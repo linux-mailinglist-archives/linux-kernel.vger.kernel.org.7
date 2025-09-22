@@ -1,93 +1,116 @@
-Return-Path: <linux-kernel+bounces-826971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE4BB8FC1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:31:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE258B8FC3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D8521894533
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:31:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 787923BD7C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659D52877D5;
-	Mon, 22 Sep 2025 09:31:08 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537EB287518;
+	Mon, 22 Sep 2025 09:33:21 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E25F279DAD;
-	Mon, 22 Sep 2025 09:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C2F286889;
+	Mon, 22 Sep 2025 09:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758533468; cv=none; b=GIQ71txFTZcRvOs0WSHf33Ih5ANTD2UCdU7X1DHDBXp5q58c4bJD7t5pL19bSFFQnwlSruWa9Zf69XnVJbiPIhC2q3fbUVAjwg40KHIV6taBwyLW7AsGTyohVN9D/KCJjnUnbY2zVYE9c9/djG8XSJJnZ0coEp6bpx5ql+pZIw4=
+	t=1758533600; cv=none; b=BCviaMDOpB6y6EioE+oCiuYzJAfTVAKOHEBSrJx08jokd7MHin4E3vEc+HFdlSxhJ8Dng5SiDwWYPXdlV0TrtdAU27GP649WJNCL7xAmDggWem7JUC1R6tpAN1k1Gbld9AItRkBCUwLidiuVQnbBIoqFYV3rcFeuGwGVGL4WCU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758533468; c=relaxed/simple;
-	bh=PhrTQha9+wsRa000TsVoYqxA9+ogH3hKIDIHjWjgaHg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HSPXEeyANvN2KlVPuwqwlXdAIEl4Kl+zAOjLP5TfZu+ur6D7WxMIkzgr8vxLcih8H13r54Cfi5D10yDDj8WpWTWXaObLOsAXiKZe2E+2iD3K1BKBjGWclDsfNVR1Glw2LOho8UiIcDMSooJv2jqO4NuftnleXNOtrY1oKHbXPK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: d7e934b2979611f08b9f7d2eb6caa7cf-20250922
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:5fb6092d-f6d5-47fa-af2e-9468285061cf,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:03ccd001aaf2432aee1f691bbbbeb582,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|817|850,TC:nil,Content:-
-	10|-8|-5|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,CO
-	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: d7e934b2979611f08b9f7d2eb6caa7cf-20250922
-X-User: zhangzihuan@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1987420254; Mon, 22 Sep 2025 17:30:57 +0800
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: rafael@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	viresh.kumar@linaro.org,
-	zhangzihuan@kylinos.cn,
-	zhenglifeng1@huawei.com
-Subject: Re: [PATCH v1] cpufreq: Replace pointer subtraction with iteration macros
-Date: Mon, 22 Sep 2025 17:30:54 +0800
-Message-Id: <20250922093054.106986-1-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <CAJZ5v0i4V=ayEXRfJXduR-15jvVHgP_Cmc80WfhQoDv7N5xGjw@mail.gmail.com>
-References: <CAJZ5v0i4V=ayEXRfJXduR-15jvVHgP_Cmc80WfhQoDv7N5xGjw@mail.gmail.com>
+	s=arc-20240116; t=1758533600; c=relaxed/simple;
+	bh=8NgYybOv9WNWz4bn+lQs2bqTHjIC8EFd9xRM5WE1Adg=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=m6gxVdn4gN/B67lJVC8Ai59k45QMxwZe1Xzh6pn22zx2mmYyhUfT5H7pAWfydo5UOgkM1gDKMMaXjhfWrU67gSqGxn/NMWVCEDkso3wq6iD04vTuI+/03EaVlKvfl4MoZYwI87tnv0DmJt83BxYU+tO2L/oSZ7fnS2GvvAT0+Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cVdFf3Vtkz501bS;
+	Mon, 22 Sep 2025 17:33:10 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl1.zte.com.cn with SMTP id 58M9Vu75080767;
+	Mon, 22 Sep 2025 17:31:56 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Mon, 22 Sep 2025 17:31:58 +0800 (CST)
+Date: Mon, 22 Sep 2025 17:31:58 +0800 (CST)
+X-Zmail-TransId: 2af968d1178e17d-217fb
+X-Mailer: Zmail v1.0
+Message-ID: <20250922173158997VPIUgFcs8UoazWb_JQIc9@zte.com.cn>
+In-Reply-To: <aNEG5W0qLPKKflQA@tiehlicka>
+References: 20250921230726978agBBWNsPLi2hCp9Sxed1Y@zte.com.cn,aNEG5W0qLPKKflQA@tiehlicka
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <mhocko@suse.com>
+Cc: <akpm@linux-foundation.org>, <shakeel.butt@linux.dev>,
+        <hannes@cmpxchg.org>, <roman.gushchin@linux.dev>, <david@redhat.com>,
+        <chengming.zhou@linux.dev>, <muchun.song@linux.dev>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <cgroups@vger.kernel.org>
+Subject: =?UTF-8?B?562U5aSNOiBbUEFUQ0ggbGludXgtbmV4dCB2MyAwLzZdIG1lbWNnOiBTdXBwb3J0IHBlci1tZW1jZyBLU00gbWV0cmljcw==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 58M9Vu75080767
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: xu.xin16@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Mon, 22 Sep 2025 17:33:10 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68D117D6.003/4cVdFf3Vtkz501bS
 
-> >  drivers/cpufreq/freq_table.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
-> > index d5111ee56e38..ca06a0236e70 100644
-> > --- a/drivers/cpufreq/freq_table.c
-> > +++ b/drivers/cpufreq/freq_table.c
-> > @@ -33,16 +33,17 @@ int cpufreq_frequency_table_cpuinfo(struct cpufreq_po=
-> licy *policy)
-> >         struct cpufreq_frequency_table *pos, *table =3D policy->freq_tabl=
-> e;
-> >         unsigned int min_freq = ~0;
-> >         unsigned int max_freq = 0;
-> > +       unsigned int i = 0;
+> > From: xu xin <xu.xin16@zte.com.cn>
+> > 
+> > v2->v3:
+> > ------
+> > Some fixes of compilation error due to missed inclusion of header or missed
+> > function definition on some kernel config.
+> > https://lore.kernel.org/all/202509142147.WQI0impC-lkp@intel.com/
+> > https://lore.kernel.org/all/202509142046.QatEaTQV-lkp@intel.com/
+> > 
+> > v1->v2:
+> > ------
+> > According to Shakeel's suggestion, expose these metric item into memory.stat
+> > instead of a new interface.
+> > https://lore.kernel.org/all/ir2s6sqi6hrbz7ghmfngbif6fbgmswhqdljlntesurfl2xvmmv@yp3w2lqyipb5/
+> > 
+> > Background
+> > ==========
+> > 
+> > With the enablement of container-level KSM (e.g., via prctl [1]), there is
+> > a growing demand for container-level observability of KSM behavior. However,
+> > current cgroup implementations lack support for exposing KSM-related metrics.
 > 
-> This initialization isn't necessary because
-> cpufreq_for_each_valid_entry_idx() will initialize i to 0 to start
-> with AFAICS.
+> Could you be more specific why this is needed and what it will be used
+> for?
 
-Got it, I’ll update the remaining places accordingly.
+Yes. Some Linux application developers or vendors are eager to deploy container-level
+KSM feature in containers (docker, containerd or runc and so on). They have found
+significant memory savings without needing to modify application source code as
+before—for example, by adding prctl to enable KSM in the container’s startup
+program. Processes within the container can inherit KSM attributes via fork,
+allowing the entire container to have KSM enabled.  
 
-Thanks!
+However, in practice, not all containers benefit from KSM’s memory savings. Some
+containers may have few identical pages but incur additional memory overhead due
+to excessive ksm_rmap_items generation from KSM scanning. Therefore, we need to
+provide a container-level KSM monitoring method, enabling users to adjust their
+strategies based on actual KSM merging performance.
+
+> -- 
+> Michal Hocko
+> SUSE Labs
 
