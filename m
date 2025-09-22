@@ -1,289 +1,189 @@
-Return-Path: <linux-kernel+bounces-827040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47CBB8FFC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:23:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25EA2B8FFC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F5972A1418
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:23:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F6018A07CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820372FE58F;
-	Mon, 22 Sep 2025 10:23:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550863009D4
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696922FE05D;
+	Mon, 22 Sep 2025 10:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Uf7ofyBF"
+Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B076F27B4FA
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758536585; cv=none; b=Pa3RSN1pXNZcVItrPEMLQVxvvUIrkwMtWpyBDeiBJbkzXDYtjBGpUYaIedyV+q6cFFqD4DUxgdZV/NZNnsbHWVokf0FhBz4GvD7OquRoFTQ4MIAUiJD8wGoDNVbjvVZe9NWW91YHBtzQHNH+WpHi53r/uWEC+QGlVecPCAqdFrE=
+	t=1758536660; cv=none; b=APmXnm8FMdxqUQdIUbGXPqepCQoMe4gctLxlzo87Kj+x1HQ4g4X4MVJd49+zuXtPFZu9aUqUf+YSQm6c9CCmNf0yrF7NemqxvJd+DqoJsFuEYSEyRJCHX1+eNb78kEDi7GsRjPqXEqgv9fNt3WGEm+RXHVIa5ru9U/thO1iFGiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758536585; c=relaxed/simple;
-	bh=+cttgyCvPZgqqI+cXrQZqwMLdb8U9U1WNJj5VLXe5F4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YpyfgMd6Z6kY/oELdYUgzEv9ODfZvMjDEdktVxRH/VArak6izzqOMMJvIVb+MWctw9Ddckg1OQSt1ELi4DyE7S9zlkwy7mxD2O0MMFcnwa3fSzL/Vu6+tx5a4rrGp+sGMPkaSz9mXJ/F3fLO8GtKw/2xQoU64rb1goaf7ZmKX3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA7391515;
-	Mon, 22 Sep 2025 03:22:54 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9A9433F66E;
-	Mon, 22 Sep 2025 03:23:00 -0700 (PDT)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	broonie@kernel.org,
-	maz@kernel.org,
-	oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	james.morse@arm.com,
-	ardb@kernel.org,
-	scott@os.amperecomputing.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	mark.rutland@arm.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v9 5/5] arm64: futex: support futex with FEAT_LSUI
-Date: Mon, 22 Sep 2025 11:22:44 +0100
-Message-Id: <20250922102244.2068414-6-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250922102244.2068414-1-yeoreum.yun@arm.com>
-References: <20250922102244.2068414-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1758536660; c=relaxed/simple;
+	bh=WeCgHLtnSgNpZ7gn36nF7rz1YE2rl4o0+q2+1VO9gL0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KtFABQ2SaUJPTA/hW9szZdZbVk6IsX00fz0pp1wEwxxZqQlf8yVE5e4QgtcLS8wTpZ1e1gxFdxtneL9ixxP+YxbHn6L5S9Dy/1GPjYDtkzDN86JPg4MGt87XeuucIWUO8A4utlD9pWGZjnU19PDWMMGh5GiC5qv0ZDMdcPPRWXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Uf7ofyBF; arc=none smtp.client-ip=209.85.128.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-45dcfecdc0fso37170525e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 03:24:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758536657; x=1759141457; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iLMVfYX+Ed+WkB440q1jx27jrFMxDy/tvf6qzWMnybQ=;
+        b=Uf7ofyBF0Bzt4XZLo786kh749jHm0tjXuIgQd3AFImuNRHWH+LWX+RSiyM/BhhGChx
+         27sM+I2NKAoCfQZhGC23HXIdt8p32tnhspMD71eQcpepjeBq/66THVsOSE8VF9U/bBIr
+         jPes1IXA4win1e8/LhUlTRoNP/0oyQI6/MxFIoMXIHAsQ/v7wLeclgWmebRQYtkfwyA1
+         N2tX33ennHQTnThz+W4WQ5VsraNnGnqoN+PoyGZ1KHpxEDkS3QkRYDgHxhEalSLGqoPa
+         hDuZv+IreoOpM6LhVIdzKy0ztqOlulxfzjyHiCwWihzXdxM5C0oxmNIZBdcY96TkOHg0
+         3Y1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758536657; x=1759141457;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iLMVfYX+Ed+WkB440q1jx27jrFMxDy/tvf6qzWMnybQ=;
+        b=piNc5cnF2vRFlOGhaNhzH3h4VealwJnOi1vLne+E+rSpatXfstcZTCqQYC7Olhhs/o
+         GVwXbjCOmzxD6MXfjeMBgpbJ5rnoz+s0DXtHr8CUx6Khzfbj705NC8DBhiLl34cEAyHV
+         YTeHr4ys4E/kcCZqVJdnzmCKKrkey5gAN/0uz/LbF2qScV0T8bemYEcGvTV334t1DNeK
+         eiJnBVskb+8Z82oJMMYmQNY/zygJFE/kNnkyrSyoHkaPmLNG4POh9nbDCete2Br6PUgT
+         zAfWEPTcJ3fLLfuyyhdNmRHMDQ68iPCa0a3XdCrkW2VO1op0BxHDEWq5lUc7QWkVRWbR
+         tFQQ==
+X-Gm-Message-State: AOJu0YzFcbPbudV00QxWgoz5AaKIPFLJ4oVAFVUFOf/MSDCx9/jjG5tt
+	y1NJ8cErq9lq0VtmvP80enbVInWTt4wEq8Ji8NFDjFOGdvG71XbSD0WiUM0osK4zMhSSq8wXB7l
+	okE1/IACWvg==
+X-Gm-Gg: ASbGnctAp3TadW8lzZBQOW1vTg3Z5xRJuHcXvXUzyXOOQUmwsDHeWr33YY9nSMfyZHr
+	McORv+GskJilQ30WV2KQYNERiNhYt9EftMZhVm3VEgkr/mwrXgHOoC+DPG2PtXe9fwRF2FZxdvT
+	fxdIQ93Tr/KDgJDwIhdxebEI/UddsYI1yj+Obl5nnU5BiJzOw3REZx3ib1skO39i7pNHvnOOldQ
+	w5pHVW7btXz7UnIC4iOUMdfdENVBpEq/o0dr4LJtuOhZwky/uqeuVFHDdyavDGEAZ5rwWer2kCz
+	VvDgQWLSQ9oyEa6bEcvDFBeq5blxidsR8bsC8yojhrATDHBS+oa9RS6VDEj4t3s2sUoI969T6VQ
+	ODMSqmGHl6YYGmK9a1+fe1WyDCk4F4x4fR3/c/yrgzNIwtAY=
+X-Google-Smtp-Source: AGHT+IGv7BD/KGw2dPm5H7KTTZtP4TTXvAHrXkuN0W6sv8PTNay36d6Kg+AK+ZE5blJMp+jSnKWPJQ==
+X-Received: by 2002:a05:600c:1f90:b0:46b:9ab2:38d5 with SMTP id 5b1f17b1804b1-46b9ab23ac7mr54954705e9.31.1758536656657;
+        Mon, 22 Sep 2025 03:24:16 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f4f9f41csm218613625e9.15.2025.09.22.03.24.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 03:24:16 -0700 (PDT)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Brian Norris <briannorris@chromium.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Kalle Valo <kvalo@kernel.org>,
+	"Dr . David Alan Gilbert" <linux@treblig.org>,
+	Jeff Chen <jeff.chen_1@nxp.com>,
+	Stefan Kerkmann <s.kerkmann@pengutronix.de>
+Subject: [PATCH 0/1] wifi: libertas: add WQ_PERCPU to alloc_workqueue users
+Date: Mon, 22 Sep 2025 12:24:06 +0200
+Message-ID: <20250922102407.186660-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Current futex atomic operations are implemented with ll/sc instructions
-and clearing PSTATE.PAN.
+Hi!
 
-Since Armv9.6, FEAT_LSUI supplies not only load/store instructions but
-also atomic operation for user memory access in kernel it doesn't need
-to clear PSTATE.PAN bit anymore.
+Below is a summary of a discussion about the Workqueue API and cpu isolation
+considerations. Details and more information are available here:
 
-With theses instructions some of futex atomic operations don't need to
-be implmented with ldxr/stlxr pair instead can be implmented with
-one atomic operation supplied by FEAT_LSUI.
+        "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
+        https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
 
-However, some of futex atomic operation don't have matched
-instructuion i.e) eor or cmpxchg with word size.
-For those operation, uses cas{al}t to implement them.
+=== Current situation: problems ===
 
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- arch/arm64/include/asm/futex.h | 178 ++++++++++++++++++++++++++++++++-
- 1 file changed, 177 insertions(+), 1 deletion(-)
+Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
 
-diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
-index f8cb674bdb3f..ee79944df6fe 100644
---- a/arch/arm64/include/asm/futex.h
-+++ b/arch/arm64/include/asm/futex.h
-@@ -9,6 +9,8 @@
- #include <linux/uaccess.h>
- #include <linux/stringify.h>
- 
-+#include <asm/alternative.h>
-+#include <asm/alternative-macros.h>
- #include <asm/errno.h>
- 
- #define FUTEX_MAX_LOOPS	128 /* What's the largest number you can think of? */
-@@ -86,11 +88,185 @@ __llsc_futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
- 	return ret;
- }
- 
-+#ifdef CONFIG_AS_HAS_LSUI
-+
-+/*
-+ * When the LSUI feature is present, the CPU also implements PAN, because
-+ * FEAT_PAN has been mandatory since Armv8.1. Therefore, there is no need to
-+ * call uaccess_ttbr0_enable()/uaccess_ttbr0_disable() around each LSUI
-+ * operation.
-+ */
-+
-+#define __LSUI_PREAMBLE	".arch_extension lsui\n"
-+
-+#define LSUI_FUTEX_ATOMIC_OP(op, asm_op, mb)				\
-+static __always_inline int						\
-+__lsui_futex_atomic_##op(int oparg, u32 __user *uaddr, int *oval)	\
-+{									\
-+	int ret = 0;							\
-+	int oldval;							\
-+									\
-+	asm volatile("// __lsui_futex_atomic_" #op "\n"			\
-+	__LSUI_PREAMBLE							\
-+"1:	" #asm_op #mb "	%w3, %w2, %1\n"					\
-+"2:\n"									\
-+	_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)				\
-+	: "+r" (ret), "+Q" (*uaddr), "=r" (oldval)			\
-+	: "r" (oparg)							\
-+	: "memory");							\
-+									\
-+	if (!ret)							\
-+		*oval = oldval;						\
-+									\
-+	return ret;							\
-+}
-+
-+LSUI_FUTEX_ATOMIC_OP(add, ldtadd, al)
-+LSUI_FUTEX_ATOMIC_OP(or, ldtset, al)
-+LSUI_FUTEX_ATOMIC_OP(andnot, ldtclr, al)
-+LSUI_FUTEX_ATOMIC_OP(set, swpt, al)
-+
-+static __always_inline int
-+__lsui_cmpxchg64(u64 __user *uaddr, u64 *oldval, u64 newval)
-+{
-+	int ret = 0;
-+
-+	asm volatile("// __lsui_cmpxchg64\n"
-+	__LSUI_PREAMBLE
-+"1:	casalt	%x2, %x3, %1\n"
-+"2:\n"
-+	_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)
-+	: "+r" (ret), "+Q" (*uaddr), "+r" (*oldval)
-+	: "r" (newval)
-+	: "memory");
-+
-+	return ret;
-+}
-+
-+static __always_inline int
-+__lsui_cmpxchg32(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
-+{
-+	u64 __user *uaddr64;
-+	bool futex_on_lo;
-+	int ret = -EAGAIN, i;
-+	u32 other, orig_other;
-+	union {
-+		struct futex_on_lo {
-+			u32 val;
-+			u32 other;
-+		} lo_futex;
-+
-+		struct futex_on_hi {
-+			u32 other;
-+			u32 val;
-+		} hi_futex;
-+
-+		u64 raw;
-+	} oval64, orig64, nval64;
-+
-+	uaddr64 = (u64 __user *) PTR_ALIGN_DOWN(uaddr, sizeof(u64));
-+	futex_on_lo = (IS_ALIGNED((unsigned long)uaddr, sizeof(u64)) ==
-+			IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN));
-+
-+	for (i = 0; i < FUTEX_MAX_LOOPS; i++) {
-+		if (get_user(oval64.raw, uaddr64))
-+			return -EFAULT;
-+
-+		nval64.raw = oval64.raw;
-+
-+		if (futex_on_lo) {
-+			oval64.lo_futex.val = oldval;
-+			nval64.lo_futex.val = newval;
-+		} else {
-+			oval64.hi_futex.val = oldval;
-+			nval64.hi_futex.val = newval;
-+		}
-+
-+		orig64.raw = oval64.raw;
-+
-+		if (__lsui_cmpxchg64(uaddr64, &oval64.raw, nval64.raw))
-+			return -EFAULT;
-+
-+		if (futex_on_lo) {
-+			oldval = oval64.lo_futex.val;
-+			other = oval64.lo_futex.other;
-+			orig_other = orig64.lo_futex.other;
-+		} else {
-+			oldval = oval64.hi_futex.val;
-+			other = oval64.hi_futex.other;
-+			orig_other = orig64.hi_futex.other;
-+		}
-+
-+		if (other == orig_other) {
-+			ret = 0;
-+			break;
-+		}
-+	}
-+
-+	if (!ret)
-+		*oval = oldval;
-+
-+	return ret;
-+}
-+
-+static __always_inline int
-+__lsui_futex_atomic_and(int oparg, u32 __user *uaddr, int *oval)
-+{
-+	return __lsui_futex_atomic_andnot(~oparg, uaddr, oval);
-+}
-+
-+static __always_inline int
-+__lsui_futex_atomic_eor(int oparg, u32 __user *uaddr, int *oval)
-+{
-+	u32 oldval, newval, val;
-+	int ret, i;
-+
-+	/*
-+	 * there are no ldteor/stteor instructions...
-+	 */
-+	for (i = 0; i < FUTEX_MAX_LOOPS; i++) {
-+		if (get_user(oldval, uaddr))
-+			return -EFAULT;
-+
-+		newval = oldval ^ oparg;
-+
-+		ret = __lsui_cmpxchg32(uaddr, oldval, newval, &val);
-+		if (ret)
-+			return ret;
-+
-+		if (val == oldval) {
-+			*oval = val;
-+			return 0;
-+		}
-+	}
-+
-+	return -EAGAIN;
-+}
-+
-+static __always_inline int
-+__lsui_futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
-+{
-+	return __lsui_cmpxchg32(uaddr, oldval, newval, oval);
-+}
-+
-+#define __lsui_llsc_body(op, ...)					\
-+({									\
-+	alternative_has_cap_likely(ARM64_HAS_LSUI) ?			\
-+		__lsui_##op(__VA_ARGS__) : __llsc_##op(__VA_ARGS__);	\
-+})
-+
-+#else	/* CONFIG_AS_HAS_LSUI */
-+
-+#define __lsui_llsc_body(op, ...)	__llsc_##op(__VA_ARGS__)
-+
-+#endif	/* CONFIG_AS_HAS_LSUI */
-+
-+
- #define FUTEX_ATOMIC_OP(op)						\
- static __always_inline int						\
- __futex_atomic_##op(int oparg, u32 __user *uaddr, int *oval)		\
- {									\
--	return __llsc_futex_atomic_##op(oparg, uaddr, oval);		\
-+	return __lsui_llsc_body(futex_atomic_##op, oparg, uaddr, oval);	\
- }
- 
- FUTEX_ATOMIC_OP(add)
+This leads to different scenarios if a work item is scheduled on an isolated
+CPU where "delay" value is 0 or greater then 0:
+        schedule_delayed_work(, 0);
+
+This will be handled by __queue_work() that will queue the work item on the
+current local (isolated) CPU, while:
+
+        schedule_delayed_work(, 1);
+
+Will move the timer on an housekeeping CPU, and schedule the work there.
+
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+
+This lack of consistentcy cannot be addressed without refactoring the API.
+
+=== Plan and future plans ===
+
+This patchset is the first stone on a refactoring needed in order to
+address the points aforementioned; it will have a positive impact also
+on the cpu isolation, in the long term, moving away percpu workqueue in
+favor to an unbound model.
+
+These are the main steps:
+1)  API refactoring (that this patch is introducing)
+    -   Make more clear and uniform the system wq names, both per-cpu and
+        unbound. This to avoid any possible confusion on what should be
+        used.
+
+    -   Introduction of WQ_PERCPU: this flag is the complement of WQ_UNBOUND,
+        introduced in this patchset and used on all the callers that are not
+        currently using WQ_UNBOUND.
+
+        WQ_UNBOUND will be removed in a future release cycle.
+
+        Most users don't need to be per-cpu, because they don't have
+        locality requirements, because of that, a next future step will be
+        make "unbound" the default behavior.
+
+2)  Check who really needs to be per-cpu
+    -   Remove the WQ_PERCPU flag when is not strictly required.
+
+3)  Add a new API (prefer local cpu)
+    -   There are users that don't require a local execution, like mentioned
+        above; despite that, local execution yeld to performance gain.
+
+        This new API will prefer the local execution, without requiring it.
+
+=== Introduced Changes by this series ===
+
+1) [P 1] add WQ_PERCPU to alloc_workqueue() users
+
+        Every alloc_workqueue() caller should use one among WQ_PERCPU or
+        WQ_UNBOUND.
+
+        WQ_UNBOUND will be removed in a next release cycle.
+
+Thanks!
+
+Marco Crivellari (1):
+  wifi: libertas: WQ_PERCPU added to alloc_workqueue users
+
+ drivers/net/wireless/marvell/libertas/if_sdio.c | 3 ++-
+ drivers/net/wireless/marvell/libertas/if_spi.c  | 3 ++-
+ drivers/net/wireless/marvell/libertas_tf/main.c | 2 +-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+
 -- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+2.51.0
 
 
