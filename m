@@ -1,86 +1,54 @@
-Return-Path: <linux-kernel+bounces-827079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 257F8B90379
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:45:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3D9B903D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2587318A343D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:44:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9962A16D6FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEA43093B6;
-	Mon, 22 Sep 2025 10:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1666A303A09;
+	Mon, 22 Sep 2025 10:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kaREty9V"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gH2nDDxr"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547DD304972
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A682472B1;
+	Mon, 22 Sep 2025 10:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758537598; cv=none; b=jVvtdHVOxWG/KPaNzQBmANoc4X57R2I66VUefH5pa8MiPHAE3RMLjv437zF5gZD/swqhnP9ojZ2FPHDAmyBIF3e/2RvpbcWa1VFfEozXHt4G8KIUxH0SL/NzR760bvdAI488ZXuTsrruU7hKDwJ1/f6/V6IhXrGa3Dlbru9a/rA=
+	t=1758537757; cv=none; b=kJJwrN7AoLn5vMsKD9YpE/Y2hQMPkY1BWqIUs2fTK9rwpTprbM/0Sg0GIj9b1ZJ6XsFHvglSVKTXS+2fOZejfmqA3waOov3TLTe8UE4uzK2qnUTu0X7lmGEGy0peOGvwTk5cvBmsyZOJZRsID66qiN2zuTCTPelKUdXr3ZZ4/68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758537598; c=relaxed/simple;
-	bh=twUcl12npOG8qzI9GA9aXYM/D+zCfltEzGgWykDIeu8=;
+	s=arc-20240116; t=1758537757; c=relaxed/simple;
+	bh=Ih1cqIyFne9UJCmMiU/r1H207xbYTp3gU6PQi6WJ/js=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pcYL7+a5ot66N7avDRK4tO5Jt08agLzUDAuicLwmEsm1ks6f+itefnlbQrHu588bogjTLuJUPXiP6Bo+LtzdTXdZAryyaXnAoFz126a1bOzGRCQlmEShh8qzhgQFm4jaws7vP0I8WSqmJePb/lwObhJHb7wcWsN4V8VfTFu9kno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kaREty9V; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58M7GPMA029201
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:39:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	S/sA8nAMeAFMELZqIPjuLjJ4XtaKTMC4EnJ3WDadUqo=; b=kaREty9VXGeciDLI
-	tCvv1KCyLhUfKm/djj2m4hnm9nMrsHRkwQzZgWImpLtgW00/4d39/gq+ziey5ral
-	QSHeBxAucErWvK23cbWyWyvXCLMWdjufjUHvB0bGfHWcY2QaLk6QCTi3ReNYrTiR
-	DJkmfa100TLfOC5xs5R+m3qOmLXAg6RfKqWRo3LlUGS3Q8ixL6C4tdba4NLLFS4v
-	0yffZl8J5fGt178CwkdUL2tJpUwed5Y+/wAuOWw2sDaS+lrtPHx0tZuum52E3MIQ
-	S8ih2sgoJweK4CzFWVrznjiSBOOB/l60gbOu2vx5X2mUhz286H1xsFLitauhQMg5
-	2AMvNw==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hyempsu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:39:56 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b5546169b7aso37779a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 03:39:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758537596; x=1759142396;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=S/sA8nAMeAFMELZqIPjuLjJ4XtaKTMC4EnJ3WDadUqo=;
-        b=H6vy5cK1jdul0096o+N4WsSdL8gP8KekTNXEaaZqOz9Zu4IWpHYeqiloLgRUTU25ZL
-         Pa7vyz4M7/eZfdeuu93HW/C9QyEYb3FI/ewJtovU6+Axf7pNwPZtdeDuF7lPD7nHcnvo
-         qHuiQtpg6TX7NgpCYMxIv9AtfBJU4MCWe6szSyZF349k8jEe4OMrlZ1Tth7Y+uDYVwH3
-         9VXFBuP/ClZeRk7QzYqfbI9vK6y1coBWCE7xffrTUvWGDcWQrFmV5jcfdh41oCgzHdY8
-         PeJymNPVboKfbJ8qGowmYSbn0MYI1mhbT605fyYtq8Jnp4+ErZg7FL7B3IG3pjVwkrZ7
-         76cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOOFdJ5df5WtFd+gZwSbh4rDzKdAzp54sohB5F8zDGdsiuPeul0nr37q19E+8FqvCm+zMNDxD5Dt6rSZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybXujjTrQq6fNKwXpbbPXL44m6i6TREdJWBVPmQla2u00ZyrkU
-	ZCLgoCk1XxKjun/dyC5yxX3KhAsbgPZaWpTiCDWrHHUzJOaugvDvALSiOeIQtUSmP7lnwHDAOMq
-	IJIN52zGe9aMfDcdr0n7bvKu/N2JK2pmQ2WY/nKClSouS+soDdjyeajW366M5L88DdKM=
-X-Gm-Gg: ASbGncuamtF5P4Xs/nKdFKInyP9CSYRe6mm5My10Rrr0srJHbNUHLjDv1OaY63ByTkp
-	XvFTIpaTDC0uWm1fNKk0Ge3ykK1mG0beg6No2xd8jwPwA7jB+gtS1zBq6LqrdV4vDvXARbgNak+
-	gRf1pOHivMbFctGyihTs/2c4Oc+HFESCKg/lWFbSs2b7KiDG4oyT8R+4mryedm7mpbNTFY/HXhz
-	p77r928XwHfTwXJAlRpci4VhudkgJkXiCaftNKVkHtg0vSd8BIRGF5ecJbyjMUtqxyQIk079wAC
-	zGcapUWY/U4Z8IPVf7/qt9fCaf+vKIzzCKj+RnxsXkm3w4gsyRttJjJiTcHaqdFMeg==
-X-Received: by 2002:a05:6a00:1894:b0:77f:1a6a:e72b with SMTP id d2e1a72fcca58-77f3126ad87mr2512340b3a.5.1758537595660;
-        Mon, 22 Sep 2025 03:39:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGzeuarlsbMfcKnTGM+3OHSIOvq4mUD5eYqtObyzudC9HyNv9RqGfR6ipfD9BvwEsV1pOsHsw==
-X-Received: by 2002:a05:6a00:1894:b0:77f:1a6a:e72b with SMTP id d2e1a72fcca58-77f3126ad87mr2512307b3a.5.1758537595213;
-        Mon, 22 Sep 2025 03:39:55 -0700 (PDT)
-Received: from [10.64.16.135] ([114.94.8.21])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfc2473d0sm12066251b3a.27.2025.09.22.03.39.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 03:39:54 -0700 (PDT)
-Message-ID: <bf823249-18e3-48af-a291-63b89bf83163@oss.qualcomm.com>
-Date: Mon, 22 Sep 2025 18:39:47 +0800
+	 In-Reply-To:Content-Type; b=hdIQqmXhyF6Hxb7QWVbLgD5sJLGu2ETSRyFeAgWEoYeWhsLuPKfJJ1LEV+8p1lmtprlaVHOj6SSiQE608s1kN6uy0WxpS8TJtCcw+9a17CCDlyuoyvNp77/Ab6KayAeFpWx2sTSba9blRTgJtWD4RkbdxGASKg6/vPwSjf8J2QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gH2nDDxr; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758537753;
+	bh=Ih1cqIyFne9UJCmMiU/r1H207xbYTp3gU6PQi6WJ/js=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gH2nDDxrMAvWyOHVpMLA6hKcjMOujozkD4zDZWlMdKphN0qhDkEz4blZqpQX/mEq9
+	 +O0GZLWMnm9OqJqAzao1t3U0a9VmK2bQFx6ULM7xpgR37XcxtyeSmUtgN8BBB7jcnD
+	 foZ4n7AXc/FW4oVoTyJ5RJUqK7nU5e0vsF3cfu3R+6gU1hgH0jUzZ3kZrmjPWVsNoK
+	 KQ/rms4AJz+3Y5W2wAgNRUQDI9zFeXANCft9o7CrY5CXxjY/5PGktYG678qKG5UadN
+	 O6GEnl6yc/J51h02W6ePQyZX++Azsn8rpwIYMDgI0xGgS+TECp8yZdrn9cL0BJzFP6
+	 wfFxIk4t1iuDg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D0D0217E0125;
+	Mon, 22 Sep 2025 12:42:32 +0200 (CEST)
+Message-ID: <e4a6feaf-a9cd-4092-a083-c356a7d954b2@collabora.com>
+Date: Mon, 22 Sep 2025 12:42:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,149 +56,194 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 05/14] phy: qcom: qmp-usbc: Move reset config into PHY
- cfg
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
-        li.liu@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-References: <20250919-add-displayport-support-for-qcs615-platform-v5-0-eae6681f4002@oss.qualcomm.com>
- <20250919-add-displayport-support-for-qcs615-platform-v5-5-eae6681f4002@oss.qualcomm.com>
- <z6x3bwb7izywozeran5aq64uw4tiwlbwx4kekoy3vv3vt7qyip@2ibiat5focw2>
-From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-In-Reply-To: <z6x3bwb7izywozeran5aq64uw4tiwlbwx4kekoy3vv3vt7qyip@2ibiat5focw2>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 2/3] dmaengine: mediatek: mtk-uart-apdma: support more
+ than 33 bits for DMA bitmask
+To: wctrl@proton.me, Sean Wang <sean.wang@mediatek.com>,
+ Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Long Cheng <long.cheng@mediatek.com>
+Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250921-uart-apdma-v1-0-107543c7102c@proton.me>
+ <20250921-uart-apdma-v1-2-107543c7102c@proton.me>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250921-uart-apdma-v1-2-107543c7102c@proton.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: Yc3wv09Rgd8ZhOVP8JRsbmTD4NDGCFOA
-X-Authority-Analysis: v=2.4 cv=YMOfyQGx c=1 sm=1 tr=0 ts=68d1277c cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=kiRbvkIhkhXhhATYQ8oA:9
- a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwNCBTYWx0ZWRfX2Fyk5Qenf6Ke
- EVkNCySbw73qXFaWphCNZBF53RXk3N1o6lDqLqprhYPv9MwfX+XpT+9ucmUsX5oC4Fje4WuaKOm
- F7hOh4XR2dozon33KHDBCSMVlhZE0x63EDmndTYoiPPQyEpAveHz8f3fFT1If6CQTwmmYEkbYQj
- 5D4UDbZMtiqpFkJu46FmWfoOd7958hmdHfFcVxvYQ4sJEUvCtMQGkZx6/IKRJg0F36jxzxFJd1r
- fHdd4ZVjs21X29VSEvKAo0qXeTilqfQpYuanA+d1jlBkbkITeY5IfiEekd1Zy+pbtieGoXmxHEb
- HM8vICM3sfuP+tV6KguKicQ39jIGMbksgJSXgA/zPv7NVcA99cbdbuV0KwulV+DVGjw1Vp187zN
- 2PFGw2rF
-X-Proofpoint-ORIG-GUID: Yc3wv09Rgd8ZhOVP8JRsbmTD4NDGCFOA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-22_01,2025-09-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0
- clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200004
+
+Il 21/09/25 13:03, Max Shevchenko via B4 Relay ha scritto:
+> From: Max Shevchenko <wctrl@proton.me>
+> 
+> Drop mediatek,dma-33bits property and introduce a platform data with
+> field representing DMA bitmask.
+> 
+> The reference SoCs were taken from the downstream kernel (6.6) for
+> the MT6991 SoC.
+> 
+
+That's a good idea - but it doesn't work like that.
+
+The VFF_4G_SUPPORT register really is called {RX,TX}_VFF_ADDR2 - and on all of
+the newer SoCs that support more than 33 bits, this register holds the upper
+X bits of the TX/RX addr, where X is (dma_bits - 32) meaning that, for example,
+for MT6985 X=(36-32) -> X=4.
+
+The downstream driver does have a reference implementation for this - and there
+is no simpler way around it: you either implement it all, or you don't.
+
+Simply put: with your code, you're not supporting more than 33 bits, because even
+though you're setting the dma mask, you're never correctly using the hardware (as
+in, you're never programming the additional registers to make use of that).
 
 
-On 9/22/2025 5:39 PM, Dmitry Baryshkov wrote:
-> On Fri, Sep 19, 2025 at 10:24:22PM +0800, Xiangxu Yin wrote:
->> Move resets to qmp_phy_cfg for per-PHY customization. Keep legacy DT
->> path on the old hardcoded list; non-legacy path uses cfg->reset_list.
->>
->> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
->> ---
->>  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 18 +++++++++++++++---
->>  1 file changed, 15 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
->> index 3b48c69f9c3cb7daec495ebc281b83fe34e56881..3d228db9ef0882eb76e7ab9e82f8122fa9cfe314 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
->> @@ -335,7 +335,8 @@ struct qmp_phy_cfg {
->>  	int (*configure_dp_phy)(struct qmp_usbc *qmp);
->>  	int (*calibrate_dp_phy)(struct qmp_usbc *qmp);
->>  
->> -	/* regulators to be requested */
->> +	const char * const *reset_list;
->> +	int num_resets;
->>  	const struct regulator_bulk_data *vreg_list;
->>  	int num_vregs;
->>  
->> @@ -428,6 +429,10 @@ static const char * const usb3phy_reset_l[] = {
->>  	"phy_phy", "phy",
->>  };
->>  
->> +static const char * const usb3dpphy_reset_l[] = {
->> +	"phy_phy", "dp_phy",
->> +};
-> This is unused in this patch. It should go to the patch adding QCS615 DP
-> PHY compatible and the rest of the config data.
+> Signed-off-by: Max Shevchenko <wctrl@proton.me>
+> ---
+>   drivers/dma/mediatek/mtk-uart-apdma.c | 47 +++++++++++++++++++++++++----------
+>   1 file changed, 34 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/dma/mediatek/mtk-uart-apdma.c b/drivers/dma/mediatek/mtk-uart-apdma.c
+> index 08e15177427b94246951d38a2a1d76875c1e452e..68dd3a4ee0d88fd508870a5de24ae67505023495 100644
+> --- a/drivers/dma/mediatek/mtk-uart-apdma.c
+> +++ b/drivers/dma/mediatek/mtk-uart-apdma.c
+> @@ -42,6 +42,7 @@
+>   #define VFF_EN_CLR_B		0
+>   #define VFF_INT_EN_CLR_B	0
+>   #define VFF_4G_SUPPORT_CLR_B	0
+> +#define VFF_ORI_ADDR_BITS_NUM	32
+>   
+>   /*
+>    * interrupt trigger level for tx
+> @@ -74,10 +75,14 @@
+>   #define VFF_DEBUG_STATUS	0x50
+>   #define VFF_4G_SUPPORT		0x54
+>   
+> +struct mtk_uart_apdma_data {
+> +	unsigned int dma_bits;
+> +};
+> +
+>   struct mtk_uart_apdmadev {
+>   	struct dma_device ddev;
+>   	struct clk *clk;
+> -	bool support_33bits;
+> +	unsigned int support_bits;
+
+You don't really need to carry support_bits... there's no real usage of that
+information across the code, if not at probe time.
+
+bool support_extended_addr; /* rename to your liking */
+
+>   	unsigned int dma_requests;
+>   };
+>   
+> @@ -148,7 +153,7 @@ static void mtk_uart_apdma_start_tx(struct mtk_chan *c)
+>   		mtk_uart_apdma_write(c, VFF_WPT, 0);
+>   		mtk_uart_apdma_write(c, VFF_INT_FLAG, VFF_TX_INT_CLR_B);
+>   
+> -		if (mtkd->support_33bits)
+> +		if (mtkd->support_bits > VFF_ORI_ADDR_BITS_NUM)
+
+if (mtkd->support_extended_addr)
+	mtk_uart_apdma_write(c, VFF_4G_SUPPORT, upper_32_bits(d->addr);
+
+... do the same for RX and you should be 99.9% done :-)
 
 
-Ok, will move in next patch.
+
+>   			mtk_uart_apdma_write(c, VFF_4G_SUPPORT, VFF_4G_EN_B);
+>   	}
+>   
+> @@ -191,7 +196,7 @@ static void mtk_uart_apdma_start_rx(struct mtk_chan *c)
+>   		mtk_uart_apdma_write(c, VFF_RPT, 0);
+>   		mtk_uart_apdma_write(c, VFF_INT_FLAG, VFF_RX_INT_CLR_B);
+>   
+> -		if (mtkd->support_33bits)
+> +		if (mtkd->support_bits > VFF_ORI_ADDR_BITS_NUM)
+>   			mtk_uart_apdma_write(c, VFF_4G_SUPPORT, VFF_4G_EN_B);
+>   	}
+>   
+> @@ -297,7 +302,7 @@ static int mtk_uart_apdma_alloc_chan_resources(struct dma_chan *chan)
+>   		goto err_pm;
+>   	}
+>   
+> -	if (mtkd->support_33bits)
+> +	if (mtkd->support_bits > VFF_ORI_ADDR_BITS_NUM)
+>   		mtk_uart_apdma_write(c, VFF_4G_SUPPORT, VFF_4G_SUPPORT_CLR_B);
+>   
+>   err_pm:
+> @@ -467,8 +472,27 @@ static void mtk_uart_apdma_free(struct mtk_uart_apdmadev *mtkd)
+>   	}
+>   }
+>   
+> +static const struct mtk_uart_apdma_data mt6577_data = {
+> +	.dma_bits = 32
+> +};
+> +
+> +static const struct mtk_uart_apdma_data mt6795_data = {
+> +	.dma_bits = 33
+> +};
+> +
+> +static const struct mtk_uart_apdma_data mt6779_data = {
+> +	.dma_bits = 34
+> +};
+> +
+> +static const struct mtk_uart_apdma_data mt6985_data = {
+> +	.dma_bits = 35
+> +};
+> +
+>   static const struct of_device_id mtk_uart_apdma_match[] = {
+> -	{ .compatible = "mediatek,mt6577-uart-dma", },
+> +	{ .compatible = "mediatek,mt6577-uart-dma", .data = &mt6577_data },
+
+What about doing, instead...
+
+{ .compatible = "mediatek,mt6577-uart-dma", .data = (void *)32 },
+
+> +	{ .compatible = "mediatek,mt6795-uart-dma", .data = &mt6795_data },
+> +	{ .compatible = "mediatek,mt6779-uart-dma", .data = &mt6779_data },
+> +	{ .compatible = "mediatek,mt6985-uart-dma", .data = &mt6985_data },
+>   	{ /* sentinel */ },
+>   };
+>   MODULE_DEVICE_TABLE(of, mtk_uart_apdma_match);
+> @@ -477,7 +501,8 @@ static int mtk_uart_apdma_probe(struct platform_device *pdev)
+>   {
+>   	struct device_node *np = pdev->dev.of_node;
+>   	struct mtk_uart_apdmadev *mtkd;
+> -	int bit_mask = 32, rc;
+> +	const struct mtk_uart_apdma_data *data;
+> +	int rc;
+>   	struct mtk_chan *c;
+>   	unsigned int i;
+>   
+> @@ -492,13 +517,9 @@ static int mtk_uart_apdma_probe(struct platform_device *pdev)
+>   		return rc;
+>   	}
+>   
+> -	if (of_property_read_bool(np, "mediatek,dma-33bits"))
+> -		mtkd->support_33bits = true;
+> -
+> -	if (mtkd->support_33bits)
+> -		bit_mask = 33;
+> -
+> -	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(bit_mask));
+> +	data = of_device_get_match_data(&pdev->dev);
+> +	mtkd->support_bits = data->dma_bits;
+
+...and there you just get that single number you need, store it locally, then you
+can do
+
+mtkd->support_extended_addr = apdma_num_bits > 32;
+
+> +	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(data->dma_bits));
+>   	if (rc)
+>   		return rc;
+>   
 
 
->> +
->>  static const struct regulator_bulk_data qmp_phy_msm8998_vreg_l[] = {
->>  	{ .supply = "vdda-phy", .init_load_uA = 68600 },
->>  	{ .supply = "vdda-pll", .init_load_uA = 14200 },
->> @@ -464,6 +469,8 @@ static const struct qmp_phy_cfg msm8998_usb3phy_cfg = {
->>  	.rx_tbl_num             = ARRAY_SIZE(msm8998_usb3_rx_tbl),
->>  	.pcs_tbl                = msm8998_usb3_pcs_tbl,
->>  	.pcs_tbl_num            = ARRAY_SIZE(msm8998_usb3_pcs_tbl),
->> +	.reset_list		= usb3phy_reset_l,
->> +	.num_resets		= ARRAY_SIZE(usb3phy_reset_l),
->>  	.vreg_list              = qmp_phy_msm8998_vreg_l,
->>  	.num_vregs              = ARRAY_SIZE(qmp_phy_msm8998_vreg_l),
->>  	.regs                   = qmp_v3_usb3phy_regs_layout,
->> @@ -480,6 +487,8 @@ static const struct qmp_phy_cfg qcm2290_usb3phy_cfg = {
->>  	.rx_tbl_num		= ARRAY_SIZE(qcm2290_usb3_rx_tbl),
->>  	.pcs_tbl		= qcm2290_usb3_pcs_tbl,
->>  	.pcs_tbl_num		= ARRAY_SIZE(qcm2290_usb3_pcs_tbl),
->> +	.reset_list		= usb3phy_reset_l,
->> +	.num_resets		= ARRAY_SIZE(usb3phy_reset_l),
->>  	.vreg_list		= qmp_phy_sm2290_vreg_l,
->>  	.num_vregs		= ARRAY_SIZE(qmp_phy_sm2290_vreg_l),
->>  	.regs			= qmp_v3_usb3phy_regs_layout_qcm2290,
->> @@ -496,6 +505,8 @@ static const struct qmp_phy_cfg sdm660_usb3phy_cfg = {
->>  	.rx_tbl_num		= ARRAY_SIZE(sdm660_usb3_rx_tbl),
->>  	.pcs_tbl		= qcm2290_usb3_pcs_tbl,
->>  	.pcs_tbl_num		= ARRAY_SIZE(qcm2290_usb3_pcs_tbl),
->> +	.reset_list		= usb3phy_reset_l,
->> +	.num_resets		= ARRAY_SIZE(usb3phy_reset_l),
->>  	.vreg_list		= qmp_phy_msm8998_vreg_l,
->>  	.num_vregs		= ARRAY_SIZE(qmp_phy_msm8998_vreg_l),
->>  	.regs			= qmp_v3_usb3phy_regs_layout_qcm2290,
->> @@ -512,6 +523,8 @@ static const struct qmp_phy_cfg qcs615_usb3phy_cfg = {
->>  	.rx_tbl_num		= ARRAY_SIZE(qcm2290_usb3_rx_tbl),
->>  	.pcs_tbl		= qcm2290_usb3_pcs_tbl,
->>  	.pcs_tbl_num		= ARRAY_SIZE(qcm2290_usb3_pcs_tbl),
->> +	.reset_list		= usb3phy_reset_l,
->> +	.num_resets		= ARRAY_SIZE(usb3phy_reset_l),
->>  	.vreg_list		= qmp_phy_qcs615_vreg_l,
->>  	.num_vregs		= ARRAY_SIZE(qmp_phy_qcs615_vreg_l),
->>  	.regs			= qmp_v3_usb3phy_regs_layout_qcm2290,
->> @@ -1051,8 +1064,7 @@ static int qmp_usbc_parse_dt(struct qmp_usbc *qmp)
->>  				     "failed to get pipe clock\n");
->>  	}
->>  
->> -	ret = qmp_usbc_reset_init(qmp, usb3phy_reset_l,
->> -				 ARRAY_SIZE(usb3phy_reset_l));
->> +	ret = qmp_usbc_reset_init(qmp, cfg->reset_list, cfg->num_resets);
->>  	if (ret)
->>  		return ret;
->>  
->>
->> -- 
->> 2.34.1
->>
+Cheers,
+Angelo
+
+
 
