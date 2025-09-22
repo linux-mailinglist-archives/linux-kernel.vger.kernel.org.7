@@ -1,153 +1,182 @@
-Return-Path: <linux-kernel+bounces-826780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED738B8F53E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB9E0B8F547
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE560189F881
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:45:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F64B189F333
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EE92F6168;
-	Mon, 22 Sep 2025 07:44:34 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D17C2F6184;
+	Mon, 22 Sep 2025 07:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fYkVa7vr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17945182B4
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C1686329;
+	Mon, 22 Sep 2025 07:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758527073; cv=none; b=Y1E4ay4M5e1m4rOoS79myVvN/faPUqoBu7V5X1dox0gxPhP4+rH7cJB9bQO4721cKteufYb8mn7t7FRVkMAsx0G8vPyFMEO0aTVylsvx+oa+kIR1QNiZZZVv9ivtPywvPBgrz0jTwnaXaHW1ln72mUZyNKAGu//NvNOV6gMoXIk=
+	t=1758527120; cv=none; b=SKySCclZGHmvG8TVB0jHn5H0Bt+E59mn1Fad1MQNS0sn1CN3hjTs2HUeWoR0v5YxB50RStflzNmdjvMk/hZDyehDsm7HYZ8Yrf7HJCnbyYq9hbyDEZepLVNtjEW7oKpkgPLV1GBHoyY5yXVVjfQFgiR4Sy6EBqPhnggZQ0yiODU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758527073; c=relaxed/simple;
-	bh=Wa4mZn5OmRreVbC6+RpGQVPGF1DVQlCaADuMoo1wE8k=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jwfm9Ulmzj+LZPzNk8iopyFPKnBeiJunOP1ly9AcEGnG+LC2CaJJ9pG2MJkPTiDSsss+H18HH2J59w79ZYNw+123oyVFWmzEQJoSAAhJG+6TyE4Nt93ZwvgPOyB+ZpZFpZWisd0dd8dd7/xSOhZhqWWa8g1VZLinibV06GptmpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42577be9d9fso9545135ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:44:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758527071; x=1759131871;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l3Okt1HSnexvyDI11y8Xvh0ZNvB4kxeuT5RfQh263q4=;
-        b=hUsMvgyDqj1kHZRTm1kHQgGfJRNsteXjlA/nD4Oz6JId1ZNMJIbXxC5LvGgJBhaZ+b
-         TfA9+qcnrAW19/RA88ZCIKBy+OdcyaVslUJZa7AEh0OJrQovKXgskO84O/dEZ+bYYTEW
-         Gm7d29+HNCxfRHG2dpTbjD8qsPZcknzzYDXPhbduFHwBrytd30/0coVXzCANa2mzoWDJ
-         vcJINIG2YgFvtV4ujb2wfw9QOHOaRwNyBoh+fGbVwCtwIhom38/p8ofrsWuSk8eSvuC5
-         gBP+WkZxoNdT+BEM6KYXVdfuFz4wlWel6rocr0dQH/f4N66ZN9fvjbB4Mxf5AVcPHDrO
-         ZP3Q==
-X-Gm-Message-State: AOJu0YyCRZGuQtoDiGFuKyLbRuwP+8JiSOE22IrFhsx0NopugMRldH3m
-	ZpG1xGzA7fk8cthsvbV02FWG+2oRGT03VEL2L2xHpBASMYXCC8dYne2vHya4kfcYQIK9WWqmIB+
-	dJrSrO1peeCHXrDYV1wSui2Q13CVGAEdJMWDKvyTYarwSLrD1MJRm4Zvxbx65DA==
-X-Google-Smtp-Source: AGHT+IE1QoRTIJ8DXNR/3bcnKRyiXn1j4DUoVYdNR1FfKO+tcCEzjdJN0n+ajEUoWqPPM6aMAr6lnNfcLDc1O5yXKqcK69bJ7LHW
+	s=arc-20240116; t=1758527120; c=relaxed/simple;
+	bh=H1RyaGQe908wgP+9DtCfGX//XxA1/HxhCRdfcWfFnz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qDbws+FQH/DQ5cPNw4Nqeiruet82jx9Ctnoo8+UIxlvW4GlcskIut531Rgco50WICSAtSmsBlY2etyvEVTLyDlLMW6DrBDM1lL4+NzKC5taY2gqG/eMKgSD1FXbGSyY3nZ9n3MkgSS7jPFUaxz3FJ2p8iTR9SqOMuxwf4TYkf9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fYkVa7vr; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758527120; x=1790063120;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=H1RyaGQe908wgP+9DtCfGX//XxA1/HxhCRdfcWfFnz4=;
+  b=fYkVa7vr2GGEbJfEFsfcOIrvUaFBw6nSD1prLtP5u0+sytar615BsP6g
+   xOgPSut/HEYAxDjvwp19/n+CWjb80H+hG1SMxijGOtkJgrm/WWI1EXG2a
+   TolX1H3myh8IBYrMvWjyvGSjKeRPTQl26cB7I6Qfg6GPpi08gkkHn1su/
+   xAkdPrXaGN4xXT06/uj33KbOTPUp3Jfb3rI+NV4K4n7NUfFqbcU/m2fUc
+   OLiMvRqB8nqrBlB0PTuzq0AmUXFQ5AjP75V3BeiUCMUuHc2lkDSCcI/f/
+   GhWc5oEHP5Psqber+rYtYuo+wfxZ9pUaS18i8qyEjyMUO4AwtiyoP2Tgi
+   Q==;
+X-CSE-ConnectionGUID: dOodfSctSOq24iLZ62LSuw==
+X-CSE-MsgGUID: cKjAn5KfRiW1Yzw0vc8IHg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="78224477"
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="78224477"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 00:45:19 -0700
+X-CSE-ConnectionGUID: h9HCINiUTMCizWZCP4GPqw==
+X-CSE-MsgGUID: /oSvEyXuS/2s/wbNz4RHQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="207149858"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 22 Sep 2025 00:45:16 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v0bEV-0001QP-0U;
+	Mon, 22 Sep 2025 07:45:11 +0000
+Date: Mon, 22 Sep 2025 15:45:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ma Ke <make24@iscas.ac.cn>, srini@kernel.org, lgirdwood@gmail.com,
+	broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+	pierre-louis.bossart@linux.dev
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] ASoC: wcd934x: fix error handling in
+ wcd934x_codec_parse_data()
+Message-ID: <202509221535.es8PWacQ-lkp@intel.com>
+References: <20250922013507.558-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e4:b0:425:6edd:f004 with SMTP id
- e9e14a558f8ab-4256eddf1f0mr82341885ab.20.1758527071243; Mon, 22 Sep 2025
- 00:44:31 -0700 (PDT)
-Date: Mon, 22 Sep 2025 00:44:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d0fe5f.a00a0220.37dadf.0046.GAE@google.com>
-Subject: [syzbot] [kernel?] WARNING in __ns_tree_remove (8)
-From: syzbot <syzbot+a709c87b450d0d76fdb1@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922013507.558-1-make24@iscas.ac.cn>
 
-Hello,
+Hi Ma,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build warnings:
 
-HEAD commit:    846bd2225ec3 Add linux-next specific files for 20250919
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1065be42580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d4a7665929dce15c
-dashboard link: https://syzkaller.appspot.com/bug?extid=a709c87b450d0d76fdb1
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11fe4d04580000
+[auto build test WARNING on broonie-sound/for-next]
+[also build test WARNING on linus/master v6.17-rc7 next-20250919]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/cb9b7388a93f/disk-846bd222.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c509e16ebe42/vmlinux-846bd222.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1cab2834ac1b/bzImage-846bd222.xz
+url:    https://github.com/intel-lab-lkp/linux/commits/Ma-Ke/ASoC-wcd934x-fix-error-handling-in-wcd934x_codec_parse_data/20250922-094038
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+patch link:    https://lore.kernel.org/r/20250922013507.558-1-make24%40iscas.ac.cn
+patch subject: [PATCH v2] ASoC: wcd934x: fix error handling in wcd934x_codec_parse_data()
+config: i386-buildonly-randconfig-005-20250922 (https://download.01.org/0day-ci/archive/20250922/202509221535.es8PWacQ-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250922/202509221535.es8PWacQ-lkp@intel.com/reproduce)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a709c87b450d0d76fdb1@syzkaller.appspotmail.com
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509221535.es8PWacQ-lkp@intel.com/
 
-------------[ cut here ]------------
-WARNING: kernel/nstree.c:115 at __ns_tree_remove+0x28d/0x330 kernel/nstree.c:115, CPU#0: syz.2.780/9341
-Modules linked in:
-CPU: 0 UID: 0 PID: 9341 Comm: syz.2.780 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:__ns_tree_remove+0x28d/0x330 kernel/nstree.c:115
-Code: 0f 85 a4 00 00 00 48 8b 04 24 ff 00 48 8b 7c 24 18 48 83 c4 30 5b 41 5c 41 5d 41 5e 41 5f 5d e9 79 92 f9 09 e8 54 f5 31 00 90 <0f> 0b 90 e9 cc fd ff ff e8 46 f5 31 00 90 0f 0b 90 e9 ee fd ff ff
-RSP: 0018:ffffc9000e427708 EFLAGS: 00010293
-RAX: ffffffff818de3cc RBX: ffff88805df2c820 RCX: ffff88805bd15ac0
-RDX: 0000000000000000 RSI: ffff88805df2c820 RDI: ffff88805df2c820
-RBP: dffffc0000000000 R08: ffffffff8e1efb53 R09: 1ffffffff1c3df6a
-R10: dffffc0000000000 R11: fffffbfff1c3df6b R12: ffff88805df2c820
-R13: 1ffff1100bbe5903 R14: ffff88805df2c800 R15: ffffffff8e1ea3c0
-FS:  00007fb7a87da6c0(0000) GS:ffff8881259e7000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fffaa6095e8 CR3: 0000000031e7e000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- mnt_ns_tree_remove fs/namespace.c:165 [inline]
- free_mnt_ns+0xd1/0x110 fs/namespace.c:4066
- namespace_unlock+0x529/0x760 fs/namespace.c:1710
- class_namespace_excl_destructor fs/namespace.c:96 [inline]
- copy_mnt_ns+0x6e0/0x870 fs/namespace.c:4172
- create_new_namespaces+0xd1/0x720 kernel/nsproxy.c:78
- copy_namespaces+0x438/0x4b0 kernel/nsproxy.c:175
- copy_process+0x1733/0x3c00 kernel/fork.c:2199
- kernel_clone+0x21e/0x840 kernel/fork.c:2624
- __do_sys_clone kernel/fork.c:2765 [inline]
- __se_sys_clone kernel/fork.c:2749 [inline]
- __x64_sys_clone+0x18b/0x1e0 kernel/fork.c:2749
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb7a798ec29
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fb7a87d9fe8 EFLAGS: 00000206 ORIG_RAX: 0000000000000038
-RAX: ffffffffffffffda RBX: 00007fb7a7bd6090 RCX: 00007fb7a798ec29
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000a5000
-RBP: 00007fb7a7a11e41 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
-R13: 00007fb7a7bd6128 R14: 00007fb7a7bd6090 R15: 00007fff04cb79a8
- </TASK>
+All warnings (new ones prefixed by >>):
+
+>> sound/soc/codecs/wcd934x.c:5862:38: warning: cast from 'void (*)(struct device *)' to 'void (*)(void *)' converts to incompatible function type [-Wcast-function-type-strict]
+    5862 |         ret = devm_add_action_or_reset(dev, (void (*)(void *))put_device, &wcd->sidev->dev);
+         |                                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/device/devres.h:166:34: note: expanded from macro 'devm_add_action_or_reset'
+     166 |         __devm_add_action_or_reset(dev, action, data, #action)
+         |                                         ^~~~~~
+   1 warning generated.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+vim +5862 sound/soc/codecs/wcd934x.c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+  5837	
+  5838	static int wcd934x_codec_probe(struct platform_device *pdev)
+  5839	{
+  5840		struct device *dev = &pdev->dev;
+  5841		struct wcd934x_ddata *data = dev_get_drvdata(dev->parent);
+  5842		struct wcd934x_codec *wcd;
+  5843		int ret, irq;
+  5844	
+  5845		wcd = devm_kzalloc(dev, sizeof(*wcd), GFP_KERNEL);
+  5846		if (!wcd)
+  5847			return -ENOMEM;
+  5848	
+  5849		wcd->dev = dev;
+  5850		wcd->regmap = data->regmap;
+  5851		wcd->extclk = data->extclk;
+  5852		wcd->sdev = to_slim_device(data->dev);
+  5853		mutex_init(&wcd->sysclk_mutex);
+  5854		mutex_init(&wcd->micb_lock);
+  5855		wcd->common.dev = dev->parent;
+  5856		wcd->common.max_bias = 4;
+  5857	
+  5858		ret = wcd934x_codec_parse_data(wcd);
+  5859		if (ret)
+  5860			return ret;
+  5861	
+> 5862		ret = devm_add_action_or_reset(dev, (void (*)(void *))put_device, &wcd->sidev->dev);
+  5863		if (ret)
+  5864			return ret;
+  5865	
+  5866		/* set default rate 9P6MHz */
+  5867		regmap_update_bits(wcd->regmap, WCD934X_CODEC_RPM_CLK_MCLK_CFG,
+  5868				   WCD934X_CODEC_RPM_CLK_MCLK_CFG_MCLK_MASK,
+  5869				   WCD934X_CODEC_RPM_CLK_MCLK_CFG_9P6MHZ);
+  5870		memcpy(wcd->rx_chs, wcd934x_rx_chs, sizeof(wcd934x_rx_chs));
+  5871		memcpy(wcd->tx_chs, wcd934x_tx_chs, sizeof(wcd934x_tx_chs));
+  5872	
+  5873		irq = regmap_irq_get_virq(data->irq_data, WCD934X_IRQ_SLIMBUS);
+  5874		if (irq < 0)
+  5875			return dev_err_probe(wcd->dev, irq, "Failed to get SLIM IRQ\n");
+  5876	
+  5877		ret = devm_request_threaded_irq(dev, irq, NULL,
+  5878						wcd934x_slim_irq_handler,
+  5879						IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+  5880						"slim", wcd);
+  5881		if (ret)
+  5882			return dev_err_probe(dev, ret, "Failed to request slimbus irq\n");
+  5883	
+  5884		wcd934x_register_mclk_output(wcd);
+  5885		platform_set_drvdata(pdev, wcd);
+  5886	
+  5887		return devm_snd_soc_register_component(dev, &wcd934x_component_drv,
+  5888						       wcd934x_slim_dais,
+  5889						       ARRAY_SIZE(wcd934x_slim_dais));
+  5890	}
+  5891	
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
