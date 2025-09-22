@@ -1,115 +1,226 @@
-Return-Path: <linux-kernel+bounces-826623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E0F9B8EF55
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:51:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82328B8EF6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37F91188FE2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 04:51:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36FBE17758D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 04:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FFB1F4289;
-	Mon, 22 Sep 2025 04:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E3B21B9F5;
+	Mon, 22 Sep 2025 04:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tSKKE5uZ"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="B7orMvvR"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011056.outbound.protection.outlook.com [40.93.194.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02C126AC3
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 04:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758516661; cv=none; b=aOPhE68l061Imr20WSCTcbRiEvyOCS/s8FjAYoTS3jZFyZRcv4bOZ1Pbt+g1jbBZw6T1W4GhmWPnEOmFtTxE9rVmsBZrQCkQDNDFoTrMtB4MoG5iRDCmSNkxLvdfnW3leKFrEBOBdBBFBZUi5WaPYT1FiHtgCEIAJloozuroYTU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758516661; c=relaxed/simple;
-	bh=EJpecCmvYVnW7+hEqEIcBODJ3WmkmrgoXzFssouN4Dw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tj3BHKHrxq6EMRRw2IrRx1wg3BCks8AP3dn1aTgPeJide47NVFe3gqBYh6ERH4ytImZZqvWLrT2AizFxi4u+fc3lnLPA6DAXlNtLSrSXHU3tJluTv42RCUltQLHXMysqAQQTi9EJzo4utG/bFRZgttgLTlm8RdAcY0fwiBVKJfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tSKKE5uZ; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758516655;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rwgsf+oOu+Cs2yHtuw1gc40ABzClXDU5V0q0ZXbaVqg=;
-	b=tSKKE5uZia5W1YJpJE1LHPCwdzQLSumM+IE2wmINU4dYzOgcgOHeCvBuqdTZDW3EUnr08x
-	NfcIgYeZ/QQKZYxcWcpp1DKZLlX3eTLp2hSF+cJ2bThYggumrmQXwOpJDKG68Mt9uLCbPV
-	9drP/z0vnulkh8W871WrSMCPdsO9OSo=
-From: Tiwei Bie <tiwei.bie@linux.dev>
-To: linux@weissschuh.net
-Cc: richard@nod.at,
-	anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net,
-	benjamin@sipsolutions.net,
-	arnd@arndb.de,
-	linux-um@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	tiwei.btw@antgroup.com,
-	tiwei.bie@linux.dev
-Subject: Re: [PATCH v2 03/10] um: vdso: Implement __vdso_getcpu() via syscall
-Date: Mon, 22 Sep 2025 12:50:20 +0800
-Message-Id: <20250922045020.48158-1-tiwei.bie@linux.dev>
-In-Reply-To: <1568f254-7963-4015-91ed-7630d5d87881@t-8ch.de>
-References: <1568f254-7963-4015-91ed-7630d5d87881@t-8ch.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A961E89C;
+	Mon, 22 Sep 2025 04:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758516869; cv=fail; b=O9aCyWaQHKNI8mvK5VFtWMhaG2lMYmruzrIdqM0XjslUfyvD3qKj6bpgbBS0G3ahFrkwXrVMfA96dZQu7k7kt4DlS2BGhU6cAfuPaSEXztTXKmYMu0A6+EtEkn4xuF7OythwtSMab+mu3AwqdRLhyLuAFdLVzMZh9kodHLxpZL0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758516869; c=relaxed/simple;
+	bh=lhMdAij2Q7dlyOyI2ScSZdJ5ALHsvPtePRKHVkWiVic=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=byy7VyRdjxi+UgS28e1iDo7QZnPIt3HYExMb2emFI9EhPU2ejNqap8cw+DVCMjCKDJLj+Q8hqGI55X+7t8wzpnB+Y1A0qT8/KjSrJb1MYBPqfLyfCFcRWoO0EMPK8nQM8bpxYSSj/mQjC2s1Mf7at0yt7Xug5s7hcPq4zIcM6BA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=B7orMvvR; arc=fail smtp.client-ip=40.93.194.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cXSZBbYzylql5RG32ymE05vq02Qif3V5+YA47HvTJTLZWMpcmMcJToc5dUjnEbOZUWpmFKUDR8d/aziYU1vqG63p+C0pD7oHwkUk3+LqXNEBXZIlVzqNh5ir4GXCvGTXUm+FTn6akTxAl/PrLLOevwvDjLWvfb70uScCQEw+j5dXuyiJGcj4xk1k9d47MCOyfeRje1xuB2ja3+rYQnqf4Q8VfX5KtpJbA4ZFrbcMzEgc7H+4JQfe7NpdH/u9cakUuT0ErLAdZ+/bAraQ1tXAA+OTTwjwnQAkk5sw6kO89Yc0xC6/0OAM4GJBV7C4jqF1sfSCp3LID/BXnpca/fUkwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cV3YqXVVsFlXProdwBlYg/jTAiTLK5HOQu281eAdHR8=;
+ b=cCHVT8D6nHxWfORh3ko4O+sMmgyRgAAqeEKAd+B0LzWe6YX+7ulVup8ql++UQ2LldH/uxCnvIWivyzSp+z4mJSos/WWgeNDkx9CGnsfcU7fuRYz4kARr40mKSXlD6FFPCG14RUtNhdeF5d7jMLKRehwW+2nn8ky62AZUUVIQG0G5+sHOEoAh6WRtiWKmY63SKidtbJ4RkGzy1VX50iGpgFjVqEgC/IY3AhwchXBATKkhyG+BgMCKE0/6xnf2BduQKB+AUODw2zraxUIbl3kiWPH5cVdtD8lSeM+crDdL/jqUU2Ja/OyTW2cT3G+EC2C5+jUtHQuuzWBC+vMDQPD4GQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cV3YqXVVsFlXProdwBlYg/jTAiTLK5HOQu281eAdHR8=;
+ b=B7orMvvRNqWQAGrMpeLCwDjTUbwjqrLlg7D2meGyVrB6Tyzi972mC+tt7hftiPCGuz96YGIUUemiQ3dEtFvYB6QwchCtR/gOoaE8nivNgERMQcmFh13mosqoZOrlHI7QBcyl1YzcsN4rRxkAHr5aAh1cwXpX4qmTOdtjiKorn9KsOOl4Y57n28+vHPohk1RO/O2ny2cDVzl1xFEghXyMlyA0duEpAYcZysjo0WMUx4P/DeMkygbh2W2qhPgnd+rcFB1hNgaYNx8oco7/7bSDi0A0VjGxdu+bh5aYzc1VAP099d3Rl63EUuR5i02qFx1LV2/lJXkq8GFLCzbOyzEGUg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ MW6PR12MB8706.namprd12.prod.outlook.com (2603:10b6:303:249::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.19; Mon, 22 Sep 2025 04:54:24 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9137.018; Mon, 22 Sep 2025
+ 04:54:24 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Svyatoslav Ryhel <clamor95@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
+ Jonas =?UTF-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>,
+ Charan Pedumuru <charan.pedumuru@gmail.com>,
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-staging@lists.linux.dev
+Subject:
+ Re: [PATCH v2 18/23] staging: media: tegra-video: tegra20: increase maximum
+ VI clock frequency
+Date: Mon, 22 Sep 2025 13:54:20 +0900
+Message-ID: <2331830.3VsfAaAtOV@senjougahara>
+In-Reply-To: <20250906135345.241229-19-clamor95@gmail.com>
+References:
+ <20250906135345.241229-1-clamor95@gmail.com>
+ <20250906135345.241229-19-clamor95@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCPR01CA0173.jpnprd01.prod.outlook.com
+ (2603:1096:400:2b2::11) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|MW6PR12MB8706:EE_
+X-MS-Office365-Filtering-Correlation-Id: 82ec6ff0-f857-4773-ae14-08ddf99419de
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|376014|366016|10070799003|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S3VFY2NGajlKa2p0OVYyckc2Q3RHblpjSS8rR3BZbkVKd3lmbVVqblhuZlF4?=
+ =?utf-8?B?ZXRDeHdEOHhTRVpsbE9RQlZXaU4rTGVjVDRVL0xSWjFySmd1VFV0SHgxSjNn?=
+ =?utf-8?B?T25RRG1aRHN4NXQ2VHRObHNrcGNXRlVLd2hRM2h1OEp0U281VFRmVFZwMkI3?=
+ =?utf-8?B?bGkraDRDZE9qbFFyYWJuTTgrT3RSRDdBdzcwdEJXMDBrQ1l2dUVDeDdSaXdF?=
+ =?utf-8?B?cDRmcGxEd3hLd0UwZERFb2xnSGxKL3NkVlNkU3V2MUxjZnVkVTQxK1ZsNWZS?=
+ =?utf-8?B?bFl5TFYyNWFQUmEvWGdNaVYvdEE3NGUveTJTUGFjZ1hmN2ZqRkk1SGowK1Vv?=
+ =?utf-8?B?bktiSy9xZlA5RE4yMlVCeDRGNERaamtRZGtXMW41OGhpVzk0VTRiMTRpeGxN?=
+ =?utf-8?B?UnVTUEtsQnFiakNVOXJad2RNOUJzdHVSZDhhbkp3SzdxekVCYnBJaDA3dmJx?=
+ =?utf-8?B?K3pXNEdRTGZZNml0S1dBYnlwdk1FSjZMSEtsdE5hbUpMOW5Nc2NvOXZkTUF5?=
+ =?utf-8?B?QlI2K3E4V09iUU16c3B4REh2empWUHRGd3JIKzNjSmFBbGYxNjJnUGVLVzFB?=
+ =?utf-8?B?TkRxVjNWazVoMFdUT2puVG9KS1o0eTF6V1M1SjFzL29yT01UbUtJdUloZWR3?=
+ =?utf-8?B?elJIdXFIQlBHV0h4R0duMDJmRFRuRU1NVG9EbkU3ZzNSZlVjNXVRTHJ5dDhJ?=
+ =?utf-8?B?Vk9CVGhRVlpiT1dGdGpiYlNGKzQ2c28vSDZScmkxa243VnVDdEJrbW8yWWRE?=
+ =?utf-8?B?dEFFZlVGaG5FYzdZSWtFeFM5VnR2WGNRYzAycERPdlk1UFpkMU9TZnJIQW9w?=
+ =?utf-8?B?N1o4Sm1MREdIdllITGFVYURYVzN1WXNHWWlSdHN1Zk8vVTg3SzFOb1VoQXdU?=
+ =?utf-8?B?YUNLMk9YNTQ4T3dKTG1MZVJXeTlsakNNc2EzYXlMdmp1dFMwNis4cmdtWFl0?=
+ =?utf-8?B?Q2IxT2V5Sk9KOGNkRkFPREFObWQrYXd2WmtBaUdZYnVjS3dmdnhFWHlHVjMx?=
+ =?utf-8?B?aWZEZjBybDRpVDdSckg5ZzF2SGtYOHk2YUp2OG1QbGZldzBXT1NrUldhaXN2?=
+ =?utf-8?B?eTVqald5Q282RksvMXRBaE9OUEk3dllWblU5c2RidU9mbTlSOE03aHJ4ejdp?=
+ =?utf-8?B?WVd5RGtFRDFHSUdtTE9VQzlHcmYrcG5jTEwrM2NRalFIdWZIT3pBSFJoQkY3?=
+ =?utf-8?B?Q09NM1BDVVA2ZDZ4NlRoR0tFL3B0a0QyeGFFQVFJTkN4L0Jid25QYm9Ja0Fm?=
+ =?utf-8?B?Tm00T3E3Q0QwZFdkWnl3bDN1Wk1MNE5vSHJiMExJNDF6T0U4bHpSeUNIaTRG?=
+ =?utf-8?B?emF6UExWak83eXk2aXdNS0tZOGkwS1pXWHFvOGx1NGtGS2J3bEtpVEpFZ252?=
+ =?utf-8?B?alg5TVdtWTBWMGxSNzg4bnl5Ti9LT3M3SktTSFBmTSs0UjA3Wk9DdTJKVEtr?=
+ =?utf-8?B?RHY5ZnZJUGNabkF3cDNVbk5pSTZycCsyRUw1TkFjVkhiYVhodTRYTURFTVVr?=
+ =?utf-8?B?VnNhY05KM2ladXFMUEVBMnJjdFhmcWc3elRaeTIyTEUrVWxPVGNYZkYyVDVV?=
+ =?utf-8?B?T09OOXp6M1lhekUyMHljbko3dHd3dUkwMzJrZ3NvRUtNY2FlbUFPKzlYK0M5?=
+ =?utf-8?B?SkpMOFRJZFNLZndnODRjaUdUUk5TNnNoQzIyRmNJa0d3RjBWUFhUV3dtb0d3?=
+ =?utf-8?B?Ny94c1RLQWRqTjAyaDVNRzZSNjd0RVc0bEN4WkxhbEdPU09HbGRVcUkzWW1K?=
+ =?utf-8?B?RWxGS3ROclNKc3hzeXFySzUxajNzb3JONGU2UkV1Ym9oTXZuRG1GZ0RuTkpy?=
+ =?utf-8?B?NS9LU2VTcEJjQ05wQS9taWZSdE9LSjZnUFdIOEVHbElxSUpyRFB0MlJZNVlj?=
+ =?utf-8?B?M29CczVMUitlTndKaEovVnZJaGI3eml6T3l4bjl0eCtBWkFJSUpQM3A2NENO?=
+ =?utf-8?B?K2VSTTRJdGdlbXdOUlZjZmNnSCtlYThyWC9VVXIvcGhBdFFWMlJ0bFBzQUxG?=
+ =?utf-8?B?SUdLZnR4NXB3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(10070799003)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NldtSkRFWDdJdExnYStveXhiOWVOMXF0UDZTSkxwaFRPUjFUUmFqNHMrT0w1?=
+ =?utf-8?B?QnZ4QmJOV0pjK1U3Q1FIeUFRNFNKMTQwdnQzWmp6WFllNjZFc0kvMVJvYWpa?=
+ =?utf-8?B?WkRxV0JxRDFtMjBUTTBQdURueFZNaW05THZQK243bndNdld6SXEzdUIxRTE5?=
+ =?utf-8?B?YjFmc1pVR1BMRHFFTGwzMzRTQ1liRkFXOTZYRnQ2TjBzT25wMm5HQWJPNExV?=
+ =?utf-8?B?TVJJTU5LVEc3NWxOKzl1NXN5WlhMb2lxdXhseVlYQUx1dnlodEFrb0tVbi9l?=
+ =?utf-8?B?RVU0RzdPRm16QTlnSmtOQUZGQnJjMjlzNzUvZ0ZoYWNoWmxHWVFqendvbERI?=
+ =?utf-8?B?cloySWVzOTVDZ1k5TlpaOGkwSGxHN01UVkI0V0FYQ1cyeHVrNmpmeUJtT2x6?=
+ =?utf-8?B?T1JyZ2pvWUF6c2VNdDcreXBxL3lkZ1BpVmFsSjFrRDBDRFJDTEFkK0F5UmM4?=
+ =?utf-8?B?ekJoNEVFUVZUZHNWN1VtcGljc0tuUDR3Rm1leVg3U3c3QjZGMjlTZEZWK1JG?=
+ =?utf-8?B?aVFrOWN4Nyt5ZXJ4ekdSczFvbjhGVG56b1JNL3RVSGxKOUNTTHNJbTVva2o0?=
+ =?utf-8?B?SlVQWG5rbjFwM2p0UWJ4S3JiYkxvVzdkS2lpbk92OFJ6YnhYbXUzSmwyRzFL?=
+ =?utf-8?B?L0dTNjl5eGwwL2Urb0tIOHZKRHdZOEFmUEhCa0V2bXIrazd4ekRaL3JTQmNT?=
+ =?utf-8?B?K29kdWJGV2dJdElTS0kxY3daNENEUVBkMTVkakNMRkdEdXBKYkxkM1c4VEts?=
+ =?utf-8?B?RHFQclN4UlJOTzd1T3IyUHhQdStwWU9halNCSkp0MVpSeEhISmwycjNCVG1x?=
+ =?utf-8?B?Njd1Z0NPUmFmNXNySnZCRm5tN0E4cm0yemg4d2lWSWZLblhXZ0NOMWgzU0s4?=
+ =?utf-8?B?ZjdlT0Y3ZmJtamxWRlk0QjErbmxkNnF2U1ZVdE5LYWd4dUVKS2xZclZ5Ykdm?=
+ =?utf-8?B?blNiV3JiZ2NxYXY3NmcyeWFxbDFENG03UmdXMDVpT2NvNFl0dEZEUHBsanAz?=
+ =?utf-8?B?SFh2aFh6MlNsR21yN3YwYzBWeUZ6U2w4UTZ2cUhqb2ppazVGRit5M29JRWgz?=
+ =?utf-8?B?Z05XdWhLZzNlWU9RTElJUk1USDBaeVFRQlpVNXpNSTBhUzVGY0pNUlNOSzQy?=
+ =?utf-8?B?NDBnWEU2SmN2NDJNdmpaRXMwN1NnWWFIVHl5b1M0aHUwN3FBUVZueVRldkEw?=
+ =?utf-8?B?TXlSSFJLTUpXOVRvVStnV2xSWkM3aFM1YVVkbW1sSnAyZ3h2TUFjWC9Ddjd1?=
+ =?utf-8?B?b0RMZU5SZmU1TS9ndXlWYmR5KzlxandRbU0rUWg3V3lDVHhtYjdveFF6ZElB?=
+ =?utf-8?B?UHhtb1RuVTdGZVl3OXBJbktaMjlXRVd5aXdxY1FWWEpjZmwzMitINXpHaVhT?=
+ =?utf-8?B?OElMaGpwUlhzNXFaT2RvYWlOdGlPREdBNitTQSsvOG5MSEM2dmZ5ejZXRnN5?=
+ =?utf-8?B?WGZTTUxHSWVPaUJlcVNQSE9WbEhMdGVtTThjVFkyM2trQ3A2cEE5TjZmdnNX?=
+ =?utf-8?B?bC9zY0xkY213alpVcEpsQTJvR0FTSlB3NWdCM05saUI2WW5JVFpWNjBjZVM4?=
+ =?utf-8?B?RFdKWTEwTU42NkRRRERmbmI2U3Mxa3RSZG1LVjJJTTVxMWxsVitvVDhXRmlS?=
+ =?utf-8?B?cWJtdnhpRG5Va2MrMU9QNk05MVl2QUtWZmJYM0k2QUk3cHMyOGFPbGgyYkFy?=
+ =?utf-8?B?VzFtdUlSeHgxUk9jR3hhaTBtYnBCQUQ0Wm1laGlwbFQ3ODlsWWU3SDFZdFZB?=
+ =?utf-8?B?bXZvQjJsTy9IdUhPU2dDU3lzNWY5N2h4ZjlEWnNNT0kvQ1lwa1hYeXY2eVVt?=
+ =?utf-8?B?WjlFZzF3ekoxWTM1VmxyZFhoQ1lyMVlaUUZhajF4Y2lZTGtOaUlHc2FRMDU1?=
+ =?utf-8?B?VlMxWXQ5YnY5dnc4Tkh1aGhGcVlQaXpJdUFXNi83cXRXNmVXSGZ3M3orRkJV?=
+ =?utf-8?B?SHB1b25DVnh0QXBsNzdtbE82ZjNlaFpUOGlsY3JtRDh1K0ZoYkZNUU0yWG5q?=
+ =?utf-8?B?RkVYaUhSZ2w3dnJJTDkzeWpIU0o4dGdmRHkzZTQraGtvR1JlK2taZWN3Y2N3?=
+ =?utf-8?B?bDVqWVVjWThxelBkMWtSQVcySVBzUlMycGt6YWNhN2Q2NzhPMUVzYTJvaVF0?=
+ =?utf-8?B?dE1OZ2w1TGZhY01WRXRqRm9QTWt4cC95RHpKaGJtMllkYVAwMjdwYmQ4eHBX?=
+ =?utf-8?B?MEpnbkJJRURNdEtLU0tMaTN5QVEyMDl3aCs1WGV4bEFKN0doQVVkcHpETUcz?=
+ =?utf-8?B?RFAyT1JHUkpNTWYwaERrbzhzYVpnPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82ec6ff0-f857-4773-ae14-08ddf99419de
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 04:54:24.2553
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7vZgx2dy6eKgkFCQlHC8yMr1llNE+wEeFi01m+2ANAS8n7s532VRI+rtPipxNkciNTd5/zRX4wB8pRRgWSnS+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8706
 
-On Sun, 21 Sep 2025 22:00:41 +0200, Thomas Weißschuh wrote:
-> On 2025-09-10 13:59:02+0200, Johannes Berg wrote:
-> > On Sun, 2025-08-10 at 13:51 +0800, Tiwei Bie wrote:
-> > > From: Tiwei Bie <tiwei.btw@antgroup.com>
-> > > 
-> > > We are going to support SMP in UML, so we can not hard code
-> > > the CPU and NUMA node in __vdso_getcpu() anymore.
-> > 
-> > Correct. But does that mean we actually have to implement it via syscall
-> > in the VDSO? That seems a bit odd? ARM doesn't seem to have getcpu in
-> > the VDSO at all, for example, so could we do the same and just remove
-> > it?
-> 
-> It is my understanding that the UM VDSO exists to cope with old versions
-> of glibc which would fall back to the old vsyscall mechanism if no VDSO
-> was present. That could fall through to the host kernels vsyscalls.
-> See commit f1c2bb8b9964 ("um: implement a x86_64 vDSO").
-> 
-> If this is not necessary anymore, the whole VDSO on UM can probably go
-> away.
+On Saturday, September 6, 2025 10:53=E2=80=AFPM Svyatoslav Ryhel wrote:
+> Increase maximum VI clock frequency to 450MHz to allow correct work with
+> high resolution camera sensors.
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  drivers/staging/media/tegra-video/tegra20.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/stagin=
+g/media/tegra-video/tegra20.c
+> index e0da496bb50f..3c5bafebfcd8 100644
+> --- a/drivers/staging/media/tegra-video/tegra20.c
+> +++ b/drivers/staging/media/tegra-video/tegra20.c
+> @@ -590,7 +590,7 @@ const struct tegra_vi_soc tegra20_vi_soc =3D {
+>  	.ops =3D &tegra20_vi_ops,
+>  	.hw_revision =3D 1,
+>  	.vi_max_channels =3D 2, /* TEGRA_VI_OUT_1 and TEGRA_VI_OUT_2 */
+> -	.vi_max_clk_hz =3D 150000000,
+> +	.vi_max_clk_hz =3D 450000000,
+>  	.has_h_v_flip =3D true,
+>  };
+> =20
+>=20
 
-The vsyscall usage was removed from glibc a decade ago:
+Where does the 450MHz come from? Instead of hardcoding this value for each =
+SoC, could we just clk_set_rate(ULONG_MAX) like e.g. the vic driver does, o=
+r does that get a too high rate?
 
-https://sourceware.org/git/?p=glibc.git;a=commit;h=7cbeabac0fb28e24c99aaa5085e613ea543a2346
 
-"This patch removes the vsyscall usage for x86_64 port.  As indicated
- by kernel code comments [1], vsyscalls are a legacy ABI and its concept
- is problematic:
 
- - It interferes with ASLR.
- - It's awkward to write code that lives in kernel addresses but is
-   callable by userspace at fixed addresses.
- - The whole concept is impossible for 32-bit compat userspace.
- - UML cannot easily virtualize a vsyscall.
-
- ......"
-
-The original issue could now be considered resolved. So in v3, we no
-longer turn __vdso_getcpu into a syscall wrapper; we simply removed it.
-Perhaps we could remove the whole VDSO before we implement the "real"
-VDSO. However, its implementation is clean, so keeping it wouldn't hurt
-and it could serve as a useful starting point for the "real" VDSO.
-
-Regards,
-Tiwei
 
