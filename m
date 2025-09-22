@@ -1,170 +1,226 @@
-Return-Path: <linux-kernel+bounces-826959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9E3B8FBA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:20:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24668B8FBAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21F0117F554
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:20:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D33521896147
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD622FB98A;
-	Mon, 22 Sep 2025 09:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66423287518;
+	Mon, 22 Sep 2025 09:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pm7qG2F/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jop2Uggq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4169283FE4
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C175A284892
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758532780; cv=none; b=agiNYWpzQIpcbS70ivOorOpNKj8ddWi2G00+fBvAWI7ddcHvvA5PyF9ne/Q4Z6u3pex7SQ7trjlmKzQtvcmFyL9TraPsA0SGpJIjbQfVewYr8RPmXXctpDpTqlzoEh1AbvM7h69u+dPitCZB8C4coRmcIGKXRdRopjnpfGNbD/c=
+	t=1758532792; cv=none; b=QGQh0RoczWrIUOAj5vF+fIA1CUQvB1x5IQ7j2GcADWWNxSIEgZOXd+xI7Q9CwS98Pa0J0a69sUXcoy38pNkpSe87cNjl2wBAB+IyIYouYLWxwlczfhcwU1agt7qycH1ykwquRWapQ1ohjcfFLXyxqJvaVec1Jj/LbBeN4bC0VO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758532780; c=relaxed/simple;
-	bh=mINGhUbFUw/UX9P3RSUq9mI62lRnSA0nxH723eCJjfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U6gOPtRcpFCudvaaox6mh04xWPJzo7sfEmGE+Cmb0N6UGXiI2+aeagHVibGm+4HppEdk8DdfLSbgFbcDRJFD6XcxaYtUA6SsMRO1vjiqYyDtZegRzuFaKixzOka9jX2ppOAEk4xwvaABsSG6gZ6mC4aApmVIM4IRj1Y3f0A9GkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pm7qG2F/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34566C116C6;
-	Mon, 22 Sep 2025 09:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758532779;
-	bh=mINGhUbFUw/UX9P3RSUq9mI62lRnSA0nxH723eCJjfU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pm7qG2F/ZTdpoKosKUufxtf7uavh5Bmvm9MHXCfzdQh1LdY23bSycQFMkpbihUDaw
-	 PeN/xXjTfVVt4Za2Djx9eTvlh/yIbre5uf6Jeixww+wGGqdUoH1OcDi4eQ9yN5WsVH
-	 DUPHX7oApQZNoI1P5FImyAHSJIbTJNim7BavteLpRR0lpo9rRFGMw4ZmU8CgkH+keK
-	 VSYqMd+kci2TW6XOqIETHaSCaZqZG0b2A/iUI05Ng+qlwwjXXB3MF1IT+J2u67Ae3a
-	 vPBAlaH+5g/lFBsUT5DYU7KRMiw1Knjwi1zZpRciMi3yPHcFv+0nNbruC6O1QnSjED
-	 k/BbU92pmTYiw==
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 31CCAF40066;
-	Mon, 22 Sep 2025 05:19:38 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Mon, 22 Sep 2025 05:19:38 -0400
-X-ME-Sender: <xms:qhTRaJ126p4Yc6YNRcAVyKBG7A222hAachBICdVph9lu6BDr0JbM_A>
-    <xme:qhTRaL_O3hf1aXez-o6Pc2OwwEqBaf2CUI49A32_W4hmXBN3GROjQ1mnYcQCy_w_x
-    hrJKmDA4RU6Uy9oLjw>
-X-ME-Received: <xmr:qhTRaCuyjQMnpRjlQJpM2RXAzltTFBBPAfQeV8iGYWAoPL9MBSdn74N1DvWGVw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehjeegjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
-    hhhuthhsvghmrghuuceokhgrsheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
-    hnpefhieekteelledugefhffekfffgjedtveevgffgjeeffeegvdekteetudeggefgkeen
-    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlodhmvghsmhhtphgruhhthhhpvghr
-    shhonhgrlhhithihqdduieduudeivdeiheehqddvkeeggeegjedvkedqkhgrsheppehkvg
-    hrnhgvlhdrohhrghesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepvdeg
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehnvggvrhgrjhdruhhprgguhhihrg
-    ihsegrmhgurdgtohhmpdhrtghpthhtoheprhhitghkrdhprdgvughgvggtohhmsggvsehi
-    nhhtvghlrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhlvghnuggrtghkhiesrghmug
-    drtghomhdprhgtphhtthhopehjohhhnhdrrghllhgvnhesrghmugdrtghomhdprhgtphht
-    thhopegthhgrohdrghgrohesihhnthgvlhdrtghomhdprhgtphhtthhopehsvggrnhhjtg
-    esghhoohhglhgvrdgtohhmpdhrtghpthhtohepgihirghohigrohdrlhhisehinhhtvghl
-    rdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepmhhinhhiphhlihesghhrshgvtghurhhithihrdhnvght
-X-ME-Proxy: <xmx:qhTRaPrQ0ykqtC-eguqLLVGJC66Xo9d61rcTi1qxSrZGd9R4WrA_Xw>
-    <xmx:qhTRaFGosY7WaY-f_0e7ak2Ieqj5vX2fYgQPIHGX9OUsHCe7sMpKHw>
-    <xmx:qhTRaK6Wehey6yNTfsUKAh5E-8BU6GQQz604sy83cbq7tpercYUb4w>
-    <xmx:qhTRaACrnEdnUl8fMaD8syC2yLr-Qw9jdj2aBnRLIhlsL0aY3yLLhA>
-    <xmx:qhTRaFQboQs5bWdo0Y6kL6kMPr-4Sthrse2PJPKwlzECDRBkQWbNqc_p>
-Feedback-ID: i10464835:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 22 Sep 2025 05:19:37 -0400 (EDT)
-Date: Mon, 22 Sep 2025 10:19:35 +0100
-From: Kiryl Shutsemau <kas@kernel.org>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, 
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"john.allen@amd.com" <john.allen@amd.com>, "Gao, Chao" <chao.gao@intel.com>, 
-	"seanjc@google.com" <seanjc@google.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "minipli@grsecurity.net" <minipli@grsecurity.net>, 
-	"mlevitsk@redhat.com" <mlevitsk@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>
-Subject: Re: [PATCH v15 29/41] KVM: SEV: Synchronize MSR_IA32_XSS from the
- GHCB when it's valid
-Message-ID: <7ds23x6ifdvpagt3h2to3z5gmmfb356au5emokdny7bcuivvql@3yl3frlj7ecb>
-References: <aMnq5ceM3l340UPH@AUSJOHALLEN.amd.com>
- <aMxiIRrDzIqNj2Do@AUSJOHALLEN.amd.com>
- <aMxs2taghfiOQkTU@google.com>
- <aMxvHbhsRn40x-4g@google.com>
- <aMx4TwOLS62ccHTQ@AUSJOHALLEN.amd.com>
- <c64a667d9bcb35a7ffee07391b04334f16892305.camel@intel.com>
- <aMyFIDwbHV3UQUrx@AUSJOHALLEN.amd.com>
- <2661794f-748d-422a-b381-6577ee2729ee@amd.com>
- <bb3256d7c5ee2e84e26d71570db25b05ada8a59f.camel@intel.com>
- <ecaaef65cf1cd90eb8f83e6a53d9689c8b0b9a22.camel@intel.com>
+	s=arc-20240116; t=1758532792; c=relaxed/simple;
+	bh=iahSutWnM8ILN9f1GZL+lxyjU0INcODBKIEp08lunJk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qy9oE2HUEJObhu1G+CPei6yy1AqlNX4bsEPj+xZly5VCc2CYhLZVnpl7bD7v3mRt3CYgNR24LwFuvWW9t7GPEPjNjbkC1Y4Q0JTJSPs1BfEOX6Mq/1YPWmfVMnES/R8ZxfDXzdyhkG3ca5N5QSF7M4M/YpxtDyeQV1PmhBszCcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jop2Uggq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58M8wqwV030254
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:19:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6QFAuB94TCuhJbu5HfgrzB51Khzr10FN1no2TYnl+3I=; b=jop2UggqJ8cXVBD1
+	m585fhzOmI+yGD9lZaq/gDVGNuTf/4g73kSNzeUy8q+znm1KYBzDW4OgH8nKo2U3
+	fI1QHHWvnK6+5z0FjXvUJ2SVAh1+XV5K3+sBZh2X7nExAMwlggad+SBxXK4kfCUb
+	Ssgbro6R8AoOCFAaenKeznz/amkSeQzJjJNlCDbdywvUrlbxYLY6+yhwsHW+dgj9
+	4t5r08a+UHwBIqvzsmU9uCbrFFG+vyv+UR5PFgz1OFz/11mDlsHh+MdfRHVJZpdU
+	NSTIemjDXUvRzZdDBmATkNLu29QVAleyVB4n/B7U54Y4j0Gpm/bhkslx951Lhm8f
+	F0jwtg==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499kv0v674-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:19:49 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b522037281bso3169479a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:19:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758532788; x=1759137588;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6QFAuB94TCuhJbu5HfgrzB51Khzr10FN1no2TYnl+3I=;
+        b=Mz8AQBYM7xTT+VWn9DvGQaigXdfW+MMyjuo5Yjq/Wn3lyus/tzLeevxwPlvnJAhc9R
+         mMogccBczBuAjQIAAmvZ8Jbm/6Szgi8WUVD6USwtEeUVQHr+6CpiKWNhgC9BRdokjPzW
+         i/9aFkC01dv9TqXJLtZzrbXTTk6H6+ZnY9UKBAUfSjVRmdFmtG4Gs3UNBabm+r6q36vS
+         G+ZAJpDgjz3WgWilKkSdTeitE0GykTNtUCy8d0XB6zmyYKEgT9WAj/h85JaeB7j185+2
+         D/OSMEka/M32LH1RzAd3nXzAG3EHbmx3OJPLB7lm7NVn4xmR5Kt6S8V52Ncs/YpnvTnG
+         MZyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVlNpjQGUWzDSr3QKSP3aV8t43kaVt0gLqde3RT9/JXup6DgUhfd+T5Jcmce4I5AIyr9L94i0S079GKlo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7Z61UZl6LPs2qjIyLS1pL5DheEk4bXvkvOJ7rUy0JQqQ1FFli
+	pbp8GjcjX9C5AGjUphI9K15AiS+S6Wb8axOcxneoRltOdIrPtW4FwwvYMwKrPqi4tM1AXRoB4od
+	1kBFjGCSXcyP6xI9hZF3jcw7P4Y/86PRUjnV+GsI2Dd5vWtcGQStmi2JO7c0SDa+DS807pY7cK0
+	vQ/g==
+X-Gm-Gg: ASbGncuAE/HgAYlGITXm4fBYjDnrdiCL8mhIKabOGFT2SpTq3y25HL1n5puXJH+fM0n
+	gvCCgFmqJ9REldTV1QswcpTZuuHbyX0KHM7nRqcqZEdBLTb6doPZddDXY8nYnPgi1h2ux7mvETO
+	1uzLXWhd0FYjN2e2Wz3jLVNSXVVaqblk/4UiBSqPkjH6VLHS3YqbiKb5xkLNnoKNs3t2yYQ1U40
+	Sqab1PlcdTHVm+QXo7uaRCgBH9/3gn4tlzgEpdPnlLWB1/SXtn5MbUFn/ah3ckfy7XzQZfaGPnc
+	WbNxQ9Jf9kINERJtKEUQyig9QAqlceOEdvZ0o7PDE12c8Tv2Yd13yKJCgDsWhgFBjL1ZbXYgkCs
+	kTRYQWORXvRq7Dd2M2YblgRvub48x
+X-Received: by 2002:a17:90b:3a4f:b0:330:ba05:a799 with SMTP id 98e67ed59e1d1-330ba05a7efmr12060865a91.16.1758532787544;
+        Mon, 22 Sep 2025 02:19:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFGlBLHJiIRLKu2Bo5vmptL2RNjyGlsgtdhiL+mYYxplGiZaDVAKYWlOvZMv2E4Ns2BZBmdVA==
+X-Received: by 2002:a17:90b:3a4f:b0:330:ba05:a799 with SMTP id 98e67ed59e1d1-330ba05a7efmr12060841a91.16.1758532787103;
+        Mon, 22 Sep 2025 02:19:47 -0700 (PDT)
+Received: from [10.133.33.94] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-330607b1fccsm12530565a91.14.2025.09.22.02.19.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 02:19:46 -0700 (PDT)
+Message-ID: <808e57a4-8f1e-4870-894e-2eb05ec7a134@oss.qualcomm.com>
+Date: Mon, 22 Sep 2025 17:19:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ecaaef65cf1cd90eb8f83e6a53d9689c8b0b9a22.camel@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/3] coresight: tmc: add the handle of the event to
+ the path
+To: Leo Yan <leo.yan@arm.com>
+Cc: Carl Worth <carl@os.amperecomputing.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+ <mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
+        coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20250922-fix_helper_data-v1-0-905e8115a24e@oss.qualcomm.com>
+ <20250922-fix_helper_data-v1-1-905e8115a24e@oss.qualcomm.com>
+ <20250922082920.GB516577@e132581.arm.com>
+Content-Language: en-US
+From: Jie Gan <jie.gan@oss.qualcomm.com>
+In-Reply-To: <20250922082920.GB516577@e132581.arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: R-yNXmONtwdrKVs096jrtLoIOPyEDLFQ
+X-Authority-Analysis: v=2.4 cv=RO2zH5i+ c=1 sm=1 tr=0 ts=68d114b5 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=ck2vDrGU2QCsmqff:21 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=vzhER2c_AAAA:8
+ a=EUspDBNiAAAA:8 a=7CQSdrXTAAAA:8 a=ZO4bw9XDxdbX_LlL1T4A:9 a=QEXdDO2ut3YA:10
+ a=bFCP_H2QrGi7Okbo017w:22 a=0YTRHmU2iG2pZC6F1fw2:22 a=a-qgeE7W1pNrGK8U0ZQC:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyNSBTYWx0ZWRfX8oOVJy7o7gST
+ fkDqQ2DFTZc0/dxw7++AemKQbozBUZuT02dxG7PrYXJlIpMEhl71LiEsbAOjgpOrYriXKw2tSz+
+ WTBQQmjWQa/+PoBwWUjG0PBUjFRW0K/91o2wEGeOHhwhCh5PLWoFtvoQINXoXipshAU13RrG1xp
+ q7BBXe6/tTvfd6QxzD8quSMkS1o8uXdY8+GlYvQ3dZeht6mg5bQWAC60BY3aGygIMan/XtY+d+9
+ 67rkJdSEtNaCuxrdLgguLRtJDB/Qus681RGWRLS4YRAzNRsAIGnZTQl+NfSPHFh+ZddLMwqwN0X
+ oTXYEOKccG9DOXhdQCt8JVNVl1Zr7ydYGUsn1TA32EnSU65DOMTEp/t8ogrynx1tR7d6RPgVKcx
+ gOtG9SsX
+X-Proofpoint-ORIG-GUID: R-yNXmONtwdrKVs096jrtLoIOPyEDLFQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-22_01,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 suspectscore=0 priorityscore=1501
+ impostorscore=0 spamscore=0 adultscore=0 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200025
 
-On Fri, Sep 19, 2025 at 08:58:45PM +0000, Edgecombe, Rick P wrote:
-> +Kiryl, a CET selftest that does int80 fails on SEV-ES.
+
+
+On 9/22/2025 4:29 PM, Leo Yan wrote:
+> On Mon, Sep 22, 2025 at 03:31:39PM +0800, Jie Gan wrote:
+>> From: Carl Worth <carl@os.amperecomputing.com>
+>>
+>> The handle is essential for retrieving the AUX_EVENT of each CPU and is
+>> required in perf mode. It has been added to the coresight_path so that
+>> dependent devices can access it from the path when needed.
+>>
+>> Fixes: 080ee83cc361 ("Coresight: Change functions to accept the coresight_path")
+>> Signed-off-by: Carl Worth <carl@os.amperecomputing.com>
+>> Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
+>> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-etm-perf.c |  1 +
+>>   drivers/hwtracing/coresight/coresight-tmc-etr.c  |  3 ++-
+>>   include/linux/coresight.h                        | 10 ++++++----
+>>   3 files changed, 9 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> index f677c08233ba..5c256af6e54a 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> @@ -520,6 +520,7 @@ static void etm_event_start(struct perf_event *event, int flags)
+>>   		goto out;
+>>   
+>>   	path = etm_event_cpu_path(event_data, cpu);
+>> +	path->handle = handle;
+>>   	/* We need a sink, no need to continue without one */
+>>   	sink = coresight_get_sink(path);
+>>   	if (WARN_ON_ONCE(!sink))
+>> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+>> index b07fcdb3fe1a..1040f73f0537 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
+>> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+>> @@ -1327,7 +1327,8 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
+>>   struct etr_buf *tmc_etr_get_buffer(struct coresight_device *csdev,
+>>   				   enum cs_mode mode, void *data)
+>>   {
+>> -	struct perf_output_handle *handle = data;
+>> +	struct coresight_path *path = data;
+>> +	struct perf_output_handle *handle = path->handle;
+>>   	struct etr_perf_buffer *etr_perf;
+>>   
+>>   	switch (mode) {
+>> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+>> index 6de59ce8ef8c..4591121ae1d4 100644
+>> --- a/include/linux/coresight.h
+>> +++ b/include/linux/coresight.h
+>> @@ -332,12 +332,14 @@ static struct coresight_dev_list (var) = {				\
+>>   
+>>   /**
+>>    * struct coresight_path - data needed by enable/disable path
+>> - * @path_list:              path from source to sink.
+>> - * @trace_id:          trace_id of the whole path.
+>> + * @path_list:			path from source to sink.
+>> + * @trace_id:			trace_id of the whole path.
+>> + * struct perf_output_handle:	handle of the aux_event.
 > 
-> On Fri, 2025-09-19 at 10:29 -0700, Rick Edgecombe wrote:
-> > PS, we don't support CET on TDX currently even though it doesn't require
-> > everything in this series, but I just remembered (forehead slap) that on the way
-> > upstream the extra CET-TDX exclusion got pulled out. After this series, it would
-> > be allowed in TDX guests as well. So we need to do the same testing in TDX. Let
-> > me see how the test goes in TDX and get back to you.
+> s/struct perf_output_handle/@handle/
+
+Hi Leo,
+
+Thanks for pointing out. I actually missed this error during the code 
+review...
+
+Jie
+
 > 
-> The test passes on a TDX guest:
+> Otherwise, LGTM:
 > 
-> [INFO]	new_ssp = 7f8c8d7ffff8, *new_ssp = 7f8c8d800001
-> [INFO]	changing ssp from 7f8c8e1ffff0 to 7f8c8d7ffff8
-> [INFO]	ssp is now 7f8c8d800000
-> [OK]	Shadow stack pivot
-> [OK]	Shadow stack faults
-> [INFO]	Corrupting shadow stack
-> [INFO]	Generated shadow stack violation successfully
-> [OK]	Shadow stack violation test
-> [INFO]	Gup read -> shstk access success
-> [INFO]	Gup write -> shstk access success
-> [INFO]	Violation from normal write
-> [INFO]	Gup read -> write access success
-> [INFO]	Violation from normal write
-> [INFO]	Gup write -> write access success
-> [INFO]	Cow gup write -> write access success
-> [OK]	Shadow gup test
-> [INFO]	Violation from shstk access
-> [OK]	mprotect() test
-> [OK]	Userfaultfd test
-> [OK]	Guard gap test, other mapping's gaps
-> [OK]	Guard gap test, placement mapping's gaps
-> [OK]	Ptrace test
-> [OK]	32 bit test
-> [OK]	Uretprobe test
+> Reviewed-by: Leo Yan <leo.yan@arm.com>
 > 
-> 
-> I guess int 80 was re-enabled for TDX, after being disabled for both coco
-> families. See commits starting back from f4116bfc4462 ("x86/tdx: Allow 32-bit
-> emulation by default"). Not sure why it was done that way. If there is some way
-> to re-enable int80 for SEV-ES too, we can leave the test as is. But if you
-> decide to disable the 32 bit test to resolve this, please leave it working for
-> TDX.
+>>    */
+>>   struct coresight_path {
+>> -	struct list_head	path_list;
+>> -	u8			trace_id;
+>> +	struct list_head		path_list;
+>> +	u8				trace_id;
+>> +	struct perf_output_handle	*handle;
+>>   };
+>>   
+>>   enum cs_mode {
+>>
+>> -- 
+>> 2.34.1
+>>
+>>
 
-In TDX case, VAPIC state is protected VMM. It covers ISR, so guest can
-safely check ISR to detect if the exception is external or internal.
-
-IIUC, VAPIC state is controlled by VMM in SEV case and ISR is not
-reliable.
-
-I am not sure if Secure AVIC[1] changes the situation for AMD.
-
-Neeraj?
-
-[1] https://lore.kernel.org/all/20250811094444.203161-1-Neeraj.Upadhyay@amd.com/
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
 
