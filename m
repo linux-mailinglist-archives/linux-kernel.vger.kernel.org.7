@@ -1,57 +1,62 @@
-Return-Path: <linux-kernel+bounces-827841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7FD2B933DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:34:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D24FB933EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1D6419073C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:34:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B69943BF72E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01626261B71;
-	Mon, 22 Sep 2025 20:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A79265CBD;
+	Mon, 22 Sep 2025 20:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfxP7Pvv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2JqkeF6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6DB1E833D;
-	Mon, 22 Sep 2025 20:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F34B1A08A4;
+	Mon, 22 Sep 2025 20:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758573235; cv=none; b=aJGnKdAHwxiRLO6S/pO/IXMBDb7HbUmtpu3EEIWO9ebQhrdJXcCxBX70pTrlNrTZtR62Wkln/gpqQv+1J/g5kcSpynqGVpJnFATEPe0A7La0UZatPW0pXXv6ZHiwck+6Vk45paDI/NFIoImF3JIpO4EkOrHTK3xVk4JfE41gQKA=
+	t=1758573364; cv=none; b=BsjTJsg1oOmdvwotXtPgJvurxi9h3creTjfrVKbMMUQ5fblqzYgR66UwBMA3NS5UcxMPS54qMquBG+N28PNOEMnS7cx8hhHBjL7Wn/lQgX/ydySegWryouVI2ZRFjm75OpM31S7OA1N1h+f4IZYf9orSdVmeUdXaHmGm6YuUERA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758573235; c=relaxed/simple;
-	bh=BQxZlqkbMQpNLXVzsCQCyONqf9JUCxYeIXzDA691YH8=;
+	s=arc-20240116; t=1758573364; c=relaxed/simple;
+	bh=v4k9iTHE8RqQDMv3lm+UVLVMxrQ7UzF8rFZtx1N6EDk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LSEK2+IHgCf10PreGcPUjaASFAw7GtvfstSH79szqN6fjxjm9pn4o+357NbcKCTF2kAATgUKNXOyEJFrYdzlemppw3G3PXF3HERvj3556gej+h5VFwNbw4ngRd6iilwsbHgrXW7S2LgAHhrQZwAmVzBKBZhUAfOwMgCrqdRQiy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfxP7Pvv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25A11C4CEF0;
-	Mon, 22 Sep 2025 20:33:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BRMz+WaZGXnABl+fmRv6I8J/JJjXgFXA0QNrWiJSnm7LNPqayA8njE22/zo4UjFy2pPqVDAc5nAjaZrumBLgH5IH2Dv+VKEjF05ZmLl6lLoVnpY84LA0EukUzgLydWoTo4z8NOZpcRj5Zy28YoxnlU6K0kckv+b1JwOHuPvvx2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q2JqkeF6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8A0FC4CEF0;
+	Mon, 22 Sep 2025 20:36:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758573234;
-	bh=BQxZlqkbMQpNLXVzsCQCyONqf9JUCxYeIXzDA691YH8=;
+	s=k20201202; t=1758573363;
+	bh=v4k9iTHE8RqQDMv3lm+UVLVMxrQ7UzF8rFZtx1N6EDk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cfxP7PvvPDjqhbZVcosBquL3rnK0NwMA0H3r24O2/ZTFn64MWFQ3PZwB62UlkbZNX
-	 jxomcC3l6k97qjvXiew1Lkah6XaN4Sq0xvU2qP/JWTJ7q4Xk8AG7nLh7+r0fAokMTw
-	 /Rlit71KxbPbUhChMVe8QOCJs0hjqgcR7cpTOy/glr6QL/a7mg5srm2eU4xwADPWgd
-	 G5QfS43/zkUlsMzJ6wp1u1Z7ydXpwvRukQrxB6M2f4fYPGBlyizigSO92YBVRPdLxy
-	 MHOyjNvI7Dr1ECurrMdyDjQhIMziwRy4tN1aqkCEYIuATYHiERNk481XnO/rs+S8Z+
-	 jP8x6l/rBJ3jA==
-Date: Mon, 22 Sep 2025 15:33:52 -0500
+	b=Q2JqkeF63BN07j8swHZWEGjTT9bkwn9UG2sFlUFI+Xv3HmFSgcG7PVGYhpUkRfkoh
+	 lmrnRZydJfpt7GMgsmlSSuZPAZqyENUTqjQibV3NgK2BHmM4zfRaBOI9wUxnpngrM7
+	 VVmC1hDD3DsDrMSVyFYQaB1BMw5+XJpsxOfWW8TMi1s2KuKxy+RUThtRMEXUVGAYKq
+	 UmSBoxwhMqe5HLbKLuQd56wk2Ki/GQ/82J/iZemJJiFVBWYHGD+IWwyANp0CyS7FUP
+	 pVE7v/NBJvnqmRMlw/IyyrnGK+f5S8oNaUcHCrhKjPUJAwEgVL8NAq5WmEQ6EHfFpc
+	 tCZYZcVxONZoA==
+Date: Mon, 22 Sep 2025 15:36:02 -0500
 From: Rob Herring <robh@kernel.org>
-To: Philippe Baetens <philippebaetens@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+To: Antony Kurniawan Soemardi <linux@smankusors.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: media: i2c: ams,mira220: Add mira220
- image sensor
-Message-ID: <20250922203352.GA1278145-robh@kernel.org>
-References: <20250920-mira220-v4-0-921b2e83a352@gmail.com>
- <20250920-mira220-v4-1-921b2e83a352@gmail.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	David Heidelberg <david@ixit.cz>, Max Shevchenko <wctrl@proton.me>,
+	Rudraksha Gupta <guptarud@gmail.com>,
+	Shinjo Park <peremen@gmail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: qcom: msm8960: rename msmgpio node
+ to tlmm
+Message-ID: <20250922203602.GA1283600-robh@kernel.org>
+References: <20250921-msm8960-sdcard-dtbindings-v1-1-5a2455a30a06@smankusors.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,171 +65,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250920-mira220-v4-1-921b2e83a352@gmail.com>
+In-Reply-To: <20250921-msm8960-sdcard-dtbindings-v1-1-5a2455a30a06@smankusors.com>
 
-On Sat, Sep 20, 2025 at 09:47:58PM +0200, Philippe Baetens wrote:
-> Mira220 is a global shutter NIR-enhanced image sensor made by AMS.
-> Driver is submitted in the next patch of this series and verified on
-> a raspberry pi.
+On Sun, Sep 21, 2025 at 03:25:59AM +0000, Antony Kurniawan Soemardi wrote:
+> Rename the GPIO controller node from "msmgpio" to "tlmm" to match the
+> convention used by other Qualcomm SoCs.
+
+You aren't renaming the node, but the label.
+
 > 
-> Signed-off-by: Philippe Baetens <philippebaetens@gmail.com>
+> Suggested-by: Shinjo Park <peremen@gmail.com>
+> Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
 > ---
->  .../devicetree/bindings/media/i2c/ams,mira220.yaml | 108 +++++++++++++++++++++
->  MAINTAINERS                                        |   6 ++
->  2 files changed, 114 insertions(+)
+> This patch was originally part of msm8960 cleanup series [1], but as
+> Bjorn pointed out, dt-bindings live in a different subsystem and should
+> be submitted independently.
 > 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ams,mira220.yaml b/Documentation/devicetree/bindings/media/i2c/ams,mira220.yaml
-> new file mode 100644
-> index 000000000..ae4613d0d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/ams,mira220.yaml
-> @@ -0,0 +1,108 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/i2c/ams,mira220.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ams 2.2 MP NIR enhanced global shutter image sensor
+> [1] https://lore.kernel.org/all/20250915-msm8960-reorder-v1-5-84cadcd7c6e3@smankusors.com/
+> ---
+>  Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.yaml | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-s/ams/AMS/
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-> +
-> +maintainers:
-> +  - Philippe Baetens <philippebaetens@gmail.com>
-> +
-> +description: |-
-
-Don't need '|' if no formatting to preserve.
-
-> +  2.2 MP NIR enhanced global shutter image sensor designed for 2D and 3D
-> +  consumer and industrial machine vision applications.
-
-Is this a paragraph or just a odd line break? If a paragraph, add a 
-blank line in between and use '>' modifier.
-
-> +  Due to its small size, configurability and high sensitivity both
-> +  in visual as well as NIR, the Mira220 is well suited for 2D and
-> +  3D applications, which include Active Stereo Vision,
-> +  Structured Light Vision for Robotics and AR/VR.
-
-Wrap at 80 char.
-
-> +
-> +allOf:
-> +  - $ref: /schemas/media/video-interface-devices.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: ams,mira220
-> +
-> +  reg:
-> +    description: I2C device address
-
-Drop. That's every device.
-
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  vdig-supply:
-> +    description:
-> +      Digital I/O voltage supply, 1.35 volts
-> +
-> +  vana-supply:
-> +    description:
-> +      Analog1 voltage supply, 2.8 volts
-> +
-> +  vddl-supply:
-> +    description:
-> +      Digital core voltage supply, 1.8 volts
-> +
-> +  reset-gpios:
-> +    description: Sensor reset (XCLR) GPIO
-> +    maxItems: 1
-> +
-> +  port:
-> +    $ref: /schemas/graph.yaml#/$defs/port-base
-> +    additionalProperties: false
-> +    description:
-> +      Video output port
-> +
-> +    properties:
-> +      endpoint:
-> +        $ref: /schemas/media/video-interfaces.yaml#
-> +        unevaluatedProperties: false
-> +
-> +        properties:
-> +          data-lanes:
-> +            anyOf:
-
-Don't need 'anyOf' with a single entry.
-
-> +              - items:
-> +                  - const: 1
-> +                  - const: 2
-> +
-> +          clock-noncontinuous: true
-> +
-> +        required:
-> +          - data-lanes
-> +          - link-frequencies
-> +
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - vdig-supply
-> +  - vana-supply
-> +  - vddl-supply
-> +  - port
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        mira220: camera-sensor@54 {
-> +            compatible = "ams,mira220";
-> +            reg = <0x54>;
-> +            clocks = <&cam1_clk>;
-> +            vana-supply = <&cam1_reg>;	/* 2.5v */
-> +            vdig-supply = <&cam_dummy_reg>;	/* 1.8v */
-> +            vddl-supply = <&cam_dummy_reg>;	/* 1.35v */
-> +            port {
-> +                mira220_ep: endpoint {
-> +                    clock-lanes = <0>;
-> +                    data-lanes = <1 2>;
-> +                    link-frequencies = /bits/ 64 <750000000>;
-> +                };
-> +            };
-> +        };
-> +    };
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fe168477c..c179b931b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1350,6 +1350,12 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/iio/light/ams,as73211.yaml
->  F:	drivers/iio/light/as73211.c
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.yaml
+> index 46618740bd312b975321427e5ffa34811c68e652..03a3692770142048391577401869cea9a7735053 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.yaml
+> @@ -107,12 +107,12 @@ examples:
+>    - |
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
 >  
-> +AMS MIRA220 DRIVER
-> +M:	Philippe Baetens <philippebaetens@gmail.com>
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/media/i2c/ams,mira220.yaml
-> +F:	drivers/media/i2c/mira220.c
-> +
->  AMT (Automatic Multicast Tunneling)
->  M:	Taehee Yoo <ap420073@gmail.com>
->  L:	netdev@vger.kernel.org
+> -    msmgpio: pinctrl@800000 {
+> +    tlmm: pinctrl@800000 {
+>          compatible = "qcom,msm8960-pinctrl";
+>          reg = <0x800000 0x4000>;
+>          #gpio-cells = <2>;
+>          gpio-controller;
+> -        gpio-ranges = <&msmgpio 0 0 152>;
+> +        gpio-ranges = <&tlmm 0 0 152>;
+>          interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+>          interrupt-controller;
+>          #interrupt-cells = <2>;
 > 
-> -- 
-> 2.43.0
+> ---
+> base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
+> change-id: 20250921-msm8960-sdcard-dtbindings-ad8d3d511e6c
+> 
+> Best regards,
+> --
+> Antony Kurniawan Soemardi <linux@smankusors.com>
 > 
 
