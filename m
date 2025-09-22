@@ -1,169 +1,171 @@
-Return-Path: <linux-kernel+bounces-827388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4AFB919E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:17:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FAEDB919F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C030190236E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:17:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E6A91902365
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5995A1F3D54;
-	Mon, 22 Sep 2025 14:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75C41EA7F4;
+	Mon, 22 Sep 2025 14:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSJ5KxWn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FJtRL/ii"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98ECD1DF963
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3E01D63C7
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758550616; cv=none; b=T4ZxgnmExgIOqv9iPMe0yps5J0dtmUPEar31+TJWi4EJbgnBT0g9ubfidZXNgL1aqKlyz1cWXKTGCdjGdxmYRT+hi2GxjM8nhZuDyvrAFbi3ihj/5Cujpp82AQUP7DJfouUgeQe8V/xvgIOa0scShac3kny8XdsvIMovjVhkoNM=
+	t=1758550642; cv=none; b=cRVHxJN0YblPr/DPyZ75Y4QlajpFVnhuLHJlW/WrykAQ8+9ounS1LeYzMZmW6v01LFPL0JSjIX+/qVDUatviCBfCx/ejHKpsZWo09e+tNHkuwlcjxm575sHiGY9JbphLAABecAfz63QiGLCCy/vw1yt6rB4RIa/jUJu1pbhgiDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758550616; c=relaxed/simple;
-	bh=p3VFPh6zlqMPmTv7B8WmCD9EeY5W5Y5bNLdM/OEKTHA=;
+	s=arc-20240116; t=1758550642; c=relaxed/simple;
+	bh=fWzzdjlL6Qeihn+o/itxjEqN74qvQQO38r2QqurBj94=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=urGudsfVq+5ySXcuTVg98ZcBylnVtjsRN1gKPpwy+exI6w0E7n+J+qyNjHYF846KAm0mP20OdqlhKNAaOk8X1CtCwOScnEfvU67VufcescLscBHkeNeV8+PDctkvxvyPjsVStcVbnJDoUeZMDpTnY+urncke6b8NvI/nrzjAXBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QSJ5KxWn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71405C116D0
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:16:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758550616;
-	bh=p3VFPh6zlqMPmTv7B8WmCD9EeY5W5Y5bNLdM/OEKTHA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QSJ5KxWnDGVuXQVsLeNgRxIi2vUmRhnv5Cs84C7HJIe5EV0YN+jdS4POIR51uSLMD
-	 q7aoDVLdSieVi/Ysg0lBmAkGi63s8Wz671LYAOaK0kd0Evbdyt9kpuDQSa18KoRNLL
-	 DpBUkQyCXx6Hr+6c8Tt8hZM/xR+97mD6d768Ca6Inze88xda7DQeVoevqumd6NP4iE
-	 qh5oG0ZwnzVk1wdC1lUojasyewc6+9NrL8nqZLbjBH/FAjrIMNTl/nqhDOHuJPjSJ/
-	 u62ale+XrMb4DFjWFaXwTeu8e9rundsQV8cMqUd3QELrJhswlrhepShs1hfF0QlZQt
-	 2dp9h2xCEeLWw==
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-62ea23446f4so198161eaf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:16:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVaJxxlCV/4Ep9uej1kiFaqnZ7EsrMLM8UUjcm7DwsxOGGEeu04xleFsSXfTtYiXfbKGAMmA5wqcglZ9Dc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+a8Ymp3PoMJVLNkkQeoSAUn23l630PwQFSJbyiHvW5edIcsye
-	REn7BgPeD7422kJRz52c10mpHQR+Xg5hYYLs5lp/tffukLx8VoEUi2af/nxy42xwVs7K8dSfl5J
-	54SEokNfDu/ywaFlzAgqXXNkFpIxVT68=
-X-Google-Smtp-Source: AGHT+IETiCQcLSU3PeDydQh7rifOkZY2/e69xVa4uqUWHyP8lQ5K6Dq6B4mRaVxu42sWCzafFCDFQD9SXsgOIheAy8k=
-X-Received: by 2002:a05:6820:1caa:b0:624:b767:e1c4 with SMTP id
- 006d021491bc7-62724df2f3bmr7336347eaf.0.1758550615446; Mon, 22 Sep 2025
- 07:16:55 -0700 (PDT)
+	 To:Cc:Content-Type; b=ugKQfc+C/gnXIM7wRk0NE4QjjNetHpEzyn1qVShALElClrsj3rCENy6ntL9REQ1fEn7tAEZGgMJCrvb+Wfp0BFecUKYdF6VAmFTKczYHCau/v6VB4Eee8oNafe93HmG5Is2zd+slU4dXasPgEYb8rEbJ0T7Q0yMW7B80/eR59r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FJtRL/ii; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-367874aeeacso16306641fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:17:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758550638; x=1759155438; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D42mDx7XES4dJT5DCpqob2SIIqhWq10lpNC2IIru3f8=;
+        b=FJtRL/iilefnLtGJ8RHt8JgsdkR9Bwv5jp5h9u6hOudyZ6LPBr9JRFkLYvaXS5n/Pj
+         3eN6Slc2BXlzCDaaPKfYUf5kPD8EA8rodgkufNy8SWMmZi14ttFzIAHz7CnvDpQbeG9P
+         CltohY2KfFtz68kLonVt6XNO6gjd8lrIw9B9vlGk4wwxZvnWInWWjtBaC40wPJK9CDOh
+         QnNLP1EwDbHlXAfEEI8M6895VghrF9762JOwmVEvQqjx+nH9TOnut8S28f/AwfvZjytS
+         2Wn1dHe5v0Lq10jRdpBiKL4t3iN1tecmmm8LUqjTucWDL/g9rbqyOm3rXyuCvHdO41fa
+         xh2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758550638; x=1759155438;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D42mDx7XES4dJT5DCpqob2SIIqhWq10lpNC2IIru3f8=;
+        b=ksD1eGZ4gBAEgEpFnf/OL9fADTLnTSwSZPA5bxGP2G2VuAcUGTlVaNz6449EMyR+1i
+         MFkdpZu+CQFK9lwvk/+DiWvMQ+gu9N32QrwHMo1JcOAYKFJtnWpyZcBopWUIgzDk4isI
+         S1wTpErO4L4/kyeWZ+0okq58Q1tsA/pB/kuL2VJ5tYtajsCZ6TbwNE0cU06p176yr69Z
+         ibnNmTwUY1agYLwvlK1oDrut4dHvjTPl5BcVhal+K41QiFL8Uuz88/ZoSMfNDOlPVb42
+         nF2JVQ3UpxO3nslYcr1V3Hr6mJVn19j/7VhniK0r+lJiyevtbob4b68CkXYk6vm7xBDQ
+         9gaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNo+ZhIYz0ZONMav88pvqv1Pw630+tIpIk35figEo2rkOrn0LYX520DViYa7ipWz2/jvmglYO5OqeT4Vs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf+X81SWNaM4wrPo1axJEa5DjPG3HsHxt2USerNDLHhy1NIPdb
+	fSL6o/ouXtclUV/o90JkP4GsybVsveeO0EfxkhmRXbGKxAXv2vzkmkX/vR4+6bmilmhXlAdqlRT
+	H6KNMm9u5o0HUE5FWM/6wzHFKlPuiLqzRAe3wAmhdeg==
+X-Gm-Gg: ASbGnctqd58/RwYJcBRMZ1efU82W9a1DdFBxP+MJotI25YrXmUNS0EivA4eaVGxXNRA
+	+Mt0ldnJ/KD3pO5UQAU2v5LAEBM0MPMVDN3P/0szTF6szj+eRTUJq2HJlvca2T2F9gfJlIAdLFd
+	bLjdNzC2WC5sAb62kv5/gpw4P6HnazzglkeMNZPcSa/vYB/NLed6Z1Tg9qvhjY+5qWMM85DAgCx
+	xyoKj1Fb3H1MJCC8B6tAVH8IrW5nIK1JGqfbw==
+X-Google-Smtp-Source: AGHT+IGS2AjVg06y9Gl4ZoVygRe0txj+WZLEO+s0iRtEWqABbE+tNtV+p0mvb++GTiupjPDEskTHy6Yf/wVmcolsOo4=
+X-Received: by 2002:a2e:be07:0:b0:36a:97e5:c4a5 with SMTP id
+ 38308e7fff4ca-36a97e5c8d3mr17177811fa.39.1758550638057; Mon, 22 Sep 2025
+ 07:17:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6204724.lOV4Wx5bFT@rafael.j.wysocki> <3388279.44csPzL39Z@rafael.j.wysocki>
- <875xdaevab.wl-tiwai@suse.de> <CAJZ5v0hSBDg4fD7Gy6yEX31xO-3USJG_jFps71BRJJ2f0Oh90A@mail.gmail.com>
- <87348eobnv.wl-tiwai@suse.de> <CAJZ5v0iwNuFxiu3x3-fWO9dkLUq_=c3H=G2OgFmPfVguw0U4Sw@mail.gmail.com>
- <87zfammvgs.wl-tiwai@suse.de>
-In-Reply-To: <87zfammvgs.wl-tiwai@suse.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 22 Sep 2025 16:16:39 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iL9V9SC7fQ6_RGCMfUAZzCkCp0kR6zdZWbWtKZ6dQQ2w@mail.gmail.com>
-X-Gm-Features: AS18NWCxsMyEXE-vLTHxPks8l77MEe4zD4P6Z-rZFfww8uT22FI3Ko4a3z3kutc
-Message-ID: <CAJZ5v0iL9V9SC7fQ6_RGCMfUAZzCkCp0kR6zdZWbWtKZ6dQQ2w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] PM: runtime: Add auto-cleanup macros for "resume
- and get" operations
-To: Takashi Iwai <tiwai@suse.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, 
-	Alex Williamson <alex.williamson@redhat.com>, Bjorn Helgaas <helgaas@kernel.org>, 
-	Zhang Qilong <zhangqilong3@huawei.com>, Ulf Hansson <ulf.hansson@linaro.org>
+References: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
+In-Reply-To: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 22 Sep 2025 16:17:05 +0200
+X-Gm-Features: AS18NWBBtPPpfa65LcAbGVqvkVRIVUyroOGhaWLkgkmXpHaSdWCO_RUkKb2djeo
+Message-ID: <CAMRc=Mc4hO1LDumxAfkB1W6miTJXR1NUVAKBVarkwiF2yGvSLA@mail.gmail.com>
+Subject: Re: [PATCH 00/10] RDA8810PL SD/MMC support
+To: dang.huynh@mainlining.org
+Cc: Manivannan Sadhasivam <mani@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-unisoc@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2025 at 4:07=E2=80=AFPM Takashi Iwai <tiwai@suse.de> wrote:
+On Thu, Sep 18, 2025 at 8:49=E2=80=AFPM Dang Huynh via B4 Relay
+<devnull+dang.huynh.mainlining.org@kernel.org> wrote:
 >
-> On Mon, 22 Sep 2025 15:44:51 +0200,
-> Rafael J. Wysocki wrote:
-> >
-> > On Mon, Sep 22, 2025 at 3:32=E2=80=AFPM Takashi Iwai <tiwai@suse.de> wr=
-ote:
-> > >
-> > > On Mon, 22 Sep 2025 14:50:32 +0200,
-> > > Rafael J. Wysocki wrote:
-> > > >
-> > > > On Mon, Sep 22, 2025 at 10:38=E2=80=AFAM Takashi Iwai <tiwai@suse.d=
-e> wrote:
-> > > > >
-> > > > > On Sat, 20 Sep 2025 12:54:58 +0200,
-> > > > > Rafael J. Wysocki wrote:
-> > > > > >
-> > > > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > >
-> > > > > > It is generally useful to be able to automatically drop a devic=
-e's
-> > > > > > runtime PM usage counter incremented by runtime PM operations t=
-hat
-> > > > > > resume a device and bump up its usage counter [1].
-> > > > > >
-> > > > > > To that end, add DEFINE_CLASS() macros allowing pm_runtime_put(=
-)
-> > > > > > and pm_runtime_put_autosuspend() to be used for the auto-cleanu=
-p in
-> > > > > > those cases.
-> > > > > >
-> > > > > > Simply put, a piece of code like below:
-> > > > > >
-> > > > > >       pm_runtime_get_sync(dev);
-> > > > > >       .....
-> > > > > >       pm_runtime_put(dev);
-> > > > > >       return 0;
-> > > > > >
-> > > > > > can be transformed with CLASS() like:
-> > > > > >
-> > > > > >       CLASS(pm_runtime_get_active, pm)(dev);
-> > > > > >       if (IS_ERR(pm))
-> > > > > >               return PTR_ERR(pm);
-> > > > > >       .....
-> > > > > >       return 0;
-> > > > > >
-> > > > > > (note the new resume error handling).
-> > > > >
-> > > > > Do we still allow the code without the error check even using CLA=
-SS()?
-> > > > > Although the error check should be handled, it's not mandatory fo=
-r
-> > > > > now.  That said, the above example could be still in a form like:
-> > > > >
-> > > > >         CLASS(pm_runtime_get_active, pm)(dev);
-> > > > >         .....
-> > > > >         return 0;
-> > > > >
-> > > > > while adding the proper error check is recommended?
-> > > >
-> > > > I'd rather not encourage doing this.
-> > > >
-> > > > While it may still produce working code in some cases, one needs to
-> > > > remember that in case of a runtime resume error it will be running
-> > > > without a runtime PM reference it has attempted to acquire.
-> > >
-> > > Fair enough.  Then it'd be also good to mention that in the
-> > > description, too.
-> >
-> > I can also add classes for the cases in which resume errors can be
-> > neglected, like these:
-> >
-> > DEFINE_CLASS(pm_runtime_get_sync, struct device *,
-> >          if (_T) pm_runtime_put(_T),
-> >          ({ pm_runtime_get_sync(dev); dev; }), struct device *dev)
-> >
-> > DEFINE_CLASS(pm_runtime_get_sync_auto, struct device *,
-> >          if (_T) pm_runtime_put_autosuspend(_T),
-> >          ({ pm_runtime_get_sync(dev); dev; }), struct device *dev)
-> >
-> > with a comment explaining what they are for.
+> This patch series aims to add SDMMC driver and various drivers required
+> for SDMMC controller to function.
 >
-> It might be helpful, indeed, since the error handling isn't always
-> straightforward, and this still allows us to convert to the
-> auto-cleanup safely.  It's still worth to mention that those aren't
-> recommended options, though.
+> This also fixed a bug where all the GPIO switched from INPUT to OUTPUT
+> after the GPIO driver probed or by reading the GPIO debugfs.
+>
+> This patch series is a split from [1] to ease the maintainers.
+>
 
-Agreed.
+This is still targeting at least 4 subsystems and isn't making the
+merging any easier. Are there any build-time dependencies here? If
+not, then split it further into small chunks targeting individual
+subsystems and the relevant ARM SoC tree.
 
-I'll send a v3 including these changes.
+Bartosz
+
+> Tested on Orange Pi 2G-IOT using a Buildroot environment.
+>
+> [1]: https://lore.kernel.org/all/20250917-rda8810pl-drivers-v1-0-9ca9184c=
+a977@mainlining.org/
+>
+> Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
+> ---
+> Dang Huynh (10):
+>       dt-bindings: gpio: rda: Make interrupts optional
+>       dt-bindings: clock: Add RDA Micro RDA8810PL clock/reset controller
+>       dt-bindings: dma: Add RDA IFC DMA
+>       dt-bindings: mmc: Add RDA SDMMC controller
+>       gpio: rda: Make IRQ optional
+>       gpio: rda: Make direction register unreadable
+>       clk: Add Clock and Reset Driver for RDA Micro RDA8810PL SoC
+>       dmaengine: Add RDA IFC driver
+>       mmc: host: Add RDA Micro SD/MMC driver
+>       ARM: dts: unisoc: rda8810pl: Add SDMMC controllers
+>
+>  .../bindings/clock/rda,8810pl-apsyscon.yaml        |  43 ++
+>  Documentation/devicetree/bindings/dma/rda,ifc.yaml |  45 ++
+>  .../devicetree/bindings/gpio/gpio-rda.yaml         |   3 -
+>  Documentation/devicetree/bindings/mmc/rda,mmc.yaml |  92 +++
+>  MAINTAINERS                                        |  18 +
+>  .../boot/dts/unisoc/rda8810pl-orangepi-2g-iot.dts  |  20 +
+>  .../arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts |  20 +
+>  arch/arm/boot/dts/unisoc/rda8810pl.dtsi            |  47 +-
+>  drivers/clk/Kconfig                                |   1 +
+>  drivers/clk/Makefile                               |   1 +
+>  drivers/clk/rda/Kconfig                            |  14 +
+>  drivers/clk/rda/Makefile                           |   2 +
+>  drivers/clk/rda/clk-rda8810.c                      | 769 +++++++++++++++=
+++++
+>  drivers/dma/Kconfig                                |  10 +
+>  drivers/dma/Makefile                               |   1 +
+>  drivers/dma/rda-ifc.c                              | 450 +++++++++++
+>  drivers/gpio/gpio-rda.c                            |   4 +-
+>  drivers/mmc/host/Kconfig                           |  12 +
+>  drivers/mmc/host/Makefile                          |   1 +
+>  drivers/mmc/host/rda-mmc.c                         | 853 +++++++++++++++=
+++++++
+>  include/dt-bindings/clock/rda,8810pl-apclk.h       |  70 ++
+>  include/dt-bindings/dma/rda-ifc.h                  |  28 +
+>  22 files changed, 2495 insertions(+), 9 deletions(-)
+> ---
+> base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+> change-id: 20250918-rda8810pl-mmc-3f33b83c313d
+>
+> Best regards,
+> --
+> Dang Huynh <dang.huynh@mainlining.org>
+>
+>
 
