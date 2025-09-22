@@ -1,134 +1,257 @@
-Return-Path: <linux-kernel+bounces-827610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C1FB9235A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:21:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD33B92370
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 750C83B42EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:21:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5398F3B60AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78373115BC;
-	Mon, 22 Sep 2025 16:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2284311596;
+	Mon, 22 Sep 2025 16:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gERRg5Kb"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2uKK9BO"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1D8215198
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FF62D94B3
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758558087; cv=none; b=Ufoj0msTIbGdbsCQzRfoCQBCv73tFatEhpZzMmRKSS9EPSeI9u3/G46P6ltoWEsetQA+mh7LN0Jqhi6X85D5oJ+PI62Gwg2h6GLNYi40mIojaPU2XXqmoAYG8fxtaeC2VFNZnVKN8wgCH4Lo1TGzvPLKcf2/iO5qv4uWyYGN0fc=
+	t=1758558356; cv=none; b=VgUkW8fV+FD4KHZpL7fRRWFSFIGxZFtKKjW3QfjyxVKEynmZhICMgqLwOH/qfoPxlvY3CLEGaAP04BTnMnhMUKMqTfPAw76FsADcg2/Hgs3rGQjgDEzqInuyu+Zaw9K6WiglIhM/Gvmc5Of6iOHF1pCPtyE7xpjASmPm4PCPBUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758558087; c=relaxed/simple;
-	bh=TsSo5v20e3QCGi81nt9NTXKtnhDrJ6hOgG/6U8OU58g=;
+	s=arc-20240116; t=1758558356; c=relaxed/simple;
+	bh=OL+Xvwz25wsFr/Baw3v/lJYTgw11rKtS73xu9MyjE9o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c/dwrvUBaIa2rm0zH1QwfuHEeAo1RKN47R+DTKMwTB/nVw5vb+PHFUmbZJDD2NcSwGaVSy6tei//riZD0bEedpde/saWsEXb9eoE3DSEnGMUnK5Z4Em7SjUekEG3sLrll30iQmG9Pc/YSb8Js8jE5uP0Iq3OQKHfEJEw5VMKhVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gERRg5Kb; arc=none smtp.client-ip=209.85.208.179
+	 To:Cc:Content-Type; b=uL77ducLO+iUZvT9BcbEJL4bU/xrElQ+CpzfHzlHna4z0IeAx/XNdStrVoykPqkA6U3Oakna+7Hx8NZ+nwJpZkrPnWcMLb1P/69VlOi6mgTd5cjHjCZvIXHVoE1Ef4DmzYCn8Es/o1lFvJX2S6oyJQKmPdlSAK0ghJeZs4iGXVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2uKK9BO; arc=none smtp.client-ip=209.85.222.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-36639c30bb7so24768971fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:21:25 -0700 (PDT)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-8498f5194deso126823485a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:25:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758558084; x=1759162884; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=q0t8TkngeWBa24L4rwJYazMbCKONZc82MDv2pY9DHfo=;
-        b=gERRg5KbOnkLNG+n71Z0kZxHPK2RWyEAGi9qjp/QAb4mSMlMLz8Yg33GAYQEgN8Ed2
-         ceT0E48GaRX5hMOL+L4LcLPXxDBeb2QA3RAzYBIIgY+Q8riqVBoFOlM8V3MIaaGKbr8i
-         VFf0vtiIh5G4OYooMrLblcZIH9y0ZW/5genuO2IFxHfMA+t/MldEs3Qdhyb+IaVjoVGj
-         ylKKTP2ui+oAQYCN2w+F5Ku2T9Of9wQxYCPCXZ8l8xAkrB4gP9bQCFBZg1iocMuUaP/Q
-         /mdOUUdA0g6gjBhzkE9Y6nRkWba5V924Y3fstWT7kqj2iIEPuIK6vlzfm5IWyTjrKXKz
-         fRGQ==
+        d=gmail.com; s=20230601; t=1758558353; x=1759163153; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dlm3T0upOwy7xn1t1XulwYtiwQ2wQG91vzbQ2MSVGzE=;
+        b=A2uKK9BOWxuvX2a19oq5OmqlJbC7FWJrBNzvI09EmJpt55sy/m9GJbYehM+PC8137g
+         3J5Qe5Ocb2buf04uXzyiqojY/KymMnBWXo7IqrqhBSLidFaQ8UQysxin9vcMvb+bKedo
+         4UcX5AN16BnsbdlM0OznOe14T6JAgmMRk28+umJSWR5tR1PVOcGY9yeLsm1zI1VKK+6W
+         xWPIq0V5HXWzZ5MwfBQ3S87DZ3/NCXJW6v7DHKnWlZkcB/vO/gpn8hVIZyt1/7OVQo0C
+         nbA3UQugHULY4u4RUNUTnyQNjQXcAz5qNDddPrRQNrXKlVQCg7yEZ9deCz3hEwtgTZfY
+         FkLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758558084; x=1759162884;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q0t8TkngeWBa24L4rwJYazMbCKONZc82MDv2pY9DHfo=;
-        b=PQraA5V7Di21XTsBqw0Z6QEiJBQcVrv3zhbDl4rwEc7neqlMVeYGMnDbrMxtENwBzN
-         G5vrEFQhDnPx2MatroYnsxeHuRXqu1ML+UeqrGQdU4Ty3JXflaicQtsBnQ0IKPBuAPFJ
-         NhGGZ3pLizicVaj3NAr06QXskU5W5xKp+YbxwK0I9T4enVwtmSZCo9NCJq57rQoEWOJ3
-         A3sDfR8xmafVdUUfE8+RAdseVReou31ym2oUbIvD+fKJXo20Nii8ffPSs0C5hBb60fGX
-         4FfrqU/0z2jlyDFhC7cL/uaDt+3hmr49eDe6y+4r4zZRkbOmeGP2yLYFjYFZACob8oNg
-         nt6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWhp9uUhMThqrPPwU5FhzJLUwhWGsHyB2+hwwVeO+/MjXQf0nPJLB5IntilkxYNS8xOR7D5d4q+abG6rwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIHqrrPs3LJYAE/SnX0Hd8n61LYX+A/+4t1hWg7kAXFUWKJ49C
-	1r1H1m7SVmp3UgDZSdSDozHA9ySUCQbmaZ6pirWrobKBE8PKoJDcsySyk6dvZ6TLvjrzz+bcGK8
-	cw+phTkf9TrLDdqpjf7oY0FxysO8Xe85grw==
-X-Gm-Gg: ASbGncv+gKUxj7NoT9BtS6hpoQIYtlH1wNT02jE4kIvDTqEUZbGO9gQ0lUKGUy0t0k4
-	bmKXvLw6g7KwWWnyuVV1w9NVh9rSjCT8MjQzJbRYIkpL2sW9rz2F8Z5ZFtYR3SeUgtY+rIhBu+2
-	EIrE1akBHavy3g6L1kn8OiJPLnh7fGRPie2ZrOrr/Q1hVAUbWNERgKQgFHM3IE8f5FJeM02nqNT
-	Q/zAiRf8Q==
-X-Google-Smtp-Source: AGHT+IHyflDhXEZ8d6nRs6K93Y7D5RspOmec4aU7ZWi2YQAy9LSUsWlc9YgLICF8EsksTaHkPC11zFyDPlCzZsUl2N4=
-X-Received: by 2002:a05:651c:1547:b0:365:a58c:3ca with SMTP id
- 38308e7fff4ca-365a58c08c2mr38832981fa.40.1758558083309; Mon, 22 Sep 2025
- 09:21:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758558353; x=1759163153;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dlm3T0upOwy7xn1t1XulwYtiwQ2wQG91vzbQ2MSVGzE=;
+        b=YlmTv30jIAwgV6kl2HU4l9tNSG6sIo7YLq0Xo2Zbc1vYsvDEEzVryKUDwPrRRqFfsj
+         GGzkpMPO3R050AA1pCd/a/Dy6w0+/sRRgaqXStYbCNVomDkPAwb3PmYYH0JkNRfPPapl
+         npaDNb+QBsiMNbLG4/ybfF/q2d94Vl9V6KdjotnykTNADAGLoFXiOQ6MRn/OBvyPbcbJ
+         UGgSN509QrXTP0pBXYT7hpFy9dO01GDLaLXDT/ihg7ZddmChlFPwVy3giebYctql1D9Q
+         U2XBwWAtN8CpA2lqzS7j8/C9ujcM57RS2WZyukgHzdU+rfZH4MKLCk+7MDTzcoDd1ab4
+         UaZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5bOGvXYjbFsu72ZGKTO2x6BRgR3iX8DJA1KmEsQeaNeQ983wlKzSLsBwJoEiUt2k1kWvKjdLNB/9TMLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNm5/VD16B6zI2sUoT9c7vFKa8um+bW8i9i+phWADE4JAERVQW
+	Ou8aymZbdK8chx9qMpmuJKx+PEyTI01s6Qw0SA9hALsR9nUdOh+shjHAurbxQT3fXGsn31GsUv9
+	/BFoakebQxRGyv4pN6bC81bYCQ83c/VA=
+X-Gm-Gg: ASbGnct2U4zNgwswv+PW1sAA/28xPwfxcpiQJJDSwd4H9Tc+NAMCrUxL6AQX/glWmBy
+	TbC9me0IMMuo9DhrRfldyE5nMhnAdYIPxiwrIKP75CEfmXsExWtCM0hFCkxIlUoswSoG/BGZ5fX
+	HRoC1rxYeQ6lrLrzQZgIi0p2KrYYu7v6Dp8jB5NNRKcL6h1jA3CmSdcPLoSBC8tLezEN+ngn/Ec
+	/MvidPEB0wJB/KR8HrPK07tC2/QB/k1sPPpw/y3MA==
+X-Google-Smtp-Source: AGHT+IFZhv8u5V97EH7c6E8ccTpPNiMPjPkf8k4uxGpuwG/R76WmlxoeA2GBWbJKLNpiQ2cA18m7RsoJzIdumj0YlJU=
+X-Received: by 2002:a05:620a:258c:b0:828:5588:7eb6 with SMTP id
+ af79cd13be357-83ba2e800a1mr1387800985a.10.1758558352993; Mon, 22 Sep 2025
+ 09:25:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHP4M8W+uMHkzcx-fHJ0NxYf4hrkdFBQTGWwax5wHLa0Qf37Nw@mail.gmail.com>
- <20250919104123.7c6ba069.alex.williamson@redhat.com> <CAHP4M8XQw5_2LX4OpYeO+8bbAEEaRmjQ39+nPzk0qXzwG7uaUQ@mail.gmail.com>
- <20250920083441.306d58d0.alex.williamson@redhat.com> <CAHP4M8WOkDvEf6DYe6w+V9PVHkqcu2-8YrKa7jwLBYRAqLVS+g@mail.gmail.com>
- <20250922083221.5c6a68c0.alex.williamson@redhat.com>
-In-Reply-To: <20250922083221.5c6a68c0.alex.williamson@redhat.com>
-From: Ajay Garg <ajaygargnsit@gmail.com>
-Date: Mon, 22 Sep 2025 21:51:09 +0530
-X-Gm-Features: AS18NWDDojf2RGP6S7lgnWI-3L1sM5khCOx-a1BaBWqJqq4H9fDzSEOwXpAUtKA
-Message-ID: <CAHP4M8X89SUY=qoSO3xy8-TE0ubWGkOqP-WwP6niyn+NQLKUvQ@mail.gmail.com>
-Subject: Re: How are iommu-mappings set up in guest-OS for dma_alloc_coherent
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAEU-x4=Zs22b5LX_rsBVMu4BxvDfO+CZkkuWuVNaxv8mqvh9Gw@mail.gmail.com>
+ <bjtev7sgmcafoysd53xrxih4nawn2dbq4odylwdglbub6td2a3@nhoxenprhjvy> <CAEU-x4kL45DAddmNahjR2C97+43jchpmXep++LbeP8cXLEWN-w@mail.gmail.com>
+In-Reply-To: <CAEU-x4kL45DAddmNahjR2C97+43jchpmXep++LbeP8cXLEWN-w@mail.gmail.com>
+From: Yinon Burgansky <yinonburgansky@gmail.com>
+Date: Mon, 22 Sep 2025 19:25:42 +0300
+X-Gm-Features: AS18NWA_WQyNBKYZgu76coVUkTHSCyWrHKyXA-QRTG_dDTw5oHCZR-32wA0Dln0
+Message-ID: <CAEU-x4nv3XnXchevtwN5mkVcxqnpgBobhavxZc7BjS7EgYG8Ng@mail.gmail.com>
+Subject: Re: Touchpad multitouch leaves ghost fingers
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Benjamin,
+
+Thank you for the quick and detailed response. The solution sounds
+great! It will take me some time to learn how to code, build, and
+compile HID-BPF on my machine and figure it out. If you can provide me
+with additional guidance to speed up the process, I would greatly
+appreciate it!
+
+If it is a common issue, as you suggested, having public instructions
+to refer to would also be very helpful for others running into the
+same issue (e.g. the other 2 users from the libinput issue).
+
+Thanks,
+Yinon
+
+On Mon, Sep 22, 2025 at 7:11=E2=80=AFPM Yinon Burgansky
+<yinonburgansky@gmail.com> wrote:
 >
-> VFIO doesn't make PCI devices disappear from the host.  Maybe you're
-> referring to unbinding the host function driver, which might make your
-> NIC/HBA/GPU device disappear from the host as the PCI device is bound
-> to vfio-pci instead.
+> Hi Benjamin,
 >
-
-Yep Alex, that's what I meant.
-I am sorry for (unintentionally) causing ambiguity.
-
-> There are ways to multiplex devices between host and guest, SR-IOV is
-> currently the most common way to do this.  Here you'd have a physical
-> function (PF) with a host function driver, which can create multiple
-> virtual functions (VFs), each of which have a unique requester ID and
-> therefore a unique set of page tables allowing them to operate in
-> independent IOVA spaces for VMs.  You can imagine here that your PF
-> remains bound to the host function driver and continues to provide host
-> services, while the VFs can be assigned to VMs.
-
-Perfect, thanks Alex ..
-
+> Thank you for the quick and detailed response. The solution sounds great!=
+ It will take me some time to learn how to code, build, and compile HID-BPF=
+ on my machine and figure it out. If you can provide me with additional gui=
+dance to speed up the process, I would greatly appreciate it!
 >
-> PASID is another way to do this and is often described in an SIOV
-> (Scalable IOV) framework, where we rely more on software to expose an
-> assignable entity which makes use of the combination of the physical
-> requester ID along with PASID to create a unique IOVA space through two
-> levels of IOMMU page tables.
-
-Perfect again, many thanks again Alex ..
-
+> If it is a common issue, as you suggested, having instructions to refer t=
+o would also be very helpful for others running into the same issue (e.g. t=
+he other 2 users from the libinput issue).
 >
-> In either case, having an SR-IOV or PASID capability on the device
-> doesn't automatically enable device multiplexing, there's software
-> required to enable these features, more so in the direction of SIOV
-> support as the scalability trade-off is to push more of the basic
-> device emulation into software.
-
-Thanks a ton Alex for all the help !
-Thank you for always being there whenever we get stuck .. !!
-
-
-Thanks and Regards,
-Ajay
+> Thanks,
+> Yinon
+>
+>
+> On Mon, Sep 22, 2025 at 4:32=E2=80=AFPM Benjamin Tissoires <bentiss@kerne=
+l.org> wrote:
+>>
+>> Hi,
+>>
+>> On Sep 21 2025, Yinon Burgansky wrote:
+>> > When using the touchpad with multi-finger gestures, ghost fingers some=
+times
+>> > remain.
+>> > This is reproducible with `hid-replay hid-recorded.txt`: after the
+>> > recording, two ghost fingers remain on the touchpad,
+>> > so a subsequent single-finger tap is interpreted as a triple tap.
+>> > Tapping with three or four fingers resets the device state.
+>> >
+>> > I compared `hid-recorded.txt` to `evtest.txt` for the same events and =
+it
+>> > appears the problem occurs when the device sends a single HID report t=
+hat
+>> > changes the contact count from 3 -> 1,
+>> > while the kernel's evdev stream removes only one contact (3 -> 2) inst=
+ead
+>> > of clearing the two removed contacts.
+>> > The following are the exact events where the issue first appeared:
+>> >
+>> > hid recorder:
+>> >
+>> > ```
+>> > # ReportID: 3 / Confidence: 1 | Tip Switch: 1 | Contact Id: 0 | # | X:=
+ 792
+>> > | Y: 378
+>> > # | Confidence: 1 | Tip Switch: 1 | Contact Id: 1 | # | X: 564 | Y: 40=
+3
+>> > # | Confidence: 1 | Tip Switch: 1 | Contact Id: 2 | # | X: 383 | Y: 54=
+2
+>> > # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0
+>> > # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0 | =
+Scan
+>> > Time: 43407 | Contact Count: 3 | Button: 0 | #
+>> > E: 000085.948315 30 03 03 18 03 7a 01 07 34 02 93 01 0b 7f 01 1e 02 00=
+ 00
+>> > 00 00 00 00 00 00 00 00 8f a9 03 00
+>> > # ReportID: 3 / Confidence: 1 | Tip Switch: 0 | Contact Id: 1 | # | X:=
+ 564
+>> > | Y: 406
+>> > # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0
+>> > # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0
+>> > # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0
+>> > # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0 | =
+Scan
+>> > Time: 43615 | Contact Count: 1 | Button: 0 | #
+>> > E: 000085.960958 30 03 05 34 02 96 01 00 00 00 00 00 00 00 00 00 00 00=
+ 00
+>> > 00 00 00 00 00 00 00 00 5f aa 01 00
+>> > ```
+>>
+>> Actually, this doesn't seem to be 3->1 but 3 ->0:
+>> - first report has all 3 touches with "Tip Switch: 1" -> 3 touches
+>> - second report has only one report of a touch with "Tip Switch: 0", so
+>>         the kernel thinks only Contact Id 1 has been released.
+>>
+>> What we are missing here is a common defect in some touchpad: "not seen
+>> means up". And so we need the multitouch class
+>> `MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU`.
+>>
+>> And following the libinput report, it seems you already found this
+>> yourself :)
+>>
+>> Unfortunatelly, because your touchpad is an integrated one using I2C, we
+>> can not dynamically assign this quirk at boot so testing will require
+>> you to recompile the hid-multitouch module or inserting a HID-BPF
+>> module.
+>>
+>> I would lean toward providing a small HID-BPF program while the kernel
+>> is being fixed as this will be a much quicker way of fixing it for you
+>> (but the kernel will still need to be fixed).
+>>
+>> How does that sound?
+>>
+>> Cheers,
+>> Benjamin
+>>
+>> >
+>> > evtest:
+>> >
+>> > ```
+>> > Event: time 1758384424.367216, -------------- SYN_REPORT ------------
+>> > Event: time 1758384424.380922, type 3 (EV_ABS), code 47 (ABS_MT_SLOT),
+>> > value 0
+>> > Event: time 1758384424.380922, type 3 (EV_ABS), code 54
+>> > (ABS_MT_POSITION_Y), value 378
+>> > Event: time 1758384424.380922, type 3 (EV_ABS), code 47 (ABS_MT_SLOT),
+>> > value 1
+>> > Event: time 1758384424.380922, type 3 (EV_ABS), code 53
+>> > (ABS_MT_POSITION_X), value 564
+>> > Event: time 1758384424.380922, type 3 (EV_ABS), code 54
+>> > (ABS_MT_POSITION_Y), value 403
+>> > Event: time 1758384424.380922, type 3 (EV_ABS), code 47 (ABS_MT_SLOT),
+>> > value 2
+>> > Event: time 1758384424.380922, type 3 (EV_ABS), code 53
+>> > (ABS_MT_POSITION_X), value 383
+>> > Event: time 1758384424.380922, type 3 (EV_ABS), code 54
+>> > (ABS_MT_POSITION_Y), value 542
+>> > Event: time 1758384424.380922, type 3 (EV_ABS), code 1 (ABS_Y), value =
+378
+>> > Event: time 1758384424.380922, type 4 (EV_MSC), code 5 (MSC_TIMESTAMP)=
+,
+>> > value 547800
+>> > Event: time 1758384424.380922, -------------- SYN_REPORT ------------
+>> > Event: time 1758384424.393487, type 3 (EV_ABS), code 47 (ABS_MT_SLOT),
+>> > value 1
+>> > Event: time 1758384424.393487, type 3 (EV_ABS), code 57
+>> > (ABS_MT_TRACKING_ID), value -1
+>> > Event: time 1758384424.393487, type 1 (EV_KEY), code 333
+>> > (BTN_TOOL_DOUBLETAP), value 1
+>> > Event: time 1758384424.393487, type 1 (EV_KEY), code 334
+>> > (BTN_TOOL_TRIPLETAP), value 0
+>> > Event: time 1758384424.393487, type 4 (EV_MSC), code 5 (MSC_TIMESTAMP)=
+,
+>> > value 568600
+>> > ```
+>> >
+>> > This is an old issue (at least a year old) that I still encounter
+>> > occasionally. I originally reported it downstream:
+>> > https://gitlab.freedesktop.org/libinput/libinput/-/issues/1194
+>> >
+>> > ```
+>> > uname -a
+>> > Linux fedora 6.16.7-200.fc42.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Sep 11
+>> > 17:46:54 UTC 2025 x86_64 GNU/Linux
+>> > ```
+>> >
+>> > Please let me know if you need anything else,
+>> > Thank you!
 
