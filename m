@@ -1,115 +1,131 @@
-Return-Path: <linux-kernel+bounces-827684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45407B9267E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:24:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BA87B92687
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 068163A7DBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:24:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F9C3A951B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55BF313E1C;
-	Mon, 22 Sep 2025 17:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uKMItRd/"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB24C313D48;
+	Mon, 22 Sep 2025 17:24:43 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE3E311948
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BAE1FDA82;
+	Mon, 22 Sep 2025 17:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758561837; cv=none; b=SeUr09KdLxPcrmVhzPiXNqVRD5D95aU0ZQyefQDFPv6UmQW01hCf3899E25nizncaflKcB40SSFK+2iEROeGQE+BO47WmVhdEaLAXTuuFH/YvX/y2dTCkceG9IbzhvH+XGhFaR1EKyqcRiJKBP2WaGGviEEGiSQGV7ArfEno7rY=
+	t=1758561883; cv=none; b=PBjhXLur3AdGWX1qJOyMqRB6MAyDVeifY69PZ5Z4LzMwZ6i8WLRcYQgP3m0czPUxTaM9AJK5L0CVw35Al7KGzGS3Jq0lbLDyInMlYpze+jVGNEslDs7ShealpVyK2oAlwqUOuu4LHNC951rw6ruHwDHPIBFjUV7nbFgINp/hWGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758561837; c=relaxed/simple;
-	bh=Qr8opr5Va/cNTYJOoQfNrBHaJx/DGVxEWEk+0FtXquU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iB3iPkVWYPjcalvGis8lJBPzR11UmVmCzYFahWVLZKTPPFLIaVPKl7swCnhA6VaE9gznIgepYwU5BAIC9c1onmSOqCdIH/xHy8pqye2DJjeF4B1+0uIHP3ngRUWN212rzw59ZuISoFmq4/N4s8wxDvpL7pcOsyFSX0UgfO0YT5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uKMItRd/; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77f2e48a829so2263530b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:23:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758561835; x=1759166635; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M9vyYHmdIH5iKP3oSm5+z2eLymQyLbEwwwhYHv+QomA=;
-        b=uKMItRd/8801mvvYlmzUpFWAzGZc4Eh6vWQWfeHZ2ePqdo0VDnpKJ4AsRNoGHx9Sfc
-         I4Hyasghz/M+HvoOBQ4taaz+wbxe27XPZwyoQM14PG7fVacUIE8OOP0nobiKzlUubJcB
-         XW+ejS/D1PRJs6HPqY6/Xb5XmtNmQSI0XnaMU4ZJNpOQlx7aoMxAH9DdI7Z9onWTBOMG
-         rjkhqlrqxAMRM09o4xRVehgkJ/Es8tFvFZCgMNzYceXi2CrMYVZVPEnC0QOe0tkDALUv
-         InNzMl2efovKp1GeZggJyI454x0LS4sljQTAojZdSWy8d0zaVOVmjooCh+c3PbuVV935
-         44jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758561835; x=1759166635;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M9vyYHmdIH5iKP3oSm5+z2eLymQyLbEwwwhYHv+QomA=;
-        b=ssc1EZdfzjci/Bx7jDnhFsbljfObX2i0T59XxsUeSowX9DRvwm9tDf4I2Myt5ow2Jd
-         qyBEH/Rpl/JWvNQ/IfhrJaqP95/QXAyp/NmZ/Y1d7os4bEMTt966DCiBStKeOwbUOe6/
-         IkdsVPBk+ZO4Up4HAEip3jRsG91ESn9lxxgj2nBPvz0DOjqoTpkGzXkRhQTNDheAiH45
-         QJqLZN3XULJgfGCR9rq5E3/Ftf5bbXOT+6QKDAxoFbMU8dDwyPFsl4yvkZoPkGkqPvh0
-         Ooa8A5ZVBGLRmZjXb7oNaXAGTPE8QlknHc9TNNdv+eoVLeBRP6lTvzSxXj0Z27csred1
-         Qa0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVHdnVYO1ccwXzByKlGwFHQ+8GtK3Ik3V5J2NcOGjmlNNsG7D/HUlJnc3ZnW8NTk7kxNgNcPCKOhlEcBjI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7gNDPI6q0+KP6NKX5g/ZgcJw4gRlz1J/OEGjRvpkY9buMGgtI
-	n2SylWkVNiuX+pEoR0bP9Xjoo3bZ+mstW2wMY5ErRKPO3rzqs/+bievJ9HLz29FTJ3YEhetLNJV
-	psyPIfw==
-X-Google-Smtp-Source: AGHT+IHzaNnenwkgcBdaNWYxcUbuxKLyQwhcnBxdwF8ALviEB1U545RXGfkdPcZrZCYnvFYVPR14Frq61bQ=
-X-Received: from pgcs15.prod.google.com ([2002:a63:770f:0:b0:b4c:190c:3129])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:1584:b0:246:3a6:3e5e
- with SMTP id adf61e73a8af0-29274fb118dmr19821556637.54.1758561835342; Mon, 22
- Sep 2025 10:23:55 -0700 (PDT)
-Date: Mon, 22 Sep 2025 10:23:54 -0700
-In-Reply-To: <b89600a2-c3ae-4bb6-8c91-ea9a1dd507fb@linux.intel.com>
+	s=arc-20240116; t=1758561883; c=relaxed/simple;
+	bh=oxPhOJCQ/qZoiBIau7Zcl2ipPtFqQVDVZ14kTjBCDoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mMyeCkomcsM3DT9K7GaW2exw6rzOur1wcM1YV2bv/KVgCm4k3x9F3Rzcg/ktiQng6nYB1Wsi3wZNs5PJrgehtyosbozqcM3nWuJXMAYj6Y9ysypbhdbkEKGryLa1Wdr7FshLrTrKZAExK0eGKRCKkJeWctmq/c/6QqptkpfwCOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68AACC4CEF0;
+	Mon, 22 Sep 2025 17:24:36 +0000 (UTC)
+Date: Mon, 22 Sep 2025 18:24:33 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+	usamaarif642@gmail.com, yuzhao@google.com, ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com, baohua@kernel.org, voidice@gmail.com,
+	Liam.Howlett@oracle.com, cerasuolodomenico@gmail.com,
+	hannes@cmpxchg.org, kaleshsingh@google.com, npache@redhat.com,
+	riel@surriel.com, roman.gushchin@linux.dev, rppt@kernel.org,
+	ryan.roberts@arm.com, dev.jain@arm.com, ryncsn@gmail.com,
+	shakeel.butt@linux.dev, surenb@google.com, hughd@google.com,
+	willy@infradead.org, matthew.brost@intel.com,
+	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
+	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+	qun-wei.lin@mediatek.com, Andrew.Yang@mediatek.com,
+	casper.li@mediatek.com, chinwen.chang@mediatek.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-mm@kvack.org,
+	ioworker0@gmail.com, stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] mm/thp: fix MTE tag mismatch when replacing
+ zero-filled subpages
+Message-ID: <aNGGUXLCn_bWlne5@arm.com>
+References: <20250922021458.68123-1-lance.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250919223258.1604852-1-seanjc@google.com> <20250919223258.1604852-20-seanjc@google.com>
- <b89600a2-c3ae-4bb6-8c91-ea9a1dd507fb@linux.intel.com>
-Message-ID: <aNGGKm0Yzjvn3YVv@google.com>
-Subject: Re: [PATCH v16 19/51] KVM: x86: Don't emulate task switches when IBT
- or SHSTK is enabled
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Chao Gao <chao.gao@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922021458.68123-1-lance.yang@linux.dev>
 
-On Mon, Sep 22, 2025, Binbin Wu wrote:
+On Mon, Sep 22, 2025 at 10:14:58AM +0800, Lance Yang wrote:
+> From: Lance Yang <lance.yang@linux.dev>
 > 
+> When both THP and MTE are enabled, splitting a THP and replacing its
+> zero-filled subpages with the shared zeropage can cause MTE tag mismatch
+> faults in userspace.
 > 
-> On 9/20/2025 6:32 AM, Sean Christopherson wrote:
-> > Exit to userspace with KVM_INTERNAL_ERROR_EMULATION if the guest triggers
-> > task switch emulation with Indirect Branch Tracking or Shadow Stacks
-> > enabled,
+> Remapping zero-filled subpages to the shared zeropage is unsafe, as the
+> zeropage has a fixed tag of zero, which may not match the tag expected by
+> the userspace pointer.
 > 
-> The code just does it when shadow stack is enabled.
+> KSM already avoids this problem by using memcmp_pages(), which on arm64
+> intentionally reports MTE-tagged pages as non-identical to prevent unsafe
+> merging.
+> 
+> As suggested by David[1], this patch adopts the same pattern, replacing the
+> memchr_inv() byte-level check with a call to pages_identical(). This
+> leverages existing architecture-specific logic to determine if a page is
+> truly identical to the shared zeropage.
+> 
+> Having both the THP shrinker and KSM rely on pages_identical() makes the
+> design more future-proof, IMO. Instead of handling quirks in generic code,
+> we just let the architecture decide what makes two pages identical.
+> 
+> [1] https://lore.kernel.org/all/ca2106a3-4bb2-4457-81af-301fd99fbef4@redhat.com
+> 
+> Cc: <stable@vger.kernel.org>
+> Reported-by: Qun-wei Lin <Qun-wei.Lin@mediatek.com>
+> Closes: https://lore.kernel.org/all/a7944523fcc3634607691c35311a5d59d1a3f8d4.camel@mediatek.com
+> Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage when splitting isolated thp")
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
 
-Doh.  Fixed that and the EMULATION_FAILED typo Chao pointed out:
+Functionally, the patch looks fine, both with and without MTE.
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 8b31dfcb1de9..06a88a2b08d7 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -12194,9 +12194,9 @@ int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int idt_index,
-                 */
-                if (__kvm_emulate_msr_read(vcpu, MSR_IA32_U_CET, &u_cet) ||
-                    __kvm_emulate_msr_read(vcpu, MSR_IA32_S_CET, &s_cet))
--                       return EMULATION_FAILED;
-+                       goto unhandled_task_switch;
- 
--               if ((u_cet | s_cet) & CET_SHSTK_EN)
-+               if ((u_cet | s_cet) & (CET_ENDBR_EN | CET_SHSTK_EN))
-                        goto unhandled_task_switch;
-        }
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 32e0ec2dde36..28d4b02a1aa5 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -4104,29 +4104,20 @@ static unsigned long deferred_split_count(struct shrinker *shrink,
+>  static bool thp_underused(struct folio *folio)
+>  {
+>  	int num_zero_pages = 0, num_filled_pages = 0;
+> -	void *kaddr;
+>  	int i;
+>  
+>  	for (i = 0; i < folio_nr_pages(folio); i++) {
+> -		kaddr = kmap_local_folio(folio, i * PAGE_SIZE);
+> -		if (!memchr_inv(kaddr, 0, PAGE_SIZE)) {
+> -			num_zero_pages++;
+> -			if (num_zero_pages > khugepaged_max_ptes_none) {
+> -				kunmap_local(kaddr);
+> +		if (pages_identical(folio_page(folio, i), ZERO_PAGE(0))) {
+> +			if (++num_zero_pages > khugepaged_max_ptes_none)
+>  				return true;
+
+I wonder what the overhead of doing a memcmp() vs memchr_inv() is. The
+former will need to read from two places. If it's noticeable, it would
+affect architectures that don't have an MTE equivalent.
+
+Alternatively we could introduce something like folio_has_metadata()
+which on arm64 simply checks PG_mte_tagged.
+
+-- 
+Catalin
 
