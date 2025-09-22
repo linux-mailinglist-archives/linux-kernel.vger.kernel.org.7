@@ -1,218 +1,176 @@
-Return-Path: <linux-kernel+bounces-826716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB7DB8F2D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:38:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B56AB8F2DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 399FD3A785F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:38:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8D7017E2E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105C22ECD15;
-	Mon, 22 Sep 2025 06:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6DF285C92;
+	Mon, 22 Sep 2025 06:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jdPZHB8E"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SyG9g19M"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5460242925
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3146534BA39
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758523091; cv=none; b=IdxGCsKdf/t41yH9ouFNvONvBFQjlXVAMlL1X1wf1O7oZ8C5/Gd81/bbw181XO3Yuz3utErfJPRRuS1BhYXWzFK2/cunEmXzobn1q3nyUWnu4cs4rl9N/kuwl6FkpJQQWAThc5bnwRPXchuDWkpQqmR2aG0CXNBVBI9eGtxbTDs=
+	t=1758523163; cv=none; b=MfClOQiC97vqhtyZHfenz/jobPo0G9s4bmmwVRYrKi5LIXa+Ow5IYkQUo9MOi4w2Wum+9iC0oddVMV+dmJzxyQeR/Uwj4ZoKXbouatWtRaG+PjMgWkWoOzscAGtWPLVGfGHFZ5mPsbyxThI2L6u2S44FNaGv8FvfFuvAaCglCYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758523091; c=relaxed/simple;
-	bh=WIER8c2mKqkhk+RGmQeGAh8ClSePfIreHUbcG9aeDJM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KVAI+b8TxhXcIT04IhA18VgtJryNyJRw1UwYoQ4P6O1p2O8TM50URNzo5aMjdneGYT+zqGIjQcFhqCEkk4AjKDKxhNsWgBnnBmb7G/rDobhEYnYCm5FjozbePe/hTGcCNwesPnzV0AWR92PR+HP7OEltDROlZ44hqa0pKilR4A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jdPZHB8E; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2698384978dso33493855ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 23:38:09 -0700 (PDT)
+	s=arc-20240116; t=1758523163; c=relaxed/simple;
+	bh=aAm2tLu9Lcd/rEeyh90A2+r4aVuP6V5aTrIvHxF3RDM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fgcNwuVZJeMiOvzbc2BCAh5pUV4qC8iJeVFxiJYvbR6jd4KtTt6jrZ5so52SwhA021unRSNc9V0MHhSnyK29U8EYGdBtdJrTJJhpOKLUcjawcW4fkC3zLMevmZIMFTfGv4PCAtRHnzokziGfu8Cwf0XIF8Nw7SNxh8T28dsE1Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SyG9g19M; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-751415c488cso3991223a34.1
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 23:39:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758523089; x=1759127889; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kbZxxzNbGXKFGJ3KpKcsJGk+kSH40TJzWJbjDNAzLEI=;
-        b=jdPZHB8EuQ5sc9rcDdA3fqY17jIV+dKSpz3nQnj7c4YpEoDJoVcbe+RR10VufWl6y9
-         ipeXo2D7BDZBGw+yDmxsvBuRfm5aAL4kXWxpQandPYe1VsVicrsIU+q5VwELIefSkpKr
-         K8iwCOFFyC/QKKLnMSEbdtUWrt6uQID8JxHWpPsllaqUg8Lg3GUlRxKb+pmR9b3eMyrS
-         uTCRUbwrOX2wJvAyzGDU3tLMqxpceJ9Ft0QnYmMrd6EwJXh82wFfxQQZDNCZuVahueta
-         hHVJSZhWoEHtu1DaOUwY+xtS25V909wxLze1fu1+hNjiEJ0tk71lOfcjJ3gftmnTHJUn
-         Skgg==
+        d=linaro.org; s=google; t=1758523161; x=1759127961; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g3BWzW2J9Z3ytb9T+PalkAt1wTD7VsNe5O2iBqLv+TE=;
+        b=SyG9g19MDe30mqXfKc2DtFMag8r2gSi0aKin5HTnJfCsHmTXEXhyqhdAYT+XBe6MWK
+         XhOlSkB6ONYzGFjNZWsSKQAE7u2dYlgMceAMvN9JXKgcMw5i5Mz7El+QQMWR/vJ6wOjm
+         g9YaHBzbsqyqkKt8GfK+9yqgifLUNWBoNEVyMYcDBHe3GgE2X8J/6p7DfU9gunJDRdsa
+         g66zJERgcN3k4FG/65OiSQUwCqN/TECqy9KjH/bEm4mxtM/W8WNxATkxNSJnAua2Is+N
+         lp+H9UiMK1Uul0CvaAycewK5NiSr3h+OReIZGnPgz3fTOIyZuuSjSOBBgGcnwZ9NFLZW
+         Yihg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758523089; x=1759127889;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kbZxxzNbGXKFGJ3KpKcsJGk+kSH40TJzWJbjDNAzLEI=;
-        b=QgXaH/+B/alDJqcgFwHrStPRxs6mJnUM3atQwMKBCzN5kKTYrkRCBcl93ofSv8A8jZ
-         bXcJjxmvQdc6XdVjiCDDuIB/O50Fu39tZ1jxur28HUImrgnsrMBhylh7m2A6yzMdXoJY
-         JI4KIvl+8D/fybvgo1y0CVzixRF4Nzn0FyUZpLPmBlB/bSaZMSwGaAgosgDaxRZhAHKC
-         v/8//E1JmbNbucNTbjTVSHZLsHzNk4nYws0YjSRgvXoDoirwlKwLNO1pu0AyXHbDE+2w
-         ryFmwjWZUOYo5QTvAjWB9j72pYse1ia0dymoQFSdRDz2fdZRByaVlFTQ+/1khHRnYb9y
-         qYqA==
-X-Gm-Message-State: AOJu0Yz5nQNl303l74SQ4r338XsLKnp0TDr2LW9ypjYSNgKz/xGo26IE
-	acZ0uS9Jo5ALlc3T9vJFwytQvQdwqGN+rERE6OeOYw+hYbp4OUckHnje
-X-Gm-Gg: ASbGnct49fCFPLUjQAW8PU0hp0h+A2XfK4ygGoXieyEDWohe8VhuHHZBTL9PH4lwj8j
-	1qoGQZ8zVRZFq/i+iT72F3Z0QV3XlyurCwgRdZaXu8ZY2fmP2t1k6OVSkWxxw5Vg03JpBaMVq7s
-	Hvls+/51+rqzm4oSbLJuyH5Ki1GVVgdaOtKi4704QXvOb7VM8NWsZks0/Epx45UT40l2wfaRJJ6
-	DToqX0eJJrSr1eOUyDFdpJA+KGlgzuM0DMfYOCNNAFbQ0PpgIz0vtoUM26H2xCXEKhv1WmCHc6n
-	CvsHZ4RqgzLPkeh4lpgOEjFFOom4QAWgluroNvluHLrwKMC7NcETF6hu78uhZsN5J0NjkimC89G
-	5i/LFa8JbOukP7OR0P4Ue1Q==
-X-Google-Smtp-Source: AGHT+IEueJ6WL1Yk1kHKY6sJjKww7EG4lz99L2dAxOx0yuQwLDHaIcxLIKhyrFcPWMrloura1GOrSg==
-X-Received: by 2002:a17:903:1b0b:b0:267:a942:788c with SMTP id d9443c01a7336-269ba3fa0afmr175389435ad.1.1758523088903;
-        Sun, 21 Sep 2025 23:38:08 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698033d2a7sm119488145ad.132.2025.09.21.23.38.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 23:38:08 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 1BECE423FA7F; Mon, 22 Sep 2025 13:38:05 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux IIO <linux-iio@vger.kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH] Documentation: iio: ade9000, adis*, adx*: Convert IIO subsystem cross-references
-Date: Mon, 22 Sep 2025 13:37:54 +0700
-Message-ID: <20250922063754.21190-1-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1758523161; x=1759127961;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g3BWzW2J9Z3ytb9T+PalkAt1wTD7VsNe5O2iBqLv+TE=;
+        b=VKkd9oLw4nLXslzvFOFU2gOoy2lyC8Jnlm1BEGRh0/AyjnUxzU6/rjZjAbCFJ23ZgM
+         +xok1uqP8v+md5yVGF+t9jLT+8e16E9Xjbk54EgsnC8vhpIhWa2dCXPA25oc8VYRO85R
+         070CBSWi0sZ8gD6MriUq6DukdglSYvaz0K1/GTP0AfJbGm9i2qvp+e8BfHFgjZ4SnqcQ
+         DworL1AEvu0AUIhsGCr/+vB95RVlxxOCTZIktlgLsdND+pVbjlQNQQt8iGethYe9ROEr
+         AEQTefG7U4KxMeXon7aXepqikVaUEJyuX/EIb69hx7eEhD9rNLERCBZLr6T7L6seDLpB
+         nGfg==
+X-Gm-Message-State: AOJu0YxsiWnw74Uv+aqG4KEQljyJ4Xwud4ojTP6H9BbDzRRz/4xBeqXg
+	EQZebV6zY5RLWhKv5F2skEibl9cKRfDFSQv5tab/ribjX6yi41i95WfwTyNm+OkwGBeEIOD5Ys0
+	bjCNlI1Q0UUyl0Ktr8tY3P81+XIuvpQVs8/ByE2mbNBgA0ldHYyYcehw=
+X-Gm-Gg: ASbGncuXZeyDC4bITwGvSz5yWp7Op6t2+OmfHlptQs3SueFz9noaX7OncABCXlNtCln
+	ZUNGKW4uv2D9N3cK9MrSElNbsUgoFKWlo/0pU23Zoi/4n0/B9Rve569Nb/saaeOEB3tPiMgqYhc
+	wPFr8F5iJ5iVpRlFUm8sh3cF/wf03LfxpcsUm5X2rr590dybUnRqHqWlruzQ3bp4MZ5ksFFXCHy
+	AlA7qX1
+X-Google-Smtp-Source: AGHT+IFx764zTbdEA6SqVfFUP9+ys/yQKFZFbRR5D83kmZZwWIFqppMGgBDBb4BDrHixxUD9Shg72y/IVcEl/e7S/GI=
+X-Received: by 2002:a05:6830:6988:b0:749:77df:c38a with SMTP id
+ 46e09a7af769-76f6eb4df7dmr6465952a34.2.1758523161170; Sun, 21 Sep 2025
+ 23:39:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5064; i=bagasdotme@gmail.com; h=from:subject; bh=WIER8c2mKqkhk+RGmQeGAh8ClSePfIreHUbcG9aeDJM=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBkX3uVFTLs6y2Pf129elw0Do3dILH92auvMBWbdIuevN TUpZ1ie6ShlYRDjYpAVU2SZlMjXdHqXkciF9rWOMHNYmUCGMHBxCsBEpFUYGV56Sqq4zXOpvM0s V974+kX4DL4p9+pvrth3t1FdvimAZT3D/7wSCef9YVNObxA8+P3ktHkvZrH2zPmxO8xDfNO7xey vHdkB
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+References: <20250919124217.2934718-1-jens.wiklander@linaro.org> <aNDMXvTriEiSLwPb@sumit-X1>
+In-Reply-To: <aNDMXvTriEiSLwPb@sumit-X1>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Mon, 22 Sep 2025 08:39:09 +0200
+X-Gm-Features: AS18NWBbLb0VegGkHDcTRrbkfOYIr2ePDSBP0JcyijOcWJqS4-t8BSaLIlBpDKw
+Message-ID: <CAHUa44FKBXjteyU=PsVfwdhNXb0msw03WD=5itxx2EKcEDwNTg@mail.gmail.com>
+Subject: Re: [PATCH] tee: fix register_shm_helper()
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
+	Jerome Forissier <jerome.forissier@linaro.org>, stable@vger.kernel.org, 
+	Masami Ichikawa <masami256@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Cross-references to iio_tools.rst (IIO Interfacing Tools) and
-iio_devbuf.rst (Industrial IIO device buffers) are shown in inline
-code instead. Convert them to proper cross-references.
+On Mon, Sep 22, 2025 at 6:11=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org> =
+wrote:
+>
+> On Fri, Sep 19, 2025 at 02:40:16PM +0200, Jens Wiklander wrote:
+> > In register_shm_helper(), fix incorrect error handling for a call to
+> > iov_iter_extract_pages(). A case is missing for when
+> > iov_iter_extract_pages() only got some pages and return a number larger
+> > than 0, but not the requested amount.
+> >
+> > This fixes a possible NULL pointer dereference following a bad input fr=
+om
+> > ioctl(TEE_IOC_SHM_REGISTER) where parts of the buffer isn't mapped.
+> >
+> > Cc: stable@vger.kernel.org
+> > Reported-by: Masami Ichikawa <masami256@gmail.com>
+> > Closes: https://lore.kernel.org/op-tee/CACOXgS-Bo2W72Nj1_44c7bntyNYOavn=
+TjJAvUbEiQfq=3Du9W+-g@mail.gmail.com/
+> > Fixes: 7bdee4157591 ("tee: Use iov_iter to better support shared buffer=
+ registration")
+> > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> > ---
+> >  drivers/tee/tee_shm.c | 11 ++++++++++-
+> >  1 file changed, 10 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
+> > index daf6e5cfd59a..6ed7d030f4ed 100644
+> > --- a/drivers/tee/tee_shm.c
+> > +++ b/drivers/tee/tee_shm.c
+> > @@ -316,7 +316,16 @@ register_shm_helper(struct tee_context *ctx, struc=
+t iov_iter *iter, u32 flags,
+> >
+> >       len =3D iov_iter_extract_pages(iter, &shm->pages, LONG_MAX, num_p=
+ages, 0,
+> >                                    &off);
+> > -     if (unlikely(len <=3D 0)) {
+> > +     if (DIV_ROUND_UP(len + off, PAGE_SIZE) !=3D num_pages) {
+> > +             if (len > 0) {
+> > +                     /*
+> > +                      * If we only got a few pages, update to release
+> > +                      * the correct amount below.
+> > +                      */
+> > +                     shm->num_pages =3D len / PAGE_SIZE;
+> > +                     ret =3D ERR_PTR(-ENOMEM);
+> > +                     goto err_put_shm_pages;
+> > +             }
+> >               ret =3D len ? ERR_PTR(len) : ERR_PTR(-ENOMEM);
+> >               goto err_free_shm_pages;
+> >       }
+>
+> Rather than operating directly on "len" without checking for error code
+> first doesn't seems appropriate to me. How about following diff instead?
 
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/iio/ade9000.rst   | 2 +-
- Documentation/iio/adis16475.rst | 4 ++--
- Documentation/iio/adis16480.rst | 4 ++--
- Documentation/iio/adis16550.rst | 4 ++--
- Documentation/iio/adxl345.rst   | 4 ++--
- Documentation/iio/adxl380.rst   | 4 ++--
- 6 files changed, 11 insertions(+), 11 deletions(-)
+Sure, works for me.
 
-diff --git a/Documentation/iio/ade9000.rst b/Documentation/iio/ade9000.rst
-index 43d4b8dc1cb72c..c9ff702a42512b 100644
---- a/Documentation/iio/ade9000.rst
-+++ b/Documentation/iio/ade9000.rst
-@@ -264,5 +264,5 @@ Configure RMS voltage event thresholds (requires interrupts):
- 8. IIO Interfacing Tools
- ========================
- 
--See ``Documentation/iio/iio_tools.rst`` for the description of the available IIO
-+See Documentation/iio/iio_tools.rst for the description of the available IIO
- interfacing tools.
-diff --git a/Documentation/iio/adis16475.rst b/Documentation/iio/adis16475.rst
-index 4bf0998be36efc..89a388490ab735 100644
---- a/Documentation/iio/adis16475.rst
-+++ b/Documentation/iio/adis16475.rst
-@@ -374,11 +374,11 @@ Obtain buffered data:
-         00001740  01 1a 00 00 ff ff fe 31  00 00 46 aa 00 03 37 f7  |.......1..F...7.|
-         ...
- 
--See ``Documentation/iio/iio_devbuf.rst`` for more information about how buffered
-+See Documentation/iio/iio_devbuf.rst for more information about how buffered
- data is structured.
- 
- 4. IIO Interfacing Tools
- ========================
- 
--See ``Documentation/iio/iio_tools.rst`` for the description of the available IIO
-+See Documentation/iio/iio_tools.rst for the description of the available IIO
- interfacing tools.
-diff --git a/Documentation/iio/adis16480.rst b/Documentation/iio/adis16480.rst
-index 4a2d40e0daa798..cce5f3e0174158 100644
---- a/Documentation/iio/adis16480.rst
-+++ b/Documentation/iio/adis16480.rst
-@@ -436,11 +436,11 @@ Obtain buffered data::
-   00006b60  09 63 00 00 00 00 1b 13  00 00 22 2f 00 03 23 91  |.c........"/..#.|
-   ...
- 
--See ``Documentation/iio/iio_devbuf.rst`` for more information about how buffered
-+See Documentation/iio/iio_devbuf.rst for more information about how buffered
- data is structured.
- 
- 4. IIO Interfacing Tools
- ========================
- 
--See ``Documentation/iio/iio_tools.rst`` for the description of the available IIO
-+See Documentation/iio/iio_tools.rst for the description of the available IIO
- interfacing tools.
-diff --git a/Documentation/iio/adis16550.rst b/Documentation/iio/adis16550.rst
-index 25db7b8060c421..c9bbc0a857b03b 100644
---- a/Documentation/iio/adis16550.rst
-+++ b/Documentation/iio/adis16550.rst
-@@ -366,11 +366,11 @@ Obtain buffered data:
-         0000ceb0  00 00 0d 2f 00 00 05 25  00 00 07 8d 00 00 a2 ce  |.../...%........|
-         ...
- 
--See ``Documentation/iio/iio_devbuf.rst`` for more information about how buffered
-+See Documentation/iio/iio_devbuf.rst for more information about how buffered
- data is structured.
- 
- 4. IIO Interfacing Tools
- ========================
- 
--See ``Documentation/iio/iio_tools.rst`` for the description of the available IIO
-+See Documentation/iio/iio_tools.rst for the description of the available IIO
- interfacing tools.
-diff --git a/Documentation/iio/adxl345.rst b/Documentation/iio/adxl345.rst
-index afdb35f8b72e78..bb19d64f67c3d2 100644
---- a/Documentation/iio/adxl345.rst
-+++ b/Documentation/iio/adxl345.rst
-@@ -433,11 +433,11 @@ Obtain buffered data:
-         00000f0   00004   00014   00015   00005   00012   00011   00005   00012
-         ...
- 
--See ``Documentation/iio/iio_devbuf.rst`` for more information about how buffered
-+See Documentation/iio/iio_devbuf.rst for more information about how buffered
- data is structured.
- 
- 4. IIO Interfacing Tools
- ========================
- 
--See ``Documentation/iio/iio_tools.rst`` for the description of the available IIO
-+See Documentation/iio/iio_tools.rst for the description of the available IIO
- interfacing tools.
-diff --git a/Documentation/iio/adxl380.rst b/Documentation/iio/adxl380.rst
-index 66c8a4d4f767e5..61cafa2f98bf36 100644
---- a/Documentation/iio/adxl380.rst
-+++ b/Documentation/iio/adxl380.rst
-@@ -223,11 +223,11 @@ Obtain buffered data:
-         002bc3c0  f7 fd 00 cb fb 94 24 80  f7 e3 00 f2 fb b8 24 80  |......$.......$.|
-         ...
- 
--See ``Documentation/iio/iio_devbuf.rst`` for more information about how buffered
-+See Documentation/iio/iio_devbuf.rst for more information about how buffered
- data is structured.
- 
- 4. IIO Interfacing Tools
- ========================
- 
--See ``Documentation/iio/iio_tools.rst`` for the description of the available IIO
-+See Documentation/iio/iio_tools.rst for the description of the available IIO
- interfacing tools.
+>
+> diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
+> index daf6e5cfd59a..cb52bc51943e 100644
+> --- a/drivers/tee/tee_shm.c
+> +++ b/drivers/tee/tee_shm.c
+> @@ -319,6 +319,14 @@ register_shm_helper(struct tee_context *ctx, struct =
+iov_iter *iter, u32 flags,
+>         if (unlikely(len <=3D 0)) {
+>                 ret =3D len ? ERR_PTR(len) : ERR_PTR(-ENOMEM);
+>                 goto err_free_shm_pages;
+> +       } else if (DIV_ROUND_UP(len + off, PAGE_SIZE) !=3D num_pages) {
+> +               /*
+> +                * If we only got a few pages, update to release the corr=
+ect
+> +                * amount below.
+> +                */
+> +               shm->num_pages =3D len / PAGE_SIZE;
+> +               ret =3D ERR_PTR(-ENOMEM);
+> +               goto err_put_shm_pages;
+>         }
+>
+>         /*
 
-base-commit: 561285d048053fec8a3d6d1e3ddc60df11c393a0
--- 
-An old man doll... just what I always wanted! - Clara
+Thanks,
+Jens
 
+>
+> -Sumit
+>
+> > --
+> > 2.43.0
+> >
 
