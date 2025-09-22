@@ -1,132 +1,90 @@
-Return-Path: <linux-kernel+bounces-827551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44ACAB92103
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:53:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ABEEB920C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F39543B334C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:53:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1398B179743
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA0730CD90;
-	Mon, 22 Sep 2025 15:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E780630214E;
+	Mon, 22 Sep 2025 15:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="AJj3luLd"
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=josie.lol header.i=@josie.lol header.b="kEPjzzsL"
+Received: from mail-108-mta73.mxroute.com (mail-108-mta73.mxroute.com [136.175.108.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C87307486;
-	Mon, 22 Sep 2025 15:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA2C24DCEF
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758556383; cv=none; b=Wu88HAOhbKdvYW3pKYNBYd5NkYRvDEOKuLRDOQquWv1OgMbn6U2ZRXYGwVbpBmsmPVbi15QK9LxxTt9k+6SyaJwj4t7GrAOO1WOLRB7Zm0TLc5bRm+thXj7SYDbaNwevqgDQlIcHcSh9L5r+AomgLlAu7pPtGxJMrbnOGqbcbK0=
+	t=1758556152; cv=none; b=TQ2syBNLBq+wkbAdEP59m+tGUl6a4x1BsjpNN4EQBp4Z6p1ybYhg/iiwiCS/8pfA4m/v4brWbk7BzByCksrgRztzrH83t+yqNww2bb0P8L1IbqSGq20zpVKf/wJKL9E3up/9xrrZr/0l64z9m+UecSKjMTKEkA81SdhNza1FZN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758556383; c=relaxed/simple;
-	bh=Ffwye/JbVrXIKu8cIrK/pOcB8IdFpHDSAu6vrUoG2SI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hOI3/EGjvd3xBTtaP9VYe6F5DbB3VnSLNVu/KNNeb/a2MLCPsJlMLGIlsO2xccJZBz5RZwSYgCFgu0LhV5dZdN/7U9lPToprKLlhj/23Yim9gVK7/EAD7f1MxKpS3hgnY+6G9ULVcHIpZdEW88fI/NTzhUb2y6M5HXBkWGV1Kgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=AJj3luLd; arc=none smtp.client-ip=80.12.242.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id 0ihNv1uZQ6fJ30ihNvRBh2; Mon, 22 Sep 2025 17:43:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1758555813;
-	bh=FkpL0tmHxowKoCQg6KgQE7aVVXQ8VXFIV/me0DgJOe8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=AJj3luLdsdZm6Hh9cs8v3hu1Xrx/xtjz6njOnl5bdrsltRGWoLkcpzbo3ji7oS6mC
-	 5YZaQyvvjYyK1wwjrJP8l42XJEaw/Dq5KvFKbSBJWHzyAk+lqlHGJtxMIGEHBwgsf3
-	 pYd8pmC4hcZpAGD3ZdEPKpVlCzjgF8D97oDt92/q7T6CTj7umly4owlqUQfQSZ+sZw
-	 Zf/Kw+b9ryh7irWVLdjOEhvLQ2DEfal6jZBAZiSy5YmyFLth7HKC3Y17SdKeVQdC0l
-	 iC53qyWGA6KOu0Y98FUDUUbm0XISxieirL48iwVUOnd0qPfRJMgpsWp3P2EwI9YZN0
-	 DB2lcqiMlrCRw==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 22 Sep 2025 17:43:33 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <dcb6023b-8c14-4bbd-9bac-2933e91ef553@wanadoo.fr>
-Date: Mon, 22 Sep 2025 17:43:28 +0200
+	s=arc-20240116; t=1758556152; c=relaxed/simple;
+	bh=iIGvux50TESzjj1eoSoBdxqakhNVSI5qpVupMzfxtlg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TdxGqv5qRxYJCu2MDzpmuHrMg1wti0ySFPcRqQT6ZpMBtzne1coRkzQ39QIegozzNqRFsdLLBm2CoxlvSZv+6beVWNY6tgBkX4wheYFGFEk/l0tAwslqyhPp+Im8r8sw7M42RsWOPohVJ54ecBvBg/evld+sal6+GM2tmH/K2To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=josie.lol; spf=pass smtp.mailfrom=josie.lol; dkim=pass (2048-bit key) header.d=josie.lol header.i=@josie.lol header.b=kEPjzzsL; arc=none smtp.client-ip=136.175.108.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=josie.lol
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=josie.lol
+Received: from filter006.mxroute.com ([136.175.111.3] filter006.mxroute.com)
+ (Authenticated sender: mN4UYu2MZsgR)
+ by mail-108-mta73.mxroute.com (ZoneMTA) with ESMTPSA id 1997218931c000c244.003
+ for <linux-kernel@vger.kernel.org>
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+ Mon, 22 Sep 2025 15:43:57 +0000
+X-Zone-Loop: 0a5e50abfee574fae511fa48df171d359aafaffeedd3
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=josie.lol;
+	s=x; h=Content-Transfer-Encoding:MIME-Version:Date:Subject:Cc:To:From:Sender:
+	Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+	List-Archive; bh=NL5DazgC+1XFrc/1zvLChWWjytvo0Wn05gD//cJKMlg=; b=kEPjzzsLnI4H
+	MEZeVVJQ5OcyoWHHB9eaOmt0tqbq+GrEmJo2TA7QKs4d3YAY2bhSvOo/ph7UYPhG3A7El6qxEhor4
+	E5myxq+dlD9Jj7LbQ8dqwTZ9IiYZHW8Z2AGgJ2cjER7XgNlQkvwc+94MWgvzCLFPQViYmJUw2luB5
+	o4ZMFONtLcDRpACwfdcmEb33f+R2lSw3T2cMQ/HqLmgMdjNTBEGMXQT9v9TYK6eEjlKzlYAG9lbdX
+	tHq8VnYxdTGXecOkDnvbCe8BIzOfRSV2RFdLS5afVwncRSZFg9ZccKY+5KAtYzDj4b4XqlWuim8Yb
+	/ppSiyN98iHyi9qfShQQuw==;
+From: Josephine Pfeiffer <hi@josie.lol>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8723bs: Add missing MODULE_DESCRIPTION()
+Date: Mon, 22 Sep 2025 17:43:44 +0200
+Message-ID: <20250922154344.641438-1-hi@josie.lol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ASoC: mediatek: mt8365: Add check for devm_kcalloc()
- in mt8365_afe_suspend()
-To: Guangshuo Li <lgs201920130244@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Charles Keepax <ckeepax@opensource.cirrus.com>,
- Alexandre Mergnat <amergnat@baylibre.com>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-Cc: stable@vger.kernel.org
-References: <20250922153448.1824447-1-lgs201920130244@gmail.com>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-In-Reply-To: <20250922153448.1824447-1-lgs201920130244@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Authenticated-Id: hi@josie.lol
 
-Le 22/09/2025 à 17:34, Guangshuo Li a écrit :
-> devm_kcalloc() may fail. mt8365_afe_suspend() uses afe->reg_back_up
-> unconditionally after allocation and writes afe->reg_back_up[i], which
-> can lead to a NULL pointer dereference under low-memory conditions.
-> 
-> Add a NULL check and bail out with -ENOMEM, making sure to disable the
-> main clock via the existing error path to keep clock state balanced.
-> 
-> Fixes: e1991d102bc2 ("ASoC: mediatek: mt8365: Add the AFE driver support")
-> Cc: stable@vger.kernel.org
-> ---
-> changelog:
-> v2:
-> - Return -ENOMEM directly on allocation failure without goto/label.
-> - Disable the main clock before returning to keep clock state balanced.
-> 
-> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+Add missing MODULE_DESCRIPTION() macro to the RTL8723BS SDIO
+interface driver to fix the modpost warning.
 
-This should be above the ---
+Fixes modpost warning:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/rtl8723bs/r8723bs.o
 
-> ---
->   sound/soc/mediatek/mt8365/mt8365-afe-pcm.c | 10 +++++++---
->   1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c b/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
-> index 10793bbe9275..55d832e05072 100644
-> --- a/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
-> +++ b/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
-> @@ -1975,11 +1975,15 @@ static int mt8365_afe_suspend(struct device *dev)
->   
->   	mt8365_afe_enable_main_clk(afe);
->   
-> -	if (!afe->reg_back_up)
-> +	if (!afe->reg_back_up) {
->   		afe->reg_back_up =
->   			devm_kcalloc(dev, afe->reg_back_up_list_num,
-> -				     sizeof(unsigned int), GFP_KERNEL);
-> -
-> +				    sizeof(unsigned int), GFP_KERNEL);
+Signed-off-by: Josephine Pfeiffer <hi@josie.lol>
+---
+ drivers/staging/rtl8723bs/os_dep/sdio_intf.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-you should not remove a space here.
-
-CJ
-
-> +		if (!afe->reg_back_up) {
-> +			mt8365_afe_disable_main_clk(afe);
-> +			return -ENOMEM;
-> +		}
-> +	}
->   	for (i = 0; i < afe->reg_back_up_list_num; i++)
->   		regmap_read(regmap, afe->reg_back_up_list[i],
->   			    &afe->reg_back_up[i]);
+diff --git a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+index f3caaa857c86..1d0239eef114 100644
+--- a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
++++ b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+@@ -490,3 +490,5 @@ static void __exit rtw_drv_halt(void)
+ 	sdio_unregister_driver(&rtl8723bs_sdio_driver);
+ }
+ module_exit(rtw_drv_halt);
++
++MODULE_DESCRIPTION("Realtek RTL8723BS SDIO WiFi driver");
+-- 
+2.51.0
 
 
