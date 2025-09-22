@@ -1,127 +1,92 @@
-Return-Path: <linux-kernel+bounces-826997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7556B8FDA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:54:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B9AB8FDAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B0B3BDAD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:54:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE7D62A0C50
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B5D2F9990;
-	Mon, 22 Sep 2025 09:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0042F618F;
+	Mon, 22 Sep 2025 09:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="amzS7D9U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="W/nQzgw/"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF9D296BAA;
-	Mon, 22 Sep 2025 09:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C86F296BAA;
+	Mon, 22 Sep 2025 09:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758534829; cv=none; b=WkbQPN+sRnnSLJChwnhzBL6rv6tLtzVKG3J0ibrC0OSOEBvLPdgcJj1+TVRswR8rOPQSJM4TeLzyG+GKggdj1O6rwQy2iWPgb46fDvFLRxyFHQfxxrT5Z0rHvu9shH+TPdUhvLzCSIlCG9PlcCz1jYvc9+D6dpteJ4kH+ClJlYM=
+	t=1758534837; cv=none; b=Gsn+yWOo27mObmNdbXGnz/lumWFzzku0QSqA0KVPk8JBXSXS+dHBh7gfBMy3zZvURWS5CHlxkuggXOul9fPJsYssYbhuDm+xM33jvUiLkwzN1Dos9m3R/YfNN7HcsnJjMQkGc+N5G7CaGLAj1W6JFs8dJvhz65EN4SffTcJ5hRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758534829; c=relaxed/simple;
-	bh=2QF7uKBvTtUL406kDFC/otZNDadH3y23jxIfXW4hXCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PF9BvWDxknWKDjaOmDIY7glFLtWdag68MfaYMCCI+G/174iVzaeoTCLpkq6R9BeTJc0hhcPOMjk3L4g2w2ElyazLzm7pxz+s7drCKOv7ehEnWYJj92owZ/4cotwj0qhRCIsG1JW/WwYNpDUU9QBl7wSLKdu7HT3L1ALYzdTyrMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=amzS7D9U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB659C4CEF0;
-	Mon, 22 Sep 2025 09:53:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758534828;
-	bh=2QF7uKBvTtUL406kDFC/otZNDadH3y23jxIfXW4hXCI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=amzS7D9UCB7brMiIXIWt59JW5dDzq/C6RxCnT9+0G9835qC+Zql+nkZlaUp9kP9Ln
-	 Q2RSyDIbCxYL8nHcRS7bKhIuaegVFBwvLexKvrNvQy3WYVevtk+55roJaWhFfCR4Sh
-	 6TMQsgCY84j/9DwQ24rAmm5o9FLS7v5yGHfg9MeEKBgnfMm6FYHioWd4paGXMY9PA5
-	 6Svi5ZJ+Ri+rph9oYhCAtdCedZRwcHacNxQ5ynDoMDLjBGtqyL91T7bBOtRt75kLse
-	 SdNmOgyB73+TACxLaOPUY1MADZhAvumjkv/mT7ZVrp/ySjUko6skvzvkpKGLpF5xDe
-	 4Cdg9vhUvm0/w==
-Date: Mon, 22 Sep 2025 10:53:43 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Carsten Haitzler <carsten.haitzler@foss.arm.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Matt Gilbride <mattgilbride@google.com>,
-	Rob Herring <robh@kernel.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>
-Subject: linux-next: manual merge of the char-misc tree with the drm tree
-Message-ID: <aNEcp1CglKxMEe92@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1758534837; c=relaxed/simple;
+	bh=PL/YajbOibPLqyRMxiJdv/uzpYvMdylD/ei2zQhoXwI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oRn9wNayJK40zN8npin0Bec4ztzi7SACeauzmwsGcV1nZ2hnBaj66zbj94fxV64/DacX6+jFq0SDMttgjyJfrQFFC0JUXh5M2VW0S0bFc5EKqt8K58HWZX4lQfYREJTTF3RC/N/rIxXOOqQ3LAoXYt8ys+8G3C3essiBAD9lgN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=W/nQzgw/; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758534833;
+	bh=PL/YajbOibPLqyRMxiJdv/uzpYvMdylD/ei2zQhoXwI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=W/nQzgw/B/SriU0SadvwUreIeC63YgmlyBEJRz4Je5mwXxlK1vKjWy37TIASblOFf
+	 tGuskA2KvFgwvZFc+TLFGGgzYfKes4R/uuIncC1pR+der0PSFHtoPiScOfUC8rcaGf
+	 T0Ypr4zGnZVxetKwVJS8W5CwpNZrX9wFYuF5fRPOcALAiAsA0ulzIumQScomGWYrC3
+	 vjrNjrLxIY8ZOgDpSfWBcVgekxox2gWpnPxDrPy/obXq9ZEstd7jbQ61bybINrb5/M
+	 55D/sTvL15r7ruD1xzcvvXdRkx4/jLjGGmvJ2C4dKMnlGn7sf8rZNVuHRaqjianyuY
+	 YjX8xT8cgjQ5A==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 01F9317E12C1;
+	Mon, 22 Sep 2025 11:53:52 +0200 (CEST)
+Message-ID: <3ba38a84-2e93-483e-8316-f992f981ac7b@collabora.com>
+Date: Mon, 22 Sep 2025 11:53:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Kgz0SjSZOPFmFmQw"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] arm64: dts: mt7981/openwrt-one: UART labels and
+ console
+To: Bryan Hinton <bryan@bryanhinton.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ daniel@makrotopia.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250922035828.2941327-1-bryan@bryanhinton.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250922035828.2941327-1-bryan@bryanhinton.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Il 22/09/25 05:58, Bryan Hinton ha scritto:
+> This series makes two small updates for MT7981:
+> 
+> - Patch 1/2: Add stable labels (uart0, uart1, uart2) in the SoC dtsi so
+>    that board dts files can reference them directly.
+> - Patch 2/2: Update the OpenWrt One board dts to define serial0 alias,
+>    set chosen stdout-path, and enable uart0.
+> 
+> Both patches were build-tested (dtbs) and boot-tested: mainline Image+DTB
+> built and loaded via U-Boot on MT7981 hardware, with serial console output
+> verified.
+> 
 
---Kgz0SjSZOPFmFmQw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Whole series is
 
-Hi all,
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Today's linux-next merge of the char-misc tree got a conflict in:
-
-  rust/uapi/uapi_helper.h
-
-between commit:
-
-  cf4fd52e32360 ("rust: drm: Introduce the Tyr driver for Arm Mali GPUs")
-
-=66rom the drm tree and commit:
-
-  eafedbc7c050c ("rust_binder: add Rust Binder driver")
-
-=66rom the char-misc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc rust/uapi/uapi_helper.h
-index d4a239cf2a64f,de3562b08d0c3..0000000000000
---- a/rust/uapi/uapi_helper.h
-+++ b/rust/uapi/uapi_helper.h
-@@@ -9,7 -9,7 +9,8 @@@
-  #include <uapi/asm-generic/ioctl.h>
-  #include <uapi/drm/drm.h>
-  #include <uapi/drm/nova_drm.h>
- +#include <uapi/drm/panthor_drm.h>
-+ #include <uapi/linux/android/binder.h>
-  #include <uapi/linux/mdio.h>
-  #include <uapi/linux/mii.h>
-  #include <uapi/linux/ethtool.h>
-
---Kgz0SjSZOPFmFmQw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjRHKYACgkQJNaLcl1U
-h9A9sQf+MHUD66OiHT9O6z2SXrd8H16WDhMEAlZjOB0+w638c4bGkUv1ogaDnkch
-vfqXXEKqWyd7tLI4Q5v4ZXjzIKYbccNOSuy0zWXIc98n47YUpn685MDmmUtoH6FU
-w9nSnOCVrS9l8PGUuvjtnZ5vOF+I9rVIqlRfwJQaY97ox+MmSeP9xMYsCd1GfGtx
-JAfJpo81wt7q3mloCxPV+/7IxcrzVazn/EvyDAJ7MN5DoACEX/QRBc9hcnN7GEQh
-uEvSlJi+AaH3TtH3pDCT4SHLBI95q/gke1j9OHrACTEvvR76FLRLPLfttKRZ/C6z
-s78oSFVjQA4Qya5mRkAqgmkPjGvxig==
-=5hGp
------END PGP SIGNATURE-----
-
---Kgz0SjSZOPFmFmQw--
+Thanks!
 
