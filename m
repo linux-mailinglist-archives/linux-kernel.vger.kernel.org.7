@@ -1,212 +1,161 @@
-Return-Path: <linux-kernel+bounces-826596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEED5B8EE17
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 05:48:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF233B8EE23
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 05:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0943BEA8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 03:48:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81A5F189CB51
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 03:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C4C158874;
-	Mon, 22 Sep 2025 03:48:39 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F752DAFDA;
+	Mon, 22 Sep 2025 03:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="R5y25kGl"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0291C20E6
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 03:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5025520E6;
+	Mon, 22 Sep 2025 03:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758512919; cv=none; b=a7ILldgpPpTyXKjqQKbXsnNGgpN3HkoCtrHWXCuSk2zoAAhgxsqJSKylroKOI77K4UAAX66gcGznlWHQ/HYzSpVL3wM/wXotmO49UZ+E2dQrEbzq7ho/mHkPrepjs/PXVJYLL+ZEqwlKau7EELop2CE42OWVS+eaEmNPWBY1FcE=
+	t=1758513126; cv=none; b=WB9t4FrAbfHgSS9j3CgqP2kl1qbc4OPPzDjTAnVgK5nEQbgbjieD82sh6wc+B9NP83XzF4mxXCTMYQvfbCL79BRi1Opmkd3oXORQHJz6cJy4ZmDdNh3E+yyL4/nBsMOtMRi9aZkDYdZIMZyWncJz6BicMUjAtIUw3YeIxY1bbJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758512919; c=relaxed/simple;
-	bh=WO4T4xP4meCYH8qOpzhhrSChiZL0cEfYEkusq1KX3fQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rU1t7DJIrA0cixFWzPQJmndn3QV6WtrsjhPjIUxkphiQ++rnzfotjt70rdO6fkPpHBppvQj0A1IO9mDNerMuHpXN1exMXwL5Z8ddd/DZubymXix+mt3pzl/Lbr5hbAbrqtEy8QrcTiLWT2CUJxjrQW3m6j+gmg97tqHIwomAWOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cVTbf65n2z14MTN;
-	Mon, 22 Sep 2025 11:48:14 +0800 (CST)
-Received: from dggpemr200006.china.huawei.com (unknown [7.185.36.167])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6C6D1180486;
-	Mon, 22 Sep 2025 11:48:33 +0800 (CST)
-Received: from [10.67.110.83] (10.67.110.83) by dggpemr200006.china.huawei.com
- (7.185.36.167) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 22 Sep
- 2025 11:48:32 +0800
-Message-ID: <d7f78b73-6bb4-4ccd-b604-5bfa6473fd2a@huawei.com>
-Date: Mon, 22 Sep 2025 11:48:32 +0800
+	s=arc-20240116; t=1758513126; c=relaxed/simple;
+	bh=GMX9s1i31zNfPGhbaSDgqO9wvhN5KiQlBN5FnQbwcsQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gXDE/Fv2S6FAMHWdRY8zEAAVKcUnlFryz7aVg/gH+Q7kDsm2ZzXXpISOmlb3ZzXQKry17ScKcoTLeNDEIGHYklZKu+NLTZm+BeRen13YzKMgEFoc1qDWzKqSGQGXuGVBSbUtb7SUBzPu4uRQzQJuTDIK5KI4zKwuTYwY6189UnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=R5y25kGl; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1758513122;
+	bh=GMX9s1i31zNfPGhbaSDgqO9wvhN5KiQlBN5FnQbwcsQ=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=R5y25kGly0jXDcy71cuhiCnaJaV57UNoTLvi0N42QFAM14mtNxGEecssbDsq0x/l2
+	 D8mX298SS8OTrO2x51zHfCQI/4KEJROLtcpdy+8XIm/3pOpdncFQF7LcnZtqVVEfnz
+	 GZ1cWL5npdDdNzWyNI+MRmNEW01Q9IBWEbXGo676IHeGjxYdBvhy33urlHLLr8Gg9b
+	 T3sP5ZRKL3g/Nwtm4HSM3lxyUpheZw7Ezla/QSX9WdBCvrtP+5/uoeqe35Pig2aRnk
+	 TYOjhoNye7ZkurPH+lqExGlk34pqa/E+zpKEeHpq36rikDOZsFi4mfDeItYZRR2zWF
+	 /NnMhvm2i7Nkw==
+Received: from [192.168.68.113] (unknown [180.150.112.213])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 8DFEE64731;
+	Mon, 22 Sep 2025 11:52:00 +0800 (AWST)
+Message-ID: <9ed40c5439dc8ecaa7b265e21d3cf15d45415bee.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 1/2] arm64: dts: nuvoton: npcm845: Add peripheral
+ nodes
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Tomer Maimon <tmaimon77@gmail.com>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, 	avifishman70@gmail.com, tali.perry1@gmail.com,
+ joel@jms.id.au, venture@google.com, 	yuenn@google.com,
+ benjaminfair@google.com, openbmc@lists.ozlabs.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 22 Sep 2025 13:21:59 +0930
+In-Reply-To: <CAP6Zq1j83gOX0vGX3tR09c3S4_DSX4uCcM8TqbFxeP5zXNn2ng@mail.gmail.com>
+References: <20250908125938.3584927-1-tmaimon77@gmail.com>
+	 <20250908125938.3584927-2-tmaimon77@gmail.com>
+	 <bee023bb9b2ccb3e2437e466190dff2304268db9.camel@codeconstruct.com.au>
+	 <CAP6Zq1j83gOX0vGX3tR09c3S4_DSX4uCcM8TqbFxeP5zXNn2ng@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG REPORT] mm/damon: softlockup when kdamond walk page with cpu
- hotplug
-To: SeongJae Park <sj@kernel.org>, Hugh Dickins <hughd@google.com>
-CC: Andrew Morton <akpm@linux-foundation.org>, "Paul E . McKenney"
-	<paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	<damon@lists.linux.dev>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <zouyipeng@huawei.com>
-References: <20250920104220.1399-1-sj@kernel.org>
-Content-Language: en-US
-From: Xinyu Zheng <zhengxinyu6@huawei.com>
-In-Reply-To: <20250920104220.1399-1-sj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemr200006.china.huawei.com (7.185.36.167)
 
-
-
-On 9/20/2025 6:42 PM, SeongJae Park wrote:
-> On Fri, 19 Sep 2025 20:56:56 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
-> 
->> On Thu, 18 Sep 2025, SeongJae Park wrote:
->>
->>> Hello,
->>>
->>> On Thu, 18 Sep 2025 03:00:29 +0000 Xinyu Zheng <zhengxinyu6@huawei.com> wrote:
->>>
->>>> A softlockup issue was found with stress test:
-> [...]
->> This had me worried for a while: thought we might be needing to change
->> lots of other places, and scatter cond_resched()s here and there.
->>
->> But no: no need for cond_resched()'s, this is all just a confusion about
->> where pmd migration entries are handled: a pmd migration entry is accepted
->> by pmd_trans_huge_lock(), but is not accepted by pmd_trans_huge().
->>
->> See fs/proc/task_mmu.c for mm_walk examples of trying pmd_trans_huge_lock(),
->> then pte_offset_map_lock() if it failed, or ACTION_AGAIN if that failed too.
->>
->> When I ACTION_AGAINed damon_mkold_pmd_entry() and damon_young_pmd_entry()
->> in 6.5, I didn't realize that the pmd migration entries were reaching the
->> pte_offset_map_lock(), with corrupt results (or did pmd_bad() filter them
->> out? I didn't think so, but it'll take me too long now to work out whether
->> a pmd migration entry counts as pmd_bad or not); but knew that the new
->> pte_offset_map_lock() filtered them out safely if there was a race.
->>
->> But they've been reaching it without any race, so yes the ACTION_AGAIN
->> would send the mm_walk back again and again for as long as the pmd
->> migration entry remained there: not good, and Xinyu finds a lockup
->> when hotplugging CPU without preemption.
-> 
-> Thank you for your detailed and kind explanation, Hugh!
-> 
->>
->> My suggested patch below (please take it over SJ, and do with it what
->> you will), converting damon_mkold_pmd_entry() and damon_young_pmd_entry()
->> to use pmd_trans_huge_lock() as I'd been expecting, so handling the
->> pmd migration entry up in that block.  (Side note: patch against 6.17-rc,
->> but I see mm.git adds also a damos_va_stat_pmd_entry(), which would
->> better be converted to the same pmd_trans_huge_lock() pattern -
->> though I notice you're not setting ACTION_AGAIN in that one.)
->>
->> But I have to admit, there's very little gained by using ACTION_AGAIN
->> in these functions: it helps not to miss the range when racing against
->> THP collapse or split, but you're already content to miss the extent
->> if it has a pmd migration entry, and there can still be an instant when
->> the range which used to have a page table does not yet show the THP.
->>
->> So if you prefer a smaller fix (but a larger source file!), just
->> dropping the walk->action = ACTION_AGAIN lines should be good enough.
-
-Hi, Hugh. Thank you for your patient explanation and solution!
-
-> 
-> I agree all your points.
-> 
-> I'd prefer the smaller source file following your suggested change below (using
-> pmd_trans_huge_lock()) in long term.  But, for a short term, I'd prefer the
-> smaller fix (dropping walk->action = ACTION_AGAIN) since it should also be
-> merged into stable@, up to 6.5.y.
-> 
-> So, I'd like to suggest as following.  Let's drop the
-> 'walk->action = ACTION_AGAIN' like the below attached one, for now.  After it
-> is confirmed to fix the issue and merged into relevant trees including stable
-> trees, let's revisit the code to cleanup following pmd_trans_huge_lock()
-> pattern.
-> 
-> Please let me know if I'm missing something, or you have other opinions.
-> 
-> Xinyu, could you please test if the below attached patch fixes your issue and
-> let us know the result?
-
-Thanks for all the reply and suggestion, SJ! I am trying to reproduce 
-the scenario now and will send the result back very soon!
-
-> 
-> If Xinyu confirms the validity of the fix and no one objects to the above plan,
-> I will post the fix as a formal one with a better commit message.
-> 
-> 
-> Thanks,
-> SJ
-> 
-
-> [...]
-> 
-> ==== >8 ====
->  From 743cafda8982624229541741dbfe5ff252328ac0 Mon Sep 17 00:00:00 2001
-> From: SeongJae Park <sj@kernel.org>
-> Date: Sat, 20 Sep 2025 03:35:34 -0700
-> Subject: [PATCH] mm/damon/vaddr: do not try page table walk again
-> 
-> For a quick fix of a softlockup issue:
-> https://lore.kernel.org/20250918030029.2652607-1-zhengxinyu6@huawei.com
-> 
-> Signed-off-by: SeongJae Park <sj@kernel.org>
-> ---
->  From 743cafda8982624229541741dbfe5ff252328ac0 Mon Sep 17 00:00:00 2001
-> From: SeongJae Park <sj@kernel.org>
-> Date: Sat, 20 Sep 2025 03:35:34 -0700
-> Subject: [PATCH] mm/damon/vaddr: do not try page table walk again
-> 
-> For a quick fix of a softlockup issue:
-> https://lore.kernel.org/20250918030029.2652607-1-zhengxinyu6@huawei.com
-> 
-> Signed-off-by: SeongJae Park <sj@kernel.org>
-> ---
->   mm/damon/vaddr.c | 8 ++------
->   1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
-> index 8c048f9b129e..7e834467b2d8 100644
-> --- a/mm/damon/vaddr.c
-> +++ b/mm/damon/vaddr.c
-> @@ -328,10 +328,8 @@ static int damon_mkold_pmd_entry(pmd_t *pmd, unsigned long addr,
->   	}
->   
->   	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
-> -	if (!pte) {
-> -		walk->action = ACTION_AGAIN;
-> +	if (!pte)
->   		return 0;
-> -	}
->   	if (!pte_present(ptep_get(pte)))
->   		goto out;
->   	damon_ptep_mkold(pte, walk->vma, addr);
-> @@ -481,10 +479,8 @@ static int damon_young_pmd_entry(pmd_t *pmd, unsigned long addr,
->   #endif	/* CONFIG_TRANSPARENT_HUGEPAGE */
->   
->   	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
-> -	if (!pte) {
-> -		walk->action = ACTION_AGAIN;
-> +	if (!pte)
->   		return 0;
-> -	}
->   	ptent = ptep_get(pte);
->   	if (!pte_present(ptent))
->   		goto out;
-
--- 
-Xinyu Zheng
+SGkgVG9tZXIsCgpPbiBTdW4sIDIwMjUtMDktMjEgYXQgMTg6NTYgKzAzMDAsIFRvbWVyIE1haW1v
+biB3cm90ZToKPiBIaSBBbmRyZXcsCj4gCj4gVGhhbmtzIGZvciB5b3VyIGNvbW1lbnRzLgo+IAo+
+IE9uIFdlZCwgMTAgU2VwdCAyMDI1IGF0IDEwOjUyLCBBbmRyZXcgSmVmZmVyeQo+IDxhbmRyZXdA
+Y29kZWNvbnN0cnVjdC5jb20uYXU+IHdyb3RlOgo+ID4gCj4gPiBIaSBUb21lciwKPiA+IAo+ID4g
+T24gTW9uLCAyMDI1LTA5LTA4IGF0IDE1OjU5ICswMzAwLCBUb21lciBNYWltb24gd3JvdGU6Cj4g
+PiA+IEVuYWJsZSBwZXJpcGhlcmFsIHN1cHBvcnQgZm9yIHRoZSBOdXZvdG9uIE5QQ004NDUgU29D
+IGJ5IGFkZGluZwo+ID4gPiBkZXZpY2UKPiA+ID4gbm9kZXMgZm9yIEV0aGVybmV0IGNvbnRyb2xs
+ZXJzLCBNTUMgY29udHJvbGxlciwgU1BJIGNvbnRyb2xsZXJzLAo+ID4gPiBVU0IKPiA+ID4gZGV2
+aWNlIGNvbnRyb2xsZXJzLCByYW5kb20gbnVtYmVyIGdlbmVyYXRvciwgQURDLCBQV00tRkFOCj4g
+PiA+IGNvbnRyb2xsZXIsCj4gPiA+IGFuZCBJMkMgY29udHJvbGxlcnMuIEluY2x1ZGUgcGlubXV4
+IGNvbmZpZ3VyYXRpb25zIGZvciByZWxldmFudAo+ID4gPiBwZXJpcGhlcmFscyB0byBzdXBwb3J0
+IGhhcmR3YXJlIG9wZXJhdGlvbi4gQWRkIGFuIE9QLVRFRSBmaXJtd2FyZQo+ID4gPiBub2RlCj4g
+PiA+IGZvciBzZWN1cmUgc2VydmljZXMuCj4gPiA+IAo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBUb21l
+ciBNYWltb24gPHRtYWltb243N0BnbWFpbC5jb20+Cj4gPiA+IC0tLQo+ID4gPiDCoC4uLi9kdHMv
+bnV2b3Rvbi9udXZvdG9uLWNvbW1vbi1ucGNtOHh4LmR0c2nCoMKgIHwgNzAyCj4gPiA+ICsrKysr
+KysrKysrKysrKysrLQo+ID4gPiDCoC4uLi9ib290L2R0cy9udXZvdG9uL251dm90b24tbnBjbTg0
+NS5kdHNpwqDCoMKgwqAgfMKgwqAgNyArCj4gPiA+IMKgMiBmaWxlcyBjaGFuZ2VkLCA3MDggaW5z
+ZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+ID4gPiAKPiA+ID4gZGlmZiAtLWdpdCBhL2FyY2gv
+YXJtNjQvYm9vdC9kdHMvbnV2b3Rvbi9udXZvdG9uLWNvbW1vbi0KPiA+ID4gbnBjbTh4eC5kdHNp
+IGIvYXJjaC9hcm02NC9ib290L2R0cy9udXZvdG9uL251dm90b24tY29tbW9uLQo+ID4gPiBucGNt
+OHh4LmR0c2kKPiA+ID4gaW5kZXggMjQxMzM1MjhiOGU5Li43ZjEyMGRhMzMxMGEgMTAwNjQ0Cj4g
+PiA+IAo+ID4gCj4gPiAqc25pcCoKPiA+IAo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBmaXUxOiBzcGlAZmIwMDIwMDAgewo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgY29tcGF0aWJsZSA9ICJudXZvdG9uLG5wY204NDUtZml1IjsK
+PiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICNhZGRy
+ZXNzLWNlbGxzID0gPDE+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgI3NpemUtY2VsbHMgPSA8MD47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZWcgPSA8MHgwIDB4ZmIwMDIwMDAgMHgwIDB4MTAw
+MD47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBy
+ZWctbmFtZXMgPSAiY29udHJvbCI7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCBjbG9ja3MgPcKgIDwmY2xrIE5QQ004WFhfQ0xLX1NQSTE+Owo+ID4g
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY2xvY2stbmFt
+ZXMgPSAiY2xrX3NwaTEiOwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKPiA+ID4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHBpbmN0cmwtMCA9IDwmc3BpMV9waW5z
+PjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0
+YXR1cyA9ICJkaXNhYmxlZCI7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH07
+Cj4gPiA+ICsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZml1Mzogc3BpQGMw
+MDAwMDAwIHsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIGNvbXBhdGlibGUgPSAibnV2b3RvbixucGNtODQ1LWZpdSI7Cj4gPiA+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAjYWRkcmVzcy1jZWxscyA9IDwxPjsK
+PiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICNzaXpl
+LWNlbGxzID0gPDA+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgcmVnID0gPDB4MCAweGMwMDAwMDAwIDB4MCAweDEwMDA+Owo+ID4gPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmVnLW5hbWVzID0gImNvbnRy
+b2wiOwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+Y2xvY2tzID3CoCA8JmNsayBOUENNOFhYX0NMS19TUEkzPjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGNsb2NrLW5hbWVzID0gImNsa19zcGkzIjsK
+PiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHBpbmN0
+cmwtbmFtZXMgPSAiZGVmYXVsdCI7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCBwaW5jdHJsLTAgPSA8JnNwaTNfcGlucz47Cj4gPiA+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdGF0dXMgPSAiZGlzYWJsZWQi
+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9Owo+IEkgZG9uJ3QgbmVlZCB0
+byBtb3ZlIHRoZSBGSVUzIG5vZGUgYXMgb3JkZXJlZCBieSBhc2NlbmRpbmcgdW5pdAo+IGFkZHJl
+c3Mgc2luY2UgdGhlIEZJVTMgbm9kZSBpcyBhIHBhcnQgb2YgdGhlIEZJVSdzIGdyb3VwLCBhbSBJ
+Cj4gY29ycmVjdD8KCkl0J3MgYWNjZXB0YWJsZSBieSB0aGUgbGlua2VkIGNvZGluZyBzdGFuZGFy
+ZCwgYnV0IG15IHByZWZlcmVuY2UgaXMgZm9yCnRoZSBjb25zaXN0ZW5jeSBvZiBvcmRlcmluZyBi
+eSB1bml0IGFkZHJlc3MuCgo+ID4gPiArCj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIGZpdXg6IHNwaUBmYjAwMTAwMCB7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBjb21wYXRpYmxlID0gIm51dm90b24sbnBjbTg0NS1maXUiOwo+
+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgI2FkZHJl
+c3MtY2VsbHMgPSA8MT47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCAjc2l6ZS1jZWxscyA9IDwwPjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJlZyA9IDwweDAgMHhmYjAwMTAwMCAweDAgMHgxMDAw
+PiwKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDww
+eDAgMHhmODAwMDAwMCAweDAgMHgyMDAwMDAwPjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJlZy1uYW1lcyA9ICJjb250cm9sIiwgIm1lbW9yeSI7
+Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjbG9j
+a3MgPcKgIDwmY2xrIE5QQ004WFhfQ0xLX1NQSVg+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY2xvY2stbmFtZXMgPSAiY2xrX2FoYiI7Cj4gPiA+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdGF0dXMgPSAi
+ZGlzYWJsZWQiOwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9Owo+ID4gCj4g
+PiBDYW4geW91IHBsZWFzZSBhdWRpdCB0aGUgcGF0Y2ggKGFuZCB0aGUgcmVzdCBvZiB0aGUgZHRz
+aSkgdG8gbWFrZQo+ID4gc3VyZQo+ID4gYWxsIG5vZGVzIGFyZSBvcmRlcmVkIGJ5IGFzY2VuZGlu
+ZyB1bml0IGFkZHJlc3MsIGFzIHBlciB0aGUgRFRTCj4gPiBzdHlsZQo+ID4gZ3VpZGU/Cj4gPiAK
+PiA+IGh0dHBzOi8vZG9jcy5rZXJuZWwub3JnL2RldmljZXRyZWUvYmluZGluZ3MvZHRzLWNvZGlu
+Zy1zdHlsZS5odG1sI29yZGVyLW9mLW5vZGVzCj4gPiAKPiA+IEFuZHJldwo+ID4gCj4gPiA+ICsK
+PiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbWM6IG1lbW9yeS1jb250cm9sbGVy
+QGYwODI0MDAwIHsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIGNvbXBhdGlibGUgPSAibnV2b3RvbixucGNtODQ1LW1lbW9yeS0KPiA+ID4gY29udHJv
+bGxlciI7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCByZWcgPSA8MHgwIDB4ZjA4MjQwMDAgMHgwIDB4MTAwMD47Cj4gPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMjUK
+PiA+ID4gSVJRX1RZUEVfTEVWRUxfSElHSD47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIH07Cj4gPiA+ICsKPiA+IAo+ID4gKnNuaXAqCj4gCj4gSSBzZWUgZGlzb3JkZXIgaW4g
+dGhlIHVwc3RyZWFtIGR0c2kgZmlsZSwgZm9yIGV4YW1wbGUsIFBFQ0kgb3JkZXIuIERvCj4geW91
+IHN1Z2dlc3QgZml4aW5nIGl0PwoKSWYgeW91IGRvbid0IG1pbmQsIHllcyBwbGVhc2UgKC4uLiBh
+cyBhIHNlcGFyYXRlIHBhdGNoKSA6KQoKQW5kcmV3Cg==
 
 
