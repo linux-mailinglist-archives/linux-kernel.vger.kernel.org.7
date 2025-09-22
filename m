@@ -1,337 +1,137 @@
-Return-Path: <linux-kernel+bounces-826830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6147B8F72D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:16:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 865A4B8F730
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 453A63AC5F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:16:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B7C23ABA70
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBA12F6561;
-	Mon, 22 Sep 2025 08:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78642ED164;
+	Mon, 22 Sep 2025 08:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzRBo25t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TykEoA+T"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16235218AB0;
-	Mon, 22 Sep 2025 08:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C58F27A93D
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758528965; cv=none; b=MNxCFQ0jKrlXB2e/YRV0tqYnARNv+USzmbQ1sn+sTvKDXezSAWXUH34oap4Kgfd0Q5HuChIWxhFfSWQq6Kt2F8HsX5Zjfa8VRqzMl+/T4dcJO50KsonRdRZuZvKoaPnNEWmP2YW8+S501btxhC+MmbFsIf/oHyHSI+hoilz3kR0=
+	t=1758528979; cv=none; b=lacot9jZtranZPpW4dpEerSd+OVKcIICb/PdJLnXeSDMbnLuyswZeLhDoK+32TdKipddmGYcB6fh5uD67TtuV0bGIfnWMkyOKdw96MagJuKCMEAGOayKKu4GwKfjMFYwrutOflwvK4KBXPbCiQsE9AdV8ETRI7EPr8eb47I8pHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758528965; c=relaxed/simple;
-	bh=RcgSLTAtj3P7SAgzMAz8sdgrzXk0wdMPKOvyaQNkJCc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NQoI4Vxc0057lzsnFtn0A+El2/jrNs6T5mOD4Ue9xZ8wcw22kyVwXi6mvA0sjIdejYgm81/l402m5PCAti6z1C0Z+/R+obFIR4W6UYr7v7QGYuAwAOVad8fEXOKyjgxzIMev99WhRAfmOlCAHAEdpD3SrvwEcHPwODm0rnWdr7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzRBo25t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58749C4CEF5;
-	Mon, 22 Sep 2025 08:16:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758528964;
-	bh=RcgSLTAtj3P7SAgzMAz8sdgrzXk0wdMPKOvyaQNkJCc=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=VzRBo25tIMJO0xyG+XuaQaVbvMlhMcpktjsVeMIn8IKM4kv63yY7uMNvyjnblk/xv
-	 9WMy1cxc8KfEA4Q9V8FNYXZagr9iGpZ40gHMUZcop2ruaGBPYn4V02kewpU80em8+a
-	 IjRa8L5mU6LC+lSJUw5hjzB1MLhV0XVaf1M70DP3TECy0t5Pa72pTqCkS/B5qOB+N6
-	 SEsKYwKOcZz4+yyDQnWOUrMDLtr3FwzlO+reugVsNfIpPpKgqrjRu+IZk41KAtc825
-	 WkmZSb5tscYXOsc0j5R4auDqrFp8tlga9Xjcgz/WJItOV8KycxBOKlZ4Xt5ulSBRiD
-	 O5HubHStFQE3Q==
-Message-ID: <f7850c68-d255-465e-a549-a5fd70cfaa72@kernel.org>
-Date: Mon, 22 Sep 2025 10:16:00 +0200
+	s=arc-20240116; t=1758528979; c=relaxed/simple;
+	bh=UMJWZiC7sBj6mxojXhTJC+tuD8oKXX6T1jbAHxgYnJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TIp6rAHc2eGkJCHXrSySZ/XXX/tAVzETxrxaFBVLVV4JTN9eHmGui8BBengTMKckyw1KKqa97TNgtJOQEMDMQL0T5sTQHRYiIR9v4UK8CS83DvTDdCCI6iUx8JxD/v7zRWNd9N85TvmRQP1Yr6SoMC/tSP0Yn8eT1jXJ5JB1PT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TykEoA+T; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-57dfd0b6cd7so1018212e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:16:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758528975; x=1759133775; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c5VEvi4x8chbxAda+lSO8rMAf/beZcw/I4cFoExnq3E=;
+        b=TykEoA+T2QQDbvhjRHvga/ygUfeJuvwoaRYSR0tBITiSAPBRZCQnO2j8b79UDqd8qR
+         6ithQFSgVi544ea4Tace/Ryxtk9Li2oEzQQbPV/ASNj/k7+CwxzYMzPWmWefzU8vOC+5
+         YhAdSYPjXlQHSiBHMOAb2h67mO0C5j5ayJBJ99NZdm/xY97XnAW2gLGfgmRUyzCL1qFw
+         5RUTihSJUdrxkGmeeuaXKH+AM5VgffaDuQ1Td9yX/ktGPjznBCLC9Qb2IiF3mDJzKvfY
+         0/bsXE5Eff+NoKDfpmPEMvXzCMQe03OrAz4TGbkJnaRFE8EHnUQoc/en8ywH8PmC7+6R
+         C/2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758528975; x=1759133775;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c5VEvi4x8chbxAda+lSO8rMAf/beZcw/I4cFoExnq3E=;
+        b=OanxUFwCh3vsyqF3plz7aJB4dQHfA5DoSWQCWUQrRhPOiKzIb1qrr1XL/IlK8SFOso
+         htQh4K1KnBh0pmx4bzr1jbWI4rxq8T9kAsXoa9XkRhf7qp0U8GQML21hXOPg6GdZ/9IJ
+         Ax6boKCG1INGVUKji4oQIeQ+vnMwefUkmpWY8AeOS50h/izZyqLKQw30vXVey/6U25wt
+         pBeJh1c04DD1twCC3R7MPwvnfgJaV3CWyUGJ1v4iGGCIYuzcjpP+2/S2W5V+tVsq/jH7
+         wepB7E3gq3vYfumKzpC2/q0YDazjB0CAX643TpxcFjCtgvKytQKfAX7GyTYcNu0nQTjk
+         ifNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXuzpYvUJeAbYBZPbixOEM4quJrlJtoVvlOZERuoM3D0IJOjPtmy4mMaeAWC5PaYsU1QjVOksblkuJQDFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeBe5j6qa2lvB/OTEaoJTY5Tu267gOblfAvo/mMwrxfPLlBhha
+	I0HFKaexcqxUDry8/5L+erruH/ojQrvFiS+rPSNAXbQCtf29ZiR8ggsM6ahX5Q==
+X-Gm-Gg: ASbGnctHY5R9Uhd7C4S3xZwOsN+uyL+MAMfAJw9nBF7wWMfZIa6fkrgQLg0v7bdFtox
+	96v71FApwW8/j8Zgh2zDYa+pleoulET5WiglWxoHy+Za6kkZPxaPqwbPMHphlq8FzzCxbLLfjDb
+	P4JGH7V3S1xjvsEeGsPaSTYAw/gd/aXGWBUhI/i8n4I53Kwwmx36q03pD8ZU/3upN+JWTXGIita
+	noJiPF+JRhgb8pqfh01vogLSkCho3iKzNZiPG5hw8Cv65Q+hg7npRrubm1sqcF4aIF2yEF3i3/G
+	zqcE7Ehbhokl+s1BfIgWBsJ52pkcuIKAMTknzSpYNx7EkM8Mh+UZnHZ6AIw/pl2lGCPHejDsV4O
+	4My96tEmgr2+MB1KrnEL+hVsMkJwsoDyRxTY=
+X-Google-Smtp-Source: AGHT+IEBnciOJYeoELu8rLKOpYmJe14ZWR4sLAktR1bK9CrTwUMc1Hawjx43GGZQU5SZBI4fWanYFg==
+X-Received: by 2002:a05:6512:4041:b0:55f:4fac:3f2b with SMTP id 2adb3069b0e04-579dfccb059mr3293297e87.5.1758528975194;
+        Mon, 22 Sep 2025 01:16:15 -0700 (PDT)
+Received: from foxbook (bfe191.neoplus.adsl.tpnet.pl. [83.28.42.191])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-57e37d09511sm868935e87.88.2025.09.22.01.16.13
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Mon, 22 Sep 2025 01:16:14 -0700 (PDT)
+Date: Mon, 22 Sep 2025 10:16:10 +0200
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] usb: xhci: Queue URB_ZERO_PACKET as one TD
+Message-ID: <20250922101610.0102e1a1.michal.pecio@gmail.com>
+In-Reply-To: <e29fa12b-55e4-4ab1-b623-11feb447bdf7@linux.intel.com>
+References: <20250908130128.7ed81912.michal.pecio@gmail.com>
+	<6ca18b05-80d4-4988-bb08-3cad003e10f4@linux.intel.com>
+	<20250909193859.73127f85.michal.pecio@gmail.com>
+	<e29fa12b-55e4-4ab1-b623-11feb447bdf7@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH v2 08/10] media: ti: j721e-csi2rx: Use video_device_state
-To: Jai Luthra <jai.luthra@ideasonboard.com>,
- Hans Verkuil <hverkuil@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, linux-media@vger.kernel.org
-Cc: Jai Luthra <jai.luthra@linux.dev>, linux-kernel@vger.kernel.org
-References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
- <20250919-vdev-state-v2-8-b2c42426965c@ideasonboard.com>
-Content-Language: en-US, nl
-In-Reply-To: <20250919-vdev-state-v2-8-b2c42426965c@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 19/09/2025 11:56, Jai Luthra wrote:
-> Use the newly introduced video_device_state to store the active V4L2
-> format for the video device.
+On Wed, 10 Sep 2025 01:57:39 +0300, Mathias Nyman wrote:
+> On 9.9.2025 20.38, Michal Pecio wrote:
+> > But this is not what this patch is about - the trick is to use an
+> > *unchained* TRB, which is a separate TD from HW's perspective, and
+> > to count it as part of the same TD from the driver's perspective.  
 > 
-> This change allows using a single function for both .s_fmt and .try_fmt
-> hooks, while leveraging the framework helper for the .g_fmt hook.
+> Ok, I see.
+> The whole TD without completion flag does worry me a bit.
+> 
+> We need to make sure stop/stald mid TD cases work, and  urb length is
+> set correctly.
 
-Rather than replying to 00/10, since that is CC-ed to a million people, I'll
-reply here.
+I came up with a potential problem case for clearing IOC:
 
-For core framework changes like this I want to see it applied to the test-drivers
-as well. At minimum the vivid driver and, if we support this for M2M devices as
-well, either vim2m or vicodec.
+1. all data of the first TD are sent out sucessfully
+2. no completion is generated because no IOC
+3. ring stops before advancing to the zero-length TD
+4. we only get FSE (Stopped - Length Invalid)
 
-The test-drivers are used in the media CI regression tests, so it is important
-that this is implemented in at least some of the test drivers.
+See xHCI 4.6.9:
+     Table 4-2: Stop Endpoint Command TRB Handling
+       2nd row: Stopped on TD boundary
+
+Current event handler doesn't expect this to happen and actual length
+will be reported incorrectly. This would be easy to fix.
+
+But there is also the 0.96 spec where FSE was optional (xHCI G.2), so
+on some HCs (like NEC uPD720200) we won't get any event whatsoever and
+the almost fully completed URB will seem to have transferred no data.
+
+(This assumes that any HC would stop in this manner rather than advance
+to the zero-length TD atomically after previous TD completion and stop
+normally in the zero-length TD. So not sure if it's a real problem and
+the condition seems hard to trigger for testing purposes.)
+
+
+Control URBs have the same problem - FSE isn't handled very well and
+old HCs would seem to need IOC on the data stage to ensure correct
+actual length of cancelled URBs, if anyone cares.
 
 Regards,
-
-	Hans
-
-> 
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> --
-> Cc: Jai Luthra <jai.luthra@linux.dev>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: linux-media@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  .../media/platform/ti/j721e-csi2rx/j721e-csi2rx.c  | 119 +++++++++++----------
->  1 file changed, 62 insertions(+), 57 deletions(-)
-> 
-> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> index ac9a87ee06b1090456508c87893ac0a265c93ae9..08557fc77851ec5897d5adc8011e2cd031267cf5 100644
-> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> @@ -17,6 +17,7 @@
->  
->  #include <media/cadence/cdns-csi2rx.h>
->  #include <media/mipi-csi2.h>
-> +#include <media/v4l2-dev.h>
->  #include <media/v4l2-device.h>
->  #include <media/v4l2-ioctl.h>
->  #include <media/v4l2-mc.h>
-> @@ -110,7 +111,6 @@ struct ti_csi2rx_dev {
->  	struct v4l2_subdev		*source;
->  	struct vb2_queue		vidq;
->  	struct mutex			mutex; /* To serialize ioctls. */
-> -	struct v4l2_format		v_fmt;
->  	struct ti_csi2rx_dma		dma;
->  	u32				sequence;
->  	u8				pix_per_clk;
-> @@ -308,22 +308,19 @@ static int ti_csi2rx_enum_fmt_vid_cap(struct file *file,
->  	return 0;
->  }
->  
-> -static int ti_csi2rx_g_fmt_vid_cap(struct file *file,
-> -				   struct video_device_state *state,
-> -				   struct v4l2_format *f)
-> -{
-> -	struct ti_csi2rx_dev *csi = video_drvdata(file);
-> -
-> -	*f = csi->v_fmt;
-> -
-> -	return 0;
-> -}
-> -
-> -static int ti_csi2rx_try_fmt_vid_cap(struct file *file,
-> +static int ti_csi2rx_adj_fmt_vid_cap(struct file *file,
->  				     struct video_device_state *state,
->  				     struct v4l2_format *f)
->  {
->  	const struct ti_csi2rx_fmt *fmt;
-> +	struct v4l2_format *format;
-> +
-> +	if (state->which == VIDEO_DEVICE_STATE_ACTIVE) {
-> +		struct ti_csi2rx_dev *csi = video_drvdata(file);
-> +
-> +		if (vb2_is_busy(csi->vdev.queue))
-> +			return -EBUSY;
-> +	}
->  
->  	/*
->  	 * Default to the first format if the requested pixel format code isn't
-> @@ -338,25 +335,8 @@ static int ti_csi2rx_try_fmt_vid_cap(struct file *file,
->  
->  	ti_csi2rx_fill_fmt(fmt, f);
->  
-> -	return 0;
-> -}
-> -
-> -static int ti_csi2rx_s_fmt_vid_cap(struct file *file,
-> -				   struct video_device_state *state,
-> -				   struct v4l2_format *f)
-> -{
-> -	struct ti_csi2rx_dev *csi = video_drvdata(file);
-> -	struct vb2_queue *q = &csi->vidq;
-> -	int ret;
-> -
-> -	if (vb2_is_busy(q))
-> -		return -EBUSY;
-> -
-> -	ret = ti_csi2rx_try_fmt_vid_cap(file, state, f);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	csi->v_fmt = *f;
-> +	format = video_device_state_get_fmt(state);
-> +	*format = *f;
->  
->  	return 0;
->  }
-> @@ -390,12 +370,36 @@ static int ti_csi2rx_enum_framesizes(struct file *file,
->  	return 0;
->  }
->  
-> +static int ti_csi2rx_vdev_init_state(struct video_device_state *state)
-> +{
-> +	const struct ti_csi2rx_fmt *fmt;
-> +	struct v4l2_pix_format *pix_fmt;
-> +
-> +	fmt = find_format_by_fourcc(V4L2_PIX_FMT_UYVY);
-> +	if (!fmt)
-> +		return -EINVAL;
-> +
-> +	state->fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-> +	pix_fmt = &state->fmt.fmt.pix;
-> +	pix_fmt->width = 640;
-> +	pix_fmt->height = 480;
-> +	pix_fmt->field = V4L2_FIELD_NONE;
-> +	pix_fmt->colorspace = V4L2_COLORSPACE_SRGB;
-> +	pix_fmt->ycbcr_enc = V4L2_YCBCR_ENC_601;
-> +	pix_fmt->quantization = V4L2_QUANTIZATION_LIM_RANGE;
-> +	pix_fmt->xfer_func = V4L2_XFER_FUNC_SRGB;
-> +
-> +	ti_csi2rx_fill_fmt(fmt, &state->fmt);
-> +
-> +	return 0;
-> +}
-> +
->  static const struct v4l2_ioctl_ops csi_ioctl_ops = {
->  	.vidioc_querycap      = ti_csi2rx_querycap,
->  	.vidioc_enum_fmt_vid_cap = ti_csi2rx_enum_fmt_vid_cap,
-> -	.vidioc_try_fmt_vid_cap = ti_csi2rx_try_fmt_vid_cap,
-> -	.vidioc_g_fmt_vid_cap = ti_csi2rx_g_fmt_vid_cap,
-> -	.vidioc_s_fmt_vid_cap = ti_csi2rx_s_fmt_vid_cap,
-> +	.vidioc_try_fmt_vid_cap = ti_csi2rx_adj_fmt_vid_cap,
-> +	.vidioc_g_fmt_vid_cap = video_device_g_fmt,
-> +	.vidioc_s_fmt_vid_cap = ti_csi2rx_adj_fmt_vid_cap,
->  	.vidioc_enum_framesizes = ti_csi2rx_enum_framesizes,
->  	.vidioc_reqbufs       = vb2_ioctl_reqbufs,
->  	.vidioc_create_bufs   = vb2_ioctl_create_bufs,
-> @@ -418,6 +422,10 @@ static const struct v4l2_file_operations csi_fops = {
->  	.mmap = vb2_fop_mmap,
->  };
->  
-> +static const struct video_device_internal_ops csi_vdev_ops = {
-> +	.init_state = ti_csi2rx_vdev_init_state,
-> +};
-> +
->  static int csi_async_notifier_bound(struct v4l2_async_notifier *notifier,
->  				    struct v4l2_subdev *subdev,
->  				    struct v4l2_async_connection *asc)
-> @@ -518,9 +526,11 @@ static void ti_csi2rx_request_max_ppc(struct ti_csi2rx_dev *csi)
->  static void ti_csi2rx_setup_shim(struct ti_csi2rx_dev *csi)
->  {
->  	const struct ti_csi2rx_fmt *fmt;
-> +	struct v4l2_format *format;
->  	unsigned int reg;
->  
-> -	fmt = find_format_by_fourcc(csi->v_fmt.fmt.pix.pixelformat);
-> +	format = video_device_state_get_fmt(csi->vdev.state);
-> +	fmt = find_format_by_fourcc(format->fmt.pix.pixelformat);
->  
->  	/* De-assert the pixel interface reset. */
->  	reg = SHIM_CNTL_PIX_RST;
-> @@ -671,13 +681,21 @@ static void ti_csi2rx_dma_callback(void *param)
->  	spin_unlock_irqrestore(&dma->lock, flags);
->  }
->  
-> +static u32 ti_csi2rx_sizeimage(struct ti_csi2rx_dev *csi)
-> +{
-> +	struct v4l2_format *format =
-> +		video_device_state_get_fmt(csi->vdev.state);
-> +
-> +	return format->fmt.pix.sizeimage;
-> +}
-> +
->  static int ti_csi2rx_start_dma(struct ti_csi2rx_dev *csi,
->  			       struct ti_csi2rx_buffer *buf)
->  {
-> -	unsigned long addr;
->  	struct dma_async_tx_descriptor *desc;
-> -	size_t len = csi->v_fmt.fmt.pix.sizeimage;
-> +	unsigned long addr;
->  	dma_cookie_t cookie;
-> +	size_t len = ti_csi2rx_sizeimage(csi);
->  	int ret = 0;
->  
->  	addr = vb2_dma_contig_plane_dma_addr(&buf->vb.vb2_buf, 0);
-> @@ -754,7 +772,7 @@ static int ti_csi2rx_queue_setup(struct vb2_queue *q, unsigned int *nbuffers,
->  				 struct device *alloc_devs[])
->  {
->  	struct ti_csi2rx_dev *csi = vb2_get_drv_priv(q);
-> -	unsigned int size = csi->v_fmt.fmt.pix.sizeimage;
-> +	unsigned int size = ti_csi2rx_sizeimage(csi);
->  
->  	if (*nplanes) {
->  		if (sizes[0] < size)
-> @@ -771,7 +789,7 @@ static int ti_csi2rx_queue_setup(struct vb2_queue *q, unsigned int *nbuffers,
->  static int ti_csi2rx_buffer_prepare(struct vb2_buffer *vb)
->  {
->  	struct ti_csi2rx_dev *csi = vb2_get_drv_priv(vb->vb2_queue);
-> -	unsigned long size = csi->v_fmt.fmt.pix.sizeimage;
-> +	unsigned long size = ti_csi2rx_sizeimage(csi);
->  
->  	if (vb2_plane_size(vb, 0) < size) {
->  		dev_err(csi->dev, "Data will not fit into plane\n");
-> @@ -951,7 +969,8 @@ static int ti_csi2rx_link_validate(struct media_link *link)
->  	struct media_entity *entity = link->sink->entity;
->  	struct video_device *vdev = media_entity_to_video_device(entity);
->  	struct ti_csi2rx_dev *csi = container_of(vdev, struct ti_csi2rx_dev, vdev);
-> -	struct v4l2_pix_format *csi_fmt = &csi->v_fmt.fmt.pix;
-> +	struct v4l2_format *format = video_device_state_get_fmt(vdev->state);
-> +	struct v4l2_pix_format *csi_fmt = &format->fmt.pix;
->  	struct v4l2_subdev_format source_fmt = {
->  		.which	= V4L2_SUBDEV_FORMAT_ACTIVE,
->  		.pad	= link->source->index,
-> @@ -1041,24 +1060,8 @@ static int ti_csi2rx_v4l2_init(struct ti_csi2rx_dev *csi)
->  {
->  	struct media_device *mdev = &csi->mdev;
->  	struct video_device *vdev = &csi->vdev;
-> -	const struct ti_csi2rx_fmt *fmt;
-> -	struct v4l2_pix_format *pix_fmt = &csi->v_fmt.fmt.pix;
->  	int ret;
->  
-> -	fmt = find_format_by_fourcc(V4L2_PIX_FMT_UYVY);
-> -	if (!fmt)
-> -		return -EINVAL;
-> -
-> -	pix_fmt->width = 640;
-> -	pix_fmt->height = 480;
-> -	pix_fmt->field = V4L2_FIELD_NONE;
-> -	pix_fmt->colorspace = V4L2_COLORSPACE_SRGB;
-> -	pix_fmt->ycbcr_enc = V4L2_YCBCR_ENC_601;
-> -	pix_fmt->quantization = V4L2_QUANTIZATION_LIM_RANGE;
-> -	pix_fmt->xfer_func = V4L2_XFER_FUNC_SRGB;
-> -
-> -	ti_csi2rx_fill_fmt(fmt, &csi->v_fmt);
-> -
->  	mdev->dev = csi->dev;
->  	mdev->hw_revision = 1;
->  	strscpy(mdev->model, "TI-CSI2RX", sizeof(mdev->model));
-> @@ -1070,10 +1073,12 @@ static int ti_csi2rx_v4l2_init(struct ti_csi2rx_dev *csi)
->  	vdev->vfl_dir = VFL_DIR_RX;
->  	vdev->fops = &csi_fops;
->  	vdev->ioctl_ops = &csi_ioctl_ops;
-> +	vdev->vdev_ops = &csi_vdev_ops;
->  	vdev->release = video_device_release_empty;
->  	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
->  			    V4L2_CAP_IO_MC;
->  	vdev->lock = &csi->mutex;
-> +	set_bit(V4L2_FL_USES_STATE, &vdev->flags);
->  	video_set_drvdata(vdev, csi);
->  
->  	csi->pad.flags = MEDIA_PAD_FL_SINK;
-> 
-
+Michal
 
