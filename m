@@ -1,412 +1,642 @@
-Return-Path: <linux-kernel+bounces-827806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E3B7B9329B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:04:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4FCB932AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D90DF19072AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:04:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAB4118840F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AB131A56B;
-	Mon, 22 Sep 2025 20:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B910631A54C;
+	Mon, 22 Sep 2025 20:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pOBeXDpm"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="Sp7ZeRuX"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C3B317706
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 20:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0342F1FD3
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 20:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758571463; cv=none; b=BuUiPS7ehb7M4P383r55P0GDaK8rP1FPeLJfaTwIE5SJbtPmUwecpw1y1Fesp/9Fg+DPYsd/nPUCpyskRT8qTt4VG2HUS7rSQ0ov+Af3QcqXLbqCb43VyVAfE3ndd4yLH6NdS2ehZtJADRtV1PJk8pvY5xDmDuWMP6T+TNogUHQ=
+	t=1758571482; cv=none; b=Kx8eMWiD58aQKDSY7m95qvDa7dzL+3oBQGi/3/DTHEar8mj7CRLF8kD68cx+0rJWacu4AYQfpix1eaAAO3VQZmRSPLF5xV34g+xEaF7zriTsf0R7zQuiSFGMIkg8Dr+/vTB7PJx82XqlRz3nqJ2l6bp7yXibjSj8uUeuYtLmIAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758571463; c=relaxed/simple;
-	bh=mGxoGYOUnloHBRoWisM0PLt4IQ6SxjGCx8WXassUJIA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ExuaoMU8iJ429PXwZpxGaOOjNQQ6sQk1AOLFKauJeiXrRtN5W0AkfeBzgsQbUD8dCwFiJ785H/l3Ys+FRSIJD/4G3xy1teZHbBmSzvi9bU3XOep+e0716YTvP9SG/3Ykm0k9x364+musgwcK8cevbCG6+Zl99VCDSpBZ2BRgjrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pOBeXDpm; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-324e41e946eso8280665a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:04:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758571460; x=1759176260; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TWCJajFwmPVox9XPXHQlrmJ82Q85uEzbjIoGGe1fqFo=;
-        b=pOBeXDpmNWYOmTJJRdb7vQyb2WeqUzPVfkFGTXnZ1FEIKvyTkwmhwqwkzIXVkoCp+B
-         b1HXBL17fVc5rQi8jVlb9vAs+rLJHhFAAPa7oR+ScdsTZ4eH3EUDf61zfkno7FnTinxv
-         Aza8pXpquiFXFOy4u1uonPbgUXOuEm6Z+5Br/HMiS11pF1V9beyV5Cp5fAg7K5yM3JEi
-         aJnE1moDvqFmjU4KsLxtvZcBXl1t/+uNsn+bNjGlD2aGJyJ4GbFz1/fk70WbxrGKFiLG
-         9KddJLto+3gR13smP+4RhOCpcick+JzdOy6n0FyIkwXQ8n1D8uvYd9yP1aYUFGQUWiCz
-         d2Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758571460; x=1759176260;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TWCJajFwmPVox9XPXHQlrmJ82Q85uEzbjIoGGe1fqFo=;
-        b=blj4WmTWCzRCdqzN6JTdnsZ/YZGIOBSQSWKStywYp6a2Yo+s69o+6J0aCWLYFi+3z/
-         VARpujioK1mUfzwN9WfKai+6zAfc7AOmrSpn6k3Xdg6ayaniUD4aAxT+ogWlQHP9SyGy
-         CzEephsBlGYq8mvgDTJiraZhfL+4/iT/1vItwVxwXJZS3cnZk6ItLQYgkGwE7vi4LYig
-         zKhj6Vpf33MKwCxPgSAo/3eZealCbfBJOlQ/jMEbqPTUB1IYBUuZzZmW2cqJS2r4tq3U
-         GwPT7LabeQhZXKBNb+HxESSGXgtYq3umc8niHjvUCzA7wKgspkEuhHj33CtoYILZlik9
-         nAHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMH0B8uoQVvm0h5gDfz/RcTmpzxv0r2KxO0qeaNBtJCMdRrJ/ScRL31tXJWT7OCwli0t3oZOnZRQXh9wA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/C9u7sd/8r87CB5Yf3G6Oh38Shum2Y2MRL/37piVIn6OJsaI9
-	oNnZqT1idyzC+OEpFpKUk2rJOP0Vw8thPLPhsLpNmqkPB/ICLnMi+6Ltj1QpgO14pJmBzxbCeHq
-	c8ReJ+Q==
-X-Google-Smtp-Source: AGHT+IEtLu3IltyKnd9He5AU8onY3HoWiXSlUQXFXe8yo8ra+bKkkSjTE9Qujh7X66ORNUpkJig2qpfrNws=
-X-Received: from pjh8.prod.google.com ([2002:a17:90b:3f88:b0:32e:e4e6:ecfe])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3d0b:b0:32e:18b2:5a45
- with SMTP id 98e67ed59e1d1-332a92decfcmr206298a91.5.1758571460593; Mon, 22
- Sep 2025 13:04:20 -0700 (PDT)
-Date: Mon, 22 Sep 2025 13:04:19 -0700
-In-Reply-To: <aNEkrlv1bdoRitoU@intel.com>
+	s=arc-20240116; t=1758571482; c=relaxed/simple;
+	bh=ov4FxXKPmgQsjzZeajzGsOfpAyFSkazLFJSinIXAVY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cfp/paEi6pAP+VzcY9C5NCVLkE1oX28H97I5CxqN5wqH/GaTfn2vW3v6CJaFhYWffKwUyUsjqtr20WAjRwoAjKibGwH2KIyCNoHeJriaW+lPveK8TXC4dif22t38zvg0JYyv9Iz3zANL6XBDoR0CAIZh5lgDL9qOFahtiCbq9qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=Sp7ZeRuX; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+Date: Mon, 22 Sep 2025 22:04:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1758571476;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GS9QOIT9CUvHJE0VHPRGoH5OMz8vdAI6lcsPk44/KRA=;
+	b=Sp7ZeRuXWqGvsr8wyRsHRhTHEnu2TeihC4R2LphJmg8W4FxOxa6a4S7sJY4JvIgFggeQIP
+	su0I7W06EBVPV6YCUyYp0FZGSq6MEGfPy78P4af3GGPn07ES7DuknnvD2vi+b9SfIxMyPT
+	tpx7KHlnh7RAYj7i5B4zqGjzThd4rf0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Henrik Grimler <henrik@grimler.se>
+To: Shin Son <shin.son@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] thermal: exynos_tmu: Support new hardware and
+ update TMU interface
+Message-ID: <20250922200430.GA4697@l14.localdomain>
+References: <20250922041857.1107445-1-shin.son@samsung.com>
+ <CGME20250922041902epcas2p3e40ed58737b22b7af9d09f6ba362928d@epcas2p3.samsung.com>
+ <20250922041857.1107445-3-shin.son@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250919223258.1604852-1-seanjc@google.com> <20250919223258.1604852-19-seanjc@google.com>
- <aNEkrlv1bdoRitoU@intel.com>
-Message-ID: <aNGrwzoYRC_a6d5D@google.com>
-Subject: Re: [PATCH v16 18/51] KVM: x86: Don't emulate instructions affected
- by CET features
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922041857.1107445-3-shin.son@samsung.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 22, 2025, Chao Gao wrote:
-> >+static bool is_ibt_instruction(u64 flags)
-> >+{
-> >+	if (!(flags & IsBranch))
-> >+		return false;
-> >+
-> >+	/*
-> >+	 * Far transfers can affect IBT state even if the branch itself is
-> >+	 * direct, e.g. when changing privilege levels and loading a conforming
-> >+	 * code segment.  For simplicity, treat all far branches as affecting
-> >+	 * IBT.  False positives are acceptable (emulating far branches on an
-> >+	 * IBT-capable CPU won't happen in practice), while false negatives
-> >+	 * could impact guest security.
-> >+	 *
-> >+	 * Note, this also handles SYCALL and SYSENTER.
-> >+	 */
-> >+	if (!(flags & NearBranch))
-> >+		return true;
-> >+
-> >+	switch (flags & (OpMask << SrcShift)) {
+Hi Shin,
+
+On Mon, Sep 22, 2025 at 01:18:56PM +0900, Shin Son wrote:
+> The Exynos tmu driver's private data structure has been extended
+> to support the exynosautov920 hardware, which requires per-sensor interrupt
+> enablement and multiple-zone handling:
 > 
-> nit: maybe use SrcMask here.
+> - Add 'slope_comp' : compensation parameter below 25 degrees.
+> - Add 'calib_temp' : stores the fused calibaration temperature.
+> - Add 'sensor_count' : reflects the maximum sensor numbers.
+> - Rename 'tzd' -> 'tzd_array' to register multiple thermal zones.
 > 
-> #define SrcMask     (OpMask << SrcShift)
-
-Fixed.  No idea how I missed that macro.
-
-> >+	case SrcReg:
-> >+	case SrcMem:
-> >+	case SrcMem16:
-> >+	case SrcMem32:
-> >+		return true;
-> >+	case SrcMemFAddr:
-> >+	case SrcImmFAddr:
-> >+		/* Far branches should be handled above. */
-> >+		WARN_ON_ONCE(1);
-> >+		return true;
-> >+	case SrcNone:
-> >+	case SrcImm:
-> >+	case SrcImmByte:
-> >+	/*
-> >+	 * Note, ImmU16 is used only for the stack adjustment operand on ENTER
-> >+	 * and RET instructions.  ENTER isn't a branch and RET FAR is handled
-> >+	 * by the NearBranch check above.  RET itself isn't an indirect branch.
-> >+	 */
+> Since splitting this patch causes runtime errors during temperature
+> emulation or problems where the read temperature feature fails to
+> retrieve values, I have submitted it as a single commit. To add support
+> for the exynosautov920 to the exisiting TMU interface, the following
+> changes are included:
 > 
-> RET FAR isn't affected by IBT, right?
+> 1. Simplify "temp_to_code" and "code_to_temp" to one computation path
+>    by normalizing calib_temp.
+> 2. Loop over 'sensor_count' in critical-point setup.
+> 3. Introduce 'update_con_reg' for exynosautov920 control-register updates.
+> 4. Add exynosautov920-specific branch in 'exynos_tmu_update_temp' function.
+> 5. Skip high & low temperature threshold setup in exynosautov920.
+> 6. Enable interrupts via sensor_count in exynosautov920.
+> 7. Initialize all new members during 'exynosautov920_tmu_initialize'.
+> 8. Clear IRQs by iterating the sensor_count in exynosautov920.
+> 9. Register each zone with 'devm_thermal_of_zone_register()'
+>    based on 'sensor_count'.
+> 
+> Signed-off-by: Shin Son <shin.son@samsung.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 322 ++++++++++++++++++++++++---
+>  1 file changed, 285 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 47a99b3c5395..ebcc38f3fff6 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -121,8 +121,51 @@
+>  
+>  #define EXYNOS_NOISE_CANCEL_MODE		4
+>  
+> +/* ExynosAutov920 specific registers */
+> +#define EXYNOSAUTOV920_SLOPE_COMP		25
+> +#define EXYNOSAUTOV920_SLOPE_COMP_MASK		0xf
+> +#define EXYNOSAUTOV920_CALIB_SEL_TEMP		30
+> +#define EXYNOSAUTOV920_CALIB_SEL_TEMP_MASK	0x2
+> +
+> +#define EXYNOSAUTOV920_SENSOR0_TRIM_INFO	0x10
+> +#define EXYNOSAUTOV920_TRIM_MASK		0x1ff
+> +#define EXYNOSAUTOV920_TRIMINFO_25_SHIFT	0
+> +#define EXYNOSAUTOV920_TRIMINFO_85_SHIFT	9
+> +
+> +#define EXYNOSAUTOV920_TMU_REG_TRIMINFO2	0x04
+> +
+> +#define EXYNOSAUTOV920_TMU_REG_THRESHOLD(p)	(((p)) * 0x50 + 0x00d0)
+> +#define EXYNOSAUTOV920_TMU_REG_INTEN(p)		(((p)) * 0x50 + 0x00f0)
+> +#define EXYNOSAUTOV920_TMU_REG_INT_PEND(p)	(((p)) * 0x50 + 0x00f8)
+> +
+> +#define EXYNOSAUTOV920_CURRENT_TEMP_P1_P0	0x084
+> +#define EXYNOSAUTOV920_TMU_REG_EMUL_CON		0x0b0
+> +
+> +#define EXYNOSAUTOV920_TMU_REG_CONTROL		0x50
+> +#define EXYNOSAUTOV920_TMU_REG_CONTROL1		0x54
+> +#define EXYNOSAUTOV920_TMU_REG_AVG_CONTROL	0x58
+> +#define EXYNOSAUTOV920_TMU_SAMPLING_INTERVAL	0x70
+> +#define EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE0	0x74
+> +#define EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE1	0x78
+> +
+> +#define EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_SHIFT		8
+> +#define EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_MASK		0x1f
+> +#define EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_SHIFT	3
+> +#define EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_MASK		0xf
+> +#define EXYNOSAUTOV920_TMU_NUM_PROBE_MASK		0xf
+> +#define EXYNOSAUTOV920_TMU_NUM_PROBE_SHIFT		16
+> +#define EXYNOSAUTOV920_TMU_LPI_MODE_MASK		1
+> +#define EXYNOSAUTOV920_TMU_LPI_MODE_SHIFT		10
+> +
+> +#define EXYNOSAUTOV920_TMU_AVG_CON_UPDATE		0x0008011a
+> +#define EXYNOSAUTOV920_TMU_COUNTER_VALUE0_UPDATE	0x030003c0
+> +#define EXYNOSAUTOV920_TMU_COUNTER_VALUE1_UPDATE	0x03c0004d
+> +
+>  #define MCELSIUS	1000
+>  
+> +#define EXYNOS_DEFAULT_SENSOR_COUNT			1
+> +#define EXYNOS_MAX_SENSOR_COUNT				16
 
-Correct, AFAICT RET FAR doesn't have any interactions with IBT.
+In patch 1, sensor count is described as a value 0 <= sensor_count <=
+15, but here max sensor count value is set to 16. Shouldn't max value
+be the same in these two places, what is the maximum number of thermal
+sensors that the hardware can have?
 
-> So it is a false positive in the above NearBranch check. I am not asking you
-> to fix it - just want to ensure it is intended.
+>  enum soc_type {
+>  	SOC_ARCH_EXYNOS3250 = 1,
+>  	SOC_ARCH_EXYNOS4210,
+> @@ -133,6 +176,7 @@ enum soc_type {
+>  	SOC_ARCH_EXYNOS5420_TRIMINFO,
+>  	SOC_ARCH_EXYNOS5433,
+>  	SOC_ARCH_EXYNOS7,
+> +	SOC_ARCH_EXYNOSAUTOV920,
+>  };
+>  
+>  /**
+> @@ -150,6 +194,8 @@ enum soc_type {
+>   * @efuse_value: SoC defined fuse value
+>   * @min_efuse_value: minimum valid trimming data
+>   * @max_efuse_value: maximum valid trimming data
+> + * @slope_comp: allocated value of the slope compensation.
+> + * @calib_temp: calibration temperature of the TMU.
+>   * @temp_error1: fused value of the first point trim.
+>   * @temp_error2: fused value of the second point trim.
+>   * @gain: gain of amplifier in the positive-TC generator block
+> @@ -157,7 +203,8 @@ enum soc_type {
+>   * @reference_voltage: reference voltage of amplifier
+>   *	in the positive-TC generator block
+>   *	0 < reference_voltage <= 31
+> - * @tzd: pointer to thermal_zone_device structure
+> + * @sensor_count: The maximum number of the sensors
+> + * @tzd_array: pointer array of thermal_zone_device structure
+>   * @enabled: current status of TMU device
+>   * @tmu_set_low_temp: SoC specific method to set trip (falling threshold)
+>   * @tmu_set_high_temp: SoC specific method to set trip (rising threshold)
+> @@ -174,6 +221,7 @@ struct exynos_tmu_data {
+>  	void __iomem *base;
+>  	void __iomem *base_second;
+>  	int irq;
+> +	int sensor_count;
+>  	enum soc_type soc;
+>  	struct mutex lock;
+>  	struct clk *clk, *clk_sec, *sclk;
+> @@ -181,10 +229,12 @@ struct exynos_tmu_data {
+>  	u32 efuse_value;
+>  	u32 min_efuse_value;
+>  	u32 max_efuse_value;
+> +	u16 slope_comp;
+> +	u16 calib_temp;
+>  	u16 temp_error1, temp_error2;
+>  	u8 gain;
+>  	u8 reference_voltage;
+> -	struct thermal_zone_device *tzd;
+> +	struct thermal_zone_device *tzd_array[EXYNOS_MAX_SENSOR_COUNT];
+>  	bool enabled;
+>  
+>  	void (*tmu_set_low_temp)(struct exynos_tmu_data *data, u8 temp);
+> @@ -205,13 +255,20 @@ struct exynos_tmu_data {
+>   */
+>  static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
+>  {
+> +	s32 temp_diff, code;
+> +
+>  	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
+>  		return temp + data->temp_error1 - EXYNOS_FIRST_POINT_TRIM;
+>  
+> -	return (temp - EXYNOS_FIRST_POINT_TRIM) *
+> -		(data->temp_error2 - data->temp_error1) /
+> -		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) +
+> -		data->temp_error1;
+> +	temp_diff = temp - EXYNOS_FIRST_POINT_TRIM;
+> +
+> +	code = temp_diff * (data->temp_error2 - data->temp_error1) * MCELSIUS /
+> +	       (data->calib_temp - EXYNOS_FIRST_POINT_TRIM);
+> +
+> +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920 && temp_diff < 0)
+> +		code = code * (57 + data->slope_comp) / 65;
+> +
+> +	return code / MCELSIUS + data->temp_error1;
+>  }
+>  
+>  /*
+> @@ -220,13 +277,20 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
+>   */
+>  static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
+>  {
+> +	s32 code_diff, temp;
+> +
+>  	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
+>  		return temp_code - data->temp_error1 + EXYNOS_FIRST_POINT_TRIM;
+>  
+> -	return (temp_code - data->temp_error1) *
+> -		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
+> -		(data->temp_error2 - data->temp_error1) +
+> -		EXYNOS_FIRST_POINT_TRIM;
+> +	code_diff = temp_code - data->temp_error1;
+> +
+> +	temp = code_diff * (data->calib_temp - EXYNOS_FIRST_POINT_TRIM) * MCELSIUS /
+> +	       (data->temp_error2 - data->temp_error1);
+> +
+> +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920 && code_diff < 0)
+> +		temp = temp * 65 / (57 + data->slope_comp);
+> +
+> +	return temp / MCELSIUS + EXYNOS_FIRST_POINT_TRIM;
+>  }
 
-Intended, but wrong.  Specifically, this isn't true for FAR RET or IRET:
+Nice, these two functions looks much better compared to v2!
 
-  Far transfers can affect IBT state even if the branch itself is direct
+>  static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info)
+> @@ -262,6 +326,9 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>  		clk_enable(data->clk_sec);
+>  
+>  	status = readb(data->base + EXYNOS_TMU_REG_STATUS);
+> +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920)
+> +		status = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
+> +
+>  	if (!status) {
+>  		ret = -EBUSY;
+>  	} else {
+> @@ -280,27 +347,34 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>  static int exynos_thermal_zone_configure(struct platform_device *pdev)
+>  {
+>  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+> -	struct thermal_zone_device *tzd = data->tzd;
+> -	int ret, temp;
+> +	struct thermal_zone_device *tzd;
+> +	int ret, temp, idx;
+>  
+> -	ret = thermal_zone_get_crit_temp(tzd, &temp);
+> -	if (ret) {
+> -		/* FIXME: Remove this special case */
+> -		if (data->soc == SOC_ARCH_EXYNOS5433)
+> -			return 0;
+> +	for (idx = 0; idx < data->sensor_count; idx++) {
+> +		tzd = data->tzd_array[idx];
+>  
+> -		dev_err(&pdev->dev,
+> -			"No CRITICAL trip point defined in device tree!\n");
+> -		return ret;
+> -	}
+> +		if (!tzd)
+> +			continue;
+>  
+> -	mutex_lock(&data->lock);
+> -	clk_enable(data->clk);
+> +		ret = thermal_zone_get_crit_temp(tzd, &temp);
+> +		if (ret) {
+> +			/* FIXME: Remove this special case */
+> +			if (data->soc == SOC_ARCH_EXYNOS5433)
+> +				return 0;
+>  
+> -	data->tmu_set_crit_temp(data, temp / MCELSIUS);
+> +			dev_err(&pdev->dev,
+> +				"No CRITICAL trip point defined in device tree!\n");
+> +			return ret;
+> +		}
+>  
+> -	clk_disable(data->clk);
+> -	mutex_unlock(&data->lock);
+> +		mutex_lock(&data->lock);
+> +		clk_enable(data->clk);
+> +
+> +		data->tmu_set_crit_temp(data, temp / MCELSIUS);
+> +
+> +		clk_disable(data->clk);
+> +		mutex_unlock(&data->lock);
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -323,6 +397,37 @@ static u32 get_con_reg(struct exynos_tmu_data *data, u32 con)
+>  	return con;
+>  }
+>  
+> +static void update_con_reg(struct exynos_tmu_data *data)
+> +{
+> +	u32 val, t_buf_vref_sel, t_buf_slope_sel;
+> +
+> +	val = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
+> +	t_buf_vref_sel = (val >> EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_SHIFT)
+> +				& EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_MASK;
+> +	t_buf_slope_sel = (val >> EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_SHIFT)
+> +				& EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_MASK;
+> +
+> +	val = readl(data->base +  EXYNOSAUTOV920_TMU_REG_CONTROL);
+> +	val &= ~(EXYNOS_TMU_REF_VOLTAGE_MASK << EXYNOS_TMU_REF_VOLTAGE_SHIFT);
+> +	val |= (t_buf_vref_sel << EXYNOS_TMU_REF_VOLTAGE_SHIFT);
+> +	val &= ~(EXYNOS_TMU_BUF_SLOPE_SEL_MASK << EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
+> +	val |= (t_buf_slope_sel << EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
+> +	writel(val, data->base + EXYNOSAUTOV920_TMU_REG_CONTROL);
+> +
+> +	val = readl(data->base + EXYNOSAUTOV920_TMU_REG_CONTROL1);
+> +	val &= ~(EXYNOSAUTOV920_TMU_NUM_PROBE_MASK << EXYNOSAUTOV920_TMU_NUM_PROBE_SHIFT);
+> +	val &= ~(EXYNOSAUTOV920_TMU_LPI_MODE_MASK << EXYNOSAUTOV920_TMU_LPI_MODE_SHIFT);
+> +	val |= (data->sensor_count << EXYNOSAUTOV920_TMU_NUM_PROBE_SHIFT);
+> +	writel(val, data->base + EXYNOSAUTOV920_TMU_REG_CONTROL1);
+> +
+> +	writel(1, data->base + EXYNOSAUTOV920_TMU_SAMPLING_INTERVAL);
+> +	writel(EXYNOSAUTOV920_TMU_AVG_CON_UPDATE, data->base + EXYNOSAUTOV920_TMU_REG_AVG_CONTROL);
+> +	writel(EXYNOSAUTOV920_TMU_COUNTER_VALUE0_UPDATE,
+> +	       data->base + EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE0);
+> +	writel(EXYNOSAUTOV920_TMU_COUNTER_VALUE1_UPDATE,
+> +	       data->base + EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE1);
+> +}
+> +
+>  static void exynos_tmu_control(struct platform_device *pdev, bool on)
+>  {
+>  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+> @@ -354,9 +459,8 @@ static void exynos_tmu_update_temp(struct exynos_tmu_data *data, int reg_off,
+>  	u16 tmu_temp_mask;
+>  	u32 th;
+>  
+> -	tmu_temp_mask =
+> -		(data->soc == SOC_ARCH_EXYNOS7) ? EXYNOS7_TMU_TEMP_MASK
+> -						: EXYNOS_TMU_TEMP_MASK;
+> +	tmu_temp_mask = (data->soc == SOC_ARCH_EXYNOS7 || data->soc == SOC_ARCH_EXYNOSAUTOV920)
+> +		? EXYNOS7_TMU_TEMP_MASK	: EXYNOS_TMU_TEMP_MASK;
+>  
+>  	th = readl(data->base + reg_off);
+>  	th &= ~(tmu_temp_mask << bit_off);
+> @@ -582,6 +686,68 @@ static void exynos7_tmu_initialize(struct platform_device *pdev)
+>  	sanitize_temp_error(data, trim_info);
+>  }
+>  
+> +static void exynosautov920_tmu_set_low_temp(struct exynos_tmu_data *data, u8 temp)
+> +{
+> +	/*
+> +	 * Failing thresholds are not supported on Exynosautov920.
+> +	 * We use polling instead.
+> +	 */
+> +}
+> +
+> +static void exynosautov920_tmu_set_high_temp(struct exynos_tmu_data *data, u8 temp)
+> +{
+> +	/*
+> +	 * Rising thresholds are not supported on Exynosautov920.
+> +	 * We use polling instead.
+> +	 */
+> +}
+> +
+> +static void exynosautov920_tmu_disable_low(struct exynos_tmu_data *data)
+> +{
+> +	/* Again, this is handled by polling. */
+> +}
+> +
+> +static void exynosautov920_tmu_disable_high(struct exynos_tmu_data *data)
+> +{
+> +	/* Again, this is handled by polling. */
+> +}
+> +
+> +static void exynosautov920_tmu_set_crit_temp(struct exynos_tmu_data *data, u8 temp)
+> +{
+> +	unsigned int idx;
+> +
+> +	for (idx = 0; idx < data->sensor_count; idx++) {
+> +		if (!data->tzd_array[idx])
+> +			continue;
+> +
+> +		exynos_tmu_update_temp(data, EXYNOSAUTOV920_TMU_REG_THRESHOLD(idx), 16, temp);
+> +		exynos_tmu_update_bit(data, EXYNOSAUTOV920_TMU_REG_INTEN(idx), 7, true);
+> +	}
+> +}
+> +
+> +static void exynosautov920_tmu_initialize(struct platform_device *pdev)
+> +{
+> +	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+> +	unsigned int val;
+> +
+> +	data->tmu_control(pdev, false);
+> +
+> +	update_con_reg(data);
+> +
+> +	val = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
+> +	data->cal_type = TYPE_TWO_POINT_TRIMMING;
+> +	data->slope_comp = (val >> EXYNOSAUTOV920_SLOPE_COMP) & EXYNOSAUTOV920_SLOPE_COMP_MASK;
+> +
+> +	val = readl(data->base + EXYNOSAUTOV920_SENSOR0_TRIM_INFO);
+> +	data->temp_error1 = (val >> EXYNOSAUTOV920_TRIMINFO_25_SHIFT) & EXYNOSAUTOV920_TRIM_MASK;
+> +	data->temp_error2 = (val >> EXYNOSAUTOV920_TRIMINFO_85_SHIFT) & EXYNOSAUTOV920_TRIM_MASK;
+> +
+> +	val = readl(data->base + EXYNOSAUTOV920_TMU_REG_TRIMINFO2);
+> +	val = (val >> EXYNOSAUTOV920_CALIB_SEL_TEMP) & EXYNOSAUTOV920_CALIB_SEL_TEMP_MASK;
+> +
+> +	data->calib_temp = (EXYNOS_SECOND_POINT_TRIM + (20 * val));
+> +}
+> +
+>  static void exynos4210_tmu_control(struct platform_device *pdev, bool on)
+>  {
+>  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+> @@ -633,6 +799,24 @@ static void exynos7_tmu_control(struct platform_device *pdev, bool on)
+>  	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
+>  }
+>  
+> +static void exynosautov920_tmu_control(struct platform_device *pdev, bool on)
+> +{
+> +	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+> +	unsigned int con;
+> +
+> +	con = readl(data->base + EXYNOSAUTOV920_TMU_REG_CONTROL);
+> +
+> +	if (on) {
+> +		con |= BIT(EXYNOS_TMU_THERM_TRIP_EN_SHIFT);
+> +		con |= BIT(EXYNOS_TMU_CORE_EN_SHIFT);
+> +	} else {
+> +		con &= ~BIT(EXYNOS_TMU_THERM_TRIP_EN_SHIFT);
+> +		con &= ~BIT(EXYNOS_TMU_CORE_EN_SHIFT);
+> +	}
+> +
+> +	writel(con, data->base + EXYNOSAUTOV920_TMU_REG_CONTROL);
+> +}
+> +
+>  static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
+>  {
+>  	struct exynos_tmu_data *data = thermal_zone_device_priv(tz);
+> @@ -671,7 +855,7 @@ static u32 get_emul_con_reg(struct exynos_tmu_data *data, unsigned int val,
+>  
+>  		val &= ~(EXYNOS_EMUL_TIME_MASK << EXYNOS_EMUL_TIME_SHIFT);
+>  		val |= (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT);
+> -		if (data->soc == SOC_ARCH_EXYNOS7) {
+> +		if (data->soc == SOC_ARCH_EXYNOS7 || data->soc == SOC_ARCH_EXYNOSAUTOV920) {
+>  			val &= ~(EXYNOS7_EMUL_DATA_MASK <<
+>  				EXYNOS7_EMUL_DATA_SHIFT);
+>  			val |= (temp_to_code(data, temp) <<
+> @@ -703,6 +887,8 @@ static void exynos4412_tmu_set_emulation(struct exynos_tmu_data *data,
+>  		emul_con = EXYNOS5433_TMU_EMUL_CON;
+>  	else if (data->soc == SOC_ARCH_EXYNOS7)
+>  		emul_con = EXYNOS7_TMU_REG_EMUL_CON;
+> +	else if (data->soc == SOC_ARCH_EXYNOSAUTOV920)
+> +		emul_con = EXYNOSAUTOV920_TMU_REG_EMUL_CON;
+>  	else
+>  		emul_con = EXYNOS_EMUL_CON;
+>  
+> @@ -756,11 +942,23 @@ static int exynos7_tmu_read(struct exynos_tmu_data *data)
+>  		EXYNOS7_TMU_TEMP_MASK;
+>  }
+>  
+> +static int exynosautov920_tmu_read(struct exynos_tmu_data *data)
+> +{
+> +	return readw(data->base + EXYNOSAUTOV920_CURRENT_TEMP_P1_P0) &
+> +		EXYNOS7_TMU_TEMP_MASK;
+> +}
+> +
+>  static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
+>  {
+>  	struct exynos_tmu_data *data = id;
+> +	int idx;
+>  
+> -	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
+> +	for (idx = 0; idx < data->sensor_count; idx++) {
+> +		if (!data->tzd_array[idx])
+> +			continue;
+> +
+> +		thermal_zone_device_update(data->tzd_array[idx], THERMAL_EVENT_UNSPECIFIED);
+> +	}
+>  
+>  	mutex_lock(&data->lock);
+>  	clk_enable(data->clk);
+> @@ -805,6 +1003,19 @@ static void exynos4210_tmu_clear_irqs(struct exynos_tmu_data *data)
+>  	writel(val_irq, data->base + tmu_intclear);
+>  }
+>  
+> +static void exynosautov920_tmu_clear_irqs(struct exynos_tmu_data *data)
+> +{
+> +	unsigned int idx, val_irq;
+> +
+> +	for (idx = 0; idx < data->sensor_count; idx++) {
+> +		if (!data->tzd_array[idx])
+> +			continue;
+> +
+> +		val_irq = readl(data->base + EXYNOSAUTOV920_TMU_REG_INT_PEND(idx));
+> +		writel(val_irq, data->base + EXYNOSAUTOV920_TMU_REG_INT_PEND(idx));
+> +	}
+> +}
+> +
+>  static const struct of_device_id exynos_tmu_match[] = {
+>  	{
+>  		.compatible = "samsung,exynos3250-tmu",
+> @@ -833,6 +1044,9 @@ static const struct of_device_id exynos_tmu_match[] = {
+>  	}, {
+>  		.compatible = "samsung,exynos7-tmu",
+>  		.data = (const void *)SOC_ARCH_EXYNOS7,
+> +	}, {
+> +		.compatible = "samsung,exynosautov920-tmu",
+> +		.data = (const void *)SOC_ARCH_EXYNOSAUTOV920,
+>  	},
+>  	{ },
+>  };
+> @@ -865,6 +1079,10 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+>  
+>  	data->soc = (uintptr_t)of_device_get_match_data(&pdev->dev);
+>  
+> +	data->sensor_count = EXYNOS_DEFAULT_SENSOR_COUNT;
+> +
+> +	data->calib_temp = EXYNOS_SECOND_POINT_TRIM;
+> +
+>  	switch (data->soc) {
+>  	case SOC_ARCH_EXYNOS4210:
+>  		data->tmu_set_low_temp = exynos4210_tmu_set_low_temp;
+> @@ -945,6 +1163,19 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+>  		data->min_efuse_value = 15;
+>  		data->max_efuse_value = 100;
+>  		break;
+> +	case SOC_ARCH_EXYNOSAUTOV920:
+> +		data->tmu_set_low_temp = exynosautov920_tmu_set_low_temp;
+> +		data->tmu_set_high_temp = exynosautov920_tmu_set_high_temp;
+> +		data->tmu_disable_low = exynosautov920_tmu_disable_low;
+> +		data->tmu_disable_high = exynosautov920_tmu_disable_high;
+> +		data->tmu_set_crit_temp = exynosautov920_tmu_set_crit_temp;
+> +		data->tmu_initialize = exynosautov920_tmu_initialize;
+> +		data->tmu_control = exynosautov920_tmu_control;
+> +		data->tmu_read = exynosautov920_tmu_read;
+> +		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
+> +		data->tmu_clear_irqs = exynosautov920_tmu_clear_irqs;
+> +		data->sensor_count = EXYNOS_MAX_SENSOR_COUNT;
+> +		break;
+>  	default:
+>  		dev_err(&pdev->dev, "Platform not supported\n");
+>  		return -EINVAL;
+> @@ -952,6 +1183,14 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+>  
+>  	data->cal_type = TYPE_ONE_POINT_TRIMMING;
+>  
+> +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920) {
+> +		if (of_property_read_u32(pdev->dev.of_node, "samsung,sensors",
+> +					 &data->sensor_count)) {
+> +			dev_err(&pdev->dev, "failed to get sensor count\n");
+> +			return -ENODEV;
+> +		}
+> +	}
 
-(IRET #GPs on return to vm86, but KVM doesn't emulate IRET if CR0.PE=1, so that's
- a moot point)
+Do we really need the `if (data->soc == SOC_ARCH_EXYNOSAUTOV920)`
+here, I am sure there will be more socs that use
+samsung,sensors. Can't we simply read samsung,sensors for all socs and
+use EXYNOS_DEFAULT_SENSOR_COUNT if it fails, or would it be
+potentially dangerous if samsung,sensors is missing for autov920 dtb and
+default value of 1 is used?
 
-While it's tempting to sweep this under the rug, it's easy enough to handle with
-a short allow-list.  I can't imagine it'll ever matter, e.g. the odds of a guest
-enabling IBT _and_ doing a FAR RET without a previous FAR CALL _and_ triggering
-emulation on the FAR RET would be... impressive.
+Best regards,
+Henrik Grimler
 
-This is what I have applied.  It passes both negative and positive testcases for
-FAR RET and IRET (I didn't try to encode SYSEXIT; though that's be a "fun" way to
-implement usermode support in KUT :-D)
-
---
-From: Sean Christopherson <seanjc@google.com>
-Date: Fri, 19 Sep 2025 15:32:25 -0700
-Subject: [PATCH] KVM: x86: Don't emulate instructions affected by CET features
-
-Don't emulate branch instructions, e.g. CALL/RET/JMP etc., that are
-affected by Shadow Stacks and/or Indirect Branch Tracking when said
-features are enabled in the guest, as fully emulating CET would require
-significant complexity for no practical benefit (KVM shouldn't need to
-emulate branch instructions on modern hosts).  Simply doing nothing isn't
-an option as that would allow a malicious entity to subvert CET
-protections via the emulator.
-
-To detect instructions that are subject to IBT or affect IBT state, use
-the existing IsBranch flag along with the source operand type to detect
-indirect branches, and the existing NearBranch flag to detect far JMPs
-and CALLs, all of which are effectively indirect.  Explicitly check for
-emulation of IRET, FAR RET (IMM), and SYSEXIT (the ret-like far branches)
-instead of adding another flag, e.g. IsRet, as it's unlikely the emulator
-will ever need to check for return-like instructions outside of this one
-specific flow.  Use an allow-list instead of a deny-list because (a) it's
-a shorter list and (b) so that a missed entry gets a false positive, not a
-false negative (i.e. reject emulation instead of clobbering CET state).
-
-For Shadow Stacks, explicitly track instructions that directly affect the
-current SSP, as KVM's emulator doesn't have existing flags that can be
-used to precisely detect such instructions.  Alternatively, the em_xxx()
-helpers could directly check for ShadowStack interactions, but using a
-dedicated flag is arguably easier to audit, and allows for handling both
-IBT and SHSTK in one fell swoop.
-
-Note!  On far transfers, do NOT consult the current privilege level and
-instead treat SHSTK/IBT as being enabled if they're enabled for User *or*
-Supervisor mode.  On inter-privilege level far transfers, SHSTK and IBT
-can be in play for the target privilege level, i.e. checking the current
-privilege could get a false negative, and KVM doesn't know the target
-privilege level until emulation gets under way.
-
-Note #2, FAR JMP from 64-bit mode to compatibility mode interacts with
-the current SSP, but only to ensure SSP[63:32] == 0.  Don't tag FAR JMP
-as SHSTK, which would be rather confusing and would result in FAR JMP
-being rejected unnecessarily the vast majority of the time (ignoring that
-it's unlikely to ever be emulated).  A future commit will add the #GP(0)
-check for the specific FAR JMP scenario.
-
-Note #3, task switches also modify SSP and so need to be rejected.  That
-too will be addressed in a future commit.
-
-Suggested-by: Chao Gao <chao.gao@intel.com>
-Originally-by: Yang Weijiang <weijiang.yang@intel.com>
-Cc: Mathias Krause <minipli@grsecurity.net>
-Cc: John Allen <john.allen@amd.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Reviewed-by: Chao Gao <chao.gao@intel.com>
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-Link: https://lore.kernel.org/r/20250919223258.1604852-19-seanjc@google.com
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/emulate.c | 117 ++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 103 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-index 23929151a5b8..a7683dc18405 100644
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -178,6 +178,7 @@
- #define IncSP       ((u64)1 << 54)  /* SP is incremented before ModRM calc */
- #define TwoMemOp    ((u64)1 << 55)  /* Instruction has two memory operand */
- #define IsBranch    ((u64)1 << 56)  /* Instruction is considered a branch. */
-+#define ShadowStack ((u64)1 << 57)  /* Instruction affects Shadow Stacks. */
- 
- #define DstXacc     (DstAccLo | SrcAccHi | SrcWrite)
- 
-@@ -4068,9 +4069,9 @@ static const struct opcode group4[] = {
- static const struct opcode group5[] = {
- 	F(DstMem | SrcNone | Lock,		em_inc),
- 	F(DstMem | SrcNone | Lock,		em_dec),
--	I(SrcMem | NearBranch | IsBranch,       em_call_near_abs),
--	I(SrcMemFAddr | ImplicitOps | IsBranch, em_call_far),
--	I(SrcMem | NearBranch | IsBranch,       em_jmp_abs),
-+	I(SrcMem | NearBranch | IsBranch | ShadowStack, em_call_near_abs),
-+	I(SrcMemFAddr | ImplicitOps | IsBranch | ShadowStack, em_call_far),
-+	I(SrcMem | NearBranch | IsBranch, em_jmp_abs),
- 	I(SrcMemFAddr | ImplicitOps | IsBranch, em_jmp_far),
- 	I(SrcMem | Stack | TwoMemOp,		em_push), D(Undefined),
- };
-@@ -4304,7 +4305,7 @@ static const struct opcode opcode_table[256] = {
- 	DI(SrcAcc | DstReg, pause), X7(D(SrcAcc | DstReg)),
- 	/* 0x98 - 0x9F */
- 	D(DstAcc | SrcNone), I(ImplicitOps | SrcAcc, em_cwd),
--	I(SrcImmFAddr | No64 | IsBranch, em_call_far), N,
-+	I(SrcImmFAddr | No64 | IsBranch | ShadowStack, em_call_far), N,
- 	II(ImplicitOps | Stack, em_pushf, pushf),
- 	II(ImplicitOps | Stack, em_popf, popf),
- 	I(ImplicitOps, em_sahf), I(ImplicitOps, em_lahf),
-@@ -4324,19 +4325,19 @@ static const struct opcode opcode_table[256] = {
- 	X8(I(DstReg | SrcImm64 | Mov, em_mov)),
- 	/* 0xC0 - 0xC7 */
- 	G(ByteOp | Src2ImmByte, group2), G(Src2ImmByte, group2),
--	I(ImplicitOps | NearBranch | SrcImmU16 | IsBranch, em_ret_near_imm),
--	I(ImplicitOps | NearBranch | IsBranch, em_ret),
-+	I(ImplicitOps | NearBranch | SrcImmU16 | IsBranch | ShadowStack, em_ret_near_imm),
-+	I(ImplicitOps | NearBranch | IsBranch | ShadowStack, em_ret),
- 	I(DstReg | SrcMemFAddr | ModRM | No64 | Src2ES, em_lseg),
- 	I(DstReg | SrcMemFAddr | ModRM | No64 | Src2DS, em_lseg),
- 	G(ByteOp, group11), G(0, group11),
- 	/* 0xC8 - 0xCF */
- 	I(Stack | SrcImmU16 | Src2ImmByte, em_enter),
- 	I(Stack, em_leave),
--	I(ImplicitOps | SrcImmU16 | IsBranch, em_ret_far_imm),
--	I(ImplicitOps | IsBranch, em_ret_far),
--	D(ImplicitOps | IsBranch), DI(SrcImmByte | IsBranch, intn),
-+	I(ImplicitOps | SrcImmU16 | IsBranch | ShadowStack, em_ret_far_imm),
-+	I(ImplicitOps | IsBranch | ShadowStack, em_ret_far),
-+	D(ImplicitOps | IsBranch), DI(SrcImmByte | IsBranch | ShadowStack, intn),
- 	D(ImplicitOps | No64 | IsBranch),
--	II(ImplicitOps | IsBranch, em_iret, iret),
-+	II(ImplicitOps | IsBranch | ShadowStack, em_iret, iret),
- 	/* 0xD0 - 0xD7 */
- 	G(Src2One | ByteOp, group2), G(Src2One, group2),
- 	G(Src2CL | ByteOp, group2), G(Src2CL, group2),
-@@ -4352,7 +4353,7 @@ static const struct opcode opcode_table[256] = {
- 	I2bvIP(SrcImmUByte | DstAcc, em_in,  in,  check_perm_in),
- 	I2bvIP(SrcAcc | DstImmUByte, em_out, out, check_perm_out),
- 	/* 0xE8 - 0xEF */
--	I(SrcImm | NearBranch | IsBranch, em_call),
-+	I(SrcImm | NearBranch | IsBranch | ShadowStack, em_call),
- 	D(SrcImm | ImplicitOps | NearBranch | IsBranch),
- 	I(SrcImmFAddr | No64 | IsBranch, em_jmp_far),
- 	D(SrcImmByte | ImplicitOps | NearBranch | IsBranch),
-@@ -4371,7 +4372,7 @@ static const struct opcode opcode_table[256] = {
- static const struct opcode twobyte_table[256] = {
- 	/* 0x00 - 0x0F */
- 	G(0, group6), GD(0, &group7), N, N,
--	N, I(ImplicitOps | EmulateOnUD | IsBranch, em_syscall),
-+	N, I(ImplicitOps | EmulateOnUD | IsBranch | ShadowStack, em_syscall),
- 	II(ImplicitOps | Priv, em_clts, clts), N,
- 	DI(ImplicitOps | Priv, invd), DI(ImplicitOps | Priv, wbinvd), N, N,
- 	N, D(ImplicitOps | ModRM | SrcMem | NoAccess), N, N,
-@@ -4402,8 +4403,8 @@ static const struct opcode twobyte_table[256] = {
- 	IIP(ImplicitOps, em_rdtsc, rdtsc, check_rdtsc),
- 	II(ImplicitOps | Priv, em_rdmsr, rdmsr),
- 	IIP(ImplicitOps, em_rdpmc, rdpmc, check_rdpmc),
--	I(ImplicitOps | EmulateOnUD | IsBranch, em_sysenter),
--	I(ImplicitOps | Priv | EmulateOnUD | IsBranch, em_sysexit),
-+	I(ImplicitOps | EmulateOnUD | IsBranch | ShadowStack, em_sysenter),
-+	I(ImplicitOps | Priv | EmulateOnUD | IsBranch | ShadowStack, em_sysexit),
- 	N, N,
- 	N, N, N, N, N, N, N, N,
- 	/* 0x40 - 0x4F */
-@@ -4514,6 +4515,60 @@ static const struct opcode opcode_map_0f_38[256] = {
- #undef I2bvIP
- #undef I6ALU
- 
-+static bool is_shstk_instruction(struct x86_emulate_ctxt *ctxt)
-+{
-+	return ctxt->d & ShadowStack;
-+}
-+
-+static bool is_ibt_instruction(struct x86_emulate_ctxt *ctxt)
-+{
-+	u64 flags = ctxt->d;
-+
-+	if (!(flags & IsBranch))
-+		return false;
-+
-+	/*
-+	 * All far JMPs and CALLs (including SYSCALL, SYSENTER, and INTn) are
-+	 * indirect and thus affect IBT state.  All far RETs (including SYSEXIT
-+	 * and IRET) are protected via Shadow Stacks and thus don't affect IBT
-+	 * state.  IRET #GPs when returning to virtual-8086 and IBT or SHSTK is
-+	 * enabled, but that should be handled by IRET emulation (in the very
-+	 * unlikely scenario that KVM adds support for fully emulating IRET).
-+	 */
-+	if (!(flags & NearBranch))
-+		return ctxt->execute != em_iret &&
-+		       ctxt->execute != em_ret_far &&
-+		       ctxt->execute != em_ret_far_imm &&
-+		       ctxt->execute != em_sysexit;
-+
-+	switch (flags & SrcMask) {
-+	case SrcReg:
-+	case SrcMem:
-+	case SrcMem16:
-+	case SrcMem32:
-+		return true;
-+	case SrcMemFAddr:
-+	case SrcImmFAddr:
-+		/* Far branches should be handled above. */
-+		WARN_ON_ONCE(1);
-+		return true;
-+	case SrcNone:
-+	case SrcImm:
-+	case SrcImmByte:
-+	/*
-+	 * Note, ImmU16 is used only for the stack adjustment operand on ENTER
-+	 * and RET instructions.  ENTER isn't a branch and RET FAR is handled
-+	 * by the NearBranch check above.  RET itself isn't an indirect branch.
-+	 */
-+	case SrcImmU16:
-+		return false;
-+	default:
-+		WARN_ONCE(1, "Unexpected Src operand '%llx' on branch",
-+			  flags & SrcMask);
-+		return false;
-+	}
-+}
-+
- static unsigned imm_size(struct x86_emulate_ctxt *ctxt)
- {
- 	unsigned size;
-@@ -4943,6 +4998,40 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int
- 
- 	ctxt->execute = opcode.u.execute;
- 
-+	/*
-+	 * Reject emulation if KVM might need to emulate shadow stack updates
-+	 * and/or indirect branch tracking enforcement, which the emulator
-+	 * doesn't support.
-+	 */
-+	if ((is_ibt_instruction(ctxt) || is_shstk_instruction(ctxt)) &&
-+	    ctxt->ops->get_cr(ctxt, 4) & X86_CR4_CET) {
-+		u64 u_cet = 0, s_cet = 0;
-+
-+		/*
-+		 * Check both User and Supervisor on far transfers as inter-
-+		 * privilege level transfers are impacted by CET at the target
-+		 * privilege level, and that is not known at this time.  The
-+		 * the expectation is that the guest will not require emulation
-+		 * of any CET-affected instructions at any privilege level.
-+		 */
-+		if (!(ctxt->d & NearBranch))
-+			u_cet = s_cet = CET_SHSTK_EN | CET_ENDBR_EN;
-+		else if (ctxt->ops->cpl(ctxt) == 3)
-+			u_cet = CET_SHSTK_EN | CET_ENDBR_EN;
-+		else
-+			s_cet = CET_SHSTK_EN | CET_ENDBR_EN;
-+
-+		if ((u_cet && ctxt->ops->get_msr(ctxt, MSR_IA32_U_CET, &u_cet)) ||
-+		    (s_cet && ctxt->ops->get_msr(ctxt, MSR_IA32_S_CET, &s_cet)))
-+			return EMULATION_FAILED;
-+
-+		if ((u_cet | s_cet) & CET_SHSTK_EN && is_shstk_instruction(ctxt))
-+			return EMULATION_FAILED;
-+
-+		if ((u_cet | s_cet) & CET_ENDBR_EN && is_ibt_instruction(ctxt))
-+			return EMULATION_FAILED;
-+	}
-+
- 	if (unlikely(emulation_type & EMULTYPE_TRAP_UD) &&
- 	    likely(!(ctxt->d & EmulateOnUD)))
- 		return EMULATION_FAILED;
-
-base-commit: 88539a6a25bc7a7ed96952775152e0c3331fdcaf
---
+> +
+>  	/*
+>  	 * Check if the TMU shares some registers and then try to map the
+>  	 * memory of common registers.
+> @@ -1006,7 +1245,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct exynos_tmu_data *data;
+> -	int ret;
+> +	struct thermal_zone_device *tzd;
+> +	int ret, idx;
+>  
+>  	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+>  	if (!data)
+> @@ -1084,11 +1324,19 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>  		goto err_sclk;
+>  	}
+>  
+> -	data->tzd = devm_thermal_of_zone_register(dev, 0, data,
+> -						  &exynos_sensor_ops);
+> -	if (IS_ERR(data->tzd)) {
+> -		ret = dev_err_probe(dev, PTR_ERR(data->tzd), "Failed to register sensor\n");
+> -		goto err_sclk;
+> +	for (idx = 0; idx < data->sensor_count; idx++) {
+> +		tzd = devm_thermal_of_zone_register(dev, idx, data, &exynos_sensor_ops);
+> +
+> +		if (IS_ERR(tzd)) {
+> +			if (PTR_ERR(tzd) == -ENODEV)
+> +				continue;
+> +
+> +			ret = dev_err_probe(dev, PTR_ERR(data->tzd_array[idx]),
+> +					    "Failed to register sensor\n");
+> +			goto err_sclk;
+> +		}
+> +
+> +		data->tzd_array[idx] = tzd;
+>  	}
+>  
+>  	ret = exynos_thermal_zone_configure(pdev);
+> -- 
+> 2.50.1
+> 
 
