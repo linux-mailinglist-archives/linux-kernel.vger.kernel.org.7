@@ -1,279 +1,153 @@
-Return-Path: <linux-kernel+bounces-826779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0A1B8F53B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:44:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED738B8F53E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4CB13BEB72
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:44:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE560189F881
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F672F618F;
-	Mon, 22 Sep 2025 07:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Woo2QBeN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EE92F6168;
+	Mon, 22 Sep 2025 07:44:34 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717608F40;
-	Mon, 22 Sep 2025 07:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17945182B4
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758527047; cv=none; b=ekDVzkehsG/cPTEnSOpaqjRiStMLpW2pk+oxfXd8BjSGQmyHxIZ6zy1iba6SjZGmSnt7WttHGFj/Uc3x1f2rpaoKCEQ+03HRHZfdmzmCpOuWWxJuYoOrMPWl4GEXVeDn/0coTyi6a1wwh+y/bJa0C5BIMi3qWPVG3v8my0jdL6k=
+	t=1758527073; cv=none; b=Y1E4ay4M5e1m4rOoS79myVvN/faPUqoBu7V5X1dox0gxPhP4+rH7cJB9bQO4721cKteufYb8mn7t7FRVkMAsx0G8vPyFMEO0aTVylsvx+oa+kIR1QNiZZZVv9ivtPywvPBgrz0jTwnaXaHW1ln72mUZyNKAGu//NvNOV6gMoXIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758527047; c=relaxed/simple;
-	bh=xTJmutZRe2xmXyQhek9lOtpNGYD49Simt+rFNAEbuJQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Oe2Akk2D9IVh1YjMM5O4XTKniY0BF2Q1nEQF9FTklJ0l0QJGHeN18UWd8VjcbklZ30hw6oMN8iji8NQpZuCNzJRcWCwTBolEPtEtgqyKGG7awOcrEIzB46DD+i53TOAXPAgie4PCCuAVDZS3uQcr66WdP47HvrdeNZLHDdGgtP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Woo2QBeN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E58BC4CEF0;
-	Mon, 22 Sep 2025 07:44:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758527047;
-	bh=xTJmutZRe2xmXyQhek9lOtpNGYD49Simt+rFNAEbuJQ=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=Woo2QBeNR0jRVE685higrpHvwMEnNOtNZrQrOp24TSeJ+WgE/35Cun4Ba76LH7fln
-	 xuczEcsyEGk0I40iIXeCvDOjQkogpdaIKN6YIPmfi6f4fPeszqegaQgCW/9bxUr96S
-	 5bym8Zpv4vdt3wM9XMZbPabCP0dhduXiFIfUold4q78UmMua9SNryOa+vh3KO5rszN
-	 X2rMuzLCR106XhSlbcdj8COSkSCOYA3sRDCILGzV60QIUq+Yl4re5+xMqBjHx3pP7/
-	 m8Kqmvl1TP/R7o7DaFhOnqQKhfiStTbilkqZt+EwRXjc87adVBubqpaZGBPtFhPe1T
-	 s3tHTZ3dZUnyQ==
-Message-ID: <15df046b-0fe1-4b57-acad-66b88beac982@kernel.org>
-Date: Mon, 22 Sep 2025 09:44:02 +0200
+	s=arc-20240116; t=1758527073; c=relaxed/simple;
+	bh=Wa4mZn5OmRreVbC6+RpGQVPGF1DVQlCaADuMoo1wE8k=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jwfm9Ulmzj+LZPzNk8iopyFPKnBeiJunOP1ly9AcEGnG+LC2CaJJ9pG2MJkPTiDSsss+H18HH2J59w79ZYNw+123oyVFWmzEQJoSAAhJG+6TyE4Nt93ZwvgPOyB+ZpZFpZWisd0dd8dd7/xSOhZhqWWa8g1VZLinibV06GptmpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42577be9d9fso9545135ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:44:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758527071; x=1759131871;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l3Okt1HSnexvyDI11y8Xvh0ZNvB4kxeuT5RfQh263q4=;
+        b=hUsMvgyDqj1kHZRTm1kHQgGfJRNsteXjlA/nD4Oz6JId1ZNMJIbXxC5LvGgJBhaZ+b
+         TfA9+qcnrAW19/RA88ZCIKBy+OdcyaVslUJZa7AEh0OJrQovKXgskO84O/dEZ+bYYTEW
+         Gm7d29+HNCxfRHG2dpTbjD8qsPZcknzzYDXPhbduFHwBrytd30/0coVXzCANa2mzoWDJ
+         vcJINIG2YgFvtV4ujb2wfw9QOHOaRwNyBoh+fGbVwCtwIhom38/p8ofrsWuSk8eSvuC5
+         gBP+WkZxoNdT+BEM6KYXVdfuFz4wlWel6rocr0dQH/f4N66ZN9fvjbB4Mxf5AVcPHDrO
+         ZP3Q==
+X-Gm-Message-State: AOJu0YyCRZGuQtoDiGFuKyLbRuwP+8JiSOE22IrFhsx0NopugMRldH3m
+	ZpG1xGzA7fk8cthsvbV02FWG+2oRGT03VEL2L2xHpBASMYXCC8dYne2vHya4kfcYQIK9WWqmIB+
+	dJrSrO1peeCHXrDYV1wSui2Q13CVGAEdJMWDKvyTYarwSLrD1MJRm4Zvxbx65DA==
+X-Google-Smtp-Source: AGHT+IE1QoRTIJ8DXNR/3bcnKRyiXn1j4DUoVYdNR1FfKO+tcCEzjdJN0n+ajEUoWqPPM6aMAr6lnNfcLDc1O5yXKqcK69bJ7LHW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH v2 01/10] media: v4l2-core: Introduce state management for
- video devices
-To: Jai Luthra <jai.luthra@ideasonboard.com>,
- Hans Verkuil <hverkuil@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, linux-media@vger.kernel.org
-Cc: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Al Viro <viro@zeniv.linux.org.uk>, Ma Ke <make24@iscas.ac.cn>,
- linux-kernel@vger.kernel.org
-References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
- <20250919-vdev-state-v2-1-b2c42426965c@ideasonboard.com>
-Content-Language: en-US, nl
-In-Reply-To: <20250919-vdev-state-v2-1-b2c42426965c@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:12e4:b0:425:6edd:f004 with SMTP id
+ e9e14a558f8ab-4256eddf1f0mr82341885ab.20.1758527071243; Mon, 22 Sep 2025
+ 00:44:31 -0700 (PDT)
+Date: Mon, 22 Sep 2025 00:44:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d0fe5f.a00a0220.37dadf.0046.GAE@google.com>
+Subject: [syzbot] [kernel?] WARNING in __ns_tree_remove (8)
+From: syzbot <syzbot+a709c87b450d0d76fdb1@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jai,
+Hello,
 
-Apologies that I had no time to review v1, but I'll review v2 today.
+syzbot found the following issue on:
 
-On 19/09/2025 11:55, Jai Luthra wrote:
-> Similar to V4L2 subdev states, introduce state support for video devices
-> to provide a centralized location for storing device state information.
-> This includes the current (active) pixelformat used by the device and
-> the temporary (try) pixelformat used during format negotiation. In the
-> future, this may be extended or subclassed by device drivers to store
-> their internal state variables.
-> 
-> Also introduce a flag for drivers that wish to use this state
-> management. When set, the framework automatically allocates the state
-> during device registration and stores a pointer to it within the
-> video_device structure.
-> 
-> This change aligns video devices with V4L2 subdevices by storing
-> hardware state in a common framework-allocated structure. This is the
-> first step towards enabling the multiplexing of the underlying hardware
-> by using different software "contexts", each represented by the combined
-> state of all video devices and V4L2 subdevices in a complex media graph.
-> 
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> --
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Hans Verkuil <hverkuil@kernel.org>
-> Cc: Ricardo Ribalda <ribalda@chromium.org>
-> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Ma Ke <make24@iscas.ac.cn>
-> Cc: Jai Luthra <jai.luthra@ideasonboard.com>
-> Cc: linux-media@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  drivers/media/v4l2-core/v4l2-dev.c | 27 +++++++++++++++++++++++++
->  include/media/v4l2-dev.h           | 40 ++++++++++++++++++++++++++++++++++++++
->  2 files changed, 67 insertions(+)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
-> index 10a126e50c1ca25b1bd0e9872571261acfc26b39..997255709448510fcd17b6de798a3df99cd7ea09 100644
-> --- a/drivers/media/v4l2-core/v4l2-dev.c
-> +++ b/drivers/media/v4l2-core/v4l2-dev.c
-> @@ -163,6 +163,27 @@ void video_device_release_empty(struct video_device *vdev)
->  }
->  EXPORT_SYMBOL(video_device_release_empty);
->  
-> +struct video_device_state *
-> +__video_device_state_alloc(struct video_device *vdev)
-> +{
-> +	struct video_device_state *state =
-> +		kzalloc(sizeof(struct video_device_state), GFP_KERNEL);
-> +
-> +	if (!state)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	state->vdev = vdev;
-> +
-> +	return state;
-> +}
-> +EXPORT_SYMBOL_GPL(__video_device_state_alloc);
-> +
-> +void __video_device_state_free(struct video_device_state *state)
-> +{
-> +	kfree(state);
-> +}
-> +EXPORT_SYMBOL_GPL(__video_device_state_free);
-> +
->  static inline void video_get(struct video_device *vdev)
->  {
->  	get_device(&vdev->dev);
-> @@ -939,6 +960,10 @@ int __video_register_device(struct video_device *vdev,
->  	spin_lock_init(&vdev->fh_lock);
->  	INIT_LIST_HEAD(&vdev->fh_list);
->  
-> +	/* state support */
-> +	if (test_bit(V4L2_FL_USES_STATE, &vdev->flags))
-> +		vdev->state = __video_device_state_alloc(vdev);
-> +
->  	/* Part 1: check device type */
->  	switch (type) {
->  	case VFL_TYPE_VIDEO:
-> @@ -1127,6 +1152,8 @@ void video_unregister_device(struct video_device *vdev)
->  	clear_bit(V4L2_FL_REGISTERED, &vdev->flags);
->  	mutex_unlock(&videodev_lock);
->  	v4l2_event_wake_all(vdev);
-> +	if (test_bit(V4L2_FL_USES_STATE, &vdev->flags))
-> +		__video_device_state_free(vdev->state);
->  	device_unregister(&vdev->dev);
->  }
->  EXPORT_SYMBOL(video_unregister_device);
-> diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
-> index a213c3398dcf60be8c531df87bf40c56b4ad772d..57e4691ef467aa2b0782dd4b8357bd0670643293 100644
-> --- a/include/media/v4l2-dev.h
-> +++ b/include/media/v4l2-dev.h
-> @@ -89,12 +89,18 @@ struct dentry;
->   *	set by the core when the sub-devices device nodes are registered with
->   *	v4l2_device_register_ro_subdev_nodes() and used by the sub-device ioctl
->   *	handler to restrict access to some ioctl calls.
-> + * @V4L2_FL_USES_STATE:
-> + *	indicates that the &struct video_device has state support.
-> + *	The active video and metadata formats are stored in video_device.state,
-> + *	and the try video and metadata formats are stored in v4l2_fh.state.
-> + *	All new drivers should use it.
->   */
->  enum v4l2_video_device_flags {
->  	V4L2_FL_REGISTERED		= 0,
->  	V4L2_FL_USES_V4L2_FH		= 1,
->  	V4L2_FL_QUIRK_INVERTED_CROP	= 2,
->  	V4L2_FL_SUBDEV_RO_DEVNODE	= 3,
-> +	V4L2_FL_USES_STATE		= 4,
->  };
->  
->  /* Priority helper functions */
-> @@ -214,6 +220,17 @@ struct v4l2_file_operations {
->  	int (*release) (struct file *);
->  };
->  
-> +/**
-> + * struct video_device_state - Used for storing video device state information.
-> + *
-> + * @fmt: Format of the capture stream
-> + * @vdev: Pointer to video device
-> + */
-> +struct video_device_state {
-> +	struct v4l2_format fmt;
+HEAD commit:    846bd2225ec3 Add linux-next specific files for 20250919
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1065be42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d4a7665929dce15c
+dashboard link: https://syzkaller.appspot.com/bug?extid=a709c87b450d0d76fdb1
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11fe4d04580000
 
-While typically a video_device supports only a single video format type, that is
-not always the case. There are the following exceptions:
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/cb9b7388a93f/disk-846bd222.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c509e16ebe42/vmlinux-846bd222.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1cab2834ac1b/bzImage-846bd222.xz
 
-1) M2M devices have both a capture and output video format. However, for M2M devices
-   the state is per-filehandle, so it shouldn't be stored in a video_device_state
-   struct anyway.
-2) VBI devices can have both a raw and sliced VBI format (either capture or output)
-3) AFAIK non-M2M video devices can have both a video and meta format. That may have
-   changed, I'm not 100% certain about this.
-4) video devices can also support an OVERLAY or OUTPUT_OVERLAY format (rare)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a709c87b450d0d76fdb1@syzkaller.appspotmail.com
 
-V4L2_CAP_VIDEO_OVERLAY is currently only used in
-drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c, so once that driver
-disappears we can drop video overlay support for capture devices.
+------------[ cut here ]------------
+WARNING: kernel/nstree.c:115 at __ns_tree_remove+0x28d/0x330 kernel/nstree.c:115, CPU#0: syz.2.780/9341
+Modules linked in:
+CPU: 0 UID: 0 PID: 9341 Comm: syz.2.780 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:__ns_tree_remove+0x28d/0x330 kernel/nstree.c:115
+Code: 0f 85 a4 00 00 00 48 8b 04 24 ff 00 48 8b 7c 24 18 48 83 c4 30 5b 41 5c 41 5d 41 5e 41 5f 5d e9 79 92 f9 09 e8 54 f5 31 00 90 <0f> 0b 90 e9 cc fd ff ff e8 46 f5 31 00 90 0f 0b 90 e9 ee fd ff ff
+RSP: 0018:ffffc9000e427708 EFLAGS: 00010293
+RAX: ffffffff818de3cc RBX: ffff88805df2c820 RCX: ffff88805bd15ac0
+RDX: 0000000000000000 RSI: ffff88805df2c820 RDI: ffff88805df2c820
+RBP: dffffc0000000000 R08: ffffffff8e1efb53 R09: 1ffffffff1c3df6a
+R10: dffffc0000000000 R11: fffffbfff1c3df6b R12: ffff88805df2c820
+R13: 1ffff1100bbe5903 R14: ffff88805df2c800 R15: ffffffff8e1ea3c0
+FS:  00007fb7a87da6c0(0000) GS:ffff8881259e7000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fffaa6095e8 CR3: 0000000031e7e000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ mnt_ns_tree_remove fs/namespace.c:165 [inline]
+ free_mnt_ns+0xd1/0x110 fs/namespace.c:4066
+ namespace_unlock+0x529/0x760 fs/namespace.c:1710
+ class_namespace_excl_destructor fs/namespace.c:96 [inline]
+ copy_mnt_ns+0x6e0/0x870 fs/namespace.c:4172
+ create_new_namespaces+0xd1/0x720 kernel/nsproxy.c:78
+ copy_namespaces+0x438/0x4b0 kernel/nsproxy.c:175
+ copy_process+0x1733/0x3c00 kernel/fork.c:2199
+ kernel_clone+0x21e/0x840 kernel/fork.c:2624
+ __do_sys_clone kernel/fork.c:2765 [inline]
+ __se_sys_clone kernel/fork.c:2749 [inline]
+ __x64_sys_clone+0x18b/0x1e0 kernel/fork.c:2749
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb7a798ec29
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb7a87d9fe8 EFLAGS: 00000206 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007fb7a7bd6090 RCX: 00007fb7a798ec29
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000a5000
+RBP: 00007fb7a7a11e41 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
+R13: 00007fb7a7bd6128 R14: 00007fb7a7bd6090 R15: 00007fff04cb79a8
+ </TASK>
 
-2-4 are all quite rare, but 1 is very common. But for such devices the state
-wouldn't be in video_device anyway.
 
-But it would be nice if the same struct can be used in both m2m devices and non-m2m
-devices. It's just stored either in struct v4l2_fh or struct video_device. It would
-give a lot of opportunities for creating helper functions to make the life for
-driver developers easier.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Regards,
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-	Hans
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> +	struct video_device *vdev;
-> +};
-> +
->  /*
->   * Newer version of video_device, handled by videodev2.c
->   *	This version moves redundant code from video device code to
-> @@ -238,6 +255,7 @@ struct v4l2_file_operations {
->   * @queue: &struct vb2_queue associated with this device node. May be NULL.
->   * @prio: pointer to &struct v4l2_prio_state with device's Priority state.
->   *	 If NULL, then v4l2_dev->prio will be used.
-> + * @state: &struct video_device_state, holds the active state for the device.
->   * @name: video device name
->   * @vfl_type: V4L device type, as defined by &enum vfl_devnode_type
->   * @vfl_dir: V4L receiver, transmitter or m2m
-> @@ -283,6 +301,7 @@ struct video_device {
->  	struct vb2_queue *queue;
->  
->  	struct v4l2_prio_state *prio;
-> +	struct video_device_state *state;
->  
->  	/* device info */
->  	char name[64];
-> @@ -546,6 +565,27 @@ static inline int video_is_registered(struct video_device *vdev)
->  	return test_bit(V4L2_FL_REGISTERED, &vdev->flags);
->  }
->  
-> +/** __video_device_state_alloc - allocate video device state structure
-> + *
-> + * @vdev: pointer to struct video_device
-> + *
-> + * .. note::
-> + *
-> + *	This function is meant to be used only inside the V4L2 core.
-> + */
-> +struct video_device_state *
-> +__video_device_state_alloc(struct video_device *vdev);
-> +
-> +/** __video_device_state_free - free video device state structure
-> + *
-> + * @state: pointer to the state to be freed
-> + *
-> + * .. note::
-> + *
-> + *	This function is meant to be used only inside the V4L2 core.
-> + */
-> +void __video_device_state_free(struct video_device_state *state);
-> +
->  /**
->   * v4l2_debugfs_root - returns the dentry of the top-level "v4l2" debugfs dir
->   *
-> 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
