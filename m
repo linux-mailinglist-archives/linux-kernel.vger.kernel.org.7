@@ -1,176 +1,101 @@
-Return-Path: <linux-kernel+bounces-827614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6FDB92381
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:29:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7762B9239C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F28CA7A3067
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:27:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD8161895969
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268C73115A7;
-	Mon, 22 Sep 2025 16:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DF7311C07;
+	Mon, 22 Sep 2025 16:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PFEyKmdW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4AjFpTsP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="InzbI3M0"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDB23112C3;
-	Mon, 22 Sep 2025 16:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52C4311973
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758558545; cv=none; b=aCsC5Uanwnk2dbov86KFUdCWiiH9OZwJrOKpk1LPWeteS+1RNn3y30IHGwuseZugyjI5F7skW6kwWjMrdWGQqEVvgIVPDebMhFsUKGIGXk0nyIEydi31pCXjztAyL7PfZKDTRGAjcV0/L9/0Rar4IiyeRvSsXIHbg5V199MjG1I=
+	t=1758558586; cv=none; b=hyCsN8p4PGrCMSexZnKBpwtPz17XdeXzfvB3Y94Ac7Wfo+VIODXLvlI2N1hMh4Nh3aHykxpp/ckBWb4I2VWE3yrYOxcww5eRcHhGKZax4Mi0zPgdfWBrODaXjddRCtBHXPVXc0VYzg2AKp0+KIwDo+yak0YvXKTSPJNc4aR368A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758558545; c=relaxed/simple;
-	bh=mgvFeTK4TM6IjKYriZlHqMRbdNwTUYyVt1ns/bRTkKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=njc1h45AHwgwsV+3tkVNHWbjf9aTrNNi7yY1b3rlHL4Pk80cXbNId3H1dLM07WNN5uF1lJ7JGYBwjx2u1xYr8+M9lqZESu5rc211lvTwxyVvEcjVULtDy81q+NgW7gUC0L6CEUm/XQ4WuQQLHIHE6c/DGiHtgfHYzsUpckFdBeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PFEyKmdW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4AjFpTsP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 22 Sep 2025 18:29:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758558541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zHg8+HkamnZm01xX5vs4eWwYS7Rr0huD8EUHR5N18h4=;
-	b=PFEyKmdWC2NlEKsvPKX7SE7QqKwBDa8zpu0rOZ1YnK6l07ZT+4L006gl2TQIsckGMoMlLP
-	yO6S4hTReLkOSEOAaCssTUuffpiFIHz6eS9+fLvOYdcqo7kMW1PkLSKtZl6h1B0grHOMlg
-	IhN6GLySvlK+NYbGFI2kjmJSdY83D4ileLV5+5l23DHqQFSUyZV1s9AXBkYd1b/SdLEjcU
-	3p+Jww1nH70MgMcxarjm3cLMowQLlebf032UfXMEb5CTmQ4VNuNBl57kWJ1bh3AB3APJd7
-	h9GduoOI7dLW6cLQiy2o0UCosFns+TaBNrS+7oH4yQ3lK6ASjL9CaxBQtyM2Zw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758558541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zHg8+HkamnZm01xX5vs4eWwYS7Rr0huD8EUHR5N18h4=;
-	b=4AjFpTsPKHirZXXkhZ2ilwCaFUppb2w3q/cVmRWIh2ZWnU4ASROoxnspSBbH76hyx/0Iyg
-	ROaDnu0WcxaUrDDA==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] rv: Add signal reactor
-Message-ID: <20250922162900.eNwI7CS0@linutronix.de>
-References: <20250919-rv-reactor-signal-v1-1-fb0012034158@linutronix.de>
- <d0aaaf1f47f0d948b60b0575e179564e3c024188.camel@redhat.com>
+	s=arc-20240116; t=1758558586; c=relaxed/simple;
+	bh=BNpuoWscqWPIQy/ua0d92zBuwrVxwqe7G/MAj/J1buE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rWLEPn+tqTUTEkdzM1HA1fsj+Tq9c4PGGZ4U1M+CbAYzOs4A+mh+ZtIsURYkLQkKjLXaal7Bcf2HgcBPe+WN7f9AdPL9n+Qx3BdnBbz5RPDicXPuT2fLlWQQZmkRpBdaQ/Hx7gdzXvvxCwg9MLxR1D7KYn1Q7EuL4E0IrBK1tQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=InzbI3M0; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-329dca88b5aso5474254a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:29:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758558584; x=1759163384; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4jnnjuKLSYUVDhTiZqC/IzKihdyANGAPDm6V/YZHqys=;
+        b=InzbI3M0elXqdcbsPEGd7+biy3Z1aNGZuAm26sSrMdFVuh6miCPi8cnJZNaCos/1Y/
+         M+Vr91xsPRl/7vT87dm5aDoSdCJUeZYHO29mQmUY5c8OJuILnAHevq7pwkXRKLF9lSs4
+         FyPRMVrDQbwyKMOSjPMshD3jz1Do9D4meSVbVr2RHUkriT5oDQssf8GqhLPhoGoJmkW6
+         AtiHwNQbcn6KdzfDPrD5/Ldy9y6AQfe30HW0Wy+t5MgpFo9ibOXAS0yF97Z4GfJh0kg4
+         iHkVY4ycgf/FjuVxqR9KORsjtGcvGQTXLcQ9IjCvz8rJ+XzYfH07k6VVzcC3Myn6Y8Vu
+         yqAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758558584; x=1759163384;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4jnnjuKLSYUVDhTiZqC/IzKihdyANGAPDm6V/YZHqys=;
+        b=KS5ozS+oshNcljoEatnXE+S+Z1S3H989SH/4O0uSS0OKRBRWj2DxjCNoQ5/fvRPPHC
+         QD1QlG530RYvO036zEJ8spdlWai9Ueg04+6ZNmYx15oDnnbBwge2Uz25vJyaTEYJpLfO
+         wmetUdtwUtlTBxTCsvespUcw0/rOB77lDJ96W4BHMNLpzqoBNwBYnAPkTwfj4b18VcGO
+         cL8ptWiEuVM75v//LaaSkHDVI2y8+MTHel9ZFXpNKwpYVo64Fq6Tqg8v8M/vOkKsZvIL
+         F/JyzQYNm0HuVI9H6c12URum/mTtDM+IAqH8KWTMkcVTk4ucB038TWkAXDk1zoXFFBe0
+         8wog==
+X-Forwarded-Encrypted: i=1; AJvYcCU9XTyrpFEknOMz8ZjkD+UX+KccjiC52V6Dm40txNVuhAP/SZriRVkiaAWo1PW+yLLemcRsi1IJ1Q7Xe+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwopE8geIpa/C7OPq16baJ7navdbcZCO/urG5icOGnHxs322MUy
+	hSGF4FKYDTjXQMIka8pwiwAjvnT2JfdMczwSfeOFmuxDxP6by+pu5yYizBVupuIrsgoCFAeR65v
+	uguVT6p1jDKvk+w==
+X-Google-Smtp-Source: AGHT+IGguMbVp50NCUFx1El/2VL407lzgDW2byc5QrRm4W72G//quMgmHLsbAf9GYPqCvQhEbX/zrATSjVSVSQ==
+X-Received: from pji15.prod.google.com ([2002:a17:90b:3fcf:b0:32d:df7e:66c2])
+ (user=jmattson job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:54c5:b0:32e:dcc6:cd33 with SMTP id 98e67ed59e1d1-33093851a09mr16624962a91.11.1758558584275;
+ Mon, 22 Sep 2025 09:29:44 -0700 (PDT)
+Date: Mon, 22 Sep 2025 09:29:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d0aaaf1f47f0d948b60b0575e179564e3c024188.camel@redhat.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
+Message-ID: <20250922162935.621409-1-jmattson@google.com>
+Subject: [PATCH 0/2] KVM: SVM: Aggressively clear vmcb02 clean bits
+From: Jim Mattson <jmattson@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jim Mattson <jmattson@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 19, 2025 at 02:26:12PM +0200, Gabriele Monaco wrote:
-> On Fri, 2025-09-19 at 12:49 +0200, Thomas Weißschuh wrote:
-> > Reactions of the existing reactors are not easily detectable from programs
-> > and also not easily attributable to the triggering task.
-> > This makes it hard to test the monitors themselves programmatically.
-> > 
-> > The signal reactors allows applications to validate the correct operations
-> > of monitors either by installing custom signal handlers or by forking a
-> > child and waiting for the expected exit code.
-> 
-> Thanks, this looks like a really nice addition!
+It is unlikely that L1 will toggle the MSR intercept bit in vmcb02,
+or that L1 will change its own IA32_PAT MSR. However, if it does,
+the affected fields in vmcb02 should not be marked clean.
 
-Yeah, this will help us write KUnit or kselftest for the rtapp monitor.
+An alternative approach would be to implement a set of mutators for
+vmcb02 fields, and to clear the associated clean bit whenever a field
+is modified.
 
-> > For now only SIGBUS is supported, but additional signals can be added.
-> 
-> Curious choice of a default signal, is this specific to your use-case?
+Jim Mattson (2):
+  KVM: SVM: Mark VMCB_PERM_MAP as dirty on nested VMRUN
+  KVM: SVM: Mark VMCB_NPT as dirty on nested VMRUN
 
-Any signal should do. Looking through the signal list, I think SIGTRAP is
-more appropriate.
+ arch/x86/kvm/svm/nested.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> > +config RV_REACT_SIGNAL
-> > +	bool "Signal reactor"
-> > +	depends on RV_REACTORS
-> > +	default y
-> > +	help
-> > +	  Enables the signal reactor. The signal reactors sends a signal to
-> > the
-> > +	  task triggering an exception.
-> 
-> This assumption is not always correct, imagine a failure in the sleep monitor
-> caused by the wakeup event. The offending task is not current but the wakee.
-> 
-> This is a bit tricky because reactors don't have access to that task, just to
-> keep the same implementation between per-cpu and per-task monitors.
+-- 
+2.51.0.470.ga7dc726c21-goog
 
-Yeah, this one is tricky. We probably need to pass the correct task_struct
-to reactor, but then I'm not sure how to handle the other monitor types,
-e.g. per-cpu monitors.
-
-I have no alternative to offer, let me give it some thought.
-
-> > +static void rv_signal_force_sig(int signal, const char *message)
-> > +{
-> > +	/* The message already contains a subsystem prefix, so use raw
-> > printk() */
-> > +	printk(KERN_WARNING "%s", message);
-> > +	pr_warn("Killing PID %d with signal %d", task_pid_nr(current),
-> > signal);
-
-RV reactors have to use printk_deferred() instead. See:
-https://lore.kernel.org/lkml/874k50hqmj.fsf@jogness.linutronix.de/
-
-But I suggest dropping the printk from this reactor. We already have a
-printk reactor for that.
-
-> > +	force_sig(signal);
-> > +}
-> > +
-> > +static void rv_signal_task_work(struct callback_head *cbh)
-> > +{
-> > +	struct rv_signal_work *work = container_of_const(cbh, struct
-> > rv_signal_work, twork);
-> > +
-> > +	rv_signal_force_sig(work->signal, work->message);
-> > +
-> > +	mempool_free(work, rv_signal_task_work_pool);
-> > +}
-> > +
-> > +static void rv_reaction_signal(int signal, const char *fmt, va_list args)
-> > +{
-> > +	struct rv_signal_work *work;
-> > +	char message[256];
-> > +
-> > +	work = mempool_alloc_preallocated(rv_signal_task_work_pool);
-> > +	if (!work) {
-> > +		pr_warn_ratelimited("Unable to signal through task_work,
-> > sending directly\n");
-> > +		vsnprintf(message, sizeof(message), fmt, args);
-> > +		rv_signal_force_sig(signal, message);
-> > +		return;
-> > +	}
-> 
-> Why do you use the task_work at all instead of signalling directly?
-> If that's something not safe from a (any) tracepoint because it can sleep
-
-If I remember correctly, sending signals requires a spinlock and therefore
-may sleep on PREEMPT_RT.
-
-> you should definitely not call it if allocation fails.
-
-Yep.
-
-We probably can get away with not reacting at all if allocation fails, by
-crafting our tests such that only one reaction happens at a time, and
-allocation won't fail.
-
-Nam
 
