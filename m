@@ -1,131 +1,108 @@
-Return-Path: <linux-kernel+bounces-827439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1BA4B91C50
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:43:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B46DB91C53
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F747179ADC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:43:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2732A188CA81
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC8627FD6E;
-	Mon, 22 Sep 2025 14:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE2C2820A0;
+	Mon, 22 Sep 2025 14:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HtXlnGsS"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="QOPfvEsM"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2918827B326
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5655A274B50
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758552166; cv=none; b=n1qKyDaMqYB+lHTbOIJNgf0GuGultpOKZTgbY2uWYPNkMgbY5Hz2bZ/dCe5t/razxmy9N+fXZMQpLpc7uI/je3j6sG20bm92oJyIHyieBVCJW/ROmqqs+JdepnzWnp4VghKF8xD9ldrr6NqpA6gvF1+8BP///TUC1N5+pmtPiSc=
+	t=1758552167; cv=none; b=iI4CSrH1kr3J9Tq6eSdGvDiX7LgwWoqrD2iJQ8/JHvZrkGcW+RA4SeFGYaOiJUotC3hc+1beGy8hmNs/CQ37zTVClXt5hWMrRb14UqFcwEPGbkol1GG2u9NmeKjXY+ayr+UN3o0tWXA2SmmR0npyoxByYT4CacJzfHWlCB0FkZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758552166; c=relaxed/simple;
-	bh=mr1z2WZUkV5w8wCfWL4CkLdVwBTw1uNI4CLr3JqVcps=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ULHgfa82VrfUE9CYrmA2bVazpL8jpne2qBr1N0c1HWfL6EJ5/j9X8F4sJhnr6YjdXUkzcginz7SnkUPuzzQvE00I/VelgMRxOURl9yZhYnLnXQ0nAydZnlMAenL1QWNaCdzF2/ZoNyCGbMMtQ9sOdnTag86o+y05IOpCRWy+6cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HtXlnGsS; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-57bc9775989so1814390e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:42:44 -0700 (PDT)
+	s=arc-20240116; t=1758552167; c=relaxed/simple;
+	bh=cbgpVXooeJQoxtDkq+orZaKLHLZsU4tUaffVgtq1Mcc=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K1t2QLehnkJ4HBhX4Dz9p21sarqaGY+lzvBwpmkkTbWLXCC0xOzCqNYoQfEv9Fpn5uW+rksXXLhRUzJJ0o4P6XGbhws62OFPUGHaX8YpvwabZxorD0ZH+vC0+E4lBt4ULMZJhMOnkbUvNcAF6wldthpW6O+n0bIAiCOfHpl4N7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=QOPfvEsM; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-36a6a39752bso13563201fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:42:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758552163; x=1759156963; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fSdpk6/rCEmFmOFR6iR3IWh5rll/qCku+r80HG/TWtM=;
-        b=HtXlnGsS6sqRusRhxOI0c7Sw/68eTe7Opi/23HkTv3uLy3lQ1HBM9IrJXlkgrwemL3
-         VgqFyuBdnshjT3sJv2P4FevriOPBHYmkQXRZM/njYjnkT90qIqByyRb+iWzWcvr37ff3
-         VrP/UbHjC7ZxIAQwCukEbgo011Dy8pH0WXZ9SP0i89VDn7OZVJAqGg30twkECvDTdhcf
-         2+W+tvXwXgkJFd/kr8RkQewfjZMZ3/iTl7gzWhCTXPzozZuRNCydYIxhzVNon+ES59qs
-         xSHthqdha2qPTiEa5b5d7psZUS/DE3nUeljsKHJWzdCI3jcrJBDi8Cgkb4r6HN8M3HkW
-         qtuQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758552164; x=1759156964; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cbgpVXooeJQoxtDkq+orZaKLHLZsU4tUaffVgtq1Mcc=;
+        b=QOPfvEsMMEXAemiKfxrmMO9uFUY2th96vvKPTOtvxV3ikdb1FmTLRwjoX6RFivconY
+         PzG+pCtxzyOFf6sAWFAL1bCvAhVXdEOunLbTe4jq4ABp1PZaeOVgGrIkpbyS4XLfJFnM
+         0MVNU4sVv5x8nltBGXfhfxal9mmCyZ3v13vt/pitpGzJO8EAWgwjAKakptw3mYq+tZ7V
+         4idRp4EOMvgLCUuBGCfE9pQIflKYxXhO3LX8RwmmTwHBG7njzouZWsRxufMSHT14TzVX
+         u/Qok1HhHFGrKRw1rXVJbdVdYiQ1aCPuBsREu5ilKCuCjd3AEHvbwQGn+L4v57f9G3sX
+         3Ijg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758552163; x=1759156963;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fSdpk6/rCEmFmOFR6iR3IWh5rll/qCku+r80HG/TWtM=;
-        b=VOuTzOhZWi7/5v2pse1tmHe+P3EiBjnP30k8fGs1jFlLuRZIzNOe1bxAG6fbUxQFbN
-         TNp4qQzRuE6YEOHhwgEH937s0sAWzjfgHIDRqMY/tFfHHpZlvaJ8N8zXQiArFUaKUi35
-         NVQ+yGFepiQTXNs3nYamXMeAj9vH5xIllw+itsoePdSaz4djgiiG9lCVqWs8qmWwM4Rr
-         PDFKLISxt4Vf1SqvuFwP+AqHEr/ncb2I/C6RJnfFnLXFrpmSj78idD9UmWbDxhErAUPT
-         H01fJPdctm+S+Hjm+Icw0i4T4ymsbsKjvgIJIDfZReokfMNI7FZN+DpXoi3OpQVQ4SDU
-         mI8g==
-X-Forwarded-Encrypted: i=1; AJvYcCV/51Mx+UiDMUxYEeIQRVpJMXDCVa0g6U+W9cX11cVN+ZBjJJQtVn62RS6qGWRWdPPd3mbx8yqEJQ+DVuA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5u4k92gF9gaqKPiqID31sATsUgozMbSMdZMrvJgYqjAxwvJbp
-	K9e3DrxL0L/rAPqwwMlig/vbyDM3BxrAh9OsYdkiKVatalCCLexNOFQl
-X-Gm-Gg: ASbGncu7PuaVQENoNJeh5oEJCMkRdB2wdS4j1iYBJGuEii15VpNbob2zu8hhtts5VP+
-	tZ3SsknLBdgVsH1pj0HdAQqWzegxukyZtWDOYuXOfGqjJnOL8nSfqmTWhGhOwtWQ6tqUd2usosB
-	rnLdmdlaV+dQqX0uZQTawWkzM9ObpxZS6lrcMzG+YSRSvvY+cVvJbOK7Ed7p/eLbhhpJDc21BmG
-	GFSrZiwiXlmDE00r73VoGnMeBoU/RONm3imy0uylBceprTnLg38oKf7CVJABlr3Mg+9O5lnP2nv
-	+n9Z6kVk6d9wL7E/5FwvOg1tr6cEVOBMqyaKL0+9DtFBGJwKOTav1QlDP5L0/4a4k2T0gcNr5+i
-	TX2mxSFUtDBVXNSUnUxrY1np2x3O5a8ziw5HcTXLkMmKV6JuFpSdfQK70IaZ9FToC4BcwoBKJvd
-	STQX83tjUwAPpbtrJ2
-X-Google-Smtp-Source: AGHT+IEaXJNVnmOempIC4sdHG1xqvMW++QRt/th9kx+Xh1olAhqCDJAWeG7b0NIR1dEzieOMIXNmBA==
-X-Received: by 2002:a05:6512:6306:b0:57e:ef77:698e with SMTP id 2adb3069b0e04-57eef777f01mr949325e87.11.1758552162891;
-        Mon, 22 Sep 2025 07:42:42 -0700 (PDT)
-Received: from localhost.localdomain (broadband-109-173-93-221.ip.moscow.rt.ru. [109.173.93.221])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-578a5f44735sm3381450e87.26.2025.09.22.07.42.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 07:42:42 -0700 (PDT)
-From: Alexandr Sapozhnkiov <alsp705@gmail.com>
-To: Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@redhat.com>,
-	dm-devel@redhat.com,
-	linux-kernel@vger.kernel.org
-Cc: Alexandr Sapozhnikov <alsp705@gmail.com>,
-	linux-media@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH 5.10] md: fix NULL pointer dereference at reregister_snapshot()
-Date: Mon, 22 Sep 2025 17:42:37 +0300
-Message-ID: <20250922144239.11-1-alsp705@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1758552164; x=1759156964;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cbgpVXooeJQoxtDkq+orZaKLHLZsU4tUaffVgtq1Mcc=;
+        b=cWox/OPEFxDzKYwyrGrQGLAS+Uco3iciovUSrm1lQA7/3a5UJUkpqm2goudRqfckt4
+         VpALgfywmQXNITW9bBeFtE6Th53aD6P5fJ5lN59Kdl9YhecNy7UCVqbHp5F5oxGhg/Ks
+         6G9JxrjexLRmZw35r8+1CaFVs35609zCIG0aD3FY4hsN3ggot+JtK4agAg4So7vAHwCK
+         rpLff2MHN662oFJQRMIuHlnRMAQB6SF/qFTfD7StenBr4PwAkLBelPbZxPsuW4PmcuSf
+         n8u67t6XAjCGhVL7e3stmXCS7QsoT+9hD4pr+699ll/d5ItC05+lCdod4KPM+KaFDG2l
+         4SVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWynmi0azkFmjpRaWqdLaadjO7XHwCAOwtSkygwJF/l79xn6u4Ickd0kI6+qByzYVyCDNWgT94A5gdJWP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy28yyIjvz+BEAeO+QCAtxZbBseK5+oYUpV8wLEQB/IxzGItoF9
+	Q8Bn9iGxVTXhNjyCpDKsd+IBaIX5NYWubGMYZsxEhSXYaOhwLdYxZK7Pb5Iuvn13QEeQjS2iSF3
+	R7j3g/zXyHduHOYdl7Am8okJgF+722/nvmPWAWSVgiA==
+X-Gm-Gg: ASbGncswOo7VlT4JY6xS3/xBCtV7C77Vzd1sKQyEi19LMzhVdPPuUkxDOIU2SN2TNeQ
+	s0VzUZze+o01OjWqHDRA2w8d0R6hnHHJKUbwIA6j8K3vgjV3iGp1XEPB2zexL4f/6riP1wy2Cjs
+	JUmenvGQTeJzrnFaD4EjJFzEczkdw01BCHSmE2xo5MX43Oo3Ayj4mI46oY/9NSNw2Jup70TqW14
+	kStCjCuVf4s5wNn/7mhq/36rP0fBEQ8CJCQHQ==
+X-Google-Smtp-Source: AGHT+IHaE9nqceFLj+JInNghJEvz7NuUskN6MHfzPYyLxUjABx4E3I4QkTLcuqh8bctTyJSvA4j3CUuzt28CZtnMZP8=
+X-Received: by 2002:a05:6512:2395:b0:57a:501:54ab with SMTP id
+ 2adb3069b0e04-57a05015577mr5016702e87.50.1758552164438; Mon, 22 Sep 2025
+ 07:42:44 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 22 Sep 2025 07:42:43 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 22 Sep 2025 07:42:43 -0700
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <20250922-i2c-mux-v1-5-28c94a610930@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250922-i2c-mux-v1-0-28c94a610930@gmail.com> <20250922-i2c-mux-v1-5-28c94a610930@gmail.com>
+Date: Mon, 22 Sep 2025 07:42:43 -0700
+X-Gm-Features: AS18NWA6jseTsU1-el3RwI7NaUjcbCUkPeK98Ko-CDeIjcGra6Ar6whhs_lBYGo
+Message-ID: <CAMRc=MdMMQxFfkMPHaUg9nMWuW9F1p+PT2i-ggcU5SSFKOVGKQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 5/7] i2c: davinci: calculate bus freq from Hz instead
+ of kHz
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
+	Michael Hennerich <michael.hennerich@analog.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Alexandr Sapozhnikov <alsp705@gmail.com>
+On Mon, 22 Sep 2025 08:21:00 +0200, Marcus Folkesson
+<marcus.folkesson@gmail.com> said:
+> The bus frequency is unnecessarily converted between Hz and kHz in
+> several places.
+> This is probably an old legacy from the old times (pre-devicetrees)
+> when the davinci_i2c_platform_data took the bus_freq in kHz.
+>
+> Stick to Hz.
+>
 
-Return value of a function '__lookup_origin' is dereferenced 
-at dm-snap.c:596 without checking for NULL, but it is usually 
-checked for this function
+This looks good but would you mind also changing the name of the field to
+bus_freq_hz in order to leave zero change of misinterpreting it in the future?
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
-
----
- drivers/md/dm-snap.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index 4668b2cd98f4..105f6e768ad1 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -590,12 +590,15 @@ static int register_snapshot(struct dm_snapshot *snap)
-  */
- static void reregister_snapshot(struct dm_snapshot *s)
- {
-+	struct origin *o;
- 	struct block_device *bdev = s->origin->bdev;
- 
- 	down_write(&_origins_lock);
-+	o = __lookup_origin(s->origin->bdev);
- 
- 	list_del(&s->list);
--	__insert_snapshot(__lookup_origin(bdev), s);
-+	if (o)
-+		__insert_snapshot(o, s);
- 
- 	up_write(&_origins_lock);
- }
--- 
-2.43.0
-
+Bartosz
 
