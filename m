@@ -1,441 +1,192 @@
-Return-Path: <linux-kernel+bounces-827919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A4CB936B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:01:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAA0AB936C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CC13188B9B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:01:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C627D7B2AEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E4F285068;
-	Mon, 22 Sep 2025 22:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5452F49F2;
+	Mon, 22 Sep 2025 22:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJjF9VOW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZIesPBQ0"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8801E502;
-	Mon, 22 Sep 2025 22:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A00B284B33
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 22:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758578456; cv=none; b=JUgtu1ZF5W1kitdVRcIwHu+Y7yghZ+katLminIJBcySW3kvqLHsXenGCxBNg1navVPkUzAkMamYMuTHRBVkPc4LouOVExrndk0W5emk3gGDLqt7tV31HUvQhHOCWnUhVj187DOy4JxJLMb3CRg3ovGo2mifm45Z8eft4YtLwjVM=
+	t=1758578551; cv=none; b=jpDBs3lVXV7W5HuHRBxEZRk77puvnUCY7o0AoCUgmZyN1dn1UP9lhSjvmtguUsOSLE7elvIthVtIXnmxPv0Vn+aQmMJp1ebSznPJu6KK2tE/H0zjsiazmvfRIWKwbBuISHYt4vdveW4aojnNULUR5X9HIFHT19R0kw6FJdlvrLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758578456; c=relaxed/simple;
-	bh=y4F5Q8UI8jEbr6PZWHKJIknJACl49zX4dkSjzhSSdUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c697YCvv1mQCKJ+Cq6h0smA63ETRTWMjxd5Ui0QVhwL4nqt8P6SE//LEG3GM+EwQJSZoFZqQh3gA8qYJkySPo3jAtyVk6OJapbHUe7L8c+ecLvhM6GijtjBDq4qwHvBNc6ltsEt/PPi2IjJI/efbuXhhrDCIwJxveRsBD2C7KYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJjF9VOW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BDBDC4CEF0;
-	Mon, 22 Sep 2025 22:00:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758578455;
-	bh=y4F5Q8UI8jEbr6PZWHKJIknJACl49zX4dkSjzhSSdUY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aJjF9VOWeSzHOb+WneKzU5dxiMzu00UXs0vHrJOIbuQs8Kgf9x5RD8W9e59PC306B
-	 omrO557Q0o8NRon9DK6ElBf1tEukx3GX8EJ5Vq3hyj3/M/i0H0gj81qR2q88BuA65F
-	 F+UAC98N9cd2RfidIsAHZnGfjTnhG4+HDrJtrroMtYnla84YHm9RcxrMVLCuWMW7k5
-	 qhBS88EE4d1Q80SgN9YjkrWIQ6IbeShLN+WTOzncWL69DvYVOtHxzkWTe1b9DIESNQ
-	 xSv6dyS0M7S+Ii5p1s47Cg5/aaGMSDUA15xee76uX+PQDvU/2vkdqIlGbDkmu1CNpt
-	 QhQqJZFucgOXA==
-Date: Mon, 22 Sep 2025 17:00:53 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ariana Lazar <ariana.lazar@microchip.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: iio: dac: adding support for Microchip
- MCP47FEB02
-Message-ID: <20250922220053.GA1371364-robh@kernel.org>
-References: <20250922-mcp47feb02-v1-0-06cb4acaa347@microchip.com>
- <20250922-mcp47feb02-v1-1-06cb4acaa347@microchip.com>
+	s=arc-20240116; t=1758578551; c=relaxed/simple;
+	bh=LWWy1NSMrdokOxRy9TWCPxhDNVSdaHvZSyTj7oBWRf8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jTwFHfnynLO+WGjmmTPgUDoCdJUJNakCFLLA0TViO/VOOjWUGj2f2Ks6raUuH7XOHXg2A/dAkOVW/TYgwubtRH5VNSA0eq359zvun+DxVlPNWd1TKk7gGuyfdzcxnhWa34ACAupQBTIDdqx8BN0LH8YjiQfnzttS6vcxpSg1Cdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZIesPBQ0; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758578536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LvQMnsu791EG1tpjwy9I3544++reF65dwLMnGRELwws=;
+	b=ZIesPBQ0zAl1Vmukqxmtt0XIK/MVh1ffyqQa8stAcXpFk9CsnyvK3u7hKV5bkDVd50Tz9d
+	518QauXNlAT2j4sE8owNxzkvVG0kvid9zfQUuEIbqqYr7Or6i+wsuhQ7AAQ3ymIsoYuF80
+	BhhlByeyTe56tg6TFdwmWHKUtJCGNNw=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Peilin Ye <yepeilin@google.com>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	bpf@vger.kernel.org,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>,
+	Michal Hocko <mhocko@suse.com>
+Subject: [PATCH v2] memcg: skip cgroup_file_notify if spinning is not allowed
+Date: Mon, 22 Sep 2025 15:02:03 -0700
+Message-ID: <20250922220203.261714-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250922-mcp47feb02-v1-1-06cb4acaa347@microchip.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 22, 2025 at 02:30:53PM +0300, Ariana Lazar wrote:
-> This is the device tree schema for iio driver for Microchip
-> MCP47F(E/V)B(0/1/2)1, MCP47F(E/V)B(0/1/2)2, MCP47F(E/V)B(0/1/2)4 and
-> MCP47F(E/V)B(0/1/2)8 series of buffered voltage output Digital-to-Analog
-> Converters with nonvolatile or volatile memory and an I2C Interface.
-> 
-> The families support up to 8 output channels.
-> 
-> The devices can be 8-bit, 10-bit and 12-bit.
-> 
-> Signed-off-by: Ariana Lazar <ariana.lazar@microchip.com>
-> ---
->  .../bindings/iio/dac/microchip,mcp47feb02.yaml     | 305 +++++++++++++++++++++
->  MAINTAINERS                                        |   6 +
->  2 files changed, 311 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/dac/microchip,mcp47feb02.yaml b/Documentation/devicetree/bindings/iio/dac/microchip,mcp47feb02.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..d05ddafa37540bc1f6b6ce65a466b95913925c10
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/dac/microchip,mcp47feb02.yaml
-> @@ -0,0 +1,305 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/dac/microchip,mcp47feb02.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Microchip MCP47F(E/V)B(0/1/2)(1/2/4/8) DAC with I2C Interface Families
-> +
-> +maintainers:
-> +  - Ariana Lazar <ariana.lazar@microchip.com>
-> +
-> +description: |
-> +  Datasheet for MCP47FEB01, MCP47FEB11, MCP47FEB21, MCP47FEB02, MCP47FEB12,
-> +  MCP47FEB22 can be found here:
-> +    https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005375A.pdf
-> +  Datasheet for MCP47FVBXX can be found here:
-> +    https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005405A.pdf
-> +  Datasheet for MCP47FEB04, MCP47FEB14, MCP47FEB24, MCP47FEB08, MCP47FEB18,
-> +  MCP47FEB28, MCP47FVB04, MCP47FVB14, MCP47FVB24, MCP47FVB08, MCP47FVB18,
-> +  MCP47FVB28 can be found here:
-> +    https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/MCP47FXBX48-Data-Sheet-DS200006368A.pdf
-> +
-> +  +------------+--------------+-------------+-------------+------------+
-> +  | Device     |  Resolution  |   Channels  | Vref number | Memory     |
-> +  |------------|--------------|-------------|-------------|------------|
-> +  | MCP47FEB01 |     8-bit    |      1      |      1      |   EEPROM   |
-> +  | MCP47FEB11 |    10-bit    |      1      |      1      |   EEPROM   |
-> +  | MCP47FEB21 |    12-bit    |      1      |      1      |   EEPROM   |
-> +  |------------|--------------|-------------|-------------|------------|
-> +  | MCP47FEB02 |     8-bit    |      2      |      1      |   EEPROM   |
-> +  | MCP47FEB12 |    10-bit    |      2      |      1      |   EEPROM   |
-> +  | MCP47FEB22 |    12-bit    |      2      |      1      |   EEPROM   |
-> +  |------------|--------------|-------------|-------------|------------|
-> +  | MCP47FVB01 |     8-bit    |      1      |      1      |      RAM   |
-> +  | MCP47FVB11 |    10-bit    |      1      |      1      |      RAM   |
-> +  | MCP47FVB21 |    12-bit    |      1      |      1      |      RAM   |
-> +  |------------|--------------|-------------|-------------|------------|
-> +  | MCP47FVB02 |     8-bit    |      2      |      1      |      RAM   |
-> +  | MCP47FVB12 |    10-bit    |      2      |      1      |      RAM   |
-> +  | MCP47FVB22 |    12-bit    |      2      |      1      |      RAM   |
-> +  |------------|--------------|-------------|-------------|------------|
-> +  | MCP47FVB04 |     8-bit    |      4      |      2      |      RAM   |
-> +  | MCP47FVB14 |    10-bit    |      4      |      2      |      RAM   |
-> +  | MCP47FVB24 |    12-bit    |      4      |      2      |      RAM   |
-> +  |------------|--------------|-------------|-------------|------------|
-> +  | MCP47FVB08 |     8-bit    |      8      |      2      |      RAM   |
-> +  | MCP47FVB18 |    10-bit    |      8      |      2      |      RAM   |
-> +  | MCP47FVB28 |    12-bit    |      8      |      2      |      RAM   |
-> +  |------------|--------------|-------------|-------------|------------|
-> +  | MCP47FEB04 |     8-bit    |      4      |      2      |   EEPROM   |
-> +  | MCP47FEB14 |    10-bit    |      4      |      2      |   EEPROM   |
-> +  | MCP47FEB24 |    12-bit    |      4      |      2      |   EEPROM   |
-> +  |------------|--------------|-------------|-------------|------------|
-> +  | MCP47FEB08 |     8-bit    |      8      |      2      |   EEPROM   |
-> +  | MCP47FEB18 |    10-bit    |      8      |      2      |   EEPROM   |
-> +  | MCP47FEB28 |    12-bit    |      8      |      2      |   EEPROM   |
-> +  +------------+--------------+-------------+-------------+------------+
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - microchip,mcp47feb01
-> +      - microchip,mcp47feb11
-> +      - microchip,mcp47feb21
-> +      - microchip,mcp47feb02
-> +      - microchip,mcp47feb12
-> +      - microchip,mcp47feb22
-> +      - microchip,mcp47fvb01
-> +      - microchip,mcp47fvb11
-> +      - microchip,mcp47fvb21
-> +      - microchip,mcp47fvb02
-> +      - microchip,mcp47fvb12
-> +      - microchip,mcp47fvb22
-> +      - microchip,mcp47fvb04
-> +      - microchip,mcp47fvb14
-> +      - microchip,mcp47fvb24
-> +      - microchip,mcp47fvb08
-> +      - microchip,mcp47fvb18
-> +      - microchip,mcp47fvb28
-> +      - microchip,mcp47feb04
-> +      - microchip,mcp47feb14
-> +      - microchip,mcp47feb24
-> +      - microchip,mcp47feb08
-> +      - microchip,mcp47feb18
-> +      - microchip,mcp47feb28
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +  vdd-supply:
-> +    description: |
+Generally memcg charging is allowed from all the contexts including NMI
+where even spinning on spinlock can cause locking issues. However one
+call chain was missed during the addition of memcg charging from any
+context support. That is try_charge_memcg() -> memcg_memory_event() ->
+cgroup_file_notify().
 
-Don't need '|' if no formatting to preserve.
+The possible function call tree under cgroup_file_notify() can acquire
+many different spin locks in spinning mode. Some of them are
+cgroup_file_kn_lock, kernfs_notify_lock, pool_workqeue's lock. So, let's
+just skip cgroup_file_notify() from memcg charging if the context does
+not allow spinning.
 
-> +      Provides power and it will be used as the reference voltage if vref-supply
-> +      is not provided.
-> +
-> +  vref-supply:
-> +    description: |
-> +      Vref pin is used as a voltage reference when this supply is specified.
-> +      Into the datasheet it could be found as a Vref0.
-> +      If it does not exists the internal reference will be used.
+Alternative approach was also explored where instead of skipping
+cgroup_file_notify(), we defer the memcg event processing to irq_work
+[1]. However it adds complexity and it was decided to keep things simple
+until we need more memcg events with !allow_spinning requirement.
 
-blank line between paragraphs. But is every sentence a paragraph?
+Link: https://lore.kernel.org/all/5qi2llyzf7gklncflo6gxoozljbm4h3tpnuv4u4ej4ztysvi6f@x44v7nz2wdzd/ [1]
+Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+Acked-by: Michal Hocko <mhocko@suse.com>
+---
+Changes since v1:
+- Add warning if !allow_spinning is used with memcg events other than
+  MEMCG_MAX (requested by Roman)
 
-> +      This will be used as a reference voltage for the following outputs:
-> +        - for single-channel device: Vout0;
-> +        - for dual-channel device: Vout0, Vout1;
-> +        - for quad-channel device: Vout0, Vout2;
-> +        - for octal-channel device: Vout0, Vout2, Vout6, Vout8;
-> +
-> +  vref1-supply:
-> +    description: |
-> +      Vref1 pin is used as a voltage reference when this supply is specified.
-> +      If it does not exists the internal reference will be used.
-> +      This will be used as a reference voltage for the following outputs:
-> +        - for quad-channel device: Vout1, Vout3;
-> +        - for octal-channel device: Vout1, Vout3, Vout5, Vout7;
-> +
-> +  lat-gpios:
-> +    description: |
-> +      LAT pin to be used as a hardware trigger to synchronously update the DAC
-> +      channels and the pin is active Low. It could be also found as lat0 in
-> +      datasheet.
-> +    maxItems: 1
-> +
-> +  lat1-gpios:
-> +    description: |
-> +     LAT1 pin to be used as a hardware trigger to synchronously update the odd
-> +     DAC channels on devices with 4 and 8 channels. The pin is active Low.
-> +    maxItems: 1
-> +
-> +  microchip,vref-buffered:
-> +    type: boolean
-> +    description: |
-> +      Enable buffering of the external Vref/Vref0 pin in cases where the
-> +      external reference voltage does not have sufficient current capability in
-> +      order not to drop it’s voltage when connected to the internal resistor
-> +      ladder circuit.
-> +
-> +  microchip,vref1-buffered:
-> +    type: boolean
-> +    description: |
-> +      Enable buffering of the external Vref1 pin in cases where the external
-> +      reference voltage does not have sufficient current capability in order not
-> +      to drop it’s voltage when connected to the internal resistor ladder
-> +      circuit.
-> +
-> +  microchip,output-gain-2x:
-> +    type: boolean
-> +    description: |
+ include/linux/memcontrol.h | 26 +++++++++++++++++++-------
+ mm/memcontrol.c            |  7 ++++---
+ 2 files changed, 23 insertions(+), 10 deletions(-)
 
-?
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 16fe0306e50e..873e510d6f8d 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1001,22 +1001,28 @@ static inline void count_memcg_event_mm(struct mm_struct *mm,
+ 	count_memcg_events_mm(mm, idx, 1);
+ }
+ 
+-static inline void memcg_memory_event(struct mem_cgroup *memcg,
+-				      enum memcg_memory_event event)
++static inline void __memcg_memory_event(struct mem_cgroup *memcg,
++					enum memcg_memory_event event,
++					bool allow_spinning)
+ {
+ 	bool swap_event = event == MEMCG_SWAP_HIGH || event == MEMCG_SWAP_MAX ||
+ 			  event == MEMCG_SWAP_FAIL;
+ 
++	/* For now only MEMCG_MAX can happen with !allow_spinning context. */
++	VM_WARN_ON_ONCE(!allow_spinning && event != MEMCG_MAX);
++
+ 	atomic_long_inc(&memcg->memory_events_local[event]);
+-	if (!swap_event)
++	if (!swap_event && allow_spinning)
+ 		cgroup_file_notify(&memcg->events_local_file);
+ 
+ 	do {
+ 		atomic_long_inc(&memcg->memory_events[event]);
+-		if (swap_event)
+-			cgroup_file_notify(&memcg->swap_events_file);
+-		else
+-			cgroup_file_notify(&memcg->events_file);
++		if (allow_spinning) {
++			if (swap_event)
++				cgroup_file_notify(&memcg->swap_events_file);
++			else
++				cgroup_file_notify(&memcg->events_file);
++		}
+ 
+ 		if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
+ 			break;
+@@ -1026,6 +1032,12 @@ static inline void memcg_memory_event(struct mem_cgroup *memcg,
+ 		 !mem_cgroup_is_root(memcg));
+ }
+ 
++static inline void memcg_memory_event(struct mem_cgroup *memcg,
++				      enum memcg_memory_event event)
++{
++	__memcg_memory_event(memcg, event, true);
++}
++
+ static inline void memcg_memory_event_mm(struct mm_struct *mm,
+ 					 enum memcg_memory_event event)
+ {
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index e090f29eb03b..4deda33625f4 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2307,12 +2307,13 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	bool drained = false;
+ 	bool raised_max_event = false;
+ 	unsigned long pflags;
++	bool allow_spinning = gfpflags_allow_spinning(gfp_mask);
+ 
+ retry:
+ 	if (consume_stock(memcg, nr_pages))
+ 		return 0;
+ 
+-	if (!gfpflags_allow_spinning(gfp_mask))
++	if (!allow_spinning)
+ 		/* Avoid the refill and flush of the older stock */
+ 		batch = nr_pages;
+ 
+@@ -2348,7 +2349,7 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	if (!gfpflags_allow_blocking(gfp_mask))
+ 		goto nomem;
+ 
+-	memcg_memory_event(mem_over_limit, MEMCG_MAX);
++	__memcg_memory_event(mem_over_limit, MEMCG_MAX, allow_spinning);
+ 	raised_max_event = true;
+ 
+ 	psi_memstall_enter(&pflags);
+@@ -2415,7 +2416,7 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	 * a MEMCG_MAX event.
+ 	 */
+ 	if (!raised_max_event)
+-		memcg_memory_event(mem_over_limit, MEMCG_MAX);
++		__memcg_memory_event(mem_over_limit, MEMCG_MAX, allow_spinning);
+ 
+ 	/*
+ 	 * The allocation either can't fail or will lead to more memory
+-- 
+2.47.3
 
-> +
-> +patternProperties:
-> +  "^channel@[0-7]$":
-> +    $ref: dac.yaml
-> +    type: object
-> +    description: Voltage output channel.
-> +
-> +    properties:
-> +      reg:
-> +        description: The channel number.
-> +        minimum: 1
-> +        maximum: 7
-> +
-> +      label:
-> +        description: Unique name to identify which channel this is.
-> +
-> +    required:
-> +      - reg
-> +
-> +    unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vdd-supply
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - microchip,mcp47feb01
-> +              - microchip,mcp47feb11
-> +              - microchip,mcp47feb21
-> +              - microchip,mcp47fvb01
-> +              - microchip,mcp47fvb11
-> +              - microchip,mcp47fvb21
-> +    then:
-> +      properties:
-> +        lat-gpios: true
-
-true has no effect as the property is already allowed. Drop all the true 
-cases.
-
-> +        lat1-gpios: false
-> +        vref-supply: true
-> +        vref1-supply: false
-> +        microchip,vref-buffered: true
-> +        microchip,vref1-buffered: false
-> +      patternProperties:
-> +       "^channel@[1]$":
-
-Did you mean "[01]"? If not, that's not a pattern, but a fixed string.
-
-
-> +        properties:
-> +         reg:
-> +          items:
-> +            maximum: 1
-> +        "^channel@[2-7]$": false
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - microchip,mcp47feb02
-> +              - microchip,mcp47feb12
-> +              - microchip,mcp47feb22
-> +              - microchip,mcp47fvb02
-> +              - microchip,mcp47fvb12
-> +              - microchip,mcp47fvb22
-> +    then:
-> +      properties:
-> +        lat-gpios: true
-> +        lat1-gpios: false
-> +        vref-supply: true
-> +        vref1-supply: false
-> +        microchip,vref-buffered: true
-> +        microchip,vref1-buffered: false
-> +      patternProperties:
-> +       "^channel@[1-2]$":
-> +        properties:
-> +         reg:
-> +          items:
-> +            maximum: 1
-
-Based on the unit-address, the minimum is 1 and the maximum is 2. 
-"enum: [ 1, 2 ]" is a bit more concise.
-
-> +        "^channel@[3-7]$": false
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - microchip,mcp47fvb04
-> +              - microchip,mcp47fvb14
-> +              - microchip,mcp47fvb24
-> +              - microchip,mcp47fvb08
-> +              - microchip,mcp47fvb18
-> +              - microchip,mcp47fvb28
-> +              - microchip,mcp47feb04
-> +              - microchip,mcp47feb14
-> +              - microchip,mcp47feb24
-> +              - microchip,mcp47feb08
-> +              - microchip,mcp47feb18
-> +              - microchip,mcp47feb28
-> +    then:
-> +      properties:
-> +        lat-gpios: true
-> +        lat1-gpios: true
-> +        vref-supply: true
-> +        vref1-supply: true
-> +        microchip,vref-buffered: true
-> +        microchip,vref1-buffered: true
-> +      patternProperties:
-> +       "^channel@[1-4]$":
-> +        properties:
-> +         reg:
-> +          items:
-> +            maximum: 1
-
-?
-
-> +       "^channel@[5-7]$": false
-> +  - if:
-> +      not:
-> +        required:
-> +          - vref-supply
-> +    then:
-> +      properties:
-> +        microchip,vref-buffered: false
-> +  - if:
-> +      not:
-> +        required:
-> +          - vref1-supply
-> +    then:
-> +      properties:
-> +        microchip,vref1-buffered: false
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        dac@0 {
-> +          compatible = "microchip,mcp47feb02";
-> +          reg = <0>;
-> +          vdd-supply = <&vdac_vdd>;
-> +          vref-supply = <&vref_reg>;
-> +
-> +          #address-cells = <1>;
-> +          #size-cells = <0>;
-> +          channel@0 {
-> +            reg = <0>;
-> +            label = "DAC_OUTPUT_0";
-> +          };
-> +
-> +          channel@1 {
-> +            reg = <0x1>;
-> +            label = "DAC_OUTPUT_1";
-> +          };
-> +      };
-> +    };
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a92290fffa163f9fe8fe3f04bf66426f9a894409..6f51890cfc3081bc49c08fddc8af526c1ecc8d72 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14938,6 +14938,12 @@ F:	Documentation/ABI/testing/sysfs-bus-iio-potentiometer-mcp4531
->  F:	drivers/iio/potentiometer/mcp4018.c
->  F:	drivers/iio/potentiometer/mcp4531.c
->  
-> +MCP47FEB02 MICROCHIP DAC DRIVER
-> +M:	Ariana Lazar <ariana.lazar@microchip.com>
-> +L:	linux-iio@vger.kernel.org
-> +S:	Supported
-> +F:	Documentation/devicetree/bindings/iio/dac/microchip,mcp47feb02.yaml
-> +
->  MCP4821 DAC DRIVER
->  M:	Anshul Dalal <anshulusr@gmail.com>
->  L:	linux-iio@vger.kernel.org
-> 
-> -- 
-> 2.43.0
-> 
 
