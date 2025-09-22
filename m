@@ -1,176 +1,157 @@
-Return-Path: <linux-kernel+bounces-827867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA05B934E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:59:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C926AB934EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81E0F7A9ED3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:57:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F6F3A3BD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140052ECE86;
-	Mon, 22 Sep 2025 20:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997C527F011;
+	Mon, 22 Sep 2025 21:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I5/QHp1e"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I1avbmk6"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E8A27B34A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 20:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED9425D218
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758574768; cv=none; b=VIQcVDZXdMst7j/cvdUHY81OwW3vuL0kxu4KFVl6tRn/MDW8Bb6WtSeex0zGooirrK3knKWjXju2rcJvYUHLJfkJvjBb77NOA4m9igokUQtUP9UCDoPVPxEsW7uvG8BNjq+9Cz7n/ZrJW/7Zt4L/gqv7RRzILPv5HX4PQ4JAoEw=
+	t=1758574815; cv=none; b=VZJ5H1tGl09Xy+RE4iS+H5TdbwwUKOypPjAe7e6CesAV0w853UICQiTtclVmkzLJ19D4hwsmHF7QMXubg9UO48dtkVAf5uqCIfxk8fbj+nWW9KREHImrFS5Dl7pgijmHo6hxXs+N+l6TpSyAo1zK6bQuBq8B3Ak2exh+jTcg3nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758574768; c=relaxed/simple;
-	bh=CUP3eycXoGcBJmDOi+pXkUgGpzCUq/xusP8MHFeb4Vw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dumJJ9zHWftdpjEiGFhNm3mpJs7227R3AlUfPLCM5BfXbp81Jxj3wYnIfWsJJ9VmXzljgnDrHuG+/3KcRjT3JijcvXI/wntElgil+yb7sDjOmFNbTkJF4BU4ZzOOc5MAPiopZaa1z2tjfMQef1jo78HFkZh4At8Z6P66FBpBTJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I5/QHp1e; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b54a74f9150so3586988a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:59:26 -0700 (PDT)
+	s=arc-20240116; t=1758574815; c=relaxed/simple;
+	bh=AggCKAT/ai9pPMS+uvkc8gHc61NeqPEoUM5TIXFt0jE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k3IKAxDiaJCOW3n+PZFGjVZjxm9bXYbPsBXdMoGHZXEMthlfNOAzBUpFnKKHMevaIOxm9YmLLZgyKUpvFfcAmMezAgovJPdm0NyII+mcRGVxwP8w9h2/1tfPxOV/7hqKohxKqSvf5g4NIM9R9EJhpKPrEtSc+PirdfmuRy4JlQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I1avbmk6; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45f2acb5f42so36320975e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:00:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758574766; x=1759179566; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PiFG421BizDvewXPlC7JQjLJ8H0b8/d80Id9cbV0N74=;
-        b=I5/QHp1eg1IAJASMR+jmi1MwWUwbNhmS7pBwA+S+nf5xhpQzQFcvmAo1M4NTQxE5UQ
-         hBLWB16TwH1wg5BwNvpJuS6O+tFUdFOh4sYtaJKvUfINhbrpyc1WdWQu6/qfWuwvkoxy
-         j/pWRTPaF0MCoX42m8N/mZd1Kg3VB+ADwdC4ZTfVYnKkWwL2wa16P3GncLokkNvp6h6q
-         3N5o+YXHX5Df7Arwsqf54JjK0hscsqfNo76n11yBEurpDivUf7UESdk9JHxqjRLjnQj0
-         wEd0/L/AqZLDZl5pcW/0dBBrja9CSFIl3odDbkr/DFiaWGLdrwUhFi65LBj9/BPuCtgX
-         cZ6A==
+        d=google.com; s=20230601; t=1758574811; x=1759179611; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tZr0hPhFAud0Uw+aBiZrTvnM6zeOzyc8u94gFH2jTwA=;
+        b=I1avbmk6/YfMZ3csIRh0eB2/T59L8xPgw5F7juqcjhkXIVAzzn8wsuGm9Cfe6deVfG
+         KLqVq9G6JDwenEV9UrAz0Hr+perUaLwtaPn+qo+UY14VBn+8lNds6rz3wxKSBeWsrNT/
+         bYehkzF0Xj2kPQIh5wHiJMf9j/bjSraSYuDK1rJ8288xBpt34O4hGRzEprxxRIZa4zW9
+         fpV8NVlkNVfh0E/8p2t7X7yw2CVDA1WdhLhEa8a8V2hju4uq4TTEfG6oNrem9mgHaBvS
+         PK2Qyt5x5ME/lv0lBj2+u5PV4pVipBRE4zQ/5VgbfrzKyetDM2stvq1psnVMddt7Z4dw
+         ol+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758574766; x=1759179566;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PiFG421BizDvewXPlC7JQjLJ8H0b8/d80Id9cbV0N74=;
-        b=AE8aPyIbJPQVmR/gSCXvviVj6kVERAyPP9lPzoYC+44MCYyfKS6mb4hIaiYY/w3GTM
-         yDFfFoI7F+hTpAx4gT8IzSJJzsNdvhBvnU90XMr+EyWkEyFNVd+4//Qc8py0+SIwTCPQ
-         19lVv64NLX8VkveyN+kuEy9A+ngypJ4rTJ5BjAIXKv0CxHq80ONQJmwMbXe8nE+7619V
-         i5T9IVjF5OUwiSVtBVoXMVqiKsz2blbDdGjnPFV+1nwsy2gTErUHeYl8il+GOpvqb077
-         ZUPCZsBYWkLrtV712zCyca27haBALOrXxcFrzIyPlaluHB07E83eOyg23j/UyG4UpcxA
-         02Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkNqEpTdlM2EYuEZHqeWRz8xsD35mT5gSX/O3FxwoaiFMbqbZ7mY1UNVHjZVI5CQkJtHexspZrfvlFDrw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSFrK5nTWr2bKs2FKcFnsnDd498NkEXPcAegbaRcDnrT5AWje3
-	rTNZnTPlKNyk4biuuxpcTs0U8sMk/AS8pe5xL59lkwy1NeTTx4sUqHKnQ8mQ6QYP1y46/OjDQ1p
-	JeoyTQV32zcDD5e8YL8KL/abPmPnC/fxgag==
-X-Gm-Gg: ASbGncsK2JEQ1YKoC+yQfLdTCDbkiXB6E/+uJrIhcs/u1X4FEA6pkwy7leXGO22wa0W
-	M3F8oH9WsNX8dFa2yLxhKFs5xG52A6oQK6D7tYO4mMWivdo2kXPUAEmzSXPbtuJbifsszLD3o/w
-	2xC780AeV9NSy7Q5/hdUNe7Ozedt6EY7Kvlz9zJ3pVi30akpYVvp/Bng6J1Db70Z0wsz/RIlrGp
-	+7fh7iXv9ULduuI2P/5nbI=
-X-Google-Smtp-Source: AGHT+IE9VwmPhMIv6d0ZnfhqqCx6ceFX364yO9AZ/YG0TmLdzzTNChAty82pjLqupowSD1TL5gMW2iLVCihtihnXoVw=
-X-Received: by 2002:a17:90b:55c6:b0:32b:ca6f:1245 with SMTP id
- 98e67ed59e1d1-332a92c97a2mr336889a91.5.1758574766224; Mon, 22 Sep 2025
- 13:59:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758574811; x=1759179611;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tZr0hPhFAud0Uw+aBiZrTvnM6zeOzyc8u94gFH2jTwA=;
+        b=AhRN0QuIfjCMQJmBpdu4blfagrgmSGQPIJjrsl5Mcq89nOivwKIamzcqh+pObcDomV
+         Fz+0nxBARB2zuP22Lnb5WBfY9N/2m2+mW6d6BIBv7qgQBEVXt9W1dFCJ5hHbj5pU/tWG
+         +3rGHOMbeOyOtVmDPT0XQGcHG9BJOE2kTskTf2eLnxORmfzFfxblXvqi3jpTSyEhSmiF
+         zOCBGmYvVZJ0ENRV0HAce8WjPMlR4W4K8lAsiR5sDk3RP3JNsW4pOIn9Yu7HI2wqb824
+         Q6T4e2NHMA/Ywo93AE/0E/EQxQBA52xpr2CuS0gG8cxAF8K6U2S9PrR5h5RnO2cPdV3t
+         4miA==
+X-Forwarded-Encrypted: i=1; AJvYcCVy/UnLJxoIgsIzzp24xYsRFu/MHGhFKLu2S8miO2y7TMgZPUvx/FYDQhuxkdXZo1GcRFlGz/y+zE70vKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvgbwC2Y2tP/q5ShhDyCXWtDiH0W8quNNgetuMWXFoE4Qdykk6
+	oOZ+AMW5ECuClXw/nPtL/oDq6M9nXWkdBcu6Pfi8Az00fv+3kVmcx8HWa8ksrtEKUg==
+X-Gm-Gg: ASbGncvlTdWUDSqfFzhXTuuhlqZVdb1a1jzL/t4JEe2s6lYoIXL5efgW/DTTjRU4BF0
+	W7DyiE+vuV7j4VDW9WgiVXgLco+SwMRQ1SxmLBuhEdfGeVJ6jLX5mmhspBcX0yDSzu8scUTcqt6
+	I6TOMM241BnDU2qtqX77fnlBrde9iZQXX/qxdGxBWcmLCJL/I8gjHrr0RYfY0+aNTzXIepdcJEi
+	qUX0lzdHMz+fME1AsZnbcZ/az4atEGDPJ95DEoCDxLbWGnukfjfdZ4MGt1omhIlWmI8fR6ks8IH
+	4rs6IbwniG5uWFRYefe3zCwsB+CcsZu2iopcKoK5zUBEhxJXauWNTsb9qq/D/UfbdZ3Bitqpvkm
+	RlhVvfmTRMvcAx7GJa6MLtg2oHmnlWah6W0mmhL03dXkidRuOImuerVQTjG1ao4/29A==
+X-Google-Smtp-Source: AGHT+IGQQ4kfiQOVTFeyQzQt2jYtkM5/eyZicm9Wu0N0OnLEQ0zchv5LfIGa+8+xPV9iHI+UIbvczw==
+X-Received: by 2002:a05:600c:8287:b0:46d:34cc:e9c1 with SMTP id 5b1f17b1804b1-46e1e0f7c74mr978165e9.4.1758574811415;
+        Mon, 22 Sep 2025 14:00:11 -0700 (PDT)
+Received: from google.com (135.91.155.104.bc.googleusercontent.com. [104.155.91.135])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e1bc00695sm14039935e9.4.2025.09.22.14.00.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 14:00:11 -0700 (PDT)
+Date: Mon, 22 Sep 2025 22:00:07 +0100
+From: Vincent Donnefort <vdonnefort@google.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org,
+	qperret@google.com, sebastianene@google.com, keirf@google.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v2] KVM: arm64: Check range args for pKVM mem transitions
+Message-ID: <aNG417MneSKBxyn8@google.com>
+References: <20250919155056.2648137-1-vdonnefort@google.com>
+ <87plbkxcvv.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250920155211.1354348-1-chen.dylane@linux.dev>
- <20250920155211.1354348-2-chen.dylane@linux.dev> <f1d2d0fc-c541-4acc-b5d6-34f2bba37aea@gmail.com>
-In-Reply-To: <f1d2d0fc-c541-4acc-b5d6-34f2bba37aea@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 22 Sep 2025 13:59:10 -0700
-X-Gm-Features: AS18NWDOlowWXkediPF7GZxq3CHM4H4DGTwIIh0oSy17dJQm2WRIqevDYgt8APY
-Message-ID: <CAEf4BzbWOzwmsMhHmk_LbWUFM=Q2DwVsWWtoVD4ZjK672_XV9w@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 2/2] selftests/bpf: Add stacktrace map
- lookup_and_delete_elem test case
-To: Leon Hwang <hffilwlqm@gmail.com>
-Cc: Tao Chen <chen.dylane@linux.dev>, ast@kernel.org, daniel@iogearbox.net, 
-	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev, 
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87plbkxcvv.wl-maz@kernel.org>
 
-On Sun, Sep 21, 2025 at 7:42=E2=80=AFPM Leon Hwang <hffilwlqm@gmail.com> wr=
-ote:
->
->
->
-> On 20/9/25 23:52, Tao Chen wrote:
-> > ...
-> > test_stacktrace_map:PASS:compare_stack_ips stackmap vs. stack_amap 0 ns=
-ec
-> > test_stacktrace_map:PASS:stack_key_map lookup 0 nsec
-> > test_stacktrace_map:PASS:stackmap lookup and detele 0 nsec
-> > test_stacktrace_map:PASS:stackmap lookup deleted stack_id 0 nsec
-> >  #397     stacktrace_map:OK
-> > ...
->
-> As they suppose to pass, they are meaningless in the commit log.
->
-> Please describe what the test is for and what it is doing instead.
->
-> >
-> > Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+On Sun, Sep 21, 2025 at 12:29:08PM +0100, Marc Zyngier wrote:
+> On Fri, 19 Sep 2025 16:50:56 +0100,
+> Vincent Donnefort <vdonnefort@google.com> wrote:
+> > 
+> > There's currently no verification for host issued ranges in most of the
+> > pKVM memory transitions. The subsequent end boundary might therefore be
+> > subject to overflow and could evade the later checks.
+> > 
+> > Close this loophole with an additional check_range_args() check on a per
+> > public function basis.
+> > 
+> > host_unshare_guest transition is already protected via
+> > __check_host_shared_guest(), while assert_host_shared_guest() callers
+> > are already ignoring host checks.
+> > 
+> > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> > 
 > > ---
-> >  .../selftests/bpf/prog_tests/stacktrace_map.c | 22 ++++++++++++++++++-
-> >  .../selftests/bpf/progs/test_stacktrace_map.c |  8 +++++++
-> >  2 files changed, 29 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c b/=
-tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-> > index 84a7e405e91..7d38afe5cfc 100644
-> > --- a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-> > +++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-> > @@ -3,7 +3,7 @@
-> >
-> >  void test_stacktrace_map(void)
-> >  {
-> > -     int control_map_fd, stackid_hmap_fd, stackmap_fd, stack_amap_fd;
-> > +     int control_map_fd, stackid_hmap_fd, stackmap_fd, stack_amap_fd, =
-stack_key_map_fd;
-> >       const char *prog_name =3D "oncpu";
-> >       int err, prog_fd, stack_trace_len;
-> >       const char *file =3D "./test_stacktrace_map.bpf.o";
-> > @@ -11,6 +11,9 @@ void test_stacktrace_map(void)
-> >       struct bpf_program *prog;
-> >       struct bpf_object *obj;
-> >       struct bpf_link *link;
-> > +     __u32 stack_id;
-> > +     char val_buf[PERF_MAX_STACK_DEPTH *
-> > +             sizeof(struct bpf_stack_build_id)];
->
-> Nit: minor indentation issue here.
->
-> 'val_buf' should stay on a single line, since up to 100 characters per
-> line are allowed.
->
-> NOTE: keep inverted Christmas tree style.
-
-we don't really enforce this, no need to shift lines around just for
-the reverse Christmas tree style
-
->
-> Thanks,
-> Leon
->
-> >
-> >       err =3D bpf_prog_test_load(file, BPF_PROG_TYPE_TRACEPOINT, &obj, =
-&prog_fd);
-> >       if (CHECK(err, "prog_load", "err %d errno %d\n", err, errno))
-> > @@ -41,6 +44,10 @@ void test_stacktrace_map(void)
-> >       if (CHECK_FAIL(stack_amap_fd < 0))
-> >               goto disable_pmu;
-> >
-> > +     stack_key_map_fd =3D bpf_find_map(__func__, obj, "stack_key_map")=
-;
-> > +     if (CHECK_FAIL(stack_key_map_fd < 0))
-> > +             goto disable_pmu;
+> > 
+> >  v1 -> v2:
+> >    - Also check for (nr_pages * PAGE_SIZE) overflow. (Quentin)
+> >    - Rename to check_range_args().
+> > 
+> > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > index 8957734d6183..65fcd2148f59 100644
+> > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > @@ -712,6 +712,14 @@ static int __guest_check_page_state_range(struct pkvm_hyp_vm *vm, u64 addr,
+> >  	return check_page_state_range(&vm->pgt, addr, size, &d);
+> >  }
+> >  
+> > +static bool check_range_args(u64 start, u64 nr_pages, u64 *size)
+> > +{
+> > +	if (check_mul_overflow(nr_pages, PAGE_SIZE, size))
+> > +		return false;
 > > +
-> >       /* give some time for bpf program run */
-> >       sleep(1);
-> >
->
-> [...]
+> > +	return start < (start + *size);
+> 
+> I will echo Oliver's concern on v1: you probably want to convert the
+> boundary check to be inclusive of the end of the range. Otherwise, a
+> range that ends at the top of the 64bit range will be represented as
+> 0, and fail the  check despite being perfectly valid.
+
+Do you mean allowing something like start == 0xfffffffffffff000 and size ==
+4096?
+
+But I guess that would still put all the following checks using "addr + size" at
+risk. Also, I believe even the code in pgtable.c wouldn't support a such range
+as it is also using a u64 end boundary.
+
+> 
+> That's not a problem for PAs, as we will be stuck with at most 56bit
+> PAs for quite a while, but VAs are a different story, and this sort of
+> range check should be valid for VAs as well.
+> 
+> Thanks,
+> 
+> 	M.
+> 
+> -- 
+> Jazz isn't dead. It just smells funny.
 
