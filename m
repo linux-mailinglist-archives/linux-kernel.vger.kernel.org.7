@@ -1,82 +1,129 @@
-Return-Path: <linux-kernel+bounces-827530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F33B91FDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:39:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70495B91FFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22E1816F603
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:39:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38A7C2A605E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498F32EA75C;
-	Mon, 22 Sep 2025 15:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FC53C0C;
+	Mon, 22 Sep 2025 15:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MUmRw1gE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zanders.be header.i=@zanders.be header.b="RgxdkXik"
+Received: from smtp28.bhosted.nl (smtp28.bhosted.nl [94.124.121.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCFD2EA499;
-	Mon, 22 Sep 2025 15:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD822222A0
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758555538; cv=none; b=vAt9zsWuYopGDcpQH+XUw4BQ9CYoopx1ftrMwlA+F1b76+mUHcYdIwwT0KTI/SslDRDGyD6BYwWgy7bBa/cmlmMzbEhTmDDUwwM/SOReobcvlTpxMGr+4Q6gQ4H8IydN3jsFhRLqIpJ9VgULRbQCxfd5khas02TNTFLCXfVNZL4=
+	t=1758555648; cv=none; b=qHl7+HRG74EAsWmyPbBFjT+mA+Ob2/l+arAwVmI1MMJeGs0NqW35QuukbMbLltfzB4wsCRJUU+N6SPvzO1wkKhhe8Z15hZ6PVKHpAvGpchKDPnlJkvtwn1CX+fYvs9KwAZhMWN9vrJcsESUSsm7xc9nhkj5AqeOrqcmuiqAJVQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758555538; c=relaxed/simple;
-	bh=FBWDbjZfsMysPb0xcoGWF64MTI0r+fWrLs6ifIU3x0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R1w2Q8bmg9e6lp2mJvoMfcl78nmMhP0uTbdNEma+0SXuC0qFZi8MREfgbeOUuz8bJNLlxvZpOcOpEWgyA2DAVaj0DMYsN8RVtS9MgMdXEDucGBATKLoy6tMZNWrsZOk4KLRDj7piHd7AoOXYh9EhgxOAnEB5ydWecv5B2iIjBGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MUmRw1gE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E61BFC4CEF0;
-	Mon, 22 Sep 2025 15:38:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758555538;
-	bh=FBWDbjZfsMysPb0xcoGWF64MTI0r+fWrLs6ifIU3x0w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MUmRw1gESZaZOwHKqmiaPk930EhWUHUpcYJcLamtYfE9PStoI6+9qpbvoGloczY8O
-	 XkJBP+tKpbzpqrTbXxIENGg40CpLqOo6mfu4ARI7JGb0lOLMh6GgLkbNfq5gGzN4m1
-	 ZkjzrpxXmTNQ/GvRsm+bBxjvyTGuKBY5eqRmm8zxthD/aOjlH3QMYbngVxS10PGmdx
-	 +SsQIgN6yp6lm+EanBfIeakIyB42WGZd5nKF4uEgSg1CqbWDKN1A1KnBajvOdL0IZ/
-	 c9GEt6IZROwXyE2Tfn/Db1Pr2vvk+UVh8UQR8OPOMART4JIyl8PIMJ9vwgodzX9v3p
-	 4FYuaPAQFcqpg==
-Date: Mon, 22 Sep 2025 10:38:57 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Henrik Rydberg <rydberg@bitmath.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: input: document Samsung A552
- touchscreen controller
-Message-ID: <175855553663.6246.2974787430902564373.robh@kernel.org>
-References: <20250914134458.2624176-1-ivo.ivanov.ivanov1@gmail.com>
- <20250914134458.2624176-2-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1758555648; c=relaxed/simple;
+	bh=lTqVCEjcxikwMjepirSLpSNK6L3IHAlxdl5A38gWUoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nnyvbQbdV+SLWQMQwAA+1ezvSp9VlV3xSErkS3MVvvkdOT3uxKPnVI0begkBt7QGxCWLDD1WuLtWLiSG3QeUBf/6ReFGL6yd0KFtmbOI52hzTxYEF3mSwqrdSPBPP/e1lD+cb+KUCMpITr50igxnZ05uUXRQz0Lj6GNLOeyElQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zanders.be; spf=pass smtp.mailfrom=zanders.be; dkim=pass (2048-bit key) header.d=zanders.be header.i=@zanders.be header.b=RgxdkXik; arc=none smtp.client-ip=94.124.121.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zanders.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zanders.be
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=zanders.be; s=202002;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=4m4XxfeOnQfD8SjFcUdl5itKBGk9YX/dPDna0jtQUXw=;
+	b=RgxdkXikJ4C1IUraDotl7A2lAWMKaHYSAdsmuRZvm8BojeT9lKz3aDSFV1hDbNaweRDCh65I7biJD
+	 QEURI2TTb330OHUuQRBgLjMiQYEsiY89rmaIZc+Zg7vZkcH3LOBVNDNHABrjRM4BsfWVCBqHGImtje
+	 KIuRjKZLZQOHMX/CGGZEXlXcOBO6n5SZOdErPH88gOy0+aJ1meSxnI2ZdQJroQyPfJccylXC5/mFX5
+	 E0odx9cc8O4C/CrXGk+VMvpqDBnOsLLJwCy4dWjPUB7fO6l/tCtfVGxCW1cOPzsn/26JdD5BMOIbYg
+	 Njis3hRXa303t/tc+Vdoq4kKIaUpNaw==
+X-MSG-ID: 78c8b809-97ca-11f0-867b-0050568164d1
+From: Maarten Zanders <maarten@zanders.be>
+To: Han Xu <han.xu@nxp.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Maarten Zanders <maarten@zanders.be>,
+	stable@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mtd: nand: raw: gpmi: fix clocks when CONFIG_PM=N
+Date: Mon, 22 Sep 2025 17:39:38 +0200
+Message-ID: <20250922153938.743640-2-maarten@zanders.be>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250914134458.2624176-2-ivo.ivanov.ivanov1@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+Commit f04ced6d545e ("mtd: nand: raw: gpmi: improve power management
+handling") moved all clock handling into PM callbacks. With CONFIG_PM
+disabled, those callbacks are missing, leaving the driver unusable.
 
-On Sun, 14 Sep 2025 16:44:56 +0300, Ivaylo Ivanov wrote:
-> Document the Samsung A552 touchscreen controller, present in devices like
-> the Samsung Galaxy S7.
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
->  .../input/touchscreen/samsung,s6sa552.yaml    | 54 +++++++++++++++++++
->  1 file changed, 54 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/samsung,s6sa552.yaml
-> 
+Add clock init/teardown for !CONFIG_PM builds to restore basic operation.
+Keeping the driver working without requiring CONFIG_PM is preferred over
+adding a Kconfig dependency.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Fixes: f04ced6d545e ("mtd: nand: raw: gpmi: improve power management handling")
+Signed-off-by: Maarten Zanders <maarten@zanders.be>
+Cc: stable@vger.kernel.org
+---
+ drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
+index f4e68008ea03..a750f5839e34 100644
+--- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
++++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
+@@ -145,6 +145,9 @@ static int __gpmi_enable_clk(struct gpmi_nand_data *this, bool v)
+ 	return ret;
+ }
+ 
++#define gpmi_enable_clk(x)	__gpmi_enable_clk(x, true)
++#define gpmi_disable_clk(x)	__gpmi_enable_clk(x, false)
++
+ static int gpmi_init(struct gpmi_nand_data *this)
+ {
+ 	struct resources *r = &this->resources;
+@@ -2765,6 +2768,11 @@ static int gpmi_nand_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(&pdev->dev);
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
+ 	pm_runtime_use_autosuspend(&pdev->dev);
++#ifndef CONFIG_PM
++	ret = gpmi_enable_clk(this);
++	if (ret)
++		goto exit_acquire_resources;
++#endif
+ 
+ 	ret = gpmi_init(this);
+ 	if (ret)
+@@ -2800,6 +2808,9 @@ static void gpmi_nand_remove(struct platform_device *pdev)
+ 	release_resources(this);
+ 	pm_runtime_dont_use_autosuspend(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
++#ifndef CONFIG_PM
++	gpmi_disable_clk(this);
++#endif
+ }
+ 
+ static int gpmi_pm_suspend(struct device *dev)
+@@ -2846,9 +2857,6 @@ static int gpmi_pm_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-#define gpmi_enable_clk(x)	__gpmi_enable_clk(x, true)
+-#define gpmi_disable_clk(x)	__gpmi_enable_clk(x, false)
+-
+ static int gpmi_runtime_suspend(struct device *dev)
+ {
+ 	struct gpmi_nand_data *this = dev_get_drvdata(dev);
+-- 
+2.51.0
 
 
