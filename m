@@ -1,133 +1,138 @@
-Return-Path: <linux-kernel+bounces-826918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D280FB8FA48
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76099B8FA69
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63BAC7A87C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:46:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D63027A18CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4459283FDD;
-	Mon, 22 Sep 2025 08:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAAB283CBE;
+	Mon, 22 Sep 2025 08:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NQI7vfj1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OYaGTk7p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FDA280318;
-	Mon, 22 Sep 2025 08:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE0C23B616;
+	Mon, 22 Sep 2025 08:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758530850; cv=none; b=mWuqeXhLWcxdkCYkfwoptO8SXnOR7nYQcAHhpJVEXtX197zci4KazkUtJhgnoILUX1hSsNb1IkEJYnCgjg/ejGDADvAzV7hcXzMktxWRkzl710yDM99caKogo7PcIWj+jbatxaAsUMrNf2QvJytTnquiqSMb0V7NkKV39IkWkXA=
+	t=1758531012; cv=none; b=pKdtfN/psbFFbA7Bz1YNSscBYpo8ed1+lSYx7KmuOxXfiD7MM3Naz+MH7bykz6140ZByklpw6KqQTH6P3gal4JgXtXX5wwl+UEVnVHZRpA9qAjOEAWUMe8p4vQHGvTf+8iU3ZbILl4kxqNcvmsdAKLZh1WS2+tEAh3FfjQ5XHOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758530850; c=relaxed/simple;
-	bh=xK0IKlfmQV4KqP/ONXLLmX2l7B4IM2yv3wbTFnma9xE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nYpcNls6CrQmJcOpV3lWc8MWO94cTRRWNKFSgG7CoxwRrn+r+MH5M6UOgW1SMt/wpseSTZtR47rF8i2dlbPHxaxF577J3Qxzj5IWg2ZXXDgEzAlGy5jkB+3KeQPqXNmIkEfE79fj1MmdCB7xwCAOsFcKzxCegjAY4VQZcJ+1OLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NQI7vfj1; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1758531012; c=relaxed/simple;
+	bh=EIwX2Gv25NRIdufRlFKCm9KTmV1tzjcTIKEMfhqFOjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=thsbddKUPSswj9fQXf2BRdoPe+Nxshk6vU0eocKFqgqAllminjMsPIHfUcXQjw54JOOcWCA7L0OcRF45kH1VCqVKF917HdtSueZL61hq9dsv6ZSQRzocNVvMfdAc+d1p+vpEs0+GSn9Ybj6aiUJtR8Dsz8CjxY9uwovWACrZrPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OYaGTk7p; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758530848; x=1790066848;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=xK0IKlfmQV4KqP/ONXLLmX2l7B4IM2yv3wbTFnma9xE=;
-  b=NQI7vfj1hOWW1ydJuhHu/P6dbPU1e0qKi+TbNYWckTu4MfNxUTJGwdvk
-   10WLYZO9zNNct8XaGGgCQ+Nuh4ngoVq3IXZimogFkkmV8Pwoeli06QevD
-   WTLi6JXhIR7+DNLHuiDLqfMo1WnyAmLlYZHHQxbGgRmpSJE3HA5yKtSqf
-   u+xHhcrK7m0FRjH/3Wln/mwvBtYQkthNraVHuyp7W5etAkRgXxUYwdiy6
-   StNleTzbCCCOR5j0ppNdv/RT4MxgTOIgTdn1jX6n8iQH1H+WtqYB3FALq
-   U1hUJqiXpGE31JdI4KR3oc2iwnUzfeOwGw46hku3fHuJfAqLmIUxMq/Za
+  t=1758531011; x=1790067011;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EIwX2Gv25NRIdufRlFKCm9KTmV1tzjcTIKEMfhqFOjs=;
+  b=OYaGTk7p34eIeIWimkMEL6v5bc1DCZLxjP5BP4dcpxppMbvd7IrNSv5t
+   PivxNFcd7+BmlYjXFVhfnPyGhRNF1ai7eT2DvV2fEHzfzdbToPEq4g18W
+   2v7ATOKSliP+nIdFgZ5sqRgtOcmXvAzw2qC4gkZ3BxbK72NRAQXSqh8Hx
+   jtRFs4cjJtTDU54ld2TOBQGNM503mp1lvppCAWTKhGvxHb7HCVRxk4x28
+   n2E/j9OH7oY2EoIyhYn9M8ZGM2ICaymtyQzrIJ8GcYYd1td0wIlYSUZSQ
+   9fqLtPFRNWDu6DKp6YgIiTaEepZZUwnc72Beua6i/EoYGcFR0P/K8y3IX
    g==;
-X-CSE-ConnectionGUID: 66Umf0ffSCez03hc2P7fEw==
-X-CSE-MsgGUID: dAbgTQuRTt6j0nDx5CXj1g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="60905617"
+X-CSE-ConnectionGUID: i3XzaMxfQtKF9DGX7IxKkw==
+X-CSE-MsgGUID: 8/I6CdThQ+SmBhweQH/prw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="48364743"
 X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="60905617"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:47:27 -0700
-X-CSE-ConnectionGUID: Dtz3/7uUQyyNAPOwcMeeHg==
-X-CSE-MsgGUID: qYg3TEY6TSmJuaULv0UDsA==
+   d="scan'208";a="48364743"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:50:10 -0700
+X-CSE-ConnectionGUID: H465Suv1SMms04Tugxlnaw==
+X-CSE-MsgGUID: 2epaaLTjT7uCtIJLozB0OQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="175558701"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:47:24 -0700
-Message-ID: <f06fe1c9-7042-4373-93b1-6a51acc4316b@linux.intel.com>
-Date: Mon, 22 Sep 2025 16:47:21 +0800
+   d="scan'208";a="176033714"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 22 Sep 2025 01:50:03 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v0cFF-0001UX-07;
+	Mon, 22 Sep 2025 08:50:01 +0000
+Date: Mon, 22 Sep 2025 16:49:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yubing Zhang <yubing.zhang@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Peter Robinson <pbrobinson@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v4 1/7] usb: typec: Add default HPD device when register
+ DisplayPort altmode
+Message-ID: <202509221607.rWZ3wNqm-lkp@intel.com>
+References: <20250922012039.323-2-kernel@airkyi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 32/51] KVM: nVMX: Add consistency checks for CR0.WP
- and CR4.CET
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Xiaoyao Li <xiaoyao.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-References: <20250919223258.1604852-1-seanjc@google.com>
- <20250919223258.1604852-33-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250919223258.1604852-33-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922012039.323-2-kernel@airkyi.com>
 
+Hi Chaoyi,
 
+kernel test robot noticed the following build errors:
 
-On 9/20/2025 6:32 AM, Sean Christopherson wrote:
-> From: Chao Gao <chao.gao@intel.com>
->
-> Add consistency checks for CR4.CET and CR0.WP in guest-state or host-state
-> area in the VMCS12. This ensures that configurations with CR4.CET set and
-> CR0.WP not set result in VM-entry failure, aligning with architectural
-> behavior.
->
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+[auto build test ERROR on usb/usb-testing]
+[also build test ERROR on usb/usb-next usb/usb-linus robh/for-next linus/master v6.17-rc7 next-20250919]
+[cannot apply to rockchip/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Chaoyi-Chen/usb-typec-Add-default-HPD-device-when-register-DisplayPort-altmode/20250922-092549
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+patch link:    https://lore.kernel.org/r/20250922012039.323-2-kernel%40airkyi.com
+patch subject: [PATCH v4 1/7] usb: typec: Add default HPD device when register DisplayPort altmode
+config: arm-randconfig-001-20250922 (https://download.01.org/0day-ci/archive/20250922/202509221607.rWZ3wNqm-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project cafc064fc7a96b3979a023ddae1da2b499d6c954)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250922/202509221607.rWZ3wNqm-lkp@intel.com/reproduce)
 
-> ---
->   arch/x86/kvm/vmx/nested.c | 6 ++++++
->   1 file changed, 6 insertions(+)
->
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index 11e5d3569933..51c50ce9e011 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -3110,6 +3110,9 @@ static int nested_vmx_check_host_state(struct kvm_vcpu *vcpu,
->   	    CC(!kvm_vcpu_is_legal_cr3(vcpu, vmcs12->host_cr3)))
->   		return -EINVAL;
->   
-> +	if (CC(vmcs12->host_cr4 & X86_CR4_CET && !(vmcs12->host_cr0 & X86_CR0_WP)))
-> +		return -EINVAL;
-> +
->   	if (CC(is_noncanonical_msr_address(vmcs12->host_ia32_sysenter_esp, vcpu)) ||
->   	    CC(is_noncanonical_msr_address(vmcs12->host_ia32_sysenter_eip, vcpu)))
->   		return -EINVAL;
-> @@ -3224,6 +3227,9 @@ static int nested_vmx_check_guest_state(struct kvm_vcpu *vcpu,
->   	    CC(!nested_guest_cr4_valid(vcpu, vmcs12->guest_cr4)))
->   		return -EINVAL;
->   
-> +	if (CC(vmcs12->guest_cr4 & X86_CR4_CET && !(vmcs12->guest_cr0 & X86_CR0_WP)))
-> +		return -EINVAL;
-> +
->   	if ((vmcs12->vm_entry_controls & VM_ENTRY_LOAD_DEBUG_CONTROLS) &&
->   	    (CC(!kvm_dr7_valid(vmcs12->guest_dr7)) ||
->   	     CC(!vmx_is_valid_debugctl(vcpu, vmcs12->guest_ia32_debugctl, false))))
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509221607.rWZ3wNqm-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: undefined symbol: dp_altmode_hpd_device_register
+   >>> referenced by class.c:609 (drivers/usb/typec/class.c:609)
+   >>>               drivers/usb/typec/class.o:(typec_register_altmode) in archive vmlinux.a
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
