@@ -1,132 +1,126 @@
-Return-Path: <linux-kernel+bounces-827004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DAF5B8FDD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:55:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCD8B8FDDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28EB43AD806
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:55:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20A4F7AC3DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB632FFF89;
-	Mon, 22 Sep 2025 09:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E082F5306;
+	Mon, 22 Sep 2025 09:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GyH4W6GW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z60jwgxz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC062FF142
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F69F286D56;
+	Mon, 22 Sep 2025 09:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758534868; cv=none; b=BCJXcljeNEvxt3VVDVetTJAnts28ITOXJHNNK0Kr9TmVEqdKtmHMXI6wpjZDXnV5yFbAj/UD8/BEreUfb9ztoG7ZLpoK5kewkJzIM67tx6yHseqmYMWlH9Dr85fc2ma6U9cLp9mwuMd9WATIPjscanZrZHwZah1+pc1+Jc6ynEA=
+	t=1758535005; cv=none; b=uODHL8g9F7XpHRizmWppv6re23ThT3P5gNWTG/uyFyXM91EMfKIK+g7qOwEBqhY/QtquqH3qpHyS0pMFdFQjnghnSGSrvfZuRg7sphPsDQ0cFHNgyISS/C5cXfW5wKbhBWTHA8ZC5OZ+mohjA3TTed64/TX79wyjh7qxk/2G78g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758534868; c=relaxed/simple;
-	bh=8w6/o14ZXBOrZ5fcQwirnz0Nsc2q9gxNt8eNNNzu6mQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=knKjE0U7pzGURaEPeVcVol7Iq+jBo5MmihJ7wvOc+xNMrMvCfcXAbOBfXzEts841ItiSKFCUAFnR59eiVst7N6sYRy+isunpd/+k6hxqQzexBHtnlHzaIW8Dg2eoT/6hDj552Xsaas1Fhj8O5G0b5jaFv+NYnyCD0AEq3JoK7K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GyH4W6GW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52E8AC4CEF5;
-	Mon, 22 Sep 2025 09:54:27 +0000 (UTC)
+	s=arc-20240116; t=1758535005; c=relaxed/simple;
+	bh=m/OLSdJWaYDeAMGOOFQ4RYAla1sMj7NBkGFJg1S74x8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=oMUpjNySgwQKkfTUkiqZ8jb8BntBvACs/Wf+z8/mTJfDcOidcKmhvXzbcolXVHrCMuN+oTY7HHjuWSHuU/AUqTw5Vrc23/sv62v6WTnHUKicef14T0d0LX9qRQrU5DEacIr4/MOlsPAhX4Iq7n+9KCnu1Ktmv++SIPidNde+aTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z60jwgxz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4D97C4CEF0;
+	Mon, 22 Sep 2025 09:56:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758534867;
-	bh=8w6/o14ZXBOrZ5fcQwirnz0Nsc2q9gxNt8eNNNzu6mQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GyH4W6GWIhCtzhojtNAKnnNT3V4TSsQuNRdntOF0HddNjN5q1dWXKhT2WEtrE29sw
-	 dOqGF7XkXKhBwz0J/MJ36HFHZe/DcC/9u6sn/bWpXKqfWdqOa64aZelsyjuUvEf/Eb
-	 u6A9cTCQNFWqHuuoBgsq3aRtI4Xa4ORPEcWghaARpSxt+xAxVPCEoVCQDrebOzULz4
-	 TYDwhH33FkuEdaaYPPRS/uA5qQvgVNO067j2ctbZ0CVQ3L1fs8tFeQk5ayxPgEVkoB
-	 qnD31iJsBmNI9dZNylKZZpsKejo8x4NHE5GwcQOznc2/NXE2UvWT3VVx7+pKf9tmat
-	 uusk313WH3Q9A==
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 7788CF40066;
-	Mon, 22 Sep 2025 05:54:26 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Mon, 22 Sep 2025 05:54:26 -0400
-X-ME-Sender: <xms:0hzRaPDy7YTN00wQ7F9AdRbAc3f48LRKlq6vX1dU37hHwB3xnpXCsA>
-    <xme:0hzRaBAXrM0KpYoCKN2tNH7ajEkhR-pHOoLUMiIrCMINwH5jfyvP_xBv3yi4mjG0E
-    8TlGLGOyodQu8Qzlo0>
-X-ME-Received: <xmr:0hzRaAnpbjncp3NO83SBZpFhw_-inT8PX_Ozmz0KqHBpeu-DxH4fkffC8NRE9A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehjeehgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
-    hhhuthhsvghmrghuuceokhgrsheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
-    hnpeehieekueevudehvedtvdffkefhueefhfevtdduheehkedthfdtheejveelueffgeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrih
-    hllhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeiudduiedvieehhedq
-    vdekgeeggeejvdekqdhkrghspeepkhgvrhhnvghlrdhorhhgsehshhhuthgvmhhovhdrnh
-    grmhgvpdhnsggprhgtphhtthhopedviedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepnhgvvghrrghjrdhuphgrughhhigrhiesrghmugdrtghomhdprhgtphhtthhopehrih
-    gtkhdrphdrvggughgvtghomhgsvgesihhnthgvlhdrtghomhdprhgtphhtthhopehthhho
-    mhgrshdrlhgvnhgurggtkhihsegrmhgurdgtohhmpdhrtghpthhtohepjhhohhhnrdgrlh
-    hlvghnsegrmhgurdgtohhmpdhrtghpthhtoheptghhrghordhgrghosehinhhtvghlrdgt
-    ohhmpdhrtghpthhtohepshgvrghnjhgtsehgohhoghhlvgdrtghomhdprhgtphhtthhope
-    igihgrohihrghordhlihesihhnthgvlhdrtghomhdprhgtphhtthhopehlihhnuhigqdhk
-    vghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihhnihhplh
-    hisehgrhhsvggtuhhrihhthidrnhgvth
-X-ME-Proxy: <xmx:0hzRaPgja_LiSqIlFl1iQEvsFllHCj8NS-IxwsP_Dxk97Elv6fn-ug>
-    <xmx:0hzRaJdmaQX2cUwVC8Phea1gUNgGL2OUQfFwS_vifUy6q7mNa-Qfpw>
-    <xmx:0hzRaPATkaP1IqLbnlOsIquu8LgK2z6hHVkKntlZefJDsit2pTI6cQ>
-    <xmx:0hzRaN61M-jNpmPgbfnkEfdANdJUjJDpA-9ySLSx1N9ybho-nRqPeA>
-    <xmx:0hzRaMw71qp7PqRJm_0fXe5xz7tJA_J6QJbEojxIyLdx7W_v64Ts_t8C>
-Feedback-ID: i10464835:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 22 Sep 2025 05:54:25 -0400 (EDT)
-Date: Mon, 22 Sep 2025 10:54:23 +0100
-From: Kiryl Shutsemau <kas@kernel.org>
-To: "Upadhyay, Neeraj" <neeraj.upadhyay@amd.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "john.allen@amd.com" <john.allen@amd.com>, 
-	"Gao, Chao" <chao.gao@intel.com>, "seanjc@google.com" <seanjc@google.com>, 
-	"Li, Xiaoyao" <xiaoyao.li@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"minipli@grsecurity.net" <minipli@grsecurity.net>, "mlevitsk@redhat.com" <mlevitsk@redhat.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, naveen.rao@amd.com
-Subject: Re: [PATCH v15 29/41] KVM: SEV: Synchronize MSR_IA32_XSS from the
- GHCB when it's valid
-Message-ID: <nvd4fg4mfd6cdcnqqaqyaqthn5ljuzswplvnslpv2pkuano4mf@yn45t5solwzp>
-References: <aMxs2taghfiOQkTU@google.com>
- <aMxvHbhsRn40x-4g@google.com>
- <aMx4TwOLS62ccHTQ@AUSJOHALLEN.amd.com>
- <c64a667d9bcb35a7ffee07391b04334f16892305.camel@intel.com>
- <aMyFIDwbHV3UQUrx@AUSJOHALLEN.amd.com>
- <2661794f-748d-422a-b381-6577ee2729ee@amd.com>
- <bb3256d7c5ee2e84e26d71570db25b05ada8a59f.camel@intel.com>
- <ecaaef65cf1cd90eb8f83e6a53d9689c8b0b9a22.camel@intel.com>
- <7ds23x6ifdvpagt3h2to3z5gmmfb356au5emokdny7bcuivvql@3yl3frlj7ecb>
- <bd8831a3-2a23-43d2-9998-73cd5165716c@amd.com>
+	s=k20201202; t=1758535005;
+	bh=m/OLSdJWaYDeAMGOOFQ4RYAla1sMj7NBkGFJg1S74x8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Z60jwgxzz5GqMl9g62yiRNOxo6UsPJ6AFq6WgfKvlzCPKqkYXrRD42ESLJ9wwhGNf
+	 VgQf+CdPbOYDpByHySRNSTLGfwElw/y0z6bwTljlsabopCF/C93BDamxOIoWz8g5mo
+	 B2JNCAR5rO9ZnQ+whTdY9T40khVIsM9O5UArM3n8WY1j6gmV+AaekUd8JpzGQXpYzr
+	 DokFQ16Yeh2pD/D/R+bFVJ0WwYFCXKap9CTlPm1du/pSkzo1HlcfpOrKRvspSy3Oae
+	 rVjrcoLNSrudVF+wV213wnVTEBemQ3zuNDkyMGu7UL66YX0GN97hcSKRqmWigwf97k
+	 nVzZ2uLVaQEeg==
+Date: Mon, 22 Sep 2025 10:56:40 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Matt Gilbride <mattgilbride@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Subject: linux-next: manual merge of the char-misc tree with the tip tree
+Message-ID: <aNEdWOS8s6U0c5pz@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TgbA+hGrLDR1xZeJ"
+Content-Disposition: inline
+
+
+--TgbA+hGrLDR1xZeJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bd8831a3-2a23-43d2-9998-73cd5165716c@amd.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2025 at 03:03:59PM +0530, Upadhyay, Neeraj wrote:
-> 
-> > 
-> > In TDX case, VAPIC state is protected VMM. It covers ISR, so guest can
-> > safely check ISR to detect if the exception is external or internal.
-> > 
-> > IIUC, VAPIC state is controlled by VMM in SEV case and ISR is not
-> > reliable.
-> > 
-> > I am not sure if Secure AVIC[1] changes the situation for AMD.
-> > 
-> > Neeraj?
-> > 
-> 
-> For Secure AVIC enabled guests, guest's vAPIC ISR state is not visible to
-> (and not controlled by) host or VMM.
+Hi all,
 
-In this case, I think you should make ia32_disable() in sme_early_init()
-conditional on !Secure AVIC.
+Today's linux-next merge of the char-misc tree got a conflict in:
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+  rust/helpers/helpers.c
+
+between commit:
+
+  d9ea5a41cef80 ("rust: sync: Add memory barriers")
+
+=66rom the tip tree and commit:
+
+  eafedbc7c050c ("rust_binder: add Rust Binder driver")
+
+=66rom the char-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc rust/helpers/helpers.c
+index 1c6096f53a6fe,8e8277bdddcae..0000000000000
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@@ -7,9 -7,8 +7,10 @@@
+   * Sorted alphabetically.
+   */
+ =20
+ +#include "atomic.c"
+  #include "auxiliary.c"
+ +#include "barrier.c"
++ #include "binder.c"
+  #include "blk.c"
+  #include "bug.c"
+  #include "build_assert.c"
+
+--TgbA+hGrLDR1xZeJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjRHVEACgkQJNaLcl1U
+h9Bh1wf/QMmRAXg2dHBAxXdM5GRY1gcRE6ije1ifFUlnI5Sp+dfWeqQR7ttpzJB0
+rmRD6mnTpi6BCHG5nOP8uF9iPHjeV5gRgG6fWgqMthGdplWWUY/BOQi44c2TM/GQ
+MLMYoHR3pQJijn0lfpw+rqw1fBV2vNRD7TibhOfDSB0VhZcM18gzuZ/4AxPGwSWx
+YQGw7PdRuGllScuI3t4l76U6jfFaHTNVp0ohNHGDP8h2TcupATyrG92WSjp/g55G
++fNrqRE7PjJ67SDGEf7+KatgSzCcj9sggRo+HkaTyiruqpW1s5WQHT9x88QkL8EV
+YFZF7vOtkQRBIThDP34LlLgQgw4f8Q==
+=OqGz
+-----END PGP SIGNATURE-----
+
+--TgbA+hGrLDR1xZeJ--
 
