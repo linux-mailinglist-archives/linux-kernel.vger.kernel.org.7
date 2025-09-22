@@ -1,78 +1,138 @@
-Return-Path: <linux-kernel+bounces-827741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47FA2B9298A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:28:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 850A1B92993
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3E172A67B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:28:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 933B31905352
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7482731961F;
-	Mon, 22 Sep 2025 18:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9161A319851;
+	Mon, 22 Sep 2025 18:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGotDhyF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mY9mgklH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD81E2E2DC1;
-	Mon, 22 Sep 2025 18:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D1D2E2DC1;
+	Mon, 22 Sep 2025 18:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758565670; cv=none; b=jpJHxv4OscfVfq+J+beckpYuS1SAMm02keUUXPkF+Z8TFnm7G4WQejg0L0r0gi+5QAcDUvxoc3xkCQk0iZKZxqv6xQ6qWTv8IdEej3OXFkpgrsRETIWrmt7llwrLGk+gqF8IDHHJ9Q12nI1ar9afyY/EC3lRLjtH2XaFWfA6UxI=
+	t=1758565718; cv=none; b=FSb/h0sTVi/M0g3m4BfMSzaHYMYgAfCjNHLFVHL8UAeLyMc7bp/hFckgjuSa2rxbVXWrJyOh724Y7/uj1juWXQ3dAjUjIxMHdzcYReYEV8/6GNgzb0R+b9U+Gz/KaEjSGXEs+a1kfZRsK5e1RGb2jqov55R3hyCAb6k0Dyx3/p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758565670; c=relaxed/simple;
-	bh=EMzN53aowTznjSqnr+CEIXDATtGcsQ+o59S+NQEKZDo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=pznAvUe1whylXVs2cvzvK6eIEsytnLMW8Cb3nulxUNktgI7SuaxbCKkRZcAfJVxnjz5B4kBZ2f11Rwvw1iN2gCALc63WGOHicTCjxr3TNoCAF/GtxhDBw+JJaZ2U5yMJkBsaxxCxosI0MOj+ppyXQCo+qOphvrBr+OGMDpTQf9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGotDhyF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2FC0C4CEF0;
-	Mon, 22 Sep 2025 18:27:50 +0000 (UTC)
+	s=arc-20240116; t=1758565718; c=relaxed/simple;
+	bh=CtXv+R6iAlZW62kHx4mvRdzMvmB9GMmmeZkvV3T4gNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SZFBXrm9noQIpk5HUMyVYTasyPM5oP9Yemi4/EjYsbdrkIPDAa4A+ejMp8ESgk/VMNw7zO5wnPJQSZYz8P0Wy0SWdUFoGuSpiTsm6BSa2kN79Ig6a3FmReo4OQi/6Fl3+V86r/otp/RQwDwid1IxY35MNA8kjtK7T9Vhq67cbbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mY9mgklH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D86DC4CEF0;
+	Mon, 22 Sep 2025 18:28:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758565670;
-	bh=EMzN53aowTznjSqnr+CEIXDATtGcsQ+o59S+NQEKZDo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=GGotDhyFCYegZ9rZMFTRrkdcSpvkrISXNGdddoeQuq9vRO0XcSGXSu1L22WPbpDOg
-	 lj7InHkR2aR9tVsqqeumNfI+npsB8Zk+3YMwcK8YtnFHQcsF/UkpT09+dCwzysFJrz
-	 T10pvsCwWZesIFvJs0L1ehy92F4nP5meI9x4i4TbsVJ8u09pDbhvfnPnL4S9f9l6X+
-	 u9FiGe5szsOxdGgzSTIGGWI7Q4zLEywaJbIly+zwszPMsPGTGdSUlIp1b4kqp+kJnB
-	 a+bGHzhEuHj1aFtbD+i9hNCHDZ7k7pWBIVk07X43+/ODjGwBgardEwflE2kTFd7qxb
-	 eXQNL9sPgIpLA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DA439D0C20;
-	Mon, 22 Sep 2025 18:27:49 +0000 (UTC)
-Subject: Re: [GIT PULL] Please pull RDMA subsystem changes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250922135846.GA2502832@nvidia.com>
-References: <20250922135846.GA2502832@nvidia.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250922135846.GA2502832@nvidia.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
-X-PR-Tracked-Commit-Id: 85fe9f565d2d5af95ac2bbaa5082b8ce62b039f5
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b183f251e2024531c2262829e97907b0e623cc41
-Message-Id: <175856566807.1111894.17786497958643240690.pr-tracker-bot@kernel.org>
-Date: Mon, 22 Sep 2025 18:27:48 +0000
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, Leon Romanovsky <leonro@nvidia.com>
+	s=k20201202; t=1758565717;
+	bh=CtXv+R6iAlZW62kHx4mvRdzMvmB9GMmmeZkvV3T4gNM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mY9mgklHJ2bbnmR5oqvSjp7yHIOrpCJlEoPeERuxWmHPPAaSfluGnZGWh8qo7mkS2
+	 G65BSKgOUodgjPJshVxxerGOk5NJj9SGhY+oTqoV52+AvToKb7azjzGveZ4osMDmJb
+	 WJDV2c/eFEFQFOHsqZFXgvN6UsulJsBgwmq9GPJQmgYKDbUkuPX1PNWiA0JgvA2UES
+	 Ov4m5oDD81ct94YRLzoIZhztJwBPicV80IY80h4kbQOVTwR2BzSC6Ssa1GQIy2z0hB
+	 ejjdLU8T87Ty8lyrGe7jWb8Ei0UhwtngCiuaxH0GFqj5GFQw6h7vvyuk4orDvmC+nU
+	 JDexX6ZbDAung==
+Date: Mon, 22 Sep 2025 11:28:32 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	DRM XE List <intel-xe@lists.freedesktop.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Zongyao Bai <zongyao.bai@intel.com>
+Subject: Re: linux-next: manual merge of the drm-xe tree with the drm-fixes
+ tree
+Message-ID: <20250922182832.GA1542561@ax162>
+References: <aM1QX4eEaSRQX6Dl@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aM1QX4eEaSRQX6Dl@sirena.org.uk>
 
-The pull request you sent on Mon, 22 Sep 2025 10:58:46 -0300:
+Hi Mark,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
+On Fri, Sep 19, 2025 at 01:45:19PM +0100, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the drm-xe tree got a conflict in:
+> 
+>   drivers/gpu/drm/xe/xe_guc_submit.c
+> 
+> between commit:
+> 
+>   ff89a4d285c82 ("drm/xe/sysfs: Add cleanup action in xe_device_sysfs_init")
+> 
+> from the drm-fixes tree and commit:
+> 
+>   fb3c27a69c473 ("drm/xe/sysfs: Simplify sysfs registration")
+> 
+> from the drm-xe tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc drivers/gpu/drm/xe/xe_device_sysfs.c
+> index b7f8fcfed8d86,c5151c86a98ae..0000000000000
+> --- a/drivers/gpu/drm/xe/xe_device_sysfs.c
+> +++ b/drivers/gpu/drm/xe/xe_device_sysfs.c
+> @@@ -308,19 -290,15 +290,15 @@@ int xe_device_sysfs_init(struct xe_devi
+>   			return ret;
+>   	}
+>   
+> - 	if (xe->info.platform == XE_BATTLEMAGE) {
+> - 		ret = sysfs_create_files(&dev->kobj, auto_link_downgrade_attrs);
+> + 	if (xe->info.platform == XE_BATTLEMAGE && !IS_SRIOV_VF(xe)) {
+> + 		ret = devm_device_add_group(dev, &auto_link_downgrade_attr_group);
+>   		if (ret)
+>  -			return ret;
+>  +			goto cleanup;
+>   
+> - 		ret = late_bind_create_files(dev);
+> + 		ret = devm_device_add_group(dev, &late_bind_attr_group);
+>   		if (ret)
+>  -			return ret;
+>  +			goto cleanup;
+>   	}
+>   
+> - 	return devm_add_action_or_reset(dev, xe_device_sysfs_fini, xe);
+> - 
+> - cleanup:
+> - 	xe_device_sysfs_fini(xe);
+> - 	return ret;
+> + 	return 0;
+>   }
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b183f251e2024531c2262829e97907b0e623cc41
+This resolution breaks the build.
 
-Thank you!
+  drivers/gpu/drm/xe/xe_device_sysfs.c: In function 'xe_device_sysfs_init':
+  drivers/gpu/drm/xe/xe_device_sysfs.c:300:25: error: label 'cleanup' used but not defined
+    300 |                         goto cleanup;
+        |                         ^~~~
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+I think those should just be 'return ret', as it appears that
+fb3c27a69c473 already includes ff89a4d285c82, so I think you can just
+take the right side of the conflict wholesale.
+
+Cheers,
+Nathan
 
