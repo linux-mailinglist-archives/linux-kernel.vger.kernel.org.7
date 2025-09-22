@@ -1,197 +1,258 @@
-Return-Path: <linux-kernel+bounces-826666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08EC2B8F137
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:08:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79F7B8F141
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81D56189D6F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:08:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B02DC179663
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E4E254AF5;
-	Mon, 22 Sep 2025 06:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219422561AE;
+	Mon, 22 Sep 2025 06:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pOKOHX8A"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013021.outbound.protection.outlook.com [40.107.201.21])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KnGtzfUq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055F22ED842;
-	Mon, 22 Sep 2025 06:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758521241; cv=fail; b=CJuIl0pjYJbdUQtYIBFwzuB4esj9+JhOvvOGdcM9ATI4yacpTIc3+dN365jyP+kffxMBsqUvFl/XRr1Akhg2LX6PhfQgfWkiaRsQmbkT7RL/niIEdkEdl11LTTD8dP7lfIbVoHfKR149qMJP/cd+NKGyQtisIkpbu3zRxsyVhws=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758521241; c=relaxed/simple;
-	bh=ICXglgFmSSeBHSuDdF1CCra3bktxfrAhNI9j7AY0Ck8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DXwW6urITs3CYDmu8GKdPA0I+gP4dSy0MGto/2rabaQ1c88imA99Netm2rvIFwKhLbz+QmmVjSYPVBJtEengb9Boheq7boZcof/Vj2NVFPGbl38oHC0pBqvkcCle/eJF3XGoNBXVnvoxeOUt2mR0P52JfIezPSXY4XDXd/WcqnA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pOKOHX8A; arc=fail smtp.client-ip=40.107.201.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yj756NMfHEfRQ01dPtdE6i0P3P6WGu6K5JE/ZgmPvX6tvF3/uDrtNAYNPjn7OY8COMzHl6OQO2TfRZj9WD4YGqLkX9fKfrg/QQKnFWnFNM9XbwV9/4Pe+Oc/rBtFSry4s12esrp5bfG7Y1S7bJjx6rm9cPwO5iwK3AFPVV8tNrPy1zWqtkUKpK2u2hHD4+z4WtJlWpmS8NXL6GdbiwuytygKM79wGUohfKnxk55SS/4M5ikIxtjYXtopkI3UTWjNjhSTe5QGuziXVzzxomLTRytHGP80C4Qz95SP2r/U2phjMwvOwPPUCObFHJENFVy+KXJ/J4LGKmtZhrdzT8Y0NA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8EPjZRqLLBkW2922HUh/7lo+9pD1vlgxfjNpn+KNTXo=;
- b=EkCFuMm+xOw4y/02A9eJ9eUmpmSmggFh8aOUiW9UWIFc/8LGyEqz/OZO5VI9uYKQD9ly6FGyge//qtU6bmD3x+bNvDCYwzgS1LTMkGKscb4+6vdgK+b5CfaN7ZDvl9dcxBZ6RJx7lvSUum8FbdweqhZMRy2l6qmY3oZFieu1YQPq56SaklVd+1scYwN9m0YXTCuq4SkH/gcci06vGHEfcLPUhDdeb4Iyft61KvZMUlt1hpWgSpE2IKSZdE5MNlGumpR4mXuZL1x2HYPfrNMdM3birjVT6oBbkH+p7fuc8tGvGQoQTsB2kDxNNsTQzBsaC3p7RbgnRSAO35nUwYFkNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8EPjZRqLLBkW2922HUh/7lo+9pD1vlgxfjNpn+KNTXo=;
- b=pOKOHX8AW36wgy1OGoEK2CB3MycnCR47Qz99+tHEzVPj3I+eSl349Z3YLSr6GhbTe0oakywpQbliUxT/WEzYaZkU3PoCAweD3nNo10Z26ovffT3M2Dzi6QA6/ZxyuBqu0D26Y+vtn0edBLd4Jh0HBaJpwpGNqOx62kw+k0QIrNfE38IascAOLjs4R+rwOoyEHfSdwFi+/SYZ4zumj/kY12x5LzRbcMz+0lcEsq1ZsP/dXIVbZMRbN8e838/EAYKGskgtcXuT8NqN5y5IldcvwKy2k4vJY6RwswmUVqA/Iigfb3mcWC3o1drqqz7GT027XlkWg3JbaPSa7hzjPMIdAA==
-Received: from BLAPR03CA0099.namprd03.prod.outlook.com (2603:10b6:208:32a::14)
- by CH1PPF5A8F51299.namprd12.prod.outlook.com (2603:10b6:61f:fc00::60f) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Mon, 22 Sep
- 2025 06:07:15 +0000
-Received: from MN1PEPF0000F0DF.namprd04.prod.outlook.com
- (2603:10b6:208:32a:cafe::f1) by BLAPR03CA0099.outlook.office365.com
- (2603:10b6:208:32a::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.19 via Frontend Transport; Mon,
- 22 Sep 2025 06:07:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- MN1PEPF0000F0DF.mail.protection.outlook.com (10.167.242.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Mon, 22 Sep 2025 06:07:14 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 21 Sep
- 2025 23:06:58 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 21 Sep
- 2025 23:06:57 -0700
-Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Sun, 21
- Sep 2025 23:06:53 -0700
-From: Tariq Toukan <tariqt@nvidia.com>
-To: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>
-CC: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Tariq Toukan <tariqt@nvidia.com>, "Mark
- Bloch" <mbloch@nvidia.com>, <netdev@vger.kernel.org>,
-	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gal Pressman
-	<gal@nvidia.com>
-Subject: [PATCH mlx5-next 2/2] net/mlx5: IFC add balance ID and LAG per MP group bits
-Date: Mon, 22 Sep 2025 09:06:31 +0300
-Message-ID: <1758521191-814350-3-git-send-email-tariqt@nvidia.com>
-X-Mailer: git-send-email 2.8.0
-In-Reply-To: <1758521191-814350-1-git-send-email-tariqt@nvidia.com>
-References: <1758521191-814350-1-git-send-email-tariqt@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC2B2417FB
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758521315; cv=none; b=M6Gr99JzW28UIgYZ5dKq9+96tERsasmhi+IuEnJ/SAwLrjV/BscCe3Bu2rQslH1bTK5ZIt+hkdrgGDNH3lXTZkJCf0wRQLVxot/ikBA4ZDH2m7kmOLBx9T9qi0ebkR3b2moOxX5GMlG1BcuMFPLk2TVt3MT6Q4fjAMmwrh42DYY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758521315; c=relaxed/simple;
+	bh=IDeCGnTalHX3T7NUX5lLcn7U2RTxQnMhyPrXKtsl/Xs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yv5yZdZdvyGOBDq1v2VFG+JWgJcrPsYYsqpzdo8aPbMm63sbcpWqMpJqghih0tKZ34nI3lKh/xiSDtxbIuMq3+1E8J9PTgiyYp40Kbomv2p6LgQzdWPhkSLIzMSZAtYpZ+ZQVXzUp92xD451t0WXOLmOUWBkS03unHI1c4pMOKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KnGtzfUq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58LNwPKv015017
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:08:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=DNso+X5TFBbICS+hz8yOAV8D
+	VBBPw5nkoo+yOiUYWYs=; b=KnGtzfUqHLrbX4ktl+2QnrCpFZSZLZ1axdHY5Bh+
+	BKm7tN3ognSbn8ZI00Ka05LEB7TE86+hHcmYmmLeLN+RwfSpibv1+de3S85AxKEI
+	FBJ/yHrxs8ztw1neg3IKZLFCvqJNU3rsA5Cs2cYvjpfa+sdWsLQ6JukRIV5IdO8M
+	CAGu3XDx9iU5RjNYxOWp2J0zP69ZTvyxWpX9sZZSc2byDnweEeuJOP1Vz2+mL+52
+	zQYXmB3yP8tXmzKDQ7IHRe7pz5aHSGZp9O1Onlbk13J3PBSqbhd337pduN6/fbFe
+	K3kmpmQS7ADMb+KAD2IPVHXlUdkrGcEFp4cL9DemW0Nebg==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499kkhkk4h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:08:32 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-244581953b8so46485505ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 23:08:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758521311; x=1759126111;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DNso+X5TFBbICS+hz8yOAV8DVBBPw5nkoo+yOiUYWYs=;
+        b=MK/2mKGHpU/WS6QeYIhfLtA84atlhgDafZxHiRIGEDaZpG7r7m/zltSuVpKZxYo+nl
+         FghkQME69bCp0ZkMKdTr9YZp10QNzaEn5+8OQ2WDV6Vypi9sUsUIYADTVIN/mqaRmb95
+         bKtOABPQOjNo9F/+Ke/mtomH5OlkTukrm47aHP1zy5i2CtmU59VXJEF0cSMcVK7GcQpa
+         gVlfW1CPqvb/W2QkPy/mNHd/sx7r21c9ZAOdBqfVUk7zTmdgGQQ06GDShavImf8Qne4s
+         AIkNjRO+Ah2zP5wdl77tiluZkeg/CKpd+5ImjP7jWi4qS3bLY7ShoohX7g+whCT74TUj
+         1rjA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5A3PAIc10McvjiH/3TAxQo7/7ORSJW8lWDhj15iZPl8g2Rg7jkcpUvF/u7TtFcqulsx7raynGXka1qjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoA3lPVQI8WbqGY5NwZsyCKUVbvfD/2/4T2REy0GDR2kR6ciqU
+	RuN1xtkFLxx6AjWBKIzWZh/d/5tzfttshhNs4PzrzMCMr99sO0oZF99bqdQqbGL8duMlzssQMwL
+	wXfnB/C4M2zzLncVc0/1TSRfbuBhi482D+kfCj1OksgxoIC5koroiYcMmKZsqj6mITGPd33d72Y
+	M=
+X-Gm-Gg: ASbGncvKx3XmwKo1YoACYmUKQGUZ+9AI7C3g0seJ70VOXGuXKBkyDNAYvvG3/mLGik6
+	MdVzn8VhLx8IRi0Bi1mCRkmwjWEEt/GwTQ/tCsMqZtfn6EHZwXGzUuXbgT7h/t3lNPezVhtTnSU
+	qHU+A7a3Ym4rPJ7Ca6agBsspcv8ZwidBevNjLcXv2tGBFeDr2TdigOzj6yYlvDtaBfPEeRlCLTO
+	8DMhKgYLdLNbQW3NCWU/hIvF2eTmOfTbh/w0CSAV97VdUnmko07UoOmMTbMIgTlYdKHU/0o8kph
+	kpcDitFHb+6NGGPeiSBLb3QHNjrOExv0OlyrtCYZm6ZKD8VT+EsLt7crnIMgiaIuPt4=
+X-Received: by 2002:a17:903:22c9:b0:277:9193:f2da with SMTP id d9443c01a7336-2779193fd50mr35333285ad.5.1758521310861;
+        Sun, 21 Sep 2025 23:08:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHKFMR8879Pl4lZyZ2YF4Lh/8cDAxLwZpRuzeHq+bU9jRrd9agMM6wzkTs9ZZ4iKfo4TduB4A==
+X-Received: by 2002:a17:903:22c9:b0:277:9193:f2da with SMTP id d9443c01a7336-2779193fd50mr35332945ad.5.1758521310376;
+        Sun, 21 Sep 2025 23:08:30 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802deeb1sm117970665ad.78.2025.09.21.23.08.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Sep 2025 23:08:30 -0700 (PDT)
+Date: Mon, 22 Sep 2025 11:38:23 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 10/12] remoteproc: pas: Extend parse_fw callback to
+ fetch resources via SMC call
+Message-ID: <20250922060823.upc6r7mbxcm2c66w@hu-mojha-hyd.qualcomm.com>
+References: <20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com>
+ <20250921-kvm_rproc_pas-v3-10-458f09647920@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0DF:EE_|CH1PPF5A8F51299:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a5d00b2-a765-4321-2879-08ddf99e46e6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZVbXYi7hf/w0TD/cEfjWiqIXdBS7jpz0An7Bl9KeMXbIgaBBb3EThUuQhbN2?=
- =?us-ascii?Q?rhNNUK0iD+jvOpkHNeD+OBjuC+scf6y+WWzkzTfcrBvb22shC+/NIE3wjazD?=
- =?us-ascii?Q?7yX2rET1WgUbKzCAenEgbzntE33n9FYQ1lxmVYQyQb9JiJw8jvwu28gYzG1x?=
- =?us-ascii?Q?LRq6UAuO56w7EmcCd5kSBx7W1FCsNdxDsEVc8WfIU1MhjpYe4j3q02H7SZT3?=
- =?us-ascii?Q?5KGp4UA/M4OwZNuutCzGqjD1S5C3/4J23Lfu17WKUXInItXtPOwUT54VBV01?=
- =?us-ascii?Q?9KaVsxBbFJikXRMoH9C9Q3CowLOVlRKpyb0PubriK55MdcHTaqNELPk1A7yp?=
- =?us-ascii?Q?+AQf9R7r7/8l7c51VSvQcUtNsqwgcFY4pNZ8NGH2axXIcYfMtt3jOyGNfVWL?=
- =?us-ascii?Q?OQJjGD9tWiJbOgggMtm2ctg1hKanLMfz8I4D5dY1cWocTMkx2kapBGo6RVUU?=
- =?us-ascii?Q?SqKHmyji59UepQsETNVsaowzsjmWjJfZDhrOcHzPrGOc00tC2+bxjJCbBYqg?=
- =?us-ascii?Q?JRWeyTqwGYrQWSL0elGXB23jrKGD2xxloVDj3bUmMkU7qsteh5Qi7Xaf/jtp?=
- =?us-ascii?Q?pq4Zr58DOAPYe+BJvex6I9roLn2wQiXlZRDlaBZmk5S/uPxO+fpzKdQgyi8b?=
- =?us-ascii?Q?3pB1XqzwshoFOE3/KapMJC7BBWME41YSSIVQz9CsZgJ2S+rIlLvUQVwE+VEs?=
- =?us-ascii?Q?4M/s2VjI/FQSP2TPMI34dLkHVxyzuG8EimXTv0IrxvQYk6+nwnmADvfEDdx5?=
- =?us-ascii?Q?fWJwlVrWgsUk/y7Ou8IxYpLFivgJNF8B/T/3j/7r6hzLUO1hUVGt91NX5qW/?=
- =?us-ascii?Q?WFAXuq7y2r3GzbOS0nc6l6zC/9IoG1s/kfk4T0QyuHgNZpLlxiW4gU1RFw0q?=
- =?us-ascii?Q?718Mdymz6MqCy0XLCnWFA43IFBDhx+GAKucQf1ifyEa8BPZELIWaNbwcbHbA?=
- =?us-ascii?Q?WoplcP7qkxJCIu8d6mn+MQe7qltrZqKLay0JFGz5MQm10jHmPRpx02DM2Gni?=
- =?us-ascii?Q?A1Dg3ibDrZZ5Cm6pqrvVXhzuz4I7m7uSicm5P5AKd32knLV00LLedgM2XvoC?=
- =?us-ascii?Q?sKq7VBA8S+yO+h4thPsO3JGaKWKFbqbb3WOp96/m1wugKeK8+5VM0p0k6GE9?=
- =?us-ascii?Q?3RW1RZzRXZhjQBm9JSciNoIL4YW78wXFdeGL0/AsEvbuFpXI9pmlFoVv4FKX?=
- =?us-ascii?Q?PMBr2GQExYnL4om28I/8rzvkJ9s+3auzgq1kZK8Is0/Ie4IFLKHylSA7OpTk?=
- =?us-ascii?Q?qgDJRV7EuhKkRwVboXct1uOvoM12jqcjzT3avtM4aZZjP+Su1a+7KDGQcpke?=
- =?us-ascii?Q?1F2Bko3/oqEf4RxCYYa0u9b1KpTnoiLpv9Kp7oFEILF6OrJZYWqCqTCt4s2d?=
- =?us-ascii?Q?P/WCvvZRr8yTYMSPVWLrnreZsAg7Gi4gkWSmumr24xN36R3opb0tw6gfMy2W?=
- =?us-ascii?Q?Z+oF8SXvxJzFFIn1/OkrF6+f5z7zQ2GHrv1v2QNPs/nFxgDq7FQLSjf+OQLm?=
- =?us-ascii?Q?Vy6LmaG1QEvpuJtX1/F39Cg0YX8HZCvfMuh6?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 06:07:14.4321
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a5d00b2-a765-4321-2879-08ddf99e46e6
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000F0DF.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPF5A8F51299
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250921-kvm_rproc_pas-v3-10-458f09647920@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: ZI8BvOGvvIe_p1Ycu2GCWFwzK7nrgmud
+X-Proofpoint-GUID: ZI8BvOGvvIe_p1Ycu2GCWFwzK7nrgmud
+X-Authority-Analysis: v=2.4 cv=JMo7s9Kb c=1 sm=1 tr=0 ts=68d0e7e0 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=fIUZ2iN8pujUo_8L_LEA:9
+ a=CjuIK1q_8ugA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyMiBTYWx0ZWRfX9xcmkRFqeRXo
+ M+aI9NKSXCrSx0AIXzwg+sD+MtnMEPP9sUQryqAZmS1jCGzHtMl7Twjvm6WbuDy6N0gefa/Psf4
+ Dp7MNw2gqG6m+Uu8yI+04xkDNA71JCCiSoxtm8FpqK3u4kXlBixjJpADElsc5uQtiRZiX2j8VKS
+ vW0nbC9xov/xuGuY7lxJAFketP/fjseG203iPpKSzQBKyNzweC4wfw4hIoKId1A3fEDJv0wYAfP
+ Ja8Fj5lkQ8L1XSqCsQiqqRZsbYdvvy7BDBgrsnXYVpXEas+LZwfcqRW6o684c5YZeRkizp4pBHj
+ SVIPsDpQNl9XKL7atvsqPxmMPWiPnYI3p71ZobZO/v2zee6R8c4nHpGOkZTo73hGCPs978otlja
+ ZBO1yJjh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-21_10,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0
+ clxscore=1015 adultscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509200022
 
-From: Mark Bloch <mbloch@nvidia.com>
+On Sun, Sep 21, 2025 at 01:11:08AM +0530, Mukesh Ojha wrote:
+> Qualcomm remote processor may rely on static and dynamic resources for
+> it to be functional. For most of the Qualcomm SoCs, when run with Gunyah
+> or older QHEE hypervisor, all the resources whether it is static or
+> dynamic, is managed by the hypervisor. Dynamic resources if it is
+> present for a remote processor will always be coming from secure world
+> via SMC call while static resources may be present in remote processor
+> firmware binary or it may be coming from SMC call along with dynamic
+> resources.
+> 
+> Remoteproc already has method like rproc_elf_load_rsc_table() to check
+> firmware binary has resources or not and if it is not having then we
+> pass NULL and zero as input resource table and its size argument
+> respectively to qcom_scm_pas_get_rsc_table() and while it has resource
+> present then it should pass the present resources to Trustzone(TZ) so that
+> it could authenticate the present resources and append dynamic resource
+> to return in output_rt argument along with authenticated resources.
+> 
+> Extend parse_fw callback to include SMC call to get resources from
+> Trustzone and to leverage resource table parsing and mapping and
+> unmapping code from the remoteproc framework.
+> 
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> ---
+>  drivers/remoteproc/qcom_q6v5_pas.c | 60 ++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 58 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index ad87e0334a7d..9a0c0e8f5506 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -34,6 +34,7 @@
+>  #define QCOM_PAS_DECRYPT_SHUTDOWN_DELAY_MS	100
+>  
+>  #define MAX_ASSIGN_COUNT 3
+> +#define MAX_RSCTABLE_SIZE	SZ_16K
+>  
+>  struct qcom_pas_data {
+>  	int crash_reason_smem;
+> @@ -408,6 +409,61 @@ static void *qcom_pas_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is
+>  	return pas->mem_region + offset;
+>  }
+>  
+> +static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *fw)
+> +{
+> +	size_t output_rt_size = MAX_RSCTABLE_SIZE;
+> +	struct qcom_pas *pas = rproc->priv;
+> +	struct resource_table *table = NULL;
+> +	void *output_rt;
+> +	size_t table_sz;
+> +	int ret;
+> +
+> +	ret = qcom_register_dump_segments(rproc, fw);
+> +	if (ret) {
+> +		dev_err(pas->dev, "Error in registering dump segments\n");
+> +		return ret;
+> +	}
+> +
+> +	if (!rproc->has_iommu)
+> +		return ret;
+> +
+> +	ret = rproc_elf_load_rsc_table(rproc, fw);
+> +	if (ret)
+> +		dev_info(&rproc->dev, "Error in loading resource table from firmware\n");
+> +
+> +	table = rproc->table_ptr;
+> +	table_sz = rproc->table_sz;
+> +
+> +	/*
+> +	 * Qualcomm remote processor may rely on static and dynamic resources for
+> +	 * it to be functional. For most of the Qualcomm SoCs, when run with Gunyah
+> +	 * or older QHEE hypervisor, all the resources whether it is static or dynamic,
+> +	 * is managed by present hypervisor. Dynamic resources if it is present for
+> +	 * a remote processor will always be coming from secure world via SMC call
+> +	 * while static resources may be present in remote processor firmware binary
+> +	 * or it may be coming from SMC call along with dynamic resources.
+> +	 *
+> +	 * Here, we call rproc_elf_load_rsc_table() to check firmware binary has resources
+> +	 * or not and if it is not having then we pass NULL and zero as input resource
+> +	 * table pointer and size respectively to the argument of qcom_scm_pas_get_rsc_table()
+> +	 * and this is even true for Qualcomm remote processor who does follow remoteproc
+> +	 * framework.
+> +	 */
+> +	ret = qcom_scm_pas_get_rsc_table(pas->pas_id, table, table_sz, &output_rt,
+> +					 &output_rt_size);
 
-Add interface definitions for load balance ID and LAG per multiplane group
-functionality. This patch introduces the hardware capability bits needed
-to support balance ID in multiplane LAG configurations.
+It is a mistake from my end, this pas->pas_id should be pas->pas_ctx
 
-The new fields include:
-- load_balance_id: 4-bit field for balance identifier.
-- lag_per_mp_group: capability bit for LAG per multiplane group support.
+> +	if (ret) {
+> +		dev_err(pas->dev, "error %d getting resource_table\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	kfree(rproc->cached_table);
+> +	rproc->cached_table = output_rt;
+> +	rproc->table_ptr = rproc->cached_table;
+> +	rproc->table_sz = output_rt_size;
+> +
+> +	return ret;
+> +}
+> +
+>  static unsigned long qcom_pas_panic(struct rproc *rproc)
+>  {
+>  	struct qcom_pas *pas = rproc->priv;
+> @@ -420,7 +476,7 @@ static const struct rproc_ops qcom_pas_ops = {
+>  	.start = qcom_pas_start,
+>  	.stop = qcom_pas_stop,
+>  	.da_to_va = qcom_pas_da_to_va,
+> -	.parse_fw = qcom_register_dump_segments,
+> +	.parse_fw = qcom_pas_parse_firmware,
+>  	.load = qcom_pas_load,
+>  	.panic = qcom_pas_panic,
+>  };
+> @@ -430,7 +486,7 @@ static const struct rproc_ops qcom_pas_minidump_ops = {
+>  	.start = qcom_pas_start,
+>  	.stop = qcom_pas_stop,
+>  	.da_to_va = qcom_pas_da_to_va,
+> -	.parse_fw = qcom_register_dump_segments,
+> +	.parse_fw = qcom_pas_parse_firmware,
+>  	.load = qcom_pas_load,
+>  	.panic = qcom_pas_panic,
+>  	.coredump = qcom_pas_minidump,
+> 
+> -- 
+> 2.50.1
+> 
 
-These interface additions are prerequisites for implementing balance ID
-support in the MLX5 driver.
-
-Signed-off-by: Mark Bloch <mbloch@nvidia.com>
-Reviewed-by: Shay Drori <shayd@nvidia.com>
-Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
----
- include/linux/mlx5/mlx5_ifc.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/mlx5/mlx5_ifc.h b/include/linux/mlx5/mlx5_ifc.h
-index c0f5fee7a4a5..07614cd95bed 100644
---- a/include/linux/mlx5/mlx5_ifc.h
-+++ b/include/linux/mlx5/mlx5_ifc.h
-@@ -2235,12 +2235,16 @@ struct mlx5_ifc_cmd_hca_cap_2_bits {
- 	u8	   reserved_at_440[0x8];
- 	u8	   max_num_eqs_24b[0x18];
- 
--	u8         reserved_at_460[0x160];
-+	u8         reserved_at_460[0x144];
-+	u8         load_balance_id[0x4];
-+	u8         reserved_at_5a8[0x18];
- 
- 	u8         query_adjacent_functions_id[0x1];
- 	u8         ingress_egress_esw_vport_connect[0x1];
- 	u8         function_id_type_vhca_id[0x1];
--	u8         reserved_at_5c3[0xd];
-+	u8         reserved_at_5c3[0x1];
-+	u8         lag_per_mp_group[0x1];
-+	u8         reserved_at_5c5[0xb];
- 	u8         delegate_vhca_management_profiles[0x10];
- 
- 	u8         delegated_vhca_max[0x10];
 -- 
-2.31.1
-
+-Mukesh Ojha
 
