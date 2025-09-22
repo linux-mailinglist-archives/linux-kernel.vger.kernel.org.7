@@ -1,138 +1,131 @@
-Return-Path: <linux-kernel+bounces-827316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C99B916A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:33:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9825B916A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A57F17A1C79
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:32:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A86FB3A86FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2A830CB2F;
-	Mon, 22 Sep 2025 13:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A609E30C35D;
+	Mon, 22 Sep 2025 13:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SDy8VOE2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IaeRSp5f"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98122309EF6
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AB0309EF6
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758548020; cv=none; b=Y+0GSwskZbbhj+XtQYXeqOYep+pH3bZz91bPN9TTKOSoncZOTQJDcVnSBh7R95nfPZ4UGH0XN6K6sYtq8qKGYLu1xRPnJxmNsLgdPvILiBtbEvYbUoeN5vD9MJxnNtIdmjogkGDkpqlibE/5hxD+wm0uk/Q/MCorGq9i85jqUYQ=
+	t=1758547993; cv=none; b=a69zZpQ8hXT8ehsS0asuvA7DEsxX0Jjk/PQg7kMFus1k64CyK1DxuaZ88wToEgQvAjtSC/IehOPBJ014i2h2AYAsrxTYV0HAJoP3xj39NIzYnpJ9HQP5gFd78uXGfXbQCwDb/KrdpBBLQmR68F6xX3R4vW4cmxvUmao3RHOY1Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758548020; c=relaxed/simple;
-	bh=elO3NLv4vt1JKnON/yJ0aCls7P7sTB7/lhLmqgp9rgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pGGQns83buTWakqHroy1G69BNQB1aUFJlQqqXe/xcUWxOPaZzt0mNxR+VncTxIqkquFPdOMIC8IwP7xWIE+AqBSN6HqcPM7RyGTfb+NfpQTa3I0gUm5wGe0HPIzn1KMoYyaWFokxaiTrammJXxD0KAjYoWjCgc3HZ3V9+0e4p8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SDy8VOE2; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758548019; x=1790084019;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=elO3NLv4vt1JKnON/yJ0aCls7P7sTB7/lhLmqgp9rgg=;
-  b=SDy8VOE268vPkXtUUIeDzrsM5+jV1MATvXcWQs/wv5O1tLgewTI4L85n
-   ZH/pYB3z9hq0St7yQiOgomD0Sm91XS2ZEhMhm1NCwjpyzr3BmYNU1UXI2
-   UzNpD3pIcHTc4mBAVy1NBrGN9tsRnZHEjp4UKvCPjzEletWTSaOVc2Sa3
-   IqcfLViNAeyCGhsxt1AKq5q/xJ5xam68n69YxnTTUpLWMP0eF56gaigRp
-   24SZx9cSwsOqYt7vntRPmNvH+Ht8rMVQ7yUhgdpSnqvKXJsaGJvSKQRl1
-   3r4PJMYDOarPf8FSjUFHS3hJVbhv2Mt2ylI/OD3LwLMw40bYI56EpuIQ5
-   A==;
-X-CSE-ConnectionGUID: D+goINgcQmW3zA24K4sIAA==
-X-CSE-MsgGUID: pLA0eckkTh6IpzdoHXeOAw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="63437687"
-X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
-   d="scan'208";a="63437687"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 06:33:38 -0700
-X-CSE-ConnectionGUID: BC/kmH+NTrGQk6dneCix1w==
-X-CSE-MsgGUID: 3o4exqteQd+w9anjPZHnaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
-   d="scan'208";a="180491381"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 22 Sep 2025 06:33:36 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v0gfd-0001iT-0c;
-	Mon, 22 Sep 2025 13:33:33 +0000
-Date: Mon, 22 Sep 2025 21:32:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Brian Norris <briannorris@chromium.org>,
-	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>
-Subject: include/asm-generic/percpu.h:21:44: warning: array subscript 32 is
- above array bounds of 'long unsigned int[32]'
-Message-ID: <202509222148.aujDHbuM-lkp@intel.com>
+	s=arc-20240116; t=1758547993; c=relaxed/simple;
+	bh=ju/+Tk1jIZw8C+PDK6Uifc35Hld5yaogm6d4PJKSVxM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WBaQq1u8cVTe0W8h494nS3C/b+42zF/LNeAGibHVvEiDyJhSx87ENEWXivJpIMMLnux0FHca9wEY62M3oZoTr0K4bWd015HBNMxgyLi1vsT3igZhzyfvHX2kb1PJE0pK+c0JWT+HLN8ItWtG9h+7VOzmnkDheRRfzdes5WMBhM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IaeRSp5f; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-57a292a3a4bso3053362e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:33:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758547989; x=1759152789; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ju/+Tk1jIZw8C+PDK6Uifc35Hld5yaogm6d4PJKSVxM=;
+        b=IaeRSp5fW3FI4cjA2qid95VidKwoAWpdi78h1l+cJVfevuWQpKNOo9IbRWtKtA5mwa
+         1FAWVUSwrR1YjXSnc4iTGqhKkMiQe4oGGk+l0Z62YzUtbCb9qoGZg8WyuGsoIK8Bec1t
+         FTkY/U8Juq1JA/+ACJekmouAQ3KircfHYMO+70OFxPtbPMZGPquIExujnSVD2eWSApOe
+         LfPueYV/MG1bXAbokuowgkUM/CrBkbXjKIb2zoImPpAr73qZ/p/6Orw7GN3LbRjQZkQW
+         /dVm3ReZ4MdvTFe+ayvEztR+vak5zHwzmGT7bBUaj8koJzf7yjzEkQWJcEX5SWap3+PW
+         KclQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758547989; x=1759152789;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ju/+Tk1jIZw8C+PDK6Uifc35Hld5yaogm6d4PJKSVxM=;
+        b=q4oV5anIz32aKAocVlQEN9gfbc/d4O6xXbo0BHZ3Hd9p4DNahWp9LAYHWxjy4EcVv5
+         nxJMvRR827pA1Suvvzr4hrtm2zC9eotqZQ9L7UKkip6gZ5n5pDp0/ZtG/D0fBaVJdbTR
+         N0csIej373X/Do9286uvvPvCCJu2BegkWclonRvRGWWPZfrJ1nfVq4aEKlgbxREXzBnJ
+         2wTw4akWFz7RHqXZmgvvZvnnEvZ1QQs3aXsbiaZb16f+P+EgNq1By+E4DZvPZkrO89Dq
+         qzZukykybvaCKpXxvE3i2Q1j5dO20jdZVQcEUJrtubzuJTNdG/XYrZjxy84jT3cViE7T
+         k8bA==
+X-Gm-Message-State: AOJu0YzsNzo7fIZjZpMvMYmH94N5YPGUVoQLK/v/B3WlsmFBlSINuQhc
+	iRLGT4bW3PoUqKYy17JS5xDSRZAuOtyGk13Iwm8hrJD/iXIhDaaWE4ngiYo6lNH43z2Cew6xMl2
+	NBLvwPWl5eOlCORnQFEvwG4uu6HePwjnZnB0kggPu0A==
+X-Gm-Gg: ASbGncu75SM+sh5hg8r+WRedrC93xVh8+E0Vn3mitaynuhJ3oTEQBbb5QeIpY3NX9wX
+	RKI+ExDBsWozRGx8itK8D1UQOfkmXHlkZyCePnKWtZVtbxetFD4ncGTJ+Gu2YEdVEr06N0J/0Kl
+	n/TCodAkrepC5Gt/8YQTWHpMbuB3MUi8HNEAmGG6F45MXLtgrucBIluz+BKcsl+ZMebBZ0uReoe
+	5gUWXRS8GSWX7PwpQKhMEyJKMxDzueSmr7KG5NP
+X-Google-Smtp-Source: AGHT+IHTBjNX0HP3ZCkaVoLL4eLDrptLZmHCvsE+kJJ3VY7J9vfIkHf0tBWobs9HDVtvaVyexH4mBI1JSmF5zBtai5s=
+X-Received: by 2002:a05:6512:2093:b0:55f:503c:d328 with SMTP id
+ 2adb3069b0e04-579e2cc187emr3681505e87.36.1758547989257; Mon, 22 Sep 2025
+ 06:33:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250922102407.186660-1-marco.crivellari@suse.com>
+ <20250922102407.186660-2-marco.crivellari@suse.com> <b64db199e6e1cd09b26f44d2e8cc1bec43b163fd.camel@sipsolutions.net>
+In-Reply-To: <b64db199e6e1cd09b26f44d2e8cc1bec43b163fd.camel@sipsolutions.net>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Mon, 22 Sep 2025 15:32:58 +0200
+X-Gm-Features: AS18NWBfPDmqzwWyp5Hr3BDD1B5D9T66jY4pTEMJ-g36rEN9zorzdVIGywuXji0
+Message-ID: <CAAofZF4=UgS+hH_fNry-Sjt8O1wzrEp2x12pcPzh7oPETUZ0-Q@mail.gmail.com>
+Subject: Re: [PATCH 1/1] wifi: libertas: WQ_PERCPU added to alloc_workqueue users
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, Francesco Dolcini <francesco.dolcini@toradex.com>, 
+	Brian Norris <briannorris@chromium.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Kalle Valo <kvalo@kernel.org>, "Dr . David Alan Gilbert" <linux@treblig.org>, Jeff Chen <jeff.chen_1@nxp.com>, 
+	Stefan Kerkmann <s.kerkmann@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yury,
+On Mon, Sep 22, 2025 at 1:33=E2=80=AFPM Johannes Berg <johannes@sipsolution=
+s.net> wrote:
+> On Mon, 2025-09-22 at 12:24 +0200, Marco Crivellari wrote:
+> >
+> > With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND)=
+,
+> > any alloc_workqueue() caller that doesn=E2=80=99t explicitly specify WQ=
+_UNBOUND
+> > must now use WQ_PERCPU.
+>
+> Which I guess forces a decision, and should be kept for a few releases,
+> but ... is "keep what it did" really the right decision in all places?
+> It seems to me that for instance for libertas here, there really is no
+> reason to be CPU bound?
 
-FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
+Hello Johannes,
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   07e27ad16399afcd693be20211b0dfae63e0615f
-commit: fda1dd3c54ef3c4200c2e77634a91610da973950 find: Switch from inline to __always_inline
-date:   1 year, 1 month ago
-config: riscv-randconfig-r111-20250922 (https://download.01.org/0day-ci/archive/20250922/202509222148.aujDHbuM-lkp@intel.com/config)
-compiler: riscv32-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250922/202509222148.aujDHbuM-lkp@intel.com/reproduce)
+This change has been massively introduced only to make explicit that one
+of the two flags must be used (preserving the old behavior), where WQ_UNBOU=
+ND
+was not present..
+Going for each subsystem and checking who really needs to be per-cpu would
+have been a future step.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509222148.aujDHbuM-lkp@intel.com/
+I've already sent a v2 for a few other subsystems changing the old behavior=
+.
+I haven't seen per-cpu work, so removing the WQ_PERCPU flag and using
+explicitly WQ_UNBOUND instead, is not a problem, also for libertas.
 
-All warnings (new ones prefixed by >>):
+Thank you!
 
-   In file included from include/linux/compiler_types.h:174,
-                    from <command-line>:
-   drivers/base/test/test_async_driver_probe.c: In function 'test_async_probe_init':
->> include/asm-generic/percpu.h:21:44: warning: array subscript 32 is above array bounds of 'long unsigned int[32]' [-Warray-bounds]
-    #define per_cpu_offset(x) (__per_cpu_offset[x])
-   include/linux/compiler-gcc.h:35:26: note: in definition of macro 'RELOC_HIDE'
-     (typeof(ptr)) (__ptr + (off));     \
-                             ^~~
-   include/linux/percpu-defs.h:236:2: note: in expansion of macro 'SHIFT_PERCPU_PTR'
-     SHIFT_PERCPU_PTR((ptr), per_cpu_offset((cpu)));   \
-     ^~~~~~~~~~~~~~~~
-   include/linux/percpu-defs.h:236:26: note: in expansion of macro 'per_cpu_offset'
-     SHIFT_PERCPU_PTR((ptr), per_cpu_offset((cpu)));   \
-                             ^~~~~~~~~~~~~~
-   include/linux/percpu-defs.h:269:29: note: in expansion of macro 'per_cpu_ptr'
-    #define per_cpu(var, cpu) (*per_cpu_ptr(&(var), cpu))
-                                ^~~~~~~~~~~
-   include/linux/topology.h:96:9: note: in expansion of macro 'per_cpu'
-     return per_cpu(numa_node, cpu);
-            ^~~~~~~
+--
 
+Marco Crivellari
 
-vim +21 include/asm-generic/percpu.h
-
-^1da177e4c3f41 Linus Torvalds 2005-04-16  20  
-a875a69f8b00a3 Ingo Molnar    2006-07-03 @21  #define per_cpu_offset(x) (__per_cpu_offset[x])
-acdac87202a408 travis@sgi.com 2008-01-30  22  #endif
-acdac87202a408 travis@sgi.com 2008-01-30  23  
-
-:::::: The code at line 21 was first introduced by commit
-:::::: a875a69f8b00a38b4f40d9632a4fc71a159f0e0d [PATCH] lockdep: add per_cpu_offset()
-
-:::::: TO: Ingo Molnar <mingo@elte.hu>
-:::::: CC: Linus Torvalds <torvalds@g5.osdl.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+L3 Support Engineer, Technology & Product
 
