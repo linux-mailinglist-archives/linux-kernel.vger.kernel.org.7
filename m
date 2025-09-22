@@ -1,70 +1,59 @@
-Return-Path: <linux-kernel+bounces-827863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3567B934C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:56:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD1AB934C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C28F190851B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:57:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0E001908313
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A5E3128A2;
-	Mon, 22 Sep 2025 20:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B0F2FD1DA;
+	Mon, 22 Sep 2025 20:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="VdPr7U5W"
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Le7ez/gb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E224F27B34A;
-	Mon, 22 Sep 2025 20:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142932EA75C;
+	Mon, 22 Sep 2025 20:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758574572; cv=none; b=DGLWPxaz3k7qa7onhmcTXDB/WxHTm8mhwcArUFAiSyBVbyZIyoQKer93HPC+4qowi7sjHm5N0c8OEKx92x0rf+SLBxVfA1Hv7lMS2LXskgW/URIffKlv5Odn1KY9oLAaRPxUm3JM8xjwQiETrBTBrp7OD+3DRVYf/YWa6U5AIfI=
+	t=1758574569; cv=none; b=Q5xRsTWyPB4pEoMg4CcUN3EhFUxQDq02PEOYZYO3PccSCcWcQVzediSEMtfcDV6FH7Ifsfo2aV0WM4mrdOdl4V3PXvT4MpP43Gb98QuZnDonAdsVdV4VV+rNxZeZ/o7SZRSHbF6LKxDgGk7soiCDKDj96AYj0MZmroxXw44lYZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758574572; c=relaxed/simple;
-	bh=jEUM8lyfKvFiUdFhZ7PjWops+g7IRy5j7YhU6VucO20=;
+	s=arc-20240116; t=1758574569; c=relaxed/simple;
+	bh=lA0I4opGxZhQyjvHJkWoV1rrN874cWsCfYAyg+K+GmY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JwRUx+S/jVD8x3odB9zlLXenP82jhZDhH2LhfnB0RTU8YieWQBejSLPvCTG/nLzi5O7HOOeSyx6cpsxbCIM0YhF9mBEg5u4Ur1lcK0Q0+3/so4+zxaqQ5dLOz68F1iQzqAI0qEdVkdcKr2Fp5gA1qOxwNsIYtTIIIQ12v6pb+Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=VdPr7U5W; arc=none smtp.client-ip=195.154.113.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=bgQCp7CA1XODO0c4sqWCuEz1Lkml//ftLZS1eQvEnHw=; b=VdPr7U5WX7c+DPpyALWzTkyeN5
-	OJK8cdDVLEklr/DqAjxdg/QQKcBkM9T0MFIUNBx8T+oiDx7VjFrTbo9cnHznd9DxLFdyr1ZWhXIvX
-	H9KERN9r4b2mZSsiLu2vRav53XTrFpkDdHDvQzYdpbBSzpBXLtHofDrRi9ykqKOrd48WX+msouj+A
-	oKdAqvQPGTspKxyCMqIbZQny9fpm8KGrzEtw7jIh2SK3y7ROImsU/XfJLwvysM3fg32Coh/7YWU5Z
-	leG1m2aVv1p2TpTEEAUg9RyjCV0xKrvqFvlY1SgawqTOoO4NIZIqmYxWy5kv706tggfwxQaxOTYOL
-	3VEn4vqw==;
-Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
-	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1v0nZs-00AlWP-2U;
-	Mon, 22 Sep 2025 22:56:04 +0200
-Date: Mon, 22 Sep 2025 22:56:04 +0200
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>,
-	Troy Mitchell <troymitchell988@gmail.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Subject: Re: [PATCH 4/6] i2c: spacemit: check SDA instead of SCL after bus
- reset
-Message-ID: <aNG35Dwg7wWivSHJ@aurel32.net>
-Mail-Followup-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>,
-	Troy Mitchell <troymitchell988@gmail.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-References: <20250827-k1-i2c-atomic-v1-0-e59bea02d680@linux.spacemit.com>
- <20250827-k1-i2c-atomic-v1-4-e59bea02d680@linux.spacemit.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gn07jK7+dJzUtbQ30kYF/DwjsqGbPwitK/sMJorVkRWMLTgUbnNBjHfgFXmjK28D5l7tVfdghj65Njsm9ahCTq+qf0Hmi85bkJamYb015otHo/s+jl7752XSUH6816815ReSNRIhVOdpG58IaBciZ9FA9lm3DaaHsRqY6iGc/7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Le7ez/gb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B59EC116C6;
+	Mon, 22 Sep 2025 20:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758574568;
+	bh=lA0I4opGxZhQyjvHJkWoV1rrN874cWsCfYAyg+K+GmY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Le7ez/gbtNl0rwXZOciHgorHo1T/mjXDa7Sqb5DGeFMvXPlU1fXY7fFL2EXP4MATJ
+	 k4JMAcimAtW56q5h4mEmqv+lZ7CZZgAfTMJPq4aENh/BvRSFtwSmovxi4P8pPlTQuk
+	 Uo39ZFhQv7ro1ce9AbxBovRAWMH/wfbZOoqsUozJgkGTwVCv7uasDxxOF/3mzKnTjb
+	 wdaO43fS/kAsageKBUaOl9+vxC7Xby2vxT+TqWKiWvTqSfmMTlG1g2BPm4KSMUpM9y
+	 dU2JSUWyjRb/o8hIhp8fsaBlxgADVXWQyHTpLwAEe9WsK0J2CKHrbLhz3fVHIF7Hm4
+	 P8tbpW1uO6SuQ==
+Date: Mon, 22 Sep 2025 15:56:06 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Tianling Shen <cnsztl@gmail.com>
+Cc: Jonas Karlman <jonas@kwiboo.se>, linux-arm-kernel@lists.infradead.org,
+	Dragan Simic <dsimic@manjaro.org>,
+	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: arm: rockchip: Add FriendlyElec NanoPi
+ R76S
+Message-ID: <175857456614.1309030.10386435757239530357.robh@kernel.org>
+References: <20250922091509.2695565-1-cnsztl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,46 +62,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250827-k1-i2c-atomic-v1-4-e59bea02d680@linux.spacemit.com>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+In-Reply-To: <20250922091509.2695565-1-cnsztl@gmail.com>
 
-On 2025-08-27 15:39, Troy Mitchell wrote:
-> After calling spacemit_i2c_conditionally_reset_bus(),
-> the controller should ensure that the SDA line is release
-> before proceeding.
+
+On Mon, 22 Sep 2025 17:15:08 +0800, Tianling Shen wrote:
+> The NanoPi R76S (as "R76S") is an open-sourced mini IoT gateway
+> device with two 2.5G, designed and developed by FriendlyElec.
 > 
-> Previously, the driver checked the SCL line instead,
-> which does not guarantee that the bus is truly idle.
+> Add devicetree binding documentation for the FriendlyElec NanoPi R76S
+> board.
 > 
-> This patch changes the check to verify SDA. This ensures
-> proper bus recovery and avoids potential communication errors
-> after a conditional reset.
-> 
-> Fixes: 5ea558473fa31 ("i2c: spacemit: add support for SpacemiT K1 SoC")
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
 > ---
->  drivers/i2c/busses/i2c-k1.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
-> index c1656b78f1681729ccc2ebca6e290259d14889d9..4d78ee7b6929ee43771e500d4f85d9e55e68b221 100644
-> --- a/drivers/i2c/busses/i2c-k1.c
-> +++ b/drivers/i2c/busses/i2c-k1.c
-> @@ -172,9 +172,9 @@ static void spacemit_i2c_conditionally_reset_bus(struct spacemit_i2c_dev *i2c)
->  	spacemit_i2c_reset(i2c);
->  	usleep_range(10, 20);
->  
-> -	/* check scl status again */
-> +	/* check sda again here */
->  	status = readl(i2c->base + SPACEMIT_IBMR);
-> -	if (!(status & SPACEMIT_BMR_SCL))
-> +	if (!(status & SPACEMIT_BMR_SDA))
->  		dev_warn_ratelimited(i2c->dev, "unit reset failed\n");
->  }
 
-Reviewed-by: Aurelien Jarno <aurelien@aurel32.net>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
--- 
-Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-aurelien@aurel32.net                     http://aurel32.net
 
