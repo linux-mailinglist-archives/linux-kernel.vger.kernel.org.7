@@ -1,194 +1,119 @@
-Return-Path: <linux-kernel+bounces-826561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D5AB8ECA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 04:39:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BCC6B8ECED
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 04:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42BB74E01FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 02:39:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 728D97AB20C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 02:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F921C7017;
-	Mon, 22 Sep 2025 02:39:16 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D498922F757;
+	Mon, 22 Sep 2025 02:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="GkIVyXN3"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFFA16CD33;
-	Mon, 22 Sep 2025 02:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2258B1805E;
+	Mon, 22 Sep 2025 02:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758508756; cv=none; b=qkqEp3a1lHkI58Oo31ZBtNFOvgojkA0uQNI8HiOfcDDR3ITFxwhEj8d3N4cJMBN8CBzE9DtSTRGJUTbX+mj4An0MhMYXrLxqAAi1J11uv+dh8S2IMqo5kGycmRMmyJchh9Y0YIGITxQ5nBvF+N+Urmyss+3WwcSwIJWohMddx4k=
+	t=1758508836; cv=none; b=gUWjGFPC/gsQW1S7Nn6Gbo576BMRMeCulnX74KeEECieJilPIwRc1QEBxIaBwoBtNjGqLZHYu8VlhQesBQZSm/3k3uXUE8ZT6tIoDROYJNmVfRRIPLDy6S2LpBOUr0KAgC01jeWJBUF5ASefAdRHvcwXOYeRIRK0sW936XfYNZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758508756; c=relaxed/simple;
-	bh=2njLDJiojIEQxOF+htkPknhP0qErdIkYtULif4SAAOQ=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=nr0i+JL2DgmMKnlOXt55oudfCYsKI8oGJKTSLL9nRwsP98/xdJnyDJuTFWw/pdB0y/ZTtsuYDWf6flAmLYdTQT1MhLHxYHhM8xJIlE/V3AB1SNXiNvdcpEweEWXmlphUTdDctD5uOGiYhtxiIp646b16eTJhQxH9NGNnUZYWAp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-03 (Coremail) with SMTP id rQCowAB3x4GpttBoZbgtBA--.19549S2;
-	Mon, 22 Sep 2025 10:38:56 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: dpenkler@gmail.com,
-	gregkh@linuxfoundation.org,
-	matchstick@neverthere.org,
-	dominik.karol.piatkowski@protonmail.com,
-	arnd@arndb.de,
-	nichen@iscas.ac.cn,
-	paul.retourne@orange.fr
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] staging: gpib: Fix device reference leak in fmh_gpib driver
-Date: Mon, 22 Sep 2025 10:38:31 +0800
-Message-Id: <20250922023831.21343-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:rQCowAB3x4GpttBoZbgtBA--.19549S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWF4fCr1UuF1kKrWkAF1UZFb_yoWrCF1Upa
-	17Xa1rKry0vrnaqF45Xr1UZFsayw4IyayYvw17C343Aa95Zry0ya1DW34ayryrAFykJr15
-	trW09r40gFWkZF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
-	4UJVW0owAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
-	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4
-	vE14v_Gr1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
-	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
-	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
-	14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
-	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOTmh
-	UUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1758508836; c=relaxed/simple;
+	bh=oRwhNNcJ4UuJqK2uvE74sNP2bcTWym5M48wax+q4hFg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dLwkce+LDwspp5CLnMByDfJNfq/hN5xzWiCS56gB1aWC957GTvQ9gnaQuIrDMYkd5CUwGGcxiL79gq1BW8J9z1GISiPGplx1U5Z9S7TjU+v8RCJibpBme04v9zxpEedWUuWEd31kNEw8XW6ZuDPWFqR1XKSDshtwwk/B3m2k0Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=GkIVyXN3; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1758508823;
+	bh=sbMTFBkaNempQ9R89eRUdq5Tnnibi7nvv+qJWfTi2ys=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=GkIVyXN3hTKABUPSJs3w6GjAn44kF9bvQknDdWFdldCOnDKkSNfoDnN1uylHmcHD5
+	 tvO4lPlxKNJLrZjgvqLxgjxv7nOdwyVqOJO9ta8+M/EQ73dCxpXBptqdTm0wUmSmfX
+	 SGuVqkXmK0Yorlsugi587z7v95484+DTFgx25q3w8lJDwFRWtWBfoGexDbaMBtE334
+	 MVZ34FU0g9+PdEvqSfuRanyzXxW5cGO/j2EkZ93AOID2fiec5rMi+WhzQBXL+gYEeO
+	 A1F5BfbwyH6j3zQRAvBV6KsRe63IrO8nyCIWSjl/LHXSqt/ggdrUQ+lXWfLuDmlUwH
+	 dGitfe2CtzYLA==
+Received: from [192.168.68.113] (unknown [180.150.112.213])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id E29CF64755;
+	Mon, 22 Sep 2025 10:40:20 +0800 (AWST)
+Message-ID: <dd660ce0388afb61e476f164335600f3fc2b1fb6.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 0/2] Add device tree for ASRock Rack ALTRAD8 BMC
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Rebecca Cran <rebecca@bsdio.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley
+	 <joel@jms.id.au>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 22 Sep 2025 12:10:19 +0930
+In-Reply-To: <20250917180428.810751-1-rebecca@bsdio.com>
+References: <20250917180428.810751-1-rebecca@bsdio.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
 
-The fmh_gpib driver contains a device reference count leak in
-fmh_gpib_attach_impl() where driver_find_device() increases the
-reference count of the device by get_device() when matching but this
-reference is not properly decreased. Add put_device() in
-fmh_gpib_attach_impl() and add put_device() in fmh_gpib_detach(),
-which ensures that the reference count of the device is correctly
-managed.
+Hi Rebecca,
 
-Found by code review.
+On Wed, 2025-09-17 at 12:04 -0600, Rebecca Cran wrote:
+> The ASRock Rack ALTRAD8 BMC is an Aspeed AST2500-based BMC for the
+> ALTRAD8UD-1L2T and ALTRAD8UD2-1L2Q boards with an Ampere Altra
+> processor. The BMC runs OpenBMC.
+>=20
+> These patches add a device tree and binding for the BMC.
+>=20
+> **Changes between v1 and v2**
+>=20
+> - Reordered nodes to be in alphabetical order.
+> - Removed status lines.
+> - Fixed naming.
+>=20
+> There are still several warnings from
+> make CHECK_DTBS=3Dy ARCH=3Darm W=3D1 aspeed/aspeed-bmc-asrock-altrad8.dtb
 
-Cc: stable@vger.kernel.org
-Fixes: 8e4841a0888c ("staging: gpib: Add Frank Mori Hess FPGA PCI GPIB driver")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/staging/gpib/fmh_gpib/fmh_gpib.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+Thanks for checking!
 
-diff --git a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c b/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-index 4138f3d2bae7..245c8fe87eaa 100644
---- a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-+++ b/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-@@ -1395,14 +1395,17 @@ static int fmh_gpib_attach_impl(struct gpib_board *board, const struct gpib_boar
- 	pdev = to_platform_device(board->dev);
- 
- 	retval = fmh_gpib_generic_attach(board);
--	if (retval)
-+	if (retval) {
-+		put_device(board->dev);
- 		return retval;
-+	}
- 
- 	e_priv = board->private_data;
- 	nec_priv = &e_priv->nec7210_priv;
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "gpib_control_status");
- 	if (!res) {
-+		put_device(board->dev);
- 		dev_err(board->dev, "Unable to locate mmio resource\n");
- 		return -ENODEV;
- 	}
-@@ -1410,6 +1413,7 @@ static int fmh_gpib_attach_impl(struct gpib_board *board, const struct gpib_boar
- 	if (request_mem_region(res->start,
- 			       resource_size(res),
- 			       pdev->name) == NULL) {
-+		put_device(board->dev);
- 		dev_err(board->dev, "cannot claim registers\n");
- 		return -ENXIO;
- 	}
-@@ -1418,6 +1422,7 @@ static int fmh_gpib_attach_impl(struct gpib_board *board, const struct gpib_boar
- 	nec_priv->mmiobase = ioremap(e_priv->gpib_iomem_res->start,
- 				     resource_size(e_priv->gpib_iomem_res));
- 	if (!nec_priv->mmiobase) {
-+		put_device(board->dev);
- 		dev_err(board->dev, "Could not map I/O memory\n");
- 		return -ENOMEM;
- 	}
-@@ -1426,12 +1431,14 @@ static int fmh_gpib_attach_impl(struct gpib_board *board, const struct gpib_boar
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dma_fifos");
- 	if (!res) {
-+		put_device(board->dev);
- 		dev_err(board->dev, "Unable to locate mmio resource for gpib dma port\n");
- 		return -ENODEV;
- 	}
- 	if (request_mem_region(res->start,
- 			       resource_size(res),
- 			       pdev->name) == NULL) {
-+		put_device(board->dev);
- 		dev_err(board->dev, "cannot claim registers\n");
- 		return -ENXIO;
- 	}
-@@ -1439,6 +1446,7 @@ static int fmh_gpib_attach_impl(struct gpib_board *board, const struct gpib_boar
- 	e_priv->fifo_base = ioremap(e_priv->dma_port_res->start,
- 				    resource_size(e_priv->dma_port_res));
- 	if (!e_priv->fifo_base) {
-+		put_device(board->dev);
- 		dev_err(board->dev, "Could not map I/O memory for fifos\n");
- 		return -ENOMEM;
- 	}
-@@ -1447,10 +1455,14 @@ static int fmh_gpib_attach_impl(struct gpib_board *board, const struct gpib_boar
- 		(unsigned long)resource_size(e_priv->dma_port_res));
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0)
-+	if (irq < 0) {
-+		put_device(board->dev);
- 		return -EBUSY;
-+	}
-+
- 	retval = request_irq(irq, fmh_gpib_interrupt, IRQF_SHARED, pdev->name, board);
- 	if (retval) {
-+		put_device(board->dev);
- 		dev_err(board->dev,
- 			"cannot register interrupt handler err=%d\n",
- 			retval);
-@@ -1461,6 +1473,7 @@ static int fmh_gpib_attach_impl(struct gpib_board *board, const struct gpib_boar
- 	if (acquire_dma) {
- 		e_priv->dma_channel = dma_request_slave_channel(board->dev, "rxtx");
- 		if (!e_priv->dma_channel) {
-+			put_device(board->dev);
- 			dev_err(board->dev, "failed to acquire dma channel \"rxtx\".\n");
- 			return -EIO;
- 		}
-@@ -1517,6 +1530,12 @@ void fmh_gpib_detach(struct gpib_board *board)
- 					   resource_size(e_priv->gpib_iomem_res));
- 	}
- 	fmh_gpib_generic_detach(board);
-+
-+	if (board->dev) {
-+		dev_set_drvdata(board->dev, NULL);
-+		put_device(board->dev);
-+		board->dev = NULL;
-+	}
- }
- 
- static int fmh_gpib_pci_attach_impl(struct gpib_board *board,
--- 
-2.17.1
+> I believe the only one which is reporting an issue in my dts file (as opp=
+osed
+> to included files) is the first, and that's because the code partition co=
+ntains
+> the TF-A and UEFI areas. I couldn't see a way to suppress it.
+>=20
+> aspeed-bmc-asrock-altrad8.dts:578.16-581.6: Warning (unique_unit_address_=
+if_enabled): /ahb/spi@1e630000/flash@0/partitions/code@400000: duplicate un=
+it-address (also used in node /ahb/spi@1e630000/flash@0/partitions/tfa@4000=
+00)
 
+It seems odd that the partitions intersect. Are the offsets correct? If
+they are, can you add comments to the DTS discussing what's going on
+there?
+
+> aspeed-bmc-asrock-altrad8.dtb: /ahb/apb/memory-controller@1e6e0000: faile=
+d to match any schema with compatible: ['aspeed,ast2500-sdram-edac']
+
+*snip*
+
+> aspeed-bmc-asrock-altrad8.dtb: gpio@1c (nxp,pca9557): '#address-cells', '=
+#size-cells', 'gpio@0', 'gpio@1', 'gpio@2', 'gpio@3', 'gpio@4', 'gpio@5', '=
+gpio@6', 'gpio@7' do not match any of the regexes: '^(hog-[0-9]+|.+-hog(-[0=
+-9]+)?)$', '^pinctrl-[0-9]+$'
+> 	from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yaml#
+
+This one needs fixing.
+
+Cheers,
+
+Andrew
 
