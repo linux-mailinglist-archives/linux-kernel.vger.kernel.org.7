@@ -1,95 +1,129 @@
-Return-Path: <linux-kernel+bounces-827579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4042B92239
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:08:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B17B92245
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69ABD3B2C94
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:08:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE6613B9234
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B8C31077A;
-	Mon, 22 Sep 2025 16:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F64A2EA75C;
+	Mon, 22 Sep 2025 16:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PT7yPVcO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hN/5y+Lz"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC8D310621;
-	Mon, 22 Sep 2025 16:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4E6310764;
+	Mon, 22 Sep 2025 16:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758557298; cv=none; b=hPMzB7iBi1RTNWK5JbPakHnCU1ySQApsoMNnsCAhDcQD3zeUE2OVAkt3JMgERqWG1zIlI19y7huaVsaVF7ZQZX7V/6pMrRhageuyU5R2DtdZ9saI5R1EGdEUM5PR0eZ/3lICyfZUMzcrkWpTAgdg5v/a7sLkUjwS2KGodLmX5KU=
+	t=1758557320; cv=none; b=a0UoYlrB/IJANtsObxhPaBWHwTQenk/X/fq9Hr0vFn/Q9iyg5MMeruAv01trv+BIHS8VeTIbIbvXTyy1Xi6R8J07p6b3o8N6hzSP9k/YMAT2AbQoOk3EDHWZUmjkWqoeIpa7b5ZLzcC1aL5gb4Kwuk8goYeNrAINRAY+md7Eaq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758557298; c=relaxed/simple;
-	bh=z1dSIFPf3uKVgcTrmtn/W/j/YsVPru6sP0KVWsUJ/3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rGXTkXbw2HLTvVWqUHRcHgB1eBklueWViF/155AphhycJUmHlZwuTuYFgJK3AFtpAPims5lUHH3tm/Xbm94xZmBQDWMVejzmj2P9gl/DQJ6jUjWLSjIz0/hOIiH66EV8fetWiN4uYJO8ceLR4O+wiYFcNxNPYzop67sHSbtoibw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PT7yPVcO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D53FC4CEF0;
-	Mon, 22 Sep 2025 16:08:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758557297;
-	bh=z1dSIFPf3uKVgcTrmtn/W/j/YsVPru6sP0KVWsUJ/3I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PT7yPVcOsskmD/uItoqsNP3xpqYF08qg+D40grJL/t2gu1wbLevwIQF+xVWX1oLD9
-	 c7kN78wXHE4UbW+u9ybDnIu5Bh2uQagDzHo8ireHT/x1QRbq2YACmMoZCXELlajIgc
-	 Oqk14Yq7KcBPhinAXIP72U77Yb2KuHUxEFs12NxZzBeKCbidAzHTpni+F0Up8D2NdH
-	 wMNFalkPMbliXeAHHJXw8WCIhwH1XhNH4E7CaOfiR9lDT7KwwbAa3rnFhItdoja73Z
-	 h85Ib/Hj6F7VAKh/IrNkjM+rjL2XAMUICDEFLn86PnOJuf1mLYJ37/Np3KunIFaYfN
-	 MEEDw37B1ZlOA==
-Message-ID: <7fb081e9-e607-401b-937f-f4e3a78a2874@kernel.org>
-Date: Mon, 22 Sep 2025 18:08:11 +0200
+	s=arc-20240116; t=1758557320; c=relaxed/simple;
+	bh=1JhvlsGag/g0lsEn3CJ4T79NzeC8MMz8OYCOhlhCcfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D7jEeUL4iPk94PIluXj+NODn0ZuNqFQIJMm+O+2J6oZLNilGvXb13houwvu1Tz6E+YWzU/pf3t18feIHkykCODcmhvPUrzB5UoR5Adg9ARs0pPb8cn0HTAoleE+YaxdgWJ8aR7TrAx6CI3HX0v97k2LiKqGsmXGFUWAOlWjGnLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hN/5y+Lz; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 6891FC8EC47;
+	Mon, 22 Sep 2025 16:08:13 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3D28360635;
+	Mon, 22 Sep 2025 16:08:30 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 58A1F102F1942;
+	Mon, 22 Sep 2025 18:08:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758557309; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Hg2NoZ+lLEZW8Bu+98QwiGq8+y6KwiE9j3xN84DMQww=;
+	b=hN/5y+Lzx6vJQWz5+IvAyWUVCO9Sb8V+lGAwRHtGKlZHhiH9QpCd5NrK4oDe6YpbAmgnIX
+	ku+RMG37326N+lZz5XAgWH5nSuHgiObTTQ/wHd4qezZ/j8mke5Pb9bIu9fQFPd8g1n3Cju
+	Am6lH4IIJK54d9FjDmxzONgPRSDCYyw9zDpWxWdZ4+wDCsvfK9DcwHWCK6V0jRpp4ox2FA
+	yW2suHPc7o8wJjNwTP9+ujj08T4lNrUfePNLgKMmQUwxNcgtFveSJ6/BKajTZCgbJnGNAa
+	jRvZDa5eHTBYhQGXAU44mSibt4ktklGI+5PeSl+6j2yWOvGnTByBDSWp6SI80Q==
+Date: Mon, 22 Sep 2025 18:08:17 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Hoan Tran
+ <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Saravana
+ Kannan <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, Phil
+ Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, Pascal Eberhard
+ <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 5/8] ARM: dts: r9a06g032: Add GPIO controllers
+Message-ID: <20250922180817.7c1b8f61@bootlin.com>
+In-Reply-To: <CAMRc=MeLDe+o6dWkFCv6zc7ubcXicWdw4FA_A2p519OC4SH2BA@mail.gmail.com>
+References: <20250918104009.94754-1-herve.codina@bootlin.com>
+	<20250918104009.94754-6-herve.codina@bootlin.com>
+	<CAMRc=Mf9OB03FXEpSXG8XeJhtd7MkwJTH=rY11SBb9SazCMqJw@mail.gmail.com>
+	<20250922173145.4d4dbb2f@bootlin.com>
+	<CAMRc=MeLDe+o6dWkFCv6zc7ubcXicWdw4FA_A2p519OC4SH2BA@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/10] gpu: nova-core: Set correct DMA mask
-To: Alistair Popple <apopple@nvidia.com>
-Cc: rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
- acourbot@nvidia.com, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- John Hubbard <jhubbard@nvidia.com>, Joel Fernandes <joelagnelf@nvidia.com>,
- Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org,
- nouveau@lists.freedesktop.org
-References: <20250922113026.3083103-1-apopple@nvidia.com>
- <20250922113026.3083103-2-apopple@nvidia.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250922113026.3083103-2-apopple@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 9/22/25 1:30 PM, Alistair Popple wrote:
-> +        // SAFETY: No DMA allocations have been made yet
+Hi Barosz,
 
-It's not really about DMA allocations that have been made previously, there is
-no unsafe behavior in that.
+On Mon, 22 Sep 2025 18:33:49 +0300
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-It's about the method must not be called concurrently with any DMA allocation or
-mapping primitives.
+> On Mon, 22 Sep 2025 17:31:45 +0200, Herve Codina
+> <herve.codina@bootlin.com> said:
+> > Hi Bartosz,
+> >
+> > On Mon, 22 Sep 2025 16:22:14 +0200
+> > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >  
+> >> On Thu, Sep 18, 2025 at 12:40 PM Herve Codina (Schneider Electric)
+> >> <herve.codina@bootlin.com> wrote:  
+> >> >
+> >> > Add GPIO controllers (Synosys DesignWare IPs) available in the
+> >> > r9a06g032 (RZ/N1D) SoC.
+> >> >
+> >> > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
+> >> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >> > Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >> > ---  
+> >>
+> >> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>  
+> >
+> > I have just sent the v4 iteration.
+> >
+> > This patch has not been modified in v4.
+> >
+> > Can you add your 'Reviewed-by' in the v4 series?
+> >  
+> 
+> Sure, done.
 
-Can you please adjust the comment correspondingly?
+I have seen your 'Reviewed-by' in v4 but on patch 8 ("ARM: dts: r9a06g032:
+Add support for GPIO interrupts").
 
-> +        unsafe { pdev.dma_set_mask_and_coherent(DmaMask::new::<47>())? };
+Maybe this is correct but here (v3) your 'Reviewed-by' in on patch 5 ("ARM: dts:
+r9a06g032: Add GPIO controllers").
 
-As Boqun mentioned, we shouldn't have a magic number for this. I don't know if
-it will change for future chips, but maybe we should move this to gpu::Spec to
-be safe.
+This exact same patch 5 exists also in v4.
 
-At least, create a constant for it (also in gpu::Spec?); in Nouveau I named this
-NOUVEAU_VA_SPACE_BITS back then. Not a great name, if you have a better idea,
-please go for it. :)
+Best regards,
+Hervé
 
