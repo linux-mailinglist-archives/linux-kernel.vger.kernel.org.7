@@ -1,79 +1,64 @@
-Return-Path: <linux-kernel+bounces-827016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33B1B8FE51
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:02:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BC3B8FE61
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C06F7ADFC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:00:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40B0B4223C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579252C187;
-	Mon, 22 Sep 2025 10:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1732C2F3C2C;
+	Mon, 22 Sep 2025 10:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cHO1HZ5M"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZKdxg8o0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB8D2FD7B1
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346ED24167A;
+	Mon, 22 Sep 2025 10:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758535318; cv=none; b=C7JYdrH1VU8ecH7o+17zkIWhz9y9hRPcwYndfYPDNwCRVNICjlu9cFFD8A3jGf+I3m+f0HPqpQpHTo19ImAiSFhF7gh801iRTrxhsdtkInG5tFKZ1gYdzSKPaGfxiuluBnmIu0I8AGFM6CDItRv4C1JzDUgLqh8VoliAxHR3Bvo=
+	t=1758535504; cv=none; b=CRfdn063Ysl1sY0hysfuvAE9OVyvRoCu9B5YklIRhA4kCkChWjqUV9zIXHpwsaIspL++IILHA7dv6i2JXwUppAtn4+ww7+InFj7LeRKanI4ycCEP6heiuOfls0GNI7u4BK+6K5m3k0qUTTGhrk2wkaga7r/JK9sMg22RIzr9vaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758535318; c=relaxed/simple;
-	bh=GLC9unjLHcduutfU2De8SO6Cn5IZFndntQa/0T2wPQw=;
+	s=arc-20240116; t=1758535504; c=relaxed/simple;
+	bh=WB8GQ5RsepoYi2eFGEtfbChCX1TN6uBkef1VC/5PxZ8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pq7VN8d/D2ljLOA8JJ6v9nOm8HMQnfnUNTvX0Rl8JWuCCrJCUxZNS/isJuyCaqlxEmTOQsi+TcEEypMECSBb2lMj204MnPctILY+jTuQhvkhv6Q/OWq5b7AcDTTI4rJbNp6ceHUq+kMXUg/Z/ZXeOekG1qqNJXk8SUUjNeZbcNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cHO1HZ5M; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46b303f7469so11183045e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 03:01:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758535315; x=1759140115; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y811XUkUAcjUYq9kF2IbC9o9QTenp6PpvmUvV5JyxCo=;
-        b=cHO1HZ5M30mU5lJ+mWZ3CuIc02V2Kw+aRK3u+qJ6OaPpYZ8smMH0dyYT9aBV+j5G3A
-         5RngpuRemNRb2YCNUzP0pJxaX78uxGNQLguZ0yyIh+JBfbANGjhPZKwxGrntsMUzTWLc
-         NRJeDWPfTtYQBs/HEpOUUeVHjTSLKGDAgm4Hu3A7+tYwLVpjk1G2K46X9NNey6VL5K+f
-         dohhc3vEM7Oi4lYHZQ2Wjn4MVuI2GpkSoOuoSIV+OmuRxuoVh+SjNY1kjNuchAEF5vcs
-         jdPQl+7bVFQsuuvHlfB3KTCLmKUHtkduO6xgd1qX+whD6UJo1QUDV77jRLywTeqCYSoV
-         Z77A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758535315; x=1759140115;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y811XUkUAcjUYq9kF2IbC9o9QTenp6PpvmUvV5JyxCo=;
-        b=oNglgjlvgqWF/M41IHhdGViA84ibgT8ZchPICZFhcgww/j01dJ3Rinh4Pp0Kwb3aHh
-         1Z+ot238O2xtNZ0anngRCUixPmUqI4bS7dMzC9O6lroc/HN6Tti88+WlikZpgmNUUlN9
-         gXFVW1H57zRF64+E0+6gbjj10xmxC/7KBkvc5vhmT1RDS5Nmdf0q/wQsnotDaE470kkQ
-         8IuZzitSYesACESrDOAEVFOJKTQanoQxdLqXK/Ra8XnfY0CYyT1xbfRvvom1+zXLZeo5
-         jYzZFEb19tK21xbnLpKUouhLcY/diIe+zziG9dPl0X7JmzHRrUXre4WrUYfVP4SsQeQf
-         SiUg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvrZyG62IVt8M3POLN/GxmLA2z+F8HzIa7ldgGtV3po/Vg2DHFFh6w3Kxs26GNO30EwsiLuc00fQ+W1xU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvkrRuwURTPjrrLM6p8/iwsfcUbMXktTIkKjKTtStS758mHAY+
-	3uC2YTsF479I2nNLN29TrvtihRdhXEtJu05bEAWMM0u3fIy9rZdsHmHO+K4JQbluaZo=
-X-Gm-Gg: ASbGnctOSt7NVGMhgYMAtdwEzQYxrT2Mtb2mDo3LvHCdo8BvrXfq7Ueyl43uzOmr6TG
-	nV/FxmBTjueG972vc1WnyBCsjISyJ83T5LA8hzNVGrYVLrEgWVedquhAp40qkJOSIHfXPKvm3dA
-	M+33YqkqG/geCzDZ4f1f2RSgQTLJJOMZGTKVph583OmUGrios9PoLmkW3Sj3sL2Qf8ku+ocQm9p
-	QcUMZyQGlD42POf2I6gyIEdazCZHX5Bgb+a4NHn706IfUqAQFBSx6ayeSGYlaYCFJbdE2j+J5At
-	zcyLVi+fnLX92yxb5jxXkycIKW64gW1Sm2bCIYBrVhWF4jxVnHPkK+bd+9KgFAhdGgc0bCt+EaN
-	2oTq+jK/8PVwuuXOE/HN2nNpgFvc+ihNj
-X-Google-Smtp-Source: AGHT+IHyiSZQlLreoJ3W3Ph8Q291wVJ5XeiMCjmBz4nM2qvfV1a5GmC8lVHC1BmJs2M+jyBWopho2A==
-X-Received: by 2002:a05:6000:144f:b0:3ea:e0fd:290a with SMTP id ffacd0b85a97d-3ee7ca198bcmr9624896f8f.12.1758535315118;
-        Mon, 22 Sep 2025 03:01:55 -0700 (PDT)
-Received: from [10.11.12.107] ([79.118.185.144])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee1095489asm18419549f8f.24.2025.09.22.03.01.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 03:01:54 -0700 (PDT)
-Message-ID: <c0a0daf4-e9e3-4152-8e5e-c7b52a30dae9@linaro.org>
-Date: Mon, 22 Sep 2025 11:01:51 +0100
+	 In-Reply-To:Content-Type; b=lQY0scQZxIqB2bjmakSrpw0SDZZIp7KkyhVY/XDPLUmymiUHRE9Pxj+D9HnxiHR8CdNPWHurNlOuucNSa1f48esfVOw2Q/pGNZe6hdunLJ/1MQ4RtsYKYbiQ9p1ZUJD+i39jcbuTEDAMQsRR0LCYGdaMmADLPWxjuKCIvte+OVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZKdxg8o0; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758535502; x=1790071502;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WB8GQ5RsepoYi2eFGEtfbChCX1TN6uBkef1VC/5PxZ8=;
+  b=ZKdxg8o08fJWoD1uy5ByViiSqsbiP3qkzAYKXj8xTnC1vPcRghczW3Xf
+   cP95VDcep8FeCOhJdro3zSsElf8IsyllgSIy040q38wEswu83AxuW7ODq
+   Wc3yiqdVOi26UmduoEvSSGkbJs9YtSKL0Wqdndx2Lfv8+GJJAotx3NHxP
+   Un6Cmhg3vYR3r4VVuPeF3Y4hMyGYqYC+nUZH7KR+p8SgKJWyMDM4xZf78
+   mnb5ADBlm+6Mcz/6mn8Elww+v4E8//bZsgL9Loftaw0izyZQKVj0YP6vn
+   FIMRQ6bkNX480gurq5IegbiCVD9djVEFNJLi95u6wTlUGx3uuWv1+m/gK
+   g==;
+X-CSE-ConnectionGUID: tOhN9DbPRa2nw0NwlGI+Jg==
+X-CSE-MsgGUID: /tAajN2JRbuCRLMMmhOzKw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="72218546"
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="72218546"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 03:05:01 -0700
+X-CSE-ConnectionGUID: Ai8W4B+aTiKldxgsb2qz1A==
+X-CSE-MsgGUID: G6NnfLnPQDaymjrIefS/zw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="207180385"
+Received: from uniemimu-mobl1.ger.corp.intel.com (HELO [10.245.80.13]) ([10.245.80.13])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 03:04:57 -0700
+Message-ID: <2a927881-e0c7-47c8-a455-7ba3b1413648@linux.intel.com>
+Date: Mon, 22 Sep 2025 12:04:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,44 +66,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v3 15/16] kmemdump: Add Kinfo backend driver
-To: Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
- andersson@kernel.org, pmladek@suse.com, rdunlap@infradead.org,
- corbet@lwn.net, david@redhat.com, mhocko@suse.com
-Cc: mukesh.ojha@oss.qualcomm.com, linux-arm-kernel@lists.infradead.org,
- linux-hardening@vger.kernel.org, jonechou@google.com, rostedt@goodmis.org,
- linux-doc@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
- <20250912150855.2901211-16-eugen.hristev@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20250912150855.2901211-16-eugen.hristev@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH net-next 0/2] net: page_pool: Expose size limit
+To: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+ Leon Romanovsky <leon@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gal Pressman <gal@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>
+References: <1758532715-820422-1-git-send-email-tariqt@nvidia.com>
+Content-Language: pl, en-US
+From: Dawid Osuchowski <dawid.osuchowski@linux.intel.com>
+In-Reply-To: <1758532715-820422-1-git-send-email-tariqt@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 9/12/25 4:08 PM, Eugen Hristev wrote:
-> Add Kinfo backend driver.
-> This backend driver will select only regions of interest for the firmware,
-> and it copy those into a shared memory area that is supplied via OF.
-> The firmware is only interested in addresses for some symbols.
-> The list format is kinfo-compatible, with devices like Google Pixel phone.
+On 2025-09-22 11:18 AM, Tariq Toukan wrote:
+> Hi,
 > 
-> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
-> ---
->  MAINTAINERS               |   5 +
->  mm/kmemdump/Kconfig.debug |  13 ++
->  mm/kmemdump/Makefile      |   1 +
->  mm/kmemdump/kinfo.c       | 293 ++++++++++++++++++++++++++++++++++++++
->  4 files changed, 312 insertions(+)
->  create mode 100644 mm/kmemdump/kinfo.c
+> This small series by Dragos has two patches.
+> 
+> Patch #1 exposes the page_pool internal size limit so that drivers can
+> check against it before creating a page_pool.
+> 
+> Patch #2 adds usage of the exposed limit in mlx5e driver.
+> 
+> Regards,
+> Tariq
+> 
+> Dragos Tatulea (2):
+>    net: page_pool: Expose internal limit
+>    net/mlx5e: Clamp page_pool size to max
+> 
+>   drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 2 ++
+>   include/net/page_pool/types.h                     | 2 ++
+>   net/core/page_pool.c                              | 2 +-
+>   3 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> 
+> base-commit: 312e6f7676e63bbb9b81e5c68e580a9f776cc6f0
 
-I tested the series on pixel 6 and I could see the backtraces correctly
-decoded by the bootloader:
+For the series:
+Reviewed-by: Dawid Osuchowski <dawid.osuchowski@linux.intel.com>
 
-Tested-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-
-Thanks!
+Thanks,
+Dawid
 
