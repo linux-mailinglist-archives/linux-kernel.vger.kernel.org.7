@@ -1,134 +1,109 @@
-Return-Path: <linux-kernel+bounces-827025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65CB4B8FEAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:07:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4FDB8FEB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18917162FDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:07:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED91D422D51
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD8B3009D4;
-	Mon, 22 Sep 2025 10:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EWiLK/E8"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513ED3009C1
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575D82FDC44;
+	Mon, 22 Sep 2025 10:06:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11FC01CAA92
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758535592; cv=none; b=UWz4GoCPWmPUMKSykdpLWou02RyVAZ4mx+ziZgqK+d9tGPa+2aL629oI8c2cWwfgrTSu3jVmD8EK79PKDYBKiGLSUhj7YulCoZh0kdU35hUcwnhUYdHcJTiZ5Mvx8yWSzDUCxrFNFamGJ5+76p2z/9JOkt4+JQCqqL+uXf4ZZGI=
+	t=1758535619; cv=none; b=FLLxOVzOSnL/NIE4PyFxLY7NLkMPYBYiYLQ2xVQKuhQq7YZQ3GNKDySuv2M3VCUQh+QwngoSrJjtv6uaUSvBxU/x3MAYHY9f0siSNAQm9Kfkd+SVM24LSNgOIR/yGMwklHgMKQ+vWMs1LqP3G687Z93DSDBKtxKwdQMYnBJxVAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758535592; c=relaxed/simple;
-	bh=JE5vzNG6Sy2HEFoz+DBwUg/nv8rP+wKI7N6BxDeuvto=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RXiyw9wH1JYWn90ztIQeXo6xS0fTmVxrcmVTOCx6WMVPAYNzPhnkH5RbdX1d369O1DX7O9NVwzEA6j/KODsnQOeQ4Dk+dqYG9+mdbvMzgxwcId+RfJr/pPbJngWyTIQ7qAAZ6bPkCuQZtG0asW+gimhE7UhHMxLcplkiiAyMATo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EWiLK/E8; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3f2cf786abeso1450591f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 03:06:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758535590; x=1759140390; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HQSp6khD66PWakk86QjUyhjTSipaHZaw5SNW0wYKmlw=;
-        b=EWiLK/E8Usdl1hIMoIV3HvUUQp0vbGRsEDcShSOntPVn/q+x6Ob7eS1WqcM6FPXY06
-         f4UTpwvh4GdkfSoc/tQmu0rVA+5WQHqkoZFPya+/9zfv0koinmbGQsJoLkNv19Gtgf3s
-         52Rtj7CgG8cV6n4mb5tG2mBZSEd2IkH5UmwEwII/vrdCspJmlf5pvYk1syw9mqmA8CHj
-         2KyGlrgPgquAQr8K5bYk4y4ymNV7/UDHx57gLU1p20kD0OYmQH9KHaq0wekeJds/fHkb
-         ff+QIqIQuIn+BV4+ekpnJynOALQPRMe/6nfGN5C/PdqtRD6e9IY0Eo7F+os3rlpu7vpZ
-         hkiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758535590; x=1759140390;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HQSp6khD66PWakk86QjUyhjTSipaHZaw5SNW0wYKmlw=;
-        b=bG4FhT83MFKwQ1Y3Kq6+oCUyeVQ770+X5whZGFQU9UqoCaayD4pInhavTRsktIXxEj
-         9BhusJ4pWaSwigQxH31/BTYZQeb9Rs039D5o26IpaM96Wc/tSQAFnc6v2c7ftlwDLUva
-         al4jxDzgSWfJxzgsxkprTQQ9F+z9GfnFaxaWCeiBZxODdICHsoYT/UNImLPsj4/tZrnZ
-         UF9jZY5ce3XCIwHFOPLEOpIql6R+juj7E5mzlLM0n7MC/EBLsXm94ODNRxSMcS0v8FQR
-         U0zQDcKzIexI1p1EvA2cK8uEQyU00zBQyuGYfdaXPXIynKYOFM3hywc5crPQ0owPlRTq
-         aGBA==
-X-Gm-Message-State: AOJu0YxAxN5M/Cehfvw+FePsNUmT8y+fPiE0DMVbE7K+TVgVyGn3qSe/
-	BzBma4i9EPjFEUx2ljQkd+jxZH2zRu8oJgGg8sJqnENBlSLH84RJ9Y33CkS/DA==
-X-Gm-Gg: ASbGncuGHq4YT1BQz1laOt6+zjiHP/b9huzd6Ry+CqdeWDYkp1SAVCTNjZQqbvI8G1X
-	nUW8PNpOqv5NYvOAVp2gZGyjw3Gi7RMhbLe4Suq1P4hINeMuD8ZuM1hEp6olRYlf1RT5eiXbyDg
-	kSJosg6sjgOkRwcm8s5mBSIGsfYQ+32G9P87AJpfbaeM0rgrokHd5DrKYfKX+LxEGcianC3T06W
-	0i7235BQaukvIBbQHE/OsjRhA6PfS1ffjvhiAisJTqjkXqnwIB6iJd4jejACafI3xpPZ+MRkdpd
-	iQkvFBuYshsVdhwDBnVdzCKv86IdN2DgnPAvIVc89LNaQ8pMvuOCu9Y4bvqvi363S7lEp+nX4uJ
-	fyeBi4EAeisTX2HUJ0pnAc6ENolxGdWQ5pDcRDOGJ83PuXLK7FSl34sQ4xmqLuqjYu6PLGiuGss
-	a0mH8b/aemuaSyotaO
-X-Google-Smtp-Source: AGHT+IFMdYeYi2iaeAdjrGDcnkGPmrB4GjWSDhVK2rF2FgfKPc6GjT1SHKlJ9mXDLcRp77TRnBlKDg==
-X-Received: by 2002:a5d:5d88:0:b0:3ee:13ba:e140 with SMTP id ffacd0b85a97d-3ee7e1059b9mr9638251f8f.21.1758535589473;
-        Mon, 22 Sep 2025 03:06:29 -0700 (PDT)
-Received: from localhost (2a02-8440-750d-3377-171e-75f8-f2d4-2af8.rev.sfr.net. [2a02:8440:750d:3377:171e:75f8:f2d4:2af8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbc7188sm19867335f8f.37.2025.09.22.03.06.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 03:06:29 -0700 (PDT)
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-Date: Mon, 22 Sep 2025 12:06:20 +0200
-Subject: [PATCH v7 7/7] arm64: dts: st: add DDR channel to stm32mp257f-ev1
- board
+	s=arc-20240116; t=1758535619; c=relaxed/simple;
+	bh=LgMMQgwUTwmnvWOlcbeZFBKWAokQKCrWBDrPiMOMYh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qkLa3nvN06TagLeb4Q7YlTopMnCWBtfrxPNMAR8H1WiwL9Zi/WJRaIPPJBq2hiOBYMp38cjh1rR2/88TWUUxWYSAsxwrMYhU3QOdOt2dV695JRtmU9p0VwW7EfOiOgOM0QarX4TsdYKPxfrkwD89+v3fOOt3TZYvF9u4+iK1yJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F063B14BF;
+	Mon, 22 Sep 2025 03:06:47 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BEAB23F66E;
+	Mon, 22 Sep 2025 03:06:55 -0700 (PDT)
+Date: Mon, 22 Sep 2025 11:06:53 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	Linu Cherian <lcherian@marvell.com>,
+	Mike Leach <mike.leach@linaro.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] coresight: Fix fwnode leak in coresight_register
+ error path
+Message-ID: <20250922100653.GE516577@e132581.arm.com>
+References: <20250919160653.507109-1-sean.anderson@linux.dev>
+ <20250919160653.507109-2-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250922-b4-ddr-bindings-v7-7-b3dd20e54db6@gmail.com>
-References: <20250922-b4-ddr-bindings-v7-0-b3dd20e54db6@gmail.com>
-In-Reply-To: <20250922-b4-ddr-bindings-v7-0-b3dd20e54db6@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Julius Werner <jwerner@chromium.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, 
- =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>, 
- =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-X-Mailer: b4 0.15-dev-0dae4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919160653.507109-2-sean.anderson@linux.dev>
 
-From: Clément Le Goffic <clement.legoffic@foss.st.com>
+On Fri, Sep 19, 2025 at 12:06:52PM -0400, Sean Anderson wrote:
+> If registering the CPU map fails, we need to put the fwnode. free_percpu
+> works when called with a NULL pointer, so just use
+> coresight_device_release.
+> 
+> Fixes: 5ad628a76176 ("coresight: Use per-sink trace ID maps for Perf sessions")
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 
-Add 32bits DDR4 channel to the stm32mp257f-dk board.
+I have a patch that fixes the same issue:
 
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-Signed-off-by: Clément Le Goffic <legoffic.clement@gmail.com>
----
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
+https://lore.kernel.org/linux-arm-kernel/20250512154108.23920-2-leo.yan@arm.com/
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 836b1958ce65..c4223f06396a 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -41,6 +41,13 @@ pad_clk: pad-clk {
- 		};
- 	};
- 
-+	ddr_channel: sdram-channel-0 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "jedec,ddr4-channel";
-+		io-width = <32>;
-+	};
-+
- 	imx335_2v9: regulator-2v9 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "imx335-avdd";
+The difference in my patch is about the sequence: first it allocates the
+resource, then increases the fw node's reference count. During release,
+it first decreases the reference count, and then safely releases the
+resource.
 
--- 
-2.43.0
+After comparing your patch, I still think the above reason is valid.
 
+That said, I agree we should put this fixing before the panic notifier
+fix. This would be friendly for backporting.
+
+Thanks,
+Leo
+
+> ---
+> 
+> Changes in v4:
+> - New
+> 
+>  drivers/hwtracing/coresight/coresight-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+> index fa758cc21827..022c8384b98d 100644
+> --- a/drivers/hwtracing/coresight/coresight-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-core.c
+> @@ -1352,7 +1352,7 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
+>  		raw_spin_lock_init(&csdev->perf_sink_id_map.lock);
+>  		csdev->perf_sink_id_map.cpu_map = alloc_percpu(atomic_t);
+>  		if (!csdev->perf_sink_id_map.cpu_map) {
+> -			kfree(csdev);
+> +			coresight_device_release(&csdev->dev);
+>  			ret = -ENOMEM;
+>  			goto err_out;
+>  		}
+> -- 
+> 2.35.1.1320.gc452695387.dirty
+> 
 
