@@ -1,83 +1,94 @@
-Return-Path: <linux-kernel+bounces-826657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E70EB8F0F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:58:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 925B4B8F0F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 023F8175AC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 05:58:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70675189CA6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 05:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061AD2417C5;
-	Mon, 22 Sep 2025 05:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7239F2405E8;
+	Mon, 22 Sep 2025 05:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fO2ZwGku"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012020.outbound.protection.outlook.com [52.101.48.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Fs5tQfPc";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7o97hV/s";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pLudh/Qi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2O8npJVl"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C1434BA47;
-	Mon, 22 Sep 2025 05:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758520673; cv=fail; b=swNZbSUfOH/cQjz6mUpUskrKz4NwMJk0962eX0evNAE0gYJ/uprSc0WX7d0aCCNVtQgBmObS6VNTRRHzVJOKpJaSnLV5FHfj88JWu+/6AYcKeij65/yS3mc45oJSw+zQRx7JApzQ6KCwCIyNxBQJUfsksO2j1SZl3LxM/KYzggI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758520673; c=relaxed/simple;
-	bh=EjcoRVV9h4bzuK56lWnZYVux98kuB9XnOHY11qonPsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=StbhkceJ7cha5RWVC0FoCMDPr70vJwORPaMuPHBz66KhkjKMlgbP9Bp9Tv9Fl92hbxIszJLbZ0ZlQjnQhF/0J0cuC9A1qUDgkf19+UszlXtXfkKV0VQxwSSkbw9hPVxQngwFGwQOHwOAipWzrhpZQm6+e8edm2EnNs2r8S9wzT8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fO2ZwGku; arc=fail smtp.client-ip=52.101.48.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YGWENzl78xcY/QWYhvbVpmOxkkEjFJ/1xX/XwAcUJiSk+dHRtHZhLSuvxcNDg31KjReK9RTbmV/95cZ1RtrKDlBUG5GVhfsRlszfAnu1yEp8DxgOStDSOkA07q6U6dSHEYP0ZQQaaMP9grTR8xCSDg+Ib2fnNfat7HCmbGufAPuPr7N2uaTc/jBwBqsGLJpvC5URC1HYJU75iwh0VI6AAoul67F99h2HRfGSt3dVUDdjAO7uTMCsiWv8cLBQtbd+VafD3ew36rZXz2YOxij0OQ1iET2a0ZVWaRvQmyTlHeb7ARsDNEW2eXTaROJ3/uNdrQ8gIXyCxyipJKRv2QCKrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VRkJfYTNyU2Uuczde5wcwKndGAmUQzYUGBCep6a+HF0=;
- b=LHilzVTAqgOwtEpsIe28QZ+SSe17QRnLCuLEjkY3wnsHR8QG0PK0L8jWNcftAfx7N7O0FDwZbCEeUi27KwmNDPyjdy2uyKpcrbGrNsTSGn2pXBpM56zHYOWo2tiVMIvV/KaX9va+R8SRCFoqAI5HenGedVufDC1Ky44hEqqdQ0JvDwF1IdsqBMNgfXRfzk2RdOqUApLPX0syQUE6k5s0k0mmlUAsYSLGM5AyQ4nkLvrnPyakCO5PKSgzlMwCn/yY8zR0R1CHNbRaoFJGEhGl7KwuB2K+Rz4c285wjtzlTyyMEE4vicUSldJya0E6zvalz+XbBgH3WQGFFCbKkIczrw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=oracle.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VRkJfYTNyU2Uuczde5wcwKndGAmUQzYUGBCep6a+HF0=;
- b=fO2ZwGkudF4t6GiQaIXB7FVY43t9haiZP6OjIgQIHGitBi7V8PYsDQFzVvBkRGxUgqB5ZjCApqKpM4hQvwPQuPw0NQxN257fP+TkCOAHiGcr2AE8OSe6qzMlofR0NSrWMBUlFc9ZhQr4kDjl71UPrZQWJs4w7bJO5whCLzYTc58=
-Received: from SA9PR10CA0003.namprd10.prod.outlook.com (2603:10b6:806:a7::8)
- by IA1PR12MB8466.namprd12.prod.outlook.com (2603:10b6:208:44b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Mon, 22 Sep
- 2025 05:57:48 +0000
-Received: from SN1PEPF0002636B.namprd02.prod.outlook.com
- (2603:10b6:806:a7:cafe::8d) by SA9PR10CA0003.outlook.office365.com
- (2603:10b6:806:a7::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.19 via Frontend Transport; Mon,
- 22 Sep 2025 05:57:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- SN1PEPF0002636B.mail.protection.outlook.com (10.167.241.136) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Mon, 22 Sep 2025 05:57:47 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Sun, 21 Sep
- 2025 22:57:47 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 22 Sep
- 2025 00:57:47 -0500
-Received: from [172.31.184.125] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Sun, 21 Sep 2025 22:57:43 -0700
-Message-ID: <228e2fb7-e141-462c-8796-3cf78aa01902@amd.com>
-Date: Mon, 22 Sep 2025 11:27:42 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F189E34BA47
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 05:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758520682; cv=none; b=RTuitnH1CIqJct1+RvLQj9lRijD7WK589qR4bTSFhryD6GTHiZWDrg6fnXPrIaSpgEWAw1hh23xMGzmjLTPzoBAqVDnhoceoFMqoO+iuliWuElGWWhidElmjaeTowGJCgmOAogr75RcQZdmYZ0K2Bl4LwVpdGdPgXVcX5xH29Sk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758520682; c=relaxed/simple;
+	bh=HTnXmlTgzBbJg/xa5WP46C9Vh+W7/65uOoznDeyd3Wo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=laVaEvhbF81ffX17oe/sZE8cNYKTk90TVrsvefPR78iIt0zkvM9/HXed1ONslpUbPx3JuRFrzw+tksVT02Pa2PeHfkxTmC3LP6SkCdOCI6nLMm0E46i7taJvzXgdR/PYN9QkNUCxJ/X8hEfpd6Z8fFl0CTeYUtXiN61x/tgftb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Fs5tQfPc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7o97hV/s; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pLudh/Qi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2O8npJVl; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C8B611F8B9;
+	Mon, 22 Sep 2025 05:57:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758520678; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/RQhxHn+4UU3UiUHb3vbEUI/CfFVbR3/MSpBOKAXb7I=;
+	b=Fs5tQfPci0a+Jw35Cj2Lfww9fpxaVviqDYWN4O8YjHD71pGyPCvO3MTjupSE2iPRTTBdHx
+	1JYsA3NN9mOrO7fjYV+jhA/HiSHGn6sbQRnbqFM/4VL4nxhZSlS1HhsYE5WCY/b8cYbp0r
+	OPjdvedwtGeXnHOXGE87K0YbXtxYwik=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758520678;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/RQhxHn+4UU3UiUHb3vbEUI/CfFVbR3/MSpBOKAXb7I=;
+	b=7o97hV/sel56lX3iFmE+RtbRoImY0aqaQ4MSPuJm/z1hqhJdrMH4F290wfVyRxgebQD7nb
+	SI51Bj6hWqGM0pAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758520676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/RQhxHn+4UU3UiUHb3vbEUI/CfFVbR3/MSpBOKAXb7I=;
+	b=pLudh/QibDB09pUHmYYRhEmcNtDal8EpQ3h7AuiT7P/ZiI3f2plZRwzEuepWwjswC4wIxM
+	088qyKVZvpJ5mWe8+WzBf0XMS0YSkzjLPN8IMTijEazoj2lL43SAZ/IE9syDwN7j0806fi
+	1M4ErxviDFKs9+J8QhPtBnjKzq938AM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758520676;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/RQhxHn+4UU3UiUHb3vbEUI/CfFVbR3/MSpBOKAXb7I=;
+	b=2O8npJVlA9VHEZbrKFk1vRoiG4Zp/lGajxuc6YQVlQPLQtJ4qSCmhq6U0Z0WIW9asxfurN
+	erE3JgVD3gjK3bCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 86D8E1388C;
+	Mon, 22 Sep 2025 05:57:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Mq70HmTl0GgaYwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 22 Sep 2025 05:57:56 +0000
+Message-ID: <4a24f449-5f40-4169-9c19-4840fec81f4b@suse.de>
+Date: Mon, 22 Sep 2025 07:57:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,100 +96,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [patch 02/12] rseq: Add fields and constants for time slice
- extension
-To: Prakash Sangappa <prakash.sangappa@oracle.com>, Thomas Gleixner
-	<tglx@linutronix.de>
-CC: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
-	<peterz@infradead.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, Madadi Vineeth Reddy
-	<vineethr@linux.ibm.com>, Steven Rostedt <rostedt@goodmis.org>, "Sebastian
- Andrzej Siewior" <bigeasy@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-References: <20250908225709.144709889@linutronix.de>
- <20250908225752.679815003@linutronix.de>
- <736A5840-3372-453F-8F78-5861AFA0F140@oracle.com>
+Subject: Re: [PATCH] drm/tiny: pixpaper: Fix missing dependency on
+ DRM_GEM_SHMEM_HELPER
+To: LiangCheng Wang <zaq14760@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel test robot <lkp@intel.com>
+References: <20250922-bar-v1-1-b2a1f54ace82@gmail.com>
 Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <736A5840-3372-453F-8F78-5861AFA0F140@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB05.amd.com: kprateek.nayak@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002636B:EE_|IA1PR12MB8466:EE_
-X-MS-Office365-Filtering-Correlation-Id: 793b8416-e552-4005-7dab-08ddf99cf517
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|36860700013|82310400026|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TnZOSFRmak9EVXp2OUdSaCttTXFzOG5QeFI3UlpBODYxTkJsZ0VLbFh6a2NL?=
- =?utf-8?B?aTkwVHAyNUxjKzRQTC9hUHhmOTdsOGRXN2NhOGxsZXFRWHhwczJxTk5oSmtp?=
- =?utf-8?B?dm4wYWlaSEVKSE9qMnkyMi9FcHAvejNHbFFQWnRKZUdlR0dzSTNvM2RFMGVZ?=
- =?utf-8?B?ZWRNV09aOTRtd05mVE1kT3pscGpXVm00TGlOM2JzOEZwUGVwTmprWGE5NEJs?=
- =?utf-8?B?U2VYQmFHYVVCd3RUVHQ5YXVMcWZJVjcvZDNxdzNGUnAvT0tmU0RBYVVSQUhL?=
- =?utf-8?B?RitISU5lbytja1hITkJLUlhkbXZ1NVhwTncxd0pFMUx3ZmE5aE56REdVNjUv?=
- =?utf-8?B?dVhkci84RWFuM0UwbEFsczJrRHBvTWsxZjcyWUlBS0pWdHZIaWY4VkpSWVlT?=
- =?utf-8?B?RWZYbVEyUGxzbVRxTVppUFc4cFdwM2xacjIrZzdOTGlEdE0zdjdIUzYxMmlp?=
- =?utf-8?B?QkdYb2tSbmorQWdOMFZUMFB4NTZjVVZtV0RJWjFrQ0ZlbHFsQjhwWVZUT3BS?=
- =?utf-8?B?NjFFRGFiTDdjOUpUMU5DY1dQNGN4TUNkTVNpeGxPMlNDZ0QrT0Uxa3V0WU5v?=
- =?utf-8?B?cXdXdDUzSUlSV29FZG9GQUdCZllFZ3c1WnN3YUpDTG9GR1lTSVVITmU3TUVD?=
- =?utf-8?B?WW9md1kzdVNsQVhZWGtBUFdUTWJlaFJhU0Z0b01jaEd5TkhoQ3R5T2x4UldR?=
- =?utf-8?B?a3hHK0QyZmFEWFdJejdkLzRtcWE3T0JIdXBQdDFRWjhVWlNic0lZTGxGT1pP?=
- =?utf-8?B?bkN0VGNoUUgwK1ZUQzByWGN2QU85RHdHMlg3dXUyQnE1NE84ZXNGTk9HYmpq?=
- =?utf-8?B?TnJQSTF5bVlsVHc2T3VZQm1pWVZpWFkrd3Q2WnE0QS93ZW5yMFFGTlVKTFp1?=
- =?utf-8?B?WDQ5VENMdktjcHJZOHpTR1dsNUgwdWdxZ0xzczNuRjVWbXlBVmxGRnAvNFhm?=
- =?utf-8?B?QUhYNWlLbU5haHZxc2RicSsxRFRya2NaWFNIc3F4R1RtajBOSVA5cUU0RVJ4?=
- =?utf-8?B?ZDJEZTdoU1ZlejFmaDVpS3ZhK3NsU2ZRdlBGUTJ2eklsdjduVmVhdXI0T3Vv?=
- =?utf-8?B?dkRzYkZEc2JTK2YxL0VPWHoyRXFvQnhyMnIxWGRpVTFJOFlpMC81M0lCTnpT?=
- =?utf-8?B?c3ZKV1FtRDRJemFpb1MybWw4Zm9nazNYNEpYTFpWemdwSzhWdFhtWGdCS09Q?=
- =?utf-8?B?Tk1Remk4clNvc04raW0yNTUxbm4xY0VVYjBRcjM0TmVPUU94M0NyRlpEL2ls?=
- =?utf-8?B?MFRCdlE4bm5wVmtYbG9EbUhUSlR3eVYwL3VweCtrKzFjd0xnTzR4d3k1bS9U?=
- =?utf-8?B?REx6UmJ1WjRoUG1CS1NLbWRRV3U1NzFHVklUekFVRmxkeWpDOUdUQnlBdjRr?=
- =?utf-8?B?VE5oNFMvUG84V3QxYjI0ZG9OaWJhZms4L3p3cnAxd3lhdXJSWTBLNHJQb0dm?=
- =?utf-8?B?c0ZZRlZENXZJU2J0OXNaeWZaZ3k3cFJoblhZcUxrT1dUR2o3a0JWVnFMNTlu?=
- =?utf-8?B?eFZCNWRONlJLajN1RDZjOEVZa1BDdHU2ZHdUYjN0eXl4Y1UramhaOHBoZzhj?=
- =?utf-8?B?RnBETHJWdFk0VW1iRE5IK2t5OFU0bTc0NTFINlA3aHNuT2FRdWJkb3oydE9M?=
- =?utf-8?B?MTl5QzRvNFovb04zV1czRmlxQ1p3RFVQU0ZoN0hxL2xnVVJ2dFN3SEd2R2pq?=
- =?utf-8?B?R1VKS2t4S3R5MlFsZWdhL09URVQ1RDNESlNDak1lWmYxVWVRNnZmMTR1U1dp?=
- =?utf-8?B?SXFwNHVhZ0FnSDFzZ1ZmY2YzNjVSeGNiYnRRdkJKd0FMR1hUbkpROXBQMlNt?=
- =?utf-8?B?UUZTWXphMWtKVEJIMnhKNnVXd3RpWXExKzhGd1lGSi8yZzhLbHhaQjMrSm1J?=
- =?utf-8?B?NDhOQ3NlaXNZRFhuSFQrd0pLemxhSXhHNWlkd1F6OVJhTGQxWHplQXRHRDRo?=
- =?utf-8?B?c2V4bDJaMktSVUUyazM2cE1abXdUUVFIOTNWWTBtUFZTS2JPYVVXc3c2aUhy?=
- =?utf-8?B?dDhzb0hrWEl3WHhjeWlJUEROQWRTUkZ2QlFsNjVDZzdWdzZUT1JJYzdxbzJO?=
- =?utf-8?Q?ywND5G?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 05:57:47.8036
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 793b8416-e552-4005-7dab-08ddf99cf517
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002636B.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8466
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250922-bar-v1-1-b2a1f54ace82@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-Hello Prakash,
 
-On 9/22/2025 10:58 AM, Prakash Sangappa wrote:
-> With use of a new structure member for slice control, could there be discrepancy 
-> with rseq structure size(older version) registered by libc?  In that case the application 
-> may  not be able to use slice extension feature unless Libc’s use of rseq is disabled.
 
-In this case, wouldn't GLIBC's rseq registration fail if presumed
-__rseq_size is smaller than the "struct rseq" size?
+Am 22.09.25 um 04:57 schrieb LiangCheng Wang:
+> The driver uses drm_gem_shmem_prime_import_no_map() and
+> drm_gem_shmem_dumb_create(), but the Kconfig currently selects
+> DRM_GEM_DMA_HELPER instead of DRM_GEM_SHMEM_HELPER. This causes
+> link failures when DRM_GEM_SHMEM_HELPER is not enabled.
+>
+> Select DRM_GEM_SHMEM_HELPER to fix the build.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202509220320.gfFZjmyg-lkp@intel.com/
+> Fixes: c9e70639f591 ("drm: tiny: Add support for Mayqueen Pixpaper e-ink panel")
+>
+> Signed-off-by: LiangCheng Wang <zaq14760@gmail.com>
 
-And if it has allocated a large enough area, then the prctl() should
-help to query the slice extension feature's availability.
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+> ---
+> This patch fixes a build failure in the Pixpaper DRM tiny driver caused by
+> a missing dependency on DRM_GEM_SHMEM_HELPER. The driver calls
+> drm_gem_shmem_prime_import_no_map() and drm_gem_shmem_dumb_create(), which
+> require CONFIG_DRM_GEM_SHMEM_HELPER to be enabled.
+>
+> The issue was reported by the 0-day kernel test robot. This patch updates
+> the Kconfig to select DRM_GEM_SHMEM_HELPER instead of DRM_GEM_DMA_HELPER.
+> ---
+>   drivers/gpu/drm/tiny/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/tiny/Kconfig b/drivers/gpu/drm/tiny/Kconfig
+> index 94a5bf61a115929640022128e20c723ab7c0e735..7d9e85e932d7fd7bdb6ad7a4c6ba0f835841f623 100644
+> --- a/drivers/gpu/drm/tiny/Kconfig
+> +++ b/drivers/gpu/drm/tiny/Kconfig
+> @@ -86,7 +86,7 @@ config DRM_PIXPAPER
+>           tristate "DRM support for PIXPAPER display panels"
+>           depends on DRM && SPI
+>           select DRM_CLIENT_SELECTION
+> -        select DRM_GEM_DMA_HELPER
+> +        select DRM_GEM_SHMEM_HELPER
+>           select DRM_KMS_HELPER
+>           help
+>   	  DRM driver for the Mayqueen Pixpaper e-ink display panel.
+>
+> ---
+> base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
+> change-id: 20250922-bar-cd1f3e834e78
+>
+> Best regards,
 
 -- 
-Thanks and Regards,
-Prateek
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
 
