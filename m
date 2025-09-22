@@ -1,335 +1,153 @@
-Return-Path: <linux-kernel+bounces-827137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F89B90676
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:33:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BF2CB905DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1472A42078A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:33:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8A0F17D480
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7CD30C34F;
-	Mon, 22 Sep 2025 11:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D172877DF;
+	Mon, 22 Sep 2025 11:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lL+fvKK1"
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011053.outbound.protection.outlook.com [52.101.57.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S4AsqHM+"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283A430BF71;
-	Mon, 22 Sep 2025 11:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758540700; cv=fail; b=OcGnP3DDOwsd1mHu7h5l1kXfZPNgppCTa9i1USL+aZFZyPNfgtYGdI1Hu0SF2lJ8QpFGh37WurVLwuktYTPZBCXccYWhJ6yMXIkkAiMfasz39b6oGs7RwuRJw92axwfoViKI63C0XdoYfCznS1aQ+rvel73AxLUjeYt3f05CHrg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758540700; c=relaxed/simple;
-	bh=09smEHsUKoVhJlyOoziXgz9o0O6k7QNepo4zw+YRKck=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SjALOMRLhwmc8WV13SpvqPEyQuuqFeMfXFvMnXEja6WBbCv6+A2jGwvPkxFV5hmT7g2Mxup31eo9qt899GMiiLth/nmDUR3eBjDxXyxfpgINcWZdDDP4CgasbskJn3KLDXcmiFzaBFAWzxZdmArLavL0n2OdR0xT9YBieRFujxs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lL+fvKK1; arc=fail smtp.client-ip=52.101.57.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kGvf1TIRfj/V0SQEkbfX5iF7sRtJQD/0iFezSz5Nmmnp9Cf/aBPf7zrjsg8ibV6XBqIYPh44QaKLL06dqa6NiASIUq9+64C8gwCL1/DiOOqxShHlg8x1Zgo6DNbcFyRzdSQGbEM4v3Vrdwfk8YtlnN+emZc3q7Ftym/AV42Bwyk1U3ki+iTOqTJ2O5SfHTVUhPZpUga0pZRReTXNyKyCPLBZ24G/MqVtufbU2+bQwEHwVaw1lrr3A1ARoQiYCQk7oN2GRjnoxneplFQvEB91EeEj7EBnkRr5TOkvHDAI5ZiyelralUoHP0YP0gKp4D+vBtNkEbWsTsghNBz108Lj4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f1e9QGFcEP4ebWxKjWLsj6czelCKRQbCh1G1SsbIMrg=;
- b=GPS37WRafsiUETRW8b0xBtn02A77lpgsvZmLFjv0BHRWTbfC1Ty6ZrHy/xk4gpUo535E2vtlJAQ6ije9f1mfDrMYP8+B5sT00IRGf/1crA3IItLSQqRAwaQ+cMSH3s1Jp/329C+Ldb340lMOHZ3haqecpXJoyQgSBoSOcyJfitmy4DEsZ69Bhy0cc87SaQGcpVJu3absf2niqAWFp9vdzyf1BmxJlZBTxRjSG1lyu98IdOsNc6zmu67S2IkoZ7OsO4Kb1B8WTGnPQee7xlCWGYUd9op9oA3gSE0unDGZBnQ/Z+lNW4AS1ygBJ/OEvlAzVd+L3WBEkapktMf0jieC1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f1e9QGFcEP4ebWxKjWLsj6czelCKRQbCh1G1SsbIMrg=;
- b=lL+fvKK1w7rxbn6kml6iuGAFV8BST9aXJvRJt6Ix3EgbsYb4Cj6xLzXALgWorJKuyBGYSGB5gRLy8EsqLaWJna4TXWFhfioHeXcMJDxH/KMdmi28pnJZl2Clk4YGyFDgDENY9bZEWIm9yxXDVwLj6i5d8L6409IykvhB+1s/qm0ItxWNFu6m6J3MoG5fRafJh6TiO7QmC4CHTbhcdRzBIjT6W0Pk8LrAGX78Kgk0Ac8U38LxopZj8AGoxepylOL9xBTkog3jJOvcFMExAI2J5ZmqGMf/T76UdRvpiHYwWKMAXaNrx6WYBL9Cz6LVFlrjOfIaAoVf7P2E4mn9f1SwBg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- CY8PR12MB7683.namprd12.prod.outlook.com (2603:10b6:930:86::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.14; Mon, 22 Sep 2025 11:31:34 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9137.018; Mon, 22 Sep 2025
- 11:31:34 +0000
-From: Alistair Popple <apopple@nvidia.com>
-To: rust-for-linux@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	dakr@kernel.org,
-	acourbot@nvidia.com
-Cc: Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>,
-	linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org
-Subject: [PATCH v2 10/10] nova-core: gsp: Boot GSP
-Date: Mon, 22 Sep 2025 21:30:26 +1000
-Message-ID: <20250922113026.3083103-11-apopple@nvidia.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250922113026.3083103-1-apopple@nvidia.com>
-References: <20250922113026.3083103-1-apopple@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SY6PR01CA0057.ausprd01.prod.outlook.com
- (2603:10c6:10:ea::8) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DA5256C88
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 11:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758540646; cv=none; b=Utj5iBJmy/Yof9X/aQIpprjIHME6VcrInHdLlp3YMPOGFxumSdKrkWM+i8uevj86TF93YB5bu4KGhKsioyvotq0wtlrAiPCuUysKK4aINjCptjt6idH3GtC7f0CqcxsP1AsjvfAGUaZ2/Avf5uZHSYbihrDgNz0506orN59zInU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758540646; c=relaxed/simple;
+	bh=exJIaGVZRA41ft1d8kldxrGWTT6BfUiUQXmXRuV8u7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KwpmWgjOCD7zeH9OGkLAznxD30voLiRnZiJHPNrHSDx23b/2Q5Ejdb2kL9uVgEp4R6+2LiPCa4lUwB3ZZECAOAEIFOaxAVXd1H/fOpB5aYf4++wWpexUjw3lch0cS15XinxuR9A2R6MhloU/pNZaNIx/Aj54mnuJHk8iNgbMuqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S4AsqHM+; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-77f454c57dbso334609b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 04:30:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758540644; x=1759145444; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d19kgaF4cF7llUtlCB54elxTKW7Xa+l9+r8wNmLGWJc=;
+        b=S4AsqHM+5vJgfCvIG50kpNj5WK9bfsWFJg3HYHbsOVzydDRH3dFyABCKqncyWEZADo
+         j0r9J1bMGrywAWKaJjUELcjLDtwAPHlxTFvhlMbfuQ7PriBJfFT7/aoOEgGY77ydfUs6
+         HIkDXl7EizSTWRQeQtiNS9FH4mATWvcLflZnCQyaYav+dlBq8v602PlihUzOPP2sBsmc
+         dGtwJ50L+aF85IKldEpQtLJKVD5RFZJyBr6oAvHuDRWhJTal2uG8GBJnXh57s7/luke4
+         Ic4H7CCWl6eSO4suZpNwvSNjJZQS/82UrBMKbuhsRNXKKmzXz2arpJE5dc3s+wWUxXg1
+         4j2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758540644; x=1759145444;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d19kgaF4cF7llUtlCB54elxTKW7Xa+l9+r8wNmLGWJc=;
+        b=f5oSezX2w320b4WhKC6486VXsXEo79hAFqfXABKqVeUeJKNP1lSoReBT6xF8seAZrR
+         fJZJwwoiLOQOyKxyYB7yuHle76Hq1RDJ7Ptuo5CiUNuLTUlB66Z+Kq5aCYeRDW1dG3zp
+         lW4MYVM+l+kAigi9RbcKEwq1fzt3g8XDf6v/q1ZzRhVUZcztSKmSsf8ozYvA/EMi+0Oh
+         tppG9Q0N1QqoQfMsPpPdiD24cqjeSHJloC41w8hKxoHbkeNtPhf58vbSaP/xVTVbg/54
+         Wlql6b8EwzTZucmBMiw07NxWX80m6Iyx3y0wUAPH3y9PWUiB5FlwFv++vO8udhxrM4E5
+         iaZg==
+X-Gm-Message-State: AOJu0YwxIdXf5y1Sh6E/Oru/croIJ16aqwdxR9CWGo15Ljg9TgSQfEHd
+	7mrWau5tKROOi0NvZ40y0yFz/sWEikoSEiM7QlxlsDodKqbZfnhEx78I
+X-Gm-Gg: ASbGnctCTylDhpm4TYVCdajrpLSEsOPYv5XFWfapT4neUo1/GaPeIDqsH9tMKCxsiNL
+	yI09xyxtIK+daDdA8RGE0RWDf/wTTrfw0K+CyoF0pC+nt+E8U6jtO9mRngLXCoaFQ+zUkPbQPYE
+	Ms3NBkFJQiLlAlVPcqSzPOVdso9EznmRY360PhBsAyF0Ms+oONu/va22NFQxAx/86Ee2N6Jnhll
+	ItZLKYiIGfFUZFXvams9hBAXSaHY+U9WVho7QBSJ5EZy4eMydRcz9pdH/2cMnf8+uzBWYqhEGL8
+	inFYEEDqaPpqhWsbbRZr43v6XTFlYHDgEFAMwBMSrifuJ/T5l/BgyYVwXZxbt2sMOgl/L+lfeV7
+	35OIFPNcXBMrxujb+f4LURGdLQzO1nnjDyVX+/C06C0SNVL86Tk9f+jvx8VFpIUUIu49E
+X-Google-Smtp-Source: AGHT+IEmGQ8ezO3TtOdftc+mCIAJ6aLgEsQSmxgVxjQfrvzQONfiVHgyQHAP9sLiLBgvDFkwTF21oA==
+X-Received: by 2002:a17:902:ce12:b0:274:5030:2906 with SMTP id d9443c01a7336-27450302a03mr76858975ad.46.1758540643820;
+        Mon, 22 Sep 2025 04:30:43 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802df852sm131071645ad.87.2025.09.22.04.30.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 04:30:43 -0700 (PDT)
+Message-ID: <f31c2169-cd0e-438a-9e59-d6ebd8eaea6e@gmail.com>
+Date: Mon, 22 Sep 2025 20:30:40 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|CY8PR12MB7683:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5f7b0237-19e5-4ff8-34d2-08ddf9cb95a2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZKDvc5i24tQEASw0UiKds+bNH83vpAZpWI4ibF9W5poaertJ+eVLEYdStD4n?=
- =?us-ascii?Q?HaZiK/dM8PYdGHlzhWnYneG4lnMqg07KGG48ezJXRTHzre7yFceqIQ64mpUt?=
- =?us-ascii?Q?H62JBXmW5viXKGRrGhVdRHHUubsxOZWWWceINCDT1xmUQwZfD9Wzry+NgNrs?=
- =?us-ascii?Q?+3FFAJjapscWo78eo3Iha2sxiFHGs/Vrc47Wr175/8L2UCK4crWwWlz+ZpYn?=
- =?us-ascii?Q?HRRPPYHeAKsPzB3nc7eMS6eq56D+GV06TLmCunatkTL+C866jOSqfMeOeJTL?=
- =?us-ascii?Q?O56g0yq36EDQ24Ay8oNIK/UQpH7zip/mchCQicm0ZOTC+m5BaTqKkCIiKvr8?=
- =?us-ascii?Q?xP2QCnT+4fCune/9iqEG0Y113S6WDNPpAKQGJePVttoXQyaoOhQCYunPxwRm?=
- =?us-ascii?Q?nP5IkLRk+v3OIaw2QXdNCbwoMSmEADkxFa6KMHc/yU/YYRHXWzgOsa1iUrlu?=
- =?us-ascii?Q?ddSvU6YzU+n9NEl/N/JnmzsoutBxbgoQ6zOYD0CiO6ghNgF3bqcfiWCczWgT?=
- =?us-ascii?Q?TuxzpFsWwxTIyVAxF8jhVRc2q2xtETw1unVsSQvsVLs2Lvx2pMr37c5s8xZB?=
- =?us-ascii?Q?QUP8Q5KWL9RVGb3U/z+hLY6m9JCn+GaXwTIfCo48BuHj0TGrIRFVo8g6I39j?=
- =?us-ascii?Q?8w0FjkFGFwHHwOG97Mfk+SQPB7ow1VwtOng1qrxYTYmAK6SRLggZYALaSRqA?=
- =?us-ascii?Q?BeXf1C+BvyMgfthFQxfZ4/8A+z1GaWOXcR3r2E/5WKgkewpsqSduCGgpotVm?=
- =?us-ascii?Q?DtMCbtmjHODfOLTOPdUe67m6S+1zJ3vBtww5mw8G4hoolmfYpD+ozpU2aZjD?=
- =?us-ascii?Q?hfxSxH2xXH7MmC9y2tdB3nI2HYayhqoRjZo7oCubZr1wF7f+5yNljhDa0+Y6?=
- =?us-ascii?Q?zWDd/7q1JdjaAtIDE66lA9uagNul7ofPccrc6HC0xgEJQ+zsw6nvaVOSl21v?=
- =?us-ascii?Q?mVvZU2YB7gx2M2BkXO+bn3PWutXZK6+7PLHug/q48bs/W2SYvJjxJo28UlaB?=
- =?us-ascii?Q?esj09HfAKz4KQ1H85MtALYlkMFM5MiS7A5cI1QzP4v3J52gQt2WtWUdlg+ro?=
- =?us-ascii?Q?SHCa0kSiyU/Bje3kpD9iK5LICDWsV+lIK3c6ivr8qOXhXh/oEG23yZrMP41N?=
- =?us-ascii?Q?lq2zOMxZ+jRTzSSw62UoqATOelMg9olpud27YbCiwuMyIgn3ptJFs61PwjWN?=
- =?us-ascii?Q?cMH5MyAoJySoAbJacNQNtG73HB+pJ0VTVljr09nX70E4ulvr+yVZnH9K049A?=
- =?us-ascii?Q?tmzrlYCnA17OJ9w0PWwPr8PZ4XgpMf+HndNPYbmpc75hqZDP4mp2/8bKoP/A?=
- =?us-ascii?Q?2JIvYXq/Oq0zWEOsuy9EvXpb1ytiVkA8z9sPcn8eVXJ1HQklyPR+2Ogiy28y?=
- =?us-ascii?Q?FPkQ1j2n1yJSOQrlF4+y0pSQQ+hAUyCe2dcSh462Gwg9iPmZ9uycee8AqP9n?=
- =?us-ascii?Q?EwYHa1mDK9U=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?M6sAZG8GmWDVWTYhaH8FHy0kdzJ9SGo46IuYjCrm/+g6/gUntp8ATTheqEBT?=
- =?us-ascii?Q?R53cFH1qj5v8ZR7OF+mXNsl8j20PWZi64KRE7VZUkQKrt7CZT9w95F+z8BUC?=
- =?us-ascii?Q?5ZxuzdlEILnBxD+4DXHj60lQclioItlztjbu53qTOKYjg3b22xkFvFT6pcww?=
- =?us-ascii?Q?UGYNzMUjcfNFgOGEmfSZCDis9ObwkiEFGFpAXmuDDMeMRtyojzj6slyZm/IV?=
- =?us-ascii?Q?Q5Nf6M7tS7QUOoJbvubLd/ucXLRkP4Kjo8drUvheeXE8pKF6sHUzfaY/0syo?=
- =?us-ascii?Q?aO0Hguc4sUYbG+qdE67J4518yoX4KHM0kziFh5nEwlRpf2KwD1nqSj4aaLsT?=
- =?us-ascii?Q?cD9mQs/7/FxXBZ5BKKx7/sTke4i7jDhtSaLY8p5ijebHz98r8yxee9w/UhCZ?=
- =?us-ascii?Q?Yx8Z1sihZNB053WlAn/PyhQp2ynPEy1qQzPyDar4vfHNNQeR3a0p18wlFeDD?=
- =?us-ascii?Q?q74hdC6fDxfHYOk4qbJDj1uEQGlOUcQPsrUs1C6bNRw5vSKY3JVbhzc1A3fL?=
- =?us-ascii?Q?aEedCCGzYOaIzjpPvzKVIypfpgmmjISUDWdBibJ28KjOJz77Hsr0BvepD8Q/?=
- =?us-ascii?Q?5c4RhwdUXkUESQOHZWfzo8SDJR1B8aML3odsYFfnTSPetjNwshyYO4qi2uTO?=
- =?us-ascii?Q?ujCFzO2nHDBHrrlK4yIAUzkUP+ZmmJy1N0FYrsKtw2NDDvcNgFS3y/w4iNE/?=
- =?us-ascii?Q?N1kng9/6Co4OVLY5BXpZpgAhEIEVbGVrFftWXO0CU4OLrAFk2fGlSAG26wZt?=
- =?us-ascii?Q?tFro22kUL2rKa/i6qxKFxKoyyjYislCqUBRIFGXsF1s72cg5oLnGnyWUZ2VT?=
- =?us-ascii?Q?n6HVQIfSzEZNyV8A+8/yP2IterT2VKRROtSQg5BbSqZDyufi8ncZecUbb5BE?=
- =?us-ascii?Q?Gibi86vC4I4hBGSUdGnPIos9ThNeovd6AbXZ2+WE50Z8rHVbwV7FTAajevPv?=
- =?us-ascii?Q?an5X08HNdBV2nwtnkRybxg7VkXi7wK3EUfGp7Kmd6ycNr1TaQ6JFqbO5GnNy?=
- =?us-ascii?Q?2FNo+Lz2FFTkf3YauQGcomU0eRuNM/XYVCLKV6ofGN5Eo9WZZ9eJyO7+C5+Z?=
- =?us-ascii?Q?Aeo6JHkm3LzIJfwIK+3b+k+vFl+d4gdXbtWEd3J5uOFeWhCTzS2pvHfecAaD?=
- =?us-ascii?Q?lFCOtIXYw5F/ddPQc02ADxcIENSI/7OqncnDdBjtjcGkwhBXoa2zyGLExlp9?=
- =?us-ascii?Q?duoznaE9V+HrJ0y6agH1ud7FSgCFkNUPyDQQ/w2iRc8tKvzx8OlB3dNorya1?=
- =?us-ascii?Q?0hM/gt5No+VMp7ygfv9pkc55sDADNesdely4i/JNWaA/wurf2U6j8epsQgsX?=
- =?us-ascii?Q?qTjOjbU/NCm4ghKwRjEmADI5XEJW3EuQym7rTzjdbCg3y4i5FYOAt3Rwb2nT?=
- =?us-ascii?Q?mqL5dG31f7sOaStF6SZ324gx8uIRH+juU5KDZLnFE3I5uAiMjydJw6BGJUiq?=
- =?us-ascii?Q?2QIgVFhioDdf0Zdz9NleVMi5eyoxCiUyLRz0pqnBcHZO0RIIqBzctoNfVS1H?=
- =?us-ascii?Q?DTPcKhELU9nkL24Z9K9Z0yjDtInKN7JLhAV1gEZCUjxmVhzVY6jpJUVVqglR?=
- =?us-ascii?Q?kp6R58Ru/4CPyQjJfxAH9vQWVYf7EaR9eYmMNlR/?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f7b0237-19e5-4ff8-34d2-08ddf9cb95a2
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 11:31:34.4019
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I+UAyTeENeoZOn1LElt5wrBPSlhaOB5bed/vukm1VtOr0mvEqV3UIT3qNkThE6Znp2b9Lujn+Cbfsvnp/GQ9mg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7683
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/1] sphinx-build-wrapper: add support for skipping
+ sphinx-build
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+ Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Akira Yokosawa <akiyks@gmail.com>
+References: <cover.1758444913.git.mchehab+huawei@kernel.org>
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <cover.1758444913.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Boot the GSP to the RISC-V active state. Completing the boot requires
-running the CPU sequencer which will be added in a future commit.
+On Sun, 21 Sep 2025 11:13:24 +0200, Mauro Carvalho Chehab wrote:
+> Hi Jon,
+> 
+> This patch adds support for not running sphinx-build at the wrapper
+> tool. It was requested by Akira, who wanted to be able to ignore
+> Sphinx errors during latex build and still try to build PDF.
 
-Signed-off-by: Alistair Popple <apopple@nvidia.com>
+Thank you for trying to figure out my intention.
+However, you failed to see the point.
 
----
+> 
+> This patch is against docs/build-script and applies after the 3 patch
+> series I sent yesterday:
+> 
+>     https://lore.kernel.org/linux-doc/cover.1758361087.git.mchehab+huawei@kernel.org/
+> 
+> 
+> While Akira's original intention is to have pdfdocs target depend on
+> latexdocs, IMO, this is overkill, as probably only Akira and a couple
+> of other developers might want to have such behavior.
 
-Changes for v2:
- - Rebased on Alex's latest tree
----
- drivers/gpu/nova-core/falcon.rs         |  2 -
- drivers/gpu/nova-core/firmware/riscv.rs |  3 +-
- drivers/gpu/nova-core/gsp.rs            |  2 +-
- drivers/gpu/nova-core/gsp/boot.rs       | 56 ++++++++++++++++++++++++-
- 4 files changed, 57 insertions(+), 6 deletions(-)
+I think it is only you who don't want such behavior.
 
-diff --git a/drivers/gpu/nova-core/falcon.rs b/drivers/gpu/nova-core/falcon.rs
-index 0cb7821341ed..960801f74bf1 100644
---- a/drivers/gpu/nova-core/falcon.rs
-+++ b/drivers/gpu/nova-core/falcon.rs
-@@ -614,14 +614,12 @@ pub(crate) fn signature_reg_fuse_version(
-     /// Check if the RISC-V core is active.
-     ///
-     /// Returns `true` if the RISC-V core is active, `false` otherwise.
--    #[expect(unused)]
-     pub(crate) fn is_riscv_active(&self, bar: &Bar0) -> Result<bool> {
-         let cpuctl = regs::NV_PRISCV_RISCV_CPUCTL::read(bar, &E::ID);
-         Ok(cpuctl.active_stat())
-     }
- 
-     /// Write the application version to the OS register.
--    #[expect(dead_code)]
-     pub(crate) fn write_os_version(&self, bar: &Bar0, app_version: u32) -> Result<()> {
-         regs::NV_PFALCON_FALCON_OS::default()
-             .set_value(app_version)
-diff --git a/drivers/gpu/nova-core/firmware/riscv.rs b/drivers/gpu/nova-core/firmware/riscv.rs
-index dec33d2b631a..d1a9e027bac3 100644
---- a/drivers/gpu/nova-core/firmware/riscv.rs
-+++ b/drivers/gpu/nova-core/firmware/riscv.rs
-@@ -50,7 +50,6 @@ fn new(bin_fw: &BinFirmware<'_>) -> Result<Self> {
- }
- 
- /// A parsed firmware for a RISC-V core, ready to be loaded and run.
--#[expect(unused)]
- pub(crate) struct RiscvFirmware {
-     /// Offset at which the code starts in the firmware image.
-     pub code_offset: u32,
-@@ -59,7 +58,7 @@ pub(crate) struct RiscvFirmware {
-     /// Offset at which the manifest starts in the firmware image.
-     pub manifest_offset: u32,
-     /// Application version.
--    app_version: u32,
-+    pub app_version: u32,
-     /// Device-mapped firmware image.
-     pub ucode: DmaObject,
- }
-diff --git a/drivers/gpu/nova-core/gsp.rs b/drivers/gpu/nova-core/gsp.rs
-index 1f7427a530e5..8fcfd6447101 100644
---- a/drivers/gpu/nova-core/gsp.rs
-+++ b/drivers/gpu/nova-core/gsp.rs
-@@ -32,7 +32,7 @@
- /// GSP runtime data.
- #[pin_data]
- pub(crate) struct Gsp {
--    libos: CoherentAllocation<LibosMemoryRegionInitArgument>,
-+    pub libos: CoherentAllocation<LibosMemoryRegionInitArgument>,
-     pub loginit: CoherentAllocation<u8>,
-     pub logintr: CoherentAllocation<u8>,
-     pub logrm: CoherentAllocation<u8>,
-diff --git a/drivers/gpu/nova-core/gsp/boot.rs b/drivers/gpu/nova-core/gsp/boot.rs
-index 0b306313ec53..0f3d40ade807 100644
---- a/drivers/gpu/nova-core/gsp/boot.rs
-+++ b/drivers/gpu/nova-core/gsp/boot.rs
-@@ -5,6 +5,7 @@
- use kernel::dma_write;
- use kernel::pci;
- use kernel::prelude::*;
-+use kernel::time::Delta;
- 
- use crate::driver::Bar0;
- use crate::falcon::{gsp::Gsp, sec2::Sec2, Falcon};
-@@ -19,6 +20,7 @@
- use crate::gsp::commands::{build_registry, set_system_info};
- use crate::gsp::GspFwWprMeta;
- use crate::regs;
-+use crate::util;
- use crate::vbios::Vbios;
- 
- impl super::Gsp {
-@@ -127,7 +129,7 @@ pub(crate) fn boot(
- 
-         Self::run_fwsec_frts(dev, gsp_falcon, bar, &bios, &fb_layout)?;
- 
--        let _booter_loader = BooterFirmware::new(
-+        let booter_loader = BooterFirmware::new(
-             dev,
-             BooterKind::Loader,
-             chipset,
-@@ -143,6 +145,58 @@ pub(crate) fn boot(
-         set_system_info(&mut self.cmdq, pdev, bar)?;
-         build_registry(&mut self.cmdq, bar)?;
- 
-+        gsp_falcon.reset(bar)?;
-+        let libos_handle = self.libos.dma_handle();
-+        let (mbox0, mbox1) = gsp_falcon.boot(
-+            bar,
-+            Some(libos_handle as u32),
-+            Some((libos_handle >> 32) as u32),
-+        )?;
-+        dev_dbg!(
-+            pdev.as_ref(),
-+            "GSP MBOX0: {:#x}, MBOX1: {:#x}\n",
-+            mbox0,
-+            mbox1
-+        );
-+
-+        dev_dbg!(
-+            pdev.as_ref(),
-+            "Using SEC2 to load and run the booter_load firmware...\n"
-+        );
-+
-+        sec2_falcon.reset(bar)?;
-+        sec2_falcon.dma_load(bar, &booter_loader)?;
-+        let wpr_handle = wpr_meta.dma_handle();
-+        let (mbox0, mbox1) = sec2_falcon.boot(
-+            bar,
-+            Some(wpr_handle as u32),
-+            Some((wpr_handle >> 32) as u32),
-+        )?;
-+        dev_dbg!(
-+            pdev.as_ref(),
-+            "SEC2 MBOX0: {:#x}, MBOX1{:#x}\n",
-+            mbox0,
-+            mbox1
-+        );
-+
-+        // Match what Nouveau does here:
-+        gsp_falcon.write_os_version(bar, gsp_fw.bootloader.app_version)?;
-+
-+        // Poll for RISC-V to become active before running sequencer
-+        util::wait_on(Delta::from_secs(5), || {
-+            if gsp_falcon.is_riscv_active(bar).unwrap_or(false) {
-+                Some(())
-+            } else {
-+                None
-+            }
-+        })?;
-+
-+        dev_dbg!(
-+            pdev.as_ref(),
-+            "RISC-V active? {}\n",
-+            gsp_falcon.is_riscv_active(bar)?,
-+        );
-+
-         Ok(())
-     }
- }
--- 
-2.50.1
+> 
+> See, after all changes, the makefile rule for *all* doc build targets
+> is simple:
+> 
+>         $(Q)@$(srctree)/tools/docs/sphinx-pre-install --version-check
+>         +$(Q)$(PYTHON3) $(BUILD_WRAPPER) $@ \
+>                 --sphinxdirs="$(SPHINXDIRS)" $(RUSTDOC) \
+>                 --builddir="$(BUILDDIR)" --deny-vf=$(FONTS_CONF_DENY_VF) \
+>                 --theme=$(DOCS_THEME) --css=$(DOCS_CSS) --paper=$(PAPER)
+> 
+> After applying patch 1 from this series, it is really easy to replicate 
+> "make -i" by writing a small script that does:
+> 
+> 	tools/docs/sphinx-pre-install --version-check	
+> 	tools/docs/sphinx-build-wrapper latexdocs || echo "LaTeX build failed, but we'll try build PDF anyway"
+> 	tools/docs/sphinx-build-wrapper -s pdfdocs
+> 
+
+Hello?
+
+You are the one who is changing the way "make pdfdocs" behaves.
+All I want is to restore the current behavior, without any need to
+use such an ad-hoc script.
+
+Sorry, but I think I have to NAK this.
+
+Furthermore, your "cleanup" is obfuscating the very fact that "pdfdocs"
+needs a successful "latexdocs" stage.
+
+I believe Documentation/Makefile is the right place to describe it.
+
+Good luck,
+Akira
 
 
