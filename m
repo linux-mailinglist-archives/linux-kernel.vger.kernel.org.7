@@ -1,96 +1,184 @@
-Return-Path: <linux-kernel+bounces-827304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC95B91647
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:27:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C18DB9165D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EAB717E4E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:27:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90C742A3239
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C6430AAAD;
-	Mon, 22 Sep 2025 13:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7273230C368;
+	Mon, 22 Sep 2025 13:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JvUtezjp"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="E3+R4Fb7"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2660D308F3D;
-	Mon, 22 Sep 2025 13:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CC630AD16;
+	Mon, 22 Sep 2025 13:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758547658; cv=none; b=fA9JdbP9StYhW71DY8Dv8skQHKUq6DBhVq8y+HTdhc5TekrvH2dMuSwAPyMckadA8wCH4SsdPoV1sqoyAHesI/sMo20WsF6eQeg4xySim4Q4+2dZbSfd7p228MEuTSczj1dcwsauFkKuVv7FcvK75ISQg/VYWmSh9iPVHcZKw6Q=
+	t=1758547750; cv=none; b=CJINABijv0xGFRK64Kcql2GAqvTYCZhOls/4AzYmN8smJeMIH4UAZw1WXoHW4oY5+xPp7ecg3IbbyyzjLYxllgTVcHSiMxKEgZmGDiAduLj9uYtREDTTHcUob3vIxduIlWK2RvVB6x0aQ9CUN3i5RXVpI8p6GHFGiEHV7Qdr5Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758547658; c=relaxed/simple;
-	bh=iQB2tK5oYzwUb0lzFNB9gF3mWy0XefIMzKvfpWvOgFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vB8AfXhF/pYaeAuM7AKymtHbgSwT0RXezLb37Q2K20fTeBoREHDRI97fS7tVh3jN8CgDnbg4pDJ1bdvO+VsfBerJVUm2Dy9NJpaNzmOO+Bt8nJAzz9ZgVpMYJF9Qo/aqi6CcLULkqxAjY+H83gaZ6acNFt5uHBVCxeimjFMJtXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JvUtezjp; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gXn0i45i0GYDvNjhiWGuOVxIDrx7s+sedk7SXIkVUzE=; b=JvUtezjpXOH71dwV5MTcx8BcpE
-	W8+nsZtN0Y+tt8r/IxTGc5aaZygIsPO7ewbBOAEtgAJfhZC79vXIYibQKl+1Th7nbwckfxnkgyuxw
-	caeP1ZJ2LukrZIUrcJZsJocH1FlLVSV+LEu0dw/QDEmX/wCLzdCwkzbYDdxLNPaQgz09XlcvAuzL+
-	8nmXpiGxZewmrpzRZtZkuaK9rUSvfb04I5lnukfMHwihlNpdN6gIWGws5hXD+tYJopNwriNHOxGbK
-	zNENcOiQQIXo4/EGkZPVOd+KK2tHaoEiIqSlGeYP5NLEsfYMv+20bA7Azf0MuNMtsSgtrhgbOf/u3
-	455y7F3g==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v0gZb-00000008YFW-3dqC;
-	Mon, 22 Sep 2025 13:27:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A73303001F0; Mon, 22 Sep 2025 15:27:18 +0200 (CEST)
-Date: Mon, 22 Sep 2025 15:27:18 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Julian Sun <sunjunchao@bytedance.com>
-Cc: cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, akpm@linux-foundation.org,
-	lance.yang@linux.dev, mhiramat@kernel.org, agruenba@redhat.com,
-	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev, muchun.song@linux.dev
-Subject: Re: [PATCH 0/3] Suppress undesirable hung task warnings.
-Message-ID: <20250922132718.GB49638@noisy.programming.kicks-ass.net>
-References: <20250922094146.708272-1-sunjunchao@bytedance.com>
+	s=arc-20240116; t=1758547750; c=relaxed/simple;
+	bh=ZVX1e3ohbjMRT6yvQbtfGjCtUWRTySjeKIAiaDp53hA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IT+3gPYrtrCXBUmJsK7nhmzIC9UVDm/0UJA2q893gcaTCYZEiKe4uyd/diuusFsNenFVAg2pGJwyaspxoe+ZnHJ538TeodHEUmMptz3hh7Ig7M5CxzKaD+pmCYUhXCYrovtZHrnPQUl/36+DbEB4FgC5+IzD2iGi+0MEGCQze2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=E3+R4Fb7; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1758547749; x=1790083749;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ZVX1e3ohbjMRT6yvQbtfGjCtUWRTySjeKIAiaDp53hA=;
+  b=E3+R4Fb7RFk81DV77SXX5TyLS3eq4C69rVwYAWxZJXDIbXm+KNcfcqoj
+   2gxcnw91VeHyqh/godiMTRUgEAIwlsoUiH4DoxOdF75g1AFYbZViK2eHx
+   hzQtK2YY8yHjsf5H2yZqhkcNGsStJ2ZLnjILwOpamBU6yJHrQN3iFcAZW
+   0PdIY8QHjKOtfBNfjNgWDRFjw+QaIBONkpgeS2O1qjBcEKVTWXDFVjTnC
+   1rfVhgrQAFKArG6D6T+JxQgoAHF7NY+5Q6LttLS5rBL041LgVf4wnTZQv
+   oMdtEklD+43R+MoxEMwfFqN1p3CSkOaZsugZUT9HqDVd4oKDiTjSch4D3
+   g==;
+X-CSE-ConnectionGUID: qeIO0Q34ST+dI1Wb5TenNg==
+X-CSE-MsgGUID: wfSfsjMHTbqnLogYXVIlXg==
+X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
+   d="scan'208";a="214200816"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Sep 2025 06:29:07 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 22 Sep 2025 06:28:42 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Mon, 22 Sep 2025 06:28:40 -0700
+Message-ID: <d06e5323-995e-425e-8ace-c04e9140f5d0@microchip.com>
+Date: Mon, 22 Sep 2025 15:28:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922094146.708272-1-sunjunchao@bytedance.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ARM: dts: microchip: sama7d65: Add GPIO buttons and
+ LEDs
+To: <Ryan.Wanner@microchip.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
+References: <20250917210409.503830-1-Ryan.Wanner@microchip.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Content-Language: en-US, fr
+Organization: microchip
+In-Reply-To: <20250917210409.503830-1-Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 22, 2025 at 05:41:43PM +0800, Julian Sun wrote:
-> As suggested by Andrew Morton in [1], we need a general mechanism 
-> that allows the hung task detector to ignore unnecessary hung 
-> tasks. This patch set implements this functionality.
+On 17/09/2025 at 23:04, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> Patch 1 introduces a PF_DONT_HUNG flag. The hung task detector will 
-> ignores all tasks that have the PF_DONT_HUNG flag set.
+> Add the USER button as a GPIO input as well as add the LEDs and enable
+> the blue LED as a heartbeat.
 > 
-> Patch 2 introduces wait_event_no_hung() and wb_wait_for_completion_no_hung(), 
-> which enable the hung task detector to ignore hung tasks caused by these
-> wait events.
-> 
-> Patch 3 uses wb_wait_for_completion_no_hung() in the final phase of memcg 
-> teardown to eliminate the hung task warning.
-> 
-> Julian Sun (3):
->   sched: Introduce a new flag PF_DONT_HUNG.
->   writeback: Introduce wb_wait_for_completion_no_hung().
->   memcg: Don't trigger hung task when memcg is releasing.
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-This is all quite terrible. I'm not at all sure why a task that is
-genuinely not making progress and isn't killable should not be reported.
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+And queued in at91-dt branch.
+
+Regards,
+   Nicolas
+
+> ---
+> Changes v1 -> v2:
+> - Remove the label node in the LEDs.
+> - Use properties color and function to describe the LEDs.
+> - Add phandles for the LEDs.
+> 
+>   .../dts/microchip/at91-sama7d65_curiosity.dts | 51 +++++++++++++++++++
+>   1 file changed, 51 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+> index f091cc40a9f0..927c27260b6c 100644
+> --- a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+> +++ b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+> @@ -11,6 +11,8 @@
+>   #include "sama7d65-pinfunc.h"
+>   #include "sama7d65.dtsi"
+>   #include <dt-bindings/mfd/atmel-flexcom.h>
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/leds/common.h>
+>   #include <dt-bindings/pinctrl/at91.h>
+>   
+>   / {
+> @@ -26,6 +28,43 @@ chosen {
+>   		stdout-path = "serial0:115200n8";
+>   	};
+>   
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_key_gpio_default>;
+> +
+> +		button {
+> +			label = "PB_USER";
+> +			gpios = <&pioa PIN_PC10 GPIO_ACTIVE_LOW>;
+> +			linux,code = <KEY_PROG1>;
+> +			wakeup-source;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_led_gpio_default>;
+> +
+> +		led0: led-red {
+> +			color = <LED_COLOR_ID_RED>;
+> +			gpios = <&pioa PIN_PB17 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
+> +		};
+> +
+> +		led1: led-green {
+> +			color = <LED_COLOR_ID_GREEN>;
+> +			gpios = <&pioa PIN_PB15 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
+> +		};
+> +
+> +		led2: led-blue {
+> +			color = <LED_COLOR_ID_BLUE>;
+> +			function = LED_FUNCTION_HEARTBEAT;
+> +			gpios = <&pioa PIN_PA21 GPIO_ACTIVE_HIGH>;
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +	};
+> +
+>   	memory@60000000 {
+>   		device_type = "memory";
+>   		reg = <0x60000000 0x40000000>;
+> @@ -352,6 +391,18 @@ pinctrl_i2c10_default: i2c10-default {
+>   		bias-pull-up;
+>   	};
+>   
+> +	pinctrl_key_gpio_default: key-gpio-default {
+> +		pinmux = <PIN_PC10__GPIO>;
+> +		bias-pull-up;
+> +	};
+> +
+> +	pinctrl_led_gpio_default: led-gpio-default {
+> +		pinmux = <PIN_PB15__GPIO>,
+> +			 <PIN_PB17__GPIO>,
+> +			 <PIN_PA21__GPIO>;
+> +		bias-pull-up;
+> +	};
+> +
+>   	pinctrl_sdmmc1_default: sdmmc1-default {
+>   		cmd-data {
+>   			pinmux = <PIN_PB22__SDMMC1_CMD>,
+
 
