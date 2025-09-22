@@ -1,106 +1,283 @@
-Return-Path: <linux-kernel+bounces-827229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF47FB9135A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:50:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7C03B91348
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 546D14217DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:49:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ECC718A4237
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4105A309EF2;
-	Mon, 22 Sep 2025 12:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ii/sfJTM"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3640304BDC;
+	Mon, 22 Sep 2025 12:49:32 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AF73090CB
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DA6302773
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758545383; cv=none; b=rII7wrURLDL2asKJWWOx4zhL3/b4mYWZuxX3W4TS6r8fkKLTH7q7tCFL/L+3tJdUxbyAbM+sP5I40soZUFrTx+T/GOIoYOlFZIkej7/gsg36jCFXev1xq9P0kWiDjObs9Kzx0/zOi8V9bxV6iEKlKiUYsTxUxZ4t94Vvh4rPkM8=
+	t=1758545372; cv=none; b=L0WNBNzmCu1vZZ+qBL+IvjUZW7HnX7TeJ3B2ETYfY/6X1R3KlKj6exI0s8H0muVcMkUuQJea9BNufpumrWiT131N7RCPtKoc8lVbqRSMfnLMvZBJ64u9f42nDZBTpgqVZlpbFi+g17sCVqXXOOiw2v+OOMe3F1XqPKEP7MdLENM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758545383; c=relaxed/simple;
-	bh=72xINJxwfWCjPzDYknkvknCftfqpRGYVTgoJ7cd1Fis=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T8YtfsIQfbcZXxgqsuVZ2Tsk1DWfoQMfl2fNshkgSpqMQLMciS7fGpQLJ3+66CdVtP9OducyEL8SMY+k9K5K7YOGFnrDbfpun6E45ENSyaVqL5VqrIxkiJV0TGIF96sLLEkx9dzFASTutJj4OUTbuTE76TO5ggIvx+6pnZ5IzfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ii/sfJTM; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-25669596955so39138135ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 05:49:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758545381; x=1759150181; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=72xINJxwfWCjPzDYknkvknCftfqpRGYVTgoJ7cd1Fis=;
-        b=ii/sfJTMMsLJrDJaSVZ6QD1jZ8bw80lisBBdAKUvU3SzLqx5Jq3/GAi4lWWZfiocN3
-         uHz1xdz9bj4BO55Hyvw6VrIPtSfH/kQkcQHhl3akriqeo6Zoj2gdeO/tPft/3k2MI1WU
-         gvGZKaIXr4XJVBOwZRWnEsArxsdP7d46M7MrPfCKaXH2jy61V9dJRrY2XimNZISIilFi
-         IJlqTz0sywvpM+7ABe0+jfCkAxEOf32hQ89o6GzRPuhQM/hxltmY3AVGK8+LjeA69znG
-         gO6t6rYiuz0/wYQnTicvrx1tZxXPjHlIuG3kEmPiKfVRyai4bnvB+PXdD3zCaxASqgXN
-         iDww==
+	s=arc-20240116; t=1758545372; c=relaxed/simple;
+	bh=G0y9X7TNMtVlzbZiOKf0IWGC49hjkC3FDGYjBRNKoyU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oWXGcOcj0jl9H3qm2r545oFyBgk2nyPOBunYc8467d848lfQRegfxwf4D90sSM4a2ZnF7gFsLXl8lnOuIu2y2ay2wNmT+P+HVAGHyRuCuMwI1dURuHAWlI0PCwxR0qRv5qwgUk4A+D32+VE+yDgHZInvA+FCQUd4HndWw4kLrWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-425745467d1so17343095ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 05:49:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758545381; x=1759150181;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=72xINJxwfWCjPzDYknkvknCftfqpRGYVTgoJ7cd1Fis=;
-        b=rPAc6wyOzIxrdnR4R4dYh+bix7SZJxZKm/hFgNpRDgpoQT/ewMUZmdOkhaJv1/a9lT
-         Aig7L1MCCGuNjbxIpZi0QjCYIWxAnb03yW/9a9zEBaUKSPTV+h800WrIpC3298FNMi+A
-         b05rh5GsQ7K8M8RT8UxAG59moQYDgqtG3w2rc7WhyNSZoSMHIFex+c7Nr0wLI2nZuP4o
-         5tmWY+LKRYv8h2nEIRWGQYF6yg2xM1FEytBGOWhpEXdBdkMLWSiccYm0QnJxgxeCL+Yx
-         BxutSoyAu8+qKShL9nszQoIMLTAJgOAeFPPDDlOlpZQag/gkrb2qapQ5viXnvfM5ftBg
-         mr8A==
-X-Gm-Message-State: AOJu0YwUbO/JY6gyJPjlCxJP0TNf1cPsbIpVdP48hjRBV+9qotlBhmfn
-	0PdpLPt60HBiXoDFZnBSDGeNpy0aO6Uf2Hfb+Yiib1XXC8Ql+OzTzxnF
-X-Gm-Gg: ASbGncu/gld//2huClbabEenMu2lrQchtZ/9823LyOsTB7epWbL+TG9KcyckT2XggQi
-	20To7TlvcAGgUSG/JUdaiTWuEi5cKUbcktN8SFh1ho89w5RGb4r5UkEyEjv46SveNAE9gYsQNPT
-	YA6Sn899kjAdRgb0PJ/EHH/hs5pS/VwR1QqE6+T/PTCskd2dfTvEsT236ZkBlgUjGf06IxGNT1w
-	K2SbiwSm5EggkKZz26o2YqcDk6sLYsyoZOXPCCvWrwmf27zqs47cC6igEsWYarz44xCm0OKWgBT
-	5LUEMKUwygKzo20dvLMxXFpd8ZToSplNbvnFeCcjA96YdqqvmuAK4cDDywNZ1FdmcoXV8xQPPUA
-	aHJK69Jvm4iHJLQ1AEwzZhslLXcQWTZrV+uHE4m9toPZwnSylJI8=
-X-Google-Smtp-Source: AGHT+IHLkdd31s0BBY9824+rv3LblWPuwQwTjzF2olLliAheKwRkIaLxNxoDa9KmpbrowO9UkMVCsA==
-X-Received: by 2002:a17:903:3b83:b0:25f:45d9:6592 with SMTP id d9443c01a7336-269ba558c7amr145199075ad.48.1758545381429;
-        Mon, 22 Sep 2025 05:49:41 -0700 (PDT)
-Received: from zhr-ThinkStation-K.mioffice.cn ([43.224.245.231])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980053da4sm132593165ad.20.2025.09.22.05.49.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 05:49:41 -0700 (PDT)
-From: Hongru Zhang <zhanghongru06@gmail.com>
-X-Google-Original-From: Hongru Zhang <zhanghongru@xiaomi.com>
-To: stephen.smalley.work@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	omosnace@redhat.com,
-	paul@paul-moore.com,
-	selinux@vger.kernel.org,
-	zhanghongru06@gmail.com,
-	zhanghongru@xiaomi.com
-Subject: Re: [PATCH] selinux: Make avc cache slot size configurable during boot
-Date: Mon, 22 Sep 2025 20:49:20 +0800
-Message-ID: <20250922124920.262151-1-zhanghongru@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAEjxPJ41d8WcEh8QYp9E63+tCO2ukE5UWvCJ-hoXgN_Sx=P_-Q@mail.gmail.com>
-References: <CAEjxPJ41d8WcEh8QYp9E63+tCO2ukE5UWvCJ-hoXgN_Sx=P_-Q@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1758545369; x=1759150169;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r2EZgZnnONYs0RVP3NoxeQXUi9dswBt1SJz+Ube7nhw=;
+        b=RNG40aV0bjiJZmTfes72016FgYaR+Bqyfd0e2FqCrV/OM50+9euDrUCOut4eyfIqHx
+         0b53RIgLiHduv0K47lQhafbjFAOFYj58TDZdvUHusbq9eGCZgXAfxDoY7snbphmRFiBL
+         grkFOgGETs+0ZDm6Se2OhecPm0Hcj2eQiNRM680z/mV1FzUIo8Y8pTqu1WFtnipdjZwP
+         5c0zJRRcOCgN+c6BGPJiOQANSgUuGgM4wpkFFJzelSA+MnmKbiMHSqZzn538ZXFWCKG2
+         o5WF6HROHhVGDZEPGzjwUtAqOgGoCpqZDuAv7z3dQzyMwAeoo7iLHorIGfYxB7ZRd2F0
+         mF5A==
+X-Gm-Message-State: AOJu0Yz0lswZ1GLIwOENo70Dlf1dUhCEcKZN9G4SK3+kK0AgTbR51HKw
+	tKjOECnmrhB2ygZst/FgECuDQdjuEcMgOxVoTcSp6YnJqI6FYNHK96cYf4nH6BgO8cLSrzB+sye
+	p1jxY/1oDkigkbLrTiYaQQt6DwGj+vLqe6GbRUytRuJMj0aXyoel3IK46Bx5jew==
+X-Google-Smtp-Source: AGHT+IEIA65pPQvWpzBGBAMap+MKT1OdtaclxVxeI/hA4qFDds1ryLrsL2GwWDVMJP/E3qZt99cjKfB7SoP2WQ5+HSRJoMSw+ewo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:218a:b0:424:9917:1762 with SMTP id
+ e9e14a558f8ab-42499265b73mr117730095ab.30.1758545368970; Mon, 22 Sep 2025
+ 05:49:28 -0700 (PDT)
+Date: Mon, 22 Sep 2025 05:49:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d145d8.050a0220.13cd81.05b4.GAE@google.com>
+Subject: [syzbot] [media?] KASAN: slab-use-after-free Write in dvb_device_put
+From: syzbot <syzbot+d445a71e1c011b592c16@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	mchehab@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> Given that the constants are from well known, public sources (which
-> you should document in the patch description and possibly as comments
-> in the code) and the combining function is trivial, I assume this is
-> fine to use, but at the end of the day, it is Paul's call. I would
-> recommend #define's for each constant with its source noted as a
-> comment.
+Hello,
 
-Thanks for your suggestions. I'll update the patch accordingly and submit
-a new version.
+syzbot found the following issue on:
+
+HEAD commit:    d4b779985a6c Merge tag 'for-6.17/dm-fixes' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12bd2e42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=595e5938a1dd5b4e
+dashboard link: https://syzkaller.appspot.com/bug?extid=d445a71e1c011b592c16
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9a84e163c589/disk-d4b77998.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/050f34576399/vmlinux-d4b77998.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7a561c0f3881/bzImage-d4b77998.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d445a71e1c011b592c16@syzkaller.appspotmail.com
+
+R13: 00007fdf3abd6038 R14: 00007fdf3abd5fa0 R15: 00007ffc24915c58
+ </TASK>
+i2c i2c-0: dvb_frontend_start: failed to start kthread (-12)
+==================================================================
+BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+BUG: KASAN: slab-use-after-free in atomic_fetch_sub_release include/linux/atomic/atomic-instrumented.h:400 [inline]
+BUG: KASAN: slab-use-after-free in __refcount_sub_and_test include/linux/refcount.h:389 [inline]
+BUG: KASAN: slab-use-after-free in __refcount_dec_and_test include/linux/refcount.h:432 [inline]
+BUG: KASAN: slab-use-after-free in refcount_dec_and_test include/linux/refcount.h:450 [inline]
+BUG: KASAN: slab-use-after-free in kref_put include/linux/kref.h:64 [inline]
+BUG: KASAN: slab-use-after-free in dvb_device_put.part.0+0x22/0x90 drivers/media/dvb-core/dvbdev.c:632
+Write of size 4 at addr ffff88802aae1610 by task syz.2.3292/14587
+
+CPU: 1 UID: 0 PID: 14587 Comm: syz.2.3292 Tainted: G     U              syzkaller #0 PREEMPT(full) 
+Tainted: [U]=USER
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xcd/0x630 mm/kasan/report.c:482
+ kasan_report+0xe0/0x110 mm/kasan/report.c:595
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0x100/0x1b0 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_fetch_sub_release include/linux/atomic/atomic-instrumented.h:400 [inline]
+ __refcount_sub_and_test include/linux/refcount.h:389 [inline]
+ __refcount_dec_and_test include/linux/refcount.h:432 [inline]
+ refcount_dec_and_test include/linux/refcount.h:450 [inline]
+ kref_put include/linux/kref.h:64 [inline]
+ dvb_device_put.part.0+0x22/0x90 drivers/media/dvb-core/dvbdev.c:632
+ dvb_device_put drivers/media/dvb-core/dvbdev.c:631 [inline]
+ dvb_device_open+0x2a4/0x3b0 drivers/media/dvb-core/dvbdev.c:113
+ chrdev_open+0x234/0x6a0 fs/char_dev.c:414
+ do_dentry_open+0x982/0x1530 fs/open.c:965
+ vfs_open+0x82/0x3f0 fs/open.c:1095
+ do_open fs/namei.c:3887 [inline]
+ path_openat+0x1de4/0x2cb0 fs/namei.c:4046
+ do_filp_open+0x20b/0x470 fs/namei.c:4073
+ do_sys_openat2+0x11b/0x1d0 fs/open.c:1435
+ do_sys_open fs/open.c:1450 [inline]
+ __do_sys_openat fs/open.c:1466 [inline]
+ __se_sys_openat fs/open.c:1461 [inline]
+ __x64_sys_openat+0x174/0x210 fs/open.c:1461
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fdf3a98eba9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fdf3b8e0038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007fdf3abd5fa0 RCX: 00007fdf3a98eba9
+RDX: 0000000000000001 RSI: 0000200000000000 RDI: ffffffffffffff9c
+RBP: 00007fdf3aa11e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fdf3abd6038 R14: 00007fdf3abd5fa0 R15: 00007ffc24915c58
+ </TASK>
+
+Allocated by task 1:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:405
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ dvb_register_device+0x1e4/0x2370 drivers/media/dvb-core/dvbdev.c:475
+ dvb_register_frontend+0x5a6/0x880 drivers/media/dvb-core/dvb_frontend.c:3051
+ vidtv_bridge_dvb_init drivers/media/test-drivers/vidtv/vidtv_bridge.c:436 [inline]
+ vidtv_bridge_probe+0x459/0xa90 drivers/media/test-drivers/vidtv/vidtv_bridge.c:508
+ platform_probe+0x103/0x1d0 drivers/base/platform.c:1405
+ call_driver_probe drivers/base/dd.c:581 [inline]
+ really_probe+0x241/0xa90 drivers/base/dd.c:659
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
+ __driver_attach+0x283/0x580 drivers/base/dd.c:1217
+ bus_for_each_dev+0x13e/0x1d0 drivers/base/bus.c:370
+ bus_add_driver+0x2e9/0x690 drivers/base/bus.c:678
+ driver_register+0x15c/0x4b0 drivers/base/driver.c:249
+ vidtv_bridge_init+0x45/0x80 drivers/media/test-drivers/vidtv/vidtv_bridge.c:598
+ do_one_initcall+0x120/0x6e0 init/main.c:1269
+ do_initcall_level init/main.c:1331 [inline]
+ do_initcalls init/main.c:1347 [inline]
+ do_basic_setup init/main.c:1366 [inline]
+ kernel_init_freeable+0x5c2/0x910 init/main.c:1579
+ kernel_init+0x1c/0x2b0 init/main.c:1469
+ ret_from_fork+0x56d/0x730 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Freed by task 14593:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:243 [inline]
+ __kasan_slab_free+0x60/0x70 mm/kasan/common.c:275
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2422 [inline]
+ slab_free mm/slub.c:4695 [inline]
+ kfree+0x2b4/0x4d0 mm/slub.c:4894
+ dvb_free_device drivers/media/dvb-core/dvbdev.c:619 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ dvb_device_put.part.0+0x60/0x90 drivers/media/dvb-core/dvbdev.c:632
+ dvb_device_put drivers/media/dvb-core/dvbdev.c:631 [inline]
+ dvb_device_open+0x2a4/0x3b0 drivers/media/dvb-core/dvbdev.c:113
+ chrdev_open+0x234/0x6a0 fs/char_dev.c:414
+ do_dentry_open+0x982/0x1530 fs/open.c:965
+ vfs_open+0x82/0x3f0 fs/open.c:1095
+ do_open fs/namei.c:3887 [inline]
+ path_openat+0x1de4/0x2cb0 fs/namei.c:4046
+ do_filp_open+0x20b/0x470 fs/namei.c:4073
+ do_sys_openat2+0x11b/0x1d0 fs/open.c:1435
+ do_sys_open fs/open.c:1450 [inline]
+ __do_sys_openat fs/open.c:1466 [inline]
+ __se_sys_openat fs/open.c:1461 [inline]
+ __x64_sys_openat+0x174/0x210 fs/open.c:1461
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88802aae1600
+ which belongs to the cache kmalloc-256 of size 256
+The buggy address is located 16 bytes inside of
+ freed 256-byte region [ffff88802aae1600, ffff88802aae1700)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2aae0
+head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801b841b40 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
+head: 00fff00000000040 ffff88801b841b40 dead000000000122 0000000000000000
+head: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
+head: 00fff00000000001 ffffea0000aab801 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000002
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 1, tgid 1 (swapper/0), ts 19212219133, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x132b/0x38e0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:5148
+ alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2492 [inline]
+ allocate_slab mm/slub.c:2660 [inline]
+ new_slab+0x247/0x330 mm/slub.c:2714
+ ___slab_alloc+0xcf2/0x1750 mm/slub.c:3901
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3992
+ __slab_alloc_node mm/slub.c:4067 [inline]
+ slab_alloc_node mm/slub.c:4228 [inline]
+ __kmalloc_cache_noprof+0xfb/0x3e0 mm/slub.c:4402
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ bus_add_driver+0x92/0x690 drivers/base/bus.c:662
+ driver_register+0x15c/0x4b0 drivers/base/driver.c:249
+ usb_register_driver+0x216/0x4d0 drivers/usb/core/driver.c:1078
+ do_one_initcall+0x120/0x6e0 init/main.c:1269
+ do_initcall_level init/main.c:1331 [inline]
+ do_initcalls init/main.c:1347 [inline]
+ do_basic_setup init/main.c:1366 [inline]
+ kernel_init_freeable+0x5c2/0x910 init/main.c:1579
+ kernel_init+0x1c/0x2b0 init/main.c:1469
+ ret_from_fork+0x56d/0x730 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff88802aae1500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88802aae1580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88802aae1600: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                         ^
+ ffff88802aae1680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88802aae1700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
