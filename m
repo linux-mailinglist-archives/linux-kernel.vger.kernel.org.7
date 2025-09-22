@@ -1,194 +1,132 @@
-Return-Path: <linux-kernel+bounces-826754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5BFB8F41E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:17:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC9FAB8F41F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56431189EDB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:17:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53A03189EFA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7E92F3612;
-	Mon, 22 Sep 2025 07:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407C32F3612;
+	Mon, 22 Sep 2025 07:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ufpHgwcg"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JWi+FLuB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99C59475;
-	Mon, 22 Sep 2025 07:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5F5A59;
+	Mon, 22 Sep 2025 07:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758525434; cv=none; b=vFy2nRTnGAG02Y3Az8hK/ByjwWFtEQlzo78J8iNXCxaVW1roH290vTD/bdA26yeZtzLzCyjQNKt1GRMglkD7e+EwG8y8V2TWF62l9A1U/0uhcFewZnOXsch2PMrIlnUQbZUjTjwJF2rb1Ve0WUVfPLLUi1J2Aln+1Oqq9UZ49uc=
+	t=1758525448; cv=none; b=KEsigHOqftGV9U4+h3fJP6Zihl855ubdaavPzG5oGaJuelvqNFJoU+4ihdkbDiu5+OKY/3xNBi8pUFTw+GZ0eGZ6hV7/ZcjaGHto90R9I6p3wMna6fWmSR0hKoEzo17vIDZAsQrNphxIoCGiFDHX13jzkcPPUbMkbNb7WrSa3Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758525434; c=relaxed/simple;
-	bh=eulG1dlDhbrFnqQ/5xFfJsT6m8P5BkUgfXxI6mGrGeo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=prscGPNcx47rs9rXsRs2y/m3HbuklbwpPRAFVVRVaVIZX1K6qsQbRzCSq+moLLWvpLfm3F8+ET+hXDKfBXea3XuQ0QSYXvXoybpp1/DYeki5KP3JnQpckJjjnFmeQWb3wyQ+CRVcXMVf3MvgDIwdoyc6i5dguPNzAoa+SFTWCQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ufpHgwcg; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 7A5A36DC;
-	Mon, 22 Sep 2025 09:15:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1758525346;
-	bh=eulG1dlDhbrFnqQ/5xFfJsT6m8P5BkUgfXxI6mGrGeo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ufpHgwcg0ZMn+gEkWQoQ0MiIM9bDGIl/lywer96IBtniuPFz5oOsjbEFh+tg6pgyz
-	 JSm9kKuOFPF37Ke5swwPo7gwH4NSjImdP9yrAwL6VemJQ9ugGX+OxKzkIfJMo4gYy+
-	 bpSj8V7c/yqUW9qKjjT0arg7TobiT+h2ybCFWkok=
-Date: Mon, 22 Sep 2025 10:16:37 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Isaac Scott <isaac.scott@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v3 1/3] media: v4l: Add helper to get number of active
- lanes via a pad
-Message-ID: <20250922071637.GH10540@pendragon.ideasonboard.com>
-References: <20250915-mbus-config-active-lanes-v3-0-97a1282a410b@ideasonboard.com>
- <20250915-mbus-config-active-lanes-v3-1-97a1282a410b@ideasonboard.com>
- <aNDxR72CmvGofTHy@valkosipuli.retiisi.eu>
+	s=arc-20240116; t=1758525448; c=relaxed/simple;
+	bh=xhJzjdVpCWCxnGVYZvRiniOhNKc51qLY1XcE0UQu0p4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jH4J2i9ImVEW8gjm6/xOyaVlqRKzjvbi+YRoWeJ4PEOtFNUCaNjqpMFJuj4m9oujfaTW23Rn51VuqatzjMVyv4w4qNMLssQ2rQn5x2DT04zXo14MYUWBDI0eoRm7vDgNjam3uOfeuUzHCFA6PmUu8PhbLkb6voRr2VdPEdGWd/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JWi+FLuB; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758525447; x=1790061447;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=xhJzjdVpCWCxnGVYZvRiniOhNKc51qLY1XcE0UQu0p4=;
+  b=JWi+FLuBc+1RxCevYyGDHW/tdxAqdRC7yEA2lw0iU2/HY+uRpw4P4GFk
+   s3SS6mb0NBFGCSOmSV4AAR9r+rH6mugMxvdll17dv4sBviV4UEl7dnh1x
+   ukqWUwZytbv6Zjnarmj5fAuBLtssp5lHqgn2rbIddCNgDaNIZuJ0OWbeW
+   CnAz63gbXwB5IgcPx4sPXWNbL1IrOtIGBB0HmIA36W0+xzHrwZN8BXg5E
+   ngZG3yqKh/Me2keqZfndy3c4SErWtQ8sSUohClFp5sWvagKKJ1weg6KsM
+   cvMJT1FsM88TnLuj4lNq/7PwebWswsAAW1lG8jmxchD5XHeWx9JXjghjE
+   Q==;
+X-CSE-ConnectionGUID: z8nIa8h1S/6qPCKcZ2ZVsw==
+X-CSE-MsgGUID: fMgBImKqQ2ecqggf7Xew7Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="60839460"
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="60839460"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 00:17:26 -0700
+X-CSE-ConnectionGUID: InhUzUbfQrqYo6GzGHBWJQ==
+X-CSE-MsgGUID: A3CsxddkSHW6jDv79s0sog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="176845829"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 00:17:23 -0700
+Message-ID: <8b91ca86-6301-4645-a9c2-c2de3a16327c@linux.intel.com>
+Date: Mon, 22 Sep 2025 15:17:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aNDxR72CmvGofTHy@valkosipuli.retiisi.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 21/51] KVM: x86/mmu: WARN on attempt to check
+ permissions for Shadow Stack #PF
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Xiaoyao Li <xiaoyao.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+References: <20250919223258.1604852-1-seanjc@google.com>
+ <20250919223258.1604852-22-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250919223258.1604852-22-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 22, 2025 at 09:48:39AM +0300, Sakari Ailus wrote:
-> On Mon, Sep 15, 2025 at 02:18:33PM +0100, Isaac Scott wrote:
-> > Sometimes, users will not use all of the MIPI CSI 2 lanes available when
-> > connecting to the MIPI CSI receiver of their device. Add a helper
-> > function that checks the mbus_config for the device driver to allow
-> > users to define the number of active data lanes through the
-> > get_mbus_config op.
-> > 
-> > If the driver does not implement this op, fall back to using the number
-> > of data lanes specified in device tree.
-> > 
-> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
-> > ---
-> >  drivers/media/v4l2-core/v4l2-common.c | 32 ++++++++++++++++++++++++++++++++
-> >  include/media/v4l2-common.h           | 21 +++++++++++++++++++++
-> >  2 files changed, 53 insertions(+)
-> > 
-> > diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
-> > index 6e585bc76367..2ce8407f1397 100644
-> > --- a/drivers/media/v4l2-core/v4l2-common.c
-> > +++ b/drivers/media/v4l2-core/v4l2-common.c
-> > @@ -571,6 +571,38 @@ s64 __v4l2_get_link_freq_pad(struct media_pad *pad, unsigned int mul,
-> >  	return __v4l2_get_link_freq_ctrl(sd->ctrl_handler, mul, div);
-> >  }
-> >  EXPORT_SYMBOL_GPL(__v4l2_get_link_freq_pad);
-> > +
-> > +unsigned int v4l2_get_active_data_lanes(const struct media_pad *pad,
-> > +					unsigned int max_data_lanes)
-> > +{
-> > +	struct v4l2_mbus_config mbus_config = {};
-> > +	struct v4l2_subdev *sd;
-> > +	unsigned int lanes;
-> > +	int ret;
-> > +
-> > +	sd = media_entity_to_v4l2_subdev(pad->entity);
-> > +	ret = v4l2_subdev_call(sd, pad, get_mbus_config, pad->index,
-> > +			       &mbus_config);
-> > +	if (ret < 0 && ret != -ENOIOCTLCMD)
-> > +		return ret;
-> > +
-> > +	/*
-> > +	 * This relies on the mbus_config being zeroed at init time.
-> > +	 */
 
-This holds on a single line.
 
-> > +	if (!mbus_config.bus.mipi_csi2.num_data_lanes)
-> 
-> I'd either use the local variable for this (lanes) either all the time, or
-> not at all.
-> 
-> > +		return max_data_lanes;
-> > +
-> > +	lanes = mbus_config.bus.mipi_csi2.num_data_lanes;
-> > +
-> > +	if (lanes > max_data_lanes) {
-> > +		dev_dbg(sd->dev, "Active data lanes (%u) exceeds max (%u)\n",
-> > +			lanes, max_data_lanes);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	return lanes;
-> > +}
-> > +EXPORT_SYMBOL_GPL(v4l2_get_active_data_lanes);
-> >  #endif /* CONFIG_MEDIA_CONTROLLER */
-> >  
-> >  /*
-> > diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
-> > index 0a43f56578bc..6af0695460ab 100644
-> > --- a/include/media/v4l2-common.h
-> > +++ b/include/media/v4l2-common.h
-> > @@ -584,6 +584,27 @@ int v4l2_fill_pixfmt_mp(struct v4l2_pix_format_mplane *pixfmt, u32 pixelformat,
-> >  	(pad, mul, div)
-> >  s64 __v4l2_get_link_freq_pad(struct media_pad *pad, unsigned int mul,
-> >  			     unsigned int div);
-> 
-> Is your tree up to date?
+On 9/20/2025 6:32 AM, Sean Christopherson wrote:
+> Add PFERR_SS_MASK, a.k.a. Shadow Stack access, and WARN if KVM attempts to
+> check permissions for a Shadow Stack access as KVM hasn't been taught to
+> understand the magic Writable=0,Dirty=0 combination that is required for
+> Shadow Stack accesses, and likely will never learn.  There are no plans to
+> support Shadow Stacks with the Shadow MMU, and the emulator rejects all
+> instructions that affect Shadow Stacks, i.e. it should be impossible for
+> KVM to observe a #PF due to a shadow stack access.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-We seem to be moving faster than we used to :-)
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
-> > +
-> > +/**
-> > + * v4l2_get_active_data_lanes - Get number of active data lanes from driver
-> > + *
-> > + * @pad: The transmitter's media pad.
-> > + * @max_data_lanes: The maximum number of active data lanes supported by
-> > + * 		    the MIPI CSI link in hardware. This can be configured
-> > + * 		    in device tree.
-> 
-> I'd remove the latter sentence. Alternatively, it needs to be improved:
-> there are other sources for this information than DT.
-> 
-> > + *
-> > + * This function is intended for obtaining the number of data lanes that are
-> > + * actively being used by the driver for a MIPI CSI-2 device on a given media pad.
-> > + * This information is derived from a mbus_config fetched from a device driver
-> > + * using the get_mbus_config v4l2_subdev pad op.
-> > + *
-> > + * Return:
-> > + * * >0: Number of active data lanes
-> > + * * %-EINVAL: Number of active data lanes is invalid, as it exceeds the maximum
-> > + *	       supported data lanes listed in device tree.
+> ---
+>   arch/x86/include/asm/kvm_host.h | 1 +
+>   arch/x86/kvm/mmu.h              | 2 +-
+>   2 files changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 7a7e6356a8dd..554d83ff6135 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -267,6 +267,7 @@ enum x86_intercept_stage;
+>   #define PFERR_RSVD_MASK		BIT(3)
+>   #define PFERR_FETCH_MASK	BIT(4)
+>   #define PFERR_PK_MASK		BIT(5)
+> +#define PFERR_SS_MASK		BIT(6)
+>   #define PFERR_SGX_MASK		BIT(15)
+>   #define PFERR_GUEST_RMP_MASK	BIT_ULL(31)
+>   #define PFERR_GUEST_FINAL_MASK	BIT_ULL(32)
+> diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
+> index b4b6860ab971..f63074048ec6 100644
+> --- a/arch/x86/kvm/mmu.h
+> +++ b/arch/x86/kvm/mmu.h
+> @@ -212,7 +212,7 @@ static inline u8 permission_fault(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
+>   
+>   	fault = (mmu->permissions[index] >> pte_access) & 1;
+>   
+> -	WARN_ON(pfec & (PFERR_PK_MASK | PFERR_RSVD_MASK));
+> +	WARN_ON_ONCE(pfec & (PFERR_PK_MASK | PFERR_SS_MASK | PFERR_RSVD_MASK));
+>   	if (unlikely(mmu->pkru_mask)) {
+>   		u32 pkru_bits, offset;
+>   
 
-Drop "listed in the device tree" here too.
-
-With those small issues fixed,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> > + */
-> > +unsigned int v4l2_get_active_data_lanes(const struct media_pad *pad,
-> > +					unsigned int max_data_lanes);
-> >  #else
-> >  #define v4l2_get_link_freq(handler, mul, div)		\
-> >  	__v4l2_get_link_freq_ctrl(handler, mul, div)
-
--- 
-Regards,
-
-Laurent Pinchart
 
