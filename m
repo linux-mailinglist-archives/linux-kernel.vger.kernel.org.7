@@ -1,174 +1,318 @@
-Return-Path: <linux-kernel+bounces-827501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F91FB91EDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:29:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E34C6B91F38
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7C8642248F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:28:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D5AD4E26D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1182E54A1;
-	Mon, 22 Sep 2025 15:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8AF2E7F2A;
+	Mon, 22 Sep 2025 15:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JnCJh8IJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6tDJUbPl";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JnCJh8IJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6tDJUbPl"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DsG0jomU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5692E284A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7FC2E8B6F;
+	Mon, 22 Sep 2025 15:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758554858; cv=none; b=BNOi6ZzjmQ7CtRlXoPoC84DFql0o9FhhnEubPVk/5+31Q2meCmF6DtRkBK0MN1OljXlvk/ZwEg99oL5CL6xPXouhPaDg5NbIdi85NJwlgGUa9EMQcfcKkkTOr/77d/z8aKdw4jZXoDaMEN00BDw9qu1/SmoY1CabjPZjBbP12OQ=
+	t=1758555210; cv=none; b=uN0o8wm6T7j/oJVi9uZ2WtBjUBwYoyBP5EbrFloTLJ3Ed3HkN04L1l9BGwIq7Brv1r9oMgxjFx1u62vp3JdmTA8iRnn8YvFOozUp5yzkvgn0IIezs5+O429bMIzCylhdPfTifFNZ8eH/WCOwso4MHkVi/yGFhJTvzz960KWV1sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758554858; c=relaxed/simple;
-	bh=Vw6JJ7xrCIwh6MqyjOkTVkannJHgEmX47UGmuXG+9Tc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ol2A74D/t7WNskwD3FZ+dB33RVGv8wkETR0FSZ8hQBSAWHo6NQhplK7n5ihERW5EMwR7jsVPFtXTOSgnL1cW3rKGfM1pz8foaY6pjiTbAXuamxNobhYVvenuTL6FwGNyt/wTvzIWP2xwK4NLIwwd4Q4/1T5CmADwh4DV1/Pisv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JnCJh8IJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6tDJUbPl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JnCJh8IJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6tDJUbPl; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AC9D41F395;
-	Mon, 22 Sep 2025 15:27:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758554855; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rb+DXx+3ADAp+EoOOgHeeXZgUzRoFnTs9AYorQ75bCM=;
-	b=JnCJh8IJFkuMqJxVQU00Jyy2lJHqLhBBIjbqNFgL5nOeKX/O/TfNKaSvBgDKiHpRSXN46f
-	X4aIKirmoFDIQ6Ke9+rt0kjUUvrhYip+a/Iawy7fdVspYdB7XcV8xFnK7Zvw4SxD5kkook
-	m2/4+HzM9LAfD9G9vyNJZfEF5ZFhUFw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758554855;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rb+DXx+3ADAp+EoOOgHeeXZgUzRoFnTs9AYorQ75bCM=;
-	b=6tDJUbPlqJioZyGmF1fM2NZufXV2CD+L8O45l0A4SRfTOdLwBwkpTCdfQrZrjthXcYQFy4
-	aHKQ1hYI+3kzguCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758554855; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rb+DXx+3ADAp+EoOOgHeeXZgUzRoFnTs9AYorQ75bCM=;
-	b=JnCJh8IJFkuMqJxVQU00Jyy2lJHqLhBBIjbqNFgL5nOeKX/O/TfNKaSvBgDKiHpRSXN46f
-	X4aIKirmoFDIQ6Ke9+rt0kjUUvrhYip+a/Iawy7fdVspYdB7XcV8xFnK7Zvw4SxD5kkook
-	m2/4+HzM9LAfD9G9vyNJZfEF5ZFhUFw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758554855;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rb+DXx+3ADAp+EoOOgHeeXZgUzRoFnTs9AYorQ75bCM=;
-	b=6tDJUbPlqJioZyGmF1fM2NZufXV2CD+L8O45l0A4SRfTOdLwBwkpTCdfQrZrjthXcYQFy4
-	aHKQ1hYI+3kzguCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 92CC21388C;
-	Mon, 22 Sep 2025 15:27:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kRbQI+dq0WgYJAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 22 Sep 2025 15:27:35 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 2AB47A07C4; Mon, 22 Sep 2025 17:27:35 +0200 (CEST)
-Date: Mon, 22 Sep 2025 17:27:35 +0200
-From: Jan Kara <jack@suse.cz>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Julian Sun <sunjunchao@bytedance.com>, cgroups@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, akpm@linux-foundation.org, 
-	lance.yang@linux.dev, mhiramat@kernel.org, agruenba@redhat.com, hannes@cmpxchg.org, 
-	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-	muchun.song@linux.dev
-Subject: Re: [PATCH 0/3] Suppress undesirable hung task warnings.
-Message-ID: <4ntd7nnkoidyakbfm3caieku5tvpmzklhm27vgr3fu746hsrov@wqiqxasc4s7p>
-References: <20250922094146.708272-1-sunjunchao@bytedance.com>
- <20250922132718.GB49638@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1758555210; c=relaxed/simple;
+	bh=8AJxPrUrT8Y5UvfAyE95s6mhMSCa3aX/7RCx12ybYKE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IKyWKpO1v7y2w7mmxixRRCn4PPCodtoE36Ij1G2ErEbpi8jYfpOlmnLeVQzgzMdOHeTpNpkFhcr2F2lfCYJBOUXr61alviAinPOh25vT0g3dRXhhelq3Wvs/Mn6twJsYWmi6ktzhC4On58eQD29oGTi8rmEUR0uL3T1MX1z1iIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DsG0jomU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4EADC4CEF7;
+	Mon, 22 Sep 2025 15:33:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758555209;
+	bh=8AJxPrUrT8Y5UvfAyE95s6mhMSCa3aX/7RCx12ybYKE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DsG0jomUQOO9aot8CQ6Vka/7oa14xh9nY8wICcw6N8zXLjNQbME8PFO3Z7bjU33Wp
+	 3FzX3XmdeRTMVCfR/2sGWZETbaKQAsFzZOTMJXcdiusRfS77H+i03zjnW4RwNbrFH7
+	 dZIXuA4VXcvmi0APxArhFnQ1HgcR+wzpYyl+qp3Qh38zWI//BEcDEV/yz5ZNPJVB0p
+	 iN8CKAgYDPaMzsKlpGjJ36ayfQSqaGeGiz6YRNco0A+7NWkjw2cCtdBR4XEEBimN5x
+	 5zCXMu0hpb7TJUeVTK5RUGLjMF1QnxubsT7qBQMV5Wv071+ynMWpk4zY+jBlAViB7B
+	 AS2XfISEfxCog==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux PCI <linux-pci@vger.kernel.org>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Bjorn Helgaas <helgaas@kernel.org>, Zhang Qilong <zhangqilong3@huawei.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Subject:
+ [PATCH v3 1/3] PM: runtime: Add auto-cleanup macros for "resume and get"
+ operations
+Date: Mon, 22 Sep 2025 17:30:43 +0200
+Message-ID: <2399578.ElGaqSPkdT@rafael.j.wysocki>
+Organization: Linux Kernel Development
+In-Reply-To: <12763087.O9o76ZdvQC@rafael.j.wysocki>
+References: <12763087.O9o76ZdvQC@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922132718.GB49638@noisy.programming.kicks-ass.net>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon 22-09-25 15:27:18, Peter Zijlstra wrote:
-> On Mon, Sep 22, 2025 at 05:41:43PM +0800, Julian Sun wrote:
-> > As suggested by Andrew Morton in [1], we need a general mechanism 
-> > that allows the hung task detector to ignore unnecessary hung 
-> > tasks. This patch set implements this functionality.
-> > 
-> > Patch 1 introduces a PF_DONT_HUNG flag. The hung task detector will 
-> > ignores all tasks that have the PF_DONT_HUNG flag set.
-> > 
-> > Patch 2 introduces wait_event_no_hung() and wb_wait_for_completion_no_hung(), 
-> > which enable the hung task detector to ignore hung tasks caused by these
-> > wait events.
-> > 
-> > Patch 3 uses wb_wait_for_completion_no_hung() in the final phase of memcg 
-> > teardown to eliminate the hung task warning.
-> > 
-> > Julian Sun (3):
-> >   sched: Introduce a new flag PF_DONT_HUNG.
-> >   writeback: Introduce wb_wait_for_completion_no_hung().
-> >   memcg: Don't trigger hung task when memcg is releasing.
-> 
-> This is all quite terrible. I'm not at all sure why a task that is
-> genuinely not making progress and isn't killable should not be reported.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-In principle it is a variation of the old problem where hung task detector
-was reporting tasks that were waiting for IO to complete for too long (e.g.
-if sync(2) took longer than 2 minutes or whatever the limit is set). In
-this case we are waiting for IO in a cgroup to complete which has the
-additional dimension that cgroup IO may be throttled so it progresses extra
-slowly. But the reports of hang check firing for long running IO
-disappeared quite some time ago - I have a vague recollection there were
-some tweaks to it for this case but maybe I'm wrong and people just learned
-to tune the hang check timer :).
+It is generally useful to be able to automatically drop a device's
+runtime PM usage counter incremented by runtime PM operations that
+resume a device and bump up its usage counter [1].
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+To that end, add DEFINE_CLASS() macros allowing pm_runtime_put()
+and pm_runtime_put_autosuspend() to be used for the auto-cleanup in
+those cases.
+
+Simply put, a piece of code like below:
+
+	pm_runtime_get_sync(dev);
+	.....
+	pm_runtime_put(dev);
+	return 0;
+
+can be transformed with CLASS(pm_runtime_get_sync) like:
+
+	guard(pm_runtime_get_sync)(dev);
+	.....
+	return 0;
+
+(see pm_runtime_put() call is gone).
+
+However, it is better to do proper error handling in the majority of
+cases, so doing something like this instead of the above is recommended:
+
+	CLASS(pm_runtime_get_active, pm)(dev);
+	if (IS_ERR(pm))
+		return PTR_ERR(pm);
+	.....
+	return 0;
+
+In all of the cases in which runtime PM is known to be enabled for the
+given device or the device can be regarded as operational (and so it can
+be accessed) with runtime PM disabled, a piece of code like:
+
+	ret = pm_runtime_resume_and_get(dev);
+	if (ret < 0)
+		return ret;
+	.....
+	pm_runtime_put(dev);
+	return 0;
+
+can be simplified with CLASS() like:
+
+	CLASS(pm_runtime_get_active, pm)(dev);
+	if (IS_ERR(pm))
+		return PTR_ERR(pm);
+	.....
+	return 0;
+
+(again, see pm_runtime_put() call is gone).
+
+Still, if the device cannot be accessed unless runtime PM has been
+enabled for it, the CLASS(pm_runtime_get_active_enabled) variant
+needs to be used, that is (in the context of the example above):
+
+	CLASS(pm_runtime_get_active_enabled, pm)(dev);
+	if (IS_ERR(pm))
+		return PTR_ERR(pm);
+	.....
+	return 0;
+
+When the original code calls pm_runtime_put_autosuspend(), use one
+of the "auto" class variants, CLASS(pm_runtime_get_active_auto) or
+CLASS(pm_runtime_get_active_enabled_auto), so for example, a piece
+of code like:
+
+	ret = pm_runtime_resume_and_get(dev);
+	if (ret < 0)
+		return ret;
+	.....
+	pm_runtime_put_autosuspend(dev);
+	return 0;
+
+will become:
+
+	CLASS(pm_runtime_get_active_enabled_auto, pm)(dev);
+	if (IS_ERR(pm))
+		return PTR_ERR(pm);
+	.....
+	return 0;
+
+Note that the cases in which the return value of pm_runtime_get_sync()
+is checked can also be handled with the help of the new class macros.
+For example, a piece of code like:
+
+	ret = pm_runtime_get_sync(dev);
+	if (ret < 0) {
+		pm_runtime_put(dev);
+		return ret;
+	}
+	.....
+	pm_runtime_put(dev);
+	return 0;
+
+can be rewritten as:
+
+	CLASS(pm_runtime_get_active_enabled, pm)(dev);
+	if (IS_ERR(pm))
+		return PTR_ERR(pm);
+	.....
+	return 0;
+
+or CLASS(pm_runtime_get_active) can be used if transparent handling of
+disabled runtime PM is desirable.
+
+Link: https://lore.kernel.org/linux-pm/878qimv24u.wl-tiwai@suse.de/ [1]
+Co-developed-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+v2 -> v3:
+   * Two more class definitions for the case in which resume errors can be
+     neglected.
+   * Update of new code comments (for more clarity).
+   * Changelog update.
+
+v1 -> v2:
+   * Rename the new classes and the new static inline helper.
+   * Add two classes for handling disabled runtime PM.
+   * Expand the changelog.
+   * Adjust the subject.
+
+---
+ drivers/base/power/runtime.c |    2 +
+ include/linux/pm_runtime.h   |   82 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 84 insertions(+)
+
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -796,6 +796,8 @@ static int rpm_resume(struct device *dev
+ 		if (dev->power.runtime_status == RPM_ACTIVE &&
+ 		    dev->power.last_status == RPM_ACTIVE)
+ 			retval = 1;
++		else if (rpmflags & RPM_TRANSPARENT)
++			goto out;
+ 		else
+ 			retval = -EACCES;
+ 	}
+--- a/include/linux/pm_runtime.h
++++ b/include/linux/pm_runtime.h
+@@ -21,6 +21,7 @@
+ #define RPM_GET_PUT		0x04	/* Increment/decrement the
+ 					    usage_count */
+ #define RPM_AUTO		0x08	/* Use autosuspend_delay */
++#define RPM_TRANSPARENT	0x10	/* Succeed if runtime PM is disabled */
+ 
+ /*
+  * Use this for defining a set of PM operations to be used in all situations
+@@ -533,6 +534,32 @@ static inline int pm_runtime_resume_and_
+ }
+ 
+ /**
++ * pm_runtime_get_active_dev - Resume a device and bump up its usage counter.
++ * @dev: Target device.
++ * @rpmflags: Additional runtime PM flags to combine with RPM_GET_PUT.
++ *
++ * Resume @dev synchronously and if that is successful, increment its runtime
++ * PM usage counter.
++ *
++ * Return:
++ * * 0 if the runtime PM usage counter of @dev has been incremented.
++ * * Negative error code otherwise.
++ */
++static inline struct device *pm_runtime_get_active_dev(struct device *dev,
++						       int rpmflags)
++{
++	int ret;
++
++	ret = __pm_runtime_resume(dev, RPM_GET_PUT | rpmflags);
++	if (ret < 0) {
++		pm_runtime_put_noidle(dev);
++		return ERR_PTR(ret);
++	}
++
++	return dev;
++}
++
++/**
+  * pm_runtime_put - Drop device usage counter and queue up "idle check" if 0.
+  * @dev: Target device.
+  *
+@@ -606,6 +633,61 @@ static inline int pm_runtime_put_autosus
+ 	return __pm_runtime_put_autosuspend(dev);
+ }
+ 
++/*
++ * The way to use the classes defined below is to define a class variable and
++ * use it going forward for representing the target device until it goes out of
++ * the scope.  For example:
++ *
++ * CLASS(pm_runtime_get_active, active_dev)(dev);
++ * if (IS_ERR(active_dev))
++ *         return PTR_ERR(active_dev);
++ *
++ * ... do something with active_dev (which is guaranteed to never suspend) ...
++ *
++ * If an error occurs, the runtime PM usage counter of dev will not be
++ * incremented, so using these classes without error handling is not
++ * recommended.
++ */
++DEFINE_CLASS(pm_runtime_get_active, struct device *,
++	     if (!IS_ERR_OR_NULL(_T)) pm_runtime_put(_T),
++	     pm_runtime_get_active_dev(dev, RPM_TRANSPARENT), struct device *dev)
++
++DEFINE_CLASS(pm_runtime_get_active_auto, struct device *,
++	     if (!IS_ERR_OR_NULL(_T)) pm_runtime_put_autosuspend(_T),
++	     pm_runtime_get_active_dev(dev, RPM_TRANSPARENT), struct device *dev)
++
++/*
++ * The following two classes are analogous to the two classes defined above,
++ * respectively, but they produce an error pointer if runtime PM has been
++ * disabled for the given device.
++ *
++ * They should be used only when runtime PM may be disabled for the given device
++ * and if that happens, the device is not regarded as operational and so it
++ * cannot be accessed.  The classes defined above should be used instead in all
++ * of the other cases.
++ */
++DEFINE_CLASS(pm_runtime_get_active_enabled, struct device *,
++	     if (!IS_ERR_OR_NULL(_T)) pm_runtime_put(_T),
++	     pm_runtime_get_active_dev(dev, 0), struct device *dev)
++
++DEFINE_CLASS(pm_runtime_get_active_enabled_auto, struct device *,
++	     if (!IS_ERR_OR_NULL(_T)) pm_runtime_put_autosuspend(_T),
++	     pm_runtime_get_active_dev(dev, 0), struct device *dev)
++
++/*
++ * The following classes may be used instead of the above if resume failures can
++ * be neglected.  However, such cases are not expected to be prevalent, so using
++ * one of these classes should always be regarded as an exception and explained
++ * in an adjacent code comment.
++ */
++DEFINE_CLASS(pm_runtime_get_sync, struct device *,
++	     if (_T) pm_runtime_put(_T),
++	     ({ pm_runtime_get_sync(dev); dev; }), struct device *dev)
++
++DEFINE_CLASS(pm_runtime_get_sync_auto, struct device *,
++	     if (_T) pm_runtime_put_autosuspend(_T),
++	     ({ pm_runtime_get_sync(dev); dev; }), struct device *dev)
++
+ /**
+  * pm_runtime_put_sync - Drop device usage counter and run "idle check" if 0.
+  * @dev: Target device.
+
+
+
 
