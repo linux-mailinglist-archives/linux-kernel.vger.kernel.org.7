@@ -1,197 +1,132 @@
-Return-Path: <linux-kernel+bounces-827756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F8D9B92A41
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:48:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F34B92A50
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA7967B35F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:46:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3AC77A55B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9547D31A072;
-	Mon, 22 Sep 2025 18:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11C531A545;
+	Mon, 22 Sep 2025 18:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XevxrgIr"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EMZMCUwR"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787E614386D
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 18:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0FA3126A0
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 18:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758566868; cv=none; b=qz93GVXr7Ts/rO4VM8ckrCc2X1/8I0nGAvI57q66c53AUGmlwvcb3O4YrjuoSb9Ci9ktmvVPbxjbQv59WhsUfPlnNGrYDwQ+CDtNVEK63mKE0BMCXE/3UMbPtNMwoD9A1/xTt5KrobR8bkNkH5ffoAF7RB6Tt97zjCKx7L61aoQ=
+	t=1758566923; cv=none; b=MgDDViAK25FDNn8x9F9CTRvDgfCcUwza5OwwIAu4RaYERr9RNUZh8TXPzcgdbSntjLgKn27wCmaoRKBkoe9yk1+1K/oo4+Dtky9TI5E0Mwzf/p9bjC3Bj0vX8njRB84IrjTLIxcILpls3dNqAuneTldziAqUZEhxpuVO4N16dQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758566868; c=relaxed/simple;
-	bh=wbUDsEuejmM6LgX1Hj/KaKt6+BgZxwAmcKIRV/X+mqg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZXOFC6cm2QyJ3jtXchM0Rhnes8vKkiAVrkY2fsrU941E8tXQHib4Og9E9BvuvUZ7X7Bz63DgI5Qads31Fl6/7JukYq69JdbvIaKYhNJ2cQuYGctnNzoYUNPcNsoXFsBDiS0tFozuwKbY0Qi9vo/JG5uC4RSGDe1WfmjZ0XCar+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XevxrgIr; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32eb18b5500so7597492a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 11:47:46 -0700 (PDT)
+	s=arc-20240116; t=1758566923; c=relaxed/simple;
+	bh=62BWT+ChZietzG21mZwYd1nPiVzg6h9wIs2Www+JfAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y7RyhGODTLWJxYGebZ69p2h0UoKuaqeVYS4cFh2Zk1CZVn0yJ7sHnN+Og+fKfyToIFcGEr8aR3H/FH4kKR+K4z5dxky8fRYcuRk84PxQLjMYJrzS0e9rI9ns6iqYJofs+TNAMLsswnwRDt98X33Ocqwsc+bRANvPDfcMvUpMLUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EMZMCUwR; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7761b83fd01so4389413b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 11:48:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758566866; x=1759171666; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K0UpDKhoRLh7dpDRy6uigY5bqnigEpXRuNEVRYUji54=;
-        b=XevxrgIraHfykLM0SGuXBJhCyf9zUf0Ii1fiG3vmTn+yXNcE2zdMqdmoZYRPj5uWnr
-         YduJIoKBI50wzuFndyNrIeVuUSBb73H3xLAmL4prs+ekQ6BeP5dGkhj6a/DpU5f1OsmW
-         HwaceTNN6Bf3gZoj0XtQ4z3mFSpT6yRDPoYHGv+gxeUkZnuMYb4UrB0rfmucwwzw5fW4
-         yjSeAsqq7m6IPSNYk0EZfJsM1fgX7ItQr+NLbiPU40ayMgFUyzwsY/bvw3d52sZk7L1D
-         9xCnhVUGK0pakznKXCEeNxaasGDifmjwTX4qBstkQfZfbYhfGn0HKJSjSi6CNL7xT/vv
-         4FKw==
+        d=chromium.org; s=google; t=1758566921; x=1759171721; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=62BWT+ChZietzG21mZwYd1nPiVzg6h9wIs2Www+JfAc=;
+        b=EMZMCUwRqkqCT7w8Zq8rDm4OrkZdVUjuWagkuWRFgsBEcR4H0ab3y255zQb8kv+8Ku
+         mI6iIbZXgUt/HcTQtAXojjSmTFH5pEDAV/unjNJ1AQbxdtTAvt5gWZ0uF+8Qll98vd/v
+         CUyzL9+3Z/ozswqE+LwhUbfGoUUkQLfUckDx8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758566866; x=1759171666;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K0UpDKhoRLh7dpDRy6uigY5bqnigEpXRuNEVRYUji54=;
-        b=HxnhSbZQoQ3lO1LUsdaL6XMuuR0A+vakzfVLIEeV9DD8EYQAVwfZHKKTBJ7r3EWgCh
-         TBFxiFStr15a2ELAgE1yIKjDJ43ILOj2CNHskKcyvr17aiz1DIDwML2OX9utrSVhzemI
-         YV/vH9FsIL+hI4Y72P7G1ZN288Xat2E5QDPd7IEQgaqgPGjWeXsbQB8QdxY/wvjsgb4d
-         o6HEMMmN6QeaUnAkjmukQvQSbg1LJgEzHvycNKxBYxCi7jBcdRuWycZlxhiDpjgUdeCH
-         HjUJtyx1SMfjx9PaD6ItBBRwcbT4Goka9wajDlJM0sIwLkhHNwihGvyTtRV8xDKEswQ8
-         Fc+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVG7M3xPy6qOivjVkiNizAs0aItY8lkR678L2Gm1pKMqhpepecs7mKoRVLV11ttZLj24jwYeve3AWIx9pg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1UDqtmW/PgMwFhoRkMoOwpzqX4EmZD3lf9KBfN+knvIfyaFPj
-	/8auGk/HQDW5VpyOeFBDnFUUhiCW7ZKNrmfM0v4C7+nvfMOd5bF6HSx3/UqH8Ki0UvVBZecVnB0
-	cDnMAWQ==
-X-Google-Smtp-Source: AGHT+IEjlvdFs7P6ZUHLEhAT6cz3bcJ8IRMZO+Skz6MNKFJhZvvHWfyBM2xfHi4RsFjemOBmhymu89gdFCc=
-X-Received: from pjbqn13.prod.google.com ([2002:a17:90b:3d4d:b0:31f:2a78:943])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5109:b0:32e:e18a:368c
- with SMTP id 98e67ed59e1d1-33097fdca4dmr15334777a91.7.1758566866504; Mon, 22
- Sep 2025 11:47:46 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Mon, 22 Sep 2025 11:47:43 -0700
+        d=1e100.net; s=20230601; t=1758566921; x=1759171721;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=62BWT+ChZietzG21mZwYd1nPiVzg6h9wIs2Www+JfAc=;
+        b=RpQQsVQnFwWYmDbrIEG3SdpHHiw3aofE2BkEHb4uleUaxoQY/0zgYZC46I5mfOxpYI
+         kmb34jzJm2U9+dX2DnZGI89ZfigmHvw0iN7u3K0Bd4txrDb8RD3BBJBx3kE9SUQZtgNf
+         pzsF74+XIwSojCJN6rrxrT2BheDFuRnYu8wT5LNWV9jOXAFjy5smqMIGDNRNBs/ih/sq
+         cJepfgCoO7perO9pMc0gZ2LIwpDaYoe/CxdZSRa8ZSY2IXTHXYtjpfbqL91DyJZqMIqA
+         YvjpRrlF4n0VBczUYAnVmKYzKBWahz/fnaTWip4jMBBfuautQpwQHjk6zFy+3naseg1r
+         acBw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1cI80xD2344eqjoJOn/65/Qsod5Roa3n1GtV9htjMdKn2ZLgbo6b605ih5tIha5jrrW84hsWw9FI6dqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfhzSgTGvKeqOQjPAVfBIG9y48Bt0Td/hta6s9+P2qzeidAKiy
+	FIVvCCNfkbId3GB6dCrStmKZZIYome+IYsdpN//6NM2PoGWpKGukxCgu45hIQDhC3A==
+X-Gm-Gg: ASbGnctlC3NloGA7fV5ETnsdjuCuoe/vZl7/3paI06qBkdYoxI54h752nuEzUvwtJEc
+	eaRp81rseADOx8+xqfG9T/zQob7VAWgu1pbOC+t2M0JwM+i1PZGF8PWWMGfdxp8y+i8ZrStzlkc
+	ywHnZDLYs2oVbpUNuFID2gRSF7S7JsHgnE/A190s4cDyvdHmoC5FCQFnmMeV+0m+5h8vOixqjoU
+	66/vFKUinUh0Yj7iZjUaig5xWk1JntIK8YjD9zih9k8Yt6rQT24qYsgvnmjGGaFN+FfixwzNEVk
+	sBk8R8gadXr5d+tREKKEMb3FRAD5LFDNwpQcmSVkPkDdvzu0esI4kq59/um4x6kiXMr4FSC8NIn
+	SIM01y0vKTPMJowkBRh3zSH0ob3uIdbfVbH2LJEmGUUC4xBNNSSpsZcJMJCfK
+X-Google-Smtp-Source: AGHT+IEwQZB9OJP+yIk47lHkNRnpblDU+mAiC3pniWHHE9+nReBcI884SHHQG9F+tJn/QrVZqfu7fA==
+X-Received: by 2002:a05:6a00:390b:b0:73c:b86:b47f with SMTP id d2e1a72fcca58-77e4cd35838mr16708833b3a.4.1758566921098;
+        Mon, 22 Sep 2025 11:48:41 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e7c:8:f126:ac9b:b8ac:e280])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-77f34d416a9sm4169794b3a.101.2025.09.22.11.48.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 11:48:40 -0700 (PDT)
+Date: Mon, 22 Sep 2025 11:48:38 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@kernel.org>, linux-pci@vger.kernel.org,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Richard Weinberger <richard@nod.at>, Wei Liu <wei.liu@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	kunit-dev@googlegroups.com,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	linux-um@lists.infradead.org
+Subject: Re: [PATCH 0/4] PCI: Add support and tests for FIXUP quirks in
+ modules
+Message-ID: <aNGaBiUOb6_n8w8P@google.com>
+References: <20250912230208.967129-1-briannorris@chromium.org>
+ <aMgZJgU7p57KC0DL@infradead.org>
+ <aMhd4REssOE-AlYw@google.com>
+ <aNGR0x185VGHxSde@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
-Message-ID: <20250922184743.1745778-1-seanjc@google.com>
-Subject: [PATCH (CET v16 26.5)] KVM: x86: Initialize allow_smaller_maxphyaddr
- earlier in setup
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNGR0x185VGHxSde@infradead.org>
 
-Initialize allow_smaller_maxphyaddr during hardware setup as soon as KVM
-knows whether or not TDP will be utilized.  To avoid having to teach KVM's
-emulator all about CET, KVM's upcoming CET virtualization support will be
-mutually exclusive with allow_smaller_maxphyaddr, i.e. will disable SHSTK
-and IBT if allow_smaller_maxphyaddr is enabled.
+On Mon, Sep 22, 2025 at 11:13:39AM -0700, Christoph Hellwig wrote:
+> Controller drivers are a special case I guess, but I'd rather still
+> not open it up to any random driver.
 
-In general, allow_smaller_maxphyaddr should be initialized as soon as
-possible since it's globally visible while its only input is whether or
-not EPT/NPT is enabled.  I.e. there's effectively zero risk of setting
-allow_smaller_maxphyaddr too early, and substantial risk of setting it
-too late.
+I don't really see why this particular thing should develop restrictions
+beyond "can it work in modules?", but if you have an idea for how to do
+that reasonably, my ears are open.
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
+> When did we allow modular
+> controller drivers anyway?
 
-As the subject suggests, I'm going to slot this in when applying the CET
-series as this is a dependency for disabling SHSTK and IBT if
-allow_smaller_maxphyaddr.  Without this, SVM will incorrectly clear (or not)
-SHSTK.  VMX isn't affected because !enable_ept disables unrestricted guest,
-which also clears SHSTK and IBT, but as the changelog calls out, there's no
-reason to wait to initialize allow_smaller_maxphyaddr.
+An approximate count:
 
-https://lore.kernel.org/all/20250919223258.1604852-28-seanjc@google.com
+$ git grep tristate ./drivers/pci/controller/ | wc -l
+39
 
- arch/x86/kvm/svm/svm.c | 30 +++++++++++++++---------------
- arch/x86/kvm/vmx/vmx.c | 16 ++++++++--------
- 2 files changed, 23 insertions(+), 23 deletions(-)
+There's been a steady trickle of module-related changes over the years.
+And several modular controller drivers predate the
+drivers/pci/controller/ creation in 2018 at commit 6e0832fa432e ("PCI:
+Collect all native drivers under drivers/pci/controller/").
 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 54ca0ec5ea57..74a6e3868517 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -5413,6 +5413,21 @@ static __init int svm_hardware_setup(void)
- 			  get_npt_level(), PG_LEVEL_1G);
- 	pr_info("Nested Paging %s\n", str_enabled_disabled(npt_enabled));
- 
-+	/*
-+	 * It seems that on AMD processors PTE's accessed bit is
-+	 * being set by the CPU hardware before the NPF vmexit.
-+	 * This is not expected behaviour and our tests fail because
-+	 * of it.
-+	 * A workaround here is to disable support for
-+	 * GUEST_MAXPHYADDR < HOST_MAXPHYADDR if NPT is enabled.
-+	 * In this case userspace can know if there is support using
-+	 * KVM_CAP_SMALLER_MAXPHYADDR extension and decide how to handle
-+	 * it
-+	 * If future AMD CPU models change the behaviour described above,
-+	 * this variable can be changed accordingly
-+	 */
-+	allow_smaller_maxphyaddr = !npt_enabled;
-+
- 	/* Setup shadow_me_value and shadow_me_mask */
- 	kvm_mmu_set_me_spte_mask(sme_me_mask, sme_me_mask);
- 
-@@ -5492,21 +5507,6 @@ static __init int svm_hardware_setup(void)
- 
- 	svm_set_cpu_caps();
- 
--	/*
--	 * It seems that on AMD processors PTE's accessed bit is
--	 * being set by the CPU hardware before the NPF vmexit.
--	 * This is not expected behaviour and our tests fail because
--	 * of it.
--	 * A workaround here is to disable support for
--	 * GUEST_MAXPHYADDR < HOST_MAXPHYADDR if NPT is enabled.
--	 * In this case userspace can know if there is support using
--	 * KVM_CAP_SMALLER_MAXPHYADDR extension and decide how to handle
--	 * it
--	 * If future AMD CPU models change the behaviour described above,
--	 * this variable can be changed accordingly
--	 */
--	allow_smaller_maxphyaddr = !npt_enabled;
--
- 	kvm_caps.inapplicable_quirks &= ~KVM_X86_QUIRK_CD_NW_CLEARED;
- 	return 0;
- 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 509487a1f04a..ace8208fc1be 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -8479,6 +8479,14 @@ __init int vmx_hardware_setup(void)
- 		return -EOPNOTSUPP;
- 	}
- 
-+	/*
-+	 * Shadow paging doesn't have a (further) performance penalty
-+	 * from GUEST_MAXPHYADDR < HOST_MAXPHYADDR so enable it
-+	 * by default
-+	 */
-+	if (!enable_ept)
-+		allow_smaller_maxphyaddr = true;
-+
- 	if (!cpu_has_vmx_ept_ad_bits() || !enable_ept)
- 		enable_ept_ad_bits = 0;
- 
-@@ -8715,14 +8723,6 @@ int __init vmx_init(void)
- 
- 	vmx_check_vmcs12_offsets();
- 
--	/*
--	 * Shadow paging doesn't have a (further) performance penalty
--	 * from GUEST_MAXPHYADDR < HOST_MAXPHYADDR so enable it
--	 * by default
--	 */
--	if (!enable_ept)
--		allow_smaller_maxphyaddr = true;
--
- 	return 0;
- 
- err_l1d_flush:
+> That feels like a somewhat bad idea, too.
 
-base-commit: d44fa096b63659f2398a28f24d99e48c23857c82
--- 
-2.51.0.534.gc79095c0ca-goog
+Any particular reason behind that feeling? Most other bus frameworks I'm
+familiar with support modular drivers.
 
+Brian
 
