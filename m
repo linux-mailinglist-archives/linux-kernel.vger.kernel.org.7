@@ -1,133 +1,135 @@
-Return-Path: <linux-kernel+bounces-827421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9E4B91BA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:31:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646D2B91B87
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A75D12A63B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:29:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3205F7B12A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C2123AB9C;
-	Mon, 22 Sep 2025 14:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B46229B16;
+	Mon, 22 Sep 2025 14:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="e8IvNzFP"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="awP7csTI"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5D3213E9C
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F24B213E9C
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758551363; cv=none; b=u/NZ9PldK2ikP3ZUmvfLPT5rFg+AIyBE7gngMRMMh/IwlMSoCp8RkVXIjypW4yDLWnGxne82/NnQV73j2JqBS3VUzvopM+UeTW1lEmtQT0oP0Dnzhg+pKL749VJa99n7cBD5yD5OLQ6AUcZWmVpU6st5expH0Q3vjCUWNyMJHww=
+	t=1758551368; cv=none; b=qsJmhdZhEg8VNz8hfeNuqI+kuFPySAfgfkt45jQWaInIksZGFWh9xGDKkYicMqYUn86xMRtX2BdORKQpjLHighqA0QZG/Y5/3FGMBcPDWmQKLc4nru7tcKKK5euZ+CdbZ4pavxCaK86NyFG7UujER5u5CGcUBkZsUXHe0YU4tG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758551363; c=relaxed/simple;
-	bh=yGlk0yEGsz9oqFHlfX9nlnj957Wcrr89da99updnen0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cvk2xGN2xb/KkS2QIgjYaNskzrNBUMJ3AGpTRbY/9RsrrPAYmpNGhHPjSaFS/aS6OGkYFr54kqxtyLTLnuO6HJ7NypI3vAWIUby1lLCvGhCIe0SRvSXRzGAUY2KsMXozw7C6pUxPOkzaYGSFppWDvjWd8C4wel1AeRYlUyBeDiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=e8IvNzFP; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=kgOl
-	zuOh/25n4EQYjJ46ea7gRIzki/d+Hkt1uNpKmtg=; b=e8IvNzFPPNA4ttOGpvPw
-	cBfjy8X/nc3ct+dvp5/nMRessnlRg9B0ArGwvM1HlFVvDscfEh/dGJD7SxiAKcVe
-	QcOvSjQOTSu41SpcJ7eO5pDJobVydTfNZNCe9Khe9dW6naj/WUC5RKkcTR0iyQO/
-	bw1Gc0PeWaSSdq7nS2Qbo2wcO3nbC2bYUbUTE7wrasjZjSo6td1xgF76vi68h3gs
-	giadPpZ6O+G7eSp5nhx/jI5DXYvRiteUDTqxlYHSEGdvDz4vgmh5gfwS4LhaXEgj
-	YvZ/kLgBmKFXRfF8u9DTTMIkhyATQP9O/n2LqKibnZaQrik6/4jB7pj7VuNJ22nB
-	fQ==
-Received: (qmail 762152 invoked from network); 22 Sep 2025 16:29:19 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Sep 2025 16:29:19 +0200
-X-UD-Smtp-Session: l3s3148p1@GsEQpWQ/wO0gAwDPXwQHAL/S9V79e5yL
-Date: Mon, 22 Sep 2025 16:29:18 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 8/8] ARM: dts: r9a06g032: Add support for GPIO
- interrupts
-Message-ID: <aNFdPnN7UcUlrWY6@shikoro>
-References: <20250918104009.94754-1-herve.codina@bootlin.com>
- <20250918104009.94754-9-herve.codina@bootlin.com>
- <aM0llhn054OI9rA8@ninjato>
- <20250919155910.4d106256@bootlin.com>
- <aM1rgY9CCF54c_Pg@shikoro>
- <20250919191211.0ed4c976@bootlin.com>
- <20250922161620.03fa8d8e@bootlin.com>
+	s=arc-20240116; t=1758551368; c=relaxed/simple;
+	bh=oUj350T6EOY4u5853/0XWCIRgQCJC/nctqpOg3WNCLw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RcZdcnQs047AhFv40x/szJT7uq3YulMDhQ1IaJXLCUGBFG7Ow+XPEHpkgrntY4d7SMsEOAzVp78Xt/S6fMYJ/BxyctuQWUSUrnu/4Y4Urdwa3yBJca0uhTP4dDWZsz7fSoDKaC4LX/xubHYvZvQyd5jPXh3yvtI/mRa3fc5mDJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=awP7csTI; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-72e565bf2feso31933407b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:29:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1758551366; x=1759156166; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JHqdFBeIkyqzt8Mc+yBevveD8rkxvyWh5nDLvmBZJ5c=;
+        b=awP7csTIB9calTgbWnLK/CFeTk4/gtSN9ljH9LykOEz+odxqzYmc621QaOAQP+yb1q
+         gx2w0d39gpVO/w0CjP4h+GA8myFWS7ehJmA3bdB7eeJAZ9Wgal/Xxr8lK+Q9/GEaIpLn
+         fyXzQjNd6tQU8gRgogPCNpFlSBavotEnb2fyTdsryyP+WWmxz41Sj7pvdw9CvekDobKh
+         BXvMEOPFPcRbecNsAuyUn8B+6ustav0FKiZePtvoCNRJGIhoscnFDHiC5WivszGLtgbN
+         MHrwv3jMZ3au+N/2Xv+iZYRLZZMxYPyx0qBLR+y5FjOuzUUsaOS1TcKwsSCs3iPe9uUc
+         2LGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758551366; x=1759156166;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JHqdFBeIkyqzt8Mc+yBevveD8rkxvyWh5nDLvmBZJ5c=;
+        b=LjeOem5VRLkuBrGqO4h9Cf4mynn+jBruKxfijiJakKkzscwb2QHVBMyTQgn13qhwWo
+         uFbbOCgSjntZAY2jLAJlRvjDjIRyC/g9jYdIpSXrvWFTKS4B4vbCe5y3+H8Up2CMa0CC
+         QV0edzcoqZPE9qRlnudb64BPVBFwPbNVUcXxYqDLO1EsK3Mo7fxb3FWoAdjrvoHRns9/
+         A9KiAQdGDfmHzqYrg9ckN1klmVCFeUOy1SqDONLJGkWsI5p3N46dA0DZnc53cw/0vrHM
+         63Lf4u9G6Rd0RPphe1MFZHYu6H+RIKC96uo1yWXaIpYttR51Xz64Y9AvmAWE1EZHHJnq
+         nALg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKrJ5R0gGhuTCkzysIWEsxnGZb5zXRE7l+Nv3mKM2nw7//2zX1byUJVXQzNnw5ifjgvmE6wOzGcLPhv6g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfJe1KIRISI7HorlisRARuofpsckDiddNuWNJV7ABZhgsjJt2K
+	Zlz87p14eUrILYEN4e5mRmTfExNsOPJxJpysa7mB6tVn3Mt84unAylOdYblwqJLxw6Gx4Q3ClQN
+	19VT6tGMGoaS46ZnjuW+7nVHICpfJMGg9lBRiPcTxHQ==
+X-Gm-Gg: ASbGncs+l3kUfswxuPidkQrksR3o+NJYcUvYTYxoFd+Xoy4bwBXdHf4QIZIcbhl/maW
+	W3/4p9b7ybKNQ+ouNJRW0FdZc8ynf0J6+hD4PKMYmYyQzwZcddSrrWdwHqmq+fyhNUjsCbJxpO+
+	Fd/GpdiOLWBeNntKUxin49HDc45+v68mqdr86XtxM4/9u9/NTpEuCLTMjDkCUWwKsnWxYWtG3EZ
+	fvQG11R
+X-Google-Smtp-Source: AGHT+IHJ2lJmsHlAxcqszjCgu/K4P3zLcQJ5uNA7XJd9iurFBQKMVNe95iJrTTyw5mOlZmwRrwMEpFmq5dIm49cJsWI=
+X-Received: by 2002:a05:690c:60c3:b0:742:a0be:e3f1 with SMTP id
+ 00721157ae682-742a0beec20mr110975537b3.13.1758551366130; Mon, 22 Sep 2025
+ 07:29:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RHfAQ3LcjS2qKNkM"
-Content-Disposition: inline
-In-Reply-To: <20250922161620.03fa8d8e@bootlin.com>
-
-
---RHfAQ3LcjS2qKNkM
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20250922094146.708272-1-sunjunchao@bytedance.com> <20250922132718.GB49638@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250922132718.GB49638@noisy.programming.kicks-ass.net>
+From: Julian Sun <sunjunchao@bytedance.com>
+Date: Mon, 22 Sep 2025 22:29:23 +0800
+X-Gm-Features: AS18NWAs6wAemc8c5yHBO8lN5G0tRCe88xdDCZ4rxbtmuK7NE8PZDJxRhF7dHJk
+Message-ID: <CAHSKhteGasUZa8u6_YUhwH3V_b_QLwBu7dDAEob4SBC7K8KTGQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH 0/3] Suppress undesirable hung task warnings.
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	akpm@linux-foundation.org, lance.yang@linux.dev, mhiramat@kernel.org, 
+	agruenba@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org, 
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Herv=C3=A9,
+On Mon, Sep 22, 2025 at 9:27=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Mon, Sep 22, 2025 at 05:41:43PM +0800, Julian Sun wrote:
+> > As suggested by Andrew Morton in [1], we need a general mechanism
+> > that allows the hung task detector to ignore unnecessary hung
+> > tasks. This patch set implements this functionality.
+> >
+> > Patch 1 introduces a PF_DONT_HUNG flag. The hung task detector will
+> > ignores all tasks that have the PF_DONT_HUNG flag set.
+> >
+> > Patch 2 introduces wait_event_no_hung() and wb_wait_for_completion_no_h=
+ung(),
+> > which enable the hung task detector to ignore hung tasks caused by thes=
+e
+> > wait events.
+> >
+> > Patch 3 uses wb_wait_for_completion_no_hung() in the final phase of mem=
+cg
+> > teardown to eliminate the hung task warning.
+> >
+> > Julian Sun (3):
+> >   sched: Introduce a new flag PF_DONT_HUNG.
+> >   writeback: Introduce wb_wait_for_completion_no_hung().
+> >   memcg: Don't trigger hung task when memcg is releasing.
+>
+> This is all quite terrible. I'm not at all sure why a task that is
+> genuinely not making progress and isn't killable should not be reported.
 
-> 		/*
-> 		 * interrupt-map has to be updated according to GPIO
-> 		 * usage. The src irq (0 field) has to be updated with
-> 		 * the needed GPIO interrupt number.
-> 		 * More items can be added (up to 8). Those items must
-> 		 * define a GIC SPI interrupt in the range 103 to 110.
-> 		 */
-> 		interrupt-map =3D <0 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
+Actually, I tried another approach to fix this issue [1], but Andrew
+thinks eliminating the warning should be simpler. Either approach is
+fine with me.
 
-Thanks for digging into this. Gievn your results, I can live with a
-minimal interrupt-map, but ideally it should do nothing instead of
-mapping GPIO0? Will think about it...
+[1]: https://lore.kernel.org/cgroups/20250917212959.355656-1-sunjunchao@byt=
+edance.com/
 
-All the best,
-
-   Wolfram
-
-
---RHfAQ3LcjS2qKNkM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjRXToACgkQFA3kzBSg
-KbZrJQ//fMsyzEgSboD4Ldh4yo6rXIxydhNXqQxq2x2GUmk1OmIP0SheZAgM3e94
-PoSmVEz5zPlu3kLFlK3VPWm5HCuQDOXK8U3+1yc4e38bJmfVjW22UrY76zA5ib3M
-3lNDkn+A4zewK50QTxRRgcHYU03K+Ud+ohle/YX0oaf82J5NRdMvyAbOgwKdsgbL
-ZEPQsXx53uLD4XoAsqJCBnonbPgh6+zDCpjIoDe9/43SVA2gzPVWgB3hENOM4ICK
-KDApwZEli6faEEzi+Fg8xhTgtsVNlmOTPkjZnnxrJPUhKuWKmRilJHeyUXpNvfB1
-SdEzgynB896ZrGg7sqpmiBIAnDww+Ov4tVtTtN5X34Il/4/vwQC0FJQiCalhE7Hl
-910Z7paHwGcmesMQtBSdgSGJR3dO80b+lFddm5yuEzVG21u4MwW4/Guhh2feTd22
-nzJ8YfKYUPQwPLEld420CoTrE/DM7BywqumFdoyhkCcl+vgAQ2Dyc8/ejnk5hN6z
-YO/fzsLEFEMUiZ1xmnJk20V9FNdtNPIH/Xl1U34KR2HAF26MQB52W75WDar5kZV8
-GMdFs/xrIQJwupTbiHEuhHUKdZRQRRXto70mlOKymXPuPrNh7vGsQVMtHgmhpD9U
-cItO+v9z9AeQ2PNy/wAaUfwSj0IajwCbEN5hq81deMq/z3TjZGc=
-=xbU9
------END PGP SIGNATURE-----
-
---RHfAQ3LcjS2qKNkM--
+Thanks,
+--=20
+Julian Sun <sunjunchao@bytedance.com>
 
