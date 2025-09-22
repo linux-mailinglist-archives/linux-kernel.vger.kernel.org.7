@@ -1,142 +1,184 @@
-Return-Path: <linux-kernel+bounces-826733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9C3B8F372
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:04:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3676B8F37D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F0883BB8BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:04:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 785F316E406
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40722F0C46;
-	Mon, 22 Sep 2025 07:04:01 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3103B2F0C50;
+	Mon, 22 Sep 2025 07:06:45 +0000 (UTC)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA9E286A9;
-	Mon, 22 Sep 2025 07:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D112F0690
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758524641; cv=none; b=BRpv2gAII9sbrdHF1B5Z1yTXZ440inmDFeberXM8HPcMVgu1X5nOv6v+xpHR8kpr0QK3JNu773K/asdo79dtkf5xIrz2Jo+T9gtSfBzhO5YRS3ifXMfmE+K9b1ZEama4ukwQY6mp/f5WnTTL6RHv3IrRoLaW4D1IebrjOa8TL4g=
+	t=1758524804; cv=none; b=hpstChXUnhDSnJPzUocBYJdJWoFZ+3gRfOI7nV4XRZWbdjB9rxq10uRJj9P5OPIm3A5F14bPOxqZqgH1wsIYYDtDTSSQ/gLBT0Z6NvZ6d4cZO7BnvJFMUEJIj6NN10euhzj2WYTTc8DjQq7HgN6as+vNAAi45pzLGfJYKw+9chw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758524641; c=relaxed/simple;
-	bh=L2nzYQ6JMIg/ONOfF4+3w4YUx0WkjbbxpvYbuajtGxo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u/ue2fMwQgQzcxDQx81kNp6dgwt10fJ8nR7UU/4eL5XouKpZKHtXMNe4gcyWrXAU3s8+Rfgjn4WWkroJ6q2IGD6RR/RaZuTXLd3k7iFyUwDrprCDjjQZqj3p6ny5rv4CyCXTUzYP3PjrBEjA1MDxNaaiRWp6FjwsVJbSr26m68M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cVYrX2hSVz13NQ5;
-	Mon, 22 Sep 2025 14:59:40 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7D90C1400D1;
-	Mon, 22 Sep 2025 15:03:56 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 22 Sep 2025 15:03:56 +0800
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 22 Sep 2025 15:03:55 +0800
-From: Huisong Li <lihuisong@huawei.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>
-CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>,
-	<lihuisong@huawei.com>
-Subject: [PATCH v4 1/1] ACPI: processor: Do not expose the global acpi_idle_driver variable
-Date: Mon, 22 Sep 2025 15:03:54 +0800
-Message-ID: <20250922070354.485296-2-lihuisong@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250922070354.485296-1-lihuisong@huawei.com>
-References: <20250922070354.485296-1-lihuisong@huawei.com>
+	s=arc-20240116; t=1758524804; c=relaxed/simple;
+	bh=wMF9oky7UmEQJ4boi4TyOd7REJFcUI4wE8M3KLv+D7M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=moh1lBHAfE9XnHqQ89FKODdpioEZNOfrAYly5t6bCwN7PmeY91/poAhXsY9QMWgBaa4Dxf8CN9tcKcRbF/Kk07cvIYb7K1qPm8G7pAUBocTtS4+W7PfaGSn/sBt42vu+M18y6M0hv+RfTQiCGEvpHcUZX/DSchr/iqVZlCgZb/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-892196f0471so1543073241.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:06:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758524802; x=1759129602;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=otSOcFmqfS8pvi0Xz9Z+1wbPbvnTdFmAW97wMweoytQ=;
+        b=xEbqfraG2xOP/4ANx2E6GawdMN69qYwF73uoEKhwBXxnCeF/KCsh3pmVzjqb4y/TC+
+         ynYCgOjjDLz5vxHsMm4zEWEkh4JGuyAYIbGzY2dn6tmeAZDFHXGh7jUM3UnBEHFcjDGT
+         qq9rnYUFxzW9+CqAD328rjkMEXqYzVasNn1gs+31AFRh4ei56Mq41FTMoYU74pK/XoTO
+         +QMMCu/nyqIip+3MEzl38Mqbjmz264rClbRmqGQoW16eKswCrY2lRm/UFouPgNuqAcLw
+         jhmQ4gfdvsIcC+KziJ7HwQW3d+hpi2sVfWUk9koHsDTmjk5mytd13ihBy7+wSghSddfu
+         YEgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzxkCxyicjqdbaKDaTRlGnofqX3GXB91SJqnyHFGTO6TWkC2MNGwrpYCXYNpNweUrnxBxLoYSNKTK8i5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3VqrsO/asXyta9WXnwr+aEo53lXRrZuMuAzbc72w/Zn1hCUoi
+	XJpxJTDKhJS4TNseqIWwdOXyDHK7LG+AoF4Q5zr9ZS9wind/ftK1MOmQACgzrPQA
+X-Gm-Gg: ASbGncuFVPkce/vWl8VEmMXHPONDcjYvLk0h/C09YIjDjhaBAjd/IdoZ+WZCa0A6Wt1
+	JoPvjt/5mi+l5hgclC/zklKVdNim+aF3rsX2pbJBgQghve5ikmxixuZoiwO/+Ou6ONfbrSGsq5H
+	Vs+m6GKNGV1wFSGh14B3zdmhr249tHe21ZkEI8Bk9qdCKaTNsWtde377cZLy8W9A4GqeNUOolDg
+	7WqYjoXszm29XyieDC8SpomHsXZq2LQiSiBq6303YwuBhm8PNHORC+ZfHhqo8qQcmsnTk18CwyZ
+	QECCYk4ShNbRblVjs8L491hpJ67jffN30eAyJl8KBEibCDFYXbgWQFdAu1VBjVaIFgZxce2xpfI
+	rVukgRo9gBo4lPKFoBGV1kCOBWnPFA1prwb5wCnzYUgLnErbFBWSyIwMWle0N
+X-Google-Smtp-Source: AGHT+IG1I7RECVnbstsmech5BNVrV1vHBZZkYgfQ4f+HTfToOrbO1JdJICsVKttr18aEpd0I0bcIGQ==
+X-Received: by 2002:a05:6122:caa:b0:544:9414:105f with SMTP id 71dfb90a1353d-54a837c5148mr3062241e0c.2.1758524801760;
+        Mon, 22 Sep 2025 00:06:41 -0700 (PDT)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54a9d1cf721sm1005197e0c.7.2025.09.22.00.06.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 00:06:41 -0700 (PDT)
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-890190c7912so897133241.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:06:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVAWpNCTK/E2H2XBvSCdrK3Et0zG9hGP5mVyGAwxrbajqFmVQe77UD+J8qC/TaOEjTBarDKYSRd2A/rUik=@vger.kernel.org
+X-Received: by 2002:a05:6102:91c:b0:529:b446:1743 with SMTP id
+ ada2fe7eead31-588e0e8a553mr3474082137.11.1758524801110; Mon, 22 Sep 2025
+ 00:06:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+References: <cover.1757810729.git.fthain@linux-m68k.org> <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org>
+In-Reply-To: <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 22 Sep 2025 09:06:29 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com>
+X-Gm-Features: AS18NWB31RoWEM5tCRYcbUAZXcSpEG_-VNOK-4sGk7R95MgJVOOdlhgttn5Zi70
+Message-ID: <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com>
+Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and atomic64_t
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-m68k@vger.kernel.org, Lance Yang <lance.yang@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently, processor_driver just use the global acpi_idle_driver variable
-to check if the cpuidle driver is acpi_idle_driver. Actually, there is no
-need to expose this global variable defined in processor_idle.c to outside.
-So move the related check to acpi_processor_power_init() and limit the
-global variable to a static one.
+Hi Finn,
 
-Signed-off-by: Huisong Li <lihuisong@huawei.com>
----
- drivers/acpi/processor_driver.c |  3 +--
- drivers/acpi/processor_idle.c   | 12 +++++++++++-
- include/acpi/processor.h        |  1 -
- 3 files changed, 12 insertions(+), 4 deletions(-)
+On Sun, 14 Sept 2025 at 02:59, Finn Thain <fthain@linux-m68k.org> wrote:
+> Some recent commits incorrectly assumed 4-byte alignment of locks.
+> That assumption fails on Linux/m68k (and, interestingly, would have
+> failed on Linux/cris also). Specify the minimum alignment of atomic
+> variables for fewer surprises and (hopefully) better performance.
+>
+> Consistent with i386, atomic64_t is not given natural alignment here.
+>
+> Cc: Lance Yang <lance.yang@linux.dev>
+> Link: https://lore.kernel.org/lkml/CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fx=
+zr8_g58Rc1_0g@mail.gmail.com/
 
-diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_driver.c
-index de17c1412678..5d824435b26b 100644
---- a/drivers/acpi/processor_driver.c
-+++ b/drivers/acpi/processor_driver.c
-@@ -166,8 +166,7 @@ static int __acpi_processor_start(struct acpi_device *device)
- 	if (result && !IS_ENABLED(CONFIG_ACPI_CPU_FREQ_PSS))
- 		dev_dbg(&device->dev, "CPPC data invalid or not present\n");
- 
--	if (cpuidle_get_driver() == &acpi_idle_driver)
--		acpi_processor_power_init(pr);
-+	acpi_processor_power_init(pr);
- 
- 	acpi_pss_perf_init(pr);
- 
-diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-index 698d14c19587..42948495f4f1 100644
---- a/drivers/acpi/processor_idle.c
-+++ b/drivers/acpi/processor_idle.c
-@@ -51,7 +51,7 @@ module_param(latency_factor, uint, 0644);
- 
- static DEFINE_PER_CPU(struct cpuidle_device *, acpi_cpuidle_device);
- 
--struct cpuidle_driver acpi_idle_driver = {
-+static struct cpuidle_driver acpi_idle_driver = {
- 	.name =		"acpi_idle",
- 	.owner =	THIS_MODULE,
- };
-@@ -1402,8 +1402,18 @@ void acpi_processor_unregister_idle_driver(void)
- 
- void acpi_processor_power_init(struct acpi_processor *pr)
- {
-+	struct cpuidle_driver *drv = cpuidle_get_driver();
- 	struct cpuidle_device *dev;
- 
-+	/*
-+	 * Normally, the ACPI idle driver has already been registered before
-+	 * CPU online. But the 'drv' may be NULL if register idle driver failed.
-+	 * So do not anything if the idle driver isn't acpi_idle_driver or the
-+	 * 'drv' is NULL.
-+	 */
-+	if (drv != &acpi_idle_driver)
-+		return;
-+
- 	if (disabled_by_idle_boot_param())
- 		return;
- 
-diff --git a/include/acpi/processor.h b/include/acpi/processor.h
-index 24fdaa3c2899..7146a8e9e9c2 100644
---- a/include/acpi/processor.h
-+++ b/include/acpi/processor.h
-@@ -417,7 +417,6 @@ static inline void acpi_processor_throttling_init(void) {}
- #endif	/* CONFIG_ACPI_CPU_FREQ_PSS */
- 
- /* in processor_idle.c */
--extern struct cpuidle_driver acpi_idle_driver;
- #ifdef CONFIG_ACPI_PROCESSOR_IDLE
- void acpi_processor_power_init(struct acpi_processor *pr);
- void acpi_processor_power_exit(struct acpi_processor *pr);
--- 
-2.33.0
+Thanks for your patch!
 
+> --- a/include/asm-generic/atomic64.h
+> +++ b/include/asm-generic/atomic64.h
+> @@ -10,7 +10,7 @@
+>  #include <linux/types.h>
+>
+>  typedef struct {
+> -       s64 counter;
+> +       s64 counter __aligned(sizeof(long));
+>  } atomic64_t;
+>
+>  #define ATOMIC64_INIT(i)       { (i) }
+> diff --git a/include/linux/types.h b/include/linux/types.h
+> index 6dfdb8e8e4c3..cd5b2b0f4b02 100644
+> --- a/include/linux/types.h
+> +++ b/include/linux/types.h
+> @@ -179,7 +179,7 @@ typedef phys_addr_t resource_size_t;
+>  typedef unsigned long irq_hw_number_t;
+>
+>  typedef struct {
+> -       int counter;
+> +       int counter __aligned(sizeof(int));
+>  } atomic_t;
+>
+>  #define ATOMIC_INIT(i) { (i) }
+
+This triggers a failure in kernel/bpf/rqspinlock.c:
+
+kernel/bpf/rqspinlock.c: In function =E2=80=98bpf_res_spin_lock=E2=80=99:
+include/linux/compiler_types.h:572:45: error: call to
+=E2=80=98__compiletime_assert_397=E2=80=99 declared with attribute error: B=
+UILD_BUG_ON
+failed: __alignof__(rqspinlock_t) !=3D __alignof__(struct
+bpf_res_spin_lock)
+  572 |         _compiletime_assert(condition, msg,
+__compiletime_assert_, __COUNTER__)
+      |                                             ^
+include/linux/compiler_types.h:553:25: note: in definition of macro
+=E2=80=98__compiletime_assert=E2=80=99
+  553 |                         prefix ## suffix();
+         \
+      |                         ^~~~~~
+include/linux/compiler_types.h:572:9: note: in expansion of macro
+=E2=80=98_compiletime_assert=E2=80=99
+  572 |         _compiletime_assert(condition, msg,
+__compiletime_assert_, __COUNTER__)
+      |         ^~~~~~~~~~~~~~~~~~~
+include/linux/build_bug.h:39:37: note: in expansion of macro
+=E2=80=98compiletime_assert=E2=80=99
+   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg=
+)
+      |                                     ^~~~~~~~~~~~~~~~~~
+include/linux/build_bug.h:50:9: note: in expansion of macro =E2=80=98BUILD_=
+BUG_ON_MSG=E2=80=99
+   50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condit=
+ion)
+      |         ^~~~~~~~~~~~~~~~
+kernel/bpf/rqspinlock.c:695:9: note: in expansion of macro =E2=80=98BUILD_B=
+UG_ON=E2=80=99
+  695 |         BUILD_BUG_ON(__alignof__(rqspinlock_t) !=3D
+__alignof__(struct bpf_res_spin_lock));
+      |         ^~~~~~~~~~~~
+
+I haven't investigated it yet.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
