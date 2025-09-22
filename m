@@ -1,275 +1,212 @@
-Return-Path: <linux-kernel+bounces-826594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE43B8EE0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 05:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEED5B8EE17
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 05:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C17F73B83D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 03:47:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0943BEA8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 03:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FA21CDFCA;
-	Mon, 22 Sep 2025 03:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="gTIyApyd"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012031.outbound.protection.outlook.com [52.101.66.31])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C4C158874;
+	Mon, 22 Sep 2025 03:48:39 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F07720E6;
-	Mon, 22 Sep 2025 03:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758512823; cv=fail; b=CiDat8HvcKr437wwGcUNeRFdOiOGsmhI+WubfymWb9bG5qjZvYA9v8uczmDEhtyWw1g8frXsaI99qcbLUUmf4n0B23Is/L+YaPWNje0ndRUTFqeF8y8e2nciloGJN6Cd+4uRXiATKly2y09glstjvcd3YX7imfOeQOY/pHjGtMM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758512823; c=relaxed/simple;
-	bh=n9HX4dAC3pVzWglHKyFkAQaZYAqVUDAGooRSseRio9k=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=i+X7WyDOYaVjiRWIxylAXZprh/TRZpl7Fw+FyzE05PZcK0ThcQ5EcNXAFN3WfYECke63DAgFSkt7KOeNlrk9WOwZ2/G1drXe/iONdflmqmAmAz5G+qUDawgsRPTuWFOO6fvNBehRgzfUz4tqrRHWv4nrF30vmHqjuZYLk/oLRsc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=gTIyApyd; arc=fail smtp.client-ip=52.101.66.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F5IMdyXGmdkMVtd84M1CRHmb+dv5lkzWzoGzPUuUy3EUS92ATqFHGS+veJfSuGtuMytgjHM8ncTzeqNpkjPWl7Toy1d7A7splDDkX6fpNuBxEDz1rLbxJlcXZJX88drdaRiaYp4OtbmA0l9VjdIyWYcweFTMoi44KtaBJD5N7gC917ECfxwy+FNrxNSAJjbFKwo8OnH7VLQYhL1uAFdSk+ESYtyZISG7CjRMZZOC+q5lG94fMj4nLtoES3GRJUYk9m5e5OMpdiw6Qg3GV9VcaPrSnDzIp2R0xKVKz3TOz03EPtRqqIUQAUVJ4rSd5s14VeQeK/oo5JEX87AjsIxNQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kV4Hnlm9obszAR1yDEOeXScgJ8nx1zOyZ1Y8iy1IhfQ=;
- b=oMIoLE1S8GchsQbXL9tmlSDJHpHU0uVFDM9aKcwHsi3C/MAWX6oFUTROixEVgm72Bhu0M5cTAB/43jnk3ltXEf18ppGGSRTb1fEacvRE5x2NGFbuxfXeR2mziDqY5o/dSXJ3v327Ss24w93R8G6C+nPNPDpFt9BbiCDpu3MN9X4c3N1ikbwC4bvdbXbLMU1x4ZyBV8JGR9JqKIeBzg02vpfCpdA9c2byLhGrDZeMUQNjvT1UefnE1vNFiJl3ClEWJNNL6LEIn5O7PE7Vg/CqkcNIVuW1FrTzwVMpaDp/Xtt9z7/MwWDyc7GvS19/ziUJZaZXWiMPiVSj6b13mFPW9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kV4Hnlm9obszAR1yDEOeXScgJ8nx1zOyZ1Y8iy1IhfQ=;
- b=gTIyApyd2wg4PUsRvm6kLbM445W2HicK6gMCZhRUCY/T1j+PZVJ/lr8y1DSRNUa9LfulFxipL89OEdHmFtkm4t1mQ9JfLB+XeCmz1F64jBAuOlHncruBTXPJRaNpVSLsRnBH8eJ9QuKWi1k2DSi0znEOs1wP84oUWNlJiSXIAGVdKPMrur4DTQSlOhaC7QxYXtPix+xIYBmOhXpkA6IPaYNsVv8S2vFPtw3MmSkj904gzQJWn7qIT95SNf+5Wc5Vy559DmOHCMyjMl7igfenMVdrBx8ZEMHo05BryZwA3p3lesseD39/e6g7ZqU6QDtREa/6wEMlswLu8wAwFUCl6A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by VE1PR04MB7246.eurprd04.prod.outlook.com (2603:10a6:800:1ae::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.8; Mon, 22 Sep
- 2025 03:46:57 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64%6]) with mapi id 15.20.9160.008; Mon, 22 Sep 2025
- 03:46:56 +0000
-Message-ID: <a4a75e87-ffe4-4660-a1a9-19ab06521a6e@nxp.com>
-Date: Mon, 22 Sep 2025 11:48:26 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/14] drm/imx: dc: Use TCON operation mode
-To: Frank Li <Frank.li@nxp.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250704-imx8-dc-prefetch-v1-0-784c03fd645f@nxp.com>
- <20250704-imx8-dc-prefetch-v1-8-784c03fd645f@nxp.com>
- <aM11kCDCGaAFO7cv@lizhi-Precision-Tower-5810>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <aM11kCDCGaAFO7cv@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2P153CA0034.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::21)
- To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0291C20E6
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 03:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758512919; cv=none; b=a7ILldgpPpTyXKjqQKbXsnNGgpN3HkoCtrHWXCuSk2zoAAhgxsqJSKylroKOI77K4UAAX66gcGznlWHQ/HYzSpVL3wM/wXotmO49UZ+E2dQrEbzq7ho/mHkPrepjs/PXVJYLL+ZEqwlKau7EELop2CE42OWVS+eaEmNPWBY1FcE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758512919; c=relaxed/simple;
+	bh=WO4T4xP4meCYH8qOpzhhrSChiZL0cEfYEkusq1KX3fQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rU1t7DJIrA0cixFWzPQJmndn3QV6WtrsjhPjIUxkphiQ++rnzfotjt70rdO6fkPpHBppvQj0A1IO9mDNerMuHpXN1exMXwL5Z8ddd/DZubymXix+mt3pzl/Lbr5hbAbrqtEy8QrcTiLWT2CUJxjrQW3m6j+gmg97tqHIwomAWOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cVTbf65n2z14MTN;
+	Mon, 22 Sep 2025 11:48:14 +0800 (CST)
+Received: from dggpemr200006.china.huawei.com (unknown [7.185.36.167])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6C6D1180486;
+	Mon, 22 Sep 2025 11:48:33 +0800 (CST)
+Received: from [10.67.110.83] (10.67.110.83) by dggpemr200006.china.huawei.com
+ (7.185.36.167) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 22 Sep
+ 2025 11:48:32 +0800
+Message-ID: <d7f78b73-6bb4-4ccd-b604-5bfa6473fd2a@huawei.com>
+Date: Mon, 22 Sep 2025 11:48:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|VE1PR04MB7246:EE_
-X-MS-Office365-Filtering-Correlation-Id: fe2e4abb-5833-4a16-939a-08ddf98aad01
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|19092799006;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZmY4bk1BRmpuOVNCTVRwRXFta3htenVEcDdrMTRVMzVsYzZyK1FVSHhHZitH?=
- =?utf-8?B?anNqUzJrTEZwaVpHNlBYZTFKUkxyR0JTTVZ5QVNyY0c4V3BXTzJwbS9zbm9r?=
- =?utf-8?B?TUJ0cSswajZmQXl2WGNBSmRFenlIcjJZZnUyQzRYY0tRZWR3Vm5qME1xT3Nm?=
- =?utf-8?B?TVdvWXNrVVJQTmhUeWFURFc3OS9UMWM4SnUzdXNXNEhNZ04rOWlNbnIydmF3?=
- =?utf-8?B?emkwLzF1T3p3Sk8vT00wSXZaK2pOdE80MnpzbWhwRkVFTTlrY0YybkI4QnVz?=
- =?utf-8?B?Z1dlb2dyMkxMUmVWOXpabEtsc2d5b0k0ZHBIUDJ1TGcrNCtZK2t1MW1jVk1h?=
- =?utf-8?B?RG5EL2xxWlZaZUtLd2RWbDlhS0dNSndGbjRrRVBrcC9UbGhsSlMrakF0VFA4?=
- =?utf-8?B?MXhWL3gwWEJjTHY2ZE5xQWpqdVhRd29TaHB6WWlQbjRGaVdJN1ZFRTFTUGV0?=
- =?utf-8?B?M3hidERxYWFDT0xjYmpvZEV4elRSSEZ3a0hoT1NYUFlTV2o3aUw1Yk5EMDlF?=
- =?utf-8?B?d0gyZFpXZmNoRjcxZ0tmWFlLOE1NZDR5WDFuQitMNHlpck1KUTZvcWRwa2g3?=
- =?utf-8?B?SWFaRm1JeDZvSksyRzdFcTA4bmtEUzBsbkFFczdwTkRQTUVhUmgrenh1ekgz?=
- =?utf-8?B?QU5YVW9zdHljeVIrTHdBZkhMaTBRVnlUQ3BTdGZPcDVNSmh3RWE3alNlc2sx?=
- =?utf-8?B?NTdzQzlVdzlPcEU3eDNUOFBiclMwRlVLS0VuYUh6SGdqYjlWMXBVczQvVzBr?=
- =?utf-8?B?dGZaWFRNZEw2dWplaDIrVWd2ODE5SldHRmJwaThEaTliY3MwT2xCL2ttdEhK?=
- =?utf-8?B?dWYzQTNmRUoyUjVlOS9DRm1jZWUwTWlySkJuYitCaWhET1QzSXVyU2pWRjJZ?=
- =?utf-8?B?Z1p0SUJpbk1LVU0yUHhHN0ZaemJYZWwzQUhMSHNMWG4zb01lRForT3YrK3JE?=
- =?utf-8?B?T2N3aGk4alpoOHcrbWQ2ZjljcVVsOEFubjRlRjFjTUMrM2FXekJVVTZwUGZa?=
- =?utf-8?B?bDRhLzhpc0tLWGM3Y25MT1lhUFNoNythOFpxOUZ5NndsYlhwZGlSTktsMjNU?=
- =?utf-8?B?L0VTamIyRGpNclJ0TmZPQnlBQ01mbnZnWWdraWhCWmY4UVF6SDJhZFhVUk9M?=
- =?utf-8?B?UDZzM0g1VjhmV3hjd2ZoNFlUeGl2VnZYdC9HdEQ3amwzaTc0cER0by9EN2tq?=
- =?utf-8?B?bW56Tko0YzFoRExyY1pwZE53WE5GV2dHb1NFN1hYMlNiYjM4aXpzVWczaVpF?=
- =?utf-8?B?S1V4WUxGMDZEeFd3bU1venpZYUR2aS9lN00wOUlQeCs3eVNCNHpORS9PcmZ1?=
- =?utf-8?B?ZG5rMDltMjlhR3NWcWcwYjBKYldkSkVjUTZ0WWdYbXlzMGhDeHYrejlvYUdr?=
- =?utf-8?B?QmlZMXJyL0NuYmhzMnBNTmQyRGhDV080T2JiRXVvYlNENmxLd3ZQeStNUnVi?=
- =?utf-8?B?bnQwWll0Zm02M0V6b2hJUWREMHB1SE41OXRKNG5la21VbUtjUUlYTi95S2RX?=
- =?utf-8?B?ZDllUHdGMlQvT1lidGJOMDNHK252NTFMZ2Mra1QrdzZXSzA5YUR1WGlQZjdu?=
- =?utf-8?B?OGpNVUFhVUNSR0cwaGQwUGplRlFiVDNwczF0NXh4SzYvbGYrMXAvU0JDbXNx?=
- =?utf-8?B?Q2ZXT0xJMjI2NkpFVVF6ZlorbFJKZFNOaWg4dHMvakFZNGJrUEJvNlJrM1BX?=
- =?utf-8?B?eHBmNGpWbE1iLytsSEU5SkE5UFo2N25MbEVIblpRK2poZ2FxemdKcTVOVTZj?=
- =?utf-8?B?eHREVmVCTm51NTdHUzNsWEFwY3BUSkdXWUxlOVl4YUh4cHBUT3F4LzNLeHBz?=
- =?utf-8?B?TmRXNmxPOXplbTVIWGlsb0VXYlFYSGUxdU5rWkIyNFZyYTFDU3VtSzhTQmJx?=
- =?utf-8?B?Z29lNTkwQkNKQyt5akRveXNLUEpEQmZuakVUMlFycUgzRmlHejI2TU42SjNK?=
- =?utf-8?Q?61zlpjIOj38=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(19092799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MWZqK3RTbTh0QVBuU2phVVZuYVVHdjRmTjNGQUpvbWRpVm00dy96cFU3MGNq?=
- =?utf-8?B?WDRJNFZyM3dCSWtMdjR3UnBzcWZMaCtxWkxNU01wZjFPL1pVNXdYVUI1RkIy?=
- =?utf-8?B?R3lScGR6SmgwblN4NmIyWGZIK1BQRW1Ma1ZUekFPVjB2YTFiYkRvTVpGVWs4?=
- =?utf-8?B?SkNaVk15T2tSeC9BOEwxSzczK28zUE9XaVJsWWFmYzFUTEhGL3F6RjU2Qisw?=
- =?utf-8?B?L2ZDQklYVjRMVWdkVlBBMXZZK3V6TDk4NW00WmZvQ0dEL05Eam81R2doREdr?=
- =?utf-8?B?TlppZktDeXBCNVpNWkVBSDZ1blpnbEQrYVJNUldIWjBhUlRBNkU3SXhtd0VD?=
- =?utf-8?B?ZGNvems4Zkc4aVdvR2M0dm85VjVkT1J3RUJaSVE3VmlWWmtJRmxmR29kSHJR?=
- =?utf-8?B?UmJxNmNZckRYYnRJUnZvUGxCNkxJVUxTQk9BZ3JFQmtGM05MMkp2RmZsd29q?=
- =?utf-8?B?MjJYUVVnTWNCeldxcXcvSHFGWHdqVDJGQkVweDVZMGdzMDR2ekRqZ0llUFhF?=
- =?utf-8?B?SFFKeE1CMVl4VDhiRE5YNzR0dFVnbE9QVjNGV0dsUUpLNXBYd0JsRmhYUjUy?=
- =?utf-8?B?MERrWjg4Qy9GWHpHTHF1dU5WTXhCWHQ3ekdoMDU4NmhGeG04WU02Vm94Z2R6?=
- =?utf-8?B?VDAzanVjOVVQVTV2eFVBZDE1Y1ZyMmRFbVpkUmZveW15bXQybmZWcGhqQ1hH?=
- =?utf-8?B?TmcyUkhqYzJibDBrV1hzRjVDRlZkZUYxWEVVQk1zR0Zka0lKenltUkNkUFlh?=
- =?utf-8?B?Wk5RRFF4QW1aRGlkdVEreUZsNWZmTlBXcTNhR21QKy90NkE3WXhJd3ZhRUxD?=
- =?utf-8?B?RzMvZkxUcUFvU1F1enBoMkFSQXhNWnJGa3N1Q3M5RjViOHBHZFZZOG5WUmxl?=
- =?utf-8?B?d3V2VE8xUEluTUlERlVLaml2bnpOUFlDRGVhZWxPSlg2ekhrMlBZa3NScFpL?=
- =?utf-8?B?N09rRExNMERsWTNXcTN3YmZkUGR4NENyZnpybTJ6akI0dVVIN0cxbTZqZFBR?=
- =?utf-8?B?dDJVSEk2VC96T2s4L1REQmp3OHpSQXU1MUM3MmZ2RkcrN3EvUFpOVjR5L01x?=
- =?utf-8?B?SkRvMFR4Z0JDNnQ1dTFRc3Q1YTZKZDVmV1lqYXdid05KdTV2L2Z3UG9Hb2ta?=
- =?utf-8?B?alpNV29vZzR6YzFWRG8rQUlQWXNyNkIwU29ybG81R3RTWmpYeEJQYTdqZGpT?=
- =?utf-8?B?NzROMGtwL2dCY2FjaEErbHI5d2ZiVDhYL0VBWWN3L0RNVWY4Ylh4MVNDS0tv?=
- =?utf-8?B?eFJPcTNlaDBwQUx0RmNiWjNQajdGUk1NZHNDWGtoRmhxVDc5UUg3SC9LeTRY?=
- =?utf-8?B?S1U5YmdYN1EvNkJjZHBrd2c5cllCTkd6Y2ZDaVAvZVZ5VEkxWTd3NUJjT2px?=
- =?utf-8?B?cVl1VFdVa2tveSsyZ0hFekNEZ2dMMTZKMTFoNWNzSUFnRE1DQ0JMYjlGZ0lX?=
- =?utf-8?B?T0NGZ0c5Y0oyZGpCMFJsUHpyQk5iU0lhRlIyN3hielJERDhyNXRSVlAwZ0N1?=
- =?utf-8?B?aVAwNjlCZjkwVlprcy94ZlpZRGZoUExvR1h6TFhCZXNQM2ZLVHBFcVZzSDZp?=
- =?utf-8?B?aW1aZUlPV0RLZ1V5OXpqVzRMRDJUMmYvc0FDNStRREEwbWF0UU8xLzVZcHkw?=
- =?utf-8?B?Z0ZvWHpBOURZbnpzdlVvc3ZTVHY4eWZKa0xac0VmZzNPY0tuaUoybG9PY2pa?=
- =?utf-8?B?by8xMnNQKzA5Snk0bkJ3dGtINkZHZ09lRG1yMWZJclVNb2NRb3Jma2VUeGc1?=
- =?utf-8?B?VzN3THZxeExmNjBUdWNGYkQySUo2bzBDcjNqMlBQNWZmNHBJSnExYzhrMEl3?=
- =?utf-8?B?Uk5kR1BFa0k5OTRIZXVud2d0NWVNeFpHK3B5SnYrU1JEb1VTQ0NkU05ZcFRp?=
- =?utf-8?B?MG1sU0xTRWpjRGVZNlRmVS9EVDFzQUdMa3EvRTNYbFR4ci9DaGFIUVZORG50?=
- =?utf-8?B?WmdVUXJoNGlKamJhLzdVRXhpTENwTE05TjdMU3VUU2FMVUQ1UjlEN0hGZ2lM?=
- =?utf-8?B?b0VjL3RIUUFTV1pzb1IxazRuWS8xZURSQ1hCUmkydG5RZUtxdEhnUDZGNGdu?=
- =?utf-8?B?Vnd4R2FwZ3d2QVNySExyczBwQnZvSWViUCtwQk1CMUdaVWp6cjRYRVVYbUJO?=
- =?utf-8?Q?ki6CJvD2tchU7m6iPdRYIwwWD?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe2e4abb-5833-4a16-939a-08ddf98aad01
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 03:46:56.3985
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hYnwPNaUotwWKOYK5TS1CVZOSxPCQsXpdJJ1e8wAU5U9Oi/1M6TualLPh21Ab5B0Hc2zWcAYuEaw825Xw/q/5g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7246
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG REPORT] mm/damon: softlockup when kdamond walk page with cpu
+ hotplug
+To: SeongJae Park <sj@kernel.org>, Hugh Dickins <hughd@google.com>
+CC: Andrew Morton <akpm@linux-foundation.org>, "Paul E . McKenney"
+	<paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	<damon@lists.linux.dev>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <zouyipeng@huawei.com>
+References: <20250920104220.1399-1-sj@kernel.org>
+Content-Language: en-US
+From: Xinyu Zheng <zhengxinyu6@huawei.com>
+In-Reply-To: <20250920104220.1399-1-sj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemr200006.china.huawei.com (7.185.36.167)
 
-On 09/19/2025, Frank Li wrote:
-> On Fri, Jul 04, 2025 at 05:03:55PM +0800, Liu Ying wrote:
->> In TCON operation mode, sync signals from FrameGen are ignored, but
->> a much more customized output timing can be generated by the TCON
->> module.  By using TCON operaton mode, generate KACHUNK signal along
->> with HSYNC/VSYNC/data enable signals.  The KACHUNK signal is used as
->> a synchronization signal inside the prefetch engine(DPRC + PRG(s),
->> attached to FetchUnit(s)).  Carefully switch TCON bypass mode to TCON
->> operation mode when CRTC is being enabled so that the prefetch engine
->> may evade the first dumb frame generated by the display controller.
->>
->> Since TCON BYPASS bit is controlled by KMS driver when doing atomic
->> commits, drop the bit setting when initializing TCON.  This also
->> avoids accidentally initializing TCON BYPASS bit to 1 when driver
->> module removing and re-installing where an upcoming patch would
->> disable a CRTC at boot in TCON operation mode if needed.
->>
->> Signed-off-by: Liu Ying <victor.liu@nxp.com>
->> ---
->>  drivers/gpu/drm/imx/dc/dc-crtc.c |  28 ++++++++++
->>  drivers/gpu/drm/imx/dc/dc-de.h   |   2 +
->>  drivers/gpu/drm/imx/dc/dc-kms.h  |   2 +
->>  drivers/gpu/drm/imx/dc/dc-tc.c   | 114 +++++++++++++++++++++++++++++++++++++--
->>  4 files changed, 142 insertions(+), 4 deletions(-)
->>
-> ...
->> @@ -249,6 +260,7 @@ dc_crtc_atomic_enable(struct drm_crtc *crtc, struct drm_atomic_state *state)
->>  	enable_irq(dc_crtc->irq_ed_safe_shdload);
->>
->>  	dc_fg_cfg_videomode(dc_crtc->fg, adj);
->> +	dc_tc_cfg_videomode(dc_crtc->tc, adj);
->>
->>  	dc_cf_framedimensions(dc_crtc->cf_cont,
->>  			      adj->crtc_hdisplay, adj->crtc_vdisplay);
->> @@ -273,7 +285,22 @@ dc_crtc_atomic_enable(struct drm_crtc *crtc, struct drm_atomic_state *state)
->>  	dc_ed_pec_sync_trigger(dc_crtc->ed_cont);
->>  	dc_ed_pec_sync_trigger(dc_crtc->ed_safe);
->>  	dc_fg_shdtokgen(dc_crtc->fg);
->> +
->> +	/* Don't relinquish CPU until TCON is set to operation mode. */
->> +	local_irq_save(flags);
->> +	preempt_disable();
->> +
->>  	dc_fg_enable(dc_crtc->fg);
->> +	/*
->> +	 * Turn TCON into operation mode as soon as the first dumb
->> +	 * frame is generated by DC(we don't relinquish CPU to ensure
->> +	 * this).  This makes DPR/PRG be able to evade the frame.
->> +	 */
->> +	DC_CRTC_WAIT_FOR_FRAMEGEN_FRAME_INDEX_MOVING(dc_crtc->fg);
->> +	dc_tc_set_operation_mode(dc_crtc->tc);
->> +
->> +	local_irq_restore(flags);
->> +	preempt_enable();
+
+
+On 9/20/2025 6:42 PM, SeongJae Park wrote:
+> On Fri, 19 Sep 2025 20:56:56 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
 > 
-> Does it need reverised order?
-
-I'm referring to __raw_spin_lock_irqsave() and __raw_spin_unlock_irqrestore()
-to do this right, where local IRQ is saved/restored prior to preemption
-disablement/enablement.  Am I missing anything?
-
+>> On Thu, 18 Sep 2025, SeongJae Park wrote:
+>>
+>>> Hello,
+>>>
+>>> On Thu, 18 Sep 2025 03:00:29 +0000 Xinyu Zheng <zhengxinyu6@huawei.com> wrote:
+>>>
+>>>> A softlockup issue was found with stress test:
+> [...]
+>> This had me worried for a while: thought we might be needing to change
+>> lots of other places, and scatter cond_resched()s here and there.
+>>
+>> But no: no need for cond_resched()'s, this is all just a confusion about
+>> where pmd migration entries are handled: a pmd migration entry is accepted
+>> by pmd_trans_huge_lock(), but is not accepted by pmd_trans_huge().
+>>
+>> See fs/proc/task_mmu.c for mm_walk examples of trying pmd_trans_huge_lock(),
+>> then pte_offset_map_lock() if it failed, or ACTION_AGAIN if that failed too.
+>>
+>> When I ACTION_AGAINed damon_mkold_pmd_entry() and damon_young_pmd_entry()
+>> in 6.5, I didn't realize that the pmd migration entries were reaching the
+>> pte_offset_map_lock(), with corrupt results (or did pmd_bad() filter them
+>> out? I didn't think so, but it'll take me too long now to work out whether
+>> a pmd migration entry counts as pmd_bad or not); but knew that the new
+>> pte_offset_map_lock() filtered them out safely if there was a race.
+>>
+>> But they've been reaching it without any race, so yes the ACTION_AGAIN
+>> would send the mm_walk back again and again for as long as the pmd
+>> migration entry remained there: not good, and Xinyu finds a lockup
+>> when hotplugging CPU without preemption.
+> 
+> Thank you for your detailed and kind explanation, Hugh!
 > 
 >>
->>  	DC_CRTC_WAIT_FOR_COMPLETION_TIMEOUT(ed_safe_shdload_done);
->>  	DC_CRTC_WAIT_FOR_COMPLETION_TIMEOUT(ed_cont_shdload_done);
->> @@ -561,6 +588,7 @@ int dc_crtc_init(struct dc_drm_device *dc_drm, int crtc_index)
->>  	dc_crtc->ed_cont = pe->ed_cont[crtc_index];
->>  	dc_crtc->ed_safe = pe->ed_safe[crtc_index];
->>  	dc_crtc->fg = de->fg;
->> +	dc_crtc->tc = de->tc;
+>> My suggested patch below (please take it over SJ, and do with it what
+>> you will), converting damon_mkold_pmd_entry() and damon_young_pmd_entry()
+>> to use pmd_trans_huge_lock() as I'd been expecting, so handling the
+>> pmd migration entry up in that block.  (Side note: patch against 6.17-rc,
+>> but I see mm.git adds also a damos_va_stat_pmd_entry(), which would
+>> better be converted to the same pmd_trans_huge_lock() pattern -
+>> though I notice you're not setting ACTION_AGAIN in that one.)
 >>
->>  	dc_crtc->irq_dec_framecomplete = de->irq_framecomplete;
->>  	dc_crtc->irq_dec_seqcomplete = de->irq_seqcomplete;
->> diff --git a/drivers/gpu/drm/imx/dc/dc-de.h b/drivers/gpu/drm/imx/dc/dc-de.h
->> index 211f3fcc1a9ad642617d3b22e35ea923f75e645b..c39f2ef5eea98c3eb6ae9b5392f9bf9f7e33e7c5 100644
->> --- a/drivers/gpu/drm/imx/dc/dc-de.h
->> +++ b/drivers/gpu/drm/imx/dc/dc-de.h
->> @@ -54,6 +54,8 @@ enum drm_mode_status dc_fg_check_clock(struct dc_fg *fg, int clk_khz);
->>  void dc_fg_init(struct dc_fg *fg);
+>> But I have to admit, there's very little gained by using ACTION_AGAIN
+>> in these functions: it helps not to miss the range when racing against
+>> THP collapse or split, but you're already content to miss the extent
+>> if it has a pmd migration entry, and there can still be an instant when
+>> the range which used to have a page table does not yet show the THP.
 >>
-> ...
-> 
->>
->> --
->> 2.34.1
->>
+>> So if you prefer a smaller fix (but a larger source file!), just
+>> dropping the walk->action = ACTION_AGAIN lines should be good enough.
 
+Hi, Hugh. Thank you for your patient explanation and solution!
+
+> 
+> I agree all your points.
+> 
+> I'd prefer the smaller source file following your suggested change below (using
+> pmd_trans_huge_lock()) in long term.  But, for a short term, I'd prefer the
+> smaller fix (dropping walk->action = ACTION_AGAIN) since it should also be
+> merged into stable@, up to 6.5.y.
+> 
+> So, I'd like to suggest as following.  Let's drop the
+> 'walk->action = ACTION_AGAIN' like the below attached one, for now.  After it
+> is confirmed to fix the issue and merged into relevant trees including stable
+> trees, let's revisit the code to cleanup following pmd_trans_huge_lock()
+> pattern.
+> 
+> Please let me know if I'm missing something, or you have other opinions.
+> 
+> Xinyu, could you please test if the below attached patch fixes your issue and
+> let us know the result?
+
+Thanks for all the reply and suggestion, SJ! I am trying to reproduce 
+the scenario now and will send the result back very soon!
+
+> 
+> If Xinyu confirms the validity of the fix and no one objects to the above plan,
+> I will post the fix as a formal one with a better commit message.
+> 
+> 
+> Thanks,
+> SJ
+> 
+
+> [...]
+> 
+> ==== >8 ====
+>  From 743cafda8982624229541741dbfe5ff252328ac0 Mon Sep 17 00:00:00 2001
+> From: SeongJae Park <sj@kernel.org>
+> Date: Sat, 20 Sep 2025 03:35:34 -0700
+> Subject: [PATCH] mm/damon/vaddr: do not try page table walk again
+> 
+> For a quick fix of a softlockup issue:
+> https://lore.kernel.org/20250918030029.2652607-1-zhengxinyu6@huawei.com
+> 
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  From 743cafda8982624229541741dbfe5ff252328ac0 Mon Sep 17 00:00:00 2001
+> From: SeongJae Park <sj@kernel.org>
+> Date: Sat, 20 Sep 2025 03:35:34 -0700
+> Subject: [PATCH] mm/damon/vaddr: do not try page table walk again
+> 
+> For a quick fix of a softlockup issue:
+> https://lore.kernel.org/20250918030029.2652607-1-zhengxinyu6@huawei.com
+> 
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>   mm/damon/vaddr.c | 8 ++------
+>   1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+> index 8c048f9b129e..7e834467b2d8 100644
+> --- a/mm/damon/vaddr.c
+> +++ b/mm/damon/vaddr.c
+> @@ -328,10 +328,8 @@ static int damon_mkold_pmd_entry(pmd_t *pmd, unsigned long addr,
+>   	}
+>   
+>   	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
+> -	if (!pte) {
+> -		walk->action = ACTION_AGAIN;
+> +	if (!pte)
+>   		return 0;
+> -	}
+>   	if (!pte_present(ptep_get(pte)))
+>   		goto out;
+>   	damon_ptep_mkold(pte, walk->vma, addr);
+> @@ -481,10 +479,8 @@ static int damon_young_pmd_entry(pmd_t *pmd, unsigned long addr,
+>   #endif	/* CONFIG_TRANSPARENT_HUGEPAGE */
+>   
+>   	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
+> -	if (!pte) {
+> -		walk->action = ACTION_AGAIN;
+> +	if (!pte)
+>   		return 0;
+> -	}
+>   	ptent = ptep_get(pte);
+>   	if (!pte_present(ptent))
+>   		goto out;
 
 -- 
-Regards,
-Liu Ying
+Xinyu Zheng
+
 
