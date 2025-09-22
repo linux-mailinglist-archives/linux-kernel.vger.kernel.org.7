@@ -1,197 +1,159 @@
-Return-Path: <linux-kernel+bounces-826751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD89B8F404
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:15:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF8FB8F568
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 711BE17E800
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:15:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA02216982B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9F918C2C;
-	Mon, 22 Sep 2025 07:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E15C2F6198;
+	Mon, 22 Sep 2025 07:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CDO+Sbwl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ewCs27ot"
+Received: from mail-m1973172.qiye.163.com (mail-m1973172.qiye.163.com [220.197.31.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AA0C13B;
-	Mon, 22 Sep 2025 07:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7F921D3E6;
+	Mon, 22 Sep 2025 07:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758525326; cv=none; b=PyUg0X9Wz/XMxUB2UvMSzur6QMszuRRoen1h7iCEHkSqda28i5klDHMygiYsSz+YP2VHk7ilaUdDyBxQiRorlfZtrAW8nBQhy6Sx5MFg7R1LkWQXszQz6GME/FX3CYQEOkzd3R4o+o9d7ADkOosJnuq7DNzJhgGZ6Q+q0FrG3uc=
+	t=1758527480; cv=none; b=PwraySrQlePJYrQC7KHmtQ75lfeieQUa9STBRnrYg1AFaRZ+FJOJSb6ZkqAkhClfO31gTTnj+9R410PkJMQgveolIq10VgdFHKLWOpcb1/e9adPI7EZUe9w4v3deDZ11w76LSWa3c8lCfGwNLjPF4uRFMAVy3MSuVixhG9SmEFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758525326; c=relaxed/simple;
-	bh=9XjEIiZUMnEXr26fGuRXOrsJqG5hsCCqqHkiXhYDgPc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AVXSze8u8D0MRj0qUwe+Jr2CBZORYJEFFUmdaR6nq1YAQYQm8NkNfg5DUiRKZizSp14wyss4CKjtlkF1IVJIXZCiRzLZEDSjRl4esdxnTy0+rVVBmrUNat5Vkc4DSlO7RPw5efPhth+bALqfcnmLfYG4fcISe8Y4sJfSexnQgqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CDO+Sbwl; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758525325; x=1790061325;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9XjEIiZUMnEXr26fGuRXOrsJqG5hsCCqqHkiXhYDgPc=;
-  b=CDO+SbwlVA3OjsTh2bYPWtTraeA4QJfoi85lvsLo03AEBvZ3zc8D9PqU
-   1/yCr8+92yj2h4JmgSMujJm9rlDuD2uhPJnZJcFvgEoIt2fd0zDj5XVwQ
-   +K/HFiQAnfVhPBFYkdfYPoVjO9UJircWg5k6wSkBmZyROQgtLNGDktd0R
-   kEI2mHpXGr4802WMznjvziH/lBNcfENJ+PWoPRI2Gqn9sgZcQylDdGm7h
-   5xw8EgT1iF+JunzjSoaxSp9/PQGhHQ8wGO/LKeCWwqCawFaJfhpwu5tgq
-   D772bUjb9BwGCetXt+Aoypi49UHSGdQyxZQubmCzUovL0t94NS++2JZ/e
-   Q==;
-X-CSE-ConnectionGUID: 1m9+sUwUQc2hsB8sjoRf9w==
-X-CSE-MsgGUID: azHy9/fPS4OjRijD0rjcaQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="60839280"
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="60839280"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 00:15:24 -0700
-X-CSE-ConnectionGUID: +RP0sdqpSqiRw+5jz9yhGA==
-X-CSE-MsgGUID: IybGDvzITguv4lKfO4Krrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="176844302"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 00:15:21 -0700
-Message-ID: <73f2301c-0520-422e-b3f9-8ce19e325b37@linux.intel.com>
-Date: Mon, 22 Sep 2025 15:15:18 +0800
+	s=arc-20240116; t=1758527480; c=relaxed/simple;
+	bh=552MQTFbXGGbsRKmEV3YQPU108Ly5Ccl3xQZBI1+E5U=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LyJ4Hhj0ExuX/KmBAv5TshMXC7mSIR6ez+pnuX1x5owacIdHof5a76n0dfVK4U4xViimOdUrFovqxwfNI/RFFsPQHqKUuuXU8pt834XStaZP+JNOnEiDXENYjBN6E09naDSPsWVzg/y+6n/XivxkQ2MQSNRJgjZHgu0QEPpFN4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ewCs27ot; arc=none smtp.client-ip=220.197.31.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 239b62aa5;
+	Mon, 22 Sep 2025 15:15:47 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: zhangqing@rock-chips.com,
+	mkl@pengutronix.de,
+	kernel@pengutronix.de,
+	mailhol.vincent@wanadoo.fr,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	cl@rock-chips.com,
+	kever.yang@rock-chips.com
+Cc: linux-can@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v7 1/4] dt-bindings: can: rockchip_canfd: add rk3576 CAN-FD controller
+Date: Mon, 22 Sep 2025 15:15:40 +0800
+Message-Id: <20250922071543.73923-2-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250922071543.73923-1-zhangqing@rock-chips.com>
+References: <20250922071543.73923-1-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 20/51] KVM: x86: Emulate SSP[63:32]!=0 #GP(0) for FAR
- JMP to 32-bit mode
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Xiaoyao Li <xiaoyao.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-References: <20250919223258.1604852-1-seanjc@google.com>
- <20250919223258.1604852-21-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250919223258.1604852-21-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a997047556f03a3kunm864fae2f2315ff
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh1MTFZCTx5PSUJDHUpPTRhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=ewCs27otX8URC1SDS3RTg7l/ZHere0KXrM6WD9oDEfChlLnGgVLPFXUPELIHbcn0p62ZEK/tYr5AoQEqt1P44edR6HYnNMRDpVt2/+enHLsEbshS1fQn5+7RajI3HEEfzZ5cHPZCZ/QAfsbofLZ9I1zXMDK9ygPJMIimX0COx9A=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=i75mDsCkq/jbT8+fOGxrW7Oxw4N8ldNFYTgOUYb4dDk=;
+	h=date:mime-version:subject:message-id:from;
 
+Add documentation for the rockchip rk3576 CAN-FD controller.
 
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ .../net/can/rockchip,rk3568v2-canfd.yaml      | 47 +++++++++++++++++--
+ 1 file changed, 44 insertions(+), 3 deletions(-)
 
-On 9/20/2025 6:32 AM, Sean Christopherson wrote:
-> Emulate the Shadow Stack restriction that the current SSP must be a 32-bit
-> value on a FAR JMP from 64-bit mode to compatibility mode.  From the SDM's
-> pseudocode for FAR JMP:
->
->    IF ShadowStackEnabled(CPL)
->      IF (IA32_EFER.LMA and DEST(segment selector).L) = 0
->        (* If target is legacy or compatibility mode then the SSP must be in low 4GB *)
->        IF (SSP & 0xFFFFFFFF00000000 != 0); THEN
->          #GP(0);
->        FI;
->      FI;
->    FI;
->
-> Note, only the current CPL needs to be considered, as FAR JMP can't be
-> used for inter-privilege level transfers, and KVM rejects emulation of all
-> other far branch instructions when Shadow Stacks are enabled.
->
-> To give the emulator access to GUEST_SSP, special case handling
-> MSR_KVM_INTERNAL_GUEST_SSP in emulator_get_msr() to treat the access as a
-> host access (KVM doesn't allow guest accesses to internal "MSRs").  The
-> ->get_msr() API is only used for implicit accesses from the emulator, i.e.
-> is only used with hardcoded MSR indices, and so any access to
-> MSR_KVM_INTERNAL_GUEST_SSP is guaranteed to be from KVM, i.e. not from the
-> guest via RDMSR.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-
-> ---
->   arch/x86/kvm/emulate.c | 35 +++++++++++++++++++++++++++++++++++
->   arch/x86/kvm/x86.c     |  9 +++++++++
->   2 files changed, 44 insertions(+)
->
-> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-> index dc0249929cbf..5c5fb6a6f7f9 100644
-> --- a/arch/x86/kvm/emulate.c
-> +++ b/arch/x86/kvm/emulate.c
-> @@ -1605,6 +1605,37 @@ static int write_segment_descriptor(struct x86_emulate_ctxt *ctxt,
->   	return linear_write_system(ctxt, addr, desc, sizeof(*desc));
->   }
->   
-> +static bool emulator_is_ssp_invalid(struct x86_emulate_ctxt *ctxt, u8 cpl)
-> +{
-> +	const u32 MSR_IA32_X_CET = cpl == 3 ? MSR_IA32_U_CET : MSR_IA32_S_CET;
-> +	u64 efer = 0, cet = 0, ssp = 0;
-> +
-> +	if (!(ctxt->ops->get_cr(ctxt, 4) & X86_CR4_CET))
-> +		return false;
-> +
-> +	if (ctxt->ops->get_msr(ctxt, MSR_EFER, &efer))
-> +		return true;
-> +
-> +	/* SSP is guaranteed to be valid if the vCPU was already in 32-bit mode. */
-> +	if (!(efer & EFER_LMA))
-> +		return false;
-> +
-> +	if (ctxt->ops->get_msr(ctxt, MSR_IA32_X_CET, &cet))
-> +		return true;
-> +
-> +	if (!(cet & CET_SHSTK_EN))
-> +		return false;
-> +
-> +	if (ctxt->ops->get_msr(ctxt, MSR_KVM_INTERNAL_GUEST_SSP, &ssp))
-> +		return true;
-> +
-> +	/*
-> +	 * On transfer from 64-bit mode to compatibility mode, SSP[63:32] must
-> +	 * be 0, i.e. SSP must be a 32-bit value outside of 64-bit mode.
-> +	 */
-> +	return ssp >> 32;
-> +}
-> +
->   static int __load_segment_descriptor(struct x86_emulate_ctxt *ctxt,
->   				     u16 selector, int seg, u8 cpl,
->   				     enum x86_transfer_type transfer,
-> @@ -1745,6 +1776,10 @@ static int __load_segment_descriptor(struct x86_emulate_ctxt *ctxt,
->   			if (efer & EFER_LMA)
->   				goto exception;
->   		}
-> +		if (!seg_desc.l && emulator_is_ssp_invalid(ctxt, cpl)) {
-> +			err_code = 0;
-> +			goto exception;
-> +		}
->   
->   		/* CS(RPL) <- CPL */
->   		selector = (selector & 0xfffc) | cpl;
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 0c060e506f9d..40596fc5142e 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -8741,6 +8741,15 @@ static int emulator_set_msr_with_filter(struct x86_emulate_ctxt *ctxt,
->   static int emulator_get_msr(struct x86_emulate_ctxt *ctxt,
->   			    u32 msr_index, u64 *pdata)
->   {
-> +	/*
-> +	 * Treat emulator accesses to the current shadow stack pointer as host-
-> +	 * initiated, as they aren't true MSR accesses (SSP is a "just a reg"),
-> +	 * and this API is used only for implicit accesses, i.e. not RDMSR, and
-> +	 * so the index is fully KVM-controlled.
-> +	 */
-> +	if (unlikely(msr_index == MSR_KVM_INTERNAL_GUEST_SSP))
-> +		return kvm_msr_read(emul_to_vcpu(ctxt), msr_index, pdata);
-> +
->   	return __kvm_emulate_msr_read(emul_to_vcpu(ctxt), msr_index, pdata);
->   }
->   
+diff --git a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
+index a077c0330013..74b1a502f0b7 100644
+--- a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
++++ b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
+@@ -10,13 +10,11 @@ title:
+ maintainers:
+   - Marc Kleine-Budde <mkl@pengutronix.de>
+ 
+-allOf:
+-  - $ref: can-controller.yaml#
+-
+ properties:
+   compatible:
+     oneOf:
+       - const: rockchip,rk3568v2-canfd
++      - const: rockchip,rk3576-canfd
+       - items:
+           - const: rockchip,rk3568v3-canfd
+           - const: rockchip,rk3568v2-canfd
+@@ -43,6 +41,31 @@ properties:
+       - const: core
+       - const: apb
+ 
++  dmas:
++    maxItems: 1
++
++  dma-names:
++    items:
++      - const: rx
++
++allOf:
++  - $ref: can-controller.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: rockchip,rk3576-canfd
++      required:
++        - compatible
++    then:
++      required:
++        - dmas
++        - dma-names
++    else:
++      properties:
++        dmas: false
++        dma-names: false
++
+ required:
+   - compatible
+   - reg
+@@ -72,3 +95,21 @@ examples:
+             reset-names = "core", "apb";
+         };
+     };
++
++  - |
++    soc {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        can@2ac00000 {
++            compatible = "rockchip,rk3576-canfd";
++            reg = <0x0 0x2ac00000 0x0 0x1000>;
++            interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
++            clocks = <&cru CLK_CAN0>, <&cru PCLK_CAN0>;
++            clock-names = "baud", "pclk";
++            resets = <&cru SRST_CAN0>, <&cru SRST_P_CAN0>;
++            reset-names = "core", "apb";
++            dmas = <&dmac0 20>;
++            dma-names = "rx";
++        };
++    };
+-- 
+2.34.1
 
 
