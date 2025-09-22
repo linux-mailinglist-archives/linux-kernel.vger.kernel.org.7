@@ -1,321 +1,348 @@
-Return-Path: <linux-kernel+bounces-826803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C14AB8F625
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:59:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6B1B8F616
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66DE7189FFB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:59:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8038616171E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C49A2F90DE;
-	Mon, 22 Sep 2025 07:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D812F0C6E;
+	Mon, 22 Sep 2025 07:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DjxHyYUe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A0LtMm4K"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4162F7ADD
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3C72F746F
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758527942; cv=none; b=MjELkBTk2QwDSQy9m/Qod1Ltg6lk5JvKhnk9lwqSX2UQj7SZ7ZtCnZXllGNDkhVmWoONdd+R5efXKjGTKfL0YzBgHMy5thaoSjDfsfpFm9KvMpbG0D++ww5BHyeW3Zf5d3HirjU/M1t2R+ViMnikI7IcWRDtNMs0ujDP3ByRtr4=
+	t=1758527939; cv=none; b=QhBgXvZbhPKSxh08WQsN/EmZozfk/7/4NA5sdP5FXiRCYONWGnGt2+sTQgF0T4dCxCVmu0q+hTdhpRMtEGiB+eTo85xqATAjzztMiMnHt8oy0MdYrK175AJx7XixfxZwuaOhWr74zwpQcTI2Ii2BEv/ISNSyRfZEwoit5KNm4Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758527942; c=relaxed/simple;
-	bh=RPLNulL/r1ylv0eKUGZC0lH7XyKc8D+Rtu5BpXYM9TA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XRLXXcYh2aUquTpS0TdERXuylMbUA2eZ2QN1Yjehd0ci1z5iOwhsQjYWYsGmh2BokACs9tFpp6UZ8gmLYsOPDrsJquIx0C2O3YR762YP1YoUcxLu2Gaezj1QBnFqwCHSpq0ljm9d00VrOXsQdjRwcV2NHvLlHjocGD1somboFw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DjxHyYUe; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758527939;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PxrdOx4EB3kHQYnOmI6oNM1Rpe8WnbLIdR6BsCbOTz8=;
-	b=DjxHyYUeQXTCRdQitz9TngPDlCXYeacFxFCV0P2yGIhHjTEcLTjKCxaOw384aQVZ8TXODj
-	udgYKKL4omGQMe4Ho4x3IPVUCUvZIdk/6Fltb820O7vPBwJBvWuQnczSfhqTsG8T6WwQFQ
-	MKAvNUBEo+ZFMSKfSGLL3sD6bpcI5hg=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-198-reYywP-rOOSrGSnbnOXXMg-1; Mon, 22 Sep 2025 03:58:57 -0400
-X-MC-Unique: reYywP-rOOSrGSnbnOXXMg-1
-X-Mimecast-MFC-AGG-ID: reYywP-rOOSrGSnbnOXXMg_1758527936
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-401dbafbcfaso128355f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:58:57 -0700 (PDT)
+	s=arc-20240116; t=1758527939; c=relaxed/simple;
+	bh=VxFoXFJfLJu72VUQI8PkapTjFSVP1bwVeJjNyFvSU6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BSRdAfDJIWMyCUNRZyGy+7g8Mmxjbo7Bl9DSDAknEsp1g8jl5oIZ7eKp/l0/rrcFmd7uf00YiXiFTvlLm0zU6wSvb6m95TVlFBlpYR5fiPrxUvmx3GVenZ/PcATX98hI0znyDi+Pf12wiFfS1QQN2c2OQqEMW5LQAaLUqi6DGUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A0LtMm4K; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b9a856dc2so26686185e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:58:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758527935; x=1759132735; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xQRpOTdPlsJ/I3ie9xITMLFON03T608didGjNtYqmd8=;
+        b=A0LtMm4KGe7kf1WDxajMfqTBr3JGx9o8EdpYa+ejdHZrKrlF6Mi4lLBtiyGDrxRmaG
+         hTTlfQsAZWd+dKrcx0eV5ANPokbJp2z8/lq/GTgXh/ygBrbSTjU2XEMnT6W9jFpeXTXT
+         yKXwNIbflatbA9lo1tNpsxitqPh39dzWVlUKG5dBCJr/geLe10jlMqU8sYM09YoqKzKN
+         ZZG+JYhbAiz8TX8+H13XhDtvGvmhd7XafBB2ZfRPhcqoGkdIVB9iaNgHoCKXbMcZ/Fe9
+         aKYVfhl2fze0MOruqfugaS3D7ZEnSmRadwuoW8NQ5OM5sIY7r2hTUklIHgJImfr2hXV/
+         KDZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758527936; x=1759132736;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PxrdOx4EB3kHQYnOmI6oNM1Rpe8WnbLIdR6BsCbOTz8=;
-        b=CSPW0EbyUNngynsqkcO2+vS3+wOc7CR9hh/W1XA4UDvl1HXriOH+AHFHK8BNa+7ioC
-         aew7SPW1957jr+AS8fm9vvNTQ68n76BXfdbeY/J+OS25mRht4iA866YuJees9pwdi21E
-         5V8g0P/1YUljBEie+Y0er9VxknFXrDZvnQg97o9dUzXD5HOk6gsEI6nqEs6DmXgf/RAM
-         b+Y6j4M0jI0lclTWk1dnO4CsvDVTM3/6sxMTs2fw80bVnJK80p/i5EOWC4nIrI1zSkr5
-         KZCfk27tHZ17DNaY6eHuNbA5IZ+QQjqT1mPh2N/zAe2PzUXMx5Xp46ztHNC2U2MkKNR8
-         9oCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLErTu9psJ0nbMzZtsH9yfjqBf+2pSt3baE5lxP6mUr33gLhv62SqEE+PBoWIx+DHkHDlQeWOYvzu4A8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8VU06aOaxPyv+cISDUR80tX6wNuGy0LssE2EOW0VJEvUwpDkw
-	MVySbfA3XGmvOwB0PkSLHiIuLK39qayH9LVqn24N2yPJXFBTZ0TP/ho371re/Iz7/OlA5wN1WkU
-	u5Mt8s6ebFVB98bxf6cNJ7pOOskz5img45yOK27m1w6SAxK+S1vnBMKB4HIC8v94eww==
-X-Gm-Gg: ASbGnctWvxpxXxDn77OK5RQ7hk6P/gW30bmuavoui8vKXljk+dBdME2mft6jHDKR4/6
-	2TnaM6nfnYGfrPpZVUqG2ehdmDrNqDLWo3hb65RlaicLSOS2dm4SKzIUKLWBl6iQgMym7fa/egY
-	SqOCwaPPpa6Z9a4omKAC6eYlDfPIGSsHTj6rokWe6c94BOiSyqZNFQvDFGCVWe6OopGDM3SwEaH
-	01l0XAPQm9jAWeu5Iv8L7ufmlp9gBczcOA6v1Y5fsUG6c/akw37ugss+ed3Vy/9nrJB+4zVXgmC
-	kqqQCFJA485SagLtc+UEY27vp8Eqa9+oX4ew4BBHow==
-X-Received: by 2002:a5d:4943:0:b0:3f8:3f7a:e7e with SMTP id ffacd0b85a97d-3f83f7a1050mr3635635f8f.63.1758527935768;
-        Mon, 22 Sep 2025 00:58:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFg5E/j/J153zhcNVC1lL72SAmeutEX0IFz0drnTb2dHTudyZkYhubA99dVKR3VQmM6PJrzCQ==
-X-Received: by 2002:a5d:4943:0:b0:3f8:3f7a:e7e with SMTP id ffacd0b85a97d-3f83f7a1050mr3635608f8f.63.1758527935093;
-        Mon, 22 Sep 2025 00:58:55 -0700 (PDT)
-Received: from sgarzare-redhat ([5.77.126.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fc00a92sm18904744f8f.63.2025.09.22.00.58.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        d=1e100.net; s=20230601; t=1758527935; x=1759132735;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xQRpOTdPlsJ/I3ie9xITMLFON03T608didGjNtYqmd8=;
+        b=nwAc6450pI41vzCxw9QF+oyVDPaZLoRadB4vi0MFvDWoo3KqJPfqEg/r6J1qWdMykC
+         Xa6WJi3nsnp2Xr6eYCeyh0bqC/UiCBnZ5y3G+wGugNnJCbIvvWoRCTc59kTMSoBuCpal
+         2LnohZ5MvfW8ES2YSUEosUiRKi12LgHnggPrYPr2eJIa77KAbYoOD0FdF70TRFG93d54
+         E+0E1Ja2yW8BLHDRqOfBCPvQgCioNNrmRZb1ldxsoLnDNQihDxeC6HXx2CARISgd1usE
+         1LBvVJHy3LPnh4SOOpdnORr8/HY+K7os8LLC72TweTyemJd1b5vGi5HjV4S3qxDIf2y7
+         ZJDw==
+X-Gm-Message-State: AOJu0Yx6SP9oMHBvFFHfBZgARNS1gJSzpdOmehLKphEk266ZRS8ClNCN
+	WtZ1Yq/tIa0Y/B5O97bbMbREpZWxN5IjmVhEpVeIlGEPZSbtscSmwxLPJFYX0QLQKFY=
+X-Gm-Gg: ASbGncvJaPjrzAWkb/GEdIl8uWG2T9wB8pZUtd25vVjktGVInlcyR0cbpwoS5u7asbU
+	AvONsQnimq0vexjr7QwJ6gG/5lzzSK9nNFvvxhJN+InhFL4boZ+3CzeqOFDjqWZwBguavzIFWpB
+	XEBkHA9uTfLbAAY1gggiF67k0+ei172Jvsm5sFDpbdL8T/ViTcRFyD1G3GpeXlEtwQvk/Nl6o1k
+	6bPXrHV8IVExUOixcEDP0kw0O58/FHsXOLlp0upA9shzHghussDAwNhlt7hJbLB15RV4qQ5CXE4
+	WW9C+I6WI1Pst1wJA2YuZDFD/SmzgORiNA7ZKpZ7fX7QQqsJnELMdzIvR3rFI1opBGjp8KWmkzs
+	S8x3i483/890yalmrC09e8KqlraWqgMg7
+X-Google-Smtp-Source: AGHT+IGv/gvgtd+VyFOGRY+JKmS6raLqaaGrk4Saz9mqQNEkVwU+lxnyBc+9ONztYTEGxxuU7e9nsg==
+X-Received: by 2002:a05:600c:3555:b0:45d:5c71:769a with SMTP id 5b1f17b1804b1-467eb048bafmr104267165e9.26.1758527934709;
         Mon, 22 Sep 2025 00:58:54 -0700 (PDT)
-Date: Mon, 22 Sep 2025 09:58:46 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>, 
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	open list <linux-kernel@vger.kernel.org>, "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v7] tpm: Make TPM buffer allocations more robust
-Message-ID: <jecgeh5dmurb6dwzbfgc3agenfsuhwyzslqcvbh3rlbtgvyqzk@ljkuaxtm5rch>
-References: <20250919112448.2543343-1-jarkko@kernel.org>
- <hwsx2t2tkbos3g7k2syemxbvc6sfrsbviwm64ubcdl6ms7ljvo@toetomkhheht>
- <aM13m-CYijlu6Pf6@kernel.org>
+Received: from [10.11.12.107] ([79.118.185.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f0aac3fdsm186423945e9.1.2025.09.22.00.58.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 00:58:54 -0700 (PDT)
+Message-ID: <905d8c89-56d3-40c9-928f-d6418a0f9193@linaro.org>
+Date: Mon, 22 Sep 2025 08:58:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <aM13m-CYijlu6Pf6@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/5] clk: samsung: add Exynos ACPM clock driver
+To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org>
+ <20250908-acpm-clk-v4-4-633350c0c0b1@linaro.org>
+ <175848703636.4354.2936744718103927060@lazor>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <175848703636.4354.2936744718103927060@lazor>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 19, 2025 at 06:32:43PM +0300, Jarkko Sakkinen wrote:
->On Fri, Sep 19, 2025 at 03:35:43PM +0200, Stefano Garzarella wrote:
->> On Fri, Sep 19, 2025 at 02:24:47PM +0300, Jarkko Sakkinen wrote:
->> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
->> >
->> > Drop 'tpm_buf_init', 'tpm_buf_init_sized' and 'tpm_buf_free'. Refine
->> > 'struct tpm_buf' to hold capacity in order to enable stack allocation and
->> > sizes other than page size.
->> >
->> > The updated 'struct tpm_buf' can be allocated either from stack or heap.
->> >
->> > The contract is the following:
->> >
->> > 1. 'tpm_buf_reset' and 'tpm_buf_reset_size' expect that on the first run
->> >   the passed buffer is zeroed by the caller (e.g. via memset or kzalloc).
->> > 2. The same buffer can be reused. On the second and subsequent resets the
->> >   aforementioned functions verify that 'buf_size' has the same value, and
->> >   emits warning if not.
->> >
->> > As a consequence 'struct tpm_buf' instance can be easily wrapped into
->> > managed allocation:
->> >
->> > 	struct tpm_buf *buf __free(kfree) buf = kzalloc(PAGE_SIZE,
->> > 							GFP_KERNEL);
->> >
->> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
->> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
->> > ---
->> > v7:
->> > - Additional function comments and invariant was unfortunately left to
->> >  my staging area so here's the addition (does not affect functionality).
->> > v6:
->> > - Removed two empty lines as requested by Stefan:
->> >  https://lore.kernel.org/linux-integrity/be1c5bef-7c97-4173-b417-986dc90d779c@linux.ibm.com/
->> > - Add 'capacity' field as this makes easy to stretch tpm_buf into stack
->> >  allocation.
->> > v5:
->> > - I tested this version also with TPM 1.2 by booting up and checking
->> >  that sysfs attributes work.
->> > - Fixed the length check against capacity (James) with TPM_BUF_CAPACITY.
->> > - Fixed declaration style: do it at the site (Jason).
->> > - Improved commit message (Stefan).
->> > - Removed "out" label from tpm2_pcr_read() (Stefan).
->> > - Removed spurious "return rc;" from tpm2_get_pcr_allocation() (Stefan).
->> > v4:
->> > - Wrote a more a descriptive short summary and improved description.
->> > - Fixed the error in documentation: there is 4090 bytes of space left
->> >  for the payload - not 4088 bytes.
->> > - Turned tpm_buf_alloc() into inline function.
->> > v3:
->> > - Removed the cleanup class and moved on using __free(kfree) instead.
->> > - Removed `buf_size` (James).
->> > - I'm open for the idea of splitting still (Jason) but I'll hold
->> >  at least this revision just to check that my core idea here
->> >  is correct.
->> > v2:
->> > - Implement also memory allocation using the cleanup class.
->> > - Rewrote the commit message.
->> > - Implemented CLASS_TPM_BUF() helper macro.
->> > ---
->> > drivers/char/tpm/tpm-buf.c                |  68 ++----
->> > drivers/char/tpm/tpm-sysfs.c              |  19 +-
->> > drivers/char/tpm/tpm1-cmd.c               | 143 ++++++------
->> > drivers/char/tpm/tpm2-cmd.c               | 270 ++++++++++------------
->> > drivers/char/tpm/tpm2-sessions.c          | 118 +++++-----
->> > drivers/char/tpm/tpm2-space.c             |  42 ++--
->> > drivers/char/tpm/tpm_vtpm_proxy.c         |  29 +--
->> > include/linux/tpm.h                       |  17 +-
->> > security/keys/trusted-keys/trusted_tpm1.c |  40 ++--
->> > security/keys/trusted-keys/trusted_tpm2.c | 153 ++++++------
->> > 10 files changed, 390 insertions(+), 509 deletions(-)
->> >
->> > diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
->> > index dc882fc9fa9e..19774bc5786f 100644
->> > --- a/drivers/char/tpm/tpm-buf.c
->> > +++ b/drivers/char/tpm/tpm-buf.c
->> > @@ -7,83 +7,57 @@
->> > #include <linux/module.h>
->> > #include <linux/tpm.h>
->> >
->> > -/**
->> > - * tpm_buf_init() - Allocate and initialize a TPM command
->> > - * @buf:	A &tpm_buf
->> > - * @tag:	TPM_TAG_RQU_COMMAND, TPM2_ST_NO_SESSIONS or TPM2_ST_SESSIONS
->> > - * @ordinal:	A command ordinal
->> > - *
->> > - * Return: 0 or -ENOMEM
->> > - */
->> > -int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
->> > -{
->> > -	buf->data = (u8 *)__get_free_page(GFP_KERNEL);
->> > -	if (!buf->data)
->> > -		return -ENOMEM;
->> > -
->> > -	tpm_buf_reset(buf, tag, ordinal);
->> > -	return 0;
->> > -}
->> > -EXPORT_SYMBOL_GPL(tpm_buf_init);
->> > -
->> > /**
->> >  * tpm_buf_reset() - Initialize a TPM command
->> >  * @buf:	A &tpm_buf
->> > + * @buf_size:	Size of the buffer.
->> >  * @tag:	TPM_TAG_RQU_COMMAND, TPM2_ST_NO_SESSIONS or TPM2_ST_SESSIONS
->> >  * @ordinal:	A command ordinal
->> > + *
->> > + * 1. Expects that on the first run the passed buffer is zeroed by the caller.
->> > + * 2. Old buffer can be reused. On the second and subsequent resets @buf_size is
->> > + *    verified to be equal to the previous value.
->> >  */
->> > -void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
->> > +void tpm_buf_reset(struct tpm_buf *buf, u16 buf_size, u16 tag, u32 ordinal)
->> > {
->> > 	struct tpm_header *head = (struct tpm_header *)buf->data;
->> >
->> > +	WARN_ON(buf->capacity != 0 && buf_size != (buf->capacity + sizeof(*buf)));
->> > 	WARN_ON(tag != TPM_TAG_RQU_COMMAND && tag != TPM2_ST_NO_SESSIONS &&
->> > 		tag != TPM2_ST_SESSIONS && tag != 0);
->> >
->> > 	buf->flags = 0;
->> > 	buf->length = sizeof(*head);
->> > +	buf->capacity = buf_size - sizeof(*buf);
->> > +	buf->handles = 0;
->> > 	head->tag = cpu_to_be16(tag);
->> > 	head->length = cpu_to_be32(sizeof(*head));
->> > 	head->ordinal = cpu_to_be32(ordinal);
->> > -	buf->handles = 0;
->> > }
->> > EXPORT_SYMBOL_GPL(tpm_buf_reset);
->> >
->> > -/**
->> > - * tpm_buf_init_sized() - Allocate and initialize a sized (TPM2B) buffer
->> > - * @buf:	A @tpm_buf
->> > - *
->> > - * Return: 0 or -ENOMEM
->> > - */
->> > -int tpm_buf_init_sized(struct tpm_buf *buf)
->> > -{
->> > -	buf->data = (u8 *)__get_free_page(GFP_KERNEL);
->> > -	if (!buf->data)
->> > -		return -ENOMEM;
->> > -
->> > -	tpm_buf_reset_sized(buf);
->> > -	return 0;
->> > -}
->> > -EXPORT_SYMBOL_GPL(tpm_buf_init_sized);
->> > -
->> > /**
->> >  * tpm_buf_reset_sized() - Initialize a sized buffer
->> >  * @buf:	A &tpm_buf
->> > + * @buf_size:	Size of the buffer.
->> > + *
->> > + * 1. Expects that on the first run the passed buffer is zeroed by the caller.
->> > + * 2. Old buffer can be reused. On the second and subsequent resets @buf_size is
->> > + *    verified to be equal to the previous value.
->> >  */
->> > -void tpm_buf_reset_sized(struct tpm_buf *buf)
->> > +void tpm_buf_reset_sized(struct tpm_buf *buf, u16 buf_size)
->> > {
->> > +	WARN_ON(buf->capacity != 0 && buf_size != (buf->capacity + sizeof(*buf)));
->> > +
->> > 	buf->flags = TPM_BUF_TPM2B;
->> > 	buf->length = 2;
->> > +	buf->capacity = buf_size - sizeof(*buf);
->> > +	buf->handles = 0;
->> > 	buf->data[0] = 0;
->> > 	buf->data[1] = 0;
->> > }
->> > EXPORT_SYMBOL_GPL(tpm_buf_reset_sized);
->> >
->> > -void tpm_buf_destroy(struct tpm_buf *buf)
->> > -{
->> > -	free_page((unsigned long)buf->data);
->> > -}
->> > -EXPORT_SYMBOL_GPL(tpm_buf_destroy);
->> > -
->> > /**
->> >  * tpm_buf_length() - Return the number of bytes consumed by the data
->> >  * @buf:	A &tpm_buf
->>  *
->>  * Return: The number of bytes consumed by the buffer
->>  */
->> u32 tpm_buf_length(struct tpm_buf *buf)
->> {
->> 	return buf->length;
->> }
->> EXPORT_SYMBOL_GPL(tpm_buf_length);
->>
->> Should we update the return type (u16) on this function?
->
->Yes we should. Thanks for catching this.
->
->>
->> > @@ -108,7 +82,7 @@ void tpm_buf_append(struct tpm_buf *buf, const u8 *new_data, u16 new_length)
->> > 	if (buf->flags & TPM_BUF_OVERFLOW)
->> > 		return;
->> >
->> > -	if ((buf->length + new_length) > PAGE_SIZE) {
->> > +	if ((buf->length + new_length) > buf->capacity) {
->>
->> IIUC all of these are u16, so there could be an overflow when we do
->> `buf->length + new_length` ?
->>
->> Should we cast to u32 or just change the expression in something like
->> `new_length > (buf->capacity - buf->length)`
->
->Thanks, these really appropriate comments.
->
->I think best measure here would have hard constant cap of PAGE_SIZE
->for buf_size. That's how the specs limit anyhow. I'll extend the
->invariant.
+Hi, Stephen,
 
-Oh I see, that makes sense, thanks :-)
+On 9/21/25 9:37 PM, Stephen Boyd wrote:
+> Quoting Tudor Ambarus (2025-09-08 06:12:45)
+>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+>> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
+>> --- a/drivers/clk/samsung/Kconfig
+>> +++ b/drivers/clk/samsung/Kconfig
+>> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
+>>           status of the certains clocks from SoC, but it could also be tied to
+>>           other devices as an input clock.
+>>  
+>> +config EXYNOS_ACPM_CLK
+>> +       tristate "Clock driver controlled via ACPM interface"
+>> +       depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+> 
+> Why is COMPILE_TEST limited to !EXYNOS_ACPM_PROTOCOL?
 
-Stefano
+
+otherwise on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
+ERROR: modpost: "devm_acpm_get_by_node" [drivers/clk/samsung/clk-acpm.ko] undefined!
+
+> 
+>> +       help
+>> +         This driver provides support for clocks that are controlled by
+>> +         firmware that implements the ACPM interface.
+>> +
+>> +         This driver uses the ACPM interface to interact with the firmware
+>> +         providing all the clock controlls.
+>> +
+>>  config TESLA_FSD_COMMON_CLK
+>>         bool "Tesla FSD clock controller support" if COMPILE_TEST
+>>         depends on COMMON_CLK_SAMSUNG
+>> diff --git a/drivers/clk/samsung/clk-acpm.c b/drivers/clk/samsung/clk-acpm.c
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..8566495265ee3e06dbf370f9e424d5540f5c7457
+>> --- /dev/null
+>> +++ b/drivers/clk/samsung/clk-acpm.c
+>> @@ -0,0 +1,184 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Samsung Exynos ACPM protocol based clock driver.
+>> + *
+>> + * Copyright 2025 Linaro Ltd.
+>> + */
+>> +
+>> +#include <linux/array_size.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/device.h>
+>> +#include <linux/err.h>
+>> +#include <linux/firmware/samsung/exynos-acpm-protocol.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+> 
+> Is this include used?
+
+ah, it's no longer used, I'll drop it, thanks!
+> 
+>> +#include <linux/platform_device.h>
+>> +#include <linux/types.h>
+> 
+> Are you avoiding kernel.h? If so, please include container_of.h and
+
+I tend to include just what's needed, yes. kernel.h has some things that
+are not yet needed in this driver.
+
+> device/devres.h to avoid implicit includes.
+
+Will add the two and recheck whether I rely on implicit includes somewhere else.
+
+>> +
+>> +struct acpm_clk {
+>> +       u32 id;
+>> +       struct clk_hw hw;
+>> +       unsigned int mbox_chan_id;
+>> +       const struct acpm_handle *handle;
+>> +};
+>> +
+>> +struct acpm_clk_variant {
+>> +       const char *name;
+>> +};
+>> +
+>> +struct acpm_clk_driver_data {
+>> +       const struct acpm_clk_variant *clks;
+>> +       unsigned int nr_clks;
+>> +       unsigned int mbox_chan_id;
+>> +};
+>> +
+>> +#define to_acpm_clk(clk) container_of(clk, struct acpm_clk, hw)
+>> +
+>> +#define ACPM_CLK(cname)                                        \
+>> +       {                                               \
+>> +               .name           = cname,                \
+>> +       }
+>> +
+>> +static const struct acpm_clk_variant gs101_acpm_clks[] = {
+>> +       ACPM_CLK("mif"),
+>> +       ACPM_CLK("int"),
+>> +       ACPM_CLK("cpucl0"),
+>> +       ACPM_CLK("cpucl1"),
+>> +       ACPM_CLK("cpucl2"),
+>> +       ACPM_CLK("g3d"),
+>> +       ACPM_CLK("g3dl2"),
+>> +       ACPM_CLK("tpu"),
+>> +       ACPM_CLK("intcam"),
+>> +       ACPM_CLK("tnr"),
+>> +       ACPM_CLK("cam"),
+>> +       ACPM_CLK("mfc"),
+>> +       ACPM_CLK("disp"),
+>> +       ACPM_CLK("b0"),
+>> +};
+>> +
+>> +static const struct acpm_clk_driver_data acpm_clk_gs101 = {
+>> +       .clks = gs101_acpm_clks,
+>> +       .nr_clks = ARRAY_SIZE(gs101_acpm_clks),
+>> +       .mbox_chan_id = 0,
+>> +};
+>> +
+>> +static unsigned long acpm_clk_recalc_rate(struct clk_hw *hw,
+>> +                                         unsigned long parent_rate)
+>> +{
+>> +       struct acpm_clk *clk = to_acpm_clk(hw);
+>> +
+>> +       return clk->handle->ops.dvfs_ops.get_rate(clk->handle,
+>> +                                       clk->mbox_chan_id, clk->id, 0);
+>> +}
+>> +
+>> +static int acpm_clk_determine_rate(struct clk_hw *hw,
+>> +                                  struct clk_rate_request *req)
+>> +{
+>> +       /*
+>> +        * We can't figure out what rate it will be, so just return the
+>> +        * rate back to the caller. acpm_clk_recalc_rate() will be called
+>> +        * after the rate is set and we'll know what rate the clock is
+>> +        * running at then.
+>> +        */
+>> +       return 0;
+>> +}
+>> +
+>> +static int acpm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +                            unsigned long parent_rate)
+>> +{
+>> +       struct acpm_clk *clk = to_acpm_clk(hw);
+>> +
+>> +       return clk->handle->ops.dvfs_ops.set_rate(clk->handle,
+>> +                                       clk->mbox_chan_id, clk->id, rate);
+>> +}
+>> +
+>> +static const struct clk_ops acpm_clk_ops = {
+>> +       .recalc_rate = acpm_clk_recalc_rate,
+>> +       .determine_rate = acpm_clk_determine_rate,
+>> +       .set_rate = acpm_clk_set_rate,
+>> +};
+>> +
+>> +static int acpm_clk_ops_init(struct device *dev, struct acpm_clk *aclk,
+> 
+> Maybe acpm_clk_register() is a more appropriate name.
+
+okay, will update.
+
+> 
+>> +                            const char *name)
+>> +{
+>> +       struct clk_init_data init = {};
+>> +
+>> +       init.name = name;
+>> +       init.ops = &acpm_clk_ops;
+>> +       aclk->hw.init = &init;
+>> +
+>> +       return devm_clk_hw_register(dev, &aclk->hw);
+>> +}
+>> +
+>> +static int acpm_clk_probe(struct platform_device *pdev)
+>> +{
+>> +       const struct acpm_handle *acpm_handle;
+>> +       struct clk_hw_onecell_data *clk_data;
+>> +       struct clk_hw **hws;
+>> +       struct device *dev = &pdev->dev;
+>> +       struct acpm_clk *aclks;
+>> +       unsigned int mbox_chan_id;
+>> +       int i, err, count;
+>> +
+>> +       acpm_handle = devm_acpm_get_by_node(dev, dev->parent->of_node);
+>> +       if (IS_ERR(acpm_handle))
+>> +               return dev_err_probe(dev, PTR_ERR(acpm_handle),
+>> +                                    "Failed to get acpm handle.\n");
+> 
+> Remove the period please. Most error messages don't have proper
+> punctuation.
+
+okay, will update.
+
+> 
+>> +
+>> +       count = acpm_clk_gs101.nr_clks;
+>> +       mbox_chan_id = acpm_clk_gs101.mbox_chan_id;
+>> +
+>> +       clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, count),
+>> +                               GFP_KERNEL);
+>> +       if (!clk_data)
+>> +               return -ENOMEM;
+>> +
+>> +       clk_data->num = count;
+>> +       hws = clk_data->hws;
+>> +
+>> +       aclks = devm_kcalloc(dev, count, sizeof(*aclks), GFP_KERNEL);
+>> +       if (!aclks)
+>> +               return -ENOMEM;
+>> +
+>> +       for (i = 0; i < count; i++) {
+>> +               struct acpm_clk *aclk = &aclks[i];
+>> +
+>> +               /*
+>> +                * The code assumes the clock IDs start from zero,
+>> +                * are sequential and do not have gaps.
+>> +                */
+>> +               aclk->id = i;
+>> +               aclk->handle = acpm_handle;
+>> +               aclk->mbox_chan_id = mbox_chan_id;
+>> +
+>> +               hws[i] = &aclk->hw;
+>> +
+>> +               err = acpm_clk_ops_init(dev, aclk,
+>> +                                       acpm_clk_gs101.clks[i].name);
+>> +               if (err)
+>> +                       return dev_err_probe(dev, err,
+>> +                                            "Failed to register clock.\n");
+>> +       }
+>> +
+>> +       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+>> +                                          clk_data);
+>> +}
+>> +
+>> +static const struct platform_device_id acpm_clk_id[] = {
+>> +       { "gs101-acpm-clk" },
+>> +       {},
+> 
+> Please drop comma here so that nothing can come after.
+
+okay. Thanks for the review!
+Cheers,
+ta
 
 
