@@ -1,110 +1,100 @@
-Return-Path: <linux-kernel+bounces-827987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A211B939DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:40:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F341B939EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D60F16902E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86ED619C1984
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F8B301025;
-	Mon, 22 Sep 2025 23:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9A72FDC44;
+	Mon, 22 Sep 2025 23:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ksO/eRpK"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmvm1AZn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405D11E502
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FBB2EE5FC;
+	Mon, 22 Sep 2025 23:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758584405; cv=none; b=EKVLInd4BaOxvXqOAVB+wB4UEFV8+1xhjdvKNemYIGMAgvNvUhFeYaiOPF/LzAVGnCPSzvDsg3mihZ+m3ImiZd9TbHnMUyCjOhpdLn8n1R5xItSc3w5zJuJNum4fyIzmclBGl0CuOzC9i4ei800PciqOyf8OWBSWUrQxGnxKVSA=
+	t=1758584419; cv=none; b=QnzIutZzArVMrzc+y45+YofPHQRw/6Nx8DiW1S2tEZnxYXFYkDSFz+H7bAZRoOLteIMZEDyo6ced5P864xD5FfWHy62veFBDaPGPRW+/GbST8RTDyD//IthlLSY/9bHHojLCCol4xEfKYFfEf6pkyPWt3OM7PiVgBmfxlKOhA28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758584405; c=relaxed/simple;
-	bh=nQ+nJKAqfH3akqIipGSES3PuSwYbGJnWEeN3gYAiKTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O1qcbPKaiFZSaqbBYqEKHAtMQUudpGXcBa4vGCM/Dy7Ca6zq25J5ZaLDfO21CPneV1IbvKda68EDGEW8d1lNl5D+/tGjIc9LqvHgN8estpNMrYHWdpzs5rF+QkvrggMY3RqDHio+QQMAMKjyMAqLbrqIj1MExCjcdxO9jn73G+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ksO/eRpK; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 22 Sep 2025 16:39:53 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758584401;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6UQ6EfbCYepok3ceoUDeJ/x6bFVJ/E+q/zzBwjTLLp4=;
-	b=ksO/eRpKDXXynNESrLmMo1u81CH/LwY9blsXfMRvkA6O6cPUQuZ0v5Nzq6INeIbeJcqmbI
-	Bv6aLttCnAEx2rrt/l3Qumlpjdp4ukS+cXgCd5odAtNGUWw7827V3Noc4C076aDAEus9Lh
-	zY5U6BKC5S3WXSc1AeIrIIDLwp/lrOA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
-	Peilin Ye <yepeilin@google.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, bpf@vger.kernel.org, 
-	linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v2] memcg: skip cgroup_file_notify if spinning is not
- allowed
-Message-ID: <552lz3qxc3z45r446rfndi7gx6nsht5iuhrhaszljofka2zrfs@odxfnm2blgdd>
-References: <20250922220203.261714-1-shakeel.butt@linux.dev>
- <20250922160443.f48bb14e2d055e6e954cd874@linux-foundation.org>
+	s=arc-20240116; t=1758584419; c=relaxed/simple;
+	bh=e+4gDmocNIpbwDa+bz2tDklxvVz7dECa+umrwZTQInk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=CeC17bI22jhG2PijG+fDK8YwRjQWutkr1CzlKg7/ACqU1MXrg27dYRIMK6FZ+mlai8hWbJMtTgVofRimLtG9Cq1wxGt5k5u7+5Q4W/DQ3dRqc+VQiasMW8lUwuNu86iLGveVMCUcS7FazKMI++ZsM+MH3hw+Y54kulWQpcZdm/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmvm1AZn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BED28C4CEF0;
+	Mon, 22 Sep 2025 23:40:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758584418;
+	bh=e+4gDmocNIpbwDa+bz2tDklxvVz7dECa+umrwZTQInk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=rmvm1AZnNxfYMEYyHxPen4kTromVR6yk7rN68uWmy/1Hh/eHBkOL018T7IFmU+BvC
+	 elU7eUsji2PVKOwMhhH1bpO99AePJNUoSuGWrs8rbnPPi9Lw5w/UExIQhAyOTXQDv2
+	 K1x8rPZUKnoKMTuGL7h0HzhaFG8aBRQGmbdVvmG0hGwx72iHQxaLAI/IE1VrL04Go9
+	 zbeG2brQXPm1mGnXdYEqM1MswHXr6pfQIDz6yDvw+hFP2HyzvOPom9/QtkiKhAAJk9
+	 ROETqy+zwWTR5f6PPRZTO0+9eAf4twQ/WtAPMyitqAk2sc+OQdfuv820ElFG9jcuyh
+	 EOIBCdp5+PHDA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D5C39D0C20;
+	Mon, 22 Sep 2025 23:40:17 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922160443.f48bb14e2d055e6e954cd874@linux-foundation.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3 0/3] net: dsa: microchip: Add strap
+ description
+ to set SPI as interface bus
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175858441625.1195312.14260104623562139849.git-patchwork-notify@kernel.org>
+Date: Mon, 22 Sep 2025 23:40:16 +0000
+References: <20250918-ksz-strap-pins-v3-0-16662e881728@bootlin.com>
+In-Reply-To: <20250918-ksz-strap-pins-v3-0-16662e881728@bootlin.com>
+To: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Cc: woojung.huh@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
+ olteanv@gmail.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ marex@denx.de, thomas.petazzoni@bootlin.com, miquel.raynal@bootlin.com,
+ pascal.eberhard@se.com, Woojung.Huh@microchip.com, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Sep 22, 2025 at 04:04:43PM -0700, Andrew Morton wrote:
-> On Mon, 22 Sep 2025 15:02:03 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> 
-> > Generally memcg charging is allowed from all the contexts including NMI
-> > where even spinning on spinlock can cause locking issues. However one
-> > call chain was missed during the addition of memcg charging from any
-> > context support. That is try_charge_memcg() -> memcg_memory_event() ->
-> > cgroup_file_notify().
-> > 
-> > The possible function call tree under cgroup_file_notify() can acquire
-> > many different spin locks in spinning mode. Some of them are
-> > cgroup_file_kn_lock, kernfs_notify_lock, pool_workqeue's lock. So, let's
-> > just skip cgroup_file_notify() from memcg charging if the context does
-> > not allow spinning.
-> > 
-> > Alternative approach was also explored where instead of skipping
-> > cgroup_file_notify(), we defer the memcg event processing to irq_work
-> > [1]. However it adds complexity and it was decided to keep things simple
-> > until we need more memcg events with !allow_spinning requirement.
-> > 
-> > Link: https://lore.kernel.org/all/5qi2llyzf7gklncflo6gxoozljbm4h3tpnuv4u4ej4ztysvi6f@x44v7nz2wdzd/ [1]
-> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > Acked-by: Michal Hocko <mhocko@suse.com>
-> 
-> Fixes a possible kernel deadlock, yes?
-> 
-> Is a cc:stable appropriate and can we identify a Fixes: target?
-> 
-> Thanks.
-> 
-> (Did it ever generate lockdep warnings?)
+Hello:
 
-The report is here:
-https://lore.kernel.org/all/20250905061919.439648-1-yepeilin@google.com/
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-I am not sure about the Fixes tag though or more like which one to put
-in the Fixes as we recently started supporting memcg charging for NMI
-context or allowing bpf programs to do memcg charged allocations in
-recursive context (see the above report for this recursive call chain).
-There is no single commit which can be blamed here.
+On Thu, 18 Sep 2025 10:33:49 +0200 you wrote:
+> Hi all,
+> 
+> At reset, the KSZ8463 uses a strap-based configuration to set SPI as
+> interface bus. If the required pull-ups/pull-downs are missing (by
+> mistake or by design to save power) the pins may float and the
+> configuration can go wrong preventing any communication with the switch.
+> 
+> [...]
 
-Alexei, what do you suggest? 
+Here is the summary with links:
+  - [net-next,v3,1/3] dt-bindings: net: dsa: microchip: Group if clause under allOf tag
+    https://git.kernel.org/netdev/net-next/c/6bd5b7297c95
+  - [net-next,v3,2/3] dt-bindings: net: dsa: microchip: Add strap description to set SPI mode
+    https://git.kernel.org/netdev/net-next/c/e469b87e0fb0
+  - [net-next,v3,3/3] net: dsa: microchip: Set SPI as bus interface during reset for KSZ8463
+    https://git.kernel.org/netdev/net-next/c/a0b977a3d193
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
