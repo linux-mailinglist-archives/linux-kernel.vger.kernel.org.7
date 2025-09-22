@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-827914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FDCCB9369D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:59:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA47B936A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04D4F1903BD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:59:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 277137A561A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0519330ACED;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E351C311C06;
 	Mon, 22 Sep 2025 21:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AkT9iD5y"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YhAgJ+Xo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C48428B3E7
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C562F49F2
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758578358; cv=none; b=Q0pQdIveOEycKQO+r9RnUUgJMEIeMqeESn3K7GuG0i2zAs3BmCpl/Dr1E7shhUj16EUyzqavPtSh68eRM8mS7J82NNlyXlsoFqsfs87nwr4kjZcK6fM00t1jRJ79jZtCay/ObELfhJKxr3DkcgyyAznwmn3L8Xe4WQZpMOneRb4=
+	t=1758578359; cv=none; b=bF9H9uzh9rh3Xl8P0t4RY2i1mDG3LfUx9TsAUIDSNwJT4WVEweZbbyIu2Z6dMJm18FdnUBP8y+U16NLkNE7onq3AM13d+4UdHO4BdqnIR2A5/rlejNSfb95YBvRi4GR2VN3jKVLLohFCB4A9VByDh2qn74FMQiOsZovtqTFMXxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758578358; c=relaxed/simple;
-	bh=8EAdYteEsZfi3L8LNoGQ5Mo9rWCKtDhbyQqf6B5Tt4c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tGUETQIoYM8Cx7ECDBCEN+CdotRQ3B6OVSBBqzWBIWR0dpLvzWHE4dE6ctXMSiKr5lRORiCrWmIjlUmAMik/Wf+Oz1ZrXaYRiDZASQsm7jvgJ/6sZ1KgCtdS0V3ssr7FdCqKJxvq6AGABhmhb+tLSqKxvvB+6pLvh/R4zWvk/xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AkT9iD5y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58MITf6C029672
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:59:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0LDmHGPzBvAlIgIdJc1sMUYY1nDOFFKwgh16pYuyb2I=; b=AkT9iD5yDkz2ePE9
-	hYrle13HGQ84SwGViegVrJ6NjaVVf9fJ3FyaBJbfL1X2x4RT/lgN52Ml6+WHRQyt
-	5YeTnbs3lnpqBjHSuHMcEBOCdK0mJFmXPHOs++OGR2rrJUeSAdNcPNlYQ0t/NqCs
-	eu469/Us5gX6j/GKWdY2LCTXlsio0Kdeorghcz8EFiqvI48bT8Z0OprjBhROMVKu
-	PzkXjw3Qqr/fyYTH4MMmuhHXAgkBXFl4A8WVyyhLa8B7CRRgrYU4UQLT00RuplP+
-	rVulvB0RwxUFSr0/FpwByc2FLc17qGncFQ2AjO1R6V4lOpZja55LzhuXaKs5DbuF
-	wr9qQw==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49b3kk25pf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:59:15 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2698b5fbe5bso61272795ad.0
+	s=arc-20240116; t=1758578359; c=relaxed/simple;
+	bh=TBLAWI/01Mxm/FPjAN5/L7dSJBnelejvoJwcUwPik8c=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=OMUVgG0eiaJewWx58dGCs6wRdOQvHIgL1Xvhs3CFlR1Q3fi+5aqf9MZyLwXnKs46a+QB+16kCSKdCYxEE5l4h+w5WpoRg9SPM7spCtMQl/EkpI1kgLAz0sYYfbtXnJJmZdI1QCQoEQZbGmUzspuwL/57Q5TP1BtH3XaNdLKUlxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YhAgJ+Xo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758578356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PApI70tveZI3fLaO8VuqSiVWaaxwDqYrNcJIn/abLXw=;
+	b=YhAgJ+XoyOsC0503e6ck5CCmfl+g9xhNoYDbH1xyiEbUmXu6N4Pjq9g/Cl/DsZO+uHiiMO
+	Xwz+LxooWS8e4JLNb52OtKAd6NAllxJuoCw+JZQlEBMPL8vBw+8k0e+k8B/fpSjSaN5aZE
+	aj0a1uZeguPnsrr5vvMQt5jC3H4vr0s=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-474-OxVZIgcAMqSpUasmFLl5KQ-1; Mon, 22 Sep 2025 17:59:14 -0400
+X-MC-Unique: OxVZIgcAMqSpUasmFLl5KQ-1
+X-Mimecast-MFC-AGG-ID: OxVZIgcAMqSpUasmFLl5KQ_1758578354
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-82968fe9e8cso1365929085a.0
         for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:59:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1758578354; x=1759183154;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0LDmHGPzBvAlIgIdJc1sMUYY1nDOFFKwgh16pYuyb2I=;
-        b=GV3pmNcdW4Qoo+Lrr+q5Y8Hd4xOXYls4gG9MX/Gg/IsFdh7Ko1fv2uffn1JC1cniLS
-         Y9SAAtSx9YN6wCH0IyAyi85L+T65FEoAPSBzoccXF5x1Q1wZtNTEhZOjjCH64wdHNkKw
-         Qlj/bH/QeA5ApZ2v4RE9Lo26NJJL/hPRtF4uFiwqzMFL2sCaLtFt63qY1XAsQw9QNWJG
-         LTihx9rYQWDywkZjiB1Y7XssaTBU2Xtq0hVqyWhX8WccIUMevRLngVK31d2twcuV00mD
-         fEVt5QlLwhyXSst2l9PVU/YOqNahMgoMm2LtE5JkKTocH7E5AWyP2BMF+PvuIESunyKC
-         bWEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVneDH5uZ8PxFDtZzUxzWx6CDDD+aLazDg2DCegNFyMGLQmZj1SLkgNgHU6AV2jf7evkbeHkhDRUO2KVjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU7df89R8M3WfPm0etovPXPjIgSJLDym+FxtvdYHMeo9vdrFhV
-	WIMRloUqwIxBixJiPggfTKi5Z0ywfhtKCShBx3dZlafSmP6ApvFK6Ee4PYHN4oLtT6LWbExiHtH
-	ycj84PP5ubohQcGfrd5BqiBZ50AZQnk76ay7lCNuKZCxGeAngEIPrzesK9cPt5D6m/qg=
-X-Gm-Gg: ASbGncuv5oxTH7kmJJNQwcNLHM87I8a4szselaMfujTBoxy0Ixod5H3+q+UB5rmoDw0
-	EiXVVqKKR4qi4k/jZQjSNgdIz/gs6yCI0WaEOWH2/WhIafbtw1SbvtzmS464DN5uNAZKX3+YlZU
-	8lbHMWGbbT6sFK61RPT3yE7/cSr2v9yNuq5PnMeR+4kMCP+K671XULNwnfXn5R4m0wamimrLEYa
-	92ODEq8pGAmf7m4pF7ir4qF72ZkJWbyneQrTigmZxKLdaHllaMEvODItH3GudAB9xuEMVc34Hdx
-	Xp3J61N59dlVOOFYMUwNBFCkH8OnRQvJMWDCzZ3Xjo+k8A/LfpIm5u40PxVu4rwIRiJnclyfiq1
-	rA9V/952CxfeM21/SdwJMVH1rXkn5daVsqn/W
-X-Received: by 2002:a17:903:1547:b0:248:79d4:93be with SMTP id d9443c01a7336-27cc5624f64mr3801125ad.30.1758578353851;
-        Mon, 22 Sep 2025 14:59:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGGG6T7ySc8crxPcb7K8edEeVJNt96b5JVAn3AQ/h6MKUU8Y56um/AFywBRAM+AxXS7ufrcJg==
-X-Received: by 2002:a17:903:1547:b0:248:79d4:93be with SMTP id d9443c01a7336-27cc5624f64mr3800745ad.30.1758578353279;
-        Mon, 22 Sep 2025 14:59:13 -0700 (PDT)
-Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698016c08dsm141506235ad.51.2025.09.22.14.59.11
+        bh=PApI70tveZI3fLaO8VuqSiVWaaxwDqYrNcJIn/abLXw=;
+        b=kON4fFYg5lCfg4bRWuFVO/tEbbCnmYTiu+mUFVUY5Y+PaJDYDP3FFtbAQSjB9hL3lj
+         jRhJvEWDeIgBmZJc2+++P9ww83fZO0gdEyD9qH96LWfbdEW3qhxPhXN5j1F9QKk1etI3
+         tTCrTM2kwfFQA3F7/hRLYNbkjQC26ibNue3rskQ2+522BhKV75dRVrXuMFN8efCQzC4O
+         YU2MpyszQ/e+/j62KN1HHVeGDJeOeqbG9B888qPXfrSXUgH9AiDIOwmhfVYnMRJJvWBT
+         iaSm8IP9dIpO2HN+qKV9gPHyQfYOm4zWqv1b/amxzfHlgD+N7O3zll3ELQjYuOFhvMgR
+         uSJw==
+X-Gm-Message-State: AOJu0YxdN+0YV7qLBZ4mgDKXrOJtqFXnfpMdEOamH0ftkeGQ9d0erMTa
+	RbshZWsLjuXXtEFSnL4U7Ws8zx02w4joP0dxiwGJ1VA7UJh2LUOStDkfQNR7GZJf0OhboIdX/QX
+	g/R9IJ0BxpNumLRnD63R05bpXdjwTrGcckbh9MPkkTgZJtYxSkp4wnSrHPF04BWkbOQ==
+X-Gm-Gg: ASbGnctX8SMkXHOR/EeL1Wxk9/kUOuJVIVdkdgcDLVPD+0GIASym7qJ//nbpz+jkYHM
+	ZtvrjEYNKeS27oql1ZhnlkQgQWMsIvOiEBQbUd7av7sZjVWpYhn3QTB5fUaHLDRB5W1hF/x1DZe
+	tD46RoVxXS/3CwCaACC/zRamiDhvwUoIk0arfd8CoqU4tI19y4JLFdl1N7mHGWSmGsAxLo2n+rS
+	d//WtFiSywjpE8Oc5bwlVvSRVjrYQx+V4gZAsj9SuYpGw3LKyd4DJVjzHbk2rr45uB1q23VOQNu
+	Cbgr2eAJ7n8rnxCnrNaFghD7MRNgGIfjzH3RUP6f9igRlxv1me0d3QpTLrPyzHdXW5ObDGeddBT
+	zf3J2JAnr9BQ=
+X-Received: by 2002:a05:620a:4484:b0:811:1212:1b6e with SMTP id af79cd13be357-85170245016mr77855685a.50.1758578354406;
+        Mon, 22 Sep 2025 14:59:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGF4aCJmVxX283zKdgoGqqHv/hlsXVL9SOjLFHOlJR9jB81AYP9Ha6Zz6Y5QnzcoO52MnZZGg==
+X-Received: by 2002:a05:620a:4484:b0:811:1212:1b6e with SMTP id af79cd13be357-85170245016mr77853785a.50.1758578354039;
+        Mon, 22 Sep 2025 14:59:14 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4bda15f59besm77848421cf.8.2025.09.22.14.59.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 14:59:12 -0700 (PDT)
-Message-ID: <b2885d4b-dd11-44ef-816a-9eed99f7a219@oss.qualcomm.com>
-Date: Mon, 22 Sep 2025 14:59:11 -0700
+        Mon, 22 Sep 2025 14:59:13 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <1c77c072-ddf1-4894-a5bb-73bf13a838b9@redhat.com>
+Date: Mon, 22 Sep 2025 17:59:12 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,141 +89,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] wifi: ath11k: HAL SRNG: don't deinitialize and
- re-initialize again
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: kernel@collabora.com, stable@vger.kernel.org,
-        Muna Sinada <quic_msinada@quicinc.com>,
-        Anilkumar Kolli <quic_akolli@quicinc.com>,
-        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>,
-        Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
-        Sathishkumar Muruganandam <quic_murugana@quicinc.com>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Manikanta Pubbisetty <quic_mpubbise@quicinc.com>,
-        Sven Eckelmann <sven@narfation.org>
-References: <20250722053121.1145001-1-usama.anjum@collabora.com>
- <1598d25d-e254-410e-ac5c-66d5450fd686@oss.qualcomm.com>
- <ae7a08cb-af73-4a27-aad4-c852be5f77aa@collabora.com>
- <ab5af5b9-d5a7-434c-938d-3f9aac388542@oss.qualcomm.com>
- <86c465a3-f9a1-4a63-9e21-7529a5634301@collabora.com>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [PATCH 19/33] sched/isolation: Remove HK_TYPE_TICK test from
+ cpu_is_isolated()
+To: Frederic Weisbecker <frederic@kernel.org>, Waiman Long <llong@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
+ <mhocko@suse.com>, Peter Zijlstra <peterz@infradead.org>,
+ Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>
+References: <20250829154814.47015-1-frederic@kernel.org>
+ <20250829154814.47015-20-frederic@kernel.org>
+ <dc75acab-36c1-4340-9cf2-35a35361c32b@redhat.com>
+ <aNFpHgRnf-mV-4d8@2a01cb069018a81087c6c9b3bf9471d3.ipv6.abo.wanadoo.fr>
 Content-Language: en-US
-In-Reply-To: <86c465a3-f9a1-4a63-9e21-7529a5634301@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: q3gu_pHBLrcAEVWIugRyVoT2X8KqzYbR
-X-Proofpoint-ORIG-GUID: q3gu_pHBLrcAEVWIugRyVoT2X8KqzYbR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDA4OSBTYWx0ZWRfXxHs5lOOFJjox
- HKWandMD1CmotZuNZjmTPGiofLl7+QMJN7Pglxzi+0rXAOrKBgn4t4iSX6fsVu9Z/9ReTzxuofn
- 3bVAL73Lomz17+w/y2PPzZCwx4erB1zmxhDDOhhiT49v/1AZDGWb1K/DyalljsTPte7uetFON/b
- 40MTTUE9sRjWh64iJ4i9pABtH4jp4eO2WNseN/AZYAHr7I5CQQg3Lxkun1hBWDfjqYRm3XIDqyx
- s5OajnmHi+BFPE6etqD85tLKgeqzY6+1S7ww0MaNCh23JEUqQz64gSxNdDu0/IPOLe2RlQ3PDxR
- 9t8EcOR39QCqVR5XcghIP4W6CyGrvtj7zJBmmaF8mOnmjZzu1YgW7VeoCgWZUHJKJNA+l4zaukO
- 46LJl4Yq
-X-Authority-Analysis: v=2.4 cv=BabY0qt2 c=1 sm=1 tr=0 ts=68d1c6b3 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=e70TP3dOR9hTogukJ0528Q==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=QX4gbG5DAAAA:8 a=RL02kzwgQxJZJf316toA:9 a=QEXdDO2ut3YA:10
- a=1OuFwYUASf3TG4hYMiVC:22 a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-22_04,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 phishscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 malwarescore=0 spamscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220089
+In-Reply-To: <aNFpHgRnf-mV-4d8@2a01cb069018a81087c6c9b3bf9471d3.ipv6.abo.wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 7/22/2025 8:05 AM, Muhammad Usama Anjum wrote:
-> On 7/22/25 7:07 PM, Jeff Johnson wrote:
->> On 7/22/2025 4:23 AM, Muhammad Usama Anjum wrote:
->>> Hi Kalle,
->>
->> Kalle is no longer a maintainer -- I am currently the only ath11k maintainer.
-> Sorry, I missed it.
-> 
->>
+
+On 9/22/25 11:19 AM, Frederic Weisbecker wrote:
+> Le Tue, Sep 02, 2025 at 10:28:58AM -0400, Waiman Long a écrit :
+>> On 8/29/25 11:48 AM, Frederic Weisbecker wrote:
+>>> It doesn't make sense to use nohz_full without also isolating the
+>>> related CPUs from the domain topology, either through the use of
+>>> isolcpus= or cpuset isolated partitions.
 >>>
->>> On 7/22/25 2:47 PM, Baochen Qiang wrote:
->>>>
->>>>
->>>> On 7/22/2025 1:31 PM, Muhammad Usama Anjum wrote:
->>>>> Don't deinitialize and reinitialize the HAL helpers. The dma memory is
->>>>> deallocated and there is high possibility that we'll not be able to get
->>>>> the same memory allocated from dma when there is high memory pressure.
->>>>>
->>>>> Tested-on: WCN6855 hw2.0 PCI WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
->>>>>
->>>>> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
->>>>> Cc: stable@vger.kernel.org
->>>>> Cc: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
->>>>> Reviewed-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
->>>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->>>>> ---
->>>>> Changes since v1:
->>>>> - Cc stable and fix tested on tag
->>>>> - Clear essential fields as they may have stale data
->>>>>
->>>>> Changes since v2:
->>>>> - Add comment and reviewed by tag
->>>>> ---
->>>>>  drivers/net/wireless/ath/ath11k/core.c |  6 +-----
->>>>>  drivers/net/wireless/ath/ath11k/hal.c  | 16 ++++++++++++++++
->>>>>  drivers/net/wireless/ath/ath11k/hal.h  |  1 +
->>>>>  3 files changed, 18 insertions(+), 5 deletions(-)
->>>>>
->>>>> diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
->>>>> index 4488e4cdc5e9e..34b27711ed00f 100644
->>>>> --- a/drivers/net/wireless/ath/ath11k/core.c
->>>>> +++ b/drivers/net/wireless/ath/ath11k/core.c
->>>>> @@ -2213,14 +2213,10 @@ static int ath11k_core_reconfigure_on_crash(struct ath11k_base *ab)
->>>>>  	mutex_unlock(&ab->core_lock);
->>>>>  
->>>>>  	ath11k_dp_free(ab);
->>>>> -	ath11k_hal_srng_deinit(ab);
->>>>> +	ath11k_hal_srng_clear(ab);
->>>>>  
->>>>>  	ab->free_vdev_map = (1LL << (ab->num_radios * TARGET_NUM_VDEVS(ab))) - 1;
->>>>>  
->>>>> -	ret = ath11k_hal_srng_init(ab);
->>>>> -	if (ret)
->>>>> -		return ret;
->>>>> -
->>>>>  	clear_bit(ATH11K_FLAG_CRASH_FLUSH, &ab->dev_flags);
->>>>>  
->>>>>  	ret = ath11k_core_qmi_firmware_ready(ab);
->>>>> diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
->>>>> index b32de563d453a..e8ebf963f195c 100644
->>>>> --- a/drivers/net/wireless/ath/ath11k/hal.c
->>>>> +++ b/drivers/net/wireless/ath/ath11k/hal.c
->>>>> @@ -1359,6 +1359,22 @@ void ath11k_hal_srng_deinit(struct ath11k_base *ab)
->>>>>  }
->>>>>  EXPORT_SYMBOL(ath11k_hal_srng_deinit);
->>>>>  
->>>>> +void ath11k_hal_srng_clear(struct ath11k_base *ab)
->>>>> +{
->>>>> +	/* No need to memset rdp and wrp memory since each individual
->>>>> +	 * segment would get cleared ath11k_hal_srng_src_hw_init() and
->>>>
->>>> nit: s/cleared /cleared in/
->>> Please can you make this change while applying the patch?
->>
->> I can make this change when I pull the patch into the pending branch.
->> I'd like to see a public Reviewed-by before doing so.
->>
->> Also note that, except for anything critical, I'm not taking any patches into
->> ath-next until the upcoming v6.17 merge window closes and all changes made to
->> Linus' tree have been backmerged via net-next => wireless-next => ath-next.
-> Thank you for mentioning. I didn't know the workflow.
-> 
-> No problem. There is no hurry.
+>>> And now HK_TYPE_DOMAIN includes all kinds of domain isolated CPUs.
+>>>
+>>> This means that HK_TYPE_KERNEL_NOISE (of which HK_TYPE_TICK is only an
+>>> alias) is always a superset of HK_TYPE_DOMAIN.
+>> That may not be true. Users can still set "isolcpus=" and "nohz_full=" with
+>> disjoint set of CPUs whether cpuset is used for additional isolated CPUs or
+>> not.
+> There can be domain isolated CPU that are not nohz_full indeed. But OTOH nohz_full
+> CPUs that are not domain isolated don't make much sense. I know such settings
+> exist but it's usually a half working misconfiguration. I wish I had
+> forbidden that since the early days but this was from times when we didn't know
+> about all the potential usages.
 
-I've modified this comment in my 'pending' branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git/commit/?h=pending&id=9de41dd4c35fca6ebfe300b3799507dcafb9005e
+The assumption is true for cpuset isolated partition, but users may 
+still set conflicting nohz_full and isolcpus parameters by mistake. We 
+should probably a warning if this happens and document that clearly to 
+enforce such rule.
 
-I'll promote to ath-next before my pull request to wireless for the v6.18
-merge window.
+Cheers,
+Longman
 
-/jeff
 
