@@ -1,194 +1,149 @@
-Return-Path: <linux-kernel+bounces-827605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CABAB92322
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:19:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B390B9233F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DC961648A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:19:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38CC83A558F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01393115BB;
-	Mon, 22 Sep 2025 16:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1035A3112D9;
+	Mon, 22 Sep 2025 16:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yoWj5L4F"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KdLt3BPy"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2A43112A3
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4DA2FE566
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758557936; cv=none; b=DAVj7gGCVDf+YaKhCJaw0+f0YHdbJGj6gga7ok1SOBmJ5fX2cs+mkhvTPpSh8abEDWMdQZNuxDe1ZLKMU+TIet3f17vE2T+QJMiPHL7qPKKDS0hLrgJX3y30ihGB/D2I6VidWHgWPRcAj1SJTEF5IyhuixWyqremnHH1867YkG0=
+	t=1758558033; cv=none; b=dg2tWZki4EurJ9EpzrmMIhScumetblxwtEDIYBsm3tiift83AJEpznzyJX8k67a9Qd1TFOJO2MI/Fg/FXoZH/hQGS3ASf9ZZrw71rAYkpNSxQ1H78NPny1NEdI20ckmpgn/xScI9vOg3S/DvwLo30NcfkO/P3GMSC+y1QjPYDSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758557936; c=relaxed/simple;
-	bh=j0tbiuJYe5u+nQX+pGPGDa6eS/5NF6pL5f+1Wtk2GhQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CtLVjEdHdAr9rBYIE1Vw+QlkFqpZxaeB13SMW1F+S74UtYoCePZQRyzMYC7tRJB5GPf9oJ8lrwlCS1y4Yo8gnENfqkDizEBAYiJCbB571sAc6GunwYT43KSPVNZYKNt0uz4x79Lw9H503WN7Nn4alp6nHRxi3MSWFlyrYTQS+Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yoWj5L4F; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32e09eaf85dso5716668a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:18:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758557934; x=1759162734; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tft9W6H590i+BfaoCmKikwuvny4xpJFLnNN0qVKuogY=;
-        b=yoWj5L4F7vXAzz4uPZZjNdaoDAuvqq+qUhPBTIJA1nR6GKRqd6iJwDTG/fUfNBpge6
-         ppgJepeFWatU+DfCwNqqTiAKmRdlw+DLAlx7Hu7bUIHQ6WvjSZoOXgtZTLkjBEy4Zccw
-         ZgSkMcyXVhQCLvNNGoAYL1b6hdP1Sh9lYWLlnqmY1rjDjK50yU5wp+66Ef8oQgtpLrFj
-         dDgMS/MXnbX56VcX46jsSu+HxgLkBgycWxaqHY6kcJmBtOU2pozFIQYahj/rCYdRwf0x
-         naHHGb1GqBRqjR9v/WqusOmTcVYyH7bsUYEd7wDgHN+s8RWZVJAm7YHrmC6I9qabGuiN
-         yEkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758557934; x=1759162734;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tft9W6H590i+BfaoCmKikwuvny4xpJFLnNN0qVKuogY=;
-        b=AAyw58JY+s691qov8zj1WSVH3lgTBMpw5FL6pT1T6hdxWMW1lEn/wmqGT5s5TIYM/W
-         8L3CsobnEwt0q/FbCYMQdVueEpsNfxUOHe2MRuD9XVPsVGZvwCzblP3U3YuuwqobLaij
-         zVH2A6OKbkUZdJ97MGvFVA/fsZQA03iaFdh2HtxSafXSFPKKkMmOPJ37axsnvffs42ot
-         BGrRDivXz/8bBG56bBF3ZKgaBbnQ+wiUmie0ARw9lwc//WtWpapATJSd/WFPeSwHwVVx
-         A3Yy17SDmsuWJsnUY3H/cciWhXdSiTMVM7DtMHOxFvN7K6m4F/RnXfm6PAp4HWh4j+Sm
-         BA2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWZgSu+PYpDiZOEei58uVIKavlhGPimprKMtcJnI7j3bmupMcuE0HaClA3lrTl194vhWpf2KhweU+d+pUE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ34XId6a3gKgisgkevlXQ+iWdPz/FQtm4mBuZRBFcgHlQpYgB
-	85KI6OnjxidDCD41iKcZxFkSCAW8QrNvR718venioALx3XzyBEGsj+Rp+rXjNkMYMrUurvPzG0Y
-	jwLqcqA==
-X-Google-Smtp-Source: AGHT+IHymzkiG3BEJ+XaoDM3SA3RGhdAZTXLVSYm5PvTzbo/cud73Uypt1Fvj4jCfCqaDHU1pkLP0SVJFnI=
-X-Received: from pjur6.prod.google.com ([2002:a17:90a:d406:b0:32e:749d:fcc6])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d40b:b0:32e:345c:54fe
- with SMTP id 98e67ed59e1d1-3309834fdfcmr16169001a91.20.1758557933895; Mon, 22
- Sep 2025 09:18:53 -0700 (PDT)
-Date: Mon, 22 Sep 2025 09:18:52 -0700
-In-Reply-To: <8bf4690c-36ce-46cf-8646-5238ad65086a@linux.intel.com>
+	s=arc-20240116; t=1758558033; c=relaxed/simple;
+	bh=Be4GevQkmF/nFmdQN6+ONfubwu/F5kbrYP4ewlUZlXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YHUoIfapOnyX8QKcyUScrTbbjR73UgkkBi9ItODpibURoe6FeK96z+I6XO129tt+GCkmWM/MUY2qxaalEYGXExW91fKV98lTSkc9eb8DGnPlR13CJq/dfSzfUFjMN7odSbsgp0Swq0Hu4t8VUwiXVl/cp0SfT/HRcPRRbOgWgbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KdLt3BPy; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 1BB2DC8EC77;
+	Mon, 22 Sep 2025 16:20:12 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 111CE60635;
+	Mon, 22 Sep 2025 16:20:29 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 66EEE102F193E;
+	Mon, 22 Sep 2025 18:20:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758558027; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=u/5Oa4oSVwwK58CYuiN5FtTp13SFKt17H/vR6qsflCQ=;
+	b=KdLt3BPy4PPPNqmCpLPibifuqjV5FPeD0cBX2voEwmizA1QmtL20rgI0pk8JotVuVlC9ip
+	Ov53SUeg1HnoEY4Zp1pKqGWgFGCv5UxLS0rxM8x2UWxBtnslr+GvHYBkih5UMcWzlN6wbD
+	4vC3qpwJYPg95RR1lFzM07GJHyDt9tggZV+sIpglXNoN8SVO0/pvskRiq1utZ9EGAWFmeD
+	KOfBKRP/eh2KL6LfojppLod1KjszwKsEZYLRcdVuYtAVy2V5PWeDmbiBwK+exRRhQxuVwe
+	voRsEmabOC9vWIVqJUGKNgfFpiNd+llXGcqklnQju+nakoNXPz736re0eUmx1Q==
+Date: Mon, 22 Sep 2025 18:20:02 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko
+ <jiri@resnulli.us>, Simon Horman <horms@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>,
+ kernel@pengutronix.de, Dent Project <dentproject@linuxfoundation.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, linux-doc@vger.kernel.org, Kyle Swenson
+ <kyle.swenson@est.tech>, Luka Perkov <luka.perkov@sartura.hr>, Robert Marko
+ <robert.marko@sartura.hr>, Sridhar Rao <srao@linuxfoundation.org>
+Subject: Re: [PATCH net-next v3 0/5] net: pse-pd: pd692x0: Add permanent
+ configuration management support
+Message-ID: <20250922182002.6948586f@kmaincent-XPS-13-7390>
+In-Reply-To: <20250917141912.314ea89b@kernel.org>
+References: <20250915-feature_poe_permanent_conf-v3-0-78871151088b@bootlin.com>
+	<20250916165440.3d4e498a@kernel.org>
+	<20250917114655.6ed579eb@kmaincent-XPS-13-7390>
+	<20250917141912.314ea89b@kernel.org>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250919223258.1604852-1-seanjc@google.com> <20250919223258.1604852-23-seanjc@google.com>
- <8bf4690c-36ce-46cf-8646-5238ad65086a@linux.intel.com>
-Message-ID: <aNF27N2SCsoEx7Pt@google.com>
-Subject: Re: [PATCH v16 22/51] KVM: x86/mmu: Pretty print PK, SS, and SGX
- flags in MMU tracepoints
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Chao Gao <chao.gao@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Sep 22, 2025, Binbin Wu wrote:
-> 
-> 
-> On 9/20/2025 6:32 AM, Sean Christopherson wrote:
-> > Add PK (Protection Keys), SS (Shadow Stacks), and SGX (Software Guard
-> > Extensions) to the set of #PF error flags handled via
-> > kvm_mmu_trace_pferr_flags.  While KVM doesn't expect PK or SS #PFs
-> Also SGX.
+Hello Jakub,
 
-Huh.  I deliberately omitted SGX from this particular statement, as KVM supports
-SGX virtualization with shadow paging.  I.e. KVM "expects" PFERR_SGX in the sense
-that an EPCM violation on SGX2 hardware will show up in KVM.
+On Wed, 17 Sep 2025 14:19:12 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-Typing that out made me realize that, unless I'm forgetting/missing code, KVM
-doesn't actually do the right thing with respect to intercepted #PFs with PFERR_SGX.
-On SGX2 hardware, an EPCM permissions violation will trigger a #PF(SGX).  KVM isn't
-aware that such exceptions effectively have nothing to do with software-visibile
-page tables.  And so I'm pretty sure an EPCM violation on SGX2 hardware would put
-the vCPU into an infinite loop due to KVM not realizing the #PF (ugh, or #GP if
-the guest CPU model is only SGX1) should be injected into the guest, (KVM will
-think the fault is spurious).
+> On Wed, 17 Sep 2025 11:46:55 +0200 Kory Maincent wrote:
+> > > On Mon, 15 Sep 2025 19:06:25 +0200 Kory Maincent wrote:   =20
+>  [...] =20
+> > >=20
+> > > I'm still unclear on the technical justification for this.
+> > > "There's a tool in another project which does it this way"
+> > > is not usually sufficient upstream. For better or worse we
+> > > like to re-implement things from first principles.
+> > >=20
+> > > Could you succinctly explain why "saving config" can't be implemented
+> > > by some user space dumping out ethtool configuration, saving it under
+> > > /etc, and using that config after reboot. A'la iptables-save /
+> > > iptables-restore?   =20
+> >=20
+> > I think the only reason to save the config in the NVM instead of the
+> > userspace is to improve boot time. As Oleksij described: =20
+> > > I can confirm a field case from industrial/medical gear. Closed syste=
+m,
+> > > several modules on SPE, PoDL for power. Requirement: power the PDs as
+> > > early as possible, even before Linux. The box boots faster if power-up
+> > > and Linux init run in parallel. In this setup the power-on state is
+> > > pre-designed by the product team and should not be changed by Linux at
+> > > runtime.   =20
+> >=20
+> > He told me that he also had added support for switches in Barebox for t=
+he
+> > same reason, the boot time. I don't know if it is a reasonable reason to
+> > add it in Linux. =20
+>=20
+> Right, subjectively I focused on the last sentence of Oleksij's reply.
+> I vote we leave it out for now.
 
-To fix that, we'd need something like the below (completely untested).  But for
-this patch, the changelog is "correct", i.e. observing SGX #PFs shouldn't be
-impossible.
+I would like to restart the discussion as I have one more argument besides =
+the
+boot time optimization coming from Luka Perkov in CC.
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 08845c1d7a62..99cc790615fd 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -5175,12 +5175,52 @@ static bool is_xfd_nm_fault(struct kvm_vcpu *vcpu)
-               !kvm_is_cr0_bit_set(vcpu, X86_CR0_TS);
- }
- 
-+static int vmx_handle_page_fault(struct kvm_vcpu *vcpu, u32 error_code)
-+{
-+       unsigned long cr2 = vmx_get_exit_qual(vcpu);
-+
-+       if (vcpu->arch.apf.host_apf_flags)
-+               goto handle_pf;
-+
-+       /* When using EPT, KVM intercepts #PF only to detect illegal GPAs. */
-+       WARN_ON_ONCE(enable_ept && !allow_smaller_maxphyaddr);
-+
-+       /*
-+        * On SGX2 hardware, EPCM violations are delivered as #PF with the SGX
-+        * flag set in the error code (SGX1 harware generates #GP(0)).  EPCM
-+        * violations have nothing to do with shadow paging and can never be
-+        * resolved by KVM; always reflect them into the guest.
-+        */
-+       if (error_code & PFERR_SGX_MASK) {
-+               WARN_ON_ONCE(!IS_ENABLED_(CONFIG_X86_SGX_KVM) ||
-+                            !cpu_feature_enabled(X86_FEATURE_SGX2));
-+               if (guest_cpu_cap_has(vcpu, X86_FEATURE_SGX2))
-+                       kvm_fixup_and_inject_pf_error(vcpu, cr2, error_code);
-+               else
-+                       kvm_inject_gp(vcpu, 0);
-+               return 1;
-+       }
-+
-+       /*
-+        * If EPT is enabled, fixup and inject the #PF.  KVM intercepts #PFs
-+        * only to set PFERR_RSVD as appropriate (hardware won't set RSVD due
-+        * to the GPA being legal with respect to host.MAXPHYADDR).
-+        */
-+       if (enable_ept) {
-+               kvm_fixup_and_inject_pf_error(vcpu, cr2, error_code);
-+               return 1;
-+       }
-+
-+handle_pf:
-+       return kvm_handle_page_fault(vcpu, error_code, cr2, NULL, 0);
-+}
-+
- static int handle_exception_nmi(struct kvm_vcpu *vcpu)
- {
-        struct vcpu_vmx *vmx = to_vmx(vcpu);
-        struct kvm_run *kvm_run = vcpu->run;
-        u32 intr_info, ex_no, error_code;
--       unsigned long cr2, dr6;
-+       unsigned long dr6;
-        u32 vect_info;
- 
-        vect_info = vmx->idt_vectoring_info;
-@@ -5255,19 +5295,8 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
-                return 0;
-        }
- 
--       if (is_page_fault(intr_info)) {
--               cr2 = vmx_get_exit_qual(vcpu);
--               if (enable_ept && !vcpu->arch.apf.host_apf_flags) {
--                       /*
--                        * EPT will cause page fault only if we need to
--                        * detect illegal GPAs.
--                        */
--                       WARN_ON_ONCE(!allow_smaller_maxphyaddr);
--                       kvm_fixup_and_inject_pf_error(vcpu, cr2, error_code);
--                       return 1;
--               } else
--                       return kvm_handle_page_fault(vcpu, error_code, cr2, NULL, 0);
--       }
-+       if (is_page_fault(intr_info))
-+               return vmx_handle_page_fault(vcpu, error_code);
- 
-        ex_no = intr_info & INTR_INFO_VECTOR_MASK;
+According to him, not having this feature supported also brings an issue ac=
+ross
+reboot:
+"When a network switch reboots, any devices receiving Power over
+Ethernet (PoE) from that switch will lose power unless the PoE
+configuration is persisted across the reboot cycle. This creates a
+significant operational impact: WiFi access points and other
+PoE-powered devices will experience an unplanned hard power loss,
+forcing them offline without any opportunity for graceful shutdown.
 
+The critical issue is not the impact on the switch itself, but rather
+the cascading effect on all dependent infrastructure. Without
+kernel-level persistence of PoE settings, a simple switch reboot
+(whether for maintenance, updates, or recovery) forces all connected
+PoE devices into an abrupt power cycle. This results in extended
+downtime as these devices must complete their full boot sequence once
+power is restored, rather than remaining operational throughout the
+switch's reboot process."
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
