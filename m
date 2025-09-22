@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-827349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2189CB91833
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:50:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B321B9184E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEB36166BC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:50:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49DCE3BCA3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4E730F52C;
-	Mon, 22 Sep 2025 13:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D941C30E0F2;
+	Mon, 22 Sep 2025 13:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0gkXo+7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kHXRzKkn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682C530EF6F
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB5630CDB7
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758549015; cv=none; b=IZIvomT1ErYgkBv98pGB7Q+HhL3dBwNTV7dfNBcKh8/k3CDeDd7OrqUoSbws1o5CQluvy+E9UyrK2vMve4YPkZbhK2oOd9e35iJ+YEr9J0d2ETrYtK5jZV0BahPwZUTGCj7t0OyhO3lxQtKtncroISRVsf9zlGTak0Vx9ibvovM=
+	t=1758549050; cv=none; b=mFQcSUWJwI0NLt9qPN9N9hlaqDQErpcvUd2DwFRxjiBso4USBxOFCgg0ErWYUw9/HmsQ+XKnGnUQwY9m4e6JcJE6T5Cx02Hegoqs4fjLesW/7yxYyHXgZrSX6dM90388eBqfSfVSbzAGLrbS7cVjSPhrAzDrr6RRdwvQUvC+q6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758549015; c=relaxed/simple;
-	bh=KUdvoa11waaL9VuET18T94f4qWSxyLfuRY+uFrUSlbc=;
+	s=arc-20240116; t=1758549050; c=relaxed/simple;
+	bh=d8t+hPlDB0nO1VCV/5JqDtENUCr2tcakVRrmCSOG4Ac=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eRopxM8lcwUlDN5VJnDkmvJVtLCrv55QX5eHQmQ4FcVJt8Lf4750c5GWrc39Vz6g9rDfZZBhLOCMrtBk/AT06FI4UsRKo32JcYc25nEXdNIPassCTyye0AswCQr5VxnKzSs6c3Fph3/3TPnjf8kwSp0NrCm5jDL/85ae29gdasQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0gkXo+7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51F0AC4CEF0;
-	Mon, 22 Sep 2025 13:50:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=QkZvXtNkG3gwmOSdZcOmOELe9HpJR2AkvJHytBXxDiEmozXYWBc8HKPj82t/WqfQx2+velDWYguyqyR7ySF6BdXObn54m6vFEebBpAQT9ii3ikENinDUbHMj74Krt2twSCMb8d2GCJzeyYOy0PDetsK2XWnTGCs1BnSB1jkzddI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kHXRzKkn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B75E3C4CEF0;
+	Mon, 22 Sep 2025 13:50:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758549015;
-	bh=KUdvoa11waaL9VuET18T94f4qWSxyLfuRY+uFrUSlbc=;
+	s=k20201202; t=1758549049;
+	bh=d8t+hPlDB0nO1VCV/5JqDtENUCr2tcakVRrmCSOG4Ac=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=a0gkXo+7nkOQjnfZoRnPryocuqfZjQyryU+hLaAMYZUqw6iC1azA7St+vnNuoVRTh
-	 nNkh68Ro9p2RrHDyKGqPnT73vcBHi+RqgC+3AKVPNaQve8wgwDMUFVQP6i0bkwuyR7
-	 N9dWi040fV2IjhU7VJw2lW7933JwoNscuXyevLoGxbgWMi5OaBVieTstCKHqaj9Cji
-	 kL84/+J0ryNnwsfKSYoFZqW3DYPyLLWM2S8UY8W4aVKacDIN3c9zwcAHElgdPNmfHw
-	 IDWLQQcOEjB88Apb8ReEL/jIX60v8tlUChs4T64rSXK5TqNuYDwtTgXtkZgA2arBtb
-	 jYvB4xyJi6a6A==
+	b=kHXRzKknA3A9aDX+Xz4lbLB90q+PBv33eJfoQmsaLhGOv1tahF6UtQxvL4LPgamsz
+	 t5rltBbjHiXOXBaIQ8GXVHEFuNa4IUu6hHP55+CClRyl9Jw9qBab7s+lj2ZLSzSwE0
+	 2nVOz1InhfwHxtwZShWt9xa36LxkWLfKVBmhuogVea0VBtzaEoSCScVdh9pM8AOqlz
+	 YDAPPY3zBoEUwLTXr7Vzl0RDcIzG0jf3tcO8mz+pWJ8x4ZFRN5eEfZk2Meog34jjTm
+	 0hgRJoKPS0hhuNJDPgtvie5eQX1nGMYKMFqk0ZG0V091QLWQPTYjmQDB9nrEPj3vx8
+	 U8HP7CeoJb1NA==
 From: Pratyush Yadav <pratyush@kernel.org>
 To: Mike Rapoport <rppt@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>,  Alexander Graf
@@ -48,13 +48,12 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,  Alexander Graf
  <jgg@nvidia.com>,  Pasha Tatashin <pasha.tatashin@soleen.com>,  Pratyush
  Yadav <pratyush@kernel.org>,  kexec@lists.infradead.org,
   linux-mm@kvack.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] kho: replace kho_preserve_phys() with
- kho_preserve_pages()
-In-Reply-To: <20250921054458.4043761-3-rppt@kernel.org>
+Subject: Re: [PATCH v5 3/4] kho: add support for preserving vmalloc allocations
+In-Reply-To: <20250921054458.4043761-4-rppt@kernel.org>
 References: <20250921054458.4043761-1-rppt@kernel.org>
-	<20250921054458.4043761-3-rppt@kernel.org>
-Date: Mon, 22 Sep 2025 15:50:12 +0200
-Message-ID: <mafs0y0q6fvfv.fsf@kernel.org>
+	<20250921054458.4043761-4-rppt@kernel.org>
+Date: Mon, 22 Sep 2025 15:50:46 +0200
+Message-ID: <mafs0tt0ufvex.fsf@kernel.org>
 User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,15 +67,23 @@ On Sun, Sep 21 2025, Mike Rapoport wrote:
 
 > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 >
-> to make it clear that KHO operates on pages rather than on a random
-> physical address.
+> A vmalloc allocation is preserved using binary structure similar to
+> global KHO memory tracker. It's a linked list of pages where each page
+> is an array of physical address of pages in vmalloc area.
 >
-> The kho_preserve_pages() will be also used in upcoming support for
-> vmalloc preservation.
+> kho_preserve_vmalloc() hands out the physical address of the head page
+> to the caller. This address is used as the argument to
+> kho_vmalloc_restore() to restore the mapping in the vmalloc address
+> space and populate it with the preserved pages.
 >
 > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+
+For the new kho_restore_pages() as well:
 
 Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+
+Thanks for working on this series!
 
 [...]
 
