@@ -1,192 +1,203 @@
-Return-Path: <linux-kernel+bounces-826730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ACB9B8F352
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:59:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B76FB8F363
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58DD2189DFF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:00:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 193F13B2540
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810E52ECEA7;
-	Mon, 22 Sep 2025 06:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DEE285C92;
+	Mon, 22 Sep 2025 07:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="l/zsR0G5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QzwoyyBX"
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWMkjLgP"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B910182B7;
-	Mon, 22 Sep 2025 06:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B812F286A9
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758524373; cv=none; b=bo+dOQPadDsG6YwpCEgk1IQErzbhYN9aQxJJMtDC5H28VgRaZVYrcQ+M/NZsDyRaloMTuqv8yg/GQfjMFouhDvmzSLAXHDQiLLRtfGTZVMdq5LQ+Jua5kElrQtwV2booOrQ4Mmka6/kBHxabzcN/FLfhTeyenlPis2Cs7wgvHY0=
+	t=1758524591; cv=none; b=M2rOtoQOYPWGfCCwpqggClBmzoApU6YHK94VsLkb1HLa0GfHTxxZhy74zGFET//Hg281XRFfERD+A1xRp8uZBG7QW8XLpaBnxixtYtfYNykWbTvkmSGiIzIg2s8FEPTX5+WwNerirMQ0IaVY5j3Ci8/sXA3a5VqXReUqAgPC/Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758524373; c=relaxed/simple;
-	bh=Z4a99FyJQzgGi/pMN3UMIYUuikvwd00kIlYCCwNP6pI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Vyc5pqmhlpp5bDAZEaaid6tOm7EWqjwd19uj0kT8BXTKbbC1Zh9PzgH3A1AUiX463EIl13rbin+5oK3i4Pyebtsyb8zqkzDuw4gn7pUPhB7R4RrHqfNuzL9AJUX1WP8bXlmFuvpt+EUY2bSHq1Q2y54/5cmSexrWgf5i4GzMB1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=l/zsR0G5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QzwoyyBX; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 535241D0018C;
-	Mon, 22 Sep 2025 02:59:29 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Mon, 22 Sep 2025 02:59:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1758524369;
-	 x=1758610769; bh=tw7JZ6uQ+dSxRm1cR3ykcHwmxGgsza4QaeIC4IgS1AM=; b=
-	l/zsR0G5eT2gz2q4CXpfCwEpXLiXIWeuSMMOfqTnOtjbPdFXKq1o5OVaHjeuQvok
-	O/W1x65coIcNpApW8qDJuJ4wKYWnuGNwyn7j6woJVBtie9xTAb11d6HngQbvPBKf
-	HkCNYVpWqebU7GhZ9Qey2zLtrgNjUWrVxAmBONRPhSMCY64Yky9DXR9XDsvA3+XZ
-	ZbbjO4HokYqsR0tDqaso05RrMm8/wXDNhWRhP1S8JSdqgGPk660msIOs8xolJTTe
-	2E/lysfyyJ9YlxYZ8Aor/xg7B2nhZhTFHzG0yoqk3Jvxl/t/B3hFBhIboNtcexas
-	F/U17mzbpFvEthrXVADCEg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758524369; x=
-	1758610769; bh=tw7JZ6uQ+dSxRm1cR3ykcHwmxGgsza4QaeIC4IgS1AM=; b=Q
-	zwoyyBXTJ/xlyTuAl6eaDR08Yk7cKQ/BYb5Q+OZLHccYXOTq0s/D4PTdaj96/BWY
-	ggJn+VsyjX4BR1Hr2f98K40hOZatGzQ2cuJfCPnbWUbSoltfyoQfrYcbTyI5AP3z
-	cdO1sLjEizaP++pe3JWdqMUu8E/hcLc6Ezoa3b1J8l3zBl/LcuFy2NWUviuBLo+j
-	hEda/Sd5M2ZGiE+v/q3X7Sq/5MeU9PWw3eI+9cHwC3G6RvYy60ZxsD8o6B1XVsHD
-	/+UIoZdinlSwV09zE0r1PRQKkYVnb6LlKZJUsMPxXN8tUA+c46acCx0AdynNnU3F
-	AWgKAlnztXyZ2gLYJNgsQ==
-X-ME-Sender: <xms:z_PQaHJgzXYKoYDzZ-ssaOLFznF26Q_ZnAG6-dRyqJQJmlL_yyLZLQ>
-    <xme:z_PQaLKYJie8lkusfN2_LRJLymKL9CiEKO2L9JMaW6nU_INMf_a-KAqcU9AVkuY7H
-    Dtm7lvTZTS76OqV9zI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehjedulecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeefuddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheptghhvghsthgvrhdrrgdruhhnrghlsegrrhhinhgtledrtghomhdprh
-    gtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhr
-    tghpthhtohepnhhstghhihgthhgrnhesfhhrvggvsghogidrfhhrpdhrtghpthhtoheprg
-    hnughrvggrshesghgrihhslhgvrhdrtghomhdprhgtphhtthhopehgvggvrhhtodhrvghn
-    vghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtoheprghlvgigrghnuggvrhdrshhvvg
-    hrughlihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgvrhhgihhordhprghrrggt
-    uhgvlhhlohhssehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhurhgvnhgssehgohhogh
-    hlvgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhg
-X-ME-Proxy: <xmx:z_PQaO-AbAyrchLt1gPFzz5ImqtdsCE4MtwCgozi9Nvp6tIrZcpE2Q>
-    <xmx:z_PQaOrgvuN6qNmRYjHfGwBTMsdEkP_7cBTz8lKVYq6AnPpCxT48tA>
-    <xmx:z_PQaPkdEcrkiW2nIGq5bH_Mu4Fdt4bCb8JYLLnUSHz6JcSrKkzR9Q>
-    <xmx:z_PQaLbNi1YcKXD1-mIpvlgsrc7fhhvtK_CV_WIUToIeUNXLq5ldZg>
-    <xmx:0fPQaCrlRiKZ3grcKLdDxNAcmQRYM5wxeUnR0jLm2DG7jGDKd4pLMQoQ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 79F2D700065; Mon, 22 Sep 2025 02:59:27 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1758524591; c=relaxed/simple;
+	bh=965izMH36FGLomjtcPvBm89ybWQtRT8ePyq8yto8kUo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fIgBwlEgGBp6CKtL0scoLhQ9WH2bEaSlI1GU8q13FwN8/ApufNn45yKRBu6pZb2GpFbbaCk9Ox3NbIyJdjU7U0THV5BTSa5U86gAuPkx+HLNarjelrEMPa+24yuAOhVOnQsBqsqneqtujHMkKjPvOUukL4RJiXWS+5RBZiqNPh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hWMkjLgP; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-77f41f819ebso268992b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:03:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758524589; x=1759129389; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4VdrnFXMa9rFd83Zher/BcNQQzlodlm+IkoVXej7FCs=;
+        b=hWMkjLgPJjieabMET5HCu0mjhCIfHxA8msfSyjFD3buAxOcCivFR72GlSSHyKYu1jn
+         krhf8ZwJY86vo+MJmHAdNscIs32yNSAiyrdTPfaSj8gPuTbYCZEoEX7T2hpBKXyNriBz
+         rb5I2Fn6o01yJvXdeknMGTE+byXmOzY1ZUv5qMp5wcc29XI3PLtr/A9iQVqx8aURzEv5
+         wGeVwI8iGqCg4XVqC0GcbVrZJEDcD7H+rEMuLmPS5bgBhAuZucCAcCt1t3xdPLzP7kEU
+         /dMgNoiRpXKOne6SfkGAZZuR+Ks7KdaJ0yy2p4KgNDZ4etUy1uP6ZNpbQ8GioAKP5TBY
+         oNMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758524589; x=1759129389;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4VdrnFXMa9rFd83Zher/BcNQQzlodlm+IkoVXej7FCs=;
+        b=JSk/fScoCJ9hvQQRxXbSbHNKxMgoRdBpbJe+3/jeaYioAsfzSPWbeEy0G2dvqD5lUs
+         /IywtyL2SbFo6385I16ByuUwynSrycwgvmvr7Q9I3JGhPPAD0NLlK9kSH/oo76q4iaUH
+         1HUhgmG+QDQE1mQon0o1Scj+qA5DUfRmEuve3BvM6SK9EFIUYRYaS8AdAmYkmnhaycNx
+         oXgwefBZQ+wIZr4G7gu0ojdQfSfqLWQIRjkbp8gtw4OoBwg/uyujmcAGf+dlEkbZJDvX
+         LzEcp5Esc++PxCEE0yB6E6IH/b2j0a8nLWzbllMsPHnL+46ZvekuXp48Lg5lo95yxrqT
+         yIbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSONsIAHmllMIiAW78UwuinCfGqSXiGDg97WLDowP9FFQ9tCfpXiqc9hQWFgiSo4ZU0SDz1xEfoqInB5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwelPLeeQ4Bw4rhdq5jFQyYI9QcxPoPOdEvcL4c32+vFivV/ZdR
+	CDIX8ucEH30+c8uEkQHeOKDx6mycQhtXi6TNh24V2GBqvtdcIzATk8ag
+X-Gm-Gg: ASbGncs5ddBNpdSv8NgeQnDwu2ZG/C7vFPGjZZPUcYLuyRCNXhxN1nRGafV/sVhigSM
+	0pSiRSc7xbXG0rj1wLl0oCZ6WtoWMXl/5HtjMlpxW8TBCK/Z/T5oJ0IHbJFMdZUEBH6l913QLOA
+	lJL5uWaH27ntQsVo6THXEoTCSnWaBSBtJylDMprSkF2xdTqStGNJC4n8vQABK7O1loIhlVZr+Ez
+	2anYb7fXj11zojCZeO3P70OXqoo/MNshQRc+voBePhA7RiNeFiScaquPxagLiz4ps1UhsOM5BZC
+	Ji8lTO7KDGWec7OIfMaDsKTvAPGLgBpeCPOYvAVuHefQl7pmPARvOosv5ZSI4na1TNPejmz3PWs
+	qUbiztPKP+RfzVyXeoCTU73PMOxggV7Isnou6TSrLty1+qVf8TMnB0EtCEtuw/be9EQ4=
+X-Google-Smtp-Source: AGHT+IGJ48A08lAcVKcYdk0WkcJU/k9veu86ugQxlnRCGNKMTcl5D3T3DnGhbnyIKjGQKizhhH8t5A==
+X-Received: by 2002:a17:903:2f4c:b0:263:d6b5:fbe1 with SMTP id d9443c01a7336-269ba56738bmr118340355ad.55.1758524589057;
+        Mon, 22 Sep 2025 00:03:09 -0700 (PDT)
+Received: from [172.17.0.3] (125-227-29-20.hinet-ip.hinet.net. [125.227.29.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-270cdb02c3bsm61149115ad.102.2025.09.22.00.03.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 00:03:08 -0700 (PDT)
+From: Leo Wang <leo.jt.wang@gmail.com>
+X-Google-Original-From: Leo Wang <leo.jt.wang@fii-foxconn.com>
+Date: Mon, 22 Sep 2025 15:02:48 +0800
+Subject: [PATCH v2] ARM: dts: aspeed: clemente: add MCTP over I2C support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AneuvEk2E7Kg
-Date: Mon, 22 Sep 2025 08:58:57 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jason Gunthorpe" <jgg@nvidia.com>
-Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>, ksummit@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
- linux-mm@kvack.org, imx@lists.linux.dev,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Richard Weinberger" <richard@nod.at>,
- "Lucas Stach" <l.stach@pengutronix.de>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "Ankur Arora" <ankur.a.arora@oracle.com>,
- "David Hildenbrand" <david@redhat.com>,
- "Mike Rapoport" <rppt@kernel.org>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Matthew Wilcox" <willy@infradead.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Vlastimil Babka" <vbabka@suse.cz>,
- "Suren Baghdasaryan" <surenb@google.com>,
- "Ira Weiny" <ira.weiny@intel.com>, "Nishanth Menon" <nm@ti.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
- "Chester A. Unal" <chester.a.unal@arinc9.com>,
- "Sergio Paracuellos" <sergio.paracuellos@gmail.com>,
- "Andreas Larsson" <andreas@gaisler.com>,
- "Nicolas Schichan" <nschichan@freebox.fr>
-Message-Id: <44f910bf-ac2c-4b2f-8e50-5cfc7dd0761a@app.fastmail.com>
-In-Reply-To: <20250919143436.GC2132010@nvidia.com>
-References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
- <20250917125951.GA1390993@nvidia.com>
- <02b0f383-1c43-4eeb-a76f-830c2970b833@app.fastmail.com>
- <CAMuHMdVecUeLZ2LPpa457C0a=uduvDhQ4KZJx-++dEFJraRi3w@mail.gmail.com>
- <547dcb81-434d-4910-aa7c-1d69019fcb3d@app.fastmail.com>
- <20250919143436.GC2132010@nvidia.com>
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250922-leo-dts-transceiver-v2-1-d2dc0e24a70b@fii-foxconn.com>
+X-B4-Tracking: v=1; b=H4sIAJf00GgC/32NTQrDIBBGrxJm3Sn+IKRd9R4lC9FJMpBoUZGW4
+ N1rc4Au34PvfQdkSkwZ7sMBiSpnjqGDugzgVhsWQvadQQllxE2OuFFEXzKWZEN2xJUSkndaknZ
+ K2hn68pVo5vdZfU6dV84lps95UuXP/u9ViRI1KTMKrUyvP5bd8nZ1cYeptfYFSinqOrYAAAA=
+X-Change-ID: 20250918-leo-dts-transceiver-edc31e3c21af
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ george.kw.lee@fii-foxconn.com, bruce.jy.hung@fii-foxconn.com, 
+ leo.jt.wang@fii-foxconn.com, Leo Wang <leo.jt.wang@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758524586; l=2794;
+ i=leo.jt.wang@fii-foxconn.com; s=20250618; h=from:subject:message-id;
+ bh=9m5R4VJWufe7k7yurqqw3z2y+D8AnXNo6e7S0rTybvc=;
+ b=H587RMaWwa8qjdxlMqKskZgP2x92LSHN4XC0VLs+x1k0fF8sSLgQ/oghPLxbeWH2ZTr3udvki
+ ykREjgsCdz8A2JTncdm266pra8yLsRJBoZ5qb8m1GYIjQptIuBJiPlC
+X-Developer-Key: i=leo.jt.wang@fii-foxconn.com; a=ed25519;
+ pk=x+DKjAtU/ZbbMkkAVdwfZzKpvNUVgiV1sLJbidVIwSQ=
 
-On Fri, Sep 19, 2025, at 16:34, Jason Gunthorpe wrote:
-> On Fri, Sep 19, 2025 at 04:22:20PM +0200, Arnd Bergmann wrote:
->
->> SAM9X7 in 2023 added DDR3 mode with up to 256MB according to
->> the datasheet, no idea why they chose not to support more,
->
-> Quite possible the internal SOC wiring only has 28 address lines. :)
->
-> I am right it sounds like we can drop vivt cache support with highmem?
-> vivt is alot easier to understand if kmap isn't running around
-> creating virtual addresses aliases!
+From: Leo Wang <leo.jt.wang@gmail.com>
 
-I think so, yes. I've prototyped a patch for it to add a dependency
-on !VIVT and the drop the code paths that are clearly no longer
-needed without it. This obviously needs proper testing, but the
-diffstat is promising:
+Enable MCTP communication on the Meta Clemente BMC board:
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index f14bac913d50..0a31cfaf3818 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1214,6 +1214,7 @@ config ARCH_SPARSEMEM_ENABLE
- config HIGHMEM
-        bool "High Memory Support"
-        depends on MMU
-+       depends on !CPU_CACHE_VIVT
-        select KMAP_LOCAL
-        select KMAP_LOCAL_NON_LINEAR_PTE_ARRAY
-        help
- arch/arm/Kconfig                    |  1 +
- arch/arm/configs/gemini_defconfig   |  1 -
- arch/arm/configs/multi_v5_defconfig |  1 -
- arch/arm/configs/mvebu_v5_defconfig |  1 -
- arch/arm/include/asm/highmem.h      | 56 +-----------------------
- arch/arm/mm/cache-feroceon-l2.c     | 31 +------------
- arch/arm/mm/cache-xsc3l2.c          | 47 +++-----------------
- arch/arm/mm/dma-mapping.c           | 14 ++----
- arch/arm/mm/flush.c                 | 19 ++------
- mm/highmem.c                        | 86 +++++--------------------------------
- 10 files changed, 27 insertions(+), 230 deletions(-)
+- Add an MCTP I2C controller node at address 0x10 on I2C0
+- Mark selected I2C mux channels as MCTP controllers
+- Remove unused "i2c-mux-idle-disconnect" properties
 
-I did get an email from Nicolas Schichan (added to Cc here),
-and he is still supporting a widely deployed Kirkwood based
-platform that uses 1GB RAM configurations. He should get
-a chance to test that with CONFIG_VMSPLIT_3G_OPT, but I
-would expect that to continue working, possibly with minor
-bugfixes.
+This allows MCTP devices to be discovered and used for
+management communication on the Clemente platform.
 
-For the timeline, the coming merge window is for an LTS
-release, so if we remove VIVT highmem support in 6.19,
-any remaining users we missed at least still be able to
-use 6.18 for a couple of years and get security updates.
+Signed-off-by: Leo Wang <leo.jt.wang@gmail.com>
+---
+Please consider the patch "[PATCH v1 1/1] ARM: dts: aspeed: clemente: add MCTP over I2C support"
+withdrawn.
 
-      Arnd
+After further review we determined that enabling MCTP in the Clemente device-tree is not
+required; the affected devices are managed through other mechanisms and adding MCTP nodes
+would be unnecessary. To avoid confusion and noise, please ignore the previous patch.
+
+Original patch message-id: <20250918-leo-dts-transceiver-v1-1-3e2580325edc@gmail.com>
+---
+Changes in v2:
+- Withdraw patch; no functional changes
+- Link to v1: https://lore.kernel.org/r/20250918-leo-dts-transceiver-v1-1-3e2580325edc@gmail.com
+---
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts
+index a614f947dafc9a6628c3f3d45b62ff3ca9d2b618..a2f0ed6e7bbefbdcec33f7ddebdf2de62adec164 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts
+@@ -269,18 +269,23 @@ &gpio1 {
+ 
+ &i2c0 {
+ 	status = "okay";
++	multi-master;
++	mctp@10 {
++		compatible = "mctp-i2c-controller";
++		reg = <(0x10 | I2C_OWN_SLAVE_ADDRESS)>;
++	};
+ 
+ 	i2c-mux@71 {
+ 		compatible = "nxp,pca9546";
+ 		reg = <0x71>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		i2c-mux-idle-disconnect;
+ 
+ 		i2c0mux0ch0: i2c@0 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <0>;
++			mctp-controller;
+ 		};
+ 
+ 		i2c0mux0ch1: i2c@1 {
+@@ -332,6 +337,7 @@ i2c0mux0ch2: i2c@2 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <2>;
++			mctp-controller;
+ 		};
+ 
+ 		i2c0mux0ch3: i2c@3 {
+@@ -457,12 +463,12 @@ i2c-mux@75 {
+ 		reg = <0x75>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		i2c-mux-idle-disconnect;
+ 
+ 		i2c0mux3ch0: i2c@0 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <0>;
++			mctp-controller;
+ 		};
+ 
+ 		i2c0mux3ch1: i2c@1 {
+@@ -514,6 +520,7 @@ i2c0mux3ch2: i2c@2 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <2>;
++			mctp-controller;
+ 		};
+ 
+ 		i2c0mux3ch3: i2c@3 {
+
+---
+base-commit: 1937f781fe7fcde26e537e74dfc6097fc08fc9bb
+change-id: 20250918-leo-dts-transceiver-edc31e3c21af
+
+Best regards,
+-- 
+Leo Wang <leo.jt.wang@fii-foxconn.com>
+
 
