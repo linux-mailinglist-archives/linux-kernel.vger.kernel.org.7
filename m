@@ -1,114 +1,104 @@
-Return-Path: <linux-kernel+bounces-827504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD1CB91F0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:32:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F023B91F3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2792A19044D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:32:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E01A1904B72
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D222E764B;
-	Mon, 22 Sep 2025 15:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8762264B2;
+	Mon, 22 Sep 2025 15:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NPo173pW"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tXM5QUiY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8329D2E7197;
-	Mon, 22 Sep 2025 15:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06AA2E7F2A;
+	Mon, 22 Sep 2025 15:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758555115; cv=none; b=a2VWivTonpOAJ8CmKxN2iEtt3AaSUxpUnw3JTqmNCqMbY4y8dpKc0mexZusf5LA36IiuZ1JBbvbXHi7GC4cf57twpsR1/n2HlDqh56qaM07k3b1dYb4+oBYFFl/e4JWp3SybB8DssgAX0opvwgelFz4NtkUY/6WxECLmpvWczV0=
+	t=1758555204; cv=none; b=jN24HuD3x1ZpLadKUvGWCU7Yj2Kr9ZubQDSl8w2o3axqHSZB4XFvY75R+DB6vWqlXUkoM5Ob1dsFfFxhsoJjh/c5auiKfa0WOetk5KEFr3YVqmTBZTDy+E49Nqc/F8hs1bjkBdIXku1YH2w8X4xoKBU66S8YD2FDTlVsOBsYcoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758555115; c=relaxed/simple;
-	bh=qDAPKLAmBW+BbWlMqzRPUrZf2ejgZ/s+bak4MX7qR+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j9w0qnAHjAccAUNtACqm7fUXL1jKy/pXbfGQQOgpNZBsd46Gf/Zg5jiPNYCd3q3pZIxmpu0R68Uke77yrJ65S2kS5I0vQ/GaoogAD/2jhLkBWYbci5oFAW7YhIpfDrp+rlsf5hkG7KFvv2H+24D2nXHTqnKt1DtoN7cfnntNKt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NPo173pW; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id ED55F4E40D53;
-	Mon, 22 Sep 2025 15:31:51 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BBDB360635;
-	Mon, 22 Sep 2025 15:31:51 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 471F6102F1942;
-	Mon, 22 Sep 2025 17:31:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758555110; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=++hT/gI4Y4VMUAzGdgLP1ng3+Xf93jWlboopap+4PG8=;
-	b=NPo173pWeUqhoCioDsMe7BwxhI/GUauHlbILxe59u8f6SmQ1TlB8ZDyr8H0TZ/WHnocjpO
-	8iLoaKDHRIe4ooQ+8ct5Ygr1oTc3zc5gaW9sjHHY4Gg86yfi8XlVq8JSsIF5GcJdEfKGfp
-	PEZh51dNubkTOiKpRqXJ20HN22rZFYYTTzFKzshCXE1kRMVozUYd4Oc83xnX2/0W4g2nw7
-	zUMRM2mvCcgwykO+wx0LxP9mPeq542fPhB1QVWn72KtLCq4uQ2/jyiVKsMmvJsYdKwxoum
-	z+twfQL4JCM0damPmqA4qW1BbwFyDtv19ZJ3pTL0u4u2pt/HAQXUvJwEjY1jXg==
-Date: Mon, 22 Sep 2025 17:31:45 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Hoan Tran
- <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Saravana
- Kannan <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, Phil
- Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, Pascal Eberhard
- <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 5/8] ARM: dts: r9a06g032: Add GPIO controllers
-Message-ID: <20250922173145.4d4dbb2f@bootlin.com>
-In-Reply-To: <CAMRc=Mf9OB03FXEpSXG8XeJhtd7MkwJTH=rY11SBb9SazCMqJw@mail.gmail.com>
-References: <20250918104009.94754-1-herve.codina@bootlin.com>
-	<20250918104009.94754-6-herve.codina@bootlin.com>
-	<CAMRc=Mf9OB03FXEpSXG8XeJhtd7MkwJTH=rY11SBb9SazCMqJw@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1758555204; c=relaxed/simple;
+	bh=OCz7zJBEnf97vpSiBCLClDWqNe8hZTHYV35i690Btlo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b7gcxx7O1Cpr1g4uAHikiiSog0QMVuTOP/9/ckQ6Q9q51quafwY3bsrRmnDJCbz3XW5Bz7ZJc+oca2Z9NQ8ngD7irTtPqbNQuOXlVxgEsSDZ/f0S0Q2QVMn9gD93Ho21pTWYLH02aW/4G5OWd/OKwBugMhcL5SDarJETwjTMNcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tXM5QUiY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8A54C4CEF0;
+	Mon, 22 Sep 2025 15:33:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758555203;
+	bh=OCz7zJBEnf97vpSiBCLClDWqNe8hZTHYV35i690Btlo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tXM5QUiY7W956Il35348XSH4rBsqGetv6Ms/9LgSMkhV35pfMsCZbpGsXHeu95KNF
+	 trmyj21Q3FCj5QjQj9sRJ+WxMeLcSK70gXbZYAKH0nSMsM6ULikfBHPGLPAHSRswIF
+	 L+QTUmybm4ghIJpnma64gczJzeFZC4cwnA6TUBhA/CsluSFXmXmcF8rGSEDTK8z3q/
+	 XRS7QLiiYlYpdkdav/nuIFpgCutWu8OuktFenRoc5/necEKj7/woBhQOza02i1Ae4y
+	 8V/Px42bpzrkD6lcIWOKb+bXD2MLHGBP34XDjPGq3IZGmBoPT1V1LkShHWWbEWbKfk
+	 gnf5eG+VN1bQg==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux PCI <linux-pci@vger.kernel.org>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Bjorn Helgaas <helgaas@kernel.org>, Zhang Qilong <zhangqilong3@huawei.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v3 2/3] PCI/sysfs: Use runtime PM class macro for auto-cleanup
+Date: Mon, 22 Sep 2025 17:31:53 +0200
+Message-ID: <1950293.tdWV9SEqCh@rafael.j.wysocki>
+Organization: Linux Kernel Development
+In-Reply-To: <12763087.O9o76ZdvQC@rafael.j.wysocki>
+References: <12763087.O9o76ZdvQC@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Bartosz,
+From: Takashi Iwai <tiwai@suse.de>
 
-On Mon, 22 Sep 2025 16:22:14 +0200
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+Use the newly introduced class macro to simplify the code.
 
-> On Thu, Sep 18, 2025 at 12:40 PM Herve Codina (Schneider Electric)
-> <herve.codina@bootlin.com> wrote:
-> >
-> > Add GPIO controllers (Synosys DesignWare IPs) available in the
-> > r9a06g032 (RZ/N1D) SoC.
-> >
-> > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
-> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > ---  
-> 
-> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Also, add the proper error handling for the PM runtime get errors.
 
-I have just sent the v4 iteration.
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Link: https://patch.msgid.link/20250919163147.4743-3-tiwai@suse.de
+[ rjw: Adjusted the subject and the name of the class ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-This patch has not been modified in v4.
+v2 -> v3: No changes
 
-Can you add your 'Reviewed-by' in the v4 series?
+v1 -> v2:
+   * Adjust the name of the class to handle the disabled runtime PM case
+     transparently (like the original code).
 
-Best regards,
-Hervé
+---
+ drivers/pci/pci-sysfs.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
--- 
-Hervé Codina, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -1475,8 +1475,9 @@ static ssize_t reset_method_store(struct
+ 		return count;
+ 	}
+ 
+-	pm_runtime_get_sync(dev);
+-	struct device *pmdev __free(pm_runtime_put) = dev;
++	CLASS(pm_runtime_get_active, pmdev)(dev);
++	if (IS_ERR(pmdev))
++		return -ENXIO;
+ 
+ 	if (sysfs_streq(buf, "default")) {
+ 		pci_init_reset_methods(pdev);
+
+
+
 
