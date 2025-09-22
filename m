@@ -1,420 +1,298 @@
-Return-Path: <linux-kernel+bounces-826528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A8AB8EBA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 04:01:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68905B8EBB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 04:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469E41895EF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 02:01:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4397018961E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 02:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1722E2ECE82;
-	Mon, 22 Sep 2025 02:01:17 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EDB2ED842;
+	Mon, 22 Sep 2025 02:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="QXrN0V32"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022084.outbound.protection.outlook.com [40.107.75.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135A01A285;
-	Mon, 22 Sep 2025 02:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758506476; cv=none; b=WaoVk1LLLB77gaTeCxdG89Cg1Q8zf13YslsiI3EE0KyeUbvnSuO7YB2pmwewGRB/kH5r5kEyjBLCS4ReaeMzRkvkz/AqAJqzxtpp7EC0j8BQLn178n+9T4knjAkudF8kC/+hsPj/qggbGPTEGap10w2nwBZwWkBQGNQSzUvgj14=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758506476; c=relaxed/simple;
-	bh=D+Czq0gZvzYEtmk/aSmSdvbKLoqeewgul78UxHS99ik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tMY7G8tUN17oU/bkUF4KeP2CBEVOu4BaP91SR4KJbAy84tkejt3hMipkSNw1g0jOmHF1q44knp14RaPOdagFozJgP8Ow0mfWEx0vbRXtPTx6Xc1qWofI3PMoAQZXdBr01XRcEJFfZqY1bC2LPlaH4aev0SSAUnM7EG85LclXoJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cVRD15BVczYQv4K;
-	Mon, 22 Sep 2025 10:01:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 44E721A1675;
-	Mon, 22 Sep 2025 10:01:09 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgDHjGTfrdBo2dGXAQ--.16041S3;
-	Mon, 22 Sep 2025 10:01:05 +0800 (CST)
-Message-ID: <9e38a891-f5be-41ce-e00f-9ef8f905de10@huaweicloud.com>
-Date: Mon, 22 Sep 2025 10:01:03 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EA017993;
+	Mon, 22 Sep 2025 02:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758506628; cv=fail; b=d99PHsbSTjHDBVky00iJrsLb6NZthDMbdin9pZatwly7Eb8eafSTXzN+3HM/Wn1Yh4os0tsTo5ZWsPWAHBCKPvyRMFpYs24bRUTuUFSxmUtX7xLXgISs5DA7bMhyAdPE6FZu1vDlsfwpk4qf57d1NFQS7ZhBf0DrG5OhMOTjE88=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758506628; c=relaxed/simple;
+	bh=cxkv9ZOKfArxvTgOpbyU/ggPUfLfYZoSdwX2JVeEO9k=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QaecmgTQfI4UAuEeRYhNFw4Vi3RAgMEfIGLy+JmXR9e5aCWRnqrVTKYhw/mcrJxJd/LquanDL8/7+t4CpxP1Hc8Ky+f8ANjoRMoLiSTfwigp7UvDYweIQGeK2inSXNS01WUdy6JAp0mV3tqF+xDA/1C96hVac+8pvtB5Z9dUuwc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=QXrN0V32; arc=fail smtp.client-ip=40.107.75.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cSCXQ8PC+2HvZjOjK1I83sdgDDcDW6+RGi8OH9KLC7+T6YGYykFKUPivx/17VRQ9pDUWSRkbpihU6VSkJsuRWK9FtcmYEVLL46d7KFFwujMLB4PaSD1Kv6j6HRcTxmlLFbhodi7VIl/Ojb7t2mcPcRLexQF+b0iq7nmWcVh3JZUi+BT8ZTaiqliGqGAt06RFMPu65wUHJToy12yQoa0c2wXTscTwf8Bwqs/N6NzBbaHwgbi7bU5HzifYUM35lwaaXYeywPE/IJtlWH31tV8Dwb3RUlxlLIriYPqLn1vKFjr+JcVH5Ol89/6kSsp9WhM6HzkXn48jA6iIW1T9RgvtJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NUwI60KdGI6O5XTc0oQBArY3uUU5h6uP9agX4s5UqLM=;
+ b=GNLQ4FJLb3xWXFDqa0uQS/EjMmoJFxDkiUvxo0vBliR462EejXXvQF5hWtNpwR6zf5gt1IU47wqVt356vrZFk/VAJhmzkyV5N+0dbCrC6DyREVJ/PDDfxQhPRhT3KLMcFCLRaENwK2y3aA9NudoE3O4JeX6XVHMlfQT3bcr/0v6HlvRRjgz4BevQrXG1Im1fhFgM9jTCcj/Vmi/gqHff1LbuCgCwguy6WE7NRphUKWpS5UBuCT7olQwBhjx9IEXGbb8EOWF3FRUO6VX2uVsTjludYIAdDmccluslBJ7S6EorhHWMGJt13eh4N9fJPC83qtP3sTGBB96i1Mj2lQB1Pw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NUwI60KdGI6O5XTc0oQBArY3uUU5h6uP9agX4s5UqLM=;
+ b=QXrN0V32OXE2vt0lskDgZJYGOAx36M52yorP4lsJziImgQKmgqI1N9qerGWFFkHj/6qDxnAUt44ZS31leOa/2qq47+jTRx8wf9yANdRyYxDQYDn00EltpVjKSvozuRAJ8d0bDqNM3awN95s4buTQ0gp6DBNuNw2icGZoGtuDPjhSB+EEmnEOLTPn8QcK1Y6fMBvkG88daBfyRgEti7Wrgob0CihkpPJA9QmfFv9x/K2DiIo1bo9yg2KjtuFUHX6IFyJGwQdCU3lv48Ad3GS+ydY1EG4NJUWY6SIhgTRJ1TEmZ507WsFd6d8JJTX9HWXvjYseVkJlNYS7Lm1XuZgbIw==
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com (2603:1096:604:2b1::11)
+ by TY2PPFFD5F4C141.apcprd06.prod.outlook.com (2603:1096:408::7b3) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Mon, 22 Sep
+ 2025 02:03:41 +0000
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11]) by OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11%6]) with mapi id 15.20.9137.018; Mon, 22 Sep 2025
+ 02:03:41 +0000
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 2/4] usb: uhci: Add reset control support
+Thread-Topic: [PATCH v3 2/4] usb: uhci: Add reset control support
+Thread-Index: AQHcKREd5VlUPj0h6Ey13T7T08axA7SamuyAgAJBwnCAAZodgA==
+Date: Mon, 22 Sep 2025 02:03:40 +0000
+Message-ID:
+ <OS8PR06MB7541897BB2E71E8847B04C0CF212A@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20250919025712.719246-1-ryan_chen@aspeedtech.com>
+ <20250919025712.719246-3-ryan_chen@aspeedtech.com>
+ <9c867c34-047d-4771-b9a6-a2c88dd1f800@rowland.harvard.edu>
+ <OS8PR06MB75419B5722DD375F493A7902F213A@OS8PR06MB7541.apcprd06.prod.outlook.com>
+In-Reply-To:
+ <OS8PR06MB75419B5722DD375F493A7902F213A@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS8PR06MB7541:EE_|TY2PPFFD5F4C141:EE_
+x-ms-office365-filtering-correlation-id: 2531f2fd-6b54-4da9-5948-08ddf97c405c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|38070700021|13003099007;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?yCBey29F2hY2xrkMQOYK9wX2kDhl9OySAElye3XhlE+y0saZwER6Cxr9i9TP?=
+ =?us-ascii?Q?V2P3m2gIgDbVjDPdpa5ZK54/KvrCGFADQnsmdEXGEOnja6WFVAhpKZjFBjiG?=
+ =?us-ascii?Q?6PjALNktxNXVxEH+E9K3a2B8BBUtgyolbZqAqlkNz6Fghg/o0Rzqsyl5qrQw?=
+ =?us-ascii?Q?z4rHkqUoUk1AF2rA/mgKWX/Zm2ZeNqNo3C+22lWvVonOIktpTI6ctbz6GIRm?=
+ =?us-ascii?Q?hJmPmN++x4eGCZgw+cCaid6A/K1HFHuVQUP8acx+l3HtCETGbOcN9UrkZNuW?=
+ =?us-ascii?Q?JUFTs9RwgjR7GFNu9EnURo4SAqzFMR/mYFYJvZiVDrlwh4cf+o9OV3GFKm3I?=
+ =?us-ascii?Q?Fjgyk+MKNUPkdxb1b0a5GOj5jnyF7YxgP6F7CxYIBM9EjxL5O8WDDjnsWB/Y?=
+ =?us-ascii?Q?y4tEyhjbVw0eJBnpt2k7aGlr+BA2h5CmnGa4AFKQgGbq7wMvQriDKnL39r65?=
+ =?us-ascii?Q?mesWsEh4TnQMszMxxddgNmY9YV0UR+A2QmeRuZaSzjA0He6El6PsQ5pHTBhS?=
+ =?us-ascii?Q?oeJneiA/Rq7Tp3MT8gGH+VNSPrrJP65HxuQn0FRcHmLR+LHUnSK6igS7oo0Y?=
+ =?us-ascii?Q?0lrgfkuWyBgqxAARwvxf1n9A9ksb9v7P0QtG+t3XKEEtO55Vw0SGeg7H9D0c?=
+ =?us-ascii?Q?gCIl5yZbeVAX8EYMIrNnltJGbJtNSnccJSLNbYraGeZHsM5+4kJvJ5I/XpNj?=
+ =?us-ascii?Q?t7I1fneLEA/UbvWLa8snMJWR9ko3ZcCFON6/GJRc6snbg8eX95I5HYrMdiKK?=
+ =?us-ascii?Q?LuVstodugB/St5k5CQzTUM0soSch8DwkS8XsmvsG80AXJ4GwNV34tpAuP1Xc?=
+ =?us-ascii?Q?C8N8H1WM7nezUwxFiQj5kajwYaAGvixjCW+2NpfeDNOHMljPneAFUvqw9K4E?=
+ =?us-ascii?Q?fmACNIZdpBM0kbG2w7M6MZz5snUhf2omQWtVmAeRY2S6uMFMYT+eaAmrbNUR?=
+ =?us-ascii?Q?naktJ5XEkRe906GacpXMv5UOb2NwLjLwulW/JrfRRYbx43BFDfI6ahJ2/C0C?=
+ =?us-ascii?Q?JM8eSaI6RpbZBxBfJMUN1p4Kcnp4EgNfjRSoSxLehE8grjcsb9ymy2WGiz8P?=
+ =?us-ascii?Q?ZAUrrTtfLFN8jUiDK1wH4mSri1v3nm2hMRVSieiWvbdUR9NMLmRA+mSbkGmD?=
+ =?us-ascii?Q?GsVGvXkop/ZOEWm2C/rjh+0fz/2b2szt8NnT1ebRyZVKerzzk0L7+Kl78ZWS?=
+ =?us-ascii?Q?phdbWMDhZBz83H6VcncliKtqoEUte2hWXHaHgyMfqhLwB/VTtOkKjU7mDcv6?=
+ =?us-ascii?Q?rHSZhaGVlMBgLdMoSYAHMmF2Ug9MjZC/07O/fdBJOIZb7oxM47HSlVY7EPr5?=
+ =?us-ascii?Q?zTsczlyQeA+ok/N6nQc/niItzjGdvbDrrCZTrImAgHjBNCRtWBeO5UGGlJly?=
+ =?us-ascii?Q?Yz3szP63kLyJAbqFt0hUrjajfhu/NQE7aa6N897Fo8CvrzMbDiovs1z2mLSm?=
+ =?us-ascii?Q?T0ZIK9tIFbE=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS8PR06MB7541.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700021)(13003099007);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?QhYqw5rnsh2xGISN6nTYufIVrvlbBZBqu4dhlMjEAhclAc0paZbgLGI0WNc1?=
+ =?us-ascii?Q?AQ1Nd3Pt/L+yjxWnUXWCwOyUAgFCmXuqEVX/TLDkczSwkZS4+KlhfPH6HqxG?=
+ =?us-ascii?Q?xRbLbpD67iX52q8WydKKDWIHcUSLuscYPVETNpuPublDAaahQQjGVUgYILzC?=
+ =?us-ascii?Q?8RcYIKGG3bX4J9X4Jxjz0pA57+UCPl3doLcYcq8rznST4anETWroTpmpUd/k?=
+ =?us-ascii?Q?S4xlxahFbp4u1ZFzWcyBMWr/2dh6Hk0pZjckwNp7Dsh1wB1GPfP7my0tYY5b?=
+ =?us-ascii?Q?lkS9gJGmbWD19+SYpxbhL2vN4AZWVNW4lfC5Zm5/LljOQ6KJEKY/+EagTqY7?=
+ =?us-ascii?Q?nYvbZn3AqwoFspJkgNQnFxXoo62MAYXi8/gF9DclRbnRSa/yF3ETRGC3oSwK?=
+ =?us-ascii?Q?W7fodAOsUZ9oPCmI5vkUCcHens6GBbwbElNlxlDF58OFbceqiLhBRQ/AYMnR?=
+ =?us-ascii?Q?p2tuyaCqY5W5LtL58EHvalja+YQdtV+FYW/g1J8argfqAbUtnR8ysWaJ5BYh?=
+ =?us-ascii?Q?2c7wBewP1AMtCAAldjtA4sa4IKlDHCV7ynS8Mxpw7rDR1e2heAjhJgTGMNLr?=
+ =?us-ascii?Q?SWZvJ1SHq0PnwaN2HdnJKMWQOacGzPF1IKv7Fy9LgktfzjfDVmL8zRcmTZ4V?=
+ =?us-ascii?Q?+UlAmpzevrm4v7JuafChw8chzRRfEf4tDbWKcvR/7TWDTdPN6Q83g9aqbR6F?=
+ =?us-ascii?Q?9Qay2nMAgMG1Wgnm5yS/3MG4Y5FPrkQoRKX452REpNHsprQ8dKOLMXkZnhro?=
+ =?us-ascii?Q?842ZkJViCIBvxTOvDA0+Ew93OiflaS3KhD4uve+JbCV6WOLN+xMC9SUW3RdW?=
+ =?us-ascii?Q?3ldzL0+4io80XY1IHDzd9K85aRp3zTRmPBZytfFjjCUug5C9YgRAdGrua6eN?=
+ =?us-ascii?Q?OUp6hSbSt+ChWGvMredR/gh8jZSr9/lmowiXaApGNPVYYRPn5g2JVvpjf8sj?=
+ =?us-ascii?Q?P0laWdG6w1GeT98WsfXBElhxmRdHq8EjdxKGMaslwG2P+ECSFVB88c3TZSV6?=
+ =?us-ascii?Q?Hh8bN7wLPZB65pTuINnLeOH14bBK2saK1tKihFsK4TcAWyjJmNw8aB7oKLk2?=
+ =?us-ascii?Q?p0oB51n4g8Lzw+pGed3caYKyzF/SdbJDz7BGNv+9IpQtmePC0ERbNiNrwX2e?=
+ =?us-ascii?Q?O4VCgN2cy2Njw+q4jV+XjKciFj4ICSpjAT5gnS4chYgDrcPu6+BZXO2ybk0x?=
+ =?us-ascii?Q?ysNm6tUTd7Adpgx4p0tTSQ91sEdjMt+4SfsxYTU6706+h1KS2gEnQLUSnV4B?=
+ =?us-ascii?Q?yAAOt9Axn716GpY0sUFyLFQVOJGdZNQqXuSlkPU2CHIQTXDMjYiSGtu+cRI1?=
+ =?us-ascii?Q?cxTgHhKdVTdCS5rsml23rL9f/huHvv6UFnGS3NV7k04R4LUdITU7xeqnyJ2q?=
+ =?us-ascii?Q?FZqtrMwifKQyTdWw3JE5YpgmsPMIXwk65PFDiGHEfMXPI+baQ3Lh2wNE56Vp?=
+ =?us-ascii?Q?EzOv9dGTcvu/b4gcB4W2pjFlUL6XhEYFq+pZD9noF2sTlhyreN/pwI147Xfl?=
+ =?us-ascii?Q?4Fb+EeJSArVXz3ohdRiEfcZLTBfCT+68VaVxXwEUkqf73GlcQEwNTye5dV7z?=
+ =?us-ascii?Q?xgu1AOWp3tvLii697eJRxPGczPdNEhpVyST51R5t?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 2/7] md: mark rdev Faulty when badblocks setting fails
-To: linan666@huaweicloud.com, song@kernel.org, yukuai3@huawei.com,
- neil@brown.name, namhyung@gmail.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, yi.zhang@huawei.com
-References: <20250917093508.456790-1-linan666@huaweicloud.com>
- <20250917093508.456790-3-linan666@huaweicloud.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <20250917093508.456790-3-linan666@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHjGTfrdBo2dGXAQ--.16041S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Zw4fWFy7tr1UGry3tr4fXwb_yoWkXFWDp3
-	yDGasayrZ8JryrX3WUAFWDWF9Y934ftFW2yr4xKw1xCwn5Kr93KF48XryYgFykAF9xuF47
-	X3Z8WrWDZrWDKFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS8PR06MB7541.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2531f2fd-6b54-4da9-5948-08ddf97c405c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Sep 2025 02:03:40.7344
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +5H8yR1vSbaac2SDad95V958DE8JxWOwUZoeX0ANViBfffXEfmLlNOLaIrHQmlCInQfqXjtOePNQQ6D/IprDbLR9Zn08qO+bsExw4ZOy1/I=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PPFFD5F4C141
+
+> Subject: RE: [PATCH v3 2/4] usb: uhci: Add reset control support
+>=20
+> > Subject: Re: [PATCH v3 2/4] usb: uhci: Add reset control support
+> >
+> > On Fri, Sep 19, 2025 at 10:57:10AM +0800, Ryan Chen wrote:
+> > > Some SoCs, such as the Aspeed AST2700, require the UHCI controller
+> > > to be taken out of reset before it can operate. Add optional reset
+> > > control support to the UHCI platform driver.
+> > >
+> > > The driver now acquires an optional reset line from device tree,
+> > > deasserts it during probe, and asserts it again in the error path
+> > > and shutdown.
+> > >
+> > > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> > > ---
+> > >  drivers/usb/host/uhci-hcd.h      |  1 +
+> > >  drivers/usb/host/uhci-platform.c | 18 ++++++++++++++++--
+> > >  2 files changed, 17 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/usb/host/uhci-hcd.h
+> > > b/drivers/usb/host/uhci-hcd.h index 13ee2a6144b2..4326d1f3ca76
+> > > 100644
+> > > --- a/drivers/usb/host/uhci-hcd.h
+> > > +++ b/drivers/usb/host/uhci-hcd.h
+> > > @@ -445,6 +445,7 @@ struct uhci_hcd {
+> > >  	short load[MAX_PHASE];			/* Periodic allocations */
+> > >
+> > >  	struct clk *clk;			/* (optional) clock source */
+> > > +	struct reset_control *rsts;		/* (optional) clock reset */
+> > >
+> > >  	/* Reset host controller */
+> > >  	void	(*reset_hc) (struct uhci_hcd *uhci);
+> > > diff --git a/drivers/usb/host/uhci-platform.c
+> > > b/drivers/usb/host/uhci-platform.c
+> > > index 62318291f566..f255358d6242 100644
+> > > --- a/drivers/usb/host/uhci-platform.c
+> > > +++ b/drivers/usb/host/uhci-platform.c
+> > > @@ -11,6 +11,7 @@
+> > >  #include <linux/of.h>
+> > >  #include <linux/device.h>
+> > >  #include <linux/platform_device.h>
+> > > +#include <linux/reset.h>
+> > >
+> > >  static int uhci_platform_init(struct usb_hcd *hcd)  { @@ -132,17
+> > > +133,29 @@ static int uhci_hcd_platform_probe(struct platform_device
+> > *pdev)
+> > >  		goto err_rmr;
+> > >  	}
+> > >
+> > > +	uhci->rsts =3D
+> devm_reset_control_array_get_optional_shared(&pdev->dev);
+> > > +	if (IS_ERR(uhci->rsts)) {
+> > > +		ret =3D PTR_ERR(uhci->rsts);
+> > > +		goto err_clk;
+> > > +	}
+> > > +	ret =3D reset_control_deassert(uhci->rsts);
+> >
+> > Does this work right if uhci->rsts is NULL?
+
+Update the information that I test with ast2600 (which is no rsts)
+When uhci->rsts is null, reset_control_deassert(uhci->rsts) will return 0.
+So It still work. I think this is support both rsts and non-rsts platform.
+
+https://github.com/torvalds/linux/blob/master/drivers/reset/core.c#L468-L47=
+2
 
 
+> >
+> > > +	if (ret)
+> > > +		goto err_clk;
+> > > +
+> > >  	ret =3D platform_get_irq(pdev, 0);
+> > >  	if (ret < 0)
+> > > -		goto err_clk;
+> > > +		goto err_reset;
+> > >
+> > >  	ret =3D usb_add_hcd(hcd, ret, IRQF_SHARED);
+> > >  	if (ret)
+> > > -		goto err_clk;
+> > > +		goto err_reset;
+> > >
+> > >  	device_wakeup_enable(hcd->self.controller);
+> > >  	return 0;
+> > >
+> > > +err_reset:
+> > > +	if (!IS_ERR_OR_NULL(uhci->rsts))
+> > > +		reset_control_assert(uhci->rsts);
+> >
+> > How could this code ever execute if uhci->rsts is an ERR_PTR?
+> >
+> > Also, why does this code test for NULL...
+>=20
+> Will add with following.
+> 	if (uhci->rsts) {
+> 		ret =3D reset_control_deassert(uhci->rsts);
+> 		if (ret)
+> 			goto err_clk;
+> 	}
+>=20
+> I will test it with non-resets platform.
 
-在 2025/9/17 17:35, linan666@huaweicloud.com 写道:
-> From: Li Nan <linan122@huawei.com>
-> 
-> Currently when sync read fails and badblocks set fails (exceeding
-> 512 limit), rdev isn't immediately marked Faulty. Instead
-> 'recovery_disabled' is set and non-In_sync rdevs are removed later.
-> This preserves array availability if bad regions aren't read, but bad
-> sectors might be read by users before rdev removal. This occurs due
-> to incorrect resync/recovery_offset updates that include these bad
-> sectors.
-> 
-> When badblocks exceed 512, keeping the disk provides little benefit
-> while adding complexity. Prompt disk replacement is more important.
-> Therefore when badblocks set fails, directly call md_error to mark rdev
-> Faulty immediately, preventing potential data access issues.
-> 
-> After this change, cleanup of offset update logic and 'recovery_disabled'
-> handling will follow.
-> 
-> Fixes: 5e5702898e93 ("md/raid10: Handle read errors during recovery better.")
-> Fixes: 3a9f28a5117e ("md/raid1: improve handling of read failure during recovery.")
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> ---
->   drivers/md/md.c     |  8 ++++++-
->   drivers/md/raid1.c  | 41 +++++++++++++++--------------------
->   drivers/md/raid10.c | 53 ++++++++++++++++++++-------------------------
->   drivers/md/raid5.c  | 22 ++++++++-----------
->   4 files changed, 57 insertions(+), 67 deletions(-)
-> 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 1795f725f7fb..05b6b3145648 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -10245,8 +10245,14 @@ bool rdev_set_badblocks(struct md_rdev *rdev, sector_t s, int sectors,
->   	else
->   		s += rdev->data_offset;
->   
-> -	if (!badblocks_set(&rdev->badblocks, s, sectors, 0))
-> +	if (!badblocks_set(&rdev->badblocks, s, sectors, 0)) {
-> +		/*
-> +		 * Mark the disk as Faulty when setting badblocks fails,
-> +		 * otherwise, bad sectors may be read.
-> +		 */
-> +		md_error(mddev, rdev);
->   		return false;
-> +	}
->   
->   	/* Make sure they get written out promptly */
->   	if (test_bit(ExternalBbl, &rdev->flags))
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 397b3a2eaee4..f7238e9f35e5 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -2127,8 +2127,7 @@ static int r1_sync_page_io(struct md_rdev *rdev, sector_t sector,
->   				rdev->mddev->recovery);
->   	}
->   	/* need to record an error - either for the block or the device */
-> -	if (!rdev_set_badblocks(rdev, sector, sectors, 0))
-> -		md_error(rdev->mddev, rdev);
-> +	rdev_set_badblocks(rdev, sector, sectors, 0);
->   	return 0;
->   }
->   
-> @@ -2453,8 +2452,7 @@ static void fix_read_error(struct r1conf *conf, struct r1bio *r1_bio)
->   		if (!success) {
->   			/* Cannot read from anywhere - mark it bad */
->   			struct md_rdev *rdev = conf->mirrors[read_disk].rdev;
-> -			if (!rdev_set_badblocks(rdev, sect, s, 0))
-> -				md_error(mddev, rdev);
-> +			rdev_set_badblocks(rdev, sect, s, 0);
->   			break;
->   		}
->   		/* write it back and re-read */
-> @@ -2498,7 +2496,7 @@ static void fix_read_error(struct r1conf *conf, struct r1bio *r1_bio)
->   	}
->   }
->   
-> -static bool narrow_write_error(struct r1bio *r1_bio, int i)
-> +static void narrow_write_error(struct r1bio *r1_bio, int i)
->   {
->   	struct mddev *mddev = r1_bio->mddev;
->   	struct r1conf *conf = mddev->private;
-> @@ -2519,10 +2517,9 @@ static bool narrow_write_error(struct r1bio *r1_bio, int i)
->   	sector_t sector;
->   	int sectors;
->   	int sect_to_write = r1_bio->sectors;
-> -	bool ok = true;
->   
->   	if (rdev->badblocks.shift < 0)
-> -		return false;
-> +		return;
->   
->   	block_sectors = roundup(1 << rdev->badblocks.shift,
->   				bdev_logical_block_size(rdev->bdev) >> 9);
-> @@ -2553,18 +2550,21 @@ static bool narrow_write_error(struct r1bio *r1_bio, int i)
->   		bio_trim(wbio, sector - r1_bio->sector, sectors);
->   		wbio->bi_iter.bi_sector += rdev->data_offset;
->   
-> -		if (submit_bio_wait(wbio) < 0)
-> -			/* failure! */
-> -			ok = rdev_set_badblocks(rdev, sector,
-> -						sectors, 0)
-> -				&& ok;
-> +		if (submit_bio_wait(wbio) < 0 &&
-> +		    !rdev_set_badblocks(rdev, sector, sectors, 0)) {
-> +			/*
-> +			 * Badblocks set failed, disk marked Faulty.
-> +			 * No further operations needed.
-> +			 */
-> +			bio_put(wbio);
-> +			break;
-> +		}
->   
->   		bio_put(wbio);
->   		sect_to_write -= sectors;
->   		sector += sectors;
->   		sectors = block_sectors;
->   	}
-> -	return ok;
->   }
->   
->   static void handle_sync_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
-> @@ -2577,14 +2577,11 @@ static void handle_sync_write_finished(struct r1conf *conf, struct r1bio *r1_bio
->   		if (bio->bi_end_io == NULL)
->   			continue;
->   		if (!bio->bi_status &&
-> -		    test_bit(R1BIO_MadeGood, &r1_bio->state)) {
-> +		    test_bit(R1BIO_MadeGood, &r1_bio->state))
->   			rdev_clear_badblocks(rdev, r1_bio->sector, s, 0);
-> -		}
->   		if (bio->bi_status &&
-> -		    test_bit(R1BIO_WriteError, &r1_bio->state)) {
-> -			if (!rdev_set_badblocks(rdev, r1_bio->sector, s, 0))
-> -				md_error(conf->mddev, rdev);
-> -		}
-> +		    test_bit(R1BIO_WriteError, &r1_bio->state))
-> +			rdev_set_badblocks(rdev, r1_bio->sector, s, 0);
->   	}
->   	put_buf(r1_bio);
->   	md_done_sync(conf->mddev, s);
-> @@ -2608,10 +2605,8 @@ static void handle_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
->   			 * errors.
->   			 */
->   			fail = true;
-> -			if (!narrow_write_error(r1_bio, m))
-> -				md_error(conf->mddev,
-> -					 conf->mirrors[m].rdev);
-> -				/* an I/O failed, we can't clear the bitmap */
-> +			narrow_write_error(r1_bio, m);
-> +			/* an I/O failed, we can't clear the bitmap */
->   			rdev_dec_pending(conf->mirrors[m].rdev,
->   					 conf->mddev);
->   		}
-> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-> index 2899fd1ecc57..4c58c32f7c27 100644
-> --- a/drivers/md/raid10.c
-> +++ b/drivers/md/raid10.c
-> @@ -2610,8 +2610,7 @@ static int r10_sync_page_io(struct md_rdev *rdev, sector_t sector,
->   				&rdev->mddev->recovery);
->   	}
->   	/* need to record an error - either for the block or the device */
-> -	if (!rdev_set_badblocks(rdev, sector, sectors, 0))
-> -		md_error(rdev->mddev, rdev);
-> +	rdev_set_badblocks(rdev, sector, sectors, 0);
->   	return 0;
->   }
->   
-> @@ -2692,7 +2691,6 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
->   				    r10_bio->devs[slot].addr
->   				    + sect,
->   				    s, 0)) {
-> -				md_error(mddev, rdev);
->   				r10_bio->devs[slot].bio
->   					= IO_BLOCKED;
->   			}
-> @@ -2779,7 +2777,7 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
->   	}
->   }
->   
-> -static bool narrow_write_error(struct r10bio *r10_bio, int i)
-> +static void narrow_write_error(struct r10bio *r10_bio, int i)
->   {
->   	struct bio *bio = r10_bio->master_bio;
->   	struct mddev *mddev = r10_bio->mddev;
-> @@ -2800,10 +2798,9 @@ static bool narrow_write_error(struct r10bio *r10_bio, int i)
->   	sector_t sector;
->   	int sectors;
->   	int sect_to_write = r10_bio->sectors;
-> -	bool ok = true;
->   
->   	if (rdev->badblocks.shift < 0)
-> -		return false;
-> +		return;
->   
+No need to check if (uhci->rsts) with test with non-rsts platform.
 
-A direct return here is incorrect. This change ought to be removed after
-Kenta's cleanup. I will fix it after that cleanup merged.
-
-https://lore.kernel.org/all/cbce67bc-74c6-0c99-fdba-48cd8aa27dda@huaweicloud.com/
-
->   	block_sectors = roundup(1 << rdev->badblocks.shift,
->   				bdev_logical_block_size(rdev->bdev) >> 9);
-> @@ -2826,18 +2823,21 @@ static bool narrow_write_error(struct r10bio *r10_bio, int i)
->   				   choose_data_offset(r10_bio, rdev);
->   		wbio->bi_opf = REQ_OP_WRITE;
->   
-> -		if (submit_bio_wait(wbio) < 0)
-> -			/* Failure! */
-> -			ok = rdev_set_badblocks(rdev, wsector,
-> -						sectors, 0)
-> -				&& ok;
-> +		if (submit_bio_wait(wbio) < 0 &&
-> +		    rdev_set_badblocks(rdev, wsector, sectors, 0)) {
-> +			/*
-> +			 * Badblocks set failed, disk marked Faulty.
-> +			 * No further operations needed.
-> +			 */
-> +			bio_put(wbio);
-> +			break;
-> +		}
->   
->   		bio_put(wbio);
->   		sect_to_write -= sectors;
->   		sector += sectors;
->   		sectors = block_sectors;
->   	}
-> -	return ok;
->   }
->   
->   static void handle_read_error(struct mddev *mddev, struct r10bio *r10_bio)
-> @@ -2897,35 +2897,29 @@ static void handle_write_completed(struct r10conf *conf, struct r10bio *r10_bio)
->   			if (r10_bio->devs[m].bio == NULL ||
->   				r10_bio->devs[m].bio->bi_end_io == NULL)
->   				continue;
-> -			if (!r10_bio->devs[m].bio->bi_status) {
-> +			if (!r10_bio->devs[m].bio->bi_status)
->   				rdev_clear_badblocks(
->   					rdev,
->   					r10_bio->devs[m].addr,
->   					r10_bio->sectors, 0);
-> -			} else {
-> -				if (!rdev_set_badblocks(
-> -					    rdev,
-> -					    r10_bio->devs[m].addr,
-> -					    r10_bio->sectors, 0))
-> -					md_error(conf->mddev, rdev);
-> -			}
-> +			else
-> +				rdev_set_badblocks(rdev,
-> +						   r10_bio->devs[m].addr,
-> +						   r10_bio->sectors, 0);
->   			rdev = conf->mirrors[dev].replacement;
->   			if (r10_bio->devs[m].repl_bio == NULL ||
->   				r10_bio->devs[m].repl_bio->bi_end_io == NULL)
->   				continue;
->   
-> -			if (!r10_bio->devs[m].repl_bio->bi_status) {
-> +			if (!r10_bio->devs[m].repl_bio->bi_status)
->   				rdev_clear_badblocks(
->   					rdev,
->   					r10_bio->devs[m].addr,
->   					r10_bio->sectors, 0);
-> -			} else {
-> -				if (!rdev_set_badblocks(
-> -					    rdev,
-> -					    r10_bio->devs[m].addr,
-> -					    r10_bio->sectors, 0))
-> -					md_error(conf->mddev, rdev);
-> -			}
-> +			else
-> +				rdev_set_badblocks(rdev,
-> +						   r10_bio->devs[m].addr,
-> +						   r10_bio->sectors, 0);
->   		}
->   		put_buf(r10_bio);
->   	} else {
-> @@ -2942,8 +2936,7 @@ static void handle_write_completed(struct r10conf *conf, struct r10bio *r10_bio)
->   				rdev_dec_pending(rdev, conf->mddev);
->   			} else if (bio != NULL && bio->bi_status) {
->   				fail = true;
-> -				if (!narrow_write_error(r10_bio, m))
-> -					md_error(conf->mddev, rdev);
-> +				narrow_write_error(r10_bio, m);
->   				rdev_dec_pending(rdev, conf->mddev);
->   			}
->   			bio = r10_bio->devs[m].repl_bio;
-> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-> index b09265fb872a..70106abf2110 100644
-> --- a/drivers/md/raid5.c
-> +++ b/drivers/md/raid5.c
-> @@ -2817,11 +2817,9 @@ static void raid5_end_read_request(struct bio * bi)
->   		else {
->   			clear_bit(R5_ReadError, &sh->dev[i].flags);
->   			clear_bit(R5_ReWrite, &sh->dev[i].flags);
-> -			if (!(set_bad
-> -			      && test_bit(In_sync, &rdev->flags)
-> -			      && rdev_set_badblocks(
-> -				      rdev, sh->sector, RAID5_STRIPE_SECTORS(conf), 0)))
-> -				md_error(conf->mddev, rdev);
-> +			if (!(set_bad && test_bit(In_sync, &rdev->flags)))
-> +				rdev_set_badblocks(rdev, sh->sector,
-> +						   RAID5_STRIPE_SECTORS(conf), 0);
->   		}
->   	}
->   	rdev_dec_pending(rdev, conf->mddev);
-> @@ -3599,11 +3597,10 @@ handle_failed_stripe(struct r5conf *conf, struct stripe_head *sh,
->   			else
->   				rdev = NULL;
->   			if (rdev) {
-> -				if (!rdev_set_badblocks(
-> -					    rdev,
-> -					    sh->sector,
-> -					    RAID5_STRIPE_SECTORS(conf), 0))
-> -					md_error(conf->mddev, rdev);
-> +				rdev_set_badblocks(rdev,
-> +						   sh->sector,
-> +						   RAID5_STRIPE_SECTORS(conf),
-> +						   0);
->   				rdev_dec_pending(rdev, conf->mddev);
->   			}
->   		}
-> @@ -5254,9 +5251,8 @@ static void handle_stripe(struct stripe_head *sh)
->   			if (test_and_clear_bit(R5_WriteError, &dev->flags)) {
->   				/* We own a safe reference to the rdev */
->   				rdev = conf->disks[i].rdev;
-> -				if (!rdev_set_badblocks(rdev, sh->sector,
-> -							RAID5_STRIPE_SECTORS(conf), 0))
-> -					md_error(conf->mddev, rdev);
-> +				rdev_set_badblocks(rdev, sh->sector,
-> +						   RAID5_STRIPE_SECTORS(conf), 0);
->   				rdev_dec_pending(rdev, conf->mddev);
->   			}
->   			if (test_and_clear_bit(R5_MadeGood, &dev->flags)) {
-
--- 
-Thanks,
-Nan
-
+> >
+> > >  err_clk:
+> > >  	clk_disable_unprepare(uhci->clk);
+> > >  err_rmr:
+> > > @@ -156,6 +169,7 @@ static void uhci_hcd_platform_remove(struct
+> > platform_device *pdev)
+> > >  	struct usb_hcd *hcd =3D platform_get_drvdata(pdev);
+> > >  	struct uhci_hcd *uhci =3D hcd_to_uhci(hcd);
+> > >
+> > > +	reset_control_assert(uhci->rsts);
+> >
+> > when this code doesn't?
+>=20
+> Both reset_control_assert() and reset_control_deassert() already handle N=
+ULL
+> and ERR_PTR safely in the reset framework.
+> https://github.com/torvalds/linux/blob/master/drivers/reset/core.c#L468-L=
+472
+>=20
+> >
+> > Alan Stern
+> >
+> > >  	clk_disable_unprepare(uhci->clk);
+> > >  	usb_remove_hcd(hcd);
+> > >  	usb_put_hcd(hcd);
+> > > --
+> > > 2.34.1
+> > >
 
