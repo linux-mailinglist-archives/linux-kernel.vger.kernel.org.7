@@ -1,83 +1,169 @@
-Return-Path: <linux-kernel+bounces-827704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC02B92742
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:35:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D872B92757
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 255A317793C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:35:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F95A2A1621
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A80315D32;
-	Mon, 22 Sep 2025 17:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D02315D43;
+	Mon, 22 Sep 2025 17:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cvxuy2Od"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+nVwbB0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47578310779;
-	Mon, 22 Sep 2025 17:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C03E311C11
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758562533; cv=none; b=Gd8eYA6jUiKdDQLIs369+a4YtUl68EyHSLMnjvqZ3iBkPv0fXsmBxY1zVv0OLZ1OSQcK8OsHfmSatExmTVZuaTEj/KD1CjmjnyvQ+l39uctNFDgf/8O8sY0aivrdYR6eltHGewrVRbHvFpeC4DpG3uU+tmz+wiNKrwDxfyow/98=
+	t=1758562711; cv=none; b=fehBtkKPTwtc/5/cRwWO+EOlPKOHYO3+nFL1DESv6W+3ko2zszpcY5dw8tp4cD9OomApJoClB1tYwFq/YXClLz8hEJuqv0Y6HRluD48KH1Rl5yZ7c8WVCSzOaOL44xXT24nw1G6phsMn53FE/39avoR3rtggVV+yj9helwOk4aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758562533; c=relaxed/simple;
-	bh=SjLMRdgFLtjEhMZhVwZ+8di8xB9TzPTbN6TSdIpLCTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m8yXZWVXQnKiyZMZ9gPrSWXXxC+tdphN6/ziNHFImvN9DLqaUeKaFDWuWlgoB3hmVOMRhxTR4MTFARxzc6wBT1wsJrrKKlUTlYOvs07WZ6ZA+ZACJSUaMpYeMNGXXgu76zyo7BwC1y9TnCcJE6VqxB+d21VVYukWNqq6wIXgkgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cvxuy2Od; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95E1AC4CEF0;
-	Mon, 22 Sep 2025 17:35:32 +0000 (UTC)
+	s=arc-20240116; t=1758562711; c=relaxed/simple;
+	bh=eU0Qi2CGcTFYUF4HkWtlFQv9q6YwGrMPF6VOALGnCQ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pk9oGJVeiGtOoc1uMPjUZLFnX5xmsPxDpXRo/8QKSMgB1BKx9oUos4EgVCtGTIiNRryeWDnRmmInr0UL3l8eL2gaHlRM0V7iu45GOEvN214jDHB5cs19OGdghCA4vrB/700aFjjJYrWUXHzacEwlluJS+gfJEnR1f4H87zEaW8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+nVwbB0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A95F6C19422
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:38:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758562532;
-	bh=SjLMRdgFLtjEhMZhVwZ+8di8xB9TzPTbN6TSdIpLCTk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cvxuy2Odkf2OfzoH9IYRfasU6uRmJPYkGcgSs3m4jB1USAVSQ/rAUiV0oI2CCA9Uq
-	 oi0lYVhfEobvVfedpOX0y/8wFWXrjdNvyNvrbQW4/M9XzNJCvqTecFnCXn4jO+joZQ
-	 nYCm8vjGGqWv64zMooed457CfOuRew8yqgPvjjvCraCOpYMq3+k6B2Jpno1qQctqoJ
-	 dD0eojmtR37FhLQxPXpS2GYophr43FHe5OMfiQotjJ40mDuSupLfH48iSlPNbXuECa
-	 gcbqK4srue3RDwlG/hX0IX0LmCeqBblyTTLYY4pOdR2YWrB0c1RrlxOXmISlsfIHue
-	 5p2X4ytw6fy1w==
-Date: Mon, 22 Sep 2025 12:35:31 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jens Reidel <adrian@mainlining.org>
-Cc: Hans de Goede <hansg@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>,
-	devicetree@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	phone-devel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH RFC 1/3] dt-bindings: input: document Goodix GTX8
- Touchscreen ICs
-Message-ID: <175856252870.514028.9418085581607326906.robh@kernel.org>
-References: <20250918-gtx8-v1-0-cba879c84775@mainlining.org>
- <20250918-gtx8-v1-1-cba879c84775@mainlining.org>
+	s=k20201202; t=1758562710;
+	bh=eU0Qi2CGcTFYUF4HkWtlFQv9q6YwGrMPF6VOALGnCQ8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=c+nVwbB0wM1Y+tcE+4kTfiRtZxGQ5LidHiU4DznXbd1GtWJfvJ9JQ8MjFmdPzqjut
+	 qlc5PcL4SBFqeF6xgOQ3Z9JYVZgG7xcPL06nZMqbp4FmHAR866MHqbCZmCHZj5DMqg
+	 1kN/HfeHt8b0KAxeq2kbW3fBg+g+yieghoiel9ILbjExzI/S+vf1NiepXPu8pVPukE
+	 Xd0Ow7Pgj7+5KLJhNCKBqFUvTl4DmxK2oBRwmO8z+0J6DLAxDs2c39/RHsB2gm5zIK
+	 YSxBDLJV5ScFxs+MNNoiWIsFDOJeYI6nxqVkzapQq9AmT2jLoBqhZf87LyPfFj6Lxx
+	 8TAfiGwrhCp6g==
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-74381df387fso2416526a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:38:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVh1JEKqdyBV8E91BgYdJHetxTOuefbuXgYPMey2CLuR6r3CCK+T/pbM6ckRVJk2JenxySN1A4NRRv40kA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDps8sShy5ZQVjXl9OqQanAy9WofJh76sE+fQ0+VnGOkUzEtKr
+	sIw2uKbwdmIdKLvI3jFnQv60RWy0FUgZucfl7ueTyciUV+kXdFX49uJ5Xc06Kx/6Unpl9C47Fa0
+	LGNmJr604oHqlvYIjnfxzbh252DNAgTM=
+X-Google-Smtp-Source: AGHT+IHV8cxuy9k/9N7RcLszKXs9o+2mQp6Yq49waAg/Mhc6x9R9wm6g/wkI/0I98/zEQpcH3t/csIJgb08H6E9dSVs=
+X-Received: by 2002:a05:6808:1814:b0:438:8ad:16bb with SMTP id
+ 5614622812f47-43d6c2476b0mr5907174b6e.28.1758562709955; Mon, 22 Sep 2025
+ 10:38:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918-gtx8-v1-1-cba879c84775@mainlining.org>
+References: <20250922070354.485296-1-lihuisong@huawei.com> <20250922070354.485296-2-lihuisong@huawei.com>
+In-Reply-To: <20250922070354.485296-2-lihuisong@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 22 Sep 2025 19:38:18 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gWSRE1WX0GTVqHhpDZW8ZaWpviuQ+zEyS4E6ne4rutLQ@mail.gmail.com>
+X-Gm-Features: AS18NWDJFw4P-xoaY_5kyOWubWW-AtUuyTgvwJbUIiLXXTIp3LEQgQ5T_5eOJJw
+Message-ID: <CAJZ5v0gWSRE1WX0GTVqHhpDZW8ZaWpviuQ+zEyS4E6ne4rutLQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/1] ACPI: processor: Do not expose the global
+ acpi_idle_driver variable
+To: Huisong Li <lihuisong@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On Thu, 18 Sep 2025 16:02:48 +0200, Jens Reidel wrote:
-> Document the Goodix GT9886 and GT9896 which are part of the GTX8 series
-> of Touchscreen controller ICs from Goodix.
-> 
-> Signed-off-by: Jens Reidel <adrian@mainlining.org>
+On Mon, Sep 22, 2025 at 9:04=E2=80=AFAM Huisong Li <lihuisong@huawei.com> w=
+rote:
+>
+> Currently, processor_driver just use the global acpi_idle_driver variable
+> to check if the cpuidle driver is acpi_idle_driver. Actually, there is no
+> need to expose this global variable defined in processor_idle.c to outsid=
+e.
+> So move the related check to acpi_processor_power_init() and limit the
+> global variable to a static one.
+>
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
 > ---
->  .../bindings/input/touchscreen/goodix,gt9886.yaml  | 71 ++++++++++++++++++++++
->  1 file changed, 71 insertions(+)
-> 
+>  drivers/acpi/processor_driver.c |  3 +--
+>  drivers/acpi/processor_idle.c   | 12 +++++++++++-
+>  include/acpi/processor.h        |  1 -
+>  3 files changed, 12 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_dri=
+ver.c
+> index de17c1412678..5d824435b26b 100644
+> --- a/drivers/acpi/processor_driver.c
+> +++ b/drivers/acpi/processor_driver.c
+> @@ -166,8 +166,7 @@ static int __acpi_processor_start(struct acpi_device =
+*device)
+>         if (result && !IS_ENABLED(CONFIG_ACPI_CPU_FREQ_PSS))
+>                 dev_dbg(&device->dev, "CPPC data invalid or not present\n=
+");
+>
+> -       if (cpuidle_get_driver() =3D=3D &acpi_idle_driver)
+> -               acpi_processor_power_init(pr);
+> +       acpi_processor_power_init(pr);
+>
+>         acpi_pss_perf_init(pr);
+>
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
+c
+> index 698d14c19587..42948495f4f1 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -51,7 +51,7 @@ module_param(latency_factor, uint, 0644);
+>
+>  static DEFINE_PER_CPU(struct cpuidle_device *, acpi_cpuidle_device);
+>
+> -struct cpuidle_driver acpi_idle_driver =3D {
+> +static struct cpuidle_driver acpi_idle_driver =3D {
+>         .name =3D         "acpi_idle",
+>         .owner =3D        THIS_MODULE,
+>  };
+> @@ -1402,8 +1402,18 @@ void acpi_processor_unregister_idle_driver(void)
+>
+>  void acpi_processor_power_init(struct acpi_processor *pr)
+>  {
+> +       struct cpuidle_driver *drv =3D cpuidle_get_driver();
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+This variable is not needed any more.
 
+>         struct cpuidle_device *dev;
+>
+> +       /*
+> +        * Normally, the ACPI idle driver has already been registered bef=
+ore
+> +        * CPU online. But the 'drv' may be NULL if register idle driver =
+failed.
+> +        * So do not anything if the idle driver isn't acpi_idle_driver o=
+r the
+> +        * 'drv' is NULL.
+
+And this comment can be much shorter, maybe something like "The code
+below only works if acpi_idle_driver is the current cpuidle driver."
+
+> +        */
+> +       if (drv !=3D &acpi_idle_driver)
+> +               return;
+> +
+>         if (disabled_by_idle_boot_param())
+>                 return;
+>
+> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
+> index 24fdaa3c2899..7146a8e9e9c2 100644
+> --- a/include/acpi/processor.h
+> +++ b/include/acpi/processor.h
+> @@ -417,7 +417,6 @@ static inline void acpi_processor_throttling_init(voi=
+d) {}
+>  #endif /* CONFIG_ACPI_CPU_FREQ_PSS */
+>
+>  /* in processor_idle.c */
+> -extern struct cpuidle_driver acpi_idle_driver;
+>  #ifdef CONFIG_ACPI_PROCESSOR_IDLE
+>  void acpi_processor_power_init(struct acpi_processor *pr);
+>  void acpi_processor_power_exit(struct acpi_processor *pr);
+> --
+> 2.33.0
+>
 
