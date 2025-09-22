@@ -1,112 +1,88 @@
-Return-Path: <linux-kernel+bounces-827573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3917CB921FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:05:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2BA0B921FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49B00189A54C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:05:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE7682A4439
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55606310764;
-	Mon, 22 Sep 2025 16:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4931631065A;
+	Mon, 22 Sep 2025 16:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="iByImEF+"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GNEhAO9a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C046F48CFC
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A142B2EA75C;
+	Mon, 22 Sep 2025 16:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758557093; cv=none; b=BXrrRxguSiFQ54KGVi1pZcLxBjZDLpE6Y1ujUBLrW3hnEG+JglxN2RvKxNrXZvUSZ8icS8e+eLTLPv3l+PHG8NXaodjdbgXw/pLP5HHGR15boeG435VUwN0bNcMm5XihCHECB+DLhPOb0jkSDDSufRHZA1Jfjt16DxfCGA6eoSw=
+	t=1758557144; cv=none; b=rZ/gUBFE6cPWH5Kh2tPlaqcwJ1zNyardIUiDFbi5+lgzm4ecazyVbTfLnpdqg2j0vgvndnp5XsLy5bizTdsAw5pnI8ehXu1FzBisufcOooXygkYiXH+EgaWkHC5u5qb38g4+OrwHSYerdB6xo+FtgDGVJfQP3dZXdiTo73xSS1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758557093; c=relaxed/simple;
-	bh=eVcTWrZCCQXQKEvyt0ECeLBgfnYB7E4UW/QXsjEnE6k=;
+	s=arc-20240116; t=1758557144; c=relaxed/simple;
+	bh=JPkZxdmSLhErHT2r6+C3wkfctmMfikaGR/BNm9a5YNQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rdFNR/mWVwngR3EyIG2uj78dGkeFLNSx8DZ3vHw7+xCzm5QSWwad8Zqd00lmgk7UXsxZd2aooYziGpgXMzhChrih/JzaQmMp58IENC3ouqVLsX3fDrtuT1hWCVDLJLsZmfFtMDDDCL74vZTV05Oqs7KRhtfLm0/+Xt6JgF9NuFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=iByImEF+; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1758557089;
-	bh=eVcTWrZCCQXQKEvyt0ECeLBgfnYB7E4UW/QXsjEnE6k=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=MNBPdC+vKB3deYgvriw8RNj/riTHn3SdmCKAYHs7xrvDiXgA8WZskDY3QI14yBgIfI8FrnzE2zhJscRPBB2GJBYqRiVWDtfaEBGV4CLCfOpAMgd8XUlPq/bnMbwUc3bu2MENmfEqOat1MrTnFMmbOmG8otahs1/L4HY2RbE22eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GNEhAO9a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14679C4CEF0;
+	Mon, 22 Sep 2025 16:05:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758557144;
+	bh=JPkZxdmSLhErHT2r6+C3wkfctmMfikaGR/BNm9a5YNQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iByImEF+ESPqh+9OVfLJbkxlhK/cOt7POvbPMqVjyOl28YXYmxd3zcJo+HYOPT99q
-	 oiIz8mTt9jZlhPB+oEyBjvJucJOSuoPYdjvi8uFuFOjmb+jbeP6rUvLMAbCyRHC3+R
-	 pU7O/DzaK+P6RsTYduWKMZjhLbjwnh+ohe4KJi9o=
-Date: Mon, 22 Sep 2025 18:04:46 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Tiwei Bie <tiwei.bie@linux.dev>, richard@nod.at, 
-	anton.ivanov@cambridgegreys.com, benjamin@sipsolutions.net, arnd@arndb.de, 
-	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, tiwei.btw@antgroup.com
-Subject: Re: [PATCH v2 03/10] um: vdso: Implement __vdso_getcpu() via syscall
-Message-ID: <61ae09df-d65b-4c9d-a0c1-7de915246590@t-8ch.de>
-References: <1568f254-7963-4015-91ed-7630d5d87881@t-8ch.de>
- <20250922045020.48158-1-tiwei.bie@linux.dev>
- <495a5594-8ac6-4b7d-be6b-7c176b741c21@t-8ch.de>
- <76b5ba35f864764100c9a5a00d50d8fa4276cd98.camel@sipsolutions.net>
- <21755635-74d4-4fa4-8ffd-371c17630fdf@t-8ch.de>
- <366bb558c3fd23b9a80008d923f29ed0234e17b9.camel@sipsolutions.net>
+	b=GNEhAO9aBetiLDHu8K9co2Qyo5AsQg6T/SupFrIVQSWa3I3reOQFVWsEYJapeiMoN
+	 5cCsYyagEi096PoQPTkMz0vEV06YJTqmb661KvwQnc7vM400S6qrWy4qGwe4ESp2Wl
+	 VsgI5kqtZVoXkObKtO4kKkE3JgxUE8PIJ4UyoB/VKFg8C/SGEHvYYWXy2mguMxA/Fc
+	 lM54ZW8AOLU43HrYaF+3lfcp1/ES/ucuhvpaAycZSTCdNV8XRKgLUdC8ww7gNkrTGR
+	 u71vKSP1hjUkuv9jtNAZAhXCKN2NpfERCQxVbQf7Q4NSyhk25OmhMmi1SHtU0DYIzt
+	 oGy7oEnybRyhA==
+Date: Mon, 22 Sep 2025 11:05:43 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Alexandre Ghiti <alex@ghiti.fr>, Icenowy Zheng <uwu@icenowy.me>,
+	Palmer Dabbelt <palmer@dabbelt.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>,
+	Han Gao <rabenda.cn@gmail.com>, Han Gao <gaohan@iscas.ac.cn>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Drew Fustini <fustini@kernel.org>, linux-riscv@lists.infradead.org,
+	Fu Wei <wefu@redhat.com>
+Subject: Re: [PATCH v2 2/5] dt-bindings: reset: thead,th1520-reset: Add
+ controllers for more subsys
+Message-ID: <175855714271.140455.3621528471565311357.robh@kernel.org>
+References: <20250915095331.53350-1-ziyao@disroot.org>
+ <20250915095331.53350-3-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <366bb558c3fd23b9a80008d923f29ed0234e17b9.camel@sipsolutions.net>
+In-Reply-To: <20250915095331.53350-3-ziyao@disroot.org>
 
-On 2025-09-22 17:14:18+0200, Johannes Berg wrote:
-> On Mon, 2025-09-22 at 16:01 +0200, Thomas Weißschuh wrote:
-> > Right now it does not provide any advantage over a regular syscall.
-> > Essentially it is just overhead. That said, if you do want to make a
-> > real vDSO out of it, I'd be happy to help in that.
+
+On Mon, 15 Sep 2025 09:53:28 +0000, Yao Zi wrote:
+> TH1520 SoC is divided into several subsystems, most of them have
+> distinct reset controllers. Let's document reset controllers other than
+> the one for VO subsystem and IDs for their reset signals.
 > 
-> I don't know if I'd say "just overhead" - depends on which path is more
-> optimised in a typical libc implementation? I'd basically think it's
-> identical, no? You either link to the vDSO, or a __weak same function in
-> the libc?
-
-The code also needs to be built and maintained. AFAIK __weak is only for
-the compile-time linker. The vDSO call will be an indirect call.
-
-> > > I mean ... on the one hand, sure, it doesn't really do much after this,
-> > > but OTOH it lets userspace actually use that path? So might be useful.
-> > 
-> > What advantage does userspace have from it?
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  .../bindings/reset/thead,th1520-reset.yaml    |   8 +-
+>  .../dt-bindings/reset/thead,th1520-reset.h    | 216 ++++++++++++++++++
+>  2 files changed, 223 insertions(+), 1 deletion(-)
 > 
-> Right now, none? But it's easier to play with if you have the
-> infrastructure, and I'm not convinced there's a _disadvantage_?
 
-So far that hasn't happened. The disadvantages are the ones from above,
-nothing critical. But of course it is your subsystem and your call to make.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> > > > Also the functionality to map the host vDSO and vsyscall page into UML
-> > > > userspace looks very weird and error-prone. Maybe it can also go away.
-> > > 
-> > > Surely host vDSO etc. is never mapped into UML userspace and never is,
-> > > not sure what you're thinking of, but clearly that's wrong as written.
-> > 
-> > This is how I understand the 32bit implementation using
-> > ARCH_REUSE_HOST_VSYSCALL_AREA and NEW_AUX_ENT(AT_SYSINFO_EHDR, vsyscall_ehdr)
-> > where vsyscall_ehdr comes from the hosts getauxval(AT_SYSINFO_EHDR).
-> 
-> Huh, hm, yeah I forgot about that ... 32-bit. Yeah, agree we should just
-> kill that. I'm not even sure it works with the host kernel trapping
-> there? Oh well.
-
-Ack, do you want me to send a patch? This was my real gripe with the UM
-vDSO. I want to enable time namespaces for all architectures but these
-need to be handled in the vDSO properly. For the 64-bit stub vDSO it's
-not a problem as the syscalls will work correctly.
-But the interaction with the weird 32-bit logic on the other hand...
-
-
-Thomas
 
