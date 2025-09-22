@@ -1,139 +1,163 @@
-Return-Path: <linux-kernel+bounces-827545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6046B920B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:48:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C623CB920BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99C08178F9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:48:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A7BA7A9416
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A01302172;
-	Mon, 22 Sep 2025 15:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC472EACF1;
+	Mon, 22 Sep 2025 15:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="tn0LHe/y";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="DeoDfLbQ"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JFJSYVno"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36BA24DCEF;
-	Mon, 22 Sep 2025 15:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8800424DCEF
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758556129; cv=none; b=CeB0mYmLwmlBPIbOoWoYC7M49NFd9xfPTrg4zX/EU5OUt5EXebt1WV4OwTeWxXfHrt8uBVhMpSom0T8fWyyr4pJOWIADJh4cuHvR4+UCzvyWNLStnNSU+exj6iV9zhSrVMOkZ4wBRzdEEXt0Cxd/ORmCDAkPboJdGM9xmBWDMmw=
+	t=1758556142; cv=none; b=ZOXSeF5aadGNW1JM+CqrP+irYP8jTwKOPuOBMR1AySG9B4pw7dsT64amVPjhAFkZBpJ2NQOetXpL9r424vdi/ay3saH6LHBVFX8CR7BDMihn1pcQd+c6z9WPZ6rZbPNDM2m+ayhxudYQX8uzezwkjGrGiiPnbJriVUMv6Th/964=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758556129; c=relaxed/simple;
-	bh=kBy0R6qsAf01w8d8qiO7eIAukjvrsyPyscspc7cKOsE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YZZZps/W83LgaFi8+PqhLB1P1tPZ1DF2d9i9vq/Y8vz/Kp6DFBEC7m8GnKqnrBhRAaBmOThzyuxJ09IKQaeisaW2iIVAhCBoggBsdLJ9c3IRX870GxCbhnvFS4G5wEVqFnxfsL9ERYQ+smdvkTh3wmsjXamfYdY55PkPgFytclY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=tn0LHe/y; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=DeoDfLbQ; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cVnb14Q3sz9tLy;
-	Mon, 22 Sep 2025 17:48:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1758556125;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L5sibm9aKqkELGV5S3+do/9O9uWTDA7wayVwb+b4la8=;
-	b=tn0LHe/y8tgn+h6jyaS6pAOtpiCf6IWGKFbOyCvizZkXq04DnoGWJO5UR6RXHkY+jtDVb4
-	w1KLqSYyiz8/RSNliAnwx6BV9uokqZrunECRtCvzXodVKfc+hTI7BZXoQVRp2N7O/Vp+q4
-	5MbLckX85tqMQm8sY7ixccLk3xkhWMOwhOl/2cZJtBxsOOaszRqLYggAtNStC40RSvS4nE
-	48O3FKMszQX3i0elUdEnuJiqY0oQD7+Te96B+yS9f97GHiVmN9E7O4XFCwnMeS8p/r/iIg
-	ZHkG17WL3cnhqaV3E0GaI5Fxd22KsJ3SgMNvQxu2Obd79dwwyVrsojC5nTZ3WA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=DeoDfLbQ;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
-Message-ID: <974b6f7f-e769-48ff-9bd9-0ed0c8f48b1e@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1758556123;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L5sibm9aKqkELGV5S3+do/9O9uWTDA7wayVwb+b4la8=;
-	b=DeoDfLbQVsfgLz52qytCsVpTrmezqE03QWwrljfq80vx8G6d0NQ8hrVIg57Oh5M3HP6NLQ
-	w5yfmfbyGazNFzj+pH+L4CP02Pc1I+/QSgnhhnuZqf/bzxYORyg/HY5eBFA7/WqeSpPFmW
-	16rq3aHxWm8eXQy/oeFasPWWKofIp4gYIgCSWKmqKYW6Fkiw3Y2y/jcoSKcgKNSefjDrHf
-	5aR22ZAup9NJgZBFu+oOiA4hLg3POkeSTqAXvAJ2HJKYh8ieYzpMyrH6XXVzSJBShI/uk9
-	jDGTv8N01LYNpxXmNDQsuI4vf62HfzS986OiXGS58BoWt1BdLV9jown8I19u3A==
-Date: Mon, 22 Sep 2025 17:48:40 +0200
+	s=arc-20240116; t=1758556142; c=relaxed/simple;
+	bh=vNkRmPJx//e+92f7Jn7qqIglcTXlvX95k7Q7RsLP8i4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FNYW8E7bgMwEWh2oNdokaViupygGN5yZA/byJiY9TyR3tyjLrJsjJd9inh0mVJ+DKzX2dlmtgLYz4QZJb5QvcgKQVQi/X6Oa6nND1S49Bk1dZA9S0TQs8PtabSPdFx9W7AoSRnJ90u/Wg5MeevIUtZsw2YFcuD2PlUyTa2Lfpp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JFJSYVno; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-78e4056623fso42943426d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:49:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758556139; x=1759160939; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qlg2oopvF77trHsNmLt3OpgaKYs1PYeJnpJK0K9pt00=;
+        b=JFJSYVnod4L/nso1xEg1Pup3cEnZjd9aA83F83Da43Y+3IjZp7C6AOJykNDNpF368n
+         FOUUc7STGxbmGjdLbM756QUAatLO7yf2+hUNWp+ysMtR27cHs4us9QTy+aOKLdpRL9WX
+         hZqGYYuEHaTE65WimGq/X5dAMpN2RfH3GwYyiax39Hn4yWDGL1IiWHUdYYltY021NQhg
+         ylwMlLGyZFv4PDviGfduzHbxpDrNpYUdkc2VEDp1k94/LQfD6uW6GTyDYtDKujwtxraX
+         V//MxqPvCl/1ZHSJkd4lngJAHAqxD2C0T7qFSTetx5NHUBo1xyPYwuX3zBI3K3Fk6A8t
+         oyoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758556139; x=1759160939;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qlg2oopvF77trHsNmLt3OpgaKYs1PYeJnpJK0K9pt00=;
+        b=OGOAnErGwEePEzE+VeuvHlNZ0yrz7zcf3PU8NTecPfVYbNgmc6tdShKYbhU8x4Zup1
+         DX9mWVvcib8Qk0S8ygUfc0r5uCDS7xOIgXNFmBSdMbtbkuwkfdjNjGjJA6tlZA+CEmm2
+         7H0r0cx+3uNszjmljfOcFoz7DU8eE3d5IS3B4oaXDjCD+GvX5UrsKGD/6HDYZMjPuZIi
+         rkJLvKyDRouAmao9abmFV5Gxee2eArbHEYX8xoblGmJ+vuoo+lLbCIZZNetOCcD8uQ4b
+         mvx8VnyzHPyheDjNCXkLD64BSLKsF/ebW60D75qsoFpdIX6gWAYmDG2O0gYKuN0lKliJ
+         WsAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVssac0XnO7ddbSBKmzwBm3cMgnMOBur7HR0OsN8OZrJSlrfhH6wZGSN1+rC67iKha9tLYYp0EC8v8n6Hs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzul6tfnyKFD5mss6uPUJmsXMtqSwbzuqItH72AMvjmkEegvcAq
+	qoUzDQzlibB4/Xn8BBdA+AxIp1hfKyafrOYkRHtn17PHNbAZL+n9bgofI6Fn32eLI/ua/lL/vXF
+	fuzhI9eIoam+cL6cWfuR0MHN+Kr5LNvg=
+X-Gm-Gg: ASbGncsXt/e+iJlb62pB1ps1hMPCtExMgvwJlZwrZleSjWvt+yMmEfjmVM4jaRglOQ7
+	JU1lGWzI1vJwBxWNNL9YUwajDy4ubVhP4WCmNnuzCiKFKVl5CYCQQ6ZCmwKdKUhdOQoV7+uPUUn
+	SSwcQvlXhuJoMiinfRpDofWIf342Y5KCRJSYxrQOsfe3vG4hokdw8/ltE2A5/m46uaUExQdHQ7o
+	EnqUFCi+8rBvVnA4ybWK7Tljl0Salx/VkXzFFCX0ZkOG/x9ccXxTM0Ck3pqmtALnOV+eS6pg2Hl
+	VXCAJG4pM2d0XpdR0LzqfG5mcL6W4/Ot8oHRH4S+D1HApoQSem9ssDpANjAI1YaDOGIKkM327q/
+	sex7Lej27m+Fbv4tRzJg8
+X-Google-Smtp-Source: AGHT+IHVcugTSFzYYfT7bSVR5B8KfV75JOC+bkghqVVTgya+qCitcTbaRA7yVXfj09A0yT4WrZbJ6OupQWKSKBIcWws=
+X-Received: by 2002:a05:6214:268b:b0:77e:8d71:c334 with SMTP id
+ 6a1803df08f44-7991297fb36mr150947796d6.17.1758556139181; Mon, 22 Sep 2025
+ 08:48:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] PCI: rcar-host: Add static assertion to check
- !PCI_LOCKLESS_CONFIG
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-pci@vger.kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Magnus Damm <magnus.damm@gmail.com>, Manivannan Sadhasivam
- <mani@kernel.org>, Marek Vasut <marek.vasut+renesas@gmail.com>,
- Rob Herring <robh@kernel.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20250922153352.99197-1-marek.vasut+renesas@mailbox.org>
- <CAMuHMdUG_y-gb6kGd+Bgo5AQvqv009RYwVjwN5dDC0WFOuyPcg@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <CAMuHMdUG_y-gb6kGd+Bgo5AQvqv009RYwVjwN5dDC0WFOuyPcg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 13124b8e7eb5f44b06d
-X-MBO-RS-META: gohb74zqdcjunqh9z3xtx7whuwfk6y88
-X-Rspamd-Queue-Id: 4cVnb14Q3sz9tLy
+References: <20250922082417.816331-1-rajasimandalos@gmail.com>
+In-Reply-To: <20250922082417.816331-1-rajasimandalos@gmail.com>
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 22 Sep 2025 10:48:47 -0500
+X-Gm-Features: AS18NWBZ-tc9h4IfVjj8s-i7hSP4_43DpRVZDBpO1wJ1me1nASDPtaIyja-mdsg
+Message-ID: <CAH2r5mtpEc7ePZ58_qdE+9GRPVO3PPYuN44uHuskoQpnssbkdA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] cifs: client: force multichannel=off when max_channels=1
+To: rajasimandalos@gmail.com
+Cc: linux-cifs@vger.kernel.org, pc@manguebit.org, ronniesahlberg@gmail.com, 
+	sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com, 
+	linux-kernel@vger.kernel.org, Rajasi Mandal <rajasimandal@microsoft.com>, 
+	samba-technical <samba-technical@lists.samba.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/22/25 5:41 PM, Geert Uytterhoeven wrote:
+i just noticed a more serious problem with multichannel/max_channels
 
-Hello Geert,
+When we mount with multichannel (at least to Samba e.g.) with
+multichannel disabled on the server it confusingly returns "resource
+not available" we should at least log to dmesg something more
+meaningful than what we do today:
 
-> On Mon, 22 Sept 2025 at 17:34, Marek Vasut
-> <marek.vasut+renesas@mailbox.org> wrote:
->> This driver can not function correctly without PCIe subsystem level
->> config space access serialization. In case PCI_LOCKLESS_CONFIG is
->> ever enabled on ARM, complain loudly so the driver can be updated
->> accordingly.
->>
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> 
-> Thanks for your patch!
-> 
->> --- a/drivers/pci/controller/pcie-rcar-host.c
->> +++ b/drivers/pci/controller/pcie-rcar-host.c
->> @@ -35,6 +35,14 @@
->>
->>   #include "pcie-rcar.h"
->>
->> +/*
->> + * This driver can not function correctly without PCIe subsystem level
->> + * config space access serialization. In case PCI_LOCKLESS_CONFIG is
->> + * ever enabled on ARM, complain loudly so the driver can be updated
->> + * accordingly.
->> + */
->> +static_assert(!IS_ENABLED(CONFIG_PCI_LOCKLESS_CONFIG));
->> +
->>   struct rcar_msi {
->>          DECLARE_BITMAP(used, INT_PCI_MSI_NR);
->>          struct irq_domain *domain;
-> 
-> This causes a build failure when compile-testing, e.g. x86 allmodconfig.
-> Using "depends on !PCI_LOCKLESS_CONFIG" instead would avoid that,
-> but indeed has the disadvantage that it wouldn't complain loudly when
-> PCI_LOCKLESS_CONFIG would ever be enabled on ARM64...
-All right, let's also wait for input from PCI maintainers. It seems both 
-alternatives -- static_assert() and !PCI_LOCKLESS_CONFIG have their own 
-disadvantages, maybe there is a third option.
+[ 1195.349188] CIFS: VFS: failed to open extra channel on
+iface:10.45.126.66 rc=3D-11
+[ 1195.454361] CIFS: successfully opened new channel on
+iface:2607:fb90:f2b6:0732:7504:183c:991e:6e53
+[ 1195.454599] CIFS: VFS: reconnect tcon failed rc =3D -11
+[ 1195.457025] CIFS: VFS: reconnect tcon failed rc =3D -11
+[ 1195.457040] CIFS: VFS: cifs_read_super: get root inode failed
+
+
+Samba behavior is also strange - it advertises multichannel support in
+negprot response but doesn't advertise it in session setup flags.
+
+On Mon, Sep 22, 2025 at 3:25=E2=80=AFAM <rajasimandalos@gmail.com> wrote:
+>
+> From: Rajasi Mandal <rajasimandal@microsoft.com>
+>
+> Previously, specifying both multichannel and max_channels=3D1 as mount
+> options would leave multichannel enabled, even though it is not
+> meaningful when only one channel is allowed. This led to confusion and
+> inconsistent behavior, as the client would advertise multichannel
+> capability but never establish secondary channels.
+>
+> Fix this by forcing multichannel to false whenever max_channels=3D1,
+> ensuring the mount configuration is consistent and matches user intent.
+> This prevents the client from advertising or attempting multichannel
+> support when it is not possible.
+>
+> Signed-off-by: Rajasi Mandal <rajasimandal@microsoft.com>
+> ---
+>  fs/smb/client/fs_context.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
+> index 072383899e81..43552b44f613 100644
+> --- a/fs/smb/client/fs_context.c
+> +++ b/fs/smb/client/fs_context.c
+> @@ -1820,6 +1820,13 @@ static int smb3_fs_context_parse_param(struct fs_c=
+ontext *fc,
+>                 goto cifs_parse_mount_err;
+>         }
+>
+> +       /*
+> +        * Multichannel is not meaningful if max_channels is 1.
+> +        * Force multichannel to false to ensure consistent configuration=
+.
+> +        */
+> +       if (ctx->multichannel && ctx->max_channels =3D=3D 1)
+> +               ctx->multichannel =3D false;
+> +
+>         return 0;
+>
+>   cifs_parse_mount_err:
+> --
+> 2.43.0
+>
+>
+
+
+--=20
+Thanks,
+
+Steve
 
