@@ -1,129 +1,132 @@
-Return-Path: <linux-kernel+bounces-827556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60337B92121
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:53:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF91B91934
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB1E19040D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:54:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 642131683E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BAB30BB8F;
-	Mon, 22 Sep 2025 15:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4901922FB;
+	Mon, 22 Sep 2025 14:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QBj6/FJ+"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c87RPluG"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE4B30E0FB
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7447919AD8B
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758556388; cv=none; b=b2XwCMSv42xGoOwh/O5MaW5Z554q3gVNk6ktUi1Jn8Axy+j73+U02i6bxTKMlOobwhKMRkum3FgGHoUjpTT98O2j4272ExZl6m8WwTOkVexaRU+ITjfYShXw/wm+laMTCLeAbeD0J9T/bIocZAJrmRFS9HdgFjBY+5kAZ15+sDE=
+	t=1758549979; cv=none; b=g21AOWtPSwpuvChH/nKf3tMv0hvRtY5LyOi3CMfucVvxM8GRlsONBCRIRalZ26tu8DY5DhuuBVeBkFL/OSvrEK5NSi+vkc/5odAs48ArNiNrpYXAVm+2twRJ0qTOxSQ3TfCfD1Bj4DNy/9YDTt+1luoyp/4i16DDnIugvJT0ki8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758556388; c=relaxed/simple;
-	bh=UO9DQsrKA93JMMQ0MKH6EUkVh9p3xM8BKS5q1KtAVsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=KkyooDBOvkl7rLbAm3VgoWHi+BuM0fez4kmM9Z4/OyHk3CqKV6u1VfE8IxSNSKAc6oSitaF92u+bHUEYq7FhEpDBDIK+wHd8yx0+r7ujAhQigmeCxUTzeQpaZMJn4ZFsgwHEFZKyIauKthg8LreGxt8SjCIKpTT+SjWB55BHrxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QBj6/FJ+; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250922155304epoutp041a079170e1652fe2e9d5ce08fcbc792e~npbbSYeQw2096620966epoutp04I
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:53:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250922155304epoutp041a079170e1652fe2e9d5ce08fcbc792e~npbbSYeQw2096620966epoutp04I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758556384;
-	bh=PVd11SH1umpLuTwKukA509cqXTgpF93/PRhn1vgp1GA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QBj6/FJ+hkoZGUnS2nAwzbAbALmgBHZEIKjLjiMZw6dyXvpum0Ramut76Q8DUxwaC
-	 1UZQEm8Z5eN5+Ms1JPS0ev59Ig8D32j3pjccHKD0PNbIb8+IlQyHIGYXHP9Py9wZ5d
-	 X/sJ0vqC8/fbFR2M6eYVSEXzzviXvIVf/DjYwJzc=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250922155303epcas5p2f292b1c915746b799e0bb319493f2f33~npbadzrlk0096500965epcas5p2q;
-	Mon, 22 Sep 2025 15:53:03 +0000 (GMT)
-Received: from epcpadp2new (unknown [182.195.40.142]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cVngz1dRzz6B9m5; Mon, 22 Sep
-	2025 15:53:03 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250922130536epcas5p4dab9590bdc86b86dc3d8ad92ac9346c6~nnJNs1ET90059300593epcas5p4v;
-	Mon, 22 Sep 2025 13:05:36 +0000 (GMT)
-Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250922130534epsmtip10e7ced87578cd0711d11a8a085964319~nnJLce0H50967409674epsmtip1G;
-	Mon, 22 Sep 2025 13:05:33 +0000 (GMT)
-Date: Mon, 22 Sep 2025 18:35:29 +0530
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
-	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	cpgs@samsung.com
-Subject: Re: [PATCH V3 05/20] nvdimm/namespace_label: Add namespace label
- changes as per CXL LSA v2.1
-Message-ID: <439928219.101758556383225.JavaMail.epsvc@epcpadp2new>
+	s=arc-20240116; t=1758549979; c=relaxed/simple;
+	bh=NSzxPZcHqME+hAtkJ0C72qogZnh9d1CTCSrgMBNyWpw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NODjIl6Usmvn9lwPh/S9hLoCiOggr01fSyJdpMLenv/YJ9MCZS3XSEFJKCGVe+KzjgiZmoCFKXOdDEYOGsbYVu4fVFHkPMvYx5XLJZM9O2zz6DgsDaFrxJMB3jfyC6V4H5wy2vlW+8PuQBrltR/hRU2Ttbf4VG4YZj9XNsASfXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c87RPluG; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso3624614b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:06:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758549976; x=1759154776; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=q65R4wtI7rKWrIB8Hpru/7LhZExxGYM5TnlXns4ne/U=;
+        b=c87RPluGLTEG4UqAFiiXTRysBebOLFXX8T6DeDpuUDsgRfSC+PyTVWh9UIwtr9rKa/
+         v3PmFehxTh8wY3+MPNuGTZ3o9RSdjwBK9hcqqwwnqCM27CQ9+tQLTVneHkAcUN6y2r5a
+         k9mDgQXBuEk17Nt36U66AFrCOCYvaU7RP6tfpdQ4pNNB3Pc5sBL9jF0mmFAR6lFYvrmU
+         sL7MBpnBo777nQ7MmSkNCNqjF9GIS49ww4ht/6br2t1i6whdHv+30x+UtH5hDTmTe4lL
+         HBqIr1+jgZVXcXI21YmnrTtV/Hy5I4RCC9708jAPBimYt7Jeq+jcJBKgyZnQ403yDHxp
+         0QoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758549976; x=1759154776;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q65R4wtI7rKWrIB8Hpru/7LhZExxGYM5TnlXns4ne/U=;
+        b=wcIuuKl0vocBzvGFLJj7osfr5C69DbJwHLL5Y3LYbRiQbENHsKCukh1L2kxPXsxB9k
+         gnJpIrWkD4Yy727F4R5Yo4Wnm1jMizAU7EmKAvXIJzP/lUKkd8GuIlPnIdai5DzS1IH3
+         KxNH5j8sKnHYyDn4zKKdQ1/dXB1lH55Rq0PpZ1mZP1iI72cF7r5bo1MHSOHptmjASZH2
+         J+3WAa6nA4yx8tPOqnqMiT6kp2nGsvdS76ojrV7X/ZQiWhKjIRqEEijdgj7fkrgVqOf9
+         k/Y5t6d7+LAHQnOR94lZYKSsiejkL9ip9Xz11W33N0Jl/JTQeFz6wsRQD3co2yh4HLSV
+         IR2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU3wz19bDLUaOyo7FQ00jdQ1T7zerNr3JGWfB6icDb64+9CTF/5pHqTZaI89PKyhDNPx1ovW0Bvrqqs9tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGWwFTy/j3PCueu1CUCUzDJuZktuMKkDjUuUFN4ZOphtRpCIla
+	L2MSbEhuDc3/tocig9z9Tibfwh3BUCok7aGf8FFnD2lHtOKjC5aEgqh8
+X-Gm-Gg: ASbGncsnyf6F9HoS5HOhTwMgeup0hAvqYNN/POtpTe9VgMTYwoYkI8b4Ao2mwDrkMpV
+	QRSgWyJBxcuX1T5114O0lQZLPiyQ7iFdt8H9LMn7X7new8/ql02AS1of1DBk7LTdlZ8Y+fTiX0a
+	Qx4yaJ4iGKCsng0znXHozL7YPziGybUcoseZUxCpO8gRWFSjSGdvYN2MtEu8J5Ra0zsZ1mDdJLb
+	8YH2M9Y6UpvDTg6PtRnt+xx2DjJtcgNmC02jSHn9fcY9Krhyff0hAtuahb+yBS5M6AWg5mJsRLn
+	ZJpowraUJUD0+FfKxNuBJbeU4LC1OqUB+XiBSVRwEvE68tjETnbvGFBbChNtiHicnJtXzYpJKvE
+	OpAyr18xF1XFwaMxXm6XmNA0b
+X-Google-Smtp-Source: AGHT+IGut+RghUbyFn2F4fwYbZuwj/DFVn5Cf89eveAp7C+mVNUJEdBY4DbdKoQyXojSDqZ4ufxz5w==
+X-Received: by 2002:a05:6a00:c85:b0:77f:472b:bc73 with SMTP id d2e1a72fcca58-77f472bbe3amr1851305b3a.6.1758549975348;
+        Mon, 22 Sep 2025 07:06:15 -0700 (PDT)
+Received: from lgs.. ([2408:8418:1100:9530:3333:9fe1:c4de:4cb8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f188dd4a8sm7177799b3a.39.2025.09.22.07.06.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 07:06:14 -0700 (PDT)
+From: Guangshuo Li <lgs201920130244@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Guangshuo Li <lgs201920130244@gmail.com>,
+	Alexandre Mergnat <amergnat@baylibre.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: stable@vger.kernel.org
+Subject: [PATCH] ASoC: mediatek: mt8365: Add check for devm_kcalloc() in mt8365_afe_suspend()
+Date: Mon, 22 Sep 2025 22:05:55 +0800
+Message-ID: <20250922140555.1776903-1-lgs201920130244@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <68cdd281bd9bf_1a2a1729410@iweiny-mobl.notmuch>
-X-CMS-MailID: 20250922130536epcas5p4dab9590bdc86b86dc3d8ad92ac9346c6
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----eh7qRvcfO6PRFbEYZqDEORj5Ys3ZDDqSWzhM1v_RBQGd0jaZ=_26d2b_"
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-X-Hop-Count: 3
-X-CMS-RootMailID: 20250917134138epcas5p2b02390404681df79c26f7a1a0f0262b8
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
-	<CGME20250917134138epcas5p2b02390404681df79c26f7a1a0f0262b8@epcas5p2.samsung.com>
-	<20250917134116.1623730-6-s.neeraj@samsung.com>
-	<68cdd281bd9bf_1a2a1729410@iweiny-mobl.notmuch>
+Content-Transfer-Encoding: 8bit
 
-------eh7qRvcfO6PRFbEYZqDEORj5Ys3ZDDqSWzhM1v_RBQGd0jaZ=_26d2b_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+devm_kcalloc() may fail. mt8365_afe_suspend() uses afe->reg_back_up
+unconditionally after allocation and writes afe->reg_back_up[i], which
+can lead to a NULL pointer dereference under low-memory conditions.
 
-On 19/09/25 05:00PM, Ira Weiny wrote:
->Neeraj Kumar wrote:
->> CXL 3.2 Spec mentions CXL LSA 2.1 Namespace Labels at section 9.13.2.5
->> Modified __pmem_label_update function using setter functions to update
->> namespace label as per CXL LSA 2.1
->
->Again I'm curious as to why?
->
->Is it to be able to use the setter's later?  I see a call to
->nsl_set_type() added later in the series but then deleted in an even later
->patch.  (??)
->
->I don't have time ATM to really follow this through but giving a why in
->the commit message may have made this a simple patch to review.  Now I'm
->not clear if it is ok or not.
+Add a NULL check and bail out with -ENOMEM, making sure to disable the
+main clock via the existing error path to keep clock state balanced.
 
-Hi Ira,
+Fixes: e1991d102bc2 ("ASoC: mediatek: mt8365: Add the AFE driver support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+---
+ sound/soc/mediatek/mt8365/mt8365-afe-pcm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Yes these setter functions are required because of namespace
-modifications as per LSA 2.1.
-
-Actually it looks deleted due to refactoring of __pmem_label_update() in
-later patch.
-
-I got your point, I will re-arrange it after __pmem_label_update() refactoring.
-
-
-Regards,
-Neeraj
-
-------eh7qRvcfO6PRFbEYZqDEORj5Ys3ZDDqSWzhM1v_RBQGd0jaZ=_26d2b_
-Content-Type: text/plain; charset="utf-8"
-
-
-------eh7qRvcfO6PRFbEYZqDEORj5Ys3ZDDqSWzhM1v_RBQGd0jaZ=_26d2b_--
+diff --git a/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c b/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
+index 10793bbe9275..eaeb14e1fce9 100644
+--- a/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
++++ b/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
+@@ -1979,6 +1979,10 @@ static int mt8365_afe_suspend(struct device *dev)
+ 		afe->reg_back_up =
+ 			devm_kcalloc(dev, afe->reg_back_up_list_num,
+ 				     sizeof(unsigned int), GFP_KERNEL);
++		if (!afe->reg_back_up) {
++			mt8365_afe_disable_main_clk(afe);
++			return -ENOMEM;
++		}
+ 
+ 	for (i = 0; i < afe->reg_back_up_list_num; i++)
+ 		regmap_read(regmap, afe->reg_back_up_list[i],
+-- 
+2.43.0
 
 
