@@ -1,138 +1,141 @@
-Return-Path: <linux-kernel+bounces-827663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84351B92591
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:07:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DDDB92594
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 434A12A412E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:07:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB21F16A05D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A5A3128D6;
-	Mon, 22 Sep 2025 17:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078943128C0;
+	Mon, 22 Sep 2025 17:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="ojmwYfqU"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="qIyOb7nY"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB01312801;
-	Mon, 22 Sep 2025 17:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77CE2D780A
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758560825; cv=none; b=fY1X/Wpmj4Y82Ta3g3I8/jDdDEbLWRwxWe32502fWlkYZhLHjsSC+Jek8f7SuNBPPRgFUuvAG+uJFcGgGDbI7JFWj0kYlsw1BE2PFZOfXNXqku/gljlh9AyzIQtePYB4aJOqsph40pooPtELUuaNBmeva4iOWWUdH+Y8SH5l/yM=
+	t=1758560862; cv=none; b=YvW5NRDhuTE/7MZm7IiO04r4knw6bpMmwuxIIHvpLbK4M/W4Q4LZPKngQISGDBHRufzq08oyEhFW2VWk+8KR7XdBol6+rvwZ/nvYawV27LX504ILv+RzBRH1vGP3o+9zP1gWGSHv27CeHUaVLHNGmXUQk5jEvS1dkx0CcU8eYnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758560825; c=relaxed/simple;
-	bh=vQJRsj0jxkKp+AedBogVahhGsvxI0h+wyN653B4zDZ0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=JsXWVCAvBJRKxV+UJZGKjat68HtgzmyX2U9Y7VP+iLw/BE/qwDckSPBZMGxIfHajRPUJML9DzXeNyQ2eIawvOqltVKKycwNf1WrrY0Y6GOkNHSq69PpHwYP6fQwfFH5304nP6UddtLpW2XsA5OoOPHsN39jIWe8mcxZWx4565+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=ojmwYfqU; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1758560862; c=relaxed/simple;
+	bh=oW2Z7Oee1Y9cSqTEm5oMUUXJ2TPcwlolNY+tvCTo7eU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TGoVDBibpujijKxT/W9qS3v4EDH7Hx7k4BtaKQ7JRJr+S3DReCwL6PInArM1t/yM3P+jpH8YFh8TnbDhjczoX/34n13sI6pSXfhCrgeUUYkgwKyOc1BU5RAAFA5qciDaHTFdPvMMe/ccdEFq8HF525vtusEtFjxmm6SN7yxChpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=qIyOb7nY; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=JqGwuLdtfhO757m4LeuXnKCWOoq71+1IP2gYTz8bM8s=;
+	t=1758560861; x=1759770461; b=qIyOb7nYYb3wybufTliF6GVOUCFSpIMRHjUmzjltOVfEkYI
+	owIk345h9du9BLJjopeO9EfuUXah5akmzgXrc7zhR/3aimNXc9kajQvujFr8Nr8NLGScAZx63rzT9
+	SX62Gmy6UYWiCq0UcGKgBmzUVdVdDWXU53bQjUczJznH5TQdeP4h55CTpz2alo9chYEktSU9bfWUb
+	vpwmcsXri7vxfa40eRPPSgwBZuJ1a8p31nLGlRKlsNhI8sYjkkreAazuW75tGKzgmJQdY7DNqdx1w
+	5a8OBy2YkX33xB/ax+xLZJ3kqJEdx4Z6ndMRVoqbNMWr4ccn6VAXmx7vU35mjwuA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1v0k0e-00000004sVf-2Dfv;
+	Mon, 22 Sep 2025 19:07:28 +0200
+Message-ID: <96ae8e726480a36a37d472106b761a141394e845.camel@sipsolutions.net>
+Subject: Re: [PATCH v2 03/10] um: vdso: Implement __vdso_getcpu() via syscall
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Tiwei Bie <tiwei.bie@linux.dev>, richard@nod.at, 
+	anton.ivanov@cambridgegreys.com, benjamin@sipsolutions.net, arnd@arndb.de, 
+	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	tiwei.btw@antgroup.com
+Date: Mon, 22 Sep 2025 19:07:27 +0200
+In-Reply-To: <61ae09df-d65b-4c9d-a0c1-7de915246590@t-8ch.de> (sfid-20250922_180452_263852_EC16D5FF)
+References: <1568f254-7963-4015-91ed-7630d5d87881@t-8ch.de>
+	 <20250922045020.48158-1-tiwei.bie@linux.dev>
+	 <495a5594-8ac6-4b7d-be6b-7c176b741c21@t-8ch.de>
+	 <76b5ba35f864764100c9a5a00d50d8fa4276cd98.camel@sipsolutions.net>
+	 <21755635-74d4-4fa4-8ffd-371c17630fdf@t-8ch.de>
+	 <366bb558c3fd23b9a80008d923f29ed0234e17b9.camel@sipsolutions.net>
+	 <61ae09df-d65b-4c9d-a0c1-7de915246590@t-8ch.de>
+	 (sfid-20250922_180452_263852_EC16D5FF)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1758560815;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Czn2vrlolGeYQImejpAr7KFt5Sj149E/ZMwKdYUmdVs=;
-	b=ojmwYfqUYRslwx9vrc6Vkc9cUh/s/av1mcLNGO7ucF+zTT6OESF9DAe4ez6x51V0FNbB8g
-	rb6oZyjIhxCHPiwYlPVGDXkkGQepwQkUvB97umvVL6TEstsXVV8fzAy1Ort9Kw66MF8gsS
-	PGua7faiaSFvowWcas8HN9eRAZKd96TpBXV+qyzcJ7N8ovITJESRy7PFG4q4i5y5TiGhJa
-	13W4iqoAwtNTah8wRhtOGhUUgBlraXiOKiF9rQPECYD64Zk8WzpIpnLQ1+LmS2Jm4eCUMq
-	4p4IMsgCeGHzGV0WUcRSVv2ObP7f+VG8rpXqhAq7wPTkRqAx9cE5dtPMONmhnQ==
-Date: Mon, 22 Sep 2025 19:06:55 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: guptarud@gmail.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Ondrej
- Jirman <megi@xff.cz>, "Leonardo G. Trombetta" <lgtrombetta@gmx.com>
-Subject: Re: [PATCH v3 0/5] Upstreaming Pinephone Pro Patches
-In-Reply-To: <20250921-ppp_light_accel_mag_vol-down-v3-0-7af6651f77e4@gmail.com>
-References: <20250921-ppp_light_accel_mag_vol-down-v3-0-7af6651f77e4@gmail.com>
-Message-ID: <53eabe34a310ea9c74315fa09a604e4a@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-malware-bazaar: not-scanned
 
-Hello Rudraksha,
+On Mon, 2025-09-22 at 18:04 +0200, Thomas Wei=C3=9Fschuh wrote:
 
-On 2025-09-21 23:05, Rudraksha Gupta via B4 Relay wrote:
-> Throughout the years, many have contributed to the Pinephone Pro (ppp)
-> development. Unfortunately, these patches are scattered around various
-> repositories in different states.
+> > I don't know if I'd say "just overhead" - depends on which path is more
+> > optimised in a typical libc implementation? I'd basically think it's
+> > identical, no? You either link to the vDSO, or a __weak same function i=
+n
+> > the libc?
+>=20
+> The code also needs to be built and maintained.
 
-Thanks for submitting these patches.  However, please expand the patch
-descriptions, because their current forms are too terse and, as such,
-simply not acceptable.  This applies to all patches in this series.
+Yeah, fair, though the vDSO doesn't really do anything, and if we do
+want to use it then having a working version beats having to re-do it
+from scratch, which=20
 
-I'm also under impression that you're submitting these patches upstream
-blindly and without researching the rules that apply well enough, which
-may not be the best possible approach.
+>  AFAIK __weak is only for
+> the compile-time linker. The vDSO call will be an indirect call.
 
-Finally, please refrain yourself from sending multiple versions of the
-same patch series in the same day.  Doing so makes reviewing the patches
-unnecessarily hard.
+yeah, I looked at the links you'd sent earlier only later ...
 
-> I will be attempting to upstream these patches. I will start off with 
-> the
-> following small series:
-> - Add light/proximity sensor support
->   - 
-> https://codeberg.org/megi/linux/commit/f171bc7013bc7ad3de9af817bfbcbfa548ebe01c
-> - Add accelerometer sensor support
->   - 
-> https://codeberg.org/megi/linux/commit/b0bb7633e073a6760fa213b8c4a78ea2e73c7bf1
-> - Add magnetometer sensor support
->   - 
-> https://codeberg.org/megi/linux/commit/2f7e67f451f16eaf15b81aa1dbdf126d54927d35
-> - Add mount-matrix for magnetometer
->   - 
-> https://codeberg.org/megi/linux/commit/d7cd2eab931e32fa94408a96d73b4e6c0616107a
-> - Fix voltage threshold for volume down key
->   - 
-> https://codeberg.org/megi/linux/commit/7c496a5cc27ed4e38b740f36c2d8b2c62f80ae54
-> 
-> Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
-> ---
-> Changes in v3:
-> - change magnetometer mount matrix
-> - update volume button threshold
-> - Link to v2:
-> https://lore.kernel.org/r/20250921-ppp_light_accel_mag_vol-down-v2-0-e6bcc6ca74ae@gmail.com
-> 
-> Changes in v2:
-> - remove usb-typec node in dts from light/proximity sensor patch
-> - Link to v1:
-> https://lore.kernel.org/r/20250920-ppp_light_accel_mag_vol-down-v1-0-c8bbcd3e2e94@gmail.com
-> 
-> ---
-> Leonardo G. Trombetta (1):
->       arm64: dts: rk3399-pinephone-pro: Add mount-matrix for 
-> magnetometer
-> 
-> Ondrej Jirman (4):
->       arm64: dts: rk3399-pinephone-pro: Add light/proximity sensor 
-> support
->       arm64: dts: rk3399-pinephone-pro: Add accelerometer sensor 
-> support
->       arm64: dts: rk3399-pinephone-pro: Add magnetometer sensor support
->       arm64: dts: rk3399-pinephone-pro: Fix voltage threshold for 
-> volume keys
-> 
->  .../boot/dts/rockchip/rk3399-pinephone-pro.dts     | 42 
-> ++++++++++++++++++++--
->  1 file changed, 40 insertions(+), 2 deletions(-)
+> > > > I mean ... on the one hand, sure, it doesn't really do much after t=
+his,
+> > > > but OTOH it lets userspace actually use that path? So might be usef=
+ul.
+> > >=20
+> > > What advantage does userspace have from it?
+> >=20
+> > Right now, none? But it's easier to play with if you have the
+> > infrastructure, and I'm not convinced there's a _disadvantage_?
+>=20
+> So far that hasn't happened. The disadvantages are the ones from above,
+> nothing critical. But of course it is your subsystem and your call to mak=
+e.
+
+Yeah, kind of agree, though I'd like to actually use it - especially in
+time-travel mode - but haven't really gotten time to add it. Having it
+maintained in-tree is a bit nicer in case of global updates, but yeah,
+ultimately it's not really all that important either way.
+
+I guess we could get getrandom() pretty easily by taking the x86 one.
+
+I actually have half a patch somewhere that rejiggers the UM vDSO to be
+more like normal architectures, using lib/vdso/gettimeofday.c and making
+the build more regular etc. Maybe I should dig that up and try to make
+it work entirely - it was part of a previous attempt of adding the time-
+travel thing I mentioned.
+
+> > Huh, hm, yeah I forgot about that ... 32-bit. Yeah, agree we should jus=
+t
+> > kill that. I'm not even sure it works with the host kernel trapping
+> > there? Oh well.
+>=20
+> Ack, do you want me to send a patch? This was my real gripe with the UM
+> vDSO. I want to enable time namespaces for all architectures but these
+> need to be handled in the vDSO properly. For the 64-bit stub vDSO it's
+> not a problem as the syscalls will work correctly.
+> But the interaction with the weird 32-bit logic on the other hand...
+
+I guess? But I'm confused by what you say about it being related to time
+namespaces, the vsyscall stuff doesn't really _do_ anything, assuming it
+works at all? It's not like the host actually could be doing anything
+other than syscalls there, which are intercepted? If it were doing
+anything else, it wouldn't work in UML in the first place?
+
+johannes
 
