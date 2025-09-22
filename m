@@ -1,183 +1,100 @@
-Return-Path: <linux-kernel+bounces-827448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B175B91C92
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:45:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8B8B91C0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C1953AAFBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:45:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67588164B21
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917E62848A9;
-	Mon, 22 Sep 2025 14:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E3F27B359;
+	Mon, 22 Sep 2025 14:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyano.uk header.i=@cyano.uk header.b="dBhXMRCA"
-Received: from jupiter.guys.cyano.uk (jupiter.guys.cyano.uk [45.63.120.176])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ewloeGIy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC85F270575;
-	Mon, 22 Sep 2025 14:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.63.120.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76059231832;
+	Mon, 22 Sep 2025 14:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758552330; cv=none; b=oj1RtcM3BLTh8UnQDc2h1viIgQercs73vqcQvXfOAz9316Bsb2h6hbvhBdGeq4qVtd56IU1mto1XD08UttEd9jq1Z5XXaBpYin9VlcbFfIdok6UrByV7tSKnpB62MInxJHu218T4U77hM4zgibQib8BTMGxVwWXtpG9cWHz1dLo=
+	t=1758551970; cv=none; b=YUFeC5ZbcAD3sJYU5qJ5VdmzW96l+TBLfPYgvTcqqqqFC96eY8SiapEwbyIqYBITAlLxLimWOGVHJqk9hMzs0K3UD2rMSVaTu61TzQzpY4gT6ct20xIiUJLNHpLHqpcdVMVxv2MF27v5XOmW/mWiNur4TVzJJkATYsT50fwjdz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758552330; c=relaxed/simple;
-	bh=d2mMnZSYt/0QmdgJDvPlJQuYTeSOPwcauhZznvRBvLM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HdfLdC/Jdl8BUN/03ARiB10wC60ixP3Ahm8FwNeEDkSvbOeD6mDDkQ/4Phzmrqydz1fWfDW326MCzeW70fUxCNdkVgAax5xpWPi+oK4Zviu7AddOTz6TYu/hdFjDVmdd7na/pVGjoAdhvH8ZXIimSkg1cqrDifKWh1txypMJuOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cyano.uk; spf=pass smtp.mailfrom=cyano.uk; dkim=pass (2048-bit key) header.d=cyano.uk header.i=@cyano.uk header.b=dBhXMRCA; arc=none smtp.client-ip=45.63.120.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cyano.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyano.uk
-From: Xinhui Yang <cyan@cyano.uk>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyano.uk; s=dkim;
-	t=1758551852;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jJB3CodlCdQSfnz45CZ5KOyNJWuDIISVpH/Ds+KGYBE=;
-	b=dBhXMRCAU2B1StqCmMIyux7XHP5EsuaykQFQ+SyayqI8GyO0cyf07nsaVOD3Kg6K0GMN3W
-	DzhMEWNOZ0Pw3n+4qA72crZvqwGFq6Ph/RVcnBgxZ+ClFViQwQK5ouAhGn8E5xdSdoOyUV
-	8c8towRjaAsVJkhxQ/17BsVEBYXeQlYNuwmI1SWKbBZj65herck+sc9HYQGq9nytSA11Vn
-	4QoVmsM7KCQi7wiBq8vwIjY5/KI4i8ebyxF1sybzeG8lKMeqhLahxcDaS+NmlHeRJy963m
-	bcwsA8zIw9axePe3YMG+9px6m3cljPSjS7R2ix3RpDdW+nxqsBrMaEmcnTKoag==
-Authentication-Results: jupiter.guys.cyano.uk;
-	auth=pass smtp.mailfrom=cyan@cyano.uk
-To: linux-scsi@vger.kernel.org
-Cc: stable@vger.kernel.org,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>,
-	Xinhui Yang <cyan@cyano.uk>,
-	Oliver Neukum <oliver@neukum.org>,
-	Ali Akcaagac <aliakc@web.de>,
-	Jamie Lenehan <lenehan@twibble.org>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] scsi: dc395x: correctly discard the return value in certain reads
-Date: Mon, 22 Sep 2025 22:36:19 +0800
-Message-ID: <20250922143619.824129-1-cyan@cyano.uk>
+	s=arc-20240116; t=1758551970; c=relaxed/simple;
+	bh=XUyYu1eYga/BDEMIdszJKKF+XHr9UK13KXG6TovG4ag=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=neLvQ/i4HsTH0w6+rWzZb1mHdnD/6HF+T3H2QZFW4QF4BvFDjYT3wwwkfHJ4BunuMWii3DfE0KNxZjpNI2R1r9jgFjeJxIi0gN6Fo5o4HZLqyaU5bcXpYvBdTFh5UMAxltgrriCjJCaB0oxm6pk0eMFIYPuhI+z525YawdjYblw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ewloeGIy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CF91C4CEF0;
+	Mon, 22 Sep 2025 14:39:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758551970;
+	bh=XUyYu1eYga/BDEMIdszJKKF+XHr9UK13KXG6TovG4ag=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ewloeGIyQwxY+LI+JeKAaLxERVQuJ1tkHBJDwIzhbQZzaSdZQUODYxGFIszzIqg7j
+	 7Uc58pCCruDgadAgm2SjK6Yy34evEi3+Qnw8V0hRRg6kIjl4OBdn1u5yekNy4dY6zv
+	 9IwSOQE+YRqbbto6AybI1hzhksn4kyxiqbedo6mvhZp4a8LvR+tIxjbTQlxq0hNkz2
+	 lki+jgF9fcjWgr2qKNnI+pCHYLfnRFyNy/d1d4Xu7/bzYo1+jkQfzz1tETGDFlOJUM
+	 bM2YGGtMQFgX3tZY0gicDqeZPZH/64S8E8FmyyztO2TSiF1C3aJbTn4q3M+TVTOpk5
+	 SINPEeS8DE33Q==
+Date: Mon, 22 Sep 2025 16:39:20 +0200
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: John Fastabend <john.fastabend@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] tls: Avoid -Wflex-array-member-not-at-end warning
+Message-ID: <aNFfmBLEoDSBSLJe@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: /
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-There are certain read operations performed in this code which doesn't
-really don't need its return value. Those read operations either clears
-the FIFO buffer, or clears the interruption status. However, unused read
-triggers compiler warnings. With CONFIG_WERROR on, these warnings get
-converted into errors:
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-drivers/scsi/dc395x.c: In function ‘__dc395x_eh_bus_reset’:
-drivers/scsi/dc395x.c:97:49: error: value computed is not used [-Werror=unused-value]
-   97 | #define DC395x_read8(acb,address)               (u8)(inb(acb->io_port_base + (address)))
-      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/scsi/dc395x.c:1003:9: note: in expansion of macro ‘DC395x_read8’
- 1003 |         DC395x_read8(acb, TRM_S1040_SCSI_INTSTATUS);
-      |         ^~~~~~~~~~~~
-drivers/scsi/dc395x.c: In function ‘data_io_transfer’:
-drivers/scsi/dc395x.c:97:49: error: value computed is not used [-Werror=unused-value]
-   97 | #define DC395x_read8(acb,address)               (u8)(inb(acb->io_port_base + (address)))
-      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/scsi/dc395x.c:2032:33: note: in expansion of macro ‘DC395x_read8’
- 2032 |                                 DC395x_read8(acb, TRM_S1040_SCSI_FIFO);
+Use the new TRAILING_OVERLAP() helper to fix the following warning:
 
-Create a new macro DC395x_peek8() to deliberately cast the return value
-to void, which tells the compiler we really don't need the return value
-of such read operations.
+net/tls/tls.h:131:29: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-Signed-off-by: Xinhui Yang <cyan@cyano.uk>
+This helper creates a union between a flexible-array member (FAM)
+and a set of members that would otherwise follow it. This overlays
+the trailing members onto the FAM while preserving the original
+memory layout.
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 ---
- drivers/scsi/dc395x.c | 34 ++++++++++++++++++++--------------
- 1 file changed, 20 insertions(+), 14 deletions(-)
+ net/tls/tls.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/dc395x.c b/drivers/scsi/dc395x.c
-index 386c8359e1cc..013d0d5277d6 100644
---- a/drivers/scsi/dc395x.c
-+++ b/drivers/scsi/dc395x.c
-@@ -91,15 +91,21 @@
- #endif
+diff --git a/net/tls/tls.h b/net/tls/tls.h
+index 4e077068e6d9..d06435d186c0 100644
+--- a/net/tls/tls.h
++++ b/net/tls/tls.h
+@@ -128,8 +128,9 @@ struct tls_rec {
  
+ 	char aad_space[TLS_AAD_SPACE_SIZE];
+ 	u8 iv_data[TLS_MAX_IV_SIZE];
+-	struct aead_request aead_req;
+-	u8 aead_req_ctx[];
++	TRAILING_OVERLAP(struct aead_request, aead_req, __ctx,
++		u8 aead_req_ctx[];
++	);
+ };
  
--#define DC395x_LOCK_IO(dev,flags)		spin_lock_irqsave(((struct Scsi_Host *)dev)->host_lock, flags)
--#define DC395x_UNLOCK_IO(dev,flags)		spin_unlock_irqrestore(((struct Scsi_Host *)dev)->host_lock, flags)
-+#define DC395x_LOCK_IO(dev, flags)		spin_lock_irqsave(((struct Scsi_Host *)dev)->host_lock, flags)
-+#define DC395x_UNLOCK_IO(dev, flags)		spin_unlock_irqrestore(((struct Scsi_Host *)dev)->host_lock, flags)
- 
--#define DC395x_read8(acb,address)		(u8)(inb(acb->io_port_base + (address)))
--#define DC395x_read16(acb,address)		(u16)(inw(acb->io_port_base + (address)))
--#define DC395x_read32(acb,address)		(u32)(inl(acb->io_port_base + (address)))
--#define DC395x_write8(acb,address,value)	outb((value), acb->io_port_base + (address))
--#define DC395x_write16(acb,address,value)	outw((value), acb->io_port_base + (address))
--#define DC395x_write32(acb,address,value)	outl((value), acb->io_port_base + (address))
-+/*
-+ * read operations that may trigger side effects in the hardware,
-+ * but the value can or should be discarded.
-+ */
-+#define DC395x_peek8(acb, address)		((void)(inb(acb->io_port_base + (address))))
-+/* Normal read write operations goes here. */
-+#define DC395x_read8(acb, address)		((u8)    (inb(acb->io_port_base + (address))))
-+#define DC395x_read16(acb, address)		((u16)   (inw(acb->io_port_base + (address))))
-+#define DC395x_read32(acb, address)		((u32)   (inl(acb->io_port_base + (address))))
-+#define DC395x_write8(acb, address, value)	(outb((value), acb->io_port_base + (address)))
-+#define DC395x_write16(acb, address, value)	(outw((value), acb->io_port_base + (address)))
-+#define DC395x_write32(acb, address, value)	(outl((value), acb->io_port_base + (address)))
- 
- #define TAG_NONE 255
- 
-@@ -1000,7 +1006,7 @@ static int __dc395x_eh_bus_reset(struct scsi_cmnd *cmd)
- 	DC395x_write8(acb, TRM_S1040_DMA_CONTROL, CLRXFIFO);
- 	clear_fifo(acb, "eh_bus_reset");
- 	/* Delete pending IRQ */
--	DC395x_read8(acb, TRM_S1040_SCSI_INTSTATUS);
-+	DC395x_peek8(acb, TRM_S1040_SCSI_INTSTATUS);
- 	set_basic_config(acb);
- 
- 	reset_dev_param(acb);
-@@ -2029,8 +2035,8 @@ static void data_io_transfer(struct AdapterCtlBlk *acb,
- 			DC395x_write8(acb, TRM_S1040_SCSI_CONFIG2,
- 				      CFG2_WIDEFIFO);
- 			if (io_dir & DMACMD_DIR) {
--				DC395x_read8(acb, TRM_S1040_SCSI_FIFO);
--				DC395x_read8(acb, TRM_S1040_SCSI_FIFO);
-+				DC395x_peek8(acb, TRM_S1040_SCSI_FIFO);
-+				DC395x_peek8(acb, TRM_S1040_SCSI_FIFO);
- 			} else {
- 				/* Danger, Robinson: If you find KGs
- 				 * scattered over the wide disk, the driver
-@@ -2044,7 +2050,7 @@ static void data_io_transfer(struct AdapterCtlBlk *acb,
- 			/* Danger, Robinson: If you find a collection of Ks on your disk
- 			 * something broke :-( */
- 			if (io_dir & DMACMD_DIR)
--				DC395x_read8(acb, TRM_S1040_SCSI_FIFO);
-+				DC395x_peek8(acb, TRM_S1040_SCSI_FIFO);
- 			else
- 				DC395x_write8(acb, TRM_S1040_SCSI_FIFO, 'K');
- 		}
-@@ -2892,7 +2898,7 @@ static void set_basic_config(struct AdapterCtlBlk *acb)
- 	    DMA_FIFO_HALF_HALF | DMA_ENHANCE /*| DMA_MEM_MULTI_READ */ ;
- 	DC395x_write16(acb, TRM_S1040_DMA_CONFIG, wval);
- 	/* Clear pending interrupt status */
--	DC395x_read8(acb, TRM_S1040_SCSI_INTSTATUS);
-+	DC395x_peek8(acb, TRM_S1040_SCSI_INTSTATUS);
- 	/* Enable SCSI interrupt    */
- 	DC395x_write8(acb, TRM_S1040_SCSI_INTEN, 0x7F);
- 	DC395x_write8(acb, TRM_S1040_DMA_INTEN, EN_SCSIINTR | EN_DMAXFERERROR
-@@ -3799,7 +3805,7 @@ static void adapter_uninit_chip(struct AdapterCtlBlk *acb)
- 		reset_scsi_bus(acb);
- 
- 	/* clear any pending interrupt state */
--	DC395x_read8(acb, TRM_S1040_SCSI_INTSTATUS);
-+	DC395x_peek8(acb, TRM_S1040_SCSI_INTSTATUS);
- }
- 
- 
+ int __net_init tls_proc_init(struct net *net);
 -- 
-2.51.0
+2.43.0
 
 
