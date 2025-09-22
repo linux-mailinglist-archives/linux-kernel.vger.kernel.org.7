@@ -1,59 +1,109 @@
-Return-Path: <linux-kernel+bounces-827582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71BE9B9225A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:11:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D43B92260
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BC687A66D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:10:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7847D4E1366
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2777431079B;
-	Mon, 22 Sep 2025 16:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E4F310627;
+	Mon, 22 Sep 2025 16:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="svBdbWtE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="TQnx8Ydl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hi0s1aBr"
+Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7463D305E10;
-	Mon, 22 Sep 2025 16:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095142E8B74
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758557501; cv=none; b=svLuv7SsPYha2SGhIpOAVu8c9d2+/ziLHMFrsr9Pc4BAMDW82CSFaaYHseBJDrExBubJ8Rsjg4VC/swU+AheDYaQVFo/G0fVtOYVvZgmF6BOoVbehLfvZgyxLdFpzr/VYDTiOoOoyHXHBlrWYqNMsskv7pX3ZD6gkKV3VdMv2BI=
+	t=1758557615; cv=none; b=MLSdgPSqJ1LNVibP4JyH2iYvYGLwo7qYUrrp2x5DTnrXwAB4kMYOyOZ6EPmFJbNTd2hV4Kz9L4fI3CDp6kNU8K0yzR1OCzRvNgum3ILyPI3gj9gePmnx9xGfWEuqiTXuJU4DZR0YvrC9BuEHMRd/oH8epEn/hu9Fof11hWIFFYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758557501; c=relaxed/simple;
-	bh=Y4dexsKXHeZk//jfbzy1vNcOZEXCwdx3La8z6nNKwJY=;
+	s=arc-20240116; t=1758557615; c=relaxed/simple;
+	bh=UbYINqfr9M12tQLD6VtbEp4Z3iPBoHHDToP4tnR+KfQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g6Xnnub+T20EeLW+Lgc/BD8PJr+gwORyEdX7jzVWob5PeoA/YF7+UmFTHIAHeMABbznj/dLyCngmM5xUTEdvJwGrUG2+OFGum8SxHifcKJx2WSbHZF9lZbLDWCUxEuBSwNMi7aM19cTEFLN5rpvelzkf7Fo7/hH/HpEcynZ6RNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=svBdbWtE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C796BC4CEF0;
-	Mon, 22 Sep 2025 16:11:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758557501;
-	bh=Y4dexsKXHeZk//jfbzy1vNcOZEXCwdx3La8z6nNKwJY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=svBdbWtEwjtojsDy0C1kWGJQszMlj2jH0sgM1mMyVwDa5OsQD0H33HzwybTdErCJG
-	 rd6an1Ed4ucvaB5lNn3KWy8u9IMr5kTwOYDYtI8Ka1yf/BbcIlk98eyeGIfBtXx7mc
-	 8I5EvQ4Go2uJ6P/JNtdiGPMpVMEk95RtIZiC0iseMd7fdJar+RWenXmTYvEOWUEXNg
-	 eFevYjCvM2kz2YA4QQZx1ZqsK2y7dfV5Xbjg+5E0dwGSjBRcRQoZ2ANbVzELDC9j9N
-	 fm+hN8urMOx0V79vPzer8q8havNkrk945eYN2Yuz1tOFL5oJnrLS7qHlJ6FMVtlIlM
-	 yfVwRjk3XVSsQ==
-Date: Mon, 22 Sep 2025 11:11:40 -0500
-From: Rob Herring <robh@kernel.org>
-To: Yulin Lu <luyulin@eswincomputing.com>
-Cc: dlemoal@kernel.org, cassel@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-ide@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	vkoul@kernel.org, kishon@kernel.org, linux-phy@lists.infradead.org,
-	ningyu@eswincomputing.com, zhengyu@eswincomputing.com,
-	linmin@eswincomputing.com, huangyifeng@eswincomputing.com,
-	fenglin@eswincomputing.com, lianghujun@eswincomputing.com
-Subject: Re: [PATCH v4 1/3] Document the EIC7700 SoC sata ahci
-Message-ID: <20250922161140.GA150852-robh@kernel.org>
-References: <20250915125902.375-1-luyulin@eswincomputing.com>
- <20250915130135.1497-1-luyulin@eswincomputing.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KJSp8sJL3vniIVoIJcRJ10xroF5RhWb3fGGumtU/hhqZmA/7/JFGoi4FAjRad+/bwwGhP/wKyll+tDB3ba3s07OlZPJ4Ae0WRXy1i6GF1jPUQpPY1mqcdn+tvZ0Ukxcj1J1QwdG6xM8mcb1Lnmihj5F1UWT6306SpFlialuhfbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=TQnx8Ydl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hi0s1aBr; arc=none smtp.client-ip=202.12.124.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailflow.stl.internal (Postfix) with ESMTP id 2B6AF130096C;
+	Mon, 22 Sep 2025 12:13:31 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Mon, 22 Sep 2025 12:13:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1758557611; x=
+	1758564811; bh=dL1BvnI43qIxZyYhkmHSIoN6CjGw1NlqI0MDthq8w9Y=; b=T
+	Qnx8YdlA4Bixu00SPEK/E8uvAGBG2ZuirkZjqZKZo/wDFN0WRIAnizm/yvSZF83x
+	BmdlJ1RcJUGgsSjj5tzUcqK72WaHBV+mGoM5OxTBVe7bceH5j20FSqOice/U0oV7
+	tZYQ1Ko5CkWnQVtzfn7WPvH/xo7CYZL7b7547T7LvGfS0DriblTobFRTN/ZotfzS
+	VygQDe5ZZLfa85WItHWDmaBdXLLUGDkL8W4Xm2t1bm56HjRd6T4h58i0f8CQnmao
+	f7qsQzt3/W4GLfKWViAGC7Co59zUGTHF2Wa8plaJY+lS/V0cDghQRSp1P00i/l3K
+	BXBMkDs2RCFcwmPijizdA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758557611; x=1758564811; bh=dL1BvnI43qIxZyYhkmHSIoN6CjGw1NlqI0M
+	Dthq8w9Y=; b=hi0s1aBrjyLf7KpNYh61eeN/01oa41y0Twc5U6m79rDCb53AYb4
+	EYQluMA77XCpQZEtclcH/mys9nSq3mE2eLvage7i9Lt5t9uW16XinFd40gSaFREL
+	9mK6m6wv3FLanJ54jQl3rkqMYN65XZYphC+w6nXrioR/4UCuYTCx7sv1uneAWnFA
+	QKq5vC7kRGJnDTn2wqHRwgGkdegNVPtt8CBiveOxIjkkDH1WPp2+MXObGUG4SG47
+	VNUk8j/rdSWpXgZ8TbHdGTlJvgalTY/wfDmbr1cGIIHT8QMWHLHhE1qmdVr69+aY
+	OSZU7yGdV4E96BM2+tEYdCgmWjWIZacaiGQ==
+X-ME-Sender: <xms:qXXRaK5-PYvzCD-E4oS9Ik0F6FYumOp1szuHE9oykxxD7AxwsUSMEg>
+    <xme:qXXRaBj_BoMm96RPO87hvhtaaQ1FadVMcam7rJGq8T0xnuwbqlZMtlrGi2k6gMc_G
+    zYFWYtXsOml9aSULf7uOiQC5ypZsTaOSJ5iXAXvQNY_kNpmiWDu9Uw>
+X-ME-Received: <xmr:qXXRaA2_gtxaz7-WQj2u54xSP0sG8CImf6lHFwbpocnBaEsVBXDTUe8sVGmI-g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehkeeftdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
+    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
+    frrghtthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtledu
+    hfeffeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepfeeg
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehshhgrkhgvvghlrdgsuhhttheslh
+    hinhhugidruggvvhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhi
+    ohhnrdhorhhgpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpth
+    htohephhhughhhugesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhn
+    fhhrrgguvggrugdrohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghsse
+    horhgrtghlvgdrtghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggt
+    lhgvrdgtohhmpdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgiipdhrtghpthhtoh
+    eprhhpphhtsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:qXXRaPXSdJN4P154GrwvVLIh1WSMjw0ByeJs2_M-9ZHvnVz7bW_O8g>
+    <xmx:qXXRaF2oCbgrdnQipG4V-EJDmcNAtLy5ujm7sjce1rHVBZzIwq78qA>
+    <xmx:qXXRaIi-q8guWTWB33mTkkr8Rc5WfOmsH_jJntYH7t0pCfpYHv4BKg>
+    <xmx:qXXRaNKajF62yjoOdyjGK-bBpSpiA3k19zT7_TB0fJf3AglwuNL7Yw>
+    <xmx:q3XRaE7y_bkgd_zKul3O4e5ZFYOdeRkuQziAifMzK1YenzemQPgDJ5iZ>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 22 Sep 2025 12:13:29 -0400 (EDT)
+Date: Mon, 22 Sep 2025 17:13:26 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 1/5] mm/page_vma_mapped: Track if the page is mapped
+ across page table boundary
+Message-ID: <wnenjcqvr2lzqaqnxyc6tbtd7smv2hepajtjxl72kundsfaisk@k2mlxpzuzhbv>
+References: <20250919124036.455709-1-kirill@shutemov.name>
+ <20250919124036.455709-2-kirill@shutemov.name>
+ <7qkpt4ia3qryjp2xo2ywy7qydav6nijghasr7biwctd5ah7dat@t3epq5dzt2sd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,126 +112,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250915130135.1497-1-luyulin@eswincomputing.com>
+In-Reply-To: <7qkpt4ia3qryjp2xo2ywy7qydav6nijghasr7biwctd5ah7dat@t3epq5dzt2sd>
 
-On Mon, Sep 15, 2025 at 09:01:35PM +0800, Yulin Lu wrote:
-> Document the SATA AHCI controller on the EIC7700 SoC platform,
-> including descriptions of its hardware configurations.
+On Fri, Sep 19, 2025 at 01:25:36PM -0700, Shakeel Butt wrote:
+> On Fri, Sep 19, 2025 at 01:40:32PM +0100, Kiryl Shutsemau wrote:
+> > From: Kiryl Shutsemau <kas@kernel.org>
+> > 
+> > Add a PVMW_PGTABLE_CROSSSED flag that page_vma_mapped_walk() will set if
+> > the page is mapped across page table boundary. Unlike other PVMW_*
+> > flags, this one is result of page_vma_mapped_walk() and not set by the
+> > caller.
+> > 
+> > folio_referenced_one() will use it detect if it safe to mlock the folio.
+> > 
+> > Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+> 
+> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+> 
+> > ---
+> >  include/linux/rmap.h | 5 +++++
+> >  mm/page_vma_mapped.c | 1 +
+> >  2 files changed, 6 insertions(+)
+> > 
+> > diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+> > index 6cd020eea37a..04797cea3205 100644
+> > --- a/include/linux/rmap.h
+> > +++ b/include/linux/rmap.h
+> > @@ -928,6 +928,11 @@ struct page *make_device_exclusive(struct mm_struct *mm, unsigned long addr,
+> >  /* Look for migration entries rather than present PTEs */
+> >  #define PVMW_MIGRATION		(1 << 1)
+> >  
+> > +/* Result flags */
+> > +
+> > +/* The page is mapped across page boundary */
+> 
+> I think you meant "page table boundary" in above comment.
 
-Please fix the subject: "dt-bindings: ata: ..."
+Right. Will fix in the v3.
 
-> 
-> Retains the "ports-implemented" property in the DTS, because
-> removing it and relying only on the firmware register causes
-> problems. If the property is not present and we remove the
-> module using `rmmod`, a reset is triggered that clears the
-> register. As a result, inserting module again using `insmod`
-> will lead to errors.
-> 
-> The detailed reasons are that the ports-implemented register is
-> configured by the firmware (U-Boot on the HiFive Premier P550 board)
-> before kernel entry and correctly set to 0x1. During probe,
-> ahci_platform_enable_resources() -> ahci_platform_deassert_rsts() is
-> called, and when the driver is removed,
-> ahci_platform_disable_resources() -> ahci_platform_assert_rsts() is
-> called. This reset clears the register, which is defined by the IP
-> databook to reset to 0.
-> 
-> Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
-> ---
->  .../bindings/ata/eswin,eic7700-ahci.yaml      | 79 +++++++++++++++++++
->  1 file changed, 79 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml b/Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
-> new file mode 100644
-> index 000000000000..40c44f0705ba
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
-> @@ -0,0 +1,79 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/ata/eswin,eic7700-ahci.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Eswin EIC7700 SoC SATA Controller
-> +
-> +maintainers:
-> +  - Yulin Lu <luyulin@eswincomputing.com>
-> +  - Huan He <hehuan1@eswincomputing.com>
-> +
-> +description:
-> +  AHCI SATA controller embedded into the EIC7700 SoC
-> +  is based on the DWC AHCI SATA v5.00a IP core.
-
-Wrap at 80 chars.
-
-> +
-> +select:
-> +  properties:
-> +    compatible:
-> +      const: eswin,eic7700-ahci
-> +  required:
-> +    - compatible
-> +
-> +allOf:
-> +  - $ref: snps,dwc-ahci-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: eswin,eic7700-ahci
-> +      - const: snps,dwc-ahci
-> +
-> +  clocks:
-> +    minItems: 2
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: pclk
-> +      - const: aclk
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    const: arst
-> +
-> +  ports-implemented:
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - phys
-> +  - phy-names
-> +  - ports-implemented
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    sata@50420000 {
-> +        compatible = "eswin,eic7700-ahci", "snps,dwc-ahci";
-> +        reg = <0x50420000 0x10000>;
-> +        interrupt-parent = <&plic>;
-> +        interrupts = <58>;
-> +        clocks = <&clock 171>, <&clock 186>;
-> +        clock-names = "pclk", "aclk";
-> +        phys = <&sata_phy>;
-> +        phy-names = "sata-phy";
-> +        ports-implemented = <0x1>;
-> +        resets = <&reset 96>;
-> +        reset-names = "arst";
-> +    };
-> -- 
-> 2.25.1
-> 
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
