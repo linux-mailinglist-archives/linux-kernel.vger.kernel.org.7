@@ -1,141 +1,165 @@
-Return-Path: <linux-kernel+bounces-827299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81CD7B91602
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:21:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5CBB9161A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C66D84232D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:21:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D9D23B25A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2607E3090E4;
-	Mon, 22 Sep 2025 13:21:12 +0000 (UTC)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F03E30C0FD;
+	Mon, 22 Sep 2025 13:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YxMQ+NBa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A670230B517
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77169277CAE;
+	Mon, 22 Sep 2025 13:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758547271; cv=none; b=L+SFQpUDhlLcPCRFclBex7t9ehLN0p2oVNCQJTfBiJ4BvovwThD3kQbtFYa8cC03pQYBlq8P/YoqWGCr1uVzQm5xRKRWIpVJLfo76Q67U1iAxr01rFZbJLlrEYNKqHJP5TnxFUrDwBAwf2Fbupvq6uM3Z26n2FexIC8BXQrDgrQ=
+	t=1758547354; cv=none; b=edMSJoPXDK8KC+fCdVNRdIreB3niPyaIslWbqfsNoezfW22psEdHqkrbClTso78tWRgY4VITcna1Kih3flwTfM2bRnWPbNkBfkjcheRk/6cYxuUSwh3HIH6Hce34Ug3/7Q8QDEOmkCmpNd8zyXFFe0hE+1M0poicIMYYwOEgpQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758547271; c=relaxed/simple;
-	bh=twHi5A9x4cQ/6G+wv9NhTj7Vvql2JLIedMZaL1HDcCs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jxf5EwxfugsfghkYYuCYvY5zl6IW9pSnQAczjfifbWuhj4vwedLiMcBHBQ6BWw2ArONGwheqll2Gu/w0jk8+I892CJl3oczum9k73j4ulIfEXbdFYU083BhdViOTeXDR4jQYkM8TQVm06+QEe+i2KUoYod+JkfB5w3aZOQ3sDHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-54a9482f832so1517322e0c.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:21:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758547268; x=1759152068;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7oT2yfLN/4pYPbEtz7ZQcc5Ja0yXs/qEChj5LREg+X4=;
-        b=bdOdyXxJhMCzlQgEq02w+LcR/haMKJYZTYsZ3Bjd6wSoPCc/+ScfmKGMC3NLWfo271
-         EkfEUD3HaEjImBc+tqyIk+JWTMvZp8nS/taeiQQYlNWlr1cLOxJCrl8HdtacRuJWk0Pm
-         JuPDPSF46jzJcBqqT2HsKjZk+I3y5cWVA1JT0DgxMHLl8azB84VABjysvbGF/X6dAnO9
-         jXkh8L02btdxcwNPm0gCD3oQfVdijI1GM5hZ8d+2s6K0HLOvKnkFrjB7mJa78o3WdUHB
-         P0PemKlwmeZbGynpKVluncJH+k+j4GtMwUE3eLlESJVyRNXnLde2dbdTCLaWmPyt9Djf
-         r3Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUo2ndJWZG4JT0kibThqPoVAkcSM3axw+F6egX0Mrc0iILJFTsaum4JpvQW6O3RV0XtP/RU5Fx14ky7XK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy13zbW7xxJeWC9lC4wLvZ/4VHM6tlOxfiiFXaAmQ2QpN9LYA7h
-	E+Zj0xgsJRuYcCnYKLky0ioz9fdjKsjpiH5/1Zz0kaB5iPyh5ifwspX1LQ7ULcuD
-X-Gm-Gg: ASbGncuscps7LnWumk+YyDOZloPRyBm0KW9FAshA2KR2/uPX+ZXDZ+p8Dlme/i43B+5
-	xhc8qyZ12vdwdUFNFQ6IfVMb6iXQp9/tswltqrNthVzXxxMkTJDIaPjZcsiIHojq35f9nCkpNLh
-	6waiKago3Ph4zxj3indYkKiQX47K5MwzDPzDrUEv9hwDy0gMkfbxjE5C04kwAdjP4Ku/ZPDQ9lE
-	4ftqU1MwJlw3WWQPrae0/R1CMZ2nwNyFKQPLta6yRN/wNi+VboGMDE4EVLj1s6/bugJl1sOtI4l
-	xdTtS9IdLFcNj5yXd6B7d75YYE+PY6dkolvKMIIrg7SHLKqFGBFun9xKf3bUAoyfOMxmBuubS6Z
-	jKY913D5l9yCLXbQs9GLyY2Ubt4HTuLJG1bSbxaikA1KjCqso52DA7TjsPc59
-X-Google-Smtp-Source: AGHT+IG7JZ2eFr4mwhZxFFy4VYxsPdoQgBSJsmPH8UBRqWiSyFWXnIVyJVjnJcpW3d+jHpxCG5aC4A==
-X-Received: by 2002:a05:6122:e46:b0:54a:93be:46fc with SMTP id 71dfb90a1353d-54a93be4a66mr1563646e0c.0.1758547268106;
-        Mon, 22 Sep 2025 06:21:08 -0700 (PDT)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54bbc96ccacsm424907e0c.3.2025.09.22.06.21.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 06:21:07 -0700 (PDT)
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-8943501ba3dso1994646241.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:21:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUWu98dbBUuaIj3f4p+ljCe3glgRAAC1QHTkQsv2OCzKpgurAF5vpr5ILLeqMifaL5vw+XL0RUf5yUmto8=@vger.kernel.org
-X-Received: by 2002:a05:6102:d8c:b0:521:ed06:1fc7 with SMTP id
- ada2fe7eead31-588bb9bf4c8mr3821613137.0.1758547267049; Mon, 22 Sep 2025
- 06:21:07 -0700 (PDT)
+	s=arc-20240116; t=1758547354; c=relaxed/simple;
+	bh=ZpKHIENUoUhwJkuDvGTZQgZeFO4daeKHvVKAGsIWa6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UWtViyf41VLzS8pzeqWASgM2qEAd3YFZXrZvucJY0FdwWkUmv6tCUbgXvdk+ngjJzQW0Ygz2L5bYrTfsYaMC+ZAlAQBgEyrpj0aoM1wb+KxnKPFsjcGRb2UNW9cHkcKmZTottwKBN79fXTvLRnNZGcWFcRZfgK4KDu41aVRpEpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YxMQ+NBa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CE6CC4CEF0;
+	Mon, 22 Sep 2025 13:22:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758547354;
+	bh=ZpKHIENUoUhwJkuDvGTZQgZeFO4daeKHvVKAGsIWa6o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YxMQ+NBaYfUgnSnuDkJYaXuxgtOBdZrWoJREzP8yz4GQab96ehxCmsrBMhRAexhbd
+	 AVY2Yu0ZfZcpCVvN/C4nr/4yhcYC+EjteZTvMibtAfkZEpIoTkWjm8xfyCp5DmUmLB
+	 qbZIGeBMteZsO/RMH7VTcMN4sRjNU6GBHDdgEtuS+4M0vcPODsApRuouimWs9xIl+I
+	 Qj1sntMi+lCClH8Q/tM89TjzY7Jq4MxM7iJw2HdQbQAj9K0r5kpT6Xn81kFPp7m3FC
+	 J9hjJ4wNlclaLmnRETExM1XMIkV30rlXMUS5wxlKMEHH3URNBR2DD5DlE2qSNB4pc2
+	 KqieoFBm+lNeQ==
+Date: Mon, 22 Sep 2025 15:22:27 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 07/10] man/man2/open_tree.2: document "new" mount API
+Message-ID: <aqhcwkln4fls44e2o6pwnepex6yec6lg2jnngrtck3g5pc6q5d@7zibx3l2vrjw>
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+ <20250919-new-mount-api-v4-7-1261201ab562@cyphar.com>
+ <gyhtwwu7kgkaz5l5h46ll3voypfk74cahpfpmagbngj3va3x7c@pm3pssyst2al>
+ <2025-09-22-sneaky-similar-mind-cilantro-u1EJJ2@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250921111557.103069-1-biju.das.jz@bp.renesas.com> <20250921111557.103069-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250921111557.103069-3-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 22 Sep 2025 15:20:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWtpv325awR06pFA+_EHh5GZ90K6OEf5S6Wkg+_89uRBQ@mail.gmail.com>
-X-Gm-Features: AS18NWDdF71ys-sJ9xzdE3pXCvKO4zAavWIwsnrvZsEZ2kjh3SpCcOFmdVkNVPA
-Message-ID: <CAMuHMdWtpv325awR06pFA+_EHh5GZ90K6OEf5S6Wkg+_89uRBQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] pinctrl: renesas: rzg2l: Drop the unnecessary pin configurations
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-
-Hi Biju,
-
-On Sun, 21 Sept 2025 at 13:16, Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> There is no need to reconfigure the pin if the pin's configuration values
-> are same as the reset values. E.g.: PS0 pin configuration for NMI function
-> is PMC = 1 and PFC = 0 and is same as that of reset values. Currently the
-> code is first setting it to GPIO HI-Z state and then again reconfiguring
-> to NMI function leading to spurious IRQ. Drop the unnecessary pin
-> configurations from the driver.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v3->v4:
->  * No change.
-> v2->v3:
->  * Dropped extra space before the == operator.
->  * Moved spinlock acquire before reading pfc value.
->  * Make sure it is configured for function in PMC register for
->    skipping GPIO switch.
-
-Thanks for the update!
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7gv4y3hrk7klyb5b"
+Content-Disposition: inline
+In-Reply-To: <2025-09-22-sneaky-similar-mind-cilantro-u1EJJ2@cyphar.com>
 
 
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -541,7 +541,11 @@ static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
->                                        u8 pin, u8 off, u8 func)
->  {
->         unsigned long flags;
-> -       u32 reg;
-> +       u32 reg, pfc;
-> +
-> +       pfc = readl(pctrl->base + PFC(off));
-> +       if (((pfc >> (pin * 4)) & PFC_MASK)  == func)
-> +               return;
->
->         spin_lock_irqsave(&pctrl->lock, flags);
->
+--7gv4y3hrk7klyb5b
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 07/10] man/man2/open_tree.2: document "new" mount API
+Message-ID: <aqhcwkln4fls44e2o6pwnepex6yec6lg2jnngrtck3g5pc6q5d@7zibx3l2vrjw>
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+ <20250919-new-mount-api-v4-7-1261201ab562@cyphar.com>
+ <gyhtwwu7kgkaz5l5h46ll3voypfk74cahpfpmagbngj3va3x7c@pm3pssyst2al>
+ <2025-09-22-sneaky-similar-mind-cilantro-u1EJJ2@cyphar.com>
+MIME-Version: 1.0
+In-Reply-To: <2025-09-22-sneaky-similar-mind-cilantro-u1EJJ2@cyphar.com>
 
-Looks like you accidentally switched back to the code from v2?
-Shall I take v3 instead?
-Thanks!
+Hi Aleksa,
 
-Gr{oetje,eeting}s,
+On Mon, Sep 22, 2025 at 08:09:47PM +1000, Aleksa Sarai wrote:
+> > > +is lazy\[em]akin to calling
+> >=20
+> > I prefer em dashes in both sides of the parenthetical; it more clearly
+> > denotes where it ends.
+> >=20
+> > 	is lazy
+> > 	\[em]akin to calling
+> > 	.BR umount2 (2)
+> > 	with
+> > 	.BR MOUNT_DETACH \[em];
+>=20
+> An \[em] next to a ";"? Let me see if I can rewrite it to avoid this...
 
-                        Geert
+You could use parentheses, maybe.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> > > +.IR "mount --bind" )
+> >=20
+> > You need to escape dashes in manual pages.  Otherwise, they're formatted
+> > as hyphens, which can't be pasted into the terminal (and another
+> > consequence is not being able to search for them in the man(1) reader
+> > with literal dashes).
+> >=20
+> > Depending on your system, you might be able to search for them or paste
+> > them to the terminal, because some distros patch this in
+> > /etc/local/an.tmac, at the expense of generating lower quality pages,
+> > but in general don't rely on that.
+> >=20
+> > I've noticed now, but this probably also happens in previous pages in
+> > this patch set.
+> >=20
+> > While at it, you should also use a non-breaking space, to keep the
+> > entire command in the same line.
+> >=20
+> > 	.IR \%mount\~\-\-bind )
+>=20
+> My bad, I think my terminal font doesn't distinguish between them well
+> enough for it to be obvious. I'll go through and fix up all of these
+> cases.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I should probably add an automated diagnostic.  At least the case of two
+'--' together, which I've never seen useful unescaped, should be
+diagnosed.  I'll add a make(1) 'lint-man-dash' target that catches this
+with a regex.
+
+
+Have a lovely day!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--7gv4y3hrk7klyb5b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjRTYwACgkQ64mZXMKQ
+wqmm2A//QAHUgf3mNDz7yAdWfueHzIl/M5wGQa4+TZCh+4v+dwqkN7OFGtbtD42p
+LO4vBmhKrX32iPDMaLrK5Luj7t5IgSSSHi9ZbkN1stgl8ku+XIdpq3ApYPuYKKyB
+JecginBsLE9Z+tqRN5uzsLx+lyDdcPrq1F/5KVNCN53Dn1C9oz0+/tiWxNIQYo4Z
+s6gvyGMTuPB31WzTXI0dzb2JxT/Dw+19lGWUJnpMl1HzCKMWLf+YFKXkydNH+6NZ
+CDmX9DFPQsL/VIa9igU5jIyudpJs5kkH5dXqQHO3xbMS73OLjNhlJLeFLPNaXQa7
+idx+L873f+7DQ4dD8UPmlKn3uVn99DkXPcYzmqFaLS1pCuBag5Q8YQkBASd9VJZn
+bG/EhmKT0XhKkCj7ake/NraSmIPn1XO7IdwTS0S3vuZUqaHc9BW1zxisM116Qfbi
+Ht7f4a+T4vOuesk6IBdpLgc0p5ZyRiQAx70dAOmOgzSvGsmQvKY9R8xpElbyKW2v
+AixCwUXNzpga2TVI/eJb2KxcffSJk5WV/FYMyV3GpT+VieUcEcDzl9E3EpAiQWpO
+6BVQFsXP9PwtsyuGLbtKtpAd1M+5xNkysuIymBvFKB1ysDc6IgTte/QrD8qAJPu4
+JJozjcn5qG2NjWl22s5zSrmM83p/np56cGpQ15G3qTv+Sg9IJkQ=
+=DYOq
+-----END PGP SIGNATURE-----
+
+--7gv4y3hrk7klyb5b--
 
