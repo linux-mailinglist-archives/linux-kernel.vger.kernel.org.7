@@ -1,108 +1,132 @@
-Return-Path: <linux-kernel+bounces-827440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B46DB91C53
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:43:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB4DB91C6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2732A188CA81
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:43:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042972A452B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE2C2820A0;
-	Mon, 22 Sep 2025 14:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECE227F732;
+	Mon, 22 Sep 2025 14:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="QOPfvEsM"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bq45ijOg"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5655A274B50
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860D322D4DD
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758552167; cv=none; b=iI4CSrH1kr3J9Tq6eSdGvDiX7LgwWoqrD2iJQ8/JHvZrkGcW+RA4SeFGYaOiJUotC3hc+1beGy8hmNs/CQ37zTVClXt5hWMrRb14UqFcwEPGbkol1GG2u9NmeKjXY+ayr+UN3o0tWXA2SmmR0npyoxByYT4CacJzfHWlCB0FkZs=
+	t=1758552187; cv=none; b=dJhAes2YkwKl/A7Q93XfB+ZTjKGPWwpTvXaHmw5aGZEEGxoS5jfslGABsN46jwpkh5ROYN31Z07TL21AdmUiJqdTmT+UtNMdJ4ontZQhmMlWziV5CsJDy26NNkJkRDw9K48Cc8A/FGZutLcRxrrD04BFha/n6PYMgttQg1RWJdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758552167; c=relaxed/simple;
-	bh=cbgpVXooeJQoxtDkq+orZaKLHLZsU4tUaffVgtq1Mcc=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K1t2QLehnkJ4HBhX4Dz9p21sarqaGY+lzvBwpmkkTbWLXCC0xOzCqNYoQfEv9Fpn5uW+rksXXLhRUzJJ0o4P6XGbhws62OFPUGHaX8YpvwabZxorD0ZH+vC0+E4lBt4ULMZJhMOnkbUvNcAF6wldthpW6O+n0bIAiCOfHpl4N7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=QOPfvEsM; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-36a6a39752bso13563201fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:42:46 -0700 (PDT)
+	s=arc-20240116; t=1758552187; c=relaxed/simple;
+	bh=GNd0y4cVbWPetSA78wepeAR7zoMfnuBG+rjT2H3cUJA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iBb5cmeSAUfkLD0LTY0jaZgIYjSHy3JeF8f5b8W0TYnjsS/9rvctOfJiKa+cfPboGnZ4gLOV0mZ675emkDS8D5VmVv6K2iVB/L0WoTokge0+pYfQHq68nJk/LbCPRPjKomFf4XEEKy0U2rh4oG1GBB2Mbz7eJg9bom6o0LvL77o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bq45ijOg; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-363be237227so30404331fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:43:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758552164; x=1759156964; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cbgpVXooeJQoxtDkq+orZaKLHLZsU4tUaffVgtq1Mcc=;
-        b=QOPfvEsMMEXAemiKfxrmMO9uFUY2th96vvKPTOtvxV3ikdb1FmTLRwjoX6RFivconY
-         PzG+pCtxzyOFf6sAWFAL1bCvAhVXdEOunLbTe4jq4ABp1PZaeOVgGrIkpbyS4XLfJFnM
-         0MVNU4sVv5x8nltBGXfhfxal9mmCyZ3v13vt/pitpGzJO8EAWgwjAKakptw3mYq+tZ7V
-         4idRp4EOMvgLCUuBGCfE9pQIflKYxXhO3LX8RwmmTwHBG7njzouZWsRxufMSHT14TzVX
-         u/Qok1HhHFGrKRw1rXVJbdVdYiQ1aCPuBsREu5ilKCuCjd3AEHvbwQGn+L4v57f9G3sX
-         3Ijg==
+        d=gmail.com; s=20230601; t=1758552184; x=1759156984; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MtIdBcXjvQm0npfMBQTkmT+Qi8zM6Vw8hQsMj63CDrk=;
+        b=bq45ijOgAmprZnywT9pQa4Os54Gc44xFaAHmLAwbL/7fvG2rR1EFAhdcvhfiVQPF4R
+         QZ6/Dmx+6D/eCeKSWEq4oW5ARx7fLihN6aI5PFjr5gQvDM8RugKIfSdNKJSfR4KbAQ4b
+         cNozQm6aiPcWRLG23ktDWtfx7DFoZJkGjBLEc78+cdpIZNWFmk2hxHItnJFf5+KXH83K
+         WsM7zV6gNNic9JNsfgyPLbY+skaQg40+6Jd2ThqVznDWkd8d3C26lFtwrtGEuZ8d9LK3
+         Yi+FnNjAY99alx6nGy/vNqKZgoZBlkTRNDhxtaayMGY9ujGknln517P5cJaExfh9oqP+
+         uWLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758552164; x=1759156964;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cbgpVXooeJQoxtDkq+orZaKLHLZsU4tUaffVgtq1Mcc=;
-        b=cWox/OPEFxDzKYwyrGrQGLAS+Uco3iciovUSrm1lQA7/3a5UJUkpqm2goudRqfckt4
-         VpALgfywmQXNITW9bBeFtE6Th53aD6P5fJ5lN59Kdl9YhecNy7UCVqbHp5F5oxGhg/Ks
-         6G9JxrjexLRmZw35r8+1CaFVs35609zCIG0aD3FY4hsN3ggot+JtK4agAg4So7vAHwCK
-         rpLff2MHN662oFJQRMIuHlnRMAQB6SF/qFTfD7StenBr4PwAkLBelPbZxPsuW4PmcuSf
-         n8u67t6XAjCGhVL7e3stmXCS7QsoT+9hD4pr+699ll/d5ItC05+lCdod4KPM+KaFDG2l
-         4SVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWynmi0azkFmjpRaWqdLaadjO7XHwCAOwtSkygwJF/l79xn6u4Ickd0kI6+qByzYVyCDNWgT94A5gdJWP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy28yyIjvz+BEAeO+QCAtxZbBseK5+oYUpV8wLEQB/IxzGItoF9
-	Q8Bn9iGxVTXhNjyCpDKsd+IBaIX5NYWubGMYZsxEhSXYaOhwLdYxZK7Pb5Iuvn13QEeQjS2iSF3
-	R7j3g/zXyHduHOYdl7Am8okJgF+722/nvmPWAWSVgiA==
-X-Gm-Gg: ASbGncswOo7VlT4JY6xS3/xBCtV7C77Vzd1sKQyEi19LMzhVdPPuUkxDOIU2SN2TNeQ
-	s0VzUZze+o01OjWqHDRA2w8d0R6hnHHJKUbwIA6j8K3vgjV3iGp1XEPB2zexL4f/6riP1wy2Cjs
-	JUmenvGQTeJzrnFaD4EjJFzEczkdw01BCHSmE2xo5MX43Oo3Ayj4mI46oY/9NSNw2Jup70TqW14
-	kStCjCuVf4s5wNn/7mhq/36rP0fBEQ8CJCQHQ==
-X-Google-Smtp-Source: AGHT+IHaE9nqceFLj+JInNghJEvz7NuUskN6MHfzPYyLxUjABx4E3I4QkTLcuqh8bctTyJSvA4j3CUuzt28CZtnMZP8=
-X-Received: by 2002:a05:6512:2395:b0:57a:501:54ab with SMTP id
- 2adb3069b0e04-57a05015577mr5016702e87.50.1758552164438; Mon, 22 Sep 2025
- 07:42:44 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 22 Sep 2025 07:42:43 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 22 Sep 2025 07:42:43 -0700
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <20250922-i2c-mux-v1-5-28c94a610930@gmail.com>
+        d=1e100.net; s=20230601; t=1758552184; x=1759156984;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MtIdBcXjvQm0npfMBQTkmT+Qi8zM6Vw8hQsMj63CDrk=;
+        b=HvgkRvY3eiM6rd2irl+0rkRg1FiwETX/IoOK8Y9qSORyqrRmCfA3cZs8uHLTQFeiwE
+         CKYV5wR4ShtPxRFThrOJ+P6JgKerGjN9QIi7eWlDakuNCJVcM66JPBXYJNYQbM3drU4d
+         tAdy/0UMcj6MbvI+N1A3P3lNEtPW4gjJ3zvGlan4advaTbR6x9J51Sh1rFT70fNUAdSZ
+         B684r+6SBhcv4u2txckwtPVJic7CNRiVyMU7GDOtpDjqMG4y4m+UsGLdd3R5D8U1iRWw
+         210kmDVdBxjqaPa8q+7Q48Z5jmw/tF1ax12vOYea3fiutqmD7Kk06WIa/7TjScLiFhze
+         q7/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWUrbuok0hZgpyLIh7/6yReiIi4tftWQVAycRAPc0jR6fV3mYpsAPYAIgaLNtEmUP/iLWmuL+CffUDwIIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbHdYH3a4JHdUm2gSux/QFhnZ0/bNhR3RMp+4AdlEv8H3Nk8ql
+	3eo695jusGYWAt2Hm7hnFDYhDih6FNDaEeWIIlkhgQth8IYeBF/A+FTd
+X-Gm-Gg: ASbGncsTBQQO6q/W3XzZBmwX+bVAuRWhhgBcaurs88NpUAQRacoV9SgXWcD64P9ABrg
+	QRVpXmvBAZVYLQ2q7MKdVgNFKmg/e/s5FZcAaBllQmAasFxVimRRLqXez8KkuZiCkuj4Rqk8f4m
+	QPQmuZ4tI290fUmDfSm4HUBfIc1FW9XrCwiNPCU2xXyEymI2Qy7RByKrLX/j6dwmhKZOMIHd+vl
+	g672YLfSmq4ksTWePdZ59RFxFyDFZdbqiQ2kwS8qyuO0m/RbjOne5HX+SY/TjssHl2KVy9Zj51/
+	bgl4zEABnhx6dZ73H69Cme6ngLODrObB+jW97lOMXkuQY5Lnl+Bo3Sf82w4Fq8jc7GcstgA1omB
+	G/7AkG19dBT6z1TdGd6VEgid71yp6xwbl5LIbbr2ltbYh8Ri1sEh/tZHRFj//Hb1zCnHKHWncCJ
+	9uybRz554m33m4AR9s
+X-Google-Smtp-Source: AGHT+IEyiePhldEEUbZLhZdpleCuDyBFXuJfswMLKkVPADF+9ubU/JrFMn02YfNheZiFsLVEtydyuw==
+X-Received: by 2002:a05:651c:4413:20b0:360:3fc1:28a3 with SMTP id 38308e7fff4ca-36418ed0e80mr31697991fa.38.1758552183370;
+        Mon, 22 Sep 2025 07:43:03 -0700 (PDT)
+Received: from localhost.localdomain (broadband-109-173-93-221.ip.moscow.rt.ru. [109.173.93.221])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-361a25d7309sm30492541fa.15.2025.09.22.07.43.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 07:43:03 -0700 (PDT)
+From: Alexandr Sapozhnkiov <alsp705@gmail.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexandr Sapozhnikov <alsp705@gmail.com>,
+	linux-media@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH 5.10] rtc: fix error return in pm80x_rtc_set_alarm()
+Date: Mon, 22 Sep 2025 17:42:58 +0300
+Message-ID: <20250922144300.11-1-alsp705@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922-i2c-mux-v1-0-28c94a610930@gmail.com> <20250922-i2c-mux-v1-5-28c94a610930@gmail.com>
-Date: Mon, 22 Sep 2025 07:42:43 -0700
-X-Gm-Features: AS18NWA6jseTsU1-el3RwI7NaUjcbCUkPeK98Ko-CDeIjcGra6Ar6whhs_lBYGo
-Message-ID: <CAMRc=MdMMQxFfkMPHaUg9nMWuW9F1p+PT2i-ggcU5SSFKOVGKQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 5/7] i2c: davinci: calculate bus freq from Hz instead
- of kHz
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
-	Michael Hennerich <michael.hennerich@analog.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 22 Sep 2025 08:21:00 +0200, Marcus Folkesson
-<marcus.folkesson@gmail.com> said:
-> The bus frequency is unnecessarily converted between Hz and kHz in
-> several places.
-> This is probably an old legacy from the old times (pre-devicetrees)
-> when the davinci_i2c_platform_data took the bus_freq in kHz.
->
-> Stick to Hz.
->
+From: Alexandr Sapozhnikov <alsp705@gmail.com>
 
-This looks good but would you mind also changing the name of the field to
-bus_freq_hz in order to leave zero change of misinterpreting it in the future?
+Return value of function 'regmap_raw_write', called at rtc-88pm80x.c:205, 
+is not checked, but it is usually checked for this function
 
-Bartosz
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
+
+---
+ drivers/rtc/rtc-88pm80x.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rtc/rtc-88pm80x.c b/drivers/rtc/rtc-88pm80x.c
+index f40cc06b0979..82984a58dca7 100644
+--- a/drivers/rtc/rtc-88pm80x.c
++++ b/drivers/rtc/rtc-88pm80x.c
+@@ -173,7 +173,7 @@ static int pm80x_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	struct rtc_time now_tm, alarm_tm;
+ 	unsigned long ticks, base, data;
+ 	unsigned char buf[4];
+-	int mask;
++	int mask, ret;
+ 
+ 	regmap_update_bits(info->map, PM800_RTC_CONTROL, PM800_ALARM1_EN, 0);
+ 
+@@ -202,7 +202,9 @@ static int pm80x_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	buf[1] = (data >> 8) & 0xff;
+ 	buf[2] = (data >> 16) & 0xff;
+ 	buf[3] = (data >> 24) & 0xff;
+-	regmap_raw_write(info->map, PM800_RTC_EXPIRE1_1, buf, 4);
++	ret = regmap_raw_write(info->map, PM800_RTC_EXPIRE1_1, buf, 4);
++	if (ret)
++		return ret;
+ 	if (alrm->enabled) {
+ 		mask = PM800_ALARM | PM800_ALARM_WAKEUP | PM800_ALARM1_EN;
+ 		regmap_update_bits(info->map, PM800_RTC_CONTROL, mask, mask);
+-- 
+2.43.0
+
 
