@@ -1,138 +1,139 @@
-Return-Path: <linux-kernel+bounces-826805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4DCFB8F62F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:01:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 661B3B8F63B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 612C116868A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:01:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE8B1896F53
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28A62F7AA1;
-	Mon, 22 Sep 2025 08:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mIST54By"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342D32F83BC;
+	Mon, 22 Sep 2025 08:01:12 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6891862A;
-	Mon, 22 Sep 2025 08:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606D82EC571;
+	Mon, 22 Sep 2025 08:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758528060; cv=none; b=U2RgoSLtDEGw58iKwA06ZZ0A/kzxDLgv70jRPjwvrh1UH70JOAN+9Si0KZzyfGpS3cKD9EcP0iiwkkzk33cgAdjnYfdqY5RgVkgXkj6q3BdnmkhYxL4fZQIu1CIfjYso8KFHMEOgLxXL3QHO+7LONmQpSLAUJoYDPT7r6riNKwU=
+	t=1758528071; cv=none; b=GH1iTYk/UlSqtq1A1gN4gmq4WdS6dVTdDXC5RlkmNp7tZyJO2DgvuX49VosBpEE7lbd15m9GtgyVj8S5YKbi3yeZw+AhZTeQip7JfWdIpGaxQC7EtBUMfw02Ktdw3FAqttqW9Vm3lroMBeSM6R7yrKLQHt+ZUtxFHo5GE5IdQeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758528060; c=relaxed/simple;
-	bh=vNyASgDMALp2F+nu5vVRejbnwXsKQbnGGWSCJj1fXLc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ggehHn4vs3UxbeKN9xIqjrzNUGnxPYUe+7kZ5GZTdlWl+0T/K5t3ilm2mJZcgZ5JSiAQuXmQ8coIEu9UzNF63vWR2cyjkzRf+UYukPaJ1AYe/q6FQr44dlpECdcSXdP0nKvovX+4E43hNkPFUw1NA5W+658TToUTLlwRt3Mh6VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mIST54By; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758528058; x=1790064058;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=vNyASgDMALp2F+nu5vVRejbnwXsKQbnGGWSCJj1fXLc=;
-  b=mIST54ByvG/UIIHADxI+A9gOVNIUczAcxzWBIfri72Xua//mukCsTgzl
-   oDmiltlVnCAAHP8kph5RVejLWGHY8H10ZCGeJeTZbs38aDdiM986G6TtW
-   IRgcZRT09RJ4blJCvJSQ8fskfhFXlf6hHh0fxwjNcMfjLLkgUmaiOWvva
-   Hfg1LBxmOMVgqKpVKXu8tKNdq+jzjT+g8i94G+Lkmjwk1B0KPfcb58iyd
-   TYqRXZMspQmnEZPufo1+qA3wR6vSXtJrZbr32vcN/01ZYUjMkMYfEp+c4
-   WCKD1dKnGHUSOcVB3kchOCLWT1x9MTWQ+CfTNw2KK8BOBpL7zqKDeuadc
-   w==;
-X-CSE-ConnectionGUID: W7d7nakgSt6NfKrGoiR/0Q==
-X-CSE-MsgGUID: r5a/wRedR6CHolHPv7mJig==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60725629"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="60725629"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:00:57 -0700
-X-CSE-ConnectionGUID: nMxVTHJvQkaET8Hj31utaw==
-X-CSE-MsgGUID: hIfwrIfwR82Hg2GM3Lh0BA==
-X-ExtLoop1: 1
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:00:53 -0700
-Message-ID: <380c48c1-26ca-4a78-81fe-529fcdc56960@linux.intel.com>
-Date: Mon, 22 Sep 2025 16:00:50 +0800
+	s=arc-20240116; t=1758528071; c=relaxed/simple;
+	bh=Uk7jFx6ij0VJG/+aJ2eTZp3XvSC+fw3naQAQN0dvgBE=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NGXagZ0hfbEztPnBn6xKqHofgiZt0VYLNH7yQGrADGo0iAyM6Yd40q/Wvy/hZrmVGpz9JnnHeoeJ/u4iPyW1mY3wRNXsP3Se/+V+3bhOp3x2MZovZyqE1Xksk7Rspm6y4EbtnlGG7xGGW41R7BdzxE56ggcsD93Z/J9dBfFzKPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [180.158.240.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 55F52340A98;
+	Mon, 22 Sep 2025 08:01:09 +0000 (UTC)
+Date: Mon, 22 Sep 2025 16:01:05 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
+Subject: Re: [PATCH 2/3] riscv: dts: spacemit: add 24c02 eeprom on BPI-F3
+Message-ID: <20250922080105-GYB1291757@gentoo.org>
+References: <20250921210237.943370-1-aurelien@aurel32.net>
+ <20250921210237.943370-3-aurelien@aurel32.net>
+ <20250922032158-GYA1291757@gentoo.org>
+ <aNDVX9IrDbH2w7yJ@aurel32.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 27/51] KVM: x86: Disable support for IBT and SHSTK if
- allow_smaller_maxphyaddr is true
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Xiaoyao Li <xiaoyao.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-References: <20250919223258.1604852-1-seanjc@google.com>
- <20250919223258.1604852-28-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250919223258.1604852-28-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNDVX9IrDbH2w7yJ@aurel32.net>
 
+Hi Aurelien,
 
+On 06:49 Mon 22 Sep     , Aurelien Jarno wrote:
+> Hi,
+> 
+> On 2025-09-22 11:21, Yixun Lan wrote:
+> > Hi Aurelien,
+> > 
+> > On 23:01 Sun 21 Sep     , Aurelien Jarno wrote:
+> > > The BPI-F3 contains a 24c02 eeprom, that contains among other things the
+> > > MAC addresses of the two network interfaces. For this reason, mark it as
+> > > read-only.
+> > > 
+> > > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+> > > ---
+> > >  arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 11 ++++++++++-
+> > >  1 file changed, 10 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+> > > index 3b6e4f52e9aad..574d10fdf9b82 100644
+> > > --- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+> > > +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+> > > @@ -115,6 +115,15 @@ &i2c2 {
+> > >  	pinctrl-0 = <&i2c2_0_cfg>;
+> > >  	pinctrl-names = "default";
+> > >  	status = "okay";
+> > > +
+> > > +	eeprom@50 {
+> > > +		compatible = "atmel,24c02";
+> > > +		reg = <0x50>;
+> > > +		vcc-supply = <&vcc1v8_sys>;
+> > > +		pagesize = <16>;
+> > ..
+> > > +		read-only;
+> > so you're sure there is no demand to write data to eeprom?
+> > (update info at linux env)
+> 
+> It seems to only contains board infos (mac addresses), but if there are 
+> other use cases, that can indeed be dropped.
+> 
+On my second thought, I'm ok with it being "read-only", as we flash these
+infos during firmware burning stage, then never alter them later.
 
-On 9/20/2025 6:32 AM, Sean Christopherson wrote:
-> Make IBT and SHSTK virtualization mutually exclusive with "officially"
-> supporting setups with guest.MAXPHYADDR < host.MAXPHYADDR, i.e. if the
-> allow_smaller_maxphyaddr module param is set.  Running a guest with a
-> smaller MAXPHYADDR requires intercepting #PF, and can also trigger
-> emulation of arbitrary instructions.  Intercepting and reacting to #PFs
-> doesn't play nice with SHSTK, as KVM's MMU hasn't been taught to handle
-> Shadow Stack accesses, and emulating arbitrary instructions doesn't play
-> nice with IBT or SHSTK, as KVM's emulator doesn't handle the various side
-> effects, e.g. doesn't enforce end-branch markers or model Shadow Stack
-> updates.
->
-> Note, hiding IBT and SHSTK based solely on allow_smaller_maxphyaddr is
-> overkill, as allow_smaller_maxphyaddr is only problematic if the guest is
-> actually configured to have a smaller MAXPHYADDR.  However, KVM's ABI
-> doesn't provide a way to express that IBT and SHSTK may break if enabled
-> in conjunction with guest.MAXPHYADDR < host.MAXPHYADDR.  I.e. the
-> alternative is to do nothing in KVM and instead update documentation and
-> hope KVM users are thorough readers.  Go with the conservative-but-correct
-> approach; worst case scenario, this restriction can be dropped if there's
-> a strong use case for enabling CET on hosts with allow_smaller_maxphyaddr.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > > +		size = <256>;
+> > > +	};
+> > >  };
+> > >  
+> > >  &i2c8 {
+> > > @@ -143,7 +152,7 @@ buck2 {
+> > >  				regulator-always-on;
+> > >  			};
+> > >  
+> > > -			buck3 {
+> > > +			vcc1v8_sys: buck3 {
+> > I'm not sure if adding an alias here is a good idea, it occurs buck3
+> > serve the suppy for many devices, besides, to me it's more proper to
+> > name it as eeprom_vcc1v8 for the eeprom according to schematics in
+> > this case..
+> 
+> We need to add a label to be able to reference it for the eeprom 
+> vcc-supply, but we'll have to also reference it for other devices (e.g.  
+> emmc, wifi, phys, etc... It tried to choose a common name, ie the right 
+> most one on the schematics. Another option could be to call it buck3, 
+> but other name suggestions are welcome.
+how about simply making it "buck3_1v8", then probably add a comment
+later in the eeprom node? to mapping to the shecmatics
+	vcc-supply = <&buck3_1v8>; /* EEPROM_VCC1V8 */
+> 
+> -- 
+> Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+> aurelien@aurel32.net                     http://aurel32.net
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-
-> ---
->   arch/x86/kvm/cpuid.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
->
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 499c86bd457e..b5c4cb13630c 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -963,6 +963,16 @@ void kvm_set_cpu_caps(void)
->   	if (!tdp_enabled)
->   		kvm_cpu_cap_clear(X86_FEATURE_SHSTK);
->   
-> +	/*
-> +	 * Disable support for IBT and SHSTK if KVM is configured to emulate
-> +	 * accesses to reserved GPAs, as KVM's emulator doesn't support IBT or
-> +	 * SHSTK, nor does KVM handle Shadow Stack #PFs (see above).
-> +	 */
-> +	if (allow_smaller_maxphyaddr) {
-> +		kvm_cpu_cap_clear(X86_FEATURE_SHSTK);
-> +		kvm_cpu_cap_clear(X86_FEATURE_IBT);
-> +	}
-> +
->   	kvm_cpu_cap_init(CPUID_7_EDX,
->   		F(AVX512_4VNNIW),
->   		F(AVX512_4FMAPS),
-
+-- 
+Yixun Lan (dlan)
 
