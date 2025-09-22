@@ -1,223 +1,412 @@
-Return-Path: <linux-kernel+bounces-827812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEBBEB932D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:06:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E3B7B9329B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 780792A30B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:06:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D90DF19072AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D64231B833;
-	Mon, 22 Sep 2025 20:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AB131A56B;
+	Mon, 22 Sep 2025 20:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OsEc+83m"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013000.outbound.protection.outlook.com [40.107.159.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pOBeXDpm"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABE931CA5E;
-	Mon, 22 Sep 2025 20:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758571518; cv=fail; b=qyXE9MmzQ4izCOL+lJAVaWYcVJwboopSpjYwFYcFS8FgZ3gIxVt3WZFnXTwebz7TDmVb9qYQwKCLjIVfbKpU3T5M1H2lqdtVIUe4JK9aVXAgHXfaLUgOujkK8jzZSCKYR9LLgidCsd4fTMIhU1VPGPNqvoCg/Mif3/CpSbQnIYw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758571518; c=relaxed/simple;
-	bh=vGLhSV9HOD4MlWjPO5ELI7rFfhHl/ceGxaektFvV2mo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oXX6EB1hM9emFY8CsnFmxZ2hg5FEXiKyIVTh3Q2VdYr1YJ3lckc/VU9zl6Pul3lHjYUE1BPzFYfuZcjnZDklToDLH+Z9A1sYnog3nRv5XzItC9p9ISXXYRhdkEgwPrCVJqXzFEHBr+f5v8qAL0Fe3EQhB2743aYPSv8AmIuCPZE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OsEc+83m; arc=fail smtp.client-ip=40.107.159.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MAEkk58XE3eUgA/ZNAhs/H8XHdWCS9sQxJMUhW/7hW2ZO0hMx0WHkABtIqU9eB7eT3h7oN/TiY2miQ2OU57q/fSodi9rYV5RsSwXqhY0DGcVp0Hf7Fuqpj85jjg6YU8g4c0dpUWflA7shX4WfXYYIxODh+UVaItkqzxV9pIoGwndV7kVQfUodklxvtJkgIwnCu8/3PwSRoVcVJLGURYYnK+vsfJgNTWWkZYI7MiQxbCJ5/70J22D5TP05el/6iiBQ8wIk3tsmg64wAUzT9ZYCIxE7tznQ4v26uDckWJujCpiCEs4IdszcRnDTgBmZHMYb5XHcCKlfEEC5KA2ag1ljw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B2HiVBIMWSRnhCNOweRn6OKMCU2LmeoFk1QA712toKQ=;
- b=Mtn8ekEFzl5zY8QIMgQDKtXo9XvTT0mPmDRzXHq1LOn4Ik6mV4A6npBxnfahGG6tJfptvldRW3P8GwJvY+cQA2Q7wGJw36t2Evqtj0s6mg6jaZxOXZqU+qA6Gny6Y9Ib8OZ2PwLQOBP8RJHD2/gzY5ZI8NBqBxy4d65i9YL0VzjDQiTGn1zJpr2nT4JQ+5VtGN7lxeb/n/GxGDtQT2NOsjV9KcNWgOaKm9Rc18cJrvJ6lfP7DiuYxEGF8/wYa2vSg0/WhOEMXBVYEByA3VvNrV/DdEsEAa9fzwBv5csHeZhQuvmpnsR4lPEJ2jzCgT5vSNti2CYMdESylkhCrx5flw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B2HiVBIMWSRnhCNOweRn6OKMCU2LmeoFk1QA712toKQ=;
- b=OsEc+83m/ClgXpWM/GSCmBIVRi9g4pFCLfbsmyikGUEsjMs+KWxy13JekwOIBKA3p7tDffaf1GVak1xwI5+hXqGixRl+ihKcti6MC+hWzC/Lc4FnobHzTvXIaAReb3pF1LKqCir9LMxqQQLWD3A5CDKwkk8jen6gyzgFmRnF1J8DzNVkbXrV0swaIz/PyjJAHvNr1ftfDNvXpNWRmEkpoV6ZRMCBJWFD/0wZ8kUhX/Qu2rJP/WnChmXe0A0SRXynsQygXaHwhLywl9g9GMMAsod9CnkYrSWL+1zpQKZxMqsQkDmY9NjqjJzFP3JPri1R0s/sPMyjMAvBgyOOU8ujkQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
- by AM0PR04MB7073.eurprd04.prod.outlook.com (2603:10a6:208:1a0::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.12; Mon, 22 Sep
- 2025 20:05:13 +0000
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612%4]) with mapi id 15.20.9160.008; Mon, 22 Sep 2025
- 20:05:13 +0000
-From: Shenwei Wang <shenwei.wang@nxp.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-imx@nxp.com,
-	Shenwei Wang <shenwei.wang@nxp.com>
-Subject: [PATCH v2 4/4] arm64: dts: imx8ulp: Add rpmsg node under imx_rproc
-Date: Mon, 22 Sep 2025 15:04:13 -0500
-Message-ID: <20250922200413.309707-5-shenwei.wang@nxp.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250922200413.309707-1-shenwei.wang@nxp.com>
-References: <20250922200413.309707-1-shenwei.wang@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY3PR04CA0011.namprd04.prod.outlook.com
- (2603:10b6:a03:217::16) To PAXPR04MB9185.eurprd04.prod.outlook.com
- (2603:10a6:102:231::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C3B317706
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 20:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758571463; cv=none; b=BuUiPS7ehb7M4P383r55P0GDaK8rP1FPeLJfaTwIE5SJbtPmUwecpw1y1Fesp/9Fg+DPYsd/nPUCpyskRT8qTt4VG2HUS7rSQ0ov+Af3QcqXLbqCb43VyVAfE3ndd4yLH6NdS2ehZtJADRtV1PJk8pvY5xDmDuWMP6T+TNogUHQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758571463; c=relaxed/simple;
+	bh=mGxoGYOUnloHBRoWisM0PLt4IQ6SxjGCx8WXassUJIA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ExuaoMU8iJ429PXwZpxGaOOjNQQ6sQk1AOLFKauJeiXrRtN5W0AkfeBzgsQbUD8dCwFiJ785H/l3Ys+FRSIJD/4G3xy1teZHbBmSzvi9bU3XOep+e0716YTvP9SG/3Ykm0k9x364+musgwcK8cevbCG6+Zl99VCDSpBZ2BRgjrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pOBeXDpm; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-324e41e946eso8280665a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:04:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758571460; x=1759176260; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TWCJajFwmPVox9XPXHQlrmJ82Q85uEzbjIoGGe1fqFo=;
+        b=pOBeXDpmNWYOmTJJRdb7vQyb2WeqUzPVfkFGTXnZ1FEIKvyTkwmhwqwkzIXVkoCp+B
+         b1HXBL17fVc5rQi8jVlb9vAs+rLJHhFAAPa7oR+ScdsTZ4eH3EUDf61zfkno7FnTinxv
+         Aza8pXpquiFXFOy4u1uonPbgUXOuEm6Z+5Br/HMiS11pF1V9beyV5Cp5fAg7K5yM3JEi
+         aJnE1moDvqFmjU4KsLxtvZcBXl1t/+uNsn+bNjGlD2aGJyJ4GbFz1/fk70WbxrGKFiLG
+         9KddJLto+3gR13smP+4RhOCpcick+JzdOy6n0FyIkwXQ8n1D8uvYd9yP1aYUFGQUWiCz
+         d2Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758571460; x=1759176260;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TWCJajFwmPVox9XPXHQlrmJ82Q85uEzbjIoGGe1fqFo=;
+        b=blj4WmTWCzRCdqzN6JTdnsZ/YZGIOBSQSWKStywYp6a2Yo+s69o+6J0aCWLYFi+3z/
+         VARpujioK1mUfzwN9WfKai+6zAfc7AOmrSpn6k3Xdg6ayaniUD4aAxT+ogWlQHP9SyGy
+         CzEephsBlGYq8mvgDTJiraZhfL+4/iT/1vItwVxwXJZS3cnZk6ItLQYgkGwE7vi4LYig
+         zKhj6Vpf33MKwCxPgSAo/3eZealCbfBJOlQ/jMEbqPTUB1IYBUuZzZmW2cqJS2r4tq3U
+         GwPT7LabeQhZXKBNb+HxESSGXgtYq3umc8niHjvUCzA7wKgspkEuhHj33CtoYILZlik9
+         nAHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMH0B8uoQVvm0h5gDfz/RcTmpzxv0r2KxO0qeaNBtJCMdRrJ/ScRL31tXJWT7OCwli0t3oZOnZRQXh9wA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/C9u7sd/8r87CB5Yf3G6Oh38Shum2Y2MRL/37piVIn6OJsaI9
+	oNnZqT1idyzC+OEpFpKUk2rJOP0Vw8thPLPhsLpNmqkPB/ICLnMi+6Ltj1QpgO14pJmBzxbCeHq
+	c8ReJ+Q==
+X-Google-Smtp-Source: AGHT+IEtLu3IltyKnd9He5AU8onY3HoWiXSlUQXFXe8yo8ra+bKkkSjTE9Qujh7X66ORNUpkJig2qpfrNws=
+X-Received: from pjh8.prod.google.com ([2002:a17:90b:3f88:b0:32e:e4e6:ecfe])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3d0b:b0:32e:18b2:5a45
+ with SMTP id 98e67ed59e1d1-332a92decfcmr206298a91.5.1758571460593; Mon, 22
+ Sep 2025 13:04:20 -0700 (PDT)
+Date: Mon, 22 Sep 2025 13:04:19 -0700
+In-Reply-To: <aNEkrlv1bdoRitoU@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9185:EE_|AM0PR04MB7073:EE_
-X-MS-Office365-Filtering-Correlation-Id: dc7ff512-eec5-4d1e-ce63-08ddfa135726
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|19092799006|366016|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zuhqGuOKuUWpIgWSzuIuS0O8AGbedSMgiidEcnC7takiaPgbjX46uzX3MJcq?=
- =?us-ascii?Q?m14pk3whpu/gRhKegVWnC7n7UCpROyZ+Ga5CFpAYbTSMJECT/GPCqdwgfvpz?=
- =?us-ascii?Q?73SWoAMd/JFbdaeZDQirUIuUnrctnEaueGvYEq6n+pb10pryV4PCvV/dZe7w?=
- =?us-ascii?Q?tbXVhyvXBR2trBJsHvy765mVOgLCQ7T2xP0JepY9XFRnaSNnbjjgs6lsryyV?=
- =?us-ascii?Q?vy580wpO2rte5IhsBDwnO0lZvyeV15M4VO3hI+POR6bg5AvpKe7UjHadY6a3?=
- =?us-ascii?Q?vYR6TqdRiX+M+4VFrgEDIB9vRf/D45Csev67h27mZU6mqAOCcF7AWObtU2mW?=
- =?us-ascii?Q?FCkQOoGKrpCaOAEEt4jz80l14EzUcQMbIi17f1Wmln+Fb6jw4YtzQIxyucaN?=
- =?us-ascii?Q?duOkB1Nli6i5HYeHOq8dGjQWtsagoYRm9TSQtTHKsJQKaSm7sSxZM1RZm33W?=
- =?us-ascii?Q?Bs+L2yjLs61af7sEtzdwIOth2pA258VU97wXJ6ZnSqS8skn4fAtJxFMYcP3l?=
- =?us-ascii?Q?OPAjVuHug0sst20gBqFoaEHBE0zwbfMbzi1Bj007sJPhpLf4iRocN41LMKZ9?=
- =?us-ascii?Q?Qp4iiJf+T2oYWNambIYRNuQA9hAwuagGCFLbq9c0MIr3LQ1ZroAGyZ2qQsgm?=
- =?us-ascii?Q?PTowU3MUZb16Y2ksJykcd8VaUOUJY9yJrIOAM9yiglmYEkEI2/PVK/PTwmpA?=
- =?us-ascii?Q?gvU6DGo5qe4/6EbhjUWwz644hmYzCxxxCBd1ayZ6B0MXVYOojYs92kbDteL9?=
- =?us-ascii?Q?wztgFaIMt4axbaG9McfZWOqVzISbCynhjWfj/Bo5fMpQHJD9pncZMi2cCMah?=
- =?us-ascii?Q?/FgKWPLifo6bSpBNbfblhwg0Vhoq/t2cq5S2VPPE++kU9nUo0i/GfyonS6a3?=
- =?us-ascii?Q?4dSaXgMJa9fbFHxqyM7LhqU0r+AoNBcYKMeZbi6qddUzeCnFBio3c6CgKPly?=
- =?us-ascii?Q?QeO2eo7q+HzBzYAe8HtW7ZY9/J34VX0ZzyWsRCsyilVNXxWGohDoKRHwY8Hg?=
- =?us-ascii?Q?sN3GEQgnAkF/njF5wu5LX5dH9ouo90wZMOQnV8ggtwQiZ5V7cgfq/3v662u1?=
- =?us-ascii?Q?oL1PqtSiSUx079GQygE73qpurWDhFRAStizoIc5r/9c7wBLekzTRkF7YowsA?=
- =?us-ascii?Q?00TkZuIEpPHJuF8UBI8wGK1bfL2415q+sXnJfgaEZPVIbMnNNSR3vSDVB7VO?=
- =?us-ascii?Q?v18bfeQS2EqMXaPADvNBcO5hUIjiJufizcY1/40AX4Eqrxkz2WwaDQBjHQUG?=
- =?us-ascii?Q?3qj1qpstEiFmmJm3RK+7R4E3Hlqch0yV3yf2Nu4fHXaKqhnHt8H7TWNbceeg?=
- =?us-ascii?Q?RljFADP40echHlKixplrl3bJXQGPx0srHw+Pn3jc/QRHUbts6CueBmIZEkxj?=
- =?us-ascii?Q?LRGk3xikPaNoDldGhg2q36P0aTR+M+RQAJDaAmWLrQRXmRgvfBGZDgFz9vhr?=
- =?us-ascii?Q?Mz2dhyTuGFZG/J5UDkgOZEiBdd0fTfoOtYISqF+ODV7PQ4q5My6S6g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(19092799006)(366016)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kslmHddt98en8+UdbzoLSQgLiYUHF6gtgHdnHsfD1ELkcBsWkkXHmiWLt/68?=
- =?us-ascii?Q?4vMtnSHxObiwVnNeLSQz9G9iLEc74EvgpCtL4sdLTDKC+QR5/4pFoHoi1aOn?=
- =?us-ascii?Q?2vPZw+j4uH5mDhIq4uEesU0NZhVz9xvDJ935jLvHKxGK2WqEuQFOya+tS/xN?=
- =?us-ascii?Q?GHdep82AdZqN3fYaLaktT1XQb4Lj536YcTUqZeIO9JLtE+kcDCr7qjPp7vXw?=
- =?us-ascii?Q?oV41M1YoIdReJMuYJqeXruH5qFN0Oc/po1yJfVwKbsifLxWYAz9GmlIi4r6r?=
- =?us-ascii?Q?ebebpjsJY0U9bMj2lUYj9QIbCxpnd/QO7P0uijABn4DvheMupb0nibD93clP?=
- =?us-ascii?Q?rWZJDNDUqlJAPf/SDQdGPRilCtvUmQPUyBxtSyANZujpzT2f2HCf4YFcnzVq?=
- =?us-ascii?Q?znls8puigZlYEHO76Iuyz9DGIKIccLEM6mF/sWXI+CMkAxc9ttUDc6f/XLy1?=
- =?us-ascii?Q?YwF4EJJD9+G+x2QZBEPIzBx97/q6c5+KGBdDFN6vERKQnssGXu/YLYAHnX8R?=
- =?us-ascii?Q?jKZyvNE2Cx0jIyvS7AUHHuE+SlCebovDsiQWdbyAlsv1fSC6tWwwqUqbgTzg?=
- =?us-ascii?Q?0M/wEjJR24QMgsAQ9O5RHJuwSP/gIfyxoGL9R6yt19Ttgp5JxZ/C7YXiVDmx?=
- =?us-ascii?Q?5MDZmGNyBxbWZu3jIcRuYwLmQgt67cN2MHR/d8OEuZ3ezAoCKnEsZxaYgmg7?=
- =?us-ascii?Q?VspiuDR90LofI2gKNGP36voO5l5DvY9WnRgs4yWXobeRLKgzjZLuHQskML4o?=
- =?us-ascii?Q?wgrENG5K4jfccrJbOTc8xrTWcMICaFtWFJJ6oIyxSxY93sDYg27VN3aclbEC?=
- =?us-ascii?Q?ups+N7Ahwf9Pw/1tRsruI8D6WO4uumOkOqkPrETgQqR2ZDq678PRurYYIPvd?=
- =?us-ascii?Q?hw9U9aFXrXHGqbdDmKOinJN5K0Mg0Tt+yiIaLakHC+YHcBYK4f6aK0LiCQO9?=
- =?us-ascii?Q?dUI6aabRSonzjflCAHHbak2Y1MJiQ8qWJEvWcpbISmglPpFyq/DfkhF/PG+c?=
- =?us-ascii?Q?8EEWedQH889BhuXYFdZD+EwN+DXggRT+achvzHDvXK0VqozMYHbAJY9u3M6c?=
- =?us-ascii?Q?swTSNt63u02+1cR1LZejaIsGjaK/GLtDmCGqF+RfOzUO8edXubkpExGVlFNL?=
- =?us-ascii?Q?i7cIZTvWGtQ8CiUgT5LTVMhm15nekv5pGjat2fDimSj++KTSEyp6cuzpKpu/?=
- =?us-ascii?Q?6nSq+Q+A/H2Jw/D3uCuT5ir3ExVhqjzxH06sEQqBV29gw4mJqvbErDuNmgIk?=
- =?us-ascii?Q?facgw4JAntNZZKcyh6rV9zEinixOnFfU6vARIgkrwFQI8hcvVqm8Gq6CHxZO?=
- =?us-ascii?Q?rC2fulB5fEUodRkf/SCfwEES1fxib3VuAVe1W0TWOrSrWMXXNPRDa4gcn2k5?=
- =?us-ascii?Q?RGHKoTr/SEBhcNt6bdtuwpWZ+8st31qEmTKRzQta4/f7oU1UbozDLy9wFgcK?=
- =?us-ascii?Q?8Md1NfbSvoBKhZa3qe6Dybcc2b9iIXjJaczrv7qLUNC8skJhu/5SyvEtTdPy?=
- =?us-ascii?Q?KY3kas3jMQF/vIKAv54FCo0wqIQVqtjhvyiJpJxCKs+7PhTqkggzExcV1cTw?=
- =?us-ascii?Q?bIuZ43hS2OzDGvQR0BhXYJVWw6HIQH3GwGrUJzTn?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc7ff512-eec5-4d1e-ce63-08ddfa135726
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 20:05:13.2072
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lkQIpEI1uMrCeH1UaoFdYlWfk2GDM1MGfsJHWj0UoaY+mO4mzmsAoWEftHYsf3kg1BKHSMCUn75+AxXgho0fRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7073
+Mime-Version: 1.0
+References: <20250919223258.1604852-1-seanjc@google.com> <20250919223258.1604852-19-seanjc@google.com>
+ <aNEkrlv1bdoRitoU@intel.com>
+Message-ID: <aNGrwzoYRC_a6d5D@google.com>
+Subject: Re: [PATCH v16 18/51] KVM: x86: Don't emulate instructions affected
+ by CET features
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
+	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Add the RPMSG bus node along with its GPIO subnodes to the device
-tree.
+On Mon, Sep 22, 2025, Chao Gao wrote:
+> >+static bool is_ibt_instruction(u64 flags)
+> >+{
+> >+	if (!(flags & IsBranch))
+> >+		return false;
+> >+
+> >+	/*
+> >+	 * Far transfers can affect IBT state even if the branch itself is
+> >+	 * direct, e.g. when changing privilege levels and loading a conforming
+> >+	 * code segment.  For simplicity, treat all far branches as affecting
+> >+	 * IBT.  False positives are acceptable (emulating far branches on an
+> >+	 * IBT-capable CPU won't happen in practice), while false negatives
+> >+	 * could impact guest security.
+> >+	 *
+> >+	 * Note, this also handles SYCALL and SYSENTER.
+> >+	 */
+> >+	if (!(flags & NearBranch))
+> >+		return true;
+> >+
+> >+	switch (flags & (OpMask << SrcShift)) {
+> 
+> nit: maybe use SrcMask here.
+> 
+> #define SrcMask     (OpMask << SrcShift)
 
-Enable remote device communication and GPIO control via RPMSG on
-the i.MX platform.
+Fixed.  No idea how I missed that macro.
 
-Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+> >+	case SrcReg:
+> >+	case SrcMem:
+> >+	case SrcMem16:
+> >+	case SrcMem32:
+> >+		return true;
+> >+	case SrcMemFAddr:
+> >+	case SrcImmFAddr:
+> >+		/* Far branches should be handled above. */
+> >+		WARN_ON_ONCE(1);
+> >+		return true;
+> >+	case SrcNone:
+> >+	case SrcImm:
+> >+	case SrcImmByte:
+> >+	/*
+> >+	 * Note, ImmU16 is used only for the stack adjustment operand on ENTER
+> >+	 * and RET instructions.  ENTER isn't a branch and RET FAR is handled
+> >+	 * by the NearBranch check above.  RET itself isn't an indirect branch.
+> >+	 */
+> 
+> RET FAR isn't affected by IBT, right?
+
+Correct, AFAICT RET FAR doesn't have any interactions with IBT.
+
+> So it is a false positive in the above NearBranch check. I am not asking you
+> to fix it - just want to ensure it is intended.
+
+Intended, but wrong.  Specifically, this isn't true for FAR RET or IRET:
+
+  Far transfers can affect IBT state even if the branch itself is direct
+
+(IRET #GPs on return to vm86, but KVM doesn't emulate IRET if CR0.PE=1, so that's
+ a moot point)
+
+While it's tempting to sweep this under the rug, it's easy enough to handle with
+a short allow-list.  I can't imagine it'll ever matter, e.g. the odds of a guest
+enabling IBT _and_ doing a FAR RET without a previous FAR CALL _and_ triggering
+emulation on the FAR RET would be... impressive.
+
+This is what I have applied.  It passes both negative and positive testcases for
+FAR RET and IRET (I didn't try to encode SYSEXIT; though that's be a "fun" way to
+implement usermode support in KUT :-D)
+
+--
+From: Sean Christopherson <seanjc@google.com>
+Date: Fri, 19 Sep 2025 15:32:25 -0700
+Subject: [PATCH] KVM: x86: Don't emulate instructions affected by CET features
+
+Don't emulate branch instructions, e.g. CALL/RET/JMP etc., that are
+affected by Shadow Stacks and/or Indirect Branch Tracking when said
+features are enabled in the guest, as fully emulating CET would require
+significant complexity for no practical benefit (KVM shouldn't need to
+emulate branch instructions on modern hosts).  Simply doing nothing isn't
+an option as that would allow a malicious entity to subvert CET
+protections via the emulator.
+
+To detect instructions that are subject to IBT or affect IBT state, use
+the existing IsBranch flag along with the source operand type to detect
+indirect branches, and the existing NearBranch flag to detect far JMPs
+and CALLs, all of which are effectively indirect.  Explicitly check for
+emulation of IRET, FAR RET (IMM), and SYSEXIT (the ret-like far branches)
+instead of adding another flag, e.g. IsRet, as it's unlikely the emulator
+will ever need to check for return-like instructions outside of this one
+specific flow.  Use an allow-list instead of a deny-list because (a) it's
+a shorter list and (b) so that a missed entry gets a false positive, not a
+false negative (i.e. reject emulation instead of clobbering CET state).
+
+For Shadow Stacks, explicitly track instructions that directly affect the
+current SSP, as KVM's emulator doesn't have existing flags that can be
+used to precisely detect such instructions.  Alternatively, the em_xxx()
+helpers could directly check for ShadowStack interactions, but using a
+dedicated flag is arguably easier to audit, and allows for handling both
+IBT and SHSTK in one fell swoop.
+
+Note!  On far transfers, do NOT consult the current privilege level and
+instead treat SHSTK/IBT as being enabled if they're enabled for User *or*
+Supervisor mode.  On inter-privilege level far transfers, SHSTK and IBT
+can be in play for the target privilege level, i.e. checking the current
+privilege could get a false negative, and KVM doesn't know the target
+privilege level until emulation gets under way.
+
+Note #2, FAR JMP from 64-bit mode to compatibility mode interacts with
+the current SSP, but only to ensure SSP[63:32] == 0.  Don't tag FAR JMP
+as SHSTK, which would be rather confusing and would result in FAR JMP
+being rejected unnecessarily the vast majority of the time (ignoring that
+it's unlikely to ever be emulated).  A future commit will add the #GP(0)
+check for the specific FAR JMP scenario.
+
+Note #3, task switches also modify SSP and so need to be rejected.  That
+too will be addressed in a future commit.
+
+Suggested-by: Chao Gao <chao.gao@intel.com>
+Originally-by: Yang Weijiang <weijiang.yang@intel.com>
+Cc: Mathias Krause <minipli@grsecurity.net>
+Cc: John Allen <john.allen@amd.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Reviewed-by: Chao Gao <chao.gao@intel.com>
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+Link: https://lore.kernel.org/r/20250919223258.1604852-19-seanjc@google.com
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/arm64/boot/dts/freescale/imx8ulp.dtsi | 27 ++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ arch/x86/kvm/emulate.c | 117 ++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 103 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8ulp.dtsi b/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-index 13b01f3aa2a4..6ab1c12a3bc1 100644
---- a/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-@@ -191,6 +191,33 @@ scmi_sensor: protocol@15 {
- 	cm33: remoteproc-cm33 {
- 		compatible = "fsl,imx8ulp-cm33";
- 		status = "disabled";
-+
-+		rpmsg {
-+			rpmsg-io-channel {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				rpmsg_gpioa: gpio@0 {
-+					compatible = "fsl,imx-rpmsg-gpio";
-+					reg = <0>;
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					#interrupt-cells = <2>;
-+					interrupt-controller;
-+					interrupt-parent = <&rpmsg_gpioa>;
-+				};
-+
-+				rpmsg_gpiob: gpio@1 {
-+					compatible = "fsl,imx-rpmsg-gpio";
-+					reg = <1>;
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					#interrupt-cells = <2>;
-+					interrupt-controller;
-+					interrupt-parent = <&rpmsg_gpiob>;
-+				};
-+			};
-+		};
- 	};
+diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+index 23929151a5b8..a7683dc18405 100644
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -178,6 +178,7 @@
+ #define IncSP       ((u64)1 << 54)  /* SP is incremented before ModRM calc */
+ #define TwoMemOp    ((u64)1 << 55)  /* Instruction has two memory operand */
+ #define IsBranch    ((u64)1 << 56)  /* Instruction is considered a branch. */
++#define ShadowStack ((u64)1 << 57)  /* Instruction affects Shadow Stacks. */
  
- 	soc: soc@0 {
--- 
-2.43.0
+ #define DstXacc     (DstAccLo | SrcAccHi | SrcWrite)
+ 
+@@ -4068,9 +4069,9 @@ static const struct opcode group4[] = {
+ static const struct opcode group5[] = {
+ 	F(DstMem | SrcNone | Lock,		em_inc),
+ 	F(DstMem | SrcNone | Lock,		em_dec),
+-	I(SrcMem | NearBranch | IsBranch,       em_call_near_abs),
+-	I(SrcMemFAddr | ImplicitOps | IsBranch, em_call_far),
+-	I(SrcMem | NearBranch | IsBranch,       em_jmp_abs),
++	I(SrcMem | NearBranch | IsBranch | ShadowStack, em_call_near_abs),
++	I(SrcMemFAddr | ImplicitOps | IsBranch | ShadowStack, em_call_far),
++	I(SrcMem | NearBranch | IsBranch, em_jmp_abs),
+ 	I(SrcMemFAddr | ImplicitOps | IsBranch, em_jmp_far),
+ 	I(SrcMem | Stack | TwoMemOp,		em_push), D(Undefined),
+ };
+@@ -4304,7 +4305,7 @@ static const struct opcode opcode_table[256] = {
+ 	DI(SrcAcc | DstReg, pause), X7(D(SrcAcc | DstReg)),
+ 	/* 0x98 - 0x9F */
+ 	D(DstAcc | SrcNone), I(ImplicitOps | SrcAcc, em_cwd),
+-	I(SrcImmFAddr | No64 | IsBranch, em_call_far), N,
++	I(SrcImmFAddr | No64 | IsBranch | ShadowStack, em_call_far), N,
+ 	II(ImplicitOps | Stack, em_pushf, pushf),
+ 	II(ImplicitOps | Stack, em_popf, popf),
+ 	I(ImplicitOps, em_sahf), I(ImplicitOps, em_lahf),
+@@ -4324,19 +4325,19 @@ static const struct opcode opcode_table[256] = {
+ 	X8(I(DstReg | SrcImm64 | Mov, em_mov)),
+ 	/* 0xC0 - 0xC7 */
+ 	G(ByteOp | Src2ImmByte, group2), G(Src2ImmByte, group2),
+-	I(ImplicitOps | NearBranch | SrcImmU16 | IsBranch, em_ret_near_imm),
+-	I(ImplicitOps | NearBranch | IsBranch, em_ret),
++	I(ImplicitOps | NearBranch | SrcImmU16 | IsBranch | ShadowStack, em_ret_near_imm),
++	I(ImplicitOps | NearBranch | IsBranch | ShadowStack, em_ret),
+ 	I(DstReg | SrcMemFAddr | ModRM | No64 | Src2ES, em_lseg),
+ 	I(DstReg | SrcMemFAddr | ModRM | No64 | Src2DS, em_lseg),
+ 	G(ByteOp, group11), G(0, group11),
+ 	/* 0xC8 - 0xCF */
+ 	I(Stack | SrcImmU16 | Src2ImmByte, em_enter),
+ 	I(Stack, em_leave),
+-	I(ImplicitOps | SrcImmU16 | IsBranch, em_ret_far_imm),
+-	I(ImplicitOps | IsBranch, em_ret_far),
+-	D(ImplicitOps | IsBranch), DI(SrcImmByte | IsBranch, intn),
++	I(ImplicitOps | SrcImmU16 | IsBranch | ShadowStack, em_ret_far_imm),
++	I(ImplicitOps | IsBranch | ShadowStack, em_ret_far),
++	D(ImplicitOps | IsBranch), DI(SrcImmByte | IsBranch | ShadowStack, intn),
+ 	D(ImplicitOps | No64 | IsBranch),
+-	II(ImplicitOps | IsBranch, em_iret, iret),
++	II(ImplicitOps | IsBranch | ShadowStack, em_iret, iret),
+ 	/* 0xD0 - 0xD7 */
+ 	G(Src2One | ByteOp, group2), G(Src2One, group2),
+ 	G(Src2CL | ByteOp, group2), G(Src2CL, group2),
+@@ -4352,7 +4353,7 @@ static const struct opcode opcode_table[256] = {
+ 	I2bvIP(SrcImmUByte | DstAcc, em_in,  in,  check_perm_in),
+ 	I2bvIP(SrcAcc | DstImmUByte, em_out, out, check_perm_out),
+ 	/* 0xE8 - 0xEF */
+-	I(SrcImm | NearBranch | IsBranch, em_call),
++	I(SrcImm | NearBranch | IsBranch | ShadowStack, em_call),
+ 	D(SrcImm | ImplicitOps | NearBranch | IsBranch),
+ 	I(SrcImmFAddr | No64 | IsBranch, em_jmp_far),
+ 	D(SrcImmByte | ImplicitOps | NearBranch | IsBranch),
+@@ -4371,7 +4372,7 @@ static const struct opcode opcode_table[256] = {
+ static const struct opcode twobyte_table[256] = {
+ 	/* 0x00 - 0x0F */
+ 	G(0, group6), GD(0, &group7), N, N,
+-	N, I(ImplicitOps | EmulateOnUD | IsBranch, em_syscall),
++	N, I(ImplicitOps | EmulateOnUD | IsBranch | ShadowStack, em_syscall),
+ 	II(ImplicitOps | Priv, em_clts, clts), N,
+ 	DI(ImplicitOps | Priv, invd), DI(ImplicitOps | Priv, wbinvd), N, N,
+ 	N, D(ImplicitOps | ModRM | SrcMem | NoAccess), N, N,
+@@ -4402,8 +4403,8 @@ static const struct opcode twobyte_table[256] = {
+ 	IIP(ImplicitOps, em_rdtsc, rdtsc, check_rdtsc),
+ 	II(ImplicitOps | Priv, em_rdmsr, rdmsr),
+ 	IIP(ImplicitOps, em_rdpmc, rdpmc, check_rdpmc),
+-	I(ImplicitOps | EmulateOnUD | IsBranch, em_sysenter),
+-	I(ImplicitOps | Priv | EmulateOnUD | IsBranch, em_sysexit),
++	I(ImplicitOps | EmulateOnUD | IsBranch | ShadowStack, em_sysenter),
++	I(ImplicitOps | Priv | EmulateOnUD | IsBranch | ShadowStack, em_sysexit),
+ 	N, N,
+ 	N, N, N, N, N, N, N, N,
+ 	/* 0x40 - 0x4F */
+@@ -4514,6 +4515,60 @@ static const struct opcode opcode_map_0f_38[256] = {
+ #undef I2bvIP
+ #undef I6ALU
+ 
++static bool is_shstk_instruction(struct x86_emulate_ctxt *ctxt)
++{
++	return ctxt->d & ShadowStack;
++}
++
++static bool is_ibt_instruction(struct x86_emulate_ctxt *ctxt)
++{
++	u64 flags = ctxt->d;
++
++	if (!(flags & IsBranch))
++		return false;
++
++	/*
++	 * All far JMPs and CALLs (including SYSCALL, SYSENTER, and INTn) are
++	 * indirect and thus affect IBT state.  All far RETs (including SYSEXIT
++	 * and IRET) are protected via Shadow Stacks and thus don't affect IBT
++	 * state.  IRET #GPs when returning to virtual-8086 and IBT or SHSTK is
++	 * enabled, but that should be handled by IRET emulation (in the very
++	 * unlikely scenario that KVM adds support for fully emulating IRET).
++	 */
++	if (!(flags & NearBranch))
++		return ctxt->execute != em_iret &&
++		       ctxt->execute != em_ret_far &&
++		       ctxt->execute != em_ret_far_imm &&
++		       ctxt->execute != em_sysexit;
++
++	switch (flags & SrcMask) {
++	case SrcReg:
++	case SrcMem:
++	case SrcMem16:
++	case SrcMem32:
++		return true;
++	case SrcMemFAddr:
++	case SrcImmFAddr:
++		/* Far branches should be handled above. */
++		WARN_ON_ONCE(1);
++		return true;
++	case SrcNone:
++	case SrcImm:
++	case SrcImmByte:
++	/*
++	 * Note, ImmU16 is used only for the stack adjustment operand on ENTER
++	 * and RET instructions.  ENTER isn't a branch and RET FAR is handled
++	 * by the NearBranch check above.  RET itself isn't an indirect branch.
++	 */
++	case SrcImmU16:
++		return false;
++	default:
++		WARN_ONCE(1, "Unexpected Src operand '%llx' on branch",
++			  flags & SrcMask);
++		return false;
++	}
++}
++
+ static unsigned imm_size(struct x86_emulate_ctxt *ctxt)
+ {
+ 	unsigned size;
+@@ -4943,6 +4998,40 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int
+ 
+ 	ctxt->execute = opcode.u.execute;
+ 
++	/*
++	 * Reject emulation if KVM might need to emulate shadow stack updates
++	 * and/or indirect branch tracking enforcement, which the emulator
++	 * doesn't support.
++	 */
++	if ((is_ibt_instruction(ctxt) || is_shstk_instruction(ctxt)) &&
++	    ctxt->ops->get_cr(ctxt, 4) & X86_CR4_CET) {
++		u64 u_cet = 0, s_cet = 0;
++
++		/*
++		 * Check both User and Supervisor on far transfers as inter-
++		 * privilege level transfers are impacted by CET at the target
++		 * privilege level, and that is not known at this time.  The
++		 * the expectation is that the guest will not require emulation
++		 * of any CET-affected instructions at any privilege level.
++		 */
++		if (!(ctxt->d & NearBranch))
++			u_cet = s_cet = CET_SHSTK_EN | CET_ENDBR_EN;
++		else if (ctxt->ops->cpl(ctxt) == 3)
++			u_cet = CET_SHSTK_EN | CET_ENDBR_EN;
++		else
++			s_cet = CET_SHSTK_EN | CET_ENDBR_EN;
++
++		if ((u_cet && ctxt->ops->get_msr(ctxt, MSR_IA32_U_CET, &u_cet)) ||
++		    (s_cet && ctxt->ops->get_msr(ctxt, MSR_IA32_S_CET, &s_cet)))
++			return EMULATION_FAILED;
++
++		if ((u_cet | s_cet) & CET_SHSTK_EN && is_shstk_instruction(ctxt))
++			return EMULATION_FAILED;
++
++		if ((u_cet | s_cet) & CET_ENDBR_EN && is_ibt_instruction(ctxt))
++			return EMULATION_FAILED;
++	}
++
+ 	if (unlikely(emulation_type & EMULTYPE_TRAP_UD) &&
+ 	    likely(!(ctxt->d & EmulateOnUD)))
+ 		return EMULATION_FAILED;
 
+base-commit: 88539a6a25bc7a7ed96952775152e0c3331fdcaf
+--
 
