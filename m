@@ -1,255 +1,136 @@
-Return-Path: <linux-kernel+bounces-826610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB28B8EEB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:15:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E56B8EED3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686AB3AE2B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 04:15:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81DA2189CD51
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 04:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6365D2EFD8F;
-	Mon, 22 Sep 2025 04:15:31 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2893B2F0C5F;
+	Mon, 22 Sep 2025 04:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JFg9q5lp"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FAF2EE612
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 04:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20C52ED14E
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 04:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758514530; cv=none; b=phGJM0yTe60H1LIWP7KT5+WAcfoT29kAfivgBp1+sH+g5BDQIlvKTp6IujJTXCcdabsnNLbb05Bdl4ZBk6pmIr8ii/TxgsvFdk+ThNZ/3/wFd1WOz7DisT7DyqyfTabAdlcZN2fwFbXD/2z0YggIU/OZTGILwpEr2Fr0slCwaKE=
+	t=1758514755; cv=none; b=UBWhq9L7OrF97IDDT2Bx2GvEoH0ByrhGjs8PFBbsYBB52ha1WmQGXpblCSR8GEpRn7iEcKZisgKcKQFf2CesJXKJB2lAwg9Ii0/Tq2BJ8+6d9K/m8MK8703H42zBsWeExbMHhLvDIjFBvoZLbfpNHfNiDSdYRLYG4qy9ZyUIGEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758514530; c=relaxed/simple;
-	bh=d5jyAUOyOuNwNPi0K5UeEN2IaYmjoAzAaUvITMdvBiY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Nns9Jpk4nIGmW5YaB/UcxTn7Ri0YpruKHGCj8H5Z9vNVn1HRieYFVCXMxrXKp2APe6yBND5wvfQNqRXd356KbDt3HLWGbm3Zm+9DERxmUpfeP3jD1iDhYf6M5zezL3zSux2SWgUrSI41xFdmHQZ29oKOLaglHnufilEmdDrD8HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-88d4b38d080so347924039f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 21:15:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758514528; x=1759119328;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BakDNPWo+QkF9V9wbXmNqYGZxd72ptFmNyaovE0QhPw=;
-        b=UvamaloT0mU9TEHr/5LiPw10ws0mhm1nBraINt4V2gyQJy6Z31gBaW22dqecMku7MR
-         Qd6BdXbmDzxvI2pxN4e75PmMx2ppXcEH2TRGGtTJJDLiGGx2I0+us5tBiN1F/bAJObPS
-         2zburJlNAg2R43te+CtuhAAjy1dY4OdLueCqxi2fIKlY2gpkGYz70upbViZ2bF8a3l2O
-         J/ESHWyuPfig2nq26KQliKUbvRa/K5McxKgOulEmOwjI5/TE9aAIEMuHDKJOtPBTEI45
-         piEfg4uOlSK4ObKolHZrnnKoYU7Pk+iX77IPQhEo0pJVCpggeRi486AsCUc9yxao1Zls
-         Csxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvup6H4XcIkKqG/QcU9x0fYs/peHaQtGRjJqe0DCe9YCY2FuBtVckeBA3bo5xuohuX5NokxYpg5nFktyw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyZpABlFpgaInbwf9KVRGSuIIh7ZRi4MOPURBj6RoDHvGnvN4V
-	NYtgjae8LJw5oGwlqkAodzzMjzzlAdhsMNf9FNXYZoLBpqaJOzJAEg2MyhlSeBbqCZTHi9J4aTb
-	9HpvfWbrEbzYOHbhime1noppnvDhqkj0g5pns5pWd1B1kYQAlq6fKlJz5JiI=
-X-Google-Smtp-Source: AGHT+IGdtf8+tn/0tLHSfNn/WIvMRMx9qNdlFsybI223Br7aqGakbUQdFqw2QC0HSYbbI1UdSWjVmRuaUdU9L5ru6k+ec5lkq/dK
+	s=arc-20240116; t=1758514755; c=relaxed/simple;
+	bh=9mQfF97iUqTuIDpHjmThzhD8K+3px3mB/MpG9m45V0o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=G7fCIFnUIvbop/IwuDCDp05mZ1cy5ZfLVDvW2g2guPTwXv7KkF/bRCtdWtDpUfGb1x2uvvj3gieX+H4atnhdBuzn36e2gbYIhg7phGi8K7e5rPkUVVbsxRsFd1cYzKbMrX5HQxD00nScNZyQLzpW9wBAeHHONfc4vvGMHt3l+58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JFg9q5lp; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250922041903epoutp03a3be95e9ad740560ac7a5b32dac5884e~nf9en6gR02227122271epoutp03K
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 04:19:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250922041903epoutp03a3be95e9ad740560ac7a5b32dac5884e~nf9en6gR02227122271epoutp03K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758514743;
+	bh=/rbB9Qe0PyGkKDgc61OqgDnmcVxYp84SH6KpmgRnDqk=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=JFg9q5lp2AvZG+s2v9yqSJYiyLRqq5TGmjseJ4vuImH8CIb8ZNXzn5UmPJZ9F2Bru
+	 rXLgQdtKScCD/c1Ry5UUKvrselcHHOD+EqC/h51o5zTypIkyrSsQEXRqCRmm7URsUo
+	 BDmidaatle3pKocdAQ+O7/nUeluXcvC9lVV0M+hg=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250922041903epcas2p26df62412d40a7074b3c1ff6923629832~nf9eF2NSc1765817658epcas2p2D;
+	Mon, 22 Sep 2025 04:19:03 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.36.91]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cVVHB3pytz6B9mB; Mon, 22 Sep
+	2025 04:19:02 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250922041901epcas2p2d3d164ea9421e57d9327f29782f955df~nf9c3FJsN1765817658epcas2p2C;
+	Mon, 22 Sep 2025 04:19:01 +0000 (GMT)
+Received: from asswp60 (unknown [10.229.9.60]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250922041901epsmtip2d12fca8c5826a6ab1078b93f6091d011~nf9cxel3W0606606066epsmtip2I;
+	Mon, 22 Sep 2025 04:19:01 +0000 (GMT)
+From: Shin Son <shin.son@samsung.com>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+	<lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Henrik Grimler
+	<henrik@grimler.se>
+Cc: Shin Son <shin.son@samsung.com>, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] Add exynosautov920 thermal support
+Date: Mon, 22 Sep 2025 13:18:54 +0900
+Message-ID: <20250922041857.1107445-1-shin.son@samsung.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:258a:b0:424:3b83:4f5f with SMTP id
- e9e14a558f8ab-4248190bbd3mr155108815ab.8.1758514527823; Sun, 21 Sep 2025
- 21:15:27 -0700 (PDT)
-Date: Sun, 21 Sep 2025 21:15:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d0cd5f.050a0220.139b6.0017.GAE@google.com>
-Subject: [syzbot] [fbdev?] KASAN: slab-out-of-bounds Read in
- fb_pad_unaligned_buffer (4)
-From: syzbot <syzbot+55e03490a0175b8dd81d@syzkaller.appspotmail.com>
-To: deller@gmx.de, dri-devel@lists.freedesktop.org, 
-	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, simona@ffwll.ch, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250922041901epcas2p2d3d164ea9421e57d9327f29782f955df
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250922041901epcas2p2d3d164ea9421e57d9327f29782f955df
+References: <CGME20250922041901epcas2p2d3d164ea9421e57d9327f29782f955df@epcas2p2.samsung.com>
 
-Hello,
+This change merges the new exynosautov920-specific register definitions and
+timing parameters into the exynos-tmu driver, ensuring consistent behavior
+across all Exynos series. All new code paths have been tested on a
+exynosautov920 board and verified to correctly read temperatures and
+emulate behavior.
 
-syzbot found the following issue on:
+Changes in v4:
+- Kept 'addtionalProperties: false'.
+- Removed the 'samsung,hw-sensor-indices' property in the binding.
+- Added the 'samsung,sensors' property in the binding.
+- Dropped code-like formatting and rewrote the description in plain,
+  hardware-focused language in the commit message.
+- Removed the bitmap and replaced the tz_count to sensor_count.
 
-HEAD commit:    b320789d6883 Linux 6.17-rc4
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16ceae62580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d4703ac89d9e185a
-dashboard link: https://syzkaller.appspot.com/bug?extid=55e03490a0175b8dd81d
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Changes in v3:
+- Removed redundant commit message.
+- Rephrased the sentences to describe the hardware clearly.
+- Restricted sensor indices to V920.
+- Set #thermal-sensor-cells per variant.
+- Replaced 'additionalProperties' with 'unevaluatedProperties'.
+- Removed the duplicate #define and use the original.
+- Used lowercase hex in #define.
+- Simplified 'temp_to_code' and 'code_to_temp' to one computation
+  path by normalizing calib_temp.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Changes in v2:
+- Replace the generic property with a vendor-specific one.
+- Added an indices property instead of ranges.
+- Shortened thermal node name and made them more generic.
+- Updated the indices logic accordingly after removing the ranges property.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/daf1f6c847dd/disk-b320789d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fbeb0bd5d987/vmlinux-b320789d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a85084f8e16b/bzImage-b320789d.xz
+Shin Son (3):
+  dt-bindings: thermal: samsung: Adjust '#thermal-sensor-cells' to 1
+  thermal: exynos_tmu: Support new hardware and update TMU interface
+  arm64: dts: exynosautov920: Add multiple sensors
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+55e03490a0175b8dd81d@syzkaller.appspotmail.com
+ .../thermal/samsung,exynos-thermal.yaml       |  32 +-
+ .../boot/dts/exynos/exynosautov920-tmu.dtsi   | 377 ++++++++++++++++++
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |  31 ++
+ drivers/thermal/samsung/exynos_tmu.c          | 322 +++++++++++++--
+ 4 files changed, 724 insertions(+), 38 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi
 
-==================================================================
-BUG: KASAN: slab-out-of-bounds in fb_pad_unaligned_buffer+0x3b8/0x440 drivers/video/fbdev/core/fbmem.c:110
-Read of size 1 at addr ffff888075fb54e4 by task syz.0.1621/12752
+-- 
+2.50.1
 
-CPU: 1 UID: 0 PID: 12752 Comm: syz.0.1621 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/14/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xcd/0x630 mm/kasan/report.c:482
- kasan_report+0xe0/0x110 mm/kasan/report.c:595
- fb_pad_unaligned_buffer+0x3b8/0x440 drivers/video/fbdev/core/fbmem.c:110
- bit_putcs_unaligned drivers/video/fbdev/core/bitblit.c:129 [inline]
- bit_putcs+0x870/0xde0 drivers/video/fbdev/core/bitblit.c:187
- fbcon_putcs+0x384/0x4a0 drivers/video/fbdev/core/fbcon.c:1327
- con_flush drivers/tty/vt/vt.c:2746 [inline]
- do_con_write+0xfed/0x8280 drivers/tty/vt/vt.c:3173
- con_write+0x23/0xb0 drivers/tty/vt/vt.c:3516
- process_output_block drivers/tty/n_tty.c:561 [inline]
- n_tty_write+0x41c/0x11e0 drivers/tty/n_tty.c:2377
- iterate_tty_write drivers/tty/tty_io.c:1006 [inline]
- file_tty_write.constprop.0+0x504/0x9b0 drivers/tty/tty_io.c:1081
- new_sync_write fs/read_write.c:593 [inline]
- vfs_write+0x7d3/0x11d0 fs/read_write.c:686
- ksys_write+0x12a/0x250 fs/read_write.c:738
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1f5fb8ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f1f60a10038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f1f5fdc6180 RCX: 00007f1f5fb8ebe9
-RDX: 0000000000001066 RSI: 0000200000001640 RDI: 0000000000000009
-RBP: 00007f1f5fc11e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f1f5fdc6218 R14: 00007f1f5fdc6180 R15: 00007ffc8f9c3728
- </TASK>
-
-Allocated by task 10009:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:405
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4365 [inline]
- __kmalloc_noprof+0x223/0x510 mm/slub.c:4377
- kmalloc_noprof include/linux/slab.h:909 [inline]
- fbcon_set_font+0x434/0xb80 drivers/video/fbdev/core/fbcon.c:2536
- con_font_set drivers/tty/vt/vt.c:4887 [inline]
- con_font_op+0x7fb/0xf50 drivers/tty/vt/vt.c:4934
- vt_k_ioctl drivers/tty/vt/vt_ioctl.c:474 [inline]
- vt_ioctl+0x48f/0x30a0 drivers/tty/vt/vt_ioctl.c:751
- tty_ioctl+0x661/0x1680 drivers/tty/tty_io.c:2792
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl fs/ioctl.c:584 [inline]
- __x64_sys_ioctl+0x18b/0x210 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888075fb5000
- which belongs to the cache kmalloc-1k of size 1024
-The buggy address is located 468 bytes to the right of
- allocated 784-byte region [ffff888075fb5000, ffff888075fb5310)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x75fb0
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801b841dc0 0000000000000000 dead000000000001
-raw: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
-head: 00fff00000000040 ffff88801b841dc0 0000000000000000 dead000000000001
-head: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
-head: 00fff00000000003 ffffea0001d7ec01 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0x52820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 37, tgid 37 (kworker/u8:3), ts 77706432678, free_ts 77578310551
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x132b/0x38e0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:5148
- alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:2487 [inline]
- allocate_slab mm/slub.c:2655 [inline]
- new_slab+0x247/0x330 mm/slub.c:2709
- ___slab_alloc+0xcf2/0x1740 mm/slub.c:3891
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3981
- __slab_alloc_node mm/slub.c:4056 [inline]
- slab_alloc_node mm/slub.c:4217 [inline]
- __do_kmalloc_node mm/slub.c:4364 [inline]
- __kmalloc_noprof+0x2f2/0x510 mm/slub.c:4377
- kmalloc_noprof include/linux/slab.h:909 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- ieee802_11_parse_elems_full+0x1db/0x3780 net/mac80211/parse.c:1011
- ieee802_11_parse_elems_crc net/mac80211/ieee80211_i.h:2462 [inline]
- ieee802_11_parse_elems net/mac80211/ieee80211_i.h:2469 [inline]
- ieee80211_inform_bss+0x10b/0x1140 net/mac80211/scan.c:79
- rdev_inform_bss net/wireless/rdev-ops.h:418 [inline]
- cfg80211_inform_single_bss_data+0x8e7/0x1df0 net/wireless/scan.c:2379
- cfg80211_inform_bss_data+0x224/0x3bd0 net/wireless/scan.c:3234
- cfg80211_inform_bss_frame_data+0x26f/0x750 net/wireless/scan.c:3325
- ieee80211_bss_info_update+0x310/0xab0 net/mac80211/scan.c:226
- ieee80211_rx_bss_info net/mac80211/ibss.c:1094 [inline]
- ieee80211_rx_mgmt_probe_beacon net/mac80211/ibss.c:1573 [inline]
- ieee80211_ibss_rx_queued_mgmt+0x1905/0x2fd0 net/mac80211/ibss.c:1600
- ieee80211_iface_process_skb net/mac80211/iface.c:1699 [inline]
- ieee80211_iface_work+0xe2e/0x1360 net/mac80211/iface.c:1753
-page last free pid 5220 tgid 5220 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0x7d5/0x10f0 mm/page_alloc.c:2895
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x4d/0x120 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:340
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4180 [inline]
- slab_alloc_node mm/slub.c:4229 [inline]
- kmem_cache_alloc_noprof+0x1cb/0x3b0 mm/slub.c:4236
- getname_flags.part.0+0x4c/0x550 fs/namei.c:146
- getname_flags+0x93/0xf0 include/linux/audit.h:322
- do_readlinkat+0xb4/0x3a0 fs/stat.c:575
- __do_sys_readlink fs/stat.c:613 [inline]
- __se_sys_readlink fs/stat.c:610 [inline]
- __x64_sys_readlink+0x78/0xc0 fs/stat.c:610
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888075fb5380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888075fb5400: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff888075fb5480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                                                       ^
- ffff888075fb5500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888075fb5580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
