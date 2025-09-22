@@ -1,218 +1,174 @@
-Return-Path: <linux-kernel+bounces-827686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A2B9B92694
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:25:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9107B92697
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2DE3B6E48
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:25:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7661904E3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFE3313E21;
-	Mon, 22 Sep 2025 17:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72820313E25;
+	Mon, 22 Sep 2025 17:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xbr5NpMh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="mNA9SFZJ"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11023117.outbound.protection.outlook.com [40.107.201.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29A2313D73
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758561940; cv=none; b=EKWlS1A1z4hS/pRba/jtmrkVdMBLRhqKncZObc7m2KSTJ/q0E4sCbUmtXbytYSjHKCxqmwKbKV4i/u/xkNWrSxftcP/3np/V7eDMhj7pWHef/DHLdv+lH39RkgbF7NrxLO65TmLQDV+k6Y8FOn7A0dMmMwdZz2+21NboPX0uwjY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758561940; c=relaxed/simple;
-	bh=9UTJYhngwTX4OcNuNjPaeMmaGryOpl+uEyIlezKAg+I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gB+EAf2EJzVGcdX5PNxbjWbm/lfwcqHUNbCd8509yvWjwYf0TSJtsuPuD/0zsIWmhSgt5ZQTWAmBPeGs/5/Vp7Az5sU85UABiyMGxFkEE4j5DtGlz+2kFqFrwhAswlD0yUdQ2RzmERsfx6q8vFEkbjiE2pQm0MVpUWYIE1YmMKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xbr5NpMh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58168C4CEF7
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:25:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758561940;
-	bh=9UTJYhngwTX4OcNuNjPaeMmaGryOpl+uEyIlezKAg+I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Xbr5NpMh/Mwu7bcW4s72QRbgAUaHyrOdYIPDYCyKQDCZqR7/A2qIC5jbdzfLwgZJ1
-	 OAVop5BfnbDIDK3uetvtJE2scWe/YBDDt08JXSA8qfhpzBs4Z58qVNVQXCwJHBlynJ
-	 yCyusPsP2mKEglriRKnnz0E8DQIZh3kM92J/7mQnKAaCzXOFqQCOzzGj/BOuQATIYH
-	 8DYNqnwWtPVBbZjMALPbTPFY93gRR4/DudgUI2zi26pUs8Xydveo4Dn1z5KNADAPCk
-	 7VOK5oJ5sn50s6BBACCz1qSolJz1TsRp3ECh3MUJ2WTAm11UUSs+zfWDoBDRDwN6yS
-	 c46RgzgUNLwcQ==
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-74526ca7a46so1799123a34.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:25:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWvVSd6PqBs2L8IZAboUUU8craNrhJx2YPPWErSgLajbXitQb25h7//ADLs/V4BrR7y5NrGIRj0vSy7x1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSLDETNE7pbOAw1Tp/+Ne6ACE1VmH9l9ojNPiVcNEizHh/ve5y
-	a9YtklwitNLf1cm91roRsNMnWhLOTZVz8DnvY9g5tSmPNUjIcnZYeHzWsZMJzxLlc1vwhHaQF9M
-	AsexF2SON2b0XjuA9QfMbKzxnS8/3AM4=
-X-Google-Smtp-Source: AGHT+IGevYc0Cjky5Fo70RXjuSv4ZxzjBma/yLe/MuVyw/IyNPLXKEdEEkMVmIcV+GoSg2VFRVyl7D9VdPXgn0KjBOc=
-X-Received: by 2002:a05:6808:2189:b0:43b:252e:f7aa with SMTP id
- 5614622812f47-43d6c1d5116mr6519936b6e.21.1758561939579; Mon, 22 Sep 2025
- 10:25:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149D21A9FB7
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.117
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758561992; cv=fail; b=KW4CMftxMghQ0PP0H9AW0LUCP+3vnJqdAnol2mawwbigHZ5T5GBViUKMlD4sztQeLyx/JVg5NUCU9mzMUHj/M+r36mljSNE/1Tb4vinyIX7PAe0WEn5mBLzvFQc/fTvJk1OrdzL3ILGcfLivSaQqkzdQZE3greSF9Fp9CzTw1c4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758561992; c=relaxed/simple;
+	bh=IgrYbxcsPAroPuIR1EfyU/ZNhRuWJWPfjiodql2m4Vg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 Content-Type:MIME-Version; b=K4RsU7XBAwZP0DhfSeustros79+YIiWFAOUIKoWtiMb2kl8yihuRyymgDG7jhoRWzbiUQ5U2WP857dd2cejWBrFAnq9AaA6ttTZsMn2jUP1G/itMD1iYzIE0LptQbaHni7qsHrVK37VbdjISvOnwvPPGFq/Irfl5bDhh7jeY/VQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=mNA9SFZJ; arc=fail smtp.client-ip=40.107.201.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fAZc/bNIZ5dFPMSbrhB5r+glRxX+D7ZfhsXTLy85yTmjgZ6Ak59dsuffDWNmGUi4hsKkugu3T1aRaabICW/6EUTIt8t8AMLDeoeUieeWrtFMTipZi26XPvXraK8r3WwgKbFaTunGYkfopYo1sBYE0vUXvDZ2SLlxL85/aNjrIvW/m5VNbMsL2TMgW3q+56CI4yuOq85rt8qBcCCvMoBCPKkXjYbxDC51hLFrPCRvv/v0lmHxM5/uqBzAzkGF2OFHUA2Yp6Ic024g7eX8TK2per/c5eFoLrg0oIuS4vofv8EWbkTg8ihqHzKvfn5FPe8r47DsbifBNhtSJof6HbKwmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IgrYbxcsPAroPuIR1EfyU/ZNhRuWJWPfjiodql2m4Vg=;
+ b=X3DjItMhDI3ChRc5vYytflqcH+saJDBo6iq6jTLReRBs+/+aWRz0goNr9ptDoM8i/3qtIPzifSKmQqw4x00FvuYt6f7svjfPM/Z+WUfqXn3KM0MfL2gtF/o4yoCUThRCg1egsSls3qoa43O0nxDpdvXkbUWieePPdO+rOAa7L1BzJYAJrnOwhp0truUB7dAKDloXrnQjF6CY3Ypn5yfdw1NCk7qLKs55R401JjwBlCUJ+QGTn3wDvMJ1qhc8CnIPNIFrqV9dSpVioIp8bfYo8mVlMP0hYKt7yutpKeSRLXdXZ1er95YivatiXhB4rVPX8PWYfLcC7kUWNGKnb+75bA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IgrYbxcsPAroPuIR1EfyU/ZNhRuWJWPfjiodql2m4Vg=;
+ b=mNA9SFZJHHkUD0sVfUaaILsnjtGlT/+O2BVK66lI6Puhs7w15S9oJ7pADNO/zpO9bGl3KEduaJ4wBjNz3qLdnlF3wUtAWoVG0/CvyAsPP6Z9LS0elJa+QILtUgrG9kEJKbr4OjSodCq3aWXIVmsBuzYSx3XWtww9vHwgdjVGMgA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from BN0PR01MB6862.prod.exchangelabs.com (2603:10b6:408:161::11) by
+ CO1PR01MB6600.prod.exchangelabs.com (2603:10b6:303:da::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.16; Mon, 22 Sep 2025 17:26:27 +0000
+Received: from BN0PR01MB6862.prod.exchangelabs.com
+ ([fe80::8a1e:34a8:2ad9:7f83]) by BN0PR01MB6862.prod.exchangelabs.com
+ ([fe80::8a1e:34a8:2ad9:7f83%2]) with mapi id 15.20.9137.015; Mon, 22 Sep 2025
+ 17:26:27 +0000
+From: Carl Worth <carl@os.amperecomputing.com>
+To: Jie Gan <jie.gan@oss.qualcomm.com>, Suzuki K Poulose
+ <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, James Clark
+ <james.clark@linaro.org>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Jie Gan <jie.gan@oss.qualcomm.com>,
+ Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 0/3] coresight: replace the void pointer with
+ coresight_path pointer
+In-Reply-To: <20250922-fix_helper_data-v1-0-905e8115a24e@oss.qualcomm.com>
+References: <20250922-fix_helper_data-v1-0-905e8115a24e@oss.qualcomm.com>
+Date: Mon, 22 Sep 2025 10:26:18 -0700
+Message-ID: <877bxqo0ud.fsf@rasp.cworth.amperemail.amperecomputing.com>
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR03CA0080.namprd03.prod.outlook.com
+ (2603:10b6:303:b6::25) To BN0PR01MB6862.prod.exchangelabs.com
+ (2603:10b6:408:161::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915172119.5303-1-a.jahangirzad@gmail.com>
-In-Reply-To: <20250915172119.5303-1-a.jahangirzad@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 22 Sep 2025 19:25:28 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hsG=s37mSkcxbTqhmE_i-6skHPn+OpmCUhmJf27V+yzA@mail.gmail.com>
-X-Gm-Features: AS18NWA_flde3oqxc9oluH3gWfzXRVKRBOgC-j2GEqQCuSEekHCTMfBM5SSkKjI
-Message-ID: <CAJZ5v0hsG=s37mSkcxbTqhmE_i-6skHPn+OpmCUhmJf27V+yzA@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: debug: fix signedness issues in read/write helpers
-To: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR01MB6862:EE_|CO1PR01MB6600:EE_
+X-MS-Office365-Filtering-Correlation-Id: fefbeb46-d89c-4f47-35a2-08ddf9fd2927
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?X13/vbhvcCzCGrI2Esnuu/E2w5da1wLdVSXZi5nlFZMTIZQKzJQCGF0TMjfE?=
+ =?us-ascii?Q?Kr+VH3nhMmhaBZc5AXZc3egC8WIxcAQSJ0z80HTD7pYWJtOYhtr307j+NVoY?=
+ =?us-ascii?Q?V0JPmACKwOH2EiZQflS92utwt9pRuqm6Y3rNoscWfQdLWd52k2nli7vVPwsU?=
+ =?us-ascii?Q?QdAo4uMnwvJb6iu/1c4P7zb06+FSPwbbgG0L/e7dlRvPz18HfGkBbG0WExNL?=
+ =?us-ascii?Q?Cq4H4ucE0Kp+7Sr/6uJNJWgzOFFNkj+Kpu1ntSLeER6fduLSzFhkZOiuPfSu?=
+ =?us-ascii?Q?Bfm13XYQKqgc6mf2929B3+SesXOwKa9JH+SdUHSqGPsbBncd6SdrSpiLbDlG?=
+ =?us-ascii?Q?FiOWmvHVtON1VEjBqgry08Epc1QZsSzBZCAn0z1t8tgcfNokmXSMNVx5npq+?=
+ =?us-ascii?Q?T2IJyKokp5pjIRxskvTo5ke6fAFJacN05388dq2qdicqXadm91dXWB7EJaqE?=
+ =?us-ascii?Q?FEgDIcc2BC91OvDSMCVEBroFA/QJ/3AIm7e0yGP3efeMOwTX4h+esywyWyRL?=
+ =?us-ascii?Q?rZcl7qhRHgDZIllAbXEBo/3w4TWQTfHHthpyzTD1683Vww4brlOqLwc7WJwW?=
+ =?us-ascii?Q?+VMSu1YekqaEDs9JcEESg29opiU+lMcBNDh5FhFW11GLssmWQ67xKKO0xugM?=
+ =?us-ascii?Q?yGaQE8z7gzICAqiOUUl/UO3ce/UxImYcOwspIVaXza+NZ4hDXGAqwaoqpDZr?=
+ =?us-ascii?Q?EQuYcUSkStu76XTXZNDaRBp5YIiKveBsyJ4y74fWdBaalaFnViyYQ/g4knbn?=
+ =?us-ascii?Q?HZ+BBXXyI69aMM7zGqxMFY3pXInDiCIrbVxXQLxrgVgfFgV7tgcR3VqqjPCB?=
+ =?us-ascii?Q?KkeD31XT+dBRzjP25Zhilx78V8y+qcVHJG3CYkEvOPtzIl3w5Vx8zjS4OTAA?=
+ =?us-ascii?Q?xGWSZj/3CL+iRDGFsMhzhROZ1TbGsBDFCgb7tvJ2XVR2HWHGxdWM1Ql19D3D?=
+ =?us-ascii?Q?H8va5agtzTgDMLeW1sdIdKgcpM/vL3LwL2M/QbfKYhGTNR2ngoSVqc4bafVS?=
+ =?us-ascii?Q?EQBs4+4mgJemt3XV+dNFCz3qe5d6M3Qi+9cd7NgV2T2RvglGstgjT18N/Ubf?=
+ =?us-ascii?Q?rzGX91l0DdXONvlsvl0kAldmJZbl3GY1HbZoANvoVYPvMsUHSVS8Rf0ZZkCH?=
+ =?us-ascii?Q?B5D0n0VJ6Q+JjFRk3Y0nF8bOFcy0VufyaS7sP6XID6wgx8tOlOUk7qIwF4zJ?=
+ =?us-ascii?Q?FYInzj8/GQ5mFJmAPX5H84tk6ZIm+vIBhddKuRCagZR7mCZkRMYY0/NUv5m2?=
+ =?us-ascii?Q?QjWtWkTC7LzgLg3xFN3jwQQ84IMlwj/G4slZDiluNWqbea9ehwxRbVt8jGup?=
+ =?us-ascii?Q?9xYES+kCFyYVgmlP67aXi5UNKjP5HTDsumFs8blJF1FCG5kC3OT86Tb+9PZ7?=
+ =?us-ascii?Q?714BFCv09tVHBwKS08UNUNmunBBby8p+UxJ9KJXtAnWGZNVDiFEIe6z2/+JR?=
+ =?us-ascii?Q?+QNjS8Tfu2WZGPgAoQmB8rKzVd6Ti5UXm3l+16z/QTOc8MS21MFQ1Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR01MB6862.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?UV2qOc8J9hOcFRfharBIW5ZszHPPmAFRmtKxHTINSEp7nLbTO+zaZMxp3x4R?=
+ =?us-ascii?Q?Pv7Ivhx2GebESkOiv2ZztdnYJ2AEED57u+n3UNgjDIPRCOiowO+fE4KeHFsa?=
+ =?us-ascii?Q?D/AoZOwNV/Sv5621wYTpL6IcJtBZSg2vavtpIkjKqsXDyjUdPFQYV3aivefj?=
+ =?us-ascii?Q?H87ksIQPIYkIaYzou75xf2HV45753rTcWkw7NCKI/XiQRgV7LrrfV1j8QUxu?=
+ =?us-ascii?Q?bCqyPCJe8msCKLcfD9l/D1987uyz2lu2Kql2TyZxXa/abaURBoo1TlihR/Vd?=
+ =?us-ascii?Q?OdBArkVkfhSqfV6XPGQt4AXYYgB10cj5AWFAqLUdboFk7P7ceZx3D4859R8b?=
+ =?us-ascii?Q?Zu4oSCC71ZREGCPq0u33aWvOSF0GjJW9GBznqv/omxt9pq+OyBZsVUl5HY5A?=
+ =?us-ascii?Q?h9UPMBDjA9hrwVc5PoJ8W9L04YIE0y/Bpl+E2ZzAGudC0yfCJ5YL209Q+xir?=
+ =?us-ascii?Q?sUA5G1VhrsSeR30A4dGkixQVsurSxIpupyE3pHzOe4T3SqJpTvyylrneD5sF?=
+ =?us-ascii?Q?n0AHT6UP9CgRbPkEx0FSM3o+A530pJOThaBxdjjn5HshjKW/khJrwXwmYntt?=
+ =?us-ascii?Q?+EQHEmhCjNeiwRuXMjMM05UIjDy3XF01sTbyf56Q2FNPj/ypz9XY0ULekynb?=
+ =?us-ascii?Q?EvwkrxpIohxLlDtBlvpnaqFyLkV4/HSGPwWrp4hu3ukWrty49HarLyebPxX0?=
+ =?us-ascii?Q?WgFz0fiInE2dVN5SgiYHhiCXFyiYk8RLt0ba995VXLvtB4JNUY4iI7E4kgg4?=
+ =?us-ascii?Q?Pp4P7MgVapdt74I27z90Eyyn1BIP0bJ6mR0lSMSyTB45Xvwq6kJ8SnplEWSp?=
+ =?us-ascii?Q?BGtzh9qx4+5PbEcIVzlXzD+hmWNSxXgTyIRW79ug9jkP0U8M17rsXsg/GVPM?=
+ =?us-ascii?Q?O7+SG+X09V2+mTdXYoIs32IMwX70BoeIlob+mDV8o7S7orWWJIA/dcCUphAw?=
+ =?us-ascii?Q?c33pp7TFTFJMfJ4AQR54qqNs34lHCEsgPdmCQVLTrJolgOMI0tcr/fyQWJb8?=
+ =?us-ascii?Q?23eSH9vHTvukRmcCA5IrlhOVDoQjVWzj8IHQrB0d108kNtHY5CwlDmZq+xZ4?=
+ =?us-ascii?Q?01sbPAo8lChrzdMuMDRztvy+vp3SX9ZQr1llJFafZOnsrqjyHsEc7WIf3xMY?=
+ =?us-ascii?Q?iXHYQnaLVuZR+VvXgmJ6k8hcbuExrKIdETzJZNz7i6YFbn+V6SIGOEzQLnT7?=
+ =?us-ascii?Q?mdLcPY/U1VxwHhWKezEzHGbsLfcCwgfLWo9ItMF56qw/sy7+ECTUNdoSJkhe?=
+ =?us-ascii?Q?f0VHmEtyN4L20XeEp8xoFe3Y4Vn4dAbgbSDFDEcJriBJJiPoXjZarmxXKVT8?=
+ =?us-ascii?Q?vbPTfg9F8jPobk+biRqlsmlQJgy6Kz5h2HhbJ6pbqlkm/TCkeGQ57Uklr72z?=
+ =?us-ascii?Q?39VjYfmUG4yfrGR+onZb2IvCwX3UMZjn6hOjSMDPRjMb8crS9tkStXOFW7g4?=
+ =?us-ascii?Q?t1pSlM0s1bC/oV1f+q24Bd52BSF2Lx0M4d1J9sCv+m2ZIku0dYQULJUdxnko?=
+ =?us-ascii?Q?e0IshRmN+k/tW+bOMlLPp44S3owm1XkytMvNZxPTF20gHXh2hcUyLVKPnEE0?=
+ =?us-ascii?Q?yswaVfOCsEmTEQVWjsRqw4cR6hVdW3Fg/H6YJkA4oZ+/k+D5D/HiFaBh5AsQ?=
+ =?us-ascii?Q?gXCWFKHp1XoZEzJq0WzT55U=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fefbeb46-d89c-4f47-35a2-08ddf9fd2927
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR01MB6862.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 17:26:27.3178
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4LvOs1KTB3SjhJHNkGEV8VZma2O5Nq7kSDgF4/mKjKxJppzdEvUG2rnBHcqzm1GcVHEjEbwktm1SOCCua1DMG9mmL2FTjAzh510F71/ggK0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR01MB6600
 
-On Mon, Sep 15, 2025 at 7:21=E2=80=AFPM Amir Mohammad Jahangirzad
-<a.jahangirzad@gmail.com> wrote:
->
-> In the ACPI debugger interface the helper functions for read and write
-> operations use an `int` type for the length parameter. When a large
+Jie Gan <jie.gan@oss.qualcomm.com> writes:
+> I think it's better to explain my ideas with codes, so I directly created the
+> patch series for sharing my solution. Please let me know if it's
+> offend you.
 
-There's no need to escape data types in patch changelog and generally
-please use double quotes for escaping.
+Thanks, Jie! I'm not offended at all. My primary goal is the improvement
+of our shared code base, and this is helpful for that. And I agree with
+you that code can bring a lot of clarity to the discussion.
 
-> `size_t count` is passed from the file operations, this cast to `int`
-> results in truncation and a negative value due to signed integer
-> representation.
->
-> Logically, this negative number value propagates to the `min` calculation=
-,
-> where it's selected over the positive buffer space value, leading to an
-> unexpected behavior. Subsequently, when this negative value is used in
-> `copy_to_user` or `copy_from_user`, it is interpreted as a large positive
+I've tested the series and it works and fixes the bug. I'll comment
+specifically on each patch separately.
 
-Function names need not be escaped too, but please add () at the end
-of each function name.
-
-> value due to the unsigned nature of the size parameter in these functions
-> causing the copy operations to attempt handling sizes far beyond the
-> intended buffer limits.
->
-> This patch addresses the issue by:
-
-Please change the phrase above to "Address the issue by:"
-
-> - Changing the length parameters in `acpi_aml_read_user` and
->   `acpi_aml_write_user` from `int` to `size_t`, aligning with the expecte=
-d
->   unsigned size semantics.
-> - Updating return types and local variables in acpi_aml_read() and
->   acpi_aml_write() to 'ssize_t' for consistency with kernel file operatio=
-n
->   conventions.
-> - Using 'size_t' for the 'n' variable to ensure calculations remain
->   unsigned.
-> - Adding explicit casts to 'size_t' for circ_count_to_end() and
->   circ_space_to_end() to align types in the min() macro.
-
-min_t() can be used instead.
-
->
-> Signed-off-by: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
-> ---
->  drivers/acpi/acpi_dbg.c | 26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/acpi/acpi_dbg.c b/drivers/acpi/acpi_dbg.c
-> index d50261d05f3a1..72878840b4b75 100644
-> --- a/drivers/acpi/acpi_dbg.c
-> +++ b/drivers/acpi/acpi_dbg.c
-> @@ -569,11 +569,11 @@ static int acpi_aml_release(struct inode *inode, st=
-ruct file *file)
->         return 0;
->  }
->
-> -static int acpi_aml_read_user(char __user *buf, int len)
-> +static ssize_t acpi_aml_read_user(char __user *buf, size_t len)
->  {
-> -       int ret;
-> +       ssize_t ret;
->         struct circ_buf *crc =3D &acpi_aml_io.out_crc;
-> -       int n;
-> +       size_t n;
->         char *p;
->
->         ret =3D acpi_aml_lock_read(crc, ACPI_AML_OUT_USER);
-> @@ -582,7 +582,7 @@ static int acpi_aml_read_user(char __user *buf, int l=
-en)
->         /* sync head before removing logs */
->         smp_rmb();
->         p =3D &crc->buf[crc->tail];
-> -       n =3D min(len, circ_count_to_end(crc));
-> +       n =3D min(len, (size_t)circ_count_to_end(crc));
-
-Use min_t() here.
-
->         if (copy_to_user(buf, p, n)) {
->                 ret =3D -EFAULT;
->                 goto out;
-> @@ -599,8 +599,8 @@ static int acpi_aml_read_user(char __user *buf, int l=
-en)
->  static ssize_t acpi_aml_read(struct file *file, char __user *buf,
->                              size_t count, loff_t *ppos)
->  {
-> -       int ret =3D 0;
-> -       int size =3D 0;
-> +       ssize_t ret =3D 0;
-> +       ssize_t size =3D 0;
->
->         if (!count)
->                 return 0;
-> @@ -639,11 +639,11 @@ static ssize_t acpi_aml_read(struct file *file, cha=
-r __user *buf,
->         return size > 0 ? size : ret;
->  }
->
-> -static int acpi_aml_write_user(const char __user *buf, int len)
-> +static ssize_t acpi_aml_write_user(const char __user *buf, size_t len)
->  {
-> -       int ret;
-> +       ssize_t ret;
->         struct circ_buf *crc =3D &acpi_aml_io.in_crc;
-> -       int n;
-> +       size_t n;
->         char *p;
->
->         ret =3D acpi_aml_lock_write(crc, ACPI_AML_IN_USER);
-> @@ -652,7 +652,7 @@ static int acpi_aml_write_user(const char __user *buf=
-, int len)
->         /* sync tail before inserting cmds */
->         smp_mb();
->         p =3D &crc->buf[crc->head];
-> -       n =3D min(len, circ_space_to_end(crc));
-> +       n =3D min(len, (size_t)circ_space_to_end(crc));
-
-And here.
-
->         if (copy_from_user(p, buf, n)) {
->                 ret =3D -EFAULT;
->                 goto out;
-> @@ -663,14 +663,14 @@ static int acpi_aml_write_user(const char __user *b=
-uf, int len)
->         ret =3D n;
->  out:
->         acpi_aml_unlock_fifo(ACPI_AML_IN_USER, ret >=3D 0);
-> -       return n;
-> +       return ret;
->  }
->
->  static ssize_t acpi_aml_write(struct file *file, const char __user *buf,
->                               size_t count, loff_t *ppos)
->  {
-> -       int ret =3D 0;
-> -       int size =3D 0;
-> +       ssize_t ret =3D 0;
-> +       ssize_t size =3D 0;
->
->         if (!count)
->                 return 0;
-> --
+-Carl
 
