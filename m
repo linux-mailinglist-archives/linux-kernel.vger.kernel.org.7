@@ -1,87 +1,78 @@
-Return-Path: <linux-kernel+bounces-827700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB6B3B92727
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:33:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 327D7B92763
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11FC5189C031
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:33:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37D6E1904A58
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E181E31578E;
-	Mon, 22 Sep 2025 17:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRtwAyLJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BFD314D3F;
-	Mon, 22 Sep 2025 17:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F758316189;
+	Mon, 22 Sep 2025 17:42:42 +0000 (UTC)
+Received: from aero2k.de (aero2k.de [49.12.35.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF577285CA2
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.35.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758562369; cv=none; b=TKMSts5YP7c5tDjrPKYShzRTx/JBjlMrAIvGjLEOugI6K3p3i62O1Go2sDybGwNfFmVPg7u34FXwiCU+UF5CBHQuJVDq2DERdZuvmY/PoZ4RnBdMnX9Z/V6QXHJvdFGWL77bBQPSf4dDr/R8kR6xhmha0aPCImHQ2XLr3q5ZSTo=
+	t=1758562962; cv=none; b=D5z9tkS00V30WY/2ZTT2YLCkYuuiNK21WrqYPXzQGwE82Md6Uo6c8rKmy4mQfNjEWHGj+6iQotIFEppSNFhR5TeLSENMK6+Pcc5UwhsSKmSIeufQyEJ8ITHeEouCCLuV+YqqcquTQeciIyIQNZAGJkdLsPZhHIriarr6aR1jpEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758562369; c=relaxed/simple;
-	bh=gLoJKtzalDuOH/rmRMJ55zcAI7y5bhJhyzWCe2JGf1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hxuvOhhsgwMuq6rPWOfVZxL5TuMe138xGH9PWz0Cqoc95k172L8+wYgM98XdHz+MRhgdYHQ+T2dOuVjaKx80nj+C8vN4kkUN4fOa7fadBuJc8is0KAlIWQZ6PZ8IcJu3U/o/AhmCzJKtEuHT1NSxqyr9W5VUAZsMsbga0KTaBz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRtwAyLJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C4CC4CEF0;
-	Mon, 22 Sep 2025 17:32:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758562368;
-	bh=gLoJKtzalDuOH/rmRMJ55zcAI7y5bhJhyzWCe2JGf1U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XRtwAyLJHXC/w4/KuZ533bntdd1AtbCwzsDCiQLhxyNuMrwr/qZv3rAQ/6PucLbl1
-	 +Ii6PL+zXm8m7CVZDaE4DreOP6VRzhXQYNFICTjAnt+f7LtwHLuuez3v5ibBFjIQ3q
-	 2xgeR2WHLYf7BG7JEGPys36TfIfdVYN0LHnLT7xbq/gKNK//5987u+O80O5Mc3rV2P
-	 0i6kYNha3h28RSBq6xhh3xp/goplAT1sRv1/XPORSY91gBsTsT7ho+oCIJKt0PEILi
-	 GLZj0UA2kS2spRINxR40UBXYZ0+CxuSNNyCEpeZOgN4N8EVyJTYIkNSEDTit6bgTO7
-	 2XrDoQB1PmzdA==
-Date: Mon, 22 Sep 2025 12:32:47 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Sheetal ." <sheetal@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-	linux-tegra@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, dmaengine@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>, linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Vinod Koul <vkoul@kernel.org>,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Sameer Pujar <spujar@nvidia.com>
-Subject: Re: [PATCH 3/4] dt-bindings: interrupt-controller: arm,gic: Add
- tegra264-agic
-Message-ID: <175856236329.510188.15404982398472651889.robh@kernel.org>
-References: <20250918102009.1519588-1-sheetal@nvidia.com>
- <20250918102009.1519588-4-sheetal@nvidia.com>
+	s=arc-20240116; t=1758562962; c=relaxed/simple;
+	bh=+z8laoByDF+J7usdfNvnaPQnu7QjnH2bfkPSXSXSC2s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RQO5pvvYXWcMtVqk4eD2Biuif93POm1ZLGp0hPydPS3Lsx/dEZ9HKiJ1wg3YivfwNOoVV86FBYKPeM4zl++4s2txBN5x04DtsgPQ9/LA1IVn6cUMQhhuQ0snIBgXC2g+mdQLyVNwTBzREHbPAt/bAHLPExTrUAw6djNSgdZogQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aero2k.de; spf=pass smtp.mailfrom=aero2k.de; arc=none smtp.client-ip=49.12.35.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aero2k.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aero2k.de
+Received: from [IPV6:2a02:8071:73d0:11f0:9c03:26ff:fe9c:2a6a] (unknown [IPv6:2a02:8071:73d0:11f0:9c03:26ff:fe9c:2a6a])
+	by aero2k.de (Postfix) with ESMTPSA id 8265B22325;
+	Mon, 22 Sep 2025 19:33:05 +0200 (CEST)
+Message-ID: <60c824f2-667f-4957-bfe1-145a79e01ac5@aero2k.de>
+Date: Mon, 22 Sep 2025 19:33:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918102009.1519588-4-sheetal@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: NMI: IOCK error (debug interrupt?) for reason 71 on CPU 0
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: 1111027@bugs.debian.org, Thomas Gleixner <tglx@linutronix.de>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org
+References: <tfwuhg7fxlvb3iix2k4qqh74dcmwgcipprlehy7zlaz3btmtym@2x2vsccw5yzs>
+ <2pdp3kq4qebdxizprbnaq6omh4dvxdlktokvr37b7nlkf4po3b@fxzmgmi47wxx>
+Content-Language: en-US
+From: Thorsten Sperber <lists+debian@aero2k.de>
+In-Reply-To: <2pdp3kq4qebdxizprbnaq6omh4dvxdlktokvr37b7nlkf4po3b@fxzmgmi47wxx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
-On Thu, 18 Sep 2025 15:50:08 +0530, Sheetal . wrote:
-> From: sheetal <sheetal@nvidia.com>
-> 
-> Add nvidia,tegra264-agic to the arm,gic binding for tegra264 audio
-> interrupt controller support.
-> 
-> Signed-off-by: sheetal <sheetal@nvidia.com>
-> ---
->  .../devicetree/bindings/interrupt-controller/arm,gic.yaml        | 1 +
->  1 file changed, 1 insertion(+)
-> 
+thanks for your help. It's been four days now, I'd say above average (last was five days) - and no crash yet. I'm going to wait at least until the weekend before naming a winner, but that's already looking pretty good.
 
-Applied, thanks!
+Just to get things right: the machine stopped crashing fatally - I believe with the addition of intel_iommu=off. It starts flashing red, logs those errors in kernel buffer, but stays running. I'd like to backtrack that later on, maybe after the weekend, removing all params and seeing where things go. Unless you'd like me to test something else before that.
 
+Best regards
+Thorsten
+
+On 9/18/25 10:57, Uwe Kleine-König wrote:
+> Hello Thorsten,
+>
+> after writing the mail to Rafael Thomas provided the idea on irc to test
+> using
+>
+> 	intel_idle.max_cstate=2
+>
+> (or =1 or =0) on the kernel command line given that the splat hints at
+> this happening for C3.
+>
+> Can you please add this (with =2) to your bootloader and if the problem
+> happens again, tell us here and reduce the number further?
+>
+> Best regards
+> Uwe
 
