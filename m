@@ -1,153 +1,125 @@
-Return-Path: <linux-kernel+bounces-827123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BF2CB905DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:30:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EAFEB9065E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8A0F17D480
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:30:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EA4E2A15DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D172877DF;
-	Mon, 22 Sep 2025 11:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6CC309DCB;
+	Mon, 22 Sep 2025 11:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S4AsqHM+"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Ibl6Sbpi"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DA5256C88
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 11:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B61130506F;
+	Mon, 22 Sep 2025 11:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758540646; cv=none; b=Utj5iBJmy/Yof9X/aQIpprjIHME6VcrInHdLlp3YMPOGFxumSdKrkWM+i8uevj86TF93YB5bu4KGhKsioyvotq0wtlrAiPCuUysKK4aINjCptjt6idH3GtC7f0CqcxsP1AsjvfAGUaZ2/Avf5uZHSYbihrDgNz0506orN59zInU=
+	t=1758540691; cv=none; b=F+2zHaE49bBzzUJRPPxLjeycbnIJQ//9IvkPZdz228G7l2k2X7VOfnCbGoAJQpdiw3FwemzuaZJr516bolj+7nOfSBHM203C1pjSdjtmxrqyufhstGbvUy8X5FA8XmalO+2We9d7Xu+PFexzUNq3jKGQ8uFUf1JkXpHI8BF2r6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758540646; c=relaxed/simple;
-	bh=exJIaGVZRA41ft1d8kldxrGWTT6BfUiUQXmXRuV8u7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KwpmWgjOCD7zeH9OGkLAznxD30voLiRnZiJHPNrHSDx23b/2Q5Ejdb2kL9uVgEp4R6+2LiPCa4lUwB3ZZECAOAEIFOaxAVXd1H/fOpB5aYf4++wWpexUjw3lch0cS15XinxuR9A2R6MhloU/pNZaNIx/Aj54mnuJHk8iNgbMuqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S4AsqHM+; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-77f454c57dbso334609b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 04:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758540644; x=1759145444; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d19kgaF4cF7llUtlCB54elxTKW7Xa+l9+r8wNmLGWJc=;
-        b=S4AsqHM+5vJgfCvIG50kpNj5WK9bfsWFJg3HYHbsOVzydDRH3dFyABCKqncyWEZADo
-         j0r9J1bMGrywAWKaJjUELcjLDtwAPHlxTFvhlMbfuQ7PriBJfFT7/aoOEgGY77ydfUs6
-         HIkDXl7EizSTWRQeQtiNS9FH4mATWvcLflZnCQyaYav+dlBq8v602PlihUzOPP2sBsmc
-         dGtwJ50L+aF85IKldEpQtLJKVD5RFZJyBr6oAvHuDRWhJTal2uG8GBJnXh57s7/luke4
-         Ic4H7CCWl6eSO4suZpNwvSNjJZQS/82UrBMKbuhsRNXKKmzXz2arpJE5dc3s+wWUxXg1
-         4j2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758540644; x=1759145444;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d19kgaF4cF7llUtlCB54elxTKW7Xa+l9+r8wNmLGWJc=;
-        b=f5oSezX2w320b4WhKC6486VXsXEo79hAFqfXABKqVeUeJKNP1lSoReBT6xF8seAZrR
-         fJZJwwoiLOQOyKxyYB7yuHle76Hq1RDJ7Ptuo5CiUNuLTUlB66Z+Kq5aCYeRDW1dG3zp
-         lW4MYVM+l+kAigi9RbcKEwq1fzt3g8XDf6v/q1ZzRhVUZcztSKmSsf8ozYvA/EMi+0Oh
-         tppG9Q0N1QqoQfMsPpPdiD24cqjeSHJloC41w8hKxoHbkeNtPhf58vbSaP/xVTVbg/54
-         Wlql6b8EwzTZucmBMiw07NxWX80m6Iyx3y0wUAPH3y9PWUiB5FlwFv++vO8udhxrM4E5
-         iaZg==
-X-Gm-Message-State: AOJu0YwxIdXf5y1Sh6E/Oru/croIJ16aqwdxR9CWGo15Ljg9TgSQfEHd
-	7mrWau5tKROOi0NvZ40y0yFz/sWEikoSEiM7QlxlsDodKqbZfnhEx78I
-X-Gm-Gg: ASbGnctCTylDhpm4TYVCdajrpLSEsOPYv5XFWfapT4neUo1/GaPeIDqsH9tMKCxsiNL
-	yI09xyxtIK+daDdA8RGE0RWDf/wTTrfw0K+CyoF0pC+nt+E8U6jtO9mRngLXCoaFQ+zUkPbQPYE
-	Ms3NBkFJQiLlAlVPcqSzPOVdso9EznmRY360PhBsAyF0Ms+oONu/va22NFQxAx/86Ee2N6Jnhll
-	ItZLKYiIGfFUZFXvams9hBAXSaHY+U9WVho7QBSJ5EZy4eMydRcz9pdH/2cMnf8+uzBWYqhEGL8
-	inFYEEDqaPpqhWsbbRZr43v6XTFlYHDgEFAMwBMSrifuJ/T5l/BgyYVwXZxbt2sMOgl/L+lfeV7
-	35OIFPNcXBMrxujb+f4LURGdLQzO1nnjDyVX+/C06C0SNVL86Tk9f+jvx8VFpIUUIu49E
-X-Google-Smtp-Source: AGHT+IEmGQ8ezO3TtOdftc+mCIAJ6aLgEsQSmxgVxjQfrvzQONfiVHgyQHAP9sLiLBgvDFkwTF21oA==
-X-Received: by 2002:a17:902:ce12:b0:274:5030:2906 with SMTP id d9443c01a7336-27450302a03mr76858975ad.46.1758540643820;
-        Mon, 22 Sep 2025 04:30:43 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802df852sm131071645ad.87.2025.09.22.04.30.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 04:30:43 -0700 (PDT)
-Message-ID: <f31c2169-cd0e-438a-9e59-d6ebd8eaea6e@gmail.com>
-Date: Mon, 22 Sep 2025 20:30:40 +0900
+	s=arc-20240116; t=1758540691; c=relaxed/simple;
+	bh=HrSs+EwKvaIOsKnacb9gRdXLOC2RSNtMLI5caZpumFg=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=GuShj9bRBcfQCUI9BPrpGC9lEQPCEITgH8eko6sH+AXEuUeSCfmx4Ib/FFjKW4lBODflNySXg5zhRKQNd8aOnHLIcyfK2SbDOZiy8/1DPsVADBrcjHvQmg3zbmszEYoXzhz0xgEF6vYPWclv/kLWcRBb+eZ9jx/p51p5We19v4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Ibl6Sbpi; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1758540689; x=1790076689;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=HrSs+EwKvaIOsKnacb9gRdXLOC2RSNtMLI5caZpumFg=;
+  b=Ibl6SbpiG0qzv3/rVRGy1WLpcyQ/gVtBGyh8e+zdXMrlTfVWgIVNnp0b
+   RVJUTsu3J2hL17ri8i7jN+7+jxLQYYZnEf/q6FNrPnIRpN3Dghzrgftr0
+   X12e+6kJhppEuShMUNtdx+MXIM3LXggMgS4pRSsUY5GjP0tuDdxSpJlW0
+   LSfQ1z0W0a9ocBIDPASdosqLVbkDQdSU0/OFCIr2w58ibWGwRrmwSWYIX
+   F9N/EqaYYEBwWt/V1vfO9b5zMGOOtrSoF2xsPM560L7Q2ejUmwjKYXATS
+   eH2OBkfkQ61WCnEyVvE7PSCqU6o/tIonhuN9ISPv0VBphpqxcEebX22Pb
+   g==;
+X-CSE-ConnectionGUID: ItnTgdDQT3CQ6aHeJ/KMMA==
+X-CSE-MsgGUID: iCVfDHXvTI+z3drHLz7Pcw==
+X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
+   d="scan'208";a="46230241"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Sep 2025 04:31:22 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 22 Sep 2025 04:31:03 -0700
+Received: from [127.0.1.1] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Mon, 22 Sep 2025 04:31:01 -0700
+From: Ariana Lazar <ariana.lazar@microchip.com>
+Subject: [PATCH 0/2] Adding support for Microchip MCP47FEB02
+Date: Mon, 22 Sep 2025 14:30:52 +0300
+Message-ID: <20250922-mcp47feb02-v1-0-06cb4acaa347@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/1] sphinx-build-wrapper: add support for skipping
- sphinx-build
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
- Linux Doc Mailing List <linux-doc@vger.kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Akira Yokosawa <akiyks@gmail.com>
-References: <cover.1758444913.git.mchehab+huawei@kernel.org>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <cover.1758444913.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGwz0WgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCyNT3dzkAhPztNQkAyNdY8Nkc3MLU/PEVCNLJaCGgqLUtMwKsGHRsbW
+ 1AMjHngZcAAAA
+X-Change-ID: 20250825-mcp47feb02-31c77857ae29
+To: Jonathan Cameron <jic23@kernel.org>, David Lechner
+	<dlechner@baylibre.com>, =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Andy
+ Shevchenko" <andy@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Ariana Lazar <ariana.lazar@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758540660; l=1489;
+ i=ariana.lazar@microchip.com; s=20250825; h=from:subject:message-id;
+ bh=HrSs+EwKvaIOsKnacb9gRdXLOC2RSNtMLI5caZpumFg=;
+ b=8IsiKnHd6DQdHXMfiGzJ5JGQq6/qIVmK3mV0eDf7x36iizoh5nb1xE1gaRx9SBEujSFaRHj7W
+ jiQ3k+j7e+6AJuvA+vwAxK/iRXtYGORqWQw+o1N/3ijbL7XJrlfGqq0
+X-Developer-Key: i=ariana.lazar@microchip.com; a=ed25519;
+ pk=jmvf1fSxcnzZmXfITM3L94IwutM+wqA1POQHiYyD6Dk=
 
-On Sun, 21 Sep 2025 11:13:24 +0200, Mauro Carvalho Chehab wrote:
-> Hi Jon,
-> 
-> This patch adds support for not running sphinx-build at the wrapper
-> tool. It was requested by Akira, who wanted to be able to ignore
-> Sphinx errors during latex build and still try to build PDF.
+Adding support for Microchip MCP47F(E/V)B(0/1/2)1, MCP47F(E/V)B(0/1/2)2,
+MCP47F(E/V)B(0/1/2)4 and MCP47F(E/V)B(0/1/2)8 series of buffered voltage
+output Digital-to-Analog converters with an I2C Interface. This driver
+covers the following part numbers:
+ - With nonvolatile memory:
+   - MCP47FEB01, MCP47FEB11, MCP47FEB21, MCP47FEB02, MCP47FEB12
+   - MCP47FEB22, MCP47FVB01, MCP47FVB11, MCP47FVB21, MCP47FVB02
+ - With volatile memory:	 
+   - MCP47FVB12, MCP47FVB02, MCP47FVB12, MCP47FVB22, MCP47FVB04
+   - MCP47FVB14, MCP47FVB24, MCP47FVB04, MCP47FVB08, MCP47FVB18
+   - MCP47FVB28, MCP47FEB04, MCP47FEB14 and MCP47FEB24
 
-Thank you for trying to figure out my intention.
-However, you failed to see the point.
+The families support up to 8 output channels. The devices can be 8-bit,
+10-bit and 12-bit resolution.
 
-> 
-> This patch is against docs/build-script and applies after the 3 patch
-> series I sent yesterday:
-> 
->     https://lore.kernel.org/linux-doc/cover.1758361087.git.mchehab+huawei@kernel.org/
-> 
-> 
-> While Akira's original intention is to have pdfdocs target depend on
-> latexdocs, IMO, this is overkill, as probably only Akira and a couple
-> of other developers might want to have such behavior.
+Signed-off-by: Ariana Lazar <ariana.lazar@microchip.com>
+---
+Ariana Lazar (2):
+      dt-bindings: iio: dac: adding support for Microchip MCP47FEB02
+      iio: dac: adding support for Microchip MCP47FEB02
 
-I think it is only you who don't want such behavior.
+ .../bindings/iio/dac/microchip,mcp47feb02.yaml     |  305 +++++
+ MAINTAINERS                                        |    7 +
+ drivers/iio/dac/Kconfig                            |   16 +
+ drivers/iio/dac/Makefile                           |    1 +
+ drivers/iio/dac/mcp47feb02.c                       | 1347 ++++++++++++++++++++
+ 5 files changed, 1676 insertions(+)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250825-mcp47feb02-31c77857ae29
 
-> 
-> See, after all changes, the makefile rule for *all* doc build targets
-> is simple:
-> 
->         $(Q)@$(srctree)/tools/docs/sphinx-pre-install --version-check
->         +$(Q)$(PYTHON3) $(BUILD_WRAPPER) $@ \
->                 --sphinxdirs="$(SPHINXDIRS)" $(RUSTDOC) \
->                 --builddir="$(BUILDDIR)" --deny-vf=$(FONTS_CONF_DENY_VF) \
->                 --theme=$(DOCS_THEME) --css=$(DOCS_CSS) --paper=$(PAPER)
-> 
-> After applying patch 1 from this series, it is really easy to replicate 
-> "make -i" by writing a small script that does:
-> 
-> 	tools/docs/sphinx-pre-install --version-check	
-> 	tools/docs/sphinx-build-wrapper latexdocs || echo "LaTeX build failed, but we'll try build PDF anyway"
-> 	tools/docs/sphinx-build-wrapper -s pdfdocs
-> 
-
-Hello?
-
-You are the one who is changing the way "make pdfdocs" behaves.
-All I want is to restore the current behavior, without any need to
-use such an ad-hoc script.
-
-Sorry, but I think I have to NAK this.
-
-Furthermore, your "cleanup" is obfuscating the very fact that "pdfdocs"
-needs a successful "latexdocs" stage.
-
-I believe Documentation/Makefile is the right place to describe it.
-
-Good luck,
-Akira
+Best regards,
+-- 
+Ariana Lazar <ariana.lazar@microchip.com>
 
 
