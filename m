@@ -1,57 +1,71 @@
-Return-Path: <linux-kernel+bounces-827292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB3DB915C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:18:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A712B914C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B0CF7B1E3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:16:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9612E18A2359
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675E830AD0A;
-	Mon, 22 Sep 2025 13:18:00 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EF1309EEC;
+	Mon, 22 Sep 2025 13:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ZcAqSJqB"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FC11DBB3A;
-	Mon, 22 Sep 2025 13:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B68DC120;
+	Mon, 22 Sep 2025 13:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758547079; cv=none; b=bp4MVskLBuqdhKujH+/XM0ZGEpiJg2fI/bxH8OFKLaLMRROMkxExQ/BaXZbLRK5n2gGEIP6kl32nnkpeZ/CE/XDRsNHDqTSRRlYhzvvd3oP1gbF7O8cRerUD3Rqe4xq62L+EooGbgoo4D3fiNQWXoSKnq/hJR173p3p0lUbmpIs=
+	t=1758546483; cv=none; b=hGk0g9ON7FdHtI7nL1IZ9v4bqiB5+MVV+ohRtKM3zTgk4+4IS5WWVH6ron3M6EEWBcWNS1+VD+krDj5WzZdynNuH9NMYH8G0O4/niYF7XRw95hxkxJCiQL7vGpraoSlExMFyuOhMqENewcNpk1cO1sAF8WmnsJdoLa9vKQ4NsME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758547079; c=relaxed/simple;
-	bh=nT/4BYn6CiOPJFOIZOZVP2rIVAAaffeP/tWq6h/x8ko=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jXecO1lb7fWLUvvQ2PgpOtC78o986FKoEJe/ENBzDxMJ2E4WcXVD37w/XsOZSRAYwGHTNTT90xup/bfiMczeSWZ6ipYIYD8fnLUAGh/yEpz4/TnaYv1TJqk45LwZEZ0vnstBPT6MjQa6ryOFPLRe3+B5ymLDehArI/ej75VSrBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cVkDt4JDWzKHMhD;
-	Mon, 22 Sep 2025 21:17:50 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 588EC1A1881;
-	Mon, 22 Sep 2025 21:17:54 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP2 (Coremail) with SMTP id Syh0CgCH0hZ3TNFoBhXHAQ--.54770S5;
-	Mon, 22 Sep 2025 21:17:54 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: longman@redhat.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [PATCH -next 3/3] cpuset: remove is_prs_invalid helper
-Date: Mon, 22 Sep 2025 13:02:33 +0000
-Message-Id: <20250922130233.3237521-4-chenridong@huaweicloud.com>
+	s=arc-20240116; t=1758546483; c=relaxed/simple;
+	bh=QVsLC+z3WG5ImB4zyT7a9y80b64iWfxOZjKHhCuYOiA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A0t3xlp8fYPj7v8k4Xtc+8y9aw4qWJd3UiXtaBgO2IRvGmCdi1UZvzPpEN37zUmoiIArKRLuE3NsPJL5TRvFV5aaD+Yap6Tmc/MuKmKbxYg8rxH6NFHVyYC4gN35pW940FjigQ5DsM89nr2lGPX/s2X74D17dYbIOwwi4SW6Ufw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ZcAqSJqB; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1758546482; x=1790082482;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=QVsLC+z3WG5ImB4zyT7a9y80b64iWfxOZjKHhCuYOiA=;
+  b=ZcAqSJqB6eTJDgHWiAF6I6D5hqkJtPjKRt/RWJikmZFwmD/1vp3NeDgT
+   P18ymFrRrAT8NdK44h+Tb7QNmBFNYJXdHV4YA3pfpAEaZqLPpuyGO28Fp
+   MFm0t8M9Yn++1rMIPkLZsOPOwQvTozIcTXsI1Hft8BcHG1Xqw8lWHm1CG
+   F3wLoqe8kI04G6wLyCHREhv3F+h1FwtKfZFw2rUxmftnwslBCdGvJS2cK
+   JtIWNWv4yLzsB+jo+wtMBrrArDAI1uOgVLNQuXvTs/eeFDGjE9K3RJz+R
+   DTxbQjiGk5xx/5En+9donse1N4V4l2PrjjdGUFrFH+PEDeA99j17kA+GR
+   w==;
+X-CSE-ConnectionGUID: FVJ2Zij+QNKIJUYJJlqdNg==
+X-CSE-MsgGUID: XEdQEz2jTWeqK2v8yEHvSQ==
+X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
+   d="scan'208";a="214200142"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Sep 2025 06:07:59 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 22 Sep 2025 06:07:22 -0700
+Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Mon, 22 Sep 2025 06:07:20 -0700
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>
+Subject: [PATCH net-next] net: phy: micrel: Fix default LED behaviour
+Date: Mon, 22 Sep 2025 15:03:14 +0200
+Message-ID: <20250922130314.758229-1-horatiu.vultur@microchip.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250922130233.3237521-1-chenridong@huaweicloud.com>
-References: <20250922130233.3237521-1-chenridong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,81 +73,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgCH0hZ3TNFoBhXHAQ--.54770S5
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF4xGF18CrW3Jr4UXFyUAwb_yoW8CF13pF
-	yUKa1UJ3y8WF1UC34DtFs29345KwsFqa47tF98W348XF17Ja1v9Fy0k34aqrW5t345WF1U
-	Z3Z0vr4IgasFy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWw
-	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr4
-	1l4c8EcI0Ec7CjxVAaw2AFwI0_JF0_Jw1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r
-	43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU
-	whFxUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain
 
-From: Chen Ridong <chenridong@huawei.com>
+By default the LED will be ON when there is a link but they are not
+blinking when there is any traffic activity. Therefore change this
+to blink when there is any traffic.
 
-The is_prs_invalid helper function is redundant as it serves a similar
-purpose to is_partition_invalid. It can be fully replaced by the existing
-is_partition_invalid function, so this patch removes the is_prs_invalid
-helper.
+Fixes: 5a774b64cd6a ("net: phy: micrel: Add support for lan8842")
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
 ---
- kernel/cgroup/cpuset.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+This fix is targeting net-next and not net because the blamed commit
+doesn't exist on net
+---
+ drivers/net/phy/micrel.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 196645b38b24..52468d2c178a 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -132,11 +132,6 @@ static bool force_sd_rebuild;
- #define PRS_INVALID_ROOT	-1
- #define PRS_INVALID_ISOLATED	-2
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index 399d0cf4d3426..0b42400e5e098 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -267,6 +267,8 @@
  
--static inline bool is_prs_invalid(int prs_state)
--{
--	return prs_state < 0;
--}
--
- /*
-  * Temporary cpumasks for working with partitions that are passed among
-  * functions to avoid memory allocation in inner functions.
-@@ -1767,7 +1762,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
- 	old_prs = new_prs = cs->partition_root_state;
+ #define LAN8814_LED_CTRL_1			0x0
+ #define LAN8814_LED_CTRL_1_KSZ9031_LED_MODE_	BIT(6)
++#define LAN8814_LED_CTRL_2			0x1
++#define LAN8814_LED_CTRL_2_LED1_COM_DIS		BIT(8)
  
- 	if (cmd == partcmd_invalidate) {
--		if (is_prs_invalid(old_prs))
-+		if (is_partition_invalid(cs))
- 			return 0;
+ /* PHY Control 1 */
+ #define MII_KSZPHY_CTRL_1			0x1e
+@@ -5894,6 +5896,23 @@ static int lan8842_config_init(struct phy_device *phydev)
+ 	if (ret < 0)
+ 		return ret;
  
- 		/*
-@@ -1874,7 +1869,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
- 		 * For invalid partition:
- 		 *   delmask = newmask & parent->effective_xcpus
- 		 */
--		if (is_prs_invalid(old_prs)) {
-+		if (is_partition_invalid(cs)) {
- 			adding = false;
- 			deleting = cpumask_and(tmp->delmask,
- 					newmask, parent->effective_xcpus);
-@@ -2964,7 +2959,7 @@ static int update_prstate(struct cpuset *cs, int new_prs)
- 	/*
- 	 * Treat a previously invalid partition root as if it is a "member".
- 	 */
--	if (new_prs && is_prs_invalid(old_prs))
-+	if (new_prs && is_partition_invalid(cs))
- 		old_prs = PRS_MEMBER;
- 
- 	if (alloc_tmpmasks(&tmpmask))
++	/* Even if the GPIOs are set to control the LEDs the behaviour of the
++	 * LEDs is wrong, they are not blinking when there is traffic.
++	 * To fix this it is required to set extended LED mode
++	 */
++	ret = lanphy_modify_page_reg(phydev, LAN8814_PAGE_PORT_REGS,
++				     LAN8814_LED_CTRL_1,
++				     LAN8814_LED_CTRL_1_KSZ9031_LED_MODE_, 0);
++	if (ret < 0)
++		return ret;
++
++	ret = lanphy_modify_page_reg(phydev, LAN8814_PAGE_PORT_REGS,
++				     LAN8814_LED_CTRL_2,
++				     LAN8814_LED_CTRL_2_LED1_COM_DIS,
++				     LAN8814_LED_CTRL_2_LED1_COM_DIS);
++	if (ret < 0)
++		return ret;
++
+ 	/* To allow the PHY to control the LEDs the GPIOs of the PHY should have
+ 	 * a function mode and not the GPIO. Apparently by default the value is
+ 	 * GPIO and not function even though the datasheet it says that it is
 -- 
 2.34.1
 
