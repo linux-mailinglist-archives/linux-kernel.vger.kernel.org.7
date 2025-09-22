@@ -1,245 +1,90 @@
-Return-Path: <linux-kernel+bounces-827971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3CAB938DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:18:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13696B938E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C8111907633
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:18:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA0E12A8492
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E25C2C159A;
-	Mon, 22 Sep 2025 23:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFB928B3E7;
+	Mon, 22 Sep 2025 23:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="K8wuFhmK"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P05cvPA/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F38226E6E2
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B2D26E708;
+	Mon, 22 Sep 2025 23:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758583091; cv=none; b=GcxALHv+qei/rDHPGjb5LxscAP4SAzeb7eVy7acROdKVvzW+MLvuVlApYuQJ2h+zwnWtTQYxL0wnHUZjTl1UFea0iJPcM+Ha6dsQRjSjfPuK7J2uEcX5V+C+Zl2/Vg2isri7nxDGNkUkOz0QXDVR0aHSfWh0r11dzTo4kVPOPHo=
+	t=1758583110; cv=none; b=rhhnJ2MNp5fV3D5ilc8JAdsqEQja0lid2Cli5lNHTgkbMCqBNETnUJkFobS3t5OApLTUv84mfMMp64YnaJaDZUyWP4gZqC27QV7GV05iNcwwjIgaoHgIDNPyDa+RUfUhYh2rfVhFOxpE3Q73STEm2T7UuZoZrWHXDT3Oorvk2n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758583091; c=relaxed/simple;
-	bh=xCV6ojMbzc6eJsEK8QI8aRXOvwRakeEpGB5Uw4nXNXo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pI09jzm7pdCzyELSOoCuVFJLvmHCfS+x3jyNKYjFF5wFyauD81m9l6iHQSVc1vkkaHPiOZ2/aHA5ej45AET0RGg+MSufCBriLPMjxYQqcmAfiCq2ZPpLKtAZ1tIw2OQiE1pE9V7vSK0Pzv2rFCVtPetyIQ4TIwxout6SYTnBeSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=K8wuFhmK; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b5ed9d7e20so48856841cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:18:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1758583088; x=1759187888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FMhzCZwWvSzmvpHLTjoUKn9VxrN7Ynwi1w+l4sf5xFg=;
-        b=K8wuFhmK1Pm0t4+LoNc6LEVgF0GhPhqaWXNTpmVn4VMSM/Oq40GpqWenZKOi3pHO6z
-         Yhlk8y3diE0WpjFrmsmnfgrsPRUgxjP1I3t+3mZRxtFyN1FQXzQLTDA8ZiB3kiZp/NjU
-         ykTVDZ7wasx6veB3oN30mtOZTqXjSMEp5mipa88xkBYCt7y/NhmqnDSJkDMTGdGA8B/S
-         tIXofJSmY8zC3htL4XAgfhGjPe2Dqf2RBfDJZaXo0y5gmJiEXKOffZjig/OClPd86IiM
-         TQCFOd17GHWPdFHTH2kBQYtYLvT5RMFwNviZ99jRvUgucbImIzK4Ytbp1pFFynsZLlOl
-         7fRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758583088; x=1759187888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FMhzCZwWvSzmvpHLTjoUKn9VxrN7Ynwi1w+l4sf5xFg=;
-        b=Bldd82K5KdkZMXSa5743bva0WvjrYaEcl+2UJ9OLLGTlXdV0jCWBf0FvyZEPYQE2wH
-         72BM9HBXoM/V/SH29PbCBafrTSeWkG7HQP/6TYfU2Mi4afGi1etjeku4cP9mreB62EaI
-         YygYMk3HN+mdnDnie7mvEgpzFbXkW/48v04k/lb0se/uQ08wALkGyHkA6KvSqOTeQE35
-         DOINfuDbKZYspKF/nhjxRCDTileCeXyo9JjJCfDkIDo5XijTFki4SSLr04787ICYxRvp
-         qJ9JXhsDGSnA6TmN8uTOqpbSTZPF+840HXIfI1nuL0RwsnnFBou3KwYn6tEJhWG16q7x
-         RARA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOCiniLQhVvSQpQ/Du3KRt+f6EHefVRw4YkcEkPiTtoMEEXAjn2jCbNJHjXsfOlvDHx1Z4PzQovx5toJU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfPupKp5aphcoFDqk8iuA/2ZLwR3/Asb0mipRsrSE44togKuWr
-	IBkEqSd3M9fxO48wgFfr+ozhMXSkdTeE33p5LjVw5GJcgKWCBEAN/L0tPw1ZoWYUOWS+8Cqb+cJ
-	sRDSbVXs0gtk2HdIXFETGvzWoU+nrfHM2YUT0SB6OYA==
-X-Gm-Gg: ASbGnctcc7rS7l7attogbVcoURg2mPO8Qus5KBR+NuHp8LjNXb8eKiQLWdgnSyr7Uzs
-	t7ECzDiDr94E9sLwca577Ay/ghhZz1/pPZA2pIFGzqQmijE/HhZ/moZM4loQqb2ImJYIHX4r5VK
-	cOhvSmgq+LFOhdABtduAlcegoC1vCf/XGCkJkPolNS+5+J2+yGQbxf6lQbSycg6M6OuYTe73MXK
-	t9c
-X-Google-Smtp-Source: AGHT+IHI7fhTCub3gR6FvbuAadFoUObXh5vH4jQwaxG/DrUU33qN/BcWlCQrH5/hzcu886DWWuHj5rfrmRYYSjZ03hs=
-X-Received: by 2002:a05:622a:130b:b0:4b3:140c:ef9f with SMTP id
- d75a77b69052e-4d369eae636mr9141131cf.23.1758583088357; Mon, 22 Sep 2025
- 16:18:08 -0700 (PDT)
+	s=arc-20240116; t=1758583110; c=relaxed/simple;
+	bh=QV9vCYaQNSbKXoqYJD0H0GTtH4u6s4//8ot+8KssKTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rqT31a9+zmeVif+yb7zcRjMShp7JbJkdZD3+xlB4llKuh1rKHRLpD9VJbZXLPwgz4V014NNQsSQdGTkNTqiW+Ws18OQvq2m2y5M5dyflPr4vh+5yHNt7FYiLOG9Oh3kQO4jsgmF//4UQWgSuudNw5KjPv/2mNguro+/Lfm2oJ5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P05cvPA/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF898C4CEF0;
+	Mon, 22 Sep 2025 23:18:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758583109;
+	bh=QV9vCYaQNSbKXoqYJD0H0GTtH4u6s4//8ot+8KssKTo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=P05cvPA/EtvXvZZp7CJzTCU0fhYZrRfPvHyvMiy8f4c0kCrrwAqTYWJ9O0NSig161
+	 nWPgVVu2jBtJFwwNZRX6gXPXBfUU1C9dUJJnRRLwUN96PMuz3iOWb08sssbAcBDTeD
+	 eC6Iq9/48DMZmOgGS/7c8iUQQX4CgXmyFg5xJXrVZi5nEd73GD9cko8t4tkAvE7YOI
+	 bMESEjFVTnqHbZ6NU5hl7kwnAYR8wX7VbSuzUgQvOOJ42jYPzGiVp6FRDKCsDhjCxi
+	 7qA28Aug/zwr+0XdNN8nTXuy4pXNJgGDB1/md7OkNU/BE14iE0jud6lHdj2GrERKqF
+	 pjABlUezz8aVQ==
+Date: Mon, 22 Sep 2025 16:18:27 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Ilias Apalodimas
+ <ilias.apalodimas@linaro.org>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, Steven
+ Rostedt <rostedt@goodmis.org>, netdev@vger.kernel.org, Tariq Toukan
+ <tariqt@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH net-next] page_pool: add debug for release to cache from
+ wrong CPU
+Message-ID: <20250922161827.4c4aebd1@kernel.org>
+In-Reply-To: <muuya2c2qrnmr3wzxslgkpeufet3rlnitw5dijcaq2gpy4tnwa@5p2xnefrp5rk>
+References: <20250918084823.372000-1-dtatulea@nvidia.com>
+	<20250919165746.5004bb8c@kernel.org>
+	<muuya2c2qrnmr3wzxslgkpeufet3rlnitw5dijcaq2gpy4tnwa@5p2xnefrp5rk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-19-pasha.tatashin@soleen.com> <20250814140252.GF802098@nvidia.com>
-In-Reply-To: <20250814140252.GF802098@nvidia.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 22 Sep 2025 19:17:31 -0400
-X-Gm-Features: AS18NWAv4dGFYOhiSllCg2EpqurnWbzUBhfung7Dsp39jZsN7-oM6V2Ui5LlSZc
-Message-ID: <CA+CK2bB+NRneE=uFxvQ867zT3BHGvfBUz+6Ntqk9p2=wj4JYWQ@mail.gmail.com>
-Subject: Re: [PATCH v3 18/30] liveupdate: luo_files: luo_ioctl: Add ioctls for
- per-file state management
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 14, 2025 at 10:02=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> w=
-rote:
+On Sat, 20 Sep 2025 09:25:31 +0000 Dragos Tatulea wrote:
+> > The patch seems half-baked. If the NAPI local recycling is incorrect
+> > the pp will leak a reference and live forever. Which hopefully people
+> > would notice. Are you adding this check just to double confirm that
+> > any leaks you're chasing are in the driver, and not in the core?  
 >
-> On Thu, Aug 07, 2025 at 01:44:24AM +0000, Pasha Tatashin wrote:
-> > +struct liveupdate_ioctl_get_fd_state {
-> > +     __u32           size;
-> > +     __u8            incoming;
-> > +     __aligned_u64   token;
-> > +     __u32           state;
-> > +};
->
-> Same remark about explicit padding and checking padding for 0
+> The point is not to chase leaks but races from doing a recycle to cache
+> from the wrong CPU. This is how XDP issue was caught where
+> xdp_set_return_frame_no_direct() was not set appropriately for cpumap [1].
+> 
+> My first approach was to __page_pool_put_page() but then I figured that
+> the warning should live closer to where the actual assignment happens.
+> 
+> [1] https://lore.kernel.org/all/e60404e2-4782-409f-8596-ae21ce7272c4@kernel.org/
 
-Done
-
-> > + * luo_file_get_state - Get the preservation state of a specific file.
-> > + * @token: The token of the file to query.
-> > + * @statep: Output pointer to store the file's current live update sta=
-te.
-> > + * @incoming: If true, query the state of a restored file from the inc=
-oming
-> > + *            (previous kernel's) set. If false, query a file being pr=
-epared
-> > + *            for preservation in the current set.
-> > + *
-> > + * Finds the file associated with the given @token in either the incom=
-ing
-> > + * or outgoing tracking arrays and returns its current LUO state
-> > + * (NORMAL, PREPARED, FROZEN, UPDATED).
-> > + *
-> > + * Return: 0 on success, -ENOENT if the token is not found.
-> > + */
-> > +int luo_file_get_state(u64 token, enum liveupdate_state *statep, bool =
-incoming)
-> > +{
-> > +     struct luo_file *luo_file;
-> > +     struct xarray *target_xa;
-> > +     int ret =3D 0;
-> > +
-> > +     luo_state_read_enter();
->
-> Less globals, at this point everything should be within memory
-> attached to the file descriptor and not in globals. Doing this will
-> promote good maintainable structure and not a spaghetti
->
-> Also I think a BKL design is not a good idea for new code. We've had
-> so many bad experiences with this pattern promoting uncontrolled
-> incomprehensible locking.
->
-> The xarray already has a lock, why not have reasonable locking inside
-> the luo_file? Probably just a refcount?
->
-> > +     target_xa =3D incoming ? &luo_files_xa_in : &luo_files_xa_out;
-> > +     luo_file =3D xa_load(target_xa, token);
-> > +
-> > +     if (!luo_file) {
-> > +             ret =3D -ENOENT;
-> > +             goto out_unlock;
-> > +     }
-> > +
-> > +     scoped_guard(mutex, &luo_file->mutex)
-> > +             *statep =3D luo_file->state;
-> > +
-> > +out_unlock:
-> > +     luo_state_read_exit();
->
-> If we are using cleanup.h then use it for this too..
->
-> But it seems kind of weird, why not just
->
-> xa_lock()
-> xa_load()
-> *statep =3D READ_ONCE(luo_file->state);
-> xa_unlock()
->
-> ?
-
-Yes, we can simplify with xa_lock(), thank you for your suggestion.
-
->
-> > +static int luo_ioctl_set_fd_event(struct luo_ucmd *ucmd)
-> > +{
-> > +     struct liveupdate_ioctl_set_fd_event *argp =3D ucmd->cmd;
-> > +     int ret;
-> > +
-> > +     switch (argp->event) {
-> > +     case LIVEUPDATE_PREPARE:
-> > +             ret =3D luo_file_prepare(argp->token);
-> > +             break;
-> > +     case LIVEUPDATE_FREEZE:
-> > +             ret =3D luo_file_freeze(argp->token);
-> > +             break;
-> > +     case LIVEUPDATE_FINISH:
-> > +             ret =3D luo_file_finish(argp->token);
-> > +             break;
-> > +     case LIVEUPDATE_CANCEL:
-> > +             ret =3D luo_file_cancel(argp->token);
-> > +             break;
->
-> The token should be converted to a file here instead of duplicated in
-> each function
-
-struct luo_file is preivate to luo_file.c, and I think it makes sense
-to keep it that way, amount of duplicated code is trivial.00
-
-> >  static int luo_open(struct inode *inodep, struct file *filep)
-> >  {
-> >       if (atomic_cmpxchg(&luo_device_in_use, 0, 1))
-> > @@ -149,6 +191,8 @@ union ucmd_buffer {
-> >       struct liveupdate_ioctl_fd_restore      restore;
-> >       struct liveupdate_ioctl_get_state       state;
-> >       struct liveupdate_ioctl_set_event       event;
-> > +     struct liveupdate_ioctl_get_fd_state    fd_state;
-> > +     struct liveupdate_ioctl_set_fd_event    fd_event;
-> >  };
-> >
-> >  struct luo_ioctl_op {
-> > @@ -179,6 +223,10 @@ static const struct luo_ioctl_op luo_ioctl_ops[] =
-=3D {
-> >                struct liveupdate_ioctl_get_state, state),
-> >       IOCTL_OP(LIVEUPDATE_IOCTL_SET_EVENT, luo_ioctl_set_event,
-> >                struct liveupdate_ioctl_set_event, event),
-> > +     IOCTL_OP(LIVEUPDATE_IOCTL_GET_FD_STATE, luo_ioctl_get_fd_state,
-> > +              struct liveupdate_ioctl_get_fd_state, token),
-> > +     IOCTL_OP(LIVEUPDATE_IOCTL_SET_FD_EVENT, luo_ioctl_set_fd_event,
-> > +              struct liveupdate_ioctl_set_fd_event, token),
-> >  };
->
-> Keep sorted
-
-Done
+Ah, that thing. I wonder whether the complexity in the driver-facing 
+xdp_return API is really worth the gain here. IIUC we want to extract
+the cases where we're doing local recycling and let those cases use
+the lockless cache. But all those cases should be caught by automatic
+local recycling detection, so caller can just pass false..
 
