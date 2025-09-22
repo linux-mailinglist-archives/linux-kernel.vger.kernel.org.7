@@ -1,122 +1,143 @@
-Return-Path: <linux-kernel+bounces-827195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258C0B911B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:26:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCFF2B911E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5C3516F59D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:26:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6B463BC35D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E9F3064AE;
-	Mon, 22 Sep 2025 12:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AC13074A0;
+	Mon, 22 Sep 2025 12:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RpHuDnXi"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NFISUv0C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFF6283FDA
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C45288CA6;
+	Mon, 22 Sep 2025 12:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758544009; cv=none; b=uPNxp9rDJp4e5UuELcGsO976zoF8y5h5xtuwUqWk2isdLCdfCeSWRZOP8qm/Q1OivOBCQMgxerDJ5MvA3nnmkxvz5En9c7SEWTenLhn8Fx8Jx92oOsmrTkCnEuixePipJ33Ey1kFE8cGnX6Xyl9K5MBDTP6mxqI/tc2/6wobM4M=
+	t=1758544037; cv=none; b=YRCc3bqLbw3cafUNcIa9n1UqIqT0Cln05V3ffXCdyTdIthZCdItD7Trke3T+zhvvUKMNXIfkNmjoyicIfWnn4mAKuLRQcYEZEYpoiKW0ouzi+cgmRyDxHGZmwmDtvNGYAv2Zuez50uQqQwcH8EwD8wdd/aTAvIpnUcCeOl3lqPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758544009; c=relaxed/simple;
-	bh=8rrFH4hr1izK2boh2nC4Hg35q0qZ01RVDeNujNXSldA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IkGTbXIj2qeAjkDiwwL/+U0NogrHfixWFJsYmhvJ4s1NLbVm2GYWPJXk0EUe7NndW94MZe5N/oTP13cF7U89+QUVoI5WUiPTyWw97ZHNzLC+sMp0ONzHlcsktorenrRiQCwci8QE8msYp2NkGO4uc9Fu68cWQ/mourbbh3FdpFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RpHuDnXi; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77f3580ab80so1089421b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 05:26:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758544007; x=1759148807; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PuYpX09H9KFZrrARW2j/gLTHGPwYXK58O4y6cHUAgEk=;
-        b=RpHuDnXi8++/EYGb8BS3KBgMmb04eX2add4EmMg/QaVDTDS9CwGrIFzhy9hu8P1FNI
-         RjjczyFmhTdx1SGdH/Xv9CM73M1Sgfqw2Nedm1R2cIT5/A22ZCzpN7+WyXG+FpzDcJQR
-         7RJH4Tm7iRM1n4VRKDCk/IQ184HYBBM7uMKDPLdaT3SRiGlGxVUQrE25Qb0YokfL7Uld
-         SlbJOOMys6eu8cnQyaLxwEGH7ScHUnVnqnanFFGgfCBVLSLc1pTLnsaB8LdBe5VVdsko
-         N+0bW8USzEcIJefi8a/tqSAZm5HoCCSr/NEMx5KjkzyLqTP3NIWIRRWTAb6xxo72P8L5
-         W0bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758544007; x=1759148807;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PuYpX09H9KFZrrARW2j/gLTHGPwYXK58O4y6cHUAgEk=;
-        b=J+JycGEmiYFYOlqibICB2aXXBD/frjt9LFQgs0gnaCNeTsfWzNb1kC80zPIS+AFhEn
-         yokhm742uf+mH5YoMCPEXfftjcTRPeKAmAUWsimh4Z9uUjx9rfY4b6V0taHq5Ue9CHJB
-         noKCii6xFGlhyyUB7FUfxKn4SS2c2WcTd5sm8xCx+PK2Pb9svckq9KpejcWp+E+uugJY
-         oFhYwoq3s9gi6XnRjB+r3LTEcBdZyw+hH+ZC0mAwPC5AZK1RiJ6jDNC7DD6TB6+fBWHt
-         Hsiz++ID8Yj7KItvUY6WGKUAY5x+f3JcG07G/lEo482gtOlRSR15Zf3Z+lT0fdzjtipC
-         reXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0CcDOJFv8Ms7xSEsmVTwjPNl4+a8NYz6GnNDLlZ7s9b9nOnENgvdKOWx4kdEgPH/wWqkVexj9MmDUTTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaCXfs5lOanO/5rBJhRyn7TtLS9NzPKDRMh6iR/6OTqk+1H+fO
-	CjrbCx6qGPo0mMpJlovZ1//CL3T2582cHBkHfSdxIwjP7RO0/BsKM/gA
-X-Gm-Gg: ASbGnctcEJo8asKIYN/TJjbxYO9Fi4imYEGV20+Oln+mJrdy5XcemEjIcsz/+9mjPJ7
-	l1/NdtCtcdWWQjYBNMZBTbCezJBoBqWiyqF1AbIRYtPjPfOnPaa7vY/8gWx0titc/IeJBZarRYt
-	DV/slNboIvEJXw7C3qYmtAYB4Gp1Rkc44zEbnuaPaxQ2Z7aRPQHQnd/Cb7h5JQS+vbImbMWdVQB
-	T64UN2hVW3s2ay7BqnEM4X24j5kA3QPYNPVGsXHIPJXTO7AI9WruvRzZCTNY0FwMUjNoYswNlbQ
-	NOLBs6M66sM5pE8YW+ls1CyvKfmmqieQXxIuPd1JtvAppdnidBuZRqoRa2UOKN/dgX4G1YNki5B
-	VNJ5R0MYQdQZyJuTs3cu9NksHN0YLbTS2IV+9HKmHvkevpeqilk1sZ6i0MIl4BOhTHpIpNOUlLP
-	ShADiEtLDQqy8awbSGsXViK3znuYG1jvrLZVHd
-X-Google-Smtp-Source: AGHT+IGQk4YSEaazTSeAW+opKwRMG3/jSIGDBwzfBTJu+e2mXeNJbH/paF4r6nTXx3faaTTdcZJgjg==
-X-Received: by 2002:a05:6a21:1349:b0:2c2:626b:b04c with SMTP id adf61e73a8af0-2c2626c16b4mr2853633637.35.1758544007027;
-        Mon, 22 Sep 2025 05:26:47 -0700 (PDT)
-Received: from crl-3.node2.local ([125.63.65.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54ff447060sm11795362a12.53.2025.09.22.05.26.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 05:26:46 -0700 (PDT)
-From: Kriish Sharma <kriish.sharma2006@gmail.com>
-To: tj@kernel.org
-Cc: jiangshanlai@gmail.com,
-	linux-kernel@vger.kernel.org,
-	Kriish Sharma <kriish.sharma2006@gmail.com>
-Subject: [PATCH] workqueue: fix texinfodocs warning for WQ_* flags reference
-Date: Mon, 22 Sep 2025 12:26:06 +0000
-Message-Id: <20250922122606.418533-1-kriish.sharma2006@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758544037; c=relaxed/simple;
+	bh=nn71jYKJUfLJdSiXQc761lhdp5O9gEml56dkSvOCQ+E=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JyU4SyqdjrvQX26+54sdfd+4JL2sOB4xO3En90Jz6aIpcfWxZjK7tXmGcIoMWTQX1nlZYcHL9fTcvsVSE4fucKQ16ChiOCDsInKZqbGtohjtFSEiyZ3lzGHULL/1i16NdWrRsyfBvide6dmKtJ573wUGLmvHle+X0xvtGKA29Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NFISUv0C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B8D1C113D0;
+	Mon, 22 Sep 2025 12:27:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758544037;
+	bh=nn71jYKJUfLJdSiXQc761lhdp5O9gEml56dkSvOCQ+E=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=NFISUv0ChwJJp7wFd7//jAHXUtELe5XBclawAhLLONURnxG/Q+94ixqXwLbAqEhaE
+	 hAgAx3tS8wLWVcU8FlfiAxYWuu15A94zGKUE50MiTuhr0/T9jxdsQiQHCDCBOD4DdT
+	 utXZJGesvqkuaPna5Q6yeTAd+sMm+x+xH2zt3JgapUCcpeVl/SakISVonfIIAajxCb
+	 MRgkkGcnIKa9hFC9jV5VzcmMh+2C+AiTtcedqUqSo/1NiEskUttHgdrLFIsx02vQUd
+	 WZcxQCyT9fot83rxPqSbpLURp26meXs/F0LviTSExPkU0S/9jEC7HWr3AI8pGFjqmv
+	 fYgAtAaWJBjxQ==
+Message-ID: <70b66bb7-3889-4c66-bbeb-e3961f16d7b9@kernel.org>
+Date: Mon, 22 Sep 2025 14:27:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH v5 5/5] docs: media: profile: make it clearer about
+ maintainership duties
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ Hans Verkuil <hverkuil@xs4all.nl>
+References: <cover.1755851331.git.mchehab+huawei@kernel.org>
+ <a17ca9fa81e95aff9167c6f1162b4703178c65c9.1755851331.git.mchehab+huawei@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <a17ca9fa81e95aff9167c6f1162b4703178c65c9.1755851331.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Sphinx emitted a warning during make texinfodocs:
+On 22/08/2025 10:33, Mauro Carvalho Chehab wrote:
+> During the review of the media committer's profile, it was noticed
+> that the responsibility for timely review patches was not clear:
+> such review is expected that all developers listed at MAINTAINERS
+> with the "M:" tag (e.g. "maintainers" on its broad sense).
+> 
+> This is orthogonal of being a media committer or not. Such duty
+> is implied at:
+> 
+> 	Documentation/admin-guide/reporting-issues.rst
+> 
+> and at the MAINTAINERS header, when it says that even when the
+> status is "odd fixes", the patches will flow in.
+> 
+> So, let make it explicit at the maintainer-entry-profile that
+> maintainers need to do timely reviews.
+> 
+> Also, while right now our focus is on granting committer rights to
+> maintainers, the media-committer model may evolve in the future to
+> accept other committers that don't have such duties.
+> 
+> So, make it clear at the media-committer.rst that the duties
+> related to reviewing patches from others are for the drivers
+> they are maintainers as well.
+> 
+> Reviewed-by: Hans Verkuil <hverkuil@xs4all.nl>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  Documentation/driver-api/media/maintainer-entry-profile.rst | 5 +++++
+>  Documentation/driver-api/media/media-committer.rst          | 6 +++---
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/driver-api/media/maintainer-entry-profile.rst b/Documentation/driver-api/media/maintainer-entry-profile.rst
+> index 41a1a2326bef..67a18f82f857 100644
+> --- a/Documentation/driver-api/media/maintainer-entry-profile.rst
+> +++ b/Documentation/driver-api/media/maintainer-entry-profile.rst
+> @@ -177,6 +177,11 @@ b. Committers' workflow: patches are handled by media committers::
+>  On both workflows, all patches shall be properly reviewed at
+>  linux-media@vger.kernel.org (LMML) before being merged at media-committers.git.
+>  
+> +Such patches will be reviewed timely by the maintainers and reviewers as
+> +listed in the MAINTAINERS file. The subsystem maintainers will follow one of
 
-  WARNING: Inline literal start-string without end-string.
+You probably mean "media maintainers" instead of "subsystem maintainers".
 
-This was caused by the trailing '*' in "%WQ_*" being parsed as
-reStructuredText markup in the kernel-doc comment.
+> +the above workflows, e. g. they will either send a pull request or merge
 
-Escape the '*' in the comment so that Sphinx treats it as a literal
-character, resolving the warning.
+e. g. -> e.g.
 
-Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
----
- include/linux/workqueue.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +patches directly at the media-committers tree.
+> +
+>  When patches are picked by patchwork and when merged at media-committers,
+>  CI bots will check for errors and may provide e-mail feedback about
+>  patch problems. When this happens, the patch submitter must fix them or
+> diff --git a/Documentation/driver-api/media/media-committer.rst b/Documentation/driver-api/media/media-committer.rst
+> index 3d0987a8a93b..0bc038a0fdcc 100644
+> --- a/Documentation/driver-api/media/media-committer.rst
+> +++ b/Documentation/driver-api/media/media-committer.rst
+> @@ -90,9 +90,9 @@ be a part of their maintenance tasks.
+>  Due to that, to become a committer or a core committer, a consensus between
+>  all subsystem maintainers is required, as they all need to trust a developer
+>  well enough to be delegated the responsibility to maintain part of the code
+> -and to properly review patches from third parties, in a timely manner and
+> -keeping the status of the reviewed code at https://patchwork.linuxtv.org
+> -updated.
+> +and to properly review patches from third parties for the drivers that they
+> +maintain in a timely manner and keeping the status of the patches at
+> +https://patchwork.linuxtv.org updated.
+>  
+>  .. Note::
+>  
 
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index 158784dd189a..60f0c7d30337 100644
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -490,7 +490,7 @@ void workqueue_softirq_dead(unsigned int cpu);
-  * min_active which is set to min(@max_active, %WQ_DFL_MIN_ACTIVE). This means
-  * that the sum of per-node max_active's may be larger than @max_active.
-  *
-- * For detailed information on %WQ_* flags, please refer to
-+ * For detailed information on %WQ_\* flags, please refer to
-  * Documentation/core-api/workqueue.rst.
-  *
-  * RETURNS:
--- 
-2.34.1
+I think that it would make sense to just merge these changes into the preceding
+patches.
 
+Regards,
+
+	Hans
 
