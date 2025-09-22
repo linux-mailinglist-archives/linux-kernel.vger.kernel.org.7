@@ -1,122 +1,234 @@
-Return-Path: <linux-kernel+bounces-827378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0CA8B91956
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:08:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDCA7B9195B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A9F0424093
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:08:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18700424887
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC011A9F99;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49D419AD5C;
 	Mon, 22 Sep 2025 14:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="13oRaIfE"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="T5GskFl7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Y3Ervkkc";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="T5GskFl7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Y3Ervkkc"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951051A23B9
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5879D1AF0A7
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758550072; cv=none; b=dFgBOIGrnU31gwOLoWuA+rS10p62IxiERu74UQdR4OP5hMX8W0CKResFa7yU1oT37a9MCdyoEseT5QYZ9+Bd8TWb+znu52pWOXJ9QLKWOIflG0aTpkNyalj/oKsG+/kHR6cpuA6ukzPyaHHu4f1XLqJY/Z+kp8ENym5iQxi9cwg=
+	t=1758550072; cv=none; b=iKUbhyaAw2DuU1QkO7zTvqBZmlLW42NUtX65JcbndhODXX2gEINC7RjMMgjCh/9Yu/FbIDWMUIH3+AX/8YEo4D0ZLUYwGpKL/v3HGxCufYm8UrY7IwRZlG6MljMRxiFy6bMy4wt+bjFqjsr7eO7dZsJGmApKaMCNq6q6SqXVe9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758550072; c=relaxed/simple;
-	bh=2gKCZnS8Y0kw7LI52aPWPye+cd/qPIjBzxQKuWEn6pk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=B8sgbvnTXo1OUeAAys0Bxeod9hKWjE1JmEIZtIkHp7HenhobaXhN2d7f9yrd6TrAa1VxKC/EVIOLeVVWX+9k+Dm4d4+LFakNARdjPXETyrCvgO4LSxrIW/FlF9gnwT2awkcqzCdktBn649vWqOn7IWvnL/Y3y3kqh+tS5p+PDpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=13oRaIfE; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so624142466b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:07:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1758550068; x=1759154868; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2gKCZnS8Y0kw7LI52aPWPye+cd/qPIjBzxQKuWEn6pk=;
-        b=13oRaIfEW+73jLfqkyekNErZbMJqXdnSYacGoyP2XAv6ZfSQf1RXPcha8atJOZl8As
-         46vhi5spf6uugfF2HRkrCGnngBkhpSKwqsOkk5OYk85LfSrz7LbfLsPwhVRYToYTXkqz
-         +1ZLJuSe2KBcwjuxVw6YY4LVO98aDuiisfokbLUcSNYz8kMw5HJx39snWC62fR7VVmIP
-         7zM85Qj96lClyr/B8O5QVaul7SKe33eNJP5xRF1zUmd3u4ylwb/kRSmRTW86aOz2gvbF
-         kXslc/8QQmixEmS3PCXkkdI8irlBHJ+OMliP64r1Viic8ND2F7FfAIGtHgJIMlOJM+3/
-         URdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758550068; x=1759154868;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2gKCZnS8Y0kw7LI52aPWPye+cd/qPIjBzxQKuWEn6pk=;
-        b=Aid+nIQfi94m4Tq1CkRkK8KnPSgICKOjmqEwAXzxp6Yz2NY0QANhOwoi+IELPBbpLY
-         3UcSifEcFM5tBRXAm2rXj4lhZCmrjweRZnraReBI/SUvrxe6Gwy8f8bJ/cVm8l5YM6KD
-         +26ZW4/Ltw/F82oyHasaqyDvtVE4jJ8uCX0QknMeiuX/sl8aFYJcGUAWEwpNd3bvBP+R
-         EuGI5d4R29d9HQ0c5fqMmGmJMdrjcZsrwVcAinIkUTWpQQ5lxdTVKnoQPNZth4kycePg
-         Uz+3SdCw95WQyH9UwRMTiE4/ugRTN/CeJ/+jiI+iS98zW6a84fk1OINYjKdgXvst+DJz
-         cvfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVm88rMwT2izJe7UGOoHrlV4PM9TRPucufd4xHUGsRctSsGNXElc4kwoo5P2IyeGG9BE3ydS5/pbq5IK8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx15Q4XEe9AKmg0GcF5Fk+ppaAOhIu1sSGVLRZB9ry3fhVyDrfc
-	F6sV5hghePJ3q77cZNpqa7TUaqquLOSHV9Xm1E/Dg5O05PnEI6zzMFbGxPPSFt0mlCM=
-X-Gm-Gg: ASbGncsfW6X/OvCYdv49I5FTaUkDnYJ2fWhwMWXPNGnFYJzKrKwvEIxizcBc6Jb/hVb
-	XUOUVDK5aYif8qJl6uwFDBT4gq4gu8NWmA+i5y6s/eUEDAWrKlNwvZUan2z2fValVlAeeyKwGo0
-	vz0JvYyNGuatleI529Juo2CUFm2RtsfmLKmKt9f666B4QFk448qew21/EyYcs7P/jwiCDL9pky+
-	zY4PAwnL5OsOzy9BeFyGIpzBX2n9gzqyV/lKAcT2ndcB7d5NDz0L2N8Nh3uHZ6RrMbqZtEoCtf8
-	+I3LEtiYEWCVHg9aQ85npMihJrtOwUsR3gZFGKldqcwxQdfGZJCtx3wFouLdJOpMvJxQsO5yB/d
-	CRrYrmUC3iuXLI13vSRwULhj8LLJL8rFvogwHY4xPSmekJq2O1Yb3QZmr0Dw49IPmto0w
-X-Google-Smtp-Source: AGHT+IG2LQi+1Jve61dJzJPf3p6C4wK2oRc2C6Ic3zD7ZHI0AKL2Y3hhz823ekZ6+r+8VVvfemU3qw==
-X-Received: by 2002:a17:907:972a:b0:b04:4046:db6b with SMTP id a640c23a62f3a-b24f567c816mr1300784166b.45.1758550067866;
-        Mon, 22 Sep 2025 07:07:47 -0700 (PDT)
-Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b29b80eaec6sm484442766b.87.2025.09.22.07.07.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 07:07:47 -0700 (PDT)
+	bh=WqYi7C7rPVPMchWD3Tm/mWLYvFm7Ms2J7l9sot1F8V4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jpKIP7QqFUB10+3buvFJZRkr8xaFOXAgRh3m7jbK0AbK0LU8/kZHsviliewIcm/XAd0+WfQNmOxpXZoxIJlY9Fz5GEmimK6QD4iyjgqoSHKZ0FN/pkEF1mkKWWiDkUd8l1+9zVwZkOdF1ALyN8LjXTD7SZJLeFebOvCraK+Vxd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=T5GskFl7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Y3Ervkkc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=T5GskFl7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Y3Ervkkc; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 680DC21E89;
+	Mon, 22 Sep 2025 14:07:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758550068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VGHYx5pOu3PjDgbMOcAjQn1OWUKG2IfHDuHiMX4Epn0=;
+	b=T5GskFl792iJc+ydo0xeGMBXRXGfst8/vFHPYscSYhHlez9L6VIXv4u5ksxRo7NCINOPS6
+	O9hwvd2neeDeHkQL0Mm22lxRxo8LNKkHJFN6tHizuVRYCGRDgGHhUeL3Pnk6hEddK2N/vv
+	8oSsO75GD7Vbc6CLC2OAdg+k8wtA7mM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758550068;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VGHYx5pOu3PjDgbMOcAjQn1OWUKG2IfHDuHiMX4Epn0=;
+	b=Y3Ervkkc+c9IT/VS6vwPm5mlkV2ozDDrvGYH/D6b8hVfg7X5tbWNBshBrUr3WhSWnn/XfJ
+	Iv0KCW+WAC45UzCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=T5GskFl7;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Y3Ervkkc
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758550068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VGHYx5pOu3PjDgbMOcAjQn1OWUKG2IfHDuHiMX4Epn0=;
+	b=T5GskFl792iJc+ydo0xeGMBXRXGfst8/vFHPYscSYhHlez9L6VIXv4u5ksxRo7NCINOPS6
+	O9hwvd2neeDeHkQL0Mm22lxRxo8LNKkHJFN6tHizuVRYCGRDgGHhUeL3Pnk6hEddK2N/vv
+	8oSsO75GD7Vbc6CLC2OAdg+k8wtA7mM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758550068;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VGHYx5pOu3PjDgbMOcAjQn1OWUKG2IfHDuHiMX4Epn0=;
+	b=Y3Ervkkc+c9IT/VS6vwPm5mlkV2ozDDrvGYH/D6b8hVfg7X5tbWNBshBrUr3WhSWnn/XfJ
+	Iv0KCW+WAC45UzCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 200F713A78;
+	Mon, 22 Sep 2025 14:07:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8KZ8BjRY0WhCCQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 22 Sep 2025 14:07:48 +0000
+Date: Mon, 22 Sep 2025 16:07:47 +0200
+Message-ID: <87zfammvgs.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux PCI <linux-pci@vger.kernel.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Zhang Qilong <zhangqilong3@huawei.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 1/3] PM: runtime: Add auto-cleanup macros for "resume and get" operations
+In-Reply-To: <CAJZ5v0iwNuFxiu3x3-fWO9dkLUq_=c3H=G2OgFmPfVguw0U4Sw@mail.gmail.com>
+References: <6204724.lOV4Wx5bFT@rafael.j.wysocki>
+	<3388279.44csPzL39Z@rafael.j.wysocki>
+	<875xdaevab.wl-tiwai@suse.de>
+	<CAJZ5v0hSBDg4fD7Gy6yEX31xO-3USJG_jFps71BRJJ2f0Oh90A@mail.gmail.com>
+	<87348eobnv.wl-tiwai@suse.de>
+	<CAJZ5v0iwNuFxiu3x3-fWO9dkLUq_=c3H=G2OgFmPfVguw0U4Sw@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 22 Sep 2025 16:07:47 +0200
-Message-Id: <DCZDZ037P56C.3MS3HI55IN41J@fairphone.com>
-Cc: <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/5] fbdev/simplefb: Sort headers correctly
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Javier Martinez Canillas" <javierm@redhat.com>, "Luca Weiss"
- <luca.weiss@fairphone.com>, "Hans de Goede" <hdegoede@redhat.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Helge Deller" <deller@gmx.de>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250623-simple-drm-fb-icc-v2-0-f69b86cd3d7d@fairphone.com>
- <20250623-simple-drm-fb-icc-v2-4-f69b86cd3d7d@fairphone.com>
- <87o6u9d3kg.fsf@minerva.mail-host-address-is-not-set>
-In-Reply-To: <87o6u9d3kg.fsf@minerva.mail-host-address-is-not-set>
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 680DC21E89
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email];
+	TO_DN_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -3.51
 
-Hi all,
+On Mon, 22 Sep 2025 15:44:51 +0200,
+Rafael J. Wysocki wrote:
+> 
+> On Mon, Sep 22, 2025 at 3:32 PM Takashi Iwai <tiwai@suse.de> wrote:
+> >
+> > On Mon, 22 Sep 2025 14:50:32 +0200,
+> > Rafael J. Wysocki wrote:
+> > >
+> > > On Mon, Sep 22, 2025 at 10:38 AM Takashi Iwai <tiwai@suse.de> wrote:
+> > > >
+> > > > On Sat, 20 Sep 2025 12:54:58 +0200,
+> > > > Rafael J. Wysocki wrote:
+> > > > >
+> > > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > >
+> > > > > It is generally useful to be able to automatically drop a device's
+> > > > > runtime PM usage counter incremented by runtime PM operations that
+> > > > > resume a device and bump up its usage counter [1].
+> > > > >
+> > > > > To that end, add DEFINE_CLASS() macros allowing pm_runtime_put()
+> > > > > and pm_runtime_put_autosuspend() to be used for the auto-cleanup in
+> > > > > those cases.
+> > > > >
+> > > > > Simply put, a piece of code like below:
+> > > > >
+> > > > >       pm_runtime_get_sync(dev);
+> > > > >       .....
+> > > > >       pm_runtime_put(dev);
+> > > > >       return 0;
+> > > > >
+> > > > > can be transformed with CLASS() like:
+> > > > >
+> > > > >       CLASS(pm_runtime_get_active, pm)(dev);
+> > > > >       if (IS_ERR(pm))
+> > > > >               return PTR_ERR(pm);
+> > > > >       .....
+> > > > >       return 0;
+> > > > >
+> > > > > (note the new resume error handling).
+> > > >
+> > > > Do we still allow the code without the error check even using CLASS()?
+> > > > Although the error check should be handled, it's not mandatory for
+> > > > now.  That said, the above example could be still in a form like:
+> > > >
+> > > >         CLASS(pm_runtime_get_active, pm)(dev);
+> > > >         .....
+> > > >         return 0;
+> > > >
+> > > > while adding the proper error check is recommended?
+> > >
+> > > I'd rather not encourage doing this.
+> > >
+> > > While it may still produce working code in some cases, one needs to
+> > > remember that in case of a runtime resume error it will be running
+> > > without a runtime PM reference it has attempted to acquire.
+> >
+> > Fair enough.  Then it'd be also good to mention that in the
+> > description, too.
+> 
+> I can also add classes for the cases in which resume errors can be
+> neglected, like these:
+> 
+> DEFINE_CLASS(pm_runtime_get_sync, struct device *,
+>          if (_T) pm_runtime_put(_T),
+>          ({ pm_runtime_get_sync(dev); dev; }), struct device *dev)
+> 
+> DEFINE_CLASS(pm_runtime_get_sync_auto, struct device *,
+>          if (_T) pm_runtime_put_autosuspend(_T),
+>          ({ pm_runtime_get_sync(dev); dev; }), struct device *dev)
+> 
+> with a comment explaining what they are for.
 
-On Fri Jun 27, 2025 at 9:52 AM CEST, Javier Martinez Canillas wrote:
-> Luca Weiss <luca.weiss@fairphone.com> writes:
->
->> Make sure the headers are sorted alphabetically to ensure consistent
->> code.
->>
->> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->> ---
->
-> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+It might be helpful, indeed, since the error handling isn't always
+straightforward, and this still allows us to convert to the
+auto-cleanup safely.  It's still worth to mention that those aren't
+recommended options, though.
 
-While there's still some open questions surrounding dt-bindings and how
-exactly to do that, I think it would be good to pick up the two
-"Sort headers correctly" patches so that they already get in. They're
-good to have in any case in my opinion.
 
-Regards
-Luca
+thanks,
+
+Takashi
 
