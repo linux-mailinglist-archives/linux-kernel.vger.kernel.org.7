@@ -1,59 +1,68 @@
-Return-Path: <linux-kernel+bounces-827857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B118BB934A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:55:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074CEB934A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 661002E043B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEFAD2E04B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B235A2E2DC1;
-	Mon, 22 Sep 2025 20:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31CEA2E2DC1;
+	Mon, 22 Sep 2025 20:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btMCe4pJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="W92NzEjg"
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF6426F28B;
-	Mon, 22 Sep 2025 20:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C7527B34A;
+	Mon, 22 Sep 2025 20:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758574525; cv=none; b=qvRjTFRIyrSN6tPD1HlCtUj7c6BAiAtbVyVcjyVqQuZkm041RZ+HkGaPAsxekzrBweK+vc0BD98HSInCRIVFYrEzGNYf/U3o9jN348l+haKkfPBB0w47xx2BYS57BJSm4HkGqzOQvotMZCCLJA2Sey0JLarMEnqK1necfwb3R2k=
+	t=1758574552; cv=none; b=t21FxlSHp+dBr4JXcnFPyyfXju1zL+BJsVBKJNdQY+a1mDCn9EUWHlpwf9xgfcud9WY6miNHJFT8EB1goPy50SA1yYSieBkWYG4TR6s8V85wKY1BQIzQREOe1jI2nIRIllkw6D46vJLWFq0xXFvczNBRw5PfnHS2TsRoJUN6NRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758574525; c=relaxed/simple;
-	bh=tYpOjofHpW9mWp+Pr+zwn20aiOFBJXMUD80BxBDT1OE=;
+	s=arc-20240116; t=1758574552; c=relaxed/simple;
+	bh=mTgFQg6dzMvuZBQYKUL5ugfwTPau97m8tBHkehv2j3M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mJIY3Ydj5UcuSoZ9/SnkJRNbLhNQaGhjpdKI89OmOFdG7M9AiaeuOQi3dhHK2INV4Qo9Tbf7MVBr03boEA7C/MOZ7aODNZzAHKL2LshVTHuPI9PpEoXdZkSfSgHbOCrJovKBvC7nUhOrVZ2zvVrSeHQlU8Xy/B/hBqimLk46Ftk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btMCe4pJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5211C4CEF0;
-	Mon, 22 Sep 2025 20:55:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758574524;
-	bh=tYpOjofHpW9mWp+Pr+zwn20aiOFBJXMUD80BxBDT1OE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=btMCe4pJzrjEFcSIlChfqpHzRKX9nmREvFuQo1txXzAfXiMm7dqUgVYz/Yg24jZfh
-	 oEC0lhquRT3S7V6O3w4AhmbeOIoeL8PEjKvTuf9hYNW3DLFeoNTjSxSkZvta8koKyN
-	 LXm5t6Kbm0VC1PdnmcRy/++FJf3w3qG5pOJYGUGf2wr2YowDAUyHurGLKeI6XZ6PwB
-	 Qttw6vo5oui+LCk5cciNBbSNLP8Z/+yvxIQGRQ8bdkk9ytAxiuFaZRQtIXHpkPh1sN
-	 HvoJimqkW8ltIgE5weKxlHGjBkju03NhQdRKOJ71ZfuCQERW+3wBIu9gPl3p041Bxy
-	 XvQr5ridOkuaw==
-Date: Mon, 22 Sep 2025 15:55:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mkl@pengutronix.de, kernel@pengutronix.de, mailhol.vincent@wanadoo.fr,
-	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
-	cl@rock-chips.com, kever.yang@rock-chips.com,
-	linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v7 1/4] dt-bindings: can: rockchip_canfd: add rk3576
- CAN-FD controller
-Message-ID: <20250922205521.GA1307111-robh@kernel.org>
-References: <20250922071543.73923-1-zhangqing@rock-chips.com>
- <20250922071543.73923-2-zhangqing@rock-chips.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lp215yxMIlkUZUntpw+joGp6tU/ONI+wDHjYhr2+DVd/rlhRl+3E3rIf4O96TVdYo8iqhE7cUOlpi1M/3kSfABmdcP9mYF9kNyoEbyqGU/nbw/W5iT6xJPlL7b498AaLCpj8+4alcS5skPk3938qeXxa7Y5ONUFPteYBmhLpRWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=W92NzEjg; arc=none smtp.client-ip=195.154.113.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
+	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
+	bh=cRFwK1pxi/SZ8dEX9JP4LGjTwxzF/2UPH05MAWDWiCM=; b=W92NzEjgy5lxNqfQw08KL+V9t6
+	m0CT/hubY0h540cMF8PTPLCcb4GYisVHRJo1d2FOPObc/RofuOUHYNjrgslYCkjpgE5T6Ts5RZcBA
+	pxG130bkqm85LG3NAvqP1PWU7WQxyyKDPOuLh1eliDwGXS3Q1hCnFuqQTH2Gf3ub7p1DAJ1przJ9Z
+	ofpmlwh+5CYZHvi079Y6rXGwuA50nINfXAe/bd3HWlqMCxIzXfdF+x/JzZeswynlJq5RiiPaISjvV
+	PWoszQ5xYuYbuGl1OFAS7FsWdaDPffKZ5bT86ER6Bevtsnc0jast+3EGCcR/KvWOxeQ4q14r/gw2L
+	ilZZLoqQ==;
+Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
+	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1v0nZO-00AlR7-2f;
+	Mon, 22 Sep 2025 22:55:34 +0200
+Date: Mon, 22 Sep 2025 22:55:33 +0200
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH 0/6] i2c: spacemit: fix and introduce pio
+Message-ID: <aNG3xXKEYvhGfKjb@aurel32.net>
+Mail-Followup-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+References: <20250827-k1-i2c-atomic-v1-0-e59bea02d680@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,93 +71,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250922071543.73923-2-zhangqing@rock-chips.com>
+In-Reply-To: <20250827-k1-i2c-atomic-v1-0-e59bea02d680@linux.spacemit.com>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-On Mon, Sep 22, 2025 at 03:15:40PM +0800, Elaine Zhang wrote:
-> Add documentation for the rockchip rk3576 CAN-FD controller.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->  .../net/can/rockchip,rk3568v2-canfd.yaml      | 47 +++++++++++++++++--
->  1 file changed, 44 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
-> index a077c0330013..74b1a502f0b7 100644
-> --- a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
-> +++ b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
-> @@ -10,13 +10,11 @@ title:
->  maintainers:
->    - Marc Kleine-Budde <mkl@pengutronix.de>
->  
-> -allOf:
-> -  - $ref: can-controller.yaml#
-> -
->  properties:
->    compatible:
->      oneOf:
->        - const: rockchip,rk3568v2-canfd
-> +      - const: rockchip,rk3576-canfd
+Hi,
 
-Combine these 2 into an enum.
-
->        - items:
->            - const: rockchip,rk3568v3-canfd
->            - const: rockchip,rk3568v2-canfd
-> @@ -43,6 +41,31 @@ properties:
->        - const: core
->        - const: apb
->  
-> +  dmas:
-> +    maxItems: 1
-> +
-> +  dma-names:
-> +    items:
-> +      - const: rx
-> +
-> +allOf:
-> +  - $ref: can-controller.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: rockchip,rk3576-canfd
-> +      required:
-> +        - compatible
-> +    then:
-> +      required:
-> +        - dmas
-> +        - dma-names
-> +    else:
-> +      properties:
-> +        dmas: false
-> +        dma-names: false
-> +
->  required:
->    - compatible
->    - reg
-> @@ -72,3 +95,21 @@ examples:
->              reset-names = "core", "apb";
->          };
->      };
-> +
-> +  - |
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        can@2ac00000 {
-> +            compatible = "rockchip,rk3576-canfd";
-> +            reg = <0x0 0x2ac00000 0x0 0x1000>;
-> +            interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-> +            clocks = <&cru CLK_CAN0>, <&cru PCLK_CAN0>;
-> +            clock-names = "baud", "pclk";
-> +            resets = <&cru SRST_CAN0>, <&cru SRST_P_CAN0>;
-> +            reset-names = "core", "apb";
-> +            dmas = <&dmac0 20>;
-> +            dma-names = "rx";
-> +        };
-> +    };
-> -- 
-> 2.34.1
+On 2025-08-27 15:39, Troy Mitchell wrote:
+> Previously, there were a few latent issues in the I2C driver.
 > 
+> These did not manifest under interrupt mode, but they were
+> still present and could be triggered when running in PIO mode.
+> 
+> This series addresses those issues and adds support for PIO
+> mode transfers.
+> 
+> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+
+Thanks for this series. Based on it and with the few fixes suggested in 
+the individual patches, I have been able to write a small power reset 
+driver for the P1 chip, supporting reset and shutdown. I'll post it on 
+the list in the next days.
+
+Regards
+Aurelien
+
+-- 
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                     http://aurel32.net
 
