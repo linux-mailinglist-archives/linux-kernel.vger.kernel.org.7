@@ -1,144 +1,119 @@
-Return-Path: <linux-kernel+bounces-826582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57D3B8ED9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 05:21:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1830B8EDA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 05:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8950C173C46
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 03:21:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E92BD3B0A66
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 03:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF232ECD37;
-	Mon, 22 Sep 2025 03:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="r3K7dwil"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2F52EDD53;
+	Mon, 22 Sep 2025 03:22:12 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B32024886A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 03:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86462DC340;
+	Mon, 22 Sep 2025 03:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758511271; cv=none; b=XDOFYlyHmF+lk22v8USAcENVt4F7UXs7dueiaz/l175bb60lWXAvzJMYvIUuOpcSSj/UWKvFnFO/inu2Bvc2f2EL7Qr4eA3MdAwkex68jyKFzA+0J0DrEbA7BxE60Uwj0x7lyZB9GhMzyIaQdjaz1zsF0Ki1UHhsmiblzPZlLv4=
+	t=1758511332; cv=none; b=LgnXImqIlIDXn3DCbJXvSPV+pDIu6bNr+GBdB7NGx/BgWugKRkUrjB+Knqx6zYDPsIEBPoqvP+28pLHaML9/AFuHmxvr47zvBT3Q6H+z27ij8J1DgNiJqMJpipi2Vd4VVFFQnJn112te34YcP8wk8+GIYzzgI5KZg6wt3HwClWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758511271; c=relaxed/simple;
-	bh=7/AuCQHhJ7zokt309WTcBj0n5rvQPYkKt88ezeqHdeo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FLk66w2EqyBdNqm3GmE5ZOW41QKuUBDCQPDUGXMfu9ZaBnNukFEcSOA6mIL4An7n/UC5z5HocNVLzynbyN4bJJcyFDnlCF0Xt22ieKnnYFufqv31nwgIxLyJmJIiFJOSNZvHpR2shRZyMoO8frDp9B3IzkmB/pXuxQB7XrGqAxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=r3K7dwil; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1758511260; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=ixrh/iVBsgE1vkoJFlHD/3G5r4MUeYbHEFcICJyE87Y=;
-	b=r3K7dwilxmPqVeGKZYGPXtWBdww9JMphb//Vwh0/a2GQ7GxGUB5cXBnMPY2mHg6q/52350KAiz+0aiDXWiY2k03cmO+m02m9WYO/ajdj6jKgrR9TEvqSFoV4WvEkuNxzoWTsbkD/0gjGS8kqxI5QCFpTM3R7UG7TPqIv8XX3qfg=
-Received: from 30.74.144.144(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WoRD3UW_1758511258 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 22 Sep 2025 11:20:59 +0800
-Message-ID: <29d9fa8a-5ff2-47f3-8503-fe3032097e5e@linux.alibaba.com>
-Date: Mon, 22 Sep 2025 11:20:57 +0800
+	s=arc-20240116; t=1758511332; c=relaxed/simple;
+	bh=VHDdLDkLeO1KOC3C0gHzNdGVM+/XbRNsbPh7C6mdBSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I6Ap6+OcthwYTDqPzEwjH+a1pxor2bT0+BI9SVmXOul3Z8fUSGOBfGaFEeBEOEUlgwixSPCcxFYejZDu2fNJMtH8sddJm5lDehK+B5Pj5SqS6ymdtTh81lm5JnaAGcAnHHKbs0HPDI/LiAoHAQcFj0dgYJd5C4Xj9sIGjqm04CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [180.158.240.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id B70E6341002;
+	Mon, 22 Sep 2025 03:22:08 +0000 (UTC)
+Date: Mon, 22 Sep 2025 11:21:58 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Aurelien Jarno <aurelien@aurel32.net>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
+Subject: Re: [PATCH 2/3] riscv: dts: spacemit: add 24c02 eeprom on BPI-F3
+Message-ID: <20250922032158-GYA1291757@gentoo.org>
+References: <20250921210237.943370-1-aurelien@aurel32.net>
+ <20250921210237.943370-3-aurelien@aurel32.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 5/5] mm/rmap: Improve mlock tracking for large folios
-To: Kiryl Shutsemau <kirill@shutemov.name>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
- Matthew Wilcox <willy@infradead.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Kiryl Shutsemau <kas@kernel.org>
-References: <20250919124036.455709-1-kirill@shutemov.name>
- <20250919124036.455709-6-kirill@shutemov.name>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250919124036.455709-6-kirill@shutemov.name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250921210237.943370-3-aurelien@aurel32.net>
 
+Hi Aurelien,
 
-
-On 2025/9/19 20:40, Kiryl Shutsemau wrote:
-> From: Kiryl Shutsemau <kas@kernel.org>
+On 23:01 Sun 21 Sep     , Aurelien Jarno wrote:
+> The BPI-F3 contains a 24c02 eeprom, that contains among other things the
+> MAC addresses of the two network interfaces. For this reason, mark it as
+> read-only.
 > 
-> The kernel currently does not mlock large folios when adding them to
-> rmap, stating that it is difficult to confirm that the folio is fully
-> mapped and safe to mlock it.
-> 
-> This leads to a significant undercount of Mlocked in /proc/meminfo,
-> causing problems in production where the stat was used to estimate
-> system utilization and determine if load shedding is required.
-> 
-> However, nowadays the caller passes a number of pages of the folio that
-> are getting mapped, making it easy to check if the entire folio is
-> mapped to the VMA.
-> 
-> mlock the folio on rmap if it is fully mapped to the VMA.
-> 
-> Mlocked in /proc/meminfo can still undercount, but the value is closer
-> the truth and is useful for userspace.
-> 
-> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
 > ---
-
-LGTM.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
->   mm/rmap.c | 19 ++++++++++++-------
->   1 file changed, 12 insertions(+), 7 deletions(-)
+>  arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 > 
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 482e6504fa88..6e09956670f4 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1462,12 +1462,12 @@ static __always_inline void __folio_add_anon_rmap(struct folio *folio,
->   	}
->   
->   	/*
-> -	 * For large folio, only mlock it if it's fully mapped to VMA. It's
-> -	 * not easy to check whether the large folio is fully mapped to VMA
-> -	 * here. Only mlock normal 4K folio and leave page reclaim to handle
-> -	 * large folio.
-> +	 * Only mlock it if the folio is fully mapped to the VMA.
-> +	 *
-> +	 * Partially mapped folios can be split on reclaim and part outside
-> +	 * of mlocked VMA can be evicted or freed.
->   	 */
-> -	if (!folio_test_large(folio))
-> +	if (folio_nr_pages(folio) == nr_pages)
->   		mlock_vma_folio(folio, vma);
->   }
->   
-> @@ -1603,8 +1603,13 @@ static __always_inline void __folio_add_file_rmap(struct folio *folio,
->   	nr = __folio_add_rmap(folio, page, nr_pages, vma, level, &nr_pmdmapped);
->   	__folio_mod_stat(folio, nr, nr_pmdmapped);
->   
-> -	/* See comments in folio_add_anon_rmap_*() */
-> -	if (!folio_test_large(folio))
-> +	/*
-> +	 * Only mlock it if the folio is fully mapped to the VMA.
-> +	 *
-> +	 * Partially mapped folios can be split on reclaim and part outside
-> +	 * of mlocked VMA can be evicted or freed.
-> +	 */
-> +	if (folio_nr_pages(folio) == nr_pages)
->   		mlock_vma_folio(folio, vma);
->   }
->   
+> diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+> index 3b6e4f52e9aad..574d10fdf9b82 100644
+> --- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+> +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+> @@ -115,6 +115,15 @@ &i2c2 {
+>  	pinctrl-0 = <&i2c2_0_cfg>;
+>  	pinctrl-names = "default";
+>  	status = "okay";
+> +
+> +	eeprom@50 {
+> +		compatible = "atmel,24c02";
+> +		reg = <0x50>;
+> +		vcc-supply = <&vcc1v8_sys>;
+> +		pagesize = <16>;
+..
+> +		read-only;
+so you're sure there is no demand to write data to eeprom?
+(update info at linux env)
+> +		size = <256>;
+> +	};
+>  };
+>  
+>  &i2c8 {
+> @@ -143,7 +152,7 @@ buck2 {
+>  				regulator-always-on;
+>  			};
+>  
+> -			buck3 {
+> +			vcc1v8_sys: buck3 {
+I'm not sure if adding an alias here is a good idea, it occurs buck3
+serve the suppy for many devices, besides, to me it's more proper to
+name it as eeprom_vcc1v8 for the eeprom according to schematics in
+this case..
 
+>  				regulator-min-microvolt = <500000>;
+>  				regulator-max-microvolt = <1800000>;
+>  				regulator-ramp-delay = <5000>;
+> -- 
+> 2.47.2
+> 
+
+-- 
+Yixun Lan (dlan)
 
