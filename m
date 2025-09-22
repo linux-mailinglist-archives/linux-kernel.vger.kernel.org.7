@@ -1,176 +1,335 @@
-Return-Path: <linux-kernel+bounces-826717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B56AB8F2DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38170B8F2EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8D7017E2E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:39:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB416179132
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6DF285C92;
-	Mon, 22 Sep 2025 06:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SyG9g19M"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3146534BA39
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4322F0670;
+	Mon, 22 Sep 2025 06:41:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0FE2475C7
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758523163; cv=none; b=MfClOQiC97vqhtyZHfenz/jobPo0G9s4bmmwVRYrKi5LIXa+Ow5IYkQUo9MOi4w2Wum+9iC0oddVMV+dmJzxyQeR/Uwj4ZoKXbouatWtRaG+PjMgWkWoOzscAGtWPLVGfGHFZ5mPsbyxThI2L6u2S44FNaGv8FvfFuvAaCglCYs=
+	t=1758523299; cv=none; b=Id5BEscXgXB+RfcjC9mJIULc4dOyTTrVA3OORFHQd7ge+HIb9F1tVr1uXz/O98/3YJBXLc2MzEeP52ckqZaLTgSd+hJTWkq9WkXEfQ4P8DlQkqCE1viChylhSXmqKUC4QxN2tIjIADdzTPddn8iTDu25eza6pJipx4GvoavosM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758523163; c=relaxed/simple;
-	bh=aAm2tLu9Lcd/rEeyh90A2+r4aVuP6V5aTrIvHxF3RDM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fgcNwuVZJeMiOvzbc2BCAh5pUV4qC8iJeVFxiJYvbR6jd4KtTt6jrZ5so52SwhA021unRSNc9V0MHhSnyK29U8EYGdBtdJrTJJhpOKLUcjawcW4fkC3zLMevmZIMFTfGv4PCAtRHnzokziGfu8Cwf0XIF8Nw7SNxh8T28dsE1Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SyG9g19M; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-751415c488cso3991223a34.1
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 23:39:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758523161; x=1759127961; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g3BWzW2J9Z3ytb9T+PalkAt1wTD7VsNe5O2iBqLv+TE=;
-        b=SyG9g19MDe30mqXfKc2DtFMag8r2gSi0aKin5HTnJfCsHmTXEXhyqhdAYT+XBe6MWK
-         XhOlSkB6ONYzGFjNZWsSKQAE7u2dYlgMceAMvN9JXKgcMw5i5Mz7El+QQMWR/vJ6wOjm
-         g9YaHBzbsqyqkKt8GfK+9yqgifLUNWBoNEVyMYcDBHe3GgE2X8J/6p7DfU9gunJDRdsa
-         g66zJERgcN3k4FG/65OiSQUwCqN/TECqy9KjH/bEm4mxtM/W8WNxATkxNSJnAua2Is+N
-         lp+H9UiMK1Uul0CvaAycewK5NiSr3h+OReIZGnPgz3fTOIyZuuSjSOBBgGcnwZ9NFLZW
-         Yihg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758523161; x=1759127961;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g3BWzW2J9Z3ytb9T+PalkAt1wTD7VsNe5O2iBqLv+TE=;
-        b=VKkd9oLw4nLXslzvFOFU2gOoy2lyC8Jnlm1BEGRh0/AyjnUxzU6/rjZjAbCFJ23ZgM
-         +xok1uqP8v+md5yVGF+t9jLT+8e16E9Xjbk54EgsnC8vhpIhWa2dCXPA25oc8VYRO85R
-         070CBSWi0sZ8gD6MriUq6DukdglSYvaz0K1/GTP0AfJbGm9i2qvp+e8BfHFgjZ4SnqcQ
-         DworL1AEvu0AUIhsGCr/+vB95RVlxxOCTZIktlgLsdND+pVbjlQNQQt8iGethYe9ROEr
-         AEQTefG7U4KxMeXon7aXepqikVaUEJyuX/EIb69hx7eEhD9rNLERCBZLr6T7L6seDLpB
-         nGfg==
-X-Gm-Message-State: AOJu0YxsiWnw74Uv+aqG4KEQljyJ4Xwud4ojTP6H9BbDzRRz/4xBeqXg
-	EQZebV6zY5RLWhKv5F2skEibl9cKRfDFSQv5tab/ribjX6yi41i95WfwTyNm+OkwGBeEIOD5Ys0
-	bjCNlI1Q0UUyl0Ktr8tY3P81+XIuvpQVs8/ByE2mbNBgA0ldHYyYcehw=
-X-Gm-Gg: ASbGncuXZeyDC4bITwGvSz5yWp7Op6t2+OmfHlptQs3SueFz9noaX7OncABCXlNtCln
-	ZUNGKW4uv2D9N3cK9MrSElNbsUgoFKWlo/0pU23Zoi/4n0/B9Rve569Nb/saaeOEB3tPiMgqYhc
-	wPFr8F5iJ5iVpRlFUm8sh3cF/wf03LfxpcsUm5X2rr590dybUnRqHqWlruzQ3bp4MZ5ksFFXCHy
-	AlA7qX1
-X-Google-Smtp-Source: AGHT+IFx764zTbdEA6SqVfFUP9+ys/yQKFZFbRR5D83kmZZwWIFqppMGgBDBb4BDrHixxUD9Shg72y/IVcEl/e7S/GI=
-X-Received: by 2002:a05:6830:6988:b0:749:77df:c38a with SMTP id
- 46e09a7af769-76f6eb4df7dmr6465952a34.2.1758523161170; Sun, 21 Sep 2025
- 23:39:21 -0700 (PDT)
+	s=arc-20240116; t=1758523299; c=relaxed/simple;
+	bh=RJm3hGQ/y4dCLATL2eyTpq8/p3BYK/UFzGLjeommE2I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SFavPAmxpxLWJyKO6vH9x6Z5Kq0ztqTxagicQOp4hpoW/IM3vPLgL5s+vMADjSGSCIZ/BvgrKlo/sZHTySMVpaLNtZd2ngkizQHsWLqsPF1tVAKDR+Dxnkv5H30RBuU9XDXYMA+a5wYvJiGoF9AQ6YOS2DfAaV9ES4stry+Sh38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB3C21515;
+	Sun, 21 Sep 2025 23:41:27 -0700 (PDT)
+Received: from MacBook-Pro.blr.arm.com (MacBook-Pro.blr.arm.com [10.164.18.52])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EF7113F66E;
+	Sun, 21 Sep 2025 23:41:31 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org
+Cc: anshuman.khandual@arm.com,
+	quic_zhenhuah@quicinc.com,
+	ryan.roberts@arm.com,
+	kevin.brodsky@arm.com,
+	yangyicong@hisilicon.com,
+	joey.gouly@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	david@redhat.com,
+	mark.rutland@arm.com,
+	urezki@gmail.com,
+	jthoughton@google.com,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v6] arm64: Enable vmalloc-huge with ptdump
+Date: Mon, 22 Sep 2025 12:11:26 +0530
+Message-Id: <20250922064126.63016-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919124217.2934718-1-jens.wiklander@linaro.org> <aNDMXvTriEiSLwPb@sumit-X1>
-In-Reply-To: <aNDMXvTriEiSLwPb@sumit-X1>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Mon, 22 Sep 2025 08:39:09 +0200
-X-Gm-Features: AS18NWBbLb0VegGkHDcTRrbkfOYIr2ePDSBP0JcyijOcWJqS4-t8BSaLIlBpDKw
-Message-ID: <CAHUa44FKBXjteyU=PsVfwdhNXb0msw03WD=5itxx2EKcEDwNTg@mail.gmail.com>
-Subject: Re: [PATCH] tee: fix register_shm_helper()
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
-	Jerome Forissier <jerome.forissier@linaro.org>, stable@vger.kernel.org, 
-	Masami Ichikawa <masami256@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 22, 2025 at 6:11=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org> =
-wrote:
->
-> On Fri, Sep 19, 2025 at 02:40:16PM +0200, Jens Wiklander wrote:
-> > In register_shm_helper(), fix incorrect error handling for a call to
-> > iov_iter_extract_pages(). A case is missing for when
-> > iov_iter_extract_pages() only got some pages and return a number larger
-> > than 0, but not the requested amount.
-> >
-> > This fixes a possible NULL pointer dereference following a bad input fr=
-om
-> > ioctl(TEE_IOC_SHM_REGISTER) where parts of the buffer isn't mapped.
-> >
-> > Cc: stable@vger.kernel.org
-> > Reported-by: Masami Ichikawa <masami256@gmail.com>
-> > Closes: https://lore.kernel.org/op-tee/CACOXgS-Bo2W72Nj1_44c7bntyNYOavn=
-TjJAvUbEiQfq=3Du9W+-g@mail.gmail.com/
-> > Fixes: 7bdee4157591 ("tee: Use iov_iter to better support shared buffer=
- registration")
-> > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> > ---
-> >  drivers/tee/tee_shm.c | 11 ++++++++++-
-> >  1 file changed, 10 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-> > index daf6e5cfd59a..6ed7d030f4ed 100644
-> > --- a/drivers/tee/tee_shm.c
-> > +++ b/drivers/tee/tee_shm.c
-> > @@ -316,7 +316,16 @@ register_shm_helper(struct tee_context *ctx, struc=
-t iov_iter *iter, u32 flags,
-> >
-> >       len =3D iov_iter_extract_pages(iter, &shm->pages, LONG_MAX, num_p=
-ages, 0,
-> >                                    &off);
-> > -     if (unlikely(len <=3D 0)) {
-> > +     if (DIV_ROUND_UP(len + off, PAGE_SIZE) !=3D num_pages) {
-> > +             if (len > 0) {
-> > +                     /*
-> > +                      * If we only got a few pages, update to release
-> > +                      * the correct amount below.
-> > +                      */
-> > +                     shm->num_pages =3D len / PAGE_SIZE;
-> > +                     ret =3D ERR_PTR(-ENOMEM);
-> > +                     goto err_put_shm_pages;
-> > +             }
-> >               ret =3D len ? ERR_PTR(len) : ERR_PTR(-ENOMEM);
-> >               goto err_free_shm_pages;
-> >       }
->
-> Rather than operating directly on "len" without checking for error code
-> first doesn't seems appropriate to me. How about following diff instead?
+Our goal is to move towards enabling vmalloc-huge by default on arm64 so
+as to reduce TLB pressure. Therefore, we need a way to analyze the portion
+of block mappings in vmalloc space we can get on a production system; this
+can be done through ptdump, but currently we disable vmalloc-huge if
+CONFIG_PTDUMP_DEBUGFS is on. The reason is that lazy freeing of kernel
+pagetables via vmap_try_huge_pxd() may race with ptdump, so ptdump
+may dereference a bogus address.
 
-Sure, works for me.
+To solve this, we need to synchronize ptdump_walk() and ptdump_check_wx()
+with pud_free_pmd_page() and pmd_free_pte_page().
 
->
-> diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-> index daf6e5cfd59a..cb52bc51943e 100644
-> --- a/drivers/tee/tee_shm.c
-> +++ b/drivers/tee/tee_shm.c
-> @@ -319,6 +319,14 @@ register_shm_helper(struct tee_context *ctx, struct =
-iov_iter *iter, u32 flags,
->         if (unlikely(len <=3D 0)) {
->                 ret =3D len ? ERR_PTR(len) : ERR_PTR(-ENOMEM);
->                 goto err_free_shm_pages;
-> +       } else if (DIV_ROUND_UP(len + off, PAGE_SIZE) !=3D num_pages) {
-> +               /*
-> +                * If we only got a few pages, update to release the corr=
-ect
-> +                * amount below.
-> +                */
-> +               shm->num_pages =3D len / PAGE_SIZE;
-> +               ret =3D ERR_PTR(-ENOMEM);
-> +               goto err_put_shm_pages;
->         }
->
->         /*
+Since this race is very unlikely to happen in practice, we do not want to
+penalize the vmalloc pagetable tearing path by taking the init_mm
+mmap_lock. Therefore, we use static keys. ptdump_walk() and
+ptdump_check_wx() are the pagetable walkers; they will enable the static
+key - upon observing that, the vmalloc pagetable tearing path will get
+patched in with an mmap_read_lock/unlock sequence. A combination of the
+patched-in mmap_read_lock/unlock, the acquire semantics of
+static_branch_inc(), and the barriers in __flush_tlb_kernel_pgtable()
+ensures that ptdump will never get a hold on the address of a freed PMD
+or PTE table.
 
-Thanks,
-Jens
+We can verify the correctness of the algorithm via the following litmus
+test (thanks to James Houghton and Will Deacon):
 
->
-> -Sumit
->
-> > --
-> > 2.43.0
-> >
+AArch64 ptdump
+Variant=Ifetch
+{
+uint64_t pud=0xa110c;
+uint64_t pmd;
+
+0:X0=label:"P1:L0"; 0:X1=instr:"NOP"; 0:X2=lock; 0:X3=pud; 0:X4=pmd;
+                    1:X1=0xdead;      1:X2=lock; 1:X3=pud; 1:X4=pmd;
+}
+ P0				| P1				;
+ (* static_key_enable *)	| (* pud_free_pmd_page *)	;
+ STR	W1, [X0]		| LDR	X9, [X3]		;
+ DC	CVAU,X0			| STR	XZR, [X3]		;
+ DSB	ISH			| DSB	ISH			;
+ IC	IVAU,X0			| ISB				;
+ DSB	ISH			|				;
+ ISB				| (* static key *)		;
+				| L0:				;
+ (* mmap_lock *)		| B	out1			;
+ Lwlock:			|				;
+ MOV	W7, #1			| (* mmap_lock *)		;
+ SWPA	W7, W8, [X2]		| Lrlock:			;
+				| MOV	W7, #1			;
+				| SWPA	W7, W8, [X2]		;
+ (* walk pgtable *)		|				;
+ LDR	X9, [X3]		| (* mmap_unlock *)		;
+ CBZ	X9, out0		| STLR	WZR, [X2]		;
+ EOR	X10, X9, X9		|				;
+ LDR	X11, [X4, X10]		| out1:				;
+				| EOR	X10, X9, X9		;
+ out0:				| STR	X1, [X4, X10]		;
+
+exists (0:X8=0 /\ 1:X8=0 /\	(* Lock acquisitions succeed *)
+	0:X9=0xa110c /\		(* P0 sees the valid PUD ...*)
+	0:X11=0xdead)		(* ... but the freed PMD *)
+
+For an approximate written proof of why this algorithm works, please read
+the code comment in [1], which is now removed for the sake of simplicity.
+
+mm-selftests pass. No issues were observed while parallelly running
+test_vmalloc.sh (which stresses the vmalloc subsystem),
+and cat /sys/kernel/debug/{kernel_page_tables, check_wx_pages} in a loop.
+
+[1] https://lore.kernel.org/all/20250723161827.15802-1-dev.jain@arm.com/
+
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+Signed-off-by: Dev Jain <dev.jain@arm.com>
+---
+v5->v6:
+ - Put litmus test in patch description, summarize the code comment, use
+   static_branch_inc/dec to handle race from ptdump_check_wx() (Will)
+ - Split lock comment, rename lock parameter, drop now-obsolete comment
+   in arch_vmap_pud_supported (Anshuman)
+
+v4->v5:
+ - The arch_vmap_pxd_supported() changes were dropped by mistake in between
+   the revisions, add them back (Anshuman)
+ - Rewrite cover letter, drop stray change, add arm64_ptdump_walk_pgd()
+   helper, rename ptdump_lock_key -> arm64_ptdump_lock_key, add comment
+   above __pmd_free_pte_page() to explain when the lock won't
+   be taken (Anshuman)
+ - Rewrite the comment explaining the synchronization logic (Catalin)
+
+v3->v4:
+ - Lock-unlock immediately
+ - Simplify includes
+
+v2->v3:
+ - Use static key mechanism
+
+v1->v2:
+ - Take lock only when CONFIG_PTDUMP_DEBUGFS is on
+ - In case of pud_free_pmd_page(), isolate the PMD table to avoid taking
+   the lock 512 times again via pmd_free_pte_page()
+
+
+ arch/arm64/include/asm/ptdump.h  |  2 ++
+ arch/arm64/include/asm/vmalloc.h |  9 ++-----
+ arch/arm64/mm/mmu.c              | 43 +++++++++++++++++++++++++++++---
+ arch/arm64/mm/ptdump.c           | 11 ++++++--
+ 4 files changed, 52 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
+index fded5358641f..baff24004459 100644
+--- a/arch/arm64/include/asm/ptdump.h
++++ b/arch/arm64/include/asm/ptdump.h
+@@ -7,6 +7,8 @@
+ 
+ #include <linux/ptdump.h>
+ 
++DECLARE_STATIC_KEY_FALSE(arm64_ptdump_lock_key);
++
+ #ifdef CONFIG_PTDUMP
+ 
+ #include <linux/mm_types.h>
+diff --git a/arch/arm64/include/asm/vmalloc.h b/arch/arm64/include/asm/vmalloc.h
+index 12f534e8f3ed..4ec1acd3c1b3 100644
+--- a/arch/arm64/include/asm/vmalloc.h
++++ b/arch/arm64/include/asm/vmalloc.h
+@@ -9,18 +9,13 @@
+ #define arch_vmap_pud_supported arch_vmap_pud_supported
+ static inline bool arch_vmap_pud_supported(pgprot_t prot)
+ {
+-	/*
+-	 * SW table walks can't handle removal of intermediate entries.
+-	 */
+-	return pud_sect_supported() &&
+-	       !IS_ENABLED(CONFIG_PTDUMP_DEBUGFS);
++	return pud_sect_supported();
+ }
+ 
+ #define arch_vmap_pmd_supported arch_vmap_pmd_supported
+ static inline bool arch_vmap_pmd_supported(pgprot_t prot)
+ {
+-	/* See arch_vmap_pud_supported() */
+-	return !IS_ENABLED(CONFIG_PTDUMP_DEBUGFS);
++	return true;
+ }
+ 
+ #define arch_vmap_pte_range_map_size arch_vmap_pte_range_map_size
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 183801520740..feda73165025 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -47,6 +47,8 @@
+ #define NO_CONT_MAPPINGS	BIT(1)
+ #define NO_EXEC_MAPPINGS	BIT(2)	/* assumes FEAT_HPDS is not used */
+ 
++DEFINE_STATIC_KEY_FALSE(arm64_ptdump_lock_key);
++
+ u64 kimage_voffset __ro_after_init;
+ EXPORT_SYMBOL(kimage_voffset);
+ 
+@@ -1261,7 +1263,8 @@ int pmd_clear_huge(pmd_t *pmdp)
+ 	return 1;
+ }
+ 
+-int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
++static int __pmd_free_pte_page(pmd_t *pmdp, unsigned long addr,
++			       bool acquire_mmap_lock)
+ {
+ 	pte_t *table;
+ 	pmd_t pmd;
+@@ -1273,13 +1276,25 @@ int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
+ 		return 1;
+ 	}
+ 
++	/* See comment in pud_free_pmd_page for static key logic */
+ 	table = pte_offset_kernel(pmdp, addr);
+ 	pmd_clear(pmdp);
+ 	__flush_tlb_kernel_pgtable(addr);
++	if (static_branch_unlikely(&arm64_ptdump_lock_key) && acquire_mmap_lock) {
++		mmap_read_lock(&init_mm);
++		mmap_read_unlock(&init_mm);
++	}
++
+ 	pte_free_kernel(NULL, table);
+ 	return 1;
+ }
+ 
++int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
++{
++	/* If ptdump is walking the pagetables, acquire init_mm.mmap_lock */
++	return __pmd_free_pte_page(pmdp, addr, /* acquire_mmap_lock = */ true);
++}
++
+ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+ {
+ 	pmd_t *table;
+@@ -1295,16 +1310,36 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+ 	}
+ 
+ 	table = pmd_offset(pudp, addr);
++
++	/*
++	 * Our objective is to prevent ptdump from reading a PMD table which has
++	 * been freed. In this race, if pud_free_pmd_page observes the key on
++	 * (which got flipped by ptdump) then the mmap lock sequence here will,
++	 * as a result of the mmap write lock/unlock sequence in ptdump, give
++	 * us the correct synchronization. If not, this means that ptdump has
++	 * yet not started walking the pagetables - the sequence of barriers
++	 * issued by __flush_tlb_kernel_pgtable() guarantees that ptdump will
++	 * observe an empty PUD.
++	 */
++	pud_clear(pudp);
++	__flush_tlb_kernel_pgtable(addr);
++	if (static_branch_unlikely(&arm64_ptdump_lock_key)) {
++		mmap_read_lock(&init_mm);
++		mmap_read_unlock(&init_mm);
++	}
++
+ 	pmdp = table;
+ 	next = addr;
+ 	end = addr + PUD_SIZE;
+ 	do {
+ 		if (pmd_present(pmdp_get(pmdp)))
+-			pmd_free_pte_page(pmdp, next);
++			/*
++			 * PMD has been isolated, so ptdump won't see it. No
++			 * need to acquire init_mm.mmap_lock.
++			 */
++			__pmd_free_pte_page(pmdp, next, /* acquire_mmap_lock = */ false);
+ 	} while (pmdp++, next += PMD_SIZE, next != end);
+ 
+-	pud_clear(pudp);
+-	__flush_tlb_kernel_pgtable(addr);
+ 	pmd_free(NULL, table);
+ 	return 1;
+ }
+diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
+index 421a5de806c6..ab9899ca1e5f 100644
+--- a/arch/arm64/mm/ptdump.c
++++ b/arch/arm64/mm/ptdump.c
+@@ -283,6 +283,13 @@ void note_page_flush(struct ptdump_state *pt_st)
+ 	note_page(pt_st, 0, -1, pte_val(pte_zero));
+ }
+ 
++static void arm64_ptdump_walk_pgd(struct ptdump_state *st, struct mm_struct *mm)
++{
++	static_branch_inc(&arm64_ptdump_lock_key);
++	ptdump_walk_pgd(st, mm, NULL);
++	static_branch_dec(&arm64_ptdump_lock_key);
++}
++
+ void ptdump_walk(struct seq_file *s, struct ptdump_info *info)
+ {
+ 	unsigned long end = ~0UL;
+@@ -311,7 +318,7 @@ void ptdump_walk(struct seq_file *s, struct ptdump_info *info)
+ 		}
+ 	};
+ 
+-	ptdump_walk_pgd(&st.ptdump, info->mm, NULL);
++	arm64_ptdump_walk_pgd(&st.ptdump, info->mm);
+ }
+ 
+ static void __init ptdump_initialize(void)
+@@ -353,7 +360,7 @@ bool ptdump_check_wx(void)
+ 		}
+ 	};
+ 
+-	ptdump_walk_pgd(&st.ptdump, &init_mm, NULL);
++	arm64_ptdump_walk_pgd(&st.ptdump, &init_mm);
+ 
+ 	if (st.wx_pages || st.uxn_pages) {
+ 		pr_warn("Checked W+X mappings: FAILED, %lu W+X pages found, %lu non-UXN pages found\n",
+-- 
+2.30.2
+
 
