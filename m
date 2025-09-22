@@ -1,171 +1,190 @@
-Return-Path: <linux-kernel+bounces-826769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D211B8F4C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:31:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1469B8F4CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0520D189EB18
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:32:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 872F5189C3A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4AD2F5A2B;
-	Mon, 22 Sep 2025 07:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120252F5498;
+	Mon, 22 Sep 2025 07:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gHjmUyjD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GAwpi30k"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821C72DA755;
-	Mon, 22 Sep 2025 07:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985CA274B2B
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758526303; cv=none; b=hFvG+txaYuPLVK2yEryn8kdQN3dhtNVkkY7c413vFNBg4xvI3XcdTjIfWSTEq8d9hFXh+9Njuk5BjIM4adQf5OxdlSPt+lIczLNWpxd8Riv1yCVQLFLUFHm4o0ouJJup4uqUTB+EFCVGfpYx5m235cP/WyyD9K+/exep+lxiUV0=
+	t=1758526328; cv=none; b=UOdX9O+mhLxjgIh8SW6U5Hz0hSpOLw/94NZqFs//oE7sCROipRVXg2lOcYWPFA+Q2RzntcaWqoCIXgri/yCl0m33RWHDhgIiZWckvKrqcoxe8h39IPiG+lIXdl1uGgkPmtGv/udJB2vr3WKMDo5BajmNZ2Ff9URVFLwNWTShqxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758526303; c=relaxed/simple;
-	bh=2zXwsAvFZkIWX22XaZ31IeMWHmWvxUAHMvVhmsGWwo8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fsfnvXRbJ4WK1wIRIGcyA8x7XZKvbVNsynX1PUct0PbjihaxOUAbqSofLF26ko/zQo4U8W2+QZTEV7c0ljXjEP/oLshYFHkE9R+oGSim5dwwZZIjYG4qmR6hqYybOGJlQMX5P26igrE2Y25NSFdXIWTQrsShU8hdIIhQNlqQ+w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gHjmUyjD; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758526302; x=1790062302;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2zXwsAvFZkIWX22XaZ31IeMWHmWvxUAHMvVhmsGWwo8=;
-  b=gHjmUyjDl36lv83oa7As003IjPyiYzqdJ4Y1VhuKhVQkPA2/cvPc3UOg
-   ea6OJnpP1WOfDYKTGRSJ4Bsa0z4ozxB4mXslZ8dgRPkhiIsK7IGaNUAXn
-   8fonzfoD8EBYThyp44PC32gm37xOsAZAKw7ZDdgIuK3qbYHdofKeRujdT
-   SxanKTTvR36GScBc9rq+TSsTK8r/p95fWaRwBAPhyYZBAMoNi33ghjmud
-   HBr+xtCI2oNBBkmw16S65+X32zSo/oXjn8VTeSRiDKcWfUkDbgnHR6PxO
-   xvMZSJqSXIxj5SVYPcMARAE29pNkHN95zdx6LU7SPXVt/Nj2iLoD4Lu9L
-   A==;
-X-CSE-ConnectionGUID: etyXoZwsRLOQMPwGhw7Wew==
-X-CSE-MsgGUID: aEzVUDNZRvO3efGgh8T6NA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="59820734"
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="59820734"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 00:31:41 -0700
-X-CSE-ConnectionGUID: HOhqTXWIRXaLIunMmzA9zQ==
-X-CSE-MsgGUID: nchSdi7bQVmC+UYXVIS4YQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="176320293"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 00:31:38 -0700
-Message-ID: <bebd47e3-2434-4b0d-953e-166150decdec@linux.intel.com>
-Date: Mon, 22 Sep 2025 15:31:35 +0800
+	s=arc-20240116; t=1758526328; c=relaxed/simple;
+	bh=YrT9/6cOaNebvdLrOWVAkYW+o5XEoVq2kg/YXaHHI/U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XH1RtqOAGE0Zchbxesurk3XleBcC266Lq16MSbevxsI2QYi9LHlGrgz7rxZukgc4OVPQ7+djDfp/XGCrZUPeFB93N4HVVRCUzUebe9kT6aeVeXv0LL/Qn2Q37ybhUdTB/C53tyu6d2Wle8F/C14TD39oakhr1oxeBJRi9oYsri4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GAwpi30k; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58LNQ8fp023579
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:32:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=OWi7tLFsC3oHaAFTRIeTnd
+	u8yLUafh5CrbBfm6ky0VI=; b=GAwpi30kFHiiuARFWDw1oBImLiZqpXVP8ZzmTS
+	m9p2cN7VEFvmQi+jHQhhNgI5oB+9deNPAMrLRtudClo24Fff+dkjeI0nX3X+vBTZ
+	MvfVkH/JwTNV6PYRyDfGF0eKjhyOC9jIE5jtzF7GeOkE9ypvQ581bq2GKHtY8fr9
+	dq4ARzvoGKxXcIa1ME8GyhU9Ha25W8T9VpY2M7vrqXhVLHNL97+FAXenwE9rNWe8
+	EqhWuLOEUh4MWnWRoznj1eyJU8UQq/SX0pR1eO/uwfVQmGMvhrTJkhqBzVRcmito
+	9uv4dCryadcD0h9GGJ9wLTbYcwMEWNUhq8o+aWt5pjPWIAtA==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499kkhktc0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:32:05 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2697c4e7354so40715745ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:32:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758526324; x=1759131124;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OWi7tLFsC3oHaAFTRIeTndu8yLUafh5CrbBfm6ky0VI=;
+        b=OLOmUoJ12GYT5NQ/ZXCwv4ojcK6wioCo+v8JLXMu3Oq54J/dtz7w3AwG+3zCOzx09F
+         9RnmEZVjadUH8lFZDH3PT/ObR+hI12wogKzU83JK4m04cJoNSs0uXeFSvLEzZwXmFnOM
+         5wY15DavRtudOoqZlpZVdnYHKD/xp0PCRlL74wE84RyLdyOlme9wp6QfL632oOLF7pUX
+         n/vv9Q6NHa4jUjnbxEkccr3REhPV61mucIjeXrudpoNmWBa1d3DpvezZaJ3Jzhj06kfQ
+         /6kzKrEzDO7xQtYgxsapJFJNf75DzdmSDnU8k/FU33qZB9vE0A8cANVt8U+omxdHWJaQ
+         aJPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXuRPvhzcA2/AddJyRLgrSfuMsVohu1/S9Q+Zs1ZTxqldWInYymIYzyH1DHHMuJ0zz95eFfIMK0zJxe60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdDBg8v/INOmTertcB5Y2umwdjSa7j/An1vGq4QJ/d+m7LCmcI
+	w+DKHY09njPTSx0h+6dZPlInKarA2g//stZQgw9OaAxo5jjUE9xaO1IrP81byg8lStedvFTE6Ez
+	3aEKA1lKGn7GKlsGNceh3gCizIZZLb1vCPbOnoYWG/GLE4Ae6dXnon9718FKfYuTISZ0=
+X-Gm-Gg: ASbGnct/Nwi2GuibybEogiCZEon65fMLXapHm/0aiz2OwpXzv5bsKkb/ma8JPau4qbH
+	B00gd8dTqi+PdVu2Eyo8L3m2y/dN0NgmBhZR8KlPaMSo9fBsk3BFRxYM4+snpFL6hPGiXRCRvqt
+	YH36p4chOHV2zDWnjPENT5XGiPnZk4gAR4KHYkw2AAB+w/iXbxEz3dw/lwClIAIol72a/xL9J/F
+	gj/Diy7oms9ieFXPV0GKjjIprd6m0No1cYMG5PppHIGpCScj5a3XW8XDPLViwE+lJazOZUOsLS0
+	EMLOwXj/ByuW4yUzOZ/L3ckZ8pvRfIwFGLevYDecL2XutHD4Yt6S00FmeEM9fY0AM2AeW4+KUQ5
+	+FxcVqG+dv242BwP0lAmF5Dv3Jss=
+X-Received: by 2002:a17:902:f68e:b0:262:f975:fcba with SMTP id d9443c01a7336-269b7952ec0mr154757905ad.9.1758526323484;
+        Mon, 22 Sep 2025 00:32:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGMjZkCKxOtZY/ljG3yp4aaA9ZSaDbW1wn7Y3F081kioXdQoygdRhRGBnvJWT+ILCt2MI6gTw==
+X-Received: by 2002:a17:902:f68e:b0:262:f975:fcba with SMTP id d9443c01a7336-269b7952ec0mr154757605ad.9.1758526322703;
+        Mon, 22 Sep 2025 00:32:02 -0700 (PDT)
+Received: from jiegan-gv.ap.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269800529cdsm123806865ad.22.2025.09.22.00.31.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 00:32:02 -0700 (PDT)
+From: Jie Gan <jie.gan@oss.qualcomm.com>
+Subject: [PATCH RFC 0/3] coresight: replace the void pointer with
+ coresight_path pointer
+Date: Mon, 22 Sep 2025 15:31:38 +0800
+Message-Id: <20250922-fix_helper_data-v1-0-905e8115a24e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 25/51] KVM: x86: Add XSS support for CET_KERNEL and
- CET_USER
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Xiaoyao Li <xiaoyao.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-References: <20250919223258.1604852-1-seanjc@google.com>
- <20250919223258.1604852-26-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250919223258.1604852-26-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFv70GgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSyMj3bTMiviM1JyC1KL4lMSSRN00UzMDQ4u0ZEszszQloK6ColSgErC
+ J0UpBbs5KsbW1ACGAKQxmAAAA
+To: Carl Worth <carl@os.amperecomputing.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jie Gan <jie.gan@oss.qualcomm.com>,
+        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758526318; l=2227;
+ i=jie.gan@oss.qualcomm.com; s=20250909; h=from:subject:message-id;
+ bh=YrT9/6cOaNebvdLrOWVAkYW+o5XEoVq2kg/YXaHHI/U=;
+ b=zLvwT4JNV1lIAn120SkbsdBOV6Lx7oJRcAmeJQk1x0htNRlJon6mYHSDodNKMnLhhde7pD1qV
+ ce4pfeJTocHD1EHELMcRKuUrAf76kdB+Dmk+4ryq/tazgAn8PSVqCw9
+X-Developer-Key: i=jie.gan@oss.qualcomm.com; a=ed25519;
+ pk=3LxxUZRPCNkvPDlWOvXfJNqNO4SfGdy3eghMb8puHuk=
+X-Proofpoint-ORIG-GUID: qiwzddLAdCecnHrMTmiGB03IGY65EtJl
+X-Proofpoint-GUID: qiwzddLAdCecnHrMTmiGB03IGY65EtJl
+X-Authority-Analysis: v=2.4 cv=JMo7s9Kb c=1 sm=1 tr=0 ts=68d0fb75 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=i-0O458ng5iwxdbG68kA:9
+ a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyMiBTYWx0ZWRfX5wEmOo7oQyAN
+ OZ2dFHleetVd0uCgeY4ZSdf0AyUoIeFEv3Qy4bDey/LdxkSWw51KqApz33ZmrO+9EUC5ZCoMFvE
+ IZCtlxBtDbTA/NEqNazTfxNxSD6XKNSTC8kvQWaiPorcOrJIQuXFqCic+VNcqGtCNE1/lZzfcRk
+ ZNeox81PRsyQyLezJmghqWBA4C8rWRFWEVd+nHVSvh/ktEY32JwBrGp6wYC5DSV6pNag1jv558X
+ IR2iSZeo502EjyYmlwy4u/GLPv0o3nwnN2cdLEliCNYBMgR4eMvvXjxSOcfMDw2stNW5ulkkpI6
+ EaB4SmvNAcsWScCGn2+FNG5/S7kllxTU12kRYQnfsEE9CzVPURj7UwvY3T2eixQ14QEsV1ypSmO
+ C2Q5eTbB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-22_01,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0
+ clxscore=1015 adultscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509200022
 
+Hi Carl Worth,
 
+I just created a patch series as an example to fix the reported issues.
+Please feel free to check it and let me know if you have any queries.
 
-On 9/20/2025 6:32 AM, Sean Christopherson wrote:
-> From: Yang Weijiang <weijiang.yang@intel.com>
->
-> Add CET_KERNEL and CET_USER to KVM's set of supported XSS bits when IBT
-> *or* SHSTK is supported.  Like CR4.CET, XFEATURE support for IBT and SHSTK
-> are bundle together under the CET umbrella, and thus prone to
-> virtualization holes if KVM or the guest supports only one of IBT or SHSTK,
-> but hardware supports both.  However, again like CR4.CET, such
-> virtualization holes are benign from the host's perspective so long as KVM
-> takes care to always honor the "or" logic.
->
-> Require CET_KERNEL and CET_USER to come as a pair, and refuse to support
-> IBT or SHSTK if one (or both) features is missing, as the (host) kernel
-> expects them to come as a pair, i.e. may get confused and corrupt state if
-> only one of CET_KERNEL or CET_USER is supported.
->
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Signed-off-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> [sean: split to separate patch, write changelog, add XFEATURE_MASK_CET_ALL]
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+I think it's better to explain my ideas with codes, so I directly created the
+patch series for sharing my solution. Please let me know if it's offend you.
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+Thanks,
 
-> ---
->   arch/x86/kvm/x86.c | 18 +++++++++++++++---
->   1 file changed, 15 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 40596fc5142e..4a0ff0403bb2 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -220,13 +220,14 @@ static struct kvm_user_return_msrs __percpu *user_return_msrs;
->   				| XFEATURE_MASK_BNDCSR | XFEATURE_MASK_AVX512 \
->   				| XFEATURE_MASK_PKRU | XFEATURE_MASK_XTILE)
->   
-> +#define XFEATURE_MASK_CET_ALL	(XFEATURE_MASK_CET_USER | XFEATURE_MASK_CET_KERNEL)
->   /*
->    * Note, KVM supports exposing PT to the guest, but does not support context
->    * switching PT via XSTATE (KVM's PT virtualization relies on perf; swapping
->    * PT via guest XSTATE would clobber perf state), i.e. KVM doesn't support
->    * IA32_XSS[bit 8] (guests can/must use RDMSR/WRMSR to save/restore PT MSRs).
->    */
-> -#define KVM_SUPPORTED_XSS     0
-> +#define KVM_SUPPORTED_XSS	(XFEATURE_MASK_CET_ALL)
->   
->   bool __read_mostly allow_smaller_maxphyaddr = 0;
->   EXPORT_SYMBOL_GPL(allow_smaller_maxphyaddr);
-> @@ -10104,6 +10105,16 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
->   	if (!kvm_cpu_cap_has(X86_FEATURE_XSAVES))
->   		kvm_caps.supported_xss = 0;
->   
-> +	if (!kvm_cpu_cap_has(X86_FEATURE_SHSTK) &&
-> +	    !kvm_cpu_cap_has(X86_FEATURE_IBT))
-> +		kvm_caps.supported_xss &= ~XFEATURE_MASK_CET_ALL;
-> +
-> +	if ((kvm_caps.supported_xss & XFEATURE_MASK_CET_ALL) != XFEATURE_MASK_CET_ALL) {
-> +		kvm_cpu_cap_clear(X86_FEATURE_SHSTK);
-> +		kvm_cpu_cap_clear(X86_FEATURE_IBT);
-> +		kvm_caps.supported_xss &= ~XFEATURE_MASK_CET_ALL;
-> +	}
-> +
->   	if (kvm_caps.has_tsc_control) {
->   		/*
->   		 * Make sure the user can only configure tsc_khz values that
-> @@ -12775,10 +12786,11 @@ static void kvm_xstate_reset(struct kvm_vcpu *vcpu, bool init_event)
->   	/*
->   	 * On INIT, only select XSTATE components are zeroed, most components
->   	 * are unchanged.  Currently, the only components that are zeroed and
-> -	 * supported by KVM are MPX related.
-> +	 * supported by KVM are MPX and CET related.
->   	 */
->   	xfeatures_mask = (kvm_caps.supported_xcr0 | kvm_caps.supported_xss) &
-> -			 (XFEATURE_MASK_BNDREGS | XFEATURE_MASK_BNDCSR);
-> +			 (XFEATURE_MASK_BNDREGS | XFEATURE_MASK_BNDCSR |
-> +			  XFEATURE_MASK_CET_ALL);
->   	if (!xfeatures_mask)
->   		return;
->   
+Patch 1:
+Fix the issue that the catu cannot correctly read the handle of the AUX
+event which is caused by the commit[1].
+
+[1] 080ee83cc361 ("Coresight: Change functions to accept the coresight_path")
+
+Patch 2 - 3:
+Change the sink_enable and help_enable/disable to accept coresight_path.
+
+Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+---
+Carl Worth (1):
+      coresight: tmc: add the handle of the event to the path
+
+Jie Gan (2):
+      coresight: change helper_ops to accept coresight_path
+      coresight: change the sink_ops to accept coresight_path
+
+ drivers/hwtracing/coresight/coresight-catu.c      | 10 ++++----
+ drivers/hwtracing/coresight/coresight-core.c      | 30 +++++++++++++----------
+ drivers/hwtracing/coresight/coresight-ctcu-core.c |  9 +++----
+ drivers/hwtracing/coresight/coresight-cti-core.c  |  5 ++--
+ drivers/hwtracing/coresight/coresight-cti.h       |  5 ++--
+ drivers/hwtracing/coresight/coresight-dummy.c     |  2 +-
+ drivers/hwtracing/coresight/coresight-etb10.c     |  8 +++---
+ drivers/hwtracing/coresight/coresight-etm-perf.c  |  3 ++-
+ drivers/hwtracing/coresight/coresight-priv.h      |  3 +--
+ drivers/hwtracing/coresight/coresight-sysfs.c     |  2 +-
+ drivers/hwtracing/coresight/coresight-tmc-etf.c   | 10 +++++---
+ drivers/hwtracing/coresight/coresight-tmc-etr.c   | 15 +++++++-----
+ drivers/hwtracing/coresight/coresight-tmc.h       |  3 ++-
+ drivers/hwtracing/coresight/coresight-tpiu.c      |  2 +-
+ drivers/hwtracing/coresight/coresight-trbe.c      |  4 +--
+ drivers/hwtracing/coresight/ultrasoc-smb.c        |  9 ++++---
+ include/linux/coresight.h                         | 17 +++++++------
+ 17 files changed, 75 insertions(+), 62 deletions(-)
+---
+base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
+change-id: 20250922-fix_helper_data-f56018fc966f
+
+Best regards,
+-- 
+Jie Gan <jie.gan@oss.qualcomm.com>
 
 
