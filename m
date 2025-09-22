@@ -1,127 +1,111 @@
-Return-Path: <linux-kernel+bounces-826688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68103B8F1E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:23:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CB2B8F1EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63BAB189DFD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:24:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E77AF189E1B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19226298CD5;
-	Mon, 22 Sep 2025 06:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="FxYfeYpH"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AF92C21E4;
+	Mon, 22 Sep 2025 06:23:01 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF0E256C83
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548D8221299;
+	Mon, 22 Sep 2025 06:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758522123; cv=none; b=PcAwVY20NR7ABCVU1d760nNI0ZiKKdN98gJp/1bwHip7E543ssy2WnJNko5fQej4CkIAdl5NHIOjJCjXOWkVd0/+MvSB7dGkGTRCpJ/3of+I3oYFsaFMgFQMgZG+7H6mBvZ8OjuL4ihGQ3t3kgqzi5fGxFQ23AlSJFBrl4AjNJU=
+	t=1758522181; cv=none; b=LsFiwn39YiIXSSYqrhEHre9JVXUgbqVunAeMbszD66fCEIKHI9TdkgSZOBjduNysTF4yG967mxEwnb7GfsTDKT3YYPdbOt3RFm7TeneDzuuSnF9NA5j1t52FoNX3+ceEX7HkETwfDKZdT34rFohE0KcS5wyH1jS/P1EYf7Eg91s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758522123; c=relaxed/simple;
-	bh=CJCL5BEPcUDkaY186ZiSz1N6maZ/1QO2mHIcYWEJb5g=;
-	h=Mime-Version:In-Reply-To:From:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aL8gGXTlgBhW+zMFsDiccHUiSYL2HQmT+1kl+m0zgVVGftJFq+VXn2LrjP9bseOYchdn/bXwmnuSl1CfkgMnISio0hg1zXz3fKWQgtIwyJhbUGSiTNmqAUhF9l2zv9QHEUESvJhZqi7d+nepx0aD4EJiRYPKhksmFY+62C0mRrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=FxYfeYpH; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-ea5b96d2488so2844509276.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 23:22:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758522121; x=1759126921; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:references:from
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CJCL5BEPcUDkaY186ZiSz1N6maZ/1QO2mHIcYWEJb5g=;
-        b=FxYfeYpHaKHeup202awRg2FDFKafLZoHcKLbZ9avm2jZbJSdN6Z5Xobxaa8O/ABZmB
-         wPcQC5bUkEWE4vs5EiK18PY9UCR3V/sx8MdnVw+uTqMayS88+7cN1xukGY04w2jXqzB9
-         E8I+xLhAwH+51YB7aS17j2tix2BRK7rRKik8gV688kjk6JLajUNqWdpqhiqQ+/sMqvyG
-         YjLaPo2iigxaRdxwGWpLdLbx02p1dXDqghJ0hcM+S8h9bsCNHZdi5y49Fm/gZItBjOIj
-         JN1HUI+a+TOCldjDU8qkVb5EhqxmspPoEZNBOPBV/rwqu04wIuGIjIXahpoqGeOKB16f
-         pqXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758522121; x=1759126921;
-        h=cc:to:subject:message-id:date:user-agent:references:from
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CJCL5BEPcUDkaY186ZiSz1N6maZ/1QO2mHIcYWEJb5g=;
-        b=IXesV+OAg6+EMWWKTWy+M2YaHGzdyl+MJEkdjJRgfjmEv/uDWseq6raQ45zCulbDZ9
-         r5pnXMiN4pKqvMhP6XpqzS6+XiDYx6IIJFf0OAiPy3lfS6QZunwdSoXaLDKRi1OXf8mK
-         Yxk7sH8dhj02lHi3dPMmrxWsW+dFbBeaAcuk/8Xh2aY/KJTKdzZ6bIZjBOusZwRDYcgq
-         TiPjZNMGQ2xXVn1TUKoWlZ0RLz4pZjWl/R9tzLfHqD5lLMyuPae04EPaEGAyWDn6s6Cp
-         e613FF6DbAv52/gvakFdlMbgGQ8OdXuybeFrikGjogaxm5pmNvDmmh4hE1RDM5EpujuR
-         dj+g==
-X-Forwarded-Encrypted: i=1; AJvYcCU/gj8s9zCMUys/BqKn7EReA8X7QInq2B2qc4IytlMGZ5cVNJ7HjTMe+naZbmveRp7TBVCp4aVMMh7pAEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR67B8lh5iUdEgURrE0G0DCHR0DnukIGaTdGr26hGt3v4X4vRE
-	KFJl42uwc9rOhGaGKy4uUQLDc0ubO4dToBp4uTRNUdffi0NOt4phs5g+tJZ+R+m1Q0WRpZRp89U
-	P6HV+hj4VJNNR/xiRQMD5VFZEdf9BqyTrYU7Hx/EZ4Q==
-X-Gm-Gg: ASbGncuDv+88/0UXYXzLVeO/NqajKw84dY4aHoRFYzL/IanSD+z/Ntc7xmAQrD7mVpc
-	djmX3NECXx8kDFizsEWPA2YXlB+oKaR5Hee/BvLZd4ysbjO2/ZbTQCNtsVoOgumxo9NZhaSKzFy
-	wm/LKEo1LOSFUznDaKqoOb1a38/bTgiFDHCY6/7lK7jrOZhKWk61Z5momu5phBHjXs/J/hOpadp
-	gN8VBVuXw==
-X-Google-Smtp-Source: AGHT+IHhXNBQkZKHusfqahAqxM1ALfuXESEXOtvpI4K6U0wS4nO9F3zMYGz5W6IsEBxhXvfLKW+/GTAzoL105VPYcCU=
-X-Received: by 2002:a05:690e:2505:20b0:630:8fd5:4cd9 with SMTP id
- 956f58d0204a3-6347f5d0343mr7947322d50.36.1758522120671; Sun, 21 Sep 2025
- 23:22:00 -0700 (PDT)
-Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
- Sun, 21 Sep 2025 23:22:00 -0700
-Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
- Sun, 21 Sep 2025 23:22:00 -0700
+	s=arc-20240116; t=1758522181; c=relaxed/simple;
+	bh=KQ1leaj5E8Gkg9eOuDixRaXiAbGw+Q16aS6Wxzp/CLM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mNLvI/EGud/es8qfF8JKiYEkEctn+d4Zg2+7iIOBM3e3Ul3eAb1EvR+4fYVgkZYPiSz5X+73o9OVlwH45vwF9+05hYKjiwwh5SwaCdJpuEczJU5M7lWPS8v8gvX3RMKWtm9URz932ndsfzCC89LE+O595sqHCqnEGxozasLNMlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 8efc18ec977c11f0b29709d653e92f7d-20250922
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:73680881-81b2-483e-a4cc-4248df5742ee,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:-5
+X-CID-INFO: VERSION:1.1.45,REQID:73680881-81b2-483e-a4cc-4248df5742ee,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6493067,CLOUDID:3e0c31d6808fdfd6be2a69de8f2dd8a5,BulkI
+	D:250922142250KV4QC9ZA,BulkQuantity:0,Recheck:0,SF:17|19|24|38|44|66|78|10
+	2|850,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:99|1,File:nil,RT:nil,Bulk:nil,Q
+	S:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,
+	ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_ULS,TF_CID_SPAM_SNR,
+	TF_CID_SPAM_FAS
+X-UUID: 8efc18ec977c11f0b29709d653e92f7d-20250922
+X-User: duanchenghao@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <duanchenghao@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 2007902817; Mon, 22 Sep 2025 14:22:47 +0800
+From: Chenghao Duan <duanchenghao@kylinos.cn>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	bjorn@kernel.org,
+	pulehui@huawei.com,
+	puranjay@kernel.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu
+Cc: martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	alex@ghiti.fr,
+	bpf@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	duanchenghao@kylinos.cn
+Subject: [PATCH v2 0/1] riscv: bpf: Fix uninitialized symbol 'retval_off'
+Date: Mon, 22 Sep 2025 14:22:43 +0800
+Message-Id: <20250922062244.822937-1-duanchenghao@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-In-Reply-To: <SA1PR11MB7130D0C4D54EBAD854CB18B68911A@SA1PR11MB7130.namprd11.prod.outlook.com>
-From: Rui Qi <qirui.001@bytedance.com>
-X-Original-From: Rui Qi <qirui.001@bytedance.com>
-References: <20250918121704.45116-1-qirui.001@bytedance.com> <SA1PR11MB7130D0C4D54EBAD854CB18B68911A@SA1PR11MB7130.namprd11.prod.outlook.com>
-User-Agent: Mozilla Thunderbird
-Date: Sun, 21 Sep 2025 23:22:00 -0700
-X-Gm-Features: AS18NWC7ydSo-Pbyk19l4vC7zCVBkL-thS0EJngVcF_Vzt340CAkOsiiQC93ouE
-Message-ID: <CALU4DmqEF4qbWdz5E6wo_XrWXKpYNfCzTrENCj2jH=DaZOzftQ@mail.gmail.com>
-Subject: Re: [External] RE: [PATCH] EDAC/skx_common: Fix allocation check when
- adxl_component_count is 0
-To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>, "Luck, Tony" <tony.luck@intel.com>, 
-	"bp@alien8.de" <bp@alien8.de>, "mchehab@kernel.org" <mchehab@kernel.org>, 
-	"james.morse@arm.com" <james.morse@arm.com>, "rric@kernel.org" <rric@kernel.org>
-Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On 9/19/25 8:56 PM, Zhuo, Qiuxu wrote:
-> Hi Rui Qi,
->
-> Thanks for looking at the code.
->
->> From: Rui Qi <qirui.001@bytedance.com>
->> [...]
->> Subject: [PATCH] EDAC/skx_common: Fix allocation check when
->> adxl_component_count is 0
->>
->> From: Rui Qi <qirui.001@bytedance.com>
->>
->> Use ZERO_OR_NULL_PTR instead of simple NULL check to properly handle the
->> case where adxl_component_count is 0, which would result in kcalloc
->> returning ZERO_SIZE_PTR rather than NULL.
->>
->> This ensures correct error handling when no ADXL components are present
->> and prevents potential issues with zero-sized allocations.
->
-> If the ADXL component names are empty, skx_adxl_get() will immediately jump to error handling.
-> So, the adxl_component_count value is guaranteed to be non-zero when passed to kcalloc().
->
+v2:
+Adjust the commit log
 
-Well, I've rechecked the code, and your statement is correct. So my
-modification is indeed unnecessary.
+URL for version v1:
+https://lore.kernel.org/all/20250820062520.846720-1-duanchenghao@kylinos.cn/
 
->>
->> Signed-off-by: Rui Qi <qirui.001@bytedance.com>
->> [...]
+Chenghao Duan (1):
+  riscv: bpf: Fix uninitialized symbol 'retval_off'
+
+ arch/riscv/net/bpf_jit_comp64.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+-- 
+2.25.1
+
 
