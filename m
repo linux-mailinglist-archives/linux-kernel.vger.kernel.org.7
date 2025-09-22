@@ -1,222 +1,361 @@
-Return-Path: <linux-kernel+bounces-827768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F59EB92B70
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:01:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF4EBB92BA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A6E419063D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:02:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6918619055B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D7931AF06;
-	Mon, 22 Sep 2025 19:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC7931A573;
+	Mon, 22 Sep 2025 19:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UaU9WOXt"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010048.outbound.protection.outlook.com [52.101.56.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcWiGJof"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE5D70810;
-	Mon, 22 Sep 2025 19:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758567695; cv=fail; b=sduGYdQVW5oCpuxq2qotQXygbZlnXUbtijFcOd3vSs3YjL4DuIfi7SAi2XLruJy8NcPSDAvAMEmUwsbEmnf4H3bwusUrs38G6lfnPzeHEUCaO82PXL7Tak5/BK6tP9UawdrC6rs6BOuNnQbmDMoU7EAtWh6IZcEAgZtjLdRJdwY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758567695; c=relaxed/simple;
-	bh=mbB2OYhsmttHXACx8TRmeAQxR4jKbRmA13bsUZwPX94=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=JvuvbF2RViNmQrRJBsY5JnsHPnUdpGpkZaBzuuxZM2EbpJHJK7vNrEMf/KVF9cxgIeNWUPTtSIKF5i3ca6V23WiK7RpP7sKgUWY0u8trd1bm8eqjHDp4y1Qz9kFFG1E5A1q3zmqQMBowbo4l4sS01TAaHS5NqwT3dufQMG5d0rA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UaU9WOXt; arc=fail smtp.client-ip=52.101.56.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jdpIJAPaellpH1c2jDhC38evdb8kC3i3nb9hiDUdD7SW1qGyRnj/XtuTlPNKGm3Z3Mdfk38JaUcRso1DIEnhMhD36xBmd3Lc6S0raWYtnqLEjLRSoCAfhC7/OhDPXRP1ojirq1P8cftqJwLZD9rm7rZ3bEJyWnJuowU2IUAnLJzoajXFN2+dEA1wrrssf2o24+6iAt/mXZXF1Z3UAcSTgOVOWTzF+NGyrxVSFz5VJJGowNWHap17xMvGVPD01jYFp1E0sRzmaItbsE49b+6ZV7/CJUM/nubmwZueUOXBEWEulgoHo/68wDlyW/91QIQ0hNxalq+1/f/Q17B6jVJPYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HZLV6TLkpyXKI6p685Q5cCspLe8CW9PHZnr8wCQrRoI=;
- b=HqPnjLOZkZbHCfQNzFZtoFUzXXP1/OEsu0s1ClzHA+xI+VSbm5s3X9gxGC1nlTNcwEL/Q7eznIuqQdU3NMAEkYdoFZgN9/Yh95q/NJBckaEx0JpG2IL1MrsyZM1fg5+155T8NiPvXYFYnyq38WMardKDICRQU8cpfbt4rtbe2CFzBTyccY1YO/7dYrw+xPPlB7TUPnmRz6UVgJlORkr3MwAh+laBGW7k36RATmRWqJN7Jt9yYiJGCrn5bX8y7RrieFkiChFU99K1yw326A0SS3G0C0Zdrdb62tny5W4xps1jPkiHkIIL6VkP8Xh8MSwCySuD0QiiQBo+ONdmVupZ7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HZLV6TLkpyXKI6p685Q5cCspLe8CW9PHZnr8wCQrRoI=;
- b=UaU9WOXtKXMKWPS86j4gFvy2Sfk5BSe/qtNRBiOcBnHLySnJzYTljMbMQpxTknr3xT7WXJvg6A3RvxDeSbl0+65aFSjCXWwHFuENmRZnC9WT00uO2xduMTZd4PNpdy8PRf4SHsgJRv/YZ3oNOigkcMfuCvSJaOef38GW17tsJE4nr/f0TvFagRIJdBCFRwErfT6Q9jLL/Rrc5QDKcE4OObGRMqcgi3kUKg1rPkbHZBQcFAe4fAkznwdiIsgXGgzjqnI878dcBex24Myk9XSYoWvNoBILrgxSsSXCTBa8r4Ry/F17rH+w0norrcJysNHM2RYrkYPmQhXiMRa8J1viSw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB8056.namprd12.prod.outlook.com (2603:10b6:510:269::21)
- by DS0PR12MB6654.namprd12.prod.outlook.com (2603:10b6:8:d1::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Mon, 22 Sep
- 2025 19:01:29 +0000
-Received: from PH7PR12MB8056.namprd12.prod.outlook.com
- ([fe80::5682:7bec:7be0:cbd6]) by PH7PR12MB8056.namprd12.prod.outlook.com
- ([fe80::5682:7bec:7be0:cbd6%4]) with mapi id 15.20.9137.018; Mon, 22 Sep 2025
- 19:01:29 +0000
-Date: Mon, 22 Sep 2025 15:01:27 -0400
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, acourbot@nvidia.com,
-	Alistair Popple <apopple@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] rust: print: Fix issue with rust_build_error
-Message-ID: <20250922190127.GA2462108@joelbox2>
-References: <20250920161958.2079105-1-joelagnelf@nvidia.com>
- <DCXWEV3YO443.2EUZL32P96Z0D@kernel.org>
- <20250921004517.GA2101443@joelbox2>
- <CANiq72kDkAtYQ6fBb4gPEJqsS10qmXRRZj34gDWqjAQEvmXVPw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72kDkAtYQ6fBb4gPEJqsS10qmXRRZj34gDWqjAQEvmXVPw@mail.gmail.com>
-X-ClientProxiedBy: BN9P221CA0004.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:408:10a::12) To PH7PR12MB8056.namprd12.prod.outlook.com
- (2603:10b6:510:269::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2A41FF7C5
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 19:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758567969; cv=none; b=Jz1g/BDT7eAaSKTcozPWZNs9QPRF/eY7VHyE831S5QCPd8VuEkAq/ao2SrAVO8/OhO2Ee9+inExm3KjHKIG8+2oXG5wmmGEIQtvrlZ4Vdz3SB9LpXcpZK1Sv37b9F2SKA4gKqxBH2SKNr5QzY0tRzcFgda26xvYXHGG5Ipu8yHc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758567969; c=relaxed/simple;
+	bh=aFWXLiivJ4YUzHUPxpWbeSvezEsm51bwTeklbJQIcYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUhyWMQKiX6/UvqB6hFyMmvhpi/cuOJuxqRPy9eJo31eZeWOOtsJsCDkrUidwMmFOetry8NUa7tDrjZjH/wbLf4lq8YO1eJBV2ZJABZJspqR++/KQsLI0Ldz5KnUcH1OK7/gudn+m1lvDX17if++tc4Y9fo2zDlR4aqiSjdMCUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcWiGJof; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e1bc8ffa1so3730285e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:06:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758567965; x=1759172765; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xfkY5AXvD0ZvDWTOWzvtBozCzcTw2ZSBgWbw8Ju3dcg=;
+        b=LcWiGJofrtnq5/bRmWEFYgOAdl+fpACZajYlNS/jGSXsWm+7fq5cbf3BDdaTPSqfaM
+         f6JK8EwPcP7zMz4wfGAo0xnhi5KlBwG/VIErv6DuV2fIDak5Zu9uR8nGyi2N1h8A+/d1
+         +eliyOHNpVNUq1uDsvgZ9OVBt7ZKwx6obHNWyrwr16CI1lL4amEF+Rxq9WnyDKXGOnXf
+         Gvtnj7xXKfmXwCAysl3xxw2ThmZISVm75HXGV8AEHL1tkXjmKEU1O6XoQe6quWFTgwc4
+         cef+ou5O2eXdmn4laYUu1vhQRMvwJGj9OhDajlJNNLof/nR87M//y/Ob8FEa7GLKoDxo
+         CyIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758567965; x=1759172765;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xfkY5AXvD0ZvDWTOWzvtBozCzcTw2ZSBgWbw8Ju3dcg=;
+        b=n4LbBX4CCUehCOujz4mZGIZPX19qET1gYk1dwTwrklPvep05h4oXWlYM4yjhnu3jHY
+         tz662vJnkTezJ0YUkE2dFjetXyvAh3oolzxigWt5KtZqJgJ8eiuhWfY2n0RQ4xis7cjn
+         PSxSJ1NjNjt8ZmFN/62YF2B60XdNKcWRVUxXn118N4a910c7brnSSKBVCoaWIgHgxuSs
+         CglKssM+oQJx8W+HbSKAU8KjD7Xuy/uQHAUeqnj6KMPXCYjWMRyMy9J/VegNyLjFuZNF
+         rGB7CSgFnHFMJd+1hzWa+qwM70+IeY3MDoGjvE9LWD8/pYq2PWwJtf7sh/OK7kYaYI/V
+         +MBg==
+X-Gm-Message-State: AOJu0YzfTF6cd5u02FAWU7uXUWsvDZnvdRu43vTaj+fOD3AhrfwHlHFy
+	BeIge7Py5iF1vPpqwbMui6dIsPeGnlJQc1ouhrVVwIu2fN4yap2ieGU0
+X-Gm-Gg: ASbGncte0uzi/BDIinvnz5rb8sZLVO+h/QQ2JWBMAz6SY6ZZ1uiV20FU3ec6bO0wQ1s
+	AHnwr2kU4+YlvVEjcKpjNZ3ynjo1oc8WqA+QB4r4HHVzcF3f5qRcd6M68xJQtqRYI2WWrnt1/+U
+	KrdxmK5SjIBgNQcPcjOxBSf0KJS1EWgM19Up12V0laj+Z4LnvimpDGa7GYkElq0KnH2Xylxn3Jk
+	oxlrlG+faEAEzre8PBUtM1OZAM2DnuBmognR2MxJKenuxe2kVQj7Yv7MRkXYXd/ORkUh88cA+92
+	2hjfQIVVbe8OFfyPNDQ7P4mcXlR4Yn2l5S/o0TF24gSiJDEMWzXaWRo+i3BrU6OxF/E1nVfZ1N1
+	Kw2F6tLU7888xoVx3GtTG91djv5u4Pk+GScdrjA5NrX+UpSkdJVrGcGQM43pjDaVoGE4=
+X-Google-Smtp-Source: AGHT+IHiYtsZgQnnhYurpBqcCwqkq3VPjSs12XfFd0dBTlEzJMi+R4rGhaLrT5UZpoVZwHHVfGt4pA==
+X-Received: by 2002:a05:600c:6288:b0:46d:996b:8293 with SMTP id 5b1f17b1804b1-46e1dab26ccmr133545e9.22.1758567964495;
+        Mon, 22 Sep 2025 12:06:04 -0700 (PDT)
+Received: from antoni-VivoBook-ASUSLaptop-X512FAY-K512FA ([37.163.188.178])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46d1c97a87csm58186295e9.20.2025.09.22.12.06.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 12:06:04 -0700 (PDT)
+Date: Mon, 22 Sep 2025 21:05:49 +0200
+From: Antoni Pokusinski <apokusinski01@gmail.com>
+To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux@roeck-us.net,
+	rodrigo.gobbi.7@gmail.com, naresh.solanki@9elements.com,
+	michal.simek@amd.com, grantpeltier93@gmail.com,
+	farouk.bouabid@cherry.de, marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH 2/3] iio: mpl3115: add support for DRDY interrupt
+Message-ID: <20250922190549.22ly3ekwuflgbga7@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
+References: <20250921133327.123726-1-apokusinski01@gmail.com>
+ <20250921133327.123726-3-apokusinski01@gmail.com>
+ <073de1da8b8f04c037f267765235b3334941844f.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB8056:EE_|DS0PR12MB6654:EE_
-X-MS-Office365-Filtering-Correlation-Id: c39bc8e1-3dd2-47e9-c0a7-08ddfa0a703e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N0N4KzFuRDI2bnVYOCswUHBhQllUbHpXemRSN242RzIzNUI3TURZalNHQjJO?=
- =?utf-8?B?eGVjQWlrSmRtVWRXU0VzelZVRHlWV3ZVUTZtZDA2N01MK2JKNXNQbTJmNTRv?=
- =?utf-8?B?YXdVTUFMVGRxUXVNSVQ4b0xJeEt2RGl1clFlcFVWbDRUOEVkT2g2bHU2alNs?=
- =?utf-8?B?Rjc5eGJVZDNXK3MvT0krZnpGY3drMjdMaWxFNEg2bkRIWmpEUFZISDZacHdF?=
- =?utf-8?B?WlpqRGhuYktlVk5XSmlhYlc4MGxERkZoNm9pRGIwbEJHUWlDa1diVHpDTVFJ?=
- =?utf-8?B?VWo2KzFsQjVCcTBsTDFBUkZoM05LYm85SndWTlEvdXIxWnh0azcwaER0T0s0?=
- =?utf-8?B?dnB6dnh3WmNacmhYVWx1L1JnQzFWSjdmQitqem10cjMxWVZOdk5VQmlrZGgz?=
- =?utf-8?B?MjRHWTlvY0hMalgwcU8vdWN4c1JWTTdldXF1MmtyRjAzTTE2QVZFbVF5WVhT?=
- =?utf-8?B?RlROUlRWR0xKdGp1ekI2ZE5sY0h0OExrNlVHL3FhNUNVWDFXS3pSdHdtdVRI?=
- =?utf-8?B?V2YwRzBla25VY2lNc1NjVW1wdmJIZXc3R3BSS0VkMlp6RU96ZzRhL0NwTWxU?=
- =?utf-8?B?Y2szdXNWM09lRlRsUUVuNWtVdnZOemFFbGdrNmtUTGdhN0RrdnNFaWZ0all5?=
- =?utf-8?B?U1hWVkgrVXY1aDNOdlozVU5nOFFPS2swSm50NUtBYUg2bjAvWE56UEd2MXhK?=
- =?utf-8?B?dGszTXhuYlNGVWttc1JPTmdkV2pqSTJ1enNsYU04UW9TaGpsdjQzQVdkOFNh?=
- =?utf-8?B?dVhJKzRXck9sRUpxQ3FNeHdCQnB4NUIzNEphMm1ucGxDMU1YRWVPcTJ6OFdO?=
- =?utf-8?B?bjR3NVliRUdFRVEzQ0hhaGJ4Z2I3VkZYVlN4Ukt6b28xdzBJQmpkK0U1Y2Mz?=
- =?utf-8?B?M2FnYnpQSmpMMXhXUDZpQmVlTU13VlA1M0FpNE9IcUpUSlNXNlFUa3h5NkRt?=
- =?utf-8?B?d29aYTF3clFUbkFiK0Zsd09SbFdZNGZ5V1FEcDNtVmttMUxvR1hScmhPMWQ3?=
- =?utf-8?B?OXRNcC9hYlFxSnVSUXd0dUVjbFVPM1RDTW56c1FnRVUrZzdnUGFqQ0RWMmRE?=
- =?utf-8?B?VVdjUVVzUG14dEZVOGIvVkVoQXFWYWxCQ3czU2NkYk1Ea2xsRXRXdnQrcTU2?=
- =?utf-8?B?MEVEYmhQSjFVMk1WdEFUWXk1UkZLZzJWeDNIM2h3akw5K1JzZWRQaXN2dEh3?=
- =?utf-8?B?R0xzL3FzRDRlaHZkVUNrYkxUdWg1V1BxTFBBUW1ZeW4yamNYOFpNeHRTQXhT?=
- =?utf-8?B?Z0owMC8yaUJvOW5pbjFCQ2labTlsTytKZWI4LzdXN1BIZFFSZzFqZU9IL3hH?=
- =?utf-8?B?TTNkQ3VTcXE2Z2pTYXFBbjdDS3F3em1STUtiemRaU29IUCtnWlFTLys1dkVL?=
- =?utf-8?B?WW8yZ0NzODkrNkpqQnpXL3hrWlBIcEI1a3RlRFBkVzk2Uis2RnowaUVTTWxW?=
- =?utf-8?B?dHNxbnR0Z3BxNDBzeXhUN2FHM3hUaElMS0t1K1hkaEpob0s2dUxqR1hTY3Q2?=
- =?utf-8?B?Wm4xUC9DMEU2blZCM0tRZVhtZmg3dUllamhoaGF6YUZoMHZvbXc3a3JIVWZR?=
- =?utf-8?B?Wi9FekhodkQvS2JCMmEyQU56TFgwaUhBV25XKzEwd3Y1Z1VzSmRJQTZsYnYv?=
- =?utf-8?B?dE8wdk53ZHRIcElOOUFYY0x6ck1NQWkrVFFwclRBb2R2TEt1eEdjRHpoMlNz?=
- =?utf-8?B?WEhzcjI0cVRFQk5UeTQ0aWxkR3lXTnJqOXczQzBkLzVHTkpWanhLZnZYWkRS?=
- =?utf-8?B?cW8rSFVLMjJ4bVQwblZKbHlFclVLYjlTUWg1NXRHRWVxRE1kd2RabDFuWDFP?=
- =?utf-8?B?MFF2MjQxWXF6L1EwQW5SRmwyekhyVnp3aXY0Um5FQ3cxNUgzaXhGQzdHbWhs?=
- =?utf-8?B?N1Q4WVU0Y3lWRDh4ZXlLTkNickRpcmFUNHBtM0xQVEFieHJRL2cvbitqU1dj?=
- =?utf-8?Q?9RexYIXLwDM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB8056.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VG9YOC94ckJmU244WWpzSkh0aWExd2ZVbklGQlA2YmpUR1F6R3RoY05MQjVB?=
- =?utf-8?B?aE1WSlZjeHBtWUN6a0p1M1JCNGhmSUNhemgxc1hYZVRzV1U5aVVJeklwamo4?=
- =?utf-8?B?MkdKeGI5emZQd1J6L2JXbGFXbVBtbng5R0hLTUhOVjlHOUFJTXhtWWVxeWts?=
- =?utf-8?B?bHB2c2VXMUJqdU9ZTDIzSC81VTVBRXVURGUvcXMvTUw3VzVXeXh6Y3VFZWNU?=
- =?utf-8?B?NUFsY3U1NkJ5ZEM4OEliaDI4ak5TUU1ydVNmWUxubGQwSENiRkRjMzdlUWtI?=
- =?utf-8?B?RUJORDNyakh5dXQ3WVpsSG42aWxteDluRkllVzI4THN3ZjJNK1lhaWlWV1k0?=
- =?utf-8?B?VlVhZDA2Ym9QenM1OE02cTBOemlIQVBrbVZHS3AxcTRMWmZGR1p5RWJGTnZW?=
- =?utf-8?B?dnMzQ0R5UVRIKy90NEtWNlVidm5XRWVGNTJJdFhQNVMzbEcySXg2azZJOGtt?=
- =?utf-8?B?bnlDcWtVdG1BU1RXMHRuZnY5RUErYkwvMCtjSllwWElLMnY4TUdYcVI3SGd2?=
- =?utf-8?B?aThWclJ1R1h5TlM1ODROZXFnOVE4ZkMwMTE0MnF2RUFnZjVJcC9EWDdWUnZV?=
- =?utf-8?B?OCtNYXFSQ0RJYnkxQ1dLMXJqSlY1dkdHd1F0VG1NcFNSV0NCQnloUjhvRzVG?=
- =?utf-8?B?NE9QY1BJZkxxYk1XcmVudmVlK1lmdkV4TU5FSTZjcGZhOUhJbTBWbTZqZ2p3?=
- =?utf-8?B?WGFVZk1Ia2k3VzNZcGJ4REw5VExDRy9ESlNJQzA0K2ptb2luOW95OHdnVDF0?=
- =?utf-8?B?WjlaYWlwRXZ0clVFaWhrMWRWWVlFdHdIem1KWGpNRlF3WGhhcUZDL2pFakhE?=
- =?utf-8?B?cDNmckVXbkU3R0puTzJKbWtIdnc4OGJKZjJyZTdXZkJJc1kyVndsWWpOYnNz?=
- =?utf-8?B?aklkTTU1YkVtUHFjcE42Z3pDanVBc01KRVJEUjltamI1MW9qRFpvR2tSSlNw?=
- =?utf-8?B?clJHOUtHbExjQ1JSYUxINVRLajl6WXRkUjVtU2MyeU1FTlVwTUY5L3JOd0hl?=
- =?utf-8?B?NVdCTkhlN205VWd0T0FoZjZEeks3QUFCR1ZpbHFQY3E1R3REcktja3lBMkdp?=
- =?utf-8?B?RGgvNDBscDNoVktlTW1FbVZRb2FuWWwxaXZEQzJsam15cStUSDh6ZW91bTlz?=
- =?utf-8?B?K2daM1lpd00yaUJvVFZHSG1wa2ZJYk5mZ1g4NUJFczFWQStYb2NiQytCSTg3?=
- =?utf-8?B?ZXFJTXk1em9PcTJKdnJKVk5uM2FvTEdmamtWWHZJYjM5VFpMS3NCb21QTVli?=
- =?utf-8?B?OVNTZW8yckxCaEhEV0VySjFWaWNMRm0xQ0wrUi80UEx6RFVTMHMxODIvaHZD?=
- =?utf-8?B?UDdWdVVrTWd2ZHFjNHNhTDRuU3Jna2Q2b1VNdUxHb3lxODVtQmNhcXRVaGNr?=
- =?utf-8?B?cEJoVE5yWU5KMkdYdFd5UWtEKy9ORVhjNjZnQTh2eFZXQ1dnYnNNcFZkVzVw?=
- =?utf-8?B?aHVhUnJGdkRoWVcwR0cwT25PUG9zcUsrTDNlVktFNkdITllkTk54SFVLeTZY?=
- =?utf-8?B?OHRHa1Rla0I2dCtHMFRhY1VUQTZ6NUsraFVRcWh1TFhEUkMyc2h1aXp6VW9y?=
- =?utf-8?B?ZWptcjgwRWFQQ25EWktTVWFObzRvQlVERmlzVkRlWXpGdGYvYkpzNjlJaHl4?=
- =?utf-8?B?aUpLSTVFdUZOVmRLWHVMeVB1T2c2L0l1T3ZmZWRuS1BLUHp1Zm9ZM0FtSDUy?=
- =?utf-8?B?N3lXM2V0R3FMV1FYaTk3c3R5QUo1TEJERCtteUpyRTNLOVlTWHBIVFQ1dCtI?=
- =?utf-8?B?RXJxRWY0cW9HNXhXaURCWnZMUmI2RGhzamZHV24xdEcvN3lqdkpMN3QxTGlD?=
- =?utf-8?B?SVVOWnhOS0MvYXhIU0gvaUlOQ25nczkwbVBCWkpvU0dWQjlKTW5INW8rVDYz?=
- =?utf-8?B?T0xRYVBHM1pEa0dsaUpXTjR5UmE0cjJ4N0llZ0NaSGsvb3hRRmI4RTg2a05X?=
- =?utf-8?B?WnJHbDVXWThPUHFWaGtjV0hMNDY3NVkyekhWQWtMQ25ZdlZaaEJCeFBKRGJj?=
- =?utf-8?B?Nkx6dTRGN21Kd1B3RVBlZUlEMVBqOFB0djFuZUJXakhBQWhlNndtUWkrYktS?=
- =?utf-8?B?dEc3a2JzS2Rpd0ErblZWbm9OVS9CQmlRRXFzcUp1Q1BzR2F2T00vZU16VEFF?=
- =?utf-8?Q?cdYbhFRVJKRXvlva12/lU123i?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c39bc8e1-3dd2-47e9-c0a7-08ddfa0a703e
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB8056.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 19:01:29.7913
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 76YlzYuHimcAFjQUdL5MU05V5chgOGT3Y7A8SSBP2TXaVpbjO8rKVt3HSE4bdWa1k5VALG/hxC69t5pDMzf1zw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6654
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <073de1da8b8f04c037f267765235b3334941844f.camel@gmail.com>
 
-On Sun, Sep 21, 2025 at 11:13:11AM +0200, Miguel Ojeda wrote:
-> On Sun, Sep 21, 2025 at 2:45â€¯AM Joel Fernandes <joelagnelf@nvidia.com> wrote:
-> >
-> > But even if the pointer is a C const pointer, LLVM seems to
-> > always want to reload it.
+On Mon, Sep 22, 2025 at 10:15:19AM +0100, Nuno Sá wrote:
+> On Sun, 2025-09-21 at 15:33 +0200, Antoni Pokusinski wrote:
+> > MPL3115 sensor features a "data ready" interrupt which indicates the
+> > presence of new measurements.
+> > 
+> > Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
+> > ---
+> >  drivers/iio/pressure/mpl3115.c | 167 ++++++++++++++++++++++++++++++++-
+> >  1 file changed, 162 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/iio/pressure/mpl3115.c b/drivers/iio/pressure/mpl3115.c
+> > index 579da60ef441..cf34de8f0d7e 100644
+> > --- a/drivers/iio/pressure/mpl3115.c
+> > +++ b/drivers/iio/pressure/mpl3115.c
+> > @@ -7,7 +7,7 @@
+> >   * (7-bit I2C slave address 0x60)
+> >   *
+> >   * TODO: FIFO buffer, altimeter mode, oversampling, continuous mode,
+> > - * interrupts, user offset correction, raw mode
+> > + * user offset correction, raw mode
+> >   */
+> >  
+> >  #include <linux/module.h>
+> > @@ -17,26 +17,45 @@
+> >  #include <linux/iio/trigger_consumer.h>
+> >  #include <linux/iio/buffer.h>
+> >  #include <linux/iio/triggered_buffer.h>
+> > +#include <linux/iio/trigger.h>
+> >  #include <linux/delay.h>
+> > +#include <linux/property.h>
+> >  
+> >  #define MPL3115_STATUS 0x00
+> >  #define MPL3115_OUT_PRESS 0x01 /* MSB first, 20 bit */
+> >  #define MPL3115_OUT_TEMP 0x04 /* MSB first, 12 bit */
+> >  #define MPL3115_WHO_AM_I 0x0c
+> > +#define MPL3115_INT_SOURCE 0x12
+> > +#define MPL3115_PT_DATA_CFG 0x13
+> >  #define MPL3115_CTRL_REG1 0x26
+> > +#define MPL3115_CTRL_REG3 0x28
+> > +#define MPL3115_CTRL_REG4 0x29
+> > +#define MPL3115_CTRL_REG5 0x2a
+> >  
+> >  #define MPL3115_DEVICE_ID 0xc4
+> >  
+> >  #define MPL3115_STATUS_PRESS_RDY BIT(2)
+> >  #define MPL3115_STATUS_TEMP_RDY BIT(1)
+> >  
+> > +#define MPL3115_CTRL_INT_SRC_DRDY BIT(7)
+> > +
+> > +#define MPL3115_PT_DATA_EVENT_ALL (BIT(2) | BIT(1) | BIT(0))
+> > +
+> >  #define MPL3115_CTRL_RESET BIT(2) /* software reset */
+> >  #define MPL3115_CTRL_OST BIT(1) /* initiate measurement */
+> >  #define MPL3115_CTRL_ACTIVE BIT(0) /* continuous measurement */
+> >  #define MPL3115_CTRL_OS_258MS (BIT(5) | BIT(4)) /* 64x oversampling */
+> >  
+> > +#define MPL3115_CTRL_IPOL1 BIT(5)
+> > +#define MPL3115_CTRL_IPOL2 BIT(1)
+> > +
+> > +#define MPL3115_CTRL_INT_EN_DRDY BIT(7)
+> > +
+> > +#define MPL3115_CTRL_INT_CFG_DRDY BIT(7)
+> > +
+> >  struct mpl3115_data {
+> >  	struct i2c_client *client;
+> > +	struct iio_trigger *drdy_trig;
+> >  	struct mutex lock;
+> >  	u8 ctrl_reg1;
+> >  };
+> > @@ -164,10 +183,12 @@ static irqreturn_t mpl3115_trigger_handler(int irq, void
+> > *p)
+> >  	int ret, pos = 0;
+> >  
+> >  	mutex_lock(&data->lock);
+> > -	ret = mpl3115_request(data);
+> > -	if (ret < 0) {
+> > -		mutex_unlock(&data->lock);
+> > -		goto done;
+> > +	if (!(data->ctrl_reg1 & MPL3115_CTRL_ACTIVE)) {
+> > +		ret = mpl3115_request(data);
+> > +		if (ret < 0) {
+> > +			mutex_unlock(&data->lock);
+> > +			goto done;
+> > +		}
+> >  	}
+> >  
+> >  	if (test_bit(0, indio_dev->active_scan_mask)) {
+> > @@ -228,10 +249,142 @@ static const struct iio_chan_spec mpl3115_channels[] =
+> > {
+> >  	IIO_CHAN_SOFT_TIMESTAMP(2),
+> >  };
+> >  
+> > +static irqreturn_t mpl3115_interrupt_handler(int irq, void *private)
+> > +{
+> > +	struct iio_dev *indio_dev = private;
+> > +	struct mpl3115_data *data = iio_priv(indio_dev);
+> > +	int ret;
+> > +
+> > +	ret = i2c_smbus_read_byte_data(data->client, MPL3115_INT_SOURCE);
+> > +	if (ret < 0)
+> > +		return IRQ_HANDLED;
+> > +
+> > +	if (!(ret & MPL3115_CTRL_INT_SRC_DRDY))
+> > +		return IRQ_NONE;
+> > +
+> > +	iio_trigger_poll_nested(data->drdy_trig);
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +static int mpl3115_set_trigger_state(struct iio_trigger *trig, bool state)
+> > +{
+> > +	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
+> > +	struct mpl3115_data *data = iio_priv(indio_dev);
+> > +	int ret;
+> > +	u8 ctrl_reg1 = data->ctrl_reg1;
+> > +
+> > +	if (state)
+> > +		ctrl_reg1 |= MPL3115_CTRL_ACTIVE;
+> > +	else
+> > +		ctrl_reg1 &= ~MPL3115_CTRL_ACTIVE;
+> > +
+> > +	guard(mutex)(&data->lock);
+> > +
 > 
-> What do you mean by this? I think I mentioned in the other thread that
-> a C pointer to const still allows the callee to change the value.
-
-Apologies, indeed a const pointer in C does not mean the pointee cannot be
-modified.
-
-I think I somewhat understand the issue but still not fully. MIR optimization
-is supposed to optimize away the dead code in build_assert. This is what I
-see for "good" cases when things work.
-
-But the information that the data being printed is an immutable reference, is
-lost somehow during MIR optimization phase when a printk is involved.  Per the
-github issue [1], there is likely some provenance information in the immutable
-reference to the data, that gets lost during "MIR inlining" optimization. In
-other words, this is not an LLVM problem as I was pointing out, but an MIR
-optimization problem.  Benno/Gary correct me anything I said is wrong.
-
-I guess I still have a few more questions:
-
-1. What is being inlined when we talk about MIR inlining? The print
-statement? Constructor to the Argument object? Something else?
-
-2. What does 'noalias' mean in the github report [1], and why would that effect
-'MIR inlining'?
-
-3. Why does LLVM inlining still succeed when MIR inlining is disabled? This
-has something to do with a new llvm feature Niki referred to in the report.
-
-thanks,
-
- - Joel
-[1] https://github.com/rust-lang/rust/issues/146844
-
+> As Andy pointed out, you should have a precursor patch converting the complete
+> driver to use the cleanup logic.
+> 
+> Another nice cleanup you could do (if you want of course) would be to get rid of
+> mpl3115_remove().
+> 
+Will add the precursor patch in v2
+> > +	ret = i2c_smbus_write_byte_data(data->client, MPL3115_CTRL_REG1,
+> > +					ctrl_reg1);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = i2c_smbus_write_byte_data(data->client, MPL3115_CTRL_REG4,
+> > +					state ? MPL3115_CTRL_INT_EN_DRDY :
+> > 0);
+> > +	if (ret < 0)
+> > +		goto reg1_cleanup;
+> > +
+> > +	data->ctrl_reg1 = ctrl_reg1;
+> > +
+> > +	return 0;
+> > +
+> > +reg1_cleanup:
+> > +	i2c_smbus_write_byte_data(data->client, MPL3115_CTRL_REG1,
+> > +				  data->ctrl_reg1);
+> > +	return ret;
+> > +}
+> > +
+> > +static const struct iio_trigger_ops mpl3115_trigger_ops = {
+> > +	.set_trigger_state = mpl3115_set_trigger_state,
+> > +};
+> > +
+> >  static const struct iio_info mpl3115_info = {
+> >  	.read_raw = &mpl3115_read_raw,
+> >  };
+> >  
+> > +static int mpl3115_trigger_probe(struct mpl3115_data *data,
+> > +				 struct iio_dev *indio_dev)
+> > +{
+> > +	struct fwnode_handle *fwnode;
+> > +	int ret, irq, irq_type;
+> > +	bool act_high, is_int2 = false;
+> > +
+> > +	fwnode = dev_fwnode(&data->client->dev);
+> > +	if (!fwnode)
+> > +		return -ENODEV;
+> > +
+> 
+> And to add to Andy's review, fwnode_irq_get_byname() will give you an error
+> anyways if !fwnode.
+> 
+> > +	irq = fwnode_irq_get_byname(fwnode, "INT1");
+> > +	if (irq < 0) {
+> > +		irq = fwnode_irq_get_byname(fwnode, "INT2");
+> > +		if (irq < 0)
+> > +			return 0;
+> > +
+> > +		is_int2 = true;
+> > +	}
+> > +
+> > +	irq_type = irq_get_trigger_type(irq);
+> > +	switch (irq_type) {
+> > +	case IRQF_TRIGGER_RISING:
+> > +		act_high = true;
+> > +		break;
+> > +	case IRQF_TRIGGER_FALLING:
+> > +		act_high = false;
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	ret = i2c_smbus_write_byte_data(data->client, MPL3115_PT_DATA_CFG,
+> > +					MPL3115_PT_DATA_EVENT_ALL);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	if (!is_int2) {
+> > +		ret = i2c_smbus_write_byte_data(data->client,
+> > +						MPL3115_CTRL_REG5,
+> > +						MPL3115_CTRL_INT_CFG_DRDY);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +	if (act_high) {
+> > +		ret = i2c_smbus_write_byte_data(data->client,
+> > +						MPL3115_CTRL_REG3,
+> > +						is_int2 ? MPL3115_CTRL_IPOL2
+> > :
+> > +							 
+> > MPL3115_CTRL_IPOL1);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> > +	data->drdy_trig = devm_iio_trigger_alloc(&data->client->dev,
+> > +						 "%s-dev%d",
+> > +						 indio_dev->name,
+> > +						 iio_device_id(indio_dev));
+> > +	if (!data->drdy_trig)
+> > +		return -ENOMEM;
+> > +
+> > +	data->drdy_trig->ops = &mpl3115_trigger_ops;
+> > +	iio_trigger_set_drvdata(data->drdy_trig, indio_dev);
+> > +	ret = iio_trigger_register(data->drdy_trig);
+> 
+> devm_iio_trigger_register()
+> 
+> - Nuno Sá
+>
+Will fix in v2
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	indio_dev->trig = iio_trigger_get(data->drdy_trig);
+> > +
+> > +	return devm_request_threaded_irq(&data->client->dev, irq,
+> > +					 NULL,
+> > +					 mpl3115_interrupt_handler,
+> > +					 IRQF_ONESHOT,
+> > +					 "mpl3115_irq",
+> > +					 indio_dev);
+> > +}
+> > +
+> >  static int mpl3115_probe(struct i2c_client *client)
+> >  {
+> >  	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+> > @@ -271,6 +424,10 @@ static int mpl3115_probe(struct i2c_client *client)
+> >  	if (ret < 0)
+> >  		return ret;
+> >  
+> > +	ret = mpl3115_trigger_probe(data, indio_dev);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> >  	ret = iio_triggered_buffer_setup(indio_dev, NULL,
+> >  		mpl3115_trigger_handler, NULL);
+> >  	if (ret < 0)
 
