@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-827510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95BE3B91F1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F3E0B91F17
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 743367A87EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:31:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DFAE7A7336
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC752E972C;
-	Mon, 22 Sep 2025 15:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24F22E8897;
+	Mon, 22 Sep 2025 15:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uyq2eQkc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSPOkrAw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7E72E7BDC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A76F2E764B
 	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758555123; cv=none; b=KQq2OiYswy2nyCRe5Lpf3Da3eT8yrAx3saYNpW9f+LoU6gKa4Vn988SpM+YjSvQik5E2u98mDx7awYDKVGrmDALzZUKeYCylLqUIrk4EPoWyG7NzxY7DtnxhYQSdu1eQtl7QeJW89C80TG8S2XOC2RP4RV1EnptbNLwMdO6Zj/Y=
+	t=1758555123; cv=none; b=Xvrcac+MvfGnsk3adOnSgfh3v2uc96bO+UBIi7V5yX0S+WRooCKpuhJjuh6O10RTpKgoj7kalrput6IrHPjW1PVQiRpTSzBUubPjCTWmk6lvFG1crPY5Zo8em6ZHa96FLkbmqHLD9dW0hvGKQL+BWXsdpkoXikhOjk9EAbt97J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758555123; c=relaxed/simple;
-	bh=bClmoRfRjjOnU9fmAIB3gBoOykMbWx45Ktd4MD4g5Ew=;
+	bh=SfaFrl4QZz0bkddp7YAsKSPz8h9hoenE26+Qxca49Cg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Hhr5NFyEdAG2YaZkx9FRDg7UEbjZPKwF6nYjwAXpJ9tWMR1msf6tY+1mQ1LcnV+gki8prbIPqhKZBMqTrIiKUKVPpJfzNnyd0FDNXNMCmyhdeMzJJoZFQwn4tattoUw3lt7rcNkZnhol8tsHjco3iZg6nEaO4weuX8I/yiyOIrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uyq2eQkc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB8EDC19425;
+	 MIME-Version; b=eNADlpOh/ScnWknTv56HOu8Wt8biH607I5QMM5vm31C5J5rNxsaDnjsK0UzYuw7E44DQMaHworCr/1TJI/rYkxjj6GFfONXT42Plo7Fhbfnj3Hc79XHAw06J4KdvFaeZD0NGEpRusjNJy/oE5tEtvkA3gw2D6SSPXY3YHyRUEwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSPOkrAw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB861C19424;
 	Mon, 22 Sep 2025 15:32:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1758555122;
-	bh=bClmoRfRjjOnU9fmAIB3gBoOykMbWx45Ktd4MD4g5Ew=;
+	bh=SfaFrl4QZz0bkddp7YAsKSPz8h9hoenE26+Qxca49Cg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Uyq2eQkc8WJECeQgTxdjUWWuCtoxtnjjeTtJbwif/K+LgqdFe6CdNrek2IIRAzCEc
-	 5EeeQ5lZJsSWJDSD60fzTU1EfkjBvcjrhlCchYrUOmRKatPjWV+xVGHS/7UYH+oBnR
-	 qqTaQmPKmtunFKo3hNNIE6xGAKEeOO4TOGyId7paV3+F1O+1+6WUE9TMSDW2jRNGJt
-	 tAihBprq3oqUSDSf+6C3CiH9G8hjhibigfm6PNlmNsjU5vOMxAcXCc6OfwrPWMMKdx
-	 QFtjUaKVew8XFyWKpBh93zLcFgX0a4mAq8PmxMlfQg93OoPMDgfCaOxxjw7FNe+SzJ
-	 5ImZrgw3fdaHg==
+	b=RSPOkrAwxVhlLva+kII+0FJHAR0eNKTqECqic4+PAVCuE4eqk7ooafrFxWCnltglU
+	 tMVsBTMGWAYkbapenkNHfeZef6UQJhu2w300uk+hEmCwGfxv2VXzbueMe1++4EU1Px
+	 QFw1Kx4f25xVrmUEGsvK0AvqiENk5Lzj86gODINbeNV+hb3JkXkquSeEm1khf5usU8
+	 mmiIyMuF3/0eK8PmV1veEFGDj16Z3md+IUbWyjj8YwWsW56B/NTPK4oDL6cyGsDW7e
+	 qXvWEvsp6CCFAAsViFmxyybQrX0hvXH5w54S5sH+7L4ILJcPbC7Sa34uqFF+ywT5Ql
+	 7Ir4Ztfd20jBg==
 Received: from johan by xi.lan with local (Exim 4.98.2)
 	(envelope-from <johan@kernel.org>)
-	id 1v0iWC-000000004Hm-1Tv3;
+	id 1v0iWC-000000004Hp-1rny;
 	Mon, 22 Sep 2025 17:31:56 +0200
 From: Johan Hovold <johan@kernel.org>
 To: Miquel Raynal <miquel.raynal@bootlin.com>
@@ -63,9 +63,9 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
 	linux-mtd@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4/8] mtd: rawnand: omap2: drop unused module alias
-Date: Mon, 22 Sep 2025 17:31:03 +0200
-Message-ID: <20250922153107.16381-5-johan@kernel.org>
+Subject: [PATCH 5/8] mtd: rawnand: pl353: drop unused module alias
+Date: Mon, 22 Sep 2025 17:31:04 +0200
+Message-ID: <20250922153107.16381-6-johan@kernel.org>
 X-Mailer: git-send-email 2.49.1
 In-Reply-To: <20250922153107.16381-1-johan@kernel.org>
 References: <20250922153107.16381-1-johan@kernel.org>
@@ -77,26 +77,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The driver only supports OF probing since commit 086c321ec57b ("mtd:
-nand: omap2: Remove omap_nand_platform_data") so drop the unused
-platform module alias.
+The driver has never supported anything but OF probing so drop the
+unused platform module alias.
 
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/mtd/nand/raw/omap2.c | 1 -
+ drivers/mtd/nand/raw/pl35x-nand-controller.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/raw/omap2.c b/drivers/mtd/nand/raw/omap2.c
-index 61fd98ad5c78..39e297486721 100644
---- a/drivers/mtd/nand/raw/omap2.c
-+++ b/drivers/mtd/nand/raw/omap2.c
-@@ -2332,6 +2332,5 @@ static struct platform_driver omap_nand_driver = {
+diff --git a/drivers/mtd/nand/raw/pl35x-nand-controller.c b/drivers/mtd/nand/raw/pl35x-nand-controller.c
+index 09440ed4652e..a7dc45c7f214 100644
+--- a/drivers/mtd/nand/raw/pl35x-nand-controller.c
++++ b/drivers/mtd/nand/raw/pl35x-nand-controller.c
+@@ -1193,6 +1193,5 @@ static struct platform_driver pl35x_nandc_driver = {
+ module_platform_driver(pl35x_nandc_driver);
  
- module_platform_driver(omap_nand_driver);
- 
--MODULE_ALIAS("platform:" DRIVER_NAME);
+ MODULE_AUTHOR("Xilinx, Inc.");
+-MODULE_ALIAS("platform:" PL35X_NANDC_DRIVER_NAME);
+ MODULE_DESCRIPTION("ARM PL35X NAND controller driver");
  MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("Glue layer for NAND flash on TI OMAP boards");
 -- 
 2.49.1
 
