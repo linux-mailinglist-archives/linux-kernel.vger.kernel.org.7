@@ -1,219 +1,114 @@
-Return-Path: <linux-kernel+bounces-827837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CB1B933BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:30:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3327B933BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69A087A4D03
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:28:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C976170915
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EE4257855;
-	Mon, 22 Sep 2025 20:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231E9255222;
+	Mon, 22 Sep 2025 20:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsdio.com header.i=@bsdio.com header.b="nyo6oT3T";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="U/yyLiv+"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bvWDYbj3"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71797261D;
-	Mon, 22 Sep 2025 20:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F5651022
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 20:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758573027; cv=none; b=MW26O1LEHEcLD0yUikZ4NXCoEgi+UwMaN5mx016GvvioOQp0MtTsmPzCuJ9q98RRczpwojWMQ4SzQS74ZXY+KM1GVCLXX8iLk81d+AX3baKdg1VekPja/IBKZ6fJ5nJ1xrE1qVj4pvfvr4FrmB4TtoWUHP0/EgT1FG+gykkvphg=
+	t=1758573074; cv=none; b=gdkJnux+yIQC2bVPEpXEgUFGHB604yvnwYBfT1/tdk3lINPk5YeLodOTfSLVcp8d+WwOxzQxv3ccUQiclmPe07eXmjP/8pAGvNTyS6Etw6ctYbmWbxbzaiwXagMoavWJkeMP/8cAKuOA0OfErF3eHLgVsxhSaEj2xXXQzTTFYhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758573027; c=relaxed/simple;
-	bh=OfAHROsZ/7AD+4yQPz8CC8L4N9Jmv4p9hLytTyE08bE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z6cBRJlNIY5lNw47dnRZzXI8awifbA3e7Uct5KYKAGV+S4mJ/K8W/AC7e12fmmeJpHkD0DhSQhZUbwgveTKviMHDdKQodG0n6yZ0IspRbn+5Vq79Ej4Jwsit6rnxACKLXv1pycjO1n75yyTukrqSpGMOpWcSV+TA7t1fN1CKlBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bsdio.com; spf=fail smtp.mailfrom=bsdio.com; dkim=pass (2048-bit key) header.d=bsdio.com header.i=@bsdio.com header.b=nyo6oT3T; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=U/yyLiv+; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bsdio.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=bsdio.com
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id B78311400195;
-	Mon, 22 Sep 2025 16:30:24 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Mon, 22 Sep 2025 16:30:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsdio.com; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1758573024;
-	 x=1758659424; bh=f21DJ6iYS1AxepjbbwpyUgIz1EeYo2MNWy5iIbDBSNA=; b=
-	nyo6oT3TzFlY5I0WXnpyAEAGvwZ7yrOX381aUcW9MCrYjV1HUsv9GNg3x9EVY5/Y
-	QWL6QAHCBzf4jqps7hUL3qLz08wWgu5L9PApxBmv5Nq2GjC2S9Mw32eH7y5FSsrL
-	mfMy+vxc2HGCVhIXq5c7ufejrBWddxrhN7H/vmBJ6lIfF2d29hXEE4guxmCGb6O2
-	tAN9UZB/6gYpk3kLx+AOh7wcP9SFQxEWxTgBKNMOYxfIg694Z2HsKPnMoL+Ll5Xv
-	wA9u54MFXg7WqqinMg3l/QI9rhMTX1kA1HkQpcYjsI1CL34LwrH+rbI6Q/DcrN91
-	PsPP3aIPgrWohrbWxj925w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758573024; x=
-	1758659424; bh=f21DJ6iYS1AxepjbbwpyUgIz1EeYo2MNWy5iIbDBSNA=; b=U
-	/yyLiv+pWD3PyJ3colP+XRK6MtW9++tb2sQ00VzQVnQg92g9ccest3ombaG+YE9Z
-	Krp5L8hUTSwwYZBpJHra0KTIURfdnOoyX97uyApKmoZpR+6I9N3SkjCLej4/U4LK
-	W27W/vuevB1bUNXLn79QfBKen7v8V4DZpm0g34qjTPm4Th2j7O3z714F5uVU9yol
-	YAOQTQVGV2eFRnFHuR0t+gdIMGUv+R5x9d/FkA6uAN01QUeF4gXdInta6cHiDpUO
-	hmWokA3rolCedc/plYPHvqBVG/la2lgP/LZNJurANuWShYf7RfoIoqu2BtqcwujY
-	ZqmsIN51rVyGYb1xe6s3g==
-X-ME-Sender: <xms:37HRaIwsafr6gF3kyW0TLuRr05Zet02ihsvoDiCsstmJ3xvHKBm5hQ>
-    <xme:37HRaIKSwoxwHK11CbSILFjipTABJQ4lz85Fs-wSsrqBypGmoJEqed1pxua3eIG4x
-    RWTyUIAPiBNQ6FvK89blT_-RMo88N3Ez91tGliBzaMVDccw0QqEklnX>
-X-ME-Received: <xmr:37HRaHVIHFrvchhMAVw8xJPWG_KL1xYPiWSMNivnGnuUo4hlX_T7MeUbQC7yDEsqLf51VWu0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehkeekudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptfgvsggvtggt
-    rgcuvehrrghnuceorhgvsggvtggtrgessghsughiohdrtghomheqnecuggftrfgrthhtvg
-    hrnheplefhgeevleehieeuveduudfguedtieetteevhffgfffhhffhveffueegtdegkeek
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgvsg
-    gvtggtrgessghsughiohdrtghomhdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhm
-    thhpohhuthdprhgtphhtthhopeiivghvsegsvgifihhluggvrhgsvggvshhtrdhnvghtpd
-    hrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdo
-    ughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepjhhovghlsehjmhhsrdhiugdrrghupdhrtghpthhtohep
-    rghnughrvgifsegtohguvggtohhnshhtrhhutghtrdgtohhmrdgruhdprhgtphhtthhope
-    guvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
-    ihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
-    dprhgtphhtthhopehlihhnuhigqdgrshhpvggvugeslhhishhtshdrohiilhgrsghsrdho
-    rhhg
-X-ME-Proxy: <xmx:37HRaLZiMcZINQDA-uN_LIPEmV_2dg0aaXPTlLUgkpr3xZ7YeQEAKA>
-    <xmx:37HRaOzEz13wT_YWvqqDiFluHmxDfIwe9y7cAe2MqgagHS8kgzgsSw>
-    <xmx:37HRaL0doQA-z0ua5-aE69gyuEoO6O8YFf-A-gIHr5jrgYcwcxbgVA>
-    <xmx:37HRaPkNGJxoOUR2aaf1rlJRRsI-G33G6vzTzi4gAB_GkHccQ5D49Q>
-    <xmx:4LHRaF988bm42vHCFUaajGuBKhBjIO4Bn-IfDrAeVWs788Ar0EZuBfyb>
-Feedback-ID: i5b994698:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 22 Sep 2025 16:30:22 -0400 (EDT)
-Message-ID: <354c5977-2bab-446f-9ae0-b01d678fd74f@bsdio.com>
-Date: Mon, 22 Sep 2025 14:30:21 -0600
+	s=arc-20240116; t=1758573074; c=relaxed/simple;
+	bh=MJEFNOBSo3SKM5qiYRxxqoiLN0A/+xJxbSym8TLAOgE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eDgC5ZLNToPQmgMk+a3/z5R9BBx9IDOI6bE4/HEFqVf89YstU98+1uNGVtD7CbWufdb06/Eik+uS/G5dU2fhqHXUItYNandso4DAaOSe8DVWLJmMoqeh6MyvEYmPK7dCew0D/TZY0scqW65IjUQHrynZNwkiH8p2oo/8CgAw03s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bvWDYbj3; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-267f15eb5d3so7040095ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:31:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758573072; x=1759177872; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IcwSM1XGta2EiHK7PYQk1Nst2JShxKlF4k281BKxKcw=;
+        b=bvWDYbj3iqME7AmlblHpwc+1M5ztBJOGASqHVlb/kZLva/72avzSR19LqgOH2RelOn
+         7do6odcBZpcHxaeSOMY9yKKjO8m6vuJGhPQNuGl1MSz6SZm4av5TUNbUvXcDiTok23dq
+         TXXZ0tvsHfmZqo1Beaam8sUsNnKpz/4YZOlkdeRD+VcaQNKMfDU8roMZ9yP1PI565mEL
+         NFwlUp4qcAVOoJG/+ugesrgxUdPiCAalF38eZcMsr5RlCgok0as1Y+ukUX5igbaBs8w7
+         LqMfKTRvpJ1VatoFKgNUD21yT3ee1HGZTtLEDCaojN5ZNBXLoFcgkEl3cL/aA0pMQvpc
+         kvwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758573072; x=1759177872;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IcwSM1XGta2EiHK7PYQk1Nst2JShxKlF4k281BKxKcw=;
+        b=m/SKQyb2mOFA4Oy4Woa2rctZLSahU4aXImF71zsgKXj9GtmxmavHmb7uUHaxjQ1+ff
+         F4BBrZRbFYi11F9YKf4nu40wyn/blwhyUPdChjcvV3bM1n7QDGrIYJVRsywNcsyd80RZ
+         CxwfK90KI772fuYacxBLzQqFUhwFxFE8flpIESqdcEA3R/AMg8Lc197VygN9nPSTfoCY
+         ILgJZ72Qbdh69f9Pn6oyoHzlV0Z2fPNVq2gp6DwsTPdfRSX3zLYO2dv/v5pLMNmfHkUH
+         oJs6JNo0NuHkt3yU1kPoSJvRtNgopRzsXmgZYSasBNWPEKBi6ah5dJkWcbRYR+07Y0FV
+         69XA==
+X-Forwarded-Encrypted: i=1; AJvYcCWH4NBgzFpwKMTrfFHlnwy+nC5PyJ+qEy/SnipYCFg3vBrfERn3UFNGpz1HecdAv0yI6CDQ8n88B+o1reo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwownuHudSI9rVuLfsWLpWmR9SoJ0H8oCBaG/9gNszO25cKc5hV
+	EnOX1PU7YtJn2Wl/8c6RYdQFWlJzjMErzn2kGn/KgLGBuFn6MVdK9R0VNSeUAxKkNaIn0BI+juG
+	hEmPx+K8TWS9ZlycyFYh8MTipEYHdchQ=
+X-Gm-Gg: ASbGnctm/xyqRGd86j/4ZKZdq1xD3pVOCVJTBLbr2ZpNIOfdouZyU4RuJAne8OaJdZN
+	RPo/QjQjxXVLS/LUdg5FdyYMxZSvjkIFW8P+so01TRi0Q6pExzZv8ADWHWmhutZa4g+IQYr164h
+	WSNs1dUYi0w7WaJ7K6mqnK2XoC8ql8emeP7rRg0Espffc0ntyxswyLpuhEsXQN7jI8G5zWNkkLF
+	A0pSo776/lLx7twV8VmrHycb32ZBQfbgsFL7+kZ2oMODTX/ylWbQxOQqnF3il3eNBt9H6tSgaxh
+	8KGIg0TOEXeLWcfXo61VC/8Pbg==
+X-Google-Smtp-Source: AGHT+IGXlLgoOnlIi0xB27xbNnE/Gt3cViOhpVvylnU7nHRlbjGJ/bgbhPyP5R4jQ61rPO6JCpcQYEV2WsDmAL4iq+E=
+X-Received: by 2002:a17:902:d48f:b0:272:f27d:33bd with SMTP id
+ d9443c01a7336-27cbb8b9fd0mr1155245ad.0.1758573072387; Mon, 22 Sep 2025
+ 13:31:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] ARM: dts: aspeed: add device tree for ASRock Rack
- ALTRAD8 BMC
-To: Zev Weiss <zev@bewilderbeest.net>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-References: <20250917180428.810751-1-rebecca@bsdio.com>
- <20250917180428.810751-3-rebecca@bsdio.com>
- <66c5bf80-a3ef-4984-82ce-6d1720b15d38@hatter.bewilderbeest.net>
-Content-Language: en-US
-From: Rebecca Cran <rebecca@bsdio.com>
-In-Reply-To: <66c5bf80-a3ef-4984-82ce-6d1720b15d38@hatter.bewilderbeest.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250813-cstr-core-v15-0-c732d9223f4e@gmail.com>
+In-Reply-To: <20250813-cstr-core-v15-0-c732d9223f4e@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 22 Sep 2025 22:31:00 +0200
+X-Gm-Features: AS18NWB6PmBlAWRUNDsKcUzY6cTwjDnURYFePpOCqHbTRGNIsxmxdgZIFpfQAjE
+Message-ID: <CANiq72nyQiHCvbTw1+njf3ZWYsK-f603iY-oox=9dMyfeCE8rg@mail.gmail.com>
+Subject: Re: [PATCH v15 0/4] rust: replace kernel::str::CStr w/ core::ffi::CStr
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/22/25 00:29, Zev Weiss wrote:
-> Here and on most of the other i2c busses, is there a particular reason 
-> we want this bus-frequency explicitly specified?  100kHz is the 
-> default according to 
-> Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml (and the other 
-> existing aspeed-bmc-asrock-*.dts files leave it at that implicit 
-> default, FWIW).
-
-There's no particular reason - I've deleted them.
-
-> It looks like this device only monitors temperatures?  If so, perhaps 
-> temperature-sensor@29 would be a slightly more appropriate node name.
-
-The chip can also monitor power supply voltages and fan speeds but on 
-this board it's only used as a temperature sensor, so I'll change the 
-node name.
-
-> channel@1 and channel@2 block bodies look over-indented by one level 
-> here.
-
-Thanks - fixed.
-
-> Are these correct?  On every other ASRock board I've dealt with, the 
-> eth0 address is at 0x3f80 and eth1 is at 0x3f88.
+On Wed, Aug 13, 2025 at 5:45=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
 >
-> If so and they are really for some reason swapped on this platform, as 
-> a slight nitpick I might suggest swapping the order the nodes are 
-> listed in so they go in order of increasing addresses.
+>       rust: macros: reduce collections in `quote!` macro
 
-After installing the latest 3.06 BMC firmware from the ASRock website, 
-I'm seeing:
+Applied this one for the moment -- thanks everyone!
 
-root@altrad8ud-1l2t:~# ifconfig
-eth0      Link encap:Ethernet  HWaddr 9C:6B:00:43:0B:F7
-           inet addr:10.0.0.25  Bcast:10.0.0.255 Mask:255.255.255.0
-           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-           RX packets:457 errors:0 dropped:0 overruns:0 frame:0
-           TX packets:240 errors:0 dropped:0 overruns:0 carrier:0
-           collisions:0 txqueuelen:1000
-           RX bytes:88379 (86.3 KiB)  TX bytes:17663 (17.2 KiB)
-           Interrupt:26
+The others require a bunch of changes in linux-next.
 
-eth1      Link encap:Ethernet  HWaddr 9C:6B:00:43:0B:BD
-           inet addr:10.0.0.11  Bcast:10.0.0.255 Mask:255.255.255.0
-           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-           RX packets:368 errors:0 dropped:0 overruns:0 frame:0
-           TX packets:26 errors:0 dropped:0 overruns:0 carrier:0
-           collisions:0 txqueuelen:1000
-           RX bytes:88134 (86.0 KiB)  TX bytes:3507 (3.4 KiB)
-           Interrupt:27
-
-lo        Link encap:Local Loopback
-           inet addr:127.0.0.1  Mask:255.0.0.0
-           inet6 addr: ::1/128 Scope:Host
-           UP LOOPBACK RUNNING  MTU:65536  Metric:1
-           RX packets:434 errors:0 dropped:0 overruns:0 frame:0
-           TX packets:434 errors:0 dropped:0 overruns:0 carrier:0
-           collisions:0 txqueuelen:1000
-           RX bytes:34479 (33.6 KiB)  TX bytes:34479 (33.6 KiB)
-
-usb0      Link encap:Ethernet  HWaddr 4E:F6:84:8E:63:B9
-           inet addr:169.254.0.17  Bcast:169.254.255.255 Mask:255.255.0.0
-           UP BROADCAST MULTICAST  MTU:1500  Metric:1
-           RX packets:0 errors:0 dropped:0 overruns:0 frame:0
-           TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
-           collisions:0 txqueuelen:1000
-           RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
-
-root@altrad8ud-1l2t:~# hexdump -C /sys/bus/i2c/devices/7-0057/eeprom
-...
-*
-00003f80  9c 6b 00 43 0b bd ff ff  9c 6b 00 43 0b f7 ff ff 
-|.k.C.....k.C....|
-00003f90  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
-|................|
-*
-00003fd0  1e 90 db 9a 13 ff cb ff  4e f6 84 8e 63 b9 8e ff 
-|........N...c...|
-00003fe0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
-|................|
-*
-00004000
-
-
-I don't know why they're swapped, but I think keeping them that way 
-makes sense to avoid people's IP address changing.
-
-> As the DTBS_CHECK lint reported and Andrew Jeffery commented on, these 
-> two partitions overlapping is a bit surprising -- is that intentional?
-
-It was intentional since I've updated the firmware update script to be 
-able to program the TF-A or UEFI areas separately, or the entire code 
-region (i.e. TF-A _and_ UEFI, excluding the data/configuration areas of 
-the EEPROM). But I'll update the script to not depend on there being a 
-'code' partition that covers both areas.
-
-
--- 
-
-Rebecca Cran
-
+Cheers,
+Miguel
 
