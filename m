@@ -1,91 +1,172 @@
-Return-Path: <linux-kernel+bounces-827890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B4DB935D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:21:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE53B935E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98E35446478
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:21:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEE7019C0947
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0535928850B;
-	Mon, 22 Sep 2025 21:21:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC351A239D;
+	Mon, 22 Sep 2025 21:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BOU6mVcT";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gmHBoxtT"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12746283141
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25EC248F66;
+	Mon, 22 Sep 2025 21:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758576065; cv=none; b=kxFe/PVN1Q3urbgWVpGxqo3CT0pJ2HhjHtWCQDMLzngTEWTSZzEkcMxnW4sMi5jDshMP6rVWBxlIzFCJb3rYexNDWczoPgOxSN4DAeDGG+qbd0KRdXUvyIjxh6WYceqLtDXQCxYdRa9AT+yJ28/V8W1/9YGxWLcJQw8wALoG4n4=
+	t=1758576186; cv=none; b=VZKhFbSQb78VHtUD1oNB2x/6ByfXK5XakofZWmnj11nfZ0Z9/EgVdzZyo64BGC5OnFgmtqqtJUfcg7pwAiQGrVD4OZb4XuVbGWlPY+iy5pmoo5sVcfEyfs+gNxY+YWnW0oKaB4Hre8EWRgRgRJAX5EGnhEgkvnLk7RNkSZQa848=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758576065; c=relaxed/simple;
-	bh=r3NpGz1qBNHJUaKYOiNUrMQdMwwoP6Ucp5LUoYR9YGI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MD1vgYXXyBwdV4jLuvg4mnHrK8J6Eodkos9uSrrb4cwFlolTN8yO9NcJEzZvr7ZvAY0iSQxjOhAZjPIek9jky/bnHfY0ZupsLFSjhybE4swDljPLtWW6DQqvvLHOPIESB4mnecmXTfxwnIQ1shHDDsYYX1sL6yLmRw16nnGFdaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4247d389921so57369185ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:21:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758576063; x=1759180863;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pEXVzVh1xRpn36QUJyWBl0yE9J7HW6QGqDG73VIJJTE=;
-        b=XbM0Z7N9z8gJMfQ5CukCqYRrgt82fdv5iMnEG4EdWp4AflvUFixr0VctUwzIb4Dl8k
-         wL8lecC4zgV/J3Y35CVoOGrOvlg1vGF+UF+S8VceB3jQh/5g/2gGMbyb36VSKEovvY98
-         nPxJH8XttQd7a0Nr/JuR4fvvVLLwf6nhY1myutmkLgdNrbEKA2+b85KgBr/jUnBKbxQA
-         mxXf1701or72pSQ97+qr3xdTeXJ1XaIgGS5obR2OeL+eXC51Ef8sXsQ6H7jXkf7Qd9tU
-         bk9OqKoGuSAGZ9CWtNh5TPmYip3KkXLUKrr6tTTDsc3us/KdxwBTRQTwFydFDksqq4Q5
-         d7nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDBA/8HUivNydZnUp0HVv6Ja33DAagEqCKmULJvjRo+B6Fdm/NphdUwqC73cgr6FICi3iNGKAI9tfm4Ds=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4Q+Fu9vImCUMQ9/ds5Q+njzuNGHDG1zTo64IXo1taVIVEYroz
-	j6ckK55DHFwdjx6JSRfqzqOx7Z0SSBdxg/c3FXnFi/REg/DrlEGlrEV1FAjLjs2cGFhGYjkzz7O
-	SwzEGUA47bko08uRs+rfugxUSrsY21CjahksToi7km33au0/XO0/Bpq21I3Q=
-X-Google-Smtp-Source: AGHT+IHJ5Lcy1PFoE+1HFqUxDvjXb3iEWiVH3SD6SKxbsyUcUF2l8Pan6sffL9AvGWy5az5bN517uy1gywSblFEpVuz8oT8HE9qK
+	s=arc-20240116; t=1758576186; c=relaxed/simple;
+	bh=9MeoJVbhO66Lo2sUM7HZCvvlOclMK/bvVvuvlROFij4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=renrY4ANz1DT6N90mD3q/2Yid4CeF2wP4z92jyidgI7+Lt/DDb3EOpWbqkgZwvg5032Ks0GPl1oBAfkVI2Fml3QdDsOAEyhoErMcpt80wbI4/AQXguMLOg2D4MJt0A+2Pjmb2QV/l+DrlOjaLcJN766sJwiMJYYiqgaq0QUU9ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BOU6mVcT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gmHBoxtT; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 97915EC0301;
+	Mon, 22 Sep 2025 17:23:03 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 22 Sep 2025 17:23:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1758576183;
+	 x=1758662583; bh=Di8U+yHpW9PWxGMprMpa0qfyAiwc5nChUHQPZxjrHH8=; b=
+	BOU6mVcToMxa6qFUiC6cht0bV05a8ANyKR5ukskNj74Kgap+DqTUaWSu+IKdFe3l
+	WRpUM30Wu3H0Q7A2y/voOAEVMz1ItWGdFd+w1g29YJ7Tjl2aT+hQdsIjBYzOSRat
+	P6tosIN336s/ecXEeQ/mGTufNXrxc6oPikF3ykV/4Wx5E6r8XKZkcW5rH07dbYAi
+	hVS+ZWgjs+wGKwhWw9MlR/A61u1V4gi072jORA/RDnj7Nu/QRBfiadbi2FwamY3C
+	z1g3eaCmC+6ZV0VO36eJ9rA4ai9KBUyUl+kX8rwbdvVby3ynOJZk+yOUH9dNivMj
+	J6BkZ2jlIo5ZNgAXnGA8VQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758576183; x=
+	1758662583; bh=Di8U+yHpW9PWxGMprMpa0qfyAiwc5nChUHQPZxjrHH8=; b=g
+	mHBoxtTQev5hHzzjS7DzOG6LjQc2O42dSxLb4L6WQb2WlRSURFQb5PpcuBN2HTms
+	62d99pLVtJPUCF7OT5ICVSqlboyOqdGHXJIUax+oI0O3IgOolDGEnOWayvlw19bk
+	GTctlMrBtCTrn15fz5C78bks5N4t7sTFyuHhpbp7bypfTbN9jsFm7miJXebzUTbu
+	GkBm5/mf2z9Lam8hkmNkaZhD/Aa8ufZ9KIVP69Ld+kkRg/FCv7kH/PRqbJ/kSgjT
+	Ys/j3Va2f5abW1fJBGV59q3b0QcV6n8w4sBB+Pm5+Jpany6I0MqmylWHR2hKS/7W
+	p6MNsjIRV0fcgvwbafw5Q==
+X-ME-Sender: <xms:Nb7RaHIv0elNNGqKqz2hq59PlbQ1WvH3PQekoKoYN6GHdrkbplcdZg>
+    <xme:Nb7RaF9zWPO1z0eI-85xdehQcHCJ4U-ixtIweYwspyjZNwYzs6sJyQVkn2QKVroo2
+    tuHZCnZ7Y6hRCAk3yvZYtO1xCbsZ8geow9JBfeHT6Z-a8qAnaICeO8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehkeelvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeefuddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheptghhvghsthgvrhdrrgdruhhnrghlsegrrhhinhgtledrtghomhdprh
+    gtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhr
+    tghpthhtohepnhhstghhihgthhgrnhesfhhrvggvsghogidrfhhrpdhrtghpthhtoheprg
+    hnughrvggrshesghgrihhslhgvrhdrtghomhdprhgtphhtthhopehgvggvrhhtodhrvghn
+    vghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtoheprghlvgigrghnuggvrhdrshhvvg
+    hrughlihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgvrhhgihhordhprghrrggt
+    uhgvlhhlohhssehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhurhgvnhgssehgohhogh
+    hlvgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhg
+X-ME-Proxy: <xmx:Nb7RaHyj4-U5cmLtj8aV6Obmj2wE8qDHFtnv04wApvnSKRdpvOTwyQ>
+    <xmx:Nb7RaPNEf6QOHCcg2sOwG2YcDZEDgMATtieOS7b2v4iNsq7NAARQhg>
+    <xmx:Nb7RaM7LJ7xoeWbjkfv203dQeqEDMpWgwtURBYX5yI5dIc7-dM-KOA>
+    <xmx:Nb7RaGcvvcBerj7e35_eqxKXMQdHMfkXoSuoEeKpoVO0WLLALUm55w>
+    <xmx:N77RaF-PoW2bovyuykM0k5mv84evTeZMjlxPQrSMV7i2vSrQZNKLFHZX>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2385C70006A; Mon, 22 Sep 2025 17:23:01 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1542:b0:424:86d:7bb9 with SMTP id
- e9e14a558f8ab-42582209805mr3563505ab.0.1758576062967; Mon, 22 Sep 2025
- 14:21:02 -0700 (PDT)
-Date: Mon, 22 Sep 2025 14:21:02 -0700
-In-Reply-To: <672b23bd.050a0220.2a847.1ba3.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d1bdbe.a70a0220.1b52b.0003.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] INFO: task hung in flush_delayed_work
-From: syzbot <syzbot+ab509d831d9b0222f5fd@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, glass.su@suse.com, jack@suse.com, 
-	jlbec@evilplan.org, joseph.qi@linux.alibaba.com, linux-kernel@vger.kernel.org, 
-	mark@fasheh.com, ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: AneuvEk2E7Kg
+Date: Mon, 22 Sep 2025 23:22:30 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Nicolas Schichan" <nschichan@freebox.fr>
+Cc: "Jason Gunthorpe" <jgg@nvidia.com>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>, ksummit@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
+ linux-mm@kvack.org, imx@lists.linux.dev,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Richard Weinberger" <richard@nod.at>,
+ "Lucas Stach" <l.stach@pengutronix.de>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "Ankur Arora" <ankur.a.arora@oracle.com>,
+ "David Hildenbrand" <david@redhat.com>,
+ "Mike Rapoport" <rppt@kernel.org>,
+ "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Matthew Wilcox" <willy@infradead.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>,
+ "Suren Baghdasaryan" <surenb@google.com>,
+ "Ira Weiny" <ira.weiny@intel.com>, "Nishanth Menon" <nm@ti.com>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
+ "Chester A. Unal" <chester.a.unal@arinc9.com>,
+ "Sergio Paracuellos" <sergio.paracuellos@gmail.com>,
+ "Andreas Larsson" <andreas@gaisler.com>
+Message-Id: <598ab56d-7dd0-4adb-b0fe-30ad5cf24335@app.fastmail.com>
+In-Reply-To: 
+ <CAHNNwZCsBY+ta2-OqD40K0-C8N25PLMYfOJowiVeaEMotqR1nQ@mail.gmail.com>
+References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
+ <20250917125951.GA1390993@nvidia.com>
+ <02b0f383-1c43-4eeb-a76f-830c2970b833@app.fastmail.com>
+ <CAMuHMdVecUeLZ2LPpa457C0a=uduvDhQ4KZJx-++dEFJraRi3w@mail.gmail.com>
+ <547dcb81-434d-4910-aa7c-1d69019fcb3d@app.fastmail.com>
+ <20250919143436.GC2132010@nvidia.com>
+ <44f910bf-ac2c-4b2f-8e50-5cfc7dd0761a@app.fastmail.com>
+ <CAHNNwZCsBY+ta2-OqD40K0-C8N25PLMYfOJowiVeaEMotqR1nQ@mail.gmail.com>
+Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-syzbot suspects this issue was fixed by commit:
+On Mon, Sep 22, 2025, at 19:05, Nicolas Schichan wrote:
+>> On Fri, Sep 19, 2025, at 16:34, Jason Gunthorpe wrote:
+>> > On Fri, Sep 19, 2025 at 04:22:20PM +0200, Arnd Bergmann wrote:
+>>
+>> I did get an email from Nicolas Schichan (added to Cc here),
+>> and he is still supporting a widely deployed Kirkwood based
+>> platform that uses 1GB RAM configurations. He should get
+>> a chance to test that with CONFIG_VMSPLIT_3G_OPT, but I
+>> would expect that to continue working, possibly with minor
+>> bugfixes.
+>
+> We don't use HIGMEM on our Kirkwood platform, we are happy using a
+> 2G/2G WMSPLIT. We don't need a lot of virtual address space for
+> userland, and with the 2G split we don't waste physical memory.
 
-commit 276c61385f6bc3223a5ecd307cf4aba2dfbb9a31
-Author: Su Yue <glass.su@suse.com>
-Date:   Mon Jan 6 14:06:53 2025 +0000
+Ok, good.
 
-    ocfs2: mark dquot as inactive if failed to start trans while releasing dquot
+> I'm happy to test your patch serie with VMSPLIT_3G_OPT and see if it
+> still boots with it once you send it.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=140da8e2580000
-start commit:   2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=11254d3590b16717
-dashboard link: https://syzkaller.appspot.com/bug?extid=ab509d831d9b0222f5fd
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=142f4e30580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c00d87980000
+The patches I did for turning off HIGHMEM on ARMv5 won't have
+any effect if you are already running without highmem, so I
+don't think we need to wait for your tests specifically.
+Any testing would be useful of course just to check that
+everything still works.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Jason, I think we can go ahead with your suggestion. I can
+post my patches for review once I've done some testing on
+them.
 
-#syz fix: ocfs2: mark dquot as inactive if failed to start trans while releasing dquot
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+     Arnd
 
