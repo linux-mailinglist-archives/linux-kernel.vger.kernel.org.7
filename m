@@ -1,131 +1,109 @@
-Return-Path: <linux-kernel+bounces-826650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57FDCB8F0C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:49:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB63B8F0CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53421189CBC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 05:49:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A4C43B714B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 05:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A368B22DA1F;
-	Mon, 22 Sep 2025 05:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E32D2367C0;
+	Mon, 22 Sep 2025 05:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="C7CF/riN"
-Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="hs56J8KM"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D654627455;
-	Mon, 22 Sep 2025 05:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4380234BA47;
+	Mon, 22 Sep 2025 05:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758520151; cv=none; b=uQxhfaXBbJ0AYQOVjPvdVE/lx6qQZ/e1BUoSgr696dPYRuP5TfOSQx3qvPi1apEv2CKYfU/3YW/IoEiAykHNQU9y+dkpae+fm+neIjgw6sO1WbIEpMi4QSbDvEFNcPfgPKOo60q5eCipFqHn8PQ9NsSRG+eztuR7MJj4sCGoScg=
+	t=1758520258; cv=none; b=MJYV8Qfec3v5pECr6wTo/+fxRxI2X9FLl3yJ9NMWxitqR+qQhWSsAyPgqTzSUURJl2YsNqfylhKd1HgNeFU+RGI0zk6BHCrfiGh6OEO/KZHnueUdEC+cl74VVz/L8xbA4rxc0YSnaHp1Av0gGuMcNobBz3qnDNyeYkrmAWJnQZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758520151; c=relaxed/simple;
-	bh=xLznKOPCZJxUINUg6ogY4rcZGSnCqCh6PHSXO/zoNl0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m2WpOsTlFarF1LUswV35NCGAL93iKkuBEKCRfywDv2QmBftPYH4WjRmiUdYSPr7wCVQgCsMMgQZ0EjIgPGUkfYZRc5r4+SZlRrZWJuobLfsd9dLYRJntqijLS9AbDyApsElsjgctazFisro8ohvlRyH42uq+8kTf4etwHcAWv38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=fail (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=C7CF/riN reason="key not found in DNS"; arc=none smtp.client-ip=94.231.106.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4cVXGz2Gfbz1FXSV;
-	Mon, 22 Sep 2025 07:48:59 +0200 (CEST)
-Received: from [10.10.15.9] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp.simply.com (Simply.com) with ESMTPSA id 4cVXGz0Gx3z1FXSX;
-	Mon, 22 Sep 2025 07:48:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
-	s=simplycom2; t=1758520139;
-	bh=OtRjZMliMamb/V4HMei//Y9bvbkSRWDtwSqjtwGbWTM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=C7CF/riNw5nkFMWvCk6RcdVD4xQcy5Q03qeD27YEPK2pxwJEmm2cJWOulwfd57C1q
-	 bLUMKTWcHAZZ7G9bF8wZougelLI7Xe0CZXKSGXKSpFR8R3zW5iQBFgW6aQ8RkiY/Kd
-	 QlXnEMn4epa4CliUeOcTeHPpI/pxJFnxfYrF1/5cMdbhzKhbQ6zHJldd/pYJTE+0dL
-	 ZkSJGNBLcM5wSTfGqdTnxWmKRNsWIQdGcBcivNFzaj5fTjQqKQMFBPbXZXBbUL5O8P
-	 6sFWcqBiiYpYUYo0gxTr2s2RJZzPn8Ft2NRfLLr4w8Rts+Q94ukPZClxJNcaZxsPPE
-	 eonlLD/dp9qKw==
-Message-ID: <93a6baf0-bafe-4855-8679-aec375debaa6@gaisler.com>
-Date: Mon, 22 Sep 2025 07:48:58 +0200
+	s=arc-20240116; t=1758520258; c=relaxed/simple;
+	bh=h9WmkhGE2XndTUlFIPDGYWd1Wy/a4PZG1WZX/qmCO+4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dlu4NjttHwoRIuc1LuBoxZR+s8KCAlXkcapupJrtUN/g2XsdvPZPu4uWoNHOnbeO2+0rW2j9h+M3HKtVK5VGZGpkOrt8vHaZUhRz+d2NnJbb+QtxXvWGrWRkaITWaiKVtbrF++cLIFjdTRUv7kz92QwUg5V0I9TVYV6ctLfv0IM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=hs56J8KM; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58M5ooK433924084, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1758520250; bh=h9WmkhGE2XndTUlFIPDGYWd1Wy/a4PZG1WZX/qmCO+4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=hs56J8KMlEehOuHZeUV/AqDaUqL5Nx0mUrM7U9frpsPCo9kZZmxXJGJY12gLqRkGS
+	 fEHjc1a08MaEu/UKzuFHLX6hZld7T+iVFIvRjz8obPIarDUB9Go0tcCL14put3DgmF
+	 Vv3PvyHNuF5ZCJSjPdNTjRwPTVLDml+UrWcYHzBHIJfDJRow0478MecJo7kpT+XGsf
+	 /ozE04oqImGr6BU4vUkiDnZGI7uP3dauJ/u99sqjud0kEs/R15acYQA9PTBgmwfht+
+	 mQwXVjrKSMfKiBc7NcJcNcKWecwl2uFWbrEHXHDbMk7sQ3hRAubS4l454/snc9uPcZ
+	 jGRVt5O/hCR+Q==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58M5ooK433924084
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 22 Sep 2025 13:50:50 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Mon, 22 Sep 2025 13:50:50 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
+ 15.02.1544.027; Mon, 22 Sep 2025 13:50:50 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Yu-Chun Lin <eleanor15x@gmail.com>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?big5?B?Q1lfSHVhbmdbtsDgsq7LXQ==?= <cy.huang@realtek.com>,
+        =?big5?B?U3RhbmxleSBDaGFuZ1up96h8vHdd?= <stanley_chang@realtek.com>,
+        "jserv@ccns.ncku.edu.tw" <jserv@ccns.ncku.edu.tw>,
+        "visitorckw@gmail.com"
+	<visitorckw@gmail.com>
+Subject: RE: [PATCH rtw-next] wifi: rtw89: Replace hardcoded strings with helper functions
+Thread-Topic: [PATCH rtw-next] wifi: rtw89: Replace hardcoded strings with
+ helper functions
+Thread-Index: AQHcKw6iw9xkJS2rJEiZoIdnDXLQ2rSesj7w
+Date: Mon, 22 Sep 2025 05:50:50 +0000
+Message-ID: <715313b943d84cfeb3a337dc20be5f6a@realtek.com>
+References: <20250921154410.1202074-1-eleanor15x@gmail.com>
+In-Reply-To: <20250921154410.1202074-1-eleanor15x@gmail.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="big5"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] sparc: fix error handling in scan_one_device()
-To: Ma Ke <make24@iscas.ac.cn>, davem@davemloft.net
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250920125312.3588-1-make24@iscas.ac.cn>
-Content-Language: en-US
-From: Andreas Larsson <andreas@gaisler.com>
-In-Reply-To: <20250920125312.3588-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 2025-09-20 14:53, Ma Ke wrote:
-> Once of_device_register() failed, we should call put_device() to
-> decrement reference count for cleanup. Or it could cause memory leak.
-> So fix this by calling put_device(), then the name can be freed in
-> kobject_cleanup().
-> 
-> Calling path: of_device_register() -> of_device_add() -> device_add().
-> As comment of device_add() says, 'if device_add() succeeds, you should
-> call device_del() when you want to get rid of it. If device_add() has
-> not succeeded, use only put_device() to drop the reference count'.
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: cf44bbc26cf1 ("[SPARC]: Beginnings of generic of_device framework.")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v3:
-> - also fixed the same problem in arch/sparc/kernel/of_device_32.c as suggestions.
-> Changes in v2:
-> - retained kfree() manually due to the lack of a release callback function.
-> ---
->  arch/sparc/kernel/of_device_32.c | 1 +
->  arch/sparc/kernel/of_device_64.c | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/arch/sparc/kernel/of_device_32.c b/arch/sparc/kernel/of_device_32.c
-> index 06012e68bdca..284a4cafa432 100644
-> --- a/arch/sparc/kernel/of_device_32.c
-> +++ b/arch/sparc/kernel/of_device_32.c
-> @@ -387,6 +387,7 @@ static struct platform_device * __init scan_one_device(struct device_node *dp,
->  
->  	if (of_device_register(op)) {
->  		printk("%pOF: Could not register of device.\n", dp);
-> +		put_device(&op->dev);
->  		kfree(op);
->  		op = NULL;
->  	}
-> diff --git a/arch/sparc/kernel/of_device_64.c b/arch/sparc/kernel/of_device_64.c
-> index f98c2901f335..f53092b07b9e 100644
-> --- a/arch/sparc/kernel/of_device_64.c
-> +++ b/arch/sparc/kernel/of_device_64.c
-> @@ -677,6 +677,7 @@ static struct platform_device * __init scan_one_device(struct device_node *dp,
->  
->  	if (of_device_register(op)) {
->  		printk("%pOF: Could not register of device.\n", dp);
-> +		put_device(&op->dev);
->  		kfree(op);
->  		op = NULL;
->  	}
-
-
-Reviewed-by: Andreas Larsson <andreas@gaisler.com>
-
-Picking this up to my for-next.
-
-Thanks,
-Andreas
-
+WXUtQ2h1biBMaW4gPGVsZWFub3IxNXhAZ21haWwuY29tPiB3cm90ZToNCj4gUmVwbGFjZSBoYXJk
+Y29kZWQgc3RyaW5ncyB3aXRoICdzdHJfb25fb2ZmKCknLCAnc3RyX2VuYWJsZV9kaXNhYmxlKCkn
+LA0KPiBhbmQgJ3N0cl9yZWFkX3dyaXRlKCknLg0KPiANCj4gVGhlIGNoYW5nZSBpbXByb3ZlcyBy
+ZWFkYWJpbGl0eSBhbmQgZW5hYmxlcyBwb3RlbnRpYWwgc3RyaW5nIGRlZHVwbGljYXRpb24NCj4g
+YnkgdGhlIGxpbmtlciwgd2hpY2ggbWF5IHNsaWdodGx5IHJlZHVjZSBiaW5hcnkgc2l6ZS4NCg0K
+SGF2ZSB5b3UgbWVhc3VyZWQgdGhlIGNoYW5nZSBvZiBiaW5hcnkgc2l6ZT8gTWF5YmUgeW91IGNh
+biBzaGFyZSB0aGUgcmVzdWx0DQpoZXJlLg0KDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBZdS1DaHVu
+IExpbiA8ZWxlYW5vcjE1eEBnbWFpbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9uZXQvd2lyZWxl
+c3MvcmVhbHRlay9ydHc4OS9ydHc4ODUxYl9yZmsuYyB8IDEwICsrKysrKy0tLS0NCj4gIGRyaXZl
+cnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODkvcnR3ODg1MmFfcmZrLmMgfCAxMCArKysrKyst
+LS0tDQo+ICBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0dzg5L3J0dzg4NTJiX3Jmay5j
+IHwgIDggKysrKystLS0NCj4gIGRyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODkvcnR3
+ODg1MmNfcmZrLmMgfCAxMSArKysrKystLS0tLQ0KPiAgZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVh
+bHRlay9ydHc4OS91c2IuYyAgICAgICAgICB8ICAzICsrLQ0KPiAgZHJpdmVycy9uZXQvd2lyZWxl
+c3MvcmVhbHRlay9ydHc4OS93b3cuYyAgICAgICAgICB8ICA1ICsrKystDQo+ICA2IGZpbGVzIGNo
+YW5nZWQsIDI5IGluc2VydGlvbnMoKyksIDE4IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODkvcnR3ODg1MWJfcmZrLmMNCj4g
+Yi9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0dzg5L3J0dzg4NTFiX3Jmay5jDQo+IGlu
+ZGV4IDg0YzQ2ZDJmNGQ4NS4uMDAwNzUzMDYxZTM4IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25l
+dC93aXJlbGVzcy9yZWFsdGVrL3J0dzg5L3J0dzg4NTFiX3Jmay5jDQo+ICsrKyBiL2RyaXZlcnMv
+bmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODkvcnR3ODg1MWJfcmZrLmMNCj4gQEAgLTIsNiArMiw4
+IEBADQo+ICAvKiBDb3B5cmlnaHQoYykgMjAyMi0yMDIzICBSZWFsdGVrIENvcnBvcmF0aW9uDQo+
+ICAgKi8NCj4gDQo+ICsjaW5jbHVkZSA8bGludXgvc3RyaW5nX2Nob2ljZXMuaD4NCj4gKw0KDQpE
+cml2ZXIgaGFzIGluY2x1ZGVkIHRoaXMgaW1wbGljaXRseSwgc28gZG9uJ3QgbmVlZCB0byBpbmNs
+dWRlIGl0IGFjcm9zcw0Kd2hvbGUgcGF0Y2guDQoNCk90aGVyd2lzZSBsb29rcyBnb29kIHRvIG1l
+Lg0KDQo=
 
