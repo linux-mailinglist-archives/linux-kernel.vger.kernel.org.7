@@ -1,100 +1,132 @@
-Return-Path: <linux-kernel+bounces-827483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B66B91E18
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BAD8B91E2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DA433A8A85
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:20:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD7E4426B58
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F22B2DFF04;
-	Mon, 22 Sep 2025 15:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C74B2E040C;
+	Mon, 22 Sep 2025 15:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RlIptims"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="R2tPGMv8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L78zsXHV"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7864F2820D1
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EAF2DFF04;
+	Mon, 22 Sep 2025 15:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758554426; cv=none; b=WfPzWuLIRi3qeH/5UevLmnkjWtLdgJFz57bgC3y35dyz+PcFfh4qIubef3XqwEXn83y97TvN4wkNmHUwppYXuFxSpa3SZoPE/N3Xkb11aYp0Tu2iv0MwBNYl7XuqnNCaHOapV9v+vhm3gorDOnIRA+Tj0+goy+NRRFMZfUqg6zk=
+	t=1758554478; cv=none; b=BLOWSftAorFSG1fqVj4efQOaIfQyQJ1n6lG1rJpaCYYhKjJp4lvviT51QJP1EXnT0aFih5BCp7DuQ+iu5Bj8UKmsC1FvLsuHY75XAMxyTmp1sQwxg9iumUoNWmdQVNeverUWuh7bqp5GokURREasltnKxptA9/5EvqqUvxSj9PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758554426; c=relaxed/simple;
-	bh=OItNXivxvXjl3aMGPmeElGX+iifBDz1qjZCikif9gd0=;
+	s=arc-20240116; t=1758554478; c=relaxed/simple;
+	bh=YLRGMaKJEGRBu417qctrK+7kZvPXslGrB5nA02ql9jc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d61AY+n84idymJbBIya3Y+DrhQQcWWJNxWkc58UR/qUNCLkDJrMp87Lsz/k/nYv69Fh8Ac/ZSu8Ws6xhjtixNXmcVkP+KPn9jIRLoVMBKthdHbroe7/PTJN7x0anQPyxNIFL7SXxtWu1vCdoRl3l/8eVvIVZ5jTHMQz4nayjyu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RlIptims; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0F4FC4CEF0;
-	Mon, 22 Sep 2025 15:20:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758554426;
-	bh=OItNXivxvXjl3aMGPmeElGX+iifBDz1qjZCikif9gd0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RlIptims1OLFqRlrCfYUfS/y1/c2LZsgxeC4oVCOWt6UUSVqC6H2yzYjJiOVqBbf8
-	 g4gehO/OPho85wGpj9pzxLkYoPxg0y+Dj8QdQziDF8bg0m1uXcffYcMSh6ehcSvHpu
-	 OmxGcfoJt+8iAmNsYK345d1Q511V88gWlbrOfcO7kBAMql5oofjjRannKdH1sldbt0
-	 XPIAXz6jhszzbkDwnqscPFfQVuBTLzU4KWz8a5Hm8FpIeqKqZxmC0XBc+Fv4PTWgFs
-	 LqTvNKZlPp/NT913QorJvn7F1P61QHtWclTYpzEslkDFuw0JJVGSecReSjr2GuyEk1
-	 lR+sWj+5QgIGQ==
-Date: Mon, 22 Sep 2025 17:20:22 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Waiman Long <llong@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH 19/33] sched/isolation: Remove HK_TYPE_TICK test from
- cpu_is_isolated()
-Message-ID: <aNFpNijJ0tT0rjPa@2a01cb069018a81087c6c9b3bf9471d3.ipv6.abo.wanadoo.fr>
-References: <20250829154814.47015-1-frederic@kernel.org>
- <20250829154814.47015-20-frederic@kernel.org>
- <dc75acab-36c1-4340-9cf2-35a35361c32b@redhat.com>
- <152b067c-1fa3-4b73-98f3-7e0a0c87e388@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DuZecap+U+FuoErdw0oH76q53hpnQ6yQVeDfYFpVq71yQyZfkTSPO+rWLgqQrNMSUq0gVLlT5H7hiUnTmw1CRTPcI0URnRHYXlLO7rGR53gGFlZ9jS+A+B1Tl1WfqOdPNYTb6myR38HvZABAz0kzrTJg96pL8hjsZ47dS6umYwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=R2tPGMv8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L78zsXHV; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 33FDE1400029;
+	Mon, 22 Sep 2025 11:21:14 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Mon, 22 Sep 2025 11:21:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1758554474; x=
+	1758640874; bh=LOCqdFL4WWIYlFONxqeTYa9PGa7VDH7WRH97rsSp3cU=; b=R
+	2tPGMv8gzsZRntDTz11bl1fbCr4LDLsmzghIXFMx3Hn1K71J+FmDW8L6tetaVn2w
+	0AV0ZmyUUWQtuKnrWhnFQj7yjSeuZrWYtCd2s2chhnx02S5o3wRuWXRmlpaYRbNs
+	wAHcKYVtXBNciAke67nJwMr+3GMX7jK+92SuPH/UAOuqD0WuSAfJ1ZOfuUnHYjbz
+	OZeyZkDrDoVPiWvyyhsZobMcczCOfunljQV4uc2P5RgqzVgVZaZQUsjXk2nK8kuu
+	UpJzyT2eWZ4vxqa26C5qnPQMixp2tqkd7VgwWh63jAO2edI+IcIZ65Y274HK2ZZW
+	WfNqrW/yCc4vLys6GP2Eg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758554474; x=1758640874; bh=LOCqdFL4WWIYlFONxqeTYa9PGa7VDH7WRH9
+	7rsSp3cU=; b=L78zsXHVo26Ryl5UDQk+DYkTnAguTXFkoKz0GRCvH7qtSolG8bn
+	v0TBy+xncQqtie2/Ey5E4OWEw33A0NEn6eHDos/CVEBNIfQtBCBQ8cJQ7oQyhKi8
+	/i6m9iUfk9qfsRiIq4f+QBMfg2cqqnsvZ9mR55nm7u6+KSe7j62puCis/Ogw71rQ
+	0WCuvOkF9pUPJVQYOBs0g2JnbsjUawJfRgk9FN0CRbaMflUIke91qELXbXGracyV
+	v9DwVYCfoDRrd/D7xw5FlIC91BwtGVOic5u7yv+ey0qOCGqfdJPd0HjFUa59FipU
+	QOLCsoSh4FCBea7Si66ONt4V7VoryvX04zA==
+X-ME-Sender: <xms:aWnRaMqL-a8_ePWNPvc75Lp8Agd4nCwI8q_jcG4rigzRtiWPs1MXEw>
+    <xme:aWnRaIp4EgThwIEgQngxeuPBr_CDqlgyVjk6zpxLI2p2YjsIx5Uw-RY5mKNxdmu5Z
+    J3uNOwAkaEOrU10_tq8arhn7rZp2O0FHBxXqgvxYBTxz1-b3NlnhXxv>
+X-ME-Received: <xmr:aWnRaMC3IbNnOK9cQ_8IvvQyRNrnwfYgEYWkGFcfF8Upaw-VR93VBYlmrr5E>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehkedvtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpefurggsrhhinhgr
+    ucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrihhlrdhnvghtqeenucggtffrrg
+    htthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeegteehgeehieffgfeuvdeuffef
+    gfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghrtghpthhtohepuddtpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehguhhsthgrvhhorghrsheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhm
+    pdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvg
+    hmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohho
+    ghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtg
+    hpthhtohephhhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghv
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
+    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:aWnRaGvN4zeWXQN3OE2B8jqXQl8mTbmmwGZkQ17ngP327ejf4rxA3g>
+    <xmx:aWnRaLJaqyiyPMX7M0RqsyJ5Q8jI2DlJcPg2d4spRy3p2-Ac8GZN9w>
+    <xmx:aWnRaNYPAp-VgeuiSRytKizrw_vj-1oGYyACgbdTFP_iMDoWR3Dgxw>
+    <xmx:aWnRaNBFsbIG4VV_UIA2WqR-kNAcwydRREiHrhqpKqKuB9L0kF2s8w>
+    <xmx:amnRaJkan2ubi54gS-FgsbxmSBAIeBgTPwgDfdFdOARz3QRex7QNBZea>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 22 Sep 2025 11:21:13 -0400 (EDT)
+Date: Mon, 22 Sep 2025 17:21:11 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: John Fastabend <john.fastabend@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] tls: Avoid -Wflex-array-member-not-at-end warning
+Message-ID: <aNFpZ4zg5WIG6Rl6@krikkit>
+References: <aNFfmBLEoDSBSLJe@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <152b067c-1fa3-4b73-98f3-7e0a0c87e388@redhat.com>
+In-Reply-To: <aNFfmBLEoDSBSLJe@kspp>
 
-Le Tue, Sep 02, 2025 at 11:48:16AM -0400, Waiman Long a écrit :
+2025-09-22, 16:39:20 +0200, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
 > 
-> On 9/2/25 10:28 AM, Waiman Long wrote:
-> > 
-> > On 8/29/25 11:48 AM, Frederic Weisbecker wrote:
-> > > It doesn't make sense to use nohz_full without also isolating the
-> > > related CPUs from the domain topology, either through the use of
-> > > isolcpus= or cpuset isolated partitions.
-> > > 
-> > > And now HK_TYPE_DOMAIN includes all kinds of domain isolated CPUs.
-> > > 
-> > > This means that HK_TYPE_KERNEL_NOISE (of which HK_TYPE_TICK is only an
-> > > alias) is always a superset of HK_TYPE_DOMAIN.
-> > 
-> > That may not be true. Users can still set "isolcpus=" and "nohz_full="
-> > with disjoint set of CPUs whether cpuset is used for additional isolated
-> > CPUs or not.
+> Use the new TRAILING_OVERLAP() helper to fix the following warning:
 > 
-> Instead of "is always a superset", I would prefer to use "should always be a
-> superset" as it is a recommendation but users can still violate it.
+> net/tls/tls.h:131:29: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> This helper creates a union between a flexible-array member (FAM)
+> and a set of members that would otherwise follow it. This overlays
+> the trailing members onto the FAM while preserving the original
+> memory layout.
 
-Good point!
-
-> Cheers,
-> Longman
-> 
+Do we need to keep aead_req_ctx in tls_rec? It doesn't seem to be
+used, and I don't see it ever being used since it was introduced in
+commit a42055e8d2c3 ("net/tls: Add support for async encryption of
+records for performance").
 
 -- 
-Frederic Weisbecker
-SUSE Labs
+Sabrina
 
