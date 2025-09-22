@@ -1,157 +1,127 @@
-Return-Path: <linux-kernel+bounces-826948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D2AB8FB48
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:14:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B253B8FB6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F7216C629
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:14:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36FFC3BB70F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE186286D70;
-	Mon, 22 Sep 2025 09:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5744284892;
+	Mon, 22 Sep 2025 09:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1ZpdRARG"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YR21dulM"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620B821D596
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C1C2367D1
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758532472; cv=none; b=WMuHu2Vd3BR0ebKAa+cy68mUCo6LCTtfklBt1LQSZBNC/Z3EMirWisf88trgl6AtbQ87032ykGttri2hJWVnJV7BDazZKeTDGeZsq6mhxKMVu+KFNb1ngCURZsvnZP4O1VYNAtLq4VJtjLoaPkZRsoUftc6BuZc6W4qEW+SldsE=
+	t=1758532647; cv=none; b=gX/rrhIJW3gN37PlhORzQGoDjkU6g8E/YhFWwUqLHZcI7t0oKMrpBJ/C7AAi30zLI7xENo8InbFT2/3/yIUjIE/8ehzSqCD4DN7WJBAWPnCbTVxCMu7zVR537ILifjEIze+Vsah+daQXDOH7vFspvdhzSP3igFQBGuIgc3o1f1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758532472; c=relaxed/simple;
-	bh=PWZIHxNO9F6b5mRaqczR3GeKYl1D6LdC4n5HIjFGDFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hTRHVcWlrNym6oGeVpsuwjgf+Y9qv0DAaQyEOUY5n3LW0L3+JwIEKVQfioV8qHFtI/8EuTNIRkc6ZnSrE+zRoWBX0aiPnIzlixuu5DK8o+3M4H8HYzSt/0gU73Q66+TPIzviC4oHgHhA03SLmrBXaJ7Y1+2+Ifksi9t/aXar5VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1ZpdRARG; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46d72711971so30825e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:14:30 -0700 (PDT)
+	s=arc-20240116; t=1758532647; c=relaxed/simple;
+	bh=H4xR9rGnsgWWE3kFpKrgf6Nqe4SgPA48B2S8CSNA3sc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O3KYQIz7TrR6H2ATeO0hOZjRIYPDVSwStC56Ya/y3VR1VhBR+zxRNoYht5u8Ug1iA0D1NSx8QWDJdD3e0WiUKf/0gjj+YBntTfoSvLDxhE2KAyiKjsl1EFMK2FODsu2QDEun4N2PitWOL37fCUhe0SVhhVDDNEkJFzYnlP4Naho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YR21dulM; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-77db1bcf4d3so2807268b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:17:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758532469; x=1759137269; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wgArYQu+cHNbaIGGgNnr3ySxE/Az/B6v/bHyH6zdSV4=;
-        b=1ZpdRARGYER41O1923opmMPvG9X5f/TwG3kjJGNY8/Qm/ndvfUEjo4wnbDuVy84c2x
-         JMq6kyVCpj2t/3munw/mJB5EW+jZMXpmwh6YjMb8LofcbHqe2hsyRdI1RExhC+I/vZOT
-         EIzpMLj4WOQEMBTa0wu6vd3jGn+Viw6NMmP9yTXJubfHtCMXGScyEQtX7sqqbflLO87d
-         1UqKL9zBAdlbmeexqy6kBnQRMCGelsoi6+R0wFtgEHdFH/CBdKekkgWrhTSaodjyI+EK
-         NLBbCNECv7g6QhauxhXuHGb2ogeu/2KbqG91ZYHpr00nQo9tA31+I/cJcGs57lalW6nj
-         Wlhw==
+        d=gmail.com; s=20230601; t=1758532645; x=1759137445; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fGb/DBgzMdYPrR58mCFwPhHuJtGwABvWLMjhmJdkkaY=;
+        b=YR21dulMwp6yaiIGQC1xJSWThqkpsYV7mpD7kcpQozpeiC7vnM3sgX0Se9N2MPWg0r
+         uoYQDhFCURB+1ad+LeviCQrGXq/fyVIJ99JUCQ2Lh2S0v52tbNbXgFLsHWj1q8262K9Q
+         IQabTlqVC0mBUxCzo8UrOhXYUwvNe/SgS8es1WfWAnqhklhySYa2ODoZlRqlOQ/A3gNK
+         M7xdh+m1RZHkMdchYUQuh7WAWQRF7d6GddF1VNZdswmlFV9/PGQKYSoYEoyuh3FqBsGU
+         Q56oIOH3UYvVn3M1GL+0ep6y482VSJ1YhUsD17je3/J7nUFd1xbqYL0hQTyyQtJ7Xk8J
+         uQAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758532469; x=1759137269;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wgArYQu+cHNbaIGGgNnr3ySxE/Az/B6v/bHyH6zdSV4=;
-        b=EUQM97hPd7g8OzxJKTYPX2H/ZEom1CG/zY60FMwjJFptzpr+qBtJbvrivBD4wqJ5vB
-         75FoIUrJCQvUSzCmYPSxXPCzAXaNMDPE3+/AtO1GhXnuHG5Pz3bKdNvRd/EzrsonyJrq
-         LV9GhNXe6M9oZs52g1B9K/bm5yOvw6KHYaZM73ivSxl7evcifZ57aWhHJbgY926mS/vc
-         g2c4rdOLoZOH72fS10ujJu8oHdwOvzLm5ccrDAc5tsLMsWK7K870Bj37CAsFtIoOymud
-         FavPVtoO0Xs4CtFLy67Y60Y6hkvKY8ZhJvowuMJIZ25xoTAMa0Wlf7FJ8uBTeaVrQHU8
-         23uw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxnqQGsQw9zQyFnn5DsPHxxZk+SlxnpNHiwFkx18BNTs5iG+LPQ/Gbb3nf/HnwItZ0tKiF6f8cwRIQpnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7o2onsRW5WswjWOgSK08OyYRVoeH+d3/cPiX5HVLQ4xquxgdk
-	XKZ+dbeX6Wq82fEorPYwUdHWhCOVNQiHYb3zVGYqGcisM8GbdBpZCOreFQbTI6v0wQ==
-X-Gm-Gg: ASbGnctiSAVEmuQjTDSo7JFL8SY3Do4FmW37v9ZIaAM+ad81AO4HuM7SXv5831sRreG
-	Mt3aRCbutU3pRL9w65SzuE2P5VsrrdYB8n7NYxoJyb3rJfa3xj2IGHatM3KokbTfXn8mCYMcK9i
-	9tafMQ03em+3JpGFuzHsr+AOjZXle4pZYNrXCIlK204FGZsMR8M93QeuLdzOf+uSV9pb11Thu3H
-	tALm5PwaGhDib6tbcu07bk1CSYCqwVuV05GKC4Q+fnQ4TF85ecJ3kGLsUHF4iXOOizBXN8fYHBt
-	Ss26NqFQaxhr+M6k6ihnt3hYMnXm1QuwwlV7lr6R0OBAkxdTknOdMtnWDVOKNQbqxWyjnzQXmwW
-	l6tkyFH01hLjry5VmHy1sS1EqNM+FZDOfu7ytplAuCwFHeZ9DDWRamUFB0UDpCLM=
-X-Google-Smtp-Source: AGHT+IHzWY/BU+tZg/uSMYwHsohYz2u6un9Jyb5wJfEWQ7iDRJk2kEB7VjW0B+HU5Afwed6ytoIPQw==
-X-Received: by 2002:a05:600c:190e:b0:45f:2e6d:ca01 with SMTP id 5b1f17b1804b1-46154878d4bmr11295375e9.4.1758532468571;
-        Mon, 22 Sep 2025 02:14:28 -0700 (PDT)
-Received: from google.com (157.24.148.146.bc.googleusercontent.com. [146.148.24.157])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3f829e01a15sm7769744f8f.57.2025.09.22.02.14.27
+        d=1e100.net; s=20230601; t=1758532645; x=1759137445;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fGb/DBgzMdYPrR58mCFwPhHuJtGwABvWLMjhmJdkkaY=;
+        b=rrKddpLSFLy4SieDRIZyzfVMYjId76PuxDgNfcKqvQisIUEDyeIC1qT5bs1BB2WgCN
+         cgGNpvInE9OoeOBSn6cRwQ/R8W8os+li4SGW925XGwFmZubAEvxdxgL9JJjZY2d0RsaY
+         33/JDWiWc0zyNWgqgT6cqmk1esOVz1SJ2joGm+vz9qQxefbpE78YgRGvlPjbJ/qa+eUl
+         VhAsv5T8Nn/s+icRnKgN0S+CJ3Qm80oBBmQfc1O8OPptxliJmNT30lTvLm5S5bZrmXKp
+         WHCdA7SyTBgBFX+MgucoLUhqZJ07n77GSewBeQY4ZqxvBjWf9fJePDo7HgaaIGJgMRmH
+         lWIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVg6SF70qEzQEyasEu1mPwzXxmQx6heIpu1cTCHJ92BQtubMh7Ih3cWt7UZ/niGbEPOTGRTKYEWOTnpjCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgDviv8pO2gWhHGF9CPqpfftcV5EnX7QbbqnHRM80s8IDqA9po
+	105mRgfruMgwVC4cgDOV6o7GzTSPnhbLFBYQDPFUX9iyznAn/+wfoAAJ
+X-Gm-Gg: ASbGncvFGHe+50wE43GLQYowJkt7FWeA318YtqTQGf16uCDpL8/OmSfGQgdDoiZtc2j
+	FXDQngHR9rFMkcZDaOTGgWclRFb1lti1q1nuGovw2BWDi4wXDevuvfdHNkTFqRRL3N3aUMJ5+OR
+	x1OqgMjyLlCvtH+4cbBGXjg0U/zUk1ZGmGh1TNtamXbkP5VJvjTFBHKXAkfGsdXMGtbZ7p0gFp+
+	FoYIweIvRUTzEBzJRmHgxFpjMxYGB7UwLxIOz8oLbI8czIM5VqDIxEBFVgdU/HCldOL7xaUGoQl
+	9/HXVF0qs3KNEL5iwuSjyaa/pW7cT9VGgqjPoxD1HTZMhRHfRoX45FPnSyfmkxsNtdKuZBGxG22
+	nlkf/tXXUCC8+Dfz3iozGjDDIZrveMa3D
+X-Google-Smtp-Source: AGHT+IHpQUnDxqtshyNYZwoifi0+JfQ4lWp5zNwj1YOtKACLv1wuYj4WHK6vgRUMTUwuv7Y9Eq6txA==
+X-Received: by 2002:a17:903:1aee:b0:269:96db:958 with SMTP id d9443c01a7336-269ba52872bmr156749785ad.43.1758532644418;
+        Mon, 22 Sep 2025 02:17:24 -0700 (PDT)
+Received: from CNSZTL-DEB.lan ([211.158.26.188])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802deb48sm124126865ad.70.2025.09.22.02.17.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 02:14:28 -0700 (PDT)
-Date: Mon, 22 Sep 2025 09:14:24 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Keith Busch <kbusch@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Alex Mastro <amastro@fb.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, David Reiss <dreiss@meta.com>,
-	Joerg Roedel <joro@8bytes.org>, Leon Romanovsky <leon@kernel.org>,
-	Li Zhe <lizhe.67@bytedance.com>, Mahmoud Adam <mngyadam@amazon.de>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	"Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
-	Will Deacon <will@kernel.org>, Yunxiang Li <Yunxiang.Li@amd.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: Re: [TECH TOPIC] vfio, iommufd: Enabling user space drivers to vend
- more granular access to client processes
-Message-ID: <aNETcPELm72zlkwR@google.com>
-References: <20250918214425.2677057-1-amastro@fb.com>
- <20250918225739.GS1326709@ziepe.ca>
- <aMyUxqSEBHeHAPIn@kbusch-mbp>
- <BN9PR11MB5276D7D2BF13374EEA2C788F8C11A@BN9PR11MB5276.namprd11.prod.outlook.com>
+        Mon, 22 Sep 2025 02:17:24 -0700 (PDT)
+From: Tianling Shen <cnsztl@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Tianling Shen <cnsztl@gmail.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Jonas Karlman <jonas@kwiboo.se>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: arm: rockchip: Add FriendlyElec NanoPi R76S
+Date: Mon, 22 Sep 2025 17:15:08 +0800
+Message-ID: <20250922091509.2695565-1-cnsztl@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <BN9PR11MB5276D7D2BF13374EEA2C788F8C11A@BN9PR11MB5276.namprd11.prod.outlook.com>
 
-On Fri, Sep 19, 2025 at 07:00:04AM +0000, Tian, Kevin wrote:
-> > From: Keith Busch <kbusch@kernel.org>
-> > Sent: Friday, September 19, 2025 7:25 AM
-> > 
-> > On Thu, Sep 18, 2025 at 07:57:39PM -0300, Jason Gunthorpe wrote:
-> > > On Thu, Sep 18, 2025 at 02:44:07PM -0700, Alex Mastro wrote:
-> > >
-> > > > We anticipate a growing need to provide more granular access to device
-> > resources
-> > > > beyond what the kernel currently affords to user space drivers similar to
-> > our
-> > > > model.
-> > >
-> > > I'm having a somewhat hard time wrapping my head around the security
-> > > model that says your trust your related processes not use DMA in a way
-> > > that is hostile their peers, but you don't trust them not to issue
-> > > hostile ioctls..
-> > 
-> > I read this as more about having the granularity to automatically
-> > release resources associated with a client process when it dies (as
-> > mentioned below) rather than relying on the bootstrapping process to
-> > manage it all. Not really about hostile ioctls, but that an ungraceful
-> > ending of some client workload doesn't even send them.
-> > 
-> 
-> the proposal includes two parts: BAR access and IOMMU mapping. For
-> the latter looks the intention is more around releasing resource. But
-> the former sounds more like a security enhancement - instead of
-> granting the client full access to the entire device it aims to expose
-> only a region of BAR resource necessary into guest. Then as Jason
-> questioned what is the value of doing so when one client can program
-> arbitrary DMA address into the exposed BAR region to attack mapped
-> memory of other clients and the USD... there is no hw isolation 
-> within a partitioned IOAS unless the device supports PASID then 
-> each client can be associated to its own IOAS space.
+The NanoPi R76S (as "R76S") is an open-sourced mini IoT gateway
+device with two 2.5G, designed and developed by FriendlyElec.
 
-That’s also my opinion, it seems that PASIDs are not supported in
-that case, that’s why the clients share the same IOVA address space,
-instead of each one having their own.
-In that case I think as all of this is cooperative and can’t be enforced,
-one process can corrupt another process memory that is mapped the IOMMU.
+Add devicetree binding documentation for the FriendlyElec NanoPi R76S
+board.
 
-It seems to me that any memory mapped in the IOMMU is that situation
-has to be explicitly shared between processes first through the kernel,
-so such memory can be accessed both by CPU and DMA by both processes.
+Signed-off-by: Tianling Shen <cnsztl@gmail.com>
+---
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Thanks,
-Mostafa
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index 6aceaa8acbb2..e8185344c6f0 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -330,6 +330,11 @@ properties:
+               - friendlyarm,nanopi-r6s
+           - const: rockchip,rk3588s
+ 
++      - description: FriendlyElec NanoPi R76S
++        items:
++          - const: friendlyarm,nanopi-r76s
++          - const: rockchip,rk3576
++
+       - description: FriendlyElec NanoPi Zero2
+         items:
+           - const: friendlyarm,nanopi-zero2
+-- 
+2.51.0
+
 
