@@ -1,155 +1,176 @@
-Return-Path: <linux-kernel+bounces-827613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21D7B9237B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:27:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6FDB92381
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66ED9178B99
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:27:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F28CA7A3067
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E1E31159C;
-	Mon, 22 Sep 2025 16:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268C73115A7;
+	Mon, 22 Sep 2025 16:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="EMrPzHIk"
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PFEyKmdW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4AjFpTsP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559F73112BF;
-	Mon, 22 Sep 2025 16:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDB23112C3;
+	Mon, 22 Sep 2025 16:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758558433; cv=none; b=fCQ5MZm8m3xjJyUgv6Rzp/TbO85l+AYnk2U614VzBU8H5EhbnwW/TdazoqMrEIX/5YJxoSldjstX/b4aCOoEhvb5zsSYKVsaFgEEvh7ANiDo5RZeUPaC/8t92tTn7hBOqgcQLQlBKZ75WaVALjdDWtr+cLokSKvTFYR6aaTgO+w=
+	t=1758558545; cv=none; b=aCsC5Uanwnk2dbov86KFUdCWiiH9OZwJrOKpk1LPWeteS+1RNn3y30IHGwuseZugyjI5F7skW6kwWjMrdWGQqEVvgIVPDebMhFsUKGIGXk0nyIEydi31pCXjztAyL7PfZKDTRGAjcV0/L9/0Rar4IiyeRvSsXIHbg5V199MjG1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758558433; c=relaxed/simple;
-	bh=0WZeePctaXJTfHXGqOsHEP/CVINofRQZG8BFnjJa3Yk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D4/HjYvbdWiGE7E6dsTD7Gs9PIogFYO1j17LeGncRUardJnmwPduKzGjLVaigDNTFdchrmpLhU+DOMoHz3DBHhOQliUUZK2BADYyxeGSVwhngA21w/q1eu+N4P+0ctNLOvc2yfueIvY/vu+H5w9DBHby6NibBmE3FXgL/1Yv74Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=EMrPzHIk; arc=none smtp.client-ip=80.12.242.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id 0jNavqzqDFsG90jNavMclW; Mon, 22 Sep 2025 18:27:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1758558428;
-	bh=BPCGKEaZqcaAW9eCNNuUTqO8gdvHoT6lFp43/zZE20E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=EMrPzHIko64lPi6DPgWlZ6Q8XSPYroCk3hYuuAOVVL+E+Sd5JWRnyy7ANDELgFLcU
-	 zbnsCqAOhfoIF85U2d6kQdyUz6B6kEVrP+6Dr9ZuqdWuiKLEVRirzZkvyXJok6vsL6
-	 XWck3kX4nDEo82ljCKFbHjHRUCIMEBJlQYgPyQydrIoHWzs4yvg1M3zUsHOha9baUx
-	 h/Kj1MNf8yZ6zvi4iVJlCi9ZPMkvfkRbTxQMC6oEElVXefnoQ2t4cmj7ayHWGJIWyz
-	 EhkGUo11bwt2KoctuzdL7VQDXUNV1oPw5FiVJpldnjr5qmtD8d3nVA/jeE75GM4Gj+
-	 nc5Jomjzd/1sA==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 22 Sep 2025 18:27:08 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <3aaa6c7d-647f-47e6-a5fe-0051cf58cd2b@wanadoo.fr>
-Date: Mon, 22 Sep 2025 18:27:06 +0200
+	s=arc-20240116; t=1758558545; c=relaxed/simple;
+	bh=mgvFeTK4TM6IjKYriZlHqMRbdNwTUYyVt1ns/bRTkKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=njc1h45AHwgwsV+3tkVNHWbjf9aTrNNi7yY1b3rlHL4Pk80cXbNId3H1dLM07WNN5uF1lJ7JGYBwjx2u1xYr8+M9lqZESu5rc211lvTwxyVvEcjVULtDy81q+NgW7gUC0L6CEUm/XQ4WuQQLHIHE6c/DGiHtgfHYzsUpckFdBeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PFEyKmdW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4AjFpTsP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 22 Sep 2025 18:29:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758558541;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zHg8+HkamnZm01xX5vs4eWwYS7Rr0huD8EUHR5N18h4=;
+	b=PFEyKmdWC2NlEKsvPKX7SE7QqKwBDa8zpu0rOZ1YnK6l07ZT+4L006gl2TQIsckGMoMlLP
+	yO6S4hTReLkOSEOAaCssTUuffpiFIHz6eS9+fLvOYdcqo7kMW1PkLSKtZl6h1B0grHOMlg
+	IhN6GLySvlK+NYbGFI2kjmJSdY83D4ileLV5+5l23DHqQFSUyZV1s9AXBkYd1b/SdLEjcU
+	3p+Jww1nH70MgMcxarjm3cLMowQLlebf032UfXMEb5CTmQ4VNuNBl57kWJ1bh3AB3APJd7
+	h9GduoOI7dLW6cLQiy2o0UCosFns+TaBNrS+7oH4yQ3lK6ASjL9CaxBQtyM2Zw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758558541;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zHg8+HkamnZm01xX5vs4eWwYS7Rr0huD8EUHR5N18h4=;
+	b=4AjFpTsPKHirZXXkhZ2ilwCaFUppb2w3q/cVmRWIh2ZWnU4ASROoxnspSBbH76hyx/0Iyg
+	ROaDnu0WcxaUrDDA==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] rv: Add signal reactor
+Message-ID: <20250922162900.eNwI7CS0@linutronix.de>
+References: <20250919-rv-reactor-signal-v1-1-fb0012034158@linutronix.de>
+ <d0aaaf1f47f0d948b60b0575e179564e3c024188.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] powerpc/smp: Add check for kcalloc() failure in
- parse_thread_groups()
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- Guangshuo Li <lgs201920130244@gmail.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20250922151025.1821411-1-lgs201920130244@gmail.com>
- <a7453bdc-16f3-43e6-a06d-bd6144eeae72@wanadoo.fr>
- <496a8ed4-b416-47f9-be1f-cda5472d004d@csgroup.eu>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-In-Reply-To: <496a8ed4-b416-47f9-be1f-cda5472d004d@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <d0aaaf1f47f0d948b60b0575e179564e3c024188.camel@redhat.com>
 
-Le 22/09/2025 à 18:07, Christophe Leroy a écrit :
+On Fri, Sep 19, 2025 at 02:26:12PM +0200, Gabriele Monaco wrote:
+> On Fri, 2025-09-19 at 12:49 +0200, Thomas Wei�schuh wrote:
+> > Reactions of the existing reactors are not easily detectable from programs
+> > and also not easily attributable to the triggering task.
+> > This makes it hard to test the monitors themselves programmatically.
+> > 
+> > The signal reactors allows applications to validate the correct operations
+> > of monitors either by installing custom signal handlers or by forking a
+> > child and waiting for the expected exit code.
 > 
-> 
-> Le 22/09/2025 à 17:38, Christophe JAILLET a écrit :
->> Le 22/09/2025 à 17:10, Guangshuo Li a écrit :
->>> As kcalloc() may fail, check its return value to avoid a NULL pointer
->>> dereference when passing it to of_property_read_u32_array().
->>>
->>> Fixes: 790a1662d3a26 ("powerpc/smp: Parse ibm,thread-groups with 
->>> multiple properties")
->>> Cc: stable@vger.kernel.org
->>
->> Signed-off-by that was part of v1, is missing in v2.
-> 
-> I see it below the ---
-> 
->>
->>> ---
->>> changelog:
->>> v2:
->>> - Return -ENOMEM directly on allocation failure.
->>
->> Except for a newline that is removed, v2 is the same as v1, or I miss 
->> something?
-> 
-> v1 was:
-> 
-> +       if (!thread_group_array) {
-> +               ret = -ENOMEM;
-> +               goto out_free;
-> +       }
-> 
-> Which was wrong.
-> 
-> Well maybe there was several v1, I'm talking about https:// 
-> lore.kernel.org/all/20250918131513.3557422-1-lgs201920130244@gmail.com/
+> Thanks, this looks like a really nice addition!
 
-Mine, was 
-https://lore.kernel.org/lkml/20250922150442.1820675-1-lgs201920130244@gmail.com/
+Yeah, this will help us write KUnit or kselftest for the rtapp monitor.
 
-and apparently, there as been 3 v1 : 
-https://lore.kernel.org/lkml/?q=powerpc%2Fsmp%3A+Add+check+for+kcalloc%28%29+in+parse_thread_groups%28%29
-
-:/
-
-CJ
-
+> > For now only SIGBUS is supported, but additional signals can be added.
 > 
->>
->> CJ
->>
->>>
->>> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
->>> ---
->>>   arch/powerpc/kernel/smp.c | 2 ++
->>>   1 file changed, 2 insertions(+)
->>>
->>> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
->>> index 5ac7084eebc0..cfccb9389760 100644
->>> --- a/arch/powerpc/kernel/smp.c
->>> +++ b/arch/powerpc/kernel/smp.c
->>> @@ -822,6 +822,8 @@ static int parse_thread_groups(struct device_node 
->>> *dn,
->>>       count = of_property_count_u32_elems(dn, "ibm,thread-groups");
->>>       thread_group_array = kcalloc(count, sizeof(u32), GFP_KERNEL);
->>> +    if (!thread_group_array)
->>> +        return -ENOMEM;
->>>       ret = of_property_read_u32_array(dn, "ibm,thread-groups",
->>>                        thread_group_array, count);
->>>       if (ret)
->>
-> 
-> 
-> 
+> Curious choice of a default signal, is this specific to your use-case?
 
+Any signal should do. Looking through the signal list, I think SIGTRAP is
+more appropriate.
+
+> > +config RV_REACT_SIGNAL
+> > +	bool "Signal reactor"
+> > +	depends on RV_REACTORS
+> > +	default y
+> > +	help
+> > +	� Enables the signal reactor. The signal reactors sends a signal to
+> > the
+> > +	� task triggering an exception.
+> 
+> This assumption is not always correct, imagine a failure in the sleep monitor
+> caused by the wakeup event. The offending task is not current but the wakee.
+> 
+> This is a bit tricky because reactors don't have access to that task, just to
+> keep the same implementation between per-cpu and per-task monitors.
+
+Yeah, this one is tricky. We probably need to pass the correct task_struct
+to reactor, but then I'm not sure how to handle the other monitor types,
+e.g. per-cpu monitors.
+
+I have no alternative to offer, let me give it some thought.
+
+> > +static void rv_signal_force_sig(int signal, const char *message)
+> > +{
+> > +	/* The message already contains a subsystem prefix, so use raw
+> > printk() */
+> > +	printk(KERN_WARNING "%s", message);
+> > +	pr_warn("Killing PID %d with signal %d", task_pid_nr(current),
+> > signal);
+
+RV reactors have to use printk_deferred() instead. See:
+https://lore.kernel.org/lkml/874k50hqmj.fsf@jogness.linutronix.de/
+
+But I suggest dropping the printk from this reactor. We already have a
+printk reactor for that.
+
+> > +	force_sig(signal);
+> > +}
+> > +
+> > +static void rv_signal_task_work(struct callback_head *cbh)
+> > +{
+> > +	struct rv_signal_work *work = container_of_const(cbh, struct
+> > rv_signal_work, twork);
+> > +
+> > +	rv_signal_force_sig(work->signal, work->message);
+> > +
+> > +	mempool_free(work, rv_signal_task_work_pool);
+> > +}
+> > +
+> > +static void rv_reaction_signal(int signal, const char *fmt, va_list args)
+> > +{
+> > +	struct rv_signal_work *work;
+> > +	char message[256];
+> > +
+> > +	work = mempool_alloc_preallocated(rv_signal_task_work_pool);
+> > +	if (!work) {
+> > +		pr_warn_ratelimited("Unable to signal through task_work,
+> > sending directly\n");
+> > +		vsnprintf(message, sizeof(message), fmt, args);
+> > +		rv_signal_force_sig(signal, message);
+> > +		return;
+> > +	}
+> 
+> Why do you use the task_work at all instead of signalling directly?
+> If that's something not safe from a (any) tracepoint because it can sleep
+
+If I remember correctly, sending signals requires a spinlock and therefore
+may sleep on PREEMPT_RT.
+
+> you should definitely not call it if allocation fails.
+
+Yep.
+
+We probably can get away with not reacting at all if allocation fails, by
+crafting our tests such that only one reaction happens at a time, and
+allocation won't fail.
+
+Nam
 
