@@ -1,197 +1,141 @@
-Return-Path: <linux-kernel+bounces-827298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F13B915FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:21:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81CD7B91602
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9809C7AABCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:19:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C66D84232D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1B43064A7;
-	Mon, 22 Sep 2025 13:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="dhk1or6R";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Rz7+ty/k"
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2607E3090E4;
+	Mon, 22 Sep 2025 13:21:12 +0000 (UTC)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371DB139D0A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A670230B517
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758547257; cv=none; b=GQWSCtSRoOwyfcX/5oyVR0dmLPI9Gu8QXKU/lsCGZ+fZWWkwgcsKyOBJerPPiXneTnl+MnxRX0OkjS8e6tTeJLFpO9OSRjhlXVPU1WzsYOS43T3rxWoU2k0Mxc2FN51T4h3bWl+dq7A8D0r26j/Q2/5Ags5FNIdhhcf76DeOrMA=
+	t=1758547271; cv=none; b=L+SFQpUDhlLcPCRFclBex7t9ehLN0p2oVNCQJTfBiJ4BvovwThD3kQbtFYa8cC03pQYBlq8P/YoqWGCr1uVzQm5xRKRWIpVJLfo76Q67U1iAxr01rFZbJLlrEYNKqHJP5TnxFUrDwBAwf2Fbupvq6uM3Z26n2FexIC8BXQrDgrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758547257; c=relaxed/simple;
-	bh=x8Qonh0hI+KhS1QBeBt4+WDnlZqavMhjTVks59hn6hc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=dQo1wL62ZTXRHXH/foFVlBtC8OzpVokbZkeZaM3Ts008JjJ88n1YWRn/k9z9MoEETqLB0j9sgFsh1Somt5zAB8ANsN4eKdxLh7rVtkJeQ4HQeFS0typfsHUdBWY9q17wR5MzChywctar9FYjLG/RLhdL4ekehY6W596QzEKwxcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=dhk1or6R; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Rz7+ty/k; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 54E1F140014E;
-	Mon, 22 Sep 2025 09:20:54 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Mon, 22 Sep 2025 09:20:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1758547254;
-	 x=1758633654; bh=spCmI4qpr96vlC+6fo13WS0SrNCRrYHQpc+SyJrq5no=; b=
-	dhk1or6RXuzqy3ZN6yGP2ezg4vNPx1g5j/3U2t3ZqKbhqMi51sBnw1Y9SDbUvjXe
-	RQPJnFHZ1mWBzHZLbZLmw35vtOac0ExqrijHClpZzEmcBruiJ+pB1CLD/I6roS7s
-	xczCIJaIOfj48FI+b11PLUYCFAjgH7j2/pPR6r7ILMzzVoNSTQs8KmNjOPMZWthp
-	chvyBk4WY1z6L2k2SnXwPws+zj6B7jLq21WE/hsRmsJwgcpr9j/HKRtkmjsFlWC6
-	S1HESdRRF+rSYZ+pwXMYy0MVClJCGy9c6+yteXw/42xjDV1viLmkpNIKscIcuHJ7
-	m7h+W30SIOLMkS+6jpFckQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758547254; x=
-	1758633654; bh=spCmI4qpr96vlC+6fo13WS0SrNCRrYHQpc+SyJrq5no=; b=R
-	z7+ty/kRD30juLcAOy2/iu5hKtqVP74Dmgw5mcHTmc7AtyS8UPcXY9flfjaN+x99
-	ZFX/6VGYYsPB4/3iLzsNdD5Y+4eBazKoMSN4iG3e/91nWzyr2y/5hFfsT0GSHZIa
-	1eG54n1D5GK5Hygmig8+0ZxEMTNKo8zcbnZRu/zEAdcVYBAYKviEaxa9E1APZkeL
-	JM/aMS8tgWPAaz3tJgz+DhF7tli6mBsVTTwtWEqgPH1gqzX0de4OibLMYcNHmGxr
-	ym01rkvs37ldCGNyN+wWDYofUbyobKN0iNhpvYJ85RUFSpTsoAxRW6HKj2yd2suU
-	vejHf0n39XD6M/MqQ8Vzg==
-X-ME-Sender: <xms:Nk3RaJHz34vvWIIHBtSJCoI0BYVwF4JWgr-1Ky6urSunePwfOq5Kyw>
-    <xme:Nk3RaOUW0VLA1L337koW8KlilOFpz2AnpzbQtESzF0CG7XYuuFi5QvRhbglaFMLeP
-    pEVxOmeQNh5MzJ6dl4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehjeelhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpeefhfehteffuddvgfeigefhjeetvdekteekjeefkeekleffjeetvedvgefhhfeihfen
-    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghp
-    thhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugidqrghrmh
-    dqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohep
-    shhtvghfrghnrdifihgvhhhlvghrsehnohhkihgrrdgtohhmpdhrtghpthhtoheplhhinh
-    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Nk3RaAtXKtk3yb6HfhfqV49z-_fGG-FbGtxCptXUxDqPaIJb2l1h5A>
-    <xmx:Nk3RaIX7MbfaT4KVW9bAYhSsyLHBtMI7-tlQnaGsDu6WbEV1XCTNew>
-    <xmx:Nk3RaDlWDIDPe-MHs3kCaQPocarHmm9Ecx0tM1dzd15mlAchNBPUiQ>
-    <xmx:Nk3RaBb6LfPmNk4oudKcmf2auVHi1EsaPaCbTAF3xTYaPjBYCR87pA>
-    <xmx:Nk3RaD9vYB5t6nBYlQqt85xqZYQAQjjNPrAps8j_l9yMaL_YLT0uL0gy>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 11BAB700065; Mon, 22 Sep 2025 09:20:54 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1758547271; c=relaxed/simple;
+	bh=twHi5A9x4cQ/6G+wv9NhTj7Vvql2JLIedMZaL1HDcCs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jxf5EwxfugsfghkYYuCYvY5zl6IW9pSnQAczjfifbWuhj4vwedLiMcBHBQ6BWw2ArONGwheqll2Gu/w0jk8+I892CJl3oczum9k73j4ulIfEXbdFYU083BhdViOTeXDR4jQYkM8TQVm06+QEe+i2KUoYod+JkfB5w3aZOQ3sDHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-54a9482f832so1517322e0c.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:21:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758547268; x=1759152068;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7oT2yfLN/4pYPbEtz7ZQcc5Ja0yXs/qEChj5LREg+X4=;
+        b=bdOdyXxJhMCzlQgEq02w+LcR/haMKJYZTYsZ3Bjd6wSoPCc/+ScfmKGMC3NLWfo271
+         EkfEUD3HaEjImBc+tqyIk+JWTMvZp8nS/taeiQQYlNWlr1cLOxJCrl8HdtacRuJWk0Pm
+         JuPDPSF46jzJcBqqT2HsKjZk+I3y5cWVA1JT0DgxMHLl8azB84VABjysvbGF/X6dAnO9
+         jXkh8L02btdxcwNPm0gCD3oQfVdijI1GM5hZ8d+2s6K0HLOvKnkFrjB7mJa78o3WdUHB
+         P0PemKlwmeZbGynpKVluncJH+k+j4GtMwUE3eLlESJVyRNXnLde2dbdTCLaWmPyt9Djf
+         r3Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCUo2ndJWZG4JT0kibThqPoVAkcSM3axw+F6egX0Mrc0iILJFTsaum4JpvQW6O3RV0XtP/RU5Fx14ky7XK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy13zbW7xxJeWC9lC4wLvZ/4VHM6tlOxfiiFXaAmQ2QpN9LYA7h
+	E+Zj0xgsJRuYcCnYKLky0ioz9fdjKsjpiH5/1Zz0kaB5iPyh5ifwspX1LQ7ULcuD
+X-Gm-Gg: ASbGncuscps7LnWumk+YyDOZloPRyBm0KW9FAshA2KR2/uPX+ZXDZ+p8Dlme/i43B+5
+	xhc8qyZ12vdwdUFNFQ6IfVMb6iXQp9/tswltqrNthVzXxxMkTJDIaPjZcsiIHojq35f9nCkpNLh
+	6waiKago3Ph4zxj3indYkKiQX47K5MwzDPzDrUEv9hwDy0gMkfbxjE5C04kwAdjP4Ku/ZPDQ9lE
+	4ftqU1MwJlw3WWQPrae0/R1CMZ2nwNyFKQPLta6yRN/wNi+VboGMDE4EVLj1s6/bugJl1sOtI4l
+	xdTtS9IdLFcNj5yXd6B7d75YYE+PY6dkolvKMIIrg7SHLKqFGBFun9xKf3bUAoyfOMxmBuubS6Z
+	jKY913D5l9yCLXbQs9GLyY2Ubt4HTuLJG1bSbxaikA1KjCqso52DA7TjsPc59
+X-Google-Smtp-Source: AGHT+IG7JZ2eFr4mwhZxFFy4VYxsPdoQgBSJsmPH8UBRqWiSyFWXnIVyJVjnJcpW3d+jHpxCG5aC4A==
+X-Received: by 2002:a05:6122:e46:b0:54a:93be:46fc with SMTP id 71dfb90a1353d-54a93be4a66mr1563646e0c.0.1758547268106;
+        Mon, 22 Sep 2025 06:21:08 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54bbc96ccacsm424907e0c.3.2025.09.22.06.21.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 06:21:07 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-8943501ba3dso1994646241.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:21:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUWu98dbBUuaIj3f4p+ljCe3glgRAAC1QHTkQsv2OCzKpgurAF5vpr5ILLeqMifaL5vw+XL0RUf5yUmto8=@vger.kernel.org
+X-Received: by 2002:a05:6102:d8c:b0:521:ed06:1fc7 with SMTP id
+ ada2fe7eead31-588bb9bf4c8mr3821613137.0.1758547267049; Mon, 22 Sep 2025
+ 06:21:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AeuX_cJPfcCo
-Date: Mon, 22 Sep 2025 15:20:23 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Stefan Wiehler" <stefan.wiehler@nokia.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Message-Id: <9ac3eb75-efac-4f3c-a3e9-6953db4babf8@app.fastmail.com>
-In-Reply-To: <8f104eba-6805-46e0-90da-232ce18973c5@nokia.com>
-References: <8f104eba-6805-46e0-90da-232ce18973c5@nokia.com>
-Subject: Re: Highmem on AXM and K2
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20250921111557.103069-1-biju.das.jz@bp.renesas.com> <20250921111557.103069-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250921111557.103069-3-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 22 Sep 2025 15:20:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWtpv325awR06pFA+_EHh5GZ90K6OEf5S6Wkg+_89uRBQ@mail.gmail.com>
+X-Gm-Features: AS18NWDdF71ys-sJ9xzdE3pXCvKO4zAavWIwsnrvZsEZ2kjh3SpCcOFmdVkNVPA
+Message-ID: <CAMuHMdWtpv325awR06pFA+_EHh5GZ90K6OEf5S6Wkg+_89uRBQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] pinctrl: renesas: rzg2l: Drop the unnecessary pin configurations
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 19, 2025, at 15:24, Stefan Wiehler wrote:
-> Hi Arnd,
+Hi Biju,
+
+On Sun, 21 Sept 2025 at 13:16, Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> There is no need to reconfigure the pin if the pin's configuration values
+> are same as the reset values. E.g.: PS0 pin configuration for NMI function
+> is PMC = 1 and PFC = 0 and is same as that of reset values. Currently the
+> code is first setting it to GPIO HI-Z state and then again reconfiguring
+> to NMI function leading to spurious IRQ. Drop the unnecessary pin
+> configurations from the driver.
 >
-> You've been calling out for users still needing highmem, and here we are ;-) We
-> use both the Intel AXM 5516 and the TI KeyStone II with > 4 GB of RAM in our
-> networking products.
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v3->v4:
+>  * No change.
+> v2->v3:
+>  * Dropped extra space before the == operator.
+>  * Moved spinlock acquire before reading pfc value.
+>  * Make sure it is configured for function in PMC register for
+>    skipping GPIO switch.
 
-Hi Stefan,
+Thanks for the update!
 
-Thanks a lot for getting back to me on this!
 
-> We use the AXM 5516 with 6 GB of RAM and highmem is therefore a must for us.
-> The latest estimate from product management for EOL is June 2029. We would
-> appreciate if this date (plus some buffer) could be kept in mind when choosing
-> the last LTS kernel with highmem.
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -541,7 +541,11 @@ static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
+>                                        u8 pin, u8 off, u8 func)
+>  {
+>         unsigned long flags;
+> -       u32 reg;
+> +       u32 reg, pfc;
+> +
+> +       pfc = readl(pctrl->base + PFC(off));
+> +       if (((pfc >> (pin * 4)) & PFC_MASK)  == func)
+> +               return;
+>
+>         spin_lock_irqsave(&pctrl->lock, flags);
+>
 
-Ok, I think this one is fine for the highmem usage at least. According
-to our current discussions, we'd likely start by reducing the references
-to highmem but keep supporting it for the page cache. Even with the
-earliler timeline I posted in [1], 2029 would be covered by the LTS kernel
-that gets released in late 2026.
+Looks like you accidentally switched back to the code from v2?
+Shall I take v3 instead?
+Thanks!
 
-The other problem on this platform is that upstream support has been
-abandoned by Intel a long time ago and as you know the drivers that
-did get merged are incomplete, so you are already on your own.
+Gr{oetje,eeting}s,
 
-Alexander Sverdlin at some point in the past considered upstreaming
-more of it, but that never happened during his time at Nokia. If you
-or someone else are interested in improving upstream support for the
-Axxia platform, that is still something that could be done. I know
-there are other users interested in it, and some of the original
-software team are now working for consulting companies that would
-likely offer their services.
+                        Geert
 
-> With the TI K2, the situation is more complicated: The EOL for the latest
-> product hasn't even been defined yet, but most likely we need to support it
-> until 2037; it really depends on when the last 2G/3G networks will be shut
-> down. Obviously the community cannot wait that long with highmem removal. While
-> we have 5 GB of RAM there, a little bit less than half is used by Linux. 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Right, this is clearly the more worrying of the two platforms, and I had
-not expected the timeline to extend that far into the future. The platform
-has some nasty quirks with its memory layout (having to use lowmem at
-physical address >0x100000000 to get coherent DMA, and needing ARM_LPAE for
-that) and does not have a lot of activity upstream, so I had hoped that
-it would not be as long-lived as come other platforms.
-
-> I see two options:
-> 1. We'll need to evaluate if we could move away from current CONFIG_MEMSPLIT_3G
-> with our rather special memory configuration. My current understanding is that
-> there hasn't been a lot of interest in getting CONFIG_VMSPLIT_4G_4G into
-> mainline. As we cannot accept major performance degradation, I doubt that this
-> will be a viable path.
-> 2. We'll need to switch over to the last highmem-enabled SLTS kernel, earliest
-> around 2028 (to keep some support buffer).
-
-Right, I agree that these are the two possible options, and I think
-we can make the timeline work for option 2, though option 1 is
-likely better longtime if we can come up with solution that works
-for your specific workload.
-
-Can you share more details about how exactly system uses its highmem
-today? In particular:
-
-- The physical memory layout, especially whether the memory
-  that is assigned to Linux is physically contigouous, or if
-  the memory owned by other components (the network processor
-  or an FPGA) is taken from the middle. Note that at the
-  moment, any memory that is too far away from the first
-  page becomes highmem, even if the total RAM is under 800MB.  
-
-- Is the memory mainly used for file backing (including tmpfs) or
-  is it used as anonymous memory (like malloc()) in a few processes?
-
-- If most of the memory is mapped into a small number of
-  processes, how close are you to reaching the available 3GB
-  virtual address limit in those processes?
-
-- If possible, share the contents of /proc/meminfo, /proc/zoneinfo
-  and the /proc/${PID}/maps for the processes with the largest vsize
-  (according to ps)?
-
-If the largest process needs more than 2GB of virtual address
-space, then there is not much hope in changing to CONFIG_VMSPLIT_2G
-or CONFIG_VMSPLIT_1G. On the other hand if your workload does
-not rely on having all that memory mapped into a single address
-space, using VMPLIT_1G would likely improve system performance
-noticeably and have no other downside.
-
-     Arnd
-
-[1] https://lore.kernel.org/lkml/4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com/
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
