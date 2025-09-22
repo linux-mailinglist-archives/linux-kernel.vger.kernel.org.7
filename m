@@ -1,128 +1,146 @@
-Return-Path: <linux-kernel+bounces-827374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A244AB9192D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:05:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 304E2B9210C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65DE1167119
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:05:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1AAD2A0C56
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8981917FB;
-	Mon, 22 Sep 2025 14:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3950530F546;
+	Mon, 22 Sep 2025 15:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g4XktSv8"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tcDAp9xS"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E4161FFE
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F5430DEA7
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758549896; cv=none; b=s8JmuXQFyNYrNHJJjstLc0KH/Jbyu9xrd5Mujt6pIAaMZllJDROHnf+NmvybaXeECOy/d6olg/+ChOM4aAIXthTLLVz4iSvpCr2s9itqVpL93o5Y6IeEzRjAF2o1wogbuDH2VrOQLTzU8hDtYNyXekSXa9O7I/Rv0WvbQaIPEVs=
+	t=1758556387; cv=none; b=f9e6qXhASJ9vuxDvlpD3azVL8VM3Dd//8F1atWvN3QslHxROgYhjN0g4dSrMejbPNNLOV00HbaXtjUon9FRlA6Ii+3AbFtFD9ZntsjkbhFlm9XUFweKuOTpWeJ4UNHwHGli5Hq/X4oZUli6mQEkYrQzjugDZKKFUSzJ+tS/AJL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758549896; c=relaxed/simple;
-	bh=/sjcY9Fa5XFylluVuxusVCNMtRrfJbTjfjaQE20VI70=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CuKq43/NXOt/l8bgbv4NHN0wnlffiPm9Qo136VYhFZswSRa9B0LLAx31g3HwfOop38QM2sXfmkcWeBCM9UmEm7J47m3K0hNonqmRxN390zF4NajII3pTB7e8HbKzZK4JJM6auRWjnME3W7Spec4FS8pEQOB2eF3jmXyD/vouX7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g4XktSv8; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-329c76f70cbso3805803a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:04:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758549895; x=1759154695; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2heiCNaQg0i2C5CkgyQt/hQuQrr2a5K2z0DwRmV5M/o=;
-        b=g4XktSv8kxMDE1maJ22CApN4ApUn/klU4pwm5YBmC0PCF09D7aCqp6QRQ3hlol5aM9
-         JfgG0YLGlPBa7vliZnYWRQ+RSeR1rz4wxGaXUBv9axkIVoeoWY2sMJFRAE5MhUmub+e6
-         D0ilXxPW08Cw9DnLv72tK9oRaA4wFaH8VG3wUx0NdvO0nRt2Ht0GIYedi1d/l+NDAM43
-         Gjdtv8YlC1PxwPc/J86LLk2HqTg7m2yDOLiMHpxFzP837OZwUebzZO5UXczQuZvR/uwn
-         wDVXiNttZTGwOV5HaO9SANtlcm5uZVDS9Hwg3kfj3FFc9HTnVuDlk3Alem8oNIVA1Obt
-         RopA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758549895; x=1759154695;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2heiCNaQg0i2C5CkgyQt/hQuQrr2a5K2z0DwRmV5M/o=;
-        b=IYXr3PqI/aswRhzJU6Qhw6MwK9LxGmfN4ea37zEsUY7aHfk6uga42vz2DDUcHm5bro
-         +vK1e3ILQfXtFagQDSjguGJZGnMTW06iAZjxjS/ERO6XMan/oEmZbyZMu1cXkPpW30sr
-         Cclf3ekPoqsWojVqOloMsl9g36PfQLw02C7jP5n8Xv5MtvShQ2dgmXZapP0rut0YsZp0
-         BmVaPqMa9YkhUsdkC63j1IrZlzFPVnAuDQoIpWQcAADTVAdfp638rbQtaxLcBQPmq7/k
-         euv/7vYl8E4Q1LWHOjzjvx++0tT/v7iIr1JrvYmkBzCFmTdtQ+R82KnQXZkY3K64ljCs
-         NbTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVn1ga53hA/mqIG+HHREyKaopVWOFIQrDEWdhwDiRhyFy0eWoiNQ6MF6C6pLH0vhRM/wyz8xMqRcEvdbEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJD4IxkyZc4ECza0ndh+Bw6uAroLkTgqUTTrn+Cq+dkvKj8jez
-	cDLkSGLBJIeVSTmn1WPYbzLj7u/rVY+M3vm9JBli7HBkLANnvfmCUovHqjJFyraFTy0IY6ZNWPd
-	q4TRBzg==
-X-Google-Smtp-Source: AGHT+IGL72q1bTs3P0fdVgVC7YK+Ah9k+m4H28Nhfd8zENqra69s7jdTZUpaIiWplJKUQYNz1olJAXEyid0=
-X-Received: from pjbmf16.prod.google.com ([2002:a17:90b:1850:b0:32b:95bb:dbc])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1a91:b0:32e:3f93:69dc
- with SMTP id 98e67ed59e1d1-3309836d35bmr15727800a91.25.1758549894748; Mon, 22
- Sep 2025 07:04:54 -0700 (PDT)
-Date: Mon, 22 Sep 2025 07:04:50 -0700
-In-Reply-To: <aNE1s02dSgcJ4Uxq@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1758556387; c=relaxed/simple;
+	bh=nTAiUXc7YPNhzVMskHwfnAtKOJU1lFSzoQUAunE5Nh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=UGAietj6U/H0MKtyXImwxOlChBPUCNGp3qJiJW+VPkYe4BbYgtrRjFGq8ideBwwOj6XR1VTfdb5NG9bUyLo+z6cfhv1VHj3f+56lM6jWHOG45MgNKosQwxhtc6/0axist/UUDe/wAIvYsbTYbVzJy33Bs6WMMODSV9yIi235byk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tcDAp9xS; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250922155302epoutp02b2410a7a0e60a3aa4ed213254f58f910~npbaEofxz2243822438epoutp02U
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:53:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250922155302epoutp02b2410a7a0e60a3aa4ed213254f58f910~npbaEofxz2243822438epoutp02U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758556382;
+	bh=cb+U+Tkli/i0cLtgDmQMqdfYAS8rfARZ0T/H5mDemaw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tcDAp9xSmTdHUJljmabG39R5XZM5yL8vQILO8WVX5r20RComWj0t3xuLtX666lhh/
+	 0/UIhgIoQ+4kjz4bAS8AteBEYPlxfrfaXVtinrgJg6FdgBtySxIGEfQ2h6pvBnJgfb
+	 WV7sBDMEOMxGJgUHfWpSJp7YLhH59nWHfkZ5vVDs=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250922155302epcas5p498ca7e2ea2f11c115de16c4cc34cd33e~npbZl6IhI1157911579epcas5p4v;
+	Mon, 22 Sep 2025 15:53:02 +0000 (GMT)
+Received: from epcpadp2new (unknown [182.195.40.142]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cVngy23sVz6B9m5; Mon, 22 Sep
+	2025 15:53:02 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250922124141epcas5p37e5a72c3edcaff0e7b1b9912b199a91c~nm0VansYh0475204752epcas5p34;
+	Mon, 22 Sep 2025 12:41:41 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250922124139epsmtip2d92509fd3289b4dd18e0d18fbb3766a4~nm0Tvwp422506525065epsmtip2G;
+	Mon, 22 Sep 2025 12:41:39 +0000 (GMT)
+Date: Mon, 22 Sep 2025 18:11:34 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V3 01/20] nvdimm/label: Introduce NDD_REGION_LABELING
+ flag to set region label
+Message-ID: <1983025922.01758556382272.JavaMail.epsvc@epcpadp2new>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <aNEb7o3xrTDQ6JP4@finisterre.sirena.org.uk> <409d5703-ca0b-4b4b-a221-4e38ea92ae9a@amd.com>
- <aNE1s02dSgcJ4Uxq@finisterre.sirena.org.uk>
-Message-ID: <aNFXgq3SkvemIlv1@google.com>
-Subject: Re: linux-next: manual merge of the kvm-x86 tree with the tip tree
-From: Sean Christopherson <seanjc@google.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Srikanth Aithal <sraithal@amd.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>
+MIME-Version: 1.0
+In-Reply-To: <8c6bb8fc-7801-45d3-8563-054b12295df0@intel.com>
+X-CMS-MailID: 20250922124141epcas5p37e5a72c3edcaff0e7b1b9912b199a91c
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----M3TZWmnaQcCgpq3P2cdOV_lud716KtFuwxspURBH1dZsF.eH=_26d70_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20250917134130epcas5p417d7c26bc564d64d1bcea6e04d55704d
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+	<CGME20250917134130epcas5p417d7c26bc564d64d1bcea6e04d55704d@epcas5p4.samsung.com>
+	<20250917134116.1623730-2-s.neeraj@samsung.com>
+	<8c6bb8fc-7801-45d3-8563-054b12295df0@intel.com>
+
+------M3TZWmnaQcCgpq3P2cdOV_lud716KtFuwxspURBH1dZsF.eH=_26d70_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
+
+On 19/09/25 04:10PM, Dave Jiang wrote:
+>
+>
+>On 9/17/25 6:40 AM, Neeraj Kumar wrote:
+>> Prior to LSA 2.1 version, LSA contain only namespace labels. LSA 2.1
+>> introduced in CXL 2.0 Spec, which contain region label along with
+>> namespace label.
+>>
+>> NDD_LABELING flag is used for namespace. Introduced NDD_REGION_LABELING
+>> flag for region label. Based on these flags nvdimm driver performs
+>> operation on namespace label or region label.
+>>
+>> NDD_REGION_LABELING will be utilized by cxl driver to enable LSA 2.1
+>> region label support
+>>
+>> Accordingly updated label index version
+>>
+>> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+>
+>With the change noted below,
+>Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+>
+
+
+<Snip>
+>>  	/*
+>>  	 * EACCES failures reading the namespace label-area-properties
+>> diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
+>> index 21498d461fde..918c3db93195 100644
+>> --- a/drivers/nvdimm/dimm_devs.c
+>> +++ b/drivers/nvdimm/dimm_devs.c
+>> @@ -18,6 +18,13 @@
+>>
+>>  static DEFINE_IDA(dimm_ida);
+>>
+>> +bool nvdimm_check_region_label_format(struct device *dev)
+>
+>Should be called nvdimm_region_label_supported() since a bool return is expected instead of resolving the checking in the function.
+>
+>DJ
+
+Thanks Jonathan and Dave for RB tag. Sure, I will rename it accordingly
+
+
+Regards,
+Neeraj
+
+------M3TZWmnaQcCgpq3P2cdOV_lud716KtFuwxspURBH1dZsF.eH=_26d70_
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2025, Mark Brown wrote:
-> On Mon, Sep 22, 2025 at 04:57:39PM +0530, Aithal, Srikanth wrote:
-> > Hello,
-> >=20
-> > Todays linux-next build fails with below error on AMD x86:
-> >=20
-> > arch/x86/kvm/emulate.c:4091:9: error: implicit declaration of function =
-=E2=80=98F=E2=80=99
-> > [-Werror=3Dimplicit-function-declaration]
-> >  4091 |         F(DstMem | SrcNone | Lock,              em_inc),
-> >       |         ^
->=20
-> That'll be me doing a mismerge I expect and should've taken the other
-> side of the merge for these, I'm quite surprised that the x86
-> allmodconfig builds didn't trip this up :(=20
 
-Yeah, essentially just s/F/I for the em{inc,dec} entries.
+------M3TZWmnaQcCgpq3P2cdOV_lud716KtFuwxspURBH1dZsF.eH=_26d70_--
 
----
- arch/x86/kvm/emulate.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-index beda7030e40a..7d520da8dafc 100644
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -4088,8 +4088,8 @@ static const struct opcode group4[] =3D {
- };
-=20
- static const struct opcode group5[] =3D {
--	F(DstMem | SrcNone | Lock,		em_inc),
--	F(DstMem | SrcNone | Lock,		em_dec),
-+	I(DstMem | SrcNone | Lock,		em_inc),
-+	I(DstMem | SrcNone | Lock,		em_dec),
- 	I(SrcMem | NearBranch | IsBranch | ShadowStack, em_call_near_abs),
- 	I(SrcMemFAddr | ImplicitOps | IsBranch | ShadowStack, em_call_far),
- 	I(SrcMem | NearBranch | IsBranch,       em_jmp_abs),
-
-base-commit: bf2602a3cb2381fb1a04bf1c39a290518d2538d1
---
 
