@@ -1,186 +1,137 @@
-Return-Path: <linux-kernel+bounces-826685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF9BB8F1D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:22:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67DA4B8F1A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 507597AE9EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:21:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2E8172EA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3072C2F28E0;
-	Mon, 22 Sep 2025 06:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274242517AC;
+	Mon, 22 Sep 2025 06:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/yOXj5n"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nPpM8eY2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CBA2F0690
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA9317332C;
+	Mon, 22 Sep 2025 06:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758522111; cv=none; b=Hdf3sYQN1Wk0dtX9xD0IgNzkdBlkK0OaXNtXXKwRvdB7Uu6SkIgIIXD9dBXN1so5KRuW3glUxqW8mkogqsWg2d9LsgOhx+RSDBCeH9/WSkyyTQ21WLvr7A1/mffNqu+PvRcD1FDODwTOqWNr/SQchteZju/vDVOsQqNrfUyO+uk=
+	t=1758522069; cv=none; b=RfEVxc94tyAErNJ7XerafiawFGIdQmzYkoUVp/3XCxljEHiqann7RUyYF38Lyi6BgC+s9YNfDJhcAeqwLYavyQqwuQOTn3kopQgvCoKSxkcoIYwSdhpSh75102DqsriguSCwr3V1WDTdEvLGguiL8DcTH7+3NcZ3j80POlj/N9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758522111; c=relaxed/simple;
-	bh=MjUg8WhC2ePO7Wob4lthvdC2KmnV9Son3CvTOIR4tgM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=B3zAV6iY+1Rg+8aNeS+d39NNl60g1pUVZnFXQKMOZYADt5lcYKRIxR7fKrxHzbsYfRWTWOrEZV8e9tSp0GTUiJp2NyQUyEaIienmAjb/NO6MWVDhcr+REDhOdXLRIkS+NuA5grJ3pKzPgjr8YGOita3eI9SvYW82/A2KVs2gWhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L/yOXj5n; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3515a0bca13so50144371fa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 23:21:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758522108; x=1759126908; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HMp6cqsu59t8PToCUbyQtsreHZbwaZi5QAyb9viAGjk=;
-        b=L/yOXj5nQOVjyRVrIUWRbHkuVph6+HTn3TyieHte6AXZxtM+J+ugxxWL4SowKl5QC3
-         2U9A0WnDAJWr+/3rahUm+vh9r0RBJ3VCmeDEvA8SVe+SZfraqo/cqZ2t3V38IRZkru/V
-         qlFYfmwUTMq8kJIrnTO4dUCA+USJfNAvFLz1u94FdFBVfWj1acmR7ckBKFXxXH8Dguru
-         0YUYQZ9+Az7K87RlsfTv6S9yy5mVnRpyYtnQ50+vCZmtDxjBgTUoaB8TsPjqWSSbtCNo
-         OwE0OCnojlFwiQiCnMfUkhCaZsvCP13n586z9U8sZkPDeGNKhsd2OcTevs0NFyrfouQr
-         ZMpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758522108; x=1759126908;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HMp6cqsu59t8PToCUbyQtsreHZbwaZi5QAyb9viAGjk=;
-        b=fMvV88GXxtNSpSIssVi9/9JMirRRMkvZkuvT6LVyWE2QcZUHWKc9LhMHyQGPbwNbfX
-         Nv/wsewYmIP+DrWVZnrkLznXsfUG7C7MIOZMDtB91TofRGoC/OagA7lmFwNipJhCNHYM
-         QFg92T2p5REZiM5hQp92YdJYWsd9XwwUqXVxuI/zI53iyWX7RBOzd3G1MIJZ3RqQH5qr
-         21pc5CAtI9smSc2nvyK+qKcm9iCypHmsH6NXUrPepUUlJDuy2b0COvK11AK5dHLX1bw8
-         D6wdLW7B6/QJSXo4b2cGKUTKFyWJSioTM2b7fhyIsEzBRpsWSi1I3DFubjDGYok6Jec/
-         Nzxg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpn1M+SWpiZP9SNjJi+G+SmVW4CX5Vyq4Zm4+1KvaYfqnAANT0vcpY/gALAclDA9nMei41/zuRzMAV7pg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziYh2i2G05pKvTLejJKH16y5bDgGEzSIqR/MkGHLsitaibsn8G
-	CD2bhTcTvdGA4CsdvdZJijWF5F5PL/c2w70EBphSf+NgfFPAcRbkBDrZ
-X-Gm-Gg: ASbGncvwccDnAGNWkUpE2MCFziPbBpi8q5WgaluYBX2hwr6OoMPelcM4vyr1yDh89Zz
-	0/ZfTvYBkFfKZhPVerIM63+2m71bhMtV+Z/vm1llV6A4boInTeEa1RVvpIOSN4pOx9yex9A+tUG
-	1ODRgwyIDbbkKP9bjRFLHyrGpqFeIwiPd1GjNT2z8bAy6d4URCluPe6O5lCHgus4IesHknbFLLf
-	E1+5V41DpfAv787syFDyt9IkKZYuraEv5cqY44nlohjoJC9m9i/Wm1SKggF+3eC65xx/R89GLzV
-	E5NYOEmwBV22NPWPr2LCaY5LfUtORyrfcYSjPNZG0EjzgvDAT4vVk+hoYB2LG7GrtweBm9ihtml
-	rLsalKCzeuVh8JJh0xjPrTnEmZCB28hgPW7FawSStWz/bvdBoyqfY+UQ4rRsr+bOaywA=
-X-Google-Smtp-Source: AGHT+IF0vsidL+U2+O4cbI2W93e2V78iTNBrbec39/ev2fwTbSY9pJ2C+RDb5OzOvmi4WTyIjP7dAA==
-X-Received: by 2002:a05:651c:4014:b0:336:cf86:d405 with SMTP id 38308e7fff4ca-3640b95714fmr22173211fa.18.1758522107716;
-        Sun, 21 Sep 2025 23:21:47 -0700 (PDT)
-Received: from [192.168.1.166] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-361a99e99e6sm26982661fa.56.2025.09.21.23.21.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 23:21:47 -0700 (PDT)
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-Date: Mon, 22 Sep 2025 08:21:00 +0200
-Subject: [PATCH RFC 5/7] i2c: davinci: calculate bus freq from Hz instead
- of kHz
+	s=arc-20240116; t=1758522069; c=relaxed/simple;
+	bh=9HiLbM40Ej70qCxUe+2HWgi1HQvvNJ4S7zpy/HKrHEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g9VgSgnpJkJRhPHLDjrUwjvSFXNz41s0n2eI58WKEvq4iCl6AidCPpGNwFQCoo3kxje8vZZ+NFDu4YQQFqmJ+jlFVzUaBeCsOUx2O6fBJo6zeuD9ybB9b/uPAMpdrKF9fvQTEJQ96lpKHwJ8lhAsKxWePp3mi36P3AD4/KokJCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nPpM8eY2; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758522068; x=1790058068;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9HiLbM40Ej70qCxUe+2HWgi1HQvvNJ4S7zpy/HKrHEY=;
+  b=nPpM8eY2DKfNhPqh2zf5uxz7+3eO228WkxFrDgmoPDHYBVl4/ZLgQ965
+   gsqFm7+fpXzXemlXHssG3lJP/jGGQFy1QnyzWPy3Z/XPia3ssrCnm5oH0
+   o+VaklOZDmHE8s5LPEFCOPi+NJvBaENPpND3W+sFzgKfccx66eigIA6Y2
+   ozoxYMkFhnN+LW5HNEmHEntjxuHiZm+f1B5L9E4SdPQxCzUo4MPtB9qd0
+   LrLz+6SAVZdETNZGUUOqQjnG5tDOli1xd5erGBhM1CiXkbKAyWUJo4EvT
+   rpRrHCY0TBlzoGmb9JsN4hMuX4tviEIRhAU4SfW/V0GG6mVk3DWjXcJSC
+   w==;
+X-CSE-ConnectionGUID: ry3Nl9RsS4SyBxUnkCR/Hg==
+X-CSE-MsgGUID: 2KfctUv4RfKy92v66H52PA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="86214258"
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="86214258"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 23:21:06 -0700
+X-CSE-ConnectionGUID: Zkp1zbnXSCeJFwwYNv5mkA==
+X-CSE-MsgGUID: rLyaRBoCQu+fHTOJz0grtw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="176833457"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.61])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 23:21:03 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 0BDE711F982;
+	Mon, 22 Sep 2025 09:21:01 +0300 (EEST)
+Date: Mon, 22 Sep 2025 09:21:00 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: bingbu.cao@intel.com, lixu.zhang@intel.com,
+	stanislaw.gruszka@linux.intel.com, mchehab@kernel.org,
+	wentong.wu@intel.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] media: pci: intel: ivsc: fix error handling in
+ scan_one_device()
+Message-ID: <aNDqzIXpHHKZRiju@kekkonen.localdomain>
+References: <20250920134252.8612-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250922-i2c-mux-v1-5-28c94a610930@gmail.com>
-References: <20250922-i2c-mux-v1-0-28c94a610930@gmail.com>
-In-Reply-To: <20250922-i2c-mux-v1-0-28c94a610930@gmail.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
- Peter Rosin <peda@axentia.se>, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Marcus Folkesson <marcus.folkesson@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2503;
- i=marcus.folkesson@gmail.com; h=from:subject:message-id;
- bh=MjUg8WhC2ePO7Wob4lthvdC2KmnV9Son3CvTOIR4tgM=;
- b=owEBbQKS/ZANAwAKAYiATm9ZXVIyAcsmYgBo0OricZTm/oAQ1+OD0EJGMjU7LFDFZX9qnJlff
- VHGUBLiknSJAjMEAAEKAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCaNDq4gAKCRCIgE5vWV1S
- MqW5EACBIOGR2Psx5ihNOOXVUpFaHO0xoSUdfph8wVOTYoK4bHA6EJ+dajDjeB81BQiKnzqdROJ
- q5KO8MrXyBQOclZ6ZLUo9ShVbfDBLkmEsMMmgQ1OwCAItwKVGIbWEoMaL2JkaqE1MN3aM9JJMwF
- XiocyRzYo7MfQYcQ9fF2MFW9/s3JjQWxNcOxFtRTQL/uiAvShs7xo1qSd9o1MwuYADaOCf5nxtG
- ok8vGe3ppH1WqTEH2BXlo65q16WaJWibq0cYf2lBoS6pdaXk8AMRZR/S8HqU8riZXZI9Cl6MC3u
- DaAX4ErhFEgocKTATdFujAYb0uEC8yB1C+Flti/MUX1Hq+qCESRlvj3/FxcFZvsHer7BpT8gZ/N
- 6ajT1mb+IGjja3U+5vI38z7m+dwvub5O9998V9YxIelT80lQIMQJ84zVAHsJMAm92OBioY/vjyJ
- glvT0P2t+4BzSMhVVYqYfjFA6dMxqO6vJxLOdX5Z/EMO7HvfYMx8YbZCIkC+iH0PBNhXRPBJtng
- RqSEu2UMfmAtM33aYuTmM5iDA3QXxOTzF/YFaS2kiMQQGD1+22KcXDYTAJ8105ixvvyuGiUtWfI
- HyovMLr+YwvPkRfBuTpaCCqEdDM94RAoOo+2BPLHvYOt6Tl3i8r+9UaNtVGyYD2K48gOi4XORrO
- NT1P0BrqB2o4r6Q==
-X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
- fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250920134252.8612-1-make24@iscas.ac.cn>
 
-The bus frequency is unnecessarily converted between Hz and kHz in
-several places.
-This is probably an old legacy from the old times (pre-devicetrees)
-when the davinci_i2c_platform_data took the bus_freq in kHz.
+Hi Ma,
 
-Stick to Hz.
+Thank you for the patch.
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
- drivers/i2c/busses/i2c-davinci.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+On Sat, Sep 20, 2025 at 09:42:52PM +0800, Ma Ke wrote:
+> The mei_ace driver contains a device reference count leak in
+> mei_ace_setup_dev_link() where device_find_child_by_name() increases
+> the reference count of the found device but this reference is not
+> properly decreased in the success path. Add put_device() in
+> mei_ace_setup_dev_link() and delete put_device() in mei_ace_remove(),
+> which ensures that the reference count of the device is correctly
+> managed regardless of whether the probe is successful or fails.
+> 
+> Found by code review.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 78876f71b3e9 ("media: pci: intel: ivsc: Add ACE submodule")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  drivers/media/pci/intel/ivsc/mei_ace.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/pci/intel/ivsc/mei_ace.c b/drivers/media/pci/intel/ivsc/mei_ace.c
+> index 98310b8511b1..261b30788118 100644
+> --- a/drivers/media/pci/intel/ivsc/mei_ace.c
+> +++ b/drivers/media/pci/intel/ivsc/mei_ace.c
+> @@ -421,6 +421,7 @@ static int mei_ace_setup_dev_link(struct mei_ace *ace)
+>  	}
+>  
+>  	ace->csi_dev = csi_dev;
+> +	put_device(csi_dev);
+>  
+>  	return 0;
+>  
+> @@ -522,7 +523,6 @@ static void mei_ace_remove(struct mei_cl_device *cldev)
+>  	cancel_work_sync(&ace->work);
+>  
+>  	device_link_del(ace->csi_link);
+> -	put_device(ace->csi_dev);
+>  
+>  	pm_runtime_disable(&cldev->dev);
+>  	pm_runtime_set_suspended(&cldev->dev);
 
-diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
-index 6a3d4e9e07f45ecc228943e877cde1fd9d72e8cb..6b18938457d0c5cabc323c364d9330c2890df107 100644
---- a/drivers/i2c/busses/i2c-davinci.c
-+++ b/drivers/i2c/busses/i2c-davinci.c
-@@ -117,8 +117,6 @@
- /* timeout for pm runtime autosuspend */
- #define DAVINCI_I2C_PM_TIMEOUT	1000	/* ms */
- 
--#define DAVINCI_I2C_DEFAULT_BUS_FREQ	100
--
- struct davinci_i2c_dev {
- 	struct device           *dev;
- 	void __iomem		*base;
-@@ -209,16 +207,16 @@ static void i2c_davinci_calc_clk_dividers(struct davinci_i2c_dev *dev)
- 	if (device_is_compatible(dev->dev, "ti,keystone-i2c"))
- 		d = 6;
- 
--	clk = ((input_clock / (psc + 1)) / (dev->bus_freq * 1000));
-+	clk = ((input_clock / (psc + 1)) / (dev->bus_freq));
- 	/* Avoid driving the bus too fast because of rounding errors above */
--	if (input_clock / (psc + 1) / clk > dev->bus_freq * 1000)
-+	if (input_clock / (psc + 1) / clk > dev->bus_freq)
- 		clk++;
- 	/*
- 	 * According to I2C-BUS Spec 2.1, in FAST-MODE LOW period should be at
- 	 * least 1.3uS, which is not the case with 50% duty cycle. Driving HIGH
- 	 * to LOW ratio as 1 to 2 is more safe.
- 	 */
--	if (dev->bus_freq > 100)
-+	if (dev->bus_freq > 100000)
- 		clkl = (clk << 1) / 3;
- 	else
- 		clkl = (clk >> 1);
-@@ -269,7 +267,7 @@ static int i2c_davinci_init(struct davinci_i2c_dev *dev)
- 		davinci_i2c_read_reg(dev, DAVINCI_I2C_CLKL_REG));
- 	dev_dbg(dev->dev, "CLKH = %d\n",
- 		davinci_i2c_read_reg(dev, DAVINCI_I2C_CLKH_REG));
--	dev_dbg(dev->dev, "bus_freq = %dkHz\n", dev->bus_freq);
-+	dev_dbg(dev->dev, "bus_freq = %dHz\n", dev->bus_freq);
- 
- 
- 	/* Take the I2C module out of reset: */
-@@ -761,9 +759,9 @@ static int davinci_i2c_probe(struct platform_device *pdev)
- 
- 	r = device_property_read_u32(&pdev->dev, "clock-frequency", &prop);
- 	if (r)
--		prop = DAVINCI_I2C_DEFAULT_BUS_FREQ;
-+		prop = I2C_MAX_STANDARD_MODE_FREQ;
- 
--	dev->bus_freq = prop / 1000;
-+	dev->bus_freq = prop;
- 
- 	dev->has_pfunc = device_property_present(&pdev->dev, "ti,has-pfunc");
- 
+Is this a bug?
+
+device_link_add() will get both devices in success case so you could
+unconditionally put the csi_dev right after calling device_link_add().
 
 -- 
-2.50.1
+Regards,
 
+Sakari Ailus
 
