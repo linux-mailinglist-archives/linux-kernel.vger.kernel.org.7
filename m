@@ -1,149 +1,169 @@
-Return-Path: <linux-kernel+bounces-827594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650A8B922B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:17:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD71B922C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 250027ABC13
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:15:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFB987B21C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC5931077A;
-	Mon, 22 Sep 2025 16:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EAD311958;
+	Mon, 22 Sep 2025 16:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Iz96PxW4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CM1i1Kow"
-Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7i2Gev0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20CD30CB26
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A623112A0;
+	Mon, 22 Sep 2025 16:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758557803; cv=none; b=g2bDPgkaNqdKI+4xPcdxwLIq/G1B6MKLblCD31tf74d5/RiX2ICZyK8HjX3hGURklMMrvzB/eEK2LSQoaCDGFkYXrcsACfIeyqEOw/noPM5D1CrleUuE9dvueI5YppYR+uh5cAj28blPqFZQXzXjgPoXM3DPGQQcqvFmb+asOX4=
+	t=1758557814; cv=none; b=KFVkEuWUU0PSK9fUgYAnJpyce1L73ZWtbu+WLStd62QKnNU33ta1jehUIP6dSpFymTn89KtQLs9ZMMGryou719qjMIMzcK9ul84vZxFDdXy+3jCTv2V+i7mkRE8eYYNjaRFcrpvtquYL3P87ahBRs0HC87fiBhmFD3AEQ07tFJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758557803; c=relaxed/simple;
-	bh=wkJMmCXEMvAL/nxj0so67LeywLW62dz+DtEIN4ixFu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DJPp4Pu7zZXIxwGRAyyzawDOihX8mkao6h8LndkdI4Snx46S/CHDx79euLfpn7sUzReW0e9JqCS1lbBszGxcpdLI07n9bVkfgQnahjwigx0QQP0J1ZXdy0ir3ItEbP8NkBKIkyoorc1t+rWeX9TZWaaSzNhGCfDkBWwoos7Dq5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Iz96PxW4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CM1i1Kow; arc=none smtp.client-ip=202.12.124.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailflow.stl.internal (Postfix) with ESMTP id 0DA291300360;
-	Mon, 22 Sep 2025 12:16:39 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Mon, 22 Sep 2025 12:16:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1758557798; x=
-	1758564998; bh=INmHqpS8XOyU8EfGphccX7Ljpp6ELUOxylIKJQ8Yn6w=; b=I
-	z96PxW4Yw+8OnYsKB1avCOzDJAGNbTsCLR4kPQNmHK60qvqYXXlOI8C4Jcl/sbzg
-	gai9/XcDc14CGTwsChiQgE6DktBZWUwUf3CblNclDkL/Qf7hs3s2YizhNom4+KtN
-	ulIZ85BbmMfqMYF7HIWPSp8zudOpCSiLxoaca+D6wuWqzGx8Cxnj6CcT8aFYmKzR
-	dPbyMU3jhTaQUEVAhhXZ5XEXtqPSNHcuyac/o0+93TroHfrChLnfnmh+02uVjAxs
-	mXpdAqPaUaJWBvpFVCQBN9fz1LjrWLss3y4sLuAAsaMVw04JTPttJqssXTZ2jO26
-	BBExHAwPcGB/tgbTT1eRA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1758557798; x=1758564998; bh=INmHqpS8XOyU8EfGphccX7Ljpp6ELUOxylI
-	KJQ8Yn6w=; b=CM1i1KowqsrEYJZhezg7fdaxN2W6f8+uafjcx41etkzDbW/7XUM
-	v7v6YvZO9orSHMFY2lYTz92x1ML2EMO5aLtnnE/+7gqDUcDTCeMJgB9XC61B81vh
-	ZeDhLXnCIjyyzh12eda7XqzVghzY5G2hVozPC/nmrmMhCQHhMWOotm5167EqdXzm
-	XU+n3FdYWXltDDFXsm6GagrkVeZRNda5z6E7ysva0MZ7oDHw/+6hrNqCGfiDI/4N
-	I4aokKLfBX0OrzOvkb33vj7h6wjunlcoZzah0aybBkYW2XjTgr0FdjnYT8tDmxlv
-	xtl833PeBF/n/WTZY+LwMFkmMpRiySijhsw==
-X-ME-Sender: <xms:ZnbRaE7LQUF2JMsM9INnfAbzQt8VY0zj_dmw-YId-5i9PTkJ1lQJcg>
-    <xme:ZnbRaDhfM0OX2Lq5WpyB3tJfll4w5I-Qn5l0eKv_K3_22gzBOuUnNcJnWHhUUZ5Ia
-    _ZlqlJBnxds5_jqiInaGLOVhVJd2hBicJKaObPehly35rVLM7uT648>
-X-ME-Received: <xmr:ZnbRaK1sROvbF70OTTbKLHbMICS-QTEm69yIqxEBOQTyT5ISznXVdicPEjLkQg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehkeeftdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
-    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
-    frrghtthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtledu
-    hfeffeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepfeeg
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrg
-    gurdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdr
-    ohhrghdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtghomhdprhgtphhtthhope
-    hhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhopehlohhrvghniihordhsthho
-    rghkvghssehorhgrtghlvgdrtghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtth
-    esohhrrggtlhgvrdgtohhmpdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgiipdhr
-    tghpthhtoheprhhpphhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsuhhrvghnsg
-    esghhoohhglhgvrdgtohhm
-X-ME-Proxy: <xmx:ZnbRaBWAaa3ZvlckATo-PS4VYNmwipKYxGLBltIUst2gHDGckhBA7Q>
-    <xmx:ZnbRaP0eQvImVuLJ8CbwviL4F5DNFyUgr5yjPd4oAAkHc7XQ7AVM_Q>
-    <xmx:ZnbRaKgAymiCdrCd6eN25Dner05D4l4QHlFjrXSpC2gUbXLHJ1ZFpQ>
-    <xmx:ZnbRaHKCV3DdAJTY82PxaYlJUvJJRj12FLcBTlreC9FaJDoNwfYLYg>
-    <xmx:ZnbRaIsnq0pVBi34uUBmBtRE32EFwoaipSoqwycNigdPUkP93iQLd7kS>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 22 Sep 2025 12:16:37 -0400 (EDT)
-Date: Mon, 22 Sep 2025 17:16:36 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
-	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 4/5] mm/fault: Try to map the entire file folio in
- finish_fault()
-Message-ID: <n7dly3zxv3wyixmq5yqjijgqjaxzl62ebmsne3tq2zjfqeztgl@ews6hof3zvco>
-References: <20250919124036.455709-1-kirill@shutemov.name>
- <20250919124036.455709-5-kirill@shutemov.name>
- <aM5ZwWiFDOuSl6C5@casper.infradead.org>
+	s=arc-20240116; t=1758557814; c=relaxed/simple;
+	bh=VrVbBbAkZX7N6X1ZFNXfWGktbwkiMT+UGCeuD3oUrho=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lp32ebrrYPJGo2zcl535LEKkStKLLXOu1ntAtEyF+GLRxXvwRjxKHo/Q5Vw6hWEcWZVdgRpNV7f8UvhX2tyS1URzQVGpzyAJS1NPYecr0lCF6CdhD7uJZd8I02Zr9ICqONY0xI340ufFBlD4TJjxnQc8SdlHodZpepWyHkZeQrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7i2Gev0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5C56FC4CEF0;
+	Mon, 22 Sep 2025 16:16:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758557814;
+	bh=VrVbBbAkZX7N6X1ZFNXfWGktbwkiMT+UGCeuD3oUrho=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=P7i2Gev0VGA8NR+yumibcm0pfP6+ow6+3LtqZVorClFlTSK9PzXgHN4DYBL7Jdq/z
+	 /2Vg0HbIH2h5MJbCAnuU9q4QG0vVUCYzdqip63OV5doerOe+sj1Pd5GAcGr6lnmSml
+	 gXT5/Q0ZhHWp76O581v3CKvPg+KRHWfkc36KFX7HMFYSG4piK8FL/S5V6nEfFZtVhV
+	 1HfDxpslQCvAn1Uha5ya7kTXIXfwVdcA9s4hhZ1AQC0qIgjD4AngXn6lNvTjua2Gau
+	 qcBVj5gBqQJ1tFjCT+Wnd/Mfd1lPDHmthWi8lqRhYu+HJLDowTJ5bLvS9FzCBaXAho
+	 ZwT4TlQcofuug==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9F5CAC5AA;
+	Mon, 22 Sep 2025 16:16:54 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org>
+Subject: [PATCH v2 0/2] PCI/ASPM: Enable ASPM and Clock PM by default on
+ devicetree platforms
+Date: Mon, 22 Sep 2025 21:46:43 +0530
+Message-Id: <20250922-pci-dt-aspm-v2-0-2a65cf84e326@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aM5ZwWiFDOuSl6C5@casper.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGt20WgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDI1MDS0Mz3YLkTN2UEt3E4oJcXYsk40TzVIsUo+Q0QyWgjoKi1LTMCrBp0bG
+ 1tQDLM5X6XQAAAA==
+X-Change-ID: 20250916-pci-dt-aspm-8b3a7e8d2cf1
+To: Bjorn Helgaas <bhelgaas@google.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Rob Herring <robh@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, "David E. Box" <david.e.box@linux.intel.com>, 
+ Kai-Heng Feng <kai.heng.feng@canonical.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, 
+ Chia-Lin Kao <acelan.kao@canonical.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+ Bjorn Helgaas <helgaas@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3211;
+ i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
+ bh=VrVbBbAkZX7N6X1ZFNXfWGktbwkiMT+UGCeuD3oUrho=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBo0XZu+sVRoNvesArpOMqAyXXGDhGGtiBu/MQrC
+ MvA5UcMprqJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCaNF2bgAKCRBVnxHm/pHO
+ 9VDDB/sGzXZBIjGWh/XLdq/tQ505y4S/Iy0tr4X9enEgJMfKDwizHblZ0/OjDhcDJ4qttRLcAQQ
+ edMyfOVWIT/+4phq0V9wGr2AcK7doEsmeey6eUZ1qtgXMfneNJQs/rIwrChVwQnisPvk4RznPik
+ 7h6HM8osZeYqGg63mDgjTEubQQtSriUer9Wljb8c0gM97uzk0EFwi9JB43AboMx7VstKUgf2Gkr
+ yT0NVk2UQ/oaZDf6XVaG/u9OJ1jaJqwLaifSVDFF+DXnv4Mh2o8BCpXMbhVhCkPRpRolgyJjXDe
+ 9VZlILCw1RGL+zqjcHJTBOaEyOiBX4dYTJawC/ElVg+MXX4a
+X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@oss.qualcomm.com/default with auth_id=461
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Reply-To: manivannan.sadhasivam@oss.qualcomm.com
 
-On Sat, Sep 20, 2025 at 08:37:37AM +0100, Matthew Wilcox wrote:
-> On Fri, Sep 19, 2025 at 01:40:35PM +0100, Kiryl Shutsemau wrote:
-> > The finish_fault() function uses per-page fault for file folios. This
-> > only occurs for file folios smaller than PMD_SIZE.
-> > 
-> > The comment suggests that this approach prevents RSS inflation.
-> > However, it only prevents RSS accounting. The folio is still mapped to
-> > the process, and the fact that it is mapped by a single PTE does not
-> > affect memory pressure. Additionally, the kernel's ability to map
-> > large folios as PMD if they are large enough does not support this
-> > argument.
-> > 
-> > When possible, map large folios in one shot. This reduces the number of
-> > minor page faults and allows for TLB coalescing.
-> > 
-> > Mapping large folios at once will allow the rmap code to mlock it on
-> > add, as it will recognize that it is fully mapped and mlocking is safe.
-> 
-> Does this patch have any measurable effect?  Almost all folios are
-> mapped through do_fault_around().  I'm not objecting to the patch,
-> but the commit message maybe makes this sound more important than it is.
+Hi,
 
-You are right. My test cases used write faults to populate the VMA.
-Mlock accounting is still broken with faultaround.
+This series is one of the 'let's bite the bullet' kind, where we have decided to
+enable all ASPM and Clock PM states by default on devicetree platforms [1]. The
+reason why devicetree platforms were chosen because, it will be of minimal
+impact compared to the ACPI platforms. So seemed ideal to test the waters.
 
-I will look into this.
+Problem Statement
+=================
 
-I think we would need to rethink how we handle large folios in the
-faultaround. 
+Historically, PCI subsystem relied on the BIOS to enable ASPM and Clock PM
+states for PCI devices before the kernel boot if the default states are
+selected using:
 
+* Kconfig: CONFIG_PCIEASPM_DEFAULT=y, or
+* cmdline: "pcie_aspm=off", or
+* FADT: ACPI_FADT_NO_ASPM
+
+This was done to avoid enabling ASPM for the buggy devices that are known to
+create issues with ASPM (even though they advertise the ASPM capability). But
+BIOS is not at all a thing on most of the non-x86 platforms. For instance, the
+majority of the Embedded and Compute ARM based platforms using devicetree have
+something called bootloader, which is not anyway near the standard BIOS used in
+x86 based platforms. And these bootloaders wouldn't touch PCIe at all, unless
+they boot using PCIe storage, even then there would be no guarantee that the
+ASPM states will get enabled. Another example is the Intel's VMD domain that is
+not at all configured by the BIOS. But, this series is not enabling ASPM/Clock
+PM for VMD domain. I hope it will be done similarly in the future patches.
+
+Solution
+========
+
+So to avoid relying on BIOS, it was agreed [2] that the PCI subsystem has to
+enable ASPM and Clock PM states based on the device capability. If any devices
+misbehave, then they should be quirked accordingly.
+
+First patch of this series introduces two helper functions to enable all ASPM
+and Clock PM states if of_have_populated_dt() is true. Second patch drops the
+custom ASPM enablement code from the pcie-qcom driver as it is no longer needed.
+
+Testing
+=======
+
+This series is tested on Lenovo Thinkpad T14s based on Snapdragon X1 SoC. All
+supported ASPM states are getting enabled for both the NVMe and WLAN devices by
+default.
+
+[1] https://lore.kernel.org/linux-pci/a47sg5ahflhvzyzqnfxvpk3dw4clkhqlhznjxzwqpf4nyjx5dk@bcghz5o6zolk
+[2] https://lore.kernel.org/linux-pci/20250828204345.GA958461@bhelgaas
+
+Changes in v2:
+
+- Used of_have_populated_dt() instead of CONFIG_OF to identify devicetree
+  platforms
+- Renamed the override helpers and changed the override print
+- Moved setting the default state back to the original place and only kept the
+  override in helpers
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+---
+Manivannan Sadhasivam (2):
+      PCI/ASPM: Override the ASPM and Clock PM states set by BIOS for devicetree platforms
+      PCI: qcom: Remove the custom ASPM enablement code
+
+ drivers/pci/controller/dwc/pcie-qcom.c | 32 --------------------------
+ drivers/pci/pcie/aspm.c                | 42 ++++++++++++++++++++++++++++++++--
+ 2 files changed, 40 insertions(+), 34 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250916-pci-dt-aspm-8b3a7e8d2cf1
+
+Best regards,
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+
+
 
