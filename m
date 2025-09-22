@@ -1,118 +1,127 @@
-Return-Path: <linux-kernel+bounces-827200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0822AB91239
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:36:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 761D1B9129F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D54837AE5D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:35:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67A0818A4146
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B49A3064A0;
-	Mon, 22 Sep 2025 12:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E4D308F0A;
+	Mon, 22 Sep 2025 12:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KgcDunUy"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cg7tjhW0"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92208304BDF
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D3230648C;
+	Mon, 22 Sep 2025 12:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758544594; cv=none; b=bULRvDmf4ReRF9LhZcMaef+9hqySAViFtwTxPObiidwPOD2R1SJYtedRyM/gtmrA8nETL416/fda0ZUhFAI2LhHRdfl5I0bSxCYzGxrg9h7/NvMNU1gjLWy/mpiQDPGSXm2UMOcRviV+ckGt4VbpthOnLJyd40906zQInHKm6jA=
+	t=1758544904; cv=none; b=K0icEsmy4l3EBhiVlgY1E1b+fvnRiAgcqalixupw5bossJZyaW/I58IUsDwDgCzEFuNo3p0c0Xl60vQMMTiTZJgavTfqhia7DE0B+6Sh9jmne5KarkKp5xKmRhiiHu9r1R+HXUXzhL2PJ1q95s7qArI0WLVdbv8j5M2bUjJGU0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758544594; c=relaxed/simple;
-	bh=/2dFLXefAWec9kPIFBiOdf7vvOvOOA/2JEGtLWgKrBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=kOfzL/2nIQGWozRqSx5MMyuoq+jooG40sIhXovcU5w+XCxKhEkJmjqmOsz+NiuLid8SbkfTi/oreroC3K1wQ8ng+aV1b/TF7O2FuDuisEg4/4LOxq9XKm9ebPGaq4OTibO2xYIgOHkpiN2KOKxSZogZTUIEcgaWtnV5mC5f/JSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KgcDunUy; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250922123629epoutp0337358ea282e77290815edbf7572fe078~nmvyphfKr0171301713epoutp03-
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:36:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250922123629epoutp0337358ea282e77290815edbf7572fe078~nmvyphfKr0171301713epoutp03-
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758544589;
-	bh=/2dFLXefAWec9kPIFBiOdf7vvOvOOA/2JEGtLWgKrBQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KgcDunUyWDjdPF3rOSKYvgv3e3ygQ5pJBWCo812v0UlQ63iwnld59KyeWPe4u46fV
-	 yx50ZRbJ7Fu9brgeQkYUhY57Kw0FWvrDigJg4wCdQVnhyvxlX8HL5g7O5q4EpjxOv2
-	 khrhzZL2CYGIrnVyndBzOpJGNPwsFtYd9fbFDzE4=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250922123629epcas5p2de5d21797e204a8c7012ee228404e040~nmvyNHgzQ2905229052epcas5p2K;
-	Mon, 22 Sep 2025 12:36:29 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cVjK80DmCz2SSKY; Mon, 22 Sep
-	2025 12:36:28 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250922123627epcas5p33eb3e2d65cfb1705857413dd573d17e7~nmvw7Hj8g2990029900epcas5p3g;
-	Mon, 22 Sep 2025 12:36:27 +0000 (GMT)
-Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250922123626epsmtip11dcba42479f7df0af8c0a27e8e54a23c~nmvvyBGV92355923559epsmtip1c;
-	Mon, 22 Sep 2025 12:36:26 +0000 (GMT)
-Date: Mon, 22 Sep 2025 18:06:16 +0530
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
-	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	cpgs@samsung.com
-Subject: Re: [PATCH V3 00/20] Add CXL LSA 2.1 format support in nvdimm and
- cxl pmem
-Message-ID: <20250922123616.y6yi4heay26ktlhl@test-PowerEdge-R740xd>
+	s=arc-20240116; t=1758544904; c=relaxed/simple;
+	bh=fa8I0HJf9Hu8nlmRXZKypcgcpmA+mIVk83stAz4Ehj4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QUBkMsIZGzyDSAwFXhiJJhQnz5nqq9JhGlm7R2A0yau/Xt2tjJ1J4A4YvfnIbavqXQt9gq0YdXvVs+P0vPQHLYURxKVrUc0krb1PzHs1fItmmL93hgPWHT43ml/cWmpOyHoiKkMmSQXjxhtODeM3XGO86Qw1VaxBpIjHYv/KK9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cg7tjhW0; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58MCaZx0767870;
+	Mon, 22 Sep 2025 07:36:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758544596;
+	bh=VqMG1tCpCdUZdT54p/gMUyDbkNMx8mDeub7N1P1QKp4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=cg7tjhW0BShbif141QvJ/nGEjZLzhYFqOawsoLKwavBznE25mgVKATr+aN/MR9b1J
+	 Taw5nRm4JvM5hMg0iAcy0gAKrawP2hfh2Bb4sM2sBq0ByxoOIUNUih/urB6a95i4Ho
+	 EtEGIk1wbd1T4Cx6SH2ySDnbsHIkrtTZc+CE6zd0=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58MCaZtU879994
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 22 Sep 2025 07:36:35 -0500
+Received: from DFLE213.ent.ti.com (10.64.6.71) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 22
+ Sep 2025 07:36:35 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE213.ent.ti.com
+ (10.64.6.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 22 Sep 2025 07:36:35 -0500
+Received: from [10.24.69.191] (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58MCaWFW2515847;
+	Mon, 22 Sep 2025 07:36:32 -0500
+Message-ID: <c0196ac6-af65-48c1-bc5a-ca430dff0a5a@ti.com>
+Date: Mon, 22 Sep 2025 18:06:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250917155053.00004c03@huawei.com>
-X-CMS-MailID: 20250922123627epcas5p33eb3e2d65cfb1705857413dd573d17e7
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----9bSguDi.zIPe2mzIRptk1CwOcoXw-B36MWpfyHe4p2iroT9e=_26cb6_"
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250917134126epcas5p3e20c773759b91f70a1caa32b9f6f27ff
-References: <CGME20250917134126epcas5p3e20c773759b91f70a1caa32b9f6f27ff@epcas5p3.samsung.com>
-	<20250917134116.1623730-1-s.neeraj@samsung.com>
-	<20250917155053.00004c03@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] crypto: ti: Add support for AES-XTS in DTHEv2
+ driver
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Kamlesh Gurudasani
+	<kamlesh@ti.com>,
+        Manorit Chawdhry <m-chawdhry@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Praneeth Bajjuri <praneeth@ti.com>, Vishal Mahaveer
+	<vishalm@ti.com>,
+        Kavitha Malarvizhi <k-malarvizhi@ti.com>,
+        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250910100742.3747614-1-t-pratham@ti.com>
+ <20250910100742.3747614-2-t-pratham@ti.com>
+ <aM6ZNMR0CtDj01Iu@gondor.apana.org.au>
+Content-Language: en-US
+From: T Pratham <t-pratham@ti.com>
+In-Reply-To: <aM6ZNMR0CtDj01Iu@gondor.apana.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-------9bSguDi.zIPe2mzIRptk1CwOcoXw-B36MWpfyHe4p2iroT9e=_26cb6_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+On 20/09/25 17:38, Herbert Xu wrote:
+> On Wed, Sep 10, 2025 at 02:46:53PM +0530, T Pratham wrote:
+>>
+>> @@ -397,7 +446,29 @@ static struct skcipher_engine_alg cipher_algs[] = {
+>>  			.cra_module		= THIS_MODULE,
+>>  		},
+>>  		.op.do_one_request = dthe_aes_run,
+>> -	} /* CBC AES */
+>> +	}, /* CBC AES */
+>> +	{
+>> +		.base.init			= dthe_cipher_init_tfm,
+>> +		.base.setkey			= dthe_aes_xts_setkey,
+>> +		.base.encrypt			= dthe_aes_encrypt,
+>> +		.base.decrypt			= dthe_aes_decrypt,
+>> +		.base.min_keysize		= AES_MIN_KEY_SIZE * 2,
+>> +		.base.max_keysize		= AES_MAX_KEY_SIZE * 2,
+>> +		.base.ivsize			= AES_IV_SIZE,
+>> +		.base.base = {
+>> +			.cra_name		= "xts(aes)",
+>> +			.cra_driver_name	= "xts-aes-dthev2",
+>> +			.cra_priority		= 299,
+>> +			.cra_flags		= CRYPTO_ALG_TYPE_SKCIPHER |
+>> +						  CRYPTO_ALG_KERN_DRIVER_ONLY,
+> 
+> I think it's missing CRYPTO_ALG_ASYNC.
+> 
+> The existing algorithms seem to be missing this bit too so we
+> should fix that first.
+> 
+> Thanks,
 
-On 17/09/25 03:50PM, Jonathan Cameron wrote:
->On Wed, 17 Sep 2025 19:10:56 +0530
->Neeraj Kumar <s.neeraj@samsung.com> wrote:
->
->
->Hi,
->Not sure what difference between the two versions I'm seeing is.
->Patch 02 is missing in both of them.
->
->Jonathan
+Oh. Thanks for pointing this out. 
+This series had a few more issues with some of the algorithms, so I was about to send another revision anyway. I'll also correct this. And also fix the existing algorithms as well.
 
-Hi Jonathan,
-
-Because of some compliance check, Patch 02 got delayed. Now its visible
-in lore. Can you please take a look at it.
-
-
-Regards,
-Neeraj
-
-------9bSguDi.zIPe2mzIRptk1CwOcoXw-B36MWpfyHe4p2iroT9e=_26cb6_
-Content-Type: text/plain; charset="utf-8"
-
-
-------9bSguDi.zIPe2mzIRptk1CwOcoXw-B36MWpfyHe4p2iroT9e=_26cb6_--
+-- 
+Regards
+T Pratham <t-pratham@ti.com>
 
