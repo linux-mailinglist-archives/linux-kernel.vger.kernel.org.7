@@ -1,249 +1,141 @@
-Return-Path: <linux-kernel+bounces-827083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3D9B903D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:46:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D74B9040E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9962A16D6FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:45:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 659341893441
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1666A303A09;
-	Mon, 22 Sep 2025 10:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F8B303CBB;
+	Mon, 22 Sep 2025 10:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gH2nDDxr"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e+xlhDzD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A682472B1;
-	Mon, 22 Sep 2025 10:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E5C286D56;
+	Mon, 22 Sep 2025 10:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758537757; cv=none; b=kJJwrN7AoLn5vMsKD9YpE/Y2hQMPkY1BWqIUs2fTK9rwpTprbM/0Sg0GIj9b1ZJ6XsFHvglSVKTXS+2fOZejfmqA3waOov3TLTe8UE4uzK2qnUTu0X7lmGEGy0peOGvwTk5cvBmsyZOJZRsID66qiN2zuTCTPelKUdXr3ZZ4/68=
+	t=1758537849; cv=none; b=hbW9bruSlIbkQT8ADSlCu2GPEQfaLhG164RlpbqeiLCqf5wONIcyqsGFq05jLcHNekT9U063I0NCRe+iBlrL8/w+neGGnBjlOCCebQ3vpRMc+GFdfNHvxBZp0X5HFlpbDglMjeUAmbhfZq7vwJ5FjENwyKf7VVZbagXRPedyhxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758537757; c=relaxed/simple;
-	bh=Ih1cqIyFne9UJCmMiU/r1H207xbYTp3gU6PQi6WJ/js=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hdIQqmXhyF6Hxb7QWVbLgD5sJLGu2ETSRyFeAgWEoYeWhsLuPKfJJ1LEV+8p1lmtprlaVHOj6SSiQE608s1kN6uy0WxpS8TJtCcw+9a17CCDlyuoyvNp77/Ab6KayAeFpWx2sTSba9blRTgJtWD4RkbdxGASKg6/vPwSjf8J2QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gH2nDDxr; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758537753;
-	bh=Ih1cqIyFne9UJCmMiU/r1H207xbYTp3gU6PQi6WJ/js=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gH2nDDxrMAvWyOHVpMLA6hKcjMOujozkD4zDZWlMdKphN0qhDkEz4blZqpQX/mEq9
-	 +O0GZLWMnm9OqJqAzao1t3U0a9VmK2bQFx6ULM7xpgR37XcxtyeSmUtgN8BBB7jcnD
-	 foZ4n7AXc/FW4oVoTyJ5RJUqK7nU5e0vsF3cfu3R+6gU1hgH0jUzZ3kZrmjPWVsNoK
-	 KQ/rms4AJz+3Y5W2wAgNRUQDI9zFeXANCft9o7CrY5CXxjY/5PGktYG678qKG5UadN
-	 O6GEnl6yc/J51h02W6ePQyZX++Azsn8rpwIYMDgI0xGgS+TECp8yZdrn9cL0BJzFP6
-	 wfFxIk4t1iuDg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id D0D0217E0125;
-	Mon, 22 Sep 2025 12:42:32 +0200 (CEST)
-Message-ID: <e4a6feaf-a9cd-4092-a083-c356a7d954b2@collabora.com>
-Date: Mon, 22 Sep 2025 12:42:32 +0200
+	s=arc-20240116; t=1758537849; c=relaxed/simple;
+	bh=Scu0SimwoCRkxOBYc7t64x6kXw6D/8lqrdYnldQqIz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YoOfB6k9AZGzAUNE9KAPDTM7L2wWRuV/q5px3ZIhCKtpk5lVHqu8Na2O0jMRYDO8oyFBnPznnUQSvnp/ca3f5wDIPqXhsf98QU2SU8IkSNgviCTIkvA/EFC3CtdKm+lgojoeXoKcuBmPfv99WtoBg9beNNAGB+N+Gp6H/3p+c/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e+xlhDzD; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758537848; x=1790073848;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Scu0SimwoCRkxOBYc7t64x6kXw6D/8lqrdYnldQqIz4=;
+  b=e+xlhDzDCi+qdwymzneAfgTUrWWg2qdDX5PoNX4ViLFQP2DYYC4rMbdd
+   Bpxo+3qTZxq2hZI3/DzSU+NPcTTM3M5Iiv7C4zfd7ApU3PTeSyOCm+XPT
+   tccHMGkREdkhnm4Dk7n6hx+NKcwWe3m1PDEUd97nVTfIMie2/N2uCxihc
+   jYMG5gbd1C1ri9+VzayajKVZFqAG9T6LDNPwGvykVgDUVUtEEsrRBU7NX
+   hJbnNqGja6T3vuUPH5NBnfSAxUWQWJuPY+33SMbCaZzgf7fBlVM8qJDKe
+   ZCA3oM86ze/5oy07ZxS7DseEpiZdF5KHmQ92BmZ5ZS2CFEMQU0CYNqDQP
+   w==;
+X-CSE-ConnectionGUID: Pv8yjoPGTT+sXZdFpM07jw==
+X-CSE-MsgGUID: /IoALYeNQZqmL6nN6htkdA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60852398"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="60852398"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 03:44:07 -0700
+X-CSE-ConnectionGUID: jt9e9kpgS1C9Ak14/yW+Sw==
+X-CSE-MsgGUID: uUk8EzvJR72Z1zRMDduf4Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
+   d="scan'208";a="180461341"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.61])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 03:44:04 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 3C78211F967;
+	Mon, 22 Sep 2025 13:44:01 +0300 (EEST)
+Date: Mon, 22 Sep 2025 13:44:01 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: bingbu.cao@intel.com, lixu.zhang@intel.com,
+	stanislaw.gruszka@linux.intel.com, mchehab@kernel.org,
+	wentong.wu@intel.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] media: pci: intel: ivsc: fix error handling in
+ mei_ace driver
+Message-ID: <aNEocYyaT2pig7So@kekkonen.localdomain>
+References: <20250922094335.28486-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dmaengine: mediatek: mtk-uart-apdma: support more
- than 33 bits for DMA bitmask
-To: wctrl@proton.me, Sean Wang <sean.wang@mediatek.com>,
- Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Long Cheng <long.cheng@mediatek.com>
-Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250921-uart-apdma-v1-0-107543c7102c@proton.me>
- <20250921-uart-apdma-v1-2-107543c7102c@proton.me>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250921-uart-apdma-v1-2-107543c7102c@proton.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922094335.28486-1-make24@iscas.ac.cn>
 
-Il 21/09/25 13:03, Max Shevchenko via B4 Relay ha scritto:
-> From: Max Shevchenko <wctrl@proton.me>
+Hi Ma,
+
+On Mon, Sep 22, 2025 at 05:43:35PM +0800, Ma Ke wrote:
+> The mei_ace driver contains a device reference count leak in
+> mei_ace_setup_dev_link() where device_find_child_by_name() increases
+> the reference count of the found device but this reference is not
+> properly decreased in the success path. Add put_device() in
+> mei_ace_setup_dev_link() and delete put_device() in mei_ace_remove(),
+> which ensures that the reference count of the device is correctly
+> managed regardless of whether the probe is successful or fails.
 > 
-> Drop mediatek,dma-33bits property and introduce a platform data with
-> field representing DMA bitmask.
+> Found by code review.
 > 
-> The reference SoCs were taken from the downstream kernel (6.6) for
-> the MT6991 SoC.
-> 
+> Cc: stable@vger.kernel.org
+> Fixes: 78876f71b3e9 ("media: pci: intel: ivsc: Add ACE submodule")
 
-That's a good idea - but it doesn't work like that.
+As this isn't a bug fix, I don't think we need these two tags. This should
+be taken into account in the subject and commit message as well.
 
-The VFF_4G_SUPPORT register really is called {RX,TX}_VFF_ADDR2 - and on all of
-the newer SoCs that support more than 33 bits, this register holds the upper
-X bits of the TX/RX addr, where X is (dma_bits - 32) meaning that, for example,
-for MT6985 X=(36-32) -> X=4.
-
-The downstream driver does have a reference implementation for this - and there
-is no simpler way around it: you either implement it all, or you don't.
-
-Simply put: with your code, you're not supporting more than 33 bits, because even
-though you're setting the dma mask, you're never correctly using the hardware (as
-in, you're never programming the additional registers to make use of that).
-
-
-> Signed-off-by: Max Shevchenko <wctrl@proton.me>
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 > ---
->   drivers/dma/mediatek/mtk-uart-apdma.c | 47 +++++++++++++++++++++++++----------
->   1 file changed, 34 insertions(+), 13 deletions(-)
+> Changes in v2:
+> - modified the put_device() operations and the patch title as suggestions.
+> ---
+>  drivers/media/pci/intel/ivsc/mei_ace.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/dma/mediatek/mtk-uart-apdma.c b/drivers/dma/mediatek/mtk-uart-apdma.c
-> index 08e15177427b94246951d38a2a1d76875c1e452e..68dd3a4ee0d88fd508870a5de24ae67505023495 100644
-> --- a/drivers/dma/mediatek/mtk-uart-apdma.c
-> +++ b/drivers/dma/mediatek/mtk-uart-apdma.c
-> @@ -42,6 +42,7 @@
->   #define VFF_EN_CLR_B		0
->   #define VFF_INT_EN_CLR_B	0
->   #define VFF_4G_SUPPORT_CLR_B	0
-> +#define VFF_ORI_ADDR_BITS_NUM	32
->   
->   /*
->    * interrupt trigger level for tx
-> @@ -74,10 +75,14 @@
->   #define VFF_DEBUG_STATUS	0x50
->   #define VFF_4G_SUPPORT		0x54
->   
-> +struct mtk_uart_apdma_data {
-> +	unsigned int dma_bits;
-> +};
-> +
->   struct mtk_uart_apdmadev {
->   	struct dma_device ddev;
->   	struct clk *clk;
-> -	bool support_33bits;
-> +	unsigned int support_bits;
+> diff --git a/drivers/media/pci/intel/ivsc/mei_ace.c b/drivers/media/pci/intel/ivsc/mei_ace.c
+> index 98310b8511b1..bb57656fc85a 100644
+> --- a/drivers/media/pci/intel/ivsc/mei_ace.c
+> +++ b/drivers/media/pci/intel/ivsc/mei_ace.c
+> @@ -420,6 +420,7 @@ static int mei_ace_setup_dev_link(struct mei_ace *ace)
+>  		goto err_put;
+>  	}
+>  
+> +	put_device(csi_dev);
 
-You don't really need to carry support_bits... there's no real usage of that
-information across the code, if not at probe time.
+You can do this right after calling device_link_add().
 
-bool support_extended_addr; /* rename to your liking */
+>  	ace->csi_dev = csi_dev;
+>  
+>  	return 0;
+> @@ -522,7 +523,6 @@ static void mei_ace_remove(struct mei_cl_device *cldev)
+>  	cancel_work_sync(&ace->work);
+>  
+>  	device_link_del(ace->csi_link);
+> -	put_device(ace->csi_dev);
+>  
+>  	pm_runtime_disable(&cldev->dev);
+>  	pm_runtime_set_suspended(&cldev->dev);
 
->   	unsigned int dma_requests;
->   };
->   
-> @@ -148,7 +153,7 @@ static void mtk_uart_apdma_start_tx(struct mtk_chan *c)
->   		mtk_uart_apdma_write(c, VFF_WPT, 0);
->   		mtk_uart_apdma_write(c, VFF_INT_FLAG, VFF_TX_INT_CLR_B);
->   
-> -		if (mtkd->support_33bits)
-> +		if (mtkd->support_bits > VFF_ORI_ADDR_BITS_NUM)
+-- 
+Regards,
 
-if (mtkd->support_extended_addr)
-	mtk_uart_apdma_write(c, VFF_4G_SUPPORT, upper_32_bits(d->addr);
-
-... do the same for RX and you should be 99.9% done :-)
-
-
-
->   			mtk_uart_apdma_write(c, VFF_4G_SUPPORT, VFF_4G_EN_B);
->   	}
->   
-> @@ -191,7 +196,7 @@ static void mtk_uart_apdma_start_rx(struct mtk_chan *c)
->   		mtk_uart_apdma_write(c, VFF_RPT, 0);
->   		mtk_uart_apdma_write(c, VFF_INT_FLAG, VFF_RX_INT_CLR_B);
->   
-> -		if (mtkd->support_33bits)
-> +		if (mtkd->support_bits > VFF_ORI_ADDR_BITS_NUM)
->   			mtk_uart_apdma_write(c, VFF_4G_SUPPORT, VFF_4G_EN_B);
->   	}
->   
-> @@ -297,7 +302,7 @@ static int mtk_uart_apdma_alloc_chan_resources(struct dma_chan *chan)
->   		goto err_pm;
->   	}
->   
-> -	if (mtkd->support_33bits)
-> +	if (mtkd->support_bits > VFF_ORI_ADDR_BITS_NUM)
->   		mtk_uart_apdma_write(c, VFF_4G_SUPPORT, VFF_4G_SUPPORT_CLR_B);
->   
->   err_pm:
-> @@ -467,8 +472,27 @@ static void mtk_uart_apdma_free(struct mtk_uart_apdmadev *mtkd)
->   	}
->   }
->   
-> +static const struct mtk_uart_apdma_data mt6577_data = {
-> +	.dma_bits = 32
-> +};
-> +
-> +static const struct mtk_uart_apdma_data mt6795_data = {
-> +	.dma_bits = 33
-> +};
-> +
-> +static const struct mtk_uart_apdma_data mt6779_data = {
-> +	.dma_bits = 34
-> +};
-> +
-> +static const struct mtk_uart_apdma_data mt6985_data = {
-> +	.dma_bits = 35
-> +};
-> +
->   static const struct of_device_id mtk_uart_apdma_match[] = {
-> -	{ .compatible = "mediatek,mt6577-uart-dma", },
-> +	{ .compatible = "mediatek,mt6577-uart-dma", .data = &mt6577_data },
-
-What about doing, instead...
-
-{ .compatible = "mediatek,mt6577-uart-dma", .data = (void *)32 },
-
-> +	{ .compatible = "mediatek,mt6795-uart-dma", .data = &mt6795_data },
-> +	{ .compatible = "mediatek,mt6779-uart-dma", .data = &mt6779_data },
-> +	{ .compatible = "mediatek,mt6985-uart-dma", .data = &mt6985_data },
->   	{ /* sentinel */ },
->   };
->   MODULE_DEVICE_TABLE(of, mtk_uart_apdma_match);
-> @@ -477,7 +501,8 @@ static int mtk_uart_apdma_probe(struct platform_device *pdev)
->   {
->   	struct device_node *np = pdev->dev.of_node;
->   	struct mtk_uart_apdmadev *mtkd;
-> -	int bit_mask = 32, rc;
-> +	const struct mtk_uart_apdma_data *data;
-> +	int rc;
->   	struct mtk_chan *c;
->   	unsigned int i;
->   
-> @@ -492,13 +517,9 @@ static int mtk_uart_apdma_probe(struct platform_device *pdev)
->   		return rc;
->   	}
->   
-> -	if (of_property_read_bool(np, "mediatek,dma-33bits"))
-> -		mtkd->support_33bits = true;
-> -
-> -	if (mtkd->support_33bits)
-> -		bit_mask = 33;
-> -
-> -	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(bit_mask));
-> +	data = of_device_get_match_data(&pdev->dev);
-> +	mtkd->support_bits = data->dma_bits;
-
-...and there you just get that single number you need, store it locally, then you
-can do
-
-mtkd->support_extended_addr = apdma_num_bits > 32;
-
-> +	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(data->dma_bits));
->   	if (rc)
->   		return rc;
->   
-
-
-Cheers,
-Angelo
-
-
+Sakari Ailus
 
