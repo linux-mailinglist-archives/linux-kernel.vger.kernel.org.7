@@ -1,144 +1,206 @@
-Return-Path: <linux-kernel+bounces-827312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D11CB91689
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:32:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5607B91695
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 280803A575A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:32:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E83A21898AFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16BB30C378;
-	Mon, 22 Sep 2025 13:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED8A309F0A;
+	Mon, 22 Sep 2025 13:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KMoAUbhK"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SiD+5Lro";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pmKAPtHH";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SiD+5Lro";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pmKAPtHH"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A609D309EED;
-	Mon, 22 Sep 2025 13:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A442D3720
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758547943; cv=none; b=N3oOj7VEYnkqxdOL4HZTuIsXliwyLsF5iJg0TphTvKUFoKBMqa+eeqaJ6prNIzHYxqrxusfYuFLMuiAfBkXPQxUKZJJYuml24HQyQIWkE4kM4QSSgYYJyCKMfVcMY1VD5KOlu5+YGzfEa+CG7KgX7p/WUbcgRIMB7lQ29uoQsfo=
+	t=1758547960; cv=none; b=Rf99t1oKAnzqqpWdVeRHIs0rmu6iev47vtu+bGwTcbfyS0pZZVWDl6/vxgndGtuc2mrdc7MQB5wP9QYyayNWF30HcHN+bp+VnTtw3Ufwo9jEPQop+IUP7xI0oG4/ZXcg/0JJ2HJDAQJ/NdaacptxnTSk+r6McyuQSLCyD/ynQUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758547943; c=relaxed/simple;
-	bh=TDh5kMQItLeCtCYOhniYG9SE9N6xkw1ryWAXikH5CKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KXtE6BtcCnUZRdG/UX3yzXOOWiHj/Sd9YFHisXN3zrp7KnIlRweXgVoW/L8fnsKIOOulW69JpvntwHo8s3YqCXwpxkxXmwp38mmuNlQfBZy0Zc+4zI+tonK6QtbzhD56QCF8GfhkrlBuw/LKQCU++Mcq1HeJ5KYXbZbTmNyPxQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KMoAUbhK; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758547941; x=1790083941;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=TDh5kMQItLeCtCYOhniYG9SE9N6xkw1ryWAXikH5CKc=;
-  b=KMoAUbhKtuwcl9RY98Uh/zQ31AqP+56p7hnS0f06iDFV5NpMhmGaNgoi
-   EaLaIEgUW87d4dKsGyeYI1+P1lrOD7Mdrqm+9xDBc0kmtxXhQlyBa5Yd7
-   oqjY5oU0BpVeYQiuZ/ZYU7QXToEa1/kQ/76VJX36Rdfb0rte9gqPBK9Xj
-   XLuME0bZnaHfvpNNxqo7wZdmjFSuWbYPdE5CWFO9uhJYaRXkmvQ6czTif
-   JAs3GKlJrxcFyG6icA0hrVjHfA70S/B5reTov+R4dOtcVl3OE4Dy3A8nd
-   9lHaGRABkGsEpkFRXQgzywvjjTAGaeMob774jKKfztr5etXLn6LsfVFDH
-   A==;
-X-CSE-ConnectionGUID: TCpADp6USuqlHeFWAhCzYw==
-X-CSE-MsgGUID: g6s7rN8HROqtzWL3QVKHcQ==
-X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
-   d="scan'208";a="46235453"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Sep 2025 06:32:20 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 22 Sep 2025 06:31:47 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 22 Sep 2025 06:31:45 -0700
-Message-ID: <bc2278a2-387f-4e66-b275-8429bcb45db1@microchip.com>
-Date: Mon, 22 Sep 2025 15:31:45 +0200
+	s=arc-20240116; t=1758547960; c=relaxed/simple;
+	bh=msEtCxPw1Q+NQNP/NUwrNhWFN0iB75jLAt8ym53Z4Is=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pXqQttHZ/LyGykA1ZJViJ4lO7Q2YOUiUryxmwJIXQNY/x3ZBss2pdGLZR3otLU55fo8F0yumm42FOrqvNy9LTuMag7YwjpON4fPtMb+H5rVUFtX/MaZY3sCmHHxp/ck9BHRoPycS4+TJ4M9X6sZGOvghlQoUW03xJLix+DtTd3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SiD+5Lro; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pmKAPtHH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SiD+5Lro; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pmKAPtHH; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 01E8733772;
+	Mon, 22 Sep 2025 13:32:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758547957; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZhEzsNGYvikcV5pZIDnjqvry8vcm585kM1Qo2pcC4/w=;
+	b=SiD+5Lro1DX0jpai6Q1mKi4U8NtLvRpxWqcvNElHwvTAHJFzgIxkKAAa9Zsfr7mnRNWhW4
+	kOn16iSbfZHTu7zI0Uwc5WIDyHzlE4YjL5uyBlTJxvZMHFgwM9DGsM0t2IMDZRVi1jHkoi
+	yaCOP63VV9W6ffdA/V9HcU6Qw4IZVNg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758547957;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZhEzsNGYvikcV5pZIDnjqvry8vcm585kM1Qo2pcC4/w=;
+	b=pmKAPtHHCCf37ZysvZ9DkkPVVz6nqk6Dx1FTROONTwPqFxTcFcN2o8wjfdpTQIkjR28KMk
+	Eud4J2As+FBzoABQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=SiD+5Lro;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=pmKAPtHH
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758547957; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZhEzsNGYvikcV5pZIDnjqvry8vcm585kM1Qo2pcC4/w=;
+	b=SiD+5Lro1DX0jpai6Q1mKi4U8NtLvRpxWqcvNElHwvTAHJFzgIxkKAAa9Zsfr7mnRNWhW4
+	kOn16iSbfZHTu7zI0Uwc5WIDyHzlE4YjL5uyBlTJxvZMHFgwM9DGsM0t2IMDZRVi1jHkoi
+	yaCOP63VV9W6ffdA/V9HcU6Qw4IZVNg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758547957;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZhEzsNGYvikcV5pZIDnjqvry8vcm585kM1Qo2pcC4/w=;
+	b=pmKAPtHHCCf37ZysvZ9DkkPVVz6nqk6Dx1FTROONTwPqFxTcFcN2o8wjfdpTQIkjR28KMk
+	Eud4J2As+FBzoABQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B24D01388C;
+	Mon, 22 Sep 2025 13:32:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id n9ndKfRP0WhNewAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 22 Sep 2025 13:32:36 +0000
+Date: Mon, 22 Sep 2025 15:32:36 +0200
+Message-ID: <87348eobnv.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux PCI <linux-pci@vger.kernel.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Zhang Qilong <zhangqilong3@huawei.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 1/3] PM: runtime: Add auto-cleanup macros for "resume and get" operations
+In-Reply-To: <CAJZ5v0hSBDg4fD7Gy6yEX31xO-3USJG_jFps71BRJJ2f0Oh90A@mail.gmail.com>
+References: <6204724.lOV4Wx5bFT@rafael.j.wysocki>
+	<3388279.44csPzL39Z@rafael.j.wysocki>
+	<875xdaevab.wl-tiwai@suse.de>
+	<CAJZ5v0hSBDg4fD7Gy6yEX31xO-3USJG_jFps71BRJJ2f0Oh90A@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: microchip: sam9x7: Add qspi controller
-To: Dharma Balasubiramani <dharma.b@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250915-sam9x7-qspi-dtsi-v1-1-1cc9adba7573@microchip.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <20250915-sam9x7-qspi-dtsi-v1-1-1cc9adba7573@microchip.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 01E8733772
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.de:dkim,suse.de:mid,suse.de:email]
+X-Spam-Score: -3.51
 
-On 15/09/2025 at 11:13, Dharma Balasubiramani wrote:
-> Add support for QSPI controller.
+On Mon, 22 Sep 2025 14:50:32 +0200,
+Rafael J. Wysocki wrote:
 > 
-> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
-
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-And queued in at91-dt branch.
-
-> ---
-> Driver and Doc support
-> https://lore.kernel.org/lkml/20250908-microchip-qspi-v2-0-8f3d69fdd5c9@microchip.com/
-
-Thanks for the reference to the (accepted) binding and driver changes!
-
-Best regards,
-   Nicolas
-
-> ---
->   arch/arm/boot/dts/microchip/sam9x7.dtsi | 21 +++++++++++++++++++++
->   1 file changed, 21 insertions(+)
+> On Mon, Sep 22, 2025 at 10:38 AM Takashi Iwai <tiwai@suse.de> wrote:
+> >
+> > On Sat, 20 Sep 2025 12:54:58 +0200,
+> > Rafael J. Wysocki wrote:
+> > >
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >
+> > > It is generally useful to be able to automatically drop a device's
+> > > runtime PM usage counter incremented by runtime PM operations that
+> > > resume a device and bump up its usage counter [1].
+> > >
+> > > To that end, add DEFINE_CLASS() macros allowing pm_runtime_put()
+> > > and pm_runtime_put_autosuspend() to be used for the auto-cleanup in
+> > > those cases.
+> > >
+> > > Simply put, a piece of code like below:
+> > >
+> > >       pm_runtime_get_sync(dev);
+> > >       .....
+> > >       pm_runtime_put(dev);
+> > >       return 0;
+> > >
+> > > can be transformed with CLASS() like:
+> > >
+> > >       CLASS(pm_runtime_get_active, pm)(dev);
+> > >       if (IS_ERR(pm))
+> > >               return PTR_ERR(pm);
+> > >       .....
+> > >       return 0;
+> > >
+> > > (note the new resume error handling).
+> >
+> > Do we still allow the code without the error check even using CLASS()?
+> > Although the error check should be handled, it's not mandatory for
+> > now.  That said, the above example could be still in a form like:
+> >
+> >         CLASS(pm_runtime_get_active, pm)(dev);
+> >         .....
+> >         return 0;
+> >
+> > while adding the proper error check is recommended?
 > 
-> diff --git a/arch/arm/boot/dts/microchip/sam9x7.dtsi b/arch/arm/boot/dts/microchip/sam9x7.dtsi
-> index 66c07e642c3e..46dacbbd201d 100644
-> --- a/arch/arm/boot/dts/microchip/sam9x7.dtsi
-> +++ b/arch/arm/boot/dts/microchip/sam9x7.dtsi
-> @@ -271,6 +271,27 @@ AT91_XDMAC_DT_PERID(38))>,
->   			status = "disabled";
->   		};
->   
-> +		qspi: spi@f0014000 {
-> +			compatible = "microchip,sam9x7-ospi";
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0xf0014000 0x100>, <0x60000000 0x20000000>;
-> +			reg-names = "qspi_base", "qspi_mmap";
-> +			interrupts = <35 IRQ_TYPE_LEVEL_HIGH 7>;
-> +			dmas = <&dma0
-> +				(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-> +				AT91_XDMAC_DT_PERID(26))>,
-> +				<&dma0
-> +				(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-> +				AT91_XDMAC_DT_PERID(27))>;
-> +			dma-names = "tx", "rx";
-> +			clocks = <&pmc PMC_TYPE_PERIPHERAL 35>, <&pmc PMC_TYPE_GCK 35>;
-> +			clock-names = "pclk", "gclk";
-> +			assigned-clocks = <&pmc PMC_TYPE_GCK 35>;
-> +			assigned-clock-parents = <&pmc PMC_TYPE_CORE PMC_PLLADIV2>;
-> +			status = "disabled";
-> +		};
-> +
->   		i2s: i2s@f001c000 {
->   			compatible = "microchip,sam9x7-i2smcc", "microchip,sam9x60-i2smcc";
->   			reg = <0xf001c000 0x100>;
+> I'd rather not encourage doing this.
 > 
-> ---
-> base-commit: 590b221ed4256fd6c34d3dea77aa5bd6e741bbc1
-> change-id: 20250915-sam9x7-qspi-dtsi-a4844266b17d
-> 
-> Best regards,
+> While it may still produce working code in some cases, one needs to
+> remember that in case of a runtime resume error it will be running
+> without a runtime PM reference it has attempted to acquire.
 
+Fair enough.  Then it'd be also good to mention that in the
+description, too.
+
+
+thanks,
+
+Takashi
 
