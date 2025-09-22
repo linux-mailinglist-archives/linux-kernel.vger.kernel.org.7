@@ -1,139 +1,113 @@
-Return-Path: <linux-kernel+bounces-827673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C38DB92607
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:16:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10DECB92616
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2076216EE54
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:16:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFC683B9396
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6D53128CC;
-	Mon, 22 Sep 2025 17:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3670C313290;
+	Mon, 22 Sep 2025 17:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8CUpcCd"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Ch9A2iCK"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB251DA23
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E5D1A9FB6
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758561403; cv=none; b=oDmvpCGV9XeQAbiJThJWHXyr+iuZ16crVayz7wKDSfquyi6HDja+qdztMxLfsAV9FBz/nBytJnNdEkaa8WYqzRsWNqEzwLGoT7GVD49mIPddVPujsjCdoPZIPKdOqpSpokxk/b71Fi9WmofST+pNwEaY/JMpdksmF99wMBgEWGE=
+	t=1758561459; cv=none; b=nb+TUiClrylOoH4fP1LpeZm3KY0HuaR38hc/UFaLzx3fno63VvLarbFrICQVytvNJTg6WlwGTTznct6v9GYJ6YotVc96sTJPW9J/f7Jmx5psmVuUr7qUgMpbuJzkMz14flIrJ0NUZuKHad2N7i4P0BvVzX+XCOsvuw/nx9afEDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758561403; c=relaxed/simple;
-	bh=MZX3BArSyTfdsbf0Ts7rcUcL2FK6diGQFYx85udDcL0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K/HyxO2e1IWS7L536u5Ao0SqMmc8jOne2dMb2gA+TzrIpsEAtV/kIo4LDxawMhJKLn8yGk0tQfIS46jgl1qrM1J73m0AZNftbmFIy9cgNEKpDWcb5rLo6Z32C8wbfD08w+Ixoz7Yh/YN1E7xBufON4AOSXOqz4UN2VFv/SUgi0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8CUpcCd; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-57a292a3a4bso100428e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:16:41 -0700 (PDT)
+	s=arc-20240116; t=1758561459; c=relaxed/simple;
+	bh=yDCyVsMnBe1oen5dvPi/6dU/2jOJ8KUMFS4IHKbrUo0=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rrqhi/5dEWZ3zqw6TEQzxn7mYrZ2phhSDa28+Ql05BzIxXX5KlNw71VfKX59Ng8XWR1BZlIFJq/JT20LUp1YlKArgGVZVxnVCqCg76QFaKZ/D6+4+x8hXhecDZfld82gSFIoVFqmjlAG+aAJkY532F21BvJLDLGIWqrridulLrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Ch9A2iCK; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-57cfe6656dcso1688739e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:17:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758561400; x=1759166200; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MZX3BArSyTfdsbf0Ts7rcUcL2FK6diGQFYx85udDcL0=;
-        b=P8CUpcCdB7YzHdt5pwLOeEp2TCZu7rEGsfrszs4aO7AYxslxbTMfwsPdEOqpbPi3gl
-         3XKOf+VwbaWx2UvpiU4rXkFUaXieUaT9VAE0YyseDDvV9rRtFmnkOm1qzyu9HoG+81TI
-         sfrwEAHQ9x97yPwbwV2mCEZuGREfzk+vn4hTsJKLAFsKCmWOGILloksjejdwdngyLDZV
-         h/SLjc5fpQXKk3pPU564nQohrbSYUUXb1uURwzLN6La0AlJkQXX7wSFxMaC3cYlCacuw
-         maFFlNZlYLa54nCEKO/fxVqIWsI1IItCkK5swvHNehLCKBJsiP4JZ0XCpSrA2VVli91R
-         yxZQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758561456; x=1759166256; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UdkfUJcWiIhWIQMyk8FB1DAT7E/1t3lcPeSZOWW85BE=;
+        b=Ch9A2iCKWlu/r9bbz/b7q4KA3Yuv3HZ012eCJeLS649Q1gaEYghVQbNL+nANsBzIkx
+         OqgyXo3Y9mvzx/JqdcRZMdAQxuE7OXV2ZjUWx+/7TjFBqG4I4kDhV5Ka/w7d8wp5xi85
+         AJ7Qcl9ZxPr0V3Au3dDHeixq8hIUr6vlS0XxqCYo7Xkkp3ek2f/4hHb405Jnif1cTSD9
+         FJXNYOEUCRvGnHieT7jSo2J85KUhIoXGgkE9Ik6g1BywawF3jhD+HPX7zSyoe9l/23Ui
+         NSO1Q068Ix26D4xOZBXDj3n7vkh7LZuBhxIf35SvoGuq+F4Ur3bpsQ156dSARULnm72j
+         6Gcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758561400; x=1759166200;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MZX3BArSyTfdsbf0Ts7rcUcL2FK6diGQFYx85udDcL0=;
-        b=j+rNXo7unvTbQfHLEXfTkYiPQ+ui9KLph4GEswPAS2lYFr5PRFoiku0hbk22tCoF9m
-         ZUZpTfXGuy0Me8YmHh1hkIOz/bxfhKbgZGxKNuwk4EjLXUtRY9od0JYlTp/I6b3EWlhO
-         JpCjy3kcidQoUGVLrN11PvYSQ1FYjQyQ3VUu3obBv9BcBuZ3GZkDSnISkdgnEecNpm1O
-         E08rTBO43+o5IVaI5Vw1cklvps+MCJpgRJz+8QoBG2gPXUaJcJXMdU1wtDBw534hPRW/
-         w75MLuMH3ZH2qmsO3e0J9lp8jagoqmCSKtuEzPiVt2QXtiuZ1pru8DtOjPINiIv/r+kb
-         2pCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWIpzlaB+jVexA7dm6GGpkOFcnx+hBf7XvEge5/iOhsQAPWKQ7TcPjoe9pJvMd04V3g9Efoa0PEbAMxLTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwy+KnozUfHcNTaJQkGo0J9C+NH4hcU9qseVsRyRRmJvUONQQ1
-	DzCgEm6AgaxJ6Sb8avn8GJ5pOcgGybFCU/hyfQxNOfd0EISWNwWK039HDrz4MUcq9j4PK5Yocfe
-	0tZmeJGJ4VqaJoSu09cZSgg7TbLit5iU=
-X-Gm-Gg: ASbGnctn6KanPP14qjzGJTGjIigSrh8qyVbatTaMK8G2vhAWIMnOLl6YwLNb24IT/FU
-	UiTbDrxk1ZBahC5r1WduZITv7O5vhOejaFwionW+uSHHQpIL+mITDY47gbg/1hWoiWbya/u5WUH
-	+CjN1OPCRd3rhXvFLA2VKtXW1nj3Xg6uDwPHVfkaRvoWKUVtCF/rFB202aGaxp21aR1VmLubnnD
-	p19Pa8=
-X-Google-Smtp-Source: AGHT+IHarbzJ6Y0Kx1EuBP51HF3QqIRaq6W5hGvo9rzQ11VJWCv4CphDndWPOoVT25Wb0mhT/VW8OhKl1IyEHjMkBl8=
-X-Received: by 2002:a05:6512:2913:b0:57d:8870:e96d with SMTP id
- 2adb3069b0e04-57d8870f70emr1592623e87.30.1758561399443; Mon, 22 Sep 2025
- 10:16:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758561456; x=1759166256;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UdkfUJcWiIhWIQMyk8FB1DAT7E/1t3lcPeSZOWW85BE=;
+        b=CCOZB95NkXr8v4jej42jJH6U4CcQvvGibBtZ6XoCw/Iv+sSxRayOBnByIfbrQXQumZ
+         Wu8i0j41Bv8Rp6ak4dfHFrk3i/kbiLI8WlizK2kbxzVoAekd0YYXgFWlsphD2Aqbexh+
+         hBVrR7YlPbKF5G2l21u7rp56R7nCqCAuIaFRpd5nqWVXSmvM12bLSMVnIx0+UTCwLhSu
+         gCaJNfC6D4Jv8lsRsrZHC8ICV/oEh/pvDarlCfIkNaSkFDyCcVsAW9riCGpyssXawHGH
+         QgpkGNjmF+ADZw+MdSIDISHxQ34VYSg5/g6e97kb2tgSQrYPQDuE1ATBZ8QvjqwQXnj1
+         4/5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU3TgxGUiIiWENJxjc504/mCf5VqMs3GSoXy7oIH49gr8sv4tYO7QbVtVTnqofz7yvN9pIPPdYj+1xlNAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVFLfIPZUF6ApJr5QZBmWzKVQOm7oxzkt1/azUswXJa1vGOzP5
+	UOyQhg5lTQFAAs0jNT81e28OEodOOHZMNQHU1P0ji8qgO7k7NOo0+VeOOLrq3Qrcs/9H8WqRaEv
+	HucWFKN4Yv4JRasuyzekrRkj50mraeBahdjLHHZo4mO4XlWQDtPvgMT0=
+X-Gm-Gg: ASbGncuu3Rj+H2VjIZrG3Q3W3e/tjcNDHEZzTtKhvabcPF9ewnobqxGsR8MDi2VE4KP
+	pJ0z5FSOUfyF8JSnJ+i238q4Mz+Ypzvek5o0Vxzbc3gpefo5WAkTqyuxrM5G7PskY06ZsO4eViV
+	NoEMsNZLNk7fikSf/85003gO+UKQEhYSZZ56adzNiNn7HvnwknKM4VJhJSCtnBbyUx23NoOCPdX
+	YHERytA5KpnSabMxyPh8U93N9zquQcYTmwQ39FgkBAuo85h
+X-Google-Smtp-Source: AGHT+IHa5VS93YBVnCqLOZY3pYwvG4eCX52nyQdKku+32y1T0vkVAt7IQymvU+hEJRGGd/QSDHyzANnwRnT18WFvHlU=
+X-Received: by 2002:a05:6512:61af:b0:57d:6fca:f1f6 with SMTP id
+ 2adb3069b0e04-57d6fcaf45cmr2017701e87.46.1758561455821; Mon, 22 Sep 2025
+ 10:17:35 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 22 Sep 2025 10:17:34 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 22 Sep 2025 10:17:34 -0700
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <20250922152640.154092-6-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903-tegra210-speedo-v3-1-73e09e0fbb36@gmail.com>
- <2334a545-9a06-42d9-8282-674b94fdcb2f@nvidia.com> <CALHNRZ_gNzCEOzcYBY4o5Hz-efS5b52K4uZqmw5ps5zEfKoOEw@mail.gmail.com>
- <5e1b09f0-7f4a-421c-b09f-4f95c1c6ec3b@nvidia.com>
-In-Reply-To: <5e1b09f0-7f4a-421c-b09f-4f95c1c6ec3b@nvidia.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 22 Sep 2025 12:16:28 -0500
-X-Gm-Features: AS18NWChSC7X3N75Jv-gvVc8Hq-b8TEe-hBz8bqB2KABn75M9vUKybGGxS149pE
-Message-ID: <CALHNRZ-43RHsjiw1NJAxc3qAqHEoEYongtB0MzsfP5q93H7_XA@mail.gmail.com>
-Subject: Re: [PATCH v3] soc: tegra: fuse: speedo-tegra210: Update speedo ids
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Joseph Lo <josephl@nvidia.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250922152640.154092-1-herve.codina@bootlin.com> <20250922152640.154092-6-herve.codina@bootlin.com>
+Date: Mon, 22 Sep 2025 10:17:34 -0700
+X-Gm-Features: AS18NWDyCQX1J8uZYK9LHdZ-e3eFX6O7LUqq1XRGpyCJLmgX9_jhMo9add6DPkE
+Message-ID: <CAMRc=McFZ9rDgBEkUBuUX1c2a9PUwX3+ZzOs-KE4jhbU+p6+ww@mail.gmail.com>
+Subject: Re: [PATCH v4 5/8] ARM: dts: r9a06g032: Add GPIO controllers
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Hoan Tran <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Saravana Kannan <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 19, 2025 at 4:55=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
+On Mon, 22 Sep 2025 17:26:36 +0200, "Herve Codina (Schneider
+Electric)" <herve.codina@bootlin.com> said:
+> Add GPIO controllers (Synosys DesignWare IPs) available in the
+> r9a06g032 (RZ/N1D) SoC.
 >
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  arch/arm/boot/dts/renesas/r9a06g032.dtsi | 121 +++++++++++++++++++++++
+>  1 file changed, 121 insertions(+)
 >
-> On 18/09/2025 18:19, Aaron Kling wrote:
-> > On Thu, Sep 18, 2025 at 4:45=E2=80=AFAM Jon Hunter <jonathanh@nvidia.co=
-m> wrote:
-> >>
-> >>
-> >> On 04/09/2025 02:58, Aaron Kling via B4 Relay wrote:
-> >>> From: Aaron Kling <webgeek1234@gmail.com>
-> >>>
-> >>> Existing code only sets cpu and gpu speedo ids 0 and 1. The cpu dvfs
-> >>> code supports 11 ids and nouveau supports 5. This aligns with what th=
-e
-> >>> downstream vendor kernel supports. Align skus with the downstream lis=
-t.
-> >>
-> >> Do you have a reference for the downstream kernel change you are
-> >> referring to? I have found this change [0]. However, this does not qui=
-te
-> >> align with what you have in this patch.
-> >
-> > This is based on L4T r32.7.6 [0], which builds up the list over
-> > several commits, so I can't link to just one. The first revision only
-> > added sku's that I had specifically verified. Mikko suggested to just
-> > import everything from downstream and to simplify the conditionals.
-> > And that's this revision.
->
-> ...
->
-> > [0] https://nv-tegra.nvidia.com/r/plugins/gitiles/linux-4.9/+/refs/tags=
-/tegra-l4t-r32.7.6_good/drivers/soc/tegra/fuse/speedo-tegra210.c#72
->
->
-> Thanks! I saw Mikko's comments on V2 and that makes sense. The problem I
-> have is that comparing this with the above, it is not clear that these
-> are equivalent. The above is using the 'a02' chip version for setting
-> the speedo IDs but this is using the speedo revision. Now it might turn
-> out this is equivalent, but it is not obvious to me. Ideally we would
-> end up with something similar to the above.
 
-Thanks for noticing this discrepancy. I will fix and verify, then send
-a new revision.
-
-Aaron
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
