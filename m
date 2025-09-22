@@ -1,221 +1,155 @@
-Return-Path: <linux-kernel+bounces-827059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D6CEB900D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:35:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39ABAB90136
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FEAE422806
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:35:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E8513BA02B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE94F3002C1;
-	Mon, 22 Sep 2025 10:34:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A212264B2
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9BC12FFDCB;
+	Mon, 22 Sep 2025 10:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VBeeOxpq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/iUUoBaF";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VBeeOxpq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/iUUoBaF"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93ED4286D56
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758537257; cv=none; b=hCOm1BqGZJzLBZb7ulPJ5zcvJSJud5QzMCqLReKMhmyIa5doe9X6vTC6dYTj6GXLIx2IA4WYb+vDMzFxg2XkRtuqxeuOqv00LulZOqcskKDyTu3PieA20j/NG+o+tDxHCfxflPtQn4yyECDo2dixyXjjXyUl/gUSnWfKdBetEh8=
+	t=1758537287; cv=none; b=aoAqoqPd6is0PPPYiAdFZZumWLzhgqDHA+AR5ngCkKb4OGsl/SDRFpqFv1eGt3t4msxf9wr+/6Konui1nAPyRJ9kA8hey7dPeXGJeFsVPJh6qT6AhJgymtL6nkBZV3ja40TaCzBNBHzSdT+hVdqt8ozblDTKPuzV2PDnZcroAkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758537257; c=relaxed/simple;
-	bh=fxZqgCQlL8Ue4RXjT9BEhiT1hKNaYjjk5++YMgOPy1E=;
+	s=arc-20240116; t=1758537287; c=relaxed/simple;
+	bh=SvpVRH1Rmm2Oz5mJNd3LRYxacW2IuL1xezhYlATPGWo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GXWB3gEz53j+mU/VXiPkuN5jsFD6UDfQVBzF/HUn86kvGBRFbhpTlA3l17OQwOi0Y19NYbQ9CD1G38EYaV9txBkUF4a9XdXARfWk3FMc1RMDuS9aotTjbTeEnV9P+Ml7MNJKItN2TQiL5EwVtJvnu1p6ZblJE6tICjdbr0dMW7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 044EF497;
-	Mon, 22 Sep 2025 03:34:07 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C6B673F66E;
-	Mon, 22 Sep 2025 03:34:14 -0700 (PDT)
-Date: Mon, 22 Sep 2025 11:34:12 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Mike Leach <mike.leach@linaro.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] coresight: Fix possible deadlock in
- coresight_panic_cb
-Message-ID: <20250922103412.GF516577@e132581.arm.com>
-References: <20250919160653.507109-1-sean.anderson@linux.dev>
- <20250919160653.507109-3-sean.anderson@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nJNv1/UKvKZliZjwyETdk0KbVQ2CKtLZRVU1cJE+10giTf1uRy46o5QiFybp+uJeVFhTz77+NQGy9wkuIUJj3HIhYvUO3smPGtH9DLk0zZNfXRRJ6aBKcT9X0IR1K/WprrOFUMSp34sjr0Irpil+XYlh2ogAY0PKG5mfvTK+fuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VBeeOxpq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/iUUoBaF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VBeeOxpq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/iUUoBaF; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C64C51FD42;
+	Mon, 22 Sep 2025 10:34:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758537283;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qst3Vy1v4TuZqTg2IJNm8R2g+V1pVUud+f+YYek2eLU=;
+	b=VBeeOxpqmXnJAPEBQijfWdhEkVAUA55J5VsteRuJaN6Z27nrJjc46kLTLovHbLpYbIWHIg
+	KCce9oKosyt6FpSyT6PnThw4BylRabFQOvyrmJWIpr2sTpaPBoH4LCq63L01jEQHm9ZYg+
+	/GuZo1QIABb/4mi4o+TnPXWM5xA3I6A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758537283;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qst3Vy1v4TuZqTg2IJNm8R2g+V1pVUud+f+YYek2eLU=;
+	b=/iUUoBaF6K3P+eiHKDSNfbtRRHrjEmqIpoSnfqiZp59t6ETQcUHSG6dS1qY3Q7BeRk5HSl
+	nrpwthZnTxwwkHBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758537283;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qst3Vy1v4TuZqTg2IJNm8R2g+V1pVUud+f+YYek2eLU=;
+	b=VBeeOxpqmXnJAPEBQijfWdhEkVAUA55J5VsteRuJaN6Z27nrJjc46kLTLovHbLpYbIWHIg
+	KCce9oKosyt6FpSyT6PnThw4BylRabFQOvyrmJWIpr2sTpaPBoH4LCq63L01jEQHm9ZYg+
+	/GuZo1QIABb/4mi4o+TnPXWM5xA3I6A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758537283;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qst3Vy1v4TuZqTg2IJNm8R2g+V1pVUud+f+YYek2eLU=;
+	b=/iUUoBaF6K3P+eiHKDSNfbtRRHrjEmqIpoSnfqiZp59t6ETQcUHSG6dS1qY3Q7BeRk5HSl
+	nrpwthZnTxwwkHBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B827C1388C;
+	Mon, 22 Sep 2025 10:34:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id U9ijLEMm0WiBPwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 22 Sep 2025 10:34:43 +0000
+Date: Mon, 22 Sep 2025 12:34:42 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mssola@mssola.com>
+Cc: linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] btrfs: Prevent open-coded arithmetic on kmalloc
+Message-ID: <20250922103442.GM5333@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20250919145816.959845-1-mssola@mssola.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250919160653.507109-3-sean.anderson@linux.dev>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250919145816.959845-1-mssola@mssola.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.00
 
-On Fri, Sep 19, 2025 at 12:06:53PM -0400, Sean Anderson wrote:
+On Fri, Sep 19, 2025 at 04:58:14PM +0200, Miquel Sabaté Solà wrote:
+> The second patch is a small cleanup after fixing up my first patch, in
+> which I realized that the __free(kfree) attribute would come in handy in a
+> couple of particularly large functions with multiple exit points. This
+> second patch is probably more of a cosmetic thing, and it's not an
+> exhaustive exercise by any means. All of this to say that even if I feel
+> like it should be included, I don't mind if it has to be dropped.
 
-[...]
+Yes there are many candidates for the __free() cleanup annotation and
+we'll want to fix them all systematically. We already have the automatic
+cleaning for struct btrfs_path (BTRFS_PATH_AUTO_FREE). For the
+kfree/kvfree I'd like to something similar:
 
-> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-> index 022c8384b98d..6dfb1198c16e 100644
-> --- a/drivers/hwtracing/coresight/coresight-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-core.c
-> @@ -1046,8 +1046,11 @@ static void coresight_device_release(struct device *dev)
->  {
->  	struct coresight_device *csdev = to_coresight_device(dev);
->  
-> -	fwnode_handle_put(csdev->dev.fwnode);
-> +	if (panic_ops(csdev))
-> +		atomic_notifier_chain_unregister(&panic_notifier_list,
-> +						 &csdev->panic_notifier);
->  	free_percpu(csdev->perf_sink_id_map.cpu_map);
-> +	fwnode_handle_put(csdev->dev.fwnode);
+#define AUTO_KFREE(name)       *name __free(kfree) = NULL
+#define AUTO_KVFREE(name)      *name __free(kvfree) = NULL
 
-The moving fwnode_handle_put() is irrelvant to panic notifier fix,
-should be moved out from this patch.
-
->  	kfree(csdev);
->  }
->  
-> @@ -1315,6 +1318,16 @@ void coresight_release_platform_data(struct coresight_device *csdev,
->  		coresight_remove_conns_sysfs_group(csdev);
->  }
->  
-> +static int coresight_panic_notifier(struct notifier_block *nb,
-> +				    unsigned long action, void *data)
-> +{
-> +	struct coresight_device *csdev =
-> +		container_of(nb, struct coresight_device, panic_notifier);
-> +
-
-Need to check device mode:
-
-        if (coresight_get_mode(csdev) == CS_MODE_DISABLED)
-            return NOTIFY_DONE;
-
-The rest is fine for me.
-
-Thanks,
-Leo
-
-> +	panic_ops(csdev)->sync(csdev);
-> +	return NOTIFY_DONE;
-> +}
-> +
->  struct coresight_device *coresight_register(struct coresight_desc *desc)
->  {
->  	int ret;
-> @@ -1357,6 +1370,17 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
->  			goto err_out;
->  		}
->  	}
-> +
-> +	if (panic_ops(csdev)) {
-> +		csdev->panic_notifier.notifier_call = coresight_panic_notifier;
-> +		ret = atomic_notifier_chain_register(&panic_notifier_list,
-> +						     &csdev->panic_notifier);
-> +		if (ret) {
-> +			coresight_device_release(&csdev->dev);
-> +			goto err_out;
-> +		}
-> +	}
-> +
->  	/*
->  	 * Make sure the device registration and the connection fixup
->  	 * are synchronised, so that we don't see uninitialised devices
-> @@ -1563,36 +1587,6 @@ const struct bus_type coresight_bustype = {
->  	.name	= "coresight",
->  };
->  
-> -static int coresight_panic_sync(struct device *dev, void *data)
-> -{
-> -	int mode;
-> -	struct coresight_device *csdev;
-> -
-> -	/* Run through panic sync handlers for all enabled devices */
-> -	csdev = container_of(dev, struct coresight_device, dev);
-> -	mode = coresight_get_mode(csdev);
-> -
-> -	if ((mode == CS_MODE_SYSFS) || (mode == CS_MODE_PERF)) {
-> -		if (panic_ops(csdev))
-> -			panic_ops(csdev)->sync(csdev);
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -static int coresight_panic_cb(struct notifier_block *self,
-> -			       unsigned long v, void *p)
-> -{
-> -	bus_for_each_dev(&coresight_bustype, NULL, NULL,
-> -				 coresight_panic_sync);
-> -
-> -	return 0;
-> -}
-> -
-> -static struct notifier_block coresight_notifier = {
-> -	.notifier_call = coresight_panic_cb,
-> -};
-> -
->  static int __init coresight_init(void)
->  {
->  	int ret;
-> @@ -1605,20 +1599,11 @@ static int __init coresight_init(void)
->  	if (ret)
->  		goto exit_bus_unregister;
->  
-> -	/* Register function to be called for panic */
-> -	ret = atomic_notifier_chain_register(&panic_notifier_list,
-> -					     &coresight_notifier);
-> -	if (ret)
-> -		goto exit_perf;
-> -
->  	/* initialise the coresight syscfg API */
->  	ret = cscfg_init();
->  	if (!ret)
->  		return 0;
->  
-> -	atomic_notifier_chain_unregister(&panic_notifier_list,
-> -					     &coresight_notifier);
-> -exit_perf:
->  	etm_perf_exit();
->  exit_bus_unregister:
->  	bus_unregister(&coresight_bustype);
-> @@ -1628,8 +1613,6 @@ static int __init coresight_init(void)
->  static void __exit coresight_exit(void)
->  {
->  	cscfg_exit();
-> -	atomic_notifier_chain_unregister(&panic_notifier_list,
-> -					     &coresight_notifier);
->  	etm_perf_exit();
->  	bus_unregister(&coresight_bustype);
->  }
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index 4ac65c68bbf4..a7aaf9d3d01d 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -280,6 +280,7 @@ struct coresight_trace_id_map {
->   * @config_csdev_list:  List of system configurations added to the device.
->   * @cscfg_csdev_lock:	Protect the lists of configurations and features.
->   * @active_cscfg_ctxt:  Context information for current active system configuration.
-> + * @panic_notifier: Notifier block used to clean up during a panic
->   */
->  struct coresight_device {
->  	struct coresight_platform_data *pdata;
-> @@ -304,6 +305,7 @@ struct coresight_device {
->  	struct list_head config_csdev_list;
->  	raw_spinlock_t cscfg_csdev_lock;
->  	void *active_cscfg_ctxt;
-> +	struct notifier_block panic_notifier;
->  };
->  
->  /*
-> -- 
-> 2.35.1.1320.gc452695387.dirty
-> 
+This wraps the name and initializes it to NULL so it's not accidentally
+forgotten.
 
