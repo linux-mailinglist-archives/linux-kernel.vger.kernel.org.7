@@ -1,156 +1,118 @@
-Return-Path: <linux-kernel+bounces-827201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61EEBB9123F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:37:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0822AB91239
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE0A7189B22F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:38:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D54837AE5D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04EA307AC7;
-	Mon, 22 Sep 2025 12:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B49A3064A0;
+	Mon, 22 Sep 2025 12:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="oje7S2F/"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KgcDunUy"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707E7632;
-	Mon, 22 Sep 2025 12:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92208304BDF
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758544668; cv=none; b=HqG+34hKi3naExy9r9JBk+eoUYc62seEWHYLGaezlPmNAtOY+ic+HkMzJRimUeMFEAT27wvIMf2L+eLNpo2YU7nVG3DnU4O8iCZHW5HSjJdOXAO9tlu63BIbgCE4eIb20WrNZYfT9i7MO72uXrV14+ho4K1X8bUCL4oYHy8CSOI=
+	t=1758544594; cv=none; b=bULRvDmf4ReRF9LhZcMaef+9hqySAViFtwTxPObiidwPOD2R1SJYtedRyM/gtmrA8nETL416/fda0ZUhFAI2LhHRdfl5I0bSxCYzGxrg9h7/NvMNU1gjLWy/mpiQDPGSXm2UMOcRviV+ckGt4VbpthOnLJyd40906zQInHKm6jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758544668; c=relaxed/simple;
-	bh=8YypPf0aiPKuOwo+g5HDRj8EAxKrVBf8pOov84amq8A=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HdLQNxL5ID10bomjcKvQOzNEFpdiL4CntcdDs6k16tp248/yRFvmRfUc7sLR7LENEvV62ER+wCbi4ADZY4dtqV2ODry7HF/45VkSBaAfEtwPEt0Ac2kkumFsByUOqAQd7lLflpNw0M5kMVUqIhaKvbAVemr6dunaA7s8U/2LXJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=oje7S2F/; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758544666; x=1790080666;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8YypPf0aiPKuOwo+g5HDRj8EAxKrVBf8pOov84amq8A=;
-  b=oje7S2F/vmbHLTKGhEGuB5lIwdjTI4bqYH83NM9foWgoiPXx75WN28xT
-   8kROn3wNgb6n5ngOo3n6QvOpaOhreaiRWD+pXDTxSeD0A73l8i9S2iyqV
-   eSCHueUeEaFfUilmVaKVkufelabxC/GMGuYAUC3vJ4YiG7PrD0mPlO4lE
-   N92M2RpD4Gt0zl1cZjwmoWj8zD5l4r+ZI3ivRGjo+fzAs+nOYwA3DwDqu
-   F3R2lgVOVfnsDYlNpaF/zi70kdekbCHM97tLOApsGyxydUvBoI+g8Nf7c
-   +RWP8gPjcCYPJToz40WWqnpZi8SOywzL8vdTBu3k6XviHYmR8wQKyWCuP
-   Q==;
-X-CSE-ConnectionGUID: lBfTSD/JRDC5cyyuOb8Rqg==
-X-CSE-MsgGUID: WaGxFZAVTR6h9GyLGG3I9w==
-X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
-   d="scan'208";a="214199220"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Sep 2025 05:37:44 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 22 Sep 2025 05:37:04 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 22 Sep 2025 05:37:04 -0700
-Date: Mon, 22 Sep 2025 14:33:01 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-CC: Jakub Kicinski <kuba@kernel.org>, <andrew@lunn.ch>,
-	<hkallweit1@gmail.com>, <linux@armlinux.org.uk>, <davem@davemloft.net>,
-	<edumazet@google.com>, <pabeni@redhat.com>, <richardcochran@gmail.com>,
-	<vadim.fedorenko@linux.dev>, <rmk+kernel@armlinux.org.uk>,
-	<christophe.jaillet@wanadoo.fr>, <rosenp@gmail.com>,
-	<steen.hegelund@microchip.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net v2] phy: mscc: Fix PTP for vsc8574 and VSC8572
-Message-ID: <20250922123301.y7qjguatajhci67o@DEN-DL-M31836.microchip.com>
-References: <20250917113316.3973777-1-horatiu.vultur@microchip.com>
- <20250918160942.3dc54e9a@kernel.org>
- <20250922121524.3baplkjgw2xnwizr@skbuf>
+	s=arc-20240116; t=1758544594; c=relaxed/simple;
+	bh=/2dFLXefAWec9kPIFBiOdf7vvOvOOA/2JEGtLWgKrBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=kOfzL/2nIQGWozRqSx5MMyuoq+jooG40sIhXovcU5w+XCxKhEkJmjqmOsz+NiuLid8SbkfTi/oreroC3K1wQ8ng+aV1b/TF7O2FuDuisEg4/4LOxq9XKm9ebPGaq4OTibO2xYIgOHkpiN2KOKxSZogZTUIEcgaWtnV5mC5f/JSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KgcDunUy; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250922123629epoutp0337358ea282e77290815edbf7572fe078~nmvyphfKr0171301713epoutp03-
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:36:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250922123629epoutp0337358ea282e77290815edbf7572fe078~nmvyphfKr0171301713epoutp03-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758544589;
+	bh=/2dFLXefAWec9kPIFBiOdf7vvOvOOA/2JEGtLWgKrBQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KgcDunUyWDjdPF3rOSKYvgv3e3ygQ5pJBWCo812v0UlQ63iwnld59KyeWPe4u46fV
+	 yx50ZRbJ7Fu9brgeQkYUhY57Kw0FWvrDigJg4wCdQVnhyvxlX8HL5g7O5q4EpjxOv2
+	 khrhzZL2CYGIrnVyndBzOpJGNPwsFtYd9fbFDzE4=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250922123629epcas5p2de5d21797e204a8c7012ee228404e040~nmvyNHgzQ2905229052epcas5p2K;
+	Mon, 22 Sep 2025 12:36:29 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cVjK80DmCz2SSKY; Mon, 22 Sep
+	2025 12:36:28 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250922123627epcas5p33eb3e2d65cfb1705857413dd573d17e7~nmvw7Hj8g2990029900epcas5p3g;
+	Mon, 22 Sep 2025 12:36:27 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250922123626epsmtip11dcba42479f7df0af8c0a27e8e54a23c~nmvvyBGV92355923559epsmtip1c;
+	Mon, 22 Sep 2025 12:36:26 +0000 (GMT)
+Date: Mon, 22 Sep 2025 18:06:16 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V3 00/20] Add CXL LSA 2.1 format support in nvdimm and
+ cxl pmem
+Message-ID: <20250922123616.y6yi4heay26ktlhl@test-PowerEdge-R740xd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20250917155053.00004c03@huawei.com>
+X-CMS-MailID: 20250922123627epcas5p33eb3e2d65cfb1705857413dd573d17e7
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----9bSguDi.zIPe2mzIRptk1CwOcoXw-B36MWpfyHe4p2iroT9e=_26cb6_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250917134126epcas5p3e20c773759b91f70a1caa32b9f6f27ff
+References: <CGME20250917134126epcas5p3e20c773759b91f70a1caa32b9f6f27ff@epcas5p3.samsung.com>
+	<20250917134116.1623730-1-s.neeraj@samsung.com>
+	<20250917155053.00004c03@huawei.com>
+
+------9bSguDi.zIPe2mzIRptk1CwOcoXw-B36MWpfyHe4p2iroT9e=_26cb6_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Disposition: inline
-In-Reply-To: <20250922121524.3baplkjgw2xnwizr@skbuf>
 
-The 09/22/2025 15:15, Vladimir Oltean wrote:
+On 17/09/25 03:50PM, Jonathan Cameron wrote:
+>On Wed, 17 Sep 2025 19:10:56 +0530
+>Neeraj Kumar <s.neeraj@samsung.com> wrote:
+>
+>
+>Hi,
+>Not sure what difference between the two versions I'm seeing is.
+>Patch 02 is missing in both of them.
+>
+>Jonathan
 
-Hi,
+Hi Jonathan,
 
-> 
-> On Thu, Sep 18, 2025 at 04:09:42PM -0700, Jakub Kicinski wrote:
-> > On Wed, 17 Sep 2025 13:33:16 +0200 Horatiu Vultur wrote:
-> > > When trying to enable PTP on vsc8574 and vsc8572 it is not working even
-> > > if the function vsc8584_ptp_init it says that it has support for PHY
-> > > timestamping. It is not working because there is no PTP device.
-> > > So, to fix this make sure to create a PTP device also for this PHYs as
-> > > they have the same PTP IP as the other vsc PHYs.
-> >
-> > May be useful to proof read your commit message, or run it thru
-> > a grammar checker. Copy & paste into a Google Doc would be enough..
-> 
-> I agree, and I did not understand the problem from the commit message.
-> 
-> I would suggest something like below (maybe not identical).
-> 
-> The PTP initialization is two-step: first we have vsc8584_ptp_probe_once() /
-> vsc8584_ptp_probe() at probe() time, then we have vsc8584_ptp_init() at
-> config_init() time.
-> 
-> For VSC8574 and VSC8572, the PTP initialization is incomplete. We are
-> making the second step without having previously made the first one.
-> This means, for example, that ptp_clock_register() is never called.
-> 
-> Nothing crashes as a result of this, but it is unexpected that some PHY
-> generations have PTP functionality exposed by the driver and some do
-> not, even though they share the same PTP clock IP.
-
-I agree, I need to be more carefull and more clear in the commit
-messages. Thanks for the great example.
-
-> 
-> > Regarding the patch the new function looks like a spitting image
-> > of vsc8584_probe(), minus the revision check.
-> > --
-> > pw-bot: cr
-> 
-> Also, even without this patch, vsc8574_probe() and vsc8584_probe() are
-> structurally very similar and could use some consolidation.
-> 
-> Would it make sense to create a static int vsc8531_probe_common(struct
-> phy_device *phydev, bool ptp) and call it from multiple wrappers? The
-> VSC8584_REVB check can go in the vsc8584_probe() wrapper. The "size_t
-> priv_size" argument of devm_phy_package_join() can be set based on the
-> "bool ptp" argument, because struct vsc85xx_shared_private is used only
-> in PTP code.
-> 
-> You can make a preparatory change in 'net' patch sets, even without
-> a Fixes: tag, if you clearly explain what it's for.
-
-Thanks for the advice.
-What about to make the PHY_ID_VSC8572 and PHY_ID_VSC8574 to use
-vsc8584_probe() and then in this function just have this check:
-
----
-if ((phydev->phy_id & 0xfffffff0) != PHY_ID_VSC8572 &&
-    (phydev->phy_id & 0xfffffff0) != PHY_ID_VSC8574) {
-	if ((phydev->phy_id & MSCC_DEV_REV_MASK) != VSC8584_REVB) {
-		dev_err(&phydev->mdio.dev, "Only VSC8584 revB is supported.\n");
-		return -ENOTSUPP;
-	}
-}
----
+Because of some compliance check, Patch 02 got delayed. Now its visible
+in lore. Can you please take a look at it.
 
 
--- 
-/Horatiu
+Regards,
+Neeraj
+
+------9bSguDi.zIPe2mzIRptk1CwOcoXw-B36MWpfyHe4p2iroT9e=_26cb6_
+Content-Type: text/plain; charset="utf-8"
+
+
+------9bSguDi.zIPe2mzIRptk1CwOcoXw-B36MWpfyHe4p2iroT9e=_26cb6_--
 
