@@ -1,268 +1,213 @@
-Return-Path: <linux-kernel+bounces-826723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13993B8F30C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:48:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F45B8F312
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D4B3B8A5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:47:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A8827A12AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D782024167A;
-	Mon, 22 Sep 2025 06:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D322737F6;
+	Mon, 22 Sep 2025 06:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZsTxnXe4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="vVDfy2lQ"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A407182B7;
-	Mon, 22 Sep 2025 06:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758523672; cv=none; b=OqgwccKOWTmup6kMLqRF65zb+EUT+aSyQosUXRPS8bYNHi8RYGmXEZ5WMN23JCRBRODCTafMHuSmWHwwnWk/sMK0JOxBEn3XTHUFK4YcF75Alq5IYETFvn13/6S3gL2Bl+h851vMZKtrxTO+2/HaerEvOAu8PNfdVps8gOZM6Xg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758523672; c=relaxed/simple;
-	bh=um8c9LylE867iljcdmP4EdcJQIucfIpVc7FL0tHNLNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ceeQ8agyzidGZ72EDGLvaf+vlYdnrspidtf2d/2yoe5EXrg2H1qr3eL9PcL2bxT+3VT91TESJKO3OXBgAwTB8+9E+71ErjOR3a/QFrnMrUatPqq+oHZMNfVwc6eMv0ApBFhWZ0HRsMW8WzDbebTSvIi3zmZIttOS9qkWM6GnG2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZsTxnXe4; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758523666; x=1790059666;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=um8c9LylE867iljcdmP4EdcJQIucfIpVc7FL0tHNLNI=;
-  b=ZsTxnXe4KKXJSn4n/cH949sYqqzPs2I17KnSYt35mtMIX0SWflKiAGQB
-   4KMzYLAvy1SWtnUjQ2P57jRikjRZx1fvJ+D1rEEovCBkddzBhoL1deuwU
-   QGt0N291Fi6Py0vc54kAeKPz/uk+oimmZ81lFFGLUY2dfi1AsYv5wgtqV
-   srL4blFZGXMkH4wtL8VxuQSKHk2EQve3sLvEt8bn1y2lv1M8wRR3gxBUi
-   i3rypMwfZQyeAmQ6IyRPXEK9IQmmzyErxESCwIjfiJue5qgM+M0JjwBmn
-   fa9m4nIcXMRLDB/gLyoXcca4L7FesbuZ2dPIooLmK+4PeoOuLTrYw9Y+d
-   w==;
-X-CSE-ConnectionGUID: ZPNH56mPQwSex3ayvRlqoA==
-X-CSE-MsgGUID: ibXxIQbXT3aYxXISI0BxCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="71402749"
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="71402749"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 23:47:44 -0700
-X-CSE-ConnectionGUID: ujVU+tgVTV6dYFeb2yPUvg==
-X-CSE-MsgGUID: KJP3wthhR/SutvPer6xkyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="207365735"
-Received: from unknown (HELO [10.238.2.49]) ([10.238.2.49])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 23:47:42 -0700
-Message-ID: <59d61506-9f20-4ac7-8e96-3fef1857c27f@linux.intel.com>
-Date: Mon, 22 Sep 2025 14:47:39 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C84182B7;
+	Mon, 22 Sep 2025 06:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758523729; cv=pass; b=gkGSq2oYQRmTxpk62OBTG2oPo3+igUGO5PallBrtbYgQuLJaiMmVw4JNP8vtqfbbm3dg1IzMyH3L6ZYfEKnNI6s0WaR7YYHdqpUDC+SwTVXF0N7zpUSEML90Ptk0cb4N0cEwHnBoishiJxDbAPT4Eujtu8pxDmOH8MG1eyjYz0Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758523729; c=relaxed/simple;
+	bh=5IuIzBWva9dvgo3S5ZQQdPjYk/zGEYXEvzD6aLl30ZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NLzT2pBeFKGROSDat8rkiTxBnPFWn/vdv93Z/UMTuMIIpgcRAAGUHHAF0IKbTmw2dY/UvKFpn7Q0sVZUtfiIN1opqjtATB5jI3aR/5vcRRSVyMwGWdZ3QIkeznPiUJf7dvzX7K+3jnVR3wdTHTkJSCC4xQ41TylRw6fg1kV81YM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=vVDfy2lQ; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4cVYbr454BzySx;
+	Mon, 22 Sep 2025 09:48:40 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1758523724;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c54KfsI4HptCQLSrRHNLP/BIoKR4dJKvmjofNFS6EPc=;
+	b=vVDfy2lQjagkvA3af60EKADTdyriSznlKV73hf4JVOoX/TZuMUfLBjaiMLFrP7fPLmqVA3
+	sjHSkHtNOQr33qQzzn/ChKilK0YiXSDfnVHTilVwX6eH1NfRryaeLN8ZDSEzdtFbJWAB78
+	6h1reBho5da8Kr5sUqDENJOaNj7Qsqc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1758523724;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c54KfsI4HptCQLSrRHNLP/BIoKR4dJKvmjofNFS6EPc=;
+	b=lzzOw/iUyIuIcE8vKQQTUc6GdwsIGCDBvH/vR8CVyVBzzjk6Kq10jiurbsc9/suXh4ks5q
+	6CbEb9suSHT2k6Cla0dSDMppZWu8+sBH1hXp52gEdPxm7ILbjK9GtqOPaCDOCy/VVdasU4
+	CnNbB6c/RF3rTciion6y6P6ANl04V64=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1758523724; a=rsa-sha256; cv=none;
+	b=M3OqNc5uTmbUDslVQLQe5qkl/wBTqyXYHc3Sn7R/kKSv2WrmAqld7ufyaOoFejSMsWf/qS
+	ibPEaYD53GQogiMIFvtzYY57VIksUz23Eq6zSKIfLi5a3lQUvhmO4P+EI6+zZdkVOFWuXZ
+	B+91lvnWlX//KGJ4YtkXpl27gEJsbls=
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id E8CFA634C97;
+	Mon, 22 Sep 2025 09:48:39 +0300 (EEST)
+Date: Mon, 22 Sep 2025 09:48:39 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Isaac Scott <isaac.scott@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v3 1/3] media: v4l: Add helper to get number of active
+ lanes via a pad
+Message-ID: <aNDxR72CmvGofTHy@valkosipuli.retiisi.eu>
+References: <20250915-mbus-config-active-lanes-v3-0-97a1282a410b@ideasonboard.com>
+ <20250915-mbus-config-active-lanes-v3-1-97a1282a410b@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v3 5/6] perf tools kvm: Use "cycles" to sample guest for
- "kvm record" on Intel
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
- Kevin Tian <kevin.tian@intel.com>
-References: <20250919021659.1263351-1-dapeng1.mi@linux.intel.com>
- <20250919021659.1263351-6-dapeng1.mi@linux.intel.com> <aM2tSh6RGo2hB-XM@x1>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <aM2tSh6RGo2hB-XM@x1>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915-mbus-config-active-lanes-v3-1-97a1282a410b@ideasonboard.com>
 
+Hi Isaac,
 
-On 9/20/2025 3:21 AM, Arnaldo Carvalho de Melo wrote:
-> On Fri, Sep 19, 2025 at 10:16:58AM +0800, Dapeng Mi wrote:
->> After KVM supports PEBS for guest on Intel platforms
->> (https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/),
-> So this isn't something selectable, i.e. with the patch above there is
-> no way to disable precise samples on the guest and instead allow the
-> host to use perf kvm with cycles:P to have a more precise view of guest
-> samples?
->
-> I.e. wouldn't it be better to make cycles:P be accepted and since it
-> fails, it drops precise_ip to zero as its the "most precise" it can use
-> on the host when the guest is "hoarding"/using PEBS?
->
->> host loses the capability to sample guest with PEBS since all PEBS related
->> MSRs are switched to guest value after vm-entry, like IA32_DS_AREA MSR is
->> switched to guest GVA at vm-entry. This would lead to "perf kvm record"
->> fails to sample guest on Intel platforms since "cycles:P" event is used to
->> sample guest by default as below case shows.
-> Or it is even worse than I thought, the host _can_ ask for cycles:P, get
-> it but then _when the guest_ vm-entries and while it is running, the
-> host doesn't have access to it?
+Thanks for the update.
 
-Unfortunately it's the latter one. That's why see the 0 guest records when
-running "perf kvm record/top" commands, it would always success that host
-creates cycles:P event, but once VM enters guest, guest owns the PEBS HW
-resource (All PEBS MSRs are switched to guest values) and host has no way
-to touch the PEBS HW resource in guest mode.
+On Mon, Sep 15, 2025 at 02:18:33PM +0100, Isaac Scott wrote:
+> Sometimes, users will not use all of the MIPI CSI 2 lanes available when
+> connecting to the MIPI CSI receiver of their device. Add a helper
+> function that checks the mbus_config for the device driver to allow
+> users to define the number of active data lanes through the
+> get_mbus_config op.
+> 
+> If the driver does not implement this op, fall back to using the number
+> of data lanes specified in device tree.
+> 
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
+> ---
+>  drivers/media/v4l2-core/v4l2-common.c | 32 ++++++++++++++++++++++++++++++++
+>  include/media/v4l2-common.h           | 21 +++++++++++++++++++++
+>  2 files changed, 53 insertions(+)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
+> index 6e585bc76367..2ce8407f1397 100644
+> --- a/drivers/media/v4l2-core/v4l2-common.c
+> +++ b/drivers/media/v4l2-core/v4l2-common.c
+> @@ -571,6 +571,38 @@ s64 __v4l2_get_link_freq_pad(struct media_pad *pad, unsigned int mul,
+>  	return __v4l2_get_link_freq_ctrl(sd->ctrl_handler, mul, div);
+>  }
+>  EXPORT_SYMBOL_GPL(__v4l2_get_link_freq_pad);
+> +
+> +unsigned int v4l2_get_active_data_lanes(const struct media_pad *pad,
+> +					unsigned int max_data_lanes)
+> +{
+> +	struct v4l2_mbus_config mbus_config = {};
+> +	struct v4l2_subdev *sd;
+> +	unsigned int lanes;
+> +	int ret;
+> +
+> +	sd = media_entity_to_v4l2_subdev(pad->entity);
+> +	ret = v4l2_subdev_call(sd, pad, get_mbus_config, pad->index,
+> +			       &mbus_config);
+> +	if (ret < 0 && ret != -ENOIOCTLCMD)
+> +		return ret;
+> +
+> +	/*
+> +	 * This relies on the mbus_config being zeroed at init time.
+> +	 */
+> +	if (!mbus_config.bus.mipi_csi2.num_data_lanes)
 
+I'd either use the local variable for this (lanes) either all the time, or
+not at all.
 
->
-> Isn't there any programmatic way for the host to know if the guest is
-> with PEBS and thus make cycles:P turn into plain "cycles"?
-
-Currently we don't have such kind of code in Kernel. Of course, it can be
-added in theory but it could be meaningless since when users try to run
-"perf kvm" commands it's probably there are running VMs and the x86 guest
-PEBS support in KVM is always enabled. 
-
-
->
-> - Arnaldo
->
->> sudo perf kvm record -a
->> ^C[ perf record: Woken up 1 times to write data ]
->> [ perf record: Captured and wrote 0.787 MB perf.data.guest ]
->>
->> So to ensure guest record can be sampled successfully, use "cycles"
->> instead of "cycles:P" to sample guest record by default on Intel
->> platforms. With this patch, the guest record can be sampled
->> successfully.
-> but unconditionally not having access to PEBS :-\
->
-> - Arnaldo
+> +		return max_data_lanes;
+> +
+> +	lanes = mbus_config.bus.mipi_csi2.num_data_lanes;
+> +
+> +	if (lanes > max_data_lanes) {
+> +		dev_dbg(sd->dev, "Active data lanes (%u) exceeds max (%u)\n",
+> +			lanes, max_data_lanes);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return lanes;
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_get_active_data_lanes);
+>  #endif /* CONFIG_MEDIA_CONTROLLER */
 >  
->> sudo perf kvm record -a
->> ^C[ perf record: Woken up 1 times to write data ]
->> [ perf record: Captured and wrote 0.783 MB perf.data.guest (23 samples) ]
->>
->> Reported-by: Kevin Tian <kevin.tian@intel.com>
->> Fixes: cf8e55fe50df ("KVM: x86/pmu: Expose CPUIDs feature bits PDCM, DS, DTES64")
->> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->> Acked-by: Namhyung Kim <namhyung@kernel.org>
->> ---
->>  tools/perf/arch/x86/util/kvm-stat.c | 51 +++++++++++++++++++++++++++++
->>  tools/perf/builtin-kvm.c            | 10 ------
->>  tools/perf/util/kvm-stat.h          | 10 ++++++
->>  3 files changed, 61 insertions(+), 10 deletions(-)
->>
->> diff --git a/tools/perf/arch/x86/util/kvm-stat.c b/tools/perf/arch/x86/util/kvm-stat.c
->> index 424716518b75..bff36f9345ea 100644
->> --- a/tools/perf/arch/x86/util/kvm-stat.c
->> +++ b/tools/perf/arch/x86/util/kvm-stat.c
->> @@ -3,9 +3,11 @@
->>  #include <string.h>
->>  #include "../../../util/kvm-stat.h"
->>  #include "../../../util/evsel.h"
->> +#include "../../../util/env.h"
->>  #include <asm/svm.h>
->>  #include <asm/vmx.h>
->>  #include <asm/kvm.h>
->> +#include <subcmd/parse-options.h>
->>  
->>  define_exit_reasons_table(vmx_exit_reasons, VMX_EXIT_REASONS);
->>  define_exit_reasons_table(svm_exit_reasons, SVM_EXIT_REASONS);
->> @@ -211,3 +213,52 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid)
->>  
->>  	return 0;
->>  }
->> +
->> +/*
->> + * After KVM supports PEBS for guest on Intel platforms
->> + * (https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/),
->> + * host loses the capability to sample guest with PEBS since all PEBS related
->> + * MSRs are switched to guest value after vm-entry, like IA32_DS_AREA MSR is
->> + * switched to guest GVA at vm-entry. This would lead to "perf kvm record"
->> + * fails to sample guest on Intel platforms since "cycles:P" event is used to
->> + * sample guest by default.
->> + *
->> + * So, to avoid this issue explicitly use "cycles" instead of "cycles:P" event
->> + * by default to sample guest on Intel platforms.
->> + */
->> +int kvm_add_default_arch_event(int *argc, const char **argv)
->> +{
->> +	const char **tmp;
->> +	bool event = false;
->> +	int ret = 0, i, j = *argc;
->> +
->> +	const struct option event_options[] = {
->> +		OPT_BOOLEAN('e', "event", &event, NULL),
->> +		OPT_BOOLEAN(0, "pfm-events", &event, NULL),
->> +		OPT_END()
->> +	};
->> +
->> +	if (!x86__is_intel_cpu())
->> +		return 0;
->> +
->> +	tmp = calloc(j + 1, sizeof(char *));
->> +	if (!tmp)
->> +		return -ENOMEM;
->> +
->> +	for (i = 0; i < j; i++)
->> +		tmp[i] = argv[i];
->> +
->> +	parse_options(j, tmp, event_options, NULL, PARSE_OPT_KEEP_UNKNOWN);
->> +	if (!event) {
->> +		argv[j++] = STRDUP_FAIL_EXIT("-e");
->> +		argv[j++] = STRDUP_FAIL_EXIT("cycles");
->> +		*argc += 2;
->> +	}
->> +
->> +	free(tmp);
->> +	return 0;
->> +
->> +EXIT:
->> +	free(tmp);
->> +	return ret;
->> +}
->> diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
->> index d297a7b2c088..c0d62add4996 100644
->> --- a/tools/perf/builtin-kvm.c
->> +++ b/tools/perf/builtin-kvm.c
->> @@ -1636,16 +1636,6 @@ static int kvm_events_report_vcpu(struct perf_kvm_stat *kvm)
->>  	return ret;
->>  }
->>  
->> -#define STRDUP_FAIL_EXIT(s)		\
->> -	({	char *_p;		\
->> -		_p = strdup(s);		\
->> -		if (!_p) {		\
->> -			ret = -ENOMEM;	\
->> -			goto EXIT;	\
->> -		}			\
->> -		_p;			\
->> -	})
->> -
->>  int __weak setup_kvm_events_tp(struct perf_kvm_stat *kvm __maybe_unused)
->>  {
->>  	return 0;
->> diff --git a/tools/perf/util/kvm-stat.h b/tools/perf/util/kvm-stat.h
->> index 4249542544bb..53db3d56108b 100644
->> --- a/tools/perf/util/kvm-stat.h
->> +++ b/tools/perf/util/kvm-stat.h
->> @@ -190,5 +190,15 @@ static inline struct kvm_info *kvm_info__new(void)
->>  #define kvm_info__zput(ki) do { } while (0)
->>  #endif /* HAVE_KVM_STAT_SUPPORT */
->>  
->> +#define STRDUP_FAIL_EXIT(s)		\
->> +	({	char *_p;		\
->> +		_p = strdup(s);		\
->> +		if (!_p) {		\
->> +			ret = -ENOMEM;	\
->> +			goto EXIT;	\
->> +		}			\
->> +		_p;			\
->> +	})
->> +
->>  extern int kvm_add_default_arch_event(int *argc, const char **argv);
->>  #endif /* __PERF_KVM_STAT_H */
->> -- 
->> 2.34.1
+>  /*
+> diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
+> index 0a43f56578bc..6af0695460ab 100644
+> --- a/include/media/v4l2-common.h
+> +++ b/include/media/v4l2-common.h
+> @@ -584,6 +584,27 @@ int v4l2_fill_pixfmt_mp(struct v4l2_pix_format_mplane *pixfmt, u32 pixelformat,
+>  	(pad, mul, div)
+>  s64 __v4l2_get_link_freq_pad(struct media_pad *pad, unsigned int mul,
+>  			     unsigned int div);
+
+Is your tree up to date?
+
+> +
+> +/**
+> + * v4l2_get_active_data_lanes - Get number of active data lanes from driver
+> + *
+> + * @pad: The transmitter's media pad.
+> + * @max_data_lanes: The maximum number of active data lanes supported by
+> + * 		    the MIPI CSI link in hardware. This can be configured
+> + * 		    in device tree.
+
+I'd remove the latter sentence. Alternatively, it needs to be improved:
+there are other sources for this information than DT.
+
+> + *
+> + * This function is intended for obtaining the number of data lanes that are
+> + * actively being used by the driver for a MIPI CSI-2 device on a given media pad.
+> + * This information is derived from a mbus_config fetched from a device driver
+> + * using the get_mbus_config v4l2_subdev pad op.
+> + *
+> + * Return:
+> + * * >0: Number of active data lanes
+> + * * %-EINVAL: Number of active data lanes is invalid, as it exceeds the maximum
+> + *	       supported data lanes listed in device tree.
+> + */
+> +unsigned int v4l2_get_active_data_lanes(const struct media_pad *pad,
+> +					unsigned int max_data_lanes);
+>  #else
+>  #define v4l2_get_link_freq(handler, mul, div)		\
+>  	__v4l2_get_link_freq_ctrl(handler, mul, div)
+> 
+
+-- 
+Regards,
+
+Sakari Ailus
 
