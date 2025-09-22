@@ -1,97 +1,49 @@
-Return-Path: <linux-kernel+bounces-827763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFC8B92AC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:56:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E3CB92B4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F98A1904CA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:57:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A1D92A10DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C2431A545;
-	Mon, 22 Sep 2025 18:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB36031A56B;
+	Mon, 22 Sep 2025 19:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GxxVcq9N"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQkU0QSN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD27275860
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 18:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CAD19A288;
+	Mon, 22 Sep 2025 19:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758567412; cv=none; b=ui4Jal1pzfyaN9JUs9MbmWhiQvGV8X4m6F9muuFl99ccg05yjC2PE7ohGLPRZCn7BHB9fZh9WZ+phvPPKMLJ/W82buUMI+tb27xu8x4biVtqmd26aAJ/D1vMCLwoS831v4R0XFYHwro+cTMVebO1GZpJ5nuX1dVOLvCuYodnJFU=
+	t=1758567627; cv=none; b=oX6So9gRZrNjMLw302fRdPZ7dxsbJB8vdFEeqf+WlGM3tiLNvstYRkQWhcJecT/ImzZUCo4XK1/732btNexCdBW+veIgYRdFGh2ssxpiM6DxBV5B3naWynGqfLyGJ9df/FfAuqWgi4/Pt7JcOIgds7msSoKw0Y7pqvI/AJ6SzcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758567412; c=relaxed/simple;
-	bh=pmtmdIqpwp48d4/s32BjyKje6zxImLmxuZ9drhEB0mg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s+ZHhvQvp8fofFJoqR6VoSKJ7WkonQMPw9OJo5qovcShP4NTZRQnaQkZjdGtCDq6//ennw0XBasy3PZgprbYD38Bb6jbSwObvMifexizX7i1xk5DhOw229MUMFIyM1VMCSovcL2wINR12SA9F5jULiWgXaVKjkS0IHn/jkg6Jh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GxxVcq9N; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4694ac46ae0so32164225e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 11:56:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758567409; x=1759172209; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eyJq43O++KjLnjYoBP21Xp+znz9y7wC4OFS1xU5rHgk=;
-        b=GxxVcq9NFCqKCAmT2QXd/Yh/WXiENWQf2S/43QLJ6oZNDNUVuJGNVlBKdDC4aM+M6m
-         66oP1j1AElAsO5Xal9YYfcWnIts1QO+SNw+vCYTPkV96gMNUnULoR9T+R+9ruQn4B3zc
-         dqYEoLoQ3ruphy/S7jwjPZHFO5q8scaTd5M21eYm6cCgK5Yuf/f73aMcNbm2Bujr67dF
-         4rmL2KNTJHYD/ocAozHw6iyBs8zlZbNDYFddgRoZFBicuzgIa1ZoBakAJtTrofmtUFGm
-         cj4ZFMPGfYeDCoft5/D+LfrGaaqBiHZbLPTOtJ4GzHffnEdAcu7Yw9ICmlbcScQRUiDG
-         5+zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758567409; x=1759172209;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eyJq43O++KjLnjYoBP21Xp+znz9y7wC4OFS1xU5rHgk=;
-        b=ELg5gleDN1IRqwJpgjuhjEuVcQoe/4SGHOiG1BaIaWqtZbORRim72CNwRGdoNrbMCb
-         +nCO7/7Yk/KUiSFkCw4wlI7jWis24e621hntn9fnh29jABpPdVh7HtHdBq9vCxuw2fJd
-         IXE3gFw0m4hN/Cymqe49YayZaesqBcIf3EBYwc1gCl6Yzo5SRM2hVHo/g+FGlCYXhGLz
-         hRl4AA0Q5LwpVWNqxr23SGnIFxJBhAw8Unb0cdPRbH6vDAdLh/ONt+lrj3+Xd6DRn0as
-         2GhHU6ptyEtEF7N8bnrvVOfIFwYWPZcF4Et5RQWee/vuqsnQGykFxvqLrB4scvUa6X/Z
-         zrdA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9bdRMJ7wlooOmrK5APBP8ZGOmHGMqbeQonoMIhr6u+VBqD3kkA11LfJE7turQA5g2e8pnD96hVtfOzx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwOIAES1rHXWMqaPpxmEd0S0NFj8lsVScIAG9qGaG22GMru0HD
-	sHz+JJBo1E2eeznCQ/ch2TqwdnYeVftTfOFZV6Lwxn8DTFZo2+GwClHV
-X-Gm-Gg: ASbGncuqhBoie3vxVJqKGAKppMyWjdcqVGoIIZuS39s9hEXCTHctB5fOuZrk0k87cA2
-	WG/IS6q5QC0HLD6EkWNbnLjKpaPsekH1ds43qweSQGkcXF2EgvyN773H9vGwmHvXOREizYmNEqT
-	atcZoW2LGUptU6ETBtn9f8WP4CDdFp0j1fR9gzubiE+Coz+tbh6eYk8Iqq8ZyTqdSmF924K4es3
-	FbSM0AI7+LiGxpBOiCsUVVCUL/1hkcI8AV7Rj44xifSZ9vR9WT2elT5Mau3gzFMo7S4QwTiH9R7
-	EBEvPBoaKsGAYYBjJxQsx4FMZ9MxwYjMPfq0YUtXg4uEPM/UQhkE9/4UGotREHxiV7wbSWD3Fhx
-	d0xDToy8JChvBwOSycQXXwLRpeHCQ3Nk=
-X-Google-Smtp-Source: AGHT+IE2hNAByN1u+WlmeKvdGqq3iQsBllgNjf2IKG0z3jtosjk7L/KvCjfFpn/X7tEHILQPO5GNNQ==
-X-Received: by 2002:a05:600c:45c9:b0:45d:d1a3:ba6a with SMTP id 5b1f17b1804b1-467f15d405emr134177295e9.33.1758567408745;
-        Mon, 22 Sep 2025 11:56:48 -0700 (PDT)
-Received: from moktar-desktop.. ([102.31.181.245])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f0aac439sm241209755e9.5.2025.09.22.11.56.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 11:56:48 -0700 (PDT)
-From: Moktar SELLAMI <smokthar925@gmail.com>
-To: alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	Hawking.Zhang@amd.com,
-	tao.zhou1@amd.com,
-	lijo.lazar@amd.com,
-	ganglxie@amd.com,
-	victor.skvortsov@amd.com,
-	candice.li@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com
-Cc: Moktar SELLAMI <smokthar925@gmail.com>
-Subject: [PATCH] drm/amd/amdgpu: use kmalloc_array instead of kmalloc
-Date: Mon, 22 Sep 2025 19:56:35 +0100
-Message-Id: <20250922185635.50828-1-smokthar925@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758567627; c=relaxed/simple;
+	bh=8U5r7MWC4C6QDYlXsPEZHC2SwxespT/dx+lT/gIoY7M=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=euURpmzmeBIlXK3MxSWhALo1HGz6LBFmgrd/ikP5AjRLjZGbQ5LNd+5Su2JHyUl+J3etqAwcVuYirWqcnrwusBdIe6U6ommRQc+Zxndr119H85PEyRjGZEVf0qZFe98bdAAlTmxiaRr3zXhASFy7JuXoe0ETyZMTkfrmEoKKpZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQkU0QSN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DA46C4CEF0;
+	Mon, 22 Sep 2025 19:00:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758567626;
+	bh=8U5r7MWC4C6QDYlXsPEZHC2SwxespT/dx+lT/gIoY7M=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=aQkU0QSNuNyPQOddF8/8SKdXidWzfNKzXYBCKpX3NterDRsdrxxyakEzpejxN6LCm
+	 suKZ1LxYsumb/LrjOc50uEmfzZbMq/Oyy4Odkb6ch14PlftgRqiXvmYxmdzOVJ3uzo
+	 muIYH68lw8Tg3b2PvvvSzoV+RFYiOwU2GMa93RHShKjMXOy4jEsp+NGd9+kaRjthBU
+	 iyrdMqzaZdKw5b+82zCaDb+cjozYE1ZKD6LaGqP4fjokSYDA4/mCaeQ93eYY62TB6q
+	 aqYdfQHJIzLUBJhLEf9DSfmNaEtSVY/l3+V/ZsSECsKwAIKPtXsOhjyPKffcg8X3v/
+	 qpwqNjxHU/73Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D9D39D0C20;
+	Mon, 22 Sep 2025 19:00:25 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,32 +51,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next 0/6] mptcp: pm: netlink: announce server-side
+ flag
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175856762426.1122110.4750649388400694679.git-patchwork-notify@kernel.org>
+Date: Mon, 22 Sep 2025 19:00:24 +0000
+References: 
+ <20250919-net-next-mptcp-server-side-flag-v1-0-a97a5d561a8b@kernel.org>
+In-Reply-To: 
+ <20250919-net-next-mptcp-server-side-flag-v1-0-a97a5d561a8b@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: martineau@kernel.org, geliang@kernel.org, donald.hunter@gmail.com,
+ kuba@kernel.org, davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ horms@kernel.org, shuah@kernel.org, netdev@vger.kernel.org,
+ mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
 
-Replace kmalloc -> kmalloc_array in drm/amd/amdgpu/amdgpu_ras.c .
+Hello:
 
-As per said in the Documentation/process/deprecated.rst, dynamic size
-calculation should not be performed in memory allocator function
-arguments due to the risk of overflow.
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Signed-off-by: Moktar SELLAMI <smokthar925@gmail.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, 19 Sep 2025 14:08:57 +0200 you wrote:
+> Now that the 'flags' attribute is used, it seems interesting to add one
+> flag for 'server-side', a boolean value.
+> 
+> Here are a few patches related to the 'server-side' attribute:
+> 
+> - Patch 1: only announce this attribute on the server side.
+> 
+> [...]
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-index 540817e296da..8dbb9e349a8e 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-@@ -2566,7 +2566,7 @@ static int amdgpu_ras_badpages_read(struct amdgpu_device *adev,
- 		goto out;
- 	}
- 
--	*bps = kmalloc(sizeof(struct ras_badpage) * data->count, GFP_KERNEL);
-+	*bps = kmalloc_array(data->count, sizeof(struct ras_badpage), GFP_KERNEL);
- 	if (!*bps) {
- 		ret = -ENOMEM;
- 		goto out;
+Here is the summary with links:
+  - [net-next,1/6] mptcp: pm: netlink: only add server-side attr when true
+    https://git.kernel.org/netdev/net-next/c/c9809f03c158
+  - [net-next,2/6] mptcp: pm: netlink: announce server-side flag
+    https://git.kernel.org/netdev/net-next/c/3d7ae91107b8
+  - [net-next,3/6] mptcp: pm: netlink: deprecate server-side attribute
+    https://git.kernel.org/netdev/net-next/c/c8bc168f5f3d
+  - [net-next,4/6] selftests: mptcp: pm: get server-side flag
+    https://git.kernel.org/netdev/net-next/c/e6c35529452e
+  - [net-next,5/6] mptcp: use _BITUL() instead of (1 << x)
+    https://git.kernel.org/netdev/net-next/c/5c967ebb5519
+  - [net-next,6/6] mptcp: remove unused returned value of check_data_fin
+    https://git.kernel.org/netdev/net-next/c/1be5b82c4585
+
+You are awesome, thank you!
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
