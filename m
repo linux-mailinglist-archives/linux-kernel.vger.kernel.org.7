@@ -1,155 +1,156 @@
-Return-Path: <linux-kernel+bounces-827170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4C0B910A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:04:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E01B910B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F7214222ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:04:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 180011883CCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78369305E3F;
-	Mon, 22 Sep 2025 12:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECF93064B5;
+	Mon, 22 Sep 2025 12:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="tnol69L0";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H2vPBHbG"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Wq9AYzeI"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E253208;
-	Mon, 22 Sep 2025 12:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9CF2ECEB4;
+	Mon, 22 Sep 2025 12:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758542675; cv=none; b=txoKJ43ti3+G/Np9Jif5JvoTqa3kqMos9xbtHYa2MDXVx97r/BISy9KLywV+Qhd51wtLwqQd6QBRkcnJf1NbGO1wgfr8QBC4Q8iRhZhgMXtmgVgjUmBoJ7eYhG0t5s9+wQBhWyMhYM394/6/Hrn5XYkXTfQSDAyluHLOPpu/DUI=
+	t=1758542690; cv=none; b=XKaWffJ16iZhKnilhtgpqvyIlY8V0Gy010SZYZfxkiXQBv2STbvwo5AGUUoCJ4YttMRg50LivvVaD3GZfeVm63yBeI3+p82NdGichk2BbVM0l44VzwQ0tzhn3ovuq12xxkJjAQVh5MBswC9Tyu5JAt+K19Rwzv3gkZrZzbnqRtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758542675; c=relaxed/simple;
-	bh=nGmfTn1SKDTj9/EFUk1FF/qSYPKEW6dElXWnOAMnoMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C1euHFAeoPDzwo74xuxie8zY5BX+GKjcsiXrRYu6i3YI5nvFobOLuP+VLEtKg6Vp90Tsuo3AkK4ixk0a3uCcS8mSDvf9kSZxsZCLje9XxLXNPtf+J2vbs3IqsbCS/3/oRXxQSIBG6ba3ej5shUg5C38ePVdYdYG75CtwOFIAuws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=tnol69L0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H2vPBHbG; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 1D22614000D2;
-	Mon, 22 Sep 2025 08:04:33 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Mon, 22 Sep 2025 08:04:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1758542673; x=1758629073; bh=qiGGa07iRa
-	3XyrB+IuyQNXJ7Vy2Z2XUIng9M1fm9FlQ=; b=tnol69L0+bIrbvR6bMP0aH3pIH
-	sURe5K+fRgrHpTfCUnTI2ide5KUy7Q+KJE7fmbDwP+S1rmO9fcZ7UAT2Ae0s0dx2
-	T3Tbd3Oap5kEQ3Ol4ab5PiodrINw1eSep8De9u49bbaN4wnsaqtePwus2VD6mw/m
-	ovbgXDIOFMkZMq43du0pSeVdNIWvjL3wJMSMtISgcB/A4Rvld5pszCASXCdV17Q8
-	qZn9jCHQapqlj3798M1fvHPPbgSfxgGgQtP4qsvIUhzV09TsIWqWVsxdxAnkcBoJ
-	zqlFtsd4hqBo92hrv7S3x8fwRwj8fveqJGFK9J2aVU7js3UnwtDeza/L/hLA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1758542673; x=1758629073; bh=qiGGa07iRa3XyrB+IuyQNXJ7Vy2Z2XUIng9
-	M1fm9FlQ=; b=H2vPBHbGngiURVEKwEgVEK0Cq/IO7jUfGckXo9FEc7BPWKv4fm7
-	IgnauU2JQ1U6GF9iwCOM9a2A/U+f6OcAYf82V2+DvfZnkJ29hxtShYDzs75T/l4l
-	ufCi+GbGwk17YXx4SVnmunycdG0lAHHCIh9IlMveTsZnjffLuDgrGKcDQO9QfsgE
-	smRZT8YyqkfYr66ZAnReQekAp2WEkHYiayaMmi0dY+Dc9c6YW0P9JTuxbfRQ1wKy
-	iwZVWwcs8M8aW8ak7JJvDa1Me6OgT2EMW8nbp7JWzmDq+eDGZYMrFVxQJOySN2qX
-	Yx6DNJ2uXyCgQyskND2BSq5T1EFb2TrtEBg==
-X-ME-Sender: <xms:UDvRaL5gQE9jg5TdBemiYsRXGLIkBLwGOHmBZVt83QT8zFRmPEteRg>
-    <xme:UDvRaMeLjU5IXAkFtVqgtrYb5NvK3BNDcnuIJiJvVkwHQ_rvz-GzpoNMioijPZm-Q
-    0hcbTa5P9dkfg>
-X-ME-Received: <xmr:UDvRaCfqR9m5kfv6xvREa4ry8G71iGEZwLvzYezZTTAm3Rnbmoas5nQeSA73>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehjeektdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcumffj
-    uceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvvedvle
-    ejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushhtvghr
-    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtg
-    homhdpnhgspghrtghpthhtohepvddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
-    pegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhhnugesrghrnh
-    gusgdruggvpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhr
-    tghpthhtohepsggvrghtrgdrmhhitghhrghlshhkrgesrghrmhdrtghomhdprhgtphhtth
-    hopegtrghrshhtvghnrdhhrghithiilhgvrhesfhhoshhsrdgrrhhmrdgtohhmpdhrtghp
-    thhtohepuggrnhhivghlrdgrlhhmvghiuggrsegtohhllhgrsghorhgrrdgtohhmpdhrtg
-    hpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepmhgrthhtghhilhgsrhhiuggvsehgohhoghhlvgdrtghomh
-X-ME-Proxy: <xmx:UDvRaBGwQtAkRJHp4tAnCktjiKsRraaR_mR8ocBPK0Dsi_yycNWgBQ>
-    <xmx:UDvRaBFObPy-cf7TW3DFTiyKj_fKQ_WOSCeG2vkwo0lSQIalztkXhw>
-    <xmx:UDvRaCBTj4r_MSdVTTdA8I1swUMhQnkOIzxa9v9UwaaYLkdKwf6zXA>
-    <xmx:UDvRaN19fcFic8Y3RSFhAd2sFv-YGannypi4lq_hbaFeFJ6rvW2UWQ>
-    <xmx:UTvRaOuGQLqnsbIw9Ml-LSYf5WlddniDI_YUdDogXm-E7pC8SpP6mPf6>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 22 Sep 2025 08:04:31 -0400 (EDT)
-Date: Mon, 22 Sep 2025 14:04:28 +0200
-From: Greg KH <greg@kroah.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Alice Ryhl <aliceryhl@google.com>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Carsten Haitzler <carsten.haitzler@foss.arm.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Matt Gilbride <mattgilbride@google.com>,
-	Rob Herring <robh@kernel.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>
-Subject: Re: linux-next: manual merge of the char-misc tree with the drm tree
-Message-ID: <2025092219-prude-irrigate-9821@gregkh>
-References: <aNEcp1CglKxMEe92@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1758542690; c=relaxed/simple;
+	bh=qU+QjQymKYnTFSUuFlSNyXW3Ydm7nGMDl+jIWvD69eo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U49ksgrcA/EX9PIa8vymG5fdDGGHxWjws3uZ/kOUF8OtvV7WuCkgk7gM3Hubjlu0FgU58yYHMm0onqcuEa2vBJgHfh6sAfIy/ElGn6LDAGDcJMRGmTPUvYB9XkqxmfB4PGyFAlvrO2OoVjFNg8HfArUa8c05W9QmqBtcsuIlSNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Wq9AYzeI; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 987E2669;
+	Mon, 22 Sep 2025 14:03:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1758542604;
+	bh=qU+QjQymKYnTFSUuFlSNyXW3Ydm7nGMDl+jIWvD69eo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Wq9AYzeITQDYLvZqQUZNDJwdJHdptFCQJe2wEUGK9oTFz0zK5iLTe2Wk9MfNH1yfH
+	 qwxpPBz3QwRSwgiaXLt3T6L6WggOLhxTc6eJkFdrm43QkxmPWkGFzHKIOcAWPg84Zp
+	 7oGV1ongNYY5nb+Rj414ylqF8IJ5tEcIzWR0+JkA=
+Message-ID: <a961f6a3-d4ba-4c8f-a1a2-da0dbcb8cd83@ideasonboard.com>
+Date: Mon, 22 Sep 2025 15:04:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNEcp1CglKxMEe92@finisterre.sirena.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 05/16] media: ti: j721e-csi2rx: allocate DMA channel
+ based on context index
+To: Rishikesh Donadkar <r-donadkar@ti.com>, jai.luthra@linux.dev,
+ laurent.pinchart@ideasonboard.com, mripard@kernel.org
+Cc: y-abhilashchandra@ti.com, devarsht@ti.com, s-jain1@ti.com,
+ vigneshr@ti.com, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ p.zabel@pengutronix.de, conor+dt@kernel.org, sakari.ailus@linux.intel.com,
+ hverkuil-cisco@xs4all.nl, jai.luthra@ideasonboard.com,
+ changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com,
+ sjoerd@collabora.com, hverkuil+cisco@kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250911102832.1583440-1-r-donadkar@ti.com>
+ <20250911102832.1583440-6-r-donadkar@ti.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250911102832.1583440-6-r-donadkar@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 22, 2025 at 10:53:43AM +0100, Mark Brown wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the char-misc tree got a conflict in:
-> 
->   rust/uapi/uapi_helper.h
-> 
-> between commit:
-> 
->   cf4fd52e32360 ("rust: drm: Introduce the Tyr driver for Arm Mali GPUs")
-> 
-> from the drm tree and commit:
-> 
->   eafedbc7c050c ("rust_binder: add Rust Binder driver")
-> 
-> from the char-misc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --cc rust/uapi/uapi_helper.h
-> index d4a239cf2a64f,de3562b08d0c3..0000000000000
-> --- a/rust/uapi/uapi_helper.h
-> +++ b/rust/uapi/uapi_helper.h
-> @@@ -9,7 -9,7 +9,8 @@@
->   #include <uapi/asm-generic/ioctl.h>
->   #include <uapi/drm/drm.h>
->   #include <uapi/drm/nova_drm.h>
->  +#include <uapi/drm/panthor_drm.h>
-> + #include <uapi/linux/android/binder.h>
->   #include <uapi/linux/mdio.h>
->   #include <uapi/linux/mii.h>
->   #include <uapi/linux/ethtool.h>
 
-Looks correct to me, thanks.
+On 11/09/2025 13:28, Rishikesh Donadkar wrote:
+> From: Pratyush Yadav <p.yadav@ti.com>
+> 
+> With multiple contexts, there needs to be a different DMA channel for
+> each context. Earlier, the DMA channel name was hard coded to "rx0" for
+> the sake of simplicity. Generate the DMA channel name based on its index
+> and get the channel corresponding to the context.
+> 
+> Signed-off-by: Pratyush Yadav <p.yadav@ti.com>
+> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Reviewed-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
+> ---
+>  drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> index d4e6d6b5b2f7..99a721e46d54 100644
+> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> @@ -1039,9 +1039,11 @@ static int ti_csi2rx_init_dma(struct ti_csi2rx_ctx *ctx)
+>  	struct dma_slave_config cfg = {
+>  		.src_addr_width = DMA_SLAVE_BUSWIDTH_16_BYTES,
+>  	};
+> +	char name[5];
+>  	int ret;
+>  
+> -	ctx->dma.chan = dma_request_chan(ctx->csi->dev, "rx0");
+> +	snprintf(name, sizeof(name), "rx%u", ctx->idx);
+> +	ctx->dma.chan = dma_request_chan(ctx->csi->dev, name);
+>  	if (IS_ERR(ctx->dma.chan))
+>  		return PTR_ERR(ctx->dma.chan);
+>  
 
-greg k-h
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
+ Tomi
+
 
