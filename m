@@ -1,132 +1,155 @@
-Return-Path: <linux-kernel+bounces-827612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD07B92375
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:26:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B21D7B9237B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03B851603D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:26:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66ED9178B99
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8F23112DD;
-	Mon, 22 Sep 2025 16:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E1E31159C;
+	Mon, 22 Sep 2025 16:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EoPfoQFg"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="EMrPzHIk"
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBE02D94B3
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559F73112BF;
+	Mon, 22 Sep 2025 16:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758558386; cv=none; b=n+njyA6dJNixntffAP83gXPSOfU92cQugRcHMbY4IJdzh+x4GN7O6piaWfxfuJnmJQp+B+n7UeOGaQycdsFRjdCfnL614aEL8Fw8bLVOkmQmhcPEQOSUhnlz17XOF6Jik4mG91JKfD6MRMaj0tLSwDfRnxH85KMhbrc2x9RoJ28=
+	t=1758558433; cv=none; b=fCQ5MZm8m3xjJyUgv6Rzp/TbO85l+AYnk2U614VzBU8H5EhbnwW/TdazoqMrEIX/5YJxoSldjstX/b4aCOoEhvb5zsSYKVsaFgEEvh7ANiDo5RZeUPaC/8t92tTn7hBOqgcQLQlBKZ75WaVALjdDWtr+cLokSKvTFYR6aaTgO+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758558386; c=relaxed/simple;
-	bh=/xJ274f5aneSc5WlQLY2bHc3cINv3xqFVLL3V+eAL3Q=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=ht4w2smXXpi976f2O1a/81211fN+vrltpHj7SGyXVECXP6ouzmMyi7g22X+ANBrZEAnWjAlc/taPXLeEQY0WW3+D2hollaEAbH4eJfrxa7qOf81hM/xbpmyzCdnD8s2SVRZCSzfLkQ6WfYNpWLi58EJuW2p3Mve3AKtsbtTc+qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EoPfoQFg; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-54bbe260539so372045e0c.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:26:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758558383; x=1759163183; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/xJ274f5aneSc5WlQLY2bHc3cINv3xqFVLL3V+eAL3Q=;
-        b=EoPfoQFgYniyYx67DzuGbuyG0uqa86z+yQgiQgO8iHALdQvCUgblz7J/byUwDos+2H
-         TGA5X0p7YKnnyD7V8/EEWoAOV7B6dR5hQThCF6M2qVKfRrO0a8oXzwkyYHdFIC4g+YAN
-         2QAWPmzNA1/a34lGFWDzLtl42Z+fTIBGbw+BXXLDSwk5uaBEiJQe/3j8MwGTfV0VlUkv
-         ZeWySi8n1R15+TtQaQT+jSkBYFmCDi+xUk8LSlheGyxWQ+1iNSltV7pJLyN9ymGadCLM
-         vVyWJiRuVxzE0NKpP8IZcG1sKSY/nxCrlNiN+/n7o7yC84ssbC9r6QEhuNPjGMGe9uvA
-         nFbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758558383; x=1759163183;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/xJ274f5aneSc5WlQLY2bHc3cINv3xqFVLL3V+eAL3Q=;
-        b=ni8+68tMOixkxA0k2hvrsRE5+WVEZeHljIC2WwPAIw6VBt9Ebcavxb/1ol4fXZfEha
-         puwjxEUNJUacz46mvjiyUg7AENl1z0FWX+Aitv9teBv+v9W46V+3bCgqEjodX0df+1CZ
-         ML455fZKIydl5AE7+SFWY4DGSLFpodi1GV8twnb0FeXwaOtfxmm3MzO/EiodjMs0pvYZ
-         lmH0Yux8BCVKHTm24MNCe2xzFa6vYNlecLeBPx7tB/luXa7kE3alx769VCUcxy5Fkb1q
-         O4yogZcjCGnW4kyfkHB/BUmz7CnjzIjtkI1AOWLgq9PHbiWAehon1FkHxXETxSfR1zHQ
-         uoOg==
-X-Gm-Message-State: AOJu0YzfQ05RfnnAHc78DC/hyQlrE9QC0yD5Tosis0oW63IfumkHquLZ
-	FXI2T279A8Gd8/EY7iyw5H0wixUCJ5fQ0ArvRJ9sJh/y0p7yW0VwHwbJWy95GnheRHApY8NGgxN
-	/gIpK/aKzx8SuTj10Y/K/WSE7MvXtm4reg6ZJ
-X-Gm-Gg: ASbGncvxzRMX+EC42O0i+m/eA9c2lG8uJnKd2Ttcr5zrON/vS1V1xbYDdPizHjeTTfE
-	CbkR/K4oK8D2R0k1ViLaSl3zrWgFUYL1qw7OQ9WzabaKBIfia15TWQfW0qppdnuf7DAnlAIszJp
-	eHYI5zDsgDABKNqLuGh6rRj5I321+NBcrrYZEuRfiDy6OdIwKS4d+ywob4S0wOC5zqsaLU1oF1I
-	bnJzWnonLra8u77yPA5JIOAbZaOMXBTV9UsRJfP
-X-Google-Smtp-Source: AGHT+IHdkz0tUDw8zR22Ryh6xogoAjoIiil2auBs/HOG4U6NDNkxMujxev/AXW4BRicPKn9zpKd/WzMLFyZYC2OPyqI=
-X-Received: by 2002:a05:6122:3187:b0:54a:71f6:900f with SMTP id
- 71dfb90a1353d-54a83581f10mr3304214e0c.0.1758558382962; Mon, 22 Sep 2025
- 09:26:22 -0700 (PDT)
+	s=arc-20240116; t=1758558433; c=relaxed/simple;
+	bh=0WZeePctaXJTfHXGqOsHEP/CVINofRQZG8BFnjJa3Yk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D4/HjYvbdWiGE7E6dsTD7Gs9PIogFYO1j17LeGncRUardJnmwPduKzGjLVaigDNTFdchrmpLhU+DOMoHz3DBHhOQliUUZK2BADYyxeGSVwhngA21w/q1eu+N4P+0ctNLOvc2yfueIvY/vu+H5w9DBHby6NibBmE3FXgL/1Yv74Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=EMrPzHIk; arc=none smtp.client-ip=80.12.242.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id 0jNavqzqDFsG90jNavMclW; Mon, 22 Sep 2025 18:27:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1758558428;
+	bh=BPCGKEaZqcaAW9eCNNuUTqO8gdvHoT6lFp43/zZE20E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=EMrPzHIko64lPi6DPgWlZ6Q8XSPYroCk3hYuuAOVVL+E+Sd5JWRnyy7ANDELgFLcU
+	 zbnsCqAOhfoIF85U2d6kQdyUz6B6kEVrP+6Dr9ZuqdWuiKLEVRirzZkvyXJok6vsL6
+	 XWck3kX4nDEo82ljCKFbHjHRUCIMEBJlQYgPyQydrIoHWzs4yvg1M3zUsHOha9baUx
+	 h/Kj1MNf8yZ6zvi4iVJlCi9ZPMkvfkRbTxQMC6oEElVXefnoQ2t4cmj7ayHWGJIWyz
+	 EhkGUo11bwt2KoctuzdL7VQDXUNV1oPw5FiVJpldnjr5qmtD8d3nVA/jeE75GM4Gj+
+	 nc5Jomjzd/1sA==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 22 Sep 2025 18:27:08 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <3aaa6c7d-647f-47e6-a5fe-0051cf58cd2b@wanadoo.fr>
+Date: Mon, 22 Sep 2025 18:27:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Mon, 22 Sep 2025 09:26:11 -0700
-X-Gm-Features: AS18NWD2eoCPlcAE5ZCvxHxbb9JtM3JaxRWzodkfDMWSK-UVEhNbi5lZUcWFlpU
-Message-ID: <CAM_iQpWph7_w9tve4zci3hdH0oPbe9rdeQbhnv_ZJb=nY9wpfA@mail.gmail.com>
-Subject: [ANNOUNCE] New mailing list for multikernel: multikernel@lists.linux.dev
-To: LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] powerpc/smp: Add check for kcalloc() failure in
+ parse_thread_groups()
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Guangshuo Li <lgs201920130244@gmail.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20250922151025.1821411-1-lgs201920130244@gmail.com>
+ <a7453bdc-16f3-43e6-a06d-bd6144eeae72@wanadoo.fr>
+ <496a8ed4-b416-47f9-be1f-cda5472d004d@csgroup.eu>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <496a8ed4-b416-47f9-be1f-cda5472d004d@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Dear Linux kernel developers,
+Le 22/09/2025 à 18:07, Christophe Leroy a écrit :
+> 
+> 
+> Le 22/09/2025 à 17:38, Christophe JAILLET a écrit :
+>> Le 22/09/2025 à 17:10, Guangshuo Li a écrit :
+>>> As kcalloc() may fail, check its return value to avoid a NULL pointer
+>>> dereference when passing it to of_property_read_u32_array().
+>>>
+>>> Fixes: 790a1662d3a26 ("powerpc/smp: Parse ibm,thread-groups with 
+>>> multiple properties")
+>>> Cc: stable@vger.kernel.org
+>>
+>> Signed-off-by that was part of v1, is missing in v2.
+> 
+> I see it below the ---
+> 
+>>
+>>> ---
+>>> changelog:
+>>> v2:
+>>> - Return -ENOMEM directly on allocation failure.
+>>
+>> Except for a newline that is removed, v2 is the same as v1, or I miss 
+>> something?
+> 
+> v1 was:
+> 
+> +       if (!thread_group_array) {
+> +               ret = -ENOMEM;
+> +               goto out_free;
+> +       }
+> 
+> Which was wrong.
+> 
+> Well maybe there was several v1, I'm talking about https:// 
+> lore.kernel.org/all/20250918131513.3557422-1-lgs201920130244@gmail.com/
 
-I'm pleased to announce the creation of a new community mailing list
-dedicated to multikernel architecture research, development and
-discussion: multikernel@lists.linux.dev
+Mine, was 
+https://lore.kernel.org/lkml/20250922150442.1820675-1-lgs201920130244@gmail.com/
 
-1) Purpose and Scope
+and apparently, there as been 3 v1 : 
+https://lore.kernel.org/lkml/?q=powerpc%2Fsmp%3A+Add+check+for+kcalloc%28%29+in+parse_thread_groups%28%29
 
-This mailing list serves as a neutral, community-driven forum for
-discussing multikernel architectures with a specific focus on Linux
-implementation. Our goal is to foster collaboration on research,
-design, and development of multikernel architecture that can advance
-the Linux ecosystem.
+:/
 
-Key focus areas include (but not limited to):
-Multikernel architecture design and implementation for Linux
-Kernel isolation and resource management techniques
-Security enhancements via kernel-level isolation
-Zero-downtime kernel updates with multikernel
+CJ
 
-2) Community Guidelines
+> 
+>>
+>> CJ
+>>
+>>>
+>>> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+>>> ---
+>>>   arch/powerpc/kernel/smp.c | 2 ++
+>>>   1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+>>> index 5ac7084eebc0..cfccb9389760 100644
+>>> --- a/arch/powerpc/kernel/smp.c
+>>> +++ b/arch/powerpc/kernel/smp.c
+>>> @@ -822,6 +822,8 @@ static int parse_thread_groups(struct device_node 
+>>> *dn,
+>>>       count = of_property_count_u32_elems(dn, "ibm,thread-groups");
+>>>       thread_group_array = kcalloc(count, sizeof(u32), GFP_KERNEL);
+>>> +    if (!thread_group_array)
+>>> +        return -ENOMEM;
+>>>       ret = of_property_read_u32_array(dn, "ibm,thread-groups",
+>>>                        thread_group_array, count);
+>>>       if (ret)
+>>
+> 
+> 
+> 
 
-This is a vendor-neutral community mailing list. We welcome
-participation from developers across all organizations, academic
-institutions, and independent contributors. The list is not affiliated
-with or controlled by any single company or commercial entity.
-
-Discussion scope:
-Primary focus: Linux-based multikernel implementations, patches, and research
-Secondary: Non-Linux multikernel research for inspiration and
-comparative analysis only
-Off-topic: Purely theoretical discussions unrelated to Linux
-General virtualization topic: Please consider using
-virtualization@lists.linux.dev and/or containers@lists.linux.dev.
-
-We encourage technical discussions, patch reviews, research paper
-sharing, and collaborative development efforts that advance
-multikernel capabilities within the Linux ecosystem.
-
-3) Participation
-
-This mailing list is open to all interested developers, researchers,
-and contributors. Please subscribe if you are interested in this
-topic.
-
-We look forward to building a collaborative community around
-multikernel Linux development and advancing this promising area for
-the Linux community.
-
-Best regards,
-Cong Wang
 
