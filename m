@@ -1,297 +1,270 @@
-Return-Path: <linux-kernel+bounces-827347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE36B91813
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:47:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2778CB91836
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C48F1888908
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:47:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0046C3A5FBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DCC30DEDA;
-	Mon, 22 Sep 2025 13:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CD230E821;
+	Mon, 22 Sep 2025 13:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VG6l8Rhj"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012029.outbound.protection.outlook.com [52.101.43.29])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ups/rq+G"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C37B24DCE2;
-	Mon, 22 Sep 2025 13:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758548837; cv=fail; b=pYKri/ppV5FR1+cn0EX2AVTOkj/EyLDegIs8zqi3zY6Hr6wmlSL2F0JfSiP8cVAVG5JZt32utLWdpa9np2tMzuUDQB4yZnHcf+fHZYlpMoRzuY2hLU2YYrK7J80bETGWOsaaKOBWam1U/ykwWPYI5kz5JvWmhggQrUVYQeV8wjI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758548837; c=relaxed/simple;
-	bh=IQ6jSheblCpJPCGQhsIeViiE6aWGUeEgVMADAHIJDrM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=F2OFd2LIpJXHtzOwSWfyZhNUaQaqIPFRsxuea+qVxJAEOoSPzBumdV3d7NSy9tXr2UK+K6A05EjAuKQBctx0fW+fkszaVr1gGdr1zb1eK7n/nGSCA9QFmRG/LlNYl95BQU2CUlY+G/gLzR32ZvBGFUe2i1QtcEk9m8Cmny5bHNc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VG6l8Rhj; arc=fail smtp.client-ip=52.101.43.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hexio57yi4ropUddHgaUx835xixeR4dB8yxQwD9ixnYjPZVgY6AMySPXdtaEVT1hDyxJnJyObsm565h/jJBFeEPLRwyhLWzqTIybH30MRKXoTFzZ4MuFMsPDrW+LHpmMh3dYZyNAMZpMXvjatc2puJVijUHurp3BLvgsnJYROLumJVVqEjtZ9CyC1dAa9V15zfFvOKXJ/RSQ7b6G94OxwovzdrgtRUp3yD+fdZxNtn4CR6aPfc06GL5/DkCGvmDcSTgtJqiAJDtcpukVMuS/GcevthVCKxxVqHNgGuEl4TlyyyVOygOJdAXmbyEQMt54WGD2XSQpd6L5KnW/AaZ0/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uX/GGE7iuXegMZxLB8sTLUhtT97XZfS4PNMRcybgVig=;
- b=mo9i8WCbtHuZg+uG9+e5EOHE/MOdNiBjXMSwaOikobUMNt7J0uRvoC4HFgk7Ya2UXdutRkvXlysuovIDdgGAtRzT71qk1slWHE8n+0h7mB8U3PuC7ZRq+Rx58SCvOb7iIQ24Dk8w5ErB1hDE6rmu+OtWUPUFUyD9A5j3tF63l5xXqZeb/qvwjit/z7ZB1WYyohgY6JOHT5h3x1wy0rJrXJAMDwei6X5VwW2mCO6dIsvbyEOj/Q1Xt8izeX8U16Gn67afSKacuH9NugkacyVwpnCCpRx1IHPAP4PLqaQP31Dgj8BR2vhp+ztH6kU9IUYqk1Qlqy8QZ3BV41b7H41U5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uX/GGE7iuXegMZxLB8sTLUhtT97XZfS4PNMRcybgVig=;
- b=VG6l8RhjzfnQGEyzAUB+2EalgTWQ2YZGSwf1dbA9wHdDlSyXrhe4vGl+Spi8xAuUtc0+9757LD6QtjKNvG6X7wJf6AMersEa7ymmKh3fITUfm2N72SoOzswk/Ho4bIVGrlOxp5Ksw5PZVVCyHRf+MyHPJlb8NMcuhDdRwu9P9Eg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by CY1PR12MB9558.namprd12.prod.outlook.com (2603:10b6:930:fe::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Mon, 22 Sep
- 2025 13:47:12 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9137.018; Mon, 22 Sep 2025
- 13:47:11 +0000
-Message-ID: <94bc32b2-f563-4e56-baea-cf461ed29829@amd.com>
-Date: Mon, 22 Sep 2025 15:47:07 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dma-buf/sw-sync: Hide the feature by default
-To: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>,
- Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Gustavo Padovan <gustavo@padovan.org>,
- Eric Engestrom <eric.engestrom@imgtec.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-References: <20250922132837.1504441-2-janusz.krzysztofik@linux.intel.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20250922132837.1504441-2-janusz.krzysztofik@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR2P281CA0179.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9f::15) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A253093D3;
+	Mon, 22 Sep 2025 13:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758549013; cv=none; b=G7I7BwfuHYJyMw8Scg09uB2fdtO5UscsWBA8aNuM81TS6r4VPDyifeuv+0MsEQMe7gkn8FpDq3NhWDfC0ELyqo/n+qaGrGDhBAqHUDHR8pDIFjlSRG0ZtTgqquvhmfluADcmUpoyYWgAF4N5it+cwKNYJaENnjEIdPkbgLsays0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758549013; c=relaxed/simple;
+	bh=3WQaf8MM7dSVfiwqg/RdOI0oISsPzRsJCN3K1R3ANRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GzLmZoMHNOqnvp3VLRzNth/R4GkVU1pZyr9mGrvn5m6cPPT/a05l7JoVt62iftWHCdyQVHV/yT8Mcz+MFxo3/0M5lbfdD2a5wjOGEk3xozLO1jAAo5p+7HyKWmFHyMgk3AZjTh6hea9ZpazPzTx7dyTnPCeBLNCyBCdH/52AnpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ups/rq+G; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758549011; x=1790085011;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=3WQaf8MM7dSVfiwqg/RdOI0oISsPzRsJCN3K1R3ANRo=;
+  b=Ups/rq+Gn3tMallL9ED8BgneVDFudi9UC+Dhd40O2YKiM0rPtNnR4TDv
+   IIpu5vTMkAHVRI6e6ES2hfeiTDQHNWPjKdLU63KDyFBMpHScYYmxfd2V0
+   DNNKxODxwiHomhhgSb+nsBiNNhe8w4EidNnVh33yExdMXmEGHBVuvj/zb
+   NsGHYmv28JxK1mLL2Ch9FfKGHX6P8UnXRwOq1cqL+XjZZnXQ4YoxV5qr5
+   U19Jm+BwphgBWMVbad+FvGgpmMqJerAU80IBpBplFA16ANf0Dm3arlyhB
+   /NaAyOXLkhiP0h7zWUyrqNlpKN7/LcpOx+GZfbTD2fWHwYv6OzXJiGR84
+   Q==;
+X-CSE-ConnectionGUID: jG31EIo9QwO0vvDrqlgl5Q==
+X-CSE-MsgGUID: xkt8TkVCQTiXm/gYWiwzNg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60751435"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="60751435"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 06:50:10 -0700
+X-CSE-ConnectionGUID: gu/Por9PSPyiHlpSZ6q3UA==
+X-CSE-MsgGUID: O3/sSyogTH2c2TESNc5AiA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
+   d="scan'208";a="176554086"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa008.jf.intel.com with SMTP; 22 Sep 2025 06:50:07 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 22 Sep 2025 16:50:05 +0300
+Date: Mon, 22 Sep 2025 16:50:05 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Cc: Andrei Kuchynski <akuchynski@chromium.org>,
+	Benson Leung <bleung@chromium.org>,
+	Jameson Thies <jthies@google.com>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	Guenter Roeck <groeck@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 0/5] USB Type-C alternate mode selection
+Message-ID: <aNFUDZQD5UiCtHW9@kuha.fi.intel.com>
+References: <20250909123028.2127449-1-akuchynski@chromium.org>
+ <aMliLCWFKy5Esl0-@kuha.fi.intel.com>
+ <CANFp7mXvpNXr=01nQR54d+Z+vSiiwiDLB+3B+1eR6Ks7b37gtg@mail.gmail.com>
+ <aMqpe68m3rhDYsCt@kuha.fi.intel.com>
+ <CANFp7mWk_TuA6Gxbtc8OmB7eq_vT8wUg=xkPJsxLCBTrQwOd6A@mail.gmail.com>
+ <aM1DmJQz2PnEA6G_@kuha.fi.intel.com>
+ <CANFp7mUDVPLja2QANYhJ2t6W9yPE7-qV8E2HTPHcJEYgOb8s2Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CY1PR12MB9558:EE_
-X-MS-Office365-Filtering-Correlation-Id: a5ced996-0bf7-47ad-a258-08ddf9de87f2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dlRaL0prbTk5a2tNZ3RUVUplUXFXQ2RpeVRVeWZpWWZ2TlBDMkJqaTVET0VJ?=
- =?utf-8?B?ZGRTOFpTd1dmWkRaZXI4enYzT0NoaUtjZVUvOE1JYW5yeWxOeU1qZGZvQzVH?=
- =?utf-8?B?SmJIbW9MZkpwWGlIWlVZd2lYWHh1ZVpVR01yRC9BbmJOYWRvb0NTd1kxTzlH?=
- =?utf-8?B?aDVYYlRSSEhjaUFoODhqNEJRN3ZoK3FkMTkzVmV4V0ZlVFJ2RHVWU1FZRGtR?=
- =?utf-8?B?UnorMlJ6RHhPVThtanp2VXU2bDRuR21YL1ZwbTl2UmhxWk5tVkdDRitkZnJr?=
- =?utf-8?B?Vm5meFRKVVljZjJjK3ErOE16dVR1TmVIaWVPcy9ydzU1STZKakhKRkFSbmN5?=
- =?utf-8?B?WU84bitaYmI0SUhGRHJIdUhWb1RWNStDQjRtcWpsRE8wTXM4WHhWbDl3NTJF?=
- =?utf-8?B?K3lBZnRSUGd5cHFzYzcrLzk2Y2t5SFcvMzBsZXhZT3U0c09XdTA0V3duQlE1?=
- =?utf-8?B?R2FCZ1hxOVVDRXBnZnkwYmxMM1NSazJmTktIMU9BeXdHd2RHdUZ1ajFyR3NR?=
- =?utf-8?B?eFdzWXhSSG14Zy9XbmkzRjZ3eGpmRXkxQ1F1T3ZSSkc1NzBKK2cwNDEybDFQ?=
- =?utf-8?B?WnZUZnJobzd0OHZuK3RtNVBpSTJoUUw1dDltNjNlYzdGTEUxM3BkTVJPQmZ3?=
- =?utf-8?B?RE1IWmxZQWFoWXVXYU5pQW1nejR1N2NEMDhQaFRhWnR5blBETmxpMTlJdUt4?=
- =?utf-8?B?S0wyZmN6SVhUOXdMbGgyWmZPbmRuUWMxQ2ltTnNyc1FuRVROSXI5RGNHZVdL?=
- =?utf-8?B?dVlyaS8ramFlRCtLYXowTG41OE9TNDJjODFMWFI3L3B4YXlUZVRrTjVpV1M0?=
- =?utf-8?B?M1JWak8yNVR5ampkMVk0RlBwN2tuM3RtMitUcVpjbnBEUmpZNkMxVzJPaGNr?=
- =?utf-8?B?ZytnMVJGRVA0VktReTF0VnRxT2lWU2RMYXVWTEZuREk3eXZlczhXc21rQVlQ?=
- =?utf-8?B?OE13bHZ0bVhBaDRZaWloMXlVZVd2OXFqRmNNc3hCMlhJTWFvc1ZVWHZLeG4r?=
- =?utf-8?B?RlpIV2JHaVd1QW1WektIdzloWkRUeTc5NGhLZlBxRFZtUjFsQmxGb2pNa05L?=
- =?utf-8?B?UjdlR2xIeGIrNjgraWdlWXo0ZW53WGdZSUFHR080RDk5U3hHRXpUVTdXbmVF?=
- =?utf-8?B?Nm1ZZGk0TW03UnV2V0ZmQ2piNjErWTA2ZHZkcEFlUmtVRUZHT1JCb0FRVEo4?=
- =?utf-8?B?OVI2bC95OWZ0am8wL2trN1daeXRjblM0ZXlsNUNLZ1Qyc3F0S0NobW4yNkFw?=
- =?utf-8?B?OFNJTkd1MXRDeVZjbS95d1JzYmZNMXRJclFrN2p3K0xpVk4vVTBhcTBBeCtR?=
- =?utf-8?B?Z2N0bW1McEQzZXptYU1SQmkxdWxWY2JKNGQ5SGU1bnNMbUFseVJuOCszR2ZR?=
- =?utf-8?B?SDZSdkxacGZQV0xpK1ZtTHBGL1MvY3E2WG9ON09kTFRjZDdaVm5JSHAvZFNw?=
- =?utf-8?B?TUdDRVhvZDhKMXhjRGJoZDhBWmdFUm9pMHFhSk1lQmVoMDlmWWdzaHYzR1Zn?=
- =?utf-8?B?WmFYUXhwN3AxQk9XTDB4b3FXRHZ2SVdsZ0ZLTk02M0krWUJvSmhIejFZRi93?=
- =?utf-8?B?ay8rWGc0RG1taEI0VVEwMXNSQ2g1S0xweGlpNTNjTlNHVCtpWkp5MzB3bnBh?=
- =?utf-8?B?MzgrUEtOS2lQdkIvT3UySVh1SzFRMkYzRkkycitVZ1VoV0Rnd29BYlByWUVZ?=
- =?utf-8?B?VUI0MGJnYng4SXlMbWM1KzdOczFYbWZwRWxRcjR0VElEa2tsVm9pS0h6SFVp?=
- =?utf-8?B?cHRYeW1jNnIxR0U4N1hpZStKSGZvSWp1V3lhV0ZYV2hXRm40ZVhoLzRIVnE2?=
- =?utf-8?Q?rYPzG1R+7DV5k6V9JxPlgcl6pYD5jOdOV7k4c=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bG1CWUpvN2tuTno3cG9IQm41VlNXcVF4L2VIV1FuQ3oxT1RaSGpVZHIvZm96?=
- =?utf-8?B?RHEvdFpneUx4bUJRQm1IaXNWVXZxYS9LVGlNWkw2QThBalQwYWRIVmFEWDVS?=
- =?utf-8?B?Q0N0SHpINkcxSFpwT2xDNVZrVm9WZkM0dlozd3FQSms4V21EaWc0TnVLRlZT?=
- =?utf-8?B?MmtLcW5mUXFQTWhwa3VJbC9EOW8zU1p3aVAxUFhGWXM4RTY0SkxGby9WN2xL?=
- =?utf-8?B?WE5UUUlmcXBoNkhPQlJ5enF6Z2lobjlJaEprSTNHYVhndlI1ZDk4UmJLRzJQ?=
- =?utf-8?B?MGxTVFQxOTZtQytsWmpMbkQ2eWQzSjJlVkw5NkswbGJDU002c21rQ2t0dzF5?=
- =?utf-8?B?L0NhZHJUYURuaXhqSExTSStWN2RWRVlFYXd6ajBBQ0pneUo3VzhZSldtNDhS?=
- =?utf-8?B?LzlIWk1aVXY3SlBocys0ZlRyODhURU92bkUxVVhBTlMzVTFKbEVEVW5DbFZT?=
- =?utf-8?B?L2FTQmxnV3hMQ3hyM0FvdWYzQjMwdmN5Y3hzczNEQ3pJTzhIU25TWDd4QVNY?=
- =?utf-8?B?bDFIZmxieDBMRnRsVWVyZmExdWFZMjEvOVA4d2NsZ2lCcWJsSUk4aEdjMFZr?=
- =?utf-8?B?SVB4OUNJelpQenRsbk5Bc3k4VWpDUHJvWnVJYm52MWZDUUJnbkxVRzU2YWRW?=
- =?utf-8?B?TFU5S2d6M1lwVytFSWhWSmtyaGpOOE5ma1NTS1VkMGd0T1hPcmlvWVBkQStp?=
- =?utf-8?B?dk5Ia3VzVWNva05MTm9rWWwwMTdYd0VUTGhmOWU4aTNHd3JGdHhDRmhYaDIr?=
- =?utf-8?B?YUdpdjhHdnIrZ2lieE5jYml2UWQ5UFJHbDJvQmhEN2pDMkZwb3kwMDdyNVNy?=
- =?utf-8?B?R1h2MURFMm90YUR2elVvUlBDaUZ0aFczdC9pWnY1L1d5cjNmY1daZkFTQW9W?=
- =?utf-8?B?RFR3VlBqMU1BakRIaVR4ODhWd3Fvbk5McWVrSURQdDdLM0c3d3Y1NGM3WlR4?=
- =?utf-8?B?LzRRR2s5aW9IVEJJcFJkMVpxaUtjVmZtZ0NYN0YzR1l3TGIxei8yL2Q0TWY1?=
- =?utf-8?B?bmprT2FaenNtNmpKSXRSSDB2d0t3NTRHNnB3MmMrR2FmVXZUK0RPWCt4RWNx?=
- =?utf-8?B?STZteUF4TW92elowTTllWFhGYUlGYk53YVdOSysyeWk2UE5iWWVUdmJFakJx?=
- =?utf-8?B?cjM2aEFYVFRhVlJWTEcyL3ZQVzlVWTM1R2hoT2VscWhsMUZqamFmR25SczVi?=
- =?utf-8?B?U3phbkIxTHc4aktDNEFlK3B1MUFFeTU1K055aE9mekxwdThUcEFEZ3B2cXdT?=
- =?utf-8?B?MmJZMTZCQURkM08rbFFCVEw4U0FBZUozckFuU0tIRDRqdUZPOEpub1JIK2ZH?=
- =?utf-8?B?Y01zMUhIVlQvVTdnSks2NTBhNUd6ZDFaL3BZQnFMOTZLYnI1bllrQTlLaFdz?=
- =?utf-8?B?enFyVGJZOXJ0ekFtQnV5c1paSnkza0VUeUgwWXRNaHRHVmhiWDFETHVUVGFS?=
- =?utf-8?B?OUNPWTQ1QjFvbXRWb2RyUU1aN05zU3R2TzNRQXFUMkxlcUJYUUxON0plbjJQ?=
- =?utf-8?B?eXJMTWlCdThwR1kvWm9PcStDdU5Db3d0N2VsTVpqZy80dTZ3OTZ0bGE2YkFq?=
- =?utf-8?B?ZGpmRXR4VnQzaGhKdDBVYlY2ZUF4MzF6Z0oyOU9VS2doUVFHRDJjSWFzcE12?=
- =?utf-8?B?Y3JZcm5ISGtDZ3Q0VnRjbzI0bzMvejNyMWlNQy9FaVIrU2Q4ekhzaGV2MGZO?=
- =?utf-8?B?TUdvYWFVbmZKVjBJSFBFWmUvNmhkYW1XYy8waWF2MEFKcGoxNVhCK0M2LzJx?=
- =?utf-8?B?Z09iM1VJUlR0Q1hYYkU2Q3lvZmxsS1V3UVVXNnJKVk14ZnBPb2pBNUNVN3RD?=
- =?utf-8?B?bWVqQWRIR0RrQVpic0hRM2o3YnNuMG12UGdsSjJRaFBnYWJ6REkxa3pNY0E4?=
- =?utf-8?B?bEh0NmE3ejlkUmc1QnkwdG53WFFpQTVvQzNFTXBieG1yWXd5V3FBMkQyL0Ex?=
- =?utf-8?B?WEJKUFRSdThWV2N6M0I0RWQ2Zm54T0VnT0FmVGhHaFU0amUyK05KQjM4bmFn?=
- =?utf-8?B?UGJ0eWNEUFU3cjRJV3VwZmhnRjRhdHh6SjlRcDVGSVZoUmxZU0xDaWhoZ050?=
- =?utf-8?B?djJJbVptT01pbm1STkRxaG1sSnFDY2NrRmU1eVU0Snh6cUxUZHg4d2U1Yzhi?=
- =?utf-8?Q?4EWFQIiEwoIlD7Cmc7m8SOT3P?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5ced996-0bf7-47ad-a258-08ddf9de87f2
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 13:47:11.8098
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pew/nO3apc9XrEucwhojUnvMN/o8YYel0+1w4qwgGWNPzy170+fxAPuUcKv9uVcx
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9558
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANFp7mUDVPLja2QANYhJ2t6W9yPE7-qV8E2HTPHcJEYgOb8s2Q@mail.gmail.com>
 
-On 22.09.25 15:24, Janusz Krzysztofik wrote:
-> When multiple fences of an sw_sync timeline are signaled via
-> sw_sync_ioctl_inc(), we now disable interrupts and keep them disabled
-> while signaling all requested fences of the timeline in a loop.  Since
-> user space may set up an arbitrary long timeline of fences with
-> arbitrarily expensive callbacks added to each fence, we may end up running
-> with interrupts disabled for too long, longer than NMI watchdog limit.
-> That potentially risky scenario has been demonstrated on Intel DRM CI
-> trybot[1], on a low end machine fi-pnv-d510, with one of new IGT subtests
-> that tried to reimplement wait_* test cases of a dma_fence_chain selftest
-> in user space.
+On Fri, Sep 19, 2025 at 09:58:05AM -0700, Abhishek Pandit-Subedi wrote:
+> On Fri, Sep 19, 2025 at 4:50 AM Heikki Krogerus
+> <heikki.krogerus@linux.intel.com> wrote:
+> >
+> > On Wed, Sep 17, 2025 at 10:51:11AM -0700, Abhishek Pandit-Subedi wrote:
+> > > On Wed, Sep 17, 2025 at 5:28 AM Heikki Krogerus
+> > > <heikki.krogerus@linux.intel.com> wrote:
+> > > >
+> > > > On Tue, Sep 16, 2025 at 09:47:44AM -0700, Abhishek Pandit-Subedi wrote:
+> > > > > On Tue, Sep 16, 2025 at 6:12 AM Heikki Krogerus
+> > > > > <heikki.krogerus@linux.intel.com> wrote:
+> > > > > >
+> > > > > > On Tue, Sep 09, 2025 at 12:30:23PM +0000, Andrei Kuchynski wrote:
+> > > > > > > This patch series introduces a flexible mechanism for USB Type-C mode
+> > > > > > > selection, enabling into USB4 mode, Thunderbolt alternate mode, or
+> > > > > > > DisplayPort alternate mode.
+> > > > > > >
+> > > > > > > New sysfs `mode_selection` attribute is exposed to provide user control
+> > > > > > > over mode selection. It triggers an alternate mode negotiation.
+> > > > > > > The mode selection logic attempts to enter prioritized modes sequentially.
+> > > > > > > A mode is considered successfully negotiated only when its alternate mode
+> > > > > > > driver explicitly reports a positive status. Alternate mode drivers are
+> > > > > > > required to report their mode entry status (either successful or failed).
+> > > > > > > If the driver does not report its status within a defined timeout period,
+> > > > > > > the system automatically proceeds to attempt entry into the next preferred
+> > > > > > > mode.
+> > > > > >
+> > > > > > I'm still struggling to understand what is the benefit from this - why
+> > > > > > would you want the user space to explicitly start the entry process
+> > > > > > like this? Instead why would you not just take full control over the
+> > > > > > alt modes in user space by enabling the them one by one in what ever
+> > > > > > order you want?
+> > > > >
+> > > > > I think after the many patch iterations we went through upstreaming,
+> > > > > we may have lost the point a little bit wrt/ the mode selection task.
+> > > > > We talked about this on the very first iteration of this patchset
+> > > > > here: https://lore.kernel.org/linux-usb/CANFp7mVWo4GhiYqfLcD_wFV34WMkmXncMTOnmMfnKH4vm2X8Hg@mail.gmail.com/
+> > > > >
+> > > > > The motivation behind it was to allow the kernel driver to own mode
+> > > > > selection entirely and not need user space intervention. The current
+> > > > > alt-mode drivers attempt to own the mode entry process and this fails
+> > > > > when you have two or more altmode drivers loaded (i.e. displayport,
+> > > > > thunderbolt). The original goal of the mode selection task was to move
+> > > > > the mode entry decision away from the alt-mode driver and to the port
+> > > > > driver instead.
+> > > > >
+> > > > > What's missing in the current patch series to show this is probably
+> > > > > actually calling mode_selection once all partner modes are added :)
+> > > > > Andrei should be adding that to this patch series in the next patch
+> > > > > version.
+> > > > >
+> > > > > Adding the mode_selection sysfs trigger is for another reason: to
+> > > > > re-run mode selection after priorities have been changed in userspace
+> > > > > and there is no partner hotplug. We specifically have some security
+> > > > > policies around PCI tunnels that result in the following need:
+> > > > > * When we enable pci tunneling, we PREFER tbt over dp and would like
+> > > > > to select the preferred mode. When we disable it, we PREFER dp over
+> > > > > TBT and would like to select the preferred mode.
+> > > > > * When users are logged out, we always prefer DP over TBT.
+> > > > > * When the system is locked, we prefer DP over TBT for new connections
+> > > > > (but existing connections can be left as TBT). When we unlock, we want
+> > > > > to enter the most preferred mode (TBT > DP).
+> > > > >
+> > > > > While this is do-able with the alt-mode active sysfs field, we would
+> > > > > basically be re-creating the priority selection done in the kernel in
+> > > > > user space again. Hence why we want to expose the mode selection
+> > > > > trigger as done here.
+> > > >
+> > > > But this would be a step backwards. You want to keep the kernel in
+> > > > control of the mode selection, which is fine, but then you have these
+> > > > special cases where you have to give some of the control to the user
+> > > > space. So instead of taking complete control of the mode selection in
+> > > > user space, you want to create this partial control method of
+> > > > supporting your special cases while still leaving "most" of the
+> > > > control to kernel.
+> > > >
+> > > > I don't believe this will work in all cases. I'm fine with the
+> > > > priority as a way to tell the kernel the preferred entry order, but if
+> > > > the user space needs to take control of the actual mode selection, it
+> > > > has to take full control of it instead of like this, partially. This
+> > > > just looks incredibly fragile.
+> > > >
+> > > > So I'm still not convinced that there is any use for this. Either the
+> > > > user space takes over the mode selection completely with the active
+> > > > attribute files, or just leaves the selection completely to the kernel.
+> > > >
+> > >
+> > > That's a fair stance to take. We CAN do our special cases via the
+> > > "active" sysfs node. I've had a bit more time to think about the
+> > > problem we are solving and I'd like to elaborate a little.
+> > >
+> > > When we designed this mode selection task, there were two motivating factors:
+> > > * The existing typec_displayport and typec_thunderbolt modules will
+> > > both automatically try to enter a mode when probing and that does not
+> > > work well. You want a deterministic entry order.
+> > > * There is no generic typec daemon for userspace on Linux and there
+> > > isn't always a need for one (i.e. UCSI systems). The kernel has the
+> > > most information about what any given system needs and should be able
+> > > to handle mode entry timing better.
+> > >
+> > > For those motivating factors, I think an in-kernel mode selection as
+> > > designed in this series still makes sense. Let the kernel do the mode
+> > > selection, inform userspace when it is completed and userspace can
+> > > simply set priorities + report success/failure/errors.
+> > > One other change we will probably want to make is to turn the partner
+> > > altmode Kconfig options to boolean and roll it into the typec module.
+> > > Alt-mode module loading breaks mode selection ordering because you
+> > > can't be guaranteed the partner altmodes are loaded on the system when
+> > > you do partner altmode enumeration.
+> > >
+> > > Heikki, can you confirm we are on the same page up till this point at
+> > > least? The net effect here is we are moving partner altmodes
+> > > individually entering modes to centralizing mode entry in the typec
+> > > class itself.
+> >
+> > I think we are on the same page, but I don't think you can incorporate
+> > the entry of the modes into the class itself (you should not do that).
+> > You can't even make it a problem for the altmodes - I don't believe we
+> > can make it work in the long term.
 > 
-> [141.993704] [IGT] syncobj_timeline: starting subtest stress-enable-all-signal-all-forward
-> [164.964389] watchdog: CPU3: Watchdog detected hard LOCKUP on cpu 3
-> [164.964407] Modules linked in: snd_hda_codec_alc662 snd_hda_codec_realtek_lib snd_hda_codec_generic snd_hda_intel snd_intel_dspcfg snd_hda_codec snd_hda_core snd_hwdep snd_pcm snd_timer snd soundcore i915 prime_numbers ttm drm_buddy drm_display_helper cec rc_core i2c_algo_bit video wmi overlay at24 ppdev gpio_ich binfmt_misc nls_iso8859_1 coretemp i2c_i801 i2c_mux i2c_smbus r8169 lpc_ich realtek parport_pc parport nvme_fabrics dm_multipath fuse msr efi_pstore nfnetlink autofs4
-> [164.964569] irq event stamp: 1002206
-> [164.964575] hardirqs last  enabled at (1002205): [<ffffffff82898ac7>] _raw_spin_unlock_irq+0x27/0x70
-> [164.964599] hardirqs last disabled at (1002206): [<ffffffff8287d021>] sysvec_irq_work+0x11/0xc0
-> [164.964616] softirqs last  enabled at (1002138): [<ffffffff81341bc5>] fpu_clone+0xb5/0x270
-> [164.964631] softirqs last disabled at (1002136): [<ffffffff81341b97>] fpu_clone+0x87/0x270
-> [164.964650] CPU: 3 UID: 0 PID: 1515 Comm: syncobj_timelin Tainted: G     U              6.17.0-rc6-Trybot_154715v1-gc1b827f32471+ #1 PREEMPT(voluntary)
-> [164.964662] Tainted: [U]=USER
-> [164.964665] Hardware name:  /D510MO, BIOS MOPNV10J.86A.0311.2010.0802.2346 08/02/2010
-> [164.964669] RIP: 0010:lock_release+0x13d/0x2a0
-> [164.964680] Code: c2 01 48 8d 4d c8 44 89 f6 4c 89 ef e8 bc fc ff ff 0b 05 96 ca 42 06 0f 84 fc 00 00 00 b8 ff ff ff ff 65 0f c1 05 0b 71 a9 02 <83> f8 01 0f 85 2f 01 00 00 48 f7 45 c0 00 02 00 00 74 06 fb 0f 1f
-> [164.964686] RSP: 0018:ffffc90000170e70 EFLAGS: 00000057
-> [164.964693] RAX: 0000000000000001 RBX: ffffffff83595520 RCX: 0000000000000000
-> [164.964698] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> [164.964701] RBP: ffffc90000170eb0 R08: 0000000000000000 R09: 0000000000000000
-> [164.964706] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff8226a948
-> [164.964710] R13: ffff88802423b340 R14: 0000000000000001 R15: ffff88802423c238
-> [164.964714] FS:  0000729f4d972940(0000) GS:ffff8880f8e77000(0000) knlGS:0000000000000000
-> [164.964720] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [164.964725] CR2: 0000729f4d92e720 CR3: 000000003afe4000 CR4: 00000000000006f0
-> [164.964729] Call Trace:
-> [164.964734]  <IRQ>
-> [164.964750]  dma_fence_chain_get_prev+0x13d/0x240
-> [164.964769]  dma_fence_chain_walk+0xbd/0x200
-> [164.964784]  dma_fence_chain_enable_signaling+0xb2/0x280
-> [164.964803]  dma_fence_chain_irq_work+0x1b/0x80
-> [164.964816]  irq_work_single+0x75/0xa0
-> [164.964834]  irq_work_run_list+0x33/0x60
-> [164.964846]  irq_work_run+0x18/0x40
-> [164.964856]  __sysvec_irq_work+0x35/0x170
-> [164.964868]  sysvec_irq_work+0x9b/0xc0
-> [164.964879]  </IRQ>
-> [164.964882]  <TASK>
-> [164.964890]  asm_sysvec_irq_work+0x1b/0x20
-> [164.964900] RIP: 0010:_raw_spin_unlock_irq+0x2d/0x70
-> [164.964907] Code: 00 00 55 48 89 e5 53 48 89 fb 48 83 c7 18 48 8b 75 08 e8 06 63 bf fe 48 89 df e8 be 98 bf fe e8 59 ee d3 fe fb 0f 1f 44 00 00 <65> ff 0d 5c 85 68 01 74 14 48 8b 5d f8 c9 31 c0 31 d2 31 c9 31 f6
-> [164.964913] RSP: 0018:ffffc9000070fca0 EFLAGS: 00000246
-> [164.964919] RAX: 0000000000000000 RBX: ffff88800c2d8b10 RCX: 0000000000000000
-> [164.964923] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> [164.964927] RBP: ffffc9000070fca8 R08: 0000000000000000 R09: 0000000000000000
-> [164.964931] R10: 0000000000000000 R11: 0000000000000000 R12: ffff88800c2d8ac0
-> [164.964934] R13: ffffc9000070fcc8 R14: ffff88800c2d8ac0 R15: 00000000ffffffff
-> [164.964967]  sync_timeline_signal+0x153/0x2c0
-> [164.964989]  sw_sync_ioctl+0x98/0x580
-> [164.965017]  __x64_sys_ioctl+0xa2/0x100
-> [164.965034]  x64_sys_call+0x1226/0x2680
-> [164.965046]  do_syscall_64+0x93/0x980
-> [164.965057]  ? do_syscall_64+0x1b7/0x980
-> [164.965070]  ? lock_release+0xce/0x2a0
-> [164.965082]  ? __might_fault+0x53/0xb0
-> [164.965096]  ? __might_fault+0x89/0xb0
-> [164.965104]  ? __might_fault+0x53/0xb0
-> [164.965116]  ? _copy_to_user+0x53/0x70
-> [164.965131]  ? __x64_sys_rt_sigprocmask+0x8f/0xe0
-> [164.965152]  ? do_syscall_64+0x1b7/0x980
-> [164.965169]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [164.965176] RIP: 0033:0x729f4fb24ded
-> [164.965188] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
-> [164.965193] RSP: 002b:00007ffdc36220e0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> [164.965200] RAX: ffffffffffffffda RBX: 0000000000000007 RCX: 0000729f4fb24ded
-> [164.965205] RDX: 00007ffdc3622174 RSI: 0000000040045701 RDI: 0000000000000007
-> [164.965209] RBP: 00007ffdc3622130 R08: 0000000000000000 R09: 0000000000000000
-> [164.965213] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffdc3622174
-> [164.965217] R13: 0000000040045701 R14: 0000000000000007 R15: 0000000000000003
-> [164.965248]  </TASK>
-> [166.952984] perf: interrupt took too long (11861 > 6217), lowering kernel.perf_event_max_sample_rate to 16000
-> [166.953134] clocksource: Long readout interval, skipping watchdog check: cs_nsec: 13036276804 wd_nsec: 13036274445
+> It probably needs to be a port driver decision. UCSI based systems
+> will mostly expect that a mode has already been entered after a
+> partner connects (and reports the SUPPORTED_CAM_CHANGED bit in
+> Connector Status Change) but with UCSI 3.0, some systems could
+> potentially make this decision in kernel (via sending SET_NEW_CAM
+> <connector> 0xff 0 which would prevent the PPM/LPM from entering any
+> modes automatically). Even with cros_ec_typec, only devices supporting
+> TBT/USB4 will need a mode selection decision in the port driver (since
+> others just auto-enter DP).
 > 
-> As explained by Christian Köenig[2], "The purpose of the sw-sync is to
-> test what happens if drivers exposing dma-fences doesn't behave well.  So
-> being able to trigger the NMI watchdog for example is part of why that
-> functionality exists in the first place. ... You can actually use the
-> functionality to intentionally deadlock drivers and even the core memory
-> management."
+> >
+> > Here multiple modes need to be handled as a set, so the set itself
+> > needs to have an object that represents it. The altmodes will be part
+> > of these "sets", but they remain independent of any particular set.
+> > So the "set" defines the order in which the modes are entered instead
+> > of the class, or any individual altmode.
+> >
+> > I don't think there is any other way to make sure that the altmodes
+> > continue to work as well independently as part of these "sets".
+> >
+> > If you guys think that this makes sense, let me know. There are a
+> > number of ways we could implement this.
 > 
-> Let the feature show up only if EXPERT is selected.
+> The idea you've described here of sets sounds like what this patch
+> series hopes to implement. The set is just all the partner altmodes
+> which the port supports and the ordering is the port priority for
+> those altmodes.
 > 
-> [1] https://patchwork.freedesktop.org/series/154715/
-> [2] https://patchwork.freedesktop.org/patch/675579/#comment_1239269
+> >
+> > > Also, with respect to dropping the mode_selection sysfs node and
+> > > simply using the `active` fields to override:
+> > > * How can we ensure that user space does not race with the kernel mode entry?
+> > > * Should we delay exposing "number_of_alternate_modes" until after
+> > > mode selection is done? Should we keep the mode_selection sysfs (or a
+> > > similarly named file) as a read-only indicator of current status?
+> >
+> > Races are definitely a concern. But I don't think that is a problem if
+> > we go ahead with the above idea of separating the mode relationships
+> > and entry into those "mode sets".
 > 
-> Fixes: 35538d7822e86 ("dma-buf/sw_sync: de-stage SW_SYNC")
-> Cc: Christian König <christian.koenig@amd.com>
-> Signed-off-by: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+> Is the idea to give userspace the ability to create a set and try to
+> enter atomically? Who decides what constitutes a set?
 
-Good idea, we have previously discussed to taint the kernel if sw_sync is used but that is also a clearly step in the right direction.
+It's really up to what we want, and how we you guys want to implement
+it. If the mode selection was a device (associated with each port (or
+partner) for example), then maybe the "set" could be a driver attached
+to it. Maybe :)
 
-Reviewed-by: Christian König <christian.koenig@amd.com>
+I'm just asking that we isolate the feature, because I think it can be
+separated in this case. I think isolating it should give some
+flexibility on things like where the control is in the end, but more
+importantly, that should minimise the impact to the existing bits and
+pieces, maybe allow the feature to be selectable, etc. etc.
 
-Regards,
-Christian.
+thanks,
 
-> ---
->  drivers/dma-buf/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma-buf/Kconfig b/drivers/dma-buf/Kconfig
-> index b46eb8a552d7b..e726948b64f67 100644
-> --- a/drivers/dma-buf/Kconfig
-> +++ b/drivers/dma-buf/Kconfig
-> @@ -18,7 +18,7 @@ config SYNC_FILE
->  	  Documentation/driver-api/sync_file.rst.
->  
->  config SW_SYNC
-> -	bool "Sync File Validation Framework"
-> +	bool "Sync File Validation Framework" if EXPERT
->  	default n
->  	depends on SYNC_FILE
->  	depends on DEBUG_FS
-
+-- 
+heikki
 
