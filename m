@@ -1,40 +1,41 @@
-Return-Path: <linux-kernel+bounces-827100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E039DB90516
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:11:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F045B90522
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD463BA5F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:11:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C482316C474
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64574302768;
-	Mon, 22 Sep 2025 11:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADE7303A12;
+	Mon, 22 Sep 2025 11:11:28 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F79D2F90EA
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 11:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9952FF650
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 11:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758539487; cv=none; b=QTlOZSrIK5Prn4mkO3fDBZjcMLxf4lpVJj7JdKYt1rRiAyRJkDTL8m75vGEyic5uWE3Nbbyfy8RwuZnUnkDiV17tC3t7kWfNoIgzxkxJCOWX+z/lRv4EaK1IFlmSgQyjmttx6Bz5brLxlPdq8uCyMQ0T+x3b5aM+yv9TK1b+VcU=
+	t=1758539487; cv=none; b=N9cyb3XKevUCwmzS8nGHEK4agcZ7VoaWKsLhAUKOmX9Vq7zAv9sNlet+y1eo9+6AdIbIFT5e4sVcpYU5LW/YIbndAg1yE2FwPvchTS8Y9Jemx2y3Z+IMI32hcGHtdVBahvKV8/85rf4pdtaERKd7RJ4VeQrxdk5osuxZSbWFvhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758539487; c=relaxed/simple;
-	bh=WQ7IQvAQ0uRE2rmIfgojq93oHHa2bXg/BQVixqwDiM4=;
+	bh=xsmAq3dD8T1O9QBOvKaD4Sg+D6YePeRPaUCTw/xNkh8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QEHhTlBZcvUck+Dm/geEHo7oaCVUDat51l/ZZ4BJwTQN2yTWniLG28MdLiYiUwtqlbP2PuZfGo4GCb1xY82UH8PPzQDO2rn/M+Z7CgosZa3bc4CQjgrF7fpxl1NCTGMJJ5fnjoSLX3H+vWm/EjuZ2A+pJVDtDga53jJ+u6LZLPk=
+	 In-Reply-To:To:Cc; b=usHbVsmOt3Jw16oQb/5akOUdMIxZ/NMnBuEXFGOI/3fKOsv2Gv9O8TgX6n5mnH9NSnt2rwmC5e4rNBCmfxy1IdlNDGCa/ENkq8lvYlAv3qypnFr8CKqiv1LoAipjS5I8uz41fz/Y8MPKZjczVTceANJQ4YG9hRHs5X3ZRJ7Fwj8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1v0eRp-0002HM-8g; Mon, 22 Sep 2025 13:11:09 +0200
+	id 1v0eRq-0002HM-Uy; Mon, 22 Sep 2025 13:11:11 +0200
 From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Date: Mon, 22 Sep 2025 13:10:54 +0200
-Subject: [PATCH v2 3/5] drm/panel: simple: add JuTouch JT101TM023
+Date: Mon, 22 Sep 2025 13:10:55 +0200
+Subject: [PATCH v2 4/5] dt-bindings: arm: fsl: add compatible for Skov
+ i.MX8MP variant
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,8 +43,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250922-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-v2-3-abbb759cf8ef@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250922-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-v2-4-abbb759cf8ef@pengutronix.de>
 References: <20250922-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-v2-0-abbb759cf8ef@pengutronix.de>
 In-Reply-To: <20250922-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-v2-0-abbb759cf8ef@pengutronix.de>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -60,75 +61,34 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
  linux-arm-kernel@lists.infradead.org, 
- Steffen Trumtrar <s.trumtrar@pengutronix.de>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+ Steffen Trumtrar <s.trumtrar@pengutronix.de>
 X-Mailer: b4 0.14.2
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
 X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Add JuTouch Technology JT101TM023 10" 1280x800 LVDS panel support.
+In preparation for adding a new device tree variant with a different
+panel, describe the DT compatible in the binding.
 
 Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/gpu/drm/panel/panel-simple.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 3333d4a0750468b058155bcdddc694a521d342d6..3bb52a557a193a3687bc5125ab055ad6ff065d49 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -2889,6 +2889,38 @@ static const struct panel_desc innolux_zj070na_01p = {
- 	},
- };
- 
-+static const struct display_timing jutouch_jt101tm023_timing = {
-+	.pixelclock = { 66300000, 72400000, 78900000 },
-+	.hactive = { 1280, 1280, 1280 },
-+	.hfront_porch = { 12, 72, 132 },
-+	.hback_porch = { 88, 88, 88 },
-+	.hsync_len = { 10, 10, 48 },
-+	.vactive = { 800, 800, 800 },
-+	.vfront_porch = { 1, 15, 49 },
-+	.vback_porch = { 23, 23, 23 },
-+	.vsync_len = { 5, 6, 13 },
-+	.flags = DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW |
-+		 DISPLAY_FLAGS_DE_HIGH,
-+};
-+
-+static const struct panel_desc jutouch_jt101tm023 = {
-+	.timings = &jutouch_jt101tm023_timing,
-+	.num_timings = 1,
-+	.bpc = 8,
-+	.size = {
-+		.width = 217,
-+		.height = 136,
-+	},
-+	.delay = {
-+		.enable = 50,
-+		.disable = 50,
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
-+	.bus_flags = DRM_BUS_FLAG_DE_HIGH,
-+	.connector_type = DRM_MODE_CONNECTOR_LVDS,
-+};
-+
-+
- static const struct display_timing koe_tx14d24vm1bpa_timing = {
- 	.pixelclock = { 5580000, 5850000, 6200000 },
- 	.hactive = { 320, 320, 320 },
-@@ -5185,6 +5217,9 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "innolux,zj070na-01p",
- 		.data = &innolux_zj070na_01p,
-+	}, {
-+		.compatible = "jutouch,jt101tm023",
-+		.data = &jutouch_jt101tm023,
- 	}, {
- 		.compatible = "koe,tx14d24vm1bpa",
- 		.data = &koe_tx14d24vm1bpa,
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index a3e9f9e0735a8808721ebba713f14818ee49172a..95078d1a70b07e9c0d298f18ce4eaba3aebd4591 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -1111,6 +1111,7 @@ properties:
+               - skov,imx8mp-skov-revb-lt6 # SKOV i.MX8MP climate control with 7” panel
+               - skov,imx8mp-skov-revb-mi1010ait-1cp1 # SKOV i.MX8MP climate control with 10.1" panel
+               - skov,imx8mp-skov-revc-bd500 # SKOV i.MX8MP climate control with LED frontplate
++              - skov,imx8mp-skov-revc-jutouch-jt101tm023 # SKOV i.MX8MP climate control with 10" JuTouch panel
+               - skov,imx8mp-skov-revc-tian-g07017 # SKOV i.MX8MP climate control with 7" panel
+               - ysoft,imx8mp-iota2-lumpy  # Y Soft i.MX8MP IOTA2 Lumpy Board
+           - const: fsl,imx8mp
 
 -- 
 2.49.0
