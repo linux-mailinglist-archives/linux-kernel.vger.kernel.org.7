@@ -1,60 +1,55 @@
-Return-Path: <linux-kernel+bounces-827799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D781B9323D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:50:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B349B93244
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35DFD2A5B56
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:50:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E3D91907AC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1339130AD10;
-	Mon, 22 Sep 2025 19:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC53631A072;
+	Mon, 22 Sep 2025 19:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eq3Hhmzz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pSM2LXk3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633FD18C2C;
-	Mon, 22 Sep 2025 19:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B1D30C36E;
+	Mon, 22 Sep 2025 19:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758570635; cv=none; b=MDwEwwZUNjEyJlSBNpZ61PD52iWpqc0OvqiiDF4ikQIcCcOynziwV4YEe9pjj9O+4ZarvbDkP52StJmPzowVDo9jQRcnUBvD3QF6WEJ9lnMQ9E1CsyRsa7a4CvW7sqBVZreY1UZcQFoZjKQ8zesdjf7pSany325Rzh/845PVwLo=
+	t=1758570655; cv=none; b=SbfVX+oNOV0NGBZqWajih95RMqpMHiAVf9dCIjNfUfChnMXxnJ3eZQjT/NtpQN8ckRjjLBcLwVhssSiV4M9O0zQsqnnnQWt0vw9eHUbnvI8jUhRz0slRX6SWF/w5syzuUD34IVaz9ewav85A0CzdNw+iZFKP2HhJ739LnrwhxmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758570635; c=relaxed/simple;
-	bh=JgLQHFBkmZ+S8gkaMiPw+41o8BKwW0HfdBhWNAIaIPQ=;
+	s=arc-20240116; t=1758570655; c=relaxed/simple;
+	bh=PJ14tEXKCCze1FgoKpPEwcWDdS3QXMtPv/Gt8dbIO8U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qcw4Vtr7Gil6S6EgnjRxSOMJ1jBfSFUu1h6xdhfgHla8QW65zz5MjjdaZmrt1ZPKbL8Wk+cUD9UpXZQUZ8pjTq05+A4nhbMi5bRm7MC2NtH9rUvRyRPSGOK9Wpb1R1jR+3XcOXW8TrzSyRpeEtoq5qAxgatfOF1UsumgLDYJoio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eq3Hhmzz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A65E2C4CEF0;
-	Mon, 22 Sep 2025 19:50:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=IwsT6gAld7GBGmVYowPmUXBjjjZxaq97KEtXJjuBbvPjDZ/sgOiTqGGTWkVd9KpJBdc7A4Ehod0HlW05Mr1gylzTgfWs/CaSkxS4mWkuRLS37pHtMiU9igWX1AD/9JwKIC+byeCphuq0vd0OEVJ+OosgTe9XwWHzDRVQmHUXh7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pSM2LXk3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0876CC4CEF0;
+	Mon, 22 Sep 2025 19:50:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758570635;
-	bh=JgLQHFBkmZ+S8gkaMiPw+41o8BKwW0HfdBhWNAIaIPQ=;
+	s=k20201202; t=1758570654;
+	bh=PJ14tEXKCCze1FgoKpPEwcWDdS3QXMtPv/Gt8dbIO8U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eq3HhmzzMi36uwfqkhClHjhpl+S9BA68fd5sFhlPgUAeZrY96QuYy9gxImTYMUfiv
-	 CGEtyjX2PmHYJ6c2q06VCVw+j4p7UhZ4wlb1UzfitdnwdQ2bHZajnTC28wPeS+D7Yu
-	 bD953/e628+SHiat6Tk1L+Afea5w3wUqs/DJDXdVhZYjDkP9VZQST99QGxd2LXbZ1G
-	 hYl8j1MyYblb4OWFip8qjYNIBJGA9jeBRCmW6Ab+XOgzII/uLqe7GUD2Lt7UheqQAO
-	 ZfShDqsaVm3AadRLs1xGvb+31G0ZFJVeDCOGQa7DxbIBKzF7liiwHXiUrEE85he7Ql
-	 42vUx85UYuJTg==
-Date: Mon, 22 Sep 2025 14:50:33 -0500
+	b=pSM2LXk3MJBdfinmJaWTBhkL2yIyaDcKjFJjIv44irmcaMcPiq+Ttz9tgc3JWyPr4
+	 T+BcYpvAl5sNAI2PUrC94gt1A6PQ1Mr8uNLGxJIr3BGii+VYCliwzIbIoVMCCtzkly
+	 6azOYfxTxCyYHpLu+3vA19jAokfAhaHMhFM0zdehy0JlJU5J8MzfQuP9CeACezbh1u
+	 XishcU1dwE7cn8yQiCKGjYQx2T0m4/1SIFB8USrXo/tQXMdU6IdzOiUfB2YsPn8KrT
+	 S7J1m1xPv+Fjp+xTH6KwE/2eF1+w/dO1sb0FDxCfAdGN+OHN/caAfLDD7eb5D2gdSj
+	 bUYWPg+hxRMHw==
+Date: Mon, 22 Sep 2025 14:50:51 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: Lee Jones <lee@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 03/11] dt-bindings: fsl,fpga-qixis: describe the gpio
- child node found on LS1046AQDS
-Message-ID: <175857063304.1062079.93303890842024200.robh@kernel.org>
-References: <20250919132515.1895640-1-ioana.ciornei@nxp.com>
- <20250919132515.1895640-4-ioana.ciornei@nxp.com>
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: linux-kernel@vger.kernel.org, robin.murphy@arm.com, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, joro@8bytes.org,
+	will@kernel.org, krzk+dt@kernel.org
+Subject: Re: [PATCH] dt-bindings: arm-smmu: Document Glymur SMMU
+Message-ID: <175857065066.1064671.10595725300353083455.robh@kernel.org>
+References: <20250919133439.965595-1-pankaj.patil@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,23 +58,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250919132515.1895640-4-ioana.ciornei@nxp.com>
+In-Reply-To: <20250919133439.965595-1-pankaj.patil@oss.qualcomm.com>
 
 
-On Fri, 19 Sep 2025 16:25:07 +0300, Ioana Ciornei wrote:
-> Extend the list of accepted child nodes with the QIXIS FPGA based GPIO
-> controller and explicitly list its compatible string
-> fsl,ls1046aqds-fpga-gpio-stat-pres2 as the only one accepted.
+On Fri, 19 Sep 2025 19:04:39 +0530, Pankaj Patil wrote:
+> Document the compatible for Qualcomm Glymur APPS smmu
 > 
-> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 > ---
-> Changes in v3:
-> - new patch
-> Changes in v4:
-> - none
-> 
->  .../devicetree/bindings/board/fsl,fpga-qixis.yaml      | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
