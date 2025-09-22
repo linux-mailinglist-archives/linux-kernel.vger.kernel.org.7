@@ -1,120 +1,149 @@
-Return-Path: <linux-kernel+bounces-826479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A038B8EA27
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 02:51:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77EAEB8EA2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 02:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EE8E1896365
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 387583BD620
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A51384039;
-	Mon, 22 Sep 2025 00:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yaezq6v6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83E976026;
+	Mon, 22 Sep 2025 00:52:26 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA78772604
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD15F23CB;
+	Mon, 22 Sep 2025 00:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758502298; cv=none; b=bfINjnNHI8D7jE9pUhDvW7xfSF5tcTx6zA2uJnSgB+efPevtEF9TsoAX+oIqDpBq5JEMgF9NrhbmDs7k5ecH2vfiqSrLSVkUaiBe1Hxe5+3q2QzLYCdATAOA+3ufU+gt1aHAJ0cGIrMw+kviExGKLx8xa2qJClUIyKQ9PvbPp4o=
+	t=1758502346; cv=none; b=YEZFCDJEhdPrWz5nLIHM7Fb+lgkwiO+MYWcgX6vi4CmbBDCecO20qT75mwdWMEhTGO+7prOHONCFHY6Pv84PpNwciczMgZGKcbXDUUPtcgLJqQobtQiheWcklJwRQrNDglqzkZQAT9Kh//WS0TfFk4/fpRI5UuZVBycwiYBlr1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758502298; c=relaxed/simple;
-	bh=F8SykSU3lPdLjvpiYnlAUhi5iNYVQF1x129DI9Omo3E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bcGLwx+WxOju5HuCsTsFph6MgZhA642vkyIhdjNTF47BDNOAyhnZxd3ezHVFqThrxurOEu3IclE61GjiPJ98APShEsGMn4t7ZzmM9c2HwmVdCisawXzkMKJUuCha5zA1RqLEvtYx0t7EyoLLQD8cxalwSAX1IFVZ+qtJaUhGxpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yaezq6v6; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758502296;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F8SykSU3lPdLjvpiYnlAUhi5iNYVQF1x129DI9Omo3E=;
-	b=Yaezq6v6m/1cRDnDdSoKxrJb30xFJrYjSIms2TAb4mvFZOSAKE4WQ/Q2O5mtoXo11qufcw
-	Nw7IbtLT0+0QZtefwWGysFyUETsgAU7FQ1fwFGbZ/Y2AImFrCncwXQYrbaFPAg8oW6Tuxa
-	7UKE9/VE8B3QFdxPtm3k4dUMNW1/3pg=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-363-6Y-hqTYCM8m3BwTZibWArg-1; Sun, 21 Sep 2025 20:51:34 -0400
-X-MC-Unique: 6Y-hqTYCM8m3BwTZibWArg-1
-X-Mimecast-MFC-AGG-ID: 6Y-hqTYCM8m3BwTZibWArg_1758502293
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b5535902495so1029827a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 17:51:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758502293; x=1759107093;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F8SykSU3lPdLjvpiYnlAUhi5iNYVQF1x129DI9Omo3E=;
-        b=XdWJPUVEmiyu0vvRE/dSCpyfeOX7nS6PTMQfxkaialGlWp8M9XCCCHhQL5ixE99qpT
-         4HVYC/zV/8qOeX+U4Ctz3IfwiHrf+UY0l2LExNaXny28YdrLwcMONayfYvFbes9a1cqs
-         Xd+FD3dRmx5/6vzzTT7ymZDSlD/3jqfNKRO9joadReonIBKiOsw5dHznOabNYCi6Xwfa
-         HHjENUApvF+8LJsNhNc3q2PCyOyGm53oY6V/DGOTkrb9biTvQ7lGPMo3YCfDoM9r2o5H
-         xqHeF0/TTOyPs8XwtqQV39/xBprrRMj0DN14fqwUrP61OkMeINgTqDSy2Pmsn1EVlmof
-         cZ4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWtrmy1Xxc2uJ7LjZlYO+3nOXxe7lUO8jVnP88ZZKaDyJfRbunb4tDF3m9e84a7mnsIwEbp1wrSI6kj0L8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjxDKnXRVJeM0yQwBK692o8tz4poko7T2CYrMOFhPYQNplF9S/
-	rqPo3l3LLaxKF5MbfzgLqc/XLLphyeqkSRA2fn8tT4OFUQqNdzjB2drJo6GnjmH2XyjYUlc+sbV
-	URHioJMLiAp/ca7atoDuRDzRNYJ3HizT+odcq5CWn3FeIAq6vecNOng1LdPTR2/1Ii1t3VJOe3a
-	h6mz076Fp51G+VbKA61RLXpH+FqwL72FdyGJoZqIST
-X-Gm-Gg: ASbGncvYc7CVpNTIgY083RAhG4Bmef6yHkBtmFmBhTjpe4JY/iNbVib4ZRYeiJGR9pe
-	yZnQe1VJ26sLNPECMPEDzrxz4DQMZWyaKYEye0yAs9s5xQZAsZLCVN/BexShotCiNdKZ87k9hbl
-	FTAPe3na13AAqxUQmCplGr+A==
-X-Received: by 2002:a17:90b:5585:b0:32b:8582:34be with SMTP id 98e67ed59e1d1-33097ff8745mr12323826a91.13.1758502293183;
-        Sun, 21 Sep 2025 17:51:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEmPZ+UCXWP9ATTeYvrzC84/XjGYdnilWnlBNRFnXGo6v3f7HDJUGzqyEe1RfF03zBJ35TmhW0n+fWbmX49p60=
-X-Received: by 2002:a17:90b:5585:b0:32b:8582:34be with SMTP id
- 98e67ed59e1d1-33097ff8745mr12323813a91.13.1758502292864; Sun, 21 Sep 2025
- 17:51:32 -0700 (PDT)
+	s=arc-20240116; t=1758502346; c=relaxed/simple;
+	bh=UKRekcHypWryxdpArJ6WlIlnp7KFq6gZd6htTWU62t8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=dY9AMm/7eLOSEirYKmxflDPRsv/EkdfP2ijkvRl1rfZUQycI7dtA4CiCOf+nY8uATcEPfs9ce3NOYHpd1ne9YHcLX4fq2qgpfolvZmoH8LbQdoy9tVUGZoUco0o9CEnqAI2hxsXSARtEqV4u3WcG/GRhN4qWciFUgnWF2IU5/QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cVPhT3ggMzYQtpn;
+	Mon, 22 Sep 2025 08:52:09 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id F19911A0A1B;
+	Mon, 22 Sep 2025 08:52:12 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgD3CGG7ndBolluSAQ--.55304S3;
+	Mon, 22 Sep 2025 08:52:12 +0800 (CST)
+Subject: Re: [PATCH] md raid: fix hang when stopping arrays with metadata
+ through dm-raid
+To: Heinz Mauelshagen <heinzm@redhat.com>, song@kernel.org
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <cover.1758201368.git.heinzm@redhat.com>
+ <b58dddf537d5aa7519670a4df5838e7056a37c2a.1758201368.git.heinzm@redhat.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <7df6e7be-0fd1-0277-038e-3cc4efe5bf9b@huaweicloud.com>
+Date: Mon, 22 Sep 2025 08:52:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919073154.49278-1-jasowang@redhat.com> <20250919073154.49278-8-jasowang@redhat.com>
- <20250921134504-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20250921134504-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 22 Sep 2025 08:51:21 +0800
-X-Gm-Features: AS18NWDmFIyEOZnaarbLoyCKXQe5TDpfrHph2NR2KgwbgMUxuUxt6mV4iAQXhtY
-Message-ID: <CACGkMEu83s0d2UdQL+PT7yT+P2K54F7Q1B7bjotkTjbN_ChqFA@mail.gmail.com>
-Subject: Re: [PATCH V6 07/19] virtio: switch to use vring_virtqueue for
- virtqueue_add variants
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <b58dddf537d5aa7519670a4df5838e7056a37c2a.1758201368.git.heinzm@redhat.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3CGG7ndBolluSAQ--.55304S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZrWrAw4kJr4DKw45tF15XFb_yoW8Kr45p3
+	97K3WYyr1DJr9ag3ZrZr4kWFy5XF1vkrZxtr17Cw1vkw18WFn5KFya9an5Xa9Fv34vyF4a
+	vw4rJryDWr1v9F7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jjVb
+	kUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, Sep 22, 2025 at 1:45=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> On Fri, Sep 19, 2025 at 03:31:42PM +0800, Jason Wang wrote:
-> > Those variants are used internally so let's switch to use
-> > vring_virtqueue as parameter to be consistent with other internal
-> > virtqueue helpers.
-> >
-> > Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > Signed-off-by: Jason Wang <jasowang@redhat.com>
->
->
-> This one actually switches virtqueue_get_buf variants.
->
-> Previous one is for virtqueue_add
->
+Hi,
 
-Exactly, let me fix it.
+ÔÚ 2025/09/18 21:42, Heinz Mauelshagen Ð´µÀ:
+> When using device-mapper's dm-raid target, stopping a RAID array can cause the
+> system to hang under specific conditions.
+> 
+> This occurs when:
+> 
+> -  A dm-raid managed device tree is suspended from top to bottom
+>     (the top-level RAID device is suspended first, followed by its
+>      underlying metadata and data devices)
+> 
+> -  The top-level RAID device is then removed
+> 
+> The hang happens because removing the top-level device triggers md_stop() from the
+> dm-raid destructor.  This function attempts to flush the write-intent bitmap, which
+> requires writing bitmap superblocks to the metadata sub-devices.  However, since
+> these metadata devices are already suspended, the write operations cannot complete,
+> causing the system to hang.
+> 
+> Fix:
+> 
+> -  Prevent bitmap flushing when md_stop() is called from dm-raid contexts
+>     and avoid a quiescing/unquescing cycle which could also cause I/O
 
-Thanks
+If bitmap flush is skipped, then bitmap can still be dirty after dm-raid
+is stopped, and the next time when dm-raid is reloaded, looks like there
+will be unnecessary data resync because there are dirty bits?
+
+Thanks,
+Kuai
+
+> 
+> -  Avoid any I/O operations that might occur during the quiesce/unquiesce process in md_stop()
+> 
+> This ensures that RAID array teardown can complete successfully even when the
+> underlying devices are in a suspended state.
+> 
+> Signed-off-by: Heinz Mauelshagen <heinzm@redhat.com>
+> ---
+>   drivers/md/md.c | 12 +++++++-----
+>   1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 4e033c26fdd4..53e15bdd9ab2 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -6541,12 +6541,14 @@ static void __md_stop_writes(struct mddev *mddev)
+>   {
+>   	timer_delete_sync(&mddev->safemode_timer);
+>   
+> -	if (mddev->pers && mddev->pers->quiesce) {
+> -		mddev->pers->quiesce(mddev, 1);
+> -		mddev->pers->quiesce(mddev, 0);
+> -	}
+> +	if (!mddev_is_dm(mddev)) {
+> +		if (mddev->pers && mddev->pers->quiesce) {
+> +			mddev->pers->quiesce(mddev, 1);
+> +			mddev->pers->quiesce(mddev, 0);
+> +		}
+>   
+> -	mddev->bitmap_ops->flush(mddev);
+> +		mddev->bitmap_ops->flush(mddev);
+> +	}
+>   
+>   	if (md_is_rdwr(mddev) &&
+>   	    ((!mddev->in_sync && !mddev_is_clustered(mddev)) ||
+> 
 
 
