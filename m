@@ -1,199 +1,105 @@
-Return-Path: <linux-kernel+bounces-827307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF770B91665
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:29:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1406BB9163B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6789424254
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:29:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6CEB17E54A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B7B30DD11;
-	Mon, 22 Sep 2025 13:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8001308F3D;
+	Mon, 22 Sep 2025 13:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fMK4dowQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AiCNUyFK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PDEJaJp1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA31C2ED14E;
-	Mon, 22 Sep 2025 13:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2110B1A2C11
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758547753; cv=none; b=n+Vr+/IZZuLDcP2e7sJ+wam9yvuUC2T/ui3YJXmag+hQiaIIFufPnV32WISfh3D4YmrFUa+bhqTHCkuDd7/47z6heoUFTNOvKs/tv2ywx6seI6a8t8Nyz6yL2vxI7NncFr5KXNh5jnM3eByVbk1kKERqEW/jl/qjQHRcv1eMUh8=
+	t=1758547639; cv=none; b=JCfksMnSB0NNVLlMQhGjt5vwj/CcBkUJ4OVv+ZdX48iPGFptkrtzyr0udnEPKivljmgCQA3sID1PzB0aSfgOtCkIVTXja4Y6Def/hvFip6uDWmKwscQCkgE0kOaqla6w0ua+T+vOlpXzbPMVm1YmVIzmCPXvHEPmM+bIi8eNOMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758547753; c=relaxed/simple;
-	bh=Paz8VobsIxUYPs+iWX8OQkPnDcVN3kgKqTINqzBN6qg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HVzUMyEP2mipXeOaxQgEklqF3DJI9K7HhMgnvTcmyW6tE7ZQFL67sDjUMMR/Wmc0iybvN9im46AEI3z6W6NbSjh+S7V+f4+XIVfuHVHrWZx9uZcgKan11cPJZmPo2T+eyqu9f0pO6tsDxaIbtyjdctcGqEun1+fhfZmQMrQu+2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fMK4dowQ; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758547751; x=1790083751;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Paz8VobsIxUYPs+iWX8OQkPnDcVN3kgKqTINqzBN6qg=;
-  b=fMK4dowQLotZjnKm7xc+kIEFt9DpLPHLUPTtcQuAC8FoOEX9jzRu/zZy
-   7iWPw3zlXEmnOGlSzV+Af3Jks/lpY6gLR7vU3+UCOBuTDvnfpXsTpAjAA
-   7yKcywr7fVOmH7pPg65YUguA8C4vSyHMAG0uP5VsykHQTYvaYSfXPgtOF
-   zSPnPPdBvNW5/EfjqN9srQ4Y0j1cUoy7CxZ6zAt2hc912HaimRUYZ866u
-   CDs5+Gk3RodzdRIqWaWpiT+6YT38nEVxscqnqbGQKM23GeZDp7ja4wvyq
-   Hn4upx6TdLTBHnPRBSl/w4hWngi6+cP0RaaRs7UpSftyxr3jUYK3ML9li
-   w==;
-X-CSE-ConnectionGUID: qCBpgQHlRlWg3VluGJcQDA==
-X-CSE-MsgGUID: EjVh/qW9SIaJUUHKaZB3gg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="71431587"
-X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
-   d="scan'208";a="71431587"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 06:29:10 -0700
-X-CSE-ConnectionGUID: KyiiuRRfTjyymGp9ff16vQ==
-X-CSE-MsgGUID: vO7yWu6YTVWElVbgpVJYCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
-   d="scan'208";a="180733586"
-Received: from jkrzyszt-mobl2.ger.corp.intel.com ([10.245.244.109])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 06:29:06 -0700
-From: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
-To: Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>,
-	Eric Engestrom <eric.engestrom@imgtec.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	linux-kernel@vger.kernel.org,
-	Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
-Subject: [PATCH] dma-buf/sw-sync: Hide the feature by default
-Date: Mon, 22 Sep 2025 15:24:51 +0200
-Message-ID: <20250922132837.1504441-2-janusz.krzysztofik@linux.intel.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758547639; c=relaxed/simple;
+	bh=hLR/SjpkPXbadrVNeuR49fC1NpoB85qsjhbzr+tCXTs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=i3K8eXUKehne3PSyXY4ZGc2r6RRPV6Ji24DrwBfqToRzr9FbdxwJ4Rik4IZhP1VWIv0ciPX//TeuPnYWGa2lXRiyhBoiYQOqQGL3UR8nhVagIezZYIaLdKrqcp6VrEBl0guqpGj/dTXGTJW8xh0OPrUcHiXLpi0y2QARVBzepMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AiCNUyFK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PDEJaJp1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758547632;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OHjq8/naxj9wOATVKaAS3Sl7b6cZ2oEkLh8gYUB7OZo=;
+	b=AiCNUyFKMHHXueG3TBNI3CfcXYN85ycsuNU2f642S3rtN09wsij+j9FaWwnWHoRWORSYIz
+	BJrZiiZg6u/2fqALi5Ml85wetmICGf9zF26ir4LUNhm62/jJDGwkK4vWtuySZ5PGdRJSQn
+	a9tCk5+ixbMQG+7zW50aG7Rd3Gxtyf1gVorb74c03e0z/PKS11AXYrv3Wla7EgbcCn6H2I
+	AuIYbt7qrkXbBrc2nbElFpfMT9Y/tB8/8d0bZF458AzRxzCNKfSOx/WJTw4EwUxWM7eg27
+	ykKsOTR1myheB6+wNowkfaDYzikT25qvpHQMegE/KWY1jAdqg57hqFqPRLgyLg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758547632;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OHjq8/naxj9wOATVKaAS3Sl7b6cZ2oEkLh8gYUB7OZo=;
+	b=PDEJaJp1KPKU5MgTULlys7QaOp46wlgZEXKLXl4DpVdzLm4BaDXGyMteo8tCTub/Z0bzaR
+	FASUU1yG1Vy35mCA==
+To: Andrew Murray <amurray@thegoodpenguin.co.uk>, Petr Mladek
+ <pmladek@suse.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky
+ <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 2/2] printk: Use console_flush_one_record for legacy
+ printer kthread
+In-Reply-To: <CALqELGz4ug+YyBvdmPp5aHR3x4qUEp4u4cCpWLL5143VCrf3-w@mail.gmail.com>
+References: <20250915-printk_legacy_thread_console_lock-v1-0-f34d42a9bcb3@thegoodpenguin.co.uk>
+ <20250915-printk_legacy_thread_console_lock-v1-2-f34d42a9bcb3@thegoodpenguin.co.uk>
+ <aMwy7pFM7EExLxaX@pathway.suse.cz>
+ <CALqELGz4ug+YyBvdmPp5aHR3x4qUEp4u4cCpWLL5143VCrf3-w@mail.gmail.com>
+Date: Mon, 22 Sep 2025 15:33:12 +0206
+Message-ID: <845xdak47j.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-When multiple fences of an sw_sync timeline are signaled via
-sw_sync_ioctl_inc(), we now disable interrupts and keep them disabled
-while signaling all requested fences of the timeline in a loop.  Since
-user space may set up an arbitrary long timeline of fences with
-arbitrarily expensive callbacks added to each fence, we may end up running
-with interrupts disabled for too long, longer than NMI watchdog limit.
-That potentially risky scenario has been demonstrated on Intel DRM CI
-trybot[1], on a low end machine fi-pnv-d510, with one of new IGT subtests
-that tried to reimplement wait_* test cases of a dma_fence_chain selftest
-in user space.
+On 2025-09-19, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
+>> I played with the code and came up with:
+>>
+>> static int legacy_kthread_func(void *unused)
+>> {
+>>         bool any_progress;
+>>
+>> wait_for_event:
+>>         wait_event_interruptible(legacy_wait, legacy_kthread_should_wakeup());
+>>
+>>         do {
+>>                 bool any_usable;
+>>                 bool handover;
+>>                 u64 next_seq;
+>>
+>>                 if (kthread_should_stop())
+>>                         return 0;
+>
+> This changes the behaviour from the existing legacy_kthread_func. Thus
+> allowing the thread to exit mid way through printing remaining
+> records, whereas previously the whole set of unprinted records would
+> first be printed. But that's probably a good thing.
 
-[141.993704] [IGT] syncobj_timeline: starting subtest stress-enable-all-signal-all-forward
-[164.964389] watchdog: CPU3: Watchdog detected hard LOCKUP on cpu 3
-[164.964407] Modules linked in: snd_hda_codec_alc662 snd_hda_codec_realtek_lib snd_hda_codec_generic snd_hda_intel snd_intel_dspcfg snd_hda_codec snd_hda_core snd_hwdep snd_pcm snd_timer snd soundcore i915 prime_numbers ttm drm_buddy drm_display_helper cec rc_core i2c_algo_bit video wmi overlay at24 ppdev gpio_ich binfmt_misc nls_iso8859_1 coretemp i2c_i801 i2c_mux i2c_smbus r8169 lpc_ich realtek parport_pc parport nvme_fabrics dm_multipath fuse msr efi_pstore nfnetlink autofs4
-[164.964569] irq event stamp: 1002206
-[164.964575] hardirqs last  enabled at (1002205): [<ffffffff82898ac7>] _raw_spin_unlock_irq+0x27/0x70
-[164.964599] hardirqs last disabled at (1002206): [<ffffffff8287d021>] sysvec_irq_work+0x11/0xc0
-[164.964616] softirqs last  enabled at (1002138): [<ffffffff81341bc5>] fpu_clone+0xb5/0x270
-[164.964631] softirqs last disabled at (1002136): [<ffffffff81341b97>] fpu_clone+0x87/0x270
-[164.964650] CPU: 3 UID: 0 PID: 1515 Comm: syncobj_timelin Tainted: G     U              6.17.0-rc6-Trybot_154715v1-gc1b827f32471+ #1 PREEMPT(voluntary)
-[164.964662] Tainted: [U]=USER
-[164.964665] Hardware name:  /D510MO, BIOS MOPNV10J.86A.0311.2010.0802.2346 08/02/2010
-[164.964669] RIP: 0010:lock_release+0x13d/0x2a0
-[164.964680] Code: c2 01 48 8d 4d c8 44 89 f6 4c 89 ef e8 bc fc ff ff 0b 05 96 ca 42 06 0f 84 fc 00 00 00 b8 ff ff ff ff 65 0f c1 05 0b 71 a9 02 <83> f8 01 0f 85 2f 01 00 00 48 f7 45 c0 00 02 00 00 74 06 fb 0f 1f
-[164.964686] RSP: 0018:ffffc90000170e70 EFLAGS: 00000057
-[164.964693] RAX: 0000000000000001 RBX: ffffffff83595520 RCX: 0000000000000000
-[164.964698] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-[164.964701] RBP: ffffc90000170eb0 R08: 0000000000000000 R09: 0000000000000000
-[164.964706] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff8226a948
-[164.964710] R13: ffff88802423b340 R14: 0000000000000001 R15: ffff88802423c238
-[164.964714] FS:  0000729f4d972940(0000) GS:ffff8880f8e77000(0000) knlGS:0000000000000000
-[164.964720] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[164.964725] CR2: 0000729f4d92e720 CR3: 000000003afe4000 CR4: 00000000000006f0
-[164.964729] Call Trace:
-[164.964734]  <IRQ>
-[164.964750]  dma_fence_chain_get_prev+0x13d/0x240
-[164.964769]  dma_fence_chain_walk+0xbd/0x200
-[164.964784]  dma_fence_chain_enable_signaling+0xb2/0x280
-[164.964803]  dma_fence_chain_irq_work+0x1b/0x80
-[164.964816]  irq_work_single+0x75/0xa0
-[164.964834]  irq_work_run_list+0x33/0x60
-[164.964846]  irq_work_run+0x18/0x40
-[164.964856]  __sysvec_irq_work+0x35/0x170
-[164.964868]  sysvec_irq_work+0x9b/0xc0
-[164.964879]  </IRQ>
-[164.964882]  <TASK>
-[164.964890]  asm_sysvec_irq_work+0x1b/0x20
-[164.964900] RIP: 0010:_raw_spin_unlock_irq+0x2d/0x70
-[164.964907] Code: 00 00 55 48 89 e5 53 48 89 fb 48 83 c7 18 48 8b 75 08 e8 06 63 bf fe 48 89 df e8 be 98 bf fe e8 59 ee d3 fe fb 0f 1f 44 00 00 <65> ff 0d 5c 85 68 01 74 14 48 8b 5d f8 c9 31 c0 31 d2 31 c9 31 f6
-[164.964913] RSP: 0018:ffffc9000070fca0 EFLAGS: 00000246
-[164.964919] RAX: 0000000000000000 RBX: ffff88800c2d8b10 RCX: 0000000000000000
-[164.964923] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-[164.964927] RBP: ffffc9000070fca8 R08: 0000000000000000 R09: 0000000000000000
-[164.964931] R10: 0000000000000000 R11: 0000000000000000 R12: ffff88800c2d8ac0
-[164.964934] R13: ffffc9000070fcc8 R14: ffff88800c2d8ac0 R15: 00000000ffffffff
-[164.964967]  sync_timeline_signal+0x153/0x2c0
-[164.964989]  sw_sync_ioctl+0x98/0x580
-[164.965017]  __x64_sys_ioctl+0xa2/0x100
-[164.965034]  x64_sys_call+0x1226/0x2680
-[164.965046]  do_syscall_64+0x93/0x980
-[164.965057]  ? do_syscall_64+0x1b7/0x980
-[164.965070]  ? lock_release+0xce/0x2a0
-[164.965082]  ? __might_fault+0x53/0xb0
-[164.965096]  ? __might_fault+0x89/0xb0
-[164.965104]  ? __might_fault+0x53/0xb0
-[164.965116]  ? _copy_to_user+0x53/0x70
-[164.965131]  ? __x64_sys_rt_sigprocmask+0x8f/0xe0
-[164.965152]  ? do_syscall_64+0x1b7/0x980
-[164.965169]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[164.965176] RIP: 0033:0x729f4fb24ded
-[164.965188] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
-[164.965193] RSP: 002b:00007ffdc36220e0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-[164.965200] RAX: ffffffffffffffda RBX: 0000000000000007 RCX: 0000729f4fb24ded
-[164.965205] RDX: 00007ffdc3622174 RSI: 0000000040045701 RDI: 0000000000000007
-[164.965209] RBP: 00007ffdc3622130 R08: 0000000000000000 R09: 0000000000000000
-[164.965213] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffdc3622174
-[164.965217] R13: 0000000040045701 R14: 0000000000000007 R15: 0000000000000003
-[164.965248]  </TASK>
-[166.952984] perf: interrupt took too long (11861 > 6217), lowering kernel.perf_event_max_sample_rate to 16000
-[166.953134] clocksource: Long readout interval, skipping watchdog check: cs_nsec: 13036276804 wd_nsec: 13036274445
+It does not matter. kthread_should_stop() will only return true from
+printk_kthreads_check_locked() when @have_legacy_console and
+@have_boot_console are both false. That means that whatever legacy or
+boot consoles there were, they are now unregistered, and were already
+flushed from within their unregister_console_locked().
 
-As explained by Christian Köenig[2], "The purpose of the sw-sync is to
-test what happens if drivers exposing dma-fences doesn't behave well.  So
-being able to trigger the NMI watchdog for example is part of why that
-functionality exists in the first place. ... You can actually use the
-functionality to intentionally deadlock drivers and even the core memory
-management."
-
-Let the feature show up only if EXPERT is selected.
-
-[1] https://patchwork.freedesktop.org/series/154715/
-[2] https://patchwork.freedesktop.org/patch/675579/#comment_1239269
-
-Fixes: 35538d7822e86 ("dma-buf/sw_sync: de-stage SW_SYNC")
-Cc: Christian König <christian.koenig@amd.com>
-Signed-off-by: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
----
- drivers/dma-buf/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/dma-buf/Kconfig b/drivers/dma-buf/Kconfig
-index b46eb8a552d7b..e726948b64f67 100644
---- a/drivers/dma-buf/Kconfig
-+++ b/drivers/dma-buf/Kconfig
-@@ -18,7 +18,7 @@ config SYNC_FILE
- 	  Documentation/driver-api/sync_file.rst.
- 
- config SW_SYNC
--	bool "Sync File Validation Framework"
-+	bool "Sync File Validation Framework" if EXPERT
- 	default n
- 	depends on SYNC_FILE
- 	depends on DEBUG_FS
--- 
-2.51.0
-
+John
 
