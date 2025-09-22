@@ -1,139 +1,127 @@
-Return-Path: <linux-kernel+bounces-826885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5368B8F8C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:34:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EBEFB8F8ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 979872A0709
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:34:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 872CB7B17F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92BB2FF642;
-	Mon, 22 Sep 2025 08:29:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365BD2FE560
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4B32FFDF3;
+	Mon, 22 Sep 2025 08:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jclQok3a"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FBF2FE560;
+	Mon, 22 Sep 2025 08:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758529766; cv=none; b=on0A1QHAj/gLBLMCLVrkI+5FEAZA7OEb1JMrScYX6UFvnpCumjoGIkLqdFA8LQlCIqmzDUlTdCYbr7pfXJNP13G/uM5riDhpA8P8BYhnm/XqNjLuqeiqr3Q/gn4gDQ76Eyco3riGJD5zLlI4KYJ/3AZbiWZq3+r0kJkxgc9+RV0=
+	t=1758529783; cv=none; b=lfNHZd4BRqz0ZMHw6ewRr4dhC6qFB3kFoQ7jqAcUlIMSlM+V5xT//vJA5296QoXGkDWsUbp+km6NKp//Kg1JLDB3AUALy/sK1WmegXwn8bkUvJA9YiMZchzEIZbixP1L2jweL0i1IxQOm6kEepjhjA1Ibm9ntc4rpPQ2e4c4uDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758529766; c=relaxed/simple;
-	bh=okAoRJPo0UWDlLo08dcWEQ3uqZMpO5Te1Udnu5/nsKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UsGzU/z3fKyEeMKaGWqShtyDDjkbss+UmA38cAfmwTL4Yl64f73prc3EQULcqF61byoVA4yrRj0XxDXY91br2GK3bZYGM7MhykR5HFJJw6eW0u8hjIgvI1cuUA8YEIlXVYJJNRGxdA7SPZwD9dvOhwQPlEk4JqKD+r0mHk3yr+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2641B150C;
-	Mon, 22 Sep 2025 01:29:15 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA60A3F66E;
-	Mon, 22 Sep 2025 01:29:22 -0700 (PDT)
-Date: Mon, 22 Sep 2025 09:29:20 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Jie Gan <jie.gan@oss.qualcomm.com>
-Cc: Carl Worth <carl@os.amperecomputing.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/3] coresight: tmc: add the handle of the event to
- the path
-Message-ID: <20250922082920.GB516577@e132581.arm.com>
-References: <20250922-fix_helper_data-v1-0-905e8115a24e@oss.qualcomm.com>
- <20250922-fix_helper_data-v1-1-905e8115a24e@oss.qualcomm.com>
+	s=arc-20240116; t=1758529783; c=relaxed/simple;
+	bh=5r3HNYK1LoTYVBKggoCHH4XfI4B9WoLDAPbnJlBl6Io=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ofrvSB6baZCw7miJhzTsWtv2ayr0KhlmFpdVz6hsSEJr2lnnraWMx4L9/g5rzkfCsCx2F++Cw//ns5KARLY0T8qM1JQwcYqmPIfEBMSh8uEjFEBOLJHuBzlK0RAu1wom2TKHEVyfmA3ZfspvUXcIyw9+g55Z+MiJ/Pa6WzgTvn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jclQok3a; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758529782; x=1790065782;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=5r3HNYK1LoTYVBKggoCHH4XfI4B9WoLDAPbnJlBl6Io=;
+  b=jclQok3aVbHGb4ixY1/IVAHXMGOYVnfWDfdPXpcste7Ren41/qXMjOBb
+   6bn0ugRc9BsNmhgJNc6N8XwNFEJbDK1cO8bM7Y2KV/INw/8dM0e5XaHuH
+   k9fV6IrjgepBI4hW+dpptC67dq98g8auw2QCiXLAraEwxR1dYfykjbZPy
+   8853UbOsy155T9GuPZsmQ6agVfxZjc2GA+tnniThBsaLfjIJC4nYVFEng
+   JEWGhkdqVXiN8usApfolQJ0X73kcGIv+D/J/q1otmJOUo5F74tbxp8Npi
+   A1z2csrgKDy2mE9y2yRH7RnSQdarXzxPic8t//IQ1Atdt/ecj/GoSe2gP
+   g==;
+X-CSE-ConnectionGUID: u5YvFeIqRreujwNBLBJ2fA==
+X-CSE-MsgGUID: ppGkLR75T/qzRf3/gS+naQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="71463414"
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="71463414"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:29:41 -0700
+X-CSE-ConnectionGUID: 8outSjVsTFeDiRPMSraaCw==
+X-CSE-MsgGUID: G6l9sVMLTRqrhCs8jQsLQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="207380777"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:29:38 -0700
+Message-ID: <3eb74bd9-5b0d-4673-9feb-124844431939@linux.intel.com>
+Date: Mon, 22 Sep 2025 16:29:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922-fix_helper_data-v1-1-905e8115a24e@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 42/51] KVM: x86: Define Control Protection Exception
+ (#CP) vector
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Xiaoyao Li <xiaoyao.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+References: <20250919223258.1604852-1-seanjc@google.com>
+ <20250919223258.1604852-43-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250919223258.1604852-43-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 22, 2025 at 03:31:39PM +0800, Jie Gan wrote:
-> From: Carl Worth <carl@os.amperecomputing.com>
-> 
-> The handle is essential for retrieving the AUX_EVENT of each CPU and is
-> required in perf mode. It has been added to the coresight_path so that
-> dependent devices can access it from the path when needed.
-> 
-> Fixes: 080ee83cc361 ("Coresight: Change functions to accept the coresight_path")
-> Signed-off-by: Carl Worth <carl@os.amperecomputing.com>
-> Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
-> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+
+
+On 9/20/2025 6:32 AM, Sean Christopherson wrote:
+> Add a CP_VECTOR definition for CET's Control Protection Exception (#CP),
+> along with human friendly formatting for trace_kvm_inj_exception().
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+
 > ---
->  drivers/hwtracing/coresight/coresight-etm-perf.c |  1 +
->  drivers/hwtracing/coresight/coresight-tmc-etr.c  |  3 ++-
->  include/linux/coresight.h                        | 10 ++++++----
->  3 files changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> index f677c08233ba..5c256af6e54a 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> @@ -520,6 +520,7 @@ static void etm_event_start(struct perf_event *event, int flags)
->  		goto out;
->  
->  	path = etm_event_cpu_path(event_data, cpu);
-> +	path->handle = handle;
->  	/* We need a sink, no need to continue without one */
->  	sink = coresight_get_sink(path);
->  	if (WARN_ON_ONCE(!sink))
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> index b07fcdb3fe1a..1040f73f0537 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> @@ -1327,7 +1327,8 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
->  struct etr_buf *tmc_etr_get_buffer(struct coresight_device *csdev,
->  				   enum cs_mode mode, void *data)
->  {
-> -	struct perf_output_handle *handle = data;
-> +	struct coresight_path *path = data;
-> +	struct perf_output_handle *handle = path->handle;
->  	struct etr_perf_buffer *etr_perf;
->  
->  	switch (mode) {
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index 6de59ce8ef8c..4591121ae1d4 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -332,12 +332,14 @@ static struct coresight_dev_list (var) = {				\
->  
->  /**
->   * struct coresight_path - data needed by enable/disable path
-> - * @path_list:              path from source to sink.
-> - * @trace_id:          trace_id of the whole path.
-> + * @path_list:			path from source to sink.
-> + * @trace_id:			trace_id of the whole path.
-> + * struct perf_output_handle:	handle of the aux_event.
+>   arch/x86/include/uapi/asm/kvm.h | 1 +
+>   arch/x86/kvm/trace.h            | 2 +-
+>   2 files changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+> index 467116186e71..73e0e88a0a54 100644
+> --- a/arch/x86/include/uapi/asm/kvm.h
+> +++ b/arch/x86/include/uapi/asm/kvm.h
+> @@ -35,6 +35,7 @@
+>   #define MC_VECTOR 18
+>   #define XM_VECTOR 19
+>   #define VE_VECTOR 20
+> +#define CP_VECTOR 21
+>   
+>   /* Select x86 specific features in <linux/kvm.h> */
+>   #define __KVM_HAVE_PIT
+> diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
+> index 06da19b370c5..322913dda626 100644
+> --- a/arch/x86/kvm/trace.h
+> +++ b/arch/x86/kvm/trace.h
+> @@ -462,7 +462,7 @@ TRACE_EVENT(kvm_inj_virq,
+>   #define kvm_trace_sym_exc						\
+>   	EXS(DE), EXS(DB), EXS(BP), EXS(OF), EXS(BR), EXS(UD), EXS(NM),	\
+>   	EXS(DF), EXS(TS), EXS(NP), EXS(SS), EXS(GP), EXS(PF), EXS(MF),	\
+> -	EXS(AC), EXS(MC), EXS(XM), EXS(VE)
+> +	EXS(AC), EXS(MC), EXS(XM), EXS(VE), EXS(CP)
+>   
+>   /*
+>    * Tracepoint for kvm interrupt injection:
 
-s/struct perf_output_handle/@handle/
-
-Otherwise, LGTM:
-
-Reviewed-by: Leo Yan <leo.yan@arm.com>
-
->   */
->  struct coresight_path {
-> -	struct list_head	path_list;
-> -	u8			trace_id;
-> +	struct list_head		path_list;
-> +	u8				trace_id;
-> +	struct perf_output_handle	*handle;
->  };
->  
->  enum cs_mode {
-> 
-> -- 
-> 2.34.1
-> 
-> 
 
