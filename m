@@ -1,60 +1,113 @@
-Return-Path: <linux-kernel+bounces-827623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5084DB923DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:33:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69001B923DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9B2189755F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:34:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21F283A9A0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DED3126BA;
-	Mon, 22 Sep 2025 16:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D87F31076D;
+	Mon, 22 Sep 2025 16:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ir7EXn7S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WUUETWtQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B96330C625;
-	Mon, 22 Sep 2025 16:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C018A2DECA1
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758558801; cv=none; b=iYWWkxHRzVL6abThiMi/e0+uDGi1S5fQgqFg/IsVRXQolpNItJiOSX9zJ7LErujk0ZfdklAmfioqAew2w8Y9OvJyNmqLuSc0Ihl09Sh6Aq7jowkiHEt9JlM8dSSYejBsVwSqOXhgAUJ4aCVPtjkvwZ6NYb77g8fUx8lNOHdQO2k=
+	t=1758558849; cv=none; b=pVZf9mNQGbVwzwDBQP25kACOUQZu/oQtl5zAQL2GviIL3kLALczfTuRoy1z35E7xelY+bYkuqd9AOd8cGIZjQhaM8ENA5VeK0IdskUrnTNJuZPkod5u0MdVN358WRnRHgSsJQD6XhaMQSbwC+9I/F3NmrOey1YRJG03WlODWDsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758558801; c=relaxed/simple;
-	bh=xMmGNRC++VxwgdXGhecb5pzo/fRO7nnjJ1/3o+lBhYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EFafA9z95KMG2OTf+/BZ6dwGqoN2Io9xsfz6JoGXRT5tx5xvq1CjPriXVkUviAr9vHFbp5vzr4l7h3yAqG3pRHtrooEdytzFiBL0B2ptfkW2WNeQoyvFE7xaIqc9vdv8atGxSS/BGPCp1RLzhmC9M++iV+HtlEY5YOO7P/rKNg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ir7EXn7S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EBF5C4CEF0;
-	Mon, 22 Sep 2025 16:33:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758558801;
-	bh=xMmGNRC++VxwgdXGhecb5pzo/fRO7nnjJ1/3o+lBhYQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ir7EXn7SDJYv8gLjFwbbEPemzVsmpLsvC4+b1mSdgUeMwJP6u/5u656Rm9CDKjHba
-	 eG9x9/oIt0ijkGY35g0zrAQOK1TtLyAegIsdEuo6zZhzGQ4QZPtCjZi/LoXGavaU6i
-	 Y6kvuq2LAgBytIPKaVn5blQvGnyqNV0zArFbX/hT4N5DvrLvXdZuozjXESdBt+uBY8
-	 ZOGzkd4dbRHA6Bbh81mOJuhxIr51BnuGIbzq4jwVgpn0uV0YVqEymlfSPYjMX95Drs
-	 UGmcJXLXLAaGv4GMizdHYcZ7ggxvySUwF5jKwrFBCA++B4c7P0L8jWNzSvUGKHCDEA
-	 qp6ECsjgOnfrA==
-Date: Mon, 22 Sep 2025 22:03:12 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Saravana Kannan <saravanak@google.com>, 
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH v3 4/4] PCI: qcom: Allow pwrctrl core to control PERST#
- if 'reset-gpios' property is available
-Message-ID: <zlogycfwvdclx2wpxyzhdm7m5edsckcfscz4ddor5seyhmiyf4@kd7ueiga6aaq>
-References: <nxcr6ymgspcdofoy7cv4lok34qqucwrm4cxn7a7spqrszgmvin@x3mhucqy2tb3>
- <20250922160041.GA1972113@bhelgaas>
+	s=arc-20240116; t=1758558849; c=relaxed/simple;
+	bh=J5xgFBd3NU5Hap2uxJX37dSYFI7Kfv13S0/GT/le6ec=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SXh9aXGqO5391rLBr2nh8oJk4/4W1vpwchnx6QFXC1cnEkrjB4pwzGkGd0/eaxoZVD+wxrbqT85aBWiBFyjmkbw3lal/SR9wY3Pb/GLGZv+scRwlP9ztog0YXHXoEuaqYz7ZYzcgWoTY+1FeoG5qFsJqAe03rblnfDsGQkIUdmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WUUETWtQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758558846;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gBJljojDbws+qHKYWMWrH6AZIQ6pnwW8hsnZj31y4NQ=;
+	b=WUUETWtQLYO5jMZMLsueV3HEcGB1rv5uw8yWRdhuuvwb3F1gIrWvn6xXb036Ztlm4/OGzw
+	++hWZ5SehzJsbx6E8lTZy49vCWlS/2XisY57Q40BZN+EZ6Kz8YPG+d+wIYMc697B8qcDgE
+	1MBezF+Tn3ts6i+ZGyrv7EwE2fwPS7Q=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-209-XWEOdwA6O76xfPMax7Yu7g-1; Mon, 22 Sep 2025 12:34:02 -0400
+X-MC-Unique: XWEOdwA6O76xfPMax7Yu7g-1
+X-Mimecast-MFC-AGG-ID: XWEOdwA6O76xfPMax7Yu7g_1758558840
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b49666c8b8so80933781cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:34:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758558840; x=1759163640;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gBJljojDbws+qHKYWMWrH6AZIQ6pnwW8hsnZj31y4NQ=;
+        b=RUdvMI00a11nNWdng0xcBJhtDPyYoWVUSD5rMGRW9lgF6XeY+crwSvL3jtCYUX5rdQ
+         O3l33apPBXGlqi5hw7K4B27Q8uSNNid7f8W2ogypOXr/LKHhDXlvY6WflZPtTxrDRVKF
+         TUw0cI8OLN8g+RipVDmOAA13uHV6WIM7rMat1Xh8SiVoPOhxYcRg7SA+Ce7SWFhGM5Q9
+         91eWFF1+IeD+xQk3dJpbI8v4IbuuzatakB5Eo8OUw+SOFNmcaHGScLby8CWfzK7/04T7
+         8NTJtamzrJBpb3bv5mistmfQRBHgyp5+Z9P+GcOfbilLblBBCQNk8GWXHYgjP0UjurLg
+         ErbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOS83q1dzTeRueWJXIlcJXjz4AIpxiFXwWu1d9usT3Io9Z5XqAsk8QtjcO59U8w6lNS7LqVZeSBNkCsks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuHiuToGFY4C5MYBdIISRVzUSFPE1mZ8O9NScNBxzO3NT5i4ND
+	zGgTPAARx71z31AVj6PMXwMP1vam71/Zgz8jIbgm8O8O2m2RVoxxyUYh+JE62SWWMP4cmfcrSrR
+	Sl5+0SJR4f25RYIaMKxDROxGJ7ZAiv0XBPV0jS76VEW+XF/shZd/Xlv9ok3p5UBWLRlLrXOg9Ig
+	==
+X-Gm-Gg: ASbGncs8INWpYH8y7UGJEGScfSwm/FuPh944n0W+9CIYmGUGvJdvVrxY0kG8CuWSzYu
+	iUPnG44V/CyX8NTYSeBBZK3ynGKPF7cCl51ufIO/n3y3hnxBLEks7IOTx3Qx8HkHzHkiUa361z+
+	4tiZtFs3zKUmtA/ZteC9mAuT6lpe9+uKtela934awlB+4On2fjGe3W6e6ZfDlPA26zpN5esTRvv
+	5lpul5728E0o3q/B5Y8D7PVq28pAkEblQWpoNZNXl02u73gjO1nmvljVk1TzqKeOF9MuxvzF9Od
+	55+u93pbd2l6n+eg1eiujXVeZwE9yUxX
+X-Received: by 2002:a05:622a:5908:b0:4b5:db9f:9904 with SMTP id d75a77b69052e-4c06e01de1bmr199682671cf.22.1758558839533;
+        Mon, 22 Sep 2025 09:33:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH//E8b4gnkiEJqOP3wljjECSy+ua/1PyrN9UKJVnDq/W9qkrGv0rnACb5iI8z2zg8fwH1I7A==
+X-Received: by 2002:a05:622a:5908:b0:4b5:db9f:9904 with SMTP id d75a77b69052e-4c06e01de1bmr199681851cf.22.1758558838967;
+        Mon, 22 Sep 2025 09:33:58 -0700 (PDT)
+Received: from x1.local ([142.188.210.50])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ccade1cf34sm15909061cf.46.2025.09.22.09.33.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 09:33:58 -0700 (PDT)
+Date: Mon, 22 Sep 2025 12:33:56 -0400
+From: Peter Xu <peterx@redhat.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Nikita Kalyazin <kalyazin@amazon.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+	Muchun Song <muchun.song@linux.dev>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	James Houghton <jthoughton@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Ujwal Kundur <ujwal.kundur@gmail.com>
+Subject: Re: [PATCH v2 1/4] mm: Introduce vm_uffd_ops API
+Message-ID: <aNF6dCL_yonTforG@x1.local>
+References: <4czztpp7emy7gnigoa7aap2expmlnrpvhugko7q4ycfj2ikuck@v6aq7tzr6yeq>
+ <a1a48a0e-62d3-48d0-b9c2-492eb190b99f@amazon.com>
+ <7cccbceb-b833-4a21-bdc4-1ff9d1d6c14f@lucifer.local>
+ <74b92ce3-9e0e-4361-8117-7abda27f2dd4@redhat.com>
+ <aMxNgyVRuiFq2Sms@x1.local>
+ <cigo2r2x22bk7wzr6qvazcdkmt5kfqhbgb7nslpuff7djufucg@f6xucfuntz3q>
+ <aMx0oGwRpSTcfdnf@x1.local>
+ <swfs7qpgrezamnijhheiggwdfklfqdc6ahp5g7nvprr64m7wz5@msf2mqajzbuz>
+ <aM1l2YMmvBgiXJ8a@x1.local>
+ <unvooxce622bchlsivyr63lsvywnx4u6omyndotdo32ynv2eki@ju5srmktf3hg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,121 +116,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250922160041.GA1972113@bhelgaas>
+In-Reply-To: <unvooxce622bchlsivyr63lsvywnx4u6omyndotdo32ynv2eki@ju5srmktf3hg>
 
-On Mon, Sep 22, 2025 at 11:00:41AM -0500, Bjorn Helgaas wrote:
-> On Fri, Sep 19, 2025 at 01:45:51PM +0530, Manivannan Sadhasivam wrote:
-> > On Thu, Sep 18, 2025 at 01:53:56PM -0500, Bjorn Helgaas wrote:
-> > > On Wed, Sep 17, 2025 at 03:53:25PM +0530, Manivannan Sadhasivam wrote:
-> > > > On Tue, Sep 16, 2025 at 03:48:10PM GMT, Bjorn Helgaas wrote:
-> > > > > On Fri, Sep 12, 2025 at 02:05:04PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > > > > > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > > > > > 
-> > > > > > For historic reasons, the pcie-qcom driver was controlling the
-> > > > > > power supply and PERST# GPIO of the PCIe slot.
-> > > > > 
-> > > > > > This turned out to be an issue as the power supply requirements
-> > > > > > differ between components. For instance, some of the WLAN
-> > > > > > chipsets used in Qualcomm systems were connected to the Root
-> > > > > > Port in a non-standard way using their own connectors.
-> > > > > 
-> > > > > This is kind of hand-wavy.  I don't know what a non-standard
-> > > > > connector has to do with this.  I assume there's still a PCIe link
-> > > > > from Root Port to WLAN, and there's still a PERST# signal to the
-> > > > > WLAN device and a Root Port GPIO that asserts/deasserts it.
-> > > > 
-> > > > If we have a non-standard connector, then the power supply
-> > > > requirements change.  There is no longer the standard 3.3v, 3.3Vaux,
-> > > > 1.8v supplies, but plenty more.  For instance, take a look at the
-> > > > WCN6855 WiFi/BT combo chip in the Lenovo X13s laptop:
-> > > > 
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts#n414
-> > > > 
-> > > > These supplies directly go from the host PMIC to the WCN6855 chip
-> > > > integrated in the PCB itself. And these supplies need to be turned
-> > > > on/off in a sequence also, together with the EN/SWCTRL GPIOs, while
-> > > > sharing with the Bluetooth driver.
-> > > 
-> > > It sounds like the WCN6855 power supplies have nothing to do with the
-> > > qcom PCIe controller, the Root Port, or any switches leading to the
-> > > WCN6855.  And I guess the same for the wlan-enable, bt-enable, and
-> > > swctrl GPIOs?
-> > > 
-> > >   wcn6855-pmu {
-> > >           compatible = "qcom,wcn6855-pmu";
-> > >           wlan-enable-gpios = <&tlmm 134 GPIO_ACTIVE_HIGH>;
-> > >           bt-enable-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
-> > >           swctrl-gpios = <&tlmm 132 GPIO_ACTIVE_HIGH>;
-> > >           regulators {
-> > >                   vreg_pmu_rfa_cmn_0p8: ldo0 {
-> > >                           regulator-name = "vreg_pmu_rfa_cmn_0p8";
-> > >                   ...
-> > > 
-> > >   &pcie4_port0 {
-> > >           wifi@0 {
-> > >                   compatible = "pci17cb,1103";
-> > >                   vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
-> > >                   ...
-> > > 
-> > > But I guess PERST# isn't described in the same place (not in
-> > > wcn6855-pmu)?  Looks like maybe it's this, which IIUC is part of the
-> > > pcie4 host bridge?
-> > > 
-> > >   &pcie4 {
-> > >           max-link-speed = <2>;
-> > >           perst-gpios = <&tlmm 141 GPIO_ACTIVE_LOW>;
-> > >           wake-gpios = <&tlmm 139 GPIO_ACTIVE_LOW>;
-> > > 
-> > > Does that mean this PERST# signal is driven by a GPIO and routed
-> > > directly to the WCN6855?  Seems like there's some affinity between the
-> > > WCN6855 power supplies and the WCN6855 PERST# signal, and maybe they
-> > > would be better described together?
-> > 
-> > Yes, 'perst-gpios' is the PERST# signal that goes from the host
-> > system to the WCN6855 chip. But we cannot define this signal in the
-> > WCN6855 node as the DT binding only allows to define it in the PCI
-> > bridge nodes. This is why it is currently defined in the host bridge
-> > node. But when this platform switches to the per-Root Port binding,
-> > this property will be moved to the Root Port node as 'reset-gpios'.
+On Fri, Sep 19, 2025 at 03:38:51PM -0400, Liam R. Howlett wrote:
+> I spoke to Mike on this and I understand what I was missing.  I'm fine
+> with the folio part as you have it.
 > 
-> I'm questioning what the right place is to describe PERST#.  Neither
-> the host bridge/Root Complex nor the Root Port has any architected
-> support for asserting PERST#, so we can't write generic code to handle
-> it.
-> 
+> Apologies for holding this up and the added stress on your side.
 
-True.
+Thank you for changing your mind.
 
-> The PERST# signal is defined by the CEM specs, so can be physically
-> included in a standard connector or cable that carries the Link.  The
-> Link is originated by a Downstream Port, and the PCIe spec tells us
-> how to operate the Link using the DP's Link Control, Link Status, etc.
-> 
-> But PERST# might not originate in the Downstream Port, and the spec
-> doesn't tell us how to assert/deassert it, so I'm not sure it really
-> fits in the same class as things like 'max-link-speed' and
-> 'num-lanes'.  Maybe it doesn't need to be in either the host bridge or
-> the Root Port?
-> 
+Mike, I definitely appreciate your help alone the way since the start.
 
-While I agree that PERST# has nothing to do with the Downstream Port, we don't
-have any better way to represent it in devicetree. Either this has to be defined
-in Host Bridge or Root Port/Bridge or Endpoint node. Currently, the devicetree
-spec allows it to be defined in both Host Bridge and Root Port nodes, but not in
-the Endpoint node. AFAIU, this is due to the fact that PERST# is a host
-controlled signal, not device (unlike WAKE#). So we cannot put it in the
-Endpoint node.
-
-Moreover, if it is defined in the Host Bridge node, then we cannot do
-PERST#<->device mapping in the case of multiple PERST# signals. So defining it
-in the Root Port/Bridge node seemed to be the ideal place (till when there is a
-single PERST# per slot/downstream port).
-
-Maybe Rob could share more of the insight.
-
-- Mani
+I'll wait for 2-3 more days to see whether there's any further objections
+from anyone, or I'll repost.
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Peter Xu
+
 
