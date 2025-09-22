@@ -1,127 +1,113 @@
-Return-Path: <linux-kernel+bounces-826962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 245B2B8FBC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:22:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54DEAB8FBDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD5F4164AA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:22:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D74F17F752
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123242857FB;
-	Mon, 22 Sep 2025 09:22:09 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ED3286883;
+	Mon, 22 Sep 2025 09:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Frn2GiqH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462C8281530;
-	Mon, 22 Sep 2025 09:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1F71F936;
+	Mon, 22 Sep 2025 09:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758532928; cv=none; b=C1PyJRUkACtDszWWMVJgt6fQ67LepY+elN69hNlJ8QpN6POpHAJZ7FG++zHFSxb65uczB41qnGEpGOpoeem+gJZwKww78C/6I8VyII18z8eNIwh/i27l3RAr0WJf6q96VlA+Xv76V3/focncIPCeTLJ3WXmZPUq5eKzXxu5Ec/8=
+	t=1758533013; cv=none; b=capWtAo+9fBSY9LjLOvyf1e72Ax3l5OvIS/jBR2Iw0e3dnkBImCMCOXqMXomzmwlZKOJNahGLOR6E6cQvqr6f0DJElMlH9b8422cIxvKsJmGBdCD4gMcFRzDqAFswP+WdCxfTOIqrqDJ5wPnewthe9lzsbFst0MlElVMxJbcids=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758532928; c=relaxed/simple;
-	bh=F+j1gvDZbC9a4flx5aJ9RBjMLgi+Sw6IZ3alWei2zeQ=;
-	h=Content-Type:Message-ID:Date:MIME-Version:From:Subject:To:Cc:
-	 References:In-Reply-To; b=d67oHd26SxAktUXX1ZGH3vo0Qi0IIrwaqv/x1aG/yj94vULytErvYR9suk5coCjoEg+82B6epCyjxFCOQp0TjrqFfft4Voi7ZYT2uOXg8VynrY5v+wX8AMk43RlHX6n/v+sujBtCHr0Pt79IA4FwbDyO9P81wjLyIwFfUxon/ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 96f8533a979511f08b9f7d2eb6caa7cf-20250922
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:d9c9921b-7714-432e-882c-02884a80c62c,IP:0,U
-	RL:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:5,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:6493067,CLOUDID:f7e65d22eba6cc0d3236e2eccb66e2fe,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|83|102,TC:nil,Content:0|50,EDM:2,I
-	P:nil,URL:0,File:2,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
-	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 96f8533a979511f08b9f7d2eb6caa7cf-20250922
-X-User: zhangheng@kylinos.cn
-Received: from [172.25.120.76] [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <zhangheng@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
-	with ESMTP id 560678075; Mon, 22 Sep 2025 17:21:58 +0800
-Content-Type: multipart/mixed; boundary="------------HTXT9pUf30m2Q1iVCgv0L0Ai"
-Message-ID: <01ce8d55-6054-4efa-bed5-ce4c6c6bc0e6@kylinos.cn>
-Date: Mon, 22 Sep 2025 17:21:54 +0800
+	s=arc-20240116; t=1758533013; c=relaxed/simple;
+	bh=j05wZavGFXWNtjbPPzOS8CI3Pw0Pv0DRZuYuLreKJOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qObSEgWsp6cOMKGZt7XFumgWy9twvXLUy05Y2Oe2UFhG0vdCHMbpRX1uPRbbmbsjOycLfNU2v2GJ33yNAgEE+lkuI5ruBEjjrAqNB/pNy9l+uKgx0sbUpWOmmzmaR83fnK5EHKKPeEPKXy8we84+a7rx8myng2V8nb0sMVKWuRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Frn2GiqH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2A25C4CEF0;
+	Mon, 22 Sep 2025 09:23:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758533013;
+	bh=j05wZavGFXWNtjbPPzOS8CI3Pw0Pv0DRZuYuLreKJOU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Frn2GiqHH5J4JzW33sO5dqSKbojQJIaVB7J4VrqEwaSPVosvhzeo9VFSbPQrTlcy9
+	 jNLbX7boCJau8j6yr9HSWXoH9zeKsnuiF5E492x2jP/kiz+Q32li4kprjZ3kS+FXdJ
+	 DFkuMytk95NIGtDxJ6gzX94m8wCsFHYV+MNtHHMi2HLzc2+LYhKXYrriA3l8rewOjc
+	 JfMTun89en5LciiTSNM05AIYGwZYuW8I9+bu6vUZ2qSoAEBTKiu+Tc62fzApTNyS4t
+	 cZgx+Aedz5FzbNiAB20GRNjCQw2XggvDHGj4MyGkYGP3NyB+0jebndNjGmAqn19UPa
+	 n4VUFRX2XVIFA==
+Date: Mon, 22 Sep 2025 10:23:26 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+	Pavel Shpakovskiy <pashpakovskii@salutedevices.com>
+Subject: linux-next: manual merge of the bluetooth tree with the origin tree
+Message-ID: <aNEVjp5GxJHjdfbN@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: zhangheng <zhangheng@kylinos.cn>
-Subject: Re: [regression] 1a8953f4f774 ("HID: Add IGNORE quirk for
- SMARTLINKTECHNOLOGY") causes issue with ID 4c4a:4155 Jieli Technology USB
- Composite Device
-To: Staffan Melin <staffan.melin@oscillator.se>
-Cc: Terry Junge <linuxhid@cosmicgizmosystems.com>,
- Salvatore Bonaccorso <carnil@debian.org>, Jiri Kosina <jkosina@suse.com>,
- Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
- stable@vger.kernel.org, 1114557@bugs.debian.org
-References: <aL2gYJaXoB6p_oyM@eldamar.lan>
- <c8f3d402-e0ec-4767-b925-d7764aec3d93@kylinos.cn>
- <e81e8d68cb33c7de7b0e353791e21e53@oscillator.se>
- <aMUxHZF-7p7--1qS@eldamar.lan> <aMUxg6FLqDetwiGu@eldamar.lan>
- <f08669ec112d6ab2f62e35c0c96d1f06@oscillator.se>
- <94520aac-2a68-40d2-b188-80f9e361d6de@kylinos.cn>
- <735c20da-c052-4528-ad91-185a835ca40c@cosmicgizmosystems.com>
- <54b4b55c-ef29-40ae-a576-0c0b35ea9625@kylinos.cn>
- <3c299b65351c489fea95ec8b93518b6b@oscillator.se>
-In-Reply-To: <3c299b65351c489fea95ec8b93518b6b@oscillator.se>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="RNHb58DXMRibB7kk"
+Content-Disposition: inline
 
-This is a multi-part message in MIME format.
---------------HTXT9pUf30m2Q1iVCgv0L0Ai
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Please help test this patch, I will push it to the kernel community. 
-Currently, the microphone device is functioning normally
---------------HTXT9pUf30m2Q1iVCgv0L0Ai
-Content-Type: text/plain; charset=UTF-8;
- name="0001-HID-quirks-Add-device-descriptor-for-4c4a-4155.patch"
-Content-Disposition: attachment;
- filename*0="0001-HID-quirks-Add-device-descriptor-for-4c4a-4155.patch"
-Content-Transfer-Encoding: base64
+--RNHb58DXMRibB7kk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-RnJvbSA1MzJiODdkYmFkNGJkNjM0Y2E0ZDVmZjQxMDAxMDc1Zjc2OGUwYmMxIE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBaaGFuZyBIZW5nIDx6aGFuZ2hlbmdAa3lsaW5vcy5j
-bj4KRGF0ZTogRnJpLCAxMiBTZXAgMjAyNSAyMDozODoxOCArMDgwMApTdWJqZWN0OiBbUEFU
-Q0hdIEhJRDogcXVpcmtzOiBBZGQgZGV2aWNlIGRlc2NyaXB0b3IgZm9yIDRjNGE6NDE1NQoK
-TXVsdGlwbGUgVVNCIGRldmljZXMgaGF2ZSB0aGUgc2FtZSBJRDsKYWRkIGRldmljZSBkZXNj
-cmlwdG9ycyB0byBkaXN0aW5ndWlzaCB0aGVtLgoKU2lnbmVkLW9mZi1ieTogWmhhbmcgSGVu
-ZyA8emhhbmdoZW5nQGt5bGlub3MuY24+Ci0tLQogZHJpdmVycy9oaWQvaGlkLXF1aXJrcy5j
-IHwgMTIgKysrKysrKysrKystCiAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKSwg
-MSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvaGlkL2hpZC1xdWlya3MuYyBi
-L2RyaXZlcnMvaGlkL2hpZC1xdWlya3MuYwppbmRleCBmZmQwMzQ1NjZlMmUuLmQyOGIxODBh
-YmQ3MiAxMDA2NDQKLS0tIGEvZHJpdmVycy9oaWQvaGlkLXF1aXJrcy5jCisrKyBiL2RyaXZl
-cnMvaGlkL2hpZC1xdWlya3MuYwpAQCAtOTEzLDcgKzkxMyw2IEBAIHN0YXRpYyBjb25zdCBz
-dHJ1Y3QgaGlkX2RldmljZV9pZCBoaWRfaWdub3JlX2xpc3RbXSA9IHsKICNlbmRpZgogCXsg
-SElEX1VTQl9ERVZJQ0UoVVNCX1ZFTkRPUl9JRF9ZRUFMSU5LLCBVU0JfREVWSUNFX0lEX1lF
-QUxJTktfUDFLX1A0S19CMkspIH0sCiAJeyBISURfVVNCX0RFVklDRShVU0JfVkVORE9SX0lE
-X1FVQU5UQSwgVVNCX0RFVklDRV9JRF9RVUFOVEFfSFBfNU1QX0NBTUVSQV81NDczKSB9LAot
-CXsgSElEX1VTQl9ERVZJQ0UoVVNCX1ZFTkRPUl9JRF9TTUFSVExJTktURUNITk9MT0dZLCBV
-U0JfREVWSUNFX0lEX1NNQVJUTElOS1RFQ0hOT0xPR1lfNDE1NSkgfSwKIAl7IH0KIH07CiAK
-QEAgLTEwNjIsNiArMTA2MSwxNyBAQCBib29sIGhpZF9pZ25vcmUoc3RydWN0IGhpZF9kZXZp
-Y2UgKmhkZXYpCiAJCQkJCSAgICAgc3RybGVuKGVsYW5fYWNwaV9pZFtpXS5pZCkpKQogCQkJ
-CQlyZXR1cm4gdHJ1ZTsKIAkJYnJlYWs7CisJY2FzZSBVU0JfVkVORE9SX0lEX1NNQVJUTElO
-S1RFQ0hOT0xPR1k6CisJCS8qIE11bHRpcGxlIFVTQiBkZXZpY2VzIHdpdGggaWRlbnRpY2Fs
-IElEcyAobWljICYgdG91Y2hzY3JlZW4pLgorCQkgKiBUaGUgdG91Y2ggc2NyZWVuIHJlcXVp
-cmVzIGhpZCBjb3JlIHByb2Nlc3NpbmcsIGJ1dCB0aGUKKwkJICogbWljcm9waG9uZSBkb2Vz
-IG5vdC4gVGhleSBjYW4gYmUgZGlzdGluZ3Vpc2hlZCBieSBtYW51ZmFjdHVyZXIKKwkJICog
-YW5kIHNlcmlhbCBudW1iZXIuCisJCSAqLworCQlpZiAoaGRldi0+cHJvZHVjdCA9PSBVU0Jf
-REVWSUNFX0lEX1NNQVJUTElOS1RFQ0hOT0xPR1lfNDE1NSAmJgorCQkgICAgc3RybmNtcCho
-ZGV2LT5uYW1lLCAiU21hcnRsaW5rVGVjaG5vbG9neSIsIDE5KSA9PSAwICYmCisJCSAgICBz
-dHJuY21wKGhkZXYtPnVuaXEsICIyMDIwMTExMTAwMDAwMSIsIDE0KSA9PSAwKQorCQkJcmV0
-dXJuIHRydWU7CisJCWJyZWFrOwogCX0KIAogCWlmIChoZGV2LT50eXBlID09IEhJRF9UWVBF
-X1VTQk1PVVNFICYmCi0tIAoyLjQ3LjEKCg==
+Hi all,
 
---------------HTXT9pUf30m2Q1iVCgv0L0Ai--
+Today's linux-next merge of the bluetooth tree got a conflict in:
+
+  net/bluetooth/mgmt.c
+
+between commit:
+
+  6bbd0d3f0c23f ("Bluetooth: hci_sync: fix set_local_name race condition")
+
+=66rom the origin tree and commit:
+
+  3b3eb857d5ab6 ("Bluetooth: MGMT: Fix possible UAFs")
+
+=66rom the bluetooth tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc net/bluetooth/mgmt.c
+index 50634ef5c8b70,ee7068fb9fb59..0000000000000
+--- a/net/bluetooth/mgmt.c
++++ b/net/bluetooth/mgmt.c
+
+--RNHb58DXMRibB7kk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjRFY0ACgkQJNaLcl1U
+h9D+jwf/WkUVAhSgCsCYb0FUOOCjsU1TuY9qPcwawUA8E1pxCGmcqTkKxEZrWRKm
+CMCXA+aTU+nUHEqrdtGt5P9i5VLyzyAn0B90hH55E8xV0GT6Sux/1275u7OWvgcH
+8FUSVKDVzX6EKl00yVR4tx2JMo12pjwFifPtdzwDfrlDA4bstyoQVrMyFTWvYLc6
+tsoVhpYDMk4Yqs4J1OoPGSTfnmGMR3r+kB9jm1UtorUYOSU84D/GTLjlxp3sX8d8
+CLTItGidQY3giPG6MP9S/WV8HV95L7kfyT7jAVnFzZHgKhDv+hWtFSMM1aeot4sD
+I6Qdhy6iEARDJvx5Rfxn+8um3UgbAw==
+=EkR4
+-----END PGP SIGNATURE-----
+
+--RNHb58DXMRibB7kk--
 
