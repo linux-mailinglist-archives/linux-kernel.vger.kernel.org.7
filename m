@@ -1,194 +1,441 @@
-Return-Path: <linux-kernel+bounces-827917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4445CB936AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:00:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A4CB936B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D3114E1FAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:00:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CC13188B9B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CE73112A0;
-	Mon, 22 Sep 2025 21:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E4F285068;
+	Mon, 22 Sep 2025 22:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sch.bme.hu header.i=@sch.bme.hu header.b="NE22iliH"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11023075.outbound.protection.outlook.com [40.107.159.75])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJjF9VOW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BB726A0BD
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758578389; cv=fail; b=n4hEPZV6wM1bra02tp9xlL8v2rsAihqOjzALB87Pqd03Y/odzYHuy2HdZmvD7wFAwU9CdbPrtSosCDo6UqCd6NiPMLF0p01rsSW7AwF4sSQvDptOiiSXPdjWbUmW0Y3boPN9uvA7VUDwqj0EgDn2EJwbzX9sgsbtp4vSF3FMYkk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758578389; c=relaxed/simple;
-	bh=Pzv7dXPYvPtVM2JbwcB5tWlrifJV3I6GTP/l+tbhJrc=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nc3CfEr9VRNeTA9HjAU0Q2hcxfmdTone+Xw3YNVD0r6IlUSAaENR2VxaeOJmcQIyOgm3J46z6XqSlePcZX9/hzrQV0xks0B6ZNq/pCJBFjvSuCHLnZztJAmnYFeEt0OUZ1iIvNIAT1zfJZQaLLiZKsWrjTwbFf4SbtwZkTQxJmg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sch.bme.hu; spf=pass smtp.mailfrom=sch.bme.hu; dkim=pass (1024-bit key) header.d=sch.bme.hu header.i=@sch.bme.hu header.b=NE22iliH; arc=fail smtp.client-ip=40.107.159.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sch.bme.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sch.bme.hu
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LGrawhaIn8cD1OkMy9Q+yRKDDLICPnc1S/F3mc9mZ4YjNhkEIfmEGyw2AT0ShieGOWjsNgmnaZ6dynb9SLXYE/VfJ15VdKEFloB5a1BxEou5U8oE6X6dCavQ+u+X7JrBW0R8aAfGE1VL/YRdiZ9YVbWKOLw1dlWMVu0jdHKQM20c7xWAciNMSwcl7mdFajNRTp30vRmhXsTEIMBTMawkBC2doEEUOBykoOO0LIKspY0xab9I2VQmJxSu4/EFg5vQ7AjsDQP5V/0GB9bFhfEkttHvHiZXtlLK/fklsvEIrtKxllm7RwLVmmdcc1AElSmWTSEuC0AwMVGf9hxYHXV+5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TSEjQqPGcG9yFWkkAl/0gkjbH5CTdJbwTYnCgOqHQTA=;
- b=BYj6+5Q4a1f2J0RAYTr4RzileISslSYu7ce7IG3ay4mqNAcMlaLAx1B+MMTg5Ak9GTpV0YxOJUXlsIN2xQ9SLMmNhD3wDIPrY6g2OQqzUxZhGYbRKkNQKvm4TwGtZdZsh1EEAeyfzFBNtAEpUwr6/V28wSOYXuf4aROiZ9yVGQADD+l7cQCWTG/tOjWGoS0bqLs/2RDgcgiBojp8ulPPDUSPn+QphMTh+dyq8qVZNg5rc24nPdCT9grdfajzeXpM0+VHS3a3qKEU/XlTU4bCaCALHfOSs98OUdBRa5UstyOQ1LUlaGaymyyX9as6VMP0k5XdJdnCrEftll9Whyvw/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sch.bme.hu; dmarc=pass action=none header.from=sch.bme.hu;
- dkim=pass header.d=sch.bme.hu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sch.bme.hu;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TSEjQqPGcG9yFWkkAl/0gkjbH5CTdJbwTYnCgOqHQTA=;
- b=NE22iliHsstpyU5BEj1NxSgHBGlWj5daahVyld6M8fJLPvIY/Ya+e+nus8LmHGtEyrglf39YoOQ+8XMLxFJJ+1FKyQ5u6Un8sTBlhL1GrgjYbUbcLftDfXOafOY6HDl5YQhJdsUk6leFnDEeoh94B44kbnnSoYQohNemFVBYSww=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=sch.bme.hu;
-Received: from AM0PR04MB3971.eurprd04.prod.outlook.com (2603:10a6:208:56::16)
- by GV4PR04MB11330.eurprd04.prod.outlook.com (2603:10a6:150:29d::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Mon, 22 Sep
- 2025 21:59:40 +0000
-Received: from AM0PR04MB3971.eurprd04.prod.outlook.com
- ([fe80::c81f:9eb5:fbbf:e9c4]) by AM0PR04MB3971.eurprd04.prod.outlook.com
- ([fe80::c81f:9eb5:fbbf:e9c4%3]) with mapi id 15.20.9137.017; Mon, 22 Sep 2025
- 21:59:40 +0000
-Message-ID: <9e23fd1b-3d97-45f4-b707-74dba785af70@sch.bme.hu>
-Date: Mon, 22 Sep 2025 23:59:38 +0200
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH=5D_mailmap=3A_Add_entry_for_Bence_Cs=C3=B3?=
- =?UTF-8?Q?k=C3=A1s?=
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>
-References: <20250915-mailmap-v1-1-9ebdea93c6a7@prolan.hu>
- <2a8277a3-1ab7-4a78-a35a-0af983e1c112@sch.bme.hu>
-Content-Language: en-US
-From: =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <bence98@sch.bme.hu>
-In-Reply-To: <2a8277a3-1ab7-4a78-a35a-0af983e1c112@sch.bme.hu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: VI1PR08CA0273.eurprd08.prod.outlook.com
- (2603:10a6:803:dc::46) To AM0PR04MB3971.eurprd04.prod.outlook.com
- (2603:10a6:208:56::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8801E502;
+	Mon, 22 Sep 2025 22:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758578456; cv=none; b=JUgtu1ZF5W1kitdVRcIwHu+Y7yghZ+katLminIJBcySW3kvqLHsXenGCxBNg1navVPkUzAkMamYMuTHRBVkPc4LouOVExrndk0W5emk3gGDLqt7tV31HUvQhHOCWnUhVj187DOy4JxJLMb3CRg3ovGo2mifm45Z8eft4YtLwjVM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758578456; c=relaxed/simple;
+	bh=y4F5Q8UI8jEbr6PZWHKJIknJACl49zX4dkSjzhSSdUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c697YCvv1mQCKJ+Cq6h0smA63ETRTWMjxd5Ui0QVhwL4nqt8P6SE//LEG3GM+EwQJSZoFZqQh3gA8qYJkySPo3jAtyVk6OJapbHUe7L8c+ecLvhM6GijtjBDq4qwHvBNc6ltsEt/PPi2IjJI/efbuXhhrDCIwJxveRsBD2C7KYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJjF9VOW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BDBDC4CEF0;
+	Mon, 22 Sep 2025 22:00:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758578455;
+	bh=y4F5Q8UI8jEbr6PZWHKJIknJACl49zX4dkSjzhSSdUY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aJjF9VOWeSzHOb+WneKzU5dxiMzu00UXs0vHrJOIbuQs8Kgf9x5RD8W9e59PC306B
+	 omrO557Q0o8NRon9DK6ElBf1tEukx3GX8EJ5Vq3hyj3/M/i0H0gj81qR2q88BuA65F
+	 F+UAC98N9cd2RfidIsAHZnGfjTnhG4+HDrJtrroMtYnla84YHm9RcxrMVLCuWMW7k5
+	 qhBS88EE4d1Q80SgN9YjkrWIQ6IbeShLN+WTOzncWL69DvYVOtHxzkWTe1b9DIESNQ
+	 xSv6dyS0M7S+Ii5p1s47Cg5/aaGMSDUA15xee76uX+PQDvU/2vkdqIlGbDkmu1CNpt
+	 QhQqJZFucgOXA==
+Date: Mon, 22 Sep 2025 17:00:53 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ariana Lazar <ariana.lazar@microchip.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: iio: dac: adding support for Microchip
+ MCP47FEB02
+Message-ID: <20250922220053.GA1371364-robh@kernel.org>
+References: <20250922-mcp47feb02-v1-0-06cb4acaa347@microchip.com>
+ <20250922-mcp47feb02-v1-1-06cb4acaa347@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB3971:EE_|GV4PR04MB11330:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6345787c-b843-4e8a-1281-08ddfa23543b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|41320700013|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SWNiRVhoK2duUlBUSW0vQm4zdW1VRzY1bVh4RmJoVU02NkJFVVR6eFFCYVFY?=
- =?utf-8?B?aHdBR1RJMEluM0JBTVNSdnJKVEoyL1hReUF4OUJJYkQ4M1Q3SFNLMEg5bGpN?=
- =?utf-8?B?dDNrL3Z6eXR6c09DbVJLbG1JOUJxLzdxSnJaYk9UWFlMc0ZiVmtnSi9jdTVW?=
- =?utf-8?B?NkVpbWxjZjIzeVZJcFJNdlRBbXcyNmg5ZUJCN0FlaDdhaHVPSG1wbC8rU1RB?=
- =?utf-8?B?ZnRtcGIwMXZlbEtRWWtVQXN1QmpzWVBVUWVaOVhaL2ZwS1lScUZpY0FLSGRN?=
- =?utf-8?B?SThOdmdXLzZTSFdNUW52YXRYaU91NXNPMXJESXVDVXp3K3lWbmhKQTdxK2dT?=
- =?utf-8?B?eFpzSlZ6U0VtTUZvYWdPb0x4NW4yT3YvNUZBa2E0ME5Ta1JVUkhEckFOL1VI?=
- =?utf-8?B?OXJQb1ErNUhBeTZPUmg2bTNGL3hFR0xZM1lzTGtZcW5yL2VLNlprZTc1Q1hl?=
- =?utf-8?B?RjRKNGlCcFpnNkR5RUlqOXhHY3hxRituTTN4RVIvTTcxMWJVU25FZThCYnhZ?=
- =?utf-8?B?dFNTdFl4NXRTRUZPZmttckVRbDJoRU5SVXZVMTlQRzBqU1ZYZUNSZUFUZ2J2?=
- =?utf-8?B?dDExV1ZMUG9aTEYvNGxLeFc5RUM3c2g3WnJGWlpHVjhscjVNWFIwQ2VMTGJ2?=
- =?utf-8?B?TURZL2E4NndEVCtRbG0wdGZwVU9rdTBDM201dkg5NStUK1ZKeklEcnJpV2o1?=
- =?utf-8?B?QlVhcGtvODR3WFJtMzFFcmU4cWlyb2JoSHIzbmkxbHd2K2lNTENOOWZqVlFv?=
- =?utf-8?B?TGxsWGF1NDA0UHFKcXpHKzE5Z0dWOUtsQXArNHlaUGRnbG5obERSa0JPeXBj?=
- =?utf-8?B?dzdXRmR3cm1ZZFNxaEVLdnNSd2t1QlpjeURGZmdvUU4vaHdxZjV6RGRVNjdZ?=
- =?utf-8?B?dkNtT0dyZlRTM2NSRVBiWkd4RVMwaWRmckVtQkh6VVdRV01UZVpJZForSEZ2?=
- =?utf-8?B?MGp5UWJlUWVJc1lKbWRCYjZENVlnblpxQ3JvRlBkZWJUcVNEL2xJeE5LMDZC?=
- =?utf-8?B?SkFzZG52S1lXbnpmaDlia1BQeEtCRmIvc3hYZDJvdFA1dGJVMzJqQTNjU1Ra?=
- =?utf-8?B?N2RBRXRnWW9xcm9NVzZWWSs3OEhGNm8wb004cjMrT1E4ODRWRGZrNmIydEFi?=
- =?utf-8?B?VUZRa20zWEtPSnlWY0hyUHgwRHAwUG4zckltMk14YkEyQmhSSVk1NDViS2sy?=
- =?utf-8?B?OEZwalVwOVQzSU9MSnUxczVOR3FIeDdnZDlFeUlRREVoZUV1WmFZbi92bkZE?=
- =?utf-8?B?b28wMnNjWHVKcWJkUGt2OUNuKzZ0SGpzUDdMeDVHQWpXYllwSU9TTDVqUWJw?=
- =?utf-8?B?RDd0WmZMMWY3Wk10WmllUitpSGtqdnhZQmdyd0JEUDJVbTFpZkVjeFNBeWlI?=
- =?utf-8?B?ZXRzNTdndjIyVXRXMUN6eS93V3doN1pnSGVobVRxMG0ySnpqd1lMQTNFeVlp?=
- =?utf-8?B?MmZLSmxLZi9CU25UUWg2RmkxMmFmQUl3MXA3WWtyb3pkaEpQZE02bkxRejNt?=
- =?utf-8?B?MkxzNjk2bXMrc05zOUhDWWRZWnFLMzcvMXoyWjJxSk9GcnY5MGU1ZG8rQ1M3?=
- =?utf-8?B?OW9XWmt0bDZyUXJKZGI0ck82WmU1Z2ZzSm13dmx3MUtjWlFreCtFRktDcnFP?=
- =?utf-8?B?UU5xWDk3cWluQURzUkRJa0RSWGlCNUdpcUx4RGJjSE9wZHljRkk1OVJEbHlY?=
- =?utf-8?B?anZ6UHcxMFpRSXc0WHAvUCs1NkJUQ0pneUZ0Nk12QUhSTE54SFpIVUtzOWxw?=
- =?utf-8?B?VmkxcE5kV0NXekV3MVZjT0pSM1ZESkhqZUF3SmpSUlM2NXlrOWUraVI1TDN6?=
- =?utf-8?B?YnBVZGJJQ2c5MWU5ME04OXdlVUEvT01URHdrRlhFZE1LYUlmcGlFQ2xlY1dP?=
- =?utf-8?B?Q20wUUtvSE5xSm4vdWdoekxoZkFuRkVkeno5UEYzc29IVHN5eHo3ajNvV3Nv?=
- =?utf-8?Q?NphnDzPOLOQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB3971.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(41320700013)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z2NJQlpuQUUyZ1ZVVVphTzl0SmRuelFyWTdMV2NXbThzWFVDdEVXdEYzUHd3?=
- =?utf-8?B?VC8rbGNleXpCVW5VUlhQUmFhR0k4N1pPQVZXVXVWU0gzL3V0THRGbWlPT2J1?=
- =?utf-8?B?TGVNMDhzQldER3pSR1BnYjhjNTYvdll2WlJ2UWsvL1d1WDJJNFVodXQwOGFI?=
- =?utf-8?B?OWs4dmwzOFViMnV1bDhwMkxLTVdYYVZSaGZubnpzbDJKKzZQL3paZWJ0cXVG?=
- =?utf-8?B?RCtTcWFBZ2hVbUpZWjFYdUJVdEU2TjVTSDMwVE9odVJicmFzZmtIZzQrSDRs?=
- =?utf-8?B?aERKMFNHRUZ5ejcvWEZvcFlWcW9RZUV1R3JndjhBcDJBZDFDV1dEQXNma2tB?=
- =?utf-8?B?ZHIvTXVoU3NMT1ZEV3lUUXUyMTMxSEhLOFNWNkpGT3JpVm5EZXFkYUxLL1hx?=
- =?utf-8?B?MzBYY2ZtQ2lCOTlxem9jbDQwOHJnSGVoSkFvYzRmb3lBQnN3WUNYWDh6THY0?=
- =?utf-8?B?UGFnMTZPTkMxa01NdXk0cEIzdlpRSU1hNU5tK2VhY2FQMDVDZVc1ckJkUnlo?=
- =?utf-8?B?ZnRUdUxoRVozUDlUOTZjSU03YlRCenVkd0ljMXJiS29PWGZZUU1XQjkvTE5K?=
- =?utf-8?B?dFZXZVNYQ2pwN0NIdUc2S3RZeFZhc1p6T2c4eDlJb24vRFRZUmN4TGRqYzEz?=
- =?utf-8?B?TkFwdjhpaW9CRFAyalpJYklPVUVucUM5M25hSms3RGdUamh2cW83ODVRN0FR?=
- =?utf-8?B?M2FTUzBuZjhhaEh3bDhtckVqUmZXRDY1Q2g0RkRWNUV6MzBxVGxtRTd0c0tC?=
- =?utf-8?B?ZytxM2xCaHNhenlHOVV0WmNCdlR1ZE1reTBIOElDN2djd29BbGdmczQxdVpR?=
- =?utf-8?B?LzB1bTJodkJyYTNZdlEwajJ0MlBiZ1pEdkF6bkxzS2Q1b2QwRWh3Y3lLME1k?=
- =?utf-8?B?NU15ZXpscllQSXhRUEs5UVM4UHdtd1MzdHFYRlBBUWxCUzRwNHZOVThHOUww?=
- =?utf-8?B?aHZseEFHMDhqbktQZG5IUkdTZHVwNmpsTkVSMHNrQkdBc2FVK1NhVkhOTWRN?=
- =?utf-8?B?WjRmZnNMTE9waTk0d0FPdHlMeHg5OXRMblFnVnhzZTFsVjkyUHBCWEw5V003?=
- =?utf-8?B?dGpEZ1hZNHFXd1F1bU1PZlJXektncjYzT1YzOUhHUjM5cUlyRVNHZXpqQnJa?=
- =?utf-8?B?VkV2aFFIT3VZQkI2MHArbXRWMC9tMWNyN3RpUTZPQTV3ZU1uTVpBYW85M2dH?=
- =?utf-8?B?b3lkOExPRTBJVWt6ekpIY01OQ0tteHh3TGhCaXdUTkpUemxNekRYSkVEV2Ir?=
- =?utf-8?B?bC9lalg2ZWZvTGdFckd2aXNZbmoweVhYLy9Id0liQ2pIUGRGU1B4UTNDcUJE?=
- =?utf-8?B?Ym9UYitiY1NPQ0tEOWFxcjRHaE82MDRCWVJWbEFUMGZmVUNlZUY2WUE5Ulo1?=
- =?utf-8?B?Vk5kSHJHQnM4MlV4MWh2ZHJYVGNrMEJVN0J1WEUvbTJnVkF6TGp0bUlwZVVJ?=
- =?utf-8?B?UHVwTDRYYTdmb3VNK2JWeDdFVVpCclMvWWVwSTVwbVN5cEFOUHE0SmVtdXlL?=
- =?utf-8?B?NThuZzBlSnlKaUZ3Skthd1BpamRxTkFZdXA5bHprZmdHenJweFU3ME5ESHcw?=
- =?utf-8?B?VWtDR0ZZL2VHSmc4NHlHN3g5YVNuU2dzYSs5dENuWmZWZUNLOXk5cXNZMm44?=
- =?utf-8?B?OVlXZGducXc3QmFMTFdYNU5jMDMyc2ZIbVBvaWJxSGFCYzVqZmhPcDhmNFBa?=
- =?utf-8?B?OGR6dk0zQXRaV2xHeGt4aHNybGVJZWxRa001b1pjVWJxVlhLdjVHVkxEa0xn?=
- =?utf-8?B?cU54VDZVL1lKdlBHdGdVYzljdHRTTkZJTmRKSDhxZlRtbXJmZmJBM0NXVFFr?=
- =?utf-8?B?Z1IvZk9IVjRKdTV4SVM3cGFMQmtOUTlEeHFpODQwQzh5dXpLMGtCUyt4dFNI?=
- =?utf-8?B?VEY5U2RiVzM5NjVIblp1b0prdFFURWcyOWNpT2hIMVR2QmxmWHRyVXFFbjdR?=
- =?utf-8?B?MHg3cGNad1NoMlkvK3RjTFoyYjdSd1U5RFl0c0p5VHY0Q0I3R0p5cHFJZzFt?=
- =?utf-8?B?RmliVXJQQStwVlFjL2ZlSmxMSTVIVkRlcHdzTHltVnE5c3hQMENRMXpDaUtU?=
- =?utf-8?B?M3dOUjFUTmlZZ1ZVTk54ME5PWmNjaVArNDdLTnVCODF4VDAwdUc0WVNMTjJs?=
- =?utf-8?Q?qSU0RPPQg4Wu24xPN3yCfxh8T?=
-X-OriginatorOrg: sch.bme.hu
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6345787c-b843-4e8a-1281-08ddfa23543b
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB3971.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 21:59:40.2662
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 79f0ae63-ef51-49f5-9f51-78a3346e1507
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TrxfvE0C3dt+BksdwPgUyTNhVNpT1lShr0iW2n7U8aLbR0r+5n91eUqiW/jeXJjSP+s6ODXHDJPDd002qXZiOA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV4PR04MB11330
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250922-mcp47feb02-v1-1-06cb4acaa347@microchip.com>
 
-Hi all,
-
-On 2025. 09. 15. 11:13, Csókás Bence wrote:
-> Hereby I confirm that this account belongs to me as well.
+On Mon, Sep 22, 2025 at 02:30:53PM +0300, Ariana Lazar wrote:
+> This is the device tree schema for iio driver for Microchip
+> MCP47F(E/V)B(0/1/2)1, MCP47F(E/V)B(0/1/2)2, MCP47F(E/V)B(0/1/2)4 and
+> MCP47F(E/V)B(0/1/2)8 series of buffered voltage output Digital-to-Analog
+> Converters with nonvolatile or volatile memory and an I2C Interface.
 > 
-> On 2025. 09. 15. 11:05, Bence Csókás wrote:
->> I will be leaving Prolan this week. You can reach me by my personal email
->> for now.
->>
->> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+> The families support up to 8 output channels.
 > 
-> Signed-off-by: Bence Csókás <bence98@sch.bme.hu>
+> The devices can be 8-bit, 10-bit and 12-bit.
+> 
+> Signed-off-by: Ariana Lazar <ariana.lazar@microchip.com>
+> ---
+>  .../bindings/iio/dac/microchip,mcp47feb02.yaml     | 305 +++++++++++++++++++++
+>  MAINTAINERS                                        |   6 +
+>  2 files changed, 311 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/dac/microchip,mcp47feb02.yaml b/Documentation/devicetree/bindings/iio/dac/microchip,mcp47feb02.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..d05ddafa37540bc1f6b6ce65a466b95913925c10
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/dac/microchip,mcp47feb02.yaml
+> @@ -0,0 +1,305 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/dac/microchip,mcp47feb02.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Microchip MCP47F(E/V)B(0/1/2)(1/2/4/8) DAC with I2C Interface Families
+> +
+> +maintainers:
+> +  - Ariana Lazar <ariana.lazar@microchip.com>
+> +
+> +description: |
+> +  Datasheet for MCP47FEB01, MCP47FEB11, MCP47FEB21, MCP47FEB02, MCP47FEB12,
+> +  MCP47FEB22 can be found here:
+> +    https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005375A.pdf
+> +  Datasheet for MCP47FVBXX can be found here:
+> +    https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005405A.pdf
+> +  Datasheet for MCP47FEB04, MCP47FEB14, MCP47FEB24, MCP47FEB08, MCP47FEB18,
+> +  MCP47FEB28, MCP47FVB04, MCP47FVB14, MCP47FVB24, MCP47FVB08, MCP47FVB18,
+> +  MCP47FVB28 can be found here:
+> +    https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/MCP47FXBX48-Data-Sheet-DS200006368A.pdf
+> +
+> +  +------------+--------------+-------------+-------------+------------+
+> +  | Device     |  Resolution  |   Channels  | Vref number | Memory     |
+> +  |------------|--------------|-------------|-------------|------------|
+> +  | MCP47FEB01 |     8-bit    |      1      |      1      |   EEPROM   |
+> +  | MCP47FEB11 |    10-bit    |      1      |      1      |   EEPROM   |
+> +  | MCP47FEB21 |    12-bit    |      1      |      1      |   EEPROM   |
+> +  |------------|--------------|-------------|-------------|------------|
+> +  | MCP47FEB02 |     8-bit    |      2      |      1      |   EEPROM   |
+> +  | MCP47FEB12 |    10-bit    |      2      |      1      |   EEPROM   |
+> +  | MCP47FEB22 |    12-bit    |      2      |      1      |   EEPROM   |
+> +  |------------|--------------|-------------|-------------|------------|
+> +  | MCP47FVB01 |     8-bit    |      1      |      1      |      RAM   |
+> +  | MCP47FVB11 |    10-bit    |      1      |      1      |      RAM   |
+> +  | MCP47FVB21 |    12-bit    |      1      |      1      |      RAM   |
+> +  |------------|--------------|-------------|-------------|------------|
+> +  | MCP47FVB02 |     8-bit    |      2      |      1      |      RAM   |
+> +  | MCP47FVB12 |    10-bit    |      2      |      1      |      RAM   |
+> +  | MCP47FVB22 |    12-bit    |      2      |      1      |      RAM   |
+> +  |------------|--------------|-------------|-------------|------------|
+> +  | MCP47FVB04 |     8-bit    |      4      |      2      |      RAM   |
+> +  | MCP47FVB14 |    10-bit    |      4      |      2      |      RAM   |
+> +  | MCP47FVB24 |    12-bit    |      4      |      2      |      RAM   |
+> +  |------------|--------------|-------------|-------------|------------|
+> +  | MCP47FVB08 |     8-bit    |      8      |      2      |      RAM   |
+> +  | MCP47FVB18 |    10-bit    |      8      |      2      |      RAM   |
+> +  | MCP47FVB28 |    12-bit    |      8      |      2      |      RAM   |
+> +  |------------|--------------|-------------|-------------|------------|
+> +  | MCP47FEB04 |     8-bit    |      4      |      2      |   EEPROM   |
+> +  | MCP47FEB14 |    10-bit    |      4      |      2      |   EEPROM   |
+> +  | MCP47FEB24 |    12-bit    |      4      |      2      |   EEPROM   |
+> +  |------------|--------------|-------------|-------------|------------|
+> +  | MCP47FEB08 |     8-bit    |      8      |      2      |   EEPROM   |
+> +  | MCP47FEB18 |    10-bit    |      8      |      2      |   EEPROM   |
+> +  | MCP47FEB28 |    12-bit    |      8      |      2      |   EEPROM   |
+> +  +------------+--------------+-------------+-------------+------------+
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - microchip,mcp47feb01
+> +      - microchip,mcp47feb11
+> +      - microchip,mcp47feb21
+> +      - microchip,mcp47feb02
+> +      - microchip,mcp47feb12
+> +      - microchip,mcp47feb22
+> +      - microchip,mcp47fvb01
+> +      - microchip,mcp47fvb11
+> +      - microchip,mcp47fvb21
+> +      - microchip,mcp47fvb02
+> +      - microchip,mcp47fvb12
+> +      - microchip,mcp47fvb22
+> +      - microchip,mcp47fvb04
+> +      - microchip,mcp47fvb14
+> +      - microchip,mcp47fvb24
+> +      - microchip,mcp47fvb08
+> +      - microchip,mcp47fvb18
+> +      - microchip,mcp47fvb28
+> +      - microchip,mcp47feb04
+> +      - microchip,mcp47feb14
+> +      - microchip,mcp47feb24
+> +      - microchip,mcp47feb08
+> +      - microchip,mcp47feb18
+> +      - microchip,mcp47feb28
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +  vdd-supply:
+> +    description: |
 
-As of today, my Prolan address has been disabled. You can no longer 
-reach me there, I don't have access to it anymore. Please update the 
-mailmap at the soonest possible time.
+Don't need '|' if no formatting to preserve.
 
-Thanks,
-Bence
+> +      Provides power and it will be used as the reference voltage if vref-supply
+> +      is not provided.
+> +
+> +  vref-supply:
+> +    description: |
+> +      Vref pin is used as a voltage reference when this supply is specified.
+> +      Into the datasheet it could be found as a Vref0.
+> +      If it does not exists the internal reference will be used.
+
+blank line between paragraphs. But is every sentence a paragraph?
+
+> +      This will be used as a reference voltage for the following outputs:
+> +        - for single-channel device: Vout0;
+> +        - for dual-channel device: Vout0, Vout1;
+> +        - for quad-channel device: Vout0, Vout2;
+> +        - for octal-channel device: Vout0, Vout2, Vout6, Vout8;
+> +
+> +  vref1-supply:
+> +    description: |
+> +      Vref1 pin is used as a voltage reference when this supply is specified.
+> +      If it does not exists the internal reference will be used.
+> +      This will be used as a reference voltage for the following outputs:
+> +        - for quad-channel device: Vout1, Vout3;
+> +        - for octal-channel device: Vout1, Vout3, Vout5, Vout7;
+> +
+> +  lat-gpios:
+> +    description: |
+> +      LAT pin to be used as a hardware trigger to synchronously update the DAC
+> +      channels and the pin is active Low. It could be also found as lat0 in
+> +      datasheet.
+> +    maxItems: 1
+> +
+> +  lat1-gpios:
+> +    description: |
+> +     LAT1 pin to be used as a hardware trigger to synchronously update the odd
+> +     DAC channels on devices with 4 and 8 channels. The pin is active Low.
+> +    maxItems: 1
+> +
+> +  microchip,vref-buffered:
+> +    type: boolean
+> +    description: |
+> +      Enable buffering of the external Vref/Vref0 pin in cases where the
+> +      external reference voltage does not have sufficient current capability in
+> +      order not to drop it’s voltage when connected to the internal resistor
+> +      ladder circuit.
+> +
+> +  microchip,vref1-buffered:
+> +    type: boolean
+> +    description: |
+> +      Enable buffering of the external Vref1 pin in cases where the external
+> +      reference voltage does not have sufficient current capability in order not
+> +      to drop it’s voltage when connected to the internal resistor ladder
+> +      circuit.
+> +
+> +  microchip,output-gain-2x:
+> +    type: boolean
+> +    description: |
+
+?
+
+> +
+> +patternProperties:
+> +  "^channel@[0-7]$":
+> +    $ref: dac.yaml
+> +    type: object
+> +    description: Voltage output channel.
+> +
+> +    properties:
+> +      reg:
+> +        description: The channel number.
+> +        minimum: 1
+> +        maximum: 7
+> +
+> +      label:
+> +        description: Unique name to identify which channel this is.
+> +
+> +    required:
+> +      - reg
+> +
+> +    unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - vdd-supply
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - microchip,mcp47feb01
+> +              - microchip,mcp47feb11
+> +              - microchip,mcp47feb21
+> +              - microchip,mcp47fvb01
+> +              - microchip,mcp47fvb11
+> +              - microchip,mcp47fvb21
+> +    then:
+> +      properties:
+> +        lat-gpios: true
+
+true has no effect as the property is already allowed. Drop all the true 
+cases.
+
+> +        lat1-gpios: false
+> +        vref-supply: true
+> +        vref1-supply: false
+> +        microchip,vref-buffered: true
+> +        microchip,vref1-buffered: false
+> +      patternProperties:
+> +       "^channel@[1]$":
+
+Did you mean "[01]"? If not, that's not a pattern, but a fixed string.
+
+
+> +        properties:
+> +         reg:
+> +          items:
+> +            maximum: 1
+> +        "^channel@[2-7]$": false
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - microchip,mcp47feb02
+> +              - microchip,mcp47feb12
+> +              - microchip,mcp47feb22
+> +              - microchip,mcp47fvb02
+> +              - microchip,mcp47fvb12
+> +              - microchip,mcp47fvb22
+> +    then:
+> +      properties:
+> +        lat-gpios: true
+> +        lat1-gpios: false
+> +        vref-supply: true
+> +        vref1-supply: false
+> +        microchip,vref-buffered: true
+> +        microchip,vref1-buffered: false
+> +      patternProperties:
+> +       "^channel@[1-2]$":
+> +        properties:
+> +         reg:
+> +          items:
+> +            maximum: 1
+
+Based on the unit-address, the minimum is 1 and the maximum is 2. 
+"enum: [ 1, 2 ]" is a bit more concise.
+
+> +        "^channel@[3-7]$": false
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - microchip,mcp47fvb04
+> +              - microchip,mcp47fvb14
+> +              - microchip,mcp47fvb24
+> +              - microchip,mcp47fvb08
+> +              - microchip,mcp47fvb18
+> +              - microchip,mcp47fvb28
+> +              - microchip,mcp47feb04
+> +              - microchip,mcp47feb14
+> +              - microchip,mcp47feb24
+> +              - microchip,mcp47feb08
+> +              - microchip,mcp47feb18
+> +              - microchip,mcp47feb28
+> +    then:
+> +      properties:
+> +        lat-gpios: true
+> +        lat1-gpios: true
+> +        vref-supply: true
+> +        vref1-supply: true
+> +        microchip,vref-buffered: true
+> +        microchip,vref1-buffered: true
+> +      patternProperties:
+> +       "^channel@[1-4]$":
+> +        properties:
+> +         reg:
+> +          items:
+> +            maximum: 1
+
+?
+
+> +       "^channel@[5-7]$": false
+> +  - if:
+> +      not:
+> +        required:
+> +          - vref-supply
+> +    then:
+> +      properties:
+> +        microchip,vref-buffered: false
+> +  - if:
+> +      not:
+> +        required:
+> +          - vref1-supply
+> +    then:
+> +      properties:
+> +        microchip,vref1-buffered: false
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        dac@0 {
+> +          compatible = "microchip,mcp47feb02";
+> +          reg = <0>;
+> +          vdd-supply = <&vdac_vdd>;
+> +          vref-supply = <&vref_reg>;
+> +
+> +          #address-cells = <1>;
+> +          #size-cells = <0>;
+> +          channel@0 {
+> +            reg = <0>;
+> +            label = "DAC_OUTPUT_0";
+> +          };
+> +
+> +          channel@1 {
+> +            reg = <0x1>;
+> +            label = "DAC_OUTPUT_1";
+> +          };
+> +      };
+> +    };
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a92290fffa163f9fe8fe3f04bf66426f9a894409..6f51890cfc3081bc49c08fddc8af526c1ecc8d72 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14938,6 +14938,12 @@ F:	Documentation/ABI/testing/sysfs-bus-iio-potentiometer-mcp4531
+>  F:	drivers/iio/potentiometer/mcp4018.c
+>  F:	drivers/iio/potentiometer/mcp4531.c
+>  
+> +MCP47FEB02 MICROCHIP DAC DRIVER
+> +M:	Ariana Lazar <ariana.lazar@microchip.com>
+> +L:	linux-iio@vger.kernel.org
+> +S:	Supported
+> +F:	Documentation/devicetree/bindings/iio/dac/microchip,mcp47feb02.yaml
+> +
+>  MCP4821 DAC DRIVER
+>  M:	Anshul Dalal <anshulusr@gmail.com>
+>  L:	linux-iio@vger.kernel.org
+> 
+> -- 
+> 2.43.0
+> 
 
