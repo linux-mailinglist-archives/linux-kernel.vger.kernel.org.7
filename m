@@ -1,125 +1,186 @@
-Return-Path: <linux-kernel+bounces-826763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 936C6B8F474
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:23:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC36B8F483
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70607189FAC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:23:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78803420513
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8400D2F5461;
-	Mon, 22 Sep 2025 07:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A04C2F5461;
+	Mon, 22 Sep 2025 07:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T3Ym5TLa"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qy0LR9mD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FDD212578;
-	Mon, 22 Sep 2025 07:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AA92F2908;
+	Mon, 22 Sep 2025 07:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758525805; cv=none; b=heUG2bUYvfv9awBQ/9q/HEEcqFi3mr24k4guqt8wRsoAnhP7QRAjyvBsCN64EXNl6kq+e1g9QwGoFBp8Ek+Yey4OifxFFG8nJhfKw/eg3YJ4j+T58LN8DaQE+iq0I+jok9byOKgSoPdPz8E8gnwfyZNWXvsKZjLGYPAOsCUxEyY=
+	t=1758525824; cv=none; b=K2sDXXsgHixfyjthJYl5AS6pvsCtKjIiQAixNbdrjzN3yBJ/5eJzcW7n4gBqYXHjVplEx/okr3HhMtY6HzbPQpDHi/JcTsEBfhEPXOP+f768nmrYHdiVqHETzhm/WuMxDQV04fQRTY56Hktrrw03QEq5xCDBCgBpt2KUvNKkYEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758525805; c=relaxed/simple;
-	bh=4gSyreMsz1SzvIt6bu5X0lC8HZlBc0UBFd5PiUnExYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PwI8Uw3UMtR7sZNZLensq+vOz7AFdBZitU/ujUz4UNCeRReaw0vcutQffxO3AQzXv2ivrfX0fZtPkoBF0rpq5vnZKuLfHfOdsKZ64VCWtHO7DNEAuoY6DzMsRUhlSSq1f3A+XXw2CszYusZNk3ibJHc8FSW9TbRf0ggstNL2+2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T3Ym5TLa; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=q5KkD/XraiOQEskxvcqMgy2jL5L1tqkNah5t780SQt0=; b=T3Ym5TLazEK0t2f+z5h2KQHIMi
-	1j2dupNIlqDkh4Ghy4uyic8EuujRhsK4rRD5H0U5BsaQMmbOSXPwTDTsXSBwxIV9siwWfHiE9DSsQ
-	2Gm218In5mNsgrdj8cJeqLw6jXW45JSkOwDX0Z9zv5PphZWmycVKtKed4/+S2L9l1eETz0iO63m86
-	V1erXovLcT987e3QUqu+QM+6QVIzA3SgD9l6NZgHeXdrWHJJKV7l7UCX/wL0gxo6bnmOL7MlYLzBB
-	9hB6O+50/tEF+Po8UpnMThPmYXBMCX6wHN/7pJt8aIlnH6flF0dYzGiu89BJcCvFz99t6xyWd9R9b
-	rsiwe3rQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v0atA-00000002q7Z-2WsD;
-	Mon, 22 Sep 2025 07:23:08 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id AC94A300230; Mon, 22 Sep 2025 09:23:07 +0200 (CEST)
-Date: Mon, 22 Sep 2025 09:23:07 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
-	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
-Subject: Re: [RESEND][PATCH v15 0/4] perf: Support the deferred unwinding
- infrastructure
-Message-ID: <20250922072307.GQ4067720@noisy.programming.kicks-ass.net>
-References: <20250908171412.268168931@kernel.org>
- <20250918114610.GZ3419281@noisy.programming.kicks-ass.net>
- <20250918111853.5dc424df@gandalf.local.home>
- <20250918172414.GC3409427@noisy.programming.kicks-ass.net>
- <20250918173220.GA3475922@noisy.programming.kicks-ass.net>
- <20250918151018.7281647b@batman.local.home>
- <pde32olzdlqvbom5bya5exndcrfgsw7lmffy6uav5yoplonzj3@ddb2b5sihlpx>
+	s=arc-20240116; t=1758525824; c=relaxed/simple;
+	bh=ZV7aj9Kf9IQrMj6PE5MKPkZnwo28z3HICV1pbhZwGJg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LD6sGO6k1QebQS5JkUKLPflcpfRdahrKa2BpHDtO0eA7UJiTBFbNtOfe+/5/gX6B4CCF16e0ke+cq85hP6qEapdXI6o7l34LBGlS4CauzZNqWbihDQaXvzUGCipZzm6t9o4TeECjkX5oELJXWL36vBWxYX80m35HfXI8YEzptRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qy0LR9mD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD1C5C4CEF0;
+	Mon, 22 Sep 2025 07:23:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758525824;
+	bh=ZV7aj9Kf9IQrMj6PE5MKPkZnwo28z3HICV1pbhZwGJg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qy0LR9mD5FuTYFS2OEEJV0ZztHALjbF577zATXWDiMUWjUHPZvD0/XqnOoP72QWXU
+	 nUKth23FKJFWfYC+C3InmIeMopxNUDqKbtp+Hs+AlMo0vFQnFEhHP1jOUv/OWGC0Yl
+	 pSDB1pegHFPWq93holMjx+rfjUylWVmtA/ZjxIpNQFYFAyi/dtqcXWOkfOpu5OHFJW
+	 4wnQNgpeUNMdTR2XllaByQLomBdAWJ97OhoJcF2WktRGQX0eE8Oz7c9YTtde1F2jH5
+	 fqEug/+UTai+Htj7z5FXrSoAdGMW7Z7oplqqMDYAQNadNwoZvSvED2KWa+J8P83QiA
+	 YvWpwtxbeEB9Q==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	stable@vger.kernel.org,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	linux-kernel@vger.kernel.org (open list),
+	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH] tpm: Use -EPERM as fallback error code in tpm_ret_to_err
+Date: Mon, 22 Sep 2025 10:23:32 +0300
+Message-Id: <20250922072332.2649135-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <pde32olzdlqvbom5bya5exndcrfgsw7lmffy6uav5yoplonzj3@ddb2b5sihlpx>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 19, 2025 at 04:34:02PM -0700, Josh Poimboeuf wrote:
-> On Thu, Sep 18, 2025 at 03:10:18PM -0400, Steven Rostedt wrote:
-> > On Thu, 18 Sep 2025 19:32:20 +0200
-> > Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> > > > Now, task_work_run() is in the exit_to_user_mode_loop() which is notably
-> > > > *before* exit_to_user_mode() which does the unwind_reset_info().
-> > > > 
-> > > > What happens if we get an NMI requesting an unwind after
-> > > > unwind_reset_info() while still very much being in the kernel on the way
-> > > > out?  
-> > > 
-> > > AFAICT it will try and do a task_work_add(TWA_RESUME) from NMI context,
-> > > and this will fail horribly.
-> > > 
-> > > If you do something like:
-> > > 
-> > > 	twa_mode = in_nmi() ? TWA_NMI_CURRENT : TWA_RESUME;
-> > > 	task_work_add(foo, twa_mode);
-> > > 
-> > > it might actually work.
-> > 
-> > Ah, the comment for TWA_RESUME didn't express this restriction.
-> > 
-> > That does look like that would work as the way I expected task_work to
-> > handle this case.
-> 
-> BTW, I remember Peter had a fix for TWA_NMI_CURRENT, I guess it got lost
-> in the shuffle or did something else happen in the meantime?
-> 
->   https://lore.kernel.org/20250122124228.GO7145@noisy.programming.kicks-ass.net
+From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 
-Oh, yeah, I had completely forgotten about all that :-)
+Using -EFAULT here was not the best idea for tpm_ret_to_err as the fallback
+error code as it is no concise with trusted keys.
 
-I'll go stick it in the pile. Thanks!
+Change the fallback as -EPERM, process TPM_RC_HASH also in tpm_ret_to_err,
+and by these changes make the helper applicable for trusted keys.
+
+Cc: stable@vger.kernel.org # v6.15+
+Fixes: 539fbab37881 ("tpm: Mask TPM RC in tpm2_start_auth_session()")
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+---
+ include/linux/tpm.h                       |  9 +++++---
+ security/keys/trusted-keys/trusted_tpm2.c | 26 ++++++-----------------
+ 2 files changed, 13 insertions(+), 22 deletions(-)
+
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index dc0338a783f3..667d290789ca 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -449,13 +449,16 @@ static inline ssize_t tpm_ret_to_err(ssize_t ret)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	switch (tpm2_rc_value(ret)) {
+-	case TPM2_RC_SUCCESS:
++	if (!ret)
+ 		return 0;
++
++	switch (tpm2_rc_value(ret)) {
+ 	case TPM2_RC_SESSION_MEMORY:
+ 		return -ENOMEM;
++	case TPM2_RC_HASH:
++		return -EINVAL;
+ 	default:
+-		return -EFAULT;
++		return -EPERM;
+ 	}
+ }
+ 
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 024be262702f..e165b117bbca 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -348,25 +348,19 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 	}
+ 
+ 	blob_len = tpm2_key_encode(payload, options, &buf.data[offset], blob_len);
++	if (blob_len < 0)
++		rc = blob_len;
+ 
+ out:
+ 	tpm_buf_destroy(&sized);
+ 	tpm_buf_destroy(&buf);
+ 
+-	if (rc > 0) {
+-		if (tpm2_rc_value(rc) == TPM2_RC_HASH)
+-			rc = -EINVAL;
+-		else
+-			rc = -EPERM;
+-	}
+-	if (blob_len < 0)
+-		rc = blob_len;
+-	else
++	if (!rc)
+ 		payload->blob_len = blob_len;
+ 
+ out_put:
+ 	tpm_put_ops(chip);
+-	return rc;
++	return tpm_ret_to_err(rc);
+ }
+ 
+ /**
+@@ -468,10 +462,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 		kfree(blob);
+ 	tpm_buf_destroy(&buf);
+ 
+-	if (rc > 0)
+-		rc = -EPERM;
+-
+-	return rc;
++	return tpm_ret_to_err(rc);
+ }
+ 
+ /**
+@@ -534,8 +525,6 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 	tpm_buf_fill_hmac_session(chip, &buf);
+ 	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
+ 	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
+-	if (rc > 0)
+-		rc = -EPERM;
+ 
+ 	if (!rc) {
+ 		data_len = be16_to_cpup(
+@@ -568,7 +557,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 
+ out:
+ 	tpm_buf_destroy(&buf);
+-	return rc;
++	return tpm_ret_to_err(rc);
+ }
+ 
+ /**
+@@ -600,6 +589,5 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
+ 
+ out:
+ 	tpm_put_ops(chip);
+-
+-	return rc;
++	return tpm_ret_to_err(rc);
+ }
+-- 
+2.39.5
+
 
