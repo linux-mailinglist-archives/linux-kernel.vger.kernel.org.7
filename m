@@ -1,172 +1,216 @@
-Return-Path: <linux-kernel+bounces-826902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73173B8F99A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:41:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 680D9B8F985
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87E953B6CE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:41:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3443D7A40E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE3E27466D;
-	Mon, 22 Sep 2025 08:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D632765F5;
+	Mon, 22 Sep 2025 08:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nCUHaBhP"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nl/hRnOk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAF125B687;
-	Mon, 22 Sep 2025 08:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314FA25B687
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758530485; cv=none; b=KKJE2ETIvVHbNPHFiSJ7ke9N7IQ+X7Xk/MytoroFCWiRx3F28CSjpJ5WUqMBRRf+gp8RKccZV3nRjsW82BOcptIiHlGm0URhVKsiaUBFpf5DuVT6vzFZgcqgYbWYQ3D+cSOdJVQUVfd4sIzM8ujB3pULU9sijEmafZsY1MG8CoY=
+	t=1758530456; cv=none; b=V03LULASOqAJ/AAi7nZo42+1q3rBnF/07DjW8IVskrVjZb0GZ1py11eUUp0Vj+bJ4Or1G8yk+ApA9FjpAS3k3pg1i4LjIdAWmM3rd6XTpTVugz8f5LEuBLap97+KVqCzzHGVUo/kRQtRSCJNogaqbh1U2LUt0pCAoE3lZuctqko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758530485; c=relaxed/simple;
-	bh=x4aklYGFshEx41NI2ERMJ10pOo0Dk0GTz3xaw/4licM=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QXQxzl0PLCHVn0NncoRXwqIgiagk4eKb0jmKVXSRzNSpqp2QIeVOR4E+xBFMwXySWCiI42Sj3cniLYh3NfJLDqctYmTMLgbOIRN6YqNrFhez9kspojpeS6tWGHvGjDa81ggCpbELhHSPmV1KIFZhzzE/4TI+HwY+7jfryu7T1FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nCUHaBhP; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758530480;
-	bh=x4aklYGFshEx41NI2ERMJ10pOo0Dk0GTz3xaw/4licM=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=nCUHaBhPvG0KaFJG6BOXE4BwhzOe2Q1u5auBLvDgrG8mGKnQIu3OGiwqu00yc2mUa
-	 LdGjScXZHd9FajMF9M2OjqjbKz/kB3fZNug/YUjj3RqzpBRVY1PK5BFG54Zr8xVq67
-	 sn8Hdy/c6Ss5zX+jxF2gtzr+LnSWczBtJjXS20YpSkajSUc3yg9Np6vwptI8lvUlsg
-	 H6y8YeiF06Rj9xev8rcWzkCoBnxHJrK7Gw0f58s7+J6vtMtBeab+H/mHpADS9Tgw+k
-	 IBbSPrRSHpqFuAz9/77RoEAlv1FHRZdShfz8EEjMNk9ZtUcrxQAs8ICaxKVkfh0rhQ
-	 ZCps+Zm2hlkkQ==
-Received: from [192.168.100.175] (unknown [103.151.43.82])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 16B5217E124A;
-	Mon, 22 Sep 2025 10:41:17 +0200 (CEST)
-Message-ID: <a5400d9f-fb72-41ca-bedc-aa1c880a2234@collabora.com>
-Date: Mon, 22 Sep 2025 13:39:02 +0500
+	s=arc-20240116; t=1758530456; c=relaxed/simple;
+	bh=ZMo2AykX+hkkXcmuD8GfBAuju9dhidehEu+Vo5yoiqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eu/do3IijXQBlsRsCXfRJxl16OC0yTjC9yvAHSRd9AvsN9BlsIOcbYAWFcDCuwN0jf16EqoPZ5ic1za26Q53BypIpDX0oF6NRfcrsAxCWYBosKa77a7hnMm8rFJsfDAcctQ5R6JAc0bmbuHPY3yGa19xzmfOd5lYNEz+TBIUqoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nl/hRnOk; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758530453; x=1790066453;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZMo2AykX+hkkXcmuD8GfBAuju9dhidehEu+Vo5yoiqc=;
+  b=Nl/hRnOk7xN+Hftlk3c4X5+4SU6gu3ZB1DWuzqeNhq5PKY35ny7XtfLi
+   YOZnDJoD9FLobtnlEEiOG+Yz/X6yMajAvEOYCUnOuSVAT0RhTHwvg33FQ
+   MFBkQ/tSzSs9RdiHePsNHDMXU6BmdNaDiTssXNtSYutlG4z9nQys5LbjL
+   wslAVAaTSGauNypkCUNrgYpvdEJ/zcuC8Wq6JsMHeR5r/MftIinBArJ9q
+   Gz7boHMl87N06pjWNaWvVVERmdcFD7K8GPjxKkKjxr79gY3/kcPjO8XD6
+   PRosWZ1ZmdAxmhI2j8qGkeJjsVzvvfzXbg2B5TbFSrhpwZSYP3N41IG0A
+   A==;
+X-CSE-ConnectionGUID: MtvtSV0FQSKJkyoRodXTJg==
+X-CSE-MsgGUID: qrCQGXwPSFqID0NxUP2pBg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="60904821"
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="60904821"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:40:05 -0700
+X-CSE-ConnectionGUID: IT22XOp1SZGx1J9U9qub4w==
+X-CSE-MsgGUID: aZZggFjZQtKPHRHTozIsgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="177212661"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 22 Sep 2025 01:40:02 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v0c5Y-0001Tt-0G;
+	Mon, 22 Sep 2025 08:40:00 +0000
+Date: Mon, 22 Sep 2025 16:39:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
+	quic_jhugo@quicinc.com, maciej.falkowski@linux.intel.com,
+	dri-devel@lists.freedesktop.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Lizhi Hou <lizhi.hou@amd.com>, linux-kernel@vger.kernel.org,
+	max.zhen@amd.com, sonal.santan@amd.com, mario.limonciello@amd.com
+Subject: Re: [PATCH V2] accel/amdxdna: Enhance runtime power management
+Message-ID: <202509221605.9PJQqMb8-lkp@intel.com>
+References: <20250918195136.439012-1-lizhi.hou@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: usama.anjum@collabora.com, Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Jinjiang Tu <tujinjiang@huawei.com>, Suren Baghdasaryan <surenb@google.com>,
- Penglei Jiang <superman.xpt@gmail.com>, Mark Brown <broonie@kernel.org>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Andrei Vagin <avagin@gmail.com>,
- =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
- Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3] fs/proc/task_mmu: check p->vec_buf for NULL
-To: Jakub Acs <acsjakub@amazon.de>
-References: <20250922082206.6889-1-acsjakub@amazon.de>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20250922082206.6889-1-acsjakub@amazon.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250918195136.439012-1-lizhi.hou@amd.com>
 
-Added mm list to cc as well
+Hi Lizhi,
 
-On 9/22/25 1:22 PM, Jakub Acs wrote:
-> When PAGEMAP_SCAN ioctl invoked with vec_len = 0 reaches
-> pagemap_scan_backout_range(), kernel panics with null-ptr-deref:
-> 
-> [   44.936808] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
-> [   44.937797] KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-> [   44.938391] CPU: 1 UID: 0 PID: 2480 Comm: reproducer Not tainted 6.17.0-rc6 #22 PREEMPT(none)
-> [   44.939062] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> [   44.939935] RIP: 0010:pagemap_scan_thp_entry.isra.0+0x741/0xa80
-> 
-> <snip registers, unreliable trace>
-> 
-> [   44.946828] Call Trace:
-> [   44.947030]  <TASK>
-> [   44.949219]  pagemap_scan_pmd_entry+0xec/0xfa0
-> [   44.952593]  walk_pmd_range.isra.0+0x302/0x910
-> [   44.954069]  walk_pud_range.isra.0+0x419/0x790
-> [   44.954427]  walk_p4d_range+0x41e/0x620
-> [   44.954743]  walk_pgd_range+0x31e/0x630
-> [   44.955057]  __walk_page_range+0x160/0x670
-> [   44.956883]  walk_page_range_mm+0x408/0x980
-> [   44.958677]  walk_page_range+0x66/0x90
-> [   44.958984]  do_pagemap_scan+0x28d/0x9c0
-> [   44.961833]  do_pagemap_cmd+0x59/0x80
-> [   44.962484]  __x64_sys_ioctl+0x18d/0x210
-> [   44.962804]  do_syscall_64+0x5b/0x290
-> [   44.963111]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> vec_len = 0 in pagemap_scan_init_bounce_buffer() means no buffers are
-> allocated and p->vec_buf remains set to NULL.
-> 
-> This breaks an assumption made later in pagemap_scan_backout_range(),
-> that page_region is always allocated for p->vec_buf_index.
-> 
-> Fix it by explicitly checking p->vec_buf for NULL before dereferencing.
-> 
-> Other sites that might run into same deref-issue are already (directly
-> or transitively) protected by checking p->vec_buf.
-> 
-> Note:
-> From PAGEMAP_SCAN man page, it seems vec_len = 0 is valid when no output
-> is requested and it's only the side effects caller is interested in,
-> hence it passes check in pagemap_scan_get_args().
-> 
-> This issue was found by syzkaller.
-> 
-> Fixes: 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and optionally clear info about PTEs")
-> Signed-off-by: Jakub Acs <acsjakub@amazon.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Jinjiang Tu <tujinjiang@huawei.com>
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Penglei Jiang <superman.xpt@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Andrei Vagin <avagin@gmail.com>
-> Cc: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: stable@vger.kernel.org
-> ---
-> v1 -> v2: check p->vec_buf instead of cur_buf
-> v2 -> v3: fix commit title
-> 
-> v1: https://lore.kernel.org/all/20250919142106.43527-1-acsjakub@amazon.de/ 
-> v2: https://lore.kernel.org/all/20250922081713.77303-1-acsjakub@amazon.de/
-> 
->  fs/proc/task_mmu.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 29cca0e6d0ff..b26ae556b446 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -2417,6 +2417,9 @@ static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
->  {
->  	struct page_region *cur_buf = &p->vec_buf[p->vec_buf_index];
->  
-> +	if (!p->vec_buf)
-> +		return;
-> +
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on drm-misc/drm-misc-next]
+[also build test ERROR on drm-tip/drm-tip next-20250919]
+[cannot apply to linus/master v6.17-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Lizhi-Hou/accel-amdxdna-Enhance-runtime-power-management/20250919-035402
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20250918195136.439012-1-lizhi.hou%40amd.com
+patch subject: [PATCH V2] accel/amdxdna: Enhance runtime power management
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20250922/202509221605.9PJQqMb8-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250922/202509221605.9PJQqMb8-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509221605.9PJQqMb8-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/accel/amdxdna/amdxdna_ctx.c:171:3: error: cannot jump from this goto statement to its label
+     171 |                 goto free_hwctx;
+         |                 ^
+   drivers/accel/amdxdna/amdxdna_ctx.c:180:2: note: jump bypasses initialization of variable with __attribute__((cleanup))
+     180 |         guard(mutex)(&xdna->dev_lock);
+         |         ^
+   include/linux/cleanup.h:401:15: note: expanded from macro 'guard'
+     401 |         CLASS(_name, __UNIQUE_ID(guard))
+         |                      ^
+   include/linux/compiler.h:166:29: note: expanded from macro '__UNIQUE_ID'
+     166 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+         |                             ^
+   include/linux/compiler_types.h:84:22: note: expanded from macro '__PASTE'
+      84 | #define __PASTE(a,b) ___PASTE(a,b)
+         |                      ^
+   include/linux/compiler_types.h:83:23: note: expanded from macro '___PASTE'
+      83 | #define ___PASTE(a,b) a##b
+         |                       ^
+   <scratch space>:16:1: note: expanded from here
+      16 | __UNIQUE_ID_guard1255
+         | ^
+   1 error generated.
 
 
----
-Thanks,
-Usama
+vim +171 drivers/accel/amdxdna/amdxdna_ctx.c
+
+be462c97b7dfd2 Lizhi Hou 2024-11-18  152  
+be462c97b7dfd2 Lizhi Hou 2024-11-18  153  int amdxdna_drm_create_hwctx_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
+be462c97b7dfd2 Lizhi Hou 2024-11-18  154  {
+be462c97b7dfd2 Lizhi Hou 2024-11-18  155  	struct amdxdna_client *client = filp->driver_priv;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  156  	struct amdxdna_drm_create_hwctx *args = data;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  157  	struct amdxdna_dev *xdna = to_xdna_dev(dev);
+be462c97b7dfd2 Lizhi Hou 2024-11-18  158  	struct amdxdna_hwctx *hwctx;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  159  	int ret, idx;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  160  
+be462c97b7dfd2 Lizhi Hou 2024-11-18  161  	if (args->ext || args->ext_flags)
+be462c97b7dfd2 Lizhi Hou 2024-11-18  162  		return -EINVAL;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  163  
+be462c97b7dfd2 Lizhi Hou 2024-11-18  164  	hwctx = kzalloc(sizeof(*hwctx), GFP_KERNEL);
+17b2662aa6d69f Lizhi Hou 2025-09-18  165  	if (!hwctx)
+17b2662aa6d69f Lizhi Hou 2025-09-18  166  		return -ENOMEM;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  167  
+be462c97b7dfd2 Lizhi Hou 2024-11-18  168  	if (copy_from_user(&hwctx->qos, u64_to_user_ptr(args->qos_p), sizeof(hwctx->qos))) {
+be462c97b7dfd2 Lizhi Hou 2024-11-18  169  		XDNA_ERR(xdna, "Access QoS info failed");
+be462c97b7dfd2 Lizhi Hou 2024-11-18  170  		ret = -EFAULT;
+be462c97b7dfd2 Lizhi Hou 2024-11-18 @171  		goto free_hwctx;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  172  	}
+be462c97b7dfd2 Lizhi Hou 2024-11-18  173  
+be462c97b7dfd2 Lizhi Hou 2024-11-18  174  	hwctx->client = client;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  175  	hwctx->fw_ctx_id = -1;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  176  	hwctx->num_tiles = args->num_tiles;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  177  	hwctx->mem_size = args->mem_size;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  178  	hwctx->max_opc = args->max_opc;
+17b2662aa6d69f Lizhi Hou 2025-09-18  179  
+17b2662aa6d69f Lizhi Hou 2025-09-18  180  	guard(mutex)(&xdna->dev_lock);
+17b2662aa6d69f Lizhi Hou 2025-09-18  181  
+17b2662aa6d69f Lizhi Hou 2025-09-18  182  	if (!drm_dev_enter(dev, &idx)) {
+17b2662aa6d69f Lizhi Hou 2025-09-18  183  		ret = -ENODEV;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  184  		goto free_hwctx;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  185  	}
+be462c97b7dfd2 Lizhi Hou 2024-11-18  186  
+17b2662aa6d69f Lizhi Hou 2025-09-18  187  	ret = xdna->dev_info->ops->hwctx_init(hwctx);
+17b2662aa6d69f Lizhi Hou 2025-09-18  188  	if (ret) {
+17b2662aa6d69f Lizhi Hou 2025-09-18  189  		XDNA_ERR(xdna, "Init hwctx failed, ret %d", ret);
+17b2662aa6d69f Lizhi Hou 2025-09-18  190  		goto dev_exit;
+17b2662aa6d69f Lizhi Hou 2025-09-18  191  	}
+17b2662aa6d69f Lizhi Hou 2025-09-18  192  
+17b2662aa6d69f Lizhi Hou 2025-09-18  193  	hwctx->name = kasprintf(GFP_KERNEL, "hwctx.%d.%d", client->pid, hwctx->fw_ctx_id);
+be462c97b7dfd2 Lizhi Hou 2024-11-18  194  	if (!hwctx->name) {
+be462c97b7dfd2 Lizhi Hou 2024-11-18  195  		ret = -ENOMEM;
+17b2662aa6d69f Lizhi Hou 2025-09-18  196  		goto fini_hwctx;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  197  	}
+be462c97b7dfd2 Lizhi Hou 2024-11-18  198  
+17b2662aa6d69f Lizhi Hou 2025-09-18  199  	ret = xa_alloc_cyclic(&client->hwctx_xa, &hwctx->id, hwctx,
+17b2662aa6d69f Lizhi Hou 2025-09-18  200  			      XA_LIMIT(AMDXDNA_INVALID_CTX_HANDLE + 1, MAX_HWCTX_ID),
+17b2662aa6d69f Lizhi Hou 2025-09-18  201  			      &client->next_hwctxid, GFP_KERNEL);
+17b2662aa6d69f Lizhi Hou 2025-09-18  202  	if (ret < 0) {
+17b2662aa6d69f Lizhi Hou 2025-09-18  203  		XDNA_ERR(xdna, "Allocate hwctx ID failed, ret %d", ret);
+be462c97b7dfd2 Lizhi Hou 2024-11-18  204  		goto free_name;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  205  	}
+17b2662aa6d69f Lizhi Hou 2025-09-18  206  
+be462c97b7dfd2 Lizhi Hou 2024-11-18  207  	args->handle = hwctx->id;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  208  	args->syncobj_handle = hwctx->syncobj_hdl;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  209  
+4fd6ca90fc7f50 Lizhi Hou 2025-01-24  210  	atomic64_set(&hwctx->job_submit_cnt, 0);
+4fd6ca90fc7f50 Lizhi Hou 2025-01-24  211  	atomic64_set(&hwctx->job_free_cnt, 0);
+be462c97b7dfd2 Lizhi Hou 2024-11-18  212  	XDNA_DBG(xdna, "PID %d create HW context %d, ret %d", client->pid, args->handle, ret);
+be462c97b7dfd2 Lizhi Hou 2024-11-18  213  	drm_dev_exit(idx);
+be462c97b7dfd2 Lizhi Hou 2024-11-18  214  	return 0;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  215  
+be462c97b7dfd2 Lizhi Hou 2024-11-18  216  free_name:
+be462c97b7dfd2 Lizhi Hou 2024-11-18  217  	kfree(hwctx->name);
+17b2662aa6d69f Lizhi Hou 2025-09-18  218  fini_hwctx:
+17b2662aa6d69f Lizhi Hou 2025-09-18  219  	xdna->dev_info->ops->hwctx_fini(hwctx);
+17b2662aa6d69f Lizhi Hou 2025-09-18  220  dev_exit:
+17b2662aa6d69f Lizhi Hou 2025-09-18  221  	drm_dev_exit(idx);
+be462c97b7dfd2 Lizhi Hou 2024-11-18  222  free_hwctx:
+be462c97b7dfd2 Lizhi Hou 2024-11-18  223  	kfree(hwctx);
+be462c97b7dfd2 Lizhi Hou 2024-11-18  224  	return ret;
+be462c97b7dfd2 Lizhi Hou 2024-11-18  225  }
+be462c97b7dfd2 Lizhi Hou 2024-11-18  226  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
