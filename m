@@ -1,123 +1,206 @@
-Return-Path: <linux-kernel+bounces-827565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21491B92181
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:57:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD70B9218D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C7D31885E3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:57:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93F09172B47
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8537C30E852;
-	Mon, 22 Sep 2025 15:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8544F30C637;
+	Mon, 22 Sep 2025 15:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zanders.be header.i=@zanders.be header.b="v7TJKlbl"
-Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="NrV5dwJL"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C3C30C36B
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30D32DECB1;
+	Mon, 22 Sep 2025 15:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758556623; cv=none; b=s6Bp6w2oqAuPFTuA1snm+47jyjrPPym/s87I9td+nJbeDOv2s7bOai40QBAUQRdVosNdjpNOfo9NdKgiIpajtqv/a1XvWnKdAiLgOwU30GVa3nB5IyNjnzdBYI1QVdw5R4aebgxq/oumDqxUs9Mh9OHnkqgc0ljYtBsVTwYu7Ww=
+	t=1758556682; cv=none; b=h6NLPsrnPnr5UtFs9LBfH+S8c4ZziW4TdAOyw6F8+7/jpJgIRE29yOT5QOyf7eT9HFbtY6nPRK7ODiMoRWuzNpo7sSI5fc37cqhzrvuJQMGcVsEb76zMQ9J/FUByTIJA89yHjN4Od6CnGUEq8U0LGElScblbSJ2FUN9nyjKLeik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758556623; c=relaxed/simple;
-	bh=4E5/XL5Z3RUEl6uyZPvcgrzp7ZYaogZvwTMTchvU0vg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ibOqKgdvo5KP47z/Ntxb4uLc1Rj2onxFQmEWvNEYU9rs7/Orcjwc/jiuqRkhVPLaz/ugP3oU3JcfOgy7WDtnYQU2wvkAOVpgE2KFoGlVOwDYSuDjIJuVOhfskKVIoa+HkJ4L0kSSfhgzqZ3t0E4cXMaIXkKPcQCR94aeH6bDUqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zanders.be; spf=pass smtp.mailfrom=zanders.be; dkim=pass (2048-bit key) header.d=zanders.be header.i=@zanders.be header.b=v7TJKlbl; arc=none smtp.client-ip=94.124.121.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zanders.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zanders.be
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=zanders.be; s=202002;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=dnxsXnzMfxrD8+re7WIJCjdAfu5yHxyZgjdVmRrDzZc=;
-	b=v7TJKlbltdvu2szaL1HTBkerW5GYUq4QQwOomP5I1nogRrIKfYa/umsJwY0V4w49rdCSkHTGjoGeA
-	 0GLVvBjOys/0ffRiPdUfC40rh3urzecKaTrmsgvyyBOislJx8vYOo7v8jmV1x8VDnrF36FeGT1PJqG
-	 K0BdA79jXZXjr60j+3Yb1s8m4lj5/r2zVKKT8nsTPwZZka8qjAp6AitkYpivzsxlm2aOfa5Lf1gKwx
-	 6cmi0rVdbKy5c8KTKE9GcLlo25e0IrotXOkwqDb1SP7QxZEKzLG8675N2F9+QDp6G++MK27CBRkFNJ
-	 Ci1JJOTxTu1dMXsPjjxMcuCZy7cpsCQ==
-X-MSG-ID: c27314e0-97cc-11f0-9d69-00505681446f
-From: Maarten Zanders <maarten@zanders.be>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Boris Brezillon <bbrezillon@kernel.org>
-Cc: Maarten Zanders <maarten@zanders.be>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mtd: spi-nor: macronix: use RDCR opcode 0x15
-Date: Mon, 22 Sep 2025 17:56:33 +0200
-Message-ID: <20250922155635.749975-3-maarten@zanders.be>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250922155635.749975-1-maarten@zanders.be>
-References: <20250922155635.749975-1-maarten@zanders.be>
+	s=arc-20240116; t=1758556682; c=relaxed/simple;
+	bh=n9xgFK5rkFNKevOXz1p0NEJsRgwDnk5JXwaz7pCx8I8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nw+wjjdJGZ0AWfgzfEzp9SuLk8NC8LtxOJHmyhC64Ao66mOvDWc4UEH+zm9jQmin8geb4F+Ef37a92OZTrqcvVEoal+M+RxxUmWJ+3yMafSpEasrlanKx9oC9LeXCFbfiJiPvH5C/rBajOhMahQ4w9m1IQ7Ts44d90+RTmOTGIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=NrV5dwJL; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.116] (p5de45015.dip0.t-ipconnect.de [93.228.80.21])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id A49182FC0050;
+	Mon, 22 Sep 2025 17:57:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1758556670;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n4TadjzD9MQHct2ugabvX290PEUi8xkIhn3g/gIB7Lc=;
+	b=NrV5dwJLat3CaDwyCUzwpkDbTRjkN7uLrJfTua008GLLis6YuljmvGl4fFXciCNZusHBmN
+	/agsB55MYJiVR5iM/qiOeEpwZhxuDnqtp37sw1SCiikPsXuzoPF3G+a4T9iEWb137d2o9u
+	NoIyIPjD2ujqGAhH4OMdcK1EVK+tTs8=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <bdf1490f-b4cf-4ed3-b21f-584ce310a213@tuxedocomputers.com>
+Date: Mon, 22 Sep 2025 17:57:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] platform/x86: Add Uniwill laptop driver
+To: Armin Wolf <W_Armin@gmx.de>, ilpo.jarvinen@linux.intel.com,
+ hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de,
+ ggo@tuxedocomputers.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, rdunlap@infradead.org,
+ alok.a.tiwari@oracle.com, linux-leds@vger.kernel.org, lee@kernel.org,
+ pobrn@protonmail.com
+References: <20250831192708.9654-1-W_Armin@gmx.de>
+ <20250831192708.9654-2-W_Armin@gmx.de>
+ <003d760c-0314-4ea2-b2b5-860021e0daf8@tuxedocomputers.com>
+ <8d6f8cf4-3c60-4b5b-87d1-e4fe4bce06e7@gmx.de>
+ <7e640ad2-4502-4741-95bc-10045499066e@tuxedocomputers.com>
+ <c2f0b7ec-f409-41d5-9407-f5a2b43311f4@gmx.de>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <c2f0b7ec-f409-41d5-9407-f5a2b43311f4@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Macronix devices use opcode 0x15 to read the configuration register (CR)
-instead of the default 0x35. On parts such as the MX25L12833F, reading
-the CR with 0x35 returns garbage values, which are then written back
-when updating the status register (SR). This may unintentionally program
-OTP bits (e.g. top/bottom block protection) and change other default
-values.
 
-Other Macronix parts avoid this issue because their SFDP data specifies
-that CR is not read (BFPT_DWORD15_QER_SR2_BIT1_NO_RD), and the driver
-assumes CR defaults to all zeroes which matches the hardware register.
-
-Set the RDCR opcode to 0x15 for Macronix flashes to avoid corrupt CR
-writes in cases where it is used.
-
-Note that for affected parts, the block protection mechanism might
-remain broken through the OTP bit: locking an upper block (which is the
-only one supported by the driver) is now locking the lower block in HW.
-
-Fixes: 10526d85e4c6 ("mtd: spi-nor: Move Macronix bits out of core.c")
-Signed-off-by: Maarten Zanders <maarten@zanders.be>
----
- drivers/mtd/spi-nor/macronix.c | 1 +
- include/linux/mtd/spi-nor.h    | 3 +++
- 2 files changed, 4 insertions(+)
-
-diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
-index e97f5cbd9aad..de3f3d963f86 100644
---- a/drivers/mtd/spi-nor/macronix.c
-+++ b/drivers/mtd/spi-nor/macronix.c
-@@ -322,6 +322,7 @@ static int macronix_nor_late_init(struct spi_nor *nor)
- 	if (!nor->params->set_4byte_addr_mode)
- 		nor->params->set_4byte_addr_mode = spi_nor_set_4byte_addr_mode_en4b_ex4b;
- 	nor->params->set_octal_dtr = macronix_nor_set_octal_dtr;
-+	nor->params->rdcr_opcode = SPINOR_OP_RDCR_MX;
- 
- 	return 0;
- }
-diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-index cdcfe0fd2e7d..e35405b126c2 100644
---- a/include/linux/mtd/spi-nor.h
-+++ b/include/linux/mtd/spi-nor.h
-@@ -92,6 +92,9 @@
- #define SPINOR_OP_RD_EVCR      0x65    /* Read EVCR register */
- #define SPINOR_OP_WD_EVCR      0x61    /* Write EVCR register */
- 
-+/* Used for Macronix flashes only. */
-+#define SPINOR_OP_RDCR_MX	0x15	/* Read configuration register */
-+
- /* Used for GigaDevices and Winbond flashes. */
- #define SPINOR_OP_ESECR		0x44	/* Erase Security registers */
- #define SPINOR_OP_PSECR		0x42	/* Program Security registers */
--- 
-2.51.0
-
+Am 18.09.25 um 23:20 schrieb Armin Wolf:
+> Am 09.09.25 um 10:49 schrieb Werner Sembach:
+>
+>>
+>> Am 05.09.25 um 20:46 schrieb Armin Wolf:
+>>> Am 03.09.25 um 19:08 schrieb Werner Sembach:
+>>>
+>>>> Hi,
+>>>>
+>>>> started to look into the driver regarding TUXEDO NB02 devices support, 
+>>>> starting with the FN-Keys:
+>>>>
+>>>> Am 31.08.25 um 21:27 schrieb Armin Wolf:
+>>>>> +static const struct key_entry uniwill_keymap[] = {
+>>>>> +    /* Reported via keyboard controller */
+>>>>> +    { KE_IGNORE,    UNIWILL_OSD_CAPSLOCK, { KEY_CAPSLOCK }},
+>>>>> +    { KE_IGNORE,    UNIWILL_OSD_NUMLOCK, { KEY_NUMLOCK }},
+>>>>> +
+>>>>> +    /* Reported when the user locks/unlocks the super key */
+>>>>> +    { KE_IGNORE,    UNIWILL_OSD_SUPER_KEY_LOCK_ENABLE, { KEY_UNKNOWN }},
+>>>>> +    { KE_IGNORE,    UNIWILL_OSD_SUPER_KEY_LOCK_DISABLE, { KEY_UNKNOWN }},
+>>>>
+>>>> Can you also add
+>>>>
+>>>> { KE_IGNORE,    UNIWILL_OSD_SUPER_KEY_LOCK_CHANGED,     { KEY_UNKNOWN }},
+>>>>
+>>>> ?
+>>>>
+>>>> UNIWILL_OSD_SUPER_KEY_LOCK_ENABLE and UNIWILL_OSD_SUPER_KEY_LOCK_DISABLE 
+>>>> are always sent in pair with UNIWILL_OSD_SUPER_KEY_LOCK_CHANGED (at least 
+>>>> on my test device) and without this line an unknown key event is generated 
+>>>> (as that is not explicitly marked as KE_IGNORE without the line).
+>>>
+>>> OK.
+>> I found more similar cases that probably don't happen on your devices, but i 
+>> will just create a patch once this got merged. I think that will be easier.
+>
+> Alright, but i will still include UNIWILL_OSD_SUPER_KEY_LOCK_CHANGED inside 
+> the next revision.
+ack
+>
+> Thanks,
+> Armin Wolf
+>
+>>>
+>>>>
+>>>>> +
+>>>>> +    /* Reported in manual mode when toggling the airplane mode status */
+>>>>> +    { KE_KEY,       UNIWILL_OSD_RFKILL, { KEY_RFKILL }},
+>>>>> +
+>>>>> +    /* Reported when user wants to cycle the platform profile */
+>>>>> +    { KE_IGNORE,    UNIWILL_OSD_PERFORMANCE_MODE_TOGGLE, { KEY_UNKNOWN }},
+>>>> This is a physical button on the gaming devices from Uniwill, my suggestion 
+>>>> would be to bind it to F14 (because another ODM has a very similar key that 
+>>>> already sends F14 by default) and then let userspace handle it (KDE for 
+>>>> example has energy profiles that could be bound to it).
+>>>>> +
+>>>>> +    /* Reported when the user wants to adjust the brightness of the 
+>>>>> keyboard */
+>>>>> +    { KE_KEY,       UNIWILL_OSD_KBDILLUMDOWN, { KEY_KBDILLUMDOWN }},
+>>>>> +    { KE_KEY,       UNIWILL_OSD_KBDILLUMUP, { KEY_KBDILLUMUP }},
+>>>>> +
+>>>>> +    /* Reported when the user wants to toggle the microphone mute status */
+>>>>> +    { KE_KEY,       UNIWILL_OSD_MIC_MUTE, { KEY_MICMUTE }},
+>>>>> +
+>>>>> +    /* Reported when the user locks/unlocks the Fn key */
+>>>>> +    { KE_IGNORE,    UNIWILL_OSD_FN_LOCK, { KEY_FN_ESC }},
+>>>>> +
+>>>>> +    /* Reported when the user wants to toggle the brightness of the 
+>>>>> keyboard */
+>>>>> +    { KE_KEY,       UNIWILL_OSD_KBDILLUMTOGGLE, { KEY_KBDILLUMTOGGLE }},
+>>>>> +
+>>>>> +    /* FIXME: find out the exact meaning of those events */
+>>>>> +    { KE_IGNORE,    UNIWILL_OSD_BAT_CHARGE_FULL_24_H, { KEY_UNKNOWN }},
+>>>>> +    { KE_IGNORE,    UNIWILL_OSD_BAT_ERM_UPDATE, { KEY_UNKNOWN }},
+>>>>> +
+>>>>> +    /* Reported when the user wants to toggle the benchmark mode status */
+>>>>> +    { KE_IGNORE,    UNIWILL_OSD_BENCHMARK_MODE_TOGGLE, { KEY_UNKNOWN }},
+>>>>> +
+>>>>> +    { KE_END }
+>>>>> +};
+>>>>
+>>>> Any reason for still having KEY_* defines even on the ignored events? 
+>>>> Looking at other drivers KE_IGNORE events usually don't have it.
+>>>>
+>>>> Best regards,
+>>>>
+>>>> Werner
+>>>
+>>> I decided to ignore UNIWILL_OSD_FN_LOCK because i do not know if the Fn + 
+>>> Esc key presses are filtered by the EC or also received by the OS.
+>>
+>> Sorry for the misunderstanding.
+>>
+>> What i meant was: Why is it for example
+>>
+>> { KE_IGNORE,    UNIWILL_OSD_FN_LOCK,                    { KEY_FN_ESC }},
+>>
+>> and
+>>
+>> { KE_IGNORE,    UNIWILL_OSD_BENCHMARK_MODE_TOGGLE,      { KEY_UNKNOWN }},
+>>
+>> instead of just
+>>
+>> { KE_IGNORE,    UNIWILL_OSD_FN_LOCK},
+>>
+>> and
+>>
+>> { KE_IGNORE,    UNIWILL_OSD_BENCHMARK_MODE_TOGGLE},
+>>
+>> ?
+>>
+> The FN lock definition does map to a standard keycode, so i wanted to use 
+> KEY_FN_ESC
+> if this key definition is used in the future. The other usages of KEY_UNKNOWN 
+> exist
+> because i wanted to ensure that all field of the key definitions are properly 
+> initialized.
+>
+> Thanks,
+> Armin Wolf
+>
+>>>
+>>> Thanks,
+>>> Armin Wolf
+>>>
+>>
 
