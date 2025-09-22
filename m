@@ -1,185 +1,93 @@
-Return-Path: <linux-kernel+bounces-826749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62120B8F3FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:14:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C325B8F401
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86F0A189FB86
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:14:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE111889C6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C912F28FA;
-	Mon, 22 Sep 2025 07:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iofdB136"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F4C2ED17A;
+	Mon, 22 Sep 2025 07:15:07 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482BA2F0C6F
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4A921C163
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758525241; cv=none; b=fLZ8xlRnS7JolKdUzro5KHqWwe2/pKPBypwsR3dHwPI8P6Ap0zYF+f+bqsda+ARH/BBTPI41fxMHYBjIyGp/VLKoU3coyz/gehO/jOGOcXPjckVElPMRqjpYsSR0SLEyT/PpHijrIEgPtve0/4Twu1R7Jcq0FskSjp8Bk6LEOAk=
+	t=1758525307; cv=none; b=O7/S3jEGiKQvne9sCQpvNMTdIKHZ7NbBr9579di67R4nJ1fDCrREKT46LtnHQTE8iWP0yiPQ9l8bJYtNHR7+BEXWk2JXtNzPkFfctZbK2fPXRCZ6dg/Xde7ESAvo63fwfvHbZ05Ue2PC2SauS6jtRTxR43IJBvPevRESsjWZHxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758525241; c=relaxed/simple;
-	bh=lByWE2yrIj/KaVHMm9tlp9i8EGd1lYaBrckS5Va/18Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EU7bEA70YB1ixebXt3MIwG/RWT5qknJLmErKuvAnzGyqPAX78nkJo5xMhLOkQeajIC06Kpqblm8A0UafY+g0+wsJpawN47v/ybpkurLp+liADV6etQmaouTH2r5YFMtWevlDw+DaonZMW4KHVX46DtQKllcX7hbjBKqY0NLsoWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iofdB136; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758525227;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yfgv0EIskhtqw6KMs4nscyueRQky2Ah7ZOep6T6Ztks=;
-	b=iofdB136N8yv4X+ZdUrNPwgOoOi9D47RVCpInrgdrUsiacyuLnrpQKBTgg8X43iHJfT/C/
-	gwK6CPIHAF2mMJTfrv6E6h10V2KJuMs7bQzSK9sNK+Lp7eODqie4HswYZ+GZIm//i5cg86
-	pMMVuEi36UJks3piec8prJg44Y9aSZM=
-From: menglong.dong@linux.dev
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Jiri Olsa <jolsa@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Mike Rapoport <rppt@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH] x86/ibt: make is_endbr() notrace
-Date: Mon, 22 Sep 2025 15:13:38 +0800
-Message-ID: <6196970.lOV4Wx5bFT@7940hx>
-In-Reply-To: <20250922065248.GO3245006@noisy.programming.kicks-ass.net>
-References:
- <20250918120939.1706585-1-dongml2@chinatelecom.cn>
- <CADxym3Z6Ed5xjDMvh4ChRvrw_aLidkGrkgbK+076Exfmp=m3SA@mail.gmail.com>
- <20250922065248.GO3245006@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1758525307; c=relaxed/simple;
+	bh=y6PAtcZhvndTv1R6x5d7YE6Yed9I8C4KiguHQRYoShk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D8AKUoP2G9nxSrRjNUTYIQcZSooIAOaNmQaeV3cp6B374psZ/5fM9it/LHCl3YqbBmJII3Qt8e73OJkzfGGTKVfwInMqvjSt+eaKNdOoTT6eK7GVWbYolD0TzG5nnLBCDy+13xAvK2vNDLcQ2oDtLI4LAXlARP0ojCdMzg3liCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1v0alE-0000j7-AD; Mon, 22 Sep 2025 09:14:56 +0200
+Message-ID: <9cafbc70-7235-4e49-928c-4d68a57b7d46@pengutronix.de>
+Date: Mon, 22 Sep 2025 09:14:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] scripts/make_fit: Support an initial ramdisk
+To: Simon Glass <sjg@chromium.org>, linux-arm-kernel@lists.infradead.org
+Cc: Chen-Yu Tsai <wenst@chromium.org>, =?UTF-8?B?SiAuIE5ldXNjaMOkZmVy?=
+ <j.ne@posteo.net>, Masahiro Yamada <masahiroy@kernel.org>,
+ Tom Rini <trini@konsulko.com>, linux-kernel@vger.kernel.org,
+ Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20250919211000.1045267-1-sjg@chromium.org>
+Content-Language: en-US
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <20250919211000.1045267-1-sjg@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 2025/9/22 14:52 Peter Zijlstra <peterz@infradead.org> write:
-> On Fri, Sep 19, 2025 at 09:13:15AM +0800, Menglong Dong wrote:
-> 
-> > Ok, let me describe the problem in deetail.
-> > 
-> > First of all, it has nothing to do with kprobe. The bpf program of type
-> > kprobe-multi based on fprobe, and fprobe base on fgraph. So it's all
-> > about the ftrace, which means __fentry__.
-> 
-> Well, that's not confusing at all. Something called kprobe-multi not
-> being related to kprobes :-(
-> 
-> > Second, let me explain the recur detection of the kprobe-multi. Let's
-> > take the is_endbr() for example. When it is hooked by the bpf program
-> > of type kretprobe-multi, following calling chain will happen:
-> > 
-> >   is_endbr -> __ftrace_return_to_handler -> fprobe_return ->
-> >   kprobe_multi_link_exit_handler -> ftrace_get_entry_ip ->
-> >   arch_ftrace_get_symaddr -> is_endbr
-> > 
-> > Look, is_endbr() is called again during the ftrace handler, so it will
-> > trigger the ftrace handler(__ftrace_return_to_handler) again, which
-> > causes recurrence.
-> 
-> Right.
-> 
-> > Such recurrence can be detected. In kprobe_multi_link_prog_run(),
-> > the percpu various "bpf_prog_active" will be increased by 1 before we
-> > run the bpf progs, and decrease by 1 after the bpf progs finish. If the
-> > kprobe_multi_link_prog_run() is triggered again during bpf progs run,
-> > it will check if bpf_prog_active is zero, and return directly if it is not.
-> > Therefore, recurrence can't happen within the "bpf_prog_active" protection.
-> 
-> As I think Masami already said, the problem is the layer. You're trying
-> to fix an ftrace problem at the bpf layer.
+Hello Simon,
 
-Yeah, I see. And Masami has already posted a series for this
-problem in:
+On 19.09.25 23:09, Simon Glass wrote:
+> FIT (Flat Image Tree) allows an ramdisk to be included in each
+> configuration. Add support for this to the script.
+> 
+> This feature is not available via 'make image.fit' since the ramdisk
+> likely needs to be built separately anyway, e.g. using modules from
+> the kernel build.
 
-https://lore.kernel.org/bpf/175852291163.307379.14414635977719513326.stgit@devnote2/
+AFAIK the kernel supports multiple concatenated separately compressed
+initramfs just fine, so it may still be useful to add a target which
+builds a cpio with all modules inside and the rest can be then
+concatenated.
 
-> 
-> > However, the calling to is_endbr() is not within that scope, which makes
-> > the recurrence happen.
-> 
-> Sorta, I'm still sketchy on the whole kprobe-multi thing.
-> 
-> Anyway, I don't mind making is_endbr() invisible to tracing, that might
-> just have security benefits too. But I think first the ftrace folks need
-> to figure out how to best kill that recursion, because I don't think
-> is_endbr is particularly special here.
+What do you think?
 
-So, does this patch seem useful after all?
+> +        fsw.property_string('compression', args.compress)
 
-OK, I'll send a V2 base on your following suggestion.
+compression should be none as the kernel would take of decompression.
 
-Thanks!
-Menglong Dong
+Both U-Boot and barebox should warn about ramdisk compression property
+that is != "none".
 
-> 
-> It is just one more function that can emit a __fentry__ site.
-> 
-> Anyway, something like the below would do:
-> 
-> Note that without making __is_endbr() __always_inline, you run the risk
-> of the compiler being retarded (they often are in the face of
-> KASAN/UBSAN like) and deciding to out-of-line that function, resulting
-> in yet another __fentry__ site.
-> 
-> An added advantage of noinstr is that it is validated by objtool to
-> never call to !noinstr code. As such, you can be sure there is no
-> instrumentation in it.
-> 
-> (the below hasn't been near a compiler)
-> 
-> ---
->  arch/x86/include/asm/ibt.h    | 2 +-
->  arch/x86/kernel/alternative.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/ibt.h b/arch/x86/include/asm/ibt.h
-> index 5e45d6424722..54937a527042 100644
-> --- a/arch/x86/include/asm/ibt.h
-> +++ b/arch/x86/include/asm/ibt.h
-> @@ -65,7 +65,7 @@ static __always_inline __attribute_const__ u32 gen_endbr_poison(void)
->  	return 0xd6401f0f; /* nopl -42(%rax) */
->  }
->  
-> -static inline bool __is_endbr(u32 val)
-> +static __always_inline bool __is_endbr(u32 val)
->  {
->  	if (val == gen_endbr_poison())
->  		return true;
-> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> index 69fb818df2ee..f791e7abd466 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -1108,7 +1108,7 @@ void __init_or_module noinline apply_returns(s32 *start, s32 *end) { }
->  
->  #ifdef CONFIG_X86_KERNEL_IBT
->  
-> -__noendbr bool is_endbr(u32 *val)
-> +__noendbr noinstr bool is_endbr(u32 *val)
->  {
->  	u32 endbr;
->  
-> 
-> 
+Cheers,
+Ahmad
 
-
-
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
