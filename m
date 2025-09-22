@@ -1,64 +1,45 @@
-Return-Path: <linux-kernel+bounces-826577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D73B8ED77
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 05:04:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C23E3B8ED7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 05:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DD65165982
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 03:04:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B45016F860
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 03:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D968F221282;
-	Mon, 22 Sep 2025 03:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30192D876A;
+	Mon, 22 Sep 2025 03:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SP4QOC/0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="YiHQIeiB"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609CA208AD;
-	Mon, 22 Sep 2025 03:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E9BEEC0
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 03:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758510238; cv=none; b=VUBsKvSwOvARToQHG1lW8UzKdM4MnYfYTNdgWiHCOcKHecMrcHNvEiYun/PJoUCRP9HG9LNDYjcnCLbXaEWycF34LAP25iLIP5PLowfxUjmTWdW+U0D6kJMlb8KmxAWU85ccJn/VMUwXLiTyWZzgadsyDtiK3v4x28gzhfr1WIA=
+	t=1758510601; cv=none; b=hHb4BwKdPSJKF03qJSgvKj1D1hXR7xMy79JA0rwjCyvtLJJpMzrKQh1qkVyfL0sWoCeEeHkdR9rlDZreUF0pfo1wxrM/maQQjHUyXJtOOvbd9LDTZbfylKGw9Mk4GofBe0Bv6p7rITQyKqx5wF0kOnBxnMU9KC7BrH2jypQgVkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758510238; c=relaxed/simple;
-	bh=LwNhzqr4Stp6PSBaTroNcoKpU5NCq+WcaAQUF15YWmQ=;
+	s=arc-20240116; t=1758510601; c=relaxed/simple;
+	bh=hpiIyoXsxjMWun8dmnY33g0FhoPmrmqM7B4poJiDfbA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PivUXUVUBrGkbOzbNkAJwqw8WbZVF9CcY3cNFNBAomnWP2DvIa7LpTh70mCQM0oA249lmZnFYrkhcz3oca2y4HWs0bWlK8pQPfRrI90T2Ug60O5OSxjcyhtiDgPb9gv+duHJi7szsARLzz6lqe42wlSGnn4sWzIIecEUdluba9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SP4QOC/0; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758510236; x=1790046236;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=LwNhzqr4Stp6PSBaTroNcoKpU5NCq+WcaAQUF15YWmQ=;
-  b=SP4QOC/0ecphgaZHSDpQNqaV3Dj36q66eBlPpXalapZPqZ4AiYD9hLoT
-   aSd/5WK9i4w0zTFz3C6q784a6Yxe3Mjep+Mr8icc5xbhfO+SGLiW241yZ
-   7C7gZ/gp9imcynTjyZJeSBzNfynbpM0EbdndQdEVXPB4WwJdSWdzRI9ex
-   WDuf9nI1K47mhn9zIm3CsdMhqOaEpZGMqiidwzCTlJ7BMiOkSs8cE+FWD
-   iuX51kC9g7zbOWFmPvUxqQ3YLMOrehOGq3YX5UDiV8aNf2zUJ0j4Gi8Cc
-   +d+ssukW6blDZZO92s0lY8tOvtFwzC7z45EZmYCfza9W8VuJfeByRklg3
-   g==;
-X-CSE-ConnectionGUID: sJT41RujTWOvauc1avKAvQ==
-X-CSE-MsgGUID: 3XgG0FRMSNOyQHis4oBBGQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="71871265"
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="71871265"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 20:03:56 -0700
-X-CSE-ConnectionGUID: ytUH6DQvQw2K9WZdu37QQg==
-X-CSE-MsgGUID: d6tt6VjuSNWBj4oilN6rMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="175639312"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 20:03:52 -0700
-Message-ID: <39b5a556-72b8-4499-bb85-64e17bb94db7@linux.intel.com>
-Date: Mon, 22 Sep 2025 11:03:50 +0800
+	 In-Reply-To:Content-Type; b=p6nUeNK1uO33pJjcksr4iVcP7cbdpm4AyxklmPiGqKdHeS2TZXjsQ75j9aI5MVx2hqRxHOCOahJ1wock89RV3H3m/pUFellIm8w9HnBYI9uQoIXM9e+hWrLTocLb4p5QSPU7ozaUQAw2wbA3yJrO0/UougEIes8pfdp0m6/i1Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=YiHQIeiB; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1758510595; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=aZ2gdkX08ci0+g9mdPNAJE+ZbpX5mtgiwL2vmxSQH40=;
+	b=YiHQIeiBseD2zrIf0TlSS7zlZp7tJzLM5XnlE1Ps+KDpj1r1oBf8yqZiQOuRc8gPvA3p7vRjlZdF4Z1tVtISJKycZ/EtJkksyzdUkTzgeE9UxcuMbLwMRgZebsBcGUG7sq1na+ZnL7F9tfq0mCpjXHgF7zezLq2YmgtmgFCYpOE=
+Received: from 30.74.144.144(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WoR-W6p_1758510594 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 22 Sep 2025 11:09:54 +0800
+Message-ID: <58895de6-58e5-4cb5-b2b3-4a66283908a8@linux.alibaba.com>
+Date: Mon, 22 Sep 2025 11:09:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,55 +47,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 17/51] KVM: VMX: Set host constant supervisor states
- to VMCS fields
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Xiaoyao Li <xiaoyao.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-References: <20250919223258.1604852-1-seanjc@google.com>
- <20250919223258.1604852-18-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250919223258.1604852-18-seanjc@google.com>
+Subject: Re: [PATCH] mm: shmem: fix too little space for tmpfs only fallback
+ 4KB
+To: Vernon Yang <vernon2gm@gmail.com>
+Cc: hughd@google.com, akpm@linux-foundation.org, da.gomez@samsung.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Vernon Yang <yanglincheng@kylinos.cn>
+References: <20250908123128.900254-1-vernon2gm@gmail.com>
+ <c245dbb5-2e2b-4308-a296-f711b74002eb@linux.alibaba.com>
+ <3349E5A6-BCDC-47B9-956B-CB0D0BC02D84@gmail.com>
+ <fd0664f4-2ee7-420c-a63c-b4b1c923e1c2@linux.alibaba.com>
+ <kh5nq3ycj5neufhmiqetl5vtosictiflk73xyb2fdl2p4txmu3@4ndr7cw4b2j6>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <kh5nq3ycj5neufhmiqetl5vtosictiflk73xyb2fdl2p4txmu3@4ndr7cw4b2j6>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
-On 9/20/2025 6:32 AM, Sean Christopherson wrote:
-> From: Yang Weijiang <weijiang.yang@intel.com>
->
-> Save constant values to HOST_{S_CET,SSP,INTR_SSP_TABLE} field explicitly.
-> Kernel IBT is supported and the setting in MSR_IA32_S_CET is static after
-> post-boot(The exception is BIOS call case but vCPU thread never across it)
-> and KVM doesn't need to refresh HOST_S_CET field before every VM-Enter/
-> VM-Exit sequence.
->
-> Host supervisor shadow stack is not enabled now and SSP is not accessible
-> to kernel mode, thus it's safe to set host IA32_INT_SSP_TAB/SSP VMCS field
-> to 0s. When shadow stack is enabled for CPL3, SSP is reloaded from PL3_SSP
-> before it exits to userspace. Check SDM Vol 2A/B Chapter 3/4 for SYSCALL/
-> SYSRET/SYSENTER SYSEXIT/RDSSP/CALL etc.
->
-> Prevent KVM module loading if host supervisor shadow stack SHSTK_EN is set
-> in MSR_IA32_S_CET as KVM cannot co-exit with it correctly.
->
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Suggested-by: Chao Gao <chao.gao@intel.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-> Reviewed-by: Chao Gao <chao.gao@intel.com>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> [sean: snapshot host S_CET if SHSTK *or* IBT is supported]
-> Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+On 2025/9/22 10:51, Vernon Yang wrote:
+> On Mon, Sep 22, 2025 at 09:46:53AM +0800, Baolin Wang wrote:
+>>
+>>
+>> On 2025/9/9 20:29, Vernon Yang wrote:
+>>>
+>>>
+>>>> On Sep 9, 2025, at 13:58, Baolin Wang <baolin.wang@linux.alibaba.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 2025/9/8 20:31, Vernon Yang wrote:
+>>>>> From: Vernon Yang <yanglincheng@kylinos.cn>
+>>>>> When the system memory is sufficient, allocating memory is always
+>>>>> successful, but when tmpfs size is low (e.g. 1MB), it falls back
+>>>>> directly from 2MB to 4KB, and other small granularity (8KB ~ 1024KB)
+>>>>> will not be tried.
+>>>>> Therefore add check whether the remaining space of tmpfs is sufficient
+>>>>> for allocation. If there is too little space left, try smaller large
+>>>>> folio.
+>>>>
+>>>> I don't think so.
+>>>>
+>>>> For a tmpfs mount with 'huge=within_size' and 'size=1M', if you try to write 1M data, it will allocate an order 8 large folio and will not fallback to order 0.
+>>>>
+>>>> For a tmpfs mount with 'huge=always' and 'size=1M', if you try to write 1M data, it will not completely fallback to order 0 either, instead, it will still allocate some order 1 to order 7 large folios.
+>>>>
+>>>> I'm not sure if this is your actual user scenario. If your files are small and you are concerned about not getting large folio allocations, I recommend using the 'huge=within_size' mount option.
+>>>>
+>>>
+>>> No, this is not my user scenario.
+>>>
+>>> Based on your previous patch [1], this scenario can be easily reproduced as
+>>> follows.
+>>>
+>>> $ mount -t tmpfs -o size=1024K,huge=always tmpfs /xxx/test
+>>> $ echo hello > /xxx/test/README
+>>> $ df -h
+>>> tmpfs            1.0M  4.0K 1020K   1% /xxx/test
+>>>
+>>> The code logic is as follows:
+>>>
+>>> shmem_get_folio_gfp()
+>>>       orders = shmem_allowable_huge_orders()
+>>>       shmem_alloc_and_add_folio(orders) return -ENOSPC;
+>>>           shmem_alloc_folio() alloc 2MB
+>>>           shmem_inode_acct_blocks()
+>>>               percpu_counter_limited_add() goto unacct;
+>>>           filemap_remove_folio()
+>>>       shmem_alloc_and_add_folio(order = 0)
+>>>
+>>>
+>>> As long as the tmpfs remaining space is too little and the system can allocate
+>>> memory 2MB, the above path will be triggered.
+>>
+>> In your scenario, wouldn't allocating 4K be more reasonable? Using a 1M
+>> large folio would waste memory. Moreover, if you want to use a large folio,
+>> I think you could increase the 'size' mount option. To me, this doesn't seem
+>> like a real-world usage scenario, instead it looks more like a contrived
+>> test case for a specific situation.
+> 
+> The previous example is just an easy demo to reproduce, and if someone
+> uses this example in the real world, of course the best method is to
+> increase the 'size'.
+> 
+> But the scenario I want to express here is that when the tmpfs space is
+> *consumed* to less than 2MB, only 4KB will be allocated, you can imagine
+> that when a tmpfs is constantly consumed, but someone is reclaiming or
+> freeing memory, causing often tmpfs space to remain in the range of
+> [0~2MB), then tmpfs will always only allocate 4KB.
 
+Please increase your 'size' mount option for testing. I don't see why we 
+need to add more such logic without a solid reason.
+
+Andrew, please drop this patch.
 
