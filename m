@@ -1,164 +1,119 @@
-Return-Path: <linux-kernel+bounces-827885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63033B935A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:13:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB682B935C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BCBC188F247
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:13:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B354217626D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D782857D8;
-	Mon, 22 Sep 2025 21:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B74A27AC44;
+	Mon, 22 Sep 2025 21:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jXXs/9P2"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xBKF3G3r"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD763261B78
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B93623C516
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758575591; cv=none; b=eO6sGpLJTBT+JkX30k4j5eEdxDGpvSwQVGIpB+BkcWOkrdYfLhlbBj3fIiqw4r/UwzbMD7KNpJ0UuXWc/+YlSC1wiCmMC6y7vthSQZcbYihxXWUEs33hGt5m8nRW/HdajUEirT6E+mP4/Td+BXJOgw7yXXm2ySTvmCOWOGtcyMk=
+	t=1758575851; cv=none; b=gJYsEYIbtG42YmLKhjWlDTFaq1bMpqQP5/UMdqEhR+DlM7a40r287X1smEbPLGulwhpaZo5g8FvjyVavBatLXuhgqwNX3Xik1Cn5Afqn4oHPWbPxZmjeWn4/M6ayKRA8d2RMv49DEGrKsg8UZlNUOI9aGAOf4OIbiHrV3MAijIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758575591; c=relaxed/simple;
-	bh=5nYmtllGAhnb0awO7jb0e2Q28ODUSeoaxn4f2xlaPSc=;
+	s=arc-20240116; t=1758575851; c=relaxed/simple;
+	bh=YE/XuXjyf9kdCciU/Gc9Y0YeKwBw/w4DEAQJaIFnGA4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m8yQ+0f50KlktT/QVfa6QevlJqoMQMDqPKnZcvAAPz1BsVgU16la2PkLjuMCNQ9ls+a/keaJ/8fmlV57eJN3bqO7GpqJ4gpPDZdnouLx4ldI7pAAUEhhTgE+C54/LMzaTFFbuWdrAZOQJngiy0Q9KACsxE0O0BFpbde6ERG4sBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jXXs/9P2; arc=none smtp.client-ip=209.85.222.170
+	 To:Cc:Content-Type; b=i9ov1JYroQeaT2yQe49WUbWvxSngBURUTmiemQgVhjTazaa+czZTiVYJ4FHsaQFXyFDnFbi12vx2nVeULnvGAWEUsJT350SvNc90dk164osIYVhLBYZR6tWZCiH4IzEyPBGHXNENw6uEhxvQwiCKJ+QAXTRhZziZH31NsCve2vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xBKF3G3r; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-84d170783ceso122565885a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:13:09 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3f0ae439bc3so1838157f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:17:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758575588; x=1759180388; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758575848; x=1759180648; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zEsovu3oZESlhX5Jz4J0hLzBSRyfD9rtZS172hR4u5c=;
-        b=jXXs/9P2HkMHJI1yo8hz1UjOO1Q2SsxOsf0GDbBVkZI6ypOWkmfaP0RzIxLYVFU+Yn
-         f4XX5qxG18WPKv46CyytcPsWKpWOvnNvLc18kwL64v+NQpDtNBGHVQT2X8i0adigHSY9
-         FNfhs946dYZ64a10iuwzvjMYuzgvMI1qSS8gyq/Ibf5jhZFxLqahAqRzmQ/LtpikTyHl
-         VjObsHmO8K0bjgxRlzbYygjoFs9mNG+49U/mn+LYy8dbpaUyDhCx7ztomqfNb2wxfNN2
-         uesvmdga0Wh9i1YuyVUUjOz47vOgjFa3DAUNgYojEPUxOenohp/rROXnSmY7Z9obIYxw
-         m/rQ==
+        bh=YE/XuXjyf9kdCciU/Gc9Y0YeKwBw/w4DEAQJaIFnGA4=;
+        b=xBKF3G3r7C37nIw7ZfPZO8i3Zk2pO3WXkg0dzxoTy5A5UVCWy/OwhaZ0VlECsHib7k
+         CaSMpG4MDsIEajwVgIquSsFcuqU0VyCAB9fP3yWqSdI9GYyBuCDasO0bvBydaulsOnYn
+         GSABfQ3mRVCGuFWLIANbt6mUQlPVaxncCyC5RN0pN/XyNhlQhhXbXPtQjHg7Tz6s0lwJ
+         GF2CyaSQ68h6pFZ4ZQsT0blom9o1MmhSSnmRHV+Q9iwgbUPOMJrtHNloP7Q9vX3JS2Rz
+         +kw99eue7/NfGbwbzVzPjeXRCREHLdU0iQrlm9CKlHxyaXr61iBTLMUs4gUPTZrmxzzT
+         RvRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758575588; x=1759180388;
+        d=1e100.net; s=20230601; t=1758575848; x=1759180648;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zEsovu3oZESlhX5Jz4J0hLzBSRyfD9rtZS172hR4u5c=;
-        b=RoRDKhMYPByB2Xxh9oFrct9YPYMZl0K1YDJQ2CB8A3a67q2w7Kkv+Lnc9ThZunCSoQ
-         ndq6MfSKnTU1L4W+t99nI6z2CVW8YViGphz/CdmZr012qvmcmWF6x2sybJcOD6JNA7JT
-         04m3JuG0V0uPLNT1V/n2DShxWnh09qEjG5+HIDYGqLph/oMyLBxB52gsUu8wwdx1R0Kv
-         4+1uj4cCD9Bkm8wsnLT+tg/Esp5+Agbh9cIHwedJTc39HGuWN7XT9gt+ODxIfa8XA19A
-         UXEiw0jf3qUOAv937IT9xXwGwK0r6LCWHUcsUupCW8MqovSuFKOjanZ7a7BThxx2dScH
-         D67Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVnBFW8yfmmTbZ4/xaCD8LZH/JxyG16C4RczVH/d/aY7yOboOTmJ0ViUEuwM5KJeEDtM8WXnGSINSMWHIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF4LZ5OA8aBFWcFF4NP56cW7MMwifh9fDO4fLkfIKsqV1tPtpf
-	Wu9gdfDWltgc1r5CT2ljsahbahWHNmBBqY3pP34zO/iwLNqZVbtmYTjV+XBWzDKFI3t9hVUDU+S
-	Hoz7g+oUyFj4m9kYg4Y+ucIa7mrtdsBrXqHYUab3n
-X-Gm-Gg: ASbGncv/afMVVJbKZzp6lEzBDegupWgJLvgQ6oai9JWmG9YrqnsNfhKUPAEKvvLG95w
-	LM7QD4J9llX3Y2YKmcQvmE8VyA2uG0EWQIzXMGu86Tach2Vii7Lh88s7AH48w33FCdqC52wddOK
-	5NcBQRkWasLW26H/dnVBS1OaH++LjkEnZ7UtSv0O4t7cH8BgXfgAoI1v1hgdfIZMsXzsb8y/bf5
-	vgs/ws=
-X-Google-Smtp-Source: AGHT+IFOkInq54LGgN9MBihJi22pHNNfcp/jaI8lGmqg1owNQ9Fe2LgHA1i2G81dAprInLWEJoUWSLD05co99TykTR8=
-X-Received: by 2002:a05:622a:f:b0:4b7:b1cb:5bd8 with SMTP id
- d75a77b69052e-4d372a3a633mr3487491cf.73.1758575588247; Mon, 22 Sep 2025
- 14:13:08 -0700 (PDT)
+        bh=YE/XuXjyf9kdCciU/Gc9Y0YeKwBw/w4DEAQJaIFnGA4=;
+        b=FWDl/kkPpnkDLBXhOlCyn6Za6HQCe/v5rB7nfP2ITsr4+cw9WlV1OVNCAm2Eiyax+Z
+         O4yCpGN8d53gh35vPa2DnY77ARmFGys9CA8B0PAUmPntjuvXjK5NcIIIGgRV5TrCYAEU
+         IlM3ZmG5hrNu4TsCQWDAPoJZx5JYUbG4od8AZV2CnoMSFvy1yNeD3p/poBbrHPLW3Edn
+         CxJjArd27Mq8h/7/aXrk+BIUxUBnOesQLNaFCKbp1VKcZ33KoaYUV1ILzzGTLHIfnhLr
+         WeqPevg5DzJ9VnvDDoiIPF/hzmge3GFdmHjtqgF1eKGNxCdxtpsjnxfxt+MZH1+hHkEb
+         84hg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdnmkni1M3Von88xAD6WcjMLyVziDJAyGidQ9os2agxBrtVe73a20SDLtB8Cs6pkid6QHFnBBuA/3wJ1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIg8oZyCYjxxUyvoKv4mOAb9e81BUDukTSEsa/I+n7rejhIlZq
+	x5OTn27OL/cqDpxadkw2BOVzlitvIrBQVR9IdRcP/S88HD0sHcQdA+zdKdwt31VdDV2fBwTQTrE
+	4yjEfM8yHrReOTHYM9iJDohLCFNoPz20efclr+l+7zmsDqbwV8N0Wkz9D
+X-Gm-Gg: ASbGnculr1oT5gwoLxOUOSDYByeg/mssGuEmygAdNZmVgbwXmdwAOjNEHgQr8C+YFWG
+	L67bngW08aFHxWCteSGQnHy289P7UbYbmlnKlwG9cvuxp+6OcT8++fcp83TThS41orX/7Fkmb7s
+	KGSBVeoh7yFcBeK8vD8A5oqcWSqxVAnXYc9tbaSweQAhbZ2qrZOTa9Vd+naVvXfoWDq0cleUyLi
+	OW1kgM=
+X-Google-Smtp-Source: AGHT+IGFfQDiOiOTcseY76dFEJwdeLwzzEeu9kFerU+3PuuH69Q0zrP1RtnqvJHFmMg62gFwa5AM12ocDwpkjSDDnfs=
+X-Received: by 2002:a05:600c:1d0d:b0:45b:8b3e:9f66 with SMTP id
+ 5b1f17b1804b1-46e1d98bfb7mr2416355e9.13.1758575848204; Mon, 22 Sep 2025
+ 14:17:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922194819.182809-1-d-tatianin@yandex-team.ru> <20250922194819.182809-2-d-tatianin@yandex-team.ru>
-In-Reply-To: <20250922194819.182809-2-d-tatianin@yandex-team.ru>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 22 Sep 2025 14:12:57 -0700
-X-Gm-Features: AS18NWBPo_cBZCPlO-PBo6K89_XzA7B4cPtbYpYgjXD_e43PNvxeaVox88UED2g
-Message-ID: <CANn89i+GoVZLcdHxuf33HpmgyPNKxGqEjXGpi=XiB-QOsAG52A@mail.gmail.com>
-Subject: Re: [PATCH 1/3] netfilter/x_tables: go back to using vmalloc for xt_table_info
-To: Daniil Tatianin <d-tatianin@yandex-team.ru>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, 
-	Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>, "David S. Miller" <davem@davemloft.net>, 
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20250909065937.3433134-1-vitaly.wool@konsulko.se> <9b287ca0-fe1a-46c1-9510-03871326aecb@konsulko.se>
+In-Reply-To: <9b287ca0-fe1a-46c1-9510-03871326aecb@konsulko.se>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 22 Sep 2025 23:17:14 +0200
+X-Gm-Features: AS18NWAGBsnmu6IQaC1BSV9I2a1X8mM7h6QAPAtyHzicwwtixR6PIYOvITz2G04
+Message-ID: <CAH5fLgitaTFEhSMm3mZrinsjTktvqLFg6m_JyMxMAd0JzsLtHA@mail.gmail.com>
+Subject: Re: [PATCH v4] rust: rbtree: add immutable cursor
+To: Vitaly Wool <vitaly.wool@konsulko.se>
+Cc: rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, linux-kernel@vger.kernel.org, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, Bjorn Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2025 at 12:48=E2=80=AFPM Daniil Tatianin
-<d-tatianin@yandex-team.ru> wrote:
+On Mon, Sep 22, 2025 at 2:13=E2=80=AFPM Vitaly Wool <vitaly.wool@konsulko.s=
+e> wrote:
 >
-> This code previously always used vmalloc for anything above
-> PAGE_ALLOC_COSTLY_ORDER, but this logic was changed in
-> commit eacd86ca3b036 ("net/netfilter/x_tables.c: use kvmalloc() in xt_all=
-oc_table_info()").
 >
-> The commit that changed it did so because "xt_alloc_table_info()
-> basically opencodes kvmalloc()", which is not actually what it was
-> doing. kvmalloc() does not attempt to go directly to vmalloc if the
-> order the caller is trying to allocate is "expensive", instead it only
-> uses vmalloc as a fallback in case the buddy allocator is not able to
-> fullfill the request.
 >
-> The difference between the two is actually huge in case the system is
-> under memory pressure and has no free pages of a large order. Before the
-> change to kvmalloc we wouldn't even try going to the buddy allocator for
-> large orders, but now we would force it to try to find a page of the
-> required order by waking up kswapd/kcompactd and dropping reclaimable mem=
-ory
-> for no reason at all to satisfy our huge order allocation that could easi=
-ly
-> exist within vmalloc'ed memory instead.
+> On 9/9/25 08:59, Vitaly Wool wrote:
+> > Sometimes we may need to iterate over, or find an element in a read
+> > only (or read mostly) red-black tree, and in that case we don't need a
+> > mutable reference to the tree, which we'll however have to take to be
+> > able to use the current (mutable) cursor implementation.
+> >
+> > This patch adds a simple immutable cursor implementation to RBTree,
+> > which enables us to use an immutable tree reference. The existing
+> > (fully featured) cursor implementation is renamed to CursorMut,
+> > while retaining its functionality.
+> >
+> > Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+>
+> I don't think I've got any feedback on this one, is there anything else
+> that needs to be addressed or is this one good to go?
 
-This would hint at an issue with kvmalloc(), why not fixing it, instead
-of trying to fix all its users ?
+I would like to look, but I'm still tied up in my second consecutive confer=
+ence.
 
-There was a time where PAGE_ALLOC_COSTLY_ORDER was used.
-
-
-
->
-> Revert the change to always call vmalloc, since this code doesn't really
-> benefit from contiguous physical memory, and the size it allocates is
-> directly dictated by the userspace-passed table buffer thus allowing it t=
-o
-> torture the buddy allocator by carefully crafting a huge table that fits
-> right at the maximum available memory order on the system.
->
-> Signed-off-by: Daniil Tatianin <d-tatianin@yandex-team.ru>
-> ---
->  net/netfilter/x_tables.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
-> index 90b7630421c4..c98f4b05d79d 100644
-> --- a/net/netfilter/x_tables.c
-> +++ b/net/netfilter/x_tables.c
-> @@ -1190,7 +1190,7 @@ struct xt_table_info *xt_alloc_table_info(unsigned =
-int size)
->         if (sz < sizeof(*info) || sz >=3D XT_MAX_TABLE_SIZE)
->                 return NULL;
->
-> -       info =3D kvmalloc(sz, GFP_KERNEL_ACCOUNT);
-> +       info =3D __vmalloc(sz, GFP_KERNEL_ACCOUNT);
->         if (!info)
->                 return NULL;
->
-> @@ -1210,7 +1210,7 @@ void xt_free_table_info(struct xt_table_info *info)
->                 kvfree(info->jumpstack);
->         }
->
-> -       kvfree(info);
-> +       vfree(info);
->  }
->  EXPORT_SYMBOL(xt_free_table_info);
->
-> --
-> 2.34.1
->
+Alice
 
