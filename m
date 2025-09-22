@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-827104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A20CB9052B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:12:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8374B9051F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2422B17544E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:11:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61D6A1695B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABD63043C0;
-	Mon, 22 Sep 2025 11:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D80302CD9;
+	Mon, 22 Sep 2025 11:11:27 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47B7301020
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3537B2FD1B8
 	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 11:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758539488; cv=none; b=KQY+SGvFZQWDxM9US+o/XYMoL9npCVnOoYOwfIywWdtHRHKnLFGEh9/oCdPrqweKYVcuyFI4DnLHEjbE74ZeQWQ41flRQ4MaHXshZ2ig1BMUgIsVi0/dEnVU3kBih/3chF5DBVTr4j4xkWsQzawshZNGtq2FQ/CWzegpvZg8jS8=
+	t=1758539487; cv=none; b=lWm0E+920Dnc3P060oNdixULfP2VhwUno2br1OtvkZqTZ51+X8Gsda14UJTOSOiAqEwrI7JoI4hPkpAlxctF/qFzrBoc242GrASn21TzTOrah7gj4DC57kNtJn1xcmxaNMPNPy1b9IDCbTJ3KFaNG/b4bHrxE+sWvUzupOZoxMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758539488; c=relaxed/simple;
-	bh=Uo9nCKnhrCEWJtFJDVa1RPwlQawqN+Vhk/e/1vP62XM=;
+	s=arc-20240116; t=1758539487; c=relaxed/simple;
+	bh=AptTenFlnFakiSsKWBr9+gI3TZAnyMz05ha+0J8l85Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Eba6bNSgfoG1H4j/HLLhczsSUlFH+yYaJDwOyAbI3hVVnFYWnVVFe0h2tppT1KwGiCQCp4vrn5I9x0a59xmOP5zULCULF005437WkCJP/HmqYCNb7e+40iMIcxcNaO9x+nGJIKo9vFwU/cKG5f+4sSRpz4Wn2vmSUSVNDB4M690=
+	 In-Reply-To:To:Cc; b=nu4eN/koXiHZa4F6RHXYRGg9lL9gulbxQTVYddgCsacNQnXIt3MyZvjW7RE7CA8IQPyGg8G2tYQj25bewxcSJuoBtFU8VxDXkYXUaplm3kKYJ5uq5A0RYAOSRBJnmEYSn7yQrtR3ElsJnvYDsT+FiL+in6ERfbe0/bYvU12JauM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1v0eRl-0002HM-Uk; Mon, 22 Sep 2025 13:11:06 +0200
+	id 1v0eRn-0002HM-Dz; Mon, 22 Sep 2025 13:11:07 +0200
 From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Date: Mon, 22 Sep 2025 13:10:52 +0200
-Subject: [PATCH v2 1/5] dt-bindings: vendor-prefixes: Add JuTouch
- Technology Co, Ltd
+Date: Mon, 22 Sep 2025 13:10:53 +0200
+Subject: [PATCH v2 2/5] dt-bindings: display: simple: Add JuTouch
+ JT101TM023 panel
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250922-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-v2-1-abbb759cf8ef@pengutronix.de>
+Message-Id: <20250922-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-v2-2-abbb759cf8ef@pengutronix.de>
 References: <20250922-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-v2-0-abbb759cf8ef@pengutronix.de>
 In-Reply-To: <20250922-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-v2-0-abbb759cf8ef@pengutronix.de>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -68,31 +68,27 @@ X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-JuTouch is a chinese touch screen supplier dedicated to manufacturing
-high-end touch display products for the global industrial market.
-(www.jutouch.com)
-
-Add a vendor prefix for it.
+Add the JuTouch Technology Co. 10" JT101TM023 LVDS panel.
 
 Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ Documentation/devicetree/bindings/display/panel/panel-simple.yaml | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 77160cd47f54079a39f35b570d69f7c4c2274724..074e2ce9025dfa5ff76f7df3a743c2dd2f9ccd93 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -799,6 +799,8 @@ patternProperties:
-     description: JOZ BV
-   "^jty,.*":
-     description: JTY
-+  "^jutouch,.*":
-+    description: JuTouch Technology Co., Ltd.
-   "^kam,.*":
-     description: Kamstrup A/S
-   "^karo,.*":
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
+index 1ac1f02190790cbff00c9f977d5c1a4420ed9f27..8107dc60e19695d56cd7302e7af7c808575df491 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
++++ b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
+@@ -182,6 +182,8 @@ properties:
+       - innolux,n156bge-l21
+         # Innolux Corporation 7.0" WSVGA (1024x600) TFT LCD panel
+       - innolux,zj070na-01p
++        # JuTouch Technology Co.. 10" JT101TM023 WXGA (1280 x 800) LVDS panel
++      - jutouch,jt101tm023
+         # Kaohsiung Opto-Electronics Inc. 5.7" QVGA (320 x 240) TFT LCD panel
+       - koe,tx14d24vm1bpa
+         # Kaohsiung Opto-Electronics. TX31D200VM0BAA 12.3" HSXGA LVDS panel
 
 -- 
 2.49.0
