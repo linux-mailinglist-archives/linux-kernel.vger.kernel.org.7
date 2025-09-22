@@ -1,167 +1,196 @@
-Return-Path: <linux-kernel+bounces-827598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488DCB922D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:17:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E01CB922EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 900307B210C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:16:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1ABA17435C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A4E3115A3;
-	Mon, 22 Sep 2025 16:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86506311972;
+	Mon, 22 Sep 2025 16:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cX2QzIr8"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="a6zfVrgK"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDF63112A1;
-	Mon, 22 Sep 2025 16:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255B43112BF
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758557827; cv=none; b=tAktHYH0jUmaDoPlA3anV67K0KI+5j6IRWV3alRavD1VHDCu6+lxzLjDEY9csciRsKiqhtu8h7N6u3KFit+wfLca1QyAMptHkzrl98s4TGopNGrql6TaMH31Lq0BEK4DwcRqbuZN1Tt7+6M8hBL+GvSzZKCJvetq6aa8yKYCJ70=
+	t=1758557846; cv=none; b=bBL1GMpeAs8KL5jqQSpfcxsiUMvkcEcyG913ogTfZgMCSL0W+w9oARNbqCRkeKRcOq2JDmPZkY3+gNuLO4ssno4u1KdCPdfuvs9U+TxSh6wASzqz3/mTeZslbU+JxVexEYg2FI6zTGH31hJifGgJA8IqXJD/VLjQCQkveygHLHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758557827; c=relaxed/simple;
-	bh=6RF4WqwGow6+r/Y+6HnhvBn/j7oUcG6s0+waKyr36Ww=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Renqp67wV3e2/BYjZs5FeY/fb2YD2s1E60kykIN9MB2wYrhgBDbuA00Rhyta/yG3Ej7gXR4Xb9KDJ53Cd7FqrUTNnQFehtljRG9D1a6KaypVRcWpCQJo6o9pmOmWkmM1RBApuqmSe3AU0UH7EofXwK0yinF6UK74Pba3gnx4hlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=cX2QzIr8; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1758557810; x=1759162610; i=markus.elfring@web.de;
-	bh=I8Jm+BtLCOfPFPkOJcSYGezIXJ1kj0/IaJCMO99n4jY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=cX2QzIr8hD+Uxilr6Lp5I9cvUno244j48PuEKqUhV1smOWgIruTWVqnVi5a/WpqA
-	 cXl0PQvqwRdMw2bzBQ40rx/aVMG2U+HgHAvp95oj9pXsgpDvZzH94z3vhTrXKHufA
-	 0VGlN53IkkomVa4RMmhra2Q9Aw3x6tnhuY6tKSxea9NoH/q4gJOLJHKX7bexsd4bM
-	 dFUeWjk4a01wYOneVAwFqBH2BJ2F1XXMHQ2qzEBHvbo5+HnTsFG2IoBnC7oktqmPj
-	 SuYuw9KPH9h1pPb8sP6+QXf0n/ktvPsxSudS5RlKfwzMQ1YmPE7ZgzMOqN3Tqq+UZ
-	 PycikOS4T9JWto0hHw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.175]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Zo6-1u6gBa0OA8-011N67; Mon, 22
- Sep 2025 18:16:50 +0200
-Message-ID: <d1c2e56b-2ef9-4ab1-a4f8-3834d1857386@web.de>
-Date: Mon, 22 Sep 2025 18:16:47 +0200
+	s=arc-20240116; t=1758557846; c=relaxed/simple;
+	bh=7vVewiqA0e2iwP/eAxuh7WA4OQg2jToWd9kLbbhtNC4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZVYKTBU4lbBKQN74t9kcMmUS4yU7WAE8YdylQFiuvQEtgmvNre9C1seTG9ZEDx222SFOa/FjIfCM7LjHAFEUH4YGyGroeAJTiPfPST+WcTcy3T7V4iLLO3JW2kqF3pva+ou3HHBVy8gdVjUll1/Bv87NUPWb6j4AwsQM963FoRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=a6zfVrgK; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-4248a13fbe9so16593465ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:17:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1758557842; x=1759162642; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VY+UeuZTbe4DuOfkxt1V9gHqp7+wtqNRHgcn1ay/Mt0=;
+        b=a6zfVrgK3lKpIMkoZA5S7FL67Q2pkzemmCSD/Il3RTfiF+DFVxODWzI00tJxJL0X5c
+         9Uowix6h6tY5K3kNiwZp8DREyhMmAym8V35HZkNdzoKhb0YytuHJ1qnzdmZKB6X3MGdL
+         puCcY/YemMVh8cxJSXZG/KR6ttWawENE+j2gT31PCT4y3CBgSsH7xu8XSGnsXSpVprfo
+         JDscoGTR7pudfNn2sP2xSEgVc48ZvmGcvVA1HJ1iEAge6XxXez4nNywrnOi9/sxJ0TGA
+         iW46kKy+gW0OCDi12xq+AkeWDV+a+ikNCwGHd4wLNR2yuEywblRwfjkHKgjhcfXn3iGa
+         RtDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758557842; x=1759162642;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VY+UeuZTbe4DuOfkxt1V9gHqp7+wtqNRHgcn1ay/Mt0=;
+        b=fPLmodk12mWnKH29l2WlGy96In92W6bqvHUUi14LXa+GDrl1z8hvXkUIi6B6h0vMBb
+         Ir0lBfNJrLKnm0Fd6kQ7FqOWAGFFeU8MkCV4xpIQUl6zMmADLYC4VfRPekaaQDAUFJti
+         PzoLcEsIVRnzbEq1/iLKA5b9oYMVoNW4wk/nYlU7dQMIepbNZ/kPgNyafxvLBvAlWeTh
+         s3xgpWOJg0KuWAyxnGSF4nElyha3MwZNk9OMqXTUyCpwm6nfptAUqvn+oepjbmfSdzlV
+         b3kq2PYjVzfdUR+Q5HtLUmwmm5MimiG8DF3BIJV/WH7RcEfjTvqF6JPGlaEpaQgsdZwO
+         mKPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWHHH4uPu1guZibrh0OiBUrK95q+aZz8nE5aq868Bhwoa5twbIFbaCqsG9UXuUO5AvTF2fpvR2al1wfio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycjEHD0dPyW9DfuBWYPVzqClFVkNUtXGKx1qDtkPEvyHOfq1Hf
+	9u55nknWkv0xBnHW3cpDOMwbIV/VHBRAE6yDBMbBx5JlZ0fSp16ryhIBoxjt/rHBHZc=
+X-Gm-Gg: ASbGncsMfMFLQs4aj6TJABpWxCZzsJnDbZY6MFkNPEoRSw6vqm6cLeZMHlIsoe87AEe
+	WKAewRzdrjsJV2+z1DmP2H1uweySHJwd/LJAzTt2c5iemaSU+x2QXo1X81+DWvbQCGIqeTteQUO
+	bl7B39mtf6jB/bEcLYPJXpnqxojmTBriixigQPJUkAun7aQQ8tDyDnV0eiZbx5VPc1OufPckfR6
+	wmcXuuA5ogD/HhGpdXIS9XYx1wq2tSW3z1DwL1/i4r5tKSXga9cIcAFMqgXoogyjtDdNFiqJqbi
+	hS75nf2HKT8vzz7La3VbqnD9RRUS/fgryEvu1EWLKtxLn0nMTlQLRg1GQMzxunNePxMO2nWJE0R
+	fttSHW63daL+Dei+RN00PSIHMnzQhpqbA8omFv1CI72qD63d0HTn7Kznx8Rg0WA2/Hg==
+X-Google-Smtp-Source: AGHT+IGacLGMErLcsONCaQ7tVN/QLr7qDvYuMf/IioCcbyv5ZtFG8CwlnJVAkhCLzpWTG1DzdwCTxg==
+X-Received: by 2002:a05:6e02:1a8d:b0:3f2:a7ef:bd88 with SMTP id e9e14a558f8ab-42481911aadmr188245465ab.5.1758557842154;
+        Mon, 22 Sep 2025 09:17:22 -0700 (PDT)
+Received: from zippy.localdomain (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-425711d9aa0sm25207185ab.48.2025.09.22.09.17.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 09:17:21 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: broonie@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: dlan@gentoo.org,
+	ziyao@disroot.org,
+	linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	p.zabel@pengutronix.de,
+	spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] spi: support the SpacemiT K1 SPI controller
+Date: Mon, 22 Sep 2025 11:17:13 -0500
+Message-ID: <20250922161717.1590690-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Johan Hovold <johan@kernel.org>, dri-devel@lists.freedesktop.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Alain Volmat <alain.volmat@foss.st.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Raphael Gallais-Pou <rgallaispou@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>
-References: <20250922122012.27407-1-johan@kernel.org>
-Subject: Re: [PATCH] drm: sti: fix device leaks at component probe
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250922122012.27407-1-johan@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:a+AtYotd606Xa21CbGi3o7GaI5bhai9FYkRwUp61htil2YrJ/+c
- FyRvqii7mj/w9zncs2ubBjvbKUa4J7YuKI9wz9zt/LTX8O/CxO4WUxDLkJm4uSESmRiYgD1
- BZNXUrgfr5kPg6tX9YO8kDGaOpXyA+V88WX+CqriyupwwcE9Lymovitrg19K8YIS0TSqYhf
- bDkowCv5EDjXR4K3dGKmQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:GkWc9pE//4E=;2AdirriGddFOhYmYm096rakQFlM
- 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
- R1jSo8jNmXNuedbXprfMkiOgYolr
+Content-Transfer-Encoding: 8bit
 
-> Make sure to drop the references taken to the vtg devices by
+This series adds support for the SPI controller found in the SpacemiT
+K1 SoC.  The driver currently supports only master mode.  The controller
+has two 32-entry FIFOs and supports PIO and DMA for transfers.
 
-                                                VTG device?
+Version 3 incorporates changes suggested during review of v2.
+
+					-Alex
+
+This series is available here:
+  https://github.com/riscstar/linux/tree/outgoing/spi-v3
+
+Between version 2 and version 3:
+  - Add Conor's Acked-by to patch 1
+  - Add Rob's Reviewed-by to patch 1
+  - Added imply_PDMA to the SPI_SPACEMIT_K1 Kconfig option
+  - Fixed a bug pointed out by Vivian (and Troy) in word-sized reads
+  - Added a comment stating we use 1, 2, or 4 bytes per word
+  - Cleaned up DMA channels properly in case of failure setting up
+  - No longer use devm_*() for allocating DMA channels or buffer
+  - Moved the SPI controller into the dma-bus memory region
+
+Here is version 2 of this series:
+  https://lore.kernel.org/lkml/20250919155914.935608-1-elder@riscstar.com/
+
+Between version 1 and version 2:
+  - Use enum rather than const for the binding compatible string
+  - Omit the label and status property in the binding example
+  - The spi-spacemit-k1.o make target is now added in sorted order
+  - The SPI_SPACEMIT_K1 config option is added in sorted order
+  - The SPI_SPACEMIT_K1 config does *not* depend on MMP_PDMA,
+    however MMP_PDMA is checked at runtime, and if not enabled,
+    DMA will not be used
+  - Read/modify/writes of registers no longer use an additional
+    "virt" variable to hold the address accessed
+  - The k1_spi_driver_data->ioaddr field has been renamed base
+  - The DMA address for the base address is maintained, rather than
+    saving the DMA address of the data register
+  - The spi-max-frequency property value is now bounds checked
+  - A local variable is now initialized to 0 in k1_spi_write_word()
+  - The driver name is now "k1-spi"
+  - DT aliases are used rather than spacemit,k1-ssp-id for bus number
+  - The order of two pin control properties was changed as requested
+  - Clock names and DMA names are now on one line in the "k1.dtsi"
+  - The interrupts property is used rather than interrupts-extended
+  - The order of two pin control properties was changed as requested
+  - Clock names and DMA names are now on one line in the "k1.dtsi"
+  - The interrupts property is used rather than interrupts-extended
+
+Here is version 1 of this series:
+  https://lore.kernel.org/lkml/20250917220724.288127-1-elder@riscstar.com/
+
+Alex Elder (3):
+  dt-bindings: spi: add SpacemiT K1 SPI support
+  spi: spacemit: introduce SpacemiT K1 SPI controller driver
+  riscv: dts: spacemit: define a SPI controller node
+
+ .../bindings/spi/spacemit,k1-spi.yaml         |  87 ++
+ .../boot/dts/spacemit/k1-bananapi-f3.dts      |   7 +
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  |  20 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi          |  16 +
+ drivers/spi/Kconfig                           |   8 +
+ drivers/spi/Makefile                          |   1 +
+ drivers/spi/spi-spacemit-k1.c                 | 968 ++++++++++++++++++
+ 7 files changed, 1107 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml
+ create mode 100644 drivers/spi/spi-spacemit-k1.c
 
 
-> of_find_device_by_node() when looking up their driver data during
-> component probe.
-=E2=80=A6
+base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
+-- 
+2.48.1
 
-How do you think about to increase the application of scope-based resource=
- management?
-https://elixir.bootlin.com/linux/v6.17-rc7/source/include/linux/device.h#L=
-1180
 
-Can a summary phrase like =E2=80=9CPrevent device leak in of_vtg_find()=E2=
-=80=9D be nicer?
+Alex Elder (3):
+  dt-bindings: spi: add SpacemiT K1 SPI support
+  spi: spacemit: introduce SpacemiT K1 SPI controller driver
+  riscv: dts: spacemit: define a SPI controller node
 
-Regards,
-Markus
+ .../bindings/spi/spacemit,k1-spi.yaml         |  87 ++
+ .../boot/dts/spacemit/k1-bananapi-f3.dts      |   7 +
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  |  20 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi          |  16 +
+ drivers/spi/Kconfig                           |   9 +
+ drivers/spi/Makefile                          |   1 +
+ drivers/spi/spi-spacemit-k1.c                 | 965 ++++++++++++++++++
+ 7 files changed, 1105 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml
+ create mode 100644 drivers/spi/spi-spacemit-k1.c
+
+
+base-commit: bf2602a3cb2381fb1a04bf1c39a290518d2538d1
+-- 
+2.48.1
+
 
