@@ -1,91 +1,131 @@
-Return-Path: <linux-kernel+bounces-827438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEE41B91C47
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:42:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1BA4B91C50
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792DC3AFFA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:42:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F747179ADC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155E927F183;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC8627FD6E;
 	Mon, 22 Sep 2025 14:42:47 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HtXlnGsS"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BEF1B4257;
-	Mon, 22 Sep 2025 14:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2918827B326
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758552166; cv=none; b=eY3r9s2QGw7vcdDMnUgCjPIFH08EO7+vrI/xKMrE+wIN3c5+tlyYMC/9SWQzEPC3VYhcqNTaFBLJ/pcyyEei1kL+LZV8GmwJCqKCTsPq4jxyixs/Eiq6DSjD4y5tkSw6VjPtewjtkE0gfvMWQGDrZk21QzUviDGe/tAyqU36Bb8=
+	t=1758552166; cv=none; b=n1qKyDaMqYB+lHTbOIJNgf0GuGultpOKZTgbY2uWYPNkMgbY5Hz2bZ/dCe5t/razxmy9N+fXZMQpLpc7uI/je3j6sG20bm92oJyIHyieBVCJW/ROmqqs+JdepnzWnp4VghKF8xD9ldrr6NqpA6gvF1+8BP///TUC1N5+pmtPiSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758552166; c=relaxed/simple;
-	bh=Fy9oWw8EZpU9EKlvXhF7WepyC69BvXaMNw2K16O/hMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BMH1c2zUoMTBkavs2QND2A3NQBVLnJDiH7+ntt4lqCRhZ7OKAORNJxiqwnbmiY/dVTuI4gduvL2qo31ceGZl7eoeVqhaqg/7dRcDxLMdJxiLqx9a4Nlvex2Kkend0v4szBrv9R332bfRwHXk+m3dtwCMzsWUbWlDPiGuCtj06as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 83C1DB1FCD;
-	Mon, 22 Sep 2025 14:42:36 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 2F1CE34;
-	Mon, 22 Sep 2025 14:42:31 +0000 (UTC)
-Date: Mon, 22 Sep 2025 10:42:28 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Steven Rostedt <rostedt@kernel.org>, Menglong Dong
- <menglong8.dong@gmail.com>, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- kees@kernel.org, samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
- ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Subject: Re: [PATCH] tracing: fgraph: Protect return handler from recursion
- loop
-Message-ID: <20250922104228.4993227e@batman.local.home>
-In-Reply-To: <aNFRRa3m6Qm8zzQu@krava>
-References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
-	<175828305637.117978.4183947592750468265.stgit@devnote2>
-	<20250919112746.09fa02c7@gandalf.local.home>
-	<aM5bizfTTTAH5Xoa@krava>
-	<20250922151655.1792fa0abc6c3a8d98d052c9@kernel.org>
-	<aNFRRa3m6Qm8zzQu@krava>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	bh=mr1z2WZUkV5w8wCfWL4CkLdVwBTw1uNI4CLr3JqVcps=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ULHgfa82VrfUE9CYrmA2bVazpL8jpne2qBr1N0c1HWfL6EJ5/j9X8F4sJhnr6YjdXUkzcginz7SnkUPuzzQvE00I/VelgMRxOURl9yZhYnLnXQ0nAydZnlMAenL1QWNaCdzF2/ZoNyCGbMMtQ9sOdnTag86o+y05IOpCRWy+6cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HtXlnGsS; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-57bc9775989so1814390e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:42:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758552163; x=1759156963; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fSdpk6/rCEmFmOFR6iR3IWh5rll/qCku+r80HG/TWtM=;
+        b=HtXlnGsS6sqRusRhxOI0c7Sw/68eTe7Opi/23HkTv3uLy3lQ1HBM9IrJXlkgrwemL3
+         VgqFyuBdnshjT3sJv2P4FevriOPBHYmkQXRZM/njYjnkT90qIqByyRb+iWzWcvr37ff3
+         VrP/UbHjC7ZxIAQwCukEbgo011Dy8pH0WXZ9SP0i89VDn7OZVJAqGg30twkECvDTdhcf
+         2+W+tvXwXgkJFd/kr8RkQewfjZMZ3/iTl7gzWhCTXPzozZuRNCydYIxhzVNon+ES59qs
+         xSHthqdha2qPTiEa5b5d7psZUS/DE3nUeljsKHJWzdCI3jcrJBDi8Cgkb4r6HN8M3HkW
+         qtuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758552163; x=1759156963;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fSdpk6/rCEmFmOFR6iR3IWh5rll/qCku+r80HG/TWtM=;
+        b=VOuTzOhZWi7/5v2pse1tmHe+P3EiBjnP30k8fGs1jFlLuRZIzNOe1bxAG6fbUxQFbN
+         TNp4qQzRuE6YEOHhwgEH937s0sAWzjfgHIDRqMY/tFfHHpZlvaJ8N8zXQiArFUaKUi35
+         NVQ+yGFepiQTXNs3nYamXMeAj9vH5xIllw+itsoePdSaz4djgiiG9lCVqWs8qmWwM4Rr
+         PDFKLISxt4Vf1SqvuFwP+AqHEr/ncb2I/C6RJnfFnLXFrpmSj78idD9UmWbDxhErAUPT
+         H01fJPdctm+S+Hjm+Icw0i4T4ymsbsKjvgIJIDfZReokfMNI7FZN+DpXoi3OpQVQ4SDU
+         mI8g==
+X-Forwarded-Encrypted: i=1; AJvYcCV/51Mx+UiDMUxYEeIQRVpJMXDCVa0g6U+W9cX11cVN+ZBjJJQtVn62RS6qGWRWdPPd3mbx8yqEJQ+DVuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5u4k92gF9gaqKPiqID31sATsUgozMbSMdZMrvJgYqjAxwvJbp
+	K9e3DrxL0L/rAPqwwMlig/vbyDM3BxrAh9OsYdkiKVatalCCLexNOFQl
+X-Gm-Gg: ASbGncu7PuaVQENoNJeh5oEJCMkRdB2wdS4j1iYBJGuEii15VpNbob2zu8hhtts5VP+
+	tZ3SsknLBdgVsH1pj0HdAQqWzegxukyZtWDOYuXOfGqjJnOL8nSfqmTWhGhOwtWQ6tqUd2usosB
+	rnLdmdlaV+dQqX0uZQTawWkzM9ObpxZS6lrcMzG+YSRSvvY+cVvJbOK7Ed7p/eLbhhpJDc21BmG
+	GFSrZiwiXlmDE00r73VoGnMeBoU/RONm3imy0uylBceprTnLg38oKf7CVJABlr3Mg+9O5lnP2nv
+	+n9Z6kVk6d9wL7E/5FwvOg1tr6cEVOBMqyaKL0+9DtFBGJwKOTav1QlDP5L0/4a4k2T0gcNr5+i
+	TX2mxSFUtDBVXNSUnUxrY1np2x3O5a8ziw5HcTXLkMmKV6JuFpSdfQK70IaZ9FToC4BcwoBKJvd
+	STQX83tjUwAPpbtrJ2
+X-Google-Smtp-Source: AGHT+IEaXJNVnmOempIC4sdHG1xqvMW++QRt/th9kx+Xh1olAhqCDJAWeG7b0NIR1dEzieOMIXNmBA==
+X-Received: by 2002:a05:6512:6306:b0:57e:ef77:698e with SMTP id 2adb3069b0e04-57eef777f01mr949325e87.11.1758552162891;
+        Mon, 22 Sep 2025 07:42:42 -0700 (PDT)
+Received: from localhost.localdomain (broadband-109-173-93-221.ip.moscow.rt.ru. [109.173.93.221])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-578a5f44735sm3381450e87.26.2025.09.22.07.42.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 07:42:42 -0700 (PDT)
+From: Alexandr Sapozhnkiov <alsp705@gmail.com>
+To: Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@redhat.com>,
+	dm-devel@redhat.com,
+	linux-kernel@vger.kernel.org
+Cc: Alexandr Sapozhnikov <alsp705@gmail.com>,
+	linux-media@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH 5.10] md: fix NULL pointer dereference at reregister_snapshot()
+Date: Mon, 22 Sep 2025 17:42:37 +0300
+Message-ID: <20250922144239.11-1-alsp705@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 2F1CE34
-X-Stat-Signature: 5m6dza8eerdq5fheuuog9iasxo6kxxca
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+cmRNjfPhQevxwVVsrBXj76Fr4LaCEzak=
-X-HE-Tag: 1758552151-367461
-X-HE-Meta: U2FsdGVkX1+r8iiyTWCvVbzNqGRqFSi/LZd3+qBMFsYq55nmV1rdpVsIv1x2pIXT3AHi2UMNJUvNOaozexYK45qDrN23a9Fxq/ptGTMS3MAhkSKJ47wG1rX0wsmp801U/BQ+Dc1j5poRmYDeJXOCe0EBtaMZnR/WKJGhuWTGWBECNmruc0Q/aG02YvNRfRqp7Xu7TgvElN6VAAmRuuV+YI2R+nd+SgJogu27UJTKJH9mL6kjQPQcTfIorckUwhdogLEWlr5/LBrL1851l+zUBKSCRhBOTbXBZzgA/q+GmEsZ6hKWvQ/vWkcw1ehXTQk32pG6CcOpJEpDzJ1MdaB4DATN/LK3EagD
+Content-Transfer-Encoding: 8bit
 
-On Mon, 22 Sep 2025 15:38:13 +0200
-Jiri Olsa <olsajiri@gmail.com> wrote:
+From: Alexandr Sapozhnikov <alsp705@gmail.com>
 
-> > I found ftrace_test_recursion_trylock() allows one nest level, can you
-> > make sure it is OK?  
-> 
-> hum, I recall being surprised by that already in the past,
-> I thought we fixed that somehow, will check later today
+Return value of a function '__lookup_origin' is dereferenced 
+at dm-snap.c:596 without checking for NULL, but it is usually 
+checked for this function
 
-It still does allow one level of recursion, because there's still
-locations that can trace in interrupt context before the preempt count
-is updated to the new context.
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
 
-I looked at fixing these, but IIRC, there's several locations in
-assembly that do this and it started getting messy. I guess I can try
-to fix this again.
+---
+ drivers/md/dm-snap.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
--- Steve
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index 4668b2cd98f4..105f6e768ad1 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -590,12 +590,15 @@ static int register_snapshot(struct dm_snapshot *snap)
+  */
+ static void reregister_snapshot(struct dm_snapshot *s)
+ {
++	struct origin *o;
+ 	struct block_device *bdev = s->origin->bdev;
+ 
+ 	down_write(&_origins_lock);
++	o = __lookup_origin(s->origin->bdev);
+ 
+ 	list_del(&s->list);
+-	__insert_snapshot(__lookup_origin(bdev), s);
++	if (o)
++		__insert_snapshot(o, s);
+ 
+ 	up_write(&_origins_lock);
+ }
+-- 
+2.43.0
+
 
