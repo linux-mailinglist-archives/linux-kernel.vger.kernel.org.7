@@ -1,137 +1,156 @@
-Return-Path: <linux-kernel+bounces-826831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 865A4B8F730
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:16:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C9CB8F74C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B7C23ABA70
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:16:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9522C18A0751
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78642ED164;
-	Mon, 22 Sep 2025 08:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F432FDC44;
+	Mon, 22 Sep 2025 08:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TykEoA+T"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NwM4pKAi"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C58F27A93D
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EB42FD7A5;
+	Mon, 22 Sep 2025 08:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758528979; cv=none; b=lacot9jZtranZPpW4dpEerSd+OVKcIICb/PdJLnXeSDMbnLuyswZeLhDoK+32TdKipddmGYcB6fh5uD67TtuV0bGIfnWMkyOKdw96MagJuKCMEAGOayKKu4GwKfjMFYwrutOflwvK4KBXPbCiQsE9AdV8ETRI7EPr8eb47I8pHQ=
+	t=1758529021; cv=none; b=YLcb/62naLb6kY3tM0CXGcmyioAnp5UFxfTwYlFvoNWHuW8IR8tWBeBrfP/h7MQY56kWBVks3NSrCmGjLWUMeSZQnHoZ0U2vVxuG/etKRdo5um5S8tGgQiQFo/fBge2xx9yand+EH59EGaV+r+DoL04KYRVcQT4fixL0pqY0+aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758528979; c=relaxed/simple;
-	bh=UMJWZiC7sBj6mxojXhTJC+tuD8oKXX6T1jbAHxgYnJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TIp6rAHc2eGkJCHXrSySZ/XXX/tAVzETxrxaFBVLVV4JTN9eHmGui8BBengTMKckyw1KKqa97TNgtJOQEMDMQL0T5sTQHRYiIR9v4UK8CS83DvTDdCCI6iUx8JxD/v7zRWNd9N85TvmRQP1Yr6SoMC/tSP0Yn8eT1jXJ5JB1PT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TykEoA+T; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-57dfd0b6cd7so1018212e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:16:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758528975; x=1759133775; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c5VEvi4x8chbxAda+lSO8rMAf/beZcw/I4cFoExnq3E=;
-        b=TykEoA+T2QQDbvhjRHvga/ygUfeJuvwoaRYSR0tBITiSAPBRZCQnO2j8b79UDqd8qR
-         6ithQFSgVi544ea4Tace/Ryxtk9Li2oEzQQbPV/ASNj/k7+CwxzYMzPWmWefzU8vOC+5
-         YhAdSYPjXlQHSiBHMOAb2h67mO0C5j5ayJBJ99NZdm/xY97XnAW2gLGfgmRUyzCL1qFw
-         5RUTihSJUdrxkGmeeuaXKH+AM5VgffaDuQ1Td9yX/ktGPjznBCLC9Qb2IiF3mDJzKvfY
-         0/bsXE5Eff+NoKDfpmPEMvXzCMQe03OrAz4TGbkJnaRFE8EHnUQoc/en8ywH8PmC7+6R
-         C/2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758528975; x=1759133775;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c5VEvi4x8chbxAda+lSO8rMAf/beZcw/I4cFoExnq3E=;
-        b=OanxUFwCh3vsyqF3plz7aJB4dQHfA5DoSWQCWUQrRhPOiKzIb1qrr1XL/IlK8SFOso
-         htQh4K1KnBh0pmx4bzr1jbWI4rxq8T9kAsXoa9XkRhf7qp0U8GQML21hXOPg6GdZ/9IJ
-         Ax6boKCG1INGVUKji4oQIeQ+vnMwefUkmpWY8AeOS50h/izZyqLKQw30vXVey/6U25wt
-         pBeJh1c04DD1twCC3R7MPwvnfgJaV3CWyUGJ1v4iGGCIYuzcjpP+2/S2W5V+tVsq/jH7
-         wepB7E3gq3vYfumKzpC2/q0YDazjB0CAX643TpxcFjCtgvKytQKfAX7GyTYcNu0nQTjk
-         ifNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXuzpYvUJeAbYBZPbixOEM4quJrlJtoVvlOZERuoM3D0IJOjPtmy4mMaeAWC5PaYsU1QjVOksblkuJQDFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeBe5j6qa2lvB/OTEaoJTY5Tu267gOblfAvo/mMwrxfPLlBhha
-	I0HFKaexcqxUDry8/5L+erruH/ojQrvFiS+rPSNAXbQCtf29ZiR8ggsM6ahX5Q==
-X-Gm-Gg: ASbGnctHY5R9Uhd7C4S3xZwOsN+uyL+MAMfAJw9nBF7wWMfZIa6fkrgQLg0v7bdFtox
-	96v71FApwW8/j8Zgh2zDYa+pleoulET5WiglWxoHy+Za6kkZPxaPqwbPMHphlq8FzzCxbLLfjDb
-	P4JGH7V3S1xjvsEeGsPaSTYAw/gd/aXGWBUhI/i8n4I53Kwwmx36q03pD8ZU/3upN+JWTXGIita
-	noJiPF+JRhgb8pqfh01vogLSkCho3iKzNZiPG5hw8Cv65Q+hg7npRrubm1sqcF4aIF2yEF3i3/G
-	zqcE7Ehbhokl+s1BfIgWBsJ52pkcuIKAMTknzSpYNx7EkM8Mh+UZnHZ6AIw/pl2lGCPHejDsV4O
-	4My96tEmgr2+MB1KrnEL+hVsMkJwsoDyRxTY=
-X-Google-Smtp-Source: AGHT+IEBnciOJYeoELu8rLKOpYmJe14ZWR4sLAktR1bK9CrTwUMc1Hawjx43GGZQU5SZBI4fWanYFg==
-X-Received: by 2002:a05:6512:4041:b0:55f:4fac:3f2b with SMTP id 2adb3069b0e04-579dfccb059mr3293297e87.5.1758528975194;
-        Mon, 22 Sep 2025 01:16:15 -0700 (PDT)
-Received: from foxbook (bfe191.neoplus.adsl.tpnet.pl. [83.28.42.191])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-57e37d09511sm868935e87.88.2025.09.22.01.16.13
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Mon, 22 Sep 2025 01:16:14 -0700 (PDT)
-Date: Mon, 22 Sep 2025 10:16:10 +0200
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/1] usb: xhci: Queue URB_ZERO_PACKET as one TD
-Message-ID: <20250922101610.0102e1a1.michal.pecio@gmail.com>
-In-Reply-To: <e29fa12b-55e4-4ab1-b623-11feb447bdf7@linux.intel.com>
-References: <20250908130128.7ed81912.michal.pecio@gmail.com>
-	<6ca18b05-80d4-4988-bb08-3cad003e10f4@linux.intel.com>
-	<20250909193859.73127f85.michal.pecio@gmail.com>
-	<e29fa12b-55e4-4ab1-b623-11feb447bdf7@linux.intel.com>
+	s=arc-20240116; t=1758529021; c=relaxed/simple;
+	bh=UyOU1xRxcm24PTawkUcIYuxEXyz2/rhe3tOT2tO4aJQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=F1f7vntsHIOX/K6zzkwjTPs/HbKFJyHFxl7B5eTCXtSjKgjDt7JIEpd1f/CINVrEQ0tdF8e/1U+JLRiwvHuT8a+zITqPbMCK74ZIaZq+P9bVCeYpM4tWbXpQ271F1SFetCAznRE9j+z9fyaXDd+POt4XRKXk1G8c1iGLcPVHXgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NwM4pKAi; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id 010921D001E2;
+	Mon, 22 Sep 2025 04:16:55 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Mon, 22 Sep 2025 04:16:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758529015; x=1758615415; bh=LSyQ0eho+Rkj9jDVCYjCdGVibMqOOq8P7k3
+	4yc9M2bI=; b=NwM4pKAisCx5wsCT64JF1nefSw/lQdqSS5csYDqkpzsJLReiG6H
+	LY8ctKjbS2gAgnCh30VvloBz9RWF7XXAxus1beBfNt4iQjv/nl1QkyFy3kWz8YFS
+	JB9snNnka8ttrDyNNF9G8t2aemo3O80hHdktuSSuO1+x5riOMPkOEttxEZEFkJDg
+	8j17QPkXBiRIc6MqCpIItka4q1C5lOpCU6EhQ3/7/K5ZebLs8IblMlcGlUz60Wkq
+	JLFLByZLiIqOlpFfxptC3kl8y9CxzCfipQ3Zn+rsTJc6rnGhWnfyk+fjIJUDfVqu
+	7rQWFDzGrUkwAgO5tPO99AX+qncCO7Pyj6A==
+X-ME-Sender: <xms:9wXRaND8V60QO2YldHVU2_TYSvSs9lWp1SdH7bF8xdaMtf46sWxhBg>
+    <xme:9wXRaF-S8hREq4KwDa5S-BwVI_lA-W5l2hjY_ZUGqtrLWv-nddcCSUTVR110Yoz_8
+    3t2gRZP_Ldl3sEeqZM>
+X-ME-Received: <xmr:9wXRaAEryH5gvxAeuevo-2-Z3cfBIBdjNgapw3WTt4qtLKsiLNZOWw-NBdWv2M3okeUzX4EL3e4xywtttSgrG5S09exMkGZcbTc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehjeefhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefujgfkfhggtgesmhdtreertddtjeenucfhrhhomhephfhinhhnucfvhhgr
+    ihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepudegleeujeefgeduvdejveevveejvdejveekkeekhfejfeeufefgueffkeekteej
+    necuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdho
+    rhhgpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+    epghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepphgvthgvrhii
+    sehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+    pdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    eptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgu
+    segrrhhmrdgtohhmpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtth
+    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:9wXRaPRWudEGSfbl_26KWpIrDRXm_p62tMbRrjSck5seFAgnapWV6A>
+    <xmx:9wXRaHTdZvby3HCnjBSmclq462v3MuvWxHpFmmTrcAM-dgNGxfvVNA>
+    <xmx:9wXRaC2NnKxJbyC6pcGAuDvxR42Nwlhe_O6fDD38Nv-zxx_4m3c5lA>
+    <xmx:9wXRaBzWpF7HCiyC1MWYe6RQED3o5AsIsCX3JS_iBhV-KUOF8WsfTQ>
+    <xmx:9wXRaIKSXe0ycNqFkxkeyg2OnCF3AuKQNetP-y3Ity40TkW-SFqr2rK0>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 22 Sep 2025 04:16:52 -0400 (EDT)
+Date: Mon, 22 Sep 2025 18:16:43 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+    Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
+    linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+    linux-m68k@vger.kernel.org, Lance Yang <lance.yang@linux.dev>
+Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and
+ atomic64_t
+In-Reply-To: <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com>
+Message-ID: <6c295a4e-4d18-a004-5db8-db2e57afc957@linux-m68k.org>
+References: <cover.1757810729.git.fthain@linux-m68k.org> <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org> <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary=-14638117741591782072175852900335
 
-On Wed, 10 Sep 2025 01:57:39 +0300, Mathias Nyman wrote:
-> On 9.9.2025 20.38, Michal Pecio wrote:
-> > But this is not what this patch is about - the trick is to use an
-> > *unchained* TRB, which is a separate TD from HW's perspective, and
-> > to count it as part of the same TD from the driver's perspective.  
-> 
-> Ok, I see.
-> The whole TD without completion flag does worry me a bit.
-> 
-> We need to make sure stop/stald mid TD cases work, and  urb length is
-> set correctly.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I came up with a potential problem case for clearing IOC:
-
-1. all data of the first TD are sent out sucessfully
-2. no completion is generated because no IOC
-3. ring stops before advancing to the zero-length TD
-4. we only get FSE (Stopped - Length Invalid)
-
-See xHCI 4.6.9:
-     Table 4-2: Stop Endpoint Command TRB Handling
-       2nd row: Stopped on TD boundary
-
-Current event handler doesn't expect this to happen and actual length
-will be reported incorrectly. This would be easy to fix.
-
-But there is also the 0.96 spec where FSE was optional (xHCI G.2), so
-on some HCs (like NEC uPD720200) we won't get any event whatsoever and
-the almost fully completed URB will seem to have transferred no data.
-
-(This assumes that any HC would stop in this manner rather than advance
-to the zero-length TD atomically after previous TD completion and stop
-normally in the zero-length TD. So not sure if it's a real problem and
-the condition seems hard to trigger for testing purposes.)
+---14638117741591782072175852900335
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
 
-Control URBs have the same problem - FSE isn't handled very well and
-old HCs would seem to need IOC on the data stage to ensure correct
-actual length of cancelled URBs, if anyone cares.
+On Mon, 22 Sep 2025, Geert Uytterhoeven wrote:
 
-Regards,
-Michal
+>=20
+> This triggers a failure in kernel/bpf/rqspinlock.c:
+>=20
+> kernel/bpf/rqspinlock.c: In function =E2=80=98bpf_res_spin_lock=E2=80=99:
+> include/linux/compiler_types.h:572:45: error: call to
+> =E2=80=98__compiletime_assert_397=E2=80=99 declared with attribute error:=
+ BUILD_BUG_ON
+> failed: __alignof__(rqspinlock_t) !=3D __alignof__(struct
+> bpf_res_spin_lock)
+>   572 |         _compiletime_assert(condition, msg,
+> __compiletime_assert_, __COUNTER__)
+>       |                                             ^
+> include/linux/compiler_types.h:553:25: note: in definition of macro
+> =E2=80=98__compiletime_assert=E2=80=99
+>   553 |                         prefix ## suffix();
+>          \
+>       |                         ^~~~~~
+> include/linux/compiler_types.h:572:9: note: in expansion of macro
+> =E2=80=98_compiletime_assert=E2=80=99
+>   572 |         _compiletime_assert(condition, msg,
+> __compiletime_assert_, __COUNTER__)
+>       |         ^~~~~~~~~~~~~~~~~~~
+> include/linux/build_bug.h:39:37: note: in expansion of macro
+> =E2=80=98compiletime_assert=E2=80=99
+>    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), m=
+sg)
+>       |                                     ^~~~~~~~~~~~~~~~~~
+> include/linux/build_bug.h:50:9: note: in expansion of macro =E2=80=98BUIL=
+D_BUG_ON_MSG=E2=80=99
+>    50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #cond=
+ition)
+>       |         ^~~~~~~~~~~~~~~~
+> kernel/bpf/rqspinlock.c:695:9: note: in expansion of macro =E2=80=98BUILD=
+_BUG_ON=E2=80=99
+>   695 |         BUILD_BUG_ON(__alignof__(rqspinlock_t) !=3D
+> __alignof__(struct bpf_res_spin_lock));
+>       |         ^~~~~~~~~~~~
+>=20
+> I haven't investigated it yet.
+>=20
+
+Yes, I noticed that also, after I started building with defconfigs.
+I pushed a new patch to my github repo.
+
+https://github.com/fthain/linux/tree/atomic_t
+---14638117741591782072175852900335--
 
