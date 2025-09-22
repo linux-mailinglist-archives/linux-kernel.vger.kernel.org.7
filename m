@@ -1,115 +1,84 @@
-Return-Path: <linux-kernel+bounces-826933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3EB6B8FABF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:01:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C6FDB8FB24
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 711FE3A6DE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:01:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB023AC4B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF080284885;
-	Mon, 22 Sep 2025 09:01:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0832921CA14
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259F627B34A;
+	Mon, 22 Sep 2025 09:06:41 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F6027C145
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758531684; cv=none; b=bvzG+ovcj11Rv3snxtUhPJ2Uoo9Vduook1wjSzug04taWfdexnWPAJrvaVVAd3P/n14WvXZws4ZIOenu3T0d+qzzd3N3INTZ7gTjWA4X8MAsTfi6YSS7hGThOdM1L0NkN2hznRLKuaoeMdHq1b+TerbkVtbTZu80iX32QqeUylA=
+	t=1758532000; cv=none; b=Vnc5Yklnt4IGJzxLDb5gDELa/9DoT0kYer+LCdSJMVGyl2HpGPViQ/2yE3knNMu4lF6/QsHvhPF9mm3wvhhFTV6846gbsOBKDkhJ2pE8gcuT4vYzIBMUeV/rAgqhtyXy++ErGlaWhjBgiXMPsfqodQKzHDkA3nPR3gzscaGZKik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758531684; c=relaxed/simple;
-	bh=dkm5/OjYRqFLQTraVYrjKGfqxdjTAc5ZQu2qGcHVmAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DIu45Cl6gGaV0xUW2wPfckCjsDc/ZN5OoX/s3tLf50KjUo08eylo7TcQrKNV1IFFp3tzMvYHLYJpG6XVqoonxDus/FReX+Lj671bXx+TsjbHZg/xqpbOKSkLrj5jL5pzSgaqJswH4rs/xDTeKNplMMGo7xex/ZwRxIDjG1crZ6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44A3B150C;
-	Mon, 22 Sep 2025 02:01:14 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7119F3F694;
-	Mon, 22 Sep 2025 02:01:20 -0700 (PDT)
-Date: Mon, 22 Sep 2025 10:01:17 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: yunhui cui <cuiyunhui@bytedance.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, gregkh@linuxfoundation.org,
-	rafael@kernel.org, dakr@kernel.org, beata.michalska@arm.com,
-	ptsm@linux.microsoft.com, sumitg@nvidia.com,
-	yangyicong@hisilicon.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [External] Re: [PATCH v3 1/1] arch_topology: move
- parse_acpi_topology() to common code
-Message-ID: <20250922-buffalo-of-hypothetical-downpour-d2a47c@sudeepholla>
-References: <20250919085918.5442-1-cuiyunhui@bytedance.com>
- <20250919085918.5442-2-cuiyunhui@bytedance.com>
- <20250919-colossal-splendid-bettong-e5a0bd@sudeepholla>
- <CAEEQ3wkRoX5Y5xQu22kVCFxEy8fgcUxKHEm=9Bpg7g-Np8b-SA@mail.gmail.com>
+	s=arc-20240116; t=1758532000; c=relaxed/simple;
+	bh=oDeIf1xa35tx31JztYqK1THQyqYY2PAChkYgXng55Ko=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f7k/NI1iq1hvNxl6ZePrHaxk9lS29kKe36zRC/DV4qEqLrkZ09iga/WGaL7ibtg28TMMYBXUzcgNq2qQyqMEyyIPr2WCzaEd6X0hO13IxT+SMLgcmq1cBfCmGQH/A5LQXNguLsyE9rZkNQnt6ThWiycweRoU5IQrT/+AHHlgpYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee668d110dedd2-fb76a;
+	Mon, 22 Sep 2025 17:03:27 +0800 (CST)
+X-RM-TRANSID:2ee668d110dedd2-fb76a
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[10.55.1.70])
+	by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee168d110deefd-9d6ff;
+	Mon, 22 Sep 2025 17:03:27 +0800 (CST)
+X-RM-TRANSID:2ee168d110deefd-9d6ff
+From: liujing <liujing@cmss.chinamobile.com>
+To: jpoimboe@kernel.org
+Cc: peterz@infradead.org,
+	linux-kernel@vger.kernel.org,
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] objtool: fix memory leak in tools/objtool/elf.c
+Date: Mon, 22 Sep 2025 17:03:24 +0800
+Message-Id: <20250922090324.2598-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEEQ3wkRoX5Y5xQu22kVCFxEy8fgcUxKHEm=9Bpg7g-Np8b-SA@mail.gmail.com>
 
-On Mon, Sep 22, 2025 at 10:18:57AM +0800, yunhui cui wrote:
-> Hi Sudeep,
-> 
-> On Fri, Sep 19, 2025 at 10:05 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
+If calloc succeeds but malloc fails (i.e., sym != NULL but name == NULL),
+then memory has already been allocated for sym via calloc, but atthis
+point sym is not freed, leading to a memory leak.
 
-[...]
+Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+---
+ tools/objtool/elf.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> >
-> > Just thinking if it makes sense keep acpi_cpu_is_threaded generic without
-> > the need for weak definition.
-> >
-> > Additional note: not sure why you haven't moved this under CONFIG_ARM64/RISCV as
-> > done with other code.
-> >
-> > bool __init acpi_cpu_is_threaded(int cpu)
-> > {
-> >         int is_threaded = acpi_pptt_cpu_is_thread(cpu);
-> >
-> >         /*
-> >          * if the PPTT doesn't have thread information, check for architecture
-> >          * specific fallback if available
-> >          */
-> >         if (is_threaded < 0)
-> >                 is_threaded = arch_cpu_is_threaded();
-> >
-> >         return !!is_threaded;
-> > }
-> >
-> > Then you can just have the define in
-> >
-> > #define arch_cpu_is_threaded() (read_cpuid_mpidr() & MPIDR_MT_BITMASK)
-> >
-> > in arch/arm64/include/asm/topology.h
-> >
-> > and
-> >
-> > +#ifndef arch_cpu_is_threaded
-> > +#define arch_cpu_is_threaded           (0)
-> > +#endif
-> >
-> > in include/linux/arch_topology.h
-> >
-> > Thoughts ?
-> 
-> If placed in include/linux/arch_topology.h, there is a possibility
-> that "arch_cpu_is_threaded" will be redefined.
->
-
-Why is that a problem ? We want arch to override the default definition
-if and when required.
-
+diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
+index ca5d77db692a..69766f8a49d6 100644
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -859,6 +859,8 @@ elf_create_prefix_symbol(struct elf *elf, struct symbol *orig, long size)
+ 
+ 	if (!sym || !name) {
+ 		ERROR_GLIBC("malloc");
++		free(sym);
++		free(name);
+ 		return NULL;
+ 	}
+ 
 -- 
-Regards,
-Sudeep
+2.27.0
+
+
+
 
