@@ -1,133 +1,115 @@
-Return-Path: <linux-kernel+bounces-827175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2496B910E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:07:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C839B9111E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AEFC170F95
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE0B3A8A22
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE953090FD;
-	Mon, 22 Sep 2025 12:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912FF306B09;
+	Mon, 22 Sep 2025 12:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jq6gBx9G"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MWcLntuG"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF652306B09;
-	Mon, 22 Sep 2025 12:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E818A2F0687
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758542804; cv=none; b=eRd62yqC3sKTBHKF0kYLHDlyxbTE/zMIuoHrqC7UznieoRjbhkRYf20Z0mPpcJno0+iuPNOgOStsV50W2q6fX4CWuTfr8rWSmUrGAO0pN7eWNQ62DJWfBvyoRD1c5kmpP5cS6bnA23A2/l2snQRJhOVyPHaAl39l7D7xeUydGGU=
+	t=1758543025; cv=none; b=DeYNstW7GS02sG/QSyLT7LuqG67uA6CDABfxlpNJbwyOGmVLpxxuV6CPbXbpyl2g3NCwGJbyYLULlqkSXAA8VC0mPa2rKQOd3h0Z6Hh61tQwif1NnPV2cGE0vZzrTF/QrGaA3ZwPYUIGeXAhoCGmDcLpHj68DA7vLC/ahRtpsB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758542804; c=relaxed/simple;
-	bh=BqqaY02AaKRz6FYXRgBC7tGdga5OnpwR2SDTy3uOWLI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JwKr2bbzagI+wxKj5Uz6/fr9vSJVdRfPXyUsO15woyYz2su4L4lnscz8SxU6ER52Ho/RzDYZQkYuX0OpGWv1W+/Oa7vcFbSTBZV0dS4igEHYp3NscW8KRKlUO9vXkHUBM2O04ziXZgU3KEYdpnzByL+KY1mKueRk02C6IOS8Re0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jq6gBx9G; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758542802; x=1790078802;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=BqqaY02AaKRz6FYXRgBC7tGdga5OnpwR2SDTy3uOWLI=;
-  b=Jq6gBx9GO68WFLd7zbBeca7AZQ5HVCTuyXccU/f6kAZcwKjOx8pcsX+4
-   f7PetNIdpHb8az7v9Q8jn3Dm0RVzVf2OqKwsnWfKqNNQAapnAtanmqb3n
-   Yn5ACULnysPYB2NTrh1G/QHvU/BLKMpsg8tKQxU/ElZ5eNUVcXUtFHE2b
-   wDop4Nq7R5CffO3ZlwAsFEyYsdZgvnHh3pFHllFrt9PM6ColSu9tx2JWY
-   d4jttuxQKkmW+ecFT8crhg/HFauF8KQPhx/pl5YVjQPpNO4BIRy4DPQmA
-   64HWJV+Ekvs+XdYQUA9xDYESyMrfWhme1+Q2CbrU8EECgItnEiQcs4EQ0
-   A==;
-X-CSE-ConnectionGUID: pj/7MX/XStCeHk0nrOHlEQ==
-X-CSE-MsgGUID: kXrO0miXRdi/Zld322YywA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="63431642"
-X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
-   d="scan'208";a="63431642"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 05:06:38 -0700
-X-CSE-ConnectionGUID: pzO72+6BRwejA/Z5VIiATQ==
-X-CSE-MsgGUID: LeALQ2uhTX6inN6lFWINnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
-   d="scan'208";a="176842517"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.61])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 05:06:35 -0700
-Received: from punajuuri.localdomain (unknown [192.168.240.130])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 01F45121F08;
-	Mon, 22 Sep 2025 15:06:33 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.98.2)
-	(envelope-from <sakari.ailus@linux.intel.com>)
-	id 1v0fJQ-000000002jJ-4AhS;
-	Mon, 22 Sep 2025 15:06:32 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Lixu Zhang <lixu.zhang@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Brown <broonie@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH 5/5] mei: vsc: Remove Wentong's e-mail address
-Date: Mon, 22 Sep 2025 15:06:32 +0300
-Message-ID: <20250922120632.10460-5-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250922120632.10460-1-sakari.ailus@linux.intel.com>
-References: <20250922120632.10460-1-sakari.ailus@linux.intel.com>
+	s=arc-20240116; t=1758543025; c=relaxed/simple;
+	bh=D/clnD1hIlVnSt9RwqpAPzOANdJ2p5vqoO7F4SHQKHk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B7EUgkXnpQ6Ga+lUzSH2ZxeYSHsqJMBCkOiCeDjblg3+7g+KJm+2+AeF26ZrnUy4EpRP2nQYReqOyv5brf5l1Vr1gqy2rz/ghHBCQOqk12jEYL0TypUOVEMGDPl1GDURwXnvuEC8+AQzqhGlRhfmKb7Tf1bNIY35medWmziV3Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MWcLntuG; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45f2313dd86so36929095e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 05:10:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758543020; x=1759147820; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=71jw5Qy/VkNLzHuH4x3iqTkdWQrjxtig66ummONYtOM=;
+        b=MWcLntuGxb2GSltYe7nmE8qf/7WZA0gETFKw5/s3LjGLiRx8JM5pAHaM02mbQYl3XG
+         1SW6cGtsLhpDL5D/1lUbf8aEv7hxYvo4H7OY3mJMx9TuSAGj7cYzrKdCP94GDLY0hsYd
+         Kx/pVKFVVTZADei1ewDy7QxmN1pXJIGbOp7kjsW1ZdnhF8iE/gWijVcYluG3+DKDISwT
+         KKSXZ13Qa67Rt8b/qM/5WSJyklaPMhgvNgYUaAbhbSlGzQFVs21JG0c3a/R7cRg99d1v
+         /mSiKRzki5VIC6uIKbr328WP4PjOVxkBDSz99ACpvCYs5jTKvK9gC+Vrb/wU7KXPZj5h
+         OXtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758543020; x=1759147820;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=71jw5Qy/VkNLzHuH4x3iqTkdWQrjxtig66ummONYtOM=;
+        b=BYrU1zDQMyzXmTMbC489uEtYHoNZcM8wtbpgoPgbHNrEavUIMuMLjp/aLmrHE+HWxw
+         6dQwymHAHxfrXmz9Cda+yftqmwAODRbsCCBNAV842ozOlbp9Kx3zqEhsBnAbHAHtfsHH
+         0PVs6DXFavSMa+IEEbfngAGRKuWs/DuMEAL/O6/xBss/Tybk8Jk9bVA1TX3glcGIHhk5
+         tklHGqmFnHi750LFnR1BlNI+FqV5gTP7nyt1Nndv3QbVBsQdVL86kVDBSgDhl1xCL2qE
+         Rg7HlKcW+v84f8es0Cfypk+d4Q8YaVftWaplAC3JTdBLShhHCof4nxfv6WVCDgH/AL3h
+         m5Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLkmWL3ofwbJWA3ojWsExeAhZ3PRWBMWrICxOYHlloy+jB3Y+ZSMekFPnlkEEwQ6ydZBkSuKwOP3VJiBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrRltv627rodC/iRMShh5/kAYFl6MO13ZDh1L6QIAdTs9SfEN4
+	vqad46bvnqW1VFwiBYLWBckC/+U9u8x5idNFCRfRPJTMD7/4CgSrqPNuDftTmAwh
+X-Gm-Gg: ASbGncujoeHmZH0fogTO1giuYG80zjQTB4o0UxOQvxI3KdDL1geeAS/HkmCfg78bSe7
+	fkz4gAuLlOgdyQ0deBFKK/YwE7txpkogZEYaOFj5XuZkx4ay48jKnDOssq8DVtZBssMeLMrGQln
+	Jz+y20e9/oUws4/CkjHhzz25431nuqpAucvuaZvKdpgGgw3MjSznTiIQ+ah4aPpQXbHfSbu554j
+	MvYuQZNlaWRvUty7nLaw8WPrMUBXE7Ujb1Oq9DHFwiZNZfjoxJFQhJvYXweUOL3oGGuvmYeY1Af
+	O+60r8Cw8JM6HvGcXXQSCf2R69j4zSVYHQHAm3sml2pieE/kpHIXbZtrcZ5vctUgEcRdFuHgVP6
+	Zahab3ZX3YHvcgZdO/eVMUg==
+X-Google-Smtp-Source: AGHT+IGHW9CPoYUliHRmOI9QW83IwXhzxlqJRF4i5x3vsGF8rbB4SFo9J0Y/nPh3bivEr5ReaiyMtA==
+X-Received: by 2002:a05:600c:468a:b0:45d:e326:96e7 with SMTP id 5b1f17b1804b1-467eaa86e42mr112243105e9.29.1758543020076;
+        Mon, 22 Sep 2025 05:10:20 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45f32141ae9sm131846735e9.5.2025.09.22.05.10.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 05:10:19 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Christian Brauner <brauner@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Subject: [PATCH][next] selftests/clone3: Fix spelling mistake "supportd" -> "supported"
+Date: Mon, 22 Sep 2025 13:09:30 +0100
+Message-ID: <20250922120931.56786-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Wentong's e-mail address no longer works, remove it.
+There is a spelling mistake in a ksft_print_msg message. Fix it.
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/misc/mei/platform-vsc.c | 2 +-
- drivers/misc/mei/vsc-tp.c       | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ tools/testing/selftests/clone3/clone3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/mei/platform-vsc.c b/drivers/misc/mei/platform-vsc.c
-index b2b5a20ae3fa..ce43668ad9fd 100644
---- a/drivers/misc/mei/platform-vsc.c
-+++ b/drivers/misc/mei/platform-vsc.c
-@@ -453,7 +453,7 @@ static struct platform_driver mei_vsc_drv = {
- };
- module_platform_driver(mei_vsc_drv);
+diff --git a/tools/testing/selftests/clone3/clone3.c b/tools/testing/selftests/clone3/clone3.c
+index 05c3d2dcbf2a..385cf08f8cf8 100644
+--- a/tools/testing/selftests/clone3/clone3.c
++++ b/tools/testing/selftests/clone3/clone3.c
+@@ -71,7 +71,7 @@ static void test_shadow_stack_supported(void)
+ 	} else if ((void *)ret == MAP_FAILED) {
+ 		ksft_print_msg("Failed to map shadow stack\n");
+ 	} else {
+-		ksft_print_msg("Shadow stack supportd\n");
++		ksft_print_msg("Shadow stack supported\n");
+ 		shadow_stack_supported = true;
  
--MODULE_AUTHOR("Wentong Wu <wentong.wu@intel.com>");
-+MODULE_AUTHOR("Wentong Wu");
- MODULE_AUTHOR("Zhifeng Wang <zhifeng.wang@intel.com>");
- MODULE_DESCRIPTION("Intel Visual Sensing Controller Interface");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/misc/mei/vsc-tp.c b/drivers/misc/mei/vsc-tp.c
-index 5ecf99883996..a75d8307a0f2 100644
---- a/drivers/misc/mei/vsc-tp.c
-+++ b/drivers/misc/mei/vsc-tp.c
-@@ -571,7 +571,7 @@ static struct spi_driver vsc_tp_driver = {
- };
- module_spi_driver(vsc_tp_driver);
- 
--MODULE_AUTHOR("Wentong Wu <wentong.wu@intel.com>");
-+MODULE_AUTHOR("Wentong Wu");
- MODULE_AUTHOR("Zhifeng Wang <zhifeng.wang@intel.com>");
- MODULE_DESCRIPTION("Intel Visual Sensing Controller Transport Layer");
- MODULE_LICENSE("GPL");
+ 		if (!shadow_stack_enabled)
 -- 
-2.47.3
+2.51.0
 
 
