@@ -1,88 +1,122 @@
-Return-Path: <linux-kernel+bounces-827574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2BA0B921FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:06:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A32BB92345
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE7682A4439
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:05:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3423189DCFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4931631065A;
-	Mon, 22 Sep 2025 16:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GNEhAO9a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A142B2EA75C;
-	Mon, 22 Sep 2025 16:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2DD31195B;
+	Mon, 22 Sep 2025 16:20:38 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36271311595;
+	Mon, 22 Sep 2025 16:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758557144; cv=none; b=rZ/gUBFE6cPWH5Kh2tPlaqcwJ1zNyardIUiDFbi5+lgzm4ecazyVbTfLnpdqg2j0vgvndnp5XsLy5bizTdsAw5pnI8ehXu1FzBisufcOooXygkYiXH+EgaWkHC5u5qb38g4+OrwHSYerdB6xo+FtgDGVJfQP3dZXdiTo73xSS1U=
+	t=1758558038; cv=none; b=tQQzCv9QAxFwKm99TE9KaBK6bAt9Zxu8GoPfgeIPbLA+OQh6MoQ/FTypSPF/l7bKDkVVtGizPwaIohnO2BkerPHvs2ftZUoqH0uYxULQ0M76Flx3Xam5yTLZzJCwgEFEiPIOnxEnIzv9zF+RLJy/eRH44J6Oj+9H44EEKpvt8FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758557144; c=relaxed/simple;
-	bh=JPkZxdmSLhErHT2r6+C3wkfctmMfikaGR/BNm9a5YNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MNBPdC+vKB3deYgvriw8RNj/riTHn3SdmCKAYHs7xrvDiXgA8WZskDY3QI14yBgIfI8FrnzE2zhJscRPBB2GJBYqRiVWDtfaEBGV4CLCfOpAMgd8XUlPq/bnMbwUc3bu2MENmfEqOat1MrTnFMmbOmG8otahs1/L4HY2RbE22eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GNEhAO9a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14679C4CEF0;
-	Mon, 22 Sep 2025 16:05:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758557144;
-	bh=JPkZxdmSLhErHT2r6+C3wkfctmMfikaGR/BNm9a5YNQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GNEhAO9aBetiLDHu8K9co2Qyo5AsQg6T/SupFrIVQSWa3I3reOQFVWsEYJapeiMoN
-	 5cCsYyagEi096PoQPTkMz0vEV06YJTqmb661KvwQnc7vM400S6qrWy4qGwe4ESp2Wl
-	 VsgI5kqtZVoXkObKtO4kKkE3JgxUE8PIJ4UyoB/VKFg8C/SGEHvYYWXy2mguMxA/Fc
-	 lM54ZW8AOLU43HrYaF+3lfcp1/ES/ucuhvpaAycZSTCdNV8XRKgLUdC8ww7gNkrTGR
-	 u71vKSP1hjUkuv9jtNAZAhXCKN2NpfERCQxVbQf7Q4NSyhk25OmhMmi1SHtU0DYIzt
-	 oGy7oEnybRyhA==
-Date: Mon, 22 Sep 2025 11:05:43 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Alexandre Ghiti <alex@ghiti.fr>, Icenowy Zheng <uwu@icenowy.me>,
-	Palmer Dabbelt <palmer@dabbelt.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>,
-	Han Gao <rabenda.cn@gmail.com>, Han Gao <gaohan@iscas.ac.cn>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Drew Fustini <fustini@kernel.org>, linux-riscv@lists.infradead.org,
-	Fu Wei <wefu@redhat.com>
-Subject: Re: [PATCH v2 2/5] dt-bindings: reset: thead,th1520-reset: Add
- controllers for more subsys
-Message-ID: <175855714271.140455.3621528471565311357.robh@kernel.org>
-References: <20250915095331.53350-1-ziyao@disroot.org>
- <20250915095331.53350-3-ziyao@disroot.org>
+	s=arc-20240116; t=1758558038; c=relaxed/simple;
+	bh=/b6LZkKz++JM5BAJmEVxfRNTiKyfcQ7AX3Z9ffGHfjw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hw57zo6gSahTtS9oEQ3hDZIOOeStTbFE45+bLXhfHqS7FteHDt7xFm8mSFTfIk/cebHfKjx+arw5sjjkoWFIYhfVHEl1/mNAX+Yebti9GOygfpn7SMiFqoyxurU8txQ3HJD5Ji5QVNXx/YdqSAUn5wGB67xipdQJxItZLV0RvCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cVnyB1Lhlz9sSL;
+	Mon, 22 Sep 2025 18:05:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id RQGetHUt7Al8; Mon, 22 Sep 2025 18:05:22 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cVnyB0Zhlz9sSK;
+	Mon, 22 Sep 2025 18:05:22 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id F32C18B768;
+	Mon, 22 Sep 2025 18:05:21 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 1HyZsWwZsQmv; Mon, 22 Sep 2025 18:05:21 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 891948B763;
+	Mon, 22 Sep 2025 18:05:20 +0200 (CEST)
+Message-ID: <71cabf42-ce79-4030-a08e-475275c19f05@csgroup.eu>
+Date: Mon, 22 Sep 2025 18:05:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915095331.53350-3-ziyao@disroot.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] powerpc/smp: Add check for kcalloc() failure in
+ parse_thread_groups()
+To: Guangshuo Li <lgs201920130244@gmail.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20250922151025.1821411-1-lgs201920130244@gmail.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250922151025.1821411-1-lgs201920130244@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-On Mon, 15 Sep 2025 09:53:28 +0000, Yao Zi wrote:
-> TH1520 SoC is divided into several subsystems, most of them have
-> distinct reset controllers. Let's document reset controllers other than
-> the one for VO subsystem and IDs for their reset signals.
+
+Le 22/09/2025 à 17:10, Guangshuo Li a écrit :
+> [Vous ne recevez pas souvent de courriers de lgs201920130244@gmail.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
 > 
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> As kcalloc() may fail, check its return value to avoid a NULL pointer
+> dereference when passing it to of_property_read_u32_array().
+> 
+> Fixes: 790a1662d3a26 ("powerpc/smp: Parse ibm,thread-groups with multiple properties")
+> Cc: stable@vger.kernel.org
 > ---
->  .../bindings/reset/thead,th1520-reset.yaml    |   8 +-
->  .../dt-bindings/reset/thead,th1520-reset.h    | 216 ++++++++++++++++++
->  2 files changed, 223 insertions(+), 1 deletion(-)
+> changelog:
+> v2:
+> - Return -ENOMEM directly on allocation failure.
 > 
+> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+The Signed-off-by: must be above the ---, otherwise it will be lost when 
+applying the commit.
+
+With that fixed,
+
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
+
+
+> ---
+>   arch/powerpc/kernel/smp.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+> index 5ac7084eebc0..cfccb9389760 100644
+> --- a/arch/powerpc/kernel/smp.c
+> +++ b/arch/powerpc/kernel/smp.c
+> @@ -822,6 +822,8 @@ static int parse_thread_groups(struct device_node *dn,
+> 
+>          count = of_property_count_u32_elems(dn, "ibm,thread-groups");
+>          thread_group_array = kcalloc(count, sizeof(u32), GFP_KERNEL);
+> +       if (!thread_group_array)
+> +               return -ENOMEM;
+>          ret = of_property_read_u32_array(dn, "ibm,thread-groups",
+>                                           thread_group_array, count);
+>          if (ret)
+> --
+> 2.43.0
+> 
 
 
