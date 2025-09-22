@@ -1,54 +1,62 @@
-Return-Path: <linux-kernel+bounces-827091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D963B90498
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:55:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DEBB904B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0EBC18931A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:55:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7A6518965CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58E62FF143;
-	Mon, 22 Sep 2025 10:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1972F90EA;
+	Mon, 22 Sep 2025 11:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QbK+hulz"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="F46rgG33"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D414C42AA9;
-	Mon, 22 Sep 2025 10:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC7E2FC008;
+	Mon, 22 Sep 2025 11:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758538521; cv=none; b=tywFj8wsyk4+j06p1PsOWWgCdMB3NCU0+nkaGMqWDnxSVKbJZ2lvfPdoQDhDqq7gNszYO62uu5q6H+kMhAxiKu73AfnznWoKT2YuR+CX/K7HautZ2PVbyzOCGk1tbVSqMd44r+j6uPkTqmvijzoJdEnGoZR/otN7wK8ZGDM4S/s=
+	t=1758538805; cv=none; b=d639zfflEgvHIk6dn3SpSthOXW3z1agLvsoC1e7sPOhlsjfzkk6CGl0jEdd+9BHv1QfdR50loaa7lWbPJXqwuLGBRe8PlIighFjg0G4wTLqRbJSs4EhSkgUmQKT3U3mwTvuY+WsBK2DCvhGLyOIXtkKWj3xwyg9UXNINVZOTg5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758538521; c=relaxed/simple;
-	bh=cq7Y4UZHdRw2ECiLZbveDiF74dbYePvi+a4phlHnPtY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iMVH3pam9zl0BgexD/DuhYOkeUEe5Tiq7LaXMPtKj0djaMwZPCFYK0aymcLV3byIj0Pyz49MwORuuT/0LG0eldaJTDjGmubE7rug3x5QTZyIww8pemfWqzZZOI4KRCk0OMs/VuT3xHJathc0abQLFHhbhiFOdoKPVpreHX+W1WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QbK+hulz; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758538516;
-	bh=cq7Y4UZHdRw2ECiLZbveDiF74dbYePvi+a4phlHnPtY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QbK+hulz3cRofs2gz2imTo35BmAq9oyHgdicO4p3aKWCfae83ng/JF1phynRpMfzb
-	 EuVXef5tc+M3MEHd287xeKzfT9mVt+1oAR7fUJfVgx3+3R0NuK5/fiasc4TYWglNvE
-	 93XlbxP8cERhUsWnHpPuns5AJ8/QRPVLbopOIrgFwyY6Et63A3RawnM1zn/1JF+fnc
-	 KfwXMYeSwHpTu7EX1CFTguGhgeeT/Ub6QMEXC+71X8tNYwhdS7THjVwrCyEtsrgZ6w
-	 kjrT1HVp3qoNlFHshhrf4KdjEaeexDd1LhSZPWVvZMcV7eqIhhUj3xxB6GEuCySHiH
-	 kS8wrgJKWbdVw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5AC9417E10F3;
-	Mon, 22 Sep 2025 12:55:15 +0200 (CEST)
-Message-ID: <e700cea3-cbe7-4ab5-94d8-a211051e2472@collabora.com>
-Date: Mon, 22 Sep 2025 12:55:14 +0200
+	s=arc-20240116; t=1758538805; c=relaxed/simple;
+	bh=3o+03UvtuKo6XVZQs/hIKg2h5/JAcBwZytDhnqiwhVk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dhXwJyGGlsDLVoAWn8ICAkJKQCQPF7LLhltDCKz4q8bnykI0U2qe7BFVS7Ep5r0I2Cf3GXZTsGIO93Br2SVI0dM6ZGm8yKxfGIoyuPdHgKQO5zlPHSY/xkLecNbjupG1e8RXjH3gEtV1kbkpDK+pouqXCIIIgDn7U93sj4uFHBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=F46rgG33; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58MAxEfY1220947;
+	Mon, 22 Sep 2025 05:59:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758538754;
+	bh=a07Jje9wgJS411V9TAYdRp6D/A+/X9TQdr2317tN+Jw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=F46rgG33jswHneyWPfRr/B1Vx1kkSi1ndlwOdFNTX32Yo1+g/s5Ajpx5MLqsODlr0
+	 xODnXVWbWqk1mH6HqDUaRJIsdtR7jIhu4CjeMGjgK5kjcwRLQUhBGbZ1pyHqTY/lMa
+	 5SnfW3adXlc+VhXuLyozljYOsgJuLtdkllo6Qyls=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58MAxE2B251090
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 22 Sep 2025 05:59:14 -0500
+Received: from DLEE210.ent.ti.com (157.170.170.112) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 22
+ Sep 2025 05:59:13 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE210.ent.ti.com
+ (157.170.170.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 22 Sep 2025 05:59:13 -0500
+Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58MAx5q52656697;
+	Mon, 22 Sep 2025 05:59:06 -0500
+Message-ID: <4f6af874-ca9c-48d5-a812-9fd42226ac5c@ti.com>
+Date: Mon, 22 Sep 2025 16:29:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,109 +64,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] PCI: Convert devm_pci_alloc_host_bridge() users to
- error-pointer returns
-To: Alok Tiwari <alok.a.tiwari@oracle.com>, thomas.petazzoni@bootlin.com,
- pali@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
- mani@kernel.org, robh@kernel.org, bhelgaas@google.com, joyce.ooi@intel.com,
- alyssa@rosenzweig.io, maz@kernel.org, jim2101024@gmail.com,
- florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
- rjui@broadcom.com, sbranden@broadcom.com, ryder.lee@mediatek.com,
- jianjun.wang@mediatek.com, sergio.paracuellos@gmail.com,
- matthias.bgg@gmail.com, marek.vasut+renesas@gmail.com,
- yoshihiro.shimoda.uh@renesas.com, geert+renesas@glider.be,
- magnus.damm@gmail.com, shawn.lin@rock-chips.com, heiko@sntech.de,
- michal.simek@amd.com, bharat.kumar.gogada@amd.com, will@kernel.org,
- kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, linus.walleij@linaro.org, thierry.reding@gmail.com,
- jonathanh@nvidia.com, rric@kernel.org, nirmal.patel@linux.intel.com,
- toan@os.amperecomputing.com, jonathan.derrick@linux.dev,
- linux-pci@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-hyperv@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20250921161434.1561770-1-alok.a.tiwari@oracle.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH net-next v4 0/7] Add RPMSG Ethernet Driver
+To: Andrew Davis <afd@ti.com>, "David S. Miller" <davem@davemloft.net>,
+        Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        Jonathan Corbet
+	<corbet@lwn.net>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        Mengyuan Lou
+	<mengyuanlou@net-swift.com>,
+        Lei Wei <quic_leiwei@quicinc.com>, Xin Guo
+	<guoxin09@huawei.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, Fan Gong
+	<gongfan1@huawei.com>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Parthiban
+ Veerasooran <Parthiban.Veerasooran@microchip.com>,
+        Lukas Bulwahn
+	<lukas.bulwahn@redhat.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+References: <20250911113612.2598643-1-danishanwar@ti.com>
+ <8a20160e-1528-4d0e-9347-0561fc3426b4@ti.com>
+ <7cd06f8f-bd74-429d-bf2c-71858178950a@ti.com>
+ <65a98655-68a1-4bf9-b139-c4172f48dad4@ti.com>
 Content-Language: en-US
-In-Reply-To: <20250921161434.1561770-1-alok.a.tiwari@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <65a98655-68a1-4bf9-b139-c4172f48dad4@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Il 21/09/25 18:14, Alok Tiwari ha scritto:
-> devm_pci_alloc_host_bridge() and pci_alloc_host_bridge() previously
-> returned NULL on failure, forcing callers to special-case NULL handling
-> and often hardcode -ENOMEM as the error.
+Hi Andrew
+
+On 17/09/25 10:07 pm, Andrew Davis wrote:
+> On 9/17/25 6:44 AM, MD Danish Anwar wrote:
+>> Hi Andrew,
+>>
+>> On 11/09/25 9:34 pm, Andrew Davis wrote:
+>>> On 9/11/25 6:36 AM, MD Danish Anwar wrote:
+>>>> This patch series introduces the RPMSG Ethernet driver, which
+>>>> provides a
+>>>> virtual Ethernet interface for communication between a host
+>>>> processor and
+>>>> a remote processor using the RPMSG framework. The driver enables
+>>>> Ethernet-like packet transmission and reception over shared memory,
+>>>> facilitating inter-core communication in systems with heterogeneous
+>>>> processors.
+>>>>
+>>>
+>>> This is neat and all but I have to ask: why? What does this provide
+>>> that couldn't be done with normal RPMSG messages? Or from a userspace
+>>> TAP/TUN driver on top of RPMSG?
+>>>
+>>
+>> This is different from RPMSG because here I am not using RPMSG to do the
+>> actual TX / RX. RPMSG is only used to share information (tx / rx
+>> offsets, buffer size, etc) between driver and firmware. The TX / RX
+>> happens in the shared memory. This implementation uses a shared memory
 > 
-> This series updates devm_pci_alloc_host_bridge() to consistently return
-> error pointers (ERR_PTR) with the actual error code, instead of NULL.
-> All callers across PCI host controller drivers are updated to use
-> IS_ERR_OR_NULL()/PTR_ERR() instead of NULL checks and hardcoded -ENOMEM.
+> This is how RPMSG is supposed to be used, it is meant for small messages
+> and signaling, bulk data should be send out-of-band. We have examples
+> specifically showing how this should be done when using RPMSG[0], and our
+> RPMSG backed frameworks do the same (like DSP audio[1] and OpenVX[2]).
 > 
-> Benefits:
->    - Standardizes error handling with Linux kernel ERR_PTR()/PTR_ERR()
->      conventions.
->    - Ensures that the actual error code from lower-level helpers is
->      propagated back to the caller.
->    - Removes ambiguity between NULL and error pointer returns.
+>> circular buffer with head/tail pointers for efficient data passing
+>> without copies between cores.
+>>
+>>> This also feels like some odd layering, as RPMSG sits on virtio, and
+>>> we have virtio-net, couldn't we have a firmware just expose that (or
+>>> would the firmware be vhost-net..)?
+>>>
+>>
+>> PMSG sits on virtio, and we do have virtio-net but I am not trying to do
+>> ethernet communication over RPMSG. RPMSG is only used to exchange
+>> information between cores regarding the shared memory where the actual
+>> ethernet communication happens.
+>>
 > 
-> Touched drivers include:
->   cadence (J721E, cadence-plat)
->   dwc (designware, qcom)
->   mobiveil (layerscape-gen4, mobiveil-plat)
->   aardvark, ftpci100, ixp4xx, loongson, mvebu, rcar, tegra, v3-semi,
->   versatile, xgene, altera, brcmstb, iproc, mediatek, mt7621, xilinx,
->   plda, and others
-> 
-> This patch updates error handling across these host controller drivers
->   so that callers consistently receive ERR_PTR() instead of NULL.
+> Again nothing new here, virtio-net does control plane work though a
+> message channel but the data plane is done using fast shared memory
+> vqueues with vhost-net[3]. Using RPMSG would just be an extra unneeded
+> middle layer and cause you to re-implement what is already done with
+> virtio-net/vhost-net.
 > 
 
-I think that's a nice improvement - propagating the right error code looks good.
+virtio-net provides a solution for virtual ethernet interface in a
+virtualized environment. Our use-case here is traffic tunneling between
+heterogeneous processors in a non virtualized environment such as TI's
+AM64x that has Cortex A53 and Cortex R5 where Linux runs on A53 and a
+flavour of RTOS on R5(FreeRTOS) and the ethernet controller is managed
+by R5 and needs to pass some low priority data to A53. The data plane is
+over the shared memory while the control plane is over RPMsg end point
+channel.
 
-The only thing is - you have to make sure that it never returns NULL, so that
-in the controller drivers you always check for `if (IS_ERR(x))` - otherwise with
-the current IS_ERR_OR_NULL(x) most of the error paths are wrong.
+We had aligned with Andrew L [1] and the ask was to create a generic
+Linux Ethernet driver that can be used for heterogeneous system. Similar
+to rpmsg_tty.c. It was suggested to create a new rpmsg_eth.c driver that
+can be used for this purpose.
 
-Cheers,
-Angelo
+Here I have implemented what was suggested in [1]
 
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-> ---
->   arch/mips/pci/pci-xtalk-bridge.c                       | 4 ++--
->   drivers/pci/controller/cadence/pci-j721e.c             | 4 ++--
->   drivers/pci/controller/cadence/pcie-cadence-plat.c     | 4 ++--
->   drivers/pci/controller/dwc/pcie-designware-host.c      | 4 ++--
->   drivers/pci/controller/dwc/pcie-qcom.c                 | 4 ++--
->   drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c | 4 ++--
->   drivers/pci/controller/mobiveil/pcie-mobiveil-plat.c   | 4 ++--
->   drivers/pci/controller/pci-aardvark.c                  | 4 ++--
->   drivers/pci/controller/pci-ftpci100.c                  | 4 ++--
->   drivers/pci/controller/pci-host-common.c               | 4 ++--
->   drivers/pci/controller/pci-hyperv.c                    | 4 ++--
->   drivers/pci/controller/pci-ixp4xx.c                    | 4 ++--
->   drivers/pci/controller/pci-loongson.c                  | 4 ++--
->   drivers/pci/controller/pci-mvebu.c                     | 4 ++--
->   drivers/pci/controller/pci-rcar-gen2.c                 | 4 ++--
->   drivers/pci/controller/pci-tegra.c                     | 4 ++--
->   drivers/pci/controller/pci-v3-semi.c                   | 4 ++--
->   drivers/pci/controller/pci-versatile.c                 | 4 ++--
->   drivers/pci/controller/pci-xgene.c                     | 4 ++--
->   drivers/pci/controller/pcie-altera.c                   | 4 ++--
->   drivers/pci/controller/pcie-brcmstb.c                  | 4 ++--
->   drivers/pci/controller/pcie-iproc-bcma.c               | 4 ++--
->   drivers/pci/controller/pcie-iproc-platform.c           | 4 ++--
->   drivers/pci/controller/pcie-mediatek-gen3.c            | 4 ++--
->   drivers/pci/controller/pcie-mediatek.c                 | 4 ++--
->   drivers/pci/controller/pcie-mt7621.c                   | 4 ++--
->   drivers/pci/controller/pcie-rcar-host.c                | 4 ++--
->   drivers/pci/controller/pcie-rockchip-host.c            | 4 ++--
->   drivers/pci/controller/pcie-xilinx-cpm.c               | 4 ++--
->   drivers/pci/controller/pcie-xilinx-dma-pl.c            | 4 ++--
->   drivers/pci/controller/pcie-xilinx-nwl.c               | 4 ++--
->   drivers/pci/controller/pcie-xilinx.c                   | 4 ++--
->   drivers/pci/controller/plda/pcie-plda-host.c           | 4 ++--
->   drivers/pci/probe.c                                    | 8 ++++----
->   34 files changed, 70 insertions(+), 70 deletions(-)
+[1]
+https://lore.kernel.org/all/8f5d2448-bfd7-48a5-be12-fb16cdc4de79@lunn.ch/
+
+> Andrew
 > 
+> [0] https://git.ti.com/cgit/rpmsg/rpmsg_char_zerocopy
+> [1] https://github.com/TexasInstruments/rpmsg-dma
+> [2] https://github.com/TexasInstruments/tiovx
+> [3] https://www.redhat.com/en/blog/deep-dive-virtio-networking-and-
+> vhost-net
+> 
+
+
+-- 
+Thanks and Regards,
+Danish
+
 
