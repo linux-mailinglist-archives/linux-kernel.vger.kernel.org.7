@@ -1,411 +1,121 @@
-Return-Path: <linux-kernel+bounces-827785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3281AB92D7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7FDB92C7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79FDB446940
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:34:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AECD3AB356
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8182DF714;
-	Mon, 22 Sep 2025 19:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D0F2F0C5E;
+	Mon, 22 Sep 2025 19:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="r2TMpoRu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="a5L0TJsa"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6989C27FB2D;
-	Mon, 22 Sep 2025 19:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CCF1519AC
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 19:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758569666; cv=none; b=JF5geNSWS8C9lGk6ZiJCLR9SdugK1hh22sJoNxfeQEHkhofic63T19LWFpQij0+eixAiLmjZgVY1LGtt3UKKU7YJV9QHOWM3haVGyzo/jn/tnklrqbXKfUGKGyku1ClLtQvLjjxkffUpYsnsqypBkiZQ1mk6nI8L0SMi2DCyI4Q=
+	t=1758569422; cv=none; b=NonQoAKqiy7Z3UZmEqwQ21+uzk8/RvL2UnVMBJ1/JS1zlPv4W6nyRjmOtFYI72zWZbaXnzw9sfb2jszLtpfZ7hCJoRqLHcre+8ShRz5l1GqJBCy4suamofeVMs82vFEemvZY+6gvkiP4mSGM1Yk+i6SbyRngweNFPzNyPirty6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758569666; c=relaxed/simple;
-	bh=V36PHP8pI4Fc6CvqaqqeCLqHuhprRf/NCpWeuG0r3+8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Clt6tuzWGTvjnc2S0A+pMytbTLvljdBnxrDaeKInMkLQ9w8jAJs4OjaJNFQnE456xMU/gaFewe25v+jqxDPw4SkKCmMid32Oo1oASLLOr6oTRSQ8oe4U54NoUXWnKHggTc5F1XunXd/oo6hYjeXshEHjTXFkD569kwhtuy3g/10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=r2TMpoRu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2831C4CEF0;
-	Mon, 22 Sep 2025 19:34:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1758569666;
-	bh=V36PHP8pI4Fc6CvqaqqeCLqHuhprRf/NCpWeuG0r3+8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=r2TMpoRuuPvZGWQZp+btqWK6kqMQabViwUeWsmGMRRXgJPv9rb+1sn3q6+xAw9CKm
-	 8MPync0lx9ObWuBNN/Hr0ArTdJbuLRpElOinBqrdLdG0RhHT4K3axjjMZN1EHqB+qt
-	 vMQsyD7oMh6OwAv4X61iL1f9aJREy7RfASJOMq4A=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	achill@achill.org
-Subject: [PATCH 6.6 00/70] 6.6.108-rc1 review
-Date: Mon, 22 Sep 2025 21:29:00 +0200
-Message-ID: <20250922192404.455120315@linuxfoundation.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758569422; c=relaxed/simple;
+	bh=M55kfbiA5WNrGJ3r6EqFqgctDNfA8Xd3Z8+bi9BHwqY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TTLUxh5Mu9AXKNCeJn5NtB4rrr6lh2jKnjJ4AvwPiGZosKzOlaWB2EQqH7sIoQlMXi4OR2nvDgu5/9iqU/P8JLi1RAAiyGPP8aQqBs8UMHAtOGXf/hs+Wa7yVFEUvNT1m11VSpxkRfHdyWz0L2DXj9jBhy/bwGPL0qDddtKzYWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=a5L0TJsa; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-62fc89cd630so5040483a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:30:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1758569419; x=1759174219; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cvdWOntfA4A2sQxeMILs61f9nOsNLek7agJHp14BnZw=;
+        b=a5L0TJsaSgtelL6PwfSc5g1RGH5xXQFmKj5F1lLBAeFsG69TsSvyMsSrFNtc2wPL2a
+         whvVf+1P6Xvn6utJdbFrhO8fyOhXDoBY2rlST9n/D0rmICcvUF5O1dzXv9inJoECHO9X
+         ilXyo8nEQz1QpOhlnDnQmz0lHxNKPiNHUrv4jk12thJRYG6FqJ7zCf790fiTUsUzjuZm
+         948+9zbPqmkPppmpcFykZDpX4SBd3I5vVjLb/gpoN1c2LoYLk5oBAjhEphmxQDiMnb7x
+         wAPV6rdtxYN3pr+QaE2TKzq0FR+A5G8hVdAolnBiI+qM7V/8LlkuDuBsTGO7sQfIcFTs
+         xrEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758569419; x=1759174219;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cvdWOntfA4A2sQxeMILs61f9nOsNLek7agJHp14BnZw=;
+        b=WyqRosYmafe3kW22P0ShUHQtEr80MBGWKs3WMzHEgEvvS76U0wJ98SfV8BgDy7u86F
+         SgOEdS8Le/UKbesF4f5vO1qskGgC5PvhqH53bFu17+7Mf7sFa1GrU6iXZg2ExWTnTCG0
+         vxMdfLJdBl51qTvFPnAbT+X1Du5mzUnysIzZ7SW2RO2tWCjOSor86rr8zVgG6B/eheAP
+         iZFxgd61tViw351BQoL3TN8SUXXIGU0h3WV5HHNfea91/4YTJaIQCV/1Nicr9Z9KjdmF
+         ndwDzWANgdmPmIfjEFmRPtgQiuzg2ylb5A8oIrP/R3LRWzqV531mbc20zjjIhwbmlr+s
+         zubw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoNe64iXvLfLq/9p7mIMf+l2wt8NjUNWt7vDubPnkflxO9XWY5IRQ8jbFfiVWtrrgr76SXd3Sir3i/Q64=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0mAIYI3IXRu3Es1DHPuG9jk7FZ8DMIdnOXhVwDfMyV8HizJR/
+	oWO8z2PGQzASiL+WwjERg1RUf2rdQqKfcur7Ej0KlmbwXbWBwL41k4INjyqXAKzymJjzUgiK5sb
+	4xbipRmYcobc4SskpYd0HadMSsn/LNsEO8VVEpxHI
+X-Gm-Gg: ASbGncuk2PZj8jhhhGISGuDijcHwSQicf1UwRrYgJXiKm3wYLQHX3f29jygsMydxPgX
+	DbR1CB9I2eIwJwHtyF0P1g201wiY7a3vthsD1Sf+Xo+6+n2VATWs5USKOCq1oUkugDGBSwsTLOn
+	fXQ4qn60/n+xc4ogz6is4+TaEdwlPnm7StDpYZeKOrjYjBUfiERU0UomMqtR89z401eNV/+K4pE
+	tO2Ngk=
+X-Google-Smtp-Source: AGHT+IEiBDSh+6Em5c+U4LmqyUVPf4J6sg4KEYshuli5NnK7h8jqw5N22Ih+dxfjqxwcfWjX8MHUInxueYuNHXzg6tw=
+X-Received: by 2002:a05:6402:5201:b0:633:7b1e:9aa3 with SMTP id
+ 4fb4d7f45d1cf-6337b1ea02fmr4563672a12.34.1758569418235; Mon, 22 Sep 2025
+ 12:30:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.108-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.6.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.6.108-rc1
-X-KernelTest-Deadline: 2025-09-24T19:24+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-This is the start of the stable review cycle for the 6.6.108 release.
-There are 70 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Wed, 24 Sep 2025 19:23:52 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.108-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.6.108-rc1
-
-Eric Hagberg <ehagberg@janestreet.com>
-    Revert "loop: Avoid updating block size under exclusive owner"
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    minmax: add a few more MIN_T/MAX_T users
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    minmax: simplify and clarify min_t()/max_t() implementation
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    minmax: avoid overly complicated constant expressions in VM code
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    mptcp: propagate shutdown to subflows when possible
-
-Bruno Thomsen <bruno.thomsen@gmail.com>
-    rtc: pcf2127: fix SPI command byte for PCF2131 backport
-
-Vasant Hegde <vasant.hegde@amd.com>
-    iommu/amd/pgtbl: Fix possible race while increase page table level
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    xhci: dbc: Fix full DbC transfer ring after several reconnects
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    xhci: dbc: decouple endpoint allocation from initialization
-
-Johan Hovold <johan@kernel.org>
-    phy: ti: omap-usb2: fix device leak at unbind
-
-Rob Herring <robh@kernel.org>
-    phy: Use device_get_match_data()
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    selftests: mptcp: userspace pm: validate deny-join-id0 flag
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    mptcp: pm: nl: announce deny-join-id0 flag
-
-Sankararaman Jayaraman <sankararaman.jayaraman@broadcom.com>
-    vmxnet3: unregister xdp rxq info in the reset path
-
-Stefan Metzmacher <metze@samba.org>
-    smb: client: fix smbdirect_recv_io leak in smbd_negotiate() error path
-
-Herbert Xu <herbert@gondor.apana.org.au>
-    crypto: af_alg - Set merge to zero early in af_alg_sendmsg
-
-Qi Xi <xiqi2@huawei.com>
-    drm: bridge: cdns-mhdp8546: Fix missing mutex unlock on error path
-
-Loic Poulain <loic.poulain@oss.qualcomm.com>
-    drm: bridge: anx7625: Fix NULL pointer dereference with early IRQ
-
-Colin Ian King <colin.i.king@gmail.com>
-    ASoC: SOF: Intel: hda-stream: Fix incorrect variable used in error message
-
-Charles Keepax <ckeepax@opensource.cirrus.com>
-    ASoC: wm8974: Correct PLL rate rounding
-
-Charles Keepax <ckeepax@opensource.cirrus.com>
-    ASoC: wm8940: Correct typo in control name
-
-Charles Keepax <ckeepax@opensource.cirrus.com>
-    ASoC: wm8940: Correct PLL rate rounding
-
-Jens Axboe <axboe@kernel.dk>
-    io_uring: include dying ring in task_work "should cancel" state
-
-Jens Axboe <axboe@kernel.dk>
-    io_uring: backport io_should_terminate_tw()
-
-Praful Adiga <praful.adiga@gmail.com>
-    ALSA: hda/realtek: Fix mute led for HP Laptop 15-dw4xx
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    selftests: mptcp: avoid spurious errors on TCP disconnect
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    selftests: mptcp: connect: catch IO errors on listen side
-
-Håkon Bugge <haakon.bugge@oracle.com>
-    rds: ib: Increment i_fastreg_wrs before bailing out
-
-Hans de Goede <hansg@kernel.org>
-    net: rfkill: gpio: Fix crash due to dereferencering uninitialized pointer
-
-Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
-    KVM: SVM: Sync TPR from LAPIC into VMCB::V_TPR even if AVIC is active
-
-Thomas Fourier <fourier.thomas@gmail.com>
-    mmc: mvsdio: Fix dma_unmap_sg() nents value
-
-Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-    ASoC: qcom: q6apm-lpass-dais: Fix missing set_fmt DAI op for I2S
-
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-    ASoC: qcom: q6apm-lpass-dais: Fix NULL pointer dereference if source graph failed
-
-Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-    ASoC: qcom: audioreach: Fix lpaif_type configuration for the I2S interface
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: tree-checker: fix the incorrect inode ref size check
-
-Eugene Koira <eugkoira@amazon.com>
-    iommu/vt-d: Fix __domain_mapping()'s usage of switch_to_super_page()
-
-Tao Cui <cuitao@kylinos.cn>
-    LoongArch: Check the return value when creating kobj
-
-Huacai Chen <chenhuacai@kernel.org>
-    LoongArch: Align ACPI structures if ARCH_STRICT_ALIGN enabled
-
-Tiezhu Yang <yangtiezhu@loongson.cn>
-    LoongArch: Update help info of ARCH_STRICT_ALIGN
-
-H. Nikolaus Schaller <hns@goldelico.com>
-    power: supply: bq27xxx: restrict no-battery detection to bq27000
-
-H. Nikolaus Schaller <hns@goldelico.com>
-    power: supply: bq27xxx: fix error return in case of no bq27000 hdq battery
-
-Herbert Xu <herbert@gondor.apana.org.au>
-    crypto: af_alg - Disallow concurrent writes in af_alg_sendmsg
-
-Nathan Chancellor <nathan@kernel.org>
-    nilfs2: fix CFI failure when accessing /sys/fs/nilfs2/features/*
-
-Stefan Metzmacher <metze@samba.org>
-    ksmbd: smbdirect: verify remaining_data_length respects max_fragmented_recv_size
-
-Namjae Jeon <linkinjeon@kernel.org>
-    ksmbd: smbdirect: validate data_offset and data_length field of smb_direct_data_transfer
-
-Duoming Zhou <duoming@zju.edu.cn>
-    octeontx2-pf: Fix use-after-free bugs in otx2_sync_tstamp()
-
-Duoming Zhou <duoming@zju.edu.cn>
-    cnic: Fix use-after-free bugs in cnic_delete_task
-
-Alexey Nepomnyashih <sdl@nppct.ru>
-    net: liquidio: fix overflow in octeon_init_instr_queue()
-
-Tariq Toukan <tariqt@nvidia.com>
-    Revert "net/mlx5e: Update and set Xon/Xoff upon port speed set"
-
-Jakub Kicinski <kuba@kernel.org>
-    tls: make sure to abort the stream if headers are bogus
-
-Kuniyuki Iwashima <kuniyu@google.com>
-    tcp: Clear tcp_sk(sk)->fastopen_rsk in tcp_disconnect().
-
-Hangbin Liu <liuhangbin@gmail.com>
-    bonding: don't set oif to bond dev when getting NS target destination
-
-Jianbo Liu <jianbol@nvidia.com>
-    net/mlx5e: Harden uplink netdev access against device unbind
-
-Jianbo Liu <jianbol@nvidia.com>
-    net/mlx5e: Consider aggregated port speed during rate configuration
-
-Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-    i40e: remove redundant memory barrier when cleaning Tx descs
-
-Yeounsu Moon <yyyynoom@gmail.com>
-    net: natsemi: fix `rx_dropped` double accounting on `netif_rx()` failure
-
-Geliang Tang <tanggeliang@kylinos.cn>
-    selftests: mptcp: sockopt: fix error messages
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    mptcp: tfo: record 'deny join id0' info
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    mptcp: set remote_deny_join_id0 on SYN recv
-
-Hangbin Liu <liuhangbin@gmail.com>
-    bonding: set random address only when slaves already exist
-
-Jamie Bainbridge <jamie.bainbridge@gmail.com>
-    qed: Don't collect too many protection override GRC elements
-
-Ioana Ciornei <ioana.ciornei@nxp.com>
-    dpaa2-switch: fix buffer pool seeding for control traffic
-
-Miaoqian Lin <linmq006@gmail.com>
-    um: virtio_uml: Fix use-after-free after put_device in probe
-
-Filipe Manana <fdmanana@suse.com>
-    btrfs: fix invalid extref key setup when replaying dentry
-
-Chen Ridong <chenridong@huawei.com>
-    cgroup: split cgroup_destroy_wq into 3 workqueues
-
-Geert Uytterhoeven <geert+renesas@glider.be>
-    pcmcia: omap_cf: Mark driver struct with __refdata to prevent section mismatch
-
-Liao Yuanhong <liaoyuanhong@vivo.com>
-    wifi: mac80211: fix incorrect type for ret
-
-Lachlan Hodges <lachlan.hodges@morsemicro.com>
-    wifi: mac80211: increase scan_ies_len for S1G
-
-Takashi Sakamoto <o-takashi@sakamocchi.jp>
-    ALSA: firewire-motu: drop EPOLLOUT from poll return values as write is not supported
-
-Ajay.Kathat@microchip.com <Ajay.Kathat@microchip.com>
-    wifi: wilc1000: avoid buffer overflow in WID string configuration
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |  4 +-
- arch/loongarch/Kconfig                             |  8 +-
- arch/loongarch/include/asm/acenv.h                 |  7 +-
- arch/loongarch/kernel/env.c                        |  2 +
- arch/um/drivers/virtio_uml.c                       |  6 +-
- arch/x86/kvm/svm/svm.c                             |  3 +-
- arch/x86/mm/pgtable.c                              |  2 +-
- crypto/af_alg.c                                    | 10 ++-
- drivers/block/loop.c                               | 38 ++-------
- drivers/edac/sb_edac.c                             |  4 +-
- drivers/gpu/drm/bridge/analogix/anx7625.c          |  6 +-
- .../gpu/drm/bridge/cadence/cdns-mhdp8546-core.c    |  6 +-
- drivers/gpu/drm/drm_color_mgmt.c                   |  2 +-
- drivers/iommu/amd/amd_iommu_types.h                |  1 +
- drivers/iommu/amd/io_pgtable.c                     | 26 +++++-
- drivers/iommu/intel/iommu.c                        |  7 +-
- drivers/md/dm-integrity.c                          |  6 +-
- drivers/mmc/host/mvsdio.c                          |  2 +-
- drivers/net/bonding/bond_main.c                    |  2 +-
- drivers/net/ethernet/broadcom/cnic.c               |  3 +-
- .../net/ethernet/cavium/liquidio/request_manager.c |  2 +-
- .../net/ethernet/freescale/dpaa2/dpaa2-switch.c    |  2 +-
- drivers/net/ethernet/intel/i40e/i40e_txrx.c        |  3 -
- .../net/ethernet/marvell/octeontx2/nic/otx2_ptp.c  |  2 +-
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |  2 -
- drivers/net/ethernet/mellanox/mlx5/core/en_rep.c   | 27 +++++--
- drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c  | 85 ++++++++++++++++---
- drivers/net/ethernet/mellanox/mlx5/core/lib/mlx5.h | 15 +++-
- drivers/net/ethernet/natsemi/ns83820.c             | 13 ++-
- drivers/net/ethernet/qlogic/qed/qed_debug.c        |  7 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |  2 +-
- drivers/net/vmxnet3/vmxnet3_drv.c                  | 10 +--
- drivers/net/wireless/microchip/wilc1000/wlan_cfg.c | 39 ++++++---
- drivers/net/wireless/microchip/wilc1000/wlan_cfg.h |  5 +-
- drivers/pcmcia/omap_cf.c                           |  8 +-
- drivers/phy/broadcom/phy-bcm-ns-usb3.c             |  9 +--
- drivers/phy/marvell/phy-berlin-usb.c               |  7 +-
- drivers/phy/ralink/phy-ralink-usb.c                | 10 +--
- drivers/phy/rockchip/phy-rockchip-pcie.c           | 11 +--
- drivers/phy/rockchip/phy-rockchip-usb.c            | 10 +--
- drivers/phy/ti/phy-omap-control.c                  |  9 +--
- drivers/phy/ti/phy-omap-usb2.c                     | 24 ++++--
- drivers/phy/ti/phy-ti-pipe3.c                      | 14 +---
- drivers/power/supply/bq27xxx_battery.c             |  4 +-
- drivers/rtc/rtc-pcf2127.c                          | 10 +--
- drivers/usb/host/xhci-dbgcap.c                     | 94 +++++++++++++++-------
- fs/btrfs/tree-checker.c                            |  4 +-
- fs/btrfs/tree-log.c                                |  2 +-
- fs/nilfs2/sysfs.c                                  |  4 +-
- fs/nilfs2/sysfs.h                                  |  8 +-
- fs/smb/client/smbdirect.c                          |  4 +-
- fs/smb/server/transport_rdma.c                     | 26 ++++--
- include/crypto/if_alg.h                            | 10 ++-
- include/linux/minmax.h                             | 26 ++++--
- include/linux/mlx5/driver.h                        |  1 +
- include/linux/pageblock-flags.h                    |  2 +-
- include/uapi/linux/mptcp.h                         |  6 +-
- io_uring/io_uring.c                                |  7 +-
- io_uring/io_uring.h                                | 13 +++
- io_uring/poll.c                                    |  3 +-
- io_uring/timeout.c                                 |  2 +-
- kernel/cgroup/cgroup.c                             | 43 ++++++++--
- net/ipv4/proc.c                                    |  2 +-
- net/ipv4/tcp.c                                     |  5 ++
- net/ipv6/proc.c                                    |  2 +-
- net/mac80211/driver-ops.h                          |  2 +-
- net/mac80211/main.c                                |  7 +-
- net/mptcp/options.c                                |  6 +-
- net/mptcp/pm_netlink.c                             |  7 ++
- net/mptcp/protocol.c                               | 16 ++++
- net/mptcp/subflow.c                                |  4 +
- net/rds/ib_frmr.c                                  | 20 +++--
- net/rfkill/rfkill-gpio.c                           |  4 +-
- net/tls/tls.h                                      |  1 +
- net/tls/tls_strp.c                                 | 14 ++--
- net/tls/tls_sw.c                                   |  3 +-
- sound/firewire/motu/motu-hwdep.c                   |  2 +-
- sound/pci/hda/patch_realtek.c                      |  1 +
- sound/soc/codecs/wm8940.c                          |  9 ++-
- sound/soc/codecs/wm8974.c                          |  8 +-
- sound/soc/qcom/qdsp6/audioreach.c                  |  1 +
- sound/soc/qcom/qdsp6/q6apm-lpass-dais.c            |  7 +-
- sound/soc/sof/intel/hda-stream.c                   |  2 +-
- tools/testing/selftests/net/mptcp/mptcp_connect.c  | 11 +--
- tools/testing/selftests/net/mptcp/mptcp_sockopt.c  | 16 ++--
- tools/testing/selftests/net/mptcp/pm_nl_ctl.c      |  7 ++
- tools/testing/selftests/net/mptcp/userspace_pm.sh  | 14 +++-
- 87 files changed, 601 insertions(+), 300 deletions(-)
-
-
+References: <20250918020434.1612137-1-tweek@google.com> <CAHC9VhSbWJ-8tj5BxSTxznGO8zraKRSE31a+tqdfMHB53ef-MQ@mail.gmail.com>
+ <CAEjxPJ5GidA9oT_fbKRe_nH1J3mER0ggM-dBW=Nuo765JDuQKg@mail.gmail.com>
+In-Reply-To: <CAEjxPJ5GidA9oT_fbKRe_nH1J3mER0ggM-dBW=Nuo765JDuQKg@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 22 Sep 2025 15:30:04 -0400
+X-Gm-Features: AS18NWA9HrHmx3YP496OglRtxh1AdycMtaqbc5LSlhUEUhu_PxKTgISVOm7uHlk
+Message-ID: <CAHC9VhS2TU2GWgfUOHerbfjyxb5QZMSMqLdQirjSdkUohR7opg@mail.gmail.com>
+Subject: Re: [PATCH v3] memfd,selinux: call security_inode_init_security_anon
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
+	Hugh Dickins <hughd@google.com>, James Morris <jmorris@namei.org>, 
+	Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Isaac Manjarres <isaacmanjarres@google.com>, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 22, 2025 at 9:12=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> When would you recommend that I re-apply the corresponding userspace
+> patch to reserve this policy capability number for memfd_class?
+> After it is moved to selinux/dev? Understand that it isn't truly
+> reserved until it lands in a kernel.org kernel but would prefer to
+> reapply it sooner than that since there may be other policy capability
+> requests queueing up (e.g. bpf token) that should be done relative to
+> it. Can always revert it again if necessary, at least until another
+> userspace release is made (not sure on timeline for that).
+
+When it comes to API issues like this, my standard answer is "tagged
+release from Linus" as it is the safest option, but you know that
+already.
+
+The fuzzier answer is that unless something crazy happens, I'm likely
+going to move the patches, in order, from selinux/dev-staging into
+selinux/dev when the merge window closes.  This means that any
+policycap API additions for the next cycle are going to start with the
+memfd_class policycap, so it *should* be fairly safe to merge the
+userspace bits now, I just wouldn't do a userspace release with that
+API change until we see a tagged release from Linus.
+
+--=20
+paul-moore.com
 
