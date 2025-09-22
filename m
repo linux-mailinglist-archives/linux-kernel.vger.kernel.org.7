@@ -1,1345 +1,177 @@
-Return-Path: <linux-kernel+bounces-826817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD09BB8F6A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:10:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF6EB8F6B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7839175D6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:10:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6D86178E4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED08F2FD1CE;
-	Mon, 22 Sep 2025 08:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457E62FD1DA;
+	Mon, 22 Sep 2025 08:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NDxNhSxh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HebjR3Og"
+Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58699EACD;
-	Mon, 22 Sep 2025 08:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5702FD1AA
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758528623; cv=none; b=ZM5Er4hYNmIE3srC7JpNB35cgFhedeUaRMcGRgYK/n0zCKe0NsCSI/4k0MnARpVS3NETAX6lIZCsCtRd34AM314omMn2pN4GxhWaockyMpwjTtxxm7zAflC9eYb//QPkxv48mTw5/jpxSrD7YM5cSBaIFVnffBhPQ1mz/wx3ddQ=
+	t=1758528652; cv=none; b=jwV3RQ+/Pa8b12iTZzwCA2xerwGEIxnIR8ME2IRPG4Ma8F+xSdPXXHNLqpaeiSuWEvKUNLd/BEDh/uwp268Ewcd6t29Z53OkOohfefiWxXDIWyskNc+Ytd0OuophCKBTiABTa3BAJwQf0SDNh6n0ZCjeN9KvZYCji7SSxgwz0/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758528623; c=relaxed/simple;
-	bh=5HPJIJ5UdDfeF+JVqlj2EiSW9oZQZPyDRdtUpZ0LPmE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VoN385YI/ICMfmjKk0jiLu/LCbiyO0Tu4drSbKbb8SCY3CXx/lHsEUE6Pbl+8lCxRU1/N1c7vm3yW2LciNwa++oy0h4lqt7yKEifAgmjyTtxcUnYBg1cRyqT5AcQHIle4YcJcw6T+bsLcnuWS33835y1CS74y3fy+QEIbL5Gz44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NDxNhSxh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6030C116D0;
-	Mon, 22 Sep 2025 08:10:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758528622;
-	bh=5HPJIJ5UdDfeF+JVqlj2EiSW9oZQZPyDRdtUpZ0LPmE=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=NDxNhSxhNqXeA5B9Zy8t5oc9fzl29HrvEE8y+29NBWoMh7ubQdPmqYcAKEN5Gtgke
-	 13RUWOq+F+ed2fFL4jkTNEHCx1c7ZOcjm6c56HyFzaoR5RyvWLYdyf+HmgCnULW8Ig
-	 TGW+cJaDEWhxRnQmz/z/iVKN+21+2eYDAoqhuCbpI4zbM8neuQe4T9k5Oew9SHK/UU
-	 851EhQrzRK3ZbQXnkvvNs5VcHOFtGJ86DwYGTJ94GXJYhyBbizOIrsnajgleBVVkQV
-	 2V/pkT48aJ+cQKjQWSrD/fekwouxeYoXXrBzVojpOdGhbHVB8r4b3g4WXTt4hT1WQo
-	 KWOjl6MoO++xA==
-Message-ID: <dc694dae-ef81-43d2-9ec1-a657690b8da7@kernel.org>
-Date: Mon, 22 Sep 2025 10:10:17 +0200
+	s=arc-20240116; t=1758528652; c=relaxed/simple;
+	bh=s7UO2fKhfUCI4YhH5MtiSmIjIIKO8XsVSeOX4a7lczA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IvGqoIBlvZk+lbR11h2w+fQyYGWdBchS0qrKCSAsRt9MaCGWDaBrkdZVE/V/JY11ayZpp0Aj+cglnKUexC9B/IoJxs7iaph5CVn2V8a7Erp8kFMkmov7iNdBkvDIDLzkbayhJxF9khqe5GjEyy7gCA3fiN1k9MAkRSNLi28u370=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HebjR3Og; arc=none smtp.client-ip=209.85.128.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-46b7580f09eso6385295e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:10:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758528649; x=1759133449; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=q6oR8Fo0jD+wRtkqL3niLJ+D52o9GcW+sR1rF3CUjoI=;
+        b=HebjR3OgoR37YQlUjIACWF6/9uWGr2CTLWFY4PwC8whzo8fJWI9dAdpPCEEIWblKpB
+         FK5JwUY40AdAai5FFHCjf+QcJ6SzxvUVprelnLWEIKiOzkaDkHNuC6tsUV0ckBnHVoNF
+         jQ8OeLILc2MPRipVjjVw0qCWHXBG9kaRqUVA4HWyFSn2kHTKEtwmLVTJwTgFxJkwVUVi
+         G2nVX5z/kJnpZPaNdl2CHUpe/pvNSlGZCqITTcoalLbUht8Z/JvD5T7zqAm5sS1d7zut
+         iWm5X6vmrP/RbsY8qr9CNVco7lzT+rt5tl6aTRYYgibD/XBaJ3+ZsUQI9V+6EIxsPfQx
+         I3IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758528649; x=1759133449;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q6oR8Fo0jD+wRtkqL3niLJ+D52o9GcW+sR1rF3CUjoI=;
+        b=vMuWMnmTNkfuU+cQldc8GFogvzWwxJSx9WrGwBQS0KTJWeskBYjkztaOKYBdXHSucE
+         oadyI39ltgrt1YIRK9y3etzzZlMCr0p0VTZL85tnOfihb7f5S0n8LNuKJO6GaGTUrWer
+         dgHBm9o9gip7/QvUiWFXkX6IKdILQbMeUW66qM9P4HKiKGMoV2cJPBLJFmjyFu7PkZhL
+         iz1hhhfEPG7Eo4xj1vAMRjkSnC9hVazB3ywKDEA6RNwDgMIhtE9njiMEYVv2Bycv7obY
+         il4gAz6F1NKD4rhFBy8ejWVr32v0a3BaAcVI3erzidkI5o4K57RsJGxaL80UOnldZPsl
+         a4dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbsLF8irbEa9FCpjXLVkksun4dWuoU63fDwCbc60gXSaBjUaiLM25gw8P5YQYHzp9zCy4e06zwtA2O3lM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6iZveMWKl+YO5hEQIEeyqsmcN79x7DsbEI/OlYXFD+lQpAcbp
+	bfpUJLc/w8ST/rx007H1HXyz6r+M7mP7bUAiU0IQxlcencsXVDUL42LSdLDmvdvL5gc=
+X-Gm-Gg: ASbGncuNl+wGkcYeNAlLsB2qhoyjY68zffVVyfvnfoUXxZ24Y7tu9eaBOGWu00nrcQ/
+	feuwymwLzuGJnvADFgpTol7+yx8TanpOMzLd0iuDhcPs3qoMlZZo6eGYQSG578rL9NgBu7sKhko
+	4pYvmtVZDo6bBbU47PyTOd34JI08p6yy7uOWVs0Wd7U7RHLHDb6mf++syXpGfnmcJqXsueR9OTq
+	0MX9txL/ad1jnc2vWyMBrkZwDE3q8/9+0GwjS2qChCljeF6nSXfo39OWauri13KKBIZQwv4G3SN
+	XGVaWxT/vq6Vy9tIMZLOa7wPYVhBhXQcJF3SemI8uIEmh/qmQpXoEkCniza7q+Aka089xdbUnIp
+	M2ZlGn/tBdfeNz4dOxV3V+U12SFX34I6H
+X-Google-Smtp-Source: AGHT+IGdrKT0myFfqU5UTIGGqRLFLmRn7oXJe/NQIiIiBcxhj9xZ+01ud7wQJESCIUyS8bhQf9QZTg==
+X-Received: by 2002:a05:600c:3b20:b0:45b:9912:9f30 with SMTP id 5b1f17b1804b1-467ead6730bmr93561975e9.6.1758528648740;
+        Mon, 22 Sep 2025 01:10:48 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:30:c61f:42e4:1d2c:1992])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3f88de2ced0sm7345719f8f.33.2025.09.22.01.10.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 01:10:48 -0700 (PDT)
+Date: Mon, 22 Sep 2025 10:10:42 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v3 00/12] Peripheral Image Loader support for Qualcomm
+ SoCs running Linux host at EL2
+Message-ID: <aNEEglLZTJuR1sLi@linaro.org>
+References: <20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH v2 05/10] media: v4l2-ioctl: Add video_device_state
- argument to v4l2 ioctl wrappers
-To: Jai Luthra <jai.luthra@ideasonboard.com>,
- Hans Verkuil <hverkuil@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, linux-media@vger.kernel.org
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Ricardo Ribalda <ribalda@chromium.org>, Hans de Goede <hansg@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
- <20250919-vdev-state-v2-5-b2c42426965c@ideasonboard.com>
- <1209fda7-984c-42a9-98cc-ffa446f19903@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <1209fda7-984c-42a9-98cc-ffa446f19903@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com>
 
-On 22/09/2025 10:09, Hans Verkuil wrote:
-> On 19/09/2025 11:55, Jai Luthra wrote:
->> Add a third argument to all v4l2 ioctl wrappers to pass struct
->> video_device_state * directly, replacing the previous opaque pointer
->> approach.
->>
->> Currently, this argument is populated with NULL since existing driver
->> hooks still expect a void *priv argument. This will be addressed in a
->> subsequent patch.
+On Sun, Sep 21, 2025 at 01:10:58AM +0530, Mukesh Ojha wrote:
+> A few months ago, we discussed the challenges at Linaro Connect 2025 [1] 
+> related to Secure PAS remoteproc enablement when Linux is running at EL2.
 > 
-> There is one more occurrance of this in v4l2_compat_ioctl32.c in function
-> ctrl_is_pointer() where vidioc_query_ext_ctrl is called.
-
-Ignore this, this doesn't apply to this patch.
-
+> [1] https://resources.linaro.org/en/resource/sF8jXifdb9V1mUefdbfafa
 > 
-> Regards,
+> Below, is the summary of the discussion.
 > 
-> 	Hans
+> Qualcomm is working to enable remote processors on the SA8775p SoC with
+> a Linux host running at EL2. In doing so, it has encountered several
+> challenges related to how the remoteproc framework is handled when Linux
+> runs at EL1.
 > 
->>
->> Most changes to the ioctl wrappers were generated using the following
->> Coccinelle semantic patch:
->>
->> @ioctl@
->> identifier v4l2_ioctls;
->> identifier ioctl;
->> identifier fn;
->> identifier debug;
->> expression flags;
->> @@
->> struct v4l2_ioctl_info v4l2_ioctls[] = {
->> 	...,
->> 	IOCTL_INFO(ioctl, fn, debug, flags),
->> 	...,
->> };
->>
->> @depends on ioctl@
->> identifier ioctl.fn;
->> identifier ops;
->> identifier file;
->> identifier arg;
->> identifier handler;
->> expression list args;
->> @@
->> -int fn(const struct v4l2_ioctl_ops *ops, struct file *file, void *arg)
->> +int fn(const struct v4l2_ioctl_ops *ops, struct file *file,
->> +       struct video_device_state *state, void *arg)
->> {
->> 	<...
->> -	ops->handler(file, NULL, args)
->> +	ops->handler(file, state, args)
->> 	...>
->> }
->>
->> Manual changes were made to handle calls to v4l_[gs]_selection, update
->> the v4l2_ioctl_info structure definition and macros, fix argument
->> wrapping in some function definitions, and handle the common function
->> pointer in v4l2_ioctl_info.
->>
->> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
->> --
->> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
->> Cc: Hans Verkuil <hverkuil@kernel.org>
->> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->> Cc: Ricardo Ribalda <ribalda@chromium.org>
->> Cc: Hans de Goede <hansg@kernel.org>
->> Cc: Jai Luthra <jai.luthra@ideasonboard.com>
->> Cc: linux-media@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> ---
->>  drivers/media/v4l2-core/v4l2-ioctl.c | 360 ++++++++++++++++++-----------------
->>  1 file changed, 186 insertions(+), 174 deletions(-)
->>
->> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
->> index 01cf52c3ea33e1a01e1b306036ba4e57ef5c95d0..644f06521673ff7ce5b194335d50f0e375ca7f51 100644
->> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
->> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
->> @@ -1090,7 +1090,7 @@ static void v4l_sanitize_format(struct v4l2_format *fmt)
->>  }
->>  
->>  static int v4l_querycap(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			void *arg)
->> +			struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_capability *cap = (struct v4l2_capability *)arg;
->>  	struct video_device *vfd = video_devdata(file);
->> @@ -1103,7 +1103,7 @@ static int v4l_querycap(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  	media_set_bus_info(cap->bus_info, sizeof(cap->bus_info),
->>  			   vfd->dev_parent);
->>  
->> -	ret = ops->vidioc_querycap(file, NULL, cap);
->> +	ret = ops->vidioc_querycap(file, state, cap);
->>  
->>  	/*
->>  	 * Drivers must not change device_caps, so check for this and
->> @@ -1124,7 +1124,7 @@ static int v4l_querycap(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  }
->>  
->>  static int v4l_g_input(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		       void *arg)
->> +		       struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  
->> @@ -1133,11 +1133,11 @@ static int v4l_g_input(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		return 0;
->>  	}
->>  
->> -	return ops->vidioc_g_input(file, NULL, arg);
->> +	return ops->vidioc_g_input(file, state, arg);
->>  }
->>  
->>  static int v4l_g_output(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			void *arg)
->> +			struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  
->> @@ -1146,11 +1146,11 @@ static int v4l_g_output(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		return 0;
->>  	}
->>  
->> -	return ops->vidioc_g_output(file, NULL, arg);
->> +	return ops->vidioc_g_output(file, state, arg);
->>  }
->>  
->>  static int v4l_s_input(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		       void *arg)
->> +		       struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	int ret;
->> @@ -1162,22 +1162,22 @@ static int v4l_s_input(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  	if (vfd->device_caps & V4L2_CAP_IO_MC)
->>  		return  *(int *)arg ? -EINVAL : 0;
->>  
->> -	return ops->vidioc_s_input(file, NULL, *(unsigned int *)arg);
->> +	return ops->vidioc_s_input(file, state, *(unsigned int *)arg);
->>  }
->>  
->>  static int v4l_s_output(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			void *arg)
->> +			struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  
->>  	if (vfd->device_caps & V4L2_CAP_IO_MC)
->>  		return  *(int *)arg ? -EINVAL : 0;
->>  
->> -	return ops->vidioc_s_output(file, NULL, *(unsigned int *)arg);
->> +	return ops->vidioc_s_output(file, state, *(unsigned int *)arg);
->>  }
->>  
->>  static int v4l_g_priority(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			  void *arg)
->> +			  struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd;
->>  	u32 *p = arg;
->> @@ -1188,7 +1188,7 @@ static int v4l_g_priority(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  }
->>  
->>  static int v4l_s_priority(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			  void *arg)
->> +			  struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd;
->>  	struct v4l2_fh *vfh;
->> @@ -1200,7 +1200,7 @@ static int v4l_s_priority(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  }
->>  
->>  static int v4l_enuminput(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			 void *arg)
->> +			 struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_input *p = arg;
->> @@ -1222,11 +1222,11 @@ static int v4l_enuminput(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		return 0;
->>  	}
->>  
->> -	return ops->vidioc_enum_input(file, NULL, p);
->> +	return ops->vidioc_enum_input(file, state, p);
->>  }
->>  
->>  static int v4l_enumoutput(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			  void *arg)
->> +			  struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_output *p = arg;
->> @@ -1248,7 +1248,7 @@ static int v4l_enumoutput(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		return 0;
->>  	}
->>  
->> -	return ops->vidioc_enum_output(file, NULL, p);
->> +	return ops->vidioc_enum_output(file, state, p);
->>  }
->>  
->>  static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->> @@ -1588,7 +1588,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->>  }
->>  
->>  static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			void *arg)
->> +			struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vdev = video_devdata(file);
->>  	struct v4l2_fmtdesc *p = arg;
->> @@ -1618,12 +1618,12 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  
->>  		if (unlikely(!ops->vidioc_enum_fmt_vid_cap))
->>  			break;
->> -		ret = ops->vidioc_enum_fmt_vid_cap(file, NULL, arg);
->> +		ret = ops->vidioc_enum_fmt_vid_cap(file, state, arg);
->>  		break;
->>  	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
->>  		if (unlikely(!ops->vidioc_enum_fmt_vid_overlay))
->>  			break;
->> -		ret = ops->vidioc_enum_fmt_vid_overlay(file, NULL, arg);
->> +		ret = ops->vidioc_enum_fmt_vid_overlay(file, state, arg);
->>  		break;
->>  	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
->>  	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
->> @@ -1635,27 +1635,27 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  
->>  		if (unlikely(!ops->vidioc_enum_fmt_vid_out))
->>  			break;
->> -		ret = ops->vidioc_enum_fmt_vid_out(file, NULL, arg);
->> +		ret = ops->vidioc_enum_fmt_vid_out(file, state, arg);
->>  		break;
->>  	case V4L2_BUF_TYPE_SDR_CAPTURE:
->>  		if (unlikely(!ops->vidioc_enum_fmt_sdr_cap))
->>  			break;
->> -		ret = ops->vidioc_enum_fmt_sdr_cap(file, NULL, arg);
->> +		ret = ops->vidioc_enum_fmt_sdr_cap(file, state, arg);
->>  		break;
->>  	case V4L2_BUF_TYPE_SDR_OUTPUT:
->>  		if (unlikely(!ops->vidioc_enum_fmt_sdr_out))
->>  			break;
->> -		ret = ops->vidioc_enum_fmt_sdr_out(file, NULL, arg);
->> +		ret = ops->vidioc_enum_fmt_sdr_out(file, state, arg);
->>  		break;
->>  	case V4L2_BUF_TYPE_META_CAPTURE:
->>  		if (unlikely(!ops->vidioc_enum_fmt_meta_cap))
->>  			break;
->> -		ret = ops->vidioc_enum_fmt_meta_cap(file, NULL, arg);
->> +		ret = ops->vidioc_enum_fmt_meta_cap(file, state, arg);
->>  		break;
->>  	case V4L2_BUF_TYPE_META_OUTPUT:
->>  		if (unlikely(!ops->vidioc_enum_fmt_meta_out))
->>  			break;
->> -		ret = ops->vidioc_enum_fmt_meta_out(file, NULL, arg);
->> +		ret = ops->vidioc_enum_fmt_meta_out(file, state, arg);
->>  		break;
->>  	}
->>  	if (ret == 0)
->> @@ -1679,7 +1679,7 @@ static void v4l_pix_format_touch(struct v4l2_pix_format *p)
->>  }
->>  
->>  static int v4l_g_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		     void *arg)
->> +		     struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_format *p = arg;
->>  	struct video_device *vfd = video_devdata(file);
->> @@ -1695,50 +1695,50 @@ static int v4l_g_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		if (unlikely(!ops->vidioc_g_fmt_vid_cap))
->>  			break;
->>  		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
->> -		ret = ops->vidioc_g_fmt_vid_cap(file, NULL, arg);
->> +		ret = ops->vidioc_g_fmt_vid_cap(file, state, arg);
->>  		/* just in case the driver zeroed it again */
->>  		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
->>  		if (vfd->vfl_type == VFL_TYPE_TOUCH)
->>  			v4l_pix_format_touch(&p->fmt.pix);
->>  		return ret;
->>  	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
->> -		return ops->vidioc_g_fmt_vid_cap_mplane(file, NULL, arg);
->> +		return ops->vidioc_g_fmt_vid_cap_mplane(file, state, arg);
->>  	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
->> -		return ops->vidioc_g_fmt_vid_overlay(file, NULL, arg);
->> +		return ops->vidioc_g_fmt_vid_overlay(file, state, arg);
->>  	case V4L2_BUF_TYPE_VBI_CAPTURE:
->> -		return ops->vidioc_g_fmt_vbi_cap(file, NULL, arg);
->> +		return ops->vidioc_g_fmt_vbi_cap(file, state, arg);
->>  	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
->> -		return ops->vidioc_g_fmt_sliced_vbi_cap(file, NULL, arg);
->> +		return ops->vidioc_g_fmt_sliced_vbi_cap(file, state, arg);
->>  	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
->>  		if (unlikely(!ops->vidioc_g_fmt_vid_out))
->>  			break;
->>  		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
->> -		ret = ops->vidioc_g_fmt_vid_out(file, NULL, arg);
->> +		ret = ops->vidioc_g_fmt_vid_out(file, state, arg);
->>  		/* just in case the driver zeroed it again */
->>  		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
->>  		return ret;
->>  	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
->> -		return ops->vidioc_g_fmt_vid_out_mplane(file, NULL, arg);
->> +		return ops->vidioc_g_fmt_vid_out_mplane(file, state, arg);
->>  	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
->> -		return ops->vidioc_g_fmt_vid_out_overlay(file, NULL, arg);
->> +		return ops->vidioc_g_fmt_vid_out_overlay(file, state, arg);
->>  	case V4L2_BUF_TYPE_VBI_OUTPUT:
->> -		return ops->vidioc_g_fmt_vbi_out(file, NULL, arg);
->> +		return ops->vidioc_g_fmt_vbi_out(file, state, arg);
->>  	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
->> -		return ops->vidioc_g_fmt_sliced_vbi_out(file, NULL, arg);
->> +		return ops->vidioc_g_fmt_sliced_vbi_out(file, state, arg);
->>  	case V4L2_BUF_TYPE_SDR_CAPTURE:
->> -		return ops->vidioc_g_fmt_sdr_cap(file, NULL, arg);
->> +		return ops->vidioc_g_fmt_sdr_cap(file, state, arg);
->>  	case V4L2_BUF_TYPE_SDR_OUTPUT:
->> -		return ops->vidioc_g_fmt_sdr_out(file, NULL, arg);
->> +		return ops->vidioc_g_fmt_sdr_out(file, state, arg);
->>  	case V4L2_BUF_TYPE_META_CAPTURE:
->> -		return ops->vidioc_g_fmt_meta_cap(file, NULL, arg);
->> +		return ops->vidioc_g_fmt_meta_cap(file, state, arg);
->>  	case V4L2_BUF_TYPE_META_OUTPUT:
->> -		return ops->vidioc_g_fmt_meta_out(file, NULL, arg);
->> +		return ops->vidioc_g_fmt_meta_out(file, state, arg);
->>  	}
->>  	return -EINVAL;
->>  }
->>  
->>  static int v4l_s_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		     void *arg)
->> +		     struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_format *p = arg;
->>  	struct video_device *vfd = video_devdata(file);
->> @@ -1758,7 +1758,7 @@ static int v4l_s_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		if (unlikely(!ops->vidioc_s_fmt_vid_cap))
->>  			break;
->>  		memset_after(p, 0, fmt.pix);
->> -		ret = ops->vidioc_s_fmt_vid_cap(file, NULL, arg);
->> +		ret = ops->vidioc_s_fmt_vid_cap(file, state, arg);
->>  		/* just in case the driver zeroed it again */
->>  		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
->>  		if (vfd->vfl_type == VFL_TYPE_TOUCH)
->> @@ -1771,7 +1771,7 @@ static int v4l_s_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		for (i = 0; i < p->fmt.pix_mp.num_planes; i++)
->>  			memset_after(&p->fmt.pix_mp.plane_fmt[i],
->>  				     0, bytesperline);
->> -		return ops->vidioc_s_fmt_vid_cap_mplane(file, NULL, arg);
->> +		return ops->vidioc_s_fmt_vid_cap_mplane(file, state, arg);
->>  	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
->>  		if (unlikely(!ops->vidioc_s_fmt_vid_overlay))
->>  			break;
->> @@ -1779,22 +1779,22 @@ static int v4l_s_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		p->fmt.win.clips = NULL;
->>  		p->fmt.win.clipcount = 0;
->>  		p->fmt.win.bitmap = NULL;
->> -		return ops->vidioc_s_fmt_vid_overlay(file, NULL, arg);
->> +		return ops->vidioc_s_fmt_vid_overlay(file, state, arg);
->>  	case V4L2_BUF_TYPE_VBI_CAPTURE:
->>  		if (unlikely(!ops->vidioc_s_fmt_vbi_cap))
->>  			break;
->>  		memset_after(p, 0, fmt.vbi.flags);
->> -		return ops->vidioc_s_fmt_vbi_cap(file, NULL, arg);
->> +		return ops->vidioc_s_fmt_vbi_cap(file, state, arg);
->>  	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
->>  		if (unlikely(!ops->vidioc_s_fmt_sliced_vbi_cap))
->>  			break;
->>  		memset_after(p, 0, fmt.sliced.io_size);
->> -		return ops->vidioc_s_fmt_sliced_vbi_cap(file, NULL, arg);
->> +		return ops->vidioc_s_fmt_sliced_vbi_cap(file, state, arg);
->>  	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
->>  		if (unlikely(!ops->vidioc_s_fmt_vid_out))
->>  			break;
->>  		memset_after(p, 0, fmt.pix);
->> -		ret = ops->vidioc_s_fmt_vid_out(file, NULL, arg);
->> +		ret = ops->vidioc_s_fmt_vid_out(file, state, arg);
->>  		/* just in case the driver zeroed it again */
->>  		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
->>  		return ret;
->> @@ -1805,7 +1805,7 @@ static int v4l_s_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		for (i = 0; i < p->fmt.pix_mp.num_planes; i++)
->>  			memset_after(&p->fmt.pix_mp.plane_fmt[i],
->>  				     0, bytesperline);
->> -		return ops->vidioc_s_fmt_vid_out_mplane(file, NULL, arg);
->> +		return ops->vidioc_s_fmt_vid_out_mplane(file, state, arg);
->>  	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
->>  		if (unlikely(!ops->vidioc_s_fmt_vid_out_overlay))
->>  			break;
->> @@ -1813,43 +1813,43 @@ static int v4l_s_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		p->fmt.win.clips = NULL;
->>  		p->fmt.win.clipcount = 0;
->>  		p->fmt.win.bitmap = NULL;
->> -		return ops->vidioc_s_fmt_vid_out_overlay(file, NULL, arg);
->> +		return ops->vidioc_s_fmt_vid_out_overlay(file, state, arg);
->>  	case V4L2_BUF_TYPE_VBI_OUTPUT:
->>  		if (unlikely(!ops->vidioc_s_fmt_vbi_out))
->>  			break;
->>  		memset_after(p, 0, fmt.vbi.flags);
->> -		return ops->vidioc_s_fmt_vbi_out(file, NULL, arg);
->> +		return ops->vidioc_s_fmt_vbi_out(file, state, arg);
->>  	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
->>  		if (unlikely(!ops->vidioc_s_fmt_sliced_vbi_out))
->>  			break;
->>  		memset_after(p, 0, fmt.sliced.io_size);
->> -		return ops->vidioc_s_fmt_sliced_vbi_out(file, NULL, arg);
->> +		return ops->vidioc_s_fmt_sliced_vbi_out(file, state, arg);
->>  	case V4L2_BUF_TYPE_SDR_CAPTURE:
->>  		if (unlikely(!ops->vidioc_s_fmt_sdr_cap))
->>  			break;
->>  		memset_after(p, 0, fmt.sdr.buffersize);
->> -		return ops->vidioc_s_fmt_sdr_cap(file, NULL, arg);
->> +		return ops->vidioc_s_fmt_sdr_cap(file, state, arg);
->>  	case V4L2_BUF_TYPE_SDR_OUTPUT:
->>  		if (unlikely(!ops->vidioc_s_fmt_sdr_out))
->>  			break;
->>  		memset_after(p, 0, fmt.sdr.buffersize);
->> -		return ops->vidioc_s_fmt_sdr_out(file, NULL, arg);
->> +		return ops->vidioc_s_fmt_sdr_out(file, state, arg);
->>  	case V4L2_BUF_TYPE_META_CAPTURE:
->>  		if (unlikely(!ops->vidioc_s_fmt_meta_cap))
->>  			break;
->>  		memset_after(p, 0, fmt.meta);
->> -		return ops->vidioc_s_fmt_meta_cap(file, NULL, arg);
->> +		return ops->vidioc_s_fmt_meta_cap(file, state, arg);
->>  	case V4L2_BUF_TYPE_META_OUTPUT:
->>  		if (unlikely(!ops->vidioc_s_fmt_meta_out))
->>  			break;
->>  		memset_after(p, 0, fmt.meta);
->> -		return ops->vidioc_s_fmt_meta_out(file, NULL, arg);
->> +		return ops->vidioc_s_fmt_meta_out(file, state, arg);
->>  	}
->>  	return -EINVAL;
->>  }
->>  
->>  static int v4l_try_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		       void *arg)
->> +		       struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_format *p = arg;
->>  	struct video_device *vfd = video_devdata(file);
->> @@ -1866,7 +1866,7 @@ static int v4l_try_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		if (unlikely(!ops->vidioc_try_fmt_vid_cap))
->>  			break;
->>  		memset_after(p, 0, fmt.pix);
->> -		ret = ops->vidioc_try_fmt_vid_cap(file, NULL, arg);
->> +		ret = ops->vidioc_try_fmt_vid_cap(file, state, arg);
->>  		/* just in case the driver zeroed it again */
->>  		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
->>  		if (vfd->vfl_type == VFL_TYPE_TOUCH)
->> @@ -1879,7 +1879,7 @@ static int v4l_try_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		for (i = 0; i < p->fmt.pix_mp.num_planes; i++)
->>  			memset_after(&p->fmt.pix_mp.plane_fmt[i],
->>  				     0, bytesperline);
->> -		return ops->vidioc_try_fmt_vid_cap_mplane(file, NULL, arg);
->> +		return ops->vidioc_try_fmt_vid_cap_mplane(file, state, arg);
->>  	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
->>  		if (unlikely(!ops->vidioc_try_fmt_vid_overlay))
->>  			break;
->> @@ -1887,22 +1887,22 @@ static int v4l_try_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		p->fmt.win.clips = NULL;
->>  		p->fmt.win.clipcount = 0;
->>  		p->fmt.win.bitmap = NULL;
->> -		return ops->vidioc_try_fmt_vid_overlay(file, NULL, arg);
->> +		return ops->vidioc_try_fmt_vid_overlay(file, state, arg);
->>  	case V4L2_BUF_TYPE_VBI_CAPTURE:
->>  		if (unlikely(!ops->vidioc_try_fmt_vbi_cap))
->>  			break;
->>  		memset_after(p, 0, fmt.vbi.flags);
->> -		return ops->vidioc_try_fmt_vbi_cap(file, NULL, arg);
->> +		return ops->vidioc_try_fmt_vbi_cap(file, state, arg);
->>  	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
->>  		if (unlikely(!ops->vidioc_try_fmt_sliced_vbi_cap))
->>  			break;
->>  		memset_after(p, 0, fmt.sliced.io_size);
->> -		return ops->vidioc_try_fmt_sliced_vbi_cap(file, NULL, arg);
->> +		return ops->vidioc_try_fmt_sliced_vbi_cap(file, state, arg);
->>  	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
->>  		if (unlikely(!ops->vidioc_try_fmt_vid_out))
->>  			break;
->>  		memset_after(p, 0, fmt.pix);
->> -		ret = ops->vidioc_try_fmt_vid_out(file, NULL, arg);
->> +		ret = ops->vidioc_try_fmt_vid_out(file, state, arg);
->>  		/* just in case the driver zeroed it again */
->>  		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
->>  		return ret;
->> @@ -1913,7 +1913,7 @@ static int v4l_try_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		for (i = 0; i < p->fmt.pix_mp.num_planes; i++)
->>  			memset_after(&p->fmt.pix_mp.plane_fmt[i],
->>  				     0, bytesperline);
->> -		return ops->vidioc_try_fmt_vid_out_mplane(file, NULL, arg);
->> +		return ops->vidioc_try_fmt_vid_out_mplane(file, state, arg);
->>  	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
->>  		if (unlikely(!ops->vidioc_try_fmt_vid_out_overlay))
->>  			break;
->> @@ -1921,55 +1921,55 @@ static int v4l_try_fmt(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		p->fmt.win.clips = NULL;
->>  		p->fmt.win.clipcount = 0;
->>  		p->fmt.win.bitmap = NULL;
->> -		return ops->vidioc_try_fmt_vid_out_overlay(file, NULL, arg);
->> +		return ops->vidioc_try_fmt_vid_out_overlay(file, state, arg);
->>  	case V4L2_BUF_TYPE_VBI_OUTPUT:
->>  		if (unlikely(!ops->vidioc_try_fmt_vbi_out))
->>  			break;
->>  		memset_after(p, 0, fmt.vbi.flags);
->> -		return ops->vidioc_try_fmt_vbi_out(file, NULL, arg);
->> +		return ops->vidioc_try_fmt_vbi_out(file, state, arg);
->>  	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
->>  		if (unlikely(!ops->vidioc_try_fmt_sliced_vbi_out))
->>  			break;
->>  		memset_after(p, 0, fmt.sliced.io_size);
->> -		return ops->vidioc_try_fmt_sliced_vbi_out(file, NULL, arg);
->> +		return ops->vidioc_try_fmt_sliced_vbi_out(file, state, arg);
->>  	case V4L2_BUF_TYPE_SDR_CAPTURE:
->>  		if (unlikely(!ops->vidioc_try_fmt_sdr_cap))
->>  			break;
->>  		memset_after(p, 0, fmt.sdr.buffersize);
->> -		return ops->vidioc_try_fmt_sdr_cap(file, NULL, arg);
->> +		return ops->vidioc_try_fmt_sdr_cap(file, state, arg);
->>  	case V4L2_BUF_TYPE_SDR_OUTPUT:
->>  		if (unlikely(!ops->vidioc_try_fmt_sdr_out))
->>  			break;
->>  		memset_after(p, 0, fmt.sdr.buffersize);
->> -		return ops->vidioc_try_fmt_sdr_out(file, NULL, arg);
->> +		return ops->vidioc_try_fmt_sdr_out(file, state, arg);
->>  	case V4L2_BUF_TYPE_META_CAPTURE:
->>  		if (unlikely(!ops->vidioc_try_fmt_meta_cap))
->>  			break;
->>  		memset_after(p, 0, fmt.meta);
->> -		return ops->vidioc_try_fmt_meta_cap(file, NULL, arg);
->> +		return ops->vidioc_try_fmt_meta_cap(file, state, arg);
->>  	case V4L2_BUF_TYPE_META_OUTPUT:
->>  		if (unlikely(!ops->vidioc_try_fmt_meta_out))
->>  			break;
->>  		memset_after(p, 0, fmt.meta);
->> -		return ops->vidioc_try_fmt_meta_out(file, NULL, arg);
->> +		return ops->vidioc_try_fmt_meta_out(file, state, arg);
->>  	}
->>  	return -EINVAL;
->>  }
->>  
->>  static int v4l_streamon(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			void *arg)
->> +			struct video_device_state *state, void *arg)
->>  {
->> -	return ops->vidioc_streamon(file, NULL, *(unsigned int *)arg);
->> +	return ops->vidioc_streamon(file, state, *(unsigned int *)arg);
->>  }
->>  
->>  static int v4l_streamoff(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			 void *arg)
->> +			 struct video_device_state *state, void *arg)
->>  {
->> -	return ops->vidioc_streamoff(file, NULL, *(unsigned int *)arg);
->> +	return ops->vidioc_streamoff(file, state, *(unsigned int *)arg);
->>  }
->>  
->>  static int v4l_g_tuner(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		       void *arg)
->> +		       struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_tuner *p = arg;
->> @@ -1977,14 +1977,14 @@ static int v4l_g_tuner(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  
->>  	p->type = (vfd->vfl_type == VFL_TYPE_RADIO) ?
->>  			V4L2_TUNER_RADIO : V4L2_TUNER_ANALOG_TV;
->> -	err = ops->vidioc_g_tuner(file, NULL, p);
->> +	err = ops->vidioc_g_tuner(file, state, p);
->>  	if (!err)
->>  		p->capability |= V4L2_TUNER_CAP_FREQ_BANDS;
->>  	return err;
->>  }
->>  
->>  static int v4l_s_tuner(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		       void *arg)
->> +		       struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_tuner *p = arg;
->> @@ -1995,11 +1995,11 @@ static int v4l_s_tuner(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		return ret;
->>  	p->type = (vfd->vfl_type == VFL_TYPE_RADIO) ?
->>  			V4L2_TUNER_RADIO : V4L2_TUNER_ANALOG_TV;
->> -	return ops->vidioc_s_tuner(file, NULL, p);
->> +	return ops->vidioc_s_tuner(file, state, p);
->>  }
->>  
->> -static int v4l_g_modulator(const struct v4l2_ioctl_ops *ops,
->> -			   struct file *file, void *arg)
->> +static int v4l_g_modulator(const struct v4l2_ioctl_ops *ops, struct file *file,
->> +			   struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_modulator *p = arg;
->> @@ -2008,14 +2008,14 @@ static int v4l_g_modulator(const struct v4l2_ioctl_ops *ops,
->>  	if (vfd->vfl_type == VFL_TYPE_RADIO)
->>  		p->type = V4L2_TUNER_RADIO;
->>  
->> -	err = ops->vidioc_g_modulator(file, NULL, p);
->> +	err = ops->vidioc_g_modulator(file, state, p);
->>  	if (!err)
->>  		p->capability |= V4L2_TUNER_CAP_FREQ_BANDS;
->>  	return err;
->>  }
->>  
->> -static int v4l_s_modulator(const struct v4l2_ioctl_ops *ops,
->> -			   struct file *file, void *arg)
->> +static int v4l_s_modulator(const struct v4l2_ioctl_ops *ops, struct file *file,
->> +			   struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_modulator *p = arg;
->> @@ -2023,11 +2023,11 @@ static int v4l_s_modulator(const struct v4l2_ioctl_ops *ops,
->>  	if (vfd->vfl_type == VFL_TYPE_RADIO)
->>  		p->type = V4L2_TUNER_RADIO;
->>  
->> -	return ops->vidioc_s_modulator(file, NULL, p);
->> +	return ops->vidioc_s_modulator(file, state, p);
->>  }
->>  
->> -static int v4l_g_frequency(const struct v4l2_ioctl_ops *ops,
->> -			   struct file *file, void *arg)
->> +static int v4l_g_frequency(const struct v4l2_ioctl_ops *ops, struct file *file,
->> +			   struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_frequency *p = arg;
->> @@ -2037,11 +2037,11 @@ static int v4l_g_frequency(const struct v4l2_ioctl_ops *ops,
->>  	else
->>  		p->type = (vfd->vfl_type == VFL_TYPE_RADIO) ?
->>  				V4L2_TUNER_RADIO : V4L2_TUNER_ANALOG_TV;
->> -	return ops->vidioc_g_frequency(file, NULL, p);
->> +	return ops->vidioc_g_frequency(file, state, p);
->>  }
->>  
->> -static int v4l_s_frequency(const struct v4l2_ioctl_ops *ops,
->> -			   struct file *file, void *arg)
->> +static int v4l_s_frequency(const struct v4l2_ioctl_ops *ops, struct file *file,
->> +			   struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	const struct v4l2_frequency *p = arg;
->> @@ -2060,11 +2060,11 @@ static int v4l_s_frequency(const struct v4l2_ioctl_ops *ops,
->>  		if (type != p->type)
->>  			return -EINVAL;
->>  	}
->> -	return ops->vidioc_s_frequency(file, NULL, p);
->> +	return ops->vidioc_s_frequency(file, state, p);
->>  }
->>  
->>  static int v4l_enumstd(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		       void *arg)
->> +		       struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_standard *p = arg;
->> @@ -2073,7 +2073,7 @@ static int v4l_enumstd(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  }
->>  
->>  static int v4l_s_std(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		     void *arg)
->> +		     struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	v4l2_std_id id = *(v4l2_std_id *)arg, norm;
->> @@ -2087,11 +2087,11 @@ static int v4l_s_std(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		return -EINVAL;
->>  
->>  	/* Calls the specific handler */
->> -	return ops->vidioc_s_std(file, NULL, norm);
->> +	return ops->vidioc_s_std(file, state, norm);
->>  }
->>  
->>  static int v4l_querystd(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			void *arg)
->> +			struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	v4l2_std_id *p = arg;
->> @@ -2109,11 +2109,12 @@ static int v4l_querystd(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  	 * their efforts to improve the standards detection.
->>  	 */
->>  	*p = vfd->tvnorms;
->> -	return ops->vidioc_querystd(file, NULL, arg);
->> +	return ops->vidioc_querystd(file, state, arg);
->>  }
->>  
->>  static int v4l_s_hw_freq_seek(const struct v4l2_ioctl_ops *ops,
->> -			      struct file *file, void *arg)
->> +			      struct file *file,
->> +			      struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_hw_freq_seek *p = arg;
->> @@ -2131,26 +2132,26 @@ static int v4l_s_hw_freq_seek(const struct v4l2_ioctl_ops *ops,
->>  		V4L2_TUNER_RADIO : V4L2_TUNER_ANALOG_TV;
->>  	if (p->type != type)
->>  		return -EINVAL;
->> -	return ops->vidioc_s_hw_freq_seek(file, NULL, p);
->> +	return ops->vidioc_s_hw_freq_seek(file, state, p);
->>  }
->>  
->>  static int v4l_s_fbuf(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		      void *arg)
->> +		      struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_framebuffer *p = arg;
->>  
->>  	p->base = NULL;
->> -	return ops->vidioc_s_fbuf(file, NULL, p);
->> +	return ops->vidioc_s_fbuf(file, state, p);
->>  }
->>  
->>  static int v4l_overlay(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		       void *arg)
->> +		       struct video_device_state *state, void *arg)
->>  {
->> -	return ops->vidioc_overlay(file, NULL, *(unsigned int *)arg);
->> +	return ops->vidioc_overlay(file, state, *(unsigned int *)arg);
->>  }
->>  
->>  static int v4l_reqbufs(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		       void *arg)
->> +		       struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_requestbuffers *p = arg;
->> @@ -2165,38 +2166,38 @@ static int v4l_reqbufs(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  	if (is_valid_ioctl(vfd, VIDIOC_REMOVE_BUFS))
->>  		p->capabilities = V4L2_BUF_CAP_SUPPORTS_REMOVE_BUFS;
->>  
->> -	return ops->vidioc_reqbufs(file, NULL, p);
->> +	return ops->vidioc_reqbufs(file, state, p);
->>  }
->>  
->>  static int v4l_querybuf(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			void *arg)
->> +			struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_buffer *p = arg;
->>  	int ret = check_fmt(file, p->type);
->>  
->> -	return ret ? ret : ops->vidioc_querybuf(file, NULL, p);
->> +	return ret ? ret : ops->vidioc_querybuf(file, state, p);
->>  }
->>  
->>  static int v4l_qbuf(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		    void *arg)
->> +		    struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_buffer *p = arg;
->>  	int ret = check_fmt(file, p->type);
->>  
->> -	return ret ? ret : ops->vidioc_qbuf(file, NULL, p);
->> +	return ret ? ret : ops->vidioc_qbuf(file, state, p);
->>  }
->>  
->>  static int v4l_dqbuf(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		     void *arg)
->> +		     struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_buffer *p = arg;
->>  	int ret = check_fmt(file, p->type);
->>  
->> -	return ret ? ret : ops->vidioc_dqbuf(file, NULL, p);
->> +	return ret ? ret : ops->vidioc_dqbuf(file, state, p);
->>  }
->>  
->> -static int v4l_create_bufs(const struct v4l2_ioctl_ops *ops,
->> -			   struct file *file, void *arg)
->> +static int v4l_create_bufs(const struct v4l2_ioctl_ops *ops, struct file *file,
->> +			   struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_create_buffers *create = arg;
->> @@ -2213,7 +2214,7 @@ static int v4l_create_bufs(const struct v4l2_ioctl_ops *ops,
->>  	if (is_valid_ioctl(vfd, VIDIOC_REMOVE_BUFS))
->>  		create->capabilities = V4L2_BUF_CAP_SUPPORTS_REMOVE_BUFS;
->>  
->> -	ret = ops->vidioc_create_bufs(file, NULL, create);
->> +	ret = ops->vidioc_create_bufs(file, state, create);
->>  
->>  	if (create->format.type == V4L2_BUF_TYPE_VIDEO_CAPTURE ||
->>  	    create->format.type == V4L2_BUF_TYPE_VIDEO_OUTPUT)
->> @@ -2222,28 +2223,28 @@ static int v4l_create_bufs(const struct v4l2_ioctl_ops *ops,
->>  	return ret;
->>  }
->>  
->> -static int v4l_prepare_buf(const struct v4l2_ioctl_ops *ops,
->> -			   struct file *file, void *arg)
->> +static int v4l_prepare_buf(const struct v4l2_ioctl_ops *ops, struct file *file,
->> +			   struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_buffer *b = arg;
->>  	int ret = check_fmt(file, b->type);
->>  
->> -	return ret ? ret : ops->vidioc_prepare_buf(file, NULL, b);
->> +	return ret ? ret : ops->vidioc_prepare_buf(file, state, b);
->>  }
->>  
->> -static int v4l_remove_bufs(const struct v4l2_ioctl_ops *ops,
->> -			   struct file *file, void *arg)
->> +static int v4l_remove_bufs(const struct v4l2_ioctl_ops *ops, struct file *file,
->> +			   struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_remove_buffers *remove = arg;
->>  
->>  	if (ops->vidioc_remove_bufs)
->> -		return ops->vidioc_remove_bufs(file, NULL, remove);
->> +		return ops->vidioc_remove_bufs(file, state, remove);
->>  
->>  	return -ENOTTY;
->>  }
->>  
->>  static int v4l_g_parm(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		      void *arg)
->> +		      struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_streamparm *p = arg;
->> @@ -2253,20 +2254,20 @@ static int v4l_g_parm(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  	if (ret)
->>  		return ret;
->>  	if (ops->vidioc_g_parm)
->> -		return ops->vidioc_g_parm(file, NULL, p);
->> +		return ops->vidioc_g_parm(file, state, p);
->>  	if (p->type != V4L2_BUF_TYPE_VIDEO_CAPTURE &&
->>  	    p->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
->>  		return -EINVAL;
->>  	if (vfd->device_caps & V4L2_CAP_READWRITE)
->>  		p->parm.capture.readbuffers = 2;
->> -	ret = ops->vidioc_g_std(file, NULL, &std);
->> +	ret = ops->vidioc_g_std(file, state, &std);
->>  	if (ret == 0)
->>  		v4l2_video_std_frame_period(std, &p->parm.capture.timeperframe);
->>  	return ret;
->>  }
->>  
->>  static int v4l_s_parm(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		      void *arg)
->> +		      struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_streamparm *p = arg;
->>  	int ret = check_fmt(file, p->type);
->> @@ -2286,11 +2287,11 @@ static int v4l_s_parm(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		p->parm.capture.extendedmode = 0;
->>  		p->parm.capture.capturemode &= V4L2_MODE_HIGHQUALITY;
->>  	}
->> -	return ops->vidioc_s_parm(file, NULL, p);
->> +	return ops->vidioc_s_parm(file, state, p);
->>  }
->>  
->>  static int v4l_queryctrl(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			 void *arg)
->> +			 struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_query_ext_ctrl qec = {};
->> @@ -2307,7 +2308,7 @@ static int v4l_queryctrl(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  
->>  	/* Simulate query_ext_ctr using query_ctrl. */
->>  	qec.id = p->id;
->> -	ret = ops->vidioc_query_ext_ctrl(file, NULL, &qec);
->> +	ret = ops->vidioc_query_ext_ctrl(file, state, &qec);
->>  	if (ret)
->>  		return ret;
->>  	v4l2_query_ext_ctrl_to_v4l2_queryctrl(p, &qec);
->> @@ -2315,7 +2316,8 @@ static int v4l_queryctrl(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  }
->>  
->>  static int v4l_query_ext_ctrl(const struct v4l2_ioctl_ops *ops,
->> -			      struct file *file, void *arg)
->> +			      struct file *file,
->> +			      struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_query_ext_ctrl *p = arg;
->> @@ -2326,12 +2328,12 @@ static int v4l_query_ext_ctrl(const struct v4l2_ioctl_ops *ops,
->>  	if (vfd->ctrl_handler)
->>  		return v4l2_query_ext_ctrl(vfd->ctrl_handler, p);
->>  	if (ops->vidioc_query_ext_ctrl)
->> -		return ops->vidioc_query_ext_ctrl(file, NULL, p);
->> +		return ops->vidioc_query_ext_ctrl(file, state, p);
->>  	return -ENOTTY;
->>  }
->>  
->>  static int v4l_querymenu(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			 void *arg)
->> +			 struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_querymenu *p = arg;
->> @@ -2342,12 +2344,12 @@ static int v4l_querymenu(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  	if (vfd->ctrl_handler)
->>  		return v4l2_querymenu(vfd->ctrl_handler, p);
->>  	if (ops->vidioc_querymenu)
->> -		return ops->vidioc_querymenu(file, NULL, p);
->> +		return ops->vidioc_querymenu(file, state, p);
->>  	return -ENOTTY;
->>  }
->>  
->>  static int v4l_g_ctrl(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		      void *arg)
->> +		      struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_control *p = arg;
->> @@ -2368,7 +2370,7 @@ static int v4l_g_ctrl(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  	ctrl.id = p->id;
->>  	ctrl.value = p->value;
->>  	if (check_ext_ctrls(&ctrls, VIDIOC_G_CTRL)) {
->> -		int ret = ops->vidioc_g_ext_ctrls(file, NULL, &ctrls);
->> +		int ret = ops->vidioc_g_ext_ctrls(file, state, &ctrls);
->>  
->>  		if (ret == 0)
->>  			p->value = ctrl.value;
->> @@ -2378,7 +2380,7 @@ static int v4l_g_ctrl(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  }
->>  
->>  static int v4l_s_ctrl(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		      void *arg)
->> +		      struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_control *p = arg;
->> @@ -2401,13 +2403,13 @@ static int v4l_s_ctrl(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  	ctrl.value = p->value;
->>  	if (!check_ext_ctrls(&ctrls, VIDIOC_S_CTRL))
->>  		return -EINVAL;
->> -	ret = ops->vidioc_s_ext_ctrls(file, NULL, &ctrls);
->> +	ret = ops->vidioc_s_ext_ctrls(file, state, &ctrls);
->>  	p->value = ctrl.value;
->>  	return ret;
->>  }
->>  
->> -static int v4l_g_ext_ctrls(const struct v4l2_ioctl_ops *ops,
->> -			   struct file *file, void *arg)
->> +static int v4l_g_ext_ctrls(const struct v4l2_ioctl_ops *ops, struct file *file,
->> +			   struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_ext_controls *p = arg;
->> @@ -2423,11 +2425,11 @@ static int v4l_g_ext_ctrls(const struct v4l2_ioctl_ops *ops,
->>  	if (ops->vidioc_g_ext_ctrls == NULL)
->>  		return -ENOTTY;
->>  	return check_ext_ctrls(p, VIDIOC_G_EXT_CTRLS) ?
->> -				ops->vidioc_g_ext_ctrls(file, NULL, p) : -EINVAL;
->> +				ops->vidioc_g_ext_ctrls(file, state, p) : -EINVAL;
->>  }
->>  
->> -static int v4l_s_ext_ctrls(const struct v4l2_ioctl_ops *ops,
->> -			   struct file *file, void *arg)
->> +static int v4l_s_ext_ctrls(const struct v4l2_ioctl_ops *ops, struct file *file,
->> +			   struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_ext_controls *p = arg;
->> @@ -2443,11 +2445,12 @@ static int v4l_s_ext_ctrls(const struct v4l2_ioctl_ops *ops,
->>  	if (ops->vidioc_s_ext_ctrls == NULL)
->>  		return -ENOTTY;
->>  	return check_ext_ctrls(p, VIDIOC_S_EXT_CTRLS) ?
->> -				ops->vidioc_s_ext_ctrls(file, NULL, p) : -EINVAL;
->> +				ops->vidioc_s_ext_ctrls(file, state, p) : -EINVAL;
->>  }
->>  
->>  static int v4l_try_ext_ctrls(const struct v4l2_ioctl_ops *ops,
->> -			     struct file *file, void *arg)
->> +			     struct file *file,
->> +			     struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_ext_controls *p = arg;
->> @@ -2463,7 +2466,7 @@ static int v4l_try_ext_ctrls(const struct v4l2_ioctl_ops *ops,
->>  	if (ops->vidioc_try_ext_ctrls == NULL)
->>  		return -ENOTTY;
->>  	return check_ext_ctrls(p, VIDIOC_TRY_EXT_CTRLS) ?
->> -			ops->vidioc_try_ext_ctrls(file, NULL, p) : -EINVAL;
->> +			ops->vidioc_try_ext_ctrls(file, state, p) : -EINVAL;
->>  }
->>  
->>  /*
->> @@ -2475,8 +2478,8 @@ static int v4l_try_ext_ctrls(const struct v4l2_ioctl_ops *ops,
->>   * restore it afterwards. This way applications can use either buffer
->>   * type and drivers don't need to check for both.
->>   */
->> -static int v4l_g_selection(const struct v4l2_ioctl_ops *ops,
->> -			   struct file *file, void *arg)
->> +static int v4l_g_selection(const struct v4l2_ioctl_ops *ops, struct file *file,
->> +			   struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_selection *p = arg;
->>  	u32 old_type = p->type;
->> @@ -2486,13 +2489,13 @@ static int v4l_g_selection(const struct v4l2_ioctl_ops *ops,
->>  		p->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
->>  	else if (p->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
->>  		p->type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
->> -	ret = ops->vidioc_g_selection(file, NULL, p);
->> +	ret = ops->vidioc_g_selection(file, state, p);
->>  	p->type = old_type;
->>  	return ret;
->>  }
->>  
->> -static int v4l_s_selection(const struct v4l2_ioctl_ops *ops,
->> -			   struct file *file, void *arg)
->> +static int v4l_s_selection(const struct v4l2_ioctl_ops *ops, struct file *file,
->> +			   struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_selection *p = arg;
->>  	u32 old_type = p->type;
->> @@ -2502,13 +2505,13 @@ static int v4l_s_selection(const struct v4l2_ioctl_ops *ops,
->>  		p->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
->>  	else if (p->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
->>  		p->type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
->> -	ret = ops->vidioc_s_selection(file, NULL, p);
->> +	ret = ops->vidioc_s_selection(file, state, p);
->>  	p->type = old_type;
->>  	return ret;
->>  }
->>  
->>  static int v4l_g_crop(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		      void *arg)
->> +		      struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_crop *p = arg;
->> @@ -2529,7 +2532,7 @@ static int v4l_g_crop(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		s.target = s.target == V4L2_SEL_TGT_COMPOSE ?
->>  			V4L2_SEL_TGT_CROP : V4L2_SEL_TGT_COMPOSE;
->>  
->> -	ret = v4l_g_selection(ops, file, &s);
->> +	ret = v4l_g_selection(ops, file, state, &s);
->>  
->>  	/* copying results to old structure on success */
->>  	if (!ret)
->> @@ -2538,7 +2541,7 @@ static int v4l_g_crop(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  }
->>  
->>  static int v4l_s_crop(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		      void *arg)
->> +		      struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_crop *p = arg;
->> @@ -2559,11 +2562,11 @@ static int v4l_s_crop(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		s.target = s.target == V4L2_SEL_TGT_COMPOSE ?
->>  			V4L2_SEL_TGT_CROP : V4L2_SEL_TGT_COMPOSE;
->>  
->> -	return v4l_s_selection(ops, file, &s);
->> +	return v4l_s_selection(ops, file, state, &s);
->>  }
->>  
->>  static int v4l_cropcap(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		       void *arg)
->> +		       struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_cropcap *p = arg;
->> @@ -2587,7 +2590,7 @@ static int v4l_cropcap(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		return -ENOTTY;
->>  
->>  	if (ops->vidioc_g_pixelaspect)
->> -		ret = ops->vidioc_g_pixelaspect(file, NULL, s.type,
->> +		ret = ops->vidioc_g_pixelaspect(file, state, s.type,
->>  						&p->pixelaspect);
->>  
->>  	/*
->> @@ -2609,7 +2612,7 @@ static int v4l_cropcap(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  		s.target = s.target == V4L2_SEL_TGT_COMPOSE_BOUNDS ?
->>  			V4L2_SEL_TGT_CROP_BOUNDS : V4L2_SEL_TGT_COMPOSE_BOUNDS;
->>  
->> -	ret = v4l_g_selection(ops, file, &s);
->> +	ret = v4l_g_selection(ops, file, state, &s);
->>  	if (ret)
->>  		return ret;
->>  	p->bounds = s.r;
->> @@ -2620,7 +2623,7 @@ static int v4l_cropcap(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  	else
->>  		s.target = V4L2_SEL_TGT_CROP_DEFAULT;
->>  
->> -	ret = v4l_g_selection(ops, file, &s);
->> +	ret = v4l_g_selection(ops, file, state, &s);
->>  	if (ret)
->>  		return ret;
->>  	p->defrect = s.r;
->> @@ -2629,7 +2632,7 @@ static int v4l_cropcap(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  }
->>  
->>  static int v4l_log_status(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -			  void *arg)
->> +			  struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	int ret;
->> @@ -2637,7 +2640,7 @@ static int v4l_log_status(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  	if (vfd->v4l2_dev)
->>  		pr_info("%s: =================  START STATUS  =================\n",
->>  			vfd->v4l2_dev->name);
->> -	ret = ops->vidioc_log_status(file, NULL);
->> +	ret = ops->vidioc_log_status(file, state);
->>  	if (vfd->v4l2_dev)
->>  		pr_info("%s: ==================  END STATUS  ==================\n",
->>  			vfd->v4l2_dev->name);
->> @@ -2645,7 +2648,8 @@ static int v4l_log_status(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  }
->>  
->>  static int v4l_dbg_g_register(const struct v4l2_ioctl_ops *ops,
->> -			      struct file *file, void *arg)
->> +			      struct file *file,
->> +			      struct video_device_state *state, void *arg)
->>  {
->>  #ifdef CONFIG_VIDEO_ADV_DEBUG
->>  	struct v4l2_dbg_register *p = arg;
->> @@ -2665,7 +2669,7 @@ static int v4l_dbg_g_register(const struct v4l2_ioctl_ops *ops,
->>  	}
->>  	if (ops->vidioc_g_register && p->match.type == V4L2_CHIP_MATCH_BRIDGE &&
->>  	    (ops->vidioc_g_chip_info || p->match.addr == 0))
->> -		return ops->vidioc_g_register(file, NULL, p);
->> +		return ops->vidioc_g_register(file, state, p);
->>  	return -EINVAL;
->>  #else
->>  	return -ENOTTY;
->> @@ -2673,7 +2677,8 @@ static int v4l_dbg_g_register(const struct v4l2_ioctl_ops *ops,
->>  }
->>  
->>  static int v4l_dbg_s_register(const struct v4l2_ioctl_ops *ops,
->> -			      struct file *file, void *arg)
->> +			      struct file *file,
->> +			      struct video_device_state *state, void *arg)
->>  {
->>  #ifdef CONFIG_VIDEO_ADV_DEBUG
->>  	const struct v4l2_dbg_register *p = arg;
->> @@ -2693,7 +2698,7 @@ static int v4l_dbg_s_register(const struct v4l2_ioctl_ops *ops,
->>  	}
->>  	if (ops->vidioc_s_register && p->match.type == V4L2_CHIP_MATCH_BRIDGE &&
->>  	    (ops->vidioc_g_chip_info || p->match.addr == 0))
->> -		return ops->vidioc_s_register(file, NULL, p);
->> +		return ops->vidioc_s_register(file, state, p);
->>  	return -EINVAL;
->>  #else
->>  	return -ENOTTY;
->> @@ -2701,7 +2706,8 @@ static int v4l_dbg_s_register(const struct v4l2_ioctl_ops *ops,
->>  }
->>  
->>  static int v4l_dbg_g_chip_info(const struct v4l2_ioctl_ops *ops,
->> -			       struct file *file, void *arg)
->> +			       struct file *file,
->> +			       struct video_device_state *state, void *arg)
->>  {
->>  #ifdef CONFIG_VIDEO_ADV_DEBUG
->>  	struct video_device *vfd = video_devdata(file);
->> @@ -2717,7 +2723,7 @@ static int v4l_dbg_g_chip_info(const struct v4l2_ioctl_ops *ops,
->>  			p->flags |= V4L2_CHIP_FL_READABLE;
->>  		strscpy(p->name, vfd->v4l2_dev->name, sizeof(p->name));
->>  		if (ops->vidioc_g_chip_info)
->> -			return ops->vidioc_g_chip_info(file, NULL, arg);
->> +			return ops->vidioc_g_chip_info(file, state, arg);
->>  		if (p->match.addr)
->>  			return -EINVAL;
->>  		return 0;
->> @@ -2744,7 +2750,7 @@ static int v4l_dbg_g_chip_info(const struct v4l2_ioctl_ops *ops,
->>  }
->>  
->>  static int v4l_dqevent(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		       void *arg)
->> +		       struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_fh *vfh = file_to_v4l2_fh(file);
->>  
->> @@ -2752,7 +2758,8 @@ static int v4l_dqevent(const struct v4l2_ioctl_ops *ops, struct file *file,
->>  }
->>  
->>  static int v4l_subscribe_event(const struct v4l2_ioctl_ops *ops,
->> -			       struct file *file, void *arg)
->> +			       struct file *file,
->> +			       struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_fh *vfh = file_to_v4l2_fh(file);
->>  
->> @@ -2760,7 +2767,8 @@ static int v4l_subscribe_event(const struct v4l2_ioctl_ops *ops,
->>  }
->>  
->>  static int v4l_unsubscribe_event(const struct v4l2_ioctl_ops *ops,
->> -				 struct file *file, void *arg)
->> +				 struct file *file,
->> +				 struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_fh *vfh = file_to_v4l2_fh(file);
->>  
->> @@ -2768,7 +2776,8 @@ static int v4l_unsubscribe_event(const struct v4l2_ioctl_ops *ops,
->>  }
->>  
->>  static int v4l_g_sliced_vbi_cap(const struct v4l2_ioctl_ops *ops,
->> -				struct file *file, void *arg)
->> +				struct file *file,
->> +				struct video_device_state *state, void *arg)
->>  {
->>  	struct v4l2_sliced_vbi_cap *p = arg;
->>  	int ret = check_fmt(file, p->type);
->> @@ -2779,11 +2788,12 @@ static int v4l_g_sliced_vbi_cap(const struct v4l2_ioctl_ops *ops,
->>  	/* Clear up to type, everything after type is zeroed already */
->>  	memset(p, 0, offsetof(struct v4l2_sliced_vbi_cap, type));
->>  
->> -	return ops->vidioc_g_sliced_vbi_cap(file, NULL, p);
->> +	return ops->vidioc_g_sliced_vbi_cap(file, state, p);
->>  }
->>  
->>  static int v4l_enum_freq_bands(const struct v4l2_ioctl_ops *ops,
->> -			       struct file *file, void *arg)
->> +			       struct file *file,
->> +			       struct video_device_state *state, void *arg)
->>  {
->>  	struct video_device *vfd = video_devdata(file);
->>  	struct v4l2_frequency_band *p = arg;
->> @@ -2801,7 +2811,7 @@ static int v4l_enum_freq_bands(const struct v4l2_ioctl_ops *ops,
->>  			return -EINVAL;
->>  	}
->>  	if (ops->vidioc_enum_freq_bands) {
->> -		err = ops->vidioc_enum_freq_bands(file, NULL, p);
->> +		err = ops->vidioc_enum_freq_bands(file, state, p);
->>  		if (err != -ENOTTY)
->>  			return err;
->>  	}
->> @@ -2813,7 +2823,7 @@ static int v4l_enum_freq_bands(const struct v4l2_ioctl_ops *ops,
->>  
->>  		if (p->index)
->>  			return -EINVAL;
->> -		err = ops->vidioc_g_tuner(file, NULL, &t);
->> +		err = ops->vidioc_g_tuner(file, state, &t);
->>  		if (err)
->>  			return err;
->>  		p->capability = t.capability | V4L2_TUNER_CAP_FREQ_BANDS;
->> @@ -2832,7 +2842,7 @@ static int v4l_enum_freq_bands(const struct v4l2_ioctl_ops *ops,
->>  			return -EINVAL;
->>  		if (p->index)
->>  			return -EINVAL;
->> -		err = ops->vidioc_g_modulator(file, NULL, &m);
->> +		err = ops->vidioc_g_modulator(file, state, &m);
->>  		if (err)
->>  			return err;
->>  		p->capability = m.capability | V4L2_TUNER_CAP_FREQ_BANDS;
->> @@ -2849,7 +2859,7 @@ struct v4l2_ioctl_info {
->>  	u32 flags;
->>  	const char * const name;
->>  	int (*func)(const struct v4l2_ioctl_ops *ops, struct file *file,
->> -		    void *p);
->> +		    struct video_device_state *state, void *p);
->>  	void (*debug)(const void *arg, bool write_only);
->>  };
->>  
->> @@ -2870,7 +2880,9 @@ struct v4l2_ioctl_info {
->>  #define DEFINE_V4L_STUB_FUNC(_vidioc)				\
->>  	static int v4l_stub_ ## _vidioc(			\
->>  			const struct v4l2_ioctl_ops *ops,	\
->> -			struct file *file, void *p)		\
->> +			struct file *file,			\
->> +			struct video_device_state *state,	\
->> +			void *p)				\
->>  	{							\
->>  		return ops->vidioc_ ## _vidioc(file, NULL, p);	\
->>  	}
->> @@ -3126,7 +3138,7 @@ static long __video_do_ioctl(struct file *file,
->>  
->>  	write_only = _IOC_DIR(cmd) == _IOC_WRITE;
->>  	if (info != &default_info) {
->> -		ret = info->func(ops, file, arg);
->> +		ret = info->func(ops, file, NULL, arg);
->>  	} else if (!ops->vidioc_default) {
->>  		ret = -ENOTTY;
->>  	} else {
->>
+> One of the main challenges arises from differences in how IOMMU
+> translation is currently managed on SoCs running the Qualcomm EL2
+> hypervisor (QHEE), where IOMMU translation for any device is entirely
+> owned by the hypervisor. Additionally, the firmware for remote
+> processors does not contain a resource table, which would typically
+> include the necessary IOMMU configuration settings.
 > 
+> Qualcomm SoCs running with QHEE (EL2) have been utilizing the Peripheral
+> Authentication Service (PAS) from TrustZone (TZ) firmware to securely
+> authenticate and reset remote processors via a single SMC call,
+> _auth_and_reset_. This call is first trapped by QHEE, which then invokes
+> TZ for authentication. Once authentication is complete, the call returns
+> to QHEE, which sets up the IOMMU translation scheme for the remote
+> processors and subsequently brings them out of reset. The design of the
+> Qualcomm EL2 hypervisor dictates that the Linux host OS running at EL1
+> is not permitted to configure IOMMU translation for remote processors,
+> and only a single-stage translation is configured.
+> 
+> To make the remote processor bring-up (PAS) sequence
+> hypervisor-independent, the auth_and_reset SMC call is now handled
+> entirely by TZ. However, the issue of IOMMU configuration remains
+> unresolved, for example a scenario, when KVM host at EL2 has no
+> knowledge of the remote processors’ IOMMU settings.  This is being
+> addressed by overlaying the IOMMU properties when the SoC runs a Linux
+> host at EL2. SMC call is being provided from the TrustZone firmware to
+> retrieve the resource table for a given subsystem.
+> 
+> There are also remote processors such as those for video, camera, and
+> graphics that do not use the remoteproc framework to manage their
+> lifecycle. Instead, they rely on the Qualcomm PAS service to
+> authenticate their firmware. These processors also need to be brought
+> out of reset when Linux is running at EL2. The client drivers for these
+> processors use the MDT loader function to load and authenticate
+> firmware. Similar to the Qualcomm remoteproc PAS driver, they also need
+> to retrieve the resource table, create a shared memory bridge
+> (shmbridge), and map the resources before bringing the processors out of
+> reset.
+> 
+> This series has dependency on below series for creating SHMbridge over
+> carveout memory. It seems to be merged on linux-next and pushed for 6.18.
+> 
+> https://lore.kernel.org/lkml/20250911-qcom-tee-using-tee-ss-without-mem-obj-v12-0-17f07a942b8d@oss.qualcomm.com/
+> 
+> It is based on next-20250919 where above series is already merged
+> and tested on SA8775p which is now called Lemans IOT platform and
+> does not addresses DMA problem discussed at [1] which is future
+> scope of the series.
 > 
 
+When testing your series on Lemans, what happens with the additional
+SIDs from the peripherals assigned to the remoteproc ("DMA masters" in
+your talk)? Are these running in bypass because the previous firmware
+component (Gunyah?) had allocated SMMU SMRs for these?
+
+It would be worth mentioning this in the cover letter (and perhaps as
+part of the EL2 overlay patch as well), since it is unclear otherwise
+why your series does not result in crashes the first time a remoteproc
+tries to use one of these DMA-capable peripherals.
+
+Thanks,
+Stephan
 
