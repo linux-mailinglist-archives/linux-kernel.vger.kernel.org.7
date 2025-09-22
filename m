@@ -1,171 +1,98 @@
-Return-Path: <linux-kernel+bounces-827389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAEDB919F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:17:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96CAB91A04
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E6A91902365
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:17:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CA5742428C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75C41EA7F4;
-	Mon, 22 Sep 2025 14:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A78210F59;
+	Mon, 22 Sep 2025 14:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FJtRL/ii"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fJVmMbFn"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3E01D63C7
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA83191F66;
+	Mon, 22 Sep 2025 14:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758550642; cv=none; b=cRVHxJN0YblPr/DPyZ75Y4QlajpFVnhuLHJlW/WrykAQ8+9ounS1LeYzMZmW6v01LFPL0JSjIX+/qVDUatviCBfCx/ejHKpsZWo09e+tNHkuwlcjxm575sHiGY9JbphLAABecAfz63QiGLCCy/vw1yt6rB4RIa/jUJu1pbhgiDQ=
+	t=1758550644; cv=none; b=AAfANixkKRvGaKHqA5dr7x1KbuItQJkSdBTD6H3lelMxnV9GpDMRMDaCztrAkOH1yWyQ99hBqODo/7GzCJX2vLHtZPVcCXE1BplqNN3aVqXGCcRzG4G1KdZCNAIttcZjRmGn0vHnus3uPNH/e0wBSsjlhQ+kHXqWtkQgkVktQK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758550642; c=relaxed/simple;
-	bh=fWzzdjlL6Qeihn+o/itxjEqN74qvQQO38r2QqurBj94=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ugKQfc+C/gnXIM7wRk0NE4QjjNetHpEzyn1qVShALElClrsj3rCENy6ntL9REQ1fEn7tAEZGgMJCrvb+Wfp0BFecUKYdF6VAmFTKczYHCau/v6VB4Eee8oNafe93HmG5Is2zd+slU4dXasPgEYb8rEbJ0T7Q0yMW7B80/eR59r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FJtRL/ii; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-367874aeeacso16306641fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758550638; x=1759155438; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D42mDx7XES4dJT5DCpqob2SIIqhWq10lpNC2IIru3f8=;
-        b=FJtRL/iilefnLtGJ8RHt8JgsdkR9Bwv5jp5h9u6hOudyZ6LPBr9JRFkLYvaXS5n/Pj
-         3eN6Slc2BXlzCDaaPKfYUf5kPD8EA8rodgkufNy8SWMmZi14ttFzIAHz7CnvDpQbeG9P
-         CltohY2KfFtz68kLonVt6XNO6gjd8lrIw9B9vlGk4wwxZvnWInWWjtBaC40wPJK9CDOh
-         QnNLP1EwDbHlXAfEEI8M6895VghrF9762JOwmVEvQqjx+nH9TOnut8S28f/AwfvZjytS
-         2Wn1dHe5v0Lq10jRdpBiKL4t3iN1tecmmm8LUqjTucWDL/g9rbqyOm3rXyuCvHdO41fa
-         xh2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758550638; x=1759155438;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D42mDx7XES4dJT5DCpqob2SIIqhWq10lpNC2IIru3f8=;
-        b=ksD1eGZ4gBAEgEpFnf/OL9fADTLnTSwSZPA5bxGP2G2VuAcUGTlVaNz6449EMyR+1i
-         MFkdpZu+CQFK9lwvk/+DiWvMQ+gu9N32QrwHMo1JcOAYKFJtnWpyZcBopWUIgzDk4isI
-         S1wTpErO4L4/kyeWZ+0okq58Q1tsA/pB/kuL2VJ5tYtajsCZ6TbwNE0cU06p176yr69Z
-         ibnNmTwUY1agYLwvlK1oDrut4dHvjTPl5BcVhal+K41QiFL8Uuz88/ZoSMfNDOlPVb42
-         nF2JVQ3UpxO3nslYcr1V3Hr6mJVn19j/7VhniK0r+lJiyevtbob4b68CkXYk6vm7xBDQ
-         9gaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNo+ZhIYz0ZONMav88pvqv1Pw630+tIpIk35figEo2rkOrn0LYX520DViYa7ipWz2/jvmglYO5OqeT4Vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf+X81SWNaM4wrPo1axJEa5DjPG3HsHxt2USerNDLHhy1NIPdb
-	fSL6o/ouXtclUV/o90JkP4GsybVsveeO0EfxkhmRXbGKxAXv2vzkmkX/vR4+6bmilmhXlAdqlRT
-	H6KNMm9u5o0HUE5FWM/6wzHFKlPuiLqzRAe3wAmhdeg==
-X-Gm-Gg: ASbGnctqd58/RwYJcBRMZ1efU82W9a1DdFBxP+MJotI25YrXmUNS0EivA4eaVGxXNRA
-	+Mt0ldnJ/KD3pO5UQAU2v5LAEBM0MPMVDN3P/0szTF6szj+eRTUJq2HJlvca2T2F9gfJlIAdLFd
-	bLjdNzC2WC5sAb62kv5/gpw4P6HnazzglkeMNZPcSa/vYB/NLed6Z1Tg9qvhjY+5qWMM85DAgCx
-	xyoKj1Fb3H1MJCC8B6tAVH8IrW5nIK1JGqfbw==
-X-Google-Smtp-Source: AGHT+IGS2AjVg06y9Gl4ZoVygRe0txj+WZLEO+s0iRtEWqABbE+tNtV+p0mvb++GTiupjPDEskTHy6Yf/wVmcolsOo4=
-X-Received: by 2002:a2e:be07:0:b0:36a:97e5:c4a5 with SMTP id
- 38308e7fff4ca-36a97e5c8d3mr17177811fa.39.1758550638057; Mon, 22 Sep 2025
- 07:17:18 -0700 (PDT)
+	s=arc-20240116; t=1758550644; c=relaxed/simple;
+	bh=gn8LLxkIVjhTNakRHlp3LSM2QyH8Sg2TELVlWw65SjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SnKw4KrZn+lgiU4Cii9cYR2wXv0HZCPmYKE9nOTC4leAG5oGbSfore8LfxGLQA4ovZ4RT3CnVNWutrkyGoOAQrHGdfpytzMCj+oPTby3wUrNpWlB1+jh3E5zhWEoFomzI9ttptJCMeE6J9leVSekfM+s+IAsACJIpu4qBneDZ0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fJVmMbFn; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=PgurSM8v6g4XqceJ5reSyG+7GSpIjEQay/9SsuDXPGA=; b=fJVmMbFn82hQOQlJn8i7wEAqMo
+	gIYPHmDMHX1ccIwKVsRyoMEEwEzsQxYo/VoQPeD/jPETtuusCXpyCo+vvUR+ORfz6Trv7m3sYvgdy
+	35nTRXyTUIC+muQVKIJxXk7Vl9ZPyWsu9P4y2/63nVyT4C4rPHTvJRf2pG3j0nLy66mRnN9thvT/y
+	92XzdLRjNlhsIHgkol5PbliP0vxmIq33BIzw4tGjLHKXlinDbGYa6af/45ZNCYTapl0FP072aiYnO
+	L1YhCXOmnmsQQfwaDs5VORIz4NoP9ssCD+piMYohzxsBZwUNhqYosCl1SE0dD9HvhjWh1bYkIrDyv
+	fxabBk5A==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v0hLp-00000009Kva-36Qu;
+	Mon, 22 Sep 2025 14:17:09 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4920F30057E; Mon, 22 Sep 2025 16:17:08 +0200 (CEST)
+Date: Mon, 22 Sep 2025 16:17:08 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: Re: [RESEND][PATCH v15 0/4] perf: Support the deferred unwinding
+ infrastructure
+Message-ID: <20250922141708.GB70318@noisy.programming.kicks-ass.net>
+References: <20250908171412.268168931@kernel.org>
+ <20250918114610.GZ3419281@noisy.programming.kicks-ass.net>
+ <20250918111853.5dc424df@gandalf.local.home>
+ <20250918172414.GC3409427@noisy.programming.kicks-ass.net>
+ <20250918173220.GA3475922@noisy.programming.kicks-ass.net>
+ <20250918151018.7281647b@batman.local.home>
+ <pde32olzdlqvbom5bya5exndcrfgsw7lmffy6uav5yoplonzj3@ddb2b5sihlpx>
+ <20250922072307.GQ4067720@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
-In-Reply-To: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 22 Sep 2025 16:17:05 +0200
-X-Gm-Features: AS18NWBBtPPpfa65LcAbGVqvkVRIVUyroOGhaWLkgkmXpHaSdWCO_RUkKb2djeo
-Message-ID: <CAMRc=Mc4hO1LDumxAfkB1W6miTJXR1NUVAKBVarkwiF2yGvSLA@mail.gmail.com>
-Subject: Re: [PATCH 00/10] RDA8810PL SD/MMC support
-To: dang.huynh@mainlining.org
-Cc: Manivannan Sadhasivam <mani@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-unisoc@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922072307.GQ4067720@noisy.programming.kicks-ass.net>
 
-On Thu, Sep 18, 2025 at 8:49=E2=80=AFPM Dang Huynh via B4 Relay
-<devnull+dang.huynh.mainlining.org@kernel.org> wrote:
->
-> This patch series aims to add SDMMC driver and various drivers required
-> for SDMMC controller to function.
->
-> This also fixed a bug where all the GPIO switched from INPUT to OUTPUT
-> after the GPIO driver probed or by reading the GPIO debugfs.
->
-> This patch series is a split from [1] to ease the maintainers.
->
+On Mon, Sep 22, 2025 at 09:23:07AM +0200, Peter Zijlstra wrote:
 
-This is still targeting at least 4 subsystems and isn't making the
-merging any easier. Are there any build-time dependencies here? If
-not, then split it further into small chunks targeting individual
-subsystems and the relevant ARM SoC tree.
+> I'll go stick it in the pile. Thanks!
 
-Bartosz
+  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git unwind/cleanup
 
-> Tested on Orange Pi 2G-IOT using a Buildroot environment.
->
-> [1]: https://lore.kernel.org/all/20250917-rda8810pl-drivers-v1-0-9ca9184c=
-a977@mainlining.org/
->
-> Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
-> ---
-> Dang Huynh (10):
->       dt-bindings: gpio: rda: Make interrupts optional
->       dt-bindings: clock: Add RDA Micro RDA8810PL clock/reset controller
->       dt-bindings: dma: Add RDA IFC DMA
->       dt-bindings: mmc: Add RDA SDMMC controller
->       gpio: rda: Make IRQ optional
->       gpio: rda: Make direction register unreadable
->       clk: Add Clock and Reset Driver for RDA Micro RDA8810PL SoC
->       dmaengine: Add RDA IFC driver
->       mmc: host: Add RDA Micro SD/MMC driver
->       ARM: dts: unisoc: rda8810pl: Add SDMMC controllers
->
->  .../bindings/clock/rda,8810pl-apsyscon.yaml        |  43 ++
->  Documentation/devicetree/bindings/dma/rda,ifc.yaml |  45 ++
->  .../devicetree/bindings/gpio/gpio-rda.yaml         |   3 -
->  Documentation/devicetree/bindings/mmc/rda,mmc.yaml |  92 +++
->  MAINTAINERS                                        |  18 +
->  .../boot/dts/unisoc/rda8810pl-orangepi-2g-iot.dts  |  20 +
->  .../arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts |  20 +
->  arch/arm/boot/dts/unisoc/rda8810pl.dtsi            |  47 +-
->  drivers/clk/Kconfig                                |   1 +
->  drivers/clk/Makefile                               |   1 +
->  drivers/clk/rda/Kconfig                            |  14 +
->  drivers/clk/rda/Makefile                           |   2 +
->  drivers/clk/rda/clk-rda8810.c                      | 769 +++++++++++++++=
-++++
->  drivers/dma/Kconfig                                |  10 +
->  drivers/dma/Makefile                               |   1 +
->  drivers/dma/rda-ifc.c                              | 450 +++++++++++
->  drivers/gpio/gpio-rda.c                            |   4 +-
->  drivers/mmc/host/Kconfig                           |  12 +
->  drivers/mmc/host/Makefile                          |   1 +
->  drivers/mmc/host/rda-mmc.c                         | 853 +++++++++++++++=
-++++++
->  include/dt-bindings/clock/rda,8810pl-apclk.h       |  70 ++
->  include/dt-bindings/dma/rda-ifc.h                  |  28 +
->  22 files changed, 2495 insertions(+), 9 deletions(-)
-> ---
-> base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
-> change-id: 20250918-rda8810pl-mmc-3f33b83c313d
->
-> Best regards,
-> --
-> Dang Huynh <dang.huynh@mainlining.org>
->
->
+I'll let the robot have a chew and post tomorrow or so.
 
