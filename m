@@ -1,278 +1,279 @@
-Return-Path: <linux-kernel+bounces-827658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE8AB9256A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:03:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF71B9255E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31147441A50
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:03:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 823891895AB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B7C31352B;
-	Mon, 22 Sep 2025 17:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647BE31282B;
+	Mon, 22 Sep 2025 17:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="XjRH3wMZ"
-Received: from mail-oo1-f100.google.com (mail-oo1-f100.google.com [209.85.161.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Bw/QfCX1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A51e/Kyu"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5462A3128D6
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCDC19D8BC;
+	Mon, 22 Sep 2025 17:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758560576; cv=none; b=WGhoMoGY+ek8dNE1c+TzWADc1nFWg46ipPAZ50PR095NVKhmWA8KLQnWIMagXXKgCbaOEOevbfFRlyXVMyKQuCboVX5pFonDrrzyIRPKgVuy6pWVFRa8ElDlH1fVwdLFY3vfB8JdwwEdlMd2ZlyID2p5/yWLSd7TvWKOGRXvnHE=
+	t=1758560571; cv=none; b=TdGvB4BiyR3r/qiMdYEaCEb4hjoNZdJkxHtuV3+xWh/oHyisscRPLP2fn/16dtZIS9gRZrQoHklQMq6p+AhW/0tG4sgl/cCXDbuelAGW10DAKFwmUghwF37SrVSkc2CEYXN4ikYAyu68nJCCC6Ey+F62I89alB3t/xCF5ii3VGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758560576; c=relaxed/simple;
-	bh=JypIUl1J7I4aTO6RIngxwIbvE3Bf0MU28iQ5ahgADgs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r12S15oI8HHNTnuAvO8nU6Q0FyfZRXZRDGMKRYOXZcFDRKiwejT6zz0yV/3ZfEU3B7CHQuUVZyd1CJLgm0L4W+hyegJ+ZimeN7C+YzkE34WMpUQtfhd3zHaThMhnzYqLBvjE7IXYkXrvHdcOr/gEYy5PE3Bcm2Iq4o9nGnhqYjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=XjRH3wMZ; arc=none smtp.client-ip=209.85.161.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-oo1-f100.google.com with SMTP id 006d021491bc7-6217352bc25so61502eaf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:02:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1758560573; x=1759165373; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=X9Il64cUpTJjRu6b4mQHWeErfD8hD7D/QYu++Gqs37U=;
-        b=XjRH3wMZYxbFVBQNU1/ia6FN7L8QvxflhV45+Y2WQYH2F3hwnn8rQacPoQs5oGLFrc
-         QYHDLJRrx9sF+8+Bo1HP2JRwp0CYG+5s72AntDyWp4Br+a6bASuDdmyCI+PfWZw0AVa0
-         /h5MPHvnoNAoV5TR7RNVtYBzG2aPwV3i8MjFnoNUPuM7Jh9ok9Qz2pSSnk0n2Z0tW1mO
-         vEa5zLxVVWQegPr7zg8av5olR4lqwoSAa59nNogsURQSIFAPVFQRnmyw8fPWk/bD9c4G
-         mv4EVFm0J3IuZR8sMVMtEryb3Xzm5GurmRxunPlI4SGapgs5VxS3G/xcCyp2oXIDUDnr
-         L62A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758560573; x=1759165373;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X9Il64cUpTJjRu6b4mQHWeErfD8hD7D/QYu++Gqs37U=;
-        b=uan/rCwOCyoVIN16zLC7QrcmYzbuNBORDjX+30iunIQB4OneJRVI1gGqPtxpJiF7FO
-         DTHZ3gCb0r4UmO30YunVdxKKGpg71OIClE1Awud13uevrPO5MaEnjV2jP9Umv1mholsM
-         OpVOYhTh+tI52Lv7w6FnLGj13iH3cQsBU3xJxGWzJL8D+fGuDZlv3Qk5w2gUzjZVQsWr
-         AcsElaa0OGEVvaURMb8ViCmLFsNR9E+FlXZKIU3jjpqNbVsCN8PxpkX5U2YzYLdAFcsy
-         rmbosvjhJVRHwnlVri+H6KZBszY6rs4jGaXfh/wdJvbApxDIcsHGyEgJatSNLZo9GIRd
-         VBkg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5zRStZFkI2kccUfEPD8mst+X31fThgfyDa+T4fsQvRxLRZ1CegsCKzljN+7rY3h0YP0lZ48kiSi0jj0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx39XBmvjos4mA009P2QTH3UM9esRtzOfMhagAMHaWdN8DTWp8Z
-	lFqDKlPHAEcVbAXqozLc4u67tK5z7a9eFD6ZVXdEJ8B2LW1suIopVgjMQ7aSzybXrLL8/702LiO
-	nNO94KMqBgCHuu/dAFHBEJRKSZVRBpCq9wV7Q1Owo55eFjXOSo0zq
-X-Gm-Gg: ASbGnctq4Yr5ZpVlMKhq1Curvkl7btUcdcObzjBVRshp2CU2zRe03LjW/IN8HuRGlRo
-	/Z3EO2ZORhWmZ3y0OLo23lJtGm91zmXAFgcPuPG7lTy+6hzJhT97PNHVE7M12Tmq4z/E+TB+GUY
-	MKbc4TVz0ndDDpr8C14Js0EbuKinxxRUaj1Ny3TsWQh9TTz7Huo/UtjLcKFfp5ulbMQ9FD2TsI4
-	m9SICk2Z3gR3B1fGCRQJTGRaAhzgRNg/B3joqCe7S2SCh75IShU1sAZY3MEVMTf4T2Oep170zET
-	iRE8MYBLa3QE4ea+1RaqrBeo6q6rUO45MFytd7tUc3QwYFxDWukQShzQDQ==
-X-Google-Smtp-Source: AGHT+IGgvjnxvdko/nCuAkBCNCdpc3qhLNgvtxgilGl8hD1yrabr5ZA1gFKHJa7ofAq5Qix3umS3FgQxvi+X
-X-Received: by 2002:a05:6820:c8b:b0:61f:a265:6b9c with SMTP id 006d021491bc7-62724fddc3emr4069963eaf.0.1758560573320;
-        Mon, 22 Sep 2025 10:02:53 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id 006d021491bc7-625dae1d688sm484015eaf.9.2025.09.22.10.02.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 10:02:53 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::1199])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id D6914340408;
-	Mon, 22 Sep 2025 11:02:52 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id C3F93E414A1; Mon, 22 Sep 2025 11:02:52 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Ming Lei <ming.lei@redhat.com>,
-	Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	Miklos Szeredi <miklos@szeredi.hu>
-Cc: Keith Busch <kbusch@meta.com>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: [PATCH] io_uring/cmd: drop unused res2 param from io_uring_cmd_done()
-Date: Mon, 22 Sep 2025 11:02:31 -0600
-Message-ID: <20250922170234.2269956-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1758560571; c=relaxed/simple;
+	bh=Qvg83Qu6YbCe2R5WpEPoIiWAVMIinrNZ+JlUpuhEgPM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Lq8kQ/2y0pO6wVuepVR56acq2+6qpibEiSz7Yyf7PeF0bI2Dq73J45xIyMiRmNNQRnc7KGXUOXd+p02dcEMSB4aJWrVW79Mp6MmxqSthn/cLUaoHJ6EtCmU4g2W8Y6xM6M3cyrRyTMercyj0wYnU40QPbWDtSHRl9npg2MgCifM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Bw/QfCX1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A51e/Kyu; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758560566;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RUqMA26b1vUicgfT4K+dRgpiKkcWxum2fd2DSOHZFk4=;
+	b=Bw/QfCX1Z7L3VAd3THhhYOirVF1fGlj9rRFBrhgK9T0XuT51c9DIc4IJEvysRFrT1RSL2w
+	4NinpDYD8uGFnEkNWAHgGtx0LSGCfwjTIeLitq7hEPXx72i3Tc2tfyU3+TwyP8tfc6FJDo
+	I3sVozyw1oAUJ0tYYxj6TMdyXyCB3AW0XXG+z6xK1QeYg+bu8/KezDurItOYzqp2gJB222
+	tW2UxuSeokCIlZSanjTf/SEW1ldW56kWu/G9H/gzt9VfsPu+UkEnD43JtB7kGWIrqgB23v
+	ISgJ4s5XVJlmG3hV9rUnlJ1PBAw9TEwTu1nvHoLPGJhIV2Y98DvuwvGZ1BncGw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758560566;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RUqMA26b1vUicgfT4K+dRgpiKkcWxum2fd2DSOHZFk4=;
+	b=A51e/Kyu/6HBntiw3EP8g2JIqqA5eg/P6ouajs8hy3Nc44cB+qg1aaqtcHaGvrtTkg5voD
+	WWxqol48W7tKoYCQ==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Esben Haabendal <esben@geanix.com>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann
+ <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>, Niklas Schnelle
+ <schnelle@linux.ibm.com>, Serge Semin <fancer.lancer@gmail.com>
+Subject: Re: [RFC 0/1] serial: 8250: nbcon_atomic_flush_pending() might
+ trigger watchdog warnigns
+In-Reply-To: <aNFR45fL2L4PavNc@pathway.suse.cz>
+References: <20250822142502.69917-1-pmladek@suse.com>
+ <84qzwzbr90.fsf@jogness.linutronix.de> <aNFR45fL2L4PavNc@pathway.suse.cz>
+Date: Mon, 22 Sep 2025 19:08:45 +0206
+Message-ID: <84348eju8a.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Commit 79525b51acc1 ("io_uring: fix nvme's 32b cqes on mixed cq") split
-out a separate io_uring_cmd_done32() helper for ->uring_cmd()
-implementations that return 32-byte CQEs. The res2 value passed to
-io_uring_cmd_done() is now unused because __io_uring_cmd_done() ignores
-it when is_cqe32 is passed as false. So drop the parameter from
-io_uring_cmd_done() to simplify the callers and clarify that it's not
-possible to return an extra value beyond the 32-bit CQE result.
+On 2025-09-22, Petr Mladek <pmladek@suse.com> wrote:
+> On Mon 2025-08-25 13:06:27, John Ogness wrote:
+>> On 2025-08-22, Petr Mladek <pmladek@suse.com> wrote:
+>> > There are clearly visible two points where nbcon_atomic_flush_pending()
+>> > took over the ownership from a lover priority context. I believe that:
+>> >
+>> >   + 1st occurrence is triggered by the "WARNING: CPU: 2 PID: 1 at
+>> >     arch/x86/..." line printed with NBCON_PRIO_EMERGENCY.
+>> >
+>> >   + 2nd occurrence is triggered by the "Kernel panic - not syncing:
+>> >     Hard LOCKUP" line printed with NBCON_PRIO_PANIC.
+>> >
+>> > There were flushed more than 2500lines, about 240kB of characters,
+>> > in the NBCON_PRIO_EMERGENCY before the hardlockup detector
+>> > triggered panic.
+>> >
+>> > If I count it correctly, a serial console with the speed 115200 baud/sec
+>> > would be able to emit about 11.5kB/sec. And it would take about 20sec
+>> > to emit the 240kB of messages.
+>> >
+>> > => softlockup is quite realistic
+>> >
+>> > Solution:
+>> >
+>> > IMHO, we really should flush all pending messages atomically.
+>> > It means that the watchdog reports need to be prevented
+>> > by touching the watchdog. It is not needed in
+>> > univ8250_console_write_thread()
+>> >
+>> > => put back touch_nmi_watchdog() into univ8250_console_write_atomic().
+>> 
+>> I would expect the touch_nmi_watchdog() within wait_for_lsr() to be
+>> sufficient. After all, that is the loop that leads to the large emit
+>> times.
+>
+> Good point. I was not aware of this touch_nmi_watchdog().
+>
+>> For QEMU, the touch_nmi_watchdog() within wait_for_lsr() will never be
+>> called because QEMU does not implement baud rates. So that may be reason
+>> enough to accept this change.
+>
+> Another good point.
+>
+> Well, the original problem happened on bare metal. And the problem
+> was reporoducible even with the extra touch_nmi_watchog() in
+> univ8250_console_write_atomic().
+>
+> I was confused _until_ I realized that touch_nmi_watchog()
+> modified per-CPU variable:
+>
+> notrace void arch_touch_nmi_watchdog(void)
+> {
+> 	raw_cpu_write(watchdog_hardlockup_touched, true);
+> }
+>
+> And the hardlockup detector checked only the one per-CPU variable
+> as well:
+>
+> void watchdog_hardlockup_check(unsigned int cpu, struct pt_regs *regs)
+> {
+> 	if (per_cpu(watchdog_hardlockup_touched, cpu)) {
+> 		per_cpu(watchdog_hardlockup_touched, cpu) = false;
+> 		return;
+> 	}
+> [...]
+> }
+>
+> By other words, touch_nmi_watchog() delays hardlockup report
+> only on the given CPU.
+>
+> But we have two CPUs stuck by printk:
+>
+> 1. CPU2 is calling WARN():
+>
+>    [    3.933488][    T1] WARNING: CPU: 2 PID: 1 at arch/x86/events/intel/uncore.c:1156 uncore_pci_pmu_register+0x15e/0x180
+>
+>    It gets busy with flushing the backlog of pending messages
+>    in the emergency context.
+>
+>    This context regularly touches the watchodog.
+>    So far, so good.
+>
+>
+> 2. CPU0 tries to reacquire the console ownership so that it could
+>    restore IRQ settting from the printk kthread.
+>
+>    The nbcon_reacquire_nobuf() is called with disabled IRQs
+>    so that it might trigger hardlockup. And it clearly
+>    happens:
+>
+>    [    3.930291][    C0] watchdog: Watchdog detected hard LOCKUP on cpu 0
+>    [    3.930291][    C0] CPU: 0 UID: 0 PID: 18 Comm: pr/ttyS0 Not tainted 6.12.0-160000.18-default #1 PREEMPT(voluntary) SLFO-1.2 (unreleased) dd174c2cca19586eee16eaccfeba02f4d5b57c67
+>    [    3.930291][    C0] Hardware name: HPE ProLiant DL560 Gen11/ProLiant DL560 Gen11, BIOS 2.48 03/11/2025
+>    [    3.930291][    C0] RIP: 0010:nbcon_reacquire_nobuf+0x11/0x50
+>    [...]
+>    [    3.930291][    C0]  <TASK>
+>    [    3.930291][    C0]  serial8250_console_write+0x16d/0x5c0
+>    [    3.930291][    C0]  nbcon_emit_next_record+0x22c/0x250
+>    [    3.930291][    C0]  nbcon_emit_one+0x93/0xe0
+>    [    3.930291][    C0]  nbcon_kthread_func+0x13c/0x1c0
+>
+>
+> Note that CPU2 keeps the nbcon console ownership until all pending
+> messages are flushed and the ownership is blocked for a long
+> time:
+>
+> static int __nbcon_atomic_flush_pending_con(struct console *con, u64 stop_seq,
+> 					    bool allow_unsafe_takeover)
+> {
+> 	if (!nbcon_context_try_acquire(ctxt, false))
+> 		return -EPERM;
+>
+> 	while (nbcon_seq_read(con) < stop_seq) {
+> 		if (!nbcon_emit_next_record(&wctxt, true))
+> 			return -EAGAIN;
+> 	}
+>
+> 	nbcon_context_release(ctxt);
+> }
+>
+> An solution is to touch the watchdog also in nbcon_reacquire_nobuf()
+> because it might get blocked from known reasons. Something like:
+>
+> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> index 646801813415..dd5966261b09 100644
+> --- a/kernel/printk/nbcon.c
+> +++ b/kernel/printk/nbcon.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/irqflags.h>
+>  #include <linux/kthread.h>
+>  #include <linux/minmax.h>
+> +#include <linux/nmi.h>
+>  #include <linux/percpu.h>
+>  #include <linux/preempt.h>
+>  #include <linux/slab.h>
+> @@ -932,8 +933,10 @@ void nbcon_reacquire_nobuf(struct nbcon_write_context *wctxt)
+>  {
+>  	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
+>  
+> -	while (!nbcon_context_try_acquire(ctxt, true))
+> +	while (!nbcon_context_try_acquire(ctxt, true)) {
+> +		touch_nmi_watchdog();
+>  		cpu_relax();
+> +	}
+>  
+>  	nbcon_write_context_set_buf(wctxt, NULL, 0);
+>  }
+>
+>
+> Alternative solution would be to release the console ownership in
+> __nbcon_atomic_flush_pending_con() between each record. It might
+> give the kthread a chance to restore the IRQ setting an continue.
+>
+> It might be better. But we would need to make sure that the kthread
+> would stay blocked until the emergency context flushes all messages.
+> Otherwise, the kthread would repeatedly lose the console ownership
+> in the middle of the message when __nbcon_atomic_flush_pending_con()
+> would acquire the context with NBCON_EMERGENCY_PRIO for the next
+> pending message.
+>
+> We might need similar handshake also between panic and emergency
+> context.
+>
+> I am not sure if this is worth the complexity.
+>
+> What do you think?
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- block/ioctl.c                | 2 +-
- drivers/block/ublk_drv.c     | 6 +++---
- fs/btrfs/ioctl.c             | 2 +-
- fs/fuse/dev_uring.c          | 8 ++++----
- include/linux/io_uring/cmd.h | 4 ++--
- 5 files changed, 11 insertions(+), 11 deletions(-)
+Originally I had implemented the atomic flushing to release between
+records. The problem is, as you mentioned, that the threaded printers
+keep jumping back in. So you end up with lots of "replaying previous
+printk message" from the atomic printer taking over all the time. This
+is visible from a simple WARN() and it is ugly as hell.
 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index f7b0006ca45d..c9ea8e53871e 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -774,11 +774,11 @@ static void blk_cmd_complete(struct io_uring_cmd *cmd, unsigned int issue_flags)
- 	struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
- 
- 	if (bic->res == -EAGAIN && bic->nowait)
- 		io_uring_cmd_issue_blocking(cmd);
- 	else
--		io_uring_cmd_done(cmd, bic->res, 0, issue_flags);
-+		io_uring_cmd_done(cmd, bic->res, issue_flags);
- }
- 
- static void bio_cmd_bio_end_io(struct bio *bio)
- {
- 	struct io_uring_cmd *cmd = bio->bi_private;
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 99abd67b708b..48c409d1e1bb 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -1186,11 +1186,11 @@ static void ublk_complete_io_cmd(struct ublk_io *io, struct request *req,
- 				 int res, unsigned issue_flags)
- {
- 	struct io_uring_cmd *cmd = __ublk_prep_compl_io_cmd(io, req);
- 
- 	/* tell ublksrv one io request is coming */
--	io_uring_cmd_done(cmd, res, 0, issue_flags);
-+	io_uring_cmd_done(cmd, res, issue_flags);
- }
- 
- #define UBLK_REQUEUE_DELAY_MS	3
- 
- static inline void __ublk_abort_rq(struct ublk_queue *ubq,
-@@ -1803,11 +1803,11 @@ static void ublk_cancel_cmd(struct ublk_queue *ubq, unsigned tag,
- 	if (!done)
- 		io->flags |= UBLK_IO_FLAG_CANCELED;
- 	spin_unlock(&ubq->cancel_lock);
- 
- 	if (!done)
--		io_uring_cmd_done(io->cmd, UBLK_IO_RES_ABORT, 0, issue_flags);
-+		io_uring_cmd_done(io->cmd, UBLK_IO_RES_ABORT, issue_flags);
- }
- 
- /*
-  * The ublk char device won't be closed when calling cancel fn, so both
-  * ublk device and queue are guaranteed to be live
-@@ -2450,11 +2450,11 @@ static void ublk_ch_uring_cmd_cb(struct io_uring_cmd *cmd,
- 		unsigned int issue_flags)
- {
- 	int ret = ublk_ch_uring_cmd_local(cmd, issue_flags);
- 
- 	if (ret != -EIOCBQUEUED)
--		io_uring_cmd_done(cmd, ret, 0, issue_flags);
-+		io_uring_cmd_done(cmd, ret, issue_flags);
- }
- 
- static int ublk_ch_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
- {
- 	if (unlikely(issue_flags & IO_URING_F_CANCEL)) {
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 7e13de2bdcbf..168d84421a78 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -4683,11 +4683,11 @@ static void btrfs_uring_read_finished(struct io_uring_cmd *cmd, unsigned int iss
- 
- out:
- 	btrfs_unlock_extent(io_tree, priv->start, priv->lockend, &priv->cached_state);
- 	btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
- 
--	io_uring_cmd_done(cmd, ret, 0, issue_flags);
-+	io_uring_cmd_done(cmd, ret, issue_flags);
- 	add_rchar(current, ret);
- 
- 	for (index = 0; index < priv->nr_pages; index++)
- 		__free_page(priv->pages[index]);
- 
-diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index 249b210becb1..a30c44234a4e 100644
---- a/fs/fuse/dev_uring.c
-+++ b/fs/fuse/dev_uring.c
-@@ -349,11 +349,11 @@ static void fuse_uring_entry_teardown(struct fuse_ring_ent *ent)
- 	list_move(&ent->list, &queue->ent_released);
- 	ent->state = FRRS_RELEASED;
- 	spin_unlock(&queue->lock);
- 
- 	if (cmd)
--		io_uring_cmd_done(cmd, -ENOTCONN, 0, IO_URING_F_UNLOCKED);
-+		io_uring_cmd_done(cmd, -ENOTCONN, IO_URING_F_UNLOCKED);
- 
- 	if (req)
- 		fuse_uring_stop_fuse_req_end(req);
- }
- 
-@@ -516,11 +516,11 @@ static void fuse_uring_cancel(struct io_uring_cmd *cmd,
- 	}
- 	spin_unlock(&queue->lock);
- 
- 	if (need_cmd_done) {
- 		/* no queue lock to avoid lock order issues */
--		io_uring_cmd_done(cmd, -ENOTCONN, 0, issue_flags);
-+		io_uring_cmd_done(cmd, -ENOTCONN, issue_flags);
- 	}
- }
- 
- static void fuse_uring_prepare_cancel(struct io_uring_cmd *cmd, int issue_flags,
- 				      struct fuse_ring_ent *ring_ent)
-@@ -731,11 +731,11 @@ static int fuse_uring_send_next_to_ring(struct fuse_ring_ent *ent,
- 	ent->cmd = NULL;
- 	ent->state = FRRS_USERSPACE;
- 	list_move_tail(&ent->list, &queue->ent_in_userspace);
- 	spin_unlock(&queue->lock);
- 
--	io_uring_cmd_done(cmd, 0, 0, issue_flags);
-+	io_uring_cmd_done(cmd, 0, issue_flags);
- 	return 0;
- }
- 
- /*
-  * Make a ring entry available for fuse_req assignment
-@@ -1198,11 +1198,11 @@ static void fuse_uring_send(struct fuse_ring_ent *ent, struct io_uring_cmd *cmd,
- 	ent->state = FRRS_USERSPACE;
- 	list_move_tail(&ent->list, &queue->ent_in_userspace);
- 	ent->cmd = NULL;
- 	spin_unlock(&queue->lock);
- 
--	io_uring_cmd_done(cmd, ret, 0, issue_flags);
-+	io_uring_cmd_done(cmd, ret, issue_flags);
- }
- 
- /*
-  * This prepares and sends the ring request in fuse-uring task context.
-  * User buffers are not mapped yet - the application does not have permission
-diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index 02d50f08f668..7509025b4071 100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@ -158,13 +158,13 @@ static inline void *io_uring_cmd_ctx_handle(struct io_uring_cmd *cmd)
- {
- 	return cmd_to_io_kiocb(cmd)->ctx;
- }
- 
- static inline void io_uring_cmd_done(struct io_uring_cmd *ioucmd, s32 ret,
--				     u64 res2, unsigned issue_flags)
-+				     unsigned issue_flags)
- {
--	return __io_uring_cmd_done(ioucmd, ret, res2, issue_flags, false);
-+	return __io_uring_cmd_done(ioucmd, ret, 0, issue_flags, false);
- }
- 
- static inline void io_uring_cmd_done32(struct io_uring_cmd *ioucmd, s32 ret,
- 				       u64 res2, unsigned issue_flags)
- {
--- 
-2.45.2
+Trying to make the output clean is quite tricky. Mainly because the
+lower-prio context (which may or may not be the kthread printer) and the
+higher-prio context need to understand each other's intentions and
+somehow coordinate. My code started to look like I was implementing a
+second layer of ownership (indended ownership) and/or some type of
+bizarre scheduling with "printing-prio boosting" and/or "proxy console
+ownership". It was a lot of code to make emergency blocks look sane.
 
+In the end I decided to keep things simple and let the kthread printer
+busy-wait, possibly with interrupts disabled. Your suggestion of adding
+touch_nmi_watchdog() to nbcon_reacquire_nobuf() would also follow that
+line of simplicity. The simplicity comes at the cost of possibly having
+two CPUs dedicated to atomically flushing a single console (one that is
+actually printing and one that is the busy-waiting normal-prio printer).
+
+Note that for PREEMPT_RT the hardware interrupts are not actually
+disabled. That is not an excuse to keep things this way, just a
+reminder. Non-RT may also want to use that 2nd CPU for something useful,
+in which case we would need the higher-prio printer to somehow
+temporarily yield ownership to the lower-prio printer. And quite
+frankly, that is not something the nbcon console ownership model was
+designed to support.
+
+If we can come up with an elegant way to handle the temporary transfer
+while preserving clean output, I am all for it. I will take another look
+and see if I can come up with a _proper_ (no duct tape) solution.
+
+John
 
