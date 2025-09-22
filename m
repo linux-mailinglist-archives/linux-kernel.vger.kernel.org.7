@@ -1,65 +1,61 @@
-Return-Path: <linux-kernel+bounces-827776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD87BB92C24
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:18:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27507B92C30
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E6A62A539D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:18:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D63563B7317
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937E131A576;
-	Mon, 22 Sep 2025 19:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2321631A7F0;
+	Mon, 22 Sep 2025 19:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iWhkh865"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qDSVkCoD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1B32D739F;
-	Mon, 22 Sep 2025 19:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3462D739F;
+	Mon, 22 Sep 2025 19:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758568683; cv=none; b=f+5mKKydtPkwIbXgzEN0k4PBI5M9TuSyh1DTAdW5xVnhTfq2Ah9Tr5Y7VKvUeQoyCIBpiNk3j63L3qSJ5u+XYgl0T1hQNBJCQ6XFHfQB6lK5MpQHGtRhINYpO0/jTsPFg7B0SKHfCSHuz9meJSbCcTsLO8/xda58cIG9VVfxzNY=
+	t=1758568718; cv=none; b=u9Y+jwfLuL6Bc2Isjco3HIgNb3Im4SpMqWj21T+gzyg/QvPBNTlLrN2PXxHYQLIuJOmzo7eYkrGEQXntI83nh2DcW9kJ+oWG0AP+2DxDOihIEH0c4pXf9X1d4VrIvjbVdpFmSx0TOpptJ/2nR2L4zPO1TPG/lcF4KqnttwjkbEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758568683; c=relaxed/simple;
-	bh=zCc9tNG1q472U6/8gOeRaAEy7Q3tksNlUbazLFehR+A=;
+	s=arc-20240116; t=1758568718; c=relaxed/simple;
+	bh=+6GthuWD7OfS7LclSstUGvru0X9bBCDJ1/9Qumd0NxU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZFf+mh2RgtApK+IT4W6V4nAlIuAAWnYBAkvxghgy90qdrt6UyDK/y4OhdCTYwJJC15SqYdeeNHAAQAzhU82UG5W5WRRxdx/nPN+emAJg3JXPjsr6zQ8l3DFi6aZCLXOGbhuiQcE04HHu2cQy9geyYS1UOeKwn3ubWRQjabABCQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iWhkh865; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30DBFC4CEF0;
-	Mon, 22 Sep 2025 19:18:02 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LbxvPfW9PzZjrstbCPyr4fbDl3yT2hyDtjvAQ/EN2kliZBqThwHqvEZe+++UcQNwYksqM4/ca1v+haCoYLl9j78I5mBa+5xlEn+sqVjFHizo/d8WV9+CbM9lzcDkYcp2KAT6PQCmnFU2xu7D5pKDkTXX9jWDA9YvfSyx12zDD0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qDSVkCoD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC3DDC4CEF0;
+	Mon, 22 Sep 2025 19:18:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758568682;
-	bh=zCc9tNG1q472U6/8gOeRaAEy7Q3tksNlUbazLFehR+A=;
+	s=k20201202; t=1758568718;
+	bh=+6GthuWD7OfS7LclSstUGvru0X9bBCDJ1/9Qumd0NxU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iWhkh865UFh80V8VI//H0GWPdPaSpAvOnQ2i1FEOgSy5NadL3MfiHV49Rpkt/+nbJ
-	 hLct6KggwAgo2X7kIj44Z62PYQo2SaepyOy7nVwVdDPNlQRs0GKFo9C+i3Bw/tYDSL
-	 x4bt3ZnwBWma8vpVSr67k7eLThE2p42zKVJK24Mps8Eg8bfaUweyaDWZW8AHW10IOM
-	 qjcZ11ZoHhJ4P7N0xebWV6ecpvoDJW4/jvadswqXNKarTvKTyll9lvhVJd5Dz5xYOY
-	 bC87E547PWU7zzo0xwjmplafPSzclp02UNZfcQC5/MpUJGWbDJpJgYlVEjsrgHf3B6
-	 q/X9voTgzbwQw==
-Date: Mon, 22 Sep 2025 14:18:01 -0500
+	b=qDSVkCoDtsIsXX49GOFjZCJ4xt0bubXj0rvP+UuSUJtJ7mJ4bl4MLu3PrqGjdJUaP
+	 8fUF4TsR5C6T+O9QDb/rM0PVCC9Np6Qa8hjYr/azg1E9vNqp0Ruw0fXrXYN444WcG+
+	 cGL2sIVzDPwos8P+a1XPxYFB6cQJq6SyfrDP3sFbh0IkcakDYZ/a49X1qM0jyvHv77
+	 H+Daz23i62GGk6fe9QpwV/1QYJvIq+a73Gb0Ok2HyoDth5Ltk9JwNaAwaZmIkTDDGw
+	 MpPeYSa0Fd8EYzmHs0jm5UVFKFKLLLvZYFNiFRS+iSXCPccG0h5nM7xip1/2wMs5mh
+	 II8Q06ApCzSfA==
+Date: Mon, 22 Sep 2025 14:18:35 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: David Yang <mmyangfl@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH net-next v10 1/5] dt-bindings: ethernet-phy: add reverse
- SGMII phy interface type
-Message-ID: <175856868047.835812.3464607742164476820.robh@kernel.org>
-References: <20250919094234.1491638-1-mmyangfl@gmail.com>
- <20250919094234.1491638-2-mmyangfl@gmail.com>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: clock: dispcc-sm6350: Add MDSS_CORE &
+ MDSS_RSCC resets
+Message-ID: <175856871448.840389.12273232916869077124.robh@kernel.org>
+References: <20250919-sm6350-mdss-reset-v1-0-48dcac917c73@fairphone.com>
+ <20250919-sm6350-mdss-reset-v1-1-48dcac917c73@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,18 +64,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250919094234.1491638-2-mmyangfl@gmail.com>
+In-Reply-To: <20250919-sm6350-mdss-reset-v1-1-48dcac917c73@fairphone.com>
 
 
-On Fri, 19 Sep 2025 17:42:26 +0800, David Yang wrote:
-> The "reverse SGMII" protocol name is a personal invention, derived from
-> "reverse MII" and "reverse RMII", this means: "behave like an SGMII
-> PHY".
+On Fri, 19 Sep 2025 11:57:23 +0200, Luca Weiss wrote:
+> Add the indexes for two resets inside the dispcc on SM6350 SoC.
 > 
-> Signed-off-by: David Yang <mmyangfl@gmail.com>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 > ---
->  Documentation/devicetree/bindings/net/ethernet-controller.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  include/dt-bindings/clock/qcom,dispcc-sm6350.h | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
