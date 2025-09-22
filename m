@@ -1,107 +1,97 @@
-Return-Path: <linux-kernel+bounces-827323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439CAB916E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:37:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 713D2B916EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F2504E15D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30D063B3ADE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784CE30EF62;
-	Mon, 22 Sep 2025 13:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297BB283FE9;
+	Mon, 22 Sep 2025 13:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lonrv9Gi";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VGwEqm3G";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="02pT3B3Q";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qZhL7xuj"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FwT8Ol8B"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE70D30DD0C
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF872D9EED
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758548234; cv=none; b=HQ7WyX0i20CeZKETAk7qYsRYP57HlHACammEfpXZwc0yWhxwv0BGIV25a7TdwYsq3VCqgnJ0SQ7Hbcjcrv3A3K0MZDhNG8tDI+C8davWC/y7z/Sms2yEg2ZAfJZLfva4tsJrTgvWeFa772wmVRmIT7n1TNWgBuTRHY27hZb3bdU=
+	t=1758548300; cv=none; b=F7v1tp3j3e2FY0gLdzemI8oy/AUTgqKQGvPZNBJHapbQpBpfZiFtQEiH+dhTMhGnh14ZfotI4YsSUoGwOy98wOdgkDV315+J0PgmnpIhiMHhWtdbe3pshcSDMn6hBkBtRpCUB+HFNSFKf3HV/IQ/gFFANHsCecpMMks4dC4JZf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758548234; c=relaxed/simple;
-	bh=PRnL3UI5prYxcevnQGbJxE2F+LhRx0YrzCwUWz2ChlA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OfxzSx7RFFc4o2ZeLJWagOkCyFpm42dujjlPtArmdXUfZFy/Dy71YA9g5FaqVq7JSNofv07oddt5z9RocAeau/xgGk1d6jMHgWuxLRIRX4XKm402jaoSlcbZpMX+zKRaQmN/t66Fr56djg2PveHULPk86k/YAlBdg9jg2MoVNk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lonrv9Gi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VGwEqm3G; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=02pT3B3Q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qZhL7xuj; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EC60A216E2;
-	Mon, 22 Sep 2025 13:37:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758548231; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZFydlF0huAfGEfcgCyTMMZ7Fjv7KiBk5yCHa4SxOuiA=;
-	b=lonrv9Gi3OUBpb0r1k6R2TAEZqM9fQSNvfm/EUwmPDvBvk7DV3G/XQ1x+xpWL0KXD1pQUH
-	CIX71daSYYZqKVr4qIPJ3UMDo7IIjh68LzLYEb13/u64ehnsPWHyckdp3/KoWo17K9btzj
-	l77Q288gw6bQD8xvmVFQLH93CsR7E2I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758548231;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZFydlF0huAfGEfcgCyTMMZ7Fjv7KiBk5yCHa4SxOuiA=;
-	b=VGwEqm3GEUZCyU5Io1qwDk0D+Fd/E9EP/KFXROwYOtrg79pNfvh3KJUMfnIeLtFemo+28E
-	Wno58FJNMxOxevCA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=02pT3B3Q;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qZhL7xuj
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758548230; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZFydlF0huAfGEfcgCyTMMZ7Fjv7KiBk5yCHa4SxOuiA=;
-	b=02pT3B3QWzLtzDjRB94o867ud19kAibBTbHXzBxC/vzeYQgChikuzycvbCB4IlvmulRiy5
-	VnPmSg9xOLa9p3Z1GxwkKmEOZ2nkh5ZYU9f/bYJ0d6S5ql0bq1nkL26re+UrMaDa9siyvZ
-	2vr9dEWB4YeOAGlU0182TtdZ03yow6M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758548230;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZFydlF0huAfGEfcgCyTMMZ7Fjv7KiBk5yCHa4SxOuiA=;
-	b=qZhL7xuj2KSWF/VK1/bs/0FenfievnqKcJn79LqXhEqohw2SzUN6/LmV0V6P8JKu/brVni
-	bA1rEs4/KF/kD9Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DE8D413A63;
-	Mon, 22 Sep 2025 13:37:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cxpNNgZR0WjefAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 22 Sep 2025 13:37:10 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A3F46A07C4; Mon, 22 Sep 2025 15:37:06 +0200 (CEST)
-Date: Mon, 22 Sep 2025 15:37:06 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 1/3] cgroup: add missing ns_common include
-Message-ID: <lpdznqhnqy3kzeezhr5l6x42a7okr2e6ou6kh5rmlszokzoc6l@h63hnj5h3hew>
-References: <20250922-work-namespace-ns_common-fixes-v1-0-3c26aeb30831@kernel.org>
- <20250922-work-namespace-ns_common-fixes-v1-1-3c26aeb30831@kernel.org>
+	s=arc-20240116; t=1758548300; c=relaxed/simple;
+	bh=oH4AoBve0xbicZociklSp6XKp0C3amTsaF8P8uMO+V8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+dwcBTFG2DXlqpYPHkXm9VqARX/SFXy8rfFds0TjlaENsFnmSb6YmuXFAtoIzmvRPAYe8Axyv9u6e29KFMDPYyJ00vFpE0t7iU1uGhlo2hj/x0nLRhDldnFIXtO2ahXFRff9xwZAFqlpFvC6wadMce7AWZUzI8L4P/ny/XZbgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FwT8Ol8B; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ee12332f3dso4433969f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:38:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758548297; x=1759153097; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pjtr/WBwKkdc0dNJq3VYkWPcGQdd+yuTUcmaT9L1px0=;
+        b=FwT8Ol8BPEMqAE9zksNEIHsbaa9dq8/OszNXWV3OjA5edSdeTM6sLS6f97RAKovNVX
+         vn3vYkXiOSxVlbk8JLgLrkHRmH0pxtcOcHSy8gjRIBMNyR9494hT4vCWmV7vf9TPrMA0
+         CCkDP5g1H1GIMx3daUjoOEwzUdny/MEE0Od6ReAd82M4sBzp50bAuaPX25KCLUNXwnus
+         IcxQXM2Ov/i0UbwzrTyyYRqKATqT6n1JLoWB7ifTlXjxXe4cWP+OUo2Xb3F/jFhcJlik
+         5QKcbZ6DY6L2MUbAhtN5n7OoWGGrGrF6aguRQcjlnt4VcGakTBUwaI3tQLnVq21M5iKN
+         0G4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758548297; x=1759153097;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pjtr/WBwKkdc0dNJq3VYkWPcGQdd+yuTUcmaT9L1px0=;
+        b=g29ORECo+jPf1rBqIJ+vX4RfqQBNzkN1OtGSogLTxBD9EPm+lmm20I6ETPQpUK9dc7
+         pHcxBjRinRjUo3amMbnyv5WVVXI+AFI71awkVt1VeDyTFW72lDcdXy8wd05KCT17UI9/
+         tR6RXOwah1Ji/4lazoAzMPEwyFJ3eb1cLbTxq4sihkXQTMCZRHO56E3c7P2xgqqdbJNX
+         boK37uZaK6Yst58dfu3hgb6+0wQmkaE/bgs+XXVfjvmmFD2PoDkZMOrvZ4CAxrqkymbo
+         FvJP95aZcT6T/S7k1XAKC3j/YUVtaHzrCzXd9MWIPtrC6sCrMoMurLXH5j+q3Fm5R/J1
+         lYbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOIzq4jx9NMoh4ZvYXenq+Ufj8PWtuXIZPsX45uUb3JwofWh4tc7eJaVW11Sr4FMxvsR6RquqVTRQwMuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbBdyICUI4SWrC+AyHupIMVkFqIyYbTVS2M5tTH9Hn28lzFdi8
+	AbxNajLfUuIucvmbJ/Jf9S8K10169WQi0zQYqDVbIx8305aOhQCP3Hf6
+X-Gm-Gg: ASbGncvE5ttbg4n4nDva0t6tuX5C9BMAeKqIvAo+igI6nePZyjsWoKKBcgKVR57bzrg
+	rEX/Z03TNImt+F2E68r9YTl6tf+P5pRTvpRiQaHiab/lJbpeR8r6g6WWPfu3XF9QcCWqdj97YzJ
+	TVf7CyDXx/b6Et0+VFpPmupb22TDMNRQGp0Za/E9xbapOPgaqkelOuf+MWKToQdedNP8JHDm99T
+	MOSI/k36sCmmpu+7kzRqX8HW2zH0zorcsggjSm1Fa1Gdt74GS9Gne0hDF/EmB2MCiwzJhC93LAe
+	HzVyAGWboAhwTqm/2cWYGqkl+LXp2zJAMsauOMUkHMOGtBg2Zt4SsnhGGa4+qDL5D3bpXF8loPb
+	Hmn25i6yoEFPrAtXcWy+xqw==
+X-Google-Smtp-Source: AGHT+IFb8QVE1JPoVN1bc6+jCc1wg3npty3iJ1lDuKaGOl7ScBmdTGUwgEUhvmpVwnZrFYD9+VLSQA==
+X-Received: by 2002:a5d:5d03:0:b0:3ec:4e41:fd86 with SMTP id ffacd0b85a97d-3ee86d6cf94mr10071515f8f.50.1758548296402;
+        Mon, 22 Sep 2025 06:38:16 -0700 (PDT)
+Received: from krava ([176.74.159.170])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613dccb5e2sm241428795e9.17.2025.09.22.06.38.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 06:38:15 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 22 Sep 2025 15:38:13 +0200
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@kernel.org>,
+	Menglong Dong <menglong8.dong@gmail.com>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, kees@kernel.org,
+	samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
+	ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH] tracing: fgraph: Protect return handler from recursion
+ loop
+Message-ID: <aNFRRa3m6Qm8zzQu@krava>
+References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
+ <175828305637.117978.4183947592750468265.stgit@devnote2>
+ <20250919112746.09fa02c7@gandalf.local.home>
+ <aM5bizfTTTAH5Xoa@krava>
+ <20250922151655.1792fa0abc6c3a8d98d052c9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,77 +100,181 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250922-work-namespace-ns_common-fixes-v1-1-3c26aeb30831@kernel.org>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: EC60A216E2
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	URIBL_BLOCKED(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:email];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,suse.cz,cmpxchg.org,suse.com,linutronix.de];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim,suse.cz:email]
-X-Spam-Score: -4.01
+In-Reply-To: <20250922151655.1792fa0abc6c3a8d98d052c9@kernel.org>
 
-On Mon 22-09-25 14:42:35, Christian Brauner wrote:
-> Add the missing include of the ns_common header.
+On Mon, Sep 22, 2025 at 03:16:55PM +0900, Masami Hiramatsu wrote:
+> On Sat, 20 Sep 2025 09:45:15 +0200
+> Jiri Olsa <olsajiri@gmail.com> wrote:
 > 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-Sure. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  include/linux/cgroup_namespace.h | 2 ++
->  1 file changed, 2 insertions(+)
+> > On Fri, Sep 19, 2025 at 11:27:46AM -0400, Steven Rostedt wrote:
+> > > On Fri, 19 Sep 2025 20:57:36 +0900
+> > > "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> > > 
+> > > > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > > 
+> > > > function_graph_enter_regs() prevents itself from recursion by
+> > > > ftrace_test_recursion_trylock(), but __ftrace_return_to_handler(),
+> > > > which is called at the exit, does not prevent such recursion.
+> > > > Therefore, while it can prevent recursive calls from
+> > > > fgraph_ops::entryfunc(), it is not able to prevent recursive calls
+> > > > to fgraph from fgraph_ops::retfunc(), resulting in a recursive loop.
+> > > > This can lead an unexpected recursion bug reported by Menglong.
+> > > > 
+> > > >  is_endbr() is called in __ftrace_return_to_handler -> fprobe_return
+> > > >   -> kprobe_multi_link_exit_handler -> is_endbr.  
+> > > 
+> > > So basically its if the handler for the return part calls something that it
+> > > is tracing, it can trigger the recursion?
+> > > 
+> > > > 
+> > > > To fix this issue, acquire ftrace_test_recursion_trylock() in the
+> > > > __ftrace_return_to_handler() after unwind the shadow stack to mark
+> > > > this section must prevent recursive call of fgraph inside user-defined
+> > > > fgraph_ops::retfunc().
+> > > > 
+> > > > This is essentially a fix to commit 4346ba160409 ("fprobe: Rewrite
+> > > > fprobe on function-graph tracer"), because before that fgraph was
+> > > > only used from the function graph tracer. Fprobe allowed user to run
+> > > > any callbacks from fgraph after that commit.
+> > > 
+> > > I would actually say it's because before this commit, the return handler
+> > > callers never called anything that the entry handlers didn't already call.
+> > > If there was recursion, the entry handler would catch it (and the entry
+> > > tells fgraph if the exit handler should be called).
+> > > 
+> > > The difference here is with fprobes, you can have the exit handler calling
+> > > functions that the entry handler does not, which exposes more cases where
+> > > recursion could happen.
+> > 
+> > so IIUC we have return kprobe multi probe on is_endbr and now we do:
+> > 	
+> > 	is_endbr()
+> > 	{ -> function_graph_enter_regs installs return probe
+> > 	  ...
+> > 	} -> __ftrace_return_to_handler
+> > 	       fprobe_return
+> > 	         kprobe_multi_link_exit_handler
+> > 	           is_endbr
+> > 		   { -> function_graph_enter_regs installs return probe
+> > 		     ...
+> > 		   } -> __ftrace_return_to_handler
+> > 		          fprobe_return
+> > 		            kprobe_multi_link_exit_handler
+> > 			      is_endbr
+> > 			      { -> function_graph_enter_regs installs return probe
+> > 			        ...
+> > 			      } -> __ftrace_return_to_handler
+> > 			           ... recursion
+> > 
+> > 
+> > with the fix:
+> > 
+> > 	is_endbr()
+> > 	{ -> function_graph_enter_regs installs return probe
+> > 	  ...
+> > 	} -> __ftrace_return_to_handler
+> > 	       fprobe_return
+> > 	         kprobe_multi_link_exit_handler
+> > 	           ...
+> > 	           is_endbr
+> > 		   { ->  function_graph_enter_regs
+> > 		           ftrace_test_recursion_trylock fails and we do NOT install return probe
+> >                      ...
+> > 		   }
+> > 
+> > 
+> > there's is_endbr call also in kprobe_multi_link_handler, but it won't
+> > trigger recursion, because function_graph_enter_regs already uses
+> > ftrace_test_recursion_trylock 
+> > 
+> > 
+> > if above is correct then the fix looks good to me
+> > 
+> > Acked-by: Jiri Olsa <jolsa@kernel.org>
 > 
-> diff --git a/include/linux/cgroup_namespace.h b/include/linux/cgroup_namespace.h
-> index b7dbf4d623d2..81ccbdee425b 100644
-> --- a/include/linux/cgroup_namespace.h
-> +++ b/include/linux/cgroup_namespace.h
-> @@ -2,6 +2,8 @@
->  #ifndef _LINUX_CGROUP_NAMESPACE_H
->  #define _LINUX_CGROUP_NAMESPACE_H
->  
-> +#include <linux/ns_common.h>
-> +
->  struct cgroup_namespace {
->  	struct ns_common	ns;
->  	struct user_namespace	*user_ns;
+> Hi Jiri,
+> 
+> I found ftrace_test_recursion_trylock() allows one nest level, can you
+> make sure it is OK?
+
+hum, I recall being surprised by that already in the past,
+I thought we fixed that somehow, will check later today
+
+thanks,
+jirka
+
+> 
+> Thank you,
+> 
+> > 
+> > thanks,
+> > jirka
+> > 
+> > 
+> > > 
+> > > > 
+> > > > Reported-by: Menglong Dong <menglong8.dong@gmail.com>
+> > > > Closes: https://lore.kernel.org/all/20250918120939.1706585-1-dongml2@chinatelecom.cn/
+> > > > Fixes: 4346ba160409 ("fprobe: Rewrite fprobe on function-graph tracer")
+> > > > Cc: stable@vger.kernel.org
+> > > > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > > ---
+> > > >  kernel/trace/fgraph.c |   12 ++++++++++++
+> > > >  1 file changed, 12 insertions(+)
+> > > > 
+> > > > diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> > > > index 1e3b32b1e82c..08dde420635b 100644
+> > > > --- a/kernel/trace/fgraph.c
+> > > > +++ b/kernel/trace/fgraph.c
+> > > > @@ -815,6 +815,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> > > >  	unsigned long bitmap;
+> > > >  	unsigned long ret;
+> > > >  	int offset;
+> > > > +	int bit;
+> > > >  	int i;
+> > > >  
+> > > >  	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
+> > > > @@ -829,6 +830,15 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> > > >  	if (fregs)
+> > > >  		ftrace_regs_set_instruction_pointer(fregs, ret);
+> > > >  
+> > > > +	bit = ftrace_test_recursion_trylock(trace.func, ret);
+> > > > +	/*
+> > > > +	 * This must be succeeded because the entry handler returns before
+> > > > +	 * modifying the return address if it is nested. Anyway, we need to
+> > > > +	 * avoid calling user callbacks if it is nested.
+> > > > +	 */
+> > > > +	if (WARN_ON_ONCE(bit < 0))
+> > > 
+> > > I'm not so sure we need the warn on here. We should probably hook it to the
+> > > recursion detection infrastructure that the function tracer has.
+> > > 
+> > > The reason I would say not to have the warn on, is because we don't have a
+> > > warn on for recursion happening at the entry handler. Because this now is
+> > > exposed by fprobe allowing different routines to be called at exit than
+> > > what is used in entry, it can easily be triggered.
+> > > 
+> > > -- Steve
+> > > 
+> > > 
+> > > 
+> > > > +		goto out;
+> > > > +
+> > > >  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
+> > > >  	trace.retval = ftrace_regs_get_return_value(fregs);
+> > > >  #endif
+> > > > @@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> > > >  		}
+> > > >  	}
+> > > >  
+> > > > +	ftrace_test_recursion_unlock(bit);
+> > > > +out:
+> > > >  	/*
+> > > >  	 * The ftrace_graph_return() may still access the current
+> > > >  	 * ret_stack structure, we need to make sure the update of
+> > > 
+> 
 > 
 > -- 
-> 2.47.3
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
