@@ -1,133 +1,374 @@
-Return-Path: <linux-kernel+bounces-826690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D3BB8F1F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:24:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE786B8F1FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A55C917ABFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:24:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC25C3BF1C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2865D2EFDBA;
-	Mon, 22 Sep 2025 06:23:03 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9CB2F2909;
+	Mon, 22 Sep 2025 06:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NB0MBcbW"
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011068.outbound.protection.outlook.com [52.101.57.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD1D257827;
-	Mon, 22 Sep 2025 06:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758522182; cv=none; b=EHvGQRNSofKtN3UD5lrlNMUdGHhZuF6j0u/eMIZmBVs8/KkMyNp+COfGQVEs+UsMOtx//1tEZLTq86h92Ha30RDJEaXCSNp8glnygwe+BLB8xzSScS2iynexRcb3hWcPgohkZEFsILxNTv1qCKTxZ770G3zQHg9iC7DpndFZppg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758522182; c=relaxed/simple;
-	bh=is8yakVFJ92Y77+pJ24vkJB51vTMkdKk2Ii8jnnEXLc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q3P76seo33FX+phbXqNgn5UlwFbn/Z2s4srtzCf9XquhGKQLKzU5CA9noqpeu/RvKCJJgH/1qVnAvgiYHipO16F2NutL1N6qhSnRm/mHS8Vqm053Nui8KUf6NMz3+PWQSSnXyYPmGNvK61FO+/l3639EbPK+ztLBpNYZMznl5Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 916b7686977c11f0b29709d653e92f7d-20250922
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
-	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:0dfb604e-c375-4e14-8edb-4e1323093f64,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:-5
-X-CID-INFO: VERSION:1.1.45,REQID:0dfb604e-c375-4e14-8edb-4e1323093f64,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:6493067,CLOUDID:aab4714ecc1f80bb4f209f82ea7ba360,BulkI
-	D:250922142250KV4QC9ZA,BulkQuantity:1,Recheck:0,SF:17|19|24|38|44|66|78|81
-	|82|102|850,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40
-	,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:
-	0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-UUID: 916b7686977c11f0b29709d653e92f7d-20250922
-X-User: duanchenghao@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1612824356; Mon, 22 Sep 2025 14:22:51 +0800
-From: Chenghao Duan <duanchenghao@kylinos.cn>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	bjorn@kernel.org,
-	pulehui@huawei.com,
-	puranjay@kernel.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu
-Cc: martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	alex@ghiti.fr,
-	bpf@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	duanchenghao@kylinos.cn
-Subject: [PATCH v2 1/1] riscv: bpf: Fix uninitialized symbol 'retval_off'
-Date: Mon, 22 Sep 2025 14:22:44 +0800
-Message-Id: <20250922062244.822937-2-duanchenghao@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250922062244.822937-1-duanchenghao@kylinos.cn>
-References: <20250922062244.822937-1-duanchenghao@kylinos.cn>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20856257827;
+	Mon, 22 Sep 2025 06:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758522194; cv=fail; b=tARx5rvRvXsPLZi+L2fwvheoY8DWVCMLLxgFosuhAwO8uzNt05ST1Ktqypf0nrXdhU85SYE1o1OdrnaGjBA8j4L0wv5k9VxqTtIcDt+6xVQUtQkIKupPUYA6nRIcXMSc+se/7fxg44MpqOu3MlbYYUuf5uzB0GeAUJX9F8bc8js=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758522194; c=relaxed/simple;
+	bh=p/HV5bKYD+5Ge2fGmuDnkvSV9XcUh4cD67f/4v2DG2Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MX8geaWRKYOeCjb27kioioYRomIGM+t1oKSEgVuVURixUiph54l4SJRei7EhJWCZQVX1Dyk48ZhLtzEgU/J8H808xA4fO5f4dWavE8A3g+LlO9tsKQaWziPsyEN72PisgZv0bfjH6CTKaFk3r0w9ucrUrQUpdQXVRcEWYbHFDJ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NB0MBcbW; arc=fail smtp.client-ip=52.101.57.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J1u1iQNL4S0YckYr8y6tL7dB0AAZAcUnDlHqJL/50jQ3Syu/dtj/1rieC5Cs/2iiBRyiGu+X0vi6Yu4EplCFZIZ+nrEMB5jzR7ipkrtVNZkJ0SxoeWlWDYFJTborKHJ6+9y/k+Vw84LUb7HTbH6wZiZ/EcGOfEVXA3tflg21RPrYX/mz3ZVjDwczNxyiSKspldwou2EBy7EIk+ixUxJCwByFetnSsYVGW8Z4PmjHBGqkev2UfOiWeNENk0eap5vfMJwigRiRubWTMJcwcBfBaH33tuEi8e8DlQnvc5jF+ZJ5zAelrubC4o7pu+nPd8pMHQcmA5yqba/E+na/bA58cw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EeBX+2Y3un3HLwhSl0HbNL5WzuGLxGWrqowfcdD34ts=;
+ b=LbmDg/PODAArsmhnRVlU2LzthUb91fhKk/TQAo7+CkiLiZE6RtNwvKAgaUGz2U5NU/nH36TmnnPaAQGqhLcfT2qBsuiivMJ7e3ZM691p//YKTsQJ/hQHIlhpMiZhBFt0/w/yfywzaIUagLzxRDS8GU62dKK2Ql56HKXyKretciLZqCE674lfrcsGUxtyXQpJ0mZbI9Xq4F4O5lRsfEvsCSE0nsXEsCxK7uTt26FpvuXkp0tYijs44W/By0otRY/wdRxKTGdKr8XbyWlHosmiVbB8kUWBD2Ph/UchU4l37LsZz8bvusRZT3/VSxFfO09s2A8hM3yIYTqur1QKTZTxew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EeBX+2Y3un3HLwhSl0HbNL5WzuGLxGWrqowfcdD34ts=;
+ b=NB0MBcbWosVT6nsdHcO/msSbFGaCsBuLQBOsRPFWZCzQ/sOBOZOQwUc/mIIyQbolN1qIfMtC32SxUGIH16mVoEchi0YTjkwlSigeXbVGggZPCMkSsjYFmj7hoqNgqZmPYfdkJsyVcXMq/HAKDKZ8LwLqI7jkATiZJ99GXE0FwZNQAJUwjTFaSvSYkKlJz3FHmkKbxvGyB4li17/f+PwcK88B09xPeW76zz2UeXlck84z5MkDkp2Qc3hZ4AkAbPdiN9e9Vvl/r8+Dp4KKAe1tETDoxOEMjz9aM9NFOdPjM6LuBjT19q7MPdUtS/5b2SvIUqy2fcNXFQqesz+wbwe2SA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ DM4PR12MB6086.namprd12.prod.outlook.com (2603:10b6:8:b2::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.20; Mon, 22 Sep 2025 06:23:08 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9137.018; Mon, 22 Sep 2025
+ 06:23:08 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dmitry Osipenko <digetx@gmail.com>,
+ Jonas =?UTF-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>,
+ Charan Pedumuru <charan.pedumuru@gmail.com>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
+Subject:
+ Re: [PATCH v2 16/23] staging: media: tegra-video: tegra20: simplify format
+ align calculations
+Date: Mon, 22 Sep 2025 15:23:04 +0900
+Message-ID: <4198615.hdfAi7Kttb@senjougahara>
+In-Reply-To:
+ <CAPVz0n1Tur0YY7yOYAyUFvyTxie4OteyzGhzv487L+aA-YY+wQ@mail.gmail.com>
+References:
+ <20250906135345.241229-1-clamor95@gmail.com>
+ <25240767.ouqheUzb2q@senjougahara>
+ <CAPVz0n1Tur0YY7yOYAyUFvyTxie4OteyzGhzv487L+aA-YY+wQ@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP301CA0029.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:400:381::15) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|DM4PR12MB6086:EE_
+X-MS-Office365-Filtering-Correlation-Id: fcbdb779-67ab-4182-05e6-08ddf9a07f00
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|10070799003|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cmhOSEZaK3UyRExTWDluZkVVK0laeSttNVR1cG1ZakdkWXpGdEI3UDhtN3dL?=
+ =?utf-8?B?L0FSWkhKT3AxRjV6M09VcVJXQmpIbkRNYWYwM2ZBd2xrN21tVHBqcDk0U0xV?=
+ =?utf-8?B?NVEyckhWSmQxYTJHZHZFa2RLcXlRbFpXQWRNckNERHpwTEFWUEd5WXdSaUJE?=
+ =?utf-8?B?QUJCaFpSRGw4NmJhc1JmMEpZSVZJYnpLZlpDUHJyUEhkYjZtVktnbWdhUHB5?=
+ =?utf-8?B?QWVZOTNQanNUY2d4TzlwZTJycjFGSUtRN2YwbXMrRnlwQUhrVnVoS2tNWEZm?=
+ =?utf-8?B?WnZYdlNKZ29aeWZ2Y3ZtSStrck80blRNZ0JjaTUxaGJINVZpUi9XMU93Q3NF?=
+ =?utf-8?B?R0lBZk14MnM1V1pZZWlXM2JsUGZLUHJUOFdiRWhTQzlQaXlaTEhtcTlFY3hE?=
+ =?utf-8?B?L0dzVGpDSHJMUk1Wci9ZeE41SlRwWms0WWJ3UjVKclk2NFdpRGhzTFBOdlhK?=
+ =?utf-8?B?c0N1K3pIazc3SXZVcXdkY3ZjTkFyOGxadGt2czYrQ2FDRW9pclBJaGwzV2dl?=
+ =?utf-8?B?bkJqSHE2RmdPVUEzZHAxV3ZaWGNrSlBnclBvNFlwRVU2bTBjeDBrKzZ5bVcv?=
+ =?utf-8?B?UTQxbXUrSk1PcFJGOU1ENWFTYVZmSGs2anhsWXN2WWNEeThwVGErU0N6N3l0?=
+ =?utf-8?B?RW1iTWVsWXpTODNpRlczeWlwc2FMQ0d3S0t4VkU3dzRpNXV6bGtQd0lTb3hG?=
+ =?utf-8?B?NGc4eFFoK242Y01iUFhRd1BPOTNxR3Z3OEdPMlVOaHYrOWh1RUNTVG0xK2Mr?=
+ =?utf-8?B?MnVtSEhuSmR3S3dQMmk3RFBhWmJNenU4aTN1LzQ0cWNrRU4wK3FOVFprampw?=
+ =?utf-8?B?V0pQMWhFejFybkp1b09keUlRemxIaTdMQjdFNldUYzFnS3YraTlkcmFvb3Vx?=
+ =?utf-8?B?MnFoYjl1eUNzUWptb3BSMFBLc3I2OVVzRGZLaklYWW82aWFUSmdoQjJsS0lw?=
+ =?utf-8?B?SmsvUmpRenR0RDkzR3FvU3ZkejZ4SnA2ekhnU1dXNDZCcWVZYllTbGxwRjhl?=
+ =?utf-8?B?ZlhJN0tSWXdLNFdnVDlhWTBaeXgvaktNSGdnMERlK280c3E4OVFXL05aUXgy?=
+ =?utf-8?B?Q0ljVkFZajhnN1pCbFpxcko0b3V2K2s4V3lnNWorb2t3WEhkMlp6aFVOa2Nj?=
+ =?utf-8?B?VEJ5QVpGeEl0aFhKTStrWURRVm12emMrZW1heHl6dCtwb2NlSHhXdEw2SVNa?=
+ =?utf-8?B?REt0SGl0a1B2dlJwb0hOL2FCRExrWU5OekZOVzYwNzFLek5KWkpOcHd3dVhI?=
+ =?utf-8?B?OHJ5ZngwVnp6OWMyVVR6QTU0TzIzN3M4QXRIdXVZSmU4SDhtZUFIY2l4VXB6?=
+ =?utf-8?B?eHVpZGhaWVNzdVUyaHZETzdWT3BpN3BlVFV5ZW5TMmM4TERxWDF0YlpKbXBr?=
+ =?utf-8?B?cVJFTnVMS0ppb2tEYVhFSXc0dHo4UzFoTUY0TUVmaURzVERLeW5NRmtoOWE5?=
+ =?utf-8?B?dW9idno1VkRSd1JybjV2SUYwU2hMTmJ0T1hwSHdiSy81OUZwOUcwSGJtci9w?=
+ =?utf-8?B?dmxFSGovRHQyZnRkQW9MVmhGb0FDNHhENTdKTzd5WUtLdmNFOC9tOW9WNzhj?=
+ =?utf-8?B?aVB4VHp3Y1RYWHZHR1FDendCdHFOcmIra3FWODFzODZKdjhrSllneTc3K2J5?=
+ =?utf-8?B?QzVZVXloMUR1ZVNBM3FCNGFHOGRGQUhSWXFVaW9HaHJWVy9YdFUwVVpqYjA3?=
+ =?utf-8?B?VC9IVGxhQ3krVnRwQTdCcjQyZHg1YUVVUzZmeGhxdGFrQmNvQUlYQ0FKM1k5?=
+ =?utf-8?B?ZzVwZ2lNdDhCdlVZMHp2WStYQUJyZFpMRjIzZmorL2gvYVErbGZlVnFmSCs2?=
+ =?utf-8?B?aUo2YnNra3l0dzY2dE0xdyt3cmdYWEVVM0d2RWFtaktBYmNvVVZIVEpFMi85?=
+ =?utf-8?B?RmYvQ2x6Z2toWndyeFhvbERCNkZqTjhrTFRrVTZJWUtYYW5WYlFyZzdYVElT?=
+ =?utf-8?Q?6aMuAwUHvaI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(10070799003)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?K2Y4eEtGb21lempmT0FWU2gzVlRCNDlFbDNvbE1qakVLdk81NmtiaG52M1Bm?=
+ =?utf-8?B?UXZXeFhiSndIQjVYclBBbC9pdC9CS2Z2WmJPNlVHeUE0dE9mYjZEL0VpY1hO?=
+ =?utf-8?B?QWdKdm0wSEg5bEp5ckdYYVU3dEUvUDNWU3BweUhsQUxha05GVkNIOGsrRC8r?=
+ =?utf-8?B?ZndVUXpzZFpwNHFrTkRsMyszM1llNGVaSzB4b2JmRU0xY1ZRYUpTdlh6ZGFu?=
+ =?utf-8?B?L0lxbVVIVzNkbzlaZ1NzN1B0RitsMkFMMEJBZCtPUzBZY010VjdYam9SaHEr?=
+ =?utf-8?B?MGxrT1BybDU0SU1UUzU5bU0xSnZIU284NjVYTkgyeFRrRlNhN24wMk9qeDZP?=
+ =?utf-8?B?Z2gzc3pPV3c2Z1dIR3M2MllvQ0pGWHpEcFhiTWRhMHE3Y1FLVU8zekJJZWtZ?=
+ =?utf-8?B?b1M2R2JlMm9tT1g0Zk9GV3FrZWk2QVVvOHpLVDdVYjBqekdRSno1UlJQNXJs?=
+ =?utf-8?B?QUFkVTJsU0ZUcE1PYWN5emVwYUNzbHg5SHpiekY4aStkT2JOd2Z3UmZYM1Qx?=
+ =?utf-8?B?MzN0a2FYc0IwamJDMThhejJmRHQzZzdUdlJJY0U3RjVYVzQ1aHVLaFVEdnF2?=
+ =?utf-8?B?c1Yya1gvc0l2cEdjWmZEc2FtTmFDdUVja3VPcXNFenNTUjBnVytSZGt1cHox?=
+ =?utf-8?B?QnluekoyK0JsWXBlcVY4RElaeXFzODlyN1NvS3JWQ3hOU3h3MkR6NytJMWdJ?=
+ =?utf-8?B?a2VieEpYeU1Pd0pQbFoxb0RSbndLNjVobXU2R2laaHQ5ejcvV3E4SGZHRTdi?=
+ =?utf-8?B?ZGVVOExCUTJRTm1TTVBxRnZYQkF0V3B1c0hEa1BySituekRJV1l2SDM3MVFz?=
+ =?utf-8?B?NkxvMlYzUDQydnFNcTVZdFJaaklhT2J6TWdWYUtTODFsaUxIRkFGVmJUQ3N0?=
+ =?utf-8?B?UkZsZjFtNVFtVSswdlA0YzE5U0NwOXVoUUowd1J6TUZpY1BRVzZ0UXBiNUQ3?=
+ =?utf-8?B?K3JTRC9CNXpVUmRWNGZEVzAwQUxPcGxTTGNNNW9EdlZjdG4waXVFajdtMmlr?=
+ =?utf-8?B?Nm9DOC9ua05VY0V6K1FVcEFuYXhPNXJHQ1YyQXluS0VVd3VhYUVFOEtqOG0x?=
+ =?utf-8?B?dmlwRFpLdkZ3MWJwc3RqWnFSMHRWRGE4Y0NYUUpNNlpBbVlNekdYc0E0aElE?=
+ =?utf-8?B?K0FHMlkyamowME9vK3o1eVYyZGxCSmVhMTNCWWpkNkcvWFdRdHJXSW9vNHVq?=
+ =?utf-8?B?cHlzU2xGYTNiUy9pY0R2cDVFK3YzNC9zdVp5TkpLcTVLNWFidlZ3bThDbk1L?=
+ =?utf-8?B?TTN5d3llcE9BbTlKNmU4NW1yZnVNd3A0WmtoSVBoY3FTUUtCSzZCNVdIM2dM?=
+ =?utf-8?B?elVYYlAySTM5QjhSblFKQXJQTnR6ckFYbW5PaUE0QWlUejZDTDIzSlc2U1d6?=
+ =?utf-8?B?V2drRkhoTkxTWWp0MTZCcDZhZ2EwYjZ6bTZuckhRbm93NmtiQlZIbVM4aHNh?=
+ =?utf-8?B?enU0dTJuTHdxRTJ6TUhTcVVxMi8vZGE2RGNLOTFFb3lWWExsTXIwWFY0UWJl?=
+ =?utf-8?B?SUhGZEQ5VFFjRjlVYVZYRVRNdnlqTXBLQ2krTjRLS0YrY0NEaTdKaGNhRHNS?=
+ =?utf-8?B?NEp6alRDWFZhVlZ3UzNzdjRCcXJoTi81dnU1MzBmWHZWVk02V3BDSjJHbGZk?=
+ =?utf-8?B?VHllT1Y0c0VhK2RJUXlCdlVxQ2pKRGxwSkN3UElWR1BYMUI5eEs5OE10b3Jv?=
+ =?utf-8?B?TDlJWGh0T0cyYmdBMFhvQnRYaHJSQm94dGZZNFJ6aHlpV2R1OVB3b1haUVVs?=
+ =?utf-8?B?Q2xzc2FlaGExd3ZCNHF6TXlXK1M5QlRidFNkM20vWjVSR2F3ek52N2ZEd2Ny?=
+ =?utf-8?B?UjIrTG9veDJXZXJub3JPM2hXQUtwU3M2cjgzNjRLcnRRSy9TTjUyWDdyK0xL?=
+ =?utf-8?B?TFVEeDJuUEVaTUt4cnZzcHN6UDF2aUFGMkJ1SkgyUGhZWXhXeGxva3dVMU5v?=
+ =?utf-8?B?NDBxNU45cGVSZlFpSnljQlQrcFB4UHZpUHVXNVRKalZtTWJFeE1hcStzSUtQ?=
+ =?utf-8?B?VmE3WHZUcE1SV3E2cE9abjhyeWZicThBcm9HQitibStsaU45VDc5T0x1UU1h?=
+ =?utf-8?B?SHN6NXhLRUhlV2w5MVJiOWd5NjZHYlV0MzlGbjhpL0hRdGdsNmlML3o3eE5Q?=
+ =?utf-8?B?TTd6RGZYY3Ztbk1RTjhtdzZsY1NESHQvTnVtbHlUdG9pRmM0MHRwbVN0S2tw?=
+ =?utf-8?B?YWI1TlB2cUFiL0grQUo3cU1IZUtDWUllY3l6bjVwTFk0UUp1cEV3blUvdXFj?=
+ =?utf-8?B?TWhkRElGV2pHS0lwQUhTellFdk5RPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fcbdb779-67ab-4182-05e6-08ddf9a07f00
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 06:23:08.0250
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: s1uKUYSgNHt9HCy5DMSE6VaHwGQt7dPMTtCDn7b1PrTV2+7CoE+5ZcV+5yJkZVWIiysmvMtbAJZit8BYrg/Gug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6086
 
-In the __arch_prepare_bpf_trampoline() function, retval_off is only
-meaningful when save_ret is true, so the current logic is correct.
-However, in the original logic, retval_off is only initialized under
-certain conditions; for example, in the fmod_ret logic, the compiler is
-not aware that the flags of the fmod_ret program (prog) have set
-BPF_TRAMP_F_CALL_ORIG, which results in an uninitialized symbol
-compilation warning.
+On Monday, September 22, 2025 2:13=E2=80=AFPM Svyatoslav Ryhel wrote:
+> =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 07:44 Mi=
+kko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Saturday, September 6, 2025 10:53=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > > Simplify format align calculations by slightly modifying supported fo=
+rmats
+> > > structure.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  drivers/staging/media/tegra-video/tegra20.c | 41 ++++++++-----------=
+--
+> > >  1 file changed, 16 insertions(+), 25 deletions(-)
+> > >
+> > > diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/st=
+aging/media/tegra-video/tegra20.c
+> > > index 6e0b3b728623..781c4e8ec856 100644
+> > > --- a/drivers/staging/media/tegra-video/tegra20.c
+> > > +++ b/drivers/staging/media/tegra-video/tegra20.c
+> > > @@ -280,20 +280,8 @@ static void tegra20_fmt_align(struct v4l2_pix_fo=
+rmat *pix, unsigned int bpp)
+> > >       pix->width  =3D clamp(pix->width,  TEGRA20_MIN_WIDTH,  TEGRA20_=
+MAX_WIDTH);
+> > >       pix->height =3D clamp(pix->height, TEGRA20_MIN_HEIGHT, TEGRA20_=
+MAX_HEIGHT);
+> > >
+> > > -     switch (pix->pixelformat) {
+> > > -     case V4L2_PIX_FMT_UYVY:
+> > > -     case V4L2_PIX_FMT_VYUY:
+> > > -     case V4L2_PIX_FMT_YUYV:
+> > > -     case V4L2_PIX_FMT_YVYU:
+> > > -             pix->bytesperline =3D roundup(pix->width, 2) * 2;
+> > > -             pix->sizeimage =3D roundup(pix->width, 2) * 2 * pix->he=
+ight;
+> > > -             break;
+> > > -     case V4L2_PIX_FMT_YUV420:
+> > > -     case V4L2_PIX_FMT_YVU420:
+> > > -             pix->bytesperline =3D roundup(pix->width, 8);
+> > > -             pix->sizeimage =3D roundup(pix->width, 8) * pix->height=
+ * 3 / 2;
+> > > -             break;
+> > > -     }
+> > > +     pix->bytesperline =3D DIV_ROUND_UP(pix->width * bpp, 8);
+> >
+> > Assuming the bpp is coming from the format table below, this changes th=
+e value of bytesperline for planar formats. With this it'll be (width * 12)=
+ / 8 i.e. width * 3/2, which doesn't sound right.
+> >
+>=20
+> Downstream uses soc_mbus_bytes_per_line for this calculation which was
+> deprecated some time ago, here is a fragment
+>=20
+> s32 soc_mbus_bytes_per_line(u32 width, const struct soc_mbus_pixelfmt *mf=
+)
+> {
+>  if (mf->fourcc =3D=3D V4L2_PIX_FMT_JPEG)
+>  return 0;
+>=20
+>  if (mf->layout !=3D SOC_MBUS_LAYOUT_PACKED)
+>  return width * mf->bits_per_sample / 8;
+>=20
+>  switch (mf->packing) {
+>  case SOC_MBUS_PACKING_NONE:
+>   return width * mf->bits_per_sample / 8;
+>  case SOC_MBUS_PACKING_2X8_PADHI:
+>  case SOC_MBUS_PACKING_2X8_PADLO:
+>  case SOC_MBUS_PACKING_EXTEND16:
+>   return width * 2;
+>  case SOC_MBUS_PACKING_1_5X8:
+>   return width * 3 / 2;
+>  case SOC_MBUS_PACKING_VARIABLE:
+>   return 0;
+>  }
+>    return -EINVAL;
+> }
+>=20
+> V4L2_PIX_FMT_YUV420 and V4L2_PIX_FMT_YVU420 are classified as
+> SOC_MBUS_PACKING_1_5X8 hence we get width * 3/2
 
-So initialize retval_off unconditionally to fix it.
+Googling this brings up the entry
 
-Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
----
- arch/riscv/net/bpf_jit_comp64.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+{
+	.code =3D V4L2_MBUS_FMT_YUYV8_1_5X8,
+	.fmt =3D {
+		.fourcc			=3D V4L2_PIX_FMT_YUV420,
+		.name			=3D "YUYV 4:2:0",
+		.bits_per_sample		=3D 8,
+		.packing			=3D SOC_MBUS_PACKING_1_5X8,
+		.order			=3D SOC_MBUS_ORDER_LE,
+		.layout			=3D SOC_MBUS_LAYOUT_PACKED,
+	},
+}
 
-diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
-index 9883a55d61b5..8475a8ab5715 100644
---- a/arch/riscv/net/bpf_jit_comp64.c
-+++ b/arch/riscv/net/bpf_jit_comp64.c
-@@ -1079,10 +1079,9 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im,
- 	stack_size += 16;
- 
- 	save_ret = flags & (BPF_TRAMP_F_CALL_ORIG | BPF_TRAMP_F_RET_FENTRY_RET);
--	if (save_ret) {
-+	if (save_ret)
- 		stack_size += 16; /* Save both A5 (BPF R0) and A0 */
--		retval_off = stack_size;
--	}
-+	retval_off = stack_size;
- 
- 	stack_size += nr_arg_slots * 8;
- 	args_off = stack_size;
--- 
-2.25.1
+which matches that you're describing. It doesn't make sense to me, since it=
+ at the same time specifies PIX_FMT_YUV420 (which is planar with 3 planes, =
+as documented by include/uapi/linux/videodev2.h), and LAYOUT_PACKED
+
+/**
+ * enum soc_mbus_layout - planes layout in memory
+ * @SOC_MBUS_LAYOUT_PACKED:		color components packed
+ * @SOC_MBUS_LAYOUT_PLANAR_2Y_U_V:	YUV components stored in 3 planes (4:2:2=
+)
+ * @SOC_MBUS_LAYOUT_PLANAR_2Y_C:	YUV components stored in a luma and a
+ *					chroma plane (C plane is half the size
+ *					of Y plane)
+ * @SOC_MBUS_LAYOUT_PLANAR_Y_C:		YUV components stored in a luma and a
+ *					chroma plane (C plane is the same size
+ *					as Y plane)
+ */
+enum soc_mbus_layout {
+	SOC_MBUS_LAYOUT_PACKED =3D 0,
+	SOC_MBUS_LAYOUT_PLANAR_2Y_U_V,
+	SOC_MBUS_LAYOUT_PLANAR_2Y_C,
+	SOC_MBUS_LAYOUT_PLANAR_Y_C,
+};
+
+i.e. non-planar. The code in the driver is handling it as three planes as w=
+ell, with addresses VB0_BASE_ADDRESS/VB0_BASE_ADDRESS_U/VB0_BASE_ADDRESS_V.=
+ Since the planes are separate, there should be no need to have more than '=
+width' samples per line.
+
+>=20
+> > > +     pix->sizeimage =3D pix->bytesperline * pix->height;
+> > >  }
+> > >
+> > >  /*
+> > > @@ -576,20 +564,23 @@ static const struct tegra_vi_ops tegra20_vi_ops=
+ =3D {
+> > >       .vi_stop_streaming =3D tegra20_vi_stop_streaming,
+> > >  };
+> > >
+> > > -#define TEGRA20_VIDEO_FMT(MBUS_CODE, BPP, FOURCC)    \
+> > > -{                                                    \
+> > > -     .code    =3D MEDIA_BUS_FMT_##MBUS_CODE,           \
+> > > -     .bpp     =3D BPP,                                 \
+> > > -     .fourcc  =3D V4L2_PIX_FMT_##FOURCC,               \
+> > > +#define TEGRA20_VIDEO_FMT(DATA_TYPE, BIT_WIDTH, MBUS_CODE, BPP, FOUR=
+CC)      \
+> > > +{                                                                   =
+ \
+> > > +     .img_dt         =3D TEGRA_IMAGE_DT_##DATA_TYPE,                =
+   \
+> > > +     .bit_width      =3D BIT_WIDTH,                                 =
+   \
+> > > +     .code           =3D MEDIA_BUS_FMT_##MBUS_CODE,                 =
+   \
+> > > +     .bpp            =3D BPP,                                       =
+   \
+> > > +     .fourcc         =3D V4L2_PIX_FMT_##FOURCC,                     =
+   \
+> > >  }
+> > >
+> > >  static const struct tegra_video_format tegra20_video_formats[] =3D {
+> > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 2, UYVY),
+> > > -     TEGRA20_VIDEO_FMT(VYUY8_2X8, 2, VYUY),
+> > > -     TEGRA20_VIDEO_FMT(YUYV8_2X8, 2, YUYV),
+> > > -     TEGRA20_VIDEO_FMT(YVYU8_2X8, 2, YVYU),
+> > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YUV420),
+> > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YVU420),
+> > > +     /* YUV422 */
+> > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 16, UYVY),
+> > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 16, VYUY),
+> > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 16, YUYV),
+> > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 16, YVYU),
+> > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YUV420),
+> > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YVU420),
+> > >  };
+> > >
+> > >  const struct tegra_vi_soc tegra20_vi_soc =3D {
+> > >
+> >
+> >
+> >
+> >
+
+
+
 
 
