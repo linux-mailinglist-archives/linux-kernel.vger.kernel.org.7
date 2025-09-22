@@ -1,136 +1,110 @@
-Return-Path: <linux-kernel+bounces-827719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA95B92872
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:00:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DE6B92890
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:02:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8925F188582D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:00:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 877C87B1DB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F2B318139;
-	Mon, 22 Sep 2025 18:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B513D3164C7;
+	Mon, 22 Sep 2025 18:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FrX5Zltf"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3/rDtC0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E017B318136;
-	Mon, 22 Sep 2025 18:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12758285CA2;
+	Mon, 22 Sep 2025 18:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758564007; cv=none; b=Etn8Znq4e9LFgWwOh4/qT7eunp8C2rQ0hb4Xa7km4jTiLDD0Ebh2PTPJKIpvtkrWSfu91o9dpjIOJ9KXpLe7BFrw60hvCGGEUyd4Ba2W8n9Gxp9hdhUH1mmlw1zgJeBS/UTuzOmsWKLrjNQVFUOZCCctt1NwkhVaS9TNdB8N+NA=
+	t=1758564142; cv=none; b=daumaz1uERir793tRZdYDyjc7IC0jj5Nm+S3wPYv8sLTYohdSJ5kHkK7n/MuqRWjZvwOSHie1A4j/3rwfYHKt21e/u6+PxrZBZi2WwAPq4glbiLZ9jDQ4TB2gEIIfLwnXQyPSwn9tAvct61a2tdYjArwT50KfYqs7GSFUOkIxeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758564007; c=relaxed/simple;
-	bh=p8E21R87obxQ5eDnJ6dm0V/d4KC9aZ4GRIbU+G+zi6s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=L6hk0+GRPOryfi+BOab/O97fGbLtyujJkkxW/FSlBZ7Dn4AEQIv/EnWuyouSZY6cHhYHwuDQPm5C+c8Ufw2yLL2O+7DiGkmTC9h7DrJwPJZ1DYnKzfpi5U3rfj08g4Cv/lpxr4kjcOGw6fTrIX2Zr7ySmBjsyovsmN1QDfGeRIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FrX5Zltf; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758564003;
-	bh=p8E21R87obxQ5eDnJ6dm0V/d4KC9aZ4GRIbU+G+zi6s=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=FrX5ZltfJWthDwgm1gqnmBUQaq7LchnbCduyeFoMWA00+sYS8qhNxNgEdvAvCOabe
-	 Cw+TWGHg1OIKqtptM6QFQMv3GfV8rrGOvuzCNW1Gs87whYybNcXbVms9uPWIn7Fb23
-	 //17E5+sg1/Eac84sF30icaHyEra+wrLLg8GwpxUvBuUOgUD4udLwyBuJzjGIpt+7q
-	 UnYoS3Lg+N/iZP7yhw+MG1iPWY7EWGTsM3MIpU3Cu8Jnrbn4DnbEnglpNCfzoz6jWH
-	 kJph/82jhwO3woLaXqfNUg/J9pM6GNFUXe0fdyYyikwfiVHoU71CH6tRPIVUy+tsSh
-	 jt/ahHfnCASjw==
-Received: from [IPv6:2606:6d00:10:aee0::5ac] (unknown [IPv6:2606:6d00:10:aee0::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C7AD817E0125;
-	Mon, 22 Sep 2025 20:00:02 +0200 (CEST)
-Message-ID: <d4b7cc51f1bd7fcf88066e8510f950ec90cfb5aa.camel@collabora.com>
-Subject: Re: [PATCH v5 4/4] media: chips-media: wave5: Improve performance
- of decoder
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Brandon Brnich <b-brnich@ti.com>, "Jackson.lee"	
- <jackson.lee@chipsnmedia.com>, mchehab@kernel.org,
- hverkuil-cisco@xs4all.nl, 	bob.beckett@collabora.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lafley.kim@chipsnmedia.com, hverkuil@xs4all.nl, nas.chung@chipsnmedia.com
-Date: Mon, 22 Sep 2025 14:00:00 -0400
-In-Reply-To: <1f59f00d-eff7-4c65-a504-227df0de75d2@ti.com>
-References: <20250922055255.116-1-jackson.lee@chipsnmedia.com>
-	 <20250922055255.116-5-jackson.lee@chipsnmedia.com>
-	 <1f59f00d-eff7-4c65-a504-227df0de75d2@ti.com>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-1ejI2RC+CbxdNdlEAcBM"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1758564142; c=relaxed/simple;
+	bh=hqcYFdmQGHTd43tWX+HtkWYFfrsMuhVJNngoHln+C3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IoLn1qznjnOmeAPVhLWD/zyKviDYUir8LKJRHlkI7ZO3doKen+EAV/tVTKqEGIRDLYEG2ifDYDqkvplaR2BuC/Ek4Cf31ERZjT3H+76FHwurVR0ymazsCLOrl1GiTQFErT8542HxbabfWQTxRKUtd1Xu1NeqwXu2bukpF+9G718=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3/rDtC0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F101BC4CEF0;
+	Mon, 22 Sep 2025 18:02:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758564141;
+	bh=hqcYFdmQGHTd43tWX+HtkWYFfrsMuhVJNngoHln+C3Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Q3/rDtC09F2D7j5nsSE36Hh9igWt74TsxXzWN5xRvGxL30R5IfeLUt2JHOJde47Pg
+	 SRyWEIfULyXRu2UR5MoYo0ZFLBJ6ssfNPv0UXzvsKUVZ7Ooh9Pv8xNrPCHVzAdTxV0
+	 rWLW54H2pCz3KZGSgybvsSVo/+IvH06snSiQYsFFaDCvUlvo3fkr+gslKG8Ev0ylXA
+	 raP7KfC8MkXOGRkSoUgaaB3SPOovJ6fxbvgotU0qJwhKr6Xgq4sKq4omS3FPlV6Gwg
+	 WLKIpgbzM3FMPlvNIWNdAegT5ITsYx8YdIkxflOHnXX6cHm0rN9I/HAfxPlob7zyml
+	 QQ+HrKcCIbIvw==
+Date: Mon, 22 Sep 2025 11:02:20 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko
+ <jiri@resnulli.us>, Simon Horman <horms@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>,
+ kernel@pengutronix.de, Dent Project <dentproject@linuxfoundation.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, linux-doc@vger.kernel.org, Kyle Swenson
+ <kyle.swenson@est.tech>, Luka Perkov <luka.perkov@sartura.hr>, Robert Marko
+ <robert.marko@sartura.hr>, Sridhar Rao <srao@linuxfoundation.org>
+Subject: Re: [PATCH net-next v3 0/5] net: pse-pd: pd692x0: Add permanent
+ configuration management support
+Message-ID: <20250922110220.4909e58b@kernel.org>
+In-Reply-To: <20250922182002.6948586f@kmaincent-XPS-13-7390>
+References: <20250915-feature_poe_permanent_conf-v3-0-78871151088b@bootlin.com>
+	<20250916165440.3d4e498a@kernel.org>
+	<20250917114655.6ed579eb@kmaincent-XPS-13-7390>
+	<20250917141912.314ea89b@kernel.org>
+	<20250922182002.6948586f@kmaincent-XPS-13-7390>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-1ejI2RC+CbxdNdlEAcBM
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Brandon,
-
-Le lundi 22 septembre 2025 =C3=A0 12:32 -0500, Brandon Brnich a =C3=A9crit=
-=C2=A0:
-> > -	/*
-> > -	 * During a resolution change and while draining, the firmware may
-> > flush
-> > -	 * the reorder queue regardless of having a matching decoding
-> > operation
-> > -	 * pending. Only terminate the job if there are no more IRQ coming.
-> > -	 */
-> > -	wave5_vpu_dec_give_command(inst, DEC_GET_QUEUE_STATUS, &q_status);
-> > -	if (q_status.report_queue_count =3D=3D 0 &&
-> > -	=C2=A0=C2=A0=C2=A0 (q_status.instance_queue_count =3D=3D 0 ||
-> > dec_info.sequence_changed)) {
-> > -		dev_dbg(inst->dev->dev, "%s: finishing job.\n", __func__);
-> > -		pm_runtime_mark_last_busy(inst->dev->dev);
->=20
-> Patch is failing to apply here to linux-next because these redundant=20
-> calls have already been removed[0].
-
-Which have not been merged back from the RC into media-committers/next, for=
-cing
-to skip a cycle. Jackson, feel free to rebase on linux-next like Brandon
-suggest.
-
-regards,
-Nicolas
-
---=-1ejI2RC+CbxdNdlEAcBM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
------BEGIN PGP SIGNATURE-----
+On Mon, 22 Sep 2025 18:20:02 +0200 Kory Maincent wrote:
+> > > I think the only reason to save the config in the NVM instead of the
+> > > userspace is to improve boot time. As Oleksij described:    
+> > > 
+> > > He told me that he also had added support for switches in Barebox for the
+> > > same reason, the boot time. I don't know if it is a reasonable reason to
+> > > add it in Linux.    
+> > 
+> > Right, subjectively I focused on the last sentence of Oleksij's reply.
+> > I vote we leave it out for now.  
+> 
+> I would like to restart the discussion as I have one more argument besides the
+> boot time optimization coming from Luka Perkov in CC.
+> 
+> According to him, not having this feature supported also brings an issue across
+> reboot:
+> "When a network switch reboots, any devices receiving Power over
+> Ethernet (PoE) from that switch will lose power unless the PoE
+> configuration is persisted across the reboot cycle. This creates a
+> significant operational impact: WiFi access points and other
+> PoE-powered devices will experience an unplanned hard power loss,
+> forcing them offline without any opportunity for graceful shutdown.
+> 
+> The critical issue is not the impact on the switch itself, but rather
+> the cascading effect on all dependent infrastructure. Without
+> kernel-level persistence of PoE settings, a simple switch reboot
+> (whether for maintenance, updates, or recovery) forces all connected
+> PoE devices into an abrupt power cycle. This results in extended
+> downtime as these devices must complete their full boot sequence once
+> power is restored, rather than remaining operational throughout the
+> switch's reboot process."
 
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaNGOoAAKCRDZQZRRKWBy
-9DIWAP4qLLuvr1F5whpba/LvQWT1xkoQSKc+MPsqt8wt1LzPkgEAw4S2lo0+ngr6
-jHI3P4fJlgDGfV4Bwq7pwcmPUbXRyQY=
-=mfSs
------END PGP SIGNATURE-----
-
---=-1ejI2RC+CbxdNdlEAcBM--
+Any sort of hot reset that maintains the pre-existing configuration 
+and doesn't issue resets is orthogonal to storing the configuration
+into the flash.
 
