@@ -1,113 +1,87 @@
-Return-Path: <linux-kernel+bounces-827800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64FBEB93243
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:51:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D781B9323D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 279C52E10F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:51:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35DFD2A5B56
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632B63191C2;
-	Mon, 22 Sep 2025 19:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1339130AD10;
+	Mon, 22 Sep 2025 19:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="WCMIMWJL"
-Received: from forwardcorp1b.mail.yandex.net (forwardcorp1b.mail.yandex.net [178.154.239.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eq3Hhmzz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CD32F3613;
-	Mon, 22 Sep 2025 19:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633FD18C2C;
+	Mon, 22 Sep 2025 19:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758570654; cv=none; b=Swe9YzyF9Cbrg38irtk+c6u8mMddjCfytgIn1IwAM71gHq94042/VMQcuVj2NvKSAGI8uxJOPOo9MN+mGcSzGcTbCfxQJlTagg6kHvMYwugkCBzjGbeEC8aHBHMO227JDEUnhQzuRRCVcviNOn65SLT1elGs7xgJphJ6Z5o4C9k=
+	t=1758570635; cv=none; b=MDwEwwZUNjEyJlSBNpZ61PD52iWpqc0OvqiiDF4ikQIcCcOynziwV4YEe9pjj9O+4ZarvbDkP52StJmPzowVDo9jQRcnUBvD3QF6WEJ9lnMQ9E1CsyRsa7a4CvW7sqBVZreY1UZcQFoZjKQ8zesdjf7pSany325Rzh/845PVwLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758570654; c=relaxed/simple;
-	bh=IIuaOrz0FC8chHu7ILOxwOJmM63B00UIluxC+65xLfE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hBSLZ8JW3CFbZKON2lv4mC1JhyQGf4aXyo6ncq9VVgBQl9OxKLAvcK1QtzpeBbB7WRy8LSNw7ty4+ZRpF4cwezSg5dMEh5vY5/BFu6raQxhMqY6i3SNgV+iCS3MCqGGpSIIZy3cSjwZlxCkjhB5rWC25dMsOGJ5jIClfjJPOTTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=WCMIMWJL; arc=none smtp.client-ip=178.154.239.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:1621:0:640:12d9:0])
-	by forwardcorp1b.mail.yandex.net (Yandex) with ESMTPS id 3AEF38857E;
-	Mon, 22 Sep 2025 22:48:50 +0300 (MSK)
-Received: from d-tatianin-lin.yandex-team.ru (unknown [2a02:6bf:8080:c27::1:3a])
-	by mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id TmcMU33Goa60-srwXviqN;
-	Mon, 22 Sep 2025 22:48:49 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1758570529;
-	bh=ERVn3lgtdd/+G0FxLqF0rVkFcod05w/PTMcT604L6DQ=;
-	h=Message-Id:Date:In-Reply-To:Cc:Subject:References:To:From;
-	b=WCMIMWJLK29lv+34fERZqiPcN8jMoaVD5duMuwNGl67OsGtHqshss3ZBAX6zH/05o
-	 nRe81/EuqTq7c+j8DEpkwW72OoodgboTm5Q79VMTViL2V6JsDOIo+Wghy99L2Uz6AQ
-	 /oOlDd+uouw26fNMQcOI1i6imguTvqZWRKzrSD0o=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-From: Daniil Tatianin <d-tatianin@yandex-team.ru>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Daniil Tatianin <d-tatianin@yandex-team.ru>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Florian Westphal <fw@strlen.de>,
-	Phil Sutter <phil@nwl.cc>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH 3/3] netfilter/x_tables: allocate entry_offsets with vcalloc
-Date: Mon, 22 Sep 2025 22:48:19 +0300
-Message-Id: <20250922194819.182809-4-d-tatianin@yandex-team.ru>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250922194819.182809-1-d-tatianin@yandex-team.ru>
-References: <20250922194819.182809-1-d-tatianin@yandex-team.ru>
+	s=arc-20240116; t=1758570635; c=relaxed/simple;
+	bh=JgLQHFBkmZ+S8gkaMiPw+41o8BKwW0HfdBhWNAIaIPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qcw4Vtr7Gil6S6EgnjRxSOMJ1jBfSFUu1h6xdhfgHla8QW65zz5MjjdaZmrt1ZPKbL8Wk+cUD9UpXZQUZ8pjTq05+A4nhbMi5bRm7MC2NtH9rUvRyRPSGOK9Wpb1R1jR+3XcOXW8TrzSyRpeEtoq5qAxgatfOF1UsumgLDYJoio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eq3Hhmzz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A65E2C4CEF0;
+	Mon, 22 Sep 2025 19:50:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758570635;
+	bh=JgLQHFBkmZ+S8gkaMiPw+41o8BKwW0HfdBhWNAIaIPQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eq3HhmzzMi36uwfqkhClHjhpl+S9BA68fd5sFhlPgUAeZrY96QuYy9gxImTYMUfiv
+	 CGEtyjX2PmHYJ6c2q06VCVw+j4p7UhZ4wlb1UzfitdnwdQ2bHZajnTC28wPeS+D7Yu
+	 bD953/e628+SHiat6Tk1L+Afea5w3wUqs/DJDXdVhZYjDkP9VZQST99QGxd2LXbZ1G
+	 hYl8j1MyYblb4OWFip8qjYNIBJGA9jeBRCmW6Ab+XOgzII/uLqe7GUD2Lt7UheqQAO
+	 ZfShDqsaVm3AadRLs1xGvb+31G0ZFJVeDCOGQa7DxbIBKzF7liiwHXiUrEE85he7Ql
+	 42vUx85UYuJTg==
+Date: Mon, 22 Sep 2025 14:50:33 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: Lee Jones <lee@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 03/11] dt-bindings: fsl,fpga-qixis: describe the gpio
+ child node found on LS1046AQDS
+Message-ID: <175857063304.1062079.93303890842024200.robh@kernel.org>
+References: <20250919132515.1895640-1-ioana.ciornei@nxp.com>
+ <20250919132515.1895640-4-ioana.ciornei@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919132515.1895640-4-ioana.ciornei@nxp.com>
 
-This allocation does not benefit from contiguous physical memory, and
-its size depends on userspace input.
 
-No reason to stress the buddy allocator and thus the entire system for
-allocations that can exist in vmalloc'ed memory just fine.
+On Fri, 19 Sep 2025 16:25:07 +0300, Ioana Ciornei wrote:
+> Extend the list of accepted child nodes with the QIXIS FPGA based GPIO
+> controller and explicitly list its compatible string
+> fsl,ls1046aqds-fpga-gpio-stat-pres2 as the only one accepted.
+> 
+> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> ---
+> Changes in v3:
+> - new patch
+> Changes in v4:
+> - none
+> 
+>  .../devicetree/bindings/board/fsl,fpga-qixis.yaml      | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
 
-Signed-off-by: Daniil Tatianin <d-tatianin@yandex-team.ru>
----
- net/netfilter/x_tables.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
-index 5ea95c56f3a0..06a86648b931 100644
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -965,14 +965,14 @@ unsigned int *xt_alloc_entry_offsets(unsigned int size)
- 	if (size > XT_MAX_TABLE_SIZE / sizeof(unsigned int))
- 		return NULL;
- 
--	return kvcalloc(size, sizeof(unsigned int), GFP_KERNEL);
-+	return __vcalloc(size, sizeof(unsigned int), GFP_KERNEL);
- 
- }
- EXPORT_SYMBOL(xt_alloc_entry_offsets);
- 
- void xt_free_entry_offsets(unsigned int *offsets)
- {
--	kvfree(offsets);
-+	vfree(offsets);
- }
- EXPORT_SYMBOL(xt_free_entry_offsets);
- 
--- 
-2.34.1
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
