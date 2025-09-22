@@ -1,171 +1,218 @@
-Return-Path: <linux-kernel+bounces-826986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD80B8FD0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:44:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 770CBB8FD1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 237A7421486
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:44:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30F152A00A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D3E2882A5;
-	Mon, 22 Sep 2025 09:44:10 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B3226E715;
+	Mon, 22 Sep 2025 09:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OSA1VEl0"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CECF1459F7
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE02287254
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758534249; cv=none; b=g2cWyCihvucrS6DceMTq6jV72KELtgGoAM3NhPR+8ix+z6ppjEuPVlPwzdvG4CzYxajbZWGwXCqfKHIh87dPyxFX/zCz+Bzrs9nfovKCsOkmXXWxKNVWIQv4ZcSriPIMZ+tYXHyoebDZWaJVvSIBUZnkrEsBF1QbV0PIqAZNBec=
+	t=1758534279; cv=none; b=dEeWYOXJmIXhb7o811Lj2QJmnZeza3kY8DKfmGlqbTyNm9l8WyhWAV1006USrFXRw96bRjdpvGZQ0IYkDwN8WapUKSIxtDEAkhrk1JJ83IoL83nG1aIcfzWa9jshREnVFqt4rsdBEHThAa/s5qM7brQ8FNyTErD6V7gw+Uecnmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758534249; c=relaxed/simple;
-	bh=Op2SVDJIe/UqVXLX0hU5fJrbWehPyFq8PPlw17qHjNc=;
+	s=arc-20240116; t=1758534279; c=relaxed/simple;
+	bh=bh3PrlTyHqr89iR5kDHD3GFHvUPf4v7jEkCtIvQxWFs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uCmCeXfdFVc8F4qISN+q9ZLWj6gz8v2viHmEMWkuZ+jd6XUtBPENtupiY4bDLPp5s0j2JVaKONVaxm9nTGqD/hz4z05vq/W2d0zODT3Zf8bznuPw0iyZSQEfn/ltalD89+jctArnlUSpwhvQzFMQu6oM6KuoGqySI0GWZs/8cL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v0d5P-0002lt-6t; Mon, 22 Sep 2025 11:43:55 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v0d5O-002ZM8-0p;
-	Mon, 22 Sep 2025 11:43:54 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	 Content-Type:Content-Disposition:In-Reply-To; b=iN0aHDxqh46rohiWHMwCDDWVB7Aci4JchKJ3/qR/eTQtI2h5Z/8mifuLRgWsARHT4N2XzvnGOOSdjHzvAi/zASuBbDExy7ihB4LEFj1OENYOoZ2/efFTW9ktVqqSfwQgCONTkkFfMI9+0d6GL5q3bOFptb2qHy4Kc1ZYgerMz6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OSA1VEl0; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1AC3340E015C;
+	Mon, 22 Sep 2025 09:44:27 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id WJo_HN9dz-Cw; Mon, 22 Sep 2025 09:44:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1758534262; bh=UC6vGCroZxEaEsreADnB6bNDmgN+ygH/lgJg5f2jp6c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OSA1VEl0zFJ6BO6/gXLxRPhkJ1Hqv3dJxPeNDhbPPdGbApjpYgT6eCizi8j4X8X2c
+	 2i2HK2Xtgx9tyyEyw5CXQ7/gVJKFcYN7k4Qm+Gq/H6ICn5bh6igQMwUeuY4awoFsiH
+	 GTM2ocypeqIh+EG8tHTLPqzRuwknmoaoBE7kx30wOek8wbptEu+o6CJCxxtU3lptjF
+	 qId111jlPqA+LP4CBp+nSj6HK3qKlGXS5H0evaEtpVWV4eCnePtIQE05c0ZTR5S4Or
+	 MNWULQuXFb+uqnquuQFyiTFFu730CS6xc2eHIFMTOQaspQvAvhPrDR2g90KsIdecuS
+	 DDqnZ6+cGWZBe8Fm7noJdl3Rhowdc+1wvOZioHNH9mEN40n2VDadA8dZQ9R/4L6Ck3
+	 J/p/MM+ht+aiSXXjQYm1ZDuMe4P2HcQBSR0beRXR3WzhUJvD4BJvZbQSpTzEJdx3Uq
+	 RzHGlywz8HaWHUxpVjQs+qvPeg2Rj2sShbbsMla1OQXA5YX/8oHbLhESd8iJ+EZsjq
+	 rBY8Le1Z10cUArMDUnVWpmpvGYo2WwT5ormo26KlXvQ5pShlguBSAUA5mnnWPbNqSM
+	 J63CB9oy46KGDpwuzIqoXwNcDONXOKPhfUxD9Fk8VbcCuynCKUvl354T1y6EWRSTQr
+	 m5vQtCIXoT+T2s1yXoklQl8M=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id DEF40476CA3;
-	Mon, 22 Sep 2025 09:43:53 +0000 (UTC)
-Date: Mon, 22 Sep 2025 11:43:53 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Vincent Mailhol <mailhol@kernel.org>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>, 
-	=?utf-8?B?U3TDqXBoYW5l?= Grosjean <stephane.grosjean@hms-networks.com>, Robert Nawrath <mbro1689@gmail.com>, 
-	Minh Le <minh.le.aj@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
-	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 07/20] can: netlink: refactor
- CAN_CTRLMODE_TDC_{AUTO,MANUAL} flag reset logic
-Message-ID: <20250922-amber-spider-of-control-90be7c-mkl@pengutronix.de>
-References: <20250910-canxl-netlink-prep-v2-0-f128d4083721@kernel.org>
- <20250910-canxl-netlink-prep-v2-7-f128d4083721@kernel.org>
- <f9854748-78c1-4852-a610-e839e9c91df3@kernel.org>
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 1F7C340E0196;
+	Mon, 22 Sep 2025 09:44:11 +0000 (UTC)
+Date: Mon, 22 Sep 2025 11:44:04 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tengda Wu <wutengda@huaweicloud.com>
+Cc: x86@kernel.org, jpoimboe@kernel.org,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>, Ingo Molnar <mingo@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next v3] x86/dumpstack: Prevent KASAN false positive
+ warnings in __show_regs
+Message-ID: <20250922094404.GAaNEaZIj-Hdilh_9H@fat_crate.local>
+References: <20250830092556.3360776-1-wutengda@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d5aff4qmd2lfxgtx"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f9854748-78c1-4852-a610-e839e9c91df3@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20250830092556.3360776-1-wutengda@huaweicloud.com>
 
+On Sat, Aug 30, 2025 at 09:25:56AM +0000, Tengda Wu wrote:
+> When task A walks task B's stack without suspending it, the continuous
+> changes in task B's stack (and corresponding KASAN shadow tags) may cause
+> task A to hit KASAN redzones when accessing obsolete values on the stack,
+> resulting in false positive reports. [1][2]
 
---d5aff4qmd2lfxgtx
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 07/20] can: netlink: refactor
- CAN_CTRLMODE_TDC_{AUTO,MANUAL} flag reset logic
-MIME-Version: 1.0
+What kind of a use case is that even? Why do we care?
 
-On 20.09.2025 16:24:42, Vincent Mailhol wrote:
-> On 10/09/2025 at 15:03, Vincent Mailhol wrote:
-> > CAN_CTRLMODE_TDC_AUTO and CAN_CTRLMODE_TDC_MANUAL are mutually
-> > exclusive. This means that whenever the user switches from auto to
-> > manual mode (or vice versa), the other flag which was set previously
-> > needs to be cleared.
-> >=20
-> > Currently, this is handled with a masking operation. It can be done in
-> > a simpler manner by clearing any of the previous TDC flags before
-> > copying netlink attributes. The code becomes easier to understand and
-> > will make it easier to add the new upcoming CAN XL flags which will
-> > have a similar reset logic as the current TDC flags.
-> >=20
-> > Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
-> > ---
-> >  drivers/net/can/dev/netlink.c | 9 ++++-----
-> >  1 file changed, 4 insertions(+), 5 deletions(-)
-> >=20
-> > diff --git a/drivers/net/can/dev/netlink.c b/drivers/net/can/dev/netlin=
-k.c
-> > index 274eaab10796b601d565c32f6315727a578970bb..72a82d4e9d6494771320ea0=
-35ed6f6098c0e8ce6 100644
-> > --- a/drivers/net/can/dev/netlink.c
-> > +++ b/drivers/net/can/dev/netlink.c
-> > @@ -254,6 +254,10 @@ static int can_changelink(struct net_device *dev, =
-struct nlattr *tb[],
-> >  		if ((maskedflags & ctrlstatic) !=3D ctrlstatic)
-> >  			return -EOPNOTSUPP;
-> > =20
-> > +		/* If a top dependency flag is provided, reset all its dependencies =
-*/
-> > +		if (cm->mask & CAN_CTRLMODE_FD)
-> > +			priv->ctrlmode &=3D !CAN_CTRLMODE_FD_TDC_MASK;
->                                           ^
->=20
-> This is a bug. The correct operation to unset the flag is:
->=20
-> 		priv->ctrlmode &=3D ~CAN_CTRLMODE_FD_TDC_MASK;
->=20
-> (replace the ! operator by ~).
->=20
-> @Marc, do you think you can send your next PR to net soonish?
->=20
-> I would like to rebase this series and the "rework the CAN MTU logic" ser=
-ies on
-> top of the MTU fix:
->=20
-> https://lore.kernel.org/linux-can/20250918-can-fix-mtu-v1-0-0d1cada9393b@=
-kernel.org/
->=20
-> But to do so, I first need to wait for the MTU fix to appear on net-next =
-and
-> there is not so much time left before the end of the development windows.
+> The specific issue occurs as follows:
+> 
+> Task A (walk other tasks' stacks)           Task B (running)
+> 1. echo t > /proc/sysrq-trigger
+> 
+> show_trace_log_lvl
+>   regs = unwind_get_entry_regs()
+>   show_regs_if_on_stack(regs)
+>                                             2. The stack data pointed by
+>                                                `regs` keeps changing, and
+>                                                so are the tags in its
+>                                                KASAN shadow region.
+>     __show_regs(regs)
+>       regs->ax, regs->bx, ...
+>         3. hit KASAN redzones, OOB
+> 
+> Fix this by detecting asynchronous stack unwinding scenarios through
+> `task != current` during unwinding, and disabling KASAN checks when this
+> scenario occurs.
+> 
+> [1] https://lore.kernel.org/all/000000000000cb8e3a05c4ed84bb@google.com/
+> [2] KASAN out-of-bounds:
+> [332706.552324] BUG: KASAN: out-of-bounds in __show_regs+0x4b/0x340
+> [332706.552433] Read of size 8 at addr ffff88d24999fb20 by task sysrq_t_test.sh/3977032
+> [332706.552562]
+> [332706.552652] CPU: 36 PID: 3977032 Comm: sysrq_t_test.sh Kdump: loaded Not tainted 6.6.0+ #20
+> [332706.552783] Hardware name: Huawei RH2288H V3/BC11HGSA0, BIOS 3.35 10/20/2016
+> [332706.552906] Call Trace:
+> [332706.552998]  <TASK>
+> [332706.553089]  dump_stack_lvl+0x32/0x50
+> [332706.553193]  print_address_description.constprop.0+0x6b/0x3d0
+> [332706.553303]  print_report+0xbe/0x280
+> [332706.553409]  ? __virt_addr_valid+0xed/0x160
+> [332706.553512]  ? __show_regs+0x4b/0x340
+> [332706.553612]  kasan_report+0xa8/0xe0
+> [332706.553716]  ? __show_regs+0x4b/0x340
+> [332706.553816]  ? asm_exc_page_fault+0x22/0x30
+> [332706.553919]  __show_regs+0x4b/0x340
+> [332706.554021]  ? asm_exc_page_fault+0x22/0x30
+> [332706.554123]  show_trace_log_lvl+0x274/0x3b0
+> [332706.554229]  ? load_elf_binary+0xf6e/0x1610
+> [332706.554330]  ? rep_stos_alternative+0x40/0x80
+> [332706.554439]  sched_show_task+0x211/0x290
+> [332706.554544]  ? __pfx_sched_show_task+0x10/0x10
+> [332706.554648]  ? _find_next_bit+0x6/0xc0
+> [332706.554749]  ? _find_next_bit+0x37/0xc0
+> [332706.554852]  show_state_filter+0x72/0x130
+> [332706.554956]  sysrq_handle_showstate+0x7/0x10
+> [332706.555062]  __handle_sysrq+0x146/0x2d0
+> [332706.555165]  write_sysrq_trigger+0x2f/0x50
+> [332706.555270]  proc_reg_write+0xdd/0x140
+> [332706.555372]  vfs_write+0x1ff/0x5f0
+> [332706.555474]  ? __pfx_vfs_write+0x10/0x10
+> [332706.555576]  ? __pfx___handle_mm_fault+0x10/0x10
+> [332706.555682]  ? __fget_light+0x99/0xf0
+> [332706.555785]  ksys_write+0xb8/0x150
+> [332706.555887]  ? __pfx_ksys_write+0x10/0x10
+> [332706.555989]  ? ktime_get_coarse_real_ts64+0x4e/0x70
+> [332706.556094]  do_syscall_64+0x55/0x100
+> [332706.556196]  entry_SYSCALL_64_after_hwframe+0x78/0xe2
 
-This series looks fine to me. After -rc1, please check for any
-ndo_change_mtu, because the Nuvoton CAN-FD driver will go mainline, but
-not via the net-next tree.
+What is this stack dump here for?
 
-> If the schedule is too short, let me know and I will adjust accordingly by
-> dropping whatever patches are in conflict.
+If it is absolutely needed, at least clean it up by removing hex numbers and
+timestamps because they're useless in a commit message.
 
-Marc
+> 
+> Fixes: 3b3fa11bc700 ("x86/dumpstack: Print any pt_regs found on the stack")
+> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
+> ---
+> v3: Address Josh comment, move kasan checks to show_trace_log_lvl, and
+>     controlled by task != current.
+> v2: https://lore.kernel.org/all/20250829094744.3133324-1-wutengda@huaweicloud.com/
+> v1: https://lore.kernel.org/all/20250818130715.2904264-1-wutengda@huaweicloud.com/
+> ---
+>  arch/x86/kernel/dumpstack.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+> index 71ee20102a8a..6d1ae0d77ffc 100644
+> --- a/arch/x86/kernel/dumpstack.c
+> +++ b/arch/x86/kernel/dumpstack.c
+> @@ -189,9 +189,20 @@ static void show_trace_log_lvl(struct task_struct *task, struct pt_regs *regs,
+>  	unsigned long visit_mask = 0;
+>  	int graph_idx = 0;
+>  	bool partial = false;
+> +	bool kasan_disabled = false;
+>  
+>  	printk("%sCall Trace:\n", log_lvl);
+>  
+> +	/*
+> +	 * KASAN should be disabled during walking another task's stacks
+> +	 * to prevent false positives, as values on these stacks may change
+> +	 * concurrently with task execution.
+> +	 */
+> +	if (task && task != current) {
+> +		kasan_disable_current();
+> +		kasan_disabled = true;
+> +	}
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+I don't like the sprinking of KASAN checks all over the tree just to make this
+thing work.
 
---d5aff4qmd2lfxgtx
-Content-Type: application/pgp-signature; name="signature.asc"
+If anything, you should disable KASAN like this:
 
------BEGIN PGP SIGNATURE-----
+show_trace_log_lvl:
+	disable KASAN
+	__show_trace_log_lvl
+	enable KASAN
 
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjRGlUACgkQDHRl3/mQ
-kZzjZwf/YVBw13aS+uX4OutqD6C3ihMaJhnkeBAwGlJ/eJZ3/dYyEhhbZKnEF8XZ
-L3bqB1K2+s6L9c6JoKPXsRVyBt/XO//yCO3ElgvRYSIvdq//iH5RxB8jyJTw8YLc
-OwRQKyu6g7CdYx9ocXAcYS5Kh00p/d+td4z//MG21elnj4V8HiAd/zlpEIRWWG2p
-q1jlh9/c+1n8aWW4HaPmKDlIvyN1WecEn408FUAHgB//jWHY2utmO9IjqvK2VJvL
-eadcqxK8/tu5UP4QHZX8gSGwbK2vPyPXjx8hweuz5jE4cudE/mrvII4+gBTIWQrc
-nduNusLYlCuebi4mE0nGopAMiWGvAw==
-=EcZb
------END PGP SIGNATURE-----
+so that at least this thing is out of the way.
 
---d5aff4qmd2lfxgtx--
+But I'd like to hear first whether that's a use case we really want to
+support. Right now, it sounds like a meh to me: if you want to walk a task's
+stack with KASAN enabled, then stop it first.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
