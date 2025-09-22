@@ -1,128 +1,133 @@
-Return-Path: <linux-kernel+bounces-827443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169C6B91C80
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:44:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866CFB91C5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA0F02A63C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:43:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D053B370E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0431C281503;
-	Mon, 22 Sep 2025 14:43:32 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6316027CCF0;
+	Mon, 22 Sep 2025 14:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dbclt5RU"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D672727F010
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A2C27B326
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758552211; cv=none; b=GZ3ePZcffA+HqoyJea656eok02gSJ5Nn1AFvxKN1GBxHPjgbvi1JAuXWo7N2t7MOuUbk8IBqS5EmKpL18zh6/pbVPQkBFEQRh5ZM1jk7P82QA3ATnu2iZBeQqFKWmTjqHLm94zfI3RHFqw32+dcNjZvY9HYX3E6vewZaIBOVyis=
+	t=1758552205; cv=none; b=H0HXmWReBIeAObEXpKH//7MCS2EP6nt5lkBjsQolp4wRXZ8qSVRhnjgeAD2dZfbk959D6/q31K2cS72GG2ZnvqqG4yVelpTIEk9Kx4A6/yYIc3sYtxZDbRi3oWEegTisQr2GSfsbGFJvVeF1t/23pGkGHS1tpvaLlfqSdXkUQFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758552211; c=relaxed/simple;
-	bh=K3RBSQTM49KUNjw2CtBsyB/PryLCH1PizWHUGDJdndQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aFE88x575hJ1JSEZbMzUSUjBfqUfZBwpics2hE63XDgz+6623kQLY0I/IYL5a34+siObk3pGkGPRI+DZYaRpsbIpsjaMvhx7+X9Nc2wXDAl/29rVbPQ8q8xE63hppjgSawb0LQ6fiep1QnCvhiANQ+HP3NML9pgddrLlw9WDBOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v0hkx-0002M5-Lq; Mon, 22 Sep 2025 16:43:07 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v0hkw-002bxt-0S;
-	Mon, 22 Sep 2025 16:43:06 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id B7A84477169;
-	Mon, 22 Sep 2025 14:43:05 +0000 (UTC)
-Date: Mon, 22 Sep 2025 16:43:05 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>, 
-	mukesh.savaliya@oss.qualcomm.com, anup.kulkarni@oss.qualcomm.com, 
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>, mani@kernel.org, thomas.kopp@microchip.com, 
-	mailhol.vincent@wanadoo.fr, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linus.walleij@linaro.org, linux-can@vger.kernel.org, devicetree@vger.kernel.org, 
+	s=arc-20240116; t=1758552205; c=relaxed/simple;
+	bh=01eLBwKsR2MPC5ljxSM0eM0q4VqlpbK29DMtnFjku3Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Aidj1O4MITAiMygBSBmtHr8wSZEeMWIN7BmyyDtSDdffFTtahfsmYo6erzL08U34J931xJeBEG5ALNWx2tgpFzm58wXrNnupxwV/zfa06Cn0k35ChiTEg4iABBsTZErUIGfUAul6FV2XIC1PAwDqvd9aOuZ+bLckNpXwNx32VNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dbclt5RU; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3635bd94dadso34716091fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:43:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758552202; x=1759157002; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F0lMUB1ROfKuK75/vGdOophe58nNykYwwEOWTGObV+k=;
+        b=Dbclt5RURZ5S3nBkBhGAJfnMXY5irBTsOgkqqkhfsEqo9yqiNRnYfnMkgdpnenNIjV
+         95W7EqA3Sy0V9DEdK8H4DNqF91pKTaVo59yND4P9gszI62iSDxf7qVpMIWLYen0W6UGQ
+         iC4J+Ej+d5iqAnl95fWncSOvi5/bA/yWr40pO+SOWK+mq9MPzUDttyxIczUjj4qIFqZB
+         uPAB4W0wX+jmuSsRZXayXhqHEBlRsUb6s/5d9trZhPcEZMDO7rRqnWS6BZSVtM05I52w
+         A4bnTYarvAfCEYoiIAktf+IrlGKiPtKbWDAa44kCvnAEmAt3jPPba+dj0s53JN+POOth
+         UxQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758552202; x=1759157002;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F0lMUB1ROfKuK75/vGdOophe58nNykYwwEOWTGObV+k=;
+        b=lLgCVfzCB1YIotUuls9hrRVnDSTcFbkOqqjclLnAR/uJFxYA7AyTSWzhh0jO+Wr6XJ
+         e+mX7kjWa8BNJb3dyqtYsQemYh+RN9V8FoD5JPqNIuHJIMJSQoxEjWZNdkF3vVCrWZcR
+         b/ePNWqHdS+OnQi/RabO7Gg7hg9dDCPLN8haYUj9YGXeghQZWyEtXtb1bAUlCplVt556
+         hyg3uEStAnGp3IJPSy0xMRqsYfcgRH9Xf+9idNmxweFUc49JhLW1OE4DBp6PkDRCPJhI
+         1QP8IFdNc5YNgboCp79Y1fGYdfVIfKq4OgGrlcsoLaJ31bkwGTQhNb/eDxDDx5Y/tqeJ
+         0oKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWeapxDRrLx48MmLu9FbF7VK62s7WGDPmCXdOTTUW9IzemWFlKRtbcXyiVYG5VJUyI4WK6Bl5bW//RGzjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu+d19uGFbNYYPvR3Q0hUpuTTBSEqdt1Zdo9iEuZmVJ/d92M0S
+	FFROcSEnhgz4Pr6NoiRLs/H6FcVSjxbhtGOAHsukbBZzdYImc/uohNyJ
+X-Gm-Gg: ASbGncvDJPlL5Moh3nBo5lQ5sWDT2lFo/8exxFkpOWEz/NFZANtCSNUtMTaU7rM3sLI
+	1OIbUm5QCBycaiJEnN1YSSz1HFr4IUGUg7vOtin3ivdGxhGraEi2i8E3bXX31dh353CgXqSTT+M
+	q4CnpuLr9D09JW56+IYzcPZ/tBgT/i0bNfSB7iyKKj63lZtQRJdqUTpigHbWBhjJVuOwYwMMIyy
+	5Vf8w8KyUy7cYnuSjyoL9i1HUllXYDykTORM6PpDSR4jzChiTY6Y/CbOvKpobW7yB/twb5KwLMj
+	NFQQVphH9g7V5NgM+7NrBYGRF5b3GufARiIpZHFnO2VLJZFYE6NxGQGGEtQ5WjLLpb8k3qhcVXX
+	8ilXwVA5KhT7UWAppIIY3B8KJFJi8KfV/6RkozvOpJUlrT1osIm3KOtiKyExPsl27+gHH/icmA/
+	0Ipaug99JWN2iYil85
+X-Google-Smtp-Source: AGHT+IG0k8GFm/GzeFNoiWTic6tM3XN6hehF7mLWcX6QsOfPfppRRO6H9eJxef5vfYTewNG17se7sA==
+X-Received: by 2002:a05:651c:545:b0:36b:4cc1:15ff with SMTP id 38308e7fff4ca-36b4cc116b5mr18512911fa.5.1758552201998;
+        Mon, 22 Sep 2025 07:43:21 -0700 (PDT)
+Received: from localhost.localdomain (broadband-109-173-93-221.ip.moscow.rt.ru. [109.173.93.221])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3673e015747sm15960611fa.62.2025.09.22.07.43.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 07:43:21 -0700 (PDT)
+From: Alexandr Sapozhnkiov <alsp705@gmail.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] can: mcp251xfd: add gpio functionality
-Message-ID: <20250922-magnetic-dashing-piculet-97f38d-mkl@pengutronix.de>
-References: <20250918064903.241372-1-viken.dadhaniya@oss.qualcomm.com>
- <20250918064903.241372-6-viken.dadhaniya@oss.qualcomm.com>
- <CAMRc=Mf2ycyKbL35bdy5m1WBEap7Bu8OO2Q9AdZYgc04Uynf8g@mail.gmail.com>
- <20250918-daffy-steady-griffin-5299ac-mkl@pengutronix.de>
- <CAMRc=Mfypwopu6daCBzg90i98dbO-7rwAehkiNkA-tF074fO5w@mail.gmail.com>
+Cc: Alexandr Sapozhnikov <alsp705@gmail.com>,
+	linux-media@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH 5.10] gpu/i915: fix error return in mmap_offset_attach()
+Date: Mon, 22 Sep 2025 17:43:16 +0300
+Message-ID: <20250922144318.26-1-alsp705@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ypln7uuzn6d5ihga"
-Content-Disposition: inline
-In-Reply-To: <CAMRc=Mfypwopu6daCBzg90i98dbO-7rwAehkiNkA-tF074fO5w@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+From: Alexandr Sapozhnikov <alsp705@gmail.com>
 
---ypln7uuzn6d5ihga
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 5/6] can: mcp251xfd: add gpio functionality
-MIME-Version: 1.0
+Return value of function 'drm_vma_node_allow', called 
+at i915_gem_mman.c:670, is not checked, but it is usually 
+checked for this function
 
-On 22.09.2025 16:28:53, Bartosz Golaszewski wrote:
-> > > You must be rebased on pre v6.17 code, this will not compile with cur=
-rent
-> > > mainline.
-> >
-> > You mean "post" v6.17? Best rebase to latest net-next/main, which
-> > already contains the new signatures for the GPIO callbacks.
->=20
-> No, you read that right. The signature of the set() and set_multiple()
-> callbacks changed in v6.17-rc1 so Viken must have rebased his changes
-> on v6.16 or earlier.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
 
-I'm not sure if I understand you correctly. This series must apply on
-current net-next/main, which is v6.17-rc6.
+---
+ drivers/gpu/drm/i915/gem/i915_gem_mman.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-regards,
-Marc
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_mman.c b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+index a2195e28b625..adaef8f09d59 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_mman.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+@@ -706,8 +706,11 @@ mmap_offset_attach(struct drm_i915_gem_object *obj,
+ 	mmo = insert_mmo(obj, mmo);
+ 	GEM_BUG_ON(lookup_mmo(obj, mmap_type) != mmo);
+ out:
+-	if (file)
+-		drm_vma_node_allow_once(&mmo->vma_node, file);
++	if (file) {
++		err = drm_vma_node_allow_once(&mmo->vma_node, file);
++		if (err)
++			goto err;
++	}
+ 	return mmo;
+ 
+ err:
+-- 
+2.43.0
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---ypln7uuzn6d5ihga
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjRYHQACgkQDHRl3/mQ
-kZzA6AgAj6Har03pBSaJ0EP40FYACFmmLHSn/M7nPaKldDVQIdZ9W+RoQqD2mH9W
-XqbMfcRH1zvXHR0LKF+plVRcgDaZyU0vae0Ioo+gGk+2hMC3ii8oH29fwPioViKB
-nRgCY0ml8TsXbiXI5h5M71ktH4fOU+73/hunXWEE9HyplHocxI42VKDsIezK+MTq
-rKCpttTl/akUcwqrYdm7cUYnabY3SAueM+Cd3pOa0fgQeeazvdP2GHvNv/XYnou+
-mah8lhU24Lw5uD8rHjgbT8T1eFz8QEK6JQP7NJwz9y9rG4NVEp6NsQz88nNCw8Hr
-9YV7uShd8zrW30tshJnPoqACXO453A==
-=bdKu
------END PGP SIGNATURE-----
-
---ypln7uuzn6d5ihga--
 
