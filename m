@@ -1,151 +1,164 @@
-Return-Path: <linux-kernel+bounces-827090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF5AB9046E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:52:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D963B90498
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09B653ABF22
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:52:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0EBC18931A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF89A2FDC53;
-	Mon, 22 Sep 2025 10:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58E62FF143;
+	Mon, 22 Sep 2025 10:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=whynothugo.nl header.i=@whynothugo.nl header.b="Ow9LCl1e";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Yc8oCpWm"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QbK+hulz"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FA978F43;
-	Mon, 22 Sep 2025 10:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D414C42AA9;
+	Mon, 22 Sep 2025 10:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758538329; cv=none; b=SQR0iQFAzlTsFcNNh+ch4zTqKHGqURXRzVht/KVHtKBR8NprwJGSqPcRRyOylylClM0YuJmnEl/okEwC+3RbNpQ1PsTY0UaezLE5a69PeSC0e9U0QxRvVegLRB6WRVBQBbucJwO6roEw1uS34A9SIpwr5+kdhcBT9DfkgwDAR/U=
+	t=1758538521; cv=none; b=tywFj8wsyk4+j06p1PsOWWgCdMB3NCU0+nkaGMqWDnxSVKbJZ2lvfPdoQDhDqq7gNszYO62uu5q6H+kMhAxiKu73AfnznWoKT2YuR+CX/K7HautZ2PVbyzOCGk1tbVSqMd44r+j6uPkTqmvijzoJdEnGoZR/otN7wK8ZGDM4S/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758538329; c=relaxed/simple;
-	bh=XTJ6Eaj/i446zNXmwj9Zmnd5ozBQVqnlIGt1oWtpAL4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Hn0kN0aPCSTEM/vuSB20NZ4q7IrqzTAUFciGi65SXOKRGT2fxotUUQO7X8VuR8rpZmOPfjis2WA3p6QhCYuMlNGYOaMCq4X0qfwFATfCwvMriLdSPDg2JBZbbRqVzRXtdeQ4CKlIGGdsQuzOxsk2ZnHiCy4pwWPnBVBoIrAqf2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=whynothugo.nl; spf=pass smtp.mailfrom=whynothugo.nl; dkim=pass (2048-bit key) header.d=whynothugo.nl header.i=@whynothugo.nl header.b=Ow9LCl1e; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Yc8oCpWm; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=whynothugo.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whynothugo.nl
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 120221400030;
-	Mon, 22 Sep 2025 06:52:06 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 22 Sep 2025 06:52:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=whynothugo.nl;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
-	 t=1758538326; x=1758624726; bh=z72JMyrHj5yss06Ds7unVYneJe0p/rLi
-	/xZ/DsNUCTk=; b=Ow9LCl1egC3lCr8HL7YPTutRkXtKOruJA1DFdVni89IKAXQs
-	+ql3EMNKNtVkUWJWfJtCp/8AtHLGRuI9Cl+grnDqyJ6LAyWiFtTEmjwSfVkORrTW
-	krsF3M9eE5G3TZYDBVF7oflp6BElRGZ/tY62OGXGQyUc9IGRVJ9g/fHlSHk3uH6T
-	KCpjZw21kKgkIstcEN/lA4Z19zY/RddKyn3PWwPbluIeM0vuQdFimU2Cv+Y/hhMc
-	qczOomesvy89MP+Dl7riPiCCoTjcVAehrWRI4i6KHgu7kWNCDfJSy70DwqkXnRFY
-	lnVSbjRIXK+2uB2vrA4HEnvYcuEat3KL4S57AQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758538326; x=
-	1758624726; bh=z72JMyrHj5yss06Ds7unVYneJe0p/rLi/xZ/DsNUCTk=; b=Y
-	c8oCpWmM9v6eNHPE3vJTiNVoVI7PR5jddv+zij4uk0c+1Dq5wCH47/yvF9qdmQ0F
-	o8uGK1ChMewhqj72qrPcqwNZrliLPPLMmMQEQo73hqs8vOIoklqWadSxyGNZWK9i
-	TbYQ3fte/Y/wjFMd7wD1rbeg3qVS3oKhqaGY7MaDbQqLOfMhQ8A8m02xCkmJY1me
-	Wzi92KD/Cfkvv6dWGVWEEpqLg5X2MrC2RrKAPGWhb0+7E//UjyE44jd+zt8wxguo
-	GWngOXlxi0PEjgEheyZ5O2wopAmTA91UuFVkCDRdwhCHgTZ7P6jeHUx/QKfjMixi
-	rL3TDX9+2uzRRqQeiftVA==
-X-ME-Sender: <xms:VSrRaIHp1lsLaHpjfv8-EcDpUDP6qoSdmVKguAUfH3MPcM2Z-cGT0A>
-    <xme:VSrRaBVuLZn_ostKCSq-kFmA15TiGFmwI2mJcIXXNEMdTMkmOV6_X0-pFaQG-eX5b
-    GAVpkIkwaRKEOTngA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehjeeihecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdfjuhhgohcu
-    qfhsvhgrlhguohcuuegrrhhrvghrrgdfuceohhhughhoseifhhihnhhothhhuhhgohdrnh
-    hlqeenucggtffrrghtthgvrhhnpeevgeffgfeiffegteelteekhefgfffhkeffudfgfffh
-    ueegveevuedthedthedujeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhephhhughhoseifhhih
-    nhhothhhuhhgohdrnhhlpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouh
-    htpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepsggrghgrshgu
-    ohhtmhgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhguuhhnlhgrphesihhnfhhrrg
-    guvggrugdrohhrghdprhgtphhtthhopegrrhgusgeskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuh
-    htrhhonhhigidruggvpdhrtghpthhtohepuggrvhgvrdhhrghnshgvnheslhhinhhugidr
-    ihhnthgvlhdrtghomhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtph
-    htthhopehmihhnghhosehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:VSrRaOoGji-8EEOBgjo31hHhExSBb5_RcvpI_EvtoAMENvMO68dzOw>
-    <xmx:VSrRaLK10USXWdPpAd0Z7FNicJzzbekiJU8zPWnlJosx6FGWkumlRQ>
-    <xmx:VSrRaOuHvjCImCY6WFHLQUOGhgN2yxBTrhfQho0BBSMI8lx85s9xng>
-    <xmx:VSrRaICUXOh1CPMYuny_xh8ei48Sa4ywtjHVxjj1WbLEcw1sbOa0eg>
-    <xmx:VirRaKJYu7vb66KlQgycyuAuex9hQMQbnBczp70vVirByd00WHA_y_uc>
-Feedback-ID: ib8c04050:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 4436C1B40071; Mon, 22 Sep 2025 06:52:05 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1758538521; c=relaxed/simple;
+	bh=cq7Y4UZHdRw2ECiLZbveDiF74dbYePvi+a4phlHnPtY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iMVH3pam9zl0BgexD/DuhYOkeUEe5Tiq7LaXMPtKj0djaMwZPCFYK0aymcLV3byIj0Pyz49MwORuuT/0LG0eldaJTDjGmubE7rug3x5QTZyIww8pemfWqzZZOI4KRCk0OMs/VuT3xHJathc0abQLFHhbhiFOdoKPVpreHX+W1WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QbK+hulz; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758538516;
+	bh=cq7Y4UZHdRw2ECiLZbveDiF74dbYePvi+a4phlHnPtY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QbK+hulz3cRofs2gz2imTo35BmAq9oyHgdicO4p3aKWCfae83ng/JF1phynRpMfzb
+	 EuVXef5tc+M3MEHd287xeKzfT9mVt+1oAR7fUJfVgx3+3R0NuK5/fiasc4TYWglNvE
+	 93XlbxP8cERhUsWnHpPuns5AJ8/QRPVLbopOIrgFwyY6Et63A3RawnM1zn/1JF+fnc
+	 KfwXMYeSwHpTu7EX1CFTguGhgeeT/Ub6QMEXC+71X8tNYwhdS7THjVwrCyEtsrgZ6w
+	 kjrT1HVp3qoNlFHshhrf4KdjEaeexDd1LhSZPWVvZMcV7eqIhhUj3xxB6GEuCySHiH
+	 kS8wrgJKWbdVw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5AC9417E10F3;
+	Mon, 22 Sep 2025 12:55:15 +0200 (CEST)
+Message-ID: <e700cea3-cbe7-4ab5-94d8-a211051e2472@collabora.com>
+Date: Mon, 22 Sep 2025 12:55:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Ar2Xryr4sLlg
-Date: Mon, 22 Sep 2025 12:51:43 +0200
-From: "Hugo Osvaldo Barrera" <hugo@whynothugo.nl>
-To: "Jonathan Corbet" <corbet@lwn.net>,
- "Bagas Sanjaya" <bagasdotme@gmail.com>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- "Linux Documentation" <linux-doc@vger.kernel.org>,
- "Linux EFI" <linux-efi@vger.kernel.org>
-Cc: "Ard Biesheuvel" <ardb@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, "Randy Dunlap" <rdunlap@infradead.org>
-Message-Id: <e8bb9bb3-f9ec-49bb-9884-af727ea61caf@app.fastmail.com>
-In-Reply-To: <87zfaufrcq.fsf@trenco.lwn.net>
-References: <20250916073244.590483-1-bagasdotme@gmail.com>
- <b629ff7e-a223-467f-8e32-78f825bd31ac@app.fastmail.com>
- <87zfaufrcq.fsf@trenco.lwn.net>
-Subject: Re: [PATCH v2] Documentation/x86: explain LINUX_EFI_INITRD_MEDIA_GUID
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] PCI: Convert devm_pci_alloc_host_bridge() users to
+ error-pointer returns
+To: Alok Tiwari <alok.a.tiwari@oracle.com>, thomas.petazzoni@bootlin.com,
+ pali@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ mani@kernel.org, robh@kernel.org, bhelgaas@google.com, joyce.ooi@intel.com,
+ alyssa@rosenzweig.io, maz@kernel.org, jim2101024@gmail.com,
+ florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+ rjui@broadcom.com, sbranden@broadcom.com, ryder.lee@mediatek.com,
+ jianjun.wang@mediatek.com, sergio.paracuellos@gmail.com,
+ matthias.bgg@gmail.com, marek.vasut+renesas@gmail.com,
+ yoshihiro.shimoda.uh@renesas.com, geert+renesas@glider.be,
+ magnus.damm@gmail.com, shawn.lin@rock-chips.com, heiko@sntech.de,
+ michal.simek@amd.com, bharat.kumar.gogada@amd.com, will@kernel.org,
+ kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, linus.walleij@linaro.org, thierry.reding@gmail.com,
+ jonathanh@nvidia.com, rric@kernel.org, nirmal.patel@linux.intel.com,
+ toan@os.amperecomputing.com, jonathan.derrick@linux.dev,
+ linux-pci@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-hyperv@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20250921161434.1561770-1-alok.a.tiwari@oracle.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250921161434.1561770-1-alok.a.tiwari@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+Il 21/09/25 18:14, Alok Tiwari ha scritto:
+> devm_pci_alloc_host_bridge() and pci_alloc_host_bridge() previously
+> returned NULL on failure, forcing callers to special-case NULL handling
+> and often hardcode -ENOMEM as the error.
+> 
+> This series updates devm_pci_alloc_host_bridge() to consistently return
+> error pointers (ERR_PTR) with the actual error code, instead of NULL.
+> All callers across PCI host controller drivers are updated to use
+> IS_ERR_OR_NULL()/PTR_ERR() instead of NULL checks and hardcoded -ENOMEM.
+> 
+> Benefits:
+>    - Standardizes error handling with Linux kernel ERR_PTR()/PTR_ERR()
+>      conventions.
+>    - Ensures that the actual error code from lower-level helpers is
+>      propagated back to the caller.
+>    - Removes ambiguity between NULL and error pointer returns.
+> 
+> Touched drivers include:
+>   cadence (J721E, cadence-plat)
+>   dwc (designware, qcom)
+>   mobiveil (layerscape-gen4, mobiveil-plat)
+>   aardvark, ftpci100, ixp4xx, loongson, mvebu, rcar, tegra, v3-semi,
+>   versatile, xgene, altera, brcmstb, iproc, mediatek, mt7621, xilinx,
+>   plda, and others
+> 
+> This patch updates error handling across these host controller drivers
+>   so that callers consistently receive ERR_PTR() instead of NULL.
+> 
 
+I think that's a nice improvement - propagating the right error code looks good.
 
-On Tue, 16 Sep 2025, at 15:40, Jonathan Corbet wrote:
-> "Hugo Osvaldo Barrera" <hugo@whynothugo.nl> writes:
->
->>> +When compiled with ``CONFIG_EFI_STUB=y``, the kernel can be executed 
->>> as a
->>> +regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
->>> +implementation details.
->>
->> I must insist that it's a terrible idea to replace an actual link with the
->> name of the source file.
->>
->> This might be (marginally) more convenient for somebody who's editing the
->> documentation, but it becomes completely useless for somebody who's READING
->> the documentation. Documentation needs to target readers.
->>
->> For someone reading https://www.kernel.org/doc/html/latest/arch/x86/boot.html,
->> the above filename conveys no useful information.
->
-> When the documentation is rendered into HTML, that file reference will
-> be turned into a link automatically, and people reading it on kernel.org
-> will not notice the difference.
->
+The only thing is - you have to make sure that it never returns NULL, so that
+in the controller drivers you always check for `if (IS_ERR(x))` - otherwise with
+the current IS_ERR_OR_NULL(x) most of the error paths are wrong.
 
-Thanks for the clarification.
-I mis-interpreted this previously.
-Sorry for the noise.
+Cheers,
+Angelo
 
-
--- 
-Hugo
+> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+> ---
+>   arch/mips/pci/pci-xtalk-bridge.c                       | 4 ++--
+>   drivers/pci/controller/cadence/pci-j721e.c             | 4 ++--
+>   drivers/pci/controller/cadence/pcie-cadence-plat.c     | 4 ++--
+>   drivers/pci/controller/dwc/pcie-designware-host.c      | 4 ++--
+>   drivers/pci/controller/dwc/pcie-qcom.c                 | 4 ++--
+>   drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c | 4 ++--
+>   drivers/pci/controller/mobiveil/pcie-mobiveil-plat.c   | 4 ++--
+>   drivers/pci/controller/pci-aardvark.c                  | 4 ++--
+>   drivers/pci/controller/pci-ftpci100.c                  | 4 ++--
+>   drivers/pci/controller/pci-host-common.c               | 4 ++--
+>   drivers/pci/controller/pci-hyperv.c                    | 4 ++--
+>   drivers/pci/controller/pci-ixp4xx.c                    | 4 ++--
+>   drivers/pci/controller/pci-loongson.c                  | 4 ++--
+>   drivers/pci/controller/pci-mvebu.c                     | 4 ++--
+>   drivers/pci/controller/pci-rcar-gen2.c                 | 4 ++--
+>   drivers/pci/controller/pci-tegra.c                     | 4 ++--
+>   drivers/pci/controller/pci-v3-semi.c                   | 4 ++--
+>   drivers/pci/controller/pci-versatile.c                 | 4 ++--
+>   drivers/pci/controller/pci-xgene.c                     | 4 ++--
+>   drivers/pci/controller/pcie-altera.c                   | 4 ++--
+>   drivers/pci/controller/pcie-brcmstb.c                  | 4 ++--
+>   drivers/pci/controller/pcie-iproc-bcma.c               | 4 ++--
+>   drivers/pci/controller/pcie-iproc-platform.c           | 4 ++--
+>   drivers/pci/controller/pcie-mediatek-gen3.c            | 4 ++--
+>   drivers/pci/controller/pcie-mediatek.c                 | 4 ++--
+>   drivers/pci/controller/pcie-mt7621.c                   | 4 ++--
+>   drivers/pci/controller/pcie-rcar-host.c                | 4 ++--
+>   drivers/pci/controller/pcie-rockchip-host.c            | 4 ++--
+>   drivers/pci/controller/pcie-xilinx-cpm.c               | 4 ++--
+>   drivers/pci/controller/pcie-xilinx-dma-pl.c            | 4 ++--
+>   drivers/pci/controller/pcie-xilinx-nwl.c               | 4 ++--
+>   drivers/pci/controller/pcie-xilinx.c                   | 4 ++--
+>   drivers/pci/controller/plda/pcie-plda-host.c           | 4 ++--
+>   drivers/pci/probe.c                                    | 8 ++++----
+>   34 files changed, 70 insertions(+), 70 deletions(-)
+> 
 
