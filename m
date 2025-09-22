@@ -1,140 +1,147 @@
-Return-Path: <linux-kernel+bounces-827034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E25EB8FFAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:22:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EEBEB8FFB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 481F44201EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:22:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CE731764BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB132FCC17;
-	Mon, 22 Sep 2025 10:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uws9FWpe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960C127B4FA;
-	Mon, 22 Sep 2025 10:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8869E2FDC44;
+	Mon, 22 Sep 2025 10:22:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF6F2EDD63
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758536550; cv=none; b=JaaYgN4NPznzqFhOYGdIj0a/O44MoZmZpPNjW6JMWNzYs1tSa0nP8NekdMq+Z/XK2ll6ruNWWf5KznnzeWzFAS3n+tyOztpbCiry+7q7fMrE76NFs6zPdqPkx9s3tzxZPoVVfRSbtl5xTuLu+Dj7PmslVZgwhMD1yRGuFo+roTU=
+	t=1758536573; cv=none; b=tQl4z0yAGFJ0t8WXs0dycU8UYQWINSF/sAPv6KqhyXNDpeI/zCV572UOuFGTuUpENkZ+4CtF9iq3763zUpf2krpEiIwuubpuQqbMLRAlZCR9tjn33zRKTrFGzYFudrm61q0mU9r63DldlBkIaDZDwNp0KjlWqohm30mVM7Revec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758536550; c=relaxed/simple;
-	bh=xwUv2INjmR8kpAihPDaHIfJemY7XBiU2wOe6ys8W1sY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pk7/EqnLRo91QIj2upO/yJXbpa0W1IkSGxYhIFRXsJKFIUS/9V/kfVX/Mu4sF3DH+/2cW2DT8O8SXGbO+blbq0N3q0f+FvsxyPgMOM5AvpGJjYCx1ATO9nP4NYpTZow1tBF7JoagDKNkXRUCqPmAr0mfQat23t37JtfZToAlLZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uws9FWpe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 833DCC4CEF0;
-	Mon, 22 Sep 2025 10:22:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758536550;
-	bh=xwUv2INjmR8kpAihPDaHIfJemY7XBiU2wOe6ys8W1sY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Uws9FWpei6QBwqT44uTgff5T98CTbD67XowSgfVjvQ6jUcn5NDZzuFMnMiChkfGM4
-	 uoTQVw/ibBQnaFthql3E0HjvqYioOCCDD5p2HgzOhq3CJNutwAFBQPuolDqxVSrsZg
-	 uyf/pmFl1PsMGKiHo0x7vehqE6eqqEmfFLjtUqHXE8xgqptCkDlVfjwaVasPM+PmJb
-	 WYYGu19xrrJYg48S1hKjHWTNOMHCfcQthFQach4oiAvuiWzOBGTVYrxDJllm4gCJ6D
-	 iZ8VKc507zjHMZAyO3NnD0/+7D5VtwjHVY4r/wgPA0IEVzAQ/of/nVDgQz3Zx6H1nf
-	 IGPf4SgCidA6g==
-Date: Mon, 22 Sep 2025 12:22:26 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Sep 22
-Message-ID: <aNEjYlO0jQdisB3O@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1758536573; c=relaxed/simple;
+	bh=TKoIACpDvCRORBma6dGuMqTYSr124BdjoyT0MEjQVu4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E4P7/B8fFQewh80YEtiOtbUTApTBEr1zPOwMHUApGYVlrOoVkv09/8Qs8kl4rR8dTRRsrbp9TtHWsglH4CrJna+TWRSsJg/iCdgo0M6BYWNdVolPpOpAnmec5+7jlhOgjlRIEERxbCjCbFB2+ArUfvYFM7UzNYiMA9d5P78kCSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCC3B14BF;
+	Mon, 22 Sep 2025 03:22:41 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CADB23F66E;
+	Mon, 22 Sep 2025 03:22:47 -0700 (PDT)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org,
+	broonie@kernel.org,
+	maz@kernel.org,
+	oliver.upton@linux.dev,
+	joey.gouly@arm.com,
+	james.morse@arm.com,
+	ardb@kernel.org,
+	scott@os.amperecomputing.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	mark.rutland@arm.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v9 0/6] support FEAT_LSUI and apply it on futex atomic ops
+Date: Mon, 22 Sep 2025 11:22:39 +0100
+Message-Id: <20250922102244.2068414-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QmJYFMt1xDdAS1I7"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+Since Armv9.6, FEAT_LSUI supplies the load/store instructions for
+previleged level to access to access user memory without clearing
+PSTATE.PAN bit.
 
---QmJYFMt1xDdAS1I7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patchset support FEAT_LSUI and applies in futex atomic operation
+where can replace from ldxr/stlxr pair implmentation with clearing
+PSTATE.PAN bit to correspondant load/store unprevileged atomic operation
+without clearing PSTATE.PAN bit.
 
-Hi all,
+Patch Sequences
+================
 
-There will likely be some missing -next releases Monday to Wednesday
-this week, normal operation will resume on Thursday.
+Patch #1 adds cpufeature for FEAT_LSUI
 
-Changes since 20250919:
+Patch #2 expose FEAT_LSUI to guest
 
-The vfs tree gained a conflict with the vfs-brauner tree.
+Patch #3 adds Kconfig for FEAT_LSUI
 
-The rockchip tree gained a conflict with the arm-soc tree.
+Patch #4 refactor former futex atomic-op implmentation with ll/sc &
+         clearing PSTATE.PAN
 
-The fs-next tree gained a conflict with the arm64 tree.
+Patch #5 support futex atomic-op with FEAT_LSUI
 
-The bluteooth tree gained a conflict with the origin tree.
+Patch History
+==============
+from v8 to v9:
+  - refotoring __lsui_cmpxchg64()
+  - rebase to v6.17-rc7
+  - https://lore.kernel.org/all/20250917110838.917281-1-yeoreum.yun@arm.com/
 
-The kvm-x86 tree gained a conflict with the tip tree.
+from v7 to v8:
+  - implements futex_atomic_eor() and futex_atomic_cmpxchg() with casalt
+    with C helper.
+  - Drop the small optimisation on ll/sc futex_atomic_set operation.
+  - modify some commit message.
+  - https://lore.kernel.org/all/20250816151929.197589-1-yeoreum.yun@arm.com/
 
-The char-misc tree gained a conflict with the drm tree.
+from v6 to v7:
+  - wrap FEAT_LSUI with CONFIG_AS_HAS_LSUI in cpufeature
+  - remove unnecessary addition of indentation.
+  - remove unnecessary mte_tco_enable()/disable() on LSUI operation.
+  - https://lore.kernel.org/all/20250811163635.1562145-1-yeoreum.yun@arm.com/
 
-The char-misc tree gained a conflict with the tip tree.
+from v5 to v6:
+  - rebase to v6.17-rc1
+  - https://lore.kernel.org/all/20250722121956.1509403-1-yeoreum.yun@arm.com/
 
-The gpio-brgl tree gained a conflict with the mfd tree.
+from v4 to v5:
+  - remove futex_ll_sc.h futext_lsui and lsui.h and move them to futex.h
+  - reorganize the patches.
+  - https://lore.kernel.org/all/20250721083618.2743569-1-yeoreum.yun@arm.com/
 
-The bitmap tree gained a conflict with the char-misc and drm trees.
+from v3 to v4:
+  - rebase to v6.16-rc7
+  - modify some patch's title.
+  - https://lore.kernel.org/all/20250617183635.1266015-1-yeoreum.yun@arm.com/
 
-Non-merge commits (relative to Linus' tree): 10380
- 10610 files changed, 506992 insertions(+), 197129 deletions(-)
+from v2 to v3:
+  - expose FEAT_LUSI to guest
+  - add help section for LUSI Kconfig
+  - https://lore.kernel.org/all/20250611151154.46362-1-yeoreum.yun@arm.com/
 
-----------------------------------------------------------------------------
+from v1 to v2:
+  - remove empty v9.6 menu entry
+  - locate HAS_LUSI in cpucaps in order
+  - https://lore.kernel.org/all/20250611104916.10636-1-yeoreum.yun@arm.com/
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
+Yeoreum Yun (5):
+  arm64: cpufeature: add FEAT_LSUI
+  KVM: arm64: expose FEAT_LSUI to guest
+  arm64: Kconfig: Detect toolchain support for LSUI
+  arm64: futex: refactor futex atomic operation
+  arm64: futex: support futex with FEAT_LSUI
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with an arm64
-defconfig, an allmodconfig for x86_64, a multi_v7_defconfig for arm and
-a native build of tools/perf. After the final fixups (if any), I do an
-x86_64 modules_install followed by builds for x86_64 allnoconfig,
-powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig, allyesconfig and
-pseries_le_defconfig and i386, arm64, s390, sparc and sparc64 defconfig
-and htmldocs. And finally, a simple boot test of the powerpc
-pseries_le_defconfig kernel in qemu (with and without kvm enabled).
+ arch/arm64/Kconfig             |   5 +
+ arch/arm64/include/asm/futex.h | 304 ++++++++++++++++++++++++++++-----
+ arch/arm64/kernel/cpufeature.c |  10 ++
+ arch/arm64/kvm/sys_regs.c      |   5 +-
+ arch/arm64/tools/cpucaps       |   1 +
+ 5 files changed, 277 insertions(+), 48 deletions(-)
 
-Below is a summary of the state of the merge.
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
-I am currently merging 407 trees (counting Linus' and 406 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
-
---QmJYFMt1xDdAS1I7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjRI2EACgkQJNaLcl1U
-h9DT1Af/e/0xe6T66bLATK42l5X4tBKjOzkdlGIG01xxb3aTtRZRF3+C/MO2hVU9
-JU/u3dZ6E2Om12p3Qq0XKuYY4qEi4sFKc7LBV1srAwF+bumU7U/t2Sqc3LLn9G9j
-U/BZB7EHUhZjUDeho9umywJbjZSsPBKhT8B06n8LSk/kFvElJ1Ura6W8XPrqmNXk
-I4HbUw8XRP+nZPc/MjhzmaYVfcvbblWmZUByTJ4LxAZDlvqgmRD3f4FZ1a4pBsf/
-5eHTaQ4fyN7rbZ0li1inqcqUryQSrlP0N5mZGEvUBy1pSFESX1HApm0ayiPzJHqD
-2iNHLNlbWYryNvliyemas4DDge2gcQ==
-=bE3m
------END PGP SIGNATURE-----
-
---QmJYFMt1xDdAS1I7--
 
