@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-827824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBEDB9334D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:20:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A491B9335C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08D871901B40
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:20:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF5F52A4E86
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893882F6567;
-	Mon, 22 Sep 2025 20:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E105311955;
+	Mon, 22 Sep 2025 20:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="REGKL9+0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iMeWhZ//"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D982E2DC1;
-	Mon, 22 Sep 2025 20:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4CA2E2DC1;
+	Mon, 22 Sep 2025 20:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758572418; cv=none; b=BE6URJY3m4dLnLKg8fN7rMQGlV4sJxstgoKzfjlmayozhE9B/kpIaOctl+1PYbeS+tKsrdFyat9dLb8xx5FrqlJSOklFy24IuSyCqZytWfj626Uu7OV78YdkNXkpWSBYqslEc1jpMSuXv1/egK+0yCMaa2onF2NkpHoHpjBZSbY=
+	t=1758572548; cv=none; b=FXOs72YCP/L1h8Cy4y5uM9RoQrh/Rp91n7eOrN6H2x+ct1HqEX3i/lkeH1AQKgQp8p/IhcyxTHT3uha/aEg2xa+HzIL03HvG+NPj0u8LPB3AoLefMB4sq9iuesSSLdDwyyuWqRKa0SATlLYhpN/UN7VGKAtJFlFMIUcb3L2kaRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758572418; c=relaxed/simple;
-	bh=SKHIwH86g+4PIdxQd+vsl7x9QVwZsHHhDsTe90dtEXg=;
+	s=arc-20240116; t=1758572548; c=relaxed/simple;
+	bh=QFCnLH0QSBllhhPkO/Euf4JjftyjoIQgHonjoMISULY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RRrEjwIwzszEFcg0yMqLecYbypqKlL5Rnocz+O/H2bowhNxlM2sY5lUKApA8LdCfrb18QXLDJmzHCD87ZY5wLzd17+aOn80JpUMIlmJbwe8Tllq2VS3fu7o1/AElRVh9YSlyLtkPmcMMcXHo+W7IlVRiVGbSjzANDUBwJMlk5jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=REGKL9+0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DCADC4CEF0;
-	Mon, 22 Sep 2025 20:20:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ohbVnsdLz27YR48qp82+AbYbDMQnCYsoH6MATvnn1dT5P0MbTWxPoae3xhUCSQiWfPIxZZgb6ZHMzYHQk0oIib/R4AJSZXfyvidnzp7mq51FoXXx5VGaoXVWMHjYcOfZjvpBHN03SrW0Xj+oa4T/HuK7ALq/86dmoZuDUqoRA+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iMeWhZ//; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0797BC4CEF0;
+	Mon, 22 Sep 2025 20:22:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758572415;
-	bh=SKHIwH86g+4PIdxQd+vsl7x9QVwZsHHhDsTe90dtEXg=;
+	s=k20201202; t=1758572548;
+	bh=QFCnLH0QSBllhhPkO/Euf4JjftyjoIQgHonjoMISULY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=REGKL9+0p0aAaSu9XbgwQD9Yjw9tk6kRwRyRwQOEon1DMRnpg2q/ZXmIJpXp5aUcN
-	 tINWgKWq0xMRb6DUjaJRNqoGezQr0N7pda3g/m/xcs4rK2L3xJrbykE2/qFl0uyshX
-	 LnDA1U2DYi7PIqUxBKO183APHCWGo1YG31Pa+pSU0pSrSgY84+HZVpT/bE4ZVQNeqW
-	 lJJZUUm6nWy+TJ4wwtOXw3joLmeOsj5CkLTX46Z+ZclGwUw9OcfiT+Tsg62bJlbdu2
-	 ytdJD0iMiG7fJKs8IG1jDum2RbOBxc+l9JMfac3vt5ExdoeM55ujfHdSXSmLFoYWe/
-	 HWFQqohmPxnmw==
-Date: Mon, 22 Sep 2025 15:20:14 -0500
+	b=iMeWhZ//daiwUNkvKmTcBSCGoGPZr0fAdTE5i1Th7PygrLIBryuzucXSnmAzox9bo
+	 +pJTxQwLP/9XY1PVOzibojpEw0XWfnlgSh9czmSwqIovYYK3B2E/JUhjSw+4Pn7kxZ
+	 K8srHtkOFzrmIAQHpnI1jc2WmElfo62Tf10vqt1PB1kOmBrScz2WxPil7j9VUsRC3b
+	 DBnAPzrMbsavRrycEQUv7gWGHoXBOFOb06+XdUOEW1Eu6e1hR4DOkzuWoGDIBfFrCi
+	 A0yP2uekGhf/U38PbLz1zP5IzA9mZKOWLG82fA45CC6UMqXFYSXLe2YRQxihoK8dHg
+	 SdDe/m5njECyw==
+Date: Mon, 22 Sep 2025 15:22:27 -0500
 From: Rob Herring <robh@kernel.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: saravanak@google.com, lizhi.hou@amd.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] of: unittest: Fix device reference count leak in
- of_unittest_pci_node_verify
-Message-ID: <20250922202014.GA1254345-robh@kernel.org>
-References: <20250920085135.21835-1-make24@iscas.ac.cn>
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: amitk@kernel.org, thara.gopinath@gmail.com, rafael@kernel.org,
+	daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: thermal: qcom-tsens: document the glymur
+ Temperature Sensor
+Message-ID: <20250922202227.GA1268708-robh@kernel.org>
+References: <20250920113052.151370-1-pankaj.patil@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,53 +60,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250920085135.21835-1-make24@iscas.ac.cn>
+In-Reply-To: <20250920113052.151370-1-pankaj.patil@oss.qualcomm.com>
 
-On Sat, Sep 20, 2025 at 04:51:35PM +0800, Ma Ke wrote:
-> In of_unittest_pci_node_verify(), when the add parameter is false,
-> device_find_any_child() obtains a reference to a child device. This
-> function implicitly calls get_device() to increment the device's
-> reference count before returning the pointer. However, the caller
-> fails to properly release this reference by calling put_device(),
-> leading to a device reference count leak.
+On Sat, Sep 20, 2025 at 05:00:52PM +0530, Pankaj Patil wrote:
+> From: Manaf Meethalavalappu Pallikunhi <quic_manafm@quicinc.com>
 > 
-> As the comment of device_find_any_child states: "NOTE: you will need
-> to drop the reference with put_device() after use".
+> Document the Temperature Sensor (TSENS) on the glymur Platform.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 26409dd04589 ("of: unittest: Add pci_dt_testdrv pci driver")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> Signed-off-by: Manaf Meethalavalappu Pallikunhi <quic_manafm@quicinc.com>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 > ---
->  drivers/of/unittest.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-> index e3503ec20f6c..d225e73781fe 100644
-> --- a/drivers/of/unittest.c
-> +++ b/drivers/of/unittest.c
-> @@ -4271,7 +4271,7 @@ static struct platform_driver unittest_pci_driver = {
->  static int of_unittest_pci_node_verify(struct pci_dev *pdev, bool add)
->  {
->  	struct device_node *pnp, *np = NULL;
-> -	struct device *child_dev;
-> +	struct device *child_dev = NULL;
->  	char *path = NULL;
->  	const __be32 *reg;
->  	int rc = 0;
-> @@ -4306,6 +4306,8 @@ static int of_unittest_pci_node_verify(struct pci_dev *pdev, bool add)
->  	kfree(path);
->  	if (np)
->  		of_node_put(np);
-> +	if (child_dev)
-> +		put_device(child_dev);
+> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> index f65dc829574c..bfbacba1dc55 100644
+> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> @@ -50,6 +50,7 @@ properties:
+>          items:
+>            - enum:
+>                - qcom,milos-tsens
+> +              - qcom,glymur-tsens
 
-This can go in the else clause. Then child_dev doesn't need to be 
-initialized to NULL.
+Alphabetical order
 
->  
->  	return rc;
->  }
+>                - qcom,msm8953-tsens
+>                - qcom,msm8996-tsens
+>                - qcom,msm8998-tsens
 > -- 
-> 2.17.1
+> 2.34.1
 > 
 
