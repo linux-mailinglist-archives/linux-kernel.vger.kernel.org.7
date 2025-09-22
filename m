@@ -1,134 +1,178 @@
-Return-Path: <linux-kernel+bounces-827236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C49B9138A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:51:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63AECB913F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 623CA7A64F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:49:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A589118A4627
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB95308F1A;
-	Mon, 22 Sep 2025 12:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BEE3093AA;
+	Mon, 22 Sep 2025 12:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="haXU5Doe"
-Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AX0tZCik"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BAC2AD20;
-	Mon, 22 Sep 2025 12:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D372A3081C1
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758545486; cv=none; b=kQN1RSEDqNDulGeFrMs91NGvQLZrPSvY58Zm/hz0pNJrqZYdWxPt20AaBAVZ8CzWoyn/5wP/I8WLZCrmW5ey7XiSupPFEcgY2jnNK/jDPBETOZe8MS5v0qtpHitFP6XD1Cd8gc8yjS7gSEmwtHCjwxS1H7jt6LHHb5fxb/itdiY=
+	t=1758545502; cv=none; b=Bh2BqRjUrbyEHGWHMgV1Jfdw5BEPUTt2K2Q419BeuNjEbRI5AQnYsuxsUZKDgv/04IDpMdWxbnmBkQV49vaT5p5Cj3RWPKW7ertAQnRvodsonvYCLr/yz2Yftj+LQOUyb5wPcuJ9GqcOGg1JCONamFgWajBqIz2dYAvSZtrr1K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758545486; c=relaxed/simple;
-	bh=Iz9UZgNJKyNMc2OfTRs4Qobm5C+M7qBf/0bvJog+Lzw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ncHNaJ4erqGE6no84xpezethEn4I8nKIeQgNyQqJ1ftT+4S25TTZZ3Az+0gEBX6YmSQCk7MUZ8RrcP9rS1HZfP0SNX30qpJrptw2U2Yo4GMf0mwzTqUHei8RiSLtJxs/QdGKi92WRLUJIgLkhHTj6e9NhMLWxNmYRQ1rZZTpibE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=haXU5Doe; arc=none smtp.client-ip=91.198.250.237
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4cVjfG4wzczB0P9;
-	Mon, 22 Sep 2025 14:51:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
-	t=1758545478;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K1dXOwMIZsJBnAC+87S37o9PpbrQcwWEFVTNEZoIX7k=;
-	b=haXU5DoeQf/+m2Ut2EbLBHUxXxp5xKCvXqkaEHHNFfTrXDURHrifykdfUAKOTT7Y8vJpcP
-	dZhz3Ctc95tZt3c9j0MM8KfFgMCawE7S2vMpJdyh1jiXzpcm6CEOGkEhERx44dfHn+zxkF
-	qiiIG/YD8AFxKuqbz9yRNc4LLsq7BJhzrUATxyHA6YRcH6eonLw7F/J6yGuzsXYlKnxGpq
-	yKxzkeOSwy9GI6B2qqYgqRVYmv0X3lS5gTYI9KV1f2vKd4VrodeHPWLkuCMqbtVJo2B4RG
-	JF9GgJ62o5tYfhmPRH8dlJ0qQUuEn+VXityJArbFLMG6rvtXv3Xm8qDJpdMYrg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=softfail (outgoing_mbo_mout: 2001:67c:2050:b231:465::1 is neither permitted nor denied by domain of mssola@mssola.com) smtp.mailfrom=mssola@mssola.com
-From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mssola@mssola.com>
-To: David Sterba <dsterba@suse.cz>
-Cc: linux-btrfs@vger.kernel.org,  clm@fb.com,  dsterba@suse.com,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] btrfs: Prevent open-coded arithmetic on kmalloc
-In-Reply-To: <20250922103442.GM5333@twin.jikos.cz> (David Sterba's message of
-	"Mon, 22 Sep 2025 12:34:42 +0200")
-References: <20250919145816.959845-1-mssola@mssola.com>
-	<20250922103442.GM5333@twin.jikos.cz>
-Date: Mon, 22 Sep 2025 14:51:15 +0200
-Message-ID: <87bjn24pmk.fsf@>
+	s=arc-20240116; t=1758545502; c=relaxed/simple;
+	bh=ZQ5VUijvYpFvcyKNThwBlQAIlb7oH7NFolfh4z9Dr98=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=LxqISIs6T6N9loTIfH4Ki+++YkAQs5ECiqtfRn24Y7ul3jqeSeITn+YTPhTx6feCXJnx1ZotWzuFnmLsjaGR5M8+3fp/W6A7UGeFD7cVoXAERgr1pTcRYrYExJ6muLnHHf+J9AkrA6Bajf2Wxnk64Ua9ItoA0DpNYo7H0K9Y2EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AX0tZCik; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250922125137epoutp023fe0521c6fe1cfb63fb121e2d34aa91d~nm9AfQvma3199931999epoutp02h
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:51:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250922125137epoutp023fe0521c6fe1cfb63fb121e2d34aa91d~nm9AfQvma3199931999epoutp02h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758545497;
+	bh=HYKpfIouK921vQ6QGHevYxod5Jzj4y8Z8mu37Q92pkQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AX0tZCik32940iGDLI1f49OSHAKkS2a5SUJ3wFKhIIa3Jv/io1GR2nT2sN4xtJbT7
+	 dPS0FAlhERk5PoYMP45zSHyuPlkArcCeB71/nFEpxcpOiqloTwUmLrMLJzHXMf8JgK
+	 rdbxW7wDrW/aJ6aCijLvwln+2kDNxVclVUvsOcRY=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250922125137epcas5p33b1bb74798ea240fe00b72dd28bdb560~nm9AQ_CM41720517205epcas5p3k;
+	Mon, 22 Sep 2025 12:51:37 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cVjfc3V7Xz6B9m5; Mon, 22 Sep
+	2025 12:51:36 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250922125135epcas5p3ac2131266f68cc18eaed3921a42bdf9b~nm8_pSBu81431814318epcas5p3u;
+	Mon, 22 Sep 2025 12:51:35 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250922125134epsmtip1cbbc4d374f9f2829a520f3f1670c2f7c~nm89m51rS0171401714epsmtip1K;
+	Mon, 22 Sep 2025 12:51:34 +0000 (GMT)
+Date: Mon, 22 Sep 2025 18:21:25 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com
+Subject: Re: [PATCH V3 04/20] nvdimm/label: Update mutex_lock() with
+ guard(mutex)()
+Message-ID: <20250922125125.tm3yapxoxd5lhmat@test-PowerEdge-R740xd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
-X-Rspamd-Queue-Id: 4cVjfG4wzczB0P9
+In-Reply-To: <20250917154656.00001c2f@huawei.com>
+X-CMS-MailID: 20250922125135epcas5p3ac2131266f68cc18eaed3921a42bdf9b
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="-----ZxWg4Xdj5J3Rn97nhBblfMsRvMrJ.qI_ZCg1wtmDaptzyAW=_26db1_"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250917133034epcas5p2c9485e40fce4c3a5a826cc94d515b25d
+References: <20250917132940.1566437-1-s.neeraj@samsung.com>
+	<CGME20250917133034epcas5p2c9485e40fce4c3a5a826cc94d515b25d@epcas5p2.samsung.com>
+	<20250917132940.1566437-5-s.neeraj@samsung.com>
+	<20250917154656.00001c2f@huawei.com>
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+-------ZxWg4Xdj5J3Rn97nhBblfMsRvMrJ.qI_ZCg1wtmDaptzyAW=_26db1_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-Hello,
-
-David Sterba @ 2025-09-22 12:34 +02:
-
-> On Fri, Sep 19, 2025 at 04:58:14PM +0200, Miquel Sabat=C3=A9 Sol=C3=A0 wr=
-ote:
->> The second patch is a small cleanup after fixing up my first patch, in
->> which I realized that the __free(kfree) attribute would come in handy in=
- a
->> couple of particularly large functions with multiple exit points. This
->> second patch is probably more of a cosmetic thing, and it's not an
->> exhaustive exercise by any means. All of this to say that even if I feel
->> like it should be included, I don't mind if it has to be dropped.
+On 17/09/25 03:46PM, Jonathan Cameron wrote:
+>On Wed, 17 Sep 2025 18:59:24 +0530
+>Neeraj Kumar <s.neeraj@samsung.com> wrote:
 >
-> Yes there are many candidates for the __free() cleanup annotation and
-> we'll want to fix them all systematically. We already have the automatic
-> cleaning for struct btrfs_path (BTRFS_PATH_AUTO_FREE). For the
-> kfree/kvfree I'd like to something similar:
+>> Updated mutex_lock() with guard(mutex)()
 >
-> #define AUTO_KFREE(name)       *name __free(kfree) =3D NULL
-> #define AUTO_KVFREE(name)      *name __free(kvfree) =3D NULL
+>Say why.
+
+Sure, I will update it in next patch-set.
+
+>>
+>> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+>> ---
+>>  drivers/nvdimm/label.c | 36 +++++++++++++++++-------------------
+>>  1 file changed, 17 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+>> index 668e1e146229..3235562d0e1c 100644
+>> --- a/drivers/nvdimm/label.c
+>> +++ b/drivers/nvdimm/label.c
+>> @@ -948,7 +948,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>>  		return rc;
+>> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
+>> +		if (!label_ent->label) {
+>> +			label_ent->label = nd_label;
+>> +			nd_label = NULL;
+>> +			break;
 >
-> This wraps the name and initializes it to NULL so it's not accidentally
-> forgotten.
+>Perhaps it will change in later patches, but you could have done
+>		if (!label_ent->label) {
+>			label_ent->label = nd_label;
+>			return;
+>		}
+>as nothing else happens if we find a match.
 
-Makes sense! I can take a look at this if nobody else is working on it,
-even if I think it should go into a new patch series.
+Yes, I have updated it in later patch. I will update it here itself.
 
-Hence, if it sounds good to you, we can merge this patch as it is right
-now, and in parallel I work on this proposed AUTO_KFREE and AUTO_KVFREE
-macros in a new patch series (which will take more time to prepare).
+>
+>> +		}
+>> @@ -998,9 +998,8 @@ static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
+>>  		label_ent = kzalloc(sizeof(*label_ent), GFP_KERNEL);
+>>  		if (!label_ent)
+>>  			return -ENOMEM;
+>> -		mutex_lock(&nd_mapping->lock);
+>> +		guard(mutex)(&nd_mapping->lock);
+>>  		list_add_tail(&label_ent->list, &nd_mapping->labels);
+>> -		mutex_unlock(&nd_mapping->lock);
+>
+>Not sure I'd bother with cases like this but harmless.
+>
+>>  	}
+>>
+>> -	mutex_lock(&nd_mapping->lock);
+>> +	guard(mutex)(&nd_mapping->lock);
+>>  	list_for_each_entry_safe(label_ent, e, &nd_mapping->labels, list) {
+>>  		struct nd_namespace_label *nd_label = label_ent->label;
+>>
+>> @@ -1061,7 +1060,6 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
+>>  		nd_mapping_free_labels(nd_mapping);
+>>  		dev_dbg(ndd->dev, "no more active labels\n");
+>>  	}
+>> -	mutex_unlock(&nd_mapping->lock);
+>This is a potential functional change as the lock is held for longer than before.
+>nd_label_write_index is not trivial so reviewing if that is safe is not trivial.
+>
+>The benefit is small so far (maybe that changes in later patches) so I would not
+>make the change.
 
-Thanks,
-Miquel
+Sure, I will revert it back in next patch-set
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+Regards,
+Neeraj
 
------BEGIN PGP SIGNATURE-----
+>
+>
+>
+>>
+>>  	return nd_label_write_index(ndd, ndd->ns_next,
+>>  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
+>
 
-iQJiBAEBCgBMFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmjRRkMbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTEsMiwyEhxtc3NvbGFAbXNzb2xhLmNvbQAKCRCWvoxv2J1l
-ZdXmD/9aKfcwkUP8/3YhELwG+Pj6gfzY/EsKaTaYhLErAZ08HxPpyAgpf/qxVsuj
-TrtwICvOqVE2DYnrdooyTn9qYYr9iLBbkKiGf+YdN6mCMKxpxhw8oKpmpWTsZjUo
-tStFuaDUU6/PPwL/x1QcOS4nJLrUT+HMGx0bhNgoP06qOH/VefoBxNPzF7bjNpRK
-A81JCCvx0kdvSYh4Wc6qkuN9puba42Fp6Jzqn4eaJkjyyAV8TED8SbPl1lH1wEl5
-WdXuNdzk0rebNwulILFBOiOPWAEZ6zGSfi1Nh/K3+YqLQ4gCN5b1fZpRWLWer8lU
-tL4yJpdTr8B1agNJEycJ0AhkRwC+i19V6UGIkeJQxgeeqyYS+pBJDWRT1mtbzVn4
-Uo0l3CRNRZmTTZFrp6Cka8Qju0jwFej577uIn22l11zsYh5+9goFRnzPO+Hjucba
-DwfcVwKP5r8VE+pduDmo/dyz7FikPlwka4XWkxqmimaggk6C39RdeuzTL/d2BUan
-ObsoID5MDMK2xWd2O7IwqEAj8Dm19SdwzHVDJ1l5ACXAEtNEPdNoXlUh9Wd2GTm2
-7mfiRPshZ3LFuB6yjWM6I3Z9JlnCaO5aO6N269gl8DRwpBPrpLLklzLrV2om7k7W
-QXQrqcaSoCUGG22EMZErCuh6FINkZSkzieEvmZ+LIHR5mRM8pw==
-=ogjZ
------END PGP SIGNATURE-----
---=-=-=--
+-------ZxWg4Xdj5J3Rn97nhBblfMsRvMrJ.qI_ZCg1wtmDaptzyAW=_26db1_
+Content-Type: text/plain; charset="utf-8"
+
+
+-------ZxWg4Xdj5J3Rn97nhBblfMsRvMrJ.qI_ZCg1wtmDaptzyAW=_26db1_--
 
