@@ -1,54 +1,65 @@
-Return-Path: <linux-kernel+bounces-827649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7983CB924F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:53:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 359ADB92501
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CF2C19037F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:53:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A81F7A1843
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FD61624E9;
-	Mon, 22 Sep 2025 16:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BD73126A4;
+	Mon, 22 Sep 2025 16:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZmVqeYKQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="haa/u39e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE793115AD;
-	Mon, 22 Sep 2025 16:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E03E1624E9;
+	Mon, 22 Sep 2025 16:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758559979; cv=none; b=jJNdKkCLcu4ZOsF/f99uMz2WOj3TnxY99wcAbJ0N/rsCydr5t5G4XE5sXNxUZ76polt5BDWr+ejTNeN+uOVBw6UD5epdsBEEetqjlsKqjf0wjeygLfg/E/oB6ggoJFnGucTrgiOsoloG1eANWqRFcQ76/JMMrWNfRaLUJ8y6X1g=
+	t=1758560024; cv=none; b=G6zeMN8g+YItUK0K7usQKyXE9NOYaiPARDEG7MhGj3ZVNknqVfGSm+P5IhJoRC4U/SWbexFqwKJuj4nXXzVeRWSt9mPaPVRBZwaq0kEsvSvvZzV6CQaxdYF2t/pjPqvEgXmJDU4x/jm0xQOgVAMiorJLWc5wbKaORyVuOyswHi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758559979; c=relaxed/simple;
-	bh=OCuXQqhvk5cSivdHAJGWAda1tAp8A7a/ttMvbmq2wGU=;
+	s=arc-20240116; t=1758560024; c=relaxed/simple;
+	bh=66YVdEIz0WO5xOUAZXPuRtDVfvF4ZqtngHDQvIbb4OU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xnwhbwl9nEMp6lPDV9q+IEDJ6AcmSQ5D+flntRqHRaXO4a1XXunZrNgUJGdyjw3Ob3Gz6/sWFspPTCVD4j+qganQxiaf3NrGpqbTwtfy2pVaMmws+07iBJ+PrhLBCuwjP/WDrYXmj7tyuoOg0VlyGMVKlPdQzq8qUmtWp8GG7aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZmVqeYKQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CBA5C4CEF0;
-	Mon, 22 Sep 2025 16:52:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rDMr2xiA+G2M7/Gqf9WzuaRS21f7fNJsHSppcjLbQRJvtA0X8ZYUpmnd/cvTaaobxRLeRHuxKgOJKHASmrnuOuehJQ2A5H2bSLNoey51sJzQt8xPqh39rJWV07qvE7v9Ak5X+U27pFJvL8Nhj4F9X1uza9aScy75jWIH7sanCC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=haa/u39e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FB29C4CEF0;
+	Mon, 22 Sep 2025 16:53:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758559978;
-	bh=OCuXQqhvk5cSivdHAJGWAda1tAp8A7a/ttMvbmq2wGU=;
+	s=k20201202; t=1758560023;
+	bh=66YVdEIz0WO5xOUAZXPuRtDVfvF4ZqtngHDQvIbb4OU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZmVqeYKQoOtTipuonon3LQCHIfKgyaAgXWpIy6IO69OXLQXCRsgF8UsVRfCE/66ae
-	 GUTIcHpkFl/m3n6gFzLYWi8ED+tHEa5y6ObBd2uYGQK8RnvB9yAnWxrJbvWmy3Rari
-	 LxN9kwNmwC7k4LVYOKI3ryXGdFSuraxcM1veRXZNjpE6wtvKA8B1AjZtiw9+wUDs3m
-	 Rko5wTSAF70tnYqU8cSv9WZsWSIDn/8AQ5wkoJclhBXz8RRP0kgBIdnNhy3efE+KJI
-	 eguSy3CHMDmzUkIBo0q2PLv+SELOPmT3HAWrKbxqYv7TYdYWP5KnguQNSWBFL62lx7
-	 zC05ClgKmapSA==
-Date: Mon, 22 Sep 2025 06:52:57 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched_ext: idle: Handle migration-disabled tasks in BPF
- code
-Message-ID: <aNF-6bmzGgY5QaEp@slm.duckdns.org>
-References: <20250920132621.16263-1-arighi@nvidia.com>
+	b=haa/u39eq5BLyx3UoZBQ1gg9wuP69x6DUj/rxEJE/qhGf9Fd0u5Te+KW89NvfVKBm
+	 7xfdjvF2tQCp+A3hO+2oeuDpGnIsney4VEfDVvrSa2vy31p4IX9TzZnbXuTV1LMwU8
+	 BeB7Eui+Noq6w7m/Qe1QZ1So3r3Tq+uGNJeMxhonPX7gduqIJRicoArwpC5BMarFk8
+	 20D+1Xfc30GxQ62VETnvK4LqIUJHYja/WxJ6u7Px4dEEmrEjM+PAN9ghH0UrzdMFYs
+	 YBUWsacp8SM86DyL5V89hpaoBGl8k9lmxjpu7vY3nWcJD2CwporgGCX+IRe0PkPxf4
+	 k5WmcfOv5NrnQ==
+Date: Mon, 22 Sep 2025 11:53:42 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Ravi Patel <ravi.patel@samsung.com>
+Cc: ksk4725@coasia.com, kenkim@coasia.com, jesper.nilsson@axis.com,
+	s.nawrocki@samsung.com, hgkim05@coasia.com, krzk+dt@kernel.org,
+	bread@coasia.com, shradha.t@samsung.com, mingyoungbo@coasia.com,
+	cw00.choi@samsung.com, krzk@kernel.org,
+	linux-kernel@vger.kernel.org, jspark@coasia.com,
+	linux-arm-kernel@axis.com, linux-clk@vger.kernel.org,
+	limjh0823@coasia.com, smn1196@coasia.com, lightwise@coasia.com,
+	devicetree@vger.kernel.org, gwk1013@coasia.com, pjsin865@coasia.com,
+	lars.persson@axis.com, sboyd@kernel.org, alim.akhtar@samsung.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, swathi.ks@samsung.com,
+	conor+dt@kernel.org, mturquette@baylibre.com
+Subject: Re: [PATCH 1/7] dt-bindings: clock: Add ARTPEC-9 clock controller
+Message-ID: <175856002216.463169.9530978340977850859.robh@kernel.org>
+References: <20250917085005.89819-1-ravi.patel@samsung.com>
+ <CGME20250917085025epcas5p229b9eba48bd93a1f059b3cc4656145bc@epcas5p2.samsung.com>
+ <20250917085005.89819-2-ravi.patel@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,38 +68,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250920132621.16263-1-arighi@nvidia.com>
+In-Reply-To: <20250917085005.89819-2-ravi.patel@samsung.com>
 
-On Sat, Sep 20, 2025 at 03:26:21PM +0200, Andrea Righi wrote:
-> When scx_bpf_select_cpu_dfl()/and() kfuncs are invoked outside of
-> ops.select_cpu() we can't rely on @p->migration_disabled to determine if
-> migration is disabled for the task @p.
-> 
-> In fact, migration is always disabled for the current task while running
-> BPF code: __bpf_prog_enter() disables migration and __bpf_prog_exit()
-> re-enables it.
-> 
-> To handle this, when @p->migration_disabled == 1, check whether @p is
-> the current task. If so, migration was not disabled before entering the
-> callback, otherwise migration was disabled.
-> 
-> This ensures correct idle CPU selection in all cases. The behavior of
-> ops.select_cpu() remains unchanged, because this callback is never
-> invoked for the current task and migration-disabled tasks are always
-> excluded.
-> 
-> Example: without this change scx_bpf_select_cpu_and() called from
-> ops.enqueue() always returns -EBUSY; with this change applied, it
-> correctly returns idle CPUs.
-> 
-> Fixes: 06efc9fe0b8de ("sched_ext: idle: Handle migration-disabled tasks in idle selection")
-> Cc: stable@vger.kernel.org # v6.16+
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
 
-Applied to sched_ext/for-6.17-fixes.
+On Wed, 17 Sep 2025 14:19:58 +0530, Ravi Patel wrote:
+> From: GyoungBo Min <mingyoungbo@coasia.com>
+> 
+> Add dt-schema for Axis ARTPEC-9 SoC clock controller.
+> 
+> The Clock Management Unit (CMU) has a top-level block CMU_CMU
+> which generates clocks for other blocks.
+> 
+> Add device-tree binding definitions for following CMU blocks:
+> - CMU_CMU
+> - CMU_BUS
+> - CMU_CORE
+> - CMU_CPUCL
+> - CMU_FSYS0
+> - CMU_FSYS1
+> - CMU_IMEM
+> - CMU_PERI
+> 
+> Signed-off-by: GyoungBo Min <mingyoungbo@coasia.com>
+> Reviewed-by: Kyunghwan Kim <kenkim@coasia.com>
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> ---
+>  .../bindings/clock/axis,artpec9-clock.yaml    | 232 ++++++++++++++++++
+>  include/dt-bindings/clock/axis,artpec9-clk.h  | 195 +++++++++++++++
+>  2 files changed, 427 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec9-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/axis,artpec9-clk.h
+> 
 
-Thanks.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
--- 
-tejun
 
