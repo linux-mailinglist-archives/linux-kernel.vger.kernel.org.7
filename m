@@ -1,115 +1,109 @@
-Return-Path: <linux-kernel+bounces-827823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F0DCB93344
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:19:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBEDB9334D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8DA82A4BD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:19:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08D871901B40
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1235A30DEA6;
-	Mon, 22 Sep 2025 20:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893882F6567;
+	Mon, 22 Sep 2025 20:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NMWwzLT8"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="REGKL9+0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8884C2E5B11
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 20:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D982E2DC1;
+	Mon, 22 Sep 2025 20:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758572363; cv=none; b=RQfRsmGHgsAxNdf+qATBZVTtJto/qYzylqZtuff1v4JGweN8rHbDRpCaykukOPkEQ8oJifABERMI+lEi78RfyYPW0VjGRWiT88HEqGJc5DzlTqm/z2wsic/7wPnLGRM/Jb+8aYTgs5ieFqmxxUGvump/1uVrLvQ9xMO/D5tP0Uc=
+	t=1758572418; cv=none; b=BE6URJY3m4dLnLKg8fN7rMQGlV4sJxstgoKzfjlmayozhE9B/kpIaOctl+1PYbeS+tKsrdFyat9dLb8xx5FrqlJSOklFy24IuSyCqZytWfj626Uu7OV78YdkNXkpWSBYqslEc1jpMSuXv1/egK+0yCMaa2onF2NkpHoHpjBZSbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758572363; c=relaxed/simple;
-	bh=Wjj5orz1Ls2CmQfDaIzFeM+RMmWdHrc6IpmRS8oj2cE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l5NHbWm80eNUww/IewX0O0AOlULEFQWhD5fDoElyaEezEzZKj1DAg3cVw2KYayEdlj0zOK95V4GgNfKzLYRhazeUGTUGEwyjJ06BahMNbf1T6gFMv0RIII7rrNJ8HABHjBnSnScgOc+dEdkhiiMplKNNQ1S+dSizfdB9bMK0FGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NMWwzLT8; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758572358;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IuZR+nPkiRhCz8T90e0V2L3HEyIm3Q690MeSbxQKeMU=;
-	b=NMWwzLT8M4RGJ/zUJG7hO+v+bz5Cj+8AIAwzQgqQm4/rb07TTQQhFuLxcIw4s3e9dG6TqT
-	HNeFU6ACb3QXUVeDJwiv/r0EdF4fowykbQ8+zYhHjneR9iG3UhpL0Hf1MNXZkU80uVpgy+
-	x3WaNshFOMtbfvyQPdmpxZl4gA3/PlE=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Don Brace <don.brace@microchip.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	storagedev@microchip.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: smartpqi: Replace kmalloc + copy_from_user with memdup_user
-Date: Mon, 22 Sep 2025 22:18:33 +0200
-Message-ID: <20250922201832.1697874-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1758572418; c=relaxed/simple;
+	bh=SKHIwH86g+4PIdxQd+vsl7x9QVwZsHHhDsTe90dtEXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RRrEjwIwzszEFcg0yMqLecYbypqKlL5Rnocz+O/H2bowhNxlM2sY5lUKApA8LdCfrb18QXLDJmzHCD87ZY5wLzd17+aOn80JpUMIlmJbwe8Tllq2VS3fu7o1/AElRVh9YSlyLtkPmcMMcXHo+W7IlVRiVGbSjzANDUBwJMlk5jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=REGKL9+0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DCADC4CEF0;
+	Mon, 22 Sep 2025 20:20:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758572415;
+	bh=SKHIwH86g+4PIdxQd+vsl7x9QVwZsHHhDsTe90dtEXg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=REGKL9+0p0aAaSu9XbgwQD9Yjw9tk6kRwRyRwQOEon1DMRnpg2q/ZXmIJpXp5aUcN
+	 tINWgKWq0xMRb6DUjaJRNqoGezQr0N7pda3g/m/xcs4rK2L3xJrbykE2/qFl0uyshX
+	 LnDA1U2DYi7PIqUxBKO183APHCWGo1YG31Pa+pSU0pSrSgY84+HZVpT/bE4ZVQNeqW
+	 lJJZUUm6nWy+TJ4wwtOXw3joLmeOsj5CkLTX46Z+ZclGwUw9OcfiT+Tsg62bJlbdu2
+	 ytdJD0iMiG7fJKs8IG1jDum2RbOBxc+l9JMfac3vt5ExdoeM55ujfHdSXSmLFoYWe/
+	 HWFQqohmPxnmw==
+Date: Mon, 22 Sep 2025 15:20:14 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: saravanak@google.com, lizhi.hou@amd.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] of: unittest: Fix device reference count leak in
+ of_unittest_pci_node_verify
+Message-ID: <20250922202014.GA1254345-robh@kernel.org>
+References: <20250920085135.21835-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250920085135.21835-1-make24@iscas.ac.cn>
 
-Replace kmalloc() followed by copy_from_user() with memdup_user() to
-simplify and improve pqi_passthru_ioctl().
+On Sat, Sep 20, 2025 at 04:51:35PM +0800, Ma Ke wrote:
+> In of_unittest_pci_node_verify(), when the add parameter is false,
+> device_find_any_child() obtains a reference to a child device. This
+> function implicitly calls get_device() to increment the device's
+> reference count before returning the pointer. However, the caller
+> fails to properly release this reference by calling put_device(),
+> leading to a device reference count leak.
+> 
+> As the comment of device_find_any_child states: "NOTE: you will need
+> to drop the reference with put_device() after use".
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 26409dd04589 ("of: unittest: Add pci_dt_testdrv pci driver")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  drivers/of/unittest.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+> index e3503ec20f6c..d225e73781fe 100644
+> --- a/drivers/of/unittest.c
+> +++ b/drivers/of/unittest.c
+> @@ -4271,7 +4271,7 @@ static struct platform_driver unittest_pci_driver = {
+>  static int of_unittest_pci_node_verify(struct pci_dev *pdev, bool add)
+>  {
+>  	struct device_node *pnp, *np = NULL;
+> -	struct device *child_dev;
+> +	struct device *child_dev = NULL;
+>  	char *path = NULL;
+>  	const __be32 *reg;
+>  	int rc = 0;
+> @@ -4306,6 +4306,8 @@ static int of_unittest_pci_node_verify(struct pci_dev *pdev, bool add)
+>  	kfree(path);
+>  	if (np)
+>  		of_node_put(np);
+> +	if (child_dev)
+> +		put_device(child_dev);
 
-Since memdup_user() already allocates memory, use kzalloc() in the else
-branch instead of manually zeroing 'kernel_buffer' using memset(0).
+This can go in the else clause. Then child_dev doesn't need to be 
+initialized to NULL.
 
-Return early if an error occurs.  No functional changes intended.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/scsi/smartpqi/smartpqi_init.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
-index 125944941601..03c97e60d36f 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -20,6 +20,7 @@
- #include <linux/reboot.h>
- #include <linux/cciss_ioctl.h>
- #include <linux/crash_dump.h>
-+#include <linux/string.h>
- #include <scsi/scsi_host.h>
- #include <scsi/scsi_cmnd.h>
- #include <scsi/scsi_device.h>
-@@ -6774,17 +6775,15 @@ static int pqi_passthru_ioctl(struct pqi_ctrl_info *ctrl_info, void __user *arg)
- 	}
- 
- 	if (iocommand.buf_size > 0) {
--		kernel_buffer = kmalloc(iocommand.buf_size, GFP_KERNEL);
--		if (!kernel_buffer)
--			return -ENOMEM;
- 		if (iocommand.Request.Type.Direction & XFER_WRITE) {
--			if (copy_from_user(kernel_buffer, iocommand.buf,
--				iocommand.buf_size)) {
--				rc = -EFAULT;
--				goto out;
--			}
-+			kernel_buffer = memdup_user(iocommand.buf,
-+						    iocommand.buf_size);
-+			if (IS_ERR(kernel_buffer))
-+				return PTR_ERR(kernel_buffer);
- 		} else {
--			memset(kernel_buffer, 0, iocommand.buf_size);
-+			kernel_buffer = kzalloc(iocommand.buf_size, GFP_KERNEL);
-+			if (!kernel_buffer)
-+				return -ENOMEM;
- 		}
- 	}
- 
--- 
-2.51.0
-
+>  
+>  	return rc;
+>  }
+> -- 
+> 2.17.1
+> 
 
