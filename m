@@ -1,119 +1,95 @@
-Return-Path: <linux-kernel+bounces-827957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D813B93863
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:57:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD0CB93866
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D147544111E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:57:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99FC2A5EC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9BB1E502;
-	Mon, 22 Sep 2025 22:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AE22F0C6C;
+	Mon, 22 Sep 2025 22:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpcw6JrB"
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="UHSyUcIq"
+Received: from r3-19.sinamail.sina.com.cn (r3-19.sinamail.sina.com.cn [202.108.3.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BE12550AD
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 22:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A81246764
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 22:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758581857; cv=none; b=lAIkoHHo0phiWSL+bI0UI/mIwt9nTM0UxGgh6en6SQ7XXpEmB02P2LBFVBxk4YNN2gSKgZydSBRdqgLisEnfQW8AqwTHX3qFbod9x+wnrWkdEdlZaytQxYLp9XOB2UP+XfNIWUhGvRKNvMbevt2wkrf5pWGGXzyd3cYiA0qlYVM=
+	t=1758581977; cv=none; b=d2aKhIe5gcWOJRwNEkHTRJL6ncf6OV5vEiEg+WgJBvhBYZoA+mPpbzdK1b8mhhshL/BnkycT4QBu/ySSoz8EHAlA/jrlfkSNud5i792A/2tVM6gZI5oYpSVYtkc/N0vKIRA5tMGMYCxNIF1XJMDrlf5DqYJ8Fkj5BMsJ+ZpN784=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758581857; c=relaxed/simple;
-	bh=wJcpJFENZM3XJoASue2WgV0KmkWQXXkTgGWB1tLNT3o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LeX5OC4fgxc3xAtF0i34bmC8cA7Zr5AKORbqKesZBg0/6v76y+w2pBJFb8ojCtaG/3HfT7K7gkqY1GhC4DgUccQdSlVoZKz4o5JSPZeN20ZZelgzq4HWAFFJeK3uHh1WhiPCXymLvtMUWWvvQHIMgPvMJGpClvcAjp3cUq1MZIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dpcw6JrB; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-8e1d6fd99c1so1479616241.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:57:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758581855; x=1759186655; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4PmeTUZt1oKPH7ak6kJVKMIBti4fjRyL0GgGscNM+JY=;
-        b=dpcw6JrBZONtlfbZf9OG2m5/KRfsla9uLol1Tw++vgQFsv4TrT1yqfiOFt+Opzb4sx
-         UyDRxhFZfPTEhKGXkQphaBcbCYkEduUOw961fGxkhOhyQ0dMDJ3Fa7jwB/HlnuD4WNK9
-         eFPod4Nweq0sRavkxwnG5bRwV/89OHwxH36A5qL7rdZuGUoaFk2K4BnwDAEnlqLc4gaA
-         vjX3U1sqBImFkDs6t0XHjhhyYiISdWR9Qz4rb5hghmBGbsDxRjfPnq54xihREHycdMtn
-         vN5ueZQzw7ZhKX4rE3OBtmKuCjWWU7umQQz1nBQr9Ms9IW4+Lc7SpxDZAcmdMEzf1vUz
-         lFQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758581855; x=1759186655;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4PmeTUZt1oKPH7ak6kJVKMIBti4fjRyL0GgGscNM+JY=;
-        b=n2dk62nOMwlSrbEL16g/TWJCBHh4PLkIalIHwNl0WnIt3fRgfKzDK0TCKFQB28EGji
-         tutwfDS1D7E6nIs8J5LRCQtC1xlIpZ8kLQnuEqw9j5Zk3E4QFvwFef4FchGYCPh6WMEy
-         YJjGIyKO51R4uuSrj2SBepNVttcuY7P2y5XIS8AIG8ODjb0DM30G23E+YPpk4+C5Rc2+
-         E3Uz6ojNk4KBYtjaDrPws/GAzQr0Q9QuDQqswy6Mykb5kqXDl8Ca7wq0TjyO1N4WWAXJ
-         cRsHtwTPhr+4/fS5570Pc1nrw7wb3HTQdYfqwav4lbho3S66qzGUXcc26XKz36egxeE0
-         y6XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWu+zA6RxsIHyinNk56yx7bfF3MRBgxZ/TdIjyQQOsldorvHAhxeSemhwNQfVvzzf82PAiFahrx8XMbWc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlqz2L/CaXUFzT3XYSrgkAoFhA2n5BF/HNc63uiAMpwJ/ixllG
-	mh0isGoyPNxLay6bghzOQtKAJw1HQHN7stvcNy0Bn5sp1OoZWjmb6Ly3
-X-Gm-Gg: ASbGncv5XCV6GWvy0yx0NaK5GyiRvjXhavapQ7QfzCuwXf9TwTDsmZGoRpSuArUhFzN
-	auqCW4ZiUCk2ryJofvqsGrNgXFn3IKspgPiABrRBZlhPb6Q1niUfch+4+J7XR+Z84O56RpMgwJt
-	WFKOyQBtZcJWDop0kXh872PpebGl9I0XTkk9utTF1Z84YItdxmeZa4oJUb3s5TecHv8FAiZwjnw
-	4dNp32zi0ImBdxUcZ+PZWe/Np8dN4DWPZ/kLRSOusfNTJR51RexKEwjXTonOiCxI0cRGXOXePRh
-	xuuyAzXMNdmhGJP2GwxMVr8azEpH1EeAJ8MydquI+4rfiKoVNzzLsQSq/OeZ6BRo8kzfSjaKhSG
-	mzPU3FlHN6oFvbgzJMDk60YwCE2xYxE7LpGafgvo=
-X-Google-Smtp-Source: AGHT+IEvT9aPO8VQeqDviuBf3xOmqzdNdU8B4VMjX/6iETFgk5faqYljbrRsv10VslcAQOzyPiUIlA==
-X-Received: by 2002:a05:6122:3187:b0:539:1dbf:3148 with SMTP id 71dfb90a1353d-54bcadf84e4mr233297e0c.2.1758581855238;
-        Mon, 22 Sep 2025 15:57:35 -0700 (PDT)
-Received: from [192.168.1.145] ([104.203.11.126])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54a72974f24sm2963990e0c.19.2025.09.22.15.57.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 15:57:34 -0700 (PDT)
-Message-ID: <29f30ca3-cf45-44fc-aec7-1db6f9694e5f@gmail.com>
-Date: Mon, 22 Sep 2025 18:57:33 -0400
+	s=arc-20240116; t=1758581977; c=relaxed/simple;
+	bh=6JIKavNMsCVzCbTgEM7D4yYHPb5qWgUy33rt1dH4N7w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Fw2gCNKvu2ZoBRWpMkbiz+td/QyDIbXp2P3TR4+A1omUM22fGn1IzuNDhBKQ7qLIg/CzBw2p9EE7RTLv0UvGdagnr9V5YiQdJab8Xw2HmMHm87xphxeMN+aMCwA6dYZ4CGaqhBg1XZH3xXeNhiBx+C8nSTdbSrD5bP36EffMWyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=UHSyUcIq; arc=none smtp.client-ip=202.108.3.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1758581972;
+	bh=63V+dCJdxqQLzgPfVm6yIkiMqBaRWnBqIIYzurwPefA=;
+	h=From:Subject:Date:Message-ID;
+	b=UHSyUcIqcXp2IPn0XR/k3rFV6dAtI9nG5BjmfJ2dszBNrhDhMG5yE6YYkwmQHgTLX
+	 EI2dRKwQ8K+8aqOgtEJu0O3DfhvK2MOiixj6AH559DiN8+B/D+nuXdQHG/x2JMTDye
+	 BJlZlHlipGuepVoUvXhiIklgnSp8Oc8DMLGZovss=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 68D1D4A400001201; Mon, 23 Sep 2025 06:58:46 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 5073724456663
+X-SMAIL-UIID: 5494ED2ADE3642D8AEDA5531F6C1A036-20250923-065846-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+5c5d41e80248d610221f@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [block?] general protection fault in blk_mq_free_tags_callback
+Date: Tue, 23 Sep 2025 06:58:33 +0800
+Message-ID: <20250922225834.7386-1-hdanton@sina.com>
+In-Reply-To: <68d1b079.a70a0220.1b52b.0000.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: Fix Makefile to run targets even the ones in
- SKIP_TARGETS
-To: I Viswanath <viswanathiyyappan@gmail.com>, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-References: <20250920041914.7253-1-viswanathiyyappan@gmail.com>
-Content-Language: en-US
-From: David Hunter <david.hunter.linux@gmail.com>
-In-Reply-To: <20250920041914.7253-1-viswanathiyyappan@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/20/25 00:19, I Viswanath wrote:
-
-> Signed-off-by: I Viswanath <viswanathiyyappan@gmail.com>
-> ---
-> make --silent summary=1 TARGETS="bpf size" kselftest
+> Date: Mon, 22 Sep 2025 13:24:25 -0700	[thread overview]
+> Hello,
 > 
-> make[3]: Entering directory '/home/user/kernel-dev/linux-next/tools/testing/selftests/bpf'
+> syzbot found the following issue on:
 > 
-> Auto-detecting system features:
-> ...                                    llvm: [ OFF ]
-> 
+> HEAD commit:    846bd2225ec3 Add linux-next specific files for 20250919
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13c238e2580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=135377594f35b576
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5c5d41e80248d610221f
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155e427c580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17bb8142580000
 
-Hi Viswaneth,
+#syz test linux-next  master
 
-After the "---" usually the change log is placed. The change log
-contains the changes from version 1. Also if this is a version 2 patch,
-it is best to note it in the subject line. The v2 helps people keep up
-with which patch is the most recent.
-
-Thanks,
-David Hunter
-
-
+--- x/block/blk-mq-tag.c
++++ y/block/blk-mq-tag.c
+@@ -565,6 +565,7 @@ struct blk_mq_tags *blk_mq_init_tags(uns
+ 	if (!tags)
+ 		return NULL;
+ 
++	INIT_LIST_HEAD(&tags->page_list);
+ 	tags->nr_tags = total_tags;
+ 	tags->nr_reserved_tags = reserved_tags;
+ 	spin_lock_init(&tags->lock);
+--
 
