@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-827221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1583B912F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:46:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE57B91321
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFD14421464
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:46:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 326CD7A337A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F363081AB;
-	Mon, 22 Sep 2025 12:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E933093D7;
+	Mon, 22 Sep 2025 12:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lWY7uFJB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="bxLN3kHH"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CE7234964;
-	Mon, 22 Sep 2025 12:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758545185; cv=none; b=QuZlj+kZ8cGuth6zqi+Cg1wCzEAuFgSzO1W4UfwN5AFwQjoGib+2NhSHohK1yLJMAA8uArPZnfSyd7Tuv3/fGy6mrYfP3+NX5pe1Gk32BLIIBjBKabTAZNua3zpqSrMjV/POWQ2pnBqV8+SeABcGLrIppT6US62/L3z9gFPQddI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758545185; c=relaxed/simple;
-	bh=M/x/bO4gCNcIOS93WlITlNNf+KPkpctnTn5IThzaU0g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LY8OSZBRGTvwhX12p4kyUbssALPmBYYPrMHRoWvmbQ5W5H30PgtRU3YKHWDT/scEpiMicEmtK8hK56ghrPsEm/TuWKKyanUZzWIjUr93rsLtUxeu/5qmmyGXBbQ3MkVj+OfEZrC/liurW3uz9zbMlhzz8aYoaWQbcfZGKsMagCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lWY7uFJB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 428CEC4CEF0;
-	Mon, 22 Sep 2025 12:46:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758545184;
-	bh=M/x/bO4gCNcIOS93WlITlNNf+KPkpctnTn5IThzaU0g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lWY7uFJB3bweCwm0w6OTEOdhVA+Dbrm/f/V0setUxgUD4gxoSr+c5sIH0DazsK33f
-	 a2L6PHmZdlIvyFTgfN6IAjcTSK5ygwkNlOWGIBJTPJeredwrXU2JtIpqcUSCS9sTxg
-	 XQNtSLHET5i/wxKwYVOu6yCl8EGYMx70WR7AcoXb3unh5WrJAaxTFFawxrK4Rf/2SK
-	 U/pXXWrDnVemo6fiiIG+yDmmOtiv0Kj6AU4zw5bJfk0c6HHWgzYWVatrtOPF8VjNEn
-	 xXWaCcugICGHGf4bLB5SfZ34GmBfmaYLNdfzlAal3cnEx+esa2oubi8UqQGKDxFL09
-	 7krMbr5hZkdZw==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] tracing: Add an option to show symbols in _text+offset for function profiler
-Date: Mon, 22 Sep 2025 21:46:21 +0900
-Message-ID: <175854518099.353182.11090224112128363620.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <175854516202.353182.1216978967046454932.stgit@devnote2>
-References: <175854516202.353182.1216978967046454932.stgit@devnote2>
-User-Agent: StGit/0.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB1C30101F;
+	Mon, 22 Sep 2025 12:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758545318; cv=pass; b=OlwcQlS/kVxkHacxI/qTwsZHvOd0TyvauR5ah/DiQcy6LN+8pcZikzoSRYJGvfYLv/TY9iW9rHGD/KzITgkoakEnp4oLoq5++ALlvCd+RoGT3uz5TF03aj4tKNaXNGZ/7/hzdrVOX4IOi94JanKi7EmZEsL+VfeGGUDaq+Bs5b0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758545318; c=relaxed/simple;
+	bh=ajgpqeWH1J9OjvBk976S+Q5QHwI27D09dVg+WbxvooQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=n0a2ItUIG31cWMneOgw64CsBLWNY63U4h4DqDjo3RIBBZaiGPBd0/Xkp2ipaK4isOrSOcdzH9G6HNIEo3Ns9ROoEjfVlgwCqNVleDH6Q0CuI63Jp2BSDZWhsOSkPxQlRs4N/RbhlLvRGDdXmsoT8wwT6XYycwi+hJOGBxpJ/yG0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=bxLN3kHH; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+ARC-Seal: i=1; a=rsa-sha256; t=1758545252; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=FLON75iNI9JeHakiKtstQpQY0Ir6xijkmvDbc+pQKZMfTyA9jb5ryUx4wbF9gOxkhEW4ik81Bda4wp+jNwFQ+NhuomroOGnvfuadLWJDjLYIViTCw4MJaqO6+1PvNEsIiH4eXFcbGgLl+mMCnJ3qkCLxdBlRa6JxckaldS4HPL4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758545252; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=QQHfWPLq9h9/26EFDezuhABuHqn17sUNy+23WQyGpPU=; 
+	b=H+RUeXyAvuzi51F/NpdpfmgLuct9VvfsjU8iwVR5n9dfR/yQJ3onNE3GNyI3+qV+8Qoxhe1mwGmUxwBrqlQnUcIOTDR2L5hdYn1cBe8w3xhPED4ogT4lPtdkulbQd49LQj2peIalt4yLo8KbHmOCDws7Ui9r5nsi+YWGXBr6QaY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758545252;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=QQHfWPLq9h9/26EFDezuhABuHqn17sUNy+23WQyGpPU=;
+	b=bxLN3kHHHM0PpnR/N/YnowWACvzX+3ZFxQwHdkbgTlvSh/D5DLMcGjmh/gA59zib
+	xF0PLnUAW7kzpyZf+Du4z1D/VuuI/X6OETsEeQSU7xvi4TD3XG0ZSfSdFLb/yjKIPbf
+	3KmDtov5L9MENQ3v6HXWcX2T7WStGiHvj7v5nz84=
+Received: by mx.zohomail.com with SMTPS id 1758545250603407.16427504257217;
+	Mon, 22 Sep 2025 05:47:30 -0700 (PDT)
+From: Junhui Liu <junhui.liu@pigmoral.tech>
+Subject: [PATCH v2 00/11] riscv: Add initial support for Anlogic DR1V90
+Date: Mon, 22 Sep 2025 20:46:30 +0800
+Message-Id: <20250922-dr1v90-basic-dt-v2-0-64d28500cb37@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,137 +61,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACZF0WgC/2WNQQrCMBBFr1Jm7UgSG2JceQ/pIk3HdkDbkoSgl
+ NzdWNy5fA/++xtECkwRLs0GgTJHXuYK6tCAn9w8EvJQGZRQWhgpcAgyW4G9i+xxSHjSiqwj7Xx
+ /hrpaA935tRdvXeWJY1rCez/I8mt/LSX/WlmiQG1a4bW01rfmuvL4XIJ7HBP5CbpSygdnsNQ6s
+ gAAAA==
+X-Change-ID: 20250710-dr1v90-basic-dt-352e9ae5acb8
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Anup Patel <anup@brainfault.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Junhui Liu <junhui.liu@pigmoral.tech>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>, 
+ linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758545232; l=3345;
+ i=junhui.liu@pigmoral.tech; s=20250910; h=from:subject:message-id;
+ bh=ajgpqeWH1J9OjvBk976S+Q5QHwI27D09dVg+WbxvooQ=;
+ b=BM1IXkvoJJUJQu9/EIL9IfPkPgdDl/LrRNrn7XaLuR4FQWU3nNPC6jFTkXc8wd1csYCvwteOC
+ WQ7F3pEnccFDX2VF6rfBWZeZtllg70wToOUT18ZIDm6M/IcCmRpR03z
+X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
+ pk=cgATWSU1KfGWmdwNmkPyHGnWgofhqqhE8Vts58wyxe4=
+X-ZohoMailClient: External
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+This patch series introduces initial support for the Anlogic DR1V90 SoC
+[1] and the Milianke MLKPAI-FS01 [2] board.
 
-Function profiler shows the hit count of each function using its symbol
-name. However, there are some same-name local symbols, which we can not
-distinguish.
-To solve this issue, this introduces an option to show the symbols
-in "_text+OFFSET" format. This can avoid exposing the random shift of
-KASLR. The functions in modules are shown as "MODNAME+OFFSET" where the
-offset is from ".text".
+The DR1V90 is a RISC-V based FPSoC from Anlogic, featuring a Nuclei
+UX900 [3] core as its processing system (PS) and 94,464 LUTs in the
+programmable logic (PL) part. The Milianke MLKPAI-FS01 board is one of
+the first platforms based on this SoC, with UART1 routed to a Type-C
+interface for console access.
 
-E.g. for the kernel text symbols, specify vmlinux and the output to
- addr2line, you can find the actual function and source info;
+Tested on the Milianke MLKPAI-FS01 board with both the vendor's OpenSBI
+and the not-yet-upstreamed mainline OpenSBI [4], as well as the vendor’s
+U-Boot. Because the vendor’s OpenSBI is loaded at 0x1f300000, we have
+to additionally reserve the DRAM region 0x1fe00000–0x1fffffff to prevent
+overlap if using vendor's OpenSBI.
 
-  $ addr2line -fie vmlinux _text+3078208
-  __balance_callbacks
-  kernel/sched/core.c:5064
+Notice: A "no4lvl" bootarg or dependency patch [5] is currently required
+for successful boot on the DR1V90 platform, since the SoC hangs if the
+kernel attempts to use unsupported 4-level or 5-level paging modes.
 
-for modules, specify the module file and .text+OFFSET;
-
-  $ addr2line -fie samples/trace_events/trace-events-sample.ko .text+8224
-  do_simple_thread_func
-  samples/trace_events/trace-events-sample.c:23
-
-Suggested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Link: https://www.anlogic.com/product/fpga/saldragon/dr1 [1]
+Link: https://www.milianke.com/product-item-104.html [2]
+Link: https://nucleisys.com/product/900.php [3]
+Link: https://github.com/pigmoral/opensbi/tree/dr1v90 [4]
+Link: https://lore.kernel.org/linux-riscv/20250722-satp-from-fdt-v1-0-5ba22218fa5f@pigmoral.tech [5]
 ---
- Changes in v2:
-  - Define a dummy TRACE_ITER_PROF_TEXT_OFFSET if CONFIG_FUNCTION_PROFILER=n.
----
- kernel/trace/ftrace.c |   26 +++++++++++++++++++++++++-
- kernel/trace/trace.c  |    5 +++--
- kernel/trace/trace.h  |   11 ++++++++++-
- 3 files changed, 38 insertions(+), 4 deletions(-)
+Changes in v2:
+- Add MAINTAINERS entry for the DR1V90 platform
+- Remove the riscv,isa property of cpu and reorder propertyies
+- Fix clint base address in the dtsi
+- Change the memory node to cover the full 512MB RAM in board dts
+- Link to v1: https://lore.kernel.org/r/20250721-dr1v90-basic-dt-v1-0-5740c5199c47@pigmoral.tech
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 00b76d450a89..d4802bb93793 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -534,7 +534,9 @@ static int function_stat_headers(struct seq_file *m)
- 
- static int function_stat_show(struct seq_file *m, void *v)
- {
-+	struct trace_array *tr = trace_get_global_array();
- 	struct ftrace_profile *rec = v;
-+	const char *refsymbol = NULL;
- 	char str[KSYM_SYMBOL_LEN];
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- 	static struct trace_seq s;
-@@ -554,7 +556,29 @@ static int function_stat_show(struct seq_file *m, void *v)
- 		return 0;
- #endif
- 
--	kallsyms_lookup(rec->ip, NULL, NULL, NULL, str);
-+	if (tr->trace_flags & TRACE_ITER_PROF_TEXT_OFFSET) {
-+		long offset;
-+
-+		if (core_kernel_text(rec->ip)) {
-+			refsymbol = "_text";
-+			offset = rec->ip - (unsigned long)_text;
-+		} else {
-+			struct module *mod;
-+
-+			guard(rcu)();
-+			mod = __module_text_address(rec->ip);
-+			if (mod) {
-+				refsymbol = mod->name;
-+				/* Calculate offset from module's text entry address. */
-+				offset = rec->ip - (unsigned long)mod->mem[MOD_TEXT].base;
-+			}
-+		}
-+		if (refsymbol)
-+			snprintf(str, sizeof(str), "  %s%+ld", refsymbol, offset);
-+	}
-+	if (!refsymbol)
-+		kallsyms_lookup(rec->ip, NULL, NULL, NULL, str);
-+
- 	seq_printf(m, "  %-30.30s  %10lu", str, rec->counter);
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 114098f7b06f..cbe1c5aa12e1 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -522,7 +522,8 @@ EXPORT_SYMBOL_GPL(unregister_ftrace_export);
- 
- /* trace_options that are only supported by global_trace */
- #define TOP_LEVEL_TRACE_FLAGS (TRACE_ITER_PRINTK |			\
--	       TRACE_ITER_PRINTK_MSGONLY | TRACE_ITER_RECORD_CMD)
-+	       TRACE_ITER_PRINTK_MSGONLY | TRACE_ITER_RECORD_CMD |	\
-+	       TRACE_ITER_PROF_TEXT_OFFSET)
- 
- /* trace_flags that are default zero for instances */
- #define ZEROED_TRACE_FLAGS \
-@@ -11106,7 +11107,7 @@ __init static int tracer_alloc_buffers(void)
- 
- #ifdef CONFIG_FUNCTION_TRACER
- /* Used to set module cached ftrace filtering at boot up */
--__init struct trace_array *trace_get_global_array(void)
-+struct trace_array *trace_get_global_array(void)
- {
- 	return &global_trace;
- }
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index c2a41c2cafe5..f57d0900f427 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1353,6 +1353,14 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- # define STACK_FLAGS
- #endif
- 
-+#ifdef CONFIG_FUNCTION_PROFILER
-+# define PROFILER_FLAGS					\
-+		C(PROF_TEXT_OFFSET,	"prof-text-offset")
-+#else
-+# define PROFILER_FLAGS
-+# define TRACE_ITER_PROF_TEXT_OFFSET	0UL
-+#endif
-+
- /*
-  * trace_iterator_flags is an enumeration that defines bit
-  * positions into trace_flags that controls the output.
-@@ -1391,7 +1399,8 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 		FUNCTION_FLAGS					\
- 		FGRAPH_FLAGS					\
- 		STACK_FLAGS					\
--		BRANCH_FLAGS
-+		BRANCH_FLAGS					\
-+		PROFILER_FLAGS
- 
- /*
-  * By defining C, we can make TRACE_FLAGS a list of bit names
+---
+Junhui Liu (11):
+      dt-bindings: vendor-prefixes: Add Anlogic, Milianke and Nuclei
+      dt-bindings: riscv: Add Nuclei UX900 compatibles
+      dt-bindings: riscv: Add Anlogic DR1V90
+      dt-bindings: timer: Add Anlogic DR1V90 CLINT
+      dt-bindings: interrupt-controller: Add Anlogic DR1V90 PLIC
+      dt-bindings: serial: snps-dw-apb-uart: Add Anlogic DR1V90 uart
+      riscv: Add Anlogic SoC famly Kconfig support
+      riscv: dts: Add initial Anlogic DR1V90 SoC device tree
+      riscv: dts: anlogic: Add Milianke MLKPAI FS01 board
+      riscv: defconfig: Enable Anlogic SoC
+      MAINTAINERS: Setup support for Anlogic DR1V90 SoC tree
+
+ .../interrupt-controller/sifive,plic-1.0.0.yaml    |  1 +
+ .../devicetree/bindings/riscv/anlogic.yaml         | 27 +++++++
+ Documentation/devicetree/bindings/riscv/cpus.yaml  |  1 +
+ .../bindings/serial/snps-dw-apb-uart.yaml          |  1 +
+ .../devicetree/bindings/timer/sifive,clint.yaml    |  1 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |  6 ++
+ MAINTAINERS                                        |  9 +++
+ arch/riscv/Kconfig.socs                            |  5 ++
+ arch/riscv/boot/dts/Makefile                       |  1 +
+ arch/riscv/boot/dts/anlogic/Makefile               |  2 +
+ arch/riscv/boot/dts/anlogic/dr1v90-mlkpai-fs01.dts | 28 +++++++
+ arch/riscv/boot/dts/anlogic/dr1v90.dtsi            | 85 ++++++++++++++++++++++
+ arch/riscv/configs/defconfig                       |  1 +
+ 13 files changed, 168 insertions(+)
+---
+base-commit: 07e27ad16399afcd693be20211b0dfae63e0615f
+change-id: 20250710-dr1v90-basic-dt-352e9ae5acb8
+
+Best regards,
+-- 
+Junhui Liu <junhui.liu@pigmoral.tech>
 
 
