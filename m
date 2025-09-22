@@ -1,238 +1,357 @@
-Return-Path: <linux-kernel+bounces-827032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4489EB8FF85
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:19:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B65B8FFA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96C68164A37
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:19:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA485188DE61
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72752FE077;
-	Mon, 22 Sep 2025 10:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3817E2FC001;
+	Mon, 22 Sep 2025 10:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iYSZLn1J";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FPsuUoSa";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iYSZLn1J";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FPsuUoSa"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gUhJ99K2"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE7214EC46
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7BE27B4FA
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758536390; cv=none; b=r85Ax3IzYwDbu57KqAwrLHWohzVZ6oKkc2Na81v/aTaMJSCsoc8esovcpa3zq1l4+mqQTooV60QqBi23c/v7tX6pK1J/erjLXF0oprBglQR9VF893Q58BpnfA+G4wiyK390LCsftBwUV3KGpdOLB03QL32OeyOugGBeb6BI1mPw=
+	t=1758536518; cv=none; b=MJaZi4HeDTn8owVsZXhErVq/yBUeg9jKops/R0Myg2bSs7bhNC2ReUb0LzWBdOJhiAzaVWTdCbYwIwJSpmXpB1B5XxXHqtfdzRJ6xBFGs/18LUbuP/SscPwX2G1eykWgq+wf8GGNDzcuMMItw3PpECBTBwmzu7IkKXIMP/9Om3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758536390; c=relaxed/simple;
-	bh=JE6eqHzVPMQMi049oMT9AY3guqoW9SUvz9a8sK5TNWo=;
+	s=arc-20240116; t=1758536518; c=relaxed/simple;
+	bh=6D3C4NKcjggk2Xj5Rl9Vb2TSMCHcURlQFKxeVhEQcuw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BB1U6MU16P885RMYf0sNh6poW/BUc1emw05AsiJBfYsm5+d+GzLqjQomwRxC+By3OTyHnE0lMxCQ6e+OgWZg3vSVi3A27W7V4DW8OnQYE96aUCY33J8nq+DrhK/kCBDCza7/r9dLWMVpuEZ8F+Le65VxfcyaT2MSVuoX1ay5epU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iYSZLn1J; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FPsuUoSa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iYSZLn1J; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FPsuUoSa; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 96277223EF;
-	Mon, 22 Sep 2025 10:19:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758536387; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RAiuS03SpWwOA2S2gGfiYmmunr9i/aaWyctgd7V3wXs=;
-	b=iYSZLn1JntyqA+I6cogq3wX0qOAwNaCuk9s7EBuBuBpGQZZYbyI3qcq2tcC8kCsz0RwZ0k
-	W5ca5XDxazKW8PKsS65TLZHzw8G9nXUBeCgzPUwh8pi2zcugodnORNmWTXb4XAZG2aK/v7
-	lbpXVXC4dZ8ZRWm7XLlpAE9kRYehKUU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758536387;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RAiuS03SpWwOA2S2gGfiYmmunr9i/aaWyctgd7V3wXs=;
-	b=FPsuUoSaBzFUiW089T9i9Cc3L02cTEg2aWNHzjKD31U+jq5rDqz/9wdVVjO3QR2uHpJKec
-	4qnH7utVocSHMHDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758536387; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RAiuS03SpWwOA2S2gGfiYmmunr9i/aaWyctgd7V3wXs=;
-	b=iYSZLn1JntyqA+I6cogq3wX0qOAwNaCuk9s7EBuBuBpGQZZYbyI3qcq2tcC8kCsz0RwZ0k
-	W5ca5XDxazKW8PKsS65TLZHzw8G9nXUBeCgzPUwh8pi2zcugodnORNmWTXb4XAZG2aK/v7
-	lbpXVXC4dZ8ZRWm7XLlpAE9kRYehKUU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758536387;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RAiuS03SpWwOA2S2gGfiYmmunr9i/aaWyctgd7V3wXs=;
-	b=FPsuUoSaBzFUiW089T9i9Cc3L02cTEg2aWNHzjKD31U+jq5rDqz/9wdVVjO3QR2uHpJKec
-	4qnH7utVocSHMHDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8359B13A63;
-	Mon, 22 Sep 2025 10:19:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5ZgPIMMi0WhlOgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 22 Sep 2025 10:19:47 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4A874A07C4; Mon, 22 Sep 2025 12:19:43 +0200 (CEST)
-Date: Mon, 22 Sep 2025 12:19:43 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 7/9] net: centralize ns_common initialization
-Message-ID: <yfd2esldmb63p3cv43gbnqy4xsefqfdlbfpoi2sr3crocmptp5@ouvz5orl7zlo>
-References: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
- <20250917-work-namespace-ns_common-v1-7-1b3bda8ef8f2@kernel.org>
- <kiyr4pnrw2a2oeoc3lavj73glvdg5llsfz2txfnn56bxmytfgw@o6weansm3iyi>
- <20250919-fanatiker-ethik-7a9bb32ee334@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XLoPDDZTLCD26mC+ZiAIAD33Y+7+VfD2uffAGXPl9rkM9H4ziQ8gMskMiFcm5dBdE5UZfV8tSgndNLmERv7maIoQ4r0fDAHQZ1X66JwkUmU3srcau/SbJWyA5J24izPSVLak6XMHaYVeDY1SCYe4k9HyEaEXytd509OfYLNZHTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gUhJ99K2; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b54a588ad96so3124680a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 03:21:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758536516; x=1759141316; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qgzrsKFjkdOHqZq8z9KJvQRmwrFpRxJTot1VKAx98R8=;
+        b=gUhJ99K2IWUdDoDvDch/f5l5v/Re1hL9lVEyXOpcyUQI1CaFNRJAKyDXZWjinY4J36
+         R6IG1409IzxniMGslrxWay4iljD1hCPPI/InnVNx8rkUx5wNAhy5W915HbNwfrCzBggC
+         VbfKK066rZL3L3GT5PgenjRLb9/wai7ClurYaTkyjrUPxM9e53DbBThmh+qriZ3Pt3o1
+         26+8bfqSF48X42FXsqdt08k5qkLwxOhHwEtPmeexdE0JvYWjdD9jg3tpfScI1bb9JVNo
+         88LM7RaNcjkKABNMyD+Eq2/X/owfHL1I1ZJE+/O/ZcZUEPOGgw6b7eJRQniQCWMG97uJ
+         0fuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758536516; x=1759141316;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qgzrsKFjkdOHqZq8z9KJvQRmwrFpRxJTot1VKAx98R8=;
+        b=lnze5OkhSO2tNkE27byU32Z8XwRQBEgK9dWskgZ/bvJyOdVz8/MWGX7xClOy2umCvF
+         /A2bRePenyCr6LaLrTO9iI909ZLfHIN8eAWKXvuS7RvvT4C3bZts8Va8/tV8yGN2dPI4
+         MilBuY8r7V/aVdYF7FRUcM+BCrNgRuYV2W9r12v3Mq35DzE5Rlb8QIGuJSM4R4g/llAt
+         DiBB1RsnOoMbPmmKWWewKoSyeYWaeL+cMyMXGyOVyjqpVqAsoIE82wgvw0gMbcLjXfjL
+         5RwiR/LRc6u35anv12sYFtIGYg4s1n2d7oP6Q3GKqTvh+UoV13v0aW5AoSH1Te1U5dD7
+         wNWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXilU2CINLdPtByMQUSCSuQQ/+NVaQ2XW+R7Ah0lqjhmhy/RUPFwZn2QTquzpmHgv0aL289674NfPx3Uac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNVWkyZn/4K6VqkDkONioYhEJ1u1vu7eJJTMZ/VTfHYfFs0GSz
+	0l5R4K0ObGNKQPiej0GvWycf8KE7jM/8qYkiFfBo0TPQjWBF5GwM37VKH/KfhQ==
+X-Gm-Gg: ASbGncvnHsM7nTl6c0Z5gq59/ibQsDh43xluav7EfeLHFGGaCQm4dHSPTCHlPEK/xyc
+	3ES8HdOSg8y1mnQsh8CIoUpoz0FUXyazrmIEz0nO5LNVlAPT3eEO2bJ7YunCCQ3B8+KYqPO6yf4
+	XNl7zySbIlNesThrZVYOfkc8jU4Wp/3WTljmk6MUbT36KOyELeN1DheGfA9/a4RQIq9t14vnurD
+	nJvX3gtfn4NsgKZnCop2xGfVI2TeGRGi4Zj17RnQ3Eoyo+TrqRHAmwLkpVz7dflQaqq/xn1tBt8
+	3cmtI3fbR9ht4UNqp4r1NQksHB0kNqkYaXSZJ1q6odoP2EEnUsmHTlx4aDeBLU1ofHZ/pu38aA0
+	vaCka99dVuzGZ5H/ZNpBaqEy6YRQk5+OE
+X-Google-Smtp-Source: AGHT+IFKvuB8nQ7chq/pZQMYgIgXJUcMFLs1cyYqPT9bIL5ygOY6/yTLZdyMi8zHSlQUMW4v/IZp4A==
+X-Received: by 2002:a17:90a:e509:b0:32e:dcc6:cd3f with SMTP id 98e67ed59e1d1-3305c6d8db1mr15617472a91.14.1758536515713;
+        Mon, 22 Sep 2025 03:21:55 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77e70c06ba1sm9402454b3a.67.2025.09.22.03.21.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 03:21:54 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 98E2B423FA7F; Mon, 22 Sep 2025 17:21:52 +0700 (WIB)
+Date: Mon, 22 Sep 2025 17:21:52 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Framebuffer <linux-fbdev@vger.kernel.org>,
+	Linux DRI Development <dri-devel@lists.freedesktop.org>
+Cc: Helge Deller <deller@gmx.de>, Jonathan Corbet <corbet@lwn.net>,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	Teddy Wang <teddy.wang@siliconmotion.com>,
+	Bernie Thompson <bernie@plugable.com>,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Arvind Sankar <nivedita@alum.mit.edu>
+Subject: Re: [PATCH 2/3] Documentation: fb: Retitle driver docs
+Message-ID: <aNEjQEY5J5DBTF8P@archie.me>
+References: <20250919003640.14867-1-bagasdotme@gmail.com>
+ <20250919003640.14867-3-bagasdotme@gmail.com>
+ <222d551c-fb01-4a8c-9b83-daef019b6795@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pyPpSPV0lzt8YzEF"
 Content-Disposition: inline
-In-Reply-To: <20250919-fanatiker-ethik-7a9bb32ee334@brauner>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,gmail.com,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,cmpxchg.org,suse.com,linutronix.de];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+In-Reply-To: <222d551c-fb01-4a8c-9b83-daef019b6795@infradead.org>
 
-On Fri 19-09-25 10:08:33, Christian Brauner wrote:
-> On Thu, Sep 18, 2025 at 11:42:38AM +0200, Jan Kara wrote:
-> > On Wed 17-09-25 12:28:06, Christian Brauner wrote:
-> > > Centralize ns_common initialization.
-> > > 
-> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > ---
-> > >  net/core/net_namespace.c | 23 +++--------------------
-> > >  1 file changed, 3 insertions(+), 20 deletions(-)
-> > > 
-> > > diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-> > > index a57b3cda8dbc..897f4927df9e 100644
-> > > --- a/net/core/net_namespace.c
-> > > +++ b/net/core/net_namespace.c
-> > > @@ -409,7 +409,7 @@ static __net_init int preinit_net(struct net *net, struct user_namespace *user_n
-> > >  	ns_ops = NULL;
-> > >  #endif
-> > >  
-> > > -	ret = ns_common_init(&net->ns, ns_ops, false);
-> > > +	ret = ns_common_init(&net->ns, ns_ops, true);
-> > >  	if (ret)
-> > >  		return ret;
-> > >  
-> > > @@ -597,6 +597,7 @@ struct net *copy_net_ns(unsigned long flags,
-> > >  		net_passive_dec(net);
-> > >  dec_ucounts:
-> > >  		dec_net_namespaces(ucounts);
-> > > +		ns_free_inum(&net->ns);
-> > 
-> > This looks like a wrong place to put it? dec_ucounts also gets called when we
-> > failed to create 'net' and thus net == NULL. 
-> > 
-> > >  		return ERR_PTR(rv);
-> > >  	}
-> > >  	return net;
-> > > @@ -718,6 +719,7 @@ static void cleanup_net(struct work_struct *work)
-> > >  #endif
-> > >  		put_user_ns(net->user_ns);
-> > >  		net_passive_dec(net);
-> > > +		ns_free_inum(&net->ns);
-> > 
-> > The calling of ns_free_inum() after we've dropped our reference
-> > (net_passive_dec()) looks suspicious. Given how 'net' freeing works I don't
-> > think this can lead to actual UAF issues but it is in my opinion a bad
-> > coding pattern and for no good reason AFAICT.
-> 
-> All good points. I can't say I'm fond of the complexity in this specific
-> instance in general.
 
-Agreed. The changes look good to me now. Feel free to add:
+--pyPpSPV0lzt8YzEF
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+On Sat, Sep 20, 2025 at 09:08:57PM -0700, Randy Dunlap wrote:
+> > diff --git a/Documentation/fb/aty128fb.rst b/Documentation/fb/aty128fb.=
+rst
+> > index 3f107718f933fc..0da8070a552165 100644
+> > --- a/Documentation/fb/aty128fb.rst
+> > +++ b/Documentation/fb/aty128fb.rst
+> > @@ -1,8 +1,6 @@
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -What is aty128fb?
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -
+> > -.. [This file is cloned from VesaFB/matroxfb]
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +aty128fb - ATI Rage128 framebuffer driver
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > =20
+> >  This is a driver for a graphic framebuffer for ATI Rage128 based devic=
+es
+> >  on Intel and PPC boxes.
+> > diff --git a/Documentation/fb/efifb.rst b/Documentation/fb/efifb.rst
+> > index 6badff64756f49..3d4aab406dee0a 100644
+> > --- a/Documentation/fb/efifb.rst
+> > +++ b/Documentation/fb/efifb.rst
+> > @@ -1,6 +1,6 @@
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -What is efifb?
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +efifb - Generic EFI platform driver
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > =20
+> >  This is a generic EFI platform driver for systems with UEFI firmware. =
+The
+> >  system must be booted via the EFI stub for this to be usable. efifb su=
+pports
+> > diff --git a/Documentation/fb/gxfb.rst b/Documentation/fb/gxfb.rst
+> > index 5738709bccbbf3..3fda485606bdc1 100644
+> > --- a/Documentation/fb/gxfb.rst
+> > +++ b/Documentation/fb/gxfb.rst
+> > @@ -1,8 +1,6 @@
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -What is gxfb?
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -
+> > -.. [This file is cloned from VesaFB/aty128fb]
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +gxfb - AMD Geode GX2 framebuffer driver
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > =20
+> >  This is a graphics framebuffer driver for AMD Geode GX2 based processo=
+rs.
+> > =20
+> > diff --git a/Documentation/fb/lxfb.rst b/Documentation/fb/lxfb.rst
+> > index 863e6b98fbae55..0a176ab376e30e 100644
+> > --- a/Documentation/fb/lxfb.rst
+> > +++ b/Documentation/fb/lxfb.rst
+> > @@ -1,9 +1,6 @@
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -What is lxfb?
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -
+> > -.. [This file is cloned from VesaFB/aty128fb]
+> > -
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +lxfb - AMD Geode LX framebuffer driver
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > =20
+> >  This is a graphics framebuffer driver for AMD Geode LX based processor=
+s.
+> > =20
+> > diff --git a/Documentation/fb/matroxfb.rst b/Documentation/fb/matroxfb.=
+rst
+> > index 6158c49c857148..34cafaa00bab19 100644
+> > --- a/Documentation/fb/matroxfb.rst
+> > +++ b/Documentation/fb/matroxfb.rst
+> > @@ -1,9 +1,6 @@
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -What is matroxfb?
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -
+> > -.. [This file is cloned from VesaFB. Thanks go to Gerd Knorr]
+> > -
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +matroxfb driver for Matrox devices
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> Add a '-' after matroxfb
+>=20
+> > =20
+> >  This is a driver for a graphic framebuffer for Matrox devices on
+> >  Alpha, Intel and PPC boxes.
+> > diff --git a/Documentation/fb/pvr2fb.rst b/Documentation/fb/pvr2fb.rst
+> > index fcf2c21c8fcfeb..315ce085a5855b 100644
+> > --- a/Documentation/fb/pvr2fb.rst
+> > +++ b/Documentation/fb/pvr2fb.rst
+> > @@ -1,6 +1,6 @@
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -What is pvr2fb?
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +pvr2fb - PowerVR 2 graphics frame buffer driver
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > =20
+> >  This is a driver for PowerVR 2 based graphics frame buffers, such as t=
+he
+> >  one found in the Dreamcast.
+> > diff --git a/Documentation/fb/sa1100fb.rst b/Documentation/fb/sa1100fb.=
+rst
+> > index 67e2650e017d12..c5ca019b361a94 100644
+> > --- a/Documentation/fb/sa1100fb.rst
+> > +++ b/Documentation/fb/sa1100fb.rst
+> > @@ -1,9 +1,6 @@
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -What is sa1100fb?
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -
+> > -.. [This file is cloned from VesaFB/matroxfb]
+> > -
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> > +sa1100fb - SA-1100 LCD graphic framebuffer driver
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> > =20
+> >  This is a driver for a graphic framebuffer for the SA-1100 LCD
+> >  controller.
+> > diff --git a/Documentation/fb/sisfb.rst b/Documentation/fb/sisfb.rst
+> > index 8f4e502ea12ea7..9982f5ee05601b 100644
+> > --- a/Documentation/fb/sisfb.rst
+> > +++ b/Documentation/fb/sisfb.rst
+> > @@ -1,6 +1,6 @@
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -What is sisfb?
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +sisfb - SiS framebuffer device driver
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > =20
+> >  sisfb is a framebuffer device driver for SiS (Silicon Integrated Syste=
+ms)
+> >  graphics chips. Supported are:
+> > diff --git a/Documentation/fb/sm712fb.rst b/Documentation/fb/sm712fb.rst
+> > index 8e000f80b5bc6d..abbc6efae25f46 100644
+> > --- a/Documentation/fb/sm712fb.rst
+> > +++ b/Documentation/fb/sm712fb.rst
+> > @@ -1,6 +1,6 @@
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -What is sm712fb?
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +sm712fb - Silicon Motion SM712 graphics framebuffer driver
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > =20
+> >  This is a graphics framebuffer driver for Silicon Motion SM712 based p=
+rocessors.
+> > =20
+> > diff --git a/Documentation/fb/tgafb.rst b/Documentation/fb/tgafb.rst
+> > index 0c50d2134aa433..f0944da1ea5ef1 100644
+> > --- a/Documentation/fb/tgafb.rst
+> > +++ b/Documentation/fb/tgafb.rst
+> > @@ -1,6 +1,6 @@
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -What is tgafb?
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +tgafb - TGA graphics framebuffer driver
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > =20
+> >  This is a driver for DECChip 21030 based graphics framebuffers, a.k.a.=
+ TGA
+> >  cards, which are usually found in older Digital Alpha systems. The
+> > diff --git a/Documentation/fb/udlfb.rst b/Documentation/fb/udlfb.rst
+> > index 99cfbb7a192238..9e75ac6b07c36a 100644
+> > --- a/Documentation/fb/udlfb.rst
+> > +++ b/Documentation/fb/udlfb.rst
+> > @@ -1,6 +1,6 @@
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -What is udlfb?
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +udlfb - DisplayLink USB 2.0 driver
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > =20
+> >  This is a driver for DisplayLink USB 2.0 era graphics chips.
+> > =20
+> > diff --git a/Documentation/fb/vesafb.rst b/Documentation/fb/vesafb.rst
+> > index f890a4f5623b45..5ffb35efd4538a 100644
+> > --- a/Documentation/fb/vesafb.rst
+> > +++ b/Documentation/fb/vesafb.rst
+> > @@ -1,6 +1,6 @@
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > -What is vesafb?
+> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +Generic graphic framebuffer driver (vesafb)
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> vesafb - Generic graphic framebuffer driver
+>=20
 
-								Honza
+I'll apply your suggestions in v2.
 
-> 
-> diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-> index 897f4927df9e..9df236811454 100644
-> --- a/net/core/net_namespace.c
-> +++ b/net/core/net_namespace.c
-> @@ -590,6 +590,7 @@ struct net *copy_net_ns(unsigned long flags,
-> 
->         if (rv < 0) {
->  put_userns:
-> +               ns_free_inum(&net->ns);
->  #ifdef CONFIG_KEYS
->                 key_remove_domain(net->key_domain);
->  #endif
-> @@ -597,7 +598,6 @@ struct net *copy_net_ns(unsigned long flags,
->                 net_passive_dec(net);
->  dec_ucounts:
->                 dec_net_namespaces(ucounts);
-> -               ns_free_inum(&net->ns);
->                 return ERR_PTR(rv);
->         }
->         return net;
-> @@ -713,13 +713,13 @@ static void cleanup_net(struct work_struct *work)
->         /* Finally it is safe to free my network namespace structure */
->         list_for_each_entry_safe(net, tmp, &net_exit_list, exit_list) {
->                 list_del_init(&net->exit_list);
-> +               ns_free_inum(&net->ns);
->                 dec_net_namespaces(net->ucounts);
->  #ifdef CONFIG_KEYS
->                 key_remove_domain(net->key_domain);
->  #endif
->                 put_user_ns(net->user_ns);
->                 net_passive_dec(net);
-> -               ns_free_inum(&net->ns);
->         }
->         WRITE_ONCE(cleanup_net_task, NULL);
->  }
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--pyPpSPV0lzt8YzEF
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHQEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaNEjPAAKCRD2uYlJVVFO
+o0xBAPsF+0ID1n8HvR0EkLu/NKqM0MGLm6ptctFnkIuLD3On3wD2KyiCl8y52YFV
+tV983e3Znmh0verqBnsd7h+R1jzQAA==
+=h3sz
+-----END PGP SIGNATURE-----
+
+--pyPpSPV0lzt8YzEF--
 
