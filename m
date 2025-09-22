@@ -1,192 +1,118 @@
-Return-Path: <linux-kernel+bounces-827920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAA0AB936C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:02:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83178B936E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C627D7B2AEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:00:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9318B1907A06
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5452F49F2;
-	Mon, 22 Sep 2025 22:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAA430ACED;
+	Mon, 22 Sep 2025 22:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZIesPBQ0"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="DiP2mvyJ"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A00B284B33
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 22:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A7B2F657C
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 22:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758578551; cv=none; b=jpDBs3lVXV7W5HuHRBxEZRk77puvnUCY7o0AoCUgmZyN1dn1UP9lhSjvmtguUsOSLE7elvIthVtIXnmxPv0Vn+aQmMJp1ebSznPJu6KK2tE/H0zjsiazmvfRIWKwbBuISHYt4vdveW4aojnNULUR5X9HIFHT19R0kw6FJdlvrLM=
+	t=1758578911; cv=none; b=QcgUvfp+0wBAnr3Rb0aU0PJ6k/Chl/Nf17OIslJyc/ZnRMcsRGKfQn1ooKNhame94RceUIoiZPlHLXwtl57jvm3IFA1fPUG2gVuVT+ZSRm1cMMJGHw8tDLVn8jiOpyiGtHGl7ftGW5FKIJi5PUB3YpOaqhbfSJbUaoDcsNxSJyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758578551; c=relaxed/simple;
-	bh=LWWy1NSMrdokOxRy9TWCPxhDNVSdaHvZSyTj7oBWRf8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jTwFHfnynLO+WGjmmTPgUDoCdJUJNakCFLLA0TViO/VOOjWUGj2f2Ks6raUuH7XOHXg2A/dAkOVW/TYgwubtRH5VNSA0eq359zvun+DxVlPNWd1TKk7gGuyfdzcxnhWa34ACAupQBTIDdqx8BN0LH8YjiQfnzttS6vcxpSg1Cdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZIesPBQ0; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758578536;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=LvQMnsu791EG1tpjwy9I3544++reF65dwLMnGRELwws=;
-	b=ZIesPBQ0zAl1Vmukqxmtt0XIK/MVh1ffyqQa8stAcXpFk9CsnyvK3u7hKV5bkDVd50Tz9d
-	518QauXNlAT2j4sE8owNxzkvVG0kvid9zfQUuEIbqqYr7Or6i+wsuhQ7AAQ3ymIsoYuF80
-	BhhlByeyTe56tg6TFdwmWHKUtJCGNNw=
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Peilin Ye <yepeilin@google.com>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	bpf@vger.kernel.org,
-	linux-mm@kvack.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>,
-	Michal Hocko <mhocko@suse.com>
-Subject: [PATCH v2] memcg: skip cgroup_file_notify if spinning is not allowed
-Date: Mon, 22 Sep 2025 15:02:03 -0700
-Message-ID: <20250922220203.261714-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1758578911; c=relaxed/simple;
+	bh=Avq2y8MdAwK0oH1I3MtgdoQ7iSmzzMmfx5BVuSNgHcA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FQ/B1WpwXToZNNP4RA9IKPA6flpSLGelsJ1ijduPfdBiKWC7UrO/kOxiX09vr2UDtG/op2AK6XV4xxPthkP/2c2sJe1OyXBY3NeeHji2k8QyyzuW5yB3kgqTVUspI79GEC8PZMgHkODI+3oOR4UH4YBsy3YpC1owffn7HcFDn6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=DiP2mvyJ; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4cf068ffe4dso9047061cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:08:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758578907; x=1759183707; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qUjK8kSlRwyRA71ulpxBj11meZbRhX9iUJHgvPDIzMg=;
+        b=DiP2mvyJuIZZFK+eJLPbZUHCc6UaBSc9TK3FZS151JBFLCG/GX9fPPQxPy0Sp4k1Fn
+         53or6umbFGNkReYKf4u5ZcpusSmNM3dS3SqV22/YMulrgkPl59n0gbOZNKUdXgs5zczh
+         KalQ9xJdgzNZbv7jbaHUSrjiuy47Oei0gsJjj23pSwIFD/2v1Ea1xU/SRxr+bH80UtEn
+         h+dELNBmfhpx4lHWlWHZ+ChXXQdNQkgQV5+7vE0I3NA7HbLAk5yzx1cJYFtZvzr8AuCQ
+         7fnBqcmkzX/GwV61QVDcge6Yruf3aynVZU+U7Bo/bx+EXeT9+N6WS8fEf14JKt0QZZbl
+         aswA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758578907; x=1759183707;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qUjK8kSlRwyRA71ulpxBj11meZbRhX9iUJHgvPDIzMg=;
+        b=CLuTLQPdgpezIQ8047IR4/0oGh/2cSlG4ObKBDuoGpPPI/xAdF6+cDvoh8Tb3OELsc
+         9gZq3HChrxguLyXPevv4pi+d7dbdreVwnOAISDUrOKMQQG3Y+VtbZqrIxyZHMMC8grCd
+         mOpGdzOJz9JrQVKujcJXOTxRLzHXGXJ19UQn1ZFm0LCimfkXc/ZLAFYOBAcsOrfnN656
+         6N9nFD/YsLz+IDv1pD2tmuOXwAK+aEbWFQhYehN0pQL7WQz64zU7cJ/8JqsiC7GN7EmH
+         fLtBIruaXYmDnpiqkwP6aomNOeJ/hebnVQ5su9rydtZ3P8ALNgKQc5EGqrKQzaPmDBSi
+         ZRNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUobK1ObJ6J6713ZGiN6evT0XFu7hFIH5Jtx/HdAb0j/65HDg7JfUL46W2SaHYK/0fuGidkHIuJCd4EuuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDUOI3OhSl9ULir5s4bwu2P9cbdfa8aVJ/FbDUlaIdEOhn9ylN
+	9qxjRKsDG2iYaS9pqUNgEv3W35y6vBBffMb7x6QN0aBOqHLt8QbWmoI8Lwfmv+HWI6k=
+X-Gm-Gg: ASbGnculfRZCyYl4we3djLMH4olZggPUGM4KncTe1SQegMvHacBxMKIsmL9p0lBzUBj
+	PL/dnvGsRssvrtdUc6XoulFEVZcOZYG7K0CWbHeUHeWemxTfTx4PqLbIVnehQNpo8rZpj0gZi5/
+	/GdTcG8Po8esMZXLFjGljIF0lq33DjnTrdcm6riVvdpEllHbQz/bQItUZyHhOwa0Lxrz4JRmfwj
+	6gMMZ3VqfpBauyOPqWO8enaoRJqREjx1agvY4ZpHUBq7PFcB7uQ/luLENt9fN7dTD8uLrIPp+ku
+	ppdI2wdO/BV4++fjZ5qH7OTP0CMKFkDwdEnxtPLkl4Y6++yfV+qpLo4CjyXSJZg8rSB0CJsAfv5
+	RxMbdmaYcFBcVy5PSWNt84YjltGKhUbRj7bkgqQOBZyIRmFQcWlmdRIrorDhwvmCKufvBWoV0tI
+	4=
+X-Google-Smtp-Source: AGHT+IEz0icBL4xjkfXiOd9WdBXGddBAYbpiDBXZ680UQhfkHWQJ/JZKh5CbDmMzNtrP9ERLzyDGHA==
+X-Received: by 2002:a05:622a:450:b0:4b5:d586:d74a with SMTP id d75a77b69052e-4d369db6905mr5212111cf.37.1758578907176;
+        Mon, 22 Sep 2025 15:08:27 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4cfdd34b180sm13096701cf.34.2025.09.22.15.08.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 15:08:26 -0700 (PDT)
+Date: Mon, 22 Sep 2025 15:08:22 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Vincent Mailhol <mailhol@kernel.org>
+Cc: netdev@vger.kernel.org, David Ahern <dsahern@gmail.com>, Marc
+ Kleine-Budde <mkl@pengutronix.de>, Oliver Hartkopp
+ <socketcan@hartkopp.net>, linux-kernel@vger.kernel.org,
+ linux-can@vger.kernel.org
+Subject: Re: [PATCH iproute2-next 2/3] iplink_can: fix
+ SPDX-License-Identifier tag format
+Message-ID: <20250922150822.3fce0568@hermes.local>
+In-Reply-To: <20250921-iplink_can-checkpatch-fixes-v1-2-1ddab98560cd@kernel.org>
+References: <20250921-iplink_can-checkpatch-fixes-v1-0-1ddab98560cd@kernel.org>
+	<20250921-iplink_can-checkpatch-fixes-v1-2-1ddab98560cd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Generally memcg charging is allowed from all the contexts including NMI
-where even spinning on spinlock can cause locking issues. However one
-call chain was missed during the addition of memcg charging from any
-context support. That is try_charge_memcg() -> memcg_memory_event() ->
-cgroup_file_notify().
+On Sun, 21 Sep 2025 16:32:31 +0900
+Vincent Mailhol <mailhol@kernel.org> wrote:
 
-The possible function call tree under cgroup_file_notify() can acquire
-many different spin locks in spinning mode. Some of them are
-cgroup_file_kn_lock, kernfs_notify_lock, pool_workqeue's lock. So, let's
-just skip cgroup_file_notify() from memcg charging if the context does
-not allow spinning.
+> In .c files, the SPDX tag uses the C++ comment style.
+> 
+> Fix below checkpatch.pl warning:
+> 
+>   WARNING: Improper SPDX comment style for 'ip/iplink_can.c', please use '//' instead
+>   #1: FILE: ip/iplink_can.c:1:
+>   +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> 
+>   WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
+>   #1: FILE: ip/iplink_can.c:1:
+>   +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> 
+> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
 
-Alternative approach was also explored where instead of skipping
-cgroup_file_notify(), we defer the memcg event processing to irq_work
-[1]. However it adds complexity and it was decided to keep things simple
-until we need more memcg events with !allow_spinning requirement.
-
-Link: https://lore.kernel.org/all/5qi2llyzf7gklncflo6gxoozljbm4h3tpnuv4u4ej4ztysvi6f@x44v7nz2wdzd/ [1]
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-Acked-by: Michal Hocko <mhocko@suse.com>
----
-Changes since v1:
-- Add warning if !allow_spinning is used with memcg events other than
-  MEMCG_MAX (requested by Roman)
-
- include/linux/memcontrol.h | 26 +++++++++++++++++++-------
- mm/memcontrol.c            |  7 ++++---
- 2 files changed, 23 insertions(+), 10 deletions(-)
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 16fe0306e50e..873e510d6f8d 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1001,22 +1001,28 @@ static inline void count_memcg_event_mm(struct mm_struct *mm,
- 	count_memcg_events_mm(mm, idx, 1);
- }
- 
--static inline void memcg_memory_event(struct mem_cgroup *memcg,
--				      enum memcg_memory_event event)
-+static inline void __memcg_memory_event(struct mem_cgroup *memcg,
-+					enum memcg_memory_event event,
-+					bool allow_spinning)
- {
- 	bool swap_event = event == MEMCG_SWAP_HIGH || event == MEMCG_SWAP_MAX ||
- 			  event == MEMCG_SWAP_FAIL;
- 
-+	/* For now only MEMCG_MAX can happen with !allow_spinning context. */
-+	VM_WARN_ON_ONCE(!allow_spinning && event != MEMCG_MAX);
-+
- 	atomic_long_inc(&memcg->memory_events_local[event]);
--	if (!swap_event)
-+	if (!swap_event && allow_spinning)
- 		cgroup_file_notify(&memcg->events_local_file);
- 
- 	do {
- 		atomic_long_inc(&memcg->memory_events[event]);
--		if (swap_event)
--			cgroup_file_notify(&memcg->swap_events_file);
--		else
--			cgroup_file_notify(&memcg->events_file);
-+		if (allow_spinning) {
-+			if (swap_event)
-+				cgroup_file_notify(&memcg->swap_events_file);
-+			else
-+				cgroup_file_notify(&memcg->events_file);
-+		}
- 
- 		if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
- 			break;
-@@ -1026,6 +1032,12 @@ static inline void memcg_memory_event(struct mem_cgroup *memcg,
- 		 !mem_cgroup_is_root(memcg));
- }
- 
-+static inline void memcg_memory_event(struct mem_cgroup *memcg,
-+				      enum memcg_memory_event event)
-+{
-+	__memcg_memory_event(memcg, event, true);
-+}
-+
- static inline void memcg_memory_event_mm(struct mm_struct *mm,
- 					 enum memcg_memory_event event)
- {
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e090f29eb03b..4deda33625f4 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2307,12 +2307,13 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	bool drained = false;
- 	bool raised_max_event = false;
- 	unsigned long pflags;
-+	bool allow_spinning = gfpflags_allow_spinning(gfp_mask);
- 
- retry:
- 	if (consume_stock(memcg, nr_pages))
- 		return 0;
- 
--	if (!gfpflags_allow_spinning(gfp_mask))
-+	if (!allow_spinning)
- 		/* Avoid the refill and flush of the older stock */
- 		batch = nr_pages;
- 
-@@ -2348,7 +2349,7 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	if (!gfpflags_allow_blocking(gfp_mask))
- 		goto nomem;
- 
--	memcg_memory_event(mem_over_limit, MEMCG_MAX);
-+	__memcg_memory_event(mem_over_limit, MEMCG_MAX, allow_spinning);
- 	raised_max_event = true;
- 
- 	psi_memstall_enter(&pflags);
-@@ -2415,7 +2416,7 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	 * a MEMCG_MAX event.
- 	 */
- 	if (!raised_max_event)
--		memcg_memory_event(mem_over_limit, MEMCG_MAX);
-+		__memcg_memory_event(mem_over_limit, MEMCG_MAX, allow_spinning);
- 
- 	/*
- 	 * The allocation either can't fail or will lead to more memory
--- 
-2.47.3
-
+NAK
+Iproute2 excepts both formats and both are used in several
+places.
 
