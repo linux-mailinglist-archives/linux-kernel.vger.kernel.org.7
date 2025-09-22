@@ -1,137 +1,191 @@
-Return-Path: <linux-kernel+bounces-827624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69001B923DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24CEEB923EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21F283A9A0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:34:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF8143AB793
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D87F31076D;
-	Mon, 22 Sep 2025 16:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B4A3115BB;
+	Mon, 22 Sep 2025 16:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WUUETWtQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Ep3Mh3sQ"
+Received: from mail-qv1-f100.google.com (mail-qv1-f100.google.com [209.85.219.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C018A2DECA1
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB88A3115B5
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758558849; cv=none; b=pVZf9mNQGbVwzwDBQP25kACOUQZu/oQtl5zAQL2GviIL3kLALczfTuRoy1z35E7xelY+bYkuqd9AOd8cGIZjQhaM8ENA5VeK0IdskUrnTNJuZPkod5u0MdVN358WRnRHgSsJQD6XhaMQSbwC+9I/F3NmrOey1YRJG03WlODWDsU=
+	t=1758558921; cv=none; b=Y9h8iCDsXaeel4Oy+9wM+DjuZCdOxvhdk7o3wDAbM878Eavxz9cbpWAln2kxEq19LFBrQsJx0zekEk+V0528mjh+P7ElhBw08wZrggjob09yEAiSkuIlj2dQ3iVyVd2fZfaIBzo7e9Kc69AiHnSMTO5ShYUaseNiiKiUhj/uZEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758558849; c=relaxed/simple;
-	bh=J5xgFBd3NU5Hap2uxJX37dSYFI7Kfv13S0/GT/le6ec=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SXh9aXGqO5391rLBr2nh8oJk4/4W1vpwchnx6QFXC1cnEkrjB4pwzGkGd0/eaxoZVD+wxrbqT85aBWiBFyjmkbw3lal/SR9wY3Pb/GLGZv+scRwlP9ztog0YXHXoEuaqYz7ZYzcgWoTY+1FeoG5qFsJqAe03rblnfDsGQkIUdmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WUUETWtQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758558846;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gBJljojDbws+qHKYWMWrH6AZIQ6pnwW8hsnZj31y4NQ=;
-	b=WUUETWtQLYO5jMZMLsueV3HEcGB1rv5uw8yWRdhuuvwb3F1gIrWvn6xXb036Ztlm4/OGzw
-	++hWZ5SehzJsbx6E8lTZy49vCWlS/2XisY57Q40BZN+EZ6Kz8YPG+d+wIYMc697B8qcDgE
-	1MBezF+Tn3ts6i+ZGyrv7EwE2fwPS7Q=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-209-XWEOdwA6O76xfPMax7Yu7g-1; Mon, 22 Sep 2025 12:34:02 -0400
-X-MC-Unique: XWEOdwA6O76xfPMax7Yu7g-1
-X-Mimecast-MFC-AGG-ID: XWEOdwA6O76xfPMax7Yu7g_1758558840
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b49666c8b8so80933781cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:34:02 -0700 (PDT)
+	s=arc-20240116; t=1758558921; c=relaxed/simple;
+	bh=sJZA5W8i8FsY6q8Pk9qSsL/tO9ihyOxw5JG0kLaL5NA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ba6nrKPkVSNu45zS6AdRvB02bJdI3FVd4HUowCVWJbU/dGMYNVOl3C6aX4C59ARbAeakwifw/t7pWrh1WZxAypmIbXwaw4B0XTSu6+qoDO0vOWSFaSgqiEVDBJaiIqVyhrT6v1qXOqjbL7yenuljKDkHDEAaSc0KrWJdfsufvQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Ep3Mh3sQ; arc=none smtp.client-ip=209.85.219.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qv1-f100.google.com with SMTP id 6a1803df08f44-7900f7f4ba9so40059906d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:35:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758558840; x=1759163640;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1758558918; x=1759163718;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=maAo7eOe8o8YutYShD5omzBkIATahAgKdVnzIjAE84c=;
+        b=BGgEn2RiEDEGLblsi7bsEof5QY2Jt5c8gHHRNNfUATc676S7O8swzHwbtZVttT0Lbh
+         36UtPSMBBG4jUHB5dORaWoV8E/Kc1XXtX4rkLLWdNzWH9kC8oQnLhSSGiCtD3T2sOkUn
+         5i9S61jEK+Fzrz5awYVSDtl6f8mF65FyKPY44ozqvfgtllp1aMweUfkdpHrd0vv8aGht
+         4Cmob7uqZinxyBkN4dZGRHTI21IF0NhC4H/maCf4jz6IsgAj+RvQWnM7wX+AR37KSqMk
+         IeC9N6dod83juLnWYmEqpg7bcM/sHXL3Yek2Nn4Lnxbuj8SVN6ytqejOk8Zq/N+nubV6
+         h/+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXhgq4MTnIdFC2e/C+uzxiAzz3ycq25rrzgFHykwJCFhZX64nT6s4opM53mGG6lLQzWvJLcXyR7CQW2aK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBjtI4ZYnJNC1Uqberh9OK204zaIicvCuJP8ec7AIu+xuiX9Mc
+	t54oT9cQ1G1tRR+kRYDcqfvSDVvMCRkDfmUXfHvXSfL0Kx1fNnvA16V59eO2WTgKlZ/Rz41hV8s
+	CPj7jthNl9AmB/6vZN2IeC6GwoqdEnAFjck+gRHuFaQCdasx7ras/QbM9j5xujPSrq++m4DcwiP
+	dIURzu4gmAar0wby083vFe77dv3cWv6uy8r8j60d3U6nggwoSqiUdOfqIPS1gd9VDORZT/Z2iDx
+	OQ0aughyAXOWyOGvOsy
+X-Gm-Gg: ASbGncsCsYQxnfFcoXbr5TkVbStBJ9vicNblMxOE96QEXZY55T/RRYEAeujVim2BEee
+	Rtv8knt7VYQABPpHrZ7t270SjZbQ75pWUx0sm0O+BVUNWcWaZqE/CeN9PJuBcl5CiCNsk4OMc4W
+	rAMtBGo4d1brM/8Ny27RHKxhiQheNXPhl0RrNjpthGbuwDKbdzyJO2WMML3GVYzYUCtuHwsNq3Y
+	nCkz9owunuAm0dhXmwrpKQ34m2mSihVmvgqcT8AsyUcej8QB1j2O8UmtSDHurpEN5obwkU64mCZ
+	K92k/k7mwD0ghvlbtDU3fEPf/z0XVE18miYAbqqZ4ji6kGTcO6vwyH0GXjRNsdD3c3gX2eCnQQ0
+	c38v7L3LY354X3IOO1fL2VkAqzGqwRqah2Ht1T1VNBsGxJBcaYffAFzqtkVX054mwQ1JXf0ctBg
+	Rr
+X-Google-Smtp-Source: AGHT+IFxgBXUKy/bBdYD1+GMxBQTSdDH0MrfQj4/YwFGyyXCIWJpdMf3g6xnHIhI9impMOjEQonJW7+kKJwe
+X-Received: by 2002:a05:6214:2a88:b0:70d:6df4:1b21 with SMTP id 6a1803df08f44-7991e594e1cmr147277446d6.62.1758558918155;
+        Mon, 22 Sep 2025 09:35:18 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-16.dlp.protect.broadcom.com. [144.49.247.16])
+        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-79352917cdasm7596056d6.43.2025.09.22.09.35.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Sep 2025 09:35:18 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-71d603bf1c4so45327207b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:35:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1758558917; x=1759163717; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gBJljojDbws+qHKYWMWrH6AZIQ6pnwW8hsnZj31y4NQ=;
-        b=RUdvMI00a11nNWdng0xcBJhtDPyYoWVUSD5rMGRW9lgF6XeY+crwSvL3jtCYUX5rdQ
-         O3l33apPBXGlqi5hw7K4B27Q8uSNNid7f8W2ogypOXr/LKHhDXlvY6WflZPtTxrDRVKF
-         TUw0cI8OLN8g+RipVDmOAA13uHV6WIM7rMat1Xh8SiVoPOhxYcRg7SA+Ce7SWFhGM5Q9
-         91eWFF1+IeD+xQk3dJpbI8v4IbuuzatakB5Eo8OUw+SOFNmcaHGScLby8CWfzK7/04T7
-         8NTJtamzrJBpb3bv5mistmfQRBHgyp5+Z9P+GcOfbilLblBBCQNk8GWXHYgjP0UjurLg
-         ErbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOS83q1dzTeRueWJXIlcJXjz4AIpxiFXwWu1d9usT3Io9Z5XqAsk8QtjcO59U8w6lNS7LqVZeSBNkCsks=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuHiuToGFY4C5MYBdIISRVzUSFPE1mZ8O9NScNBxzO3NT5i4ND
-	zGgTPAARx71z31AVj6PMXwMP1vam71/Zgz8jIbgm8O8O2m2RVoxxyUYh+JE62SWWMP4cmfcrSrR
-	Sl5+0SJR4f25RYIaMKxDROxGJ7ZAiv0XBPV0jS76VEW+XF/shZd/Xlv9ok3p5UBWLRlLrXOg9Ig
-	==
-X-Gm-Gg: ASbGncs8INWpYH8y7UGJEGScfSwm/FuPh944n0W+9CIYmGUGvJdvVrxY0kG8CuWSzYu
-	iUPnG44V/CyX8NTYSeBBZK3ynGKPF7cCl51ufIO/n3y3hnxBLEks7IOTx3Qx8HkHzHkiUa361z+
-	4tiZtFs3zKUmtA/ZteC9mAuT6lpe9+uKtela934awlB+4On2fjGe3W6e6ZfDlPA26zpN5esTRvv
-	5lpul5728E0o3q/B5Y8D7PVq28pAkEblQWpoNZNXl02u73gjO1nmvljVk1TzqKeOF9MuxvzF9Od
-	55+u93pbd2l6n+eg1eiujXVeZwE9yUxX
-X-Received: by 2002:a05:622a:5908:b0:4b5:db9f:9904 with SMTP id d75a77b69052e-4c06e01de1bmr199682671cf.22.1758558839533;
-        Mon, 22 Sep 2025 09:33:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH//E8b4gnkiEJqOP3wljjECSy+ua/1PyrN9UKJVnDq/W9qkrGv0rnACb5iI8z2zg8fwH1I7A==
-X-Received: by 2002:a05:622a:5908:b0:4b5:db9f:9904 with SMTP id d75a77b69052e-4c06e01de1bmr199681851cf.22.1758558838967;
-        Mon, 22 Sep 2025 09:33:58 -0700 (PDT)
-Received: from x1.local ([142.188.210.50])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ccade1cf34sm15909061cf.46.2025.09.22.09.33.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 09:33:58 -0700 (PDT)
-Date: Mon, 22 Sep 2025 12:33:56 -0400
-From: Peter Xu <peterx@redhat.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Nikita Kalyazin <kalyazin@amazon.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-	Muchun Song <muchun.song@linux.dev>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	James Houghton <jthoughton@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Ujwal Kundur <ujwal.kundur@gmail.com>
-Subject: Re: [PATCH v2 1/4] mm: Introduce vm_uffd_ops API
-Message-ID: <aNF6dCL_yonTforG@x1.local>
-References: <4czztpp7emy7gnigoa7aap2expmlnrpvhugko7q4ycfj2ikuck@v6aq7tzr6yeq>
- <a1a48a0e-62d3-48d0-b9c2-492eb190b99f@amazon.com>
- <7cccbceb-b833-4a21-bdc4-1ff9d1d6c14f@lucifer.local>
- <74b92ce3-9e0e-4361-8117-7abda27f2dd4@redhat.com>
- <aMxNgyVRuiFq2Sms@x1.local>
- <cigo2r2x22bk7wzr6qvazcdkmt5kfqhbgb7nslpuff7djufucg@f6xucfuntz3q>
- <aMx0oGwRpSTcfdnf@x1.local>
- <swfs7qpgrezamnijhheiggwdfklfqdc6ahp5g7nvprr64m7wz5@msf2mqajzbuz>
- <aM1l2YMmvBgiXJ8a@x1.local>
- <unvooxce622bchlsivyr63lsvywnx4u6omyndotdo32ynv2eki@ju5srmktf3hg>
+        bh=maAo7eOe8o8YutYShD5omzBkIATahAgKdVnzIjAE84c=;
+        b=Ep3Mh3sQraSgens7bZUWpoJzZDDh4lYbJZSx4VhVvWCq+F15ROVNDjw3g9b1BWwnzI
+         PbZVqeFhIHXhDb8NZ5mAlrSeG4C0XRShTOtXG2fHfwOa+Ch/hPRrRCdJDFaNyX1znOJM
+         zVemg76pxftu9i8W1KlJR8Q+bTQYexITg+pPE=
+X-Forwarded-Encrypted: i=1; AJvYcCX5S2STTSkqTHHnwBLlelscJHhNSeYQq2VLKoLcb8C+SgI+iGRzfBAvT2CSf/ibeMOMfO26YOuaPWCcHOA=@vger.kernel.org
+X-Received: by 2002:a05:690c:4c03:b0:721:3bd0:d5c0 with SMTP id 00721157ae682-73d222a3e42mr118281757b3.9.1758558917400;
+        Mon, 22 Sep 2025 09:35:17 -0700 (PDT)
+X-Received: by 2002:a05:690c:4c03:b0:721:3bd0:d5c0 with SMTP id
+ 00721157ae682-73d222a3e42mr118281367b3.9.1758558916916; Mon, 22 Sep 2025
+ 09:35:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <unvooxce622bchlsivyr63lsvywnx4u6omyndotdo32ynv2eki@ju5srmktf3hg>
+References: <20250920021024.847323-1-william.zhang@broadcom.com> <CAMm8Nh0oGokMDFt8ghomX1_SA3sbfv_xJVUXd2V1XeBA0OR08g@mail.gmail.com>
+In-Reply-To: <CAMm8Nh0oGokMDFt8ghomX1_SA3sbfv_xJVUXd2V1XeBA0OR08g@mail.gmail.com>
+From: William Zhang <william.zhang@broadcom.com>
+Date: Mon, 22 Sep 2025 09:35:05 -0700
+X-Gm-Features: AS18NWDDY16I_X8qmh0EBU9sMd591UP-PTflwsPGfCYMoggseyLlr2EinoIFL5E
+Message-ID: <CAHi4H7HeEdmOx1xUDj81hY8qAeshFKjH52HyQhNATMYwwSbNhw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: module: fix unwind section relocation out of range error
+To: Kursad Oney <kursad.oney@broadcom.com>
+Cc: linux-arm-kernel@lists.infradead.org, song@kernel.org, 
+	linus.walleij@linaro.org, florian.fainelli@broadcom.com, ardb@kernel.org, 
+	anand.gore@broadcom.com, 
+	Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
+	linux-kernel@vger.kernel.org, Petr Pavlu <petr.pavlu@suse.com>, 
+	Russell King <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On Fri, Sep 19, 2025 at 03:38:51PM -0400, Liam R. Howlett wrote:
-> I spoke to Mike on this and I understand what I was missing.  I'm fine
-> with the folio part as you have it.
-> 
-> Apologies for holding this up and the added stress on your side.
+Hi Kursad,
 
-Thank you for changing your mind.
+On Mon, Sep 22, 2025 at 6:13=E2=80=AFAM Kursad Oney <kursad.oney@broadcom.c=
+om> wrote:
+>
+> Hi William,
+>
+>
+> On Fri, Sep 19, 2025 at 10:10=E2=80=AFPM William Zhang
+> <william.zhang@broadcom.com> wrote:
+> >
+> > In an armv7 system that uses non-3G/1G split and with more than 512MB
+> > physical memory, driver load may fail with following error:
+> >    section 29 reloc 0 sym '': relocation 42 out of range (0xc2ab9be8 ->
+> > 0x7fad5998)
+> >
+> > This happens when relocation R_ARM_PREL31 from the unwind section
+> > .ARM.extab and .ARM.exidx are allocated from the VMALLOC space while
+> > .text section is from MODULES_VADDR space. It exceeds the +/-1GB
+> > relocation requirement of R_ARM_PREL31 hence triggers the error.
+> >
+> > The fix is to mark .ARM.extab and .ARM.exidx sections as executable so
+> > they can be allocated within .text section and always meet range
+> > requirement.
+>
+> Not "within" .text, but "along with" or "in close proximity to".
+Yeah that is more accurate.  Will update.
 
-Mike, I definitely appreciate your help alone the way since the start.
-
-I'll wait for 2-3 more days to see whether there's any further objections
-from anyone, or I'll repost.
-
--- 
-Peter Xu
-
+>
+> >
+> > Co-developed-by: Ard Biesheuvel <ardb@kernel.org>
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > Signed-off-by: William Zhang <william.zhang@broadcom.com>
+>
+> I think a Fixes tag might be appropriate?
+Yes, the change ac3b43283923 ("module: replace module_layout with
+module_memory") does expose this issue. But I won't say that change
+itself has a bug and it is more of an enhancement that this arm module
+code has to handle different memory allocation scenarios.
+>
+> >
+> > ---
+> >
+> >  arch/arm/kernel/module-plts.c | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> >
+> > diff --git a/arch/arm/kernel/module-plts.c b/arch/arm/kernel/module-plt=
+s.c
+> > index 354ce16d83cb..5f5bf5e63bd6 100644
+> > --- a/arch/arm/kernel/module-plts.c
+> > +++ b/arch/arm/kernel/module-plts.c
+> > @@ -225,6 +225,18 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_=
+Shdr *sechdrs,
+> >                         mod->arch.init.plt =3D s;
+> >                 else if (s->sh_type =3D=3D SHT_SYMTAB)
+> >                         syms =3D (Elf32_Sym *)s->sh_addr;
+> > +#if defined(CONFIG_ARM_UNWIND) && !defined(CONFIG_VMSPLIT_3G)
+> > +               else if (s->sh_type =3D=3D ELF_SECTION_UNWIND ||
+> > +                        (strncmp(".ARM.extab", secstrings + s->sh_name=
+, 10) =3D=3D 0)) {
+> > +                       /*
+> > +                        * To avoid the possible relocation out of rang=
+e issue for
+> > +                        * R_ARM_PREL31, mark unwind section .ARM.extab=
+ and .ARM.exidx as
+> > +                        * executable so they will be allocated within =
+.text section to meet
+> > +                        * +/-1GB range requirement of the R_ARM_PREL31=
+ relocation
+> > +                        */
+> > +                       s->sh_flags |=3D SHF_EXECINSTR;
+> > +               }
+> > +#endif
+> >         }
+> >
+> >         if (!mod->arch.core.plt || !mod->arch.init.plt) {
+> > --
+> > 2.43.7
+> >
 
