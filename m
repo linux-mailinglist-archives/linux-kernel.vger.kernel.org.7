@@ -1,115 +1,138 @@
-Return-Path: <linux-kernel+bounces-827017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68BC3B8FE61
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:05:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 287FAB908D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40B0B4223C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:05:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F3542A1EBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1732C2F3C2C;
-	Mon, 22 Sep 2025 10:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913893054E7;
+	Mon, 22 Sep 2025 11:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZKdxg8o0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="KE7Rv2CE"
+Received: from mail-m3271.qiye.163.com (mail-m3271.qiye.163.com [220.197.32.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346ED24167A;
-	Mon, 22 Sep 2025 10:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF53223E32D;
+	Mon, 22 Sep 2025 11:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758535504; cv=none; b=CRfdn063Ysl1sY0hysfuvAE9OVyvRoCu9B5YklIRhA4kCkChWjqUV9zIXHpwsaIspL++IILHA7dv6i2JXwUppAtn4+ww7+InFj7LeRKanI4ycCEP6heiuOfls0GNI7u4BK+6K5m3k0qUTTGhrk2wkaga7r/JK9sMg22RIzr9vaQ=
+	t=1758541919; cv=none; b=PZdOt4xsQHx20IneGMKLPspbBwMWOZjxouGfVIkMjoOO6ZsRhlPG8lkj+sTPJ81XNh21B4SAnpGoW3AzF/n4vLnvSPltH4DYRy/VNZrHz/GJHhEVTVtI2cjHtGmuyrcwZrEoP1gf8GrtkrGl1XPpHeWYluJloqZlnl8kUrs29xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758535504; c=relaxed/simple;
-	bh=WB8GQ5RsepoYi2eFGEtfbChCX1TN6uBkef1VC/5PxZ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lQY0scQZxIqB2bjmakSrpw0SDZZIp7KkyhVY/XDPLUmymiUHRE9Pxj+D9HnxiHR8CdNPWHurNlOuucNSa1f48esfVOw2Q/pGNZe6hdunLJ/1MQ4RtsYKYbiQ9p1ZUJD+i39jcbuTEDAMQsRR0LCYGdaMmADLPWxjuKCIvte+OVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZKdxg8o0; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758535502; x=1790071502;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=WB8GQ5RsepoYi2eFGEtfbChCX1TN6uBkef1VC/5PxZ8=;
-  b=ZKdxg8o08fJWoD1uy5ByViiSqsbiP3qkzAYKXj8xTnC1vPcRghczW3Xf
-   cP95VDcep8FeCOhJdro3zSsElf8IsyllgSIy040q38wEswu83AxuW7ODq
-   Wc3yiqdVOi26UmduoEvSSGkbJs9YtSKL0Wqdndx2Lfv8+GJJAotx3NHxP
-   Un6Cmhg3vYR3r4VVuPeF3Y4hMyGYqYC+nUZH7KR+p8SgKJWyMDM4xZf78
-   mnb5ADBlm+6Mcz/6mn8Elww+v4E8//bZsgL9Loftaw0izyZQKVj0YP6vn
-   FIMRQ6bkNX480gurq5IegbiCVD9djVEFNJLi95u6wTlUGx3uuWv1+m/gK
-   g==;
-X-CSE-ConnectionGUID: tOhN9DbPRa2nw0NwlGI+Jg==
-X-CSE-MsgGUID: /tAajN2JRbuCRLMMmhOzKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="72218546"
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="72218546"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 03:05:01 -0700
-X-CSE-ConnectionGUID: Ai8W4B+aTiKldxgsb2qz1A==
-X-CSE-MsgGUID: G6NnfLnPQDaymjrIefS/zw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="207180385"
-Received: from uniemimu-mobl1.ger.corp.intel.com (HELO [10.245.80.13]) ([10.245.80.13])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 03:04:57 -0700
-Message-ID: <2a927881-e0c7-47c8-a455-7ba3b1413648@linux.intel.com>
-Date: Mon, 22 Sep 2025 12:04:54 +0200
+	s=arc-20240116; t=1758541919; c=relaxed/simple;
+	bh=jGUYp96OUiZR0rWQVpSSIEGvho1XxUO+BLPXG5l9y3A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jKYOpdSJO/ucdO75bfTWP3A2xXccbjMUPdV1z5MtrQDmLdD7I7xw/w9+gH09jTxFvezNo7Pj3Y9KbLkfE+hR98nIjTs1gMxvb4V7kmpYqpYh7g81j9Wt7nvksORThiE8m3rkRcjfoJzmp8dxWYA27roKenv0KvpwH4kkEIHtbZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=KE7Rv2CE; arc=none smtp.client-ip=220.197.32.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 239b62a99;
+	Mon, 22 Sep 2025 15:15:45 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: zhangqing@rock-chips.com,
+	mkl@pengutronix.de,
+	kernel@pengutronix.de,
+	mailhol.vincent@wanadoo.fr,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	cl@rock-chips.com,
+	kever.yang@rock-chips.com
+Cc: linux-can@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v7 0/4] rockchip: add can for RK3576 Soc
+Date: Mon, 22 Sep 2025 15:15:39 +0800
+Message-Id: <20250922071543.73923-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 0/2] net: page_pool: Expose size limit
-To: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
- Leon Romanovsky <leon@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gal Pressman <gal@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>
-References: <1758532715-820422-1-git-send-email-tariqt@nvidia.com>
-Content-Language: pl, en-US
-From: Dawid Osuchowski <dawid.osuchowski@linux.intel.com>
-In-Reply-To: <1758532715-820422-1-git-send-email-tariqt@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9970474f0903a3kunm864fae2f2315c8
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkNNTVZMSB1KTkMYGRpPGh1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=KE7Rv2CE+ZXC/KBCM4fcVt3eygVCR275X14zH9jCE3LBjvNIH1+Z+VnJp4NBuEx5nqV7loP2/xFcQEC09+AopRbniEd2Fe3cEHBsg5a12U/53Yt7KwR2aSZ6/Jrme0a5aQaB1G8wge7jsgPE9J8gU8GiEmhUUwLHuMAto7k/RUo=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=LfXJiKVd7yQ24BTS+n3MbyE5ZCs02XLEVPDFXxi839A=;
+	h=date:mime-version:subject:message-id:from;
 
-On 2025-09-22 11:18 AM, Tariq Toukan wrote:
-> Hi,
-> 
-> This small series by Dragos has two patches.
-> 
-> Patch #1 exposes the page_pool internal size limit so that drivers can
-> check against it before creating a page_pool.
-> 
-> Patch #2 adds usage of the exposed limit in mlx5e driver.
-> 
-> Regards,
-> Tariq
-> 
-> Dragos Tatulea (2):
->    net: page_pool: Expose internal limit
->    net/mlx5e: Clamp page_pool size to max
-> 
->   drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 2 ++
->   include/net/page_pool/types.h                     | 2 ++
->   net/core/page_pool.c                              | 2 +-
->   3 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> 
-> base-commit: 312e6f7676e63bbb9b81e5c68e580a9f776cc6f0
+rk3576 can is a new controller,new register layout and Bit position
+definition:
+Support CAN and CANFD protocol.
+Support Dma.
 
-For the series:
-Reviewed-by: Dawid Osuchowski <dawid.osuchowski@linux.intel.com>
+There are major differences from the previous rk3568.
+All errata on the rk3568 have been fixed and redesigned.
 
-Thanks,
-Dawid
+Change in V7:
+[PATCH v7 1/4]: Correction format warning.
+[PATCH v7 2/4]: No change.
+[PATCH v7 3/4]: Correct the writing of some registers and
+		correct the annotations.
+[PATCH v7 4/4]: Optimize the structure parameters and
+		ensure error handling.
+
+Change in V6:
+[PATCH v6 1/4]: Fix dma is support only for rk3576.
+[PATCH v6 2/4]: Fix the compilation warning.
+[PATCH v6 3/4]: Fix the compilation warning.
+[PATCH v6 4/4]: Fix the compilation warning.
+
+Change in V5:
+[PATCH v5 1/4]: Add rk3576 canfd to rockchip,rk3568v2-canfd.yaml, remove
+                rockchip,rk3576-canfd.yaml
+[PATCH v5 2/4]: Encapsulate some hardware operation functions into
+                rkcanfd_devtype_data to provide differentiated
+                implementations for different models
+                (such as RK3568v2/v3)..
+[PATCH v5 3/4]: Add rk3576 canfd,fix the register naming rule,
+                Delete the variables used by rockchip itself.
+[PATCH v5 4/4]: Fix .h sorting.
+
+
+Change in V4:
+[PATCH v4 1/3]: Correct the format and add explanations.
+[PATCH v4 2/3]: No change.
+[PATCH v4 3/3]: No change.
+
+Change in V3:
+[PATCH v3 1/3]: Add documentation for the rk3576 CAN-FD.
+[PATCH v3 2/3]: Adjust the differentiated code section and
+                add dma function.
+[PATCH v3 3/3]: Remove dma, no use dma by default.
+
+Change in V2:
+[PATCH v2 1/2]: remove rk3576_canfd.c, use the rockchip_canfd driver
+[PATCH v2 2/2]: code style.
+
+Elaine Zhang (4):
+  dt-bindings: can: rockchip_canfd: add rk3576 CAN-FD controller
+  net: can: rockchip: Refactor the rkcanfd_devtype_data structure
+  net: can: rockchip: add can for RK3576 Soc
+  net: can: rockchip: support dma for rk3576 rx
+
+ .../net/can/rockchip,rk3568v2-canfd.yaml      |  47 +-
+ .../net/can/rockchip/rockchip_canfd-core.c    | 586 ++++++++++++++++--
+ drivers/net/can/rockchip/rockchip_canfd-rx.c  | 212 +++++++
+ drivers/net/can/rockchip/rockchip_canfd-tx.c  |  20 +
+ drivers/net/can/rockchip/rockchip_canfd.h     | 278 +++++++++
+ 5 files changed, 1095 insertions(+), 48 deletions(-)
+
+-- 
+2.34.1
+
 
