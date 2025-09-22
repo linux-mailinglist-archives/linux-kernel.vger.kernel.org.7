@@ -1,133 +1,86 @@
-Return-Path: <linux-kernel+bounces-827980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83DC5B93971
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:34:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8048BB9399E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34A6E17FDE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:34:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DAD5188A2BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F43302CAB;
-	Mon, 22 Sep 2025 23:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C4E27A47C;
+	Mon, 22 Sep 2025 23:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="2y+TLRap"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bhknsX6/"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015F225A642
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E92F25784A
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758584042; cv=none; b=Y2G36dEfCf0+wsMywGtsm3UTedNLcbNq0qsd7aE2rz76xK/DMwSERIh5tdWtkoxELFfEHN7sqvbcXDltj2XPwKG6U8aW++6cXbbuX4iy/phrY0fQQuFQHh1T8qrUjkZJJuamw1ONGjxG9uafVyWo08nrE3iAbZBMzUpcR+BNtdc=
+	t=1758584158; cv=none; b=skDO6IhbIzvipD7Reu6op4K0OJJwsuot6UGfeijVCu67bnDi6j+5cWB8kM/P4fnK4+YBCCQvXeIkEOr5nGfM6uTJdakRfczFvw6em/gUR5ukuVD7B582NzgLOTItq+FOBxS8B6hhhWrNCdlDMZkPju8aTsuPP5IVccMjkQGswKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758584042; c=relaxed/simple;
-	bh=LhPuL9sG3C8zlI8IcIwj4dNxj3q1GjMeZApYiKxUmOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lfFefVPUfQMzvlpG9AHIYTAfZo3hvGHpqr9sLuTRlUkqxghiNKKb+XAc6Th3EU1jgU9w2PR6zUO0E3O6JlCQhQb7OrUltPzoCwgNABW8upb3RdgFD/HJY29JgAOnMQtM52elIRi2rjFzuxflZ57xqDSX2DN5au/HtopzceyW/Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=2y+TLRap; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 38D531A0EFA;
-	Mon, 22 Sep 2025 23:33:58 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id EDE2560635;
-	Mon, 22 Sep 2025 23:33:57 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C406A102F1877;
-	Tue, 23 Sep 2025 01:33:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758584036; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=LhPuL9sG3C8zlI8IcIwj4dNxj3q1GjMeZApYiKxUmOo=;
-	b=2y+TLRap1pN3HRdoKgD6Zk4og08A79Jne/wlePbE2xwEZ63s2OK2TBJ1q/GuzMb5XynQSv
-	0fJTNL1FTuC8cSk+UrP9ndtsQl9gxHn1cWvIPlISQrPiBmOMc+qtgdsrpKSIVh9XB1v4xl
-	lbyFPybQ+rdU8nmlG6P7QMucJzaPiZiMzWORdK7oh4v8RSA3Kat6X+LvIYOOgStylihgNS
-	p5Q9wdGSoK8qs6Gqyb35TpwVDGtbx/z6V/RsDG5BvyXTujLR4cSdBweBQnwiz4fm9EYgDH
-	CV0WAQXfXqeZEJtsu9LuiZlfTt8139tAGLEvbNOINYHs9fcfqkigIJ71s8sElg==
-Date: Tue, 23 Sep 2025 01:33:48 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, Claudiu Manoil
- <claudiu.manoil@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, "Y.B. Lu"
- <yangbo.lu@nxp.com>, "richardcochran@gmail.com" <richardcochran@gmail.com>,
- "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
- <davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
- "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
- <pabeni@redhat.com>, Frank Li <frank.li@nxp.com>, "imx@lists.linux.dev"
- <imx@lists.linux.dev>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: enetc: use generic interfaces to get
- phc_index for ENETC v1
-Message-ID: <20250923013348.62f44bba@kmaincent-XPS-13-7390>
-In-Reply-To: <PAXPR04MB8510ABEC85E704D1289A0E098811A@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20250918074454.1742328-1-wei.fang@nxp.com>
-	<20250918124823.t3xlzn7w2glzkhnx@skbuf>
-	<20250919103232.6d668441@kmaincent-XPS-13-7390>
-	<PAXPR04MB8510ABEC85E704D1289A0E098811A@PAXPR04MB8510.eurprd04.prod.outlook.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758584158; c=relaxed/simple;
+	bh=QvkvFySCol+f4OrBWqJ/V7kbVeZUeLaAPs0LUqnUKTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kKoYIiNhW3NnmRQfMSUsSBExTrPu3sg8hnK5CxYIb5XVQAkiTNx8k9pIrSw7FDIsOJhjn8/caUcGpNTotaqPhiuTpfihcqsl0QvHkojaHH13mjjmyfmRumx4nhq/f0gUDkDGpEW1dhhqg9lOVIPHqZaB/UvDCbfoTG+m9qdRg4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bhknsX6/; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 22 Sep 2025 16:35:50 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758584155;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YROanHWLsZyxpmkg+bbLtUTGJa8eSeOXO+0+S132Fq0=;
+	b=bhknsX6/vaxKSZnPvKsUbfdwHD6LKytZGBvllisw+rMQMMDWi/4rtFUuhfA4B3/v1aCWwx
+	Lp3TL0ZLYkFWymqq4yqURK4uTHU3iRkrYuECvy+ovmF+ipjkrCz8O7QI8VSLtwPLDJfEmb
+	fe6iGL/v60eF86/upnlOh+WZHIH3+qc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Mark Brown <broonie@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] KVM: arm64: selftests: Cover ID_AA64ISAR3_EL1 in
+ set_id_regs
+Message-ID: <aNHdVtel5VGMltJb@linux.dev>
+References: <20250920-kvm-arm64-id-aa64isar3-el1-v1-0-1764c1c1c96d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250920-kvm-arm64-id-aa64isar3-el1-v1-0-1764c1c1c96d@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 19 Sep 2025 08:48:57 +0000
-Wei Fang <wei.fang@nxp.com> wrote:
+On Sat, Sep 20, 2025 at 08:51:58PM +0100, Mark Brown wrote:
+> The set_id_regs selftest lacks coverag for ID_AA64ISR3_EL1 which has
+> several features exposed to KVM guests in it.  Add coverage, and while
+> we're here adjust the test to improve maintainability a bit.  
+> 
+> The test will fail without the recently applied change adding FEAT_LSFE:
+> 
+>    https://lore.kernel.org/r/175829303126.1764550.939188785634158487.b4-ty@kernel.org
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+> Mark Brown (2):
+>       KVM: arm64: selftests: Remove a duplicate register listing in set_id_regs
+>       KVM: arm64: selftests: Cover ID_AA64ISAR3_EL1 in set_id_regs
 
-> > > It looks like we have a problem and can't call pci_get_slot(), which
-> > > sleeps on down_read(&pci_bus_sem), from ethtool_ops :: get_ts_info(),
-> > > which can't sleep, as of commit 4c61d809cf60 ("net: ethtool: Fix
-> > > suspicious rcu_dereference usage").
-> > >
-> > > K=C3=B6ry, do you have any comments or suggestions? Patch is here:
-> > > =20
-> > https://lore.kern/
-> > el.org%2Fnetdev%2F20250918074454.1742328-1-wei.fang%40nxp.com%2F&d
-> > ata=3D05%7C02%7Cwei.fang%40nxp.com%7Cca70608eb6c9487d98e108ddf7571
-> > de6%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C63893867571474
-> > 2481%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjA
-> > uMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7
-> > C%7C&sdata=3Dh6rMPPxArsYdoPOz95UZRU88Oz9IJ3sD6lRjqC5SHMU%3D&reser
-> > ved=3D0
-> >
-> > This is annoying indeed. I don't know how this enetc drivers works but =
-why
-> > ts_info needs this pci_get_slot() call? It seems this call seems to not=
- be
-> > used in ndo_hwtstamp_get/set while ts_info which does not need any hard=
-ware
-> > communication report only a list of capabilities.
-> > =20
->=20
-> The ENETC (MAC controller) and the PTP timer are separate devices, they
-> are both PCIe devices, the PTP timer provides the PHC for ENETC to use, so
-> enetc_get_ts_info() needs to get the phc_index of the PTP timer, so
-> pci_get_slot() is called to get the pci_dev pointer of the PTP timer. I c=
-an
-> use pci_get_domain_bus_and_slot() to instead to fix this issue.
->=20
-> I do not know whether it is a good idea to place the get_ts_info() callba=
-ck
-> within an atomic lock context. I also noticed that idpf driver also has t=
-he
-> same potential issue (idpf_get_ts_info()).
+Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
 
-We can change the device providing the PTP (currently between MAC or PHY),
-that's why we need to acquire the rcu lock to avoid any pointer change duri=
-ng
-the get_ts_info callback which could cause an use after free issue.
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Thanks,
+Oliver
 
