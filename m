@@ -1,105 +1,185 @@
-Return-Path: <linux-kernel+bounces-827288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 734F4B915A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:17:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3EFB915EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39E021665B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:17:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644E718A58D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F262FFFA9;
-	Mon, 22 Sep 2025 13:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08725264F8A;
+	Mon, 22 Sep 2025 13:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MkiYJgVR"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XdpMsSRN"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5227D3D544
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED70139D0A
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758547062; cv=none; b=o31MrVvVkWzssmBQ9r3aqyKylaV6peh3eoIP9sHqzpR0SKjaAHBY8meWRIEwkYyxacNBXWldIcecImz0waw7P16Z237z//PIAxmz8JTWnIZHSWQ+LnuEQQwiWY9LKdHXdGH5rrusKDmGYg+5AcpS/GEmDqwub9UhqroRG/vrQ7Y=
+	t=1758547155; cv=none; b=IWu+i0tbDccV1bJoUd6wKyLkkApcB5FMmnyDcG9HOZdKQ5EXjWDTi/xGbsEkuG7pEyW+c62pRNobbcg6bGsCj5OwEba4NhtMa2r2qo/0krmzy5eNCe5njCoetauW6JRJ4v0nWKuXRWvlllJ3EVssZM9mBd9kGxx+D8tPyj16Sa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758547062; c=relaxed/simple;
-	bh=cd/+b49O1n7SbTNaNWcrWFsVrS7EIcr5G7uqfnlT5jM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OfDs58tH/GmnWbdOdewrwJLuSLBwzGFKzyvCtkUel5rn8NyaHRqSLVZo3M4pCbC5uh30aPfpBqUOowj9Ye6QAUVf0/DHqPnpCLs5OCO55xCbNiiF08Ii++amVv16UY0uiquZJeJPjGUhNmsWNkgJ+L8aTnq6KwYaWV3rq6Xl/5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MkiYJgVR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58M904oq028468;
-	Mon, 22 Sep 2025 13:17:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cd/+b49O1n7SbTNaNWcrWFsVrS7EIcr5G7uqfnlT5jM=; b=MkiYJgVRF4Q9lw6k
-	3sZ8cKDLwOld3cBEvIvMIqCDFd74QxTra91ciLVwz6by7TWbSgnE7xTipJfuq3nW
-	ciZef3tQGB/4XbUPj3p752mkytFU8ZcizmN6ENPCQr+hUh3Jw7GSG76DluAujsUG
-	r3RT6JtYrEi3JL650/kO/cW0BuRvkzTMkGBgROag0DI9o08et2jMHnBn0jjAbYDS
-	u9BMLbHNtT411zCp8FB6eCcLrSvYstrYbRxP1c7ZH9InfjeEtfLL7xvBkt2pN/7s
-	AG/TUfEe1kA5kxbQDbKTNANNU5QvrZvpJ5L75fvbcIei/05MAQz5TFezkG1TmyTF
-	QjG5WQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499mn7cudu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Sep 2025 13:17:35 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58MDHZNk021149
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Sep 2025 13:17:35 GMT
-Received: from hu-ckantibh-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.24; Mon, 22 Sep 2025 06:17:33 -0700
-From: Sanjay Chitroda <quic_ckantibh@quicinc.com>
-To: <linux-kernel@vger.kernel.org>, <andrii@kernel.org>
-CC: <quic_ckantibh@quicinc.com>, <sanjayembeddese@gmail.com>
-Subject: Re: [PATCH] libbpf: increase probe_name buffer size to avoid format-truncation
-Date: Mon, 22 Sep 2025 18:47:25 +0530
-Message-ID: <20250922131725.378691-1-quic_ckantibh@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAEf4BzbM+mG5EYQKdp1r4mntP2bXTb-KgJWg4ir6zzrSRrQURA () mail ! gmail ! com>
-References: <CAEf4BzbM+mG5EYQKdp1r4mntP2bXTb-KgJWg4ir6zzrSRrQURA () mail ! gmail ! com>
+	s=arc-20240116; t=1758547155; c=relaxed/simple;
+	bh=Qlj6gaE9A3b/2DQd1Cft33Y3zpGVy37xNiChJRZHnFI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=bF4u37vJuyWeEX8LcETy50ebOSfgdsSxD6xMDXpuaykS24+5aBTT0Rtn2RCndPOv5guTfDrqQM1E/N0C4QfSXoYGn6eBvv68EhJtuXcxqz/ct0scZrgTyTREaZZ9YWUGBj2YS35vf2ZxHjFWzFS/j4iqCIgQQBU1SFUf1ICZC3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XdpMsSRN; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758547151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zlmjGFwPRx/6689gSNpnlgqIexE5fznTKNN/tGQTJOs=;
+	b=XdpMsSRNcLzC5z0tZLLNTX0TumZKf2Z9vVqzFbGzojmX3dApClYyjhmijC6lC1uGW+/fby
+	SO0aglr9HnOfI+bDjje/ng1mZAyn6zGWBHfL6TzPuxK5ij4t9RddjMmCWq1+42DGvu6j44
+	Mhz6F1WJ+HLWmL04ti36z36c9sBqQvc=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzMyBTYWx0ZWRfX5y/anbEbg44C
- AD8BuUTZ/epSLLFU6GxqGhLuM6YaUFYjUiVxVI4/wh5wCdGxolkfASFFiw1yMHseSip1frQ0eDY
- /Ma1vgWeeM0eHSAT1CfIp4FwsDJkevqmif5cnUttSbAf028YaOIDcIrZ3N7p/LUdf3r4LR3V4mU
- 2wDlDhcYcXWg7iNJozlqy46+0BcCO6deHHAl5HTwl7Fc+Q39UHWwfxS+jsObNJWiIbqMTWTm7hn
- 4aaWISXgdprUiGB8u98b7rM2fm9VosYFJj1h+VDGoIkSdZtKJvTkPQVlRE/QM6LqVTDuMhtX63B
- mkMBSLMyc/5gr0X1CxQMV8d6l/bbhZxk5e3xSdeatsi/SL8mYOxvXIRHMMA3yfBW69CXHcl6Lwz
- wA+RgHFb
-X-Proofpoint-GUID: CMq1puTU7p9PH4mn3vA7hHG_-jlTGKss
-X-Proofpoint-ORIG-GUID: CMq1puTU7p9PH4mn3vA7hHG_-jlTGKss
-X-Authority-Analysis: v=2.4 cv=EZrIQOmC c=1 sm=1 tr=0 ts=68d14c70 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=yJojWOMRYYMA:10 a=NEAV23lmAAAA:8 a=LeRpRGh6yfgUX0Gnmp8A:9
- a=TfFxjrhefX8A:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-22_01,2025-09-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 phishscore=0 suspectscore=0 priorityscore=1501
- impostorscore=0 bulkscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509200033
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] x86/sgx: Replace kmalloc() + copy_from_user() with
+ memdup_user()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <202509211747.1edb60f-lkp@intel.com>
+Date: Mon, 22 Sep 2025 15:18:32 +0200
+Cc: oe-lkp@lists.linux.dev,
+ lkp@intel.com,
+ linux-sgx@vger.kernel.org,
+ Jarkko Sakkinen <jarkko@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9A7F15AA-836C-457B-BFD9-B37497B16A27@linux.dev>
+References: <202509211747.1edb60f-lkp@intel.com>
+To: kernel test robot <oliver.sang@intel.com>
+X-Migadu-Flow: FLOW_OUT
 
-Yes, This is due to GCC being overly aggressive with its warning.
-Also, Here is regression commit:
-https://github.com/torvalds/linux/commit/4dde20b1aa85d69c4281eaac9a7cf
+On 21. Sep 2025, at 11:59, kernel test robot wrote:
+>=20
+> kernel test robot noticed =
+"kernel-selftests.sgx.test_sgx.enclave.tcs_entry.fail" on:
+>=20
+> commit: c407010c166bcf30f9400bf0a4a4ec81c0149b81 ("[PATCH] x86/sgx: =
+Replace kmalloc() + copy_from_user() with memdup_user()")
+> url: =
+https://github.com/intel-lab-lkp/linux/commits/Thorsten-Blum/x86-sgx-Repla=
+ce-kmalloc-copy_from_user-with-memdup_user/20250909-041627
+> base: https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git =
+ed16618c380c32c68c06186d0ccbb0d5e0586e59
+> patch link: =
+https://lore.kernel.org/all/20250908201229.440105-2-thorsten.blum@linux.de=
+v/
+> patch subject: [PATCH] x86/sgx: Replace kmalloc() + copy_from_user() =
+with memdup_user()
+>=20
+> in testcase: kernel-selftests
+> version: kernel-selftests-x86_64-79e8447ec662-1_20250914
+> with following parameters:
+>=20
+> group: sgx
+>=20
+>=20
+>=20
+> config: x86_64-rhel-9.4-kselftests
+> compiler: gcc-14
+> test machine: 16 threads 1 sockets Intel(R) Xeon(R) E-2278G CPU @ =
+3.40GHz (Coffee Lake-E) with 32G memory
+>=20
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>=20
+>=20
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new =
+version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: =
+https://lore.kernel.org/oe-lkp/202509211747.1edb60f-lkp@intel.com
+>=20
+>=20
+> besides, we also observed below tests failed on this commit while =
+passing
+> without this patch.
+>=20
+> =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> tbox_group/testcase/rootfs/kconfig/compiler/group:
+>  =
+lkp-cfl-e1/kernel-selftests/debian-13-x86_64-20250902.cgz/x86_64-rhel-9.4-=
+kselftests/gcc-14/sgx
+>=20
+> ed16618c380c32c6 c407010c166bcf30f9400bf0a4a
+> ---------------- ---------------------------
+>       fail:runs  %reproduction    fail:runs
+>           |             |             |
+>           :6          100%           6:6     =
+kernel-selftests.sgx.test_sgx.enclave.clobbered_vdso.fail
+>           :6          100%           6:6     =
+kernel-selftests.sgx.test_sgx.enclave.clobbered_vdso_and_user_function.fai=
+l
+>           :6          100%           6:6     =
+kernel-selftests.sgx.test_sgx.enclave.pte_permissions.fail
+>           :6          100%           6:6     =
+kernel-selftests.sgx.test_sgx.enclave.tcs_entry.fail
+>           :6          100%           6:6     =
+kernel-selftests.sgx.test_sgx.enclave.unclobbered_vdso.fail
+>           :6          100%           6:6     =
+kernel-selftests.sgx.test_sgx.enclave.unclobbered_vdso_oversubscribed.fail=
+
+>           :6          100%           6:6     =
+kernel-selftests.sgx.test_sgx.fail
+>=20
+>=20
+>=20
+> # #  RUN           enclave.tcs_entry ...
+> # SGX_IOC_ENCLAVE_CREATE failed: Input/output error
+> # # main.c:231:tcs_entry:0x0000000000000000 0x0000000000002000 0x03
+> # # main.c:231:tcs_entry:0x0000000000002000 0x0000000000002000 0x05
+> # # main.c:231:tcs_entry:0x0000000000004000 0x0000000000007000 0x03
+> # # main.c:231:tcs_entry:0x000000000000b000 0x0000000000001000 0x03
+> # # main.c:246:tcs_entry:Failed to initialize the test enclave.
+> # # main.c:578:tcs_entry:Expected 0 (0) !=3D =
+setup_test_encl(ENCL_HEAP_SIZE_DEFAULT, &self->encl, _metadata) (0)
+> # # tcs_entry: Test terminated by assertion
+> # #          FAIL  enclave.tcs_entry
+> # not ok 6 enclave.tcs_entry
+>=20
+>=20
+>=20
+> The kernel config and materials to reproduce are available at:
+> =
+https://download.01.org/0day-ci/archive/20250921/202509211747.1edb60f-lkp@=
+intel.com
+
+Can someone explain why this test is failing?
+
+After some digging into SGX, I think it's the different allocators
+kmalloc() vs. kmem_buckets_alloc_track_caller(), but I'm not exactly
+sure why it fails.
+
+Perhaps we should add a comment for anyone else trying to replace this?
+
+Thanks,
+Thorsten
 
 
