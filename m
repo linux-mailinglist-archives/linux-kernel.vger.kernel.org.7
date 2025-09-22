@@ -1,120 +1,109 @@
-Return-Path: <linux-kernel+bounces-827503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 744A7B91EF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:30:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEEC0B91F1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B03C1902B48
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:31:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 726CA4231B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF21D2E719B;
-	Mon, 22 Sep 2025 15:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878F92E7F2A;
+	Mon, 22 Sep 2025 15:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6N4B1ZW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QAuu0+fN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0362AF1B;
-	Mon, 22 Sep 2025 15:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB552E03FB
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758555046; cv=none; b=mJVjXHKWwibrxpLKLcLB291UQmVe1/gNsOBbozR7dvIu/og9ceOxQXInzGWPAA4xbMTnPz4Lixhn9A36H7c/cQcOksU6rkVTMIWwyJQ2KuCWd6xXFT3jopOKXCxmCCLOe+rD49bUfRGGO8jrz4o3bEERShHSbXHLNyq/MB6WBgg=
+	t=1758555122; cv=none; b=bpALX2gWbqoPwdsaDQbluUsEGf/9rmzNA0BCpAcXjPThPVIaJLiJ6hg5ZZO2XzkfisyQkc9xuZs/C7vpvgBOwJ0yahXzE4tATRPiRpgZAXjQuylH5CfQyLSSI26shPs0paUMGbyokUvttCXhWpZ4zCJ+D5/gGwFeh1wNyIXPYww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758555046; c=relaxed/simple;
-	bh=9rHZ46XQ5Qf/T3d8zzS2nXiEGU9SVrkDNZX4Ew3/lcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J8H1ejCIvccztbETuMaGWNjoRk/EeX8YhSKFqsip/8zMPPJbbj/WUtG0wHhxr4rjx0ZE2lm4skuNopYE36wOCRu5Jfe6/3wJwU7owNgh3O8u1s8NJ+v6KjJjfimTaBMEKUe2/edwzXmdQaI//hWnqglRhYV5PC7DCaMVU7I5LPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6N4B1ZW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F36D8C4CEF7;
-	Mon, 22 Sep 2025 15:30:45 +0000 (UTC)
+	s=arc-20240116; t=1758555122; c=relaxed/simple;
+	bh=Si41+E/+ERxwR66glrdhy5Z3+iC7P4jh0qsSv0inztQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O5KyAU238aE4Brd8ISY06r63bbzD/jw5Sf1C0npD/+0T/20VzvwKd5vyKW+/v0rxhi8TqRWiQANRBB44ZJQ0OGwIxbSWy+wA3W2saUxQGqpFEZeqB8FK5NFEnedFd41GxJ7nDAoEB7aqZaWXrWhjeDs6F1oPgz0j+GOJOLJ9VSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QAuu0+fN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85656C4CEF0;
+	Mon, 22 Sep 2025 15:32:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758555046;
-	bh=9rHZ46XQ5Qf/T3d8zzS2nXiEGU9SVrkDNZX4Ew3/lcA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T6N4B1ZWorGk+L/UGZxbHdH1HdmI84ojMsZi6kG5My+Hru+jwCNqOxvOUBjqizQZy
-	 h3o1M9/Yyyvokovm8IqHQ2wlBb0K9NPUwmvRwuw5V1ADrYOG4CpukYgIl5JzboMifB
-	 ULra0fcxgl8oVORd4ETL4ExxVkmG675nIu+X1LiSW2+wMGXM+85EcLokJc4TE5zObb
-	 adXV3rlbHLCytUt8h1gDEsfw27t8TI1q4jgUGvdnQccjBeGq75Ekja7oi6y1jlwoVK
-	 u0aRggSPVtBWHOZvCTpG8m2ylT/P/KFm5Qyqq7faHb5w1N+3gLuoe9OJhqxnd6vx8p
-	 D4UpHSwrUabLA==
-Date: Mon, 22 Sep 2025 10:30:45 -0500
-From: Rob Herring <robh@kernel.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: max77705: add interrupt-controller
- node
-Message-ID: <20250922153045.GA4143633-robh@kernel.org>
-References: <20250912-starqltechn-correct_max77705_nodes-v3-0-4ce9f694ecd9@gmail.com>
- <20250912-starqltechn-correct_max77705_nodes-v3-1-4ce9f694ecd9@gmail.com>
+	s=k20201202; t=1758555122;
+	bh=Si41+E/+ERxwR66glrdhy5Z3+iC7P4jh0qsSv0inztQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QAuu0+fNDDiJ4/5ZUcZWC9LYypnflhf2/1hkeTpYZmk6iO1ryM1rMJFjJdHnRvu8a
+	 KsnCX5q1KSKmiUaFfNtWy+ndRJmUjgI+jCYpHUxM0qM+GNTxd09wADBO9hV2g55tIB
+	 TXkAZ/WKfSvO0NN+TgMQqL58dmAdCNZ6HLUDF1JUruO4JwaCS8Y1Um60uN7YzfovNF
+	 UclLTi027l5fS4XWLEeYy95DAMOHv5cknN1sl1JLH+5Ngs3e8VZcPI3hdwCNigPHGJ
+	 JwfB4pvwOeh8poT13e0p5s/8wb8rftCFAh4ld9NWF4PiR/5dk+gZ26H7P5U54PQ+hM
+	 AF+BvEp0JFwTA==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1v0iWB-000000004He-3sPh;
+	Mon, 22 Sep 2025 17:31:55 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 0/8] mtd: drop unused module aliases
+Date: Mon, 22 Sep 2025 17:30:59 +0200
+Message-ID: <20250922153107.16381-1-johan@kernel.org>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912-starqltechn-correct_max77705_nodes-v3-1-4ce9f694ecd9@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 12, 2025 at 07:47:01PM +0300, Dzmitry Sankouski wrote:
-> Add interrupt-controller node, because it has dedicated interrupt source
-> register, to determine which sub device triggered an interrupt.
+When fixing a device leak in the omap2 rawnand driver I noticed it had
+a no longer used platform module alias.
 
-The subject and commit msg are wrong. You aren't adding a node.
+This series drops unused module aliases from mtd drivers that never
+supported anything but OF probing or that no longer do.
 
-> 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
->  Documentation/devicetree/bindings/mfd/maxim,max77705.yaml | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
-> index 0ec89f0adc64..d265c8213a08 100644
-> --- a/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
-> @@ -26,6 +26,18 @@ properties:
->    interrupts:
->      maxItems: 1
->  
-> +  interrupt-controller:
-> +    description:
-> +      The driver implements an interrupt controller for the sub devices.
-> +      The interrupt number mapping is as follows
-> +      0 - charger
-> +      1 - topsys
-> +      2 - fuelgauge
-> +      3 - usb type-c management block.
-> +
-> +  '#interrupt-cells':
-> +    const: 1
-> +
->    haptic:
->      type: object
->      additionalProperties: false
-> @@ -120,8 +132,10 @@ examples:
->              reg = <0x66>;
->              interrupt-parent = <&pm8998_gpios>;
->              interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-> +            interrupt-controller;
->              pinctrl-0 = <&chg_int_default>;
->              pinctrl-names = "default";
-> +            #interrupt-cells = <1>;
->  
->              leds {
->                  compatible = "maxim,max77705-rgb";
-> 
-> -- 
-> 2.39.5
-> 
+Johan
+
+
+Johan Hovold (8):
+  mtd: hyperbus: hbmc-am654: drop unused module alias
+  mtd: onenand: omap2: drop unused module alias
+  mtd: rawnand: atmel: drop unused module alias
+  mtd: rawnand: omap2: drop unused module alias
+  mtd: rawnand: pl353: drop unused module alias
+  mtd: rawnand: rockchip: drop unused module alias
+  mtd: rawnand: stm32_fmc2: drop unused module alias
+  mtd: rawnand: sunxi: drop unused module alias
+
+ drivers/mtd/hyperbus/hbmc-am654.c               | 1 -
+ drivers/mtd/nand/onenand/onenand_omap2.c        | 1 -
+ drivers/mtd/nand/raw/atmel/pmecc.c              | 1 -
+ drivers/mtd/nand/raw/omap2.c                    | 1 -
+ drivers/mtd/nand/raw/pl35x-nand-controller.c    | 1 -
+ drivers/mtd/nand/raw/rockchip-nand-controller.c | 1 -
+ drivers/mtd/nand/raw/stm32_fmc2_nand.c          | 1 -
+ drivers/mtd/nand/raw/sunxi_nand.c               | 1 -
+ 8 files changed, 8 deletions(-)
+
+-- 
+2.49.1
+
 
