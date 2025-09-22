@@ -1,152 +1,174 @@
-Return-Path: <linux-kernel+bounces-827715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99164B927DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:55:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD2DB9278A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3E8764E205A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:55:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 440DC17FA46
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94DF316912;
-	Mon, 22 Sep 2025 17:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E8A3168E5;
+	Mon, 22 Sep 2025 17:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="dEiyeVuT"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="UdeUtPI3"
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6951991CA;
-	Mon, 22 Sep 2025 17:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E248634F;
+	Mon, 22 Sep 2025 17:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758563727; cv=none; b=GC0WpkP+O/oMt2h5I1FLCDFpaxutkp6NPs6RcQgx1c09VAEVcrpuhovWthD4xGC9JSfkJAZG14oND1PCB3fb57HX9VexaJctDjAcxHzvX9xs1nVn5l4EKLhp9yiWPf4HJAZom/OgSuMSB6Kp1qmLpD4dDTTiql5+1UId4C1udSE=
+	t=1758563285; cv=none; b=MsG648mnju9j4PbuhffVoU5VZVHYa0TJFbFj0ei46bKqF9P4h3AmvXWY2gTBq4UMRnxX630+Y2fg1hd+h3UYmIzVNP+sa58dHF9X82Y6VuWc3wDgh900ss6DEGeVrR9+HDDiQq6iGspVd2/tNrBMfd3ml9F3eKyqKViegd5eJtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758563727; c=relaxed/simple;
-	bh=K5cl92pvkgD/y2fnBzaamznki/4BJREvN2kPtKGbm54=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TonPcRpCdUmaTbLy7E3xa3HiYyJ+5uYHjUoP7zCFaJZdwCLMQH+IuG4nZEPV8fdN47GEDOXDcrXMU6YDI4ZbFyTOa9bz5UUydVYprQPSV9c0Tf0zjPmkrV4p4ID7c7QAlHnOtfCsrRAUrsFhb77bosMWVdlX+A9RVk9BiOnoH0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=dEiyeVuT; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 3A41E1C008F; Mon, 22 Sep 2025 19:45:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1758563134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2LoNSD1MjksE+Q5STpZ9iMFA6rZNp5scT6RfGqsxh58=;
-	b=dEiyeVuTfcFh0yqrUAInmXJZKRuF3SIxESWQ07Xil4xdIB7tWc75EPVDpyt7i6rcSY+lj1
-	l6Ke6nSPHI4lpnpqhaKN4dkgF4srfd4485SecXZMyl80G1WsF/zRPNqg/vXjsDQF/cE2ms
-	eszlkEZ5YvkuB/teWa0j2ISyQ5Jl+XU=
-Date: Mon, 22 Sep 2025 19:45:33 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: =?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Otto =?iso-8859-1?Q?Pfl=FCger?= <otto.pflueger@abscue.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Lee Jones <lee@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Adam Skladowski <a_skl39@protonmail.com>,
-	Sireesh Kodali <sireeshkodali@protonmail.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, iommu@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-	linux@mainlining.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v7 6/6] arm64: dts: qcom: Add Xiaomi Redmi 3S
-Message-ID: <aNGLPdmOyh/pfroq@duo.ucw.cz>
-References: <20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org>
- <20250831-msm8937-v7-6-232a9fb19ab7@mainlining.org>
+	s=arc-20240116; t=1758563285; c=relaxed/simple;
+	bh=R7eGuMphMZdM9G9yDE66sOhkKsZHxPwK1/ibT7GQtoQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qmEuu7VsKDnFzSd7S058X7+dD9iLN+FnuVZhVz+KNvoqhbBqRGNybi7/rM7zCAXla4MzGenKKcgZCQFRxY3wUGNls8YDO2sSSvz0MT6J/vtDdk2FXdFkIu6ySRKV/klV8r5dLwjMJ/cblHhpK4xzBl1iuRopeONKgp/kggc3ae0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=UdeUtPI3; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+	by m0089730.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 58MHlScH3536413;
+	Mon, 22 Sep 2025 10:47:39 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=ytmqrYllnckBp3jLuSpyiNO6eg2YDuOo7gf0z7lcOCE=; b=UdeUtPI3UYfj
+	mD86N/7xbdKqUWyl7K+e2X07mkThaGx3KFF7XSLfL4WzVr7soMvwyEfWXIjBn9go
+	nfKq4EMCnhngXK9QjBh1Bd+YZ2b7yc3EnnKrN6ljgb1BS54DPQQIZIZXk3V+LILx
+	POlWoObsWYixysUFEL0AGch6bHafdGjYxZL4SnGCN4yB9eMM/H0hbqVYnF+sE9Gq
+	tcQpPtVbDbBPPjH6Vr6T6Gyxv8fSuUy5E4vnjAkqt7FXT7lykBEqUkp88ma/ITdj
+	nVmxVdKWOeOHSrTko5LyB/4rFKzv7ECoPYSfL7fdm/sAqHFBSq7Dteg/2AHqX4uf
+	CgQMg7Pzwg==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by m0089730.ppops.net (PPS) with ESMTPS id 49bb5tg02m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 22 Sep 2025 10:47:39 -0700 (PDT)
+Received: from devgpu025.eag6.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Mon, 22 Sep 2025 17:47:36 +0000
+From: Alex Mastro <amastro@fb.com>
+To: Mostafa Saleh <smostafa@google.com>
+CC: Alex Mastro <amastro@fb.com>, "Tian, Kevin" <kevin.tian@intel.com>,
+        "Keith
+ Busch" <kbusch@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Alex Williamson
+	<alex.williamson@redhat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, "David
+ Reiss" <dreiss@meta.com>,
+        Joerg Roedel <joro@8bytes.org>, Leon Romanovsky
+	<leon@kernel.org>,
+        Li Zhe <lizhe.67@bytedance.com>, Mahmoud Adam
+	<mngyadam@amazon.de>,
+        Philipp Stanner <pstanner@redhat.com>,
+        Robin Murphy
+	<robin.murphy@arm.com>,
+        "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
+        "Will
+ Deacon" <will@kernel.org>, Yunxiang Li <Yunxiang.Li@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+        "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>
+Subject: Re: [TECH TOPIC] vfio, iommufd: Enabling user space drivers to vend more granular access to client processes
+Date: Mon, 22 Sep 2025 10:46:23 -0700
+Message-ID: <20250922174630.3123741-1-amastro@fb.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <aNETcPELm72zlkwR@google.com>
+References:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8MXtIuaouyubyuXB"
-Content-Disposition: inline
-In-Reply-To: <20250831-msm8937-v7-6-232a9fb19ab7@mainlining.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: 8a9aRPhz3f31K-f9lCVtT0JhirN1HjE0
+X-Authority-Analysis: v=2.4 cv=CIgqXQrD c=1 sm=1 tr=0 ts=68d18bbb cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=3TvhHRHpCP51MQbkfAYA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: 8a9aRPhz3f31K-f9lCVtT0JhirN1HjE0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDE3MyBTYWx0ZWRfX8hew7QE3jpTP
+ h6vHpSu0gaPnSfqse1heR94sbIiXdZ++U25INk8f75gGE7d8jigoobHTzlYgGWvWr4BRhxVlboo
+ hVKMh3Uolxx/zNeJLIyLbDDyz+aAF7Cblp5pMjcPnJSon9qiPFQOSAuvtiAFRwmoWP+mHaPfm22
+ eao3Vtl8MxmZHxNi59773H3QJFoKXjiggR/e5hy2Sl4CG7i76R0qFXPFSTqBdvhPEuUBMYF6bs9
+ mHuKpoi27yqeY3VigZzZfSxYeLaw+N1Eq9wOV1KlMWt+ufSYl5jrKKhql/IgDSMlt5sxOG47NaS
+ ylVwbnkEgSLjj4FGuu9lCOQdV+X/dabCIaxmPQp1r1GGE64hY0ciGJzcoKr700=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-22_01,2025-09-22_01,2025-03-28_01
 
+On Mon, Sep 22, 2025 at 09:14:24AM +0000, Mostafa Saleh wrote:
+> On Fri, Sep 19, 2025 at 07:00:04AM +0000, Tian, Kevin wrote:
+> > the proposal includes two parts: BAR access and IOMMU mapping. For
+> > the latter looks the intention is more around releasing resource. But
+> > the former sounds more like a security enhancement - instead of
+> > granting the client full access to the entire device it aims to expose
+> > only a region of BAR resource necessary into guest. Then as Jason
+> > questioned what is the value of doing so when one client can program
+> > arbitrary DMA address into the exposed BAR region to attack mapped
+> > memory of other clients and the USD... there is no hw isolation 
+> > within a partitioned IOAS unless the device supports PASID then 
+> > each client can be associated to its own IOAS space.
+> 
+> That’s also my opinion, it seems that PASIDs are not supported in
+> that case, that’s why the clients share the same IOVA address space,
+> instead of each one having their own.
 
---8MXtIuaouyubyuXB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, we do have cases where PASID is not supported by our hardware.
 
-Hi!
+> In that case I think as all of this is cooperative and can’t be enforced,
+> one process can corrupt another process memory that is mapped the IOMMU.
 
-> +	led-controller@45 {
-> +		compatible =3D "awinic,aw2013";
-> +		reg =3D <0x45>;
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +
-> +		vcc-supply =3D <&pm8937_l10>;
-> +		vio-supply =3D <&pm8937_l5>;
-> +
-> +		led@0 {
-> +			reg =3D <0>;
-> +			function =3D LED_FUNCTION_STATUS;
-> +			led-max-microamp =3D <5000>;
-> +			color =3D <LED_COLOR_ID_RED>;
-> +		};
-> +
-> +		led@1 {
-> +			reg =3D <1>;
-> +			function =3D LED_FUNCTION_STATUS;
-> +			led-max-microamp =3D <5000>;
-> +			color =3D <LED_COLOR_ID_GREEN>;
-> +		};
-> +
-> +		led@2 {
-> +			reg =3D <2>;
-> +			function =3D LED_FUNCTION_STATUS;
-> +			led-max-microamp =3D <5000>;
-> +			color =3D <LED_COLOR_ID_BLUE>;
-> +		};
-> +	};
-> +};
+In systems lacking PASID, some degree of enforcement would still be possible via
+USD and device policies. In a ~similar way to how an in-kernel driver wanting
+to accomplish our same goals (enabling a client and device able to access each
+other's memory directly) would presumably need to enforce this.
 
-That's single, 3-color LED, right? Please see LED multicolor support.
+I have been thinking along the following lines:
 
-Best regards,
-								Pavel
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, Netanyahu and Musk!
+Imagine that we want the client and device to communicate with each other
+directly via queues in each other's memory, bypassing interaction with the
+driver.
 
---8MXtIuaouyubyuXB
-Content-Type: application/pgp-signature; name="signature.asc"
+As part of granting access to a client process:
+- The USD allocates some IOAS slice for the client.
+- The USD prepares a restricted IOMMU fd to be shared with the client which
+  only has mapping permissions to the IOAS slice.
+- The USD configures the device: "DMA initiated across this region of
+  client-accessible BAR is only allowed to target the client's IOAS slice."
+- The USD vends the client a dma-buf exposing a view of only that client's queue
+  space, along with the restricted IOMMU fd.
 
------BEGIN PGP SIGNATURE-----
+Given the above setup, barring bugs in the USD, or the device hardware/firmware,
+it should be impossible for one client to corrupt another client's address
+space, since the side-effects it is able to create by accessing its BAR slice
+have been constrained by a combination of USD + device policy.
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaNGLPQAKCRAw5/Bqldv6
-8irtAJwI2afEzeUg31W2fmTx+qETFXOowQCdFOieFEzz1la9CKecVgIxILFSLCI=
-=EBxA
------END PGP SIGNATURE-----
+Next, we need to address revocation. The USD needs to be able revoke:
+1) client access to BAR memory
+2) device access to client memory
 
---8MXtIuaouyubyuXB--
+Issue (2) was touched on in the original tech topic email, but we haven't
+covered (1) yet.
+
+For (1) to be possible, I think we need to grant the VFIO user (USD in this
+specific case) the ability to revoke a dma-buf in a way that prevents "peer"
+access to the device -- whether the peer is some other device, or a user space
+client process.
+
+Following a dma_buf_ops.mmap, I suppose that revocation would mean:
+- Poisoning the dma-buf fd to disallow the creation of additional mmaps.
+- Zapping the PTEs backing existing mmaps. Subsequent access to the unmapped
+  client address space should trigger page faults.
+
+Thanks,
+Alex
+
 
