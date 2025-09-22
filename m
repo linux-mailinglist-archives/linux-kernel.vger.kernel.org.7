@@ -1,211 +1,120 @@
-Return-Path: <linux-kernel+bounces-827796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659BEB9310A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:46:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32092B9322B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D9C22E082D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:45:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 053201889FAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E85311594;
-	Mon, 22 Sep 2025 19:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875762F6199;
+	Mon, 22 Sep 2025 19:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AIyqOK2C"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="a9yirU8h"
+Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15D82F3C2F
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 19:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5BD18C2C;
+	Mon, 22 Sep 2025 19:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758570353; cv=none; b=a3KxW4djog4RqrWOKdNVPk9KvZF1SCd2qBZymnCNCtqWSLfyu7YFkFB/yqJ9Aq9IDtHcd7O7lenvoO04q+Y6G+3p57JHXKKx3mHR6Dob7A3kCbIaNuae3UpVm0nAcbshAkxL5wlwzEkrAgNg/Cfze8ieGMvBLTJINXLTnvdQINk=
+	t=1758570538; cv=none; b=eZJJZg95Tu+U1jmSyWYH25MuZRlXIukgvHZXBwTxLwt5xseGrVOOENzqgPYw6E7Aqv2ZwK/Jj6b0OnUVBP4i5H+7Hat7GdRqWYQkHOCvtlWpXKK3n01IrSf0xecWjx3fzORP9U35dY2OvNTqHBXG9NN4RDwltbvqIB65NwYkIts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758570353; c=relaxed/simple;
-	bh=vjW9IJzd7UfgdYsiSak1w31pK5m8/cVZ+B867T8HHBM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DFvBmhgyo9Ty3O3HGi5zr8ivMsphghQ5f59gZ80Toxe8GZfDYV0LfJuudYrDFqCiJmPVfBZQDgck379arX1MdIF1gZIyqhPTnWlOuhZsTDY0T60tlgG02IxEtBrt1VEvOvLqbMSKA3aN+vMlTb0sICglFVMGgKbKY6loJqcR8Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AIyqOK2C; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3f1aff41e7eso3757293f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:45:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758570350; x=1759175150; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RTJuNbQlewXWG9hXwZRk7tnR5Pkf04f51vbak4miOXo=;
-        b=AIyqOK2C8LemqzBZPCzKVitZ+JRQU0TJGPkviAab5wqm3BeD8PVr4w+iOuwomOVRcC
-         7tmP2I4QbuUlkrY+j6RMPjqOIA9yZFEFONUL/5XEKafxN+PfGSukPF7PVQ3D985smwst
-         KQF1m52KBhm62RkU8EFDtPXo0AKo6y5eBE62E/rI9+C7JuPgPt1ceLRC5ERybSpIoPRc
-         PXvJFilr+2je1DyH0LjcTutLoRfrD01STt7Uix2lyxAjrV8+r4/jnpx7buIyw/AP2V6W
-         MvdhnCosXL4U7l+Q92jxMcGl6r6/LhO1wFgAstPKYj0xjhGgEOn1ThfkyqNX4SoLTNti
-         Vn1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758570350; x=1759175150;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RTJuNbQlewXWG9hXwZRk7tnR5Pkf04f51vbak4miOXo=;
-        b=k0TzgD8xBhSU/TsdpmKTmEAtdMeyz7ivc4EwQ4+hOiqsQTeQf0BL89jMyXsQGwd2od
-         yDa85KXHU0OLFlbWCuTvF7tsQ7aVHQd/ikRtah2F4IFjpZGakIzYp4XZHMTbA2t9A+Rd
-         ZqQRIxrWgXnDDqRDKVbRt96sIZnxnek7WoTBCbJ9B4BxBFHCItTebGHiLOA8z24Y3lXa
-         HV8Hya12stL6Z4D6QTXieRg3U2mxUzLlHByTYA+iDnicr9JdjkQmavq7tF98OjZ5HoYC
-         gn/JG58uOBnoWBiz0frVY/R6876H3VBj9+O6uljuh5Aip+zaYodEACcwz0ZPWod2+sPx
-         MU9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU3yse5EofaI1x+PZnsuwTphSFJxJitj1HQtaY/5Cnye8vRqyoVRj56ZTq/helCBo53bdp7QzxStZLaGiY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1vfsFgVpuHKA5EzljHsU2SZgoI8cTEUK1ZrBWj30k2A8KlTIh
-	kgxNL232UD+aCuLVSQApwBdSuCFo8d7UjnM+AUzVU/TK1yi3UufVlPoh
-X-Gm-Gg: ASbGncv8hcI+/QLSd58QvDWRQmjV8hVEJunGDQbO6qEeX2t9bO4LRl1Px6WLiYtauHQ
-	8p1ft/N9Bp/fNKnjHRce0W8B2Z46utZUCksnbtl19e9ZS/vX1Mv3M9sShcWRd5DgsO7wbPGEs/y
-	KTbeV8uJbwAaYKdxbpnYw2YoWgcehYQb2XkscB1slJpP6bVWmJCsKlq1hopcUs0aBqTQhkf9Z4f
-	o9XudHqHfkvtpdN0czDB98g+Gf4gXodf1J60K0rfZtTKJWg0cKUDOOXbTh6OVLha1a7oBAlvXwR
-	WstG7Sr/pSH2aLQEGoyZMlXnz2Ip4KWlv9l6Im9JAQzq4gZHxbjTp914RDcRnRYk2IfHeWksF0O
-	HeWd6HdtPips=
-X-Google-Smtp-Source: AGHT+IFALcKFujkO7JJhfq5xMAulEIF3k9Kmo/R5l/wpLtebtJaXUZkr0+TlebYOIa4nJOAGkyNmrg==
-X-Received: by 2002:a05:6000:4008:b0:3ee:1296:d9e6 with SMTP id ffacd0b85a97d-3ee8a3d64b4mr12379884f8f.61.1758570349889;
-        Mon, 22 Sep 2025 12:45:49 -0700 (PDT)
-Received: from krava ([176.74.159.170])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbc730dsm21311105f8f.41.2025.09.22.12.45.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 12:45:49 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 22 Sep 2025 21:45:47 +0200
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@kernel.org>,
-	Menglong Dong <menglong8.dong@gmail.com>, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, kees@kernel.org,
-	samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
-	ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH] tracing: fgraph: Protect return handler from recursion
- loop
-Message-ID: <aNGnaylt_WNL6bZr@krava>
-References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
- <175828305637.117978.4183947592750468265.stgit@devnote2>
- <20250919112746.09fa02c7@gandalf.local.home>
- <aM5bizfTTTAH5Xoa@krava>
- <20250922151655.1792fa0abc6c3a8d98d052c9@kernel.org>
- <aNFRRa3m6Qm8zzQu@krava>
+	s=arc-20240116; t=1758570538; c=relaxed/simple;
+	bh=Bktxi40ifPO0BVUh+lWCQD2JpGLqdhBXFVRwoXQXalg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UIXgVSCCeQfEpzfSylNKJM57YaDm4NNVgDwFXfIgdvvPq8pb1/ZRQeIl9LuF8Ew78+bBqmv9pEeuIXnO9OajPyPYWzBCJD8DT2USzuHzs4SGSq9beYsXZwKLTlQhTt2bMVeKqT6Uc1osV7jUkm0BUFv/IDToJkpP9OPfzYfVbWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=a9yirU8h; arc=none smtp.client-ip=178.154.239.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:1621:0:640:12d9:0])
+	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id 4C111C00F5;
+	Mon, 22 Sep 2025 22:48:42 +0300 (MSK)
+Received: from d-tatianin-lin.yandex-team.ru (unknown [2a02:6bf:8080:c27::1:3a])
+	by mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id TmcMU33Goa60-qkx2LIvO;
+	Mon, 22 Sep 2025 22:48:39 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1758570519;
+	bh=qxION9U5wlKwVIBQL5IAbiQNhU5dexT8YZgkvd6NzUw=;
+	h=Message-Id:Date:Cc:Subject:To:From;
+	b=a9yirU8hEev/JyLBw1NbWhSsTrDADJpz3q8ZPGBfZFMHdJKFc2EkUJVMuqr75DGvT
+	 Hd+JDtnzmff7m4Np8Q1x4WEGQBGCeDR/xhgoBEErX9EAjtpgv7NydhAB6XQB10aAmO
+	 0gVR/00CLy2xzYpQx4Ue8oGPZ8ywwHeedrGx5M3o=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+From: Daniil Tatianin <d-tatianin@yandex-team.ru>
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Daniil Tatianin <d-tatianin@yandex-team.ru>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Florian Westphal <fw@strlen.de>,
+	Phil Sutter <phil@nwl.cc>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH 0/3] netfilter/x_tables: go back to using vmalloc
+Date: Mon, 22 Sep 2025 22:48:16 +0300
+Message-Id: <20250922194819.182809-1-d-tatianin@yandex-team.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNFRRa3m6Qm8zzQu@krava>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 22, 2025 at 03:38:13PM +0200, Jiri Olsa wrote:
-> On Mon, Sep 22, 2025 at 03:16:55PM +0900, Masami Hiramatsu wrote:
-> > On Sat, 20 Sep 2025 09:45:15 +0200
-> > Jiri Olsa <olsajiri@gmail.com> wrote:
-> > 
-> > > On Fri, Sep 19, 2025 at 11:27:46AM -0400, Steven Rostedt wrote:
-> > > > On Fri, 19 Sep 2025 20:57:36 +0900
-> > > > "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> > > > 
-> > > > > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > > > > 
-> > > > > function_graph_enter_regs() prevents itself from recursion by
-> > > > > ftrace_test_recursion_trylock(), but __ftrace_return_to_handler(),
-> > > > > which is called at the exit, does not prevent such recursion.
-> > > > > Therefore, while it can prevent recursive calls from
-> > > > > fgraph_ops::entryfunc(), it is not able to prevent recursive calls
-> > > > > to fgraph from fgraph_ops::retfunc(), resulting in a recursive loop.
-> > > > > This can lead an unexpected recursion bug reported by Menglong.
-> > > > > 
-> > > > >  is_endbr() is called in __ftrace_return_to_handler -> fprobe_return
-> > > > >   -> kprobe_multi_link_exit_handler -> is_endbr.  
-> > > > 
-> > > > So basically its if the handler for the return part calls something that it
-> > > > is tracing, it can trigger the recursion?
-> > > > 
-> > > > > 
-> > > > > To fix this issue, acquire ftrace_test_recursion_trylock() in the
-> > > > > __ftrace_return_to_handler() after unwind the shadow stack to mark
-> > > > > this section must prevent recursive call of fgraph inside user-defined
-> > > > > fgraph_ops::retfunc().
-> > > > > 
-> > > > > This is essentially a fix to commit 4346ba160409 ("fprobe: Rewrite
-> > > > > fprobe on function-graph tracer"), because before that fgraph was
-> > > > > only used from the function graph tracer. Fprobe allowed user to run
-> > > > > any callbacks from fgraph after that commit.
-> > > > 
-> > > > I would actually say it's because before this commit, the return handler
-> > > > callers never called anything that the entry handlers didn't already call.
-> > > > If there was recursion, the entry handler would catch it (and the entry
-> > > > tells fgraph if the exit handler should be called).
-> > > > 
-> > > > The difference here is with fprobes, you can have the exit handler calling
-> > > > functions that the entry handler does not, which exposes more cases where
-> > > > recursion could happen.
-> > > 
-> > > so IIUC we have return kprobe multi probe on is_endbr and now we do:
-> > > 	
-> > > 	is_endbr()
-> > > 	{ -> function_graph_enter_regs installs return probe
-> > > 	  ...
-> > > 	} -> __ftrace_return_to_handler
-> > > 	       fprobe_return
-> > > 	         kprobe_multi_link_exit_handler
-> > > 	           is_endbr
-> > > 		   { -> function_graph_enter_regs installs return probe
-> > > 		     ...
-> > > 		   } -> __ftrace_return_to_handler
-> > > 		          fprobe_return
-> > > 		            kprobe_multi_link_exit_handler
-> > > 			      is_endbr
-> > > 			      { -> function_graph_enter_regs installs return probe
-> > > 			        ...
-> > > 			      } -> __ftrace_return_to_handler
-> > > 			           ... recursion
-> > > 
-> > > 
-> > > with the fix:
-> > > 
-> > > 	is_endbr()
-> > > 	{ -> function_graph_enter_regs installs return probe
-> > > 	  ...
-> > > 	} -> __ftrace_return_to_handler
-> > > 	       fprobe_return
-> > > 	         kprobe_multi_link_exit_handler
-> > > 	           ...
-> > > 	           is_endbr
-> > > 		   { ->  function_graph_enter_regs
-> > > 		           ftrace_test_recursion_trylock fails and we do NOT install return probe
-> > >                      ...
-> > > 		   }
-> > > 
-> > > 
-> > > there's is_endbr call also in kprobe_multi_link_handler, but it won't
-> > > trigger recursion, because function_graph_enter_regs already uses
-> > > ftrace_test_recursion_trylock 
-> > > 
-> > > 
-> > > if above is correct then the fix looks good to me
-> > > 
-> > > Acked-by: Jiri Olsa <jolsa@kernel.org>
-> > 
-> > Hi Jiri,
-> > 
-> > I found ftrace_test_recursion_trylock() allows one nest level, can you
-> > make sure it is OK?
+This series aims to replace most calls to kvmalloc whose size directly depends
+on user input with vmalloc. This was actually the way xt_table_info was
+previously allocated if it ended up being too large back in 2017 before it got
+replaced with a call to kvmalloc in the
+commit eacd86ca3b036 ("net/netfilter/x_tables.c: use kvmalloc() in xt_alloc_table_info()").
 
-we have nesting check on the kprobe multi layer making sure
-the bpf program will not nest into itself
+The commit that changed it did so because "xt_alloc_table_info()
+basically opencodes kvmalloc()", which is not actually what it was
+doing. kvmalloc() does not attempt to go directly to vmalloc if the
+order the caller is trying to allocate is "expensive", instead it only
+uses vmalloc as a fallback in case the buddy allocator is not able to
+fullfill the request.
 
-  kprobe_multi_link_prog_run
-    bpf_prog_active check
+The difference between the two is actually huge in case the system is
+under memory pressure and has no free pages of a large order. Before the
+change to kvmalloc we wouldn't even try going to the buddy allocator for
+large orders, but now we would force it to try to find a page of the
+required order by waking up kswapd/kcompactd and dropping reclaimable memory
+for no reason at all to satisfy our huge order allocation that could easily
+exist within vmalloc'ed memory instead.
 
+Revert the change to always call vmalloc, since this code doesn't really
+benefit from contiguous physical memory, and the size it allocates is
+directly dictated by the userspace-passed table buffer thus allowing it to
+torture the buddy allocator by carefully crafting a huge table that fits
+right at the maximum available memory order on the system.
 
-jirka
+This series also touches the allocation of entry_offsets, since they suffer
+from the same issue.
+
+Daniil Tatianin (3):
+  netfilter/x_tables: go back to using vmalloc for xt_table_info
+  netfilter/x_tables: introduce a helper for freeing entry offsets
+  netfilter/x_tables: allocate entry_offsets with vcalloc
+
+ include/linux/netfilter/x_tables.h |  1 +
+ net/ipv4/netfilter/arp_tables.c    |  4 ++--
+ net/ipv4/netfilter/ip_tables.c     |  4 ++--
+ net/ipv6/netfilter/ip6_tables.c    |  4 ++--
+ net/netfilter/x_tables.c           | 12 +++++++++---
+ 5 files changed, 16 insertions(+), 9 deletions(-)
+
+-- 
+2.34.1
+
 
