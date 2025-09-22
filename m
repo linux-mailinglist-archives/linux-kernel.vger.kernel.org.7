@@ -1,129 +1,129 @@
-Return-Path: <linux-kernel+bounces-826789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B68B6B8F58C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:54:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A86B8F598
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0770417E108
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:54:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8373A1883500
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E11D2F5498;
-	Mon, 22 Sep 2025 07:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38172F90E6;
+	Mon, 22 Sep 2025 07:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pUe2aln1"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B53g+eii"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777CE2F7AB4;
-	Mon, 22 Sep 2025 07:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54532F7AA4
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758527672; cv=none; b=rfcnmXz+fcxH8JxH9c3WVQ64FIHAvvGF3Nh6KNCIj7ALrIfM135xTw5PVOHjbdHXFegRsjbJlZOYRIh4kP3q+EdirWtjNIxbEpdKVykqfSo1R7CDa1808Al46eMMupnE1yuuV68I2+WV93Ozf7wwnXk1SqXngxcX6829//CV5PY=
+	t=1758527681; cv=none; b=BYYbaM8F19kdUO0FsFPkLoaGAl7w7jc0EjY9aalWyHiTgajtwsclds8KK2+XdwNIuhQUerDnyrcUgF8XLloTc3WVYKQwGXgtTsxxYYeCY/xfCrzY53CDSR288hfcNR18lhgoW323IcJvAMFl7vUGZTxQnt3P8KOiuLU+U7sBvxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758527672; c=relaxed/simple;
-	bh=0iFWjWmm10I7s3tjgXzkqF+axpO0XqIWYpCg5ZNToRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PjAKt145RsaSH0eLkx/0EyIGAvZggv2Sytk0l2f7hxsPtiBLQFbpMWCNOhq2rISL+psVCfwqt9JTvTV3uKi23VIQZuFSenOgvmN6mqUZQ9pofwdv4OrBJG3DSb3yE1hCLy5aUn2TiNLUUGY3b1cQtLYca5/foaEJUARDzI9UQf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pUe2aln1; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758527662;
-	bh=0iFWjWmm10I7s3tjgXzkqF+axpO0XqIWYpCg5ZNToRc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pUe2aln1kgbInn1sd3eipvoHMhd3Z61caAUAtGbUsMVpb/G+Rhr8WRtZXEd4nsRwp
-	 sceyvOL0BMqYhIegw0zZZ/LImHjo2xtrEDYa9kluRrwLQmJ0x4GyuBfMTBLEd5duq2
-	 G/5REOOvTKYwy43PQMTuokW1xK2EenrIbxto34dgIYJ7uT23DY+JBEo31sruBLSQZy
-	 R2+GxbD0CsBE33nbQt68CjzurcK+Jp1VReEmhDmtRgBhXZagjvAdinNxrxsSioklOQ
-	 27TUx/zUQsifEPfUSgfosvlrBE9FuUT+vtztS0lo8sZuz/93eZsqZ6cqnT6kijqgme
-	 l1QcGfOHSO4yw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1FC6917E10B7;
-	Mon, 22 Sep 2025 09:54:22 +0200 (CEST)
-Message-ID: <8e9947ba-c37c-41e3-9e0e-c802aae0d833@collabora.com>
-Date: Mon, 22 Sep 2025 09:54:21 +0200
+	s=arc-20240116; t=1758527681; c=relaxed/simple;
+	bh=wHhXbBUv8sLtLk6ZtdozUkZSGPHqvYUTRhRTVOMPPw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=liN/ePV5wjrvCHzCzD1ukmEKCsy7K8UYBxD4Wr0e8HrQ26y1nSZLARgAThVoIP6HzfBGyPnSxkP2goeCLnZH/Lv9zCG3uKw47Fiv7wC35bNZii93EVRacPn5WTgFsaMdmyzWre08TQ4vHylgxwlmaaJ9gfWBu/L72hge8U1dNes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B53g+eii; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2445824dc27so43155685ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:54:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758527679; x=1759132479; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wHhXbBUv8sLtLk6ZtdozUkZSGPHqvYUTRhRTVOMPPw4=;
+        b=B53g+eiiTb5GDiKWZd/72tvC2vLjAUOqGrQYYHn2hP6zqCOPWTErNP9eJU1q4+a/Qt
+         nL2Vs9X5i9mVdn1Pyxy8caliAFbGYzbaF7JFqNAg1lNiOr3b5sq3uBRtzxY4DtbA2Nge
+         lZPVjDf9YW9iKP6TBSRl3pKL4xYTUIju3wH9Pb7IAagjLzpGzB9R/deQZsblrDLnw4tZ
+         48iOLBZlT6ZK+DwHPH8ZRpmUFCzPRzbAqu5ux2Cn6gw6LAUdDKHFSXtE/h3lkJosoJwr
+         LkRD09lFr9kXwu453ADEQaTiKiuozO6aJpudEqSfRiUnSk1qUAxKi8t2ptYTix8/TUBx
+         bpPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758527679; x=1759132479;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wHhXbBUv8sLtLk6ZtdozUkZSGPHqvYUTRhRTVOMPPw4=;
+        b=AonChYW/mZAVMKdVS2ZJstgqHTY+8FfIOyhHYrvcdtN2ZE5M44grPy1ql2czUzL1c9
+         oOjRhDdHmfBBg1G5QGgefyU2AId9ByZJbrE8OrYMS7yHkF0QrgYS66iHAry8qoFXEOJG
+         nWwA+1EyzB22egfb99Tfd8StCCjDH4gsoz9isPrxe/HU0xm7zjO6JmjYbnTlm2VoVmhf
+         8oJcg0TZ/ivKzvuqdUre05OZfCE2uhfrU43JGck8VcAlLOjT3VSP4TCgfdpoKGEPySeq
+         bQpFngtWmRfWwqGEkdLh1UVP516ivrwJI6VMm4JrjsJEuSaz9PAJqllqWAbECjbajxKO
+         83sQ==
+X-Gm-Message-State: AOJu0YzzXqu/iMq/v5sK5ii7HfXmbFSLGUjde6WjEc5jP/Txj2RAVPA+
+	4n79/DCnQ40ZH+YrOitE0ieLrYznRc2kqdVAwhSmYC4dgOzBcDSt8wyM
+X-Gm-Gg: ASbGnctc0Ltaf/M8dNTUswwKdiSlcKdMA1EOnqrK7J1fE2ZPuW05x3NNFZBFtEwyBI1
+	m3nvq5Tydra20anosZ2iypCZYHZDyT0hUhNjqeKBVgX7lLD1hCJ9exHv7UBh6mwNjpuWDfQzvvR
+	fGgvVX6C2dxCCPwD9Ha0FbgtxQ19+XAQ76YynC3RV4lP6J4u2H1w3eE2V0CU8+mspKdr730msp/
+	VcOzYHCNypEBLgxcAvdmeX0rMROSGM0sSgDFYLcqEYtNncSdjB/YcQJkYQAOXWzIzJC5lwprRHN
+	fXQOckByrtrIU3Y/6u+UZWa/P+vC0P5Fg15fvvZUElKQH5LVC3L8b2kMgzccmajex8dFbpNgVXF
+	oqUBTsds6KdaIeT5SHkbWOQ==
+X-Google-Smtp-Source: AGHT+IHz3wNSWldGNXV3xlynWhX7Cr9eYZtSb12u2x27WnJQYglboQKton+MwFy1y4rS6oR/rbqndg==
+X-Received: by 2002:a17:903:3846:b0:267:c984:8d9f with SMTP id d9443c01a7336-269ba45919fmr182012075ad.24.1758527678869;
+        Mon, 22 Sep 2025 00:54:38 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26e2046788dsm71684115ad.72.2025.09.22.00.54.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 00:54:37 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id D26144220596; Mon, 22 Sep 2025 14:54:30 +0700 (WIB)
+Date: Mon, 22 Sep 2025 14:54:30 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux KVM <kvm@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH] KVM: x86: Fix hypercalls docs section number order
+Message-ID: <aNEAtqQXyrXUPPLc@archie.me>
+References: <20250909003952.10314-1-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] i2c: mediatek: add support for MT6878 SoC
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Qii Wang <qii.wang@mediatek.com>, Andi Shyti <andi.shyti@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20250920-mt6878-i2c-bringup-v1-0-d1527ffd3cd7@mentallysanemainliners.org>
- <20250920-mt6878-i2c-bringup-v1-2-d1527ffd3cd7@mentallysanemainliners.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250920-mt6878-i2c-bringup-v1-2-d1527ffd3cd7@mentallysanemainliners.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6Hw9PxwxK+FTyenQ"
+Content-Disposition: inline
+In-Reply-To: <20250909003952.10314-1-bagasdotme@gmail.com>
 
-Il 20/09/25 17:31, Igor Belwon ha scritto:
-> Add support for the I2C units found in the MediaTek MT6878 SoC.
-> Just like other recent MediaTek SoCs, it uses the v3 register offsets
-> (which differ from v2 only by OFFSET_SLAVE_ADDR being
-> 0x94 instead of 0x4).
-> 
 
-That's exactly the same as mt8188_compat, so you don't need to add new
-platform data for this SoC.
+--6Hw9PxwxK+FTyenQ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This means that this patch is not needed.
+On Tue, Sep 09, 2025 at 07:39:52AM +0700, Bagas Sanjaya wrote:
+> Commit 4180bf1b655a79 ("KVM: X86: Implement "send IPI" hypercall")
+> documents KVM_HC_SEND_IPI hypercall, yet its section number duplicates
+> KVM_HC_CLOCK_PAIRING one (which both are 6th). Fix the numbering order
+> so that the former should be 7th.
 
-Cheers,
-Angelo
+Paolo, Sean, would you like to apply this patch on KVM tree or let Jon
+handle it through docs-next?
 
-> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-> ---
->   drivers/i2c/busses/i2c-mt65xx.c | 14 ++++++++++++++
->   1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
-> index ab456c3717db18eef74226de0ee88c49228796f5..085702aee006a6dd0ac89d1382a12fbac2d91c55 100644
-> --- a/drivers/i2c/busses/i2c-mt65xx.c
-> +++ b/drivers/i2c/busses/i2c-mt65xx.c
-> @@ -402,6 +402,19 @@ static const struct mtk_i2c_compatible mt6589_compat = {
->   	.max_dma_support = 32,
->   };
->   
-> +static const struct mtk_i2c_compatible mt6878_compat = {
-> +	.regs = mt_i2c_regs_v3,
-> +	.pmic_i2c = 0,
-> +	.dcm = 0,
-> +	.auto_restart = 1,
-> +	.aux_len_reg = 1,
-> +	.timing_adjust = 1,
-> +	.dma_sync = 0,
-> +	.ltiming_adjust = 1,
-> +	.apdma_sync = 1,
-> +	.max_dma_support = 36,
-> +};
-> +
->   static const struct mtk_i2c_compatible mt7622_compat = {
->   	.quirks = &mt7622_i2c_quirks,
->   	.regs = mt_i2c_regs_v1,
-> @@ -525,6 +538,7 @@ static const struct of_device_id mtk_i2c_of_match[] = {
->   	{ .compatible = "mediatek,mt2712-i2c", .data = &mt2712_compat },
->   	{ .compatible = "mediatek,mt6577-i2c", .data = &mt6577_compat },
->   	{ .compatible = "mediatek,mt6589-i2c", .data = &mt6589_compat },
-> +	{ .compatible = "mediatek,mt6878-i2c", .data = &mt6878_compat },
->   	{ .compatible = "mediatek,mt7622-i2c", .data = &mt7622_compat },
->   	{ .compatible = "mediatek,mt7981-i2c", .data = &mt7981_compat },
->   	{ .compatible = "mediatek,mt7986-i2c", .data = &mt7986_compat },
-> 
+Thanks.
 
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--6Hw9PxwxK+FTyenQ
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaNEAtgAKCRD2uYlJVVFO
+o3wKAQCS3n6Xj/tW8RTpqqfFhRw/RaeX1a+0H1vnroXuIBgyAgD/d3RMhZPFm9JN
+FhRV0MeuKVEwYkg2livKKUt+Jgs+lgY=
+=b9qT
+-----END PGP SIGNATURE-----
+
+--6Hw9PxwxK+FTyenQ--
 
