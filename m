@@ -1,97 +1,90 @@
-Return-Path: <linux-kernel+bounces-826474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CDAAB8E9F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 02:26:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62335B8EA12
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 02:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA45D17B17E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:26:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3DF188EABD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C1133997;
-	Mon, 22 Sep 2025 00:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF6C126BF1;
+	Mon, 22 Sep 2025 00:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sex1tRY4"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMvV4n2d"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C616D1BC2A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8CC78F51
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758500750; cv=none; b=ArO2tyQs6CzneS3B19bv9ksVLV3NQYWUsUi0OOMmIC3A+u6R8a09NPkr+zNnXnxzlZRdRieHde4gz54dUl1ZclEoGgQQKV6rPRRjVIj8aiYZPDvQ6D3L+BnBO1sRne4Xcw2amxGpMIt8N6fCT7fvgopiI/SrMAdDQTGaxzQeJzU=
+	t=1758501906; cv=none; b=W/bSCuBKGfKXarLT1mjEpaWFzJqETxT6CDeHttzTx71JNSZcofbi0OU/CaQT32vzVrL+wnO9nCDX/Orzvopql61Tvws2m3yreQS3//9p/3F0sSy54DBH57wjX0qDXvdTcfrrm1sbr2uXb2cLc2jSC6H891bo/yn+7CtVvJN4yYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758500750; c=relaxed/simple;
-	bh=ZYxkvytXWzIneq3yvORv4oZVMuSuCQF+rZ03OyIv+xg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pnIX5LWwQX3yt5OjYkj7AEr0k8wOoE1717A6I+BKfrxaGF3PaEHgUX2y5r5gm9bfYQ2nSvDVdSqHx8q7pJcy7kSDRAVrpwKwnGlU18HE9IJqucV4DNYQs2WaeB2+lNOuEkwA76UQCVuHZnYji4UalZ0jKED8+Y4mYbxwe9jIoPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sex1tRY4; arc=none smtp.client-ip=209.85.218.44
+	s=arc-20240116; t=1758501906; c=relaxed/simple;
+	bh=CMzTLzSuPzZSKmPCVID34LoXc6n8pN+Vcm6j0KSBe3M=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=VFvlGJyXFJGpjKV7Ybxd7ENb6+OX0TcPCJNrTyypJKD6EaYTZzNw2FA0AWOwgHssmOybzyzetOLKKOhjCohPUTI6wCknp63FtIGl4Jal9mB3x/Z2ikN68I69+VyzA45dO6s+ItpcTmUUVhuskdBjrWnxrnM25Qks2nA8j+yaUQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kMvV4n2d; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b04770a25f2so628286166b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 17:25:48 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-25669596921so39115875ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 17:45:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758500747; x=1759105547; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qqow7NfKYjPX1vfqX6Q3EwqJhfVfsFixre7RiEXeVic=;
-        b=Sex1tRY4smHZjwxR9y/gvzrQRCmWL2Wpx8XLjPy6G7vxxZVb9nJ2TJGuk94Rm0L5bX
-         XHSQnft4THbXJSqg7cLjzuv1zAKjKdhvT6dCdHQWm7kr00JjDmQ52RkXFMXmP5fXdgdg
-         f3/B7sdKpvJ09fR7gcfavrvsCyLyiTIl6jrgu5heWK1mwBjhJPOR8TuI9YiAEPQAIQJi
-         qG8UkZeVOvVZ3he9RK/KZhwWhxc7INCnIPiEoV7u/LcYTPNXF27XC6T9brP5HjchDQ+j
-         KpJ0neABxVhrhNQhq933ihNSBbxa6r82Rdt0zldOHKxlFswBQirmqmlzoJeocoXLt+no
-         kSLA==
+        d=gmail.com; s=20230601; t=1758501904; x=1759106704; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+4TpF34W3PHvsBrekGwm1rvuPQAafzFCgW5mxOcoS+s=;
+        b=kMvV4n2d1G53xqdBgS9QkMa68yAuMWJRbnFWpMwK6DXBR7Kd6+vt6eqkIjUuUVhn4b
+         VPpDZpboqARJfMX1oY44IsuuhjRpEQ+NwiVgGBi0bDwEuuYXU+rMHQlT3X/S3uJRK/PY
+         Yigqbv31Djv5hZdVzS/iHhnoGdFfkvfaIcPeqsK5sA1cVMm8sRomHx4syaU9Ke3iXg53
+         +mtMUT3GHZxftB7Yyg3Frc3GmS5glMezPmGKH82OJEBLJXuFnnbs/4nqzIpcdlSO8sGo
+         6rP9qSjIFstNZE/vO5U7SIPr/6It3eS0g/KGrTBmaLt8x0raZH1ntemei5z0KfoVNJ0u
+         fNGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758500747; x=1759105547;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qqow7NfKYjPX1vfqX6Q3EwqJhfVfsFixre7RiEXeVic=;
-        b=a/c7bmpU23Te5MVghutwUu3hC10BydEVjyBL4lkGdhlpJdqsV1mNCi8MxuFKwtfooA
-         1jdPRjlRL+K1Szq2ykPTYS0EvIQoiGsP6HiIL9MJTVp+ubWE/W8f7Zw2i2xgyCh1DTsV
-         in1S6lS5YHQqlV5uIlvD9WVW8K5JIhOoyopVsqHujjcCFY7xuvi5LSWQ3ntDiVtadhfO
-         +UDS41tKKAtN+YRh7UIlGoK3+aILHoUC9YzvQPlQpFOXevb1o7pOdxr62Fm8MS6tZcUx
-         LktMlWI5VJYlknBXvsNlkmn8ji79J6UQspVGGuTKgD6m+4wGNnasoGpUp+tdg9lPkpC/
-         ZC5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWiO3HevLhYOUJxZ0wEZ9h/pXe0C+vw3wpf8GVwaeTXJeHGqv4luLfnwPU36X75yUVxdO/UrAExgT82FOE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpYl79uDS8+ge4ZGZI7S3wZWWqNJAO0S0/gXvbOhARklLtpH55
-	20dGhANE1CHryq/T4CJnAJmVTke6hsB5/U9xRvuv2kyJRBzFG2Rvgmb6
-X-Gm-Gg: ASbGncsC+6cpV/P/BDsPvPcCQcGIXc7Kzn96HKeP0AJfMsK0V2EDsdi+lxNGfYQZ8G5
-	O5JEHigrUty7x0DPV4D0uaR2Y58aWZEl7Y3yfkzKUWfv5UWkXlc+07n4ILZS0xiMHJL5FHzFQKu
-	36Z39M5hp45c0E5xU/Zihxuc7KxYKdl/Tkki0MLfZlG1tpx/PR2X+44KsUYxvF9wBsEYXd7kfC7
-	aPv7oi4ZxGCbV4UJAfg1vgScAYUc/6EbF8uk+YZ/ev3JsyYbsOuw/hqYU6s60Ru+yfZPqSFovaK
-	TUwj4cCsRtMTZjRODXjPEEIlEr/ALlmoIjsTQqniDxdUhOVBe8oYiBiUgyiu6Fzszw//nWiIZ7g
-	pnuY0te2I3yudRNkWHgo=
-X-Google-Smtp-Source: AGHT+IHsbRcdXtV5go1CgGoP+4ok3H92iE4YLKzIeNlhHJMbPBRzYcrLPwri6hTQjbCbj0oX1PYScQ==
-X-Received: by 2002:a17:907:3fa0:b0:b0e:a66f:478e with SMTP id a640c23a62f3a-b24ed97c8fbmr1084255566b.14.1758500746934;
-        Sun, 21 Sep 2025 17:25:46 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b297f3f426csm374532266b.7.2025.09.21.17.25.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Sep 2025 17:25:46 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: cyphar@cyphar.com
-Cc: alx@kernel.org,
-	brauner@kernel.org,
-	dhowells@redhat.com,
-	g.branden.robinson@gmail.com,
-	jack@suse.cz,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
+        d=1e100.net; s=20230601; t=1758501904; x=1759106704;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+4TpF34W3PHvsBrekGwm1rvuPQAafzFCgW5mxOcoS+s=;
+        b=imZNhYthfCyZCAyrlivhX9FmM+deEC5uLNzdeH3VhlJgV3Bry8Te4sDg/42EX8hpnq
+         LjFYVazX1wiwKocHPI4oBBAZeCbr+/0SyHWxC8rn9zANEp95AZOjGThZq/0jOPMilV8z
+         Do2A8AYfFh1TIBXfPS0P/fHHBxG45hrCweyk9xGWGOuOdhYYxrTYbccVyt9iYQWiu/xC
+         GYetSU6s8s1NbLoFxleeIDWOo/FLahgm5Ewy7A7ds3OItGkUdcqbcxgq+VraTyey2Tdk
+         nq3o6sS2AE8FRjndg9CPaC2kj5u7Tzi726s4lH2cfKOHv97PHsQGJ2DRC+4DdnnsR0xc
+         zkeA==
+X-Forwarded-Encrypted: i=1; AJvYcCX1T2Zlc/wsyB0ngTHl3YCL3XeqtgYCBd26rslMRsChkjdQgWVx0dl3Wp4EnvDU3QTX8rLrN3Q0YeI47ug=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjjKHmVWY893TwJGJ4TjLJ+TQoxn4IyxeszH7pZclAcuRrM3bt
+	F1QjAUTXSQ3mzkGBVqAiz+DhnImE48X4UxCSgxNUDMrQvWxWWz/IlHpA
+X-Gm-Gg: ASbGncv8QovpxUfCZ1U+NT+HFZGjV+Y67wbriKnVpe69gfpygW6D4CeLC7lMghEUxUu
+	CK/ym5yayrOX+GQ7gW7ozR8q6Y+4DNABmJ82nwSwjKnbNDE0HGVi4sAN6SvHPVb0/FOmG0S/UQp
+	/ruqXvuIZSv4sofrgcif0SyfqNfZL45zSqZxCckE9kY7rrKBP4rNQwRzLz80AXAwN33hcA3rS97
+	xl/Av0+vRWF1mBgJ0xmqcxAlhV9VP0WpQtvt2HYrgHcGsWu14kNtfdmoy1Z87lgkEL3fPCsIpLu
+	HLP4kUGxzCPOuI0CTfAVnXVKRny1AX3mKsjSC6h2S5MdPkwhK/1lsi4j/cA20Z2ZhJJpjUxB+xe
+	W89mBvo4fQTNIfVozNSgBzqXTvlsM8aBoNfJpWnX+s98TjcN2uyH0
+X-Google-Smtp-Source: AGHT+IGeGCeJGDQO792G7blZZbjio2dz2UzvLzPbvR3uVFdQj+v9IaRb+EMqbWNhfxxc4quvxfrw7A==
+X-Received: by 2002:a17:902:cf4c:b0:267:776b:a315 with SMTP id d9443c01a7336-269ba508205mr140392845ad.32.1758501903638;
+        Sun, 21 Sep 2025 17:45:03 -0700 (PDT)
+Received: from kforge.gk.pfsense.com ([103.70.166.143])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f0da42fdesm6769810b3a.66.2025.09.21.17.44.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Sep 2025 17:45:03 -0700 (PDT)
+From: Gopi Krishna Menon <krishnagopi487@gmail.com>
+To: maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	shuah@kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-man@vger.kernel.org,
-	mtk.manpages@gmail.com,
-	safinaskar@zohomail.com,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v4 03/10] man/man2/fspick.2: document "new" mount API
-Date: Mon, 22 Sep 2025 03:25:29 +0300
-Message-ID: <20250922002529.95574-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250919-new-mount-api-v4-3-1261201ab562@cyphar.com>
-References: <20250919-new-mount-api-v4-3-1261201ab562@cyphar.com>
+	linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	krishnagopi487@gmail.com
+Subject: [PATCH RESEND] selftests/powerpc/pmu/: Add check_extended_reg_test to .gitignore
+Date: Mon, 22 Sep 2025 06:11:23 +0530
+Message-ID: <20250922004439.2395-1-krishnagopi487@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,31 +93,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-> With the notable caveat that in this example, mount(2) will clear all other filesystem parameters (such as MS_NOSUID or MS_NOEXEC); fsconfig(2) will only modify the ro parameter.
+Add the check_extended_reg_test binary to .gitignore to avoid accidentally
+staging the build artifact.
 
-MS_NOSUID and MS_NOEXEC are not filesystem parameters. They can be set per-mount, but not
-per-filesystem. Here is list of all filesystem-agnostic per-superblock parameters:
+Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
+---
+ tools/testing/selftests/powerpc/pmu/sampling_tests/.gitignore | 1 +
+ 1 file changed, 1 insertion(+)
 
-https://elixir.bootlin.com/linux/v6.17-rc6/source/fs/namespace.c#L4103
-
-Note that these SB_* constants are equal to corresponding MS_* constants.
-
-As you can see, there is no NOSUID and NOEXEC in that list.
-
-Also, SB_NOSUID does exist:
-https://elixir.bootlin.com/linux/v6.17-rc6/source/include/linux/fs.h#L1240
-.
-
-So, it seems that "NOSUID superblock" does exist as a concept. But, thanks to
-code in path_mount (provided above) user cannot (in filesystem-agnostic way)
-make given superblock NOSUID.
-
-So, from user point of view, NOSUID and NOEXEC are not filesystem parameters.
-
-If you need some example of filesystem parameter, I suggest MS_SYNCHRONOUS,
-I used it here:
-https://lore.kernel.org/all/198d1f2e189.11dbac16b2998.3847935512688537521@zohomail.com/
-
+diff --git a/tools/testing/selftests/powerpc/pmu/sampling_tests/.gitignore b/tools/testing/selftests/powerpc/pmu/sampling_tests/.gitignore
+index f93b4c7c3a8a..ea29228334e8 100644
+--- a/tools/testing/selftests/powerpc/pmu/sampling_tests/.gitignore
++++ b/tools/testing/selftests/powerpc/pmu/sampling_tests/.gitignore
+@@ -1,5 +1,6 @@
+ bhrb_filter_map_test
+ bhrb_no_crash_wo_pmu_test
++check_extended_reg_test
+ intr_regs_no_crash_wo_pmu_test
+ mmcr0_cc56run_test
+ mmcr0_exceptionbits_test
 -- 
-Askar Safin
+2.43.0
+
 
