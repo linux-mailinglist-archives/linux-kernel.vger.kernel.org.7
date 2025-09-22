@@ -1,199 +1,159 @@
-Return-Path: <linux-kernel+bounces-826841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FF0B8F78E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:22:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F9AB8F7A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40CFF1894F5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:22:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3279D3A478B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE002F39B9;
-	Mon, 22 Sep 2025 08:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357F72FE049;
+	Mon, 22 Sep 2025 08:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="esNX0wzm"
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="brvk8si1"
+Received: from pdx-out-013.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-013.esa.us-west-2.outbound.mail-perimeter.amazon.com [34.218.115.239])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36AE248F69
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162E61917F1;
+	Mon, 22 Sep 2025 08:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.218.115.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758529324; cv=none; b=HBrHPO2kGLq8Ykp919UeSuW52lt71vTzVNbs+BoSxwgLCPrV2AS/1ihI3LYY+hPQs+2q4sDiNfnbKbnTqosBOg2nFJxLRT4qwYcvKyCzSyRSTFenebMAcnCvZBl0sNZ49AavXcwJqx7NF0xKVgrw+bYVIyVmRpnJO+O7BBQYl/0=
+	t=1758529351; cv=none; b=D241zw3ZL/fWfu5oY785bEz/6cE0ad7DFqCKDDRvvbc5pk6F4Ry2gZnLkEZXxfDmCKGdxlZNzMem7z3gr++amE4XElda8XVWQUwevbAhTHlFERWgim2Z+QI3wHQARBrsVDoUaaNyhgotp63U4WOIAFjZuZZbsLi9Xs3X8YOiHNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758529324; c=relaxed/simple;
-	bh=hpXjIWjocmQg1IGQK/bNuOPK7P1EOh57IUJcZHoUUYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fm8ER7wjt8w4A+36k7CZr+rBJz/hWy72H5bHcf48+nTbSoCGSKAcnp0pVnM3QF4OWk0TI2p3nMgcfCECvNKablTxCgA23sGgskNSY6QsLeKaf1kM4QQgyZo2HOn16xM3Fdvls/TEkq67CV45ECtv1lh5zxHvX9M4ikj1cmdjnBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=esNX0wzm; arc=none smtp.client-ip=209.85.128.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-45f2c9799a3so30199755e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:22:02 -0700 (PDT)
+	s=arc-20240116; t=1758529351; c=relaxed/simple;
+	bh=caEwddqtPSczT7z3uM0EFNttlXaBLds+C0H31gwqnvE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cEHQ8eS3HgcZSq+PwT1OpkgzPIEUNE1kSyvcwSThbPnWECma65iTdY8Sf1ULhwAAp4XfHWMZvxKzNfr8ijerD0OKC3IKGsGS0oGZ66JvYyK1UqifdZaPy6F3bXo8qmf7tLKcQAoRDgoUfB2XSAHD46n8vWLSMiMaf25eFqXYsWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=brvk8si1; arc=none smtp.client-ip=34.218.115.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758529321; x=1759134121; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u8T3m1gUsOj1mNTOZiLoeJIujrUc8nMWQoqIU1R+v3o=;
-        b=esNX0wzm8x7d6VvkNGjRNhq72Lzt2Y4kyaWY+qNo2vPbXV8TTlP9HCFc0sR616YBfV
-         gHNo55h4TJhVQ/jKnzUHbEsM0Rp/0kTjhTudADv+WizEe+5t/v5W/vj0vB+Aiqm9QO8P
-         6ZR3JuJw+8hMXWJwSCNP14oRrbjJhS4PpCQpucs/5957QS8yczN7w+HTjNKG6w//QIZW
-         dFIHiqC58y41I2SClfORMqH41jQUGES/8baB1DO4/rwz16e6BPSVBqEwS+RzeSK4r2Ra
-         glnilo8ZnIFiat4XB8K0NfKdKX7xsecREk53Mbg9hedyI2VrunMoqoCRsadyitBl8Syk
-         WNgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758529321; x=1759134121;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u8T3m1gUsOj1mNTOZiLoeJIujrUc8nMWQoqIU1R+v3o=;
-        b=KqI+I4pOpJ9zaAsYwOUPwVU5EyGfk8jpvVo2nRCeClDwpkS/+SU01qNfk4S+TEwa2P
-         bQ+uTqmfR1/XrxxuA9PAG3df80pdQR9XJmFkxlgM8uG8Sm7pgHySNBTWSo8U5RlewmId
-         bqKjS1/BRzVUm0GjGdpyS1yRGLJzF2GDbid/nZt8aaaf8e1wIwlrQLVzk2+qyn+WK4NM
-         va1QGyoFz41LncgLBF1qyKHb0y92OO15BrOflzMTHxP7Xd2rDqr8LnV6QTWGjlzubTOe
-         4yY2K9PmtjvFeABVkHWCWUHE5K+bVVeNxFA860CrkuFBEBInaFE2h8cTh0gCp0q7TprB
-         B6XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0MTcyPeciBYWLxVlBUsHglp2NVuaAxBztQn2cCCUmL6bR3FtH6kgGprcys/GMXdJ8pWQe/PJu5ZB7GuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdF6YPCgiDFnsB8URM1kL3/JQ8Pe/YlrNPakIV8+55NmyltbVt
-	havBc29fh2ZBgpzKE3DUYryJTk+RLqjitMbRTYNOIrsT++Osb+rUYL1kQmSI9QU9g6s5Usxi7ZJ
-	nUYknWWwSQw==
-X-Gm-Gg: ASbGncssQZ7yQ5LI6HDdn4ynNS0gmQpRCSxEkgau0YzVZFoLBa/Mgt787PNXizvMekN
-	NehDRT5sVAf3lBVM8rW4LoPR7PJEk3H3JoIBjdg0XTUY05BlFESGV7qgxSbNvWsqpHTgfaxCqrI
-	e/CzzOAFful+ozKCCVDcTwx6CmHQZ0ATM3V2CvkUhV9rH8D86MuRS2uGBMVtPepwb2G7qKLxE/j
-	3cqi6e63JJnY0X/QbF0tKI7nHkd9kb4uU6i7hl5LPHZCRnErf7saBP+fBKbfBTqdezrHCmzRs0M
-	amV9PJ4j7+03J/wb9iIejRHD0gZLQod/OeSXTryAIG/+NxNVuIwWiulVizReSnRvkyCBkpu6UeN
-	kdeUUNedeB8LrA9b34KYp76vcjZDZd0PS
-X-Google-Smtp-Source: AGHT+IFEeWcqrvmBfhuXFUAZYNAGM+LTG1i1l9VAl8hYeXesYUWH+BkcHK0X7YePLj4Vt4ebLu4Crw==
-X-Received: by 2002:a05:600c:1f95:b0:461:8b9d:db1d with SMTP id 5b1f17b1804b1-467e75ea470mr111029515e9.7.1758529321120;
-        Mon, 22 Sep 2025 01:22:01 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:30:c61f:42e4:1d2c:1992])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46139122cb5sm228556515e9.8.2025.09.22.01.22.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 01:22:00 -0700 (PDT)
-Date: Mon, 22 Sep 2025 10:21:58 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 12/12] arm64: dts: qcom: Add EL2 overlay for Lemans
-Message-ID: <aNEHJv92i8NlaSO3@linaro.org>
-References: <20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com>
- <20250921-kvm_rproc_pas-v3-12-458f09647920@oss.qualcomm.com>
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1758529349; x=1790065349;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=caEwddqtPSczT7z3uM0EFNttlXaBLds+C0H31gwqnvE=;
+  b=brvk8si1tG2CB02XN2xyOsPWjpmS9xstQJsiophy17NBiFqEWyGWSsa8
+   fW5GDOWgxYIOOVEaaZ0zrNFLu/kAMfulBporcoZJQmkjkw3iNZ9VlRrOV
+   e7V42J8pNkcKSXvT1HUprjkyr8+G/wUnaJfUtRhqHG4i0Wnosooyh8yya
+   nfx7j06CbHQmPztXbWmQsaW4Le/UbSDU+CZoqMP0SwuAfk5IAUVBSQEcc
+   g7NRLwgiA8WPbqbmjbi0plZZChKkRNDA2mssenrzHqngZCD8KKLFZx5i4
+   NopBpNfAW90zKN0ERyJtq2trLB/VYINUaOhVVq+1B7NHgwJufvKEiTJQ7
+   w==;
+X-CSE-ConnectionGUID: VlXsPdwYSTy5PHFTuTM21w==
+X-CSE-MsgGUID: ZpmByKcYTCOY1UHGBCSrHA==
+X-IronPort-AV: E=Sophos;i="6.18,284,1751241600"; 
+   d="scan'208";a="3343440"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-013.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 08:22:26 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:34737]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.57.172:2525] with esmtp (Farcaster)
+ id c186fab0-1113-419d-8b5c-5c83b9abb535; Mon, 22 Sep 2025 08:22:26 +0000 (UTC)
+X-Farcaster-Flow-ID: c186fab0-1113-419d-8b5c-5c83b9abb535
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Mon, 22 Sep 2025 08:22:26 +0000
+Received: from dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com
+ (172.19.75.107) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Mon, 22 Sep 2025
+ 08:22:23 +0000
+From: Jakub Acs <acsjakub@amazon.de>
+To: <linux-fsdevel@vger.kernel.org>
+CC: <acsjakub@amazon.de>, Andrew Morton <akpm@linux-foundation.org>, "David
+ Hildenbrand" <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, "Lorenzo
+ Stoakes" <lorenzo.stoakes@oracle.com>, Jinjiang Tu <tujinjiang@huawei.com>,
+	Suren Baghdasaryan <surenb@google.com>, Penglei Jiang
+	<superman.xpt@gmail.com>, Mark Brown <broonie@kernel.org>, Baolin Wang
+	<baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, "Andrei
+ Vagin" <avagin@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?=
+	<mirq-linux@rere.qmqm.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, "Muhammad
+ Usama Anjum" <usama.anjum@collabora.com>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: [PATCH v3] fs/proc/task_mmu: check p->vec_buf for NULL
+Date: Mon, 22 Sep 2025 08:22:05 +0000
+Message-ID: <20250922082206.6889-1-acsjakub@amazon.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250921-kvm_rproc_pas-v3-12-458f09647920@oss.qualcomm.com>
+X-ClientProxiedBy: EX19D044UWA004.ant.amazon.com (10.13.139.7) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-On Sun, Sep 21, 2025 at 01:11:10AM +0530, Mukesh Ojha wrote:
-> All the Lemans IOT variants boards are using Gunyah hypervisor which
-> means that, so far, Linux-based OS could only boot in EL1 on those
-> devices.  However, it is possible for us to boot Linux at EL2 on these
-> devices [1].
-> 
-> When running under Gunyah, remote processor firmware IOMMU streams is
-> controlled by the Gunyah however when Linux take ownership of it in EL2,
-> It need to configure it properly to use remote processor.
-> 
-> Add a EL2-specific DT overlay and apply it to Lemans IOT variant
-> devices to create -el2.dtb for each of them alongside "normal" dtb.
-> 
-> [1]
-> https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-4/boot-developer-touchpoints.html#uefi
-> 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile        |  7 ++++++-
->  arch/arm64/boot/dts/qcom/lemans-el2.dtso | 28 ++++++++++++++++++++++++++++
->  2 files changed, 34 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 296688f7cb26..e2eb6c4f8e25 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -35,6 +35,8 @@ dtb-$(CONFIG_ARCH_QCOM)	+= lemans-evk.dtb
->  lemans-evk-camera-csi1-imx577-dtbs	:= lemans-evk.dtb lemans-evk-camera-csi1-imx577.dtbo
->  
->  dtb-$(CONFIG_ARCH_QCOM)	+= lemans-evk-camera-csi1-imx577.dtb
-> +lemans-evk-el2-dtbs := lemans-evk.dtb lemans-el2.dtbo
-> +dtb-$(CONFIG_ARCH_QCOM)	+= lemans-evk-el2.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= monaco-evk.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8216-samsung-fortuna3g.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-acer-a1-724.dtb
-> @@ -136,7 +138,10 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2-vision-mezzanine.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8300-ride.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb
-> -dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb
-> +qcs9100-ride-el2-dtbs := qcs9100-ride.dtb lemans-el2.dtbo
-> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb qcs9100-ride-el2.dtb
-> +qcs9100-ride-r3-el2-dtbs := qcs9100-ride-r3.dtb lemans-el2.dtbo
-> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb qcs9100-ride-r3-el2.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qrb2210-rb1.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qrb4210-rb2.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/lemans-el2.dtso b/arch/arm64/boot/dts/qcom/lemans-el2.dtso
-> new file mode 100644
-> index 000000000000..55a2a9e2b10d
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/lemans-el2.dtso
-> @@ -0,0 +1,28 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> + */
-> +
-> +/*
-> + * Lemans specific modifications required to boot in EL2.
-> + */
-> +
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +/*
-> + * When running under Gunyah, remote processor firmware IOMMU streams is
-> + * controlled by the Gunyah however when we take ownership of it in EL2,
-> + * we need to configure it properly to use remote processor.
-> + */
-> +&remoteproc_adsp {
-> +	iommus = <&apps_smmu 0x3000 0x0>;
-> +};
-> +
-> +&remoteproc_cdsp0 {
-> +	iommus = <&apps_smmu 0x21c0 0x0400>;
-> +};
-> +
-> +&remoteproc_cdsp1 {
-> +	iommus = <&apps_smmu 0x29c0 0x0400>;
-> +};
-> 
+V2hlbiBQQUdFTUFQX1NDQU4gaW9jdGwgaW52b2tlZCB3aXRoIHZlY19sZW4gPSAwIHJlYWNoZXMK
+cGFnZW1hcF9zY2FuX2JhY2tvdXRfcmFuZ2UoKSwga2VybmVsIHBhbmljcyB3aXRoIG51bGwtcHRy
+LWRlcmVmOgoKWyAgIDQ0LjkzNjgwOF0gT29wczogZ2VuZXJhbCBwcm90ZWN0aW9uIGZhdWx0LCBw
+cm9iYWJseSBmb3Igbm9uLWNhbm9uaWNhbCBhZGRyZXNzIDB4ZGZmZmZjMDAwMDAwMDAwMDogMDAw
+MCBbIzFdIFNNUCBERUJVR19QQUdFQUxMT0MgS0FTQU4gTk9QVEkKWyAgIDQ0LjkzNzc5N10gS0FT
+QU46IG51bGwtcHRyLWRlcmVmIGluIHJhbmdlIFsweDAwMDAwMDAwMDAwMDAwMDAtMHgwMDAwMDAw
+MDAwMDAwMDA3XQpbICAgNDQuOTM4MzkxXSBDUFU6IDEgVUlEOiAwIFBJRDogMjQ4MCBDb21tOiBy
+ZXByb2R1Y2VyIE5vdCB0YWludGVkIDYuMTcuMC1yYzYgIzIyIFBSRUVNUFQobm9uZSkKWyAgIDQ0
+LjkzOTA2Ml0gSGFyZHdhcmUgbmFtZTogUUVNVSBTdGFuZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwg
+MTk5NiksIEJJT1MgcmVsLTEuMTYuMy0wLWdhNmVkNmI3MDFmMGEtcHJlYnVpbHQucWVtdS5vcmcg
+MDQvMDEvMjAxNApbICAgNDQuOTM5OTM1XSBSSVA6IDAwMTA6cGFnZW1hcF9zY2FuX3RocF9lbnRy
+eS5pc3JhLjArMHg3NDEvMHhhODAKCjxzbmlwIHJlZ2lzdGVycywgdW5yZWxpYWJsZSB0cmFjZT4K
+ClsgICA0NC45NDY4MjhdIENhbGwgVHJhY2U6ClsgICA0NC45NDcwMzBdICA8VEFTSz4KWyAgIDQ0
+Ljk0OTIxOV0gIHBhZ2VtYXBfc2Nhbl9wbWRfZW50cnkrMHhlYy8weGZhMApbICAgNDQuOTUyNTkz
+XSAgd2Fsa19wbWRfcmFuZ2UuaXNyYS4wKzB4MzAyLzB4OTEwClsgICA0NC45NTQwNjldICB3YWxr
+X3B1ZF9yYW5nZS5pc3JhLjArMHg0MTkvMHg3OTAKWyAgIDQ0Ljk1NDQyN10gIHdhbGtfcDRkX3Jh
+bmdlKzB4NDFlLzB4NjIwClsgICA0NC45NTQ3NDNdICB3YWxrX3BnZF9yYW5nZSsweDMxZS8weDYz
+MApbICAgNDQuOTU1MDU3XSAgX193YWxrX3BhZ2VfcmFuZ2UrMHgxNjAvMHg2NzAKWyAgIDQ0Ljk1
+Njg4M10gIHdhbGtfcGFnZV9yYW5nZV9tbSsweDQwOC8weDk4MApbICAgNDQuOTU4Njc3XSAgd2Fs
+a19wYWdlX3JhbmdlKzB4NjYvMHg5MApbICAgNDQuOTU4OTg0XSAgZG9fcGFnZW1hcF9zY2FuKzB4
+MjhkLzB4OWMwClsgICA0NC45NjE4MzNdICBkb19wYWdlbWFwX2NtZCsweDU5LzB4ODAKWyAgIDQ0
+Ljk2MjQ4NF0gIF9feDY0X3N5c19pb2N0bCsweDE4ZC8weDIxMApbICAgNDQuOTYyODA0XSAgZG9f
+c3lzY2FsbF82NCsweDViLzB4MjkwClsgICA0NC45NjMxMTFdICBlbnRyeV9TWVNDQUxMXzY0X2Fm
+dGVyX2h3ZnJhbWUrMHg3Ni8weDdlCgp2ZWNfbGVuID0gMCBpbiBwYWdlbWFwX3NjYW5faW5pdF9i
+b3VuY2VfYnVmZmVyKCkgbWVhbnMgbm8gYnVmZmVycyBhcmUKYWxsb2NhdGVkIGFuZCBwLT52ZWNf
+YnVmIHJlbWFpbnMgc2V0IHRvIE5VTEwuCgpUaGlzIGJyZWFrcyBhbiBhc3N1bXB0aW9uIG1hZGUg
+bGF0ZXIgaW4gcGFnZW1hcF9zY2FuX2JhY2tvdXRfcmFuZ2UoKSwKdGhhdCBwYWdlX3JlZ2lvbiBp
+cyBhbHdheXMgYWxsb2NhdGVkIGZvciBwLT52ZWNfYnVmX2luZGV4LgoKRml4IGl0IGJ5IGV4cGxp
+Y2l0bHkgY2hlY2tpbmcgcC0+dmVjX2J1ZiBmb3IgTlVMTCBiZWZvcmUgZGVyZWZlcmVuY2luZy4K
+Ck90aGVyIHNpdGVzIHRoYXQgbWlnaHQgcnVuIGludG8gc2FtZSBkZXJlZi1pc3N1ZSBhcmUgYWxy
+ZWFkeSAoZGlyZWN0bHkKb3IgdHJhbnNpdGl2ZWx5KSBwcm90ZWN0ZWQgYnkgY2hlY2tpbmcgcC0+
+dmVjX2J1Zi4KCk5vdGU6CkZyb20gUEFHRU1BUF9TQ0FOIG1hbiBwYWdlLCBpdCBzZWVtcyB2ZWNf
+bGVuID0gMCBpcyB2YWxpZCB3aGVuIG5vIG91dHB1dAppcyByZXF1ZXN0ZWQgYW5kIGl0J3Mgb25s
+eSB0aGUgc2lkZSBlZmZlY3RzIGNhbGxlciBpcyBpbnRlcmVzdGVkIGluLApoZW5jZSBpdCBwYXNz
+ZXMgY2hlY2sgaW4gcGFnZW1hcF9zY2FuX2dldF9hcmdzKCkuCgpUaGlzIGlzc3VlIHdhcyBmb3Vu
+ZCBieSBzeXprYWxsZXIuCgpGaXhlczogNTI1MjZjYTdmZGI5ICgiZnMvcHJvYy90YXNrX21tdTog
+aW1wbGVtZW50IElPQ1RMIHRvIGdldCBhbmQgb3B0aW9uYWxseSBjbGVhciBpbmZvIGFib3V0IFBU
+RXMiKQpTaWduZWQtb2ZmLWJ5OiBKYWt1YiBBY3MgPGFjc2pha3ViQGFtYXpvbi5kZT4KQ2M6IEFu
+ZHJldyBNb3J0b24gPGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc+CkNjOiBEYXZpZCBIaWxkZW5i
+cmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT4KQ2M6IFZsYXN0aW1pbCBCYWJrYSA8dmJhYmthQHN1c2Uu
+Y3o+CkNjOiBMb3JlbnpvIFN0b2FrZXMgPGxvcmVuem8uc3RvYWtlc0BvcmFjbGUuY29tPgpDYzog
+SmluamlhbmcgVHUgPHR1amluamlhbmdAaHVhd2VpLmNvbT4KQ2M6IFN1cmVuIEJhZ2hkYXNhcnlh
+biA8c3VyZW5iQGdvb2dsZS5jb20+CkNjOiBQZW5nbGVpIEppYW5nIDxzdXBlcm1hbi54cHRAZ21h
+aWwuY29tPgpDYzogTWFyayBCcm93biA8YnJvb25pZUBrZXJuZWwub3JnPgpDYzogQmFvbGluIFdh
+bmcgPGJhb2xpbi53YW5nQGxpbnV4LmFsaWJhYmEuY29tPgpDYzogUnlhbiBSb2JlcnRzIDxyeWFu
+LnJvYmVydHNAYXJtLmNvbT4KQ2M6IEFuZHJlaSBWYWdpbiA8YXZhZ2luQGdtYWlsLmNvbT4KQ2M6
+ICJNaWNoYcWCIE1pcm9zxYJhdyIgPG1pcnEtbGludXhAcmVyZS5xbXFtLnBsPgpDYzogU3RlcGhl
+biBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+CkNjOiBNdWhhbW1hZCBVc2FtYSBBbmp1
+bSA8dXNhbWEuYW5qdW1AY29sbGFib3JhLmNvbT4KQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmcKQ2M6IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnCkNjOiBzdGFibGVAdmdlci5r
+ZXJuZWwub3JnCi0tLQp2MSAtPiB2MjogY2hlY2sgcC0+dmVjX2J1ZiBpbnN0ZWFkIG9mIGN1cl9i
+dWYKdjIgLT4gdjM6IGZpeCBjb21taXQgdGl0bGUKCnYxOiBodHRwczovL2xvcmUua2VybmVsLm9y
+Zy9hbGwvMjAyNTA5MTkxNDIxMDYuNDM1MjctMS1hY3NqYWt1YkBhbWF6b24uZGUvIAp2MjogaHR0
+cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUwOTIyMDgxNzEzLjc3MzAzLTEtYWNzamFrdWJA
+YW1hem9uLmRlLwoKIGZzL3Byb2MvdGFza19tbXUuYyB8IDMgKysrCiAxIGZpbGUgY2hhbmdlZCwg
+MyBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZnMvcHJvYy90YXNrX21tdS5jIGIvZnMvcHJv
+Yy90YXNrX21tdS5jCmluZGV4IDI5Y2NhMGU2ZDBmZi4uYjI2YWU1NTZiNDQ2IDEwMDY0NAotLS0g
+YS9mcy9wcm9jL3Rhc2tfbW11LmMKKysrIGIvZnMvcHJvYy90YXNrX21tdS5jCkBAIC0yNDE3LDYg
+KzI0MTcsOSBAQCBzdGF0aWMgdm9pZCBwYWdlbWFwX3NjYW5fYmFja291dF9yYW5nZShzdHJ1Y3Qg
+cGFnZW1hcF9zY2FuX3ByaXZhdGUgKnAsCiB7CiAJc3RydWN0IHBhZ2VfcmVnaW9uICpjdXJfYnVm
+ID0gJnAtPnZlY19idWZbcC0+dmVjX2J1Zl9pbmRleF07CiAKKwlpZiAoIXAtPnZlY19idWYpCisJ
+CXJldHVybjsKKwogCWlmIChjdXJfYnVmLT5zdGFydCAhPSBhZGRyKQogCQljdXJfYnVmLT5lbmQg
+PSBhZGRyOwogCWVsc2UKLS0gCjIuNDcuMwoKCgoKQW1hem9uIFdlYiBTZXJ2aWNlcyBEZXZlbG9w
+bWVudCBDZW50ZXIgR2VybWFueSBHbWJIClRhbWFyYS1EYW56LVN0ci4gMTMKMTAyNDMgQmVybGlu
+Ckdlc2NoYWVmdHNmdWVocnVuZzogQ2hyaXN0aWFuIFNjaGxhZWdlcgpFaW5nZXRyYWdlbiBhbSBB
+bXRzZ2VyaWNodCBDaGFybG90dGVuYnVyZyB1bnRlciBIUkIgMjU3NzY0IEIKU2l0ejogQmVybGlu
+ClVzdC1JRDogREUgMzY1IDUzOCA1OTcK
 
-Would be good to disable &iris here for now similar to
-https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/commit/?h=for-next&id=c0f045e303e014cec5d883edf82fe5de74769944
-(I'm assuming it is broken without specifying the iommus?)
-
-What about GPU? You can load the GPU zap shader in EL2 without further
-changes in the drm/msm driver?
-
-What about &remoteproc_gpdsp0 and &remoteproc_gpdsp1?
-
-Please make the changes in a way that they result in a properly
-functional boot without errors. Disable functionality that needs
-more work before it can be enabled in EL2.
-
-Thanks,
-Stephan
 
