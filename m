@@ -1,460 +1,221 @@
-Return-Path: <linux-kernel+bounces-827938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F00B937C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:31:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F99B937EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1115717E7BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:31:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5156B190523A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06EB2F7469;
-	Mon, 22 Sep 2025 22:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8CE2FD7BA;
+	Mon, 22 Sep 2025 22:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TfGHw5db"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IntUQ1y2"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430C81DE2A7
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 22:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56DA28A73A
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 22:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758580312; cv=none; b=f5HLiOZy+LFxttQ8q9dS68k++Ukw1MZYSBpIY+21y4hNHG0DTXzh/LlSZdGLSq+DBjQ428GpB/kO1opnJlAzp7y1/l7dUcgiCwSGWxvUuWJnImlQE3G2/mHPTvGp+clboVmz8p4QvY98lrj8ybBsf7dedqpwUidAa5XQ1KNWqaY=
+	t=1758580704; cv=none; b=Cv6quJeW3JIXUfa8yyKKH6J6NdBUapzjDTOYv6vaCnT3cCE+Kf0Rau6HSHycDdtSj6hhIeOdr1pHQuqcVuRfHHgxAq4v2hCmbiAz1J8LS0O/OvodQ3wyRWEJpMZiKSfbcQGzDcILP1pXFAXtV6P4G9dJQ3tAnnLzI//U6/MbIqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758580312; c=relaxed/simple;
-	bh=3OrZhQbz19uSD8khNAY9LRibIgp1Gw96WCmpoxoMcxk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V/ysLu0tSVHr6mnq3ekEymcME+ghaqGigEBz9WD7os7EtNplZRnNufkAeFTnn2PtogxZPgq/o4lC/qi+z6itq73o7WLa3oII7uY365xcCq/AL/iduRZfMx1J/DlNsbBua5sMqy8xtn/LPYOjmT9KVp+tKdpidP82CI6XTbYLsqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TfGHw5db; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <8f893019-bd87-4f54-8238-acd8fdeed051@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758580307;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eJFynAT8QIYKybUlzYSFKT2F+7TPewoBKOb/7zjaiUI=;
-	b=TfGHw5dboLTINUm5ceBhu4/3su63STyUL1SNRAFy1OGLL2uZzmT+wDdaGsi8IDB4z72CcP
-	rhpcpJsiEOe4opDDyF2nipICIBmz1f6zwQseYKZRj7Cld0JaBKpos+c9R6cZU95uWcAdZj
-	Mdnq7nOGn0LWpOgchTGPGZIqZnGZAPg=
-Date: Mon, 22 Sep 2025 15:31:42 -0700
+	s=arc-20240116; t=1758580704; c=relaxed/simple;
+	bh=t6Gt2zZIkJZS/kqtp/S1AKWEh2MhVkBy+nkJ62TpK4I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gMOdclh/F+EcVKncNqxhh7vqktlmxlyrL0jvgUt7wQeg8Ef53myIfdVs8d+jbLeuyisd038bvRN4rQ8JGU3EXu59q6i1WQbxH+YO3SbIaQZu7P114e5itWb61PWCUueeHwqDsRT9b4/zn8JwY4FGLCFyTsJ3g16QrCPvheLgfH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IntUQ1y2; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-77f22902b46so2124693b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:38:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758580702; x=1759185502; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FYwEszi0bEvk60svgdH1qo2zgJoVd3qxrSSLiTClCF0=;
+        b=IntUQ1y2/Ss1GEZBMYTRa+r4UvVdsrLAz//Ld9GSUdOUpO4x9XXgH+J8NOIyG6ghzd
+         TPrqQPeeSf/JYxKaplZQQbqKWB5ZWEvz5+KNRNq3n7GrADosmTtRxFXVTcnbjIMcZLDI
+         KB50uAYCWWNVZBP6fFB7pLiM/fnDvX4/EjH6hpsT2ZFkhVxmJb2STtlENxnYqFEXZTuK
+         jCNt8c4prUFqm/F+riw3q0VBqea9RdadTHiJK6kRycTGVOqbRVqo9KkD3rIb9zMgVlmU
+         /YfBzWB2N2Ev6zOdXDS+u7LvKhQKNSv0WvAnbSNu8iao1AFWWmV2+HwTvlRom5iwAqOK
+         lB6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758580702; x=1759185502;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FYwEszi0bEvk60svgdH1qo2zgJoVd3qxrSSLiTClCF0=;
+        b=RiQO0UEMtCHFryvgeGRavgHLtg7Pnux5+bdken91LvKmoRdMjij4q1E4WofYTKp8e1
+         lLYML9fX0vNwl2bP9PqfYbqEB9o0OSm4EwmOVI0mNgFpgaasv3ivAEDZIRBSc4kSrINg
+         0ISze3WBn+hEnolJQrgfIzXfn2eRWXIi1Hl+eeHTUQvPlkwaGPq+kmPGWO7zMgFTdR2K
+         +hztaVnus6ibFTxM3Y2u4ELTpS74fX9gVKkC/Y8V9tRM2FzNwrU3suRXRseQcNnK7+eW
+         Se+y4Ymo1/seld9/wcOgqfOUD3CSz1Gvy8/13i3Fg/CZ6Iu1YuN5IRSE56hLzXoMWbru
+         FxMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuF3P1k+STf0lQ23wkVgYdhTJQg/oQQDymo0JmexNerMb3ZWvl166fonxVB2gFqZ5o6F+HwpJ56zjn6NA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnF/4gkznpY7rFk34QZyP26xSfpAGOUAajMJ8ebLOp4eSWzMI/
+	bLbmMltNvB9uQwGguwWB4HgPs9TS/dpnsaB3lBIMlQQJF4V0EaIvFncVVZWtz/3h1XF1lccK0YN
+	n6LUllli9PopDHi/9ZGzE5gLhXt6/9io=
+X-Gm-Gg: ASbGnctKubMkLJEx9Om55T3/MjzT6yZRwPev9uJXKugDCbe03vFV3UhngCYMwU7x1p/
+	VX/pUL5JQaEuK4Fc4Ahxn8DXpiu4Gzfpv4pAnOdJRBK6oz8+j7WLL9GHemDAJPzHsYBJU7wje/W
+	JXp3/apJIz2gz8LJONZn14/hV4YEgJlaujoqG7+hu2RDTQQopYpaZF09+rvk5f979wA88SWK/av
+	U5r4D4h+YZiN9W7qyQl+ss=
+X-Google-Smtp-Source: AGHT+IEQFQoR0QNM+odyEnMBpN2MGkliZTtUBGe+w3ytXVYziHfuQhgLsKdv5BNowAYLiyY7wV4AXhYJ9qjm2ktFWOQ=
+X-Received: by 2002:a05:6a20:a11f:b0:243:c6d1:776c with SMTP id
+ adf61e73a8af0-2d006a3c80bmr827377637.21.1758580701881; Mon, 22 Sep 2025
+ 15:38:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v5 3/4] kho: add support for preserving vmalloc
- allocations
-To: Mike Rapoport <rppt@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>,
- Changyuan Lyu <changyuanl@google.com>, Chris Li <chrisl@kernel.org>,
- Jason Gunthorpe <jgg@nvidia.com>, Pasha Tatashin
- <pasha.tatashin@soleen.com>, Pratyush Yadav <pratyush@kernel.org>,
- kexec@lists.infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250921054458.4043761-1-rppt@kernel.org>
- <20250921054458.4043761-4-rppt@kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "yanjun.zhu" <yanjun.zhu@linux.dev>
-In-Reply-To: <20250921054458.4043761-4-rppt@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250912233509.74996-1-contact@arnaud-lcm.com> <20250912233558.75076-1-contact@arnaud-lcm.com>
+In-Reply-To: <20250912233558.75076-1-contact@arnaud-lcm.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 22 Sep 2025 15:38:07 -0700
+X-Gm-Features: AS18NWB3UGvFDrhuRjJsFHHzijhXB-nXkC4Q0Y6-LlxGpZGShaH_bAayBzyNlyQ
+Message-ID: <CAEf4BzaoCOUofb8xzpuxT0Lg+XwdLiW1uEZURqhy_mZzigx63w@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v9 3/3] bpf: fix stackmap overflow check in __bpf_get_stackid()
+To: Arnaud Lecomte <contact@arnaud-lcm.com>
+Cc: alexei.starovoitov@gmail.com, yonghong.song@linux.dev, song@kernel.org, 
+	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net, 
+	eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com, 
+	jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org, 
+	martin.lau@linux.dev, sdf@fomichev.me, 
+	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/20/25 10:44 PM, Mike Rapoport wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> A vmalloc allocation is preserved using binary structure similar to
-> global KHO memory tracker. It's a linked list of pages where each page
-> is an array of physical address of pages in vmalloc area.
-> 
-> kho_preserve_vmalloc() hands out the physical address of the head page
-> to the caller. This address is used as the argument to
-> kho_vmalloc_restore() to restore the mapping in the vmalloc address
-> space and populate it with the preserved pages.
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+On Fri, Sep 12, 2025 at 4:36=E2=80=AFPM Arnaud Lecomte <contact@arnaud-lcm.=
+com> wrote:
+>
+> Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid(=
+)
+> when copying stack trace data. The issue occurs when the perf trace
+>  contains more stack entries than the stack map bucket can hold,
+>  leading to an out-of-bounds write in the bucket's data array.
+>
+> Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3Dc9b724fbb41cf2538b7b
+> Fixes: ee2a098851bf ("bpf: Adjust BPF stack helper functions to accommoda=
+te skip > 0")
+> Acked-by: Yonghong Song <yonghong.song@linux.dev>
+> Acked-by: Song Liu <song@kernel.org>
+> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
 > ---
->   include/linux/kexec_handover.h |  28 ++++
->   kernel/kexec_handover.c        | 281 +++++++++++++++++++++++++++++++++
->   2 files changed, 309 insertions(+)
-> 
-> diff --git a/include/linux/kexec_handover.h b/include/linux/kexec_handover.h
-> index cc5c49b0612b..49e36d4ae5dc 100644
-> --- a/include/linux/kexec_handover.h
-> +++ b/include/linux/kexec_handover.h
-> @@ -39,12 +39,23 @@ struct page;
->   
->   struct kho_serialization;
->   
-> +struct kho_vmalloc_chunk;
-> +struct kho_vmalloc {
-> +        DECLARE_KHOSER_PTR(first, struct kho_vmalloc_chunk *);
-> +        unsigned int total_pages;
-> +        unsigned short flags;
-> +        unsigned short order;
-> +};
-> +
->   #ifdef CONFIG_KEXEC_HANDOVER
->   bool kho_is_enabled(void);
->   
->   int kho_preserve_folio(struct folio *folio);
->   int kho_preserve_pages(struct page *page, unsigned int nr_pages);
-> +int kho_preserve_vmalloc(void *ptr, struct kho_vmalloc *preservation);
->   struct folio *kho_restore_folio(phys_addr_t phys);
-> +struct page *kho_restore_pages(phys_addr_t phys, unsigned int nr_pages);
-> +void *kho_restore_vmalloc(const struct kho_vmalloc *preservation);
->   int kho_add_subtree(struct kho_serialization *ser, const char *name, void *fdt);
->   int kho_retrieve_subtree(const char *name, phys_addr_t *phys);
->   
-> @@ -71,11 +82,28 @@ static inline int kho_preserve_pages(struct page *page, unsigned int nr_pages)
->   	return -EOPNOTSUPP;
->   }
->   
-> +static inline int kho_preserve_vmalloc(void *ptr,
-> +				       struct kho_vmalloc *preservation)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
->   static inline struct folio *kho_restore_folio(phys_addr_t phys)
->   {
->   	return NULL;
->   }
->   
-> +static inline struct page *kho_restore_pages(phys_addr_t phys,
-> +					     unsigned int nr_pages)
-> +{
-> +	return NULL;
-> +}
-> +
-> +static inline void *kho_restore_vmalloc(const struct kho_vmalloc *preservation)
-> +{
-> +	return NULL;
-> +}
-> +
->   static inline int kho_add_subtree(struct kho_serialization *ser,
->   				  const char *name, void *fdt)
->   {
-> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-> index fd80be3b12fd..e6380d8dce57 100644
-> --- a/kernel/kexec_handover.c
-> +++ b/kernel/kexec_handover.c
-> @@ -18,6 +18,7 @@
->   #include <linux/memblock.h>
->   #include <linux/notifier.h>
->   #include <linux/page-isolation.h>
-> +#include <linux/vmalloc.h>
->   
->   #include <asm/early_ioremap.h>
->   
-> @@ -274,6 +275,37 @@ struct folio *kho_restore_folio(phys_addr_t phys)
->   }
->   EXPORT_SYMBOL_GPL(kho_restore_folio);
->   
-> +/**
-> + * kho_restore_pages - restore list of contiguous order 0 pages.
-> + * @phys: physical address of the first page.
-> + * @nr_pages: number of pages.
-> + *
-> + * Restore a contiguous list of order 0 pages that was preserved with
-> + * kho_preserve_pages().
-> + *
-> + * Return: 0 on success, error code on failure
-> + */
-> +struct page *kho_restore_pages(phys_addr_t phys, unsigned int nr_pages)
-> +{
-> +	const unsigned long start_pfn = PHYS_PFN(phys);
-> +	const unsigned long end_pfn = start_pfn + nr_pages;
-> +	unsigned long pfn = start_pfn;
-> +
-> +	while (pfn < end_pfn) {
-> +		const unsigned int order =
-> +			min(count_trailing_zeros(pfn), ilog2(end_pfn - pfn));
-> +		struct page *page = kho_restore_page(PFN_PHYS(pfn));
-> +
-> +		if (!page)
-> +			return NULL;
-> +		split_page(page, order);
-> +		pfn += 1 << order;
-> +	}
-> +
-> +	return pfn_to_page(start_pfn);
-> +}
-> +EXPORT_SYMBOL_GPL(kho_restore_pages);
-> +
->   /* Serialize and deserialize struct kho_mem_phys across kexec
->    *
->    * Record all the bitmaps in a linked list of pages for the next kernel to
-> @@ -763,6 +795,255 @@ int kho_preserve_pages(struct page *page, unsigned int nr_pages)
->   }
->   EXPORT_SYMBOL_GPL(kho_preserve_pages);
->   
-> +struct kho_vmalloc_hdr {
-> +	DECLARE_KHOSER_PTR(next, struct kho_vmalloc_chunk *);
-> +};
-> +
-> +#define KHO_VMALLOC_SIZE				\
-> +	((PAGE_SIZE - sizeof(struct kho_vmalloc_hdr)) / \
-> +	 sizeof(phys_addr_t))
-> +
-> +struct kho_vmalloc_chunk {
-> +	struct kho_vmalloc_hdr hdr;
-> +	phys_addr_t phys[KHO_VMALLOC_SIZE];
-> +};
-> +
-> +static_assert(sizeof(struct kho_vmalloc_chunk) == PAGE_SIZE);
-> +
-> +/* vmalloc flags KHO supports */
-> +#define KHO_VMALLOC_SUPPORTED_FLAGS	(VM_ALLOC | VM_ALLOW_HUGE_VMAP)
-> +
-> +/* KHO internal flags for vmalloc preservations */
-> +#define KHO_VMALLOC_ALLOC	0x0001
-> +#define KHO_VMALLOC_HUGE_VMAP	0x0002
-> +
-> +static unsigned short vmalloc_flags_to_kho(unsigned int vm_flags)
-> +{
-> +	unsigned short kho_flags = 0;
-> +
-> +	if (vm_flags & VM_ALLOC)
-> +		kho_flags |= KHO_VMALLOC_ALLOC;
-> +	if (vm_flags & VM_ALLOW_HUGE_VMAP)
-> +		kho_flags |= KHO_VMALLOC_HUGE_VMAP;
-> +
-> +	return kho_flags;
-> +}
-> +
-> +static unsigned int kho_flags_to_vmalloc(unsigned short kho_flags)
-> +{
-> +	unsigned int vm_flags = 0;
-> +
-> +	if (kho_flags & KHO_VMALLOC_ALLOC)
-> +		vm_flags |= VM_ALLOC;
-> +	if (kho_flags & KHO_VMALLOC_HUGE_VMAP)
-> +		vm_flags |= VM_ALLOW_HUGE_VMAP;
-> +
-> +	return vm_flags;
-> +}
-> +
-> +static struct kho_vmalloc_chunk *new_vmalloc_chunk(struct kho_vmalloc_chunk *cur)
-> +{
-> +	struct kho_vmalloc_chunk *chunk;
-> +	int err;
-> +
-> +	chunk = (struct kho_vmalloc_chunk *)get_zeroed_page(GFP_KERNEL);
-> +	if (!chunk)
-> +		return NULL;
-> +
-> +	err = kho_preserve_pages(virt_to_page(chunk), 1);
-> +	if (err)
-> +		goto err_free;
-> +	if (cur)
-> +		KHOSER_STORE_PTR(cur->hdr.next, chunk);
-> +	return chunk;
-> +
-> +err_free:
-> +	free_page((unsigned long)chunk);
-> +	return NULL;
-> +}
-> +
-> +static void kho_vmalloc_unpreserve_chunk(struct kho_vmalloc_chunk *chunk)
-> +{
-> +	struct kho_mem_track *track = &kho_out.ser.track;
-> +	unsigned long pfn = PHYS_PFN(virt_to_phys(chunk));
-> +
-> +	__kho_unpreserve(track, pfn, pfn + 1);
-> +
-> +	for (int i = 0; chunk->phys[i]; i++) {
-> +		pfn = PHYS_PFN(chunk->phys[i]);
-> +		__kho_unpreserve(track, pfn, pfn + 1);
-> +	}
-> +}
-> +
-> +static void kho_vmalloc_free_chunks(struct kho_vmalloc *kho_vmalloc)
-> +{
-> +	struct kho_vmalloc_chunk *chunk = KHOSER_LOAD_PTR(kho_vmalloc->first);
-> +
-> +	while (chunk) {
-> +		struct kho_vmalloc_chunk *tmp = chunk;
-> +
-> +		kho_vmalloc_unpreserve_chunk(chunk);
-> +
-> +		chunk = KHOSER_LOAD_PTR(chunk->hdr.next);
-> +		kfree(tmp);
-> +	}
-> +}
-> +
-> +/**
-> + * kho_preserve_vmalloc - preserve memory allocated with vmalloc() across kexec
-> + * @ptr: pointer to the area in vmalloc address space
-> + * @preservation: placeholder for preservation metadata
-> + *
-> + * Instructs KHO to preserve the area in vmalloc address space at @ptr. The
-> + * physical pages mapped at @ptr will be preserved and on successful return
-> + * @preservation will hold the physical address of a structure that describes
-> + * the preservation.
-> + *
-> + * NOTE: The memory allocated with vmalloc_node() variants cannot be reliably
-> + * restored on the same node
-> + *
-> + * Return: 0 on success, error code on failure
-> + */
-> +int kho_preserve_vmalloc(void *ptr, struct kho_vmalloc *preservation)
-> +{
-> +	struct kho_vmalloc_chunk *chunk;
-> +	struct vm_struct *vm = find_vm_area(ptr);
-> +	unsigned int order, flags, nr_contig_pages;
-> +	unsigned int idx = 0;
-> +	int err;
+> Changes in v2:
+>  - Fixed max_depth names across get stack id
+>
+> Changes in v4:
+>  - Removed unnecessary empty line in __bpf_get_stackid
+>
+> Changes in v6:
+>  - Added back trace_len computation in __bpf_get_stackid
+>
+> Changes in v7:
+>  - Removed usefull trace->nr assignation in bpf_get_stackid_pe
+>  - Added restoration of trace->nr for both kernel and user traces
+>    in bpf_get_stackid_pe
+>
+> Changes in v9:
+>  - Fixed variable declarations in bpf_get_stackid_pe
+>  - Added the missing truncate of trace_nr in __bpf_getstackid
+>
+> Link to v8: https://lore.kernel.org/all/20250905134833.26791-1-contact@ar=
+naud-lcm.com/
+> ---
+> ---
+>  kernel/bpf/stackmap.c | 21 ++++++++++++++++-----
+>  1 file changed, 16 insertions(+), 5 deletions(-)
+>
+> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+> index 9a86b5acac10..ac5ec3253ce6 100644
+> --- a/kernel/bpf/stackmap.c
+> +++ b/kernel/bpf/stackmap.c
+> @@ -251,8 +251,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
+>  {
+>         struct bpf_stack_map *smap =3D container_of(map, struct bpf_stack=
+_map, map);
+>         struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
+> +       u32 hash, id, trace_nr, trace_len, i, max_storable;
+>         u32 skip =3D flags & BPF_F_SKIP_FIELD_MASK;
+> -       u32 hash, id, trace_nr, trace_len, i;
+>         bool user =3D flags & BPF_F_USER_STACK;
+>         u64 *ips;
+>         bool hash_matches;
+> @@ -261,7 +261,9 @@ static long __bpf_get_stackid(struct bpf_map *map,
+>                 /* skipping more than usable stack trace */
+>                 return -EFAULT;
+>
+> +       max_storable =3D map->value_size / stack_map_data_size(map);
+>         trace_nr =3D trace->nr - skip;
+> +       trace_nr =3D min_t(u32, trace_nr, max_storable);
+>         trace_len =3D trace_nr * sizeof(u64);
+>         ips =3D trace->ip + skip;
+>         hash =3D jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
+> @@ -369,6 +371,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_=
+data_kern *, ctx,
+>  {
+>         struct perf_event *event =3D ctx->event;
+>         struct perf_callchain_entry *trace;
+> +       u32 elem_size, max_depth;
+>         bool kernel, user;
+>         __u64 nr_kernel;
+>         int ret;
+> @@ -390,15 +393,16 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_even=
+t_data_kern *, ctx,
+>                 return -EFAULT;
+>
+>         nr_kernel =3D count_kernel_ip(trace);
+> +       elem_size =3D stack_map_data_size(map);
+> +       __u64 nr =3D trace->nr; /* save original */
+>
+>         if (kernel) {
+> -               __u64 nr =3D trace->nr;
+> -
+>                 trace->nr =3D nr_kernel;
 
-This is a trivial issue. I’m not sure whether RCT (Reverse Christmas 
-Trees) is used in the Linux MM mailing list.
+unnecessary, you'll be overriding it two lines below
 
-If it is, the variable declarations above do not comply with the RCT rules.
+> +               max_depth =3D
+> +                       stack_map_calculate_max_depth(map->value_size, el=
+em_size, flags);
 
-Yanjun.Zhu
+here and below, keep on the same line, it's under 100 characters
 
+> +               trace->nr =3D min_t(u32, nr_kernel, max_depth);
+>                 ret =3D __bpf_get_stackid(map, trace, flags);
+>
+> -               /* restore nr */
+> -               trace->nr =3D nr;
+>         } else { /* user */
+>                 u64 skip =3D flags & BPF_F_SKIP_FIELD_MASK;
+>
+> @@ -407,8 +411,15 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event=
+_data_kern *, ctx,
+>                         return -EFAULT;
+>
+>                 flags =3D (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
+> +               max_depth =3D
+> +                       stack_map_calculate_max_depth(map->value_size, el=
+em_size, flags);
+> +               trace->nr =3D min_t(u32, trace->nr, max_depth);
+>                 ret =3D __bpf_get_stackid(map, trace, flags);
+>         }
 > +
-> +	if (!vm)
-> +		return -EINVAL;
+> +       /* restore nr */
+> +       trace->nr =3D nr;
 > +
-> +	if (vm->flags & ~KHO_VMALLOC_SUPPORTED_FLAGS)
-> +		return -EOPNOTSUPP;
-> +
-> +	flags = vmalloc_flags_to_kho(vm->flags);
-> +	order = get_vm_area_page_order(vm);
-> +
-> +	chunk = new_vmalloc_chunk(NULL);
-> +	if (!chunk)
-> +		return -ENOMEM;
-> +	KHOSER_STORE_PTR(preservation->first, chunk);
-> +
-> +	nr_contig_pages = (1 << order);
-> +	for (int i = 0; i < vm->nr_pages; i += nr_contig_pages) {
-> +		phys_addr_t phys = page_to_phys(vm->pages[i]);
-> +
-> +		err = kho_preserve_pages(vm->pages[i], nr_contig_pages);
-> +		if (err)
-> +			goto err_free;
-> +
-> +		chunk->phys[idx++] = phys;
-> +		if (idx == ARRAY_SIZE(chunk->phys)) {
-> +			chunk = new_vmalloc_chunk(chunk);
-> +			if (!chunk)
-> +				goto err_free;
-> +			idx = 0;
-> +		}
-> +	}
-> +
-> +	preservation->total_pages = vm->nr_pages;
-> +	preservation->flags = flags;
-> +	preservation->order = order;
-> +
-> +	return 0;
-> +
-> +err_free:
-> +	kho_vmalloc_free_chunks(preservation);
-> +	return err;
-> +}
-> +EXPORT_SYMBOL_GPL(kho_preserve_vmalloc);
-> +
-> +/**
-> + * kho_restore_vmalloc - recreates and populates an area in vmalloc address
-> + * space from the preserved memory.
-> + * @preservation: preservation metadata.
-> + *
-> + * Recreates an area in vmalloc address space and populates it with memory that
-> + * was preserved using kho_preserve_vmalloc().
-> + *
-> + * Return: pointer to the area in the vmalloc address space, NULL on failure.
-> + */
-> +void *kho_restore_vmalloc(const struct kho_vmalloc *preservation)
-> +{
-> +	struct kho_vmalloc_chunk *chunk = KHOSER_LOAD_PTR(preservation->first);
-> +	unsigned int align, order, shift, vm_flags;
-> +	unsigned long total_pages, contig_pages;
-> +	unsigned long addr, size;
-> +	struct vm_struct *area;
-> +	struct page **pages;
-> +	unsigned int idx = 0;
-> +	int err;
-> +
-> +	vm_flags = kho_flags_to_vmalloc(preservation->flags);
-> +	if (vm_flags & ~KHO_VMALLOC_SUPPORTED_FLAGS)
-> +		return NULL;
-> +
-> +	total_pages = preservation->total_pages;
-> +	pages = kvmalloc_array(total_pages, sizeof(*pages), GFP_KERNEL);
-> +	if (!pages)
-> +		return NULL;
-> +	order = preservation->order;
-> +	contig_pages = (1 << order);
-> +	shift = PAGE_SHIFT + order;
-> +	align = 1 << shift;
-> +
-> +	while (chunk) {
-> +		struct page *page;
-> +
-> +		for (int i = 0; chunk->phys[i]; i++) {
-> +			phys_addr_t phys = chunk->phys[i];
-> +
-> +			if (idx + contig_pages > total_pages)
-> +				goto err_free_pages_array;
-> +
-> +			page = kho_restore_pages(phys, contig_pages);
-> +			if (!page)
-> +				goto err_free_pages_array;
-> +
-> +			for (int j = 0; j < contig_pages; j++)
-> +				pages[idx++] = page;
-> +
-> +			phys += contig_pages * PAGE_SIZE;
-> +		}
-> +
-> +		page = kho_restore_pages(virt_to_phys(chunk), 1);
-> +		if (!page)
-> +			goto err_free_pages_array;
-> +		chunk = KHOSER_LOAD_PTR(chunk->hdr.next);
-> +		__free_page(page);
-> +	}
-> +
-> +	if (idx != total_pages)
-> +		goto err_free_pages_array;
-> +
-> +	area = __get_vm_area_node(total_pages * PAGE_SIZE, align, shift,
-> +				  vm_flags, VMALLOC_START, VMALLOC_END,
-> +				  NUMA_NO_NODE, GFP_KERNEL,
-> +				  __builtin_return_address(0));
-> +	if (!area)
-> +		goto err_free_pages_array;
-> +
-> +	addr = (unsigned long)area->addr;
-> +	size = get_vm_area_size(area);
-> +	err = vmap_pages_range(addr, addr + size, PAGE_KERNEL, pages, shift);
-> +	if (err)
-> +		goto err_free_vm_area;
-> +
-> +	area->nr_pages = total_pages;
-> +	area->pages = pages;
-> +
-> +	return area->addr;
-> +
-> +err_free_vm_area:
-> +	free_vm_area(area);
-> +err_free_pages_array:
-> +	kvfree(pages);
-> +	return NULL;
-> +}
-> +EXPORT_SYMBOL_GPL(kho_restore_vmalloc);
-> +
->   /* Handling for debug/kho/out */
->   
->   static struct dentry *debugfs_root;
-
+>         return ret;
+>  }
+>
+> --
+> 2.43.0
+>
 
