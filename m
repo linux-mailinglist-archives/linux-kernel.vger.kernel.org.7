@@ -1,182 +1,115 @@
-Return-Path: <linux-kernel+bounces-827268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D26B91530
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:13:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D630B9155C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1221818A3F92
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:13:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95D602A263D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187CB242D90;
-	Mon, 22 Sep 2025 13:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmaxiOB2"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D307F30E0D8;
+	Mon, 22 Sep 2025 13:13:05 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2D730C355
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2ED030CB33
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758546763; cv=none; b=gbaokTLcHXIbqNpQ8cKtyIuD6hczNlBvO6ooxjnbQ5rwJ7uf1TOQSyRjRSlaJmEJwm0u3M4lTnWB8dXtbWlZXNdo1A7KzZqnsxUob8fAyVQ5vj1d80KqpUOdsRtDTYG3TPQbp5Ky2L+WXOTe1ukUFv/OoyuLEX2oCFDJweCVxDk=
+	t=1758546785; cv=none; b=hAaDTEcXiQE1kLz1mgCqSQ2qG6GykEeqroPJr1O/ekSt8ns4+QURcPNcCupZ+IUJtFFgYFNiuYqegSLtKeOZLNByEla2lHTRrH9Lbx3tiZfjiI7B8kFDV+vwa+2wnthrs33MYJVutJ/i8w01/bMABW4xOS7eHrlMriLBLaK/hsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758546763; c=relaxed/simple;
-	bh=uOdISHyO/SByEHogAEAJPMB3jhvhzan36scydbrpki0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kih1z9HeA8VMt6joRFzO2yduqjLQv+rhmlR5die/+0kKBmCOL1t+zqsBBkZHDpKtW5P6htQOqrwaJWyjv0ZjsxITBytE+UnFYIKn6WQZ3ScvfKs07CvvDo1e7aGGpzPrn0VMR/VWzqWbRAQKRnDKwSuEXK/mv9YvbjwySqBuBck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CmaxiOB2; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-330b0bb4507so2331140a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:12:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758546761; x=1759151561; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JFvHbq8BGAwHmjI5XMDiCg9CB8o/Dt308prrHiAcRyI=;
-        b=CmaxiOB2iSDFyh0IxGPe+IAxNL92/zMkqZq1gy3+TIJz8ZjpEEgtx9KAZX0xNVyL17
-         N9MKAmJ57KJm7bkjh3TIhMZQ8QJWFpUcjFHytQMWWBdliwpFPrL5766CGLjESc4tC2sz
-         Wrlk266ZQ/EwlOJyBl2ES5QBxTzZijierMNbXZO+I95svVAW64DKjHfTN+UatZh3yxEy
-         PM3KmsApzoJBVTt1LrCFpLmo1gEHpuowIOod0dHDp0KxxIs3poYRi/Lnch87r5Maleia
-         1Y2jMgJVEl7TzRMewZszfgsev9IwGehzkl0w80t28IP0sOH4UxUZ2aw4yR9UVy2j9+DB
-         2yFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758546761; x=1759151561;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JFvHbq8BGAwHmjI5XMDiCg9CB8o/Dt308prrHiAcRyI=;
-        b=rCIsyAPr+8xb+1FlUzK4hEfNHgCM14kYyLds2PvDy1NkCLJShdPo9CXHIAQ3r140JN
-         vyBS0RNkDXuEvduxw6L9IEilAwTuTNboXXY+l8Vy8olHPIw1TaDMws1KxyaSuYyMzqmw
-         fhvoer06UOZYSR5UKYhapMlK4G4KD4mhjVOjq4BfbDHEU2QecTGK143p2Hpp+LlXH1+n
-         7ThwVIh0fV3+3FwqHue56mfEkqfFL9kkMhNV03MPIpG1J64/Nu9YzZeV2ZyZhtrfjvbr
-         X8FZKGyxxsn7yoNB/0up1x2Ev2hvDFEf3Ke+zmVICVVWSf9yocJFIFsnohrsmJ1J0n/i
-         zpSg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1/ps3CicH+MZGNzoiQC48xf2tk9sjPneHwPl7LdhTzQOTG54Iu4cMRELeCXVBPMTPdmRJJOk1vMZw7wk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB4TyPTDzlPPXGbihyWYhcMPyMWUFu5huRie1oMRhSgt9vzosp
-	Zv2UJcxZGuPjSmpTF3Pmlwsd+7r0N8tnXHpp8d+SlI2fFBVtihIy2uIWwuLTupSdn4GXIpPHBOg
-	DMtwDvmG+fNG6eciKDvNCnJnyQ3A0KMk=
-X-Gm-Gg: ASbGncusfHlaEBaVPHSQC2NYaDZ1OW/gwYH78n/5dM9mlrvWPidE3u7RlsoJstUjfWg
-	ejdt4p7uWr54ncx1/mB1Js13EXeOmG2kLs8QwJk62yW4QBPR/pNVgg4XZt41BwT1ZOODenJuEdg
-	5WfTqvnNARGXdcmGELwEPuIlee2m6fV/4VpAFiGoEDA/rb/ysN/6ne+z/lIQNXOuNbq9w2tOJ1c
-	0JDcuk=
-X-Google-Smtp-Source: AGHT+IErOhD8VYTYiXj/emQEmjvSZJYRDnQiUT71TAsYBNpYKZHlMYedIO8UbMKe7SgXnEyy3ylBN2ENEcWlSiRqsO0=
-X-Received: by 2002:a17:90b:33c8:b0:330:6c04:a72b with SMTP id
- 98e67ed59e1d1-33097fdd77dmr15212107a91.3.1758546760692; Mon, 22 Sep 2025
- 06:12:40 -0700 (PDT)
+	s=arc-20240116; t=1758546785; c=relaxed/simple;
+	bh=fifZ7UrR3FG0IWv0F3QlkHcEIoJkRo+i1fID8hMDXS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gnohjpRGgaMKqWEVE5uC1Mlcjk4CKyxsvgyWwZDqMERBrukoJv9V9zR22Rk5z0tTiI3UOxeiNrIpyp5PDPUFtbXR6Tvrs7em0aYkNKbxBDWixNfnCvly4T6O+PPOq0sPR8yPLscrr3R8DQwE0M2RJwltqU1/sSCBUn1lE0KP8PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v0gLU-0003pc-1P; Mon, 22 Sep 2025 15:12:44 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v0gLS-002bMp-1J;
+	Mon, 22 Sep 2025 15:12:42 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 06C7C477022;
+	Mon, 22 Sep 2025 13:12:42 +0000 (UTC)
+Date: Mon, 22 Sep 2025 15:12:40 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: kernel@pengutronix.de, mailhol.vincent@wanadoo.fr, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, cl@rock-chips.com, 
+	kever.yang@rock-chips.com, linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 1/4] dt-bindings: can: rockchip_canfd: add rk3576
+ CAN-FD controller
+Message-ID: <20250922-secret-visionary-macaque-4f52a7-mkl@pengutronix.de>
+References: <20250922071543.73923-1-zhangqing@rock-chips.com>
+ <20250922071543.73923-2-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918020434.1612137-1-tweek@google.com> <CAHC9VhSbWJ-8tj5BxSTxznGO8zraKRSE31a+tqdfMHB53ef-MQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhSbWJ-8tj5BxSTxznGO8zraKRSE31a+tqdfMHB53ef-MQ@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Mon, 22 Sep 2025 09:12:29 -0400
-X-Gm-Features: AS18NWCCoF-gEznmiapevcW7RPAuF_YwrH7AbkG9x3tb1Dsso_FuxRXtaZlxNKU
-Message-ID: <CAEjxPJ5GidA9oT_fbKRe_nH1J3mER0ggM-dBW=Nuo765JDuQKg@mail.gmail.com>
-Subject: Re: [PATCH v3] memfd,selinux: call security_inode_init_security_anon
-To: Paul Moore <paul@paul-moore.com>
-Cc: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
-	Hugh Dickins <hughd@google.com>, James Morris <jmorris@namei.org>, 
-	Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Isaac Manjarres <isaacmanjarres@google.com>, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ta3ykn3sqrxc7f3w"
+Content-Disposition: inline
+In-Reply-To: <20250922071543.73923-2-zhangqing@rock-chips.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--ta3ykn3sqrxc7f3w
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 1/4] dt-bindings: can: rockchip_canfd: add rk3576
+ CAN-FD controller
+MIME-Version: 1.0
 
-On Sun, Sep 21, 2025 at 2:31=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Wed, Sep 17, 2025 at 10:04=E2=80=AFPM Thi=C3=A9baud Weksteen <tweek@go=
-ogle.com> wrote:
-> >
-> > Prior to this change, no security hooks were called at the creation of =
-a
-> > memfd file. It means that, for SELinux as an example, it will receive
-> > the default type of the filesystem that backs the in-memory inode. In
-> > most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
-> > be hugetlbfs. Both can be considered implementation details of memfd.
-> >
-> > It also means that it is not possible to differentiate between a file
-> > coming from memfd_create and a file coming from a standard tmpfs mount
-> > point.
-> >
-> > Additionally, no permission is validated at creation, which differs fro=
-m
-> > the similar memfd_secret syscall.
-> >
-> > Call security_inode_init_security_anon during creation. This ensures
-> > that the file is setup similarly to other anonymous inodes. On SELinux,
-> > it means that the file will receive the security context of its task.
-> >
-> > The ability to limit fexecve on memfd has been of interest to avoid
-> > potential pitfalls where /proc/self/exe or similar would be executed
-> > [1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
-> > similarly to the file class. These access vectors may not make sense fo=
-r
-> > the existing "anon_inode" class. Therefore, define and assign a new
-> > class "memfd_file" to support such access vectors.
-> >
-> > Guard these changes behind a new policy capability named "memfd_class".
-> >
-> > [1] https://crbug.com/1305267
-> > [2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.c=
-om/
-> >
-> > Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
-> > ---
-> > Changes since v2:
-> > - Add WARN_ON when using unexpected class. Return -EACCES instead
-> >   of -EPERM
-> > - Remove extra new line
-> > - Rebase on selinux/dev
-> >
-> > Changes since v1:
-> > - Move test of class earlier in selinux_bprm_creds_for_exec
-> > - Remove duplicate call to security_transition_sid
-> >
-> > Changes since RFC:
-> > - Remove enum argument, simply compare the anon inode name
-> > - Introduce a policy capability for compatility
-> > - Add validation of class in selinux_bprm_creds_for_exec
-> >  include/linux/memfd.h                      |  2 ++
-> >  mm/memfd.c                                 | 14 ++++++++++--
-> >  security/selinux/hooks.c                   | 26 +++++++++++++++++-----
-> >  security/selinux/include/classmap.h        |  2 ++
-> >  security/selinux/include/policycap.h       |  1 +
-> >  security/selinux/include/policycap_names.h |  1 +
-> >  security/selinux/include/security.h        |  5 +++++
-> >  7 files changed, 44 insertions(+), 7 deletions(-)
->
-> Thanks Thi=C3=A9baud, I'm going to merge this into selinux/dev-staging no=
-w
-> with the plan to move it over to selinux/dev after the upcoming merge
-> window closes.
->
-> Hugh, since the changes between this patch and the v2 you ACK'd are
-> minimal and limited to the SELinux error handling code (see diff
-> below), I'm going to carry over your ACK, but if you have any concerns
-> or objections please let us know.
->
-> Thanks everyone!
+On 22.09.2025 15:15:40, Elaine Zhang wrote:
+> Add documentation for the rockchip rk3576 CAN-FD controller.
 
-When would you recommend that I re-apply the corresponding userspace
-patch to reserve this policy capability number for memfd_class?
-After it is moved to selinux/dev? Understand that it isn't truly
-reserved until it lands in a kernel.org kernel but would prefer to
-reapply it sooner than that since there may be other policy capability
-requests queueing up (e.g. bpf token) that should be done relative to
-it. Can always revert it again if necessary, at least until another
-userspace release is made (not sure on timeline for that).
+Please make DMA optional, I'm not convinced that it brings any benefit
+for the system.
 
->
-> --
-> paul-moore.com
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--ta3ykn3sqrxc7f3w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjRS0QACgkQDHRl3/mQ
+kZzmYgf/XGDJsCLS4h1r22LbETIcTtzkKskRIg8uS4VtJ6+B3fpEpeSdiurlbgLJ
+H2Uk60UC2qwtfCGX34k3W/KUZAcMiWUF0uSwIey54+V/47Z57T7tyF+qlLXavAJg
+EvMzEqQBXo/HF7qKjn5zwGt/cfJzkaZ0gQurGnuGcVfQCtVh6yyjRK7zA3az9tso
+9aeJjgqJxCR2Eu41e1X5ch1iFULgtRXPhzeUi1ApANoiqWy10XR1GpCRvOlMYxQo
+d4Ss493hcO5HefbgwTXnJ12waxg3YZSOSfV9iRdiZoSdgeGZyYKd+Ffeyps8Ep34
+DZMvjmPilwpExGCnFVr7LJBfrco1Ww==
+=/ET9
+-----END PGP SIGNATURE-----
+
+--ta3ykn3sqrxc7f3w--
 
