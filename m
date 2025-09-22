@@ -1,257 +1,132 @@
-Return-Path: <linux-kernel+bounces-827611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD33B92370
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:26:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD07B92375
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5398F3B60AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:26:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03B851603D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2284311596;
-	Mon, 22 Sep 2025 16:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8F23112DD;
+	Mon, 22 Sep 2025 16:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2uKK9BO"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EoPfoQFg"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FF62D94B3
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBE02D94B3
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758558356; cv=none; b=VgUkW8fV+FD4KHZpL7fRRWFSFIGxZFtKKjW3QfjyxVKEynmZhICMgqLwOH/qfoPxlvY3CLEGaAP04BTnMnhMUKMqTfPAw76FsADcg2/Hgs3rGQjgDEzqInuyu+Zaw9K6WiglIhM/Gvmc5Of6iOHF1pCPtyE7xpjASmPm4PCPBUE=
+	t=1758558386; cv=none; b=n+njyA6dJNixntffAP83gXPSOfU92cQugRcHMbY4IJdzh+x4GN7O6piaWfxfuJnmJQp+B+n7UeOGaQycdsFRjdCfnL614aEL8Fw8bLVOkmQmhcPEQOSUhnlz17XOF6Jik4mG91JKfD6MRMaj0tLSwDfRnxH85KMhbrc2x9RoJ28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758558356; c=relaxed/simple;
-	bh=OL+Xvwz25wsFr/Baw3v/lJYTgw11rKtS73xu9MyjE9o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uL77ducLO+iUZvT9BcbEJL4bU/xrElQ+CpzfHzlHna4z0IeAx/XNdStrVoykPqkA6U3Oakna+7Hx8NZ+nwJpZkrPnWcMLb1P/69VlOi6mgTd5cjHjCZvIXHVoE1Ef4DmzYCn8Es/o1lFvJX2S6oyJQKmPdlSAK0ghJeZs4iGXVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2uKK9BO; arc=none smtp.client-ip=209.85.222.173
+	s=arc-20240116; t=1758558386; c=relaxed/simple;
+	bh=/xJ274f5aneSc5WlQLY2bHc3cINv3xqFVLL3V+eAL3Q=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=ht4w2smXXpi976f2O1a/81211fN+vrltpHj7SGyXVECXP6ouzmMyi7g22X+ANBrZEAnWjAlc/taPXLeEQY0WW3+D2hollaEAbH4eJfrxa7qOf81hM/xbpmyzCdnD8s2SVRZCSzfLkQ6WfYNpWLi58EJuW2p3Mve3AKtsbtTc+qM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EoPfoQFg; arc=none smtp.client-ip=209.85.221.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-8498f5194deso126823485a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:25:54 -0700 (PDT)
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-54bbe260539so372045e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:26:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758558353; x=1759163153; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dlm3T0upOwy7xn1t1XulwYtiwQ2wQG91vzbQ2MSVGzE=;
-        b=A2uKK9BOWxuvX2a19oq5OmqlJbC7FWJrBNzvI09EmJpt55sy/m9GJbYehM+PC8137g
-         3J5Qe5Ocb2buf04uXzyiqojY/KymMnBWXo7IqrqhBSLidFaQ8UQysxin9vcMvb+bKedo
-         4UcX5AN16BnsbdlM0OznOe14T6JAgmMRk28+umJSWR5tR1PVOcGY9yeLsm1zI1VKK+6W
-         xWPIq0V5HXWzZ5MwfBQ3S87DZ3/NCXJW6v7DHKnWlZkcB/vO/gpn8hVIZyt1/7OVQo0C
-         nbA3UQugHULY4u4RUNUTnyQNjQXcAz5qNDddPrRQNrXKlVQCg7yEZ9deCz3hEwtgTZfY
-         FkLg==
+        d=gmail.com; s=20230601; t=1758558383; x=1759163183; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/xJ274f5aneSc5WlQLY2bHc3cINv3xqFVLL3V+eAL3Q=;
+        b=EoPfoQFgYniyYx67DzuGbuyG0uqa86z+yQgiQgO8iHALdQvCUgblz7J/byUwDos+2H
+         TGA5X0p7YKnnyD7V8/EEWoAOV7B6dR5hQThCF6M2qVKfRrO0a8oXzwkyYHdFIC4g+YAN
+         2QAWPmzNA1/a34lGFWDzLtl42Z+fTIBGbw+BXXLDSwk5uaBEiJQe/3j8MwGTfV0VlUkv
+         ZeWySi8n1R15+TtQaQT+jSkBYFmCDi+xUk8LSlheGyxWQ+1iNSltV7pJLyN9ymGadCLM
+         vVyWJiRuVxzE0NKpP8IZcG1sKSY/nxCrlNiN+/n7o7yC84ssbC9r6QEhuNPjGMGe9uvA
+         nFbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758558353; x=1759163153;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dlm3T0upOwy7xn1t1XulwYtiwQ2wQG91vzbQ2MSVGzE=;
-        b=YlmTv30jIAwgV6kl2HU4l9tNSG6sIo7YLq0Xo2Zbc1vYsvDEEzVryKUDwPrRRqFfsj
-         GGzkpMPO3R050AA1pCd/a/Dy6w0+/sRRgaqXStYbCNVomDkPAwb3PmYYH0JkNRfPPapl
-         npaDNb+QBsiMNbLG4/ybfF/q2d94Vl9V6KdjotnykTNADAGLoFXiOQ6MRn/OBvyPbcbJ
-         UGgSN509QrXTP0pBXYT7hpFy9dO01GDLaLXDT/ihg7ZddmChlFPwVy3giebYctql1D9Q
-         U2XBwWAtN8CpA2lqzS7j8/C9ujcM57RS2WZyukgHzdU+rfZH4MKLCk+7MDTzcoDd1ab4
-         UaZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5bOGvXYjbFsu72ZGKTO2x6BRgR3iX8DJA1KmEsQeaNeQ983wlKzSLsBwJoEiUt2k1kWvKjdLNB/9TMLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNm5/VD16B6zI2sUoT9c7vFKa8um+bW8i9i+phWADE4JAERVQW
-	Ou8aymZbdK8chx9qMpmuJKx+PEyTI01s6Qw0SA9hALsR9nUdOh+shjHAurbxQT3fXGsn31GsUv9
-	/BFoakebQxRGyv4pN6bC81bYCQ83c/VA=
-X-Gm-Gg: ASbGnct2U4zNgwswv+PW1sAA/28xPwfxcpiQJJDSwd4H9Tc+NAMCrUxL6AQX/glWmBy
-	TbC9me0IMMuo9DhrRfldyE5nMhnAdYIPxiwrIKP75CEfmXsExWtCM0hFCkxIlUoswSoG/BGZ5fX
-	HRoC1rxYeQ6lrLrzQZgIi0p2KrYYu7v6Dp8jB5NNRKcL6h1jA3CmSdcPLoSBC8tLezEN+ngn/Ec
-	/MvidPEB0wJB/KR8HrPK07tC2/QB/k1sPPpw/y3MA==
-X-Google-Smtp-Source: AGHT+IFZhv8u5V97EH7c6E8ccTpPNiMPjPkf8k4uxGpuwG/R76WmlxoeA2GBWbJKLNpiQ2cA18m7RsoJzIdumj0YlJU=
-X-Received: by 2002:a05:620a:258c:b0:828:5588:7eb6 with SMTP id
- af79cd13be357-83ba2e800a1mr1387800985a.10.1758558352993; Mon, 22 Sep 2025
- 09:25:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758558383; x=1759163183;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/xJ274f5aneSc5WlQLY2bHc3cINv3xqFVLL3V+eAL3Q=;
+        b=ni8+68tMOixkxA0k2hvrsRE5+WVEZeHljIC2WwPAIw6VBt9Ebcavxb/1ol4fXZfEha
+         puwjxEUNJUacz46mvjiyUg7AENl1z0FWX+Aitv9teBv+v9W46V+3bCgqEjodX0df+1CZ
+         ML455fZKIydl5AE7+SFWY4DGSLFpodi1GV8twnb0FeXwaOtfxmm3MzO/EiodjMs0pvYZ
+         lmH0Yux8BCVKHTm24MNCe2xzFa6vYNlecLeBPx7tB/luXa7kE3alx769VCUcxy5Fkb1q
+         O4yogZcjCGnW4kyfkHB/BUmz7CnjzIjtkI1AOWLgq9PHbiWAehon1FkHxXETxSfR1zHQ
+         uoOg==
+X-Gm-Message-State: AOJu0YzfQ05RfnnAHc78DC/hyQlrE9QC0yD5Tosis0oW63IfumkHquLZ
+	FXI2T279A8Gd8/EY7iyw5H0wixUCJ5fQ0ArvRJ9sJh/y0p7yW0VwHwbJWy95GnheRHApY8NGgxN
+	/gIpK/aKzx8SuTj10Y/K/WSE7MvXtm4reg6ZJ
+X-Gm-Gg: ASbGncvxzRMX+EC42O0i+m/eA9c2lG8uJnKd2Ttcr5zrON/vS1V1xbYDdPizHjeTTfE
+	CbkR/K4oK8D2R0k1ViLaSl3zrWgFUYL1qw7OQ9WzabaKBIfia15TWQfW0qppdnuf7DAnlAIszJp
+	eHYI5zDsgDABKNqLuGh6rRj5I321+NBcrrYZEuRfiDy6OdIwKS4d+ywob4S0wOC5zqsaLU1oF1I
+	bnJzWnonLra8u77yPA5JIOAbZaOMXBTV9UsRJfP
+X-Google-Smtp-Source: AGHT+IHdkz0tUDw8zR22Ryh6xogoAjoIiil2auBs/HOG4U6NDNkxMujxev/AXW4BRicPKn9zpKd/WzMLFyZYC2OPyqI=
+X-Received: by 2002:a05:6122:3187:b0:54a:71f6:900f with SMTP id
+ 71dfb90a1353d-54a83581f10mr3304214e0c.0.1758558382962; Mon, 22 Sep 2025
+ 09:26:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAEU-x4=Zs22b5LX_rsBVMu4BxvDfO+CZkkuWuVNaxv8mqvh9Gw@mail.gmail.com>
- <bjtev7sgmcafoysd53xrxih4nawn2dbq4odylwdglbub6td2a3@nhoxenprhjvy> <CAEU-x4kL45DAddmNahjR2C97+43jchpmXep++LbeP8cXLEWN-w@mail.gmail.com>
-In-Reply-To: <CAEU-x4kL45DAddmNahjR2C97+43jchpmXep++LbeP8cXLEWN-w@mail.gmail.com>
-From: Yinon Burgansky <yinonburgansky@gmail.com>
-Date: Mon, 22 Sep 2025 19:25:42 +0300
-X-Gm-Features: AS18NWA_WQyNBKYZgu76coVUkTHSCyWrHKyXA-QRTG_dDTw5oHCZR-32wA0Dln0
-Message-ID: <CAEU-x4nv3XnXchevtwN5mkVcxqnpgBobhavxZc7BjS7EgYG8Ng@mail.gmail.com>
-Subject: Re: Touchpad multitouch leaves ghost fingers
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Mon, 22 Sep 2025 09:26:11 -0700
+X-Gm-Features: AS18NWD2eoCPlcAE5ZCvxHxbb9JtM3JaxRWzodkfDMWSK-UVEhNbi5lZUcWFlpU
+Message-ID: <CAM_iQpWph7_w9tve4zci3hdH0oPbe9rdeQbhnv_ZJb=nY9wpfA@mail.gmail.com>
+Subject: [ANNOUNCE] New mailing list for multikernel: multikernel@lists.linux.dev
+To: LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Benjamin,
+Dear Linux kernel developers,
 
-Thank you for the quick and detailed response. The solution sounds
-great! It will take me some time to learn how to code, build, and
-compile HID-BPF on my machine and figure it out. If you can provide me
-with additional guidance to speed up the process, I would greatly
-appreciate it!
+I'm pleased to announce the creation of a new community mailing list
+dedicated to multikernel architecture research, development and
+discussion: multikernel@lists.linux.dev
 
-If it is a common issue, as you suggested, having public instructions
-to refer to would also be very helpful for others running into the
-same issue (e.g. the other 2 users from the libinput issue).
+1) Purpose and Scope
 
-Thanks,
-Yinon
+This mailing list serves as a neutral, community-driven forum for
+discussing multikernel architectures with a specific focus on Linux
+implementation. Our goal is to foster collaboration on research,
+design, and development of multikernel architecture that can advance
+the Linux ecosystem.
 
-On Mon, Sep 22, 2025 at 7:11=E2=80=AFPM Yinon Burgansky
-<yinonburgansky@gmail.com> wrote:
->
-> Hi Benjamin,
->
-> Thank you for the quick and detailed response. The solution sounds great!=
- It will take me some time to learn how to code, build, and compile HID-BPF=
- on my machine and figure it out. If you can provide me with additional gui=
-dance to speed up the process, I would greatly appreciate it!
->
-> If it is a common issue, as you suggested, having instructions to refer t=
-o would also be very helpful for others running into the same issue (e.g. t=
-he other 2 users from the libinput issue).
->
-> Thanks,
-> Yinon
->
->
-> On Mon, Sep 22, 2025 at 4:32=E2=80=AFPM Benjamin Tissoires <bentiss@kerne=
-l.org> wrote:
->>
->> Hi,
->>
->> On Sep 21 2025, Yinon Burgansky wrote:
->> > When using the touchpad with multi-finger gestures, ghost fingers some=
-times
->> > remain.
->> > This is reproducible with `hid-replay hid-recorded.txt`: after the
->> > recording, two ghost fingers remain on the touchpad,
->> > so a subsequent single-finger tap is interpreted as a triple tap.
->> > Tapping with three or four fingers resets the device state.
->> >
->> > I compared `hid-recorded.txt` to `evtest.txt` for the same events and =
-it
->> > appears the problem occurs when the device sends a single HID report t=
-hat
->> > changes the contact count from 3 -> 1,
->> > while the kernel's evdev stream removes only one contact (3 -> 2) inst=
-ead
->> > of clearing the two removed contacts.
->> > The following are the exact events where the issue first appeared:
->> >
->> > hid recorder:
->> >
->> > ```
->> > # ReportID: 3 / Confidence: 1 | Tip Switch: 1 | Contact Id: 0 | # | X:=
- 792
->> > | Y: 378
->> > # | Confidence: 1 | Tip Switch: 1 | Contact Id: 1 | # | X: 564 | Y: 40=
-3
->> > # | Confidence: 1 | Tip Switch: 1 | Contact Id: 2 | # | X: 383 | Y: 54=
-2
->> > # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0
->> > # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0 | =
-Scan
->> > Time: 43407 | Contact Count: 3 | Button: 0 | #
->> > E: 000085.948315 30 03 03 18 03 7a 01 07 34 02 93 01 0b 7f 01 1e 02 00=
- 00
->> > 00 00 00 00 00 00 00 00 8f a9 03 00
->> > # ReportID: 3 / Confidence: 1 | Tip Switch: 0 | Contact Id: 1 | # | X:=
- 564
->> > | Y: 406
->> > # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0
->> > # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0
->> > # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0
->> > # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0 | =
-Scan
->> > Time: 43615 | Contact Count: 1 | Button: 0 | #
->> > E: 000085.960958 30 03 05 34 02 96 01 00 00 00 00 00 00 00 00 00 00 00=
- 00
->> > 00 00 00 00 00 00 00 00 5f aa 01 00
->> > ```
->>
->> Actually, this doesn't seem to be 3->1 but 3 ->0:
->> - first report has all 3 touches with "Tip Switch: 1" -> 3 touches
->> - second report has only one report of a touch with "Tip Switch: 0", so
->>         the kernel thinks only Contact Id 1 has been released.
->>
->> What we are missing here is a common defect in some touchpad: "not seen
->> means up". And so we need the multitouch class
->> `MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU`.
->>
->> And following the libinput report, it seems you already found this
->> yourself :)
->>
->> Unfortunatelly, because your touchpad is an integrated one using I2C, we
->> can not dynamically assign this quirk at boot so testing will require
->> you to recompile the hid-multitouch module or inserting a HID-BPF
->> module.
->>
->> I would lean toward providing a small HID-BPF program while the kernel
->> is being fixed as this will be a much quicker way of fixing it for you
->> (but the kernel will still need to be fixed).
->>
->> How does that sound?
->>
->> Cheers,
->> Benjamin
->>
->> >
->> > evtest:
->> >
->> > ```
->> > Event: time 1758384424.367216, -------------- SYN_REPORT ------------
->> > Event: time 1758384424.380922, type 3 (EV_ABS), code 47 (ABS_MT_SLOT),
->> > value 0
->> > Event: time 1758384424.380922, type 3 (EV_ABS), code 54
->> > (ABS_MT_POSITION_Y), value 378
->> > Event: time 1758384424.380922, type 3 (EV_ABS), code 47 (ABS_MT_SLOT),
->> > value 1
->> > Event: time 1758384424.380922, type 3 (EV_ABS), code 53
->> > (ABS_MT_POSITION_X), value 564
->> > Event: time 1758384424.380922, type 3 (EV_ABS), code 54
->> > (ABS_MT_POSITION_Y), value 403
->> > Event: time 1758384424.380922, type 3 (EV_ABS), code 47 (ABS_MT_SLOT),
->> > value 2
->> > Event: time 1758384424.380922, type 3 (EV_ABS), code 53
->> > (ABS_MT_POSITION_X), value 383
->> > Event: time 1758384424.380922, type 3 (EV_ABS), code 54
->> > (ABS_MT_POSITION_Y), value 542
->> > Event: time 1758384424.380922, type 3 (EV_ABS), code 1 (ABS_Y), value =
-378
->> > Event: time 1758384424.380922, type 4 (EV_MSC), code 5 (MSC_TIMESTAMP)=
-,
->> > value 547800
->> > Event: time 1758384424.380922, -------------- SYN_REPORT ------------
->> > Event: time 1758384424.393487, type 3 (EV_ABS), code 47 (ABS_MT_SLOT),
->> > value 1
->> > Event: time 1758384424.393487, type 3 (EV_ABS), code 57
->> > (ABS_MT_TRACKING_ID), value -1
->> > Event: time 1758384424.393487, type 1 (EV_KEY), code 333
->> > (BTN_TOOL_DOUBLETAP), value 1
->> > Event: time 1758384424.393487, type 1 (EV_KEY), code 334
->> > (BTN_TOOL_TRIPLETAP), value 0
->> > Event: time 1758384424.393487, type 4 (EV_MSC), code 5 (MSC_TIMESTAMP)=
-,
->> > value 568600
->> > ```
->> >
->> > This is an old issue (at least a year old) that I still encounter
->> > occasionally. I originally reported it downstream:
->> > https://gitlab.freedesktop.org/libinput/libinput/-/issues/1194
->> >
->> > ```
->> > uname -a
->> > Linux fedora 6.16.7-200.fc42.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Sep 11
->> > 17:46:54 UTC 2025 x86_64 GNU/Linux
->> > ```
->> >
->> > Please let me know if you need anything else,
->> > Thank you!
+Key focus areas include (but not limited to):
+Multikernel architecture design and implementation for Linux
+Kernel isolation and resource management techniques
+Security enhancements via kernel-level isolation
+Zero-downtime kernel updates with multikernel
+
+2) Community Guidelines
+
+This is a vendor-neutral community mailing list. We welcome
+participation from developers across all organizations, academic
+institutions, and independent contributors. The list is not affiliated
+with or controlled by any single company or commercial entity.
+
+Discussion scope:
+Primary focus: Linux-based multikernel implementations, patches, and research
+Secondary: Non-Linux multikernel research for inspiration and
+comparative analysis only
+Off-topic: Purely theoretical discussions unrelated to Linux
+General virtualization topic: Please consider using
+virtualization@lists.linux.dev and/or containers@lists.linux.dev.
+
+We encourage technical discussions, patch reviews, research paper
+sharing, and collaborative development efforts that advance
+multikernel capabilities within the Linux ecosystem.
+
+3) Participation
+
+This mailing list is open to all interested developers, researchers,
+and contributors. Please subscribe if you are interested in this
+topic.
+
+We look forward to building a collaborative community around
+multikernel Linux development and advancing this promising area for
+the Linux community.
+
+Best regards,
+Cong Wang
 
