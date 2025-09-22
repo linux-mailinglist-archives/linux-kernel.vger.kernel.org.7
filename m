@@ -1,334 +1,115 @@
-Return-Path: <linux-kernel+bounces-827936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E009B937B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:29:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC45DB937B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A7C2E0C25
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:29:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B29EB190681E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8C430DEA6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376F22FD7BC;
 	Mon, 22 Sep 2025 22:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="fq9emhxZ"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IX5E30KV"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E45325C810;
-	Mon, 22 Sep 2025 22:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758580143; cv=pass; b=Vg6Z6mJY+2CXqIknws/9URw5Hsohj2b3leEn5OmSNjAuSMPo+iJTCvaD9RK2IPgD5cskcCjJW7aoW/maxUCe/N/xVoEvpo5GHd9Gu+cm1KauZQa6v2hFc9TYen9Im79KmNXeIhRPGJCVHnKUCEc5Tq1gf/gK/1X9UkK3OTDpe5Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED46261B71
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 22:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758580143; cv=none; b=GDmhLSRPD4O4ClM0BUSEVTDlwttvv6FFBqSm6R1Nizj1W09bYQl7JHGZdu160x6+XFQyAQB4cS+bSUOvvwZRgWz5Ur/Vi0xAzFW/xfrXNcFykmX72UZn8z/mw76dOMjf8YisHZ7fZofTjCaLTEWUDh3mrtvzwCkqblcFNrQjNp8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758580143; c=relaxed/simple;
-	bh=Hni2pb/SWCKrnx1pZrLyZv0XAOBFJ6gEG1PhKYWLPbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jgmsh0VpbhIJIXNa6C3I1AcmnnDsEkUJ9zqYAoKGduLwu/MmMkDOAQwAm5YYoNIWMh5Zx3cR7NCNFRQlKImnEknN9LZUOQEFQgNSNkzZG3CBANsDDLIq0uTq9r+piV261mZqjDHQfkjU9QhxfwQ0llBwto4CkYr31zqLVfPcedM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=fq9emhxZ; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758580122; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=DPbNvVlTeHvk4rTzZKxtZIqrCBnffwKyBSn8hOedCksVBKMhnfqpRQGjcbTFOJ7kJV2ex0oDze6zKc974HEQ01cjOhOS/47OEJ+0kbsSa+S8Yldjrlt8fRQHM8dZCAlNCfftFXPNukyxQ/VwIqkf7alSmUybho08RWf3Hh24Elw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758580122; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=WGJ9p7ccOI7hAWR8G+9Ww5sw5ElrDPjQ4hRjDgDPqwI=; 
-	b=m3amN5ZroATML53DJiqlu7sIB12+Y6CJR2DQN1RPyi9P+D7CPd4Gqddfew4qSpvdiBzPb6R1KSMd+vg0j12aaKNF+auLUAzq6ta4Wz0gK6PB08N+gJO/MxLXE5v9yEhzBMfTeh/9sv1WmWwAlsaY3AUfQEvV+stJeoT1iJS8ZHc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758580122;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=WGJ9p7ccOI7hAWR8G+9Ww5sw5ElrDPjQ4hRjDgDPqwI=;
-	b=fq9emhxZaF6tZyCTVA0ZNce4XhGQYY0Kg4RBaDvnn8hBJRcUfCqScUE+et0jxA1Q
-	upUntuEvbTe2UoGODPSoXeihyhJWOjG0be9ZGoY4gNW9wItvAEFjjhfRF8GTMaJKQRQ
-	0sod+y87/yBZXxcic4vT12xBAT5AAwL2BO+eVE8I=
-Received: by mx.zohomail.com with SMTPS id 1758580119097740.5010327230345;
-	Mon, 22 Sep 2025 15:28:39 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 67D56180309; Tue, 23 Sep 2025 00:28:33 +0200 (CEST)
-Date: Tue, 23 Sep 2025 00:28:33 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5] power: supply: max77705_charger: implement aicl
- feature
-Message-ID: <cctdvj7jsf5ng3ab5vyhzjn73u6wqye3kcrgfj4tugpd32zj4f@o5buyuu7mmns>
-References: <20250920-max77705_77976_charger_improvement-v5-1-aab0aef82cc4@gmail.com>
+	bh=bnoVvW7A4MZboCUWUp3uJoL/5QHRg63EHvbJEX0C48k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R5bTccE44fZRZmox51O+BmlkjsX2+gg458OjzakQtrLE4Rx6eAmajgSIHuVS68CkeJVejXnGTFQp4fL+k5a409VPsowiUMXr3HL7oSmASQeIPjthuduy5OZmG9ZTpsaxI97wwAdDH8C5xzjGN9n4dv6go6iEpSwYfkKUL/UseQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IX5E30KV; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b551b040930so2147893a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:29:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758580141; x=1759184941; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BtoT7lETDiyBBBUdd6zpmqK1Q4j9ahP216sTNQ0nsxM=;
+        b=IX5E30KVxgFPJ6p2dHUpUxJRlT0Z0s83563QpBj3WbExEofAH4EUzOd3Sa4/OvtHdI
+         pz0DWgou/hhLEq0Y+bU/L4UEJ/8CWpNBYtOpE7Zx7MIm+7jScXnD8OqztbfRm3QMA/63
+         +oxrnjL7NNyg/wXArhqBEgm61tsTA0dGcRDFCZC9bSB3BFjKISIcx12mhZmrpZkBMCWf
+         IW/ZVCumH3zDLWz0kVZG9DjWmrOQSM0A4m5cFKzNF2Z3DzNOx8ydCWeNKfgdOrS76iAB
+         YH87T9V1nLB2NVBQ0ORRQNcsAwnWaRPmGshhNrDMtRldhPUF91VQlOh/YYdLRASXc6hP
+         O6UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758580141; x=1759184941;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BtoT7lETDiyBBBUdd6zpmqK1Q4j9ahP216sTNQ0nsxM=;
+        b=J5kal7ilJ1+95unJInHqn2nNmZ90Qk5b75EbUw/D3AZadjfIa2F0Oe/FIwiurkb5Tn
+         3HnFXr0yqDzZO3sguhAQpPBcYKHsR/hshPbCkUQW+b0wCFybXkjyYoObBZAoFsFwIcQU
+         6SsYgtKdul0aY+lptjzn528NPDGxd/8Wuduq+apm6KMB8WAhEABWztLVByBJxleMr6yi
+         vZmbZN7S3Dga07rRrWXQkx2RtoU1sVvFq9lcgV4WAW578KPFJAr5vF3w8MYjL6KyQamz
+         bDsOeeTimE1KRvDTLHOE0fd7Ts7fCbcXRY6fTe7dFoWbGitzF9S4mk2WDqDU9X73nMW2
+         RU3A==
+X-Gm-Message-State: AOJu0YxeNAXUycIWlJK3eoAwdc3edgJ3wufNRV6mbMcIy2j4uekj31im
+	1IR8mQ5VGbk+3iyPaNhFtrTdbcMhSvUULRgmNfSdTzfl8CPkiCH5i8Jr
+X-Gm-Gg: ASbGncuF6pT5T3xP1k45gP6ez/nAtJ/7g7j8DyrLXGuXXZdumeJapM5lR3IKn2ps4YN
+	QpCJNwkXyjZGu6Z9bLEyeEV1FYMNblVV2ht81ABh4GwNIJcNc66uL1t7V983xwwr4pNDyDSWJbE
+	cQIGPsa0PMfEkm7ugPVPqfUbrqkMJGHdOijvOxnZw2vUmMBJUYNcPfe+R94/14lv9GYft/1QiQE
+	uT+DLa9vys2Gx54dqR5Uhi9Ed/GKASTw67H/a6OVGtbXbkMsTTeqm5YMa4FZM4UswOmbu9s63W0
+	D9RtNkoym1uXojhh1prf4ditXcZ1TCNalvfqDWeomAyyiqZg1j7BVzfanzCDdiZ4edoypwGqNSb
+	yuD0R/3Zt0Bhg4SIH+3vqU7aYLTAUwQ==
+X-Google-Smtp-Source: AGHT+IEr9MnnfuaOnEgl5Ok6lmMqyEMDd1YwFlpFnduveoNyqRB+X6CgKFY+fvDTCnEk46JVsmmqkQ==
+X-Received: by 2002:a17:90b:3a8c:b0:32d:f352:f764 with SMTP id 98e67ed59e1d1-332a9542d69mr564005a91.2.1758580141402;
+        Mon, 22 Sep 2025 15:29:01 -0700 (PDT)
+Received: from [192.168.0.150] ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b551518480asm10765908a12.28.2025.09.22.15.28.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 15:29:00 -0700 (PDT)
+Message-ID: <864b1042-9494-44da-b87e-d4cd8aa1ec11@gmail.com>
+Date: Tue, 23 Sep 2025 05:28:57 +0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="apzq35hofjb3hln6"
-Content-Disposition: inline
-In-Reply-To: <20250920-max77705_77976_charger_improvement-v5-1-aab0aef82cc4@gmail.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/258.557.22
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: x86: Fix hypercalls docs section number order
+To: Sean Christopherson <seanjc@google.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux KVM <kvm@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Wanpeng Li <wanpengli@tencent.com>
+References: <20250909003952.10314-1-bagasdotme@gmail.com>
+ <aNEAtqQXyrXUPPLc@archie.me> <aNFYL2Os3rbfMbh6@google.com>
+Content-Language: en-US
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <aNFYL2Os3rbfMbh6@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 9/22/25 21:07, Sean Christopherson wrote:
+> On Mon, Sep 22, 2025, Bagas Sanjaya wrote:
+>> On Tue, Sep 09, 2025 at 07:39:52AM +0700, Bagas Sanjaya wrote:
+>>> Commit 4180bf1b655a79 ("KVM: X86: Implement "send IPI" hypercall")
+>>> documents KVM_HC_SEND_IPI hypercall, yet its section number duplicates
+>>> KVM_HC_CLOCK_PAIRING one (which both are 6th). Fix the numbering order
+>>> so that the former should be 7th.
+>>
+>> Paolo, Sean, would you like to apply this patch on KVM tree or let Jon
+>> handle it through docs-next?
+> 
+> I'll take it.
 
---apzq35hofjb3hln6
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5] power: supply: max77705_charger: implement aicl
- feature
-MIME-Version: 1.0
+OK, thanks!
 
-Hi,
-
-On Sat, Sep 20, 2025 at 09:42:30PM +0300, Dzmitry Sankouski wrote:
-> Adaptive input current allows charger to reduce it's current
-> consumption, when source is not able to provide enough power.
->=20
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
-> This series consists of:
-> - max77705: interrupt handling fix
-> - max77705: make input current limit and charge current limit properties
->   writable
-> - max77705: add adaptive input current limit feature
-> - max77705: switch to regfields
-> - max77705: refactoring
-> - max77976: change property for current charge limit value
-> ---
-> Changes in v5:
-> - rebase on latest linux-next, dropping already applied patches
-> - optimize code to drop is_aicl_irq_disabled variable
-> - Link to v4: https://lore.kernel.org/r/20250918-max77705_77976_charger_i=
-mprovement-v4-0-11ec9188f489@gmail.com
->=20
-> Changes in v4:
-> - fix commit message
-> - use IRQF_TRIGGER_NONE, because non physical irqs
-> - minor rename refactoring
-> - rebase on latest linux-next
-> - patch reorder: put fixes patch first
-> - aicl feature cleanup
-> - Link to v3: https://lore.kernel.org/r/20250911-max77705_77976_charger_i=
-mprovement-v3-0-35203686fa29@gmail.com
->=20
-> Changes in v3:
-> - move interrupt request before interrupt handler work initialization
-> - Link to v2: https://lore.kernel.org/r/20250909-max77705_77976_charger_i=
-mprovement-v2-0-a8d2fba47159@gmail.com
->=20
-> Changes in v2:
-> - fix charger register protection unlock
-> - Link to v1: https://lore.kernel.org/r/20250830-max77705_77976_charger_i=
-mprovement-v1-0-e976db3fd432@gmail.com
-> ---
-> Changes in v5:
-> - add _MS suffix to AICL_WORK_DELAY
-> - optimize code to drop is_aicl_irq_disabled variable
->=20
-> Changes in v4:
-> - fix intendation
-> - use IRQF_TRIGGER_NONE, because this is not physical irq
-> - use dev_err_probe instead of pr_err
-> - remove excessive chgin irq request
-> - remove pr_infos
-> ---
->  drivers/power/supply/max77705_charger.c | 55 +++++++++++++++++++++++++++=
-++++++
->  include/linux/power/max77705_charger.h  |  4 +++
->  2 files changed, 59 insertions(+)
->=20
-> diff --git a/drivers/power/supply/max77705_charger.c b/drivers/power/supp=
-ly/max77705_charger.c
-> index b1a227bf72e2..ff1663b414f5 100644
-> --- a/drivers/power/supply/max77705_charger.c
-> +++ b/drivers/power/supply/max77705_charger.c
-> @@ -40,6 +40,18 @@ static enum power_supply_property max77705_charger_pro=
-ps[] =3D {
->  	POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
->  };
-> =20
-> +static irqreturn_t max77705_aicl_irq(int irq, void *irq_drv_data)
-> +{
-> +	struct max77705_charger_data *chg =3D irq_drv_data;
-> +
-> +	disable_irq(chg->aicl_irq);
-> +
-> +	queue_delayed_work(chg->wqueue, &chg->aicl_work,
-> +		     msecs_to_jiffies(AICL_WORK_DELAY_MS));
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
->  static irqreturn_t max77705_chgin_irq(int irq, void *irq_drv_data)
->  {
->  	struct max77705_charger_data *chg =3D irq_drv_data;
-> @@ -445,6 +457,33 @@ static const struct power_supply_desc max77705_charg=
-er_psy_desc =3D {
->  	.set_property =3D max77705_set_property,
->  };
-> =20
-> +static void max77705_aicl_isr_work(struct work_struct *work)
-> +{
-> +	unsigned int regval, irq_status;
-> +	int err;
-> +	struct max77705_charger_data *chg =3D
-> +		container_of(work, struct max77705_charger_data, aicl_work.work);
-> +
-> +	regmap_read(chg->regmap, MAX77705_CHG_REG_INT_OK, &irq_status);
-> +
-> +	if (!(irq_status & BIT(MAX77705_AICL_I))) {
-> +		err =3D regmap_field_read(chg->rfield[MAX77705_CHG_CHGIN_LIM], &regval=
-);
-> +		if (err < 0)
-> +			return;
-> +
-> +		regval--;
-> +
-> +		err =3D regmap_field_write(chg->rfield[MAX77705_CHG_CHGIN_LIM], regval=
-);
-> +		if (err < 0)
-> +			return;
-> +
-> +		queue_delayed_work(chg->wqueue, &chg->aicl_work,
-> +		     msecs_to_jiffies(AICL_WORK_DELAY_MS));
-> +	} else {
-> +		enable_irq(chg->aicl_irq);
-> +	}
-> +}
-
-After looking at this again in this simpler version: Why do you
-need the delayed work at all? It seems you can simplify to this:
-
-static irqreturn_t max77705_aicl_irq(int irq, void *irq_drv_data)
-{
-    struct max77705_charger_data *chg =3D irq_drv_data;
-    unsigned int regval, irq_status;
-    int err;
-
-    do {
-        regmap_read(chg->regmap, MAX77705_CHG_REG_INT_OK, &irq_status);
-        if (!(irq_status & BIT(MAX77705_AICL_I))) {
-            err =3D regmap_field_read(chg->rfield[MAX77705_CHG_CHGIN_LIM], =
-&regval);
-            if (err < 0)
-                continue;
-
-            regval--;
-
-            err =3D regmap_field_write(chg->rfield[MAX77705_CHG_CHGIN_LIM],=
- regval);
-            if (err < 0)
-                continue;
-
-            msleep(AICL_WORK_DELAY_MS);
-        }
-    } while(irq_status & BIT(MAX77705_AICL_I));
-
-    return IRQ_HANDLED;
-}
-
-Greetings,
-
--- Sebastian
-
->  static void max77705_chgin_isr_work(struct work_struct *work)
->  {
->  	struct max77705_charger_data *chg =3D
-> @@ -617,6 +656,12 @@ static int max77705_charger_probe(struct i2c_client =
-*i2c)
->  		goto destroy_wq;
->  	}
-> =20
-> +	ret =3D devm_delayed_work_autocancel(dev, &chg->aicl_work, max77705_aic=
-l_isr_work);
-> +	if (ret) {
-> +		dev_err_probe(dev, ret, "failed to initialize interrupt work\n");
-> +		goto destroy_wq;
-> +	}
-> +
->  	ret =3D max77705_charger_initialize(chg);
->  	if (ret) {
->  		dev_err_probe(dev, ret, "failed to initialize charger IC\n");
-> @@ -632,6 +677,16 @@ static int max77705_charger_probe(struct i2c_client =
-*i2c)
->  		goto destroy_wq;
->  	}
-> =20
-> +	chg->aicl_irq =3D regmap_irq_get_virq(irq_data, MAX77705_AICL_I);
-> +	ret =3D devm_request_threaded_irq(dev, chg->aicl_irq,
-> +					NULL, max77705_aicl_irq,
-> +					IRQF_TRIGGER_NONE,
-> +					"aicl-irq", chg);
-> +	if (ret) {
-> +		dev_err_probe(dev, ret, "Failed to Request aicl IRQ\n");
-> +		goto destroy_wq;
-> +	}
-> +
->  	ret =3D max77705_charger_enable(chg);
->  	if (ret) {
->  		dev_err_probe(dev, ret, "failed to enable charge\n");
-> diff --git a/include/linux/power/max77705_charger.h b/include/linux/power=
-/max77705_charger.h
-> index 6653abfdf747..031c1dc2485d 100644
-> --- a/include/linux/power/max77705_charger.h
-> +++ b/include/linux/power/max77705_charger.h
-> @@ -123,6 +123,8 @@
->  #define MAX77705_DISABLE_SKIP		1
->  #define MAX77705_AUTO_SKIP		0
-> =20
-> +#define AICL_WORK_DELAY_MS		100
-> +
->  /* uA */
->  #define MAX77705_CURRENT_CHGIN_STEP	25000
->  #define MAX77705_CURRENT_CHG_STEP	50000
-> @@ -185,7 +187,9 @@ struct max77705_charger_data {
->  	struct power_supply_battery_info *bat_info;
->  	struct workqueue_struct *wqueue;
->  	struct work_struct	chgin_work;
-> +	struct delayed_work	aicl_work;
->  	struct power_supply	*psy_chg;
-> +	int			aicl_irq;
->  };
-> =20
->  #endif /* __MAX77705_CHARGER_H */
->=20
-> ---
-> base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
-> change-id: 20250830-max77705_77976_charger_improvement-e3f417bfaa56
->=20
-> Best regards,
-> --=20
-> Dzmitry Sankouski <dsankouski@gmail.com>
->=20
-
---apzq35hofjb3hln6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjRzYkACgkQ2O7X88g7
-+pqwkRAAqMCFdV0RLB0wWNB8mejioEGdtJJqmMDWyD2M2+HLPwfqvSYlvKKKFEL8
-eU0MOjpKKdYP1Lo6m0ZbYIpJxPiLoXGToOdbwtjr44/y97QPaf9jF71xYSEnN1Gs
-rsDeSFncD7dBXX1wayjgjfADznImbMOsjRfioRLLrTD7Xd7AjJDJ+eFOc1u5/f0e
-qupMjjF5KkO2mt6X7FSfRwsn3DcEvyHs1lJ1KYwfOnC1i82OfG3QQ1hZ2PtJHUnA
-zoHyAM4Q3GPyn6HejdaBZJH8HhxQrgdv2idKpr51S9Wxzh/JfQ6+Boa9pNLq809G
-T0tyFr06O1vpGWsNAETFmDpxH2qbmHuHCURVP7hccM+ny4i5pZO7W1ic+Ik2TzNQ
-l0jDTD+UjcjATRakHvrCfqA+pLKq1vMs3rFL8YdZTrbqqrweD9FEOtjnAszim1Qg
-8GA8RMaE+urnWTg+D73ZLYhJwztxbQjFSSjEb5AP//qA81wocEkSXXUJq6pm9ryn
-lKuKyoqKBxWWQ+VlhWWeqqgDOrKIVaf7GhCDauie1OHW8Yhd3TybZ7xA8sHRROc5
-u3BNxhizQ/BB6m2OMqF4ZBJxIJjs6N6dqp9EiZy/+Z9GvgklbYBhlHBoUAn4O7cJ
-ky1OR0R/ttTzKKwVJ1X2sHbfhdZ7R28tEu1fXJAuxEgscqRVk7M=
-=2EFx
------END PGP SIGNATURE-----
-
---apzq35hofjb3hln6--
+-- 
+An old man doll... just what I always wanted! - Clara
 
