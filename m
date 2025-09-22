@@ -1,1098 +1,436 @@
-Return-Path: <linux-kernel+bounces-827883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E37C8B93588
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:10:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF61B93319
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 338B37A8625
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:08:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 614D92A67D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCAB28466F;
-	Mon, 22 Sep 2025 21:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6140131A573;
+	Mon, 22 Sep 2025 20:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ifGZveNz"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Jt3AB43/"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013065.outbound.protection.outlook.com [40.107.201.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AFA288C9D
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758575401; cv=none; b=SjJL/Fzvbh4sv+ZIiArGZ9X9fw2+39LrXUQytuaCzOVcdx5ev7rGQd9Fa/poP02F2wNiefSCtzPk54VCxmwiywW+36jplBERNwYkE7p8qIWW5t0/M+n+3sY9CnFSkYSOrJ46WZGx5vJo/xRo/zF79CDYJJEZu/f78O2myhk60ig=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758575401; c=relaxed/simple;
-	bh=0zEkXPmthcOYy+k20HASdyS055JrPTn0l0RoEyNXNUM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=khT5EnbzWo6R6fJgd7PfXftpPXsf+QiCbqLF020HqzLoV+j674Vn1sjYQCnKswQv6PqkGKZSQ1h7YYbHhsRvNWggEDSptiBt50ueTZpkpWsjfU/0OlkjNcnwrdv7eILLY0m2M6S70LVPg20wo56u48LDeVw5rK70nJ6GgAO6/OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ifGZveNz; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3ece1102998so3062713f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:09:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758575397; x=1759180197; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=i+8dRG/LLSczlrcz2sI01JOamdKjotUDi9xFwucy4h8=;
-        b=ifGZveNzvXi3lWE3FDHguchqbnOqucBmtBjiJKy6cEYl6QMQLY3CsQPa7jHAxWTWNN
-         CS3Rprop99o3LO5ejqSr580ccLmwZ0yAP6b8wKxJtckbSBVDHdlFg4RZWdwpb57f5pm+
-         WHbaOkHW5Dcq99/VGC0mmttb2cgr5GJ716/8f5teRltFNdBTZfSSMnd3BnZgp/Ra95y4
-         vOItQMlNz3xm4/mZ4Y+V1UKklQ6AchEIXvd522MGDDl3njLPTb62fBg1Ty4yH4PRMGWz
-         eIuJ3ivjm8Rx7GfpJyFsVmhCja0FMwgRWrGaAL5NvOKV2mZiIAa/amJV+D8ch3894t1L
-         lF0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758575397; x=1759180197;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i+8dRG/LLSczlrcz2sI01JOamdKjotUDi9xFwucy4h8=;
-        b=tw3nPsxhvPHBkh0qOGilJ3hRR6Ncb9eV1LOacomni+Fyyj2zKaUkCq4CyhtA+D7Fc5
-         R9EG1HySwUT5OwD8tiSrRR4oUFWMlFkUyx+62S/9Kf2K3rHYgGhaL8xVKtT5611klQtq
-         KtXqMzmthjr6O68GMuhjd4eNhZVMlyOmDjfg22O9OdV0OW9ZF2OyEitaNSUfSygMN5LD
-         QIPUNrgQLRTdhYJWpdaeFxbvlYACiZC9DBWgxvBhJlcQ6hjCZUJidIhOA2BAymC5PZkH
-         roU+O1RMRa4MuyYsLkLJZ/2lHxjn0pITC7/D08pjfq/RIdZZxK8VjDL37pOTX4Hkk8AE
-         SrEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/BQVDotNLXtrG50uEg29DeCYazhd1FEPDbwfPX7sHzsEZxV6ILJmo93mrEb7JFfOWOMNf4n/j9HCpNIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyqwnNAkxx+O/vHh8UJ/YJxqneVlWYHY7n/FecZMZei+e113pv
-	zed1RBUY4okQFqTvxIOFTo+zNUdTz0qOZNVMcxxdvtWLvNmxMXZi7Rpf
-X-Gm-Gg: ASbGncuWVuPzqEFofvea3rsEUzJzoTq+MFoHWCido5/3FzRMHlyVFLUGmtHkUnDP6dI
-	hrfbm61CO3UrSTc1p62E6zA8Vh22JOB64xArwLBz650eGK9qgcMoV1sKcz4ZXg9lhF8XbDC08Uo
-	+De1RGFuyh22q3qzhrWE11UUkPDfiNUd2c6AthNzUk6KlngN5WicLbMzYUaDAZL4FrWdJMXRKVP
-	H/psXpQO/3ES08Lslys4q7ewbM4IZEvVUELJUc8lG1dtZeo7NOKSrASyemlBESWsPiHhY3OE9KJ
-	gYfmOQ65H1k6mxOTRQk7p2Pb4cTdkuSNBGcWu46grysBqYFfZHDDHjhjKiGNMcc9ODqXy2gqnRb
-	0p1cNFM2v1QbTOYvw1UV/+egi65Ks0Ox9Tcq/YUqSUxxXSdVabMCvKhNuhK1tNf5UBHBfPn/HmV
-	Ma/L6uptc=
-X-Google-Smtp-Source: AGHT+IHlGjULAy1MK1DXmJEiIQnyeR/Nrx17wURiAECIMFQ/nl14w7JOfaBIA0Hd9mq5VLxN76huVA==
-X-Received: by 2002:a05:6000:40c8:b0:3eb:4e88:55e with SMTP id ffacd0b85a97d-405ca95a0abmr101779f8f.41.1758575396565;
-        Mon, 22 Sep 2025 14:09:56 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee07407ccasm21282645f8f.15.2025.09.22.14.09.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 14:09:56 -0700 (PDT)
-Message-ID: <859d8472a8f9e8d28b890ad565f9d3ce11e162d5.camel@gmail.com>
-Subject: Re: [PATCH 2/2] iio: dac: adding support for Microchip MCP47FEB02
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Ariana Lazar <ariana.lazar@microchip.com>, Jonathan Cameron
-	 <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
- =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
-	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	 <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 22 Sep 2025 21:10:47 +0100
-In-Reply-To: <20250922-mcp47feb02-v1-2-06cb4acaa347@microchip.com>
-References: <20250922-mcp47feb02-v1-0-06cb4acaa347@microchip.com>
-	 <20250922-mcp47feb02-v1-2-06cb4acaa347@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4316C1E32B7
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 20:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758572040; cv=fail; b=WeKpIT+2Nx+TbH899MWc3cHHNBri3e7mGhHQdwrzwponaz/2vdQnY2C75iatgkkev32FvYzHz8zpRR2Zm/8Pafiq6NFNKj/0xMgZAU0+vJMQAAO0KXbE0w7gydD2iwmk4O6auLxOodM8blB3hViRkuSu7KwolvCEamv9ZQiLxoc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758572040; c=relaxed/simple;
+	bh=a1+0Z8T3NuhERtBMyxH+Wv13/W864dl8DZzJZ+IBz1U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CA8fOMlBbM9fX8I3CAUGNhZzPuQWXnOR4NUhFUPYTJ+7M+W5mFo6DqqK2VMzj52ZH2ij8ywTm9yPSQjlCi7A2uGXvhUD490ABfl4VHxt88tsbX373sO2xIBG4PVuT6DemZnWLYyWk+z4ExQZOI7i8HSOfw5XVNWOdiswVAlGZK4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Jt3AB43/; arc=fail smtp.client-ip=40.107.201.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YDBkeobDDS4YTo28gon47vmmvfKWClF/tt65QwcEzhn8QXsumciDG93e6hgNtD0BoHUkY6aG6zHJC1uQSiSSLTqGtOmhu9D4IWJktOXcYFFB1EwkGvrHSib+Chw+IiioVYeeK+Tn9uk1TGC3FHB1UMjNR5wgrksH7BCEWrUWX7YM/fZYRdViMxzPyKe5DV6WdoqAlLRNf1Opa7KlbdbwSO0VFzGcUSuEAvbHzZTLoPfqczRWJWUH8wvp6VUrRI6jRhZXR3dg7YNvPItoinU3e5i7+s4+Xq2JAqVpTYYIEDQ+04JNzR81h4V9S7x55nY/UdJmDT171JSGwurfs8ZjUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Qil7eAMHq91jMhq+dsuahGcHPT2WhjrqXtU33f9pM+w=;
+ b=NZ+sxWOttmWk8p36ClaOIB0OaQ9JIGJYnw6RBxZxltk8toZLE+1UEqBlQt023sIOzgC4KvFfLv72IXrmltQ+SFA41k+XKFzsl8BiFDC67GG/dym1vgEyHSF29v510HFMQ4FEf1TP+riwH5jBmoyUsPA1AriTtH+HsRwMpCtnENfMMlLcK1Kc5KjeJsPBVkwC4OyWRMTe7/qw8+r17ENDYj8Gx7BWAhaOE8MC9LpAAZ96dQ/pNpsHXb2/MyLORe00v1jF9vYsh4Vt5EddhS/K/H7FOWt0tvksjDEAoBA5k0Z4fG79P/NeC9/pJSKol/nQm9/rLiT1QWn9+v29MPodjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Qil7eAMHq91jMhq+dsuahGcHPT2WhjrqXtU33f9pM+w=;
+ b=Jt3AB43//pWfti7dy9qVS21ynzOlGpuWALbNx3dMYqXiLu5xOcenj5n4sY3TN0nqHzYFAunRB3+c3GxpGZeVHhKlJ+wkyHDghWFG7d80UAjzze8NkxqpP7yFhIAExsOKAhU+0q90ogASeZuCkAHuJG7nUmjIAqVQWqs6+1iVNI4+ky/EjjivqOK9+dUVJeeqqXCPBxM1L+v8lfRk9UXCO1ZO0wbMo/jyIjGN2sATTZpvnqQoQbJ9Vf06wf6jirCv0safCpPzUQSKDBcy/3T8KJ4HgGPK6PPTQXFE651cZLZ1XgE9H5+hUlCUIRtMqeLk58UiBPy9g8cR3OoirUDsvQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ CY8PR12MB7657.namprd12.prod.outlook.com (2603:10b6:930:9d::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.19; Mon, 22 Sep 2025 20:13:53 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9137.018; Mon, 22 Sep 2025
+ 20:13:53 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Balbir Singh <balbirs@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, damon@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, SeongJae Park <sj@kernel.org>,
+ David Hildenbrand <david@redhat.com>, Joshua Hahn <joshua.hahnjy@gmail.com>,
+ Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
+ Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?utf-8?q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+Subject: Re: [v6 03/15] mm/rmap: extend rmap and migration support
+ device-private entries
+Date: Mon, 22 Sep 2025 16:13:47 -0400
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <D4440A30-118E-40DF-99BD-6F58B708E597@nvidia.com>
+In-Reply-To: <20250916122128.2098535-4-balbirs@nvidia.com>
+References: <20250916122128.2098535-1-balbirs@nvidia.com>
+ <20250916122128.2098535-4-balbirs@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+X-ClientProxiedBy: BN9PR03CA0612.namprd03.prod.outlook.com
+ (2603:10b6:408:106::17) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|CY8PR12MB7657:EE_
+X-MS-Office365-Filtering-Correlation-Id: 50796d16-ca4d-4bbc-080a-08ddfa148d44
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NG9ROFlSSEZMeUNmUXUwellrd0RYSEVkZ20zd3lmSTkvR0R1VGRoRTM1VjR0?=
+ =?utf-8?B?V1lwcElVeDUvdEZ2Nm1EWU9leHJIZDYrUitXTzJueWpyTS9jVVhNSzEvaUxW?=
+ =?utf-8?B?ZmNGNVFPOHp1VzZLR3N2a2M3eUMvSVJTc25FaEw3WTlkSTgyYStabTdmNHdG?=
+ =?utf-8?B?eksvcVBRSFNLUE85SkpjaUxEZHRXZzV4MHlLSVBlemNyRHZEQWpzOUxLMklm?=
+ =?utf-8?B?bXVnb28wLzBFNG9EamxyMmJLSll3UHU5b3JQbTdJR25xc1U0SlQ0VDVFcG5Q?=
+ =?utf-8?B?bDM1T1orVmx0SjVkTXJJMVpxSzBwY0lGK3ExOUcwbjJ0RUovemtBcGhVZXhk?=
+ =?utf-8?B?ejIyc1lqZi9UU3hoMlM0d2lHTGVBQ1RSSHZhUDAvWHRxOVBlUTVBR0dvQXlR?=
+ =?utf-8?B?QmlTNG1JcXh3UVExUGd2cDkwY3V5Rzg5ZjNGcGRENzRKRXNRT1FZRW1xYUMz?=
+ =?utf-8?B?YkNKdjJpUFFLVFZRaW1oSUd4cGcrQXNDeU9GYkFGUTVDWGw5V1dPTUxUVmVX?=
+ =?utf-8?B?d0dIcVNCNmtONUpoeE9Bb0JkSEprZ3BualQ5eVpiUlRVMjVBMnNiZ21yVTNr?=
+ =?utf-8?B?dHI3QlJMTk5uU0w4dVk2YWRsaWxKR0F5S210bEt2Z25mQXBxTXgxMXZFTjEz?=
+ =?utf-8?B?b2JiZ2xFVHpady92NnFXQ2p1Q3ZET0dlM241aUxnN0wvanluS0NRNVF4aHA2?=
+ =?utf-8?B?ZE9tblVQbjhEZEV2NlBMeXJuT0hZTVdGajlIZ2h6eFlna3VtVlZKZjB6WVpz?=
+ =?utf-8?B?Q01JSHhVRmlxREtqaTM2NHRCRitCVnJzNlZBL1lOQTdybFJ0K0hnMkpMcjQy?=
+ =?utf-8?B?c2VZeW1nc3o3YVErWGU5OHRkZzNLTVpwUXFkNGgxek0zUHFWdVhVM2JMUWx6?=
+ =?utf-8?B?djltUWdWdFVyS3pzYmp6SjE0aXUzTmFGYWdNZUV1QmpwcUphazY2SGNyY3A5?=
+ =?utf-8?B?a2Y3c29PTkhWT0psZkphVFZaUmFTQ0srbmVqSjV0bk1BcWpCTFR3N1lZREth?=
+ =?utf-8?B?OWlQNkxhTWxnYWVCcWcxYUl5VDhQeXJwNGRRaWF3TjV6STVmYkpzNTk0OStS?=
+ =?utf-8?B?N2pQWS9tQzJZdFdhSERiYnI2VkVVa2pneWtjZWF0ZkEzWXVnNm5jUkFyaUpi?=
+ =?utf-8?B?QnhVMWxhVi8zaGZuTnBRdy80cm95UDM5dXJOU0dJdWppTmZreVlOQTBURkFM?=
+ =?utf-8?B?MXg0emRVMFMzc1FmejZuQm1FZE93OEhodjVrYkl0OXpybkNDa3V6ejZsa0h0?=
+ =?utf-8?B?M3ZIamJJVEtOSDZOOXdhSERUM0RJdm11VDFEVzgvTEQvU1prYkw5WUNVZ1BF?=
+ =?utf-8?B?NHZlNXptVUdqNkRKcmd1WTQ0d1NQMCtuVjVmUHR3TDB0cmJJR1FuRGxXV21J?=
+ =?utf-8?B?RDhtaVJ4ckI1cnNDV293VG8weC9kZTlLSDd0QjRlaEgxa3FXc1RDMTBzaGt5?=
+ =?utf-8?B?ZWthVjFLTWxzcEdCcm9zRVdtRVIyZ3lvUEQyWFBnZUFDZkFQd3BiSzJrRzlO?=
+ =?utf-8?B?bXZDTXZCZG5kQ1VwYTFlaGQ5cGtVangvZmtiRU12SElaajNWTlMxR1RuaFBK?=
+ =?utf-8?B?aEFVeDd5RlFsRWNyTzd4Z050NUppTm9aSlVNMGtnNGUreGkyVzJFNk5PZEpR?=
+ =?utf-8?B?SjFNaFNTcWIyZWdDaEdQNmw5bTlJWEM4OVY4Z05rR0o2STFMWGN4OEFKSUtM?=
+ =?utf-8?B?ak4vRk9HSkE0ZkRkSnlCRkV2czZ0TVl5Y2JiQVdGL2tsWEVXNElIOEdBVkFX?=
+ =?utf-8?B?R0N3ZHVNREp6OTdUUHJwWHliYWI1OVFFdnpNVysreHQ1bU9TQzJMOVRhb0Fy?=
+ =?utf-8?B?K1ZjWkNXYVBwR1dVaXB1TkJ2dGJsQ1ZXNFBnd1d5V3ZNYlkvTGhQMlVNUldk?=
+ =?utf-8?B?bVhpMVM1SjhqVTUxV01uMUhWQzZXT0xLc2F2VndyRE05TU5zRW5DWVYvRSt1?=
+ =?utf-8?Q?OtQ5Nmv5r9E=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZjUvbC9FTWpPRE1rWGE5SE1XUHFFZzI1a2VhYkNlWWVNN2ZBSUU0UUQxTEl4?=
+ =?utf-8?B?MkNjdGUxMXNpMUk0S3Rqak52TkhxTi94UUZPUThxcWZEeStvK3h2ems5cS8r?=
+ =?utf-8?B?UlFtajJBTFBjTHdjaGlMRE5HaUNJMnFjcU00K3EvbVFnQWxJSERuTTdQcUha?=
+ =?utf-8?B?b2x0Y1JBU3FHRnRpLy9CS3daMFlaSlpmYk5vN2hPb2FOYkxPMlFiRThPeW5G?=
+ =?utf-8?B?eDJXL2NJeGI3SFJGR3d2dzM4enlYYWttdjY5NzgzUkdCMVM1Rkh3bDBLY0lG?=
+ =?utf-8?B?U0U3cE9BRTJjVFNLcmtzdElaZmdheUQ0T2xRQ1pIa2hHaGV4TCtGZG1nK251?=
+ =?utf-8?B?NDF5QVpVazFGYWxSS25ZNDloa2hWZk9ydWwwMWt2aDF2YVd6ditDdlJmaVl4?=
+ =?utf-8?B?QVhxYmwxME5adXF5M0ZZdnB6dm4xclRkazBBTkVkb0RpL0YxMUJETWlnWElz?=
+ =?utf-8?B?UWtGWXl1QVR2QmdkVVY1VEtKVWpodVlVY3VneWJGL1BCT01WbGpZcWYwNjQr?=
+ =?utf-8?B?aWFIZ1h6eldUYlFMbHZKd2lqMWVLaHp2R3YycmFublZ5ZGVLWmxaRkNjOTVD?=
+ =?utf-8?B?eTluNkZtdldESUM0VUptYzZ1NSttdjVIK1dETmdCYlZZcGZPU3Y1clkxVitw?=
+ =?utf-8?B?UDMrUFFjeGhvY09xSllzVTU5QllyYVRJVnBUTTN3Y2VVREpidGl3N25ydFdE?=
+ =?utf-8?B?RzFsZnBxa2RQNkxLcFppMnF2Sks3YzZpWEFsUnBJUFZDdER1YTF0VTYxbElJ?=
+ =?utf-8?B?dUZWK1ljRzRjVUpFbEtPbWl4OUZlVWZDZnNGQ0VyMFdPTjBXTWtUZTJXdVk1?=
+ =?utf-8?B?Ym9BMEw1OW52OWdQeFJKL0poZDNTSXhhMlpNQTA4SklRaFRaanR5U29GaDRR?=
+ =?utf-8?B?aGwwUi9YY3lRWWtQekFEZjRWR2RNYS83cjRXY2dwWU43c2xpNGxLSDBScmtZ?=
+ =?utf-8?B?Wkh3QXlSUXBuTk1yN1ZlSGFvOVVueWhtTlVZUjNJOGtZQ3VqeGc4alpOb2Jq?=
+ =?utf-8?B?T1FoTVhlR3B0VWszYnZJWUNiblBMbUJPaFRVQ285bFJVRnlzdGl4MElTSHh0?=
+ =?utf-8?B?OUwyMEtNVGYwVDVudk51dlAwcEgxS2phbUMwa1k4aDdVNVQ1b080SXhkb2VV?=
+ =?utf-8?B?bjhuTUdua0oyaTJHSnd2NUZVQ0xNTm41bFJBT01TcGRtakZRRi9RTW11a25Z?=
+ =?utf-8?B?dWx5TGpLdG90ckUrNWNZckdUZnpFbmhkcmd1MXozTTFJVFovWnY4MTZYN2Rm?=
+ =?utf-8?B?MnJrVCt1TWk2anlnaVNyc0ZISDlIZEZZbEx1NVFuUmhaUUJ2SnI0MGN6RFF2?=
+ =?utf-8?B?WGpnWlpOL3lDdTQwelRkRmlvWDRESmYzQVR3bkRHNDY3c1I5c21UdTVuQTNF?=
+ =?utf-8?B?N2ZlWm1laXRLOFJ2eDB3MUc5VldEZm55NisyYzhPQ3hveGhaM3pENVpCTDZG?=
+ =?utf-8?B?ak8xN0txNHM1dHhIcWQwaVBKdlVlR1k1Ykh4Um92dURGL0FDNUJKeW9ZUEt0?=
+ =?utf-8?B?Z2pEWTYzT2VHTjJLYk9xVStyUTRiUlY5M09lT25CdUZpZDMyZFYraks4VlJm?=
+ =?utf-8?B?NUw3UUZpb1RDMkpUcXhFTlROenhZRDNSNHQ0aFJyVVdZai9YN2t6a0FiRHhM?=
+ =?utf-8?B?clAzdDhBSHpBNjlQRXNRZ3BBQi9WTml6cUQ0UFovcjVhWDFpSmgxRk50VXBV?=
+ =?utf-8?B?T3RNU2R0UDRkbGFDU2xoTnh5RlNOT0xlNVI0bjB0TWx5cWRwNmlZc1RxeTBp?=
+ =?utf-8?B?YlZYcUc4ZnE0L1JPeXpGd2JqcWh0cmIvZFg5SE0zYkYzbUt3SzVTRmUrMDFm?=
+ =?utf-8?B?aUtTcnNnTk9seXJJSTRGK2g4YzFTMnF2KzFQMzNtTjBack5wb0d1VE1QcE9v?=
+ =?utf-8?B?VFhpYzRKMG9HeTZ1a3U5R1ZMNExSbDdLVjV5eUk4RkZTS21veHQ5ekxvWnpj?=
+ =?utf-8?B?VGd5TVdxck9PNFJHQS9ybFFRNkpoOGo2eTY4T014LzdVYTB4L2Z2R09kdm5v?=
+ =?utf-8?B?d1YyZEc3T3IwbGJiZ25FaXZ2NERUZnNDSmkycHgvbVB2NGVMUmkxSkZUcTNn?=
+ =?utf-8?B?a1VZMEE3VXBPWmczWFdTOHV4eFZHTEtMTGp2aXlCd1ZFYVpndWFRV0dZUHBp?=
+ =?utf-8?Q?bfhOuI1rw4ThGPMMARSivrZc4?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50796d16-ca4d-4bbc-080a-08ddfa148d44
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 20:13:53.4439
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /39lH557pGqSZ/T1//eKwiEGgNToSGV1/aSSEiXor77EPyLEkiZjGAvkxKEtNee6
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7657
 
-Hi Ariana,
+On 16 Sep 2025, at 8:21, Balbir Singh wrote:
 
-Thanks for your patches. Some initial comments from me...
-
-On Mon, 2025-09-22 at 14:30 +0300, Ariana Lazar wrote:
-> This is the iio driver for Microchip MCP47F(E/V)B(0/1/2)1, MCP47F(E/V)B(0=
-/1/2)2,
-> MCP47F(E/V)B(0/1/2)4 and MCP47F(E/V)B(0/1/2)8 series of buffered voltage =
-output
-> Digital-to-Analog Converters with nonvolatile or volatile memory and an I=
-2C
-> Interface.
->=20
-> The families support up to 8 output channels.
->=20
-> The devices can be 8-bit, 10-bit and 12-bit.
->=20
-> Signed-off-by: Ariana Lazar <ariana.lazar@microchip.com>
+> Add device-private THP support to reverse mapping infrastructure, enablin=
+g
+> proper handling during migration and walk operations.
+>
+> The key changes are:
+> - add_migration_pmd()/remove_migration_pmd(): Handle device-private
+>   entries during folio migration and splitting
+> - page_vma_mapped_walk(): Recognize device-private THP entries during
+>   VMA traversal operations
+>
+> This change supports folio splitting and migration operations on
+> device-private entries.
+>
+> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+> Reviewed-by: SeongJae Park <sj@kernel.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Cc: Rakie Kim <rakie.kim@sk.com>
+> Cc: Byungchul Park <byungchul@sk.com>
+> Cc: Gregory Price <gourry@gourry.net>
+> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> Cc: Nico Pache <npache@redhat.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Dev Jain <dev.jain@arm.com>
+> Cc: Barry Song <baohua@kernel.org>
+> Cc: Lyude Paul <lyude@redhat.com>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: Mika Penttil=C3=A4 <mpenttil@redhat.com>
+> Cc: Matthew Brost <matthew.brost@intel.com>
+> Cc: Francois Dugast <francois.dugast@intel.com>
 > ---
-> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
-> =C2=A0drivers/iio/dac/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=
- 16 +
-> =C2=A0drivers/iio/dac/Makefile=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=
-=A0 1 +
-> =C2=A0drivers/iio/dac/mcp47feb02.c | 1347 +++++++++++++++++++++++++++++++=
-+++++++++++
-> =C2=A04 files changed, 1365 insertions(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index
-> 6f51890cfc3081bc49c08fddc8af526c1ecc8d72..0f97f90ac2f492895d27da86d831df8=
-3cb402516
-> 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14943,6 +14943,7 @@ M:	Ariana Lazar <ariana.lazar@microchip.com>
-> =C2=A0L:	linux-iio@vger.kernel.org
-> =C2=A0S:	Supported
-> =C2=A0F:	Documentation/devicetree/bindings/iio/dac/microchip,mcp47feb02.y=
-aml
-> +F:	drivers/iio/dac/mcp47feb02.c
-> =C2=A0
-> =C2=A0MCP4821 DAC DRIVER
-> =C2=A0M:	Anshul Dalal <anshulusr@gmail.com>
-> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-> index
-> e0996dc014a3d538ab6b4e0d50ff54ede50f1527..179ce565036e3494e4ce43bb926de31=
-f38b547c4
-> 100644
-> --- a/drivers/iio/dac/Kconfig
-> +++ b/drivers/iio/dac/Kconfig
-> @@ -509,6 +509,22 @@ config MCP4728
-> =C2=A0	=C2=A0 To compile this driver as a module, choose M here: the modu=
-le
-> =C2=A0	=C2=A0 will be called mcp4728.
-> =C2=A0
-> +config MCP47FEB02
-> +	tristate "MCP47F(E/V)B|(0/1/2)(1/2/4/8)DAC driver"
-> +	depends on I2C
-> +	help
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Say yes here if y=
-ou want to build a driver for the Microchip
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MCP47FEB01, MCP47=
-FEB11, MCP47FEB21, MCP47FEB02, MCP47FEB12,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MCP47FEB22, MCP47=
-FVB01, MCP47FVB11, MCP47FVB21, MCP47FVB02,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MCP47FVB12, MCP47=
-FVB02, MCP47FVB12, MCP47FVB22, MCP47FVB04,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MCP47FVB14, MCP47=
-FVB24, MCP47FVB04, MCP47FVB08, MCP47FVB18,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MCP47FVB28, MCP47=
-FEB04, MCP47FEB14 and MCP47FEB24 having up to 8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 channels, 8-bit, =
-10-bit or 12-bit digital-to-analog converter (DAC)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 with I2C interfac=
-e.
+>  mm/damon/ops-common.c | 20 +++++++++++++++++---
+>  mm/huge_memory.c      | 16 +++++++++++++++-
+>  mm/page_idle.c        |  7 +++++--
+>  mm/page_vma_mapped.c  |  7 +++++++
+>  mm/rmap.c             | 21 +++++++++++++++++----
+>  5 files changed, 61 insertions(+), 10 deletions(-)
+>
+> diff --git a/mm/damon/ops-common.c b/mm/damon/ops-common.c
+> index 998c5180a603..eda4de553611 100644
+> --- a/mm/damon/ops-common.c
+> +++ b/mm/damon/ops-common.c
+> @@ -75,12 +75,24 @@ void damon_ptep_mkold(pte_t *pte, struct vm_area_stru=
+ct *vma, unsigned long addr
+>  void damon_pmdp_mkold(pmd_t *pmd, struct vm_area_struct *vma, unsigned l=
+ong addr)
+>  {
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -	struct folio *folio =3D damon_get_folio(pmd_pfn(pmdp_get(pmd)));
+> +	pmd_t pmdval =3D pmdp_get(pmd);
+> +	struct folio *folio;
+> +	bool young =3D false;
+> +	unsigned long pfn;
 > +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 To compile this d=
-river as a module, choose M here: the module
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 will be called mc=
-p47feb02.
-> +
-> =C2=A0config MCP4821
-> =C2=A0	tristate "MCP4801/02/11/12/21/22 DAC driver"
-> =C2=A0	depends on SPI
-> diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
-> index
-> 3684cd52b7fa9bc0ad9f855323dcbb2e4965c404..d633a6440fc4b9aba7d8b1c209b6dcd=
-05cd982dd
-> 100644
-> --- a/drivers/iio/dac/Makefile
-> +++ b/drivers/iio/dac/Makefile
-> @@ -50,6 +50,7 @@ obj-$(CONFIG_MAX5522) +=3D max5522.o
-> =C2=A0obj-$(CONFIG_MAX5821) +=3D max5821.o
-> =C2=A0obj-$(CONFIG_MCP4725) +=3D mcp4725.o
-> =C2=A0obj-$(CONFIG_MCP4728) +=3D mcp4728.o
-> +obj-$(CONFIG_MCP47FEB02) +=3D mcp47feb02.o
-> =C2=A0obj-$(CONFIG_MCP4821) +=3D mcp4821.o
-> =C2=A0obj-$(CONFIG_MCP4922) +=3D mcp4922.o
-> =C2=A0obj-$(CONFIG_STM32_DAC_CORE) +=3D stm32-dac-core.o
-> diff --git a/drivers/iio/dac/mcp47feb02.c b/drivers/iio/dac/mcp47feb02.c
-> new file mode 100644
-> index
-> 0000000000000000000000000000000000000000..c9c2ded78d9c6013e5618e6342ebc8f=
-50e79a31e
-> --- /dev/null
-> +++ b/drivers/iio/dac/mcp47feb02.c
-> @@ -0,0 +1,1347 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * IIO driver for MCP47FEB02 Multi-Channel DAC with I2C interface
-> + *
-> + * Copyright (C) 2025 Microchip Technology Inc. and its subsidiaries
-> + *
-> + * Author: Ariana Lazar <ariana.lazar@microchip.com>
-> + *
-> + * Datasheet for MCP47FEBXX can be found here:
-> + *
-> https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDoc=
-uments/DataSheets/20005375A.pdf
-> + *
-> + * Datasheet for MCP47FVBXX can be found here:
-> + *
-> https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDoc=
-uments/DataSheets/20005405A.pdf
-> + *
-> + * Datasheet for MCP47FXBX4/8 can be found here:
-> + *
-> https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDo=
-cuments/DataSheets/MCP47FXBX48-Data-Sheet-DS200006368A.pdf
-> + */
-> +#include <linux/bits.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/i2c.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/sysfs.h>
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/mutex.h>
-> +#include <linux/property.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-> +
->=20
-
-...
-
-> +
-> +static int mcp47feb02_write_to_register(struct regmap *regmap, unsigned =
-int reg,
-> +					int channel, int tmp_val)
-> +{
-> +	int ret, val;
-> +
-> +	ret =3D regmap_read(regmap, CMD_FORMAT(reg, READ_CMD), &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (reg =3D=3D MCP47FEB02_GAIN_STATUS_REG_ADDR) {
-> +		switch (channel) {
-> +		case 0:
-> +			FIELD_MODIFY(G_0, &val, tmp_val);
-> +			break;
-> +		case 1:
-> +			FIELD_MODIFY(G_1, &val, tmp_val);
-> +			break;
-> +		case 2:
-> +			FIELD_MODIFY(G_2, &val, tmp_val);
-> +			break;
-> +		case 3:
-> +			FIELD_MODIFY(G_3, &val, tmp_val);
-> +			break;
-> +		case 4:
-> +			FIELD_MODIFY(G_4, &val, tmp_val);
-> +			break;
-> +		case 5:
-> +			FIELD_MODIFY(G_5, &val, tmp_val);
-> +			break;
-> +		case 6:
-> +			FIELD_MODIFY(G_6, &val, tmp_val);
-> +			break;
-> +		case 7:
-> +			FIELD_MODIFY(G_7, &val, tmp_val);
-> +			break;
-> +		default:
-> +			FIELD_MODIFY(G_0, &val, tmp_val);
-> +			break;
-> +		}
-> +	} else {
-> +		switch (channel) {
-> +		case 0:
-> +			FIELD_MODIFY(CH_0, &val, tmp_val);
-> +			break;
-> +		case 1:
-> +			FIELD_MODIFY(CH_1, &val, tmp_val);
-> +			break;
-> +		case 2:
-> +			FIELD_MODIFY(CH_2, &val, tmp_val);
-> +			break;
-> +		case 3:
-> +			FIELD_MODIFY(CH_3, &val, tmp_val);
-> +			break;
-> +		case 4:
-> +			FIELD_MODIFY(CH_4, &val, tmp_val);
-> +			break;
-> +		case 5:
-> +			FIELD_MODIFY(CH_5, &val, tmp_val);
-> +			break;
-> +		case 6:
-> +			FIELD_MODIFY(CH_6, &val, tmp_val);
-> +			break;
-> +		case 7:
-> +			FIELD_MODIFY(CH_7, &val, tmp_val);
-> +			break;
-> +		default:
-> +			FIELD_MODIFY(CH_0, &val, tmp_val);
-> +			break;
-> +		}
-> +	}
-> +
-> +	ret =3D regmap_write(regmap, CMD_FORMAT(reg, WRITE_CMD), val);
-
-Looking at the above, this looks like a creative way of doing regmap_update=
-_bits()?
-Am I missing something?
-
-> +
-> +	return ret;
-
-return regmap_write()
-
-> +}
-> +
-> +static int mcp47feb02_write_to_eeprom(struct regmap *regmap, unsigned in=
-t reg,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int val)
-> +{
-> +	int eewa_val, ret;
-> +
-> +	/*
-> +	 * wait till the currently occurring EEPROM Write Cycle is completed.
-> +	 * Only serial commands to the volatile memory are allowed.
-> +	 */
-> +	ret =3D regmap_read_poll_timeout(regmap,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CMD_FORMAT(MCP47FEB02_GAIN_STAT=
-US_REG_ADDR,
-> READ_CMD),
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 eewa_val, !(eewa_val &
-> MCP47FEB02_GAIN_STATUS_EEWA_MASK),
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MCP47FEB02_DELAY_1_MS,
-> MCP47FEB02_DELAY_1_MS * 5);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D regmap_write(regmap, CMD_FORMAT(reg, WRITE_CMD), val);
-> +
-> +	return ret;
-> +}
-> +
-> +static ssize_t mcp47feb02_store_eeprom(struct device *dev, struct device=
-_attribute
-> *attr,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *buf, size_t len)
-> +{
-> +	struct mcp47feb02_data *data =3D iio_priv(dev_to_iio_dev(dev));
-> +	int ret, i, val, val1;
-> +	bool state;
-> +
-> +	ret =3D kstrtobool(buf, &state);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (!state)
-> +		return 0;
-> +
-> +	if (!data->have_eeprom) {
-> +		dev_err(dev, "Device has no eeprom memory.\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/*
-> +	 * Verify DAC Wiper and DAC Configuratioin are unlocked. If both are
-> disabled,
-> +	 * writing to EEPROM is available.
-> +	 */
-> +	ret =3D regmap_read(data->regmap,
-> CMD_FORMAT(MCP47FEB02_WIPERLOCK_STATUS_REG_ADDR, READ_CMD),
-> +			=C2=A0 &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (val)=C2=A0 {
-> +		dev_err(dev, "DAC Wiper and DAC Configuration not are
-> unlocked.\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	for_each_set_bit(i, &data->active_channels_mask, data->phys_channels) {
-> +		ret =3D mcp47feb02_write_to_eeprom(data->regmap,
-> MCP47FEB02_NV_DAC0_REG_ADDR + i,
-> +						 data->chdata[i].dac_data);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	ret =3D regmap_read(data->regmap, CMD_FORMAT(MCP47FEB02_VREF_REG_ADDR,
-> READ_CMD), &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D mcp47feb02_write_to_eeprom(data->regmap,
-> MCP47FEB02_NV_VREF_REG_ADDR, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D regmap_read(data->regmap, CMD_FORMAT(MCP47FEB02_POWER_DOWN_REG_=
-ADDR,
-> READ_CMD), &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D mcp47feb02_write_to_eeprom(data->regmap,
-> MCP47FEB02_NV_POWER_DOWN_REG_ADDR, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D regmap_read(data->regmap,
-> +			=C2=A0 CMD_FORMAT(MCP47FEB02_NV_GAIN_I2C_SLAVE_REG_ADDR,
-> READ_CMD), &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D regmap_read(data->regmap,
-> +			=C2=A0 CMD_FORMAT(MCP47FEB02_GAIN_STATUS_REG_ADDR, READ_CMD),
-> &val1);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D mcp47feb02_write_to_eeprom(data->regmap,
-> MCP47FEB02_NV_GAIN_I2C_SLAVE_REG_ADDR,
-> +					 (val1 & MCP47FEB02_VOLATILE_GAIN_MASK) |
-> +					=C2=A0 (val &
-> MCP47FEB02_NV_I2C_SLAVE_ADDR_MASK));
-> +	if (ret)
-> +		return ret;
-> +
-> +	return len;
-> +}
-> +
-> +static IIO_DEVICE_ATTR(store_eeprom, 0200, NULL, mcp47feb02_store_eeprom=
-, 0);
-> +static struct attribute *mcp47feb02_attributes[] =3D {
-> +	&iio_dev_attr_store_eeprom.dev_attr.attr,
-> +	NULL,
-> +};
-> +
-
-Not going to argue about the ABI for now but I don't think this is a standa=
-rd one? So
-if acceptable you need an ABI doc.
-
-> +static int mcp47feb02_suspend(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> +	struct mcp47feb02_data *data =3D iio_priv(indio_dev);
-> +	int ret, ch;
-> +
-> +	for_each_set_bit(ch, &data->active_channels_mask, data->phys_channels) =
-{
-> +		data->chdata[ch].powerdown =3D true;
-> +		ret =3D mcp47feb02_write_to_register(data->regmap,
-> MCP47FEB02_POWER_DOWN_REG_ADDR,
-> +						=C2=A0=C2=A0 ch, data-
-> >chdata[ch].powerdown_mode + 1);
-> +		if (ret)
-> +			return ret;
-
-So looking at this, can we actually powerdown channels individually?
-
-> +
-> +		ret =3D regmap_write(data->regmap, CMD_FORMAT(ch, WRITE_CMD),
-> +				=C2=A0=C2=A0 data->chdata[ch].dac_data);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int mcp47feb02_resume(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> +	struct mcp47feb02_data *data =3D iio_priv(indio_dev);
-> +	int ch, ret;
-> +
-> +	for_each_set_bit(ch, &data->active_channels_mask, data->phys_channels) =
-{
-> +		data->chdata[ch].powerdown =3D false;
-> +
-> +		ret =3D regmap_write(data->regmap, CMD_FORMAT(ch, WRITE_CMD),
-> +				=C2=A0=C2=A0 data->chdata[ch].dac_data);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret =3D mcp47feb02_write_to_register(data->regmap,
-> MCP47FEB02_VREF_REG_ADDR,
-> +						=C2=A0=C2=A0 ch, data->chdata[ch].ref_mode);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret =3D mcp47feb02_write_to_register(data->regmap,
-> MCP47FEB02_GAIN_STATUS_REG_ADDR,
-> +						=C2=A0=C2=A0 ch, data-
-> >chdata[ch].use_2x_gain);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret =3D mcp47feb02_write_to_register(data->regmap,
-> MCP47FEB02_POWER_DOWN_REG_ADDR,
-> +						=C2=A0=C2=A0 ch,
-> MCP47FEB02_NORMAL_OPERATION);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static DEFINE_SIMPLE_DEV_PM_OPS(mcp47feb02_pm_ops, mcp47feb02_suspend,
-> mcp47feb02_resume);
-> +
-> +static const struct attribute_group mcp47feb02_attribute_group =3D {
-> +	.attrs =3D mcp47feb02_attributes,
-> +};
-> +
-> +static const char * const mcp47feb02_powerdown_modes[] =3D {
-> +	"1kohm_to_gnd",
-> +	"100kohm_to_gnd",
-> +	"open_circuit",
-> +};
-> +
-> +static int mcp47feb02_get_powerdown_mode(struct iio_dev *indio_dev,
-> +					 const struct iio_chan_spec *chan)
-> +{
-> +	struct mcp47feb02_data *data =3D iio_priv(indio_dev);
-> +	int bit_set;
-> +
-> +	bit_set =3D test_bit(chan->address, &data->active_channels_mask);
-> +	if (bit_set)
-
-not seeing the need for bit_set.
-
-> +		return data->chdata[chan->address].powerdown_mode;
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int mcp47feb02_set_powerdown_mode(struct iio_dev *indio_dev,
-> +					 const struct iio_chan_spec *chan,
-> unsigned int mode)
-> +{
-> +	struct mcp47feb02_data *data =3D iio_priv(indio_dev);
-> +	struct device *dev =3D &data->client->dev;
-> +	int bit_set, ret;
-> +
-> +	bit_set =3D test_bit(chan->address, &data->active_channels_mask);
-> +	if (bit_set) {
-
-same
-
-> +		ret =3D mcp47feb02_write_to_register(data->regmap,
-> MCP47FEB02_POWER_DOWN_REG_ADDR,
-> +						=C2=A0=C2=A0 chan->address, mode + 1);
-> +		if (ret)
-> +			return ret;
-> +
-> +		data->chdata[chan->address].powerdown_mode =3D mode;
-> +
-> +		return 0;
-> +	}
-> +
-> +	dev_err(dev, "Channel %ld not enabled\n", chan->address);
-> +	return -EINVAL;
-> +}
-> +
-> +static ssize_t mcp47feb02_read_powerdown(struct iio_dev *indio_dev, uint=
-ptr_t
-> private,
-> +					 const struct iio_chan_spec *chan, char
-> *buf)
-> +{
-> +	struct mcp47feb02_data *data =3D iio_priv(indio_dev);
-> +	int bit_set;
-> +
-> +	bit_set =3D test_bit(chan->address, &data->active_channels_mask);
-> +	if (bit_set)
-> +		return sysfs_emit(buf, "%d\n", data->chdata[chan-
-> >address].powerdown);
-> +
-> +	dev_err(&data->client->dev, "Channel %ld not enabled\n", chan->address)=
+> +	if (likely(pmd_present(pmdval)))
+> +		pfn =3D pmd_pfn(pmdval);
+> +	else
+> +		pfn =3D swp_offset_pfn(pmd_to_swp_entry(pmdval));
+>
+> +	folio =3D damon_get_folio(pfn);
+>  	if (!folio)
+>  		return;
+>
+> -	if (pmdp_clear_young_notify(vma, addr, pmd))
+> +	if (likely(pmd_present(pmdval)))
+> +		young |=3D pmdp_clear_young_notify(vma, addr, pmd);
+> +	young |=3D mmu_notifier_clear_young(vma->vm_mm, addr, addr + PAGE_SIZE)=
 ;
-> +	return -EINVAL;
-> +}
-> +
-> +static ssize_t mcp47feb02_write_powerdown(struct iio_dev *indio_dev, uin=
-tptr_t
-> private,
-> +					=C2=A0 const struct iio_chan_spec *chan, const
-> char *buf,
-> +					=C2=A0 size_t len)
-> +{
-> +	struct mcp47feb02_data *data =3D iio_priv(indio_dev);
-> +	struct device *dev =3D &data->client->dev;
-> +	int bit_set, ret;
-> +	bool state;
-> +
-> +	ret =3D kstrtobool(buf, &state);
-> +	if (ret)
-> +		return ret;
-> +
-> +	bit_set =3D test_bit(chan->address, &data->active_channels_mask);
-> +	if (bit_set)
-> +		data->chdata[chan->address].powerdown =3D state;
-> +	else
-> +		dev_err(dev, "Channel %ld not enabled\n", chan->address);
 
-I might be missing something but I'm puzzled. So powering down is just sett=
-ing a
-variable? I would expect some register read.
-
-> +
-> +	return len;
-> +}
-> +
-> +static const struct iio_enum mcp47febxx_powerdown_mode_enum =3D {
-> +	.items =3D mcp47feb02_powerdown_modes,
-> +	.num_items =3D ARRAY_SIZE(mcp47feb02_powerdown_modes),
-> +	.get =3D mcp47feb02_get_powerdown_mode,
-> +	.set =3D mcp47feb02_set_powerdown_mode,
-> +};
-> +
-> +static const struct iio_chan_spec_ext_info mcp47feb02_ext_info[] =3D {
-> +	{
-> +		.name =3D "powerdown",
-> +		.read =3D mcp47feb02_read_powerdown,
-> +		.write =3D mcp47feb02_write_powerdown,
-> +		.shared =3D IIO_SEPARATE,
-> +	},
-> +	IIO_ENUM("powerdown_mode", IIO_SEPARATE, &mcp47febxx_powerdown_mode_enu=
-m),
-> +	IIO_ENUM_AVAILABLE("powerdown_mode", IIO_SHARED_BY_TYPE,
-> &mcp47febxx_powerdown_mode_enum),
-> +	{ },
-> +};
-> +
-> +static const struct iio_chan_spec mcp47febxx_ch_template =3D {
-> +	.type =3D IIO_VOLTAGE,
-> +	.output =3D 1,
-> +	.indexed =3D 1,
-> +	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW)	|
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(IIO_CHAN_INFO_SCALE),
-> +	.info_mask_separate_available =3D BIT(IIO_CHAN_INFO_SCALE),
-> +	.ext_info =3D mcp47feb02_ext_info,
-> +};
-> +
-> +static void mcp47feb02_init_scale(const struct mcp47feb02_features *info=
+This should be HPAGE_PMD_SIZE (it is guarded in CONFIG_TRANSPARENT_HUGEPAGE=
 ,
-> +				=C2=A0 enum mcp47feb02_scale scale, int vref_mv,
-> +				=C2=A0 int scale_avail[])
-> +{
-> +	int value_micro, value_int;
-> +	s64 tmp;
-> +
-> +	tmp =3D (s64)vref_mv * 1000000LL >> info->resolution;
-> +	value_int =3D div_s64_rem(tmp, 1000000LL, &value_micro);
-> +	scale_avail[scale * 2] =3D value_int;
-> +	scale_avail[scale * 2 + 1] =3D value_micro;
-> +}
-> +
-> +static int mcp47feb02_init_scales_avail(const struct mcp47feb02_features=
- *info,
-> +					struct mcp47feb02_data *data, int vdd_mv,
-> int vref_mv,
-> +					int vref1_mv)
-> +{
-> +	struct device *dev =3D &data->client->dev;
-> +	int tmp_vref;
-> +
-> +	if (data->use_vref && vref_mv <=3D 0) {
-> +		dev_err(dev, "use_vref set but vref_mv invalid\n");
-> +		return -EINVAL;
+so HPAGE_PMD_SIZE will not trigger a build bug like the one below).
 
-dev_err_probe()?
-
-> +	}
+> +	if (young)
+>  		folio_set_young(folio);
+>
+>  	folio_set_idle(folio);
+> @@ -203,7 +215,9 @@ static bool damon_folio_young_one(struct folio *folio=
+,
+>  				mmu_notifier_test_young(vma->vm_mm, addr);
+>  		} else {
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -			*accessed =3D pmd_young(pmdp_get(pvmw.pmd)) ||
+> +			pmd_t pmd =3D pmdp_get(pvmw.pmd);
 > +
-> +	mcp47feb02_init_scale(info, MCP47FEB02_SCALE_VDD, vdd_mv, data->scale);
-> +
-> +	if (data->use_vref)
-> +		tmp_vref =3D vref_mv;
+> +			*accessed =3D (pmd_present(pmd) && pmd_young(pmd)) ||
+>  				!folio_test_idle(folio) ||
+>  				mmu_notifier_test_young(vma->vm_mm, addr);
+>  #else
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index a5e4c2aef191..78166db72f4d 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -4637,7 +4637,10 @@ int set_pmd_migration_entry(struct page_vma_mapped=
+_walk *pvmw,
+>  		return 0;
+>
+>  	flush_cache_range(vma, address, address + HPAGE_PMD_SIZE);
+> -	pmdval =3D pmdp_invalidate(vma, address, pvmw->pmd);
+> +	if (unlikely(!pmd_present(*pvmw->pmd)))
+> +		pmdval =3D pmdp_huge_get_and_clear(vma->vm_mm, address, pvmw->pmd);
 > +	else
-> +		tmp_vref =3D MCP47FEB02_INTERNAL_BAND_GAP_MV;
+> +		pmdval =3D pmdp_invalidate(vma, address, pvmw->pmd);
+>
+>  	/* See folio_try_share_anon_rmap_pmd(): invalidate PMD first. */
+>  	anon_exclusive =3D folio_test_anon(folio) && PageAnonExclusive(page);
+> @@ -4687,6 +4690,17 @@ void remove_migration_pmd(struct page_vma_mapped_w=
+alk *pvmw, struct page *new)
+>  	entry =3D pmd_to_swp_entry(*pvmw->pmd);
+>  	folio_get(folio);
+>  	pmde =3D folio_mk_pmd(folio, READ_ONCE(vma->vm_page_prot));
 > +
-> +	mcp47feb02_init_scale(info, MCP47FEB02_SCALE_GAIN_X1, tmp_vref, data-
-> >scale);
-> +	mcp47feb02_init_scale(info, MCP47FEB02_SCALE_GAIN_X2, tmp_vref * 2, dat=
-a-
-> >scale);
-> +
-> +	if (data->phys_channels >=3D 4) {
-> +		mcp47feb02_init_scale(info, MCP47FEB02_SCALE_VDD, vdd_mv, data-
-> >scale_1);
-> +
-> +		if (data->use_vref1 && vref1_mv <=3D 0) {
-> +			dev_err(dev, "use_vref1 set but vref1_mv invalid\n");
-> +			return -EINVAL;
-
-same
-
-...
-
-> +
-> +static int mcp47feb02_set_scale(struct mcp47feb02_data *data, int channe=
-l, int
-> scale)
-> +{
-> +	int tmp_val, ret;
-> +
-> +	mcp47feb02_ch_scale(data->phys_channels, data, channel, scale);
-> +
-> +	if (scale =3D=3D MCP47FEB02_SCALE_GAIN_X2)
-> +		tmp_val =3D MCP47FEB02_GAIN_X2;
-> +	else
-> +		tmp_val =3D MCP47FEB02_GAIN_X1;
-> +
-> +	ret =3D mcp47feb02_write_to_register(data->regmap,
-> MCP47FEB02_GAIN_STATUS_REG_ADDR,
-> +					=C2=A0=C2=A0 channel, tmp_val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	data->chdata[channel].use_2x_gain =3D tmp_val;
->=20
-
-Also looks like it could use a lock.
-
-> +	return 0;
-> +}
-> +
-> +static int mcp47feb02_read_raw(struct iio_dev *indio_dev, struct iio_cha=
-n_spec
-> const *chan,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int *val, int *val2, long mask)
-> +{
-> +	struct mcp47feb02_data *data =3D iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		ret =3D regmap_read(data->regmap, CMD_FORMAT(chan->address,
-> READ_CMD), val);
-> +		if (ret)
-> +			return ret;
-> +
-> +		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_SCALE:
-> +		mcp47feb02_get_scale(chan->address, data, val, val2);
-> +		return IIO_VAL_INT_PLUS_MICRO;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int mcp47feb02_write_raw(struct iio_dev *indio_dev, struct iio_ch=
-an_spec
-> const *chan,
-> +				int val, int val2, long mask)
-> +{
-> +	struct mcp47feb02_data *data =3D iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		ret =3D regmap_write(data->regmap, CMD_FORMAT(chan->address,
-> WRITE_CMD), val);
-> +		data->chdata[chan->address].dac_data =3D val;
-
-You should only save the value in case regmap_write() succeeds. And given t=
-hat you're
-doing that you should use a mutx.
-
-> +		return ret;
-> +	case IIO_CHAN_INFO_SCALE:
-> +		if (data->phys_channels >=3D 4 && (chan->address % 2))
-> +			ret =3D mcp47feb02_check_scale(data, val, val2, data-
-> >scale_1);
+> +	if (folio_is_device_private(folio)) {
+> +		if (pmd_write(pmde))
+> +			entry =3D make_writable_device_private_entry(
+> +							page_to_pfn(new));
 > +		else
-> +			ret =3D mcp47feb02_check_scale(data, val, val2, data-
-> >scale);
-> +
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		return mcp47feb02_set_scale(data, chan->address, ret);
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static const struct iio_info mcp47feb02_info =3D {
-> +	.read_raw =3D mcp47feb02_read_raw,
-> +	.write_raw =3D mcp47feb02_write_raw,
-> +	.read_avail =3D &mcp47feb02_read_avail,
-> +	.attrs =3D &mcp47feb02_attribute_group,
-> +};
-> +
-> +static const struct iio_info mcp47fvb02_info =3D {
-> +	.read_raw =3D mcp47feb02_read_raw,
-> +	.write_raw =3D mcp47feb02_write_raw,
-> +	.read_avail =3D &mcp47feb02_read_avail,
-> +	.attrs =3D &mcp47feb02_attribute_group,
-> +};
-> +
-> +static int mcp47feb02_parse_fw(struct iio_dev *indio_dev, const struct
-> mcp47feb02_features *info)
-> +{
-> +	struct iio_chan_spec chanspec =3D mcp47febxx_ch_template;
-> +	struct mcp47feb02_data *data =3D iio_priv(indio_dev);
-> +	struct device *dev =3D &data->client->dev;
-> +	struct iio_chan_spec *channels;
-> +	u32 reg, num_channels;
-> +	int chan_idx =3D 0;
-> +
-> +	num_channels =3D device_get_child_node_count(dev);
-> +	if (num_channels > info->phys_channels)
-> +		return dev_err_probe(dev, -EINVAL, "More channels than the chip
-> supports\n");
-> +
-
-Are 0 channels acceptable? devm_kcalloc() wont't give you a NULL ptr and yo=
-u might
-get subtle issues.
-
-> +	channels =3D devm_kcalloc(dev, num_channels, sizeof(*channels), GFP_KER=
-NEL);
-> +	if (!channels)
-> +		return -ENOMEM;
-> +
-> +	device_for_each_child_node_scoped(dev, child) {
-> +		fwnode_property_read_u32(child, "reg", &reg);
-> +
-
-reg is a mandatory property so you need to check for errors. If the propert=
-y is not
-given, fwnode_property_read_u32() won't touch in reg so you have a random n=
-umber in
-the next condition.
-
-> +		if (reg >=3D info->phys_channels)
-> +			return dev_err_probe(dev, -EINVAL,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0 "The index of the channels does not
-> match the chip\n");
-> +
-> +		set_bit(reg, &data->active_channels_mask);
-> +
-> +		if (fwnode_property_present(child, "label"))
-> +			fwnode_property_read_string(child, "label",
-> +						=C2=A0=C2=A0=C2=A0 (const char **)&data-
-> >labels[reg]);
-> +
-> +		chanspec.address =3D reg;
-> +		chanspec.channel =3D reg;
-> +		channels[chan_idx] =3D chanspec;
-> +		chan_idx++;
+> +			entry =3D make_readable_device_private_entry(
+> +							page_to_pfn(new));
+> +		pmde =3D swp_entry_to_pmd(entry);
 > +	}
 > +
-> +	indio_dev->num_channels =3D num_channels;
-> +	indio_dev->channels =3D channels;
-> +	indio_dev->modes =3D INDIO_DIRECT_MODE;
-> +	data->phys_channels =3D info->phys_channels;
+>  	if (pmd_swp_soft_dirty(*pvmw->pmd))
+>  		pmde =3D pmd_mksoft_dirty(pmde);
+>  	if (is_writable_migration_entry(entry))
+> diff --git a/mm/page_idle.c b/mm/page_idle.c
+> index a82b340dc204..3bf0fbe05cc2 100644
+> --- a/mm/page_idle.c
+> +++ b/mm/page_idle.c
+> @@ -71,8 +71,11 @@ static bool page_idle_clear_pte_refs_one(struct folio =
+*folio,
+>  				referenced |=3D ptep_test_and_clear_young(vma, addr, pvmw.pte);
+>  			referenced |=3D mmu_notifier_clear_young(vma->vm_mm, addr, addr + PAG=
+E_SIZE);
+>  		} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
+> -			if (pmdp_clear_young_notify(vma, addr, pvmw.pmd))
+> -				referenced =3D true;
+> +			pmd_t pmdval =3D pmdp_get(pvmw.pmd);
 > +
-> +	/*
-> +	 * check if vref-supply, vref1-supply, microchip,vref-buffered and
-> +	 * microchip,vref1-buffered are defined in the devicetree
-> +	 */
-> +	data->use_vref =3D device_property_present(dev, "vref-supply");
-> +	data->use_vref1 =3D device_property_present(dev, "vref1-supply");
-> +	data->vref_buffered =3D device_property_read_bool(dev, "microchip,vref-
-> buffered");
-> +	data->vref1_buffered =3D device_property_read_bool(dev, "microchip,vref=
-1-
-> buffered");
-> +
-> +	return 0;
-> +}
-> +
-> +static int mcp47feb02_probe(struct i2c_client *client)
-> +{
-> +	int err, ret, vdd_mv, vref_mv, vref1_mv, i, tmp_vref, vref_ch, gain_ch;
-> +	const struct i2c_device_id *id =3D i2c_client_get_device_id(client);
-> +	const struct mcp47feb02_features *info;
-> +	enum vref_mode ref_mode, ref_mode1;
-> +	struct device *dev =3D &client->dev;
-> +	struct mcp47feb02_data *data;
-> +	struct iio_dev *indio_dev;
-> +
-> +	indio_dev =3D devm_iio_device_alloc(dev, sizeof(*data));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	data =3D iio_priv(indio_dev);
-> +	i2c_set_clientdata(client, indio_dev);
+> +			if (likely(pmd_present(pmdval)))
+> +				referenced |=3D pmdp_clear_young_notify(vma, addr, pvmw.pmd);
+> +			referenced |=3D mmu_notifier_clear_young(vma->vm_mm, addr, addr + PAG=
+E_SIZE);
 
-You can drop the above. See my devm_ comment below.
-> +	data->client =3D client;
-> +	info =3D i2c_get_match_data(client);
+This should be HPAGE_PMD_SIZE (or PMD_SIZE, since the code is not compiled
+out when CONFIG_TRANSPARENT_HUGEPAGE is not selected and HPAGE_PMD_SIZE
+will cause a build bug when CONFIG_PGTABLE_HAS_HUGE_LEAVES is not selected)=
+.
 
-for consistency, add some error handling.
+>  		} else {
+>  			/* unexpected pmd-mapped page? */
+>  			WARN_ON_ONCE(1);
+> diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
+> index e981a1a292d2..159953c590cc 100644
+> --- a/mm/page_vma_mapped.c
+> +++ b/mm/page_vma_mapped.c
+> @@ -277,6 +277,13 @@ bool page_vma_mapped_walk(struct page_vma_mapped_wal=
+k *pvmw)
+>  			 * cannot return prematurely, while zap_huge_pmd() has
+>  			 * cleared *pmd but not decremented compound_mapcount().
+>  			 */
+> +			swp_entry_t entry =3D pmd_to_swp_entry(pmde);
+> +
+> +			if (is_device_private_entry(entry)) {
+> +				pvmw->ptl =3D pmd_lock(mm, pvmw->pmd);
+> +				return true;
+> +			}
+> +
+>  			if ((pvmw->flags & PVMW_SYNC) &&
+>  			    thp_vma_suitable_order(vma, pvmw->address,
+>  						   PMD_ORDER) &&
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index 9a2aabfaea6f..080fc4048431 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1063,9 +1063,11 @@ static int page_vma_mkclean_one(struct page_vma_ma=
+pped_walk *pvmw)
+>  		} else {
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>  			pmd_t *pmd =3D pvmw->pmd;
+> -			pmd_t entry;
+> +			pmd_t entry =3D pmdp_get(pmd);
+>
+> -			if (!pmd_dirty(*pmd) && !pmd_write(*pmd))
 
-> +
-> +	if (info->have_eeprom) {
-> +		data->regmap =3D devm_regmap_init_i2c(client,
-> &mcp47feb02_regmap_config);
-> +		data->have_eeprom =3D true;
-> +	} else {
-> +		data->regmap =3D devm_regmap_init_i2c(client,
-> &mcp47fvb02_regmap_config);
-> +		data->have_eeprom =3D false;
-> +	}
-> +
-> +	if (IS_ERR(data->regmap))
-> +		dev_err_probe(dev, PTR_ERR(data->regmap), "Error initializing i2c
-> regmap\n");
-> +
-> +	err =3D mcp47feb02_parse_fw(indio_dev, info);
-> +	if (err)
-> +		return dev_err_probe(dev, err, "Error parsing devicetree data\n");
-> +
-> +	if (!info->have_ext_vref2 && data->use_vref1)
-> +		return dev_err_probe(dev, -EINVAL,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0 "Second External reference is unavailable o=
-n
-> %s\n",
-> +				=C2=A0=C2=A0=C2=A0=C2=A0 info->name);
-> +
-> +	ret =3D regmap_read(data->regmap, CMD_FORMAT(MCP47FEB02_VREF_REG_ADDR,
-> READ_CMD), &vref_ch);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D regmap_read(data->regmap,
-> CMD_FORMAT(MCP47FEB02_GAIN_STATUS_REG_ADDR, READ_CMD),
-> +			=C2=A0 &gain_ch);
-> +	if (ret)
-> +		return ret;
-> +
-> +	gain_ch =3D gain_ch >> 8;
-> +
-> +	/*
-> +	 * Values stored in the nonvolatile memory will be transferred to the
-> volatile registers
-> +	 * at startup. For safety reasons, the user receives a warning if start=
-up
-> values
-> +	 * do not match the ones from current devicetree configuration.
-> +	 * Nonvolatile memory can be written at any time
-> +	 */
-> +	for_each_set_bit(i, &data->active_channels_mask, data->phys_channels) {
-> +		/* VDD can be set as Vref only with Gain x1 */
-> +		if ((vref_ch & 0x03) =3D=3D MCP47FEB02_VREF_VDD &&
-> +		=C2=A0=C2=A0=C2=A0 (gain_ch & 0x01) =3D=3D MCP47FEB02_GAIN_X2) {
-
-some defines with be nice for those magic bits.
-
-> +			dev_info(dev, "vdd can be used only with gain x1\n");
-dev_dbg()
-> +			ret =3D mcp47feb02_write_to_register(data->regmap,
-> +							=C2=A0=C2=A0
-> MCP47FEB02_GAIN_STATUS_REG_ADDR,
-> +							=C2=A0=C2=A0 i, MCP47FEB02_GAIN_X1);
-> +			if (ret)
-> +				return ret;
-> +
-> +			data->chdata[i].use_2x_gain =3D MCP47FEB02_GAIN_X1;
-> +		}
-> +
-> +		if (data->phys_channels >=3D 4 && (i % 2)) {
-> +			if ((vref_ch & 0x03) =3D=3D MCP47FEB02_EXTERNAL_VREF_BUFFERED
-> &&
-> +			=C2=A0=C2=A0=C2=A0 data->use_vref1 && !data->vref1_buffered)
-> +				dev_info(dev, "vref1 is unbuffered\n");
-> +			else if ((vref_ch & 0x03) =3D=3D
-> MCP47FEB02_EXTERNAL_VREF_UNBUFFERED &&
-> +				 data->use_vref1 && data->vref1_buffered)
-> +				dev_info(dev, "vref1 is buffered\n");
-> +		} else {
-> +			if ((vref_ch & 0x03) =3D=3D MCP47FEB02_EXTERNAL_VREF_BUFFERED
-> &&
-> +			=C2=A0=C2=A0=C2=A0 data->use_vref && !data->vref_buffered)
-> +				dev_info(dev, "vref is unbuffered\n");
-> +			else if ((vref_ch & 0x03) =3D=3D
-> MCP47FEB02_EXTERNAL_VREF_UNBUFFERED &&
-> +				 data->use_vref && data->vref_buffered)
-> +				dev_info(dev, "vref is buffered\n");
-> +		}
-> +
-> +		vref_ch =3D vref_ch >> 2;
-> +		gain_ch =3D gain_ch >> 1;
-> +	}
-> +
-> +	if (data->use_vref)
-> +		ref_mode =3D data->vref_buffered ?
-> +			MCP47FEB02_EXTERNAL_VREF_BUFFERED :
-> MCP47FEB02_EXTERNAL_VREF_UNBUFFERED;
-> +	else
-> +		ref_mode =3D MCP47FEB02_INTERNAL_BAND_GAP;
-> +
-> +	if (data->use_vref1)
-> +		ref_mode1 =3D data->vref1_buffered ?
-> +			MCP47FEB02_EXTERNAL_VREF_BUFFERED :
-> MCP47FEB02_EXTERNAL_VREF_UNBUFFERED;
-> +
-> +	else
-> +		ref_mode1 =3D=C2=A0 MCP47FEB02_INTERNAL_BAND_GAP;
-> +
-> +	for_each_set_bit(i, &data->active_channels_mask, data->phys_channels) {
-> +		if (data->phys_channels >=3D 4 && (i % 2))
-> +			tmp_vref =3D ref_mode1;
-> +		else
-> +			tmp_vref =3D ref_mode;
-> +
-> +		ret =3D mcp47feb02_write_to_register(data->regmap,
-> MCP47FEB02_VREF_REG_ADDR,
-> +						=C2=A0=C2=A0 i, tmp_vref);
-> +		if (ret)
-> +			return ret;
-> +
-> +		data->chdata[i].ref_mode =3D tmp_vref;
-> +	}
-
-Maybe have the above in a setup function?
-
-> +
-> +	indio_dev->name =3D id->name;
-> +	if (info->have_eeprom)
-> +		indio_dev->info =3D &mcp47feb02_info;
-> +	else
-> +		indio_dev->info =3D &mcp47fvb02_info;
-> +
-> +	ret =3D devm_mutex_init(dev, &data->lock);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret =3D devm_regulator_get_enable_read_voltage(dev, "vdd");
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	vdd_mv =3D ret / 1000;
-> +
-> +	if (data->use_vref) {
-> +		ret =3D devm_regulator_get_enable_read_voltage(dev, "vref");
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		vref_mv =3D ret / 1000;
-> +	}
-> +
-> +	if (data->use_vref1) {
-> +		ret =3D devm_regulator_get_enable_read_voltage(dev, "vref1");
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		vref1_mv =3D ret / 1000;
-> +	}
-> +
-> +	for_each_set_bit(i, &data->active_channels_mask, data->phys_channels) {
-> +		ret =3D mcp47feb02_init_scales_avail(info, data, vdd_mv, vref_mv,
-> vref1_mv);
-> +		if (ret)
-> +			dev_err_probe(dev, ret, "failed to init scales for ch i
-> %d\n", i);
-> +	}
-
-I guess the above loop could also be in a setup function.
-
-> +
-> +	err =3D iio_device_register(indio_dev);
-> +
-
-devm_iio_device_register(). With that you can drop mcp47feb02_remove()
+It is better to add a similar comment as the one above !pte_present().
+Something like:
+PFN swap PMDs, such as ...
 
 
-- Nuno S=C3=A1
+> +			if (!pmd_present(entry))
+> +				continue;
+> +			if (!pmd_dirty(entry) && !pmd_write(entry))
+>  				continue;
+>
+>  			flush_cache_range(vma, address,
+> @@ -2330,6 +2332,11 @@ static bool try_to_migrate_one(struct folio *folio=
+, struct vm_area_struct *vma,
+>  	while (page_vma_mapped_walk(&pvmw)) {
+>  		/* PMD-mapped THP migration entry */
+>  		if (!pvmw.pte) {
+> +#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> +			unsigned long pfn;
+> +			pmd_t pmdval;
+> +#endif
+> +
 
+This looks ugly. IIRC, we now can put variable definition in the middle.
+Maybe for this case, these two can be moved to the below ifdef region.
+
+>  			if (flags & TTU_SPLIT_HUGE_PMD) {
+>  				split_huge_pmd_locked(vma, pvmw.address,
+>  						      pvmw.pmd, true);
+> @@ -2338,8 +2345,14 @@ static bool try_to_migrate_one(struct folio *folio=
+, struct vm_area_struct *vma,
+>  				break;
+>  			}
+>  #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> -			subpage =3D folio_page(folio,
+> -				pmd_pfn(*pvmw.pmd) - folio_pfn(folio));
+> +			pmdval =3D pmdp_get(pvmw.pmd);
+> +			if (likely(pmd_present(pmdval)))
+> +				pfn =3D pmd_pfn(pmdval);
+> +			else
+> +				pfn =3D swp_offset_pfn(pmd_to_swp_entry(pmdval));
+> +
+> +			subpage =3D folio_page(folio, pfn - folio_pfn(folio));
+> +
+>  			VM_BUG_ON_FOLIO(folio_test_hugetlb(folio) ||
+>  					!folio_test_pmd_mappable(folio), folio);
+>
+> --=20
+> 2.50.1
+
+Otherwise, LGTM. Acked-by: Zi Yan <ziy@nvidia.com>
+
+Best Regards,
+Yan, Zi
 
