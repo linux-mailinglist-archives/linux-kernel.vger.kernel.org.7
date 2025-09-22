@@ -1,222 +1,175 @@
-Return-Path: <linux-kernel+bounces-827158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F61B90785
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:48:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A722EB9079A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85ABA177FB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:48:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FAA117897C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BE328727C;
-	Mon, 22 Sep 2025 11:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41305305042;
+	Mon, 22 Sep 2025 11:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vu0hnT3E"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mG8lB6bW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F52191493
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 11:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAC9280CFA;
+	Mon, 22 Sep 2025 11:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758541708; cv=none; b=md+Jyc2U3RX0W3AX0b1RKDNnNw9OWNWmu18/b5qBgCJBhRfiLdqNhnnriHz58MfLRu5cVa0bnGyddPeFcLnIxtLudUMcgfR0LWAGMfZaNxRFjHG+lXJYdziAR+uYag7a9hb2q1Lb/Tt3zfJTMsqH1nZ1yd9LRSlDIq0uAI67VYw=
+	t=1758541823; cv=none; b=YQtZCM8hedqHckMuNfG5UebyzYvR1n+xYE4miprVpCEzJyD0D8cc3mn5mueTB4rv7G/OawrHPatE6t27kfQJXJR/C66tiTcKJEbdNvV0JNPnBbrw+0EeZgmQsMVe5M71SyaUsYyABgeVL1qpbDfwvA1JsSZTKStiMfo7LsGf10M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758541708; c=relaxed/simple;
-	bh=Pregwja20pPdeQ6hBFFCv6+ehyzfjlp1M6LIaaFG39c=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JgLIMHwzPkW0BJk+85itJcDj5FhKBGOaVNf0gf7roZfW9RX9hfgdTxJzrBWkW7mEmbt13HwDfoKnZamJKlsRq1GjjsnL20LnHqYIW7sI+ZQ84rMf4M9CadM0ryTSuh9TNCVkE4EVc3nMt45XDtrNnZE60G24OqxyKvvQp1URC6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vu0hnT3E; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758541705;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=B8RU7qUq3dY+e3f8Ehx10rzc/Ey4Gre7j1V3AC9ifV8=;
-	b=Vu0hnT3ECinFWCNKv3rHBQQStMZpwwmU6Q5FoFkD09sZYQ1emXbEJK61yfQkZIhpnnmMnx
-	tML11LahJoIzVDNU1K/0wRm6jbFeP3SZKNJvxhkWXAbau/mibsO3L2I23qy1lfynsno62f
-	t6wf/TO1TCNXNzY48SyilmnPeD0Lnrc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-154-TiU9SO8qPRKk6tiRbwKv8g-1; Mon,
- 22 Sep 2025 07:48:23 -0400
-X-MC-Unique: TiU9SO8qPRKk6tiRbwKv8g-1
-X-Mimecast-MFC-AGG-ID: TiU9SO8qPRKk6tiRbwKv8g_1758541702
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5949D19560A2;
-	Mon, 22 Sep 2025 11:48:22 +0000 (UTC)
-Received: from ws.net.home (unknown [10.45.224.252])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 15AC31955F21;
-	Mon, 22 Sep 2025 11:48:19 +0000 (UTC)
-Date: Mon, 22 Sep 2025 13:48:16 +0200
-From: Karel Zak <kzak@redhat.com>
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	util-linux@vger.kernel.org
-Subject: [ANNOUNCE] util-linux stable v2.41.2
-Message-ID: <cphv3swx7a3nqmzgxroyezzpxf2rrvfdxrbev55tm6ioeczki3@plvbxfgxkvl4>
+	s=arc-20240116; t=1758541823; c=relaxed/simple;
+	bh=M4vWG+Jid2SxNiuuHydQTaCp6c30nOkRvRWQ7YmQsis=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bsSY8vUam6AmxTnH2tiXBGiUJhI5oDB4E0SkIBPx2T15ecQ6yq2x8Emh3rJBa7cEJy6B5CX42byi3r0OrL4zCKg4hXYEYaFrla2H4e5Vadd9tWQ/iNuJIGaVbrmo5hEEvbRCMBXSr3sbJVsj5n+zj1VSv71B2X1bmSp41YLD9PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mG8lB6bW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CABAFC4CEF0;
+	Mon, 22 Sep 2025 11:50:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758541823;
+	bh=M4vWG+Jid2SxNiuuHydQTaCp6c30nOkRvRWQ7YmQsis=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mG8lB6bWUBvbm/cp9s1RLUSdeIoySbwnwxXp2WoebgTOtuBlHyqlHsUEGTjg8rQue
+	 OnQ/VO5E/nfHdanxxI9WV2T3RceHlctyBuznScmZcn/z+nm/Na2f/rCF2X7CdtaPsj
+	 SuqDo3wTlSkVC8TN+zZQcEt0MPaUKn4J4saxH4WHXpn8211r4snoToH2AgeCJqZYQN
+	 Sqa5ZB1h2z4ohZHN9vJhwlEdpZaJcphvIFhLL+3Q0D9iX+3MU0JSopzZrsqh1F+0Eg
+	 ScphcNw4iTmf6FaM7HClitZvOrUQxbD504CnAHVdNxw6qxLpf0T2ji2OKZ0hJQh/BN
+	 17CiHf2eOu7nw==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	linux-kernel@vger.kernel.org (open list),
+	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH] tpm2-sessions: Remove unnecessary wrapper
+Date: Mon, 22 Sep 2025 14:50:09 +0300
+Message-Id: <20250922115009.3053664-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
+From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 
-The util-linux stable maintenance release v2.41.2 is now available at
-      
-  http://www.kernel.org/pub/linux/utils/util-linux/v2.41/
-      
-Feedback and bug reports, as always, are welcomed.
+Open code tpm_buf_append_hmac_session_opt() because it adds unnecessary
+disperancy to the call sites (and reduces the amount of code).
+
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+---
+ drivers/char/tpm/tpm2-cmd.c               | 14 +++++++++++---
+ include/linux/tpm.h                       | 23 -----------------------
+ security/keys/trusted-keys/trusted_tpm2.c | 12 ++++++++++--
+ 3 files changed, 21 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 7d77f6fbc152..89e6169add88 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -257,9 +257,17 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
  
-  Karel
-
-
-util-linux 2.41.2 Release Notes
-===============================
-
-bash-completion:
-    - fix function name of enosys completion (by Koichi Murase)
-    - add choom and coresched (by Karel Zak)
-
-blkid:
-    - correct an erroneous error message (by Benno Schulenberg)
-
-build-sys:
-    - update release dates (by Karel Zak)
-
-docs:
-    - add v2.41.2-ReleaseNotes (by Karel Zak)
-
-findmnt:
-    - (usage) add a needed equals sign before an optional argument (by Benno Schulenberg)
-    - add missing newline in --raw, --pair and --list output formats (by Christian Goeschel Ndjomouo)
-
-fsck.cramfs:
-    - check buffer size for memcpy() (by Karel Zak)
-
-getopt:
-    - document special symbols that should not be used as option characters (by cgoesche)
-
-gitignore:
-    - Ignore tests/diff/ and test/output/ (by Jesse Rosenstock)
-
-hardlink:
-    - (man) add note note about ULFILEEQ_DEBUG= (by Karel Zak)
-
-include/mount-api-utils:
-    - avoid using sys/mount.h (by Karel Zak)
-
-libblkid:
-    - Fix probe_ioctl_tp assigning BLKGETDISKSEQ as physical sector size (by Sam Fink)
-    - (ext) reduce false positive (by 胡玮文)
-    - improve UUID_SUB= description (by Karel Zak)
-
-lib/color-names:
-    - fix stupid bugs (by Karel Zak)
-    - Fix color name canonicalization (by Karel Zak)
-
-libfdisk:
-    - (script) improve separator usage in named-fields dump (by Karel Zak)
-    - (script) fix device name separator parsing (by Karel Zak)
-
-liblastlog2:
-    - markup fixes for man pages (by Mario Blättermann)
-
-libmount:
-    - don't report fsconfig errors with "nofail" (by Karel Zak)
-
-lib/path:
-    - avoid double free() for cpusets (by Karel Zak)
-
-lib/strutils:
-    - add ul_ prefix to strrep() and strrem() functions (by Karel Zak)
-    - add ul_ prefix to split() function (by Karel Zak)
-    - add ul_ prefix to strappend() functions (by Karel Zak)
-    - add ul_ prefix to strconcat() functions (by Karel Zak)
-    - add ul_ prefix to startswith() and endswith() (by Karel Zak)
-
-lib/strv:
-    - use ul_ prefix for strv functions (by Karel Zak)
-
-logger:
-    - fix buffer overflow when read stdin (by Karel Zak)
-    - fix incorrect warning message when both --file and a message are specified (by Alexander Kappner)
-
-lsblk:
-    - fix possible use-after-free (by Karel Zak)
-    - fix memory leak [coverity scan] (by Karel Zak)
-    - use md as fallback TYPE when md/level empty (by codefiles)
-
-lscpu:
-    - New Arm C1 parts (by Jeremy Linton)
-    - Add NVIDIA Olympus arm64 core (by Matthew R. Ochs)
-
-man:
-    - Fixed incorrect ipcrm options (by Prasanna Paithankar)
-    - Replace RETURN VALUE with EXIT STATUS in section 1 (by Jesse Rosenstock)
-
-mkfs.cramfs:
-    - avoid uninitialized value [coverity scan] (by Karel Zak)
-
-more:
-    - temporarily ignore stdin when waiting for stderr (by Karel Zak)
-
-po:
-    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
-    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
-    - update pl.po (from translationproject.org) (by Jakub Bogusz)
-    - update nl.po (from translationproject.org) (by Benno Schulenberg)
-    - update ko.po (from translationproject.org) (by Seong-ho Cho)
-    - update ja.po (from translationproject.org) (by YOSHIDA Hideki)
-    - update hr.po (from translationproject.org) (by Božidar Putanec)
-    - update fr.po (from translationproject.org) (by Frédéric Marchal)
-    - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
-    - update de.po (from translationproject.org) (by Mario Blättermann)
-    - update cs.po (from translationproject.org) (by Petr Písař)
-
-po-man:
-    - merge changes (by Karel Zak)
-    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
-    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
-    - update pl.po (from translationproject.org) (by Michał Kułach)
-    - update de.po (from translationproject.org) (by Mario Blättermann)
-    - merge changes (by Karel Zak)
-    - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
-
-rev:
-    - add --zero option to --help output (by Christian Goeschel Ndjomouo)
-
-setpriv:
-    - Improve getgroups() Portability (by Karel Zak)
-
-sfdisk:
-    - reject spurious arguments for --reorder/--backup-pt-sectors (by Thomas Weißschuh)
-
-tests:
-    - add color names test (by Karel Zak)
-
-tests/helpers/test_sigstate.c:
-    - explicitly reset SIGINT to default action after trapping (by Hongxu Jia)
-
-tools:
-    - add git-version-next script release versioning (by Karel Zak)
-
-zramctl:
-    - ignore ENOENT when setting max_comp_streams (by Jiang XueQian)
-    - fix MEM-USED column description (by Jérôme Poulin)
-
-Misc:
-    - Add missing ;; to -m case (#1) (by Nate Drake)
+ 	do {
+ 		tpm_buf_reset(&buf, TPM2_ST_SESSIONS, TPM2_CC_GET_RANDOM);
+-		tpm_buf_append_hmac_session_opt(chip, &buf, TPM2_SA_ENCRYPT
+-						| TPM2_SA_CONTINUE_SESSION,
+-						NULL, 0);
++		if (tpm2_chip_auth(chip)) {
++			tpm_buf_append_hmac_session(chip, &buf,
++						    TPM2_SA_ENCRYPT |
++						    TPM2_SA_CONTINUE_SESSION,
++						    NULL, 0);
++		} else  {
++			offset = buf.handles * 4 + TPM_HEADER_SIZE;
++			head = (struct tpm_header *)buf.data;
++			if (tpm_buf_length(&buf) == offset)
++				head->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
++		}
+ 		tpm_buf_append_u16(&buf, num_bytes);
+ 		tpm_buf_fill_hmac_session(chip, &buf);
+ 		err = tpm_transmit_cmd(chip, &buf,
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 667d290789ca..aaa407ddef21 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -534,29 +534,6 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
+ 				 int passphraselen);
+ void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
+ 			 u8 attributes, u8 *passphrase, int passphraselen);
+-static inline void tpm_buf_append_hmac_session_opt(struct tpm_chip *chip,
+-						   struct tpm_buf *buf,
+-						   u8 attributes,
+-						   u8 *passphrase,
+-						   int passphraselen)
+-{
+-	struct tpm_header *head;
+-	int offset;
+-
+-	if (tpm2_chip_auth(chip)) {
+-		tpm_buf_append_hmac_session(chip, buf, attributes, passphrase, passphraselen);
+-	} else  {
+-		offset = buf->handles * 4 + TPM_HEADER_SIZE;
+-		head = (struct tpm_header *)buf->data;
+-
+-		/*
+-		 * If the only sessions are optional, the command tag must change to
+-		 * TPM2_ST_NO_SESSIONS.
+-		 */
+-		if (tpm_buf_length(buf) == offset)
+-			head->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
+-	}
+-}
+ 
+ #ifdef CONFIG_TCG_TPM2_HMAC
+ 
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index e165b117bbca..c414a7006d78 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -482,8 +482,10 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 			   struct trusted_key_options *options,
+ 			   u32 blob_handle)
+ {
++	struct tpm_header *head;
+ 	struct tpm_buf buf;
+ 	u16 data_len;
++	int offset;
+ 	u8 *data;
+ 	int rc;
+ 
+@@ -518,8 +520,14 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 		tpm2_buf_append_auth(&buf, options->policyhandle,
+ 				     NULL /* nonce */, 0, 0,
+ 				     options->blobauth, options->blobauth_len);
+-		tpm_buf_append_hmac_session_opt(chip, &buf, TPM2_SA_ENCRYPT,
+-						NULL, 0);
++		if (tpm2_chip_auth(chip)) {
++			tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_ENCRYPT, NULL, 0);
++		} else  {
++			offset = buf.handles * 4 + TPM_HEADER_SIZE;
++			head = (struct tpm_header *)buf.data;
++			if (tpm_buf_length(&buf) == offset)
++				head->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
++		}
+ 	}
+ 
+ 	tpm_buf_fill_hmac_session(chip, &buf);
+-- 
+2.39.5
 
 
