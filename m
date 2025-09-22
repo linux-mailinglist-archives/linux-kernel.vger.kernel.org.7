@@ -1,129 +1,137 @@
-Return-Path: <linux-kernel+bounces-826790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A86B8F598
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:55:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B6FB8F5A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8373A1883500
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:55:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 101AB188553D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38172F90E6;
-	Mon, 22 Sep 2025 07:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AEF2F7ABD;
+	Mon, 22 Sep 2025 07:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B53g+eii"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Y4YdA5Ka"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54532F7AA4
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B126D22A7E5;
+	Mon, 22 Sep 2025 07:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758527681; cv=none; b=BYYbaM8F19kdUO0FsFPkLoaGAl7w7jc0EjY9aalWyHiTgajtwsclds8KK2+XdwNIuhQUerDnyrcUgF8XLloTc3WVYKQwGXgtTsxxYYeCY/xfCrzY53CDSR288hfcNR18lhgoW323IcJvAMFl7vUGZTxQnt3P8KOiuLU+U7sBvxc=
+	t=1758527731; cv=none; b=mABbAAqqvjlP08nbPM7ZdshSxd6+HI3dzOKBZknACAAwc5RCx61g85c0buqzZWHNHqnvqM1wzAocoXXczwEMgJz16j5HIIYOfJjS8AzfRBiVdwd0+1pkkrJwelmUfI1LIFeiqjtzKaKnod8E1zZntgMcwC06rxa6yQLkCOkqTnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758527681; c=relaxed/simple;
-	bh=wHhXbBUv8sLtLk6ZtdozUkZSGPHqvYUTRhRTVOMPPw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=liN/ePV5wjrvCHzCzD1ukmEKCsy7K8UYBxD4Wr0e8HrQ26y1nSZLARgAThVoIP6HzfBGyPnSxkP2goeCLnZH/Lv9zCG3uKw47Fiv7wC35bNZii93EVRacPn5WTgFsaMdmyzWre08TQ4vHylgxwlmaaJ9gfWBu/L72hge8U1dNes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B53g+eii; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2445824dc27so43155685ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:54:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758527679; x=1759132479; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wHhXbBUv8sLtLk6ZtdozUkZSGPHqvYUTRhRTVOMPPw4=;
-        b=B53g+eiiTb5GDiKWZd/72tvC2vLjAUOqGrQYYHn2hP6zqCOPWTErNP9eJU1q4+a/Qt
-         nL2Vs9X5i9mVdn1Pyxy8caliAFbGYzbaF7JFqNAg1lNiOr3b5sq3uBRtzxY4DtbA2Nge
-         lZPVjDf9YW9iKP6TBSRl3pKL4xYTUIju3wH9Pb7IAagjLzpGzB9R/deQZsblrDLnw4tZ
-         48iOLBZlT6ZK+DwHPH8ZRpmUFCzPRzbAqu5ux2Cn6gw6LAUdDKHFSXtE/h3lkJosoJwr
-         LkRD09lFr9kXwu453ADEQaTiKiuozO6aJpudEqSfRiUnSk1qUAxKi8t2ptYTix8/TUBx
-         bpPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758527679; x=1759132479;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wHhXbBUv8sLtLk6ZtdozUkZSGPHqvYUTRhRTVOMPPw4=;
-        b=AonChYW/mZAVMKdVS2ZJstgqHTY+8FfIOyhHYrvcdtN2ZE5M44grPy1ql2czUzL1c9
-         oOjRhDdHmfBBg1G5QGgefyU2AId9ByZJbrE8OrYMS7yHkF0QrgYS66iHAry8qoFXEOJG
-         nWwA+1EyzB22egfb99Tfd8StCCjDH4gsoz9isPrxe/HU0xm7zjO6JmjYbnTlm2VoVmhf
-         8oJcg0TZ/ivKzvuqdUre05OZfCE2uhfrU43JGck8VcAlLOjT3VSP4TCgfdpoKGEPySeq
-         bQpFngtWmRfWwqGEkdLh1UVP516ivrwJI6VMm4JrjsJEuSaz9PAJqllqWAbECjbajxKO
-         83sQ==
-X-Gm-Message-State: AOJu0YzzXqu/iMq/v5sK5ii7HfXmbFSLGUjde6WjEc5jP/Txj2RAVPA+
-	4n79/DCnQ40ZH+YrOitE0ieLrYznRc2kqdVAwhSmYC4dgOzBcDSt8wyM
-X-Gm-Gg: ASbGnctc0Ltaf/M8dNTUswwKdiSlcKdMA1EOnqrK7J1fE2ZPuW05x3NNFZBFtEwyBI1
-	m3nvq5Tydra20anosZ2iypCZYHZDyT0hUhNjqeKBVgX7lLD1hCJ9exHv7UBh6mwNjpuWDfQzvvR
-	fGgvVX6C2dxCCPwD9Ha0FbgtxQ19+XAQ76YynC3RV4lP6J4u2H1w3eE2V0CU8+mspKdr730msp/
-	VcOzYHCNypEBLgxcAvdmeX0rMROSGM0sSgDFYLcqEYtNncSdjB/YcQJkYQAOXWzIzJC5lwprRHN
-	fXQOckByrtrIU3Y/6u+UZWa/P+vC0P5Fg15fvvZUElKQH5LVC3L8b2kMgzccmajex8dFbpNgVXF
-	oqUBTsds6KdaIeT5SHkbWOQ==
-X-Google-Smtp-Source: AGHT+IHz3wNSWldGNXV3xlynWhX7Cr9eYZtSb12u2x27WnJQYglboQKton+MwFy1y4rS6oR/rbqndg==
-X-Received: by 2002:a17:903:3846:b0:267:c984:8d9f with SMTP id d9443c01a7336-269ba45919fmr182012075ad.24.1758527678869;
-        Mon, 22 Sep 2025 00:54:38 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26e2046788dsm71684115ad.72.2025.09.22.00.54.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 00:54:37 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id D26144220596; Mon, 22 Sep 2025 14:54:30 +0700 (WIB)
-Date: Mon, 22 Sep 2025 14:54:30 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux KVM <kvm@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Wanpeng Li <wanpengli@tencent.com>
-Subject: Re: [PATCH] KVM: x86: Fix hypercalls docs section number order
-Message-ID: <aNEAtqQXyrXUPPLc@archie.me>
-References: <20250909003952.10314-1-bagasdotme@gmail.com>
+	s=arc-20240116; t=1758527731; c=relaxed/simple;
+	bh=BHlVCI0RAYek6UwchOkDkXbXFt6NXcfxNN4MdAPfvpQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YnQ9vXqCDx2IRCWy3upPnNjab19OOgA43/pjmnx+EOpxBJ4gzr7CAr3hFWXCVmFVnopQSOLRkpLAuJba/e8OzZoPKMNUL0ke73L0lvP0GJp89sxbiesWNH6MG2fTeQRAwMu2s/sxU7vGtUv+cRkcfV1IE9XcRJC3BL4lNXVB7r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Y4YdA5Ka; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58LMhs0S013411;
+	Mon, 22 Sep 2025 07:55:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=q2TTWfPPdRbtXjNcPVyyM613088qz57a8Kp
+	5KPxUQb0=; b=Y4YdA5KaE2nPI45odYRkl5USmKTocGlvU3Gh3ss2FFBLm8Hx85P
+	phMGbjVvVgqOrMuW5cQL2CEU30xDMytIV2ERQY8kfRgJ+3yibx25DXo0Lf9Qt0XW
+	zljKWBBs9ZcQ9C2uYUiNBpFh9715dJhVgoWgZWz4PYhevieZIxi3tyOem2lGr+/z
+	zs8fcp5ncVYYFdsAIxVQFfNpeXGlTyui+Dh2HdXmH4bmSkMgmn8Q+USViCVyRnHU
+	FC7VIOygcEvPGelC0OrY8ccZvCWPtbnOudqkPQgtIWfqb5zyZsZkjMEc0GN0CZQ1
+	ZBUVPPdkxPsxVmCg8rgwnvR+wLyO5amxeQQ==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499nekupkx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Sep 2025 07:55:18 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 58M7tGSV022237;
+	Mon, 22 Sep 2025 07:55:16 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 499nbm0545-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Sep 2025 07:55:16 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58M7tG53022218;
+	Mon, 22 Sep 2025 07:55:16 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 58M7tFDg022210
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Sep 2025 07:55:16 +0000
+Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
+	id 80C1978F; Mon, 22 Sep 2025 15:55:14 +0800 (CST)
+From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+        kw@linux.com
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Subject: [PATCH v1 0/4] Add PCIe3 and PCIe5 support for HAMOA-IOT-EVK board
+Date: Mon, 22 Sep 2025 15:55:05 +0800
+Message-Id: <20250922075509.3288419-1-ziyue.zhang@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6Hw9PxwxK+FTyenQ"
-Content-Disposition: inline
-In-Reply-To: <20250909003952.10314-1-bagasdotme@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: P5o3jBsPVlON9C_jr5OKaUoqukc0NLmE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDA0MSBTYWx0ZWRfX1Ja8mTfkmE2v
+ egs7vPUa8nGcd2XJX2JlRAMSl6OXJa9daa20UqS72FVPaOJs6BUHAuMBy0RMKzV79Uh2/CUBKcm
+ KGXpyLvMWbWNGYsXeXfGz7FKG6uWbl2ZYwPf3WPpvUezZgQxjsCiOMN+UxtUFtuRxsiy4JqHjJ/
+ L7Aw4//urSI3KGnsS+EmnBBlulC+CjZyoMI1qRF/C0M7y5HsSMkNjK1R3vlYqtIc43Q45FxZi5z
+ 09W38QQVYYkLKTd2cMLhSFzNGiChXgeWdfzFu+iaVnDiPjtxTxghqxzWQpAORYe5q8WpEAU+wPk
+ 1FGyh6my6QgkBC4SzWHF6nMcln4hzyaFSQDMzMOuLBYBVDA8Qw2q7dlvvLYT7/pNStiVYDKPsvp
+ +Ut0vt7Z
+X-Authority-Analysis: v=2.4 cv=b+Oy4sGx c=1 sm=1 tr=0 ts=68d100e7 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=yJojWOMRYYMA:10 a=RMFkh6N_GHqejj8ZFKIA:9
+X-Proofpoint-GUID: P5o3jBsPVlON9C_jr5OKaUoqukc0NLmE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-22_01,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ malwarescore=0 priorityscore=1501 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200041
+
+This patch series adds support for PCIe3 and PCIe5 on the HAMOA-IOT-EVK
+board.
+
+PCIe3 is a Gen4 x8 slot intended for external GPU.
+PCIe5 is a Gen3 x2 slot designed for external modem connectivity.
+
+To enable these interfaces, the series introduces the necessary device
+tree nodes and associated regulator definitions to ensure proper power
+sequencing and functionality.
+
+Ziyue Zhang (4):
+  arm64: dts: qcom: Add PCIe 5 support for HAMOA-IOT-SOM platform
+  arm64: dts: qcom: Add PCIe 5 wwan regulator for HAMOA-IOT-EVK board
+  arm64: dts: qcom: Add PCIe 3 support for HAMOA-IOT-SOM platform
+  arm64: dts: qcom: Add PCIe 3 regulators for HAMOA-IOT-EVK board
+
+ arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts  |  52 +++++++++
+ arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi | 110 ++++++++++++++++++++
+ 2 files changed, 162 insertions(+)
 
 
---6Hw9PxwxK+FTyenQ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
+-- 
+2.34.1
 
-On Tue, Sep 09, 2025 at 07:39:52AM +0700, Bagas Sanjaya wrote:
-> Commit 4180bf1b655a79 ("KVM: X86: Implement "send IPI" hypercall")
-> documents KVM_HC_SEND_IPI hypercall, yet its section number duplicates
-> KVM_HC_CLOCK_PAIRING one (which both are 6th). Fix the numbering order
-> so that the former should be 7th.
-
-Paolo, Sean, would you like to apply this patch on KVM tree or let Jon
-handle it through docs-next?
-
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---6Hw9PxwxK+FTyenQ
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaNEAtgAKCRD2uYlJVVFO
-o3wKAQCS3n6Xj/tW8RTpqqfFhRw/RaeX1a+0H1vnroXuIBgyAgD/d3RMhZPFm9JN
-FhRV0MeuKVEwYkg2livKKUt+Jgs+lgY=
-=b9qT
------END PGP SIGNATURE-----
-
---6Hw9PxwxK+FTyenQ--
 
