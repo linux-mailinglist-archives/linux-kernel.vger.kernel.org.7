@@ -1,167 +1,171 @@
-Return-Path: <linux-kernel+bounces-826994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8722B8FD95
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:51:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE72B8FD98
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA1387AFB0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:50:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0646A2A0881
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26282EE27D;
-	Mon, 22 Sep 2025 09:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E6B2F657A;
+	Mon, 22 Sep 2025 09:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="g00bKmK5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="OKwHWU7Y";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hy6krAsS"
+Received: from flow-b1-smtp.messagingengine.com (flow-b1-smtp.messagingengine.com [202.12.124.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD7421C163
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F2F21C163
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758534697; cv=none; b=WS/8bIFdB0QvLUOrYz/jBL0RYXamqsJqF9CbcYoea63sStaGE2v8XZvn0UKCx3reRvMey59Za1Phg+4mfECyYvEo0WIIIrawVR33KHH1aIcicQfsIghiO2ACSTcxxZL8vXL31wiC8tFAoBpKhFGRA3R1Ps5OWlQeCydjef1jXoE=
+	t=1758534703; cv=none; b=DurRxF8H5Xjl73/Dpqo54xFRStA1MdE/qpoD/cfSZVCD4t9d19aXzRj3jjeOabLCukQB+gCtEqlltY4hFUwc1h7beagV7G4TpydDsLlXelQH+oBMTu2GmehxH+nTyUQTFUWu6lN7A2w5Lj3faPpGuet6qxRo0YcQ+v2SuDhTucU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758534697; c=relaxed/simple;
-	bh=Wd7MXk7KVvMKiL8QsKVzK7/O3AGc1BJP+qNpHFBkcrM=;
+	s=arc-20240116; t=1758534703; c=relaxed/simple;
+	bh=M/9Yft2ysOKGoB9IbiTWmHXJAM3lPSv01CKWnRhW40E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZiWVC/65JIo7bfRUhfvXXs5Q12W7c5GHEXAEoBY0dI9Hqt2bcPyhPSvcqwQAmB/mukW8MxCI0bAsZCxccJe1B85dSFzM2r9ODvnoEHsfAhqCt5z7ZCzn+PnLQvpxmuACNIQdi/lagcxaddSjLz3yQ3oL4mT81tPtpJYJr/5+WVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=g00bKmK5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58M8n3Ea018783
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:51:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yAF4yxuR/rHPPnaXohNM3mKvMvsG55hvpoK6MrwhJhU=; b=g00bKmK5X+iyT6uJ
-	BwwkFrqPb/8fMndkoZlDRAdF5JCjZ2u33EG0dixZvArwSBfHbfVkWdBQ6AEOtLYP
-	YneL8oWNwt8gPDS18jhrN8m/90eS5ok+EeizhllVZQlX4r64xYgDqYhJH2o+IgUb
-	mgYCMrfnXa+yL7YgU2j+OqQV6HVRxugZBv+KMaUqVTIs2sbHrzIZL1xxUzOZ8dCT
-	iGW05FnhuouX8q12uvMTcI2Ewxq17xNWcrLz97qkB3/PbU4yJHwwbex3gS3dnVbW
-	COgxkaU3NsY7vfhs4QzzGObrctjQ3y8BlWwliEB5LGi4RiKg9rcDysPry7GuHMXB
-	RD0IYQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499n1fc6uc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:51:35 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b5e303fe1cso71096521cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:51:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758534694; x=1759139494;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yAF4yxuR/rHPPnaXohNM3mKvMvsG55hvpoK6MrwhJhU=;
-        b=F3poHfHDfH36xbYcM5Ly0PKZKrwyiGEfhYak3FHj1U3YPW5DZUJF8l4m2Y/zQ5OUAE
-         rhx4L7Af33fkejPtpBYXfSWiZqTjQjm6HfM63UcaatPj919hzjwZceYUmspliPx1+1hW
-         1DFq8T4Tu2nagPEgs/sK8IOcDAiULdRxExgAouFDdyRdskTBYb+VrUZAbMBvA+DAUZ57
-         k4P4zSqHfdo56CLEzzIisLnSSn0kBQ6dA7fsaJex6wh+bSsGl/L47IGVhDyBjt2oVhx4
-         RhoDXKM3E/TyG+fkb6QGDkUdzKk6oksdiEiRlnc/ajMKzHN8fL3suDGLqPETgTg9qrAZ
-         y9Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgEIgDiNhYOyVN1fF6AwAj6ka14oH6m4tftbSgoWvwdUE+NKUCctebh+iT/AiJzThMyMxtXC+6oaWlVa0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKsmOeRGqvRhKH/XmvKENkgMNVMny39ODq9oW+FOpeE4bnHcRk
-	2maWIkZFiHIe/jFtlZXH0qAZSHSYPhAmgXTSVqn0gebzOAeAhBbkYcaMQCaTcdYfo3koiVw2Z5o
-	LTr04W7IYfYLC8IliqAJr4vj8TEEHw5WaOnuOzswrMZykPrF3cJtRX+1hCmTHW3SXgEU=
-X-Gm-Gg: ASbGncvIAyWkWM8PH3lciUdWgg4B2T1VcRIYLnVODcsDZ2RxyHhPx8bZQtOuK8Qv4hS
-	FkT2uog/CJH4kKHrc3EtcDZoMIlQeQtGLNTVEFgxEv7YhlFiSdSLNSKZF/Jvqp5i1krE0tfnGxI
-	B044mue430JXyqqEwAMOcc/RbaOcB+2gdvcE7MNNAyQD+qFiei3ENeeTZbok50pB2Ggrzjg3zYD
-	9QGanJbQSq/GnieaVN8OvwegsVMlLCRefmrCNzMOQZGMpa+v/h5pkZbrfgREQnqdD0Gdsz1Pe1T
-	30TTB6gEYQ44xypmD7zWDGFiSMhJij/n8UD+IWna5mtcK3rtHdk2O2hU4pr85OXTNdITM+BV2Jw
-	nQZvG1XW/w0jnEwRIufny2rm2SqR/PWM7aQCde/gHV5uyxl3I7gu+
-X-Received: by 2002:ac8:574e:0:b0:4b0:677d:d8e1 with SMTP id d75a77b69052e-4c06e3f854amr129598331cf.17.1758534693628;
-        Mon, 22 Sep 2025 02:51:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEojLDIZ5dwkeP8Fy6MbtD8yJ4tYri6Xinj/1tvHaAC1AZVzLBWg33l1NfA/vlFrxCb/mR7WA==
-X-Received: by 2002:ac8:574e:0:b0:4b0:677d:d8e1 with SMTP id d75a77b69052e-4c06e3f854amr129598121cf.17.1758534693106;
-        Mon, 22 Sep 2025 02:51:33 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-578a8fadb2dsm3183075e87.90.2025.09.22.02.51.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 02:51:32 -0700 (PDT)
-Date: Mon, 22 Sep 2025 12:51:30 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Eric =?utf-8?Q?Gon=C3=A7alves?= <ghatto404@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: sm8250-samsung-common: correct
- reserved pins
-Message-ID: <aar5oq4xvlbpjmitnwzti5w7gitf7wxdas4bflx6eqh3r6srt7@iccpujd6xc4m>
-References: <20250921135623.273662-1-ghatto404@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FW6QaDvaUejSlZlShb6OMn4weR9Hv9xac6ZCNLKqTdVzARdilHMlk58Bqg7KRwAxhafiaHyVGw8IvEgGoLVa6NES6+CkSdo4xxEJJ9K/xcnm9Ivhz/m38Le/dBMtDJWBkBzz6KFI1z+0zi/zU6O2AQTPFz6nOzTJLKX7tw0XfD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=OKwHWU7Y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hy6krAsS; arc=none smtp.client-ip=202.12.124.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailflow.stl.internal (Postfix) with ESMTP id 7BA5E1300084;
+	Mon, 22 Sep 2025 05:51:39 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Mon, 22 Sep 2025 05:51:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1758534699; x=
+	1758541899; bh=SdMGCj84qIt/JChf77XrYGp40awzcdDLugRw8vVBx3I=; b=O
+	KwHWU7Yv3q4NhrBceIs+ljHL9m9t5pYdT8oJ2owXs4HM3Rcn8PoyU8w0Bw+1OlLn
+	mcKEC/nWCmE1OJf8YUAxwuPMc2zIGuUHY3TNLoIogSPxfb9bSwvb8+b6mhQD8epi
+	xB2fncLIOGHmlUh+bQj2zC+4dAys7ij8N4Dz0hHgPcqxaInr4MzqLAaQf3kRZKHm
+	BDSE9h1yKsOZU8c9Sn+hOSZ7OF3tcUtnLkVxwJ4qzRCCWA1OvxNhgKWvJHCK7HwM
+	UEho5roG7S7Hjb177+mVZq5jw1X2Hc6QdwvtLXdm90GnmlpE0si/4ck5Xc7zL6Ny
+	daeE3zuolTXIgQvsqVXiQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758534699; x=1758541899; bh=SdMGCj84qIt/JChf77XrYGp40awzcdDLugR
+	w8vVBx3I=; b=hy6krAsSQz+QbWjUjh2u+fBZKCCKZXJoufUwakmN1qHpqr7HnsL
+	URGGBNRCis7Blg/VOM4Ik6npB7lTxPL9/vpbjMZ8ueDhGjzNyAjRQbuDPqWm9SWn
+	wjUYs0KjUfA1ZBBSzZMzTHeLbahlkZneqHxYu9WvIPWydyVEqPvSfS6KJdFxHTXE
+	QqlYcOcksyVwH5/16qtvQ1m4BJLRT7QdIG3vD8KTK4vVrEtqw0BkCR2KSp0etb8j
+	++q+AfsBG85dcEjj8W0Qyf+d8qabUbcnnOfQkS+TL2LT2e/5SWCckU6S5S8JzKL4
+	5O7XSPOeTkJ0th+nxAeIESgtO23/V5wMD8Q==
+X-ME-Sender: <xms:KRzRaEm5MjBNqrH-4I75aOOGk1lVDVVoIVnNI8itTy9dLSl7cY3ARg>
+    <xme:KRzRaOoLlQQGIuHDj3r9qUcOyUDuto1tcGm9yMpGEt4mdn-nHnjYod9F3wSZyfo1e
+    eS1tt5SF9ZlMGRZoVI>
+X-ME-Received: <xmr:KRzRaA4bCpaabTvh5_m4ipP88LgOxGW6uMb-5DINMQIuebdHXZzYf4_vdC8DDg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehjeehgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
+    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
+    frrghtthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtledu
+    hfeffeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepfeeg
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehshhgrkhgvvghlrdgsuhhttheslh
+    hinhhugidruggvvhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhi
+    ohhnrdhorhhgpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpth
+    htohephhhughhhugesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhn
+    fhhrrgguvggrugdrohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghsse
+    horhgrtghlvgdrtghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggt
+    lhgvrdgtohhmpdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgiipdhrtghpthhtoh
+    eprhhpphhtsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:KRzRaALRaxUp4xgtzHmSZaoU8wLIl3No_gCku-i-PryXC2p8phYJSw>
+    <xmx:KRzRaMlKF0rngRFI45tr-db7KlFX6tamt2928VGI67stg2z26a9erg>
+    <xmx:KRzRaH-4RcPROMMtruqVE_MyiZLdfmZ1qEe3b5xvVHI_cErHNQQaLA>
+    <xmx:KRzRaD7E2rxEce7e0tXPKoNwnyz_gdiwgFeKM1iHkFDiTbV0pKAkNw>
+    <xmx:KxzRaAuGGx0mjKDpCyfLpwsUIqAAUgs-iGY2dLFxjxH3XijEEf565K8F>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 22 Sep 2025 05:51:37 -0400 (EDT)
+Date: Mon, 22 Sep 2025 10:51:35 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 3/5] mm/rmap: mlock large folios in try_to_unmap_one()
+Message-ID: <pdorb325r7fatuclbaw4zriieve4tphlrox6w36fo4mlmzgcx7@kdsf4pwqs2wy>
+References: <20250919124036.455709-1-kirill@shutemov.name>
+ <20250919124036.455709-4-kirill@shutemov.name>
+ <27wxlfhnkxaat57lzyzlpo66vse3jjhp422ziswbl4oyjnamif@2jx25dwgkame>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250921135623.273662-1-ghatto404@gmail.com>
-X-Proofpoint-ORIG-GUID: PexUnM1dLET9LFq_UCworQ00yhy0ykGn
-X-Proofpoint-GUID: PexUnM1dLET9LFq_UCworQ00yhy0ykGn
-X-Authority-Analysis: v=2.4 cv=No/Rc9dJ c=1 sm=1 tr=0 ts=68d11c27 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
- a=yJojWOMRYYMA:10 a=pGLkceISAAAA:8 a=jqn0LYlPQ9Sjq9uXwicA:9 a=3ZKOabzyN94A:10
- a=wPNLvfGTeEIA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzNyBTYWx0ZWRfX8f1F8uiCxX6/
- k/p8+ldRq4ryNen7DU6WoWYYgC0pdGbmfIiu1vl9VFcHhkHTT7XxdRiYXZt/A/z9KZv+7Mmc0DX
- gk9bVywAe5jTl1DGIar9M8f9fUD1KzZ5J7OfOiFprrW3yRkXqQL3YudTHWHDxv/YZqMV+GTFSOK
- lBuipZykfRpTZGinACptMHRT+dD32YzKYvamQwx9JQx8QQmojCA+RcF1m7H08wKnCojmo04etsQ
- trLALJLXzjORc6rz4tFL+CBoOlkQX8I1cFWEEHmf9uUdDg2YnNWv0xHkdC5prj2EAgxP5ez2nOM
- lWeCColLdqMgXFskb+Z5vaSL1twBI6ikYvtjGokYg3UWOHpu5vwblTy7/dqSQmy2P5BVc7AVxYr
- qxzf+kbE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-22_01,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 suspectscore=0 adultscore=0 malwarescore=0
- phishscore=0 bulkscore=0 priorityscore=1501 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200037
+In-Reply-To: <27wxlfhnkxaat57lzyzlpo66vse3jjhp422ziswbl4oyjnamif@2jx25dwgkame>
 
-On Sun, Sep 21, 2025 at 01:56:23PM +0000, Eric Gonçalves wrote:
-> The S20 series has additional reserved pins for the fingerprint sensor,
-> GPIO 20-23. Correct it by adding them into gpio-reserved-ranges.
+On Fri, Sep 19, 2025 at 02:27:40PM -0700, Shakeel Butt wrote:
+> On Fri, Sep 19, 2025 at 01:40:34PM +0100, Kiryl Shutsemau wrote:
+> > From: Kiryl Shutsemau <kas@kernel.org>
+> > 
+> > Currently, try_to_unmap_once() only tries to mlock small folios.
+> > 
+> > Use logic similar to folio_referenced_one() to mlock large folios:
+> > only do this for fully mapped folios and under page table lock that
+> > protects all page table entries.
+> > 
+> > Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+> > ---
+> >  mm/rmap.c | 23 ++++++++++++++++++++---
+> >  1 file changed, 20 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/mm/rmap.c b/mm/rmap.c
+> > index 3d0235f332de..482e6504fa88 100644
+> > --- a/mm/rmap.c
+> > +++ b/mm/rmap.c
+> > @@ -1870,6 +1870,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+> >  	unsigned long nr_pages = 1, end_addr;
+> >  	unsigned long pfn;
+> >  	unsigned long hsz = 0;
+> > +	int ptes = 0;
+> >  
+> >  	/*
+> >  	 * When racing against e.g. zap_pte_range() on another cpu,
+> > @@ -1910,10 +1911,26 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+> >  		 */
+> >  		if (!(flags & TTU_IGNORE_MLOCK) &&
+> >  		    (vma->vm_flags & VM_LOCKED)) {
+> > +			ptes++;
+> > +			ret = false;
+> > +
+> > +			/* Only mlock fully mapped pages */
+> > +			if (pvmw.pte && ptes != pvmw.nr_pages)
+> > +				continue;
+> > +
+> > +			/*
+> > +			 * All PTEs must be protected by page table lock in
+> > +			 * order to mlock the page.
+> > +			 *
+> > +			 * If page table boundary has been cross, current ptl
+> > +			 * only protect part of ptes.
+> > +			 */
+> > +			if (pvmw.flags & PVMW_PGTABLE_CROSSSED)
+> > +				goto walk_done;
 > 
-> Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
-> ---
->  arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi b/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi
-> index 96662bf9e527..1680be67e733 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi
-> @@ -159,7 +159,8 @@ &pon_resin {
->  };
->  
->  &tlmm {
-> -	gpio-reserved-ranges = <40 4>; /* I2C (Unused) */
-> +	gpio-reserved-ranges = <20 4>, /* SPI (Fingerprint scanner) */
-> +						   <40 4>; /* I2C (Unused) */
+> Should it be goto walk_abort?
 
-Typically Tab size is 8 spaces, not 4.
-
-
-Also:
-
-Fixes: 6657fe9e9f23 ("arm64: dts: qcom: add initial support for Samsung Galaxy S20 FE")
-
-
->  };
->  
->  &usb_1 {
-> -- 
-> 2.51.0
-> 
+I already have to set ret to false above to make it work for partially
+mapped large folios. So walk_done is enough here.
 
 -- 
-With best wishes
-Dmitry
+  Kiryl Shutsemau / Kirill A. Shutemov
 
