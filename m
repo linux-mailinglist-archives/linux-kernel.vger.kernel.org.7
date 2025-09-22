@@ -1,102 +1,116 @@
-Return-Path: <linux-kernel+bounces-826883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2DDB8F8BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:34:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55789B8F8BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 010FB42179C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:34:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1500218A1220
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC1430C361;
-	Mon, 22 Sep 2025 08:29:12 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CED2FE073;
+	Mon, 22 Sep 2025 08:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hELNXOqE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AB130C359
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A872EFDB5;
+	Mon, 22 Sep 2025 08:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758529752; cv=none; b=bPHvPeb6GlAQMe4a5tlqmAJoaoGCSbjKLNv9wHW3+SBWid3kgLt4WeIaN1rTYWNT1DrQSe8xhNCQTFFQV5ipdLc/WjckXmxkLF/2Kx1eocjN5r1hYNSJ1ngVSgyaawU5nQgs/O545RwMOHiq4u+WcV4jzrpVuvz2qZF3ewbZCPY=
+	t=1758529763; cv=none; b=tePXpmVkI4iriETgXpZw8iPNFsYHGHfs13FhQ7z17u4+TPO4ZozLxZcOMpNE7cQ1ctFDL4RwCccB8l3w/5mZ4N8bi/UFbO2+Qq+ZrkkFN8dfxFKjUOg5TICgZjXv+iZueZfQlcvQgxpg0c3S/W8tn3+BQkcTYhKUthefbv+4W5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758529752; c=relaxed/simple;
-	bh=BMMk8js8DlXGWjrIYIjSUpVxF9gNtUyoQmQlNbWXboo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NkEq6ZG9Dv+8io7nbTj1TwcFbEsoAEGq60gXDBN4IsxG//S36cKEA1Vp0u94a1ipvD0aXgoynq1rK3S/0bJ98pyYoL8mRwTaFSYZ8cPE5nFnfq49QQJHWMohiNVfRqcXAWUCrMA9ZKeA7NLBxpHw4YL0Ki/c/qB3IlUP3Qy9igU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cVbkP0p5tzddGH;
-	Mon, 22 Sep 2025 16:24:29 +0800 (CST)
-Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id ECF3F180486;
-	Mon, 22 Sep 2025 16:29:06 +0800 (CST)
-Received: from DESKTOP-A37P9LK.huawei.com (10.67.108.232) by
- kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 22 Sep 2025 16:29:05 +0800
-From: Xie Yuanbin <xieyuanbin1@huawei.com>
-To: <arnd@arndb.de>
-CC: <Liam.Howlett@oracle.com>, <akpm@linux-foundation.org>, <ardb@kernel.org>,
-	<dave@vasilevsky.ca>, <david@redhat.com>, <ebiggers@kernel.org>,
-	<kees@kernel.org>, <liaohua4@huawei.com>, <lilinjie8@huawei.com>,
-	<linmiaohe@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux@armlinux.org.uk>, <lorenzo.stoakes@oracle.com>, <mhocko@suse.com>,
-	<nao.horiguchi@gmail.com>, <nathan@kernel.org>, <peterz@infradead.org>,
-	<rmk+kernel@armlinux.org.uk>, <rostedt@goodmis.org>, <rppt@kernel.org>,
-	<surenb@google.com>, <vbabka@suse.cz>, <will@kernel.org>,
-	<xieyuanbin1@huawei.com>
-Subject: Re: [RFC PATCH 1/2] ARM: mm: support memory-failure
-Date: Mon, 22 Sep 2025 16:28:43 +0800
-Message-ID: <20250922082843.26722-1-xieyuanbin1@huawei.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <727caa4f-5be5-4b59-a10e-8dc9bbc384bf@app.fastmail.com>
-References: <727caa4f-5be5-4b59-a10e-8dc9bbc384bf@app.fastmail.com>
+	s=arc-20240116; t=1758529763; c=relaxed/simple;
+	bh=K7FUXxr4panYFb9ndrVlWxpuvrlJECaYA06OE+T4kg8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fltXEX1nOXm0NvhSwh1/Yhesv0n58uowVJaCuY2bs2T6RQy0T4gZ7d+PPp6vH3qtquVgPY7gn1BboqdcREdlpnC5yHxYDgqLjjXDVV4t39XCJGLsnfR3vbHgvGn+UAkTN1h5JH2UjztHcRvfRUF9uijZ6uD76ZDk3ZJ1r0FrqlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hELNXOqE; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758529761; x=1790065761;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=K7FUXxr4panYFb9ndrVlWxpuvrlJECaYA06OE+T4kg8=;
+  b=hELNXOqENJINepg/TfiiBJnjasajyY2QLKq+YPHwdxk/7hqu3AH8fvsA
+   WfXRHHkUD2kItTDsdL8ok3duvcjE9dE8cMVTkmxQFILofbtFYK3k3SnGr
+   OZXlFmmjJfsMlYFjI6kO74AVh9fxZ2OUF+0Kwen63xT9otJsZSajRBHuo
+   hrXb/DjXa3Pm6TzXFv3wpHuQv14zIRfAExWESgC0aSTM+9Rub90+i1Zsx
+   Z7STpv0u8YsYMw3ih6iq7CfD5YYx93cIBHoVi8NxGnhwnC7uYXTlgU1oi
+   68wSiH8J0zu/1NOY2B76vtFZnoWqLZ7MPWAba5kHN3/asgWIVd+xus6+/
+   g==;
+X-CSE-ConnectionGUID: 6b47iwUYSuiN8k0AjQmkNA==
+X-CSE-MsgGUID: OS+8f9HQSKC75KeP3C2oGQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="71463380"
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="71463380"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:29:21 -0700
+X-CSE-ConnectionGUID: IAnBXZMfStWaWQrpAw245g==
+X-CSE-MsgGUID: xiDlI6urSDeuMHGKnB3pag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="207380739"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:29:18 -0700
+Message-ID: <c6a43683-0b5e-4ab4-a0bd-30ffc883ef36@linux.intel.com>
+Date: Mon, 22 Sep 2025 16:29:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemj100009.china.huawei.com (7.202.194.3)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 41/51] KVM: x86: Add human friendly formatting for
+ #XM, and #VE
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Xiaoyao Li <xiaoyao.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+References: <20250919223258.1604852-1-seanjc@google.com>
+ <20250919223258.1604852-42-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250919223258.1604852-42-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> It would be helpful to be more specific about what you
-> want to do with this.
-> 
-> Are you working on a driver that would actually make use of
-> the exported interface?
 
-Thanks for your reply.
 
-Yes, In fact, we have developed a hardware component to detect DDR bit
-transitions (software does not sense the detection behavior). Once a bit
-transition is detected, an interrupt is reported to the CPU.
+On 9/20/2025 6:32 AM, Sean Christopherson wrote:
+> Add XM_VECTOR and VE_VECTOR pretty-printing for
+> trace_kvm_inj_exception().
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-On the software side, we have developed a driver module ko to register
-the interrupt callback to perform soft page offline to the corresponding
-physical pages.
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
-In fact, we will export `soft_offline_page` for ko to use (we can ensure
-that it is not called in the interrupt context), but I have looked at the
-code and found that `memory_failure_queue` and `memory_failure` can also
-be used, which are already exported.
+> ---
+>   arch/x86/kvm/trace.h | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
+> index 57d79fd31df0..06da19b370c5 100644
+> --- a/arch/x86/kvm/trace.h
+> +++ b/arch/x86/kvm/trace.h
+> @@ -461,8 +461,8 @@ TRACE_EVENT(kvm_inj_virq,
+>   
+>   #define kvm_trace_sym_exc						\
+>   	EXS(DE), EXS(DB), EXS(BP), EXS(OF), EXS(BR), EXS(UD), EXS(NM),	\
+> -	EXS(DF), EXS(TS), EXS(NP), EXS(SS), EXS(GP), EXS(PF),		\
+> -	EXS(MF), EXS(AC), EXS(MC)
+> +	EXS(DF), EXS(TS), EXS(NP), EXS(SS), EXS(GP), EXS(PF), EXS(MF),	\
+> +	EXS(AC), EXS(MC), EXS(XM), EXS(VE)
+>   
+>   /*
+>    * Tracepoint for kvm interrupt injection:
 
-> I see only a very small number of
-> drivers that call memory_failure(), and none of them are
-> usable on Arm.
-
-I think that not all drivers are in the open source kernel code.
-As far as I know, there should be similar third-party drivers in other
-architectures that use memory-failure functions, like x86 or arm64.
-I am not a specialist in drivers, so if I have made any mistakes,
-please correct me.
-
-Xie Yuanbin
 
