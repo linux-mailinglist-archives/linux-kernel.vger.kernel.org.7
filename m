@@ -1,113 +1,122 @@
-Return-Path: <linux-kernel+bounces-827370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F970B9190F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:02:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58DFDB91906
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43D2A189A363
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:02:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF5B23AE9F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAD57260D;
-	Mon, 22 Sep 2025 14:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836F542AA6;
+	Mon, 22 Sep 2025 14:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="c/P8qUNN"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZNQyyHpu"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDB3134CF
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFAD41C62
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758549736; cv=none; b=SnLJ7ScmqaAEhoUuOP1RIuTNUVTADq7tzw8v2IOCgu0ZgwGoqUm7Vtzxm1BWZ3xVWXrI/+hFuwAUzkdFrQ2qlNypUF/hmoYggM95GijWP6Q9p/T5cmwRs0mgCxUSYbtGbtjzPxObM+E4Nxqi+3bxbBZwbXXdpkF4Uk799FVfcAs=
+	t=1758549697; cv=none; b=J3//L2FoxAveRDwHZudB02Bak/lWQbwOa9ajUeSKkm4GG7+m59VZEs+/ISFFeXmwML6Nq1E1Z01RJIPC3Uiz7+wOAicKen5dtif+HZGYs7JmGCcLwv+EnSoThVusfiXs55CwkzqFaiq0+qSG1MefoQU1B3ChNYLa9eBHMSoWFH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758549736; c=relaxed/simple;
-	bh=e5PY6U82YwilDEzB4p0kKsmSnXCVDFHMHAYraZzOBuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RyZ+xkMKpCCfofJ6CuQc2C2jC9jXxSIiZGuqZn+LALBYW9tR6dYGyGO7ICCuzsELWgwuM2nCLpfja3qCVoSamE2sQ7KL0nYwZ3KCHG7lIfot9gVuru6X7NbGx7gf80H82z30kJ98tf1WuKEc5MmduGrXDv8tUbkYF+0Pfaeoknc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=c/P8qUNN; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1758549729;
-	bh=e5PY6U82YwilDEzB4p0kKsmSnXCVDFHMHAYraZzOBuY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c/P8qUNNgX72CeMTDluIenBfBLO6g4qqsq/BAOdrH/S0tT0jWbqFWMvGiQJcpC+ck
-	 xMptr4GXEzdfZegnDLP1x8QIbJ6EUCgbkfx9xk1/UJhMwTWaLwISzlSzr7GUb5bFq+
-	 PBoM4pVwbPUPx2t2C1oQib1DfS7qKG8nPHLFgOSw=
-Date: Mon, 22 Sep 2025 16:01:17 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Tiwei Bie <tiwei.bie@linux.dev>, richard@nod.at, 
-	anton.ivanov@cambridgegreys.com, benjamin@sipsolutions.net, arnd@arndb.de, 
-	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, tiwei.btw@antgroup.com
-Subject: Re: [PATCH v2 03/10] um: vdso: Implement __vdso_getcpu() via syscall
-Message-ID: <21755635-74d4-4fa4-8ffd-371c17630fdf@t-8ch.de>
-References: <1568f254-7963-4015-91ed-7630d5d87881@t-8ch.de>
- <20250922045020.48158-1-tiwei.bie@linux.dev>
- <495a5594-8ac6-4b7d-be6b-7c176b741c21@t-8ch.de>
- <76b5ba35f864764100c9a5a00d50d8fa4276cd98.camel@sipsolutions.net>
+	s=arc-20240116; t=1758549697; c=relaxed/simple;
+	bh=UZjjThwwJZGVVrDbQVu3djnqq0f0cHLoax1dEyX8gx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t3N6wZGwPXkveC9crOw05Ahi2khPJ03yn3mfrQxij4QMRvvUSQiTHzlFAmk41vtyMeyrS28EYiMr41T1Ie4+Qf/SC6OE0/SV6lOoUVfban2RcitiPadCRSpcdTd+U2V61xl37Sfqa/qomhNzmZPN6CAmCMFmZ1UdkXpQt2QYQ80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZNQyyHpu; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7704f3c46ceso4026351b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:01:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758549696; x=1759154496; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fKCwA09uzuhqOzWAVdE6ynBeU1Drahgo1zKeykBUIgA=;
+        b=ZNQyyHpuEAmkQweemQ5+oZWcIw0D0Dg6LHu+wMpjNp6IidrSLYIV9prpKVXyIa2BWv
+         0z1FJ1x+pn5Da6tdjEEF6Wa9nVOLSQN5pfhJfeX6mUH8+xCd1DlKnHrvbmiV7dSc8Mli
+         69ECXNoKHReM7B84ke25VvzBu5GDmiamQ/+NgX4nKvTspEWrHG/sMdh8W0nqREwSKpGB
+         CImZUSb3CbZHqcpsEXDPyUrNQ8b8WqD4rk76skYT1HuK5nRAHf20E9p5/3krz1WfJTOw
+         kIcP2Rkn0PiKLhPAglqOgfnVsOsnbXmrCV7Z3i4DOKgKN955zkU85ZEfypvNOHLDFtJk
+         OqLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758549696; x=1759154496;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fKCwA09uzuhqOzWAVdE6ynBeU1Drahgo1zKeykBUIgA=;
+        b=GPKOqh27sLrGOllahlEn0aYWa3HVfUJtniIka5zqCaM8rkmbn/n+mpUjKY0jlfribC
+         UjzDioPcOtKABPotSbUYXwgoQFWcXIH4ZyySUaDava+dyEm3mpzOEW8bON3dASsXSOMu
+         XBTtUwMtAUmD8OW/lW9ZitVnClGD2oPAgp8Jye9+Nxa8XWvsyvVwr2LUyNl3OO6nV79Q
+         pfELua1HqdY4EHG/66Op2apss+oDPQ19oANZ1SPLvqDVLJkajLZjNejTS3Zf+a6NP/A2
+         vdKI8m7d2/+LIe7TTfSWNDsilH+mZ5BB2BohcwTlf9GGlSkGxALDg00YD3TThNLOgDVb
+         S33A==
+X-Forwarded-Encrypted: i=1; AJvYcCUMGHB400DuAoiTdCdKZtTNbBFHL95Rsn1g+Pt6jYotsZZNYzL/7cBtWNzPt+ZW0MYOlOwgADPi0oW26Y0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZD+WhVdAxEnpkA5OrSCuCAGrCJQaY445qZL/n6JtVcbewWmf1
+	eJDZEjE66uOjX/EDG+ytXO+cEXfR5WWiILFsh8jMgzikkFky8p+fjVdO
+X-Gm-Gg: ASbGnctoSt34lw1YQsH2+mSgvgnv2vH7wUvSaRnmuzDjS4fq/OiEQl+Aw+htLF7Zbku
+	OLnF1ufoGx1xzdmH2Ym9QxQWDgqtMyQ3LnSYv+7Xc0IfTaW+Go/gr2aGIqZIOVtz1ONBJ9tB1uB
+	6EGJ+Kqdspw0xqAEKaG+SlR755e6FtAEVv88gMLy3xSRpw1TVAYnU4DQ8Mxu4XSKVLljD+dxvtN
+	xyZbkHmAmu4sVa5kFiEkhY/QIMUixrXQNuonZpadC6+8NhYykLuQp5j8cfb9VfLQGCiO8dnp/LH
+	VeJiVhHZEPTP1FRECpqNaxVooRDHqVvwUdGkNQKvdpDBqJdhLfR9ifpsVZqaIOVbjoILuXoJTdT
+	+aGslqba57hHANpvwVR7RHPHD+8CWsQ==
+X-Google-Smtp-Source: AGHT+IGrmrGvSmosds+W3wTUoh6DC44jNVPqPse8MKhb2Qiqm6JwSQCRflUH7JmR95N5n8TSktl7BQ==
+X-Received: by 2002:a05:6a00:22d1:b0:77f:414d:3774 with SMTP id d2e1a72fcca58-77f414d38e0mr3142062b3a.4.1758549695190;
+        Mon, 22 Sep 2025 07:01:35 -0700 (PDT)
+Received: from [192.168.0.150] ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f4d204aa7sm528770b3a.44.2025.09.22.07.01.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 07:01:26 -0700 (PDT)
+Message-ID: <ff092ff5-8ee1-4e91-b7f7-e5beb1d6d759@gmail.com>
+Date: Mon, 22 Sep 2025 21:01:18 +0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <76b5ba35f864764100c9a5a00d50d8fa4276cd98.camel@sipsolutions.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Documentation: process: Arbitrarily bump kernel major
+ version number
+To: Jonathan Corbet <corbet@lwn.net>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux Kernel Workflows <workflows@vger.kernel.org>
+Cc: Dante Strock <dantestrock@hotmail.com>,
+ Randy Dunlap <rdunlap@infradead.org>
+References: <20250922074219.26241-1-bagasdotme@gmail.com>
+ <87h5wu8x7o.fsf@trenco.lwn.net>
+Content-Language: en-US
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <87h5wu8x7o.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2025-09-22 14:12:52+0200, Johannes Berg wrote:
-> On Mon, 2025-09-22 at 14:05 +0200, Thomas Weißschuh wrote:
-> > > The original issue could now be considered resolved. So in v3, we no
-> > > longer turn __vdso_getcpu into a syscall wrapper; we simply removed it.
-> > > Perhaps we could remove the whole VDSO before we implement the "real"
-> > > VDSO. However, its implementation is clean, so keeping it wouldn't hurt
-> > > and it could serve as a useful starting point for the "real" VDSO.
-> > 
-> > A "real" vDSO would require quite some more infrastructure.
-> > 
+On 9/22/25 19:53, Jonathan Corbet wrote:
+> Bagas Sanjaya <bagasdotme@gmail.com> writes:
 > 
-> What's not "real" about the vDSO now? Yes it just implement syscalls
-> after the getcpu removal, but ... it's still a vDSO? I _have_ played
-> with getting data into it for the time-travel case, at least.
-
-Right now it does not provide any advantage over a regular syscall.
-Essentially it is just overhead. That said, if you do want to make a
-real vDSO out of it, I'd be happy to help in that.
-(I did most of the recent work on the generic vDSO infrastructure)
-
-> > And it is not even clear if such a vDSO will make a difference on UML.
+>> The big picture section of 2.Process.rst currently hardcodes major
+>> version number to 5 since fb0e0ffe7fc8e0 ("Documentation: bring process
+>> docs up to date"). As it can get outdated when it is actually
+>> incremented (the recent is 6 and will be 7 in the near future),
+>> arbitrarily bump it to 9, giving a headroom for a decade.
+>>
+>> Note that the version number examples are kept to illustrate the
+>> numbering scheme.
+>>
+>> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 > 
-> Syscall overhead is _huge_ in UML, if it does anything but syscalls it
-> will _certainly_ make a difference.
-
-Ack.
-
-> > In my
-> > opinion if __vdso_getcpu() gets removed, the whole vDSO should go with
-> > it. The code can still be easily restored from git.
+> Just FYI, I've pretty much shut docs down for the upcoming merge window.
+> I'm probably not the only one.
 > 
-> I mean ... on the one hand, sure, it doesn't really do much after this,
-> but OTOH it lets userspace actually use that path? So might be useful.
 
-What advantage does userspace have from it?
+So it is slated for 6.19 then?
 
-> > Also the functionality to map the host vDSO and vsyscall page into UML
-> > userspace looks very weird and error-prone. Maybe it can also go away.
-> 
-> Surely host vDSO etc. is never mapped into UML userspace and never is,
-> not sure what you're thinking of, but clearly that's wrong as written.
-
-This is how I understand the 32bit implementation using
-ARCH_REUSE_HOST_VSYSCALL_AREA and NEW_AUX_ENT(AT_SYSINFO_EHDR, vsyscall_ehdr)
-where vsyscall_ehdr comes from the hosts getauxval(AT_SYSINFO_EHDR).
-But I didn't actually test this. I'll look at it again, but currently
-I'm travelling.
-
-
-Thomas
+-- 
+An old man doll... just what I always wanted! - Clara
 
