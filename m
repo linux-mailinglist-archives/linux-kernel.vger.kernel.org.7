@@ -1,208 +1,139 @@
-Return-Path: <linux-kernel+bounces-827676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38558B9262B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:18:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C38DB92607
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E04FA2A6989
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:18:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2076216EE54
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2A8313D48;
-	Mon, 22 Sep 2025 17:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6D53128CC;
+	Mon, 22 Sep 2025 17:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VfAULzj0"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8CUpcCd"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96072EA72C
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB251DA23
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758561494; cv=none; b=Ot+1/1f9+oRHmC6un164HVPoafwqebLxorTl3oC01S4w+7DYhtXOH8h3dB146MUFNpkRnOo5N+JUxfhGYuTz0G1APVHwQp75oZCLIAS1irSPNYnWnLsbC47J+XpLprIKDvKs/CiRjw2dgVaLuYG/sGNdfaWit6RXRITNCAuJF7o=
+	t=1758561403; cv=none; b=oDmvpCGV9XeQAbiJThJWHXyr+iuZ16crVayz7wKDSfquyi6HDja+qdztMxLfsAV9FBz/nBytJnNdEkaa8WYqzRsWNqEzwLGoT7GVD49mIPddVPujsjCdoPZIPKdOqpSpokxk/b71Fi9WmofST+pNwEaY/JMpdksmF99wMBgEWGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758561494; c=relaxed/simple;
-	bh=h23jT0lD1N06Ba7ngBAjZL3uKVwx/wGpZmwj/K5oFVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZLEFSFMgfxG1jV8khCut06weCfxsmYwpjlhsnHVbABCtPDX9C0mrGyFBw/gpJVsJgldsfgoCEUkTRdE3E22LO8dRCUcCBNtIh7iV4BtSXc+G8Bewps2g1ibRZHYo31L1F80mELpbiB13FJh+zqQrH3mfMZ7FxeZ2dhnKk6vnzy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VfAULzj0; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3f2ae6fadb4so2670396f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:18:11 -0700 (PDT)
+	s=arc-20240116; t=1758561403; c=relaxed/simple;
+	bh=MZX3BArSyTfdsbf0Ts7rcUcL2FK6diGQFYx85udDcL0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K/HyxO2e1IWS7L536u5Ao0SqMmc8jOne2dMb2gA+TzrIpsEAtV/kIo4LDxawMhJKLn8yGk0tQfIS46jgl1qrM1J73m0AZNftbmFIy9cgNEKpDWcb5rLo6Z32C8wbfD08w+Ixoz7Yh/YN1E7xBufON4AOSXOqz4UN2VFv/SUgi0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8CUpcCd; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-57a292a3a4bso100428e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:16:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758561490; x=1759166290; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y5wud1lSV0wbWVfXsBYPf/NNYAcPsEVVEIqquff6paA=;
-        b=VfAULzj0ECsYAQFEdLZEMJK4wlpDA7ZVSGGGwfBvJOeCOWWWpiFw3aFyZ6fEoJttmO
-         Q926gxlmjWqoUSj3ftUSriBdu5xXUISeNH6hPTalHf4RYeAVNd3STVG+rkC4gDv6s/K/
-         vq4A6S0Ji3uZ3Fa1zaPtl3m6v5ZTIE2PsGqBQdX8x4/gloFftklo6enUiaEVp29SZIIA
-         lxHgJ995SiAgqCW+PV9MyLwypeqGpRdMuSh79VJZVMiyk3WGhY7yTIlM2nXswKL57iMw
-         y18WI2ykUlNVEVwGX47XASCtPobvSYDHUtnEKkWajwKjreeIEI6C+4odFGOmITqkApkf
-         pdOQ==
+        d=gmail.com; s=20230601; t=1758561400; x=1759166200; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MZX3BArSyTfdsbf0Ts7rcUcL2FK6diGQFYx85udDcL0=;
+        b=P8CUpcCdB7YzHdt5pwLOeEp2TCZu7rEGsfrszs4aO7AYxslxbTMfwsPdEOqpbPi3gl
+         3XKOf+VwbaWx2UvpiU4rXkFUaXieUaT9VAE0YyseDDvV9rRtFmnkOm1qzyu9HoG+81TI
+         sfrwEAHQ9x97yPwbwV2mCEZuGREfzk+vn4hTsJKLAFsKCmWOGILloksjejdwdngyLDZV
+         h/SLjc5fpQXKk3pPU564nQohrbSYUUXb1uURwzLN6La0AlJkQXX7wSFxMaC3cYlCacuw
+         maFFlNZlYLa54nCEKO/fxVqIWsI1IItCkK5swvHNehLCKBJsiP4JZ0XCpSrA2VVli91R
+         yxZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758561490; x=1759166290;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y5wud1lSV0wbWVfXsBYPf/NNYAcPsEVVEIqquff6paA=;
-        b=lGlSH3HYDd6QKkiDDX4SYM15M4TqISCN/2BPwOlsiWrMCkdPXvOXqDBzTx0PK2ZRXM
-         u960W+uMUJOMwZTwVNQ+/cXqzaTBN1ukY1WghN2Yeqm9dGR7P4RSOrlZhPT2AAh3aPPe
-         Usens8GXIHa4Ns3bZiXMSUYnRua+WXg0LH/Jg5GIz81yHEiAEUG73l7/kWJcdIvO2MWQ
-         cJ3kKlkbC5jrl/4El1CCcjVfMJjxsTVSgUYyWQvWCGZLdQJMrftRuJdWx59KuqFMJLDN
-         j99lEzUj/0HFBYhgXXJ/CmRNxY/+2QsN6dr1fCXMwsnj99UutKLfJI1STlleP3OW0Gy0
-         Z9Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCXRBbhXo/6EL1ymO6Qp6VgMNGCo67jarY8BWUtU6cEylh85CGwTdeJLKWqMteMZ2WLdd9HE+TMMW4+NV5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVQ9Gg6OY3a6zvvYfuORIxe0HBTsXZGyBWnopKJZAW4Bg5fJ/w
-	sMdQnBO5Ql1xXSguy/U5Kr7ONj5hRq6AqyDfIJMNP9GQ7+xPttbeQY2x6ziHJzwh9U0=
-X-Gm-Gg: ASbGncuCBin8DG5kddAasNKOkZg3bTjAzwQMzb8UtrQ+JVJBsivXLuW6Ne0pbh/RQtj
-	rb8Y8KdxBjjVWytsOFlW4CTRddYBAhzr5KfnHZWqfY90C57V7aaKFLivrWXDNrMjGE7R5XuNP3j
-	s5FGKG2FPVf7npAqnAlZVNmuDDovQZXQ1vdBNo0URMlT89FdU8fS8hF5C3Nc5umiKn6Wz0pAQBz
-	KMYhwXZEl85BVdHeM8xoaUQ2i08s906zoFfiUwdFLAnSj+wVsUv3fwZMj2Zoo3reUlFxgu0FBZn
-	nwiaahwY0DBVGiDa1gCDxlxKmby9ENMvRRz/TzOThwJ+N/cZgIIpfu6ou5Lytpv+3o3t5lIzpkP
-	80D4iZEDGVevOYIF7LU1ji3hvV8ki1gmE4Me4J6oItyAQnQV2VfvPjMgEKX1qZvYzXXxa/NpNgg
-	Io8FBcqA==
-X-Google-Smtp-Source: AGHT+IHO/UO2nNy8R+3qajssdW17mzOXAbqfr27EmoY4nf8f1wtEGz+MCivYp3KbUmmU18a/YxXG1w==
-X-Received: by 2002:a5d:5f95:0:b0:3ea:71c4:8e1b with SMTP id ffacd0b85a97d-3ee86d6cf37mr10443452f8f.63.1758561490119;
-        Mon, 22 Sep 2025 10:18:10 -0700 (PDT)
-Received: from ?IPV6:2804:18:10d:538:67e6:b01b:caa9:3531? ([2804:18:10d:538:67e6:b01b:caa9:3531])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77dbc8e7cc4sm11725498b3a.29.2025.09.22.10.18.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 10:18:08 -0700 (PDT)
-Message-ID: <75a60a40-a6fe-40f5-9d6a-aa9ff8cbfa3c@suse.com>
-Date: Mon, 22 Sep 2025 14:15:57 -0300
+        d=1e100.net; s=20230601; t=1758561400; x=1759166200;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MZX3BArSyTfdsbf0Ts7rcUcL2FK6diGQFYx85udDcL0=;
+        b=j+rNXo7unvTbQfHLEXfTkYiPQ+ui9KLph4GEswPAS2lYFr5PRFoiku0hbk22tCoF9m
+         ZUZpTfXGuy0Me8YmHh1hkIOz/bxfhKbgZGxKNuwk4EjLXUtRY9od0JYlTp/I6b3EWlhO
+         JpCjy3kcidQoUGVLrN11PvYSQ1FYjQyQ3VUu3obBv9BcBuZ3GZkDSnISkdgnEecNpm1O
+         E08rTBO43+o5IVaI5Vw1cklvps+MCJpgRJz+8QoBG2gPXUaJcJXMdU1wtDBw534hPRW/
+         w75MLuMH3ZH2qmsO3e0J9lp8jagoqmCSKtuEzPiVt2QXtiuZ1pru8DtOjPINiIv/r+kb
+         2pCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWIpzlaB+jVexA7dm6GGpkOFcnx+hBf7XvEge5/iOhsQAPWKQ7TcPjoe9pJvMd04V3g9Efoa0PEbAMxLTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxwy+KnozUfHcNTaJQkGo0J9C+NH4hcU9qseVsRyRRmJvUONQQ1
+	DzCgEm6AgaxJ6Sb8avn8GJ5pOcgGybFCU/hyfQxNOfd0EISWNwWK039HDrz4MUcq9j4PK5Yocfe
+	0tZmeJGJ4VqaJoSu09cZSgg7TbLit5iU=
+X-Gm-Gg: ASbGnctn6KanPP14qjzGJTGjIigSrh8qyVbatTaMK8G2vhAWIMnOLl6YwLNb24IT/FU
+	UiTbDrxk1ZBahC5r1WduZITv7O5vhOejaFwionW+uSHHQpIL+mITDY47gbg/1hWoiWbya/u5WUH
+	+CjN1OPCRd3rhXvFLA2VKtXW1nj3Xg6uDwPHVfkaRvoWKUVtCF/rFB202aGaxp21aR1VmLubnnD
+	p19Pa8=
+X-Google-Smtp-Source: AGHT+IHarbzJ6Y0Kx1EuBP51HF3QqIRaq6W5hGvo9rzQ11VJWCv4CphDndWPOoVT25Wb0mhT/VW8OhKl1IyEHjMkBl8=
+X-Received: by 2002:a05:6512:2913:b0:57d:8870:e96d with SMTP id
+ 2adb3069b0e04-57d8870f70emr1592623e87.30.1758561399443; Mon, 22 Sep 2025
+ 10:16:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] cifs: client: force multichannel=off when
- max_channels=1
-To: Steve French <smfrench@gmail.com>, Enzo Matsumiya <ematsumiya@suse.de>
-Cc: rajasimandalos@gmail.com, linux-cifs@vger.kernel.org, sfrench@samba.org,
- pc@manguebit.org, ronniesahlberg@gmail.com, sprasad@microsoft.com,
- tom@talpey.com, bharathsm@microsoft.com, linux-kernel@vger.kernel.org,
- Rajasi Mandal <rajasimandal@microsoft.com>
-References: <20250922082417.816331-1-rajasimandalos@gmail.com>
- <da3e2b5a-a5da-4526-9884-8789990ebf95@suse.com>
- <qmf3xwqq4hqj4issgci2g76eghytaqxihnrp236ithh2istkkf@n4s54vp3hblr>
- <CAH2r5mu9xUQz5e1Mf-dBCNh2_y2jnxPYMhmuHr1bVqKC6atd8w@mail.gmail.com>
-Content-Language: en-US
-From: Henrique Carvalho <henrique.carvalho@suse.com>
-In-Reply-To: <CAH2r5mu9xUQz5e1Mf-dBCNh2_y2jnxPYMhmuHr1bVqKC6atd8w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250903-tegra210-speedo-v3-1-73e09e0fbb36@gmail.com>
+ <2334a545-9a06-42d9-8282-674b94fdcb2f@nvidia.com> <CALHNRZ_gNzCEOzcYBY4o5Hz-efS5b52K4uZqmw5ps5zEfKoOEw@mail.gmail.com>
+ <5e1b09f0-7f4a-421c-b09f-4f95c1c6ec3b@nvidia.com>
+In-Reply-To: <5e1b09f0-7f4a-421c-b09f-4f95c1c6ec3b@nvidia.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Mon, 22 Sep 2025 12:16:28 -0500
+X-Gm-Features: AS18NWChSC7X3N75Jv-gvVc8Hq-b8TEe-hBz8bqB2KABn75M9vUKybGGxS149pE
+Message-ID: <CALHNRZ-43RHsjiw1NJAxc3qAqHEoEYongtB0MzsfP5q93H7_XA@mail.gmail.com>
+Subject: Re: [PATCH v3] soc: tegra: fuse: speedo-tegra210: Update speedo ids
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Joseph Lo <josephl@nvidia.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Sep 19, 2025 at 4:55=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
+rote:
+>
+>
+> On 18/09/2025 18:19, Aaron Kling wrote:
+> > On Thu, Sep 18, 2025 at 4:45=E2=80=AFAM Jon Hunter <jonathanh@nvidia.co=
+m> wrote:
+> >>
+> >>
+> >> On 04/09/2025 02:58, Aaron Kling via B4 Relay wrote:
+> >>> From: Aaron Kling <webgeek1234@gmail.com>
+> >>>
+> >>> Existing code only sets cpu and gpu speedo ids 0 and 1. The cpu dvfs
+> >>> code supports 11 ids and nouveau supports 5. This aligns with what th=
+e
+> >>> downstream vendor kernel supports. Align skus with the downstream lis=
+t.
+> >>
+> >> Do you have a reference for the downstream kernel change you are
+> >> referring to? I have found this change [0]. However, this does not qui=
+te
+> >> align with what you have in this patch.
+> >
+> > This is based on L4T r32.7.6 [0], which builds up the list over
+> > several commits, so I can't link to just one. The first revision only
+> > added sku's that I had specifically verified. Mikko suggested to just
+> > import everything from downstream and to simplify the conditionals.
+> > And that's this revision.
+>
+> ...
+>
+> > [0] https://nv-tegra.nvidia.com/r/plugins/gitiles/linux-4.9/+/refs/tags=
+/tegra-l4t-r32.7.6_good/drivers/soc/tegra/fuse/speedo-tegra210.c#72
+>
+>
+> Thanks! I saw Mikko's comments on V2 and that makes sense. The problem I
+> have is that comparing this with the above, it is not clear that these
+> are equivalent. The above is using the 'a02' chip version for setting
+> the speedo IDs but this is using the speedo revision. Now it might turn
+> out this is equivalent, but it is not obvious to me. Ideally we would
+> end up with something similar to the above.
 
+Thanks for noticing this discrepancy. I will fix and verify, then send
+a new revision.
 
-On 9/22/25 1:14 PM, Steve French wrote:
-> . >Do we even need ->multichannel flag at all?
-> 
-> Yes - especially in the future.   The goal is for the user to have
-> three options:
-> 1) (preferred) "multichannel" (max channels will be dynamically
-> selected and can change) the client gets to choose how many channels
-> to connect to based on what it sees in the output of the most recent
-> query interfaces call (it can change on the fly as server dynamically
-> adds and removes channels or networks become temporarily unreachable)
-
-I'm guessing this would be required while we are transitioning from
-setting channels dynamically to having multichannel on by default, as
-you commented below. Because once we have it on by default, I don't
-think there is a point in having the flag.
-
-> 2) "max_channels="   This is for the case where user wants to choose
-> the number of channels rather than have the client automatically
-> (hopefully soon in the future) choose it for you
-> 3) if server has mchan bugs, allow client to mount with no
-> multichannel (or equivalent max_channels=1)
-> 
-> But ... "remount" also has to work for the three above (and currently
-> doesn't) and this is what I am hoping the recent patches can fix (?)
-> but haven't tested them enough yet
-> 
-
-Yes, I agree the patches are important, I am also testing them here.
-
-> On Mon, Sep 22, 2025 at 9:59 AM Enzo Matsumiya <ematsumiya@suse.de> wrote:
->> I'd actually like to propose going even further and having the whole
->> module behaving as if multichannel was always on, even with
->> max_channels=1
-> 
-> Obviously the goal (would love patches for this) is to turn
-> multichannel on by default, have the client select the appropriate
-> number of channels by default etc. but we have to let the user
-> override it (as described above)
-> 
->>
->> On 09/22, Henrique Carvalho wrote:
->>> Hi Rajasi,
->>>
->>> On 9/22/25 5:24 AM, rajasimandalos@gmail.com wrote:
->>>> From: Rajasi Mandal <rajasimandal@microsoft.com>
->>>>
->>>> Previously, specifying both multichannel and max_channels=1 as mount
->>>> options would leave multichannel enabled, even though it is not
->>>> meaningful when only one channel is allowed. This led to confusion and
->>>> inconsistent behavior, as the client would advertise multichannel
->>>> capability but never establish secondary channels.
->>>>
->>>> Fix this by forcing multichannel to false whenever max_channels=1,
->>>> ensuring the mount configuration is consistent and matches user intent.
->>>> This prevents the client from advertising or attempting multichannel
->>>> support when it is not possible.
->>>>
->>>> Signed-off-by: Rajasi Mandal <rajasimandal@microsoft.com>
->>>> ---
->>>>  fs/smb/client/fs_context.c | 7 +++++++
->>>>  1 file changed, 7 insertions(+)
->>>>
->>>> diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
->>>> index 072383899e81..43552b44f613 100644
->>>> --- a/fs/smb/client/fs_context.c
->>>> +++ b/fs/smb/client/fs_context.c
->>>> @@ -1820,6 +1820,13 @@ static int smb3_fs_context_parse_param(struct fs_context *fc,
->>>>              goto cifs_parse_mount_err;
->>>>      }
->>>>
->>>> +    /*
->>>> +     * Multichannel is not meaningful if max_channels is 1.
->>>> +     * Force multichannel to false to ensure consistent configuration.
->>>> +     */
->>>> +    if (ctx->multichannel && ctx->max_channels == 1)
->>>> +            ctx->multichannel = false;
->>>> +
->>>>      return 0;
->>>>
->>>>   cifs_parse_mount_err:
->>>
->>> Do we even need ->multichannel flag at all? Maybe we could replace
->>> ->multichannel for a function that checks for max_channels > 1?
->>
->> I agree with Henrique.
->>
->> I'd actually like to propose going even further and having the whole
->> module behaving as if multichannel was always on, even with
->> max_channels=1 -- the only difference being the need to run the
->> query_interfaces worker.
->>
->> This is probably work for another patch/series though.
->>
->>
->> Cheers,
->>
->> Enzo
->>
-> 
-> 
-
--- 
-Henrique
-SUSE Labs
+Aaron
 
