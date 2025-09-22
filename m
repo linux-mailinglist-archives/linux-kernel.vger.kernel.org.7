@@ -1,126 +1,166 @@
-Return-Path: <linux-kernel+bounces-827386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1667B919C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:14:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F5AAB919DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D7201884F7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:15:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B91104236AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1982B1A238C;
-	Mon, 22 Sep 2025 14:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F6B1E47CA;
+	Mon, 22 Sep 2025 14:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dRC/YkZ2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="konAnS3U"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CD21DA23;
-	Mon, 22 Sep 2025 14:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A911DE3AC;
+	Mon, 22 Sep 2025 14:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758550490; cv=none; b=ifjYdObGKCSKumyY3yO+DZY9Ua0Pr5ljVY46HONFGwqUvLiN65NS4uESGTeUQIAY+t06idxrHuVmKehSQmR/SCzt1tKP9+TlcJs4hsMgq83J9HYRfwd/8eS6pgq7BirS4aNVEmT9wGj+RVD8ciIbhsfB6AOZytdbALmSKvwhFiU=
+	t=1758550610; cv=none; b=kIlGbLaHmn72dYv+nrWSVQVcr7eqlx3o5VTmxVrtTyVFDX8weoxIRrmwIufPMtIXaPIuzlX6A+5xr3sUiMOd0C/prBl9GI0EOCYUJ/9z+oyhLhBCvXS0EuqL4dP6cJijJhQS01XsHd3e+OC6sETA7pb7w8DuRRlM7yf4bWPPH8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758550490; c=relaxed/simple;
-	bh=1Um/7eW64s8ZlVqQRHouhXRbAmqR4c08KCIXT6us7L8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kdrtavuV3FIUqZX85IbRVx1DCLEzPMpdIn7gqud4ZdoZYaNvG2TvFpfyUjc0KAELwQ+D4i1m8bl3idpxHxcRJ8PGWF3BdOMkCjIiyyYkAu8kDw5eFDnuStRfhvsJ8lmf1KzfNv3aNAVcwc2nCMfGiOLwcG4cj+2VcJTpLcu9Ixo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dRC/YkZ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D6AC4CEF0;
-	Mon, 22 Sep 2025 14:14:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758550490;
-	bh=1Um/7eW64s8ZlVqQRHouhXRbAmqR4c08KCIXT6us7L8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dRC/YkZ2hEwdyJaKfspnZczuFMlvTMM9zy+ISaXcxCwnjSGZlW7YaX79yYEabwks0
-	 SvD8vQW+W//0qgVAgBoKDD3EaPE9x0uSQj4jNRWn+SLkeQObrn1LuDOPpx/cNOTIp4
-	 s8nfNg2ZF+XiP0FaEg7VOe3f6CzBoRYQ0BCrB1rJXYsHj90US3lWl2X0T9Z+NJAhtA
-	 bieQ0+vXuH4oclle5VokbneVxbwWc514btvmxPlEIrFDT7VGzeFXs/waZgNYBFWQAT
-	 xw8T0b/Y5UDcBXWw3R0p9b4HV/eGTrmwrNle7qLpP4zJuxsBkfQCaeNYx/p21f8Pc7
-	 J/CiMkcS4PpqA==
-Date: Mon, 22 Sep 2025 16:14:46 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>, Jens Axboe <axboe@kernel.dk>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>
-Subject: Re: [PATCH v2 3/3] rcu: WQ_UNBOUND added to sync_wq workqueue
-Message-ID: <aNFZ1huhgmMkaIWH@2a01cb069018a81087c6c9b3bf9471d3.ipv6.abo.wanadoo.fr>
-References: <20250919145040.290214-1-marco.crivellari@suse.com>
- <20250919145040.290214-4-marco.crivellari@suse.com>
+	s=arc-20240116; t=1758550610; c=relaxed/simple;
+	bh=uNppTuam3Us42pG36glkkl2XG4QsQhRzg9RzTUlo9+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gj4vvLuaM/sFBWbc6/3zuREfrMjt9xvoK85DbMND+QesonC34ZGtpEiSNvME29NuPL9Afb7acgjZMKD8KbZXQSGEGNPn7xIbzUP/jSQitdXgQNg12AvxCn7aD+wAEf2BO1b7bUIHjZ/b7EIyiQBwLAGW63hwk+4nojdNocUyCzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=konAnS3U; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 9B2884E40D20;
+	Mon, 22 Sep 2025 14:16:39 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 520D660634;
+	Mon, 22 Sep 2025 14:16:39 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8DE15102F1929;
+	Mon, 22 Sep 2025 16:16:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758550598; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Jebq9t143raDKfgvx6YsnmKGCNR8DfJDEIED3irNcJk=;
+	b=konAnS3UHmYMPEtgcRx33Q19DB+JYfmTijrplkBupkL7pfdxJ7kFVVY6/Qhv/0/ZJDSBSM
+	yG93VSXZJ570DGEnaoGO7PAkI8d7Tfd6q0qNty8TrWf5hV7YYxvl5O5GgkZpuovxa7VMQ0
+	GK6RsUToXHHQrFvu4zRzFCQV2grW6VYh53vC4ypvmgnXd5AyUJRLe+c766IH3USzhjoyp5
+	yNr3EkPzDbpHXdvFGdf8y2e5llHMMT0yqLCbgxGwT2N6rQ5INF31NGF8ziILh3TNHA2d4Z
+	prw9+SYKXJs689jNZI1Qt0cPApV3gd0xePEAMadsx+mxnmt8YIv97Hl/Wphnpg==
+Date: Mon, 22 Sep 2025 16:16:20 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Hoan Tran
+ <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
+ Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, Serge
+ Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Pascal
+ Eberhard <pascal.eberhard@se.com>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 8/8] ARM: dts: r9a06g032: Add support for GPIO
+ interrupts
+Message-ID: <20250922161620.03fa8d8e@bootlin.com>
+In-Reply-To: <20250919191211.0ed4c976@bootlin.com>
+References: <20250918104009.94754-1-herve.codina@bootlin.com>
+	<20250918104009.94754-9-herve.codina@bootlin.com>
+	<aM0llhn054OI9rA8@ninjato>
+	<20250919155910.4d106256@bootlin.com>
+	<aM1rgY9CCF54c_Pg@shikoro>
+	<20250919191211.0ed4c976@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250919145040.290214-4-marco.crivellari@suse.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Le Fri, Sep 19, 2025 at 04:50:39PM +0200, Marco Crivellari a écrit :
-> Currently if a user enqueue a work item using schedule_delayed_work() the
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
-> This lack of consistentcy cannot be addressed without refactoring the API.
-> 
-> alloc_workqueue() treats all queues as per-CPU by default, while unbound
-> workqueues must opt-in via WQ_UNBOUND.
-> 
-> This default is suboptimal: most workloads benefit from unbound queues,
-> allowing the scheduler to place worker threads where they’re needed and
-> reducing noise when CPUs are isolated.
-> 
-> This change add the WQ_UNBOUND flag to sync_wq, to make explicit this
-> workqueue can be unbound and that it does not benefit from per-cpu work.
-> 
-> Once migration is complete, WQ_UNBOUND can be removed and unbound will
-> become the implicit default.
-> 
-> With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-> any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-> must now use WQ_PERCPU.
-> 
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+Hi Wolfram,
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+On Fri, 19 Sep 2025 19:12:11 +0200
+Herve Codina <herve.codina@bootlin.com> wrote:
 
-
-> ---
->  kernel/rcu/tree.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On Fri, 19 Sep 2025 16:41:05 +0200
+> Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 > 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 4f3175df5999..7137723f8f95 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -4888,7 +4888,7 @@ void __init rcu_init(void)
->  	rcu_gp_wq = alloc_workqueue("rcu_gp", WQ_MEM_RECLAIM | WQ_PERCPU, 0);
->  	WARN_ON(!rcu_gp_wq);
->  
-> -	sync_wq = alloc_workqueue("sync_wq", WQ_MEM_RECLAIM, 0);
-> +	sync_wq = alloc_workqueue("sync_wq", WQ_MEM_RECLAIM | WQ_UNBOUND, 0);
->  	WARN_ON(!sync_wq);
->  
->  	/* Respect if explicitly disabled via a boot parameter. */
-> -- 
-> 2.51.0
+> > > 'interrupt-map' is a required property. If the board doesn't use any interrupt
+> > > GPIO, its dts has no reason to set the interrupt-map.    
+> > 
+> > Why is 'interrupt-map' then a required property? Can we drop it from the
+> > requirements?
+> >   
+> 
+> I need to check in details but 'interrupt-map' should be kept required.
+> Indeed, irq-mux needs this property to work. It is not an optional one.
+> 
+> I need to look at the 'make CHECK_DTBS=y' behavior when required property is
+> missing in a not enabled node (node with status = "disabled").
+> 
+> Also, got some:
+>    Warning (interrupts_property): /soc/interrupt-controller@51000480: Missing interrupt-controller or interrupt-map property
+> 
+> This could be due to the presence of #interrupt-cells or the node name (not
+> sure). As I need to rename the node (Conor's comment), I will see if the
+> warning disappear. If the warning is due to #interrupt-cells, I don't think
+> that removing #interrupt-cells is the right solution to avoid the warning.
+> 
+> That's said, I need to perform some local tries. I will keep you informed.
 > 
 
--- 
-Frederic Weisbecker
-SUSE Labs
+If I remove the 'interrupt-map', I still have warnings from DTC:
+  r9a06g032.dtsi:647.45-664.5: Warning (interrupts_property): /soc/interrupt-controller@51000480: Missing interrupt-controller or interrupt-map property
+  r9a06g032.dtsi:647.45-664.5: Warning (interrupts_property): /soc/interrupt-controller@51000480: Missing interrupt-controller or interrupt-map property
+  r9a06g032.dtsi:647.45-664.5: Warning (interrupts_property): /soc/interrupt-controller@51000480: Missing interrupt-controller or interrupt-map property
+  r9a06g032.dtsi:647.45-664.5: Warning (interrupt_provider): /soc/interrupt-controller@51000480: '#interrupt-cells' found, but node is not an interrupt provider
+  r9a06g032-rzn1d400-eb.dtb: Warning (interrupt_map): Failed prerequisite 'interrupt_provider'
+
+Indeed, the irq-mux node is referenced (interrupt-parent) in the gpio nodes.
+DTC checks that in that case irq-mux is correctly set. It has to be either
+an interrupt controller ('interrupt-controller' property) or a interrupt
+nexus node ('interrupt-map' property).
+
+If I remove, the 'interrupt-map' property, DTC is not happy.
+
+Also in that case, my node has '#interrupt-cells' set without being an
+interrupt controller of a interrupt nexus node and this leads to a warning too.
+
+The only way to avoid warnings is to fully remove the irq-mux node and related
+references available in gpio nodes.
+
+IHMO, I think we can leave with a reduce 'interrupt-map' array set in the irq-mux
+node in r9a06g032.dtsi file such as follow.
+--- 8< ---
+	interrupt-controller@51000480 {
+		compatible = "renesas,r9a06g032-gpioirqmux", "renesas,rzn1-gpioirqmux";
+		reg = <0x51000480 0x20>;
+		#interrupt-cells = <1>;
+		#address-cells = <0>;
+		interrupt-map-mask = <0x7f>;
+
+		/*
+		 * interrupt-map has to be updated according to GPIO
+		 * usage. The src irq (0 field) has to be updated with
+		 * the needed GPIO interrupt number.
+		 * More items can be added (up to 8). Those items must
+		 * define a GIC SPI interrupt in the range 103 to 110.
+		 */
+		interrupt-map = <0 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
+
+		status = "disabled";
+	};
+--- 8< ---
+
+Could this modification be ok on your side?
+
+Best regards,
+Hervé
 
