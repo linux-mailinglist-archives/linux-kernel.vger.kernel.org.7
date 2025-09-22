@@ -1,249 +1,130 @@
-Return-Path: <linux-kernel+bounces-827762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE039B92AB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:56:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EFC8B92AC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61B033B890C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:56:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F98A1904CA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED2531A54A;
-	Mon, 22 Sep 2025 18:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C2431A545;
+	Mon, 22 Sep 2025 18:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/okeDMI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GxxVcq9N"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9EC310777
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 18:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD27275860
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 18:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758567357; cv=none; b=OtzK90S2GA/HGJj5cmutppdWOyRTqjBcrSzzykkJt6bbMGF53mQT3qoNoWiD6ZIrXQCyyUdGZHT6J+GzUwOyuYrAjTO6UooOBNDN7bGRhB8XCVP5VZ6dVbYGbgR3gEaCsEKIIvz2RDhba3Yg62gNxVd8go3evPzZDFyXE1gnZGQ=
+	t=1758567412; cv=none; b=ui4Jal1pzfyaN9JUs9MbmWhiQvGV8X4m6F9muuFl99ccg05yjC2PE7ohGLPRZCn7BHB9fZh9WZ+phvPPKMLJ/W82buUMI+tb27xu8x4biVtqmd26aAJ/D1vMCLwoS831v4R0XFYHwro+cTMVebO1GZpJ5nuX1dVOLvCuYodnJFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758567357; c=relaxed/simple;
-	bh=rpnKJoDnQ69EXyGOvfTeBYWhyP/tp6zNGqSbpMUrvKg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=atizORLpEc6g5gsbMfnWUhuM2AKy2ZB1T/BeHJApDWzFgXR60UOlBEFTB0E0c+zckPcg1xeA9VOQ6wWjxKGBLnZ2Gk+6CKjpFeqj+0ql8WS1NWxpvp084Xn6ObQ5n1VO7R4UtbagN6zTuM7UBXETiUx0fs7cKhT13qKMb2OR7TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/okeDMI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C920C4CEF0
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 18:55:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758567357;
-	bh=rpnKJoDnQ69EXyGOvfTeBYWhyP/tp6zNGqSbpMUrvKg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=d/okeDMIkVgGG0vArFIpDH9r3pQZ/zzvpSk6qYKIjz8ge25oja5YdQSaOiiR4jBQ9
-	 Bx6Cwl90Zsq8Et7ss9h70bAtYy2qtxz8Rk1kndWIX7QmoXXH1SstHoUbkgoTkNR3L2
-	 Ioy1Za7FJ2dqtg+Bylhazi3ycV+2dUEpk+RXIfyF3rBHGuLcLn1ebyE5sjwnza/OTT
-	 hvj1NQbJW04L9JQsStG92S+LY3eYTUfsPcJesZ3hp0yFhS2xDn7QijevzPWE4QggmB
-	 qeY6VbOtM2KSsJCBbTLja680GgRgHzQXOe8FSepqG2d+loCkRvS+i5u/gObsd8z6oR
-	 10FNIbcNEx8ng==
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-74381df387fso2460469a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 11:55:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUxk2zfWLpMheHWg/gOvkUBooXZwBmVUju7o7zoiG9BI4y/65Mv0zrDPA+AJ7g2fpCAnx4A9vAV3yS/kX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4QkUh6XKkq4KtfGoZdNWvlfzD2AZZID3wfa3eDc5ZnHcFntSK
-	4H78YXzS62+IiRFopilSaWYGJ6ukIsGgLV6HgCHsQeEetfvHKF7MQgRJxjzCLi5VgEJ3aq8X8Jq
-	zDtLUmv70Oud6cGt4PN8SbTDN2oFU+ls=
-X-Google-Smtp-Source: AGHT+IFuqFHAX1fywg4rX28McVqobPBk9c7dx9KK8JP7Mwu8ueN867r8mO/48JVQvtJrzihyGJD313+CTMDHl4ULaVI=
-X-Received: by 2002:a05:6808:d50:b0:439:ae49:9157 with SMTP id
- 5614622812f47-43d6c279229mr6200623b6e.34.1758567356303; Mon, 22 Sep 2025
- 11:55:56 -0700 (PDT)
+	s=arc-20240116; t=1758567412; c=relaxed/simple;
+	bh=pmtmdIqpwp48d4/s32BjyKje6zxImLmxuZ9drhEB0mg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s+ZHhvQvp8fofFJoqR6VoSKJ7WkonQMPw9OJo5qovcShP4NTZRQnaQkZjdGtCDq6//ennw0XBasy3PZgprbYD38Bb6jbSwObvMifexizX7i1xk5DhOw229MUMFIyM1VMCSovcL2wINR12SA9F5jULiWgXaVKjkS0IHn/jkg6Jh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GxxVcq9N; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4694ac46ae0so32164225e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 11:56:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758567409; x=1759172209; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eyJq43O++KjLnjYoBP21Xp+znz9y7wC4OFS1xU5rHgk=;
+        b=GxxVcq9NFCqKCAmT2QXd/Yh/WXiENWQf2S/43QLJ6oZNDNUVuJGNVlBKdDC4aM+M6m
+         66oP1j1AElAsO5Xal9YYfcWnIts1QO+SNw+vCYTPkV96gMNUnULoR9T+R+9ruQn4B3zc
+         dqYEoLoQ3ruphy/S7jwjPZHFO5q8scaTd5M21eYm6cCgK5Yuf/f73aMcNbm2Bujr67dF
+         4rmL2KNTJHYD/ocAozHw6iyBs8zlZbNDYFddgRoZFBicuzgIa1ZoBakAJtTrofmtUFGm
+         cj4ZFMPGfYeDCoft5/D+LfrGaaqBiHZbLPTOtJ4GzHffnEdAcu7Yw9ICmlbcScQRUiDG
+         5+zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758567409; x=1759172209;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eyJq43O++KjLnjYoBP21Xp+znz9y7wC4OFS1xU5rHgk=;
+        b=ELg5gleDN1IRqwJpgjuhjEuVcQoe/4SGHOiG1BaIaWqtZbORRim72CNwRGdoNrbMCb
+         +nCO7/7Yk/KUiSFkCw4wlI7jWis24e621hntn9fnh29jABpPdVh7HtHdBq9vCxuw2fJd
+         IXE3gFw0m4hN/Cymqe49YayZaesqBcIf3EBYwc1gCl6Yzo5SRM2hVHo/g+FGlCYXhGLz
+         hRl4AA0Q5LwpVWNqxr23SGnIFxJBhAw8Unb0cdPRbH6vDAdLh/ONt+lrj3+Xd6DRn0as
+         2GhHU6ptyEtEF7N8bnrvVOfIFwYWPZcF4Et5RQWee/vuqsnQGykFxvqLrB4scvUa6X/Z
+         zrdA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9bdRMJ7wlooOmrK5APBP8ZGOmHGMqbeQonoMIhr6u+VBqD3kkA11LfJE7turQA5g2e8pnD96hVtfOzx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwOIAES1rHXWMqaPpxmEd0S0NFj8lsVScIAG9qGaG22GMru0HD
+	sHz+JJBo1E2eeznCQ/ch2TqwdnYeVftTfOFZV6Lwxn8DTFZo2+GwClHV
+X-Gm-Gg: ASbGncuqhBoie3vxVJqKGAKppMyWjdcqVGoIIZuS39s9hEXCTHctB5fOuZrk0k87cA2
+	WG/IS6q5QC0HLD6EkWNbnLjKpaPsekH1ds43qweSQGkcXF2EgvyN773H9vGwmHvXOREizYmNEqT
+	atcZoW2LGUptU6ETBtn9f8WP4CDdFp0j1fR9gzubiE+Coz+tbh6eYk8Iqq8ZyTqdSmF924K4es3
+	FbSM0AI7+LiGxpBOiCsUVVCUL/1hkcI8AV7Rj44xifSZ9vR9WT2elT5Mau3gzFMo7S4QwTiH9R7
+	EBEvPBoaKsGAYYBjJxQsx4FMZ9MxwYjMPfq0YUtXg4uEPM/UQhkE9/4UGotREHxiV7wbSWD3Fhx
+	d0xDToy8JChvBwOSycQXXwLRpeHCQ3Nk=
+X-Google-Smtp-Source: AGHT+IE2hNAByN1u+WlmeKvdGqq3iQsBllgNjf2IKG0z3jtosjk7L/KvCjfFpn/X7tEHILQPO5GNNQ==
+X-Received: by 2002:a05:600c:45c9:b0:45d:d1a3:ba6a with SMTP id 5b1f17b1804b1-467f15d405emr134177295e9.33.1758567408745;
+        Mon, 22 Sep 2025 11:56:48 -0700 (PDT)
+Received: from moktar-desktop.. ([102.31.181.245])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f0aac439sm241209755e9.5.2025.09.22.11.56.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 11:56:48 -0700 (PDT)
+From: Moktar SELLAMI <smokthar925@gmail.com>
+To: alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	Hawking.Zhang@amd.com,
+	tao.zhou1@amd.com,
+	lijo.lazar@amd.com,
+	ganglxie@amd.com,
+	victor.skvortsov@amd.com,
+	candice.li@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com
+Cc: Moktar SELLAMI <smokthar925@gmail.com>
+Subject: [PATCH] drm/amd/amdgpu: use kmalloc_array instead of kmalloc
+Date: Mon, 22 Sep 2025 19:56:35 +0100
+Message-Id: <20250922185635.50828-1-smokthar925@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716123323.65441-1-ulf.hansson@linaro.org>
- <20250716123323.65441-2-ulf.hansson@linaro.org> <CAJZ5v0iq7UODJ83fkwnzfFR3HpG2_R-YRnip_cLwyUHZZ+rXyg@mail.gmail.com>
- <7hldnp6apf.fsf@baylibre.com> <CAJZ5v0j=9RXHrcVEBp0yy1Ae4_kC1y-WFQyBf89r3NtoL-tYQw@mail.gmail.com>
- <CAPDyKFpeVF_EHJDQ9u=LDuJ56g7ykYUQWHXV2WXTYLa-mYahVA@mail.gmail.com>
- <CAPDyKFpc-PHC1QhoSrNt9KnaGov749H1AwFZUwnDDzG7RDYBRw@mail.gmail.com>
- <CAJZ5v0hC=sEcC-mU8jArwVN3EA6+U=EmCa2e7TKO0sg6LJiz7g@mail.gmail.com> <CAPDyKFqG=bFSP2rJ3PXt5=6_nLdpJ+ir80krU1DrRCCMhwKQng@mail.gmail.com>
-In-Reply-To: <CAPDyKFqG=bFSP2rJ3PXt5=6_nLdpJ+ir80krU1DrRCCMhwKQng@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 22 Sep 2025 20:55:44 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hYN5G_WpA6KDpeDgowc2i9AvrUBCq-egS==8RNVb6N=w@mail.gmail.com>
-X-Gm-Features: AS18NWAqpPudgPO9jCOlrdnlFpqqqtPd-tizRtXXuA2HtJo6NEEUaYVfGnJKui8
-Message-ID: <CAJZ5v0hYN5G_WpA6KDpeDgowc2i9AvrUBCq-egS==8RNVb6N=w@mail.gmail.com>
-Subject: Re: [RFC/PATCH 1/3] PM: QoS: Introduce a system-wakeup QoS limit
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@baylibre.com>, linux-pm@vger.kernel.org, 
-	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 18, 2025 at 5:34=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
->
-> On Wed, 17 Sept 2025 at 21:24, Rafael J. Wysocki <rafael@kernel.org> wrot=
-e:
-> >
-> > Hi,
-> >
-> > Sorry for the delay.
-> >
-> > On Fri, Sep 12, 2025 at 3:58=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro=
-.org> wrote:
-> > >
-> > > On Tue, 12 Aug 2025 at 11:26, Ulf Hansson <ulf.hansson@linaro.org> wr=
-ote:
-> > > >
-> > > > On Mon, 11 Aug 2025 at 21:16, Rafael J. Wysocki <rafael@kernel.org>=
- wrote:
-> > > > >
-> > > > > On Mon, Aug 11, 2025 at 7:16=E2=80=AFPM Kevin Hilman <khilman@bay=
-libre.com> wrote:
-> > > > > >
-> > > > > > "Rafael J. Wysocki" <rafael@kernel.org> writes:
-> > > > > >
-> > > > > > > On Wed, Jul 16, 2025 at 2:33=E2=80=AFPM Ulf Hansson <ulf.hans=
-son@linaro.org> wrote:
-> > > > > > >>
-> > > > > > >> Some platforms and devices supports multiple low-power-state=
-s than can be
-> > > > > > >> used for system-wide suspend. Today these states are selecte=
-d on per
-> > > > > > >> subsystem basis and in most cases it's the deepest possible =
-state that
-> > > > > > >> becomes selected.
-> > > > > > >>
-> > > > > > >> For some use-cases this is a problem as it isn't suitable or=
- even breaks
-> > > > > > >> the system-wakeup latency constraint, when we decide to ente=
-r these deeper
-> > > > > > >> states during system-wide suspend.
-> > > > > > >>
-> > > > > > >> Therefore, let's introduce an interface for user-space, allo=
-wing us to
-> > > > > > >> specify the system-wakeup QoS limit. Subsequent changes will=
- start taking
-> > > > > > >> into account the QoS limit.
-> > > > > > >
-> > > > > > > Well, this is not really a system-wakeup limit, but a CPU idl=
-e state
-> > > > > > > latency limit for states entered in the last step of suspend-=
-to-idle.
-> > > > > > >
-> > > > > > > It looks like the problem is that the existing CPU latency Qo=
-S is not
-> > > > > > > taken into account by suspend-to-idle, so instead of adding a=
-n
-> > > > > > > entirely new interface to overcome this, would it make sense =
-to add an
-> > > > > > > ioctl() to the existing one that would allow the user of it t=
-o
-> > > > > > > indicate that the given request should also be respected by
-> > > > > > > suspend-to-idle?
-> > > > > > >
-> > > > > > > There are two basic reasons why I think so:
-> > > > > > > (1) The requests that you want to be respected by suspend-to-=
-idle
-> > > > > > > should also be respected by the regular "runtime" idle, or at=
- least I
-> > > > > > > don't see a reason why it wouldn't be the case.
-> > > > > > > (2) The new interface introduced by this patch basically dupl=
-icates
-> > > > > > > the existing one.
-> > > > > >
-> > > > > > I also think that just using the existing /dev/cpu_dma_latency =
-is the
-> > > > > > right approach here, and simply teaching s2idle to respect this=
- value.
-> > > > > >
-> > > > > > I'm curious about the need for a new ioctl() though.  Under wha=
-t
-> > > > > > conditions do you want normal/runtime CPUidle to respect this v=
-alue and
-> > > > > > s2idle to not respect this value?
-> > > > >
-> > > > > In a typical PC environment s2idle is a replacement for ACPI S3 w=
-hich
-> > > > > does not take any QoS constraints into account, so users may want=
- to
-> > > > > set QoS limits for run-time and then suspend with the expectation=
- that
-> > > > > QoS will not affect it.
-> > > >
-> > > > Yes, I agree. To me, these are orthogonal use-cases which could hav=
-e
-> > > > different wakeup latency constraints.
-> > > >
-> > > > Adding an ioctl for /dev/cpu_dma_latency, as suggested by Rafael wo=
-uld
-> > > > allow this to be managed, I think.
-> > > >
-> > > > Although, I am not fully convinced yet that re-using
-> > > > /dev/cpu_dma_latency is the right path. The main reason is that I
-> > > > don't want us to limit the use-case to CPU latencies, but rather al=
-low
-> > > > the QoS constraint to be system-wide for any type of device. For
-> > > > example, it could be used by storage drivers too (like NVMe, UFS,
-> > > > eMMC), as a way to understand what low power state to pick as syste=
-m
-> > > > wide suspend. If you have a closer look at patch2 [1] , I suggest w=
-e
-> > > > extend the genpd-governor for *both* CPU-cluster-PM-domains and for
-> > > > other PM-domains too.
-> > > >
-> > > > Interested to hear your thoughts around this.
-> > >
-> > > Hey, just wanted to see if you have managed to digest this and have
-> > > any possible further comment?
-> >
-> > The reason why I thought about reusing /dev/cpu_dma_latency is because
-> > I think that the s2idle limit should also apply to cpuidle.  Of
-> > course, cpuidle may be limited further, but IMV it should observe the
-> > limit set on system suspend (it would be kind of inconsistent to allow
-> > cpuidle to use deeper idle states than can be used by s2idle).
->
-> Agreed!
->
-> >
-> > I also don't think that having a per-CPU s2idle limit would be
-> > particularly useful (and it might be problematic).
-> >
-> > Now, it is not as straightforward as I thought because someone may
-> > want to set a more restrictive limit on cpuidle, in which case they
-> > would need to open the same special device file twice etc and that
-> > would be quite cumbersome.
-> >
-> > So in the end I think that what you did in the $subject patch is
-> > better, but I still would like it to also affect cpuidle.
->
-> Okay. I will update the patches according to your suggestions!
->
-> >
-> > And it needs to be made clear that this is a limit on the resume
-> > latency of one device.  Worst case, the system wakeup latency may be a
-> > sum of those limits if the devices in question are resumed
-> > sequentially, so in fact this is a limit on the contribution of a
-> > given device to the system wakeup latency.
->
-> Indeed, that's a very good point! I will keep this in mind when
-> working on adding the documentation part.
+Replace kmalloc -> kmalloc_array in drm/amd/amdgpu/amdgpu_ras.c .
 
-Well, this also means that using one limit for all of the different
-devices is not likely to be very practical because the goal is to save
-as much energy as reasonably possible in system suspend while
-respecting a global resume latency constraint at the same time.
+As per said in the Documentation/process/deprecated.rst, dynamic size
+calculation should not be performed in memory allocator function
+arguments due to the risk of overflow.
 
-Using the same limit on a local contribution from each device to the
-combined latency is not likely to be effective here.  Rather, I'd
-expect that the best results can be achieved by setting different
-resume latency limits on different devices, depending on how much
-power they draw in each of their idle states and what the exit latency
-values for all of those states are.  In other words, this appears to
-be an optimization problem in which the resume latency limits for
-individual devices need to be chosen to satisfy the global resume
-latency constraint and minimize the total system power.
+Signed-off-by: Moktar SELLAMI <smokthar925@gmail.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Again, thanks a lot for your feedback!
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
+index 540817e296da..8dbb9e349a8e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
+@@ -2566,7 +2566,7 @@ static int amdgpu_ras_badpages_read(struct amdgpu_device *adev,
+ 		goto out;
+ 	}
+ 
+-	*bps = kmalloc(sizeof(struct ras_badpage) * data->count, GFP_KERNEL);
++	*bps = kmalloc_array(data->count, sizeof(struct ras_badpage), GFP_KERNEL);
+ 	if (!*bps) {
+ 		ret = -ENOMEM;
+ 		goto out;
+-- 
+2.34.1
 
-Anytime!
 
