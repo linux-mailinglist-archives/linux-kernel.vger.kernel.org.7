@@ -1,114 +1,132 @@
-Return-Path: <linux-kernel+bounces-827998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D4CB93A6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:55:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73691B93A7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 484251890DC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:55:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86CFF1900333
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CBC302745;
-	Mon, 22 Sep 2025 23:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5813F2FE07D;
+	Mon, 22 Sep 2025 23:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QodwpJl8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJW0RerF"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277871D5178;
-	Mon, 22 Sep 2025 23:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0D02FC877
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758585311; cv=none; b=edcrSC6OaL7xS9m6/GnPWUfFSTUAQLVus2O6KCH2rPeeiTA04SjHsY3JFN+Q18lBTB/X2MCZb0ug/rxZ033HOaBs5ATOaDc9+hYI2sJNMG8KKKKhbR3NrYn5pSVccxG+lRBy/+kl4w2p1z2gh647L0yB9mQ4oFG6PB0NyjWtgu8=
+	t=1758585434; cv=none; b=OUmvJPPIwv/cqDM26RYPvwXm5KROBParukRYtPtrjWm7BIk/+6OXtVX3q0i/S5IiKRCjJp/kz7aHuK/T5akfxz6nlqVzcEpt3Nv336TdoFNF5juK+Dm9SzSrDN8iLxzPQGqJDbUqoLToKuAtFmxXxIM9jwd46AQ1kRnIoFNSnxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758585311; c=relaxed/simple;
-	bh=GUUIv/PzkqvPIBWCrFcZLWsQWgOY8kSV/evTaZnYusU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=JV4nLz1c15P6FDrhUcqmnPKlbtPJMV+t5SQFeLXUGMwiwmHe+7sPtvgD7JM3IJZr+ohdll+Svh/eSrv49YzLyoLYupBempRMPDdaWT1JOl99a2WtB5ap/Rgs77NQfVT+ViP5pG3xCT+svoA9YxVrpUMmwx8NBYPruUam70+hN0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QodwpJl8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4220C4CEF0;
-	Mon, 22 Sep 2025 23:55:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1758585310;
-	bh=GUUIv/PzkqvPIBWCrFcZLWsQWgOY8kSV/evTaZnYusU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QodwpJl8LgA0tAs/Ed4XU6lKjkVzRkPVTn1mvkR2m700vx+dg/C36CMq5EA430M8j
-	 NFeO6/Xy2OpKGxh1br3FuHqcjlxhm4YjqqjYErMdYpUEcrYss0BHlgCklJoyJWmHV8
-	 9ClCI0kaA6W4SSO1tML+maH2YGRDO4KUh/IlOcXE=
-Date: Mon, 22 Sep 2025 16:55:09 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Michal
- Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, Alexei Starovoitov <ast@kernel.org>,
- Peilin Ye <yepeilin@google.com>, Kumar Kartikeya Dwivedi
- <memxor@gmail.com>, bpf@vger.kernel.org, linux-mm@kvack.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, Meta kernel team
- <kernel-team@meta.com>, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v2] memcg: skip cgroup_file_notify if spinning is not
- allowed
-Message-Id: <20250922165509.3fe07892054bb9e149e7cc06@linux-foundation.org>
-In-Reply-To: <552lz3qxc3z45r446rfndi7gx6nsht5iuhrhaszljofka2zrfs@odxfnm2blgdd>
-References: <20250922220203.261714-1-shakeel.butt@linux.dev>
-	<20250922160443.f48bb14e2d055e6e954cd874@linux-foundation.org>
-	<552lz3qxc3z45r446rfndi7gx6nsht5iuhrhaszljofka2zrfs@odxfnm2blgdd>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758585434; c=relaxed/simple;
+	bh=B63YuYx5gKQMFWvVm9fq5GYU6bV+k57a1fas2yIrTxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=flhVHnoHvHxBHMDPchUXA3Lk2fI7tlDZ9tFGQqYr0jEqvNCiFvmOTO0fSC/b0zWB63BscFFchW1r8hzwNW7XhmGsekFe4IBpYV3/z2t7u6uwCqDy5HA0cvVkRcXXql0tyUEJNVRK45GRhWhWKx/uLNWmEhWOpvpsSgXBF2+AV3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kJW0RerF; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3327f8ed081so1574220a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:57:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758585433; x=1759190233; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IODUA9zga0m/nOGRKLCJjuNE/B+/uoV/AOO8W3swHIU=;
+        b=kJW0RerFNPIXvrsJg/WaefyDyydMJO+FT1tDVh1nJyCSRhGnu5IjESJOTvp62Hgloy
+         48WfYqqZGyVCEEfCjJlTkO3+v5e5yzM2cAdjrTpuHlcvTqGQapT5MoybhVy8Dr81i6IM
+         dIluqnW2jcwDqwDI/WxK2v3rWOOMOTtmGRkztVfuxLUCKbLAtkEGfzT5QrdQ9Z0hlmpf
+         DjDg5LpyjARyy4iXN9yi06acwE5c2XuORdXg1oik7rkXHXYED0Yz1KSgueP3eWBAh4ni
+         zwVIPZ8LcU6CZSi3UW+HkBgcNEQeruv5qnK4SR5eMwJPOk42jl1Q+ahUWtkAqga6PlHk
+         ZU3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758585433; x=1759190233;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IODUA9zga0m/nOGRKLCJjuNE/B+/uoV/AOO8W3swHIU=;
+        b=hJiLo3ECLfHtMDBZRcTdA2PfGBbxDv9jtoVdkn51Jjx4GPoyWS7KNFXsmYSzSk9lRm
+         DnJdp+/tFCvDG/+RCfVvbSmCUQnYLf86GNJORR63U+rpXfh6Jf0DiB/MVgmfhZnuB2Ho
+         +TDlydUl7U3n9hnf363uimbTD15C/SU58LnkwWizJgZXw+2iC9RQfPj3OLTWfiEZUQNI
+         hJ4tybTdcv8FLeScuVjBatFEe9C2koHSSAdQq9r1dP45bgdZDbjloVwYco/UktL63VVl
+         DYHLWaKGMUSa5NtaNQmj1JPXE6vi4mQUYqySRusSiaSofrpsQp5nURkCgxJhK3isNWIu
+         +ZwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCFGgxsigTbh8XC5C+DrL8ymRRizITHNhVjPgJvlXMdD5xtAEgNtb/w98HUPFxIhLp+1GVVulyfLC+hB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMao4FFc/+y5nsmRObg1wnJGjAa6U85Lr6VC89V6KfHM0c/K9o
+	e8g7tMb/l2iZ7BqpGEbOIXf8nukOez2FCigYjAe7oyHO6msqDBgr7D/8
+X-Gm-Gg: ASbGncvyNaFCiPctjMugBa+j4ca9OAakxWDimUeBn3d/u/o8C/gd8T+2x9r5YpBb0/2
+	H+VzYcx/+jZErYZjfOHVjZxkebqcVUikxeahPWbuZzpNVc6hzju1ZsEpGBNLHQDqYBRSJAfV3lY
+	Kwg6qnB0cX6+TTzD/+4xlGxnnnAUI3AwqO14qcb4igjAVvTxjoI8lc/AhvmwuIsZ19LGtzEteb0
+	W81C63pw9OILmHM3koBuOByBQpBv1YVS1Z+tfeRJO4ENBCnIbSLC5ymSidaNR3opEgpkarzgLmT
+	2gaV2R3ooaTlXoIOhWIjWT96DE8vyOFjt3Ex4sfIodnHMApJfIOsluw0XH0zekUTAQA5jxnvPcn
+	VY4dEkaRbWBHGM+g+tV3w7sbx
+X-Google-Smtp-Source: AGHT+IFLSQPMmtJG7J8JigPkcsPkbNvPUMLxpyd334NCh2UapNWwuDV3lLZRY3JDLwxXh9eDESpAQA==
+X-Received: by 2002:a17:90b:55c6:b0:32e:dd8c:dd2a with SMTP id 98e67ed59e1d1-332a8ceaae3mr951669a91.0.1758585432510;
+        Mon, 22 Sep 2025 16:57:12 -0700 (PDT)
+Received: from [192.168.0.13] ([172.92.174.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77e0bb98790sm11669657b3a.9.2025.09.22.16.57.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 16:57:11 -0700 (PDT)
+Message-ID: <8ca8192e-ccc1-41bb-a913-dd633d65ac54@gmail.com>
+Date: Mon, 22 Sep 2025 16:55:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/11] riscv: Memory type control for platforms with
+ physical memory aliases
+To: Samuel Holland <samuel.holland@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
+ Conor Dooley <conor@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, uwu@icenowy.me
+References: <20241102000843.1301099-1-samuel.holland@sifive.com>
+Content-Language: en-US
+From: Bo Gan <ganboing@gmail.com>
+In-Reply-To: <20241102000843.1301099-1-samuel.holland@sifive.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Mon, 22 Sep 2025 16:39:53 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
-
-> On Mon, Sep 22, 2025 at 04:04:43PM -0700, Andrew Morton wrote:
-> > On Mon, 22 Sep 2025 15:02:03 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> > 
-> > > Generally memcg charging is allowed from all the contexts including NMI
-> > > where even spinning on spinlock can cause locking issues. However one
-> > > call chain was missed during the addition of memcg charging from any
-> > > context support. That is try_charge_memcg() -> memcg_memory_event() ->
-> > > cgroup_file_notify().
-> > > 
-> > > The possible function call tree under cgroup_file_notify() can acquire
-> > > many different spin locks in spinning mode. Some of them are
-> > > cgroup_file_kn_lock, kernfs_notify_lock, pool_workqeue's lock. So, let's
-> > > just skip cgroup_file_notify() from memcg charging if the context does
-> > > not allow spinning.
-> > > 
-> > > Alternative approach was also explored where instead of skipping
-> > > cgroup_file_notify(), we defer the memcg event processing to irq_work
-> > > [1]. However it adds complexity and it was decided to keep things simple
-> > > until we need more memcg events with !allow_spinning requirement.
-> > > 
-> > > Link: https://lore.kernel.org/all/5qi2llyzf7gklncflo6gxoozljbm4h3tpnuv4u4ej4ztysvi6f@x44v7nz2wdzd/ [1]
-> > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > > Acked-by: Michal Hocko <mhocko@suse.com>
-> > 
-> > Fixes a possible kernel deadlock, yes?
-> > 
-> > Is a cc:stable appropriate and can we identify a Fixes: target?
-> > 
-> > Thanks.
-> > 
-> > (Did it ever generate lockdep warnings?)
+On 11/1/24 17:07, Samuel Holland wrote:
 > 
-> The report is here:
-> https://lore.kernel.org/all/20250905061919.439648-1-yepeilin@google.com/
+> On some RISC-V platforms, including StarFive JH7100 and ESWIN EIC7700,
+> RAM is mapped to multiple physical address ranges, with each alias
+> having a different set of statically-determined Physical Memory
+> Attributes (PMAs). Software selects the PMAs for a page by choosing a
+> PFN from the corresponding physical address range. On these platforms,
+> this is the only way to allocate noncached memory for use with
+> noncoherent DMA.
 > 
-> I am not sure about the Fixes tag though or more like which one to put
-> in the Fixes as we recently started supporting memcg charging for NMI
-> context or allowing bpf programs to do memcg charged allocations in
-> recursive context (see the above report for this recursive call chain).
-> There is no single commit which can be blamed here.
+>   - Patch 1 adds a new binding to describe physical memory regions in
+>     the devicetree.
+>   - Patches 2-6 refactor existing memory type support to be modeled as
+>     variants on top of Svpbmt.
+>   - Patches 7-10 add logic to transform the PFN to use the desired alias
+>     when reading/writing page tables.
+>   - Patch 11 enables this new method of memory type control on JH7100.
+> 
+> I have boot-tested this series on platforms with each of the 4 ways to
+> select a memory type: SiFive FU740 (none), QEMU (Svpbmt), Allwinner D1
+> (XTheadMae), and ESWIN EIC7700 (aliases).
+> 
 
-I tend to view the Fixes: as us suggesting which kernel versions should
-be patched.  I'm suspecting that's 6.16+, so using the final relevant
-patch in that release as a Fixes: target would work.
+Hi Samuel,
 
+Any update on this? I see ESWIN has started their EIC7700 upstreaming
+effort, and it'll likely rely on this. Is there any follow up series?
+BTW, Icenowy's working on upstreaming the Verisilicon DC8200 driver.
+His work also depend on this patchset in order to test on JH7110/EIC7700
+
+Thanks!
 
