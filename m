@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-827835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F5C8B933AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:28:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39B2DB933B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3878B16B600
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:28:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55E171907D1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917AF31770B;
-	Mon, 22 Sep 2025 20:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B3731A068;
+	Mon, 22 Sep 2025 20:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PBSC9QF6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xzj8NSRh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E628D2AE68;
-	Mon, 22 Sep 2025 20:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A1C2AE68;
+	Mon, 22 Sep 2025 20:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758572904; cv=none; b=WqCXvpt3Ay7Vb9HDI3/BfGhV2j9X/iYa3Q1iBq7/JBaEL/Jnjjtij214L//ekWDs7fYw4f/SuXJ2f6j8rJTAPiblaUHfk/pvOJFsCrQs/vHDpbzx6Qm/jT2k6vNd5Bmt23yqf8vCRyJ1WUzPyDOeI3f4eBhJuNYGF/mkBdw27do=
+	t=1758572962; cv=none; b=WMe2+3HmZNQstCnRnbai03+MxbUbuah482ESgxeSREJMM7qp0Kpad5xouubYWz/dM2x3ZWjMZy9amWqxAmwGTFvGLQigNuNURg8+2tP30UWIU1N6YE+fxpPdfEu0Cc7Xu27Pttw1GkV9ExQtUiRZpJrk7Pp6KokhBB9j+D5BkSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758572904; c=relaxed/simple;
-	bh=Aa9Zejc4i8sog0iYwcjJT4xP56rN2qZlLPTRblqZAaE=;
+	s=arc-20240116; t=1758572962; c=relaxed/simple;
+	bh=NHqia+Ky4WBJqsYqstgFB+541LM71n6NxiCPBPEen7I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k4XDNkYrACPOh/r6Wbifr2fVi6Ca/cfmvzE+VZtsZFPxAQQ0YcUUOxQj2Ps4O9Uxk9VEklo1I/+4TVMP4SkHKyMJPBlTs02FQNLnWljC4kCGgm2cgT95fvio6XNgvDXk/fvL6UxCvMwENkQQCewGAWsiHv/CY4VLe1aE2UpYmEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PBSC9QF6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE159C4CEF0;
-	Mon, 22 Sep 2025 20:28:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LdwHSk8n5SsZOfkOzMIhDu/ei/40EELSIK9oJ/d983wiF6kuvasl4IJK2gTGS+sZHvD83RwObuwZWEla5jWUjJRPU+KGarPeGthsUg5S7/daqMbIi7L1IQNCs/6W7fzUSSFB80ag4THPXprhE8BRq3Xr/4alJxO4DuRd+8NGUkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xzj8NSRh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C593C4CEF0;
+	Mon, 22 Sep 2025 20:29:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758572903;
-	bh=Aa9Zejc4i8sog0iYwcjJT4xP56rN2qZlLPTRblqZAaE=;
+	s=k20201202; t=1758572958;
+	bh=NHqia+Ky4WBJqsYqstgFB+541LM71n6NxiCPBPEen7I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PBSC9QF6pqsF2+zLfwkVCsjWpG9lrQ+2r7K9dhgeW/Oz+a66ouHDvYJQYo9UbYFNi
-	 iC8Qr7RqS/KWNqi/S/JTu+eSHT4+jxF2wOnUlKKEeLt8LJ6TEH1URHf9aA9P/QDoMR
-	 YQICxbkZtfWfFN1oLx4lvP7y6WJL5eqc+k50FcM/qYfhuizowaos2Tde2vS4CyVgCS
-	 UDYY3HK2tC2lGyzBvaOSpXTn0IJ6wJtw/wapQUQ57f8fo9rln2M9AM/78zuWfTbEMT
-	 /Td5RZCgDGe80DoZSETUywfRnsoPNnzMsk12XPPCmaEFHzo3ZD1cN55be1seiNTR1L
-	 zwf4fNDHbF68Q==
-Date: Mon, 22 Sep 2025 15:28:21 -0500
+	b=Xzj8NSRh56Ro4/R36u4lWQlslhpVvUecYqfG+UFTqA1vej8AU7qGv6RcOUwGhYrw3
+	 7/YWFK2Tnj2FO1H+fzqaUjRzXo2oaVac2qwurFbVBCzrWxQVlQgpS2lbLXzN4ON/Sq
+	 jHBQc0aNUSE8pyA1korfp1MImBUEm3r1P1yNJjsuRsYZQ9QltuDsuI5WonAO3Tq4Py
+	 +WGE8nlU6x/ncNj2o4HiU0M9MvdvsQhFPtiPNF4bUkbAtUCd8CQI3HUGxYfoEM5P/4
+	 1Fs6JmGpjAi7XONwhxBMY1Q474vp//LAfSIoCMRC4uxmv262p//fj7X3uNcUbNvvda
+	 gRGrSZy10b3Qw==
+Date: Mon, 22 Sep 2025 15:29:17 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Cristian Cozzolino <cristian_ci@protonmail.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, linux-kernel@vger.kernel.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Conor Dooley <conor+dt@kernel.org>,
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-remoteproc@vger.kernel.org,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-mediatek@lists.infradead.org,
-	Sean Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org,
-	phone-devel@vger.kernel.org
-Subject: Re: [PATCH 09/10] dt-bindings: arm: mediatek: Add MT6582 yarisxl
-Message-ID: <175857289696.1276760.5254518096401967149.robh@kernel.org>
-References: <20250920-mt6582-v1-0-b887720f577d@protonmail.com>
- <20250920-mt6582-v1-9-b887720f577d@protonmail.com>
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH v3 01/12] dt-bindings: remoteproc: qcom,pas: Add iommus
+ property
+Message-ID: <175857295701.1277953.1772407338158672337.robh@kernel.org>
+References: <20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com>
+ <20250921-kvm_rproc_pas-v3-1-458f09647920@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,17 +64,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250920-mt6582-v1-9-b887720f577d@protonmail.com>
+In-Reply-To: <20250921-kvm_rproc_pas-v3-1-458f09647920@oss.qualcomm.com>
 
 
-On Sat, 20 Sep 2025 20:23:34 +0200, Cristian Cozzolino wrote:
-> Add an entry for Alcatel Pop C7 (OT-7041D) smartphone board, named
-> yarisxl, based on MT6582 SoC.
+On Sun, 21 Sep 2025 01:10:59 +0530, Mukesh Ojha wrote:
+> Most Qualcomm platforms feature Gunyah hypervisor which handles IOMMU
+> configuration for remote processor and when it is not present, the
+> operating system must perform these configurations instead and for that
+> firmware stream should be presented to the operating system. Hence, add
+> iommus property as optional property for PAS supported devices.
 > 
-> Signed-off-by: Cristian Cozzolino <cristian_ci@protonmail.com>
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 > ---
->  Documentation/devicetree/bindings/arm/mediatek.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
