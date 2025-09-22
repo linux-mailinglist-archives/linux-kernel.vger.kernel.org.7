@@ -1,178 +1,172 @@
-Return-Path: <linux-kernel+bounces-827237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63AECB913F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:52:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EEFEB9142F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A589118A4627
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:52:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D86521893723
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BEE3093AA;
-	Mon, 22 Sep 2025 12:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7BD309DDF;
+	Mon, 22 Sep 2025 12:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AX0tZCik"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Byx+4gU0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H0IPFaD0"
+Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D372A3081C1
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2A530AADA
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758545502; cv=none; b=Bh2BqRjUrbyEHGWHMgV1Jfdw5BEPUTt2K2Q419BeuNjEbRI5AQnYsuxsUZKDgv/04IDpMdWxbnmBkQV49vaT5p5Cj3RWPKW7ertAQnRvodsonvYCLr/yz2Yftj+LQOUyb5wPcuJ9GqcOGg1JCONamFgWajBqIz2dYAvSZtrr1K4=
+	t=1758545700; cv=none; b=a5pqLPGp+4uDK/eC83XO3YoaQUJ+wW3JA/DCgLuqu31bQfw2tskC5UnanZIf2UYRuLxgnsRMIcMJjjqk0nSDF11+aiuaWi3mH2Oz6X6Eu5K4aebpVx1Ht3MdBb3MAUP7pJ/oxUEJayIPM2u4/Evzz+p3I/krFUkBrxKRz7RCECM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758545502; c=relaxed/simple;
-	bh=ZQ5VUijvYpFvcyKNThwBlQAIlb7oH7NFolfh4z9Dr98=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=LxqISIs6T6N9loTIfH4Ki+++YkAQs5ECiqtfRn24Y7ul3jqeSeITn+YTPhTx6feCXJnx1ZotWzuFnmLsjaGR5M8+3fp/W6A7UGeFD7cVoXAERgr1pTcRYrYExJ6muLnHHf+J9AkrA6Bajf2Wxnk64Ua9ItoA0DpNYo7H0K9Y2EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AX0tZCik; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250922125137epoutp023fe0521c6fe1cfb63fb121e2d34aa91d~nm9AfQvma3199931999epoutp02h
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:51:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250922125137epoutp023fe0521c6fe1cfb63fb121e2d34aa91d~nm9AfQvma3199931999epoutp02h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758545497;
-	bh=HYKpfIouK921vQ6QGHevYxod5Jzj4y8Z8mu37Q92pkQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AX0tZCik32940iGDLI1f49OSHAKkS2a5SUJ3wFKhIIa3Jv/io1GR2nT2sN4xtJbT7
-	 dPS0FAlhERk5PoYMP45zSHyuPlkArcCeB71/nFEpxcpOiqloTwUmLrMLJzHXMf8JgK
-	 rdbxW7wDrW/aJ6aCijLvwln+2kDNxVclVUvsOcRY=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250922125137epcas5p33b1bb74798ea240fe00b72dd28bdb560~nm9AQ_CM41720517205epcas5p3k;
-	Mon, 22 Sep 2025 12:51:37 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cVjfc3V7Xz6B9m5; Mon, 22 Sep
-	2025 12:51:36 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250922125135epcas5p3ac2131266f68cc18eaed3921a42bdf9b~nm8_pSBu81431814318epcas5p3u;
-	Mon, 22 Sep 2025 12:51:35 +0000 (GMT)
-Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250922125134epsmtip1cbbc4d374f9f2829a520f3f1670c2f7c~nm89m51rS0171401714epsmtip1K;
-	Mon, 22 Sep 2025 12:51:34 +0000 (GMT)
-Date: Mon, 22 Sep 2025 18:21:25 +0530
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
-	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com
-Subject: Re: [PATCH V3 04/20] nvdimm/label: Update mutex_lock() with
- guard(mutex)()
-Message-ID: <20250922125125.tm3yapxoxd5lhmat@test-PowerEdge-R740xd>
+	s=arc-20240116; t=1758545700; c=relaxed/simple;
+	bh=6bhiT9mkGiHIxyKAIy5xJM5rxL4wlxNGm9Smq3GZIGg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=WM+jSAUClOsmjIFN+wvy3rjgLyhoPipRfoOblXN52KeaIlQD74Uf2dVxmIeOhNujnI2umj89SHxGz+or+B59z83sesCH0gSy0MTOC8T/2KwDTZ0dZ7PnW7YW4m9NQzCJwN8/YJSCeZlIQzxPuBSHsSyZ/CW9RhZCrk89YMYq32k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Byx+4gU0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H0IPFaD0; arc=none smtp.client-ip=103.168.172.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailflow.phl.internal (Postfix) with ESMTP id B4DF41380189;
+	Mon, 22 Sep 2025 08:54:55 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 22 Sep 2025 08:54:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1758545695;
+	 x=1758552895; bh=t36qDepR8M2DCIZbR0pCgjLUAnazHFDPHVI50t3UlR0=; b=
+	Byx+4gU0eym5kWVlcDXwUEDI2l9mrErWD5C903u60dnEyaLum9cP1ZuS5KIp+xgV
+	ZPhoSR2eD/GkgL674LQAABX9NWS2vtfKwaGvmIMh7dn5zMpqei4YDaKF6Sg1lPqM
+	/QYUc0VveyM9znhOFNe0I0Peulxx/MpOzCUQKlSEgPHlsEhuUOD2y6mRk3lDEj02
+	VonOHqKY3rqz628mNujxcDBLfdikoS4DkYJFuSM7iVjrVgPyCF1G4xzwHAbC28ak
+	vvUqx1uImSJZ0/2d1CaWpImUIRc3GyUcfQGlUAGQNOWn2gPJHn5TvlH9sflGdsBd
+	Q080PKF/+Wx2IOzfgFAq3g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758545695; x=
+	1758552895; bh=t36qDepR8M2DCIZbR0pCgjLUAnazHFDPHVI50t3UlR0=; b=H
+	0IPFaD0Bba71iIapHDtSV1s5vKNTmSWg76ZWGgJDWMeMe2uVZv93YLpC6F+3M7WS
+	7WR8RZqD6IX9RfHdr78aWjw7DCVCJJDQQAyQV579FYFi5N053564JuPCiuOaoK7E
+	jCNWhlk6xzOLMU//k4yHk7ANSniWbtRW6bN+QjnKeFTwCD651tkhjiL2UZK6FT4a
+	N+e/Yd+67opM9BzKp4zMCF1uEB2IdBcU4BDnt7dF2IYQtXXKkU2s8zbUPCs7FRgT
+	esVXVJWVpb7ki7wYLCkfM9rz4wm7rTHNen16vLJGDFL/xHUUzNYiuVSL2AtqWUoo
+	LzUsfYTN6qltg5PEeMddw==
+X-ME-Sender: <xms:HkfRaIhwl2BmHC6VY4isyWFya-k04jD6ylI2zmgaqD6hV2yhCcrcAw>
+    <xme:HkfRaBA26ySSRAPgSQvT1XYEaaJYts20E0XhpKyqZSIXJCR2OE9jzNtNSAFz8UVQR
+    HSJ4LKxnkBuSkZFk1c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehjeeltdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedviedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtth
+    hopehrmhhkodhkvghrnhgvlhesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthho
+    pehnrghordhhohhrihhguhgthhhisehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhosh
+    htvgguthesghhoohgumhhishdrohhrghdprhgtphhtthhopehsuhhrvghnsgesghhoohhg
+    lhgvrdgtohhmpdhrtghpthhtoheplhhirghohhhurgegsehhuhgrfigvihdrtghomhdprh
+    gtphhtthhopehlihhlihhnjhhivgeksehhuhgrfigvihdrtghomhdprhgtphhtthhopehl
+    ihhnmhhirghohhgvsehhuhgrfigvihdrtghomhdprhgtphhtthhopeigihgvhihurghnsg
+    hinhdusehhuhgrfigvihdrtghomh
+X-ME-Proxy: <xmx:HkfRaCigs8Fbeh9nddaAG96q7IyZQvw3aeIYEeOmKg-CRsa1QbL_6Q>
+    <xmx:HkfRaCv2xmbmRFslevLLrkDTmmKL1-lKBkFUSXaessp7GPqBHtniAg>
+    <xmx:HkfRaE64XxBzr53OG3J0xus2BYuY6_ti3fdW9pt59OdOalF9khdfew>
+    <xmx:HkfRaNtIkKJV0zAg5uDGA1LBG8hBH_va0vo4RVrbVfhnUgCeeDvgOQ>
+    <xmx:H0fRaKVMmb-oKkRydhvIG9b_njKCBCZyzUrTrxLNyaHqA221GeTlQIFn>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 3037D700065; Mon, 22 Sep 2025 08:54:54 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250917154656.00001c2f@huawei.com>
-X-CMS-MailID: 20250922125135epcas5p3ac2131266f68cc18eaed3921a42bdf9b
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="-----ZxWg4Xdj5J3Rn97nhBblfMsRvMrJ.qI_ZCg1wtmDaptzyAW=_26db1_"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250917133034epcas5p2c9485e40fce4c3a5a826cc94d515b25d
-References: <20250917132940.1566437-1-s.neeraj@samsung.com>
-	<CGME20250917133034epcas5p2c9485e40fce4c3a5a826cc94d515b25d@epcas5p2.samsung.com>
-	<20250917132940.1566437-5-s.neeraj@samsung.com>
-	<20250917154656.00001c2f@huawei.com>
+X-ThreadId: AFFCV0QGVXfF
+Date: Mon, 22 Sep 2025 14:51:59 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Xie Yuanbin" <xieyuanbin1@huawei.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Ard Biesheuvel" <ardb@kernel.org>, "Dave Vasilevsky" <dave@vasilevsky.ca>,
+ "David Hildenbrand" <david@redhat.com>, "Eric Biggers" <ebiggers@kernel.org>,
+ "Kees Cook" <kees@kernel.org>, liaohua4@huawei.com, lilinjie8@huawei.com,
+ linmiaohe@huawei.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ "Russell King" <linux@armlinux.org.uk>,
+ "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Michal Hocko" <mhocko@suse.com>, nao.horiguchi@gmail.com,
+ "Nathan Chancellor" <nathan@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Russell King" <rmk+kernel@armlinux.org.uk>,
+ "Steven Rostedt" <rostedt@goodmis.org>, "Mike Rapoport" <rppt@kernel.org>,
+ "Suren Baghdasaryan" <surenb@google.com>, "Vlastimil Babka" <vbabka@suse.cz>,
+ "Will Deacon" <will@kernel.org>
+Message-Id: <9c0cd24c-559b-4550-9fc8-5dc4bcc20bf7@app.fastmail.com>
+In-Reply-To: <20250922082843.26722-1-xieyuanbin1@huawei.com>
+References: <727caa4f-5be5-4b59-a10e-8dc9bbc384bf@app.fastmail.com>
+ <20250922082843.26722-1-xieyuanbin1@huawei.com>
+Subject: Re: [RFC PATCH 1/2] ARM: mm: support memory-failure
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
--------ZxWg4Xdj5J3Rn97nhBblfMsRvMrJ.qI_ZCg1wtmDaptzyAW=_26db1_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-
-On 17/09/25 03:46PM, Jonathan Cameron wrote:
->On Wed, 17 Sep 2025 18:59:24 +0530
->Neeraj Kumar <s.neeraj@samsung.com> wrote:
+On Mon, Sep 22, 2025, at 10:28, Xie Yuanbin wrote:
+>> It would be helpful to be more specific about what you
+>> want to do with this.
+>> 
+>> Are you working on a driver that would actually make use of
+>> the exported interface?
 >
->> Updated mutex_lock() with guard(mutex)()
+> Thanks for your reply.
 >
->Say why.
-
-Sure, I will update it in next patch-set.
-
->>
->> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
->> ---
->>  drivers/nvdimm/label.c | 36 +++++++++++++++++-------------------
->>  1 file changed, 17 insertions(+), 19 deletions(-)
->>
->> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
->> index 668e1e146229..3235562d0e1c 100644
->> --- a/drivers/nvdimm/label.c
->> +++ b/drivers/nvdimm/label.c
->> @@ -948,7 +948,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
->>  		return rc;
->> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
->> +		if (!label_ent->label) {
->> +			label_ent->label = nd_label;
->> +			nd_label = NULL;
->> +			break;
+> Yes, In fact, we have developed a hardware component to detect DDR bit
+> transitions (software does not sense the detection behavior). Once a bit
+> transition is detected, an interrupt is reported to the CPU.
 >
->Perhaps it will change in later patches, but you could have done
->		if (!label_ent->label) {
->			label_ent->label = nd_label;
->			return;
->		}
->as nothing else happens if we find a match.
-
-Yes, I have updated it in later patch. I will update it here itself.
-
+> On the software side, we have developed a driver module ko to register
+> the interrupt callback to perform soft page offline to the corresponding
+> physical pages.
 >
->> +		}
->> @@ -998,9 +998,8 @@ static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
->>  		label_ent = kzalloc(sizeof(*label_ent), GFP_KERNEL);
->>  		if (!label_ent)
->>  			return -ENOMEM;
->> -		mutex_lock(&nd_mapping->lock);
->> +		guard(mutex)(&nd_mapping->lock);
->>  		list_add_tail(&label_ent->list, &nd_mapping->labels);
->> -		mutex_unlock(&nd_mapping->lock);
->
->Not sure I'd bother with cases like this but harmless.
->
->>  	}
->>
->> -	mutex_lock(&nd_mapping->lock);
->> +	guard(mutex)(&nd_mapping->lock);
->>  	list_for_each_entry_safe(label_ent, e, &nd_mapping->labels, list) {
->>  		struct nd_namespace_label *nd_label = label_ent->label;
->>
->> @@ -1061,7 +1060,6 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
->>  		nd_mapping_free_labels(nd_mapping);
->>  		dev_dbg(ndd->dev, "no more active labels\n");
->>  	}
->> -	mutex_unlock(&nd_mapping->lock);
->This is a potential functional change as the lock is held for longer than before.
->nd_label_write_index is not trivial so reviewing if that is safe is not trivial.
->
->The benefit is small so far (maybe that changes in later patches) so I would not
->make the change.
+> In fact, we will export `soft_offline_page` for ko to use (we can ensure
+> that it is not called in the interrupt context), but I have looked at the
+> code and found that `memory_failure_queue` and `memory_failure` can also
+> be used, which are already exported.
 
-Sure, I will revert it back in next patch-set
+Ok
 
-Regards,
-Neeraj
-
+>> I see only a very small number of
+>> drivers that call memory_failure(), and none of them are
+>> usable on Arm.
 >
->
->
->>
->>  	return nd_label_write_index(ndd, ndd->ns_next,
->>  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
->
+> I think that not all drivers are in the open source kernel code.
+> As far as I know, there should be similar third-party drivers in other
+> architectures that use memory-failure functions, like x86 or arm64.
+> I am not a specialist in drivers, so if I have made any mistakes,
+> please correct me.
 
--------ZxWg4Xdj5J3Rn97nhBblfMsRvMrJ.qI_ZCg1wtmDaptzyAW=_26db1_
-Content-Type: text/plain; charset="utf-8"
+I'm not familiar with the memory-failure support, but this sounds
+like something that is usually done with a drivers/edac/ driver.
+There are many SoC specific drivers, including for 32-bit Arm
+SoCs.
 
+Have you considered adding an EDAC driver first? I don't know
+how the other platforms that have EDAC drivers handle failures,
+but I would assume that either that subsystem already contains
+functionality for taking pages offline, or this is something
+that should be done in a way that works for all of them without
+requiring an extra driver.
 
--------ZxWg4Xdj5J3Rn97nhBblfMsRvMrJ.qI_ZCg1wtmDaptzyAW=_26db1_--
+      Arnd
 
