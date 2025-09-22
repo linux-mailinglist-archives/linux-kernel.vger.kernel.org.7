@@ -1,173 +1,112 @@
-Return-Path: <linux-kernel+bounces-826727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C28DB8F32A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:53:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02450B8F333
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6620B18986F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:53:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0E553BA66D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E80F2EC571;
-	Mon, 22 Sep 2025 06:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4AB2D2387;
+	Mon, 22 Sep 2025 06:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="laqNe9yZ"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYFCCN+s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1675C24167A;
-	Mon, 22 Sep 2025 06:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D39723E32D
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758523988; cv=none; b=gV54gZIQimfW6Zk4dv4lflPMkFhTeCdSz2KqIIMWKAcdBWO1twA/lF2pG+WN7BMiGNA1D3k7bxEPeEfMujbh6rMnB3qVxHTLTafMGze5UHiaOumj1JAyvViNgdfYttKzkAHu7Yc0ilv06CDkyOEyCk8MFwWnmcsR0ldbdaH3YyQ=
+	t=1758524148; cv=none; b=J5WmbeAFq+nxbaTstYKJETP4eWSkCZfyDJl0ZU60qJvLwb4ITctn1xsZ8iokTZbCk/pXtnbpSYBphes9gOTucdSvHQu5qu2iJTx4uA8ggTF06cPhjc5ck9CtHsLBRSM0YIvwCZJu3OlkoJm5h4jJZ9A7raASzURJT45H+P8tGsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758523988; c=relaxed/simple;
-	bh=Z9SzlnSaNkil4Uciv97Oc+wza+qYCN+LUYBG6Se0PYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=atyvg0Xo2LtWjR1qGQhlXXLUXf39omJws06rX8P2VAwJ2N+8N3f6Fh3Q7B53ii8sESVZ0nnS+fPLwGGb3HAdMVXt2EnkwXc0cdnKwHnUNornVbQlj6akAODZP9CfdInHYEm7keO1W6+k0c+Mq1Z+Sw2/ipU+YnUaj5Wg05N+xpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=laqNe9yZ; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=nt5V0m/6qItzzOB7/4FsyRK1vmNf2/WoHA2kRpeeqMg=; b=laqNe9yZRchL9LbZ2kHPC3oCZO
-	Y6LEAyDsEITEftd8JqCRe0zBPpRSE4Ly1u2pldD4D+/O9ufvdLJLoAekWGft97ydlnjmWYhzBm4h3
-	E8mrvRrW7SVah7y3TtzpE28D/9epGuaO0yZsXVSLmqhVzUxr8E8E30lxekc8ttgC6WZC055zhdGq1
-	KdtKwShmbyGlA6rtuJWtxpPYm87oMVHw+1rUt4nLAhNjSsMSKkZEyJwoKr5t29u42iKkRyh6KGnq6
-	82OL18ehLYWIxqbWGrA5S+KQqMrt+beMgsOxwedqNmCMWPT90Or1YXNjRu5jdX01/DvLIUux1LwKI
-	ARo1oAkQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v0aPp-00000008FNC-1Jtv;
-	Mon, 22 Sep 2025 06:52:51 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 45E07300230; Mon, 22 Sep 2025 08:52:48 +0200 (CEST)
-Date: Mon, 22 Sep 2025 08:52:48 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Jiri Olsa <jolsa@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Mike Rapoport <rppt@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH] x86/ibt: make is_endbr() notrace
-Message-ID: <20250922065248.GO3245006@noisy.programming.kicks-ass.net>
-References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
- <20250918130543.GM3245006@noisy.programming.kicks-ass.net>
- <CADxym3ae8NGRt70rVO8ZyHa3BvWhczUkRs=dVn=rTRMVzrU9tA@mail.gmail.com>
- <CAADnVQ+hOdOpCR6s_GyO_7xxehCPBHSttidia38P5xFie6yjnw@mail.gmail.com>
- <20250918165935.GB3409427@noisy.programming.kicks-ass.net>
- <CAADnVQLP6-s_dtGpEcnFaVJfDW12rTOS2qk5k0Fyvn=4Gn7gBw@mail.gmail.com>
- <CADxym3Z6Ed5xjDMvh4ChRvrw_aLidkGrkgbK+076Exfmp=m3SA@mail.gmail.com>
+	s=arc-20240116; t=1758524148; c=relaxed/simple;
+	bh=cStxNPR0+6f9gxfR6Jcf39Q6otOQTf0Wm6ycPUO8mOo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EBLAjUZCEYc2H0vWcYT4YwF+P/OOQhwALyJ+HTIx816hqwjqDIG/p8VJvt2J2FwXEXmsWT+J1+H2icX96qYb411GxDculvKzB/Rgi8v8DY1fwH35AHyvMKl7X7KP9TUOhrRogeOoAonzCKkRtK/3aun7HeG+qx6LPWLxLFaj25w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NYFCCN+s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F352FC19422
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:55:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758524148;
+	bh=cStxNPR0+6f9gxfR6Jcf39Q6otOQTf0Wm6ycPUO8mOo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NYFCCN+sQQx+IbiznA1is+TIzAsRZYPUGjwb1qz+EdVcOZDYJq0UIfVKhwsqtO2sL
+	 FMZy+A11cCj3xMiIc+b4xwikpCHn6VzM+WsW2Lu8LniZ6miM27QFC2DXOuPMp0zHm3
+	 TsOdLHd+WdsdOZIi/IcblQTGbYC9L4eszsdK6uWco0qYgjPhsMh28U0S+q7FKK8ihi
+	 FBL4Pkyc6HlYPdQhbJnWL3+rJRjvNYmwDvZu5I8G1By/6m20Nr2oCkDg1E6YlaZQ0w
+	 OXDJyXuvxfx1dIONP2rR5qS97g06RlxyX/9+auZNGw9UdltlFrQnB7kBhTVjlayC9V
+	 Wr/z6b7B66ARg==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-579e9fd5474so3398071e87.0
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 23:55:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXpKjQtlsU5HrfFMcZ6X4aWnYHrFcdZGvdOc1AYznWEdQ3RsHG8sfKmtAflSz2i/VSUg/21AsKbOy20xtE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8qsFN33tdZMvtpFaHEuxPzA263klBLBEEFljaGSZe/FeCLJtB
+	6zXiXVusDOXI0SbMgn1n/ryUar8qQ5VmTek7mEfGjzoTQ0mqqe093XH6L6p51W6/ttDL2l2xHq1
+	44EbsI0eT3ApqRrZlyipSuEpBjdwv/8M=
+X-Google-Smtp-Source: AGHT+IFEuuIizw00M5tOMIlDV79GLzIy8VumPMrZQwg+c8cGe2MnwvUkmO7jOkF/XPepPXL3XhK5bQF243dup2ewVbE=
+X-Received: by 2002:a05:6512:39c8:b0:571:75c8:43a5 with SMTP id
+ 2adb3069b0e04-578932c711amr5316823e87.1.1758524146258; Sun, 21 Sep 2025
+ 23:55:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADxym3Z6Ed5xjDMvh4ChRvrw_aLidkGrkgbK+076Exfmp=m3SA@mail.gmail.com>
+References: <20250918103010.2973462-10-ardb+git@google.com>
+ <20250918103010.2973462-15-ardb+git@google.com> <19b370e4-d6a8-4a60-bc14-4adb55616040@sirena.org.uk>
+In-Reply-To: <19b370e4-d6a8-4a60-bc14-4adb55616040@sirena.org.uk>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 22 Sep 2025 08:55:35 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGrbQW-0ERuHWz1cGhnm81j1_2Kf_FEUT5pzZZa=9Cuyw@mail.gmail.com>
+X-Gm-Features: AS18NWDhOO8LR2J_B_pV8xirK6v2Tu0IG5sHBmb-PL3i5tNUhl9Y83YVb_5Bcvc
+Message-ID: <CAMj1kXGrbQW-0ERuHWz1cGhnm81j1_2Kf_FEUT5pzZZa=9Cuyw@mail.gmail.com>
+Subject: Re: [PATCH v3 5/8] arm64/fpsimd: Drop special handling for EFI
+ runtime services
+To: Mark Brown <broonie@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 19, 2025 at 09:13:15AM +0800, Menglong Dong wrote:
+On Thu, 18 Sept 2025 at 15:10, Mark Brown <broonie@kernel.org> wrote:
+>
+> On Thu, Sep 18, 2025 at 12:30:16PM +0200, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
+>
+> > Now that the use of kernel mode FP/SIMD is generally permitted when IRQs
+> > are disabled, the only purpose served by the EFI-specific fallback code
+> > in fpsimd.c is the case where an EFI call occurs from hardirq or NMI
+> > context. No such cases are known to occur in practice, and it is
+> > doubtful whether calling into the EFI firmware for any reason under such
+> > conditions would be a good idea to begin with.
+> >
+> > So disallow EFI runtime services in such cases. This means all the
+> > fallback code can be dropped.
+>
+> This is a really nice simplification, with the fixup rolled in:
+>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
 
-> Ok, let me describe the problem in deetail.
-> 
-> First of all, it has nothing to do with kprobe. The bpf program of type
-> kprobe-multi based on fprobe, and fprobe base on fgraph. So it's all
-> about the ftrace, which means __fentry__.
+Sadly, this is not as simply as I had hoped.
 
-Well, that's not confusing at all. Something called kprobe-multi not
-being related to kprobes :-(
+So even if we address the irqs_disabled() case, there are three
+remaining code paths where EFI pstore may end up calling the
+SetVariable() runtime service in hard IRQ or NMI context: panic(),
+oops_exit() and emergency_restart(). So disallowing this is
+problematic, as EFI pstore might be the only way to do a post mortem.
 
-> Second, let me explain the recur detection of the kprobe-multi. Let's
-> take the is_endbr() for example. When it is hooked by the bpf program
-> of type kretprobe-multi, following calling chain will happen:
-> 
->   is_endbr -> __ftrace_return_to_handler -> fprobe_return ->
->   kprobe_multi_link_exit_handler -> ftrace_get_entry_ip ->
->   arch_ftrace_get_symaddr -> is_endbr
-> 
-> Look, is_endbr() is called again during the ftrace handler, so it will
-> trigger the ftrace handler(__ftrace_return_to_handler) again, which
-> causes recurrence.
-
-Right.
-
-> Such recurrence can be detected. In kprobe_multi_link_prog_run(),
-> the percpu various "bpf_prog_active" will be increased by 1 before we
-> run the bpf progs, and decrease by 1 after the bpf progs finish. If the
-> kprobe_multi_link_prog_run() is triggered again during bpf progs run,
-> it will check if bpf_prog_active is zero, and return directly if it is not.
-> Therefore, recurrence can't happen within the "bpf_prog_active" protection.
-
-As I think Masami already said, the problem is the layer. You're trying
-to fix an ftrace problem at the bpf layer.
-
-> However, the calling to is_endbr() is not within that scope, which makes
-> the recurrence happen.
-
-Sorta, I'm still sketchy on the whole kprobe-multi thing.
-
-Anyway, I don't mind making is_endbr() invisible to tracing, that might
-just have security benefits too. But I think first the ftrace folks need
-to figure out how to best kill that recursion, because I don't think
-is_endbr is particularly special here.
-
-It is just one more function that can emit a __fentry__ site.
-
-Anyway, something like the below would do:
-
-Note that without making __is_endbr() __always_inline, you run the risk
-of the compiler being retarded (they often are in the face of
-KASAN/UBSAN like) and deciding to out-of-line that function, resulting
-in yet another __fentry__ site.
-
-An added advantage of noinstr is that it is validated by objtool to
-never call to !noinstr code. As such, you can be sure there is no
-instrumentation in it.
-
-(the below hasn't been near a compiler)
-
----
- arch/x86/include/asm/ibt.h    | 2 +-
- arch/x86/kernel/alternative.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/ibt.h b/arch/x86/include/asm/ibt.h
-index 5e45d6424722..54937a527042 100644
---- a/arch/x86/include/asm/ibt.h
-+++ b/arch/x86/include/asm/ibt.h
-@@ -65,7 +65,7 @@ static __always_inline __attribute_const__ u32 gen_endbr_poison(void)
- 	return 0xd6401f0f; /* nopl -42(%rax) */
- }
- 
--static inline bool __is_endbr(u32 val)
-+static __always_inline bool __is_endbr(u32 val)
- {
- 	if (val == gen_endbr_poison())
- 		return true;
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 69fb818df2ee..f791e7abd466 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -1108,7 +1108,7 @@ void __init_or_module noinline apply_returns(s32 *start, s32 *end) { }
- 
- #ifdef CONFIG_X86_KERNEL_IBT
- 
--__noendbr bool is_endbr(u32 *val)
-+__noendbr noinstr bool is_endbr(u32 *val)
- {
- 	u32 endbr;
- 
+As such an IRQ could potentially occur at a time when the FP/SIMD unit
+is being used both in task and in softirq context, there still needs
+to be some special handling, even though a) this condition is
+vanishingly rare, and so having elaborate logic like we do today that
+is never exercised is not great
+b) much of the logic deals with SVE which is user space only, and we
+can just disregard that under the conditions where we may enter in IRQ
+context.
 
