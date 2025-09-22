@@ -1,155 +1,194 @@
-Return-Path: <linux-kernel+bounces-827583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D43B92260
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:13:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C60B92273
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7847D4E1366
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:13:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A47D442F07
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E4F310627;
-	Mon, 22 Sep 2025 16:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F823112A3;
+	Mon, 22 Sep 2025 16:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="TQnx8Ydl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hi0s1aBr"
-Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JzDrXIPX"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095142E8B74
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE481310785
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758557615; cv=none; b=MLSdgPSqJ1LNVibP4JyH2iYvYGLwo7qYUrrp2x5DTnrXwAB4kMYOyOZ6EPmFJbNTd2hV4Kz9L4fI3CDp6kNU8K0yzR1OCzRvNgum3ILyPI3gj9gePmnx9xGfWEuqiTXuJU4DZR0YvrC9BuEHMRd/oH8epEn/hu9Fof11hWIFFYo=
+	t=1758557670; cv=none; b=lGK/66z//OiSkEd7LwbhDfgoeCE/0WtoeVj9tUfj7oM+sqpLXoFucTwiSNxC0m8RSD4BYTQXYPldsz+OHI8Epc2Su7NSj15FZXCKCswcdvgRXJjlk93mMJ7vl+jEpk3UHfBEyN6mZB5fLSwbvXofQ57M0XbZMZ8Deu0Qtg2iAms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758557615; c=relaxed/simple;
-	bh=UbYINqfr9M12tQLD6VtbEp4Z3iPBoHHDToP4tnR+KfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KJSp8sJL3vniIVoIJcRJ10xroF5RhWb3fGGumtU/hhqZmA/7/JFGoi4FAjRad+/bwwGhP/wKyll+tDB3ba3s07OlZPJ4Ae0WRXy1i6GF1jPUQpPY1mqcdn+tvZ0Ukxcj1J1QwdG6xM8mcb1Lnmihj5F1UWT6306SpFlialuhfbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=TQnx8Ydl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hi0s1aBr; arc=none smtp.client-ip=202.12.124.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailflow.stl.internal (Postfix) with ESMTP id 2B6AF130096C;
-	Mon, 22 Sep 2025 12:13:31 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Mon, 22 Sep 2025 12:13:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1758557611; x=
-	1758564811; bh=dL1BvnI43qIxZyYhkmHSIoN6CjGw1NlqI0MDthq8w9Y=; b=T
-	Qnx8YdlA4Bixu00SPEK/E8uvAGBG2ZuirkZjqZKZo/wDFN0WRIAnizm/yvSZF83x
-	BmdlJ1RcJUGgsSjj5tzUcqK72WaHBV+mGoM5OxTBVe7bceH5j20FSqOice/U0oV7
-	tZYQ1Ko5CkWnQVtzfn7WPvH/xo7CYZL7b7547T7LvGfS0DriblTobFRTN/ZotfzS
-	VygQDe5ZZLfa85WItHWDmaBdXLLUGDkL8W4Xm2t1bm56HjRd6T4h58i0f8CQnmao
-	f7qsQzt3/W4GLfKWViAGC7Co59zUGTHF2Wa8plaJY+lS/V0cDghQRSp1P00i/l3K
-	BXBMkDs2RCFcwmPijizdA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1758557611; x=1758564811; bh=dL1BvnI43qIxZyYhkmHSIoN6CjGw1NlqI0M
-	Dthq8w9Y=; b=hi0s1aBrjyLf7KpNYh61eeN/01oa41y0Twc5U6m79rDCb53AYb4
-	EYQluMA77XCpQZEtclcH/mys9nSq3mE2eLvage7i9Lt5t9uW16XinFd40gSaFREL
-	9mK6m6wv3FLanJ54jQl3rkqMYN65XZYphC+w6nXrioR/4UCuYTCx7sv1uneAWnFA
-	QKq5vC7kRGJnDTn2wqHRwgGkdegNVPtt8CBiveOxIjkkDH1WPp2+MXObGUG4SG47
-	VNUk8j/rdSWpXgZ8TbHdGTlJvgalTY/wfDmbr1cGIIHT8QMWHLHhE1qmdVr69+aY
-	OSZU7yGdV4E96BM2+tEYdCgmWjWIZacaiGQ==
-X-ME-Sender: <xms:qXXRaK5-PYvzCD-E4oS9Ik0F6FYumOp1szuHE9oykxxD7AxwsUSMEg>
-    <xme:qXXRaBj_BoMm96RPO87hvhtaaQ1FadVMcam7rJGq8T0xnuwbqlZMtlrGi2k6gMc_G
-    zYFWYtXsOml9aSULf7uOiQC5ypZsTaOSJ5iXAXvQNY_kNpmiWDu9Uw>
-X-ME-Received: <xmr:qXXRaA2_gtxaz7-WQj2u54xSP0sG8CImf6lHFwbpocnBaEsVBXDTUe8sVGmI-g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehkeeftdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
-    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
-    frrghtthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtledu
-    hfeffeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepfeeg
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehshhgrkhgvvghlrdgsuhhttheslh
-    hinhhugidruggvvhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhi
-    ohhnrdhorhhgpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpth
-    htohephhhughhhugesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhn
-    fhhrrgguvggrugdrohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghsse
-    horhgrtghlvgdrtghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggt
-    lhgvrdgtohhmpdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgiipdhrtghpthhtoh
-    eprhhpphhtsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:qXXRaPXSdJN4P154GrwvVLIh1WSMjw0ByeJs2_M-9ZHvnVz7bW_O8g>
-    <xmx:qXXRaF2oCbgrdnQipG4V-EJDmcNAtLy5ujm7sjce1rHVBZzIwq78qA>
-    <xmx:qXXRaIi-q8guWTWB33mTkkr8Rc5WfOmsH_jJntYH7t0pCfpYHv4BKg>
-    <xmx:qXXRaNKajF62yjoOdyjGK-bBpSpiA3k19zT7_TB0fJf3AglwuNL7Yw>
-    <xmx:q3XRaE7y_bkgd_zKul3O4e5ZFYOdeRkuQziAifMzK1YenzemQPgDJ5iZ>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 22 Sep 2025 12:13:29 -0400 (EDT)
-Date: Mon, 22 Sep 2025 17:13:26 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
-	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 1/5] mm/page_vma_mapped: Track if the page is mapped
- across page table boundary
-Message-ID: <wnenjcqvr2lzqaqnxyc6tbtd7smv2hepajtjxl72kundsfaisk@k2mlxpzuzhbv>
-References: <20250919124036.455709-1-kirill@shutemov.name>
- <20250919124036.455709-2-kirill@shutemov.name>
- <7qkpt4ia3qryjp2xo2ywy7qydav6nijghasr7biwctd5ah7dat@t3epq5dzt2sd>
+	s=arc-20240116; t=1758557670; c=relaxed/simple;
+	bh=30ZsOOdTdIvFOBRZCGShkP5CSMuuIYqi33XXYVJfMrs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BG8ghiujZMwcseBWJPpkCkzZ3MhMPXa2EAkJv055RxniUycfyeZv0wgXWKnTHn2lU7QslDUTcWmCTMw1S9z1JXsHQY45R4Jq++o51lPqNN+cUj2656XXzKYBRd9z8Z6QsmpzkHwnkV3udohTB5/tAVUMTL4Ss7e2D4EkZLxqNvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JzDrXIPX; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-7bb414430d4so12999896d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:14:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758557667; x=1759162467; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1CBVYfoU6o53B/HSfKNkUVa7COgkMVy8im6SMIh04P4=;
+        b=JzDrXIPXRU2UCSSn4kuBPixSk1g/FtByvAx9hJU6MtwShiUTTBSYP/y1P1eIoVZ2NJ
+         KKIdzo6EjVmyh0o09eyP4swRVgk4q3+Wh9dHeZpjgnzZCdjT1Q1QzlmNvIIHL9RAHKuG
+         kp6DfyjiqfbnN4sIqxfL2JDtTok/LdMTL+No8Cq6a3k5ERJGfpzeh4y8EuN+c2QBSvSV
+         x9Q5evHnn459lMMx9u7tIchbsvooGHXvlTdOmdcYyc2GMYVpKGQtSzQLjTOuCR7CxvSQ
+         BjiklwLT9cfvUCqpAZOW5g6p6oLfsuZM0CjyMd/jY969gG9OyQNUjjOEM1IiHYcNerrN
+         j25w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758557667; x=1759162467;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1CBVYfoU6o53B/HSfKNkUVa7COgkMVy8im6SMIh04P4=;
+        b=vTSoOmyfR+TENXWlDfGgJApvkMjAZmNFQDEYBaiSUddSCkH5TWCVwB89l4V7w7YVOp
+         ywXIOb7xh3MTXpTmVlPPp8twvOvhS2e6ISttxu7CWhwP3AwmAsQeSOJUwFujvTXms9B8
+         cunK6tqpf2u6GqYwzRncHTEc591vzrtiTGzJ6Pztb3YrtkzRylXG4xs5Jg/f7IK7CQKu
+         MAArsE4CLrGll/weWkLO0ZdhfjBhZbHi6nKdC3P80YQ8u4zUTlEK6IY/X5wZKZk+qpUP
+         sS0MQvgVdQ0gJlW/HB22Vv/5vJqLvkg/N4XffR9isv44KGvQS1p7cCyWRMsnKRvk65rY
+         zFOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXa52x1df2LuPfvxZQ99+eJY1BI20qYu5LufFT45o7ji7dCFQsYOzNmwK3qOQlbeThT9a7uuxuRMMw0HM0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx505GR5sNE2mB3L07bzESkRx9c9Gin3MLfDbCcMcKp1US5I1X5
+	deCAyZyTVYeFub0FzntiQEcArzQsF8EfdN+rX2K0oOPSId4iYuQVYFpcamoKjnplWg2CJJwkQd9
+	2f6u0Ujw5fVu4g1n25xOiSTPM2ipLbK4=
+X-Gm-Gg: ASbGncvsiagBtUEPaWIneou49LrElBtlrbYaKngFGjZTY5LfWyFcO5UjCckB/5RZNrZ
+	/nKamNo2tNqNlu29z01EC0slD4HQz9dMJdff0rD2kp3PKvWdFUpR9dosv6UemYY6wKk4p4UY+wT
+	121+pQnbRIrfyD7kJmpLMlqOi25xbbx6dpuXuW+LsaKsjXESGkR51dib26Hizure3jqZbVCGRGA
+	x4yanjdj87ErZ65a6pxHGHJsqELVPFHps2sll9tZs5cmwLOeQody7vP4CuKh6G1y3ww3iL8QrUs
+	7dS1Bc0nrc+pK/kQqudoxhAS4fL+K8TY/DyuLr7OdtKwqueLF5sjca54ZD2K3XQcSh6tU76RNaO
+	1cQ+nODh5Q4KdvcMWGeyD
+X-Google-Smtp-Source: AGHT+IEqZU/wF0sn1DWt8sMOHpiPXw7fk9nZf6HIqD/usItSrrexiSvbEo6NMOuRV89WWu9lrxUB2IlEFQz8631SxmU=
+X-Received: by 2002:ad4:5f88:0:b0:77b:3734:8a6e with SMTP id
+ 6a1803df08f44-798c54f30e5mr145325036d6.29.1758557666331; Mon, 22 Sep 2025
+ 09:14:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7qkpt4ia3qryjp2xo2ywy7qydav6nijghasr7biwctd5ah7dat@t3epq5dzt2sd>
+References: <20250922082417.816331-1-rajasimandalos@gmail.com>
+ <da3e2b5a-a5da-4526-9884-8789990ebf95@suse.com> <qmf3xwqq4hqj4issgci2g76eghytaqxihnrp236ithh2istkkf@n4s54vp3hblr>
+In-Reply-To: <qmf3xwqq4hqj4issgci2g76eghytaqxihnrp236ithh2istkkf@n4s54vp3hblr>
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 22 Sep 2025 11:14:14 -0500
+X-Gm-Features: AS18NWCMq_JNOli-tfaoAf_osXE7CkxbRo-UTZnodnIN7idYXbnwuLpYslWJ6-g
+Message-ID: <CAH2r5mu9xUQz5e1Mf-dBCNh2_y2jnxPYMhmuHr1bVqKC6atd8w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] cifs: client: force multichannel=off when max_channels=1
+To: Enzo Matsumiya <ematsumiya@suse.de>
+Cc: Henrique Carvalho <henrique.carvalho@suse.com>, rajasimandalos@gmail.com, 
+	linux-cifs@vger.kernel.org, sfrench@samba.org, pc@manguebit.org, 
+	ronniesahlberg@gmail.com, sprasad@microsoft.com, tom@talpey.com, 
+	bharathsm@microsoft.com, linux-kernel@vger.kernel.org, 
+	Rajasi Mandal <rajasimandal@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 19, 2025 at 01:25:36PM -0700, Shakeel Butt wrote:
-> On Fri, Sep 19, 2025 at 01:40:32PM +0100, Kiryl Shutsemau wrote:
-> > From: Kiryl Shutsemau <kas@kernel.org>
-> > 
-> > Add a PVMW_PGTABLE_CROSSSED flag that page_vma_mapped_walk() will set if
-> > the page is mapped across page table boundary. Unlike other PVMW_*
-> > flags, this one is result of page_vma_mapped_walk() and not set by the
-> > caller.
-> > 
-> > folio_referenced_one() will use it detect if it safe to mlock the folio.
-> > 
-> > Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
-> 
-> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
-> 
-> > ---
-> >  include/linux/rmap.h | 5 +++++
-> >  mm/page_vma_mapped.c | 1 +
-> >  2 files changed, 6 insertions(+)
-> > 
-> > diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-> > index 6cd020eea37a..04797cea3205 100644
-> > --- a/include/linux/rmap.h
-> > +++ b/include/linux/rmap.h
-> > @@ -928,6 +928,11 @@ struct page *make_device_exclusive(struct mm_struct *mm, unsigned long addr,
-> >  /* Look for migration entries rather than present PTEs */
-> >  #define PVMW_MIGRATION		(1 << 1)
-> >  
-> > +/* Result flags */
-> > +
-> > +/* The page is mapped across page boundary */
-> 
-> I think you meant "page table boundary" in above comment.
+. >Do we even need ->multichannel flag at all?
 
-Right. Will fix in the v3.
+Yes - especially in the future.   The goal is for the user to have
+three options:
+1) (preferred) "multichannel" (max channels will be dynamically
+selected and can change) the client gets to choose how many channels
+to connect to based on what it sees in the output of the most recent
+query interfaces call (it can change on the fly as server dynamically
+adds and removes channels or networks become temporarily unreachable)
+2) "max_channels=3D"   This is for the case where user wants to choose
+the number of channels rather than have the client automatically
+(hopefully soon in the future) choose it for you
+3) if server has mchan bugs, allow client to mount with no
+multichannel (or equivalent max_channels=3D1)
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+But ... "remount" also has to work for the three above (and currently
+doesn't) and this is what I am hoping the recent patches can fix (?)
+but haven't tested them enough yet
+
+> I'd actually like to propose going even further and having the whole
+module behaving as if multichannel was always on, even with
+max_channels=3D1
+
+Obviously the goal (would love patches for this) is to turn
+multichannel on by default, have the client select the appropriate
+number of channels by default etc. but we have to let the user
+override it (as described above)
+
+On Mon, Sep 22, 2025 at 9:59=E2=80=AFAM Enzo Matsumiya <ematsumiya@suse.de>=
+ wrote:
+>
+> On 09/22, Henrique Carvalho wrote:
+> >Hi Rajasi,
+> >
+> >On 9/22/25 5:24 AM, rajasimandalos@gmail.com wrote:
+> >> From: Rajasi Mandal <rajasimandal@microsoft.com>
+> >>
+> >> Previously, specifying both multichannel and max_channels=3D1 as mount
+> >> options would leave multichannel enabled, even though it is not
+> >> meaningful when only one channel is allowed. This led to confusion and
+> >> inconsistent behavior, as the client would advertise multichannel
+> >> capability but never establish secondary channels.
+> >>
+> >> Fix this by forcing multichannel to false whenever max_channels=3D1,
+> >> ensuring the mount configuration is consistent and matches user intent=
+.
+> >> This prevents the client from advertising or attempting multichannel
+> >> support when it is not possible.
+> >>
+> >> Signed-off-by: Rajasi Mandal <rajasimandal@microsoft.com>
+> >> ---
+> >>  fs/smb/client/fs_context.c | 7 +++++++
+> >>  1 file changed, 7 insertions(+)
+> >>
+> >> diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
+> >> index 072383899e81..43552b44f613 100644
+> >> --- a/fs/smb/client/fs_context.c
+> >> +++ b/fs/smb/client/fs_context.c
+> >> @@ -1820,6 +1820,13 @@ static int smb3_fs_context_parse_param(struct f=
+s_context *fc,
+> >>              goto cifs_parse_mount_err;
+> >>      }
+> >>
+> >> +    /*
+> >> +     * Multichannel is not meaningful if max_channels is 1.
+> >> +     * Force multichannel to false to ensure consistent configuration=
+.
+> >> +     */
+> >> +    if (ctx->multichannel && ctx->max_channels =3D=3D 1)
+> >> +            ctx->multichannel =3D false;
+> >> +
+> >>      return 0;
+> >>
+> >>   cifs_parse_mount_err:
+> >
+> >Do we even need ->multichannel flag at all? Maybe we could replace
+> >->multichannel for a function that checks for max_channels > 1?
+>
+> I agree with Henrique.
+>
+> I'd actually like to propose going even further and having the whole
+> module behaving as if multichannel was always on, even with
+> max_channels=3D1 -- the only difference being the need to run the
+> query_interfaces worker.
+>
+> This is probably work for another patch/series though.
+>
+>
+> Cheers,
+>
+> Enzo
+>
+
+
+--=20
+Thanks,
+
+Steve
 
