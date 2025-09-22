@@ -1,195 +1,124 @@
-Return-Path: <linux-kernel+bounces-827015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B832EB8FE42
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:02:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33B1B8FE51
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FAC818A17FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:02:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C06F7ADFC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8B92C2349;
-	Mon, 22 Sep 2025 10:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579252C187;
+	Mon, 22 Sep 2025 10:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M7Yzv5JW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cHO1HZ5M"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD3E246763
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB8D2FD7B1
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758535313; cv=none; b=TA6hg6ifW8AWusa9Z/WuSsjv6ChFFQ06B8IVxqKutfi8uLzz1VlKSl8ybcd51EWUlclqnxis2eWtr3Ldcskg5rPzJc/1Agrm9FEtwWGvH1z4ND7PHlyyt+YJ07hSbG46S14i8qH/3/T67DQoE/FQzAKyA7oWiDdMiPjJgetE++I=
+	t=1758535318; cv=none; b=C7JYdrH1VU8ecH7o+17zkIWhz9y9hRPcwYndfYPDNwCRVNICjlu9cFFD8A3jGf+I3m+f0HPqpQpHTo19ImAiSFhF7gh801iRTrxhsdtkInG5tFKZ1gYdzSKPaGfxiuluBnmIu0I8AGFM6CDItRv4C1JzDUgLqh8VoliAxHR3Bvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758535313; c=relaxed/simple;
-	bh=kmtBnFX9cPzIhV8jePoZbgCrPoLPtjXSYEzZso3twiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIWxGKOWNCxLMY3eI/5YK6NJ3ZvgYwwb/ydadgXTR1ZLT+FV54oKAH0bjm/Y/QcNZh5ExueGjx3KK03y5YbQVhD+Y9ewMe/Vzd7FBlSMCVm2cGkkyXbSt8z6fcmSZmt+bHYrVsBnBGFo5CMKvoD1OwwkJ82S1Awj95t6kIhD4AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M7Yzv5JW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58M91mV3005834
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:01:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=XiYvYz09Ku6t3DKDC+/4pI6q
-	fS4bj3bJjEj9wOzslhA=; b=M7Yzv5JW0kzo5jqhfuTrRAr2NwtyCdfXVTLVHncP
-	tYI97i8LcDHQB5HgXes9kVdNM0fTPrfKEikVW5TvqhegrojVEAyu1/H2qs8MNc1Q
-	VoGZZ2bvd/2C2225s7s7U2IXWuu/zxXLD83t1PfAVQ3Ex8YzYzw0wNK9XuifolUL
-	qqRXE5YC0eTFuK2tGjUDYH6nA6ORf7KuA9VYoRVFUXn0VWb7pzvJvozCpd3h5gtV
-	/REIvnhJ0oIMAcL7e/3p4yZFYBjUDllStnUmYL2t9DGEVn5PNJv3j6oZfV4pORIB
-	3OJcgmPs9kjwgyNQzEhh7tJjyNTuVaYGLy7e3Tuz6HfQTA==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499kv0vaqg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:01:50 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-84e6256b06dso20750185a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 03:01:50 -0700 (PDT)
+	s=arc-20240116; t=1758535318; c=relaxed/simple;
+	bh=GLC9unjLHcduutfU2De8SO6Cn5IZFndntQa/0T2wPQw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pq7VN8d/D2ljLOA8JJ6v9nOm8HMQnfnUNTvX0Rl8JWuCCrJCUxZNS/isJuyCaqlxEmTOQsi+TcEEypMECSBb2lMj204MnPctILY+jTuQhvkhv6Q/OWq5b7AcDTTI4rJbNp6ceHUq+kMXUg/Z/ZXeOekG1qqNJXk8SUUjNeZbcNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cHO1HZ5M; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46b303f7469so11183045e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 03:01:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758535315; x=1759140115; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y811XUkUAcjUYq9kF2IbC9o9QTenp6PpvmUvV5JyxCo=;
+        b=cHO1HZ5M30mU5lJ+mWZ3CuIc02V2Kw+aRK3u+qJ6OaPpYZ8smMH0dyYT9aBV+j5G3A
+         5RngpuRemNRb2YCNUzP0pJxaX78uxGNQLguZ0yyIh+JBfbANGjhPZKwxGrntsMUzTWLc
+         NRJeDWPfTtYQBs/HEpOUUeVHjTSLKGDAgm4Hu3A7+tYwLVpjk1G2K46X9NNey6VL5K+f
+         dohhc3vEM7Oi4lYHZQ2Wjn4MVuI2GpkSoOuoSIV+OmuRxuoVh+SjNY1kjNuchAEF5vcs
+         jdPQl+7bVFQsuuvHlfB3KTCLmKUHtkduO6xgd1qX+whD6UJo1QUDV77jRLywTeqCYSoV
+         Z77A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758535309; x=1759140109;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XiYvYz09Ku6t3DKDC+/4pI6qfS4bj3bJjEj9wOzslhA=;
-        b=dzllVxw4AtFco5rzLReraZs8G9sxXknlVAo2XE71PnA3UR9w4mvjxj70L4KjcYQyUa
-         eBiXeqYvIleWEuwnASJzAhq739TcStDhJEDPyKu3Ha/DOPYL6tFDkcRQ/2lBuIuAV6gE
-         0xviXDnav++mCD/oC7ntJnmyeCk/nF1s9P1AA59P9llc6LMSXH3W7lPHzvKeAZGQ7e6R
-         K2rUw1HjRmsTtALINrq4hzk+q81L80EcZmnty3qOj/yaO/f92M9YEkes+VxKKOuJ3eTQ
-         dx8OAVi3twZo+1k41oUG5TIObrdhcJv3m3B3p0BJ1CvUzLFgtScxnmrWVmTFR34ViN9B
-         ymRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnriyFknTH1OyGhP6Jeb7tnWrcbdOfGdplSP1uBAJrLD2/+KXxmBHYyv4sGhUKKKz+dL0egPQkgt6CiGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOeoLSGSqBwW4S+BjN2pGT86pb8YdaiOJc8NqW8f4W9102Aanv
-	O+tr7CW94C5ua8QI5AmIMIwdh9yBCBaQ5gUKwm5hr/8t/akynostT8wbOjTGZdcac3fFPZI8juP
-	mpjdqUoGABnNxY5kO/MYgW7tMzVvwpOjrEVqTLGApvN89Jbv1JiTUe04pgWVFFAc+gi8=
-X-Gm-Gg: ASbGncvU6XYoSEGa8gUdAX03nRpyATPdyc8J346hCv4cPw7ur7n5TVnMD4YplQUiQ9R
-	tcyxVDDLOC1ioxk5IQ6a5lKSKGzaG3YzaW2YTShzkkcKr/CkwKmzBdQjShyDKWGAa57mRqtm7sb
-	ewqhzfMBFyY08If8SDdxfo8E1TGeSn761utsQI+32+rVfcDod8PSvLUJNFyinztYimoZeMNxkhY
-	VGeT/kDTjVoSKbjC3cttfK+TNIcIuG2nwddNBaCEqqpzIFNIDHaYy8f7n5XxWhz3htxfpWLyhDk
-	RHvDh3lGRhRAeWbt5fyVg2ouFWUddV3L6xtS6p4SLU87KIuGguAmH+1/ImjkSplgf0yIgLjYx1f
-	6h982YO2oengHxnXnQtOJEK1ZY5x/5wwa9UM+cJmRScZDq4hzTEXg
-X-Received: by 2002:a05:6214:2129:b0:77e:dd3e:a0c9 with SMTP id 6a1803df08f44-79911fe849emr152956646d6.14.1758535309161;
-        Mon, 22 Sep 2025 03:01:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH3dwdmnAT8Ej8kna6zU+1gThqQvOHecwhWI8VJSZtuu94b0HchIuEq9o+Du143hQaVFqG97w==
-X-Received: by 2002:a05:6214:2129:b0:77e:dd3e:a0c9 with SMTP id 6a1803df08f44-79911fe849emr152956006d6.14.1758535308504;
-        Mon, 22 Sep 2025 03:01:48 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-361a1e077d0sm29027191fa.9.2025.09.22.03.01.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 03:01:47 -0700 (PDT)
-Date: Mon, 22 Sep 2025 13:01:44 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Chaoyi Chen <kernel@airkyi.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Yubing Zhang <yubing.zhang@rock-chips.com>,
-        Frank Wang <frank.wang@rock-chips.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Amit Sunil Dhamne <amitsd@google.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-        Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
-        Diederik de Haas <didi.debian@cknow.org>,
-        Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 4/7] drm/rockchip: cdn-dp: Support handle lane info
- without extcon
-Message-ID: <gcgiszrrpqkoi3mhajn4i72awbffqv6mayahmnyswoitxxmrgd@nr2z4cpurbwq>
-References: <20250922012039.323-1-kernel@airkyi.com>
- <20250922012039.323-5-kernel@airkyi.com>
+        d=1e100.net; s=20230601; t=1758535315; x=1759140115;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y811XUkUAcjUYq9kF2IbC9o9QTenp6PpvmUvV5JyxCo=;
+        b=oNglgjlvgqWF/M41IHhdGViA84ibgT8ZchPICZFhcgww/j01dJ3Rinh4Pp0Kwb3aHh
+         1Z+ot238O2xtNZ0anngRCUixPmUqI4bS7dMzC9O6lroc/HN6Tti88+WlikZpgmNUUlN9
+         gXFVW1H57zRF64+E0+6gbjj10xmxC/7KBkvc5vhmT1RDS5Nmdf0q/wQsnotDaE470kkQ
+         8IuZzitSYesACESrDOAEVFOJKTQanoQxdLqXK/Ra8XnfY0CYyT1xbfRvvom1+zXLZeo5
+         jYzZFEb19tK21xbnLpKUouhLcY/diIe+zziG9dPl0X7JmzHRrUXre4WrUYfVP4SsQeQf
+         SiUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXvrZyG62IVt8M3POLN/GxmLA2z+F8HzIa7ldgGtV3po/Vg2DHFFh6w3Kxs26GNO30EwsiLuc00fQ+W1xU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvkrRuwURTPjrrLM6p8/iwsfcUbMXktTIkKjKTtStS758mHAY+
+	3uC2YTsF479I2nNLN29TrvtihRdhXEtJu05bEAWMM0u3fIy9rZdsHmHO+K4JQbluaZo=
+X-Gm-Gg: ASbGnctOSt7NVGMhgYMAtdwEzQYxrT2Mtb2mDo3LvHCdo8BvrXfq7Ueyl43uzOmr6TG
+	nV/FxmBTjueG972vc1WnyBCsjISyJ83T5LA8hzNVGrYVLrEgWVedquhAp40qkJOSIHfXPKvm3dA
+	M+33YqkqG/geCzDZ4f1f2RSgQTLJJOMZGTKVph583OmUGrios9PoLmkW3Sj3sL2Qf8ku+ocQm9p
+	QcUMZyQGlD42POf2I6gyIEdazCZHX5Bgb+a4NHn706IfUqAQFBSx6ayeSGYlaYCFJbdE2j+J5At
+	zcyLVi+fnLX92yxb5jxXkycIKW64gW1Sm2bCIYBrVhWF4jxVnHPkK+bd+9KgFAhdGgc0bCt+EaN
+	2oTq+jK/8PVwuuXOE/HN2nNpgFvc+ihNj
+X-Google-Smtp-Source: AGHT+IHyiSZQlLreoJ3W3Ph8Q291wVJ5XeiMCjmBz4nM2qvfV1a5GmC8lVHC1BmJs2M+jyBWopho2A==
+X-Received: by 2002:a05:6000:144f:b0:3ea:e0fd:290a with SMTP id ffacd0b85a97d-3ee7ca198bcmr9624896f8f.12.1758535315118;
+        Mon, 22 Sep 2025 03:01:55 -0700 (PDT)
+Received: from [10.11.12.107] ([79.118.185.144])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee1095489asm18419549f8f.24.2025.09.22.03.01.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 03:01:54 -0700 (PDT)
+Message-ID: <c0a0daf4-e9e3-4152-8e5e-c7b52a30dae9@linaro.org>
+Date: Mon, 22 Sep 2025 11:01:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922012039.323-5-kernel@airkyi.com>
-X-Proofpoint-GUID: GqbOU3yRda9Bzzpkyfv0mhWXIKqc03w6
-X-Authority-Analysis: v=2.4 cv=RO2zH5i+ c=1 sm=1 tr=0 ts=68d11e8e cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=k09sBhBf5rVv_DnywOQA:9 a=CjuIK1q_8ugA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22 a=jGH_LyMDp9YhSvY-UuyI:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyNSBTYWx0ZWRfX/4svO3aomFI9
- 8tEBsoR/lmDC8HYmL9/o7Okxe1oop+y6VsmxwTny6GvIrx64wELr1WhocZUv5M0I23r9pvUrirJ
- oU4zbzbvma/6VOPCpwT7pA89w55SU0kaS8r2TYRHrHaETBqyul9XdyDS40o9eGEYvTSuaKI9T1m
- sR4Dn27jE/rw3CRBwvflXbNcw4iYDmeRlbpjxvIPUxfjIxg9QC7/2+QEzwQngDb+oHsTAU+X7CK
- y0/9GGe5DKjD01AyWlg0Q3BuS2gwZIZWpx/H1p+rSuJ/SoS5REObst1D6SXATxmcGLg+6sDDbyf
- ejY8NHmbdHj0C2yuEb3zeqXfDJDm0yD05K5L1iNS2LisqfRS3EoGjY8fYswFhShuRbj4ZOmD+3R
- kLxK9N8y
-X-Proofpoint-ORIG-GUID: GqbOU3yRda9Bzzpkyfv0mhWXIKqc03w6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-22_01,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 suspectscore=0 priorityscore=1501
- impostorscore=0 spamscore=0 adultscore=0 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200025
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v3 15/16] kmemdump: Add Kinfo backend driver
+To: Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
+ andersson@kernel.org, pmladek@suse.com, rdunlap@infradead.org,
+ corbet@lwn.net, david@redhat.com, mhocko@suse.com
+Cc: mukesh.ojha@oss.qualcomm.com, linux-arm-kernel@lists.infradead.org,
+ linux-hardening@vger.kernel.org, jonechou@google.com, rostedt@goodmis.org,
+ linux-doc@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
+ <20250912150855.2901211-16-eugen.hristev@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250912150855.2901211-16-eugen.hristev@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 22, 2025 at 09:20:36AM +0800, Chaoyi Chen wrote:
-> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+Hi,
+
+On 9/12/25 4:08 PM, Eugen Hristev wrote:
+> Add Kinfo backend driver.
+> This backend driver will select only regions of interest for the firmware,
+> and it copy those into a shared memory area that is supplied via OF.
+> The firmware is only interested in addresses for some symbols.
+> The list format is kinfo-compatible, with devices like Google Pixel phone.
 > 
-> This patch add support for get PHY lane info without help of extcon.
-> 
-> There is no extcon needed if the Type-C controller is present. In this
-> case, the lane info can be get from PHY instead of extcon.
-> 
-> The extcon device should still be supported if Type-C controller is
-> not present.
-> 
-> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
 > ---
-> 
-> Changes in v4:
-> - Remove cdn_dp_hpd_notify().
-> 
-> (no changes since v3)
-> 
-> Changes in v2:
-> - Ignore duplicate HPD events.
-> 
->  drivers/gpu/drm/rockchip/cdn-dp-core.c | 25 +++++++++++++++++--------
->  1 file changed, 17 insertions(+), 8 deletions(-)
-> 
-> @@ -1120,14 +1129,14 @@ static int cdn_dp_probe(struct platform_device *pdev)
->  		    PTR_ERR(phy) == -EPROBE_DEFER)
->  			return -EPROBE_DEFER;
->  
-> -		if (IS_ERR(extcon) || IS_ERR(phy))
-> +		if (IS_ERR(phy) || PTR_ERR(extcon) != -ENODEV)
->  			continue;
+>  MAINTAINERS               |   5 +
+>  mm/kmemdump/Kconfig.debug |  13 ++
+>  mm/kmemdump/Makefile      |   1 +
+>  mm/kmemdump/kinfo.c       | 293 ++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 312 insertions(+)
+>  create mode 100644 mm/kmemdump/kinfo.c
 
-This will break the case when the extcon is present. It should be
-(IS_ERR(extcon) && PTR_ERR(extcon) != -ENODEV)
+I tested the series on pixel 6 and I could see the backtraces correctly
+decoded by the bootloader:
 
->  
->  		port = devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
->  		if (!port)
->  			return -ENOMEM;
->  
-> -		port->extcon = extcon;
-> +		port->extcon = IS_ERR(extcon) ? NULL : extcon;
->  		port->phy = phy;
->  		port->dp = dp;
->  		port->id = i;
-> -- 
-> 2.49.0
-> 
+Tested-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
--- 
-With best wishes
-Dmitry
+Thanks!
 
