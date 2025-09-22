@@ -1,137 +1,169 @@
-Return-Path: <linux-kernel+bounces-826678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67DA4B8F1A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:21:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31AD5B8F1D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2E8172EA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:21:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06163189DF76
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274242517AC;
-	Mon, 22 Sep 2025 06:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E2F2F39BC;
+	Mon, 22 Sep 2025 06:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nPpM8eY2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PA7zgMWo"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA9317332C;
-	Mon, 22 Sep 2025 06:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0592F1FC3
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758522069; cv=none; b=RfEVxc94tyAErNJ7XerafiawFGIdQmzYkoUVp/3XCxljEHiqann7RUyYF38Lyi6BgC+s9YNfDJhcAeqwLYavyQqwuQOTn3kopQgvCoKSxkcoIYwSdhpSh75102DqsriguSCwr3V1WDTdEvLGguiL8DcTH7+3NcZ3j80POlj/N9c=
+	t=1758522113; cv=none; b=tDXK+NJi1xXT08xxd88hlV9iDlogZyUbDMbXiks1jeON5A5JN7yjDqVDeXGj1c/J/dLdqI7CZwCtnp8yw6cyBG4qd5t+3vh99nAbZcZPEkWGQ2IzUKBwjX6zECBq4ud+goIy+F/6kug94qlqyCrRu9HrTKjIv0yCdqHjRVidgyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758522069; c=relaxed/simple;
-	bh=9HiLbM40Ej70qCxUe+2HWgi1HQvvNJ4S7zpy/HKrHEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g9VgSgnpJkJRhPHLDjrUwjvSFXNz41s0n2eI58WKEvq4iCl6AidCPpGNwFQCoo3kxje8vZZ+NFDu4YQQFqmJ+jlFVzUaBeCsOUx2O6fBJo6zeuD9ybB9b/uPAMpdrKF9fvQTEJQ96lpKHwJ8lhAsKxWePp3mi36P3AD4/KokJCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nPpM8eY2; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758522068; x=1790058068;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9HiLbM40Ej70qCxUe+2HWgi1HQvvNJ4S7zpy/HKrHEY=;
-  b=nPpM8eY2DKfNhPqh2zf5uxz7+3eO228WkxFrDgmoPDHYBVl4/ZLgQ965
-   gsqFm7+fpXzXemlXHssG3lJP/jGGQFy1QnyzWPy3Z/XPia3ssrCnm5oH0
-   o+VaklOZDmHE8s5LPEFCOPi+NJvBaENPpND3W+sFzgKfccx66eigIA6Y2
-   ozoxYMkFhnN+LW5HNEmHEntjxuHiZm+f1B5L9E4SdPQxCzUo4MPtB9qd0
-   LrLz+6SAVZdETNZGUUOqQjnG5tDOli1xd5erGBhM1CiXkbKAyWUJo4EvT
-   rpRrHCY0TBlzoGmb9JsN4hMuX4tviEIRhAU4SfW/V0GG6mVk3DWjXcJSC
-   w==;
-X-CSE-ConnectionGUID: ry3Nl9RsS4SyBxUnkCR/Hg==
-X-CSE-MsgGUID: 2KfctUv4RfKy92v66H52PA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="86214258"
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="86214258"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 23:21:06 -0700
-X-CSE-ConnectionGUID: Zkp1zbnXSCeJFwwYNv5mkA==
-X-CSE-MsgGUID: rLyaRBoCQu+fHTOJz0grtw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="176833457"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.61])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 23:21:03 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 0BDE711F982;
-	Mon, 22 Sep 2025 09:21:01 +0300 (EEST)
-Date: Mon, 22 Sep 2025 09:21:00 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: bingbu.cao@intel.com, lixu.zhang@intel.com,
-	stanislaw.gruszka@linux.intel.com, mchehab@kernel.org,
-	wentong.wu@intel.com, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] media: pci: intel: ivsc: fix error handling in
- scan_one_device()
-Message-ID: <aNDqzIXpHHKZRiju@kekkonen.localdomain>
-References: <20250920134252.8612-1-make24@iscas.ac.cn>
+	s=arc-20240116; t=1758522113; c=relaxed/simple;
+	bh=ZRFvSmAGP6q+vBY0PuMHuuVxT+alZd4ni1G4olWQ04c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ue3gvb+F3Q4naS1xuJaJR+tO2oRFkPnK0PJlUbsD2PU5YFZbFvZvAPTpoOtQFD7f6FZhqSCPJpYLW/Khf+OAQgkUONtUO2ZMiR3yTTmE9DSCJkTYineFg+Vz3vXL+xjQoTFHeR2Q8RmpcvoNK65u9k6VushNS3W8QA+MMIEbGLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PA7zgMWo; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-362acd22c78so33420091fa.2
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 23:21:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758522109; x=1759126909; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bGqOJ9/wDsjD1e8/2jE4mLqygiZZmNcpMQ5EJRhUWNI=;
+        b=PA7zgMWomIWLs3OKtdzfH+wDufQ/ESOlNEJCX1sWH7VfLzSA5emcTqp1c1KcTef4OL
+         1THjY5evi0FEBb4i1akhBSBWpcDJGgdpX7QvQA44N5MUJEQoogMoxTthmfPZBFVhVkgd
+         DljN0RCgYzdTqcsFRqmqgoko6YqH98xul7gZLQbm2wG54RxAaQzVp+dWYuyLvozLy8iX
+         0w6w9ncQFN+GRXQ9KsA25Z3KjLksxTLz6ujrH5UkexWk/f4BjnvR+5WG74WtrADxcoXF
+         gsNHe1t7i4PgeN6DmPssdfO4JPpBiacsMFZx41clwtSrBrVOSYDqmf+Detf0CmbSGG6m
+         xLGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758522109; x=1759126909;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bGqOJ9/wDsjD1e8/2jE4mLqygiZZmNcpMQ5EJRhUWNI=;
+        b=OPAPO/JidIYWGYMjvS2u83DnfHLHejkuVBoq0WAjisv9vMfG5t98FzDSYDeBAOIBCw
+         QVECT5urq3vnkdzaSKsCqxjBr39KM2zzRId8fWFR8sZYCO/VC5UVkJbclV1tvHu2711m
+         vS2asW5b1PgxpcWOOoURmvliToFnw8w7YLwLATP6KdNryDnY5DsGuUQUOYPQUjnbggyU
+         vsO+y42BBqkL7PJnEKlyc1Jc05jnO7O45i435JEqgCHCEjUW7KMGrpeTGaFb/6Ftw293
+         Z9arSawdz4chUe3JpwnjuHngdaZrQE5GOhrseSChG+rGzQnEtr/xCbIj0lWJABk3l/yo
+         D76Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXEfzDirAD20OKGXr+I59c181/DkxFBd1ES6TLdr2TSVswqdea1E3QdC1H1OIOFi62wP1KlcACAVysSmSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx61PX50fMxtLxgijrHfN0uMgoVww9UJm+w9aU2YmNxsVA+HWcS
+	K9Fczr2dWiema9n0VUjG9a8tFEtwTvCoIznn8+3PSUgkpb6jJmEd87GQ
+X-Gm-Gg: ASbGncui/iAGwBlx8TrSF9gl29/xqv38mBksE8GeaqhM+LPlbv2KNipmF3tLExfqaSc
+	lDK6WgsrdlMZP8nH8+aicRwjPS/P6AuFq0yPCxoZk8BS0jlUqniPqLrdLpFBoQKyfd3h01pSn1j
+	F2pUaOdco1WPpfmXZEbpD0x8SEH/CUYb+d3CXS8vFU1ZsiC0WmzfwSgU3UF34pXS9aQRHxCuYfn
+	rUvN61FGCEBcFLMRXXSUkOR2XBJ0dp88WeYxPpZWSMo4sF7QZlAvC7pMcUgSlIgsXSyOq081TNQ
+	cYAxn/pl3PSxmUYuFZHtFPKERwJMJdzePgeJkTyO9ycdwGLTfrnELTXblhILz/e2N5go469nR4A
+	/JvFyianCvS6H7AZsfXz3ggWwoFvcGXUIhYjCw0+4GXQM5ia7BWaVeDoV4JcsJCZzkOA=
+X-Google-Smtp-Source: AGHT+IGwN2JhhPE7hHQ65uaLB0URi5QMIY3lqEciWVWM+KDMGsSo4o4IH62XENx1ZoUvR5i/oC859g==
+X-Received: by 2002:a2e:be21:0:b0:36c:3b69:2cfc with SMTP id 38308e7fff4ca-36c3b69e759mr673001fa.8.1758522108996;
+        Sun, 21 Sep 2025 23:21:48 -0700 (PDT)
+Received: from [192.168.1.166] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-361a99e99e6sm26982661fa.56.2025.09.21.23.21.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Sep 2025 23:21:48 -0700 (PDT)
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+Date: Mon, 22 Sep 2025 08:21:01 +0200
+Subject: [PATCH RFC 6/7] i2c: davinci: add support for setting bus
+ frequency
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250920134252.8612-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250922-i2c-mux-v1-6-28c94a610930@gmail.com>
+References: <20250922-i2c-mux-v1-0-28c94a610930@gmail.com>
+In-Reply-To: <20250922-i2c-mux-v1-0-28c94a610930@gmail.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Peter Rosin <peda@axentia.se>, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Marcus Folkesson <marcus.folkesson@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1607;
+ i=marcus.folkesson@gmail.com; h=from:subject:message-id;
+ bh=ZRFvSmAGP6q+vBY0PuMHuuVxT+alZd4ni1G4olWQ04c=;
+ b=owEBbQKS/ZANAwAKAYiATm9ZXVIyAcsmYgBo0OrnD0paauU8/1PUKU/MWNI4rWluhwYS4jfbi
+ KOJB16EP9+JAjMEAAEKAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCaNDq5wAKCRCIgE5vWV1S
+ Mgp3D/9Cz7yhGXhmLHWthsXVuKYbL0YxQVy1e8U724NkO8lZES31r9eFAf692OBdoIcKJ4S43HX
+ fmkgWg1lbJLADJ380iZdDVt9jzTj3SJZ+jhjwPbNnOFPqQpQ0WQuzCiXmjyfQQwt76bSsxwoWE8
+ 7NrytWx4w4y0dxGrtQX3A3VFX5kJNOlpfHNtKwAm46T9L3PIBkuyD4fPH4+JOb1nOV3+CVKNVia
+ LpS54IMFKNyXua00Iq7dqhEMYrZ/BECI3ygwKXJBXrN/hv6FCUQTnWM0UcUnaUTHzfbW9ziUvju
+ OgtMe/o2nqSyGjhfAkpQ7LdCfkCccxdN9sazjhZWc3M8YSS0TstSc1MuwuhyXVHi/YHE6Yb4IdU
+ KV23LyBnyMkGaxKwAHCw3j+gizljEDhcmNv1T6micBVKLhqmoLOLid3eJH8Kk/ylH2ejmemIbMS
+ Fq1WAZfTw1cqWBWgUlO7q4VWuDqAZsfg2ZxG87lfcpu2n6orpniH+Gi8Gb8Cs4w/cWVF5g6hR3y
+ uJj52cFUqy4+ctxslVzxti0dxWVdslFvnYKzUjugX5dCYSz2xo3rT/emfFU68W1eTkf6dlQA9WN
+ jxIfCoibU1rNARox5JK+m6wwnbXDgxEUKFLyZgvVOg4AjcIo54pAyLmjQn64jqkIjAMzgxcLXq1
+ JX0MkjYuPwatmwA==
+X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
+ fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
-Hi Ma,
+Populate adapter with clock_hz and set_clk_freq to enable support for
+dynamic bus frequency.
 
-Thank you for the patch.
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+ drivers/i2c/busses/i2c-davinci.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-On Sat, Sep 20, 2025 at 09:42:52PM +0800, Ma Ke wrote:
-> The mei_ace driver contains a device reference count leak in
-> mei_ace_setup_dev_link() where device_find_child_by_name() increases
-> the reference count of the found device but this reference is not
-> properly decreased in the success path. Add put_device() in
-> mei_ace_setup_dev_link() and delete put_device() in mei_ace_remove(),
-> which ensures that the reference count of the device is correctly
-> managed regardless of whether the probe is successful or fails.
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 78876f71b3e9 ("media: pci: intel: ivsc: Add ACE submodule")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->  drivers/media/pci/intel/ivsc/mei_ace.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/pci/intel/ivsc/mei_ace.c b/drivers/media/pci/intel/ivsc/mei_ace.c
-> index 98310b8511b1..261b30788118 100644
-> --- a/drivers/media/pci/intel/ivsc/mei_ace.c
-> +++ b/drivers/media/pci/intel/ivsc/mei_ace.c
-> @@ -421,6 +421,7 @@ static int mei_ace_setup_dev_link(struct mei_ace *ace)
->  	}
->  
->  	ace->csi_dev = csi_dev;
-> +	put_device(csi_dev);
->  
->  	return 0;
->  
-> @@ -522,7 +523,6 @@ static void mei_ace_remove(struct mei_cl_device *cldev)
->  	cancel_work_sync(&ace->work);
->  
->  	device_link_del(ace->csi_link);
-> -	put_device(ace->csi_dev);
->  
->  	pm_runtime_disable(&cldev->dev);
->  	pm_runtime_set_suspended(&cldev->dev);
-
-Is this a bug?
-
-device_link_add() will get both devices in success case so you could
-unconditionally put the csi_dev right after calling device_link_add().
+diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
+index 6b18938457d0c5cabc323c364d9330c2890df107..d3e47738f8ee7e8f69fee49509dcda396c9b7fb6 100644
+--- a/drivers/i2c/busses/i2c-davinci.c
++++ b/drivers/i2c/busses/i2c-davinci.c
+@@ -279,6 +279,27 @@ static int i2c_davinci_init(struct davinci_i2c_dev *dev)
+ 	return 0;
+ }
+ 
++static int davinci_i2c_set_clk(struct i2c_adapter *adap, u32 clock_hz)
++{
++	struct davinci_i2c_dev *dev = i2c_get_adapdata(adap);
++
++	if (dev->bus_freq == clock_hz)
++		return 0;
++
++	dev->bus_freq = clock_hz;
++
++	/* put I2C into reset */
++	davinci_i2c_reset_ctrl(dev, 0);
++
++	/* compute clock dividers */
++	i2c_davinci_calc_clk_dividers(dev);
++
++	/* Take the I2C module out of reset: */
++	davinci_i2c_reset_ctrl(dev, 1);
++
++	return 0;
++}
++
+ /*
+  * This routine does i2c bus recovery by using i2c_generic_scl_recovery
+  * which is provided by I2C Bus recovery infrastructure.
+@@ -810,6 +831,8 @@ static int davinci_i2c_probe(struct platform_device *pdev)
+ 	adap->dev.parent = &pdev->dev;
+ 	adap->timeout = DAVINCI_I2C_TIMEOUT;
+ 	adap->dev.of_node = dev_of_node(&pdev->dev);
++	adap->clock_hz = dev->bus_freq;
++	adap->set_clk_freq = davinci_i2c_set_clk;
+ 
+ 	if (dev->has_pfunc)
+ 		adap->bus_recovery_info = &davinci_i2c_scl_recovery_info;
 
 -- 
-Regards,
+2.50.1
 
-Sakari Ailus
 
