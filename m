@@ -1,79 +1,44 @@
-Return-Path: <linux-kernel+bounces-827154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23FE8B90748
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:41:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D33B90769
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D32FB3B451B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:41:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD4C518A0199
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E0C3054E7;
-	Mon, 22 Sep 2025 11:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OcXzLsdJ"
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF24E3054C3;
+	Mon, 22 Sep 2025 11:42:26 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4292877D5
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 11:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713F92FCBFD;
+	Mon, 22 Sep 2025 11:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758541312; cv=none; b=GnglonugctQ5RS+pZ2EhdiLm/bFIYsRWxDYUsNeDgo79oP0eHhsvx9vy13NU+oSK67n/VuCb9neERB1zOSDzhgOCHQ1aBDIF+UAbpwlMERWKDQUQXzfCTD7J3FvsdmGwrsYqL26y5MEvU9jgJdw3CtzPqa+AhQQvX00Iwb3u5/A=
+	t=1758541346; cv=none; b=KGougSkS9qhTYwQKZIkTcrbhGwwOaKKa1x4fYxGF/IjG/mrX2/UJDh+XUZ0972Iv/i9KiDo7hkC9fgQ/uf99b8YWTrAiY8pqYbBXqPSkq6J9tzQbPIh1cu5LOXb6DMnSdr18cRpcvzfdGYjqXTsdiU+0XHYeQrORgbO10CxlowM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758541312; c=relaxed/simple;
-	bh=SkmDfKo+eEdjnW9uMKMhb4tyiSGYMXbg6bDpRiMZguo=;
+	s=arc-20240116; t=1758541346; c=relaxed/simple;
+	bh=WxBCkp7CDm9lFHXFic/l68d1KIlKT4RxOgDq417+sv4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ip6+bHgbm75aOqarmc5FPGKlBC0AsoourkQVxIaO3iiztGKqVhQqHD0z6tn47dPXg+nThwgrT8jikaOWOoW0PMifclewL1nzsP2e9tBrF9Ym24yv+NVkpgUCyB7yIAScFlsn9BFynIS3cG3/9GLZvRVgJGRTSZDuhqSZL+60fIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OcXzLsdJ; arc=none smtp.client-ip=209.85.221.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-3f2ae6fadb4so2299053f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 04:41:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758541307; x=1759146107; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nZhfkZrmmENpriZJPsLNFxh8UI4vzLjIXEUlO8v8wBA=;
-        b=OcXzLsdJ1YZyIxwgUJRGukEW6/uWhEpkcFwgaL2XZ5cqc0tB5LrVGRpeMHNwW0kZ3O
-         tqFibgowQiMpdckc2oHMbXSvCSukp+iT7qj9Ig8uq746SuhkymQle7CzBa8JgaO6wxt1
-         XAUngZMd7hvjPdHfKyT7DG5bQXJphzTnBbMgrOqN+L/j3OrDfAK7x9eKICa7q679BD96
-         cdqnwL6yJRdr/IXbLIqf6M+EMLbWvIxX7RxnyiXqml/gqoUMnjte/LXsy9gxu9HcDYDw
-         bN0d8nk8vD/g54TGEPR6itrIthwXA/2Z4l9wjDZjWuhKOrJvTOGY+rqyeO4ErM4FFTuw
-         8aFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758541307; x=1759146107;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nZhfkZrmmENpriZJPsLNFxh8UI4vzLjIXEUlO8v8wBA=;
-        b=h/5hwJTco5gbyrTmmTjxYQagdc6UVoFUGqgWxjeALxqBTB/g20264P5acUbNsIjofe
-         cPu+j3HnWHUHaHtBjUzetjQJHbJ7PXjgaUxlIKAnL/4YrHY0d+7yAvtK2Mg+Y88T3psv
-         41L/6jFO1aSIn1gSZo0MKq+UmzQ0ElrwH7B6kZIA3SZwefwCQVBwLWjDuzkGzm9mn4SG
-         BJ8QKoTkKhTXoZneO4isdbEbsaGQPrxFlv37HVLf73cBovvlI1gTx4M8N3nzXk8A20m+
-         8eksyJYoMHTZ6NqMrOvfZSIoyahPriKJpN5nV57xEgu6+aklrS+w13knostRtROuWX6n
-         lWhg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVfLm8vGBDb6+LQlMihzgTOBqEUKDbLYC1i7jJEzVObSvby7mo5yaNdnYmae8PB3t7qsqeE4rNm8p0/3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyoi4fCyodn4oAu6vEVkU3HkzOzLTQL7HYX7fTOi9jupdLtmfLn
-	tHmInyYhEHdoFGjRG5zw9R1RvHg3UOj9tRpcxPosEaHxEx7/TEdurZevRYD+RuN6T3I=
-X-Gm-Gg: ASbGncs5RHoMXHollUkllvxmpASw85vRr9faJJEH8322BnXWBLwwaTtULhhwYsAdfy/
-	Wsk0cxoIspA8UNG/RCJpbNF1G0BNDzEzssGCcQPulOihWkJgvvCGLy2mJ8s327U655RSOA/xPvQ
-	hE4V/8MAeUnzaqYMhdVbX8CEwFFSWQ42bjeUbJpd2J4K33hOL86CtfEE1hpWPv3NPvk/Yy1pM7f
-	zJY7m4MZf9Q/IhQPf6xMHAAxBLBilBXdfWl4Veh/L5FS7J67oHVg/iXZ9y/oK/zsbQhsx6Nnysj
-	FSOkhJBGZ4MsewapSkC2pToiL8n8NTAo6V6rKXcjN7oRIgGY4CoxsgEeZ0JpNUjbfOJweOqyVeM
-	smIi98w4IIuajLt9iMlTvKWTfHOVWXiisMeYPJPFAv+4=
-X-Google-Smtp-Source: AGHT+IFSgf0/67bknpjpjI1D9ssQyqK0+H61LFm4GaoxDPRZUS53Mc3VlNw/HYi2tcLYwMO2NCcHbg==
-X-Received: by 2002:a05:6000:238a:b0:3fe:34ec:2f8f with SMTP id ffacd0b85a97d-3fe34ec3351mr2639110f8f.40.1758541306596;
-        Mon, 22 Sep 2025 04:41:46 -0700 (PDT)
-Received: from [10.100.51.209] (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f325cec0fsm141095505e9.4.2025.09.22.04.41.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 04:41:46 -0700 (PDT)
-Message-ID: <2bf54830-ea9c-4962-a7ef-653fbed8f8c0@suse.com>
-Date: Mon, 22 Sep 2025 13:41:45 +0200
+	 In-Reply-To:Content-Type; b=ihAQiJqA4lx6F9cFvYSz4dsuavEK8CHSP4+dMhytgf6ELRjkBafOT2RNuQaxW8FHCsw1WiYDsVlseNZlLLTB/JcHyW1QLGlKtuqF8w6l85Rc7gjQjlFb98Df1YDPprAH2fCmRrDaC2E9Cq8KvCmgW0APfB23G8BoxZuwPmZFInk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cVh6d26pkzKHN7L;
+	Mon, 22 Sep 2025 19:42:17 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E79131A124B;
+	Mon, 22 Sep 2025 19:42:20 +0800 (CST)
+Received: from [10.174.176.88] (unknown [10.174.176.88])
+	by APP4 (Coremail) with SMTP id gCh0CgAXKWEYNtFoiYXFAQ--.64696S3;
+	Mon, 22 Sep 2025 19:42:18 +0800 (CST)
+Message-ID: <394c720f-d23e-4208-b1d6-e0b98b03fc91@huaweicloud.com>
+Date: Mon, 22 Sep 2025 19:42:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,201 +46,191 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/10] scalable symbol flags with __kflagstab
-To: Sid Nayyar <sidnayyar@google.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Sami Tolvanen
- <samitolvanen@google.com>, Nicolas Schier <nicolas.schier@linux.dev>,
- Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org, Giuliano Procida <gprocida@google.com>,
- =?UTF-8?Q?Matthias_M=C3=A4nnich?= <maennich@google.com>
-References: <20250829105418.3053274-1-sidnayyar@google.com>
- <4e215854-59df-489b-b92d-8d2fb2edf522@suse.com>
- <CA+OvW8ZY1D3ECy2vw_Nojm1Kc8NzJHCpqNJUF0n8z3MhLAQd8A@mail.gmail.com>
- <409ddefc-24f8-465c-8872-17dc585626a6@suse.com>
- <CA+OvW8bhWK7prmyQMMJ_VYBeGMbn_mNiamHhUgYuCsnht+LFtA@mail.gmail.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <CA+OvW8bhWK7prmyQMMJ_VYBeGMbn_mNiamHhUgYuCsnht+LFtA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] fbdev: Delay the setting of fbcon_ops to fix KASAN issues
+To: Thomas Zimmermann <tzimmermann@suse.de>, deller@gmx.de, lee@kernel.org,
+ jani.nikula@intel.com, oushixiong@kylinos.cn, soci@c64.rulez.org
+Cc: linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, yangerkun@huawei.com
+References: <20250905024340.337521-1-wozizhi@huaweicloud.com>
+ <97658279-73a4-4d30-817b-6dcd47a11d6b@suse.de>
+From: Zizhi Wo <wozizhi@huaweicloud.com>
+In-Reply-To: <97658279-73a4-4d30-817b-6dcd47a11d6b@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXKWEYNtFoiYXFAQ--.64696S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxKFyrtFykur4UKFy3GF43trb_yoWxGrWDpF
+	10yryUtFy5Crn5Jw17Xr4UXFy5XwnrJa4DW397ta4YyFW5AF1jqw4UXF1qgFW8Grs7Jr18
+	Xw1DJrWxuF47Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
+	DUUUUU=
+X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
 
-On 9/15/25 5:53 PM, Sid Nayyar wrote:
-> On Mon, Sep 8, 2025 at 11:09 AM Petr Pavlu <petr.pavlu@suse.com> wrote:
->> This sounds reasonable to me. Do you have any numbers on hand that would
->> show the impact of extending __ksymtab?
+
+
+在 2025/9/22 14:31, Thomas Zimmermann 写道:
+> Hi
 > 
-> I did performance analysis for module loading. The kflagstab
-> optimizes symbol search, which accounts for less than 2% of the
-> average module load time. Therefore, this change does not translate
-> into any meaningful gains (or losses) in module loading performance.
-> 
-> On the binary size side, the on-disk size for vmlinux is somewhat
-> inflated due to extra entries in .symtab and .strtab. Since these
-> sections are not part of the final Image, the only increase in the
-> in-memory size of the kernel is for the kflagstab itself. This new
-> table occupies 1 byte for each symbol in the ksymtab.
-
-This is useful information. However, I was specifically interested in
-the impact of having the new flags field present as part of __ksymtab
-(kernel_symbol), compared to keeping it in a separate section. Sorry for
-not being clear.
-
-I ran a small test to get a better understanding of the different sizes.
-I used v6.17-rc6 together with the openSUSE x86_64 config [1], which is
-fairly large. The resulting vmlinux.bin (no debuginfo) had an on-disk
-size of 58 MiB, and included 5937 + 6589 (GPL-only) exported symbols.
-
-The following table summarizes my measurements and calculations
-regarding the sizes of all sections related to exported symbols:
-
-                      |  HAVE_ARCH_PREL32_RELOCATIONS  | !HAVE_ARCH_PREL32_RELOCATIONS
- Section              | Base [B] | Ext. [B] | Sep. [B] | Base [B] | Ext. [B] | Sep. [B]
-----------------------------------------------------------------------------------------
- __ksymtab            |    71244 |   200416 |   150312 |   142488 |   400832 |   300624
- __ksymtab_gpl        |    79068 |       NA |       NA |   158136 |       NA |       NA
- __kcrctab            |    23748 |    50104 |    50104 |    23748 |    50104 |    50104
- __kcrctab_gpl        |    26356 |       NA |       NA |    26356 |       NA |       NA
- __ksymtab_strings    |   253628 |   253628 |   253628 |   253628 |   253628 |   253628
- __kflagstab          |       NA |       NA |    12526 |       NA |       NA |    12526
-----------------------------------------------------------------------------------------
- Total                |   454044 |   504148 |   466570 |   604356 |   704564 |   616882
- Increase to base [%] |       NA |     11.0 |      2.8 |       NA |     16.6 |      2.1
-
-The column "HAVE_ARCH_PREL32_RELOCATIONS -> Base" contains the numbers
-that I measured. The rest of the values are calculated. The "Ext."
-column represents the variant of extending __ksymtab, and the "Sep."
-column represents the variant of having a separate __kflagstab. With
-HAVE_ARCH_PREL32_RELOCATIONS, each kernel_symbol is 12 B in size and is
-extended to 16 B. With !HAVE_ARCH_PREL32_RELOCATIONS, it is 24 B,
-extended to 32 B. Note that this does not include the metadata needed to
-relocate __ksymtab*, which is freed after the initial processing.
-
-The base export data in this case totals 0.43 MiB. About 50% is used for
-storing the names of exported symbols.
-
-Adding __kflagstab as a separate section has a negligible impact, as
-expected. When extending __ksymtab (kernel_symbol) instead, the worst
-case with !HAVE_ARCH_PREL32_RELOCATIONS increases the export data size
-by 16.6%.
-
-Based on the above, I think introducing __kflagstab makes senses, as the
-added complexity is minimal, although I feel we could probably also get
-away with extending kernel_symbol.
-
-> 
->>> The Android Common Kernel source is compiled into what we call
->>> GKI (Generic Kernel Image), which consists of a kernel and a
->>> number of modules. We maintain a stable interface (based on CRCs and
->>> types) between the GKI components and vendor-specific modules
->>> (compiled by device manufacturers, e.g., for hardware-specific
->>> drivers) for the lifetime of a given GKI version.
->>>
->>> This interface is intentionally restricted to the minimal set of
->>> symbols required by the union of all vendor modules; our partners
->>> declare their requirements in symbol lists. Any additions to these
->>> lists are reviewed to ensure kernel internals are not overly exposed.
->>> For example, we restrict drivers from having the ability to open and
->>> read arbitrary files. This ABI boundary also allows us to evolve
->>> internal kernel types that are not exposed to vendor modules, for
->>> example, when a security fix requires a type to change.
->>>
->>> The mechanism we use for this is CONFIG_TRIM_UNUSED_KSYMS and
->>> CONFIG_UNUSED_KSYMS_WHITELIST. This results in a ksymtab
->>> containing two kinds of exported symbols: those explicitly required
->>> by vendors ("vendor-listed") and those only required by GKI modules
->>> ("GKI use only").
->>>
->>> On top of this, we have implemented symbol import protection
->>> (covered in patches 9/10 and 10/10). This feature prevents vendor
->>> modules from using symbols that are not on the vendor-listed
->>> whitelist. It is built on top of CONFIG_MODULE_SIG. GKI modules are
->>> signed with a specific key, while vendor modules are unsigned and thus
->>> treated as untrusted. This distinction allows signed GKI modules to
->>> use any symbol in the ksymtab, while unsigned vendor modules can only
->>> access the declared subset. This provides a significant layer of
->>> defense and security against potentially exploitable vendor module
->>> code.
+> Am 05.09.25 um 04:43 schrieb Zizhi Wo:
+>> [BUG]
+>> Recently, we encountered a KASAN warning as follows:
 >>
->> If I understand correctly, this is similar to the recently introduced
->> EXPORT_SYMBOL_FOR_MODULES() macro, but with a coarser boundary.
+>> kasan_report+0xaf/0xe0 mm/kasan/report.c:588
+>> fb_pad_aligned_buffer+0x12f/0x150 drivers/video/fbdev/core/fbmem.c:116
+>> ccw_putcs_aligned drivers/video/fbdev/core/fbcon_ccw.c:119 [inline]
+>> ccw_putcs+0x9ac/0xbb0 drivers/video/fbdev/core/fbcon_ccw.c:175
+>> fbcon_putcs+0x329/0x3f0 drivers/video/fbdev/core/fbcon.c:1297
+>> do_update_region+0x3de/0x670 drivers/tty/vt/vt.c:623
+>> invert_screen+0x1de/0x600 drivers/tty/vt/vt.c:748
+>> highlight drivers/tty/vt/selection.c:57 [inline]
+>> clear_selection+0x5e/0x70 drivers/tty/vt/selection.c:81
+>> vc_do_resize+0xc8e/0xf40 drivers/tty/vt/vt.c:1206
+>> fbcon_modechanged+0x489/0x7a0 drivers/video/fbdev/core/fbcon.c:2705
+>> fbcon_set_all_vcs+0x1e0/0x600 drivers/video/fbdev/core/fbcon.c:2752
+>> fbcon_rotate_all drivers/video/fbdev/core/fbcon.c:250 [inline]
+>> ...
 >>
->> I think that if the goal is to control the kABI scope and limit the use
->> of certain symbols only to GKI modules, then having the protection
->> depend on whether the module is signed is somewhat odd. It doesn't give
->> me much confidence if vendor modules are unsigned in the Android
->> ecosystem. I would expect that you want to improve this in the long
->> term.
+>> reproduce[probabilistic, depending on the width and height of vc_font, as
+>> well as the value of "p" in do_update_region()]:
 > 
-> GKI modules are the only modules built in the same Kbuild as the
-> kernel image, which Google builds and provides to partners. In
-> contrast, vendor modules are built and packaged entirely by partners.
-> 
-> Google signs GKI modules with ephemeral keys. Since partners do
-> not have these keys, vendor modules are treated as unsigned by
-> the kernel.
-> 
-> To ensure the authenticity of these unsigned modules, partners
-> package them into a separate image that becomes one of the boot
-> partitions. This entire image is signed, and its signature is
-> verified by the bootloader at boot time.
-> 
->> It would then make more sense to me if the protection was determined by
->> whether the module is in-tree (the "intree" flag in modinfo) or,
->> alternatively, if it is signed by a built-in trusted key. I feel this
->> way the feature could be potentially useful for other distributions that
->> care about the kABI scope and have ecosystems where vendor modules are
->> properly signed with some key. However, I'm not sure if this would still
->> work in your case.
-> 
-> Partners can produce both in-tree and out-of-tree modules. We do not
-> trust either type regarding symbol exposure, as there is no way to know
-> exactly what sources were used. Furthermore, symbols exported via
-> EXPORT_SYMBOL_FOR_MODULES can be accessed by any vendor module that
-> mimics the GKI module name.
-> 
-> Therefore, neither the in-tree flag nor the EXPORT_SYMBOL_FOR_MODULES
-> mechanism provides a strong enough guarantee for the Android kernel to
-> identify GKI modules.
-> 
-> Only module signatures are sufficient to allow a module to access the
-> full set of exported symbols.  Unsigned vendor modules may only access
-> the symbol subset declared ahead of time by partners.
+> Which font sizes trigger the bug?
 
-This seems to answer why the in-tree flag is not sufficient for you.
-However, I also suggested an alternative that the symbol protection
-could be determined by whether the module is signed by a key from the
-.builtin_trusted_keys keyring, as opposed to being signed by another key
-reachable from the .secondary_trusted_keys keyring or being completely
-unsigned.
+As far as I can remember, op.width = 32 and op.height = 12;
 
-Distributions can require that external modules be signed and allow
-additional keys to be added as Machine Owner Keys, which can be made
-reachable from .secondary_trusted_keys. Nonetheless, such distributions
-might be still interested in limiting the number of symbols that such
-external modules can use.
-
-I think this option is worth considering, as it could potentially make
-this symbol protection useful for other distributions as well.
+And I also do the TIOCL_SETSEL ioctl to set vc_sel.start && vc_sel.end
 
 > 
-> In case such symbol protection is not useful for the Linux community, I
-> am happy to keep this as an Android-specific feature.  However, I would
-> urge you to at least accept the kflagstab, as it allows us (and
-> potentially other Linux distributions) to easily introduce additional
-> flags for symbols. It is also a simplification/clean-up of the module
-> loader code.
+>> 1) echo 2 > /sys/devices/virtual/graphics/fbcon/rotate_all
+>> 2) echo 3 > /sys/devices/virtual/graphics/fbcon/rotate_all
+>>
+>> [CAUSE]
+>> The root cause is that fbcon_modechanged() first sets the current 
+>> rotate's
+>> corresponding ops. Subsequently, during vc_resize(), it may trigger
+>> clear_selection(), and in fbcon_putcs->ccw_putcs[rotate=3], this can 
+>> result
+>> in an out-of-bounds access to "src". This happens because ops->fontbuffer
+>> is reallocated in fbcon_rotate_font():
+>> 1) When rotate=2, its size is (width + 7) / 8 * height
+>> 2) When rotate=3, its size is (height + 7) / 8 * width
+>>
+>> And the call to fbcon_rotate_font() occurs after clear_selection(). In
+>> other words, the fontbuffer is allocated using the size calculated 
+>> from the
+>> previous rotation[2], but before reallocating it with the new size,
+>> con_putcs is already using the new rotation[3]:
+> 
+> We recently reworked the way rotation callbacks are set. [1] Does the 
+> bug still happen with [1] applied?
+> 
+> [1] https://patchwork.freedesktop.org/series/153056/#rev2
 
-I'm personally ok with adding the kflagstab support. I think it
-introduces minimal complexity and, as you point out, simplifies certain
-aspects. Additionally, if we add it, I believe that adding the proposed
-symbol protection is simple enough to be included as well, at least from
-my perspective.
+Sorry, my reproduction script has been cleaned up because some time has
+passed. But the root cause of the issue is still setting ops too early,
+which leads to vc_resize() calling clear_selection(), then eventually
+.putcs. This uses the updated rotation-related functions on the previous
+region, which may cause out-of-bounds access.
 
-[1] https://github.com/openSUSE/kernel-source/blob/307f149d9100a0e229eb94cbb997ae61187995c3/config/x86_64/default
+If this patch series does not ensure that the old putcs is used in the
+context of clear_selection() during vc_resize(), the problem may still 
+exist?
 
--- 
 Thanks,
-Petr
+Zizhi Wo
+
+> 
+> Best regards
+> Thomas
+> 
+>>
+>> rotate_all_store
+>>   fbcon_rotate_all
+>>    fbcon_set_all_vcs
+>>     fbcon_modechanged
+>>     ...
+>>      fbcon_set_rotate
+>>       fbcon_rotate_ccw
+>>        ops->putcs = ccw_putcs // set rotate 3 ops
+>>      vc_resize
+>>      ...
+>>       clear_selection
+>>        highlight
+>>        ...
+>>         do_update_region
+>>     fbcon_putcs
+>>      ccw_putcs_aligned
+>>       src = ops->fontbuffer + (scr_readw(s--) & charmask)*cellsize
+>>       fb_pad_aligned_buffer----[src KASAN!!!]
+>>         update_screen
+>>          redraw_screen
+>>      fbcon_switch
+>>       fbcon_rotate_font
+>>        dst = kmalloc_array(len, d_cellsize, GFP_KERNEL)
+>>        ops->fontbuffer = dst
+>>
+>> [FIX]
+>> Considering that when the rotation changes, clear_selection() should 
+>> clear
+>> the previously selected region and not consider the new rotation yet.
+>> Therefore, the assignment to fbcon_ops for the newly set rotate can be
+>> postponed to fbcon_rotate_font(), since the fontbuffer is regenerated
+>> there. To avoid affecting other code paths, fbcon_set_rotate() will
+>> temporarily continue assigning fbcon_ops based on cur_rotate not rotate.
+>>
+>> Signed-off-by: Zizhi Wo <wozizhi@huaweicloud.com>
+>> ---
+>>   drivers/video/fbdev/core/fbcon_rotate.c | 5 ++++-
+>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/video/fbdev/core/fbcon_rotate.c 
+>> b/drivers/video/fbdev/core/fbcon_rotate.c
+>> index ec3c883400f7..d76446da24d4 100644
+>> --- a/drivers/video/fbdev/core/fbcon_rotate.c
+>> +++ b/drivers/video/fbdev/core/fbcon_rotate.c
+>> @@ -70,6 +70,7 @@ static int fbcon_rotate_font(struct fb_info *info, 
+>> struct vc_data *vc)
+>>               src += s_cellsize;
+>>               dst += d_cellsize;
+>>           }
+>> +        fbcon_rotate_ud(ops);
+>>           break;
+>>       case FB_ROTATE_CW:
+>>           for (i = len; i--; ) {
+>> @@ -78,6 +79,7 @@ static int fbcon_rotate_font(struct fb_info *info, 
+>> struct vc_data *vc)
+>>               src += s_cellsize;
+>>               dst += d_cellsize;
+>>           }
+>> +        fbcon_rotate_cw(ops);
+>>           break;
+>>       case FB_ROTATE_CCW:
+>>           for (i = len; i--; ) {
+>> @@ -86,6 +88,7 @@ static int fbcon_rotate_font(struct fb_info *info, 
+>> struct vc_data *vc)
+>>               src += s_cellsize;
+>>               dst += d_cellsize;
+>>           }
+>> +        fbcon_rotate_ccw(ops);
+>>           break;
+>>       }
+>> @@ -97,7 +100,7 @@ void fbcon_set_rotate(struct fbcon_ops *ops)
+>>   {
+>>       ops->rotate_font = fbcon_rotate_font;
+>> -    switch(ops->rotate) {
+>> +    switch (ops->cur_rotate) {
+>>       case FB_ROTATE_CW:
+>>           fbcon_rotate_cw(ops);
+>>           break;
+> 
+
 
