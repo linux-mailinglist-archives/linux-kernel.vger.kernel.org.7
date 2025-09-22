@@ -1,144 +1,80 @@
-Return-Path: <linux-kernel+bounces-827692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A84B926C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:28:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866D6B926D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8664B1905FE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E19C446038
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51ED4314B95;
-	Mon, 22 Sep 2025 17:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E4A3148B4;
+	Mon, 22 Sep 2025 17:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMz2p8UH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrkJtioE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DB1314B72;
-	Mon, 22 Sep 2025 17:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE91313E2B;
+	Mon, 22 Sep 2025 17:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758562073; cv=none; b=uROLOr53XzE8pghbL7YffPUzh6/w7A1wTSNdmkr5jVyNHKpnAdaEm2si89RGDtWtmcDN1gRVAE6mTaM1Z7VimnnaO8PjmWHtdwd7q3tPgYt/qdnMbdUwxgcSvuwqCqzScWXIh4etQrT3kSdy+Ff/mzoBwrF4xAmcqtftR+OGATE=
+	t=1758562125; cv=none; b=gksBgWb6hmooOAsLT3YKOTp56EvEA+1l1Jk1UyuakpL8OcUpD/lzSWwsMux6r65aOEPVdvdVCYRPwBHnq3bs1EIOMgoq0IqVEEFJircQHMtKHpC5PnoP72RBPtjtyssyKOOMyU7BvRa1eXmT6F2qdfp5esb8stwgdn1tXQ/v+xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758562073; c=relaxed/simple;
-	bh=5lJB8tk6gm0Z5L41/sm06dw0UVyCuVO3QM5zofxo82Y=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=tCZRP19q2kBs/4Kuz3lL3YxNFrVlMQSxZgcl2Wfj3NWIKiGGVMWCoJl6djbho08XBtxYBlAhe+6SkWxyi6aFJ+5NiN0gNiXf5JbEbu1TGRwfjzbVxItPRzKKP3r8A2DBer2moZyRkP/JNrLuasiyJVjQpplL726Vtlv8M36s/KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMz2p8UH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E57EC113D0;
-	Mon, 22 Sep 2025 17:27:52 +0000 (UTC)
+	s=arc-20240116; t=1758562125; c=relaxed/simple;
+	bh=xWh/GvAqWRCKj0KUUTfyKjrVO33OOAVo1h4s/cBrpZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNL6GJDMHfXX7fr+rkfq8blkoZktS2b+IVDsk35031USHG5jWCWDssANeeJYFJSIR5QiaV1coIR1gbPuom9j34BDnSx9yMuYyra3iYq9hwtagKMS0xWCNmC3fb8qLG4ez15N9tJo1C/6FRH9dk8ZURHsUW7xRrRx5b4ty1wltNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrkJtioE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44439C4CEF0;
+	Mon, 22 Sep 2025 17:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758562073;
-	bh=5lJB8tk6gm0Z5L41/sm06dw0UVyCuVO3QM5zofxo82Y=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=tMz2p8UHjG++4yoSSDmd8BLseobavRr/kuYv1CdkCrzwNw2hGkZUbIk9VvAiT4vwM
-	 bKDVbnaZyblQDAhZd/CCFRNpi9zXH+9mzv+Yw7sTRa+sQz9qvDLSMLqwwL00fZw26s
-	 PFENvo/IrpZ0B0lZmC3p9m/pzJAfjAbocdtu6xeDEGhvIqIDLT/nfrGRYxOG5r1XFc
-	 8teifN/vSdEC+ElO9DDwRCvY/G9a8FHcV3TnAhB8c5Q+I6Ko1DW5cQ2IXyBUSc571x
-	 q7iVqu7jafE2GqqiLp/9BW1OlB+BCtwKalm5oSUiOCA7r3FNE1KnESXSia7SlOPQmZ
-	 fGYz/HmfDX5Pg==
-Date: Mon, 22 Sep 2025 12:27:50 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1758562125;
+	bh=xWh/GvAqWRCKj0KUUTfyKjrVO33OOAVo1h4s/cBrpZ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PrkJtioEOSYPoyVx1rybJ+uzDR/Q6UPnelJGrJNQ7Lu+C+w8AZIG2lCISQIzyGP+q
+	 gnJ9OD1dKzjh8yIi7pXFHfm9CLJJ0/LO5b7bTAxjABA98SKzDSQbiNTGl3hN7noL1B
+	 6g1JSyYB4f3pdWN+zSgb3UJ6u9IVcAwt0yeRfDVQb+C7RXt9FGDu+E9F5EbcKbJSFh
+	 LQ3A6bQMnydcpjeIdstajPFi1LW/sDmpMWKDj9eTg8dRN29GJUHm+F+Q2vr6uAPvPV
+	 /RchmYnOJT7r4x1CSjl/qugKvgKuOMDc97b9dhqliSRJ4yYb/IIc0rB5Kqp15X07sN
+	 7nco7eUhZ50zw==
+Date: Mon, 22 Sep 2025 12:28:44 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: devicetree@vger.kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
+	konradybcio@kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, vkoul@kernel.org,
+	quic_varada@quicinc.com, linux-arm-msm@vger.kernel.org,
+	andersson@kernel.org, dmaengine@vger.kernel.org, broonie@kernel.org
+Subject: Re: [PATCH 1/9] spi: dt-bindings: spi-qpic-snand: Add IPQ5424
+ compatible
+Message-ID: <175856212403.505378.6554973184588982018.robh@kernel.org>
+References: <20250918094017.3844338-1-quic_mdalam@quicinc.com>
+ <20250918094017.3844338-2-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- linux-arm-kernel@lists.infradead.org, 
- Gabriel Fernandez <gabriel.fernandez@foss.st.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-stm32@st-md-mailman.stormreply.com, linux-clk@vger.kernel.org, 
- Michael Turquette <mturquette@baylibre.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
- Stephen Boyd <sboyd@kernel.org>
-To: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-In-Reply-To: <20250922-b4-rcc-upstream-v7-0-2dfc4e018f40@gmail.com>
-References: <20250922-b4-rcc-upstream-v7-0-2dfc4e018f40@gmail.com>
-Message-Id: <175856184058.499994.8575309202132748563.robh@kernel.org>
-Subject: Re: [PATCH v7 0/3] Register the STM32MP25 RCC driver as an access
- controller.
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250918094017.3844338-2-quic_mdalam@quicinc.com>
 
 
-On Mon, 22 Sep 2025 10:12:17 +0200, Clément Le Goffic wrote:
-> The STM32MP25 RCC peripheral as an access controller is allowed to know
-> whether the clocks are secured or not.
-> The STM32MP25 RCC peripheral knows about the clock secure configuration
-> of all non RIF-aware peripheral.
-> In parallel all the RIF-aware peripheral configuration information
-> are known by the RIFSC peripheral which is already an access
-> controller.
+On Thu, 18 Sep 2025 15:10:09 +0530, Md Sadre Alam wrote:
+> IPQ5424 contains the QPIC-SPI-NAND flash controller which is the same as
+> the one found in IPQ9574. So let's document the IPQ5424 compatible and
+> use IPQ9574 as the fallback.
 > 
-> This v7 is a subset of the v6 and other prior versions, split to simplify
-> the review and merging process.
-> 
-> Changes in v7:
-> - None
-> - Link to v6: https://lore.kernel.org/all/20250909-b4-ddrperfm-upstream-v6-2-ce082cc801b5@gmail.com/
-> 
-> Signed-off-by: Clément Le Goffic <legoffic.clement@gmail.com>
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
 > ---
-> Clément Le Goffic (3):
->       dt-bindings: stm32: stm32mp25: add `#access-controller-cells` property
->       clk: stm32mp25: add firewall grant_access ops
->       arm64: dts: st: set rcc as an access-controller
-> 
->  .../bindings/clock/st,stm32mp25-rcc.yaml           |  7 ++++
->  arch/arm64/boot/dts/st/stm32mp251.dtsi             |  1 +
->  drivers/clk/stm32/clk-stm32mp25.c                  | 40 +++++++++++++++++++++-
->  3 files changed, 47 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 07e27ad16399afcd693be20211b0dfae63e0615f
-> change-id: 20250916-b4-rcc-upstream-8a8ea3af6a0d
-> prerequisite-change-id: 20250916-b4-firewall-upstream-dfe8588a21f8:v7
-> prerequisite-patch-id: 1ead960f405c7a2dcc9111acd0bb4c95ed33954f
-> 
-> Best regards,
-> --
-> Clément Le Goffic <legoffic.clement@gmail.com>
-> 
-> 
+>  Documentation/devicetree/bindings/spi/qcom,spi-qpic-snand.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: using specified base-commit 07e27ad16399afcd693be20211b0dfae63e0615f
- Deps: looking for dependencies matching 1 patch-ids
- Deps: Applying prerequisite patch: [PATCH v7] bus: firewall: move stm32_firewall header file in include folder
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/st/' for 20250922-b4-rcc-upstream-v7-0-2dfc4e018f40@gmail.com:
-
-arch/arm64/boot/dts/st/stm32mp235f-dk.dtb: clock-controller@44200000 (st,stm32mp25-rcc): '#access-controller-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/st,stm32mp25-rcc.yaml#
-
-
-
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
