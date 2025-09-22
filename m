@@ -1,1058 +1,191 @@
-Return-Path: <linux-kernel+bounces-826898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E66E5B8F97C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:40:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EA6B8F98B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 879F17A30E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:39:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5554A2A0AB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED879265632;
-	Mon, 22 Sep 2025 08:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E964275B03;
+	Mon, 22 Sep 2025 08:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dVy/dVCk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBTCA/yH"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23D49463
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEBB26E718
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758530435; cv=none; b=WNGffTZwJbTWmQeC6nYR8xm0y6NxWhXsvo+pta7DTBfJdOPIWNXIVU1C0nRt2n8x6j+mqZxW+hcP187fT5cZFbImAEJf11T2/lHaeXgp3wuzlelbeso10vOiQftt9z0DL/ETPL2UVldsMhuao2XaJrDzSmAcbaXIhKJdfQDuKKs=
+	t=1758530477; cv=none; b=S4OwH/Ah+tOWSTwxFmje092Tw98Mqaae5vKyR+bE8KZQbXlt0ZrDou5KKbM12qN2x8l1QD6cBer5GwQQchSSKRfw6IhyBrmZff2CDHjBfU1InKJ61wYvtj7HN568fJmpcl3DTrWzBWQfASGMxRrXABQD1uJCfAbV3/lH+0ITyOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758530435; c=relaxed/simple;
-	bh=+dBhtfNbQ7BB67gl1kOjonGzuMgO1eFkWnCTbnT08ls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h6W5dqnIPbMlRGd9p9cTMAErNap/aBXxsgO4tca1BrrNwamIHcdu+sjEz89e313Fp7dBTJe7jBzyPrf8w2H29SjQFMT6MIWWO2DTM+KiDXwv+MddWvbldbSW82bWQKG4mP84iWZKY2/WWO1+kWnSPv/JbCJkeFCA5xWIm9pdslg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dVy/dVCk; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758530433; x=1790066433;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=+dBhtfNbQ7BB67gl1kOjonGzuMgO1eFkWnCTbnT08ls=;
-  b=dVy/dVCkfKUP62H3rmOIMVvTSJ9gDmGiNh8sShtWowp9z8ysEIRI8G3Y
-   yyUowmfgqgMx4rxfEZksAZBVowJXvK0cIXWvzQfX4vjWlvTriZpf9YUiD
-   00HER54R8KX0Np11G0EaLxBPREsB3e5k/4LpgWdoyumiEZxbyp/IhrKW+
-   3v/42PB4DkdyROSY0lW+CwbUY9pPa40RQFM5Xj1WoJZ4c2xYcd+H4J3tH
-   Bs3QTklqIaiTvzeMTG2xh4bK9LeO0yhJ1TJpbWr1BljXh5VBU/SNKzLEj
-   C30lXE3ng4FFtDkUOWGWHYM+zvaKsRIJhybBAO5L05fXpYwM+1WvEmsSh
-   w==;
-X-CSE-ConnectionGUID: IuGi1IPEQLam5RVaXQrYrQ==
-X-CSE-MsgGUID: rGsgJF7RT9imIterBQPrzg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="83390967"
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="83390967"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:40:32 -0700
-X-CSE-ConnectionGUID: N2NcbaUxQ/CeBcoLj7QI1g==
-X-CSE-MsgGUID: vzeWCxNFTvKo5MJXT9dWyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="175693753"
-Received: from unknown (HELO [10.102.88.152]) ([10.102.88.152])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:40:30 -0700
-Message-ID: <a1c3605b-9ea2-44da-9414-1b30227ed88e@linux.intel.com>
-Date: Mon, 22 Sep 2025 10:40:27 +0200
+	s=arc-20240116; t=1758530477; c=relaxed/simple;
+	bh=IgDmUWmAz3k3xMYGbslmykc44jrCG/h+cJ2EcZIzq7k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hzQIIPHtUhUbR7+Ipv+bI9bmBhZaPfGUk2YH36kZvElkCtI8lc2TdG6yVflkJCvy9wu1HIYTWgU+IorNdtxib1ngmPlundHyREjNLQGA4buiBjg6iFHO7JsIc6TSAZxHwqEh1U2N0OB8YC3xXqCdosMJKAFikLiqE61rcmXfJFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBTCA/yH; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46b7bf21fceso12889895e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:41:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758530474; x=1759135274; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hBlTOa/JIIU4AN6VgsnPXOfeNO8zUmXwwSI0iEAF4tE=;
+        b=SBTCA/yH+ejLjouKu0YUJTzyh0BZOCqC94BTGFvG+yyQOQ4an/cWrqaqREHnVpiYTZ
+         kc/0Fkf9sHNzwIeLyntKoSYMe2bNdHC2eBW+IbSs7I8MKDX8FIm8mMZmyDwourixnRch
+         +OAOVlyzLRqt8+A3FerLWVMOekcG/GG9sPAd2/qrB7bHdlS2/ylhzXborBwbpwbtirXy
+         R+XH+tqwHViS3LTi9ckE2HNSPPjB1BWA+4/igwt6C99yMF2L1GDgFncI3giiBElRG4+d
+         +rm10+QMraVncE/QRB8DjF4X1Pp0QtiPHMQ2trGfcK14nWhVoF+4hvwMF6GIi2xhp2Xw
+         Gccw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758530474; x=1759135274;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hBlTOa/JIIU4AN6VgsnPXOfeNO8zUmXwwSI0iEAF4tE=;
+        b=qHIysgaCb0lkx7wXDBr2OOl6u+HcPvDJUxPryVWcKwZsmBBTbx7KzcvLxLsQ5qCQq8
+         jr3r1lqkYZ6PF6rqlkW79ZZvzAUiSOPx52cK4G7ul4iZJd7dbAc6sgWlOV+g2ixqOJPS
+         1pjJWVNHVlmDbGfrXScy8yE+pylbcupbqUboE1bWfhrV92X3JspDlxY6UcP+S4mV1gW7
+         TZLD1s5VruQw3Y8BAoUJLwkrEVjWL4OIG3pKpCvdNNzp8yIu3y2wybi+ogcqvinvvhX3
+         uRSn2OhdLOt7wC05kaGpGO9c4USJf9YrPmX030iCAtSO4pzuhI/wzBnqdtCfeskU2XZl
+         /4XA==
+X-Forwarded-Encrypted: i=1; AJvYcCXS5GiPwF5wqCjCi0d8ijVclT1/f6AzfnkBFGONqii2oZbozsv+jyhS8erNfAn1VtnNEim8reu/ZELcl3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwczqN+PBI4U1Vw1V9X7Jk4vwXJc/GaNaZayVlVmRMkbVUIFhuu
+	3sOR753guzcJQLwDWOpvsi+rlftwkYAUh0phGaMEC5Lk+GvT+AwlBHdL
+X-Gm-Gg: ASbGnctNIA/cI+dLTAQWDK4XUApRQ3L5za/PcKxaTqB6kMkFYL8sOExoCGtXd2k1ODw
+	L8Dz2OhjVcFLxJibcaC/uPD+c/tr9JFvVnIzf6M9tzCFIiQmDekinJ5kKOvreHO3msZjZBu1cSU
+	EYEtw2TDbxKPg3P63wo4yDTXwu3j/TtDcNvMF+Um5arJJF/zsTogYHrkxpJiWaIuHkuxM/iz12E
+	I3f/qNa2HTyXUOLhfKUxVTZH0Vdj4XJ4y9wQ9ePS3RJaKMsWSjy52vn+nZGFB7tOq1mboLRmOTF
+	vlphPPxGzO1u2ce9Rv3IjMSNNAs8hfGJWjc1u2Hpu58bQkANt7g5KwunY6uXR7B4+AbC/8vaYQQ
+	HPpqhTkJZVm9zDvJfI8F/3gc=
+X-Google-Smtp-Source: AGHT+IEEpjDF7/jDbuuZ9uvE77K7VPyrIf8uLU6V10I88hb6CbUenR9CJX5qSU2VbLrTHzh5Qt1MHw==
+X-Received: by 2002:a05:600c:1511:b0:46e:19f8:88d3 with SMTP id 5b1f17b1804b1-46e19f88a15mr3866775e9.22.1758530473602;
+        Mon, 22 Sep 2025 01:41:13 -0700 (PDT)
+Received: from localhost ([45.10.155.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613e09f879sm232005265e9.19.2025.09.22.01.41.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 01:41:13 -0700 (PDT)
+From: Richard Gobert <richardbgobert@gmail.com>
+To: netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	ecree.xilinx@gmail.com,
+	willemdebruijn.kernel@gmail.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	horms@kernel.org,
+	corbet@lwn.net,
+	saeedm@nvidia.com,
+	tariqt@nvidia.com,
+	mbloch@nvidia.com,
+	leon@kernel.org,
+	dsahern@kernel.org,
+	ncardwell@google.com,
+	kuniyu@google.com,
+	shuah@kernel.org,
+	sdf@fomichev.me,
+	aleksander.lobakin@intel.com,
+	florian.fainelli@broadcom.com,
+	alexander.duyck@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-net-drivers@amd.com,
+	Richard Gobert <richardbgobert@gmail.com>
+Subject: [PATCH net-next v7 0/5] net: gso: restore outer ip ids correctly
+Date: Mon, 22 Sep 2025 10:40:58 +0200
+Message-Id: <20250922084103.4764-1-richardbgobert@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] accel/amdxdna: Enhance runtime power management
-To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
- quic_jhugo@quicinc.com, maciej.falkowski@linux.intel.com,
- dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com,
- mario.limonciello@amd.com
-References: <20250918195136.439012-1-lizhi.hou@amd.com>
-Content-Language: en-US
-From: Karol Wachowski <karol.wachowski@linux.intel.com>
-Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
- Gdansk - KRS 101882 - NIP 957-07-52-316
-In-Reply-To: <20250918195136.439012-1-lizhi.hou@amd.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+GRO currently ignores outer IPv4 header IDs for encapsulated packets
+that have their don't-fragment flag set. GSO, however, always assumes
+that outer IP IDs are incrementing. This results in GSO mangling the
+outer IDs when they aren't incrementing. For example, GSO mangles the
+outer IDs of IPv6 packets that were converted to IPv4, which must
+have an ID of 0 according to RFC 6145, sect. 5.1.
 
-On 9/18/2025 9:51 PM, Lizhi Hou wrote:
-> Currently, pm_runtime_resume_and_get() is invoked in the driver's open
-> callback, and pm_runtime_put_autosuspend() is called in the close
-> callback. As a result, the device remains active whenever an application
-> opens it, even if no I/O is performed, leading to unnecessary power
-> consumption.
->
-> Move the runtime PM calls to the AIE2 callbacks that actually interact
-> with the hardware. The device will automatically suspend after 5 seconds
-> of inactivity (no hardware accesses and no pending commands), and it will
-> be resumed on the next hardware access.
->
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
-> ---
->  drivers/accel/amdxdna/Makefile          |  1 +
->  drivers/accel/amdxdna/aie2_ctx.c        | 42 ++++++++---
->  drivers/accel/amdxdna/aie2_message.c    | 28 ++++----
->  drivers/accel/amdxdna/aie2_pci.c        | 79 ++++++++++----------
->  drivers/accel/amdxdna/aie2_pci.h        |  3 +-
->  drivers/accel/amdxdna/aie2_smu.c        | 28 ++++++--
->  drivers/accel/amdxdna/amdxdna_ctx.c     | 54 +++++++-------
->  drivers/accel/amdxdna/amdxdna_mailbox.c | 13 ++--
->  drivers/accel/amdxdna/amdxdna_pci_drv.c | 56 ++-------------
->  drivers/accel/amdxdna/amdxdna_pci_drv.h |  2 +
->  drivers/accel/amdxdna/amdxdna_pm.c      | 96 +++++++++++++++++++++++++
->  drivers/accel/amdxdna/amdxdna_pm.h      | 18 +++++
->  12 files changed, 262 insertions(+), 158 deletions(-)
->  create mode 100644 drivers/accel/amdxdna/amdxdna_pm.c
->  create mode 100644 drivers/accel/amdxdna/amdxdna_pm.h
->
-> diff --git a/drivers/accel/amdxdna/Makefile b/drivers/accel/amdxdna/Makefile
-> index 6797dac65efa..6344aaf523fa 100644
-> --- a/drivers/accel/amdxdna/Makefile
-> +++ b/drivers/accel/amdxdna/Makefile
-> @@ -14,6 +14,7 @@ amdxdna-y := \
->  	amdxdna_mailbox.o \
->  	amdxdna_mailbox_helper.o \
->  	amdxdna_pci_drv.o \
-> +	amdxdna_pm.o \
->  	amdxdna_sysfs.o \
->  	amdxdna_ubuf.o \
->  	npu1_regs.o \
-> diff --git a/drivers/accel/amdxdna/aie2_ctx.c b/drivers/accel/amdxdna/aie2_ctx.c
-> index e9f9b1fa5dc1..691fdb3b008f 100644
-> --- a/drivers/accel/amdxdna/aie2_ctx.c
-> +++ b/drivers/accel/amdxdna/aie2_ctx.c
-> @@ -21,6 +21,7 @@
->  #include "amdxdna_gem.h"
->  #include "amdxdna_mailbox.h"
->  #include "amdxdna_pci_drv.h"
-> +#include "amdxdna_pm.h"
->  
->  static bool force_cmdlist;
->  module_param(force_cmdlist, bool, 0600);
-> @@ -88,7 +89,7 @@ static int aie2_hwctx_restart(struct amdxdna_dev *xdna, struct amdxdna_hwctx *hw
->  		goto out;
->  	}
->  
-> -	ret = aie2_config_cu(hwctx);
-> +	ret = aie2_config_cu(hwctx, NULL);
->  	if (ret) {
->  		XDNA_ERR(xdna, "Config cu failed, ret %d", ret);
->  		goto out;
-> @@ -167,14 +168,11 @@ static int aie2_hwctx_resume_cb(struct amdxdna_hwctx *hwctx, void *arg)
->  
->  int aie2_hwctx_resume(struct amdxdna_client *client)
->  {
-> -	struct amdxdna_dev *xdna = client->xdna;
-> -
->  	/*
->  	 * The resume path cannot guarantee that mailbox channel can be
->  	 * regenerated. If this happen, when submit message to this
->  	 * mailbox channel, error will return.
->  	 */
-> -	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
->  	return amdxdna_hwctx_walk(client, NULL, aie2_hwctx_resume_cb);
->  }
->  
-> @@ -184,6 +182,8 @@ aie2_sched_notify(struct amdxdna_sched_job *job)
->  	struct dma_fence *fence = job->fence;
->  
->  	trace_xdna_job(&job->base, job->hwctx->name, "signaled fence", job->seq);
-> +
-> +	amdxdna_pm_suspend_put(job->hwctx->client->xdna);
->  	job->hwctx->priv->completed++;
->  	dma_fence_signal(fence);
->  
-> @@ -531,7 +531,7 @@ int aie2_hwctx_init(struct amdxdna_hwctx *hwctx)
->  		.num_rqs = DRM_SCHED_PRIORITY_COUNT,
->  		.credit_limit = HWCTX_MAX_CMDS,
->  		.timeout = msecs_to_jiffies(HWCTX_MAX_TIMEOUT),
-> -		.name = hwctx->name,
-> +		.name = "amdxdna_js",
->  		.dev = xdna->ddev.dev,
->  	};
->  	struct drm_gpu_scheduler *sched;
-> @@ -697,6 +697,14 @@ void aie2_hwctx_fini(struct amdxdna_hwctx *hwctx)
->  	kfree(hwctx->cus);
->  }
->  
-> +static int aie2_config_cu_resp_handler(void *handle, void __iomem *data, size_t size)
-> +{
-> +	struct amdxdna_hwctx *hwctx = handle;
-> +
-> +	amdxdna_pm_suspend_put(hwctx->client->xdna);
-> +	return 0;
-> +}
-> +
->  static int aie2_hwctx_cu_config(struct amdxdna_hwctx *hwctx, void *buf, u32 size)
->  {
->  	struct amdxdna_hwctx_param_config_cu *config = buf;
-> @@ -728,10 +736,14 @@ static int aie2_hwctx_cu_config(struct amdxdna_hwctx *hwctx, void *buf, u32 size
->  	if (!hwctx->cus)
->  		return -ENOMEM;
->  
-> -	ret = aie2_config_cu(hwctx);
-> +	ret = amdxdna_pm_resume_get(xdna);
-> +	if (ret)
-> +		goto free_cus;
-> +
-> +	ret = aie2_config_cu(hwctx, aie2_config_cu_resp_handler);
->  	if (ret) {
->  		XDNA_ERR(xdna, "Config CU to firmware failed, ret %d", ret);
-> -		goto free_cus;
-> +		goto pm_suspend_put;
->  	}
->  
->  	wmb(); /* To avoid locking in command submit when check status */
-> @@ -739,6 +751,8 @@ static int aie2_hwctx_cu_config(struct amdxdna_hwctx *hwctx, void *buf, u32 size
->  
->  	return 0;
->  
-> +pm_suspend_put:
-> +	amdxdna_pm_suspend_put(xdna);
->  free_cus:
->  	kfree(hwctx->cus);
->  	hwctx->cus = NULL;
-> @@ -862,11 +876,15 @@ int aie2_cmd_submit(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job,
->  		goto free_chain;
->  	}
->  
-> +	ret = amdxdna_pm_resume_get(xdna);
-> +	if (ret)
-> +		goto cleanup_job;
-> +
->  retry:
->  	ret = drm_gem_lock_reservations(job->bos, job->bo_cnt, &acquire_ctx);
->  	if (ret) {
->  		XDNA_WARN(xdna, "Failed to lock BOs, ret %d", ret);
-> -		goto cleanup_job;
-> +		goto suspend_put;
->  	}
->  
->  	for (i = 0; i < job->bo_cnt; i++) {
-> @@ -874,7 +892,7 @@ int aie2_cmd_submit(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job,
->  		if (ret) {
->  			XDNA_WARN(xdna, "Failed to reserve fences %d", ret);
->  			drm_gem_unlock_reservations(job->bos, job->bo_cnt, &acquire_ctx);
-> -			goto cleanup_job;
-> +			goto suspend_put;
->  		}
->  	}
->  
-> @@ -889,12 +907,12 @@ int aie2_cmd_submit(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job,
->  					msecs_to_jiffies(HMM_RANGE_DEFAULT_TIMEOUT);
->  			} else if (time_after(jiffies, timeout)) {
->  				ret = -ETIME;
-> -				goto cleanup_job;
-> +				goto suspend_put;
->  			}
->  
->  			ret = aie2_populate_range(abo);
->  			if (ret)
-> -				goto cleanup_job;
-> +				goto suspend_put;
->  			goto retry;
->  		}
->  	}
-> @@ -920,6 +938,8 @@ int aie2_cmd_submit(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job,
->  
->  	return 0;
->  
-> +suspend_put:
-> +	amdxdna_pm_suspend_put(xdna);
->  cleanup_job:
->  	drm_sched_job_cleanup(&job->base);
->  free_chain:
-> diff --git a/drivers/accel/amdxdna/aie2_message.c b/drivers/accel/amdxdna/aie2_message.c
-> index 9caad083543d..4660e8297ed8 100644
-> --- a/drivers/accel/amdxdna/aie2_message.c
-> +++ b/drivers/accel/amdxdna/aie2_message.c
-> @@ -37,7 +37,7 @@ static int aie2_send_mgmt_msg_wait(struct amdxdna_dev_hdl *ndev,
->  	if (!ndev->mgmt_chann)
->  		return -ENODEV;
->  
-> -	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-> +	drm_WARN_ON(&xdna->ddev, xdna->rpm_on && !mutex_is_locked(&xdna->dev_lock));
->  	ret = xdna_send_msg_wait(xdna, ndev->mgmt_chann, msg);
->  	if (ret == -ETIME) {
->  		xdna_mailbox_stop_channel(ndev->mgmt_chann);
-> @@ -377,15 +377,17 @@ int aie2_register_asyn_event_msg(struct amdxdna_dev_hdl *ndev, dma_addr_t addr,
->  	return xdna_mailbox_send_msg(ndev->mgmt_chann, &msg, TX_TIMEOUT);
->  }
->  
-> -int aie2_config_cu(struct amdxdna_hwctx *hwctx)
-> +int aie2_config_cu(struct amdxdna_hwctx *hwctx,
-> +		   int (*notify_cb)(void *, void __iomem *, size_t))
->  {
->  	struct mailbox_channel *chann = hwctx->priv->mbox_chann;
->  	struct amdxdna_dev *xdna = hwctx->client->xdna;
->  	u32 shift = xdna->dev_info->dev_mem_buf_shift;
-> -	DECLARE_AIE2_MSG(config_cu, MSG_OP_CONFIG_CU);
-> +	struct config_cu_req req = { 0 };
-> +	struct xdna_mailbox_msg msg;
->  	struct drm_gem_object *gobj;
->  	struct amdxdna_gem_obj *abo;
-> -	int ret, i;
-> +	int i;
->  
->  	if (!chann)
->  		return -ENODEV;
-> @@ -423,18 +425,12 @@ int aie2_config_cu(struct amdxdna_hwctx *hwctx)
->  	}
->  	req.num_cus = hwctx->cus->num_cus;
->  
-> -	ret = xdna_send_msg_wait(xdna, chann, &msg);
-> -	if (ret == -ETIME)
-> -		aie2_destroy_context(xdna->dev_handle, hwctx);
-> -
-> -	if (resp.status == AIE2_STATUS_SUCCESS) {
-> -		XDNA_DBG(xdna, "Configure %d CUs, ret %d", req.num_cus, ret);
-> -		return 0;
-> -	}
-> -
-> -	XDNA_ERR(xdna, "Command opcode 0x%x failed, status 0x%x ret %d",
-> -		 msg.opcode, resp.status, ret);
-> -	return ret;
-> +	msg.send_data = (u8 *)&req;
-> +	msg.send_size = sizeof(req);
-> +	msg.handle = hwctx;
-> +	msg.opcode = MSG_OP_CONFIG_CU;
-> +	msg.notify_cb = notify_cb;
-> +	return xdna_mailbox_send_msg(chann, &msg, TX_TIMEOUT);
->  }
->  
->  int aie2_execbuf(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job,
-> diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
-> index 6e39c769bb6d..8a66f276100e 100644
-> --- a/drivers/accel/amdxdna/aie2_pci.c
-> +++ b/drivers/accel/amdxdna/aie2_pci.c
-> @@ -25,6 +25,7 @@
->  #include "amdxdna_gem.h"
->  #include "amdxdna_mailbox.h"
->  #include "amdxdna_pci_drv.h"
-> +#include "amdxdna_pm.h"
->  
->  static int aie2_max_col = XRS_MAX_COL;
->  module_param(aie2_max_col, uint, 0600);
-> @@ -223,15 +224,6 @@ static int aie2_mgmt_fw_init(struct amdxdna_dev_hdl *ndev)
->  		return ret;
->  	}
->  
-> -	if (!ndev->async_events)
-> -		return 0;
-> -
-> -	ret = aie2_error_async_events_send(ndev);
-> -	if (ret) {
-> -		XDNA_ERR(ndev->xdna, "Send async events failed");
-> -		return ret;
-> -	}
-> -
->  	return 0;
->  }
->  
-> @@ -257,6 +249,8 @@ static int aie2_mgmt_fw_query(struct amdxdna_dev_hdl *ndev)
->  		return ret;
->  	}
->  
-> +	ndev->total_col = min(aie2_max_col, ndev->metadata.cols);
-> +
->  	return 0;
->  }
->  
-> @@ -338,6 +332,7 @@ static void aie2_hw_stop(struct amdxdna_dev *xdna)
->  	ndev->mbox = NULL;
->  	aie2_psp_stop(ndev->psp_hdl);
->  	aie2_smu_fini(ndev);
-> +	aie2_error_async_events_free(ndev);
->  	pci_disable_device(pdev);
->  
->  	ndev->dev_status = AIE2_DEV_INIT;
-> @@ -424,6 +419,18 @@ static int aie2_hw_start(struct amdxdna_dev *xdna)
->  		goto destroy_mgmt_chann;
->  	}
->  
-> +	ret = aie2_mgmt_fw_query(ndev);
-> +	if (ret) {
-> +		XDNA_ERR(xdna, "failed to query fw, ret %d", ret);
-> +		goto destroy_mgmt_chann;
-> +	}
-> +
-> +	ret = aie2_error_async_events_alloc(ndev);
-> +	if (ret) {
-> +		XDNA_ERR(xdna, "Allocate async events failed, ret %d", ret);
-> +		goto destroy_mgmt_chann;
-> +	}
-> +
->  	ndev->dev_status = AIE2_DEV_START;
->  
->  	return 0;
-> @@ -459,7 +466,6 @@ static int aie2_hw_resume(struct amdxdna_dev *xdna)
->  	struct amdxdna_client *client;
->  	int ret;
->  
-> -	guard(mutex)(&xdna->dev_lock);
->  	ret = aie2_hw_start(xdna);
->  	if (ret) {
->  		XDNA_ERR(xdna, "Start hardware failed, %d", ret);
-> @@ -565,13 +571,6 @@ static int aie2_init(struct amdxdna_dev *xdna)
->  		goto release_fw;
->  	}
->  
-> -	ret = aie2_mgmt_fw_query(ndev);
-> -	if (ret) {
-> -		XDNA_ERR(xdna, "Query firmware failed, ret %d", ret);
-> -		goto stop_hw;
-> -	}
-> -	ndev->total_col = min(aie2_max_col, ndev->metadata.cols);
-> -
->  	xrs_cfg.clk_list.num_levels = ndev->max_dpm_level + 1;
->  	for (i = 0; i < xrs_cfg.clk_list.num_levels; i++)
->  		xrs_cfg.clk_list.cu_clk_list[i] = ndev->priv->dpm_clk_tbl[i].hclk;
-> @@ -587,30 +586,10 @@ static int aie2_init(struct amdxdna_dev *xdna)
->  		goto stop_hw;
->  	}
->  
-> -	ret = aie2_error_async_events_alloc(ndev);
-> -	if (ret) {
-> -		XDNA_ERR(xdna, "Allocate async events failed, ret %d", ret);
-> -		goto stop_hw;
-> -	}
-> -
-> -	ret = aie2_error_async_events_send(ndev);
-> -	if (ret) {
-> -		XDNA_ERR(xdna, "Send async events failed, ret %d", ret);
-> -		goto async_event_free;
-> -	}
-> -
-> -	/* Issue a command to make sure firmware handled async events */
-> -	ret = aie2_query_firmware_version(ndev, &ndev->xdna->fw_ver);
-> -	if (ret) {
-> -		XDNA_ERR(xdna, "Re-query firmware version failed");
-> -		goto async_event_free;
-> -	}
-> -
->  	release_firmware(fw);
-> +	amdxdna_pm_init(xdna);
->  	return 0;
->  
-> -async_event_free:
-> -	aie2_error_async_events_free(ndev);
->  stop_hw:
->  	aie2_hw_stop(xdna);
->  release_fw:
-> @@ -621,10 +600,8 @@ static int aie2_init(struct amdxdna_dev *xdna)
->  
->  static void aie2_fini(struct amdxdna_dev *xdna)
->  {
-> -	struct amdxdna_dev_hdl *ndev = xdna->dev_handle;
-> -
-> +	amdxdna_pm_fini(xdna);
->  	aie2_hw_stop(xdna);
-> -	aie2_error_async_events_free(ndev);
->  }
->  
->  static int aie2_get_aie_status(struct amdxdna_client *client,
-> @@ -856,6 +833,10 @@ static int aie2_get_info(struct amdxdna_client *client, struct amdxdna_drm_get_i
->  	if (!drm_dev_enter(&xdna->ddev, &idx))
->  		return -ENODEV;
->  
-> +	ret = amdxdna_pm_resume_get(xdna);
-> +	if (ret)
-> +		goto dev_exit;
-> +
->  	switch (args->param) {
->  	case DRM_AMDXDNA_QUERY_AIE_STATUS:
->  		ret = aie2_get_aie_status(client, args);
-> @@ -882,8 +863,11 @@ static int aie2_get_info(struct amdxdna_client *client, struct amdxdna_drm_get_i
->  		XDNA_ERR(xdna, "Not supported request parameter %u", args->param);
->  		ret = -EOPNOTSUPP;
->  	}
-> +
-> +	amdxdna_pm_suspend_put(xdna);
->  	XDNA_DBG(xdna, "Got param %d", args->param);
->  
-> +dev_exit:
->  	drm_dev_exit(idx);
->  	return ret;
->  }
-> @@ -932,6 +916,10 @@ static int aie2_get_array(struct amdxdna_client *client,
->  	if (!drm_dev_enter(&xdna->ddev, &idx))
->  		return -ENODEV;
->  
-> +	ret = amdxdna_pm_resume_get(xdna);
-> +	if (ret)
-> +		goto dev_exit;
-> +
->  	switch (args->param) {
->  	case DRM_AMDXDNA_HW_CONTEXT_ALL:
->  		ret = aie2_query_ctx_status_array(client, args);
-> @@ -940,8 +928,11 @@ static int aie2_get_array(struct amdxdna_client *client,
->  		XDNA_ERR(xdna, "Not supported request parameter %u", args->param);
->  		ret = -EOPNOTSUPP;
->  	}
-> +
-> +	amdxdna_pm_suspend_put(xdna);
->  	XDNA_DBG(xdna, "Got param %d", args->param);
->  
-> +dev_exit:
->  	drm_dev_exit(idx);
->  	return ret;
->  }
-> @@ -980,6 +971,10 @@ static int aie2_set_state(struct amdxdna_client *client,
->  	if (!drm_dev_enter(&xdna->ddev, &idx))
->  		return -ENODEV;
->  
-> +	ret = amdxdna_pm_resume_get(xdna);
-> +	if (ret)
-> +		goto dev_exit;
-> +
->  	switch (args->param) {
->  	case DRM_AMDXDNA_SET_POWER_MODE:
->  		ret = aie2_set_power_mode(client, args);
-> @@ -990,6 +985,8 @@ static int aie2_set_state(struct amdxdna_client *client,
->  		break;
->  	}
->  
-> +	amdxdna_pm_suspend_put(xdna);
-> +dev_exit:
->  	drm_dev_exit(idx);
->  	return ret;
->  }
-> diff --git a/drivers/accel/amdxdna/aie2_pci.h b/drivers/accel/amdxdna/aie2_pci.h
-> index 91a8e948f82a..289a23ecd5f1 100644
-> --- a/drivers/accel/amdxdna/aie2_pci.h
-> +++ b/drivers/accel/amdxdna/aie2_pci.h
-> @@ -272,7 +272,8 @@ int aie2_map_host_buf(struct amdxdna_dev_hdl *ndev, u32 context_id, u64 addr, u6
->  int aie2_query_status(struct amdxdna_dev_hdl *ndev, char __user *buf, u32 size, u32 *cols_filled);
->  int aie2_register_asyn_event_msg(struct amdxdna_dev_hdl *ndev, dma_addr_t addr, u32 size,
->  				 void *handle, int (*cb)(void*, void __iomem *, size_t));
-> -int aie2_config_cu(struct amdxdna_hwctx *hwctx);
-> +int aie2_config_cu(struct amdxdna_hwctx *hwctx,
-> +		   int (*notify_cb)(void *, void __iomem *, size_t));
->  int aie2_execbuf(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job,
->  		 int (*notify_cb)(void *, void __iomem *, size_t));
->  int aie2_cmdlist_single_execbuf(struct amdxdna_hwctx *hwctx,
-> diff --git a/drivers/accel/amdxdna/aie2_smu.c b/drivers/accel/amdxdna/aie2_smu.c
-> index d303701b0ded..7f292a615ed8 100644
-> --- a/drivers/accel/amdxdna/aie2_smu.c
-> +++ b/drivers/accel/amdxdna/aie2_smu.c
-> @@ -11,6 +11,7 @@
->  
->  #include "aie2_pci.h"
->  #include "amdxdna_pci_drv.h"
-> +#include "amdxdna_pm.h"
->  
->  #define SMU_RESULT_OK		1
->  
-> @@ -59,12 +60,16 @@ int npu1_set_dpm(struct amdxdna_dev_hdl *ndev, u32 dpm_level)
->  	u32 freq;
->  	int ret;
->  
-> +	ret = amdxdna_pm_resume_get(ndev->xdna);
-> +	if (ret)
-> +		return ret;
-> +
->  	ret = aie2_smu_exec(ndev, AIE2_SMU_SET_MPNPUCLK_FREQ,
->  			    ndev->priv->dpm_clk_tbl[dpm_level].npuclk, &freq);
->  	if (ret) {
->  		XDNA_ERR(ndev->xdna, "Set npu clock to %d failed, ret %d\n",
->  			 ndev->priv->dpm_clk_tbl[dpm_level].npuclk, ret);
-> -		return ret;
-> +		goto suspend_put;
->  	}
->  	ndev->npuclk_freq = freq;
->  
-> @@ -73,8 +78,10 @@ int npu1_set_dpm(struct amdxdna_dev_hdl *ndev, u32 dpm_level)
->  	if (ret) {
->  		XDNA_ERR(ndev->xdna, "Set h clock to %d failed, ret %d\n",
->  			 ndev->priv->dpm_clk_tbl[dpm_level].hclk, ret);
-> -		return ret;
-> +		goto suspend_put;
->  	}
-> +
-> +	amdxdna_pm_suspend_put(ndev->xdna);
->  	ndev->hclk_freq = freq;
->  	ndev->dpm_level = dpm_level;
->  
-> @@ -82,26 +89,35 @@ int npu1_set_dpm(struct amdxdna_dev_hdl *ndev, u32 dpm_level)
->  		 ndev->npuclk_freq, ndev->hclk_freq);
->  
->  	return 0;
-> +
-> +suspend_put:
-> +	amdxdna_pm_suspend_put(ndev->xdna);
-> +	return ret;
->  }
->  
->  int npu4_set_dpm(struct amdxdna_dev_hdl *ndev, u32 dpm_level)
->  {
->  	int ret;
->  
-> +	ret = amdxdna_pm_resume_get(ndev->xdna);
-> +	if (ret)
-> +		return ret;
-> +
->  	ret = aie2_smu_exec(ndev, AIE2_SMU_SET_HARD_DPMLEVEL, dpm_level, NULL);
->  	if (ret) {
->  		XDNA_ERR(ndev->xdna, "Set hard dpm level %d failed, ret %d ",
->  			 dpm_level, ret);
-> -		return ret;
-> +		goto suspend_put;
->  	}
->  
->  	ret = aie2_smu_exec(ndev, AIE2_SMU_SET_SOFT_DPMLEVEL, dpm_level, NULL);
->  	if (ret) {
->  		XDNA_ERR(ndev->xdna, "Set soft dpm level %d failed, ret %d",
->  			 dpm_level, ret);
-> -		return ret;
-> +		goto suspend_put;
->  	}
->  
-> +	amdxdna_pm_suspend_put(ndev->xdna);
->  	ndev->npuclk_freq = ndev->priv->dpm_clk_tbl[dpm_level].npuclk;
->  	ndev->hclk_freq = ndev->priv->dpm_clk_tbl[dpm_level].hclk;
->  	ndev->dpm_level = dpm_level;
-> @@ -110,6 +126,10 @@ int npu4_set_dpm(struct amdxdna_dev_hdl *ndev, u32 dpm_level)
->  		 ndev->npuclk_freq, ndev->hclk_freq);
->  
->  	return 0;
-> +
-> +suspend_put:
-> +	amdxdna_pm_suspend_put(ndev->xdna);
-> +	return ret;
->  }
->  
->  int aie2_smu_init(struct amdxdna_dev_hdl *ndev)
-> diff --git a/drivers/accel/amdxdna/amdxdna_ctx.c b/drivers/accel/amdxdna/amdxdna_ctx.c
-> index 4bfe4ef20550..c3300eff7460 100644
-> --- a/drivers/accel/amdxdna/amdxdna_ctx.c
-> +++ b/drivers/accel/amdxdna/amdxdna_ctx.c
-> @@ -161,14 +161,9 @@ int amdxdna_drm_create_hwctx_ioctl(struct drm_device *dev, void *data, struct dr
->  	if (args->ext || args->ext_flags)
->  		return -EINVAL;
->  
-> -	if (!drm_dev_enter(dev, &idx))
-> -		return -ENODEV;
-> -
->  	hwctx = kzalloc(sizeof(*hwctx), GFP_KERNEL);
-> -	if (!hwctx) {
-> -		ret = -ENOMEM;
-> -		goto exit;
-> -	}
-> +	if (!hwctx)
-> +		return -ENOMEM;
->  
->  	if (copy_from_user(&hwctx->qos, u64_to_user_ptr(args->qos_p), sizeof(hwctx->qos))) {
->  		XDNA_ERR(xdna, "Access QoS info failed");
-> @@ -181,30 +176,36 @@ int amdxdna_drm_create_hwctx_ioctl(struct drm_device *dev, void *data, struct dr
->  	hwctx->num_tiles = args->num_tiles;
->  	hwctx->mem_size = args->mem_size;
->  	hwctx->max_opc = args->max_opc;
-> -	ret = xa_alloc_cyclic(&client->hwctx_xa, &hwctx->id, hwctx,
-> -			      XA_LIMIT(AMDXDNA_INVALID_CTX_HANDLE + 1, MAX_HWCTX_ID),
-> -			      &client->next_hwctxid, GFP_KERNEL);
-> -	if (ret < 0) {
-> -		XDNA_ERR(xdna, "Allocate hwctx ID failed, ret %d", ret);
-> +
-> +	guard(mutex)(&xdna->dev_lock);
-> +
-> +	if (!drm_dev_enter(dev, &idx)) {
-> +		ret = -ENODEV;
->  		goto free_hwctx;
->  	}
->  
-> -	hwctx->name = kasprintf(GFP_KERNEL, "hwctx.%d.%d", client->pid, hwctx->id);
-> +	ret = xdna->dev_info->ops->hwctx_init(hwctx);
-> +	if (ret) {
-> +		XDNA_ERR(xdna, "Init hwctx failed, ret %d", ret);
-> +		goto dev_exit;
-> +	}
-> +
-> +	hwctx->name = kasprintf(GFP_KERNEL, "hwctx.%d.%d", client->pid, hwctx->fw_ctx_id);
->  	if (!hwctx->name) {
->  		ret = -ENOMEM;
-> -		goto rm_id;
-> +		goto fini_hwctx;
->  	}
->  
-> -	mutex_lock(&xdna->dev_lock);
-> -	ret = xdna->dev_info->ops->hwctx_init(hwctx);
-> -	if (ret) {
-> -		mutex_unlock(&xdna->dev_lock);
-> -		XDNA_ERR(xdna, "Init hwctx failed, ret %d", ret);
-> +	ret = xa_alloc_cyclic(&client->hwctx_xa, &hwctx->id, hwctx,
-> +			      XA_LIMIT(AMDXDNA_INVALID_CTX_HANDLE + 1, MAX_HWCTX_ID),
-> +			      &client->next_hwctxid, GFP_KERNEL);
-> +	if (ret < 0) {
-> +		XDNA_ERR(xdna, "Allocate hwctx ID failed, ret %d", ret);
->  		goto free_name;
->  	}
-> +
->  	args->handle = hwctx->id;
->  	args->syncobj_handle = hwctx->syncobj_hdl;
-> -	mutex_unlock(&xdna->dev_lock);
->  
->  	atomic64_set(&hwctx->job_submit_cnt, 0);
->  	atomic64_set(&hwctx->job_free_cnt, 0);
-> @@ -214,12 +215,12 @@ int amdxdna_drm_create_hwctx_ioctl(struct drm_device *dev, void *data, struct dr
->  
->  free_name:
->  	kfree(hwctx->name);
-> -rm_id:
-> -	xa_erase(&client->hwctx_xa, hwctx->id);
-> +fini_hwctx:
-> +	xdna->dev_info->ops->hwctx_fini(hwctx);
-> +dev_exit:
-> +	drm_dev_exit(idx);
->  free_hwctx:
->  	kfree(hwctx);
-> -exit:
-> -	drm_dev_exit(idx);
->  	return ret;
->  }
->  
-> @@ -431,11 +432,6 @@ int amdxdna_cmd_submit(struct amdxdna_client *client,
->  		goto unlock_srcu;
->  	}
->  
-> -	if (hwctx->status != HWCTX_STAT_READY) {
-> -		XDNA_ERR(xdna, "HW Context is not ready");
-> -		ret = -EINVAL;
-> -		goto unlock_srcu;
-> -	}
->  
->  	job->hwctx = hwctx;
->  	job->mm = current->mm;
-> diff --git a/drivers/accel/amdxdna/amdxdna_mailbox.c b/drivers/accel/amdxdna/amdxdna_mailbox.c
-> index da1ac89bb78f..24258dcc18eb 100644
-> --- a/drivers/accel/amdxdna/amdxdna_mailbox.c
-> +++ b/drivers/accel/amdxdna/amdxdna_mailbox.c
-> @@ -194,7 +194,8 @@ static void mailbox_release_msg(struct mailbox_channel *mb_chann,
->  {
->  	MB_DBG(mb_chann, "msg_id 0x%x msg opcode 0x%x",
->  	       mb_msg->pkg.header.id, mb_msg->pkg.header.opcode);
-> -	mb_msg->notify_cb(mb_msg->handle, NULL, 0);
-> +	if (mb_msg->notify_cb)
-> +		mb_msg->notify_cb(mb_msg->handle, NULL, 0);
->  	kfree(mb_msg);
->  }
->  
-> @@ -248,7 +249,7 @@ mailbox_get_resp(struct mailbox_channel *mb_chann, struct xdna_msg_header *heade
->  {
->  	struct mailbox_msg *mb_msg;
->  	int msg_id;
-> -	int ret;
-> +	int ret = 0;
->  
->  	msg_id = header->id;
->  	if (!mailbox_validate_msgid(msg_id)) {
-> @@ -265,9 +266,11 @@ mailbox_get_resp(struct mailbox_channel *mb_chann, struct xdna_msg_header *heade
->  
->  	MB_DBG(mb_chann, "opcode 0x%x size %d id 0x%x",
->  	       header->opcode, header->total_size, header->id);
-> -	ret = mb_msg->notify_cb(mb_msg->handle, data, header->total_size);
-> -	if (unlikely(ret))
-> -		MB_ERR(mb_chann, "Message callback ret %d", ret);
-> +	if (mb_msg->notify_cb) {
-> +		ret = mb_msg->notify_cb(mb_msg->handle, data, header->total_size);
-> +		if (unlikely(ret))
-> +			MB_ERR(mb_chann, "Message callback ret %d", ret);
-> +	}
->  
->  	kfree(mb_msg);
->  	return ret;
-> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> index 569cd703729d..aa04452310e5 100644
-> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> @@ -13,13 +13,11 @@
->  #include <drm/gpu_scheduler.h>
->  #include <linux/iommu.h>
->  #include <linux/pci.h>
-> -#include <linux/pm_runtime.h>
->  
->  #include "amdxdna_ctx.h"
->  #include "amdxdna_gem.h"
->  #include "amdxdna_pci_drv.h"
-> -
-> -#define AMDXDNA_AUTOSUSPEND_DELAY	5000 /* milliseconds */
-> +#include "amdxdna_pm.h"
->  
->  MODULE_FIRMWARE("amdnpu/1502_00/npu.sbin");
->  MODULE_FIRMWARE("amdnpu/17f0_10/npu.sbin");
-> @@ -61,17 +59,9 @@ static int amdxdna_drm_open(struct drm_device *ddev, struct drm_file *filp)
->  	struct amdxdna_client *client;
->  	int ret;
->  
-> -	ret = pm_runtime_resume_and_get(ddev->dev);
-> -	if (ret) {
-> -		XDNA_ERR(xdna, "Failed to get rpm, ret %d", ret);
-> -		return ret;
-> -	}
-> -
->  	client = kzalloc(sizeof(*client), GFP_KERNEL);
-> -	if (!client) {
-> -		ret = -ENOMEM;
-> -		goto put_rpm;
-> -	}
-> +	if (!client)
-> +		return -ENOMEM;
->  
->  	client->pid = pid_nr(rcu_access_pointer(filp->pid));
->  	client->xdna = xdna;
-> @@ -106,9 +96,6 @@ static int amdxdna_drm_open(struct drm_device *ddev, struct drm_file *filp)
->  	iommu_sva_unbind_device(client->sva);
->  failed:
->  	kfree(client);
-> -put_rpm:
-> -	pm_runtime_mark_last_busy(ddev->dev);
-> -	pm_runtime_put_autosuspend(ddev->dev);
->  
->  	return ret;
->  }
-> @@ -130,8 +117,6 @@ static void amdxdna_drm_close(struct drm_device *ddev, struct drm_file *filp)
->  
->  	XDNA_DBG(xdna, "pid %d closed", client->pid);
->  	kfree(client);
-> -	pm_runtime_mark_last_busy(ddev->dev);
-> -	pm_runtime_put_autosuspend(ddev->dev);
->  }
->  
->  static int amdxdna_flush(struct file *f, fl_owner_t id)
-> @@ -310,19 +295,12 @@ static int amdxdna_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  		goto failed_dev_fini;
->  	}
->  
-> -	pm_runtime_set_autosuspend_delay(dev, AMDXDNA_AUTOSUSPEND_DELAY);
-> -	pm_runtime_use_autosuspend(dev);
-> -	pm_runtime_allow(dev);
-> -
->  	ret = drm_dev_register(&xdna->ddev, 0);
->  	if (ret) {
->  		XDNA_ERR(xdna, "DRM register failed, ret %d", ret);
-> -		pm_runtime_forbid(dev);
->  		goto failed_sysfs_fini;
->  	}
->  
-> -	pm_runtime_mark_last_busy(dev);
-> -	pm_runtime_put_autosuspend(dev);
->  	return 0;
->  
->  failed_sysfs_fini:
-> @@ -339,14 +317,10 @@ static int amdxdna_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  static void amdxdna_remove(struct pci_dev *pdev)
->  {
->  	struct amdxdna_dev *xdna = pci_get_drvdata(pdev);
-> -	struct device *dev = &pdev->dev;
->  	struct amdxdna_client *client;
->  
->  	destroy_workqueue(xdna->notifier_wq);
->  
-> -	pm_runtime_get_noresume(dev);
-> -	pm_runtime_forbid(dev);
-> -
->  	drm_dev_unplug(&xdna->ddev);
->  	amdxdna_sysfs_fini(xdna);
->  
-> @@ -365,29 +339,9 @@ static void amdxdna_remove(struct pci_dev *pdev)
->  	mutex_unlock(&xdna->dev_lock);
->  }
->  
-> -static int amdxdna_pmops_suspend(struct device *dev)
-> -{
-> -	struct amdxdna_dev *xdna = pci_get_drvdata(to_pci_dev(dev));
-> -
-> -	if (!xdna->dev_info->ops->suspend)
-> -		return -EOPNOTSUPP;
-> -
-> -	return xdna->dev_info->ops->suspend(xdna);
-> -}
-> -
-> -static int amdxdna_pmops_resume(struct device *dev)
-> -{
-> -	struct amdxdna_dev *xdna = pci_get_drvdata(to_pci_dev(dev));
-> -
-> -	if (!xdna->dev_info->ops->resume)
-> -		return -EOPNOTSUPP;
-> -
-> -	return xdna->dev_info->ops->resume(xdna);
-> -}
-> -
->  static const struct dev_pm_ops amdxdna_pm_ops = {
-> -	SYSTEM_SLEEP_PM_OPS(amdxdna_pmops_suspend, amdxdna_pmops_resume)
-> -	RUNTIME_PM_OPS(amdxdna_pmops_suspend, amdxdna_pmops_resume, NULL)
-> +	SYSTEM_SLEEP_PM_OPS(amdxdna_pm_suspend, amdxdna_pm_resume)
-> +	RUNTIME_PM_OPS(amdxdna_pm_suspend, amdxdna_pm_resume, NULL)
->  };
->  
->  static struct pci_driver amdxdna_pci_driver = {
-> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-> index 72d6696d49da..626beebf730e 100644
-> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
-> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-> @@ -6,6 +6,7 @@
->  #ifndef _AMDXDNA_PCI_DRV_H_
->  #define _AMDXDNA_PCI_DRV_H_
->  
-> +#include <drm/drm_print.h>
->  #include <linux/workqueue.h>
->  #include <linux/xarray.h>
->  
-> @@ -99,6 +100,7 @@ struct amdxdna_dev {
->  	struct amdxdna_fw_ver		fw_ver;
->  	struct rw_semaphore		notifier_lock; /* for mmu notifier*/
->  	struct workqueue_struct		*notifier_wq;
-> +	bool				rpm_on;
->  };
->  
->  /*
-> diff --git a/drivers/accel/amdxdna/amdxdna_pm.c b/drivers/accel/amdxdna/amdxdna_pm.c
-> new file mode 100644
-> index 000000000000..fb3f711c91ff
-> --- /dev/null
-> +++ b/drivers/accel/amdxdna/amdxdna_pm.c
-> @@ -0,0 +1,96 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2025, Advanced Micro Devices, Inc.
-> + */
-> +
-> +#include <drm/amdxdna_accel.h>
-> +#include <drm/drm_drv.h>
-> +#include <linux/pm_runtime.h>
-> +
-> +#include "amdxdna_pm.h"
-> +
-> +#define AMDXDNA_AUTOSUSPEND_DELAY	5000 /* milliseconds */
-> +
-> +int amdxdna_pm_suspend(struct device *dev)
-> +{
-> +	struct amdxdna_dev *xdna = to_xdna_dev(dev_get_drvdata(dev));
-> +	int ret = -EOPNOTSUPP;
-> +	bool rpm;
-> +
-> +	if (xdna->dev_info->ops->suspend) {
-> +		rpm = xdna->rpm_on;
-> +		xdna->rpm_on = false;
-> +		ret = xdna->dev_info->ops->suspend(xdna);
-> +		xdna->rpm_on = rpm;
-> +	}
-> +
-> +	XDNA_DBG(xdna, "Suspend done ret %d", ret);
-> +	return ret;
-> +}
+GRO+GSO is supposed to be entirely transparent by default. GSO already
+correctly restores inner IDs and IDs of non-encapsulated packets. The
+tx-tcp-mangleid-segmentation feature can be enabled to allow the
+mangling of such IDs so that TSO can be used.
 
-It seems that this implementation to avoids usage of rpm_get()/rpm_put()
-style reference counting and instead introduces an rpm_on boolean as a
-guard. That flag doesn’t appear to be protected by any lock, is it
-thread safe to call amdxdna_pm_resume_get() / amdxdna_pm_suspend_put()
-concurrently?
-Is there a reason for not using rpm_get()/rpm_put() to invoke
-suspend/resume with proper reference counting and synchronize
-intermediate states?
+This series fixes outer ID restoration for encapsulated packets when
+tx-tcp-mangleid-segmentation is disabled. It also allows GRO to merge
+packets with fixed IDs that don't have their don't-fragment flag set.
 
-> +
-> +int amdxdna_pm_resume(struct device *dev)
-> +{
-> +	struct amdxdna_dev *xdna = to_xdna_dev(dev_get_drvdata(dev));
-> +	int ret = -EOPNOTSUPP;
-> +	bool rpm;
-> +
-> +	if (xdna->dev_info->ops->resume) {
-> +		rpm = xdna->rpm_on;
-> +		xdna->rpm_on = false;
-> +		ret = xdna->dev_info->ops->resume(xdna);
-> +		xdna->rpm_on = rpm;
-> +	}
-> +
-> +	XDNA_DBG(xdna, "Resume done ret %d", ret);
-> +	return ret;
-> +}
-> +
-> +int amdxdna_pm_resume_get(struct amdxdna_dev *xdna)
-> +{
-> +	struct device *dev = xdna->ddev.dev;
-> +	int ret;
-> +
-> +	if (!xdna->rpm_on)
-> +		return 0;
-> +
-> +	ret = pm_runtime_resume_and_get(dev);
-> +	if (ret) {
-> +		XDNA_ERR(xdna, "Resume failed: %d", ret);
-> +		pm_runtime_set_suspended(dev);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +void amdxdna_pm_suspend_put(struct amdxdna_dev *xdna)
-> +{
-> +	struct device *dev = xdna->ddev.dev;
-> +
-> +	if (!xdna->rpm_on)
-> +		return;
-> +
-> +	pm_runtime_mark_last_busy(dev);
-> +	pm_runtime_put_autosuspend(dev);
-> +}
+v6 -> v7:
+ - Update comment and commit message
+ - Add BUILD_BUG_ON in tcp4_gro_complete
 
-I think pm_runtime_mark_last_busy() is redundant here as it is already
-called by pm_runtime_put_autosuspend().
+v5 -> v6:
+ - Fix typo
+ - Fix formatting
+ - Update comment and commit message
 
-Thanks,
-Karol
+v4 -> v5:
+ - Updated documentation and comments
+ - Remove explicit inline keyword in fou_core.c
+ - Fix reverse xmas tree formatting in ef100_tx.c
+ - Remove added KSFT_MACHINE_SLOW check in selftest
 
-> +
-> +void amdxdna_pm_init(struct amdxdna_dev *xdna)
-> +{
-> +	struct device *dev = xdna->ddev.dev;
-> +
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_set_autosuspend_delay(dev, AMDXDNA_AUTOSUSPEND_DELAY);
-> +	pm_runtime_use_autosuspend(dev);
-> +	pm_runtime_allow(dev);
-> +	pm_runtime_mark_last_busy(dev);
-> +	pm_runtime_put_autosuspend(dev);
-> +	xdna->rpm_on = true;
-> +}
-> +
-> +void amdxdna_pm_fini(struct amdxdna_dev *xdna)
-> +{
-> +	struct device *dev = xdna->ddev.dev;
-> +
-> +	xdna->rpm_on = false;
-> +	pm_runtime_get_noresume(dev);
-> +	pm_runtime_forbid(dev);
-> +}
-> diff --git a/drivers/accel/amdxdna/amdxdna_pm.h b/drivers/accel/amdxdna/amdxdna_pm.h
-> new file mode 100644
-> index 000000000000..77b2d6e45570
-> --- /dev/null
-> +++ b/drivers/accel/amdxdna/amdxdna_pm.h
-> @@ -0,0 +1,18 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2025, Advanced Micro Devices, Inc.
-> + */
-> +
-> +#ifndef _AMDXDNA_PM_H_
-> +#define _AMDXDNA_PM_H_
-> +
-> +#include "amdxdna_pci_drv.h"
-> +
-> +int amdxdna_pm_suspend(struct device *dev);
-> +int amdxdna_pm_resume(struct device  *dev);
-> +int amdxdna_pm_resume_get(struct amdxdna_dev *xdna);
-> +void amdxdna_pm_suspend_put(struct amdxdna_dev *xdna);
-> +void amdxdna_pm_init(struct amdxdna_dev *xdna);
-> +void amdxdna_pm_fini(struct amdxdna_dev *xdna);
-> +
-> +#endif /* _AMDXDNA_PM_H_ */
+v3 -> v4:
+ - Specify that mangleid for outer ids cannot turn incrementing ids to fixed if DF is unset
+ - Update segmentation-offload documentation
+ - Fix setting fixed ids in ef100 TSO
+ - Reformat gro_receive_network_flush again
+
+v2 -> v3:
+ - Make argument const in fou_gro_ops helper
+ - Rename SKB_GSO_TCP_FIXEDID_OUTER to SKB_GSO_TCP_FIXEDID
+ - Fix formatting in selftest, gro_receive_network_flush and tcp4_gro_complete
+
+v1 -> v2:
+ - Add fou_gro_ops helper
+ - Clarify why sk_family check works
+ - Fix ipip packet generation in selftest
+
+Links:
+ - v1: https://lore.kernel.org/netdev/20250814114030.7683-1-richardbgobert@gmail.com/
+ - v2: https://lore.kernel.org/netdev/20250819063223.5239-1-richardbgobert@gmail.com/
+ - v3: https://lore.kernel.org/netdev/20250821073047.2091-1-richardbgobert@gmail.com/
+ - v4: https://lore.kernel.org/netdev/20250901113826.6508-1-richardbgobert@gmail.com/
+ - v5: https://lore.kernel.org/netdev/20250915113933.3293-1-richardbgobert@gmail.com/
+ - v6: https://lore.kernel.org/netdev/20250916144841.4884-1-richardbgobert@gmail.com/
+
+Richard Gobert (5):
+  net: gro: remove is_ipv6 from napi_gro_cb
+  net: gro: only merge packets with incrementing or fixed outer ids
+  net: gso: restore ids of outer ip headers correctly
+  net: gro: remove unnecessary df checks
+  selftests/net: test ipip packets in gro.sh
+
+ .../networking/segmentation-offloads.rst      | 22 ++++---
+ .../net/ethernet/mellanox/mlx5/core/en_rx.c   |  8 ++-
+ drivers/net/ethernet/sfc/ef100_tx.c           | 17 ++++--
+ include/linux/netdevice.h                     |  9 ++-
+ include/linux/skbuff.h                        |  8 ++-
+ include/net/gro.h                             | 32 ++++------
+ net/core/dev.c                                |  8 ++-
+ net/ipv4/af_inet.c                            | 10 +---
+ net/ipv4/fou_core.c                           | 32 +++++-----
+ net/ipv4/tcp_offload.c                        |  1 +
+ net/ipv4/udp_offload.c                        |  2 -
+ net/ipv6/udp_offload.c                        |  2 -
+ tools/testing/selftests/net/gro.c             | 58 ++++++++++++++-----
+ tools/testing/selftests/net/gro.sh            |  2 +-
+ 14 files changed, 127 insertions(+), 84 deletions(-)
+
+-- 
+2.36.1
+
 
