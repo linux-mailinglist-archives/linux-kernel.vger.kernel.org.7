@@ -1,117 +1,192 @@
-Return-Path: <linux-kernel+bounces-827094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 310E5B904B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:02:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0526B904BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2AA13A5DB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:02:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97AFE3A6413
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3833228CF5F;
-	Mon, 22 Sep 2025 11:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F4F27F72C;
+	Mon, 22 Sep 2025 11:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="JIxMuHoM"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="fLMU/Kwj"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4692D24167A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 11:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B52D224D6
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 11:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758538952; cv=none; b=dDqUAfYLuMcB55FxRzQFNllWy9Sr6On/jhmT1hi3YOEHQ4D/wgebZzSR6vesGD+/pZuESCSIdGvDc4qUWVOyI1KV/MgJmdj7YxCjmt8zOjbdfVpgorLO+q8VTVoga7SeCZfOaD4tqIhZkokkMMwTUGgg0R7s9ejHCoThqsfwh/Q=
+	t=1758539059; cv=none; b=EExWbk9UAbLIQqtbdITZ+Y5wUy9/q+7wdaLpTg5/iXLkl28l4xw6E6FF8Pn7alurEhSyld+jOPQkNMfAry+WgDTUx10NNh2VsLyskv7M6AusY+s5b9S9SmVngBSXllM64Gx/frIFZz7y/5Y790QxIGMJV9h69GklUBgzSbMwl14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758538952; c=relaxed/simple;
-	bh=+li5jZLjno+mrEq1vnQPMSZK9xNs3cFzE65Gz2fSCdQ=;
+	s=arc-20240116; t=1758539059; c=relaxed/simple;
+	bh=x6sXZBtc5Xy+0SaVSipjo15fHcNyaUoOREPg8krCBk4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c26A+/3zrqdeTmI88TxRBn4Su3LJs6qKSdcB59fgRyLChpnkJ0K4iBRnzro/WoePhcbY4iCmk0AXSairlkNVzXcmE62EJWevnKc17ekv7Gk+Hyxp2sZDOdrZlG2gvMw+WyQrBEARz+OoNJXpO1Hhniuz3PQ3L2lQ5e8/2lj7K+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=JIxMuHoM; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24457f581aeso41823845ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 04:02:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=EUYcLw5QohKBdZepmYIYwX0GJGgytCauhmvz72kEdvGV3te83K2tPdu/FFXfd3TUH7TbY41hJJ4M8paeRETL2RIPG0lmJh9iy3p4c8q0E2BEnNAsUAao+hERtmYXA1AvxQHtFJWIE41MGF5iMMWjkGttABsIV/aVSLR6rF8y1u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=fLMU/Kwj; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-30cce8c3afaso3904018fac.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 04:04:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1758538950; x=1759143750; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1758539057; x=1759143857; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+li5jZLjno+mrEq1vnQPMSZK9xNs3cFzE65Gz2fSCdQ=;
-        b=JIxMuHoMddsnkA1HGxLhdLba+mklvPNgYLRC+BBFSA8TyBjRpqQ0WONpGo6lwPVDWW
-         hrwz/ALcbiuObkFbu65rtkB1ivDfSRA7TOvBdhaVHnPHQt4AMqus0ihUGncP7epLjnYl
-         4PVvvgSfRFYcpiF8ApwmcTLPiLHcOeYFlObL97B9zn5xYUagOgBPuONQSgn3NrGO8a0m
-         wDZACKNByxr7g61kT2ILtcFKBrH/mqO5qCAKEZXaDfCH2RQX1mO60GuQItahtyr8U8wy
-         OMbrltcLjguCUXX1kOfamT4wA0neEr66R6PqYE5+e0ZpnrcdAe+uXS7fMZPHHGzwMjrP
-         0TYA==
+        bh=4XGdu2beYVX5j16G/50OKngoOcnsJZ8baPn43qnH8Vk=;
+        b=fLMU/KwjzDSZS3/anYanEROya++jGDXoREE/7lOpJVXnVEeZBDFUBoCDnbIRvKP2pI
+         vOM5iKxe90Fike11jrk3WlT/G7Ba02L14b5/J/xuHqHHbSH5OJCQly2M+qlMAbkmV1Pl
+         Q32NRNvFujiLi0SMxd4RSBT3PhZCxST3nkO9YNFfFbMEWBHgh5Ycbe59ahtQ1aqnGnhJ
+         1kW1il/CjF+uUSsRdbVS6sjmn6u0r6NKbJ0t27SkxrB+7BONVzKkOODwsEJhWN1jliPu
+         0x6mDBIXIPMPqQsMZn3uYs1RfviT8QzoY/0n4vBPFVMPtSMI0AoE8tRWq8fCq30ufewb
+         Z4ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758538950; x=1759143750;
+        d=1e100.net; s=20230601; t=1758539057; x=1759143857;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+li5jZLjno+mrEq1vnQPMSZK9xNs3cFzE65Gz2fSCdQ=;
-        b=EeFnReeT3UZnv2Jcnl3Jen8JU/F203iaCqlm9yg3FAiaHyZ40g1//twLO9HWTABWeU
-         6wweTjSAXbE6au9D7dsBQh5tYnE+TDx5QkkQq5DftZ+oeyVrBqqjgOX88wSUJRSmpn8x
-         HxDrlplAMSJ6fE2L3R0h/+89bLs41CC+fgABVYIn4G0D2o2E+EAm9lZKm96uRZ4skUpx
-         qpfDBMueiASZ5U20+OzP4tlDvDdln/OTBJ2je2H53VDKiyL0mNW0ASOelUDqJwiUVVM7
-         IFUVDVtqttfweSHKxnjf/IFaSIHUAAizFmfZSHpIo4eyWTPJcxOyImL+JaUCWl2dJKBd
-         h3sg==
-X-Forwarded-Encrypted: i=1; AJvYcCV09cs7mwQJL0QPUJjg/zOQDMh5AYuSei00LrC0+Nta0HwvFGnwLZJWJw9kJTDGSXLmacZqEG8kZ+urw34=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKkRX9tbRVa6Mi/STmK1Q5XoxDhKsORcL0T2Q2c4mAp8y0Zwhz
-	EscD78Z0Rq1ioX94KZhdW1yj3gZFcytjo8chRbLfY0SGP38OpRfgoUZqhbSjEV4M0zqCEKqyrj+
-	E4g2kZ8lSyGE2KN4UAU+0ECQjaC2ekOU=
-X-Gm-Gg: ASbGncvf/6CkS3VOZwHFbS7CPUmalT6mnSwpkSos5pXAshIfUnzK2d8XRH1jwjFDTnB
-	3s1KL8SVRk/ayDLHmpV1zO7XLG4XDvb1R9Ioh/+H6VlGasQbrV96FkBiZPe+iPrawoM1I8SL55K
-	cQtnsDpcxltKzT2rsDuE9GQBpIdDgIYsyoBLqSt6NZubCo+SdKUealAYmFRVimMiSMjNYbRTOOZ
-	HNfCGRkhHSAqSeGcS4yQzce4sRMdq8bvp1UuyFp
-X-Google-Smtp-Source: AGHT+IGmUtMYlpRUtriAGyHEqqhD7tsNW/oErA13JErbQr7Uwk/4xc/l1EjiIRO/SRnBAHwmetXhu5CvO/UV+bZ8Paw=
-X-Received: by 2002:a17:903:1c3:b0:275:c2f:1b41 with SMTP id
- d9443c01a7336-2750c3e5feamr49668395ad.53.1758538950329; Mon, 22 Sep 2025
- 04:02:30 -0700 (PDT)
+        bh=4XGdu2beYVX5j16G/50OKngoOcnsJZ8baPn43qnH8Vk=;
+        b=T8NdkHwLdv7zjEXFTFu7w54FRfoVVpltG7LXNqqKwGCjmPTaDu1uNdaQ/4s5LVoZwN
+         rQ/mwmusRduCsjeJWFuyY6xuHk+TaC4ZEjf2Uaix/W1pe8g5RGgCbn7i9zg6YPXF1R+y
+         hHN2YR527r2n4N0CWmOx7OmhYWfNsHyhMWVLq6HZtNMuXDnVt81zQyZKGrPbHqZVpXz5
+         jadhDBMVkkPVaFIO5KkbSwobhozTgJRASxwxY7a8zT+A/h9hfQLbXqD6CdlFe1DntsUf
+         LKxyWSXWBBxmLj+SLRlVmIteShohF2w2QDnBZyNOJcLlbJVEd9fpx8zElXBkXAzbFPSN
+         uFGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX//cDIZF/Erg+U6jwJJ/0Zrk8f9NO2snx53MBl9icF2c/k5FaZRyTbMOU31OzwgXeaC8sPyQVHZ/rszeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySfLpuCfZ72Xa8gznNuhkJA/TT+1cFNb1ckjRsGfBa2HiQfA76
+	syO4u2i3PM+UISxtA8Yfect2Q6XRxtkchz+hCL68ykVZIDOrUCnbDUA41G6zY0jUE1qGxIMZE+t
+	G3FBblySaK0FwSshz2ASPjcdjhTppjVFlE9AyREFJfQ==
+X-Gm-Gg: ASbGncsyphWek0g5IZ4Uxx8Z43W2QEiRlretXrnrTaPdbwEM2jhhxxCiI5z/43TeNi1
+	x5uXwQer9+2dt8ySqR+qA+v6niD5kFP77p3vQvadgqMhYmUI3VOYoA2dS0Dqxu3Ob+sDag70gDf
+	mbkjKq5RJ1JKHZ1bC2kFG70undVcI2i7Vl0jjFDZvhWyLf2CDtZgw7V391PaKGdXe8KkCPOFKrj
+	3eMNYM5ThD8ZA==
+X-Google-Smtp-Source: AGHT+IEvS4cemYKzvf8/W3Ni0tXFdK49y2b13V4Ek7MsLn0SEOghPBIISAL2RiOAvFwYHiWJSM5vrjR4tjFOI/lJfqE=
+X-Received: by 2002:a05:6808:2106:b0:437:b63f:5b06 with SMTP id
+ 5614622812f47-43d6c2aeb61mr5322105b6e.34.1758539057077; Mon, 22 Sep 2025
+ 04:04:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
- <b88a947c-7074-4fed-8283-c278b573a7ca@sirena.org.uk> <CAFBinCBe3LhN+3beovFVuWPpe3pDF5P1wSt7nPjm=ykRAx4zzQ@mail.gmail.com>
- <1jldm855cd.fsf@starbuckisacylon.baylibre.com> <aNEZcNbSfJlkP7Ra@finisterre.sirena.org.uk>
-In-Reply-To: <aNEZcNbSfJlkP7Ra@finisterre.sirena.org.uk>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Mon, 22 Sep 2025 13:02:18 +0200
-X-Gm-Features: AS18NWBF_8d672goWt-c8mlWPO6qTZjdU-iJtORQkODp_RuBXGukLUDReQvFfGA
-Message-ID: <CAFBinCCn-rBNoCiTkgn9__NyujAbPOeEdhLskbWwg_onRh=44w@mail.gmail.com>
-Subject: Re: [PATCH 00/26] clk: amlogic: clock controllers clean-up and factorisation
-To: Mark Brown <broonie@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250919085918.5442-1-cuiyunhui@bytedance.com>
+ <20250919085918.5442-2-cuiyunhui@bytedance.com> <20250919-colossal-splendid-bettong-e5a0bd@sudeepholla>
+ <CAEEQ3wkRoX5Y5xQu22kVCFxEy8fgcUxKHEm=9Bpg7g-Np8b-SA@mail.gmail.com> <20250922-buffalo-of-hypothetical-downpour-d2a47c@sudeepholla>
+In-Reply-To: <20250922-buffalo-of-hypothetical-downpour-d2a47c@sudeepholla>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Mon, 22 Sep 2025 19:04:05 +0800
+X-Gm-Features: AS18NWCjxTnXNffNhsVhAB7VVz0ET_vSy-py67u7Gzutp1wKTHn_hOJyONTf-KI
+Message-ID: <CAEEQ3w=4aKS=p=+q4iC42Va+dMVm017R0Surxff+4R+4RjkgAg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v3 1/1] arch_topology: move
+ parse_acpi_topology() to common code
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, gregkh@linuxfoundation.org, 
+	rafael@kernel.org, dakr@kernel.org, beata.michalska@arm.com, 
+	ptsm@linux.microsoft.com, sumitg@nvidia.com, yangyicong@hisilicon.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2025 at 11:40=E2=80=AFAM Mark Brown <broonie@kernel.org> wr=
-ote:
+Hi Sudeep,
+
+On Mon, Sep 22, 2025 at 5:01=E2=80=AFPM Sudeep Holla <sudeep.holla@arm.com>=
+ wrote:
 >
-> On Sun, Sep 21, 2025 at 02:59:30PM +0200, Jerome Brunet wrote:
-> > On Sun 21 Sep 2025 at 14:21, Martin Blumenstingl <martin.blumenstingl@g=
-ooglemail.com> wrote:
+> On Mon, Sep 22, 2025 at 10:18:57AM +0800, yunhui cui wrote:
+> > Hi Sudeep,
+> >
+> > On Fri, Sep 19, 2025 at 10:05=E2=80=AFPM Sudeep Holla <sudeep.holla@arm=
+.com> wrote:
 >
-> > > A few days ago Marek reported problems on an Odroid-N2 and provided a=
- fix: [0]
-> > > It's not queued up for -next yet.
+> [...]
+>
 > > >
-> > > Please give Marek's patch a try
+> > > Just thinking if it makes sense keep acpi_cpu_is_threaded generic wit=
+hout
+> > > the need for weak definition.
+> > >
+> > > Additional note: not sure why you haven't moved this under CONFIG_ARM=
+64/RISCV as
+> > > done with other code.
+> > >
+> > > bool __init acpi_cpu_is_threaded(int cpu)
+> > > {
+> > >         int is_threaded =3D acpi_pptt_cpu_is_thread(cpu);
+> > >
+> > >         /*
+> > >          * if the PPTT doesn't have thread information, check for arc=
+hitecture
+> > >          * specific fallback if available
+> > >          */
+> > >         if (is_threaded < 0)
+> > >                 is_threaded =3D arch_cpu_is_threaded();
+> > >
+> > >         return !!is_threaded;
+> > > }
+> > >
+> > > Then you can just have the define in
+> > >
+> > > #define arch_cpu_is_threaded() (read_cpuid_mpidr() & MPIDR_MT_BITMASK=
+)
+> > >
+> > > in arch/arm64/include/asm/topology.h
+> > >
+> > > and
+> > >
+> > > +#ifndef arch_cpu_is_threaded
+> > > +#define arch_cpu_is_threaded           (0)
+> > > +#endif
+> > >
+> > > in include/linux/arch_topology.h
+> > >
+> > > Thoughts ?
+> >
+> > If placed in include/linux/arch_topology.h, there is a possibility
+> > that "arch_cpu_is_threaded" will be redefined.
+> >
 >
-> > Being on the A311D as well, it is likely to be the same issue.
-> > I suspect you would not see the crash it without earlycon indeed.
+> Why is that a problem ? We want arch to override the default definition
+> if and when required.
+
+Because include/linux/topology.h first includes linux/arch_topology.h,
+and then includes asm/topology.h, a warning will be generated during
+compilation:
+
+In file included from ./include/linux/topology.h:37,
+                 from ./include/linux/gfp.h:8,
+                 from ./include/linux/xarray.h:16,
+                 from ./include/linux/list_lru.h:14,
+                 from ./include/linux/fs.h:14,
+                 from kernel/events/core.c:11:
+./arch/arm64/include/asm/topology.h:39: warning:
+"arch_cpu_is_threaded" redefined
+   39 | #define arch_cpu_is_threaded() (read_cpuid_mpidr() & MPIDR_MT_BITMA=
+SK)
+      |
+In file included from ./include/linux/topology.h:30:
+./include/linux/arch_topology.h:94: note: this is the location of the
+previous definition
+   94 | #define arch_cpu_is_threaded()  (0)
+
+Unless #undef arch_cpu_is_threaded is used in arch/arm64/include/asm/topolo=
+gy.h,
+
+So it's better to place
+#ifndef arch_cpu_is_threaded
+#define arch_cpu_is_threaded (0)
+#endif
+in include/asm-generic/topology.h.
+
 >
-> > The fix is in clk-next already so linux-next should get it soon.
-> > Sorry for the inconvenience and thanks for the report.
->
-> If it's supposed to turn up in -next it's probably easier for me to pick
-> it up from there given the firmware issues with the board, though there
-> may not be one until Thursday.
-The mentioned patch just landed in linux-next
+> --
+> Regards,
+> Sudeep
+
+Thanks,
+Yunhui
 
