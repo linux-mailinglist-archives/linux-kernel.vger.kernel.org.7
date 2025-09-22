@@ -1,193 +1,188 @@
-Return-Path: <linux-kernel+bounces-826896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9265FB8F934
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:38:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29525B8F940
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E2903A765B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:38:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0BBA7A19EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045FF2773F3;
-	Mon, 22 Sep 2025 08:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40969275AF0;
+	Mon, 22 Sep 2025 08:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PE98RXSg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kwPAuYCZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qnJmSgp5";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kwPAuYCZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qnJmSgp5"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75440126F0A;
-	Mon, 22 Sep 2025 08:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1495B23B616
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758530279; cv=none; b=VrOgC/1+b6rTvb+oaqWSunWGEUl04sbK4bfhoLuNZ9Y5QB8tIHJ8Kf6GGhAjmD+oGPOarjNgmD1zjNDuW1IfFBzS4I31jkSGFlEaB8tZg93ItyJ0CztFKX7VASnUcBQtS8mbDKotBOCLU2QHZiEeI+3rc6wFc/yQGPBAhUvRCOM=
+	t=1758530336; cv=none; b=ZeDXeCbZr60j7HoOoL3wsYDVQ4VhYvABVH5I36iT9maI+rdnMB0/hAMV5FpX/RWHWM/U8+pDbrz5kGVTO0YEb/okiUnsnW77A/fppwReDZ8gUFnuig5Z1jmVILvoguwf3u7d/koMsOWbSJbUrb3Dqvhz29zxK6vU2VtGrNdl3XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758530279; c=relaxed/simple;
-	bh=oi12o4q5hIFskYvycyV2Jw8XJZYACMASrC6OmCmT+2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hCytn0W+aakfBU2g34DVjHDfoDcP3c78fsMfxMtpzpS5O2+cjVhn9f4Mbj4A610TlgMTg0kXy6sDwIVdvVJx4RYfvAuQQyKYmWRWF7/RZuvNUjKAMD1fcXT/2txyjCZg0jSlT4Hqpsr5rQzZsHDRjzI/A9n2KZ8o08B6eUD2M/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PE98RXSg; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758530277; x=1790066277;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=oi12o4q5hIFskYvycyV2Jw8XJZYACMASrC6OmCmT+2c=;
-  b=PE98RXSgQ25dcV/yjD/z8cmMZjW4pTok8HFEmaCvRE+9qo39tSqEJOhy
-   OkcPW0pzt8bplvCMNXlGIIxkw8qsuk9TaKZJriu15o43DeFE5fQvHrXXH
-   EZTOycKlLiFrSyuxQzN67T2WFIa6DTpDb7cP6H0C0/S4sd77w3yuG+LlA
-   eIrfy0hfDsQt6t8Z4Uo/RD5QyMU/VLiB9W4Hcg59VoL7AmCdiuRNYwVe8
-   7cJwfmp/Yz0q0slsVW+JEe53AojQl34Z6V0nwwcjrht1wUdgH887Pa5q6
-   GzkRtBIla4cidRyomMEXI1PZvf+zRru/QvNOmI4XYsxwLiSvXAcUvefOq
-   g==;
-X-CSE-ConnectionGUID: 9R7vZ02vQAyW/YniCwg4Hg==
-X-CSE-MsgGUID: gXNrrvv7REWvsBnqbMgCaQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="60845013"
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="60845013"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:37:56 -0700
-X-CSE-ConnectionGUID: BXkVqYdTT0ym4zdN7Jy0Ag==
-X-CSE-MsgGUID: yFHc42fGQKC/JkvuRp90TA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="176490946"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:37:53 -0700
-Message-ID: <499c8f65-1a28-4efa-b9e8-14e516edf4ad@linux.intel.com>
-Date: Mon, 22 Sep 2025 16:37:51 +0800
+	s=arc-20240116; t=1758530336; c=relaxed/simple;
+	bh=2OnJidlSmxP67bMZGfBWh2+IXg580m43RoHwSsKkm5s=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H4UjmMbF82CeNOWhpN8hkJmD6/WWuAskTGulGp5hysP5iJ4lWmNuYhmwka44u7iPeBqxCUukcGdHQIPtU7SxQH+yuybg06alKCv41aVVBtKjPwho61EUv1z9KbYpGfNqoDVHkd8Qy2XkcIo1RolraHeCLxsDhNyjo8n1rntv0nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kwPAuYCZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qnJmSgp5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kwPAuYCZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qnJmSgp5; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5BABF2267A;
+	Mon, 22 Sep 2025 08:38:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758530333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3FBFwzwbywcqa4BZPwtgXazqmPvTlx9lbITwaYdKPx4=;
+	b=kwPAuYCZ0QEQPt9Zyh34nC5mUxNcc10e2+eggmiFrSPYeFQ4K+7wXaS7kkPkCjXTLnqtPN
+	+59tl4DIOhgJAGsgxicY1v1MgrJPHF3bZk2njkBZutKkrk7kEaMx3psVvQB1lhFZ0AmIO1
+	gzMxuQs+vFRSIchTdS2cFFFTXpuV7w4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758530333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3FBFwzwbywcqa4BZPwtgXazqmPvTlx9lbITwaYdKPx4=;
+	b=qnJmSgp5ho1CiZHwwUETXf+X3e81NdY1ohQChby5qkDK91JPcj+76CEiNhJiEbJegooAi4
+	ETLckbB8hcjvZODw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=kwPAuYCZ;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=qnJmSgp5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758530333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3FBFwzwbywcqa4BZPwtgXazqmPvTlx9lbITwaYdKPx4=;
+	b=kwPAuYCZ0QEQPt9Zyh34nC5mUxNcc10e2+eggmiFrSPYeFQ4K+7wXaS7kkPkCjXTLnqtPN
+	+59tl4DIOhgJAGsgxicY1v1MgrJPHF3bZk2njkBZutKkrk7kEaMx3psVvQB1lhFZ0AmIO1
+	gzMxuQs+vFRSIchTdS2cFFFTXpuV7w4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758530333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3FBFwzwbywcqa4BZPwtgXazqmPvTlx9lbITwaYdKPx4=;
+	b=qnJmSgp5ho1CiZHwwUETXf+X3e81NdY1ohQChby5qkDK91JPcj+76CEiNhJiEbJegooAi4
+	ETLckbB8hcjvZODw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1CADF1388C;
+	Mon, 22 Sep 2025 08:38:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PR6fBR0L0WhHFwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 22 Sep 2025 08:38:53 +0000
+Date: Mon, 22 Sep 2025 10:38:52 +0200
+Message-ID: <875xdaevab.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+	Takashi Iwai <tiwai@suse.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux PCI <linux-pci@vger.kernel.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Zhang Qilong <zhangqilong3@huawei.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 1/3] PM: runtime: Add auto-cleanup macros for "resume and get" operations
+In-Reply-To: <3388279.44csPzL39Z@rafael.j.wysocki>
+References: <6204724.lOV4Wx5bFT@rafael.j.wysocki>
+	<3388279.44csPzL39Z@rafael.j.wysocki>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 30/51] KVM: nVMX: Virtualize NO_HW_ERROR_CODE_CC for
- L1 event injection to L2
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Xiaoyao Li <xiaoyao.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-References: <20250919223258.1604852-1-seanjc@google.com>
- <20250919223258.1604852-31-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250919223258.1604852-31-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 5BABF2267A
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.de:dkim,suse.de:mid];
+	TO_DN_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -3.51
+
+On Sat, 20 Sep 2025 12:54:58 +0200,
+Rafael J. Wysocki wrote:
+> 
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> It is generally useful to be able to automatically drop a device's
+> runtime PM usage counter incremented by runtime PM operations that
+> resume a device and bump up its usage counter [1].
+> 
+> To that end, add DEFINE_CLASS() macros allowing pm_runtime_put()
+> and pm_runtime_put_autosuspend() to be used for the auto-cleanup in
+> those cases.
+> 
+> Simply put, a piece of code like below:
+> 
+> 	pm_runtime_get_sync(dev);
+> 	.....
+> 	pm_runtime_put(dev);
+> 	return 0;
+> 
+> can be transformed with CLASS() like:
+> 
+> 	CLASS(pm_runtime_get_active, pm)(dev);
+> 	if (IS_ERR(pm))
+> 		return PTR_ERR(pm);
+> 	.....
+> 	return 0;
+> 
+> (note the new resume error handling).
+
+Do we still allow the code without the error check even using CLASS()?
+Although the error check should be handled, it's not mandatory for
+now.  That said, the above example could be still in a form like:
+
+	CLASS(pm_runtime_get_active, pm)(dev);
+	.....
+	return 0;
+
+while adding the proper error check is recommended?
 
 
+thanks,
 
-On 9/20/2025 6:32 AM, Sean Christopherson wrote:
-> From: Yang Weijiang <weijiang.yang@intel.com>
->
-> Per SDM description(Vol.3D, Appendix A.1):
-> "If bit 56 is read as 1, software can use VM entry to deliver a hardware
-> exception with or without an error code, regardless of vector"
->
-> Modify has_error_code check before inject events to nested guest. Only
-> enforce the check when guest is in real mode, the exception is not hard
-> exception and the platform doesn't enumerate bit56 in VMX_BASIC, in all
-> other case ignore the check to make the logic consistent with SDM.
->
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-> Reviewed-by: Chao Gao <chao.gao@intel.com>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-
-> ---
->   arch/x86/kvm/vmx/nested.c | 27 ++++++++++++++++++---------
->   arch/x86/kvm/vmx/nested.h |  5 +++++
->   2 files changed, 23 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index 846c07380eac..b644f4599f70 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -1272,9 +1272,10 @@ static int vmx_restore_vmx_basic(struct vcpu_vmx *vmx, u64 data)
->   {
->   	const u64 feature_bits = VMX_BASIC_DUAL_MONITOR_TREATMENT |
->   				 VMX_BASIC_INOUT |
-> -				 VMX_BASIC_TRUE_CTLS;
-> +				 VMX_BASIC_TRUE_CTLS |
-> +				 VMX_BASIC_NO_HW_ERROR_CODE_CC;
->   
-> -	const u64 reserved_bits = GENMASK_ULL(63, 56) |
-> +	const u64 reserved_bits = GENMASK_ULL(63, 57) |
->   				  GENMASK_ULL(47, 45) |
->   				  BIT_ULL(31);
->   
-> @@ -2949,7 +2950,6 @@ static int nested_check_vm_entry_controls(struct kvm_vcpu *vcpu,
->   		u8 vector = intr_info & INTR_INFO_VECTOR_MASK;
->   		u32 intr_type = intr_info & INTR_INFO_INTR_TYPE_MASK;
->   		bool has_error_code = intr_info & INTR_INFO_DELIVER_CODE_MASK;
-> -		bool should_have_error_code;
->   		bool urg = nested_cpu_has2(vmcs12,
->   					   SECONDARY_EXEC_UNRESTRICTED_GUEST);
->   		bool prot_mode = !urg || vmcs12->guest_cr0 & X86_CR0_PE;
-> @@ -2966,12 +2966,19 @@ static int nested_check_vm_entry_controls(struct kvm_vcpu *vcpu,
->   		    CC(intr_type == INTR_TYPE_OTHER_EVENT && vector != 0))
->   			return -EINVAL;
->   
-> -		/* VM-entry interruption-info field: deliver error code */
-> -		should_have_error_code =
-> -			intr_type == INTR_TYPE_HARD_EXCEPTION && prot_mode &&
-> -			x86_exception_has_error_code(vector);
-> -		if (CC(has_error_code != should_have_error_code))
-> -			return -EINVAL;
-> +		/*
-> +		 * Cannot deliver error code in real mode or if the interrupt
-> +		 * type is not hardware exception. For other cases, do the
-> +		 * consistency check only if the vCPU doesn't enumerate
-> +		 * VMX_BASIC_NO_HW_ERROR_CODE_CC.
-> +		 */
-> +		if (!prot_mode || intr_type != INTR_TYPE_HARD_EXCEPTION) {
-> +			if (CC(has_error_code))
-> +				return -EINVAL;
-> +		} else if (!nested_cpu_has_no_hw_errcode_cc(vcpu)) {
-> +			if (CC(has_error_code != x86_exception_has_error_code(vector)))
-> +				return -EINVAL;
-> +		}
->   
->   		/* VM-entry exception error code */
->   		if (CC(has_error_code &&
-> @@ -7217,6 +7224,8 @@ static void nested_vmx_setup_basic(struct nested_vmx_msrs *msrs)
->   	msrs->basic |= VMX_BASIC_TRUE_CTLS;
->   	if (cpu_has_vmx_basic_inout())
->   		msrs->basic |= VMX_BASIC_INOUT;
-> +	if (cpu_has_vmx_basic_no_hw_errcode_cc())
-> +		msrs->basic |= VMX_BASIC_NO_HW_ERROR_CODE_CC;
->   }
->   
->   static void nested_vmx_setup_cr_fixed(struct nested_vmx_msrs *msrs)
-> diff --git a/arch/x86/kvm/vmx/nested.h b/arch/x86/kvm/vmx/nested.h
-> index 6eedcfc91070..983484d42ebf 100644
-> --- a/arch/x86/kvm/vmx/nested.h
-> +++ b/arch/x86/kvm/vmx/nested.h
-> @@ -309,6 +309,11 @@ static inline bool nested_cr4_valid(struct kvm_vcpu *vcpu, unsigned long val)
->   	       __kvm_is_valid_cr4(vcpu, val);
->   }
->   
-> +static inline bool nested_cpu_has_no_hw_errcode_cc(struct kvm_vcpu *vcpu)
-> +{
-> +	return to_vmx(vcpu)->nested.msrs.basic & VMX_BASIC_NO_HW_ERROR_CODE_CC;
-> +}
-> +
->   /* No difference in the restrictions on guest and host CR4 in VMX operation. */
->   #define nested_guest_cr4_valid	nested_cr4_valid
->   #define nested_host_cr4_valid	nested_cr4_valid
-
+Takashi
 
