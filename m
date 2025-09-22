@@ -1,269 +1,237 @@
-Return-Path: <linux-kernel+bounces-827888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5582B935CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:19:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FAF5B935D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F151176F82
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:19:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2EC19C0758
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078B923C516;
-	Mon, 22 Sep 2025 21:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5261287249;
+	Mon, 22 Sep 2025 21:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tTCFSCQ5"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="RekU22S2"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613591A9F93
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63097277CA5
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758575947; cv=none; b=cPf6Qquie+sJ2XeB/7Fx5c5FQ4K2jjtgBOsf1h/+qxfayiiO3PfrDjgDk61U56lN1WZtygPiZC+BXMhT4qnTNMIJL7g9I43TT9IJuz0qFSLyU7sZ/WnDHMCHXxK/9rh7WIXhLdBTDF8foVzSpbv4G4BNqbvP+Q705M7RbhXfwiw=
+	t=1758576048; cv=none; b=A3z8C5ierkqwT6yNYJ6FleW2fC4rNwGogL1d3L6DjZuiWcYT0/vxvWgpe9w3c68AzpWjxbqjV0vNCiK7NRY3si7aJgzB7CToz772mCTGClypWuyeM6P5O0GNvqaCwA/U8nWzwTPSWI6CgVncmPqRXGaOZS7fQdBkTz3oacBRAas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758575947; c=relaxed/simple;
-	bh=MI5tLMZdBGbBrKXk75JOzF8Rb3NYMcK9pA4kRzdaLXs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ICSt8x1/yez8saCldnQ1ydsHtb5yx5uoAyiYBoQc1jCKqKgXvFeMMKaeHTX+GEWTnexJM1NnGQNrIaK05Y+UydEyNqHSvP+jvHHIIKJ4g/H1e5quJSveNPRpPVA5+dAuQTkrUeeXv6+1tGtfennDxFc+exrgowaXwJqHUyWN7DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tTCFSCQ5; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-34112cbfc85so1355409fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:19:04 -0700 (PDT)
+	s=arc-20240116; t=1758576048; c=relaxed/simple;
+	bh=xihBR50Hw2D9VbbOxPhiH3tyeef2qtQXdEqxf23CwKU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jy2KDMbB+4pCmNNeYmmvcJMpPk3KEN0c6dwqZfqQl6D+qC/7kJcCj2Ahk9dSncnn+gg7/Z9jIGHJC23a8D3V9rPSF1MczXV3GA9yNXZSwPXm9PDjvsxorZXGz19HE+Ab+I/PzswXzqJrgNdMCbVo3Uo2+P8roo9JgaVqXRDxfe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=RekU22S2; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-72ce9790acdso46461737b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:20:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758575943; x=1759180743; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q2c4nwkNiyMR3avhrupjYBq5ngF3Pu57vNUIHIWJPCM=;
-        b=tTCFSCQ55ZVKCKLAwd0slkA5ye3VfNjSD6RkbYvnZa5U0ElDVNvrlczAmEXSLSC7/r
-         Qc8b0dhJzapxAjGOakJ0wdLbGt18V5vRILdKePM1Eq8isQ8e8aeK0mMYeHMTfFwMGlVD
-         lEVrGM06bN/vKG/xYbA6dCXdyUvMwmYXPzcaf8gf18q/domTC71mZoG+2YyMf3m1oONW
-         onUbo6tn/bsTez/c5RVWFjFWvjWayU1lHxa60PVpYIolUouwDEeV5wzvZERBkBCCXbiv
-         QgCHCqFJwEM/E57Bz3dcDXmhj0FHg3+udVxHrTizAp5hPEfvF1SHv3I5LKyXafuBu4RC
-         RacA==
+        d=ventanamicro.com; s=google; t=1758576045; x=1759180845; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=onj4yFqllMzEveOUk9DfiKAf4L6zZPOcmFKF8e4Prmo=;
+        b=RekU22S29EWqJzTI15pNBLvm4dd33dZUs0lq1e/v122oymxTrdV+kuI/xa4wANY21H
+         yQ2CshfsR2Ac6bitlycLLtbWa2+8TN4iygiFDW62vYbRj4RORw8TIsFB2inxh7IY3LeY
+         eMuggKBcuOVjwazuTlT5F/5h9yOeXBqtFkItsy+U7Ub+RPwYQ1NKQzRF1UzKFT0LH+4+
+         CMXLe8j73dgyUIWvznFQRp4CKnZVdbz7PrY/THc+4c6TRXBwQtlgoxHMr2f5FO+w/PVq
+         5gW1VRDLSD2g0ZPSpb3p47IxYstYXwpxC91kyzW1wLaAKQ4vBpXsVTxNWCpcQ0HeZa1o
+         R9LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758575943; x=1759180743;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q2c4nwkNiyMR3avhrupjYBq5ngF3Pu57vNUIHIWJPCM=;
-        b=vKd7js3sYFB1shj860GjKN2+D5Cc2KKtaZpXakHjs54oygtoFKRKWhMyEevAQfpgwa
-         OOLLsmRivZcSkkrt7khr2rWFytbXHas/NLZFo0jJRhm2HdVUShKfJpg0oqGplxoegWSH
-         b3s0Z734jI6dw8PC0WDw3DrV5W151uaXDxc+4No0lB7XPKv2KJxdP6ZNVgcvUAqMDSSO
-         Dt9V/kXXoU+pkLFsiNfhZVaeEX8cEM2FhCLnvyOCYZEEcotk69eNJ/qXIRzijpxUBq43
-         mHHmtyqBOebJxZvW3vhNq6w3z7jcaTecmTUrLEbqa0mEzSXVb91pDTPMceaOFpezIU+C
-         XF/Q==
-X-Gm-Message-State: AOJu0Yyk+dyt9j5KQZJgnBagZA9Jisihs3UdCu18yjfk9BXFcvuY4S/V
-	k6bWP3zTj/lCb7shdhoeI18z0cwlH4zpB9o0ywSOhNA1LfRWDn/7uJ2BmYSC8oIM3p4=
-X-Gm-Gg: ASbGncvH0/v7eZNWwwNbmeI4Vw2ibmiQq/20QYqLCgUoDWtQADmFT9M9MQ+Mbpc+pe/
-	WMwEEh0oVS7+9uupRzItDBSuCqlxXM1rW/nyeEGf35cPuP4ric89ez01Hu6V2pCn0oDRhWEI94i
-	RJdm+LbxKInTYGwWKNtjEKqnWZbJosyQT11FCYzHELOT5AZT6EtHzNJg0o89OXbRI4lYiYXyQCh
-	F9U9RElZdwCWgrP64RWgEuMIfOXasT5Z6fnxip09lGv25ORSA14QmcXkpn8uC6Gyey/63HiWCff
-	CGb9008y1xixs3bBBKzz6Jl+pTrfi2ZHqdPFFN4s1oY5Yjaad2/jRFfRDqi1ZQugv/tRdX1MYjL
-	VhIN0el6nb+sNfvgqfnrLplf3w7XFrf+jscu0dZLBFVCDKR5mcKLjePWhT8gIxR/kC5P4Ww7eqX
-	Q=
-X-Google-Smtp-Source: AGHT+IEy2v9bgZwS7bCF+QjAPCajER2/ekE30YoyHmLioI13RbWg+IXdCZ7A77duoSqvHz2Nge2WYg==
-X-Received: by 2002:a05:6870:ab05:b0:31d:63f9:b247 with SMTP id 586e51a60fabf-34c858e36c4mr153841fac.25.1758575943355;
-        Mon, 22 Sep 2025 14:19:03 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:505f:96cd:1359:fff4? ([2600:8803:e7e4:1d00:505f:96cd:1359:fff4])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-349992164b2sm691181fac.15.2025.09.22.14.19.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 14:19:02 -0700 (PDT)
-Message-ID: <69cbe12f-3202-499e-a135-a00ff6ec9c51@baylibre.com>
-Date: Mon, 22 Sep 2025 16:19:01 -0500
+        d=1e100.net; s=20230601; t=1758576045; x=1759180845;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=onj4yFqllMzEveOUk9DfiKAf4L6zZPOcmFKF8e4Prmo=;
+        b=af+E+A7zwvTm4y4PY4bZ77OZ+7Ukf6uNTLD2Rl1v+EWgtkALUGl31aflx6L1JeWfun
+         ts2BhcWOfEQFVHCoeLKgsHtILVXMo4b8hIrzjk/a5daC967nZKbVPvRAJRX0KD57Cypa
+         qpc8mC9rxhrWq380Ena6J8jUOynvtv4GCNk7HhIcmSYI9kawmE1dtk+Z1bK0FVPXr4yM
+         lx47nQw0CENQrTFWwdTqDy1AoCncmKN9DtCohCcpp8jYeil/hkYMzxKMGNSD+m5+8Y47
+         BPaWXm94YBW8FrKbj5UdUy+WnIRcUQkaAoz7iWcm4xF119gCcwJoDWhcxF6FZE3pZC2X
+         iLmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRTZMXxkXCt8WcOZP0hkAt7LnoNXVYqfRK4fhfIqJYttFRQgIJYFvV8OdiMP3mA2ms0zHksWM6Ww76XVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAWzVVLAJvpIG+VXkA5bBW1zShutuZuQ0og1kfTUTUcQzCeRyn
+	/Hp3861k8FC6lVrzm+XMaonzV+kwjoK9PR/KEuZt7MRMOJqtIkGhWQbrEr9v8DLzwgc=
+X-Gm-Gg: ASbGncsEU73GKVAsSjcYNhamF81fLAFu8A5lsYZwz883Lza7qV26rFonagrZxWwtZR/
+	5TY2IViUnoAVHi4FXc1Chvri+SzvthsgvDj2Nr2fJcAX3rehsDMQPGcPCiBqmlGR+8XkP+087ml
+	PX8SITuxoL5+ELNdaVMe+TL7HSQD/3zvajTUiq2FHx0iJRUpMWI1fgmead3i8L8BC8gQQtCMtqv
+	iddblfGHNNpivuj5F86VOtfkTQOnw00d/Z/Tlq7ELKC51qfbZtg8WMBKclIeimzs67Os2MFINSh
+	do3P3+3QNlNZH8t1aM6Sx7exuZRvg3aAYVj94j/wBy9+hxGYd8jHNsFcfd935QdoBq1COFbQ4GR
+	YfFcL98WNAcDAJ5kFx2+cuYjf
+X-Google-Smtp-Source: AGHT+IEkvQZ5SylVDHV/m2S+NTAyd5wvsiLsp5Pptg5UwT2UN0VbvwmLcskjGP4MQTxbjIrmiAtKRQ==
+X-Received: by 2002:a05:690c:4b03:b0:722:6f24:6293 with SMTP id 00721157ae682-758a2d07fd7mr1394647b3.32.1758576045119;
+        Mon, 22 Sep 2025 14:20:45 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-633bcce7089sm4581523d50.5.2025.09.22.14.20.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 14:20:44 -0700 (PDT)
+Date: Mon, 22 Sep 2025 16:20:43 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	zong.li@sifive.com, tjeznach@rivosinc.com, joro@8bytes.org, will@kernel.org, 
+	robin.murphy@arm.com, anup@brainfault.org, atish.patra@linux.dev, tglx@linutronix.de, 
+	alex.williamson@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com, alex@ghiti.fr
+Subject: Re: [RFC PATCH v2 08/18] iommu/riscv: Use MSI table to enable IMSIC
+ access
+Message-ID: <20250922-50372a07397db3155fec49c9@orel>
+References: <20250920203851.2205115-20-ajones@ventanamicro.com>
+ <20250920203851.2205115-28-ajones@ventanamicro.com>
+ <20250922184336.GD1391379@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] iio: mpl3115: add support for sampling frequency
-To: Antoni Pokusinski <apokusinski01@gmail.com>, jic23@kernel.org,
- nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux@roeck-us.net, rodrigo.gobbi.7@gmail.com,
- naresh.solanki@9elements.com, michal.simek@amd.com,
- grantpeltier93@gmail.com, farouk.bouabid@cherry.de,
- marcelo.schmitt1@gmail.com
-References: <20250921133327.123726-1-apokusinski01@gmail.com>
- <20250921133327.123726-4-apokusinski01@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250921133327.123726-4-apokusinski01@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922184336.GD1391379@nvidia.com>
 
-On 9/21/25 8:33 AM, Antoni Pokusinski wrote:
-> When the device is in ACTIVE mode the temperature and pressure measurements
-> are collected with a frequency determined by the ST[3:0] bits of CTRL_REG2
-> register.
+On Mon, Sep 22, 2025 at 03:43:36PM -0300, Jason Gunthorpe wrote:
+> On Sat, Sep 20, 2025 at 03:38:58PM -0500, Andrew Jones wrote:
+> > When setting irq affinity extract the IMSIC address the device
+> > needs to access and add it to the MSI table. If the device no
+> > longer needs access to an IMSIC then remove it from the table
+> > to prohibit access. This allows isolating device MSIs to a set
+> > of harts so we can now add the IRQ_DOMAIN_FLAG_ISOLATED_MSI IRQ
+> > domain flag.
 > 
-> Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
-> ---
->  drivers/iio/pressure/mpl3115.c | 80 ++++++++++++++++++++++++++++++++++
->  1 file changed, 80 insertions(+)
+> IRQ_DOMAIN_FLAG_ISOLATED_MSI has nothing to do with HARTs.
 > 
-> diff --git a/drivers/iio/pressure/mpl3115.c b/drivers/iio/pressure/mpl3115.c
-> index cf34de8f0d7e..2f1860ca1f32 100644
-> --- a/drivers/iio/pressure/mpl3115.c
-> +++ b/drivers/iio/pressure/mpl3115.c
-> @@ -28,6 +28,7 @@
->  #define MPL3115_INT_SOURCE 0x12
->  #define MPL3115_PT_DATA_CFG 0x13
->  #define MPL3115_CTRL_REG1 0x26
-> +#define MPL3115_CTRL_REG2 0x27
->  #define MPL3115_CTRL_REG3 0x28
->  #define MPL3115_CTRL_REG4 0x29
->  #define MPL3115_CTRL_REG5 0x2a
-> @@ -46,6 +47,8 @@
->  #define MPL3115_CTRL_ACTIVE BIT(0) /* continuous measurement */
->  #define MPL3115_CTRL_OS_258MS (BIT(5) | BIT(4)) /* 64x oversampling */
->  
-> +#define MPL3115_CTRL_ST (BIT(3) | BIT(2) | BIT(1) | BIT(0))
+>  * Isolated MSI means that HW modeled by an irq_domain on the path from the
+>  * initiating device to the CPU will validate that the MSI message specifies an
+>  * interrupt number that the device is authorized to trigger. This must block
+>  * devices from triggering interrupts they are not authorized to trigger.
+>  * Currently authorization means the MSI vector is one assigned to the device.
 
-Can be simplified with GENMASK(3, 0).
+Unfortunately the RISC-V IOMMU doesn't have support for this. I've raised
+the lack of MSI data validation to the spec writers and I'll try to raise
+it again, but I was hoping we could still get IRQ_DOMAIN_FLAG_ISOLATED_MSI
+by simply ensuring the MSI addresses only include the affined harts (and
+also with the NOTE comment I've put in this patch to point out the
+deficiency).
 
-Would also be more clear to call it MPL3115_CTRL_REG2_ST.
-Otherwise it looks like it overlaps with the bits above
-and below.
+> 
+> It has to do with each PCI BDF having a unique set of
+> validation/mapping tables for MSIs that are granular to the interrupt
+> number.
 
-> +
->  #define MPL3115_CTRL_IPOL1 BIT(5)
->  #define MPL3115_CTRL_IPOL2 BIT(1)
->  
-> @@ -53,6 +56,25 @@
->  
->  #define MPL3115_CTRL_INT_CFG_DRDY BIT(7)
->  
-> +static const unsigned int mpl3115_samp_freq_table[][2] = {
-> +	{ 1,      0},
-> +	{ 0, 500000},
-> +	{ 0, 250000},
-> +	{ 0, 125000},
-> +	{ 0,  62500},
-> +	{ 0,  31250},
-> +	{ 0,  15625},
-> +	{ 0,   7812},
-> +	{ 0,   3906},
-> +	{ 0,   1953},
-> +	{ 0,    976},
-> +	{ 0,    488},
-> +	{ 0,    244},
-> +	{ 0,    122},
-> +	{ 0,     61},
-> +	{ 0,     30},
+Interrupt numbers (MSI data) aren't used by the RISC-V IOMMU in any way.
 
-Didn't check these all, but got 30.5... for the last one, which
-would round to 31. Not that it matters much in this case. ;-)
+> 
+> As I understand the spec this is is only possible with msiptp? As
+> discussed previously this has to be a static property and the SW stack
+> doesn't expect it to change. So if the IR driver sets
+> IRQ_DOMAIN_FLAG_ISOLATED_MSI it has to always use misptp?
 
-> +};
-> +
->  struct mpl3115_data {
->  	struct i2c_client *client;
->  	struct iio_trigger *drdy_trig;
-> @@ -163,10 +185,60 @@ static int mpl3115_read_raw(struct iio_dev *indio_dev,
->  		default:
->  			return -EINVAL;
->  		}
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		ret = i2c_smbus_read_byte_data(data->client, MPL3115_CTRL_REG2);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		ret &= MPL3115_CTRL_ST;
+Yes, the patch only sets IRQ_DOMAIN_FLAG_ISOLATED_MSI when the IOMMU
+has RISCV_IOMMU_CAPABILITIES_MSI_FLAT and it will remain set for the
+lifetime of the irqdomain, no matter how the IOMMU is being applied.
 
-FIELD_GET() would be appropriate here.
+> 
+> Further, since the interrupt tables have to be per BDF they cannot be
+> linked to an iommu_domain! Storing the msiptp in an iommu_domain is
+> totally wrong?? It needs to somehow be stored in the interrupt layer
+> per-struct device, check how AMD and Intel have stored their IR tables
+> programmed into their versions of DC.
 
-> +
-> +		*val = mpl3115_samp_freq_table[ret][0];
-> +		*val2 = mpl3115_samp_freq_table[ret][1];
-> +		return IIO_VAL_INT_PLUS_MICRO;
->  	}
->  	return -EINVAL;
->  }
->  
-> +static int mpl3115_read_avail(struct iio_dev *indio_dev,
-> +			      struct iio_chan_spec const *chan,
-> +			      const int **vals, int *type, int *length,
-> +			      long mask)
-> +{
-> +	if (mask != IIO_CHAN_INFO_SAMP_FREQ)
-> +		return -EINVAL;
-> +
-> +	*type = IIO_VAL_INT_PLUS_MICRO;
-> +	*length = ARRAY_SIZE(mpl3115_samp_freq_table) * 2;
-> +	*vals = (int *)mpl3115_samp_freq_table;
-> +	return IIO_AVAIL_LIST;
-> +}
-> +
-> +static int mpl3115_write_raw(struct iio_dev *indio_dev,
-> +			     const struct iio_chan_spec *chan,
-> +			     int val, int val2, long mask)
-> +{
-> +	struct mpl3115_data *data = iio_priv(indio_dev);
-> +	int i, ret;
-> +
-> +	if (mask != IIO_CHAN_INFO_SAMP_FREQ)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(mpl3115_samp_freq_table); i++)
-> +		if (val == mpl3115_samp_freq_table[i][0] &&
-> +		    val2 == mpl3115_samp_freq_table[i][1])
-> +			break;
-> +
-> +	if (i == ARRAY_SIZE(mpl3115_samp_freq_table))
-> +		return -EINVAL;
-> +
-> +	if (!iio_device_claim_direct(indio_dev))
-> +		return -EBUSY;
-> +
-> +	ret = i2c_smbus_write_byte_data(data->client, MPL3115_CTRL_REG2, i);
+The RISC-V IOMMU MSI table is simply a flat address remapping table,
+which also has support for MRIFs. The table indices come from an
+address matching mechanism used to filter out invalid addresses and
+to convert valid addresses into MSI table indices. IOW, the RISC-V
+MSI table is a simple translation table, and even needs to be tied to
+a particular DMA table in order to work. Here's some examples
 
-This potentially clears some unrelated bits. I guess it is not a problem for
-now since those bit aren't used, but could be easy to overlook in the future.
+1. stage1 not BARE
+------------------
 
-Also, FIELD_PREP() would be appropriate.
+      stage1     MSI table
+ IOVA ------> A  ---------> host-MSI-address
 
-> +	iio_device_release_direct(indio_dev);
-> +	return ret;
-> +}
-> +
->  static irqreturn_t mpl3115_trigger_handler(int irq, void *p)
->  {
->  	struct iio_poll_func *pf = p;
-> @@ -224,6 +296,9 @@ static const struct iio_chan_spec mpl3115_channels[] = {
->  		.type = IIO_PRESSURE,
->  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
->  		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
-> +		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
-> +		.info_mask_shared_by_all_available =
-> +			BIT(IIO_CHAN_INFO_SAMP_FREQ),
->  		.scan_index = 0,
->  		.scan_type = {
->  			.sign = 'u',
-> @@ -237,6 +312,9 @@ static const struct iio_chan_spec mpl3115_channels[] = {
->  		.type = IIO_TEMP,
->  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
->  		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
-> +		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
-> +		.info_mask_shared_by_all_available =
-> +			BIT(IIO_CHAN_INFO_SAMP_FREQ),
->  		.scan_index = 1,
->  		.scan_type = {
->  			.sign = 's',
-> @@ -307,6 +385,8 @@ static const struct iio_trigger_ops mpl3115_trigger_ops = {
->  
->  static const struct iio_info mpl3115_info = {
->  	.read_raw = &mpl3115_read_raw,
-> +	.read_avail = &mpl3115_read_avail,
-> +	.write_raw = &mpl3115_write_raw,
->  };
->  
->  static int mpl3115_trigger_probe(struct mpl3115_data *data,
+2. stage1 is BARE, for example if only stage2 is in use
+-------------------------------------------------------
 
+           MSI table
+ IOVA == A ---------> host-MSI-address
+
+When used by the host A == host-MSI-address, but at least we can block
+the write when an IRQ has been affined to a set of harts that doesn't
+include what it's targeting. When used for irqbypass A == guest-MSI-
+address and the host-MSI-address will be that of a guest interrupt file.
+This ensures a device assigned to a guest can only reach its own vcpus
+when sending MSIs.
+
+In the first example, where stage1 is not BARE, the stage1 page tables
+must have some IOVA->A mapping, otherwise the MSI table will not get
+a chance to do a translation, as the stage1 DMA will fault. This
+series ensures stage1 gets an identity mapping for all possible MSI
+targets and then leaves it be, using the MSI tables instead for the
+isolation.
+
+I don't think we can apply a lot of AMD's and Intel's model to RISC-V.
+
+> 
+> It looks like there is something in here to support HW that doesn't
+> have msiptp? That's different, and also looks very confused.
+
+The only support is to ensure all the host IMSICs are mapped, otherwise
+we can't turn on IOMMU_DMA since all MSI writes will cause faults. We
+don't set IRQ_DOMAIN_FLAG_ISOLATED_MSI in this case, though, since we
+don't bother unmapping MSI addresses of harts that IRQs have be un-
+affined from.
+
+> The IR
+> driver should never be touching the iommu domain or calling iommu_map!
+
+As pointed out above, the RISC-V IR is quite a different beast than AMD
+and Intel. Whether or not the IOMMU has MSI table support, the IMSICs
+must be mapped in stage1, when stage1 is not BARE. So, in both cases we
+roll that mapping into the IR code since there isn't really any better
+place for it for the host case and it's necessary for the IR code to
+manage it for the virt case. Since IR (or MSI delivery in general) is
+dependent upon the stage1 page tables, then it's necessary to be tied to
+the same IOMMU domain that those page tables are tied to. Patch4's changes
+to riscv_iommu_attach_paging_domain() and riscv_iommu_iodir_update() show
+how they're tied together.
+
+> Instead it probably has to use the SW_MSI mechanism to request mapping
+> the interrupt controller aperture. You don't get
+> IRQ_DOMAIN_FLAG_ISOLATED_MSI with something like this though. Look at
+> how ARM GIC works for this mechanism.
+
+I'm not seeing how SW_MSI will help here, but so far I've just done some
+quick grepping and code skimming.
+
+> 
+> Finally, please split this series up, if ther are two different ways
+> to manage the MSI aperture then please split it into two series with a
+> clear description how the HW actually works.
+> 
+> Maybe start with the simpler case of no msiptp??
+
+The first five patches plus the "enable IOMMU_DMA" will allow paging
+domains to be used by default, while paving the way for patches 6-8 to
+allow host IRQs to be isolated to the best of our ability (only able to
+access IMSICs to which they are affined). So we could have
+
+series1: irqdomain + map all imsics + enable IOMMU_DMA
+series2: actually apply irqdomain in order to implement map/unmap of MSI
+         ptes based on IRQ affinity - set IRQ_DOMAIN_FLAG_ISOLATED_MSI,
+         because that's the best we've got...
+series3: the rest of the patches of this series which introduce irqbypass
+         support for the virt use case
+
+Would that be better? Or do you see some need for some patch splits as
+well?
+
+Thanks,
+drew
 
