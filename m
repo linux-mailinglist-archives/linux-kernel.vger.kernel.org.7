@@ -1,114 +1,124 @@
-Return-Path: <linux-kernel+bounces-827838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3327B933BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:31:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B77B3B933CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C976170915
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:31:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ABFD3ADC6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231E9255222;
-	Mon, 22 Sep 2025 20:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD1825C822;
+	Mon, 22 Sep 2025 20:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bvWDYbj3"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1d70yzY"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F5651022
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 20:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B41325A33A
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 20:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758573074; cv=none; b=gdkJnux+yIQC2bVPEpXEgUFGHB604yvnwYBfT1/tdk3lINPk5YeLodOTfSLVcp8d+WwOxzQxv3ccUQiclmPe07eXmjP/8pAGvNTyS6Etw6ctYbmWbxbzaiwXagMoavWJkeMP/8cAKuOA0OfErF3eHLgVsxhSaEj2xXXQzTTFYhE=
+	t=1758573142; cv=none; b=uGGlupZyC5RfDAulpl5UULKDLnePugjc55Ouee6shQ49jz7B+vMVUOac0AxJkR7seNBGTvJHzn9cgo9A9ycDi7oMB7M9h7C4DYIuLwPFlFDj4SwR2Srzk/EAXxMgMyvgISbxAuFAhzgwXIarYarZR4W7FRhz11sHyJ2r7C20Ub4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758573074; c=relaxed/simple;
-	bh=MJEFNOBSo3SKM5qiYRxxqoiLN0A/+xJxbSym8TLAOgE=;
+	s=arc-20240116; t=1758573142; c=relaxed/simple;
+	bh=UG69M1IVVdE2PGp0fqTRKe9oVR9CdEzH1MNduD7Uexk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eDgC5ZLNToPQmgMk+a3/z5R9BBx9IDOI6bE4/HEFqVf89YstU98+1uNGVtD7CbWufdb06/Eik+uS/G5dU2fhqHXUItYNandso4DAaOSe8DVWLJmMoqeh6MyvEYmPK7dCew0D/TZY0scqW65IjUQHrynZNwkiH8p2oo/8CgAw03s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bvWDYbj3; arc=none smtp.client-ip=209.85.214.171
+	 To:Cc:Content-Type; b=O3E0fbRV3wwiZjMZdhI0ShfFHsuMaVtTQMQLzSz/X/aR68br79rc75+LeJnQkF6b2WoQe4l+G/Mc2HKMBPMhnX6F2iRSiHEMcVHPVc8TqhC/jeTn+iJKZewSmbNptJlw7jUwCrlXnWTMF5HkeGds9RJ+srYgg21O5bnRUi0od0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K1d70yzY; arc=none smtp.client-ip=209.85.222.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-267f15eb5d3so7040095ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:31:12 -0700 (PDT)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-84dcf6f28e0so87454485a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:32:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758573072; x=1759177872; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758573138; x=1759177938; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IcwSM1XGta2EiHK7PYQk1Nst2JShxKlF4k281BKxKcw=;
-        b=bvWDYbj3iqME7AmlblHpwc+1M5ztBJOGASqHVlb/kZLva/72avzSR19LqgOH2RelOn
-         7do6odcBZpcHxaeSOMY9yKKjO8m6vuJGhPQNuGl1MSz6SZm4av5TUNbUvXcDiTok23dq
-         TXXZ0tvsHfmZqo1Beaam8sUsNnKpz/4YZOlkdeRD+VcaQNKMfDU8roMZ9yP1PI565mEL
-         NFwlUp4qcAVOoJG/+ugesrgxUdPiCAalF38eZcMsr5RlCgok0as1Y+ukUX5igbaBs8w7
-         LqMfKTRvpJ1VatoFKgNUD21yT3ee1HGZTtLEDCaojN5ZNBXLoFcgkEl3cL/aA0pMQvpc
-         kvwQ==
+        bh=UG69M1IVVdE2PGp0fqTRKe9oVR9CdEzH1MNduD7Uexk=;
+        b=K1d70yzYo3LA2a586ItgQUZ0UeFQ5ggGN2MONG+KD6Z2mt0iiLLI8/9+SktniEKzMd
+         T4aFEWeWSMJhaEWIYcXN6MQDz+ePELlUo0MUbPsY/jQ4E+PWJsBhPedmnHYlX2kz846U
+         V8YRo1J3IXXY0XdckcoMwIgPJE4u/dZ2XeET/Jsa0BN/QuyordWAr5VDKDoHltlEDtyF
+         oK1uWBfMTEvvJvyt3Iw2noUW3zg8vbQp/N1Y+sz1HsA6D384o+05hR261wl9u9LyUmfC
+         Gu3p+ss35iTQ41w76oLwm2M2fkWwETck23GRbcpMj4XVM6Br4pJHSPIj3PFHXREVP3M8
+         4y7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758573072; x=1759177872;
+        d=1e100.net; s=20230601; t=1758573138; x=1759177938;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IcwSM1XGta2EiHK7PYQk1Nst2JShxKlF4k281BKxKcw=;
-        b=m/SKQyb2mOFA4Oy4Woa2rctZLSahU4aXImF71zsgKXj9GtmxmavHmb7uUHaxjQ1+ff
-         F4BBrZRbFYi11F9YKf4nu40wyn/blwhyUPdChjcvV3bM1n7QDGrIYJVRsywNcsyd80RZ
-         CxwfK90KI772fuYacxBLzQqFUhwFxFE8flpIESqdcEA3R/AMg8Lc197VygN9nPSTfoCY
-         ILgJZ72Qbdh69f9Pn6oyoHzlV0Z2fPNVq2gp6DwsTPdfRSX3zLYO2dv/v5pLMNmfHkUH
-         oJs6JNo0NuHkt3yU1kPoSJvRtNgopRzsXmgZYSasBNWPEKBi6ah5dJkWcbRYR+07Y0FV
-         69XA==
-X-Forwarded-Encrypted: i=1; AJvYcCWH4NBgzFpwKMTrfFHlnwy+nC5PyJ+qEy/SnipYCFg3vBrfERn3UFNGpz1HecdAv0yI6CDQ8n88B+o1reo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwownuHudSI9rVuLfsWLpWmR9SoJ0H8oCBaG/9gNszO25cKc5hV
-	EnOX1PU7YtJn2Wl/8c6RYdQFWlJzjMErzn2kGn/KgLGBuFn6MVdK9R0VNSeUAxKkNaIn0BI+juG
-	hEmPx+K8TWS9ZlycyFYh8MTipEYHdchQ=
-X-Gm-Gg: ASbGnctm/xyqRGd86j/4ZKZdq1xD3pVOCVJTBLbr2ZpNIOfdouZyU4RuJAne8OaJdZN
-	RPo/QjQjxXVLS/LUdg5FdyYMxZSvjkIFW8P+so01TRi0Q6pExzZv8ADWHWmhutZa4g+IQYr164h
-	WSNs1dUYi0w7WaJ7K6mqnK2XoC8ql8emeP7rRg0Espffc0ntyxswyLpuhEsXQN7jI8G5zWNkkLF
-	A0pSo776/lLx7twV8VmrHycb32ZBQfbgsFL7+kZ2oMODTX/ylWbQxOQqnF3il3eNBt9H6tSgaxh
-	8KGIg0TOEXeLWcfXo61VC/8Pbg==
-X-Google-Smtp-Source: AGHT+IGXlLgoOnlIi0xB27xbNnE/Gt3cViOhpVvylnU7nHRlbjGJ/bgbhPyP5R4jQ61rPO6JCpcQYEV2WsDmAL4iq+E=
-X-Received: by 2002:a17:902:d48f:b0:272:f27d:33bd with SMTP id
- d9443c01a7336-27cbb8b9fd0mr1155245ad.0.1758573072387; Mon, 22 Sep 2025
- 13:31:12 -0700 (PDT)
+        bh=UG69M1IVVdE2PGp0fqTRKe9oVR9CdEzH1MNduD7Uexk=;
+        b=IqCib4QZamihS8QqwEovh51wWaZ+roT3KjMss+xL1bq5w3HJOdTlaVHULbKEuUFbeV
+         s17pfJTEGt4z4d09nJ2GgFG4Wn9cR2wtegrz4Lr/Rdxvls6Lh9VwuL01vUWpogXimDJd
+         AbqaJ+bSNoue+wpSz70TGdqrH/saXe1mGPrE1TojaciSKm+wtAnRiw4s4R36xMx9ur2H
+         2zAI4OXkQ+dwHweDmjy/0LZZXPE+YHtKvMbwOnwzZ8Yxqp8zS3qw/OQ7QhQizEerC/90
+         h5bkhDlAJXoSpe1lNR1wwRqEksj3cuOVM+N0NLMsEn3uinRlzcSKEkGOH/2e8ShIVIcc
+         dkzw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+tmI2s6sqOa+A6ibmGMNCicTG3wF/NrLKwnVtti1QAWF6SYvTvwRm0HAU1FByLgGBjl4zxe7YOo1/Hqk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuEYUyJlyE2EOwjOTxH2RNUfI25b3TBn0lphsoysNseJ3jTwWD
+	ohJbV5UAa6A1XzYx9MY4x3gmayKo+nH7O8M5AePPlJrE7PULbTshZDlHGhAcGRw9DVfYiysDldv
+	eJ1pfWHc7j+hzyDuqk7pK9y1f/fO9XUI=
+X-Gm-Gg: ASbGnctF+0m1pWqD6cH21MpB+6Z3dCZgVvz0F18x5gYBqTbVP15J+rYKVZNthEhkyhN
+	aMVHfLweCCmr6tEjSRArDVejTAcBALMhv/ML2JG7c4rLBggEluiTAnNenvOmSy/xPTv4QYnUdZn
+	cvixWyINC0HUYtq5z5LO6ZonMVGhsYJlwRgnaFsKBBlIwuF4Q2H8b935qEmgepxHg9+ya1ei3v8
+	2A3XHgNj986SYQug/UMRIIHiqtIFhM4PjzGOodOMw==
+X-Google-Smtp-Source: AGHT+IHSqXAXRvrgQnAfjh65roix5LaKfKH4YNfu9oaDRcJHx5FbfpRJ/aJ3R/Xkk0NazNTr0SN+HDKIIBs1Mzh1IIo=
+X-Received: by 2002:a05:620a:370c:b0:829:25f1:3208 with SMTP id
+ af79cd13be357-85175f52ec2mr33267385a.61.1758573138310; Mon, 22 Sep 2025
+ 13:32:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813-cstr-core-v15-0-c732d9223f4e@gmail.com>
-In-Reply-To: <20250813-cstr-core-v15-0-c732d9223f4e@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 22 Sep 2025 22:31:00 +0200
-X-Gm-Features: AS18NWB6PmBlAWRUNDsKcUzY6cTwjDnURYFePpOCqHbTRGNIsxmxdgZIFpfQAjE
-Message-ID: <CANiq72nyQiHCvbTw1+njf3ZWYsK-f603iY-oox=9dMyfeCE8rg@mail.gmail.com>
-Subject: Re: [PATCH v15 0/4] rust: replace kernel::str::CStr w/ core::ffi::CStr
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Russ Weight <russ.weight@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org
+References: <CAEU-x4=Zs22b5LX_rsBVMu4BxvDfO+CZkkuWuVNaxv8mqvh9Gw@mail.gmail.com>
+ <bjtev7sgmcafoysd53xrxih4nawn2dbq4odylwdglbub6td2a3@nhoxenprhjvy>
+ <CAEU-x4kL45DAddmNahjR2C97+43jchpmXep++LbeP8cXLEWN-w@mail.gmail.com>
+ <CAEU-x4nv3XnXchevtwN5mkVcxqnpgBobhavxZc7BjS7EgYG8Ng@mail.gmail.com> <c3plpgl2zsx4do2odwdeowodkkdnfqpexlwqg5a5mckyibxlge@qai35f5yeswy>
+In-Reply-To: <c3plpgl2zsx4do2odwdeowodkkdnfqpexlwqg5a5mckyibxlge@qai35f5yeswy>
+From: Yinon Burgansky <yinonburgansky@gmail.com>
+Date: Mon, 22 Sep 2025 23:32:07 +0300
+X-Gm-Features: AS18NWC34wlHuTeaKU4_gAJIUEcIDl27QqadqogiGTSWePhgcUUmRrAOIWjEJR0
+Message-ID: <CAEU-x4mJiBM_zKg1DaeJkKB3W3Ay08bUTc-D3QjFjDxNiZGd0g@mail.gmail.com>
+Subject: Re: Touchpad multitouch leaves ghost fingers
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 5:45=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
->       rust: macros: reduce collections in `quote!` macro
+On Mon, Sep 22, 2025 at 7:51=E2=80=AFPM Benjamin Tissoires <bentiss@kernel.=
+org> wrote:
+> Well, I was meaning that I would provide a HID-BPF MR ready to install
+> for you.
+That would be awesome! Thank you very much!
 
-Applied this one for the moment -- thanks everyone!
+> But if you want to play with it, feel free to do so :)
+> For a jump start on HID-BPF:
+> https://libevdev.pages.freedesktop.org/udev-hid-bpf/tutorial.html
+Thank you for the reference. I=E2=80=99m feeling quite fatigued from the
+debugging process, as it took me a considerable amount of time to
+identify the issue.
+It was surprisingly difficult to determine what exactly was wrong with
+the touchpad and to uncover the root cause; perhaps I didn=E2=80=99t search
+for the right terms.
+However, I=E2=80=99m glad I finally took the time to debug it, submit the b=
+ug
+report, and find out what was wrong. Thank you!
 
-The others require a bunch of changes in linux-next.
+> The advantage of HID-BPF is that we can drop the file in the filesystem
+> and then forget about it.
+> My plan is to have the HID-BPF detect whether the quirk has been applied
+> or not and would gracefully remove itself once the kernel is fixed.
+That's cool, nice design.
 
-Cheers,
-Miguel
+> PS: please try to refrain from top-posting your reply. The usage is to
+> inline your reply or reply below,
+Sorry about that, hopefully I did it right this time.
+
+Thanks,
+Yinon
 
