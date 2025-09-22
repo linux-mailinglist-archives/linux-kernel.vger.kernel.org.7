@@ -1,73 +1,61 @@
-Return-Path: <linux-kernel+bounces-826882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE983B8F8AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:32:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2DDB8F8BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF8F4170C64
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:32:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 010FB42179C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF907308F19;
-	Mon, 22 Sep 2025 08:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHJ5PRh7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC1430C361;
+	Mon, 22 Sep 2025 08:29:12 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2C93054F8;
-	Mon, 22 Sep 2025 08:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AB130C359
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758529731; cv=none; b=E+V4VsRU/Bbd+wzH65TaLNs8Dkcp9j2QohOHCDiIqPwvcBVWchgwTszpBItXYhXZl4LfEkrhFFkoo8Ttxv8hCKUpYo4eJuuv/cEEezfvxxiWNp1dSdncr+kzLftrCNQk6VqxZFhAbKD5Gt5T3HUPmgMaYJUkFA2U3IStH20mTro=
+	t=1758529752; cv=none; b=bPHvPeb6GlAQMe4a5tlqmAJoaoGCSbjKLNv9wHW3+SBWid3kgLt4WeIaN1rTYWNT1DrQSe8xhNCQTFFQV5ipdLc/WjckXmxkLF/2Kx1eocjN5r1hYNSJ1ngVSgyaawU5nQgs/O545RwMOHiq4u+WcV4jzrpVuvz2qZF3ewbZCPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758529731; c=relaxed/simple;
-	bh=tS9i8aN1hYglqnYWNWW11cQTPh7t9Qg/dLKIcWSR4ZQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=op1drhDtGPXTUT4q+T53HVTxj9qOBFmA7QUihp5b3PdBWZgx1a9NSEjuzFRdNAdl6r6EcfEmBQ3mAtJEJXPmFHvQTSUGMrVqtpTnRhboBNL1IpG8NLSBUkj2tjqaNe4Srb9ZGeqa0eXl9BK0+8ffcLEfEnnOjLbd5FwrYyo7WXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHJ5PRh7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E17C8C4CEF5;
-	Mon, 22 Sep 2025 08:28:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758529730;
-	bh=tS9i8aN1hYglqnYWNWW11cQTPh7t9Qg/dLKIcWSR4ZQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lHJ5PRh7Ux8PJQOWAn4d/Lp9A0Hs+pg/NiaxkK9RMYJSmj/+imhD4Q0cMEnZS78FZ
-	 ODJdeKP3XzYggV8qOadOgH9Ptig2AU9AmrHhj9utUUHaylwa14n3iluhWrDz38hRGu
-	 uu1Pzk1gs8lhfrUPoYllNnBLk08KqZSrp0HZq5OSI432QwC/xUngD6dW8swhNrfPHc
-	 EzUbYqoFv0t5WCO2EWh/auYx2KvUjdBjR1wBeWg2m+nb3KKi4AZ6Tyq/itLJ27PLZx
-	 mabvJuICtlbgpb4doshTGd9lFb72qHAMDZhFbmpBlpuT9k2NNGmMe+jAHe9+OJ9ZI3
-	 ibdwEi+0QoNNg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v0buj-00000008Kds-0Thb;
-	Mon, 22 Sep 2025 08:28:49 +0000
-From: Marc Zyngier <maz@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Will Deacon <will@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sven Peter <sven@kernel.org>,
-	Janne Grunau <j@jannau.net>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	James Clark <james.clark@linaro.org>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>
-Subject: [PATCH v3 26/26] perf: arm_pmu: Kill last use of per-CPU cpu_armpmu pointer
-Date: Mon, 22 Sep 2025 09:28:33 +0100
-Message-ID: <20250922082833.2038905-27-maz@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250922082833.2038905-1-maz@kernel.org>
-References: <20250922082833.2038905-1-maz@kernel.org>
+	s=arc-20240116; t=1758529752; c=relaxed/simple;
+	bh=BMMk8js8DlXGWjrIYIjSUpVxF9gNtUyoQmQlNbWXboo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NkEq6ZG9Dv+8io7nbTj1TwcFbEsoAEGq60gXDBN4IsxG//S36cKEA1Vp0u94a1ipvD0aXgoynq1rK3S/0bJ98pyYoL8mRwTaFSYZ8cPE5nFnfq49QQJHWMohiNVfRqcXAWUCrMA9ZKeA7NLBxpHw4YL0Ki/c/qB3IlUP3Qy9igU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cVbkP0p5tzddGH;
+	Mon, 22 Sep 2025 16:24:29 +0800 (CST)
+Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id ECF3F180486;
+	Mon, 22 Sep 2025 16:29:06 +0800 (CST)
+Received: from DESKTOP-A37P9LK.huawei.com (10.67.108.232) by
+ kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 22 Sep 2025 16:29:05 +0800
+From: Xie Yuanbin <xieyuanbin1@huawei.com>
+To: <arnd@arndb.de>
+CC: <Liam.Howlett@oracle.com>, <akpm@linux-foundation.org>, <ardb@kernel.org>,
+	<dave@vasilevsky.ca>, <david@redhat.com>, <ebiggers@kernel.org>,
+	<kees@kernel.org>, <liaohua4@huawei.com>, <lilinjie8@huawei.com>,
+	<linmiaohe@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux@armlinux.org.uk>, <lorenzo.stoakes@oracle.com>, <mhocko@suse.com>,
+	<nao.horiguchi@gmail.com>, <nathan@kernel.org>, <peterz@infradead.org>,
+	<rmk+kernel@armlinux.org.uk>, <rostedt@goodmis.org>, <rppt@kernel.org>,
+	<surenb@google.com>, <vbabka@suse.cz>, <will@kernel.org>,
+	<xieyuanbin1@huawei.com>
+Subject: Re: [RFC PATCH 1/2] ARM: mm: support memory-failure
+Date: Mon, 22 Sep 2025 16:28:43 +0800
+Message-ID: <20250922082843.26722-1-xieyuanbin1@huawei.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <727caa4f-5be5-4b59-a10e-8dc9bbc384bf@app.fastmail.com>
+References: <727caa4f-5be5-4b59-a10e-8dc9bbc384bf@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,84 +63,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, tglx@linutronix.de, mark.rutland@arm.com, will@kernel.org, rafael@kernel.org, robh@kernel.org, saravanak@google.com, gregkh@linuxfoundation.org, sven@kernel.org, j@jannau.net, suzuki.poulose@arm.com, james.clark@linaro.org, jonathan.cameron@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemj100009.china.huawei.com (7.202.194.3)
 
-Having removed the use of the cpu_armpmu per-CPU variable from the
-interrupt handling, the only user left is the BRBE scheduler hook.
+> It would be helpful to be more specific about what you
+> want to do with this.
+> 
+> Are you working on a driver that would actually make use of
+> the exported interface?
 
-It is easy to drop the use of this variable by following the pointer
-to the generic PMU structure, and get the arm_pmu structure from there.
+Thanks for your reply.
 
-Perform the conversion and kill cpu_armpmu altogether.
+Yes, In fact, we have developed a hardware component to detect DDR bit
+transitions (software does not sense the detection behavior). Once a bit
+transition is detected, an interrupt is reported to the CPU.
 
-Suggested-by: Will Deacon <will@kernel.org>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- drivers/perf/arm_pmu.c       | 5 -----
- drivers/perf/arm_pmuv3.c     | 2 +-
- include/linux/perf/arm_pmu.h | 2 --
- 3 files changed, 1 insertion(+), 8 deletions(-)
+On the software side, we have developed a driver module ko to register
+the interrupt callback to perform soft page offline to the corresponding
+physical pages.
 
-diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-index 959ceb3d1f556..f7abd13339630 100644
---- a/drivers/perf/arm_pmu.c
-+++ b/drivers/perf/arm_pmu.c
-@@ -104,7 +104,6 @@ static const struct pmu_irq_ops percpu_pmunmi_ops = {
- 	.free_pmuirq = armpmu_free_percpu_pmunmi
- };
- 
--DEFINE_PER_CPU(struct arm_pmu *, cpu_armpmu);
- static DEFINE_PER_CPU(int, cpu_irq);
- static DEFINE_PER_CPU(const struct pmu_irq_ops *, cpu_irq_ops);
- 
-@@ -725,8 +724,6 @@ static int arm_perf_starting_cpu(unsigned int cpu, struct hlist_node *node)
- 	if (pmu->reset)
- 		pmu->reset(pmu);
- 
--	per_cpu(cpu_armpmu, cpu) = pmu;
--
- 	irq = armpmu_get_cpu_irq(pmu, cpu);
- 	if (irq)
- 		per_cpu(cpu_irq_ops, cpu)->enable_pmuirq(irq);
-@@ -746,8 +743,6 @@ static int arm_perf_teardown_cpu(unsigned int cpu, struct hlist_node *node)
- 	if (irq)
- 		per_cpu(cpu_irq_ops, cpu)->disable_pmuirq(irq);
- 
--	per_cpu(cpu_armpmu, cpu) = NULL;
--
- 	return 0;
- }
- 
-diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
-index f6d7bab5d555c..2dee2d928aaef 100644
---- a/drivers/perf/arm_pmuv3.c
-+++ b/drivers/perf/arm_pmuv3.c
-@@ -1039,7 +1039,7 @@ static int armv8pmu_user_event_idx(struct perf_event *event)
- static void armv8pmu_sched_task(struct perf_event_pmu_context *pmu_ctx,
- 				struct task_struct *task, bool sched_in)
- {
--	struct arm_pmu *armpmu = *this_cpu_ptr(&cpu_armpmu);
-+	struct arm_pmu *armpmu = to_arm_pmu(pmu_ctx->pmu);
- 	struct pmu_hw_events *hw_events = this_cpu_ptr(armpmu->hw_events);
- 
- 	if (!hw_events->branch_users)
-diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
-index 6690bd77aa4ee..bab26a7d79f4c 100644
---- a/include/linux/perf/arm_pmu.h
-+++ b/include/linux/perf/arm_pmu.h
-@@ -132,8 +132,6 @@ struct arm_pmu {
- 
- #define to_arm_pmu(p) (container_of(p, struct arm_pmu, pmu))
- 
--DECLARE_PER_CPU(struct arm_pmu *, cpu_armpmu);
--
- u64 armpmu_event_update(struct perf_event *event);
- 
- int armpmu_event_set_period(struct perf_event *event);
--- 
-2.47.3
+In fact, we will export `soft_offline_page` for ko to use (we can ensure
+that it is not called in the interrupt context), but I have looked at the
+code and found that `memory_failure_queue` and `memory_failure` can also
+be used, which are already exported.
 
+> I see only a very small number of
+> drivers that call memory_failure(), and none of them are
+> usable on Arm.
+
+I think that not all drivers are in the open source kernel code.
+As far as I know, there should be similar third-party drivers in other
+architectures that use memory-failure functions, like x86 or arm64.
+I am not a specialist in drivers, so if I have made any mistakes,
+please correct me.
+
+Xie Yuanbin
 
