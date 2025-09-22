@@ -1,78 +1,178 @@
-Return-Path: <linux-kernel+bounces-827832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC5ADB93392
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:26:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DED0B9339B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1A3419059D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:27:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC3C316823A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815D431AF3B;
-	Mon, 22 Sep 2025 20:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAF1315D32;
+	Mon, 22 Sep 2025 20:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JY0Rf10L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eEHNyk35";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+tpdkuwe"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A5C31AF38
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 20:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DF71F91E3;
+	Mon, 22 Sep 2025 20:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758572793; cv=none; b=t57WSl2IqSYUGfIib3lomyAJQ2yXXAtOhNn5XfIlXxG5Rfi/M5fh+RuHXEb4nLSOw0UvdigmMnohz3RLVC0A39cKQes7I3v1YBicxjheUw22P1T0ulMxxuAZjTVEilyyZViKYHrfnNHF1I/B6rsBPnfD8GeDVVnOiK8fYqCTOOQ=
+	t=1758572834; cv=none; b=WpXHdts+knhSOMFxHnhAESCWEYrpvKSuJ6o4OaW1PgIEaBmKmwDQBu31vvHPlALCbR/vUi+jnsPrEHoyvBivLIxQC4yBMYijY+cAPjxuUQaTLynhZBjUFrFXeoXbsRar8pcFTvVTfqwa1EnNQV7k6lqB06MSiViaXCh4JFb8AW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758572793; c=relaxed/simple;
-	bh=8oWJdKf/4213hglSrCtvGHw3q/14fgSfvO4+9cSDfzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nJ1quQz1oHy6tL48nQF+jWQ+aag6JOLVjC9MyFm/IZ87bGdbuT9UzoseDl/YjrgBWt75riD9ZOzihZwnF4VsUJjDHAGVUcoI9UL0YrbMBBEeuV/095ClhDnxFelyJasjM+yfiyNbl+7eCEPibaCytanpw7ejx5JBIK/xq+K8ur4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JY0Rf10L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E0A5C4CEF0;
-	Mon, 22 Sep 2025 20:26:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758572792;
-	bh=8oWJdKf/4213hglSrCtvGHw3q/14fgSfvO4+9cSDfzs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JY0Rf10LOyLy9fSJ6oXAM8+AYeRzhvYk3StGONj6sjTDBst8MQjcCJT704gzAb7U0
-	 A0G/nHFM2xPa8Mmh+g+MSyYa73omhh5h8KWvN6VC6zZuCmKZ3rrAtRAEyzLLQjZokv
-	 GoDAhJwKz50kBADQ+XH42fZEfrBvH+mZX70dpBmQgy/pwiP5ySgTlRxnZACe6khbwj
-	 po8PM8/ZF3pPVg3YEPV4WhNbuAjzyVR+qdDkhvmhWxO3B1UbJXUVNpNCwESMfF//Gy
-	 /SKNXklDqLhdtbxn/79xyg02tpQ1SoHqrkbvq1VA2Iq1ohh+gYNzl/lQ1hcC6NWYBE
-	 rZ3p+un10Bk4g==
-Date: Mon, 22 Sep 2025 14:26:30 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: alistair23@gmail.com
-Cc: axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH] nvme: Use non zero KATO for persistent discovery
- connections
-Message-ID: <aNGw9mXBcx1-g0ee@kbusch-mbp>
-References: <20250902035211.2953174-1-alistair.francis@wdc.com>
+	s=arc-20240116; t=1758572834; c=relaxed/simple;
+	bh=mCgp/7RadOWTpRmrXG8hqPptGQTCwh5WwhQ5Lhm3z/Y=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=tZzDs6VS3cYHJQwqbNKS3fb3vg2yikWmpOwq9PSGCX01DRc17+spmC2BB5YGksefq2Ja0+nVIDfNIs3Wb3V9cxsAv2G7/NJ57lpFbtCZlplCJRg/HPnkU2SgWJXi6atu+8U0hZkOZZ45PTK5Vtl4u+e/xtpW5RYq7hRSygVz0xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eEHNyk35; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+tpdkuwe; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 22 Sep 2025 20:26:59 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758572824;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9/Xm1F4jPoDCutpFQATFslC6fsMVWAzEBHzTOUlynjo=;
+	b=eEHNyk35d7dJnRphHqwU4VpbfAbZbM0VU5DuaFC6o+VirDljfAVAs5mAvH8QyikiFgLsTv
+	gRf2jhXVMEe/+qHd2aEvw05rwnfQop63gYQ8PKZdcfc2BDAJFt5EnbabuNM4sIza0wUyNK
+	3aBBElt0JTM8HbhrwRDDfKeiYwqc0AevPvq2MT8GCCBDtRCAYQElJruul+pNOT7/0vz9jM
+	/cRBDkUTmrr0cSRy3OqCr+dXp0jF36sUfKLrd8rK7kyHy20HcIWsI/xuU3rgmdRw1cbAv4
+	pT85EDe2em3KezZSbs+16Bx7jjgFKiDfuBRLTwuGE9/UsuyadXsSGG9JEEZRMw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758572824;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9/Xm1F4jPoDCutpFQATFslC6fsMVWAzEBHzTOUlynjo=;
+	b=+tpdkuwe7vYZPx/lXU10kvsWuRu5E9duIiGL5ukI127Y4Cn1Jv3YQMnOrIvbomqUIidQTc
+	nd3V/ftmRt+w4yBA==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/topology: Implement topology_is_core_online()
+ to address SMT regression
+Cc: Christian Loehle <christian.loehle@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ "Rafael J. Wysocki (Intel)" <rafael@kernel.org>, stable@vger.kernel.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <87cy7k5gl3.ffs@tglx>
+References: <87cy7k5gl3.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902035211.2953174-1-alistair.francis@wdc.com>
+Message-ID: <175857281995.709179.12663818315862568128.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 02, 2025 at 01:52:11PM +1000, alistair23@gmail.com wrote:
-> From: Alistair Francis <alistair.francis@wdc.com>
-> 
-> The NVMe Base Specification 2.1 states that:
-> 
-> """
-> A host requests an explicit persistent connection ... by specifying a
-> non-zero Keep Alive Timer value in the Connect command.
-> """
-> 
-> As such if we are starting a persistent connection to a discovery
-> controller and the KATO is currently 0 we need to update KATO to a non
-> zero value to avoid continuous timeouts on the target.
+The following commit has been merged into the x86/urgent branch of tip:
 
-Thanks, applied to nvme-6.18.
+Commit-ID:     2066f00e5b2dc061fb6d8c88fadaebc97f11feaa
+Gitweb:        https://git.kernel.org/tip/2066f00e5b2dc061fb6d8c88fadaebc97f1=
+1feaa
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Sun, 21 Sep 2025 10:56:40 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 22 Sep 2025 21:25:36 +02:00
+
+x86/topology: Implement topology_is_core_online() to address SMT regression
+
+Christian reported that commit a430c11f4015 ("intel_idle: Rescan "dead" SMT
+siblings during initialization") broke the use case in which both 'nosmt'
+and 'maxcpus' are on the kernel command line because it onlines primary
+threads, which were offline due to the maxcpus limit.
+
+The initially proposed fix to skip primary threads in the loop is
+inconsistent. While it prevents the primary thread to be onlined, it then
+onlines the corresponding hyperthread(s), which does not really make sense.
+
+The CPU iterator in cpuhp_smt_enable() contains a check which excludes all
+threads of a core, when the primary thread is offline. The default
+implementation is a NOOP and therefore not effective on x86.
+
+Implement topology_is_core_online() on x86 to address this issue. This
+makes the behaviour consistent between x86 and PowerPC.
+
+Fixes: a430c11f4015 ("intel_idle: Rescan "dead" SMT siblings during initializ=
+ation")
+Fixes: f694481b1d31 ("ACPI: processor: Rescan "dead" SMT siblings during init=
+ialization")
+Closes: https://lore.kernel.org/linux-pm/724616a2-6374-4ba3-8ce3-ea9c45e2ae3b=
+@arm.com/
+Reported-by: Christian Loehle <christian.loehle@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
+Tested-by: Christian Loehle <christian.loehle@arm.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/12740505.O9o76ZdvQC@rafael.j.wysocki
+---
+ arch/x86/include/asm/topology.h | 10 ++++++++++
+ arch/x86/kernel/cpu/topology.c  | 13 +++++++++++++
+ 2 files changed, 23 insertions(+)
+
+diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
+index 6c79ee7..2104189 100644
+--- a/arch/x86/include/asm/topology.h
++++ b/arch/x86/include/asm/topology.h
+@@ -231,6 +231,16 @@ static inline bool topology_is_primary_thread(unsigned i=
+nt cpu)
+ }
+ #define topology_is_primary_thread topology_is_primary_thread
+=20
++int topology_get_primary_thread(unsigned int cpu);
++
++static inline bool topology_is_core_online(unsigned int cpu)
++{
++	int pcpu =3D topology_get_primary_thread(cpu);
++
++	return pcpu >=3D 0 ? cpu_online(pcpu) : false;
++}
++#define topology_is_core_online topology_is_core_online
++
+ #else /* CONFIG_SMP */
+ static inline int topology_phys_to_logical_pkg(unsigned int pkg) { return 0;=
+ }
+ static inline int topology_max_smt_threads(void) { return 1; }
+diff --git a/arch/x86/kernel/cpu/topology.c b/arch/x86/kernel/cpu/topology.c
+index e35ccdc..6073a16 100644
+--- a/arch/x86/kernel/cpu/topology.c
++++ b/arch/x86/kernel/cpu/topology.c
+@@ -372,6 +372,19 @@ unsigned int topology_unit_count(u32 apicid, enum x86_to=
+pology_domains which_uni
+ 	return topo_unit_count(lvlid, at_level, apic_maps[which_units].map);
+ }
+=20
++#ifdef CONFIG_SMP
++int topology_get_primary_thread(unsigned int cpu)
++{
++	u32 apic_id =3D cpuid_to_apicid[cpu];
++
++	/*
++	 * Get the core domain level APIC id, which is the primary thread
++	 * and return the CPU number assigned to it.
++	 */
++	return topo_lookup_cpuid(topo_apicid(apic_id, TOPO_CORE_DOMAIN));
++}
++#endif
++
+ #ifdef CONFIG_ACPI_HOTPLUG_CPU
+ /**
+  * topology_hotplug_apic - Handle a physical hotplugged APIC after boot
 
