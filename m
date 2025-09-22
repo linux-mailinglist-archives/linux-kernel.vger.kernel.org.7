@@ -1,138 +1,129 @@
-Return-Path: <linux-kernel+bounces-827472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302D7B91D9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:08:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CBBCB91DBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6FF52A2668
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:08:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 664322A597A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9848F2DE713;
-	Mon, 22 Sep 2025 15:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C70A26E711;
+	Mon, 22 Sep 2025 15:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e2pmWWJH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NomrlLZ0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYVJ7PfF"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDC02472A5;
-	Mon, 22 Sep 2025 15:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BF328153A
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758553719; cv=none; b=V2CPdoTqfTPze7crkCBkB+UwroZh7tfCeajbYRr27XTBPIN87iLkoSTAnuOeH91BsM+ztuwV3JCYTUjK3+qfiIvYC9MaVys4l4PWh6fvayfUBVyMCUWPQRJLNEO15I7A1PHAZMC30FwGmXtgAsEyo4djp3dgI0TlUaevJ/q3snA=
+	t=1758553847; cv=none; b=HjvMB95/1yCKaH6yEz72vjaqfgMleYSC+mb0CE8Rb1iRAVJkGVZA/di2Eaqy7rMUUJ1YnZKM0pAPBv0WG14sC+W2azLWGiQlZlmxXdOYxoniftAD7qVrrV8OMYyyVcveuNHBgZP7Fon+SUw5baHYS5Fz+UkLPAEkCj6pV9kOvK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758553719; c=relaxed/simple;
-	bh=LnaYjDNVDDpRfnQ+0cx0wyO+3y5HGPz+Eo2XZYOsIwE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=eX23W8GbAXemJdgpjfqZpoypH19J/zZiCCWTgRdvd3JCcWfpJfif6DgzHExZ5ambi0jT+/VyLE5/pboTP8GvpbehqscjJrbMUEd7vAKKfYLJdjNZBFbPy8cCqv3WKqLb6qNQeAV64Do3bNSAU/Fc9Y/wt+aCJ523zrfrQykwBNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e2pmWWJH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NomrlLZ0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 22 Sep 2025 15:08:29 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758553714;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uqHx+FCqfW/ilWKgNBamj/Qr2VHNuXNAIDaLW+7mwcs=;
-	b=e2pmWWJH8ayqh10B6L+YlCcdXrUXbSI9egovU72VgF2akzfNV9XCcC7mysqku/nmT57JDS
-	tqVrov2FH15sIW2mnmRmfppLepRpPCZi6BaQAzYynwau6dUdn8JDwIfKVb/Pm6fxQy7/vN
-	53z5TrWTLcvkvuK8T61mPbqJbMNwlepmQMh+X3ksHNd8YozfwCrS9cedTH5IeivczgEDLd
-	YheknEKsBAT+dVdRZm0fdU/1fq24ZKAOH/8GSWM5yvVKbmaUAf8mjja/gY5/uCPbzldxGs
-	U94WLL2hsj76HV75aJA8/EDHUTr2vxpwtUyblO6ADpiBhgvp6o2agzpWAZsRfw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758553714;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uqHx+FCqfW/ilWKgNBamj/Qr2VHNuXNAIDaLW+7mwcs=;
-	b=NomrlLZ0xFnGr84vqheRUSavDwqr6TL4XtEuV3Tyh38r/v8RBlSvzMkYKhUaCJHZEHZheP
-	81iaetAQ1xgZjgCQ==
-From: "tip-bot2 for Alexander Popov" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/Kconfig: Reenable PTDUMP on i386
-Cc: Alexander Popov <alex.popov@linux.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250921205819.332773-1-alex.popov@linux.com>
-References: <20250921205819.332773-1-alex.popov@linux.com>
+	s=arc-20240116; t=1758553847; c=relaxed/simple;
+	bh=shbNuIMNTIvGPcWi4JkSEiRj/eJEUs+EDGP+qunsASU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GzeKs7DLwLao+hcTpeBJOdgFHPHhQLxsB8+nyHbmknWoT9Fh3CRaPuJa+jydahoKR9COI3tBZQfibjwUhCaEud3v6PuzjBlsk6jh2kNxaYJjZ5gly6vyVrLPgMK9xOImtpM2FVjv39UH3hsIyv76ZrIN+W9Hlc2s7S7la4sEllA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EYVJ7PfF; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2698e4795ebso44902985ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:10:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758553844; x=1759158644; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QeKEMoq0INFY9SFzoLjx1GtUOLFalE390u+VhOEOs1M=;
+        b=EYVJ7PfFjSfLOKau/jKasLl7nQJdViXiZ5n/VZ2TTlF0tjghV0yAl1gFJvKVYEjs+Z
+         xpvlS5OLmCQndRquF8TxUHSKIody51f5UU9ihusrb+KPTbE0gMdOrPLLNxR3i20JSUfJ
+         iG/qLpM9ZpnUkgcjEf3tw287BN8r+wo9lHH0tbSrDtyfT2x9hWa1m4z3UtWE5vgkwXhn
+         cFhQH45TD/X7pa7N6dVGqoW9z+cmdBODc3T61sm4tGZQNiIV24KhkDJ5jtNvWxZt/MOL
+         Ec6ODpiWyUbbG02MqvM78mPedCFcQo2Zlk90V51qjUD2AKW5iQX6xwYyiDLxmhhuk+fM
+         WZ4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758553844; x=1759158644;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QeKEMoq0INFY9SFzoLjx1GtUOLFalE390u+VhOEOs1M=;
+        b=bP0ktWbwhEoH+gA+8o7CDNqDUIiptsilOBqLR3eyfcvW32g+7sMGGleQiOqfTrOH5v
+         M3WDM7vKkU8DLHu2GqydhLyGBXp2+3oC/lkmAw6qU01SlELs1HYhaiviFpW6xFQ/TI4q
+         RQudmEr0V6vC9JrqEH0o5uYqXfJ7BXhXxXs8ZtEMPIdXiQdbBmRLujAOPv8wI7Rmbn1y
+         cOIbU+8YWIPAJx0mEs2VgWv/fVBJH81dFG6mqlhrqh1iadGoXbtzdoM/xwoKN3QBGNZq
+         JMmm39hROGbDuI6QqepUOa+oUlA7ibPOu3ISLH2GNIlAPZgcHrMW45UJuTa9iCxRwHY/
+         ObWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWC3UGp8NbN0P3t9pc8dS5G5gwJWnNfUIFMMwBshauuQulgCP+1vhlikUxtxlNRsn76u5yXjdfD4Zopf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxevp8n+OUuh0yIgg2CMo+OBZl/6jcp5Vk13UMD3u0bHFDc8Mxm
+	xyWYiKEwFAIIvBptwosL8reLjjoy1IJto7Xnhnu8ShkyFq0B+VG5fCee
+X-Gm-Gg: ASbGnctEdo5kERAoHdyTjMZifq+sX3sUugHc7ZqV8HlRk9Um5pZYr50qSzF5/U+XxaS
+	JssOEeksZddpx+IlaUwiAkEmhRAh/SpxR/T4zFAUfRrqk7z1xpjE85dtzQ0ld5Ki2n66bLjkCW9
+	AIccksOXQBC+ecnoeHBcMbmX43btwxiVNiflrpLI0YTm7z+qRCSzDQUBwc1LlPxav5VyOVDKbMM
+	Ma3l1pepK3170kh8RBQdlEwRaVWiPnCK/4y9xQAcOVLQDgc9He26IcWB3wilPIqz3RywkzFerA6
+	W6ZmJZOLhpNJhrtc5jigXWP7o96jGqEN4V6ETPHg7bgo19hA+KPP9s8/ZdT5uGjl4hyRz+lj3Ks
+	f1gZBoRyilqI76vmX64bqK4Oc
+X-Google-Smtp-Source: AGHT+IEvD9hsVBCMMBEEbvP8hFwp/v5gBhfqce58IDIzHbs1uD6mT1IGXhLlfqK/ToCU+antLZSz6Q==
+X-Received: by 2002:a17:902:db0e:b0:267:cdc8:b30b with SMTP id d9443c01a7336-269ba554c27mr147031635ad.53.1758553844543;
+        Mon, 22 Sep 2025 08:10:44 -0700 (PDT)
+Received: from lgs.. ([2408:8418:1100:9530:3d9f:679e:4ddb:a104])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980180bdesm134733995ad.56.2025.09.22.08.10.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 08:10:44 -0700 (PDT)
+From: Guangshuo Li <lgs201920130244@gmail.com>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Guangshuo Li <lgs201920130244@gmail.com>,
+	"Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Subject: [PATCH v2] powerpc/smp: Add check for kcalloc() failure in parse_thread_groups()
+Date: Mon, 22 Sep 2025 23:10:25 +0800
+Message-ID: <20250922151025.1821411-1-lgs201920130244@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175855371001.709179.12697961090213182246.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/urgent branch of tip:
+As kcalloc() may fail, check its return value to avoid a NULL pointer
+dereference when passing it to of_property_read_u32_array().
 
-Commit-ID:     4f115596133fa168bac06bb34c6efd8f4d84c22e
-Gitweb:        https://git.kernel.org/tip/4f115596133fa168bac06bb34c6efd8f4d8=
-4c22e
-Author:        Alexander Popov <alex.popov@linux.com>
-AuthorDate:    Sun, 21 Sep 2025 23:58:15 +03:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 22 Sep 2025 14:40:17 +02:00
-
-x86/Kconfig: Reenable PTDUMP on i386
-
-The commit
-
-  f9aad622006bd64c ("mm: rename GENERIC_PTDUMP and PTDUMP_CORE")
-
-has broken PTDUMP and the Kconfig options that use it on ARCH=3Di386, includi=
-ng
-CONFIG_DEBUG_WX.
-
-CONFIG_GENERIC_PTDUMP was renamed into CONFIG_ARCH_HAS_PTDUMP, but it was
-mistakenly moved from "config X86" to "config X86_64". That made PTDUMP
-unavailable for i386.
-
-Move CONFIG_ARCH_HAS_PTDUMP back to "config X86" to fix it.
-
-  [ bp: Massage commit message. ]
-
-Fixes: f9aad622006bd64c ("mm: rename GENERIC_PTDUMP and PTDUMP_CORE")
-Signed-off-by: Alexander Popov <alex.popov@linux.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Fixes: 790a1662d3a26 ("powerpc/smp: Parse ibm,thread-groups with multiple properties")
 Cc: stable@vger.kernel.org
 ---
- arch/x86/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+changelog:
+v2:
+- Return -ENOMEM directly on allocation failure.
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 52c8910..0588030 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -26,7 +26,6 @@ config X86_64
- 	depends on 64BIT
- 	# Options that are inherently 64-bit kernel only:
- 	select ARCH_HAS_GIGANTIC_PAGE
--	select ARCH_HAS_PTDUMP
- 	select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
- 	select ARCH_SUPPORTS_INT128 if CC_HAS_INT128
- 	select ARCH_SUPPORTS_PER_VMA_LOCK
-@@ -99,6 +98,7 @@ config X86
- 	select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
- 	select ARCH_HAS_PMEM_API		if X86_64
- 	select ARCH_HAS_PREEMPT_LAZY
-+	select ARCH_HAS_PTDUMP
- 	select ARCH_HAS_PTE_SPECIAL
- 	select ARCH_HAS_HW_PTE_YOUNG
- 	select ARCH_HAS_NONLEAF_PMD_YOUNG	if PGTABLE_LEVELS > 2
+Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+---
+ arch/powerpc/kernel/smp.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+index 5ac7084eebc0..cfccb9389760 100644
+--- a/arch/powerpc/kernel/smp.c
++++ b/arch/powerpc/kernel/smp.c
+@@ -822,6 +822,8 @@ static int parse_thread_groups(struct device_node *dn,
+ 
+ 	count = of_property_count_u32_elems(dn, "ibm,thread-groups");
+ 	thread_group_array = kcalloc(count, sizeof(u32), GFP_KERNEL);
++	if (!thread_group_array)
++		return -ENOMEM;
+ 	ret = of_property_read_u32_array(dn, "ibm,thread-groups",
+ 					 thread_group_array, count);
+ 	if (ret)
+-- 
+2.43.0
+
 
