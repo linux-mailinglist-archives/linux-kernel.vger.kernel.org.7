@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-827507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C14DCB91F12
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F4D4B91F11
 	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE98A190456A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:32:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 431AB7A7425
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAA12E7F3E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80772E888A;
 	Mon, 22 Sep 2025 15:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FGwUgvxI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLleysYm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4E62E7631
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BF22E764A
 	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758555123; cv=none; b=XD5ktecOrIozkQg349LDgdsTojEqI+x7/y1ScLiMhzEMu24crpe1WKIxzxfhqHbA34xgvyG5/B0UDFGjyielooL49brEmhwPolSFlGTpEtCiO7N/WybJLouxdxcyU5vSHM4Gg5LjW/cLbVaK74I9DAGAgiJSZmVJXsYT+wplKbs=
+	t=1758555123; cv=none; b=CwF3iPd0mH9UNy77ulS4E+2gIxrZZOe9MHMdk4twrHW9xzyFsBcW8/xXO0MNXnXu4WAvpPz+KdM2Pdqsk3zeap3+Fu+XMqShlJ5AHOqtNhhnInPRtJ3+3uIpiZVuCeJ2wZKi53llmljPexAUXAoxTrlkJV1hnLIB0t3v9vdQ1lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758555123; c=relaxed/simple;
-	bh=F/QqHKTdDoP1uBZAZZjnrrOZP/fFFhBzGoiYO8vzUdE=;
+	bh=K2Jx9BZnG+1brk58AH7l9lttwi2IYYooNAGrB6W3v7I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UE3SXZhSEra9X17pXHGrMMR1cLejX1VvPqVd02HzOKMHo9YwGU1StcpTwfOM2f0+6Vy5XBp7Ac6z+n3qXoxgxHuJHe+eLJL1sKNXFr7jasek4dNOVA1ZxzaqqEl3UycYaVzVBvfzdbfHQpSl1MHo26rlSEDRNtHyrcOG5g0aNj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FGwUgvxI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C545C4CEF7;
+	 MIME-Version; b=IA+fCQtRjAzsLcu9LwEAAfVdo2/rL3VaS5ARzT86D5hGNz7nLnLAil1lX17TtVRMjvi5hmI3ZtxHb2y0q+h4R7X5Gp8ZvTspXd8Ce1HA8U7eRt2kyM2MONm5Ce8jDBTjsi3h/vM80iNt2Q314wHo0bf1mwfZq4xs+fTM8vkxY70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oLleysYm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7D70C116D0;
 	Mon, 22 Sep 2025 15:32:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1758555122;
-	bh=F/QqHKTdDoP1uBZAZZjnrrOZP/fFFhBzGoiYO8vzUdE=;
+	bh=K2Jx9BZnG+1brk58AH7l9lttwi2IYYooNAGrB6W3v7I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FGwUgvxIZtJT38NmYLl9PjbwLyElyqNSTIz1Fdp9HXKdVD2eDrzuibq2qz2bI/Q1N
-	 rHJstbynpjUW23il3TUbAiCd8ETSiFHwSRb3VKlFyRgVSV18Nuc2RKnEkz3Htmw4qz
-	 tagOr2QMpvnmg0qs1VJQcOBlVjQOFdvj6B5qpZfHn6U5GVfITY6byi3YDI5vIpqRDk
-	 6TWsr0ZPZS+XBtBVNI2l5FlL5KJYQeenyInL11YD72HicHr4vmbu1m74oYr43RWNk7
-	 Lkjh4KGbsy7rSsFhD6FQfK7F9V/iOnyjlzRPrbV4nxhYCHq9qQydjEmjFmEkx3oDyI
-	 nN2FrUNsjRfqA==
+	b=oLleysYm8tMn61SqI+EdCtDkI4JMBll4THA8PsVy6EqflzIUEQ6pWTa72KiQKMSQX
+	 DJWTq9yxyV5gQP7NpfLfyJKPU6YkdDEZPw3MY2EJhe+ey6CtNeURoqAEAUDzKDnVsI
+	 dSzKw8R+4AnQ/T3goBgbLApDfw2TLRDrrwkxytTeRWIiq3QoEkf7e6aYDSeNDcrXTf
+	 HX6mek7Rz3VUSmKt8flauLFkHXZVQQfgkKtX8pgBEYrygobKuGjZ79rz520mJBOHgW
+	 KhyUhADPJ+045pswEj0uaKXAB7IdaT6n8fMILFLPm14SIsdoR1J1eqjWJtKwFmvyqD
+	 TzwbTuF/VOgBQ==
 Received: from johan by xi.lan with local (Exim 4.98.2)
 	(envelope-from <johan@kernel.org>)
-	id 1v0iWC-000000004Hi-0e4V;
+	id 1v0iWC-000000004Hk-13sj;
 	Mon, 22 Sep 2025 17:31:56 +0200
 From: Johan Hovold <johan@kernel.org>
 To: Miquel Raynal <miquel.raynal@bootlin.com>
@@ -63,9 +63,9 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
 	linux-mtd@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 2/8] mtd: onenand: omap2: drop unused module alias
-Date: Mon, 22 Sep 2025 17:31:01 +0200
-Message-ID: <20250922153107.16381-3-johan@kernel.org>
+Subject: [PATCH 3/8] mtd: rawnand: atmel: drop unused module alias
+Date: Mon, 22 Sep 2025 17:31:02 +0200
+Message-ID: <20250922153107.16381-4-johan@kernel.org>
 X-Mailer: git-send-email 2.49.1
 In-Reply-To: <20250922153107.16381-1-johan@kernel.org>
 References: <20250922153107.16381-1-johan@kernel.org>
@@ -77,27 +77,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The driver only supports OF probing since commit a758f50f10cf ("mtd:
-onenand: omap2: Configure driver from DT") so drop the unused platform
+The driver only supports OF probing since commit f88fc122cc34 ("mtd:
+nand: Cleanup/rework the atmel_nand driver") so drop the unused platform
 module alias.
 
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/mtd/nand/onenand/onenand_omap2.c | 1 -
+ drivers/mtd/nand/raw/atmel/pmecc.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/onenand/onenand_omap2.c b/drivers/mtd/nand/onenand/onenand_omap2.c
-index f9a386b69050..0793251ada3b 100644
---- a/drivers/mtd/nand/onenand/onenand_omap2.c
-+++ b/drivers/mtd/nand/onenand/onenand_omap2.c
-@@ -603,7 +603,6 @@ static struct platform_driver omap2_onenand_driver = {
- 
- module_platform_driver(omap2_onenand_driver);
- 
--MODULE_ALIAS("platform:" DRIVER_NAME);
+diff --git a/drivers/mtd/nand/raw/atmel/pmecc.c b/drivers/mtd/nand/raw/atmel/pmecc.c
+index 0b402823b619..1d0e93e4edb1 100644
+--- a/drivers/mtd/nand/raw/atmel/pmecc.c
++++ b/drivers/mtd/nand/raw/atmel/pmecc.c
+@@ -1010,4 +1010,3 @@ module_platform_driver(atmel_pmecc_driver);
  MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Jarkko Lavinen <jarkko.lavinen@nokia.com>");
- MODULE_DESCRIPTION("Glue layer for OneNAND flash on OMAP2 / OMAP3");
+ MODULE_AUTHOR("Boris Brezillon <boris.brezillon@free-electrons.com>");
+ MODULE_DESCRIPTION("PMECC engine driver");
+-MODULE_ALIAS("platform:atmel_pmecc");
 -- 
 2.49.1
 
