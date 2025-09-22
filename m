@@ -1,185 +1,184 @@
-Return-Path: <linux-kernel+bounces-826927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 573F1B8FAA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:59:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE19B8FAA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5503D189ECEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:59:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD4B31895373
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C435B2820D5;
-	Mon, 22 Sep 2025 08:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA3F28507D;
+	Mon, 22 Sep 2025 09:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pu/lwCDA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aLEkbcyN"
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EB421B9DE;
-	Mon, 22 Sep 2025 08:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CAC9283FE5
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758531537; cv=none; b=cz92d8gW68xaa9rG0L1Nf4ZwdbeMIpRCYoCmR5nECyvdOiXjvmwCnXQWEOsEJE52RjWHECKgW6LSzt9P2C+EdDW1/7sQI+GwfHtRXlj84hju0VEbcTb0frfFKDrg4uJPekPD/2pqkkdfTk4YKTz3gF+AlBiQ1MP/MeAQDf7riuU=
+	t=1758531609; cv=none; b=nMufVSWO9QL2BaXvoYlXLm11IB8x5V2HKsP59b09/snDIk8Aew7IJrjmRe2YZ11qKTNMdzjrR0pw0qF1lczLMC4kyuSBcg4eyMWCVljjDfSOAldCNj9dqXDKpq+i4ZskYEO6ngI4ouvjGH5sFsAuxQ3plM6J53oC6tZvv9Tm2Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758531537; c=relaxed/simple;
-	bh=x+9ic0HXk43B7VfA2TmZHAO2sD8IChCOaDJn1dv1xLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KbX36y/xPgXA5eCM6w6xp0nXEnMRN32lMbvmVc48UBEuVsLXGcP7abFsdAm99zYABD1lQYSm2wbeWWi16Hsa73V24jDwnWZnJut2jDkssMTxiJBqsP5jhrfGMv6GiUeygejO5TcMwgAEYIqjs6afNuou0XzHw+ykr2okymP/MuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pu/lwCDA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62A6CC4CEF0;
-	Mon, 22 Sep 2025 08:58:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758531537;
-	bh=x+9ic0HXk43B7VfA2TmZHAO2sD8IChCOaDJn1dv1xLw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Pu/lwCDA5u7mNtEQQql9DMrftgs4WZQgMQ3ZDhnCHcxslx94tkztpdKKWFkDJ+Jgc
-	 ImkmHKPh0xQot6Q5fwZRoxLivuwKbSPDMu/wPFVneU6gczMgu5yQbb752Y2JDulWwK
-	 pnoYuoNM+RySzbgjMYQSa503FEVgACEqq0RPMabaZAW8iSLq3gc9MfXCoM2tM395rF
-	 QCN8Sa3+ZPOoc6lXFAF7UH52sJZdMzFZ6aAgV0qGzcEjGquVaX+AmQSKgrsfWHTGzE
-	 uVam3uVmkWxKXpebXt3S2t8K4tAG8GCNuGOYGY4hvpz1iHyVKdJXDIh/mLbbTEMur1
-	 4JNc1TUClYBYQ==
-Date: Mon, 22 Sep 2025 09:58:45 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the vfs tree with the vfs-brauner tree
-Message-ID: <aNEPxbts2exyK_2A@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1758531609; c=relaxed/simple;
+	bh=w3yp2JrNnsSF3+6X/xTHjw+JwtJyjw6GCrUHlSgXglY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=fk7dceSCWU5u250Kkeqle9JxS17pBi+Nq85FYwnYA+nqz+YOKmJuUywNI2+mcm9MdU0rwKu2LXZHEPMkwjTrW6qMOD1FuFml9EPppuEgfMQ46EaAhhQ92GtVK+0qzMpxcy/xJuWwqkXE7Ll5cpCFj1oI9qlnUt2HhHqoeBSFvXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aLEkbcyN; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b2e9e07a887so11527266b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:00:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758531605; x=1759136405; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SJqhgJyvnD5d6YT81nFGxO9YqrSRYT6f3jsmSzdijO4=;
+        b=aLEkbcyNN1WH0O5YTKWL1yxKGpsOBWlbP2h/keD0HHYcPCwidbcLkj1/qVB4xVmRb4
+         NYknK6o0gAwEbu1ac8LDhuPKcIhvhzyNxQfeTpeEfN+0j2vIG12ZuWjGk6ispIC+JXa1
+         rCKMTJxpnvtpnxD42lPuugdliojSYJWK6wqTCv6b4renLeBplIUnR8a24poYAzUvFDTp
+         ldvj/ZQZjSXapVTI6ugfQPx05YudRKl6wg/fwQCqrNTY/BoqmF3QtcbWkpSpQ5M4rySB
+         BD9i2m+XcO6lPGuZUeBEdldwP7bcVes/F9XlkcZ3/+CC6gFuDSLx3erkjpdspT/DQNwT
+         GofQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758531605; x=1759136405;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SJqhgJyvnD5d6YT81nFGxO9YqrSRYT6f3jsmSzdijO4=;
+        b=e9d1/2PtOeWDdTKVmc0wb/l8pQLpb9y08MGPVGw21xOHEmERRCPj2p3uIX1M+IQ/if
+         Q+s2NdnyZqyIOwJ1frVa7RFRmf97F5f2jJZsMjDprC9c2jk6xtHtqm0CFeMRa555vH5C
+         GI3B9zZoKb4WjQRquo1wbqDLThW2jsTfnflGnVoGbK4eCzSTnkCt8D2OgnfzRMPcl3nw
+         GVNvEJEuGMGxOj+9V/gtZ2gxdHXPnGGaqDVCOB3UTok6MwqLuuSnUF32RlSyEWElEkih
+         ubVn3/G1vvXl94r73qAREnGsnHIiA/v1ATe9Kd048gFu9mM05DmnuTYO9cQ2wcMubFa8
+         Km0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXrKwLGXCProZHEJd8V1+s3wHK6p2ksiJvbQec3QonA/2nyMrFkFQFLmWJS+kdKi48yfBRzY7Azst0OGHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVXbxGCjnWgrsH9qKQZcYClDxGFvoXr3pww8MFyjV1QHZ+Fd0C
+	S34tMg7mVErPAoOHtS3U8snx7u2gdfWQ3XxVenbaFnU325GI3MhSSlYoIkyrpcMWuaWfO5bwfBq
+	K+l4reP2une/r0Q==
+X-Google-Smtp-Source: AGHT+IF+yNxN8u0Kn/bBdnRnggKLG4SBwNB4ClzRlBvae+pc7iApwAt2kx062VQ8LZ+b/9dnodHumoEI9ZZgHg==
+X-Received: from edf16.prod.google.com ([2002:a05:6402:21d0:b0:633:2fbe:a0c9])
+ (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:948c:b0:b14:53a0:5c61 with SMTP id a640c23a62f3a-b24eca014ccmr1430032766b.12.1758531605450;
+ Mon, 22 Sep 2025 02:00:05 -0700 (PDT)
+Date: Mon, 22 Sep 2025 08:59:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FzUWitXpJsmngAC3"
-Content-Disposition: inline
-
-
---FzUWitXpJsmngAC3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
+Message-ID: <20250922090003.686704-1-smostafa@google.com>
+Subject: [PATCH v4 0/4] Move io-pgtable-arm selftest to KUnit
+From: Mostafa Saleh <smostafa@google.com>
+To: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Cc: robin.murphy@arm.com, will@kernel.org, joro@8bytes.org, jgg@ziepe.ca, 
+	praan@google.com, Mostafa Saleh <smostafa@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+This is a small series to clean up the io-pgtable-arm library.
 
-Today's linux-next merge of the vfs tree got a conflict in:
+The first patch is a small clean up to reduce the depedencies of the
+test before moving it.
 
-  fs/namespace.c
+The second patch was originally part of the SMMUv3 KVM driver support[1],
+which needed to factor out the kernel code from the io-pgtable-arm
+library, and based on Jason=E2=80=99s suggestion this can be taken out as a
+cleanup, and a step further to convert it to kunit.
 
-between commit:
+The second patch just moves the code to a new file with no other changes,
+so it can be easier to review with =E2=80=9C--color-moved=E2=80=9D
 
-  be5f21d3985f0 ("ns: add ns_common_free()")
+The third patch converts the sefltest to be modular, that is useful as
+kunit can be a module and it can run anytime after boot.
 
-=66rom the vfs-brauner tree and commit:
+The fourth patch registers the test using kunit, and converges some of
+the APIs, some notes about that:
 
-  7bb4c851dcb7a ("copy_mnt_ns(): use the regular mechanism for freeing empt=
-y mnt_ns on failure")
+Granularity of tests:
+---------------------
+To make the series easier to review, the series changes the test to run in
+kunit without making intrusive changes to the test itself.
+It=E2=80=99s possible to refactor the tests to have smaller granularity (al=
+though
+I think that would make it less efficient as we might create the same io-pg=
+table
+config multiple times) and integrate them in kunit as multiple tests, that
+change would be more intrusive, if you think that is the right approach,
+I can add a couple of more patches re-writing the tests.
 
-=66rom the vfs tree.
+Other changes:
+--------------
+- Also, to make the test changes minimal, and the fail messages similar,
+  =E2=80=9CKUNIT_FAIL()=E2=80=9D is used to fail all tests instead of using=
+ KUNIT specific
+  assertions.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+- Instead of using faux device, we rely on kunit_device_register()
 
-diff --cc fs/namespace.c
-index 880cbabe6f957,b9430a5cc987f..0000000000000
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@@ -90,7 -80,16 +90,15 @@@ static DECLARE_RWSEM(namespace_sem)
-  static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
-  static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-  static struct mnt_namespace *emptied_ns; /* protected by namespace_sem */
- -static DEFINE_SEQLOCK(mnt_ns_tree_lock);
- =20
-+ static inline void namespace_lock(void);
-+ static void namespace_unlock(void);
-+ DEFINE_LOCK_GUARD_0(namespace_excl, namespace_lock(), namespace_unlock())
-+ DEFINE_LOCK_GUARD_0(namespace_shared, down_read(&namespace_sem),
-+ 				      up_read(&namespace_sem))
-+=20
-+ DEFINE_FREE(mntput, struct vfsmount *, if (!IS_ERR(_T)) mntput(_T))
-+=20
-  #ifdef CONFIG_FSNOTIFY
-  LIST_HEAD(notify_list); /* protected by namespace_sem */
-  #endif
-@@@ -3229,7 -3304,7 +3244,7 @@@ static int do_reconfigure_mnt(const str
-   * If you've mounted a non-root directory somewhere and want to do remount
-   * on it - tough luck.
-   */
-- static int do_remount(struct path *path, int sb_flags,
- -static int do_remount(const struct path *path, int ms_flags, int sb_flags,
-++static int do_remount(const struct path *path, int sb_flags,
-  		      int mnt_flags, void *data)
-  {
-  	int err;
-@@@ -4164,10 -4204,7 +4133,8 @@@ struct mnt_namespace *copy_mnt_ns(u64 f
-  		copy_flags |=3D CL_SLAVE;
-  	new =3D copy_tree(old, old->mnt.mnt_root, copy_flags);
-  	if (IS_ERR(new)) {
-+ 		emptied_ns =3D new_ns;
- +		namespace_unlock();
-- 		ns_common_free(ns);
-- 		dec_mnt_namespaces(new_ns->ucounts);
-- 		mnt_ns_release(new_ns);
-  		return ERR_CAST(new);
-  	}
-  	if (user_ns !=3D ns->user_ns) {
-@@@ -4205,14 -4241,7 +4171,7 @@@
-  		while (p->mnt.mnt_root !=3D q->mnt.mnt_root)
-  			p =3D next_mnt(skip_mnt_tree(p), old);
-  	}
-- 	namespace_unlock();
--=20
-- 	if (rootmnt)
-- 		mntput(rootmnt);
-- 	if (pwdmnt)
-- 		mntput(pwdmnt);
--=20
- -	mnt_ns_tree_add(new_ns);
- +	ns_tree_add_raw(new_ns);
-  	return new_ns;
-  }
- =20
-@@@ -6095,14 -6093,12 +6027,12 @@@ void __init mnt_init(void
- =20
-  void put_mnt_ns(struct mnt_namespace *ns)
-  {
- -	if (!refcount_dec_and_test(&ns->ns.count))
- +	if (!ns_ref_put(ns))
-  		return;
-- 	namespace_lock();
-+ 	guard(namespace_excl)();
-  	emptied_ns =3D ns;
-- 	lock_mount_hash();
-+ 	guard(mount_writer)();
-  	umount_tree(ns->root, 0);
-- 	unlock_mount_hash();
-- 	namespace_unlock();
-  }
- =20
-  struct vfsmount *kern_mount(struct file_system_type *type)
+- The WARN is removed when a test fails, as that doesn=E2=80=99t seem to be=
+ a pattern
+  used with kunit.
 
---FzUWitXpJsmngAC3
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+You can find the instructions on how to run kunit in the last patch commit =
+message.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjRD8QACgkQJNaLcl1U
-h9CdTgf9Hsv4XDFO8VrI+1Rl2xZr8hyij4qAuhj/HLJ4t8jOyDONfhK1lznqtLlO
-gsAVqifT38xmFOWmz+xo9bcSQW7lh1vWcV6VjusVNJjbm5thpVr0KKamp7VbIvm7
-wZkel+dAOC/Et1LspwZmaheuyKyvZdzWM/QzrMCPovVV4r+ql6lcjdP7rfzdeBj/
-dqITubxBKsfQZryIFBboPwFbwgEGZFYjhvEMkexDuRkzLZguOTxG/Hf9KrUk+zIL
-5XRTHD0Hk+hXk6AyuOoavAztqm/QYxOzQMSztImTDEiuHHy1wvdpV9zRlCQVebnL
-K8qR7k5kGqZsWVK9SM2p76TlPKRLeQ==
-=Yquq
------END PGP SIGNATURE-----
+A failure at the test with the new implementation look as
+[  191.675985]     # arm_lpae_do_selftests: selftest: pgsize_bitmap 0x20010=
+000, IAS 40 OAS 48
+[  191.676057]     # arm_lpae_do_selftests: EXPECTATION FAILED at drivers/i=
+ommu/io-pgtable-arm-selftests.c:91
+[  191.676087]     # arm_lpae_do_selftests: selftest: test failed for fmt i=
+dx 0
 
---FzUWitXpJsmngAC3--
+
+Main changes in v4:
+- Remove one missed __init.
+- Change the kconfig dependencies back as it broke ARM
+https://lore.kernel.org/all/202509201819.f369wBHc-lkp@intel.com/
+
+v3: https://lore.kernel.org/all/20250919133316.2741279-1-smostafa@google.co=
+m/
+
+Main changes in v3:
+-------------------
+- Move back unused code
+- Simplify printing based on Jason comments + some renames
+- Collect Jasons Rb
+v2: https://lore.kernel.org/all/20250917191143.3847487-1-smostafa@google.co=
+m/
+
+Main changes in v2:
+-------------------
+- Make the test modular
+v1: https://lore.kernel.org/linux-iommu/20250917140216.2199055-1-smostafa@g=
+oogle.com/
+
+[1] https://lore.kernel.org/all/20250819215156.2494305-5-smostafa@google.co=
+m/
+
+Mostafa Saleh (4):
+  iommu/io-pgtable-arm: Simplify error prints for selftests
+  iommu/io-pgtable-arm: Move selftests to a separate file
+  iommu/io-pgtable-arm-selftests: Modularize the test
+  iommu/io-pgtable-arm-selftests: Use KUnit
+
+ drivers/iommu/Kconfig                    |  11 +-
+ drivers/iommu/Makefile                   |   1 +
+ drivers/iommu/io-pgtable-arm-selftests.c | 222 +++++++++++++++++++++++
+ drivers/iommu/io-pgtable-arm.c           | 204 ---------------------
+ 4 files changed, 229 insertions(+), 209 deletions(-)
+ create mode 100644 drivers/iommu/io-pgtable-arm-selftests.c
+
+
+base-commit: 07e27ad16399afcd693be20211b0dfae63e0615f
+--=20
+2.51.0.534.gc79095c0ca-goog
+
 
