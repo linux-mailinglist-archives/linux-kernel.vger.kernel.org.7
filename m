@@ -1,269 +1,769 @@
-Return-Path: <linux-kernel+bounces-826698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72EEFB8F249
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:29:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE13B8F2A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BBF3174C1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:29:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C37B189F210
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFF2261B8F;
-	Mon, 22 Sep 2025 06:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4F12F0690;
+	Mon, 22 Sep 2025 06:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZTHAWmcp"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=bewilderbeest.net header.i=@bewilderbeest.net header.b="Qotb+mlR"
+Received: from thorn.bewilderbeest.net (thorn.bewilderbeest.net [71.19.156.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F595464E
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B8F23D7FD;
+	Mon, 22 Sep 2025 06:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=71.19.156.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758522540; cv=none; b=ESOcLjiF/5vIYqG5drYzhHUT57+luKyb5H9xX2sZYjKul80lKaFDpspmtcyyWMdbuyS3OThgsiONZJzb+wiBfmTfSwQGd1xNW4aM1oZgmbTY6+cg3kh6e/BSRnroI042qChY5Dd/rzJBemxxwnQZFUxnIrEFcd1PXdAaQf8r1F0=
+	t=1758522930; cv=none; b=DIFSkM87bRuiAa0d9Q17efhaQVdx0euvMu4wjfocQ3xkokE0nngA9qaHQUx0ROEs0TkTR0E0a5zRKLEPKtjDGXTXTayC2U194ykyt+2QRH8mIx2GkGi4XgNAOjWJ75HX0QaThMG+cd46ZIZGe2s9CvaaEBJRmjMSFcOOR6IygKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758522540; c=relaxed/simple;
-	bh=jS7CeHrv/AeGZdOQ/WoM0enjwVnBDM2WkTpACOOaB8g=;
+	s=arc-20240116; t=1758522930; c=relaxed/simple;
+	bh=H21fEjv6yjZI+jEhU2XlE9SRiHRY5rvfF7H6lLrkv74=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m/6QTihuWFhGLZevw82kOmTUivOTCkgDcc2UOuLoXeBYcJrT0JYPtcfS+5VHct9iJBxvsNxJyFPhl9p1gXJ/EuDSoPbjcfOvFNVOKn/I0QeLnGK8xDu90iQmnhL594wAd200f5Hh+XFZfrPHmdlakv1g1NuhTBk79/Qe17elseE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZTHAWmcp; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ee15505cdeso2327990f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 23:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758522536; x=1759127336; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ZLlyj1lrTQJXPVDMgRBgvEm8gNKaL9UfywhFXowTYg=;
-        b=ZTHAWmcpm3OyJKN8XoWT1WF2E+hQUCexKvpGkwv9x4vA0NN8Fs3urJZtlzkoJ3qkwP
-         6Itrs6PIHQgC+pZkVJkzPYl5yNT15V8cVqXEr3EtWfDSq2ASIeulGZrpanAY7fcyI6ah
-         IVGmFZyAnCjCPC8l58ghF/Xnpsqf6cca1QPIbZlYbCn9rc14jR/21XgUv1e23znb3cdg
-         /eWgUe4fewpsOrSpGf1HIVDh3/gzcWA3MrosfjSVdvFQ586LdNYy/GnBGABXIh+VPDWu
-         tU9xvY3d1QF+7wRjPhiIrmiRlGI8fhaRlY89NObd/+BnzY2eziwcGesZN1yVgh7GxT7W
-         iemQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758522536; x=1759127336;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7ZLlyj1lrTQJXPVDMgRBgvEm8gNKaL9UfywhFXowTYg=;
-        b=IUFgr4BDWP69qqd0xnVWIxJbqtzDIP0Y5dp0sXhh6bF5tSSX8IVaKdXwCbXcasWvK+
-         W2uhYkr1ZllGkAZutut/BZlH6EAUkUZ5lxd49Tb97q9LY8MxU45F0DDD4o8x9HZ8vmXp
-         eyP1VkKD4XB1AUMrpjIDOW2xP+4Cm6tX4kj5QO8nN/kPV6aYZwdgq5QgCa+pFC1nJsDB
-         XDiQsjGBrDzs+kD2Jly8k6O4n3EhqIpxIbWVGzteePeB+sb45/KjO49AaEAT8wlys1Gn
-         ZD1j1TWOqwe8toxtBcE1MMxRd4F6Syh16P8IaUG2Br5XyOIjv/ygYWpi8e3t/TqwROyd
-         2H+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXtvsXNM1YsFyjmJ6xDeOc5fcr0NwOwE2VjAyTdsTXidGUZpg8h0tBDVO/dZz02NilMp5wGU9nRZD+hAZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdX6fF/b+m5HQoZxykIAeNZ0PHwlvEhgj30YSGsBhM4G67cPiJ
-	4tsbQVsgwYugyiLA7rDnxfaKvK9amdD3Vj+fmADJ+UH0XrpnKXX02tuaXy3dvm3Rpoc=
-X-Gm-Gg: ASbGncu2/YkAiSxTHk9gRU19Nm8vDMDnFgZ92o8zvKuYwdbnyxoM+lp73HgJk5Gh88o
-	GNvXCGoO5IXJLx4RtQ7sAC28iCRkh3dJl6qyEfTQipm7wJ0YqauC9Jk00/fuTz/kHMeME9vg9f+
-	941xAQAHIIc+/ahUN581Gm02XOrJa1zZ55Hby1uatxrIE62hd5RzzDxKaOjNfsMmg2KTwt3S4oI
-	jUgmvIMfpFtC1pvICSpJvtblZXlerVVXhzdChk0Yr92xKnDoTcfvymLVyyhDgXGhOAaVCGCVsOZ
-	uyzzdtFRKN+iMyodhsa7eBU/V0E/THVq3iTPrk1S1ZErfzH8NvuMjmQFAm/q/13zhzFTPWzHWXZ
-	pyamJdmjhOdbWB5wYGH+jKrKa3MaI
-X-Google-Smtp-Source: AGHT+IEi7y+wmyoeJmcLrzMj7JBQYxtJq3v3U/Csxfuh3DcOz0vyeFncb6QmMd0G2jzMcncIY5GShg==
-X-Received: by 2002:a05:6000:248a:b0:3df:22a3:d240 with SMTP id ffacd0b85a97d-3edd43ac9ebmr12498231f8f.4.1758522536140;
-        Sun, 21 Sep 2025 23:28:56 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-464f0aac3fdsm183666865e9.1.2025.09.21.23.28.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 23:28:55 -0700 (PDT)
-Date: Mon, 22 Sep 2025 09:28:52 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: dpenkler@gmail.com, gregkh@linuxfoundation.org,
-	matchstick@neverthere.org, dominik.karol.piatkowski@protonmail.com,
-	arnd@arndb.de, nichen@iscas.ac.cn, paul.retourne@orange.fr,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, stable@vger.kernel.org
-Subject: Re: [PATCH] staging: gpib: Fix device reference leak in fmh_gpib
- driver
-Message-ID: <aNDspDsgj5I5KGLe@stanley.mountain>
-References: <20250922023831.21343-1-make24@iscas.ac.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CTuPmKLoqaaepNWDdVNVpRafQLrqbzjXU3ha94/BpTXAt1PF3xn8V8QpQZIxSOJPaaEsEC+4blbkLAIBtNjHA98DobTdOfZxBheYRUWZ5RbnnK61LQD0WvnoNA1JqUIvTHzOTXU+IKYoAFHKnW76Jf9Ct5X+9XAQt334/uW1h9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bewilderbeest.net; spf=pass smtp.mailfrom=bewilderbeest.net; dkim=pass (1024-bit key) header.d=bewilderbeest.net header.i=@bewilderbeest.net header.b=Qotb+mlR; arc=none smtp.client-ip=71.19.156.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bewilderbeest.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bewilderbeest.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bewilderbeest.net;
+	s=thorn; t=1758522558;
+	bh=8rkcGkkSHNbg3BRN1kDct5tF5NkukCIyzIEeS3WDl34=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qotb+mlRjdAlDEHIdNKxb3p8iUNutOfEqykG66Udy7+RBiMRR1PuxgXa4Q8+h2uYd
+	 aExoCuxRP0lnBtaKjt8U+Y74Qy3Qkk6z2h92O5P48rNAKo9GffbmWYrrlWRr24nCC5
+	 OJNZYFwsIQr7s48ui0KDryP2smVGGmoDv+43fwnk=
+Received: from hatter.bewilderbeest.net (unknown [IPv6:2602:61:713c:eb00::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: zev)
+	by thorn.bewilderbeest.net (Postfix) with ESMTPSA id B8FDD1BA;
+	Sun, 21 Sep 2025 23:29:17 -0700 (PDT)
+Date: Sun, 21 Sep 2025 23:29:16 -0700
+From: Zev Weiss <zev@bewilderbeest.net>
+To: Rebecca Cran <rebecca@bsdio.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] ARM: dts: aspeed: add device tree for ASRock Rack
+ ALTRAD8 BMC
+Message-ID: <66c5bf80-a3ef-4984-82ce-6d1720b15d38@hatter.bewilderbeest.net>
+References: <20250917180428.810751-1-rebecca@bsdio.com>
+ <20250917180428.810751-3-rebecca@bsdio.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20250922023831.21343-1-make24@iscas.ac.cn>
+In-Reply-To: <20250917180428.810751-3-rebecca@bsdio.com>
 
-On Mon, Sep 22, 2025 at 10:38:31AM +0800, Ma Ke wrote:
-> The fmh_gpib driver contains a device reference count leak in
-> fmh_gpib_attach_impl() where driver_find_device() increases the
-> reference count of the device by get_device() when matching but this
-> reference is not properly decreased. Add put_device() in
-> fmh_gpib_attach_impl() and add put_device() in fmh_gpib_detach(),
-> which ensures that the reference count of the device is correctly
-> managed.
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 8e4841a0888c ("staging: gpib: Add Frank Mori Hess FPGA PCI GPIB driver")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->  drivers/staging/gpib/fmh_gpib/fmh_gpib.c | 23 +++++++++++++++++++++--
->  1 file changed, 21 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c b/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-> index 4138f3d2bae7..245c8fe87eaa 100644
-> --- a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-> +++ b/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-> @@ -1395,14 +1395,17 @@ static int fmh_gpib_attach_impl(struct gpib_board *board, const struct gpib_boar
->  	pdev = to_platform_device(board->dev);
->  
->  	retval = fmh_gpib_generic_attach(board);
-> -	if (retval)
-> +	if (retval) {
-> +		put_device(board->dev);
->  		return retval;
+Hi Rebecca,
 
-Do this with an unwind goto.
+Thanks for posting this -- a handful of small comments below...
 
-	if (reval)
-		goto put_dev;
 
-	...
+Zev
 
-	retval = fmh_gpib_init(...);  /* this bug wasn't fixed btw */
-	if (retval)
-		goto put_dev;
+On Wed, Sep 17, 2025 at 11:04:26AM PDT, Rebecca Cran wrote:
+>The ALTRAD8 BMC is an Aspeed AST2500-based BMC for the ASRock Rack
+>ALTRAD8UD-1L2T and ALTRAD8UD2-1L2Q boards.
+>
+>Signed-off-by: Rebecca Cran <rebecca@bsdio.com>
+>---
+> arch/arm/boot/dts/aspeed/Makefile                      |   1 +
+> arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dts | 633 ++++++++++++++++++++
+> 2 files changed, 634 insertions(+)
+>
+>diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed/Makefile
+>index aba7451ab749..6bffb7130839 100644
+>--- a/arch/arm/boot/dts/aspeed/Makefile
+>+++ b/arch/arm/boot/dts/aspeed/Makefile
+>@@ -9,6 +9,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
+> 	aspeed-bmc-ampere-mtjefferson.dtb \
+> 	aspeed-bmc-ampere-mtmitchell.dtb \
+> 	aspeed-bmc-arm-stardragon4800-rep2.dtb \
+>+	aspeed-bmc-asrock-altrad8.dtb \
+> 	aspeed-bmc-asrock-e3c246d4i.dtb \
+> 	aspeed-bmc-asrock-e3c256d4i.dtb \
+> 	aspeed-bmc-asrock-romed8hm3.dtb \
+>diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dts
+>new file mode 100644
+>index 000000000000..ae3ddf5f6eb7
+>--- /dev/null
+>+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dts
+>@@ -0,0 +1,633 @@
+>+// SPDX-License-Identifier: GPL-2.0+
+>+/dts-v1/;
+>+
+>+#include "aspeed-g5.dtsi"
+>+#include <dt-bindings/gpio/aspeed-gpio.h>
+>+#include <dt-bindings/leds/common.h>
+>+#include <dt-bindings/i2c/i2c.h>
+>+
+>+/ {
+>+	model = "ASRock ALTRAD8 BMC";
+>+	compatible = "asrock,altrad8-bmc", "aspeed,ast2500";
+>+
+>+	aliases {
+>+		serial4 = &uart5;
+>+		i2c50 = &nvme1;
+>+		i2c51 = &pcie4;
+>+		i2c52 = &pcie5;
+>+		i2c53 = &pcie6;
+>+		i2c54 = &pcie7;
+>+		i2c55 = &nvme3;
+>+		i2c56 = &nvme2;
+>+		i2c57 = &nvme0;
+>+		i2c58 = &nvme4;
+>+		i2c59 = &nvme5;
+>+		i2c60 = &nvme6;
+>+		i2c61 = &nvme7;
+>+		i2c62 = &nvme8;
+>+		i2c63 = &nvme9;
+>+		i2c64 = &nvme10;
+>+		i2c65 = &nvme11;
+>+	};
+>+
+>+	chosen {
+>+		stdout-path = "uart5:115200n8";
+>+	};
+>+
+>+	iio-hwmon {
+>+		compatible = "iio-hwmon";
+>+		io-channels =	<&adc 0>, <&adc 1>, <&adc 2>, <&adc 3>,
+>+				<&adc 4> ,<&adc 5>, <&adc 6>, <&adc 7>,
+>+				<&adc 8>, <&adc 9>, <&adc 10>, <&adc 11>,
+>+				<&adc 12>, <&adc 13>, <&adc 14>, <&adc 15>;
+>+	};
+>+
+>+	leds {
+>+		compatible = "gpio-leds";
+>+
+>+		led-system-fault {
+>+			gpios = <&gpio ASPEED_GPIO(G,3) GPIO_ACTIVE_LOW>;
+>+			label = "platform:red:fault";
+>+			color = <LED_COLOR_ID_RED>;
+>+			function = LED_FUNCTION_FAULT;
+>+		};
+>+
+>+		led-enclosure-identify {
+>+			gpios = <&gpio ASPEED_GPIO(G,0) GPIO_ACTIVE_LOW>;
+>+			label = "platform:green:indicator";
+>+			color = <LED_COLOR_ID_GREEN>;
+>+			function = LED_FUNCTION_INDICATOR;
+>+		};
+>+
+>+		led-fan1-fault {
+>+			retain-state-shutdown;
+>+			default-state = "off";
+>+			gpios = <&pca0 0 GPIO_ACTIVE_LOW>;
+>+			label = "fan1:red:fault";
+>+			color = <LED_COLOR_ID_RED>;
+>+			function = LED_FUNCTION_FAULT;
+>+		};
+>+
+>+		led-fan2-fault {
+>+			retain-state-shutdown;
+>+			default-state = "off";
+>+			gpios = <&pca0 1 GPIO_ACTIVE_LOW>;
+>+			label = "fan2:red:fault";
+>+			color = <LED_COLOR_ID_RED>;
+>+			function = LED_FUNCTION_FAULT;
+>+		};
+>+
+>+		led-fan3-fault {
+>+			retain-state-shutdown;
+>+			default-state = "off";
+>+			gpios = <&pca0 2 GPIO_ACTIVE_LOW>;
+>+			label = "fan3:red:fault";
+>+			color = <LED_COLOR_ID_RED>;
+>+			function = LED_FUNCTION_FAULT;
+>+		};
+>+
+>+		led-fan4-fault {
+>+			retain-state-shutdown;
+>+			default-state = "off";
+>+			gpios = <&pca0 3 GPIO_ACTIVE_LOW>;
+>+			label = "fan4:red:fault";
+>+			color = <LED_COLOR_ID_RED>;
+>+			function = LED_FUNCTION_FAULT;
+>+		};
+>+
+>+		led-fan5-fault {
+>+			retain-state-shutdown;
+>+			default-state = "off";
+>+			gpios = <&pca0 4 GPIO_ACTIVE_LOW>;
+>+			label = "fan5:red:fault";
+>+			color = <LED_COLOR_ID_RED>;
+>+			function = LED_FUNCTION_FAULT;
+>+		};
+>+	};
+>+
+>+	memory@80000000 {
+>+		reg = <0x80000000 0x20000000>;
+>+	};
+>+
+>+	reserved-memory {
+>+		#address-cells = <1>;
+>+		#size-cells = <1>;
+>+		ranges;
+>+
+>+		gfx_memory: framebuffer {
+>+			compatible = "shared-dma-pool";
+>+			size = <0x01000000>;
+>+			alignment = <0x01000000>;
+>+			reusable;
+>+		};
+>+
+>+		vga_memory: framebuffer@9f000000 {
+>+			no-map;
+>+			reg = <0x9f000000 0x01000000>; /* 16M */
+>+		};
+>+
+>+		video_engine_memory: jpegbuffer {
+>+			compatible = "shared-dma-pool";
+>+			size = <0x02000000>;	/* 32M */
+>+			alignment = <0x01000000>;
+>+			reusable;
+>+		};
+>+	};
+>+};
+>+
+>+&adc {
+>+	status = "okay";
+>+};
+>+
+>+&fmc {
+>+	flash@0 {
+>+		label = "bmc";
+>+		m25p,fast-read;
+>+		spi-max-frequency = <50000000>;
+>+#include "openbmc-flash-layout-64.dtsi"
+>+	};
+>+};
+>+
+>+&gfx {
+>+	memory-region = <&gfx_memory>;
+>+};
+>+
+>+&gpio {
+>+	gpio-line-names =
+>+	/*A0-A7*/	"","","","BMC_READY","","","","",
+>+	/*B0-B7*/	"i2c-backup-sel","","","","","","","host0-shd-ack-n",
+>+	/*C0-C7*/	"","","","","","","","",
+>+	/*D0-D7*/	"POWER_BUTTON","POWER_OUT","RESET_BUTTON",
+>+			"host0-sysreset-n","","","SYS_PWR_GD","",
+>+	/*E0-E7*/	"","s0-vrd1-vddq0123-fault-l",
+>+			"s0-vrd1-vddq4567-fault-l","s0-vrd0-vddc-fault-l",
+>+			"s0-vrd3-p0v75-fault-l","","","",
+>+	/*F0-F7*/	"","","SYS_ATX_PSON_L","","","","","",
+>+	/*G0-G7*/	"id-led","id-button","","","UBOOT_READY",\
+>+			"BMC_SALT2_L","","",
+>+	/*H0-H7*/	"PS_PWROK","uart1-mode1","uart2-mode1","uart3-mode1",
+>+			"uart4-mode1","","BMC_HB_LED","",
+>+	/*I0-I7*/	"","","","","","","","",
+>+	/*J0-J7*/	"s0-hightemp-n","","","","","","","",
+>+	/*K0-K7*/	"","","","","","","","",
+>+	/*L0-L7*/	"","","","","","","","",
+>+	/*M0-M7*/	"","","","","","s0-spi-auth-fail-n","","",
+>+	/*N0-N7*/	"","","","","","","","",
+>+	/*O0-O7*/	"","","","","","","","",
+>+	/*P0-P7*/	"","","CPLD_DISABLE_BMC","","","","","",
+>+	/*Q0-Q7*/	"","","ext-hightemp-n","","","","",
+>+			"CHASSIS_INTRUSION",
+>+	/*R0-R7*/	"","","EXT_HIGHTEMP_L","spi0-program-sel","",
+>+			"HWM_BAT_EN","","",
+>+	/*S0-S7*/	"s0-vr-hot-n","","","BMC_SYSRESET_L","","","","",
+>+	/*T0-T7*/	"","","","","","","","",
+>+	/*U0-U7*/	"","","","","","","","",
+>+	/*V0-V7*/	"","","","","","","","",
+>+	/*W0-W7*/	"","","","","","","","",
+>+	/*X0-X7*/	"","","","","","","","",
+>+	/*Y0-Y7*/	"SIOS3","SIOS5","SIOPWREQ","SIOONCTRL","","","","",
+>+	/*Z0-Z7*/	"","SIOPWRGD","","s0-rtc-lock","","","","",
+>+	/*AA0-AA7*/	"RTC_INT","","","","","PMBUS_SEL_N","","",
+>+	/*AB0-AB7*/	"host0-reboot-ack-n","s0-sys-auth-failure-n",
+>+			"","","","","","",
+>+	/*AC0-AC7*/	"s0-fault-alert","host0-ready","s0-overtemp-n",
+>+			"","bmc-ok","host0-special-boot","presence-cpu0",
+>+			"host0-shd-req-n";
+>+};
+>+
+>+&i2c0 {
+>+	bus-frequency = <100000>;
 
-	return 0;
+Here and on most of the other i2c busses, is there a particular reason 
+we want this bus-frequency explicitly specified?  100kHz is the default 
+according to Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml (and 
+the other existing aspeed-bmc-asrock-*.dts files leave it at that 
+implicit default, FWIW).
 
-put_dev:
-	put_device(board->dev);
-	return retval;
+>+
+>+	ipmb@10 {
+>+		compatible = "ipmb-dev";
+>+		reg = <(0x10 | I2C_OWN_SLAVE_ADDRESS)>;
+>+		i2c-protocol;
+>+	};
+>+
+>+};
+>+
+>+&i2c1 {
+>+	bus-frequency = <100000>;
+>+
+>+	i2c-mux1@73 {
+>+		compatible = "nxp,pca9548";
+>+		reg = <0x73>;
+>+		#address-cells = <1>;
+>+		#size-cells = <0>;
+>+		i2c-mux-idle-disconnect;
+>+
+>+		nvme1: i2c@0 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <0>;
+>+		};
+>+
+>+		pcie4: i2c@1 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <1>;
+>+		};
+>+
+>+		pcie5: i2c@2 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <2>;
+>+		};
+>+
+>+		pcie6: i2c@3 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <3>;
+>+		};
+>+
+>+		pcie7: i2c@4 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <4>;
+>+		};
+>+
+>+		nvme3: i2c@5 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <5>;
+>+		};
+>+
+>+		nvme2: i2c@6 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <6>;
+>+		};
+>+
+>+		nvme0: i2c@7 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <7>;
+>+		};
+>+	};
+>+
+>+	i2c-mux2@75 {
+>+		compatible = "nxp,pca9548";
+>+		reg = <0x75>;
+>+		#address-cells = <1>;
+>+		#size-cells = <0>;
+>+		i2c-mux-idle-disconnect;
+>+
+>+		nvme4: i2c@0 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <0>;
+>+		};
+>+
+>+		nvme5: i2c@1 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <1>;
+>+		};
+>+
+>+		nvme6: i2c@2 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <2>;
+>+		};
+>+
+>+		nvme7: i2c@3 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <3>;
+>+		};
+>+
+>+		nvme8: i2c@4 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <4>;
+>+		};
+>+
+>+		nvme9: i2c@5 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <5>;
+>+		};
+>+
+>+		nvme10: i2c@6 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <6>;
+>+		};
+>+
+>+		nvme11: i2c@7 {
+>+			#address-cells = <1>;
+>+			#size-cells = <0>;
+>+			reg = <7>;
+>+		};
+>+	};
+>+};
+>+
+>+&i2c2 {
+>+	bus-frequency = <100000>;
+>+
+>+	smpro@4f {
+>+		compatible = "ampere,smpro";
+>+		reg = <0x4f>;
+>+	};
+>+};
+>+
+>+&i2c3 {
+>+	// PSU FRU
+>+	eeprom@38 {
+>+		compatible = "atmel,24c02";
+>+		reg = <0x38>;
+>+	};
+>+};
+>+
+>+&i2c4 {
+>+	bus-frequency = <100000>;
+>+
+>+	hardware-monitor@29 {
 
-Actually, this function needs a bunch of other frees as well.  See
-my blog for more details:
+It looks like this device only monitors temperatures?  If so, perhaps 
+temperature-sensor@29 would be a slightly more appropriate node name.
 
-https://staticthinking.wordpress.com/2022/04/28/free-the-last-thing-style/
+>+		compatible = "nuvoton,nct7802";
+>+		reg = <0x29>;
+>+
+>+		#address-cells = <1>;
+>+		#size-cells = <0>;
+>+
+>+		channel@0 { /* LTD */
+>+			reg = <0>;
+>+		};
+>+
+>+		channel@1 { /* RTD1 */
+>+				reg = <1>;
+>+				sensor-type = "temperature";
+>+				temperature-mode = "thermistor";
+>+		};
+>+
+>+		channel@2 { /* RTD2 */
+>+				reg = <2>;
+>+				sensor-type = "temperature";
+>+				temperature-mode = "thermal-diode";
+>+		};
 
-> +	}
->  
->  	e_priv = board->private_data;
->  	nec_priv = &e_priv->nec7210_priv;
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "gpib_control_status");
->  	if (!res) {
-> +		put_device(board->dev);
->  		dev_err(board->dev, "Unable to locate mmio resource\n");
->  		return -ENODEV;
->  	}
-> @@ -1410,6 +1413,7 @@ static int fmh_gpib_attach_impl(struct gpib_board *board, const struct gpib_boar
->  	if (request_mem_region(res->start,
->  			       resource_size(res),
->  			       pdev->name) == NULL) {
-> +		put_device(board->dev);
->  		dev_err(board->dev, "cannot claim registers\n");
->  		return -ENXIO;
->  	}
+channel@1 and channel@2 block bodies look over-indented by one level 
+here.
 
-request_mem_region() needs a release_region().
+>+	};
+>+
+>+	temperature-sensor@4c {
+>+		compatible = "nuvoton,w83773g";
+>+		reg = <0x4c>;
+>+	};
+>+};
+>+
+>+&i2c5 {
+>+	status = "okay";
+>+};
+>+
+>+&i2c6 {
+>+	bus-frequency = <100000>;
+>+
+>+	rtc@6f {
+>+		compatible = "isil,isl1208";
+>+		reg = <0x6f>;
+>+	};
+>+};
+>+
+>+&i2c7 {
+>+	bus-frequency = <100000>;
+>+
+>+	// BMC FRU
+>+	eeprom@57 {
+>+		compatible = "atmel,24c128";
+>+		reg = <0x57>;
+>+
+>+		nvmem-layout {
+>+			compatible = "fixed-layout";
+>+			#address-cells = <1>;
+>+			#size-cells = <1>;
+>+
+>+			eth0_macaddress: macaddress@3f88 {
+>+				reg = <0x3f88 6>;
+>+			};
+>+
+>+			eth1_macaddress: macaddress@3f80 {
+>+				reg = <0x3f80 6>;
+>+			};
 
-> @@ -1418,6 +1422,7 @@ static int fmh_gpib_attach_impl(struct gpib_board *board, const struct gpib_boar
->  	nec_priv->mmiobase = ioremap(e_priv->gpib_iomem_res->start,
->  				     resource_size(e_priv->gpib_iomem_res));
->  	if (!nec_priv->mmiobase) {
-> +		put_device(board->dev);
->  		dev_err(board->dev, "Could not map I/O memory\n");
->  		return -ENOMEM;
->  	}
+Are these correct?  On every other ASRock board I've dealt with, the 
+eth0 address is at 0x3f80 and eth1 is at 0x3f88.
 
-ioremap() needs an iounmap();
+If so and they are really for some reason swapped on this platform, as a 
+slight nitpick I might suggest swapping the order the nodes are listed 
+in so they go in order of increasing addresses.
 
-> @@ -1426,12 +1431,14 @@ static int fmh_gpib_attach_impl(struct gpib_board *board, const struct gpib_boar
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dma_fifos");
->  	if (!res) {
-> +		put_device(board->dev);
->  		dev_err(board->dev, "Unable to locate mmio resource for gpib dma port\n");
->  		return -ENODEV;
->  	}
->  	if (request_mem_region(res->start,
->  			       resource_size(res),
->  			       pdev->name) == NULL) {
-> +		put_device(board->dev);
->  		dev_err(board->dev, "cannot claim registers\n");
->  		return -ENXIO;
->  	}
+>+		};
+>+	};
+>+};
+>+
+>+&i2c8 {
+>+	bus-frequency = <100000>;
+>+
+>+	pca0: gpio@1c {
+>+		compatible = "nxp,pca9557";
+>+		reg = <0x1c>;
+>+		#address-cells = <1>;
+>+		#size-cells = <0>;
+>+
+>+		gpio-controller;
+>+		#gpio-cells = <2>;
+>+
+>+		gpio@0 {
+>+			reg = <0>;
+>+		};
+>+
+>+		gpio@1 {
+>+			reg = <1>;
+>+		};
+>+
+>+		gpio@2 {
+>+			reg = <2>;
+>+		};
+>+
+>+		gpio@3 {
+>+			reg = <3>;
+>+		};
+>+
+>+		gpio@4 {
+>+			reg = <4>;
+>+		};
+>+
+>+		gpio@5 {
+>+			reg = <5>;
+>+		};
+>+
+>+		gpio@6 {
+>+			reg = <6>;
+>+		};
+>+
+>+		gpio@7 {
+>+			reg = <7>;
+>+		};
+>+	};
+>+};
+>+
+>+&i2c9 {
+>+	status = "okay";
+>+};
+>+
+>+&i2c10 {
+>+	status = "okay";
+>+};
+>+
+>+&i2c11 {
+>+	status = "okay";
+>+};
+>+
+>+&i2c12 {
+>+	status = "okay";
+>+};
+>+
+>+&i2c13 {
+>+	bus-frequency = <100000>;
+>+
+>+	ssif-bmc@10 {
+>+		compatible = "ssif-bmc";
+>+		reg = <0x10>;
+>+	};
+>+};
+>+
+>+// Connected to host Intel X550 (ALTRAD8UD-1L2T) or
+>+// Broadcom BCM57414 (ALTRAD8UD2-1L2Q) interface
+>+&mac0 {
+>+	pinctrl-names = "default";
+>+	pinctrl-0 = <&pinctrl_rmii1_default>;
+>+
+>+	clocks = <&syscon ASPEED_CLK_GATE_MAC1CLK>,
+>+		 <&syscon ASPEED_CLK_MAC1RCLK>;
+>+	clock-names = "MACCLK", "RCLK";
+>+
+>+	use-ncsi;
+>+
+>+	nvmem-cells = <&eth0_macaddress>;
+>+	nvmem-cell-names = "mac-address";
+>+};
+>+
+>+// Connected to Realtek RTL8211E
+>+&mac1 {
+>+	pinctrl-names = "default";
+>+	pinctrl-0 = <&pinctrl_rgmii2_default &pinctrl_mdio2_default>;
+>+
+>+	nvmem-cells = <&eth1_macaddress>;
+>+	nvmem-cell-names = "mac-address";
+>+};
+>+
+>+&pinctrl {
+>+	aspeed,external-nodes = <&gfx &lhc>;
+>+};
+>+
+>+&pwm_tacho {
+>+	pinctrl-names = "default";
+>+	pinctrl-0 = <&pinctrl_pwm0_default
+>+			&pinctrl_pwm1_default
+>+			&pinctrl_pwm2_default
+>+			&pinctrl_pwm3_default
+>+			&pinctrl_pwm4_default
+>+			&pinctrl_pwm5_default
+>+			&pinctrl_pwm6_default
+>+			&pinctrl_pwm7_default>;
+>+
+>+	fan@0 {
+>+		reg = <0x00>;
+>+		aspeed,fan-tach-ch = /bits/ 8 <0x00 0x08>;
+>+	};
+>+
+>+	fan@1 {
+>+		reg = <0x01>;
+>+		aspeed,fan-tach-ch = /bits/ 8 <0x01 0x09>;
+>+	};
+>+
+>+	fan@2 {
+>+		reg = <0x02>;
+>+		aspeed,fan-tach-ch = /bits/ 8 <0x02 0x0a>;
+>+	};
+>+
+>+	fan@3 {
+>+		reg = <0x03>;
+>+		aspeed,fan-tach-ch = /bits/ 8 <0x03 0x0b>;
+>+	};
+>+
+>+	fan@4 {
+>+		reg = <0x04>;
+>+		aspeed,fan-tach-ch = /bits/ 8 <0x04 0x0c>;
+>+	};
+>+
+>+	fan@5 {
+>+		reg = <0x05>;
+>+		aspeed,fan-tach-ch = /bits/ 8 <0x05 0x0d>;
+>+	};
+>+
+>+	fan@6 {
+>+		reg = <0x06>;
+>+		aspeed,fan-tach-ch = /bits/ 8 <0x06 0x0e>;
+>+	};
+>+
+>+	fan@7 {
+>+		reg = <0x07>;
+>+		aspeed,fan-tach-ch = /bits/ 8 <0x07 0x0f>;
+>+	};
+>+};
+>+
+>+&spi1 {
+>+	pinctrl-names = "default";
+>+	pinctrl-0 = <&pinctrl_spi1_default>;
+>+
+>+	flash@0 {
+>+		m25p,fast-read;
+>+		label = "pnor";
+>+		spi-max-frequency = <100000000>;
+>+
+>+		partitions {
+>+			compatible = "fixed-partitions";
+>+			#address-cells = <1>;
+>+			#size-cells = <1>;
+>+
+>+			code@400000 {
+>+				reg = <0x400000 0x1C00000>;
+>+				label = "pnor-code";
+>+			};
+>+
+>+			tfa@400000 {
+>+				reg = <0x400000 0x200000>;
+>+				label = "pnor-tfa";
+>+			};
 
-release_region()
+As the DTBS_CHECK lint reported and Andrew Jeffery commented on, these 
+two partitions overlapping is a bit surprising -- is that intentional?
 
-> @@ -1439,6 +1446,7 @@ static int fmh_gpib_attach_impl(struct gpib_board *board, const struct gpib_boar
->  	e_priv->fifo_base = ioremap(e_priv->dma_port_res->start,
->  				    resource_size(e_priv->dma_port_res));
->  	if (!e_priv->fifo_base) {
-> +		put_device(board->dev);
->  		dev_err(board->dev, "Could not map I/O memory for fifos\n");
->  		return -ENOMEM;
->  	}
-
-iounmap();
-
-> @@ -1447,10 +1455,14 @@ static int fmh_gpib_attach_impl(struct gpib_board *board, const struct gpib_boar
->  		(unsigned long)resource_size(e_priv->dma_port_res));
->  
->  	irq = platform_get_irq(pdev, 0);
-> -	if (irq < 0)
-> +	if (irq < 0) {
-> +		put_device(board->dev);
->  		return -EBUSY;
-> +	}
-> +
->  	retval = request_irq(irq, fmh_gpib_interrupt, IRQF_SHARED, pdev->name, board);
->  	if (retval) {
-> +		put_device(board->dev);
->  		dev_err(board->dev,
->  			"cannot register interrupt handler err=%d\n",
->  			retval);
-
-request_irq() needs a release_irq()
-
-> @@ -1461,6 +1473,7 @@ static int fmh_gpib_attach_impl(struct gpib_board *board, const struct gpib_boar
->  	if (acquire_dma) {
->  		e_priv->dma_channel = dma_request_slave_channel(board->dev, "rxtx");
->  		if (!e_priv->dma_channel) {
-> +			put_device(board->dev);
->  			dev_err(board->dev, "failed to acquire dma channel \"rxtx\".\n");
->  			return -EIO;
->  		}
-
-This needs a free too.  There may be other things outside of what I
-can see in this email.
-
-> @@ -1517,6 +1530,12 @@ void fmh_gpib_detach(struct gpib_board *board)
->  					   resource_size(e_priv->gpib_iomem_res));
->  	}
->  	fmh_gpib_generic_detach(board);
-> +
-> +	if (board->dev) {
-> +		dev_set_drvdata(board->dev, NULL);
-> +		put_device(board->dev);
-> +		board->dev = NULL;
-
-I explain this in my blog, that the free function should be a cut
-and paste of the cleanup.  So this stuff isn't done in the cleanup
-so one or the other of these is not correct.
-
-The question is should this be done in one patch or several patches?
-Adding cleanup to one function is generally considered One Thing
-in terms of One Thing Per Path.  If we were going to backport bits
-of cleanup to different stable kernels then we would want to break
-it up into the easiest way for backporting.  But realistically we're
-not going to do that here because this doesn't affect real life
-users generally.  It's just from review.  It's not a security patch.
-And this is staging as well so the standards for backports are not
-necessarily as strict.  (Staging drivers are often really really bad).
-
-regards,
-dan carpenter
-
+>+
+>+			uefi@600000 {
+>+				reg = <0x600000 0x1A00000>;
+>+				label = "pnor-uefi";
+>+			};
+>+		};
+>+	};
+>+};
+>+
+>+&uart1 {
+>+	pinctrl-names = "default";
+>+	pinctrl-0 = <&pinctrl_txd1_default
+>+			 &pinctrl_rxd1_default
+>+			 &pinctrl_ncts1_default
+>+			 &pinctrl_nrts1_default>;
+>+};
+>+
+>+&uart2 {
+>+	pinctrl-names = "default";
+>+	pinctrl-0 = <&pinctrl_txd2_default
+>+			 &pinctrl_rxd2_default>;
+>+};
+>+
+>+&uart3 {
+>+	pinctrl-names = "default";
+>+	pinctrl-0 = <&pinctrl_txd3_default
+>+			 &pinctrl_rxd3_default>;
+>+};
+>+
+>+&uart4 {
+>+	pinctrl-names = "default";
+>+	pinctrl-0 = <&pinctrl_txd4_default
+>+			 &pinctrl_rxd4_default>;
+>+};
+>+
+>+// The BMC's uart
+>+&uart5 {
+>+	status = "okay";
+>+};
+>+
+>+&vhub {
+>+	status = "okay";
+>+};
+>+
+>+&video {
+>+	memory-region = <&video_engine_memory>;
+>+};
+>-- 
+>2.47.3
+>
+>
 
