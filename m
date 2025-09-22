@@ -1,93 +1,113 @@
-Return-Path: <linux-kernel+bounces-827366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C53B918EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:01:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F970B9190F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFBA62A490E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:01:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43D2A189A363
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BF91A5BBF;
-	Mon, 22 Sep 2025 14:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAD57260D;
+	Mon, 22 Sep 2025 14:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eln0plRe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="c/P8qUNN"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE8A19F111;
-	Mon, 22 Sep 2025 14:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDB3134CF
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758549630; cv=none; b=Sfq+wPSjmAk3Sm1Ej62OU6Mf2YJIPPvfEz3LpUfmePkXeAVMXXjELGd5405kjYw99KEjsWfwjer53tEcBfJB05fKo2Z1h+Id4+d5EztZkFO4Dr6JaD6b7inGIi2ZUMJXDN+ysFq05ulTMJhcSTP1WposRH2xE1aWq9mBEHSgdQ0=
+	t=1758549736; cv=none; b=SnLJ7ScmqaAEhoUuOP1RIuTNUVTADq7tzw8v2IOCgu0ZgwGoqUm7Vtzxm1BWZ3xVWXrI/+hFuwAUzkdFrQ2qlNypUF/hmoYggM95GijWP6Q9p/T5cmwRs0mgCxUSYbtGbtjzPxObM+E4Nxqi+3bxbBZwbXXdpkF4Uk799FVfcAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758549630; c=relaxed/simple;
-	bh=QM4Xe+Ere+bNd5tqXHknQgb0b4fotLoTht1uGvK9hSc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RyNqOJt8D09BGoVUKomwVZdCadjS5ac+1XutzCNfsjWbhNPT56i3uzPRk7fd+SXVGY7npfkNuRSewpx4mvVqE1mbkGa112W4Li8FpJYVZTJck6FvR/KCbNPy4gf4jUkD3BogHPEG5KkYcos9x9r3nQuxZzdGqQrZcARa/OzOrmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eln0plRe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A008C4CEF0;
-	Mon, 22 Sep 2025 14:00:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758549630;
-	bh=QM4Xe+Ere+bNd5tqXHknQgb0b4fotLoTht1uGvK9hSc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Eln0plRe+pAFA8SgXSlmm54EpxKcIi+paMDG3JraQCQqeKv3kfkI7aSh8KyYEeT5P
-	 qtkL7OJanS5YXSbdSHZ0Fh+2Fdj63MuLvlJNG99uPGnrRz93f/Cjap5OvPdBh5LbcL
-	 PkAA3kTGUlM12FjXf0ko2N3EfJfmi1tGS5CSIZrlvMC0fn4saeWl7qmrpfMfBnPOj0
-	 RAAUaaNBPRCn7TEqkctkGM9Y79NyJmLNB7vwGd3pbf4fGT1ZyWzlLYJ8pde+YUUGJ9
-	 bIZ4ENYXMho7+iofDPesxH/IJYXB8W25YzlT4aXPKz81dnLT2CgNh0yepgscJhR2r4
-	 GJENzJXwDe+2A==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Sibi Sankar <quic_sibis@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v2 0/4] remoteproc: qcom_q6v5: Misc fixes to prepare for reusing the "lite" ADSP FW
-Date: Mon, 22 Sep 2025 09:00:23 -0500
-Message-ID: <175854961651.817693.12196182147383570806.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250820-rproc-qcom-q6v5-fixes-v2-0-910b1a3aff71@linaro.org>
-References: <20250820-rproc-qcom-q6v5-fixes-v2-0-910b1a3aff71@linaro.org>
+	s=arc-20240116; t=1758549736; c=relaxed/simple;
+	bh=e5PY6U82YwilDEzB4p0kKsmSnXCVDFHMHAYraZzOBuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RyZ+xkMKpCCfofJ6CuQc2C2jC9jXxSIiZGuqZn+LALBYW9tR6dYGyGO7ICCuzsELWgwuM2nCLpfja3qCVoSamE2sQ7KL0nYwZ3KCHG7lIfot9gVuru6X7NbGx7gf80H82z30kJ98tf1WuKEc5MmduGrXDv8tUbkYF+0Pfaeoknc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=c/P8qUNN; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1758549729;
+	bh=e5PY6U82YwilDEzB4p0kKsmSnXCVDFHMHAYraZzOBuY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c/P8qUNNgX72CeMTDluIenBfBLO6g4qqsq/BAOdrH/S0tT0jWbqFWMvGiQJcpC+ck
+	 xMptr4GXEzdfZegnDLP1x8QIbJ6EUCgbkfx9xk1/UJhMwTWaLwISzlSzr7GUb5bFq+
+	 PBoM4pVwbPUPx2t2C1oQib1DfS7qKG8nPHLFgOSw=
+Date: Mon, 22 Sep 2025 16:01:17 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Tiwei Bie <tiwei.bie@linux.dev>, richard@nod.at, 
+	anton.ivanov@cambridgegreys.com, benjamin@sipsolutions.net, arnd@arndb.de, 
+	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, tiwei.btw@antgroup.com
+Subject: Re: [PATCH v2 03/10] um: vdso: Implement __vdso_getcpu() via syscall
+Message-ID: <21755635-74d4-4fa4-8ffd-371c17630fdf@t-8ch.de>
+References: <1568f254-7963-4015-91ed-7630d5d87881@t-8ch.de>
+ <20250922045020.48158-1-tiwei.bie@linux.dev>
+ <495a5594-8ac6-4b7d-be6b-7c176b741c21@t-8ch.de>
+ <76b5ba35f864764100c9a5a00d50d8fa4276cd98.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <76b5ba35f864764100c9a5a00d50d8fa4276cd98.camel@sipsolutions.net>
 
-
-On Wed, 20 Aug 2025 18:02:32 +0200, Stephan Gerhold wrote:
-> On X1E, the boot firmware already loads a "lite" ADSP firmware that
-> provides essential functionality such as charging, battery status and USB-C
-> detection. Only the audio functionality is missing. Since the full ADSP
-> firmware is device-specific and needs to be manually copied by the user, it
-> would be useful if we could provide the basic functionality even without
-> having the full firmware present.
+On 2025-09-22 14:12:52+0200, Johannes Berg wrote:
+> On Mon, 2025-09-22 at 14:05 +0200, Thomas Weißschuh wrote:
+> > > The original issue could now be considered resolved. So in v3, we no
+> > > longer turn __vdso_getcpu into a syscall wrapper; we simply removed it.
+> > > Perhaps we could remove the whole VDSO before we implement the "real"
+> > > VDSO. However, its implementation is clean, so keeping it wouldn't hurt
+> > > and it could serve as a useful starting point for the "real" VDSO.
+> > 
+> > A "real" vDSO would require quite some more infrastructure.
+> > 
 > 
-> [...]
+> What's not "real" about the vDSO now? Yes it just implement syscalls
+> after the getcpu removal, but ... it's still a vDSO? I _have_ played
+> with getting data into it for the time-travel case, at least.
 
-Applied, thanks!
+Right now it does not provide any advantage over a regular syscall.
+Essentially it is just overhead. That said, if you do want to make a
+real vDSO out of it, I'd be happy to help in that.
+(I did most of the recent work on the generic vDSO infrastructure)
 
-[1/4] remoteproc: qcom_q6v5: Avoid disabling handover IRQ twice
-      commit: 110be46f5afe27b66caa2d12473a84cd397b1925
-[2/4] remoteproc: qcom_q6v5: Avoid handling handover twice
-      commit: 54898664e1eb6b5b3e6cdd9343c6eb15da776153
-[3/4] remoteproc: qcom_q6v5_pas: Shutdown lite ADSP DTB on X1E
-      commit: 142964960c7c35de5c5f7bdd61c32699de693630
-[4/4] remoteproc: qcom_q6v5_pas: Drop redundant assignment to ret
-      commit: 1ae4e2dbf4cbf7c1ab2bdc89af1dc1a6af4106b3
+> > And it is not even clear if such a vDSO will make a difference on UML.
+> 
+> Syscall overhead is _huge_ in UML, if it does anything but syscalls it
+> will _certainly_ make a difference.
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Ack.
+
+> > In my
+> > opinion if __vdso_getcpu() gets removed, the whole vDSO should go with
+> > it. The code can still be easily restored from git.
+> 
+> I mean ... on the one hand, sure, it doesn't really do much after this,
+> but OTOH it lets userspace actually use that path? So might be useful.
+
+What advantage does userspace have from it?
+
+> > Also the functionality to map the host vDSO and vsyscall page into UML
+> > userspace looks very weird and error-prone. Maybe it can also go away.
+> 
+> Surely host vDSO etc. is never mapped into UML userspace and never is,
+> not sure what you're thinking of, but clearly that's wrong as written.
+
+This is how I understand the 32bit implementation using
+ARCH_REUSE_HOST_VSYSCALL_AREA and NEW_AUX_ENT(AT_SYSINFO_EHDR, vsyscall_ehdr)
+where vsyscall_ehdr comes from the hosts getauxval(AT_SYSINFO_EHDR).
+But I didn't actually test this. I'll look at it again, but currently
+I'm travelling.
+
+
+Thomas
 
