@@ -1,124 +1,124 @@
-Return-Path: <linux-kernel+bounces-827252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0330CB91484
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:02:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B976B912FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 714A5174421
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:01:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0980B7AC2CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCC930AACC;
-	Mon, 22 Sep 2025 13:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA259306488;
+	Mon, 22 Sep 2025 12:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="gRRw9l79"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="kKc01khb"
+Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AE913A3ED;
-	Mon, 22 Sep 2025 13:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758546100; cv=pass; b=jtlgEBK3pTHdQ0qi4/aOliv96nTB/etuA/jCtcAXm3Q807hyTsf3w+p9f8bEldEXRlyRkl1WzS3i5dCy/aP1UZG8MytrwCZvA6ATW20Xrl4xzTbEIAbkPpln1Cw+Dn+zSwC5QE6NQTNNxq81NENU8MGvAwHRYcpd9mmgmOi+WHw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758546100; c=relaxed/simple;
-	bh=5FXdFyIr2fRFf+Ae1txoKmwxWECY148pHNFz1j152tE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PEbr6/SBgpIRPAxzt/XZ+gJC0rk/K4PbIrVcdX/esqmlV5V0HTBbt6rr5O4d49GhwerWwXW5+dG4I93NLV5nXmEBehsPugkQi/X17L4xWeLeCofMO7UkedL0cMuBbwtVPLm46oADevVMYApVjA3WWEQrrTk0KZL32g3MiakgDxw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=gRRw9l79; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
-ARC-Seal: i=1; a=rsa-sha256; t=1758546062; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ICouqmTvyKcy/ch0AWJ3uHBxtEcG20RfMqSI81uN2AtkBACvQrUSc2a+WtMXMwcNNpr6y5YBoKYKBPH936ghZsh16ZMvG3hjENWqwRNFOx3HDoq3txSTlx8pOGyQbRzRztMJRkPdjfhEL7OryJUwQ6XoG6l3um7OvIN48DD5Sas=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758546062; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=cMfs34T5Vja4v7ftmJgnF2ValILJIvUnI6GgN9qZHtE=; 
-	b=B2RYMpNAhW13eJyVh3ywSK0/bPRuicSuAwJCe9XzIOD81KbiwPkMTRRhfA+KOotrKwy/d/+LVO2d506w4YgMe/wKjjjz3r0GS1q2w5enB0QNcBs9mW+hLn4S2jZ3GmUmwQNSZ8W3GQwPBwzoYYgfRTPxbztDdfBSFu3qmt8OJ1s=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758546062;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=cMfs34T5Vja4v7ftmJgnF2ValILJIvUnI6GgN9qZHtE=;
-	b=gRRw9l79CdKc1/g1du5p7nu3gyabRqPZtq43MdgQfd3ek9c7a7INwnLE2OIQlL7h
-	uVrW+PzwdzpW7v4mptm9hZMNpUijo5NK9TYx1X0aMgQ0AKRpK8dzhwAHQLHE8lj1RCj
-	sg/ngVcbJ7TgLWfNaTy25QTw7xLnMnbVjee2tDq0=
-Received: by mx.zohomail.com with SMTPS id 1758546059371192.16620849433718;
-	Mon, 22 Sep 2025 06:00:59 -0700 (PDT)
-From: Junhui Liu <junhui.liu@pigmoral.tech>
-Date: Mon, 22 Sep 2025 20:46:41 +0800
-Subject: [PATCH v2 11/11] MAINTAINERS: Setup support for Anlogic DR1V90 SoC
- tree
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF32617A2FB;
+	Mon, 22 Sep 2025 12:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758545253; cv=none; b=Ce+YWYAlUgVa2m9sC/TDn5OEtTsufEmHfGdNqjJAY0U7BSiEKWY8MJVXE6NOyKmoW4ntef9pWX8ndaIFDn/36OM0DkwG/mejS12DnY5BPmqzHX7IKF8qWxanyUpb+jzArbElEWypC7n2R6BQ/8GYEqV4iZxOXqNrWwA1ZB4SulM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758545253; c=relaxed/simple;
+	bh=woqjYdr6fYQ/tq8XxibmlyTyVlBuByAOdKiPLXjTrtU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=k/qw1py6Tvm0PrKWkakNWWviwpkJDcD4arZw47IC5TWYRuzG0/eYlJd0Mdvu/y98R2JxFdvTw2Sdc1R52+7lOaLBaKYeEeWHIoRU6R9K6igWcXj9a16SDrcb9q5ApuMJ0giWxIeSaRkF1MzppCgX8mbRlF/plt+s/mkr61yLcBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=kKc01khb; arc=none smtp.client-ip=91.198.250.237
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4cVjYd1j2wz9yXX;
+	Mon, 22 Sep 2025 14:47:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
+	t=1758545237;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=woqjYdr6fYQ/tq8XxibmlyTyVlBuByAOdKiPLXjTrtU=;
+	b=kKc01khbIUo4IyTASFpsTzwS2a0hqdnJQ1I4eD7VW9+1/0IpIq0k22/CTIjntgf7GiwiQX
+	6mH6HXb35vRzGtH6/s9jz49amQ2USEMmmzjwzg1QST5d2fCR+cFB3c9viwtoPJhdR5SO1b
+	onH0taTuBtjwHFvYreTHsUFSu2TOCU+MdPIEMr6e8r7mWk4RS0AWIjEIKZ13pKMGOE3w4Q
+	JPxTBlIRbPqlCUopIG1qT3uAwX+RpQ2N7DNIGUAqS6NWTRDnum19IRalNToe+LryCLZoJF
+	HTkzPt1gNAvFT6RbyloDZzqLuWjWCBc12kV7TRP0P4sofru6likGiHBIJNNWgQ==
+From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mssola@mssola.com>
+To: David Sterba <dsterba@suse.cz>
+Cc: linux-btrfs@vger.kernel.org,  clm@fb.com,  dsterba@suse.com,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] btrfs: Prevent open-coded arithmetic in kmalloc
+In-Reply-To: <20250922102850.GL5333@twin.jikos.cz> (David Sterba's message of
+	"Mon, 22 Sep 2025 12:28:50 +0200")
+References: <20250919145816.959845-1-mssola@mssola.com>
+	<20250919145816.959845-2-mssola@mssola.com>
+	<20250922102850.GL5333@twin.jikos.cz>
+Date: Mon, 22 Sep 2025 14:47:13 +0200
+Message-ID: <87h5wu4pta.fsf@>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250922-dr1v90-basic-dt-v2-11-64d28500cb37@pigmoral.tech>
-References: <20250922-dr1v90-basic-dt-v2-0-64d28500cb37@pigmoral.tech>
-In-Reply-To: <20250922-dr1v90-basic-dt-v2-0-64d28500cb37@pigmoral.tech>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Anup Patel <anup@brainfault.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Junhui Liu <junhui.liu@pigmoral.tech>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>, 
- linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758545232; l=1069;
- i=junhui.liu@pigmoral.tech; s=20250910; h=from:subject:message-id;
- bh=5FXdFyIr2fRFf+Ae1txoKmwxWECY148pHNFz1j152tE=;
- b=IKikTb5co2cwNgrDLxDroyXreMVTXAoHZa+CQqra3scT3SaZzrdaZa1Q1MeY0mcQp56V9YJ9N
- EfVgRbMK/4CBSfh0ZHiW5jirdnKVjs3bog/WzarlnDoxYotD+QM6oEj
-X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
- pk=cgATWSU1KfGWmdwNmkPyHGnWgofhqqhE8Vts58wyxe4=
-X-ZohoMailClient: External
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-Add myself as the maintainer of the Anlogic DR1V90 SoC tree, including
-the corresponding DTS and DT bindings paths for Anlogic RISC-V-based
-SoCs.
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Hello,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 520fb4e379a3954ff9b163bfdfda857e5c5b99d4..44b4b4f7e53c5904f6b9076f9542866292d33fce 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21681,6 +21681,15 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git
- F:	Documentation/devicetree/bindings/iommu/riscv,iommu.yaml
- F:	drivers/iommu/riscv/
- 
-+RISC-V ANLOGIC DR1V90 SoC SUPPORT
-+M:	Junhui Liu <junhui.liu@pigmoral.tech>
-+L:	linux-riscv@lists.infradead.org
-+S:	Maintained
-+T:	git https://github.com/pigmoral/linux-dr1v90
-+F:	Documentation/devicetree/bindings/riscv/anlogic.yaml
-+F:	arch/riscv/boot/dts/anlogic/
-+N:	dr1v90
-+
- RISC-V MICROCHIP FPGA SUPPORT
- M:	Conor Dooley <conor.dooley@microchip.com>
- M:	Daire McNamara <daire.mcnamara@microchip.com>
+David Sterba @ 2025-09-22 12:28 +02:
 
--- 
-2.51.0
+> On Fri, Sep 19, 2025 at 04:58:15PM +0200, Miquel Sabat=C3=A9 Sol=C3=A0 wr=
+ote:
+>> As pointed out in the documentation, calling 'kmalloc' with open-coded
+>> arithmetic can lead to unfortunate overflows and this particular way of
+>> using it has been deprecated. Instead, it's preferred to use
+>> 'kmalloc_array' in cases where it might apply so an overflow check is
+>> performed.
+>
+> So this is an API cleanup and it makes sense to use the checked
+> multiplication but it should be also said that this is not fixing any
+> overflow because in all cases the multipliers are bounded small numbers
+> derived from number of items in leaves/nodes.
 
+Yes, it's just an API cleanup and I don't think it fixes any current bug
+in the code base. So no need to CC stable or anything like that.
+
+>
+>> Signed-off-by: Miquel Sabat=C3=A9 Sol=C3=A0 <mssola@mssola.com>
+>
+> Reviewed-by: David Sterba <dsterba@suse.com>
+
+Thanks for the review!
+Miquel
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJiBAEBCgBMFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmjRRVEbFIAAAAAABAAO
+bWFudTIsMi41KzEuMTEsMiwyEhxtc3NvbGFAbXNzb2xhLmNvbQAKCRCWvoxv2J1l
+ZYfqEACKq6YPm10/IKgn3T2JtNX9lsveTTusqpmw4z2J+jvcrGF6au/58Zz3NmTE
+pIJrx3/RtGy697Di1rXigIE/35YXdoGlCt/AHMcLa5MOEkC8Tl2k0EVkaTd3LpnF
+BHp0Q/tEWGLuN1bT2Cq3nDTZnZAhekw45mIsT18saDDqHNZibe15VXIgGvS/g2zv
+ZbpQwtVO3/E7ELTnNBcrw52urbHjHz1MPMiX/g0dfbo27USkgqcTqbJldHycdjQR
+GG9ueZoHDpxY3Ymck2fSQ/1BwbIBugFJSyLQQH5WQPfGd9fPx0dRwR6l2+Q8CwIT
+x7p/zYmAdmAsnw5gHwPWO5L+cf/bt/uN/R448KztIBkILOX8IFkobEM/wtEKP17u
++liAXPa5OvwEOmnnjZBfOFJ7NWaebCJ/2Q4KODwtxnZZU7ecxwqu3dtb3zoIMI/B
+CeITXKzcRHCbsjPJz0r6xdmDRL4tRJUfHB9JcMKw22D+DjXl6H8BFgzSilFGHVQF
+o9nBZWXNFvh9UJ7/DUvEQ9qCNin7y1ddVeA+ok7gZOG008WmwzjvGKnVlc/r2wuL
+SCBHK4MBMVQcU3f7SQVMcKZqlwjMFwu1U2g20xunD8IJahrIIPCEnncOxkECXX2Q
+y41tUbBWPa+8Ex1gje91/bWojsBOOeogxjagB/90HJMr5Kk5uw==
+=R7Ll
+-----END PGP SIGNATURE-----
+--=-=-=--
 
