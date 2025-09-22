@@ -1,111 +1,69 @@
-Return-Path: <linux-kernel+bounces-826542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF2B1B8EC16
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 04:16:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6AA9B8EC25
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 04:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B704916321C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 02:16:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 231CD17C6C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 02:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5524C16FF37;
-	Mon, 22 Sep 2025 02:15:21 +0000 (UTC)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A069C2EF661;
+	Mon, 22 Sep 2025 02:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LV1B0/r9"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D290D2D876A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53632EDD53;
+	Mon, 22 Sep 2025 02:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758507320; cv=none; b=mCr/MqiBWIzqdKKc1cYMGCPH+1NlCDI6eHDEShfORe288rs1Ad4H4z5jfGBvmq1ydlez7F8SoJFejQPKWKXFeo+U9+VchouD3ZSERZRWEAt+/Uge2fDJv3lXEBT9KcZK07dyqrfFI1lhWUFnTqbqFU4SWWD17nEtiaOb8nmxEzA=
+	t=1758507393; cv=none; b=kuYmIA7IdgSo5ATX9tqiqq7gZCtsdycyGDOyfn0Oh/CgO0OE8J+uGVZo2ENErd8yNe+4I/ccnh2TFu+soNGHV5OgANNY9KLCEJ+PXOmMEJkSdFUo0HOdwT7yKCgVl+mRz5rvonvGuHGte8ozdzrVCtp2tqCByb73VAvOuuJCOas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758507320; c=relaxed/simple;
-	bh=BYnznYR20E7iDSy2NfKKv95IxuqDSX7OPcdghEr/WPU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=abHHTqqsXLAa/a2LdQQPjzSiXCl440mtNLv3TtbRJxXVY4EVlOcDlSjAZ19KUfchwylKRwV6cKIXdqg43mE55C5R+Rr7o13o4KV1NWG4jNSizLOjr2YsAyIM+QlU6udTZ3C3MKua0LJA+YC1aqUmh/wcVBYY8UBX+JKsiUKGNww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45de56a042dso23857505e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 19:15:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758507317; x=1759112117;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SPCqIDb+yNYcV+5yEAWwdEaCDvI8BD77bbTSTfws3Yw=;
-        b=W6nxx1e4vSQXfQYqFhJGpUJ95U0pOP12bTJBgc3Gmrcqr+d+dBP0ff/kYaC2WCuXF/
-         w7MAWB4O3T2UkzP1yraL/giZHaqq+1ncoLDfg+4KGxklV4+4/3dpBzMiW3cD928j/z1v
-         SRmy+tlp6vqcGqavfBBNt+PD5Qb3pV00X8DDZT5u5OTIi+P+7HhJxKag+Qvm/P+lPvNN
-         nlK7vBXxE0ZalgQ1RyakvT3JJ4XAOXVxpO5AB2n8PgZsfJWPHRVkEY6EhE3PUc49OIse
-         Fowov85KNGLyRKafwCEXbC7tN0Yma+vqbfTgmyZoyBE/dLJooWARoaNhiEcxiozBuj/Z
-         zYwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXaieZuj9S4YQtJ5me7EKQE3ukjN9/b3CAYyLqYB2UtOnpGQVpz8mKJ9DZJgRIo3KyY5aRi49/JBR4nKWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZks0k3duKoHIya+hL+3I46DGJm+O6d2iW94FAdBvgiC4RQARU
-	WNYdLzhQ1UCpIIHoWnkaQF1BjQ299fEq4uPa0yQlc75MRqNW/6rM/IL3
-X-Gm-Gg: ASbGncskRWBwb5ldTNZyOwQ3q+s4ACX9mPTHQpVLWTKw7TxxWPoSOSUL1bBhPAbZJsi
-	eCFkYJpW4Diixo3kPWBBlEit6hRggZwU8KOPpZ4jxs/NTAv6/AjZ50xCaXFlfaK7tRN6bIF186n
-	BQY3go5DhKGSD3jYotqT3e1+WWI8kdJmbCyCcIZtzXjerHwNXgPkNx/kLKogKTT7AVtHtgt0L84
-	VHkDqEY8GzF+hie8jueMjMcwRcOfAWI3DqO7552B6yR50Lh8SC7xVjisPrhcvK6KO3Pjs3VVulV
-	MV54fiDVdQQXsOpkdVTSxOJmX3lpGp1aJkxg3+GVg7keza9uRPYZMdZqmCoO9yIzBFo3MQGfSTB
-	33QOz5GDn
-X-Google-Smtp-Source: AGHT+IH9s1cY1E+H2vTOe2w6B4oa+af+uNdUi3NtjrXEcg2rWJv7ohFVr7kLsZhy27UnUnTj0ObGrQ==
-X-Received: by 2002:a05:600c:630e:b0:46c:9e81:ad0 with SMTP id 5b1f17b1804b1-46c9e904ffamr24190015e9.0.1758507313301;
-        Sun, 21 Sep 2025 19:15:13 -0700 (PDT)
-Received: from EBJ9932692.tcent.cn ([2a09:0:1:2::3086])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613dccb5e2sm220376635e9.17.2025.09.21.19.15.03
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 21 Sep 2025 19:15:13 -0700 (PDT)
-From: Lance Yang <lance.yang@linux.dev>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com
-Cc: usamaarif642@gmail.com,
-	yuzhao@google.com,
-	ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	baohua@kernel.org,
-	voidice@gmail.com,
-	Liam.Howlett@oracle.com,
-	catalin.marinas@arm.com,
-	cerasuolodomenico@gmail.com,
-	hannes@cmpxchg.org,
-	kaleshsingh@google.com,
-	npache@redhat.com,
-	riel@surriel.com,
-	roman.gushchin@linux.dev,
-	rppt@kernel.org,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	ryncsn@gmail.com,
-	shakeel.butt@linux.dev,
-	surenb@google.com,
-	hughd@google.com,
-	willy@infradead.org,
-	matthew.brost@intel.com,
-	joshua.hahnjy@gmail.com,
-	rakie.kim@sk.com,
-	byungchul@sk.com,
-	gourry@gourry.net,
-	ying.huang@linux.alibaba.com,
-	apopple@nvidia.com,
-	qun-wei.lin@mediatek.com,
-	Andrew.Yang@mediatek.com,
-	casper.li@mediatek.com,
-	chinwen.chang@mediatek.com,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1758507393; c=relaxed/simple;
+	bh=S+MrxK+D7iPGMmAzNAjmCE60veWJAjG6P4Xgv8bSqOI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=gK0vgAxXuVWxf6Ra8keXwYb+SzpKZscBnl+h96xuGZWzOu8uIYjh0mR/CdlFwmXRI9Y/YM2W02qtA9gDvckVZNb5dzurVCr/lDODJvePjowfLMuYyGcl93XWbUoJyQQkiUPVWlC0O2hyAp5YELz00wGIFdDlje5qaNVZk4S0rE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=LV1B0/r9; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=GI
+	Nukv/QL9unHjw23yOGGLZ/mpVpJgP94ErHeVgoy0A=; b=LV1B0/r9o066QDOKKX
+	vJrOUr+lmS3cUYjHSB8kvc/prrZKQmHwILPgunEMHjWG3BVf6j3nddYRoIZlATld
+	qk/npg8pxD6CiVAbBOFusXb1ddYmgAvlPRuYPJFcka3h1o7wY2QFzWJooUqIdClI
+	NqqW5iDWnjDw41J0VC4gAQgjk=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgD3PyFDsdBo1NKIDw--.13102S2;
+	Mon, 22 Sep 2025 10:15:33 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: mhiramat@kernel.org
+Cc: alexei.starovoitov@gmail.com,
+	andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-mm@kvack.org,
-	ioworker0@gmail.com,
-	stable@vger.kernel.org,
-	Qun-wei Lin <Qun-wei.Lin@mediatek.com>,
-	Lance Yang <lance.yang@linux.dev>
-Subject: [PATCH 1/1] mm/thp: fix MTE tag mismatch when replacing zero-filled subpages
-Date: Mon, 22 Sep 2025 10:14:58 +0800
-Message-ID: <20250922021458.68123-1-lance.yang@linux.dev>
-X-Mailer: git-send-email 2.49.0
+	linux-trace-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	sdf@fomichev.me,
+	song@kernel.org,
+	yangfeng59949@163.com,
+	yonghong.song@linux.dev
+Subject: Re: [BUG] Failed to obtain stack trace via bpf_get_stackid on ARM64 architecture
+Date: Mon, 22 Sep 2025 10:15:31 +0800
+Message-Id: <20250922021531.105670-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250921223037.f8df26b59d60b8b3f7cf2d53@kernel.org>
+References: <20250921223037.f8df26b59d60b8b3f7cf2d53@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -113,111 +71,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgD3PyFDsdBo1NKIDw--.13102S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJw4fJFWDAFy8Kr1xCFW7Arb_yoW5XrWrpF
+	n0yF1ayrs5Zr47t3sFgr45XF1S9rs3ZryUCFyrKr1akFnrXr93XFyxKF1Y9Fn3urs09w4a
+	y3W2y3sIk395Za7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pROeOLUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbipQzPeGjP9KL64AABs0
 
-From: Lance Yang <lance.yang@linux.dev>
+On Sun, 21 Sep 2025 22:30:37 +0900 Masami Hiramatsu wrote:
 
-When both THP and MTE are enabled, splitting a THP and replacing its
-zero-filled subpages with the shared zeropage can cause MTE tag mismatch
-faults in userspace.
+> On Fri, 19 Sep 2025 19:56:20 -0700
+> Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+> 
+> > On Fri, Sep 19, 2025 at 12:19 AM Feng Yang <yangfeng59949@163.com> wrote:
+> > >
+> > > When I use bpf_program__attach_kprobe_multi_opts to hook a BPF program that contains the bpf_get_stackid function on the arm64 architecture,
+> > > I find that the stack trace cannot be obtained. The trace->nr in __bpf_get_stackid is 0, and the function returns -EFAULT.
+> > >
+> > > For example:
+> > > diff --git a/tools/testing/selftests/bpf/progs/kprobe_multi.c b/tools/testing/selftests/bpf/progs/kprobe_multi.c
+> > > index 9e1ca8e34913..844fa88cdc4c 100644
+> > > --- a/tools/testing/selftests/bpf/progs/kprobe_multi.c
+> > > +++ b/tools/testing/selftests/bpf/progs/kprobe_multi.c
+> > > @@ -36,6 +36,15 @@ __u64 kretprobe_test6_result = 0;
+> > >  __u64 kretprobe_test7_result = 0;
+> > >  __u64 kretprobe_test8_result = 0;
+> > >
+> > > +typedef __u64 stack_trace_t[2];
+> > > +
+> > > +struct {
+> > > +       __uint(type, BPF_MAP_TYPE_STACK_TRACE);
+> > > +       __uint(max_entries, 1024);
+> > > +       __type(key, __u32);
+> > > +       __type(value, stack_trace_t);
+> > > +} stacks SEC(".maps");
+> > > +
+> > >  static void kprobe_multi_check(void *ctx, bool is_return)
+> > >  {
+> > >         if (bpf_get_current_pid_tgid() >> 32 != pid)
+> > > @@ -100,7 +109,9 @@ int test_kretprobe(struct pt_regs *ctx)
+> > >  SEC("kprobe.multi")
+> > >  int test_kprobe_manual(struct pt_regs *ctx)
+> > >  {
+> > > +       int id = bpf_get_stackid(ctx, &stacks, 0);
+> > 
+> > ftrace_partial_regs() supposed to work on x86 and arm64,
+> > but since multi-kprobe is the only user...
+> 
+> It should be able to unwind stack. It saves sp, pc, lr, fp.
+> 
+> 	regs->sp = afregs->sp;
+> 	regs->pc = afregs->pc;
+> 	regs->regs[29] = afregs->fp;
+> 	regs->regs[30] = afregs->lr;
+> 
+> > I suspect the arm64 implementation wasn't really tested.
+> > Or maybe there is some other issue.
+> 
+> It depends on how bpf_get_stackid() works. Some registers for that
+> function may not be saved.
+> 
+> If it returns -EFAULT, the get_perf_callchain() returns NULL.
+> 
 
-Remapping zero-filled subpages to the shared zeropage is unsafe, as the
-zeropage has a fixed tag of zero, which may not match the tag expected by
-the userspace pointer.
+During my test, the reason for returning -EFAULT was that trace->nr was 0.
 
-KSM already avoids this problem by using memcmp_pages(), which on arm64
-intentionally reports MTE-tagged pages as non-identical to prevent unsafe
-merging.
+static long __bpf_get_stackid(struct bpf_map *map,
+			      struct perf_callchain_entry *trace, u64 flags)
+{
+	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
+	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
+	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+	u32 hash, id, trace_nr, trace_len;
+	bool user = flags & BPF_F_USER_STACK;
+	u64 *ips;
+	bool hash_matches;
 
-As suggested by David[1], this patch adopts the same pattern, replacing the
-memchr_inv() byte-level check with a call to pages_identical(). This
-leverages existing architecture-specific logic to determine if a page is
-truly identical to the shared zeropage.
+	if (trace->nr <= skip)
+		/* skipping more than usable stack trace */
+		return -EFAULT;
+	......
+}
 
-Having both the THP shrinker and KSM rely on pages_identical() makes the
-design more future-proof, IMO. Instead of handling quirks in generic code,
-we just let the architecture decide what makes two pages identical.
-
-[1] https://lore.kernel.org/all/ca2106a3-4bb2-4457-81af-301fd99fbef4@redhat.com
-
-Cc: <stable@vger.kernel.org>
-Reported-by: Qun-wei Lin <Qun-wei.Lin@mediatek.com>
-Closes: https://lore.kernel.org/all/a7944523fcc3634607691c35311a5d59d1a3f8d4.camel@mediatek.com
-Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage when splitting isolated thp")
-Suggested-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Lance Yang <lance.yang@linux.dev>
----
-Tested on x86_64 and on QEMU for arm64 (with and without MTE support),
-and the fix works as expected.
-
- mm/huge_memory.c | 15 +++------------
- mm/migrate.c     |  8 +-------
- 2 files changed, 4 insertions(+), 19 deletions(-)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 32e0ec2dde36..28d4b02a1aa5 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -4104,29 +4104,20 @@ static unsigned long deferred_split_count(struct shrinker *shrink,
- static bool thp_underused(struct folio *folio)
- {
- 	int num_zero_pages = 0, num_filled_pages = 0;
--	void *kaddr;
- 	int i;
- 
- 	for (i = 0; i < folio_nr_pages(folio); i++) {
--		kaddr = kmap_local_folio(folio, i * PAGE_SIZE);
--		if (!memchr_inv(kaddr, 0, PAGE_SIZE)) {
--			num_zero_pages++;
--			if (num_zero_pages > khugepaged_max_ptes_none) {
--				kunmap_local(kaddr);
-+		if (pages_identical(folio_page(folio, i), ZERO_PAGE(0))) {
-+			if (++num_zero_pages > khugepaged_max_ptes_none)
- 				return true;
--			}
- 		} else {
- 			/*
- 			 * Another path for early exit once the number
- 			 * of non-zero filled pages exceeds threshold.
- 			 */
--			num_filled_pages++;
--			if (num_filled_pages >= HPAGE_PMD_NR - khugepaged_max_ptes_none) {
--				kunmap_local(kaddr);
-+			if (++num_filled_pages >= HPAGE_PMD_NR - khugepaged_max_ptes_none)
- 				return false;
--			}
- 		}
--		kunmap_local(kaddr);
- 	}
- 	return false;
- }
-diff --git a/mm/migrate.c b/mm/migrate.c
-index aee61a980374..ce83c2c3c287 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -300,9 +300,7 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
- 					  unsigned long idx)
- {
- 	struct page *page = folio_page(folio, idx);
--	bool contains_data;
- 	pte_t newpte;
--	void *addr;
- 
- 	if (PageCompound(page))
- 		return false;
-@@ -319,11 +317,7 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
- 	 * this subpage has been non present. If the subpage is only zero-filled
- 	 * then map it to the shared zeropage.
- 	 */
--	addr = kmap_local_page(page);
--	contains_data = memchr_inv(addr, 0, PAGE_SIZE);
--	kunmap_local(addr);
--
--	if (contains_data)
-+	if (!pages_identical(page, ZERO_PAGE(0)))
- 		return false;
- 
- 	newpte = pte_mkspecial(pfn_pte(my_zero_pfn(pvmw->address),
--- 
-2.49.0
+thanks
 
 
