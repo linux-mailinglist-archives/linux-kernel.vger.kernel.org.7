@@ -1,442 +1,263 @@
-Return-Path: <linux-kernel+bounces-827478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB0AB91DE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:13:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57361B91DF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C95E63B7404
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:13:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 195BB4E26CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CE72DEA89;
-	Mon, 22 Sep 2025 15:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A0F25F7B9;
+	Mon, 22 Sep 2025 15:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="R5Q94wru";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="g8iP3Ckm";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="R5Q94wru";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="g8iP3Ckm"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ch1JZDV+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6723E2836F
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726FF2836F
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758553983; cv=none; b=sKd/SIDIhV2roTbJWLL9RfRXZ9V9CEpSqHZmYQ7yy3PBmrRG/4Xslx/ggE8Ta9uqCBCcIV+c/WBaszvD8Gjx3oiyBXhrjwtQ3FKoUVmvYRfOjj5yehK/Asstp6HnVYQRtNPeKwwCaJsb47SfXEUuoapwm/njWvG3qCq9LTgTUc4=
+	t=1758553995; cv=none; b=c9bfBUsKhb5ReCw9CvtCpPradg2+3jV+BMf3RMSQcRrUYUWK7Z8UW8hU2KtqAhN4AvQ6BfYkjELhNg/E6aX6gtW5v3g8Oeidnx/bX6JKCgpqXcmqZfKksFweE/kDGujg1N83GL4oYZuhc2r0xxw5ELka2ml8fhwoCqhVQuyTR94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758553983; c=relaxed/simple;
-	bh=W2MiAeKT/PpUdqaJHr/nu6EjcnO1treoMo0+c39fcIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BFp646K+Yb6dk+ApabqJ7clgBErHTaLF600XEiHdQYNsAwjz7FsiJCgp4sgUsTboO7eCqx97fXDxMRkyV1clmWxXxBHTDYKva1WYe+CtEhu9bSq4tEgK7ckbbrpDNCW7PqC5UqypPUmZqmhg2PofJTbV3X2kLbdqhUuCGU268jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=R5Q94wru; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=g8iP3Ckm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=R5Q94wru; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=g8iP3Ckm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 906F21F395;
-	Mon, 22 Sep 2025 15:12:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758553979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O4LeobZZCXAiyB0HIEqZ5K95uUEhlhXloBIYiWc7Sec=;
-	b=R5Q94wruBizo/sUhN2GTsvldgJdpwCe/AtP1RP9HT5BDduGQ4tlgr32lNCGwNInmJqdO7m
-	g7WpppVthfw7V4qB88RWzPEpey+kgkDI7IJ8UgT1jSLz94EAQpeHLtCSNb8E7B8IXAgvhN
-	nAHbSEtnb//f7kQU4uJI/s0Nsl8Iew8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758553979;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O4LeobZZCXAiyB0HIEqZ5K95uUEhlhXloBIYiWc7Sec=;
-	b=g8iP3Ckm8nWpSr8jHzdnHugBJlIVIopJsEps+7e6yjPQwcWHeZ6EWwv7PWSQ63rDWMl+ww
-	OqSotRvql4hz7cDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=R5Q94wru;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=g8iP3Ckm
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758553979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O4LeobZZCXAiyB0HIEqZ5K95uUEhlhXloBIYiWc7Sec=;
-	b=R5Q94wruBizo/sUhN2GTsvldgJdpwCe/AtP1RP9HT5BDduGQ4tlgr32lNCGwNInmJqdO7m
-	g7WpppVthfw7V4qB88RWzPEpey+kgkDI7IJ8UgT1jSLz94EAQpeHLtCSNb8E7B8IXAgvhN
-	nAHbSEtnb//f7kQU4uJI/s0Nsl8Iew8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758553979;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O4LeobZZCXAiyB0HIEqZ5K95uUEhlhXloBIYiWc7Sec=;
-	b=g8iP3Ckm8nWpSr8jHzdnHugBJlIVIopJsEps+7e6yjPQwcWHeZ6EWwv7PWSQ63rDWMl+ww
-	OqSotRvql4hz7cDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1454E1388C;
-	Mon, 22 Sep 2025 15:12:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ulxsM3pn0WgfHwAAD6G6ig
-	(envelope-from <ematsumiya@suse.de>); Mon, 22 Sep 2025 15:12:58 +0000
-Date: Mon, 22 Sep 2025 12:12:56 -0300
-From: Enzo Matsumiya <ematsumiya@suse.de>
-To: rajasimandalos@gmail.com
-Cc: linux-cifs@vger.kernel.org, sfrench@samba.org, pc@manguebit.org, 
-	ronniesahlberg@gmail.com, sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com, 
-	linux-kernel@vger.kernel.org, Rajasi Mandal <rajasimandal@microsoft.com>
-Subject: Re: [PATCH 2/2] cifs: client: allow changing multichannel mount
- options on remount
-Message-ID: <4htyleuklcdod3togdqcjl5w7g3j5cmwcc4bww5knlwgwhtsbd@a7s2fa2nvcup>
-References: <20250922082417.816331-1-rajasimandalos@gmail.com>
- <20250922082417.816331-2-rajasimandalos@gmail.com>
+	s=arc-20240116; t=1758553995; c=relaxed/simple;
+	bh=B5uTWUUwwDMXefPUA50NB4QAahXRqXQpp9CStVZIpOw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kOSnV2VNZKmEiBnB/O1pfr79XKcTpYbgIyWi1wblim2dSP1jFMSEubREovcn+SV4oipY5iFBSlmr86Thkt1ZS3iRhq1hCWeVqKowLAM455Ho6iNBxea627qYvmQ2IxmHoDQBs9wmN6zPzvGJ+lNB4Kv0SvDmLavFVGr+GnY6tTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ch1JZDV+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58M92XgO023868
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:13:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=
+	qcppdkim1; bh=6L9xQwPvNyqamZukUXThzBL99kp13JUWCh+pkhXMJs8=; b=Ch
+	1JZDV+r8a/WgnKlOpaq43F9UXMaE7QwFKQFTc49dqHxNTCmTe3l+dGBTQN5/TPmM
+	x39TiYYB18ZZuaM9vNEeWb+M4uOXoYafbF7ZwTD7q/BE14Sa6+odQIFtpSeUm101
+	3x+01mzW4QBpFYlbrWORWQakdsbwSJ6C8MLXe1PfNGvdmD5BC/CS/HvHJOXlcXXN
+	1rqTpD/saU4PxETzDxSYubavNCNOwKaJ1cMvEytGRhI6JAs8JszfAQgdtIakwr+7
+	AC69IdlsFgwwKw91ZpvC++2o22NFJVAh75nm0JaLE4hWAbGUVeyjIWi9ua6WxXtU
+	2cZJ8TH7K/nR9ngV2g3A==
+Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com [209.85.160.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499mn7d6bv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:13:12 +0000 (GMT)
+Received: by mail-oa1-f72.google.com with SMTP id 586e51a60fabf-341451e05f1so1142000fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:13:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758553991; x=1759158791;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6L9xQwPvNyqamZukUXThzBL99kp13JUWCh+pkhXMJs8=;
+        b=ZJoi/GTVClv2idHHaIoRYyW5MTJU5gCbAY9nWH4+iRElVYFUVuWJXj+0KFTH3cEy16
+         6fSAodKQH56gztztrTj0Oen43YokZmuO8EWUqNBpCkGxduEk2vLmLTxK14Kirlw+Mc21
+         rGn7ceGRRLObRMt31QRbEnYW3Sg7gGD/qqmfN4BhunbjsHQK7nviixqx8XQlerX9ROcv
+         rNBzK3mbZTmOry/w0ljLjx45WR8+5ZG92pwJYtFBpkenWzW2D5mfsiGjoPDPE3MVOHX3
+         gwCdODwS3NzYhn8Eilzy2w3G3DwvFWLzAL/zQCPJheyZgiTlYTIfKOxz1QqA58U4uAHb
+         uDug==
+X-Forwarded-Encrypted: i=1; AJvYcCUHSmYMs78rNl2i+wupt/BQx+hre4Aoo4sHRfacApp7YxIShYDqPiM2DRwinSetGjzDT60fNFadSHYVsN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj5bO/cp7dl6ymjLGDOes2rHaKMvibwm95vMJBFTGQh6aRr5FB
+	hOJfdFuK9OoWx7xmeT4IXTgjJ1eemKJwjNugy5hh7Goiia2WukAScC2aIEraRuWNIJOG2bpXCnw
+	0lg/FMqrSpDWAlpxBG4XGtA7U8anNHUC2H8FcPauRkCxu79RMqgUN2mlnXrY584POv3swj0jaAC
+	IGML7ZerRtpRHGLJxqKCO36Ur1CLXg/Zx+MK4L6zPRqg==
+X-Gm-Gg: ASbGncvMOunWopBq74rgQjgNpOK73J1z7aTsseAhe/2FuEEKVhfmKTateOJTWSePNmV
+	p0o60Ia8GElYi5vQ0Pp57tU0m+Le0lPS45N9ZclDOiCHoqbyb6FIwcHEr8ayZem+Uu3o5Z9NR+a
+	XFAOc8dCDpirF8356vwUWud4rs/AHveKf10Mg4YPZQC1zOXHVDjOig
+X-Received: by 2002:a05:6870:d203:b0:321:27af:4b0 with SMTP id 586e51a60fabf-33bb387a8efmr7066561fac.21.1758553991363;
+        Mon, 22 Sep 2025 08:13:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFeI3VUzLWw/6kf7cmjW8nkegRTNOSrOJHdfgWLSr9Z07F+QepvdikPR1+KMJ0NepSDMgedO2i6ynxIGcy1040=
+X-Received: by 2002:a05:6870:d203:b0:321:27af:4b0 with SMTP id
+ 586e51a60fabf-33bb387a8efmr7066517fac.21.1758553990880; Mon, 22 Sep 2025
+ 08:13:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250922082417.816331-2-rajasimandalos@gmail.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,samba.org,manguebit.org,gmail.com,microsoft.com,talpey.com];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 906F21F395
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+References: <20250919-add-displayport-support-for-qcs615-platform-v5-0-eae6681f4002@oss.qualcomm.com>
+ <20250919-add-displayport-support-for-qcs615-platform-v5-14-eae6681f4002@oss.qualcomm.com>
+ <j7ooyi5vih6ofnjigdgj6uk3ycutugunpm5pu5zf55pu5ua6r2@agg73zakjicn>
+In-Reply-To: <j7ooyi5vih6ofnjigdgj6uk3ycutugunpm5pu5zf55pu5ua6r2@agg73zakjicn>
+Reply-To: rob.clark@oss.qualcomm.com
+From: Rob Clark <rob.clark@oss.qualcomm.com>
+Date: Mon, 22 Sep 2025 08:13:00 -0700
+X-Gm-Features: AS18NWDsjwQT4-UMvgr22Kwg3NRpxj1iGVDde1kRYPcz2iKyW9TnGKIpG41ve0w
+Message-ID: <CACSVV00Bat6LE=joM+Wh3HnC1=c3_Y=crxUGdhLQWxxpZ17Q3g@mail.gmail.com>
+Subject: Re: [PATCH v5 14/14] drm/msm/dp: Add support for lane mapping configuration
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
+        li.liu@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzMyBTYWx0ZWRfX05eL+OU2Wdaf
+ jV0wIaS+inbFd+juIh9lGR+0QhHB7GXqRT1SaMKwYixXrOdZORotU6IQzAYJDoZ8hLQqIRZfUJd
+ xc1GuPMu4rOtjeJjW5+5NWf5I7AdMaFx01xgxrKhnuXl1YVeqKhd8hmKEJkV9ToCGuHFvWawaX5
+ AdCZHDvaPK/wLv8MQZL6mxf3CNRUEy0Exr4zUNxcvBmJtS9vb0HJxl3KK9hLn+Pi1tvoMUwgnQz
+ w4EXnUaH5PNXSaDmgspvADYWmnNWYRUY8Q1Xy6qRdGFCsRWqG1EJE2nClKvD1V6SqcACkso4qXu
+ cFOEDTMkwqUqbD3pcgrnAS+plT8w5pEcZ2ZW0nS4GKLt8RdkPardo1lZR8PSfnobb36ejAg0Fog
+ zi6cY4SF
+X-Proofpoint-GUID: 0je8DbeuR7orWEuYcmaMS6BMflaO3E56
+X-Proofpoint-ORIG-GUID: 0je8DbeuR7orWEuYcmaMS6BMflaO3E56
+X-Authority-Analysis: v=2.4 cv=EZrIQOmC c=1 sm=1 tr=0 ts=68d16788 cx=c_pps
+ a=Z3eh007fzM5o9awBa1HkYQ==:117 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
+ a=EUspDBNiAAAA:8 a=Ck2O2MNpSjHhtJkipUsA:9 a=QEXdDO2ut3YA:10
+ a=eBU8X_Hb5SQ8N-bgNfv4:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-22_01,2025-09-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 clxscore=1015 phishscore=0 suspectscore=0 priorityscore=1501
+ impostorscore=0 bulkscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509200033
 
-On 09/22, rajasimandalos@gmail.com wrote:
->From: Rajasi Mandal <rajasimandal@microsoft.com>
+On Fri, Sep 19, 2025 at 11:35=E2=80=AFAM Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
 >
->Previously, the client did not properly update the session's channel
->state when multichannel or max_channels mount options were changed
->during remount. This led to inconsistent behavior and prevented
->enabling or disabling multichannel support without a full
->unmount/remount.
+> On Fri, Sep 19, 2025 at 10:24:31PM +0800, Xiangxu Yin wrote:
+> > QCS615 platform requires non-default logical-to-physical lane mapping d=
+ue
+> > to its unique hardware routing. Unlike the standard mapping sequence
+> > <0 1 2 3>, QCS615 uses <3 2 0 1>, which necessitates explicit
+> > configuration via the data-lanes property in the device tree. This ensu=
+res
+> > correct signal routing between the DP controller and PHY.
+> >
+> > For partial definitions, fill remaining lanes with unused physical lane=
+s
+> > in ascending order.
+> >
+> > Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+> > ---
+> >  drivers/gpu/drm/msm/dp/dp_ctrl.c | 10 +++----
+> >  drivers/gpu/drm/msm/dp/dp_link.c | 60 ++++++++++++++++++++++++++++++++=
+++++++++
+> >  drivers/gpu/drm/msm/dp/dp_link.h |  1 +
+> >  3 files changed, 66 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/dp/dp_link.c b/drivers/gpu/drm/msm/dp/=
+dp_link.c
+> > index 2aeb3ecf76fab2ee6a9512b785ca5dceebfc3964..34a91e194a124ef5372f133=
+52f7b3513aa88da2a 100644
+> > --- a/drivers/gpu/drm/msm/dp/dp_link.c
+> > +++ b/drivers/gpu/drm/msm/dp/dp_link.c
+> > @@ -1236,6 +1236,61 @@ static u32 msm_dp_link_link_frequencies(struct d=
+evice_node *of_node)
+> >       return frequency;
+> >  }
+> >
+> > +/*
+> > + * Always populate msm_dp_link->lane_map with 4 lanes.
+> > + * - Use DTS "data-lanes" if present; otherwise fall back to default m=
+apping.
+> > + * - For partial definitions, fill remaining entries with unused lanes=
+ in
+> > + *   ascending order.
+> > + */
+> > +static int msm_dp_link_lane_map(struct device *dev, struct msm_dp_link=
+ *msm_dp_link)
+> > +{
+> > +     struct device_node *of_node =3D dev->of_node;
+> > +     struct device_node *endpoint;
+> > +     int cnt =3D msm_dp_link->max_dp_lanes;
+> > +     u32 tmp[DP_MAX_NUM_DP_LANES];
+> > +     u32 map[DP_MAX_NUM_DP_LANES] =3D {0, 1, 2, 3}; /* default 1:1 map=
+ping */
+> > +     bool used[DP_MAX_NUM_DP_LANES] =3D {false};
+> > +     int i, j =3D 0, ret =3D -EINVAL;
+> > +
+> > +     endpoint =3D of_graph_get_endpoint_by_regs(of_node, 1, -1);
+> > +     if (endpoint) {
+> > +             ret =3D of_property_read_u32_array(endpoint, "data-lanes"=
+, tmp, cnt);
+> > +             if (ret)
+> > +                     dev_dbg(dev, "endpoint data-lanes read failed (re=
+t=3D%d)\n", ret);
+> > +     }
+> > +
+> > +     if (ret) {
+> > +             ret =3D of_property_read_u32_array(of_node, "data-lanes",=
+ tmp, cnt);
+> > +             if (ret) {
+> > +                     dev_info(dev, "data-lanes not defined, set to def=
+ault\n");
+> > +                     goto out;
+> > +             }
+> > +     }
+> > +
+> > +     for (i =3D 0; i < cnt; i++) {
+> > +             if (tmp[i] >=3D DP_MAX_NUM_DP_LANES) {
+> > +                     dev_err(dev, "data-lanes[%d]=3D%u out of range\n"=
+, i, tmp[i]);
+> > +                     return -EINVAL;
+> > +             }
+> > +             used[tmp[i]] =3D true;
+> > +             map[i] =3D tmp[i];
+> > +     }
+> > +
+> > +     /* Fill the remaining entries with unused physical lanes (ascendi=
+ng) */
+> > +     for (i =3D cnt; i < DP_MAX_NUM_DP_LANES && j < DP_MAX_NUM_DP_LANE=
+S; j++) {
 >
->Enable dynamic reconfiguration of multichannel and max_channels
->options during remount by introducing smb3_sync_ses_chan_max() to
->safely update the session's chan_max field, and smb3_sync_ses_channels()
->to synchronize the session's channels with the new configuration.
->Replace cifs_disable_secondary_channels() with
->cifs_decrease_secondary_channels(), which now takes a from_reconfigure
->argument for more flexible channel cleanup. Update the remount logic
->to detect changes in multichannel or max_channels and trigger the
->appropriate session/channel updates.
->
->With this change, users can safely change multichannel and
->max_channels options on remount, and the client will correctly adjust
->the session's channel state to match the new configuration.
->
->Signed-off-by: Rajasi Mandal <rajasimandal@microsoft.com>
->---
-> fs/smb/client/cifsproto.h  |  2 +-
-> fs/smb/client/fs_context.c | 29 ++++++++++++++++++
-> fs/smb/client/fs_context.h |  2 +-
-> fs/smb/client/sess.c       | 35 +++++++++++++++-------
-> fs/smb/client/smb2pdu.c    | 60 ++++++++++++++++++++++++++++++--------
-> fs/smb/client/smb2pdu.h    |  2 ++
-> 6 files changed, 105 insertions(+), 25 deletions(-)
+> Nit: i =3D cnt, j =3D 0; Don't init loop variables at the top of the
+> function.
 
-I think the fix is necessary, and the implementation works (at least
-with the simple case I tested).  I just think we now have too many
-functions related to channel adding/removing/updating and they're all
-too similar.  IMHO they could all be merged into a single "update
-channels" one.
+These days we can party like it's c99 and declare loop variables
+inside the for(), instead of at the top of the function.  My
+preference is to do so, unless the loop variable is used after the
+loop.
 
-Do you think it's possible to do that?  Probably would require a bit
-more work, but at least we would end up with a centralized place to deal
-with channel management.
+BR,
+-R
 
->diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
->index e8fba98690ce..ec3118457b26 100644
->--- a/fs/smb/client/cifsproto.h
->+++ b/fs/smb/client/cifsproto.h
->@@ -667,7 +667,7 @@ bool
-> cifs_chan_is_iface_active(struct cifs_ses *ses,
-> 			  struct TCP_Server_Info *server);
-> void
->-cifs_disable_secondary_channels(struct cifs_ses *ses);
->+cifs_decrease_secondary_channels(struct cifs_ses *ses, bool from_reconfigure);
-> void
-> cifs_chan_update_iface(struct cifs_ses *ses, struct TCP_Server_Info *server);
-> int
->diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
->index 43552b44f613..96e80c70f25d 100644
->--- a/fs/smb/client/fs_context.c
->+++ b/fs/smb/client/fs_context.c
->@@ -1015,6 +1015,22 @@ int smb3_sync_session_ctx_passwords(struct cifs_sb_info *cifs_sb, struct cifs_se
-> 	return 0;
-> }
+> Other than that:
 >
->+/**
->+ * smb3_sync_ses_chan_max - Synchronize the session's maximum channel count
->+ * @ses: pointer to the old CIFS session structure
->+ * @max_channels: new maximum number of channels to allow
->+ *
->+ * Updates the session's chan_max field to the new value, protecting the update
->+ * with the session's channel lock. This should be called whenever the maximum
->+ * allowed channels for a session changes (e.g., after a remount or reconfigure).
->+ */
->+void smb3_sync_ses_chan_max(struct cifs_ses *ses, unsigned int max_channels)
->+{
->+	spin_lock(&ses->chan_lock);
->+	ses->chan_max = max_channels;
->+	spin_unlock(&ses->chan_lock);
->+}
->+
-> static int smb3_reconfigure(struct fs_context *fc)
-> {
-> 	struct smb3_fs_context *ctx = smb3_fc2context(fc);
->@@ -1097,6 +1113,18 @@ static int smb3_reconfigure(struct fs_context *fc)
-> 		ses->password2 = new_password2;
-> 	}
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 >
->+	/*
->+	 * If multichannel or max_channels has changed, update the session's channels accordingly.
->+	 * This may add or remove channels to match the new configuration.
->+	 */
->+	if ((ctx->multichannel != cifs_sb->ctx->multichannel) ||
->+		(ctx->max_channels != cifs_sb->ctx->max_channels)) {
->+		//Synchronize ses->chan_max with the new mount context
->+		smb3_sync_ses_chan_max(ses, ctx->max_channels);
->+		//Now update the session's channels to match the new configuration
->+		rc = smb3_sync_ses_channels(cifs_sb);
->+	}
->+
-> 	mutex_unlock(&ses->session_mutex);
 >
-> 	STEAL_STRING(cifs_sb, ctx, domainname);
->@@ -1110,6 +1138,7 @@ static int smb3_reconfigure(struct fs_context *fc)
-> 	smb3_cleanup_fs_context_contents(cifs_sb->ctx);
-> 	rc = smb3_fs_context_dup(cifs_sb->ctx, ctx);
-> 	smb3_update_mnt_flags(cifs_sb);
->+
-> #ifdef CONFIG_CIFS_DFS_UPCALL
-> 	if (!rc)
-> 		rc = dfs_cache_remount_fs(cifs_sb);
->diff --git a/fs/smb/client/fs_context.h b/fs/smb/client/fs_context.h
->index b0fec6b9a23b..a75185858285 100644
->--- a/fs/smb/client/fs_context.h
->+++ b/fs/smb/client/fs_context.h
->@@ -371,7 +371,7 @@ static inline struct smb3_fs_context *smb3_fc2context(const struct fs_context *f
-> extern int smb3_fs_context_dup(struct smb3_fs_context *new_ctx, struct smb3_fs_context *ctx);
-> extern int smb3_sync_session_ctx_passwords(struct cifs_sb_info *cifs_sb, struct cifs_ses *ses);
-> extern void smb3_update_mnt_flags(struct cifs_sb_info *cifs_sb);
->-
->+extern void smb3_sync_ses_chan_max(struct cifs_ses *ses, unsigned int max_channels);
-> /*
->  * max deferred close timeout (jiffies) - 2^30
->  */
->diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
->index 0a8c2fcc9ded..42b5481c884a 100644
->--- a/fs/smb/client/sess.c
->+++ b/fs/smb/client/sess.c
->@@ -264,13 +264,16 @@ int cifs_try_adding_channels(struct cifs_ses *ses)
-> 	return new_chan_count - old_chan_count;
-> }
+> > +             if (!used[j])
+> > +                     map[i++] =3D j;
+> > +     }
+> > +
+> > +out:
+> > +     if (endpoint)
+> > +             of_node_put(endpoint);
+> > +
+> > +     dev_dbg(dev, "data-lanes count %d <%d %d %d %d>\n", cnt, map[0], =
+map[1], map[2], map[3]);
+> > +     memcpy(msm_dp_link->lane_map, map, sizeof(map));
+> > +     return 0;
+> > +}
+> > +
+> >  static int msm_dp_link_parse_dt(struct device *dev, struct msm_dp_link=
+ *msm_dp_link)
+> >  {
+> >       struct device_node *of_node =3D dev->of_node;
 >
->-/*
->- * called when multichannel is disabled by the server.
->- * this always gets called from smb2_reconnect
->- * and cannot get called in parallel threads.
->+/**
->+ * cifs_decrease_secondary_channels - Reduce the number of active secondary channels
->+ * @ses: pointer to the CIFS session structure
->+ * @from_reconfigure: if true, only reduce to chan_max; if false, reduce to a single channel
->+ *
->+ * This function disables and cleans up extra secondary channels for a CIFS session.
->+ * If called during reconfiguration, it reduces the channel count to the new maximum (chan_max).
->+ * Otherwise, it disables all but the primary channel.
->  */
->-void
->-cifs_disable_secondary_channels(struct cifs_ses *ses)
->+void cifs_decrease_secondary_channels(struct cifs_ses *ses, bool from_reconfigure)
-> {
-> 	int i, chan_count;
-> 	struct TCP_Server_Info *server;
->@@ -281,12 +284,13 @@ cifs_disable_secondary_channels(struct cifs_ses *ses)
-> 	if (chan_count == 1)
-> 		goto done;
->
->-	ses->chan_count = 1;
->-
->-	/* for all secondary channels reset the need reconnect bit */
->-	ses->chans_need_reconnect &= 1;
->+	// Update the chan_count to the new maximum
->+	if (from_reconfigure)
->+		ses->chan_count = ses->chan_max;
->+	else
->+		ses->chan_count = 1;
->
->-	for (i = 1; i < chan_count; i++) {
->+	for (i = ses->chan_max ; i < chan_count; i++) {
-> 		iface = ses->chans[i].iface;
-> 		server = ses->chans[i].server;
->
->@@ -318,6 +322,15 @@ cifs_disable_secondary_channels(struct cifs_ses *ses)
-> 		spin_lock(&ses->chan_lock);
-> 	}
->
->+	/* For extra secondary channels, reset the need reconnect bit */
->+	if (ses->chan_count == 1) {
->+		cifs_server_dbg(VFS, "server does not support multichannel anymore. Disable all other channels\n");
->+		ses->chans_need_reconnect &= 1;
->+	} else {
->+		cifs_server_dbg(VFS, "Disable extra secondary channels\n");
->+		ses->chans_need_reconnect &= ((1UL << ses->chan_max) - 1);
->+	}
->+
-> done:
-> 	spin_unlock(&ses->chan_lock);
-> }
->diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
->index c3b9d3f6210f..bf9a8dc0e8fc 100644
->--- a/fs/smb/client/smb2pdu.c
->+++ b/fs/smb/client/smb2pdu.c
->@@ -168,7 +168,7 @@ smb2_hdr_assemble(struct smb2_hdr *shdr, __le16 smb2_cmd,
-> static int
-> cifs_chan_skip_or_disable(struct cifs_ses *ses,
-> 			  struct TCP_Server_Info *server,
->-			  bool from_reconnect)
->+			  bool from_reconnect, bool from_reconfigure)
-> {
-> 	struct TCP_Server_Info *pserver;
-> 	unsigned int chan_index;
->@@ -206,10 +206,49 @@ cifs_chan_skip_or_disable(struct cifs_ses *ses,
-> 		return -EHOSTDOWN;
-> 	}
->
->-	cifs_server_dbg(VFS,
->-		"server does not support multichannel anymore. Disable all other channels\n");
->-	cifs_disable_secondary_channels(ses);
->+	cifs_decrease_secondary_channels(ses, from_reconfigure);
->
->+	return 0;
->+}
->+
->+/**
->+ * smb3_sync_ses_channels - Synchronize session channels
->+ * with new configuration (cifs_sb_info version)
->+ * @cifs_sb: pointer to the CIFS superblock info structure
->+ * Returns 0 on success or -EINVAL if scaling is already in progress.
->+ */
->+int smb3_sync_ses_channels(struct cifs_sb_info *cifs_sb)
->+{
->+	struct cifs_ses *ses = cifs_sb_master_tcon(cifs_sb)->ses;
->+	struct smb3_fs_context *ctx = cifs_sb->ctx;
->+	bool from_reconnect = false;
->+
->+	/* Prevent concurrent scaling operations */
->+	spin_lock(&ses->ses_lock);
->+	if (ses->flags & CIFS_SES_FLAG_SCALE_CHANNELS) {
->+		spin_unlock(&ses->ses_lock);
->+		return -EINVAL;
->+	}
->+	ses->flags |= CIFS_SES_FLAG_SCALE_CHANNELS;
->+	spin_unlock(&ses->ses_lock);
->+
->+	/*
->+	 * If the old max_channels is less than the new chan_max,
->+	 * try to add channels to reach the new maximum.
->+	 * Otherwise, disable or skip extra channels to match the new configuration.
->+	 */
->+	if (ctx->max_channels < ses->chan_max) {
->+		mutex_unlock(&ses->session_mutex);
->+		cifs_try_adding_channels(ses);
->+		mutex_lock(&ses->session_mutex);
->+	} else {
->+		cifs_chan_skip_or_disable(ses, ses->server, from_reconnect, true);
->+	}
->+
->+	/* Clear scaling flag after operation */
->+	spin_lock(&ses->ses_lock);
->+	ses->flags &= ~CIFS_SES_FLAG_SCALE_CHANNELS;
->+	spin_unlock(&ses->ses_lock);
->
-> 	return 0;
-> }
->@@ -356,7 +395,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon,
-> 	if (ses->chan_count > 1 &&
-> 	    !(server->capabilities & SMB2_GLOBAL_CAP_MULTI_CHANNEL)) {
-> 		rc = cifs_chan_skip_or_disable(ses, server,
->-					       from_reconnect);
->+					       from_reconnect, false);
-> 		if (rc) {
-> 			mutex_unlock(&ses->session_mutex);
-> 			goto out;
->@@ -439,7 +478,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon,
-> 			 */
->
-> 			rc = cifs_chan_skip_or_disable(ses, server,
->-						       from_reconnect);
->+						       from_reconnect, false);
-> 			goto skip_add_channels;
-> 		} else if (rc)
-> 			cifs_dbg(FYI, "%s: failed to query server interfaces: %d\n",
-
-(for all hunks above) Can we stick to /* */ comments instead of //
-please?
-
->@@ -1105,8 +1144,7 @@ SMB2_negotiate(const unsigned int xid,
-> 		req->SecurityMode = 0;
->
-> 	req->Capabilities = cpu_to_le32(server->vals->req_capabilities);
->-	if (ses->chan_max > 1)
->-		req->Capabilities |= cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_CHANNEL);
->+	req->Capabilities |= cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_CHANNEL);
->
-> 	/* ClientGUID must be zero for SMB2.02 dialect */
-> 	if (server->vals->protocol_id == SMB20_PROT_ID)
->@@ -1310,10 +1348,8 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
-> 	if (!pneg_inbuf)
-> 		return -ENOMEM;
->
->-	pneg_inbuf->Capabilities =
->-			cpu_to_le32(server->vals->req_capabilities);
->-	if (tcon->ses->chan_max > 1)
->-		pneg_inbuf->Capabilities |= cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_CHANNEL);
->+	pneg_inbuf->Capabilities = cpu_to_le32(server->vals->req_capabilities);
->+	pneg_inbuf->Capabilities |= cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_CHANNEL);
-
-This effectively makes query_interfaces worker run even with
-max_channels=1 -- just a heads up because it didn't look like your
-original intention.
-
-
-Cheers,
-
-Enzo
+> --
+> With best wishes
+> Dmitry
 
