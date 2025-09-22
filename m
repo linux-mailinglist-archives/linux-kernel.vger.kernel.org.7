@@ -1,129 +1,152 @@
-Return-Path: <linux-kernel+bounces-827198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB9DB91215
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:29:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D844B9121B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5BF92A2A4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:29:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D19B53BCBA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B916302748;
-	Mon, 22 Sep 2025 12:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9F6306B39;
+	Mon, 22 Sep 2025 12:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="O8BvViww"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dzLJhyfL"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62391B808
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B78306B32
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758544163; cv=none; b=mmscLD5ZeD5mF6Zgq3vXiA2u0yL2E3rid+HCUpwgfJq8S2Mf08Qp7gA5eIkp7ph4QC1blXKa9TyyLe4C8orNvfwji67XRv+9CFhGocu4ahg+f6u1kYpSkXIADkSOLfkMb4V80S11ttumon8rzv1CBl5XkjKUNYmbbMiul6TMRxI=
+	t=1758544183; cv=none; b=DBCy+MfgtggyFrrdhqv5GGyPByZjuDoKYZpS5n67uo7aGbi0TljQWpTxMXv55Y9k9SMYt48hWOxlxqe11nkGq4rc4x6gyvZDu3tozg8ZX1E3GotpQLPa+2k6dnrucupvvgwcmKH58ivkQu8ne1BlPfet3BqOblYQFGdL5xoHVaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758544163; c=relaxed/simple;
-	bh=V9ReO8fxLQ9RBM0Dpak52sqpprpYlk6LhY8mTX0QKB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=raj9WMBxEXszC8s4kMWdEIYjufvMulEzkDzMWhYOH4kLtPK2oNVh4xfBt8iAxvoMLthkvvYztydzh81pD+W6y6X76+WePoHLv0K49mMwnlJQQw4GKWayzg25KqurYEksHuG77cNqQyhMqgBFbaW3L/5lWK9irBaI6IfY5uTzuj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=O8BvViww; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9027E40E016A;
-	Mon, 22 Sep 2025 12:29:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id pVXU5qRYz-1h; Mon, 22 Sep 2025 12:29:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1758544152; bh=R9ClS1wdWOZvaeiH6gopLh9n6J1FJjLo1VFv5d2qtRo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O8BvViwwLk78shsb8sda9zTtcwIWxLkM6yuOg7H4hY9MB4ftITdkwQ3gvXVUW23TT
-	 iRDM/b+/mzAdAqJ5fnQ9sVqcWYIlhM9jJBHSR6jMliEBSbqBgR38kR0V1pn1AbdBQZ
-	 nhTQlmC8MTLzv0zP6WUO17+mYM0B0g3P93RhG69Qto57DSxOXPRDDZdISO1Sn3YgxR
-	 cJYiaasnxJdFz0wYSDmVqIOv4sG79x2QwpYjdEYteddOMGekZZX2RfBSzmWucexuZS
-	 U4A9Mv4wQeQOM1URVJiJIIlBsIeqaCKuNG41ajZgFGbV4SjS1tmJFdZYSd4A6tyzpP
-	 wGPcNy1bGQjMmBWY7Km64gQ+IPaMamRPgQFklNyMFV/VNc2G7iIr/rcUuNB/u2JV5W
-	 iSSiVbDlDxT6W/9QT1BV/RwR/KZt8kUrnydhPU440PTOmFhPqcse5g32Ly1zK9Y8Gj
-	 bW2hrJ4AEDXHSU280Gsp5S0pBi7cPrh9Wfg1jpLOz6t+3emQPTQJTmoU/+kHk28muk
-	 /76OBHidKmgc0oZjTgayv782qOph3ptXdL8H8H+i/nfm9+UCpmyfLYDolDqv+z/0dg
-	 juhb/cJcVckjocg/oNxjJvhoGP2s5cnulrRQEEEYXAtyP6FLfdLdkpKQ/ZSpVoSdDM
-	 J2SdK7bIxkY6jrYriOZkvCeg=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id AEEBC40E015C;
-	Mon, 22 Sep 2025 12:29:01 +0000 (UTC)
-Date: Mon, 22 Sep 2025 14:28:55 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tengda Wu <wutengda@huaweicloud.com>
-Cc: x86@kernel.org, jpoimboe@kernel.org,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>, Ingo Molnar <mingo@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next v3] x86/dumpstack: Prevent KASAN false positive
- warnings in __show_regs
-Message-ID: <20250922122855.GBaNFBB1GeS9ao4RmU@fat_crate.local>
-References: <20250830092556.3360776-1-wutengda@huaweicloud.com>
- <20250922094404.GAaNEaZIj-Hdilh_9H@fat_crate.local>
- <697be899-8501-405f-b4f6-eff306ae05e8@huaweicloud.com>
+	s=arc-20240116; t=1758544183; c=relaxed/simple;
+	bh=XqUdLGQWUaLEwKpZPel0kn3r/WxfPjtD/uu9HJp4bWc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d7dQj4qiGkux8lZNgk3bMfWqhkztg/K0mupzlteZ6A9/cnooL1b7h5sCNdEeH4utvwMJFi4zCIEtQBWzfhfyCc8SqgzS+AlzvBnWOJ5iCT5gbX8YgiuLg3GoL0SSGoxDCYpTyCCFVGWfJWg1echHmFuowvABduEiZbG0tqr2gpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dzLJhyfL; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-323266d6f57so4441039a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 05:29:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758544181; x=1759148981; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+kkGbbFXja5HoNsE8aPiHdoJDOGmZAghS1T8bfUgIDo=;
+        b=dzLJhyfL/5nv8e/dFv5t1Ua4n1CBlL90Loebr1ibgSwMH8xvBhGtJOLeQpmPlJd5Il
+         9pBndXjVPaI9H1a8gnU5FKwrZY0ow5AgSWry5BNw3xmPOSZYI+VlKVph79b4hXUT0akK
+         rSe41cOlCbZQstrq0Q8Kt5sPTZGkBzKrf+Ge73WjGMtIGwGqoHx3xzID9rBzQ3vPL4p9
+         BDLkLBSa75kZs7l3BLOr93Fpl+IvtNYY7RIoYs/+SOTsRsuHIIDXgzqZ1qnZneRwoEtI
+         8WDewrzcJcN0a6SRDWLloMhURjTZqnjimhONTR/xcig/iFpAQ9WHtIVrp1v95XGbHm1w
+         JRWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758544181; x=1759148981;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+kkGbbFXja5HoNsE8aPiHdoJDOGmZAghS1T8bfUgIDo=;
+        b=V1cjuZTT1KpoQeExgodTPxg3bMksaLNSrBxDR0MN/Bf6qKeFw3IlRjkE/aM5KCenvh
+         fJiJAXC7VyM22SdQ3qrOwa0pZMAMWExWJFbkujSsFuEJU4C12Q0kEZVfb169qHgW3cCc
+         OorEyQGZepjQtb1vjjpqJz/F1Lc27LNTXdglPlehch29wkMOaRGSQQvTO/laakQiUY06
+         Qns2d5/ocNAeCo8dAJOWqOrvOrV9OrrObOfCLauL9fE0CMO4YxUpO35lMjYlTG316x3s
+         AQB/5dBZP8uHDGJ8Y3DNvohnZPbk+GRFfTUDAq6U+ta0hQkHttJBZUJ3DMg9NYx4eoXb
+         CGUA==
+X-Gm-Message-State: AOJu0YzVHrwN0PIuOi95GpmeKJzS/RmGWWGxaRFzj3GXRUKda6PyupmJ
+	5/NUyS90sUgN9PLRL+SROByLBgBHVBTwUnb8trjIQdRAbOPmjMAHDK2msQ+ZmeQcVnGY1hE96cb
+	dLsVCPC4xdPVXuSZ1ztENVqleMnO8R7ypTw==
+X-Gm-Gg: ASbGnct3fVP+KlkkNmQoCg3dctduJkB13WOTR8xvCZbCM1tsBMNdoJZ6HbXujZ7mqso
+	Hc+jes3p3zS6z1lkdL+mYGiLgaMncbgNDXbg7BYTkqOGTBI09cLBPzXx0uQxq+hDKl5Y2yPlCsH
+	A91AM7mCyIjm7uvBR5G8TKudsuTVyeWHo7fuSsEILYjkOqTLrniv05YMEMhPAqVzpb30v4eQs3o
+	BNeOF4+9x22AoPIoQ==
+X-Google-Smtp-Source: AGHT+IGy5aeH7qgy9czqZ5/M905p2u1onS9dkeMikoIA8DbBlGZQierb85A/08SjKDghYR8IuXnI3vEtS7pZDZpl6ps=
+X-Received: by 2002:a17:90b:1d8a:b0:32e:6858:b503 with SMTP id
+ 98e67ed59e1d1-3309836b19amr16205104a91.29.1758544181522; Mon, 22 Sep 2025
+ 05:29:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <697be899-8501-405f-b4f6-eff306ae05e8@huaweicloud.com>
+References: <CAEjxPJ5JFqSMGSg5KEYd40JhLkgUo6g0uykDkXdKW3q5F1JtjQ@mail.gmail.com>
+ <20250920075018.631959-1-zhanghongru@xiaomi.com>
+In-Reply-To: <20250920075018.631959-1-zhanghongru@xiaomi.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Mon, 22 Sep 2025 08:29:30 -0400
+X-Gm-Features: AS18NWAxU6UFV7vm6gn38Vy_4Hwhdd_fzc_Vx7jcwj1EFPNG5vr21PNixBQM4Tc
+Message-ID: <CAEjxPJ41d8WcEh8QYp9E63+tCO2ukE5UWvCJ-hoXgN_Sx=P_-Q@mail.gmail.com>
+Subject: Re: [PATCH] selinux: Make avc cache slot size configurable during boot
+To: Hongru Zhang <zhanghongru06@gmail.com>
+Cc: linux-kernel@vger.kernel.org, omosnace@redhat.com, paul@paul-moore.com, 
+	selinux@vger.kernel.org, zhanghongru@xiaomi.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2025 at 08:14:50PM +0800, Tengda Wu wrote:
-> Running 'echo t > /proc/sysrq-trigger' will trigger this type of asynchronous
-> stack walk, as demonstrated in the use case provided below.
+On Sat, Sep 20, 2025 at 3:50=E2=80=AFAM Hongru Zhang <zhanghongru06@gmail.c=
+om> wrote:
+>
+> > > Implementation of Muladd:
+> > > static inline u32 avc_hash(u32 ssid, u32 tsid, u16 tclass)
+> > > {
+> > >         return (ssid * 0x9E3779B9 + tsid * 0x85EBCA77 + tclass * 0xC2=
+B2AE35) & (avc_cache_slots - 1);
+> > > }
+> >
+> > Can you cite the source of this hash function? Is it public domain or
+> > otherwise GPLv2-compatible?
+>
+> Based on my input, the AI proposed this algorithm and provided an explana=
+tion
+> for why it fits. The AI also stated that using these constants does not c=
+ause
+> GPLv2 license compatibility issues. If needed, I'll check with the compan=
+y's
+> legal department.
+>
+> Hash constant explaination:
+> * 0x9E3779B9 (2654435769)
+>         * Origin: Golden ratio phi =3D (square(5) - 1) / 2 ~=3D 0.6180339=
+887...
+>         * Calculation: 2^32 * phi ~=3D 2654435769 =3D 0x9E3779B9
+>         * Properties:
+>                 * This is the classic constant for Knuth's multiplicative=
+ hashing
+>                 * Excellent bit diffusion characteristics
+>                 * Coprime with powers of 2, ensuring uniform distribution
+> * 0x85EBCA77 (2246822519)
+>         * Origin: Popular quality constant used in modern hash algorithms=
+ like MurmurHash
+>         * Properties:
+>                 * Contains good alternating patterns of 1s and 0s in bina=
+ry representation
+>                 * Shows excellent difference from other constants in bitw=
+ise perspective
+>                 * Tested and verified for superior avalanche effect
+> * 0xC2B2AE35 (3266489917)
+>         * Origin: Also from modern hash algorithms (e.g., MurmurHash3)
+>         * Properties:
+>                 * Large prime-like properties
+>                 * Complex distribution of 1s in binary representation
+>                 * Complementary to the first two constants
+>
+> Advantages of this design:
+> * Minimized collisions: Different inputs won't produce similar contributi=
+ons
+> * Bit diffusion: Each constant effectively scrambles input bits
+> * Mathematical guarantee: These constants are theoretically analyzed and =
+empirically validated
+> * Complementarity: Three constants complement each other at the binary le=
+vel
 
-So lead with that please.
-
-> >> [332706.552324] BUG: KASAN: out-of-bounds in __show_regs+0x4b/0x340
-> >> [332706.552433] Read of size 8 at addr ffff88d24999fb20 by task sysrq_t_test.sh/3977032
-> >> [332706.552562]
-> >> [332706.552652] CPU: 36 PID: 3977032 Comm: sysrq_t_test.sh Kdump: loaded Not tainted 6.6.0+ #20
-						^^^^^^^^^^^^^^
-
-This doesn't help - it is some random script. Trigger this with the echo 't'
-... thing.
-
-> However, the main challenge with stopping the task first is that it fundamentally
-> alters the state we're trying to inspect. The primary use case for an asynchronous
-> stack walk is to diagnose a task that is already misbehaving (e.g., spinning in a
-> hard lockup, not responding to stops). If we need to stop a task to get its stack,
-> we might not be able to stop it at all, or the act of stopping it could change the
-> call stack, hiding the root cause of the issue.
-> 
-> This is why my implementation selectively disables KASAN precisely for the async
-> walk scenario.
-
-Add this to the commit message too. You need to explain it in such a way so
-that someone can use your instructions and reproduce it herself, without
-asking more questions. IOW, it needs to be perfectly clear what the issue is
-and what this is fixing.
-
-Also, you don't have to rush your next version - we have a merge window coming
-up so this'll wait for the next round.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Given that the constants are from well known, public sources (which
+you should document in the patch description and possibly as comments
+in the code) and the combining function is trivial, I assume this is
+fine to use, but at the end of the day, it is Paul's call. I would
+recommend #define's for each constant with its source noted as a
+comment.
 
