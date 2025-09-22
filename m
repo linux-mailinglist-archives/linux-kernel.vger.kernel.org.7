@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-827000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E290B8FDB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:54:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4A81B8FDC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21E7518A2138
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C243418A225B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D192FB96C;
-	Mon, 22 Sep 2025 09:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCC22FE56E;
+	Mon, 22 Sep 2025 09:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="PdI4FtyC"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Kl0i8cm4"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AF42EE27D
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CDD2FB98A
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758534857; cv=none; b=UqCMXeqGbnlVpQT2fNszKTf4u+p7wMCSXr9LfnBeQO1aSeAfI8y/03hPGOanxG04VVyVuHbUgzmZLC6bICKEizeufiAbk5GDItXFiG/kPkTXRK7zInUYEaJsxqCwnWbVszo26HelgME9vb+AzKbGqzVA5VZJEFIEtL8bnGSCDZw=
+	t=1758534860; cv=none; b=I/JwoQ3JSh9MFyTDgyPKpDCMVPpmXvLQvtYgfDf4OJ6LB1hkOsug/j5phkhKEfQaKOrP0GMZLIX6tuaE3h65gLs2CycMTchz0bFLT7gf5BKh+FMmK5TV4K0QQ0iaWqiJdM/Q6js0cX8B3S7mSRDbg1o1RsLiqXeFHkJKiuwEFpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758534857; c=relaxed/simple;
-	bh=aUR3ryu98yvbN2Nls9weWrK7nyd+VGsj3kYhVd11++M=;
+	s=arc-20240116; t=1758534860; c=relaxed/simple;
+	bh=hpTElvONWN7x1N39i9IekHWxIKuXTqEFxseyIF0jX/0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=B2c734r88ykGN915APialuNGh2UEFSj5+XY+ZKykt3vJAkFY7s2oT+D3Ma4QoOOTceYVWoVqVcNfcgeoASbuLjLO0JXcuAVGFksDThd7/pPYlYo15IgqW/SXAk4zHId48HSKZjbSSsgylQReYOfIPBIKAxlpFtHUg8GxZLW8VaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=PdI4FtyC; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:To:Cc; b=dhSGdm7sig5iN0i4gR6NY7YMIZJvOcbOxdOHGWJSM05mVbyRCB7pV9H5U6+JbSM6wApmQDCoFAecKRFVc/MJVLNZ9/RPZmOUIuqe0/UCdXKErFLv7vTGJLlsI4qrQqGXspylA7bSGKJ4VUFPZe88FS7rnbXlqPCsuh1Pbv+7Myw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Kl0i8cm4; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46c889b310dso10955965e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:54:14 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46cb53c5900so11799455e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:54:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758534853; x=1759139653; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758534856; x=1759139656; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ago4AKKlVfbpDEKiW0UPe8e/tjpmgCVJcEoHQkKgzL4=;
-        b=PdI4FtyCZ5A9DAeTVhgx+SdOMpaZLwF/kiowZa3PTYR/GVhARd9wGcVEzSI6rr42vN
-         PjkSiUE74ejlUtuIHxSRyp4gAt94c2DcrGLYvdS29o/n1ZVUSPywOsS+ekqXRk/Ya3vj
-         /CTUTZsx396UNq1NVCWVFUEXasZI+LL+iCmfyAEOqfc8nCMpfr6E+GXaOpvQ2dmRvwvu
-         UuQO5fJWoOIWJcsp8OzGVqiUQ4/1mFRfUWrdEXFL3Eiv/MF3TzgVzIMbHy7abiJNRbHx
-         tFOUp8tzp8aCA3HZCUsGB+Vbnh9MrrZPOfcEhU7MZNeKgVZ37U5HFtI7x07kTImg2B53
-         mnCw==
+        bh=QlPqTMOSQ2GWJ7JUOlfTZtSKhKxw8yffbKrhlZX/QZU=;
+        b=Kl0i8cm4n+nGubWQ4T9k8IyICD0yocTsd2M1MWuH/CN1Vu0RqiwUPbmOh6ttvwN1CF
+         hjJDYTjbUlQfY1JGMDGn5AtFdIeZbchsumUTwtSLnfEqkB9vPXxBQQLjgTP+oQizqDwU
+         KfYAIGNHxO66gilDq9fP9Oy6i0vBeaAt+nrDBTu2xgoW7yqh+BDMKewEyCHKQYPazwXV
+         r58Gj7SrIe8EmnPHoVFr2E8/zgm+xolTeAw8nkZ7R67ExSMzfe1a+NKKFeKGDMdmWwY+
+         cUl4594EdeOKh+ArXgfd8Pz5zoQP3+M2NXb6oclCZfetz1dG8EPY0KaVhb/7OYaQrSpv
+         YFZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758534853; x=1759139653;
+        d=1e100.net; s=20230601; t=1758534856; x=1759139656;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ago4AKKlVfbpDEKiW0UPe8e/tjpmgCVJcEoHQkKgzL4=;
-        b=dn20txep/AhRs/UQCi0xcd92fd5WIrAnE24UzLoRYjBa4r8BLqIQZxtu+g2l+kSWbh
-         DvgzVggZj2lFsuWWaFflSnFAl4/RWfkPw/ohRuPzx5GKwFjoXNOrxPzpnwonR4dm1CdW
-         A6StVm388/4BiCLGthrfL8WW90emO7rHG1Y5fRSFb1ku4kp0icit7lcIKafig/KsjbmC
-         zF8r4Ljs+9AYdGHVhdhRVvhnOWmAu6RoCFLJdacFbXB9ca0lqgcMDXpkp/tvexi2Re0P
-         n1pWJYwV2NR+NY7Iqh0+eZEC/5lp+mhtUoKCJV/rU1G2DkP+80mO6pbVV9hj+U9XWchJ
-         F9ig==
-X-Forwarded-Encrypted: i=1; AJvYcCU9h9dOntleHce87/twEy1XwpHbk9u7cfKBIJQGbjNNTYHua1YghDB3D5Y48a2t0Di9wmE002o6R0Gi5JQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlbLQ3QwBSP/d5fqStVShtffzOZBy2YLEAPqebN4W5xrRaG/we
-	Y9B81u9YIHwinwH+U0qnyNhIeftQERRrpb9x9tvhaN+8BmX5OmrTtEDcfxWmNYNUfhg=
-X-Gm-Gg: ASbGncs0dzJUdwTEkdj699Zpjk9wBIczs96HwaY1ATCPjvdKdcYd2cvRVOxtN4uhEtn
-	tnIJHNVNkzBJt9xxmAdnReifAIrghOJW6ONCfW0eu8eVPvXnDteQBEqnv3rXHVri82Qo2I+F6Jb
-	ChfTGxyzox5JKONv3Gq3eIiaENKUHX2eJV7nh4cPVF/rOMeKFOH9wAJMGdIOb1bFyu1tCx82ab7
-	Jjru26QeM1G7kFUdWEnmnzB1hd+o+rB1RiIjyXkLDsP573dNsr2UGg87ffToeX+wWsCfu8GSPUB
-	J27debQp0hpKdc4j6tgaGk/LI3McHbyZjLF/cfeP8zZ8dVInogH9GcWoT/bwh3V6F1FycmgxYBB
-	YYADCPIbwmtG3IU+G
-X-Google-Smtp-Source: AGHT+IGh3+4GY7BhbXRdxHNtvWi9t58yhCV6fj1ZeJ2EY/lY+Lj/8g1ZLXUfA7F4qSMXbmVDAFnAzA==
-X-Received: by 2002:a05:600c:4ec9:b0:46e:1a60:c995 with SMTP id 5b1f17b1804b1-46e1a60cb3amr6850765e9.2.1758534852930;
-        Mon, 22 Sep 2025 02:54:12 -0700 (PDT)
+        bh=QlPqTMOSQ2GWJ7JUOlfTZtSKhKxw8yffbKrhlZX/QZU=;
+        b=ilZ7JncKIM6K8RoHtp+mT6FxQMUscEaDBch5RG2wqKxAw7q/zpfNGKSuLKGqXEdhEP
+         by27rOH0+pQqnFLHE0WZ7EAAC1K8+5Jm6vHHc2UNy91K0dSTwp0s1hypg2FAZUQwIT6K
+         dioiNAZ/2uooyRM2TGivKmEDw54ASKeW7fv42XC0WwNVNgJSGK7PVuAlF+/apxEZWigl
+         iuqlt+vdzHUJU+JrMm4fNvU22IPU4g1UFf+GtBfPx00jTTpNErucUDc+BM/kG4Ky79UB
+         6Q42D/cE7KiCCvcjn9ja28cz/y6EkXVe8PgEQOJ7Low+DWP+WorjjfhnLN+BY48usOPg
+         Zx0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVnp9hf9VHxO1Ap4h3LaFz6iyhrCUfB8YOEWnMm8I58PX22RVdSj/maLCIgza3ICxYiy0DdTGltx/WWjnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7k4IWpgfo4CuBRH5qHCQWt2Phram2uw1D9JH92+UhijHe9/ho
+	7Aj5zsgT0Aftkf/7b26iAHqRB6GRZymqmmVBjBRUiDz+0WKpdf3xdFN4YcXhx4he8Gs=
+X-Gm-Gg: ASbGncuNALcE6wZ2cVBwgQ4TeWjAqfD4WEflK1P+WLehHAlwnI33PFEVv6hYjXZwDOB
+	gsf0CvRD5S40WiPevkX/Pz1/eDeSDfgOiyNw9jcjWwVAusjQUej0jixd6djZ5H5n3bUqEOM6T4p
+	WMBvygnbhFjA3aG8wBRnK335vn8hVX2e8PY8zsKK74bwAeVLFgWE+YGZj3ACAgeM/0xMS3f5r/O
+	qXoqZvfJf5khu6zyVLxUzwIv1ugmwO+0UGzUsQB2p0f0UcWtoKUCx/GmAUqqztVVwip6JhY1cL+
+	LcnfxetLkuMap0EBej0sfeQYKuDzv7+MV0nCBvxxy++6qoQqpNYwGkFmDx24Ta8XEq0JMesCZST
+	gZgUNWqqvNIW9uMJA
+X-Google-Smtp-Source: AGHT+IGMBSQTf6yO9n9dXfnglqDrXxdQVaaRqfuRiSAJi+cLQHzxBSjg8HqWLQMIdo3sszJUNkJO7A==
+X-Received: by 2002:a05:600c:5248:b0:46d:3576:2895 with SMTP id 5b1f17b1804b1-46d35762b25mr29467745e9.24.1758534856262;
+        Mon, 22 Sep 2025 02:54:16 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:824c:ead0:65a5:c51])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-467fc818e00sm156496835e9.0.2025.09.22.02.54.11
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-467fc818e00sm156496835e9.0.2025.09.22.02.54.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 02:54:11 -0700 (PDT)
+        Mon, 22 Sep 2025 02:54:13 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 22 Sep 2025 11:54:02 +0200
-Subject: [PATCH 1/4] gpiolib: remove unnecessary 'out of memory' messages
+Date: Mon, 22 Sep 2025 11:54:03 +0200
+Subject: [PATCH 2/4] gpiolib: rename GPIO chip printk macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250922-gpio-debug-macros-v1-1-d99739dff711@linaro.org>
+Message-Id: <20250922-gpio-debug-macros-v1-2-d99739dff711@linaro.org>
 References: <20250922-gpio-debug-macros-v1-0-d99739dff711@linaro.org>
 In-Reply-To: <20250922-gpio-debug-macros-v1-0-d99739dff711@linaro.org>
 To: Bartosz Golaszewski <brgl@bgdev.pl>, 
@@ -91,62 +91,317 @@ To: Bartosz Golaszewski <brgl@bgdev.pl>,
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1197;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11065;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=470wYlbXCkRiYNRraDrehXz5hNEeC4YDOrpA6VC+LVI=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo0RzBFF3Yf8N4TNzjAoMiMcdWI3dxJXCIyMLyl
- ziF/tqwlceJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaNEcwQAKCRARpy6gFHHX
- cmOoD/wJF9VkxmGXKrAQrpAGdKrHwUEJvosyOhLKo94EUfTzoBFOJd601fAnI1XOmaPFWoKP12H
- ucXdb2eVM4z32Y4PcLV19lOmrsOZsQD6A9BK0Ol5rlsl96Ox70evEHPBxZ2+nkqvzjTjrxlfSeO
- EyfHJQ4QVvU/LhboIMKsK0TR4qSQNCnp6jlKhmU5uNbmkOatYC9Y+gmrVekGxqJCG9ah38am/pQ
- 6LZdSvpeyT36A095VvzGH+L52zSMkhtlRcfqLWrSo96kSFR7ZD2t/Hv/icr4yic2COjidw3wbC7
- us+B3m5l0Ov9IjIQC7fLsJlT97p2luzAH+BE3bhRPPGLgyqynTpiHak6dM/umrWoSRVvtQ7BG2U
- k3PcZoout5Wg8lCJDV5sDixWuBJTxNff3cDVTLpzTraHDUW2iiy9mRvHdRXvoroniY/8LS8mZUT
- lgTS4Fg4EzZEmwOt5fNccDoL0VOzGMTtMr2k9dwfAbyyRCgW+IPzXqZEaPOx2TAd6BjIDMXVyV4
- ingDCUngOfPPixtb0iLgZUvi64jClk4DaFJ8ZZ5g6Q015wp0MQzIyvKY63UP/c/HVVTirnWjrWt
- +j+WzhWmstJ3R0IQUiGPx3p5IOpSymmeGcJ9QHGIZwQlFgzLh2w9lQR2luJGXTPcPxX5nQ0JpU7
- fxa1H9aGFAOYWyA==
+ bh=ThGiG3a81yVXSYBI/CFfvTpmsLi/CuglWfNyPf5q87M=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo0RzBBQoVZQDgw825/pEBE0TnbeDLB9npZOK9s
+ xvxw2VFkKSJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaNEcwQAKCRARpy6gFHHX
+ chKzD/sE+F0yOHeMKpTbBEzlfAN3q4vDtMyi++IN5Q1M1cZ7DcNgaeGO9Tv3mgIXtWXBva7t9ck
+ Cx6JogbU3yc0VZxs+vY9QNZlQWv4hkBPyOfeJWkyl9Wu2pvAjMmvVC6kXyDZ10BqLCQ+oPKBofb
+ m1FUtyQENkJ+QdwEh749YNE4989YYWizeqvioa1Jw9NwY2kcyMOZFES5iQz5DRuz2ugL37uCSdr
+ Hx+urdrPkcLZ7Y78G0rDd0Eq5tx5mk4wKmL7AVi2F4WzfqoMezBThYcoviA4EoKYjbiPjMZFQER
+ q/cumNau5AKGUVhY0vUxkrRPsjouoKQcWiTh5Mfp7D6KGFBavZCgCWxIVIT8qxWIhFuJUwcwmcn
+ Ad/eXPpxD5pWUb0eHYb24Np2k8pq3B+VoP+byobFM09mkrMKfqoBosMEnH5A2bzAsV4uOfQE0g3
+ tQRwaJIm6SMwn9iTLGoy1PG2EDaq7Apw9m6z3n1xSH4+PVPgTaDVZvE14OpOrNFyzKqyGsidYmf
+ 2zQQO1YQ1EpSQk/iUtH1pEq46TGHPhnfk+jLAmPsVqpspvNLnt6AkQQRH2WwQevoo6X74rs90K5
+ D5TIcZWQ6B28YFQ1YBFMawV+wuYq/TUZM38QrGlt9Xt2D7onTNs0TJCPfp0Dy/XqLLiLHnkKYOj
+ NLf+DEHiL+z7x0w==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-We don't need to add additional logs when returning -ENOMEM so remove
-unnecessary error messages.
+The chip_$level() macros take struct gpio_chip as argument so make it
+follow the convention of using the 'gpiochip_' prefix.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/gpiolib.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/gpio/gpiolib-cdev.c  |  2 +-
+ drivers/gpio/gpiolib-sysfs.c |  2 +-
+ drivers/gpio/gpiolib.c       | 80 +++++++++++++++++++++-----------------------
+ drivers/gpio/gpiolib.h       |  8 ++---
+ 4 files changed, 45 insertions(+), 47 deletions(-)
 
+diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+index 175836467f216ae372a2cb6e2cd68c7867534938..ddc452b5ee23a2be99fc2798cd1d55403a625099 100644
+--- a/drivers/gpio/gpiolib-cdev.c
++++ b/drivers/gpio/gpiolib-cdev.c
+@@ -2823,7 +2823,7 @@ int gpiolib_cdev_register(struct gpio_device *gdev, dev_t devt)
+ 	if (!gc)
+ 		return -ENODEV;
+ 
+-	chip_dbg(gc, "added GPIO chardev (%d:%d)\n", MAJOR(devt), gdev->id);
++	gpiochip_dbg(gc, "added GPIO chardev (%d:%d)\n", MAJOR(devt), gdev->id);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+index 9a849245b35880b66afeb042a8bb25520279e9a7..7d5fc1ea2aa54fce0c7c884b53d16ad1278c4612 100644
+--- a/drivers/gpio/gpiolib-sysfs.c
++++ b/drivers/gpio/gpiolib-sysfs.c
+@@ -1091,7 +1091,7 @@ static int gpiofind_sysfs_register(struct gpio_chip *gc, const void *data)
+ 
+ 	ret = gpiochip_sysfs_register(gdev);
+ 	if (ret)
+-		chip_err(gc, "failed to register the sysfs entry: %d\n", ret);
++		gpiochip_err(gc, "failed to register the sysfs entry: %d\n", ret);
+ 
+ 	return 0;
+ }
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 01bdf8fad7cff6c507e79b8880e9335d7ee53173..0bc2363e71a488a9c21b3da59821e04bc08be69d 100644
+index 0bc2363e71a488a9c21b3da59821e04bc08be69d..cf461c1d878b7bd158e33dd6aee7e42f77bbac37 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -2316,10 +2316,8 @@ int gpiochip_add_pingroup_range(struct gpio_chip *gc,
+@@ -921,8 +921,8 @@ static void gpiochip_machine_hog(struct gpio_chip *gc, struct gpiod_hog *hog)
+ 
+ 	desc = gpiochip_get_desc(gc, hog->chip_hwnum);
+ 	if (IS_ERR(desc)) {
+-		chip_err(gc, "%s: unable to get GPIO desc: %ld\n", __func__,
+-			 PTR_ERR(desc));
++		gpiochip_err(gc, "%s: unable to get GPIO desc: %ld\n",
++			     __func__, PTR_ERR(desc));
+ 		return;
+ 	}
+ 
+@@ -1124,7 +1124,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 
+ 		ret = gpiodev_add_to_list_unlocked(gdev);
+ 		if (ret) {
+-			chip_err(gc, "GPIO integer space overlap, cannot add chip\n");
++			gpiochip_err(gc, "GPIO integer space overlap, cannot add chip\n");
+ 			goto err_free_label;
+ 		}
+ 	}
+@@ -1528,8 +1528,7 @@ static void gpiochip_set_hierarchical_irqchip(struct gpio_chip *gc,
+ 							  &parent_hwirq,
+ 							  &parent_type);
+ 			if (ret) {
+-				chip_err(gc, "skip set-up on hwirq %d\n",
+-					 i);
++				gpiochip_err(gc, "skip set-up on hwirq %d\n", i);
+ 				continue;
+ 			}
+ 
+@@ -1542,15 +1541,14 @@ static void gpiochip_set_hierarchical_irqchip(struct gpio_chip *gc,
+ 			ret = irq_domain_alloc_irqs(gc->irq.domain, 1,
+ 						    NUMA_NO_NODE, &fwspec);
+ 			if (ret < 0) {
+-				chip_err(gc,
+-					 "can not allocate irq for GPIO line %d parent hwirq %d in hierarchy domain: %d\n",
+-					 i, parent_hwirq,
+-					 ret);
++				gpiochip_err(gc,
++					     "can not allocate irq for GPIO line %d parent hwirq %d in hierarchy domain: %d\n",
++					     i, parent_hwirq, ret);
+ 			}
+ 		}
+ 	}
+ 
+-	chip_err(gc, "%s unknown fwnode type proceed anyway\n", __func__);
++	gpiochip_err(gc, "%s unknown fwnode type proceed anyway\n", __func__);
+ 
+ 	return;
+ }
+@@ -1602,15 +1600,15 @@ static int gpiochip_hierarchy_irq_domain_alloc(struct irq_domain *d,
+ 	if (ret)
+ 		return ret;
+ 
+-	chip_dbg(gc, "allocate IRQ %d, hwirq %lu\n", irq, hwirq);
++	gpiochip_dbg(gc, "allocate IRQ %d, hwirq %lu\n", irq, hwirq);
+ 
+ 	ret = girq->child_to_parent_hwirq(gc, hwirq, type,
+ 					  &parent_hwirq, &parent_type);
+ 	if (ret) {
+-		chip_err(gc, "can't look up hwirq %lu\n", hwirq);
++		gpiochip_err(gc, "can't look up hwirq %lu\n", hwirq);
+ 		return ret;
+ 	}
+-	chip_dbg(gc, "found parent hwirq %u\n", parent_hwirq);
++	gpiochip_dbg(gc, "found parent hwirq %u\n", parent_hwirq);
+ 
+ 	/*
+ 	 * We set handle_bad_irq because the .set_type() should
+@@ -1631,8 +1629,8 @@ static int gpiochip_hierarchy_irq_domain_alloc(struct irq_domain *d,
+ 	if (ret)
+ 		return ret;
+ 
+-	chip_dbg(gc, "alloc_irqs_parent for %d parent hwirq %d\n",
+-		  irq, parent_hwirq);
++	gpiochip_dbg(gc, "alloc_irqs_parent for %d parent hwirq %d\n",
++		     irq, parent_hwirq);
+ 	irq_set_lockdep_class(irq, gc->irq.lock_key, gc->irq.request_key);
+ 	ret = irq_domain_alloc_irqs_parent(d, irq, 1, &gpio_parent_fwspec);
+ 	/*
+@@ -1642,9 +1640,9 @@ static int gpiochip_hierarchy_irq_domain_alloc(struct irq_domain *d,
+ 	if (irq_domain_is_msi(d->parent) && (ret == -EEXIST))
+ 		ret = 0;
+ 	if (ret)
+-		chip_err(gc,
+-			 "failed to allocate parent hwirq %d for hwirq %lu\n",
+-			 parent_hwirq, hwirq);
++		gpiochip_err(gc,
++			     "failed to allocate parent hwirq %d for hwirq %lu\n",
++			     parent_hwirq, hwirq);
+ 
+ 	return ret;
+ }
+@@ -1720,7 +1718,7 @@ static struct irq_domain *gpiochip_hierarchy_create_domain(struct gpio_chip *gc)
+ 
+ 	if (!gc->irq.child_to_parent_hwirq ||
+ 	    !gc->irq.fwnode) {
+-		chip_err(gc, "missing irqdomain vital data\n");
++		gpiochip_err(gc, "missing irqdomain vital data\n");
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+@@ -1993,7 +1991,7 @@ static void gpiochip_set_irq_hooks(struct gpio_chip *gc)
+ 	if (irqchip->flags & IRQCHIP_IMMUTABLE)
+ 		return;
+ 
+-	chip_warn(gc, "not an immutable chip, please consider fixing it!\n");
++	gpiochip_warn(gc, "not an immutable chip, please consider fixing it!\n");
+ 
+ 	if (!irqchip->irq_request_resources &&
+ 	    !irqchip->irq_release_resources) {
+@@ -2009,8 +2007,8 @@ static void gpiochip_set_irq_hooks(struct gpio_chip *gc)
+ 		 * ...and if so, give a gentle warning that this is bad
+ 		 * practice.
+ 		 */
+-		chip_info(gc,
+-			  "detected irqchip that is shared with multiple gpiochips: please fix the driver.\n");
++		gpiochip_info(gc,
++			      "detected irqchip that is shared with multiple gpiochips: please fix the driver.\n");
+ 		return;
+ 	}
+ 
+@@ -2039,7 +2037,8 @@ static int gpiochip_irqchip_add_allocated_domain(struct gpio_chip *gc,
+ 		return -EINVAL;
+ 
+ 	if (gc->to_irq)
+-		chip_warn(gc, "to_irq is redefined in %s and you shouldn't rely on it\n", __func__);
++		gpiochip_warn(gc, "to_irq is redefined in %s and you shouldn't rely on it\n",
++			      __func__);
+ 
+ 	gc->to_irq = gpiochip_to_irq;
+ 	gc->irq.domain = domain;
+@@ -2080,7 +2079,7 @@ static int gpiochip_add_irqchip(struct gpio_chip *gc,
+ 		return 0;
+ 
+ 	if (gc->irq.parent_handler && gc->can_sleep) {
+-		chip_err(gc, "you cannot have chained interrupts on a chip that may sleep\n");
++		gpiochip_err(gc, "you cannot have chained interrupts on a chip that may sleep\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -2336,7 +2335,7 @@ int gpiochip_add_pingroup_range(struct gpio_chip *gc,
+ 
+ 	pinctrl_add_gpio_range(pctldev, &pin_range->range);
+ 
+-	chip_dbg(gc, "created GPIO range %d->%d ==> %s PINGRP %s\n",
++	gpiochip_dbg(gc, "created GPIO range %d->%d ==> %s PINGRP %s\n",
+ 		 gpio_offset, gpio_offset + pin_range->range.npins - 1,
+ 		 pinctrl_dev_get_devname(pctldev), pin_group);
+ 
+@@ -2392,19 +2391,18 @@ int gpiochip_add_pin_range_with_pins(struct gpio_chip *gc,
+ 			&pin_range->range);
+ 	if (IS_ERR(pin_range->pctldev)) {
+ 		ret = PTR_ERR(pin_range->pctldev);
+-		chip_err(gc, "could not create pin range\n");
++		gpiochip_err(gc, "could not create pin range\n");
+ 		kfree(pin_range);
+ 		return ret;
+ 	}
+ 	if (pin_range->range.pins)
+-		chip_dbg(gc, "created GPIO range %d->%d ==> %s %d sparse PIN range { %d, ... }",
+-			 gpio_offset, gpio_offset + npins - 1,
+-			 pinctl_name, npins, pins[0]);
++		gpiochip_dbg(gc, "created GPIO range %d->%d ==> %s %d sparse PIN range { %d, ... }",
++			     gpio_offset, gpio_offset + npins - 1,
++			     pinctl_name, npins, pins[0]);
+ 	else
+-		chip_dbg(gc, "created GPIO range %d->%d ==> %s PIN %d->%d\n",
+-			 gpio_offset, gpio_offset + npins - 1,
+-			 pinctl_name,
+-			 pin_offset, pin_offset + npins - 1);
++		gpiochip_dbg(gc, "created GPIO range %d->%d ==> %s PIN %d->%d\n",
++			     gpio_offset, gpio_offset + npins - 1, pinctl_name,
++			     pin_offset, pin_offset + npins - 1);
+ 
+ 	list_add_tail(&pin_range->node, &gdev->pin_ranges);
+ 
+@@ -2614,7 +2612,7 @@ struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *gc,
  	int ret;
  
- 	pin_range = kzalloc(sizeof(*pin_range), GFP_KERNEL);
--	if (!pin_range) {
--		chip_err(gc, "failed to allocate pin ranges\n");
-+	if (!pin_range)
- 		return -ENOMEM;
--	}
+ 	if (IS_ERR(desc)) {
+-		chip_err(gc, "failed to get GPIO %s descriptor\n", name);
++		gpiochip_err(gc, "failed to get GPIO %s descriptor\n", name);
+ 		return desc;
+ 	}
  
- 	/* Use local offset as range ID */
- 	pin_range->range.id = gpio_offset;
-@@ -2379,10 +2377,8 @@ int gpiochip_add_pin_range_with_pins(struct gpio_chip *gc,
- 	int ret;
+@@ -2625,7 +2623,7 @@ struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *gc,
+ 	ret = gpiod_configure_flags(desc, label, lflags, dflags);
+ 	if (ret) {
+ 		gpiod_free_commit(desc);
+-		chip_err(gc, "setup of own GPIO %s failed\n", name);
++		gpiochip_err(gc, "setup of own GPIO %s failed\n", name);
+ 		return ERR_PTR(ret);
+ 	}
  
- 	pin_range = kzalloc(sizeof(*pin_range), GFP_KERNEL);
--	if (!pin_range) {
--		chip_err(gc, "failed to allocate pin ranges\n");
-+	if (!pin_range)
- 		return -ENOMEM;
--	}
+@@ -4052,8 +4050,8 @@ int gpiochip_lock_as_irq(struct gpio_chip *gc, unsigned int offset)
+ 		int dir = gpiod_get_direction(desc);
  
- 	/* Use local offset as range ID */
- 	pin_range->range.id = gpio_offset;
+ 		if (dir < 0) {
+-			chip_err(gc, "%s: cannot get GPIO direction\n",
+-				 __func__);
++			gpiochip_err(gc, "%s: cannot get GPIO direction\n",
++				     __func__);
+ 			return dir;
+ 		}
+ 	}
+@@ -4061,9 +4059,9 @@ int gpiochip_lock_as_irq(struct gpio_chip *gc, unsigned int offset)
+ 	/* To be valid for IRQ the line needs to be input or open drain */
+ 	if (test_bit(GPIOD_FLAG_IS_OUT, &desc->flags) &&
+ 	    !test_bit(GPIOD_FLAG_OPEN_DRAIN, &desc->flags)) {
+-		chip_err(gc,
+-			 "%s: tried to flag a GPIO set as output for IRQ\n",
+-			 __func__);
++		gpiochip_err(gc,
++			     "%s: tried to flag a GPIO set as output for IRQ\n",
++			     __func__);
+ 		return -EIO;
+ 	}
+ 
+@@ -4140,7 +4138,7 @@ int gpiochip_reqres_irq(struct gpio_chip *gc, unsigned int offset)
+ 
+ 	ret = gpiochip_lock_as_irq(gc, offset);
+ 	if (ret) {
+-		chip_err(gc, "unable to lock HW IRQ %u for IRQ\n", offset);
++		gpiochip_err(gc, "unable to lock HW IRQ %u for IRQ\n", offset);
+ 		module_put(gc->gpiodev->owner);
+ 		return ret;
+ 	}
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index 2a003a7311e7ac5beeaa1c947d921149ad991acf..6ee29d0222393dfff84608c79d21f4022cdd9cc1 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -309,13 +309,13 @@ do { \
+ 
+ /* With chip prefix */
+ 
+-#define chip_err(gc, fmt, ...)					\
++#define gpiochip_err(gc, fmt, ...) \
+ 	dev_err(&gc->gpiodev->dev, "(%s): " fmt, gc->label, ##__VA_ARGS__)
+-#define chip_warn(gc, fmt, ...)					\
++#define gpiochip_warn(gc, fmt, ...) \
+ 	dev_warn(&gc->gpiodev->dev, "(%s): " fmt, gc->label, ##__VA_ARGS__)
+-#define chip_info(gc, fmt, ...)					\
++#define gpiochip_info(gc, fmt, ...) \
+ 	dev_info(&gc->gpiodev->dev, "(%s): " fmt, gc->label, ##__VA_ARGS__)
+-#define chip_dbg(gc, fmt, ...)					\
++#define gpiochip_dbg(gc, fmt, ...) \
+ 	dev_dbg(&gc->gpiodev->dev, "(%s): " fmt, gc->label, ##__VA_ARGS__)
+ 
+ #endif /* GPIOLIB_H */
 
 -- 
 2.48.1
