@@ -1,158 +1,287 @@
-Return-Path: <linux-kernel+bounces-827665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48CBCB925A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:10:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED68B925B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECCC718934AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:10:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 476E51901B0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5654A3128DC;
-	Mon, 22 Sep 2025 17:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BC0313271;
+	Mon, 22 Sep 2025 17:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lrj9Z2fx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YT1O4Y/p"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B303C30CDA6
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297C73112BF;
+	Mon, 22 Sep 2025 17:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758561013; cv=none; b=ZhrgzoVlRHn49oRg+vMnvuKCZ8w9Jl0/oO8C53fEXQPaioKifKnQp8QTSS7qGdjSxii1CjOlIy6DsqpNhjO+OnEuf2rRpvlAdRAaL6IX79IFxIbRgXGAE5z1uR/i8agWPCqXzwMBCZgFOACTM1IeOaTJ99uIImPv7Wt6O4PubNI=
+	t=1758561099; cv=none; b=l6JOX86d5+WlZSS18ryEdKhZymUT0OgmFs38alTCoTWaVT7DrawuGnn2LDOATOfNwYO4pZMPh+yqETOed3ZCf7Do5uq3PfRtDcFEZXcV7f5zf9ydzuHinId1a7C1bI2K1JfIRyd2bzXvTkv/symKqQLI7PgeUwfrDY3kZUNWlf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758561013; c=relaxed/simple;
-	bh=LjfO8KQZ0pOYPVi6VN1I03sM/JgE4fiqagXrNbVWxZw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FweCIPxr0tfeDjgsSe+1gfokQUwvq3LR57MJjzQl1tJ5LwSy/1YBxBicm95h7E5Ybb53eGU01lLLodNccQh9WVOjSOu4WyL1MQQzrhHB2vXyfGTZ6tRxvM6BDjD5R/TIFKFf7x/dfB9FzJK+gKSD4S/Dw0LeS+OK3l1RStQwqo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lrj9Z2fx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D3AC4CEF0
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:10:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758561013;
-	bh=LjfO8KQZ0pOYPVi6VN1I03sM/JgE4fiqagXrNbVWxZw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Lrj9Z2fxus0EQD+OB8bJazR3ZDEcJSQZ18UQsQULqJ5Iq/2vZufMw5d4giGj7gNNa
-	 pN5PYjh+13AUKIwXi2iTfzlanD897Sw+SFtyZrYMLvg2VzDJVDpElUWHtXpr49HdFC
-	 MiRqsd8tPCaR8ldWVTFwqNPyLSwkvlErbo+t4SYAa+1WrlHlrbKd8hVbkR3rVRKQtM
-	 N4QS7Pd+JeKbhZYawQnaK+jGr2G18cAqnI/tRMUWeR2LncyOvSm7TkirwKqPFVo2ug
-	 zhFJr01QXTlmzN4mzXR5sHcjM+OnjjzaxKbYHituJStPbR+ud6HZp8MqMXf1k+1LTn
-	 +3TEuGJxT22Eg==
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7851b646dcfso1148654a34.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:10:13 -0700 (PDT)
-X-Gm-Message-State: AOJu0YxWq5grnJ9vc6DqVFe4SsjWHOyn/QMcd+IlBaCmCvKJDhSGPGkf
-	FOLHhLiQR/L1GmAcJ+QQtroscoH7NqEE7EqgpYtJh3Ztq6W0C34i+DTWewXWeD2Gb6rmcdbgTdy
-	w7fwGWwPHAdgYxPtfoB+aVfDZkW53mxg=
-X-Google-Smtp-Source: AGHT+IEQgrPHe32vZeMLsnLLopfoaTVSCbgyw3/FvnA92tK1XG9E0pwJSaFqOTcNR67lm0Y9z3GITnD3dGbnCFY+o04=
-X-Received: by 2002:a05:6830:611a:b0:756:a322:2f8 with SMTP id
- 46e09a7af769-76f6e58e005mr8523341a34.5.1758561012535; Mon, 22 Sep 2025
- 10:10:12 -0700 (PDT)
+	s=arc-20240116; t=1758561099; c=relaxed/simple;
+	bh=M+uzMYFznpcelmL6bFLZIlBwII0Rh3tn2rBrSHgYEPg=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=j/2TmQQlRfS+wuTyeXxBtoBY7/03lvyCQ9x3GaTmCK/lWBOIqjtXU4DKsGJdfL6UrNneWdcXS7CfmRhrzv3c+9PSEHtfHpsYmIH6x3JmGtxSkOjPG3kAnuRKVv/9IhSWIimFyNvWE5w1JYlDxDeyEpWOTV+VU/KZ1PD6htvXphE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YT1O4Y/p; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58MEBfJH019166;
+	Mon, 22 Sep 2025 17:11:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=uGUaih
+	jrnrBVDmg75B1XmTax7n/b2o5zTsts9ts6UDA=; b=YT1O4Y/pux9UsIjnAnk8p2
+	WFjOjAG0H7S2W1hcDzROFGp3hkDM0DcOHxqUE936BUw0iq3PpdfXCe3SYFRrcmwg
+	aWGUpaAGZcQ724CqhOCfnyDE3ZDLH6g+HXhZLH6sk57pZ0GtdwEGaG9LN/lyeR08
+	CCRRVqQfZR2AQ+dZ8zLIgjsC1BA9w4oz/D01HrEJgXPLlmNamVBFIbo+1siehLkd
+	YvZOb3AzKsrv14P5UK5FIi3o+UoVMkLDbUElwD3WhW3QMLALjyYk4BOl01Cu/HKO
+	AGl3pcN/hhN268uyaojY9eT1W2qRVM75sIivQPRwp8kR2/pRxNYaTgUp1iRCxoPg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499hpq46v5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Sep 2025 17:11:15 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58MHBF0m020602;
+	Mon, 22 Sep 2025 17:11:15 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499hpq46v3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Sep 2025 17:11:15 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58MFRRF4008777;
+	Mon, 22 Sep 2025 17:11:14 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49a6yxqc2y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Sep 2025 17:11:14 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58MHBD2927001494
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 22 Sep 2025 17:11:14 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CDA5558058;
+	Mon, 22 Sep 2025 17:11:13 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 25C1858057;
+	Mon, 22 Sep 2025 17:11:13 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.103.101])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 22 Sep 2025 17:11:13 +0000 (GMT)
+Message-ID: <9808ce35ea839c02aec4656bbbb9c01eaf1eb232.camel@linux.ibm.com>
+Subject: Re: [PATCH v3] ima: don't clear IMA_DIGSIG flag when setting or
+ removing non-IMA xattr
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin	
+ <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul
+ Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E.
+ Hallyn"	 <serge@hallyn.com>,
+        "open list:SECURITY SUBSYSTEM"	
+ <linux-security-module@vger.kernel.org>,
+        open list	
+ <linux-kernel@vger.kernel.org>
+In-Reply-To: <20250915055524.2187783-1-coxu@redhat.com>
+References: <20250902042515.759750-1-coxu@redhat.com>
+	 <20250915055524.2187783-1-coxu@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 22 Sep 2025 13:11:12 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922082833.2038905-1-maz@kernel.org> <20250922082833.2038905-3-maz@kernel.org>
-In-Reply-To: <20250922082833.2038905-3-maz@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 22 Sep 2025 19:10:01 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jPdvdTUWqW1OEkLUSrucifEQxmKjEn2H5Xp4g_4q_+Gw@mail.gmail.com>
-X-Gm-Features: AS18NWB5qQhnXhcfR4zq93qjbiiurDZoCQiEBrfaJ7614-vzCAHGIWYi6x8OUsg
-Message-ID: <CAJZ5v0jPdvdTUWqW1OEkLUSrucifEQxmKjEn2H5Xp4g_4q_+Gw@mail.gmail.com>
-Subject: Re: [PATCH v3 02/26] ACPI: irq: Add IRQ affinity reporting interface
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-acpi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=FrEF/3rq c=1 sm=1 tr=0 ts=68d18333 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8 a=WJBhaHD_QqhgIenamqsA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: ueQGuQpjQczE5407otwEgc_uEMWPKehD
+X-Proofpoint-GUID: uRzp0SdF_LNjVasTM3neG87UcM6QygCd
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE5MDIyNCBTYWx0ZWRfX4Mc/eKXOTRgJ
+ mZUIiNRHJ3Kg7Vjn6UAH/QlRfbBQuDyqNLtv0BoksyT88rxXtuNXuPze4CODpbYql9iAX7uSbcy
+ +3REQ++0FimlteWkgg4xKTTsdI/1R2QaElLyRyDFVPUj8N8tfEoTkuOyUOkudxJZHCt0TjXUErY
+ 0WHjsksDC9adCS7dpcXZseJ/hI+T8lV4B1AxruSi5iCnxjWo6jCrTsJdHa+fkIDgWuBiMccLWMF
+ TV5egJu+mvuWkMKtCXTqAV+4uAove2DrGbuZUvNlDYL+u2Vbmd+/KX7/JMDmU1fKxTJsb78Srkg
+ 54FB4kfutOkpnFB/GFUaH82ZyIZIOeI1PWlPUB/ejAB7py2/lt+hnFOT1lgVnQQeVpmJ0Z98hZM
+ PfQGwdrS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-22_01,2025-09-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 phishscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ clxscore=1015 impostorscore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509190224
 
-On Mon, Sep 22, 2025 at 10:28=E2=80=AFAM Marc Zyngier <maz@kernel.org> wrot=
-e:
->
-> Plug the irq_populate_fwspec_info() helper into the ACPI layer
-> to offer an IRQ affinity reporting function. This is currently
-> only supported for the CONFIG_ACPI_GENERIC_GSI configurations,
-> but could later be extended to legacy architectures if necessary.
->
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
+On Mon, 2025-09-15 at 13:55 +0800, Coiby Xu wrote:
+> Currently when both IMA and EVM are in fix mode, the IMA signature will
+> be reset to IMA hash if a program first stores IMA signature in
+> security.ima and then writes/removes some other security xattr for the
+> file.
+>=20
+> For example, on Fedora, after booting the kernel with "ima_appraise=3Dfix
+> evm=3Dfix ima_policy=3Dappraise_tcb" and installing rpm-plugin-ima,
+> installing/reinstalling a package will not make good reference IMA
+> signature generated. Instead IMA hash is generated,
+>=20
+>     # getfattr -m - -d -e hex /usr/bin/bash
+>     # file: usr/bin/bash
+>     security.ima=3D0x0404...
+>=20
+> This happens because when setting security.selinux, the IMA_DIGSIG flag
+> that had been set early was cleared. As a result, IMA hash is generated
+> when the file is closed.
+>=20
+> Similarly, IMA signature can be cleared on file close after removing
+> security xattr like security.evm or setting/removing ACL.
+>=20
+> Prevent replacing the IMA file signature with a file hash, by preventing
+> the IMA_DIGSIG flag from being reset.
+>=20
+> Here's a minimal C reproducer which sets security.selinux as the last
+> step which can also replaced by removing security.evm or setting ACL,
+>=20
+>     #include <stdio.h>
+>     #include <sys/xattr.h>
+>     #include <fcntl.h>
+>     #include <unistd.h>
+>     #include <string.h>
+>     #include <stdlib.h>
+>=20
+>     int main() {
+>         const char* file_path =3D "/usr/sbin/test_binary";
+>         const char* hex_string =3D "030204d33204490066306402304";
+>         int length =3D strlen(hex_string);
+>         char* ima_attr_value;
+>         int fd;
+>=20
+>         fd =3D open(file_path, O_WRONLY|O_CREAT|O_EXCL, 0644);
+>         if (fd =3D=3D -1) {
+>             perror("Error opening file");
+>             return 1;
+>         }
+>=20
+>         ima_attr_value =3D (char*)malloc(length / 2 );
+>         for (int i =3D 0, j =3D 0; i < length; i +=3D 2, j++) {
+>             sscanf(hex_string + i, "%2hhx", &ima_attr_value[j]);
+>         }
+>=20
+>         if (fsetxattr(fd, "security.ima", ima_attr_value, length/2, 0) =
+=3D=3D -1) {
+>             perror("Error setting extended attribute");
+>             close(fd);
+>             return 1;
+>         }
+>=20
+>         const char* selinux_value=3D "system_u:object_r:bin_t:s0";
+>         if (fsetxattr(fd, "security.selinux", selinux_value, strlen(selin=
+ux_value), 0) =3D=3D -1) {
+>             perror("Error setting extended attribute");
+>             close(fd);
+>             return 1;
+>         }
+>=20
+>         close(fd);
+>=20
+>         return 0;
+>     }
+>=20
+> Signed-off-by: Coiby Xu <coxu@redhat.com>
 
-Acked-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
-
+Thanks, Coiby.  The patch is now queued in next-integrity.
 > ---
->  drivers/acpi/irq.c   | 19 +++++++++++++++++++
->  include/linux/acpi.h |  7 +++++++
->  2 files changed, 26 insertions(+)
->
-> diff --git a/drivers/acpi/irq.c b/drivers/acpi/irq.c
-> index 76a856c32c4d0..d1595156c86a4 100644
-> --- a/drivers/acpi/irq.c
-> +++ b/drivers/acpi/irq.c
-> @@ -300,6 +300,25 @@ int acpi_irq_get(acpi_handle handle, unsigned int in=
-dex, struct resource *res)
+>  security/integrity/ima/ima_appraise.c | 23 ++++++++++++++++++-----
+>  1 file changed, 18 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/i=
+ma/ima_appraise.c
+> index f435eff4667f..5149ff4fd50d 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -694,6 +694,15 @@ static int ima_protect_xattr(struct dentry *dentry, =
+const char *xattr_name,
+>  	return 0;
 >  }
->  EXPORT_SYMBOL_GPL(acpi_irq_get);
->
-> +const struct cpumask *acpi_irq_get_affinity(acpi_handle handle,
-> +                                           unsigned int index)
-> +{
-> +       struct irq_fwspec_info info;
-> +       struct irq_fwspec fwspec;
-> +       unsigned long flags;
-> +
-> +       if (acpi_irq_parse_one(handle, index, &fwspec, &flags))
-> +               return NULL;
-> +
-> +       if (irq_populate_fwspec_info(&fwspec, &info))
-> +               return NULL;
-> +
-> +       if (!(info.flags & IRQ_FWSPEC_INFO_AFFINITY_VALID))
-> +               return NULL;
-> +
-> +       return info.affinity;
-> +}
-> +
->  /**
->   * acpi_set_irq_model - Setup the GSI irqdomain information
->   * @model: the value assigned to acpi_irq_model
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 1c5bb1e887cd1..c506ae4bacc86 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -1509,12 +1509,19 @@ static inline int acpi_parse_spcr(bool enable_ear=
-lycon, bool enable_console)
->
->  #if IS_ENABLED(CONFIG_ACPI_GENERIC_GSI)
->  int acpi_irq_get(acpi_handle handle, unsigned int index, struct resource=
- *res);
-> +const struct cpumask *acpi_irq_get_affinity(acpi_handle handle,
-> +                                           unsigned int index);
->  #else
->  static inline
->  int acpi_irq_get(acpi_handle handle, unsigned int index, struct resource=
- *res)
+> =20
+> +/*
+> + * ima_reset_appraise_flags - reset ima_iint_cache flags
+> + *
+> + * @digsig: whether to clear/set IMA_DIGSIG flag, tristate values
+> + *          0: clear IMA_DIGSIG
+> + *          1: set IMA_DIGSIG
+> + *         -1: don't change IMA_DIGSIG
+> + *
+> + */
+>  static void ima_reset_appraise_flags(struct inode *inode, int digsig)
 >  {
->         return -EINVAL;
+>  	struct ima_iint_cache *iint;
+> @@ -706,9 +715,9 @@ static void ima_reset_appraise_flags(struct inode *in=
+ode, int digsig)
+>  		return;
+>  	iint->measured_pcrs =3D 0;
+>  	set_bit(IMA_CHANGE_XATTR, &iint->atomic_flags);
+> -	if (digsig)
+> +	if (digsig =3D=3D 1)
+>  		set_bit(IMA_DIGSIG, &iint->atomic_flags);
+> -	else
+> +	else if (digsig =3D=3D 0)
+>  		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
 >  }
-> +static inline const struct cpumask *acpi_irq_get_affinity(acpi_handle ha=
-ndle,
-> +                                                         unsigned int in=
-dex)
-> +{
-> +       return NULL;
-> +}
->  #endif
->
->  #ifdef CONFIG_ACPI_LPIT
-> --
-> 2.47.3
->
+> =20
+> @@ -794,6 +803,8 @@ static int ima_inode_setxattr(struct mnt_idmap *idmap=
+, struct dentry *dentry,
+>  		digsig =3D (xvalue->type =3D=3D EVM_IMA_XATTR_DIGSIG);
+>  	} else if (!strcmp(xattr_name, XATTR_NAME_EVM) && xattr_value_len > 0) =
+{
+>  		digsig =3D (xvalue->type =3D=3D EVM_XATTR_PORTABLE_DIGSIG);
+> +	} else {
+> +		digsig =3D -1;
+>  	}
+>  	if (result =3D=3D 1 || evm_revalidate_status(xattr_name)) {
+>  		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
+> @@ -807,7 +818,7 @@ static int ima_inode_set_acl(struct mnt_idmap *idmap,=
+ struct dentry *dentry,
+>  			     const char *acl_name, struct posix_acl *kacl)
+>  {
+>  	if (evm_revalidate_status(acl_name))
+> -		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
+> +		ima_reset_appraise_flags(d_backing_inode(dentry), -1);
+> =20
+>  	return 0;
+>  }
+> @@ -815,11 +826,13 @@ static int ima_inode_set_acl(struct mnt_idmap *idma=
+p, struct dentry *dentry,
+>  static int ima_inode_removexattr(struct mnt_idmap *idmap, struct dentry =
+*dentry,
+>  				 const char *xattr_name)
+>  {
+> -	int result;
+> +	int result, digsig =3D -1;
+> =20
+>  	result =3D ima_protect_xattr(dentry, xattr_name, NULL, 0);
+>  	if (result =3D=3D 1 || evm_revalidate_status(xattr_name)) {
+> -		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
+> +		if (!strcmp(xattr_name, XATTR_NAME_IMA))
+> +			digsig =3D 0;
+> +		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
+>  		if (result =3D=3D 1)
+>  			result =3D 0;
+>  	}
+>=20
+> base-commit: 7aac71907bdea16e2754a782b9d9155449a9d49d
+
 
