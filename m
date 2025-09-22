@@ -1,61 +1,110 @@
-Return-Path: <linux-kernel+bounces-827559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2FD0B9213F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:55:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AF09B9214A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB6941904A94
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:55:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52E2E1885E6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061B030F52C;
-	Mon, 22 Sep 2025 15:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8123E30F94D;
+	Mon, 22 Sep 2025 15:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C06HFul/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="mtG2rvuJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nsWjqxXY"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5664B30E82A;
-	Mon, 22 Sep 2025 15:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A14F30DEDA;
+	Mon, 22 Sep 2025 15:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758556431; cv=none; b=bA2dLQvXcgimXg4b5Gjlt0SauStDVDF4JsLpV8f+HHx9mjmJn1aAm6ZjHhhORx4rGgmXR/ANY0DveRL1FQO1v+PTt+lLq85bkSnoLISTHvTKdIMtdr/t9PivqAwxXols5tJxvo/ccEgnM3lCPl4FDg1oTj08W7azGRyKErJl3/Y=
+	t=1758556456; cv=none; b=CihG7d6LJhnMGUNy3kAxJZ7xIoGZKUt/j/XtE1sbWhnOeVbEqz5wrOPerBMtrxKMAPZNAtleWO+xZ6WPFJQf29OghQHAuGyvAzc/YPqldFQsXWc1LKoZL4YKWwReHWk2c+JnJWfOOIMRbVdBGazNYedrPPl1Ier2jktVLLNDeRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758556431; c=relaxed/simple;
-	bh=aRbXPB1JpMvAIJq5asAovoC0H16Nxldusb6Zozv6hHg=;
+	s=arc-20240116; t=1758556456; c=relaxed/simple;
+	bh=WLw30Tf1j8Cie++dYGQQJq3f5lkPiJO5JJxaGR8TD1s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UGyMT9NNjAuHCQidNOT2/anOOuc5/y1tc9sxiWcoQ5rm6ooA4nFQB2zifMjyGNcgTlHtknC8mVafG6CwyrStHvVm/M1MmzxHLFih7EEYW5ktC6gTNctUZO2ULkdNgE6my0La8lGzcSe8gOnC32GMNucBnuDB6MPvD09oxeDukiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C06HFul/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED55EC4CEF0;
-	Mon, 22 Sep 2025 15:53:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758556430;
-	bh=aRbXPB1JpMvAIJq5asAovoC0H16Nxldusb6Zozv6hHg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C06HFul/szSJI0xrMjnZM1Ks1trKCXzVjBMOMrKb2VFViBpRuvzgO+pmJkv1umK2C
-	 JnSK7Nyww7INSIyb/94rRMQm6binnV5LaXoLcngcUWamHTE5fCbpMCyhJFIE96WxB2
-	 l/MZIDaLi3jj0kF3lcEbm3Cd+82Y1Ir4bM+q9X5NOXMlCEduS+V+5VTCOIuwGtnmU9
-	 bgsQhrpaKfRqdXPFVz/1Rg7ndFcKCEaMoHIHZ4PawV8hKiR61Gm11baBOQuJFjGo+s
-	 EAg28HFex3cQCPMFUIXUOQoTgW4JEcsHt11sauBMZS6A8YVXNICsQUYOdY+FquElN+
-	 OcHa8LIlTl2Kw==
-Date: Mon, 22 Sep 2025 21:23:41 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	"David E. Box" <david.e.box@linux.intel.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Chia-Lin Kao <acelan.kao@canonical.com>
-Subject: Re: [PATCH 1/2] PCI/ASPM: Override the ASPM and Clock PM states set
- by BIOS for devicetree platforms
-Message-ID: <oc23e5sgo74wpjpaaefc6or5f54crfaeyer5zwst3wyyiauhxg@ess265fdcbeu>
-References: <frmzvhnhljy23xds7lnmo23zg35wxpzu4pvabnc6v6vz7qn2lj@gk25cglbpn3q>
- <20250917112218.GA1844955@bhelgaas>
- <jgidvwogoopfgtmxywllxl76lap42s4fhzt23ldncgtzfvy5ir@xs7pnhuz2nxs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m5dB4CLgQAHxuOz45srT8ukrYfl3ZY8g50VzhbDlwu34PlhzEcctrCYEnoVI5+T44LvjIFPzkABHL/L6OxseK33XGUrKX1gMGBByloOROEXPfaeHWhOdwDZIhZtZ/7YEaAEaqew4ujFbLvuhg6zYoaKNHBNToV8h9vImFE4uhGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=mtG2rvuJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nsWjqxXY; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 2E9AB1400179;
+	Mon, 22 Sep 2025 11:54:12 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Mon, 22 Sep 2025 11:54:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1758556452; x=
+	1758642852; bh=oxbmvxOBKYdNbgHBaFZ5AkGpkPFUn4QrzOZOzIFtxQc=; b=m
+	tG2rvuJrmZJwzsd4ms8sxHMlalW9irIC9aqq38BYtH+JvRS29uRY+tvCc01904Gl
+	zn3JrrDSMlvzcm9IBGSmdC/LyYATIaDFyPt3lZGdR5maGRxhoff86RNZLzaoBDWX
+	Wg1U4ievoHJCsVFdrLk6NPWs2WhlV+dMLOTEAyoppW1qNuYpahca5WrR1QJlrcnZ
+	kvcUY8TjD+4CS2+t0swMDr89+YymjNp/zoLduqJ6MqLqs9bS1vv6cIrkIoMQ8Gfm
+	tvrInQSsmB+bzZA8Q+eijWijVmlHXgJki4BViNnsQYc7qz7e3rJyFQLVBKb9trsT
+	osMoyQytBqf/m6Zta8uZA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758556452; x=1758642852; bh=oxbmvxOBKYdNbgHBaFZ5AkGpkPFUn4QrzOZ
+	OzIFtxQc=; b=nsWjqxXY9cvdN+uve8bK4dzPewRJsaKNO4Av5SRaL76IJX7TdWS
+	2A//+VkfLWnpJXWU67ezPAEjgpFpBXathURgGMCxHW3Y5en0VbSf3GE+K76FUcmR
+	Srjggy6w7VTXdhGYb+mKD6t5ziuTLinUyMFtEWpXNNKqXDX70yOSbUTosn84jqsN
+	3S2hnVw+Tl1CWCwD9GAFDi6w4IgoHC9NoO2r8k0MtMM7rUY33Hq72lPZuExmk1kC
+	KPCVIzTNQYvOB7F4epn4RtDJVvN0N+YQ6odFISkcLEyH4ouiLhbxOzOC/LQr+jZk
+	RIY6bXXSyNE42B0qpjO5ToX4W9p4nHLd/Aw==
+X-ME-Sender: <xms:I3HRaBoeDfoXoIhoSSigbJ4yl5HK_xoZaiWyvylMmsxX7ctuEDp29A>
+    <xme:I3HRaJOMTEDgIy11TXEehDqItHa-psWkd1vnKRFFBK9tzLtIptgBR8wxB8nQI3dLK
+    qSLS75XnDAq1eOa-pgCnTOT6Ix_shQRXQNewjj9akY4S22Pikj0dBc>
+X-ME-Received: <xmr:I3HRaHx0uUyOp3onyZIwZOY1U2Ol0YliEPY5IaAmNwvgv59E8O3k5Q6xBcXD>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehkedviecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpefurggsrhhinhgr
+    ucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrihhlrdhnvghtqeenucggtffrrg
+    htthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeegteehgeehieffgfeuvdeuffef
+    gfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghrtghpthhtohepudeipdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehshhhshhhithhrihhtsehnvhhiughirgdrtg
+    homhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthgr
+    rhhiqhhtsehnvhhiughirgdrtghomhdprhgtphhtthhopegvughumhgriigvthesghhooh
+    hglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgt
+    phhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepug
+    grvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehsrggvvggumhesnhhv
+    ihguihgrrdgtohhmpdhrtghpthhtoheplhgvohhnsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:I3HRaNw-dBO5K5QWiLRW1Rk5vRE2VFwoi5qak_soktcvSQjDFQyT-A>
+    <xmx:I3HRaIKHxOm_xxH6sF1eCVYGo7IHMBZOetdW0fEmteKXD9YfDhjS7w>
+    <xmx:I3HRaBjKqpPwCuaW34C51niT3KLihWZB1hzSBivZ2k4uJMgGQff9Og>
+    <xmx:I3HRaBPaaD_gkLNgqCEgBbYn-f7-4Mon8OCvn1hY3SLG2ndzsw3ybA>
+    <xmx:JHHRaCwxVADe0SYbhCCw0pNqgUuUvkDG89ucmi1MRg0GK4JLhAUVEBn0>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 22 Sep 2025 11:54:10 -0400 (EDT)
+Date: Mon, 22 Sep 2025 17:54:09 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Shahar Shitrit <shshitrit@nvidia.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Boris Pismenny <borisp@nvidia.com>
+Subject: Re: [PATCH net 2/3] net: tls: Cancel RX async resync request on
+ rdc_delta overflow
+Message-ID: <aNFxIfD2aPpB11dC@krikkit>
+References: <1757486861-542133-1-git-send-email-tariqt@nvidia.com>
+ <1757486861-542133-3-git-send-email-tariqt@nvidia.com>
+ <20250914115308.6e991f7d@kernel.org>
+ <0b7a83ec-d505-40c3-afa4-8f6474cd78d9@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,50 +113,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <jgidvwogoopfgtmxywllxl76lap42s4fhzt23ldncgtzfvy5ir@xs7pnhuz2nxs>
+In-Reply-To: <0b7a83ec-d505-40c3-afa4-8f6474cd78d9@nvidia.com>
 
-On Wed, Sep 17, 2025 at 06:33:53PM +0530, Manivannan Sadhasivam wrote:
-> On Wed, Sep 17, 2025 at 06:22:18AM GMT, Bjorn Helgaas wrote:
-> > [+cc Kai-Heng, Rafael, Heiner, AceLan; response to
-> > https://lore.kernel.org/r/20250916-pci-dt-aspm-v1-1-778fe907c9ad@oss.qualcomm.com]
-> > 
-> > On Wed, Sep 17, 2025 at 04:14:42PM +0530, Manivannan Sadhasivam wrote:
-> > > On Tue, Sep 16, 2025 at 12:15:46PM GMT, Bjorn Helgaas wrote:
-> > > > On Tue, Sep 16, 2025 at 09:42:52PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > > > > So far, the PCI subsystem has honored the ASPM and Clock PM states set by
-> > > > > the BIOS (through LNKCTL) during device initialization. This was done
-> > > > > conservatively to avoid issues with the buggy devices that advertise
-> > > > > ASPM capabilities, but behave erratically if the ASPM states are enabled.
-> > > > > So the PCI subsystem ended up trusting the BIOS to enable only the ASPM
-> > > > > states that were known to work for the devices.
-> > > ...
-> > 
-> > > > For debuggability, I wonder if we should have a pci_dbg() at the point
-> > > > where we actually update PCI_EXP_LNKCTL, PCI_L1SS_CTL1, etc?  I could
-> > > > even argue for pci_info() since this should be a low-frequency and
-> > > > relatively high-risk event.
-> > > 
-> > > I don't know why we should print register settings since we are explicitly
-> > > printing out what states are getting enabled.
-> > 
-> > My thinking here is that we care about is what is actually written to
-> > the device, not what we *intend* to write to the device.
-> > 
-> > There's a lot of complicated aspm.c code between setting
-> > link->clkpm_default/aspm_default and actually programming the device,
-> > and when debugging a problem, I don't want to have to parse all that
-> > code to derive the register values.
+2025-09-22, 10:18:52 +0300, Shahar Shitrit wrote:
 > 
-> Sure, but that is not strictly related to this series I believe. I will add a
-> patch for that at the start of this series so that you can merge it
-> independently.
 > 
+> On 14/09/2025 21:53, Jakub Kicinski wrote:
+> > On Wed, 10 Sep 2025 09:47:40 +0300 Tariq Toukan wrote:
+> >> When a netdev issues an RX async resync request, the TLS module
+> >> increments rcd_delta for each new record that arrives. This tracks
+> >> how far the current record is from the point where synchronization
+> >> was lost.
+> >>
+> >> When rcd_delta reaches its threshold, it indicates that the device
+> >> response is either excessively delayed or unlikely to arrive at all
+> >> (at that point, tcp_sn may have wrapped around, so a match would no
+> >> longer be valid anyway).
+> >>
+> >> Previous patch introduced tls_offload_rx_resync_async_request_cancel()
+> >> to explicitly cancel resync requests when a device response failure
+> >> is detected.
+> >>
+> >> This patch adds a final safeguard: cancel the async resync request when
+> >> rcd_delta crosses its threshold, as reaching this point implies that
+> >> earlier cancellation did not occur.
+> > 
+> > Missing a Fixes tag
+> Will add
+> > 
+> >> diff --git a/net/tls/tls_device.c b/net/tls/tls_device.c
+> >> index f672a62a9a52..56c14f1647a4 100644
+> >> --- a/net/tls/tls_device.c
+> >> +++ b/net/tls/tls_device.c
+> >> @@ -721,8 +721,11 @@ tls_device_rx_resync_async(struct tls_offload_resync_async *resync_async,
+> >>  		/* shouldn't get to wraparound:
+> >>  		 * too long in async stage, something bad happened
+> >>  		 */
+> >> -		if (WARN_ON_ONCE(resync_async->rcd_delta == USHRT_MAX))
+> >> +		if (WARN_ON_ONCE(resync_async->rcd_delta == USHRT_MAX)) {
+> >> +			/* cancel resync request */
+> >> +			atomic64_set(&resync_async->req, 0);
+> > 
+> > we should probably use the helper added by the previous patch (I'd
+> > probably squash them TBH)
+>
+> It's not trivial to use the helper here, since we don't have the socket.
 
-I'm going to send this patch separately from this series.
-
-- Mani
+tls_device_rx_resync_async doesn't currently get the socket, but it
+has only one caller, tls_device_rx_resync_new_rec, which does. So
+tls_device_rx_resync_async could easily get the socket. Or just pass
+resync_async to tls_offload_rx_resync_async_request_cancel, since
+that's what it really needs?
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Sabrina
 
