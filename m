@@ -1,207 +1,259 @@
-Return-Path: <linux-kernel+bounces-827082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3233FB903FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:47:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9853DB9009E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2ABA18899AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5231E422A5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6E230CB26;
-	Mon, 22 Sep 2025 10:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA912FFDF3;
+	Mon, 22 Sep 2025 10:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="Qo6O8a8a"
-Received: from fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.178.132.221])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KX2CjQ92"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD072FBE12;
-	Mon, 22 Sep 2025 10:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.178.132.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329D32FFDCC
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758537673; cv=none; b=cOxCdqKJx0S6vPN0ab4ZKFq+RMkJdLPE3k+fVdtpfwWUljR4MFdRs2EjDEU8IVVkPdvsl20KvekZiFaX2Aj8c8GAaCk/Ahdz8vzmtWtCQDFhOtm6ktG9fUAGv70eJJkF+2ArTaR5NQkwb3e1+l9te0uOiU85e4oKY5r8v09UCoA=
+	t=1758537218; cv=none; b=ayR/5FgM7JN+1/r1tGtz0cClUKN0bp2M4WREFO+URs4tEOZv3ygdb2zdenSBc9Hqdtt8gJ8Qw50ruZxk5uAC1rDzhOI5od8A+o++QfBqFTXBlHp1z/OV1wkEKxvO+tMyM0gGXm1Y0fq/btOKoXiIUX8dz6UrhhrzpuWb93zngRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758537673; c=relaxed/simple;
-	bh=V2L3IilwofpV6SrsfVTvut5ipDXkokIOm+dTBT4i7eQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o6Gms3nHLrKrk4eis2FDbt6IeSCCYLS/2m/BBf9Opd00zN65LBKUaF8ZuqeY+b+K8OH2tWp+QrM2K4tA5IF017ilb+YV1hrgqGirS4aWvl92t8G7n4mRkGEN6cZ1xmcSwtJdukq8yeAxjjctbhgA62Sd5b2TjEmWd0Sbaw5pxPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=Qo6O8a8a; arc=none smtp.client-ip=63.178.132.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1758537671; x=1790073671;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=k0dUe76w+6n5/NfsPbyefGVCom+xh3GGcFcV3Olhmks=;
-  b=Qo6O8a8a963sLPcVEqwurfFk9sEryrbPl+aCDwVFoRTSyNMY2/lzItad
-   nqjBypr/4OLtzDcc93q7Cp0J14yV5DD6cwNzHAWQOLbUpEn+I3aLmLxtK
-   XWpNHl/jsoabgK/EJoYo5Y5Mc1/d38r3v4oxtLjAEaoSiTYOZTEDtuPIf
-   PaSI9Zk9eBtD8IwUKelTTS+xcHtROEO4gRbbJUwwHL6T91oE7WgWYljGz
-   PBmKmtMMueDkDDvTexaOwT31Ne5JgGNID6EskuGE9HKc75QBsecRE7B7s
-   dWcxx7ln1MJq2KZ/hkKvWdPVeWivDDpmbAIEZgoynuo5D+Nd+MGXxWSVC
-   A==;
-X-CSE-ConnectionGUID: nGdSMg2KRJqwFKGugNMByw==
-X-CSE-MsgGUID: 1oNLGvSNSbarq0bxcHDlmw==
-X-IronPort-AV: E=Sophos;i="6.18,284,1751241600"; 
-   d="scan'208";a="2372418"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 10:41:07 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.228:9689]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.1.3:2525] with esmtp (Farcaster)
- id 549405e1-3e62-41e8-bf89-796f0cf76dce; Mon, 22 Sep 2025 10:41:06 +0000 (UTC)
-X-Farcaster-Flow-ID: 549405e1-3e62-41e8-bf89-796f0cf76dce
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 22 Sep 2025 10:41:01 +0000
-Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
- (172.19.116.181) by EX19D018EUA004.ant.amazon.com (10.252.50.85) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Mon, 22 Sep 2025
- 10:40:34 +0000
-From: Eliav Farber <farbere@amazon.com>
-To: <richard@nod.at>, <anton.ivanov@cambridgegreys.com>,
-	<johannes@sipsolutions.net>, <dave.hansen@linux.intel.com>,
-	<luto@kernel.org>, <peterz@infradead.org>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <x86@kernel.org>, <hpa@zytor.com>,
-	<tony.luck@intel.com>, <qiuxu.zhuo@intel.com>, <james.morse@arm.com>,
-	<mchehab@kernel.org>, <rric@kernel.org>, <harry.wentland@amd.com>,
-	<sunpeng.li@amd.com>, <Rodrigo.Siqueira@amd.com>,
-	<alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-	<Xinhui.Pan@amd.com>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<evan.quan@amd.com>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>, <jdelvare@suse.com>,
-	<linux@roeck-us.net>, <linus.walleij@linaro.org>,
-	<dmitry.torokhov@gmail.com>, <wens@csie.org>, <jernej.skrabec@gmail.com>,
-	<samuel@sholland.org>, <agk@redhat.com>, <snitzer@kernel.org>,
-	<dm-devel@lists.linux.dev>, <mailhol.vincent@wanadoo.fr>,
-	<wg@grandegger.com>, <mkl@pengutronix.de>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<alexandre.torgue@foss.st.com>, <joabreu@synopsys.com>,
-	<mcoquelin.stm32@gmail.com>, <krzysztof.kozlowski@linaro.org>,
-	<malattia@linux.it>, <hdegoede@redhat.com>, <ilpo.jarvinen@linux.intel.com>,
-	<markgross@kernel.org>, <artur.paszkiewicz@intel.com>, <jejb@linux.ibm.com>,
-	<martin.petersen@oracle.com>, <sakari.ailus@linux.intel.com>,
-	<gregkh@linuxfoundation.org>, <clm@fb.com>, <josef@toxicpanda.com>,
-	<dsterba@suse.com>, <luc.vanoostenryck@gmail.com>, <rostedt@goodmis.org>,
-	<mhiramat@kernel.org>, <pmladek@suse.com>,
-	<andriy.shevchenko@linux.intel.com>, <linux@rasmusvillemoes.dk>,
-	<senozhatsky@chromium.org>, <minchan@kernel.org>,
-	<akpm@linux-foundation.org>, <dsahern@kernel.org>, <shuah@kernel.org>,
-	<keescook@chromium.org>, <wad@chromium.org>, <farbere@amazon.com>,
-	<David.Laight@ACULAB.COM>, <arnd@kernel.org>, <linux-um@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
-	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-hwmon@vger.kernel.org>, <linux-input@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
-	<linux-media@vger.kernel.org>, <linux-can@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-	<platform-driver-x86@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-	<linux-staging@lists.linux.dev>, <linux-btrfs@vger.kernel.org>,
-	<linux-sparse@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-kselftest@vger.kernel.org>,
-	<bpf@vger.kernel.org>, <stable@vger.kernel.org>
-CC: Christoph Hellwig <hch@infradead.org>, Dan Carpenter
-	<dan.carpenter@linaro.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, "Jens
- Axboe" <axboe@kernel.dk>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Matthew Wilcox <willy@infradead.org>,
-	Pedro Falcato <pedro.falcato@gmail.com>
-Subject: [PATCH 15/15 6.6.y] minmax.h: remove some #defines that are only expanded once
-Date: Mon, 22 Sep 2025 10:32:41 +0000
-Message-ID: <20250922103241.16213-16-farbere@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250922103241.16213-1-farbere@amazon.com>
-References: <20250922103241.16213-1-farbere@amazon.com>
+	s=arc-20240116; t=1758537218; c=relaxed/simple;
+	bh=StOqZObgJ1vM4HpcUU0gQz23RbwVWYAw6VNTT2jCBsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CtL7mf8ll5Uc9xu+J+UV7ShhIiolwETrtwuCk3JSO4kEsujqWDK7JFDv0v/POeDGnZsTWj2OimYM/iP2F1mxiMWPEPQI5IOnjQ6352AMuJ4HaDLXM4jG4oo+IcWhCGVcaJVVMk01/H52i4TGN4liNpCC0PxOY8kVOxTSHcD8Fbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KX2CjQ92; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58M91ZqC002083
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:33:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6vohyW6P/xPQXkhXTVUfhSzg8HjrVtZUzEp0pInDVYA=; b=KX2CjQ92y1QB0g4O
+	rLrVpqbT/7ySxN2LlyfK5dVOBHX+hPmsSTQ9sf96uX1fYoAkJkhJPbBZjQmb30PV
+	7iL5s9SQ4HEtssjmNl+GByORbFZuniK3c4DTISxRxyLcfSsnFl2dPtCbLadr22hc
+	jZDOGGBVlgUcO0ZReBdwByADAu1QH1+3T3GreIUqlZgUj4/315rAwKJIZ7lyHbml
+	stWTN64k6Ay5QpcSPfQPI2TUCByVSm94htltesG4DXhKcThENo9aQK1NGuY6jfA9
+	yc8YP881loqz79dHFjqnq/ZR4R7k+8fL6vfpgj7RESV8teWY6GLtPqNXqD1ZAPTg
+	uwW52w==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499n1fcas0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:33:36 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2698b5fbe5bso53036245ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 03:33:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758537215; x=1759142015;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6vohyW6P/xPQXkhXTVUfhSzg8HjrVtZUzEp0pInDVYA=;
+        b=PZr3kYdOMoAa++ffw6j8W/7QbvCgGfvC9pX1YhHSNjfr9lHwW9M64xe0NOj3X0o7sT
+         fu3RNyHze49ceC2BF4hGIM0geI4Ljrgza4l0qjBBznWKsmOG+GwLkwa7HvVLIX/n2NRp
+         KT9PaArPXULZkXzktl68n+3U4ivMLuLyul3ups80aCECJ33UmO5zHmGaAYJaYbANNi5L
+         kH3TnwzP/tbKdaAFWYCB2J/C8Zr1F72UuTDnTUpIStIoLD5bbD9S9ZzX+xZXUtaon9sR
+         E9NRxumuQFOuyWaQGxv0mI/iBS3dowyI9f/r4id7vm0uvYZ9qbWkj2NmojnMR6NfrHSm
+         LEKg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7wBz9bqW8HXDq37sRqUbBgdaSRNFNQy5qj4fdVxnA7qbTK0uLwiXUdwyf3p3Po9EBkPbAjG+UmBDoNeI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAZ8LpzrMusmm/yddIKZEvcOfdUkNytDA1qZlVCd1NzcffGJfa
+	wbci3kGsQLEcLXou1zA44Xx10v2CDN0qJGjr/+VL1aDhmQxlYrPFtAKAqpBK142XJvxigvMzqD7
+	AO/7G+EbPoJGYJz+2GaXA6rhA4pRSKfx2M8qUY3k6BSCYHQIdFnfTMJ6dTbWc37F1JQrMDsuH+g
+	I=
+X-Gm-Gg: ASbGnctf11uZ4X4JqjEnKVdeurb2zo4lRXuKjrh2Mdu9ofp8WfcnF8+uV01R1SBGqr2
+	rF9l7V2rDS77f38NkfqJ0jWr7n+5yZDhR1J1G9PhPvT0YcbJsoRuGvxS9FdpZ9TBt3NcadJlt5s
+	VYacfeD5NmWtNUtf9CPujmj3tIoFEuf/MtfIOtRe/34+2/T3+WYSlPG2xRv1THAJfC3AJdwuB5g
+	5mz7TqyAmVGzd7XXqG6crT7bHR64zpBzj1tFpAyx/OsoKVyj8bCvA4gBe7AgUCiGngnkLZ3wR3A
+	ESdGUgXMtcet2yTRTag7e+0nwrKBCawIftH4WlU+D6lMoLAXDDpqFgLhiVFY/Rw1Xb4=
+X-Received: by 2002:a17:903:24e:b0:24c:7bc6:7ac7 with SMTP id d9443c01a7336-269ba46450cmr195196975ad.18.1758537215034;
+        Mon, 22 Sep 2025 03:33:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFxlj2E1ZL+mzjQ9VZNOizJlfhTeeWSHY7qa+ersqewi96K8KrixBgeNCQrDKVnMq1/YWzgiA==
+X-Received: by 2002:a17:903:24e:b0:24c:7bc6:7ac7 with SMTP id d9443c01a7336-269ba46450cmr195196395ad.18.1758537214528;
+        Mon, 22 Sep 2025 03:33:34 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980339e89sm125802635ad.130.2025.09.22.03.33.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 03:33:34 -0700 (PDT)
+Date: Mon, 22 Sep 2025 16:03:27 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v3 00/12] Peripheral Image Loader support for Qualcomm
+ SoCs running Linux host at EL2
+Message-ID: <20250922103327.ylyqwo5hpmtsbx6q@hu-mojha-hyd.qualcomm.com>
+References: <20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com>
+ <aNEEglLZTJuR1sLi@linaro.org>
+ <20250922094732.6tupym6ulroctm5m@hu-mojha-hyd.qualcomm.com>
+ <aNEcngb2T62HYlMq@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D040UWB004.ant.amazon.com (10.13.138.91) To
- EX19D018EUA004.ant.amazon.com (10.252.50.85)
+In-Reply-To: <aNEcngb2T62HYlMq@linaro.org>
+X-Proofpoint-ORIG-GUID: SGRKrJJxs6n6j_NbSNvxJgEkCp2EQT9F
+X-Proofpoint-GUID: SGRKrJJxs6n6j_NbSNvxJgEkCp2EQT9F
+X-Authority-Analysis: v=2.4 cv=No/Rc9dJ c=1 sm=1 tr=0 ts=68d12600 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=cyWJFerwHc5G6ORteNIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=324X-CrmTo6CU4MGRt3R:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzNyBTYWx0ZWRfX659bPizRxtRN
+ 7wzbEV8JcRccs4QBB1W89pGKSJIe1EFCH/NHmzap6k0X9Cwr2r2CW1QfTnHAEmeVPL9JQCBr5mP
+ Z3S+mgWbF+W0SM1xCizLbZa2AcFeqDEEW625LeXg0rQ+mRoFWM5KJfeiMHgHYhKglKQND5sZP5N
+ 3ht/UQvyDJUmnq7OJBBlrgJlsYwUm1+TXPiL3Z678t7ibrMejYUUGo+ACMOdt///IFsmaPGfv2/
+ Q04p0ClkyB+HdVTIIw4B/2G02rxbuyOLtc5W/tWNtUHCorUf89o7R8wKXuZMToZTaLHCCorR2C9
+ 6IN2jOGo3C2JR5YIwCcHPDQnbLmtBP5sLQ8771/h1g5t239nh4NsrpQmkI7gJIFYep+Y90MGlyj
+ 0S3+Og9G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-22_01,2025-09-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 suspectscore=0 adultscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 priorityscore=1501 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200037
 
-From: David Laight <David.Laight@ACULAB.COM>
+On Mon, Sep 22, 2025 at 11:53:34AM +0200, Stephan Gerhold wrote:
+> On Mon, Sep 22, 2025 at 03:17:32PM +0530, Mukesh Ojha wrote:
+> > On Mon, Sep 22, 2025 at 10:10:42AM +0200, Stephan Gerhold wrote:
+> > > On Sun, Sep 21, 2025 at 01:10:58AM +0530, Mukesh Ojha wrote:
+> > > > A few months ago, we discussed the challenges at Linaro Connect 2025 [1] 
+> > > > related to Secure PAS remoteproc enablement when Linux is running at EL2.
+> > > > 
+> > > > [1] https://resources.linaro.org/en/resource/sF8jXifdb9V1mUefdbfafa
+> > > > 
+> > > > Below, is the summary of the discussion.
+> > > > 
+> > > > Qualcomm is working to enable remote processors on the SA8775p SoC with
+> > > > a Linux host running at EL2. In doing so, it has encountered several
+> > > > challenges related to how the remoteproc framework is handled when Linux
+> > > > runs at EL1.
+> > > > 
+> > > > One of the main challenges arises from differences in how IOMMU
+> > > > translation is currently managed on SoCs running the Qualcomm EL2
+> > > > hypervisor (QHEE), where IOMMU translation for any device is entirely
+> > > > owned by the hypervisor. Additionally, the firmware for remote
+> > > > processors does not contain a resource table, which would typically
+> > > > include the necessary IOMMU configuration settings.
+> > > > 
+> > > > Qualcomm SoCs running with QHEE (EL2) have been utilizing the Peripheral
+> > > > Authentication Service (PAS) from TrustZone (TZ) firmware to securely
+> > > > authenticate and reset remote processors via a single SMC call,
+> > > > _auth_and_reset_. This call is first trapped by QHEE, which then invokes
+> > > > TZ for authentication. Once authentication is complete, the call returns
+> > > > to QHEE, which sets up the IOMMU translation scheme for the remote
+> > > > processors and subsequently brings them out of reset. The design of the
+> > > > Qualcomm EL2 hypervisor dictates that the Linux host OS running at EL1
+> > > > is not permitted to configure IOMMU translation for remote processors,
+> > > > and only a single-stage translation is configured.
+> > > > 
+> > > > To make the remote processor bring-up (PAS) sequence
+> > > > hypervisor-independent, the auth_and_reset SMC call is now handled
+> > > > entirely by TZ. However, the issue of IOMMU configuration remains
+> > > > unresolved, for example a scenario, when KVM host at EL2 has no
+> > > > knowledge of the remote processors’ IOMMU settings.  This is being
+> > > > addressed by overlaying the IOMMU properties when the SoC runs a Linux
+> > > > host at EL2. SMC call is being provided from the TrustZone firmware to
+> > > > retrieve the resource table for a given subsystem.
+> > > > 
+> > > > There are also remote processors such as those for video, camera, and
+> > > > graphics that do not use the remoteproc framework to manage their
+> > > > lifecycle. Instead, they rely on the Qualcomm PAS service to
+> > > > authenticate their firmware. These processors also need to be brought
+> > > > out of reset when Linux is running at EL2. The client drivers for these
+> > > > processors use the MDT loader function to load and authenticate
+> > > > firmware. Similar to the Qualcomm remoteproc PAS driver, they also need
+> > > > to retrieve the resource table, create a shared memory bridge
+> > > > (shmbridge), and map the resources before bringing the processors out of
+> > > > reset.
+> > > > 
+> > > > This series has dependency on below series for creating SHMbridge over
+> > > > carveout memory. It seems to be merged on linux-next and pushed for 6.18.
+> > > > 
+> > > > https://lore.kernel.org/lkml/20250911-qcom-tee-using-tee-ss-without-mem-obj-v12-0-17f07a942b8d@oss.qualcomm.com/
+> > > > 
+> > > > It is based on next-20250919 where above series is already merged
+> > > > and tested on SA8775p which is now called Lemans IOT platform and
+> > > > does not addresses DMA problem discussed at [1] which is future
+> > > > scope of the series.
+> > > > 
+> > > 
+> > > When testing your series on Lemans, what happens with the additional
+> > > SIDs from the peripherals assigned to the remoteproc ("DMA masters" in
+> > > your talk)? Are these running in bypass because the previous firmware
+> > > component (Gunyah?) had allocated SMMU SMRs for these?
+> > 
+> > There is no DMA usecase present for Lemans but can exist for other SoC.
+> > 
+> > > 
+> > > It would be worth mentioning this in the cover letter (and perhaps as
+> > > part of the EL2 overlay patch as well), since it is unclear otherwise
+> > > why your series does not result in crashes the first time a remoteproc
+> > > tries to use one of these DMA-capable peripherals.
+> > 
+> > As I said above, It is not present for Lemans;
+> > 
+> 
+> Ok, thanks for clarifying. In other words: The IOMMU SIDs you have
+> specified in the overlay so far are sufficient for the current firmware
+> use cases to run successfully on Lemans?
 
-[ Upstream commit 2b97aaf74ed534fb838d09867d09a3ca5d795208 ]
+Yes.
 
-The bodies of __signed_type_use() and __unsigned_type_use() are much the
-same size as their names - so put the bodies in the only line that expands
-them.
+> 
+> > To handle the DMA use case in generic way, we might require extention
+> > change in remoteproc or generic iommu framework to handles these
+> > scenario like its SID and memory resources should be communicated
+> > through firmware resource table or device tree or some way.
+> > 
+> > And same scenario when resource table section not present in firmware
+> > binary ? like most of the Qualcomm platforms, how these cases would be
+> > handled and I believe this is similar to the problem video is facing for
+> > non-pixel case.
+> 
+> It is sort of similar, except in this case Linux doesn't really do
+> anything itself with the mappings. In the video case, Linux dynamically
+> maps buffers (or similar) into those address spaces, while in the
+> remoteproc case those are fixed(?) for a specific firmware binary. At
+> least if I understood the explanations in your talk correctly.
 
-Similarly __signed_type() is defined separately for 64bit and then used
-exactly once just below.
+Memory region used by DMA use case would be fixed with subsystem
+carveout memory but need to be mapped with DMA SID before subsystem
+boots up so that it could use the DMA. So, it looks to be subdevice
+for remote processor but programming of DMA taken care by
+remote processor firmware and those detail would not be mentioned in
+Application processor device tree.
 
-Change the test for __signed_type from CONFIG_64BIT to one based on gcc
-defined macros so that the code is valid if it gets used outside of a
-kernel build.
-
-Link: https://lkml.kernel.org/r/9386d1ebb8974fbabbed2635160c3975@AcuMS.aculab.com
-Signed-off-by: David Laight <david.laight@aculab.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Arnd Bergmann <arnd@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Pedro Falcato <pedro.falcato@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Eliav Farber <farbere@amazon.com>
----
- include/linux/minmax.h | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-index 2bbdd5b5e07e..eaaf5c008e4d 100644
---- a/include/linux/minmax.h
-+++ b/include/linux/minmax.h
-@@ -46,10 +46,8 @@
-  * comparison, and these expressions only need to be careful to not cause
-  * warnings for pointer use.
-  */
--#define __signed_type_use(ux) (2 + __is_nonneg(ux))
--#define __unsigned_type_use(ux) (1 + 2 * (sizeof(ux) < 4))
- #define __sign_use(ux) (is_signed_type(typeof(ux)) ? \
--	__signed_type_use(ux) : __unsigned_type_use(ux))
-+	(2 + __is_nonneg(ux)) : (1 + 2 * (sizeof(ux) < 4)))
+> 
+> Anyway, if you don't have these use cases for Lemans this can be
+> discussed later in the context of a specific example. I thought you have
+> this requirement for all platforms.
  
- /*
-  * Check whether a signed value is always non-negative.
-@@ -57,7 +55,7 @@
-  * A cast is needed to avoid any warnings from values that aren't signed
-  * integer types (in which case the result doesn't matter).
-  *
-- * On 64-bit any integer or pointer type can safely be cast to 'long'.
-+ * On 64-bit any integer or pointer type can safely be cast to 'long long'.
-  * But on 32-bit we need to avoid warnings about casting pointers to integers
-  * of different sizes without truncating 64-bit values so 'long' or 'long long'
-  * must be used depending on the size of the value.
-@@ -66,12 +64,12 @@
-  * them, but we do not use s128 types in the kernel (we do use 'u128',
-  * but they are handled by the !is_signed_type() case).
-  */
--#ifdef CONFIG_64BIT
--  #define __signed_type(ux) long
-+#if __SIZEOF_POINTER__ == __SIZEOF_LONG_LONG__
-+#define __is_nonneg(ux) statically_true((long long)(ux) >= 0)
- #else
--  #define __signed_type(ux) typeof(__builtin_choose_expr(sizeof(ux) > 4, 1LL, 1L))
-+#define __is_nonneg(ux) statically_true( \
-+	(typeof(__builtin_choose_expr(sizeof(ux) > 4, 1LL, 1L)))(ux) >= 0)
- #endif
--#define __is_nonneg(ux) statically_true((__signed_type(ux))(ux) >= 0)
- 
- #define __types_ok(ux, uy) \
- 	(__sign_use(ux) & __sign_use(uy))
+Sure.
+
+> Thanks,
+> Stephan
+
 -- 
-2.47.3
-
+-Mukesh Ojha
 
