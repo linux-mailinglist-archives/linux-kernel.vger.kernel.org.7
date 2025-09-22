@@ -1,151 +1,137 @@
-Return-Path: <linux-kernel+bounces-827414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6CB0B91B55
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:29:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B416CB91B36
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55412173E3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:28:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B483D7AF0F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E0D245005;
-	Mon, 22 Sep 2025 14:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4557260D;
+	Mon, 22 Sep 2025 14:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EEqJ3DlJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="Bsp0jTHa"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA3F213E9F
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D3D1482E8
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758551252; cv=none; b=HVptykg53bPGqWWYWOSmVFebbyW3WyHIkn1XmwaiY71swAJJmmPYuAZovbkPWjTLyCcak99WRcl04HgD7aZ8OTgKcFINywKaHTYgwpAeSZaZNBhGr2QCvzS69bdLjp6nxJ0cgzoE405Vs2x0isQoj3XYc1eGClC+9GxOYwyRwXE=
+	t=1758551308; cv=none; b=Xq8Z8Ku8oNps2XorTbeAMZBJGgphL8fh0L2IpNel7mUmAb5AHaGgdTGqRsqFTfF+zb4nhEKuBhBCaua9B/2hHgQP482QJpxiQe/UiTL6idaiDf/12YZa0f0mTQoW2PmJBxcAJ+uOCXL+6F8tGlHhElEusrhcWahrjZvoPkAQAjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758551252; c=relaxed/simple;
-	bh=p+DYY/6fj+Fdp+4xx5oswz4SUhx09sEWuzlwt6GtrJY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jvGiGKl0B/tOadcq7iHVwm8JiWiXfIv4jQT6aLCf8WN2CLNhrSSTDtN7NrT+AuFbVXpvUf7MA6Rp0/DAv69sCUg0p6RQRxZbWi8GGx0NROkmrJvV0jlYTg3j9jiq5RL3lYrHxr0d2kxgVZUKvch359vm3mj9UmVQsz8OgRpuUSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EEqJ3DlJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58M8vCCj010120
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:27:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fV5JuK1sD/lvBGjG3DhYlCxsRUd3KN7L4n0TphxwgvQ=; b=EEqJ3DlJuMsljbE1
-	YLXjX47wCX+El+d/HSKQxOLSkPOYRuaqpzvOuVz8mRWZ+RLpgJZQJFOqlBuPfU2X
-	5dRIrbwPztFlDC0cJJblgahYbpL5n4g4mCF7xOKmSTafjbUf55ZSCM7yCzvqJYan
-	FweKwrJv1fUeiKmebEfrV5lw9jqcuYG97xIASa3qqJPv9AxzvFPbOr+8WbWCg8C/
-	Pvyg5ctx7HPBexcWxI7BAeVzWVUZHDOucn31MtUvylLAfeRGK8pfDkuKJAdVjsfC
-	ptudtJD4/oXnGG+V3WAd0HBrrIFqfMI9KXU6LOj78RwbYhnJeo7xXmrx4zFRqz23
-	/ea1WQ==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hmnnakf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:27:28 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-277f0ea6fc6so25149105ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:27:28 -0700 (PDT)
+	s=arc-20240116; t=1758551308; c=relaxed/simple;
+	bh=SvK7btLYRO//NEuSLQunuo6sNLbgIRPNMFVxPrxcILk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NvATL+TAMnZ+EOjoYAN2aioIweT8LsxrbUvRz+SWYIUbv4vI8gfhVfs7ARXBr/YYlJvR7OEE0h+jkfILFwY7N0pjAB4K1YZGxgiPD9WjtrSgago8XwMMe1Z/tqpyr2s4UBmB4ovuNkPZT4rWMamzyTiL/p8Wzr66aHNySsDurl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=Bsp0jTHa; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-ea5c1a18acfso4203829276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:28:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sartura.hr; s=sartura; t=1758551305; x=1759156105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ix+hu5NanbKuv9VZhmjhSAP9/8kt7Tc9p5wZOTLERrA=;
+        b=Bsp0jTHaxGxDMrKSTjsbYpDejdQIFz04VtbQgqxENNU/UtnTV7/CmZX3xqs+i5zUcx
+         Hr+U5lWkE/gVYqezmiH8Pj08uREP5zwecu4DiYFkVSW+t0DYoloA1IxjuQn/gjycGoWh
+         3EyWENvOv6zlDbrY8Wz3vsAc5kanRlPTZRLyOPYckWfzYeFNbS1ei0ut2gtS8kD18RT3
+         eTYptX2YYDH9Wo2JBgKyeakKm3UVHoIDAsyo1VmUkGWoK4VrI1NPXgK+VOwUgufaxdZ2
+         X9h19XEDjg1XThRRYwGixfJrg+UOXxpy/osb//IK8+BZicE2sKT6wuPLO1omCv0an3/w
+         GTQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758551247; x=1759156047;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fV5JuK1sD/lvBGjG3DhYlCxsRUd3KN7L4n0TphxwgvQ=;
-        b=U6jV3IRMN52NZvMbPXeCYM8fj0D3P4qbVzqT7PRvxeYqrjQu9U0Qp+ol1Nf2F/Sw2a
-         KSt+xcYojS1OjP+68prtSQkVk4VfXLt/V8nBXEyOMuJmn/zK1jUzkY0iHFesM7CQTH4H
-         bYOxsEwqAKFX3bMsuCSvUgwTSfDaDGXONrbg6PTaK2eRl37JoPR0H2E0UvFSUWc5iqZG
-         ahyP0ufc7w/NUw0LJ8wtt70c8myNf+QbDJYynT+jFyNyAG57gUN865OZNtwv0GmiR6FI
-         shlaW7QkjR00llQjDuZuu3z6LrTM87NPoETLqE4MM7mgzQYmCR/zrd/7vJEgqmF5DVJA
-         n/PA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxyXgwPt2Hx5++coG9aYxiIfHErTfmQDzRPnKwEsJ5AKtuLGHCE/ZM+TLPfAqX5pzIUtiv4IoZrYbmfGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdpXM4MKVD2bQlCK3VQ3btiFSDg6q4eWh7O2NgqJ9fGaWNEpS4
-	rpJtG+mfYgCpNS7OM82ev6ogr3d++zU+trc/AeTgHD6x/aRV1daTb2tdozNPpJyZbI7fnf7vW2c
-	LT00PwW3+8BMgWqQ6g1U1RF0gzzcRrGB3OxCPcKC/aPGZNlzU1C1PtxzfJyLEk64XL8g=
-X-Gm-Gg: ASbGncsgUX7aOPyXtnHv2ZrPX44x5KU8nA98DWpZw49Gl7YEDtLqvyLikuTD/lbrAgH
-	OynctOaxVjoyp3X20a75IzDLcnlrsZfmr5zqav7wy1mXLP9pKpI8/tM3EEnzLjhA+omY+XPext2
-	Dn9ZXo3nmjui56twQscvZLZLdrv2zpzekyfuSv3cOLYgEkIkaFwGfn5/vEZJr0DPojqk1D96x6e
-	ol11FkEhens2PA466DxNkP5cKpqOqom8d+kOLPhB52eeyTJJMNx9wghuxJGsakB5pG0AUoTfwZ1
-	wV0A9d25ay4rVji59FfLtjtHo9CgiBJ6ZnMfx5LR22maRbw5xWnoiKwDBEwwLhA5RycK4x07GvT
-	BfnzifEQ86/lCPow=
-X-Received: by 2002:a17:902:e550:b0:272:2bf1:6a21 with SMTP id d9443c01a7336-2722bf16e99mr115069855ad.14.1758551247077;
-        Mon, 22 Sep 2025 07:27:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFnurI6wavqww/i4EDVMJujj3eWajrXl8/5g/qerXs7rQNtYufXniembA5tMmTfhGRq5eJXgg==
-X-Received: by 2002:a17:902:e550:b0:272:2bf1:6a21 with SMTP id d9443c01a7336-2722bf16e99mr115069495ad.14.1758551246652;
-        Mon, 22 Sep 2025 07:27:26 -0700 (PDT)
-Received: from [192.168.225.142] ([157.49.98.169])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980053248sm135186355ad.15.2025.09.22.07.27.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 07:27:26 -0700 (PDT)
-Message-ID: <2b16c982-90b5-0eb5-df93-465a8c2f4d60@oss.qualcomm.com>
-Date: Mon, 22 Sep 2025 19:57:22 +0530
+        d=1e100.net; s=20230601; t=1758551305; x=1759156105;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ix+hu5NanbKuv9VZhmjhSAP9/8kt7Tc9p5wZOTLERrA=;
+        b=Yif9I2bjYp39pFH2eQdkHT1Qst9gsRhP6zDVBWG6CH/FCEISBxbU2waW7GyBLfywsV
+         xZm8q6CSOnNXB0pzuXo+rhVXIMrf7dBm+ObXyn1LoXYH1QpA8w/JwBJae63lBMUZm26R
+         E0sHOMZa4uZ2CRZe89xCEnUePH1yc1CahQTkT+G/wtkJ2ZpJYamfFGQdVke5/312qFZ8
+         cS6LsjY9gsGGn8OkwoEVI04j0cvwspjHC9H7OtjX3en0EMz+L2aAqiOzAIqAvAlBADV2
+         S6K42GqzRC54to8xDiD0d0gsYsrYH/CvzmEO5GzmYxt/dD5H0hKHhckYx6QpMBbGj73Q
+         KUVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmi6e/fdwl5DVSQsHzGHA02ZgGkW1KczUvMqsF8vNNuBdH5iMtORSOrNNOXD/wB5tuEJWyV2Dlzlqs9XU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfHLHxOdum+FBvJiKhkJm5/xMw3Hkeo8ZY4SMFXD5OprVWDTte
+	jCM1bm5by5wh28g0chAM8hXyPkkyUceBl7SQJLOZChATHXAsmdW1Qf2B3Cxb/VwiV9U=
+X-Gm-Gg: ASbGncvpJd3l0rtZWI5tcnojUnHyMUEryXd/Tdg+o/+7COfEwhxTcMsSDMTJQeayuzk
+	v/kFmox1mSlbzSgplb3Mh9oKo2MQt+s/nsfya8wvW6eGs15wblSZLiFUMTjA620/ADhuylmqcVJ
+	BrUYfJFdz0awTvWe4W276yhp9VQxaT+nWiJu0KxkoT/C8Zp/CU2yNayIHWkRBIn1qaHUX0MkTXz
+	T1B/hgSdsdrQ6CHbJv0UfrRIuZ2BvW6cLoSGyBkq1raxbJfelfoGHXpHS+fV6BG7E+SijXmGJH2
+	Kzvf7A0P0zJyV2H/y0mDyHBO9gSLgAaZQXS2/m9K4HZDDv128aSscQg9RRgDZb5DgOWtF6J6a4U
+	4h69PlCnQkTIKCc+iUIDGU1RGEL9u6xIUPp8CpoMKIzWuaOF5PrFZUQ==
+X-Google-Smtp-Source: AGHT+IHgHNnGSIkqfxadXFSwLUGIDeGN7fzklQfcWRZ5+8r/Qi0U+5pV4roKHuT4HCHEmzJ79dd0zA==
+X-Received: by 2002:a05:6902:f84:b0:eaa:251a:a4ab with SMTP id 3f1490d57ef6-eaa251aa597mr8087710276.40.1758551304769;
+        Mon, 22 Sep 2025 07:28:24 -0700 (PDT)
+Received: from fedora (d-zg1-232.globalnet.hr. [213.149.36.246])
+        by smtp.googlemail.com with ESMTPSA id 3f1490d57ef6-ea5ce709efdsm4163124276.1.2025.09.22.07.28.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 07:28:24 -0700 (PDT)
+From: Robert Marko <robert.marko@sartura.hr>
+To: p.zabel@pengutronix.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	steen.hegelund@microchip.com,
+	lars.povlsen@microchip.com,
+	daniel.machon@microchip.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: luka.perkov@sartura.hr,
+	benjamin.ryzman@canonical.com,
+	Robert Marko <robert.marko@sartura.hr>
+Subject: [PATCH v3 1/2] dt-bindings: reset: microchip: Add LAN969x support
+Date: Mon, 22 Sep 2025 16:27:28 +0200
+Message-ID: <20250922142813.221586-1-robert.marko@sartura.hr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] wifi: ath12k: enforce CPU endian format for all QMI data
-Content-Language: en-US
-To: Alexander Wilhelm <alexander.wilhelm@westermo.com>,
-        Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20250922061607.11543-1-alexander.wilhelm@westermo.com>
-From: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
-In-Reply-To: <20250922061607.11543-1-alexander.wilhelm@westermo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=YPqfyQGx c=1 sm=1 tr=0 ts=68d15cd0 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=jURWspusQOjhl1xubyy6/g==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=N9GNhs4bAAAA:8 a=EUspDBNiAAAA:8
- a=iy7eNMHqqS-0pUZEvd4A:9 a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
- a=PZhj9NlD-CKO8hVp7yCs:22
-X-Proofpoint-ORIG-GUID: UZCcAbtteWEGKL3ILOvFaF1TyWFuGC10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwMCBTYWx0ZWRfX3PV9xhtnCgOF
- /TzzG8v7KZ5TWPCtNyV4dVXrc9i19TmulkKD1cAJ/ujhUEEn6G3OSk+2Sv7NAuoxNajj8zYzgnf
- u0cJmrj3ll0N9zxWX58bg3O5FOwUZLJVNGdo62gmpeam+czOWF+yDcxmTnH53iU7EKNc5z6D+aw
- iGnpFm2NTMOKFeSxoJbmqp37LJV3Tf+4C/SCt2a/TppIVI9pjEFzPwHSnCVR8/rHMuAtoIl79Ij
- 4l6Xp218Z35kzG5LTynZusXCXkakEiaOkCj7o+jIu1b1/scBiK79++3B8M9vgHcjMd7dGEBPMKH
- au5JPr3iPc/4PUuvPphlgmpb/pb/cyDksS1dXrXyUkvjLMMnPYw93zEBFmLX1462vX2G9dyhm7M
- g73RrXu4
-X-Proofpoint-GUID: UZCcAbtteWEGKL3ILOvFaF1TyWFuGC10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-22_01,2025-09-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0 adultscore=0
- clxscore=1015 impostorscore=0 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200000
+Content-Transfer-Encoding: 8bit
 
+LAN969x also uses the Microchip reset driver, it reuses the LAN966x
+support so use a fallback compatible.
 
+Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+---
+Changes in v3:
+* Fix compatible indentation
 
-On 9/22/2025 11:46 AM, Alexander Wilhelm wrote:
-> Currently, the QMI interface only works on little endian systems due to how
-> it encodes and decodes data. Most QMI related data structures do not use
-> endian specific types and are already defined in CPU native order. The
-> ath12k specific QMI structs are an exception: they use partially endian
-> specific types, which prevents the QMI interface from being extended to
-> support big endian systems.
-> 
-> Update the two affected ath12k QMI structs to use CPU order types instead.
-> This is required because the QMI interface is being extended to support big
-> endian system, and that support depends on QMI data structures being
-> defined in CPU native order.
-> 
-> This change:
-> * preserves compatibility with existing kernels, which only support little
->    endian system
-> * enables future support for big endian systems
-> * aligns ath12k QMI handling with the general QMI design
-> 
-> Signed-off-by: Alexander Wilhelm <alexander.wilhelm@westermo.com>
+Changes in v2:
+* Use a fallback compatible
 
-Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+ .../devicetree/bindings/reset/microchip,rst.yaml      | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/reset/microchip,rst.yaml b/Documentation/devicetree/bindings/reset/microchip,rst.yaml
+index f2da0693b05a..e190e526f3e9 100644
+--- a/Documentation/devicetree/bindings/reset/microchip,rst.yaml
++++ b/Documentation/devicetree/bindings/reset/microchip,rst.yaml
+@@ -20,9 +20,14 @@ properties:
+     pattern: "^reset-controller@[0-9a-f]+$"
+ 
+   compatible:
+-    enum:
+-      - microchip,sparx5-switch-reset
+-      - microchip,lan966x-switch-reset
++    oneOf:
++      - enum:
++          - microchip,sparx5-switch-reset
++          - microchip,lan966x-switch-reset
++      - items:
++          - enum:
++              - microchip,lan9691-switch-reset
++          - const: microchip,lan966x-switch-reset
+ 
+   reg:
+     items:
+-- 
+2.51.0
+
 
