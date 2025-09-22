@@ -1,125 +1,248 @@
-Return-Path: <linux-kernel+bounces-827235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B340B91396
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:51:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8225FB9138D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ECF8424D6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:51:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58926420ABD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B633090C5;
-	Mon, 22 Sep 2025 12:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sd7qAck8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BAE3090D7;
+	Mon, 22 Sep 2025 12:50:36 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DDA3093B8
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503897082F
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758545449; cv=none; b=RsVibHWBqB04wrVbeWJ6D1ft2KvAGyOAbMl66fgw/Qof5zE/IIPs0YJbsP6tr+fUeod89+4GYicTZb1vN4vd3cNgJcsA5kMIhSYOMf04guzEFZDbO0xW4sAy0WyaxdoDEW1SUZLuJFbBan9zuQ9JHSzxsiwAJv3CzpwGuzlbrSU=
+	t=1758545436; cv=none; b=ZZRWU1LpMzx76Kq1PwK38887A/ZOCVR0K4Nl3jfQercC+Xw8Xu/6Jir+gnDO/qHlC2kS2K2iCJMjiRyXDXTiC+Up9ZMtnJo3X+fyeV0w6GAaBjz4o0+0W4YKBRRtGOCWrg2Wm/8cXitbc5CkR7z8BRqN4h9RejBOTiZO7PvElP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758545449; c=relaxed/simple;
-	bh=lpopxTfeKK9nwMgyawU+4DnWEanmPTCaJR4h5qNJrG0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ovnHEm97rQr68bDBR1E0K2VIl764PDOJRGmetB74pQOPRQtS2OMzPHAa5h6FmmvGC0uba8cpcQYbJCDz5DF916TATYMvXk2VuotLZjgFoHYl+A+1HbRbKz3bm9CcadzVHTmgWIdxWYs6LPiAi0J79fGbwDkbbYr2qOpp3A/FuCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sd7qAck8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14CDEC19423
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:50:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758545449;
-	bh=lpopxTfeKK9nwMgyawU+4DnWEanmPTCaJR4h5qNJrG0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Sd7qAck8CXhmJEWpm1UFWeW/QCf9aY7RJ2+bXZY0RLQlGy4H6GjZchPlDMv+JvfqK
-	 sMFqN4dxahup142Z5OxbhapprbP6Tr3RdElJWjtsdjmwRXqdOptkR1UIjTSdDUtKxs
-	 6L6XpnAg76RgrMaAaZC1m5J5nWj6uEKDR9lta6ozYoG4t+Aeq1gTixjLPinRbioaBs
-	 UeIJTy2sLmyi3WhFdbmhdNgZYeHDdBPeFdKwKQcF3yq7IUCw77fA64XskMH6FhnjC5
-	 AdREgb8M2MFGP8y9F/ZNPhg6X93alunCM5nhrJ3yvpIRRg6K30V+a2lO+LtoEaIytM
-	 +LsxmlRoO+cwA==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-328466c2aedso4317817fac.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 05:50:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUEMlpH9NbVYNA6JQ/sD5e8IO4PQgkxZvYgkRYbZf4dEhx0UKj2O1TpTOD1b4ToKdNnx1TXPafZtTlsd8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbOkQGpzku5If//TM5i/E4OYoaKfQw8OqvJu96PDUUAsq6TJDF
-	34NIVOj+Q8CdJy+MGwgX4lHSsIYPUC7o7OjWV/xCFXs3MNA2wVSdRRyATTCoPqfRxVoukhc+XWv
-	ZKT2YmISSFdNxtNEbNZTmtI4WRRmj9s8=
-X-Google-Smtp-Source: AGHT+IEaNSq0P2/zvgvVh0csdNsGuoVrCyDwcZf4ZEpxG3y4MENventscB+mJeJRuFcIXn/S/FNG4bPduBbpJyth4i0=
-X-Received: by 2002:a05:6808:4703:b0:439:af72:a13b with SMTP id
- 5614622812f47-43d6c0faba9mr6286864b6e.6.1758545448291; Mon, 22 Sep 2025
- 05:50:48 -0700 (PDT)
+	s=arc-20240116; t=1758545436; c=relaxed/simple;
+	bh=N7iBCeB1NX/WELU1UW6cPg88YTxzDsWTyL9DUs/4ZKE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=urUws+aVShFY7QgvdT5fWKzbYmZE4NpWI/OmsMEh+GA/1d6k3DjsmmiOdgHO8159cVG9cZjthahaC7WKUrBPYBfuZMM+2bReIyNjRbqTeE320Fj7pSlTYRlwAH8lWqrJhcCIYAC3iVdLV4TyRvgCTIM3nY9CjAYTmJlsRuPJeKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-4257e203f14so9968595ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 05:50:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758545433; x=1759150233;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7FJVEO2JSEInNaIAVfqXuJ582DXJMN71NIxbYU3RqcA=;
+        b=n4Xi+M3XtiNylwSKeGuXv/kLBwqOPliH8V2o2AtinReqwd1KIqgBtxsikuWuCHKVnK
+         W4EPAc9fXRQ8MQSOYMJz6Avlgr2Sh4KI+17QMc52SoJ0RYKoTZYzhsXm+IZ5rCpW08tQ
+         z5AY4NPrRCjZksMqARFz4O3njCRWw8dqAHAFgBerRpIloZ+B5I5bXB59uxyacUOZFusH
+         njW0TsKx5pUw2dfVT8z0dhZdDotDaSr88cgmQSIVpyc76YLP5s/BJoGI0Iaid8aNSTrd
+         XpGW/+7JJfRF2TU+iC2h0R6BjuNZLSynC/xCbI87m8QBGyA2gQ5iRAjyJ6omAT2Gu/vu
+         R1SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNak6MvcR9cLb1cbmsuHIVO6aoU1IgG2bAFt3UMxd0qa4g1GTRXbNSKerKYDvKpkOkyLHIfxXzDhyNQAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5WubZe+rOfW3cESdVC3vJ67NPmqtzI4MfSAMGcgL6BazwLiSE
+	EgIno8M0dq3cEGd9opaYXIn+Wpa9n6BxOmpc+/4ZFbKMboHt9xbrtraIQLAST+coiEwFu0b/B2y
+	2LeZmWcn6yzKKjmBfXsxBWCPXzHKOHzyx/dpV1Ynw0oAauD5b4neYTL259vo=
+X-Google-Smtp-Source: AGHT+IHYpBtAyVXLokHcOTao6pfLrHb+XMXkLtI9C6fT1fK39oMs+hOhy4hVdkZNjyscp1qCAvz8YoVixCrJdLEG3gOum3gFSBE4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6204724.lOV4Wx5bFT@rafael.j.wysocki> <3388279.44csPzL39Z@rafael.j.wysocki>
- <875xdaevab.wl-tiwai@suse.de>
-In-Reply-To: <875xdaevab.wl-tiwai@suse.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 22 Sep 2025 14:50:32 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hSBDg4fD7Gy6yEX31xO-3USJG_jFps71BRJJ2f0Oh90A@mail.gmail.com>
-X-Gm-Features: AS18NWCHbvmsov39JF3MuuKFmqx2CC8_RanaumRHVJhrorL1QgMM11HwPKkNNYg
-Message-ID: <CAJZ5v0hSBDg4fD7Gy6yEX31xO-3USJG_jFps71BRJJ2f0Oh90A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] PM: runtime: Add auto-cleanup macros for "resume
- and get" operations
-To: Takashi Iwai <tiwai@suse.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, 
-	Alex Williamson <alex.williamson@redhat.com>, Bjorn Helgaas <helgaas@kernel.org>, 
-	Zhang Qilong <zhangqilong3@huawei.com>, Ulf Hansson <ulf.hansson@linaro.org>
+X-Received: by 2002:a05:6e02:1489:b0:421:7d1:7af8 with SMTP id
+ e9e14a558f8ab-424819a21a9mr188902185ab.26.1758545433518; Mon, 22 Sep 2025
+ 05:50:33 -0700 (PDT)
+Date: Mon, 22 Sep 2025 05:50:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d14619.a00a0220.37dadf.0049.GAE@google.com>
+Subject: [syzbot] [fbdev?] KASAN: slab-out-of-bounds Read in soft_cursor (2)
+From: syzbot <syzbot+ae44b38396335bd847cd@syzkaller.appspotmail.com>
+To: deller@gmx.de, dri-devel@lists.freedesktop.org, 
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, simona@ffwll.ch, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2025 at 10:38=E2=80=AFAM Takashi Iwai <tiwai@suse.de> wrote=
-:
->
-> On Sat, 20 Sep 2025 12:54:58 +0200,
-> Rafael J. Wysocki wrote:
-> >
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > It is generally useful to be able to automatically drop a device's
-> > runtime PM usage counter incremented by runtime PM operations that
-> > resume a device and bump up its usage counter [1].
-> >
-> > To that end, add DEFINE_CLASS() macros allowing pm_runtime_put()
-> > and pm_runtime_put_autosuspend() to be used for the auto-cleanup in
-> > those cases.
-> >
-> > Simply put, a piece of code like below:
-> >
-> >       pm_runtime_get_sync(dev);
-> >       .....
-> >       pm_runtime_put(dev);
-> >       return 0;
-> >
-> > can be transformed with CLASS() like:
-> >
-> >       CLASS(pm_runtime_get_active, pm)(dev);
-> >       if (IS_ERR(pm))
-> >               return PTR_ERR(pm);
-> >       .....
-> >       return 0;
-> >
-> > (note the new resume error handling).
->
-> Do we still allow the code without the error check even using CLASS()?
-> Although the error check should be handled, it's not mandatory for
-> now.  That said, the above example could be still in a form like:
->
->         CLASS(pm_runtime_get_active, pm)(dev);
->         .....
->         return 0;
->
-> while adding the proper error check is recommended?
+Hello,
 
-I'd rather not encourage doing this.
+syzbot found the following issue on:
 
-While it may still produce working code in some cases, one needs to
-remember that in case of a runtime resume error it will be running
-without a runtime PM reference it has attempted to acquire.
+HEAD commit:    f83ec76bf285 Linux 6.17-rc6
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17147b12580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
+dashboard link: https://syzkaller.appspot.com/bug?extid=ae44b38396335bd847cd
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-f83ec76b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bdedf70f8797/vmlinux-f83ec76b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5bf9318d9242/bzImage-f83ec76b.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ae44b38396335bd847cd@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in soft_cursor+0x458/0xa10 drivers/video/fbdev/core/softcursor.c:70
+Read of size 3 at addr ffff888054a70d7d by task kworker/2:2/3582
+
+CPU: 2 UID: 0 PID: 3582 Comm: kworker/2:2 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: events_power_efficient fb_flashcursor
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xcd/0x630 mm/kasan/report.c:482
+ kasan_report+0xe0/0x110 mm/kasan/report.c:595
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0x100/0x1b0 mm/kasan/generic.c:189
+ __asan_memcpy+0x23/0x60 mm/kasan/shadow.c:105
+ soft_cursor+0x458/0xa10 drivers/video/fbdev/core/softcursor.c:70
+ bit_cursor+0xe8c/0x17e0 drivers/video/fbdev/core/bitblit.c:370
+ fb_flashcursor drivers/video/fbdev/core/fbcon.c:408 [inline]
+ fb_flashcursor+0x30d/0x400 drivers/video/fbdev/core/fbcon.c:377
+ process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+ kthread+0x3c2/0x780 kernel/kthread.c:463
+ ret_from_fork+0x56a/0x730 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+Allocated by task 10710:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:405
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4376 [inline]
+ __kmalloc_noprof+0x223/0x510 mm/slub.c:4388
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ fbcon_set_font+0x434/0xb80 drivers/video/fbdev/core/fbcon.c:2536
+ con_font_set drivers/tty/vt/vt.c:4887 [inline]
+ con_font_op+0x7fb/0xf50 drivers/tty/vt/vt.c:4934
+ vt_k_ioctl drivers/tty/vt/vt_ioctl.c:474 [inline]
+ vt_ioctl+0x48f/0x30a0 drivers/tty/vt/vt_ioctl.c:751
+ tty_ioctl+0x661/0x1680 drivers/tty/tty_io.c:2792
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl fs/ioctl.c:584 [inline]
+ __x64_sys_ioctl+0x18b/0x210 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888054a70800
+ which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 621 bytes to the right of
+ allocated 784-byte region [ffff888054a70800, ffff888054a70b10)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x54a70
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801b842dc0 ffffea0000d94e00 dead000000000002
+raw: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
+head: 00fff00000000040 ffff88801b842dc0 ffffea0000d94e00 dead000000000002
+head: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
+head: 00fff00000000003 ffffea0001529c01 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0x52820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 12, tgid 12 (kworker/u32:0), ts 114834271157, free_ts 113350555070
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x132b/0x38e0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:5148
+ alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2492 [inline]
+ allocate_slab mm/slub.c:2660 [inline]
+ new_slab+0x247/0x330 mm/slub.c:2714
+ ___slab_alloc+0xcf2/0x1750 mm/slub.c:3901
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3992
+ __slab_alloc_node mm/slub.c:4067 [inline]
+ slab_alloc_node mm/slub.c:4228 [inline]
+ __do_kmalloc_node mm/slub.c:4375 [inline]
+ __kmalloc_noprof+0x2f2/0x510 mm/slub.c:4388
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ neigh_alloc net/core/neighbour.c:522 [inline]
+ ___neigh_create+0x14e6/0x28c0 net/core/neighbour.c:656
+ ip6_finish_output2+0x1299/0x2020 net/ipv6/ip6_output.c:132
+ __ip6_finish_output+0x3cd/0x1010 net/ipv6/ip6_output.c:215
+ ip6_finish_output net/ipv6/ip6_output.c:226 [inline]
+ NF_HOOK_COND include/linux/netfilter.h:307 [inline]
+ ip6_output+0x1ca/0x3e0 net/ipv6/ip6_output.c:248
+ dst_output include/net/dst.h:461 [inline]
+ NF_HOOK include/linux/netfilter.h:318 [inline]
+ ndisc_send_skb+0xa66/0x1e30 net/ipv6/ndisc.c:512
+ ndisc_send_rs+0x129/0x670 net/ipv6/ndisc.c:722
+ addrconf_dad_completed+0x49d/0x10d0 net/ipv6/addrconf.c:4360
+ addrconf_dad_work+0x855/0x14e0 net/ipv6/addrconf.c:4268
+page last free pid 60 tgid 60 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1395 [inline]
+ __free_frozen_pages+0x7d5/0x10f0 mm/page_alloc.c:2895
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x4d/0x120 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
+ __kasan_kmalloc+0x8a/0xb0 mm/kasan/common.c:396
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ netdevice_queue_work drivers/infiniband/core/roce_gid_mgmt.c:664 [inline]
+ netdevice_event+0x365/0x9d0 drivers/infiniband/core/roce_gid_mgmt.c:823
+ notifier_call_chain+0xb9/0x410 kernel/notifier.c:85
+ call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:2229
+ call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
+ call_netdevice_notifiers net/core/dev.c:2281 [inline]
+ unregister_netdevice_many_notify+0xf76/0x24c0 net/core/dev.c:12166
+ unregister_netdevice_many net/core/dev.c:12229 [inline]
+ default_device_exit_batch+0x853/0xaf0 net/core/dev.c:12733
+ ops_exit_list net/core/net_namespace.c:204 [inline]
+ ops_undo_list+0x360/0xab0 net/core/net_namespace.c:251
+ cleanup_net+0x408/0x890 net/core/net_namespace.c:682
+ process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+ kthread+0x3c2/0x780 kernel/kthread.c:463
+ ret_from_fork+0x56a/0x730 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Memory state around the buggy address:
+ ffff888054a70c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888054a70c80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888054a70d00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                                                                ^
+ ffff888054a70d80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888054a70e00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
