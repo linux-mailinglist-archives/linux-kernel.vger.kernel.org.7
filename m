@@ -1,45 +1,44 @@
-Return-Path: <linux-kernel+bounces-826523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF517B8EB8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 03:49:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AAC3B8EB90
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 03:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA8E9189AAF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 01:49:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A82E7A1AF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 01:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2852EC0B7;
-	Mon, 22 Sep 2025 01:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="o/N6Onyv"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C5B2EC0B7;
+	Mon, 22 Sep 2025 01:49:47 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F52C2C08BB
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47772C08BB
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758505753; cv=none; b=JP54raHd7RoFTqwHicNUTEpYoo0cJWi9WrGGL0ZRlkXWxhaePFw0enCAc4yhX6i4rSD9ho1feN9HKILWwf3VbxXl6FtdYl42k26n/9fvSx6Ml2NS6cuK1D6hGjcX7mZ9TBzWZ6fejV9zfzkhFUOvGsq5B1HnKhqcuGHtNp7maNk=
+	t=1758505787; cv=none; b=hViVXpukPHKvbQIY1zhkfZud/8tRLnS6Ys9mFU5I8qcmJaIH6NnIpaoL0INa0V2s0GS/XiDlHjrUx/Sh6wxdbAQu8K0HYss2aoUglQW4YlUkjxO5wi/7OaU082vi63OrbwG8TipzmzmE6hxR+xSvK4xnlOAwSC/ZAiGFGL1+NjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758505753; c=relaxed/simple;
-	bh=DjXsKCPvKzL+TruddAAT3u0OAJ+OZ0NAoRsUkk0jhW8=;
+	s=arc-20240116; t=1758505787; c=relaxed/simple;
+	bh=MKtW4EN9S8ZBRcAqyFc04Ams4I02EIDqB78fPKWw5Ng=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RmQYQVKJ6aO+B32T93q0pl5ryfkeghKBRaMuC0FPZz5T8O3n5EIr/7Sy0p0ELYteQEOX0+4RU62bPUejj/J1RbSl6+5bGCtLl4XrAoDvETSSwH9gKwiT11MsNLE64chySSUwu4mRCGDMQr2KV/Rd/GRK+f0ah4Wg7S6As92K+ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=o/N6Onyv; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1758505742; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Poayc0RqgwJy1pB7pq1QbfeCMD4BfPBzJE20vpS6iYk=;
-	b=o/N6OnyvLRs5is61+zS6OWGuWEcne5ajvtJiIPQnDZPFEiaMopaKtag8CC7Htn73avP6g/l4b9xLuZV34p+ImXJwu/gIQlCP3sKfSDCN+tW8okbmvhXW98FYPwvn+ZsTIlTHeCKVO5hh/BZhnJ9D1hv/yHYYHbr8gZc9jdhnlfY=
-Received: from 30.221.131.10(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WoQX48k_1758505741 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 22 Sep 2025 09:49:02 +0800
-Message-ID: <47107a3c-44d5-4937-bc35-2e01605bdb98@linux.alibaba.com>
-Date: Mon, 22 Sep 2025 09:49:00 +0800
+	 In-Reply-To:Content-Type; b=T2kkDvIC3rlDb4cpVoDlJGFP9unaHbN5x9E8yY3b4G8RcXVat27xrk/H4PPaIi9/UlW8fOpL6UdIalc3LIEhTStohHUg7tfz7Vb+hmXXnJpDDpWuJEh+bGaS5+zfLr8P32OnraCjaCIIEOoZcl4jtbRqpXhnRNECu3CvrlJc2To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cVQyn1JsCzKHMWd
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:49:37 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 39E3D1A187C
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:49:40 +0800 (CST)
+Received: from [10.67.110.36] (unknown [10.67.110.36])
+	by APP3 (Coremail) with SMTP id _Ch0CgBnAD8xq9BobIuPAQ--.46643S2;
+	Mon, 22 Sep 2025 09:49:38 +0800 (CST)
+Message-ID: <3c3d3956-250c-4216-9ebf-c85cf31fa2ba@huaweicloud.com>
+Date: Mon, 22 Sep 2025 09:49:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,149 +46,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] erofs: Add support for FS_IOC_GETFSLABEL
-To: Bo Liu <liubo03@inspur.com>, xiang@kernel.org, chao@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org
-References: <20250920060455.24002-1-liubo03@inspur.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20250920060455.24002-1-liubo03@inspur.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH -next v3] x86/dumpstack: Prevent KASAN false positive
+ warnings in __show_regs
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>, x86@kernel.org,
+ jpoimboe@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Alexander Potapenko <glider@google.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>,
+ Dmitry Vyukov <dvyukov@google.com>, Ingo Molnar <mingo@redhat.com>,
+ linux-kernel@vger.kernel.org
+References: <20250830092556.3360776-1-wutengda@huaweicloud.com>
+ <1c54cadb-36e7-4e72-83e9-53c597570c9b@gmail.com>
+Content-Language: en-US
+From: Tengda Wu <wutengda@huaweicloud.com>
+In-Reply-To: <1c54cadb-36e7-4e72-83e9-53c597570c9b@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgBnAD8xq9BobIuPAQ--.46643S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCF18XFyxXw43ZF4DWF15Arb_yoWrJr1rpw
+	4rJan5XF1Yy34rtr429F4kJr9xXF4qqryvq393Jr17JF1Uurn5J3y5CF1jvr1fGryUCFy5
+	Jayqq34qkryfCaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
+Gentle Reminder: Patch Not Merged Yet
 
+Hi,
 
-On 2025/9/20 14:04, Bo Liu wrote:
-> From: Bo Liu (OpenAnolis) <liubo03@inspur.com>
-> 
-> Add support for reading to the erofs volume label from the
-> FS_IOC_GETFSLABEL ioctls.
-> 
-> Signed-off-by: Bo Liu (OpenAnolis) <liubo03@inspur.com>
-> ---
-> 
-> v1: https://lore.kernel.org/linux-erofs/63904ade56634923ba734dcdab3c45d0@inspur.com/T/#t
-> v2: https://lore.kernel.org/linux-erofs/20250826103926.4424-1-liubo03@inspur.com/T/#u
-> 
-> Changes since v2:
-> - remove unnecessary code
-> 
->   fs/erofs/Makefile   |  2 +-
->   fs/erofs/data.c     |  4 ++++
->   fs/erofs/dir.c      |  4 ++++
->   fs/erofs/inode.c    |  5 +----
->   fs/erofs/internal.h |  7 +++++++
->   fs/erofs/ioctl.c    | 41 +++++++++++++++++++++++++++++++++++++++++
->   fs/erofs/super.c    |  8 ++++++++
->   7 files changed, 66 insertions(+), 5 deletions(-)
->   create mode 100644 fs/erofs/ioctl.c
-> 
-> diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
-> index 549abc424763..5be6cc4acc1c 100644
-> --- a/fs/erofs/Makefile
-> +++ b/fs/erofs/Makefile
-> @@ -1,7 +1,7 @@
->   # SPDX-License-Identifier: GPL-2.0-only
->   
->   obj-$(CONFIG_EROFS_FS) += erofs.o
-> -erofs-objs := super.o inode.o data.o namei.o dir.o sysfs.o
-> +erofs-objs := super.o inode.o data.o namei.o dir.o sysfs.o ioctl.o
->   erofs-$(CONFIG_EROFS_FS_XATTR) += xattr.o
->   erofs-$(CONFIG_EROFS_FS_ZIP) += decompressor.o zmap.o zdata.o zutil.o
->   erofs-$(CONFIG_EROFS_FS_ZIP_LZMA) += decompressor_lzma.o
-> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-> index 3b1ba571c728..8ca29962a3dd 100644
-> --- a/fs/erofs/data.c
-> +++ b/fs/erofs/data.c
-> @@ -475,6 +475,10 @@ static loff_t erofs_file_llseek(struct file *file, loff_t offset, int whence)
->   const struct file_operations erofs_file_fops = {
->   	.llseek		= erofs_file_llseek,
->   	.read_iter	= erofs_file_read_iter,
-> +	.unlocked_ioctl = erofs_ioctl,
-> +#ifdef CONFIG_COMPAT
-> +	.compat_ioctl   = erofs_compat_ioctl,
-> +#endif
->   	.mmap_prepare	= erofs_file_mmap_prepare,
->   	.get_unmapped_area = thp_get_unmapped_area,
->   	.splice_read	= filemap_splice_read,
-> diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
-> index debf469ad6bd..32b4f5aa60c9 100644
-> --- a/fs/erofs/dir.c
-> +++ b/fs/erofs/dir.c
-> @@ -123,4 +123,8 @@ const struct file_operations erofs_dir_fops = {
->   	.llseek		= generic_file_llseek,
->   	.read		= generic_read_dir,
->   	.iterate_shared	= erofs_readdir,
-> +	.unlocked_ioctl = erofs_ioctl,
-> +#ifdef CONFIG_COMPAT
-> +	.compat_ioctl   = erofs_compat_ioctl,
-> +#endif
->   };
-> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-> index 9a2f59721522..a7ec17eec4b2 100644
-> --- a/fs/erofs/inode.c
-> +++ b/fs/erofs/inode.c
-> @@ -213,10 +213,7 @@ static int erofs_fill_inode(struct inode *inode)
->   	switch (inode->i_mode & S_IFMT) {
->   	case S_IFREG:
->   		inode->i_op = &erofs_generic_iops;
-> -		if (erofs_inode_is_data_compressed(vi->datalayout))
-> -			inode->i_fop = &generic_ro_fops;
-> -		else
-> -			inode->i_fop = &erofs_file_fops;
-> +		inode->i_fop = &erofs_file_fops;
->   		break;
->   	case S_IFDIR:
->   		inode->i_op = &erofs_dir_iops;
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-> index 4ccc5f0ee8df..311346a017a7 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -166,6 +166,9 @@ struct erofs_sb_info {
->   	struct erofs_domain *domain;
->   	char *fsid;
->   	char *domain_id;
-> +
-> +	/* volume name */
-
-The comment is useless, just drop this line.
-
-> +	char *volume_name;
->   };
->   
->   #define EROFS_SB(sb) ((struct erofs_sb_info *)(sb)->s_fs_info)
-> @@ -535,6 +538,10 @@ static inline struct bio *erofs_fscache_bio_alloc(struct erofs_map_dev *mdev) {
->   static inline void erofs_fscache_submit_bio(struct bio *bio) {}
->   #endif
->   
-> +long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
-> +long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
-> +			unsigned long arg);
-> +
->   #define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
->   
->   #endif	/* __EROFS_INTERNAL_H */
-> diff --git a/fs/erofs/ioctl.c b/fs/erofs/ioctl.c
-> new file mode 100644
-> index 000000000000..fbcbf820c4d7
-> --- /dev/null
-> +++ b/fs/erofs/ioctl.c
-> @@ -0,0 +1,41 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +#include <linux/fs.h>
-> +#include <linux/compat.h>
-> +#include <linux/file.h>
-> +
-> +#include "internal.h"
-> +
-> +static int erofs_ioctl_get_volume_label(struct inode *inode, void __user *arg)
-
-Can we just move these functions into inode.c instead?
-
-Since there is no need to introduce a new file just for
-a few new lines.
-
-Otherwise it looks good to me.
+Just a quick follow-up on my patch that got acked and reviewed over two weeks
+ago. Could you please check on its status? Let me know if anything is needed
+from my side.
 
 Thanks,
-Gao Xiang
+Tengda
+
+On 2025/9/5 22:12, Andrey Ryabinin wrote:
+> 
+> 
+> On 8/30/25 11:25 AM, Tengda Wu wrote:
+>> When task A walks task B's stack without suspending it, the continuous
+>> changes in task B's stack (and corresponding KASAN shadow tags) may cause
+>> task A to hit KASAN redzones when accessing obsolete values on the stack,
+>> resulting in false positive reports. [1][2]
+>>
+>> The specific issue occurs as follows:
+>>
+>> Task A (walk other tasks' stacks)           Task B (running)
+>> 1. echo t > /proc/sysrq-trigger
+>>
+>> show_trace_log_lvl
+>>   regs = unwind_get_entry_regs()
+>>   show_regs_if_on_stack(regs)
+>>                                             2. The stack data pointed by
+>>                                                `regs` keeps changing, and
+>>                                                so are the tags in its
+>>                                                KASAN shadow region.
+>>     __show_regs(regs)
+>>       regs->ax, regs->bx, ...
+>>         3. hit KASAN redzones, OOB
+>>
+>> Fix this by detecting asynchronous stack unwinding scenarios through
+>> `task != current` during unwinding, and disabling KASAN checks when this
+>> scenario occurs.
+>>
+>> [1] https://lore.kernel.org/all/000000000000cb8e3a05c4ed84bb@google.com/
+>> [2] KASAN out-of-bounds:
+>> [332706.552324] BUG: KASAN: out-of-bounds in __show_regs+0x4b/0x340
+>> [332706.552433] Read of size 8 at addr ffff88d24999fb20 by task sysrq_t_test.sh/3977032
+>> [332706.552562]
+>> [332706.552652] CPU: 36 PID: 3977032 Comm: sysrq_t_test.sh Kdump: loaded Not tainted 6.6.0+ #20
+>> [332706.552783] Hardware name: Huawei RH2288H V3/BC11HGSA0, BIOS 3.35 10/20/2016
+>> [332706.552906] Call Trace:
+>> [332706.552998]  <TASK>
+>> [332706.553089]  dump_stack_lvl+0x32/0x50
+>> [332706.553193]  print_address_description.constprop.0+0x6b/0x3d0
+>> [332706.553303]  print_report+0xbe/0x280
+>> [332706.553409]  ? __virt_addr_valid+0xed/0x160
+>> [332706.553512]  ? __show_regs+0x4b/0x340
+>> [332706.553612]  kasan_report+0xa8/0xe0
+>> [332706.553716]  ? __show_regs+0x4b/0x340
+>> [332706.553816]  ? asm_exc_page_fault+0x22/0x30
+>> [332706.553919]  __show_regs+0x4b/0x340
+>> [332706.554021]  ? asm_exc_page_fault+0x22/0x30
+>> [332706.554123]  show_trace_log_lvl+0x274/0x3b0
+>> [332706.554229]  ? load_elf_binary+0xf6e/0x1610
+>> [332706.554330]  ? rep_stos_alternative+0x40/0x80
+>> [332706.554439]  sched_show_task+0x211/0x290
+>> [332706.554544]  ? __pfx_sched_show_task+0x10/0x10
+>> [332706.554648]  ? _find_next_bit+0x6/0xc0
+>> [332706.554749]  ? _find_next_bit+0x37/0xc0
+>> [332706.554852]  show_state_filter+0x72/0x130
+>> [332706.554956]  sysrq_handle_showstate+0x7/0x10
+>> [332706.555062]  __handle_sysrq+0x146/0x2d0
+>> [332706.555165]  write_sysrq_trigger+0x2f/0x50
+>> [332706.555270]  proc_reg_write+0xdd/0x140
+>> [332706.555372]  vfs_write+0x1ff/0x5f0
+>> [332706.555474]  ? __pfx_vfs_write+0x10/0x10
+>> [332706.555576]  ? __pfx___handle_mm_fault+0x10/0x10
+>> [332706.555682]  ? __fget_light+0x99/0xf0
+>> [332706.555785]  ksys_write+0xb8/0x150
+>> [332706.555887]  ? __pfx_ksys_write+0x10/0x10
+>> [332706.555989]  ? ktime_get_coarse_real_ts64+0x4e/0x70
+>> [332706.556094]  do_syscall_64+0x55/0x100
+>> [332706.556196]  entry_SYSCALL_64_after_hwframe+0x78/0xe2
+>>
+>> Fixes: 3b3fa11bc700 ("x86/dumpstack: Print any pt_regs found on the stack")
+>> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
+> 
+> Reviewed-by: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+
 
