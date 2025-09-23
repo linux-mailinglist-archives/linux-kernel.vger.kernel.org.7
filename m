@@ -1,171 +1,138 @@
-Return-Path: <linux-kernel+bounces-829563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9769AB9758D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:30:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48107B97599
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EB57442FE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:30:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22A22442FDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101561D798E;
-	Tue, 23 Sep 2025 19:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DC23043B7;
+	Tue, 23 Sep 2025 19:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="QHEOfqnS"
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S8Qb5JmT"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75AAA194A6C;
-	Tue, 23 Sep 2025 19:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18FC213E9F
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758655839; cv=none; b=dTnf2TZZEszHuvtkQTEug1Zc+gTGmb0u8zQsYqgZHlRSexhiarKvhZelEl8qEjMUJbJd5VtwFMUR7Gj0awnLfg3hcTPG9Uni8VDzlim/OGGwHQJoCNxpSE8TX1L3wgzkhqqHWOxfh4WPYApMbFz8OF6U5AlyxUHoKmbdHMyRT/4=
+	t=1758655845; cv=none; b=tVJ4MpSaihWUFLh3NdEPT9XZT4DNMJTd2AYhlNoyc5ge+bRQ5sWRLrTJrTidMFU+B6hGqIxhwcOExXgBSvCQzdmxqn7AI6A9zemfc9BUWvKMVIOonR5YpACubV+oHd6Tq8tNeV77AzUiKI5V1D+1wqjhxcDzP4zp2ozpPRQW5As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758655839; c=relaxed/simple;
-	bh=tfZ+ZOZ8j9vKPx5WIBGgdSopL2mUnuMwusRKerM+Z1c=;
+	s=arc-20240116; t=1758655845; c=relaxed/simple;
+	bh=UwNgaI77PBjLSUE+r6FEG3m9gYMM55QqcYE/BwPrKY0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxgESMOgmx2hnHV3Sh45SmEyhi1svZ3RIP+NNVda002A7L+fxMCSh9xF9FDEU7IXxlWjtgDtVp6ZeL6EEndKAYrOZlACjp+A2wrRl2VwULoI7MRBtxVnNCj/kBB3r95+Ev+nNqX1gfou7YYGMWKOzuFSLala5UEU8eGaHfxFMBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=QHEOfqnS; arc=none smtp.client-ip=195.154.113.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=sgmjEyjMA0qGIjylSrBYpm5Nywd0hmlcKcjCfl2hwTQ=; b=QHEOfqnSlEwD3ePlCOEjn3yC2y
-	5Svz442J0yi94kyTZQYgWld+xcrqqrO4FwA48ETMWguVNynk7P1bIPFkG59mmefqglXNl3xARFwCA
-	jaYPfEfnwlAQjzJNZwFD98+b8dQgKVi3x5+SEK1bu5I9QjLYM0YBW3yVU2QhS1vuD0qaYLuVLccNw
-	YGd/TeJ413MNkLKJ90RDauoVMM+mUposnA9vnZ3dJKUJQWaHFFS5oVlt0TbntN1zvMGi6njfhhZ+G
-	jhhe/yxo1xe2UsZ27lRdu/UsbC0KdyqExdoASjtB0AMV604nTpYkbbxFdByTO1L2sRHQJsU2URbQt
-	Ud6+aSQw==;
-Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
-	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1v18ia-00CAf4-2d;
-	Tue, 23 Sep 2025 21:30:28 +0200
-Date: Tue, 23 Sep 2025 21:30:28 +0200
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: Vivian Wang <wangruikang@iscas.ac.cn>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Yixun Lan <dlan@gentoo.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>,
-	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
-Subject: Re: [PATCH 2/3] riscv: dts: spacemit: add 24c02 eeprom on BPI-F3
-Message-ID: <aNL1VDm77voAHJlX@aurel32.net>
-Mail-Followup-To: Vivian Wang <wangruikang@iscas.ac.cn>,
-	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Yixun Lan <dlan@gentoo.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>,
-	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
-References: <20250921210237.943370-1-aurelien@aurel32.net>
- <20250921210237.943370-3-aurelien@aurel32.net>
- <54a959f7-a2e6-4622-97fa-18408afa0998@iscas.ac.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TgrpRHQVaTmSSjQ6wd1sVhi1c0xpzNj13eeTqBPrPpwFR7b/eQyvrTpxSenPmlaGnH1zU378ewc6D5ES5IrRe3jHpirN17s2Qo14yFwDRFAsKBXm4tAe2EOq3X+z649+ZI33mv0UUrF8T78zu4e9P2VFEnM6wvigPSxHhnPP0hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S8Qb5JmT; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45ddc7d5731so40632855e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:30:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758655842; x=1759260642; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=l3XzVTxMO4iEx25I8nAUCxuLVUDgVKpjcSi8HGEwM1A=;
+        b=S8Qb5JmTNvWjbsOSb4GzAmhgHDdETKBTg3543IS3Qia6TNW0CFMuwioXGfbjDhE28K
+         RON5bUIKPcJTclpBw58c4LMKlfFRBuKp3GyL/Ba8nx1coiyCh73eB5mWnsgBtAE5lSNq
+         jqdmee3zlJOiddzbtHMebCOEWp3t/Ume8JpmwU3xOxaSngua8lW+tzuzA9AkFix29MfT
+         B3XJ+YVQ4k7I2S8XwBhzO82jA4f0kS3WQpiCiyLnShmPRT2JkjJXz/8uSwc1t/D+1VHS
+         yzv+YTq1J+nl+gV8zD3Z6DLKSx+B2spziF5klIYq0krcZqJzXRaqfDY4B58+FE2trT7i
+         7png==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758655842; x=1759260642;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l3XzVTxMO4iEx25I8nAUCxuLVUDgVKpjcSi8HGEwM1A=;
+        b=i7aLiG+PoTcOvCILWLJEnJI5lvfytG0A3098pN/0n919GbaMfruQSsP0IF4JWI6HFv
+         j3vADNadCaFx4lq27PzcgKYPkWnnzeMFzBLHSkR4cu4vSu7XReOTfT+Q1mRC2gPP17qg
+         XnQV05TFSALNnpb8HA+4OYJA0KF0L6Z09hJjHXBieuBs8QUvTQmOFF1Q3Oll+w2k4l8q
+         ofG5t9M5L4F/YKmTdORbVl8Kg9M8oZ3Va74jXigTELfLsRGwQmNf+5ccECoMmBUv4HXA
+         /Jqh0GBz16cuRkbw0BFuH1iqOJV6H6cxufcENNjlR4msRFtVQ+VhWFjg+NYjnyCDUf+l
+         QWzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXzGFJKu6bYxVaL8HRNZNpWlzuYz+aKr0lCTd8aiVI3Mek8ah+8gI/Kvvuavr3AXrdz9nWwUvRwIGFORIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyieLkh6tmr4igEDFnKShpcHUTQaMl0hamG6khEAk8QDsqyWzRe
+	49ZaTrUKZClbxc6NLnyHKMmlEI2mR7A6FFkjLdeQ2wRuLqjeXllKnbnm
+X-Gm-Gg: ASbGncudTFkWyHiXFW5yL+9yh18SKp6OjXGzjS9mC2qHsyR7cqG2X//BcqrJUedJ5ju
+	kI+lo5WCvgpS+Mm2Vkk2kCK95p1tJ+ekkjIDOKEa0f7L/YMWJ3k5S5c3G/96MaWcoilypv/oxv+
+	HVaChzSruo6v8evcSKfju5ufhPh6kuINWt9TfuKiOOl88wBHx1sp9BQxFOWAT4VH8h5D7JsIUtW
+	R4vOwgze72647x8pFe4tOMpvB34cspMA6dyehpxXp+Er+4Se9AW48svkZW8DPuxd8JwS9UmLgPE
+	ectVlMlnxG5IFvH1AJAHtPz5ps0vN8j2xJAyU47btjF75Y0MdDGpxmLgkSlutmj5XBhlV6ufXiL
+	WO01Ft7bpuv+YAl1YOIo=
+X-Google-Smtp-Source: AGHT+IEfC1NNEAG6LGNFDwZmSsO6QvXxb0bSOmjC5mNFchosn0D8MEMu1s0ZAr8KAAjzIJEQm5U3VA==
+X-Received: by 2002:a05:600c:1c05:b0:45b:7ce0:fb98 with SMTP id 5b1f17b1804b1-46e1d97493fmr45353685e9.5.1758655841922;
+        Tue, 23 Sep 2025 12:30:41 -0700 (PDT)
+Received: from archlinux ([143.58.192.81])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3f127660840sm19066278f8f.11.2025.09.23.12.30.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 12:30:40 -0700 (PDT)
+Date: Tue, 23 Sep 2025 20:30:39 +0100
+From: Andre Carvalho <asantostc@gmail.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v2 5/6] netconsole: resume previously
+ deactivated target
+Message-ID: <4evp3lo4rg7lh2qs6gunocnk5xlx6iayruhb6eoolmah6qu3fp@bwwr3sf5tnno>
+References: <20250921-netcons-retrigger-v2-0-a0e84006237f@gmail.com>
+ <20250921-netcons-retrigger-v2-5-a0e84006237f@gmail.com>
+ <t32t7uopvipphrbo7zsnkbayhpj5vgogfcagkt5sumknchmsia@n6znkrsulm4p>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <54a959f7-a2e6-4622-97fa-18408afa0998@iscas.ac.cn>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+In-Reply-To: <t32t7uopvipphrbo7zsnkbayhpj5vgogfcagkt5sumknchmsia@n6znkrsulm4p>
 
-Hi Vivian,
+Hi Breno,
 
-On 2025-09-23 14:32, Vivian Wang wrote:
-> Hi Aurelien,
->=20
-> On 9/22/25 05:01, Aurelien Jarno wrote:
-> > The BPI-F3 contains a 24c02 eeprom, that contains among other things the
-> > MAC addresses of the two network interfaces. For this reason, mark it as
-> > read-only.
-> >
-> > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> > ---
-> >  arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 11 ++++++++++-
-> >  1 file changed, 10 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/ris=
-cv/boot/dts/spacemit/k1-bananapi-f3.dts
-> > index 3b6e4f52e9aad..574d10fdf9b82 100644
-> > --- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> > +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> > @@ -115,6 +115,15 @@ &i2c2 {
-> >  	pinctrl-0 =3D <&i2c2_0_cfg>;
-> >  	pinctrl-names =3D "default";
-> >  	status =3D "okay";
-> > +
-> > +	eeprom@50 {
-> > +		compatible =3D "atmel,24c02";
-> > +		reg =3D <0x50>;
-> > +		vcc-supply =3D <&vcc1v8_sys>;
-> > +		pagesize =3D <16>;
-> > +		read-only;
-> > +		size =3D <256>;
-> > +	};
-> >  };
-> > =20
->=20
-> I wonder if it would possibly make sense to specify a nvmem-layout here.
-> The BPI-F3 I have here has this in the 24c02:
->=20
-> 00000000=C2=A0 54 6c 76 49 6e 66 6f 00=C2=A0 01 00 20 24 06 fe fe fe=C2=
-=A0 |TlvInfo... $....|
-> 00000010=C2=A0 XX XX XX 2a 02 00 02 23=C2=A0 0c XX XX XX XX XX XX XX=C2=
-=A0 |...*...#.XXXXXXX|
-> 00000020=C2=A0 XX XX XX XX XX fe 04 XX=C2=A0 XX XX XX ff ff ff ff ff=C2=
-=A0 |XXXXX..XXXX.....|
-> 00000030=C2=A0 ff ff ff ff ff ff ff ff=C2=A0 ff ff ff ff ff ff ff ff=C2=
-=A0 |................|
-> *
-> 00000100
->=20
-> (... with variable parts replaced with X)
->=20
-> And, AFAICT, this is a "onie,tlv-layout" with fields:
->=20
-> 0x24 mac-adddress
-> 0x2a num-macs
-> 0x23 serial-number
-> 0xfe crc32
->=20
-> As you can see the mac-address assignment looks bogus with fe:fe:fe (it
-> is used by vendor code though, so at least it seems to be intended). It
-> does appear at least to have useful information.
+On Tue, Sep 23, 2025 at 05:22:25AM -0700, Breno Leitao wrote:
+> For targets that are set by the mac address, they don't necessarily get
+> np.dev_name populated, do they?
+> 
+> I am double checking netpoll_setup(), and if
+> is_valid_ether_addr(np->dev_mac), I don't see np.dev_name being
+> populated.
 
-The reason I initially tried to dump the content of the eeprom was to=20
-check the MAC addresses provided to the kernel by u-boot at they looked
-strange to me starting with fe:fe:fe... But at least they match.
+I was not expecting it to be the case either, bu my understanding is that 
+np.dev_name does get populated by __netpoll_setup, which is called unconditionally 
+at the end of netpoll_setup. __netpoll_setup eventually does:
 
-> Can you confirm on your hardware? What do you think about this: should
-> we add it now or add it when we have users?
+np->dev = ndev;
+strscpy(np->dev_name, ndev->name, IFNAMSIZ);
 
-I also have the TlvInfo data on my board, but it misses the=20
-serial-number field.
+I've confirmed that for targets bound by mac, np->dev_name is empty before these
+lines but then it is correctly populated here. For targets create by name,
+np->dev_name is already correctly set prior to this. 
+Please, let me know if I'm missing something.
 
-This is a good idea to use the "onie,tlv-layout" layout, I'll do that in=20
-the V2.
+> Should we also compare that the mac doesn't match before returning?
 
-Aurelien
+Even though the above seem to work on my tests, I was not 100% sure we wanted
+to also check the dev_name when we initially bound by mac.
+I've also considered the approach below, which I think achieves what you are
+suggesting:
 
---=20
-Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-aurelien@aurel32.net                     http://aurel32.net
+if (!is_broadcast_ether_addr(nt->np.dev_mac)) {
+	if(memcmp(nt->np.dev_mac, ndev->dev_addr, ETH_ALEN))
+		return;
+} else if (strncmp(nt->np.dev_name, ndev->name, IFNAMSIZ)) {
+        return;
+}
+
+Let me know if you prefer this approach, it would allow resuming targets in case
+even if their dev_name changes.
+
+> --breno
 
