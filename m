@@ -1,94 +1,171 @@
-Return-Path: <linux-kernel+bounces-828774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5D2B956C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:28:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8D0B956D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA15519C00CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:28:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09B5D2E5AD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19677320CB6;
-	Tue, 23 Sep 2025 10:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD436321299;
+	Tue, 23 Sep 2025 10:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mRfASxma"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="gJd2K421"
+Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC65E3191D2
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F1C310645;
+	Tue, 23 Sep 2025 10:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758623272; cv=none; b=UZ8hTGpcUICkEBSVD95dEefTh7XiADqbhVSQY+X6Z9iwNVrtcYvNzsaBWw8rOivJIF7pqFmTR8Bkud2BZgWQayeUq1Ms3WlrVyCtU7cMPPReEWb1yi9Ydh0mtAWkmX0XaSMTRjdxXSvOvTFA8SBiSflmeG92qGsu3IAS/aTWNfg=
+	t=1758623274; cv=none; b=Xei6Lii997xyX7dvnc77/urhvybxtoVaPkaOYh0iGWgauR7aVi2qxya0J3slsO/fjJ6OE9pyeV66jA3g8PmjR6PmQTNQBUsYxETyYOp7igHTqa0YXMmoYto7fRym63w6GVuHcOxd15eI10r5rllLnJWs2AGswz9y4Ip3BF6zNog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758623272; c=relaxed/simple;
-	bh=jexzQQQoLvSXdpcAQ/tUipzJbucXb2RIxjwaKuZ4JnI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ex7htM2PC8h87JBuaC+YuUOweiNoxKEbWG6j08oQzkfUeq+S65EBDpqMDl4gX9+cErcjWVFk+0LcAeXIeAGCAlCDxLsObuLBrwNZmkFIIlOUrClQxTFkFbusuCYRimrdMXOunYAD0lw7Ztov/3pthflhcZkA58DlRfKX5e2yCu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mRfASxma; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758623258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rZEYM/d80C9hf06PGYbrd/Uuixtovw5a7O63NUD1VjU=;
-	b=mRfASxmag/YyxEsnyH+7p34fI3juvOwT7Eu5FLUewinwMct3vgW96QVifEUpDhuc9FCncU
-	5wDZRMV4FMBpKY/Y+dZN4I+tb28PG0QDfjXv5xvWYh11p/b+92UxSSRlV+1gLVkfv5w6ON
-	4qH0WoMc8yGpg6vi6adrfZagyBXoIzc=
-From: menglong.dong@linux.dev
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Subject:
- Re: [PATCH 1/2] tracing: fprobe: rename fprobe_entry to fprobe_fgraph_entry
-Date: Tue, 23 Sep 2025 18:27:30 +0800
-Message-ID: <12748135.O9o76ZdvQC@7940hx>
-In-Reply-To: <20250923053803.0adee9a0@batman.local.home>
-References:
- <20250923092001.1087678-1-dongml2@chinatelecom.cn>
- <20250923053803.0adee9a0@batman.local.home>
+	s=arc-20240116; t=1758623274; c=relaxed/simple;
+	bh=7DNbOHNaKHAqXh6/yA4lmhTQDKdshc7fyPtpwopNmIA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Q3fW15VzCeR3HTC2cjqlnxnwND7s95v4DBx4oq9X6utG0UF1pqu/IZ1ygymQyCX7b5Tbqr8Ut9nKgGaUWExFxJtzrIRR2kXJV/c+H/XiEAGmlcMT96q8b1+oR23j14LZKvZogD/v8jkGNaH7ZV7p9aLWHaZj0dlfWhlQ3uM+NZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=gJd2K421; arc=none smtp.client-ip=168.119.26.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
+	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
+	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=7DNbOHNaKHAqXh6/yA4lmhTQDKdshc7fyPtpwopNmIA=; b=gJd2K421lEKr0jTa6IxYU1zGTF
+	AMOxn+22FIDzUH7XwXhl9QUd8RpXnciqAcVEJvSFmLdsspKV+N5xiWR2W7G0DqI+lESS9z8VqI5vc
+	J4KsR9bQf9yKI2WvYWGQIxRys5jkO+eT2J/26b+kEX3qNTI8UdSoI0acoWT2H0wtgqi2OkKEeZ8eO
+	G7j2FRYdLx86+HT5dXcd1FGrR2AVqxIfoJb6elVNJzavUIkEbOWj43T26ExivTgV5f5soqqZFme30
+	wG3EZ4u0y+YPRz3kbS4wVWU3AJ28kbpw2RLrKP2ZedY/ypLcrxcdMg1sAA9s166jKeDZMFHM4NqlA
+	8txKlEqA==;
+Received: from sslproxy08.your-server.de ([78.47.166.52])
+	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <git@apitzsch.eu>)
+	id 1v10FL-0003pV-0X;
+	Tue, 23 Sep 2025 12:27:43 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy08.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <git@apitzsch.eu>)
+	id 1v10Ef-0002i2-1d;
+	Tue, 23 Sep 2025 12:27:42 +0200
+Message-ID: <14e75b6ebc3e558d3449f8b4043d31260bfaffc4.camel@apitzsch.eu>
+Subject: Re: [PATCH 0/4] Add CAMSS support for MSM8939
+From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Robert Foss	
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, Vladimir Zapolskiy	
+ <vladimir.zapolskiy@linaro.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Bjorn Andersson
+ <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Vincent Knecht
+	 <vincent.knecht@mailoo.org>
+Date: Tue, 23 Sep 2025 12:27:41 +0200
+In-Reply-To: <bfc3838c-b2fe-40c9-a1bf-f5269b48dca9@linaro.org>
+References: <20250908-camss-8x39-vbif-v1-0-f198c9fd0d4d@apitzsch.eu>
+	 <bfc3838c-b2fe-40c9-a1bf-f5269b48dca9@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
+X-Virus-Scanned: Clear (ClamAV 1.0.9/27771/Tue Sep 23 10:26:39 2025)
 
-On 2025/9/23 17:38 Steven Rostedt <rostedt@goodmis.org> write:
-> On Tue, 23 Sep 2025 17:20:00 +0800
-> Menglong Dong <menglong8.dong@gmail.com> wrote:
-> 
-> > The fprobe_entry() is used by fgraph_ops, so rename it to
-> > fprobe_fgraph_entry to be more distinctive.
-> 
-> The change log should be more specific and state that this will allow
-> to have fprobes to use ftrace too. I didn't know why you did this until
-> I saw the second patch. As change logs should be self contain, it
-> should have enough information to not rely on knowing other commits to
-> understand why the patch is made.
+Hi,
 
-Ah, you are right, the commit log of this patch is too simple.
-I'll add enough information on what it is for in the next version.
+Am Montag, dem 08.09.2025 um 11:56 +0100 schrieb Bryan O'Donoghue:
+> On 07/09/2025 23:04, Andr=C3=A9 Apitzsch via B4 Relay wrote:
+> > (This series resumes [1].)
+> >=20
+> > This series adds CAMSS support for MSM8939.=C2=A0 It's mostly identical
+> > to
+> > MSM8916, except for some clocks and an additional CSI.
+> >=20
+> > To fix black stripes across sensor output, and garbage in CSID TPG
+> > output, 2 VFE VBIF register settings are needed.=C2=A0 So the 2nd patch
+> > adds
+> > helper functions to do just that.
+> >=20
+> > Patch 1: documents qcom,msm8939-camss DT bindings
+> > Patch 2: adds helper for VFE VBIF settings
+> > Patch 3: adds CAMSS_8x39 version in CAMSS driver
+> > Patch 4: adds camss and cci in msm8939.dtsi
+> >=20
+> > Changes compared to [1]:
+> > - Move bindings patch to the beginning
+> > - Make the order of {reg, clock, interrupt} items the same as in
+> > 8916 +
+> > =C2=A0=C2=A0 append additional items
+> > - Drop R-b tags from bindings and dts patches as order of items was
+> > =C2=A0=C2=A0 changed
+> >=20
+> > [1]
+> > https://lore.kernel.org/all/20250613-camss-8x39-vbif-v5-0-a002301a7730@=
+mailoo.org/
+> >=20
+> > Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
+> > [Andr=C3=A9: Apply reviewer comments]
+> > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> > ---
+> > Vincent Knecht (4):
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: dt-bindings: Add qcom,msm89=
+39-camss
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: qcom: camss: vfe: Add VBIF =
+setting support
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: qcom: camss: Add support fo=
+r MSM8939
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 arm64: dts: qcom: msm8939: Add cam=
+ss and cci
+> >=20
+> > =C2=A0 .../bindings/media/qcom,msm8939-camss.yaml=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 254
+> > +++++++++++++++++++++
+> > =C2=A0 arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 4 +
+> > =C2=A0 arch/arm64/boot/dts/qcom/msm8939.dtsi=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 146
+> > ++++++++++++
+> > =C2=A0 drivers/media/platform/qcom/camss/Makefile=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0 drivers/media/platform/qcom/camss/camss-csiphy.c=C2=A0=C2=A0 |=
+=C2=A0=C2=A0 1 +
+> > =C2=A0 drivers/media/platform/qcom/camss/camss-ispif.c=C2=A0=C2=A0=C2=
+=A0 |=C2=A0=C2=A0 8 +-
+> > =C2=A0 drivers/media/platform/qcom/camss/camss-vfe-4-1.c=C2=A0 |=C2=A0 =
+12 +
+> > =C2=A0 drivers/media/platform/qcom/camss/camss-vfe-vbif.c |=C2=A0 31 ++=
++
+> > =C2=A0 drivers/media/platform/qcom/camss/camss-vfe-vbif.h |=C2=A0 19 ++
+> > =C2=A0 drivers/media/platform/qcom/camss/camss-vfe.c=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 10 +
+> > =C2=A0 drivers/media/platform/qcom/camss/camss-vfe.h=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +
+> > =C2=A0 drivers/media/platform/qcom/camss/camss.c=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 157
+> > +++++++++++++
+> > =C2=A0 drivers/media/platform/qcom/camss/camss.h=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0 13 files changed, 645 insertions(+), 2 deletions(-)
+> > ---
+> > base-commit: be5d4872e528796df9d7425f2bd9b3893eb3a42c
+> > change-id: 20250517-camss-8x39-vbif-975ff5819198
+> >=20
+> > Best regards,
+>=20
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-Thanks!
-Menglong Dong
+any chance, this series can be applied for the next merge window?
 
-> 
-> -- Steve
-> 
-> 
-
-
-
-
+Best regards,
+Andr=C3=A9
 
