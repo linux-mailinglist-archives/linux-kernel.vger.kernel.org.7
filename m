@@ -1,175 +1,102 @@
-Return-Path: <linux-kernel+bounces-829269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AAB1B96A7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:48:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C4CB96A71
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC2C319C524F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:48:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A88019C4C38
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583CC266580;
-	Tue, 23 Sep 2025 15:47:54 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F01A23815C;
-	Tue, 23 Sep 2025 15:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07392750F6;
+	Tue, 23 Sep 2025 15:47:27 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C1726563B;
+	Tue, 23 Sep 2025 15:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758642473; cv=none; b=A0H6eBLxJB6Eca+K5GgcNl4AyXMEllGp5VFQUHcyeHObItW20jjNnaFvZtR3MTOYjWDb5GB0BQS5hHSP1iwVrV/bfgQ4b5WnyDOoEOYw4Qxq0nM+SqzQ7mj3jdOCKE+6CzXXVNim4LQhwulIOJXJMshTeuhi8fdJMPFEn5Fjk4s=
+	t=1758642447; cv=none; b=MvZzdCv6AOMNsOidCosszJpuxfsmJieNEbtuIyRm4Slfvm08iK50AsaswokChjixivVj55lOYB03HmhxSWVF7CN/en3L9Y1t3kyZWH+RTpZuT4FiRRNcKwePKJO+EDym1oZM/zgiYgSaVHxWeZYtHZ8+hAQk7RYvRNvGrbcHJf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758642473; c=relaxed/simple;
-	bh=ExbNrBUxZz4jaMeIL7GyUCv6mgFwjLV9B32HM3yyxuA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ctd9JjPiwP/2BB0ejD3XoQIOno9OCrBuG8iyIixSM4/Z6uE6RA+X4qG8pHTu8FxV4w9h/QAFI87o1LT7j5ui+6nrcTt/vQEF4UGrt2G+yquIfXKvWYNJlK4WGrEAJkDJ2NuOCtIgS1Co/PaB/WjLVnipku9m8Cleb52TFTbS9ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: 9/t0SQo+QIqN5T6NqyHqMw==
-X-CSE-MsgGUID: 2CycLQvbQz+ZWDfthuQXRw==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 24 Sep 2025 00:47:44 +0900
-Received: from demon-pc.localdomain (unknown [10.226.93.64])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 981DE40062C5;
-	Wed, 24 Sep 2025 00:47:40 +0900 (JST)
-From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-To: 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Nam Cao <namcao@linutronix.de>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] tty: serial: sh-sci: fix RSCI FIFO overrun handling
-Date: Tue, 23 Sep 2025 18:47:06 +0300
-Message-ID: <20250923154707.1089900-1-cosmin-gabriel.tanislav.xa@renesas.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758642447; c=relaxed/simple;
+	bh=7HziM51fokJHC3jC9oA36jkC79HdJut8P+XATs1vbWg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=J7EpWIYBQO/FkPOfxmWvfbfpTyftiznoySmYmcVvWjBkFkW6VRq+J7ct5u31ldtn+teoUgA62Ke+odLUs3TSLCMNic0dl0HtemlVzTwVRcaP1AYFhyzl4M9+IrqdNQOFTJzY+a9xbnvQlDiSK/zn+1OgdWgnHB+EJ48+Dzpvvew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 556FAB9B6F;
+	Tue, 23 Sep 2025 15:47:18 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf05.hostedemail.com (Postfix) with ESMTPA id C805A2000E;
+	Tue, 23 Sep 2025 15:47:14 +0000 (UTC)
+Message-ID: <a54094681531e526c7e055cc5f58d0f6d480c119.camel@perches.com>
+Subject: Re: [PATCH 20/34] checkpatch: Deprecate rcu_read_{,un}lock_trace()
+From: Joe Perches <joe@perches.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org, Andrew
+ Morton	 <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org,
+  Andy Whitcroft <apw@canonical.com>, Dwaipayan Ray
+ <dwaipayanray1@gmail.com>, Lukas Bulwahn	 <lukas.bulwahn@gmail.com>, Andrii
+ Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Peter
+ Zijlstra <peterz@infradead.org>, bpf@vger.kernel.org
+Date: Tue, 23 Sep 2025 08:47:13 -0700
+In-Reply-To: <20250923142036.112290-20-paulmck@kernel.org>
+References: <580ea2de-799a-4ddc-bde9-c16f3fb1e6e7@paulmck-laptop>
+	 <20250923142036.112290-20-paulmck@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: C805A2000E
+X-Stat-Signature: xyhh66ziobi3gt9nhn481wgoykujxgp9
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX19zGYIWzQffe4MRCC7e4CCIFAD8auaCiSk=
+X-HE-Tag: 1758642434-818505
+X-HE-Meta: U2FsdGVkX1/xO5shmau56dp57ipcWIiBFvH+NXf0PoWoiEpKQHyCrp552WPbVra/f93h++X01J5fyAsz324EKPppFjaovdpkDqlMLyS9hvcdFVuH1ljbUAie8MgXUeMS3Ikqj0W3mL6QoKRY79EUEiv7K/8lqHEQGhA1OWJYQTzbWpDDc5ccYo/CUNkyeFKV1Au4c2RyNmiWIvJemq7yAoyiSO8h6TVMnGoGYPPX3jnpfYlsOdMPzjTYBP6rfO6mrOfMxumVGfLr+IQGr62mcYb2kCqc3sCrJDDYjlskwr2ZDyUqTjZOTUnwUL4QeuKJPSsNvvxlaf0dkeco9LtdPVZttRCM6H7/0RXDrfxXM+VaI97lQtOU/+rtcbYpS+IwhyTf2SjMmXT4SgRirOlgOMIGpWWSkDzrl+A0Nl7cnmsCBifrvPDqlYgY7EAkohXt4F1bt+LPn0rd7d4gEOrlR3SGWyQ7sT+YRWgEHZr+2SQrZdEO8aPuiLv6qQFBUkG73TUyzIu1S1mznK10yoAWkizN5xf+yzy+4vODWYNOasI=
 
-The receive error handling code is shared between RSCI and all other
-SCIF port types, but the RSCI overrun_reg is specified as a memory
-offset, while for other SCIF types it is an enum value used to index
-into the sci_port_params->regs array, as mentioned above the
-sci_serial_in() function.
+On Tue, 2025-09-23 at 07:20 -0700, Paul E. McKenney wrote:
+> Uses of rcu_read_lock_trace() and rcu_read_unlock_trace()
+> are better served by the new rcu_read_lock_tasks_trace() and
+> rcu_read_unlock_tasks_trace() APIs.  Therefore, mark the old APIs as
+> deprecated.
+>=20
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 
-For RSCI, the overrun_reg is CSR (0x48), causing the sci_getreg() call
-inside the sci_handle_fifo_overrun() function to index outside the
-bounds of the regs array, which currently has a size of 20, as specified
-by SCI_NR_REGS.
+Acked-by: Joe Perches <joe@perches.com>
 
-Because of this, we end up accessing memory outside of RSCI's
-rsci_port_params structure, which, when interpreted as a plat_sci_reg,
-happens to have a non-zero size, causing the following WARN when
-sci_serial_in() is called, as the accidental size does not match the
-supported register sizes.
-
-The existence of the overrun_reg needs to be checked because
-SCIx_SH3_SCIF_REGTYPE has overrun_reg set to SCLSR, but SCLSR is not
-present in the regs array.
-
-Avoid calling sci_getreg() for port types which don't use standard
-register handling.
-
-Use the ops->read_reg() and ops->write_reg() functions to properly read
-and write registers for RSCI, and change the type of the status variable
-to accommodate the 32-bit CSR register.
-
-sci_getreg() and sci_serial_in() are also called with overrun_reg in the
-sci_mpxed_interrupt() interrupt handler, but that code path is not used
-for RSCI, as it does not have a muxed interrupt.
-
-------------[ cut here ]------------
-Invalid register access
-WARNING: CPU: 0 PID: 0 at drivers/tty/serial/sh-sci.c:522 sci_serial_in+0x38/0xac
-Modules linked in: renesas_usbhs at24 rzt2h_adc industrialio_adc sha256 cfg80211 bluetooth ecdh_generic ecc rfkill fuse drm backlight ipv6
-CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.17.0-rc1+ #30 PREEMPT
-Hardware name: Renesas RZ/T2H EVK Board based on r9a09g077m44 (DT)
-pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : sci_serial_in+0x38/0xac
-lr : sci_serial_in+0x38/0xac
-sp : ffff800080003e80
-x29: ffff800080003e80 x28: ffff800082195b80 x27: 000000000000000d
-x26: ffff8000821956d0 x25: 0000000000000000 x24: ffff800082195b80
-x23: ffff000180e0d800 x22: 0000000000000010 x21: 0000000000000000
-x20: 0000000000000010 x19: ffff000180e72000 x18: 000000000000000a
-x17: ffff8002bcee7000 x16: ffff800080000000 x15: 0720072007200720
-x14: 0720072007200720 x13: 0720072007200720 x12: 0720072007200720
-x11: 0000000000000058 x10: 0000000000000018 x9 : ffff8000821a6a48
-x8 : 0000000000057fa8 x7 : 0000000000000406 x6 : ffff8000821fea48
-x5 : ffff00033ef88408 x4 : ffff8002bcee7000 x3 : ffff800082195b80
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff800082195b80
-Call trace:
- sci_serial_in+0x38/0xac (P)
- sci_handle_fifo_overrun.isra.0+0x70/0x134
- sci_er_interrupt+0x50/0x39c
- __handle_irq_event_percpu+0x48/0x140
- handle_irq_event+0x44/0xb0
- handle_fasteoi_irq+0xf4/0x1a0
- handle_irq_desc+0x34/0x58
- generic_handle_domain_irq+0x1c/0x28
- gic_handle_irq+0x4c/0x140
- call_on_irq_stack+0x30/0x48
- do_interrupt_handler+0x80/0x84
- el1_interrupt+0x34/0x68
- el1h_64_irq_handler+0x18/0x24
- el1h_64_irq+0x6c/0x70
- default_idle_call+0x28/0x58 (P)
- do_idle+0x1f8/0x250
- cpu_startup_entry+0x34/0x3c
- rest_init+0xd8/0xe0
- console_on_rootfs+0x0/0x6c
- __primary_switched+0x88/0x90
----[ end trace 0000000000000000 ]---
-
-Cc: stable@vger.kernel.org
-Fixes: 0666e3fe95ab ("serial: sh-sci: Add support for RZ/T2H SCI")
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
----
- drivers/tty/serial/sh-sci.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 538b2f991609..62bb62b82cbe 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1014,16 +1014,18 @@ static int sci_handle_fifo_overrun(struct uart_port *port)
- 	struct sci_port *s = to_sci_port(port);
- 	const struct plat_sci_reg *reg;
- 	int copied = 0;
--	u16 status;
-+	u32 status;
- 
--	reg = sci_getreg(port, s->params->overrun_reg);
--	if (!reg->size)
--		return 0;
-+	if (s->type != SCI_PORT_RSCI) {
-+		reg = sci_getreg(port, s->params->overrun_reg);
-+		if (!reg->size)
-+			return 0;
-+	}
- 
--	status = sci_serial_in(port, s->params->overrun_reg);
-+	status = s->ops->read_reg(port, s->params->overrun_reg);
- 	if (status & s->params->overrun_mask) {
- 		status &= ~s->params->overrun_mask;
--		sci_serial_out(port, s->params->overrun_reg, status);
-+		s->ops->write_reg(port, s->params->overrun_reg, status);
- 
- 		port->icount.overrun++;
- 
--- 
-2.51.0
-
+> Cc: Andy Whitcroft <apw@canonical.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
+> Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Cc: Andrii Nakryiko <andrii@kernel.org>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: <bpf@vger.kernel.org>
+> ---
+>  scripts/checkpatch.pl | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index e722dd6fa8ef3d..3bb7d35a5cfcba 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -860,6 +860,8 @@ our %deprecated_apis =3D (
+>  	"kunmap"				=3D> "kunmap_local",
+>  	"kmap_atomic"				=3D> "kmap_local_page",
+>  	"kunmap_atomic"				=3D> "kunmap_local",
+> +	"rcu_read_lock_trace"			=3D> "rcu_read_lock_tasks_trace",
+> +	"rcu_read_unlock_trace"			=3D> "rcu_read_unlock_tasks_trace",
+>  );
+> =20
+>  #Create a search pattern for all these strings to speed up a loop below
 
