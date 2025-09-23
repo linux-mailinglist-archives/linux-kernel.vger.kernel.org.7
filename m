@@ -1,130 +1,170 @@
-Return-Path: <linux-kernel+bounces-828546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731E3B94DA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:49:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1894DB94DC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BD8C172DAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:49:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D357F1903333
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053703164A0;
-	Tue, 23 Sep 2025 07:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4001831815E;
+	Tue, 23 Sep 2025 07:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Eznf5cwO"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T3HIODO9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4DC3164BE
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7613164D8;
+	Tue, 23 Sep 2025 07:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758613736; cv=none; b=NyEn+D4RWjCo+czsVD5KATIJVK/eV2fw3fW5AUaAGN1WZlOCGcoD+lvCOxZAPzJz/yl4CGoECMmVQ8OOOX24Qsb03n8Biwjzr14vzYfn4xhGQ1T7YeWTasHKGscjR62YKMk7XHu8veE7dkWefUTBDIu89/D4tQsFW9AbxwGBSL4=
+	t=1758613936; cv=none; b=AWK+SkW9pSyz1rJEzo97qm738hz2eko6wTa85nen38xUWIClzDQbeOrU2ntebJp8UtEsALeuXgJH1SH3x5iy7DOVLqNU02Y05zdcL/TcrJf/U7p4bRoxi73k8/9yOb00pDZHeZTs9a6PO+N9xq+2R4K/Yvy8CbMjwLFHYsKNi8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758613736; c=relaxed/simple;
-	bh=AJaxzkgGMS2WBlrlop8PHPlSP36j70ySVSvjHs1aEs4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QeXuYnk2aS4idxrlBYLHLyCOAWY/JPNaC/omlKeMl4Ok/sgPeQZOakTzbMz79r2JY8Fy/a3B2Uads98LFv4Wv47s9NQUOWx/Gtp3gIRiQ6np8pD3b26WpOLZncphbrzRiznd2+SuurbrpbQMBEEDkabyyJ5I9Bz5ApR2xZtqLM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Eznf5cwO; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-57bd04f2e84so3056424e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 00:48:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758613733; x=1759218533; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AJaxzkgGMS2WBlrlop8PHPlSP36j70ySVSvjHs1aEs4=;
-        b=Eznf5cwOZ88V2MaKv6rCtt4MAxUW5dduUvOhPTHPEjhrlHMPdtFYL4g4qYiFPuFWR6
-         yRDDhVGIZ6DAt/SLexaLsJ/KzyndNLZjcqXhu4E2VfIOM+HoLI+eheKVIE1NGXowZAk1
-         yA14gM8ifFev7H/ctGl7NvU+O35jBj0uPidDyla1urUOMuP1VUnC4mYP/kDzVshUgnVy
-         5HpRSv7cAmu0dNByp8t0STC4EtGaMvBVJ3rzsrwYRC7PgGZmil1bFZeL5Mq8k6NBoj3S
-         5/T71ntfl4kZ5JIOnCaaRgMy4+X+mUCOuT9otCord4WGZj3z/5owucBaHuWvnfO7zr90
-         r5Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758613733; x=1759218533;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AJaxzkgGMS2WBlrlop8PHPlSP36j70ySVSvjHs1aEs4=;
-        b=Ad/Oi2z8a6ehjUhSXBd4HHnri/qWcdu6dZqNu/eo8/HoHrr/eIzFTl45DJkEFjTmNu
-         EoePFFEWZWX3fdV55wDbUSU1pKzeQt6gVl8jf0cfJfk19heVg1V+SjZqRXmkuZ7i+j1b
-         Z6lR0shYMSljKpnKoO6orjW/ei9TRZe6a/BYzJcSgMAY7Q8yBIiek/INOYnMpm9mFB01
-         zPLXPcw/77UILYxP5RT/61on3LuJ0/WZX4wIx8jy9Zsbq3ywj+xH66QTgF5dDTahVtGI
-         to+scxv5ttHYOi75v/xTn7rXOpMWnb2RNW0zASamDKPFUxzApGb51lL3u0SGJ/bZML2W
-         YMGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXCXHXzbvUdpeQqDScXJGfOcyMNO9CphhFTgC1dmYDu/gqDlWym7U84K3e3S7Gv33DzoTDm3GsTG7e5g0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFH1zt3Ub6WEUqBf0jwAhbV+n6I9pxtm/dmWDsgkS0Z3v29XDF
-	jfmd8PrVurqcOWPGNTTjLym5RVTCJDLOQ0w54QBYpWDw6tx9ZxAg7dJUvQ6d8kXwqArGvfPScTh
-	RcUJYRUsBnW+xXIIgdhcPye6pLuxBkDBtKP653kPG4w==
-X-Gm-Gg: ASbGncsPMKYsbicYzfF6mOU4Sm5UTMCZQ28yWNpo+b1RrCOZ6No/al1U8iS53qCnYPw
-	6h29rE4S42AwQbqzkdxMq5nViYdcX8DU1e54wjc/H9e3kLQbqBnRHM9FpQl427fd9HsvCshtFqE
-	LCtYKLbRVqb2TX0sn2TBjFWuMMheGUUc7iUy9Q0hS3t8zArcFuE/FEMWPNZKjqmvo6q9AkoAtUT
-	hf4TsX1R+q2EwgdvI3G8PaFzPBbpp7DUJsv3l6xLRtIkxAz
-X-Google-Smtp-Source: AGHT+IFXCbUC7OKlJXhiIcyp3/0pEbhIPcVmkwcaoRpLoXztj3Zx0ZDwfLpI5huj43NEMpkp0HP1DS+xrpQFvaRxUT4=
-X-Received: by 2002:a05:6512:b19:b0:578:cee7:7aa9 with SMTP id
- 2adb3069b0e04-580734f07d9mr498868e87.48.1758613732567; Tue, 23 Sep 2025
- 00:48:52 -0700 (PDT)
+	s=arc-20240116; t=1758613936; c=relaxed/simple;
+	bh=licSeWjFUdzBHCsxcp537nwdX+A34/7NtoD2kX8d7ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H1DfrvX1HPE9gTfUaAMsGGc0GFQ/6QDRHh70wWuXX26gm7VB9MwdDZ2nqvo+1yn5oTHD0/4jwLhO2MDe4pVBsfDZvlYmhJ3etMJDbYSbzNktWs0GsmLoKZFTTo6HRtlwtwZ34gFzuAREyQWpv7St00AHixjV6d3oWVRwq4pIbug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T3HIODO9; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758613935; x=1790149935;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=licSeWjFUdzBHCsxcp537nwdX+A34/7NtoD2kX8d7ys=;
+  b=T3HIODO9fdhfJ8xjLAHpIS9zXzcK/I79dlA/guMvsRnhJMdZJf0MChbQ
+   hxz23ll3p5HFodAVgpsyEE+w67Zve+yHxPBu4iqXJQZEu3PGDiwak/k8y
+   /aQlyUC9uP/VzTTmu84M2z+EKI6USDR8ekLqMZboxjdvPqFkM0BoGHysh
+   PHsot8WFfjDbG9/1gIoLayTZyeb8gs//w8pjzlyC+AyC6NroOJWCHdyjM
+   6FyFHBt+MfRwz66n1VHTfkZmO4ECbQLtinUqClYpo/COk5LEW0ofh9WTt
+   CUCuT07fAMYr2/93g4MJwAnaePWQ5AAyVouJ1vkWumeJE6QjTqCFuMmzP
+   Q==;
+X-CSE-ConnectionGUID: asVuIpXDSea65eN9R50yIg==
+X-CSE-MsgGUID: RXvx1x50QVW2yQAIH4KKLA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60942159"
+X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
+   d="scan'208";a="60942159"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 00:52:14 -0700
+X-CSE-ConnectionGUID: ky0FkstCS4y0RA7/+g+A0Q==
+X-CSE-MsgGUID: 7rquwNaGRXC45vaKXV5jgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
+   d="scan'208";a="176774466"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 23 Sep 2025 00:52:09 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v0xok-0002sP-2l;
+	Tue, 23 Sep 2025 07:52:06 +0000
+Date: Tue, 23 Sep 2025 15:52:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Menglong Dong <menglong8.dong@gmail.com>, jolsa@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, kpsingh@kernel.org,
+	mattbobrowski@google.com, song@kernel.org, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+	eddyz87@gmail.com, yonghong.song@linux.dev,
+	john.fastabend@gmail.com, sdf@fomichev.me, haoluo@google.com,
+	rostedt@goodmis.org, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next] bpf: remove is_return in struct
+ bpf_session_run_ctx
+Message-ID: <202509231550.BWhLcP9e-lkp@intel.com>
+References: <20250922095705.252519-1-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
- <CAMRc=Mc4hO1LDumxAfkB1W6miTJXR1NUVAKBVarkwiF2yGvSLA@mail.gmail.com> <2wwi3ktbcuyp7y7mqplndvawagae5hdhcx3hn375kycoqtows6@xcww2237rxpe>
-In-Reply-To: <2wwi3ktbcuyp7y7mqplndvawagae5hdhcx3hn375kycoqtows6@xcww2237rxpe>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 23 Sep 2025 09:48:41 +0200
-X-Gm-Features: AS18NWDP_wgtg5ZAo1aJS0Vwp6mqsgj6RBa2BQg1A6VrGdFXcg4GLeRrQ88qOWM
-Message-ID: <CAMRc=MdhQMR=-ayz+GfigUMVy+j1QNO3LguMoZYa5_+Es3E5Ow@mail.gmail.com>
-Subject: Re: [PATCH 00/10] RDA8810PL SD/MMC support
-To: Dang Huynh <dang.huynh@mainlining.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-unisoc@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922095705.252519-1-dongml2@chinatelecom.cn>
 
-On Tue, Sep 23, 2025 at 5:45=E2=80=AFAM Dang Huynh <dang.huynh@mainlining.o=
-rg> wrote:
->
-> On Mon, Sep 22, 2025 at 04:17:05PM +0200, Bartosz Golaszewski wrote:
-> > On Thu, Sep 18, 2025 at 8:49=E2=80=AFPM Dang Huynh via B4 Relay
-> > <devnull+dang.huynh.mainlining.org@kernel.org> wrote:
-> > >
-> > > This patch series aims to add SDMMC driver and various drivers requir=
-ed
-> > > for SDMMC controller to function.
-> > >
-> > > This also fixed a bug where all the GPIO switched from INPUT to OUTPU=
-T
-> > > after the GPIO driver probed or by reading the GPIO debugfs.
-> > >
-> > > This patch series is a split from [1] to ease the maintainers.
-> > >
-> >
-> > This is still targeting at least 4 subsystems and isn't making the
-> > merging any easier. Are there any build-time dependencies here? If
-> > not, then split it further into small chunks targeting individual
-> > subsystems and the relevant ARM SoC tree.
-> The MMC driver depends on both the clock and the DMA driver.
->
+Hi Menglong,
 
-But is the dependency a build-time one or does the MMC DT node
-reference clocks and the DMA engine by phandle? I assume it's the
-latter in which case it's fine for them to go into next separately.
+kernel test robot noticed the following build warnings:
 
-Bart
+[auto build test WARNING on bpf-next/master]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Menglong-Dong/bpf-remove-is_return-in-struct-bpf_session_run_ctx/20250922-175833
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20250922095705.252519-1-dongml2%40chinatelecom.cn
+patch subject: [PATCH bpf-next] bpf: remove is_return in struct bpf_session_run_ctx
+config: i386-randconfig-r113-20250923 (https://download.01.org/0day-ci/archive/20250923/202509231550.BWhLcP9e-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250923/202509231550.BWhLcP9e-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509231550.BWhLcP9e-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+   kernel/trace/bpf_trace.c:833:41: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void [noderef] __user *[addressable] [assigned] [usertype] sival_ptr @@     got void * @@
+   kernel/trace/bpf_trace.c:833:41: sparse:     expected void [noderef] __user *[addressable] [assigned] [usertype] sival_ptr
+   kernel/trace/bpf_trace.c:833:41: sparse:     got void *
+>> kernel/trace/bpf_trace.c:3059:62: sparse: sparse: dubious: x | !y
+   kernel/trace/bpf_trace.c:3512:52: sparse: sparse: cast removes address space '__user' of expression
+   kernel/trace/bpf_trace.c:3526:56: sparse: sparse: cast removes address space '__user' of expression
+   kernel/trace/bpf_trace.c:3540:52: sparse: sparse: cast removes address space '__user' of expression
+   kernel/trace/bpf_trace.c:3547:56: sparse: sparse: cast removes address space '__user' of expression
+   kernel/trace/bpf_trace.c:3555:52: sparse: sparse: cast removes address space '__user' of expression
+   kernel/trace/bpf_trace.c:3563:56: sparse: sparse: cast removes address space '__user' of expression
+   kernel/trace/bpf_trace.c: note: in included file (through include/linux/rbtree.h, include/linux/mm_types.h, include/linux/mmzone.h, ...):
+   include/linux/rcupdate.h:869:9: sparse: sparse: context imbalance in 'uprobe_prog_run' - unexpected unlock
+
+vim +3059 kernel/trace/bpf_trace.c
+
+  3050	
+  3051	static int uprobe_prog_run(struct bpf_uprobe *uprobe,
+  3052				   unsigned long entry_ip,
+  3053				   struct pt_regs *regs,
+  3054				   bool is_return, void *data)
+  3055	{
+  3056		struct bpf_uprobe_multi_link *link = uprobe->link;
+  3057		struct bpf_uprobe_multi_run_ctx run_ctx = {
+  3058			.session_ctx = {
+> 3059				.data = (void *)((unsigned long)data | !!is_return),
+  3060			},
+  3061			.entry_ip = entry_ip,
+  3062			.uprobe = uprobe,
+  3063		};
+  3064		struct bpf_prog *prog = link->link.prog;
+  3065		bool sleepable = prog->sleepable;
+  3066		struct bpf_run_ctx *old_run_ctx;
+  3067		int err;
+  3068	
+  3069		if (link->task && !same_thread_group(current, link->task))
+  3070			return 0;
+  3071	
+  3072		if (sleepable)
+  3073			rcu_read_lock_trace();
+  3074		else
+  3075			rcu_read_lock();
+  3076	
+  3077		migrate_disable();
+  3078	
+  3079		old_run_ctx = bpf_set_run_ctx(&run_ctx.session_ctx.run_ctx);
+  3080		err = bpf_prog_run(link->link.prog, regs);
+  3081		bpf_reset_run_ctx(old_run_ctx);
+  3082	
+  3083		migrate_enable();
+  3084	
+  3085		if (sleepable)
+  3086			rcu_read_unlock_trace();
+  3087		else
+  3088			rcu_read_unlock();
+  3089		return err;
+  3090	}
+  3091	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
