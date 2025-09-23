@@ -1,112 +1,154 @@
-Return-Path: <linux-kernel+bounces-829369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C037B96E57
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:01:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2400EB96E64
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1BF5482852
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:01:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F508188F820
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F142512DE;
-	Tue, 23 Sep 2025 17:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B684215198;
+	Tue, 23 Sep 2025 17:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXFVUQ2n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="ZW0NuQrl"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C3C1D5ABF;
-	Tue, 23 Sep 2025 17:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BEB1D5CEA;
+	Tue, 23 Sep 2025 17:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758646870; cv=none; b=It2YQH4CC8k0SElaIJ92orL4f3JFu4roC+VmDYbSDrkTtpxjdRZ3oHVtkLJ6lCM5vB1G84r7CoFANsQ7a4hkvQMeWOV/L+YN+1Y/xjmT/H8p5hQkUVJ/3kCJmNlO19OEOQ2qZcZTnzutAc/Hve1ALkoaM4xavA16jwq5dOWLBo0=
+	t=1758646945; cv=none; b=GgaX5GB1VINYE/1P5DfVweKUdn6+qF5f/4KzhTtcf3OQmeTzcvzVORIgnobW7qyx89PbPd/hYEeVugLp03pS0/1MOZiKtE7fS5GxLkkx5csMZhZ5zLeAq8QP5uPKZ/nhW6hqLnHiX1DCUv7V1IyVlK3kAZO9XqZoOtmaYpJekt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758646870; c=relaxed/simple;
-	bh=lmrO4EM0uSIgPvRyMTakRDy6DZ3TQz0ccaeq5VlOVp8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ssdxl7wFyKRghR9w+79V6w1l8N2B6GZka2DowxWj/NAWjTkTy+KJYI8gswYV/LNlVBUPHsazwcXQpfppTi0kGyDmv3piR/EQnElpMghCO1dAYNpq3/TmQG4ZbxtHBi+XZFjE5YySx0kPp6NwnKkgcbXXaFprqxKde5k1B9FfOuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dXFVUQ2n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73489C4CEF7;
-	Tue, 23 Sep 2025 17:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758646869;
-	bh=lmrO4EM0uSIgPvRyMTakRDy6DZ3TQz0ccaeq5VlOVp8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=dXFVUQ2nvAULYrLl1erVJHzt+/3VPF5bm8tjFdQaHFtlXdyvjqNPjfjqjPbsD0xOx
-	 Ra/ERhP0xu1FBw/uN1q2Dfe81Pcw3V507dCarYrFetUaPBJVfn4Sy06mmXxLwytW6O
-	 Vs4dlUsCBD4V9m32ZQ4ammA2R1WCPug7md1czUx9TVS066f7ycS/LstSRpp3ehHgt6
-	 MebbwiG5Lt7C0bXj8j0bl7PUHijlVwEg1vYzq/vNdj/KRWVQ6/c63FUmxr3pBwwqG8
-	 2avkQZDJqZxQb1fBDBFSzDoshmpUfy/fBPgbv6vQxB11ronQCiIUVCLLEr241BGjVl
-	 D5vyDoBJF4tzw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D3C9ECE0857; Tue, 23 Sep 2025 10:01:06 -0700 (PDT)
-Date: Tue, 23 Sep 2025 10:01:06 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Joe Perches <joe@perches.com>
-Cc: rcu@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Andy Whitcroft <apw@canonical.com>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, bpf@vger.kernel.org
-Subject: Re: [PATCH 20/34] checkpatch: Deprecate rcu_read_{,un}lock_trace()
-Message-ID: <6777d949-e1f7-454d-8c10-247dcbf8c6fa@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <580ea2de-799a-4ddc-bde9-c16f3fb1e6e7@paulmck-laptop>
- <20250923142036.112290-20-paulmck@kernel.org>
- <a54094681531e526c7e055cc5f58d0f6d480c119.camel@perches.com>
+	s=arc-20240116; t=1758646945; c=relaxed/simple;
+	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=trB+2mHwAA3rqiLM5+5RNP7x1IMxbx6eYdc4hlFXLs3n7XXznFzEPtgVUJ+Wz1ZACsvXGALziAVrsIZu8HbJCTMbpoPsueMSMSsjrY8bxoT5mk1Nr7ynAz2PNRVFkcC1JH/7yJVErTCAeLXX06/SLVgMHnlUnv0PJZUWac5Cm1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=ZW0NuQrl; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1758646908; x=1759251708; i=rwarsow@gmx.de;
+	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ZW0NuQrld++N4h08x0kNs4Ux/Q6BrF0uabI7G9yk+Y2Euc3DogGZzKDhcrmCyf55
+	 pOS1Nd42AeAJE5XEtIgVBfi2q0RSDoSRqDqwr2CT0RaPs8uzlVnPK3x4ZMDURXXDc
+	 CsxKib7XiSmbrU06YY7UBV/Ft3hBoKB50w3YNoTYDpUT5xjiYsxMFpaH7ojeUyHjJ
+	 +SCSyxTyooVrXmEE5e80Y3qr+NSKrD+HG+K+nzCZNgsypYxM1RiyZcFjGZ3hwCEqn
+	 WucAKIYnA5F1EBZ2HdjDeHlQVckT2NPMlKONf9rhA0D+HbE/he2RtYt51jKJT//oi
+	 nlZxMSvdMl594H0roQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.32.209]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MK3Rs-1umC8r40II-00QGGx; Tue, 23
+ Sep 2025 19:01:48 +0200
+Message-ID: <fd5e45d0-e94f-4ebe-bc23-64360fab0a52@gmx.de>
+Date: Tue, 23 Sep 2025 19:01:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a54094681531e526c7e055cc5f58d0f6d480c119.camel@perches.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.16 000/149] 6.16.9-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250922192412.885919229@linuxfoundation.org>
+From: Ronald Warsow <rwarsow@gmx.de>
+Content-Language: de-DE, en-US
+In-Reply-To: <20250922192412.885919229@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:p1eE8tLbotFJkzMo9qTZH7XfdquOcS0xiktzFRIPmI174qNupiK
+ uMabBKRLAxG4DlAvjvneThP2lRnz0YxUBr/TCYesQ1mQLeWJjK4A7OgSU1Kqamn3y0A9aBU
+ OIYKsVE7wCM+o8YaIAhUpsCKHVH02oqL0JKeY2MdsaRHKyxf2zYNCYxPstMvFGAHjOJLus5
+ wDNPWQreJ5WIs7t0Q5Z2Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:q/FwFBH+v0U=;qaydfvTVZF0YiJJzZYkUhUT18RZ
+ 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
 
-On Tue, Sep 23, 2025 at 08:47:13AM -0700, Joe Perches wrote:
-> On Tue, 2025-09-23 at 07:20 -0700, Paul E. McKenney wrote:
-> > Uses of rcu_read_lock_trace() and rcu_read_unlock_trace()
-> > are better served by the new rcu_read_lock_tasks_trace() and
-> > rcu_read_unlock_tasks_trace() APIs.  Therefore, mark the old APIs as
-> > deprecated.
-> > 
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> 
-> Acked-by: Joe Perches <joe@perches.com>
+Hi
 
-Thank you, and I will apply on my next rebase.
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-							Thanx, Paul
+Thanks
 
-> > Cc: Andy Whitcroft <apw@canonical.com>
-> > Cc: Joe Perches <joe@perches.com>
-> > Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
-> > Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > Cc: Andrii Nakryiko <andrii@kernel.org>
-> > Cc: Alexei Starovoitov <ast@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: <bpf@vger.kernel.org>
-> > ---
-> >  scripts/checkpatch.pl | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> > index e722dd6fa8ef3d..3bb7d35a5cfcba 100755
-> > --- a/scripts/checkpatch.pl
-> > +++ b/scripts/checkpatch.pl
-> > @@ -860,6 +860,8 @@ our %deprecated_apis = (
-> >  	"kunmap"				=> "kunmap_local",
-> >  	"kmap_atomic"				=> "kmap_local_page",
-> >  	"kunmap_atomic"				=> "kunmap_local",
-> > +	"rcu_read_lock_trace"			=> "rcu_read_lock_tasks_trace",
-> > +	"rcu_read_unlock_trace"			=> "rcu_read_unlock_tasks_trace",
-> >  );
-> >  
-> >  #Create a search pattern for all these strings to speed up a loop below
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
+
 
