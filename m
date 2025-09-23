@@ -1,111 +1,76 @@
-Return-Path: <linux-kernel+bounces-829249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF79B969B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:33:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F844B969C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0189320BB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:33:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58628321450
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254DE22759C;
-	Tue, 23 Sep 2025 15:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NX3Q5WBM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69087212551;
+	Tue, 23 Sep 2025 15:34:07 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB3617A5BE;
-	Tue, 23 Sep 2025 15:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90948946C
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758641626; cv=none; b=ZDyCTsPVmpnM97432nlzZT+Qm3qScWopUsN2D9Rh8xu6Vx8q2bytyzytkxgMFxom1YtD0TpOPyv64h/u1pM8yQ+2DZ4tc4vimOfWhRM7PgaGSPhVqfoIdkuw19adIxbtKHhQBSqWkYtwwIjhokI5dj7Wsm/p7wnMEED+ABx5xwo=
+	t=1758641647; cv=none; b=niYfodhwQKI4Of1ZUM7waRVpvIP+xU64uN9dkxDwyBAump8M1kct7AI65nwz51Sd6PK+IT4/hRQRcYzLbGAjk45ckvj4iwByesQQI5wHO96XurDZXjo/AW2yWlOnNETp2Qx/w+vZzl5NBmUE7fHTs/I4T5o0BExgi4YFW4liIf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758641626; c=relaxed/simple;
-	bh=ZSDQWfBtJVUblxhYyaSBTsgHuoeUC2Mk5dPjvgq3aGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ppJslHdNabkzclnXT6lXYlcMUdcXy8xba4LIaRzZi0xXZ79fDYk4N9YsShpFX/6O8b8wcILL/MI6Im5MqP+XVwPQszF04wlEqWCf7tn/GkIHad60dJYalD1f5j7HPiP967nz8+0D2Pnc1BsO0H8ZxYsRfVrP+jmWw4iCQLxHEWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NX3Q5WBM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A138C4CEF5;
-	Tue, 23 Sep 2025 15:33:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758641626;
-	bh=ZSDQWfBtJVUblxhYyaSBTsgHuoeUC2Mk5dPjvgq3aGg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NX3Q5WBMFKgGCRE/3nV7OKVIdUiGGfFSsNZv+CYrL9NciW2eNEM3sHle8pNQKTKV1
-	 jbp1v9n230M948GI9QwjrS9zmJEdBz4hz48oJ3zfb2tL/yDiWnM0CQ9BC+oMPVCHyk
-	 PAZkt8Dy3wdG5zCgKlTMpRqiIlku7HTDado8SvCzpaM/QsCEHKStey7nNI76R7/5q3
-	 fTsu4d/GDHURX3yQsoM1ohusQ7rScRiN7RXm0ZdQdvA2YDsP4wL/HgJ6ABzwZX7TOq
-	 vfnnjrk0FfGGIIvMDmVz3S6S+3fiU+zKWv4VAB4cdl9gLD+OKK4Bs0X/Gd+7f3ZnpA
-	 hqbLgLBeGMPzw==
-Date: Tue, 23 Sep 2025 08:32:28 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	Holger Dengler <dengler@linux.ibm.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Stephan Mueller <smueller@chronox.de>, Simo Sorce <simo@redhat.com>,
-	linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384,
- SHA-512, SHAKE128, SHAKE256
-Message-ID: <20250923153228.GA1570@sol>
-References: <20250921192757.GB22468@sol>
- <3936580.1758299519@warthog.procyon.org.uk>
- <506171.1758637355@warthog.procyon.org.uk>
+	s=arc-20240116; t=1758641647; c=relaxed/simple;
+	bh=L4Tq/wlgBXJplCI0ucRhcEwWqvx9uTyZDFnY9miS8IQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=LhqpBGOf3ztBm+3N9Obocub5uUJb1TbGZksa5U3x/GY5hBYdwkTResf/nG3iWNBEjD+5ISO6nu8sac911s0LPQeFRYknHIWsd+KsWnEi21EZDgrSu1GvGquqFNBD+ZMb9bC/NOE5lZv0SMs1MDJgyWG4pq7X46t92HFKW+KE2cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-425635e2928so44402055ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:34:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758641644; x=1759246444;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L4Tq/wlgBXJplCI0ucRhcEwWqvx9uTyZDFnY9miS8IQ=;
+        b=Sy0x8uLt+7TuLR03ZTlrCZ/z90E4SPvkwXfuQOCYeJ3hS4U2Sd+/Qy+E3SDfrogYaw
+         h7sn2E2k5aHYIVUimoOei5dSVMynXErCqbvsw9whRij2eM/mFKs+bqNOMqN/ZVMn+Owl
+         p1XeqsFUKfKY/RQet1IRwCDG5fky1TdY+pNKxboNTgIQpuOHe73+mUiF2+EjuoTOVlT0
+         UBCoIS8WDL1lHQI4QaAZgPUUoxM6GbDSl9x535Kyh1WCy2t4CB5nWnUrZxOB5GkQu9Bi
+         7ChRuOCFDMD5YclgSt4h3v8Tm+yY82qm+ULaUYBfB/kwgGT3AplYR5FDlCKDZ+lu36PR
+         9zkg==
+X-Gm-Message-State: AOJu0Yyn59YYh8Ezczkt6W5uI4tHIbCA/mdJq0GMJ6+AQuRb6Iiggv3f
+	6UsVnVNiCCuIk1VI66eEQgEey0uIuGnEaOO+O4uh7uDg26ttu5fpG4vPZuM001I1b2rzL+cKTw3
+	4g386t0WaScXX6smAC26BL2oPUj4ZmfRVAGAdenfxg4ehzTK99rxqKgiIpV8=
+X-Google-Smtp-Source: AGHT+IHJEhChy77IZdm4Z74ltoAjOTNbG+r/J7p82XDD7VACFhCIqe4yhm1m8aJfZvytbzuR8U4xSD1NWwzgpqojU3pIEGmXFu1f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <506171.1758637355@warthog.procyon.org.uk>
+X-Received: by 2002:a05:6e02:2186:b0:411:e396:5e2b with SMTP id
+ e9e14a558f8ab-42581e0e67amr44637855ab.4.1758641638417; Tue, 23 Sep 2025
+ 08:33:58 -0700 (PDT)
+Date: Tue, 23 Sep 2025 08:33:58 -0700
+In-Reply-To: <677c7b81.050a0220.3b3668.00f3.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d2bde6.a70a0220.1b52b.02b1.GAE@google.com>
+Subject: Forwarded: WARNING in max_vclocks_store
+From: syzbot <syzbot+94d20db923b9f51be0df@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 23, 2025 at 03:22:35PM +0100, David Howells wrote:
-> Eric Biggers <ebiggers@kernel.org> wrote:
-> 
-> > Also, the parameter should be strongly typed: 'struct sha3_state *'
-> > Likewise in all the other functions that take the raw u64 array.
-> 
-> Those function may be directly substituted by calls to assembly code - so
-> u64[] is probably more appropriate.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-We've been using strongly-typed state even for assembly functions.  See
-the SHA-1, SHA-2, and ChaCha code.
+***
 
-> > > +	for (round = 0; round < KECCAK_ROUNDS; round++) {
-> > > +		keccakf_round(st);
-> > > +		/* Iota */
-> > > +		st[0] ^= keccakf_rndc[round];
-> > > +	}
-> > 
-> > In the spec, "Iota" is part of the round.  Having it be separate from
-> > keccakf_round() in the code is confusing.
-> 
-> I assume that pertains to the comment about inlining in some way.  This is as
-> is in sha3_generic.c.  I can move it into the round function if you like, but
-> can you tell me what the effect will be?
+Subject: WARNING in max_vclocks_store
+Author: viswanathiyyappan@gmail.com
 
-The effect will be that the code will align more closely with how the
-algorithm is described in the SHA-3 spec and other publications.
-
-> > Second, the support for update() + squeeze() + update() + squeeze()
-> > seems to be trying to achieve something that is not defined in the SHA-3
-> > spec.  Could you elaborate on what it is meant to be doing, and why it's
-> > here?  According to the spec, the XOFs SHAKE128 and SHAKE256 actually
-> > just take a single message as their input.
-> 
-> Turns out I was misunderstanding what I was looking at whilst trying to adapt
-> Leancrypto's dilithium code.  Whilst it does squeeze a context several times,
-> it doesn't update it after finalising it without reinitialising it.
-
-Yes, that's what I thought.
-
-- Eric
+#syz test
 
