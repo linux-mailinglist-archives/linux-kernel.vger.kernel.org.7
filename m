@@ -1,133 +1,153 @@
-Return-Path: <linux-kernel+bounces-828204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7522B942B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:05:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73CCCB942C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C813C188E81D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:05:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CB967AC07A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A672737FB;
-	Tue, 23 Sep 2025 04:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBFE274671;
+	Tue, 23 Sep 2025 04:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m8gGLcDT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k5glPcMZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B97270568;
-	Tue, 23 Sep 2025 04:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044AE2CCC0;
+	Tue, 23 Sep 2025 04:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758600325; cv=none; b=g1w86nbhvPsVAQMLMkRXMXDRKnTWrhk0WM3NQnVJVYrEG2thCFximfd+5BlpqE0ZY8KQxSFOF8kBbriTkTRDk4Qm+o7zD8CDt+E3aj5N5jQw5XwXmvZ+CcRHO6gGPy84NioTDZPh/3u5YB+WqFPYVHUupX9rTsZnDg2QKMsr5GE=
+	t=1758600401; cv=none; b=WrWPgGYKpMdaVCrjPlLUwojB77juzcq9Jp9xoqD1Y/fe3b8P0cfyJKJXs8quz8UeemkRio6g7Rmkxxo5hxSnh+Sd9Gm179nE63PcENcuwZbTkkW/fca/VlIiahgG6jK7MTcJ8m3jyUpxmyzO8/TNmXkCUDqB/A2zlCKcSPdhr8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758600325; c=relaxed/simple;
-	bh=6PIwA7arR0o6d3GGOkq6Yfxpemnc+r61GEaPtuR1e0w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UcVYxHCFzNx9JYHMrVd9HXRwBXkBDHNFNGZZMKRgYd+iP8TVcpelbBeZVD8yQVQcBjpSUdGTX1QAm5v2QrU9E1w8q/O39k7gpcx8ms9f9WI611JmDAyuuZiIdQfiOQNhxlD2qzrhICuKlhDqazNjXMqZCR/SdBiOTZPPuZKwqi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m8gGLcDT; arc=none smtp.client-ip=198.175.65.13
+	s=arc-20240116; t=1758600401; c=relaxed/simple;
+	bh=VZX0azsj2Y+I4tix4/GQPEAlzuuwnGYKkwOGjH+jPEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VSHHS7upziXcoNHhaDVNbTdZxQF45blRWJwnzwq/WbIGMLkZDZeWpScKsRBf76CtehQHa6aTdbfTNwsMLVskAViSCg6nodWRBahM0kXHlf53RoLD9gIBK1caywAm3PItkfm2XiPjIXQ1OUzzPWHXp/FTyZqjcL0IzD9wcdbRE7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k5glPcMZ; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758600323; x=1790136323;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6PIwA7arR0o6d3GGOkq6Yfxpemnc+r61GEaPtuR1e0w=;
-  b=m8gGLcDTQH06mVc/F0hYOlgyDYBfYAk/ccoOB6H0DjunbYz1zXB24Szm
-   lWugtsPsw6UwB7BaCDmFcvKHdy+n5ucCPrn8SHhBMAr9DaopXh54YBSMI
-   SPj7U/P37yXEGk/ntvQXOW6Xgrmg3eQhPbqKs+4dARrDuVN1C01FXXIbY
-   h3KXT4F/+rY3LrcmiIE9e8xvikuZ/hMZLv3KNc/GeEyoXcrUg5EdL9taz
-   +d6Q/t37r3gbRvO+xQClqHLB+DJrg52EiJ6obR3qpw3wgDjMbnMPgDfKg
-   GpbtZjCl/qXzBW0xp/avj31FLXt+bwgFg6ch4E2RVnm3Hjk4LhWGDPBs2
-   w==;
-X-CSE-ConnectionGUID: APXyZATgSimtj7FUf8hD/A==
-X-CSE-MsgGUID: ezHtjG3MRNq3HYdMfBXBDQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="71980327"
+  t=1758600400; x=1790136400;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VZX0azsj2Y+I4tix4/GQPEAlzuuwnGYKkwOGjH+jPEM=;
+  b=k5glPcMZ/eeAqPtIrSFuBDMrj7AceTtSHPscwmQu0VxuE5vDL/UW3AR8
+   PEq92ZFaxsW32/dr6V/VcG6mmw7+OVsUw13/xbuNJItfesKQN9ZtIcAp9
+   BK64JbUBCpPDyKrTll4/hQz4ENZTJMAytp+4ROfROsZ9/WVNAdOCqNwWH
+   csP+t9dl0ZTzo7+ytp7p5pffp47n/LKjpVxN0ENXPoXtv50HIy7fsQMVK
+   tPA+ZCSlfeW/T+DdD+FfI8uEFOxB24XPLRcIeTerJwxYsNZQKxLQ5zENG
+   y/XqF66eE0lnz1xRxLeYUbzj/LoQ3nyLyhVA1xkth0GYhai1VqwhtO+WE
+   A==;
+X-CSE-ConnectionGUID: oYgo5dhoQ8eEYvKt3UNUUQ==
+X-CSE-MsgGUID: SuxTSzTTSuq9oXtUWhrzQg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="86307513"
 X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="71980327"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 21:05:22 -0700
-X-CSE-ConnectionGUID: 1/vuUJf6S7aX/nDsE3yFBA==
-X-CSE-MsgGUID: yp9wGNwrR4qtGSep6rARJg==
+   d="scan'208";a="86307513"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 21:06:39 -0700
+X-CSE-ConnectionGUID: cX+GWRf6Tu2t5gJnCXlABw==
+X-CSE-MsgGUID: Es1S0oWbQ6miuIDWmPNphw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="177103530"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 21:05:21 -0700
-Message-ID: <b9b4bb21-47db-4282-8d4c-eedb836fbfb9@intel.com>
-Date: Tue, 23 Sep 2025 12:05:18 +0800
+   d="scan'208";a="177030369"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 22 Sep 2025 21:06:35 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v0uIQ-0002jV-2y;
+	Tue, 23 Sep 2025 04:06:31 +0000
+Date: Tue, 23 Sep 2025 12:06:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+	Mark Bloch <mbloch@nvidia.com>, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
+	Moshe Shemesh <moshe@nvidia.com>
+Subject: Re: [PATCH net-next 7/7] net/mlx5e: Use extack in set rxfh callback
+Message-ID: <202509231125.Tsan9Qny-lkp@intel.com>
+References: <1758531671-819655-8-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] KVM: SVM: Re-load current, not host, TSC_AUX on
- #VMEXIT from SEV-ES guest
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hou Wenlong <houwenlong.hwl@antgroup.com>,
- Lai Jiangshan <jiangshan.ljs@antgroup.com>
-References: <20250919213806.1582673-1-seanjc@google.com>
- <20250919213806.1582673-3-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20250919213806.1582673-3-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1758531671-819655-8-git-send-email-tariqt@nvidia.com>
 
-On 9/20/2025 5:38 AM, Sean Christopherson wrote:
-> From: Hou Wenlong <houwenlong.hwl@antgroup.com>
-> 
-> Prior to running an SEV-ES guest, set TSC_AUX in the host save area to the
-> current value in hardware, as tracked by the user return infrastructure,
-> instead of always loading the host's desired value for the CPU.  If the
-> pCPU is also running a non-SEV-ES vCPU, loading the host's value on #VMEXIT
-> could clobber the other vCPU's value, e.g. if the SEV-ES vCPU preempted
-> the non-SEV-ES vCPU, in which case KVM expects the other vCPU's TSC_AUX
-> value to be resident in hardware.
-> 
-> Note, unlike TDX, which blindly _zeroes_ TSC_AUX on TD-Exit, SEV-ES CPUs
-> can load an arbitrary value.  Stuff the current value in the host save
-> area instead of refreshing the user return cache so that KVM doesn't need
-> to track whether or not the vCPU actually enterred the guest and thus
-> loaded TSC_AUX from the host save area.
-> 
-> Fixes: 916e3e5f26ab ("KVM: SVM: Do not use user return MSR support for virtualized TSC_AUX")
-> Cc: stable@vger.kernel.org
-> Suggested-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
-> Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
-> [sean: handle the SEV-ES case in sev_es_prepare_switch_to_guest()]
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+Hi Tariq,
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+kernel test robot noticed the following build warnings:
 
-one nit below,
+[auto build test WARNING on 312e6f7676e63bbb9b81e5c68e580a9f776cc6f0]
 
-> ---
->   arch/x86/kvm/svm/sev.c | 14 +++++++++++++-
->   arch/x86/kvm/svm/svm.c | 26 +++++++-------------------
->   arch/x86/kvm/svm/svm.h |  4 +++-
->   3 files changed, 23 insertions(+), 21 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index cce48fff2e6c..95767b9d0d55 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -4664,7 +4664,9 @@ int sev_vcpu_create(struct kvm_vcpu *vcpu)
->   	return 0;
->   }
->   
-> -void sev_es_prepare_switch_to_guest(struct vcpu_svm *svm, struct sev_es_save_area *hostsa)
-> +void sev_es_prepare_switch_to_guest(struct vcpu_svm *svm,
-> +				    struct sev_es_save_area *hostsa,
-> +				    int tsc_aux_uret_slot)
+url:    https://github.com/intel-lab-lkp/linux/commits/Tariq-Toukan/net-mlx5-HWS-Generalize-complex-matchers/20250922-170716
+base:   312e6f7676e63bbb9b81e5c68e580a9f776cc6f0
+patch link:    https://lore.kernel.org/r/1758531671-819655-8-git-send-email-tariqt%40nvidia.com
+patch subject: [PATCH net-next 7/7] net/mlx5e: Use extack in set rxfh callback
+config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250923/202509231125.Tsan9Qny-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250923/202509231125.Tsan9Qny-lkp@intel.com/reproduce)
 
-Passing the tsc_aux_uret_slot as paramter looks a bit ugly, how about 
-externing it?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509231125.Tsan9Qny-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c:1508:4: warning: 'snprintf' will always be truncated; specified size is 80, but format string expands to at least 131 [-Wformat-truncation]
+    1508 |                         NL_SET_ERR_MSG_FMT_MOD(
+         |                         ^
+   include/linux/netlink.h:131:2: note: expanded from macro 'NL_SET_ERR_MSG_FMT_MOD'
+     131 |         NL_SET_ERR_MSG_FMT((extack), KBUILD_MODNAME ": " fmt, ##args)
+         |         ^
+   include/linux/netlink.h:116:6: note: expanded from macro 'NL_SET_ERR_MSG_FMT'
+     116 |         if (snprintf(__extack->_msg_buf, NETLINK_MAX_FMTMSG_LEN,               \
+         |             ^
+   1 warning generated.
+
+
+vim +/snprintf +1508 drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+
+  1495	
+  1496	static int mlx5e_rxfh_hfunc_check(struct mlx5e_priv *priv,
+  1497					  const struct ethtool_rxfh_param *rxfh,
+  1498					  struct netlink_ext_ack *extack)
+  1499	{
+  1500		unsigned int count;
+  1501	
+  1502		count = priv->channels.params.num_channels;
+  1503	
+  1504		if (rxfh->hfunc == ETH_RSS_HASH_XOR) {
+  1505			unsigned int xor8_max_channels = mlx5e_rqt_max_num_channels_allowed_for_xor8();
+  1506	
+  1507			if (count > xor8_max_channels) {
+> 1508				NL_SET_ERR_MSG_FMT_MOD(
+  1509					extack,
+  1510					"Cannot set RSS hash function to XOR, current number of channels (%d) exceeds the maximum allowed for XOR8 RSS hfunc (%d)\n",
+  1511					count, xor8_max_channels);
+  1512				return -EINVAL;
+  1513			}
+  1514		}
+  1515	
+  1516		return 0;
+  1517	}
+  1518	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
