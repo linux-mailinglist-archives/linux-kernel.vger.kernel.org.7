@@ -1,96 +1,104 @@
-Return-Path: <linux-kernel+bounces-829720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D15D1B97B59
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 00:24:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A757B97B5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 00:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 921A54C248B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:24:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 150DD2E8559
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D2B30E0E2;
-	Tue, 23 Sep 2025 22:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A0630BB9E;
+	Tue, 23 Sep 2025 22:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LC3+T3Rh"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010036.outbound.protection.outlook.com [52.101.193.36])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VLeXlADs";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="xeirB9qg"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84974A48;
-	Tue, 23 Sep 2025 22:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55024A48
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 22:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758666281; cv=fail; b=i3ahfnRZng44vUd2NixmOLctRAneAxZzfJmZ5zna6NxY9njB3VRxrNLW9eH9QJOAUMPPZf3o21noUJgtM02fLfR87P+Kc59+jyJHh9ByPBRIa3iDy4COtVWDcHB1Reiqhq8kSWiI7IebjrEHXOCb7kllIACy6+ko35SWBld36I0=
+	t=1758666368; cv=fail; b=TODvw9mnE74YVbJ1CrTPXPn9UjYJzBZiCQ0BH6kZ4ijCex6Be0bPTh/qLyj0TkLEEEA+LyqTnAy5up7fd3T2D0/6RtMzXD75AJ/bQgcR2UOAJeCp/oHPsn0yyQ9GhNTRA2bSKZrHeFNpYzfSiaBpeRWSBuvHnd29OwydfS+RcGQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758666281; c=relaxed/simple;
-	bh=aj33iME2/JOUPUQXVRkABWqjekX+tN9Zg5sn9kTO4wQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=QolI9n/ZiC7iBg4nGGJIRPp8odY96tnt9YfUJTwd+762vANOIpjYciwD72u52QzRRqxSeBX589pnNKXj2EXaE7jiTxO5VYJpXmeKVAjkvteo4N9bW/UJ8m6g5zGTd74flV7NsiSibcOLRiZ6dInlf2zdjWx2V0SoZs6cpznjWV4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LC3+T3Rh; arc=fail smtp.client-ip=52.101.193.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1758666368; c=relaxed/simple;
+	bh=6RJv9yOHVzB3bLe3l+vLe1kBRC9Sq4r6TKHrFpUwb7w=;
+	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
+	 Content-Type:MIME-Version; b=m5+NOD33F+SzfVEwuLemHVXKI18XvpssjNjniix7lqRKWeGlASem1ZwIX4tkOuqgaXnqVSx/5GZ8TX/+mKVfSWL4vRdPmaF6Hnl2EUAEIADndEUkFqDrMcWFclndL1ui8PSvOTU00vA2y1DLg/h8NmXJSm7RXE7kiCqA1lZjpOA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=VLeXlADs; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=xeirB9qg; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58NLbNGk023862;
+	Tue, 23 Sep 2025 22:25:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=Cvtw8BdC0XKadnd+Cu
+	PkryqxadvnXTxhX1O4ktwT87g=; b=VLeXlADsc1uRjDitQ8tPEOhWs2Di/bvUD4
+	zCDHy8q5XcX+6K6bu62EcqFWvVEayVhztHZ2M6UNM5GQPLJhy2PNmgx0EyukCeGY
+	7a5zILTj99dcLf/8BGgkGJT7DMcGYQBzm6Q2Jbbe0+7+X69DtmImqAklqo55wjjE
+	v6mYoZ35inw5QGrEjSonUPxXSo+k0nJDheH8YN1gCpfuaRZwcUNW2JETnxa4/GcX
+	6cePMflYvlJCoCTF7zPIWNGZ4pcA4DdAWOuPdR43osooHu51/1t0ARtI1JCwU5vK
+	DKEiVAseZPx5JjbiGPIcUYfSJHbV0eF9FgRuh0N1VCDzcg+LXtKQ==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 499k23dqma-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 23 Sep 2025 22:25:14 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58NLliuE028395;
+	Tue, 23 Sep 2025 22:25:13 GMT
+Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11010011.outbound.protection.outlook.com [52.101.56.11])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 499jq92qg9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 23 Sep 2025 22:25:13 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WCYfPNcyvuUiv5l4kUCyyu43M/5JMV4gfBz0AHKt1kcGPmcDtEsq5hIV5bW1XNCxqi64JnQVAGElVIc0X6odCxIIYoBUl2vnAPfKh6GTNDxv/Qv7puCQqOuzPJ61UzL8lR0nq0cwckz1yyNq4A6Lg9oUl9MCFYN0yiOUgG3kSITbqXH+D4NbzXS5uU4LwCfOurp6jXvoqdvGwAk5ymA4hcpKmEiK1Hpz4VAPeSn2/oNDBP6h7xVQz27QB9PEaNW4Ma4t4FoSbTK3s2xc3Bngim6TzSzUYdepnoIGRJ6Lt/rpa08xyIm0wdjUd5TgYiQZSBRSD0ClriX1dOppqrt4tw==
+ b=lmUVmvq1dZVcD0yZBeI5BM/ANd/m0LZPOTggUOC0a+tCjZjJieviuFBrI1DtDpUoORHZldD5Zz0PQbWmcuk3q4DfChAl6p8xHsHUG4I1pTGA+p8OvTotlNU5O9JFhDu9W9IaMikVxx4/XuLuSMHv/aFBF1EOLT9BgOR7hSlEh11Q1TLp6PuAC/oGm7kxcNI+J+k9jIS8JGKFzk99No3rYuVVKRFt5VN2IUBS+iicDdP7TKgW1G985Gbglz7tJTyVZPinnu1LL+vWYKesBlkh8oSA0SkZG8HlRGGDGVuRL24Qo84+zf9Q7OhxjztKOyEz0+kkOwTRk7EvxDfkPwDHvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pd3M27roUi8nRJ6CgQ0KqkLijot+AokPQHpICI5k8FM=;
- b=N3eawoKDOL7x5ORyE3VMyQ7hWKad3QtKUU423JmKhEl3z7rd/Pn20FRZCDPSZ6VnFmjQyVodrFkldPxo3QIsOJkaP3D5Oxfzc6U/HjsE7Irvpehfc9sXLIZ2EoANt1nm0wqV3Zt7ehNkL+i+zQYvoTmu/Yve3EKRlADyHo/g0VGRnGSrPMJlA0iI9IX9wdAfju2yhelGyIUmnO6PBYO2YFFPYAVPtmgxQB6GD561Tl+NbBFm8JowK1qwWP9Z8Ac28xlfNjRjl8h1iGCdLZhC5NzrZgHAtEoSFMCM8R+8VWNadqkeKao8vbG5SVkEqBYhkOsmOlxL/rd9/uwN1SZcPw==
+ bh=Cvtw8BdC0XKadnd+CuPkryqxadvnXTxhX1O4ktwT87g=;
+ b=PlJS8lTWSB5muFF2wJHl6ysgyzPSlUwn5167BywmKQKOT68C27hVkwHqFzgB8G6vN7ec8aIpbqYXC0R7rCqvpKfDIHQt44K9f/6amYB8Y362e8o8eqfz71mT2PMX45Ps/Q9g5OtGDtc+in3eG6ACvxoU8NL8l6mb/2ZSMNB3mLAZRFRbxmsW/6ccBGNpkH/LNqbEXANbUnzWrgbEtMdo5bJpVZO6JZnkKiBlFye/i4iy3Q4gBAwS7UFjC++YRACp/RZ7N4SVd/lGI8gSJw/X+UjEJp1fHRPEh7Xq1I2RRzknjDoVyuWXLAk4WfF1s21jz4UhcyzA9zKRUanBspz4/Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pd3M27roUi8nRJ6CgQ0KqkLijot+AokPQHpICI5k8FM=;
- b=LC3+T3RhzyiR1dc4yC3prNK/5yp53QxCjO40EBJscpY3HMuV3/jQj5RftNXAfHDABz53PEPQYeIe5vf5ZFfX0ou2kkBWFP0VijmhHuuqedPnfm7P8GLMlfUG/c1Ls9DzAxjKLseUvitwtuoKGqMzd6CfY6zOfcqg3GjDGKyQuUbiyMi0VOVjJsgC8oI2RJ0el9lb69axkb7NkWi2XJckLBrQOsBw/OQ+qOLloPDrooQE+0r7tJtiWR9mjOx5leYluVxniTULWWob+6CGCG8qNYnmwWfKjgqVL3pIM/19O4oOvvYTrZuY7ogxDLQx3WPmDHOUy2Y4NqgDh5DAD1swpg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by LV8PR12MB9716.namprd12.prod.outlook.com (2603:10b6:408:2a1::10) with
+ bh=Cvtw8BdC0XKadnd+CuPkryqxadvnXTxhX1O4ktwT87g=;
+ b=xeirB9qgb8QFx0oQTvxtn7FPljM/r/vvSZUE82bSqcTVZtMCsZJOsvHfbot+Cc7/s3v6/UpMksuqEwHGJzmCKttEOxYWXgNuxeiJtgzpJROa4+VADto0L4QuUhR301hnBtkrNLMD3ERkKS7gtrXox5F6GG+B4Ar2iPqzye/hHR4=
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
+ by CH3PR10MB7307.namprd10.prod.outlook.com (2603:10b6:610:12f::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
- 2025 22:24:36 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 22:24:36 +0000
-Date: Tue, 23 Sep 2025 18:24:34 -0400
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	dakr@kernel.org, acourbot@nvidia.com,
-	Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com, Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
-	Yury Norov <yury.norov@gmail.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v4 1/6] nova-core: bitfield: Move bitfield-specific code
- from register! into new macro
-Message-ID: <20250923222434.GA2479829@joelbox2>
-References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
- <20250920182232.2095101-2-joelagnelf@nvidia.com>
- <2025092157-pauper-snap-aad1@gregkh>
- <DCYHCLM67KRZ.366VS9PDKLYKY@kernel.org>
- <2025092125-urban-muppet-1c2f@gregkh>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025092125-urban-muppet-1c2f@gregkh>
-X-ClientProxiedBy: MN2PR19CA0036.namprd19.prod.outlook.com
- (2603:10b6:208:178::49) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Tue, 23 Sep
+ 2025 22:25:10 +0000
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574]) by CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574%4]) with mapi id 15.20.9137.017; Tue, 23 Sep 2025
+ 22:25:10 +0000
+References: <20250917152418.4077386-1-ankur.a.arora@oracle.com>
+ <20250917152418.4077386-13-ankur.a.arora@oracle.com>
+ <d2dca02c-ec5a-4b3d-92fe-2b3a3614b5df@redhat.com>
+User-agent: mu4e 1.4.10; emacs 27.2
+From: Ankur Arora <ankur.a.arora@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, x86@kernel.org, akpm@linux-foundation.org,
+        bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+        mingo@redhat.com, mjguzik@gmail.com, luto@kernel.org,
+        peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
+        tglx@linutronix.de, willy@infradead.org, raghavendra.kt@amd.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Subject: Re: [PATCH v7 12/16] arm: mm: define clear_user_highpages()
+In-reply-to: <d2dca02c-ec5a-4b3d-92fe-2b3a3614b5df@redhat.com>
+Date: Tue, 23 Sep 2025 15:25:08 -0700
+Message-ID: <87jz1obyd7.fsf@oracle.com>
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR04CA0215.namprd04.prod.outlook.com
+ (2603:10b6:303:87::10) To CO6PR10MB5409.namprd10.prod.outlook.com
+ (2603:10b6:5:357::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,255 +106,168 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|LV8PR12MB9716:EE_
-X-MS-Office365-Filtering-Correlation-Id: 636de200-35e9-40ee-6022-08ddfaeffa44
+X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|CH3PR10MB7307:EE_
+X-MS-Office365-Filtering-Correlation-Id: 74abb5e2-b80d-45c2-9023-08ddfaf00e6d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+N3uTNEQbLkzKuMBrwa0dGkIQmWJQJMCuT51UpT4YNOx9tKSlYvrFXazWV7q?=
- =?us-ascii?Q?4bqpq1zP35CsPjyJdxLKCsJPCDJUcfDoheYU5X2OJoY6rB3YTj3CmZf4pKbn?=
- =?us-ascii?Q?cBZohKpBtLDDVsd1k/s7GyfvvHS/WkhT8hRkohlJtC0lwfbFU4INY+w6yxd9?=
- =?us-ascii?Q?rxtbnHRZPwSXOKzfANPYvV65q4zh/ooOM8Gyi6qRi3wFZSFoPTJa09Hi/37l?=
- =?us-ascii?Q?Y6cWpIl/n3L/BockmXpoq85kWM4lJlxuh7plVSG/81q5omgJOZFRDK4fnn1u?=
- =?us-ascii?Q?wh0TWrfyPObXNzrip7JlQRnJycOzzZlVFI1JtAwUYjsAHOJthyzjc1uT7OOM?=
- =?us-ascii?Q?uZIZRGFijPSBKtbTcOQYVY5NoAy2yqmfF19Ufb55o932PzRQn25tgILJ3fqW?=
- =?us-ascii?Q?3D/KnQq423chGG464Uj2VnwLPYOfGjCB4Kq1KVRjN7Ba4JMUobPZOHmaog5j?=
- =?us-ascii?Q?7ivl3e3uAesgOUiJWBVFgBRpeRf0I6C8JV6ZL/Ud0ZjWdtrO1rhc7ATq8oF+?=
- =?us-ascii?Q?TI3g8fU2oDF846W5ikKX9zQhdlXdtxdf3sXLMkDNy1+SAg0K+nX8hsB97O7L?=
- =?us-ascii?Q?lsTP8jRNOLTqEDIBeEDd97A4QgspeuYbZ+Npbsa4YNr94zcZ1KnXdVpWiNJe?=
- =?us-ascii?Q?pPq2bBppO0OXGbRgzljJU5B+FF2/N6P9frk6btkPECfQLOjzyJy8oYVP/0cu?=
- =?us-ascii?Q?XBQ31+2SspnTPJNEqbSGdnul/eZi5eymhiOduGNWqlo1nCZZF0d9EhJ8e+Gb?=
- =?us-ascii?Q?pb0xgFFRnWDGnjhQZF0TxHTV4/DYscn+4tiW11ozLEC8ufn9gjYjZwbcP3g6?=
- =?us-ascii?Q?xtzczvt18CZpfAXCmL2GnppvGN41i/WNDPiXSeOsBpBZNJ18qidBWaL12i4w?=
- =?us-ascii?Q?B5fUXgy094iAbRAaxGeWzlO+Pq7tnTEt0O6pwWgJg0lA3Qo0s7dSyPNrd3yc?=
- =?us-ascii?Q?mvrM/xNl4HkwIXQDo1Ga8uQcG9qOM71OqAFjKifSuO0j2LaAfinjOeORadhm?=
- =?us-ascii?Q?tzzCTD5REScIcH2W4rj3EFumXR2AwxWPXQQhMA+TjXIEF6JkD7c5zx7Neyv6?=
- =?us-ascii?Q?gT0gAwcoEvLq4Pwnrhgir8J4mJ6gBMBgpQqQLuox5SsKifqRF9hS7OuiauFC?=
- =?us-ascii?Q?nqUl7rCe44ib6Bq/go4SNAUMsIMdVbse20uZnUaFC1GqBK0iOPCHtz3fjgTk?=
- =?us-ascii?Q?UZr6XNcXxbD/A3XFQzPey3O2HLip+NCxkTUSADVygFGJqDUK/HP4+l3ZRbw6?=
- =?us-ascii?Q?RNNBqG9bv4dTxbBjvdr6cdY5q8uhNbsTL99R7YRZgw73ucHWgtCLC/xijQop?=
- =?us-ascii?Q?02W7+THjKhA8V+vbuWaWNPmCd255QIdTcyffZo3zcDSmqNWtL/1tqpNT+n5C?=
- =?us-ascii?Q?Eh8KqIcPZkzgQNY5OTwKLcgYr8hPLXpx6ApxRqx+KjRISd08scovmRXdTe0o?=
- =?us-ascii?Q?cOCdadVxPAo=3D?=
+	=?us-ascii?Q?vGfMRHbUydAfx2Rm3+wZ8QAL9xgaauu8geTkzy2Ej9GORDX3PitZWmL377pR?=
+ =?us-ascii?Q?BdkhTyoWvBomiMRuPyXsAf0nWiGXquRrUFXAvFV5grOjZQRw/4beFk5LbGea?=
+ =?us-ascii?Q?zG9T1SyPkonso0TaQdsWucYHXDOW2HopMlHQyCN2jqZnYRg3QFNIpbd8pnep?=
+ =?us-ascii?Q?EXdRmSG1TS0wRX+sNaZSw94B6qAYUDRA9CTipAzhuBXPjx9Ncmg+wlwiktpb?=
+ =?us-ascii?Q?+HJ4zJzgYlPi29DESQGs1LGg1eHpR1fqfrvjBaE11cPoQ0iksMXVwFkbbIeL?=
+ =?us-ascii?Q?KpNzfmb8JhsDVJQis17h+N6fIGYmcrwKuoqF4oe/XIq/zbKN1o1PGqniuAPw?=
+ =?us-ascii?Q?3HL69+yF49LaCnD79mlDVbdZ/kqdZTJc1WVnwiiXB94K2MfFQHgQPCVFnxBF?=
+ =?us-ascii?Q?tCCYHJj/WirggYA279gPZitXdZlXk0UZjIcqWSNrwujtJdfm13kaFfnXF3Xr?=
+ =?us-ascii?Q?FjzkWefQzNoNzgF7rQDPbID5CeuNB7zVjrU9VAM5XmsQteqTY48GPLFvlWPB?=
+ =?us-ascii?Q?xXv4u0Kkvpc1l+ROlv/bVJmTTf3ro3uQLj0wzFqPyoNA4qlKD/PveLFqTcvI?=
+ =?us-ascii?Q?dadSc3bwQH7aMl+nLJNI5oRBl+Cr+X2uzQ2HvcPw8K7jK2w0KmwLLOLV/V2r?=
+ =?us-ascii?Q?de36Kvr3HiFJOm59Fq59U+0b4agINZh78OIYpjhYdlUpZtyWeayuyPDIuALy?=
+ =?us-ascii?Q?obW5AMNPO9wgTSvnzXTz6f17b3uSVosVUxGlMqC824ZL8a4dxlAXvj8Z2h89?=
+ =?us-ascii?Q?h/2W73GHojR8Y2RbVUy/j4lkFagJubbYJSpgUrmuWbZgZw/pVMJ+idDH2YQz?=
+ =?us-ascii?Q?gpAN0MMhW8GhQfrN6B9qB9nuQx9d20OspIOVlyzGdqannPdSxpjN326PWCKa?=
+ =?us-ascii?Q?hx4nt2koua9vFJZH9P+Aya4PscJW/iHYNIW3d7rSqKEHnKHZ0FjbRvYQa6M5?=
+ =?us-ascii?Q?9n1Amyx4WSzBRD6m9pM7D8hyA6dhY7wJyLgk4ceXU7BYLfuf7qcwhxjmqmR7?=
+ =?us-ascii?Q?kP2CLcjqM7nlmqUb/hnIfvKWsdhlZkxp+OotqUW4VIkKz8yN9e4XJ4wP92mV?=
+ =?us-ascii?Q?PCfEztDNtnt2u/mQ2PFfD1B9DQSyozecdVKbr86J5uEZFZ7UP6N80RupsXJj?=
+ =?us-ascii?Q?VlHsNiIV5fGXs+fVIAwoVYDS6QymefyfSEcL9Eek+wkCZebxJqL0hOn/2s9n?=
+ =?us-ascii?Q?TbWcbAylPBKgk0O9VkkV6Zl31NaY7LakOchNWJK4B3M9Ud6MDQ4/1aFnBt3P?=
+ =?us-ascii?Q?JtzVwVyduOBGirqFqFvRVHfVEcuJoPgtNCDNml1Kmy0WZ+Q53iRkbg/oYoIJ?=
+ =?us-ascii?Q?6qTJ2ZM93pQC1cgbQMVim+ylxf9J8jsT4bg7zdsfH+WELhfnQvj4r2NXCL2c?=
+ =?us-ascii?Q?283xckdnJrBAOSBpQTY9zWMI01alWg0ZU19WEt3SQygIlErwGhHbUywRAinW?=
+ =?us-ascii?Q?s8CK4xipQmI=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?dDYG5/y8GKMlcOe4JG0PAhAf423UFhzlvYYLLcpGdi/6AZ/rCECVNduXGpW5?=
- =?us-ascii?Q?S0yPWEVmgGxCI2549M1a5LBkFAuNeI3VqrpVP9bCDYQODVv9hSj3XnkD/ZwO?=
- =?us-ascii?Q?zym0xoOAvyafwwDavroJvDWQSNhqwZ2N5J4DvNMSrvfv/7v2ptdrRhSFLlQO?=
- =?us-ascii?Q?7/3dppUmNRr0u5hfwB70BQq1J9BUFid8qHx+MuksKHoch8cQmAfxFuLnl4y0?=
- =?us-ascii?Q?HV2eKtSGIC/2HhEw9ohwppKjE9tuC8wF/hR6pb/hbn+9lfhPNYZ8fxnrXvF5?=
- =?us-ascii?Q?jkL1RO8yaUvaU5BCDEjsk/R4Dwo2eIKsL3hG3L65+kzQQ7JtUK7MVYEGu7w/?=
- =?us-ascii?Q?urswJPFgL2rPkp3zMYv02LM42nO+FzFD/QLRqj5oH56OxHwbFluAkxTzEK+M?=
- =?us-ascii?Q?WbOBExj4ogNVPXCO0Z3q2BIv+Bnk934SWS5Fu56X1Cap5SBUBFADClkVynQN?=
- =?us-ascii?Q?/Nfhk7Uocz8g1yUy9pUoR/lR+oD2LwKCKDl50YQ2zz091KtFDBc9L5z11np+?=
- =?us-ascii?Q?lAzcJdInOoa+VYqj+nwDKBYlx9WfxPranhde7dvRfvxXZCK3RBNYP0qc9b0m?=
- =?us-ascii?Q?Mdjyot2HZqwbnf+YgCBNSLzC55QuGPWmOmTEzbyt13FLAga9OsLmJSNxrzxX?=
- =?us-ascii?Q?vdU05ZWXdJSstxh8M0cwmtUEtgUmhdrbmVkAHtpzjmLLnduh4KnjtSnPafGZ?=
- =?us-ascii?Q?hcJu15kMdjovzypTN4+SwiuAC/pA6BBCUSN/pRd8lt2raGBxMO2Flco5EeeJ?=
- =?us-ascii?Q?UbDWWl6CaUAVZK1C3AcxJuU2K+h8duDiMh3RJw3d/Ci15a4avWSble+OkwHg?=
- =?us-ascii?Q?AlI+VmOsx1nXDKjve+JvE45lPNhH0W3kcZBLH7Yd6vPIWqPWyYO8c+O9eyU3?=
- =?us-ascii?Q?rOQM/UjC6SQdWTK7NwI3jETsX6EGgKKWXh+6uEUgrN4xOUxP0BrFqFc930/X?=
- =?us-ascii?Q?3P87ByWkDYE6qnPcLmIsVYW2LlpPsgGLDvg4w4k9y8AXMqvg+ifGa0vipfXG?=
- =?us-ascii?Q?zyiGO270mYa6oCcVXDrnTAsh87j3HfMv9YBsLCWCj8YyAA7dDDQGgj190nU8?=
- =?us-ascii?Q?N9FCHZ203MvBr08zGPZOndBM+eB3glwMc9i9fagQOSGkCcZOkleM6zbZg7di?=
- =?us-ascii?Q?GL2jIbwXinBXsCVjVlELbOx1RWM8OLlsKaIkLqc/KaouydSX47xhtY++eGiV?=
- =?us-ascii?Q?jBw3Z7nOdhvfwWhtk+5zIHnM5laNk0I5LjmgCjzpCFDjHHWbeyFxAGmUTAST?=
- =?us-ascii?Q?sVZdSloBzgo1U8tBNXZ8mb/+k6QlaQHjhmb+zQWPajH15ZdQz2dnNrR8Y51Y?=
- =?us-ascii?Q?/wMxFybAtwnMOx+C/0vWI/kX495rBdjDY/82vP5PTh+tbhKEo5VXiUbyIqJO?=
- =?us-ascii?Q?NAD5WNCMN3KyznIJz38CH4sKqZhCKWZCCqG1pGmVyGTxEZDyzzSi3u/vnY67?=
- =?us-ascii?Q?8+6Yv6vhOxxd0c7tJ16o3vWDD62y0x/7IFu7z1daawfutJAvJ228tNqgxTUf?=
- =?us-ascii?Q?OFVdgiIc0n/f1f5D9Ju1JpHHvuWf+AkLfaBfSYuf5CSk2g/qmFJremP/G7bS?=
- =?us-ascii?Q?5FPe31XZSDal+ksaeUfhUT8UM6u8fliZOIMdMk+J?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 636de200-35e9-40ee-6022-08ddfaeffa44
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+	=?us-ascii?Q?DygfAJBDXCS/RMgqwc8bKcutkFaDpe8dbF9mcd9MegFNX3CcX+h+Uu14VDIM?=
+ =?us-ascii?Q?h/FAF/7S8KZL9gTTcg+GEbxf6MQTKpSG3cc40dUCB/SPtq/b7lojEV0pS/+K?=
+ =?us-ascii?Q?VXFtruGEGV3ebGclpE01+fN/A5avHGxpyMEonxuaC+RewtwSq28jaRZLI+a1?=
+ =?us-ascii?Q?k8G1MutN+ZhEg44JiiNa5OvYMgKaFyrmPkef1NLbG1fQI2A0emmgvnewmmHP?=
+ =?us-ascii?Q?1pfuoj86voCHW27iJd9uwfWnUZzqc+nHpBz/cWX/JJz7MVHJA8Y3xt7QzOIA?=
+ =?us-ascii?Q?klkKV6kzD8VWCN8it+sImJlhHt3WI5c2QGSafNpAB8mNztYceFpCbbcamwfu?=
+ =?us-ascii?Q?/tP6eAtAT0m+8lYFnbYdo4zbbxq+nnUIWWqVHU7MrsiOmN9/L57sc/PmnWr+?=
+ =?us-ascii?Q?Bg64YFO8QH5yTQnRIjcY/mWP4JmzEVxJhkVyC81gzTNgyQijUWVCsewod91L?=
+ =?us-ascii?Q?YFtOw4WDOL95j43XdiquNoGbga0SBpDYDsBRHWi0Hy25lLmnma0ZKNkOzQxg?=
+ =?us-ascii?Q?zF4O4pRReLcubg2K+EGWPosouwXj4pvz3N6VX3uMK/nly/cLbNaK3hd9NLgk?=
+ =?us-ascii?Q?+lJWXdU0F0DG81XUFgNJDmptakBojPS/tmCzB7Qqg14mPkPc9CaA4nIO3TaO?=
+ =?us-ascii?Q?b3C1LG4xOWGBtQVN1foFdV0Nvp2LwZ+Zlryi8QsVoUjob7D5G0W+Bk8IWVaz?=
+ =?us-ascii?Q?sM9gRa2U67lxYcpe85f6vzroybFT3R3om+S5B74CJP0Wpxx3KfKGiXy3rXMG?=
+ =?us-ascii?Q?ZovsqxQZIviwAypXTLmPv5owRdS9kcfMs7U2DCfxSQpDLLrXxbD7zMDeEsz/?=
+ =?us-ascii?Q?JjQvehWAj5uZOyhjypcm3wYFQ7WXsIEeGcRNoeDV3nq1+QNC3aeMU/MWJ6Lk?=
+ =?us-ascii?Q?QZbp0u4RyTTXou67raktSA98A3xeUI+QFQjyNTl4ob5hEnNLhocZqYEGE1GS?=
+ =?us-ascii?Q?I8zvX9eCEwyd7/tWiHoaBOyNfN48zjOfamwJHSz29gxx0lEi4vt+lCvBRjrr?=
+ =?us-ascii?Q?EgN4rJVthZpCI+pkoSOviOSyHc0RJR3XtUrqiUwaP5KAxAEqDE2ZEkJLSO6c?=
+ =?us-ascii?Q?DzyLw9L44Vepgtw+ErL1eao6GhPdCfrArSiTlF1z49Sb+RRJnNR9J7JB+RLG?=
+ =?us-ascii?Q?0Qs2v2V4legcTEBVMoPCorRQy9heVBOrUkT2jYoxPpHLsa67q4GMHRxr5evq?=
+ =?us-ascii?Q?DZ94zNn+Qq4mTJZN292ZXZCk6a5odwwVR/Jr4iMtTaS+dBqcYdFm2MaVD4mP?=
+ =?us-ascii?Q?vE60vAps0B7Ov9DH2PKpCYVr7/XMnjCBbwH72xQqdxm14ilqyxjrdWDTW/0j?=
+ =?us-ascii?Q?KdiOwH1+uc2i/O1XJnuRGETZyL3FtlkspN3B2JTV2KRPSO+uvupwk4KU2XxU?=
+ =?us-ascii?Q?sL8/W/ejVr6pSGRDxTPNsoQFFeT+g69UhYhouzRv8kbn9oDe3SjalYDdyjUZ?=
+ =?us-ascii?Q?+468X/SxDHuIUfig0lIauwIMiZuq1F1if7WE1IYJWDpmxqOmsEYu1+bRjvE4?=
+ =?us-ascii?Q?XBsKFH1AUWhwO8QByvIT1XanSSDfgHwFuTnJcdt8J7x7wLW5qKxMZxqASbGQ?=
+ =?us-ascii?Q?bfm3q1qUkGlGGEGA6BU+/ezBZfGZAZDaAvHXQHs3RX+1RLpIIQN2jZ+IfFMa?=
+ =?us-ascii?Q?8w=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	XEj9UZeZ0KzagvFQz6vNhxLjEFC+WFeCrc5zER73JboovIFNZYa4gsSZdYdnvQ3+jgzCOR/+1fPS5M5bue0OWn2p9+5lJ7KVQSBJJY1SQwFEqJSH87Y9au5FYXsB2Q+7vsLXtB0QjjWtrlnE8A0uPO3gVDhx5xoxGfWkkajPaniq6rxVCymJhsN6ong3xo8RhMk28VAa60f1K/vtl4dDY3n6FTr84YPaj0kahVppIA4g2N9Dy5r6Ge/04YDPdjE99yN417slz8VAN0DaC/T9MpDZZqKojkUrCEZ66S0LFCDTC/OzhaGuhaykrIJ5xu66FUBrlO/K2n22OSe387eDQwBcLGDCN2JSFP76qjk5BGhat2IpZQ9B8oZO5V/ZVw1XRBOwjtnc5xqoHsQiI2Ih4C7jv9XjXEh87v5XfinLxAyh2TTi+r22aczNuNSMqbDcn22ef4A5ctR04idneQ5/+IO9klukYSjWBy/8xqm/+axHP5Y5eMlZ4xdFRXV2ieuIKy6CUpyZ34S+Sxzs3W/zEoEJu2UhAvW1FcfPumafe74yDCZhvbKjmBktUAFJbCXKgr8fMtMgy9aWswDKDqzE1m0GkNpHWUxVJJfSnrYAsB0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74abb5e2-b80d-45c2-9023-08ddfaf00e6d
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 22:24:36.1097
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 22:25:09.9813
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BOCkBQj9/zeVx+Ux6ZqaNNCN/IioRX1zfrWlJ2f5DAnlGgEU09FN8q55hGjCtdntCw0rO0qsMv0EJGWA+Hi8Ig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9716
+X-MS-Exchange-CrossTenant-UserPrincipalName: QHFHVJdtVvEiwBcSFKBP9eQdG2gM3TFEA6ll6nFl8XPWFq+aQmHrsKHHHSHJbpcFWuoSnmAg4k+ZJRwciGkrTN3U5k1N3aHsJ+kKDmCbQTc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7307
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-23_06,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=721 mlxscore=0 spamscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509230204
+X-Authority-Analysis: v=2.4 cv=C5XpyRP+ c=1 sm=1 tr=0 ts=68d31e4a b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=yJojWOMRYYMA:10
+ a=GoEa3M9JfhUA:10 a=20KFwNOVAAAA:8 a=hh4u7GO6P_rPUrxy3ZQA:9
+X-Proofpoint-GUID: Ac4_zvxPBGtqtom9ZZkwA5CzasGi1xqM
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxNiBTYWx0ZWRfX84CDLpXrU6cR
+ CpAeLBMaa9O7LSkoPFXneT7ujpEbZIjdJJYnJnWaD27s1KBPS+PqVPPPJV27nS6Xuv7ldl0qnce
+ WvZ0FnH2sj8jkiYXXzLIdBC49ZUX2qAiGqLeLCtrNB79RlCN0hN/u5HdncmHGTX3NIoP2NaTB53
+ AO/pf5/njiYfpfgUrf+wJce9j/HPTI54jjTAQVH/nGTaayq8Vh0kumhzYU8EX1mhFvqlFx7z/z3
+ rCF0s5riyx62Mfp1U5jZVgoEGKFKgsuawOpLrhxAOxafG36Zt1y0RRQ80VNjfh+xT8S80Q8+8BK
+ XQEWpkPnGfD71mGPuAb1a1i4JmqET5MGYaSoafuH/mr1LdJviFOQ5rki54JLJo12RPHGeXpj1bv
+ SvsKOCy2
+X-Proofpoint-ORIG-GUID: Ac4_zvxPBGtqtom9ZZkwA5CzasGi1xqM
 
-Hi Greg,
 
-On Sun, Sep 21, 2025 at 02:45:27PM +0200, Greg KH wrote:
-> On Sun, Sep 21, 2025 at 02:33:56PM +0200, Benno Lossin wrote:
-> > On Sun Sep 21, 2025 at 11:36 AM CEST, Greg KH wrote:
-> > > On Sat, Sep 20, 2025 at 02:22:27PM -0400, Joel Fernandes wrote:
-> > >> The bitfield-specific into new macro. This will be used to define
-> > >> structs with bitfields, similar to C language.
-> > >> 
-> > >> Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
-> > >> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> > >> ---
-> > >>  drivers/gpu/nova-core/bitfield.rs    | 314 +++++++++++++++++++++++++++
-> > >>  drivers/gpu/nova-core/nova_core.rs   |   3 +
-> > >>  drivers/gpu/nova-core/regs/macros.rs | 259 +---------------------
-> > >>  3 files changed, 327 insertions(+), 249 deletions(-)
-> > >>  create mode 100644 drivers/gpu/nova-core/bitfield.rs
-> > >> 
-> > >> diff --git a/drivers/gpu/nova-core/bitfield.rs b/drivers/gpu/nova-core/bitfield.rs
-> > >> new file mode 100644
-> > >> index 000000000000..ba6b7caa05d9
-> > >> --- /dev/null
-> > >> +++ b/drivers/gpu/nova-core/bitfield.rs
-> > >> @@ -0,0 +1,314 @@
-> > >> +// SPDX-License-Identifier: GPL-2.0
-> > >> +
-> > >> +//! Bitfield library for Rust structures
-> > >> +//!
-> > >> +//! Support for defining bitfields in Rust structures. Also used by the [`register!`] macro.
-> > >> +//!
-> > >> +//! # Syntax
-> > >> +//!
-> > >> +//! ```rust
-> > >> +//! #[derive(Debug, Clone, Copy)]
-> > >> +//! enum Mode {
-> > >> +//!     Low = 0,
-> > >> +//!     High = 1,
-> > >> +//!     Auto = 2,
-> > >> +//! }
-> > >> +//!
-> > >> +//! impl TryFrom<u8> for Mode {
-> > >> +//!     type Error = u8;
-> > >> +//!     fn try_from(value: u8) -> Result<Self, Self::Error> {
-> > >> +//!         match value {
-> > >> +//!             0 => Ok(Mode::Low),
-> > >> +//!             1 => Ok(Mode::High),
-> > >> +//!             2 => Ok(Mode::Auto),
-> > >> +//!             _ => Err(value),
-> > >> +//!         }
-> > >> +//!     }
-> > >> +//! }
-> > >> +//!
-> > >> +//! impl From<Mode> for u32 {
-> > >> +//!     fn from(mode: Mode) -> u32 {
-> > >> +//!         mode as u32
-> > >> +//!     }
-> > >> +//! }
-> > >> +//!
-> > >> +//! #[derive(Debug, Clone, Copy)]
-> > >> +//! enum State {
-> > >> +//!     Inactive = 0,
-> > >> +//!     Active = 1,
-> > >> +//! }
-> > >> +//!
-> > >> +//! impl From<bool> for State {
-> > >> +//!     fn from(value: bool) -> Self {
-> > >> +//!         if value { State::Active } else { State::Inactive }
-> > >> +//!     }
-> > >> +//! }
-> > >> +//!
-> > >> +//! impl From<State> for u32 {
-> > >> +//!     fn from(state: State) -> u32 {
-> > >> +//!         state as u32
-> > >> +//!     }
-> > >> +//! }
-> > >> +//!
-> > >> +//! bitfield! {
-> > >> +//!     struct ControlReg {
-> > >> +//!         3:0       mode        as u8 ?=> Mode;
-> > >> +//!         7         state       as bool => State;
-> > >> +//!     }
-> > >> +//! }
-> > >
-> > > As discussed at the conference this week, I do object to this as it
-> > > will allow the same mistakes to happen that we used to do in the kernel
-> > > for a long time before the regmap() api happened, along with GENMASK().
-> > 
-> > Have you read the following macro arm of the implementation?
-> > 
-> >     // Generates the accessor methods for a single field.
-> >     (
-> >         @leaf_accessor $name:ident $hi:tt:$lo:tt $field:ident
-> >             { $process:expr } $to_type:ty => $res_type:ty $(, $comment:literal)?;
-> >     ) => {
-> >         ::kernel::macros::paste!(
-> >         const [<$field:upper _RANGE>]: ::core::ops::RangeInclusive<u8> = $lo..=$hi;
-> >         const [<$field:upper _MASK>]: u32 = ((((1 << $hi) - 1) << 1) + 1) - ((1 << $lo) - 1);
-> >         const [<$field:upper _SHIFT>]: u32 = Self::[<$field:upper _MASK>].trailing_zeros();
-> >         );
-> >     
-> >         $(
-> >         #[doc="Returns the value of this field:"]
-> >         #[doc=$comment]
-> >         )?
-> >         #[inline(always)]
-> >         pub(crate) fn $field(self) -> $res_type {
-> >             ::kernel::macros::paste!(
-> >             const MASK: u32 = $name::[<$field:upper _MASK>];
-> >             const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
-> >             );
-> >             let field = ((self.0 & MASK) >> SHIFT);
-> > 
-> > Here you can see that it's just a mask + shift operation internally to
-> > access the field.
-> >     
-> >             $process(field)
-> >         }
-> >     
-> >         ::kernel::macros::paste!(
-> >         $(
-> >         #[doc="Sets the value of this field:"]
-> >         #[doc=$comment]
-> >         )?
-> >         #[inline(always)]
-> >         pub(crate) fn [<set_ $field>](mut self, value: $to_type) -> Self {
-> >             const MASK: u32 = $name::[<$field:upper _MASK>];
-> >             const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
-> >             let value = (u32::from(value) << SHIFT) & MASK;
-> >             self.0 = (self.0 & !MASK) | value;
-> >     
-> >             self
-> >         }
-> >         );
-> >     };
-> 
-> Yes, that's great, but that is all done in "native cpu" endian, and
-> might not actually represent what the hardware does at all, which is
-> what I was trying to get at here, sorry for not being more specific.
-> 
-> > Now I too would like to see how exactly this will be used to read data
-> > from hardware. But at least in theory if the conversion from hardware
-> > endianness to native endianness is done correctly, this will do the
-> > right thing :)
-> 
-> That's great, so we are close, but it's not quite correct.  How about
-> something like:
-> 
-> 	0:7	reg_X	as __le32
-> 	8:15	reg_y	as __le32
+David Hildenbrand <david@redhat.com> writes:
 
-I don't think we should force endianness requirements within specific fields in
-the bitfield rust library itself, it is upto the user. bitfields are not only
-for registers even in C. If you see on the C side, we have rcu_special union
-which uses 'u32' and does not enforce endianness within the fields or bytes
-of the struct with respect to the fields. Its all native CPU endian and works
-fine. You're basically saying in terms of C that, the designers of the C
-bitfield in C standard force the C language to use endianness in the types, no
-they can't / shouldn't be forced to.
+> On 17.09.25 17:24, Ankur Arora wrote:
+>> For configurations with CONFIG_MMU we do not define clear_user_page().
+>> This runs into issues for configurations with !CONFIG_HIGHMEM, because
+>> clear_user_highpages() expects to clear_user_page() (via a default
+>> version of clear_user_pages()).
+>
+> I'm confused. Can you elaborate once more why we cannot take care of that in
+> common code?
 
-For the separate issue of enforcing endianness with respect to (across)
-multiple fields, I agree with you that if the user's backend (the consumer of
-the data) is not doing such conversion, say via regmap, then that becomes a
-problem. But that problem is orthogonal/different and cannot be solved here.  
+So my definition of clear_user_highpages,
 
-> and the like.  There has to be a way to actually specify the
-> representation here and for C, that is using the "__" types that express
-> the endianness (i.e. __le32, __be32, and so on).  Then we have type
-> checks that enforce accesses to those variables to always turn the data
-> into "native" values when the cpu accesses them.
+    +#ifndef clear_user_highpages
+    +static inline void clear_user_highpages(struct page *page, unsigned long vaddr,
+    +					unsigned int npages)
+    +{
+    +	if (!IS_ENABLED(CONFIG_HIGHMEM)) {
+    +		void *base = page_address(page);
+    +		clear_user_pages(base, vaddr, page, npages);
+    +		return;
+    +	}
+    +
+    +	do {
+    +		clear_user_highpage(page, vaddr);
+    +		vaddr += PAGE_SIZE;
+    +		page++;
+    +	} while (--npages);
+    +}
+    +#endif
 
-Sure, it is upto the user, they can decide to use whatever types they want.
-In fact we also support conversion to enums, not just integer types :)
+assumes one of the following:
 
-thanks,
+  1. clear_user_highpages is defined by the architecture or,
+  2. HIGHMEM => arch defines clear_user_highpage or clear_user_page
+  3. !HIGHMEM => arch defines clear_user_pages or clear_user_page
 
- - Joel
+Case 2 is fine, since ARM has clear_user_highpage().
 
+Case 3 runs into a problem since ARM doesn't have clear_user_pages()
+or clear_user_page() (it does have the second, but only with !CONFIG_MMU).
+
+> If it's about clear_user_pages(), then you can just switch from
+> !IS_ENABLED(CONFIG_HIGHMEM) to ifdef in patch #11.
+
+It's worse than just clear_user_pages(), since we will have
+clear_user_pages() (due to the defintion in patch-10) but that
+is broken since the arch doesn't define clear_user_page().
+
+I think the fallback defintions of clear_user_highpages() and
+clear_user_pages() are reasonably sane so this needs to be addressed
+in the arch code.
+
+I defined clear_user_highpages() since it already has clear_user_highpage().
+
+Another solution might be to define clear_user_page() for ARM which
+would also address the broken-ness of clear_user_pages() but that
+is more intrusive since that needs actual knowledge of the ARM mapping
+model(s).
+
+--
+ankur
 
