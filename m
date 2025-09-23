@@ -1,79 +1,111 @@
-Return-Path: <linux-kernel+bounces-828003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28AA4B93AA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:06:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD204B93AB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 366AD1901D93
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:07:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 531F93AD819
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DBC2746A;
-	Tue, 23 Sep 2025 00:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8997533987;
+	Tue, 23 Sep 2025 00:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ja8uqtR7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0s/2sx0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35907BE5E;
-	Tue, 23 Sep 2025 00:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10E3224F6;
+	Tue, 23 Sep 2025 00:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758586004; cv=none; b=hGGDq8Crhs0UjKVg9AwDl9Xv8sS2PHpcIlNA0200PoM8EbxFfCVQeKsECrEN7bJ9FT71Zd9OL7IXmgtkaTsRLS+2qgmyGNTD0h79pz5lo+K5gF0Du8LNz9LVxbPRA1eub8sG1kev8EPT/cXL+7BJYxHQ9yBd7v8N2CYc3wlxX4g=
+	t=1758586499; cv=none; b=ngNst9mkD6/TrPT+7x15CBINnE0L4PEoGNErvlv15e6K1Yt+7QbbcLA6rGNLh6Vt9XPvuIhAx4eBZv9bguxHWCIWCljBNZ1a3d9sx6mCQ0+zEO+H0x6BTHaBe4zYUDxov/taveI+yXOmvqyTYjYvuYmAdMEuygQsnDENkOcjUZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758586004; c=relaxed/simple;
-	bh=9EZM2bQ1+x+9RpmEnYsLQfLA1yzHuL/f+/Q6zAHJuME=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iuyJJPcH/bX4jSZbs/dBB04QLxxRepUeUi0uWxDgxJlbKIBHGj/YAQmZs04V9ONTsa+90cg3G8bekN7pgG2iEb/6ZaH91LwESusivP5XV3tA3XQFjuJBIlWE5gFQBsZaa8UawD4kuxHBwXN1gpE8RIrlT1Go+8DEBrq58f5sdco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ja8uqtR7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6D49C4CEF0;
-	Tue, 23 Sep 2025 00:06:42 +0000 (UTC)
+	s=arc-20240116; t=1758586499; c=relaxed/simple;
+	bh=uJRu90axGePaPzwjQdQUU/DsYV1Oe0neqc4sV1m2M2A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ce3iJQP9KbMK3jvmDFo5DVW0m79bFerHOjx1x3qyIFxJDLN++RnhmG2sYwPNJtIIJbYTttrkQj7Sovyd0h3TTAzps1OU02+ikBPV3LNRloofLf1fG27BsQz34GRySBbQZcqXglCxrSi3VzB6k5Y9c6yEaFgslkYzYDlhKWANXrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f0s/2sx0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 789E4C4CEF0;
+	Tue, 23 Sep 2025 00:14:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758586003;
-	bh=9EZM2bQ1+x+9RpmEnYsLQfLA1yzHuL/f+/Q6zAHJuME=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ja8uqtR7yoLtRy4qlBt58qGUBIrQ4d7Z3MJbvrg+oigryoxB3DyWzqTMj8dQom0JD
-	 NMpNT6QMHOz2eFMGWvUDLeybUqlz4WTqRQ5/NZiwH+WqHu3zL5Vvb4L4cI3Ia5R+Ow
-	 le6xDqbiz2sNIgD7HyOCVpQMAgH/OwUhMYIhZVr7DIz/uXuMkfcwFx9tiSwyyszk7P
-	 6mR5oB/cOh230fN6eLggCxsfSD0CPl4pL2X6B9rfakowFbHJIRKwwa6xBmNZFziIXP
-	 ZGZ16+CWJjkjOqhO1FI9MMPduPGF5CtxeUSGr/HUcKaQl8uHDectYqNQBZBn/Mt5AU
-	 Wd3HrJmHp4m6g==
-Date: Mon, 22 Sep 2025 17:06:42 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky
- <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
- <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>, Moshe
- Shemesh <moshe@nvidia.com>, Carolina Jubran <cjubran@nvidia.com>
-Subject: Re: [PATCH net-next 3/7] net/mlx5: Improve QoS error messages with
- actual depth values
-Message-ID: <20250922170642.2d79e14b@kernel.org>
-In-Reply-To: <1758531671-819655-4-git-send-email-tariqt@nvidia.com>
-References: <1758531671-819655-1-git-send-email-tariqt@nvidia.com>
-	<1758531671-819655-4-git-send-email-tariqt@nvidia.com>
+	s=k20201202; t=1758586498;
+	bh=uJRu90axGePaPzwjQdQUU/DsYV1Oe0neqc4sV1m2M2A=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=f0s/2sx0oJa8Vs2gvlE9XbJi8yNT9wwWEtm+dCZeAD15NzemYuZn+4t2tPxrBp7Y5
+	 XMLVn4NVoQoi4VMF0aPkwoe4CjqjA0O6OsGTzz4So5/sq9W3RTPextU1372MfFhTtG
+	 1W8yR7nXZT3bAWOg5OmOS1WOQnrdoPz05S8KGIb0Zva6VXROsni+v+dhxzo5jemJTp
+	 x02GzNIZepWpBkqInxj4WiavEPmHtWMi2G0UsieMb7sGZJVM+cpIWoIgPL8SoVpthT
+	 yDoVknTzf8XMe3ynfqjacid/HFx3ArLAuHR1iuySOdbj2tPtP6GDMMZ1zCPdynvdqB
+	 l+pCCw1Fnczxg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 650CCCAC5AA;
+	Tue, 23 Sep 2025 00:14:58 +0000 (UTC)
+From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
+Date: Tue, 23 Sep 2025 02:14:50 +0200
+Subject: [PATCH] Input: ps2-gpio - fix typo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250923-ps2-typo-v1-1-03d2468acc32@posteo.net>
+X-B4-Tracking: v=1; b=H4sIAHnm0WgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSyNj3YJiI92SyoJ8XVMzcxOzZFMzC1ODRCWg8oKi1LTMCrBR0bG1tQC
+ l/lTBWgAAAA==
+X-Change-ID: 20250923-ps2-typo-56746c56850a
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758586497; l=1181;
+ i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
+ bh=IPy139GDL40Ao6EBEyf0Bsm3lBOPa8B5AbzRx2Cm4mo=;
+ b=0utriwySV/XiOEb9kOXBBXidP+4XaLTRlLPAaNEOcq1fRowy6LyK5hrLbVNuQ4g2HcXq8A1/w
+ +WW8rCLQcRNBp+XDkZ6eoN9ONeLve3nHjGMRB3uiFLMRv+ePmLzQh/r
+X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
+ pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
+X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
+ auth_id=156
+X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+Reply-To: j.ne@posteo.net
 
-On Mon, 22 Sep 2025 12:01:07 +0300 Tariq Toukan wrote:
->  		if (new_level > max_level) {
-> -			NL_SET_ERR_MSG_MOD(extack,
-> -					   "TC arbitration on leafs is not supported beyond max scheduling depth");
-> +			NL_SET_ERR_MSG_FMT_MOD(extack,
-> +					       "TC arbitration on leafs is not supported beyond max scheduling depth %d",
-> +					       max_level);
+From: "J. Neuschäfer" <j.ne@posteo.net>
 
-clang points out that these messages are too long to fit in extack
+"The data line must be sampled" makes much more sense than what was
+previously written, and given that "s" and "d" are neighbors on the
+QWERTY keybord, it was probably a typo.
+
+Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+---
+ drivers/input/serio/ps2-gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/serio/ps2-gpio.c b/drivers/input/serio/ps2-gpio.c
+index 93769910ce24ea96265b67e2d04dfd768b9d6c6b..46fb7667b244a37e29c19ac363d17e0c32d7f822 100644
+--- a/drivers/input/serio/ps2-gpio.c
++++ b/drivers/input/serio/ps2-gpio.c
+@@ -50,7 +50,7 @@
+  * interrupt interval should be ~60us. Let's allow +/- 20us for frequency
+  * deviations and interrupt latency.
+  *
+- * The data line must be samples after ~30us to 50us after the falling edge,
++ * The data line must be sampled after ~30us to 50us after the falling edge,
+  * since the device updates the data line at the rising edge.
+  *
+  * ___            ______            ______            ______            ___
+
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250923-ps2-typo-56746c56850a
+
+Best regards,
 -- 
-pw-bot: cr
+J. Neuschäfer <j.ne@posteo.net>
+
+
 
