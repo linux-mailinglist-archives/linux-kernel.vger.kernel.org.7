@@ -1,161 +1,111 @@
-Return-Path: <linux-kernel+bounces-829463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD74B9720A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:53:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF2CB97219
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:55:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE2634E3227
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:53:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81DD54C0DFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1518B2DF70E;
-	Tue, 23 Sep 2025 17:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532442DE701;
+	Tue, 23 Sep 2025 17:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="ETATS6bU"
-Received: from pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.155.198.111])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnDBeDjb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885C528643C
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.155.198.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F082DEA64;
+	Tue, 23 Sep 2025 17:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758649861; cv=none; b=ZTpUNskbrz0RpzcSEAsIB6TFU7bO/dwnpS03Ua4zKxsjIgzGJ99P/T8LC1ZDO8ETPXAuZh88AiGhpwyniNExGk7zU0oTAEJMTsSsUnA2J4hmJglHG5Fz8dvBQK2/HbGLKhU0vNJ373pyzYV1tHuaIL/2gosCCYA/m8wxsSs7/PU=
+	t=1758650079; cv=none; b=IvPv6+8nwV5RwpxsGwBEHA8ZX3ysuiKHErTynSLMcuFlET+9HXkeIAyQg+i8KYOQwLEq2LJMQ1JUYJ/98Rypsj0qWiWFEW10gEqtdpMqQGmjV2/EDeiXwWtLQE1U2NeeaRMhgkm0bGGuPRskPpG5JBd2+B6gLO6PFrObdeCgrF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758649861; c=relaxed/simple;
-	bh=hcoGFZNJkreCDeYr6BpJKXMGFNUt6arRLg1n277LcfQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M0Ig81L/zQ8WilRe80eGZ9fMTAO8tBxSBK+XODPUXLev6G942yGsNxkYuDMfJ0TQy/iqrTgj9yMZuCESuzLFuQ8m8uBIfR51YjRzxm0kAulkv8mWaY0jA5OyNLMuQIJsxU73Ilt3pU8KMRqO8439Q4zL1NalRgST5k3mEk3SGgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=ETATS6bU; arc=none smtp.client-ip=35.155.198.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1758649859; x=1790185859;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=X3tx+fZ731hStR3QwB8Vwr+fatNxOU7DCvOysaUDqs0=;
-  b=ETATS6bUzRIn+4spVw2wdJdvInGV0isllpkaPNNLvNjmesI1HyFSjBuU
-   IRprsA0PPtEsL/U1gYtibuI13BW3h8dzcR7K4apD5NLb13/LWpeTwH/Yg
-   Z18xv6Z5oFmoG7yoT5Gz/a7KWxX0iBhOmV5LtzvFGf5urbBFT/HnwIEk4
-   dO9VavlgfOlX1qBqvL/IiRxWsOws0YL3sIbHe2aS9tAdqqGL0rLNSG++G
-   j29XbiP1vJQG2mb6+23otJRjSh3oDzAJ3LXs01+mzasE1uD2CEJjKVXY9
-   TH4waPSIsAIhGve+v/ZcHEnWOOAu+ZjnxLrNw7CZaaCTqLtK/v1ukempC
-   Q==;
-X-CSE-ConnectionGUID: lwCl1RWXT+aKK2oadLaBiA==
-X-CSE-MsgGUID: 475HWfd+TQehZxD0e1rLsQ==
-X-IronPort-AV: E=Sophos;i="6.18,288,1751241600"; 
-   d="scan'208";a="3480840"
-Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
-  by internal-pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 17:50:59 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:47695]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.38.121:2525] with esmtp (Farcaster)
- id 3a68c820-3ea0-4f05-bb30-09be8ba4b876; Tue, 23 Sep 2025 17:50:58 +0000 (UTC)
-X-Farcaster-Flow-ID: 3a68c820-3ea0-4f05-bb30-09be8ba4b876
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 23 Sep 2025 17:50:58 +0000
-Received: from 80a9970eed1e (10.106.101.9) by EX19D001UWA001.ant.amazon.com
- (10.13.138.214) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Tue, 23 Sep 2025
- 17:50:57 +0000
-Date: Tue, 23 Sep 2025 10:50:55 -0700
-From: Justinien Bouron <jbouron@amazon.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: <kexec@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<llvm@lists.linux.dev>, Andrew Morton <akpm@linux-foundation.org>, Baoquan He
-	<bhe@redhat.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
-	<nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, "Justin
- Stitt" <justinstitt@google.com>, Justinien Bouron <jbouron@amazon.com>
-Subject: Re: [resend, PATCH v2 1/1] kexec: Remove unused code in
- kimage_load_cma_segment()
-Message-ID: <aNLd_6CO6YMvm2MN@80a9970eed1e>
-References: <20250916125124.3094021-2-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1758650079; c=relaxed/simple;
+	bh=rJ6aiQqxdMPsVP+OV1g5GsOOlkA6GjMmcOXKL/5YFO0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BzSSol/bFYjVVfo8ZVy7i1EBjab5tozyu0YVfe2UGJLFfncdmll8H3S52rRvan+tTY5hVOaHle95wDP7KSY4YR85UIZHS9bVAzQXeaEBfk9RV3FIqz/ZjZjDgmO65XQNTzEiWV5+PgI0aG9b/GIQeKj+JWdEl+xa6cJqu9DMWdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnDBeDjb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFBB4C113D0;
+	Tue, 23 Sep 2025 17:54:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758650079;
+	bh=rJ6aiQqxdMPsVP+OV1g5GsOOlkA6GjMmcOXKL/5YFO0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gnDBeDjb3Fgp+9OxsoeG84Q9GG5kPBG994eTfgLO/gAsH/WDgwWu8EcKDSDFcZUzA
+	 3xiiAeqSHdlL0JBrVIgVNGYsZk0KuEqdt0zdCNQ02c76N+Qo6P/4sLwEoOLFGB9oiY
+	 xxQdpyvbC5nNQ0VTbma0xP3rTgfH4zSk6xNJC0viSyG7GDcHnKYPB2VtBMayS8nlan
+	 /cJpWLK+okM/Maibjz1DDqeKoYRYt6vq8I1JoyTXW3+gOvre26bOVgb8O5H8S6j/vX
+	 jRVVWFBKJ24xBEfEOwcnjQ8UBpZ+vOIdbgmoJuCReIwgV/EBeCvn9c980O9G6iTdA8
+	 XSby2asi6Ukwg==
+Message-ID: <715c6b6d-5672-4ba4-99d1-04fcd1dbb81b@kernel.org>
+Date: Wed, 24 Sep 2025 02:54:36 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250916125124.3094021-2-andriy.shevchenko@linux.intel.com>
-X-Editor: VIM - Vi IMproved 9.1
-X-ClientProxiedBy: EX19D045UWA004.ant.amazon.com (10.13.139.91) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/20] can: netlink: preparation before introduction of
+ CAN XL step 3/3
+To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
+ Oliver Hartkopp <socketcan@hartkopp.net>,
+ =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
+ Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
+ Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250923-canxl-netlink-prep-v3-0-87a7684333f3@kernel.org>
+ <13f98eed-b535-4360-a545-0a11dbc8aa12@kernel.org>
+ <20250923-rose-shellfish-of-wealth-c8dee7@lemur>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol@kernel.org>
+Autocrypt: addr=mailhol@kernel.org; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
+ fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
+ F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
+ 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
+ YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
+ dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
+ zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20250923-rose-shellfish-of-wealth-c8dee7@lemur>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 16, 2025 at 02:51:09PM +0200, Andy Shevchenko wrote:
-> clang is not happy about set but unused variable:
+On 24/09/2025 at 02:08, Konstantin Ryabitsev wrote:
+> On Tue, Sep 23, 2025 at 03:02:49PM +0900, Vincent Mailhol wrote:
+>>> base-commit: 9b277fca90c39c8b749e659bf5c23e924c46c93b
+>>> change-id: 20250831-canxl-netlink-prep-9dbf8498fd9d
+>>> prerequisite-change-id: 20250915-can-fix-mtu-050a94b563a0:v2
+>>> prerequisite-patch-id: 03836ed1e416f9ea221e149842cc075ac174dd3a
+>>> prerequisite-patch-id: dac8f6d20f91cf996553905f08c629ca3e61d86f
 > 
-> kernel/kexec_core.c:745:16: error: variable 'maddr' set but not used [-Werror,-Wunused-but-set-variable]
->   745 |         unsigned long maddr;
->       |                       ^
-> 1 error generated.
+> ...
 > 
-> Fix the compilation breakage (`make W=1` build) by removing unused variable.
+>> So, when sending, I was based on Linus tree instead of net-next. I guess this is
+>> why all those prerequisite-patch-id are showing up...
 > 
-> As Nathan noted, GCC 16 produces the similar warning;
-> 
-> Fixes: f4fecb50d6e1 ("kexec_core: remove superfluous page offset handling in segment loading")
-FYI the commit this patch is fixing (i.e. f4fecb50d6e1) is going to need a
-second revision as well (I haven't submitted it yet, still working on it), this
-means that your "Fixes:" tag will need to be changed again, requiring a 3rd
-revision.
+> No, I think something else went wrong here. You did list
+> prerequisite-change-id, but it's only a 4-patch series. I'm not sure where the
+> other ones came from. Can you push your b4 branch somewhere where I can take a
+> look at it?
 
-I am not sure what is the proper way forward here. Should I:
-    - Send my v2, without fixing the unused variable and then you send your v3
-      with the updated "Fixes:" tag pointing to my v2.
-    - OR fixing the unused variable in my v2 (i.e. "absorb" this patch in my
-      v2).
-In the latter case, I am not sure how I am supposed to credit the work in this
-case? Do I need to add another "Signed-off-by: Andy Shevchenko" besides mine?
+Thanks for jumping in this thread and volunteering to investigate. This is kind!
 
-I'm still learning the ropes on how to contribute through the mailing list so I
-would be grateful if you could share your input on what's the proper way forward
-here.
+I pushed the v3 in my tree under the branch:
 
-Best,
-Justinien
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> 
-> v2: fixed Fixes (Nathan), added a note about GCC (Nathan), added tag (Nathan)
-> 
->  kernel/kexec_core.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-> index 5357ed39e9d1..32722926bc7e 100644
-> --- a/kernel/kexec_core.c
-> +++ b/kernel/kexec_core.c
-> @@ -742,7 +742,6 @@ static int kimage_load_cma_segment(struct kimage *image, int idx)
->  	struct kexec_segment *segment = &image->segment[idx];
->  	struct page *cma = image->segment_cma[idx];
->  	char *ptr = page_address(cma);
-> -	unsigned long maddr;
->  	size_t ubytes, mbytes;
->  	int result = 0;
->  	unsigned char __user *buf = NULL;
-> @@ -754,7 +753,6 @@ static int kimage_load_cma_segment(struct kimage *image, int idx)
->  		buf = segment->buf;
->  	ubytes = segment->bufsz;
->  	mbytes = segment->memsz;
-> -	maddr = segment->mem;
->  
->  	/* Then copy from source buffer to the CMA one */
->  	while (mbytes) {
-> @@ -782,7 +780,6 @@ static int kimage_load_cma_segment(struct kimage *image, int idx)
->  		}
->  
->  		ptr    += mchunk;
-> -		maddr  += mchunk;
->  		mbytes -= mchunk;
->  
->  		cond_resched();
-> -- 
-> 2.50.1
-> 
+  b4/misterious-prerequisite-patch-id
+
+https://git.kernel.org/pub/scm/linux/kernel/git/mailhol/linux.git/log/?h=b4/misterious-prerequisite-patch-id
+
+I did a 'b4 send --reflect' to double-checked that it still has the issue.
+
+
+Yours sincerely,
+Vincent Mailhol
+
 
