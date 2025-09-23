@@ -1,185 +1,156 @@
-Return-Path: <linux-kernel+bounces-828760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 958BDB9565C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:10:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B873CB95665
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D6342E21CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 217CC3B3AF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5901030FF25;
-	Tue, 23 Sep 2025 10:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351BE319601;
+	Tue, 23 Sep 2025 10:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="S8aVDE2e"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="fw9/bMSM"
+Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E92B30DD0B
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AF13595C;
+	Tue, 23 Sep 2025 10:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758622234; cv=none; b=gVFDxf8M0snE+Zalw5tChcbAjpELrGTwhqz5Y4VcsQbxcdaNygCay0KHH2xp0yTMa0Dv/I6tZTzRzjNgzRyZzGNtlo1ac4JHT7SENemYk4tU8daRPwws+RcMh1BP8yt3tp5jzjOgpyP6fAJ7SDyfa7XiD1uO2mAQDRNk7C3mW+I=
+	t=1758622313; cv=none; b=Z+vm5qRN1fMFcHV5ij992YQQ3QzAq5ax7+AzMQXLe17bHnEDLwBt7/OWjgroqTW73zEQeMzf9ecbyLkJfGwx+feZfCSz1SYw2aOzcXq2bKczX+Q+PBDlwEsAVD4bc+02i2a4a8oNZmaCxEobH8rX0OWcrQMf6YTGhynRtWVdsaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758622234; c=relaxed/simple;
-	bh=2RIFizlSxeHsNuz2oosCGKg4PXmOdXwFy8TF8umr80k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dh1D2VvGgcDtWkTFUYMZKvVMqeJfYeSqPxFmYc1TnqP4GxIOvzncopEQmYe/IB6FaONzCGaHvyH3wN349+Wxrc0M7FfTZCFj7LnU6rbrVp+Vsd1kxeXKWGYOZAhJ1ZPfitraDcwTackAAdFHU5BCQTyK8QmDx1tMtGWDUJVELwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=S8aVDE2e; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B529140E015C;
-	Tue, 23 Sep 2025 10:10:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Go1d1ADiO-1c; Tue, 23 Sep 2025 10:10:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1758622217; bh=s9d0/cIPYGN2Qb2jiAt/0OLuPWlA6bUH+WUAfOGd7is=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S8aVDE2e4U30j9UeenAVn3Qm2cl8+gh18hiKeAFMWBa/1Pu9VEBffalWujR9k/bCZ
-	 uPPz4eSvSPOpRTjb/qgJ7+dDI51iWh80KzhXnr3TefY4SdHHDFpZQlNCjMJppafLfp
-	 Yshiqlbxi4yF2T1kLcDRflUzdGGogJ93/LUb+NxpSd/A2FGWDaRzNoR+ZwBSz2GXaQ
-	 l6CW97PrSDFSH0+Tni0ufXcerM12gfy9cGXXniIvIaKntoU4th3ma7Vr+MmDVpPke9
-	 rU/q24s1Wfwb5LYxARasNWkrwZbz8I/GEi9rZ1I9LDQJ/rQttHYfboUZ8tW77nWfm8
-	 fzkQFsJlft1ocGGXLfua64DtyB4U8kQ+uLoVIZCjXfADH8f1A8zZPrPGWQw4uIbXTQ
-	 /g19LRUS3JxnmWJjKX3Sst4pNo+TsuTxyiqWfZr53GVebKIonLSXvQtOtxLwTddkzN
-	 MfmHprZRTOztMqjs1x9Hh6ophZtr6qS2G+N47SinGn+4n4HmNZ8SYz1LMNESe09b+k
-	 7njwW9moSfck7Kez0AJWwrs9jOiy+x0ULp8tkZJ+Dh+X0O7cKBWB0I1XqR6ceAw/ag
-	 ++I3ODeBZeUw+O0iDJKKVX2nal1IuR+S50T+7tyMQ30WE4lih4tezto+xNrvDFuvkS
-	 ne2iBPtMAeabLMr3NmGDAuO8=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id E808040E0196;
-	Tue, 23 Sep 2025 10:10:03 +0000 (UTC)
-Date: Tue, 23 Sep 2025 12:09:56 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	Fenghua Yu <fenghuay@nvidia.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>, Chen Yu <yu.c.chen@intel.com>,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v10 02/28] x86/resctrl: Move L3 initialization into new
- helper function
-Message-ID: <20250923100956.GAaNJx9BYhXKkfNJ71@fat_crate.local>
-References: <20250912221053.11349-1-tony.luck@intel.com>
- <20250912221053.11349-3-tony.luck@intel.com>
- <67f34897-d5b2-4ea4-9e4b-edea86b7636c@intel.com>
- <aM2cctuXS8NBLeJ5@agluck-desk3>
+	s=arc-20240116; t=1758622313; c=relaxed/simple;
+	bh=GFmsJyXnqb++URYJgUqltJiv7Geg8m8D9ZUDLpR3hrE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KId7Xh8x1Q1byEl+KONBezGSUnEH51NGhJbDkq8xtLYCojyQWs3U69BVQlmaYXxzsO8bprX5GQVwyXchayEfwcrkA/zYyiEHpKq6eeaixxM4Lcd1DecFknp+X8ZkfUdisakqA7THKtYPyOFdpqpp0qaqd117nTfNprGR/VxTXI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=fw9/bMSM; arc=none smtp.client-ip=178.154.239.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net [IPv6:2a02:6b8:c2d:7394:0:640:5a8a:0])
+	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id D0034C028B;
+	Tue, 23 Sep 2025 13:11:46 +0300 (MSK)
+Received: from [IPV6:2a02:6bf:8080:d98::1:24] (unknown [2a02:6bf:8080:d98::1:24])
+	by mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id fBUo1C0GwGk0-UBWnQyRm;
+	Tue, 23 Sep 2025 13:11:46 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1758622306;
+	bh=mw66Zn9tRawIgkhwxW7ceJWPwiEJCHN3d99R4FBrImU=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=fw9/bMSMA9KYipgxy6El4P9xWafYO9DwKWVjYcukKtlDGR/uyXrR/mkXocJGqHjgZ
+	 cHIyLofjzoUP76KtrAsNtuPD9s7ExMg/ZgOrX7rRs0AUP+I95Vqvp1TKG1NBIBdy7C
+	 ZR3/FbZCjgI6D3rfSFs34JDy2gJ5C6a4flcKu25M=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+Message-ID: <5f1ff52a-d2c2-40de-b00c-661b75c18dc7@yandex-team.ru>
+Date: Tue, 23 Sep 2025 13:11:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aM2cctuXS8NBLeJ5@agluck-desk3>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] netfilter/x_tables: go back to using vmalloc for
+ xt_table_info
+To: Eric Dumazet <edumazet@google.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>,
+ Phil Sutter <phil@nwl.cc>, "David S. Miller" <davem@davemloft.net>,
+ David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20250922194819.182809-1-d-tatianin@yandex-team.ru>
+ <20250922194819.182809-2-d-tatianin@yandex-team.ru>
+ <CANn89i+GoVZLcdHxuf33HpmgyPNKxGqEjXGpi=XiB-QOsAG52A@mail.gmail.com>
+Content-Language: en-US
+From: Daniil Tatianin <d-tatianin@yandex-team.ru>
+In-Reply-To: <CANn89i+GoVZLcdHxuf33HpmgyPNKxGqEjXGpi=XiB-QOsAG52A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 19, 2025 at 11:09:54AM -0700, Luck, Tony wrote:
-> I understand that Boris doesn't want to see large amounts of text copied
-> from the cover letter into each patch. But there is still a need to meet the
-> "Describe your problem" requirement for a good commit message.
-> 
-> Several of the prepatory patches in this series make changes to expand the
-> capabilities of fs/resctrl to handle monitor events from resources other
-> than RDT_RESOURCE_L3.
-> 
-> Is a single short sentence repeated in several patches "too much"?
+On 9/23/25 12:12 AM, Eric Dumazet wrote:
 
-It probably isn't too much but having boilerplate code in commit messages
-feels to the reader - at least to me - like: lemme jump over the boilerplate
-code in order to go to the meat of the change. And then the meat of the change
-is basically explaining the diff. And then I'm left scratching my head, why is
-this even in my mbox.
+> On Mon, Sep 22, 2025 at 12:48 PM Daniil Tatianin
+> <d-tatianin@yandex-team.ru> wrote:
+>> This code previously always used vmalloc for anything above
+>> PAGE_ALLOC_COSTLY_ORDER, but this logic was changed in
+>> commit eacd86ca3b036 ("net/netfilter/x_tables.c: use kvmalloc() in xt_alloc_table_info()").
+>>
+>> The commit that changed it did so because "xt_alloc_table_info()
+>> basically opencodes kvmalloc()", which is not actually what it was
+>> doing. kvmalloc() does not attempt to go directly to vmalloc if the
+>> order the caller is trying to allocate is "expensive", instead it only
+>> uses vmalloc as a fallback in case the buddy allocator is not able to
+>> fullfill the request.
+>>
+>> The difference between the two is actually huge in case the system is
+>> under memory pressure and has no free pages of a large order. Before the
+>> change to kvmalloc we wouldn't even try going to the buddy allocator for
+>> large orders, but now we would force it to try to find a page of the
+>> required order by waking up kswapd/kcompactd and dropping reclaimable memory
+>> for no reason at all to satisfy our huge order allocation that could easily
+>> exist within vmalloc'ed memory instead.
+> This would hint at an issue with kvmalloc(), why not fixing it, instead
+> of trying to fix all its users ?
 
-I dunno, maybe it is just me but I end up doing that pretty often. :-\
+Thanks for the quick reply! From my understanding, there is a lot of 
+callers of kvmalloc
+who do indeed benefit from the physical memory being contiguous, because 
+it is then
+used for hardware DMA etc., so I'm not sure that would be feasible.
 
-For example, this particular commit I'd write somewhere along those lines:
+>
+> There was a time where PAGE_ALLOC_COSTLY_ORDER was used.
 
-"Carve out the resource monitoring domain init code into a separate helper in
-order to be able to initialize new types of monitoring domains besides the
-usual L3 ones."
+Out of curiosity, do you mean kvmalloc used to always fall back to 
+vmalloc for > COSTLY_ORDER?
+If so, do you happen to know, which commit changed that behavior? I 
+tried grepping the logs and
+looking at the git blame of slub.c but I guess it was changed too long 
+ago so I wasn't successful.
 
-Or so.
-
-Short'n'sweet.
-
-You don't explain what the code does as that should be visible from the diff
-itself. You're explaining the why: "hey, I need this code into a separate
-helper in order to do bla, so I'm carving it out."
-
-That's it.
-
-IOW, you don't necessarily have to go through the common steps of describing
-the problem first, especially when you're doing preparatory, refactoring
-patches.
-
-Reading the next patch, the commit message is perfectly fine even without:
-
-"All monitoring events are associated with the L3 resource."
-
-Patch 4 doesn't have a boilerplate sentence and it is perfectly fine as it is.
-
-Patch 5 you can start like this:
-
-"Up until now, all monitoring events were associated with the L3 resource and
-it made sense to use the L3 specific "struct rdt_mon_domain *" arguments to
-functions manipulating domains...."
-
-And even if you have the gist of the boilerplate, it reads better because it
-is not simply slapped there mechanically.
-
-This is not needed:
-
-"Update kerneldoc for mon_data::sum to note that it is only used for
-RDT_RESOURCE_L3."
-
-because it is in the diff. Unless there's a reason for it to be called out in
-the commit message...? And now I'm wondering why is this called out...
-
-See what I mean?
-
-Patch 6 I'd write like this:
-
-"Use a generic struct rdt_domain_hdr representing a generic domain header in
-struct rmid_read in order to support other telemetry events' domains besides
-an L3 one. Adjust the code interacting with it to the new struct layout."
-
-Something like that.
-
-IOW, this is basically explaining the intention and *why* the patch is there.
-No need for "for the calls from mon_event_read() via smp_call*() to
-__mon_event_count() and resctrl_arch_rmid_read() and
-resctrl_arch_cntr_read()." as that is functionality details. If one is really
-interested, one can apply the patch and stare at it but the *why* is a lot
-more important.
-
-Dunno, this is ofc subjective but IMNSVHO, writing things this way makes it
-a lot easier to review and understand the why. The what one can figure out.
-
-And *if* one can't figure out the what because there's something non-trivial,
-then by all means, call that out in the commit message.
-
-And so on...
-
-I hope I'm making some sense here.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>
+>
+>
+>> Revert the change to always call vmalloc, since this code doesn't really
+>> benefit from contiguous physical memory, and the size it allocates is
+>> directly dictated by the userspace-passed table buffer thus allowing it to
+>> torture the buddy allocator by carefully crafting a huge table that fits
+>> right at the maximum available memory order on the system.
+>>
+>> Signed-off-by: Daniil Tatianin <d-tatianin@yandex-team.ru>
+>> ---
+>>   net/netfilter/x_tables.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
+>> index 90b7630421c4..c98f4b05d79d 100644
+>> --- a/net/netfilter/x_tables.c
+>> +++ b/net/netfilter/x_tables.c
+>> @@ -1190,7 +1190,7 @@ struct xt_table_info *xt_alloc_table_info(unsigned int size)
+>>          if (sz < sizeof(*info) || sz >= XT_MAX_TABLE_SIZE)
+>>                  return NULL;
+>>
+>> -       info = kvmalloc(sz, GFP_KERNEL_ACCOUNT);
+>> +       info = __vmalloc(sz, GFP_KERNEL_ACCOUNT);
+>>          if (!info)
+>>                  return NULL;
+>>
+>> @@ -1210,7 +1210,7 @@ void xt_free_table_info(struct xt_table_info *info)
+>>                  kvfree(info->jumpstack);
+>>          }
+>>
+>> -       kvfree(info);
+>> +       vfree(info);
+>>   }
+>>   EXPORT_SYMBOL(xt_free_table_info);
+>>
+>> --
+>> 2.34.1
+>>
 
