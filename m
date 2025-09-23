@@ -1,171 +1,116 @@
-Return-Path: <linux-kernel+bounces-828385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343DAB94838
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:12:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E53B94835
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206174453FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:12:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2340D17EF23
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0553F30E836;
-	Tue, 23 Sep 2025 06:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dVJxJB93";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b6h7iibo";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dVJxJB93";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b6h7iibo"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C6C30DEDA;
+	Tue, 23 Sep 2025 06:11:49 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8FF30E829
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C2C30E0D8
 	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758607909; cv=none; b=l1RmZP3mCqqDK5Mxf9XowBeK5vrrCVlV6mGZAhROPbS0IXbw/JAR+V2qgNtXZosJp0GH8+9tgJdbw5I02tNfpKuljwmipTEi0w4czxvjaK06fWHbW7qra5LX56JdlOce3cHmdHDMPCFXT7Ipq9voAV44yrM2qHReIAFSpOsglIQ=
+	t=1758607909; cv=none; b=uaArlCEeh6XxB0yX8d+XEF+MKv16DGHxzl5x7NJIb/pbIky47fJphNttLmv1bevnhuLZJOg1d5QRjxM9TTw/kRXZxon1R+vnsUmsxNpytWtq7om2HJnSnCzamTvtwmt9hsez9CAMXBQNIJFbW7JQQjvQvGNUD77DxbeQaAxla78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758607909; c=relaxed/simple;
-	bh=uzglp6EAm2VJxGeExDsM6Lofk/XPbxvh38qYQIKN0ZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l21i1uuUbOME/LlllGKV5oTAB/RiBtsEq+jFeNIlAPlW8oiRmS4MsDxPkbbqw3oppN405E4LAy7GLh5vrnLdamchTmYrvnpoiNf33fxUnzjqU6bLgnFbIlrco0k/X9DzoUv1fPI0/bLl8XVuWf29/wdyoN1g6r4TkvI74PZ2W3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dVJxJB93; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b6h7iibo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dVJxJB93; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b6h7iibo; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0F1901F387;
-	Tue, 23 Sep 2025 06:11:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758607906;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lGtSjkxMwCbGyXXhAKcyUWrdApOh6OCerYImQ5KG7L8=;
-	b=dVJxJB93RYCBsELw9gXGCQZupHxUv8oN+WzVS23QjgTxem24IRia4HMyAZhhUw/jztqE47
-	gAdoBegRjCvJvtVALazsXCZXg+N+IC3RMq7dGecXwKnYYxXPJTHK0VDAQ/cIiRjQv2IAwp
-	mFAZBNlLHfKNwCDsXYnm7DVeplbn1v4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758607906;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lGtSjkxMwCbGyXXhAKcyUWrdApOh6OCerYImQ5KG7L8=;
-	b=b6h7iiboFzd53P991SXknleuwTaNI8metAjCKUTW60p8tlE9PLgjZ6lYfX5qMh50Bre8qA
-	pmDpgxgcR1S3v/AQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758607906;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lGtSjkxMwCbGyXXhAKcyUWrdApOh6OCerYImQ5KG7L8=;
-	b=dVJxJB93RYCBsELw9gXGCQZupHxUv8oN+WzVS23QjgTxem24IRia4HMyAZhhUw/jztqE47
-	gAdoBegRjCvJvtVALazsXCZXg+N+IC3RMq7dGecXwKnYYxXPJTHK0VDAQ/cIiRjQv2IAwp
-	mFAZBNlLHfKNwCDsXYnm7DVeplbn1v4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758607906;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lGtSjkxMwCbGyXXhAKcyUWrdApOh6OCerYImQ5KG7L8=;
-	b=b6h7iiboFzd53P991SXknleuwTaNI8metAjCKUTW60p8tlE9PLgjZ6lYfX5qMh50Bre8qA
-	pmDpgxgcR1S3v/AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EA76E132C9;
-	Tue, 23 Sep 2025 06:11:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DwYWOSE60mjYFQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 23 Sep 2025 06:11:45 +0000
-Date: Tue, 23 Sep 2025 08:11:44 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mssola@mssola.com>
-Cc: David Sterba <dsterba@suse.cz>, linux-btrfs@vger.kernel.org, clm@fb.com,
-	dsterba@suse.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] btrfs: Prevent open-coded arithmetic on kmalloc
-Message-ID: <20250923061144.GS5333@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20250919145816.959845-1-mssola@mssola.com>
- <20250922103442.GM5333@twin.jikos.cz>
- <87bjn24pmk.fsf@>
+	bh=l3CIeIFezP3uJv5ibG1AXRYljWvoStznABGLEkBdTeo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=dyc/VXo0yz/KQygVsfe9oSOlMkXyqyDmgryPfpdIlGIfA3paHDln0aI9S/p5jHBUJj8JhLm+TJujs2ImuN/XCQpD4Bkf+fkMIb0aPjgbCGKk4Rh181toCB3XiT6Ky7f+eNElXU4fBbZfa9FiHyPDdmYgAxvcn7DXShAk7NhxWn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4248adc62e0so38460595ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:11:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758607906; x=1759212706;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7SUB0yOiSUghDGSbfdHE8acwCLX9d753sssq7OJ9RKw=;
+        b=iqUELXsAu0kEblUQijWFpZOJT8R24Ky5w23lojHOf/8yqlSpCAoa4rXkgraIByIuFL
+         9q3L6oP8CKqR3IToRMlDEEwgIb78qU6U/NTOKP7mVPe6k58mHHySkQ8HwGYonyjkajhh
+         kIdmkapTB2PkTVBMD203DfpGXST/7SbVFlYhZLUcLZRUOAF17emFSOF0A3V4rnNOU1ge
+         cwSVE+m1A3WE+N+erYwn7uwLxdQCdn2frMB7n81vXLPTcI6bItadZUpYI9gHJ1qqF8Cd
+         y34hlNRue5DKSXvW8dBCnpQcbKxjvds6TpmTDsdIh9xXiadkpfXI0gsp8yMJksSUzGOh
+         JuiA==
+X-Gm-Message-State: AOJu0Ywblwh8072ta0VrTkoqpMjHPU95H4s9SeJl0Wdp3YI9B+xNDo6k
+	9IwpCOT6fFvaU+97q4OitkMeRa//8/FgMdWlIdK0j6IvkxLJWD9mxr7moVR983olGuyBiNwT2o4
+	zQQ3TO+B8VPUyFXYo7PefRtIo0ZwP8QHHWPIHcuSOMEUT7gw+LThBB/T3gRI=
+X-Google-Smtp-Source: AGHT+IE4sMApfTp79ITYZyNi7SMGLsH4UGjlEUI8Y7wqU0Y6HHLiSTCJTSWFSahXVio5v+kCx6u95inl22UxjnZ6CgGrd7N0mfuJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87bjn24pmk.fsf@>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
+X-Received: by 2002:a05:6e02:3e04:b0:424:fd76:2a2d with SMTP id
+ e9e14a558f8ab-42581ee17f5mr24940225ab.29.1758607906695; Mon, 22 Sep 2025
+ 23:11:46 -0700 (PDT)
+Date: Mon, 22 Sep 2025 23:11:46 -0700
+In-Reply-To: <68c9c3fc.050a0220.3c6139.0e66.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d23a22.a70a0220.1b52b.0051.GAE@google.com>
+Subject: Forwarded: [PATCH] Subject: [PATCH] ext4: skip inode expansion on
+ readonly filesystems
+From: syzbot <syzbot+4c9d23743a2409b80293@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 22, 2025 at 02:51:15PM +0200, Miquel Sabaté Solà wrote:
-> > On Fri, Sep 19, 2025 at 04:58:14PM +0200, Miquel Sabaté Solà wrote:
-> >> The second patch is a small cleanup after fixing up my first patch, in
-> >> which I realized that the __free(kfree) attribute would come in handy in a
-> >> couple of particularly large functions with multiple exit points. This
-> >> second patch is probably more of a cosmetic thing, and it's not an
-> >> exhaustive exercise by any means. All of this to say that even if I feel
-> >> like it should be included, I don't mind if it has to be dropped.
-> >
-> > Yes there are many candidates for the __free() cleanup annotation and
-> > we'll want to fix them all systematically. We already have the automatic
-> > cleaning for struct btrfs_path (BTRFS_PATH_AUTO_FREE). For the
-> > kfree/kvfree I'd like to something similar:
-> >
-> > #define AUTO_KFREE(name)       *name __free(kfree) = NULL
-> > #define AUTO_KVFREE(name)      *name __free(kvfree) = NULL
-> >
-> > This wraps the name and initializes it to NULL so it's not accidentally
-> > forgotten.
-> 
-> Makes sense! I can take a look at this if nobody else is working on it,
-> even if I think it should go into a new patch series.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Thanks, it's yours. Yes this should be in a separate patchset.
+***
 
-> Hence, if it sounds good to you, we can merge this patch as it is right
-> now, and in parallel I work on this proposed AUTO_KFREE and AUTO_KVFREE
-> macros in a new patch series (which will take more time to prepare).
+Subject: [PATCH] Subject: [PATCH] ext4: skip inode expansion on readonly filesystems
+Author: kartikey406@gmail.com
 
-I'd rather see all the changes done the same way so it's not __free and
-then converted to AUTO_KFREE. Also the development branch is frozen
-before 6.18 pull request so all that will be in the 6.19 cycle anyway.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+
+Fix WARNING in ext4_xattr_block_set() during orphan cleanup on readonly
+filesystems when debug_want_extra_isize mount option is used.
+The issue occurs when ext4_try_to_expand_extra_isize() attempts to modify
+inodes on readonly filesystems during orphan cleanup, leading to warnings
+when encountering invalid xattr entries. Add a readonly check to skip
+expansion in this case.
+
+Reported-by: syzbot+4c9d23743a2409b80293@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=4c9d23743a2409b80293
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/ext4/inode.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 5b7a15db4953..67300baa8e4e 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -6345,6 +6345,15 @@ static int __ext4_expand_extra_isize(struct inode *inode,
+ 	unsigned int inode_size = EXT4_INODE_SIZE(inode->i_sb);
+ 	struct ext4_inode_info *ei = EXT4_I(inode);
+ 	int error;
++	if (sb_rdonly(inode->i_sb)) {
++	    printk(KERN_ERR "ext4: READONLY CHECK TRIGGERED - skipping expansion\n");
++	return 0;
++	}
++
++	if (IS_RDONLY(inode)) {
++	     printk(KERN_ERR "ext4: READONLY CHECK TRIGGERED IS_RDONLY - skipping expansion\n");
++	return 0;
++	}
+ 
+ 	/* this was checked at iget time, but double check for good measure */
+ 	if ((EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize > inode_size) ||
+-- 
+2.43.0
+
 
