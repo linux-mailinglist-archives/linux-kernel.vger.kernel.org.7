@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-829746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A167B97BB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 00:37:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8A7B97BB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 00:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3504C3210B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:37:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 164C93A0F6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD86031E0FB;
-	Tue, 23 Sep 2025 22:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327B330FF10;
+	Tue, 23 Sep 2025 22:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V6O5bavI"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K4z6/omB"
+Received: from mail-oa1-f74.google.com (mail-oa1-f74.google.com [209.85.160.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8535931D721
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 22:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B467A31E0E4
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 22:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758666845; cv=none; b=c6CuF1cuvRLOgDvnlsUB/RRwx46WNahAwT4uOcu7CRIxt6DScRejOibi4XAsCwQGjNhsHC8HxuMQUUt8sY7kvx0P2j43U3uenL7PVtAIxqdlPOdRLbz0GacbLKXo9BemWojGTDHUaazDvbVWPDZwWJ0I1N0L/I2Cejp4elmMl18=
+	t=1758666848; cv=none; b=bQGVHkt39lOuyLLFzbkx6e0t/6ZepBqEqomsOsgY58vWjw6dOBI16Gg07CHLmWuhhngYYzyLBzeiGtL2iPH6q6VVk+VuBeSiEFEk1cexhOJGy5UbpZGSoHgwtNjN/3COGw6/Jx3ATfvIoeqS9ph7Tgjhmj9wa24hrul14t4bues=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758666845; c=relaxed/simple;
-	bh=tiWZCYYxARhFlflX9gneYHYq1ndN45QYaRl9OxqYSss=;
+	s=arc-20240116; t=1758666848; c=relaxed/simple;
+	bh=Hg7n2W3MJbXr4yfAW1QWep8g55Ur5qoksqjE5SLxwwk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=hIxoZumkyA9EGQ13u+mUlAm2PLKgBhE7XN7+i5NxLR8bqRlyxE5k0owSbmSgaM+tk98KF6HumL72te8rfxGpQOxCw24GpnkOhot5+BZ6ZlH1zv8zRiYYg981sCToD7gTMtccLY8HIfMGMaJuUNtsOYloJwvTM+Mvk1rhQFr6Vno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V6O5bavI; arc=none smtp.client-ip=209.85.216.74
+	 To:Content-Type; b=VozBH0W8lNsaxXEZnkgoe06a39D/aNglTI5DHDtJmw2QxcBm4cvaF+Xe4uDp429hlaKGCEr7W/qeqItUs2B7gToAeTvICr7El0Yd9QnmhUHh3SYEd5GBabrbMrXLlvQDfu5W1EVC1I5ztat9tCJAycoSgzU4w7tGI34t722FB8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K4z6/omB; arc=none smtp.client-ip=209.85.160.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32eb2b284e4so9666582a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:34:03 -0700 (PDT)
+Received: by mail-oa1-f74.google.com with SMTP id 586e51a60fabf-34550533bd1so1055072fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:34:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758666843; x=1759271643; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758666845; x=1759271645; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=YAJoI+cyj2/WQZx/UQN66Kq9JhNBF6jZceW/gXQediQ=;
-        b=V6O5bavIn/ONew0nb9ChhX0akcDWR5oGYWc2urzg6UAoSOeScAEk9KdPvr+oy1zvbE
-         gVlgtOW/nyEV3Bm+3Xl2iMjSM+6q5y+YQEx4r/pG8FkYooup+84xJsN2fdFIWNnm1bI3
-         8WHq+qkqYOQDmR7teTQkLa6ErqtpuHxiow0RdNxdEKB4b2roebPgWi31colqJa7gN2co
-         CTEzkD3kyOEpIRf3b7q8NCSpkG5x+pKunccwadwLWkll8qLkLdDCtF2J0x0IN5ezPK8Z
-         ytkt6udC1IieMi+fAEK6C+oC9mb+rF5fqWqbDXwpzXnM2J73WeLr9GWjlX+IA2KcNClN
-         FGwA==
+        bh=cyWQosyRoXQiD370+GSPM6BLBnVE6gaC8yLvDCPltkQ=;
+        b=K4z6/omBORmB5lUAwkHs8nr2kZ5yH2c5va+uEKxzYaCPZ2z3X+mGI0zdx5mznAwNPk
+         vtKmiFfk53oHqOXWmQE52FYzHsIRMlM0SFkMy2Cr5iExMnaPBy3yh3VhVPwhZw7FxU9U
+         eAZUDvhwq209MASiiN+2wzF87TVHIeQ+nj8qG4M9D5AzkK0fxf67YXA9MZ6EjYV3ZD1s
+         4n3tuSDR/b+ojuynpPOJgWuoTQ99Cp0itEYmdP1kXn6cYGsfmPL8JHW81SmwZ7ko5bOE
+         pEqCO9N3n91WLJ6zaDLrtNmqwxiE40nPgpAlpqEW1LZxgaEWDCz5jbGVSmveNvpVPu4G
+         Wp7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758666843; x=1759271643;
+        d=1e100.net; s=20230601; t=1758666845; x=1759271645;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YAJoI+cyj2/WQZx/UQN66Kq9JhNBF6jZceW/gXQediQ=;
-        b=MWAQ16UkpsAv9w7P+Ijel7lVV70p8i+bxPrBB9Xe1HcCy3eBJ/y7bN4fLJTSzvvTMG
-         wRMexIT+nXF54IC4atI3C/dd5FGt1W8iiCy0ATHVAOCh2iKJE+YoJaw9cnFrjD1AQC9O
-         ggxZQAq2y43C4+o9GwehOB96oCoeL8+j+5v8/HzxWBWyDLtDNIcxPKTsGNMJrOhFmbpl
-         FlJ9a+DGP4Eniu0i2w+G2SslTnCmaEhxBdo+t6Hp9QY9rC4XdmNd8bI0/QBox+LfS2eh
-         gf0iJoF+eaulQqF9H9Q0wuE3al2UH4I29Fz+CWVr2dvaNlXuj8mroSq4GXb/36ng6dK9
-         KC5w==
-X-Forwarded-Encrypted: i=1; AJvYcCW064w4wFPEQYsz2yU+Gq+EenTMcOHe54luG/KBm1xRflrF7WNjR4ZtOikaFlWg7/YXk0PEAr8+fSp7NxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzofXQtArT5ElqpQQTU0nyiOAWvjrQc8mN4ZZXmEVT4Sfq3oIj
-	+sqxY/8CA5GudlQZE7jCeHH9+0TTNRbvzK8A6AHSHlsMul2LD1HTkI8ehJTQerx20UIt9Itat9d
-	1b2c8+4qUgg==
-X-Google-Smtp-Source: AGHT+IGW2+etZYDdjrmmVI9zDIVzK4Ak2FxXUmMiPP/1sV7xNBhsKnRImqMfzxq0a83LUqEMjCQoJUossTvX
-X-Received: from pjbta8.prod.google.com ([2002:a17:90b:4ec8:b0:330:6513:c709])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:33c8:b0:32d:f4cb:7486
- with SMTP id 98e67ed59e1d1-332a95e8e19mr4862342a91.19.1758666842731; Tue, 23
- Sep 2025 15:34:02 -0700 (PDT)
-Date: Tue, 23 Sep 2025 15:33:07 -0700
+        bh=cyWQosyRoXQiD370+GSPM6BLBnVE6gaC8yLvDCPltkQ=;
+        b=i8v77683lR8tqsl1h4C6C67h4ZxOfhNe4X/iGkA1ujTJNJ9Xn0Ax0PRuFQc/miMwKd
+         lsJGrrwrok8Q2n3MyKAylgWeUDc2TcHx/uCxWdjDCLjxk4ZC71yigNLsfFcTnkEKXgUK
+         kmctQXkAfYPAop8qDu6Jg6RDhDpv9LCtbZ39303pYtES6oKpn1UJQNMTDnQeKdWq/GvF
+         qyFHo6axIY9NzyuHcpzRd8gK2q3s2i4HJpb3cWgf457nnoXPgpy1E0RVbIL8sR0YGbrp
+         2NNFgAUEIh6qOjGmSJbifcTiVV16lOlqslC8d0PAH+Z1DyUnw5cbgnGq4fOWx3BascKv
+         piGg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBG/V+5XIos6f7lzRI8Gc2FhcCIyzhny4mIOR3chUL8cgKhVwSqWTnPu6HUKM3u0c9UUyNw/qEIvNhW+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoN26R1Ph5k4XB+QMlZSmO53lZeDR5PRMYS4/5SDivDcdyNYcZ
+	SmLlZ3ic6U0SxC7AGpv3uxIPXc8XYyy04JsymCxNjL+JsUSUMQtP+u55uhCdGVuz3DpEJrz3ii7
+	PeyaHEu87rQ==
+X-Google-Smtp-Source: AGHT+IEOFTeTWfpE428BTSTuXTO+cfNig+FsqxDm9y1ZeU/ZRquxlNKecZEG8XtX4QBC6EFuHojYS49v2Pd1
+X-Received: from oabhp17.prod.google.com ([2002:a05:6870:9a91:b0:34a:7a4c:d100])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:330d:b0:31d:8b8b:27d7
+ with SMTP id 586e51a60fabf-34c7a3cd842mr2578039fac.20.1758666844743; Tue, 23
+ Sep 2025 15:34:04 -0700 (PDT)
+Date: Tue, 23 Sep 2025 15:33:08 -0700
 In-Reply-To: <20250923223312.238185-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250923223312.238185-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
-Message-ID: <20250923223312.238185-24-irogers@google.com>
-Subject: [PATCH v6 23/28] perf test parse-events: Without a PMU use cpu-cycles
- rather than cycles
+Message-ID: <20250923223312.238185-25-irogers@google.com>
+Subject: [PATCH v6 24/28] perf test parse-events: Remove cpu PMU requirement
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,247 +89,584 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Vince Weaver <vincent.weaver@maine.edu>
 Content-Type: text/plain; charset="UTF-8"
 
-Without a PMU perf matches an event against any PMU with the
-event. Unfortunately some PMU drivers advertise a "cycles" event which
-is typically just a core event. Switch to using "cpu-cycles" which is
-an indentical legacy event but avoids the multiple PMU confusion
-introduced by the PMU drivers. Note, on x86 cpu-cycles is also a sysfs
-event but cycles isn't.
+In the event parse string, switch "cpu" to "default_core" and then
+rewrite this to the first core PMU name prior to parsing. This enables
+testing with a PMU on hybrid x86 and other systems that don't use
+"cpu" for the core PMU name. The name "default_core" is already used
+by jevents. Update test expectations to match.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/tests/parse-events.c | 61 ++++++++++++++++++---------------
- 1 file changed, 33 insertions(+), 28 deletions(-)
+ tools/perf/tests/parse-events.c | 230 +++++++++++++++-----------------
+ 1 file changed, 110 insertions(+), 120 deletions(-)
 
 diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index d0f1e05139ac..32981a1e4042 100644
+index 32981a1e4042..0fb338bf2848 100644
 --- a/tools/perf/tests/parse-events.c
 +++ b/tools/perf/tests/parse-events.c
-@@ -585,9 +585,10 @@ static int test__checkevent_pmu(struct evlist *evlist)
+@@ -20,17 +20,24 @@
+ #define PERF_TP_SAMPLE_TYPE (PERF_SAMPLE_RAW | PERF_SAMPLE_TIME | \
+ 			     PERF_SAMPLE_CPU | PERF_SAMPLE_PERIOD)
+ 
+-static int num_core_entries(void)
++static int num_core_entries(struct evlist *evlist)
  {
+ 	/*
+-	 * If the kernel supports extended type, expect events to be
+-	 * opened once for each core PMU type. Otherwise fall back to the legacy
+-	 * behavior of opening only one event even though there are multiple
+-	 * PMUs
++	 * Returns number of core PMUs if the evlist has >1 core PMU, otherwise
++	 * returns 1.  The number of core PMUs is needed as wild carding can
++	 * open an event for each core PMU. If the events were opened with a
++	 * specified PMU then wild carding won't happen.
+ 	 */
+-	if (perf_pmus__supports_extended_type())
+-		return perf_pmus__num_core_pmus();
++	struct perf_pmu *core_pmu = NULL;
++	struct evsel *evsel;
  
- 	struct evsel *evsel = evlist__first(evlist);
-+	struct perf_pmu *core_pmu = perf_pmus__find_core_pmu();
++	evlist__for_each_entry(evlist, evsel) {
++		if (!evsel->pmu->is_core)
++			continue;
++		if (core_pmu != evsel->pmu && core_pmu != NULL)
++			return perf_pmus__num_core_pmus();
++		core_pmu = evsel->pmu;
++	}
+ 	return 1;
+ }
  
- 	TEST_ASSERT_VAL("wrong number of entries", 1 == evlist->core.nr_entries);
--	TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW == evsel->core.attr.type);
-+	TEST_ASSERT_VAL("wrong type", core_pmu->type == evsel->core.attr.type);
- 	TEST_ASSERT_VAL("wrong config",    test_config(evsel, 10));
- 	TEST_ASSERT_VAL("wrong config1",    1 == evsel->core.attr.config1);
- 	TEST_ASSERT_VAL("wrong config2",    3 == evsel->core.attr.config2);
-@@ -646,17 +647,18 @@ static int test__checkevent_list(struct evlist *evlist)
- static int test__checkevent_pmu_name(struct evlist *evlist)
+@@ -345,7 +352,7 @@ static int test__checkevent_symbolic_name_modifier(struct evlist *evlist)
+ 	struct perf_evsel *evsel;
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == num_core_entries());
++			evlist->core.nr_entries == num_core_entries(evlist));
+ 
+ 	perf_evlist__for_each_entry(&evlist->core, evsel) {
+ 		TEST_ASSERT_VAL("wrong exclude_user", evsel->attr.exclude_user);
+@@ -648,19 +655,21 @@ static int test__checkevent_pmu_name(struct evlist *evlist)
  {
  	struct evsel *evsel = evlist__first(evlist);
-+	struct perf_pmu *core_pmu = perf_pmus__find_core_pmu();
+ 	struct perf_pmu *core_pmu = perf_pmus__find_core_pmu();
++	char buf[256];
  
- 	/* cpu/config=1,name=krava/u */
+-	/* cpu/config=1,name=krava/u */
++	/* default_core/config=1,name=krava/u */
  	TEST_ASSERT_VAL("wrong number of entries", 2 == evlist->core.nr_entries);
--	TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW == evsel->core.attr.type);
-+	TEST_ASSERT_VAL("wrong type", core_pmu->type == evsel->core.attr.type);
+ 	TEST_ASSERT_VAL("wrong type", core_pmu->type == evsel->core.attr.type);
  	TEST_ASSERT_VAL("wrong config", 1 == evsel->core.attr.config);
  	TEST_ASSERT_VAL("wrong name", evsel__name_is(evsel, "krava"));
  
- 	/* cpu/config=2/u" */
+-	/* cpu/config=2/u" */
++	/* default_core/config=2/u" */
  	evsel = evsel__next(evsel);
  	TEST_ASSERT_VAL("wrong number of entries", 2 == evlist->core.nr_entries);
--	TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW == evsel->core.attr.type);
-+	TEST_ASSERT_VAL("wrong type", core_pmu->type == evsel->core.attr.type);
+ 	TEST_ASSERT_VAL("wrong type", core_pmu->type == evsel->core.attr.type);
  	TEST_ASSERT_VAL("wrong config", 2 == evsel->core.attr.config);
- 	TEST_ASSERT_VAL("wrong name", evsel__name_is(evsel, "cpu/config=2/u"));
+-	TEST_ASSERT_VAL("wrong name", evsel__name_is(evsel, "cpu/config=2/u"));
++	snprintf(buf, sizeof(buf), "%s/config=2/u", core_pmu->name);
++	TEST_ASSERT_VAL("wrong name", evsel__name_is(evsel, buf));
  
-@@ -666,10 +668,11 @@ static int test__checkevent_pmu_name(struct evlist *evlist)
- static int test__checkevent_pmu_partial_time_callgraph(struct evlist *evlist)
- {
- 	struct evsel *evsel = evlist__first(evlist);
-+	struct perf_pmu *core_pmu = perf_pmus__find_core_pmu();
- 
- 	/* cpu/config=1,call-graph=fp,time,period=100000/ */
- 	TEST_ASSERT_VAL("wrong number of entries", 2 == evlist->core.nr_entries);
--	TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW == evsel->core.attr.type);
-+	TEST_ASSERT_VAL("wrong type", core_pmu->type == evsel->core.attr.type);
- 	TEST_ASSERT_VAL("wrong config", 1 == evsel->core.attr.config);
- 	/*
- 	 * The period, time and callgraph value gets configured within evlist__config,
-@@ -681,7 +684,7 @@ static int test__checkevent_pmu_partial_time_callgraph(struct evlist *evlist)
- 
- 	/* cpu/config=2,call-graph=no,time=0,period=2000/ */
- 	evsel = evsel__next(evsel);
--	TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW == evsel->core.attr.type);
-+	TEST_ASSERT_VAL("wrong type", core_pmu->type == evsel->core.attr.type);
- 	TEST_ASSERT_VAL("wrong config", 2 == evsel->core.attr.config);
- 	/*
- 	 * The period, time and callgraph value gets configured within evlist__config,
-@@ -697,12 +700,14 @@ static int test__checkevent_pmu_partial_time_callgraph(struct evlist *evlist)
- static int test__checkevent_pmu_events(struct evlist *evlist)
- {
- 	struct evsel *evsel;
-+	struct perf_pmu *core_pmu = perf_pmus__find_core_pmu();
- 
- 	TEST_ASSERT_VAL("wrong number of entries", 1 <= evlist->core.nr_entries);
- 
- 	evlist__for_each_entry(evlist, evsel) {
--		TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW == evsel->core.attr.type ||
--					      strcmp(evsel->pmu->name, "cpu"));
-+		TEST_ASSERT_VAL("wrong type", core_pmu->type == evsel->core.attr.type ||
-+				!strncmp(evsel__name(evsel), evsel->pmu->name,
-+					 strlen(evsel->pmu->name)));
- 		TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.exclude_user);
- 		TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.exclude_kernel);
- 		TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.exclude_hv);
-@@ -1604,7 +1609,7 @@ static int test__checkevent_complex_name(struct evlist *evlist)
- 
- 	TEST_ASSERT_VAL("wrong complex name parsing",
- 			evsel__name_is(evsel,
--				       "COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks"));
-+				       "COMPLEX_CYCLES_NAME:orig=cpu-cycles,desc=chip-clock-ticks"));
  	return TEST_OK;
  }
+@@ -670,7 +679,7 @@ static int test__checkevent_pmu_partial_time_callgraph(struct evlist *evlist)
+ 	struct evsel *evsel = evlist__first(evlist);
+ 	struct perf_pmu *core_pmu = perf_pmus__find_core_pmu();
  
-@@ -1741,7 +1746,7 @@ static const struct evlist_test test__events[] = {
- 		/* 4 */
+-	/* cpu/config=1,call-graph=fp,time,period=100000/ */
++	/* default_core/config=1,call-graph=fp,time,period=100000/ */
+ 	TEST_ASSERT_VAL("wrong number of entries", 2 == evlist->core.nr_entries);
+ 	TEST_ASSERT_VAL("wrong type", core_pmu->type == evsel->core.attr.type);
+ 	TEST_ASSERT_VAL("wrong config", 1 == evsel->core.attr.config);
+@@ -682,7 +691,7 @@ static int test__checkevent_pmu_partial_time_callgraph(struct evlist *evlist)
+ 	TEST_ASSERT_VAL("wrong callgraph",  !evsel__has_callchain(evsel));
+ 	TEST_ASSERT_VAL("wrong time",  !(PERF_SAMPLE_TIME & evsel->core.attr.sample_type));
+ 
+-	/* cpu/config=2,call-graph=no,time=0,period=2000/ */
++	/* default_core/config=2,call-graph=no,time=0,period=2000/ */
+ 	evsel = evsel__next(evsel);
+ 	TEST_ASSERT_VAL("wrong type", core_pmu->type == evsel->core.attr.type);
+ 	TEST_ASSERT_VAL("wrong config", 2 == evsel->core.attr.config);
+@@ -740,7 +749,7 @@ static int test__checkevent_pmu_events_mix(struct evlist *evlist)
+ 		TEST_ASSERT_VAL("wrong pinned", !evsel->core.attr.pinned);
+ 		TEST_ASSERT_VAL("wrong exclusive", !evsel->core.attr.exclusive);
+ 	}
+-	/* cpu/pmu-event/u*/
++	/* default_core/pmu-event/u*/
+ 	evsel = evsel__next(evsel);
+ 	TEST_ASSERT_VAL("wrong type", evsel__find_pmu(evsel)->is_core);
+ 	TEST_ASSERT_VAL("wrong exclude_user",
+@@ -840,11 +849,11 @@ static int test__group1(struct evlist *evlist)
+ 	struct evsel *evsel = NULL, *leader;
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == (num_core_entries() * 2));
++			evlist->core.nr_entries == (num_core_entries(evlist) * 2));
+ 	TEST_ASSERT_VAL("wrong number of groups",
+-			evlist__nr_groups(evlist) == num_core_entries());
++			evlist__nr_groups(evlist) == num_core_entries(evlist));
+ 
+-	for (int i = 0; i < num_core_entries(); i++) {
++	for (int i = 0; i < num_core_entries(evlist); i++) {
+ 		/* instructions:k */
+ 		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+ 		TEST_ASSERT_VAL("unexpected event", evsel__match(evsel, HARDWARE, HW_INSTRUCTIONS));
+@@ -880,7 +889,7 @@ static int test__group2(struct evlist *evlist)
+ 	struct evsel *evsel, *leader = NULL;
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == (2 * num_core_entries() + 1));
++			evlist->core.nr_entries == (2 * num_core_entries(evlist) + 1));
+ 	/*
+ 	 * TODO: Currently the software event won't be grouped with the hardware
+ 	 * event except for 1 PMU.
+@@ -1037,11 +1046,11 @@ static int test__group4(struct evlist *evlist __maybe_unused)
+ 	struct evsel *evsel = NULL, *leader;
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == (num_core_entries() * 2));
++			evlist->core.nr_entries == (num_core_entries(evlist) * 2));
+ 	TEST_ASSERT_VAL("wrong number of groups",
+-			num_core_entries() == evlist__nr_groups(evlist));
++			num_core_entries(evlist) == evlist__nr_groups(evlist));
+ 
+-	for (int i = 0; i < num_core_entries(); i++) {
++	for (int i = 0; i < num_core_entries(evlist); i++) {
+ 		/* cycles:u + p */
+ 		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+ 		TEST_ASSERT_VAL("unexpected event", evsel__match(evsel, HARDWARE, HW_CPU_CYCLES));
+@@ -1078,11 +1087,11 @@ static int test__group5(struct evlist *evlist __maybe_unused)
+ 	struct evsel *evsel = NULL, *leader;
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == (5 * num_core_entries()));
++			evlist->core.nr_entries == (5 * num_core_entries(evlist)));
+ 	TEST_ASSERT_VAL("wrong number of groups",
+-			evlist__nr_groups(evlist) == (2 * num_core_entries()));
++			evlist__nr_groups(evlist) == (2 * num_core_entries(evlist)));
+ 
+-	for (int i = 0; i < num_core_entries(); i++) {
++	for (int i = 0; i < num_core_entries(evlist); i++) {
+ 		/* cycles + G */
+ 		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+ 		TEST_ASSERT_VAL("unexpected event", evsel__match(evsel, HARDWARE, HW_CPU_CYCLES));
+@@ -1111,7 +1120,7 @@ static int test__group5(struct evlist *evlist __maybe_unused)
+ 		TEST_ASSERT_VAL("wrong group_idx", evsel__group_idx(evsel) == 1);
+ 		TEST_ASSERT_VAL("wrong sample_read", !evsel->sample_read);
+ 	}
+-	for (int i = 0; i < num_core_entries(); i++) {
++	for (int i = 0; i < num_core_entries(evlist); i++) {
+ 		/* cycles:G */
+ 		evsel = leader = evsel__next(evsel);
+ 		TEST_ASSERT_VAL("unexpected event", evsel__match(evsel, HARDWARE, HW_CPU_CYCLES));
+@@ -1139,7 +1148,7 @@ static int test__group5(struct evlist *evlist __maybe_unused)
+ 		TEST_ASSERT_VAL("wrong leader", evsel__has_leader(evsel, leader));
+ 		TEST_ASSERT_VAL("wrong group_idx", evsel__group_idx(evsel) == 1);
+ 	}
+-	for (int i = 0; i < num_core_entries(); i++) {
++	for (int i = 0; i < num_core_entries(evlist); i++) {
+ 		/* cycles */
+ 		evsel = evsel__next(evsel);
+ 		TEST_ASSERT_VAL("unexpected event", evsel__match(evsel, HARDWARE, HW_CPU_CYCLES));
+@@ -1159,11 +1168,11 @@ static int test__group_gh1(struct evlist *evlist)
+ 	struct evsel *evsel = NULL, *leader;
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == (2 * num_core_entries()));
++			evlist->core.nr_entries == (2 * num_core_entries(evlist)));
+ 	TEST_ASSERT_VAL("wrong number of groups",
+-			evlist__nr_groups(evlist) == num_core_entries());
++			evlist__nr_groups(evlist) == num_core_entries(evlist));
+ 
+-	for (int i = 0; i < num_core_entries(); i++) {
++	for (int i = 0; i < num_core_entries(evlist); i++) {
+ 		/* cycles + :H group modifier */
+ 		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+ 		TEST_ASSERT_VAL("unexpected event", evsel__match(evsel, HARDWARE, HW_CPU_CYCLES));
+@@ -1198,11 +1207,11 @@ static int test__group_gh2(struct evlist *evlist)
+ 	struct evsel *evsel = NULL, *leader;
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == (2 * num_core_entries()));
++			evlist->core.nr_entries == (2 * num_core_entries(evlist)));
+ 	TEST_ASSERT_VAL("wrong number of groups",
+-			evlist__nr_groups(evlist) == num_core_entries());
++			evlist__nr_groups(evlist) == num_core_entries(evlist));
+ 
+-	for (int i = 0; i < num_core_entries(); i++) {
++	for (int i = 0; i < num_core_entries(evlist); i++) {
+ 		/* cycles + :G group modifier */
+ 		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+ 		TEST_ASSERT_VAL("unexpected event", evsel__match(evsel, HARDWARE, HW_CPU_CYCLES));
+@@ -1237,11 +1246,11 @@ static int test__group_gh3(struct evlist *evlist)
+ 	struct evsel *evsel = NULL, *leader;
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == (2 * num_core_entries()));
++			evlist->core.nr_entries == (2 * num_core_entries(evlist)));
+ 	TEST_ASSERT_VAL("wrong number of groups",
+-			evlist__nr_groups(evlist) == num_core_entries());
++			evlist__nr_groups(evlist) == num_core_entries(evlist));
+ 
+-	for (int i = 0; i < num_core_entries(); i++) {
++	for (int i = 0; i < num_core_entries(evlist); i++) {
+ 		/* cycles:G + :u group modifier */
+ 		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+ 		TEST_ASSERT_VAL("unexpected event", evsel__match(evsel, HARDWARE, HW_CPU_CYCLES));
+@@ -1276,11 +1285,11 @@ static int test__group_gh4(struct evlist *evlist)
+ 	struct evsel *evsel = NULL, *leader;
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == (2 * num_core_entries()));
++			evlist->core.nr_entries == (2 * num_core_entries(evlist)));
+ 	TEST_ASSERT_VAL("wrong number of groups",
+-			evlist__nr_groups(evlist) == num_core_entries());
++			evlist__nr_groups(evlist) == num_core_entries(evlist));
+ 
+-	for (int i = 0; i < num_core_entries(); i++) {
++	for (int i = 0; i < num_core_entries(evlist); i++) {
+ 		/* cycles:G + :uG group modifier */
+ 		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+ 		TEST_ASSERT_VAL("unexpected event", evsel__match(evsel, HARDWARE, HW_CPU_CYCLES));
+@@ -1315,9 +1324,9 @@ static int test__leader_sample1(struct evlist *evlist)
+ 	struct evsel *evsel = NULL, *leader;
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == (3 * num_core_entries()));
++			evlist->core.nr_entries == (3 * num_core_entries(evlist)));
+ 
+-	for (int i = 0; i < num_core_entries(); i++) {
++	for (int i = 0; i < num_core_entries(evlist); i++) {
+ 		/* cycles - sampling group leader */
+ 		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+ 		TEST_ASSERT_VAL("unexpected event", evsel__match(evsel, HARDWARE, HW_CPU_CYCLES));
+@@ -1365,9 +1374,9 @@ static int test__leader_sample2(struct evlist *evlist __maybe_unused)
+ 	struct evsel *evsel = NULL, *leader;
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == (2 * num_core_entries()));
++			evlist->core.nr_entries == (2 * num_core_entries(evlist)));
+ 
+-	for (int i = 0; i < num_core_entries(); i++) {
++	for (int i = 0; i < num_core_entries(evlist); i++) {
+ 		/* instructions - sampling group leader */
+ 		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+ 		TEST_ASSERT_VAL("unexpected event", evsel__match(evsel, HARDWARE, HW_INSTRUCTIONS));
+@@ -1403,9 +1412,9 @@ static int test__checkevent_pinned_modifier(struct evlist *evlist)
+ 	struct evsel *evsel = NULL;
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == num_core_entries());
++			evlist->core.nr_entries == num_core_entries(evlist));
+ 
+-	for (int i = 0; i < num_core_entries(); i++) {
++	for (int i = 0; i < num_core_entries(evlist); i++) {
+ 		evsel = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+ 		TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.exclude_user);
+ 		TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.exclude_kernel);
+@@ -1421,9 +1430,9 @@ static int test__pinned_group(struct evlist *evlist)
+ 	struct evsel *evsel = NULL, *leader;
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == (3 * num_core_entries()));
++			evlist->core.nr_entries == (3 * num_core_entries(evlist)));
+ 
+-	for (int i = 0; i < num_core_entries(); i++) {
++	for (int i = 0; i < num_core_entries(evlist); i++) {
+ 		/* cycles - group leader */
+ 		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+ 		TEST_ASSERT_VAL("unexpected event", evsel__match(evsel, HARDWARE, HW_CPU_CYCLES));
+@@ -1465,9 +1474,9 @@ static int test__exclusive_group(struct evlist *evlist)
+ 	struct evsel *evsel = NULL, *leader;
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == 3 * num_core_entries());
++			evlist->core.nr_entries == 3 * num_core_entries(evlist));
+ 
+-	for (int i = 0; i < num_core_entries(); i++) {
++	for (int i = 0; i < num_core_entries(evlist); i++) {
+ 		/* cycles - group leader */
+ 		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+ 		TEST_ASSERT_VAL("unexpected event", evsel__match(evsel, HARDWARE, HW_CPU_CYCLES));
+@@ -1538,7 +1547,7 @@ static int test__checkevent_precise_max_modifier(struct evlist *evlist)
+ 	struct evsel *evsel = evlist__first(evlist);
+ 
+ 	TEST_ASSERT_VAL("wrong number of entries",
+-			evlist->core.nr_entries == 1 + num_core_entries());
++			evlist->core.nr_entries == 1 + num_core_entries(evlist));
+ 	TEST_ASSERT_VAL("wrong type/config", evsel__match(evsel, SOFTWARE, SW_TASK_CLOCK));
+ 	return TEST_OK;
+ }
+@@ -1575,14 +1584,9 @@ static int test__checkevent_config_cache(struct evlist *evlist)
+ 	return test__checkevent_genhw(evlist);
+ }
+ 
+-static bool test__pmu_cpu_valid(void)
++static bool test__pmu_default_core_event_valid(void)
+ {
+-	return !!perf_pmus__find("cpu");
+-}
+-
+-static bool test__pmu_cpu_event_valid(void)
+-{
+-	struct perf_pmu *pmu = perf_pmus__find("cpu");
++	struct perf_pmu *pmu = perf_pmus__find_core_pmu();
+ 
+ 	if (!pmu)
+ 		return false;
+@@ -2108,26 +2112,23 @@ static const struct evlist_test test__events[] = {
+ 
+ static const struct evlist_test test__events_pmu[] = {
+ 	{
+-		.name  = "cpu/config=10,config1=1,config2=3,period=1000/u",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/config=10,config1=1,config2=3,period=1000/u",
+ 		.check = test__checkevent_pmu,
+ 		/* 0 */
  	},
  	{
--		.name  = "cycles/period=100000,config2/",
-+		.name  = "cpu-cycles/period=100000,config2/",
+-		.name  = "cpu/config=1,name=krava/u,cpu/config=2/u",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/config=1,name=krava/u,default_core/config=2/u",
+ 		.check = test__checkevent_pmu_name,
+ 		/* 1 */
+ 	},
+ 	{
+-		.name  = "cpu/config=1,call-graph=fp,time,period=100000/,cpu/config=2,call-graph=no,time=0,period=2000/",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/config=1,call-graph=fp,time,period=100000/,default_core/config=2,call-graph=no,time=0,period=2000/",
+ 		.check = test__checkevent_pmu_partial_time_callgraph,
+ 		/* 2 */
+ 	},
+ 	{
+-		.name  = "cpu/name='COMPLEX_CYCLES_NAME:orig=cpu-cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp",
+-		.valid = test__pmu_cpu_event_valid,
++		.name  = "default_core/name='COMPLEX_CYCLES_NAME:orig=cpu-cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp",
++		.valid = test__pmu_default_core_event_valid,
+ 		.check = test__checkevent_complex_name,
+ 		/* 3 */
+ 	},
+@@ -2142,158 +2143,132 @@ static const struct evlist_test test__events_pmu[] = {
+ 		/* 5 */
+ 	},
+ 	{
+-		.name  = "cpu/L1-dcache-load-miss/",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/L1-dcache-load-miss/",
+ 		.check = test__checkevent_genhw,
+ 		/* 6 */
+ 	},
+ 	{
+-		.name  = "cpu/L1-dcache-load-miss/kp",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/L1-dcache-load-miss/kp",
+ 		.check = test__checkevent_genhw_modifier,
+ 		/* 7 */
+ 	},
+ 	{
+-		.name  = "cpu/L1-dcache-misses,name=cachepmu/",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/L1-dcache-misses,name=cachepmu/",
+ 		.check = test__checkevent_config_cache,
+ 		/* 8 */
+ 	},
+ 	{
+-		.name  = "cpu/instructions/",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/instructions/",
+ 		.check = test__checkevent_symbolic_name,
+ 		/* 9 */
+ 	},
+ 	{
+-		.name  = "cpu/cycles,period=100000,config2/",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/cycles,period=100000,config2/",
  		.check = test__checkevent_symbolic_name_config,
- 		/* 5 */
- 	},
-@@ -1856,27 +1861,27 @@ static const struct evlist_test test__events[] = {
- 		/* 7 */
+ 		/* 0 */
  	},
  	{
--		.name  = "{instructions:k,cycles:upp}",
-+		.name  = "{instructions:k,cpu-cycles:upp}",
+-		.name  = "cpu/instructions/h",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/instructions/h",
+ 		.check = test__checkevent_symbolic_name_modifier,
+ 		/* 1 */
+ 	},
+ 	{
+-		.name  = "cpu/instructions/G",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/instructions/G",
+ 		.check = test__checkevent_exclude_host_modifier,
+ 		/* 2 */
+ 	},
+ 	{
+-		.name  = "cpu/instructions/H",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/instructions/H",
+ 		.check = test__checkevent_exclude_guest_modifier,
+ 		/* 3 */
+ 	},
+ 	{
+-		.name  = "{cpu/instructions/k,cpu/cycles/upp}",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "{default_core/instructions/k,default_core/cycles/upp}",
  		.check = test__group1,
- 		/* 8 */
+ 		/* 4 */
  	},
  	{
--		.name  = "{faults:k,branches}:u,cycles:k",
-+		.name  = "{faults:k,branches}:u,cpu-cycles:k",
- 		.check = test__group2,
- 		/* 9 */
- 	},
- 	{
--		.name  = "group1{syscalls:sys_enter_openat:H,cycles:kppp},group2{cycles,1:3}:G,instructions:u",
-+		.name  = "group1{syscalls:sys_enter_openat:H,cpu-cycles:kppp},group2{cpu-cycles,1:3}:G,instructions:u",
- 		.check = test__group3,
- 		/* 0 */
- 	},
- 	{
--		.name  = "{cycles:u,instructions:kp}:p",
-+		.name  = "{cpu-cycles:u,instructions:kp}:p",
+-		.name  = "{cpu/cycles/u,cpu/instructions/kp}:p",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "{default_core/cycles/u,default_core/instructions/kp}:p",
  		.check = test__group4,
- 		/* 1 */
- 	},
- 	{
--		.name  = "{cycles,instructions}:G,{cycles:G,instructions:G},cycles",
-+		.name  = "{cpu-cycles,instructions}:G,{cpu-cycles:G,instructions:G},cpu-cycles",
- 		.check = test__group5,
- 		/* 2 */
- 	},
-@@ -1886,27 +1891,27 @@ static const struct evlist_test test__events[] = {
- 		/* 3 */
- 	},
- 	{
--		.name  = "{cycles,cache-misses:G}:H",
-+		.name  = "{cpu-cycles,cache-misses:G}:H",
- 		.check = test__group_gh1,
- 		/* 4 */
- 	},
- 	{
--		.name  = "{cycles,cache-misses:H}:G",
-+		.name  = "{cpu-cycles,cache-misses:H}:G",
- 		.check = test__group_gh2,
  		/* 5 */
  	},
  	{
--		.name  = "{cycles:G,cache-misses:H}:u",
-+		.name  = "{cpu-cycles:G,cache-misses:H}:u",
- 		.check = test__group_gh3,
+-		.name  = "{cpu/cycles/,cpu/cache-misses/G}:H",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "{default_core/cycles/,default_core/cache-misses/G}:H",
+ 		.check = test__group_gh1,
  		/* 6 */
  	},
  	{
--		.name  = "{cycles:G,cache-misses:H}:uG",
-+		.name  = "{cpu-cycles:G,cache-misses:H}:uG",
- 		.check = test__group_gh4,
+-		.name  = "{cpu/cycles/,cpu/cache-misses/H}:G",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "{default_core/cycles/,default_core/cache-misses/H}:G",
+ 		.check = test__group_gh2,
  		/* 7 */
  	},
  	{
--		.name  = "{cycles,cache-misses,branch-misses}:S",
-+		.name  = "{cpu-cycles,cache-misses,branch-misses}:S",
- 		.check = test__leader_sample1,
+-		.name  = "{cpu/cycles/G,cpu/cache-misses/H}:u",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "{default_core/cycles/G,default_core/cache-misses/H}:u",
+ 		.check = test__group_gh3,
  		/* 8 */
  	},
-@@ -1921,7 +1926,7 @@ static const struct evlist_test test__events[] = {
+ 	{
+-		.name  = "{cpu/cycles/G,cpu/cache-misses/H}:uG",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "{default_core/cycles/G,default_core/cache-misses/H}:uG",
+ 		.check = test__group_gh4,
+ 		/* 9 */
+ 	},
+ 	{
+-		.name  = "{cpu/cycles/,cpu/cache-misses/,cpu/branch-misses/}:S",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "{default_core/cycles/,default_core/cache-misses/,default_core/branch-misses/}:S",
+ 		.check = test__leader_sample1,
  		/* 0 */
  	},
  	{
--		.name  = "{cycles,cache-misses,branch-misses}:D",
-+		.name  = "{cpu-cycles,cache-misses,branch-misses}:D",
- 		.check = test__pinned_group,
+-		.name  = "{cpu/instructions/,cpu/branch-misses/}:Su",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "{default_core/instructions/,default_core/branch-misses/}:Su",
+ 		.check = test__leader_sample2,
  		/* 1 */
  	},
-@@ -1959,7 +1964,7 @@ static const struct evlist_test test__events[] = {
- 		/* 6 */
- 	},
  	{
--		.name  = "task-clock:P,cycles",
-+		.name  = "task-clock:P,cpu-cycles",
- 		.check = test__checkevent_precise_max_modifier,
- 		/* 7 */
- 	},
-@@ -1990,17 +1995,17 @@ static const struct evlist_test test__events[] = {
+-		.name  = "cpu/instructions/uDp",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/instructions/uDp",
+ 		.check = test__checkevent_pinned_modifier,
  		/* 2 */
  	},
  	{
--		.name  = "cycles/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks'/Duk",
-+		.name  = "cpu-cycles/name='COMPLEX_CYCLES_NAME:orig=cpu-cycles,desc=chip-clock-ticks'/Duk",
- 		.check = test__checkevent_complex_name,
+-		.name  = "{cpu/cycles/,cpu/cache-misses/,cpu/branch-misses/}:D",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "{default_core/cycles/,default_core/cache-misses/,default_core/branch-misses/}:D",
+ 		.check = test__pinned_group,
  		/* 3 */
  	},
  	{
--		.name  = "cycles//u",
-+		.name  = "cpu-cycles//u",
- 		.check = test__sym_event_slash,
+-		.name  = "cpu/instructions/I",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/instructions/I",
+ 		.check = test__checkevent_exclude_idle_modifier,
  		/* 4 */
  	},
  	{
--		.name  = "cycles:k",
-+		.name  = "cpu-cycles:k",
- 		.check = test__sym_event_dc,
+-		.name  = "cpu/instructions/kIG",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/instructions/kIG",
+ 		.check = test__checkevent_exclude_idle_modifier_1,
  		/* 5 */
  	},
-@@ -2010,17 +2015,17 @@ static const struct evlist_test test__events[] = {
+ 	{
+-		.name  = "cpu/cycles/u",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/cycles/u",
+ 		.check = test__sym_event_slash,
  		/* 6 */
  	},
  	{
--		.name  = "{cycles,cache-misses,branch-misses}:e",
-+		.name  = "{cpu-cycles,cache-misses,branch-misses}:e",
- 		.check = test__exclusive_group,
+-		.name  = "cpu/cycles/k",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/cycles/k",
+ 		.check = test__sym_event_dc,
  		/* 7 */
  	},
  	{
--		.name  = "cycles/name=name/",
-+		.name  = "cpu-cycles/name=name/",
- 		.check = test__term_equal_term,
+-		.name  = "cpu/instructions/uep",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/instructions/uep",
+ 		.check = test__checkevent_exclusive_modifier,
  		/* 8 */
  	},
  	{
--		.name  = "cycles/name=l1d/",
-+		.name  = "cpu-cycles/name=l1d/",
- 		.check = test__term_equal_legacy,
+-		.name  = "{cpu/cycles/,cpu/cache-misses/,cpu/branch-misses/}:e",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "{default_core/cycles/,default_core/cache-misses/,default_core/branch-misses/}:e",
+ 		.check = test__exclusive_group,
  		/* 9 */
  	},
-@@ -2121,7 +2126,7 @@ static const struct evlist_test test__events_pmu[] = {
- 		/* 2 */
+ 	{
+-		.name  = "cpu/cycles,name=name/",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/cycles,name=name/",
+ 		.check = test__term_equal_term,
+ 		/* 0 */
  	},
  	{
--		.name  = "cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp",
-+		.name  = "cpu/name='COMPLEX_CYCLES_NAME:orig=cpu-cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp",
- 		.valid = test__pmu_cpu_event_valid,
- 		.check = test__checkevent_complex_name,
- 		/* 3 */
+-		.name  = "cpu/cycles,name=l1d/",
+-		.valid = test__pmu_cpu_valid,
++		.name  = "default_core/cycles,name=l1d/",
+ 		.check = test__term_equal_legacy,
+ 		/* 1 */
+ 	},
+@@ -2383,15 +2358,30 @@ static int combine_test_results(int existing, int latest)
+ static int test_events(const struct evlist_test *events, int cnt)
+ {
+ 	int ret = TEST_OK;
++	struct perf_pmu *core_pmu = perf_pmus__find_core_pmu();
+ 
+ 	for (int i = 0; i < cnt; i++) {
+-		const struct evlist_test *e = &events[i];
++		struct evlist_test e = events[i];
+ 		int test_ret;
++		const char *pos = e.name;
++		char buf[1024], *buf_pos = buf, *end;
++
++		while ((end = strstr(pos, "default_core"))) {
++			size_t len = end - pos;
++
++			strncpy(buf_pos, pos, len);
++			pos = end + 12;
++			buf_pos += len;
++			strcpy(buf_pos, core_pmu->name);
++			buf_pos += strlen(core_pmu->name);
++		}
++		strcpy(buf_pos, pos);
+ 
+-		pr_debug("running test %d '%s'\n", i, e->name);
+-		test_ret = test_event(e);
++		e.name = buf;
++		pr_debug("running test %d '%s'\n", i, e.name);
++		test_ret = test_event(&e);
+ 		if (test_ret != TEST_OK) {
+-			pr_debug("Event test failure: test %d '%s'", i, e->name);
++			pr_debug("Event test failure: test %d '%s'", i, e.name);
+ 			ret = combine_test_results(ret, test_ret);
+ 		}
+ 	}
 -- 
 2.51.0.534.gc79095c0ca-goog
 
