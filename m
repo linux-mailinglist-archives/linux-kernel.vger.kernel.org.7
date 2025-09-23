@@ -1,91 +1,86 @@
-Return-Path: <linux-kernel+bounces-829001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 346ADB9604F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:32:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A52B96053
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E56913BBCF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:32:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B9E2171130
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF3C327A00;
-	Tue, 23 Sep 2025 13:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D944327A26;
+	Tue, 23 Sep 2025 13:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8U8uuKg"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bwnl+GsQ"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FB710F1
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3844D10F1
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758634371; cv=none; b=VlaOqecAwEjeVRIQWxFw6bOesDCL9MqgtbZF3t2C0tHoaMpDdb9KdGXVNNqTAgLEfM4vS//kZyDA328P77LIcsb0E0bw6vZYtYxrboJa59KhmChitKrMFsIJPQEpgtogxph3D3wMdwp8beaCidJngurcARYNLJESbaEYN3B0nW0=
+	t=1758634375; cv=none; b=W+axNKJuF/HNMkKmwTlmee4lfjAYn0ksBn3Y97+NdI6CHy18Ykm94c6IZ5sDj4p6/luh/inUggFFXxLyvT74cchi4rjuJNeOvg5/gikcWF2RYLaxp5YBsj8VvKKmD1ZIkUdztnXhtH1l0MfdZaIqDQRmkT3TnvYYIcHJtGYenb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758634371; c=relaxed/simple;
-	bh=wBKw9LwQW+XEjdEFwXUsCZBkjOUUTDtWyA5fwq82xbk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eXbxAG+OPqLdtluaLja5EkvitX2c1XtxoELcqJH0WST5/fRK2mmKzweTAxcn4Jv6oz6NorIulvXDQKpy2+Vg9nHAwN8Pn0jI0TDz/roGQpBg0yAhRo7jWu9jP6RfV5ww5USdthRXBIN7glLmF765WD+3bSM02m4FkZemW+MjcDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f8U8uuKg; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1758634375; c=relaxed/simple;
+	bh=0F8N30aDt+Ip9ck/9yn6rnpd6B3yfaEXU9Mdo+Q7ceY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P45wu5hbjO7hOgp7jAOa+o/qzD4ecK4PkmALuK1mSoaagLpx+4aF8qZaFxXCGMlaPSYJBpD+oSw79Cqh9xu215X+/Pu+7ks5gKk6Ke4oBY6PQq/QHDqIznuu2Tsw9NggYJX0f8Nt9SVUoNZWZJmehhMhoC/VQC63WWghRjDosjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bwnl+GsQ; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77f32d99a97so2062102b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:32:49 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-77f454c57dbso1518859b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:32:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758634369; x=1759239169; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758634373; x=1759239173; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YdNQB1ZGXvQWh3XKMx+CaBgdTFkZKFEai7KtP6jM1KU=;
-        b=f8U8uuKgzwGUIKrTqyKHHXKSlpiLPb0YwmZHKIAGA6i7sA+xtzIp49p/wYiIsFgccJ
-         I+YQ89rcWxNhFSZLVxS++mosw36gkXWHaLV0nuFyl5LEAVRDjwxLEZMlpGTz/T34C3ZS
-         gpGA4gjMIlx6PbTk60WLuK+UMrzkLatzt+Wwc0oyAC7Yn/8+Nok5Z3YlcDs+uxsWpB2v
-         QIHBBOYQVVKEKxn/nCRO18wZqs7EEcDOYoD0Q2hizcYK6JJPqu1iK2KUt/oTjKY6W++Z
-         fEPfjbTKYmEUAU7OuEQr7nO6BAFWiRXPGwCktOq7O1jCi8ElBCaOOg8kX58K2zkD4OVa
-         /8uw==
+        bh=8xSpZuIXT8IPaVfu+hEn4+A5NlUoETUpDfjWE4MNCG4=;
+        b=bwnl+GsQCv44gk7g28aAIDK/UQCwRuBTk/ydS2HS8N5seFgDuj8P4lP4g5vtu04LPo
+         nQdKwJY2nXVljOi8lkEoBhDJ48R5P6YP/Ou+lZtZnVO+JhZy9jr8FUv8XbW/zimR0bI7
+         t18CAlC9Megue/WIKV6jBh8JQx2WjxX0SSWu0OimdvjXAS/3w+Nu6ihZKxyP/87taX9c
+         +lfIzAG+/lb9M4ZpafB+ukJBopuzySk93ETOU4pNg5JouF7yJS90NnK9VxB34V9dzZX7
+         4DdxDlSt6dF7lAti7CQnMxPqN19T1eC1Jz4sAeqKuNfuIDLokjRPcoZ+bRmY2wusLDmh
+         7ZkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758634369; x=1759239169;
+        d=1e100.net; s=20230601; t=1758634373; x=1759239173;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YdNQB1ZGXvQWh3XKMx+CaBgdTFkZKFEai7KtP6jM1KU=;
-        b=XVJebiFPXcI7DPkuwCx5aehp/GqLWPvfyj2Ypu62oOdwKNQ0pXdcvYclejFBMtVGYR
-         Fk1/DWGckN3jNIH8Zu2jk9pjmjbmXFt1/qlagusEwDFLyurEQZCeSYeIXbEdjXBIoz9Q
-         aMXRC/Pa5GbmPz7xiH051wgq3o3xzTmX/yfokQvXT/PMDhmsYlT9mQVxVNlDVpYY9rva
-         0Dm2E4efyWzvshBAatKSHwqHoIbQGnsZepuUI6Cd7TvucWXa/j/9+GG8ba0qpD6Yi8U0
-         DJ5Sa3BOoHpSU7mQ0bFX9qWKxL1VR/BYonY6j44344GpqRZX/b1TKocu1oIFB1Q/Ild/
-         Daeg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPYIhHpa6eTGy59BkItNXerkNwGVDogFf+jcXaLP4MqWMoKoq0C15c9cuu+qmSIe2I9KPrRwF6wHo8IIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVjN0okjL1HuMQZ5kuFVg5QxsXx7s1Y3Aag4cZA6AOG0k2VWgM
-	2cOgiZe064Ka7t6/xJrrUy//e8jHjBHq+sQVfkjYDCgIR6QgxzhV5sF9
-X-Gm-Gg: ASbGncvZzkUCJAzZIaigdHHM6anrU0M+lXUCwp0sgYn3eMPfzooGMgqPdN3ckomweIG
-	NBlM6vZYYhV0JFa89H3uT95PAsF9X7ZXzzEw+cp+qofKzfkrnemsb6GPQBH5ZiChoDsUI+1M2iE
-	evYcezcTsDUePXI4dTjP3A/nfBha8O6Hs8e0+E2fJiBUnWmIltdLawKiXkhV+SlD/bFbPvYd7rj
-	2werxonPof7ZSTA2CJ1OQtAE0wC5KFl6VK8+TuwbXvHtqI1OtMT13IUHrFd+gxDyITZmBNY/oB+
-	yVPBagy4dG5vm9pBlyGAfEPvb0vACv+8KrukZcm7znCdnrDp0bfzsTqnJCbxnlTDlK5LyA/6Edm
-	93ZzFGpbKayM4lg==
-X-Google-Smtp-Source: AGHT+IE6W4t4zmOFnWhJK8hWF/RIwTsnYRvhbOlZb0wiZzpWRN5aDrdCT9aya8IOqH6p/Q/J1JKHJA==
-X-Received: by 2002:a05:6a00:2da8:b0:77f:2f8b:7667 with SMTP id d2e1a72fcca58-77f5362ea1fmr3223982b3a.0.1758634369100;
-        Tue, 23 Sep 2025 06:32:49 -0700 (PDT)
-Received: from lgs.. ([36.255.193.30])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f2d435616sm7364041b3a.5.2025.09.23.06.32.45
+        bh=8xSpZuIXT8IPaVfu+hEn4+A5NlUoETUpDfjWE4MNCG4=;
+        b=r608QYW4Yd9E4ZiYxdrQQnYS4hnZRrAp333pagasCG8DPQB1L9fhhNVoDnpa5UIgqM
+         0kl5imojAeN8HS1xo6ye03zru3MwjRoB2RKJ/YXY3ZdAZvXz6hDn8Zuar2rCGhHeeWRv
+         HBEWOntpFvXYEjxSbraA6pXmIC7B8XkcvS7CFV7lXH2gjN3EFgQSFojS949IOpPtl0Uh
+         mN2bXrmYe3K5LchZe6DXhVUD9+9FS24bd8RkC5mv4+TasMGWNgPz2HtLeuzf03jeU/0A
+         Jp4Ox43oGjVzLYEDXRGF7XyXactk9Kpo/V/LsVkIml7TuTL9xeeILPJq5ducO37IfFNm
+         /NQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWDWcA3OREBGogGS0NwXn7G2nzPwDOpLvUFs8Sg1amSc8XiXRqLypU8ADiAN4BvcXqBfi7QGZm9QX5rfE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6wu1F9gNXMOqYvq989HMfa5nuvwaQcNCmzr/bDEBeWxHu2q69
+	W/MSAgKJO94Y3wZqBILgkCB6AXO+H6BglatOu4iVbbwH59aCFu9MkF2IDGlT4jsP5/w=
+X-Gm-Gg: ASbGncswSI1r+BHlLTZ0Tq2g8I9tNdC89awuhJZfxYD2s1yUFsXevTXeDkb/SsKfEq0
+	PEguZtdD52ZdInrCTz67MEiwbm2qxbbeo1lPXKBfPRs5SBxoM1AeqR6V6+BwJHzQcyXlSKB2Iyu
+	4w+Ub1e3twHOl6tw8a0cMFGIeIRYNH4WwtH5WzARHudwlBDwtxznLtinKMA/vmWnnVWc7GC4giC
+	N9Wf9YaYY8xgtpasbcpJSIZ2/zrlJdYUeAyZnLcn16Fwysj4FUczPjl+YmtCrczOpkhatRxfUSg
+	BEQG+lf+YfVzotN6JySEVIgp2F8un8Gk+FU4xSOcNvNKsADyZ+FaCmvUOO+LwbryBT2xR43rI/i
+	GuIFpnKVoWi4qOCIQAvN4BI8hVaU6QGUmQ+c4SgQIZtvEq+tUzSQKA/BKsCaj290FnhMFOwNQG4
+	iZ4RA=
+X-Google-Smtp-Source: AGHT+IESpR/eL4ucXZsJRBLa8ofI+j2C8Dox1vR6EjVmyZeEFa5+hb3Y874B7sJx52CTms2hn2ZeAg==
+X-Received: by 2002:a17:903:3550:b0:246:a543:199 with SMTP id d9443c01a7336-27cc836c35emr35903835ad.54.1758634373173;
+        Tue, 23 Sep 2025 06:32:53 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:3094:8149:fd18:c8eb:ab78])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980366b2asm163463505ad.148.2025.09.23.06.32.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 06:32:48 -0700 (PDT)
-From: Guangshuo Li <lgs201920130244@gmail.com>
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Guangshuo Li <lgs201920130244@gmail.com>,
-	"Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: [PATCH v3] powerpc/smp: Add check for kcalloc() failure in parse_thread_groups()
-Date: Tue, 23 Sep 2025 21:32:35 +0800
-Message-ID: <20250923133235.1862108-1-lgs201920130244@gmail.com>
+        Tue, 23 Sep 2025 06:32:52 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: tytso@mit.edu
+Cc: adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+4c9d23743a2409b80293@syzkaller.appspotmail.com
+Subject: [PATCH v2] ext4: validate ea_ino and size in check_xattrs
+Date: Tue, 23 Sep 2025 19:02:45 +0530
+Message-ID: <20250923133245.1091761-1-kartikey406@gmail.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -95,38 +90,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As kcalloc() may fail, check its return value to avoid a NULL pointer
-dereference when passing it to of_property_read_u32_array().
+During xattr block validation, check_xattrs() processes xattr entries
+without validating that entries claiming to use EA inodes have non-zero
+sizes. Corrupted filesystems may contain xattr entries where e_value_size
+is zero but e_value_inum is non-zero, indicating invalid xattr data.
 
-Fixes: 790a1662d3a26 ("powerpc/smp: Parse ibm,thread-groups with multiple properties")
-Cc: stable@vger.kernel.org
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
----
-changelog:
-v3:
-- Move Signed-off-by above the '---' separator.
-- No code changes.
-changelog:
-v2:
-- Return -ENOMEM directly on allocation failure.
----
- arch/powerpc/kernel/smp.c | 2 ++
- 1 file changed, 2 insertions(+)
+Add validation in check_xattrs() to detect this corruption pattern early
+and return -EFSCORRUPTED, preventing invalid xattr entries from causing
+issues throughout the ext4 codebase.
 
-diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-index 5ac7084eebc0..cfccb9389760 100644
---- a/arch/powerpc/kernel/smp.c
-+++ b/arch/powerpc/kernel/smp.c
-@@ -822,6 +822,8 @@ static int parse_thread_groups(struct device_node *dn,
- 
- 	count = of_property_count_u32_elems(dn, "ibm,thread-groups");
- 	thread_group_array = kcalloc(count, sizeof(u32), GFP_KERNEL);
-+	if (!thread_group_array)
-+		return -ENOMEM;
- 	ret = of_property_read_u32_array(dn, "ibm,thread-groups",
- 					 thread_group_array, count);
- 	if (ret)
+Suggested-by: Theodore Ts'o <tytso@mit.edu>
+Reported-by: syzbot+4c9d23743a2409b80293@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=4c9d23743a2409b80293
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+---
+Changes in v2:
+- Moved validation from ext4_xattr_move_to_block() to check_xattrs() as suggested by Theodore Ts'o
+- This provides broader coverage and may address other similar syzbot reports
+
+ fs/ext4/xattr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+index 5a6fe1513fd2..d621e77c8c4d 100644
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -251,6 +251,10 @@ check_xattrs(struct inode *inode, struct buffer_head *bh,
+ 			err_str = "invalid ea_ino";
+ 			goto errout;
+ 		}
++		if (ea_ino && !size) {
++			err_str = "invalid size in ea xattr";
++			goto errout;
++		}
+ 		if (size > EXT4_XATTR_SIZE_MAX) {
+ 			err_str = "e_value size too large";
+ 			goto errout;
 -- 
 2.43.0
 
