@@ -1,288 +1,217 @@
-Return-Path: <linux-kernel+bounces-828729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D27B954C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:42:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7E48B954C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45B6016A4BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:42:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C981682AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1586320A30;
-	Tue, 23 Sep 2025 09:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACA23168EA;
+	Tue, 23 Sep 2025 09:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dLb4qUz1"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtdvfn0W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56DC320A32
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4738320A1B
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758620562; cv=none; b=aDnuFDtQR+o8CoG/QCPcl+GZfHKB3SPY7F0VkqPOvhTCKh+i6BdsFEVc5mMtwsco+1IY4L/WqUF1R42CCRFEXjQn+xWW9AF0P4AejtZ674xMVjjJ/AchS97KPW5V7NwvxXLtYxuUx1P1cE20qkVvY/tsi+fTAjKlZixeKEePDBg=
+	t=1758620586; cv=none; b=dz3sUjLom4SDXGeF56YMqyAfDubCim42nQ+9WxXZMFnZBTCp26iKGt2bI+mEkVRJTKNfNpzpeZzYvT/LErnbK3ZxP/uvLGQQdM/jqBfpS2JPuKsjAxmgqIGOKoT+Ur6RT5XnTFXVT8ySzeZk1SdrqBPa1jWxFyeXXDOlaRmaq6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758620562; c=relaxed/simple;
-	bh=LJh2If2MchdmxGnd8rAzRTloWNZErUv1X/OtUMsKCbQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FlC40/2JCTRiEgqOE8j4fEcjrCWEw5BAvQrvb5ByfOMNA99rftCg+Cb0K49SOWEDDAhwQEXr7KLUPRH7iesGZ9Bb2L1LkK+9OAGuHeHdOpUSwvEGzEs5e/kCvX8b7kJYWjpuQ3IrlANgk0qLtKqa+ho3Mt5Jf5i111Fw9lMpYDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dLb4qUz1; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-74109e2ed70so24215807b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:42:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758620560; x=1759225360; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RBf5dPAZ1k95rbY/wT/m6RJuOqwkl+3i015BswbjsMM=;
-        b=dLb4qUz1G6CpAuIeBmsoOK8CYTvyL2T6jxnj2yTZgIR3kHAZHSztqFuB7J2/d0onlT
-         8To2CBxTG7c72/64Y8bm6rP3YLcNCXSsghvI6+h/N9k1nE+6MjBDwqZwRoLZ/JNhOi/u
-         qSEghrRVvaEK2Lw0cvnipqupMbvzUOtVVryfIpxY7SmyULb76hjAimbooFGsPuzGp59Y
-         BTDdyqlkKyvB9526wjTi/6jWuzaEalP6BxA7P6j1EmG1laTVGanH6xV/t11qpXZ8MGYZ
-         MHzpnzMCZ2T/Mk0HzIdq2HXoEA/G8b+pTHirsv5uyaEjAm3yoZ5BLhBSYM6PSugwQFLr
-         sHLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758620560; x=1759225360;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RBf5dPAZ1k95rbY/wT/m6RJuOqwkl+3i015BswbjsMM=;
-        b=nVhAWrwizGv4cKCghCkmGh8C4t9q5Olf1OBlFvoinc0C8QFQVARht7x5btG4bdnBjg
-         A31V+DTlbb39BzWelGipR+0+/pJ13e3Nnarxcjp4yS1F/3GRGZ8j9C36Vk3II2d2zkHE
-         QxJAe1UY0e4A9fFPW7U1MhR/duPsXA0ErKlufrCBXleqs9/7odiwWXGtP21f+Jd3U5pR
-         1GNcIuOJfUlBfNZPrK8HcSY3Eiw0gqYkBA6bRgWj8lmjm2VY9cDzIS/yxMAvp4UP5wY6
-         +p35Y86vE7CIgEJEBpzePZVJTuckO3aTZCrFxj53yqh/+cWYYpBxBgNgxbT7jFcQB47l
-         XHmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmfB6cOCdswkcTQNN09WxvQ5PAYpXhTibfKlNAu8ZhSk1kaa9TAjIb6+m6rw0ZaK+4E1dpmbjIPY1wymo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKrPR2/G8J4zanuKTL9A7Pr9UwePxEcmIlYwJEQvTGSHBGYtUf
-	rP8ZxNrdyoRQkHYkMsH+h2tApcVW0zp2tJWs/RDdwnnAJ5T8tnm2h3FT54FhQrFvbc+S3xHZXlk
-	XrDFhrn1NH3P/dpc6EutcaoYhTTbRGv3sex3XD2RatN5PZYjFNReVbq8=
-X-Gm-Gg: ASbGnctbSVc60Hw3YBQ8or2mrQKeVlMpg+uihE/gEV54ZyTGj/v70MuwdJDzyBT3JYy
-	mCZRATUmhYQITaBG90wUufnhCokHYsbu+Cp3Bp60IJmlH+acRedsgwEU6F8elXFECe868Rormnt
-	yzhVpJA1ZvGV++PK9tFrN0n+NxVHsL8YS57hS//gAwDBwXGvvBjNi2x4W7fHD1oEGuLxiC1Tdw2
-	lIgqKwU
-X-Google-Smtp-Source: AGHT+IGy593JemuMM1I70KsGFXsfGAGV1EfuzKSIj9FL9JT27HHuI0dWec+BvgRAJZFgUw4mOcu8TmvMufj8Lq9uJM4=
-X-Received: by 2002:a05:690c:6c91:b0:725:1bc6:7cae with SMTP id
- 00721157ae682-758a43264a8mr16591947b3.41.1758620559630; Tue, 23 Sep 2025
- 02:42:39 -0700 (PDT)
+	s=arc-20240116; t=1758620586; c=relaxed/simple;
+	bh=gWokNwz3211+7i9a8Ok4nVu/7HhmNCFwfkMWyXM6JLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q5zIvn/8FWaAiT+rUAMaxWg1ulihYmM+LIiIlrq+ycf6YMr1q3KMNF/4vkSlwqFDgTSqqUepLAFumsH8rJYURqSFlMNCWLEMtTaWNiFkGVyAQSx6L5yhzAXQ11QrYXvo1KMqQlkd85tZCBgJoUVT5eLLWXWAcx0StIMgWZXMS/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtdvfn0W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 308B9C4CEF5;
+	Tue, 23 Sep 2025 09:43:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758620586;
+	bh=gWokNwz3211+7i9a8Ok4nVu/7HhmNCFwfkMWyXM6JLM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gtdvfn0WpOajOmj3ZfSZI6HT1Bf01mf+RluxQVZnhoOf1GLEdPWH/DNeaXZxz+0gl
+	 9PzCTwd4bXC2EJkJ4trWwi85K2txKt4OKKYEiLGfkXQQ8z18SlGpZ22jRGYhG+NQwH
+	 si7mbRIXl7L6kCEU2phphXeIdqr76fem5rOICRl7DUrbGHftoyl80Veza6Vn7ccDEV
+	 w/rp9KagiKzXaqX72vkKkKEqpvZHboq7zWG46RFQTABPeJWqxPgZmAnqt0LmIcmAqJ
+	 Ds1GguVndQAd8eTo0G8ZvRcOSpGo6LQE/F6q1+slsNgWI2M+ICwQaAmLTsVj078G/f
+	 YDuJe+yiY+RjA==
+Date: Tue, 23 Sep 2025 11:43:03 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Waiman Long <llong@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 27/33] sched/arm64: Move fallback task cpumask to
+ HK_TYPE_DOMAIN
+Message-ID: <aNJrp_IDiDXEx6N4@2a01cb069018a810e4ede1071806178f.ipv6.abo.wanadoo.fr>
+References: <20250829154814.47015-1-frederic@kernel.org>
+ <20250829154814.47015-28-frederic@kernel.org>
+ <26d5ced7-8f35-49b2-b342-c6b55dde9c66@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716123323.65441-1-ulf.hansson@linaro.org>
- <20250716123323.65441-2-ulf.hansson@linaro.org> <CAJZ5v0iq7UODJ83fkwnzfFR3HpG2_R-YRnip_cLwyUHZZ+rXyg@mail.gmail.com>
- <7hldnp6apf.fsf@baylibre.com> <CAJZ5v0j=9RXHrcVEBp0yy1Ae4_kC1y-WFQyBf89r3NtoL-tYQw@mail.gmail.com>
- <CAPDyKFpeVF_EHJDQ9u=LDuJ56g7ykYUQWHXV2WXTYLa-mYahVA@mail.gmail.com>
- <CAPDyKFpc-PHC1QhoSrNt9KnaGov749H1AwFZUwnDDzG7RDYBRw@mail.gmail.com>
- <CAJZ5v0hC=sEcC-mU8jArwVN3EA6+U=EmCa2e7TKO0sg6LJiz7g@mail.gmail.com>
- <CAPDyKFqG=bFSP2rJ3PXt5=6_nLdpJ+ir80krU1DrRCCMhwKQng@mail.gmail.com> <CAJZ5v0hYN5G_WpA6KDpeDgowc2i9AvrUBCq-egS==8RNVb6N=w@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hYN5G_WpA6KDpeDgowc2i9AvrUBCq-egS==8RNVb6N=w@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 23 Sep 2025 11:42:03 +0200
-X-Gm-Features: AS18NWCNpnsclJ3h9JzbEU8K86EvApkR4GFpCQmgzmDXuhk39USXLKZzr5dFQac
-Message-ID: <CAPDyKFr0-yh8wt169QanAo3AmuXBq_9p3xiiqeFmmWz-ntNQsw@mail.gmail.com>
-Subject: Re: [RFC/PATCH 1/3] PM: QoS: Introduce a system-wakeup QoS limit
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, linux-pm@vger.kernel.org, 
-	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <26d5ced7-8f35-49b2-b342-c6b55dde9c66@redhat.com>
 
-On Mon, 22 Sept 2025 at 20:55, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Thu, Sep 18, 2025 at 5:34=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
-> >
-> > On Wed, 17 Sept 2025 at 21:24, Rafael J. Wysocki <rafael@kernel.org> wr=
-ote:
-> > >
-> > > Hi,
-> > >
-> > > Sorry for the delay.
-> > >
-> > > On Fri, Sep 12, 2025 at 3:58=E2=80=AFPM Ulf Hansson <ulf.hansson@lina=
-ro.org> wrote:
-> > > >
-> > > > On Tue, 12 Aug 2025 at 11:26, Ulf Hansson <ulf.hansson@linaro.org> =
-wrote:
-> > > > >
-> > > > > On Mon, 11 Aug 2025 at 21:16, Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
-> > > > > >
-> > > > > > On Mon, Aug 11, 2025 at 7:16=E2=80=AFPM Kevin Hilman <khilman@b=
-aylibre.com> wrote:
-> > > > > > >
-> > > > > > > "Rafael J. Wysocki" <rafael@kernel.org> writes:
-> > > > > > >
-> > > > > > > > On Wed, Jul 16, 2025 at 2:33=E2=80=AFPM Ulf Hansson <ulf.ha=
-nsson@linaro.org> wrote:
-> > > > > > > >>
-> > > > > > > >> Some platforms and devices supports multiple low-power-sta=
-tes than can be
-> > > > > > > >> used for system-wide suspend. Today these states are selec=
-ted on per
-> > > > > > > >> subsystem basis and in most cases it's the deepest possibl=
-e state that
-> > > > > > > >> becomes selected.
-> > > > > > > >>
-> > > > > > > >> For some use-cases this is a problem as it isn't suitable =
-or even breaks
-> > > > > > > >> the system-wakeup latency constraint, when we decide to en=
-ter these deeper
-> > > > > > > >> states during system-wide suspend.
-> > > > > > > >>
-> > > > > > > >> Therefore, let's introduce an interface for user-space, al=
-lowing us to
-> > > > > > > >> specify the system-wakeup QoS limit. Subsequent changes wi=
-ll start taking
-> > > > > > > >> into account the QoS limit.
-> > > > > > > >
-> > > > > > > > Well, this is not really a system-wakeup limit, but a CPU i=
-dle state
-> > > > > > > > latency limit for states entered in the last step of suspen=
-d-to-idle.
-> > > > > > > >
-> > > > > > > > It looks like the problem is that the existing CPU latency =
-QoS is not
-> > > > > > > > taken into account by suspend-to-idle, so instead of adding=
- an
-> > > > > > > > entirely new interface to overcome this, would it make sens=
-e to add an
-> > > > > > > > ioctl() to the existing one that would allow the user of it=
- to
-> > > > > > > > indicate that the given request should also be respected by
-> > > > > > > > suspend-to-idle?
-> > > > > > > >
-> > > > > > > > There are two basic reasons why I think so:
-> > > > > > > > (1) The requests that you want to be respected by suspend-t=
-o-idle
-> > > > > > > > should also be respected by the regular "runtime" idle, or =
-at least I
-> > > > > > > > don't see a reason why it wouldn't be the case.
-> > > > > > > > (2) The new interface introduced by this patch basically du=
-plicates
-> > > > > > > > the existing one.
-> > > > > > >
-> > > > > > > I also think that just using the existing /dev/cpu_dma_latenc=
-y is the
-> > > > > > > right approach here, and simply teaching s2idle to respect th=
-is value.
-> > > > > > >
-> > > > > > > I'm curious about the need for a new ioctl() though.  Under w=
-hat
-> > > > > > > conditions do you want normal/runtime CPUidle to respect this=
- value and
-> > > > > > > s2idle to not respect this value?
-> > > > > >
-> > > > > > In a typical PC environment s2idle is a replacement for ACPI S3=
- which
-> > > > > > does not take any QoS constraints into account, so users may wa=
-nt to
-> > > > > > set QoS limits for run-time and then suspend with the expectati=
-on that
-> > > > > > QoS will not affect it.
-> > > > >
-> > > > > Yes, I agree. To me, these are orthogonal use-cases which could h=
-ave
-> > > > > different wakeup latency constraints.
-> > > > >
-> > > > > Adding an ioctl for /dev/cpu_dma_latency, as suggested by Rafael =
-would
-> > > > > allow this to be managed, I think.
-> > > > >
-> > > > > Although, I am not fully convinced yet that re-using
-> > > > > /dev/cpu_dma_latency is the right path. The main reason is that I
-> > > > > don't want us to limit the use-case to CPU latencies, but rather =
-allow
-> > > > > the QoS constraint to be system-wide for any type of device. For
-> > > > > example, it could be used by storage drivers too (like NVMe, UFS,
-> > > > > eMMC), as a way to understand what low power state to pick as sys=
-tem
-> > > > > wide suspend. If you have a closer look at patch2 [1] , I suggest=
- we
-> > > > > extend the genpd-governor for *both* CPU-cluster-PM-domains and f=
-or
-> > > > > other PM-domains too.
-> > > > >
-> > > > > Interested to hear your thoughts around this.
-> > > >
-> > > > Hey, just wanted to see if you have managed to digest this and have
-> > > > any possible further comment?
-> > >
-> > > The reason why I thought about reusing /dev/cpu_dma_latency is becaus=
-e
-> > > I think that the s2idle limit should also apply to cpuidle.  Of
-> > > course, cpuidle may be limited further, but IMV it should observe the
-> > > limit set on system suspend (it would be kind of inconsistent to allo=
-w
-> > > cpuidle to use deeper idle states than can be used by s2idle).
-> >
-> > Agreed!
-> >
-> > >
-> > > I also don't think that having a per-CPU s2idle limit would be
-> > > particularly useful (and it might be problematic).
-> > >
-> > > Now, it is not as straightforward as I thought because someone may
-> > > want to set a more restrictive limit on cpuidle, in which case they
-> > > would need to open the same special device file twice etc and that
-> > > would be quite cumbersome.
-> > >
-> > > So in the end I think that what you did in the $subject patch is
-> > > better, but I still would like it to also affect cpuidle.
-> >
-> > Okay. I will update the patches according to your suggestions!
-> >
-> > >
-> > > And it needs to be made clear that this is a limit on the resume
-> > > latency of one device.  Worst case, the system wakeup latency may be =
-a
-> > > sum of those limits if the devices in question are resumed
-> > > sequentially, so in fact this is a limit on the contribution of a
-> > > given device to the system wakeup latency.
-> >
-> > Indeed, that's a very good point! I will keep this in mind when
-> > working on adding the documentation part.
->
-> Well, this also means that using one limit for all of the different
-> devices is not likely to be very practical because the goal is to save
-> as much energy as reasonably possible in system suspend while
-> respecting a global resume latency constraint at the same time.
->
-> Using the same limit on a local contribution from each device to the
-> combined latency is not likely to be effective here.  Rather, I'd
-> expect that the best results can be achieved by setting different
-> resume latency limits on different devices, depending on how much
-> power they draw in each of their idle states and what the exit latency
-> values for all of those states are.  In other words, this appears to
-> be an optimization problem in which the resume latency limits for
-> individual devices need to be chosen to satisfy the global resume
-> latency constraint and minimize the total system power.
+Le Tue, Sep 02, 2025 at 12:43:16PM -0400, Waiman Long a écrit :
+> 
+> On 8/29/25 11:48 AM, Frederic Weisbecker wrote:
+> > When none of the allowed CPUs of a task are online, it gets migrated
+> > to the fallback cpumask which is all the non nohz_full CPUs.
+> > 
+> > However just like nohz_full CPUs, domain isolated CPUs don't want to be
+> > disturbed by tasks that have lost their CPU affinities.
+> > 
+> > And since nohz_full rely on domain isolation to work correctly, the
+> > housekeeping mask of domain isolated CPUs is always a subset of the
+> > housekeeping mask of nohz_full CPUs (there can be CPUs that are domain
+> > isolated but not nohz_full, OTOH there can't be nohz_full CPUs that are
+> > not domain isolated):
+> > 
+> > 	HK_TYPE_DOMAIN & HK_TYPE_KERNEL_NOISE == HK_TYPE_DOMAIN
+> > 
+> > Therefore use HK_TYPE_DOMAIN as the appropriate fallback target for
+> > tasks and since this cpumask can be modified at runtime, make sure
+> > that 32 bits support CPUs on ARM64 mismatched systems are not isolated
+> > by cpusets.
+> > 
+> > CC: linux-arm-kernel@lists.infradead.org
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > ---
+> >   arch/arm64/kernel/cpufeature.c | 18 ++++++++++++---
+> >   include/linux/cpu.h            |  4 ++++
+> >   kernel/cgroup/cpuset.c         | 40 +++++++++++++++++++++++-----------
+> >   3 files changed, 46 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> > index 9ad065f15f1d..38046489d2ea 100644
+> > --- a/arch/arm64/kernel/cpufeature.c
+> > +++ b/arch/arm64/kernel/cpufeature.c
+> > @@ -1653,6 +1653,18 @@ has_cpuid_feature(const struct arm64_cpu_capabilities *entry, int scope)
+> >   	return feature_matches(val, entry);
+> >   }
+> > +/*
+> > + * 32 bits support CPUs can't be isolated because tasks may be
+> > + * arbitrarily affine to them, defeating the purpose of isolation.
+> > + */
+> > +bool arch_isolated_cpus_can_update(struct cpumask *new_cpus)
+> > +{
+> > +	if (static_branch_unlikely(&arm64_mismatched_32bit_el0))
+> > +		return !cpumask_intersects(cpu_32bit_el0_mask, new_cpus);
+> > +	else
+> > +		return true;
+> > +}
+> > +
+> >   const struct cpumask *system_32bit_el0_cpumask(void)
+> >   {
+> >   	if (!system_supports_32bit_el0())
+> > @@ -1666,7 +1678,7 @@ const struct cpumask *system_32bit_el0_cpumask(void)
+> >   const struct cpumask *task_cpu_fallback_mask(struct task_struct *p)
+> >   {
+> > -	return __task_cpu_possible_mask(p, housekeeping_cpumask(HK_TYPE_TICK));
+> > +	return __task_cpu_possible_mask(p, housekeeping_cpumask(HK_TYPE_DOMAIN));
+> >   }
+> >   static int __init parse_32bit_el0_param(char *str)
+> > @@ -3963,8 +3975,8 @@ static int enable_mismatched_32bit_el0(unsigned int cpu)
+> >   	bool cpu_32bit = false;
+> >   	if (id_aa64pfr0_32bit_el0(info->reg_id_aa64pfr0)) {
+> > -		if (!housekeeping_cpu(cpu, HK_TYPE_TICK))
+> > -			pr_info("Treating adaptive-ticks CPU %u as 64-bit only\n", cpu);
+> > +		if (!housekeeping_cpu(cpu, HK_TYPE_DOMAIN))
+> > +			pr_info("Treating domain isolated CPU %u as 64-bit only\n", cpu);
+> >   		else
+> >   			cpu_32bit = true;
+> >   	}
+> > diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+> > index b91b993f58ee..8bb239080534 100644
+> > --- a/include/linux/cpu.h
+> > +++ b/include/linux/cpu.h
+> > @@ -228,4 +228,8 @@ static inline bool cpu_attack_vector_mitigated(enum cpu_attack_vectors v)
+> >   #define smt_mitigations SMT_MITIGATIONS_OFF
+> >   #endif
+> > +struct cpumask;
+> > +
+> > +bool arch_isolated_cpus_can_update(struct cpumask *new_cpus);
+> > +
+> >   #endif /* _LINUX_CPU_H_ */
+> > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> > index 8260dd699fd8..cf99ea844c1d 100644
+> > --- a/kernel/cgroup/cpuset.c
+> > +++ b/kernel/cgroup/cpuset.c
+> > @@ -1352,33 +1352,47 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
+> >   	return isolcpus_updated;
+> >   }
+> > +bool __weak arch_isolated_cpus_can_update(struct cpumask *new_cpus)
+> > +{
+> > +	return true;
+> > +}
+> > +
+> >   /*
+> > - * isolcpus_nohz_conflict - check for isolated & nohz_full conflicts
+> > + * isolated_cpus_can_update - check for conflicts against housekeeping and
+> > + *                            CPUs capabilities.
+> >    * @new_cpus: cpu mask for cpus that are going to be isolated
+> > - * Return: true if there is conflict, false otherwise
+> > + * Return: true if there no conflict, false otherwise
+> >    *
+> > - * If nohz_full is enabled and we have isolated CPUs, their combination must
+> > - * still leave housekeeping CPUs.
+> > + * Check for conflicts:
+> > + * - If nohz_full is enabled and there are isolated CPUs, their combination must
+> > + *   still leave housekeeping CPUs.
+> > + * - Architecture has CPU capabilities incompatible with being isolated
+> >    */
+> > -static bool isolcpus_nohz_conflict(struct cpumask *new_cpus)
+> > +static bool isolated_cpus_can_update(struct cpumask *new_cpus)
+> >   {
+> >   	cpumask_var_t full_hk_cpus;
+> > -	int res = false;
+> > +	bool res;
+> > +
+> > +	if (!arch_isolated_cpus_can_update(new_cpus))
+> > +		return false;
+> >   	if (!housekeeping_enabled(HK_TYPE_KERNEL_NOISE))
+> > -		return false;
+> > +		return true;
+> >   	if (!alloc_cpumask_var(&full_hk_cpus, GFP_KERNEL))
+> > -		return true;
+> > +		return false;
+> > +
+> > +	res = true;
+> >   	cpumask_and(full_hk_cpus, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE),
+> >   		    housekeeping_cpumask(HK_TYPE_DOMAIN));
+> >   	cpumask_andnot(full_hk_cpus, full_hk_cpus, isolated_cpus);
+> >   	cpumask_and(full_hk_cpus, full_hk_cpus, cpu_online_mask);
+> 
+> We should construct the new cpumask by adding new CPUs and removing old ones
+> from the existing isolated_cpus and pass it to
+> arch_isolated_cpus_can_update() for the checking to be correct.
 
-I am following your reasoning and I agree!
+As for arch_isolated_cpus_can_update(), arm64 only cares about the new
+CPUs that are going to be isolated. But perhaps you're referring to the check
+above that excludes isolated_cpus while we don't care about the old set?
 
-Perhaps we should start with extending the cpu_dma_latency with an
-ioctl after all? This would allow userspace to specify constraints to
-be applicable for system-wide-suspend (s2idle), but it would still be
-limited for CPUs/CPU-clusters.
+Thanks.
 
-For other devices, we should probably explore the per device PM QoS
-(pm_qos_latency_tolerance_us) instead. Currently the
-pm_qos_latency_tolerance_us is used for "runtime_suspend", so perhaps
-adding another per device sysfs file, like
-"pm_qos_system_wakeup_latency_us",  that we can use for the
-system-wide-wakeup latency constraint?
+> Cheers,
+> Longman
+> 
 
-Would this make better sense, you think?
-
-Kind regards
-Uffe
+-- 
+Frederic Weisbecker
+SUSE Labs
 
