@@ -1,115 +1,156 @@
-Return-Path: <linux-kernel+bounces-829395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA19EB96F60
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:11:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB37B96F6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCDA14E2FC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:11:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D7AC3214E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5776280CFA;
-	Tue, 23 Sep 2025 17:10:27 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253462820DC;
+	Tue, 23 Sep 2025 17:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="X93kTL2h"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD17F277008
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B233F27A446;
+	Tue, 23 Sep 2025 17:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758647427; cv=none; b=MfrNQ9jlNc3E2Akr8zrWIOb7kJf5ULoAdtdIXMPP9sU2j/UsXqKYrQ6Ex8J+6J/Ur4alklT8sXDzOt5gtLDwK1q62+a/+DZoLiJi/kQvjRIqIlIsI9BMIQY2BKY+srG2beVJYkwlISSI5kvra9JoIi+mv2YNaDzbIupy+KOfHfg=
+	t=1758647433; cv=none; b=VO0A/fkoTib91osp40fV1eUWi3IVQqPsrJRV30hfSWxxN3xFy5MWIRIjaPWzbZsu4udzWc4hUWkhXZ2DZkH1unH5Y2mXz21gKXwETf5A0Qlz9gJe4KwPT/51HmDwZIMX9Z0IpWj4jkKYL+aKb7uYZU4F6tv8pwzYTdVMYxlc9to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758647427; c=relaxed/simple;
-	bh=QooaIIVUkVLqBfQHJYm+YtWViKyaB+15BcUdn5kj5kM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XpLEIfAY1ksLAjpJZ6tYHjC5HSck84yNlsazhoGbCYLxtUUMA7FuGXWbI+29z9HC5QqAzwT+vvoJ3NW9oaovMUIuOzZDaIqFy7bkj7kJkAcGjs4Bnot3u274SGu2N1y45duAoC4RBH/jLozmDbnbv2TVxG0IlNH0VgVeAMytxvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-88d4b38d080so523503339f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:10:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758647425; x=1759252225;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KyEjEW0FvUQ1TaeESdEByryj9qh221cm1USXwPkZsYc=;
-        b=IRb2Qy5JGR29qwpuV7ldpR9S1um2C9BMrzPOrtYfqQMfqcnay4pgOBsD73oFMBEM5C
-         KK8qArNmQgplJEVDmdaZCH7N3FYlcEf1sLPsXJ1VibM07HVviMOPyb40L3KxRoW8wRqL
-         qudBAFAp6jShh82x8eI+7ucUu8F14NwrAj9GVb5rFQwtbl/qTlN7s9XxKXZnR64yMdGp
-         CcClAGguAbqtF5qqjT/nRFMXOmz52dOennnKcWwSc/GwXevcfciO2Zi0o/oP76U2VfPq
-         4FsIvfteFWjSoWMdSU4g6PgT0PTyvWKp2YZU/a4BtgIP0OZt2wlHborDCZhRBhJIZUxk
-         gweA==
-X-Gm-Message-State: AOJu0Yx9ODHyJvpk9WMx0r+xnBrs7DarZCBFuQ/3ckhzNHN+qQNADYli
-	zVs9gt2b5svKBh/slufsDBKybTHBJghbLo0OKfNpspT4i6ZhJqoDgWIpRVou/nL7ftRXBL5KYi6
-	zwdElZW1xXgR6A/gNrb1zQgFU0HDy802f5g7fIemyfmgclNI7EUWIGF4EOXM=
-X-Google-Smtp-Source: AGHT+IGAbBSIA/jNrO9HGegJvEXVVowu9Io0nRLEz/W5fEdaz38/E0lI8b5uwx427TV1809/103HDRphTnNGbHoWSeEBa7tBvXJ5
+	s=arc-20240116; t=1758647433; c=relaxed/simple;
+	bh=epzen24Lm8XzZMpzLT7sc1zAzVAnYPLwQkRE282JBxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aHmDKmMXcQNhgTFbECU2KLQ1MZt4jN1IsUxTzfn9IRh7WKhd2DDJvNU5eMXppvjKu7TuWn9+mikziRIZuZIVYQCx7JYqwBWC3ptMBJDpW1Tf5loYvpjhqSKgjp/ewviSKJPlpFrHQ5QpOR1ENIf6+nc6rCl5J8vcnKe+JIcUx4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=X93kTL2h; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=/AClO5jmdv6vuid5xiiEBjr0hK793sZbq2gbKxWSDR0=; b=X93kTL2hChVR0+wDn6jAJ2b55t
+	Qe8OTtnj4H5jmhy+7/M0BQbDQW1pUQbZyQV1WVzWuhgNZakEAeBGnpEN6M9OPmYEQizaEDxkBrHTd
+	IRYYurViR2bMw01MFxVCv29FGW37+80M0faOgatpnGvpCYxdoeior0XVk8xkI+WEC6f5/DyLv+vOb
+	0wzYeEfQMitcfqobDxfsYNvBZEwlhBb1gUOnrKi6BIKLezFMmUfSDu1NaPNMxn4aN86eKrhw8p77o
+	z5/m/3XBY81wfXanGR13DMZDG3isOicwaqVOoNmyeoiazovbFm8K+qSkf4FX3Bhx7PUKqhiY/04fP
+	vfp/RRvw==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1v16X6-00CZpf-2E;
+	Tue, 23 Sep 2025 18:10:28 +0100
+Date: Tue, 23 Sep 2025 18:10:28 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/4] tpm: Require O_EXCL for exclusive /dev/tpm access
+Message-ID: <83a323d597819d928da45b5b3914b37375c67869.1758646791.git.noodles@meta.com>
+References: <cover.1758646791.git.noodles@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:218f:b0:3ec:e669:7d76 with SMTP id
- e9e14a558f8ab-42581e3e060mr54335975ab.14.1758647424845; Tue, 23 Sep 2025
- 10:10:24 -0700 (PDT)
-Date: Tue, 23 Sep 2025 10:10:24 -0700
-In-Reply-To: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d2d480.a70a0220.1b52b.02b4.GAE@google.com>
-Subject: Forwarded: [PATCH] bpf: fix NULL pointer dereference in print_reg_state()
-From: syzbot <syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1758646791.git.noodles@meta.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+From: Jonathan McDowell <noodles@meta.com>
 
-***
+Given that /dev/tpm has not had exclusive access to the TPM since the
+existence of the kernel resource broker and other internal users, stop
+defaulted to exclusive access to the first client that opens the device.
+Continue to support exclusive access, but only with the use of the
+O_EXCL flag on device open.
 
-Subject: [PATCH] bpf: fix NULL pointer dereference in print_reg_state()
-Author: listout@listout.xyz
-
-#syz test
-
-Syzkaller reported a general protection fault due to a NULL pointer
-dereference in print_reg_state() when accessing reg->map_ptr without
-checking if it is NULL.
-
-The existing code assumes reg->map_ptr is always valid before
-dereferencing reg->map_ptr->name, reg->map_ptr->key_size, and
-reg->map_ptr->value_size.
-
-Fix this by adding explicit NULL checks before accessing reg->map_ptr
-and its members. This prevents crashes when reg->map_ptr is NULL,
-improving the robustness of the BPF verifier's verbose logging.
-
-Reported-by: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com
-Signed-off-by: Brahmajit Das <listout@listout.xyz>
+Signed-off-by: Jonathan McDowell <noodles@meta.com>
 ---
- kernel/bpf/log.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/char/tpm/tpm-dev.c | 25 +++++++++++++++++++------
+ drivers/char/tpm/tpm-dev.h |  1 +
+ 2 files changed, 20 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/bpf/log.c b/kernel/bpf/log.c
-index 38050f4ee400..14c0a442a85b 100644
---- a/kernel/bpf/log.c
-+++ b/kernel/bpf/log.c
-@@ -715,11 +715,10 @@ static void print_reg_state(struct bpf_verifier_env *env,
- 		verbose_a("ref_obj_id=%d", reg->ref_obj_id);
- 	if (type_is_non_owning_ref(reg->type))
- 		verbose_a("%s", "non_own_ref");
--	if (type_is_map_ptr(t)) {
-+	if (type_is_map_ptr(t) && reg->map_ptr) {
- 		if (reg->map_ptr->name[0])
- 			verbose_a("map=%s", reg->map_ptr->name);
--		verbose_a("ks=%d,vs=%d",
--			  reg->map_ptr->key_size,
-+		verbose_a("ks=%d,vs=%d", reg->map_ptr->key_size,
- 			  reg->map_ptr->value_size);
+diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
+index 80c4b3f3ad18..8921bbb541c1 100644
+--- a/drivers/char/tpm/tpm-dev.c
++++ b/drivers/char/tpm/tpm-dev.c
+@@ -19,15 +19,21 @@ static int tpm_open(struct inode *inode, struct file *file)
+ {
+ 	struct tpm_chip *chip;
+ 	struct file_priv *priv;
++	int rc;
+ 
+ 	chip = container_of(inode->i_cdev, struct tpm_chip, cdev);
+ 
+ 	/*
+-	 * Only one client is allowed to have /dev/tpm0 open at a time, so we
+-	 * treat it as a write lock. The shared /dev/tpmrm0 is treated as a
+-	 * read lock.
++	 * If a client uses the O_EXCL flag then it expects to be the only TPM
++	 * user, so we treat it as a write lock. Otherwise we do as /dev/tpmrm
++	 * and use a read lock.
+ 	 */
+-	if (!down_write_trylock(&chip->open_lock)) {
++	if (file->f_flags & O_EXCL)
++		rc = down_write_trylock(&chip->open_lock);
++	else
++		rc = down_read_trylock(&chip->open_lock);
++
++	if (!rc) {
+ 		dev_dbg(&chip->dev, "Another process owns this TPM\n");
+ 		return -EBUSY;
  	}
- 	if (t != SCALAR_VALUE && reg->off) {
+@@ -35,13 +41,17 @@ static int tpm_open(struct inode *inode, struct file *file)
+ 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+ 	if (priv == NULL)
+ 		goto out;
++	priv->exclusive = (file->f_flags & O_EXCL);
+ 
+ 	tpm_common_open(file, chip, priv, NULL);
+ 
+ 	return 0;
+ 
+  out:
+-	up_write(&chip->open_lock);
++	if (file->f_flags & O_EXCL)
++		up_write(&chip->open_lock);
++	else
++		up_read(&chip->open_lock);
+ 	return -ENOMEM;
+ }
+ 
+@@ -53,7 +63,10 @@ static int tpm_release(struct inode *inode, struct file *file)
+ 	struct file_priv *priv = file->private_data;
+ 
+ 	tpm_common_release(file, priv);
+-	up_write(&priv->chip->open_lock);
++	if (priv->exclusive)
++		up_write(&priv->chip->open_lock);
++	else
++		up_read(&priv->chip->open_lock);
+ 	kfree(priv);
+ 
+ 	return 0;
+diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
+index f3742bcc73e3..0ad8504c73e4 100644
+--- a/drivers/char/tpm/tpm-dev.h
++++ b/drivers/char/tpm/tpm-dev.h
+@@ -17,6 +17,7 @@ struct file_priv {
+ 	ssize_t response_length;
+ 	bool response_read;
+ 	bool command_enqueued;
++	bool exclusive;
+ 
+ 	u8 data_buffer[TPM_BUFSIZE];
+ };
 -- 
 2.51.0
 
