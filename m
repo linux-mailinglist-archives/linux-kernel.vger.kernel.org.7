@@ -1,105 +1,159 @@
-Return-Path: <linux-kernel+bounces-829778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12237B97CE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:37:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62038B97CF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA4262E3E72
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:37:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 564BD19C8209
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8F73112A0;
-	Tue, 23 Sep 2025 23:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B2930FF32;
+	Tue, 23 Sep 2025 23:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jBmKkQwR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btKodySf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14A117A5BE;
-	Tue, 23 Sep 2025 23:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3650217A5BE;
+	Tue, 23 Sep 2025 23:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758670650; cv=none; b=i+LMOePRCSDkxZH4ohKp14s9EJbtZYkK2imfO3ArM7v+Ytzxi/3ScxxbWYDYTxAe7e0IlnAm0VVakm6mPnPORzlK5/3rEzm8qzQZtIcn8IuKT7jq0wFh+SMECx8lurs4SoPu51VkIDdFIrRMDbp7jOCPpfP/T51KvSucYaWANsk=
+	t=1758670775; cv=none; b=u2gXb7kXa56xHoDpz3i+b1JlOyQbNCH54tBaW08KscMH2XVYtsaFY0Zz0fy7i1hwYMTamaJiDJfbteA1rgkszNTzZLDxH/MMrT3tYVvUkQTrn3nF276RV3dv/Yavu8qf/m7lVZGlw0olUKR67ArNbAlnKz6L2rb7Dkc/Wuq9s3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758670650; c=relaxed/simple;
-	bh=x2oIkf/wqVXdqXEmFjopZYbSnwaDoqrJINY8rvjWOVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hxWIiSPLAcJeshHcxs9YZSrV0EzRS6MLH9nL/j/yqHP4hGue/7lJwhj9qU/r7ftcJ1gf+5/MpfTRyKsBZnJtas2JODQIYPNNlBXc9E2YMNgfJQtAFuyPdB+djU14P420vg58C4TzRpmJAeuWWxN1COLj2ntMXxg/8b67eAiuFXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jBmKkQwR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF9DDC4CEF5;
-	Tue, 23 Sep 2025 23:37:28 +0000 (UTC)
+	s=arc-20240116; t=1758670775; c=relaxed/simple;
+	bh=h+EdEdNZHSQ1hSsUTnQv1Sa+TLUPz0+HmIemtZK2eQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rws0Tr+H6DT08bYK+67Zem1bIyCJA3nnbp72J6d6YWb1+EK0MUuzQixR37y/NFCRnCrkgxCYY27gQyAuuIgIktepEui+qzhJ5ZLvYIAXjwBTJvaSVgKByVUxRnX0GuYHNiqbhIXz3cnLSgIVG9OQgvtB64ztnyDZcKQEAV7aCmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btKodySf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C22B6C4CEF5;
+	Tue, 23 Sep 2025 23:39:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758670649;
-	bh=x2oIkf/wqVXdqXEmFjopZYbSnwaDoqrJINY8rvjWOVY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jBmKkQwRKMcZLRN8J15vBjTDB8GP9MfHuPufNarhtwwET0Dur/jq3DidBgT5UmJMS
-	 9jLas1fCUrorvG5uVxf/MS0FWpxHDCRBZ87ulmnOjOdX5ZQqFLLd0pWB66oKm8Lz6X
-	 Y4jw3MQOvS5ZkvQzVZKmqyozAV9LAmEE4RKrGp3j3XzRREvOmtKW/NO/WeQDrHM/p+
-	 Y3GcQGG2TGCOO3fMh5yYF1V+eG94pEaBH/YS0WCi3Ke8MM0VTJJgPOyns68n5Bk0rt
-	 TZjVpnJ7J6abkuwna73JTZS52uHTrJe7BzFnj4/s+lnOHomRWfMnsSgjM2+vGg0eNH
-	 Ohex8td6/JVRw==
-Date: Tue, 23 Sep 2025 16:37:27 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Michal Pecio <michal.pecio@gmail.com>
-Cc: I Viswanath <viswanathiyyappan@gmail.com>, andrew@lunn.ch,
- andrew+netdev@lunn.ch, davem@davemloft.net, david.hunter.linux@gmail.com,
- edumazet@google.com, linux-kernel-mentees@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, petkan@nucleusys.com,
- skhan@linuxfoundation.org,
- syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
-Subject: Re: [PATCH net v2] net: usb: Remove disruptive netif_wake_queue in
- rtl8150_set_multicast
-Message-ID: <20250923163727.5e97abdb@kernel.org>
-In-Reply-To: <20250924012039.66a2411c.michal.pecio@gmail.com>
-References: <83171a57-cb40-4c97-b736-0e62930b9e5c@lunn.ch>
-	<20250920181852.18164-1-viswanathiyyappan@gmail.com>
-	<20250922180742.6ef6e2d5@kernel.org>
-	<20250923094711.200b96f1.michal.pecio@gmail.com>
-	<20250923072809.1a58edaf@kernel.org>
-	<20250924012039.66a2411c.michal.pecio@gmail.com>
+	s=k20201202; t=1758670774;
+	bh=h+EdEdNZHSQ1hSsUTnQv1Sa+TLUPz0+HmIemtZK2eQM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=btKodySfh+IdtmJ0nqMAYqlVvJGuJyYTq5VyPsAS4NXsn0UcNVyGCSpOmPBhNCD+A
+	 TAgQLivGJHP44qILT7p/qgX9xtMah0jLLredSkZ8eiPVh6NaYnBSsdRpy1yJ7Q7fdy
+	 xloocDTSipHILrj9P54qqiuzH4VCLjrrYbpZF4eCmVWSv5rKBQSOki7pmlQE5fBTnF
+	 Q+xhvtKBrS3jEIR+7+yWRGqmS426YiXWZLAQMGVlMpgq7/wqCR4/WwMrOpJVS6WFFY
+	 /K0vMloRwTn929tU+gMoujF4byqXoJtX6m7pyEkZHsFoASFIaUjz+NGcEo5XMIM8rw
+	 7GSBQ/Gvz7+wQ==
+Date: Tue, 23 Sep 2025 16:39:34 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+0be4f339a8218d2a5bb1@syzkaller.appspotmail.com,
+	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Subject: Re: [PATCH v2] Fix: ext4: guard against EA inode refcount underflow
+ in xattr update
+Message-ID: <20250923233934.GJ8084@frogsfrogsfrogs>
+References: <20250918175545.48297-1-eraykrdg1@gmail.com>
+ <20250920021342.45575-1-eraykrdg1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250920021342.45575-1-eraykrdg1@gmail.com>
 
-On Wed, 24 Sep 2025 01:20:39 +0200 Michal Pecio wrote:
-> With the patch, it all goes away and doesn't show up even after a few
-> minutes. I also tried with two TCP streams to a real machine and only
-> observed a 20KB/s decrease in throughput while the ifconfig allmulti
-> loop is running, probably due to USB bandwidth. So it looks OK.
-
-Excellent, could you send an official Tested-by tag?
-
-> But one annoying problem is that those control requests are posted
-> asynchronously and under my test they seem to accumulate faster than
-> they drain. I get brief or not so brief lockups when USB core cleans
-> this up on sudden disconnection. And rtl8150_disconnect() should kill
-> them, but it doesn't.
+On Sat, Sep 20, 2025 at 05:13:43AM +0300, Ahmet Eray Karadag wrote:
+> syzkaller found a path where ext4_xattr_inode_update_ref() reads an EA
+> inode refcount that is already <= 0 and then applies ref_change (often
+> -1). That lets the refcount underflow and we proceed with a bogus value,
+> triggering errors like:
 > 
-> Not sure how this is supposed to work in a well-behaved net driver? Is
-> this callback expected to return without sleeping and have an immediate
-> effect? I can't see this working with USB.
+>   EXT4-fs error: EA inode <n> ref underflow: ref_count=-1 ref_change=-1
+>   EXT4-fs warning: ea_inode dec ref err=-117
+> 
+> Make the invariant explicit: if the current refcount is non-positive,
+> treat this as on-disk corruption, emit ext4_error_inode(), and fail the
+> operation with -EFSCORRUPTED instead of updating the refcount. Delete the
+> WARN_ONCE() as negative refcounts are now impossible; keep error reporting
+> in ext4_error_inode().
+> 
+> This prevents the underflow and the follow-on orphan/cleanup churn.
+> 
+> Reported-by: syzbot+0be4f339a8218d2a5bb1@syzkaller.appspotmail.com
+> Fixes: https://syzbot.org/bug?extid=0be4f339a8218d2a5bb1
+> Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+> Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+> Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+> ---
+> v2:
+>  - Move underflow guard before the update
+>  - Add overflow guard for the opposite case
+>  - Use u64 type instead s64, since ext4_xattr_inode_update_ref() returns u64 and ext4_xattr_inode_set_ref() expects u64.
+> 
+> ---
+>  fs/ext4/xattr.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+> index 5a6fe1513fd2..a510693e04ac 100644
+> --- a/fs/ext4/xattr.c
+> +++ b/fs/ext4/xattr.c
+> @@ -1019,7 +1019,7 @@ static int ext4_xattr_inode_update_ref(handle_t *handle, struct inode *ea_inode,
+>  				       int ref_change)
+>  {
+>  	struct ext4_iloc iloc;
+> -	s64 ref_count;
+> +	u64 ref_count;
+>  	int ret;
+>  
+>  	inode_lock_nested(ea_inode, I_MUTEX_XATTR);
+> @@ -1029,13 +1029,17 @@ static int ext4_xattr_inode_update_ref(handle_t *handle, struct inode *ea_inode,
+>  		goto out;
+>  
+>  	ref_count = ext4_xattr_inode_get_ref(ea_inode);
+> +	if ((ref_count == 0 && ref_change < 0) || (ref_count == U64_MAX && ref_change > 0)) {
 
-The set_rx_mode callback is annoying because it can't sleep.
-Leading to no end of issues in the drivers.
+/me wonders if you could use check_add_overflow for this, but otherwise
+everthing looks fine to me...
 
-The best way to deal with this IMHO is to do the confirm from a work
-item. Don't try to kick off the config asynchronously, instead schedule
-a work which takes a snapshot of the config, and then synchronously
-configs the device. The work give us the dirty tracking for free 
-(if a config change is made while work is running it will get
-re-scheduled). And obviously if there's only one work we can't build
-up a queue, new request before work had a chance to run will do nothing.
+> +		ext4_error_inode(ea_inode, __func__, __LINE__, 0,
+> +			"EA inode %lu ref wraparound: ref_count=%lld ref_change=%d",
 
-We have added a todo to do something along these lines in 
-the core 3+ years ago but nobody had the time to tackle this.
-The work and taking a snapshot of the rx config are not driver-specific,
-so it could all be done in the core and then call a (new) driver NDO.
+Nit: %llu since ref_count is now unsigned.
+
+> +			ea_inode->i_ino, ref_count, ref_change);
+> +		ret = -EFSCORRUPTED;
+> +		goto out;
+> +	}
+>  	ref_count += ref_change;
+>  	ext4_xattr_inode_set_ref(ea_inode, ref_count);
+>  
+>  	if (ref_change > 0) {
+> -		WARN_ONCE(ref_count <= 0, "EA inode %lu ref_count=%lld",
+> -			  ea_inode->i_ino, ref_count);
+> -
+>  		if (ref_count == 1) {
+>  			WARN_ONCE(ea_inode->i_nlink, "EA inode %lu i_nlink=%u",
+>  				  ea_inode->i_ino, ea_inode->i_nlink);
+
+...though while you're modifying the precondition checking here, I think
+these i_nlink preconditions should also be hoisted to the top and cause
+an EFSCORRUPTED return on bad inputs.
+
+--D
+
+> @@ -1044,9 +1048,6 @@ static int ext4_xattr_inode_update_ref(handle_t *handle, struct inode *ea_inode,
+>  			ext4_orphan_del(handle, ea_inode);
+>  		}
+>  	} else {
+> -		WARN_ONCE(ref_count < 0, "EA inode %lu ref_count=%lld",
+> -			  ea_inode->i_ino, ref_count);
+> -
+>  		if (ref_count == 0) {
+>  			WARN_ONCE(ea_inode->i_nlink != 1,
+>  				  "EA inode %lu i_nlink=%u",
+> -- 
+> 2.34.1
+> 
+> 
 
