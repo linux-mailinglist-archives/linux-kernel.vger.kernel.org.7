@@ -1,143 +1,105 @@
-Return-Path: <linux-kernel+bounces-828919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84EA6B95DA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:35:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2E7B95DAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 552707AD128
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:33:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 060737B00F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F51323418;
-	Tue, 23 Sep 2025 12:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150EB3233EF;
+	Tue, 23 Sep 2025 12:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="hjpwMmZY"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t47aui4f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20B2946A;
-	Tue, 23 Sep 2025 12:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758630905; cv=pass; b=W/FrFgO7CL0lmtb9owyssexv5w7y00QY8NGtT11hd9Kv7z02CFkcNOfyhmrrWIRsDyyTGZDyolvYz9HMjamaASFF0e5LNueBCBrHDueMNjJSKZqX1MV9AYg5L6Tzzg1sVaWQcq9e2ITerEFkoyybK6uJ+dt3pSuD7sFUTcPvwmI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758630905; c=relaxed/simple;
-	bh=sHemU9oAjvPnUJ8EsDfTv+/0D4+bWZwCTfsoU89CoTc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=CO3HK+rbWQt9n94mEAJ+Jq2j6O+cDBht1ypIQ4aL2ziCSJImuRCl0FdsibHZcJHk3axJczl5b4ZmNHUnWKxve2p/EyHCw0Z0xzmqg40SasxTUxLgR8DKrmbwIahJgW9OC5WgENAo1HI+pTq5D+D3ROr+2XUevJ8lCMQzrweJvtU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=hjpwMmZY; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758630884; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=nRap8WPhk31E8VLE9F92eAjJNmFuvWGXpilMzOFJn1z1O6nQunx5H4TQUG6KXNCqo5uzkP3iQ5oUTM2JzDuLdespi66NphBmlJhxqyxlzUugsWH3XtB9LZ3CowledbJsRjRNGgzWQ/6BXD9iq5oZytZ+3ylkpaDbegw2MKA75lo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758630884; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=dwjaDadXsKJkC8djtVlWDKTcSoQPetnpTd2zWoSAkak=; 
-	b=EMXYgDOmZGa95jD58te4pnP9mIHEr6A8qMyOeWJ24/NhkocmQ2sVECOYR90lFD455N0WKNLlTthtMRQje8oW4OnZmu5KleEaWue/xBswrbLqkJjeN3gBiFAGwfBNPVJiY9exW9gd5G8x9LGTcGH/2wC1/tc6v5LBUeAIlQr3aDQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758630884;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=dwjaDadXsKJkC8djtVlWDKTcSoQPetnpTd2zWoSAkak=;
-	b=hjpwMmZYx+2TjiN2sLV4Uk2t+RNCSrQABZuGZ90PRG5CA2uyqhn+KD6nLczjqbs8
-	bLQrvgofRzJwipveTsRJq5/gmbyJw6f9GbeRg46m0gzDHT9BUBcW+jAfMWOwOKE/hHO
-	XHb67x4OP3LWeN6zfsg0fYBBune/twbFAa4/55KI=
-Received: by mx.zohomail.com with SMTPS id 1758630883193557.3474373039268;
-	Tue, 23 Sep 2025 05:34:43 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65013245006;
+	Tue, 23 Sep 2025 12:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758630986; cv=none; b=pEOAgRa3IBkBnJBNJc/BUQh5QYN7fAbqK5oNqB24qkHnEELuJHDKeSy4mMslEWZFcGRDz4N2bWs72NeaqwsdneJzZO48OnwyjFuy+vaZ3VDY2Vp4Y2D+5ntvYD3sj0HUqU3La0FF+tJBhmGFHnCylo3JeYs8B4kgt4VmLg5sl3U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758630986; c=relaxed/simple;
+	bh=BYP+piG4+h2S+71BxBsBcFE0M7inyCGui7t2SCh0h/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EucgIZu/d9ybkhfhBPlr9NZrMc5SXyVZsvTlMdsbNujoKNgC1T4kLV5zMHAS693PwtIS58JJcJS8XLoHL3yZ57/xDxQCMsySqid7cHZ2x/YNXYqyD6+5nvW4brikokRaap7q/IGHteORodNEhjlMzoACrHIHukTjeKx3x2Ok72E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t47aui4f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE7A0C113CF;
+	Tue, 23 Sep 2025 12:36:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758630985;
+	bh=BYP+piG4+h2S+71BxBsBcFE0M7inyCGui7t2SCh0h/Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=t47aui4fs9uGM4H0GkV9w2oqvo9NSKsp5psPxtP7VbHaYFqG0cP8PEcpuUHtCEI57
+	 lh4BnyqT8Wlh23l4vzQcI6j08kzOA+VvpAjrZdAKyLmfHtW/WQQtwhno5kdmWrPT1Y
+	 xI+HM9VZSNHKbUpTxdnc8HRNSuvK4QHL5iYuNrvpL367ixsst6kc7bqTROfzsIpt2n
+	 WrZ1ZFSi84XRZyjiJEp6tU51gVbYF4iRt32TMfb9naU5eobHeGI/LcK+HLV/pvr0Sb
+	 nkPjfkd4JnV3Rvm1S3kQdcx7c6OnIzfIcUT+R+49Ap+J7QPl1T3HdgzfqlQk7NB1nZ
+	 1p2dqq/T4NRnw==
+Date: Tue, 23 Sep 2025 08:36:16 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
+ <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Linus
+ Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>, Sam James
+ <sam@gentoo.org>, Kees Cook <kees@kernel.org>, Carlos O'Donell
+ <codonell@redhat.com>
+Subject: Re: [RESEND][PATCH v15 2/4] perf: Support deferred user callchains
+Message-ID: <20250923083616.0413966a@batman.local.home>
+In-Reply-To: <20250923103213.GD3419281@noisy.programming.kicks-ass.net>
+References: <20250908171412.268168931@kernel.org>
+	<20250908171524.605637238@kernel.org>
+	<20250923103213.GD3419281@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH 0/2] rust: usb: add initial USB abstractions
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <CAH5fLghm-syjWRrj=G2==W4PorPq47bkAPfkeJ1UAsGbbRhPfQ@mail.gmail.com>
-Date: Tue, 23 Sep 2025 14:34:27 +0200
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-usb@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B4D07104-0A10-4B04-88CC-3F138A783811@collabora.com>
-References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
- <2025092338-elbow-dash-373d@gregkh>
- <CAH5fLghm-syjWRrj=G2==W4PorPq47bkAPfkeJ1UAsGbbRhPfQ@mail.gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-[=E2=80=A6]
+On Tue, 23 Sep 2025 12:32:13 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
->>=20
->> I tried to apply these, but I get the following build error when =
-adding
->> to the char-misc-testing tree:
->>=20
->> ld.lld: error: undefined symbol: usb_get_intf
->>>>> referenced by kernel.1a949e63ee2acc6a-cgu.0
->>>>>              rust/kernel.o:(<kernel::usb::Interface as =
-kernel::sync::aref::AlwaysRefCounted>::inc_ref) in archive vmlinux.a
->>>>> referenced by kernel.1a949e63ee2acc6a-cgu.0
->>>>>              =
-rust/kernel.o:(<kernel::sync::aref::ARef<kernel::usb::Interface> as =
-core::convert::From<&kernel::usb::Interface<kernel::device::CoreInternal>>=
->::from) in archive vmlinux.a
->>=20
->> ld.lld: error: undefined symbol: usb_put_intf
->>>>> referenced by kernel.1a949e63ee2acc6a-cgu.0
->>>>>              rust/kernel.o:(<kernel::usb::Interface as =
-kernel::sync::aref::AlwaysRefCounted>::dec_ref) in archive vmlinux.a
->>=20
->> ld.lld: error: undefined symbol: usb_get_dev
->>>>> referenced by kernel.1a949e63ee2acc6a-cgu.0
->>>>>              rust/kernel.o:(<kernel::usb::Device as =
-kernel::sync::aref::AlwaysRefCounted>::inc_ref) in archive vmlinux.a
->>>>> referenced by kernel.1a949e63ee2acc6a-cgu.0
->>>>>              =
-rust/kernel.o:(<kernel::sync::aref::ARef<kernel::usb::Device> as =
-core::convert::From<&kernel::usb::Device<kernel::device::CoreInternal>>>::=
-from) in archive vmlinux.a
->>=20
->> ld.lld: error: undefined symbol: usb_put_dev
->>>>> referenced by kernel.1a949e63ee2acc6a-cgu.0
->>>>>              rust/kernel.o:(<kernel::usb::Device as =
-kernel::sync::aref::AlwaysRefCounted>::dec_ref) in archive vmlinux.a
->>=20
->>=20
->> Any hints?
->=20
-> Did you enable CONFIG_USB?
->=20
-> Alice
+> So the thing that stands out is that you're not actually using the
+> unwind infrastructure you've previously created. Things like: struct
+> unwind_work, unwind_deferred_{init,request,cancel}() all go unused, and
+> instead you seem to have build a parallel set, with similar bugs to the
+> ones I just had to fix in the unwind_deferred things :/
+> 
+> I'm also not much of a fan of nr_no_switch_fast, and the fact that this
+> patch is limited to per-task events, and you're then adding another 300+
+> lines of code to support per-cpu events later on.
+> 
+> Fundamentally we only have one stack-trace per task at any one point. We
+> can have many events per task and many more per-cpu. Let us stick a
+> struct unwind_work in task_struct and have the perf callback function
+> use perf_iterate_sb() to find all events that want delivery or so (or we
+> can add another per perf_event_context list for this purpose).
+> 
+> But duplicating all this seems 'unfortunate'.
 
-+#[cfg(CONFIG_USB)]
-+pub mod usb;
+We could remove this and have perf only use the CPU version. That may
+be better in the long run anyway, as it gets rid of the duplication. In
+fact that was the original plan we had, but since Josh wrote this patch
+thinking it was all that perf needed (which ended not being the case),
+I still kept it in. But I believe this will work just the same as the
+CPU tracing which uses all the other infrastructure.
 
-Hmm, but the USB module is gated by #[cfg(CONFIG_USB) in lib.rs, so not =
-having
-CONFIG_USB enabled should not return any errors and instead skip the USB
-bindings completely.
-
-I wonder if this has to be CONFIG_USB=3Dy?
-
-=E2=80=94 Daniel
+-- Steve
 
 
