@@ -1,230 +1,188 @@
-Return-Path: <linux-kernel+bounces-828501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4079B94BAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:17:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7695FB94BAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766DD3B9F04
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:17:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F6B91902877
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21873112C1;
-	Tue, 23 Sep 2025 07:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D19D3101A3;
+	Tue, 23 Sep 2025 07:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="OuYfjoI0"
-Received: from mail-m1973196.qiye.163.com (mail-m1973196.qiye.163.com [220.197.31.96])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UomyOQrR"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011042.outbound.protection.outlook.com [40.107.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC9A86342;
-	Tue, 23 Sep 2025 07:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.96
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758611851; cv=none; b=VLMigj15yk+c6W+3w/1Lg0ILaZhSWoFR40xOlCr7VXW2fJnaEi4+qRcHkzYyuii12E5/PmC5XafNq8uDbDImrFotynMuX591kDKbiOrPYsfdHQHiYLU4Ua6WjAelzmPLfAlDGJWEBieeZQaJAFv64QldnsBrBPgGFRtttY0yOsk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758611851; c=relaxed/simple;
-	bh=xaJFnFUsloI8zSn85qWseot4/tYAWVG1JUyDOT1+SDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nkt7GPtGT4ETMHBIHGCWm3ZxMFBGRVpjRDbPvIKBaSR3WqlrTglhFh4PA9q0PgER5NT1WXb1SNFpajvXlnpr6KiPDJ/H+2U+5OsLlvxIpM91sClr7RIJekz3TiILzr/vCLeGu2r6yoZtRuDdkPiyIDchwJLQUjicMESk7ru8oBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=OuYfjoI0; arc=none smtp.client-ip=220.197.31.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.153] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 23c09b919;
-	Tue, 23 Sep 2025 15:17:21 +0800 (GMT+08:00)
-Message-ID: <dc554831-4368-43f0-b92b-896fd920e239@rock-chips.com>
-Date: Tue, 23 Sep 2025 15:17:20 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F332886342
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758611923; cv=fail; b=dQFH1hTnEaEmbhzFHj24SyFqjlbIxQyQS8JNKh3xjpU9GOO4kHa8IVxxevQkNlngZnCAn2T3WWaG4GpRNv8+saamOpzcwhp0dZVzPskiGjptWIcZy2UUH/jWVdUfAUbiqy8x73Jsz7Ysnsmgd25To243y1wlqmECW2qA/7KiqkI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758611923; c=relaxed/simple;
+	bh=XsoUaVNqIYhUFMAm7VhXvoJZ5gzOGlp3CVn3U6ohj4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Gfn3AK3DvVmLtzoFSjsc0dnj3X8XjVwRqNhSHyInBZlXGsC0EXGce+ne870vFQMWB3z86PCq2PW2I/H1w+nKlm+c4MfsjfxPNReoDR1BpeVaN8iBUOMCZCvDyZp1WPdzcvC7BQMAAdyR6ZCDIrB4t1d7OGyZQr30yg5M2BLlqhA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UomyOQrR; arc=fail smtp.client-ip=40.107.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nNZPdtrup9BMSnzGhK3qQORP0VG93TRoqAZCaa4bIyURao9IWvpjOe2YMSW2yH66ZY0cBRdTOSnZj/PgPbYYdFFkSSasbS+OnfqzJKAm7XnWB9m90yeNPs0CNDj0h19eVwbQCwoeMsfTatxPynqcH/P7U1KMxUlM6KrbNSVF9LewQu6oKghjPPtbkQigAzW7ZU6vqui3LAIT6JICqQGKpEUOyZ6Cuj/Eqp/CqyB7Y9BQnmBRAoBHGG2jYU5UDLpMFT19VhWumDfORLnGZk3fJfmnrEy0HreYXISd6Xu209JdIUCoZMYgwKIbb1jLhmPra5yUoduilrfes8OmusL5yg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aQpcuqst9mKk3KNQ3S3yUhdEZCQhGyU9kuSnRSr0ecs=;
+ b=hfhzV5c2qkFI6VWvPkNbbtkMCwDBAx5xVf16D2m6SMjR2Nd3RtezEXx6KFWAIbxByAY2w8z3pZAloJjYxc5z9DJVAfy/NIOFRjnOb9sO5FlhpGPeGOUDH2ybJZa5PSn+vc1T9X7yeGCAf2D/Uhksgx4lijXJHTowWknAlq7wkQdXLCMPLrB85F57yUUL+OZD5uWwF1iM9ke0skTKyusAb6LQ7IQE0UW8CvxNc0Z+Cf0/QFprzwB0l0a+FAzHHWw80hPDxDjnf5gx/2/Py0bY4Bkxj0/ULclbHHqUCOVa2Lw0NF1tNx2AHtAc8x5Qd607FuVP60fSZ4U4OIUJMyVBWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aQpcuqst9mKk3KNQ3S3yUhdEZCQhGyU9kuSnRSr0ecs=;
+ b=UomyOQrRAxPV5FHCY45RZVX8HwCrPIgtmKdX0csdPy3oYw5wUFSBnkEZV9TwF9pHpheezaodfWbU7iUkkwFwTSlKuvFEVWo13JIhs6UXjf1+M33H8YtfqI5V/hD/HI1xWAGzMCw/+pi5FRrwu69DLKSXozwdvPNY/sRP/IR4JTDzhsrWBBPJOqnJn0eo+lcK8Hp3cjHAEvYZtOf68qSoIzlXGw+OQlzrs3NFEbZy23o2or5Bum/sWsCDNb6pWyABKPS4fHhKCXdveB8yzasMrKOzmYYf+2BnD0xPWed4gSLk67y6r380pSoA778wppE4Er7nyQDsRVwQGwYzskdH+g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by CYYPR12MB8940.namprd12.prod.outlook.com (2603:10b6:930:bd::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
+ 2025 07:18:39 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 07:18:39 +0000
+Date: Tue, 23 Sep 2025 09:18:33 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
+Subject: Re: [PATCH 1/7] sched_ext: Use rhashtable_lookup() instead of
+ rhashtable_lookup_fast()
+Message-ID: <aNJJydxk8ItUpBJd@gpd4>
+References: <20250922013246.275031-1-tj@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922013246.275031-1-tj@kernel.org>
+X-ClientProxiedBy: PA7P264CA0221.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:374::17) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/7] dt-bindings: phy: rockchip: rk3399-typec-phy:
- Support mode-switch
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Yubing Zhang <yubing.zhang@rock-chips.com>,
- Frank Wang <frank.wang@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Amit Sunil Dhamne <amitsd@google.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
- Diederik de Haas <didi.debian@cknow.org>,
- Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-References: <20250922012039.323-1-kernel@airkyi.com>
- <20250922012039.323-3-kernel@airkyi.com>
- <eb6ogrepo5acwcj5gpdolxxyg3xrx7kz6zrbizzseqyavvitfd@cnzurelqeh4t>
- <533d41bd-9293-4808-85f3-8fb6dc8bcda7@rock-chips.com>
- <mpyfe63tzxzxyyqf4vxwmrewzeosnaftlkko7pq2ynld6u3lcz@wlpixckov4hg>
- <8396dd15-9111-4ceb-a561-6ed57727546f@rock-chips.com>
- <jm32ujhxslsx5snes4o66t2grb5uxhsaapjqahektfck66g6hb@fx6f53yojlcr>
-Content-Language: en-US
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <jm32ujhxslsx5snes4o66t2grb5uxhsaapjqahektfck66g6hb@fx6f53yojlcr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a99756f218d03abkunm5591869a139fab
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUgZT1ZNSE0dGUJJHklDTxhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
-	xVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=OuYfjoI0/KRTSG9Mvp5kZYif7pjSs177Xu8KZpj87g1akZkEF+pMJzmwB3eSidvVAne+dtdEcqRxOUpwCka9htscgTlWFbmWMlv7ZiMuYOV8WMKcRTDPeqIot1jzjkJ8XCw5tP08afglgbemTqC93ar2xwElmLvVYzlSaQtWkqc=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=YXgNszLNxTgYBQeXLiuoM2pl3d7cCmFzHYl2QZT0EDg=;
-	h=date:mime-version:subject:message-id:from;
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|CYYPR12MB8940:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2a095419-32e5-480c-4eaa-08ddfa716b1f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+K22e5lV4TNbNe7weCZ7Gj0CW8e2+GB+b2QJ5/QUVDF4WkK1ZXPLikPSTYYU?=
+ =?us-ascii?Q?lTm7Eu0F3R6MteUeaED6CIGEGze2+/F+oZWNaua/cRN8R68gfIly5bli2hN9?=
+ =?us-ascii?Q?RYZr5/q6WbHQ2q2/l3NIqwzjzhbXVbGKV1KrKFOaNjNUBODmrwLc2NB+7iOH?=
+ =?us-ascii?Q?9FqZ3fbpFPmI+SH0uenc0zRQGJJcLQEvgm1bIu45kcrPGUFgl97poSwjgicJ?=
+ =?us-ascii?Q?YrLjdUJlIzzoLJH62hozhNRE8YsDe/t2e0wQu3WAs8TDzAxdOJAkPdJ3o9R7?=
+ =?us-ascii?Q?tpBuQIVJXdqYWdkl14yuouEY3D5ySpFpGhdkEwVZaMXbEnhPog0LX+atSrMw?=
+ =?us-ascii?Q?d3fd0sS18nbHfRfMx2s4xcXUBeVRuJex8UaatoM3X7vzz0AbtJzleU4fDsmz?=
+ =?us-ascii?Q?5syVZM4FJ3ZTRo1g5rR5wjZvBzlHvcUhhWx259p2b7JD1fA98CcjHYAmhgS3?=
+ =?us-ascii?Q?S9/TLLTH86Ty66Z9X3SANfbWvgLA6pN0DIjGhfApKZxpmeuQF8QqR2mnlWS6?=
+ =?us-ascii?Q?XtxG8LEASKGUeYk4G4ots2lSfsPoCaUnP4Mq0KnzcMk4FimoPfd2yUpQqCbH?=
+ =?us-ascii?Q?sEeNeQcFwfVlSJXhdT9hm6oowha7e1cfQ8mOR0J4mWD7jiDc+xuiZXE3X3mm?=
+ =?us-ascii?Q?3+JGFx2y+6Wz8E4O5N/i2BezUhoCeiHH8cpwziIkfuq9qJZi8wn92Q5EI67w?=
+ =?us-ascii?Q?fckSSwbbOfPEgqcrwTJDFbvmQJQbqw5swbb4M7AlkoC1rmpOl6GjyKr/wz+Q?=
+ =?us-ascii?Q?bRbUMZXqL6AzzGH7FwY3RVAdnjQPPqZ7cp9IBEFfI1NfbSBEjn+raChipfe+?=
+ =?us-ascii?Q?EAIFDP9ijcIh54pWRPGB9H/MrGQOTPC3YNSbfaXNb/X5MEzkiBJOckMN52Vi?=
+ =?us-ascii?Q?X5GicZySZVgwyNv3Uuy2X/43l5+WHGjF5ocyKzOhTSgVJpqVvPK7L6R8jNNg?=
+ =?us-ascii?Q?D4m1czSSLRsWEUrRqCj47ZeFa7y2JKiWGv1SrAhWPuVpkPVa+m7Y/olXhTDW?=
+ =?us-ascii?Q?iAi52pjwqJiVqA2+R17YpWCjk/nOvQdRJmfw40BwIKxKg5Pis2sk5drimT3j?=
+ =?us-ascii?Q?Ry6AgeVoPSpBYC4riywWJSwlALEpLHly2wz5TWHgykM1d2qaAiabvVaw6ocu?=
+ =?us-ascii?Q?27KTby9JR6mqYQNKjmM/80wHJPL7DCGVvKYUgKwmyTaI1szBxdbjn4qqwyOj?=
+ =?us-ascii?Q?aJDX/qHETb+HHuO9yCtCkt2ofIoGLRQqBwpojDvFKnKsmKCryZWs/8QwCK9F?=
+ =?us-ascii?Q?7ZxsKElK6wgaWNXu38TFJ7tCOMIKGPEXzv/3o7HSBv6u0RDzv1dx77NWfM2J?=
+ =?us-ascii?Q?uCz4cSkhL3WLNzvx+SHA0p9x9H0j0zvbKUJG3SLy2nEIDuBNQ9Hvu56ETmkQ?=
+ =?us-ascii?Q?/EGveEnQ0y/Rke7e85vV53WzM8fzhZ4XVontnxDADevFSBIwQnfNJ+8Ysshe?=
+ =?us-ascii?Q?ic2hDCyPHsM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FEwFj7Rve5tlvQyycBo9ZPtSVAJ8jR+lb9OahUs9HODGlq3yyy/0dFYa/bS5?=
+ =?us-ascii?Q?qcXotEIFRWeU/TXFbM7sW5v1FGbCWCsbpo9KmSA5AK/p9R47cvv3jukqVr40?=
+ =?us-ascii?Q?SB3WWdAtfmPlcOuaRhc2E44rzDj+IJSnVSlvNm1UcRpqsoFZHsM6ULl/E0cN?=
+ =?us-ascii?Q?NLTDpBFLuYlo38ML+eFq4n+0NatUaz8KpVGORhS/6L57EOAamQQBwDDQw8hR?=
+ =?us-ascii?Q?mz3DJ8ggluU5tQONCRBOBssgvQoL35aTYFuFFDtpSzO+k22VI4VUIWmOHLXA?=
+ =?us-ascii?Q?V0ICN5Ddb6HoJm6m2okA8erBRneCGBgsyz2rS4mnt3ys4mPh+L7CJbqHf18e?=
+ =?us-ascii?Q?vA53TVGoSV1r0qHaxT6yJbv0hbrDXhevpc6R3p87Kcs+/tKKNlD6yEBiLODP?=
+ =?us-ascii?Q?u9GQFiTosKZJuUxRTgwr2qRxrrkYS1vJO2R+lg/wY2UCDBQafnJxnTUNWwLC?=
+ =?us-ascii?Q?LaheVHb1AapVli189udIPiIDVN5IC6dBL82u0WykZz35U6QnORfvjTmQ277x?=
+ =?us-ascii?Q?eKpuGdd68g/rGrN6aPvfxVtSAJE9PqQJjYXhtctfT+hX0icFS4UcNB0uM77N?=
+ =?us-ascii?Q?xfZtUt4B0Jut1vyx61bFzkrFJd4Q1KVT+hGh4U6bGjbQcoE2ZeHtWRIW+UlW?=
+ =?us-ascii?Q?J++rse70gixen6+JgKNMJbnSvJvYWqLRHCrg26CD1VgxNCN9pesAeP+GEZKx?=
+ =?us-ascii?Q?ks6WS4eVUTKoujz0Dh3br6cS2wzhbsVHwXSmNVxvqfBIqOt3ZbO5UOFSKRNF?=
+ =?us-ascii?Q?YfNVcX2WooPbtkEC07npBitGudlF1VWwTmz7OdRKmq6a9EQdz/x3pB2rCr0c?=
+ =?us-ascii?Q?QNyTWh8McsE8MAmrzOi0SnKKCaswZNl292Mq0pIqvEfjhzxoXmN+0zgKhR1b?=
+ =?us-ascii?Q?kQc6l0mT2aQVrNS5nqaw/JkbBEZaYfc0bjIN/qo/tJDIDSoO/et1zoaFozvi?=
+ =?us-ascii?Q?CxYSoJhF04qzRar8GSnB5J0lp8jii/0nDaYrGTi57upqwYgS9ANAk2su2rC3?=
+ =?us-ascii?Q?UpGwWKKlIhXa0GOdT3xi31VwupuXFaVTuaHBFkl+ev5S4uBgScw46VbDqCRK?=
+ =?us-ascii?Q?PMlHuC0+PC0tp7/kd0xh0n85lsGS89610rPGjoHOPDWBPfoZkcHoco1vqJmO?=
+ =?us-ascii?Q?6zXGFdeqouBqdxhJAefaf7AUbLxizX6Q6mDiks9/o2NrNHYgmGkcsSbSftBi?=
+ =?us-ascii?Q?CfNmAVZdNUsPxeJXC5LknmppueFkKC1s0W8SyFTBnwBc2qj0Bc8K66lyAHvF?=
+ =?us-ascii?Q?KVmGxrkY1eTBkCG4jL2k4dBzvuqs12w/pbHxDyfIoT2AHNxbaWhvVIOcEHf+?=
+ =?us-ascii?Q?ojHD+TIhguVL44mVlEAZoWR6KJqHGvSO6WO8QD0bSdxmhJ4TMgHETozPdP6I?=
+ =?us-ascii?Q?1ngLzLn5nDp/3MSJs9GY4qF6IdbNJmDbE0ENa0SMp1rfdaIdrVU1T2OAC/c+?=
+ =?us-ascii?Q?ZR7ZbfOqhCumrGepDRM6Oeo1uRbZO3Naur1vO1SY2i2r9STNwAMZT3jNmsU2?=
+ =?us-ascii?Q?4pBZY7e914N0zt/25AyPQVojVi7zb76CR4J/bTN+FxQnBTxb7c6OLd5hNguz?=
+ =?us-ascii?Q?A9SjSfa4OZ6wLIVLXtjNtercG8vpU7empGIfHoGL?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a095419-32e5-480c-4eaa-08ddfa716b1f
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 07:18:39.4398
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PMFCN9USaoK49NGcyh5WaAKoTsDohMsf3GPRUuRRuoArHGMb1RulozVsmJBckDoe0MFcePyPJgBAp2vOpe/6BQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8940
 
-On 9/23/2025 12:51 PM, Dmitry Baryshkov wrote:
+Hi Tejun,
 
-> On Tue, Sep 23, 2025 at 11:40:33AM +0800, Chaoyi Chen wrote:
->> On 9/23/2025 11:17 AM, Dmitry Baryshkov wrote:
->>
->>> On Tue, Sep 23, 2025 at 09:53:06AM +0800, Chaoyi Chen wrote:
->>>> Hi Dmitry,
->>>>
->>>> On 9/23/2025 9:12 AM, Dmitry Baryshkov wrote:
->>>>> On Mon, Sep 22, 2025 at 09:20:34AM +0800, Chaoyi Chen wrote:
->>>>>> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>>>>>
->>>>>> The RK3399 SoC integrates two USB/DP combo PHYs, each of which
->>>>>> supports software-configurable pin mapping and DisplayPort lane
->>>>>> assignment. These capabilities enable the PHY itself to handle both
->>>>>> mode switching and orientation switching, based on the Type-C plug
->>>>>> orientation and USB PD negotiation results.
->>>>>>
->>>>>> While an external Type-C controller is still required to detect cable
->>>>>> attachment and report USB PD events, the actual mode and orientation
->>>>>> switching is performed internally by the PHY through software
->>>>>> configuration. This allows the PHY to act as a Type-C multiplexer for
->>>>>> both data role and DP altmode configuration.
->>>>>>
->>>>>> To reflect this hardware design, this patch introduces a new
->>>>>> "mode-switch" property for the dp-port node in the device tree bindings.
->>>>>> This property indicates that the connected PHY is capable of handling
->>>>>> Type-C mode switching itself.
->>>>>>
->>>>>> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>>>>>
->>>>>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>>> ---
->>>>>>
->>>>>> Changes in v4:
->>>>>> - Remove "|" in description.
->>>>>>
->>>>>> Changes in v3:
->>>>>> - Add more descriptions to clarify the role of the PHY in switching.
->>>>>>
->>>>>> Changes in v2:
->>>>>> - Reuse dp-port/usb3-port in rk3399-typec-phy binding.
->>>>>>
->>>>>>     .../devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml  | 6 ++++++
->>>>>>     1 file changed, 6 insertions(+)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml
->>>>>> index 91c011f68cd0..83ebcde096ea 100644
->>>>>> --- a/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml
->>>>>> +++ b/Documentation/devicetree/bindings/phy/rockchip,rk3399-typec-phy.yaml
->>>>>> @@ -51,6 +51,12 @@ properties:
->>>>>>           '#phy-cells':
->>>>>>             const: 0
->>>>>> +      mode-switch:
->>>>> Having the mode-switch here is a bit strange. I think the whole PHY
->>>>> device should be an orientation-switch and mode-switch. Otherwise it
->>>>> feels weird to me.
->>>> I think this is a difference in practice. In the previous binding, there was already an orientation-switch under the usb-port. I trying to add both an orientation-switch and a mode-switch to the top-level device in v2. And Krzysztof reminded me that adding a mode-switch under the dp-port would be better, so I changed it to the current form :)
->>> I couldn't find the comment on lore. Could you please point it out?
->> Sorry, it is v1. I added an orientation-switch and a mode-switch in the top-level PHY [0]. Comment is here: [1]
-> My interpretation of [1] doesn't quite match yours. It doesn't say
-> anything about moving mode-switch to dp-port. It basically pointed out
-> that you already have two ports.
+On Sun, Sep 21, 2025 at 03:32:40PM -1000, Tejun Heo wrote:
+> The find_user_dsq() function is called from contexts that are already
+> under RCU read lock protection. Switch from rhashtable_lookup_fast() to
+> rhashtable_lookup() to avoid redundant RCU locking.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> ---
+>  kernel/sched/ext.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index f5873f8ed669..df433f6fab4b 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -207,7 +207,7 @@ static struct scx_dispatch_q *find_global_dsq(struct task_struct *p)
+>  
+>  static struct scx_dispatch_q *find_user_dsq(struct scx_sched *sch, u64 dsq_id)
+>  {
 
-Yes, I think this can be easily changed, as long as the issue you mentioned below is resolved.
+Maybe we should add a WARN_ON_ONCE(!rcu_read_lock_held()) to make sure the
+assumption is correct and catch potential non RCU read locked usage in the
+future?
 
+> -	return rhashtable_lookup_fast(&sch->dsq_hash, &dsq_id, dsq_hash_params);
+> +	return rhashtable_lookup(&sch->dsq_hash, &dsq_id, dsq_hash_params);
+>  }
+>  
+>  /*
 
->
-> Also, I'm not sure how the current construction works: you register
-> switch and mux for the dev_fwnode(tcphy->dev), however the lookfup
-> functions should be looking for a device corresponding to the port OF
-> node (which doesn't exist).
-
-In v1, that is fwnode = dev_fwnode(tcphy->dev) .  And dt like is:
-
-
-&tcphy {
-     port {
-         tcphy0_orientation_switch: endpoint@0 { ... };
-         tcphy_dp_altmode_switch: endpoint@1 { ... };
-     };
-};
-
-
-Since the binding already includes a "usb3-port" and a "dp-port", it can not add another new port.
-
-So after v1, that is fwnode = device_get_named_child_node(tcphy->dev, "usb3-port") . And dt like this:
-
-
-&tcphy0_dp {
-     port { ... };
-};
-
-&tcphy0_usb3 {
-     port { ... };
-};
-
-
-Sorry, this looks a bit hacky. Do you have a better idea? Thank you.
-
-
->
->>
->> [0] https://lore.kernel.org/all/20250715112456.101-4-kernel@airkyi.com/
->>
->> [1] https://lore.kernel.org/all/4dfed94c-665d-4e04-b527-ddd34fd3db8f@kernel.org/
->>
->>
->>
->>>>
->>>>>> +        description:
->>>>>> +          Indicates the PHY can handle altmode switching. In this case,
->>>>>> +          requires an external USB Type-C controller to report USB PD message.
->>>>>> +        type: boolean
->>>>>> +
->>>>>>           port:
->>>>>>             $ref: /schemas/graph.yaml#/properties/port
->>>>>>             description: Connection to USB Type-C connector
->>>>>> -- 
->>>>>> 2.49.0
->>>>>>
->>>> -- 
->>>> Best,
->>>> Chaoyi
->>>>
->> -- 
->> Best,
->> Chaoyi
->>
->>
->> -- 
->> linux-phy mailing list
->> linux-phy@lists.infradead.org
->> https://lists.infradead.org/mailman/listinfo/linux-phy
-
--- 
-Best,
-Chaoyi
-
+Thanks,
+-Andrea
 
