@@ -1,184 +1,93 @@
-Return-Path: <linux-kernel+bounces-829105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE95B964CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:37:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C188CB96453
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D02116A410
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:32:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD36C4E2EEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCBE322C8D;
-	Tue, 23 Sep 2025 14:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A95326D6B;
+	Tue, 23 Sep 2025 14:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="v8yfZsTW"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQCgbZOt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC492475C2
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA092475C2;
+	Tue, 23 Sep 2025 14:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758637669; cv=none; b=D9laPGbAjtTDjDD46IhRqIbhsM0qEyNKSIW9SkzxDUAH5ZMrr6wWPzywqUGf6J0WNsvuihFkhb7DEQJ60Ox1bKRkaJ3n7WxkiuHAl4Xmg/t62DBqF492OT2gKdiudxQr89zhFE10MBX7LaqagTvq4iJwuGldEhr4rOlMsONqRRQ=
+	t=1758637690; cv=none; b=kuLLCr074C2upHXfC0xgvMvUlO+6iTez7aaU2o3Towb5juvdAAxICzAsoNizD8LylCCk9D463gwG/MVQjZP3EuvPehAsOgQ+PgQSi7JLjrwc/KTiSxafjxlFGT2mMqd+N9TlDr+IGnIMD9CTEwwnRdrhjmO4gkp+s5PHC4/EgQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758637669; c=relaxed/simple;
-	bh=QSlVRuHGqVrvAwqdZx7uUPyniECMwQzZvqtjdXpsCkE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xb4xUnYxToQ0G5bfF7KFvfc+gxVjxijeUEewM+oxqof7qCV759K5ZJwr+OCvu2AlRR2uS0tHI3IhfvlpXYhFmUyJtMXmy8dWa8GiIgPidvzwfMXBeVM7RGkSGZRQZAyq1qSnJoSLFmUcSxX8wefaOxtS+OfI3RD7fsFnJXnBPG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=v8yfZsTW; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-74a61973bedso4585401a34.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:27:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758637666; x=1759242466; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hLJ7BScAjhL/3pW5EapzhVxN4E7gDwKlVKKb8Tfi10Y=;
-        b=v8yfZsTWM3ixJCEtFRsLd6y5101nnPnIQSYTqKzCVPn0Ypd14SYsLsjLzDk4vdAGj4
-         nnFevP86dH85veFbD8CxV1I3VGiDSr4Q0Z42XE7e4VjXiGVARJhszzxztsBs+brWIeC/
-         eyLgGM48uLvsVAQyYvt1BuRKEeIWxPC8h/4Dv4oxbpkFECeq0A8z1kwLeoeoINg2u/03
-         MH84mUyV0iLmsnkfFbi93w768KiKbazFmgJ7H6MydMznNEl8DupDG2WqZFXMe4G4My7m
-         tBJ+rMmx3yodRoIzGEnlmOlMaMDd4TaT50ybMtauUE3oxA55iL8tYkn1hoXQnTRSlZhY
-         xVsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758637666; x=1759242466;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hLJ7BScAjhL/3pW5EapzhVxN4E7gDwKlVKKb8Tfi10Y=;
-        b=e1HxcBvh4EtY69B6CJkmQ9TvWvRbyGZ78wgZ1BQWuKE05KHdJH2LvgavB9egTvZeYl
-         VUUUJQ+YgV+qo5dpvG1K8h8OEzbCej/UpWzcmR1LgIcEQn1R2SkslqynWoHMp1gjBjjd
-         pvtw+AiCfKxyI56HtaxcaC0E2oNPKGiALQ0jPCj+PfdK0PQLa6JnTpu0jHe5w/1hhrps
-         SCwTmV9NqIb3xTHq9D/uKW5dpROvgqAiEoBoD2FlpfJ/ylpz2Rak+x22CdNr1i8y0WsM
-         YiWfroNu92dd/e8RYkcDLA+YV72fvHLcJ6i8KDVbRXVacTR+0PJE3rs/HKrIDOsP+vjt
-         IM7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWNWv5+KCYRul82ndGmc6bgitLTHlBSowAqL/ZVty9xmDcZnsKLBrK0uozEwdNJrxbKhLuvNQm1rld2wFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYEPFw+55Qm565IHr2SK1UA+/woQ3sFBuhi0o8ua4U1mwujejA
-	H1XyT+JhAdzRJJQ7lGAunC0G6VBBx5PzpOKVQ8+PVovJMGjOGs9DAVCxyMyzP8nppUg=
-X-Gm-Gg: ASbGncsWBITW1cMROIdXSZ9aO8TorXsQ1+dsWFPwQWzRuDNY+Y6+yTXQB0qKIzO/KG8
-	DnAaUBd9PE6ZGiwQ68iNnPcUzQ7tJ+wEXDDFkflWjw8DsK9S3OrO0m9n5gh24GrLWWKt7lLqpbw
-	DF74w2OvJkLMwhidnSPLGUMj+yRDSCZgKOpMTLVw/dO14EeS7H5/MlAgKMYAD3p1MK9ggNtnH3r
-	EEw/9qrPO1H1ZnP6M2uPMRr3qurE8Bi8BjpjhOXF0xNEk1s2aydpmYjweXqpxoxChlLhfuvCJtp
-	jmsSgdQ6JluTORV7C4JgZUklPXQRltlgmWHejFCiUL8110H4OqbfiB+sFxyxw00dHH6sfd2+Ms2
-	nfkYk0rzglHtSI9cG696luo7jFEJRCz393zZMyjydsiG73Cc/N05U26RM6iAKfwywuqBhqkgUeK
-	w=
-X-Google-Smtp-Source: AGHT+IFL94lBmdZJriTx+SZHET/cqfmupNJowuzMcchFfQ0ZWLkK9i/EadeGAMHUq7kmPPWbmJIiag==
-X-Received: by 2002:a05:6808:f0b:b0:43f:17eb:3134 with SMTP id 5614622812f47-43f2d2e3709mr1548523b6e.13.1758637666225;
-        Tue, 23 Sep 2025 07:27:46 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:505f:96cd:1359:fff4? ([2600:8803:e7e4:1d00:505f:96cd:1359:fff4])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-43d5c6c935fsm5987496b6e.14.2025.09.23.07.27.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Sep 2025 07:27:45 -0700 (PDT)
-Message-ID: <c19fdb3a-e537-4f32-9b69-db819c04f447@baylibre.com>
-Date: Tue, 23 Sep 2025 09:27:44 -0500
+	s=arc-20240116; t=1758637690; c=relaxed/simple;
+	bh=cCAvArKYI9+1fdw3oMSRIGwzyIqwiRWzr2uSM38P/0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lmONpzLaq0fv4cidUc96CdlNGCeAEW0hjne+lZuDSefzWiIT6ZVPrQcstM2lzSbxx2+gFP9nXdqlwjf1ndl5rho8tAbM0o6RxrD8bk9lc6eUGGHESKtLHHAqVterHr6f0yYmb2I5d5/N2mF3Mqq8Dk9uG68dqmAbrfx0KPgi75Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vQCgbZOt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE700C4CEF5;
+	Tue, 23 Sep 2025 14:28:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758637690;
+	bh=cCAvArKYI9+1fdw3oMSRIGwzyIqwiRWzr2uSM38P/0Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vQCgbZOtZ5oeh//BAVBmA+97HegAbwdDGCSSP0v1UxIR3NPYx2UP2cV0PKKro9FGC
+	 vy/pFbHvzrZI4hx4FRzjcqW805+1xo8ImbsbA8VE2F9tzQFazOzrwY0cjTBsys5NU6
+	 9/fqE58/81Up+s0CSAJxCaHmWcEwRGBpAyjAmvsa2OvIi/XJOAiD3EmjUmqE9Bvukf
+	 sA0DFpnauMGQLqGkYAAq69B3owHwwxIt7CXPl5F0W4Bth7s6UcQEe3NWVedE484cQ4
+	 wq/y2F3LBU31fOG8KWSyRbcM45w8yp4mUcd7wDKkqdCKlOODn6oaqMZtYQtmDBVmz3
+	 SqE7gDi8hBqRQ==
+Date: Tue, 23 Sep 2025 07:28:09 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Michal Pecio <michal.pecio@gmail.com>
+Cc: I Viswanath <viswanathiyyappan@gmail.com>, andrew@lunn.ch,
+ andrew+netdev@lunn.ch, davem@davemloft.net, david.hunter.linux@gmail.com,
+ edumazet@google.com, linux-kernel-mentees@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, petkan@nucleusys.com,
+ skhan@linuxfoundation.org,
+ syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
+Subject: Re: [PATCH net v2] net: usb: Remove disruptive netif_wake_queue in
+ rtl8150_set_multicast
+Message-ID: <20250923072809.1a58edaf@kernel.org>
+In-Reply-To: <20250923094711.200b96f1.michal.pecio@gmail.com>
+References: <83171a57-cb40-4c97-b736-0e62930b9e5c@lunn.ch>
+	<20250920181852.18164-1-viswanathiyyappan@gmail.com>
+	<20250922180742.6ef6e2d5@kernel.org>
+	<20250923094711.200b96f1.michal.pecio@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 2/3] iio: adc: max14001: New driver
-To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: Kim Seer Paller <kimseer.paller@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
- Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
- Ceclan Dumitru <dumitru.ceclan@analog.com>,
- Jonathan Santos <Jonathan.Santos@analog.com>,
- Dragos Bogdan <dragos.bogdan@analog.com>
-References: <cover.1757971454.git.marilene.agarcia@gmail.com>
- <c257f7feb92dcf33bf7a55810fe69d13890374d5.1757971454.git.marilene.agarcia@gmail.com>
- <2d5ef36b-ae37-453d-a19b-76fc97b7f14f@baylibre.com>
- <83018b80-b939-4e2f-a9ee-7fbf07648181@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <83018b80-b939-4e2f-a9ee-7fbf07648181@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 9/22/25 7:56 PM, Marilene Andrade Garcia wrote:
-> On 16/09/2025 15:04, David Lechner wrote:
->> On 9/15/25 5:16 PM, Marilene Andrade Garcia wrote:
-
-...
-
-
-In general, please trim out extra stuff like I've done here when you
-reply. It makes it easier to find the important parts. I hope I didn't
-miss any of your questions.
-
->>> +    /*
->>> +     * The following buffers will be bit-reversed during device
->>> +     * communication, because the device transmits and receives data
->>> +     * LSB-first.
->>> +     * DMA (thus cache coherency maintenance) requires the transfer
->>> +     * buffers to live in their own cache lines.
->>> +     */
->>> +    __be16 spi_tx_buffer __aligned(IIO_DMA_MINALIGN);
->>> +    __be16 spi_rx_buffer;
->>
->> These would no longer be strictly big-endian, so we could
->> just make them u16 with a note in the comments.
+On Tue, 23 Sep 2025 09:47:11 +0200 Michal Pecio wrote:
+> On Mon, 22 Sep 2025 18:07:42 -0700, Jakub Kicinski wrote:
+> > On Sat, 20 Sep 2025 23:48:52 +0530 I Viswanath wrote:  
+> > > rtl8150_set_multicast is rtl8150's implementation of ndo_set_rx_mode and
+> > > should not be calling netif_stop_queue and notif_start_queue as these handle 
+> > > TX queue synchronization.
+> > > 
+> > > The net core function dev_set_rx_mode handles the synchronization
+> > > for rtl8150_set_multicast making it safe to remove these locks.    
+> > 
+> > Last time someone tried to add device ID to this driver was 20 years
+> > ago. Please post a patch to delete this driver completely. If someone
+> > speaks up we'll revert the removal and ask them to test the fix.  
 > 
-> Hello David, I have some doubts that I would like to clarify before sending v12. Since I am not able to test the case using SPI_LSB_FIRST, I noticed that you suggest saving the data as __le in this case. Just out of curiosity, if I use SPI_LSB_FIRST, would saving the data as __be lead to errors?
-
-My thinking is that since we are sending things out 1 byte at a time, in order
-for the least significant bit of 16 bits to be sent first, the least significant
-byte has to be sent first. So will little-endian, the byte containing the least
-significant bit of the 16 bits will be first in memory.
-
-__be is just a naming convention and doesn't actually cause any bytes to
-be swapped in memory. It just lets readers of the code know that the
-value stored there has to be handled carefully because it may not be
-cpu-endian. It would be confusing to readers to store a little-endian
-value in a __be16 variable, but technically, no, it would not cause any
-errors.
-
-This is why I suggested to make it u16. It is still wrong but it is
-equally wrong in both cases. If you still want to use __be16 though,
-you could make a union instead.
-
-union {
-	__be16 be;
-	__le16 le;
-} spi_tx_buffer;
-union {
-	__be16 be;
-	__le16 le;
-} spi_rx_buffer;
-
->>
->> The scoped_guard() looks a bit odd with the extra indent. I would write
->> it like this instead:
->>
->>
->>
->>     case IIO_CHAN_INFO_RAW: {
->>         guard(mutex)(&st->lock);
->>
->>         ret = regmap_read(st->regmap, MAX14001_REG_ADC, val);
->>         if (ret)
->>             return ret;
->>
->>         return IIO_VAL_INT;
->>     }
->>
+> These were quite common, I still have one.
 > 
-> Ok, thank you. But since I removed the mutex, as it was mentioned in the first comments, I should not use the guard, right? At least not for now.
-> 
+> What sort of testing do you need?
 
-Correct. The regmap_read() has something similar internally already.
-
+Excellent, could you check if there is any adverse effect of repeatedly
+writing the RCR register under heavy Tx traffic (without stopping/waking
+the Tx queue)? The driver seems to pause Tx when RCR is written, seems
+like an odd thing to do without a reason, but driver authors do the
+darndest things.
 
