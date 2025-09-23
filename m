@@ -1,134 +1,127 @@
-Return-Path: <linux-kernel+bounces-829513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3693AB973ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:52:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7200AB973F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 796402E5F45
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:52:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 268134C4925
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8402FB630;
-	Tue, 23 Sep 2025 18:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528572FB084;
+	Tue, 23 Sep 2025 18:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpozEqWp"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eTAgFoc+"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB6A2BE644
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE512836BD
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758653561; cv=none; b=OAlwaJ7e6sa53+cb2+YxRZJ5euw6uCR6gYoj1CX2jmB82gaIU3UgOHDqVKPGy03NtPc5FnkDSOPax0nqG8HipGQPS0X7H3t3gW8CRc7FFjl55aRlC0z7cFIMtTN9VEL3meCK0wOnu45nB1kz+o9sJRU/vM9le0ZYzpybTYjVy3o=
+	t=1758653632; cv=none; b=VEUeilp6xUJTvC9W+VrwB/fBRZI0VYG+xRFgLMMaFlAe0+C8lFKvbX3HyW49n/50dD05JYSxyLUmX2bd1Bgz97T/Z6ZL7kQtLgUQAeoBL97UZkOTgq8EElSBgc2Ry1fy3/1QgIC7m/9xXFmE36AzrgL56CjJ+u6hQwL8kIJWvqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758653561; c=relaxed/simple;
-	bh=cgONVmkhgMelsDdmMuAt/qU/DExf9Qngi25mO8xSTew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cFK2TJiV7xy/Rd+6yWgeDa7i3I1wDIk6p+m3DQm1/iL/wYMohndYHmt3XQ10GmyBf29cI+zxIIeQhWr5QSkayEXtIjyOJqfJ3l8UE9QDaf3wg31x+Wk46q0h/RS0h8qz5Bpa5s8Pi3gfNTAoMWYW9GJXQIlOHeOXXUQ+SZM9w3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpozEqWp; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1758653632; c=relaxed/simple;
+	bh=oRUBVfO2d3MoKM1jD4VAKRUkm+iozi0HUHHMy5T2wc0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=GNkg4sbis11mf1v8VeT44HB9wX6vjWL0NnHN1t4E/4T8yWH4PzZCdbvhQXT2gjqXBwIaPoyblQ1YT6vJ/mulBJj6A6iejS1xWCvOlU85qk/ALtxw2ca0VL8mEwVvPU72Bgl3LEpjrMbTjRrAR6LLz4qET+6v8kDZYrMVhUQ2ing=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eTAgFoc+; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46d25f99d5aso1296605e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:52:39 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46dfd711172so19875755e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:53:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758653558; x=1759258358; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jUn2OpHmm7pfo4BppeNZW2V1cfojK5GlgjBJHRJGklM=;
-        b=hpozEqWp2Dcg0CBYlV+BDbO+v4I8FQ90V6/QmuCwjbEvRgA5ETJUTY2sXvMC8DlNZx
-         oxHNEy6hgI1qhVw7V8DxrF28Qf88j/EXbMXSm+xx1OrYx+AfhWTsNnljvG8w8WoFaIHS
-         1x1ijLt9/CSRINFStPQh2gbczJ34EKtz6UHBA4C/oObYGxcv7zstFT96lKpOi66J6IKN
-         rByU36HKgmN+dT1PKnWLuBZWR6hmfFAp5AakOzWfeIXSJdCYhWnfw/N1tLqYgyqwT1m3
-         XJUyHrKjs3hG18IJeZBiMX0WzpkyTtcZ3szF7sORSL3LbAK/vfO9cEnOuwpAIjxTf4+q
-         lRxQ==
+        d=gmail.com; s=20230601; t=1758653629; x=1759258429; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nWcLtw2qXrDtFeNiHTtrGneV08EOKIFUjDj5SrfHC4s=;
+        b=eTAgFoc+IfauKpWV+Cy25xTn7xLFkB6jZ1zSdnt8H1bGXbwUxQYpsd4rUOhonayU9G
+         P4HH7KoVAvpmjqN1YcJca+Kue7ItUK2Qk4pTfnsMe8uqb2bx+Q2MrPeQSTmbLtrQtdfk
+         3Bd0HWvJNU97Ogj/NL7Fie7HQrjG6S75x9b0BY4SvXKJ0awSYHWdQ0WZfinnI/VcEWey
+         0vg7e/C5EqL70Mni5L7EmV0jAhA6ooCCT4GWTBkBdMnoHnekb3hHrrnrWQJZl3K9gdLM
+         QgblPjNUcfplQY+W+WvwnjAmDCExznuiGNxJI04GA7a2TH30PuNWCQ57LpJlYW4/Ss3k
+         kv4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758653558; x=1759258358;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jUn2OpHmm7pfo4BppeNZW2V1cfojK5GlgjBJHRJGklM=;
-        b=WMm1PfDMDtyhw/oWEWD81JiQFq15thRrEEv2CnawukVdR4FbiXxik/S1a5Wk5vuB+C
-         899aYJk3Jl5Trhe8dD1QfRiFi0TbS99BN8uw8YR12/dKW+58lLV/q2kCrIFmZ5GN3cFZ
-         snb9wm+J6soaA4sYlDIPST3I0sFN3bOUOzUJk3+fXrOJYczS4oz5+EmWP1uv23Von6wL
-         ebMsyoX1bT/u6PkFq05g2THRQog16vCmSpj6HQFXAlkXVBv9zX65xuW+krYv8Gw6dQMg
-         M1Oide14CHog7Txw3WFBSlUHyDI89P46SiClIyB5exnwD0v8XT3C/Yz1fI8RDXJOoI2C
-         XteQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzo7rG4mDqalwUg0j53tF+hL7mBWCumLO4h8UU7yGT4Hpl7x5pcRQJMRB1nwtz21bOYAtFlKPpvJ4bfE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/FUPV4A8Z/qSiuaCZRwlb1jzRhAs+/PMvhz33WBs5Xsjpa2P+
-	ieZThwQGiHWZANw3HfZeE1OvTovx93UqTWphX/sOP1BC76lR3tNKelgT4F+q1BxS32CWsBpn6TI
-	SG9JQaFjHy1uCDuyjldYv2Sr09olL3Bo=
-X-Gm-Gg: ASbGncsv2ehtn34UyU3J7WX8ivF1qOP6wY9Fd1qqBQQ8QgDicpWqB5lX0RYcPUuhBGx
-	uPFhBRwOz6pFur2q2mzoFDf2vbZoou8G/7w9fHlzVxmdTgYQHI/heFrikWrG100VyindkElKgo7
-	98IlOOorFGsDBeKRfnpu4g4U8dxl12Y3p/MzhXqcuPqg6pAXKAu1FFSKHgRPtyuzfUNAcDEZtIF
-	N5SMMs=
-X-Google-Smtp-Source: AGHT+IFXdr1qAFRKrRIhRvTAlUBj6EMd3fVOhJImQNL3jAjkCWTz1HxTEqxRjvy5Y2MiYiNM5folI9tZZzb0E6VAjPo=
-X-Received: by 2002:a05:6000:1885:b0:3f0:8d2f:5ed9 with SMTP id
- ffacd0b85a97d-405ca2a64bfmr2999158f8f.1.1758653557938; Tue, 23 Sep 2025
- 11:52:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758653629; x=1759258429;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nWcLtw2qXrDtFeNiHTtrGneV08EOKIFUjDj5SrfHC4s=;
+        b=qSgpvSexB6G18hded3Nfno5OBgIYB8LroetHi/4NWSRBiIBnFFdMVcn5e+OTTRtHwL
+         bZk7QLkyTt+v3kh3v0sMQocrBTeyLx5pUt1yPUirDMO/XgncGeaa9MPwdtQ6caLD35H+
+         NIZj1XBXGKrAtKlsA7YSGX4tL7KGrpizpYyiXNifDv7LrRUry8IXZDJG9F6c6SEQasOV
+         zQoOivsK4N6zR+Yk7EDI8gmXk+l6VeKp3++sG+O3r9L7aQvb/IOKmE7eWely2TBdMJSh
+         wxjL/stUPmD4oSKgSlc9TYhQDhW5b+L7aO3ufFdM0Kb2Jw99N25h1PsiuZw1beABAleJ
+         qSyw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTNDtmhsK15k64vfP1awM2eug84mYwXFmvQjmrvoG7a0qliLIMs5zrcEQyk/fUohKK0VrqBZxYiFhsFj8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3OteucZkl3a6Dd3NQ4DsyWo8Jarv8BeTJxTMp+HqXORK0pIA6
+	GcYJqesaByE1FOwPtAj0k6fJpWgXDa/F3z2Le/sPSnxD4TzX4EMPDcF9RrcNlg==
+X-Gm-Gg: ASbGnctnc9AkwYY60USisJgwQOsjqsH97gwTrGgRdK02RmW4FfvoUPmk7skVhVE6ICl
+	qDhlSv1euqRF9cq/aN8p178BJfLPDj8A2SB19LzDCmBuYE/acplTXyQvMVzil8HZUeJ6KfgzD5V
+	RD6dbS5UEOsjeVmUAYbNkWdOxbIYiHqedoNGrjpKfJoUO0EjfRT2loUYzZBhGfFC1AgJY5vbGEk
+	WRWdAGV5kt2c0uurlgzUvrPpadIZb+fw1IApaXMW5/tBuuzHpc8WPFg+b0bi3LOG/uuSt522vDZ
+	+VjC8UwpZ0sFQ8NCt4NGAw4fWcMYSQ7lswpER/4FeTuOjQ6mGQUBWsHIxoZeZBM8iIBgbJAKVbT
+	SOUw0BUx4yvyz6gjxExZjLNgzIm6a5qB7IXYb0CpZXEQWgHPsYgOktTtX+Y7VbbmrFb6dLEvp/h
+	6OuR0+yw==
+X-Google-Smtp-Source: AGHT+IGKjgQQvlEa+A94efi/b5b4nbfk7G0qwnMnOukLmIKhoBHDXNsNeAGIWOJr8BOP+8/JH7HY5A==
+X-Received: by 2002:a05:600c:4fcb:b0:458:bf0a:6061 with SMTP id 5b1f17b1804b1-46e1dab51fdmr45625665e9.24.1758653629107;
+        Tue, 23 Sep 2025 11:53:49 -0700 (PDT)
+Received: from Ansuel-XPS24 (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-464f64ad30csm295014655e9.23.2025.09.23.11.53.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 11:53:48 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Felix Fietkau <nbd@nbd.name>,
+	John Crispin <john@phrozen.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 1/2] dt-bindings: arm64: dts: airoha: Add AN7583 compatible
+Date: Tue, 23 Sep 2025 20:53:34 +0200
+Message-ID: <20250923185340.21526-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com> <20250923164357.1578295-1-listout@listout.xyz>
-In-Reply-To: <20250923164357.1578295-1-listout@listout.xyz>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 23 Sep 2025 11:52:26 -0700
-X-Gm-Features: AS18NWD76Xqc7COam94wfoYJ9nOoP1gcYlOdh0b2K3xOtwaSSY20L2ccQKJi6N4
-Message-ID: <CAADnVQJva1iQbVk4h9sKEEBnfDVd4iJDKR499n=hj_JL1dMZ5g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] bpf: fix NULL pointer dereference in print_reg_state()
-To: Brahmajit Das <listout@listout.xyz>
-Cc: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com, 
-	Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Eduard <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Stanislav Fomichev <sdf@fomichev.me>, Song Liu <song@kernel.org>, 
-	syzkaller-bugs <syzkaller-bugs@googlegroups.com>, Yonghong Song <yonghong.song@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 23, 2025 at 9:44=E2=80=AFAM Brahmajit Das <listout@listout.xyz>=
- wrote:
->
-> Syzkaller reported a general protection fault due to a NULL pointer
-> dereference in print_reg_state() when accessing reg->map_ptr without
-> checking if it is NULL.
->
-> The existing code assumes reg->map_ptr is always valid before
-> dereferencing reg->map_ptr->name, reg->map_ptr->key_size, and
-> reg->map_ptr->value_size.
->
-> Fix this by adding explicit NULL checks before accessing reg->map_ptr
-> and its members. This prevents crashes when reg->map_ptr is NULL,
-> improving the robustness of the BPF verifier's verbose logging.
->
-> Reported-by: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com
-> Signed-off-by: Brahmajit Das <listout@listout.xyz>
-> ---
->  kernel/bpf/log.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/bpf/log.c b/kernel/bpf/log.c
-> index 38050f4ee400..b38efbbf22cf 100644
-> --- a/kernel/bpf/log.c
-> +++ b/kernel/bpf/log.c
-> @@ -716,11 +716,12 @@ static void print_reg_state(struct bpf_verifier_env=
- *env,
->         if (type_is_non_owning_ref(reg->type))
->                 verbose_a("%s", "non_own_ref");
->         if (type_is_map_ptr(t)) {
-> -               if (reg->map_ptr->name[0])
-> +               if (reg->map_ptr !=3D NULL && reg->map_ptr->name[0] !=3D =
-'\0')
->                         verbose_a("map=3D%s", reg->map_ptr->name);
+Add Airoha AN7583 compatible to the list of enum for Airoha Supported
+SoCs.
 
-Looks like you're bandaiding a symptome instead of fixing
-underlying issue. For map types map_ptr should always be set.
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+Changes v2:
+- Follow alphabetical order
 
-pw-bot: cr
+ Documentation/devicetree/bindings/arm/airoha.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/airoha.yaml b/Documentation/devicetree/bindings/arm/airoha.yaml
+index 7c38c08dbf3f..df897227b870 100644
+--- a/Documentation/devicetree/bindings/arm/airoha.yaml
++++ b/Documentation/devicetree/bindings/arm/airoha.yaml
+@@ -18,6 +18,10 @@ properties:
+     const: '/'
+   compatible:
+     oneOf:
++      - items:
++          - enum:
++              - airoha,an7583-evb
++          - const: airoha,an7583
+       - items:
+           - enum:
+               - airoha,en7523-evb
+-- 
+2.51.0
+
 
