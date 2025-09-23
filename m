@@ -1,141 +1,149 @@
-Return-Path: <linux-kernel+bounces-829151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F699B96657
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:49:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65EC5B9666B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:49:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD041882ABC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:45:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6FE176CC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891DC22A7F1;
-	Tue, 23 Sep 2025 14:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F01246BC6;
+	Tue, 23 Sep 2025 14:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KTHYIt9j"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YpgNreNR"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0873D544;
-	Tue, 23 Sep 2025 14:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4511922F6
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758638689; cv=none; b=f5QrxRhnfqDBjBNwAB+Lx1I8V7wYC/yCOV4dk1zbZ2DvpAS8D4+wCqikV2GsEd2opkJ6Zn+srxPqkXiIUKzu2b9kqmhK4WAAj6yQKiKq3q/515PxWBw0MTk+Hcb1UcSnTF16duFy0DFykwY9qLMx5hLg7Xgh5p7BMmfntDlVrTQ=
+	t=1758638731; cv=none; b=BiVVxB/v0v7pY+Qcs5MBWBmnph03huMdggJjI/uJj1WrsoYRHMYOJxmZVbEZkpTC1t8jH6UIbGHeWgOqUCKg5xFvMcf3aMNKHLCEVylhmskyVS+Czs/ZUxK4BF1jGkGALlKNFuGfWqfxXYWakav90eQDsos1y4RdB7FAiIqx5K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758638689; c=relaxed/simple;
-	bh=hIW2FclH1g5vA9b4dxlT9n1UH4vYHvNGgdlk6GKis/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VlX3bX7hXdoR2EY1GVuCcAogWOrLzUtfOM+wR5TJ52HV1l+HRC+wYm+LhibbBnZ5iZSO7TedAxSBwq/6VZxJfzNc9EA76tozNun2WY/MhjrY6DQQmPEHWfKtQh/8AAGvXvlD059AZqVgOg6H3Av4+W43325O9oeP85tRM55cwJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KTHYIt9j; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758638688; x=1790174688;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=hIW2FclH1g5vA9b4dxlT9n1UH4vYHvNGgdlk6GKis/E=;
-  b=KTHYIt9jD19FDX6ekFPQROdg8P950vA1wmTj1K2uIe37oVVQhe9SEPTF
-   2viJhR+XZ1ckQsjcJBAc364W+fd3oO9ec8RUZwVbS8CbPgRyPdCoHdjXV
-   x1St5V4W0WLrXLxSWZaC0eiYkPWYIXgR9O0C4IeOGd5egMjWFFp9i98me
-   SBuH74GuG5JDLXdu2jMM0EtVjIQLxxU3GYZ8VfnRx3TBN1jT6CoMxpc1p
-   m3aw1KusN0Qtb06tFmC7T9FRQRR2SphFH5sI0A0s7Cz2ch87AnBm2Ofxj
-   VeXgiaXNTq3Pd5oFHhIL7d7EBcgtOiZAo284TV5t4X5SXHSexKQTew+Vg
-   w==;
-X-CSE-ConnectionGUID: Vo5+DFQfRV2lVUnjH/SIRw==
-X-CSE-MsgGUID: GDpibQFKScav3mZiq4sDGA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="86360198"
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="86360198"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:44:47 -0700
-X-CSE-ConnectionGUID: dIlySU0eQaaanhxNWFbn+A==
-X-CSE-MsgGUID: qE4KwowJRUqTHnGoR0HEkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="177157139"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:44:41 -0700
-Message-ID: <5dbc1100-6685-4eac-aa04-07f5621d3979@intel.com>
-Date: Tue, 23 Sep 2025 22:44:38 +0800
+	s=arc-20240116; t=1758638731; c=relaxed/simple;
+	bh=E++2gVltlUZvM7LO7UL5hRQpUefdLdmLO6BBQH8nTIo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=htLB+JWaJGWzA3dM+pkwlurVsbGJ7q7jrXZOrW8NrxxVTmtVcM+HrLEjus/hI3AVjOiE+Ik0ki+vAKsLITsN6yc4w5SHuGzOcewR6zy2nMm+uCmmcKlQR/9t9WfOSwpOMTImJvXO5QkwW/xlu+EmiRv1jhupu8VkEFYbcsl3szU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YpgNreNR; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46c889b310dso27209775e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:45:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758638727; x=1759243527; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1lVyOEtb44jMIonYRz4wgo+G3AHkk+QAbStCapuIh3I=;
+        b=YpgNreNRiYpOeT5qcTASfIHN4dKPo0RWg7E/jnKFlwlAcDPyaNiZwOD0ZLfxJ/URqx
+         dc2LDIh6jqDQfXoQodUXdkvfWoy6l0pHds8wB2TnJrraJ3rgDTQQG0MeG6o6j8RwEwPM
+         Ojm2mVFUsWmgjI8NzIuw2URegOZQKrT9ZFkZhn/Lz6WkC01AGnE/HMte58Hsm1gPkCUv
+         f3Sluhkdf9zxlMDy01TXhpU5ziBJHzZUYBshkjDn/Pz0L/yNveFY9dL+FGCjWolIBDCr
+         qI9GsaFeYWVYZFlH/eGRJzRSyQZvVbx9oaVIAKimTIQc5ya9dlLL8OlS893JCG8TTPMv
+         O0bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758638727; x=1759243527;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1lVyOEtb44jMIonYRz4wgo+G3AHkk+QAbStCapuIh3I=;
+        b=djxX6/J14GNMxiYrmVDvlia1vG7dyvZGo/fLmMQwJkjwOQCaXbCr5zyd/gchzm5WdZ
+         ISe0anPDgAjhxsP7EFYdqLFMYJL3+akwaPi6aySNmbgphz3T8VthtNjYG8Xv5KHe+NV3
+         RpBsxeuUqUDqpetpOZNN78X/e52zbW/CV7zULd4jobSUSe2Zi0nZ5SfZki6qbqo2739t
+         vavYdXGPomko3yCEifUWWoDyedvM8Pplsp/eWNcdAXzxOMv/ra0EpZPmmokU7ekKJptI
+         e1jrhhK+8Xu4FvlQFI2ui6IDFZnNnwu08KNU6OdpBOV7h3ioPcxm9nJJ3WqD0DvZeO12
+         iP5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXKwa8DQkyIri3oHKldebs57ASGnXZEdSWTFvFJQI4mbPJ6uSeI3JUV6QlY5AhHwKIFLc+A+/Z0nXupGa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAtbyMGIDKd4LbynG3jjMZ7aMH9wEbnANUdYvpM/1PV7nEEsTL
+	Ew8M/KawVSvagAJfPOX6Mv1eJzV6mG348l034Q71WE0Ldk+eHJBFPu2/
+X-Gm-Gg: ASbGncsyxQOP6ZRrjDrE249QOs9PHu61yEnkWbTtXQCACye2Pu6PpYWDfsJpN/tz4U6
+	YthJEsXy+hcAi8WbkDgrJMnHlmIRh3TFDcHiV06ER/i8yun/EoICSnVP2kfJtHlYyJMH/mVIbCL
+	oky46X7COBW9/c9GYZ4z6fW9F2W4QbmSv/uCivpE2z5eQGYNfD80MLiWAYbZx9s2y7DJxFHuYkZ
+	qss9bCcG0vvqoKMGxG6ZWp/4RL0ZrYFJXzS+6sJTsGJERjzJ/ql2+NrvS5ZMZ4/CTUPY5e3hy4G
+	bnsn2ULjbU7gqsEVurOYCEVC7I+6dInVTGdj5uzFb5jQ02W1LJewwIri6vlvrYpiTGWYK6OZw8L
+	yB17Ykr70bER/poOKx9Ba2Yyj/SFcbJVFHil7wNGcxpA7Vv5CH9JDC71no2o3dUH/QM1sCOGtCn
+	NjqA==
+X-Google-Smtp-Source: AGHT+IHyDP0JGNqLKMAlNFpmFatcdlVbRpg2mdFpBQ+NBXh/GQ+EiuZdPupjGEXn5Rz6NkpSEimuOg==
+X-Received: by 2002:a05:600c:6d46:b0:46d:83e7:45ec with SMTP id 5b1f17b1804b1-46e1e142a82mr19944675e9.11.1758638727056;
+        Tue, 23 Sep 2025 07:45:27 -0700 (PDT)
+Received: from biju.lan (host86-139-30-37.range86-139.btcentralplus.com. [86.139.30.37])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f0aac3fdsm238940435e9.1.2025.09.23.07.45.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 07:45:26 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v3 0/8] Add RZ/G3E GPT support
+Date: Tue, 23 Sep 2025 15:45:04 +0100
+Message-ID: <20250923144524.191892-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 27/51] KVM: x86: Disable support for IBT and SHSTK if
- allow_smaller_maxphyaddr is true
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Binbin Wu <binbin.wu@linux.intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-References: <20250919223258.1604852-1-seanjc@google.com>
- <20250919223258.1604852-28-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20250919223258.1604852-28-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/20/2025 6:32 AM, Sean Christopherson wrote:
-> Make IBT and SHSTK virtualization mutually exclusive with "officially"
-> supporting setups with guest.MAXPHYADDR < host.MAXPHYADDR, i.e. if the
-> allow_smaller_maxphyaddr module param is set.  Running a guest with a
-> smaller MAXPHYADDR requires intercepting #PF, and can also trigger
-> emulation of arbitrary instructions.  Intercepting and reacting to #PFs
-> doesn't play nice with SHSTK, as KVM's MMU hasn't been taught to handle
-> Shadow Stack accesses, and emulating arbitrary instructions doesn't play
-> nice with IBT or SHSTK, as KVM's emulator doesn't handle the various side
-> effects, e.g. doesn't enforce end-branch markers or model Shadow Stack
-> updates.
-> 
-> Note, hiding IBT and SHSTK based solely on allow_smaller_maxphyaddr is
-> overkill, as allow_smaller_maxphyaddr is only problematic if the guest is
-> actually configured to have a smaller MAXPHYADDR.  However, KVM's ABI
-> doesn't provide a way to express that IBT and SHSTK may break if enabled
-> in conjunction with guest.MAXPHYADDR < host.MAXPHYADDR.  I.e. the
-> alternative is to do nothing in KVM and instead update documentation and
-> hope KVM users are thorough readers.  
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-KVM_SET_CPUID* can return error to userspace. So KVM can return -EINVAL 
-when userspace sets a smaller maxphyaddr with SHSTK/IBT enabled.
+Add RZ/G3E GPT support. It has multiple clocks and resets compared to
+RZ/G2L. Also prescale field width and factor for calculating prescale
+are different.
 
-> Go with the conservative-but-correct
-> approach; worst case scenario, this restriction can be dropped if there's
-> a strong use case for enabling CET on hosts with allow_smaller_maxphyaddr.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/kvm/cpuid.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 499c86bd457e..b5c4cb13630c 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -963,6 +963,16 @@ void kvm_set_cpu_caps(void)
->   	if (!tdp_enabled)
->   		kvm_cpu_cap_clear(X86_FEATURE_SHSTK);
->   
-> +	/*
-> +	 * Disable support for IBT and SHSTK if KVM is configured to emulate
-> +	 * accesses to reserved GPAs, as KVM's emulator doesn't support IBT or
-> +	 * SHSTK, nor does KVM handle Shadow Stack #PFs (see above).
-> +	 */
-> +	if (allow_smaller_maxphyaddr) {
-> +		kvm_cpu_cap_clear(X86_FEATURE_SHSTK);
-> +		kvm_cpu_cap_clear(X86_FEATURE_IBT);
-> +	}
-> +
->   	kvm_cpu_cap_init(CPUID_7_EDX,
->   		F(AVX512_4VNNIW),
->   		F(AVX512_4FMAPS),
+This patch series depend upon[1]
+
+[1]
+https://lore.kernel.org/all/20250915163637.3572-1-biju.das.jz@bp.renesas.com/
+
+v2->v3:
+ * Added Rb tag from Rob for bindings patch
+ * Dropped wave form callback conversion from this patch series as
+   it is covered in another series[1]
+ * Added suspend/resume support.
+v1->v2:
+ * Created separate document for RZ/G3E GPT.
+ * Updated commit header and description for binding patch.
+ * Added waveform callback conversion to this series.
+ * Collected tag.
+ * Added link to hardware manual
+ * Updated limitation section in driver patch.
+
+Biju Das (8):
+  dt-bindings: pwm: Document RZ/G3E GPT support
+  pwm: rzg2l-gpt: Add info variable to struct rzg2l_gpt_chip
+  pwm: rzg2l-gpt: Add prescale_pow_of_two_mult_factor variable to struct
+    rzg2l_gpt_info
+  pwm: rzg2l-gpt: Add calculate_prescale() callback to struct
+    rzg2l_gpt_info
+  pwm: rzg2l-gpt: Add RZ/G3E support
+  pwm: rzg2l-gpt: Add suspend/resume support
+  arm64: dts: renesas: r9a09g047: Add GPT nodes
+  arm64: dts: renesas: r9a09g047e57-smarc: Enable GPT on carrier board
+
+ .../bindings/pwm/renesas,rzg3e-gpt.yaml       | 323 ++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    | 184 ++++++++++
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  13 +
+ drivers/pwm/pwm-rzg2l-gpt.c                   | 209 ++++++++++--
+ 4 files changed, 704 insertions(+), 25 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pwm/renesas,rzg3e-gpt.yaml
+
+
+base-commit: bf2602a3cb2381fb1a04bf1c39a290518d2538d1
+-- 
+2.43.0
 
 
