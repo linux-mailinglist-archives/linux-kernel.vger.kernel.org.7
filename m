@@ -1,158 +1,107 @@
-Return-Path: <linux-kernel+bounces-828181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E82B0B941E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 05:38:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E59EB942A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39F7E444A2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:38:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC5C93BE290
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BFC264602;
-	Tue, 23 Sep 2025 03:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vz8X+aqm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CDE22A1C5;
+	Tue, 23 Sep 2025 04:01:02 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF12D154BF5;
-	Tue, 23 Sep 2025 03:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1996B249E5;
+	Tue, 23 Sep 2025 04:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758598709; cv=none; b=Zd+gxnj/ng3DMMrGbMpjTViHnVy120Ienm6218r1syxVTuXwiUs6J5BWmnUlGvCol2hWGLuNzVt6ImvVO2CL15Y3wKcH8UKw+656uN1vDJO55kq6yZ0Bxn/pWjIVp+KhMzI/O6rl/rdrQkKjqSgnfdlWIU9C1DE7i6HcHaZWEyY=
+	t=1758600061; cv=none; b=icg4j/zlO3nlnrH+GrjL/Ysg0YW0sjfR4nY8uknSFuUrLyTfTBN3Nr6ceTHfU4ci+qa7PZjTviNUUH2zvMCbxHc7XPV8BvYyPmcMtRM1y0NFitJ2mXStE0rY7jnce/Izyx3rcy0nngH7Dp65Uz9/JbyKqcLL+cZV2gPsKuqBOM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758598709; c=relaxed/simple;
-	bh=FizkU2Y4iQmHbh9eGNnE1mk6hmTzfCGAiCcr2jNaicI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qr8PjwVBEU+rcJBjqnTmY3/U83md3XGtkfCpWVtLJ9mMHfMwFFywo1wBrEJk24GNByL1FSgTv5N2/DW+nsy/A1A44uCp5kOS+ujnjgVphw7WF7iev1L5XlHynkVxtwBRyJrUJKmNqzAt9lgToc8Gor6vusOYV78PwhOp+/i+R9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vz8X+aqm; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758598706; x=1790134706;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=FizkU2Y4iQmHbh9eGNnE1mk6hmTzfCGAiCcr2jNaicI=;
-  b=Vz8X+aqmgppxsBa/S5DIamFizRjTQDtSIR+xJRaBHyOgA4Q+DnLIBk0C
-   uWAZVz7mkxHccoRntYqn+EhPyxrGBzvDzPbFEDAze3xwHinOnsjNboxX5
-   Pyr+YZnYAnaBcyDiZ1ygQ4ViUSZMFCdHDAkont6Y4SP7pgv/k40pc/1LR
-   kK2jWVKUaHFuVXhJUhwFAvsaXZKZLQOuQ6rI87eYpuQqir/EUJ4L1oUbR
-   Ju7IdtzPVjRpP2y+nhBwC1niUA+07WSnJl7x8F4H8GwfxpOkAvVSbb0P2
-   IPbO8GzOo4oTkHWosRcN9EFsL3MegBv5QCSzCQjeeAUTlAVZC5UOF3CpA
-   A==;
-X-CSE-ConnectionGUID: Val9Na/OSjqutWAbRXhDAQ==
-X-CSE-MsgGUID: tJiYklCbRHSf+CIOuXgtCA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60810732"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="60810732"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 20:38:25 -0700
-X-CSE-ConnectionGUID: QmgsTgPHTca/mCjKADKtww==
-X-CSE-MsgGUID: khgnW+CHSdObyFHd7PV7xg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,286,1751266800"; 
-   d="scan'208";a="176231201"
-Received: from alc-spr.sh.intel.com ([10.239.53.113])
-  by orviesa009.jf.intel.com with ESMTP; 22 Sep 2025 20:38:23 -0700
-From: Aubrey Li <aubrey.li@linux.intel.com>
-To: Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nanhai Zou <nanhai.zou@intel.com>,
-	Gang Deng <gang.deng@intel.com>,
-	Tianyou Li <tianyou.li@intel.com>,
-	Vinicius Gomes <vinicius.gomes@intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Chen Yu <yu.c.chen@intel.com>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Aubrey Li <aubrey.li@linux.intel.com>
-Subject: [PATCH] mm/readahead: Skip fully overlapped range
-Date: Tue, 23 Sep 2025 11:59:46 +0800
-Message-ID: <20250923035946.2560876-1-aubrey.li@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758600061; c=relaxed/simple;
+	bh=+sA7JeshJtfQ4g+oGvoDEApvUWPOG6PAyKJcP78c1LU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rsAswCG40VhTnUqL7c+kg1ZpTEng/PwhWhDkLptvHWPfIU/R51joJtNKRAk2XtAwjsvmxu6p08JUHEXfbbGd4ECcQ6IBO6Wdpw0rae7cr98umj+p3QhNRfi1xIyGxrv4Rf+1DhZBbk4s90WhmgDEifo4mKN9drr9oGjsXlMjC7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+CC: "corbet@lwn.net" <corbet@lwn.net>, "lance.yang@linux.dev"
+	<lance.yang@linux.dev>, "mhiramat@kernel.org" <mhiramat@kernel.org>,
+	"paulmck@kernel.org" <paulmck@kernel.org>,
+	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
+	"mingo@kernel.org" <mingo@kernel.org>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"kees@kernel.org" <kees@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>,
+	"feng.tang@linux.alibaba.com" <feng.tang@linux.alibaba.com>,
+	"pauld@redhat.com" <pauld@redhat.com>, "joel.granados@kernel.org"
+	<joel.granados@kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [????] Re: [PATCH][RFC] hung_task: Support to panic when the
+ maximum number of hung task warnings is reached
+Thread-Topic: [????] Re: [PATCH][RFC] hung_task: Support to panic when the
+ maximum number of hung task warnings is reached
+Thread-Index: AQHcLDttVizJ2u6zwEeKMgiwnSexq7SfmowAgACJIFA=
+Date: Tue, 23 Sep 2025 04:00:03 +0000
+Message-ID: <f11f4dd1983f4073a8008112e55f92f8@baidu.com>
+References: <20250923033740.2696-1-lirongqing@baidu.com>
+ <20250922204554.55dd890090b0f56ad10a61f5@linux-foundation.org>
+In-Reply-To: <20250922204554.55dd890090b0f56ad10a61f5@linux-foundation.org>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-FEAS-Client-IP: 172.31.3.11
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-RocksDB sequential read benchmark under high concurrency shows severe
-lock contention. Multiple threads may issue readahead on the same file
-simultaneously, which leads to heavy contention on the xas spinlock in
-filemap_add_folio(). Perf profiling indicates 30%~60% of CPU time spent
-there.
-
-To mitigate this issue, a readahead request will be skipped if its
-range is fully covered by an ongoing readahead. This avoids redundant
-work and significantly reduces lock contention. In one-second sampling,
-contention on xas spinlock dropped from 138,314 times to 2,144 times,
-resulting in a large performance improvement in the benchmark.
-
-				w/o patch       w/ patch
-RocksDB-readseq (ops/sec)
-(32-threads)			1.2M		2.4M
-
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Vinicius Gomes <vinicius.gomes@intel.com>
-Cc: Tianyou Li <tianyou.li@intel.com>
-Cc: Chen Yu <yu.c.chen@intel.com>
-Suggested-by: Nanhai Zou <nanhai.zou@intel.com>
-Tested-by: Gang Deng <gang.deng@intel.com>
-Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
----
- mm/readahead.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 20d36d6b055e..57ae1a137730 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -337,7 +337,7 @@ void force_page_cache_ra(struct readahead_control *ractl,
- 	struct address_space *mapping = ractl->mapping;
- 	struct file_ra_state *ra = ractl->ra;
- 	struct backing_dev_info *bdi = inode_to_bdi(mapping->host);
--	unsigned long max_pages;
-+	unsigned long max_pages, index;
- 
- 	if (unlikely(!mapping->a_ops->read_folio && !mapping->a_ops->readahead))
- 		return;
-@@ -348,6 +348,19 @@ void force_page_cache_ra(struct readahead_control *ractl,
- 	 */
- 	max_pages = max_t(unsigned long, bdi->io_pages, ra->ra_pages);
- 	nr_to_read = min_t(unsigned long, nr_to_read, max_pages);
-+
-+	index = readahead_index(ractl);
-+	/*
-+	 * Skip this readahead if the requested range is fully covered
-+	 * by the ongoing readahead range. This typically occurs in
-+	 * concurrent scenarios.
-+	 */
-+	if (index >= ra->start && index + nr_to_read  <= ra->start + ra->size)
-+		return;
-+
-+	ra->start = index;
-+	ra->size = nr_to_read;
-+
- 	while (nr_to_read) {
- 		unsigned long this_chunk = (2 * 1024 * 1024) / PAGE_SIZE;
- 
-@@ -357,6 +370,10 @@ void force_page_cache_ra(struct readahead_control *ractl,
- 
- 		nr_to_read -= this_chunk;
- 	}
-+
-+	/* Reset readahead state to allow the next readahead */
-+	ra->start = 0;
-+	ra->size = 0;
- }
- 
- /*
--- 
-2.43.0
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5kcmV3IE1vcnRvbiA8
+YWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZz4NCj4gU2VudDogMjAyNcTqOdTCMjPI1SAxMTo0Ng0K
+PiBUbzogTGksUm9uZ3FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPg0KPiBDYzogY29yYmV0QGx3
+bi5uZXQ7IGxhbmNlLnlhbmdAbGludXguZGV2OyBtaGlyYW1hdEBrZXJuZWwub3JnOw0KPiBwYXVs
+bWNrQGtlcm5lbC5vcmc7IHBhd2FuLmt1bWFyLmd1cHRhQGxpbnV4LmludGVsLmNvbTsgbWluZ29A
+a2VybmVsLm9yZzsNCj4gZGF2ZS5oYW5zZW5AbGludXguaW50ZWwuY29tOyByb3N0ZWR0QGdvb2Rt
+aXMub3JnOyBrZWVzQGtlcm5lbC5vcmc7DQo+IGFybmRAYXJuZGIuZGU7IGZlbmcudGFuZ0BsaW51
+eC5hbGliYWJhLmNvbTsgcGF1bGRAcmVkaGF0LmNvbTsNCj4gam9lbC5ncmFuYWRvc0BrZXJuZWwu
+b3JnOyBsaW51eC1kb2NAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJu
+ZWwub3JnDQo+IFN1YmplY3Q6IFs/Pz8/XSBSZTogW1BBVENIXVtSRkNdIGh1bmdfdGFzazogU3Vw
+cG9ydCB0byBwYW5pYyB3aGVuIHRoZQ0KPiBtYXhpbXVtIG51bWJlciBvZiBodW5nIHRhc2sgd2Fy
+bmluZ3MgaXMgcmVhY2hlZA0KPiANCj4gT24gVHVlLCAyMyBTZXAgMjAyNSAxMTozNzo0MCArMDgw
+MCBsaXJvbmdxaW5nIDxsaXJvbmdxaW5nQGJhaWR1LmNvbT4gd3JvdGU6DQo+IA0KPiA+IEN1cnJl
+bnRseSB0aGUgaHVuZyB0YXNrIGRldGVjdG9yIGNhbiBlaXRoZXIgcGFuaWMgaW1tZWRpYXRlbHkg
+b3INCj4gPiBjb250aW51ZSBvcGVyYXRpb24gd2hlbiBodW5nIHRhc2tzIGFyZSBkZXRlY3RlZC4g
+SG93ZXZlciwgdGhlcmUgYXJlDQo+ID4gc2NlbmFyaW9zIHdoZXJlIHdlIHdhbnQgYSBtb3JlIGJh
+bGFuY2VkIGFwcHJvYWNoOg0KPiA+DQo+ID4gLSBXZSBkb24ndCB3YW50IHRoZSBzeXN0ZW0gdG8g
+cGFuaWMgaW1tZWRpYXRlbHkgd2hlbiBhIGZldyBodW5nIHRhc2tzDQo+ID4gICBhcmUgZGV0ZWN0
+ZWQsIGFzIHRoZSBzeXN0ZW0gbWF5IGJlIGFibGUgdG8gcmVjb3Zlcg0KPiA+IC0gQW5kIHdlIGFs
+c28gZG9uJ3Qgd2FudCB0aGUgc3lzdGVtIHRvIHN0YWxsIGluZGVmaW5pdGVseSB3aXRoIG11bHRp
+cGxlDQo+ID4gICBodW5nIHRhc2tzDQo+ID4NCj4gPiBUaGlzIGNvbW1pdCBpbnRyb2R1Y2VzIGEg
+bmV3IG1vZGUgKHZhbHVlIDIpIGZvciB0aGUgaHVuZyB0YXNrIHBhbmljIGJlaGF2aW9yLg0KPiA+
+IFdoZW4gc2V0IHRvIDIsIHRoZSBzeXN0ZW0gd2lsbCBwYW5pYyBvbmx5IGFmdGVyIHRoZSBtYXhp
+bXVtIG51bWJlciBvZg0KPiA+IGh1bmcgdGFzayB3YXJuaW5ncyAoaHVuZ190YXNrX3dhcm5pbmdz
+KSBoYXMgYmVlbiByZWFjaGVkLg0KPiA+DQo+ID4gVGhpcyBwcm92aWRlcyBhIG1pZGRsZSBncm91
+bmQgYmV0d2VlbiBpbW1lZGlhdGUgcGFuaWMgYW5kIHBvdGVudGlhbGx5DQo+ID4gaW5maW5pdGUg
+c3RhbGwsIGFsbG93aW5nIGZvciBhdXRvbWF0ZWQgdm1jb3JlIGdlbmVyYXRpb24gYWZ0ZXIgYQ0K
+PiA+IHJlYXNvbmFibGUNCj4gDQo+IEkgYXNzdW1lIHRoZSBzYW1lIGFyZ3VtZW50IGFwcGxpZXMg
+dG8gdGhlIE5NSSB3YXRjaGRvZywgdG8gdGhlIHNvZnRsb2NrdXANCj4gZGV0ZWN0b3IgYW5kIHRv
+IHRoZSBSQ1Ugc3RhbGwgZGV0ZWN0b3I/DQoNClRydWUsIGVzcGVjaWFsIFJDVSBzdGFsbCBkZXRl
+Y3Rvcg0KDQo+IA0KPiBBIGdlbmVyYWwgZnJhbWV3b3JrIHRvIGhhbmRsZSBhbGwgb2YgdGhlc2Ug
+bWlnaHQgYmUgYmV0dGVyLiAgQnV0IHdoeSBkbyBpdCBpbg0KPiBrZXJuZWwgYXQgYWxsPyAgV2hh
+dCBhYm91dCBhIHVzZXJzcGFjZSBkZXRlY3RvciB3aGljaCBwYXJzZXMga2VybmVsIGxvZ3MgKG9y
+DQo+IG5ldyBwcm9jZnMgY291bnRlcnMpIGFuZCBtYWtlcyBzdWNoIGRlY2lzaW9ucz8NCg0KDQpC
+eSBsZXZlcmFnaW5nIGV4aXN0aW5nIGtlcm5lbCBtZWNoYW5pc21zLCBpbXBsZW1lbnRhdGlvbiBp
+biBrZXJuZWwgaXMgdmVyeSBzaW1wbGUgYW5kIHJlbGlhYmxlLCBJIHRoaW5rDQoNClRoYW5rcw0K
+DQotTGkNCg0K
 
