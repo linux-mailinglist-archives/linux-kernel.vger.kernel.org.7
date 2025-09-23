@@ -1,186 +1,163 @@
-Return-Path: <linux-kernel+bounces-828805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33930B95861
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:55:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4953FB95879
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD63B4A33AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:55:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 623DD4A3C19
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001E932142D;
-	Tue, 23 Sep 2025 10:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41663218B1;
+	Tue, 23 Sep 2025 10:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cHnfAyvU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gmhrueqC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116061E480;
-	Tue, 23 Sep 2025 10:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70396313E16;
+	Tue, 23 Sep 2025 10:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758624907; cv=none; b=YhjB3z5FARvN6RbZmF3+T2bM4vEOkJaO0fiL0JKmL4laELoOSthW6GWcU8BE/5pB1qC1GrNjBtwgwwUqE1NgI7I6l63+kGa5zcDogNTs4uRygoPrG9k7fdYdGdundth+nYdeq8Ew1rpwlVblL1I4TgxqYiFjA8QiaogJtGBIrqk=
+	t=1758624992; cv=none; b=sl/KsgzRLH3+n2+ZWV61jxdnRsMxIZs5VMmtSDZs5FPUm1WViiYQqEFoB1GP/ERv7C2g3YwjKri0TrAAb7dhjlRFosuj5jCxXZHDWgZgRebIu8jwJoVCkR0KaK7AVcZ+hMmDVL1TDTM7kRB7pCmOm582SGXmI0E/uxNUFSVEX0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758624907; c=relaxed/simple;
-	bh=dY5Rwh2Bs45b5H34L497f8DN6MS1f5fLA1XYV31QE30=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=U2NehB0hyK51ZTsU2uPMio/JkV3XmyExjvN1Q/1ogU7WZ2PPj6OIJeYIwMM8xEoUopG/AENyKy8c0E33Y+giieNGnq61V2dFxmMLHMGVBFr5dqZEKq0DEwmY5BqdiGxsRhemfu1zi8MlKMndfhLMeri8S47jmn9tIBWWvPAD0XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cHnfAyvU; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1758624992; c=relaxed/simple;
+	bh=rZpX1cqpB/ZIey8M6xVk2BFhszygIMBGOCqDy8inSU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uQQxSQ/vOgzKIJoqxlMBJhuyiHhKljwK7yBt0CBIO7Rs4STCRZ3NgcrXzsm50GGH9/I1eHklXV2Ie+jiKbg4qgfsQCp2XJJwnRWfhiRoit5vRy49Ea65dXqLEVkc4WjKAwFGqhicLlkBjWUugdtZR6RvH1oPExPHtQCQuyB7QbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gmhrueqC; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758624905; x=1790160905;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=dY5Rwh2Bs45b5H34L497f8DN6MS1f5fLA1XYV31QE30=;
-  b=cHnfAyvUSo+YDxii3xIfhGzKc2LKJcQL1wyHg0nhBCIOECEFNH3QmzEC
-   JXZy1Q68dc0ccWTYUewC1xzZEtKh+tj/C5Al/ikSnbIKDF50NX/B0kC/n
-   cEsrmVRcOlR+lasYqSDnOt/yQ3smTqvGmggMNevbsXcbiS+VOdb2c+zfm
-   dEekuBuk30mRgnlEGKXePj/1p5wY78RSX8WgRZlSJJFzp4q7tYxOwTrTG
-   +HzqWvJqrxAFrNpO4ybRWt4c+nPvzifKuAXLQGE0o3mPnaDK1p06kSo9N
-   pG+JMf/tlG7ieis+jW+fmhF7VCCRpwRSow5SX+zrRzX2SD3/KTLskdxTy
-   g==;
-X-CSE-ConnectionGUID: giKm6m2vRIu+txj79dD2XQ==
-X-CSE-MsgGUID: agKWdt+MQq+VBRY5ApJeFQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="61069889"
+  t=1758624990; x=1790160990;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rZpX1cqpB/ZIey8M6xVk2BFhszygIMBGOCqDy8inSU8=;
+  b=gmhrueqC4N+YxeSUXbXjKTCdBTwlOIGAaPpZyZ4XifrpKAYCrz0nfb2N
+   lSGjLlaPOXSx8UQinPbb9keJa7EpFzHfkx+GwgxzDXPgIYSm9Fuwe3/i1
+   3kGRqZW/D6eiQQWbRfzTVBQdi9JAl4YkSaXybHrGo4ylwbH3afvBNc/mr
+   Xfbvb0xY85LCHGJUDDuMII/0ytv4rWl2J8B3hMBD4/TnLCuHvokX+b82o
+   CIxtCnSTn5Auno/y8EN9GTlUsMCjo+c1zmfqxwHievcXwfggGNkQAdPzj
+   cR7vy/wrfE8jDp/qFvOP8tvNtSuv8Svq2UQjt6N2RH3GtPvfOb/RJZYPR
+   A==;
+X-CSE-ConnectionGUID: AOVrKvbTTj2cnWL/UjJrBg==
+X-CSE-MsgGUID: 52I4GKV4SUeKT5u8SgDDpQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60118418"
 X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="61069889"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 03:55:04 -0700
-X-CSE-ConnectionGUID: SYmwqISISO2W6g760lAhmA==
-X-CSE-MsgGUID: Y8a2p1Z/QX6U6uTVIrbakg==
+   d="scan'208";a="60118418"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 03:56:29 -0700
+X-CSE-ConnectionGUID: d4pNVhNKRqqTzpQ3WvrWqA==
+X-CSE-MsgGUID: dHmrTC5PRU+gRttYCgYMHw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="177519668"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 03:55:01 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 23 Sep 2025 13:54:57 +0300 (EEST)
-To: Ciju Rajan K <crajank@nvidia.com>
-cc: hdegoede@redhat.com, tglx@linutronix.de, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    LKML <linux-kernel@vger.kernel.org>, christophe.jaillet@wanadoo.fr, 
-    platform-driver-x86@vger.kernel.org, vadimp@nvidia.com
-Subject: Re: [PATCH platform-next v2 2/2] [PATCH platform-next 2/2]
- platform/mellanox: mlxreg-hotplug: Add support for handling interrupt
- storm
-In-Reply-To: <20250923104452.2407460-3-crajank@nvidia.com>
-Message-ID: <066ef64c-c6e4-f070-9851-ba9358b0970e@linux.intel.com>
-References: <20250923104452.2407460-1-crajank@nvidia.com> <20250923104452.2407460-3-crajank@nvidia.com>
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 23 Sep 2025 03:56:25 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v10h5-00032H-2B;
+	Tue, 23 Sep 2025 10:56:23 +0000
+Date: Tue, 23 Sep 2025 18:56:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Guangshuo Li <lgs201920130244@gmail.com>,
+	Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Gaurav Jain <gaurav.jain@nxp.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	"Victoria Milhoan (b42089)" <vicki.milhoan@freescale.com>,
+	Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>,
+	Dan Douglass <dan.douglass@nxp.com>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	Guangshuo Li <lgs201920130244@gmail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] crypto: caam: Add check for kcalloc() in test_len()
+Message-ID: <202509231807.ZFBBKMM4-lkp@intel.com>
+References: <20250922155322.1825714-1-lgs201920130244@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922155322.1825714-1-lgs201920130244@gmail.com>
 
-On Tue, 23 Sep 2025, Ciju Rajan K wrote:
+Hi Guangshuo,
 
-> In case of broken hardware, it is possible that broken device will
-> flood interrupt handler with false events. For example, if fan or
-> power supply has damaged presence pin, it will cause permanent
-> generation of plugged in / plugged out events. As a result, interrupt
-> handler will consume a lot of CPU resources and will keep raising
-> "UDEV" events to the user space.
-> 
-> This patch provides a mechanism to detect device causing interrupt
-> flooding and mask interrupt for this specific device, to isolate
-> from interrupt handling flow. Use the following criteria: if the
-> specific interrupt was generated 'N' times during 'T' seconds,
-> such device is to be considered as broken and will be closed for
-> getting interrupts. User will be notified through the log error
-> and will be instructed to replace broken device.
-> 
-> Reviewed-by: Vadim Pasternak <vadimp@nvidia.com>
-> Signed-off-by: Ciju Rajan K <crajank@nvidia.com>
-> ---
->  drivers/platform/mellanox/mlxreg-hotplug.c | 32 ++++++++++++++++++++--
->  1 file changed, 30 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/platform/mellanox/mlxreg-hotplug.c b/drivers/platform/mellanox/mlxreg-hotplug.c
-> index d246772aafd6..ae0115ea1fd1 100644
-> --- a/drivers/platform/mellanox/mlxreg-hotplug.c
-> +++ b/drivers/platform/mellanox/mlxreg-hotplug.c
-> @@ -11,6 +11,7 @@
->  #include <linux/hwmon-sysfs.h>
->  #include <linux/i2c.h>
->  #include <linux/interrupt.h>
-> +#include <linux/jiffies.h>
->  #include <linux/module.h>
->  #include <linux/platform_data/mlxreg.h>
->  #include <linux/platform_device.h>
-> @@ -30,6 +31,11 @@
->  #define MLXREG_HOTPLUG_ATTRS_MAX	128
->  #define MLXREG_HOTPLUG_NOT_ASSERT	3
->  
-> +/* Interrupt storm definitions */
-> +#define MLXREG_HOTPLUG_WM_COUNTER	100
-> +/* Time window in milliseconds */
-> +#define MLXREG_HOTPLUG_WM_WINDOW_MS	3000
-> +
->  /**
->   * struct mlxreg_hotplug_priv_data - platform private data:
->   * @irq: platform device interrupt number;
-> @@ -366,11 +372,33 @@ mlxreg_hotplug_work_helper(struct mlxreg_hotplug_priv_data *priv,
->  	for_each_set_bit(bit, &asserted, 8) {
->  		int pos;
->  
-> +		/* Skip already marked storming bit. */
-> +		if (item->storming_bits & BIT(bit))
-> +			continue;
-> +
->  		pos = mlxreg_hotplug_item_label_index_get(item->mask, bit);
->  		if (pos < 0)
->  			goto out;
->  
->  		data = item->data + pos;
-> +
-> +		/* Interrupt storm handling logic. */
-> +		if (data->wmark_cntr == 0)
-> +			data->wmark_window = jiffies +
-> +				msecs_to_jiffies(MLXREG_HOTPLUG_WM_WINDOW_MS);
+kernel test robot noticed the following build errors:
 
-Please use braces for multi-line if blocks.
+[auto build test ERROR on herbert-cryptodev-2.6/master]
+[also build test ERROR on herbert-crypto-2.6/master linus/master v6.17-rc7 next-20250922]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> +
-> +		if (data->wmark_cntr >= MLXREG_HOTPLUG_WM_COUNTER - 1) {
-> +			if (time_after(data->wmark_window, jiffies)) {
-> +				dev_err(priv->dev,
-> +					"Storming bit %d (label: %s) - interrupt masked permanently. Replace broken HW.",
-> +					bit, data->label);
-> +				/* Mark bit as storming. */
-> +				item->storming_bits |= BIT(bit);
-> +				continue;
-> +			}
-> +			data->wmark_cntr = 0;
-> +		}
-> +		data->wmark_cntr++;
+url:    https://github.com/intel-lab-lkp/linux/commits/Guangshuo-Li/crypto-caam-Add-check-for-kcalloc-in-test_len/20250922-235723
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
+patch link:    https://lore.kernel.org/r/20250922155322.1825714-1-lgs201920130244%40gmail.com
+patch subject: [PATCH v2] crypto: caam: Add check for kcalloc() in test_len()
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250923/202509231807.ZFBBKMM4-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250923/202509231807.ZFBBKMM4-lkp@intel.com/reproduce)
 
-I think this should be in else block to allow recalculation of the time 
-window when the counter wraps.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509231807.ZFBBKMM4-lkp@intel.com/
 
->  		if (regval & BIT(bit)) {
->  			if (item->inversed)
->  				mlxreg_hotplug_device_destroy(priv, data, item->kind);
-> @@ -390,9 +418,9 @@ mlxreg_hotplug_work_helper(struct mlxreg_hotplug_priv_data *priv,
->  	if (ret)
->  		goto out;
->  
-> -	/* Unmask event. */
-> +	/* Unmask event, exclude storming bits. */
->  	ret = regmap_write(priv->regmap, item->reg + MLXREG_HOTPLUG_MASK_OFF,
-> -			   item->mask);
-> +			   item->mask & ~item->storming_bits);
->  
->   out:
->  	if (ret)
-> 
+All errors (new ones prefixed by >>):
+
+   drivers/crypto/caam/caamrng.c: In function 'test_len':
+>> drivers/crypto/caam/caamrng.c:186:24: error: 'return' with a value, in function returning void [-Wreturn-mismatch]
+     186 |                 return -ENOMEM;
+         |                        ^
+   drivers/crypto/caam/caamrng.c:176:20: note: declared here
+     176 | static inline void test_len(struct hwrng *rng, size_t len, bool wait)
+         |                    ^~~~~~~~
+
+
+vim +/return +186 drivers/crypto/caam/caamrng.c
+
+   174	
+   175	#ifdef CONFIG_CRYPTO_DEV_FSL_CAAM_RNG_TEST
+   176	static inline void test_len(struct hwrng *rng, size_t len, bool wait)
+   177	{
+   178		u8 *buf;
+   179		int read_len;
+   180		struct caam_rng_ctx *ctx = to_caam_rng_ctx(rng);
+   181		struct device *dev = ctx->ctrldev;
+   182	
+   183		buf = kcalloc(CAAM_RNG_MAX_FIFO_STORE_SIZE, sizeof(u8), GFP_KERNEL);
+   184	
+   185		if (!buf) {
+ > 186			return -ENOMEM;
+   187		}
+   188		while (len > 0) {
+   189			read_len = rng->read(rng, buf, len, wait);
+   190	
+   191			if (read_len < 0 || (read_len == 0 && wait)) {
+   192				dev_err(dev, "RNG Read FAILED received %d bytes\n",
+   193					read_len);
+   194				kfree(buf);
+   195				return;
+   196			}
+   197	
+   198			print_hex_dump_debug("random bytes@: ",
+   199				DUMP_PREFIX_ADDRESS, 16, 4,
+   200				buf, read_len, 1);
+   201	
+   202			len = len - read_len;
+   203		}
+   204	
+   205		kfree(buf);
+   206	}
+   207	
 
 -- 
- i.
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
