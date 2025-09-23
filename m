@@ -1,136 +1,85 @@
-Return-Path: <linux-kernel+bounces-828742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666D0B9554A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:52:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE344B9555F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C050442A4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:52:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCDDA3A7296
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97802750F6;
-	Tue, 23 Sep 2025 09:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F32A320CCA;
+	Tue, 23 Sep 2025 09:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gNIQYjoF"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="e1vPxofD"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB97C258CF9
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A7630F943;
+	Tue, 23 Sep 2025 09:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758621156; cv=none; b=q4uggLA43G6+tHqaxAMDEeCgNGEawb75Wd695d+55kjM3hwfjWgdOehtBWd14At+pCKWS+PUeS/bMArh3N2WPbXGvPO+3Gd9rKj31xHU6PmyfvicTGvfY1NFahpBTcZ4jHe1OrdNZAooCQkegjkawieJNzOWG2EafXpI535Wuc0=
+	t=1758621310; cv=none; b=rcXPh//W+hLMxsz2LK6J4MkagomKGLiguHoilZQYDE7USXKfFMw8P8UwYX9kHmfKzYzFniJ/eI51aFsL1HgpzdX7Zbzt5Geenhz9jBXBfcSAfPMlAApQK66HkTipBlv5tdw8xyTlmVhyQM14btAgFvxga6j0YcBXYMbeGUT++FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758621156; c=relaxed/simple;
-	bh=0BnOPQDELNokGZZYmpRQ1cd8xaZrosaBnpt3/XVY0Cg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OPGaoKnxluL9Ms/eRgpsyWEwAUX64wdTOdD7n9eLd21cZfEoImcl2GSUarEQNBJaq+RwnAvF7ZcZZrDQcmcac5lv9UvpmarJSUMDlh/LogFaD1WsS1PqlouJLoZFfu42CyaRsspDnNtHc1iqapj1RGn+/VgQb5uKOVUX625Y95U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gNIQYjoF; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46b303f755aso25303035e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:52:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758621153; x=1759225953; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LY0Z8Ik+ok4lx1moFpVF9A6wNG/8oeWUYiVAkRks1lI=;
-        b=gNIQYjoFKSf8E9eM/ivy9Vxl0llSXIQfUtr+3IVKU/htxQZyJILrCaJoCF5jiXNoOW
-         29SCLo6R5NK6YxhZYsj0iTKPIUXMlpYLMPojFqRSfHbpoGA6h2apoQ/hZ33c8L2WWTRr
-         5ctAnSIW7KthhtCUe9DsHHGPITcGd+Gvm+CfSjL3+1yh+wWA7wF9wB0uyOXUNS4j26Jj
-         QXfBE6DflSFY2mWlOLEEmmBs6HERGdZaX+tMKB28Pk4LyDcNAfTdTjfVD0inojmuz7KA
-         HN2Oq4oPbqnP14Y5l/RHRo9asGKF1OYN0j34JlEmlMSGawyZ5wqNqcbyp0llHyPmQ8n4
-         BdlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758621153; x=1759225953;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LY0Z8Ik+ok4lx1moFpVF9A6wNG/8oeWUYiVAkRks1lI=;
-        b=sHypRZtbvkOX9e9sQI60XE1I8biJ1TYq53igTiMuh4JuXU6WLAi7uARKKRKRPllz/K
-         B4I6ovbSVHKfnWw34lE+1rWAkwjnzmqTT4xEoq2FckHvZmcXEdP65Sq5E5viLh94ML8Z
-         dXa0XVm2JD/uV24XXJZrCtwWAeSexVMTYBEBjCf5+7Rv8EfZdZr0Jubic1iUsz9rX66X
-         3uv9pXYvJmucVZnK2MwLddm+sp10wix+Tyguf2QpdBxJowl1O/tNxjb0kazNUznrCkRy
-         tYSKdnVgGJp3vPCXtLBsM8RfNoimEUYL+KZXV1VE1K3ILfigvuW/3H9WdaMusBp2z4lU
-         YJ9A==
-X-Forwarded-Encrypted: i=1; AJvYcCV0od3kOM1L4yTY2ffHptQlzSWlYS+Yq9FO/faJ42k26DeyC1abketEt/hPW1aCu8GCMFEAfyikFvBQUs8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoxDYpEiCcmRFFtgb9C0ZCimS5AkT1uBBtNXVKK6NkFI04yQ+l
-	hkID9QrtFtbLzl0MU9T2+jvZugSPgIbHbocLgwOTWxain5gaX++A6lz7
-X-Gm-Gg: ASbGncsxYbEJ2b3VLhxdOoGVSXs9FuBA9iB+z5yXlr3qFfWPKXSiiwb4WEVnfJ58mh6
-	009vzmZdoAELSQwna/iQDp2eX/VM44Sd+Gdx+xS7MqvEI9DPR+wBkfnY5WgrYhQ7P2Y/eKwg2xT
-	h1Ll0CoQTF3eZ+xytkHxfDfNRqm+/gzd5wg7sVU2aclLgLBVLgTUrXHszS64oa31rcVb5ziHTID
-	r3U48bCWJBDkk+S+AgfVb031ScgRs1C8OWfL0Ersubf+FmgmWv24WbHXKIaxtcv4IcZjaWsF1Rb
-	mLnd2diuhGuViZO7LhwHa+wRNu5GHXMc2GdTfNwSQy0Oxc3uVbnPk6Su2Ikp6PdjVhTmbeQkQ80
-	kHkxmBQL6jveFK46VFBeginpyYBupQ4yt1T2OBeMQ6XtC8KPOln4jw/MiYA==
-X-Google-Smtp-Source: AGHT+IFsjWmH1yjZS2/W9w+zjAbYKelnR5zFxdIn1q1xM5jD5x8f4Cm37BnIW0kg5YVrR17ICbU27Q==
-X-Received: by 2002:a05:600c:1907:b0:46e:1fb7:a1b3 with SMTP id 5b1f17b1804b1-46e1fb7ab54mr16883045e9.23.1758621153090;
-        Tue, 23 Sep 2025 02:52:33 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:a5d1:59f5:ca88:d11c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46d3ab09b27sm86882985e9.21.2025.09.23.02.52.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 02:52:32 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Kees Cook <kees@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] lib/string_choices: Add str_assert_deassert() helper
-Date: Tue, 23 Sep 2025 10:52:29 +0100
-Message-ID: <20250923095229.2149740-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758621310; c=relaxed/simple;
+	bh=MZWNmQROaaiEO4r35cOCMPw3NenGe2yMbo5yIUgeE44=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SipJXGx4XfG/Y2WoVLpksMdMAjewn/dfBygxWThqiTuSgupBuxfvFfanfn7oa9On8XdBb9tq6U1MDuLh9+UYozULjHKiX8ls1QPK8ACRrBPSsPGm1ElaT2SeSFGvJQkSEgs5pJvirfheNFOl9R3Kxpn4Rf78clpcSNOK6PXgH/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=e1vPxofD; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758621307;
+	bh=MZWNmQROaaiEO4r35cOCMPw3NenGe2yMbo5yIUgeE44=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=e1vPxofDp0H2QyGMxhrKQ/VqWTJIn48ZIvUGHdT2CSt02BqRPzcIdg8MiL1poz9Wx
+	 klbLlgYcLiWLhY7EhDEc5UmKio1aE5NShltGMmaLgMWYDSEzj/ge7e8YjlY2c67fFr
+	 evQIDi4njNM+Wn6iHD99YTuAGrhDbjvKGjCNjw2tm7okuhBp+CtVe6FPqwcduEClec
+	 xP8Pa9HmEefrhn5INy+7ROLk9w0L4cQxsDmfYhJwsUvAhvSVEiJ0HAjCJxmlsg1SNW
+	 XvGaLJy+oFs/lvdlhyG0N3a7UcGe+AyQzrlu7vvQ98Rx8U/C7v6ZmtvWxTMEwU5pW+
+	 PVaM9NxIjyj+g==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 99E9F17E10F3;
+	Tue, 23 Sep 2025 11:55:06 +0200 (CEST)
+Message-ID: <2fb56243-1e8d-48c0-b510-8fdee489ebd0@collabora.com>
+Date: Tue, 23 Sep 2025 11:55:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: memory-controllers: mtk-smi: Add support
+ for mt8189
+To: Zhengnan Chen <zhengnan.chen@mediatek.com>, Yong Wu
+ <yong.wu@mediatek.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20250919081014.14100-1-zhengnan.chen@mediatek.com>
+ <20250919081014.14100-2-zhengnan.chen@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250919081014.14100-2-zhengnan.chen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Il 19/09/25 10:09, Zhengnan Chen ha scritto:
+> From: "zhengnan.chen" <zhengnan.chen@mediatek.com>
+> 
+> Add binding description for mt8189.
+> 
+> Signed-off-by: Zhengnan Chen <zhengnan.chen@mediatek.com>
 
-Add str_assert_deassert() helper to return "assert" or "deassert"
-string literal depending on the boolean argument. Also add the
-inversed variant str_deassert_assert().
-
-Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-Hi All,
-Note checkpatch complians about adding a new line before the macro
-definition. But this is the existing style in this file. So keeping
-it as is.
-Cheers, Prabhakar
----
- include/linux/string_choices.h | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/include/linux/string_choices.h b/include/linux/string_choices.h
-index a27c87c954ae..ee84087d4b26 100644
---- a/include/linux/string_choices.h
-+++ b/include/linux/string_choices.h
-@@ -17,6 +17,12 @@
- 
- #include <linux/types.h>
- 
-+static inline const char *str_assert_deassert(bool v)
-+{
-+	return v ? "assert" : "deassert";
-+}
-+#define str_deassert_assert(v)		str_assert_deassert(!(v))
-+
- static inline const char *str_enable_disable(bool v)
- {
- 	return v ? "enable" : "disable";
--- 
-2.51.0
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
