@@ -1,66 +1,79 @@
-Return-Path: <linux-kernel+bounces-829183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41ACEB96789
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:00:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80823B96759
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6BE0188CCBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:58:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 034FF7A77AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB39D23A98E;
-	Tue, 23 Sep 2025 14:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47AE243371;
+	Tue, 23 Sep 2025 14:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="yPYHckoK"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HWXo/5rY"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB34314A09C
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9401F75A6
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758639485; cv=none; b=GCVftzVvDaM4v0JObsDu/Dfi6tHIqkHE9dEU62kqay7XsgojLx2wWGrW2aXPfvYh3YP6TNiWtI70IAOKasLu5chOfCdWYJkyGo26AB2WfkA2bltX0DLHJjRaiovmG03desAYSvQrHAdnSSID38st9tAvxxKHTrR/caxF+GFfVrU=
+	t=1758639502; cv=none; b=heHKiriu7tyrAzbk11Oe1Jzuwmgh/jeRdnAu1lof2ihLLB9WngIDtNTZBOeOhG47ptNpha06i23JoP7Ed0juk9PkeJQ6ttXEBHJt+KvM5QZLfonMEQ9Kxyrgh9el6BcqNOPFyd1EwxcqSxDIwTegAxrZ6VcTRa6T+whWaz6rNNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758639485; c=relaxed/simple;
-	bh=fPgKhAXLtq1r+0p7DPCWl4qoTyUKru1c3B+IZWuMy88=;
+	s=arc-20240116; t=1758639502; c=relaxed/simple;
+	bh=gRBqSBgSa6OthtUzDtiNR0zF7w4r08SIGeb3mkOaZf8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ug7TpydDxHo6Pg2MwQRc4l37N57lZQLJ8pu7mNBFTO/sU8VTiM04cu33yo1MbLbUmCrN//QEXZhxgWihbWRERSujBFRgQQJ56vOw9HmUdMt24Eq8+NRQsGGaL5tVBK6pCP6H2b+ApkKnVbqiNpivkft2L0flrP/96oJ49Ry19FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=yPYHckoK; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5004b.ext.cloudfilter.net ([10.0.29.208])
-	by cmsmtp with ESMTPS
-	id 11givxgSYjzfw14SpvTqHi; Tue, 23 Sep 2025 14:57:56 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 14SovJ0oGBc9y14Spv7559; Tue, 23 Sep 2025 14:57:55 +0000
-X-Authority-Analysis: v=2.4 cv=ZcMdNtVA c=1 sm=1 tr=0 ts=68d2b573
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=H2e1TcdlFpyve7uw5OEA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Ei7w3jLwdGgrHNAL8l1NYLiV0L5D5a+WqLWXWUhRPtc=; b=yPYHckoKdKLF13hMR+iCX+JnES
-	56HwZHhvEjHgkfo3bBgQiuhYzH2DlEKKbY7DTZAA3C472eWkWojSMLOyUnGfj43rB0iwFVHCjWpmn
-	/bJ/ziWb0nplp6aD4IDd0AKhTQTEfoDP9DQebeZd2+xAhNUGvtS4IcvqZ2LmwsOOn2X09CAq+OwH6
-	kuwbPz/PqMlifKb/CafzZpxY7y7GlPC1FYauLFuljO4r9d+bDcJIFmgQr3MUUPT9ONF3UG1Ya4VTb
-	60Tp7sQSVSx+aG1VsxaOGdOYdEP8PqzlLGRKCikeVMOfpTcSVvPwmJN3z0gSeW7tdexkjdUESaLPn
-	KHKo7gvg==;
-Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:36408 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1v14So-00000000s8B-0bpF;
-	Tue, 23 Sep 2025 08:57:54 -0600
-Message-ID: <a4cab218-3c25-426e-a5a5-fb49d89ce544@w6rz.net>
-Date: Tue, 23 Sep 2025 07:57:51 -0700
+	 In-Reply-To:Content-Type; b=EGWptIC/sMBhb0+uruZUWwUhrlUHMH1QPNJ546TQsdmdjMftho7iFm+sYp2NvVFbvJZ30bAcWuUgmYVhHJOcJ0j/YC8vEvupDSop275P/OH0TxI29ANuDTeflrx9I/6AzUHItuxXDNWwAbClVkEHeKIK3CHapmitNgK5JMhaj0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HWXo/5rY; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-77f429ea4d5so1871913b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:58:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758639500; x=1759244300; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I4ImXSi7R3if4rDxtPDuHh3gasiZze1yOROTcvFaBJ0=;
+        b=HWXo/5rY11+dYX9/DzT4nd61BQkbCsUibCAiX2SkcbG2z16n5I0V0nl22/soTJQz9g
+         ian3JT272UrqW7QregjIb5p3mtH9OWEr6mzu8Aayp3NjVWrXWwHfRul6ghCKGsnWBqAR
+         Dmz4bfZG4RRju4hzSEZqjXfjTiizqVOEAmrgY1L+6+ZNVjqb9tIEA4YSJ1jj160ri+VW
+         Y5y+GpP6/eCwkPsKGBq6jcneTjqcojYjvPKz3eKIGJaFBtmzngpSAmzNrJcQq97XI3vK
+         js8SjNAgnr1AqtBx+ESkUdUnXyUggHRavqhh2evj7oVj1FZdpt643sbwTQEUVqh0+g+I
+         rtZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758639500; x=1759244300;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I4ImXSi7R3if4rDxtPDuHh3gasiZze1yOROTcvFaBJ0=;
+        b=vgM4K1hMeYlFccj8FthoPY/xXS0mNOJBkhmSkOVvR0zBmfE4BQSI2KY+fsqn85xBQJ
+         7cOH3rjiYZWeBCcD0hExYxO8HTJhGwF5uE6w3Kzt5QnQBaHY8GVzIbWsY/M/jtuj0zDo
+         5b/0gH0N/Rw4U2Woi0vaa0baMpGnriHn9/a/8Vxb51hx7eiFFLciBD34XdZNn9EYMpxN
+         fDnttCfEKQD+Kh7pa0mdenJqChcUUH5NdIfpfYz2bkxiknIGtvdHwjLLQE2s8jp2+ED4
+         e2R4rpb05dxCtwJ8uCBDvaV1oBt1zeYLpLZw8ejDMjTFSj60vC0iDOv9VTnxacrMZhUq
+         RmvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUScySXasJ6Bz8FR5XUZyMfb+9zt8atbbjLRDIJnOSq9vSTXXow9dagguQ6jONArdSODwP3hQSObHBYojw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxR36qiIleQmPkXl5Zvg1HbE2z3tIn/rNeCCS+OyazyV3Cz4UI
+	5O7dc2FD1ileG6xsnLm40rrOsgdOcrw/spkbdcXw6BRb1THgPtt7q7cc
+X-Gm-Gg: ASbGncuj8KWHXyTj8YoD6sBO46E7X/q0yR/uHN/2Orxfwk98s4PYuEHoGvrkX6U4zdi
+	CGidSud8wqsa8CUWddkRGFdMoQugfqaUGQjxkiJ4hQ9KgakKs/1uYkP7TvQsV/mJvF82H+ceWw0
+	B16n7WHLIOSSM71s5NMUdvhxsrTop51fFsctScRB3QBgqyToC4cnES9rRsoO86ImIVbYCr2/3Aq
+	lvJkWCGHQmio08og/RjbrWaSr6NwIUCV/LXFpcbV3K8hvA/6QFD7D60dLzs8agj7b5MPsxudPPF
+	nZIVZwZ9Lv/h/wiyRWyS9Esw+9cAXfxVYEpabBCR5VGTNZpopS7CtrYOvPHDhv5Om6rMLOqdj8M
+	WPBQFbbVvGGgtf+/yjrsShS8WfASEErTr00YHc41R6HkK7xc9jlmpIaTXSQ==
+X-Google-Smtp-Source: AGHT+IF/zZclFSEgpiyYayQeOXrzChZJj4MnQ21sLwn2CDDgyVrjtxcXUaNDM9WgSRffhfGpsMsI+g==
+X-Received: by 2002:a17:902:e80e:b0:267:af07:6528 with SMTP id d9443c01a7336-27cc48a2813mr39477455ad.35.1758639499884;
+        Tue, 23 Sep 2025 07:58:19 -0700 (PDT)
+Received: from [10.0.2.15] ([152.57.99.156])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698016bea0sm165554175ad.40.2025.09.23.07.58.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 07:58:19 -0700 (PDT)
+Message-ID: <65c32c82-d744-4477-8a6d-10ce9a4cd295@gmail.com>
+Date: Tue, 23 Sep 2025 20:28:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,63 +81,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.16 000/149] 6.16.9-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250922192412.885919229@linuxfoundation.org>
+Subject: Re: [PATCH] HID: ft260: Use sysfs_emit to write formatted data to
+ user buffer in sysfs show function.
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Michael Zaidman <michael.zaidman@gmail.com>,
+ Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+ linux-i2c@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linux.dev
+References: <20250923144926.307315-1-bhanuseshukumar@gmail.com>
+ <2025092316-pasta-parachute-737e@gregkh>
 Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250922192412.885919229@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: bhanuseshukumar <bhanuseshukumar@gmail.com>
+In-Reply-To: <2025092316-pasta-parachute-737e@gregkh>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.92.56.26
-X-Source-L: No
-X-Exim-ID: 1v14So-00000000s8B-0bpF
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:36408
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 17
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfL6DtO8UdVMk6hT8QVTB1Wy5DNAgS5ktj6NzKf4q1ooRGjbdbk3SOR7DKB6+ALmbGDaKGWpWpzwvzhfjoQubceDBfwgAf9OkrONBUTPUJDfY5pilUeVL
- ZDXakHhPhfSZ3HrZAXuQJ27QtThPB2+4jICiScFuwcPJ0YO/Ok/feIuhoSb9J/BvyJlKXq6ypU6hxYIW5ORtQ6KpwPiSKMTVHLg=
 
-On 9/22/25 12:28, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.16.9 release.
-> There are 149 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 24 Sep 2025 19:23:52 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.9-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
-> and the diffstat can be found below.
->
+On 23/09/25 20:26, Greg KH wrote:
+> On Tue, Sep 23, 2025 at 08:19:26PM +0530, Bhanu Seshu Kumar Valluri wrote:
+>> Inline with sysfs documentation, sysfs_emit is used in show function
+>> to write formatted data into user buffer. sysfs_emit is already PAGE_SIZE
+>> aware.
+>>
+>> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+>> ---
+>>  Note: Patch is compile tested and verified with checkpatch.
+>>
+>>  drivers/hid/hid-ft260.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/hid/hid-ft260.c b/drivers/hid/hid-ft260.c
+>> index 333341e80b0e..8677bea46bea 100644
+>> --- a/drivers/hid/hid-ft260.c
+>> +++ b/drivers/hid/hid-ft260.c
+>> @@ -826,7 +826,7 @@ static int ft260_byte_show(struct hid_device *hdev, int id, u8 *cfg, int len,
+>>  	if (ret < 0)
+>>  		return ret;
+>>  
+>> -	return scnprintf(buf, PAGE_SIZE, "%d\n", *field);
+>> +	return sysfs_emit(buf, "%d\n", *field);
+>>  }
+>>  
+>>  static int ft260_word_show(struct hid_device *hdev, int id, u8 *cfg, int len,
+>> @@ -838,7 +838,7 @@ static int ft260_word_show(struct hid_device *hdev, int id, u8 *cfg, int len,
+>>  	if (ret < 0)
+>>  		return ret;
+>>  
+>> -	return scnprintf(buf, PAGE_SIZE, "%d\n", le16_to_cpu(*field));
+>> +	return sysfs_emit(buf, "%d\n", le16_to_cpu(*field));
+> 
+> There's no need to change existing users in the kernel for stuff like
+> this, only try to do this for new sysfs files.  We've had too many bugs
+> where "simple" changes like this cause problems (recently in the USB
+> core for example.)
+> 
 > thanks,
->
+> 
 > greg k-h
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
-
-Tested-by: Ron Economos <re@w6rz.net>
-
+OK. Thanks for the prompt feedback on this. 
 
