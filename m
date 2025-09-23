@@ -1,137 +1,138 @@
-Return-Path: <linux-kernel+bounces-828676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DEB3B952A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:11:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F8DB95299
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:11:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 778173B4F12
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:10:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B1E12E5BB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0133203B5;
-	Tue, 23 Sep 2025 09:10:22 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D063203A9;
+	Tue, 23 Sep 2025 09:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fcNKe71C"
+Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532EB320391;
-	Tue, 23 Sep 2025 09:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B84F31FEEE
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758618622; cv=none; b=PXHpCWPRN8xMew382+N0grznn5TnhTbelC9YAj8PjJ7uU0+NlwEc8hpj4aObWCkoZPVky8fPII3IUngBrX24g0yhCiZvwLD45dpCVWGhLMcDwoiM25CQR9JIt3sDX14svAwPNHWmS4owq4SekqU7UWwRLPin4cACl5GnyvzRfqI=
+	t=1758618653; cv=none; b=AKzequkHvlTbrYzHvoRaZVdtICba/shCYU2ezi3QsKANc4n/X2eXI41rp5AaJWDWPfY1nqj5vBSvopRwIfvVGusTuD4GH+Cya0cBvEPiBRD9eawBwJkKp34nhg+JRQL73+671ns20mdrJcfi8RIJDGn9/wGDkN5mYc33UyqGEHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758618622; c=relaxed/simple;
-	bh=Ie3KuNDVsGGcq2MePqHSIBuVXMHsD/6PiGILJ+mecn4=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=HLQ5ZFDGgarrg9mAS4dsrQOMbezMMdeQsevmwIVKezNpymW2Zz5rIULe9nd7LFsv31t3SiFFLfnwHYLvgCMF/YQx3Og3nDz49UIIVYVe3Frn4ZaqtFGW65p4dZjplH+y4LxcSMGxslZrY51ODFFOCUYTTUvHP+Ekw51B5GFZGNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cWDhf4w1KzKHMS5;
-	Tue, 23 Sep 2025 17:10:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A15E21A14C4;
-	Tue, 23 Sep 2025 17:10:15 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDn+GDzY9Jo2psqAg--.16669S3;
-	Tue, 23 Sep 2025 17:10:12 +0800 (CST)
-Subject: Re: [PATCH] md/md-linear: Enable atomic writes
-To: John Garry <john.g.garry@oracle.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- song@kernel.org
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- martin.petersen@oracle.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250903161052.3326176-1-john.g.garry@oracle.com>
- <b6820280-cc1f-beae-2c1c-077d46bbf721@huaweicloud.com>
- <557f39a4-a760-4b10-80e3-229f7a4892cb@oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <84bbff83-b5db-6789-a668-61cc5cb7c761@huaweicloud.com>
-Date: Tue, 23 Sep 2025 17:10:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1758618653; c=relaxed/simple;
+	bh=VYLe1NIdSocytpQsqIe44RRwBrvi8DHYsXwSATgRZxs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=htjuNetz7AlFGMcjfdoYN5czwO40NNUqzS8kZcjA3sQsEu57NEis9GFHZkybFFOrJot2stgGDxthD3nFMXNDqPGE8DiZcv3i3gSvSxFDmDvVHHjjZRkhOfUVy9Y5S7gxnrYn0sEj76nghF56ypO1i4iRwE61uaQlo0fRGqkG7ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fcNKe71C; arc=none smtp.client-ip=209.85.208.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-6344f12acb6so236858a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:10:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758618650; x=1759223450; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qeGswIB7JTA/r3S3+GTL3v5BpUBkDFFt06D87rwuzYk=;
+        b=fcNKe71C+FdvQkjg6Ji5p3HyQ7l+5k0vlwP/7twWww5hCHVbtyEvDrILH81gYllWxy
+         Lm52rmCX+LTxXzzv20b+POQRZDO8pMIdPSMXH/y4c+g/KsYI7hG8iRsZZj7FvbFD1N8X
+         zMuJgsr9PLqos0Bc4NKOAFXefd/tUC4e6wrf/VL0UolUUwi3AOWlfp3DKScpsrDqWmZ1
+         LwpYFj8UAesuKK/XAxxTR4zn6C38sl5HI5P2455WS5zatOcPG6AJ6M6JWuCkV7BfNFaN
+         68cQMDd7gre7KoAyyXVebKhq7/S9Mva4kYz2WXNiNc/H2/lTxkjsd9+6GwGKhGgDWezg
+         lD7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758618650; x=1759223450;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qeGswIB7JTA/r3S3+GTL3v5BpUBkDFFt06D87rwuzYk=;
+        b=FtZknATHCsgyiWH4qnaY5c37lUtdiFy5tVT33xSr5XaPRsYDYaaNCd+RNcciL8kv6Z
+         n1i0/V5xUFV+nifoIzizHVztA9ZR2FCNPAJjfv4Zduf3VKKruxDqlWrKQNH9B0iq3zXU
+         cxxQFpqYwSXALGwlgeHTJUqmYTmPdBIrBSa2NI9QMFdkObe18hIosTmsj3Xtt0navq4e
+         iUBCuENhnYcQIoIS66WLGT2HNAOFVzLkzFlijh7uhlwx8VopRRjiI/VBL/2MmSrY80zw
+         jnkwS9tq3r7x1XMQyHR5E6uPW+AIU0oWTxVPRFQigWkKhaCjuwZTsS91Fojx07b6Jk5g
+         W6FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXz02I477+ewZZLcEBdeemFYQVFZtVImvSlm3hVdhka41LJXzOfBKNJnrVw+GdRmabOwRnkaqNwkJyYoSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTn8rwOLTceUo+Gqm5VEFuUbIRLwgjce4iBBdkNEjYAINSh76r
+	uApWxdWrXuiwFsiTBD+SO6MKcZeqaXRotKLdUIVB9HTwnE30XilnWyApuHKNEMtbwAeMzHoK785
+	loG13BbLtRUiKJ9q9tPvWCa6/R7wx3nE=
+X-Gm-Gg: ASbGnctwLRZmAqHijr/6RUhoQCMmPgb3MoKOWHGzAPhaPUIuXfo0tENqu4xAdjxmVb0
+	JacvvKRhbv0s8pQjIYJMyxeDeEVhiFOqfBP2i51Z+U8VfJB7mIC01gQBDgZSLT8fTd08lADKroZ
+	Prqn3miAYuY50sjJOsPfGyzZOifVqomL5y97EU0wC9wAlPYbr7Bln63/C/0UF785YcX6Uc9ixG+
+	UP97kM=
+X-Google-Smtp-Source: AGHT+IE4Jt7k2k4sg+HmRWSa90wKrJ0pXPA5vfzS6cisXP6TeP7zjrzajrRwQ1rclcbLmNr1zSYoKCaZmIE0A+gYC/o=
+X-Received: by 2002:a05:6402:4406:b0:62f:4a8e:b1 with SMTP id
+ 4fb4d7f45d1cf-6346780f842mr949890a12.8.1758618649472; Tue, 23 Sep 2025
+ 02:10:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <557f39a4-a760-4b10-80e3-229f7a4892cb@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDn+GDzY9Jo2psqAg--.16669S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Aw4DXr1fKw4DWw1xGF47CFg_yoW8ZFyrpr
-	Z7XFWIyFyDJFy8X3yjq347uFWFqrWDJw42qF15X3W8Kr4qgrnFgFWSqw4qgFnrAw4rAwnr
-	J3W0ka9FvF1DWr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUBVbkUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <CADPKJ-7cb9fcPbP3gDNauc22nSbqmddhYzmKeVSiLpkc_u88KA@mail.gmail.com>
+ <b0b0db4c-ac91-482a-85a4-2acd2884e5ae@kernel.dk>
+In-Reply-To: <b0b0db4c-ac91-482a-85a4-2acd2884e5ae@kernel.dk>
+From: clingfei <clf700383@gmail.com>
+Date: Tue, 23 Sep 2025 17:10:38 +0800
+X-Gm-Features: AS18NWA6ywd6FK-cz0okTXiY-QFtePe9Lecdkf5G1aXsKWQVoQPfW3HAo_jUQf8
+Message-ID: <CADPKJ-78+=j_HkUcJt2k6Xsn-fjs8=xT97j+coWNAEzTFvHr6g@mail.gmail.com>
+Subject: Re: [PATCH] io_uring/rsrc: remove unnecessary check on resv2
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Jens Axboe <axboe@kernel.dk> =E4=BA=8E2025=E5=B9=B49=E6=9C=8823=E6=97=A5=E5=
+=91=A8=E4=BA=8C 16:50=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On 9/23/25 2:41 AM, clingfei wrote:
+> > From b52509776e0f7f9ea703d0551ccaeeaa49ab6440 Mon Sep 17 00:00:00 2001
+> > From: clingfei <clf700383@gmail.com>
+> > Date: Tue, 23 Sep 2025 16:30:30 +0800
+> > Subject: [PATCH] io_uring/rsrc: remove unnecessary check on resv2
+> >
+> > The memset sets the up.resv2 to be 0,
+> > and the copy_from_user does not touch it,
+> > thus up.resv2 will always be false.
+>
+> Please wrap commit messages at around ~72 chars.
+>
+> > Signed-off-by: clingfei <clf700383@gmail.com>
+> > ---
+> >  io_uring/rsrc.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> > index f75f5e43fa4a..7006b3ca5404 100644
+> > --- a/io_uring/rsrc.c
+> > +++ b/io_uring/rsrc.c
+> > @@ -372,7 +372,7 @@ int io_register_files_update(struct io_ring_ctx
+> > *ctx, void __user *arg,
+> >     memset(&up, 0, sizeof(up));
+> >     if (copy_from_user(&up, arg, sizeof(struct io_uring_rsrc_update)))
+> >         return -EFAULT;
+> > -   if (up.resv || up.resv2)
+> > +   if (up.resv)
+> >         return -EINVAL;
+> >     return __io_register_rsrc_update(ctx, IORING_RSRC_FILE, &up, nr_arg=
+s);
+> >  }
+>
+> White space damaged patch, but more importantly, I don't think this is
+> worth adding. Yes it'll never overwrite resv2 because of the different
+> sizes. Curious how you ran into this?
+>
+> --
+> Jens Axboe
 
-在 2025/09/23 16:21, John Garry 写道:
-> On 05/09/2025 10:02, Yu Kuai wrote:
->> 在 2025/09/04 0:10, John Garry 写道:
->>> All the infrastructure has already been plumbed to support this for
->>> stacked devices, so just enable the request_queue limits features flag.
->>>
->>> A note about chunk sectors for linear arrays:
->>> While it is possible to set a chunk sectors param for building a linear
->>> array, this is for specifying the granularity at which data sectors from
->>> the device are used. It is not the same as a stripe size, like for 
->>> RAID0.
->>>
->>> As such, it is not appropriate to set chunk_sectors request queue 
->>> limit to
->>> the same value, as chunk_sectors request limit is a boundary for which
->>> requests cannot straddle.
->>>
->>> However, request_queue limit max_hw_sectors is set to chunk sectors, 
->>> which
->>> almost has the same effect as setting chunk_sectors limit.
->>>
->>> Signed-off-by: John Garry <john.g.garry@oracle.com>
->>>
->>> diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
->>> index 5d9b081153757..30ac29b990c9b 100644
->>> --- a/drivers/md/md-linear.c
->>> +++ b/drivers/md/md-linear.c
->>> @@ -74,6 +74,7 @@ static int linear_set_limits(struct mddev *mddev)
->>>       lim.max_hw_sectors = mddev->chunk_sectors;
->>>       lim.max_write_zeroes_sectors = mddev->chunk_sectors;
->>>       lim.io_min = mddev->chunk_sectors << 9;
->>> +    lim.features |= BLK_FEAT_ATOMIC_WRITES;
->>>       err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
->>>       if (err)
->>>           return err;
->>>
->>
->> LGRM
->> Reviewed-by: Yu Kuai <yukuai3@huawei.com>
->>
-> 
-> thanks
-> 
-> Could I have this picked up now? Maybe it was missed.
-> 
-Already picked last weekend, sorry that I forgot to reply.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/mdraid/linux.git/commit/?h=md-6.18&id=b481e72d24feac15017b579232370aa4b33d4129
-
-Thanks,
-Kuai
-> .
-> 
-
+During my review of the io_uring code, I noticed that
+sizeof(io_uring_rsrc_update) is used to initialize a struct
+io_uring_rsrc_update2. My initial suspicion was that this might be an
+error, but upon closer inspection, I verified that this usage is
+intentional and correct.
 
