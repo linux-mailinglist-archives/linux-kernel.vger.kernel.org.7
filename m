@@ -1,124 +1,78 @@
-Return-Path: <linux-kernel+bounces-829056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E32B962D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:18:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6813AB962E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66E8E1899A70
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:19:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAE06189AEBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B33D221F32;
-	Tue, 23 Sep 2025 14:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA7123A98E;
+	Tue, 23 Sep 2025 14:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="m61MBV/s"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sq4G4Orb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF7018E20
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F482221269;
+	Tue, 23 Sep 2025 14:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758637118; cv=none; b=RtSDcSlj+79wyE+idlmDc/ap8lS1dCIspfhiqpKLCq+khQ7oXa6Bj0/5q8NvWLEbvpzbUb20DdWOWvVEcOO9lPbQeizdlK3SGUrfmEggkoX50nL1CZGdVBsWph9I/v6VlD8c8JbOEJvKfPe/uYWcM9mxivUVuAcXLJ1rsswQzlA=
+	t=1758637118; cv=none; b=O6n2Rmxj6q+yPftNbHrNAP/qn1KgZ4TYJpOM4ZfJxDV95h4yLlvUsn3yotHvXz6bkPzfknQdMtP5tvb00LWQ+/QdmpfWbNS8xuBCqSRJjeaaqTAb+PX3pCE11iRD1WbE0pO9U7dRMj3BCOfe4uatibS3OAtLCeN7MW+VGDMqgtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758637118; c=relaxed/simple;
-	bh=dGetF1qRy9QXK0P3a8VW8pHQYytO1lsKqc29yOoYSyU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ly/yH+lFhfWFr5xxkmdm5tsGfo36Flzb3J78Q1i050uk8LnJgQdK/3gLf7XSoyAn+Bs21gtK1wpO2Tk53ygtVQWB7oNZfL7Km/lDHNDeBXKwCD5Xlqj7xL7D9GzM4twJEOkYvnjvE4GoprRgWxNRLHHdZHTmrv6FdKo2Jp+jdgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=m61MBV/s; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3f2ae6fadb4so3708961f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:18:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1758637114; x=1759241914; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NFG4tL8lqUh/sVKHN37qHfPMPVZ9QDTBTj4893Vci9I=;
-        b=m61MBV/sTq4KrEQzQepc+JQRslZuNMRlDMsyd+DpfKD+ctGsIKwf67kMXHF6AcuHIx
-         BS20phdd5i5QJtk8933lRym78Gho+0qBAc1dPIa5C7swHwGbsqgxdf/G1yd6azoLo2IC
-         0gSK8fHPPYO/ath+2+tCnL5e1DiPtOJ7p3s8sqBcoF4O2S+DcXNT+YRnF1gEucCsQ0lk
-         PGPFjVWwB1LPkRRiVrptyzwDliYVcDl3/4l7ResTdcXdDC32YI8kqKoa3zFOoqwW7BFK
-         dvzwyF8Igf6H4rmaygLN4+sNvg4LovAcAeQM2YnrmN5lpwywpKE0xfARbD1iufLwW8eJ
-         5AIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758637114; x=1759241914;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NFG4tL8lqUh/sVKHN37qHfPMPVZ9QDTBTj4893Vci9I=;
-        b=tQXgl1K0hwQg9K2GdgotC8tMhsO93kiUa98qKTfg6Cjn3Y8u1yjjrImqtXMePXVoNF
-         MakJfgdqPInVQog0z2ZPjqC+RRy8Rv0ooZae3VEq9B4TD5W9xchAdvzyWdgZVY3jfzVe
-         GlDnlPVUTt8cFE2AaA4MVzapw9pZNGzPXNCrWAjo8vTZlmhU9jFNGf/SaFz/mgNHZUPC
-         Z3qrgAsUSwPgMKgHg9ip/hrlb8GN5iZtUONTjIV1GUgk5Vcp3kM1I4VNER1KR8SGH/sm
-         03eqyT65S8Wu+FxDE5Yb2TnOnJ3o1fhn6ivMfNWbC+bI7Vr7Q/CO8kf+h2UDlPNmffel
-         baVw==
-X-Forwarded-Encrypted: i=1; AJvYcCW12zJxL7euOTLhh6anB5+wldUEgUbQJao+Zu8tflX0NjQzmGbWLmRSjNcheuSaJt5Ophh1eoNqzL+R+aY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNFTYGDGyhIBxjClTTws2ld+6SfDS99zDqUM54KIgRrhFp5+ep
-	pHm/NSWPQh+TNFyFn7FUdfuqbLj+3P0Lyge3CHkB9jVG/iBiZgjqX5SM5SA8YIXe3ro=
-X-Gm-Gg: ASbGncsyBD71D5BwOiAStWCCz9eQdJOO92gs8OG0mHHFKiGXnVWn8o6JERjMq3Ph9xs
-	dAqc13yX7OuVg+vTe5SFgfLX9hkGwY5+GssyDIkUqcRGd/ITIDbcCj5/6o2UvwEUewGb64y+TeU
-	J81XMFfnXZaTiy494TTs6JiaI7wy1naM83jPJJ06Q733ZkCTrmur/xLbrM1NBYmyeLnINCHatM7
-	8eS485ClnS9AT5snYmE3TB03BEqIQCjmNg3oNmN/9wyByY/W7N6ApIVQhEwW2Q6zOrfv8xj93ie
-	vvm6Grrpnqif1eV30PhGZymIycV3el5gz9VKNA+rGuOlWt/cgGSt2sOynAyoJiVaDoiG12CN+k6
-	HyAZaYgXhpXsJe0EP0TXpiH6TuGGXhSWo5Xkh8XNl9fUR6pbivbaJ
-X-Google-Smtp-Source: AGHT+IF4vqcfWEYZtZ/S8nA08HR0jyyV0IaZblTvH4YW512bTSjwjlBru1lEZAr3DAhQSemddQNZLw==
-X-Received: by 2002:a05:6000:1866:b0:3ee:b126:6b6 with SMTP id ffacd0b85a97d-405ca76faa0mr2014826f8f.34.1758637114129;
-        Tue, 23 Sep 2025 07:18:34 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.153])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee141e9cf7sm23617713f8f.12.2025.09.23.07.18.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 07:18:33 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: chris.brandt@renesas.com,
-	andi.shyti@kernel.org,
-	wsa@kernel.org
-Cc: claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH] i2c: riic: Allow setting frequencies lower than 50KHz
-Date: Tue, 23 Sep 2025 17:18:26 +0300
-Message-ID: <20250923141826.3765925-1-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	bh=5bWQgyLu97OKscauuQFFOi4VSgGpoEnLtETrzB6+RtQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CSdQd9Ko9L6EkthFp5o08ozO+M1HeO6YTEXOY3OX5M49sCRRgBs+9XvJlykBhQ+guAXQVizO8W99tmRMC8goyBsByF9qA60cTBcjjsXvza7cc/Y1v0fs3IWT4fooqw0+QerWanRCau83JyYw6y217npDX/TcOimAW3t3WSUoSWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sq4G4Orb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44A2FC4CEF5;
+	Tue, 23 Sep 2025 14:18:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758637118;
+	bh=5bWQgyLu97OKscauuQFFOi4VSgGpoEnLtETrzB6+RtQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sq4G4Orb/aRYIXYI4WoBHjqGJdNHE4C88bOp9q7GE8WR3Pz6fKRsMRrnOlQTl9IyD
+	 mMeGG2ljNzHm+c+07HHCHcFLxFfRbe7lQQrKWbn7WymL43ns+g/8L9xbdK8eaXMrDY
+	 /52h2tOKl/HfYfpe6fPIk3BMdK+8Hrkf/5uvExp5wZc5pSpeMUZoGET8PKYwIak4SK
+	 aJTyQnriCQImLQ0s4pSayBEob+OTT/ebVGnXH75NBi6vzvGI0SVPUIqdcg1f7xw632
+	 QWKAiHb2GWxuVmJeg6YJ1KZ1LIiAEWvpiT1bKFS4iX/RkNR+v6GBImFV8O+liDzaHX
+	 Gi2cE5oJi3pMQ==
+Message-ID: <435b664d-bfec-4065-b913-4e0473537563@kernel.org>
+Date: Tue, 23 Sep 2025 16:18:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] rust: usb: add basic USB abstractions
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
+ <20250825-b4-usb-v1-1-7aa024de7ae8@collabora.com>
+ <DD07LUJXNZN9.3RHH9NJNRFVNN@kernel.org>
+ <2025092356-rounding-eligibly-c4b7@gregkh>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <2025092356-rounding-eligibly-c4b7@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On 9/23/25 4:13 PM, Greg Kroah-Hartman wrote:
+> Functions like usb_fill_bulk_urb() takes a pointer to a usb_device, not
+> an interface.
+Yes, I'm aware, please see my reply [1] regarding that.
 
-The MR1.CKS field is 3 bits wide and all the possible values (from 0 to
-7) are valid. This is true for all the SoCs currently integrated in
-upstream Linux. Take into account CKS=7 which allows setting bus
-frequencies lower than 50KHz. This may be useful at least for debugging.
-
-Fixes: d982d6651419 ("i2c: riic: remove clock and frequency restrictions")
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- drivers/i2c/busses/i2c-riic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
-index 9c164a4b9bb9..b0ee9ac45a97 100644
---- a/drivers/i2c/busses/i2c-riic.c
-+++ b/drivers/i2c/busses/i2c-riic.c
-@@ -386,7 +386,7 @@ static int riic_init_hw(struct riic_dev *riic)
- 	 */
- 	total_ticks = DIV_ROUND_UP(rate, t->bus_freq_hz ?: 1);
- 
--	for (cks = 0; cks < 7; cks++) {
-+	for (cks = 0; cks <= 7; cks++) {
- 		/*
- 		 * 60% low time must be less than BRL + 2 + 1
- 		 * BRL max register value is 0x1F.
--- 
-2.43.0
-
+[1] https://lore.kernel.org/all/DD08HWM0M68R.2R74OSODBIWSZ@kernel.org/
 
