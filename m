@@ -1,209 +1,181 @@
-Return-Path: <linux-kernel+bounces-828689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9890BB95339
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:17:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31423B95361
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5166D48318C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:17:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C770E3B8A8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22596320CA3;
-	Tue, 23 Sep 2025 09:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC7D30F55A;
+	Tue, 23 Sep 2025 09:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o+Te11x9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mHXNj69L"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD18320A24;
-	Tue, 23 Sep 2025 09:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A58258CF9
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758619031; cv=none; b=ouI/Q8qMkD2L3EesSpcx4V6Kk9zcPScUni3CcJCGXLHChxxrrOscFs60rnfKcDDZbFPD2t6Tg+p/bowQGIzG+NuWhCY3BNb/lMtdW+gddtOAxxB+VCJnDbbhFvkmaPeVjVYkOhgxHZFuBMQ4jf4ZHD2iwvwyTVWa5HdfTrswyIU=
+	t=1758619146; cv=none; b=YDCmZpCA5LlXeeB3wgzCpY+MzOFqGspgoPf8RHR+eYkT6/ixrGoOBp12kOz00avRX4KQitEVVQ8npBww4uRGySVJLlyTOu1p3MPKLLjb1Yxuq/ApmYPCIljT+KHfZjHMIVkXXnIPVyl0Dsco5zyoXC6kCPEiKDPAIhNOXbTSEbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758619031; c=relaxed/simple;
-	bh=iJojMmqjXmNM1AROfZxDC8FC4oHqEBcWIRk8sn0CBs0=;
+	s=arc-20240116; t=1758619146; c=relaxed/simple;
+	bh=Ob4PEJnRCFKX5Dh4OXIt58T1AxKizBgCT6fTu8PMUdM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t5rkvgT7PNvYXA5lk8Vf0/cVxE2enIdM69JU416Wb6z2YSXNc5O2RK2n4Ayop8+LZmOBEEPDVaNao6H58sGMK/8gywWZvaZ4N71NLAdoerIGQ5pob472L/lRxqm+NAUTmjw8rB0obyW56TgB1YPh2zDvJOKKgm/jtPfXsIgCcdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o+Te11x9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E1B3C4CEF5;
-	Tue, 23 Sep 2025 09:17:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758619030;
-	bh=iJojMmqjXmNM1AROfZxDC8FC4oHqEBcWIRk8sn0CBs0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o+Te11x9qAXZtTHxQtqwn2W2os6yeJS1u1MHlfUbnb+JQBNcrAoOgu1pUBHxpQ4Jh
-	 TOGRswcnPpBswcIIk8IhPzgSBlPEbA6s4WJzJxKjz/Pxqony/clyu6dEC+uxDfatmw
-	 eXgdkXqaA6s9ci7tmQbdYV1iz8cXNvzo1XXc/EPuZDK63ols59iHBFmXlbKCeDOSfE
-	 YsRFVtB1Fi017+eLcNEo4YSAM/oR/saka+wk2D7iN8tgzLuZWpZkwACYKGqI0gBv2L
-	 DZUM8VP/tDonbooBpL0gZ/6Px+oAsdIreQ6X95Wv6ehoL2i+G/b5XvLoXC2zWTGOZ/
-	 ueWWwGjX3BMZA==
-Date: Tue, 23 Sep 2025 11:17:07 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Waiman Long <llong@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, cgroups@vger.kernel.org
-Subject: Re: [PATCH 26/33] cgroup/cpuset: Fail if isolated and nohz_full
- don't leave any housekeeping
-Message-ID: <aNJlk7wcAsPF_j-z@2a01cb069018a810e4ede1071806178f.ipv6.abo.wanadoo.fr>
-References: <20250829154814.47015-1-frederic@kernel.org>
- <20250829154814.47015-27-frederic@kernel.org>
- <6457dd87-95cb-4c4d-aaab-6c9b65414a75@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AoyWsOTlA6NkSoygsgWOsG2VWfRzs9Gs6eMieqJ8hZwQFL0c/ABj9rEcM0pwZkpwxEGEoqXDObv/dLuboJleOH2TyTteoqImxm9eQ7gMGqW8LGaloJVnvOsiAVxt00LJkl4JHVY0vL18qK4pwzSe0PK3RxWnMq9xKPGLDSDI9dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mHXNj69L; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3eebc513678so3588447f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758619143; x=1759223943; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rzPVgnzMxw0u/5rPyRAI2idtL300s+mFFNLf4vaxnoI=;
+        b=mHXNj69L0SEMtuvjmY+48ximovkPW3YUJ1SVTzfw4exfyRC+Y/gDIn2b25E8J4qs2D
+         v44jRfTWcGmODIJanjzwChS6eKR3gGwmKn1Csl5jg+cr+QYsKRqe+6dbnKItUqHWz6Qg
+         AsM8LwcDoiFNeI+q+gemEliePAuvVfD1+FcY2QJTJtQ1kgCP7QkkAFXm3pI84VRzRJxZ
+         bhDcnfBAuxk8+ZdbfusA4w0IyTuhRivnUfu0HEN95oCvszDdUGxTU7xTO1xSpqlOlRer
+         qzJLASyWPU64e1/bce+pR/YAvS8jdNSXYJ2C2DzmBNfDFBQtLjEIw1IrsNjRqoql22Fc
+         UEPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758619143; x=1759223943;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rzPVgnzMxw0u/5rPyRAI2idtL300s+mFFNLf4vaxnoI=;
+        b=JCeHy5ireVaQthhyIwUIJG97XM2tE4pxoszcjxyldNGAqE986qw4+1ul/+P/thCXay
+         G698vkQqy2zOhZIbGPMi22xXcfAf9rE423m8brzNKfP5jt+G4hs6+JeXl4qED6M0g38w
+         eE78BQsXHy18bLErLlDiXTVdUSzDxWsrskwOcxd7+VxeZhZ4Nghcsw78arTHFp8t86mh
+         Fjhf9DXYdbjXjujeTgHEzYON5bqcf7241IDdO1KeA2ifDYT5AA++5UPc95jCCul5i1m3
+         lapUfbfE1PFy6cwpTcnDKuCbYIBxDxUnCXv6z5oIQai07wKmfq2+uz4+an8Ti4+Bfi0t
+         Xp3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVBRVope8vLmyxIyJSDUOfINkBHDza7xlkad9+vzmulXRjMfysyPnUsUDLYuh5Tf1hibQeQI3dI73lM06I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLCTUas0yVLyRZheCkCF8LtHT2b5Acqws4FRtdQNkcvrJEl7E3
+	4p9KBCDXvihRdB2RYOvs7R0Xm+jq5U5E6eXBxWKz0oUWYdjJRVmv9vMC1zy4lJRvrg==
+X-Gm-Gg: ASbGncsyrI45OJY6XBWvLAhrGr1y5V5EgVaKoR5isMik06rd0iBnLFRoEbTR5NKhMgX
+	DApXD/Z1cfn9wXvuAeqWP0LNppT/SpOJw9JtxRxbT/lE31OHzYEtMfCIfagz6q6AjM9bYV+blpg
+	Tv86u3F2SnTLclUBvOU8xIa5qQo8JOcg5I6+TgTmqemPUBZmNX8TSJcvSpeF3i6sn+HDz5zsTWv
+	mai1R0OArR+I8QvomuJYEHKwcfkMA4Q9cblkb+xJoruYK0z5ioIpwchHgSR30xy7YwCLqmBBnlS
+	drNjnI9qYySRg8jmDCrqfsgDrsWqTVfqWfVeeYMyWwh6gLymKLx2uVvASEDB/kH107OmSxCC9Zo
+	c60qNMGY9RMg7ySyaGAN0kM0lt2LXRqGndrdtBP9ywWiU9+JnmjZQg/o/h5zB8RqpqbFa3UJZ
+X-Google-Smtp-Source: AGHT+IGW/BGKmTwR+8ZWW1MRwZl0fncm95Jhv/kZ6B+0I1aPkL40IEURTciwlEaJlI8gawUIXIITSw==
+X-Received: by 2002:a05:6000:4313:b0:3da:d015:bf84 with SMTP id ffacd0b85a97d-405c76a1cb2mr1589577f8f.25.1758619143195;
+        Tue, 23 Sep 2025 02:19:03 -0700 (PDT)
+Received: from google.com (135.91.155.104.bc.googleusercontent.com. [104.155.91.135])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee106fd0edsm22499598f8f.53.2025.09.23.02.19.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 02:19:02 -0700 (PDT)
+Date: Tue, 23 Sep 2025 10:18:59 +0100
+From: Vincent Donnefort <vdonnefort@google.com>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Marc Zyngier <maz@kernel.org>, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, qperret@google.com,
+	sebastianene@google.com, keirf@google.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v2] KVM: arm64: Check range args for pKVM mem transitions
+Message-ID: <aNJmA-1ZlikW2Knw@google.com>
+References: <20250919155056.2648137-1-vdonnefort@google.com>
+ <87plbkxcvv.wl-maz@kernel.org>
+ <aNG417MneSKBxyn8@google.com>
+ <aNHcxAJXHeS2T7TH@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6457dd87-95cb-4c4d-aaab-6c9b65414a75@redhat.com>
+In-Reply-To: <aNHcxAJXHeS2T7TH@linux.dev>
 
-Le Tue, Sep 02, 2025 at 11:44:00AM -0400, Waiman Long a écrit :
+On Mon, Sep 22, 2025 at 04:33:24PM -0700, Oliver Upton wrote:
+> On Mon, Sep 22, 2025 at 10:00:07PM +0100, Vincent Donnefort wrote:
+> > On Sun, Sep 21, 2025 at 12:29:08PM +0100, Marc Zyngier wrote:
+> > > On Fri, 19 Sep 2025 16:50:56 +0100,
+> > > Vincent Donnefort <vdonnefort@google.com> wrote:
+> > > > 
+> > > > There's currently no verification for host issued ranges in most of the
+> > > > pKVM memory transitions. The subsequent end boundary might therefore be
+> > > > subject to overflow and could evade the later checks.
+> > > > 
+> > > > Close this loophole with an additional check_range_args() check on a per
+> > > > public function basis.
+> > > > 
+> > > > host_unshare_guest transition is already protected via
+> > > > __check_host_shared_guest(), while assert_host_shared_guest() callers
+> > > > are already ignoring host checks.
+> > > > 
+> > > > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> > > > 
+> > > > ---
+> > > > 
+> > > >  v1 -> v2:
+> > > >    - Also check for (nr_pages * PAGE_SIZE) overflow. (Quentin)
+> > > >    - Rename to check_range_args().
+> > > > 
+> > > > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > > > index 8957734d6183..65fcd2148f59 100644
+> > > > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > > > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > > > @@ -712,6 +712,14 @@ static int __guest_check_page_state_range(struct pkvm_hyp_vm *vm, u64 addr,
+> > > >  	return check_page_state_range(&vm->pgt, addr, size, &d);
+> > > >  }
+> > > >  
+> > > > +static bool check_range_args(u64 start, u64 nr_pages, u64 *size)
+> > > > +{
+> > > > +	if (check_mul_overflow(nr_pages, PAGE_SIZE, size))
+> > > > +		return false;
+> > > > +
+> > > > +	return start < (start + *size);
+> > > 
+> > > I will echo Oliver's concern on v1: you probably want to convert the
+> > > boundary check to be inclusive of the end of the range. Otherwise, a
+> > > range that ends at the top of the 64bit range will be represented as
+> > > 0, and fail the  check despite being perfectly valid.
+> > 
+> > Do you mean allowing something like start == 0xfffffffffffff000 and size ==
+> > 4096?
 > 
-> On 8/29/25 11:48 AM, Frederic Weisbecker wrote:
-> > From: Gabriele Monaco <gmonaco@redhat.com>
-> > 
-> > Currently the user can set up isolated cpus via cpuset and nohz_full in
-> > such a way that leaves no housekeeping CPU (i.e. no CPU that is neither
-> > domain isolated nor nohz full). This can be a problem for other
-> > subsystems (e.g. the timer wheel imgration).
-> > 
-> > Prevent this configuration by blocking any assignation that would cause
-> > the union of domain isolated cpus and nohz_full to covers all CPUs.
-> > 
-> > Acked-by: Frederic Weisbecker <frederic@kernel.org>
-> > Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> > ---
-> >   kernel/cgroup/cpuset.c | 57 ++++++++++++++++++++++++++++++++++++++++++
-> >   1 file changed, 57 insertions(+)
-> > 
-> > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> > index df1dfacf5f9d..8260dd699fd8 100644
-> > --- a/kernel/cgroup/cpuset.c
-> > +++ b/kernel/cgroup/cpuset.c
-> > @@ -1275,6 +1275,19 @@ static void isolated_cpus_update(int old_prs, int new_prs, struct cpumask *xcpus
-> >   		cpumask_andnot(isolated_cpus, isolated_cpus, xcpus);
-> >   }
-> > +/*
-> > + * isolated_cpus_should_update - Returns if the isolated_cpus mask needs update
-> > + * @prs: new or old partition_root_state
-> > + * @parent: parent cpuset
-> > + * Return: true if isolated_cpus needs modification, false otherwise
-> > + */
-> > +static bool isolated_cpus_should_update(int prs, struct cpuset *parent)
-> > +{
-> > +	if (!parent)
-> > +		parent = &top_cpuset;
-> > +	return prs != parent->partition_root_state;
-> > +}
-> > +
-> >   /*
-> >    * partition_xcpus_add - Add new exclusive CPUs to partition
-> >    * @new_prs: new partition_root_state
-> > @@ -1339,6 +1352,36 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
-> >   	return isolcpus_updated;
-> >   }
-> > +/*
-> > + * isolcpus_nohz_conflict - check for isolated & nohz_full conflicts
-> > + * @new_cpus: cpu mask for cpus that are going to be isolated
-> > + * Return: true if there is conflict, false otherwise
-> > + *
-> > + * If nohz_full is enabled and we have isolated CPUs, their combination must
-> > + * still leave housekeeping CPUs.
-> > + */
-> > +static bool isolcpus_nohz_conflict(struct cpumask *new_cpus)
-> > +{
-> > +	cpumask_var_t full_hk_cpus;
-> > +	int res = false;
-> > +
-> > +	if (!housekeeping_enabled(HK_TYPE_KERNEL_NOISE))
-> > +		return false;
-> > +
-> > +	if (!alloc_cpumask_var(&full_hk_cpus, GFP_KERNEL))
-> > +		return true;
-> > +
-> > +	cpumask_and(full_hk_cpus, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE),
-> > +		    housekeeping_cpumask(HK_TYPE_DOMAIN));
-> > +	cpumask_andnot(full_hk_cpus, full_hk_cpus, isolated_cpus);
-> > +	cpumask_and(full_hk_cpus, full_hk_cpus, cpu_online_mask);
-> > +	if (!cpumask_weight_andnot(full_hk_cpus, new_cpus))
-> > +		res = true;
-> > +
-> > +	free_cpumask_var(full_hk_cpus);
-> > +	return res;
-> > +}
-> > +
-> >   static void update_housekeeping_cpumask(bool isolcpus_updated)
-> >   {
-> >   	int ret;
-> > @@ -1453,6 +1496,9 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
-> >   	if (!cpumask_intersects(tmp->new_cpus, cpu_active_mask) ||
-> >   	    cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
-> >   		return PERR_INVCPUS;
-> > +	if (isolated_cpus_should_update(new_prs, NULL) &&
-> > +	    isolcpus_nohz_conflict(tmp->new_cpus))
-> > +		return PERR_HKEEPING;
-> >   	spin_lock_irq(&callback_lock);
-> >   	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
-> > @@ -1552,6 +1598,9 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
-> >   		else if (cpumask_intersects(tmp->addmask, subpartitions_cpus) ||
-> >   			 cpumask_subset(top_cpuset.effective_cpus, tmp->addmask))
-> >   			cs->prs_err = PERR_NOCPUS;
-> > +		else if (isolated_cpus_should_update(prs, NULL) &&
-> > +			 isolcpus_nohz_conflict(tmp->addmask))
-> > +			cs->prs_err = PERR_HKEEPING;
-> >   		if (cs->prs_err)
-> >   			goto invalidate;
-> >   	}
-> > @@ -1904,6 +1953,12 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
-> >   			return err;
-> >   	}
-> > +	if (deleting && isolated_cpus_should_update(new_prs, parent) &&
-> > +	    isolcpus_nohz_conflict(tmp->delmask)) {
-> > +		cs->prs_err = PERR_HKEEPING;
-> > +		return PERR_HKEEPING;
-> > +	}
-> > +
-> >   	/*
-> >   	 * Change the parent's effective_cpus & effective_xcpus (top cpuset
-> >   	 * only).
-> > @@ -2924,6 +2979,8 @@ static int update_prstate(struct cpuset *cs, int new_prs)
-> >   		 * Need to update isolated_cpus.
-> >   		 */
-> >   		isolcpus_updated = true;
-> > +		if (isolcpus_nohz_conflict(cs->effective_xcpus))
-> > +			err = PERR_HKEEPING;
-> >   	} else {
-> >   		/*
-> >   		 * Switching back to member is always allowed even if it
+> Yes, this is what I was alluding to on v1.
 > 
-> In both remote_cpus_update() and update_parent_effective_cpumask(), some new
-> CPUs can be added to the isolation list while other CPUs can be removed from
-> it. So isolcpus_nohz_conflict() should include both set in its analysis to
-> avoid false positive. Essentally, if the CPUs removed from the isolated_cpus
-> intersect with the nohz_full housekeeping mask, there is no conflict.
+> > But I guess that would still put all the following checks using "addr + size" at
+> > risk. Also, I believe even the code in pgtable.c wouldn't support a such range
+> > as it is also using a u64 end boundary.
+> 
+> I'm not sure I follow. Ranges are pretty commonly expressed as a range
+> terminated by an exclusive value. This just hasn't been an issue yet as
+> the page table code is only ever dealing with TTBR0 or VTTBR
+> translations.
 
-I assume this was fixed in latest Gabriele posting?
+If I do exclude the end boundary, evading checks would be as simple as making
+sure we overflow the end boundary?
 
-Thanks.
+e.g. __pkvm_host_share_guest(phys = 0xfffffffffffff000, size = 4096) 
+
+        check_range_allowed_memory(phys, phys + size) /* nop */
+	....
+	for_each_hyp_page(page, phys, size) {  /* nop */
+               ...
+	} 
+	...
+	/* Install a valid mapping to phys */
+	kvm_pgtable_stage2_map(&vm->pgt, ipa, size, phys, ...) 
 
 > 
-> Cheers,
-> Longman
+> Anyway, I'd rather these range checks have as few assumptions of the
+> applied address space as possible.
 > 
-
--- 
-Frederic Weisbecker
-SUSE Labs
+> Thanks,
+> Oliver
+> 
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+> 
 
