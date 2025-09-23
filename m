@@ -1,225 +1,192 @@
-Return-Path: <linux-kernel+bounces-828563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8BFDB94E55
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:01:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BCC4B94D7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51D56442B34
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:00:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19FF13AE519
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B8F2F1FE3;
-	Tue, 23 Sep 2025 08:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03FA315D4E;
+	Tue, 23 Sep 2025 07:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ReoZYFy2"
-Received: from mail-qt1-f227.google.com (mail-qt1-f227.google.com [209.85.160.227])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="l7ldCV20"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012018.outbound.protection.outlook.com [40.107.209.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE95E2F1FDD
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.227
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758614452; cv=none; b=MTi5ZY54Xiy2ETeo5SxeE/fWLqvUvuvT6J3+/U+lx5bkTVvBexTkN1ndUKv6sCQgRwzK9eNhLoNPyiaYt3vnqN/HeORWZ7cSyr56xfByByCZdXp8foIm6AzDGYwiQFIrGu/AmWWcr3RHg32ozQ1kRXdC0UoJXlYbct2r5UCakBQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758614452; c=relaxed/simple;
-	bh=2Nmv4rZNUfTXcZw7YzLDJ5L6s3/QDtMNlHCYycuCRfM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DELnSDNosh/VquobZlPxUX5wCt8IwHTkx4YxvUwnwPiz+kuGEb/psCicY/4UKMiaYH8Q7RvaaoS17olbVKuZE/vfi/OkYqGrstqXswZMpE6ydJb7j0d13ohxYQXGjYmgtxmKhqlnlOHacEy02kC6JLB/WgA8/CMDxN9czgrCPn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ReoZYFy2; arc=none smtp.client-ip=209.85.160.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qt1-f227.google.com with SMTP id d75a77b69052e-4b38d4de6d9so33207561cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:00:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758614450; x=1759219250;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:dkim-signature:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6FeQF6j+JjXOV0QRTrdt9GGdX4jZQxW0sWiD25FD7sA=;
-        b=L5UbLQ/WrVlGv+PH/9pHG3Vw7EXDTIy9Hlx1Sd7tgAU5aU2qyOfcwDyGX/GuMLrP19
-         DwSmAK0Ew2FKF4Xe6cFP+ys42oQmIYJQMFUc1icKoUcmLUmUA8gifoYrInUwPdTjqKsP
-         NDp65YTY6SUUVhgwfi18Gd364KbC1dGYob1YLwAkYl1tCTx7ewdD+5HsA5y/qenwmxRj
-         AY9ytEjKcoO0AQuNlXT1+Ag6m0fO/V0al6pM4zloOwPZbpdvlMCRjuc5A+6jcWFfytD9
-         qDRhO56wu61YSTh3CtXGnQ2woSjQqyp8/9ngwxvkrFDbTCJ7Vgha5eB9GPUch457OeG0
-         2jUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNB+FOGaGG1ACs0eeO4CH7WtyBuX4JE5HapQ3d+rhHFFxsNSmuqulA3MoMrOwrn1SN+/LjseZuNMb7oo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5F+qTD0PnZbzJOxAirtOfMvOEj8W6/6Cxu+sj0HwKlSp5T/pO
-	XEtYNXt9dHyVrkuT4AaM49cxTp+EPkZK96M2+NJKU/7GFnku7k/l33ZvqJivn9OTo81EYAuvTo2
-	vujOQf+cA1fZV+Oq0M5xbozPibCAUGpmjYCi4oZPebesTSN12CDw/lEmz5Ht+v99dwRsZlfJBHX
-	/NlPxyPIv/920iJsW/VvxLQKwlxCclkHhGMHYOm4zDwjp4mET388+iZysxXDa6Eqgc+acyRDLDi
-	QL4cGEos5v/jKTY0W6wIaNEnw==
-X-Gm-Gg: ASbGncuNeCUgOT+UgDSj5v7Sq8gnY0rqD6w6dr7bpXnA3LSwkrGpJhhPxDlh14QP4j0
-	Br3pwXnsUhjg3EqYAzopensCAZeL1T27tbHbkdN/l/iDS+5HYW83Gt2RVsej3+IIfIVzO/0BDm+
-	08XST3IHz8+UqJB75SJQJP6xTk3CzC6eN53Tx9Fq4l1gtsSIrkfunKGVqPrFNHKht+O1gQ+IZXB
-	WGXpkcZiSQKnmj6YLLQ8/urcK6O4knRsCsIXam5ue3gi+fnDaVCnF6kAsQBydtG5keo5BTLCT6X
-	+MQ1iNFrwhlu+RB7ee0BiLQTWSWvObV+rCXrfW+IslmAHQyxNoyFaawhay97Kg5D2vBzL678vAA
-	TSWpZaTYkoBpM4nOFgz8fugbRN1Y4g0/BM+l/GQM3yHkqqYF4mdK7gjMlw2dN3eIeQK5X9QOugV
-	OS8Ez2/w==
-X-Google-Smtp-Source: AGHT+IFr44PMKAOKj3z6ZLKKLV2t4R2LsTH2eRW8vuOUmtPnIXcoJlCjU36igFRTCcBl3D03tm2Wmo+KXpfX
-X-Received: by 2002:a05:622a:1a97:b0:4b5:781c:8831 with SMTP id d75a77b69052e-4d3717f2a5dmr19334101cf.71.1758614449361;
-        Tue, 23 Sep 2025 01:00:49 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-118.dlp.protect.broadcom.com. [144.49.247.118])
-        by smtp-relay.gmail.com with ESMTPS id d75a77b69052e-4bda533b035sm3734911cf.10.2025.09.23.01.00.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Sep 2025 01:00:49 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2697410e7f9so99511775ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:00:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1758614448; x=1759219248; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6FeQF6j+JjXOV0QRTrdt9GGdX4jZQxW0sWiD25FD7sA=;
-        b=ReoZYFy2ZLsMXQXwlcA4zdb0MJseA0BsoCWJBVAUcQ3fHZIwm2/J4Gpna3RbGJHcud
-         PwmuCGoW6BGxauHCyUXAwz6lSLQO6uX4rVb4MPvcU+sJRLHCbnsPuhg7TbOHavKqcG0P
-         FGtI6DDns/rCSUpO24la12nOBzEOPpmWTNa34=
-X-Forwarded-Encrypted: i=1; AJvYcCWKS3XenIvTVhRsPfoLhxg3H566Nk7jkAt4CgvE0oGMV15s8SMPv0OwGUsmNtZ621RzgkqubbErP4AbT4A=@vger.kernel.org
-X-Received: by 2002:a17:902:ce03:b0:278:9051:8e9c with SMTP id d9443c01a7336-27cc61b8c8dmr20437145ad.42.1758614448160;
-        Tue, 23 Sep 2025 01:00:48 -0700 (PDT)
-X-Received: by 2002:a17:902:ce03:b0:278:9051:8e9c with SMTP id d9443c01a7336-27cc61b8c8dmr20436885ad.42.1758614447798;
-        Tue, 23 Sep 2025 01:00:47 -0700 (PDT)
-Received: from shivania.lvn.broadcom.net ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698033d788sm154912015ad.127.2025.09.23.01.00.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 01:00:47 -0700 (PDT)
-From: Shivani Agarwal <shivani.agarwal@broadcom.com>
-To: herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	smueller@chronox.de,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	ajay.kaher@broadcom.com,
-	alexey.makhalov@broadcom.com,
-	tapas.kundu@broadcom.com,
-	vamsi-krishna.brahmajosyula@broadcom.com,
-	srinidhi.rao@broadcom.com,
-	Shivani Agarwal <shivani.agarwal@broadcom.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] crypto: zero initialize memory allocated via sock_kmalloc
-Date: Tue, 23 Sep 2025 00:45:15 -0700
-Message-Id: <20250923074515.295899-1-shivani.agarwal@broadcom.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C517238C0D
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758613534; cv=fail; b=iTwmv4oZy/bipVi5lpdQrk8m5AB1o0hVsWnYHDQH4SsMahOQk/rcZaPdF5dHpgIRI/PgGFBufqyZEDh9v/is5mLoBTmXrURR28KB/lSiT+vdrPSpG4m4T0TUDvIQYCDOCQjBQU1RS2urJXv/t7VGAC51ebYuRf9u/iIxfOwMbQ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758613534; c=relaxed/simple;
+	bh=+/M4HvruErV4jBnQCtcW5pa57okAh6ZZMgW/20bcihk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=HW7yp+ywth3PTVvS3uj7grsyvE76qWuO/bMZNXvz07zYtO7XQKE3sMOsxfDB7GiwCz9M1EKR788TfOoE0s3YNI4johc6frH8NIz7XVeEpSCDoe7z2UxF6dIhCzRSa78MOAvfujUS9WNuiqEL9PLNWdJIjlB/Av9NvuYLe82ToGI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=l7ldCV20; arc=fail smtp.client-ip=40.107.209.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R8HK0G3xH9NRZHxUN2a0ze2YmPWzttA8E8/4tlCu2Xn9pInMKE9b+C9Lj4LrSs0L8j9frx9XRoYaWk3PnkO2S95LxgZ8Bhvf17qRi5X2x118ygjb0wTEkMsouNmqaINBrlPt3/mBj/qKZZfyXgRjJl1GPYZbLq8xU8nnciFDtYoL6uiWcN15xybQhT/TOMzGmpBaB8FuhtSsTvqhpP2VYHZUPhRlhB/FIResVp9xFLK44AAu/VvzQTp9mT46KLYZ2Vp5yxFqVnXW2+5S2pHoZdwt/nmLp9r+4QRfbenb7/dwc2TYC0OHs71e5oaq5KbDcgBvLpOxObfHiGwpJtxCQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZeN2vCBojHWiNmAM4k3hM5m23H1fWFe7Save76BtUXM=;
+ b=rAmzQpaRmUPf6exF5tBxwosLXAjl9peYsMBEm42TaS20VU2hSsZz56pBCIxeZP4zt7YoJJP+rH1Cpv/3LaIPI35O9I+fhFVxxTr0ygDq5o4bTKV7PYhn04AN85zvEWkMgNeUh9+SPdZ9NFXWbaTUkNEgnpxSyPkmGIupY/2dC6vYvM8gGDJnrFmmOWC1WRptFm25/F2mvY/C+J7RyVWVl6gt+PkRNgbY0od5u02PiVu5SulrEP/NUgALYoAtfFeuEoMYqKDwvwoLnfUWOqawFlp4jrk6kwna6Pvps3c/Fj+uT9+EBAzPVQAVaxBx5Hm0ILlvKuKlDm4yZMvnz6vXpQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZeN2vCBojHWiNmAM4k3hM5m23H1fWFe7Save76BtUXM=;
+ b=l7ldCV20QzXfRmGy7oo5n9GpaEQMSqee/uHiRVn5kD+zdkCbTQrUM7iMprxWSItVCpQebycpEJ018Y1+AtEAFrGse7V3D346MYF0FQENgIvfCoWSd8x8aNSIwUk73pWtjwlvtdIusX7goqdf0htQegl6DVHEm9tYwrBkMYIyQfCoOCOplVkRvRdfuERToNXLTjyyy2pSUrgVOtgl94yzK9qXqy0s5rD2zhpW6nG3aw7YUzl7e/YtAXzvtf9Al9IuT+FXb9zi9/z01FYFVP8hoUdDflq8L+4N4MgyTrQlgjHgzR6nLjrPRWFWBfLPUC2Q+yKI8dmDQgt6T/jFISBYWw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by CH2PR12MB4231.namprd12.prod.outlook.com (2603:10b6:610:7d::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Tue, 23 Sep
+ 2025 07:45:29 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 07:45:29 +0000
+Date: Tue, 23 Sep 2025 09:45:26 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
+Subject: Re: [PATCH 4/7] sched_ext: Use bitfields for boolean warning flags
+Message-ID: <aNJQFqg2R80VJc7p@gpd4>
+References: <20250922013246.275031-1-tj@kernel.org>
+ <20250922013246.275031-4-tj@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922013246.275031-4-tj@kernel.org>
+X-ClientProxiedBy: PR1P264CA0171.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:347::17) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|CH2PR12MB4231:EE_
+X-MS-Office365-Filtering-Correlation-Id: c9cffe18-037c-4dc0-da1a-08ddfa752af8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vMKmSV/yU8Bj+nIzuatgf1wqOiYmT5CjFCvJGG9DKoMtQEodzhpn+XymRc32?=
+ =?us-ascii?Q?hFfVCYexx5w+aTzT7Lx7IyRfDNhOCoodSNlk1EOeCKAKAk3t3ngEnXn5mLdA?=
+ =?us-ascii?Q?YmQZ7atJo76Nb2B5pPErhI96mj09+Kx96KD+MHWBnma5E+DZYacAd7FV1DB5?=
+ =?us-ascii?Q?h97mrh3T9YXl25OYMUVeFfZVCW8jRu1bcfXvFWR917gLYgvR1tDXYvAmj3KP?=
+ =?us-ascii?Q?KPKVhH2TorggooEtQCx599+ZZPWo2TDzYqVQmD4veI3nKzSb9MnkIHSE6vFi?=
+ =?us-ascii?Q?J9I73Ww/iDFvBaUgsiVW5ocXnLIKLvzK79OFmM2fOGb+g9Crzv4rZJV9d9Vr?=
+ =?us-ascii?Q?tEXKA9g4PAyIi4CopjiwZuvJM9/ee6qbzDGzg5H2EsvlWM6sNQrGeGHwOzzF?=
+ =?us-ascii?Q?e2HfnFLD9cpfqTWjYsx500IYSZGu82Ljb/bNF9FJHsYFgIyOzJmC6F4NbDAw?=
+ =?us-ascii?Q?GwO5pBwv30hF0w/9ZFkkKP48IQpfQm+2NV4kYnLbWaZnHbP03vU5GlC9ZO4u?=
+ =?us-ascii?Q?SDfkLg/4eDGCoi7J60miQhnCy6I5QjnW1+w7UYRFG6nR/D9ap0mLMYCE11RM?=
+ =?us-ascii?Q?hzssrwGFYufW4wlgGrnWJ02tlM9+DrDw5FCvZhUbrV5ntxryLcGH+aOulavC?=
+ =?us-ascii?Q?0poGWu7T1VgIcGqfdmmJBjRkD2Wgl+3y/iFbsdvc7YVXzi9Uhh9KUfMkSeZs?=
+ =?us-ascii?Q?rBaB84Jd13gzuN4IkpuUh1/mDIi973L6JgsY1iHA4I3juVodTlun32bYNzdw?=
+ =?us-ascii?Q?nHjkITQ6iEb57c8vYpUyMUmkNLzy8qbwqrWw5mc2u5MH6sB3byH9yLqqtNIm?=
+ =?us-ascii?Q?YDxnXwcDDHV3/GxeM4z+4ydq5r5V0TRQd7X+69Eisda/EjQGFOQYZ+dpH8j2?=
+ =?us-ascii?Q?jUDzUYT0wTYlkp+6+9UDI+tw439TFU/x2YRENeoBBm3A3vj5GIebjcTNutwR?=
+ =?us-ascii?Q?e9iNua8E4njYeq0DaUnltTl26aG9M/Syb5GAs2F55hsghx8iXYmF9gYZNNHd?=
+ =?us-ascii?Q?8cbJPvZBmwfQr7zO1nEm4gIx8ZdxDxVo+ClvSKhps+5kuH2AQd4kIw9gVKy2?=
+ =?us-ascii?Q?vnVq4dKU6Qrb6tyZdFdY/I2R+kGjiwDOwu778jAcRLdfchB/8mRdtpPNJhWv?=
+ =?us-ascii?Q?bH70TG6YthmICuLmm+LwxMJgeypfEdGeheQm2RghhH9Ux2s4svTo1quFoOYy?=
+ =?us-ascii?Q?/jCraANummq6Azk9niGvzXdDii8wCwRJT93bA2B3LLoG+L761DPFTleLwdFH?=
+ =?us-ascii?Q?p53hIsWtNFCglIXFfURM+eQWXnzr+MFFEvRVAPGp8Gmi6mKfIHjQiojOqLkb?=
+ =?us-ascii?Q?eaqbDjSsSosCSPfNf94ygNBR0uyQ8yq81ChMS2ETgHLQKomb1tiA6mAWZuVZ?=
+ =?us-ascii?Q?1GcxZs4bQGvcjRETCqTZ2YP+YoDParglvIQ1jr+ZYkI/G9NgANP4AsHCNXda?=
+ =?us-ascii?Q?+WjB8Y3iEMc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xggFiPb1YIYpjB+BE3uc/0z+nZMs1fZSsxvR37VlIsN+yLD0kekHVyey2Acc?=
+ =?us-ascii?Q?G7NUzWMTCQviTU/k3I8cyYu6fQ5XSNlM/sBOTdBvXXQzHSOi8Y0PbdhWSglp?=
+ =?us-ascii?Q?qu1l+/PpiMpr2agizQYHSP7N6lYoF91KjrklOLzdF//8FTSJOjwwvOAkYiXl?=
+ =?us-ascii?Q?5O7jkKAZXU2BC+DXU+Mtiz181RvTS2KOV/SUX/2cvu07mrSM4DVeq9NnLJHE?=
+ =?us-ascii?Q?rllOdD80uO425zS758VGRQmcmcL/5s1cxUGxVgupJp/N1yohM84IT5BctsvW?=
+ =?us-ascii?Q?5Lv/737BnXOh2Qoxws7QPFwGnZh10ttaapKWaeCGhya+HHkB1D7AumeWxkjl?=
+ =?us-ascii?Q?Ww+vZQMS2jkGHsysmc7qCXIrzd/glna9ztK0iRjoPRU6iFCPwfEvsEZLS4y3?=
+ =?us-ascii?Q?PiHWY8dlm16GLTq35nx935bdzchXQHeZpaBA8eMo0zVTeJViUEE8dNn9maou?=
+ =?us-ascii?Q?N55JXfTQIEEcCTnA+Fng5Li1DHtNNR2Pacj+GstNHv+5/aLmZ9gN2hbzdcv+?=
+ =?us-ascii?Q?1aedmtKs/NxsQ5nxSgzfIeT6vjXKYmGeBuq6gmzcOVwz+VEjRUIUlWvUrR5S?=
+ =?us-ascii?Q?ePD2yHiqFFvnXqILBYAzWBD+Yt06bIaIZADRGfKVAbTChcyzAxgL8FHi0kII?=
+ =?us-ascii?Q?Ke/d/NDailXTyTTcqUeF6Cj3BXemOM8Epn2FtfdMTZZeu7pWc138fQjT643p?=
+ =?us-ascii?Q?BY9Hp2OBtKO8XDnL81TQ8zQyXXMahOw1FD9LrXAIP3F+GKkrAWgQ20OoSLWc?=
+ =?us-ascii?Q?DwzWJ3Ecdz+jOfk8Od9wOBcT49a7Yaw/PIh+ZhK9PieZaIeEWYl0MjXCxuAl?=
+ =?us-ascii?Q?2crBdeBMp3EZv4o43yL8z30NxBwib44FAgANwTwYAWy2vl06NbXUDh1fulVq?=
+ =?us-ascii?Q?Asc7GVMDjIArviI5GwsR1ZX3KEu/W86+I170FGq9HQrCmIXosCLw0tm075hH?=
+ =?us-ascii?Q?DtzpNUP7qbs3VLrzmVDKNvBG8YMnYAjnRDcJpzdqAke5/d9Y4GUFtdEop2WJ?=
+ =?us-ascii?Q?BS/sunOHYgO+6nYKSZeaIBZefgdetujLuKAwHmJfu22owM6OUTsE+rONNyKF?=
+ =?us-ascii?Q?abuwMe4QlEQ5AFmwp0SP39oQCZIke2xrcQtKzqmEpKYVLY8+RCG3SaeMsEoP?=
+ =?us-ascii?Q?mExlqU0L2tkzHacOmLIMtdZpIZRZgoflz1ZV45tIB3ssgenUDaegUdPNvmtF?=
+ =?us-ascii?Q?YSlIrzgm76I6iP4QnVc6ilMgl1SxEfHMqvNNxt4Sz5RhaWLm1Gn6VICdLRSQ?=
+ =?us-ascii?Q?WO87ywukIf5jZPHSvYEjWnHCUExL6Mc0rYOfbhz6V9ZpYKKyUyGHzxVFPhZc?=
+ =?us-ascii?Q?bo8l7n4Ppu7gzYQm0KH9NfpKrjTlo8bsQlTBWIp++vI4lkAh7fnPzDCONXIv?=
+ =?us-ascii?Q?5VjCjHhrNo5rvv4MSheOJqGZc6Wx0A/LAaXz+ZFF2dh7E3QkhvGR/KqZwCTv?=
+ =?us-ascii?Q?yq3VnabbYgdX+07AF8GFQWbfFv5NRKLP8rYKjZPqnoznVOOaPVAO0HbJaHSi?=
+ =?us-ascii?Q?f6k+p7vCilTTuZsGYz4Zmy7y1N4EXihJ9oKlelYWdTLBT13GaWVoqdZPYHLZ?=
+ =?us-ascii?Q?3FCrvHheitu4ZZqOwQndFd0yW0iPTAujl6WRNQ3B?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9cffe18-037c-4dc0-da1a-08ddfa752af8
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 07:45:29.6817
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LqHjk/yrxIOaOM4OMSBV7tp5IlYYRqqx4IDYozSszSk+gzpnVrdy4Tu1ESe3KQ+TVf9Q0znrbPaF9cfWVMeeUw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4231
 
-Several crypto user API contexts and requests allocated with
-sock_kmalloc() were left uninitialized, relying on callers to
-set fields explicitly. This resulted in the use of uninitialized
-data in certain error paths or when new fields are added in the
-future.
+On Sun, Sep 21, 2025 at 03:32:43PM -1000, Tejun Heo wrote:
+> Convert warned_zero_slice and warned_deprecated_rq in scx_sched struct to
+> single-bit bitfields to reduce struct size.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
 
-The ACVP patches also contain two user-space interface files:
-algif_kpp.c and algif_akcipher.c. These too rely on proper
-initialization of their context structures.
+Hm... I think the struct size remains the same, at least in my build:
+ - before: /* size: 1072, cachelines: 17, members: 14 */
+ - after:  /* size: 1072, cachelines: 17, members: 14 */
 
-A particular issue has been observed with the newly added
-'inflight' variable introduced in af_alg_ctx by commit:
+Maybe if we add more attributes in the future?
 
-  67b164a871af ("crypto: af_alg - Disallow multiple in-flight AIO requests")
+Thanks,
+-Andrea
 
-Because the context is not memset to zero after allocation,
-the inflight variable has contained garbage values. As a result,
-af_alg_alloc_areq() has incorrectly returned -EBUSY randomly when
-the garbage value was interpreted as true:
-
-  https://github.com/gregkh/linux/blame/master/crypto/af_alg.c#L1209
-
-The check directly tests ctx->inflight without explicitly
-comparing against true/false. Since inflight is only ever set to
-true or false later, an uninitialized value has triggered
--EBUSY failures. Zero-initializing memory allocated with
-sock_kmalloc() ensures inflight and other fields start in a known
-state, removing random issues caused by uninitialized data.
-
-Fixes: fe869cdb89c9 ("crypto: algif_hash - User-space interface for hash operations")
-Fixes: 5afdfd22e6ba ("crypto: algif_rng - add random number generator support")
-Fixes: 2d97591ef43d ("crypto: af_alg - consolidation of duplicate code")
-Fixes: 99bd99d3e3a7 ("crypto: algif_skcipher - Fix stream cipher chaining")
-Fixes: 67b164a871af ("crypto: af_alg - Disallow multiple in-flight AIO requests")
-Cc: stable@vger.kernel.org
-Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
----
- crypto/af_alg.c         | 5 ++---
- crypto/algif_hash.c     | 3 +--
- crypto/algif_rng.c      | 3 +--
- crypto/algif_skcipher.c | 1 +
- 4 files changed, 5 insertions(+), 7 deletions(-)
-
-diff --git a/crypto/af_alg.c b/crypto/af_alg.c
-index ca6fdcc6c54a..6c271e55f44d 100644
---- a/crypto/af_alg.c
-+++ b/crypto/af_alg.c
-@@ -1212,15 +1212,14 @@ struct af_alg_async_req *af_alg_alloc_areq(struct sock *sk,
- 	if (unlikely(!areq))
- 		return ERR_PTR(-ENOMEM);
- 
-+	memset(areq, 0, areqlen);
-+
- 	ctx->inflight = true;
- 
- 	areq->areqlen = areqlen;
- 	areq->sk = sk;
- 	areq->first_rsgl.sgl.sgt.sgl = areq->first_rsgl.sgl.sgl;
--	areq->last_rsgl = NULL;
- 	INIT_LIST_HEAD(&areq->rsgl_list);
--	areq->tsgl = NULL;
--	areq->tsgl_entries = 0;
- 
- 	return areq;
- }
-diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
-index e3f1a4852737..4d3dfc60a16a 100644
---- a/crypto/algif_hash.c
-+++ b/crypto/algif_hash.c
-@@ -416,9 +416,8 @@ static int hash_accept_parent_nokey(void *private, struct sock *sk)
- 	if (!ctx)
- 		return -ENOMEM;
- 
--	ctx->result = NULL;
-+	memset(ctx, 0, len);
- 	ctx->len = len;
--	ctx->more = false;
- 	crypto_init_wait(&ctx->wait);
- 
- 	ask->private = ctx;
-diff --git a/crypto/algif_rng.c b/crypto/algif_rng.c
-index 10c41adac3b1..1a86e40c8372 100644
---- a/crypto/algif_rng.c
-+++ b/crypto/algif_rng.c
-@@ -248,9 +248,8 @@ static int rng_accept_parent(void *private, struct sock *sk)
- 	if (!ctx)
- 		return -ENOMEM;
- 
-+	memset(ctx, 0, len);
- 	ctx->len = len;
--	ctx->addtl = NULL;
--	ctx->addtl_len = 0;
- 
- 	/*
- 	 * No seeding done at that point -- if multiple accepts are
-diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
-index 125d395c5e00..f4ce5473324f 100644
---- a/crypto/algif_skcipher.c
-+++ b/crypto/algif_skcipher.c
-@@ -70,6 +70,7 @@ static int algif_skcipher_export(struct sock *sk, struct skcipher_request *req)
- 	if (!ctx->state)
- 		return -ENOMEM;
- 
-+	memset(ctx->state, 0, statesize);
- 	err = crypto_skcipher_export(req, ctx->state);
- 	if (err) {
- 		sock_kzfree_s(sk, ctx->state, statesize);
--- 
-2.40.4
-
+> ---
+>  kernel/sched/ext_internal.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sched/ext_internal.h b/kernel/sched/ext_internal.h
+> index 2e289931e567..1a80d01b1f0c 100644
+> --- a/kernel/sched/ext_internal.h
+> +++ b/kernel/sched/ext_internal.h
+> @@ -871,8 +871,8 @@ struct scx_sched {
+>  	struct scx_dispatch_q	**global_dsqs;
+>  	struct scx_sched_pcpu __percpu *pcpu;
+>  
+> -	bool			warned_zero_slice;
+> -	bool			warned_deprecated_rq;
+> +	bool			warned_zero_slice:1;
+> +	bool			warned_deprecated_rq:1;
+>  
+>  	atomic_t		exit_kind;
+>  	struct scx_exit_info	*exit_info;
+> -- 
+> 2.51.0
+> 
 
