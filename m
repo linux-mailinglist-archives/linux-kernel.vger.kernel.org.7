@@ -1,116 +1,133 @@
-Return-Path: <linux-kernel+bounces-829656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2775BB978FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:17:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F116BB9791A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD3897B427D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:15:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A23EC2E704F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68E130CB22;
-	Tue, 23 Sep 2025 21:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1CD30C617;
+	Tue, 23 Sep 2025 21:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YQt4yJD4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bPqx9QOL"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26BF309F12;
-	Tue, 23 Sep 2025 21:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA8B27F74C
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 21:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758662228; cv=none; b=PVHlDbqMvJZj0ItQGaDgQ+uqwAiaN64FgKa0TKo2KsUWa2H51pg71vABtbhN+1kN6tIMgUVHEXfFvrGsaKyMLj6R7wCeKjaPq6PPL2chUT1rkMLDKYfwnDgSjSnx2JxM3xpFTmcreDIP41Edm73mi0YdfiMxMB2A1ZcqHJeTt3U=
+	t=1758662814; cv=none; b=niSvjoimpk7AzEQfjqZfQpPtC9IExSm2tO/5Cmpl9/XPvonVR+KGiFbhY45ngAnUJ/nyLP+dX2eQnIZv/ceMt7r4WjaH/wmxP7fmNM2jwKagDhY2Dzo6190cNemsHk6uWh4AwmNOD6vKRZ4uISYFVrjh2JJooR5MPVD/PYNmsBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758662228; c=relaxed/simple;
-	bh=9maMwx7/tfxHiKFTD825WGlX9Scv4cfcxvOcT74ZDTg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Pi0DfaJdRl5ndPhT9JZmFJDPc3iVs+8tFZuMJf37jiy6ALr6yMWpKMuN4fNUflp9U2An4pEBQR4Ya4B6fV5NrhXYbo2O3OujraoYOp4x4/LMAHnDdEvBxr79LruOlqifo+gnrVFcTyU5xX+LkTg8gqJ73cpF+YT4kzPUAms4Hrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YQt4yJD4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51CB1C4CEF5;
-	Tue, 23 Sep 2025 21:17:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1758662227;
-	bh=9maMwx7/tfxHiKFTD825WGlX9Scv4cfcxvOcT74ZDTg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YQt4yJD4LLyMB/AA7fhRdzHKMMyKrYX7tPYO7bcgLcaYZEMTEEDS+V/u87paR8mvk
-	 vaZ6Hf5HJhiz4iN6UcpLvuzXo0K/kulYjPZuGmcFLhgj45aLOuctbBJIR6+SoLAoCq
-	 q1aNHSIO3K1aKeAi1QD+S0yrDrsK77/N3Jf/bOOk=
-Date: Tue, 23 Sep 2025 14:17:04 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Sumanth Korikkar <sumanthk@linux.ibm.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jonathan Corbet
- <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>, Guo Ren
- <guoren@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Heiko
- Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander
- Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- "David S . Miller" <davem@davemloft.net>, Andreas Larsson
- <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Baoquan He
- <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, Dave Young
- <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>, Reinette Chatre
- <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, James Morse
- <james.morse@arm.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
- Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
- <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>,
- Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov
- <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>, Pedro Falcato
- <pfalcato@suse.de>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
- ntfs3@lists.linux.dev, kexec@lists.infradead.org,
- kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>,
- iommu@lists.linux.dev, Kevin Tian <kevin.tian@intel.com>, Will Deacon
- <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v4 11/14] mm/hugetlbfs: update hugetlbfs to use
- mmap_prepare
-Message-Id: <20250923141704.90fba5bdf8c790e0496e6ac1@linux-foundation.org>
-In-Reply-To: <aNKJ6b7kmT_u0A4c@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-References: <cover.1758135681.git.lorenzo.stoakes@oracle.com>
-	<e5532a0aff1991a1b5435dcb358b7d35abc80f3b.1758135681.git.lorenzo.stoakes@oracle.com>
-	<aNKJ6b7kmT_u0A4c@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758662814; c=relaxed/simple;
+	bh=98TTorsAAC5opB5uJTgkfC0e3/EFtVZUCwE9L5IqI5I=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=eYBIH28JuM65fqgii3/GieA4KOt4cVpC+cSpPwb1p+uPEJqK4ihIPA4Ko+fYdVDr3OdhdR7PFf2wCHImy9jsdqYtGR5B7XloP6LWTCITTeVikOenr84Vm+//IprXKQxzcOc6WR1olfkE5UZchHVym+kw+BoXi8S9mh1UariKXqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bPqx9QOL; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-84d0386be74so224936885a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:26:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758662812; x=1759267612; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TzM+YAdlSU/VZW+2Cq6jx12e0U5MbjPEMSsvWJfPo/o=;
+        b=bPqx9QOLaXpHPp/Dh+Cr2IIHQwxDWy9cz3qqhQrTNIVFgpCdukzDGxr0xsWJD9LzHY
+         Sj0yoM0n5gO/MCCI5P7407/MK48qklBQA/b7cQ2mRmKJG7hQwLArXF+jv4PHGVkyFQ7M
+         kQJMwJLxoiJF1aKRKcgsobGMN0G6YZpviIdCTh0H6rwwETnOnJwS3tIXUbWn7BEj9GBY
+         SavlvAPJxqN0G+ms0g4Wx602Df0noXwF+9JYRLe3/otPKrA6/SpyB0f6T5sZsyBkRBi0
+         Ajssx+uiwYP0VOwYmTtYHN9XH+DyNithD9uXF8vhmF/GYxZeRjz6/zrKoBdAxZD0W7ep
+         sF7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758662812; x=1759267612;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TzM+YAdlSU/VZW+2Cq6jx12e0U5MbjPEMSsvWJfPo/o=;
+        b=mhIuq5jbxZMrbXQjiGYurOuhc/sMeD62Ncd4/Muz1/1nmRM/oY8Y/pzPBAdQNvLupt
+         KHYkkFyb5nd5qcn7r3tVlES2ZhVzvnX12wsspiScIXc+oievwSw00IK9JboaSx4IUIYb
+         RRNgUHyNnkGvcV9pSSjb4JNguDvVgAFz1EAyWCOzfVbVgH/ct3jaDlVGi7iLNfgFsgRZ
+         RqxZwga168R28G4IE0JM+5XNb15AO0MElgfHwjwvGa6iJhccHPCccdqOLVkt4yZGih0b
+         Ov0qzssAFrh+M3Ftc6/9R/hImbBk6rgSPLl06zj8WodBEKE1Mc5W5xnIMUCbs3hwMW2y
+         yjWg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4rd+XtOenFWh5LtqKkHFws5MAQorMRXLQhLh4KZUwNO7ADWKMUnem8ux2mObnPIfWXnSjmHZFEN68qf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhCAyYQf9l8j1CB7WwZXpR20E6VpNICfYODUBAjdFdpna0HdG0
+	RR7gyICG4OXaShL/06Ur3oHQvvKNKPmOJkZY26VI+JSksiVplFSQxzNq
+X-Gm-Gg: ASbGnctELE9v3r+6sZqZPm1ovS4y2eyur/laYK+rVhHPwPirMFRS8XFSBEoZhZs1VeI
+	rL6LHFIeMBZqV884Mdc9WZbyn+AkZRyNLNqRAKkm9aot0vJfj7K3KInMz1XlwYf2h2+PwAuus1B
+	hcXpk/kcVOjbon5WYr0QvZ0SoHoytM6SqJ6KUcexhsZAs55n37LK2g4XdoW0+Mb57eWZzQBCFhc
+	TUDophmQ2YMvQDn6V5T/MeDRlUM69v5cVpexXCLx7XHCIzQSWYjg7wZqSdMElp8PIwuYWPmm4F0
+	DaOeG0MiGGANP6ndDEvvllFZArVj6ykgTxJnEag+JNJo6wKoeRtUIuzmC7syxm4HWsxyv72g+Yb
+	yt9Q2dorzKGUjx8hjZvfyBcHtR1ild6YbE+7W30ZzRIyk5XRndkbtWwn8ylmBvA1VentyQQ==
+X-Google-Smtp-Source: AGHT+IH8atUv4YKSIxfZVb6zK7i1Ycf2XPhQsuhnYzuHVn6FuO+wM4OiWHH3TWoKcLdGgcHi4O5NpA==
+X-Received: by 2002:a05:620a:1a8d:b0:83b:d570:acba with SMTP id af79cd13be357-8516aa0ddcamr431669185a.29.1758662812136;
+        Tue, 23 Sep 2025 14:26:52 -0700 (PDT)
+Received: from gmail.com (21.33.48.34.bc.googleusercontent.com. [34.48.33.21])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-83630481f38sm1039458585a.39.2025.09.23.14.26.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 14:26:51 -0700 (PDT)
+Date: Tue, 23 Sep 2025 17:26:50 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Richard Gobert <richardbgobert@gmail.com>, 
+ netdev@vger.kernel.org, 
+ pabeni@redhat.com, 
+ ecree.xilinx@gmail.com, 
+ willemdebruijn.kernel@gmail.com
+Cc: davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ horms@kernel.org, 
+ corbet@lwn.net, 
+ saeedm@nvidia.com, 
+ tariqt@nvidia.com, 
+ mbloch@nvidia.com, 
+ leon@kernel.org, 
+ dsahern@kernel.org, 
+ ncardwell@google.com, 
+ kuniyu@google.com, 
+ shuah@kernel.org, 
+ sdf@fomichev.me, 
+ aleksander.lobakin@intel.com, 
+ florian.fainelli@broadcom.com, 
+ alexander.duyck@gmail.com, 
+ linux-kernel@vger.kernel.org, 
+ linux-net-drivers@amd.com, 
+ Richard Gobert <richardbgobert@gmail.com>
+Message-ID: <willemdebruijn.kernel.2d533675f308@gmail.com>
+In-Reply-To: <20250923085908.4687-4-richardbgobert@gmail.com>
+References: <20250923085908.4687-1-richardbgobert@gmail.com>
+ <20250923085908.4687-4-richardbgobert@gmail.com>
+Subject: Re: [PATCH net-next v8 3/5] net: gso: restore ids of outer ip headers
+ correctly
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 7bit
 
-On Tue, 23 Sep 2025 13:52:09 +0200 Sumanth Korikkar <sumanthk@linux.ibm.com> wrote:
-
-> > --- a/fs/hugetlbfs/inode.c
-> > +++ b/fs/hugetlbfs/inode.c
-> > @@ -96,8 +96,15 @@ static const struct fs_parameter_spec hugetlb_fs_parameters[] = {
-> >  #define PGOFF_LOFFT_MAX \
-> >  	(((1UL << (PAGE_SHIFT + 1)) - 1) <<  (BITS_PER_LONG - (PAGE_SHIFT + 1)))
-> >  
-> > -static int hugetlbfs_file_mmap(struct file *file, struct vm_area_struct *vma)
-> > +static int hugetlb_file_mmap_prepare_success(const struct vm_area_struct *vma)
-> >  {
-> > +	/* Unfortunate we have to reassign vma->vm_private_data. */
-> > +	return hugetlb_vma_lock_alloc((struct vm_area_struct *)vma);
-> > +}
+Richard Gobert wrote:
+> Currently, NETIF_F_TSO_MANGLEID indicates that the inner-most ID can
+> be mangled. Outer IDs can always be mangled.
 > 
-> Hi Lorenzo,
+> Make GSO preserve outer IDs by default, with NETIF_F_TSO_MANGLEID allowing
+> both inner and outer IDs to be mangled.
 > 
-> The following tests causes the kernel to enter a blocked state,
-> suggesting an issue related to locking order. I was able to reproduce
-> this behavior in certain test runs.
+> This commit also modifies a few drivers that use SKB_GSO_FIXEDID directly.
+> 
+> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+> Reviewed-by: Edward Cree <ecree.xilinx@gmail.com> # for sfc
 
-Thanks.  I pulled this series out of mm.git's mm-stable branch, put it
-back into mm-unstable.
+Reviewed-by: Willem de Bruijn <willemb@google.com>
+
+Thanks for added the pointer to segmentation-offloads.rst.
 
