@@ -1,520 +1,205 @@
-Return-Path: <linux-kernel+bounces-829274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD54B96AB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:53:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 743E6B96ABC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9360D2E20DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:53:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B498A7A2C4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABF226A1CC;
-	Tue, 23 Sep 2025 15:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFF4267AF6;
+	Tue, 23 Sep 2025 15:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OJJcSOU9"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HB0XYEnR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BACF9C1
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE7416DC28;
+	Tue, 23 Sep 2025 15:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758642787; cv=none; b=M8Uo84OmtEnhJ5VzJihAETsMkUt6sNgV6Qd8DO1FgT6S0sJpiuWyVtCLB119Moa9QzyB6jlITfCzPb8Cb7A1rwR+HrtwTpRTGxQvYm82lmTWhyegv5GopRUDX1DbhuPVstPJbWiFdxtBsvtidh5Oi2csqkbeJNPCQBWIS4rfFbw=
+	t=1758642886; cv=none; b=C+iY86QW4IqCp/OMmkKr2cuzVimiDemMrS9dWuInECierVRDl9uyPZGRuxQwcRBqEcXVvhO0IkExHI+zEqhIP9amZnr9849aaXdVIwMD/TCwsdgrcZslwXxcY8H922ku+aKYh3e2CBUBifh9faj5xQYvV6WulW/oK1fQY6YFaBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758642787; c=relaxed/simple;
-	bh=z+uFfbT2+V0VN1QUBUBVU7Yf0yCZy6rUsLod9G1TZRo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=oSV+X75IW7axGA88jpSblwCzavZ7yeZ7RH6801OEib6d8fkkxOxFqy2/OfyZfadmNa3RaCPuexCfZEFPOkNgk0f9682G2bFidEp74p1SbZZF39uv+stjJd2XhfYdmMmH973lR3gFawpPr0QiCKZQ2UwP28X0vj38cwu2nfqL85Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OJJcSOU9; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2699ed6d473so239585ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:53:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758642785; x=1759247585; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s2P4DLa291UN5dMIrJwLdZEHxEo+piJsQetYJAPBjZk=;
-        b=OJJcSOU98RU4rsrPHI3eyZgynatz+5P6KZ8ax1EVUp5/iSCyyf5X/eci9Vl2YObDhp
-         27Z1IqJkUxRs2vuNsD+QXazaMot7qlk9IJntc8lLsRpqflequS7yvJYEe/d9sJyYEEmq
-         In5v13gaBf7xP9u57stnAsFwV6J0gsLCqSY0EbeZFFvhOiRnAWtr0lQL+xIDjM9UliFs
-         S2u5JmS5Sz1/HcA8b76tRu454ZsR87mwhdEaK7QjbV0DE1HknRrXmSkNcgZYxtqQkyZf
-         eb4ku7UIQmB18YxneGxnjogX/Gj6D19rwVVpzwIwCvLWR7lcPogh0fgG/okabS50Y88Z
-         wPLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758642785; x=1759247585;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s2P4DLa291UN5dMIrJwLdZEHxEo+piJsQetYJAPBjZk=;
-        b=YJWjH8X7Czo0DV5zcE/GFIa8X0Pk6JDy/YlJiPB908IkHOy+TqvrUqLidj7WRe1i2s
-         F9ipU/1JVhY8jRKytZbw2xfgs7dzODngq6+gN5wlTRN8LvC+3k0z91Odqorhzv5xt+8h
-         dzY6wtsAv3jnjUy7O1RQAbmYjgnrK5Bm4miYpqZr7JWHCwMqpNM/+dYvOBILWGTQm5ib
-         YsruRUFHHbXVVFyT3NzaL4d0xL5p2xXimUUWiWP/M7BlgLdx2IylSOGRW5TRURB8KxHi
-         IAPkKRwq583sb5TuiOwt6wM32cE4ZK658/JDXiaZDfYJyqrsMxYPEkQGYFtbxC9XqQZx
-         8LXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwCYO502Nbk+BX6CAScmoJ+Ptz4pouipHMjDxeTTGm19H79L2SnO5n7wJvpK8TibciBkzw+1IoNYuy6vE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQxrAbHLYxkaqFNvOmVu5dEnGM9ivCjcHKh5Tvy7wFhymWhaU7
-	Py9t1Y+Lbo2LMCu4b/bGGfGULpIggPv6cv8SJzE3OemWy7NviQ6+V16Bh+OCQ/W4y9BIytYlzS3
-	cTlkD3gGvh4/6qwD7QOZpEjCGJPrBV9riXpC/0+QD
-X-Gm-Gg: ASbGncvcczfRLnXTR0g3tOEivGm4mID3bZD75XxXNpMoxpd9pvt/aCBP6rZWGYuXkFA
-	xvbP81f6uhMzC4PskNQysbdDcHhWDMK+zy2Pc6cZu81BduSy+bvFozJSZ8vWT1sfNBj7yT/ZA52
-	/TTNCit+v/gfYTNsPjjoYfdShkG5F5DktGJ2LVR8obIuomwb51xhRih4+elo4iMcgG4w5HFJzHw
-	dE8F+2/YGRZVrnlflFQwpIq7FaWOI3lzq0KAg==
-X-Google-Smtp-Source: AGHT+IG70m5QoiJJvuwAcevMWtg86TUItbecWmuxDqdihU/rHXvTVdXNsMfLpfuUdu+Ffaj4A8H5JLTcJWzV4vzsyGo=
-X-Received: by 2002:a17:902:e5c5:b0:274:506d:7fea with SMTP id
- d9443c01a7336-27ebcbcc1b2mr357055ad.5.1758642784825; Tue, 23 Sep 2025
- 08:53:04 -0700 (PDT)
+	s=arc-20240116; t=1758642886; c=relaxed/simple;
+	bh=9PAHk1M/py/wmr9FX/AJcB5+6ZJZbCQJMTHF0F98NFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=aJhAXGoz8E0BF8obKmfCE3BTf5J9Vlp7cahWXYRDanKMZtkQdKe80zBA6SKwmmPP3ACNGTVJIoevomp8KPvh08Sfzn4WdV2+u0gQvcN0btB0t+AIaFfOr4N5iDFsxkXekZJFlUHnRKhDqywpBzIDxPnZ6MeevLeLt8YAxOimQ28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HB0XYEnR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 552B6C113CF;
+	Tue, 23 Sep 2025 15:54:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758642885;
+	bh=9PAHk1M/py/wmr9FX/AJcB5+6ZJZbCQJMTHF0F98NFw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=HB0XYEnR4MNkE+vIXx7MKexzkD7sZteWlROImwjLYmOQTkC+TRO+FbdgUqwZjKTr0
+	 rdPY61ShmA5mZEfCZ+nh3Vk5sJbUDb6Am8Ar30yP+v4j3hLx66DUUqA3i33LD97yEM
+	 cOEP9MGIhgzOomPU26Q5Dvuyc80y9DnlBz+cyEBuJOJKnmJeAwcp9ZnA1qxBfUbwrV
+	 TR+TJnaVZYVGOjFhxqRu6xwY8iG4FPm433mVuJkL5aBQZ53fpkHzfGBPOCxe8/aG8I
+	 MjRySA+WP+fnJWjfcQ+ep6S00INskkZhdIZBsQeiWDVcH77tGiZSA8EbH+2zpELl7d
+	 oeT+tC+hUDsQg==
+Date: Tue, 23 Sep 2025 10:54:43 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Randolph Lin <randolph@andestech.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	krzk+dt@kernel.org, conor+dt@kernel.org, alex@ghiti.fr,
+	aou@eecs.berkeley.edu, palmer@dabbelt.com, paul.walmsley@sifive.com,
+	ben717@andestech.com, inochiama@gmail.com,
+	thippeswamy.havalige@amd.com, namcao@linutronix.de,
+	shradha.t@samsung.com, randolph.sklin@gmail.com,
+	tim609@andestech.com
+Subject: Re: [PATCH v3 4/5] PCI: andes: Add Andes QiLai SoC PCIe host driver
+ support
+Message-ID: <20250923155443.GA2041202@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923041844.400164-1-irogers@google.com> <20250923041844.400164-23-irogers@google.com>
-In-Reply-To: <20250923041844.400164-23-irogers@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 23 Sep 2025 08:52:53 -0700
-X-Gm-Features: AS18NWABI_j0UfirBS1qDjfAYkIAHiJq_Fz6ZmvM95S5kAUNEw1x-M1-JJ3_Amg
-Message-ID: <CAP-5=fUvDoyMW2pu-f4-Qoxr6RX_k2+NZ4STmeSDQRFyhvN89g@mail.gmail.com>
-Subject: Re: [PATCH v5 22/25] perf test parse-events: Remove cpu PMU requirement
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, Thomas Falcon <thomas.falcon@intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
-	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
-	Vince Weaver <vincent.weaver@maine.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923113647.895686-5-randolph@andestech.com>
 
-On Mon, Sep 22, 2025 at 9:19=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> In the event parse string, switch "cpu" to "default_core" and then
-> rewrite this to the first core PMU name prior to parsing. This enables
-> testing with a PMU on hybrid x86 and other systems that don't use
-> "cpu" for the core PMU name. The name "default_core" is already used
-> by jevents. Update test expectations to match.
->
-> Signed-off-by: Ian Rogers <irogers@google.com>
+On Tue, Sep 23, 2025 at 07:36:46PM +0800, Randolph Lin wrote:
+> Add driver support for DesignWare based PCIe controller in Andes
+> QiLai SoC. The driver only supports the Root Complex mode.
 
-This introduces a test failure on Intel hybrid that I'll fix in v6.
-Previously the failing tests weren't run and the test expectation was
-that, with a PMU or without a PMU, an event would be opened on all
-PMUs - which isn't true if the PMU is specified.
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -49,6 +49,19 @@ config PCIE_AMD_MDB
+>  	  DesignWare IP and therefore the driver re-uses the DesignWare
+>  	  core functions to implement the driver.
+>  
+> +config PCIE_ANDES_QILAI
+> +	bool "ANDES QiLai PCIe controller"
+> +	depends on ARCH_ANDES || COMPILE_TEST
+> +	depends on PCI_MSI
+> +	select PCIE_DW_HOST
+> +	help
+> +	  Say Y here to enable PCIe controller support on Andes QiLai SoCs,
+> +	  which operate in Root Complex mode. The Andes QiLai SoCs PCIe
+> +	  controller is based on DesignWare IP (5.97a version) and therefore
+> +	  the driver re-uses the DesignWare core functions to implement the
+> +	  driver. The Andes QiLai SoC features three Root Complexes, each
+> +	  operating on PCIe 4.0.
 
-Thanks,
-Ian
+Sort these by vendor name:
 
-> ---
->  tools/perf/tests/parse-events.c | 141 ++++++++++++++------------------
->  1 file changed, 63 insertions(+), 78 deletions(-)
->
-> diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-eve=
-nts.c
-> index d0f1e05139ac..4f197f34621b 100644
-> --- a/tools/perf/tests/parse-events.c
-> +++ b/tools/perf/tests/parse-events.c
-> @@ -646,19 +646,22 @@ static int test__checkevent_list(struct evlist *evl=
-ist)
->  static int test__checkevent_pmu_name(struct evlist *evlist)
->  {
->         struct evsel *evsel =3D evlist__first(evlist);
-> +       struct perf_pmu *core_pmu =3D perf_pmus__find_core_pmu();
-> +       char buf[256];
->
-> -       /* cpu/config=3D1,name=3Dkrava/u */
-> +       /* default_core/config=3D1,name=3Dkrava/u */
->         TEST_ASSERT_VAL("wrong number of entries", 2 =3D=3D evlist->core.=
-nr_entries);
->         TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW =3D=3D evsel->core.at=
-tr.type);
->         TEST_ASSERT_VAL("wrong config", 1 =3D=3D evsel->core.attr.config)=
-;
->         TEST_ASSERT_VAL("wrong name", evsel__name_is(evsel, "krava"));
->
-> -       /* cpu/config=3D2/u" */
-> +       /* default_core/config=3D2/u" */
->         evsel =3D evsel__next(evsel);
->         TEST_ASSERT_VAL("wrong number of entries", 2 =3D=3D evlist->core.=
-nr_entries);
->         TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW =3D=3D evsel->core.at=
-tr.type);
->         TEST_ASSERT_VAL("wrong config", 2 =3D=3D evsel->core.attr.config)=
-;
-> -       TEST_ASSERT_VAL("wrong name", evsel__name_is(evsel, "cpu/config=
-=3D2/u"));
-> +       snprintf(buf, sizeof(buf), "%s/config=3D2/u", core_pmu->name);
-> +       TEST_ASSERT_VAL("wrong name", evsel__name_is(evsel, buf));
->
->         return TEST_OK;
->  }
-> @@ -667,7 +670,7 @@ static int test__checkevent_pmu_partial_time_callgrap=
-h(struct evlist *evlist)
->  {
->         struct evsel *evsel =3D evlist__first(evlist);
->
-> -       /* cpu/config=3D1,call-graph=3Dfp,time,period=3D100000/ */
-> +       /* default_core/config=3D1,call-graph=3Dfp,time,period=3D100000/ =
-*/
->         TEST_ASSERT_VAL("wrong number of entries", 2 =3D=3D evlist->core.=
-nr_entries);
->         TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW =3D=3D evsel->core.at=
-tr.type);
->         TEST_ASSERT_VAL("wrong config", 1 =3D=3D evsel->core.attr.config)=
-;
-> @@ -679,7 +682,7 @@ static int test__checkevent_pmu_partial_time_callgrap=
-h(struct evlist *evlist)
->         TEST_ASSERT_VAL("wrong callgraph",  !evsel__has_callchain(evsel))=
-;
->         TEST_ASSERT_VAL("wrong time",  !(PERF_SAMPLE_TIME & evsel->core.a=
-ttr.sample_type));
->
-> -       /* cpu/config=3D2,call-graph=3Dno,time=3D0,period=3D2000/ */
-> +       /* default_core/config=3D2,call-graph=3Dno,time=3D0,period=3D2000=
-/ */
->         evsel =3D evsel__next(evsel);
->         TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW =3D=3D evsel->core.at=
-tr.type);
->         TEST_ASSERT_VAL("wrong config", 2 =3D=3D evsel->core.attr.config)=
-;
-> @@ -702,7 +705,8 @@ static int test__checkevent_pmu_events(struct evlist =
-*evlist)
->
->         evlist__for_each_entry(evlist, evsel) {
->                 TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW =3D=3D evsel-=
->core.attr.type ||
-> -                                             strcmp(evsel->pmu->name, "c=
-pu"));
-> +                               !strncmp(evsel__name(evsel), evsel->pmu->=
-name,
-> +                                        strlen(evsel->pmu->name)));
->                 TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.e=
-xclude_user);
->                 TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.=
-exclude_kernel);
->                 TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.excl=
-ude_hv);
-> @@ -735,7 +739,7 @@ static int test__checkevent_pmu_events_mix(struct evl=
-ist *evlist)
->                 TEST_ASSERT_VAL("wrong pinned", !evsel->core.attr.pinned)=
-;
->                 TEST_ASSERT_VAL("wrong exclusive", !evsel->core.attr.excl=
-usive);
->         }
-> -       /* cpu/pmu-event/u*/
-> +       /* default_core/pmu-event/u*/
->         evsel =3D evsel__next(evsel);
->         TEST_ASSERT_VAL("wrong type", evsel__find_pmu(evsel)->is_core);
->         TEST_ASSERT_VAL("wrong exclude_user",
-> @@ -1570,14 +1574,9 @@ static int test__checkevent_config_cache(struct ev=
-list *evlist)
->         return test__checkevent_genhw(evlist);
->  }
->
-> -static bool test__pmu_cpu_valid(void)
-> +static bool test__pmu_default_core_event_valid(void)
->  {
-> -       return !!perf_pmus__find("cpu");
-> -}
-> -
-> -static bool test__pmu_cpu_event_valid(void)
-> -{
-> -       struct perf_pmu *pmu =3D perf_pmus__find("cpu");
-> +       struct perf_pmu *pmu =3D perf_pmus__find_core_pmu();
->
->         if (!pmu)
->                 return false;
-> @@ -2103,26 +2102,23 @@ static const struct evlist_test test__events[] =
-=3D {
->
->  static const struct evlist_test test__events_pmu[] =3D {
->         {
-> -               .name  =3D "cpu/config=3D10,config1=3D1,config2=3D3,perio=
-d=3D1000/u",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/config=3D10,config1=3D1,config2=
-=3D3,period=3D1000/u",
->                 .check =3D test__checkevent_pmu,
->                 /* 0 */
->         },
->         {
-> -               .name  =3D "cpu/config=3D1,name=3Dkrava/u,cpu/config=3D2/=
-u",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/config=3D1,name=3Dkrava/u,defaul=
-t_core/config=3D2/u",
->                 .check =3D test__checkevent_pmu_name,
->                 /* 1 */
->         },
->         {
-> -               .name  =3D "cpu/config=3D1,call-graph=3Dfp,time,period=3D=
-100000/,cpu/config=3D2,call-graph=3Dno,time=3D0,period=3D2000/",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/config=3D1,call-graph=3Dfp,time,=
-period=3D100000/,default_core/config=3D2,call-graph=3Dno,time=3D0,period=3D=
-2000/",
->                 .check =3D test__checkevent_pmu_partial_time_callgraph,
->                 /* 2 */
->         },
->         {
-> -               .name  =3D "cpu/name=3D'COMPLEX_CYCLES_NAME:orig=3Dcycles=
-,desc=3Dchip-clock-ticks',period=3D0x1,event=3D0x2/ukp",
-> -               .valid =3D test__pmu_cpu_event_valid,
-> +               .name  =3D "default_core/name=3D'COMPLEX_CYCLES_NAME:orig=
-=3Dcycles,desc=3Dchip-clock-ticks',period=3D0x1,event=3D0x2/ukp",
-> +               .valid =3D test__pmu_default_core_event_valid,
->                 .check =3D test__checkevent_complex_name,
->                 /* 3 */
->         },
-> @@ -2137,158 +2133,132 @@ static const struct evlist_test test__events_pm=
-u[] =3D {
->                 /* 5 */
->         },
->         {
-> -               .name  =3D "cpu/L1-dcache-load-miss/",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/L1-dcache-load-miss/",
->                 .check =3D test__checkevent_genhw,
->                 /* 6 */
->         },
->         {
-> -               .name  =3D "cpu/L1-dcache-load-miss/kp",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/L1-dcache-load-miss/kp",
->                 .check =3D test__checkevent_genhw_modifier,
->                 /* 7 */
->         },
->         {
-> -               .name  =3D "cpu/L1-dcache-misses,name=3Dcachepmu/",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/L1-dcache-misses,name=3Dcachepmu=
-/",
->                 .check =3D test__checkevent_config_cache,
->                 /* 8 */
->         },
->         {
-> -               .name  =3D "cpu/instructions/",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/instructions/",
->                 .check =3D test__checkevent_symbolic_name,
->                 /* 9 */
->         },
->         {
-> -               .name  =3D "cpu/cycles,period=3D100000,config2/",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/cycles,period=3D100000,config2/"=
-,
->                 .check =3D test__checkevent_symbolic_name_config,
->                 /* 0 */
->         },
->         {
-> -               .name  =3D "cpu/instructions/h",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/instructions/h",
->                 .check =3D test__checkevent_symbolic_name_modifier,
->                 /* 1 */
->         },
->         {
-> -               .name  =3D "cpu/instructions/G",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/instructions/G",
->                 .check =3D test__checkevent_exclude_host_modifier,
->                 /* 2 */
->         },
->         {
-> -               .name  =3D "cpu/instructions/H",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/instructions/H",
->                 .check =3D test__checkevent_exclude_guest_modifier,
->                 /* 3 */
->         },
->         {
-> -               .name  =3D "{cpu/instructions/k,cpu/cycles/upp}",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "{default_core/instructions/k,default_core/cyc=
-les/upp}",
->                 .check =3D test__group1,
->                 /* 4 */
->         },
->         {
-> -               .name  =3D "{cpu/cycles/u,cpu/instructions/kp}:p",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "{default_core/cycles/u,default_core/instructi=
-ons/kp}:p",
->                 .check =3D test__group4,
->                 /* 5 */
->         },
->         {
-> -               .name  =3D "{cpu/cycles/,cpu/cache-misses/G}:H",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "{default_core/cycles/,default_core/cache-miss=
-es/G}:H",
->                 .check =3D test__group_gh1,
->                 /* 6 */
->         },
->         {
-> -               .name  =3D "{cpu/cycles/,cpu/cache-misses/H}:G",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "{default_core/cycles/,default_core/cache-miss=
-es/H}:G",
->                 .check =3D test__group_gh2,
->                 /* 7 */
->         },
->         {
-> -               .name  =3D "{cpu/cycles/G,cpu/cache-misses/H}:u",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "{default_core/cycles/G,default_core/cache-mis=
-ses/H}:u",
->                 .check =3D test__group_gh3,
->                 /* 8 */
->         },
->         {
-> -               .name  =3D "{cpu/cycles/G,cpu/cache-misses/H}:uG",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "{default_core/cycles/G,default_core/cache-mis=
-ses/H}:uG",
->                 .check =3D test__group_gh4,
->                 /* 9 */
->         },
->         {
-> -               .name  =3D "{cpu/cycles/,cpu/cache-misses/,cpu/branch-mis=
-ses/}:S",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "{default_core/cycles/,default_core/cache-miss=
-es/,default_core/branch-misses/}:S",
->                 .check =3D test__leader_sample1,
->                 /* 0 */
->         },
->         {
-> -               .name  =3D "{cpu/instructions/,cpu/branch-misses/}:Su",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "{default_core/instructions/,default_core/bran=
-ch-misses/}:Su",
->                 .check =3D test__leader_sample2,
->                 /* 1 */
->         },
->         {
-> -               .name  =3D "cpu/instructions/uDp",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/instructions/uDp",
->                 .check =3D test__checkevent_pinned_modifier,
->                 /* 2 */
->         },
->         {
-> -               .name  =3D "{cpu/cycles/,cpu/cache-misses/,cpu/branch-mis=
-ses/}:D",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "{default_core/cycles/,default_core/cache-miss=
-es/,default_core/branch-misses/}:D",
->                 .check =3D test__pinned_group,
->                 /* 3 */
->         },
->         {
-> -               .name  =3D "cpu/instructions/I",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/instructions/I",
->                 .check =3D test__checkevent_exclude_idle_modifier,
->                 /* 4 */
->         },
->         {
-> -               .name  =3D "cpu/instructions/kIG",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/instructions/kIG",
->                 .check =3D test__checkevent_exclude_idle_modifier_1,
->                 /* 5 */
->         },
->         {
-> -               .name  =3D "cpu/cycles/u",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/cycles/u",
->                 .check =3D test__sym_event_slash,
->                 /* 6 */
->         },
->         {
-> -               .name  =3D "cpu/cycles/k",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/cycles/k",
->                 .check =3D test__sym_event_dc,
->                 /* 7 */
->         },
->         {
-> -               .name  =3D "cpu/instructions/uep",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/instructions/uep",
->                 .check =3D test__checkevent_exclusive_modifier,
->                 /* 8 */
->         },
->         {
-> -               .name  =3D "{cpu/cycles/,cpu/cache-misses/,cpu/branch-mis=
-ses/}:e",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "{default_core/cycles/,default_core/cache-miss=
-es/,default_core/branch-misses/}:e",
->                 .check =3D test__exclusive_group,
->                 /* 9 */
->         },
->         {
-> -               .name  =3D "cpu/cycles,name=3Dname/",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/cycles,name=3Dname/",
->                 .check =3D test__term_equal_term,
->                 /* 0 */
->         },
->         {
-> -               .name  =3D "cpu/cycles,name=3Dl1d/",
-> -               .valid =3D test__pmu_cpu_valid,
-> +               .name  =3D "default_core/cycles,name=3Dl1d/",
->                 .check =3D test__term_equal_legacy,
->                 /* 1 */
->         },
-> @@ -2378,15 +2348,30 @@ static int combine_test_results(int existing, int=
- latest)
->  static int test_events(const struct evlist_test *events, int cnt)
->  {
->         int ret =3D TEST_OK;
-> +       struct perf_pmu *core_pmu =3D perf_pmus__find_core_pmu();
->
->         for (int i =3D 0; i < cnt; i++) {
-> -               const struct evlist_test *e =3D &events[i];
-> +               struct evlist_test e =3D events[i];
->                 int test_ret;
-> +               const char *pos =3D e.name;
-> +               char buf[1024], *buf_pos =3D buf, *end;
+  AMD MDB Versal2 PCIe controller
+  Amlogic Meson PCIe controller
+  ANDES QiLai PCIe controller
+  Axis ARTPEC-6 PCIe controller (host mode)
+
+>  config PCI_MESON
+>  	tristate "Amlogic Meson PCIe controller"
+
+> + * Refer to Table A4-5 (Memory type encoding) in the
+> + * AMBA AXI and ACE Protocol Specification.
+> + *
+> + * The selected value corresponds to the Memory type field:
+> + * "Write-back, Read and Write-allocate".
+> + */
+> +#define IOCP_ARCACHE				0b1111
+> +#define IOCP_AWCACHE				0b1111
+
+Deserves a note about why these values are identical.
+
+> +struct qilai_pcie {
+> +	struct dw_pcie pci;
+> +	struct platform_device *pdev;
+
+"pdev" appears to be set but never used; drop it if you don't need it.
+
+> +/*
+> + * Setup the Qilai PCIe IOCP (IO Coherence Port) Read/Write Behaviors to the
+> + * Write-Back, Read and Write Allocate mode.
+
+Add blank line or rewrap into single paragraph.
+
+> + * The IOCP HW target is SoC last-level cache (L2 Cache), which serves as the
+> + * system cache. The IOCP HW helps maintain cache monitoring, ensuring that
+> + * the device can snoop data from/to the cache.
+> + */
+> +static void qilai_pcie_iocp_cache_setup(struct dw_pcie_rp *pp)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	u32 val;
 > +
-> +               while ((end =3D strstr(pos, "default_core"))) {
-> +                       size_t len =3D end - pos;
+> +	dw_pcie_dbi_ro_wr_en(pci);
 > +
-> +                       strncpy(buf_pos, pos, len);
-> +                       pos =3D end + 12;
-> +                       buf_pos +=3D len;
-> +                       strcpy(buf_pos, core_pmu->name);
-> +                       buf_pos +=3D strlen(core_pmu->name);
-> +               }
-> +               strcpy(buf_pos, pos);
->
-> -               pr_debug("running test %d '%s'\n", i, e->name);
-> -               test_ret =3D test_event(e);
-> +               e.name =3D buf;
-> +               pr_debug("running test %d '%s'\n", i, e.name);
-> +               test_ret =3D test_event(&e);
->                 if (test_ret !=3D TEST_OK) {
-> -                       pr_debug("Event test failure: test %d '%s'", i, e=
-->name);
-> +                       pr_debug("Event test failure: test %d '%s'", i, e=
-.name);
->                         ret =3D combine_test_results(ret, test_ret);
->                 }
->         }
-> --
-> 2.51.0.534.gc79095c0ca-goog
->
+> +	dw_pcie_read(pci->dbi_base + PCIE_LOGIC_COHERENCY_CONTROL3,
+> +		     sizeof(val), &val);
+> +	FIELD_MODIFY(PCIE_CFG_MSTR_ARCACHE_MODE, &val, IOCP_ARCACHE);
+> +	FIELD_MODIFY(PCIE_CFG_MSTR_AWCACHE_MODE, &val, IOCP_AWCACHE);
+> +	FIELD_MODIFY(PCIE_CFG_MSTR_ARCACHE_VALUE, &val, IOCP_ARCACHE);
+> +	FIELD_MODIFY(PCIE_CFG_MSTR_AWCACHE_VALUE, &val, IOCP_AWCACHE);
+> +	dw_pcie_write(pci->dbi_base + PCIE_LOGIC_COHERENCY_CONTROL3,
+> +		      sizeof(val), val);
+> +
+> +	dw_pcie_dbi_ro_wr_dis(pci);
+> +}
+
+> +static int qilai_pcie_host_init(struct dw_pcie_rp *pp)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct qilai_pcie *pcie = to_qilai_pcie(pci);
+> +
+> +	qilai_pcie_enable_msi(pcie);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dw_pcie_host_ops qilai_pcie_host_ops = {
+> +	.init = qilai_pcie_host_init,
+> +};
+> +
+> +static int qilai_pcie_probe(struct platform_device *pdev)
+> +{
+> +	struct qilai_pcie *pcie;
+> +	struct dw_pcie *pci;
+> +	struct device *dev;
+> +	int ret;
+> +
+> +	pcie = devm_kzalloc(&pdev->dev, sizeof(*pcie), GFP_KERNEL);
+> +	if (!pcie)
+> +		return -ENOMEM;
+> +
+> +	pcie->pdev = pdev;
+> +	platform_set_drvdata(pdev, pcie);
+> +
+> +	pci = &pcie->pci;
+> +	dev = &pcie->pdev->dev;
+> +	pcie->pci.dev = dev;
+> +	pcie->pci.ops = &qilai_pcie_ops;
+> +	pcie->pci.pp.ops = &qilai_pcie_host_ops;
+> +	pci->use_parent_dt_ranges = true;
+> +
+> +	dw_pcie_cap_set(&pcie->pci, REQ_RES);
+> +
+> +	pcie->apb_base = devm_platform_ioremap_resource_byname(pdev, "apb");
+> +	if (IS_ERR(pcie->apb_base))
+> +		return PTR_ERR(pcie->apb_base);
+> +
+> +	ret = dw_pcie_host_init(&pcie->pci.pp);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "Failed to initialize PCIe host\n");
+> +		return ret;
+> +	}
+> +
+> +	qilai_pcie_iocp_cache_setup(&pcie->pci.pp);
+
+I don't think we should be doing anything after dw_pcie_host_init()
+because by the time we get here, we've already enumerated downstream
+devices and potentially bound drivers to them.
+
+If you need things done in dw_pcie_host_init() before enumeration,
+qilai_pcie_host_init() and similar hooks are possibilities.
+
+> +	return 0;
+> +}
 
