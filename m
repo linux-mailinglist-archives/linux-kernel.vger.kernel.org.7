@@ -1,331 +1,117 @@
-Return-Path: <linux-kernel+bounces-829327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1494B96CF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:24:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D803EB96CFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5B2817B598
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:24:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B963B19C671F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118D932779B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C664327A16;
 	Tue, 23 Sep 2025 16:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E+Pp50/D"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y/jKNSRI"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED9E322C9B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44172322DCA
 	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758644646; cv=none; b=VMoLp/5vuwbl1S/e4xibnxNeUx55bUtPoMc9v7Yjd3E3g1eRbpC/xgpYrgBmPHLDDYbrDXdntGOsfqdrAn15ZTnRdKF6cY2WBnjwytGgrm23jaxKTZWpu9I4+7/5B8vnhJivIM8RVcsYIBGnDjCWgqZqHeg1ObcLfH1pqjj42eE=
+	t=1758644646; cv=none; b=R9aqV5DAJcy8EXrLCJzdghqae3hbXgLhY9pzh5goYFx1TUCAVfm7pInRR3M75TMHa0a4ZLdoqH0uZE73N3FxZiYLaVY3f0ls3w0A6a4o72gIGG1UUDAlSWRftSDTj3nZLYN3BksewM72dqfIuAXnLTHDVYNau9UtdUahOfy6A8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758644646; c=relaxed/simple;
-	bh=YT4el4xP21BBB42t2PWFoKpg5+LAf3L0g3UU1WpBtt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QSv0PLtlrfH8Uu4msezqDUaN7NWrvaZs0LkBIAZn3vG5PTuztm4GRaSvodDqQ1ePMh6nChm5IyTFUq+t24RalIgWcKT3SvbXiOeO+xedqaKrHzSTit/imOTTJ4iIKVxs+PyZ+ncCjBxBPsa7so7AWwNoUvEzXT1Ea5H6BVUraxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E+Pp50/D; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758644643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3gC4BVDLOnUNLEX5DUiA671iXaBW42g+cMsZG4Zf9r4=;
-	b=E+Pp50/DoiQcX1OUgV96NQyRZdqKyTdDywf9AXPD70xrsLp5T9DnnxkXmztps0swrPWglL
-	19tyfndKTNH4KOI0CqS10m6nGZaUW96e9e8SBtStZNlS9wtBWzhIJRGpdcULuv88dz+GMw
-	Z2lGyFMvz8xBoMvNNJprL0lkWPLLkV0=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-661-yniGN2arPFeZPyzUo5ZJYA-1; Tue, 23 Sep 2025 12:24:01 -0400
-X-MC-Unique: yniGN2arPFeZPyzUo5ZJYA-1
-X-Mimecast-MFC-AGG-ID: yniGN2arPFeZPyzUo5ZJYA_1758644640
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e1a2a28f4so11868985e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:24:01 -0700 (PDT)
+	bh=agu8t+GtnRdTt7ziIGD3+jvwpGAKVQuk0ov+fLZVyEU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=m1ov1g4PxXwTk7BnFhDDfzffETnBdT/zJtUxr38V0tPNOxuuGE15flSENt98lSj29NyEt3+gtRZsLXG0XsLYuxmATJakFzajmEDCBsy3JQq2bMYZfRJ7VwESSbr58DfflySPgutNOTw9x7ucZ4+UYQGYxpAK1a5tmY4uZYkZIYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y/jKNSRI; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24458274406so119096125ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:24:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758644643; x=1759249443; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6ct6l4fU3rAG1+iOUtrDMwT6jHIL6tdfk6HjiAM8alg=;
+        b=y/jKNSRIeIGfW6GzKfcGD3UY6i7W0zmQn/LNgl7dBD58LKDY17G4DPkzn4VtGhESI+
+         oBT9litmmXfiOYgexjJ8F2ZKkAcyLbbbyREyLhlGYbHh9pawWM89SWFGFcBf+V7FoQD9
+         aK7VsfD/NsVeV0npfdnh+6j7q7O+BoDqLj2sYmSY02B/pi+ZOGkVQKZG+YE9PcBs9jJm
+         RHQTcC96MfwvyV4SEe3U4hDkVstO8T+JZYkfJsz9qiCUn+LP75JL7p1PGSRiqUUN/QT6
+         /VVRGTG3js1ptpP+j+v0/3xYD3T3MAJQ+Yxtn8oFwhAQctdX8ZXlXZ4i9RJb9no1CFBt
+         aqAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758644640; x=1759249440;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3gC4BVDLOnUNLEX5DUiA671iXaBW42g+cMsZG4Zf9r4=;
-        b=riThwizMiJ/Ph5/N8fquZ3oqMckKuEbHbuLcoz+0bFSePToDS+ZrJsg++GSAPDe7tV
-         LNpvREm4ooNmN/NUSq7uSHuTxb2z9/ghUzuIBxgCIUDKbkSrZnoMYr64KgaxSi9HWOAy
-         lCJDFrxr6S972cq7WUOCeEveS9ezLgbzrBg+p7z0jm2sYy9LyEbWdlRbYaVzSYtVNHDr
-         tvLQzI93yb2bMi35E0JN0YMSdy/LDvRek8aDgEPDxTIsf9+SLz4cWhpC9GB/kdl8qkx3
-         FDBmXWkEF18xf1OPBaqSbplnp7hKuO6jYtJq6tS48v8sqfUNYvemqeCVdSUaMkUo9lQc
-         TkfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsrRQwWg0GSLwz4qnCuaXtVSFBzFFhSr7Qz6UcQohAKXXt8pOKjGc2AOapKNubAC+YiNvlgBXgkV2Ojck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwacbxBcB98gcH9uqFSfAO1MTuF7RogAshh9pengc+hVzV/BXb+
-	AWoLYyh4y/9RWhxH/x1F4GjM6nBf1+B1RBM2RawylNJufSmrMFS99idq2lU1G+TeqvJGI527xgP
-	bOBu1tCa8UqiQ2frwBELLltjyGvvhhbhmzdcY9F27L13B2PapXkwooZFKBoM1xbbvDA==
-X-Gm-Gg: ASbGncvnO8lk3rJvvt2tXm17yxi1zmeipj18XFkGlIlLrfxP9r/J/9TUCbqJvb8jbvc
-	I780fFMyOp9HCOz9XF52URjg0hERa6FjJKkXhHHF376iWdqzxWzL6IAjgKFtOZAkb9Ati1flHir
-	Sf0EcvPPafW60Enmi0JP2v9+BWwubJXVHlPuFxWKvftM1LSJSdOhdZOjevE8v9+2FqaSc02ZNru
-	sSrYEOP0B3A9V7jtrDfT7XdW1q4rByi5Y2rdpH8PerKFYI2DQ84UG/omuhkz1eeHvc8FEHi+vcX
-	FQj1XmjeKjLc3SqmesAmSwb8n4MVCZVJ+NY=
-X-Received: by 2002:a05:600c:1390:b0:45b:43cc:e558 with SMTP id 5b1f17b1804b1-46e1dad77e1mr32752435e9.35.1758644639813;
-        Tue, 23 Sep 2025 09:23:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE7GesyF2ByRRbQYOqNW09UyOpostEcyx/74NI3DJWqp5z34Y6omx1cXSzjAbzY9BmBU7BQsg==
-X-Received: by 2002:a05:600c:1390:b0:45b:43cc:e558 with SMTP id 5b1f17b1804b1-46e1dad77e1mr32752205e9.35.1758644639310;
-        Tue, 23 Sep 2025 09:23:59 -0700 (PDT)
-Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46dd4e52b36sm73010345e9.14.2025.09.23.09.23.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 09:23:58 -0700 (PDT)
-Date: Tue, 23 Sep 2025 12:23:56 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Simon Schippers <simon.schippers@tu-dortmund.de>
-Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
-	eperezma@redhat.com, stephen@networkplumber.org, leiyang@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev, kvm@vger.kernel.org,
-	Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Subject: Re: [PATCH net-next v5 5/8] TUN & TAP: Provide
- ptr_ring_consume_batched wrappers for vhost_net
-Message-ID: <20250923122147-mutt-send-email-mst@kernel.org>
-References: <20250922221553.47802-1-simon.schippers@tu-dortmund.de>
- <20250922221553.47802-6-simon.schippers@tu-dortmund.de>
+        d=1e100.net; s=20230601; t=1758644643; x=1759249443;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6ct6l4fU3rAG1+iOUtrDMwT6jHIL6tdfk6HjiAM8alg=;
+        b=u+bNer0V9rOnTJcJmJ1qGAzHKZivl3FPH2Nu3kWsg5MmEJfgFhlbkkq0Fju9KHMM+L
+         fJWg/7G5bEZ3vdIglLw2q7BmC/ikx0pDbJVnzb3P536H/BpWppB+SzfH7m8HUR8uQAdN
+         VRti7M4ZQmZ8QxzTPwzHd7Wcxzt7r24Jgq8REFTmO3pAUjvY5DJklKt0ZDpFCHIFGOcm
+         mcY216ofSUFRm0wtFO00QZWPv1zEUJ0rKMDU6WJmCkrXiTjcKIj6oujoZuyz3BFisOLb
+         hQoUfYtPCzucV8aBUXAjRSIK0QnH/fUL8GsZHLwk0OUWeiVj1OSYv9CZDT3HmChSUZ0g
+         pFSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcEklooVCSzoU49xEgdIuUTjuVXbMA6KpFE4BQ4mqpm2wngvgVt2NCNpeD2u138g1HPLlhfsMtFb+T774=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKjyEoDVK0AGHdZ56x4PUffdshvH1+kj7z+PGgGtnmdFY+ezEo
+	LsbIsllMN58Xjz/kXVR35XA5EIoY/+YaCrK/eDhAumkWr5FADZSQ6JuEgcreYS17KD9fHQJWtw9
+	NlE4KPA==
+X-Google-Smtp-Source: AGHT+IEHue5KcLk/QqnBm3y2Ig9Ta51qNFW7n2QuwkMnly9TqOobukS1vav1nBv/4Yz6svZXoVmoDEzQJWA=
+X-Received: from plbkf5.prod.google.com ([2002:a17:903:5c5:b0:269:b2a5:8823])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:c94d:b0:268:1623:f8ce
+ with SMTP id d9443c01a7336-27cc1572011mr36976535ad.10.1758644643566; Tue, 23
+ Sep 2025 09:24:03 -0700 (PDT)
+Date: Tue, 23 Sep 2025 09:24:02 -0700
+In-Reply-To: <aNIH/ozYmopOuCui@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922221553.47802-6-simon.schippers@tu-dortmund.de>
+Mime-Version: 1.0
+References: <20250919223258.1604852-1-seanjc@google.com> <20250919223258.1604852-30-seanjc@google.com>
+ <aNIH/ozYmopOuCui@intel.com>
+Message-ID: <aNLJosN_1gZ7z4VF@google.com>
+Subject: Re: [PATCH v16 29/51] KVM: VMX: Configure nested capabilities after
+ CPU capabilities
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
+	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Sep 23, 2025 at 12:15:50AM +0200, Simon Schippers wrote:
-> The wrappers tun_ring_consume_batched/tap_ring_consume_batched are similar
-> to the wrappers tun_ring_consume/tap_ring_consume. They deal with
-> consuming a batch of entries of the ptr_ring and then waking the
-> netdev queue whenever entries get invalidated to be used again by the
-> producer.
-> To avoid waking the netdev queue when the ptr_ring is full, it is checked
-> if the netdev queue is stopped before invalidating entries. Like that the
-> netdev queue can be safely woken after invalidating entries.
+On Tue, Sep 23, 2025, Chao Gao wrote:
+> On Fri, Sep 19, 2025 at 03:32:36PM -0700, Sean Christopherson wrote:
+> >Swap the order between configuring nested VMX capabilities and base CPU
+> >capabilities, so that nested VMX support can be conditioned on core KVM
+> >support, e.g. to allow conditioning support for LOAD_CET_STATE on the
+> >presence of IBT or SHSTK.  Because the sanity checks on nested VMX config
+> >performed by vmx_check_processor_compat() run _after_ vmx_hardware_setup(),
+> >any use of kvm_cpu_cap_has() when configuring nested VMX support will lead
+> >to failures in vmx_check_processor_compat().
+> >
+> >While swapping the order of two (or more) configuration flows can lead to
+> >a game of whack-a-mole, in this case nested support inarguably should be
+> >done after base support.  KVM should never condition base support on nested
+> >support, because nested support is fully optional, while obviously it's
+> >desirable to condition nested support on base support.  And there's zero
+> >evidence the current ordering was intentional, e.g. commit 66a6950f9995
+> >("KVM: x86: Introduce kvm_cpu_caps to replace runtime CPUID masking")
+> >likely placed the call to kvm_set_cpu_caps() after nested setup because it
+> >looked pretty.
+> >
+> >Signed-off-by: Sean Christopherson <seanjc@google.com>
 > 
-> The READ_ONCE in __ptr_ring_peek, paired with the smp_wmb() in
-> __ptr_ring_produce within tun_net_xmit guarantees that the information
-> about the netdev queue being stopped is visible after __ptr_ring_peek is
-> called.
-
-READ_ONCE generally can't pair with smp_wmb
-
-
-From Documentation/memory-barriers.txt
-
-
-SMP BARRIER PAIRING
--------------------
-                                 
-When dealing with CPU-CPU interactions, certain types of memory barrier should
-always be paired.  A lack of appropriate pairing is almost certainly an error.
-
-
-....
-
-
-A write barrier pairs
-with an address-dependency barrier, a control dependency, an acquire barrier,
-a release barrier, a read barrier, or a general barrier.
-
-
-
-
-> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
-> ---
->  drivers/net/tap.c      | 52 ++++++++++++++++++++++++++++++++++++++++
->  drivers/net/tun.c      | 54 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/if_tap.h |  6 +++++
->  include/linux/if_tun.h |  7 ++++++
->  4 files changed, 119 insertions(+)
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
 > 
-> diff --git a/drivers/net/tap.c b/drivers/net/tap.c
-> index f8292721a9d6..651d48612329 100644
-> --- a/drivers/net/tap.c
-> +++ b/drivers/net/tap.c
-> @@ -1216,6 +1216,58 @@ struct socket *tap_get_socket(struct file *file)
->  }
->  EXPORT_SYMBOL_GPL(tap_get_socket);
->  
-> +int tap_ring_consume_batched(struct file *file,
-> +			     void **array, int n)
-> +{
-> +	struct tap_queue *q = file->private_data;
-> +	struct netdev_queue *txq;
-> +	struct net_device *dev;
-> +	bool will_invalidate;
-> +	bool stopped;
-> +	void *ptr;
-> +	int i;
-> +
-> +	spin_lock(&q->ring.consumer_lock);
-> +	ptr = __ptr_ring_peek(&q->ring);
-> +
-> +	if (!ptr) {
-> +		spin_unlock(&q->ring.consumer_lock);
-> +		return 0;
-> +	}
-> +
-> +	i = 0;
-> +	do {
-> +		/* Check if the queue stopped before zeroing out, so no
-> +		 * ptr get produced in the meantime, because this could
-> +		 * result in waking even though the ptr_ring is full.
-> +		 * The order of the operations is ensured by barrier().
-> +		 */
-> +		will_invalidate = __ptr_ring_will_invalidate(&q->ring);
-> +		if (unlikely(will_invalidate)) {
-> +			rcu_read_lock();
-> +			dev = rcu_dereference(q->tap)->dev;
-> +			txq = netdev_get_tx_queue(dev, q->queue_index);
-> +			stopped = netif_tx_queue_stopped(txq);
-> +		}
-> +		barrier();
-> +		__ptr_ring_discard_one(&q->ring, will_invalidate);
-> +
-> +		if (unlikely(will_invalidate)) {
-> +			if (stopped)
-> +				netif_tx_wake_queue(txq);
-> +			rcu_read_unlock();
-> +		}
-> +
-> +		array[i++] = ptr;
-> +		if (i >= n)
-> +			break;
-> +	} while ((ptr = __ptr_ring_peek(&q->ring)));
-> +	spin_unlock(&q->ring.consumer_lock);
-> +
-> +	return i;
-> +}
-> +EXPORT_SYMBOL_GPL(tap_ring_consume_batched);
-> +
->  struct ptr_ring *tap_get_ptr_ring(struct file *file)
->  {
->  	struct tap_queue *q;
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index 682df8157b55..7566b22780fb 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -3759,6 +3759,60 @@ struct socket *tun_get_socket(struct file *file)
->  }
->  EXPORT_SYMBOL_GPL(tun_get_socket);
->  
-> +int tun_ring_consume_batched(struct file *file,
-> +			     void **array, int n)
-> +{
-> +	struct tun_file *tfile = file->private_data;
-> +	struct netdev_queue *txq;
-> +	struct net_device *dev;
-> +	bool will_invalidate;
-> +	bool stopped;
-> +	void *ptr;
-> +	int i;
-> +
-> +	spin_lock(&tfile->tx_ring.consumer_lock);
-> +	ptr = __ptr_ring_peek(&tfile->tx_ring);
-> +
-> +	if (!ptr) {
-> +		spin_unlock(&tfile->tx_ring.consumer_lock);
-> +		return 0;
-> +	}
-> +
-> +	i = 0;
-> +	do {
-> +		/* Check if the queue stopped before zeroing out, so no
-> +		 * ptr get produced in the meantime, because this could
-> +		 * result in waking even though the ptr_ring is full.
-> +		 * The order of the operations is ensured by barrier().
-> +		 */
-> +		will_invalidate =
-> +			__ptr_ring_will_invalidate(&tfile->tx_ring);
-> +		if (unlikely(will_invalidate)) {
-> +			rcu_read_lock();
-> +			dev = rcu_dereference(tfile->tun)->dev;
-> +			txq = netdev_get_tx_queue(dev,
-> +						  tfile->queue_index);
-> +			stopped = netif_tx_queue_stopped(txq);
-> +		}
-> +		barrier();
-> +		__ptr_ring_discard_one(&tfile->tx_ring, will_invalidate);
-> +
-> +		if (unlikely(will_invalidate)) {
-> +			if (stopped)
-> +				netif_tx_wake_queue(txq);
-> +			rcu_read_unlock();
-> +		}
-> +
-> +		array[i++] = ptr;
-> +		if (i >= n)
-> +			break;
-> +	} while ((ptr = __ptr_ring_peek(&tfile->tx_ring)));
-> +	spin_unlock(&tfile->tx_ring.consumer_lock);
-> +
-> +	return i;
-> +}
-> +EXPORT_SYMBOL_GPL(tun_ring_consume_batched);
-> +
->  struct ptr_ring *tun_get_tx_ring(struct file *file)
->  {
->  	struct tun_file *tfile;
-> diff --git a/include/linux/if_tap.h b/include/linux/if_tap.h
-> index 553552fa635c..2e5542d6aef4 100644
-> --- a/include/linux/if_tap.h
-> +++ b/include/linux/if_tap.h
-> @@ -11,6 +11,7 @@ struct socket;
->  #if IS_ENABLED(CONFIG_TAP)
->  struct socket *tap_get_socket(struct file *);
->  struct ptr_ring *tap_get_ptr_ring(struct file *file);
-> +int tap_ring_consume_batched(struct file *file, void **array, int n);
->  #else
->  #include <linux/err.h>
->  #include <linux/errno.h>
-> @@ -22,6 +23,11 @@ static inline struct ptr_ring *tap_get_ptr_ring(struct file *f)
->  {
->  	return ERR_PTR(-EINVAL);
->  }
-> +static inline int tap_ring_consume_batched(struct file *f,
-> +						void **array, int n)
-> +{
-> +	return 0;
-> +}
->  #endif /* CONFIG_TAP */
->  
->  /*
-> diff --git a/include/linux/if_tun.h b/include/linux/if_tun.h
-> index 80166eb62f41..5b41525ac007 100644
-> --- a/include/linux/if_tun.h
-> +++ b/include/linux/if_tun.h
-> @@ -22,6 +22,7 @@ struct tun_msg_ctl {
->  #if defined(CONFIG_TUN) || defined(CONFIG_TUN_MODULE)
->  struct socket *tun_get_socket(struct file *);
->  struct ptr_ring *tun_get_tx_ring(struct file *file);
-> +int tun_ring_consume_batched(struct file *file, void **array, int n);
->  
->  static inline bool tun_is_xdp_frame(void *ptr)
->  {
-> @@ -55,6 +56,12 @@ static inline struct ptr_ring *tun_get_tx_ring(struct file *f)
->  	return ERR_PTR(-EINVAL);
->  }
->  
-> +static inline int tun_ring_consume_batched(struct file *file,
-> +						void **array, int n)
-> +{
-> +	return 0;
-> +}
-> +
->  static inline bool tun_is_xdp_frame(void *ptr)
->  {
->  	return false;
-> -- 
-> 2.43.0
+> I had a feeling I'd seen this patch before :). After some searching in lore, I
+> tracked it down:
+> https://lore.kernel.org/kvm/20241001050110.3643764-22-xin@zytor.com/
 
+Gah, sorry Xin :-/
 
