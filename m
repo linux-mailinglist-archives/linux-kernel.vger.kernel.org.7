@@ -1,226 +1,257 @@
-Return-Path: <linux-kernel+bounces-828577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F95B94EBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:08:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF246B94EC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F90F16337D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:08:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2FFE1903956
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E629C31815E;
-	Tue, 23 Sep 2025 08:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A154F318138;
+	Tue, 23 Sep 2025 08:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qaYtSB8s"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010058.outbound.protection.outlook.com [52.101.85.58])
+	dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="uc6Dur1F"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A36315D42
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758614898; cv=fail; b=kfud+/JOLD3qiArdF6venH/wTRr9gcrwyEuyS5m75a0XylHyupAx+hFp/WcIprCTdO7VfmrJs2Y2efjFAbBmQoilX86GbrCSXPOAPiD9ey6kW/8OldRPg1jZRS2DAzoymX3eOOoXSqfQWIANDpscjaykyuAkiy2q9tP+6bE/FrI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758614898; c=relaxed/simple;
-	bh=kxwNX169E+r8r+n7SZumreQtEGwIZpvbsEPXpp3yRLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=D5tCTuEmc0Ubp5+Y728B2TIZr7YaRw1P6qX803yWf88xMKm62GcvB0zl0Ai+iNr9QSMs0Vvl65oV/4iOtVC74ArUPjYnXIbn/C24IIo94IHBx1gNgTQnx2wRlx5xyALoPtzEnGKl2Gan9loUkBO8lDOZeQzLpMFKCpjm2oZWuCQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qaYtSB8s; arc=fail smtp.client-ip=52.101.85.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kG5s59LlffrgxkUD2U6C8ZHVabI5cR76EuIYL0p9MaNcOuYzRcGJwXWMNhq5t59FaN3rT0KvcxYOpNce7TuqZvNHe9GUFOnX4mWnVKw9ieFleZEI+wbAqHlp81Nkx9coAC6vfaSLDkAQwm5dfaAbIbVb0rFRW4RqevH0yi4q7iu09YyNxRGLacGjk14YLSt+S3HI/RTA8fSMTMmMA1oxOmJNh1mJQI3ywhH8bon/aRFcW1UmsNEZs3u/olwv1YJuT4H+4SqVr4vilzHklxZm93BaaHTBxfWZu4rJ5g2PcKZQHeHIO8vue+Lo1NDNr8F1RwFUvVKzmxYC6x7WvT29eA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oI87LuPgk0JU/i20c0SOzPV0n1F3P1YD4SollwfWo+E=;
- b=GVvdg9S197Itks7mIgipqswhOJd8cPsGqKyuL8QVs4RhYuqdFXSZvZuHfRA+YZjupjKZJa3K1g5r39nYqs6Mk4hYqzcxcFFvobFxaVQx8ex3Mfvzz/J4uVGx1eHnDwQ2vtUY0jOHAXQTif/jqTGBpdn3QmH+PpsQjzESAMlj57r+8GK7PKEcyDWUMOzyDSU3hmeg2B1HTtzEPyB2c/RyIpAlWIDupwDY6LlvljYco7c8P9mrBOG+SKOYG1FE8GxC6MW/BEiEZYhmjndW0D5RBmM7p75w9p5Pqoje0QmEqrfklbAbViWs2FWT7D4wcrXUier0/jpQ9GN2ryvJzeN9vA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oI87LuPgk0JU/i20c0SOzPV0n1F3P1YD4SollwfWo+E=;
- b=qaYtSB8siEDspAwSjiaBz/Rf9Km4sSCQAP5X5VA0rOSE+cA+1+yrw88M2Wx2+U63bD73gDg8z+JOoWUwN4FL2JGvPE1rHCo5mQqEvGaCV9QT983cx3w4WjR3FPpM30OpKhBl1qQS7LPC+ZhmGf7eMGdfF4JwCYz5r800uRCYYhvYvVbl9nGRuj/Bj0KO1rSTPRoSzX4EZQHFpHuBtANCAXwpwhfHyCUd0zzvKmqIO0fL+FupMvN3iCHu6/eBYFowfdQmG2ahbEPPVnQ4a5eG8C0OEBDzmdss+sbdKImE1MqfYrsa5QQ6g+FLtVNEEe8C2bzYNRLBLo/1KfD9wTEIgw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by SA3PR12MB9129.namprd12.prod.outlook.com (2603:10b6:806:397::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
- 2025 08:08:14 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 08:08:14 +0000
-Date: Tue, 23 Sep 2025 10:08:08 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
-Subject: Re: [PATCH 5/7] sched_ext: Add SCX_EFLAG_INITIALIZED to indicate
- successful ops.init()
-Message-ID: <aNJVaCvbUoDsMsJJ@gpd4>
-References: <20250922013246.275031-1-tj@kernel.org>
- <20250922013246.275031-5-tj@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922013246.275031-5-tj@kernel.org>
-X-ClientProxiedBy: MI2P293CA0001.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::14) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A91F265CAD;
+	Tue, 23 Sep 2025 08:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758614972; cv=none; b=DvTT1WzEJd92lgHcDeoGwzI8YrYQ1HcwQ1KP68Uijf8uEV+MH/vUy4/Ewa/DlH4OdAvOr8E05yq+FKU4GhcJOp62nKYFcXZZWMwsrdjU26aV1EN0uM7gIj5A88LrluYFKa9bo59A3Ynx+cIXujB2ixa+qbXbfX/jdZPLADghqZ0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758614972; c=relaxed/simple;
+	bh=7kc6jlZD7X62wZB0M8B9+bz4psXxD7A9CNwsZ3pJ5Uo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ScLMloS90LDvF0iQPFAgdEpIX+rFgTFBbzVQxgp0EQRnDs4sQN8X/JMwyLVSTE1Agz+6MmEB4feTyAaRbgya7zL7tdQujF2Kds0QyRiYRgU5PRIHr+Bt53+kMJg3ECGYRPuE2BtXF7CEIcYTaIWP7f/7//jPx4TYxBMlgr92s80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au; spf=pass smtp.mailfrom=gandalf.ozlabs.org; dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b=uc6Dur1F; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gandalf.ozlabs.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=gibson.dropbear.id.au; s=202508; t=1758614966;
+	bh=zzeqtwEj5UTJKBZZILUt2MPbCrrrroWXRmHWpJZjSXM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uc6Dur1F4v41rVHPdfzJFw80EzCcCxJAmN+Ld/h1WAU/6LZODUYH/jZIaAUNv5rtG
+	 gpkgVKvOwf0lmYtlArYaJfx8bIpS/2CT9/NVYjhDt1Dv2MC4bOeben9y7LsQsaWmoC
+	 AYMPFDaWhCUUYSYl/HXFgWuB69lIinLhvbOLEMc7d+8T9tJXymhrSUDLtx1/QouhOF
+	 Aig1HZ76IDyNDqgw8Iuy58ke0WsBGtOsEXqKdsmoW+79J6YAM3lCpnCDmLpPMtFsgH
+	 8YrSHM+jrahmDPnLqqZ7AyhXTWOGSwBRuRVHdevfHH7W/IQVUmPEXRb47RTXLT/hs0
+	 N4AvuW9mzOtPQ==
+Received: by gandalf.ozlabs.org (Postfix, from userid 1007)
+	id 4cWCLZ1Czcz4w9Q; Tue, 23 Sep 2025 18:09:26 +1000 (AEST)
+Date: Tue, 23 Sep 2025 18:09:13 +1000
+From: David Gibson <david@gibson.dropbear.id.au>
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: Herve Codina <herve.codina@bootlin.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Andrew Davis <afd@ti.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	devicetree@vger.kernel.org, Jason Kridner <jkridner@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: Device tree representation of (hotplug) connectors: discussion
+ at ELCE
+Message-ID: <aNJVqSpdAJzGliNx@zatzit>
+References: <aL-2fmYsbexEtpNp@zatzit>
+ <20250909114126.219c57b8@bootlin.com>
+ <aMD_qYx4ZEASD9A1@zatzit>
+ <20250911104828.48ef2c0e@bootlin.com>
+ <aMebXe-yJy34kST8@zatzit>
+ <20250916084631.77127e29@bootlin.com>
+ <aMt5kEI_WRDOf-Hw@zatzit>
+ <20250918094409.0d5f92ec@bootlin.com>
+ <aMzhgDYOuG4qNcc0@zatzit>
+ <dcbeaff2-0147-4a27-bb46-e247e42810d7@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SA3PR12MB9129:EE_
-X-MS-Office365-Filtering-Correlation-Id: bb6318ad-3c6b-4ee2-a42f-08ddfa78582c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?25XwV2AfGKgi57TG4ZlWFUxEPaD4+t5CEB0mNS39T1Bc7vRIgbNMAh0x0DVc?=
- =?us-ascii?Q?qYmT66M+UvWfzyCCJRJn0OXot/kdat3qF3j0sGFPMkTGOJuHArogPBqJS1IC?=
- =?us-ascii?Q?ozRAi3kWghneKwLic3n1CSAiBVoqcwFqxMAuPuJvHUPWomLE7mRwe/BaZncS?=
- =?us-ascii?Q?vgZU1e24/3qGBwec2Lmjl/KoBWsaAxVZcKqryNF43vNZsnS4ipUOBNStPh95?=
- =?us-ascii?Q?3EzxDAiJ15V9AFRUJwErygfhOa4r/gmwM9dhOMaCzTZfJxE8OLOkk6U+r1oB?=
- =?us-ascii?Q?tYxCi7UkH4CcCGztH0sU3Ufap3rUtFZJzXSXFxwWl8+unGNUUK27aBCaVDAk?=
- =?us-ascii?Q?r110fjDW1Rlmi6g4vCDEveOnazNoxD4xIJkTUIRBd5gl95PNops6L9wMl4Qc?=
- =?us-ascii?Q?sP85wYV9Hmzx0uMwlm9bE7z+DkYzmQL17dmxTtEpelF446PE9ZbA8UXdgbkq?=
- =?us-ascii?Q?1xWf2/9m8aojJKODdHFj4ppsMBS84dMvyMm9HJZkp9qy4SPfB22v9Zb0fKa5?=
- =?us-ascii?Q?/fSX2OSD84VoWVRrUn3IqjhfOgY/89840HN0GWRnIB4RcAjtx82FpQYJ8in2?=
- =?us-ascii?Q?K86qmuuw5DUMdmLuuh3mku/sxTH1W07QFyrbpbX7+REcZIUqFyGXPr8etS2B?=
- =?us-ascii?Q?6LFgMbpqoCNP+SffuuQZBQCq2uIpJWanICGcwXNmUCRza9D2yEJ44+hMBmvN?=
- =?us-ascii?Q?3PszHDxljxwaN4Al9GWmZBpHCH2IkWY/44FdUyAhiyH53BC9SCJ2F8BWTLcr?=
- =?us-ascii?Q?LiNm44cQf1nx5zmK2Os8fxsEr5QHjdVHCDpodtAiz0SqOnp8YpIowsf8+fBf?=
- =?us-ascii?Q?3Q+yjQAu1QeuZMDRn6D1thy67MO7zGhIBrq/TZ/G51h+n3QoRUh1lzOIOyBA?=
- =?us-ascii?Q?+6gcwLF1GdY9e/DWij3WcCXytizmCqsO2sHD32ZmnhMJIY8gWT64VDoozomI?=
- =?us-ascii?Q?vmEJegjlMmxFV3/T+gMIRboWYQ7K9nYWbEpGq8/pNujoPf3iK8ww6hK/K9zC?=
- =?us-ascii?Q?310Be4+hlHRYFWcRp0DVuddyT/7oIqm6JhhRzv4dmg44Uf4oxbHtWvgEjgV1?=
- =?us-ascii?Q?L0pN4CM2FJr7vWfQ7CaHBgeey4ejUXbQl+el3RnXdEihbpkME8TcEp4P4Em2?=
- =?us-ascii?Q?3d65U82on4tGwhQFk4l2d9jrgJSHOCSIBpKD7lolEQIepqPC9Dx30tpX1RYM?=
- =?us-ascii?Q?zVkSWS8UChpGeZoVHETf/YTy56PCvAl6bq7JVtCtExBgPw3o6XsUJ0uiIIVM?=
- =?us-ascii?Q?RFNTGmmfr+FJQ76kflcRCLqXQyDC17fv+0nd/SgRJb5jX9GttlYeYaXBcWlj?=
- =?us-ascii?Q?RbfKyDp0slE2EoCvnM1ZP7o5PyO45I4M3DhcjBXuSe1MtRWSY8OiTFuKCcCw?=
- =?us-ascii?Q?8eoLjbNhurbtHh7pf5iA1xCWdTpKYluzBMwIhSTiljjSe0BG0sZ6KMcEnWgX?=
- =?us-ascii?Q?t74LTRbtXpE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?OYIBBipYy/VxmrXXvI1Zal+qOWp7UkzjMDWlT7W6ndtq5Ym3Z/xeG/CzpCb9?=
- =?us-ascii?Q?Ehcozt3aLy4xz5N99BqnCFwTkNVDkcsrlb2P1jcYFEYdhcA42aLzDbi317C+?=
- =?us-ascii?Q?JKYsjQb7uT7+gbAb0x55Cs7ZQCwGuLWqj06RgfMUsqAsQ44FVok7BSgD60Ie?=
- =?us-ascii?Q?mHNA1KA/akZ6Z6VuhOjupi5iaQxisMU3eD0tyPQ/fekLQW/vcnPCUuMg+aFH?=
- =?us-ascii?Q?HIfxK4XdKapwLFVoch1C/DWsCQbX+dF311JAdqkbiNj/ASr37c/mM2065h2D?=
- =?us-ascii?Q?pKDP+HSA2cpx7bEC1cenqyxi1Ef48dI1YfGuQy6+vUUuZyQdFbc3T9cPqHde?=
- =?us-ascii?Q?Qbg6EGxVckAVPHg/aqtAi1gHO+/nmtEUB7ivpxDLQTAzTzRegsG0UdZElM5U?=
- =?us-ascii?Q?GOtmfePzkzdB+uN+9+OT44VlSoiwqLjREprVRDF6HURZvvgFwIN83sc0Fw+q?=
- =?us-ascii?Q?agsutNd3cSGTuqe46Gv3SxzlqqmTG6BtNqICmHGBTqTSVzEViwoRBHiX65fK?=
- =?us-ascii?Q?vs0idKcuOnsyHUxDrnUMa9tvWgirb2C5nkyLf51j6qm4qfL32QSw2WpaX8Vy?=
- =?us-ascii?Q?ETq6fcweRlRXP12XhlcktWo7MjPqvDxLACh9OqYAbXNwT0OBYvHehdd302Rc?=
- =?us-ascii?Q?RtXH7LbfnoOycXHF3FKBxRNIy2iGXwWZsYuRCKjUB68NFDuoguzhYvRtnAWT?=
- =?us-ascii?Q?O8V9flyfivG2RbUM61lV0pm4UI4k6zp++5NPrJ7FbWNx4cAQjBx2V/gaPiSp?=
- =?us-ascii?Q?fDpnzxHT9tFY+xtg1vObuq56SJmWLqM3sTVsdAwYWmWmSaW4r5aw2B2v+eVD?=
- =?us-ascii?Q?awzb75VYNmhbQsFfAAvdY/6sYzw3meOOrqFxu7u3Rk6Okf9j5xElxGHKnBEF?=
- =?us-ascii?Q?hO+37MPAiB9JUs7ZGGqGaZz+tBYFbZbJuwYbQ1s2QeNNMZ9so/0TNgZ69xmO?=
- =?us-ascii?Q?zGGdHrlWO6oFnfWztRSPqvFY43tYjmeCnkbium9BRC91QNr7smkKspQ8lCO5?=
- =?us-ascii?Q?ZpjJMBMOhCyEi2aJYVTArlj2SQCfBfHzgfLJkFYpGCNVZqcjjba7As/YZgU1?=
- =?us-ascii?Q?ZZvfYk4qiWFvUNRaYy1WMvhgfyRPRcSNrMHjOw4JI3rQjm1JYkgNXUGZBsTk?=
- =?us-ascii?Q?MFOhXFFVMzY+6xubWWgofxtd/iIf5oV9d2JQm8Hg5uXEAZtDTYvpeiWg9BwS?=
- =?us-ascii?Q?KsckcLauaRef/CD0S3bQtDB6mbPbfCRSDEnnlHplEVgPywayk33IQ+LO4VC7?=
- =?us-ascii?Q?S1QJHM44dPPMc8noviibFHg5JKkAhOgx0bhwjn9KsEYcWfyMpVxorlSaRINd?=
- =?us-ascii?Q?jb9gwNhQy9MfPiy28Cl1TpHaZf+R0OWVKRj2anwx6kEe/W5plyCegVc+qUse?=
- =?us-ascii?Q?USejnEN1yY8JfQSZy2HMbWpfGGyJIdP8mte+1jnS1HkB6tPi8sTsicggpc7L?=
- =?us-ascii?Q?HAEUejzG0VY2Ejr9YgHTHJ3ib28KwP2ehw2w+UQc323Mf3O9OYua89BkTYuv?=
- =?us-ascii?Q?bLvsiY3vUu4EpKVxCIwjeBKjFOOx5uQp9eiprGnAvNDcmjQr/sz8jZ6XULML?=
- =?us-ascii?Q?XGgRW5HyfbmJILIeXqE7j9uy1mQ6rvGoWDM2+N+5?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb6318ad-3c6b-4ee2-a42f-08ddfa78582c
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 08:08:14.0512
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PsoCmmyZJHr2A1/vHDlijoBk7JVdgpzF9rNEm1RZW7YJ04XKhtw8IR22pgYxoi2HtCgtfrAp6CCT/TveUjV2PQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9129
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Xyxstg8Uj0Y3qEx9"
+Content-Disposition: inline
+In-Reply-To: <dcbeaff2-0147-4a27-bb46-e247e42810d7@beagleboard.org>
 
-On Sun, Sep 21, 2025 at 03:32:44PM -1000, Tejun Heo wrote:
-> ops.exit() may be called even if the loading failed before ops.init()
-> finishes successfully. This is because ops.exit() allows rich exit info
-> communication. Add SCX_EFLAG_INITIALIZED flag to scx_exit_info.flags to
-> indicate whether ops.init() finished successfully.
-> 
-> This enables BPF schedulers to distinguish between exit scenarios and
-> handle cleanup appropriately based on initialization state.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
 
-This can be useful, we could update UEI_REPORT() to show the flag, but we
-can also do it later in a separate patch.
+--Xyxstg8Uj0Y3qEx9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Andrea Righi <arighi@nvidia.com>
+On Fri, Sep 19, 2025 at 10:47:17AM +0530, Ayush Singh wrote:
+> On 9/19/25 10:22, David Gibson wrote:
+>=20
+> > On Thu, Sep 18, 2025 at 09:44:09AM +0200, Herve Codina wrote:
+> > > Hi David,
+> > >=20
+> > > On Thu, 18 Sep 2025 13:16:32 +1000
+> > > David Gibson <david@gibson.dropbear.id.au> wrote:
+> > >=20
+> > > ...
+> > >=20
+> > > > > > Thoughts above suggest a different direction, but here's what I=
+ was
+> > > > > > thinking before:
+> > > > > >=20
+> > > > > > base board:
+> > > > > >=20
+> > > > > > 	connector {
+> > > > > > 		/export/ "i2c" &i2c0;
+> > > > > > 	};
+> > > > > >=20
+> > > > > > addon:
+> > > > > > 	eeprom@10 {
+> > > > > > 		compatible =3D "foo,eeprom";
+> > > > > > 		bus-reg =3D <&i2c 0x10>;
+> > > > > > 	}
+> > > > > >=20
+> > > > > > Or, if the addon had multiple i2c devices, maybe something like:
+> > > > > >=20
+> > > > > > 	board-i2c {
+> > > > > > 		compatible =3D "i2c-simple-bridge";
+> > > > > > 		bus-ranges =3D <&i2c 0 0x3ff>; /* Whole addr space */
+> > > > > > 		eeprom@10 {
+> > > > > > 			compatible =3D "foo,eeprom";
+> > > > > > 			reg =3D <0x10>;
+> > > > > > 		}
+> > > > > > 		widget@20 {
+> > > > > > 			compatible =3D "vendor,widget";
+> > > > > > 			reg =3D <0x20>;
+> > > > > > 		}
+> > > > > > 	}
+> > > > > >=20
+> > > > > > Writing that, I realise I2C introduces some complications for t=
+his.
+> > > > > > Because it has #size-cells =3D <0>, ranges doesn't really work =
+(without
+> > > > > > listing every single address to be translated).  Likewise, beca=
+use we
+> > > > > > always need the parent bus phandle, we can't use the trick of a=
+n empty
+> > > > > > 'ranges' to mean an identity mapping.
+> > > > > >=20
+> > > > > > We could invent encodings to address those, but given the addon=
+ with
+> > > > > > multiple connectors case provides another incentive for a single
+> > > > > > connector to allow adding nodes in multiple (but strictly enume=
+rated)
+> > > > > > places in the base device tree provides a better approach.
+> > > > > and the "place in base device tree" is the goal of the extension =
+bus.
+> > > > >=20
+> > > > > The strict enumeration of nodes enumerated is done by two means:
+> > > > >   - extension busses at connector level
+> > > > >     Those extensions are described as connector sub-nodes.
+> > > > >     The addon DT can only add nodes in those sub-nodes to describ=
+e devices
+> > > > >     connected to the relared extension bus.
+> > > > >   - export symbols
+> > > > >     An addon DT can only use symbols exported to reference symbol=
+s outside
+> > > > >     the addon DT itself.
+> > > > >=20
+> > > > > Can I assume that bus extensions we proposed (i2c-bus-extension a=
+nd
+> > > > > spi-bus-extension) could be a correct solution ?
+> > > > Maybe?  I prefer the idea of a universal mechanism, not one that's
+> > > > defined per-bus-type.
+> > > >=20
+> > > >=20
+> > > > Also, IIUC the way bus extension operates is a bit different - nodes
+> > > > would be "physically" added under the bus extension node, but treat=
+ed
+> > > > logically as if they go under the main bus.  What I'm proposing here
+> > > > is something at the actualy overlay application layer that allows
+> > > > nodes to be added to different parts of the base device tree - so y=
+ou
+> > > > could add your i2c device under the main i2c bus.
+> > > I think we should avoid this kind of node dispatching here and there =
+in
+> > > the base DT.
+> > Until I saw Geert's multi-connector case, I would have agreed.  That
+> > case makes me thing differently: in order to support that case we
+> > already have to handle adding information in multiple places (under
+> > all of the connectors the addon uses).  Given we have to handle that
+> > anyway, I wonder if it makes more sense to lean into that, and allow
+> > updates to multiple (strictly enumerated) places.
+>=20
+> Well, I don't love this idea. Here are my main qalms about the approach of
+> adding devices directly to the actual i2c/spi etc nodes.
+>=20
+> 1. In boards with multiple connectors, they sometimes share the same i2c.
+> Now assume that someone decided to connect the same i2c device to both the
+> connectors. If we are using something like bus extension, while the node
+> would be added, it will fail in the registration since you cannot add the
+> same address device a second time. However, if we are adding the device
+> directly to the `main_i2c`, the overlay application will just end up
+> modifying the exact same device node. There is no error, or even a 2nd
+> device node in this case. It is just lost.
+>=20
+> 2. How well will overlay adding and removing work when the same tree nodes
+> are modified by multiple connectors? I have not looked at the internals of
+> overlay resolution so not sure, but I don't want dynamic addition and
+> removal of devices in independent connectors to somehow become coupled.
 
-> ---
->  kernel/sched/ext.c          |  1 +
->  kernel/sched/ext_internal.h | 13 +++++++++++++
->  2 files changed, 14 insertions(+)
-> 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index 5801ac676d59..d131e98156ac 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -4554,6 +4554,7 @@ static int scx_enable(struct sched_ext_ops *ops, struct bpf_link *link)
->  			scx_error(sch, "ops.init() failed (%d)", ret);
->  			goto err_disable;
->  		}
-> +		sch->exit_info->flags |= SCX_EFLAG_INITIALIZED;
->  	}
->  
->  	for (i = SCX_OPI_CPU_HOTPLUG_BEGIN; i < SCX_OPI_CPU_HOTPLUG_END; i++)
-> diff --git a/kernel/sched/ext_internal.h b/kernel/sched/ext_internal.h
-> index 1a80d01b1f0c..b3617abed510 100644
-> --- a/kernel/sched/ext_internal.h
-> +++ b/kernel/sched/ext_internal.h
-> @@ -62,6 +62,16 @@ enum scx_exit_code {
->  	SCX_ECODE_ACT_RESTART	= 1LLU << 48,
->  };
->  
-> +enum scx_exit_flags {
-> +	/*
-> +	 * ops.exit() may be called even if the loading failed before ops.init()
-> +	 * finishes successfully. This is because ops.exit() allows rich exit
-> +	 * info communication. The following flag indicates whether ops.init()
-> +	 * finished successfully.
-> +	 */
-> +	SCX_EFLAG_INITIALIZED,
-> +};
-> +
->  /*
->   * scx_exit_info is passed to ops.exit() to describe why the BPF scheduler is
->   * being disabled.
-> @@ -73,6 +83,9 @@ struct scx_exit_info {
->  	/* exit code if gracefully exiting */
->  	s64			exit_code;
->  
-> +	/* %SCX_EFLAG_* */
-> +	u64			flags;
-> +
->  	/* textual representation of the above */
->  	const char		*reason;
->  
-> -- 
-> 2.51.0
-> 
+Ah, right.  To be clear: we absolutely don't want multiple addons
+altering the same nodes.  But I think we could do that in ways other
+than putting everything under a connector.  This is exactly why I
+think we should think this through as an end-to-end problem, rather
+trying to do it as a tweak to the existing (crap) overlay system.
 
-Thanks,
--Andrea
+So, if we're thinking of this as an entirely new way of updating the
+base dt - not "an overlay" - we can decide on the rules to ensure that
+addition and removal is sane.  Two obvious ones I think we should
+definitely have are:
+
+a) Addons can only add completely new nodes, never modify existing
+   ones.  This means that whatever addons are present at runtime,
+   every node has a single well defined owner (either base board or
+   addon).
+
+b) Addons can only add nodes in places that are explicitly allowed by
+   the connectors they're connecting to.
+
+We could consider further rules as well though.  For example, we could
+say that i2c devices in an addon shouldn't be added directly under the
+base board's i2c controller, but under a subnode of that i2c
+controller assigned to that connector (which would likely have an
+empty 'ranges' property meaning addresses are mapped without
+translation).  Not really sure if that rule has more benefits or
+drawbacks, but it's worth contemplating.
+
+--=20
+David Gibson (he or they)	| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you, not the other way
+				| around.
+http://www.ozlabs.org/~dgibson
+
+--Xyxstg8Uj0Y3qEx9
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEO+dNsU4E3yXUXRK2zQJF27ox2GcFAmjSVZwACgkQzQJF27ox
+2Gdn5Q//bpdVz4WXYnlnwXzhN/K8EI3FqIjuDRfTVdvbzpX1peYW+buj9IBFhme1
+xBEJ43e/jjU/6S91ITgiDUAx8fyi4D92otfTnRQTDLa97Hy1KWzksDDpbBPZthOn
+UQC865pUyD9H2GoitRAvb6hFfnbM/PP+pf3v9Xv1TiPKg7NPvwl7IW9dZ4+K4Axg
+ju5e5vO7OHM2YWA7/kQM+n1UOMlhFl7i2APUdVYXJoXeHZ5LYbar7lSues+oNS4T
+qc0o2jgVD5pWfhl2/J+0fE3/lw2+vPumkReAONIBGDrvsQ61j+Cn99avOQQPjiqU
+mCs7F9U1mgX/teyuc4prkf69V1lldMhhmhhs62XlIsZ7/04IjfSz+Mg9t4ts6zvi
+8Qepq2BiBd3hhCTeNXs9+5yb7DYvfK6cJd7dcipbXH5lMBj6nZlpZbV/m3M8KVLD
+T9pbx204kUrqWIbh6t89/0DrWeINql0mH0oiIuf7DKn6RL7Q7/R4xtXlqVnYsu0P
+lNExEbO8LklcP9rpi1lCp2KTJPgC42HWGzQHOqsMvUbIkPNbpCdOZw997lEtLta7
+SXR/+KNue/OYnYlR88Iz8zmsIUkfColBS0X2epHGFWmonR/MG6a/qG8XESYLfJ4j
+sfTEfRkGV4TI+ncLSwXEaGxCHVbzX7kNVuTt6vMVZyiBECpHg4w=
+=Fsvn
+-----END PGP SIGNATURE-----
+
+--Xyxstg8Uj0Y3qEx9--
 
