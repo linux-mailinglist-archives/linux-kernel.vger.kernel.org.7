@@ -1,201 +1,191 @@
-Return-Path: <linux-kernel+bounces-829482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EED4B972C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:14:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E4CB972CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:16:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A4424C3172
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:14:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B44607A2D73
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162FB2FB096;
-	Tue, 23 Sep 2025 18:14:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E423281370
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05E32FD7CE;
+	Tue, 23 Sep 2025 18:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tYBN+0ok"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7757A2FB093;
+	Tue, 23 Sep 2025 18:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758651267; cv=none; b=uUJDPa6306z9+s3UgXsFFc8lXwbt6nGFtG3Ik6XTeGUZtnCXGx9z+yjhZe+oFwZYtpkYw/uLoH2yaPy3J/Av81DYnjb0v9UUzjjCHe3IYTcEDGYg2jzD96c47t8UszjTgw1wYewqpHPn7W9cDSoQoJWtkwNHJPpHSBZ1r2ie7n0=
+	t=1758651372; cv=none; b=GZnGqLWouqrJ7H1fEJ6d/4uMTCf/Ehm2BZvxVkl6Bq1GtbsxIoRNYSiHs7GoLQ3YETR8YzI1/mRAr4lDHro1m4wLoxWo2zCft75uNcoF49OsyWDc2RP8Mg5rosGY9m/p9KIW/bJ1ObCJDI/V7L+wMyfSHbSkkWBGU7dBfAFTcnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758651267; c=relaxed/simple;
-	bh=u5CAF2Z9sP91EvXfpG+9jhGDFgDNJ7VUSVqL1/BVLXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=YD+zW3FFm0rRIALCkztMhhL4xf+hB+nAhLODb0tWjTCTbid04zGOauIL5ggAkpNzmR6MVGykjnHlcbOG61Q5bn6ZvubJl9+63V/YnT7U+BO16+3yx3m53qwK+jEM7nhthzuDogPOffbICJjspGvXLXXKX0iGNpjNJreq5Rolz4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4E2D5497;
-	Tue, 23 Sep 2025 11:14:14 -0700 (PDT)
-Received: from [10.57.80.141] (unknown [10.57.80.141])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D37763F694;
-	Tue, 23 Sep 2025 11:14:20 -0700 (PDT)
-Message-ID: <9edb5b8d-8660-4699-b041-bd74329a14e9@arm.com>
-Date: Tue, 23 Sep 2025 20:14:18 +0200
+	s=arc-20240116; t=1758651372; c=relaxed/simple;
+	bh=Pd/vr6gfJecTCg6idYwsj65Vxje1Ql8fzzq9QB1O7qI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c4ZvTLkNkOf4jxQMuvtB8rarSKPmLqpx12Fq/WUIY0W8rNy+Y6LBfr5L92spGkEFuyOCp3GF3Izn6pIk+D2j5Bi7Lbdjy4Wl5X89tx/68FZUiZxfaCyU3xuoYLJqymqjptd0kqWkOZdZXvzsokc7yc4ZfP2JFKGYayr2YPbXjt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tYBN+0ok; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58NIG2XL1044493;
+	Tue, 23 Sep 2025 13:16:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758651362;
+	bh=J4ZBqPejUM9ozxyVcs4lYmfMpZfbwlqrhxv4JVL0Njk=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=tYBN+0okJSmVpe5/9hx5R3aFFgRxDX0dMTEb81J/kcSxNHun5kYuDIQ5ywQpWqY5n
+	 1UOEdbmDUEP/biQRMN5aOpu3Z3SqNN/4bp8/wf+xas6qXaPPx2muXacWww80MHTuy8
+	 evHzHQRPHXC5A5u9SDvrZw9J8E0KFAyP2nFP3j4Q=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58NIG2Uc1847586
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 23 Sep 2025 13:16:02 -0500
+Received: from DLEE209.ent.ti.com (157.170.170.98) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 23
+ Sep 2025 13:16:02 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE209.ent.ti.com
+ (157.170.170.98) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 23 Sep 2025 13:16:02 -0500
+Received: from localhost (uda0506412.dhcp.ti.com [128.247.81.19])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58NIG2Is455516;
+	Tue, 23 Sep 2025 13:16:02 -0500
+Date: Tue, 23 Sep 2025 13:16:02 -0500
+From: Kendall Willis <k-willis@ti.com>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Vishal Mahaveer <vishalm@ti.com>,
+        Kevin
+ Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
+        Sebin Francis
+	<sebin.francis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>
+Subject: Re: [PATCH v2 5/7] arm64: dts: ti: k3-am62-lp-sk: Set wakeup-source
+ system-states
+Message-ID: <20250923181602.owmee6oisylw6svj@uda0506412>
+References: <20250812-topic-am62-dt-partialio-v6-15-v2-0-25352364a0ac@baylibre.com>
+ <20250812-topic-am62-dt-partialio-v6-15-v2-5-25352364a0ac@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: BUG/WARN issues in kernel/sched/rt.c under stress-ng with
- crgoup-v2
-To: Matteo Martelli <matteo.martelli@codethink.co.uk>,
- Ben Dooks <ben.dooks@codethink.co.uk>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
-References: <3308bca2-624e-42a3-8d98-48751acaa3b3@codethink.co.uk>
- <d6abff7f5f9ee5e41f19cb1f9d02de29@codethink.co.uk>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-GB
-In-Reply-To: <d6abff7f5f9ee5e41f19cb1f9d02de29@codethink.co.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250812-topic-am62-dt-partialio-v6-15-v2-5-25352364a0ac@baylibre.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 19.09.25 18:37, Matteo Martelli wrote:
-> Hi all,
+Hi Markus,
+
+On 11:15-20250812, Markus Schneider-Pargmann wrote:
+> The CANUART pins of mcu_mcan0, mcu_mcan1, mcu_uart0 and wkup_uart0 are
+> powered during Partial-IO and IO+DDR and are capable of waking up the
+> system in these states. Specify the states in which these units can do a
+> wakeup on this board.
 > 
-> On Fri, 19 Sep 2025 12:10:34 +0100, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
->> We are doing some testing with stress-ng and the cgroup-v2 enabled
->> (CONFIG_RT_GROUP_SCHED) and are running into WARN/BUG within a minute
->> related to user-space calling sched_setattr() and possibly other calls.
->>
->> At the moment we're not sure if the WARN and BUG calls are entirely
->> correct, we are considering there may be some sort of race condition
->> which is causing incorrect assumptions in the code.
->>
->> We are seeing this kernel bug in pick_next_rt_entity being triggered
->>
->> 	idx = sched_find_first_bit(array->bitmap);
->> 	BUG_ON(idx >= MAX_RT_PRIO);
->>
->> Which suggests that the pick_task_rt() ran, thought there was something
->> there to schedule and got into pick_next_rt_entity() which then found
->> there was nothing. It does this by checking rq->rt.rt_queued before it
->> bothers to try picking something to run.
->>
->> (this BUG_ON() is triggered if there is no index in the array indicating
->>   something there to run)
->>
->> We added some debug to find out what the values in pick_next_rt_entity()
->> with the current rt_queued and the value it was when pick_task_rt()
->> looked, and we got:
->>
->>     idx 100 bigger than MAX_RT_PRIO 100, queued = 0 (queued was 1)
->>
->> This shows the code was entered with the rt_q showing something
->> should have been queued and by the time the pick_next_rt_entity()
->> was entered there seems to be nothing (assuming the array is in
->> sync with the lists...)
->>
->> I think the two questions we have are:
->>
->> - Is the BUG_ON() here appropriate, should a WARN_ON_ONCE() and
->>    return NULL be the best way of handling this? I am going to try
->>    this and see if the system is still runnable with this.
->>
->> - Are we seeing a race here, and if so where is the best place to
->>    prevent it?
->>
->> Note, we do have a few local backported cgroup-v2 patches.
->>
->> Our systemd unit file to launch the test is here:
->>
->> [Service]
->> Type=simple
->> Restart=always
->> ExecStartPre=/bin/sh -c 'echo 500000 > 
->> /sys/fs/cgroup/system.slice/cpu.rt_runtime_us'
->> ExecStartPre=/bin/sh -c 'echo 500000 > 
->> /sys/fs/cgroup/system.slice/stress-sched-long-system.service/cpu.rt_runtime_us'
->> ExecStart=sandbox-run /usr/bin/stress-ng --temp-path /tmp/stress-ng 
->> --timeout=0 --verify --oom-avoid --metrics --timestamp 
->> --exclude=enosys,usersyscall --cpu-sched 0 --timeout 60 --verbose 
->> --stressor-time
->> Environment=SANDBOX_RO_BINDMOUNTS="/usr/share/stress-ng"
->> Environment=SANDBOX_RW_BINDMOUNTS="/var/log /sys /proc /dev /tmp/stress-ng"
->> Environment=SANDBOX_EXTRA_ARGS="--cwd /tmp/stress-ng --keep_caps 
->> --disable_rlimits --disable_clone_newuser"
->> Slice=system.slice
->> OOMPolicy=continue
+> Note that the UARTs are not capable of wakeup in Partial-IO because of
+> of a UART mux on the board not being powered during Partial-IO. As
+> IO+DDR is not supported on am62, the UARTs are not added in this patch.
 
-[...]
+nit: s/"am62"/"AM62x"
+nit: s/"IO+DDR"/"I/O Only + DDR"
 
-> Hi all,
+Logic looks good, but as said previously it needs to be rebased due to
+WKUP_EN macro.
+
+Best,
+Kendall Willis
+
 > 
-> To provide some more context, we have found out this issue while running
-> some tests with stress-ng scheduler stressor[1] and the RT throttling
-> feature after enabling the RT_GROUP_SCHED kernel option. Note that we
-> also have PREEMPT_RT enabled in our config.
+> Add pincontrol definitions for mcu_mcan0 and mcu_mcan1 for wakeup from
+> Partial-IO. Add these as wakeup pinctrl entries for both devices.
 > 
-> I've just reproduced the issue on qemu-x86_64 with a debian image and kernel
-> v6.17-rc6. See below the steps to reproduce it.
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> ---
+>  arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts | 60 ++++++++++++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
 > 
-> cd linux
-> git reset --hard v6.17-rc6 && git clean -f -d
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts b/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
+> index 4609f366006e4cdf0c162f72634ce90623f60a90..0314f857ea05acc4ffc62bccb5184e58d19a6103 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
+> @@ -268,3 +268,63 @@ &main_gpio1 {
+>  &gpmc0 {
+>  	ranges = <0 0 0x00 0x51000000 0x01000000>; /* CS0 space. Min partition = 16MB */
+>  };
+> +
+> +&mcu_mcan0 {
+> +	pinctrl-names = "default", "wakeup";
+> +	pinctrl-0 = <&mcu_mcan0_tx_pins_default>, <&mcu_mcan0_rx_pins_default>;
+> +	pinctrl-1 = <&mcu_mcan0_tx_pins_default>, <&mcu_mcan0_rx_pins_wakeup>;
+> +	wakeup-source = <&system_partial_io>,
+> +			<&system_deep_sleep>,
+> +			<&system_mcu_only>,
+> +			<&system_standby>;
+> +	status = "okay";
+> +};
+> +
+> +&mcu_mcan1 {
+> +	pinctrl-names = "default", "wakeup";
+> +	pinctrl-0 = <&mcu_mcan1_tx_pins_default>, <&mcu_mcan1_rx_pins_default>;
+> +	pinctrl-1 = <&mcu_mcan1_tx_pins_default>, <&mcu_mcan1_rx_pins_wakeup>;
+> +	wakeup-source = <&system_partial_io>,
+> +			<&system_deep_sleep>,
+> +			<&system_mcu_only>,
+> +			<&system_standby>;
+> +	status = "okay";
+> +};
+> +
+> +&mcu_pmx0 {
+> +	mcu_mcan0_tx_pins_default: mcu-mcan0-tx-default-pins {
+> +		pinctrl-single,pins = <
+> +			AM62X_IOPAD(0x034, PIN_OUTPUT, 0) /* (D6) MCU_MCAN0_TX */
+> +		>;
+> +	};
+> +
+> +	mcu_mcan0_rx_pins_default: mcu-mcan0-rx-default-pins {
+> +		pinctrl-single,pins = <
+> +			AM62X_IOPAD(0x038, PIN_INPUT, 0) /* (B3) MCU_MCAN0_RX */
+> +		>;
+> +	};
+> +
+> +	mcu_mcan0_rx_pins_wakeup: mcu-mcan0-rx-wakeup-pins {
+> +		pinctrl-single,pins = <
+> +			AM62X_IOPAD(0x038, PIN_INPUT | WKUP_EN, 0) /* (B3) MCU_MCAN0_RX */
+> +		>;
+> +	};
+> +
+> +	mcu_mcan1_tx_pins_default: mcu-mcan1-tx-default-pins {
+> +		pinctrl-single,pins = <
+> +			AM62X_IOPAD(0x03c, PIN_OUTPUT, 0) /* (E5) MCU_MCAN1_TX */
+> +		>;
+> +	};
+> +
+> +	mcu_mcan1_rx_pins_default: mcu-mcan1-rx-default-pins {
+> +		pinctrl-single,pins = <
+> +			AM62X_IOPAD(0x040, PIN_INPUT, 0) /* (D4) MCU_MCAN1_RX */
+> +		>;
+> +	};
+> +
+> +	mcu_mcan1_rx_pins_wakeup: mcu-mcan1-rx-wakeup-pins {
+> +		pinctrl-single,pins = <
+> +			AM62X_IOPAD(0x040, PIN_INPUT | WKUP_EN, 0) /* (D4) MCU_MCAN1_RX */
+> +		>;
+> +	};
+> +};
 > 
-> # Apply patch to expose RT_GROUP_SCHED interface to userspace with cgroupv2
-> b4 shazam --single-message https://lore.kernel.org/all/20250731105543.40832-17-yurand2000@gmail.com/
-
-Don't get this one ... you just pick a single patch from the RFC
-patch-set '[RFC PATCH v2 00/25]  Hierarchical Constant Bandwidth Server' ?
-
-https://lore.kernel.org/r/20250731105543.40832-1-yurand2000@gmail.com
-
-
-> # Build kernel with defconfig + PREEMPT_RT=y and RT_GROUP_SCHED=y
-> make mrproper
-> make defconfig
-> scripts/config -k -e EXPERT
-> scripts/config -k -e PREEMPT_RT
-> scripts/config -k -e RT_GROUP_SCHED
-> make olddefconfig
-> make -j12
+> -- 
+> 2.50.1
 > 
-> # Download a debian image and run qemu
-> wget https://cdimage.debian.org/images/cloud/sid/daily/20250919-2240/debian-sid-nocloud-amd64-daily-20250919-2240.qcow2
-> qemu-system-x86_64 \
->     -m 2G -smp 4 \
->     -nographic \
->     -nic user,hostfwd=tcp::2222-:22 \
->     -M q35,accel=kvm \
->     -drive format=qcow2,file=debian-sid-nocloud-amd64-daily-20250919-2240.qcow2 \
->     -virtfs local,path=.,mount_tag=shared,security_model=mapped-xattr \
->     -monitor none \
->     -append "root=/dev/sda1 console=ttyS0,115200 sysctl.kernel.panic_on_oops=1" \
->     -kernel arch/x86/boot/bzImage
-> 
-> # Then inside guest machine
-> # Install stress-ng
-> apt-get update && apt-get install stress-ng
-> 
-> # Create the stress-ng service. It sets the group RT runtime to 500ms
-> # (50% BW) via the cgroupv2 interface then it starts the stress-ng
-> # scheduler stressor. Also note the cpu affinity set to a single CPU
-> # which seems to help the issue to be more reproducible.
-
-I assume this is the 'AllowedCPUs=0' line in the systemd service file.
-
-> echo "[Unit]
-> Description=Mixed stress with long in the system slice
-> After=basic.target
-> 
-> [Service]
-> AllowedCPUs=0
-> Type=simple
-> Restart=always
-> ExecStartPre=/bin/sh -c 'echo 500000 > /sys/fs/cgroup/system.slice/cpu.rt_runtime_us'
-> ExecStart=/usr/bin/stress-ng --timeout=0 --verify --oom-avoid --metrics --timestamp --exclude=enosys,usersyscall --cpu-sched 0 --
-
-
-I assume you get 4 stressors since you run 'qemu -smp 4'? How many
-stress-ng related tasks have you running in
-'system.slice/stress-sched-long-system.service'? And all of them on CPU0?
-
-[...]
 
