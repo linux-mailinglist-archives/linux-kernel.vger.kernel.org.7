@@ -1,357 +1,171 @@
-Return-Path: <linux-kernel+bounces-828383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13452B94832
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:11:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 343DAB94838
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 264FF442D5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:11:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206174453FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2423830EF63;
-	Tue, 23 Sep 2025 06:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0553F30E836;
+	Tue, 23 Sep 2025 06:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9sywnaN"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dVJxJB93";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b6h7iibo";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dVJxJB93";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b6h7iibo"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E5530E829
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8FF30E829
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758607888; cv=none; b=W7f3U971mBZo/UNZ0djqbnDMnxl3mcGS0OxbUvzCGXiJvULrKjLdDogk8BiFweb51PWp+WRgWC5jipJrCHDOqsb4kiwf1KNZLWCQk52K2EKJGxwZ2jRXiEAtPutD6KOmRETb7M9xJ2fvyqKV8K99CBqrNRZIzFqX6E/UY/Ks8tY=
+	t=1758607909; cv=none; b=l1RmZP3mCqqDK5Mxf9XowBeK5vrrCVlV6mGZAhROPbS0IXbw/JAR+V2qgNtXZosJp0GH8+9tgJdbw5I02tNfpKuljwmipTEi0w4czxvjaK06fWHbW7qra5LX56JdlOce3cHmdHDMPCFXT7Ipq9voAV44yrM2qHReIAFSpOsglIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758607888; c=relaxed/simple;
-	bh=wqE//xXjG/9enyu06X/XpnA9P6xidXRuB3EznxD890E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o49V2tjE20GAfDdsU5sUsLiPpfI608v31RUdLpVJb623tJiSYc9MD/icI/dY3wDfv3xA88GyhGj2nU9M5xzZc9GE+Jf5SrhHggduPUsfRQkWJVaeRXWkdrFmfHBmOLxqEuCV0P619odOrpJjimk8ux/jEpwYSqLVTMA80cGzgbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9sywnaN; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45f2acb5f42so37753075e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:11:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758607884; x=1759212684; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=df0O5cfEZsPuYIfSKJgwSBHv7jw65fDKH5euNcKl0U8=;
-        b=j9sywnaNJeiwVdlSOASLjawKOOKU/GjmbLa/A/3LT6jc8qMYl0G9ETGNt8GSUDdvHA
-         MYOke/lKU+Cu7vK9CJ8Crooee85WW0MJpEOrAdn/Y7J18MOBl/DucBcc+MgQe1+axT+v
-         ut313PH5cvzQ0N83El+T2LBav0b5lfdGJBMtnFbCn3uBq6gkl1JRc6cs/jmYKWinQdfZ
-         36505ImiyxudB2LixR3c4h7atGfjlMKJQqgVkYKnsdwAml1xu9EztQ7UINB6b3n2ooPx
-         57kUMNExZjR9BNNq99tKWUkuOVkm3jnO384/5Q+frWi4Wf0o4TEkZrir/WDLxJQhRZiH
-         a35w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758607884; x=1759212684;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=df0O5cfEZsPuYIfSKJgwSBHv7jw65fDKH5euNcKl0U8=;
-        b=deoYzEzMWkWGCGRtnrw8ERVD+43YrAjxHpy2znkh3/+0Z8MZVirKUFvM3fY1MyXuQ4
-         5Bw5XuijsufNO0Z9VsVO3PeA6ZozRGP+sAIbmRmjrE0GXPmrw5knEGzHhT1zMFCjLy6g
-         HOa80SzddaI2x77qRKGQMGT+PpIZtC197Vvy/qCEIdjwFH8QpPsdly1T+es2Ev5w47Rl
-         nwqH7JKQBDd1LklANXGirfWB9BXMMwj65RyFg2uI0A8arp7Q9I6rUMUvb9g/2znqOBnH
-         dO6t9Dw2oAD/YHTMir3KLeO1PHRziZIDEPgXi9YMJ85L5PArZvd+wO9wuXQtMLx3qj4O
-         P4PA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQJ7R5vLdBSZGhBSlF1XjmHP37Mtc3qlFJHLdPX4gANSO/RR8IClR1+TjySjDeDj11eNQ53m4xjT4qEQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV9XgqCOdY23NIl/laVu8yxAt9fjXLhpuWXCDC0aBlPPurrvyo
-	anoUg6qZLTa5nGLLsEqkMu1KAf3LquPhWDrTSq4cBaT9wXdqZzqouJru3FvaEsFFZ2+03HNeL2P
-	KLsQ91NKjl9PhtUwDh6VyL2KsdHfVYNg=
-X-Gm-Gg: ASbGncsgnduhEu1q1/gf+H0JrhXpsv/5Bdo7AvaHAjQeT9IwX5smn9nv2fqjoQSu3Ux
-	4qLnIRrr0OgegfdZbxdkWx3CyhDwDtNHL5MlMcg3Zifno7Qs1j9HcQJV2BufLTM3eIP+URAOy18
-	iPCXZ9eav2nVxuwT+SFfBIwLGX3TSkDlouhrOpNzt4rNVtXJO1R3tUe3eBzqZPtuo2PZxdpdtc1
-	X0WqfQ7
-X-Google-Smtp-Source: AGHT+IHBSpjHfy2Q6q3z9LYXbKVWlYO8Qx27BR2vb+eB7bqLChBlxXgoI1PiDjykMrE3rras4dWInJgZFxiyTNggXpE=
-X-Received: by 2002:a05:600c:6305:b0:46e:1a60:c995 with SMTP id
- 5b1f17b1804b1-46e1e1122e4mr10672545e9.2.1758607883820; Mon, 22 Sep 2025
- 23:11:23 -0700 (PDT)
+	s=arc-20240116; t=1758607909; c=relaxed/simple;
+	bh=uzglp6EAm2VJxGeExDsM6Lofk/XPbxvh38qYQIKN0ZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l21i1uuUbOME/LlllGKV5oTAB/RiBtsEq+jFeNIlAPlW8oiRmS4MsDxPkbbqw3oppN405E4LAy7GLh5vrnLdamchTmYrvnpoiNf33fxUnzjqU6bLgnFbIlrco0k/X9DzoUv1fPI0/bLl8XVuWf29/wdyoN1g6r4TkvI74PZ2W3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dVJxJB93; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b6h7iibo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dVJxJB93; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b6h7iibo; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0F1901F387;
+	Tue, 23 Sep 2025 06:11:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758607906;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lGtSjkxMwCbGyXXhAKcyUWrdApOh6OCerYImQ5KG7L8=;
+	b=dVJxJB93RYCBsELw9gXGCQZupHxUv8oN+WzVS23QjgTxem24IRia4HMyAZhhUw/jztqE47
+	gAdoBegRjCvJvtVALazsXCZXg+N+IC3RMq7dGecXwKnYYxXPJTHK0VDAQ/cIiRjQv2IAwp
+	mFAZBNlLHfKNwCDsXYnm7DVeplbn1v4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758607906;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lGtSjkxMwCbGyXXhAKcyUWrdApOh6OCerYImQ5KG7L8=;
+	b=b6h7iiboFzd53P991SXknleuwTaNI8metAjCKUTW60p8tlE9PLgjZ6lYfX5qMh50Bre8qA
+	pmDpgxgcR1S3v/AQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758607906;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lGtSjkxMwCbGyXXhAKcyUWrdApOh6OCerYImQ5KG7L8=;
+	b=dVJxJB93RYCBsELw9gXGCQZupHxUv8oN+WzVS23QjgTxem24IRia4HMyAZhhUw/jztqE47
+	gAdoBegRjCvJvtVALazsXCZXg+N+IC3RMq7dGecXwKnYYxXPJTHK0VDAQ/cIiRjQv2IAwp
+	mFAZBNlLHfKNwCDsXYnm7DVeplbn1v4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758607906;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lGtSjkxMwCbGyXXhAKcyUWrdApOh6OCerYImQ5KG7L8=;
+	b=b6h7iiboFzd53P991SXknleuwTaNI8metAjCKUTW60p8tlE9PLgjZ6lYfX5qMh50Bre8qA
+	pmDpgxgcR1S3v/AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EA76E132C9;
+	Tue, 23 Sep 2025 06:11:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id DwYWOSE60mjYFQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 23 Sep 2025 06:11:45 +0000
+Date: Tue, 23 Sep 2025 08:11:44 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mssola@mssola.com>
+Cc: David Sterba <dsterba@suse.cz>, linux-btrfs@vger.kernel.org, clm@fb.com,
+	dsterba@suse.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] btrfs: Prevent open-coded arithmetic on kmalloc
+Message-ID: <20250923061144.GS5333@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20250919145816.959845-1-mssola@mssola.com>
+ <20250922103442.GM5333@twin.jikos.cz>
+ <87bjn24pmk.fsf@>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250906135345.241229-1-clamor95@gmail.com> <3074302.Sgy9Pd6rRy@senjougahara>
- <CAPVz0n1ozJ13MB4eFMAJzESe8iQ7SKjMApZCLFAZ_eubCFs0tg@mail.gmail.com> <7680340.18pcnM708K@senjougahara>
-In-Reply-To: <7680340.18pcnM708K@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 23 Sep 2025 09:11:12 +0300
-X-Gm-Features: AS18NWBVjttzeBZfLbhRARnUraFXXX8nh5TTiRUlvy0pbzFRoAj4ko8xGSDHW9w
-Message-ID: <CAPVz0n2iRVBf0+BwdV6Le2FhY8xERqbtsyeff26Dh44mKsTy6A@mail.gmail.com>
-Subject: Re: [PATCH v2 16/23] staging: media: tegra-video: tegra20: simplify
- format align calculations
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko <digetx@gmail.com>, 
-	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	Charan Pedumuru <charan.pedumuru@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87bjn24pmk.fsf@>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
 
-=D0=B2=D1=82, 23 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09:04 Mikk=
-o Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Monday, September 22, 2025 4:36=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 10:27 =
-Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > On Monday, September 22, 2025 3:30=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > > > =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09=
-:23 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > >
-> > > > > On Monday, September 22, 2025 2:13=E2=80=AFPM Svyatoslav Ryhel wr=
-ote:
-> > > > > > =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=
-=BE 07:44 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > > > >
-> > > > > > > On Saturday, September 6, 2025 10:53=E2=80=AFPM Svyatoslav Ry=
-hel wrote:
-> > > > > > > > Simplify format align calculations by slightly modifying su=
-pported formats
-> > > > > > > > structure.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > > > > ---
-> > > > > > > >  drivers/staging/media/tegra-video/tegra20.c | 41 ++++++++-=
-------------
-> > > > > > > >  1 file changed, 16 insertions(+), 25 deletions(-)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/staging/media/tegra-video/tegra20.c b/=
-drivers/staging/media/tegra-video/tegra20.c
-> > > > > > > > index 6e0b3b728623..781c4e8ec856 100644
-> > > > > > > > --- a/drivers/staging/media/tegra-video/tegra20.c
-> > > > > > > > +++ b/drivers/staging/media/tegra-video/tegra20.c
-> > > > > > > > @@ -280,20 +280,8 @@ static void tegra20_fmt_align(struct v=
-4l2_pix_format *pix, unsigned int bpp)
-> > > > > > > >       pix->width  =3D clamp(pix->width,  TEGRA20_MIN_WIDTH,=
-  TEGRA20_MAX_WIDTH);
-> > > > > > > >       pix->height =3D clamp(pix->height, TEGRA20_MIN_HEIGHT=
-, TEGRA20_MAX_HEIGHT);
-> > > > > > > >
-> > > > > > > > -     switch (pix->pixelformat) {
-> > > > > > > > -     case V4L2_PIX_FMT_UYVY:
-> > > > > > > > -     case V4L2_PIX_FMT_VYUY:
-> > > > > > > > -     case V4L2_PIX_FMT_YUYV:
-> > > > > > > > -     case V4L2_PIX_FMT_YVYU:
-> > > > > > > > -             pix->bytesperline =3D roundup(pix->width, 2) =
-* 2;
-> > > > > > > > -             pix->sizeimage =3D roundup(pix->width, 2) * 2=
- * pix->height;
-> > > > > > > > -             break;
-> > > > > > > > -     case V4L2_PIX_FMT_YUV420:
-> > > > > > > > -     case V4L2_PIX_FMT_YVU420:
-> > > > > > > > -             pix->bytesperline =3D roundup(pix->width, 8);
-> > > > > > > > -             pix->sizeimage =3D roundup(pix->width, 8) * p=
-ix->height * 3 / 2;
-> > > > > > > > -             break;
-> > > > > > > > -     }
-> > > > > > > > +     pix->bytesperline =3D DIV_ROUND_UP(pix->width * bpp, =
-8);
-> > > > > > >
-> > > > > > > Assuming the bpp is coming from the format table below, this =
-changes the value of bytesperline for planar formats. With this it'll be (w=
-idth * 12) / 8 i.e. width * 3/2, which doesn't sound right.
-> > > > > > >
-> > > > > >
-> > > > > > Downstream uses soc_mbus_bytes_per_line for this calculation wh=
-ich was
-> > > > > > deprecated some time ago, here is a fragment
-> > > > > >
-> > > > > > s32 soc_mbus_bytes_per_line(u32 width, const struct soc_mbus_pi=
-xelfmt *mf)
-> > > > > > {
-> > > > > >  if (mf->fourcc =3D=3D V4L2_PIX_FMT_JPEG)
-> > > > > >  return 0;
-> > > > > >
-> > > > > >  if (mf->layout !=3D SOC_MBUS_LAYOUT_PACKED)
-> > > > > >  return width * mf->bits_per_sample / 8;
-> > > > > >
-> > > > > >  switch (mf->packing) {
-> > > > > >  case SOC_MBUS_PACKING_NONE:
-> > > > > >   return width * mf->bits_per_sample / 8;
-> > > > > >  case SOC_MBUS_PACKING_2X8_PADHI:
-> > > > > >  case SOC_MBUS_PACKING_2X8_PADLO:
-> > > > > >  case SOC_MBUS_PACKING_EXTEND16:
-> > > > > >   return width * 2;
-> > > > > >  case SOC_MBUS_PACKING_1_5X8:
-> > > > > >   return width * 3 / 2;
-> > > > > >  case SOC_MBUS_PACKING_VARIABLE:
-> > > > > >   return 0;
-> > > > > >  }
-> > > > > >    return -EINVAL;
-> > > > > > }
-> > > > > >
-> > > > > > V4L2_PIX_FMT_YUV420 and V4L2_PIX_FMT_YVU420 are classified as
-> > > > > > SOC_MBUS_PACKING_1_5X8 hence we get width * 3/2
-> > > > >
-> > > > > Googling this brings up the entry
-> > > > >
-> > > > > {
-> > > > >         .code =3D V4L2_MBUS_FMT_YUYV8_1_5X8,
-> > > > >         .fmt =3D {
-> > > > >                 .fourcc                 =3D V4L2_PIX_FMT_YUV420,
-> > > > >                 .name                   =3D "YUYV 4:2:0",
-> > > > >                 .bits_per_sample                =3D 8,
-> > > > >                 .packing                        =3D SOC_MBUS_PACK=
-ING_1_5X8,
-> > > > >                 .order                  =3D SOC_MBUS_ORDER_LE,
-> > > > >                 .layout                 =3D SOC_MBUS_LAYOUT_PACKE=
-D,
-> > > > >         },
-> > > > > }
-> > > > >
-> > > > > which matches that you're describing. It doesn't make sense to me=
-, since it at the same time specifies PIX_FMT_YUV420 (which is planar with =
-3 planes, as documented by include/uapi/linux/videodev2.h), and LAYOUT_PACK=
-ED
-> > > > >
-> > > > > /**
-> > > > >  * enum soc_mbus_layout - planes layout in memory
-> > > > >  * @SOC_MBUS_LAYOUT_PACKED:             color components packed
-> > > > >  * @SOC_MBUS_LAYOUT_PLANAR_2Y_U_V:      YUV components stored in =
-3 planes (4:2:2)
-> > > > >  * @SOC_MBUS_LAYOUT_PLANAR_2Y_C:        YUV components stored in =
-a luma and a
-> > > > >  *                                      chroma plane (C plane is =
-half the size
-> > > > >  *                                      of Y plane)
-> > > > >  * @SOC_MBUS_LAYOUT_PLANAR_Y_C:         YUV components stored in =
-a luma and a
-> > > > >  *                                      chroma plane (C plane is =
-the same size
-> > > > >  *                                      as Y plane)
-> > > > >  */
-> > > > > enum soc_mbus_layout {
-> > > > >         SOC_MBUS_LAYOUT_PACKED =3D 0,
-> > > > >         SOC_MBUS_LAYOUT_PLANAR_2Y_U_V,
-> > > > >         SOC_MBUS_LAYOUT_PLANAR_2Y_C,
-> > > > >         SOC_MBUS_LAYOUT_PLANAR_Y_C,
-> > > > > };
-> > > > >
-> > > > > i.e. non-planar. The code in the driver is handling it as three p=
-lanes as well, with addresses VB0_BASE_ADDRESS/VB0_BASE_ADDRESS_U/VB0_BASE_=
-ADDRESS_V. Since the planes are separate, there should be no need to have m=
-ore than 'width' samples per line.
-> > > > >
-> > > >
-> > > > I did not invent this, I have just simplified this calculation from
-> > > > downstream, output values remain same. I have no cameras which can
-> > > > output V4L2_PIX_FMT_YUV420 or V4L2_PIX_FMT_YVU420 so I cannot test =
-if
-> > > > this works either. Other YUV and RAW formats were tested on real HW
-> > > > and work perfectly fine.
-> > >
-> > > My understanding from the code was, that the MEDIA_BUS_FMT_ formats l=
-isted in the video format table refer to the input formats from the camera,=
- and the V4L2_PIX_FMT_ formats to output formats from VI. Hence VI could in=
-put UYVY8_2X8 and write to memory in YUV420. The code dealing with V4L2_PIX=
-_FMT_ values seems to be related to the output to memory. Is it possible to=
- test this (your camera -> VI converts to YUV420) or am I mistaken?
-> > >
+On Mon, Sep 22, 2025 at 02:51:15PM +0200, Miquel Sabaté Solà wrote:
+> > On Fri, Sep 19, 2025 at 04:58:14PM +0200, Miquel Sabaté Solà wrote:
+> >> The second patch is a small cleanup after fixing up my first patch, in
+> >> which I realized that the __free(kfree) attribute would come in handy in a
+> >> couple of particularly large functions with multiple exit points. This
+> >> second patch is probably more of a cosmetic thing, and it's not an
+> >> exhaustive exercise by any means. All of this to say that even if I feel
+> >> like it should be included, I don't mind if it has to be dropped.
 > >
-> > Camera I am testing with has no YUV420 options available and from what
-> > I can tell there is no way to force VI to output in YUV420 unless
-> > camera supports it. Any format manipulations should requite hooking up
-> > ISP, or am I missing smth?
->
-> From a quick look at the spec it looks to me like for YUV422 packed input=
- formats specifically, VI should be able to convert to YUV420. If that were=
- not the case, e.g. 'TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YUV420)=
-,' would not make sense anyway as it's talking about both YUV422 packed inp=
-ut data and then also YUV420.
->
-
-After additional checking you are correct, VI should be able to
-perform YUV442 to YUV440. One of the reasons why VI is not exposing
-YUV440 may be video-centric nature of the driver, so that it exposes
-only formats supported by camera and VI. I will double check which
-formats video device exposes. What should I test exactly?
-
+> > Yes there are many candidates for the __free() cleanup annotation and
+> > we'll want to fix them all systematically. We already have the automatic
+> > cleaning for struct btrfs_path (BTRFS_PATH_AUTO_FREE). For the
+> > kfree/kvfree I'd like to something similar:
 > >
-> > > It's certainly possible that the current code is functional -- if byt=
-esperline is set to a too large value and that information flows to userspa=
-ce, it could still read the buffer. It would just waste memory.
-> > >
-> > > >
-> > > > > >
-> > > > > > > > +     pix->sizeimage =3D pix->bytesperline * pix->height;
-> > > > > > > >  }
-> > > > > > > >
-> > > > > > > >  /*
-> > > > > > > > @@ -576,20 +564,23 @@ static const struct tegra_vi_ops tegr=
-a20_vi_ops =3D {
-> > > > > > > >       .vi_stop_streaming =3D tegra20_vi_stop_streaming,
-> > > > > > > >  };
-> > > > > > > >
-> > > > > > > > -#define TEGRA20_VIDEO_FMT(MBUS_CODE, BPP, FOURCC)    \
-> > > > > > > > -{                                                    \
-> > > > > > > > -     .code    =3D MEDIA_BUS_FMT_##MBUS_CODE,           \
-> > > > > > > > -     .bpp     =3D BPP,                                 \
-> > > > > > > > -     .fourcc  =3D V4L2_PIX_FMT_##FOURCC,               \
-> > > > > > > > +#define TEGRA20_VIDEO_FMT(DATA_TYPE, BIT_WIDTH, MBUS_CODE,=
- BPP, FOURCC)      \
-> > > > > > > > +{                                                         =
-           \
-> > > > > > > > +     .img_dt         =3D TEGRA_IMAGE_DT_##DATA_TYPE,      =
-             \
-> > > > > > > > +     .bit_width      =3D BIT_WIDTH,                       =
-             \
-> > > > > > > > +     .code           =3D MEDIA_BUS_FMT_##MBUS_CODE,       =
-             \
-> > > > > > > > +     .bpp            =3D BPP,                             =
-             \
-> > > > > > > > +     .fourcc         =3D V4L2_PIX_FMT_##FOURCC,           =
-             \
-> > > > > > > >  }
-> > > > > > > >
-> > > > > > > >  static const struct tegra_video_format tegra20_video_forma=
-ts[] =3D {
-> > > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 2, UYVY),
-> > > > > > > > -     TEGRA20_VIDEO_FMT(VYUY8_2X8, 2, VYUY),
-> > > > > > > > -     TEGRA20_VIDEO_FMT(YUYV8_2X8, 2, YUYV),
-> > > > > > > > -     TEGRA20_VIDEO_FMT(YVYU8_2X8, 2, YVYU),
-> > > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YUV420),
-> > > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YVU420),
-> > > > > > > > +     /* YUV422 */
-> > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 16, UYVY),
-> > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 16, VYUY),
-> > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 16, YUYV),
-> > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 16, YVYU),
-> > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YUV420=
-),
-> > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YVU420=
-),
-> > > > > > > >  };
-> > > > > > > >
-> > > > > > > >  const struct tegra_vi_soc tegra20_vi_soc =3D {
-> > > > > > > >
-> > > > > > >
-> > > > > > >
-> > > > > > >
-> > > > > > >
-> > > > >
-> > > > >
-> > > > >
-> > > > >
-> > >
-> > >
-> > >
-> > >
->
->
->
->
+> > #define AUTO_KFREE(name)       *name __free(kfree) = NULL
+> > #define AUTO_KVFREE(name)      *name __free(kvfree) = NULL
+> >
+> > This wraps the name and initializes it to NULL so it's not accidentally
+> > forgotten.
+> 
+> Makes sense! I can take a look at this if nobody else is working on it,
+> even if I think it should go into a new patch series.
+
+Thanks, it's yours. Yes this should be in a separate patchset.
+
+> Hence, if it sounds good to you, we can merge this patch as it is right
+> now, and in parallel I work on this proposed AUTO_KFREE and AUTO_KVFREE
+> macros in a new patch series (which will take more time to prepare).
+
+I'd rather see all the changes done the same way so it's not __free and
+then converted to AUTO_KFREE. Also the development branch is frozen
+before 6.18 pull request so all that will be in the 6.19 cycle anyway.
 
