@@ -1,245 +1,194 @@
-Return-Path: <linux-kernel+bounces-828529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4597EB94CC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:37:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A7CB94CF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 428781902CF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:37:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 072CA1902EF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE43C30FC09;
-	Tue, 23 Sep 2025 07:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37C53168EA;
+	Tue, 23 Sep 2025 07:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="kBkVsji0"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013071.outbound.protection.outlook.com [52.101.72.71])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dDJQ0WfJ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828665789D;
-	Tue, 23 Sep 2025 07:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758613015; cv=fail; b=PVigEqttOaJl5iwkbWP1zXaBrJkf3yE4j7fhHXFgKnnpcC0Vq5ha6qvxWKlGpgDVe887RyOabY8Q1VWQ7CRFQsdL541YvwHpwbZ5IbzBsqvHY1wKOKPO0bRnBUwsuNGYtbOf/mSHbse/zSu8WJMVhzJGK24jlx6TuXBapoUgii8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758613015; c=relaxed/simple;
-	bh=1dsDPFfhLfTYjWCwy0BmKSfW2CRPkS+yZPJsst4OShw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BvZ/H8IB7YzjhWx3f3Q2Yrr/33TcbWfWYonArjoTeF4NxxFcLh7SVzJ8oGxqhtAxtVgAPAIRJ2yR1+CSleWg97U+TQFWBMVJ4pq9seRQCRwmEhDgDyR+uteI3+RaqCGmLjZA+XiT+TErDd+ffABvhKo2wcS3Ep7ssy651Yj07Wo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=kBkVsji0; arc=fail smtp.client-ip=52.101.72.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uXD47OzXyUOWkiG/N8hH8OxulmaLPJgjT9oAw8F1Rx7afCJmy2cgsv/lF2kVLUOXnQr3Iz770ws+Fyduh5HiwjoMZmkc4ovac/D6kTueKjP7r1s09B6mDGS9YMgQXYuUZd5pOYBridyUixDW8xvogNBwHjpJ5H/SkOKEqLEtieixmVxcriMEBqm5dJ30Wnqys3bWAH3zx2ietZmEzVKMc+nOYI6pCAnBpLWgzaKSWFUAkTSnvubQ41rhY2PI9XNLRXO4uj1BU1TaE1LGkB3zJf4DVHJiC7UiveMOkOT00n15KQO8dICKXseWtmaa784lEWRENQ2vHQXC2gfrdehEZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iOfQioJpEmdR2bDy328aGpzZPjyObrBar/IEDhH+cG0=;
- b=NRZQoz92OdWmZMCcWdNx5DsfKqVG0ijEAMCXnUL8rmUhfex4t5K0gPidBXRh9/8AhBCaz7evXx5eXPHf5lf9nmWjGRoH5OCxbnQQ0iSPF41Q5ouhk6L9Y/8UfJmwiw1wI9STw/q6+GxWAECaPYQ3jCfC1Sgd10RSupmF1Scs+Op/00WC8OJMvqjN/9mbhpJcXQ5R81tKpM4L/hL6/Ggj+oi6ZfYYv1pJBM4lMeGYo34PPhKrrRi+PNLc4Opbc/gv1UcXEWrXBRE/bJDwnpttvJ6xhCfdiDJ9Z5XiPhuTJ5JT2gx8dVrNfREo7gKbXHVCQnGBRfTiOEdanvUDy25+4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iOfQioJpEmdR2bDy328aGpzZPjyObrBar/IEDhH+cG0=;
- b=kBkVsji0wB6VWqvyC5cd1Xacjb1/jDmZDncYAZPQX7Jbwa/2VWG3hfMxbd4iiAUPvRP+ZQxxQc4KZJWoLXwzNLfeYTnKPk9Cygfl+NqSmUwSUscPHQcKjTwcdqKt0GMlhOWYsp/wXBPbJcqv83Xy2nJOpnELfrAREFkEPXMLGvzBvoXoQYQG6qgnRRg236EIoBcqWhUXTxSZ/diGhyFqfRzdJ+pNZvkiJwZRgb8lLkahnfTbptOHxVUf51A61JptP2QANwkuP3d5CDc5vb4JnXX49PYBNWI8TegD6Bz90qTC+wwpYKdhG260dNQyL8XXVPuMALU/w3sVLuJNSbZeiw==
-Received: from PAXPR04MB8425.eurprd04.prod.outlook.com (2603:10a6:102:1c7::16)
- by VI1PR04MB9812.eurprd04.prod.outlook.com (2603:10a6:800:1d2::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Tue, 23 Sep
- 2025 07:36:49 +0000
-Received: from PAXPR04MB8425.eurprd04.prod.outlook.com
- ([fe80::9f19:be05:a9e5:2592]) by PAXPR04MB8425.eurprd04.prod.outlook.com
- ([fe80::9f19:be05:a9e5:2592%2]) with mapi id 15.20.9160.008; Tue, 23 Sep 2025
- 07:36:49 +0000
-From: Sherry Sun <sherry.sun@nxp.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"jirislaby@kernel.org" <jirislaby@kernel.org>, "shawnguo@kernel.org"
-	<shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com"
-	<festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: RE: [PATCH 1/2] tty: serial: imx: Only configure the wake register
- when device is set as wakeup source
-Thread-Topic: [PATCH 1/2] tty: serial: imx: Only configure the wake register
- when device is set as wakeup source
-Thread-Index: AQHcLDibSr00yq5joEqVcU4Sp+w68LSgcKcA///v6rA=
-Date: Tue, 23 Sep 2025 07:36:49 +0000
-Message-ID:
- <PAXPR04MB84253F2ECB04AA3B799D2CC4921DA@PAXPR04MB8425.eurprd04.prod.outlook.com>
-References: <20250923031613.2448073-1-sherry.sun@nxp.com>
- <20250923031613.2448073-2-sherry.sun@nxp.com>
- <20250923083208.GC31170@nxa18884-linux.ap.freescale.net>
-In-Reply-To: <20250923083208.GC31170@nxa18884-linux.ap.freescale.net>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8425:EE_|VI1PR04MB9812:EE_
-x-ms-office365-filtering-correlation-id: a67bcad9-09b9-48e6-25ad-08ddfa73f50e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|7053199007|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?258lW9iajNnvZ/JbN0Db0s8qycNNykJjZqCPZGeWFXs2AK4/RueUFd8pw/JE?=
- =?us-ascii?Q?T+ieYwkKvPP4RFxcvkKpUcftx6IkGMsPUMX8u141WDNgqzyboUN52eIqx9dF?=
- =?us-ascii?Q?FjSGl7bIUy6nk2EVSIqwQLgDsRx05H4rHz47e4c4drvN7pwgyROrhzcOC7i0?=
- =?us-ascii?Q?5gyqdL5dMSy+YZEt9PixQN+X88wpnVgS25s/KDa6bou9lQuNdiZ+WzTOWgkA?=
- =?us-ascii?Q?z4djkoBYsK9v6TQvJ9p9wsjwjax6YF45Tdg2/s3nkKm0WIxRS4MnIItctiZD?=
- =?us-ascii?Q?ououJPE0jOmOlEdZsXqm1/kmsxTocDrOujlR0FoZJc0EsQxFBNu2eW62n4D4?=
- =?us-ascii?Q?aG9+wAB2kVQZK+kf2GtDAXNEtaMSSAoLSslYO68/bxwskluK3/ZllmpuR82f?=
- =?us-ascii?Q?SDMAioljxg2NyeQRbLYITu52EMXQ2AgTN4vuGjFdxvhZPtwSxiHSZ3wxogV6?=
- =?us-ascii?Q?bBvXI5C0fICnoM9u706HQbZzQUeFKZslsEIuM0SI/pChS6dW8vqMsCV4CJQk?=
- =?us-ascii?Q?cRy/7BJUG0+tCS7yGuYaTLMBRqsAeMexLTYnowBywSlw4H8sgukyh92aBzk+?=
- =?us-ascii?Q?O3YrhQ6HiaScHv+5UWGZAHizWKivnw4t69M8QcU6O6yTYNmfJI7850mn0J88?=
- =?us-ascii?Q?82wJiKx2kHuWVl/bUdLUeZ6oJlLjn4MOGA0HMY5ahAggI7IAbp9i5wbvPgHj?=
- =?us-ascii?Q?gkw4yl5UBWBid3qyVimcSEzbgZuHNsLN8QGXqrQRdyKL+ojCfnlshXuSg38P?=
- =?us-ascii?Q?AGWxM8+uNJ3lOngXM7sKNvbQLAdemQx+A8GddTw1uLwoxhbA6YwC6/97+Cwq?=
- =?us-ascii?Q?oLvBMKbKbVL4RSxwQio4kIsV5IpUKv/JNAzNS4+28tP1NvNRAkHHytBhNGHj?=
- =?us-ascii?Q?r2kzZLUa+xCDBWGEEkD8ZS/UU6+5y7ok3Z0gUGyc7lAZOEUGIe4Cuhl8+G2G?=
- =?us-ascii?Q?JLgvhv4zJhgOhtYG1ekMj1PHbj6qDgu/IEAGMDzYeuM2wdSdnJYRGXDA7kvD?=
- =?us-ascii?Q?z0rAjY7lbYNe5WGdNALOcrF3EYleO2PxoRkUlHq8DTRN5JmXZqX+P3B7L5WG?=
- =?us-ascii?Q?LAFVHEFpQLrDr1y0Q4nMpGuGMB2goRN7tIhcZS/bD8caS2NF9xGrAAbE6xfd?=
- =?us-ascii?Q?GhB802f8J8MGZbetD97HOZmV6iH4mGMQP5dM1PnGX2iSc5IiVCX4iC3jR0RV?=
- =?us-ascii?Q?bp5N/6SitHOu2xF9C7QiOA3SdlbvkpxEAAccscFANZIUvRAKILlZezrYNWK/?=
- =?us-ascii?Q?rx68G9J1ai2y9HwUs2FZijiV6tYdr1ZD5NcPDFgvh0mkrYdffmqzJRHT9Lyu?=
- =?us-ascii?Q?Xi5o6fc5aIjtxduy15aV7nfS6wwugOoE1YXkYuZ3XZtIUwtRsO4+J4Td7FEb?=
- =?us-ascii?Q?2hQA8CR6GGgr+6dP8cYOTdHluN43WRzM3AS7lcnxuHStsDb3Pvx8ivNfdURl?=
- =?us-ascii?Q?iXOz+I71ICLXdCohftbLANNt/tw6br3WEQYAGmI6/zbC/BF2VYZBNw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8425.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(7053199007)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?VZYUwwP5k+wPFhYZ8OdnvaIMFC8hDOIl6FJVQW/rM5N+py47+v8Op/i94z3S?=
- =?us-ascii?Q?7hP7Y85RY6MzjuUwPcYL8QWXNdN34/DwQs/4Ilso2VZFupnL4Z/XI+BF1yGa?=
- =?us-ascii?Q?FXO8AUA4zVy8D/opPNtllxRqlCT3qmW9EsxI8i4I43AzyGOI34bBzFOaKiEf?=
- =?us-ascii?Q?VYHMyD8bqY9IuUvMIt0xOVs7bUW9tt18F3faZxiNPpRbEGAvV71v4H44s0pw?=
- =?us-ascii?Q?d1O2fZMvDxsLmeQjailBlNJ+f286FpFXX998Issq0UsFC9V+YxAs9kiJYQW1?=
- =?us-ascii?Q?jePoh/u34mWVBtEtE89L3VTckLwVTl1wa+3MrT4yylGjD+1fVPHeog5T1mnB?=
- =?us-ascii?Q?yMStxf1Ca+5HG9Dj4QsPWdWG6ZK3WC/ND/WK/hb+JuJFCkJE2PI6oylhjQE0?=
- =?us-ascii?Q?MAjf3Di+BO7wmhxy6RtVPYLALYKP4E8qIfGXJf3k5qJHn+qzTOYrzXLVZNuR?=
- =?us-ascii?Q?pstCfVRMdIZtFxNqtQqnjirrBVmuHpaaxQilL5l8lyZF4A2bMKHszqylAVRb?=
- =?us-ascii?Q?1vKamR8WpgH9G9YER4GEdKn2wY7d7ScY0akUCmx213O0kxMzobaHRFzZa9TP?=
- =?us-ascii?Q?8Fz/upLeUg1usAh1KL4RjJtlEOvMwhOGPQd0IBMsVjVf+z4OB1NAN5+kEAXy?=
- =?us-ascii?Q?IljuE9al5XRtVBYkEAwwQimj5APIw0h6qr0LRwm8LVm6hoAtzd9Sclitxlyn?=
- =?us-ascii?Q?dQ+2+VCWGLYfsj+DOTLrlgO6k88AyhMlrKqMq7AniALs5HM4ZYGflpTQ+oGu?=
- =?us-ascii?Q?O0OdZ4IvsTdJP+qfSsPruRttWMg3kd3ZF5tgj1Dz5t5j8Zzux61c5G4v+TNU?=
- =?us-ascii?Q?x6q2hT64pbF9kAAMG962w7qvMWFKbnqZu4SvRcJUiMG479jtefkEmgE/nfu3?=
- =?us-ascii?Q?Z4HT7bSDins/MFiEvqkZ+/gsnkWKKIiog0Z/8aZZVKVjyflsKoh1r7a+Hxyr?=
- =?us-ascii?Q?qXRJ7HRoHaC10H68k77Ha6YoV7t8Vf0PcWR+TOoSW105vtWz2CIlGFiAulmV?=
- =?us-ascii?Q?+Ik6wjto6+3dUjeF2YOVm5mUklmLn07KiJ5uHeSKb6BHZacMxk+1EQzMUlDP?=
- =?us-ascii?Q?rpchxkHKOkn+ZvveXiElDAKLPia8dq0hn5GvXlDu1b7ILe92GN9gPfO2Lz3e?=
- =?us-ascii?Q?uTg1CkFpaCqvBk3ku6ZrU2S3p8l5Plask9anBhuPdSjirdptzBBMlUzVwrnS?=
- =?us-ascii?Q?wV+0bFovRf5zSlVPlrYe0YE5gx3o5pD403vWrDkCC+1vNPGxHBrqP45Epvwf?=
- =?us-ascii?Q?fGEorY/6LQ1rVfjA6Eki3gUsYBkqcXippkpt4bYQEKj1+5KjvXngzePnLQk3?=
- =?us-ascii?Q?DsiHKh2f1n0ffNtmWAaZw8CJmPS+7knkmzuZlTMlcWj1PpGIge8aawYBebg5?=
- =?us-ascii?Q?8AprvZNTVooS2tONrVykjGfqc23D4Ct7WKC721IQYgokJHuCTOOLNiagAU19?=
- =?us-ascii?Q?lIKtT+NhQR6tRyzQkB9aMNbWTYEwFXFKTEMv/hPhQNV0NiSAiiOnbhVC1xSp?=
- =?us-ascii?Q?PuJUz6yqXQhOmOnh0s6u0nIk3BHdCekxlDIulporWw3aDB86nfCz1776SJhX?=
- =?us-ascii?Q?42vsXFCfgaIsXJAKgDY=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585BD2F85B;
+	Tue, 23 Sep 2025 07:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758613109; cv=none; b=eLItb2qUZg4aMpsHwMxVt8CZJh1d3k2XETd7a4feP2nbUuQm7Om9g9ngVuDpgQWNl0jWO2ALBfPv4fyI+ubwVjjGskDzkfV3fOkZoSIeJpBZw9yGWd9/Y2581QSG8yzgwpfotIDSShb4s0av3Io5GWHEcDINV3waqJSSb67jkQE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758613109; c=relaxed/simple;
+	bh=Ja3B97cG9sxVWxTkb4GQib6YypxTJ4oZZnJ6CJdGC8I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P1Zl/Laf27//RXbcCibYPdu/+8AVgyWtcyfykMm6Rfd004d55F3nrgHH820Fn/Ql98noqznlXJx1LyUP+OgArhjBjWZuMMToyKNNR2JuiIWwGi+yDwDW+VVw7JFKk70QfpKwaHbUoj11qQnYm0DXBF9NthQbxnouekRuoTWdhVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dDJQ0WfJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58N6a35L003970;
+	Tue, 23 Sep 2025 07:38:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ARRojs7K/Ahf3PtDD+Sn4Q
+	I+Dr8gi7jHPV6Qe7jbNeg=; b=dDJQ0WfJJW9OMa4HlNdMTpSpP0zv6BzZyMcuZa
+	oO3cbwASS3AEpKsFZN0I7zwP+ktKtOWY3IeW9JrI+Xwuxet8G3GnEHoZ6EZZsryg
+	aZZBueO07CS5H5Jqf6QcZnl3p7pYXtG2o9gzmWaUoD3qTTJUk1qofGGhX6eTQdaP
+	J7MzS+VAhgULd+nvecRngHy2NClGG300Kvq+LMR0GuVb2TEVVUL8ykUwqPLjim77
+	PpxLsjqPRrlt31hhDH9YxSVuzEOYChg2IwS4GeTu7AAHaMlFkiJaHk33SFG+3SeG
+	5AOylnq5O/2P4Nh6qSs6ZS09Jqh0dDAdMQSn83/JZ8uubJyw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49b3kk3h94-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Sep 2025 07:38:22 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58N7cE3c007501
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Sep 2025 07:38:14 GMT
+Received: from hu-jseerapu-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Tue, 23 Sep 2025 00:38:08 -0700
+From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+To: Vinod Koul <vkoul@kernel.org>,
+        Mukesh Kumar Savaliya
+	<quic_msavaliy@quicinc.com>,
+        Viken Dadhaniya <quic_vdadhani@quicinc.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+CC: <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <quic_vtanuku@quicinc.com>
+Subject: [PATCH v7 RESEND 0/2] i2c: i2c-qcom-geni: Add Block event interrupt support
+Date: Tue, 23 Sep 2025 13:07:50 +0530
+Message-ID: <20250923073752.1425802-1-quic_jseerapu@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8425.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a67bcad9-09b9-48e6-25ad-08ddfa73f50e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Sep 2025 07:36:49.5977
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: P4Lboh6RFvk4MQZR5kd7lsDrMVarV4c1Dk5vzqvEY2gtQdfGNagewIr2KjTGP/48I86Tz6VNxQxJz0JwAW3w2Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9812
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NtWhGDcvVbjlvjhD8c6dxb6mUpOFQ-zU
+X-Proofpoint-ORIG-GUID: NtWhGDcvVbjlvjhD8c6dxb6mUpOFQ-zU
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDA4OSBTYWx0ZWRfXwc67rxRtf3Dr
+ jUXp+t7rIMDNEdFzaajt9yHU/9Ua4XQuHyb1Gfr04nj0Mv8n8xKXh/RUQN4qzkoIjp9Vd3QwF2K
+ ZruUrZzWd62slCp5YX6j+iZE/efNQCvhTjh19D2UIDqMXi87BHRuFKRLPEee/4sznZDk8kJaX3C
+ RTQ4Glc/BBXYodPyP65ob0N5nm94tHqUx9TjPrwX5H4T9wCc+HLWszXIqA1yt/6ltVF8voRHXm8
+ FWjYye0AmCwa6X0lmS0v+nJoEY7Kp4sAZiCTKmJJEZQ8YWVOH4fBpEUTe0VnoHkLBGahXL16TRO
+ Ufc8rf+HyQFdDs7MuALIG9yu2Mpnxa/KiONXhBzjQ/oBFLFESeCVWg+2aKbHYLdeeQdEArmJrHQ
+ GpXpQ6dQ
+X-Authority-Analysis: v=2.4 cv=BabY0qt2 c=1 sm=1 tr=0 ts=68d24e6e cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=yJojWOMRYYMA:10 a=Bp52wIM_v22GRZO56cAA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-23_01,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 phishscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 malwarescore=0 spamscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220089
+
+The I2C driver gets an interrupt upon transfer completion.
+When handling multiple messages in a single transfer, this
+results in N interrupts for N messages, leading to significant
+software interrupt latency.
+
+To mitigate this latency, utilize Block Event Interrupt (BEI)
+mechanism. Enabling BEI instructs the hardware to prevent interrupt
+generation and BEI is disabled when an interrupt is necessary.
+
+Large I2C transfer can be divided into chunks of messages internally.
+Interrupts are not expected for the messages for which BEI bit set,
+only the last message triggers an interrupt, indicating the completion of
+N messages. This BEI mechanism enhances overall transfer efficiency.
+
+BEI optimizations are currently implemented for I2C write transfers only,
+as there is no use case for multiple I2C read messages in a single transfer
+at this time.
 
 
+v6 -> v7:
+   - The design has been modified to configure BEI for interrupt
+     generation either:
+     After the last I2C message, if sufficient TREs are available, or
+     After a specific I2C message, when no further TREs are available.
+   - dma_buf and dma_addr for multi descriptor support is changed from
+     static allocation to dynmic allocation.
+   - In i2c_gpi_cb_result function, for multi descriptor case, instead of invoking
+     complete for everry 8 messages completions, changed the logic to Invoke 'complete'
+     for every I2C callback (for submitted I2C messages).
+   - For I2C multi descriptor case, updated 'gi2c_gpi_xfer->dma_buf' and
+     'gi2c_gpi_xfer->dma_addr' for unmappping in geni_i2c_gpi_multi_desc_unmap.
+   - In the GPI driver, passed the flags argumnetr to the gpi_create_i2c_tre function and
+     so avoided using external variables for DMA_PREP_INTERRUPT status.
+   - Updated documentation removed for "struct geni_i2c_dev" as per the review comments.
 
-> -----Original Message-----
-> From: Peng Fan (OSS) <peng.fan@oss.nxp.com>
-> Sent: Tuesday, September 23, 2025 4:32 PM
-> To: Sherry Sun <sherry.sun@nxp.com>
-> Cc: gregkh@linuxfoundation.org; jirislaby@kernel.org; shawnguo@kernel.org=
-;
-> s.hauer@pengutronix.de; kernel@pengutronix.de; festevam@gmail.com;
-> Shenwei Wang <shenwei.wang@nxp.com>; linux-serial@vger.kernel.org;
-> linux-kernel@vger.kernel.org; imx@lists.linux.dev
-> Subject: Re: [PATCH 1/2] tty: serial: imx: Only configure the wake regist=
-er when
-> device is set as wakeup source
->=20
-> On Tue, Sep 23, 2025 at 11:16:12AM +0800, Sherry Sun wrote:
-> >Currently, imx uart defaults to enabling the wake related registers for
-> >all uart devices. However, it is unnecessary for those devices not
-> >configured as wakeup source, so add device_may_wakeup() check before
-> >configuring the uart wake related registers.
->=20
-> I would rewrite as this:
-> Currently, the i.MX UART driver enables wake-related registers for all UA=
-RT
-> devices by default. However, this is unnecessary for devices that are not
-> configured as wakeup sources. To address this, add a device_may_wakeup()
-> check before configuring the UART wake-related registers.
+v5 -> v6:
+   - Instead of using bei_flag, moved the logic to use with DMA
+     supported flags like DMA_PREP_INTERRUPT.
+   - Additional parameter comments removed from geni_i2c_gpi_multi_desc_unmap
+     function documentation.
 
-Thanks, that's much clearer.
+v4 -> v5:
+   -  BEI flag naming changed from flags to bei_flag.
+   -  QCOM_GPI_BLOCK_EVENT_IRQ macro is removed from qcom-gpi-dma.h
+      file, and Block event support is checked with bei_flag.
+   -  Documentation added for "struct geni_i2c_dev".
 
->=20
-> >
-> >Fixes: db1a9b55004c ("tty: serial: imx: Allow UART to be a source for
-> >wakeup")
-> >Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
-> >---
-> > drivers/tty/serial/imx.c | 15 +++++++++++++++
-> > 1 file changed, 15 insertions(+)
-> >
-> >diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c index
-> >500dfc009d03..4ddfc89816bf 100644
-> >--- a/drivers/tty/serial/imx.c
-> >+++ b/drivers/tty/serial/imx.c
-> >@@ -2697,7 +2697,22 @@ static void imx_uart_save_context(struct
-> >imx_port *sport)
-> > /* called with irq off */
-> > static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)  {
-> >+	struct tty_port *port =3D &sport->port.state->port;
-> >+	struct tty_struct *tty;
-> >+	struct device *tty_dev;
-> > 	u32 ucr3;
-> >+	bool may_wake;
->=20
-> 'bool may_wake =3D false;' otherwise there might be report on using an
-> uninitalized value by coverity or other tools.
+v3 -> v4:
+  - API's added for Block event interrupt with multi descriptor support is
+    moved from qcom-gpi-dma.h file to I2C geni qcom driver file.
+  - gpi_multi_xfer_timeout_handler function is moved from GPI driver to
+    I2C driver.
+  - geni_i2c_gpi_multi_desc_xfer structure is added as a member of
+    struct geni_i2c_dev.
+  - Removed the changes of making I2C driver is dependent on GPI driver.
 
-Ok, will fix this in V2.
+v2 -> v3:
+  - Updated commit description
+  - In I2C GENI driver, for i2c_gpi_cb_result moved the logic of
+    "!is_tx_multi_xfer" to else part.
+  - MIN_NUM_OF_MSGS_MULTI_DESC changed from 4 to 2
+  - Changes of I2C GENI driver to depend on the GPI driver moved
+    to patch3.
+  - Renamed gpi_multi_desc_process to gpi_multi_xfer_timeout_handler
+  - Added description for newly added changes in "qcom-gpi-dma.h" file.
 
-Best Regards
-Sherry
+v1 -> v2:
+  - DT changes are reverted for adding dma channel size as a new arg of
+    dma-cells property.
+  - DT binding change reveted for dma channel size as a new arg of
+    dma-cells property.
+  - In GPI driver, reverted the changes to parse the channel TRE size
+    from device tree.
+  - Made the changes in QCOM I2C geni driver to support the BEI
+    functionality with the existing TRE size of 64.
+  - Made changes in QCOM I2C geni driver as per the review comments.
+  - Fixed Kernel test robot reported compiltion issues.
 
->=20
-> >+
-> >+	tty =3D tty_port_tty_get(port);
-> >+	if (tty) {
-> >+		tty_dev =3D tty->dev;
-> >+		may_wake =3D tty_dev && device_may_wakeup(tty_dev);
-> >+		tty_kref_put(tty);
-> >+	}
-> >+
-> >+	/* only configure the wake register when device set as wakeup source
-> */
-> >+	if (!may_wake)
-> >+		return;
->=20
-> Regards,
-> Peng
+Jyothi Kumar Seerapu (2):
+  dmaengine: qcom: gpi: Add GPI Block event interrupt support
+  i2c: i2c-qcom-geni: Add Block event interrupt support
+
+ drivers/dma/qcom/gpi.c             |  11 +-
+ drivers/i2c/busses/i2c-qcom-geni.c | 248 ++++++++++++++++++++++++++---
+ 2 files changed, 233 insertions(+), 26 deletions(-)
+
+-- 
+2.34.1
+
 
