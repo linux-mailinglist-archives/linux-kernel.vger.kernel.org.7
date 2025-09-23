@@ -1,207 +1,138 @@
-Return-Path: <linux-kernel+bounces-828891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09BB9B95C4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:05:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63720B95C58
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2982C18896CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8477189D4A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F8D322547;
-	Tue, 23 Sep 2025 12:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE94322DBD;
+	Tue, 23 Sep 2025 12:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RYNpYPHd"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="L0C9g3J+"
+Received: from forwardcorp1d.mail.yandex.net (forwardcorp1d.mail.yandex.net [178.154.239.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040102FC86F
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731062FC86F;
+	Tue, 23 Sep 2025 12:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758629092; cv=none; b=Rdf3QlYVGFXs02oCQpnUGyAWqB45324MwQJrmUqtH/09GX5TB2Y/UgiGnMw0QVZS6w58x82F9R+J/chashxGwzrk2Vf97wsq9qhCm94WTB9lZjFJGlwe0b4DYTNg+m5fDI59IfE3IuORg5pLzl0BN9p6zb9Pmj08dlvL4XBs2pM=
+	t=1758629101; cv=none; b=uxMhPYbOtRjlKMJSIdrreaCbQDAjrnrZxLJhp2AUyyacjdjTWRFOCAxVfjfczm0iezBn9k8GOWs7cvL5dexFHykYkY9g7LGftpxyA58W90ZoGCN3YJZ/8iJF5ce8nWPPOJOzxW5tiXubK/v8fgfXlGs2YdW2XgIx6yLk5dd0dII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758629092; c=relaxed/simple;
-	bh=sbs0/VeHRdgC9nsTnTaMYqDzmXybgyl50QyZRTkl7Hw=;
+	s=arc-20240116; t=1758629101; c=relaxed/simple;
+	bh=ThjKCuq/Gkaa6sxkQ2iw8pcH9Scy6bno0C+2htC9uZc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D1ivlQPT5RzadkYPS/xRoexomq6EhZButTUp4K2SoaNV4dV7TtKSaLbTgiNMPkAF2kHNxzhoI5pKGai3q5vGOeEWHyGwYM7FFAAg+NBXkmiuC0dxt6GmCYksFY011dW3kd0Wh6gXRxWMLoqfImPPAHVz6TbnVuQ7X5MN9EucDeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RYNpYPHd; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <3734c5a7-6b3f-4af1-ac35-6bd680823be5@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758629077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gk6eqZAFbX16sas/2kwE2G4a7ts2lJRHO7QXaYrFraE=;
-	b=RYNpYPHd2k0bh9y0HCKQd4gHfuRL/axnDG6gO211K7wPMxOmhySDA/74pfMz2VMbDhK3x8
-	ZnAbmEezV0E2kHK7kw/VT5JJClf3+ebKpPD6F7Rj60cETRvmVVrKada7NfskvXxs4npNVR
-	x5REP7lHguHRrQ6JhP1YbRbGmWx3H+U=
-Date: Tue, 23 Sep 2025 20:04:18 +0800
+	 In-Reply-To:Content-Type; b=g1vZbYLbMyZcOg6K/Kcrir6+QpsyFuaE00FAmwU5sPEDSDbWuhA81yNW3rpowGRatVO3CYzyFHJqGsiPoz+xz+NJgfTq1moAT1P77zezHczsf6RWfCOxYfiYwPZaVnhNvP92ndj9OXshGZZQv+z68oZXbjrQxSwQfhY4+fkHw10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=L0C9g3J+; arc=none smtp.client-ip=178.154.239.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:cf2d:0:640:140f:0])
+	by forwardcorp1d.mail.yandex.net (Yandex) with ESMTPS id 1672F80C96;
+	Tue, 23 Sep 2025 15:04:53 +0300 (MSK)
+Received: from [IPV6:2a02:6bf:8080:c77::1:3b] (unknown [2a02:6bf:8080:c77::1:3b])
+	by mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id o4WuUE0FriE0-fAFtdmJZ;
+	Tue, 23 Sep 2025 15:04:52 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1758629092;
+	bh=Vf6v1fCk8K2cHd1wSxGVsZZHow2DvCl4rn6gHJ3UDJw=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=L0C9g3J+Buq5IlPqK24blre2NyAlID7zKCiGaanAQ7d0uVqQ7U304SQTzWELPkSL8
+	 HMobw6+QoJSStHaluNL8R7Het0vAbLmykTCNFFkLIWSdda7hRKRd9vIeNFOXeEU84z
+	 XBO11aEutOxbdbL3c7nPknSeN0QFZpXNj6RbvJwM=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+Message-ID: <348f209e-89bc-4289-aaf9-e57437e31b0d@yandex-team.ru>
+Date: Tue, 23 Sep 2025 15:04:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/1] mm/thp: fix MTE tag mismatch when replacing
- zero-filled subpages
-To: David Hildenbrand <david@redhat.com>,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
- usamaarif642@gmail.com, yuzhao@google.com, ziy@nvidia.com,
- baolin.wang@linux.alibaba.com, baohua@kernel.org, voidice@gmail.com,
- Liam.Howlett@oracle.com, cerasuolodomenico@gmail.com, hannes@cmpxchg.org,
- kaleshsingh@google.com, npache@redhat.com, riel@surriel.com,
- roman.gushchin@linux.dev, rppt@kernel.org, ryan.roberts@arm.com,
- dev.jain@arm.com, ryncsn@gmail.com, shakeel.butt@linux.dev,
- surenb@google.com, hughd@google.com, willy@infradead.org,
- matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
- byungchul@sk.com, gourry@gourry.net, ying.huang@linux.alibaba.com,
- apopple@nvidia.com, qun-wei.lin@mediatek.com, Andrew.Yang@mediatek.com,
- casper.li@mediatek.com, chinwen.chang@mediatek.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-mm@kvack.org, ioworker0@gmail.com,
- stable@vger.kernel.org
-References: <20250922021458.68123-1-lance.yang@linux.dev>
- <aNGGUXLCn_bWlne5@arm.com> <a3412715-6d9d-4809-9588-ba08da450d16@redhat.com>
- <aNKJ5glToE4hMhWA@arm.com> <8bf8302a-6aba-4f7e-8356-a933bcf9e4a1@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] netfilter/x_tables: go back to using vmalloc for
+ xt_table_info
+To: Florian Westphal <fw@strlen.de>
+Cc: Eric Dumazet <edumazet@google.com>,
+ Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>, Phil Sutter <phil@nwl.cc>,
+ "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20250922194819.182809-1-d-tatianin@yandex-team.ru>
+ <20250922194819.182809-2-d-tatianin@yandex-team.ru>
+ <CANn89i+GoVZLcdHxuf33HpmgyPNKxGqEjXGpi=XiB-QOsAG52A@mail.gmail.com>
+ <5f1ff52a-d2c2-40de-b00c-661b75c18dc7@yandex-team.ru>
+ <aNKGWZSxY9RC0VWS@strlen.de>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <8bf8302a-6aba-4f7e-8356-a933bcf9e4a1@redhat.com>
+From: Daniil Tatianin <d-tatianin@yandex-team.ru>
+In-Reply-To: <aNKGWZSxY9RC0VWS@strlen.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
+On 9/23/25 2:36 PM, Florian Westphal wrote:
 
-
-On 2025/9/23 20:00, David Hildenbrand wrote:
-> On 23.09.25 13:52, Catalin Marinas wrote:
->> On Mon, Sep 22, 2025 at 07:59:00PM +0200, David Hildenbrand wrote:
->>> On 22.09.25 19:24, Catalin Marinas wrote:
->>>> On Mon, Sep 22, 2025 at 10:14:58AM +0800, Lance Yang wrote:
->>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>>> index 32e0ec2dde36..28d4b02a1aa5 100644
->>>>> --- a/mm/huge_memory.c
->>>>> +++ b/mm/huge_memory.c
->>>>> @@ -4104,29 +4104,20 @@ static unsigned long 
->>>>> deferred_split_count(struct shrinker *shrink,
->>>>>    static bool thp_underused(struct folio *folio)
->>>>>    {
->>>>>        int num_zero_pages = 0, num_filled_pages = 0;
->>>>> -    void *kaddr;
->>>>>        int i;
->>>>>        for (i = 0; i < folio_nr_pages(folio); i++) {
->>>>> -        kaddr = kmap_local_folio(folio, i * PAGE_SIZE);
->>>>> -        if (!memchr_inv(kaddr, 0, PAGE_SIZE)) {
->>>>> -            num_zero_pages++;
->>>>> -            if (num_zero_pages > khugepaged_max_ptes_none) {
->>>>> -                kunmap_local(kaddr);
->>>>> +        if (pages_identical(folio_page(folio, i), ZERO_PAGE(0))) {
->>>>> +            if (++num_zero_pages > khugepaged_max_ptes_none)
->>>>>                    return true;
+> Daniil Tatianin <d-tatianin@yandex-team.ru> wrote:
+>>> On Mon, Sep 22, 2025 at 12:48 PM Daniil Tatianin
+>>> <d-tatianin@yandex-team.ru> wrote:
+>>>> This code previously always used vmalloc for anything above
+>>>> PAGE_ALLOC_COSTLY_ORDER, but this logic was changed in
+>>>> commit eacd86ca3b036 ("net/netfilter/x_tables.c: use kvmalloc() in xt_alloc_table_info()").
 >>>>
->>>> I wonder what the overhead of doing a memcmp() vs memchr_inv() is. The
->>>> former will need to read from two places. If it's noticeable, it would
->>>> affect architectures that don't have an MTE equivalent.
+>>>> The commit that changed it did so because "xt_alloc_table_info()
+>>>> basically opencodes kvmalloc()", which is not actually what it was
+>>>> doing. kvmalloc() does not attempt to go directly to vmalloc if the
+>>>> order the caller is trying to allocate is "expensive", instead it only
+>>>> uses vmalloc as a fallback in case the buddy allocator is not able to
+>>>> fullfill the request.
 >>>>
->>>> Alternatively we could introduce something like folio_has_metadata()
->>>> which on arm64 simply checks PG_mte_tagged.
->>>
->>> We discussed something similar in the other thread (I suggested
->>> page_is_mergable()). I'd prefer to use pages_identical() for now, so 
->>> we have
->>> the same logic here and in ksm code.
->>>
->>> (this patch here almost looks like a cleanup :) )
->>>
->>> If this becomes a problem, what we could do is in pages_identical() 
->>> would be
->>> simply doing the memchr_inv() in case is_zero_pfn(). KSM might 
->>> benefit from
->>> that as well when merging with the shared zeropage through
->>> try_to_merge_with_zero_page().
->>
->> Yes, we can always optimise it later.
->>
->> I just realised that on arm64 with MTE we won't get any merging with the
->> zero page even if the user page isn't mapped with PROT_MTE. In
->> cpu_enable_mte() we zero the tags in the zero page and set
->> PG_mte_tagged. The reason is that we want to use the zero page with
->> PROT_MTE mappings (until tag setting causes CoW). Hmm, the arm64
->> memcmp_pages() messed up KSM merging with the zero page even before this
->> patch.
->>
->> The MTE tag setting evolved a bit over time with some locking using PG_*
->> flags to avoid a set_pte_at() race trying to initialise the tags on the
->> same page. We also moved the swap restoring to arch_swap_restore()
->> rather than the set_pte_at() path. So it is safe now to merge with the
->> zero page if the other page isn't tagged. A subsequent set_pte_at()
->> attempting to clear the tags would notice that the zero page is already
->> tagged.
->>
->> We could go a step further and add tag comparison (I had some code
->> around) but I think the quick fix is to just not treat the zero page as
->> tagged.
-> 
-> I assume any tag changes would result in CoW.
-> 
-> It would be interesting to know if there are use cases with VMs or other 
-> workloads where that could be beneficial with KSM.
-> 
->> Not fully tested yet:
->>
->> diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
->> index e5e773844889..72a1dfc54659 100644
->> --- a/arch/arm64/kernel/mte.c
->> +++ b/arch/arm64/kernel/mte.c
->> @@ -73,6 +73,8 @@ int memcmp_pages(struct page *page1, struct page 
->> *page2)
->>   {
->>       char *addr1, *addr2;
->>       int ret;
->> +    bool page1_tagged = page_mte_tagged(page1) && !is_zero_page(page1);
->> +    bool page2_tagged = page_mte_tagged(page2) && !is_zero_page(page2);
->>       addr1 = page_address(page1);
->>       addr2 = page_address(page2);
->> @@ -83,11 +85,10 @@ int memcmp_pages(struct page *page1, struct page 
->> *page2)
->>       /*
->>        * If the page content is identical but at least one of the 
->> pages is
->> -     * tagged, return non-zero to avoid KSM merging. If only one of the
->> -     * pages is tagged, __set_ptes() may zero or change the tags of the
->> -     * other page via mte_sync_tags().
->> +     * tagged, return non-zero to avoid KSM merging. Ignore the zero 
->> page
->> +     * since it is always tagged with the tags cleared.
->>        */
->> -    if (page_mte_tagged(page1) || page_mte_tagged(page2))
->> +    if (page1_tagged || page2_tagged)
->>           return addr1 != addr2;
-> 
-> That looks reasonable to me.
+>>>> The difference between the two is actually huge in case the system is
+>>>> under memory pressure and has no free pages of a large order. Before the
+>>>> change to kvmalloc we wouldn't even try going to the buddy allocator for
+>>>> large orders, but now we would force it to try to find a page of the
+>>>> required order by waking up kswapd/kcompactd and dropping reclaimable memory
+>>>> for no reason at all to satisfy our huge order allocation that could easily
+>>>> exist within vmalloc'ed memory instead.
+>>> This would hint at an issue with kvmalloc(), why not fixing it, instead
+>>> of trying to fix all its users ?
+> I agree with Eric.  There is nothing special in xtables compared to
+> kvmalloc usage elsewhere in the stack.  Why "fix" xtables and not e.g.
+> rhashtable?
+>
+> Please work with mm hackers to improve the situation for your use case.
+>
+> Maybe its enough to raise __GFP_NORETRY in kmalloc_gfp_adjust() if size
+> results in >= PAGE_ALLOC_COSTLY_ORDER allocation.
 
-Yeah, looks good to me as well.
+Thanks for your reply! Perhaps this is the way to go, although this 
+might have
+much broader implications since there are tons of other callers to take 
+into account.
 
-> 
-> @Lance as you had a test setup, could you give this a try as well with 
-> KSM shared zeropage deduplication enabled whether it now works as 
-> expected as well?
+I'm not sure whether rhashtable's size also directly depends on user 
+input, I was only
+aware of x_table since this is the case we ran into specifically.
 
-Sure. I'll test that and get back to you ;)
+>
+>> Thanks for the quick reply! From my understanding, there is a lot of
+>> callers of kvmalloc
+>> who do indeed benefit from the physical memory being contiguous, because
+>> it is then
+>> used for hardware DMA etc., so I'm not sure that would be feasible.
+> How can that work?  kvmalloc won't make vmalloc backed memory
+> physically contiguous.
 
-> 
-> Then, this should likely be an independent fix.
-> 
-> For KSM you likely have to enable it first through /sys/kernel/mm/ksm/ 
-> use_zero_pages.
-
-Got it.
+The allocated physical memory won't be contiguous only for fallback 
+cases (which should be rare),
+I assume in that case the hardware operation may end up being more 
+expensive with larger scatter-gather
+lists etc. So most of the time such code can take optimized paths for 
+fully contiguous memory. This is not
+the case for x_tables etc.
 
 
