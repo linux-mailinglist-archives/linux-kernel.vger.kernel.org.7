@@ -1,316 +1,261 @@
-Return-Path: <linux-kernel+bounces-828423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC6DB9495C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:38:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3544B94962
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98FA18A7DAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:39:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7622A483AA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E682E30F954;
-	Tue, 23 Sep 2025 06:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F7A30FC31;
+	Tue, 23 Sep 2025 06:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="b2JwHXt2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="lTxG9JF/"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010036.outbound.protection.outlook.com [52.101.84.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B43830FF00
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758609478; cv=none; b=hhOyvz/K8XqCeeazfK3Nr0xUyGEexpk2KKDkUb17mFzn13Uy0A4a6iy3AutL1cC4nn29EEZT0Ex9tNxCM+Qt4LLetiYeFJvRWxSwg88KSKaoIUkeOuSV3B0VkkmU7NDyR1jocsbA87RkskGWkqtlo4u5+3QCafIfAbb7kU2nHQI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758609478; c=relaxed/simple;
-	bh=/XZjxMDsdlsb2hd1V1q563apP/LGTaw7IP8VKfFQNnM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uaE+ajnlGFsi/fk9l3tyot8K71Dd1j41iwU9R1AMUgOREIGDD6YoDPX9RsQkWbPzh/4rUaoBXUV6PeXXGZVCmGOZeiditoGAje6qttT76siUvvwLMJIGs4351aHPK+GnICmSpVYUQTpqRCH93D6tGvHmR814MH+4HcgYHiCRCsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=b2JwHXt2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58N6ZhLN026426
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:37:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/2i5gCewt8z3E3EoPGc+LEWHh1OOCMfCgomgDxGz2IM=; b=b2JwHXt2hQ1DXyan
-	h1uTZL0FqtBJiQTpA/mZv2s8MtvjISRn3gXI8oeK9shy9r+2yiKiIOY+Z1QKGU5c
-	QdRe+gNUZDJtQTubzho4XUP0ArR0dq12H3xJ6YYuj0KiEB7z/TXTXSpcHUSxrZMC
-	lTWqnrRBouwA8kwzkwoGbnJ1cvlC1CC6SNtZja22IDVs6ivl221IjmUoeandSJmS
-	ByftprOWqB6asnCHkQXdTXSUHsJmviBgQUbwGFcHEaMH+Jy77drSfz0YV4bjhq4M
-	rO3zbK2CnacrnA4g+l9cRg/z8dW1abi+4hz+gB/whYBFmgaXtIaJsWBHvziWcFwV
-	PjFuDA==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hmnqrff-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:37:55 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-77f2eff831dso3178824b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:37:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758609474; x=1759214274;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/2i5gCewt8z3E3EoPGc+LEWHh1OOCMfCgomgDxGz2IM=;
-        b=DBP1lbF4f/CCcBbVCC/zI97oFRGltqvEOsViDt+qC7JPXKDooaSo7gsPA7EKollhWl
-         roYPVRn6Ig3thJ0t63/9ibCfQicnTbhA2wa4jqGsvrBQiZeHpOPBqkxIOYwdvmWKnCmh
-         3i4Kytu8Eu/5I8tUjbY2NzlUfjP3G0kxgVoXBcBcSQIIOflyiBOS70kxENbvU6DaqRNl
-         xr6rfUPT9pDs0aoAOA37YX/9GCvex9p+JMXVBrIq0LQGqx2VRYiDeZnoTQ93kadsA+Pk
-         ri4oOGiqRaPGDLH/wEgYbFKktwGpn8gGBYP1Zkl7ayIKTnvXnOBmUm60xG7S0bxcMU7C
-         w2xw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7KdIjhyhn53LaNeeiTfBYhcBX3Shb+FO13NFJq+bs9u8F5n9YRMT03Q3qe348q2Gq2B3GTwL3Yos8Bz0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGpCY/P3EGFpeaT9cA8YWnR/cRcGhLNX+XsRjA7H8acfgk07qy
-	ramR3uZDxMObm0XVOlCCp/qtA9oCnYgTHOIsfBk3m/vZ28/Au8W34m1RRLD217qv4kJQ5/tpjAU
-	yKRkPdDBVkga2eIwwcxTIgzMfviSLYp9Ir92YPL6xaDzLd4dmb7/35ZUbLHdsvSdXUkc=
-X-Gm-Gg: ASbGncvV8tR+5R1/3zvPhPgMVZZ0ON4HTFlZMDakdlYrhF5Oo83rt7OMFIPp1WaoH2K
-	ZuoHnfsv219AhPJrfSeTCPtZWupUBw4+BWNyGw2fi+AoNQm9nQUpQabFkZRfJwT5GylZ3xBwrTz
-	TaAS484dMlap0cs3Uaa++cdT54LH1ZhAE96Pt8YxWLWp0cTE40C41P52C7jHa/nh9Wjzyxah8Ix
-	4kbf3cAsFjZEo6kPqK16AJRJr5bbz4Ca+CXDZ19lChXKYRGK2CPL6vjwfPAgHndfgn/3dJ4H4QG
-	mW5OjZcIZWvZPz3/gUpWvb9WbIxp+0HmYqZk8zy0dP3K2ciWQCc50sAgCC+Rli4oug==
-X-Received: by 2002:a05:6a21:6d97:b0:2b5:769f:2542 with SMTP id adf61e73a8af0-2cfe8990c69mr2570923637.36.1758609474173;
-        Mon, 22 Sep 2025 23:37:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEcdgMOz1PL6eB9rEDeqp235HhjD28WXRHTyz1Aw/HjM+cmU/CEZqbyYKplL/kpmh4rWvdwEQ==
-X-Received: by 2002:a05:6a21:6d97:b0:2b5:769f:2542 with SMTP id adf61e73a8af0-2cfe8990c69mr2570886637.36.1758609473642;
-        Mon, 22 Sep 2025 23:37:53 -0700 (PDT)
-Received: from hu-sumk-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b551905bb4csm10792840a12.29.2025.09.22.23.37.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 23:37:53 -0700 (PDT)
-From: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
-Date: Tue, 23 Sep 2025 12:07:42 +0530
-Subject: [PATCH 2/2] bus: mhi: ep: Add loopback driver for data path
- testing
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B81030F547;
+	Tue, 23 Sep 2025 06:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758609504; cv=fail; b=CJHDZ8bl3Art1JKKAd9z3xylIxaWr+8BLqs7QrJ856/BCFWc7f82o91mdM/CNH3l4SyGrE+SBKKYyFhQ7rWw6IpFKxg/ay8njpOxexyheaNyVU+je/qbhjmYHY3bCccEC+Mg/OR0S310wyEFNQ7bpZqaIqqxExrOG7TGLpjMkro=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758609504; c=relaxed/simple;
+	bh=5Ktrla/K/YLvkCWF4ghqVSyByzIzHljlaaFPiBASRQE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FtLGzKVzhX3TL2fLgUr22QJeDiCoTv4SWITze2p0pWEZt59xxmA2QCN+21ffJqXLkQCJdYDEDMbnGPqFgWIow4FvcWY2ugxllpvgZq+Q1BcRlXMDdNvKniqmjKS0pli4AEuon4GBJXk2lYx2kzX/IxQ1tkGW1GOrHaYRmGtP1Ng=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=lTxG9JF/; arc=fail smtp.client-ip=52.101.84.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nid9vuuGxeF82fD4tzDKShbpzMEzQFiXTpNEawsK9BYsJWGWHEztdN83yFGM0J1alz5Bcbv77pg/Z/UpW4YloujpZtb/XdgvCGu3l1kHMGuhIZqKOWZoSvEdZ6iGUNpxWArF5ZbHiuEsh62oIv5T5Y5vds3e3UwX7+73Q6K53msBgYdy76RZXb08NgEjx/5HsItcPbmxYhkyKA1M3KRliKEmR3dpMTHnsfD08y7fDL7EeIAoNgrDUBnw6sQuzmh37V1z9pU3Bjcir3tZMmcQ8J47cWKFOi6xXp8M8LWFmrCTO73EEUkxVFidB65izOvMulUoCek2XzpdXwku6v5wcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=F5WoMTCzDYFuPK3Jz4DFJ+Kc68FVQSUZU9DekAWzAqU=;
+ b=wCmV4Hra3RLUSNMLIDyd3P04Tsfg9DMFE+h6FEdM+Pme3QSvg9Kkv2+onjGZt7WxZXHoV9LEZ/BUKmnvS73xK1L0do5A6s1329py56EbZuRwS89vdzuSECCet0ESy1bEQQ8NEvh+egqfbUCFpx0vu8LaPQS8azBw5sHfF1z5WINkjJalWoqQpzLLPJYTJucBDlh8eT+91HK1F/7VsNgQGVGMsdvDwYyWIC8AJy2ubQ9hRcKgQo2IRAsN8ZlQgZngKZmh9u8ZYb7mk9k2iJr4fA7VcxDXoodgn6q8vz6jq5cyn17IkQX+jgtgFQQMgEXK3K2ZYIxwY0SyWchjO3oQjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.206) smtp.rcpttodomain=kernel.org smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F5WoMTCzDYFuPK3Jz4DFJ+Kc68FVQSUZU9DekAWzAqU=;
+ b=lTxG9JF/fkbaZrxILO5ZlgiZO2JacWZaedJsW/lMB+xzTUKXLl1N5stFAglFPPL+71aZEcTNdpNRqr8TzNyEOjEmmh7kAymjVPEaCSfe1TXXN+oFCbb73qDIbGYXd5usNcM1544bxnMr7XJmfWt7BQugDpVo/Bmyidi4SUb6Ld04gXsV6hA191+dxF3AkRQPFT9J07uLmHnhJgdeZIV/Zym9vRPLmuKnS4YiM+m0rMqTL9JD341gxmIqK5okOjx2tprJ0C97Llkib3U0MqpPDxGV6Eju7eY/mGGbgrcGo7mK9m2Q/D6fGmQuVZhe95kHZVjDD0ZgO4TyIQ+3WKfmwQ==
+Received: from DUZPR01CA0054.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:469::10) by PA2PR10MB8912.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:102:41b::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
+ 2025 06:38:17 +0000
+Received: from DU6PEPF00009528.eurprd02.prod.outlook.com
+ (2603:10a6:10:469:cafe::46) by DUZPR01CA0054.outlook.office365.com
+ (2603:10a6:10:469::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.20 via Frontend Transport; Tue,
+ 23 Sep 2025 06:38:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.206)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.206 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.206; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.206) by
+ DU6PEPF00009528.mail.protection.outlook.com (10.167.8.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Tue, 23 Sep 2025 06:38:17 +0000
+Received: from RNGMBX3003.de.bosch.com (10.124.11.208) by eop.bosch-org.com
+ (139.15.153.206) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.27; Tue, 23 Sep
+ 2025 08:38:04 +0200
+Received: from [10.34.219.93] (10.34.219.93) by smtp.app.bosch.com
+ (10.124.11.208) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.27; Tue, 23 Sep
+ 2025 08:38:03 +0200
+Message-ID: <10ebc82b-7d51-4724-8de6-b44435659a08@de.bosch.com>
+Date: Tue, 23 Sep 2025 08:38:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v4 1/6] nova-core: bitfield: Move bitfield-specific code
+ from register! into new macro
+To: Danilo Krummrich <dakr@kernel.org>, Greg KH <gregkh@linuxfoundation.org>
+CC: Benno Lossin <lossin@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <acourbot@nvidia.com>, Alistair Popple
+	<apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+	<alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+	<gary@garyguo.net>, <bjorn3_gh@protonmail.com>, Andreas Hindborg
+	<a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross
+	<tmgross@umich.edu>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+	<joel@joelfernandes.org>, Elle Rhumsaa <elle@weathered-steel.dev>, Yury Norov
+	<yury.norov@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>,
+	<nouveau@lists.freedesktop.org>
+References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
+ <20250920182232.2095101-2-joelagnelf@nvidia.com>
+ <2025092157-pauper-snap-aad1@gregkh> <DCYHCLM67KRZ.366VS9PDKLYKY@kernel.org>
+ <2025092125-urban-muppet-1c2f@gregkh> <DCYIX8URVIWM.2ZK3GHH3J82XQ@kernel.org>
+Content-Language: , en-GB
+From: "Behme Dirk (XC-CP/ESD1)" <dirk.behme@de.bosch.com>
+In-Reply-To: <DCYIX8URVIWM.2ZK3GHH3J82XQ@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250923-loopback_mhi-v1-2-8618f31f44aa@oss.qualcomm.com>
-References: <20250923-loopback_mhi-v1-0-8618f31f44aa@oss.qualcomm.com>
-In-Reply-To: <20250923-loopback_mhi-v1-0-8618f31f44aa@oss.qualcomm.com>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Akhil Vinod <akhil.vinod@oss.qualcomm.com>,
-        Subramanian Ananthanarayanan <subramanian.ananthanarayanan@oss.qualcomm.com>,
-        linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, quic_vpernami@quicinc.com,
-        Sumit Kumar <sumit.kumar@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758609464; l=5830;
- i=sumit.kumar@oss.qualcomm.com; s=20250409; h=from:subject:message-id;
- bh=/XZjxMDsdlsb2hd1V1q563apP/LGTaw7IP8VKfFQNnM=;
- b=WD/6L5VbKB2D38KzJB8gQHdyMsWs2SrkdKIoQaD+MAq6ui8rTHJuvnjhuIKISlRT070gQF1N3
- pruOysrtJ/wAkO1k8tjM0ZDaLdRVlVYLCVovKtsMY741Oxd/fHtv4u/
-X-Developer-Key: i=sumit.kumar@oss.qualcomm.com; a=ed25519;
- pk=3cys6srXqLACgA68n7n7KjDeM9JiMK1w6VxzMxr0dnM=
-X-Authority-Analysis: v=2.4 cv=YPqfyQGx c=1 sm=1 tr=0 ts=68d24043 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=RyQsIt2LcgCPV6mEHuQA:9
- a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-ORIG-GUID: rrMIOtvOJEiL7y6GenUcAo6jkqbDEo7j
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwMCBTYWx0ZWRfXzxhN2wJa/DEA
- fKYRDbTOvTRmIPFFli6ZMFHcIzUoqIVYquu0kVmN8DuJKs+teppSsbbkCKsFVSCSrIAkk8K98v6
- Ujqcfo+wmuhTM6K4vU+ID2+aNkasz1Aq+3hKtVzdExsAGaenmAyrGuwm4RoUOmuDdits32nEKRz
- X3Ga26BqKTRac+YjQTYiiQ9qihYeTRtWwend60B0Z30GfxqyGmXjxl/5vHmQ28xil5utlZ24aPu
- IltyTCJKi73AbNl8m/EgYXycasfQQXnUBeGyhmBhPAOoY6zoZ/oFpzprjRLHbPhnO+8/Kp0p3W1
- Jx+B809GECJ7tnHe3ORldlWK3GnjBlLOiNoOd+ySx4nw5Q9oQgXfwKb4X8lz0BXxsTIMe1GUif3
- JeUbLuB0
-X-Proofpoint-GUID: rrMIOtvOJEiL7y6GenUcAo6jkqbDEo7j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-23_01,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0 adultscore=0
- clxscore=1015 impostorscore=0 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU6PEPF00009528:EE_|PA2PR10MB8912:EE_
+X-MS-Office365-Filtering-Correlation-Id: e66fc2d3-1b81-4380-fa82-08ddfa6bc7de
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VEV2ekxyWlBITmdRUmQ1RlZMeklKci9hY3l3K1lkcEFjMHZwdnB5UXljWmRi?=
+ =?utf-8?B?Z1BSOHdFTDg2MkhjUGxPSjBURTZwUjg3MXNJVlpOcE81QXJnRzJWaHo2M0pn?=
+ =?utf-8?B?Mi80U3prZklCbkh4RlNBYlYvU2JtWHVXOXRPZEEvWHFjcGt4bjh0a2J5c0xL?=
+ =?utf-8?B?eC9BRklTY0U3amd2dW5aM1JKTXFqMmcyZThxdjlEWk15OTNCbjFuOHRvNkpU?=
+ =?utf-8?B?UndKUDV5ZGxWSFh6S0lrS3hJeFRLU2pzZk1QRTJlYlF3cGtka2N0OW1VNnJL?=
+ =?utf-8?B?WG1XakllZmlndDRtbFUyaHltTmMzM3BwNWtUcmo2ZUVUb0hveUFEaVIzbDJi?=
+ =?utf-8?B?SDdGMW00WExlbjkwa1NVSnlobFdEWi82U2RtSHp5dUd4dlpQUDZlNkxyeUQx?=
+ =?utf-8?B?TDVaY1RtYU9vWm9KbEhhV0luMy92SE1Va2twYmlTaHlZRUhUbThZTk5neU10?=
+ =?utf-8?B?UC95Wis0ajJ4UFZneG9XdWhiMlh3alFnUi90WDBLK1ljbStpNkV5dVUrVklm?=
+ =?utf-8?B?V09JczU0YnFQUU1QWXhBdERtMUNvdGhBYVBRMGxwSnlrOEJiTExkR2dFbkV0?=
+ =?utf-8?B?RHFRSDcwS0oyc05xQ284dVVoV2VxS3hYL29yK0tVeTJaY1hUdXZSNlNTVlBL?=
+ =?utf-8?B?cHpEZWIzZFRXUzdXNEEvT2lKT0svaVg2cktnMi9rK0dYV0xIeVFmbHZxZ1Fl?=
+ =?utf-8?B?N1lyMHNraUdkSjhQK2h5ckJJbTdHenBLZkZIWlJDNVhwa0Y4ZmM2NHNYVWxD?=
+ =?utf-8?B?cGJiRENvdVVyT2lKYlM0MGdwRk10V3V6RGM4YnZoUERWTjNVd1FmaFRBcnJx?=
+ =?utf-8?B?MkZIRlUyVnRobXN3bEhqalVMY1Q1V3JkallUeDFENkVEVFhwa01BOUp1bTZw?=
+ =?utf-8?B?cnBsVmZHMjg5VFd6bVFnbmNXYWZnNEZ1M3E3VHJJK2daMXNYaWY0TnlhSWRy?=
+ =?utf-8?B?SmNQd3YrQ3cwSk1EQ3Q5MWFWcU9IZGorMWtFWXAwd0k1UlBidjMrcFJlZFJI?=
+ =?utf-8?B?YXl4K2g3R0VIRFlnWTVUaWM1OTJ0ZWE4dTg2NFRwdHhhaTd3UWtDMFZUOFJm?=
+ =?utf-8?B?QllOSEIyV2ZITEdWemQrWkt2bVlya0tCVVh4dE03UDZFdFgydmlkOUdCT2NV?=
+ =?utf-8?B?aUlCNWtvN2l4SjVWNGV0cjh4T29HTUQzekNZaGQ4aXpCZThuWGZjYVdnYUZl?=
+ =?utf-8?B?bWdpR2lLZzdqWnNNTGJXS0o1Rnl3eDJjN3pTSFVwK3FISld3MkFjb2dOV2Jq?=
+ =?utf-8?B?U2hvVW5FaVZPcXV0S0FabHNIMUw0M3U3bTUzcFluL0YrMTFEOVgwRFljd3pp?=
+ =?utf-8?B?cEJ6c2ZsQnJOMVozaWI4QkJ4WGErZjNYMUkzQUtQL21CSHpzSUdpdzEvVGdr?=
+ =?utf-8?B?SlVCUzd3Vk5ibmJITFk0SmxRbXR4TFd0aVczeFB1NldkcFNLN2sxaDBsWi8y?=
+ =?utf-8?B?VzVVK1QzdmhkVEhzMzJBNFlTaDhhZk9PSWZweTlYM3M5VytDN3FXd3cyQm5j?=
+ =?utf-8?B?SEs3ckFjamNWWjdteVJSL3M0TVJYU0EyVGljZmhBU2pnTVVNRjFJYzZ3ZTRE?=
+ =?utf-8?B?ckFNRmJaWEVpclZSMUNGVmc0VVVvdWJsZXFodHRGd1BtVTRCcG4rUm5EWHJ3?=
+ =?utf-8?B?MXFZbVQ2enFSZi9Xb3RTVWV6cVVMZWJxU2tQQ2VCZE5rOUlDNVRUbnZjZjBp?=
+ =?utf-8?B?SE5OMTFlcElNV3VhYVZNZXZpaUNLaVBpbmJBa0NuZ0piU0Y1SXBzc1pweGFC?=
+ =?utf-8?B?R29FWlN2bWE3ODl3R3l3ZmhYc29icnhrd2JYTTRONkNmQTVVazJXZkpoZVZr?=
+ =?utf-8?B?NG9JekhiS1owcVZmYzU3TXZUNHZnOFA5OEFydUtBcTJFRjc2MGZDdlN2SjRR?=
+ =?utf-8?B?SFdjYXhmZE9ZL2l3UDlJdVYvQWFpRDduSlBQUXN6UmQwY0U0elFhYmlZTi9Q?=
+ =?utf-8?B?dGNhbDdHT29CQklGejYrU21Ea3lDWmZkL1ZjL3lVdzhJakVsejRkZHJaUWl6?=
+ =?utf-8?B?NkxsL0tiV3p3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.206;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 06:38:17.7528
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e66fc2d3-1b81-4380-fa82-08ddfa6bc7de
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.206];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU6PEPF00009528.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR10MB8912
 
-Add loopback driver for MHI endpoint devices. The driver receives
-data on the uplink channel and echoes it back on the downlink
-channel using a workqueue for asynchronous processing.
 
-The driver is useful for testing MHI endpoint data path functionality
-and debugging communication issues.
+> On Sun Sep 21, 2025 at 2:45 PM CEST, Greg KH wrote:
+>> Again, regmap handles this all just fine, why not just make bindings to
+>> that api here instead?
+> 
+> The idea is to use this for the register!() macro, e.g.
+> 
+> 	register!(NV_PMC_BOOT_0 @ 0x00000000, "Basic revision information about the GPU" {
+> 	    28:24   architecture_0 as u8, "Lower bits of the architecture";
+> 	    23:20   implementation as u8, "Implementation version of the architecture";
+> 	    8:8     architecture_1 as u8, "MSB of the architecture";
+> 	    7:4     major_revision as u8, "Major revision of the chip";
+> 	    3:0     minor_revision as u8, "Minor revision of the chip";
+> 	});
+> 
+> (More examples in [1].)
+> 
+> This generates a structure with the relevant accessors; we can also implement
+> additional logic, such as:
+> 
+> 	impl NV_PMC_BOOT_0 {
+> 	    /// Combines `architecture_0` and `architecture_1` to obtain the architecture of the chip.
+> 	    pub(crate) fn architecture(self) -> Result<Architecture> {
+> 	        Architecture::try_from(
+> 	            self.architecture_0() | (self.architecture_1() << Self::ARCHITECTURE_0_RANGE.len()),
+> 	        )
+> 	    }
+> 	
+> 	    /// Combines `architecture` and `implementation` to obtain a code unique to the chipset.
+> 	    pub(crate) fn chipset(self) -> Result<Chipset> {
+> 	        self.architecture()
+> 	            .map(|arch| {
+> 	                ((arch as u32) << Self::IMPLEMENTATION_RANGE.len())
+> 	                    | u32::from(self.implementation())
+> 	            })
+> 	            .and_then(Chipset::try_from)
+> 	    }
+> 	}
+> 
+> This conviniently allows us to read the register with
+> 
+> 	let boot0 = regs::NV_PMC_BOOT_0::read(bar);
+> 
+> and obtain an instance of the entire Chipset structure with
+> 
+> 	let chipset = boot0.chipset()?;
+> 
+> or pass it to a constructor that creates a Revision instance
+> 
+> 	let rev = Revision::from_boot0(boot0);
+> 
+> Analogously it allows us to modify and write registers without having to mess
+> with error prone shifts, masks and casts, because that code is generated by the
+> register!() macro. (Of course, unless we have more complicated cases where
+> multiple fields have to be combined as illustrated above.)
+> 
+> Note that bar is of type pci::Bar<BAR0_SIZE> where BAR0_SIZE in our case is
+> SZ_16M.
+> 
+> However, the type required by read() as generated by the register!() macro
+> actually only requires something that implements an I/O backend, i.e
+> kernel::io::Io<SIZE>.
+> 
+> pci::Bar is a specific implementation of kernel::io::Io.
+> 
+> With this we can let the actual I/O backend handle the endianness of the bus.
+> 
+> (Actually, we could even implement an I/O backend that uses regmap.)
+> 
+> So, I think the register!() stuff is rather orthogonal.
+> 
+> - Danilo
+> 
+> [1] https://gitlab.freedesktop.org/drm/rust/kernel/-/blob/drm-rust-next/drivers/gpu/nova-core/regs.rs
 
-Co-developed-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Signed-off-by: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
----
- drivers/bus/mhi/ep/Kconfig           |   8 +++
- drivers/bus/mhi/ep/Makefile          |   1 +
- drivers/bus/mhi/ep/mhi_ep_loopback.c | 132 +++++++++++++++++++++++++++++++++++
- 3 files changed, 141 insertions(+)
 
-diff --git a/drivers/bus/mhi/ep/Kconfig b/drivers/bus/mhi/ep/Kconfig
-index 90ab3b040672e0f04181d4802e3062afcc7cf782..ce7b63c2da82a6ca49528517687f4910552c35bb 100644
---- a/drivers/bus/mhi/ep/Kconfig
-+++ b/drivers/bus/mhi/ep/Kconfig
-@@ -8,3 +8,11 @@ config MHI_BUS_EP
- 
- 	  MHI_BUS_EP implements the MHI protocol for the endpoint devices,
- 	  such as SDX55 modem connected to the host machine over PCIe.
-+
-+config MHI_BUS_EP_LOOPBACK
-+	tristate "MHI Endpoint loopback driver"
-+	depends on MHI_BUS_EP
-+	help
-+	  MHI endpoint loopback driver for data path testing.
-+	  This driver receives data on the uplink channel and echoes
-+	  it back on the downlink channel for testing purposes.
-diff --git a/drivers/bus/mhi/ep/Makefile b/drivers/bus/mhi/ep/Makefile
-index aad85f180b707fb997fcb541837eda9bbbb67437..02e4700e8dc3f860d40290476b0a852286683f8f 100644
---- a/drivers/bus/mhi/ep/Makefile
-+++ b/drivers/bus/mhi/ep/Makefile
-@@ -1,2 +1,3 @@
- obj-$(CONFIG_MHI_BUS_EP) += mhi_ep.o
- mhi_ep-y := main.o mmio.o ring.o sm.o
-+obj-$(CONFIG_MHI_BUS_EP_LOOPBACK) += mhi_ep_loopback.o
-diff --git a/drivers/bus/mhi/ep/mhi_ep_loopback.c b/drivers/bus/mhi/ep/mhi_ep_loopback.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..89244aca684ffc959a38f8a0c3ad577b2d127c48
---- /dev/null
-+++ b/drivers/bus/mhi/ep/mhi_ep_loopback.c
-@@ -0,0 +1,132 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-+ */
-+
-+#include <linux/mhi_ep.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/skbuff.h>
-+
-+struct mhi_ep_loopback {
-+	struct workqueue_struct *loopback_wq;
-+	struct mhi_ep_device *mdev;
-+};
-+
-+struct mhi_ep_loopback_work {
-+	struct mhi_ep_device *mdev;
-+	struct work_struct work;
-+	struct sk_buff *skb;
-+};
-+
-+static void mhi_ep_loopback_work_handler(struct work_struct *work)
-+{
-+	int ret;
-+	struct mhi_ep_loopback_work *mhi_ep_lb_work = container_of(work,
-+								struct mhi_ep_loopback_work, work);
-+
-+	ret = mhi_ep_queue_skb(mhi_ep_lb_work->mdev, mhi_ep_lb_work->skb);
-+	if (ret) {
-+		dev_err(&mhi_ep_lb_work->mdev->dev, "Failed to send the packet\n");
-+		kfree_skb(mhi_ep_lb_work->skb);
-+	}
-+
-+	kfree(mhi_ep_lb_work);
-+}
-+
-+static void mhi_ep_loopback_ul_callback(struct mhi_ep_device *mhi_dev,
-+					struct mhi_result *mhi_res)
-+{
-+	struct mhi_ep_loopback *mhi_ep_lb = dev_get_drvdata(&mhi_dev->dev);
-+	struct mhi_ep_loopback_work *mhi_ep_lb_work;
-+	struct sk_buff *skb;
-+
-+	if (!(mhi_res->transaction_status)) {
-+		skb = alloc_skb(mhi_res->bytes_xferd, GFP_KERNEL);
-+		if (!skb) {
-+			dev_err(&mhi_dev->dev, "Failed to allocate skb\n");
-+			return;
-+		}
-+
-+		skb_put_data(skb, mhi_res->buf_addr, mhi_res->bytes_xferd);
-+
-+		mhi_ep_lb_work = kmalloc(sizeof(*mhi_ep_lb_work), GFP_KERNEL);
-+		if (!mhi_ep_lb_work) {
-+			dev_err(&mhi_dev->dev, "Unable to allocate the work structure\n");
-+			kfree_skb(skb);
-+			return;
-+		}
-+
-+		INIT_WORK(&mhi_ep_lb_work->work, mhi_ep_loopback_work_handler);
-+		mhi_ep_lb_work->mdev = mhi_dev;
-+		mhi_ep_lb_work->skb = skb;
-+
-+		queue_work(mhi_ep_lb->loopback_wq, &mhi_ep_lb_work->work);
-+	}
-+}
-+
-+static void mhi_ep_loopback_dl_callback(struct mhi_ep_device *mhi_dev,
-+					struct mhi_result *mhi_res)
-+{
-+	struct sk_buff *skb;
-+
-+	if (mhi_res->transaction_status)
-+		return;
-+
-+	skb = mhi_res->buf_addr;
-+	if (skb)
-+		kfree_skb(skb);
-+}
-+
-+static int mhi_ep_loopback_probe(struct mhi_ep_device *mhi_dev, const struct mhi_device_id *id)
-+{
-+	struct mhi_ep_loopback *mhi_ep_lb;
-+
-+	mhi_ep_lb = devm_kzalloc(&mhi_dev->dev, sizeof(struct mhi_ep_loopback), GFP_KERNEL);
-+	if (!mhi_ep_lb)
-+		return -ENOMEM;
-+
-+	mhi_ep_lb->loopback_wq = alloc_ordered_workqueue("mhi_loopback", WQ_MEM_RECLAIM);
-+	if (!mhi_ep_lb->loopback_wq) {
-+		dev_err(&mhi_dev->dev, "Failed to create workqueue.\n");
-+		return -ENOMEM;
-+	}
-+
-+	mhi_ep_lb->mdev = mhi_dev;
-+	dev_set_drvdata(&mhi_dev->dev, mhi_ep_lb);
-+
-+	return 0;
-+}
-+
-+static void mhi_ep_loopback_remove(struct mhi_ep_device *mhi_dev)
-+{
-+	struct mhi_ep_loopback *mhi_ep_lb = dev_get_drvdata(&mhi_dev->dev);
-+
-+	destroy_workqueue(mhi_ep_lb->loopback_wq);
-+	dev_set_drvdata(&mhi_dev->dev, NULL);
-+}
-+
-+static const struct mhi_device_id mhi_ep_loopback_id_table[] = {
-+	{ .chan = "LOOPBACK"},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(mhi, mhi_ep_loopback_id_table);
-+
-+static struct mhi_ep_driver mhi_ep_loopback_driver = {
-+	.probe = mhi_ep_loopback_probe,
-+	.remove = mhi_ep_loopback_remove,
-+	.dl_xfer_cb = mhi_ep_loopback_dl_callback,
-+	.ul_xfer_cb = mhi_ep_loopback_ul_callback,
-+	.id_table = mhi_ep_loopback_id_table,
-+	.driver = {
-+		.name = "mhi_ep_loopback",
-+		.owner = THIS_MODULE,
-+	},
-+};
-+
-+module_mhi_ep_driver(mhi_ep_loopback_driver);
-+
-+MODULE_AUTHOR("Krishna chaitanya chundru <krishna.chundru@oss.qualcomm.com>");
-+MODULE_AUTHOR("Sumit Kumar <sumit.kumar@oss.qualcomm.com>");
-+MODULE_DESCRIPTION("MHI Endpoint Loopback driver");
-+MODULE_LICENSE("GPL");
+I really like this discussion with the thoughts and examples given above!
 
--- 
-2.34.1
+Some weeks ago I was wondering what might be the correct way for 
+accessing registers in RfL. There are various different examples 
+floating around what makes the selection of the correct one even harder. 
+Most probably I have selected the wrong one ;)
+
+So once this discussion comes to a conclusion (and gets merged?) we 
+might want to have a verbose documentation with background, examples, 
+possible options etc. Something like "Howto access registers (hardware?) 
+in RfL (correctly)". I think this would be quite helpful.
+
+Thanks!
+
+Dirk
 
 
