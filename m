@@ -1,504 +1,133 @@
-Return-Path: <linux-kernel+bounces-828203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7472B942B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:05:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7522B942B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F7F97A42A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:03:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C813C188E81D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A782D26FD8E;
-	Tue, 23 Sep 2025 04:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A672737FB;
+	Tue, 23 Sep 2025 04:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pUb+hkSw"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011008.outbound.protection.outlook.com [40.107.208.8])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m8gGLcDT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E12178F43
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758600302; cv=fail; b=JB7dA5DaVyJ2k5WfTnCcnist8cCs0Ik91mF3CFoX7Dd+b4rrVd0WqKErST5NkCgA3r0qu3dLuuR+UUMA10Yi1kxf2lREOqKP4cT1sSeGhjJtu/mmqzqeyGAYVsUkNyqNZ75gYIjNxgBVivvu9ZAX4jEhob/TQ89/vwv6KVMVSHY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758600302; c=relaxed/simple;
-	bh=AUzVQH4ZkQiDdra/gwi+SH9NRp49SrfmLCC6nO0+dqg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nLRB9cvVJddjlj1JgAiQDDnNqo43sAf1PTvfezX/s36ghzs792LX99dZ61eb1rBMzO5kkY44BTle9IYP4asW1olevjR+Ak7vjUkzNIIBuAFD8TzFZkbTwN7TYsKYUd10rIvsDKyU3CZcO1QALHMgzJumVoZWemzMoCmnU3rUyfo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pUb+hkSw; arc=fail smtp.client-ip=40.107.208.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lX0TF9HkVJ9ZGBc5CL/pShGPOY8yUoGqRHPxe7H+zrq98M1XoUWntUiSo48PrppOnTu25yOMTMXJ9UFsL63Ybqr2nuNjawB8+8fihTwGNovD6hma6pTktUvsQlvhwZwsh0PiV4YjSrlyyeNf5N2O85EvhJUfs+zqKkCOo7j/6nB/nQYNBaWLeWT6yUJ++Cpu/QqTqXOqSpr2OZebCYcbFsYJFGjf7g/BG07aEgkqoJNi27dCb3LnhAzS7+O3RhDZ6bgoM9Dof4fHmuwblHvwowzXl0fxIKuyGn+6iX7bvE3A47fL21sNb+xKKJo0O/M7tSm1HS+m1RbzXpTKugeYVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+3vGnqTATxCB/QMv1OqdYrjFpJlhkQK3tCcetd10dvw=;
- b=I7iLbZrZ3zRlc7B6A1F2sFZ3oC0BG6ORzrOW8EUQX3BEPtnp6cEpWssHFMEx2CJNAFOgfJCkMWOSYkP54JToFc3o1+6VDI5NhdGyFMxjXXsS3cJEwqGjzGJan7WwXEuG4Zn3oe49Ma2E6JNm/q+Hc4tyRLzquH2Psf67jbIXK6T+SCQxoadjJSc8dIJcWYMlFrtW2HsDUU183ulPp8a5Xl7K9BFlZEmbg+DmahSsh3O7yqmyMlQdPoEN08cAQ7MjcQ+xpED0hGHhJrNdtActoAADTGV8F1+tuqan5LKMBq3vfwwuRT44QF2sSPXC/pmM2lCpmvtpUa4UlPLHKU03CA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+3vGnqTATxCB/QMv1OqdYrjFpJlhkQK3tCcetd10dvw=;
- b=pUb+hkSw2P8HV27oP6Gjd4I/a+1xUHFJiSJmSdj73M8sffQk41K7DFPnps3mnySsOvyWZVOJNLFnuTcoMXK8UwNwL3T3pftBwBzDHhuUHBtyYMTtR6WLlXOm+f03aWf2SDKTUwiN7CgsmA9Jf+gS7FGF2Nl78nQ7morlaOd5Ezn04TJgtAwhZhA1SHN6I1MTHteWqApY0Vy2w+mlJNWU3Z52aXbRHZKgFCAXjqToi9qfZRXd2jWt8emTUwr+YjDoUgB0zravX5xtOsMn0WQzIPPPHRyJFgneYM7YCNmCKTMeqjloQNnEpaFmUJXpyAEhRiqxMc0jsFUJwHD0DVRHIQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by PH0PR12MB8150.namprd12.prod.outlook.com (2603:10b6:510:293::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Tue, 23 Sep
- 2025 04:04:56 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 04:04:56 +0000
-Message-ID: <901c82e7-0442-4791-b249-b035f8ee428d@nvidia.com>
-Date: Tue, 23 Sep 2025 14:04:48 +1000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6 04/15] mm/huge_memory: implement device-private THP splitting
-To: Zi Yan <ziy@nvidia.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250916122128.2098535-1-balbirs@nvidia.com>
- <20250916122128.2098535-5-balbirs@nvidia.com>
- <7987AB89-4E80-4A0D-8736-E95F998698DA@nvidia.com>
- <a77b03b8-508b-4bad-8913-fb825ecd8a0d@nvidia.com>
- <F6F6DB2E-C08B-417A-A8CB-3E759FE2C3A7@nvidia.com>
-Content-Language: en-US
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <F6F6DB2E-C08B-417A-A8CB-3E759FE2C3A7@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BYAPR02CA0066.namprd02.prod.outlook.com
- (2603:10b6:a03:54::43) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B97270568;
+	Tue, 23 Sep 2025 04:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758600325; cv=none; b=g1w86nbhvPsVAQMLMkRXMXDRKnTWrhk0WM3NQnVJVYrEG2thCFximfd+5BlpqE0ZY8KQxSFOF8kBbriTkTRDk4Qm+o7zD8CDt+E3aj5N5jQw5XwXmvZ+CcRHO6gGPy84NioTDZPh/3u5YB+WqFPYVHUupX9rTsZnDg2QKMsr5GE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758600325; c=relaxed/simple;
+	bh=6PIwA7arR0o6d3GGOkq6Yfxpemnc+r61GEaPtuR1e0w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UcVYxHCFzNx9JYHMrVd9HXRwBXkBDHNFNGZZMKRgYd+iP8TVcpelbBeZVD8yQVQcBjpSUdGTX1QAm5v2QrU9E1w8q/O39k7gpcx8ms9f9WI611JmDAyuuZiIdQfiOQNhxlD2qzrhICuKlhDqazNjXMqZCR/SdBiOTZPPuZKwqi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m8gGLcDT; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758600323; x=1790136323;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6PIwA7arR0o6d3GGOkq6Yfxpemnc+r61GEaPtuR1e0w=;
+  b=m8gGLcDTQH06mVc/F0hYOlgyDYBfYAk/ccoOB6H0DjunbYz1zXB24Szm
+   lWugtsPsw6UwB7BaCDmFcvKHdy+n5ucCPrn8SHhBMAr9DaopXh54YBSMI
+   SPj7U/P37yXEGk/ntvQXOW6Xgrmg3eQhPbqKs+4dARrDuVN1C01FXXIbY
+   h3KXT4F/+rY3LrcmiIE9e8xvikuZ/hMZLv3KNc/GeEyoXcrUg5EdL9taz
+   +d6Q/t37r3gbRvO+xQClqHLB+DJrg52EiJ6obR3qpw3wgDjMbnMPgDfKg
+   GpbtZjCl/qXzBW0xp/avj31FLXt+bwgFg6ch4E2RVnm3Hjk4LhWGDPBs2
+   w==;
+X-CSE-ConnectionGUID: APXyZATgSimtj7FUf8hD/A==
+X-CSE-MsgGUID: ezHtjG3MRNq3HYdMfBXBDQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="71980327"
+X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
+   d="scan'208";a="71980327"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 21:05:22 -0700
+X-CSE-ConnectionGUID: 1/vuUJf6S7aX/nDsE3yFBA==
+X-CSE-MsgGUID: yp9wGNwrR4qtGSep6rARJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
+   d="scan'208";a="177103530"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 21:05:21 -0700
+Message-ID: <b9b4bb21-47db-4282-8d4c-eedb836fbfb9@intel.com>
+Date: Tue, 23 Sep 2025 12:05:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|PH0PR12MB8150:EE_
-X-MS-Office365-Filtering-Correlation-Id: ffeb1dab-aac0-4b91-c7cb-08ddfa565afe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|10070799003|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cCswWjJYYUl3NjdKZkxkQWgvU3ZqQXBiTEhDT0hvSFpoTU9tZU15OTRHVitU?=
- =?utf-8?B?ZUNvKzZLampyNE9Fa0ZqQmhCdi9zMyt6N3R2Rk5UcElPWUhBcGcvQXp4ZGxO?=
- =?utf-8?B?VTZBbE52aE5wZFgwWDJ5R3ZybktzVUFaYVNyUm5tcklxR2RKa21ObkpaQ0h2?=
- =?utf-8?B?MHp4VExabVdjRjhVb1I4U1JBYTJHMHozTHFiMGZZeW81Q0dLTmxaMGxSczN3?=
- =?utf-8?B?WVNydGdQWXovSGFqNUEzdXFyczVwaUtZLzJlQTJTMS84MFBJa25DS3BER21K?=
- =?utf-8?B?K1QwT2ZKY2tNZHFsSDNvR3M5TzhtbFoxU1RTV3JzamZUUGxXNUk4SWtqTXMr?=
- =?utf-8?B?L2RaL0JnVlMvZFJRWGpLbzk5bHZsYnk1NUxQTlFvTUdLVHBVVzVuWVJUeGhJ?=
- =?utf-8?B?ZE12UEVJUEZMRXFZMVJKbVlIS2tNV2FLV1g5OGdTSnVEWXNXQzVsczdBd0Z0?=
- =?utf-8?B?S081TGwxaFNmYmlrQlRKWFhxVUZ1MGozQWFNTU9SdlpseXFsSkx6a2JubFBq?=
- =?utf-8?B?WXNIdGNwMDVySXRxcm9BV3Qwc3FObCtIQVo2YkZhUERqd2dCb3ZVMlJ4c3pN?=
- =?utf-8?B?WWlHOUVSSHFGcDZGeUhEK0RSNFpyd0orRjJPY2VhTHhzY09ZWGxDSTRiWDM0?=
- =?utf-8?B?OXlsQndqRmo5d01kY3FNekJLbHQwOWRkRlRmN3BDcTBORnBnbUl4cmpwZVBw?=
- =?utf-8?B?RGRSREFWcHJnZzBzSFFVaEhPOUlMRkc1SExiWmxWN25DUlkvQXg4c1U2NnpC?=
- =?utf-8?B?bHQ5STFoZGRpYklIT3NubVVlMTV1TE9SVm1XQ0FNczJ3MTMxa2c5L3ZaNVl1?=
- =?utf-8?B?OTdFRCt0VUZHUXBYaWcrSTlwdXZWQmo0U0lsOHBYWjhWRUhmUFdvMUVUeFZj?=
- =?utf-8?B?aXhBbVpQT3JKWGk5TTA1K1ppbENvTUhxSkh6NFdWSXBHdmp3MmRXcGZlNTJK?=
- =?utf-8?B?bmc0UUVjaDNUN25lYkpoK0MwQWxEbzVMWkpXZnYzb0t5WCttK1BiWi8yWW1O?=
- =?utf-8?B?NHpXTVpzQ2NmWFh2L2tQNHJUN25lM1BpMGl5TkVqbEVOSkJYaVNNdUllbmRR?=
- =?utf-8?B?S05YYTZXekd1LzA0TEhXUjF3dXUvQTNBcndSQWxuZ0RsU0xsdjZxa0xTRGVJ?=
- =?utf-8?B?THhzZzdUZ0FDK3pjaWpIWnY1ditRdEFZejllL1VTTW91c0k1UWRyN0VMTFdW?=
- =?utf-8?B?ekNycU1ibWg0SnE4VzE5bTUvY0M2Qk5iZk95SG54OVJIblh1a2hOV2NxT25U?=
- =?utf-8?B?UzI4ZGdsb0krK09kaEhLZ20vVURqeGRhMERteDZjQVNjTCsxVjBZb3pXbUNh?=
- =?utf-8?B?Ny9VaDgvaUNTNmk4M0NPMDZ2UmdNYVNBQUdLMEd4STg2REZaQkloVk03dUg0?=
- =?utf-8?B?amdIeFc2N0ZRbHFkK1NZZEhidmpUZUJrRm1QcjB1NXZYbFd5MGFHV252dSsz?=
- =?utf-8?B?RUJkMDAwNC9FM3lleXlmOGllbm1wbHhQM0pxQlh2T005RytVclRpekx4c2lL?=
- =?utf-8?B?SmVTWTdUYmtBallEZWhHWlRlOEptMkhTbkhWTUNqRkZQL2RiU2NnUmdTU09l?=
- =?utf-8?B?b2piK2JzQjYyYzZYM0o2em1ibmF3WWhHbXlDVVdtTUhibUVibk93UzJyNFF1?=
- =?utf-8?B?OEEzLzBSZUJ4bmIzRUJjSmtUbkEvSGxlOXQyczg0Z24rdloxd1J4VXJyU3hX?=
- =?utf-8?B?WjYzMjN4SUJhSk5tSlhmbU1YcjBFdGo1eTZMczJuTlFKQkVFWWhGZXlCYkJ1?=
- =?utf-8?B?SGpVTkFsZWlKVmtnVjEza0FqNmhxU3BrS2M0Zi9EdEQwMnIxSS85V0JLVkMx?=
- =?utf-8?B?Q3c4WDBXSVYwc1drNzlva2huM1hneURLbkt3bCttZklRUVo1YXo3MlU1bDBG?=
- =?utf-8?B?aTRHdmRMZzFtZy8zUWYzMGx3eFlreWw2aDVkU3BMdjdVaks2UHNENVEwcnll?=
- =?utf-8?Q?emT4qp3hrmApUPLChn37LyDwkssGSCxA?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OHlsMEp5YjdtcitiaGRpUnBtRG53K2VxelhVYkE2OFp0UEVmWEJuNGhtZkVk?=
- =?utf-8?B?dXJsSEN5Y0c5RWJNMlpQSFkrRnR0ZnJnUEI0TVovQ2tmb0pTZDFzQVorUHlE?=
- =?utf-8?B?NVBwam1BQWYvN1orME5LbUxZcFYzb1AxU2hmU1VDUWRBWWszaGt6dWxXaVNl?=
- =?utf-8?B?TmVtbjdzSzI0OVczM3R3MWNaa3N4S2ZORXhUdkFoVllDYmplbkdqak9ad083?=
- =?utf-8?B?SnVHSnQzWDlkTVRhbGY5UGFiQUhaMWl6RHBwaHRkb21weTNKVFNkcnQvOWJS?=
- =?utf-8?B?ZnBybCthT2tUQXlDZzZLMGN4K3JxZ3VjdkJ5WmRqT3d0bEltb0kxMHJnU2xF?=
- =?utf-8?B?VjJmbU4vL3NYdE92OFA0a3V1UHJneDhmeElYSFlWanZNa0lkNUtXZzhXSTM1?=
- =?utf-8?B?M0lmVjRQcWFtRlpFdFpzMFE0OXRzcFc0aG5GTlVObS92dzNPcDlRcXM3dzNu?=
- =?utf-8?B?MzdtN3F5RWJHNk9iK1BJZkpNT2JXRk5YOEdYWnVtRzg2V0s5a01vNDZ2K1JX?=
- =?utf-8?B?eDdvU25nMmw2TmV6TFpkdHBKQlA3TklobzJIRnMxWmltbjBnUWdZRDgyNUIr?=
- =?utf-8?B?Q3hnOHo2M0x2N1dmYjVDajlPVWpaRnJpYVJMRVFrUWhHY1gzbkdzT2lieWlV?=
- =?utf-8?B?MHRkamJ2MGsxVEY1SDhvS05MdVd1TGd1eEdyb1VnTVI2cWIrMlhlMzMvSEoz?=
- =?utf-8?B?UkVKcVdJdzU1TWFmZzQwd0FvYVorSG5vc1J6NWEvWWg4SWlhSWx0dkVFSXZ2?=
- =?utf-8?B?YSt0bm96Q29WVmp5dVNVQlJnVXY4aDluNkVDODJUUUloa1QwbTFwanBmNXBs?=
- =?utf-8?B?aGJ4dkl0L1FDQmlrMHlFQk44MWlRTjFhVmpUVDdsWVBYMGl1NHJuTjlpeHh0?=
- =?utf-8?B?QXJqcE1wb1U4T0FxbTlVRVRKVzVHZ0NCK1lPa2l6eVREc1NjK0F0V21VdTNS?=
- =?utf-8?B?NjFzMHllSEREY0k5WFcwbGpRNjJLdlRMRG1vR3hlU2ZrelovZ3hjTFRYcHNa?=
- =?utf-8?B?aHVWdCtoV0xtWFNDbXpoakY2WlE1cXNTRkVIbDFMMndGUmhuclY3ZVZWaXMw?=
- =?utf-8?B?Vnozc2ZnbnRld1VKNXMxUE5md3Z0VUM2eDhSWXBnc2VPMEZTblR0cVJuOGlE?=
- =?utf-8?B?WEtTZ2x4SWJ5RDBpMUhwVTdRNDd4Yk42alZzclR1VStiR3lVSHJpU1BvMkxX?=
- =?utf-8?B?Umo3TnZGR1QyWlRYalN3c2NQN3B0ZGxyRFpRZnVEV3AxQnVKLzZ6MzQyQXhI?=
- =?utf-8?B?WmVGVCtJZXR0Uzk4SEdOTlJHeGJ1dVJMNVpWUnhyeUlKWkRmT25qdWFBei9q?=
- =?utf-8?B?OUcyRHJOZ0ZpdXFHUXR4REdYbHBJQ3JuRlNIMldBemFGbWxlWjhQVjQ5RExF?=
- =?utf-8?B?MUZEQ3N6RWdoZ2JoNG1zaFYybDlCTVptL1U2aWV4MHNBMG9WaHArNzMvbFNO?=
- =?utf-8?B?bSs0M21DRjV6Qzg2V2tobldweEFTVS9hR2VlU0l6MW1qTkV5K3RVVnEvMm40?=
- =?utf-8?B?VGh1RUVnR3pUdXVPT1QxSmRqNE9sSUNPNkFqekM5ZHg4VW90QUh1citmeDBz?=
- =?utf-8?B?Y2E3K3pHRzJUcjhWZkFvL2FkZkpCelJYaDl1MXUrNzhmMWRJdHE5aTJIQStD?=
- =?utf-8?B?TDJ1eEVxSDR3cDlJK1BzdkwwYW1NRDM3cXpYcm1CczkzZlBkQnVvK2lJbElw?=
- =?utf-8?B?ZnlTRTEzeGxPNmQ5M2hua3RQcWgyZnFHdUlsM04wZEFCTkttK2txZ0RMK0pv?=
- =?utf-8?B?Q1FYWlJISi9Ba3A4bFJUM1kzeHByUCtmOVNWenZyV2ZxZ2dSRjVjRk0wc3Rq?=
- =?utf-8?B?RmpPZHlBRlhYaFBmMk1zRkRKb0ZoSmYzUi9jM2tCS0FLN1hhL2FTOTE3K2JG?=
- =?utf-8?B?aVVmdXN3eU4rQ0NJYnc5bWwwY3diRnYzZEQ0Wno4a2lBOTRnR1YzRlBJbHY4?=
- =?utf-8?B?YzR4Mm5OS0tEd0RqeVpNRVdsbG0ram93R0RHTVhONjlpMDV1M3kvazZ6eVNW?=
- =?utf-8?B?YVNxeDNyN0xNcXQzTVhXY0ZNdm5FSUxUSjNhblNqeVBCTlhnMnFFVVl1R1Rk?=
- =?utf-8?B?dUVWTU9HSDdDV3B1cFA1SWpnaXV1WmxlaE1qOUUyWVdldFhqNGZITzBDdVNW?=
- =?utf-8?B?TjIrQnY2aFdUY011UmYvOThsZXhEZHNIUUgzZ04zYUJCV0JNYU5KU0lTOHlp?=
- =?utf-8?Q?OVAyEAaHO5VWvEy9XQlMjqA/jfF0brA/Q1F0xGiF+ezb?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ffeb1dab-aac0-4b91-c7cb-08ddfa565afe
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 04:04:56.0084
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TZaFOhO5rpMv8fSF7pHk1rG+DiZ6qhd6yifCu+6ezjpUHEERIxKkRA9ftUy/cQDg7OIsSooBg3XZBbjE5gS8jA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8150
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] KVM: SVM: Re-load current, not host, TSC_AUX on
+ #VMEXIT from SEV-ES guest
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hou Wenlong <houwenlong.hwl@antgroup.com>,
+ Lai Jiangshan <jiangshan.ljs@antgroup.com>
+References: <20250919213806.1582673-1-seanjc@google.com>
+ <20250919213806.1582673-3-seanjc@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250919213806.1582673-3-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 9/23/25 12:09, Zi Yan wrote:
-> On 22 Sep 2025, at 21:50, Balbir Singh wrote:
+On 9/20/2025 5:38 AM, Sean Christopherson wrote:
+> From: Hou Wenlong <houwenlong.hwl@antgroup.com>
 > 
->> On 9/23/25 07:09, Zi Yan wrote:
->>> On 16 Sep 2025, at 8:21, Balbir Singh wrote:
->>>
->>>> Add support for splitting device-private THP folios, enabling fallback
->>>> to smaller page sizes when large page allocation or migration fails.
->>>>
->>>> Key changes:
->>>> - split_huge_pmd(): Handle device-private PMD entries during splitting
->>>> - Preserve RMAP_EXCLUSIVE semantics for anonymous exclusive folios
->>>> - Skip RMP_USE_SHARED_ZEROPAGE for device-private entries as they
->>>>   don't support shared zero page semantics
->>>>
->>>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
->>>> Cc: David Hildenbrand <david@redhat.com>
->>>> Cc: Zi Yan <ziy@nvidia.com>
->>>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
->>>> Cc: Rakie Kim <rakie.kim@sk.com>
->>>> Cc: Byungchul Park <byungchul@sk.com>
->>>> Cc: Gregory Price <gourry@gourry.net>
->>>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
->>>> Cc: Alistair Popple <apopple@nvidia.com>
->>>> Cc: Oscar Salvador <osalvador@suse.de>
->>>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->>>> Cc: Nico Pache <npache@redhat.com>
->>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>>> Cc: Dev Jain <dev.jain@arm.com>
->>>> Cc: Barry Song <baohua@kernel.org>
->>>> Cc: Lyude Paul <lyude@redhat.com>
->>>> Cc: Danilo Krummrich <dakr@kernel.org>
->>>> Cc: David Airlie <airlied@gmail.com>
->>>> Cc: Simona Vetter <simona@ffwll.ch>
->>>> Cc: Ralph Campbell <rcampbell@nvidia.com>
->>>> Cc: Mika Penttilä <mpenttil@redhat.com>
->>>> Cc: Matthew Brost <matthew.brost@intel.com>
->>>> Cc: Francois Dugast <francois.dugast@intel.com>
->>>> ---
->>>>  mm/huge_memory.c | 138 +++++++++++++++++++++++++++++++++--------------
->>>>  1 file changed, 98 insertions(+), 40 deletions(-)
->>>>
->>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>> index 78166db72f4d..5291ee155a02 100644
->>>> --- a/mm/huge_memory.c
->>>> +++ b/mm/huge_memory.c
->>>> @@ -2872,16 +2872,18 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
->>>>  	struct page *page;
->>>>  	pgtable_t pgtable;
->>>>  	pmd_t old_pmd, _pmd;
->>>> -	bool young, write, soft_dirty, pmd_migration = false, uffd_wp = false;
->>>> -	bool anon_exclusive = false, dirty = false;
->>>> +	bool soft_dirty, uffd_wp = false, young = false, write = false;
->>>> +	bool anon_exclusive = false, dirty = false, present = false;
->>>>  	unsigned long addr;
->>>>  	pte_t *pte;
->>>>  	int i;
->>>> +	swp_entry_t swp_entry;
->>>>
->>>>  	VM_BUG_ON(haddr & ~HPAGE_PMD_MASK);
->>>>  	VM_BUG_ON_VMA(vma->vm_start > haddr, vma);
->>>>  	VM_BUG_ON_VMA(vma->vm_end < haddr + HPAGE_PMD_SIZE, vma);
->>>> -	VM_BUG_ON(!is_pmd_migration_entry(*pmd) && !pmd_trans_huge(*pmd));
->>>> +
->>>> +	VM_WARN_ON(!is_pmd_non_present_folio_entry(*pmd) && !pmd_trans_huge(*pmd));
->>>>
->>>>  	count_vm_event(THP_SPLIT_PMD);
->>>>
->>>> @@ -2929,20 +2931,47 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
->>>>  		return __split_huge_zero_page_pmd(vma, haddr, pmd);
->>>>  	}
->>>>
->>>> -	pmd_migration = is_pmd_migration_entry(*pmd);
->>>> -	if (unlikely(pmd_migration)) {
->>>> -		swp_entry_t entry;
->>>>
->>>> +	present = pmd_present(*pmd);
->>>> +	if (is_pmd_migration_entry(*pmd)) {
->>>>  		old_pmd = *pmd;
->>>> -		entry = pmd_to_swp_entry(old_pmd);
->>>> -		page = pfn_swap_entry_to_page(entry);
->>>> -		write = is_writable_migration_entry(entry);
->>>> +		swp_entry = pmd_to_swp_entry(old_pmd);
->>>> +		page = pfn_swap_entry_to_page(swp_entry);
->>>> +		folio = page_folio(page);
->>>> +
->>>> +		soft_dirty = pmd_swp_soft_dirty(old_pmd);
->>>> +		uffd_wp = pmd_swp_uffd_wp(old_pmd);
->>>> +
->>>> +		write = is_writable_migration_entry(swp_entry);
->>>>  		if (PageAnon(page))
->>>> -			anon_exclusive = is_readable_exclusive_migration_entry(entry);
->>>> -		young = is_migration_entry_young(entry);
->>>> -		dirty = is_migration_entry_dirty(entry);
->>>> +			anon_exclusive = is_readable_exclusive_migration_entry(swp_entry);
->>>> +		young = is_migration_entry_young(swp_entry);
->>>> +		dirty = is_migration_entry_dirty(swp_entry);
->>>> +	} else if (is_pmd_device_private_entry(*pmd)) {
->>>> +		old_pmd = *pmd;
->>>> +		swp_entry = pmd_to_swp_entry(old_pmd);
->>>> +		page = pfn_swap_entry_to_page(swp_entry);
->>>> +		folio = page_folio(page);
->>>> +
->>>>  		soft_dirty = pmd_swp_soft_dirty(old_pmd);
->>>>  		uffd_wp = pmd_swp_uffd_wp(old_pmd);
->>>> +
->>>> +		write = is_writable_device_private_entry(swp_entry);
->>>> +		anon_exclusive = PageAnonExclusive(page);
->>>> +
->>>> +		if (freeze && anon_exclusive &&
->>>> +		    folio_try_share_anon_rmap_pmd(folio, page))
->>>> +			freeze = false;
->>>
->>> Why is it OK to change the freeze request? OK, it is replicating
->>> the code for present PMD folios. Either add a comment to point
->>> to the explanation in the comment below, or move
->>> “if (is_pmd_device_private_entry(*pmd))“ branch in the else below
->>> to deduplicate this code.
->>
->> Similar to the code for present pages, ideally folio_try_share_anon_rmap_pmd()
->> should never fail.
+> Prior to running an SEV-ES guest, set TSC_AUX in the host save area to the
+> current value in hardware, as tracked by the user return infrastructure,
+> instead of always loading the host's desired value for the CPU.  If the
+> pCPU is also running a non-SEV-ES vCPU, loading the host's value on #VMEXIT
+> could clobber the other vCPU's value, e.g. if the SEV-ES vCPU preempted
+> the non-SEV-ES vCPU, in which case KVM expects the other vCPU's TSC_AUX
+> value to be resident in hardware.
 > 
-> anon_exclusive = PageAnonExclusive(page);
-> if (freeze && anon_exclusive &&
->     folio_try_share_anon_rmap_pmd(folio, page))
->         freeze = false;
-> if (!freeze) {
->         rmap_t rmap_flags = RMAP_NONE;
+> Note, unlike TDX, which blindly _zeroes_ TSC_AUX on TD-Exit, SEV-ES CPUs
+> can load an arbitrary value.  Stuff the current value in the host save
+> area instead of refreshing the user return cache so that KVM doesn't need
+> to track whether or not the vCPU actually enterred the guest and thus
+> loaded TSC_AUX from the host save area.
 > 
->         folio_ref_add(folio, HPAGE_PMD_NR - 1);
->         if (anon_exclusive)
->                 rmap_flags |= RMAP_EXCLUSIVE;
->         folio_add_anon_rmap_ptes(folio, page, HPAGE_PMD_NR,
->                                     vma, haddr, rmap_flags);
-> }
-> 
-> are the same for both device private and present. Can it be deduplicated
-> by doing below?
-> 
-> if (is_pmd_migration_entry(*pmd)) {
-> ...
-> } else {
-> 	if (is_pmd_device_private_entry(*pmd)) {
-> 		...
-> 	} else if (pmd_present()) {
-> 		...
-> 	}
-> 
-> 	/* the above code */
-> }
-> 
-> If not, at least adding a comment in the device private copy of the code
-> pointing to the present copy's comment.
-> 
->>
->>>
->>>> +		if (!freeze) {
->>>> +			rmap_t rmap_flags = RMAP_NONE;
->>>> +
->>>> +			folio_ref_add(folio, HPAGE_PMD_NR - 1);
->>>> +			if (anon_exclusive)
->>>> +				rmap_flags |= RMAP_EXCLUSIVE;
->>>> +
->>>> +			folio_add_anon_rmap_ptes(folio, page, HPAGE_PMD_NR,
->>>> +						 vma, haddr, rmap_flags);
->>>> +		}
->>>>  	} else {
->>>>  		/*
->>>>  		 * Up to this point the pmd is present and huge and userland has
->>>> @@ -3026,32 +3055,57 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
->>>>  	 * Note that NUMA hinting access restrictions are not transferred to
->>>>  	 * avoid any possibility of altering permissions across VMAs.
->>>>  	 */
->>>> -	if (freeze || pmd_migration) {
->>>> -		for (i = 0, addr = haddr; i < HPAGE_PMD_NR; i++, addr += PAGE_SIZE) {
->>>> -			pte_t entry;
->>>> -			swp_entry_t swp_entry;
->>>> -
->>>> -			if (write)
->>>> -				swp_entry = make_writable_migration_entry(
->>>> -							page_to_pfn(page + i));
->>>> -			else if (anon_exclusive)
->>>> -				swp_entry = make_readable_exclusive_migration_entry(
->>>> -							page_to_pfn(page + i));
->>>> -			else
->>>> -				swp_entry = make_readable_migration_entry(
->>>> -							page_to_pfn(page + i));
->>>> -			if (young)
->>>> -				swp_entry = make_migration_entry_young(swp_entry);
->>>> -			if (dirty)
->>>> -				swp_entry = make_migration_entry_dirty(swp_entry);
->>>> -			entry = swp_entry_to_pte(swp_entry);
->>>> -			if (soft_dirty)
->>>> -				entry = pte_swp_mksoft_dirty(entry);
->>>> -			if (uffd_wp)
->>>> -				entry = pte_swp_mkuffd_wp(entry);
->>>> +	if (freeze || !present) {
->>>> +		pte_t entry;
->>>>
->>>> -			VM_WARN_ON(!pte_none(ptep_get(pte + i)));
->>>> -			set_pte_at(mm, addr, pte + i, entry);
->>>> +		if (freeze || is_migration_entry(swp_entry)) {
->>>>
->>> <snip>
->>>> +		} else {
->>> <snip>
->>>>  		}
->>>>  	} else {
->>>>  		pte_t entry;
->>>
->>> David already pointed this out in v5. It can be done such as:
->>>
->>> if (freeze || pmd_migration) {
->>> ...
->>> } else if (is_pmd_device_private_entry(old_pmd)) {
->>> ...
->>
->> No.. freeze can be true for device private entries as well
-> 
-> When freeze is true, migration entry is installed in place of
-> device private entry, since the "if (freeze || pmd_migration)"
-> branch is taken. This proposal is same as your code. What is
-> the difference?
-> 
+> Fixes: 916e3e5f26ab ("KVM: SVM: Do not use user return MSR support for virtualized TSC_AUX")
+> Cc: stable@vger.kernel.org
+> Suggested-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
+> Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
+> [sean: handle the SEV-ES case in sev_es_prepare_switch_to_guest()]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-I read the else if incorrectly, I'll simplify
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
->>
->>> } else {
->>> /* for present, non freeze case */
->>> }
->>>
->>>> @@ -3076,7 +3130,7 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
->>>>  	}
->>>>  	pte_unmap(pte);
->>>>
->>>> -	if (!pmd_migration)
->>>> +	if (!is_pmd_migration_entry(*pmd))
->>>>  		folio_remove_rmap_pmd(folio, page, vma);
->>>>  	if (freeze)
->>>>  		put_page(page);
->>>> @@ -3089,7 +3143,7 @@ void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long address,
->>>>  			   pmd_t *pmd, bool freeze)
->>>>  {
->>>>  	VM_WARN_ON_ONCE(!IS_ALIGNED(address, HPAGE_PMD_SIZE));
->>>> -	if (pmd_trans_huge(*pmd) || is_pmd_migration_entry(*pmd))
->>>> +	if (pmd_trans_huge(*pmd) || is_pmd_non_present_folio_entry(*pmd))
->>>>  		__split_huge_pmd_locked(vma, pmd, address, freeze);
->>>>  }
->>>>
->>>> @@ -3268,6 +3322,9 @@ static void lru_add_split_folio(struct folio *folio, struct folio *new_folio,
->>>>  	VM_BUG_ON_FOLIO(folio_test_lru(new_folio), folio);
->>>>  	lockdep_assert_held(&lruvec->lru_lock);
->>>>
->>>> +	if (folio_is_device_private(folio))
->>>> +		return;
->>>> +
->>>>  	if (list) {
->>>>  		/* page reclaim is reclaiming a huge page */
->>>>  		VM_WARN_ON(folio_test_lru(folio));
->>>> @@ -3885,8 +3942,9 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
->>>>  	if (nr_shmem_dropped)
->>>>  		shmem_uncharge(mapping->host, nr_shmem_dropped);
->>>>
->>>> -	if (!ret && is_anon)
->>>> +	if (!ret && is_anon && !folio_is_device_private(folio))
->>>>  		remap_flags = RMP_USE_SHARED_ZEROPAGE;
->>>> +
->>>
->>> You should remove this and add
->>>
->>> if (folio_is_device_private(folio))
->>> 	return false;
->>>
->>> in try_to_map_unused_to_zeropage(). Otherwise, no one would know
->>> device private folios need to be excluded from mapping unused to
->>> zero page.
->>>
->>
->> I had that upto v2 and then David asked me to remove it. FYI, this
->> is the only call site for RMP_USE_SHARED_ZEROPAGE
+one nit below,
+
+> ---
+>   arch/x86/kvm/svm/sev.c | 14 +++++++++++++-
+>   arch/x86/kvm/svm/svm.c | 26 +++++++-------------------
+>   arch/x86/kvm/svm/svm.h |  4 +++-
+>   3 files changed, 23 insertions(+), 21 deletions(-)
 > 
-> Can you provide a link?
-> 
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index cce48fff2e6c..95767b9d0d55 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -4664,7 +4664,9 @@ int sev_vcpu_create(struct kvm_vcpu *vcpu)
+>   	return 0;
+>   }
+>   
+> -void sev_es_prepare_switch_to_guest(struct vcpu_svm *svm, struct sev_es_save_area *hostsa)
+> +void sev_es_prepare_switch_to_guest(struct vcpu_svm *svm,
+> +				    struct sev_es_save_area *hostsa,
+> +				    int tsc_aux_uret_slot)
 
-Please see https://lore.kernel.org/linux-mm/20250306044239.3874247-3-balbirs@nvidia.com/T/
-
-> Even if this is the only call site, there is no guarantee that
-> there will be none in the future. I am not sure why we want caller
-> to handle this special case. Who is going to tell the next user
-> of RMP_USE_SHARED_ZEROPAGE or caller to try_to_map_unused_to_zeropage()
-> that device private is incompatible with them?
-> 
-
-I don't disagree, but the question was why are device private pages even making
-it to try_to_map_unused_to_zeropage()>>
->>>>  	remap_page(folio, 1 << order, remap_flags);
->>>>
->>>>  	/*
->>>> -- 
->>>> 2.50.1
->>>
->>>
->>
->> Thanks for the review
->> Balbir
-
-Thanks,
-Balbir
+Passing the tsc_aux_uret_slot as paramter looks a bit ugly, how about 
+externing it?
 
