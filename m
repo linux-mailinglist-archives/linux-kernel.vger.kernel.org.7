@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-829606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32368B976F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:01:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495F3B97706
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 494AF1B22A5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:02:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A06716BD6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B29230C34A;
-	Tue, 23 Sep 2025 20:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8650D30DD03;
+	Tue, 23 Sep 2025 20:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B73wVImF"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c4jOnM9Q"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F97309F0E
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 20:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE1E30C61C
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 20:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758657655; cv=none; b=l488+v3DMjVOVHMVM96xazYn3QjMxBjbQ6KhDQ+qQq/6ors1ZW3HIpPaRwboP7LI/fCBenuVAx3jMupdi0WrNrhc3xGKsFx63Ut8kjQBGkXgARkVyMPJnqwNj9zmydda5rFrgzE1JoFndHNQsESXIUmZ8gT5V8rf9nS0LjgrDwk=
+	t=1758657658; cv=none; b=bf0Zx9GLn/RuASr+6fl3NTDjlJ/7PtRnL/BtR8uYw/IhhTWC46AUOJeQbq/gmj199T3eHp1fuY0Iq6Ojjy3AGMLDctggaJII2m9WO0IWLrdlk4bE3l2veTJQhGvE5zewd9/FCc4a92SJ5/hs5ZuSer3RbezUZGRM5KvoqoqMY8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758657655; c=relaxed/simple;
-	bh=C8XXts6akLb11nM2mMQrQ1mX2Cb7JSe8mH+9EyknL/E=;
+	s=arc-20240116; t=1758657658; c=relaxed/simple;
+	bh=za6eoflza+eI0daPO52VrArrXQQh9oKqLFL2yU7G4qY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YoA7SaEVqSmhX6sIWRPedX8fWNFE/QpDzo34qqZNQ/F7Ye4NO9Bsd/QM05+TcOse34o5fVdDnNiSU8WMR2r0VI4ndAEucv7eb46ZSgZZfKzrWONAdG7VVtKida1h7WODFZi3SjK+Jf5A5SN1vLARr4zlG/63XfQ74Xv+uCk5KaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B73wVImF; arc=none smtp.client-ip=209.85.218.41
+	 MIME-Version; b=Zm6p8CfojwXez2r1shtwlqfnRt8NDsMa1WuBMrTZZFtRoaXqpAIT05LyBlNJJ/zDuiVcgs4WS2sqTr0q3K8Rgji1zg+nMEHb3/OtePkhj8s5sPcJpPCZTlsJI8xDbI9TLECq5zd2s+i9F7pMZO4dI40r7eu2av9nNk25x+mO9uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c4jOnM9Q; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b2a159bcd94so57738266b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:00:53 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b2a1a166265so49778766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:00:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758657652; x=1759262452; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758657656; x=1759262456; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xFnHRlaDkZFQz8z/nxD9a5/SArA8MCeQHjKgdaq4v7Q=;
-        b=B73wVImFx1/+bpOdlPvGQFEHw3yidTfo/uteXEpzUyPoDoqJO5G37eqXhHrdb+eNJ/
-         8SburhE9p0/e34iNF29NQVr0H5ziQ2ov5Cqypk2naHOqWHHibdrLLEbB2I6oxaUMDjsC
-         p2obl+iQhZCLZ0ZSP4iPXETSCYoj6Gl581BO0L1sG/Q/KAjIGMLB5M6VOOEIWh8hj4e9
-         fDVVwTUmI7yFrtg29oXPGlr4HY1V9/xa4weclP5c+lS+bgoo+5buo+LKZ04Qgl/bnCfx
-         MEi0A056FjNTGAfltLoSOdXZKBwhqlYQcM80mMoPsB4/sus4bqHQbknvp+Qbnp9mMkv0
-         WqvQ==
+        bh=jvM5EG3LMIQuZITndtrZP0Eki684ON50PFEBay054lA=;
+        b=c4jOnM9QEkWDqPrR+CsDuHhhX2WaAYDyMzb0l2y9LULpcKUAItkDpwx5lt6sjg4kE+
+         UyPAFDmu4aR2C5snhubvV28QfEVemUgyCWRvisVCCCtw36vDRb/fgyIausDx0hNS7+xB
+         57jqpD25HqdsXSXljGRYdGUfnjEXAFbQ7tRukTAtUzlFgb7gjcHlLxIdbLmijBrHhplW
+         QXCoglWLdYwq97XzTljwFvTr1dlmJZse6/8/FGPS3aNtVUUL+cq8i55XS+mWTpYQcdLZ
+         suuPqkJnieST71cj0UPW5T8J/XmqrgQFIarUYWIDiIAHpbJN4c6bRBxXmyh+4IEipQrM
+         Z5Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758657652; x=1759262452;
+        d=1e100.net; s=20230601; t=1758657656; x=1759262456;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xFnHRlaDkZFQz8z/nxD9a5/SArA8MCeQHjKgdaq4v7Q=;
-        b=Vl8U0g5gACDyeofrSSNI8tUCXMX3Nc2+ikRjEhYpPMyvDqy8cjxpdjMmvWs6hBc39a
-         vVZupOho7HVNQ593Pu57fXrn+k1NFrIHVi08jCLJEdXGlUyVznmMHtG4DFhPBH2VtrAZ
-         KgCnjl3VnLpdgTkrpPdCw/wVC/XM9urYu1Ak5moOgu1AlABoV7fNbfgd/fcVzstPJ3mo
-         ph5f97q2HpT8nFywMNydKYN3iA4E7ZGCCRFdwzTTcI7VXgEHTfNtG3fSBuTNyDd12tgC
-         VUd3dqyPEhjbP2SGlpEdPp6KEze2UrrK5460OOMmNwtjIiKBE2LAX8KWj9oXsI7Zt8Tp
-         nhsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxiWukkUPHhyaW3L7AB9TBslrTOijUXAR162Dkr/I41xYqZbOx/ylXlJzZbk2wLyO72wjWAUg3l4k2P20=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo1Ufa1g5g0M19XrknPugAaptlhNqwH6aQWzPPG86EMuzlVJmm
-	dRhZ6ELqL/M3aqnS8p5vi/dxiFTFn10Tiz9wXmOdCZuuQYmtTAyRkxTu
-X-Gm-Gg: ASbGncvYnnwnDmuBHPcUg1xqx6cz2qFzytykhwvcAF6/g3luun4C2pIW7vRn2BxYAln
-	uaivX3jjyJl7M9feet8jdrf1PqkoNBkaNIRc1mI7lVOGtQpT/3BxyRDjgYssMJQ5U5BUY1U41ZN
-	NqfMkWHovwn68H2w9ir2lPMVnibJ3Zn76ywBZcTD56sTo3l/D8S5n6jrdS8gcVOFYeAsKjIJWBL
-	2y5k4dZVNw0Y5WKQU3dR1kAUYWb3n+vzu1isxmdQLWedYrl4Ly0xT1NUrrlIVogzqgQaelSnD3L
-	pYdyUD+uBCNqXeSYe35crgtMdGQ0TTjQNaa3vj2fEjMgXkWiK2UyMVUJYv0K7zAiFlyI7GMX7ro
-	JI6v4UtBfGJ01Om73xg0PlSAS
-X-Google-Smtp-Source: AGHT+IGhKcZdV0r8YP2ON3pdAtvi9EACajla8mdLJY/F2fjwqzyOEqYb9k1Ezx6pq7ms/ARYTztc8Q==
-X-Received: by 2002:a17:907:d8f:b0:b04:2d89:5d3a with SMTP id a640c23a62f3a-b302b80a6femr234862766b.7.1758657651892;
-        Tue, 23 Sep 2025 13:00:51 -0700 (PDT)
+        bh=jvM5EG3LMIQuZITndtrZP0Eki684ON50PFEBay054lA=;
+        b=lgCO2IgC8eXMHrz9hwy7fHuRhb6WZ74NPU9aAFtoD/CvDLmfy/MzWJhFY+iPF5mNQK
+         9lhmopMY9h1Ha5LyLSa7VujauqjlDW8ROTeNAEoSq1bUg3koqpabjJOvhMvPeoknpRL3
+         AC+YrX1iazuGLI07lXzl6TVTDd3CKUUw5n6GNqQYzZZbAJXFjX/6Sp0K8eyjSYiYHnj3
+         /P3Xk/2mbw0isg502xquTmRw9qX3lJUkHx1CmP/W95wRDjzZ56Q4rIadaKGXTUGhl31V
+         pr1Qj8QfbLWm0p8hIWTrxfmm3nKnYs9KcdW7aPbFTR7zk+KWWpnIUhHS9mSuIDLUZDba
+         C8Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCWP6PhenimrJrxYv0FHMv/J/ZeADJSztOFFb7yNVuDO7AnfWgvtANJ1HOlQ9MK5CB1eYK34KOt+P88rKIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbUPE0HAJRMuhEX/Pp+YJJRCmhVfgQ/OEAV5yXoRDuGTIytGzq
+	XzIgp+iBTPLZ8CaZ1Ry4HSeLeSQvSvVJL+Xgae9/7qSSg0G0hdpGocI1
+X-Gm-Gg: ASbGnctCvNBEU6r3DOiG9chCxewhLPe0LF/uQxfj4j9asgEpweKvjdmxmqm8+Ui4kO2
+	eR80jeoOM5hwiCv72hcH5T6D56GpeQw0LGltjiks1SDRtxP8WZJbDN61Uq7Vm4TeCAp2eFRaoBj
+	tAOdcmjNFr6cqfvRbtUcMn/z+cyCnYq2bMAFye8kFjKqXq6lP3+1dY4ViidORrTD/0/Sl+OzOQ1
+	Sst5qz3236VFl1dq6LJHfD8m7bWoMyhvmZzpR05hofPDYkFB7Ka7tlbMD6e3CDlvqKdgE8YA4qO
+	MgHvWZOr0pSwiiVoQ3ciI26LuoBi3ncL5QNthohxEGNXucEo9uAoVItPuJ1kCETraRuP9qOQiDG
+	Uyil2O3hfGGH6WZn1sFUlm3Z0
+X-Google-Smtp-Source: AGHT+IFnbqnzDpvcF1npAo3gJlRiN0aWJNOZlV40ujMaGftot7QGowUdecTibpSbqF5TWABjiIk+nA==
+X-Received: by 2002:a17:907:3f1b:b0:afe:88ac:ab9 with SMTP id a640c23a62f3a-b302c10a6acmr180708366b.9.1758657655543;
+        Tue, 23 Sep 2025 13:00:55 -0700 (PDT)
 Received: from bhk ([165.50.1.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b2ac72dbe92sm672074066b.111.2025.09.23.13.00.49
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b2ac72dbe92sm672074066b.111.2025.09.23.13.00.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 13:00:51 -0700 (PDT)
+        Tue, 23 Sep 2025 13:00:55 -0700 (PDT)
 From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
 To: davem@davemloft.net,
 	edumazet@google.com,
@@ -99,9 +99,9 @@ Cc: horms@kernel.org,
 	bpf@vger.kernel.org,
 	linux-kernel-mentees@lists.linuxfoundation.org,
 	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-Subject: [PATCH RFC 3/4] uapi: netdev: Add XDP RX queue index metadata flags
-Date: Tue, 23 Sep 2025 22:00:14 +0100
-Message-ID: <20250923210026.3870-4-mehdi.benhadjkhelifa@gmail.com>
+Subject: [PATCH RFC 4/4] net: veth: Implement RX queue index XDP hint
+Date: Tue, 23 Sep 2025 22:00:15 +0100
+Message-ID: <20250923210026.3870-5-mehdi.benhadjkhelifa@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250923210026.3870-1-mehdi.benhadjkhelifa@gmail.com>
 References: <20250923210026.3870-1-mehdi.benhadjkhelifa@gmail.com>
@@ -113,53 +113,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Added NETDEV_XDP_RX_METADATA_QUEUE_INDEX flag to both netdev.h files
-for the bpf_xdp_metadata_rx_queue_index() function.
+Implement xmo_rx_queue_index callback in veth driver
+to export queue_index for use in eBPF programs.
 
 Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
 ---
- include/uapi/linux/netdev.h       | 3 +++
- tools/include/uapi/linux/netdev.h | 3 +++
- 2 files changed, 6 insertions(+)
+ drivers/net/veth.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/include/uapi/linux/netdev.h b/include/uapi/linux/netdev.h
-index 48eb49aa03d4..59033a607c16 100644
---- a/include/uapi/linux/netdev.h
-+++ b/include/uapi/linux/netdev.h
-@@ -46,11 +46,14 @@ enum netdev_xdp_act {
-  *   hash via bpf_xdp_metadata_rx_hash().
-  * @NETDEV_XDP_RX_METADATA_VLAN_TAG: Device is capable of exposing receive
-  *   packet VLAN tag via bpf_xdp_metadata_rx_vlan_tag().
-+ * @NETDEV_XDP_RX_METADATA_QUEUE_INDEX: Device is capable of exposing receive HW
-+ *   queue index via bpf_xdp_metadata_rx_queue_index().
-  */
- enum netdev_xdp_rx_metadata {
- 	NETDEV_XDP_RX_METADATA_TIMESTAMP = 1,
- 	NETDEV_XDP_RX_METADATA_HASH = 2,
- 	NETDEV_XDP_RX_METADATA_VLAN_TAG = 4,
-+	NETDEV_XDP_RX_METADATA_QUEUE_INDEX = 8,
+diff --git a/drivers/net/veth.c b/drivers/net/veth.c
+index a3046142cb8e..be76dd292819 100644
+--- a/drivers/net/veth.c
++++ b/drivers/net/veth.c
+@@ -1692,6 +1692,17 @@ static int veth_xdp_rx_vlan_tag(const struct xdp_md *ctx, __be16 *vlan_proto,
+ 	return err;
+ }
+ 
++static int veth_xdp_rx_queue_index(const struct xdp_md *ctx, u32 *queue_index)
++{
++	const struct veth_xdp_buff *_ctx = (void *)ctx;
++
++	if (!_ctx->xdp.rxq)
++		return -ENODATA;
++
++	*queue_index = _ctx->xdp.rxq->queue_index;
++	return 0;
++}
++
+ static const struct net_device_ops veth_netdev_ops = {
+ 	.ndo_init            = veth_dev_init,
+ 	.ndo_open            = veth_open,
+@@ -1717,6 +1728,7 @@ static const struct xdp_metadata_ops veth_xdp_metadata_ops = {
+ 	.xmo_rx_timestamp		= veth_xdp_rx_timestamp,
+ 	.xmo_rx_hash			= veth_xdp_rx_hash,
+ 	.xmo_rx_vlan_tag		= veth_xdp_rx_vlan_tag,
++	.xmo_rx_queue_index		= veth_xdp_rx_queue_index,
  };
  
- /**
-diff --git a/tools/include/uapi/linux/netdev.h b/tools/include/uapi/linux/netdev.h
-index 48eb49aa03d4..59033a607c16 100644
---- a/tools/include/uapi/linux/netdev.h
-+++ b/tools/include/uapi/linux/netdev.h
-@@ -46,11 +46,14 @@ enum netdev_xdp_act {
-  *   hash via bpf_xdp_metadata_rx_hash().
-  * @NETDEV_XDP_RX_METADATA_VLAN_TAG: Device is capable of exposing receive
-  *   packet VLAN tag via bpf_xdp_metadata_rx_vlan_tag().
-+ * @NETDEV_XDP_RX_METADATA_QUEUE_INDEX: Device is capable of exposing receive HW
-+ *   queue index via bpf_xdp_metadata_rx_queue_index().
-  */
- enum netdev_xdp_rx_metadata {
- 	NETDEV_XDP_RX_METADATA_TIMESTAMP = 1,
- 	NETDEV_XDP_RX_METADATA_HASH = 2,
- 	NETDEV_XDP_RX_METADATA_VLAN_TAG = 4,
-+	NETDEV_XDP_RX_METADATA_QUEUE_INDEX = 8,
- };
- 
- /**
+ #define VETH_FEATURES (NETIF_F_SG | NETIF_F_FRAGLIST | NETIF_F_HW_CSUM | \
 -- 
 2.51.0
 
