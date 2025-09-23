@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-829518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67463B97417
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:57:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4550AB97423
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 605A019C5F2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:58:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EFE82A6FA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1D9301468;
-	Tue, 23 Sep 2025 18:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEA22FF141;
+	Tue, 23 Sep 2025 18:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ic+JDID6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eRXOFNzr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB0720A5C4;
-	Tue, 23 Sep 2025 18:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772B62FB084;
+	Tue, 23 Sep 2025 18:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758653859; cv=none; b=I6hIrS5zxLc3hUzLT3wxYdh6aVx+ICorBShY+VbxNWG0PaSdGN3eT0YoEBs1E3RF/s06WVdvxG2bx1gyEb5CoAsePKKHk0p4JI+b7pbrS+mcoMrNWeYcYCKWTvg5Boyx1RgujU9s4CAmV3DwgXYamLWH+M7dy6p93lp+e3PzgBU=
+	t=1758653880; cv=none; b=QJYw+Z2fA2fk4U4vkNpAOtuZqn38KbXXZ+DuraVfQetbfX16cO7K26WO/chy5WHLSyvFRI/oq6FSMnhm2CxWJLQTUPY4IyUqGXHooCYl553XJAsEnVfwBKphaXRP0eiNK5JAcSAKmf6FQOoM2F+q/aMWe8cbmYrW5XlMO/drYlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758653859; c=relaxed/simple;
-	bh=dNT5HGq+/wivsTM0xfWilLF/3cUEjidlwnClb+HJxQ8=;
+	s=arc-20240116; t=1758653880; c=relaxed/simple;
+	bh=DMHlHDxZJq8826pkA7imh+9YBvoNxSHcfIJNuXObSqc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m7Tj3FXj8Zq02lQg4TPd9gmT1sV46oXRO1BHuCjFotNshPGiN2io4iYCnep1JzW75di1GkO2i36GBkR5uXXiW1wDVXytFxITCh230ZmLSEgd/fOdGLciBuC68vJjOS57gDZdn1tYlTOlG1fUH9iuqgJ50NqVZklvrWHFEvKfEOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ic+JDID6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A6CDC4CEF5;
-	Tue, 23 Sep 2025 18:57:36 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=C4dpL8OayRMc2gBrHTUAmaFf9lB13g23PUUrudvLHKBzr3unzo6WDtqY5oANZakeCGaQ2xMKFi64+iuAarTZpLeABXxKklQQuS+vZUEpyV2g3ySVfBfvnKdgO8y/bTrUu164bZY4NDT9NEHdS2xTC8cOKLchw0zZDVCcd7onwXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eRXOFNzr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5461C4CEF5;
+	Tue, 23 Sep 2025 18:57:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758653858;
-	bh=dNT5HGq+/wivsTM0xfWilLF/3cUEjidlwnClb+HJxQ8=;
+	s=k20201202; t=1758653880;
+	bh=DMHlHDxZJq8826pkA7imh+9YBvoNxSHcfIJNuXObSqc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ic+JDID6e68RvSFNbqq0MF1glN9NUZtgi4VR7HtOWlB5eeQC3uQr7b/EE+x+OrjBb
-	 sHi7MdnhsRwwu2vnlp+CWXQIKSemlToG0yXjvPsxlURejCqYxWRkTT9Sd4FcBNR4ng
-	 7QGnqWX9n2wlHwr1lGWIInvNnSbGgPDBV+B8ZMbls4YnOWtSef9MBF6j31tZbjWouD
-	 nETuruRIrRQsgWLlwJhv3bq3MePvXjw7lcqD4qtmILCmrZWaRKQxgrM0zaTgIlBnlW
-	 9euBWUo2ML30KFyrUd6ZzllAfc+iL4hzixXFf1JeYwAHwpakZV4r7287WQDNjAzJxV
-	 fW2bFjNvYwtRw==
-Date: Tue, 23 Sep 2025 19:57:34 +0100
+	b=eRXOFNzrp5N0Q4F+50z5N7duXWW1Q7xJlSU1/9K0Fvrf3z2qc80HPuZFAWztjz2Ga
+	 WGjQj65UzeIZDEvGX3Um782irxwgJ/RmrQ7wLBlHmUuUtXArhk6JVOPZXVeFcKfbVF
+	 auZCfj72yv5OgMT4wPSxF+a0thmmnsRBsk0Oy9ru5stRk3LMUNGIq0mcpxJ26Ibu5o
+	 mWBnE4OKS6yKmdpOCbnikMK1VYaEDwIxPvcbZq4MGHyzu/sX03S4ahLkq+BR0rTQdY
+	 6qYd5GXMsXXTLWhLj9eAoDO7WrfHQbIvDJXt2c0Xx6YP8bT82YJYDyYc/Cp2+RJhJ4
+	 a/c9Wotu9t2Sg==
+Date: Tue, 23 Sep 2025 19:57:55 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Lakshay Piplani <lakshay.piplani@nxp.com>
-Cc: alexandre.belloni@bootlin.com, linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	pankit.garg@nxp.com, vikash.bansal@nxp.com, priyanka.jain@nxp.com,
-	shashank.rebbapragada@nxp.com
-Subject: Re: [PATCH v4 1/2] dt-bindings: rtc: Add pcf85053 support
-Message-ID: <20250923-capitol-easter-d0154d967522@spud>
-References: <20250923113441.555284-1-lakshay.piplani@nxp.com>
+To: Yuxi Wang <Yuxi.Wang@monolithicpower.com>
+Cc: corbet@lwn.net, linux@roeck-us.net, jdelvare@suse.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, wyx137120466@gmail.com,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: Add MPS mp5998
+Message-ID: <20250923-hydrant-donator-fa075f9a31b1@spud>
+References: <20250923090926.619-1-Yuxi.Wang@monolithicpower.com>
+ <20250923090926.619-2-Yuxi.Wang@monolithicpower.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,218 +58,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fY6x4SCrQh3vev97"
+	protocol="application/pgp-signature"; boundary="mby3ndUEBZNACaRs"
 Content-Disposition: inline
-In-Reply-To: <20250923113441.555284-1-lakshay.piplani@nxp.com>
+In-Reply-To: <20250923090926.619-2-Yuxi.Wang@monolithicpower.com>
 
 
---fY6x4SCrQh3vev97
+--mby3ndUEBZNACaRs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 23, 2025 at 05:04:40PM +0530, Lakshay Piplani wrote:
-> Add device tree bindings for NXP PCF85053 RTC chip.
->=20
-> Signed-off-by: Pankit Garg <pankit.garg@nxp.com>
-> Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
-> ---
-> V3 -> V4: Add dedicated nxp,pcf85053.yaml.
->           Remove entry from trivial-rtc.yaml.
-> V2 -> V3: Moved MAINTAINERS file changes to the driver patch
-> V1 -> V2: Handled dt-bindings by trivial-rtc.yaml
->=20
->  .../devicetree/bindings/rtc/nxp,pcf85053.yaml | 128 ++++++++++++++++++
->  1 file changed, 128 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rtc/nxp,pcf85053.ya=
-ml
->=20
-> diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf85053.yaml b/Do=
-cumentation/devicetree/bindings/rtc/nxp,pcf85053.yaml
-> new file mode 100644
-> index 000000000000..6b1c97358486
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/nxp,pcf85053.yaml
-> @@ -0,0 +1,128 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright 2025 NXP
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/nxp,pcf85053.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP PCF85053 Real Time Clock
-> +
-> +maintainers:
-> +  - Pankit Garg <pankit.garg@nxp.com>
-> +  - Lakshay Piplani <lakshay.piplani@nxp.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nxp,pcf85053
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  nxp,interface:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum: [ primary, secondary ]
-> +    description: |
-> +      Identifies this host's logical role in a multi-host topology for t=
-he
-> +      PCF85053 RTC. The device exposes a "TWO" ownership bit in the CTRL
-> +      register that gates which host may write time/alarm registers.
-> +        - "primary": Designated host that *may* claim write ownership (s=
-et
-> +          CTRL.TWO=3D1) **if** write-access is explicitly requested.
-> +        - "secondary": Peer host that writes only when CTRL.TWO=3D0 (def=
-ault).
-> +
-> +  nxp,write-access:
-> +    type: boolean
-> +    description: |
-> +      Request the driver to claim write ownership at probe time by setti=
-ng
-> +      CTRL.TWO=3D1. This property is only valid when nxp,interface=3D"pr=
-imary".
-> +      The driver will not modify any other CTRL bits (HF/DM/etc.) and wi=
-ll not
-> +      clear any status/interrupt flags at probe.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - nxp,interface
-> +
-> +additionalProperties: false
-> +
-> +# Schema constraints matching driver:
-> +# 1) If nxp,write-access is present, nxp,interface must be "primary".
-> +#    Rationale: only the primary may claim ownership; driver will set TW=
-O=3D1.
-> +# 2) If nxp,interface is "secondary", nxp,write-access must not be prese=
-nt.
-> +#    Rationale: secondary never claims ownership and cannot write CTRL/S=
-T/alarm.
-> +#
-> +# Practical effect:
-> +# - Primary without 'nxp,write-access'; primary is read only; secondary =
-may
-> +#   write time registers.
-> +# - Primary with 'nxp,write-access'; primary owns writes, secondary is r=
-ead only.
-> +allOf:
-> +  - $ref: rtc.yaml#
-> +  - oneOf:
-> +      # Case 1: primary with write-access
-> +      - required: [ "nxp,write-access" ]
-> +        properties:
-> +          nxp,interface:
-> +            const: primary
-> +
-> +      # Case 2: primary without write-access
-> +      - properties:
-> +          nxp,interface:
-> +            const: primary
-> +        not:
-> +          required: [ "nxp,write-access" ]
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Aren't case 1 and case 2 here redundant? All you need to do is block
-interface =3D=3D secondary when nxp,write-access is present, which your case
-3 should be able to be modified to do via
-
-if:
-  properties:
-    nxp,interface:
-      const: secondary
-then:
-  properties:
-   nxp,write-access: false
-
-I think your description for nxp,write-access gets the point across
-about when it can be used, and the additional commentary is not really
-helpful.
-
-> +
-> +      # Case 3: secondary (must not have write-access)
-> +      - properties:
-> +          nxp,interface:
-> +            const: secondary
-> +        not:
-> +          required: [ "nxp,write-access" ]
-> +
-> +examples:
-> +  # Single host example.
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <0>;
-> +
-> +      rtc@6f {
-> +        compatible =3D "nxp,pcf85053";
-> +        reg =3D <0x6f>;
-> +        nxp,interface =3D "primary";
-> +        nxp,write-access;
-> +        interrupt-parent =3D <&gpio2>;
-> +        interrupts =3D <3 IRQ_TYPE_EDGE_FALLING>;
-> +      };
-> +    };
-> +
-> +  # Dual-host example: one primary that claims writes; one secondary tha=
-t never claims writes.
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c0 {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <0>;
-> +
-> +      rtc@6f {
-> +        compatible =3D "nxp,pcf85053";
-> +        reg =3D <0x6f>;
-> +        nxp,interface =3D "primary";
-> +        nxp,write-access;
-> +        interrupt-parent =3D <&gpio2>;
-> +        interrupts =3D <3 IRQ_TYPE_EDGE_FALLING>;
-> +      };
-> +    };
-> +
-> +    i2c1 {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <0>;
-> +
-> +      rtc@6f {
-> +        compatible =3D "nxp,pcf85053";
-> +        reg =3D <0x6f>;
-> +        nxp,interface =3D "secondary";
-
-Maybe a silly question, but if you have a system that wants to have two
-pairs of RTCs, how would you determine which primary a secondary belongs
-to? I notice you have no link between these devices in dt so I am
-curious. Would it be better to eschew nxp,interface and have a phandle
-=66rom the secondary to the primary?
-
-I don't know anything about your use case or features, so maybe knowing
-the relationship just is not relevant at all, or it can be determined at
-runtime.
-
-Cheers,
-Conor.
-
---fY6x4SCrQh3vev97
+--mby3ndUEBZNACaRs
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNLtnQAKCRB4tDGHoIJi
-0mnSAQD99ZyMCIKJqP3jGlAt1GbM1KDBt6xcMzzGhUWkvkD3ZQEAuum2mONM/NVS
-CejFjUm4FFqZbWbWbNdTTwj5D8aZaA0=
-=mI9+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNLtswAKCRB4tDGHoIJi
+0sxnAPwJpa3kcsqUQv1xptuuHfh4u0wq8sEjxbb3cZ05crJyHAEAuNvKAau/ArEG
+8yOFrBFWCoRudNFCi2mGIXfmzwUM2As=
+=18a5
 -----END PGP SIGNATURE-----
 
---fY6x4SCrQh3vev97--
+--mby3ndUEBZNACaRs--
 
