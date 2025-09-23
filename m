@@ -1,210 +1,94 @@
-Return-Path: <linux-kernel+bounces-828721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448EFB95481
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:38:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9295BB9548F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C9D517CD11
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:38:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1969A2E3711
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867A5321263;
-	Tue, 23 Sep 2025 09:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA8A320CDF;
+	Tue, 23 Sep 2025 09:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlzQJ4Xa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xe+JWNLN"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF5E320A26
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE73E320CBF;
+	Tue, 23 Sep 2025 09:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758620300; cv=none; b=sTwZroVlGKgeCIWpO/WSxoBW+eeJBmtMlV/23PwKkz1toURu6ZVtF9j88iiXhyFILEdPVgjR3FRVwV1xfrUDb1HG3Ak8QOqnKMvigSZSRWpChhySO/0CtPDCUmk9S8HdW+hI6R7rJRfys25SBZCfq65IXj1krC+KEm6T1tCwMpk=
+	t=1758620323; cv=none; b=ZfvQ+nxap5uZN4aZ2kBEdDpl8xqkpBQgG8+XYKSZGE/QNO9y9Pu41zGoBNW4i3TstIv3D0QVu8pfuB7XZROhEyj+aS1TGFCbwY8u0M/sQL31Tmy88ZTK1/Qt/7nts2gyTJ71IEGLv3oE82npWFpLmDzJe2tyHD7x80vyH45iQ4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758620300; c=relaxed/simple;
-	bh=cfbCDnH7TIQYvYT+g3viFguwlT2VYC6YLG4chSGic70=;
+	s=arc-20240116; t=1758620323; c=relaxed/simple;
+	bh=fRWDgFvvA5A8ATCfR7doIa1lG/KqewQPh5lfQ8qEfCw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WkLJGshpw5Sf+bTkeES5zVF2WYeqWVtFI/PePoQ2fIWYqvH26VwA9sADaN/VsSrvjU03j/JgQHlMoMpvhpJ33WDOHh7jSf5NLTFfJtFNw1TB5Sbkkkae358p6vWxXFVrAqOE9YaDaZXvhOeAVSDTHVNb6CIytwFssNWUa0k/44I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlzQJ4Xa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B0CDC4CEF7;
-	Tue, 23 Sep 2025 09:38:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758620300;
-	bh=cfbCDnH7TIQYvYT+g3viFguwlT2VYC6YLG4chSGic70=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rlzQJ4XaeDnmAbjuslX0XkyWaXH8OnAu+jYBD7ZAjsfB5EXuwWnpZILcLigEXIjn3
-	 vInl+qdAzGtO6j5OYYtIXgZszxOe5TmpjGMWBHmPKEatCiwZWPivp2Zv0bENLVbTzE
-	 MUy6jnD5G4TW0U1j9DDo9z7FHtxzpBiI6ksnrw2ISHAFZRS5grZ/OODLAfVdpljjKz
-	 7Jpn2Px2Vb+DZK6QrEcONAPsj17KlWId9cNrkM6U+8PnGNsL9eEg/MOWczdXPgXY8g
-	 k9KZx3UchC9qO3EqNvcKu1HeCICBBQ36Dgh0sn6730I8hTy13EnZ5oi9gGa9amqBlK
-	 dsqS0kqhJJW9w==
-Date: Tue, 23 Sep 2025 11:38:17 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Devarsh Thakkar <devarsht@ti.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/29] drm/atomic: Add atomic_state_readout infrastructure
-Message-ID: <20250923-debonair-earwig-of-abracadabra-940fa8@penduick>
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <20250902-drm-state-readout-v1-10-14ad5315da3f@kernel.org>
- <03240fae-544f-4753-96c5-a116b4b5a318@suse.de>
- <20250915-active-placid-bustard-6e1faa@penduick>
- <2ry3txigq3jyivtyz7i4c76g74vdgvlozsjkeswxalhu2vs5yx@jqswyjle632h>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DC7BmMfbfhPT07rAP6YpgAZ4bAYL/2MXAzbczqh+G7vlPuR8pTvR9VJAS4IN/MhSbg3BIHlocIqZyAQSIgeH505DyCnh+ezyQweA18RP6Eu/Z/bcQ44fapn9RK7GJkiP4Ng8h+ktJ4bk3/AgExdUD8cMFupz/YFF2rcAHzhoAsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Xe+JWNLN; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fRWDgFvvA5A8ATCfR7doIa1lG/KqewQPh5lfQ8qEfCw=; b=Xe+JWNLNyGU0hk7bcJzN/9OKc6
+	SmbU+h+5p6mfnlnPY2fS8Z6s3g2Qf07IZw6UXHqasXC8c3l1C00u5IGotOj/5mHICyfVVOnGxpBB8
+	XJUjGfgXehP99znA6sgsWqax6YgB0UKjEBh+p9QXzc/4IBb8WB5+lqCrJFXIDJEBJPaSxCrt8eEeo
+	9NVvUqgAHq6o/UT69rkGZNx/EICV1i+P6+W0HQeGDF+kuOavA/1Hvv10fHzC2xlk8Q5MCukG4mpiW
+	/o8L/WEalnqI0W8uIpu3VB2r9eeZ0udnyz/V3sUl5TcmpdOhy7tQWyXg41pvJl19iNA9WOQsxJLXh
+	0UT2z6+w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v0zTa-00000008UP6-3If5;
+	Tue, 23 Sep 2025 09:38:23 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8A4FC30049C; Tue, 23 Sep 2025 11:38:21 +0200 (CEST)
+Date: Tue, 23 Sep 2025 11:38:21 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, x86@kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: Re: [RESEND][PATCH v15 2/4] perf: Support deferred user callchains
+Message-ID: <20250923093821.GB3419281@noisy.programming.kicks-ass.net>
+References: <20250908171412.268168931@kernel.org>
+ <20250908171524.605637238@kernel.org>
+ <20250923091935.GA3419281@noisy.programming.kicks-ass.net>
+ <20250923053515.25a1713e@batman.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="nkv4wsjghchstj37"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2ry3txigq3jyivtyz7i4c76g74vdgvlozsjkeswxalhu2vs5yx@jqswyjle632h>
+In-Reply-To: <20250923053515.25a1713e@batman.local.home>
 
+On Tue, Sep 23, 2025 at 05:35:15AM -0400, Steven Rostedt wrote:
 
---nkv4wsjghchstj37
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 10/29] drm/atomic: Add atomic_state_readout infrastructure
-MIME-Version: 1.0
+> I even pushed this to a git tree. Not sure why it didn't get flagged.
 
-On Mon, Sep 15, 2025 at 09:38:44PM +0300, Dmitry Baryshkov wrote:
-> On Mon, Sep 15, 2025 at 10:42:22AM +0200, Maxime Ripard wrote:
-> > Hi Tohmas,
-> >=20
-> > On Tue, Sep 02, 2025 at 03:44:54PM +0200, Thomas Zimmermann wrote:
-> > > > +/**
-> > > > + * drm_atomic_build_readout_state - Creates an initial state from =
-the hardware
-> > > > + * @dev: DRM device to build the state for
-> > > > + *
-> > > > + * This function allocates a &struct drm_atomic_state, calls the
-> > > > + * atomic_readout_state callbacks, and fills the global state old =
-states
-> > > > + * by what the callbacks returned.
-> > > > + *
-> > > > + * Returns:
-> > > > + *
-> > > > + * A partially initialized &struct drm_atomic_state on success, an=
- error
-> > > > + * pointer otherwise.
-> > > > + */
-> > > > +static struct drm_atomic_state *
-> > > > +drm_atomic_build_readout_state(struct drm_device *dev)
-> > > > +{
-> > > > +	struct drm_connector_list_iter conn_iter;
-> > > > +	struct drm_atomic_state *state;
-> > > > +	struct drm_mode_config *config =3D
-> > > > +		&dev->mode_config;
-> > > > +	struct drm_connector *connector;
-> > > > +	struct drm_printer p =3D
-> > > > +		drm_info_printer(dev->dev);
-> > > > +	struct drm_encoder *encoder;
-> > > > +	struct drm_plane *plane;
-> > > > +	struct drm_crtc *crtc;
-> > > > +	int ret;
-> > > > +
-> > > > +	drm_dbg_kms(dev, "Starting to build atomic state from hardware st=
-ate.\n");
-> > > > +
-> > > > +	state =3D drm_atomic_state_alloc(dev);
-> > > > +	if (WARN_ON(!state))
-> > > > +		return ERR_PTR(-ENOMEM);
-> > > > +
-> > > > +	state->connectors =3D kcalloc(config->num_connector, sizeof(*stat=
-e->connectors), GFP_KERNEL);
-> > > > +	if (WARN_ON(!state->connectors)) {
-> > > > +		ret =3D -ENOMEM;
-> > > > +		goto err_state_put;
-> > > > +	}
-> > > > +
-> > > > +	state->private_objs =3D kcalloc(count_private_obj(dev), sizeof(*s=
-tate->private_objs), GFP_KERNEL);
-> > > > +	if (WARN_ON(!state->private_objs)) {
-> > > > +		ret =3D -ENOMEM;
-> > > > +		goto err_state_put;
-> > > > +	}
-> > > > +
-> > > > +	drm_for_each_crtc(crtc, dev) {
-> > > > +		const struct drm_crtc_funcs *crtc_funcs =3D
-> > > > +			crtc->funcs;
-> > > > +		struct drm_crtc_state *crtc_state;
-> > > > +
-> > > > +		drm_dbg_kms(dev, "Initializing CRTC %s state.\n", crtc->name);
-> > > > +
-> > > > +		if (crtc_funcs->atomic_readout_state) {
-> > > > +			crtc_state =3D crtc_funcs->atomic_readout_state(crtc);
-> > > > +		} else if (crtc_funcs->reset) {
-> > > > +			crtc_funcs->reset(crtc);
-> > > > +
-> > > > +			/*
-> > > > +			 * We don't want to set crtc->state field yet. Let's save and c=
-lear it up.
-> > > > +			 */
-> > > > +			crtc_state =3D crtc->state;
-> > > > +			crtc->state =3D NULL;
-> > >=20
-> > > Chancing the crtc->state pointer behind the back of the reset callbac=
-k seems
-> > > fragile. We never how if some other piece of the driver refers to it
-> > > (although illegally).
-> >=20
-> > I agree that it's clunky. I'm not sure who would use it at this point
-> > though: we're in the middle of the drm_mode_config_reset(), so the
-> > drivers' involvement is pretty minimal.
-> >=20
-> > I did wonder if changing reset to return the object instead of setting
-> > $OBJECT->state would be a better interface?
-> >=20
-> > > For now, wouldn't it be better to require a read-out helper for all e=
-lements
-> > > of the driver's mode-setting pipeline?=A0 The trivial implementation =
-would
-> > > copy the existing reset function and keep crtc->state to NULL.
-> >=20
-> > I also considered that, but I'm not sure we can expect bridges to have
-> > readout hooks filled for every configuration in the wild.
-> >=20
-> > But maybe we can look during drm_mode_config_reset() at whether all the
-> > objects have their hook filled, and if not fall back on reset for
-> > everything.
-> >=20
-> > It would make the implementation easier, but missing bridges
-> > implementations would trigger a mode change when it might actually work
-> > just fine since bridge state is pretty minimal.
->=20
-> DP bridge drivers have a pretty big state (DPCD and all the features).
+I've been looking at this... how do I enable CONFIG_UWIND_USER ?
 
-I meant drm_bridge_state. Subclasses would have their own implementation
-anyway.
-
-> Other bridge drivers randomly leak state to the non-state structs.
-
-I'm not sure what you mean by that though. Can you expand?
-
-Thanks!
-Maxime
-
---nkv4wsjghchstj37
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaNJqiAAKCRAnX84Zoj2+
-du4oAX4vqWE3lkhhojqWAnWkNXhZq4pS+Ma1jLSrPOo740DCd/UNvIV1H9hQntRP
-QcLp6D8BfAv0/geBkvfRU7eACgPpsvpxNSev1g3nzJGp/LPX4lQTpfECmt5hizq4
-sqGaRGA5cw==
-=dJTs
------END PGP SIGNATURE-----
-
---nkv4wsjghchstj37--
+I suspect the problem is that its impossible to actually compile/use
+this code.
 
