@@ -1,54 +1,64 @@
-Return-Path: <linux-kernel+bounces-829115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB69DB96525
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:39:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFAF0B9650A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C20113A401B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:35:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C4B91884793
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC0F231856;
-	Tue, 23 Sep 2025 14:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2735248F58;
+	Tue, 23 Sep 2025 14:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KFL1NFtq"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="foTog51+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA068253944;
-	Tue, 23 Sep 2025 14:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAC62B9BA;
+	Tue, 23 Sep 2025 14:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758638003; cv=none; b=rakwDDlsug/H/YGo8Ezv11/oTGyCRUpSrZiFkoDc6WRfO07dFklPTyIR2qbYGkfWCurXnoymnSeLGpYyCp3btGjR62ynmy0h/fZ5SiOiMMsfJT/xsiTscry7hjCKpSmvNDefo6Vab28ncLPxhyoPyWIyzZsJ/ei7VyoieooWDig=
+	t=1758637995; cv=none; b=j/lUuH8dDWbpytsZ+B00twBjOcvQJgull4dvyVGbtuk6TcOFtuHER17oXFv2QVu5q7jrCO29QJ6udAB//qEG8259gbCXMMgdcr7rHpExVTPRdodutDxC3Eb+Sp3prTofGKkp69leB5IjbZLY9XTq/AaQon+EGmpbRKOLGxv48q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758638003; c=relaxed/simple;
-	bh=yJvHSwfA5ToKfP+3dMkUL1S0txFq5LORtmil5BY87eo=;
+	s=arc-20240116; t=1758637995; c=relaxed/simple;
+	bh=6b/C0GA3CDu2NK6qET9/dvnZZBIEkc60GmnPLmmsZ/k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KPOGLjiW1vAWXOJo7aafoguUAapQU65XD6IXI+AmmnK4VbnFXTckI7ZH/d+w3KFyXQ6sfGuCUOs+CEaY9AOQzxP9vDOUpPsPYdd0eEQwz7UZ8V6W5i2tYfmQFTmBDSaYk1yEfAuiXeipx2g+0zlaaLZ0DNlZD1EnPXiKDjPFDkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KFL1NFtq; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id E00901A0E8B;
-	Tue, 23 Sep 2025 14:33:18 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B254D60690;
-	Tue, 23 Sep 2025 14:33:18 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C9FAF102F195F;
-	Tue, 23 Sep 2025 16:33:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758637997; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=yJvHSwfA5ToKfP+3dMkUL1S0txFq5LORtmil5BY87eo=;
-	b=KFL1NFtqPpo/sU55KEiRxYn8jki4l6W3ypQ7KajOEJYfeW5XR4RrJrpgTVI4uPqKbQeeK1
-	rPQOFH96WK5zf/TzyyKClvNnsXNdn/Z401BslTuzyCRCLYKhs41B0rwXFfETdsU9l65xeI
-	CvAvAg7zB7snvoXNIkzs+0jTYZA0fdJUeZFE7lXwnRg4drdUsXTDnDnlD4TsYpRr1KHyI4
-	VihEAstQBL2RFw/R26ODdR77tEnT8E0vrci6r5KqIYDXCTzxn8fMYVemy/IAefkZLYCTXU
-	h2dGjyVXVpf7/LXR8McYGsQ00HIOA0rD1o/ht0NkQRKl8w5Enlnhwkt4jfyZ3w==
-Message-ID: <67cf2889-4f7a-4d79-807e-8909cc8a46f6@bootlin.com>
-Date: Tue, 23 Sep 2025 20:02:53 +0530
+	 In-Reply-To:Content-Type; b=hPQ5hT4MM4FZwh7udkHkZ8mXUGFAVlYqhuzozfvDLft7ugN6FUqUo6WlzmDgRGWHnzwQzy8XrQZN9qm3kiKKf0wPQzA7gOa6A+fgah+AGOlxXdHBzeWLB5C96w9cyXJ0N4IypH/jwM2aiVzgiCQ3bwlQFzXkr/0v82rMiYEGeFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=foTog51+; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758637993; x=1790173993;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6b/C0GA3CDu2NK6qET9/dvnZZBIEkc60GmnPLmmsZ/k=;
+  b=foTog51+jHhAMwMsL9708lqVtURQj2MsqY7H4EaUw7S/zLZJP190IeL3
+   lA7Yaa/hak4poGD2u1iU8Cf3TOMe6ncv+s7bmmgS40Q5tVcTg5oko2KGn
+   AIMU3kIoLxjJmNy84MFMWdz4Q88aYDbTZeEjA5lkI7T3SW+HXKcT7o4UW
+   SaBtRL/ZAHgTRjDBdUY5377ObmpHHinjMm72MbPPkJ5nhTTTQDV4Qodd1
+   RBqj4AWajq+jz3GG9yAS+8hofXxeVmHSpbR+3XJ5KG3zYvI6yg3JuNHJo
+   NOjoFfvuJYSWa31Imvs/2+JSwCPNaFv047XfkGFs+SBwiiUfsgOFd73Oq
+   w==;
+X-CSE-ConnectionGUID: EnDDT4IxSRmOJIEwdCtYUQ==
+X-CSE-MsgGUID: ikylLlpZTm+yy4EgAqGWPQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="61033991"
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
+   d="scan'208";a="61033991"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:33:12 -0700
+X-CSE-ConnectionGUID: ikDk9zKsTgGsJxMhWPx+NA==
+X-CSE-MsgGUID: UYMI0pLUSq2kx+wwo+kXpg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
+   d="scan'208";a="176615386"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:33:07 -0700
+Message-ID: <eb2465a7-359c-41b7-9687-984537f75d96@intel.com>
+Date: Tue, 23 Sep 2025 22:33:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,36 +66,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 2/5] net: phy: introduce
- PHY_INTERFACE_MODE_REVSGMII
-To: David Yang <mmyangfl@gmail.com>, netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Simon Horman <horms@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250922131148.1917856-1-mmyangfl@gmail.com>
- <20250922131148.1917856-3-mmyangfl@gmail.com>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH v16 21/51] KVM: x86/mmu: WARN on attempt to check
+ permissions for Shadow Stack #PF
+To: Binbin Wu <binbin.wu@linux.intel.com>,
+ Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z
+ <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+References: <20250919223258.1604852-1-seanjc@google.com>
+ <20250919223258.1604852-22-seanjc@google.com>
+ <8b91ca86-6301-4645-a9c2-c2de3a16327c@linux.intel.com>
+ <b12cac74-5a08-4338-bbab-510860e11a30@linux.intel.com>
 Content-Language: en-US
-In-Reply-To: <20250922131148.1917856-3-mmyangfl@gmail.com>
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <b12cac74-5a08-4338-bbab-510860e11a30@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-On 22/09/2025 18:41, David Yang wrote:
-> The "reverse SGMII" protocol name is a personal invention, derived from
-> "reverse MII" and "reverse RMII", this means: "behave like an SGMII
-> PHY".
+On 9/22/2025 3:46 PM, Binbin Wu wrote:
+> 
+> 
+> On 9/22/2025 3:17 PM, Binbin Wu wrote:
+>>
+>>
+>> On 9/20/2025 6:32 AM, Sean Christopherson wrote:
+>>> Add PFERR_SS_MASK, a.k.a. Shadow Stack access, and WARN if KVM 
+>>> attempts to
+>>> check permissions for a Shadow Stack access as KVM hasn't been taught to
+>>> understand the magic Writable=0,Dirty=0 combination that is required for
+> Typo:
+> 
+> Writable=0,Dirty=0 -> Writable=0,Dirty=1
 
-Wasn't it Russell who suggested that name ? :D
+With it fixed,
 
-> Signed-off-by: David Yang <mmyangfl@gmail.com>
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-
-Maxime
-
+>>> Shadow Stack accesses, and likely will never learn.  There are no 
+>>> plans to
+>>> support Shadow Stacks with the Shadow MMU, and the emulator rejects all
+>>> instructions that affect Shadow Stacks, i.e. it should be impossible for
+>>> KVM to observe a #PF due to a shadow stack access.
+>>>
+>>> Signed-off-by: Sean Christopherson <seanjc@google.com>
+>>
+>> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
