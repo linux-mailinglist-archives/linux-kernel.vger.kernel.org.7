@@ -1,259 +1,217 @@
-Return-Path: <linux-kernel+bounces-828691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED27EB95345
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:18:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A42D9B9531D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C4AD2A2686
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:17:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 407D27B526C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687EC31E100;
-	Tue, 23 Sep 2025 09:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0223191D2;
+	Tue, 23 Sep 2025 09:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="XKsXqBuj"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NyLRsjjW"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013043.outbound.protection.outlook.com [40.93.196.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CA1320CC9
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758619042; cv=none; b=nRuNCvuuyBxdNSbd7RqvMfqz56vnqk94O5g9X9/wxxPp/P8F0koyKVgAqnXn91yVdoBtBh7+ORJJFI+csQ/UrcWQ9sRIIV59F0ma1bivgImtf/2sVX8QICH07BlXhB/P66M84c5mz14OEKUko3CYa9hCK0R0Id6vcZeklyO85RY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758619042; c=relaxed/simple;
-	bh=10Y+XNOiXyb/vrv5K9CM6W3Fnz9B0Mh4n4ASqtZuho0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jUR4hgiZxXSmeH8bQ6cqR5fOLNBfjy2xpUNhoVPSGu4HjXFZmWsp3T/4zgL+Ysvvxj1O/l0DZa7h6oO5VAcTcjPw7IN/xQfdr5SP7x36lemo9IPYFgmsbQ+L5x/KRKf4CdfvlH7OxFyEbMXCVCXI/NEVFug5SdSfyr2EoNXBagw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=XKsXqBuj; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so5343099b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:17:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758619040; x=1759223840; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fsqflaZCptn+OqUf7yzOdIjdD2+Qx392fdtpQO1y/sE=;
-        b=XKsXqBujT1YcdcpXDj0A9MXvYvam8fnnNcKDCHx3YQVLJwcEOND3p5GN7jWRtlUVtU
-         /E8iFqkEYgzWmQyO+T+gcJtc62g+mPgerBcvhiyqAcLg33F748GnxqLieKwCFTo9V/+0
-         02zw5jcJoiHJFilvBEWG22sOXDXJEdj9Tuif3YYLPrkKhg/KOrB8sZS+Fwey7VlICKTG
-         fG4b3VpqIYPY7SwoiypUFH8pUutWtwrNfpvITuwjFsWTJpA4ZS6QKM9CnDHzdQ6k2Ij5
-         Lk83kaXan8DgEun3ObqCZO4jh7sCmnXn3dR39Mxeboo57fzxHfY4KTCRj0qnmN5aIQLX
-         rRdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758619040; x=1759223840;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fsqflaZCptn+OqUf7yzOdIjdD2+Qx392fdtpQO1y/sE=;
-        b=CP9JvnnrSl0P/+nYDP2CaIXcOWjZnmuqF1whNECS6wxU5SxbOBqkVrHuQZc33gINAh
-         KBAUyVAziBXUr/8zr4AAeOlbHeRSYG+PZZJIJcL2lrP/N2LCxRcl2vGoLYSmiXD4wjKg
-         UWbYzJmry6xUkJhSKzCjAN4Nmu6qeSbX6sjK4F/5bv/amMNAGhRIQpIwbSnVYnhmRCqT
-         k15IIvmZKDUMkf4E58fNOYnxI/Cv6x2HSd9aeOCfT8Je+QEn7mhr28GY42hYvTRWWeHx
-         ubprmlY5deKrOsqJ0PTHl8kkdVTT0WEktb4KnRt5JLUnylNs43bRceAWEHs6peY24FiH
-         /QRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUm1nTEWwaZqRwahYhuL7ccob7LxqB1t+IdVrZn9XD8R7ieNeql6hTzKBdt+tTYdMaiSbVlLB+c3dSWGb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLQ4c+EynnmtBym/GJ/OBq2DClkC4Pe5TOsJcp1M173E7E2Cxf
-	Itr5ydJYe1hhZ2snaVdC3itzXBdqWeYuRH2fBZlwOnVsnEJLPASKP3r1hKfzQzjZiHI=
-X-Gm-Gg: ASbGncsAnGAOGr41h1DUU2plx1nWLfhGjY/LUNEhhEyEubASYFfNcT9h/qHHtK+ifvx
-	PsafyMjLKjIeeEANLO1MieBWqYpDnfUqp4WT3YzO3B8hBLsQ96AwHjK5yKy3J/JXaME4tg1Z+H7
-	veyqSy8DrGT3boelbeHTOhD+XDdh7iujZJWOZZmgNh6E+4rAaCfxQjg6T2Kq6sJhnMPFoPFR+8p
-	smxPF1JO2EG/H6mKOIxHq1KxtOWrsIPY5QS3jXD0Dv90gsSMLBnEyo/14Ay2KkScYJ+1axCqDwq
-	4pGqeOyq1e/0uD4btKOx9M7ZLWLYYFZhpHvSO2fltQ0BtDXS3QeWWi7m9oVSl/LlGQhyWPUReWE
-	Xirz0QlbaOI+Fqse9M/IE3FVSKTBoZk42mwJwJg7QzaVB/057QhNrro5T/DNk3K1u3LRu/dw=
-X-Google-Smtp-Source: AGHT+IF8RvtbGMLomOdXVkDJ+YxzFvLcecwxKm+jrWt7odK5vRmlP4nv8ElQjsO9rstnUpRj/Gaa/w==
-X-Received: by 2002:a05:6a20:a122:b0:2ba:e2c5:7281 with SMTP id adf61e73a8af0-2cfe903f449mr2771078637.35.1758619040289;
-        Tue, 23 Sep 2025 02:17:20 -0700 (PDT)
-Received: from G7HT0H2MK4.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed26a9993sm18724713a91.11.2025.09.23.02.17.12
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 23 Sep 2025 02:17:19 -0700 (PDT)
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: hannes@cmpxchg.org,
-	hughd@google.com,
-	mhocko@suse.com,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	ziy@nvidia.com,
-	harry.yoo@oracle.com,
-	baolin.wang@linux.alibaba.com,
-	Liam.Howlett@oracle.com,
-	npache@redhat.com,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	baohua@kernel.org,
-	lance.yang@linux.dev,
-	akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v2 4/4] mm: thp: reparent the split queue during memcg offline
-Date: Tue, 23 Sep 2025 17:16:25 +0800
-Message-ID: <55370bda7b2df617033ac12116c1712144bb7591.1758618527.git.zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1758618527.git.zhengqi.arch@bytedance.com>
-References: <cover.1758618527.git.zhengqi.arch@bytedance.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A19258CF9;
+	Tue, 23 Sep 2025 09:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758619006; cv=fail; b=KfTWR1SGnC0RFSCb4Vblfpn3NGr/eE/c3S2vVB+H2uBr6Lnleh7f9W6OCSk7ZjNpA1VqZds8+lbBY8D0mjPyF0vd36Qo8DZ9nCfKTxdVc/MDVMGVSEtW8YXQH8QS3hk12Ebh0UDPn56bRLJnsx7DKqOb3FmPT7rTlBBOJ4Nx74Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758619006; c=relaxed/simple;
+	bh=Nfh6mNEKWfU2XlGDT9UkdCPLMJSgJ3MQvV8WerXSWfc=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=NK5QiwjDampjTPD70j+FSlsnRlRzgxtia6GCLKPo/CBK/LyLxxdpZERCShyc8XZdZBxF2Kzumbji52uVUcd3iKi9ZxfHWGgUZHHRNPxixyAEGwYjnzIrOylnvY4wy38WXLZyasizgGMC7odAErBp0lVgQiiMAjy30zTE4y/2PXc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NyLRsjjW; arc=fail smtp.client-ip=40.93.196.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s2veRzrSJfJT17cx9Gsfz3kVyKAN7x0W5FlMiHx9piCTPNCjvgt+fQmaXTC0DIkM9JqMNKOTytMaekj2Cw3x2KCw4ELz1Wt3nT+a1slzaarNqBvJ4FTadGfWvsgndDJUQG6a0Y1O4AW+wNhcqUIF/hX5k1TsvqjAFAnKuVpAPQCwO5UrNe4PMY04xJ/V3pDHWd7MD62RVMeak74qIUw1cv0kqIUfXM+aq85tjdjZ53OFqJOl3p1/Zuu/j/7VR8Iwne/RAMchiEjdEFYdGKn2sl2w24pafhkN61DoTLhO+dsYECFGbhXOo+b1KS84YXcPRGKDRuMvKigSOTAnSw5e8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vtpp7/Uv/gtCUNBj5CIzWogr+l3iRmGOxDv2mffZXQY=;
+ b=x+75sCLdYSKDl2AtlsfBisb/vvBmhf75uIiQiR5XQ03e/gf8rQj1FZT393kmBf3qked7d53HanbiXGY3Pn60DEtWF1sVFmHCfyNcY+GUQCOtHBzwGlO9sgsBJUsbFwPOV8o4ChkAgx+7tsSgJ4buCp1ieGi1C0U4SZziHmpJoWPIoglGsMfovCGSGR8zZDgQR/UtHiq2W1jFnyy7zqGzFwpqL3vMIt2iLe4u/m8SCyzepgndPfohVNCKUXFclD8/NU5YgmdmzQCDkYWhuD50e21FZxe6xe8oYLlaru87IvTzQpLAmk2l3NL/9me69VyAE9V99dQwqBGFlpuK9al8Rw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vtpp7/Uv/gtCUNBj5CIzWogr+l3iRmGOxDv2mffZXQY=;
+ b=NyLRsjjW6LeHBK4goQppwwxHPoFZ1ZRcD1GIJvKAxQl9IabHbB8sMZZhobqiGM/VxgKNjnOJyqauq5CqUYm9jlRZFJGam1gzYfDcYXokZePkPHRlPpAUyI2vSHhkyRw8SUmsTW60gw4saFodNb5tbck1S8A2ehJ8ar5vPNUsHhdLQdi//tHj/Z8/+q4XvBZ2Ny9+nqaUu/NqShubOrSdtloqEBQsCU0Q8FGyMZE0/KtP0Kid+gAEnC99gPGIpn92i9r97oIsd7FUKpa3oCcFMR2Sp+k4mEcEYYijSMhp9Q5uG+03xIX3JisACSmIwwsWRrCG9nR8rel8ybJc9Knc2Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
+ 2025 09:16:40 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 09:16:40 +0000
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: Christian Loehle <christian.loehle@arm.com>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	sched-ext@lists.linux.dev,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] sched_ext: Verify RCU protection in scx_bpf_cpu_curr()
+Date: Tue, 23 Sep 2025 11:16:34 +0200
+Message-ID: <20250923091634.118240-1-arighi@nvidia.com>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MI0P293CA0012.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:44::20) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|CY5PR12MB6405:EE_
+X-MS-Office365-Filtering-Correlation-Id: d954bfca-4ae6-4d44-33ea-08ddfa81e79a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?20e/FXh57rpG383sXZh/SSReb7Avq0oxGR3CQe4Q6WNt1qneS0XVhyuR5XTv?=
+ =?us-ascii?Q?LU8NWPFGc5vPWTSIRppeDsNp5cMK78sKlYlUr/u407cqFZH3AtFr0LCkcGjW?=
+ =?us-ascii?Q?ch63EKZVxB/ncIUpPhhOtf8wzj38iwPhN7h0oLYL5R8dPgTXiHJjCmNJdg1B?=
+ =?us-ascii?Q?aMFYjLDwy1ETAwoyY1DWXNqk8ebeYo3IXLesZvJi5V0lH3CV6irausMx7Evr?=
+ =?us-ascii?Q?U3QieQXYgZ5YD+eZvwNBSv4NY1fd1qNUOsRW76f2YY+HBAiGS273RRbHH27s?=
+ =?us-ascii?Q?Vda+xKIdVFZAhgr/6qdS4dU7l33SRCKwwVtNWawJFPTv6RkkxbSDYerU6sav?=
+ =?us-ascii?Q?FoZTP1lMaPL6pY9MWujEgrxJ3ab4WMa5unRWbf6Su3fk04NJYk6JHQ1mIVQj?=
+ =?us-ascii?Q?0LSf6IrYiqexjE241xhMDk6fzrpEOkDpM8xTMzAPTcuhEf4VEuN74t5QwLZX?=
+ =?us-ascii?Q?O/YldGpP0ZdjjznWe9nfnWoFZW5Oh/iVrApDG0Pzt6QxsSJuLNbz+p7pzbxh?=
+ =?us-ascii?Q?gvgvgla9hEPKLznJONnl6H3ZL21/jCKAP+At1TT8V+ezaju4P2v9Io+Filtl?=
+ =?us-ascii?Q?R6NDwGoQegUPP2HM5WR7fFfNSfHTpdgcn2lZMpb3XrSgkUgOz2PbGkpDH9kn?=
+ =?us-ascii?Q?yzAfWZ/Ua9ziV5kDuaENN0YKK+awFzCrhAMdezJIH6JLXnj5JuSjCp8/CSnY?=
+ =?us-ascii?Q?39ee5pSLl7PkmTQi9oy+pbdb3f2xhYkc1m0hKtOzJkCmUH9YBpQ7CVZ/HNCv?=
+ =?us-ascii?Q?JJ6G/Ebl60JJKaR897J02k+Jnv9tetorRWbOvu0IOkjPWoMW441syOM8okVo?=
+ =?us-ascii?Q?T2wwZiO2UuGFb2OOs24B8jHQDh9ilaPFngHjQgKxFcqmXnoDaBJ4rEajkk4s?=
+ =?us-ascii?Q?m5omhVtfCF56GUpGX/4dFDzZ9GzqtGUJlBDjen4FIWTrVk3q0Qj1VIqSJU5x?=
+ =?us-ascii?Q?dPGCjL4b8TsDndYY6jTtV/kRp4WyQI+OWmBJhO6kihHXUWT17jSRmieGYW5+?=
+ =?us-ascii?Q?YOeLgEzL/jAhmXN03m3HR4StQ6oZ4jOMDj4cGxDwilrHKGq5PdEXZXBb/6H8?=
+ =?us-ascii?Q?ULF9cFb+sRbVATJza3+ELhHva5UlHoNpF3heHkFpJBT+q1KyeFaLMPDvNX4u?=
+ =?us-ascii?Q?FNgG+d/N0QXRvxPv5OyGGpfdHDfws+1I6WBBg7wJtgjnf22qdMRmLLAaknGq?=
+ =?us-ascii?Q?LFeP5DsAJ+8xak/pGvyFLcwuFO3G84BTMPXZWvEpjfY442geeTAzhwhnZsSr?=
+ =?us-ascii?Q?QYPQhMOKBmHoc91LCkhF52N32LeT9RU2SedwCpsnj/6cKFnj47SrDC7/i61V?=
+ =?us-ascii?Q?i7S1pyynSssrYugOgBUcbjGCknfIZlkm6c4Te3MIoMpxHvWnX2YG0XeXBSH1?=
+ =?us-ascii?Q?YizVw+yw3/0DnIv9wpmDl61W0O/LOBeIXc29hEAd1G6Escz3NY2bx+BQMbwS?=
+ =?us-ascii?Q?PWiDl8jPCYs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Q1NhSK5LQaV/YBbp49D9hMR2rNLg77CMqFwzcwgLpPRoVzodETyicWj4WG27?=
+ =?us-ascii?Q?r81sLzu9IK9fK1JHj3z0Q6yh4+d6yFRcBg5txgyQmkOGVju3rC4QOSWVD9vN?=
+ =?us-ascii?Q?akTXHgVThxiijIC5nbrY1DFPa3FZYA2X/HtdYbO61JLQ8aTblP4+WU3Ayqo2?=
+ =?us-ascii?Q?8q8B64/FScmghBw/Hsw7YFm95d8RLd8AKaT1KchYxqoUOmIX5jCRex1my6n9?=
+ =?us-ascii?Q?x+stY6cM9wr/L57FffIMM47dWOciAVJQpfFYcvlNsWYmqI+KlZyjNBVmejHR?=
+ =?us-ascii?Q?bKfN+JCjycdhsswKxh6IqYy5e8LwzHdqNm//RVnE602ENF00/ELBMJnxrJRD?=
+ =?us-ascii?Q?f+trssxp708JCKN1kT0igIvBzxAcciIzLkMFrIbPR33wqiafLNEJK7reRkdV?=
+ =?us-ascii?Q?MgpvyVDyWOCm40zj5WZ5KXoWZL6BwNKVSdeMuAQ+BETYeZVAdoyfHxPgbA4s?=
+ =?us-ascii?Q?BQBe8P2/bpQQDSPzxYNssOhjo3y27sUHu6tGZIDPHmKKxF/qeV6wFLC5MRt5?=
+ =?us-ascii?Q?lwcrywM4hbH8aqMWU6Jo4zfOhdGAtNIWeB4isZSiyQxtkLNEf05UctwVcVUy?=
+ =?us-ascii?Q?jUtsfTBOXnUfAP6zaPUKsBu1esYAidvwgEsEiVtKbqlmDf4zoPnP0Zut27i7?=
+ =?us-ascii?Q?kMegX8KTp3WK+lpEQOwViCLy3rLOa8yqe66ukydS5FoEntAJbuLN7Z3FXFZH?=
+ =?us-ascii?Q?CH6s8BIfLjsPCpAg5DNkkudG2XOQGpUJAgfTZZiRvvGK2Y9JzYbZyHbGL4+S?=
+ =?us-ascii?Q?y9yCVG+0JVAiKm9iCUXG4IUhy500gK6FjJlrZmWszM8ugl2whyTVHDaQs2bo?=
+ =?us-ascii?Q?0lGeg+Z+OoXyWxWAUQ0PJZkZnWw9fjZxOzjSvynMLHmH4cL66/eSdX3RdS/D?=
+ =?us-ascii?Q?Jf0dEdrGUs9aqgM6zsk9v+699HmxweYXk2eqVNq2MoIJEMowTsXMKeaJuz5y?=
+ =?us-ascii?Q?EG5YswlA8Z7ev68wqvvJLJR6Fr2R6PcWk4uUAtIn3J70/M5U37jO/Ekkwo7L?=
+ =?us-ascii?Q?aFXOUW3qjBOwr7caDLy/pW7oxW1cOCoP1VmV2oTqYvifY9R8l/dAETcYnSJ7?=
+ =?us-ascii?Q?S2O4JCY/17Y2lK8Q0CApSbSNjhvx/Xwl2FQbc2hSWpEf7G1qHk1UFameRJQ2?=
+ =?us-ascii?Q?CLN5GIsa0iGw8gozEdZyFv7NtOabzF3Bae2tLXiUK60Asxgwb86g5Nr7bx8j?=
+ =?us-ascii?Q?j6YASF6kmZ/cYp4lUVzbkaUAaDbEjXqmYEaWaPR17B+dNwsPCneUoxnguaIV?=
+ =?us-ascii?Q?4rmUhTkH/FsLR+CGtbQZ+alXjAdH8ctIdWwTiQLaTyatZnsjz4+9SSR6yo6e?=
+ =?us-ascii?Q?uncly/umwOVmkbHfXuJ5HaPjWywEaqDvozTNenSJ4uHXMIBBetzf5rpd08gc?=
+ =?us-ascii?Q?Ij4rRrP29aAXgqf1M42NYaH3OU4Y125gcF4bZEnCsmGlObOT6VXu3zKEMLk2?=
+ =?us-ascii?Q?hBMoZBy+P/pEAV2XoPXclmxTFz99StidhDb5LlnWZbNg7T0tjFZjvr0U1CCn?=
+ =?us-ascii?Q?vzncQEDmVi3S+hZaxn8S28KaeApj1E0m/8WQzGwvkuGlgB/0Qrr6ZDl6gBPa?=
+ =?us-ascii?Q?Cv+6B9TA7zeusOjRzCIUMY2s6VGyVKLb/rUKprXT?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d954bfca-4ae6-4d44-33ea-08ddfa81e79a
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 09:16:40.1505
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qF2q6z6CwhXcBxHuEXD7A/w1UV8/Ax3hG2TR+XqL40w7HhtcgF2ZdI8hcGcBFtCOVhsdUSM3fYTLCkY0oPFcaQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6405
 
-In the future, we will reparent LRU folios during memcg offline to
-eliminate dying memory cgroups, which requires reparenting the split queue
-to its parent.
+scx_bpf_cpu_curr() has been introduced to retrieve the current task of a
+given runqueue, allowing schedulers to interact with that task.
 
-Similar to list_lru, the split queue is relatively independent and does
-not need to be reparented along with objcg and LRU folios (holding
-objcg lock and lru lock). So let's apply the same mechanism as list_lru
-to reparent the split queue separately when memcg is offine.
+The kfunc assumes that it is always called in an RCU context, but this
+is not always guaranteed and some BPF schedulers can trigger the
+following warning:
 
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+  WARNING: suspicious RCU usage
+  sched_ext: BPF scheduler "cosmos_1.0.2_gd0e71ca_x86_64_unknown_linux_gnu_debug" enabled
+  6.17.0-rc1 #1-NixOS Not tainted
+  -----------------------------
+  kernel/sched/ext.c:6415 suspicious rcu_dereference_check() usage!
+  ...
+ Call Trace:
+  <IRQ>
+  dump_stack_lvl+0x6f/0xb0
+  lockdep_rcu_suspicious.cold+0x4e/0x96
+  scx_bpf_cpu_curr+0x7e/0x80
+  bpf_prog_c68b2b6b6b1b0ff8_sched_timerfn+0xce/0x1dc
+  bpf_timer_cb+0x7b/0x130
+  __hrtimer_run_queues+0x1ea/0x380
+  hrtimer_run_softirq+0x8c/0xd0
+  handle_softirqs+0xc9/0x3b0
+  __irq_exit_rcu+0x96/0xc0
+  irq_exit_rcu+0xe/0x20
+  sysvec_apic_timer_interrupt+0x73/0x80
+  </IRQ>
+  <TASK>
+
+To address this, mark the kfunc with KF_RCU_PROTECTED, so the verifier
+can enforce its usage only inside RCU-protected sections.
+
+Note: this also requires commit 1512231b6cc86 ("bpf: Enforce RCU protection
+for KF_RCU_PROTECTED"), currently in bpf-next, to enforce the proper
+KF_RCU_PROTECTED.
+
+Fixes: 20b158094a1ad ("sched_ext: Introduce scx_bpf_cpu_curr()")
+Cc: Christian Loehle <christian.loehle@arm.com>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Signed-off-by: Andrea Righi <arighi@nvidia.com>
 ---
- include/linux/huge_mm.h |  2 ++
- include/linux/mmzone.h  |  1 +
- mm/huge_memory.c        | 39 +++++++++++++++++++++++++++++++++++++++
- mm/memcontrol.c         |  1 +
- mm/mm_init.c            |  1 +
- 5 files changed, 44 insertions(+)
+ kernel/sched/ext.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index f327d62fc9852..a0d4b751974d2 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -417,6 +417,7 @@ static inline int split_huge_page(struct page *page)
- 	return split_huge_page_to_list_to_order(page, NULL, ret);
- }
- void deferred_split_folio(struct folio *folio, bool partially_mapped);
-+void reparent_deferred_split_queue(struct mem_cgroup *memcg);
- 
- void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
- 		unsigned long address, bool freeze);
-@@ -611,6 +612,7 @@ static inline int try_folio_split(struct folio *folio, struct page *page,
- }
- 
- static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
-+static inline void reparent_deferred_split_queue(struct mem_cgroup *memcg) {}
- #define split_huge_pmd(__vma, __pmd, __address)	\
- 	do { } while (0)
- 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 7fb7331c57250..f3eb81fee056a 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -1346,6 +1346,7 @@ struct deferred_split {
- 	spinlock_t split_queue_lock;
- 	struct list_head split_queue;
- 	unsigned long split_queue_len;
-+	bool is_dying;
- };
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 37d9eff3fab5b..838bdc09baa1f 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -6576,7 +6576,7 @@ BTF_ID_FLAGS(func, scx_bpf_task_running, KF_RCU)
+ BTF_ID_FLAGS(func, scx_bpf_task_cpu, KF_RCU)
+ BTF_ID_FLAGS(func, scx_bpf_cpu_rq)
+ BTF_ID_FLAGS(func, scx_bpf_locked_rq, KF_RET_NULL)
+-BTF_ID_FLAGS(func, scx_bpf_cpu_curr, KF_RET_NULL | KF_RCU)
++BTF_ID_FLAGS(func, scx_bpf_cpu_curr, KF_RET_NULL | KF_RCU_PROTECTED)
+ #ifdef CONFIG_CGROUP_SCHED
+ BTF_ID_FLAGS(func, scx_bpf_task_cgroup, KF_RCU | KF_ACQUIRE)
  #endif
- 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 48b51e6230a67..de7806f759cba 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1094,9 +1094,15 @@ static struct deferred_split *folio_split_queue_lock(struct folio *folio)
- 	struct deferred_split *queue;
- 
- 	memcg = folio_memcg(folio);
-+retry:
- 	queue = memcg ? &memcg->deferred_split_queue :
- 			&NODE_DATA(folio_nid(folio))->deferred_split_queue;
- 	spin_lock(&queue->split_queue_lock);
-+	if (unlikely(queue->is_dying == true)) {
-+		spin_unlock(&queue->split_queue_lock);
-+		memcg = parent_mem_cgroup(memcg);
-+		goto retry;
-+	}
- 
- 	return queue;
- }
-@@ -1108,9 +1114,15 @@ folio_split_queue_lock_irqsave(struct folio *folio, unsigned long *flags)
- 	struct deferred_split *queue;
- 
- 	memcg = folio_memcg(folio);
-+retry:
- 	queue = memcg ? &memcg->deferred_split_queue :
- 			&NODE_DATA(folio_nid(folio))->deferred_split_queue;
- 	spin_lock_irqsave(&queue->split_queue_lock, *flags);
-+	if (unlikely(queue->is_dying == true)) {
-+		spin_unlock_irqrestore(&queue->split_queue_lock, *flags);
-+		memcg = parent_mem_cgroup(memcg);
-+		goto retry;
-+	}
- 
- 	return queue;
- }
-@@ -4284,6 +4296,33 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
- 	return split;
- }
- 
-+void reparent_deferred_split_queue(struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *parent = parent_mem_cgroup(memcg);
-+	struct deferred_split *ds_queue = &memcg->deferred_split_queue;
-+	struct deferred_split *parent_ds_queue = &parent->deferred_split_queue;
-+	int nid;
-+
-+	spin_lock_irq(&ds_queue->split_queue_lock);
-+	spin_lock_nested(&parent_ds_queue->split_queue_lock, SINGLE_DEPTH_NESTING);
-+
-+	if (!ds_queue->split_queue_len)
-+		goto unlock;
-+
-+	list_splice_tail_init(&ds_queue->split_queue, &parent_ds_queue->split_queue);
-+	parent_ds_queue->split_queue_len += ds_queue->split_queue_len;
-+	ds_queue->split_queue_len = 0;
-+	/* Mark the ds_queue dead */
-+	ds_queue->is_dying = true;
-+
-+	for_each_node(nid)
-+		set_shrinker_bit(parent, nid, shrinker_id(deferred_split_shrinker));
-+
-+unlock:
-+	spin_unlock(&parent_ds_queue->split_queue_lock);
-+	spin_unlock_irq(&ds_queue->split_queue_lock);
-+}
-+
- #ifdef CONFIG_DEBUG_FS
- static void split_huge_pages_all(void)
- {
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e090f29eb03bd..d03da72e7585d 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3887,6 +3887,7 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
- 	zswap_memcg_offline_cleanup(memcg);
- 
- 	memcg_offline_kmem(memcg);
-+	reparent_deferred_split_queue(memcg);
- 	reparent_shrinker_deferred(memcg);
- 	wb_memcg_offline(memcg);
- 	lru_gen_offline_memcg(memcg);
-diff --git a/mm/mm_init.c b/mm/mm_init.c
-index 3db2dea7db4c5..cbda5c2ee3241 100644
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@ -1387,6 +1387,7 @@ static void pgdat_init_split_queue(struct pglist_data *pgdat)
- 	spin_lock_init(&ds_queue->split_queue_lock);
- 	INIT_LIST_HEAD(&ds_queue->split_queue);
- 	ds_queue->split_queue_len = 0;
-+	ds_queue->is_dying = false;
- }
- #else
- static void pgdat_init_split_queue(struct pglist_data *pgdat) {}
 -- 
-2.20.1
+2.51.0
 
 
