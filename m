@@ -1,129 +1,103 @@
-Return-Path: <linux-kernel+bounces-829239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 175D7B96978
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:31:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9C5B9696F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FF12483B2C
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF473322CDB
 	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DD223D2B8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB7E23C8D5;
 	Tue, 23 Sep 2025 15:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hLeOySXV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ItV15M8P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC80217A5BE;
-	Tue, 23 Sep 2025 15:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979281A9F99;
+	Tue, 23 Sep 2025 15:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758641471; cv=none; b=BVPVUb1JOe1Pi+SSm8W+xNWgwDJkqYLj5/DC1VaJi2aJI1bJ9rOgwEPZ+ywD7o0ntQfExTenWcVEk09wrNOIE9dNAwkx9749mIDyTWw7e9U+Mf2i/LHXSvjZ26R6o7F+0KTWCxmDMONilLROsRCbliDIRQpGz0L5ENhbNarB4NA=
+	t=1758641471; cv=none; b=oqpUVP8b+pe8OOXvXW+csmU79FuoEf+NBL1FkoNLtIXNEkbe2SiqIblToeg3pUvD58GJqTvzvIdnTd8UpE8ap9IUFrSnXghUY6AwhE1XiNifE05OcoygJ6ITVfRVdZNtKFEJzJGr5FF/r6mjQz2DQSIRal6Bf0RC3wEW8JH5c4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758641471; c=relaxed/simple;
-	bh=VissSN4DHuu/OV0m7zZVQ1TWut0ZMqT61xOdJ1tJB7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u01Xhhi9ak4fmm2OHbq8plnAkefjiep9O+S3DoJ2P6Ev4/r2X6ABTnqhC+lfp/hWrOsYBJf9Rj/ty7kZHt6MQ9ze7DdslJnsMoGcJpvoaLUUew9nevWLhI7Q5bgZzz90r5C8BThjg4G+mcQgQg7xijjO2UyCOK1choI8X/nvpfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hLeOySXV; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758641470; x=1790177470;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VissSN4DHuu/OV0m7zZVQ1TWut0ZMqT61xOdJ1tJB7s=;
-  b=hLeOySXVZrFjV4N4JYc91+qVWzaEXz/zbSj9bUVeyFUTE3CriU5hrArK
-   OU5zwKVX+3fQPKJW9aJHnHFs++W4+IGEI9xpFht4LR11SW+6O0g4f8pHe
-   01GfNRFcz1z86l0hcbtkZTXE9kAXm5IfUYkNkNLs690y/TTCCML7PtZrg
-   gQJIRkbLYkGTrqSK/AmJlE8MuMlgpNykGO7S0307HqkifEQv3TpfdzoWd
-   z++EZUxp6AJpArP5klILmB0TMh+moONO6zgmYmm6dR61SvBTc6q/JV0Ej
-   yuvPh6V0GjvFzDFwuifRzVC0MXKlDalnv/57laVtl3bGVS8DwPQZd/0tn
-   w==;
-X-CSE-ConnectionGUID: 6cC1zGIATRuVKByGn/zxOg==
-X-CSE-MsgGUID: IyFy7vPCQMCRCAf8OTRQFg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60141845"
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="60141845"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 08:31:09 -0700
-X-CSE-ConnectionGUID: SdWAWjV/S2yVCNW1dAQ4Tg==
-X-CSE-MsgGUID: neD2jkpORK6qW2OQvT2XnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="176077521"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa010.jf.intel.com with ESMTP; 23 Sep 2025 08:31:07 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id A238C95; Tue, 23 Sep 2025 17:31:05 +0200 (CEST)
-Date: Tue, 23 Sep 2025 17:31:05 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Duoming Zhou <duoming@zju.edu.cn>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	YehezkelShB@gmail.com, westeri@kernel.org, michael.jamet@intel.com,
-	andreas.noever@gmail.com
-Subject: Re: [PATCH v2] thunderbolt: Fix use-after-free in tb_dp_dprx_work
-Message-ID: <20250923153105.GA2912318@black.igk.intel.com>
-References: <20250923051357.12206-1-duoming@zju.edu.cn>
+	bh=nucY3Wbe1cI6pkzZWAwERh6X+C3QqlkNxUNqauiRtlk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IwmlX18/dR12l7qAuPsDUbBaVF4icEQ++1vpvy/rL6DyOvJR+kTx0KPh0DFqy7lsVC5wUvjRfo4iuPooySn3IcV5MluGE8xyQXTAhEq99k17i06A7XGCOOOqvyfba00UgwWUgnx8CjE8mOGZVnxRUfCRn61qJEgTCyprtM5Qn0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ItV15M8P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFA39C4CEF5;
+	Tue, 23 Sep 2025 15:31:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758641471;
+	bh=nucY3Wbe1cI6pkzZWAwERh6X+C3QqlkNxUNqauiRtlk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ItV15M8PyDVCRGXHYTvaqE1fqvU8n07E+pnpcKV81WH03o6Zadov0fSqbmkTqeB69
+	 jZkUJ1Vtx+9Br0ixgbN12jKS1wkRvA+oIYTJ3WLq3cgSMRfhRn5XlJzPCztOc/x+3q
+	 OKpXGfGA0bHsXZTcuX0BCTmBf+Bc8YV05YVwJvJ6Rg1vGKmHD50H+mw1BvyXvyjUdo
+	 z0LZXVO4HoF4VnGwb3OmLm6AQZlIjF8zsULZgj/rTUbz8b872F2VtAmjWGT/18r7m1
+	 3yCaLWl9jcAXCFhLxZ23uTUPcip7m1UEkX1QJpLRSjEQIoOjYur/khGCnfSS4KqpHB
+	 KthvQDM3MvkiA==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org
+In-Reply-To: <20250921-refgen-v1-0-9d93e64133ea@oss.qualcomm.com>
+References: <20250921-refgen-v1-0-9d93e64133ea@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH 00/14] arm64: dts: qcom: add refgen regulators
+ where applicable
+Message-Id: <175864146866.1117422.16276639582721125453.b4-ty@kernel.org>
+Date: Tue, 23 Sep 2025 17:31:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250923051357.12206-1-duoming@zju.edu.cn>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-a9b2a
 
-Hi,
+On Sun, 21 Sep 2025 10:09:16 +0300, Dmitry Baryshkov wrote:
+> On several Qualcomm platforms the DSI internally is using the refgen
+> regulator. Document the regulator for the SDM670, Lemans and QCS8300
+> platforms. Add corresponding device nodes and link them as a supply to
+> the DSI node.
+> 
+> 
 
-On Tue, Sep 23, 2025 at 01:13:57PM +0800, Duoming Zhou wrote:
-> The original code relies on cancel_delayed_work() in tb_dp_dprx_stop(),
-> which does not ensure that the delayed work item tunnel->dprx_work has
-> fully completed if it was already running. This leads to use-after-free
-> scenarios where tb_tunnel is deallocated by tb_tunnel_put(), while
-> tunnel->dprx_work remains active and attempts to dereference tb_tunnel
-> in tb_dp_dprx_work().
-> 
-> A typical race condition is illustrated below:
-> 
-> CPU 0                            | CPU 1
-> tb_dp_tunnel_active()            |
->   tb_deactivate_and_free_tunnel()| tb_dp_dprx_start()
->     tb_tunnel_deactivate()       |   queue_delayed_work()
->       tb_dp_activate()           |
->         tb_dp_dprx_stop()        | tb_dp_dprx_work() //delayed worker
->           cancel_delayed_work()  |
->     tb_tunnel_put(tunnel);       |
->                                  |   tunnel = container_of(...); //UAF
->                                  |   tunnel-> //UAF
-> 
-> Replacing cancel_delayed_work() with cancel_delayed_work_sync() is
-> not feasible as it would introduce a deadlock: both tb_dp_dprx_work()
-> and the cleanup path acquire tb->lock, and cancel_delayed_work_sync()
-> would wait indefinitely for the work item that cannot proceed.
-> 
-> Instead, implement proper reference counting:
-> - If cancel_delayed_work() returns true (work is pending), we release
->   the reference in the stop function.
-> - If it returns false (work is executing or already completed), the
->   reference is released in delayed work function itself.
-> 
-> This ensures the tb_tunnel remains valid during work item execution
-> while preventing memory leaks.
-> 
-> This bug was found by static analysis.
-> 
-> Fixes: d6d458d42e1e ("thunderbolt: Handle DisplayPort tunnel activation asynchronously")
-> Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+Applied to
 
-Because it is pretty late in the cycle, I would like to get some exposure
-for this one before it goes to stable trees. I applied this to my
-thunderbolt.git/next now. Once it is pulled into mainline this will be
-picked up by the stable machinery too.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
 Thanks!
+
+[01/14] regulator: dt-bindings: qcom,sdm845-refgen-regulator: document more platforms
+        commit: e609438851928381e39b5393f17156955a84122a
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
