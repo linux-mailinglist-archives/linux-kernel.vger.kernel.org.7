@@ -1,321 +1,185 @@
-Return-Path: <linux-kernel+bounces-828922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10734B95DB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:37:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C3F3B95DB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DDFB24E045F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:37:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 424A67A4B24
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CEA3233EF;
-	Tue, 23 Sep 2025 12:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937A4322C9C;
+	Tue, 23 Sep 2025 12:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pbLgoEoL"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="aeU3D51E"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC030245006
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CBE38DEC
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758631052; cv=none; b=f3Sf8f3tXFoGNEitoHMkg3FVASxZVMf0RreiKlaepPWbKgocip0+w7xxD1Kusigro29U1Z8XPtJHB/pXnJv0G/awvB0j4W2GCzijp9wShaISl4GkyustQMpU1dMM/taBp+Azn0+BP+7IHlFEBImV82h5reoW0q9Bc959fBNyr5c=
+	t=1758631039; cv=none; b=dEnzYKb1H9POjcVdnxt1Ez2YbC8/rOlPv8+ROGpjZKfckjvkKz3tKEtsZEZphUol+lSRJXUZBNP7ywEy8/L6euwxGegLzhzzB4/BLc/w1NH/gm5OvcdzupyukBz8bWbVMQsI7CLfWesuIDybeFHZqtqQIWExV+Ot6F04CiR/Ir0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758631052; c=relaxed/simple;
-	bh=+QmtAQOVwpxlpSTVPwVX5yVKeytEpt+CoKE095FD3gQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fkU2hpiHuyAy7oaGUL6KR3Kz+s/xPUFP3UZM9EJD+6KDUWqdNmeQsLHrEsed1Lr4f2FALUEzsEs9RWVgnsrkUjnzJFfOvC+XXTKec/aEEW6sMb1VSRoJLQc8c71qLSHHq3vOj1cI2eLQC/qyh5dxW+vCMBepGovL6/aPhsU4SsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pbLgoEoL; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d5fe46572so56814897b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 05:37:30 -0700 (PDT)
+	s=arc-20240116; t=1758631039; c=relaxed/simple;
+	bh=4/rN8y5+hFoB6Cf/znI8mLfQe+LliZ/NJWGVQ6hJxaI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bHsT/jsMUGppUbEBbL1ZfwAo98i2Ckp4jbGtvhckv2roTfTRqWpPmOQHeLBCV6uwJLlcL7bTvmhQAOGgph7O1xsNDyKm1/RIyP7t3ae2Ot9g7eoE56dPh48LY4VBIml2440ngDLaDLzJwEFvTjV1erVtYY3kkALI3Pf4mvthaLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=aeU3D51E; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b550eff972eso3296258a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 05:37:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758631050; x=1759235850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BvUwN9Vr9BKGSGisn6QzEhOZxHxE878oCjeyu30Gbsg=;
-        b=pbLgoEoLecEPVdRu2yfk3XwfUZ0s2lcyFSZg+Sg88KTLpKaDkaTq0mizeJUJ4ivr5h
-         tiGh4bN3Qsf4fD/UdkTFKfBO5JwZ7Mr00KBsXCyAOr4EqENKO0wZv85e9LI0Z5IAW/2E
-         SLVsSYGOQtqMBFJ6Guyw5JhFo6avmrldAwHw/oaKqEtNMvYnLN1lRplP/cuK/FVYkpCO
-         ycfmmg5Qu/8O38u4yA+KZ3fA7TFB73uYxGmw+mptgbwbhDRaKXkvSf4EZEvsHs/PJhxe
-         vjPdsOJeivC/jPLmvHxSxbDa2qv7eWVc0l6GB+0cryrkGYgVdxhiAwWysoqDubLHqrNX
-         CNpA==
+        d=bytedance.com; s=google; t=1758631036; x=1759235836; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4210Fm1QpLo6WEa68t+fTvLZqwxqcYrVkyyGk5pqsks=;
+        b=aeU3D51EXkCu/J1azOakagyOUqN4s8/oG5tEVsmHs8DnMqx5YRXXbzHKnZO6tyP+7Y
+         EwvZzPw04sm+R6nQA0YM674rmUoeQ3UH9ap+dgiDq/sRQltLXf5PhCfCSwtqJ3Vbg9+8
+         yTa1Bq9pbOq2564RO8t8s6WuG6byc0nkqbKgjWAp8YUVvXtAGFPJNAuZvg9oUCHD1935
+         DAEI8vFhQDMyD4Tn2V5Vr4azdk429B5oOEGekw0Si2RwUGExpqhK2A+eMn1xYdhkmrKg
+         ipXYInPpkPvaCJp8RiHbec6NwXjDDNnrNHQzpQ9X0/UUc84q1gvpXkAlPMljzZqD5Pyw
+         OfHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758631050; x=1759235850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BvUwN9Vr9BKGSGisn6QzEhOZxHxE878oCjeyu30Gbsg=;
-        b=JujEoa35dXtH3l7MbzphNPdrKovd4dFuuo5AaZ2VG5PuGdnmljK171KHRbv0h2vCqV
-         5PiMMD6F+hd1wQG6h9SIJ1ltoMWMJEprNjOlBeazmARoPuHKr6zX12pYKxe8zn1YANjp
-         COAmbOIEiJ9LBGeeeAHK24ZsrOJ7iWJqJVAkF6hhwfWzbksH/a4qmOlxRJa6b/Lg2HNk
-         7+kkK80VajZPGZBBIWsvyPqUpu7AStOSsfuJttwK8MGZ1IghWCmA5Cnm44YyQnN1rgM0
-         JXUNU1Isz49A3oUT1UM3sXJMKtQmz5QkE2Qfehg37M0/9vfWb9dYdJHfrjimJjpFgPnK
-         EO0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVEMJDrXPLm9olJpOOtkf1ZTLHHoRAI4a4yiQwqgO7dAlmq2tkWsgRAubiRznGMZb/lW89NggLj5BCA4e0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjHW9ykLEj8f7PhS8rHZ/A/glDXNMExfYf2JfJ+V2ANm6BuuRF
-	MOz6AV940NQs0E2HABYxSRfDK9T9+y521sE62XSqfWlmg9KdiSnXnNQR74Ia3qKlD7uUqRh3GKt
-	gqbSuKeFH/xfSAhwTJCb0Qdv/hrA/wVlvRL0btv1GKQ==
-X-Gm-Gg: ASbGncvER8UPiWLdfFsTUaVGc7GAIoUwN1oYobeujMi2+umuROF8r8GJFuYuq+EPjpI
-	bykSglKFvF9bip53O9M/TDJ6FszOks7EcDngD8AqiAibLaztkr8abUWjzrTO9+ECqBey1ZTufML
-	WAOLKgQiUQEfYZJhSftpQJGf24lN5G83ArAir+mMVTdjhpCRRCtt9R4pV1B6dA/2hcTjBgeEov5
-	tp3/L/a
-X-Google-Smtp-Source: AGHT+IHeB26D69gWYTNMT81JsyBb8j/6IpIJwLFyZe+h7iEpIJbeuVXfVhF5NDonGCkXKOQaFRnbcwFnhwo7/vnbCpY=
-X-Received: by 2002:a05:690c:700c:b0:729:e448:5005 with SMTP id
- 00721157ae682-7589174476fmr18123057b3.7.1758631049666; Tue, 23 Sep 2025
- 05:37:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758631036; x=1759235836;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4210Fm1QpLo6WEa68t+fTvLZqwxqcYrVkyyGk5pqsks=;
+        b=OBds8T6104g3FQGpenpvcJYzTxkvSeZvggxuevBwx7HCbTKbxs2qf7MPlVcTPZX+MC
+         Gumiyb1OCpE7dgWnzASUJs1b4gceONWYr5MpDVtt6F0FdgP1qa7KribrKrYBsJlE3JLN
+         N/qPRC/YqW1ayvdRi+S+EZvU9k11dOHQkj0YdcfdCcCQnxMgV+DErjAXEDamvZy7+Stt
+         JnKUueWuL6cNL2MYdpFcxQi7Qxd56dEco3t0GsbIUTF7uv0rX71FHTgSbse65pWTtFCf
+         VcQceJuyYZA9c0KMtuByQRQ6HkZdC1Z8qg+yERSGrrB/fQ4EqdKV8lAs+pHvaGfQXnl5
+         88BA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJszno7tNsYH4CQOQ2JUMbYALtHiwS3I8pzJHRU4eaB8lweOeCyZMy6czq62UXIvkYaKQ16fNWylMj6Ew=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+9+3Bw/hFV1VgXThDHJ05/BCHQatNGiV4tccOmyhrdmO2W07G
+	Wjxkm6COF5cnpP2JkkTTdFeDOh0Y8/Ah56FI8QPRZptKfnOtinkL0Tcw0erWqdWw8HU=
+X-Gm-Gg: ASbGncsKGjQmPXNSmbE+j1Yd290drooD5raScOu+3XQ92XAxGBU/sBEOwnKnSD0emie
+	vDAVJYV0ojLYB8m6eI6fm2YUBK/Ml/xOAkCl7JnAHy3ZDabNQgCudhayLb85htloaYwe4QteWsO
+	Ng6bO+a6jH72vkA8KSt18z/eMVkZrHOnoKFM8QF1/oumqu61baRN9KZaNVsCyQ5940fX55UTdjd
+	hOVBWB1tnE6BTt68MltX0ZL2Gk5S5mYTjuEAJRhbDvpE7DtjKvaSy/ImhPMCQYgv5d1R00AZxNl
+	jxYMG+gPYJEnxi9cwNGuALMvVvUUahD7gcYqwzPyHptdqpZHduRsPkqWOSbB3VPbp0nvoHJOEt6
+	3ebpsBCWERhpHctUnMtSROVwu2TtHs2+1AnRQZo8JHyP+E67THSFObSdD7O2n2xwka++g9Ao=
+X-Google-Smtp-Source: AGHT+IE39Ar0QDkR4Xr9h08I1/hHt1iycT4gYz0WAi6LZWYuJ7bIzRYt764/EzbqkiDYrN0iB/PnTQ==
+X-Received: by 2002:a17:903:2c0b:b0:275:b1cf:6dd7 with SMTP id d9443c01a7336-27cc48a0b06mr27799065ad.34.1758631035835;
+        Tue, 23 Sep 2025 05:37:15 -0700 (PDT)
+Received: from [10.88.213.9] ([61.213.176.57])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269803601e3sm162427175ad.144.2025.09.23.05.37.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 05:37:15 -0700 (PDT)
+Message-ID: <2739dcc3-7c38-492c-854a-731298396a0c@bytedance.com>
+Date: Tue, 23 Sep 2025 20:37:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716123323.65441-1-ulf.hansson@linaro.org>
- <20250716123323.65441-2-ulf.hansson@linaro.org> <CAJZ5v0iq7UODJ83fkwnzfFR3HpG2_R-YRnip_cLwyUHZZ+rXyg@mail.gmail.com>
- <7hldnp6apf.fsf@baylibre.com> <CAJZ5v0j=9RXHrcVEBp0yy1Ae4_kC1y-WFQyBf89r3NtoL-tYQw@mail.gmail.com>
- <CAPDyKFpeVF_EHJDQ9u=LDuJ56g7ykYUQWHXV2WXTYLa-mYahVA@mail.gmail.com>
- <CAPDyKFpc-PHC1QhoSrNt9KnaGov749H1AwFZUwnDDzG7RDYBRw@mail.gmail.com>
- <CAJZ5v0hC=sEcC-mU8jArwVN3EA6+U=EmCa2e7TKO0sg6LJiz7g@mail.gmail.com>
- <CAPDyKFqG=bFSP2rJ3PXt5=6_nLdpJ+ir80krU1DrRCCMhwKQng@mail.gmail.com>
- <CAJZ5v0hYN5G_WpA6KDpeDgowc2i9AvrUBCq-egS==8RNVb6N=w@mail.gmail.com>
- <CAPDyKFr0-yh8wt169QanAo3AmuXBq_9p3xiiqeFmmWz-ntNQsw@mail.gmail.com> <CAJZ5v0h4nS7fm347ue0Kj_eGwAi=o1vzyJm25_Q67dWzyoXR+Q@mail.gmail.com>
-In-Reply-To: <CAJZ5v0h4nS7fm347ue0Kj_eGwAi=o1vzyJm25_Q67dWzyoXR+Q@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 23 Sep 2025 14:36:53 +0200
-X-Gm-Features: AS18NWDnPOAVdcWOXRUED9DoyrDaLAhsSSqCkfpsN6z7uIuZCk4j3YcyswbX_9I
-Message-ID: <CAPDyKFos=rM6Y-6tFbifpFp8XxwA=t_aya-nWhz=6ME1FaBEoA@mail.gmail.com>
-Subject: Re: [RFC/PATCH 1/3] PM: QoS: Introduce a system-wakeup QoS limit
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, linux-pm@vger.kernel.org, 
-	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Re: [PATCH] vduse: Use fixed 4KB bounce pages for arm64 64KB page
+ size
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ xieyongji@bytedance.com
+References: <20250915073429.54027-1-sheng.zhao@bytedance.com>
+ <CACGkMEuvT3=a+6LyaFZFmCZzGS5tntPSbSJg=h6FAHdk89pC8g@mail.gmail.com>
+Content-Language: en-US
+From: Sheng Zhao <sheng.zhao@bytedance.com>
+In-Reply-To: <CACGkMEuvT3=a+6LyaFZFmCZzGS5tntPSbSJg=h6FAHdk89pC8g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 23 Sept 2025 at 13:39, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Tue, Sep 23, 2025 at 11:42=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.=
-org> wrote:
-> >
-> > On Mon, 22 Sept 2025 at 20:55, Rafael J. Wysocki <rafael@kernel.org> wr=
-ote:
-> > >
-> > > On Thu, Sep 18, 2025 at 5:34=E2=80=AFPM Ulf Hansson <ulf.hansson@lina=
-ro.org> wrote:
-> > > >
-> > > > On Wed, 17 Sept 2025 at 21:24, Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > Sorry for the delay.
-> > > > >
-> > > > > On Fri, Sep 12, 2025 at 3:58=E2=80=AFPM Ulf Hansson <ulf.hansson@=
-linaro.org> wrote:
-> > > > > >
-> > > > > > On Tue, 12 Aug 2025 at 11:26, Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
-> > > > > > >
-> > > > > > > On Mon, 11 Aug 2025 at 21:16, Rafael J. Wysocki <rafael@kerne=
-l.org> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Aug 11, 2025 at 7:16=E2=80=AFPM Kevin Hilman <khilm=
-an@baylibre.com> wrote:
-> > > > > > > > >
-> > > > > > > > > "Rafael J. Wysocki" <rafael@kernel.org> writes:
-> > > > > > > > >
-> > > > > > > > > > On Wed, Jul 16, 2025 at 2:33=E2=80=AFPM Ulf Hansson <ul=
-f.hansson@linaro.org> wrote:
-> > > > > > > > > >>
-> > > > > > > > > >> Some platforms and devices supports multiple low-power=
--states than can be
-> > > > > > > > > >> used for system-wide suspend. Today these states are s=
-elected on per
-> > > > > > > > > >> subsystem basis and in most cases it's the deepest pos=
-sible state that
-> > > > > > > > > >> becomes selected.
-> > > > > > > > > >>
-> > > > > > > > > >> For some use-cases this is a problem as it isn't suita=
-ble or even breaks
-> > > > > > > > > >> the system-wakeup latency constraint, when we decide t=
-o enter these deeper
-> > > > > > > > > >> states during system-wide suspend.
-> > > > > > > > > >>
-> > > > > > > > > >> Therefore, let's introduce an interface for user-space=
-, allowing us to
-> > > > > > > > > >> specify the system-wakeup QoS limit. Subsequent change=
-s will start taking
-> > > > > > > > > >> into account the QoS limit.
-> > > > > > > > > >
-> > > > > > > > > > Well, this is not really a system-wakeup limit, but a C=
-PU idle state
-> > > > > > > > > > latency limit for states entered in the last step of su=
-spend-to-idle.
-> > > > > > > > > >
-> > > > > > > > > > It looks like the problem is that the existing CPU late=
-ncy QoS is not
-> > > > > > > > > > taken into account by suspend-to-idle, so instead of ad=
-ding an
-> > > > > > > > > > entirely new interface to overcome this, would it make =
-sense to add an
-> > > > > > > > > > ioctl() to the existing one that would allow the user o=
-f it to
-> > > > > > > > > > indicate that the given request should also be respecte=
-d by
-> > > > > > > > > > suspend-to-idle?
-> > > > > > > > > >
-> > > > > > > > > > There are two basic reasons why I think so:
-> > > > > > > > > > (1) The requests that you want to be respected by suspe=
-nd-to-idle
-> > > > > > > > > > should also be respected by the regular "runtime" idle,=
- or at least I
-> > > > > > > > > > don't see a reason why it wouldn't be the case.
-> > > > > > > > > > (2) The new interface introduced by this patch basicall=
-y duplicates
-> > > > > > > > > > the existing one.
-> > > > > > > > >
-> > > > > > > > > I also think that just using the existing /dev/cpu_dma_la=
-tency is the
-> > > > > > > > > right approach here, and simply teaching s2idle to respec=
-t this value.
-> > > > > > > > >
-> > > > > > > > > I'm curious about the need for a new ioctl() though.  Und=
-er what
-> > > > > > > > > conditions do you want normal/runtime CPUidle to respect =
-this value and
-> > > > > > > > > s2idle to not respect this value?
-> > > > > > > >
-> > > > > > > > In a typical PC environment s2idle is a replacement for ACP=
-I S3 which
-> > > > > > > > does not take any QoS constraints into account, so users ma=
-y want to
-> > > > > > > > set QoS limits for run-time and then suspend with the expec=
-tation that
-> > > > > > > > QoS will not affect it.
-> > > > > > >
-> > > > > > > Yes, I agree. To me, these are orthogonal use-cases which cou=
-ld have
-> > > > > > > different wakeup latency constraints.
-> > > > > > >
-> > > > > > > Adding an ioctl for /dev/cpu_dma_latency, as suggested by Raf=
-ael would
-> > > > > > > allow this to be managed, I think.
-> > > > > > >
-> > > > > > > Although, I am not fully convinced yet that re-using
-> > > > > > > /dev/cpu_dma_latency is the right path. The main reason is th=
-at I
-> > > > > > > don't want us to limit the use-case to CPU latencies, but rat=
-her allow
-> > > > > > > the QoS constraint to be system-wide for any type of device. =
-For
-> > > > > > > example, it could be used by storage drivers too (like NVMe, =
-UFS,
-> > > > > > > eMMC), as a way to understand what low power state to pick as=
- system
-> > > > > > > wide suspend. If you have a closer look at patch2 [1] , I sug=
-gest we
-> > > > > > > extend the genpd-governor for *both* CPU-cluster-PM-domains a=
-nd for
-> > > > > > > other PM-domains too.
-> > > > > > >
-> > > > > > > Interested to hear your thoughts around this.
-> > > > > >
-> > > > > > Hey, just wanted to see if you have managed to digest this and =
-have
-> > > > > > any possible further comment?
-> > > > >
-> > > > > The reason why I thought about reusing /dev/cpu_dma_latency is be=
-cause
-> > > > > I think that the s2idle limit should also apply to cpuidle.  Of
-> > > > > course, cpuidle may be limited further, but IMV it should observe=
- the
-> > > > > limit set on system suspend (it would be kind of inconsistent to =
-allow
-> > > > > cpuidle to use deeper idle states than can be used by s2idle).
-> > > >
-> > > > Agreed!
-> > > >
-> > > > >
-> > > > > I also don't think that having a per-CPU s2idle limit would be
-> > > > > particularly useful (and it might be problematic).
-> > > > >
-> > > > > Now, it is not as straightforward as I thought because someone ma=
-y
-> > > > > want to set a more restrictive limit on cpuidle, in which case th=
-ey
-> > > > > would need to open the same special device file twice etc and tha=
-t
-> > > > > would be quite cumbersome.
-> > > > >
-> > > > > So in the end I think that what you did in the $subject patch is
-> > > > > better, but I still would like it to also affect cpuidle.
-> > > >
-> > > > Okay. I will update the patches according to your suggestions!
-> > > >
-> > > > >
-> > > > > And it needs to be made clear that this is a limit on the resume
-> > > > > latency of one device.  Worst case, the system wakeup latency may=
- be a
-> > > > > sum of those limits if the devices in question are resumed
-> > > > > sequentially, so in fact this is a limit on the contribution of a
-> > > > > given device to the system wakeup latency.
-> > > >
-> > > > Indeed, that's a very good point! I will keep this in mind when
-> > > > working on adding the documentation part.
-> > >
-> > > Well, this also means that using one limit for all of the different
-> > > devices is not likely to be very practical because the goal is to sav=
-e
-> > > as much energy as reasonably possible in system suspend while
-> > > respecting a global resume latency constraint at the same time.
-> > >
-> > > Using the same limit on a local contribution from each device to the
-> > > combined latency is not likely to be effective here.  Rather, I'd
-> > > expect that the best results can be achieved by setting different
-> > > resume latency limits on different devices, depending on how much
-> > > power they draw in each of their idle states and what the exit latenc=
-y
-> > > values for all of those states are.  In other words, this appears to
-> > > be an optimization problem in which the resume latency limits for
-> > > individual devices need to be chosen to satisfy the global resume
-> > > latency constraint and minimize the total system power.
-> >
-> > I am following your reasoning and I agree!
-> >
-> > Perhaps we should start with extending the cpu_dma_latency with an
-> > ioctl after all? This would allow userspace to specify constraints to
-> > be applicable for system-wide-suspend (s2idle), but it would still be
-> > limited for CPUs/CPU-clusters.
->
-> Right.
->
-> Adding a separate device special file to represent the limit affecting
-> s2idle may be somewhat cleaner though as mentioned before.
 
-Okay, sounds good to me too!
 
->
-> > For other devices, we should probably explore the per device PM QoS
-> > (pm_qos_latency_tolerance_us) instead. Currently the
-> > pm_qos_latency_tolerance_us is used for "runtime_suspend", so perhaps
-> > adding another per device sysfs file, like
-> > "pm_qos_system_wakeup_latency_us",  that we can use for the
-> > system-wide-wakeup latency constraint?
-> >
-> > Would this make better sense, you think?
->
-> I think that this can be made work.
+On 2025/9/17 16:16, Jason Wang wrote:
+> On Mon, Sep 15, 2025 at 3:34 PM <sheng.zhao@bytedance.com> wrote:
+>>
+>> From: Sheng Zhao <sheng.zhao@bytedance.com>
+>>
+>> The allocation granularity of bounce pages is PAGE_SIZE. This may cause
+>> even small IO requests to occupy an entire bounce page exclusively. The
+>> kind of memory waste will be more significant on arm64 with 64KB pages.
+> 
+> Let's tweak the title as there are archs that are using non 4KB pages
+> other than arm.
+> 
 
-Okay, I will explore this approach.
+Got it. I will modify this in v2.
 
-Thanks for your feedback!
+>>
+>> So, optimize it by using fixed 4KB bounce pages.
+>>
+>> Signed-off-by: Sheng Zhao <sheng.zhao@bytedance.com>
+>> ---
+>>   drivers/vdpa/vdpa_user/iova_domain.c | 120 +++++++++++++++++----------
+>>   drivers/vdpa/vdpa_user/iova_domain.h |   5 ++
+>>   2 files changed, 83 insertions(+), 42 deletions(-)
+>>
+>> diff --git a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vdpa_user/iova_domain.c
+>> index 58116f89d8da..768313c80b62 100644
+>> --- a/drivers/vdpa/vdpa_user/iova_domain.c
+>> +++ b/drivers/vdpa/vdpa_user/iova_domain.c
+>> @@ -103,19 +103,26 @@ void vduse_domain_clear_map(struct vduse_iova_domain *domain,
+>>   static int vduse_domain_map_bounce_page(struct vduse_iova_domain *domain,
+>>                                           u64 iova, u64 size, u64 paddr)
+>>   {
+>> -       struct vduse_bounce_map *map;
+>> +       struct vduse_bounce_map *map, *head_map;
+>> +       struct page *tmp_page;
+>>          u64 last = iova + size - 1;
+>>
+>>          while (iova <= last) {
+>> -               map = &domain->bounce_maps[iova >> PAGE_SHIFT];
+>> +               map = &domain->bounce_maps[iova >> BOUNCE_PAGE_SHIFT];
+> 
+> BOUNCE_PAGE_SIZE is kind of confusing as it's not the size of any page
+> at all when PAGE_SIZE is not 4K.
+> 
 
-Kind regards
-Uffe
+How about BOUNCE_MAP_SIZE?
+
+>>                  if (!map->bounce_page) {
+>> -                       map->bounce_page = alloc_page(GFP_ATOMIC);
+>> -                       if (!map->bounce_page)
+>> -                               return -ENOMEM;
+>> +                       head_map = &domain->bounce_maps[(iova & PAGE_MASK) >> BOUNCE_PAGE_SHIFT];
+>> +                       if (!head_map->bounce_page) {
+>> +                               tmp_page = alloc_page(GFP_ATOMIC);
+>> +                               if (!tmp_page)
+>> +                                       return -ENOMEM;
+>> +                               if (cmpxchg(&head_map->bounce_page, NULL, tmp_page))
+>> +                                       __free_page(tmp_page);
+> 
+> I don't understand why we need cmpxchg() logic.
+> 
+> Btw, it looks like you want to make multiple bounce_map to point to
+> the same 64KB page? I wonder what's the advantages of doing this. Can
+> we simply keep the 64KB page in bounce_map?
+> 
+> Thanks
+> 
+
+That's correct. We use fixed 4KB-sized bounce pages, and there will be a 
+many-to-one relationship between these 4KB bounce pages and the 64KB 
+memory pages.
+
+Bounce pages are allocated on demand. As a result, it may occur that 
+multiple bounce pages corresponding to the same 64KB memory page attempt 
+to allocate memory simultaneously, so we use cmpxchg to handle this 
+concurrency.
+
+In the current implementation, the bounce_map structure requires no 
+modification. However, if we keep the 64KB page into a single bounce_map 
+while still wanting to implement a similar logic, we may need an 
+additional array to store multiple orig_phys values in order to 
+accommodate the many-to-one relationship.
+
+Thanks
+
 
