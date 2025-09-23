@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-829657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F116BB9791A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:27:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D02B97920
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A23EC2E704F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:27:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD0DA3AD1E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1CD30C617;
-	Tue, 23 Sep 2025 21:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81E230CB33;
+	Tue, 23 Sep 2025 21:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bPqx9QOL"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hHGwRrl+"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA8B27F74C
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 21:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DD423A989
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 21:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758662814; cv=none; b=niSvjoimpk7AzEQfjqZfQpPtC9IExSm2tO/5Cmpl9/XPvonVR+KGiFbhY45ngAnUJ/nyLP+dX2eQnIZv/ceMt7r4WjaH/wmxP7fmNM2jwKagDhY2Dzo6190cNemsHk6uWh4AwmNOD6vKRZ4uISYFVrjh2JJooR5MPVD/PYNmsBI=
+	t=1758662989; cv=none; b=uTg/6VS/IsesCDEI0qVVwzQvgyW4D97xErHL/EWFGFeeNqsxC4WishxALVs0cZi5Wzrn2UicaPvxshf6bVX2yeBzQp05AQp0Ep6C1uJ17T3LXJtvFSfm1A4jdSVwX2k7kNZFn2gmtU80djgpqDFvDZDJ7kmX5Cu/jDumqbN4MwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758662814; c=relaxed/simple;
-	bh=98TTorsAAC5opB5uJTgkfC0e3/EFtVZUCwE9L5IqI5I=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=eYBIH28JuM65fqgii3/GieA4KOt4cVpC+cSpPwb1p+uPEJqK4ihIPA4Ko+fYdVDr3OdhdR7PFf2wCHImy9jsdqYtGR5B7XloP6LWTCITTeVikOenr84Vm+//IprXKQxzcOc6WR1olfkE5UZchHVym+kw+BoXi8S9mh1UariKXqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bPqx9QOL; arc=none smtp.client-ip=209.85.222.181
+	s=arc-20240116; t=1758662989; c=relaxed/simple;
+	bh=klwPCi4puQ0zuDEZyWWCXYcdBGsO/A0fjywC3l40eYA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YQGk7q2j6BQEAJPRmn0Z/3Lo21v99IRdH7CP6B38P+hQiNaTKwU/32gy5ZaQkge6uH24xhrtYxODeK3aiGvTQAFGWrOfecVcanHfe3Lx2EfAqjnLJCQOpRQYHaouuu1I6ItIx9lgxwGPA7S0nKBDNldpk1H/z8p2Gj3ZXiuZ9CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hHGwRrl+; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-84d0386be74so224936885a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:26:53 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-333abc4394dso103390a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:29:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758662812; x=1759267612; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1758662987; x=1759267787; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TzM+YAdlSU/VZW+2Cq6jx12e0U5MbjPEMSsvWJfPo/o=;
-        b=bPqx9QOLaXpHPp/Dh+Cr2IIHQwxDWy9cz3qqhQrTNIVFgpCdukzDGxr0xsWJD9LzHY
-         Sj0yoM0n5gO/MCCI5P7407/MK48qklBQA/b7cQ2mRmKJG7hQwLArXF+jv4PHGVkyFQ7M
-         kQJMwJLxoiJF1aKRKcgsobGMN0G6YZpviIdCTh0H6rwwETnOnJwS3tIXUbWn7BEj9GBY
-         SavlvAPJxqN0G+ms0g4Wx602Df0noXwF+9JYRLe3/otPKrA6/SpyB0f6T5sZsyBkRBi0
-         Ajssx+uiwYP0VOwYmTtYHN9XH+DyNithD9uXF8vhmF/GYxZeRjz6/zrKoBdAxZD0W7ep
-         sF7A==
+        bh=klwPCi4puQ0zuDEZyWWCXYcdBGsO/A0fjywC3l40eYA=;
+        b=hHGwRrl+vRBIDsXW8Yw2H3AsVLKcoHwqEz3rusLUH847L0K/xR6LURZHK7LCyAWcKy
+         4/Ex0JtciQx4FgwTlh52fghHp03M4ZEPJeeExyuFRKOY3UF66a3fS9b/SYIfLlEbEhKu
+         SnfwYZO7KfVQ/uNvGv+Lis7zUA2/LgZprAg16U8FF4YgcPYiCghtF+uZFr+dEbosuIZ8
+         sMUyc+SKv9/ks/XndtdMfQbrPccQoZHgZB2knAcJa4wJgFwttAoJEJUh/S9UFy2WsWM3
+         L858KQYn3PDzteG83ra2UBUMq+6MkdmxT6H56N+EAZWU32N+a3YQ3WJ3qKgexG7+hEcz
+         DqTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758662812; x=1759267612;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TzM+YAdlSU/VZW+2Cq6jx12e0U5MbjPEMSsvWJfPo/o=;
-        b=mhIuq5jbxZMrbXQjiGYurOuhc/sMeD62Ncd4/Muz1/1nmRM/oY8Y/pzPBAdQNvLupt
-         KHYkkFyb5nd5qcn7r3tVlES2ZhVzvnX12wsspiScIXc+oievwSw00IK9JboaSx4IUIYb
-         RRNgUHyNnkGvcV9pSSjb4JNguDvVgAFz1EAyWCOzfVbVgH/ct3jaDlVGi7iLNfgFsgRZ
-         RqxZwga168R28G4IE0JM+5XNb15AO0MElgfHwjwvGa6iJhccHPCccdqOLVkt4yZGih0b
-         Ov0qzssAFrh+M3Ftc6/9R/hImbBk6rgSPLl06zj8WodBEKE1Mc5W5xnIMUCbs3hwMW2y
-         yjWg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4rd+XtOenFWh5LtqKkHFws5MAQorMRXLQhLh4KZUwNO7ADWKMUnem8ux2mObnPIfWXnSjmHZFEN68qf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhCAyYQf9l8j1CB7WwZXpR20E6VpNICfYODUBAjdFdpna0HdG0
-	RR7gyICG4OXaShL/06Ur3oHQvvKNKPmOJkZY26VI+JSksiVplFSQxzNq
-X-Gm-Gg: ASbGnctELE9v3r+6sZqZPm1ovS4y2eyur/laYK+rVhHPwPirMFRS8XFSBEoZhZs1VeI
-	rL6LHFIeMBZqV884Mdc9WZbyn+AkZRyNLNqRAKkm9aot0vJfj7K3KInMz1XlwYf2h2+PwAuus1B
-	hcXpk/kcVOjbon5WYr0QvZ0SoHoytM6SqJ6KUcexhsZAs55n37LK2g4XdoW0+Mb57eWZzQBCFhc
-	TUDophmQ2YMvQDn6V5T/MeDRlUM69v5cVpexXCLx7XHCIzQSWYjg7wZqSdMElp8PIwuYWPmm4F0
-	DaOeG0MiGGANP6ndDEvvllFZArVj6ykgTxJnEag+JNJo6wKoeRtUIuzmC7syxm4HWsxyv72g+Yb
-	yt9Q2dorzKGUjx8hjZvfyBcHtR1ild6YbE+7W30ZzRIyk5XRndkbtWwn8ylmBvA1VentyQQ==
-X-Google-Smtp-Source: AGHT+IH8atUv4YKSIxfZVb6zK7i1Ycf2XPhQsuhnYzuHVn6FuO+wM4OiWHH3TWoKcLdGgcHi4O5NpA==
-X-Received: by 2002:a05:620a:1a8d:b0:83b:d570:acba with SMTP id af79cd13be357-8516aa0ddcamr431669185a.29.1758662812136;
-        Tue, 23 Sep 2025 14:26:52 -0700 (PDT)
-Received: from gmail.com (21.33.48.34.bc.googleusercontent.com. [34.48.33.21])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-83630481f38sm1039458585a.39.2025.09.23.14.26.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 14:26:51 -0700 (PDT)
-Date: Tue, 23 Sep 2025 17:26:50 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Richard Gobert <richardbgobert@gmail.com>, 
- netdev@vger.kernel.org, 
- pabeni@redhat.com, 
- ecree.xilinx@gmail.com, 
- willemdebruijn.kernel@gmail.com
-Cc: davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- horms@kernel.org, 
- corbet@lwn.net, 
- saeedm@nvidia.com, 
- tariqt@nvidia.com, 
- mbloch@nvidia.com, 
- leon@kernel.org, 
- dsahern@kernel.org, 
- ncardwell@google.com, 
- kuniyu@google.com, 
- shuah@kernel.org, 
- sdf@fomichev.me, 
- aleksander.lobakin@intel.com, 
- florian.fainelli@broadcom.com, 
- alexander.duyck@gmail.com, 
- linux-kernel@vger.kernel.org, 
- linux-net-drivers@amd.com, 
- Richard Gobert <richardbgobert@gmail.com>
-Message-ID: <willemdebruijn.kernel.2d533675f308@gmail.com>
-In-Reply-To: <20250923085908.4687-4-richardbgobert@gmail.com>
-References: <20250923085908.4687-1-richardbgobert@gmail.com>
- <20250923085908.4687-4-richardbgobert@gmail.com>
-Subject: Re: [PATCH net-next v8 3/5] net: gso: restore ids of outer ip headers
- correctly
+        d=1e100.net; s=20230601; t=1758662987; x=1759267787;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=klwPCi4puQ0zuDEZyWWCXYcdBGsO/A0fjywC3l40eYA=;
+        b=c+zS5gOo7f6kKtyJsMHVJOlq61Q6+scz8VFIEcy1mhMJqKiPj7QlSobOif0CredqQO
+         la7zCh8joMKUzlAPgsVyW0BgbtF6c1Bd1wK3F4GC0zwf/5WR4UEgpToWygRnap/4u+Ch
+         qb+gPs0u90M0gb77/0QSEWdOODTrTllemEucBjBjFhB7rKPjHFrf7RAthF9UlCBGxLJp
+         751xAY8CbwGa0zFGz8cuYh3Hv0i43q/SGPcQ4CsO+RMDTTru0tSq8WDTN7vYnRyFb7Z4
+         fpCvINP//1KLMKQW0lEoMZIsfd1Ow3HXoX1zfL75sODdgh8Yustvn246bOprVwlIMV6D
+         2Lew==
+X-Forwarded-Encrypted: i=1; AJvYcCXpkcNOzyoIHHsUUU2Q9rKlQBT7PGx0Gvv695AsvTxV3VBlMOjmz6f1CbQD87gf1zUEjQ4UlHM5ndlj/2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5jKoiRcx1zn4GVJm6ryDaKF4wV/tFjy2FgAKhKqI1dT00Bgr1
+	WWnAPYyAtR4l4AJ0RasJOPP+lcEL0N18iA2gi/y4CyBkpmd3Y6F8+85M0T2nws0+bubCzZwdIr7
+	01irM+wzrQIBX7aoMj8+Cs2IdGXF9a78=
+X-Gm-Gg: ASbGncuMEtajCg87T92CjcYRqIW1Nv+wV2x05MIXozJbT8H3jCHT1vRzh+2I4S14wxw
+	LO4UHSp4RDz1bhdJNaDT8UfdQGM/2n2Sfot2N073AVnk7I+eYTkRYeWHA7ibaXV+eaaIL5kcPRz
+	CSnAlr5jtn9O6kn03QcWOPH55Ua1jkJVV6L9e5pvX8Jh6srChYMAm3khCCP2gDvzepsdEbVaDZK
+	B109xUmN1qrNmM3cbpc2mgpnYQYRC/ZAtlX33puPkmqnCLyDfm54ykFiN96VqzJnrsy5dxiAxLs
+	2u5GoFE8lWhwGkDwB2medmF9LQ==
+X-Google-Smtp-Source: AGHT+IHm3C1GpBA3VBrZexjxAHTLcQA1zEDuqcUGIlepgOANCbpnx97SeKPhu08lBO/7UGD9tgSCkuBSZ0I0ZfqhRPU=
+X-Received: by 2002:a17:902:fd4b:b0:267:bd8d:1b6 with SMTP id
+ d9443c01a7336-27cc5de0da0mr19480475ad.6.1758662987013; Tue, 23 Sep 2025
+ 14:29:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
+ <2025092338-elbow-dash-373d@gregkh> <CANiq72k4VG4UMDJUUfD=LNM+tJmvceNDxG=A-+6GDjLzCVXurw@mail.gmail.com>
+ <F14B2B5C-C361-4670-88C0-61A1EC97E630@collabora.com>
+In-Reply-To: <F14B2B5C-C361-4670-88C0-61A1EC97E630@collabora.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 23 Sep 2025 23:29:33 +0200
+X-Gm-Features: AS18NWDubd8RGsH6mIJhWBKGluo4Gi2SmLUql2vcus2XnvSic-9i6pFMqT971zY
+Message-ID: <CANiq72noNB9ctcj51sJ=vvw6PfocgWRAD7sxBJHAfbNt9ZcVaQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] rust: usb: add initial USB abstractions
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Richard Gobert wrote:
-> Currently, NETIF_F_TSO_MANGLEID indicates that the inner-most ID can
-> be mangled. Outer IDs can always be mangled.
-> 
-> Make GSO preserve outer IDs by default, with NETIF_F_TSO_MANGLEID allowing
-> both inner and outer IDs to be mangled.
-> 
-> This commit also modifies a few drivers that use SKB_GSO_FIXEDID directly.
-> 
-> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
-> Reviewed-by: Edward Cree <ecree.xilinx@gmail.com> # for sfc
+On Tue, Sep 23, 2025 at 3:25=E2=80=AFPM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
+>
+> Yeah, I did not add that on purpose. What=E2=80=99s the preferred approac=
+h here? I
+> wonder if we can add the Rust files to the USB SUBSYSTEM entry? I can mai=
+ntain
+> the sample driver under a separate entry, for example.
+>
+> I=E2=80=99m open to any other arrangements.
 
-Reviewed-by: Willem de Bruijn <willemb@google.com>
+Up to the subsystem maintainers, so Greg in this case I assume.
 
-Thanks for added the pointer to segmentation-offloads.rst.
+In general, maintainers may want to maintain it themselves (thus
+adding the files is fine as you say); otherwise, they may prefer to
+have you as co-maintainer, or perhaps a new sub-entry with you as
+maintainer for the Rust part, etc.
+
+Thanks!
+
+Cheers,
+Miguel
 
