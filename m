@@ -1,254 +1,123 @@
-Return-Path: <linux-kernel+bounces-828722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C79B95484
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:39:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA898B9549F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E281906A21
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:39:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D1502E630C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83471320CAB;
-	Tue, 23 Sep 2025 09:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE011320A3C;
+	Tue, 23 Sep 2025 09:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hd6DZ0T2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gyx6BDuj"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54FD3191C4;
-	Tue, 23 Sep 2025 09:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8434F258CF9;
+	Tue, 23 Sep 2025 09:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758620317; cv=none; b=aH54L/wAUo7MDUGqSdGfApP+gTQPeH6B3LXI/A7qvM+Zlu1wfZYSt6VcUy1xgGnsypm86lVNnRxzSf/DpMCehF6hkpa8jAfq/bn7VSd8Iz+mgioLlmkWSNaEUVE5S7oWJyG3HuhxqMMX5RIkX8Y2dV9GzrdDpwZxI5T7Ej0ZlrQ=
+	t=1758620445; cv=none; b=uqQXJ8G4SKKvYo+2jSo9AqsBb0B7vhj0hneFeavfM5OJ9boh8SNdROudj7wQgNg2Xkb9PzUQfGw23uPnRX09wxK5A2232NgC3jJ1gZ6iUEJ9QKLq9MPPSvy7kM6Cd6PA6Xyb0RLICS8Z8oVFxZj2vIZ+pnm9jUvZ7fnS+UTD+PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758620317; c=relaxed/simple;
-	bh=j3qAWA5jjbOKf155SEPAuTyQlJzoX1Hlz3SFDGDmXH8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=omzYnQhuGPiOAhw61+jEiZUJk0xQjDSqyoJILftxV655MQkA+IaFAvjd/bChq6FWDOoFLYlce5ztNcVIZjxta/V7FgyhvHm6s6/n4U9K7mdrkjdeqJTOY8olG7TDu9UNxkKtLceqVeFm1/BupabAUTa0gy6ERDdoY/giZ+Je/6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hd6DZ0T2; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758620314; x=1790156314;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=j3qAWA5jjbOKf155SEPAuTyQlJzoX1Hlz3SFDGDmXH8=;
-  b=hd6DZ0T24IzGISmPAEiwJ4c1mKVvmLaXWJIV+ikCPgHXi9W7U+0jVtin
-   lj1L1SRvKCVB2IUMg+HWdjQkA5nlteXkJwcv3Msk5OoKWSLjyFhr0VemL
-   9jrdLryxPmoAuohhtCbHhtkpBPIUfsrI848845BNdXMHUYRvjjO8zWOIw
-   In0o2uPpL1kgrr/MTcDrC37grJqJn2mlesi9DewjV7O7lfFat9IarlOJu
-   PcOa/kmTxAsv3UmnDlw+63nW51ifYm0v9SaLW2XrCxd5CQVDt+tp4ElYk
-   4RH6ZG78Txy4K20tXGD908CYyGsYitBiWGZRdBylTqcd26/qdcEUm1RDz
-   g==;
-X-CSE-ConnectionGUID: nnnDY2+nQimDmA38s1qwKQ==
-X-CSE-MsgGUID: d9fhMdnvQfSvfbSyNcVCaA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="72255178"
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="72255178"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 02:38:33 -0700
-X-CSE-ConnectionGUID: O3nI5KnYR3S8SN5k19aP6g==
-X-CSE-MsgGUID: 5+YhFLPcTVaDbIJy3Ikwhg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="213866279"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 02:38:29 -0700
-Message-ID: <e455cb2c-a51c-494e-acc1-12743c4f4d3f@linux.intel.com>
-Date: Tue, 23 Sep 2025 17:38:26 +0800
+	s=arc-20240116; t=1758620445; c=relaxed/simple;
+	bh=q81kQ5xhqohdzpN6BRTaCRJ3bo8nUWkgVBAYZFL2f7M=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gxGr6BEE96iHtw1nuGef0fPX2CNUrE/8rcgY8sBbrXJ0WtIy6MM9dvSRE1cYfPQlPZk121Qe9o31kVVXc4QW8h0rTQVNzimB5Pc9581OY37vzIxAw8nQrbCQRm/0yB6TuJkLHA0O6NuAFQJrolaiJxTOyadxh6w4cE9JB0wIhVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=gyx6BDuj; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58N9eMLE1427212;
+	Tue, 23 Sep 2025 04:40:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758620422;
+	bh=8bg8Oys3ldqONp1rkDm9KHUE8Nsow8X5TQBNQvmAkmM=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=gyx6BDujLPlhRSIYt1R2kGpS4iOH9Y3YRjwHY/C0QD8H6fmioS4w69VaCpOB71bsx
+	 /0tshFMmA7o5ZscQu5RjfNcJEDv4SObCuipjI1YnIz4lnrDlalxaIaQwTR02DdX3gD
+	 W1GsRLHs0bPL0l+QWJjZUco4UENx+pJHvJ5WKfV0=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58N9eMnJ986154
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 23 Sep 2025 04:40:22 -0500
+Received: from DFLE213.ent.ti.com (10.64.6.71) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 23
+ Sep 2025 04:40:21 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE213.ent.ti.com
+ (10.64.6.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 23 Sep 2025 04:40:21 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58N9eKtg101593;
+	Tue, 23 Sep 2025 04:40:21 -0500
+Date: Tue, 23 Sep 2025 15:10:20 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Peng Fan <peng.fan@nxp.com>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Danilo Krummrich <dakr@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Chen <peter.chen@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha
+ Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team
+	<kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Thinh Nguyen
+	<Thinh.Nguyen@synopsys.com>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 1/5] PM: wakeup: Add out-of-band system wakeup support
+ for devices
+Message-ID: <20250923094020.ogc2nr5nxryxoavq@lcpd911>
+References: <20250922-pm-v4-v4-0-ef48428e8fe0@nxp.com>
+ <20250922-pm-v4-v4-1-ef48428e8fe0@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/16] x86/virt/tdx: Improve PAMT refcounters
- allocation for sparse memory
-To: "Huang, Kai" <kai.huang@intel.com>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
- "Zhao, Yan Y" <yan.y.zhao@intel.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "kas@kernel.org" <kas@kernel.org>, "seanjc@google.com" <seanjc@google.com>,
- "mingo@redhat.com" <mingo@redhat.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "Annapurve, Vishal" <vannapurve@google.com>, "Gao, Chao"
- <chao.gao@intel.com>, "bp@alien8.de" <bp@alien8.de>,
- "x86@kernel.org" <x86@kernel.org>,
- "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
-References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
- <20250918232224.2202592-7-rick.p.edgecombe@intel.com>
- <f1018ab125eb18f431ddb3dd50501914b396ee2b.camel@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <f1018ab125eb18f431ddb3dd50501914b396ee2b.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250922-pm-v4-v4-1-ef48428e8fe0@nxp.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+On Sep 22, 2025 at 10:21:06 +0800, Peng Fan wrote:
+> Some devices can wake up the system from suspend even when their power
+> domains are turned off. This is possible because their system-wakeup logic
+> resides in an always-on power domain - indicating that they support
+> out-of-band system wakeup.
+> 
+> Currently, PM domain core doesn't power off such devices if they are marked
+> as system wakeup sources. To better represent devices with out-of-band
 
+This commit message makes things much clearer now. Thanks!
 
-On 9/19/2025 3:25 PM, Huang, Kai wrote:
->> +/* Map a page into the PAMT refcount vmalloc region */
->> +static int pamt_refcount_populate(pte_t *pte, unsigned long addr, void *data)
->> +{
->> +	struct page *page;
->> +	pte_t entry;
->>   
->> -	pamt_refcounts = vmalloc(size);
->> -	if (!pamt_refcounts)
->> +	page = alloc_page(GFP_KERNEL | __GFP_ZERO);
->> +	if (!page)
->>   		return -ENOMEM;
->>   
->> +	entry = mk_pte(page, PAGE_KERNEL);
->> +
->> +	spin_lock(&init_mm.page_table_lock);
->> +	/*
->> +	 * PAMT refcount populations can overlap due to rounding of the
->> +	 * start/end pfn.
->>
-> [...]
->
->> Make sure another PAMT range didn't already
->> +	 * populate it.
->> +	 */
-> Make sure the same range only gets populated once ?
->
->> +	if (pte_none(ptep_get(pte)))
->> +		set_pte_at(&init_mm, addr, pte, entry);
->> +	else
->> +		__free_page(page);
->> +	spin_unlock(&init_mm.page_table_lock);
->> +
->>   	return 0;
->>   }
->>   
->> +/*
->> + * Allocate PAMT reference counters for the given PFN range.
->> + *
->> + * It consumes 2MiB for every 1TiB of physical memory.
->> + */
->> +static int alloc_pamt_refcount(unsigned long start_pfn, unsigned long end_pfn)
->> +{
->> +	unsigned long start, end;
->> +
->> +	start = (unsigned long)tdx_find_pamt_refcount(PFN_PHYS(start_pfn));
->> +	end   = (unsigned long)tdx_find_pamt_refcount(PFN_PHYS(end_pfn + 1));
-> (sorry didn't notice this in last version)
->
-> I don't quite follow why we need "end_pfn + 1" instead of just "end_pfn"?
->
-> IIUC this could result in an additional 2M range being populated
-> unnecessarily when the end_pfn is 2M aligned.
+> wakeup capability, this patch introduces a new flag out_band_wakeup in
+> 'struct dev_pm_info'.
+> 
+> Two helper APIs are added:
+>  - device_set_out_band_wakeup() - to mark a device as having out-of-band
+>    wakeup capability.
+>  - device_out_band_wakeup() - to query the flag.
+> 
+> Allow the PM core and drivers to distinguish between regular and
+> out-of-band wakeup sources, enable more accurate power management decision.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-IIUC, this will not happen.
-The +1 page will be converted to 4KB, and will be ignored since in
-tdx_find_pamt_refcount() the address is divided by 2M.
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
 
-To handle the address unaligned to 2M, +511 should be used instead of +1?
-
->
-> And ...
->
->> +	start = round_down(start, PAGE_SIZE);
->> +	end   = round_up(end, PAGE_SIZE);
->> +
->> +	return apply_to_page_range(&init_mm, start, end - start,
->> +				   pamt_refcount_populate, NULL);
->> +}
->> +
->> +/*
->> + * Reserve vmalloc range for PAMT reference counters. It covers all physical
->> + * address space up to max_pfn. It is going to be populated from
->> + * build_tdx_memlist() only for present memory that available for TDX use.
->> + *
->> + * It reserves 2MiB of virtual address space for every 1TiB of physical memory.
->> + */
->> +static int init_pamt_metadata(void)
->> +{
->> +	struct vm_struct *area;
->> +	size_t size;
->> +
->> +	if (!tdx_supports_dynamic_pamt(&tdx_sysinfo))
->> +		return 0;
->> +
->> +	size = max_pfn / PTRS_PER_PTE * sizeof(*pamt_refcounts);
->> +	size = round_up(size, PAGE_SIZE);
->> +
->> +	area = get_vm_area(size, VM_SPARSE);
->> +	if (!area)
->> +		return -ENOMEM;
->> +
->> +	pamt_refcounts = area->addr;
->> +	return 0;
->> +}
->> +
->> +/* Unmap a page from the PAMT refcount vmalloc region */
->> +static int pamt_refcount_depopulate(pte_t *pte, unsigned long addr, void *data)
->> +{
->> +	struct page *page;
->> +	pte_t entry;
->> +
->> +	spin_lock(&init_mm.page_table_lock);
->> +
->> +	entry = ptep_get(pte);
->> +	/* refount allocation is sparse, may not be populated */
-
-refount -> refcount
-
-
->> +	if (!pte_none(entry)) {
->> +		pte_clear(&init_mm, addr, pte);
->> +		page = pte_page(entry);
->> +		__free_page(page);
->> +	}
->> +
->> +	spin_unlock(&init_mm.page_table_lock);
->> +
->> +	return 0;
->> +}
->> +
->> +/* Unmap all PAMT refcount pages and free vmalloc range */
->>   static void free_pamt_metadata(void)
->>   {
->> +	size_t size;
->> +
->>   	if (!tdx_supports_dynamic_pamt(&tdx_sysinfo))
->>   		return;
->>   
->> +	size = max_pfn / PTRS_PER_PTE * sizeof(*pamt_refcounts);
->> +	size = round_up(size, PAGE_SIZE);
->> +
->> +	apply_to_existing_page_range(&init_mm,
->> +				     (unsigned long)pamt_refcounts,
->> +				     size, pamt_refcount_depopulate,
->> +				     NULL);
->>   	vfree(pamt_refcounts);
->>   	pamt_refcounts = NULL;
->>   }
->> @@ -288,10 +377,19 @@ static int build_tdx_memlist(struct list_head *tmb_list)
->>   		ret = add_tdx_memblock(tmb_list, start_pfn, end_pfn, nid);
->>   		if (ret)
->>   			goto err;
->> +
->> +		/* Allocated PAMT refcountes for the memblock */
->> +		ret = alloc_pamt_refcount(start_pfn, end_pfn);
->> +		if (ret)
->> +			goto err;
->>   	}
-> ... when max_pfn == end_pfn of the last TDX memory block, this could
-> result in an additional page of @pamt_refcounts being allocated, but it
-> will never be freed since free_pamt_metadata() will only free mapping up
-> to max_pfn.
->
-> Am I missing anything?
-
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
