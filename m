@@ -1,163 +1,299 @@
-Return-Path: <linux-kernel+bounces-828806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4953FB95879
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:56:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24852B95882
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 623DD4A3C19
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:56:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEA323A5653
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41663218B1;
-	Tue, 23 Sep 2025 10:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F93D321444;
+	Tue, 23 Sep 2025 10:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gmhrueqC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pwvBO46h"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70396313E16;
-	Tue, 23 Sep 2025 10:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8E71D63F5;
+	Tue, 23 Sep 2025 10:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758624992; cv=none; b=sl/KsgzRLH3+n2+ZWV61jxdnRsMxIZs5VMmtSDZs5FPUm1WViiYQqEFoB1GP/ERv7C2g3YwjKri0TrAAb7dhjlRFosuj5jCxXZHDWgZgRebIu8jwJoVCkR0KaK7AVcZ+hMmDVL1TDTM7kRB7pCmOm582SGXmI0E/uxNUFSVEX0M=
+	t=1758625028; cv=none; b=GWvZG8l8vwG7+aAP+xQuDMPEW7qt1VTp7dnAAN7IRwqxmsFRsDEdQs49aBIxUgtthoCjbYH8/1j/Eg//SYyLG8o1Fg/YwQdlJR7uN94Ow41WBG+oqy1WluUfwiRRBB+urE4XYcaxovsYMBpmHflLLv9I+h5dokuKdqduN4I9ias=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758624992; c=relaxed/simple;
-	bh=rZpX1cqpB/ZIey8M6xVk2BFhszygIMBGOCqDy8inSU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uQQxSQ/vOgzKIJoqxlMBJhuyiHhKljwK7yBt0CBIO7Rs4STCRZ3NgcrXzsm50GGH9/I1eHklXV2Ie+jiKbg4qgfsQCp2XJJwnRWfhiRoit5vRy49Ea65dXqLEVkc4WjKAwFGqhicLlkBjWUugdtZR6RvH1oPExPHtQCQuyB7QbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gmhrueqC; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758624990; x=1790160990;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rZpX1cqpB/ZIey8M6xVk2BFhszygIMBGOCqDy8inSU8=;
-  b=gmhrueqC4N+YxeSUXbXjKTCdBTwlOIGAaPpZyZ4XifrpKAYCrz0nfb2N
-   lSGjLlaPOXSx8UQinPbb9keJa7EpFzHfkx+GwgxzDXPgIYSm9Fuwe3/i1
-   3kGRqZW/D6eiQQWbRfzTVBQdi9JAl4YkSaXybHrGo4ylwbH3afvBNc/mr
-   Xfbvb0xY85LCHGJUDDuMII/0ytv4rWl2J8B3hMBD4/TnLCuHvokX+b82o
-   CIxtCnSTn5Auno/y8EN9GTlUsMCjo+c1zmfqxwHievcXwfggGNkQAdPzj
-   cR7vy/wrfE8jDp/qFvOP8tvNtSuv8Svq2UQjt6N2RH3GtPvfOb/RJZYPR
-   A==;
-X-CSE-ConnectionGUID: AOVrKvbTTj2cnWL/UjJrBg==
-X-CSE-MsgGUID: 52I4GKV4SUeKT5u8SgDDpQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60118418"
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="60118418"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 03:56:29 -0700
-X-CSE-ConnectionGUID: d4pNVhNKRqqTzpQ3WvrWqA==
-X-CSE-MsgGUID: dHmrTC5PRU+gRttYCgYMHw==
-X-ExtLoop1: 1
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 23 Sep 2025 03:56:25 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v10h5-00032H-2B;
-	Tue, 23 Sep 2025 10:56:23 +0000
-Date: Tue, 23 Sep 2025 18:56:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Guangshuo Li <lgs201920130244@gmail.com>,
-	Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Gaurav Jain <gaurav.jain@nxp.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Victoria Milhoan (b42089)" <vicki.milhoan@freescale.com>,
-	Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>,
-	Dan Douglass <dan.douglass@nxp.com>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	Guangshuo Li <lgs201920130244@gmail.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2] crypto: caam: Add check for kcalloc() in test_len()
-Message-ID: <202509231807.ZFBBKMM4-lkp@intel.com>
-References: <20250922155322.1825714-1-lgs201920130244@gmail.com>
+	s=arc-20240116; t=1758625028; c=relaxed/simple;
+	bh=JEyAZyjBMtjVd81h2fLv5J4ZbUDLUdUImJ/IJ+JyxaQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZGu4CgYwPZvS2v26TICpYV+Fbr9IJQF8s5uAuVje3JnugPSI4UG+kL6rKrHssfcBXDUkLgkqC0A24vKmXRc/6C6UYlniMKs7itwGmtGdm1NPnXIAaDahwm18jg9QHsiIJwFphnAspo2L5bqKl5vs3yeZGXjyqFaSWQB+SxmqH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pwvBO46h; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58NAumeW989353;
+	Tue, 23 Sep 2025 05:56:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758625008;
+	bh=KqPg3M1ZYxR0uQTJr9vLW66adtBuRQoBgJx1D1fciD4=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=pwvBO46hIf6IzY2H8NFHLCu552JzHkrUO76+IKpB6OBs/7zJz/FbKvbLogJu+lRUt
+	 Ta/girxyhpUnm9iiGAkLiwuuyNq359SrM1AcmnZqnTdF9rC672XAIZSxg88vwtWBsY
+	 mMwYiK50IHaV58OcBgc5x5+/Tmtc53aKwkKg63dE=
+Received: from DLEE214.ent.ti.com (dlee214.ent.ti.com [157.170.170.117])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58NAumZZ1917165
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 23 Sep 2025 05:56:48 -0500
+Received: from lewvowa02.ent.ti.com (10.180.75.80) by DLEE214.ent.ti.com
+ (157.170.170.117) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.20; Tue, 23 Sep
+ 2025 05:56:47 -0500
+Received: from DLEE213.ent.ti.com (157.170.170.116) by lewvowa02.ent.ti.com
+ (10.180.75.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.55; Tue, 23 Sep
+ 2025 05:56:47 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE213.ent.ti.com
+ (157.170.170.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 23 Sep 2025 05:56:47 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58NAukOK4129010;
+	Tue, 23 Sep 2025 05:56:47 -0500
+Date: Tue, 23 Sep 2025 16:26:46 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: Linux PM <linux-pm@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>,
+        LKML
+	<linux-kernel@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        "Alex
+ Williamson" <alex.williamson@redhat.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Zhang Qilong <zhangqilong3@huawei.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 1/3] PM: runtime: Add auto-cleanup macros for "resume
+ and get" operations
+Message-ID: <20250923105646.abrbuf4xblctjl4c@lcpd911>
+References: <12763087.O9o76ZdvQC@rafael.j.wysocki>
+ <2399578.ElGaqSPkdT@rafael.j.wysocki>
+ <20250923085323.sbetukdirhppecz5@lcpd911>
+ <CAJZ5v0gF93Qm0_0jGQjAAo6qBJHmEEzByE243nZAyEccsvj=Bw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20250922155322.1825714-1-lgs201920130244@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0gF93Qm0_0jGQjAAo6qBJHmEEzByE243nZAyEccsvj=Bw@mail.gmail.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Guangshuo,
+On Sep 23, 2025 at 12:43:21 +0200, Rafael J. Wysocki wrote:
+> On Tue, Sep 23, 2025 at 10:53 AM Dhruva Gole <d-gole@ti.com> wrote:
+> >
+> > On Sep 22, 2025 at 17:30:43 +0200, Rafael J. Wysocki wrote:
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >
+> > > It is generally useful to be able to automatically drop a device's
+> > > runtime PM usage counter incremented by runtime PM operations that
+> > > resume a device and bump up its usage counter [1].
+> > >
+> > > To that end, add DEFINE_CLASS() macros allowing pm_runtime_put()
+> > > and pm_runtime_put_autosuspend() to be used for the auto-cleanup in
+> > > those cases.
+> > >
+> > > Simply put, a piece of code like below:
+> > >
+> > >       pm_runtime_get_sync(dev);
+> > >       .....
+> > >       pm_runtime_put(dev);
+> > >       return 0;
+> > >
+> > > can be transformed with CLASS(pm_runtime_get_sync) like:
+> > >
+> > >       guard(pm_runtime_get_sync)(dev);
+> > >       .....
+> > >       return 0;
+> > >
+> > > (see pm_runtime_put() call is gone).
+> > >
+> > > However, it is better to do proper error handling in the majority of
+> > > cases, so doing something like this instead of the above is recommended:
+> > >
+> > >       CLASS(pm_runtime_get_active, pm)(dev);
+> > >       if (IS_ERR(pm))
+> > >               return PTR_ERR(pm);
+> > >       .....
+> > >       return 0;
+> > >
+> > > In all of the cases in which runtime PM is known to be enabled for the
+> > > given device or the device can be regarded as operational (and so it can
+> > > be accessed) with runtime PM disabled, a piece of code like:
+> > >
+> > >       ret = pm_runtime_resume_and_get(dev);
+> > >       if (ret < 0)
+> > >               return ret;
+> > >       .....
+> > >       pm_runtime_put(dev);
+> > >       return 0;
+> > >
+> > > can be simplified with CLASS() like:
+> > >
+> > >       CLASS(pm_runtime_get_active, pm)(dev);
+> > >       if (IS_ERR(pm))
+> > >               return PTR_ERR(pm);
+> > >       .....
+> > >       return 0;
+> > >
+> > > (again, see pm_runtime_put() call is gone).
+> > >
+> > > Still, if the device cannot be accessed unless runtime PM has been
+> > > enabled for it, the CLASS(pm_runtime_get_active_enabled) variant
+> > > needs to be used, that is (in the context of the example above):
+> > >
+> > >       CLASS(pm_runtime_get_active_enabled, pm)(dev);
+> > >       if (IS_ERR(pm))
+> > >               return PTR_ERR(pm);
+> > >       .....
+> > >       return 0;
+> > >
+> > > When the original code calls pm_runtime_put_autosuspend(), use one
+> > > of the "auto" class variants, CLASS(pm_runtime_get_active_auto) or
+> > > CLASS(pm_runtime_get_active_enabled_auto), so for example, a piece
+> > > of code like:
+> > >
+> > >       ret = pm_runtime_resume_and_get(dev);
+> > >       if (ret < 0)
+> > >               return ret;
+> > >       .....
+> > >       pm_runtime_put_autosuspend(dev);
+> > >       return 0;
+> > >
+> > > will become:
+> > >
+> > >       CLASS(pm_runtime_get_active_enabled_auto, pm)(dev);
+> > >       if (IS_ERR(pm))
+> > >               return PTR_ERR(pm);
+> > >       .....
+> > >       return 0;
+> > >
+> > > Note that the cases in which the return value of pm_runtime_get_sync()
+> > > is checked can also be handled with the help of the new class macros.
+> > > For example, a piece of code like:
+> > >
+> > >       ret = pm_runtime_get_sync(dev);
+> > >       if (ret < 0) {
+> > >               pm_runtime_put(dev);
+> > >               return ret;
+> > >       }
+> > >       .....
+> > >       pm_runtime_put(dev);
+> > >       return 0;
+> > >
+> > > can be rewritten as:
+> > >
+> > >       CLASS(pm_runtime_get_active_enabled, pm)(dev);
+> > >       if (IS_ERR(pm))
+> > >               return PTR_ERR(pm);
+> > >       .....
+> > >       return 0;
+> > >
+> > > or CLASS(pm_runtime_get_active) can be used if transparent handling of
+> > > disabled runtime PM is desirable.
+> > >
+> >
+> > Firstly, please can we add all this documentation in runtime_pm [1]
+> > Otherwise there's just far less developers aware of the new APIs getting
+> > introduced other than people directly involved. Not everyone is going to
+> > come down here to look at git log for API docs (even though we proud
+> > ourselves in having git log as our main source of Documentation in
+> > kernel ;) )
+> >
+> > [1] https://docs.kernel.org/power/runtime_pm.html
+> 
+> That will happen when the early adopters tell me that it works for them.
 
-kernel test robot noticed the following build errors:
+Okay..
 
-[auto build test ERROR on herbert-cryptodev-2.6/master]
-[also build test ERROR on herbert-crypto-2.6/master linus/master v6.17-rc7 next-20250922]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> > > Link: https://lore.kernel.org/linux-pm/878qimv24u.wl-tiwai@suse.de/ [1]
+> > > Co-developed-by: Takashi Iwai <tiwai@suse.de>
+> > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > ---
+> > >
+> > > v2 -> v3:
+> > >    * Two more class definitions for the case in which resume errors can be
+> > >      neglected.
+> > >    * Update of new code comments (for more clarity).
+> > >    * Changelog update.
+> > >
+> > > v1 -> v2:
+> > >    * Rename the new classes and the new static inline helper.
+> > >    * Add two classes for handling disabled runtime PM.
+> > >    * Expand the changelog.
+> > >    * Adjust the subject.
+> > >
+> > > ---
+> > >  drivers/base/power/runtime.c |    2 +
+> > >  include/linux/pm_runtime.h   |   82 +++++++++++++++++++++++++++++++++++++++++++
+> > >  2 files changed, 84 insertions(+)
+> >
+> > >
+> > > --- a/drivers/base/power/runtime.c
+> > > +++ b/drivers/base/power/runtime.c
+> > > @@ -796,6 +796,8 @@ static int rpm_resume(struct device *dev
+> > >               if (dev->power.runtime_status == RPM_ACTIVE &&
+> > >                   dev->power.last_status == RPM_ACTIVE)
+> > >                       retval = 1;
+> > > +             else if (rpmflags & RPM_TRANSPARENT)
+> > > +                     goto out;
+> >
+> > "TRANSPARENT" doesn't tell you exactly what happens. It should be something like
+> > RPM_IGNORE_DISABLED or RPM_ALLOW_DISABLED IMO.
+> 
+> There is a description in the header file and TRANSPARENT is shorter
+> than the alternatives.  Besides, this is mostly for internal use.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Guangshuo-Li/crypto-caam-Add-check-for-kcalloc-in-test_len/20250922-235723
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-patch link:    https://lore.kernel.org/r/20250922155322.1825714-1-lgs201920130244%40gmail.com
-patch subject: [PATCH v2] crypto: caam: Add check for kcalloc() in test_len()
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250923/202509231807.ZFBBKMM4-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250923/202509231807.ZFBBKMM4-lkp@intel.com/reproduce)
+OK.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509231807.ZFBBKMM4-lkp@intel.com/
+> 
+> > >               else
+> > >                       retval = -EACCES;
+> > >       }
+> > > --- a/include/linux/pm_runtime.h
+> > > +++ b/include/linux/pm_runtime.h
+> > > @@ -21,6 +21,7 @@
+> > >  #define RPM_GET_PUT          0x04    /* Increment/decrement the
+> > >                                           usage_count */
+> > >  #define RPM_AUTO             0x08    /* Use autosuspend_delay */
+> > > +#define RPM_TRANSPARENT      0x10    /* Succeed if runtime PM is disabled */
+> > >
+> > >  /*
+> > >   * Use this for defining a set of PM operations to be used in all situations
+> > > @@ -533,6 +534,32 @@ static inline int pm_runtime_resume_and_
+> > >  }
+> > >
+> > >  /**
+> > > + * pm_runtime_get_active_dev - Resume a device and bump up its usage counter.
+> >
+> > I am getting no clue as to why this is different than regular
+> > pm_runtime_get_sync then? Can we describe this API better?
+> 
+> Again, this is for internal use.
+> 
+> I may as well drop the kerneldoc for this function altogether, but I'm
+> not going to send a v4 just for this purpose.
 
-All errors (new ones prefixed by >>):
+Alright then, fine by me since most comments were nits, and I am ok with
+the general idea here...
 
-   drivers/crypto/caam/caamrng.c: In function 'test_len':
->> drivers/crypto/caam/caamrng.c:186:24: error: 'return' with a value, in function returning void [-Wreturn-mismatch]
-     186 |                 return -ENOMEM;
-         |                        ^
-   drivers/crypto/caam/caamrng.c:176:20: note: declared here
-     176 | static inline void test_len(struct hwrng *rng, size_t len, bool wait)
-         |                    ^~~~~~~~
-
-
-vim +/return +186 drivers/crypto/caam/caamrng.c
-
-   174	
-   175	#ifdef CONFIG_CRYPTO_DEV_FSL_CAAM_RNG_TEST
-   176	static inline void test_len(struct hwrng *rng, size_t len, bool wait)
-   177	{
-   178		u8 *buf;
-   179		int read_len;
-   180		struct caam_rng_ctx *ctx = to_caam_rng_ctx(rng);
-   181		struct device *dev = ctx->ctrldev;
-   182	
-   183		buf = kcalloc(CAAM_RNG_MAX_FIFO_STORE_SIZE, sizeof(u8), GFP_KERNEL);
-   184	
-   185		if (!buf) {
- > 186			return -ENOMEM;
-   187		}
-   188		while (len > 0) {
-   189			read_len = rng->read(rng, buf, len, wait);
-   190	
-   191			if (read_len < 0 || (read_len == 0 && wait)) {
-   192				dev_err(dev, "RNG Read FAILED received %d bytes\n",
-   193					read_len);
-   194				kfree(buf);
-   195				return;
-   196			}
-   197	
-   198			print_hex_dump_debug("random bytes@: ",
-   199				DUMP_PREFIX_ADDRESS, 16, 4,
-   200				buf, read_len, 1);
-   201	
-   202			len = len - read_len;
-   203		}
-   204	
-   205		kfree(buf);
-   206	}
-   207	
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
