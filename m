@@ -1,135 +1,97 @@
-Return-Path: <linux-kernel+bounces-828955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5E56B95EE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:04:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26F54B95EC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7498C2E6FF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:04:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D20CB2E3034
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74B0324B0B;
-	Tue, 23 Sep 2025 13:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E786E238C0A;
+	Tue, 23 Sep 2025 13:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u3YgpIsS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNDmIaro"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0557630FC3D;
-	Tue, 23 Sep 2025 13:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A96314A9B;
+	Tue, 23 Sep 2025 13:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758632663; cv=none; b=iyubNHKnCZH/esjXg7cvsT5Ol/j/K+Atu85J3FJgPKALbvGtAPPp+osqTPuok1e5hBc57cit0laQdN7yQQomksE/7pxnSvW8sCMBhNEnK3s8BReXxtFflrBV67JOTLHqsZaS6/DXGVwl6x+0oh4u9T6SVzp6r+u/L4LJVZUigQg=
+	t=1758632520; cv=none; b=Le7ri3tWP1FTNCyX470JFNv/tLPgA22C5jbbSs7fx8h/M8xj2W7Inp9gCm8QRH5r2i5Ghi8zDl1Kzgw8D0YqzH1pLCcYBBflNhFNyOeq6rtrZOeRt6vc9KqqOTKlVBvJL1adKjPBGw+frKYJ0VTtaRVeicwftJLaDtrou5E3zjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758632663; c=relaxed/simple;
-	bh=yhOpYhydXFOTnVyJEJ9WLdHPFnfzH5DQIG3kHF9WFQo=;
+	s=arc-20240116; t=1758632520; c=relaxed/simple;
+	bh=uaL/Zkr5B9KzHJFTlE3bZdtoVBKfoyCTKWba5LR0c/Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gAl0E6Gjef2NFUtk+zbLFWN2GfeI4l/jq40ea34KT9mMBxnc4h90KkukyYuJoYqa1WX78b5ZvN2fL3a5Wfrd7jrmvrkyIdWuuM/StbFS3cRW0TkuIOcHohrOywtIr9xtbgyk8fZfXPMvYjihVODEYn5Gzuysix73CrOft+iWwxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u3YgpIsS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CCB5C4CEF5;
-	Tue, 23 Sep 2025 13:04:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZuVqtvf77MJjtSWENSr/YDF3LmIRxA0k59JnFYDrKu1hXwC87Jk0gFoSR7gGrE0HB5gnJQJs14k2mQuC8Di34mzMvKJLHxzN2RMt92LtdO1i2Tt5oMYBsTHNgDIyXWuy6+LJRo7KxQyNdHlQ5rHFPlaoYa5LvLbyA/yWEiAMNZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lNDmIaro; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 338F4C113CF;
+	Tue, 23 Sep 2025 13:01:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758632662;
-	bh=yhOpYhydXFOTnVyJEJ9WLdHPFnfzH5DQIG3kHF9WFQo=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=u3YgpIsSAzRs7gbGciWsT76CbHblYIJASZ1shE1TjqCcWPLyEbA15JGORKPzvEXT+
-	 m02RpuKakAHjnfcH68v+foy9qD6o7ptAg8py/aNtIjMJeYSnh1rLlEaRzNorsKffqF
-	 4QqXB/lsl6YgLfFSxSpI5wFSiUh6UgsZzHV/XiWgtLvOW3upkjroP9vGaNReaLLSWB
-	 Qc5S3Q1Ms27ZRDR3QTqZeBl3Cx7Mcau+bAoMcL9ABVwWRmUyTiFBB3TlQYP3D7Rn2P
-	 4lSQxlgGnSePiHsuZj7whbhrZ1uTfqUK0CyXomKCn8eB/Wk7u6Ojze5rlHZyh7tlOi
-	 7WcLGSYIY4ORw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 00684CE0E5A; Tue, 23 Sep 2025 06:01:52 -0700 (PDT)
-Date: Tue, 23 Sep 2025 06:01:52 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [paulmck-rcu:dev.2025.09.15a 45/45] ERROR: modpost:
- "init_srcu_struct_fast" [kernel/rcu/rcutorture.ko] undefined!
-Message-ID: <0e09e4cb-058d-40fb-aa8d-9da68fb86a24@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <202509201519.udl3bu3X-lkp@intel.com>
+	s=k20201202; t=1758632519;
+	bh=uaL/Zkr5B9KzHJFTlE3bZdtoVBKfoyCTKWba5LR0c/Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lNDmIaropbOEZe125rvhnTim+k/Jvoxb6SJG2Jdn/BMRGTszhyLeAUponmx5vZ5FV
+	 Ee9y09eQoMB15QmT84FpcGfy44n6mNWARm9LpNmGs0M/9g+QflQAm3Nwo1wXa01LCk
+	 4K55khZqitFYfbDJgcUZATKoWWGwpJR7bV1rCvT3KPy8WWNNk/noXs6eV+eUNcza9c
+	 BKsab5oxxncMWQIC8YxJBZoC4V6l/axP6Rz7V6d7uWKuavQ0EbZt/8f0C2GLwjDk2m
+	 uWiBQTbo5x+xxxtDCRCoUCb0QGeBf7IX2Gbxs+/owKz0hBwLPIOgFFax/Lf4Wy4yMK
+	 wBHgROY30Lokg==
+Date: Tue, 23 Sep 2025 15:01:56 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, achill@achill.org
+Subject: Re: [PATCH 6.12 000/105] 6.12.49-rc1 review
+Message-ID: <aNKaRLu0avcXtvb6@finisterre.sirena.org.uk>
+References: <20250922192408.913556629@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qN+DdBK45s5K4Vjw"
+Content-Disposition: inline
+In-Reply-To: <20250922192408.913556629@linuxfoundation.org>
+X-Cookie: Filmed before a live audience.
+
+
+--qN+DdBK45s5K4Vjw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202509201519.udl3bu3X-lkp@intel.com>
 
-On Sat, Sep 20, 2025 at 03:10:55PM +0800, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2025.09.15a
-> head:   f81c21ec3fca688bfcb6fa0abaf70404655765dc
-> commit: f81c21ec3fca688bfcb6fa0abaf70404655765dc [45/45] rcutorture: Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast()
-> config: arm-randconfig-003-20250920 (https://download.01.org/0day-ci/archive/20250920/202509201519.udl3bu3X-lkp@intel.com/config)
-> compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7c861bcedf61607b6c087380ac711eb7ff918ca6)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250920/202509201519.udl3bu3X-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202509201519.udl3bu3X-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>, old ones prefixed by <<):
-> 
-> >> ERROR: modpost: "init_srcu_struct_fast" [kernel/rcu/rcutorture.ko] undefined!
+On Mon, Sep 22, 2025 at 09:28:43PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.49 release.
+> There are 105 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-I believe that this is fixed in current -rcu by the replacement commits
-headed by the following commit:
+Tested-by: Mark Brown <broonie@kernel.org>
 
-bd3acc50cf8c ("rcutorture: Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast()")
+--qN+DdBK45s5K4Vjw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Please see below for the diff that should fix the commit in which
-you found the failure.
+-----BEGIN PGP SIGNATURE-----
 
-And thank you for your testing efforts!!!
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjSmkMACgkQJNaLcl1U
+h9DdGAf8CqZqrV2+8kL3LHqOymLCI1rLzzcmE24N031+36z/uzPsqjkWy1a1qpbf
+juvFhO8bmedwuf+mhcWo4u6Q2pW4JScEehRnB2xVMdtgU5/m5O0mz2XLVI5HEUUP
+q1X72TE3gqwWN0KoY/DwzfNopvFAbZA7y644vzFVQin3c3hglKJ4gqIxnB7lXL2Q
+9HrY69JvScdVScB9pa0z9svhuWaTICHhKRXMFHU5gDHpldyuVQzJltXAyKvmxzuO
+EyiNu4JAZIADIcPzogNntz4kayqxpNQ/BKiNvJcv703WPxuTf7q3kKs+raTZyUo1
+nXf/CULbYK/37CGLBwFeKq54vmRpxw==
+=9qoR
+-----END PGP SIGNATURE-----
 
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index c81d5dfaf73753..26de47820c58cd 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -48,7 +48,9 @@ int __init_srcu_struct_fast(struct srcu_struct *ssp, const char *name, struct lo
- #else /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
- 
- int init_srcu_struct(struct srcu_struct *ssp);
-+#ifndef CONFIG_TINY_SRCU
- int init_srcu_struct_fast(struct srcu_struct *ssp);
-+#endif // #ifndef CONFIG_TINY_SRCU
- 
- #define __SRCU_DEP_MAP_INIT(srcu_name)
- #endif /* #else #ifdef CONFIG_DEBUG_LOCK_ALLOC */
-diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
-index 4c2f2802393062..92e6ab53398fc0 100644
---- a/include/linux/srcutiny.h
-+++ b/include/linux/srcutiny.h
-@@ -45,9 +45,9 @@ void srcu_drive_gp(struct work_struct *wp);
-  */
- #define DEFINE_SRCU(name) \
- 	struct srcu_struct name = __SRCU_STRUCT_INIT(name, name, name, name)
--#define DEFINE_SRCU_FAST(name) DEFINE_SRCU(name)
- #define DEFINE_STATIC_SRCU(name) \
- 	static struct srcu_struct name = __SRCU_STRUCT_INIT(name, name, name, name)
-+#define DEFINE_SRCU_FAST(name) DEFINE_SRCU(name)
- #define DEFINE_STATIC_SRCU_FAST(name) \
- 	static struct srcu_struct name = __SRCU_STRUCT_INIT(name, name, name, name)
- 
-@@ -55,6 +55,9 @@ void srcu_drive_gp(struct work_struct *wp);
- struct srcu_usage { };
- #define __SRCU_USAGE_INIT(name) { }
- #define __init_srcu_struct_fast __init_srcu_struct
-+#ifndef CONFIG_DEBUG_LOCK_ALLOC
-+#define init_srcu_struct_fast init_srcu_struct
-+#endif // #ifndef CONFIG_DEBUG_LOCK_ALLOC
- 
- void synchronize_srcu(struct srcu_struct *ssp);
- 
+--qN+DdBK45s5K4Vjw--
 
