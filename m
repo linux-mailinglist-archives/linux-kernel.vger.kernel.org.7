@@ -1,218 +1,287 @@
-Return-Path: <linux-kernel+bounces-828117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB38B93FAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:17:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73A3B93FB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C31522A39F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:17:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D6373AFC30
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A98E2638BA;
-	Tue, 23 Sep 2025 02:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A40327144B;
+	Tue, 23 Sep 2025 02:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NUfgTOo8"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011053.outbound.protection.outlook.com [40.93.194.53])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AGQIMRC4"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5C91684B4;
-	Tue, 23 Sep 2025 02:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758593820; cv=fail; b=DBz/WUxnaUWoflC14aDfCLCzriqflxT1pUpTimhu31G6XQuf00ei9K9FdLZULNBLWxhxu+2+gfx+35nYa/CAwA7jg8NBrtA2PNa/WJFzo35QRPtn+F22hC6Zx5J1MT09iNPJSnOJjTfTLXjTeaRnpVWBQYAZAxyZYcFnkwAHmMo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758593820; c=relaxed/simple;
-	bh=iEEqK/sjm6/f6li1Bw0rgI6XzkrqC5BjkAVTlpBnjmE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CPzZRXctger8NGCvwmUfp+PivXJ/wFc+zuPDZRJHqbRJ42qn6855aPN3iWIbgrEEXB9FTpsZGCz1W2Hdmm05KOb0G4iU6cYBCrFG/VPtjtZJxXWfFNifaH9AGbrrqY78ESYiH8s19a8aYq6BsB9h4LbJUH62AtmLYBWbOdahYfs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NUfgTOo8; arc=fail smtp.client-ip=40.93.194.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uuaLn22fgvMhtOZxZD3DEwqRN3oAGpOxrXo0Hkx9KMQulhGrmoSCignSz+cWQ4zLHFhhCw0wzrjmmL7RbP5q+hVFskzTHAhtx6y8i/+Iwe9vITF+3Ry9p/+i8kyyiYU6BsefTVlkg7i7uBUExWWvpAv4vy/HNukwGrI+nBN0q5yU7fYa1SFtw2+Z30GdsrhePhrQrQKgdWj8VhNIRF6pg46H3eXPXB+8wUUqNJhHi3OH4QcCVVoHyhkpZl99h2MK7xVtT4gG6m2+vKOWjMVkhQ3nt+xlELr7c54pbMv5umNl3q+A3fQpnYF+cjA80Rpg/ifmF4uRHX6ymcx+L/uioA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yJb01jWSIVv2wB4B6amSkY2zkPduVvhChqoKsk0M/GA=;
- b=bJv6/TBn7YjS99SRr9lIY5NlyoGL/GkHQjq93yrBeIS9Jq8VLZTfkbJt2Px56lctdCMBUl2eR1KGXZomGDFi+AKBUYkH3docBoFxS4KxC68VuGr3hll4tdAUGNejNXbm1SP8ekBMzREiofEnITwu8UYa5JqUPrHkyY1779tAVk3hQ/GvNpoMZjdQp/p3E6/gLrDTXyz38ky4y1uGluQYsLwuCsPLUyEHrJ8spB0VA/qpS/XfcFf/PT5OUDFhpyHtis7hJIcf9nlQ9VQA0uPB1C6zQ2FP84l0dqSWPclFmK610TTUUG67HRWHKd9XuRF17vhW7Fus0m8mrJswCgTE/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yJb01jWSIVv2wB4B6amSkY2zkPduVvhChqoKsk0M/GA=;
- b=NUfgTOo8QsFije8PkKJy9KkpYw6qFbaTCppifdp7LxoaGEdcq6dHtTbOZh+CudPYR+d14Y3ILW5eKUwScLoB4xxVLAnrv7wBg+5IQ3npL29LTwhcO5DpguOwq9PpnOOv5gdkG0ptqyncsXMkxGc7/D51vKAkB1CmOdyP6/fy07pBXP+FexW7NmnfqMW5wy5dSXR6FI91INU9BEhqDRNAeBn1K+M0nf1N/FER0SMsL+8m6UVWAH/6cTW4x8bmjWStuQhMv+g1MSYY4YaRSLo7h5fx7e0KHXt8QP4K8CMQtfCPYibxk7RoGYWP2WwX10QrR+71N5Hyvs+e7zzyZPJN1A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
- by MN2PR12MB4175.namprd12.prod.outlook.com (2603:10b6:208:1d3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
- 2025 02:16:56 +0000
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 02:16:56 +0000
-Message-ID: <0dbc8f78-5cee-4741-8d33-df3358dd5383@nvidia.com>
-Date: Mon, 22 Sep 2025 19:16:53 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/10] gpu: nova-core: Set correct DMA mask
-To: Danilo Krummrich <dakr@kernel.org>, Alistair Popple <apopple@nvidia.com>
-Cc: rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
- acourbot@nvidia.com, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
-References: <20250922113026.3083103-1-apopple@nvidia.com>
- <20250922113026.3083103-2-apopple@nvidia.com>
- <7fb081e9-e607-401b-937f-f4e3a78a2874@kernel.org>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <7fb081e9-e607-401b-937f-f4e3a78a2874@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0009.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::14) To BY5PR12MB4116.namprd12.prod.outlook.com
- (2603:10b6:a03:210::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985B39478;
+	Tue, 23 Sep 2025 02:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758593824; cv=none; b=VzQ7fODIpz0vC+oYsbkDHbA0ydZk7fqfrlPfPNnKpRR14Mkcx/yK+RDj3M9OcELXRojBbN5AcCsn/zWiTDoUqvLm7RskDwy4axy8WOmr7nhRKX7mv289/DaUtuqS8jGKOE1DLQR8ejeUBr3McHKsMKJzXHX2ndKv2kWI01Yfe44=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758593824; c=relaxed/simple;
+	bh=B1zsSF9qe7OEHd2YFH2OlgC0iTuiA8DzMILYXwXr6nc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Qx1TqHSvaEsxyKfk6+8AGhuPUP6RHcrHa07wkR0196iG5I6x9zkrrK/ubUjSK/0tMeekVu4UfqMbypO0kLjmUb81aya5kAVwJuV/pNJIPOmlcph7fCPc9jucULBsHZbbOg+COv7+R/VrFKN5VFmb68RZeWKOH8m+HX9EvyKNXm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AGQIMRC4; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1758593817; h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type;
+	bh=ZsKqdYHSWavPMgKI1y2o2ldKEM5tkb7kIEHNl5Tl04s=;
+	b=AGQIMRC4ELLeBVDjsEKWrVcxqVJ5NAVBh9ZP4RfHIW3vW7GUnywGengltcDW6yU/KyFO2TaEXX1FWVXpV5pYPGnOKViLqWzXCA/VhdSU2xmccfnuxlfBXyyd9oUyEg41RMlyXpVXBnOaz9MpN+2HNFG1KCLHY7iwEn/Gs/lyLF4=
+Received: from 30.246.179.19(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wod5R4q_1758593813 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 23 Sep 2025 10:16:55 +0800
+Message-ID: <1f70ddf0-702a-444e-ac81-f2c52fa46f55@linux.alibaba.com>
+Date: Tue, 23 Sep 2025 10:16:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|MN2PR12MB4175:EE_
-X-MS-Office365-Filtering-Correlation-Id: 38f01e30-0dfb-42fe-72d8-08ddfa474496
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VFFGbVpXL3pzNktiZ2JpbC9tYnFiQlFnNm5FQ2wxNEZrc2JvR3hsSTR2TmVV?=
- =?utf-8?B?dE1nYmY3RkR2dkgyZXpYKzZlR09mb1VUVjkzT1V5UWdIL3RCVEFRWG93WG1x?=
- =?utf-8?B?VmdwM1k5U3dDbW5uRTZJaW1hYUZFcm9QVzJaWGtEZUM1RFRDdW5zdmZRa0Ri?=
- =?utf-8?B?U1pxcXJ1Ti9BQ1JHTmU3Zm5nY2M4V2VxWkdISmNCNUY3cHlPYkpzcUZkcmpw?=
- =?utf-8?B?eVhkeUNCYWZuRDRVN2hlek1SQi9rR1lESXRtL1FZZy84N25zd0VjV2gwWmZp?=
- =?utf-8?B?dEZDZTVoby9xRzlUYmN5V20vSFJQNlpJSkdTbVgwVVhoVUdLcnZTNVJDcnho?=
- =?utf-8?B?dFVtVXYvdmpPVEJLajNXYTBnRlVmWitzWVg0dDhMcklibTViMWtKUG5uVVVF?=
- =?utf-8?B?V25XL2ZCNlY3T0tsbnliUnRwMUJLM0FXWU1scXAyamFmbXZpdlV2SytWMU16?=
- =?utf-8?B?OENjbFZxdFoyY0tKZUwyR1VFRjdCdDNhRXl6QTUwdUt4bEp0eDdCRjZzenc0?=
- =?utf-8?B?T3ZQUVllSXdaUGlMYzh5Qm80ZW0vbVFPdThtdjM5OC9ydnZkR1V0MDlzd0hx?=
- =?utf-8?B?RTJpeDNBSHdzYXFsQWtDcmZubzBMYVJWbjZUeDlWWjc2cnBvdXNxUU1MNTlL?=
- =?utf-8?B?empDRW1UdXJNeHIydzFxSlFCTEtOczl1dHpaeTBxVWpLV054VFFaMzdNYkVh?=
- =?utf-8?B?dkdTaWJTa3pxQzBEZUtaSFpPWnJDWjNvY1drQ0dvMFhpWUJqcVA2Vi8weEov?=
- =?utf-8?B?dEFHRE8vQjNWQ0F4RXN1aXB4YUdzQng2Q05xWmh0Z3EzVzhoaWZHaHdmZzRq?=
- =?utf-8?B?VXdtMnVSVzk1Si9RY2xQTmg1SkRWbWM3eTB3VzNJZTAvaUFyVjlCeTltK3c0?=
- =?utf-8?B?RVNkdWlqaGYyNzNjTVlVWVlRSkpvaFdkT2w3b1U3NmFjN0F5RGpaMWhwZytx?=
- =?utf-8?B?eTltWWV6WlkxOUM5WjU5aEcwYUo5L3dGY3FIZjYvVjV5WWxvUGRUMXkvNUwy?=
- =?utf-8?B?M0swLytaeGtQZE9aa1BMd1Fnc1Nwa3c0QkliZ25VSUd0NzQzQkJocUFhbklY?=
- =?utf-8?B?aTB3MkVLR1NibXNKYkZ0Vzh0aHl6T3FyYVpCMTUwazJtazI2bzRNMURvVk96?=
- =?utf-8?B?N2hMQ2kzdHp1RU1QNERxWEN4ZmNXbURSb2ZQdlZNQlFUN0U1czhCMm56WGdD?=
- =?utf-8?B?NFZuMHRjNXZSbzZRMHNqTFA2a3ZIVW5GeFZSK2NLUnFhbFB2TE5kNXlPcmIv?=
- =?utf-8?B?VG9rVlhjUWpSc0FDcVpuQkowb0NBTjhBUXgvWFlwUlQ1UUJrT1V6V1ErdjQ0?=
- =?utf-8?B?cnE2RXgzcXZGd0J5a01YZEdWNTk2REVabW1NQzV1S3FhTjVPK3Rrcm1RdnE4?=
- =?utf-8?B?d0xiR2R3RE85Q3R0RU9ZKzVLVHZDb2lVam41Yk1JRStoeHczZzE3aktjc1du?=
- =?utf-8?B?enFYSFpYYjRvSm5jNVJ6cm1OV0xKNVkya0hybUVKRGtSa3cvU0JEa2xLMENR?=
- =?utf-8?B?QVhjbmxSNWRJWTNxMnBYZWIyVGVMbkV5ZmhibXU4TXVOMTJYcGx0SHprc2lJ?=
- =?utf-8?B?UzhJSlRiL1hKZ3B3a0dUMW1EWVZKa3RKVnNBWFBRWkdadVJjaFBuWStrZnYr?=
- =?utf-8?B?bnJ4a0JYM3NaRmhpZlFxbzJoY3RQQXBldHY0NW4zcUdWSmd4YXdlQWwyVVFw?=
- =?utf-8?B?RkNxdWJVS0dDb0xYZk5PcG1NaDVVbXdWbXY1VnJKNFl2MmNVUTM2VUg3WFJ1?=
- =?utf-8?B?NHJxZElLS0RLU21YOUlURkpIbmpSMXY1Rk5uYzRIWEZPRGhsV1NXeWlUaVlz?=
- =?utf-8?B?cGZFY20rVWhnL2VMMXc0VTVGYUFFYkt6RXNGcnFlRnNFeWZMcU82dWd6UXJV?=
- =?utf-8?B?dFNvUFpWZlpxOGtaeTVhd3FIWFdLWTFsMUM5YW1TNWJ4L1VYazlUb1RXWDRl?=
- =?utf-8?Q?CJvqtY85dG0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SkxucW13cUVXZXQybk1zV1lHZEFKZzVaWUV4ZEllaFVaRGZwTGQ2bGFzbndi?=
- =?utf-8?B?QWpYOTdJVDVxVG1WKzh5STRLWjFVS1UxMlJLOEVmTFIvZjlNZjZkVjdnNmlH?=
- =?utf-8?B?RVZsRjNSMU1VTUtPWGMwZ0JVWkw2WHpDYWhjT2Zlb3J0dVhDOGovUmhWenB4?=
- =?utf-8?B?VEo1WDd6UEFrTnVWU0g4QTNmNFpCSHR2MWhDM3pGSTMycmZYTU9zWDQ0cUhr?=
- =?utf-8?B?UitwRFp3TUdvSTE5S0hvN1hkWERrazg1SXpEeWQ3N2ZpKzRYUDVZVWFVaDlE?=
- =?utf-8?B?di9BbnpCeDRjQVdDcHlqMkNQZWJOeXZBSlpQU0dUQWhVbzBZR05oakZGSkpv?=
- =?utf-8?B?S2tZVGlQMUJ1bHpGMlFtQkhNdkIxOXhEbUlSQkZ5YzMrMHlIazZmNmJkUE1U?=
- =?utf-8?B?MEgvSldIRW5VaGNCSElFaUhpcS9FYTRsc3J0MTAvUGhDR3Vua0NlWlFVQ1ow?=
- =?utf-8?B?ZGZtS3k0SjZhWHE2TFpKTU5lekRQUmxocTN6U0loUDFUQXFjTjdRcTVYcGY1?=
- =?utf-8?B?ZUp1TmJET21SZXU5ekZ5UlU3NVdYQ2lXUy9lZGRCREJQaEVZMEhkRzlQYlYr?=
- =?utf-8?B?dWhueEt4WFJpczlaVVpjcnZQQUlDanRjbGtDc2JHdkJzbTBaSXJPUEs1R2Ux?=
- =?utf-8?B?ZDBSQkZTTU9rTjFJM2xCckVYeUNNVEtJalBnM1V2NVZBcEl3eWlEQ3U0RGd0?=
- =?utf-8?B?T094djdBMVJIeWNYTlJ4MmRXRjJCYWNubEQ2UmhrUVJaZUVSQ0JwUG9DanNP?=
- =?utf-8?B?YjFDZUJoOFVQRW9oVXh6aFhPbjU5RlRkdXdtNmRGQ000czdGT1ZTT1UzOFJ2?=
- =?utf-8?B?UkQyNDR3UnlFQ2FzMlFDaVg4UVgxaEtubENZS2hUblBndSsvczIxeDgvNHRV?=
- =?utf-8?B?R21mUWpNZWJnYkVjMUlISVA3YngzVXZObUZIZWkzM3g2QUxkblJadmZZMXR4?=
- =?utf-8?B?b0FJLy81VEpydVEraEdXUnd1UTdEU21QYm84R0ZFMVZXMXR5ei81YTkvODJn?=
- =?utf-8?B?bWJYcmE4S0tWT2NDbG0xQzFBRHFMTDkxVlRjTDEyTnBFOExkSDVUeG5aMFJ2?=
- =?utf-8?B?STZObTg1TGlYZ1RYUWVNSmZLcVJIdkdmWllqUHhkanE5cFRBaXl4NmloVnQ0?=
- =?utf-8?B?K2J0T1hLR0pFQTFicXBBZWVHRXQ4RHpZYkxWblNzdzRJRmh4a1c5aDVDWDc4?=
- =?utf-8?B?dFdZMEZCaFRlTGlNUzBDTlN5NlpiMERVYjIrcjRoWkF6aU1FaFJURmw3Z2xD?=
- =?utf-8?B?a0V6YUYvUlZWTEcyQU5yUTdMZVM0MWE4OVdOWjd1SExpdllTdlVYT09qRncy?=
- =?utf-8?B?OUh3Ym5YbHloTFlKLzRkVkgwY2k3S1V5R2lLOExBVzJjVzR2UE1DRW5Dc1R1?=
- =?utf-8?B?aVNzWnora085cnFJRTJ6UXdhVE9DMDg2Sk9SUkJ3dmZpRHF2RGdUN1pZc0RJ?=
- =?utf-8?B?ZlN5ZXFVNHdWZThpNU5oWFd3RzFOUnFFWURCLzlJcXNDMFErOG5oODlMbnlx?=
- =?utf-8?B?WjdESWZCOTk2TWw5b1RTSDJhR0lTU3laMVVITms5dEt6SHF5UUl5QW1nSUtU?=
- =?utf-8?B?aVI2aHhLOG84N2JxZXVTVGtvT3diMWw4WU5CSXNIUnRIVzZDZDM4THhXRGRJ?=
- =?utf-8?B?bWpvMzFHZWtVcVBnUUdFRVNvd0xCREFlb1NaL3d6SG5aR2pSdUFZRkkwLzZv?=
- =?utf-8?B?RUp5czNwdjE3MEtSaUEyL0g2WEFYZ29YMWxtd3JpbjZyUW5LTnJGMklXbnpY?=
- =?utf-8?B?OG9XY0JMQXlESUVMV0dwTnBRbDhiL3BDTWUwbk9wZ3Bpb3F2OVc4WHZubHhX?=
- =?utf-8?B?bjd3Ni9hVGFrcSs2cnBudjdtM1ZBQ3J0L25SU0NZUkZocHhsUHoyTHRuSVFN?=
- =?utf-8?B?VkxaNm1vaVRnNWhpMXJ0eHhYUWk2SDMwL1EwNjQ0SUQvRk84eHIveklhQzhG?=
- =?utf-8?B?Q0plTjIzK0xJRUwwM3NVcXovck4wOXJoMHJCVkJ6ZGFDTldyUU1PQUpFU0Zl?=
- =?utf-8?B?ZFVTSjJzb3YycnZYUjc5Ukphdk56YnJReUg2M0gyRWlkSE9ZS1E4dHUwVnd6?=
- =?utf-8?B?cVB3b3ptWFBmL0tNQm1vRGlMOFlnOE9jWUFKOXZBSzYrZitVSXA2VG83blNQ?=
- =?utf-8?Q?Gu1eCQzN128qkYGqoW7GmCGg1?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38f01e30-0dfb-42fe-72d8-08ddfa474496
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 02:16:55.9147
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 271acqqkhf4EFpH4q4gNq6E+YkQAzkAdQ2r9nNiB0fr1kn/ejhSsN/QcHjuFNJmQRpoocGB2atjVkr/nhw7VQA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4175
+User-Agent: Mozilla Thunderbird
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+Subject: Re: [PATCH v10 2/3] PCI: trace: Add a RAS tracepoint to monitor link
+ speed changes
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: rostedt@goodmis.org, Lukas Wunner <lukas@wunner.de>,
+ linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ helgaas@kernel.org, mattc@purestorage.com, Jonathan.Cameron@huawei.com,
+ bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
+ davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
+ peterz@infradead.org, tianruidong@linux.alibaba.com
+References: <20250920060117.866-1-xueshuai@linux.alibaba.com>
+ <20250920060117.866-3-xueshuai@linux.alibaba.com>
+ <74cc8672-8e21-41e6-1535-2c504d90bbe0@linux.intel.com>
+In-Reply-To: <74cc8672-8e21-41e6-1535-2c504d90bbe0@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 9/22/25 9:08 AM, Danilo Krummrich wrote:
-> On 9/22/25 1:30 PM, Alistair Popple wrote:
->> +        // SAFETY: No DMA allocations have been made yet
+
+
+在 2025/9/22 21:06, Ilpo Järvinen 写道:
+> On Sat, 20 Sep 2025, Shuai Xue wrote:
 > 
-> It's not really about DMA allocations that have been made previously, there is
-> no unsafe behavior in that.
+>> PCIe link speed degradation directly impacts system performance and
+>> often indicates hardware issues such as faulty devices, physical layer
+>> problems, or configuration errors.
+>>
+>> To this end, add a RAS tracepoint to monitor link speed changes,
+>> enabling proactive health checks and diagnostic analysis.
+>>
+>> The following output is generated when a device is hotplugged:
+>>
+>> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pcie_link_event/enable
+>> $ cat /sys/kernel/debug/tracing/trace_pipe
+>>     irq/51-pciehp-88      [001] .....   381.545386: pcie_link_event: 0000:00:02.0 type:4, reason:4, cur_bus_speed:2.5 GT/s PCIe, max_bus_speed:16.0 GT/s PCIe, width:1, flit_mode:0, status:DLLLA
+>>
+>> Suggested-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+>> Suggested-by: Matthew W Carlis <mattc@purestorage.com>
+>> Suggested-by: Lukas Wunner <lukas@wunner.de>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> ---
+>>   drivers/pci/hotplug/pciehp_hpc.c |  3 +-
+>>   drivers/pci/pci.c                |  2 +-
+>>   drivers/pci/pci.h                | 22 +++++++++++--
+>>   drivers/pci/pcie/bwctrl.c        |  4 +--
+>>   drivers/pci/probe.c              |  9 +++--
+>>   include/linux/pci.h              |  1 +
+>>   include/trace/events/pci.h       | 56 ++++++++++++++++++++++++++++++++
+>>   7 files changed, 87 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+>> index bcc51b26d03d..ad5f28f6a8b1 100644
+>> --- a/drivers/pci/hotplug/pciehp_hpc.c
+>> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+>> @@ -320,7 +320,8 @@ int pciehp_check_link_status(struct controller *ctrl)
+>>   	}
+>>   
+>>   	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA2, &linksta2);
+>> -	__pcie_update_link_speed(ctrl->pcie->port->subordinate, lnk_status, linksta2);
+>> +	__pcie_update_link_speed(ctrl->pcie->port->subordinate, PCIE_HOTPLUG,
+>> +				 lnk_status, linksta2);
+>>   
+>>   	if (!found) {
+>>   		ctrl_info(ctrl, "Slot(%s): No device found\n",
+>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>> index b0f4d98036cd..96755ffd3841 100644
+>> --- a/drivers/pci/pci.c
+>> +++ b/drivers/pci/pci.c
+>> @@ -4749,7 +4749,7 @@ int pcie_retrain_link(struct pci_dev *pdev, bool use_lt)
+>>   	 * Link Speed.
+>>   	 */
+>>   	if (pdev->subordinate)
+>> -		pcie_update_link_speed(pdev->subordinate);
+>> +		pcie_update_link_speed(pdev->subordinate, PCIE_LINK_RETRAIN);
+>>   
+>>   	return rc;
+>>   }
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index b8d364545e7d..422406a0695c 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -3,6 +3,7 @@
+>>   #define DRIVERS_PCI_H
+>>   
+>>   #include <linux/pci.h>
+>> +#include <trace/events/pci.h>
+>>   
+>>   struct pcie_tlp_log;
+>>   
+>> @@ -455,16 +456,31 @@ static inline int pcie_dev_speed_mbps(enum pci_bus_speed speed)
+>>   }
+>>   
+>>   u8 pcie_get_supported_speeds(struct pci_dev *dev);
+>> -const char *pci_speed_string(enum pci_bus_speed speed);
+>>   void __pcie_print_link_status(struct pci_dev *dev, bool verbose);
+>>   void pcie_report_downtraining(struct pci_dev *dev);
+>>   
+>> -static inline void __pcie_update_link_speed(struct pci_bus *bus, u16 linksta, u16 linksta2)
+>> +enum pcie_link_change_reason {
+>> +	PCIE_LINK_RETRAIN,
+>> +	PCIE_ADD_BUS,
+>> +	PCIE_BWCTRL_ENABLE,
+>> +	PCIE_BWCTRL_IRQ,
+>> +	PCIE_HOTPLUG
 > 
-> It's about the method must not be called concurrently with any DMA allocation or
-> mapping primitives.
+> Please use comma on any non-terminator entry so that adding to the list
+> later will not mess up diffs.
+
+Sure.
+
 > 
-> Can you please adjust the comment correspondingly?
+>> +};
+>> +
+>> +static inline void __pcie_update_link_speed(struct pci_bus *bus,
+>> +					    enum pcie_link_change_reason reason,
+>> +					    u16 linksta, u16 linksta2)
+>>   {
+>>   	bus->cur_bus_speed = pcie_link_speed[linksta & PCI_EXP_LNKSTA_CLS];
+>>   	bus->flit_mode = (linksta2 & PCI_EXP_LNKSTA2_FLIT) ? 1 : 0;
+>> +
+>> +	trace_pcie_link_event(bus,
+>> +			     reason,
+>> +			     FIELD_GET(PCI_EXP_LNKSTA_NLW, linksta),
+>> +			     linksta & PCI_EXP_LNKSTA_LINK_STATUS_MASK);
+>>   }
+>> -void pcie_update_link_speed(struct pci_bus *bus);
+>> +
+>> +void pcie_update_link_speed(struct pci_bus *bus, enum pcie_link_change_reason reason);
+>>   
+>>   /* Single Root I/O Virtualization */
+>>   struct pci_sriov {
+>> diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
+>> index 36f939f23d34..32f1b30ecb84 100644
+>> --- a/drivers/pci/pcie/bwctrl.c
+>> +++ b/drivers/pci/pcie/bwctrl.c
+>> @@ -199,7 +199,7 @@ static void pcie_bwnotif_enable(struct pcie_device *srv)
+>>   	 * Update after enabling notifications & clearing status bits ensures
+>>   	 * link speed is up to date.
+>>   	 */
+>> -	pcie_update_link_speed(port->subordinate);
+>> +	pcie_update_link_speed(port->subordinate, PCIE_BWCTRL_ENABLE);
+>>   }
+>>   
+>>   static void pcie_bwnotif_disable(struct pci_dev *port)
+>> @@ -234,7 +234,7 @@ static irqreturn_t pcie_bwnotif_irq(int irq, void *context)
+>>   	 * speed (inside pcie_update_link_speed()) after LBMS has been
+>>   	 * cleared to avoid missing link speed changes.
+>>   	 */
+>> -	pcie_update_link_speed(port->subordinate);
+>> +	pcie_update_link_speed(port->subordinate, PCIE_BWCTRL_IRQ);
+>>   
+>>   	return IRQ_HANDLED;
+>>   }
+>> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+>> index f41128f91ca7..c4cae2664156 100644
+>> --- a/drivers/pci/probe.c
+>> +++ b/drivers/pci/probe.c
+>> @@ -21,6 +21,7 @@
+>>   #include <linux/irqdomain.h>
+>>   #include <linux/pm_runtime.h>
+>>   #include <linux/bitfield.h>
+>> +#include <trace/events/pci.h>
+>>   #include "pci.h"
+>>   
+>>   #define CARDBUS_LATENCY_TIMER	176	/* secondary latency timer */
+>> @@ -788,14 +789,16 @@ const char *pci_speed_string(enum pci_bus_speed speed)
+>>   }
+>>   EXPORT_SYMBOL_GPL(pci_speed_string);
+>>   
+>> -void pcie_update_link_speed(struct pci_bus *bus)
+>> +void pcie_update_link_speed(struct pci_bus *bus,
+>> +			    enum pcie_link_change_reason reason)
+>>   {
+>>   	struct pci_dev *bridge = bus->self;
+>>   	u16 linksta, linksta2;
+>>   
+>>   	pcie_capability_read_word(bridge, PCI_EXP_LNKSTA, &linksta);
+>>   	pcie_capability_read_word(bridge, PCI_EXP_LNKSTA2, &linksta2);
+>> -	__pcie_update_link_speed(bus, linksta, linksta2);
+>> +
+>> +	__pcie_update_link_speed(bus, reason, linksta, linksta2);
+>>   }
+>>   EXPORT_SYMBOL_GPL(pcie_update_link_speed);
+>>   
+>> @@ -882,7 +885,7 @@ static void pci_set_bus_speed(struct pci_bus *bus)
+>>   		pcie_capability_read_dword(bridge, PCI_EXP_LNKCAP, &linkcap);
+>>   		bus->max_bus_speed = pcie_link_speed[linkcap & PCI_EXP_LNKCAP_SLS];
+>>   
+>> -		pcie_update_link_speed(bus);
+>> +		pcie_update_link_speed(bus, PCIE_ADD_BUS);
+>>   	}
+>>   }
+>>   
+>> diff --git a/include/linux/pci.h b/include/linux/pci.h
+>> index 59876de13860..edd8a61ec44e 100644
+>> --- a/include/linux/pci.h
+>> +++ b/include/linux/pci.h
+>> @@ -305,6 +305,7 @@ enum pci_bus_speed {
+>>   	PCI_SPEED_UNKNOWN		= 0xff,
+>>   };
+>>   
+>> +const char *pci_speed_string(enum pci_bus_speed speed);
+>>   enum pci_bus_speed pcie_get_speed_cap(struct pci_dev *dev);
+>>   enum pcie_link_width pcie_get_width_cap(struct pci_dev *dev);
+>>   
+>> diff --git a/include/trace/events/pci.h b/include/trace/events/pci.h
+>> index 208609492c06..78e651b95cb3 100644
+>> --- a/include/trace/events/pci.h
+>> +++ b/include/trace/events/pci.h
+>> @@ -57,6 +57,62 @@ TRACE_EVENT(pci_hp_event,
+>>   	)
+>>   );
+>>   
+>> +#define PCI_EXP_LNKSTA_LINK_STATUS_MASK (PCI_EXP_LNKSTA_LBMS | \
+>> +					 PCI_EXP_LNKSTA_LABS | \
+>> +					 PCI_EXP_LNKSTA_LT | \
+>> +					 PCI_EXP_LNKSTA_DLLLA)
 > 
->> +        unsafe { pdev.dma_set_mask_and_coherent(DmaMask::new::<47>())? };
+> This looks fragile because of the headers, I don't think there anything
+> that pulls these required defines within this header itself (so it only
+> works because the .c files have the pci.h include before it so that that
+> the defines from uapi side will be include).
 > 
-> As Boqun mentioned, we shouldn't have a magic number for this. I don't know if
-> it will change for future chips, but maybe we should move this to gpu::Spec to
-
-It changes to 52 bits for GH100+ (Hopper/Blackwell+). When I post those
-patches, I'll use a HAL to select the value.
-
-> be safe.
+> If it's allowed for these files, you should include uapi/linux/pci_regs.h.
 > 
-> At least, create a constant for it (also in gpu::Spec?); in Nouveau I named this
-> NOUVEAU_VA_SPACE_BITS back then. Not a great name, if you have a better idea,
-> please go for it. :)
 
-GPU_DMA_BIT_WIDTH, for now?
+Thanks for pointing out this dependency issue. You're absolutely right.
 
+I'll add the explicit include for uapi/linux/pci_regs.h at the top of
+the trace header file to ensure the PCI register macros are always
+available, regardless of inclusion order.
 
-thanks,
--- 
-John Hubbard
+Will fix this in next version.
 
+Thanks.
+Shuai
 
