@@ -1,137 +1,120 @@
-Return-Path: <linux-kernel+bounces-829367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A63AFB96E45
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:00:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BD8B96E33
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD8123A2A13
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:00:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AFF6321115
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB9B329F10;
-	Tue, 23 Sep 2025 16:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3FC329F06;
+	Tue, 23 Sep 2025 16:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pOa8lpLr"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fgyMez20"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1823294FF
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C1A3294EE
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758646782; cv=none; b=ku7TzjoLKOqBj5dv9PdCOniVxWgOGYVlLj5wdz2jE6hTfz+vSe9EZGq+cS53KuAwXs640Ulq7OZ737U4AXR8d+tbdqSpFiKgNwH4dJD1ecaGMqRkrYVLeAAQjCAOWM4gEjl13TvvgdcpCSJg/FF6QX8TimFgQmQqBP/eYx+ADCE=
+	t=1758646762; cv=none; b=YpyK/wVbGn+h4r8dEiOmquwz06eTiQfkPnG0riKe1BTNjGInhAWmZuldKv3Owi2QdV89Aoz30UnqfPsNBzdeunMYat1MmFY59Cmrk7d0RWe3HMHpZHBARYu+081lznHntIKCY8+d3/yE04kFYThGOKeSj26VreI41t3gXGMeKcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758646782; c=relaxed/simple;
-	bh=0t1zFi9nttC26jmxoZL/rGyyeP3D5IhH0mSkl5ix+HM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dRVysmIk+46v/1AYGOOM0ox51tiKVmzU9hpN4NMmWqQGwCtH+2W0a/HiMZy/80co4atP2/XyrQdMgcCHU06bUA7CyP1gF93oUgTDdUuSLgGMHoUZaUwVVCDGh6kJwstKxJjxfUZaqsthv1+9+FR5i1m3KPDATxCr3k0p/NbloS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pOa8lpLr; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758646779;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/yv/EjLcVmv16kNK9RUEZeVdPoYyfddBCGEjLmOaBiI=;
-	b=pOa8lpLrJmDGHdl9WZYLpEOYwVz42/M/WM2i/P45tt60440My084SxoRCTO18vVQvMtGSl
-	whzl8kGPNr2Z3aDbzHxqjYOd8kJPMG+CXovdv/w+f9rCKJueRGHmz/pJ+TymBVhlb+s5yW
-	3pWmHIBURbRyuQScuv2+oKwnte/YMko=
-From: Tao Chen <chen.dylane@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next v5 3/3] selftests/bpf: Add stacktrace map lookup_and_delete_elem test case
-Date: Wed, 24 Sep 2025 00:58:49 +0800
-Message-ID: <20250923165849.1524622-3-chen.dylane@linux.dev>
-In-Reply-To: <20250923165849.1524622-1-chen.dylane@linux.dev>
-References: <20250923165849.1524622-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1758646762; c=relaxed/simple;
+	bh=YJlkXO/ZITWmEi69lauof1/RW6YMbUVumNSLKe5TqAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gE9VyfWcWap3uzgDczfNfQXIT3Z97Xhuipz6HlruqndNPDKvLIp4I7wrW4z4c2Cv2cksbRcKN83CQ46yf6Q13F7z8WtB0qEaqFBq/OwXDNXeuYLwe8bfZ2PP6fqjddUg+uO60kyzeWVr2S5Lknwt8AHmsQz6BXrpyTHPSEh7sFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fgyMez20; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46b7bf21fceso29369515e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:59:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758646758; x=1759251558; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TVJ0iQtlBKSgYr2iZSN1ZuLASEInLOEHg7PGBAMqWac=;
+        b=fgyMez20JRLSwWcli1Jk0ROBACIZjvnWelepnpaDUT2/0QfaA/I+/GLmQ3ICQH89Fa
+         cBIDizXdDuTbheA/BMS6DQym7S3U4I0hPT223ewd5rtWoMSHLM2hqsGmYikSQnpSJpfU
+         EuLUKqI4YXOFIRDJMqjIR2sgujj2pwQEImN80E9lly+tTwjwaHoSQ9QpJBazd3AEqgZq
+         DS8E986kKLRTfFf9Yn5+pgoRUTDBnc/cUt5ftnNcmr4aT8oU3VULdnpqYysHdTIbMwz9
+         C2emB0FWIDYSMHHEW0aMCnTvT86Bm4hAyS2GinO1tg92whWJM9g3Jd1SyEGuI8s1RS09
+         SUuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758646758; x=1759251558;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TVJ0iQtlBKSgYr2iZSN1ZuLASEInLOEHg7PGBAMqWac=;
+        b=fUlko0T0nqjtV6hoF1nVZSCmYrZ3ztZ0Qj0kZy7oCXN3AFaOgpmn6yX3RWS1hslLtU
+         DTVxjXCw7YIeyJiMn9AzoahN+ELXvmEseAVosYOFEA1ilIKh1+cNxUPxa6fLlNknZvyD
+         I8zoGbWMUzK/xC43wbmM0hT58r/qKPbONXTt1eI2/Xs3ZG71v1irqZbl47zw/LG/eVw6
+         iF1ZsAslrySMZ3wdVALe/uZ0Gr/QA3Bh1KXLiTpLuwHEcY0/NAeVMEHzU/J+o6G/1H8d
+         V2jIBor+QexNecgtlXC9sd15TjD3q0QoEyVg7ERuZWg2fuYjswnuWCUJAy/rc9VUvWha
+         xLlQ==
+X-Gm-Message-State: AOJu0Yzx073iV/94G5B51HgBi3U/sHuj+bhBskX72v9CZuXGVf7hXTwV
+	I7fLAsTPEr9SRq5o6wfqP4hv4oUAd8R37NTjD4hNueyLHGKi/A13hwQg+myC0HkWq+ZK23oZ9i8
+	i3J9O
+X-Gm-Gg: ASbGnctgEWt3XoZZ1YL5Tr+m1u/c7xojEziL8ga7kJzge/pnvF2yF76PzF5TAkb43/4
+	4qV8mf4RjwjRoQUN6ldZ942+eUEhCL/PVsgFBFqZ4SSTOdvGEdRfyLEKI7NjPmc2mzcAS2O6Dca
+	9AunnamhlLdlUhoWUw3o8Bn5CTYBx/VzTGBYovjBkDY7dZSThvI6yEvn8tWPGfGheW/AYE+lICo
+	KUnL1DHZeN1Qvw8meCcgznMsZa0Ng+m4bt3tmgUc5rmf17U5vUMLOq8gA7t6cVXfh41iN0IaEMS
+	wvQAzBwr5PXXaEVceMEWNiqZXu+cAQuwea5APIsgby9kLkJnXiPmIyPbiPMgdq6v4YhHrG8+j+h
+	oTDpDaPGxbmkxVOAqYblRGQQj6X/o+BKRvJp+2InsARI=
+X-Google-Smtp-Source: AGHT+IH6FsdRHwPLQobQ/I7blfetgrGu9IWl79+904uwLjysCfsJwBxPJRmS0Ytnh5dlEiMpfJnu3Q==
+X-Received: by 2002:a05:600c:4515:b0:45c:4470:271c with SMTP id 5b1f17b1804b1-46e1daacdc1mr36741925e9.18.1758646758594;
+        Tue, 23 Sep 2025 09:59:18 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3f00cc58b91sm18616483f8f.1.2025.09.23.09.59.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 09:59:18 -0700 (PDT)
+From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [PATCH] tracing: Ensure optimized hashing works
+Date: Tue, 23 Sep 2025 18:59:07 +0200
+Message-ID: <20250923165908.2399256-1-mkoutny@suse.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Add tests for stacktrace map lookup and delete:
-1. use bpf_map_lookup_and_delete_elem to lookup and delete the target
-   stack_id,
-2. lookup the deleted stack_id again to double check.
+If ever PID_MAX_DEFAULT changes, it must be compatible with tracing
+hashmaps assumptions.
 
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+Link: https://lore.kernel.org/r/20240409110126.651e94cb@gandalf.local.home/
+Signed-off-by: Michal Koutný <mkoutny@suse.com>
 ---
- .../testing/selftests/bpf/prog_tests/stacktrace_map.c | 11 ++++++++++-
- tools/testing/selftests/bpf/progs/stacktrace_map.c    |  2 ++
- 2 files changed, 12 insertions(+), 1 deletion(-)
+ kernel/trace/trace_sched_switch.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c b/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-index 26a2bd25a6f..f06bfef0bc8 100644
---- a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-+++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-@@ -7,7 +7,8 @@ void test_stacktrace_map(void)
- 	struct stacktrace_map *skel;
- 	int stackid_hmap_fd, stackmap_fd, stack_amap_fd;
- 	int err, stack_trace_len;
--	__u32 duration = 0;
-+	__u32 stack_id, duration = 0;
-+	__u64 val[PERF_MAX_STACK_DEPTH];
- 
- 	skel = stacktrace_map__open_and_load();
- 	if (!ASSERT_OK_PTR(skel, "skel_open_and_load"))
-@@ -54,6 +55,14 @@ void test_stacktrace_map(void)
- 		  "err %d errno %d\n", err, errno))
- 		goto out;
- 
-+	stack_id = skel->bss->stack_id;
-+	err = bpf_map_lookup_and_delete_elem(stackmap_fd, &stack_id,  val);
-+	if (!ASSERT_OK(err, "lookup and delete target stack_id"))
-+		goto out;
-+
-+	err = bpf_map_lookup_elem(stackmap_fd, &stack_id, val);
-+	if (!ASSERT_EQ(err, -ENOENT, "lookup deleted stack_id"))
-+		goto out;
- out:
- 	stacktrace_map__destroy(skel);
- }
-diff --git a/tools/testing/selftests/bpf/progs/stacktrace_map.c b/tools/testing/selftests/bpf/progs/stacktrace_map.c
-index 9090d561312..7abf702a6ce 100644
---- a/tools/testing/selftests/bpf/progs/stacktrace_map.c
-+++ b/tools/testing/selftests/bpf/progs/stacktrace_map.c
-@@ -44,6 +44,7 @@ struct sched_switch_args {
- };
- 
- int control = 0;
-+__u32 stack_id;
- SEC("tracepoint/sched/sched_switch")
- int oncpu(struct sched_switch_args *ctx)
+Drive-by flushing an old idea. Take it or leave it.
+
+diff --git a/kernel/trace/trace_sched_switch.c b/kernel/trace/trace_sched_switch.c
+index cb49f7279dc80..aabae7daaac91 100644
+--- a/kernel/trace/trace_sched_switch.c
++++ b/kernel/trace/trace_sched_switch.c
+@@ -243,6 +243,8 @@ int trace_create_savedcmd(void)
+ int trace_save_cmdline(struct task_struct *tsk)
  {
-@@ -57,6 +58,7 @@ int oncpu(struct sched_switch_args *ctx)
- 	/* The size of stackmap and stackid_hmap should be the same */
- 	key = bpf_get_stackid(ctx, &stackmap, 0);
- 	if ((int)key >= 0) {
-+		stack_id = key;
- 		bpf_map_update_elem(&stackid_hmap, &key, &val, 0);
- 		stack_p = bpf_map_lookup_elem(&stack_amap, &key);
- 		if (stack_p)
+ 	unsigned tpid, idx;
++	/* so that map_pid_to_cmdline indexing is efficient */
++	BUILD_BUG_ON(!is_power_of_2(PID_MAX_DEFAULT));
+ 
+ 	/* treat recording of idle task as a success */
+ 	if (!tsk->pid)
 -- 
-2.48.1
+2.51.0
 
 
