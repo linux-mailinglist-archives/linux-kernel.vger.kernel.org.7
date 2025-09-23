@@ -1,102 +1,116 @@
-Return-Path: <linux-kernel+bounces-829334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB4B7B96D49
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56383B96D4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEB22188E6FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:30:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F399188F94E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F622327A14;
-	Tue, 23 Sep 2025 16:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C533327A0D;
+	Tue, 23 Sep 2025 16:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="yOTZEw1I"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWdG3qKa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343E8327A15;
-	Tue, 23 Sep 2025 16:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86F2211A05;
+	Tue, 23 Sep 2025 16:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758645021; cv=none; b=c8HWKoGzvAqNg0XyopoOEeKI57Rz4UM/2h3BRS3jmpJQthYof68hgWjXkscfBSQ2GrNhhNYcU/J5mA/OapFVTAXNEZVQjYO5oDwBzq+6u3Kto3fty7EWciVLJli8XmHVARY3JwhIk9UxLbNoUXsW2gFQWFSuI/JtSgRO/OlKWEI=
+	t=1758645037; cv=none; b=qXXkUyu23MKuiE3dy0dyWQ2j2ha8ZCNYyIxD3mpoyu5WqKbswouVi60diVdXUdMOyXqZMsA9H3mEJYeQgaXEGzZaAkuAHoErshZnc5gpGezS2TrNjHNHePR6Jvy8lOpZjg4UJ8XWJsxpkn9fo8jdBiDL3XpRK54rUn8b3PHk4hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758645021; c=relaxed/simple;
-	bh=xxlfqxGVzmOevvcQOd7sSEOgVs7jyDvb/Tj8lHcCIeg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sy1vO+GbutR9/7K1TpHfjAc8deKO73pLFTazFbrh0gBoYNXeytUG5U+tdCNYajNdW5Y89p7/IZKaVyUAEg4UVuSVVXIqPyWzzPub2FT+E+HETrx22REGEYZ7xMDV0wXdT06W7ORhddZb0Nt6d+sm7PP3CS/Kd1bGOd4j2ja0f0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=yOTZEw1I; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cWQSV1HyBzlgqVZ;
-	Tue, 23 Sep 2025 16:30:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1758645016; x=1761237017; bh=y99uiFJpTg3J4KVIyd3kcbAn
-	72jmKkYosX7Y/88AOVc=; b=yOTZEw1IonbK6S4YQu8OWISBLAJhhYSP/5b1yztt
-	FENOZVRUHQYT3DFTrdQIFpH0G4xhr6eV90/OGPXWQk3Lm6nUcLhrwnvNgnb4H8zx
-	LrFNE31WMK/0aRLQVMgcYZWhjhH/PBoMUMW/StiIQ5FxnObg0GLyRu4wLVmoDPgk
-	iblmp101VvAayHANSSGUBWU9+ycDBnnM0tP7ifpBUlD8M24UNbp1TbsQA8qTJOS/
-	oSgRSYO6d4KyumKliD+qVt8L8H6X620qP043WBF44DZRNQndVYAsEk93+CmZ2vYk
-	h//10Nm4QGas9Q/F5equAPpNER4B6a+26Wz8eDMlMPqd1Q==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id PM0XBfolZEbQ; Tue, 23 Sep 2025 16:30:16 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cWQSC4mDZzlgqV6;
-	Tue, 23 Sep 2025 16:30:01 +0000 (UTC)
-Message-ID: <31091c95-1d0c-4e5a-a53b-929529bf0996@acm.org>
-Date: Tue, 23 Sep 2025 09:30:00 -0700
+	s=arc-20240116; t=1758645037; c=relaxed/simple;
+	bh=5tiBPtvgesyhnR47lrccS9gc7BUlsPB/UX6Ph/bryO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gi9cM3OWxigJKFz8Nqj6w4YS10+x9b/EEzcY+Vt8rxK+YjXYd3A/DMop3t8D8mASgFlS8VArzHVcUz9s+2o5+LbZnHhc/e24I3L1SDVlRJrQnYOOhd+O4Qr2Z12tb+uNeKyf3HomZNldR7K2exBfoWI5Ez+ANpvpi+xZqVITLi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWdG3qKa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63554C4CEF7;
+	Tue, 23 Sep 2025 16:30:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758645037;
+	bh=5tiBPtvgesyhnR47lrccS9gc7BUlsPB/UX6Ph/bryO8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aWdG3qKaD3dQpRSfft7dkP56jbtFkmlXyV/sGPLG/+35MnCJrm8IygZxeHMsuktex
+	 F6E8JHHHPCurlXMz1H/2VA+t0WBfIJEdO5iM0MBnIbnlbS9YL/pXL/4JOGcXjV3g7s
+	 x57oHnCYP631KXx4iXl/mn+eH9KFDn+3cQ+8uAeS9NNBWlfDz/ijCg5mSCigeaLRte
+	 X8gijx+Rn72fCZizw1oN6juT4EEbCQzYRxkMjnzYC9eJoMq/0XhGJu2GboqinhFXn/
+	 TYY1rJxQfUB1wOoK8DzSxLOUQaUbNWEC2eyqnzLRT1VZ1oeD/oT7Vu9pCyy5msKpDn
+	 uiXkSRS8WHsWA==
+Date: Tue, 23 Sep 2025 18:30:33 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Yinon Burgansky <yinonburgansky@gmail.com>
+Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: Touchpad multitouch leaves ghost fingers
+Message-ID: <iav7hzeaarxifwxk7zlfnt6vipqkp4h4ldt634exlvcswz62gj@a7ongaeduylz>
+References: <CAEU-x4=Zs22b5LX_rsBVMu4BxvDfO+CZkkuWuVNaxv8mqvh9Gw@mail.gmail.com>
+ <bjtev7sgmcafoysd53xrxih4nawn2dbq4odylwdglbub6td2a3@nhoxenprhjvy>
+ <CAEU-x4kL45DAddmNahjR2C97+43jchpmXep++LbeP8cXLEWN-w@mail.gmail.com>
+ <CAEU-x4nv3XnXchevtwN5mkVcxqnpgBobhavxZc7BjS7EgYG8Ng@mail.gmail.com>
+ <c3plpgl2zsx4do2odwdeowodkkdnfqpexlwqg5a5mckyibxlge@qai35f5yeswy>
+ <CAEU-x4mJiBM_zKg1DaeJkKB3W3Ay08bUTc-D3QjFjDxNiZGd0g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] driver: loop: introduce synchronized read for loop
- driver
-To: Zhaoyang Huang <huangzhaoyang@gmail.com>,
- Christoph Hellwig <hch@infradead.org>
-Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Jens Axboe
- <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>, linux-mm@kvack.org,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- steve.kang@unisoc.com, Minchan Kim <minchan@kernel.org>
-References: <20250922032915.3924368-1-zhaoyang.huang@unisoc.com>
- <aNGQ66CD9F82BFP-@infradead.org>
- <CAGWkznGf1eN-iszG21jGNq13C9yz8S0PW03hLc40Gjhn6LRp0Q@mail.gmail.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <CAGWkznGf1eN-iszG21jGNq13C9yz8S0PW03hLc40Gjhn6LRp0Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEU-x4mJiBM_zKg1DaeJkKB3W3Ay08bUTc-D3QjFjDxNiZGd0g@mail.gmail.com>
 
-On 9/22/25 8:50 PM, Zhaoyang Huang wrote:
-> Yes, we have tried to solve this case from the above perspective. As
-> to the scheduler, packing small tasks to one core(Big core in ARM)
-> instead of spreading them is desired for power-saving reasons. To the
-> number of kworker threads, it is upon current design which will create
-> new work for each blkcg. According to ANDROID's current approach, each
-> PID takes one cgroup and correspondingly a kworker thread which
-> actually induces this scenario.
+On Sep 22 2025, Yinon Burgansky wrote:
+> On Mon, Sep 22, 2025 at 7:51 PM Benjamin Tissoires <bentiss@kernel.org> wrote:
+> > Well, I was meaning that I would provide a HID-BPF MR ready to install
+> > for you.
+> That would be awesome! Thank you very much!
 
-More cgroups means more overhead from cgroup-internal tasks, e.g.
-accumulating statistics. How about requesting to the Android core team
-to review the approach of associating one cgroup with each PID? I'm 
-wondering whether the approach of one cgroup per aggregate profile
-(SCHED_SP_BACKGROUND, SCHED_SP_FOREGROUND, ...) would work.
+Got something out with https://gitlab.freedesktop.org/libevdev/udev-hid-bpf/-/merge_requests/204
+that seems to solve your case on the hid-recorder you provided.
 
-Thanks,
+> 
+> > But if you want to play with it, feel free to do so :)
+> > For a jump start on HID-BPF:
+> > https://libevdev.pages.freedesktop.org/udev-hid-bpf/tutorial.html
+> Thank you for the reference. I’m feeling quite fatigued from the
+> debugging process, as it took me a considerable amount of time to
+> identify the issue.
+> It was surprisingly difficult to determine what exactly was wrong with
+> the touchpad and to uncover the root cause; perhaps I didn’t search
+> for the right terms.
+> However, I’m glad I finally took the time to debug it, submit the bug
+> report, and find out what was wrong. Thank you!
+> 
+> > The advantage of HID-BPF is that we can drop the file in the filesystem
+> > and then forget about it.
+> > My plan is to have the HID-BPF detect whether the quirk has been applied
+> > or not and would gracefully remove itself once the kernel is fixed.
+> That's cool, nice design.
 
-Bart.
+Unfortunately I spoke too fast. The NSMU quirk is internal to the
+hid-multitouch driver, and not exported in the struct hid_device. Thus
+we don't have a direct access to the quirk. It should also be present in
+the driver data of the hid_device or in the input_device, but in both
+cases BPF prevents us to simply follow the pointers.
+
+In the end, it shouldn't be an issue if you have both the fixed kernel
+and the BPF because both fixes are not mutually exclusive.
+
+> 
+> > PS: please try to refrain from top-posting your reply. The usage is to
+> > inline your reply or reply below,
+> Sorry about that, hopefully I did it right this time.
+
+Yep, much better this time. I didn't meant to be rude, but if you want
+to interact with the LKML, some people gets angry about top posting and
+would just send you a link without even reading your email. So better
+having better habits :)
+
+Cheers,
+Benjamin
 
