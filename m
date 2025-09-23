@@ -1,458 +1,785 @@
-Return-Path: <linux-kernel+bounces-828376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 101CDB947ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:05:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26F76B9498C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F21797A485E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:03:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFF312E34EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE4F25B1CE;
-	Tue, 23 Sep 2025 06:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F5130F942;
+	Tue, 23 Sep 2025 06:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jcHTtwRt"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="OheCUJFh"
+Received: from mail-m1973179.qiye.163.com (mail-m1973179.qiye.163.com [220.197.31.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F083AC1C
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1607B79CD;
+	Tue, 23 Sep 2025 06:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758607501; cv=none; b=PbCkElbIlmJl5TcBtWUvjtF2W/juWrJFc4JYEXpvoeaL7ZoASumZjOsuCDik55qMgM//W3yLp5ByQi63ryrLdhy7w6YGl0GJ16LHOiPznNJ5sj3ZosicfyJaFos8U7wq37ImshR5KcM0X6dUr/PE3fjerJ1F1iiyQK9aZbtloKk=
+	t=1758609948; cv=none; b=Lkb8lcvEiFSfWpx1ZcZHNwzjCKSAjt8LPWUM/FK+D4hzVS9RHSpD+gODrFgYE+LIN3imrjyKUGHhY9dk6HEEexyFsyizXmX7ikvVAx8s8VbhrHN7kWbZ0gE2fRHtETENkiSP3GlSCZ95L6krMfFtp2lSxPP0XPkHqCZeNS8yyA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758607501; c=relaxed/simple;
-	bh=Z3vWSBUKk4vPa5Dhi69BGEU0f4G5L8uTvqC8rKu89sc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZjM2AcsoB3y/La3b7zwP7DqEl19XH1sYUhPjlIMxzQYt/gnHa1EaKGUBQ5wS3G5OdmGdpurmn6o3TntQM1gfk+noUt4iI7BPcIMe1gKnHDnazBNFu4+BHVROING74wOwMPUQDF3hdEADk//39FLloEIvs1DizirxnH+3Xv3kzyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jcHTtwRt; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b2fcfef5600so77180466b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758607498; x=1759212298; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e22fIZQhYlC3/KF+d3LRMImuPrbyTUVTTfdpcAAK9oQ=;
-        b=jcHTtwRt4tMLw/2bSWfM3SwioCLb6kDeNt6BjS8lsBgpoYrs3nDol3fy6DVsIAuG6y
-         az2e43QweaBx8V1PCr8iNnFz0P1RXoLvt0H1I0f3gmzRR1lP9ptm15gblpBZjI5rj6z8
-         uuXJXam0MWnSjC5DY92xvMn+7lVc+jLxgolKmmt/QCOaOGSrEnFM1LO8Ra7TLtlaRddO
-         zlBMLQ600fN6doV9iA8+b7OhrhHGKV4bbIGtERj0C+giadqUUnpDyjhwJxJWJcfZsa5G
-         mzvCCAwHE9U2BSiB//bs+ZKX5oppuc+owWThOo3gQbfG5vnlWcW15+vYV14y7wGq3esq
-         Ov3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758607498; x=1759212298;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e22fIZQhYlC3/KF+d3LRMImuPrbyTUVTTfdpcAAK9oQ=;
-        b=wviBC+uhEITBJV0uXCu5fxcUgm9E8ocvjFk0zofRT3x6PhSghgh0jD6+YRgbtjN+V7
-         AgTGNTRUTkTCR/+Qib/lwKtcTXNPpUevFSF0mAjm4Yw8PcC8q1yPq2oDTtXuab2gYV+H
-         os5VVmro+c1OCVy/Qc7Cmx6D3okFjdZI2mCGELPB164x58d3Xz/6P4THLta4VS6WUlpX
-         8y/iVAAZjiC7vIWbVCwuvXpQ9NLfdiYTUX3r2alZk/724yo3FcDbKjVz/1xvRwAjc+yU
-         9Wq5Ls+QZoearsabvIuADMXOg6w7AQ70cZfaaMI1CDLYND4CvxUNBXu8n4iUgO05WXPV
-         BA8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXLFfuNREU6YN3G5RzAMr3igxRv8Rt6uW3chH4uS8cqri0hF9NdLAMq/M4tApuImdgixV+n757M1r4Lk/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywolcGJ/9aFx+BjjMnvBmeygTdU2Dv/o71Z4d4nQ0u64bppcuB
-	GR8ubVTqFB8pAOHiolwukiFrUdtLrlkultWzBwD2NL/RaXgDxHALp9qOF1v0UlZ9YYzNP0iO9c6
-	MQjNg8gfd8waiinEyjWSAcHEiZN6s3gU=
-X-Gm-Gg: ASbGncuuPw89eMVLC3jDRGbTZsEIR+CXXbjz+HWWSFQQi3Xlco9JlWSbW5dEqkBtl29
-	A/Os2UIwT1IGhdXfwYj8yG0he18s7wt83PZW03zyRZrLekGdH3Cid90q7a2RZOQTK6gNG02BcV5
-	696NdKYdrjiPWqavGiFMN3c39mgZJtCsmGOzY4dGQXLHWv7UIU9jlO/FJ2P6PrirD3Q06OT3Vs+
-	BLgMH57qCDNSgAe
-X-Google-Smtp-Source: AGHT+IHXPC0Qk0LRGZJjkY7SA/XSVwAw4qDoNZWUJwZfUSEPJLVRVevwB78H3aY3Bytrw30vv9KTgERvdEBWZa+rAvE=
-X-Received: by 2002:a17:907:6d16:b0:b24:b95e:87e5 with SMTP id
- a640c23a62f3a-b302785d7demr118528866b.29.1758607497588; Mon, 22 Sep 2025
- 23:04:57 -0700 (PDT)
+	s=arc-20240116; t=1758609948; c=relaxed/simple;
+	bh=MwdBCaZb0lNaZAiXAT4LHyYHumk0L/BkcIJaMlfL1cQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZmgJrwnADGdsPQY4zAWJAD1Rm1JU4k/TguSpAjcfbjvppmjM/G8K1nNiHvqHziHZ248Wuh5ImcMNz7w5YTNvknZ4ahLYDTjguikquNtc5xB8zoDWsFQDHVHVpB5yWFLFaG854QP2wTMNdKS7vlBAgFymU2ggPWyt2hahDoCPU3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=OheCUJFh; arc=none smtp.client-ip=220.197.31.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.153] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 23b543c37;
+	Tue, 23 Sep 2025 10:09:40 +0800 (GMT+08:00)
+Message-ID: <e10484e2-fafb-4e50-866f-f409c12259a5@rock-chips.com>
+Date: Tue, 23 Sep 2025 10:09:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922082417.816331-1-rajasimandalos@gmail.com>
- <20250922082417.816331-2-rajasimandalos@gmail.com> <4htyleuklcdod3togdqcjl5w7g3j5cmwcc4bww5knlwgwhtsbd@a7s2fa2nvcup>
-In-Reply-To: <4htyleuklcdod3togdqcjl5w7g3j5cmwcc4bww5knlwgwhtsbd@a7s2fa2nvcup>
-From: Shyam Prasad N <nspmangalore@gmail.com>
-Date: Tue, 23 Sep 2025 11:34:46 +0530
-X-Gm-Features: AS18NWD7yFAhyjvoORA4y21HuDx6Djlw300tcZDsGry0395_x6REr5brTqW3ch8
-Message-ID: <CANT5p=oQaYZEjrkroP8sHw73GgT6tTX=Do6q_Mu8zmKettufHA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] cifs: client: allow changing multichannel mount
- options on remount
-To: Enzo Matsumiya <ematsumiya@suse.de>
-Cc: rajasimandalos@gmail.com, linux-cifs@vger.kernel.org, sfrench@samba.org, 
-	pc@manguebit.org, ronniesahlberg@gmail.com, sprasad@microsoft.com, 
-	tom@talpey.com, bharathsm@microsoft.com, linux-kernel@vger.kernel.org, 
-	Rajasi Mandal <rajasimandal@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/7] drm/rockchip: cdn-dp: Add multiple bridges to
+ support PHY port selection
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Chaoyi Chen <kernel@airkyi.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Yubing Zhang <yubing.zhang@rock-chips.com>,
+ Frank Wang <frank.wang@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Amit Sunil Dhamne <amitsd@google.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+ Diederik de Haas <didi.debian@cknow.org>,
+ Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+References: <20250922012039.323-1-kernel@airkyi.com>
+ <20250922012039.323-6-kernel@airkyi.com>
+ <idyrlzhd5sotg3ylr7vbwmczimglffc75nafxbnhhm3ot2jn4w@ixerm6elfmre>
+Content-Language: en-US
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <idyrlzhd5sotg3ylr7vbwmczimglffc75nafxbnhhm3ot2jn4w@ixerm6elfmre>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9974556ebe03abkunm4236affac03e6
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGR9KGlYdTUoZHh9JGBkYGR1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
+	xVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=OheCUJFhu7qJ1Z7kMsU5evCFB/mgdf3sfoj1p4qVVVaybpi3vkSkCYSGZOAjUDgJaM6dec+9y/YAsN82db7VUgQaKh4YODOLAnnwpf0DxXS2G/40EtDoylwixWI9VNAxUvrhUubf29qVs4xvRUjXYBoQ47QCBpwCGEMwdh7bSnU=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=Ryi5x4/EBEFlZSkmg/pLRoE0Y+jFyTiV8QjgyEGzpLE=;
+	h=date:mime-version:subject:message-id:from;
 
-On Mon, Sep 22, 2025 at 8:43=E2=80=AFPM Enzo Matsumiya <ematsumiya@suse.de>=
- wrote:
->
-> On 09/22, rajasimandalos@gmail.com wrote:
-> >From: Rajasi Mandal <rajasimandal@microsoft.com>
-> >
-> >Previously, the client did not properly update the session's channel
-> >state when multichannel or max_channels mount options were changed
-> >during remount. This led to inconsistent behavior and prevented
-> >enabling or disabling multichannel support without a full
-> >unmount/remount.
-> >
-> >Enable dynamic reconfiguration of multichannel and max_channels
-> >options during remount by introducing smb3_sync_ses_chan_max() to
-> >safely update the session's chan_max field, and smb3_sync_ses_channels()
-> >to synchronize the session's channels with the new configuration.
-> >Replace cifs_disable_secondary_channels() with
-> >cifs_decrease_secondary_channels(), which now takes a from_reconfigure
-> >argument for more flexible channel cleanup. Update the remount logic
-> >to detect changes in multichannel or max_channels and trigger the
-> >appropriate session/channel updates.
-> >
-> >With this change, users can safely change multichannel and
-> >max_channels options on remount, and the client will correctly adjust
-> >the session's channel state to match the new configuration.
-> >
-> >Signed-off-by: Rajasi Mandal <rajasimandal@microsoft.com>
-> >---
-> > fs/smb/client/cifsproto.h  |  2 +-
-> > fs/smb/client/fs_context.c | 29 ++++++++++++++++++
-> > fs/smb/client/fs_context.h |  2 +-
-> > fs/smb/client/sess.c       | 35 +++++++++++++++-------
-> > fs/smb/client/smb2pdu.c    | 60 ++++++++++++++++++++++++++++++--------
-> > fs/smb/client/smb2pdu.h    |  2 ++
-> > 6 files changed, 105 insertions(+), 25 deletions(-)
->
-> I think the fix is necessary, and the implementation works (at least
-> with the simple case I tested).  I just think we now have too many
-> functions related to channel adding/removing/updating and they're all
-> too similar.  IMHO they could all be merged into a single "update
-> channels" one.
->
-> Do you think it's possible to do that?  Probably would require a bit
-> more work, but at least we would end up with a centralized place to deal
-> with channel management.
+On 9/23/2025 9:50 AM, Dmitry Baryshkov wrote:
 
-That's a good option. Will explore this with Rajasi.
+> On Mon, Sep 22, 2025 at 09:20:37AM +0800, Chaoyi Chen wrote:
+>> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>>
+>> The RK3399 has two USB/DP combo PHY and one CDN-DP controller. And
+>> the CDN-DP can be switched to output to one of the PHYs. If both ports
+>> are plugged into DP, DP will select the first port for output.
+>>
+>> This patch adds support for multiple bridges, enabling users to flexibly
+>> select the output port. For each PHY port, a separate encoder and bridge
+>> are registered.
+>>
+>> The change is based on the DRM AUX HPD bridge, rather than the
+>> extcon approach. This requires the DT to correctly describe the
+>> connections between the PHY, USB connector, and DP controller.
+>> And cdn_dp_parse_hpd_bridge_dt() will parses it and determines
+>> whether to register one or two bridges.
+>>
+>> Since there is only one DP controller, only one of the PHY ports can
+>> output at a time. The key is how to switch between different PHYs,
+>> which is handled by cdn_dp_switch_port() and cdn_dp_enable().
+>>
+>> There are two cases:
+>>
+>> 1. Neither bridge is enabled. In this case, both bridges can
+>> independently read the EDID, and the PHY port may switch before
+>> reading the EDID.
+>>
+>> 2. One bridge is already enabled. In this case, other bridges are not
+>> allowed to read the EDID.
+>>
+>> Since the scenario of two ports plug in at the same time is rare,
+>> I don't have a board which support two TypeC connector to test this.
+>> Therefore, I tested forced switching on a single PHY port, as well as
+>> output using a fake PHY port alongside a real PHY port.
+>>
+>> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>> ---
+>>   drivers/gpu/drm/rockchip/Kconfig       |   1 +
+>>   drivers/gpu/drm/rockchip/cdn-dp-core.c | 398 +++++++++++++++++++++----
+>>   drivers/gpu/drm/rockchip/cdn-dp-core.h |  23 +-
+>>   3 files changed, 366 insertions(+), 56 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
+>> index faf50d872be3..3a6266279323 100644
+>> --- a/drivers/gpu/drm/rockchip/Kconfig
+>> +++ b/drivers/gpu/drm/rockchip/Kconfig
+>> @@ -55,6 +55,7 @@ config ROCKCHIP_CDN_DP
+>>   	select DRM_DISPLAY_HELPER
+>>   	select DRM_BRIDGE_CONNECTOR
+>>   	select DRM_DISPLAY_DP_HELPER
+>> +	select DRM_AUX_HPD_BRIDGE
+>>   	help
+>>   	  This selects support for Rockchip SoC specific extensions
+>>   	  for the cdn DP driver. If you want to enable Dp on
+>> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+>> index 1e27301584a4..784f5656fcc4 100644
+>> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
+>> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+>> @@ -27,16 +27,17 @@
+>>   #include "cdn-dp-core.h"
+>>   #include "cdn-dp-reg.h"
+>>   
+>> -static inline struct cdn_dp_device *bridge_to_dp(struct drm_bridge *bridge)
+>> +static int cdn_dp_switch_port(struct cdn_dp_device *dp, struct cdn_dp_port *prev_port,
+>> +			      struct cdn_dp_port *port);
+>> +
+>> +static inline struct cdn_dp_bridge *bridge_to_dp_bridge(struct drm_bridge *bridge)
+>>   {
+>> -	return container_of(bridge, struct cdn_dp_device, bridge);
+>> +	return container_of(bridge, struct cdn_dp_bridge, bridge);
+>>   }
+>>   
+>> -static inline struct cdn_dp_device *encoder_to_dp(struct drm_encoder *encoder)
+>> +static inline struct cdn_dp_device *bridge_to_dp(struct drm_bridge *bridge)
+>>   {
+>> -	struct rockchip_encoder *rkencoder = to_rockchip_encoder(encoder);
+>> -
+>> -	return container_of(rkencoder, struct cdn_dp_device, encoder);
+>> +	return bridge_to_dp_bridge(bridge)->parent;
+>>   }
+>>   
+>>   #define GRF_SOC_CON9		0x6224
+>> @@ -191,14 +192,27 @@ static int cdn_dp_get_sink_count(struct cdn_dp_device *dp, u8 *sink_count)
+>>   static struct cdn_dp_port *cdn_dp_connected_port(struct cdn_dp_device *dp)
+>>   {
+>>   	struct cdn_dp_port *port;
+>> -	int i, lanes;
+>> +	int i, lanes[MAX_PHY];
+>>   
+>>   	for (i = 0; i < dp->ports; i++) {
+>>   		port = dp->port[i];
+>> -		lanes = cdn_dp_get_port_lanes(port);
+>> -		if (lanes)
+>> +		lanes[i] = cdn_dp_get_port_lanes(port);
+>> +		if (!dp->hpd_bridge_valid)
+>>   			return port;
+>>   	}
+>> +
+>> +	if (dp->hpd_bridge_valid) {
+>> +		/* If more than one port is available, pick the last active port */
+>> +		if (dp->active_port > 0 && lanes[dp->active_port])
+>> +			return dp->port[dp->active_port];
+>> +
+>> +		/* If the last active port is not available, pick an available port in order */
+>> +		for (i = 0; i < dp->bridge_count; i++) {
+>> +			if (lanes[i])
+>> +				return dp->port[i];
+>> +		}
+>> +	}
+>> +
+>>   	return NULL;
+>>   }
+>>   
+>> @@ -239,10 +253,11 @@ static enum drm_connector_status
+>>   cdn_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *connector)
+>>   {
+>>   	struct cdn_dp_device *dp = bridge_to_dp(bridge);
+>> +	struct cdn_dp_bridge *dp_bridge = bridge_to_dp_bridge(bridge);
+>>   	enum drm_connector_status status = connector_status_disconnected;
+>>   
+>>   	mutex_lock(&dp->lock);
+>> -	if (dp->connected)
+>> +	if (dp_bridge->connected && dp->connected)
+>>   		status = connector_status_connected;
+>>   	mutex_unlock(&dp->lock);
+>>   
+>> @@ -253,10 +268,36 @@ static const struct drm_edid *
+>>   cdn_dp_bridge_edid_read(struct drm_bridge *bridge, struct drm_connector *connector)
+>>   {
+>>   	struct cdn_dp_device *dp = bridge_to_dp(bridge);
+>> -	const struct drm_edid *drm_edid;
+>> +	struct cdn_dp_bridge *dp_bridge = bridge_to_dp_bridge(bridge);
+>> +	struct cdn_dp_port *port = dp->port[dp_bridge->id];
+>> +	struct cdn_dp_port *prev_port;
+>> +	const struct drm_edid *drm_edid = NULL;
+>> +	int i, ret;
+>>   
+>>   	mutex_lock(&dp->lock);
+>> +
+>> +	/* More than one port is available */
+>> +	if (dp->bridge_count > 1 && !port->phy_enabled) {
+>> +		for (i = 0; i < dp->bridge_count; i++) {
+>> +			/* Another port already enable */
+>> +			if (dp->bridge_list[i] != dp_bridge && dp->bridge_list[i]->enabled)
+>> +				goto unlock;
+>> +			/* Find already enabled port */
+>> +			if (dp->port[i]->phy_enabled)
+>> +				prev_port = dp->port[i];
+>> +		}
+>> +
+>> +		/* Switch to current port */
+>> +		if (prev_port) {
+>> +			ret = cdn_dp_switch_port(dp, prev_port, port);
+>> +			if (ret)
+>> +				goto unlock;
+>> +		}
+>> +	}
+>> +
+>>   	drm_edid = drm_edid_read_custom(connector, cdn_dp_get_edid_block, dp);
+> So... If I try reading EDID for the PHY 2 while PHY 1 is enabled, will
+> it return NULL, even if there is a monitor there? It totally feels like
+> this is one of the rare cases when caching EDIDs might make sense.
 
->
-> >diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
-> >index e8fba98690ce..ec3118457b26 100644
-> >--- a/fs/smb/client/cifsproto.h
-> >+++ b/fs/smb/client/cifsproto.h
-> >@@ -667,7 +667,7 @@ bool
-> > cifs_chan_is_iface_active(struct cifs_ses *ses,
-> >                         struct TCP_Server_Info *server);
-> > void
-> >-cifs_disable_secondary_channels(struct cifs_ses *ses);
-> >+cifs_decrease_secondary_channels(struct cifs_ses *ses, bool from_reconf=
-igure);
-> > void
-> > cifs_chan_update_iface(struct cifs_ses *ses, struct TCP_Server_Info *se=
-rver);
-> > int
-> >diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
-> >index 43552b44f613..96e80c70f25d 100644
-> >--- a/fs/smb/client/fs_context.c
-> >+++ b/fs/smb/client/fs_context.c
-> >@@ -1015,6 +1015,22 @@ int smb3_sync_session_ctx_passwords(struct cifs_s=
-b_info *cifs_sb, struct cifs_se
-> >       return 0;
-> > }
-> >
-> >+/**
-> >+ * smb3_sync_ses_chan_max - Synchronize the session's maximum channel c=
-ount
-> >+ * @ses: pointer to the old CIFS session structure
-> >+ * @max_channels: new maximum number of channels to allow
-> >+ *
-> >+ * Updates the session's chan_max field to the new value, protecting th=
-e update
-> >+ * with the session's channel lock. This should be called whenever the =
-maximum
-> >+ * allowed channels for a session changes (e.g., after a remount or rec=
-onfigure).
-> >+ */
-> >+void smb3_sync_ses_chan_max(struct cifs_ses *ses, unsigned int max_chan=
-nels)
-> >+{
-> >+      spin_lock(&ses->chan_lock);
-> >+      ses->chan_max =3D max_channels;
-> >+      spin_unlock(&ses->chan_lock);
-> >+}
-> >+
-> > static int smb3_reconfigure(struct fs_context *fc)
-> > {
-> >       struct smb3_fs_context *ctx =3D smb3_fc2context(fc);
-> >@@ -1097,6 +1113,18 @@ static int smb3_reconfigure(struct fs_context *fc=
-)
-> >               ses->password2 =3D new_password2;
-> >       }
-> >
-> >+      /*
-> >+       * If multichannel or max_channels has changed, update the sessio=
-n's channels accordingly.
-> >+       * This may add or remove channels to match the new configuration=
-.
-> >+       */
-> >+      if ((ctx->multichannel !=3D cifs_sb->ctx->multichannel) ||
-> >+              (ctx->max_channels !=3D cifs_sb->ctx->max_channels)) {
-> >+              //Synchronize ses->chan_max with the new mount context
-> >+              smb3_sync_ses_chan_max(ses, ctx->max_channels);
-> >+              //Now update the session's channels to match the new conf=
-iguration
-> >+              rc =3D smb3_sync_ses_channels(cifs_sb);
-> >+      }
-> >+
-> >       mutex_unlock(&ses->session_mutex);
-> >
-> >       STEAL_STRING(cifs_sb, ctx, domainname);
-> >@@ -1110,6 +1138,7 @@ static int smb3_reconfigure(struct fs_context *fc)
-> >       smb3_cleanup_fs_context_contents(cifs_sb->ctx);
-> >       rc =3D smb3_fs_context_dup(cifs_sb->ctx, ctx);
-> >       smb3_update_mnt_flags(cifs_sb);
-> >+
-> > #ifdef CONFIG_CIFS_DFS_UPCALL
-> >       if (!rc)
-> >               rc =3D dfs_cache_remount_fs(cifs_sb);
-> >diff --git a/fs/smb/client/fs_context.h b/fs/smb/client/fs_context.h
-> >index b0fec6b9a23b..a75185858285 100644
-> >--- a/fs/smb/client/fs_context.h
-> >+++ b/fs/smb/client/fs_context.h
-> >@@ -371,7 +371,7 @@ static inline struct smb3_fs_context *smb3_fc2contex=
-t(const struct fs_context *f
-> > extern int smb3_fs_context_dup(struct smb3_fs_context *new_ctx, struct =
-smb3_fs_context *ctx);
-> > extern int smb3_sync_session_ctx_passwords(struct cifs_sb_info *cifs_sb=
-, struct cifs_ses *ses);
-> > extern void smb3_update_mnt_flags(struct cifs_sb_info *cifs_sb);
-> >-
-> >+extern void smb3_sync_ses_chan_max(struct cifs_ses *ses, unsigned int m=
-ax_channels);
-> > /*
-> >  * max deferred close timeout (jiffies) - 2^30
-> >  */
-> >diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
-> >index 0a8c2fcc9ded..42b5481c884a 100644
-> >--- a/fs/smb/client/sess.c
-> >+++ b/fs/smb/client/sess.c
-> >@@ -264,13 +264,16 @@ int cifs_try_adding_channels(struct cifs_ses *ses)
-> >       return new_chan_count - old_chan_count;
-> > }
-> >
-> >-/*
-> >- * called when multichannel is disabled by the server.
-> >- * this always gets called from smb2_reconnect
-> >- * and cannot get called in parallel threads.
-> >+/**
-> >+ * cifs_decrease_secondary_channels - Reduce the number of active secon=
-dary channels
-> >+ * @ses: pointer to the CIFS session structure
-> >+ * @from_reconfigure: if true, only reduce to chan_max; if false, reduc=
-e to a single channel
-> >+ *
-> >+ * This function disables and cleans up extra secondary channels for a =
-CIFS session.
-> >+ * If called during reconfiguration, it reduces the channel count to th=
-e new maximum (chan_max).
-> >+ * Otherwise, it disables all but the primary channel.
-> >  */
-> >-void
-> >-cifs_disable_secondary_channels(struct cifs_ses *ses)
-> >+void cifs_decrease_secondary_channels(struct cifs_ses *ses, bool from_r=
-econfigure)
-> > {
-> >       int i, chan_count;
-> >       struct TCP_Server_Info *server;
-> >@@ -281,12 +284,13 @@ cifs_disable_secondary_channels(struct cifs_ses *s=
-es)
-> >       if (chan_count =3D=3D 1)
-> >               goto done;
-> >
-> >-      ses->chan_count =3D 1;
-> >-
-> >-      /* for all secondary channels reset the need reconnect bit */
-> >-      ses->chans_need_reconnect &=3D 1;
-> >+      // Update the chan_count to the new maximum
-> >+      if (from_reconfigure)
-> >+              ses->chan_count =3D ses->chan_max;
-> >+      else
-> >+              ses->chan_count =3D 1;
-> >
-> >-      for (i =3D 1; i < chan_count; i++) {
-> >+      for (i =3D ses->chan_max ; i < chan_count; i++) {
-> >               iface =3D ses->chans[i].iface;
-> >               server =3D ses->chans[i].server;
-> >
-> >@@ -318,6 +322,15 @@ cifs_disable_secondary_channels(struct cifs_ses *se=
-s)
-> >               spin_lock(&ses->chan_lock);
-> >       }
-> >
-> >+      /* For extra secondary channels, reset the need reconnect bit */
-> >+      if (ses->chan_count =3D=3D 1) {
-> >+              cifs_server_dbg(VFS, "server does not support multichanne=
-l anymore. Disable all other channels\n");
-> >+              ses->chans_need_reconnect &=3D 1;
-> >+      } else {
-> >+              cifs_server_dbg(VFS, "Disable extra secondary channels\n"=
-);
-> >+              ses->chans_need_reconnect &=3D ((1UL << ses->chan_max) - =
-1);
-> >+      }
-> >+
-> > done:
-> >       spin_unlock(&ses->chan_lock);
-> > }
-> >diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-> >index c3b9d3f6210f..bf9a8dc0e8fc 100644
-> >--- a/fs/smb/client/smb2pdu.c
-> >+++ b/fs/smb/client/smb2pdu.c
-> >@@ -168,7 +168,7 @@ smb2_hdr_assemble(struct smb2_hdr *shdr, __le16 smb2=
-_cmd,
-> > static int
-> > cifs_chan_skip_or_disable(struct cifs_ses *ses,
-> >                         struct TCP_Server_Info *server,
-> >-                        bool from_reconnect)
-> >+                        bool from_reconnect, bool from_reconfigure)
-> > {
-> >       struct TCP_Server_Info *pserver;
-> >       unsigned int chan_index;
-> >@@ -206,10 +206,49 @@ cifs_chan_skip_or_disable(struct cifs_ses *ses,
-> >               return -EHOSTDOWN;
-> >       }
-> >
-> >-      cifs_server_dbg(VFS,
-> >-              "server does not support multichannel anymore. Disable al=
-l other channels\n");
-> >-      cifs_disable_secondary_channels(ses);
-> >+      cifs_decrease_secondary_channels(ses, from_reconfigure);
-> >
-> >+      return 0;
-> >+}
-> >+
-> >+/**
-> >+ * smb3_sync_ses_channels - Synchronize session channels
-> >+ * with new configuration (cifs_sb_info version)
-> >+ * @cifs_sb: pointer to the CIFS superblock info structure
-> >+ * Returns 0 on success or -EINVAL if scaling is already in progress.
-> >+ */
-> >+int smb3_sync_ses_channels(struct cifs_sb_info *cifs_sb)
-> >+{
-> >+      struct cifs_ses *ses =3D cifs_sb_master_tcon(cifs_sb)->ses;
-> >+      struct smb3_fs_context *ctx =3D cifs_sb->ctx;
-> >+      bool from_reconnect =3D false;
-> >+
-> >+      /* Prevent concurrent scaling operations */
-> >+      spin_lock(&ses->ses_lock);
-> >+      if (ses->flags & CIFS_SES_FLAG_SCALE_CHANNELS) {
-> >+              spin_unlock(&ses->ses_lock);
-> >+              return -EINVAL;
-> >+      }
-> >+      ses->flags |=3D CIFS_SES_FLAG_SCALE_CHANNELS;
-> >+      spin_unlock(&ses->ses_lock);
-> >+
-> >+      /*
-> >+       * If the old max_channels is less than the new chan_max,
-> >+       * try to add channels to reach the new maximum.
-> >+       * Otherwise, disable or skip extra channels to match the new con=
-figuration.
-> >+       */
-> >+      if (ctx->max_channels < ses->chan_max) {
-> >+              mutex_unlock(&ses->session_mutex);
-> >+              cifs_try_adding_channels(ses);
-> >+              mutex_lock(&ses->session_mutex);
-> >+      } else {
-> >+              cifs_chan_skip_or_disable(ses, ses->server, from_reconnec=
-t, true);
-> >+      }
-> >+
-> >+      /* Clear scaling flag after operation */
-> >+      spin_lock(&ses->ses_lock);
-> >+      ses->flags &=3D ~CIFS_SES_FLAG_SCALE_CHANNELS;
-> >+      spin_unlock(&ses->ses_lock);
-> >
-> >       return 0;
-> > }
-> >@@ -356,7 +395,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon=
- *tcon,
-> >       if (ses->chan_count > 1 &&
-> >           !(server->capabilities & SMB2_GLOBAL_CAP_MULTI_CHANNEL)) {
-> >               rc =3D cifs_chan_skip_or_disable(ses, server,
-> >-                                             from_reconnect);
-> >+                                             from_reconnect, false);
-> >               if (rc) {
-> >                       mutex_unlock(&ses->session_mutex);
-> >                       goto out;
-> >@@ -439,7 +478,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon=
- *tcon,
-> >                        */
-> >
-> >                       rc =3D cifs_chan_skip_or_disable(ses, server,
-> >-                                                     from_reconnect);
-> >+                                                     from_reconnect, fa=
-lse);
-> >                       goto skip_add_channels;
-> >               } else if (rc)
-> >                       cifs_dbg(FYI, "%s: failed to query server interfa=
-ces: %d\n",
->
-> (for all hunks above) Can we stick to /* */ comments instead of //
-> please?
->
-> >@@ -1105,8 +1144,7 @@ SMB2_negotiate(const unsigned int xid,
-> >               req->SecurityMode =3D 0;
-> >
-> >       req->Capabilities =3D cpu_to_le32(server->vals->req_capabilities)=
-;
-> >-      if (ses->chan_max > 1)
-> >-              req->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_=
-CHANNEL);
-> >+      req->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_CHANNEL)=
-;
-> >
-> >       /* ClientGUID must be zero for SMB2.02 dialect */
-> >       if (server->vals->protocol_id =3D=3D SMB20_PROT_ID)
-> >@@ -1310,10 +1348,8 @@ int smb3_validate_negotiate(const unsigned int xi=
-d, struct cifs_tcon *tcon)
-> >       if (!pneg_inbuf)
-> >               return -ENOMEM;
-> >
-> >-      pneg_inbuf->Capabilities =3D
-> >-                      cpu_to_le32(server->vals->req_capabilities);
-> >-      if (tcon->ses->chan_max > 1)
-> >-              pneg_inbuf->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP=
-_MULTI_CHANNEL);
-> >+      pneg_inbuf->Capabilities =3D cpu_to_le32(server->vals->req_capabi=
-lities);
-> >+      pneg_inbuf->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_C=
-HANNEL);
->
-> This effectively makes query_interfaces worker run even with
-> max_channels=3D1 -- just a heads up because it didn't look like your
-> original intention.
->
-I discussed this with Rajasi during my review. We should probably have
-a comment in the code somewhere about this behaviour.
-We could disable the worker when multichannel gets disabled, and
-enable it when multichannel gets enabled.
-However, that needs careful changes. I didn't think that a worker to
-refresh server interfaces every ten minutes is such a big deal. So I
-was okay with this.
-Perhaps we can fix this in a future patch.
-
->
-> Cheers,
->
-> Enzo
->
+Of course. I did consider using cache, but if the monitor changes, then caching the EDID doesn't seem to be of much use…
 
 
---=20
-Regards,
-Shyam
+>
+>> +
+>> +unlock:
+>>   	mutex_unlock(&dp->lock);
+>>   
+>>   	return drm_edid;
+>> @@ -267,12 +308,13 @@ cdn_dp_bridge_mode_valid(struct drm_bridge *bridge,
+>>   			 const struct drm_display_info *display_info,
+>>   			 const struct drm_display_mode *mode)
+>>   {
+>> +	struct cdn_dp_bridge *dp_bridge = bridge_to_dp_bridge(bridge);
+>>   	struct cdn_dp_device *dp = bridge_to_dp(bridge);
+>>   	u32 requested, actual, rate, sink_max, source_max = 0;
+>>   	u8 lanes, bpc;
+>>   
+>>   	/* If DP is disconnected, every mode is invalid */
+>> -	if (!dp->connected)
+>> +	if (!dp_bridge->connected || !dp->connected)
+>>   		return MODE_BAD;
+>>   
+>>   	switch (display_info->bpc) {
+>> @@ -571,6 +613,7 @@ static void cdn_dp_display_info_update(struct cdn_dp_device *dp,
+>>   static void cdn_dp_bridge_atomic_enable(struct drm_bridge *bridge, struct drm_atomic_state *state)
+>>   {
+>>   	struct cdn_dp_device *dp = bridge_to_dp(bridge);
+>> +	struct cdn_dp_bridge *dp_bridge = bridge_to_dp_bridge(bridge);
+>>   	struct drm_connector *connector;
+>>   	int ret, val;
+>>   
+>> @@ -580,7 +623,7 @@ static void cdn_dp_bridge_atomic_enable(struct drm_bridge *bridge, struct drm_at
+>>   
+>>   	cdn_dp_display_info_update(dp, &connector->display_info);
+>>   
+>> -	ret = drm_of_encoder_active_endpoint_id(dp->dev->of_node, &dp->encoder.encoder);
+>> +	ret = drm_of_encoder_active_endpoint_id(dp->dev->of_node, &dp_bridge->encoder.encoder);
+>>   	if (ret < 0) {
+>>   		DRM_DEV_ERROR(dp->dev, "Could not get vop id, %d", ret);
+>>   		return;
+>> @@ -599,6 +642,9 @@ static void cdn_dp_bridge_atomic_enable(struct drm_bridge *bridge, struct drm_at
+>>   
+>>   	mutex_lock(&dp->lock);
+>>   
+>> +	if (dp->hpd_bridge_valid)
+>> +		dp->active_port = dp_bridge->id;
+>> +
+> Don't you need to switch port here? Consider reading EDID from port 1,
+> port 2 then enabling output on port 1.
+
+Oh, I missed that. Thank you, I'll add it in v5.
+
+
+
+>
+>>   	ret = cdn_dp_enable(dp);
+>>   	if (ret) {
+>>   		DRM_DEV_ERROR(dp->dev, "Failed to enable bridge %d\n",
+>> @@ -631,6 +677,7 @@ static void cdn_dp_bridge_atomic_enable(struct drm_bridge *bridge, struct drm_at
+>>   		goto out;
+>>   	}
+>>   
+>> +	dp_bridge->enabled = true;
+>>   out:
+>>   	mutex_unlock(&dp->lock);
+>>   }
+>> @@ -638,9 +685,11 @@ static void cdn_dp_bridge_atomic_enable(struct drm_bridge *bridge, struct drm_at
+>>   static void cdn_dp_bridge_atomic_disable(struct drm_bridge *bridge, struct drm_atomic_state *state)
+>>   {
+>>   	struct cdn_dp_device *dp = bridge_to_dp(bridge);
+>> +	struct cdn_dp_bridge *dp_bridge = bridge_to_dp_bridge(bridge);
+>>   	int ret;
+>>   
+>>   	mutex_lock(&dp->lock);
+>> +	dp_bridge->enabled = false;
+>>   
+>>   	if (dp->active) {
+>>   		ret = cdn_dp_disable(dp);
+>> @@ -885,7 +934,8 @@ static void cdn_dp_pd_event_work(struct work_struct *work)
+>>   {
+>>   	struct cdn_dp_device *dp = container_of(work, struct cdn_dp_device,
+>>   						event_work);
+>> -	int ret;
+>> +	bool connected;
+>> +	int i, ret;
+>>   
+>>   	mutex_lock(&dp->lock);
+>>   
+>> @@ -944,9 +994,12 @@ static void cdn_dp_pd_event_work(struct work_struct *work)
+>>   
+>>   out:
+>>   	mutex_unlock(&dp->lock);
+>> -	drm_bridge_hpd_notify(&dp->bridge,
+>> -			      dp->connected ? connector_status_connected
+>> -					    : connector_status_disconnected);
+>> +	for (i = 0; i < dp->bridge_count; i++) {
+>> +		connected = dp->connected && dp->bridge_list[i]->connected;
+>> +		drm_bridge_hpd_notify(&dp->bridge_list[i]->bridge,
+>> +				      connected ? connector_status_connected
+>> +						: connector_status_disconnected);
+>> +	}
+>>   }
+>>   
+>>   static int cdn_dp_pd_event(struct notifier_block *nb,
+>> @@ -966,28 +1019,99 @@ static int cdn_dp_pd_event(struct notifier_block *nb,
+>>   	return NOTIFY_DONE;
+>>   }
+>>   
+>> -static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
+>> +static void cdn_dp_typec_hpd_cb(void *data, enum drm_connector_status status)
+>>   {
+>> -	struct cdn_dp_device *dp = dev_get_drvdata(dev);
+>> -	struct drm_encoder *encoder;
+>> -	struct drm_connector *connector;
+>> -	struct cdn_dp_port *port;
+>> -	struct drm_device *drm_dev = data;
+>> -	int ret, i;
+>> +	struct cdn_dp_hpd_bridge *hpd_bridge = data;
+>> +	struct cdn_dp_device *dp = hpd_bridge->parent;
+>>   
+>> -	ret = cdn_dp_parse_dt(dp);
+>> -	if (ret < 0)
+>> -		return ret;
+>> +	dp->bridge_list[hpd_bridge->id]->connected = status == connector_status_connected;
+>> +	schedule_work(&dp->event_work);
+>> +}
+>>   
+>> -	dp->drm_dev = drm_dev;
+>> -	dp->connected = false;
+>> -	dp->active = false;
+>> -	dp->active_port = -1;
+>> -	dp->fw_loaded = false;
+>> +static void cdn_dp_bridge_hpd_enable(struct cdn_dp_device *dp)
+>> +{
+>> +	int i;
+>>   
+>> -	INIT_WORK(&dp->event_work, cdn_dp_pd_event_work);
+>> +	if (!dp->hpd_bridge_valid)
+>> +		return;
+>> +
+>> +	for (i = 0; i < dp->bridge_count; i++) {
+>> +		drm_bridge_hpd_enable(dp->hpd_bridge_list[i].bridge, cdn_dp_typec_hpd_cb,
+>> +				      &dp->hpd_bridge_list[i]);
+>> +	}
+>> +}
+>> +
+>> +static void cdn_dp_bridge_hpd_disable(struct cdn_dp_device *dp)
+>> +{
+>> +	int i;
+>> +
+>> +	if (!dp->hpd_bridge_valid)
+>> +		return;
+>> +
+>> +	for (i = 0; i < dp->bridge_count; i++) {
+>> +		drm_bridge_hpd_disable(dp->hpd_bridge_list[i].bridge);
+>> +	}
+>> +}
+>> +
+>> +static int cdn_dp_switch_port(struct cdn_dp_device *dp, struct cdn_dp_port *prev_port,
+>> +			      struct cdn_dp_port *port)
+>> +{
+>> +	int ret;
+>> +
+>> +	if (dp->active)
+>> +		return 0;
+>> +
+>> +	cdn_dp_bridge_hpd_disable(dp);
+>> +
+>> +	ret = cdn_dp_disable_phy(dp, prev_port);
+>> +	if (ret)
+>> +		goto out;
+>> +	ret = cdn_dp_enable_phy(dp, port);
+>> +	if (ret)
+>> +		goto out;
+>> +
+>> +	ret = cdn_dp_get_sink_capability(dp);
+>> +	if (ret) {
+>> +		cdn_dp_disable_phy(dp, port);
+>> +		goto out;
+>> +	}
+>> +
+>> +	dp->active = true;
+>> +	dp->lanes = port->lanes;
+>> +
+>> +	if (!cdn_dp_check_link_status(dp)) {
+>> +		dev_info(dp->dev, "Connected with sink; re-train link\n");
+>> +
+>> +		ret = cdn_dp_train_link(dp);
+>> +		if (ret) {
+>> +			dev_err(dp->dev, "Training link failed: %d\n", ret);
+>> +			goto out;
+>> +		}
+>> +
+>> +		ret = cdn_dp_set_video_status(dp, CONTROL_VIDEO_IDLE);
+>> +		if (ret) {
+>> +			dev_err(dp->dev, "Failed to idle video %d\n", ret);
+>> +			goto out;
+>> +		}
+>> +
+>> +		ret = cdn_dp_config_video(dp);
+>> +		if (ret)
+>> +			dev_err(dp->dev, "Failed to configure video: %d\n", ret);
+>> +	}
+>>   
+>> -	encoder = &dp->encoder.encoder;
+>> +out:
+>> +	cdn_dp_bridge_hpd_enable(dp);
+>> +	return ret;
+>> +}
+>> +
+>> +static int cdn_bridge_add(struct device *dev,
+>> +			  struct drm_bridge *bridge,
+>> +			  struct drm_encoder *encoder)
+>> +{
+>> +	struct cdn_dp_device *dp = dev_get_drvdata(dev);
+>> +	struct drm_device *drm_dev = dp->drm_dev;
+>> +	struct drm_connector *connector;
+>> +	int ret;
+>>   
+>>   	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm_dev,
+>>   							     dev->of_node);
+>> @@ -1002,23 +1126,23 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
+>>   
+>>   	drm_encoder_helper_add(encoder, &cdn_dp_encoder_helper_funcs);
+>>   
+>> -	dp->bridge.ops =
+>> -			DRM_BRIDGE_OP_DETECT |
+>> -			DRM_BRIDGE_OP_EDID |
+>> -			DRM_BRIDGE_OP_HPD |
+>> -			DRM_BRIDGE_OP_DP_AUDIO;
+>> -	dp->bridge.of_node = dp->dev->of_node;
+>> -	dp->bridge.type = DRM_MODE_CONNECTOR_DisplayPort;
+>> -	dp->bridge.hdmi_audio_dev = dp->dev;
+>> -	dp->bridge.hdmi_audio_max_i2s_playback_channels = 8;
+>> -	dp->bridge.hdmi_audio_spdif_playback = 1;
+>> -	dp->bridge.hdmi_audio_dai_port = -1;
+>> -
+>> -	ret = devm_drm_bridge_add(dev, &dp->bridge);
+>> +	bridge->ops =
+>> +		DRM_BRIDGE_OP_DETECT |
+>> +		DRM_BRIDGE_OP_EDID |
+>> +		DRM_BRIDGE_OP_HPD |
+>> +		DRM_BRIDGE_OP_DP_AUDIO;
+>> +	bridge->of_node = dp->dev->of_node;
+>> +	bridge->type = DRM_MODE_CONNECTOR_DisplayPort;
+>> +	bridge->hdmi_audio_dev = dp->dev;
+>> +	bridge->hdmi_audio_max_i2s_playback_channels = 8;
+>> +	bridge->hdmi_audio_spdif_playback = 1;
+>> +	bridge->hdmi_audio_dai_port = -1;
+>> +
+>> +	ret = devm_drm_bridge_add(dev, bridge);
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> -	ret = drm_bridge_attach(encoder, &dp->bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+>> +	ret = drm_bridge_attach(encoder, bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> @@ -1031,6 +1155,167 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
+>>   
+>>   	drm_connector_attach_encoder(connector, encoder);
+>>   
+>> +	return 0;
+>> +}
+>> +
+>> +static int cdn_dp_parse_hpd_bridge_dt(struct cdn_dp_device *dp)
+>> +{
+>> +	struct device_node *np = dp->dev->of_node;
+>> +	struct device_node *port __free(device_node) = of_graph_get_port_by_id(np, 1);
+>> +	struct drm_bridge *bridge;
+>> +	int count = 0;
+>> +	int ret = 0;
+>> +	int i;
+>> +
+>> +	/* If device use extcon, do not use hpd bridge */
+>> +	for (i = 0; i < dp->ports; i++) {
+>> +		if (dp->port[i]->extcon) {
+>> +			dp->bridge_count = 1;
+>> +			return 0;
+>> +		}
+>> +	}
+>> +
+>> +	/*
+>> +	 *
+>> +	 * &dp_out {
+>> +	 *	dp_controller_output0: endpoint@0 {
+>> +	 * 		remote-endpoint = <&dp_phy0_in>
+>> +	 * 	};
+>> +	 *
+>> +	 * 	dp_controller_output1: endpoint@1 {
+>> +	 * 		remote-endpoint = <&dp_phy1_in>
+>> +	 * 	};
+>> +	 * };
+>> +	 *
+>> +	 * &tcphy0_dp {
+>> +	 * 	port {
+>> +	 * 		tcphy0_typec_dp: endpoint@0 {
+>> +	 * 			reg = <0>;
+>> +	 * 			remote-endpoint = <&usbc0_dp>;
+>> +	 * 		};
+>> +	 *
+>> +	 * 		dp_phy0_in: endpoint@1 {
+>> +	 * 			reg = <1>;
+>> +	 * 			remote-endpoint = <&dp_controller_output0>;
+>> +	 * 		};
+>> +	 * 	};
+>> +	 * };
+>> +	 *
+>> +	 * &tcphy1_dp {
+>> +	 * 	...
+>> +	 * };
+>> +	 *
+>> +	 * usbcon0: connector {
+>> +	 * 	...
+>> +	 * 	ports {
+>> +	 * 		...
+>> +	 * 		port@2 {
+>> +	 * 			reg = <2>;
+>> +	 *
+>> +	 * 			usbc0_dp: endpoint {
+>> +	 * 				remote-endpoint = <&tcphy0_typec_dp>;
+>> +	 * 			};
+>> +	 * 		};
+>> +	 * 	};
+>> +	 * };
+>> +	 *
+>> +	 * usbcon1: connector {
+>> +	 * 	...
+>> +	 * };
+>> +	 *
+>> +	 */
+>> +
+>> +	/* One endpoint may correspond to one HPD bridge. */
+>> +	for_each_of_graph_port_endpoint(port, dp_ep) {
+>> +		/* Try to get "port" node of correspond PHY device */
+>> +		struct device_node *phy_ep __free(device_node) =
+>> +			of_graph_get_remote_endpoint(dp_ep);
+>> +		struct device_node *phy_port __free(device_node) =
+>> +			of_get_parent(phy_ep);
+>> +
+>> +		if (!phy_port) {
+>> +			continue;
+>> +		}
+>> +
+>> +		/*
+>> +		 * A PHY port may contain two endpoints: USB connector port or CDN-DP port.
+>> +		 * Try to find the node of USB connector.
+> And then there can be a retimer between PHY and the USB-C connector. Or
+> some signal MUX. Or DP-to-HDMI bridge. Please, don't parse DT for other
+> devices. Instead you can add drm_aux_bridge to your PHY and let DRM core
+> build the bridge chain following OF graph.
+
+Okay, I will try to do it in v5.
+
+
+>
+>> +		 */
+>> +		for_each_of_graph_port_endpoint(phy_port, typec_ep) {
+>> +			struct device_node *connector_port __free(device_node) =
+>> +				of_graph_get_remote_port_parent(typec_ep);
+>> +			struct device_node *hpd_bridge_np __free(device_node) =
+>> +				of_get_parent(connector_port);
+>> +
+>> +			if (typec_ep == phy_ep)
+>> +				continue;
+>> +
+>> +			bridge = of_drm_find_bridge(hpd_bridge_np);
+>> +			if (!bridge) {
+>> +				ret = -EPROBE_DEFER;
+>> +				goto out;
+>> +			}
+>> +
+>> +			dp->hpd_bridge_valid = true;
+>> +			dp->hpd_bridge_list[count].bridge = bridge;
+>> +			dp->hpd_bridge_list[count].parent = dp;
+>> +			dp->hpd_bridge_list[count].id = count;
+>> +			count++;
+>> +			break;
+>> +		}
+>> +	}
+>> +
+>> +out:
+>> +	dp->bridge_count = count ? count : 1;
+>> +	return ret;
+>> +}
+>> +
+>> +static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
+>> +{
+>> +	struct cdn_dp_device *dp = dev_get_drvdata(dev);
+>> +	struct drm_bridge *bridge;
+>> +	struct drm_encoder *encoder;
+>> +	struct cdn_dp_port *port;
+>> +	struct drm_device *drm_dev = data;
+>> +	struct cdn_dp_bridge *bridge_list;
+>> +	int ret, i;
+>> +
+>> +	ret = cdn_dp_parse_dt(dp);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	ret = cdn_dp_parse_hpd_bridge_dt(dp);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	dp->drm_dev = drm_dev;
+>> +	dp->connected = false;
+>> +	dp->active = false;
+>> +	dp->active_port = -1;
+>> +	dp->fw_loaded = false;
+>> +
+>> +	for (i = 0; i < dp->bridge_count; i++) {
+>> +		bridge_list = devm_drm_bridge_alloc(dev, struct cdn_dp_bridge, bridge,
+>> +						    &cdn_dp_bridge_funcs);
+>> +		if (IS_ERR(bridge_list))
+>> +			return PTR_ERR(bridge_list);
+>> +		bridge_list->id = i;
+>> +		bridge_list->parent = dp;
+>> +		if (!dp->hpd_bridge_valid)
+>> +			bridge_list->connected = true;
+>> +		dp->bridge_list[i] = bridge_list;
+>> +	}
+>> +
+>> +	for (i = 0; i < dp->bridge_count; i++) {
+>> +		encoder = &dp->bridge_list[i]->encoder.encoder;
+>> +		bridge = &dp->bridge_list[i]->bridge;
+>> +		ret = cdn_bridge_add(dev, bridge, encoder);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	INIT_WORK(&dp->event_work, cdn_dp_pd_event_work);
+>> +
+>>   	for (i = 0; i < dp->ports; i++) {
+>>   		port = dp->port[i];
+>>   
+>> @@ -1050,6 +1335,7 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
+>>   
+>>   	pm_runtime_enable(dev);
+>>   
+>> +	cdn_dp_bridge_hpd_enable(dp);
+>>   	schedule_work(&dp->event_work);
+>>   
+>>   	return 0;
+>> @@ -1058,10 +1344,14 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
+>>   static void cdn_dp_unbind(struct device *dev, struct device *master, void *data)
+>>   {
+>>   	struct cdn_dp_device *dp = dev_get_drvdata(dev);
+>> -	struct drm_encoder *encoder = &dp->encoder.encoder;
+>> +	struct drm_encoder *encoder;
+>> +	int i;
+>>   
+>>   	cancel_work_sync(&dp->event_work);
+>> -	encoder->funcs->destroy(encoder);
+>> +	for (i = 0; i < dp->bridge_count; i++) {
+>> +		encoder = &dp->bridge_list[i]->encoder.encoder;
+>> +		encoder->funcs->destroy(encoder);
+>> +	}
+>>   
+>>   	pm_runtime_disable(dev);
+>>   	if (dp->fw_loaded)
+>> @@ -1112,10 +1402,10 @@ static int cdn_dp_probe(struct platform_device *pdev)
+>>   	int ret;
+>>   	int i;
+>>   
+>> -	dp = devm_drm_bridge_alloc(dev, struct cdn_dp_device, bridge,
+>> -				   &cdn_dp_bridge_funcs);
+>> -	if (IS_ERR(dp))
+>> -		return PTR_ERR(dp);
+>> +	dp = devm_kzalloc(dev, sizeof(*dp), GFP_KERNEL);
+>> +	if (!dp)
+>> +		return -ENOMEM;
+>> +
+>>   	dp->dev = dev;
+>>   
+>>   	match = of_match_node(cdn_dp_dt_ids, pdev->dev.of_node);
+>> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.h b/drivers/gpu/drm/rockchip/cdn-dp-core.h
+>> index e9c30b9fd543..215f3da61af2 100644
+>> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.h
+>> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.h
+>> @@ -38,6 +38,8 @@ enum vic_pxl_encoding_format {
+>>   	Y_ONLY = 0x10,
+>>   };
+>>   
+>> +struct cdn_dp_device;
+>> +
+>>   struct video_info {
+>>   	bool h_sync_polarity;
+>>   	bool v_sync_polarity;
+>> @@ -63,16 +65,33 @@ struct cdn_dp_port {
+>>   	u8 id;
+>>   };
+>>   
+>> +struct cdn_dp_bridge {
+>> +	struct cdn_dp_device *parent;
+>> +	struct drm_bridge bridge;
+>> +	struct rockchip_encoder encoder;
+>> +	bool connected;
+>> +	bool enabled;
+>> +	int id;
+>> +};
+>> +
+>> +struct cdn_dp_hpd_bridge {
+>> +	struct cdn_dp_device *parent;
+>> +	struct drm_bridge *bridge;
+>> +	int id;
+>> +};
+>> +
+>>   struct cdn_dp_device {
+>>   	struct device *dev;
+>>   	struct drm_device *drm_dev;
+>> -	struct drm_bridge bridge;
+>> -	struct rockchip_encoder encoder;
+>> +	int bridge_count;
+>> +	struct cdn_dp_bridge *bridge_list[MAX_PHY];
+>> +	struct cdn_dp_hpd_bridge hpd_bridge_list[MAX_PHY];
+>>   	struct drm_display_mode mode;
+>>   	struct platform_device *audio_pdev;
+>>   	struct work_struct event_work;
+>>   
+>>   	struct mutex lock;
+>> +	bool hpd_bridge_valid;
+>>   	bool connected;
+>>   	bool active;
+>>   	bool suspended;
+>> -- 
+>> 2.49.0
+>>
+-- 
+Best,
+Chaoyi
+
 
