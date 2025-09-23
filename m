@@ -1,160 +1,417 @@
-Return-Path: <linux-kernel+bounces-828206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F377CB942C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:10:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05DE8B942DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E2A816C138
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:10:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 990D8443FFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C1227381F;
-	Tue, 23 Sep 2025 04:10:25 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D83F2750F6;
+	Tue, 23 Sep 2025 04:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="chKXGe5Q"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32183AD5A
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D9F25C809
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758600625; cv=none; b=Ieg9FjwTpz30IaJsShfXGRodtdfFi4B1h/JU/6pFIjjm12uT/oEHdZ4Zet+cQuKWHLFMKw2cAtc4qa/NFz0TQ8iqM58dL1Rzv7HSGIxYPRCVq7B54m4ZhE8NLrujxPZFF859k2+x8onqWv+aJKDi54El48Gl8UwIXYXuh3nOuUI=
+	t=1758601131; cv=none; b=qhm9cL5k5PxhlMqJQ5coxBDfVuNWw8AUnRjxY4kaYA/++l+BYPcPAEd9qfH9nXFjpn5fZ9vkHqh1ROoBT7T/pw5uIrIFwYFIwJvrGQhZS0xIZQzEtNHjS7gst3kwMA6VnuioqpaAxvBNhFCS7lSvNh2S4vXsVBh+cf1aT5Y9Isk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758600625; c=relaxed/simple;
-	bh=DCSwt1IsfVly5T/2MV76YHppCE2j0ni5IpDIvlW7YDU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QQivACgRoOrNoLqbrfiyHJ5zRKQcW6tgnNfnuC0k4pBM9iBX2dEbR/84ZpFxmtN03pB8282ynLzYchmHZDb+jJ1WHW4ee+a11if5oFb9j/MU5VaNbPXCW08z2lFV7R5sQJksQv1Iz3I0nzrp1CnkzPv/t8G8lHViHj90aaEL/L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cW5x869rMzddRl;
-	Tue, 23 Sep 2025 12:05:32 +0800 (CST)
-Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id 178EE147E9C;
-	Tue, 23 Sep 2025 12:10:11 +0800 (CST)
-Received: from DESKTOP-A37P9LK.huawei.com (10.67.108.232) by
- kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 23 Sep 2025 12:10:09 +0800
-From: Xie Yuanbin <xieyuanbin1@huawei.com>
-To: <linux@armlinux.org.uk>, <akpm@linux-foundation.org>, <david@redhat.com>,
-	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>,
-	<linmiaohe@huawei.com>, <nao.horiguchi@gmail.com>,
-	<rmk+kernel@armlinux.org.uk>, <ardb@kernel.org>, <nathan@kernel.org>,
-	<ebiggers@kernel.org>, <arnd@arndb.de>, <rostedt@goodmis.org>,
-	<kees@kernel.org>, <dave@vasilevsky.ca>, <peterz@infradead.org>
-CC: <will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <liaohua4@huawei.com>,
-	<lilinjie8@huawei.com>, <xieyuanbin1@huawei.com>
-Subject: Re: [RFC PATCH 1/2] ARM: mm: support memory-failure
-Date: Tue, 23 Sep 2025 12:10:05 +0800
-Message-ID: <20250923041005.9831-1-xieyuanbin1@huawei.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <9c0cd24c-559b-4550-9fc8-5dc4bcc20bf7@app.fastmail.com>
-References: <9c0cd24c-559b-4550-9fc8-5dc4bcc20bf7@app.fastmail.com>
+	s=arc-20240116; t=1758601131; c=relaxed/simple;
+	bh=FYaZE+lufOlbjeU2jSsDz7Z6N2A3ChgWomZY1FJD8pg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=MiqC9Y/rK5IT8GMJdjFalRAYl8up7Fs3wB8wSzFma+i2ULmcFsITbyjF8uxmHnj+T2EkupnUrb2yN6HeKeUth+tu5YR2BTxL84jMa16xi30rMdty86OnAvvYa0xUv9/moG/QAwdAxjaHLe4L6XKtG7s/TFtbA+1/WPHO/t0yv7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=chKXGe5Q; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b5515a1f5b8so3146234a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:18:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758601128; x=1759205928; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zUyrcqhy0X0eycYqSNQmo7Jj9fq9nU6WWs702naDGx8=;
+        b=chKXGe5QAvIOByo7Ug5H2psRzZ++Zj7nDLi+M/l/QOm7PdN3QKr6mNvFcC/4wHC/w1
+         jJzYKPYMDPsQZaraEgEztg9XrELgz9l4sxyfSEPxhlPKkExDxuq5GPuQAr05VvPOCjM+
+         tNb7nx7ynu8VnUfXcYyniJOib5UBMJqdWWbHDwq8gzTSxM/sbBE8lkvrvSlgkLq0OeVM
+         b/jnXoWPZQxiQAMeNtpPn+bIJg/WJl/wFfcuUuNNLAtNiaffA6V5OwcRr2MllsZufb/E
+         LC9QhX+LITIiHR0zwOrsnZN7VyDhPCljxtkTniBQ7v73EbvhZEZ7wRJrWIkTwgzYLCk+
+         +3Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758601128; x=1759205928;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zUyrcqhy0X0eycYqSNQmo7Jj9fq9nU6WWs702naDGx8=;
+        b=KzVBNovP3X//zDMK5hx5ZgHty238OdCT2lH/5+dwzVB8ag2lMCkbRFHhVKeUx96kUb
+         Ul7XJjpVDADFEo+bftcENX/uAsx2PuD3WY9dz7XYMqUgr/lW1VLVvripVD958ES0j6Nx
+         GPEzUVLgZq5eU0D/BpEEzEnoUIhRweImhGiPw4OiZX+W8mlK30NGQ6yR/b/RnIH8peeY
+         rTMIlv+UjnrJYpK3N2EEcPcnMuA09f1g1Bj8Y9Xys7Rnr8kpS37u7gZCbyLikt69HAHK
+         Zu13h9Eqfke0eYssJU8mMh1qUzcnLP+fkqeW94JDn+cdV8QS8c/K2AISjDn+FrAooiUR
+         puAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3//nzKRYnNXCk9IUw/c+49vSCisKxWQt+OEFYKdY17E1aZgi6FHpCJJQGug5FQIJ0IY6rcROwVVvt0hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywfi8gJ4R5XsSIrtYS9cLcwc73Nl8Hcjhy4vdYu9sGjYmZSnSoG
+	Zq2VkXTb37iAkIeMN7tXQR4aOjMH7v18DTCRI4t09GlRpEbk+/LAM9wd9pClsiC5HZow7GjRFXN
+	7zAUosoe6rQ==
+X-Google-Smtp-Source: AGHT+IGEkCYZdUWnntUxaQ8wYF2KOUgS/q/6rlhFEdHiA2P9//5HJTOUCs4pfKAwXNTCM+WF4Fw1z8CvexIF
+X-Received: from pjur5.prod.google.com ([2002:a17:90a:d405:b0:330:6eb8:6ae4])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:db0e:b0:269:a2bc:799f
+ with SMTP id d9443c01a7336-27cc561f8b4mr14626875ad.29.1758601127955; Mon, 22
+ Sep 2025 21:18:47 -0700 (PDT)
+Date: Mon, 22 Sep 2025 21:18:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemj100009.china.huawei.com (7.202.194.3)
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
+Message-ID: <20250923041844.400164-1-irogers@google.com>
+Subject: [PATCH v5 00/25] Legacy hardware/cache events as json
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Xu Yang <xu.yang_2@nxp.com>, Thomas Falcon <thomas.falcon@intel.com>, 
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
+	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
+	Vince Weaver <vincent.weaver@maine.edu>
+Content-Type: text/plain; charset="UTF-8"
 
-Arnd Bergmann wrote:
->>> It would be helpful to be more specific about what you
->>> want to do with this.
->>> 
->>> Are you working on a driver that would actually make use of
->>> the exported interface?
->>
->> Thanks for your reply.
->>
->> Yes, In fact, we have developed a hardware component to detect DDR bit
->> transitions (software does not sense the detection behavior). Once a bit
->> transition is detected, an interrupt is reported to the CPU.
->>
->> On the software side, we have developed a driver module ko to register
->> the interrupt callback to perform soft page offline to the corresponding
->> physical pages.
->>
->> In fact, we will export `soft_offline_page` for ko to use (we can ensure
->> that it is not called in the interrupt context), but I have looked at the
->> code and found that `memory_failure_queue` and `memory_failure` can also
->> be used, which are already exported.
->
-> Ok
->
->>> I see only a very small number of
->>> drivers that call memory_failure(), and none of them are
->>> usable on Arm.
->>
->> I think that not all drivers are in the open source kernel code.
->> As far as I know, there should be similar third-party drivers in other
->> architectures that use memory-failure functions, like x86 or arm64.
->> I am not a specialist in drivers, so if I have made any mistakes,
->> please correct me.
->
-> I'm not familiar with the memory-failure support, but this sounds
-> like something that is usually done with a drivers/edac/ driver.
-> There are many SoC specific drivers, including for 32-bit Arm
-> SoCs.
->
-> Have you considered adding an EDAC driver first? I don't know
-> how the other platforms that have EDAC drivers handle failures,
-> but I would assume that either that subsystem already contains
-> functionality for taking pages offline,
+Mirroring similar work for software events in commit 6e9fa4131abb
+("perf parse-events: Remove non-json software events"). These changes
+migrate the legacy hardware and cache events to json.  With no hard
+coded legacy hardware or cache events the wild card, case
+insensitivity, etc. is consistent for events. This does, however, mean
+events like cycles will wild card against all PMUs. A change doing the
+same was originally posted and merged from:
+https://lore.kernel.org/r/20240416061533.921723-10-irogers@google.com
+and reverted by Linus in commit 4f1b067359ac ("Revert "perf
+parse-events: Prefer sysfs/JSON hardware events over legacy"") due to
+his dislike for the cycles behavior on ARM with perf record. Earlier
+patches in this series make perf record event opening failures
+non-fatal and hide the cycles event's failure to open on ARM in perf
+record, so it is expected the behavior will now be transparent in perf
+record on ARM. perf stat with a cycles event will wildcard open the
+event on all PMUs.
 
-I'm very sorry, I tried my best to do this,
-but it seems impossible to achieve.
-I am a kernel developer rathder than a driver developer. I have tried to
-communicate with driver developers, but open source is very difficult due
-to the involvement of proprietary hardware and algorithms.
+The change to support legacy events with PMUs was done to clean up
+Intel's hybrid PMU implementation. Having sysfs/json events with
+increased priority to legacy was requested by Mark Rutland
+ <mark.rutland@arm.com> to fix Apple-M PMU issues wrt broken legacy
+events on that PMU. It is believed the PMU driver is now fixed, but
+this has only been confirmed on ARM Juno boards. It was requested that
+RISC-V be able to add events to the perf tool json so the PMU driver
+didn't need to map legacy events to config encodings:
+https://lore.kernel.org/lkml/20240217005738.3744121-1-atishp@rivosinc.com/
+This patch series achieves this.
 
-> or this is something
-> that should be done in a way that works for all of them without
-> requiring an extra driver.
+A previous series of patches decreasing legacy hardware event
+priorities was posted in:
+https://lore.kernel.org/lkml/20250416045117.876775-1-irogers@google.com/
+Namhyung Kim <namhyung@kernel.org> mentioned that hardware and
+software events can be implemented similarly:
+https://lore.kernel.org/lkml/aIJmJns2lopxf3EK@google.com/
+and this patch series achieves this.
 
-Yes, I think that the memory-failure feature should not be associated with
-specific architectures or drivers.
+Note, patch 2 (perf parse-events: Fix legacy cache events if event is
+duplicated in a PMU) fixes a function deleted by patch 16 (perf
+parse-events: Remove hard coded legacy hardware and cache
+parsing). Adding the json exposed an issue when legacy cache (not
+legacy hardware) and sysfs/json events exist. The fix is necessary to
+keep tests passing through the series. It is also posted for backports
+to stable trees.
 
-I have read the memory-failure's doc and code,
-and found the following features, which are user useable,
-are not associated with specific drivers:
+The perf list behavior includes a lot more information and events. The
+before behavior on a hybrid alderlake is:
+```
+$ perf list hw
 
-1. `/sys/devices/system/memory/soft_offline_page`:
-see https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-memory-page-offline
+List of pre-defined events (to be used in -e or -M):
 
-This interface only exists when CONFIG_MEMORY_HOTPLUG is enabled, but
-ARM cannot enable it.
-However, I have read the code and believe that it should not require a
-lot of effort to decouple these two, allowing the interface to exist
-even if mem-hotplug is disabled.
+  branch-instructions OR branches                    [Hardware event]
+  branch-misses                                      [Hardware event]
+  bus-cycles                                         [Hardware event]
+  cache-misses                                       [Hardware event]
+  cache-references                                   [Hardware event]
+  cpu-cycles OR cycles                               [Hardware event]
+  instructions                                       [Hardware event]
+  ref-cycles                                         [Hardware event]
+$ perf list hwcache
 
-2. The syscall madvise with `MADV_SOFT_OFFLINE/MADV_HWPOISON` flags:
-
-According to the documentation, this interface is currently only used for
-testing. However, if the user program can map the specified physical
-address, it can actually be used for memory-failure.
-
-3. The CONFIG_HWPOISON_INJECT which depends on CONFIG_MEMORY_FAILURE:
-see https://docs.kernel.org/mm/hwpoison.html
-
-It seems to allow input of physical addresses and trigger memory-failure,
-but according to the doc, it seems to be used only for testing.
+List of pre-defined events (to be used in -e or -M):
 
 
-Additionally, I noticed that in the memory-failure doc
-https://docs.kernel.org/mm/hwpoison.html, it mentions that
-"The main target right now is KVM guests, but it works for all kinds of
-applications." This seems to confirm my speculation that the
-memory-failure feature should not be associated with specific
-architectures or drivers.
+cache:
+  L1-dcache-loads OR cpu_atom/L1-dcache-loads/
+  L1-dcache-stores OR cpu_atom/L1-dcache-stores/
+  L1-icache-loads OR cpu_atom/L1-icache-loads/
+  L1-icache-load-misses OR cpu_atom/L1-icache-load-misses/
+  LLC-loads OR cpu_atom/LLC-loads/
+  LLC-load-misses OR cpu_atom/LLC-load-misses/
+  LLC-stores OR cpu_atom/LLC-stores/
+  LLC-store-misses OR cpu_atom/LLC-store-misses/
+  dTLB-loads OR cpu_atom/dTLB-loads/
+  dTLB-load-misses OR cpu_atom/dTLB-load-misses/
+  dTLB-stores OR cpu_atom/dTLB-stores/
+  dTLB-store-misses OR cpu_atom/dTLB-store-misses/
+  iTLB-load-misses OR cpu_atom/iTLB-load-misses/
+  branch-loads OR cpu_atom/branch-loads/
+  branch-load-misses OR cpu_atom/branch-load-misses/
+  L1-dcache-loads OR cpu_core/L1-dcache-loads/
+  L1-dcache-load-misses OR cpu_core/L1-dcache-load-misses/
+  L1-dcache-stores OR cpu_core/L1-dcache-stores/
+  L1-icache-load-misses OR cpu_core/L1-icache-load-misses/
+  LLC-loads OR cpu_core/LLC-loads/
+  LLC-load-misses OR cpu_core/LLC-load-misses/
+  LLC-stores OR cpu_core/LLC-stores/
+  LLC-store-misses OR cpu_core/LLC-store-misses/
+  dTLB-loads OR cpu_core/dTLB-loads/
+  dTLB-load-misses OR cpu_core/dTLB-load-misses/
+  dTLB-stores OR cpu_core/dTLB-stores/
+  dTLB-store-misses OR cpu_core/dTLB-store-misses/
+  iTLB-load-misses OR cpu_core/iTLB-load-misses/
+  branch-loads OR cpu_core/branch-loads/
+  branch-load-misses OR cpu_core/branch-load-misses/
+  node-loads OR cpu_core/node-loads/
+  node-load-misses OR cpu_core/node-load-misses/
+```
+and after it is:
+```
+$ perf list hw
 
-Xie Yuanbin
+legacy hardware:
+  branch-instructions
+       [Retired branch instructions [This event is an alias of branches].
+        Unit: cpu_atom]
+  branch-misses
+       [Mispredicted branch instructions. Unit: cpu_atom]
+  branches
+       [Retired branch instructions [This event is an alias of
+        branch-instructions]. Unit: cpu_atom]
+  bus-cycles
+       [Bus cycles,which can be different from total cycles. Unit: cpu_atom]
+  cache-misses
+       [Cache misses. Usually this indicates Last Level Cache misses; this is
+        intended to be used in conjunction with the
+        PERF_COUNT_HW_CACHE_REFERENCES event to calculate cache miss rates.
+        Unit: cpu_atom]
+  cache-references
+       [Cache accesses. Usually this indicates Last Level Cache accesses but
+        this may vary depending on your CPU. This may include prefetches and
+        coherency messages; again this depends on the design of your CPU.
+        Unit: cpu_atom]
+  cpu-cycles
+       [Total cycles. Be wary of what happens during CPU frequency scaling
+        [This event is an alias of cycles]. Unit: cpu_atom]
+  cycles
+       [Total cycles. Be wary of what happens during CPU frequency scaling
+        [This event is an alias of cpu-cycles]. Unit: cpu_atom]
+  instructions
+       [Retired instructions. Be careful,these can be affected by various
+        issues,most notably hardware interrupt counts. Unit: cpu_atom]
+  ref-cycles
+       [Total cycles; not affected by CPU frequency scaling. Unit: cpu_atom]
+  branch-instructions
+       [Retired branch instructions [This event is an alias of branches].
+        Unit: cpu_core]
+  branch-misses
+       [Mispredicted branch instructions. Unit: cpu_core]
+  branches
+       [Retired branch instructions [This event is an alias of
+        branch-instructions]. Unit: cpu_core]
+  bus-cycles
+       [Bus cycles,which can be different from total cycles. Unit: cpu_core]
+  cache-misses
+       [Cache misses. Usually this indicates Last Level Cache misses; this is
+        intended to be used in conjunction with the
+        PERF_COUNT_HW_CACHE_REFERENCES event to calculate cache miss rates.
+        Unit: cpu_core]
+  cache-references
+       [Cache accesses. Usually this indicates Last Level Cache accesses but
+        this may vary depending on your CPU. This may include prefetches and
+        coherency messages; again this depends on the design of your CPU.
+        Unit: cpu_core]
+  cpu-cycles
+       [Total cycles. Be wary of what happens during CPU frequency scaling
+        [This event is an alias of cycles]. Unit: cpu_core]
+  cycles
+       [Total cycles. Be wary of what happens during CPU frequency scaling
+        [This event is an alias of cpu-cycles]. Unit: cpu_core]
+  instructions
+       [Retired instructions. Be careful,these can be affected by various
+        issues,most notably hardware interrupt counts. Unit: cpu_core]
+  ref-cycles
+       [Total cycles; not affected by CPU frequency scaling. Unit: cpu_core]
+$ perf list hwcache
+
+legacy cache:
+  branch-load-misses
+       [Branch prediction unit read misses. Unit: cpu_atom]
+  branch-loads
+       [Branch prediction unit read accesses. Unit: cpu_atom]
+  dtlb-load-misses
+       [Data TLB read misses. Unit: cpu_atom]
+  dtlb-loads
+       [Data TLB read accesses. Unit: cpu_atom]
+  dtlb-store-misses
+       [Data TLB write misses. Unit: cpu_atom]
+  dtlb-stores
+       [Data TLB write accesses. Unit: cpu_atom]
+  itlb-load-misses
+       [Instruction TLB read misses. Unit: cpu_atom]
+  l1-dcache-loads
+       [Level 1 data cache read accesses. Unit: cpu_atom]
+  l1-dcache-stores
+       [Level 1 data cache write accesses. Unit: cpu_atom]
+  l1-icache-load-misses
+       [Level 1 instruction cache read misses. Unit: cpu_atom]
+  l1-icache-loads
+       [Level 1 instruction cache read accesses. Unit: cpu_atom]
+  llc-load-misses
+       [Last level cache read misses. Unit: cpu_atom]
+  llc-loads
+       [Last level cache read accesses. Unit: cpu_atom]
+  llc-store-misses
+       [Last level cache write misses. Unit: cpu_atom]
+  llc-stores
+       [Last level cache write accesses. Unit: cpu_atom]
+  branch-load-misses
+       [Branch prediction unit read misses. Unit: cpu_core]
+  branch-loads
+       [Branch prediction unit read accesses. Unit: cpu_core]
+  dtlb-load-misses
+       [Data TLB read misses. Unit: cpu_core]
+  dtlb-loads
+       [Data TLB read accesses. Unit: cpu_core]
+  dtlb-store-misses
+       [Data TLB write misses. Unit: cpu_core]
+  dtlb-stores
+       [Data TLB write accesses. Unit: cpu_core]
+  itlb-load-misses
+       [Instruction TLB read misses. Unit: cpu_core]
+  l1-dcache-load-misses
+       [Level 1 data cache read misses. Unit: cpu_core]
+  l1-dcache-loads
+       [Level 1 data cache read accesses. Unit: cpu_core]
+  l1-dcache-stores
+       [Level 1 data cache write accesses. Unit: cpu_core]
+  l1-icache-load-misses
+       [Level 1 instruction cache read misses. Unit: cpu_core]
+  llc-load-misses
+       [Last level cache read misses. Unit: cpu_core]
+  llc-loads
+       [Last level cache read accesses. Unit: cpu_core]
+  llc-store-misses
+       [Last level cache write misses. Unit: cpu_core]
+  llc-stores
+       [Last level cache write accesses. Unit: cpu_core]
+  node-load-misses
+       [Local memory read misses. Unit: cpu_core]
+  node-loads
+       [Local memory read accesses. Unit: cpu_core]
+```
+
+v5. Add patch for retrying default events, fixing regression when
+    non-root and paranoid. Make cycles to cpu-cycles test event change
+    (to avoid non-core ARM events) the default on all architectures
+    (suggested by Namhyung). Switch all non-test cases to specifying a
+    PMU. Improvements to the parse-events test including core PMU
+    parsing support for architectures without a "cpu" PMU.
+
+v4: Fixes for matching hard coded metrics in stat-shadow. Make the
+    default "cycles" event string on ARM "cpu-cycles" which is the
+    same legacy event but avoids name collisions on ARM PMUs. To
+    support this, use evlist__new_default for the no command line
+    event case in `perf record` and `perf top`. Make
+    evlist__new_default only scan core PMUs.
+    https://lore.kernel.org/lkml/20250914181121.1952748-1-irogers@google.com/#t
+
+v3: Deprecate the legacy cache events that aren't shown in the
+    previous perf list to avoid the perf list output being too verbose.
+    https://lore.kernel.org/lkml/20250828205930.4007284-1-irogers@google.com/
+
+v2: Additional details to the cover letter. Credit to Vince Weaver
+    added to the commit message for the event details. Additional
+    patches to clean up perf_pmu new_alias by removing an unused term
+    scanner argument and avoid stdio usage.
+    https://lore.kernel.org/lkml/20250828163225.3839073-1-irogers@google.com/
+
+v1: https://lore.kernel.org/lkml/20250828064231.1762997-1-irogers@google.com/
+
+Ian Rogers (25):
+  perf stat: Allow retry for default events
+  perf parse-events: Fix legacy cache events if event is duplicated in a
+    PMU
+  perf perf_api_probe: Avoid scanning all PMUs, try software PMU first
+  perf record: Skip don't fail for events that don't open
+  perf jevents: Support copying the source json files to OUTPUT
+  perf pmu: Don't eagerly parse event terms
+  perf parse-events: Remove unused FILE input argument to scanner
+  perf pmu: Use fd rather than FILE from new_alias
+  perf pmu: Factor term parsing into a perf_event_attr into a helper
+  perf parse-events: Add terms for legacy hardware and cache config
+    values
+  perf jevents: Add legacy json terms and default_core event table
+    helper
+  perf pmu: Add and use legacy_terms in alias information
+  perf jevents: Add legacy-hardware and legacy-cache json
+  perf print-events: Remove print_hwcache_events
+  perf print-events: Remove print_symbol_events
+  perf parse-events: Remove hard coded legacy hardware and cache parsing
+  perf record: Use evlist__new_default when no events specified
+  perf top: Use evlist__new_default when no events specified
+  perf evlist: Avoid scanning all PMUs for evlist__new_default
+  perf evsel: Improvements to __evsel__match
+  perf test parse-events: Use evsel__match for legacy events
+  perf test parse-events: Remove cpu PMU requirement
+  perf test parse-events: Without a PMU use cpu-cycles rather than
+    cycles
+  perf stat: Avoid wildcarding PMUs for default events
+  perf test: Switch cycles event to cpu-cycles
+
+ tools/perf/Makefile.perf                      |   21 +-
+ tools/perf/arch/x86/util/intel-pt.c           |    2 +-
+ tools/perf/builtin-list.c                     |   34 +-
+ tools/perf/builtin-record.c                   |   97 +-
+ tools/perf/builtin-stat.c                     |  171 +-
+ tools/perf/builtin-top.c                      |    8 +-
+ tools/perf/pmu-events/Build                   |   24 +-
+ .../arch/common/common/legacy-hardware.json   |   72 +
+ tools/perf/pmu-events/empty-pmu-events.c      | 2771 ++++++++++++++++-
+ tools/perf/pmu-events/jevents.py              |   32 +
+ tools/perf/pmu-events/make_legacy_cache.py    |  129 +
+ tools/perf/pmu-events/pmu-events.h            |    1 +
+ tools/perf/tests/code-reading.c               |    2 +-
+ tools/perf/tests/keep-tracking.c              |    2 +-
+ tools/perf/tests/parse-events.c               |  488 +--
+ tools/perf/tests/perf-time-to-tsc.c           |    4 +-
+ tools/perf/tests/pmu-events.c                 |   24 +-
+ tools/perf/tests/pmu.c                        |    3 +-
+ tools/perf/tests/switch-tracking.c            |    2 +-
+ tools/perf/util/evlist.c                      |   18 +-
+ tools/perf/util/evsel.c                       |   21 +-
+ tools/perf/util/parse-events.c                |  282 +-
+ tools/perf/util/parse-events.h                |   22 +-
+ tools/perf/util/parse-events.l                |   54 +-
+ tools/perf/util/parse-events.y                |  114 +-
+ tools/perf/util/perf_api_probe.c              |   27 +-
+ tools/perf/util/pmu.c                         |  309 +-
+ tools/perf/util/print-events.c                |  112 -
+ tools/perf/util/print-events.h                |    4 -
+ 29 files changed, 3668 insertions(+), 1182 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/common/common/legacy-hardware.json
+ create mode 100755 tools/perf/pmu-events/make_legacy_cache.py
+
+-- 
+2.51.0.534.gc79095c0ca-goog
+
 
