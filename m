@@ -1,112 +1,187 @@
-Return-Path: <linux-kernel+bounces-829005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3A8BB9606A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:33:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB0AAB9606D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E432E6024
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:33:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8BEF19C3B0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72F3327A20;
-	Tue, 23 Sep 2025 13:33:31 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C3C32779B;
+	Tue, 23 Sep 2025 13:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aMCLsoip"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2893233FE
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C542D8371
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758634411; cv=none; b=GZ1asU/7wDUPwkDpX8qTGQN7bADZivB10Ob3uPqyEkFIY1fxvDfQBUxcSQKqwBadmYzV+XUQXytmduKeHuNGGR74578z0FnRqe7aJkNYi6HfmCwroUIrnRKP8hRQbc/hJGx0+AwWejuQrQkeCbVu699LVe6ccU3z3NzB7WmVP6w=
+	t=1758634480; cv=none; b=g9h9pow8bcvB1TfDHfAoU0OZj9NP0RtueK1lx8HdSkOF9Fu9bu1zDFuX/n1vrrtDcBCoUS+XmyeX446NetpKjgjTO7LgzhBO5JaSUi0C6p2z+q4FN7uCfHckonwcyCsKbyLfqYI5RPf0WMn26A9K2+ySUMOlc8s9todjAOoIiFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758634411; c=relaxed/simple;
-	bh=E688SA2ur8pdhDMKGP0y0zNwUkmL1KK0E2KKszEQgu4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=RhfigrwAFhznwu173HRurUwOqE8PbPojC8UqTmYvr3ca5VLZ8K3Lz0sIPDEPkQbS9M4GvtCERz35NCyYM7LmsFb2KJUoN3NQvVA7Vv6NM1zmXPp8mZdMPSBfQzaoNjNBZFT1mDU5bgGTLyB/aqyDZBSR8UpcBb0c4nQgmrN0YXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4248b59ea91so94312815ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:33:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758634409; x=1759239209;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CnFEheBcFQ9GIZwypq53PINvHcyzivG0Keb/zGJdWl0=;
-        b=H7KDdCSs1lnlixKo9sXoWw0w+EUrrqpGO49a2Uf5Ip5LiC4XQhHV8D8FF31l9q+JbJ
-         Id1fS+s63OECCRXHI1qh9Uiqh4XV3VvCkVpsfeRjW9OxDFqYv08Vd1qZIEjZxD4GPAn5
-         l2z0cc417nslX1UtGGPnDYyiWxEqwBAGUQkRBrvfZrQavF+XvQrilhWTS8yYz9uJr22q
-         N0iVpWxHDYj2xVDpj1us3+vs3OY8ArKgH9QfkHx7FScuqpk3OwkiaSpAa029vjrY1ZqI
-         br35F/8q1jsgHPhEg4bzuKBkTofw56hVrcUZb8/VYNfR47VuCmKJCh3pUcsu9Xukg3un
-         58/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXYk0olRZXBngJdzsyoBNedFOwdkqu+bOzj7J4WhjHwJQoRX4WF6oUp4TFsG2bkXhQ4+wICs83pmF4lzg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4lqeu8Ou7+KrnJEsKBPB7A7jLTF9RXBFyNQ0BLU9+MmuIcrcR
-	/073JhUib6l6EuN+V8MXVGzjvEl5lJA28j5SlXkr0mG1lkSXkqhYWzmTiE8RJ58e5S35pjK3PpK
-	P+rzERM62MhLO5w6+e7JxxNBLCi8s+ZvTvageWHVQ2mqZgBko/RkdBdNb0hY=
-X-Google-Smtp-Source: AGHT+IF+wgIXgkOJXcUn4ha1722njeR7A5N05y/cuCdCL5x3cjEn8+ifFpSsGAZYXL0xgQJe5WK/skelzVAZKneqRyB31DVL7ZCT
+	s=arc-20240116; t=1758634480; c=relaxed/simple;
+	bh=u7oEvXsps4gM6bLJm1v9nTNaPe+i34OPp3gcLJGAhHU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E20UWtiXYdiH/67ZQ0hEMq20KXJF2+lF0hYVClTEmn0mbN26hP1baQ0hBwSvR1xYnBOGpxCVGxwb4TT9UtNsYl4rQoxOU5O7ug7bfCOTNjXyCwecbqVrSI355FqDJgO5BXGOZy5naJtkRFmJDtMhZK52rMGIrFJ++7saDwVydQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aMCLsoip; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758634473;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kHfWCvv+MDYhkLFWkNZpUD65PMmDuEXuyHvDsjW9Fks=;
+	b=aMCLsoiplGJGCYSr2CEESBjyy3ZM0l6/cZLxDpGPBScX5ssxERBQFJFgSLM66REMYwJjEA
+	uyYWfkAxMY/B9aCPWZ6m0sw+XrENDJk8pqJgD42FEddeaj/PtPEBPM74iExgLlyrnfBZda
+	ACiFSCKnvF9PnLfUQSKC2Btk8gZUfXE=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, mhiramat@kernel.org, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH 2/2] tracing: fprobe: optimization for entry only case
+Date: Tue, 23 Sep 2025 21:34:20 +0800
+Message-ID: <5938379.DvuYhMxLoT@7950hx>
+In-Reply-To: <aNKRoKTAmKpafk4F@krava>
+References:
+ <20250923092001.1087678-1-dongml2@chinatelecom.cn>
+ <4681686.LvFx2qVVIh@7940hx> <aNKRoKTAmKpafk4F@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:471b:b0:425:8744:de85 with SMTP id
- e9e14a558f8ab-4258744e0cfmr18369315ab.26.1758634408705; Tue, 23 Sep 2025
- 06:33:28 -0700 (PDT)
-Date: Tue, 23 Sep 2025 06:33:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d2a1a8.a70a0220.1b52b.02ac.GAE@google.com>
-Subject: [syzbot] Monthly kernfs report (Sep 2025)
-From: syzbot <syzbot+list16151cba7370e3751c41@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Migadu-Flow: FLOW_OUT
 
-Hello kernfs maintainers/developers,
+On 2025/9/23 20:25, Jiri Olsa wrote:
+> On Tue, Sep 23, 2025 at 07:16:55PM +0800, menglong.dong@linux.dev wrote:
+> > On 2025/9/23 19:10 Jiri Olsa <olsajiri@gmail.com> write:
+> > > On Tue, Sep 23, 2025 at 05:20:01PM +0800, Menglong Dong wrote:
+> > > > For now, fgraph is used for the fprobe, even if we need trace the e=
+ntry
+> > > > only. However, the performance of ftrace is better than fgraph, and=
+ we
+> > > > can use ftrace_ops for this case.
+> > > >=20
+> > > > Then performance of kprobe-multi increases from 54M to 69M. Before =
+this
+> > > > commit:
+> > > >=20
+> > > >   $ ./benchs/run_bench_trigger.sh kprobe-multi
+> > > >   kprobe-multi   :   54.663 =C2=B1 0.493M/s
+> > > >=20
+> > > > After this commit:
+> > > >=20
+> > > >   $ ./benchs/run_bench_trigger.sh kprobe-multi
+> > > >   kprobe-multi   :   69.447 =C2=B1 0.143M/s
+> > > >=20
+> > > > Mitigation is disable during the bench testing above.
+> > > >=20
+> > > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> > > > ---
+> > > >  kernel/trace/fprobe.c | 88 +++++++++++++++++++++++++++++++++++++++=
+=2D---
+> > > >  1 file changed, 81 insertions(+), 7 deletions(-)
+> > > >=20
+> > > > diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+> > > > index 1785fba367c9..de4ae075548d 100644
+> > > > --- a/kernel/trace/fprobe.c
+> > > > +++ b/kernel/trace/fprobe.c
+> > > > @@ -292,7 +292,7 @@ static int fprobe_fgraph_entry(struct ftrace_gr=
+aph_ent *trace, struct fgraph_ops
+> > > >  				if (node->addr !=3D func)
+> > > >  					continue;
+> > > >  				fp =3D READ_ONCE(node->fp);
+> > > > -				if (fp && !fprobe_disabled(fp))
+> > > > +				if (fp && !fprobe_disabled(fp) && fp->exit_handler)
+> > > >  					fp->nmissed++;
+> > > >  			}
+> > > >  			return 0;
+> > > > @@ -312,11 +312,11 @@ static int fprobe_fgraph_entry(struct ftrace_=
+graph_ent *trace, struct fgraph_ops
+> > > >  		if (node->addr !=3D func)
+> > > >  			continue;
+> > > >  		fp =3D READ_ONCE(node->fp);
+> > > > -		if (!fp || fprobe_disabled(fp))
+> > > > +		if (unlikely(!fp || fprobe_disabled(fp) || !fp->exit_handler))
+> > > >  			continue;
+> > > > =20
+> > > >  		data_size =3D fp->entry_data_size;
+> > > > -		if (data_size && fp->exit_handler)
+> > > > +		if (data_size)
+> > > >  			data =3D fgraph_data + used + FPROBE_HEADER_SIZE_IN_LONG;
+> > > >  		else
+> > > >  			data =3D NULL;
+> > > > @@ -327,7 +327,7 @@ static int fprobe_fgraph_entry(struct ftrace_gr=
+aph_ent *trace, struct fgraph_ops
+> > > >  			ret =3D __fprobe_handler(func, ret_ip, fp, fregs, data);
+> > > > =20
+> > > >  		/* If entry_handler returns !0, nmissed is not counted but skips=
+ exit_handler. */
+> > > > -		if (!ret && fp->exit_handler) {
+> > > > +		if (!ret) {
+> > > >  			int size_words =3D SIZE_IN_LONG(data_size);
+> > > > =20
+> > > >  			if (write_fprobe_header(&fgraph_data[used], fp, size_words))
+> > > > @@ -384,6 +384,70 @@ static struct fgraph_ops fprobe_graph_ops =3D {
+> > > >  };
+> > > >  static int fprobe_graph_active;
+> > > > =20
+> > > > +/* ftrace_ops backend (entry-only) */
+> > > > +static void fprobe_ftrace_entry(unsigned long ip, unsigned long pa=
+rent_ip,
+> > > > +	struct ftrace_ops *ops, struct ftrace_regs *fregs)
+> > > > +{
+> > > > +	struct fprobe_hlist_node *node;
+> > > > +	struct rhlist_head *head, *pos;
+> > > > +	struct fprobe *fp;
+> > > > +
+> > > > +	guard(rcu)();
+> > > > +	head =3D rhltable_lookup(&fprobe_ip_table, &ip, fprobe_rht_params=
+);
+> > >=20
+> > > hi,
+> > > so this is based on yout previous patch, right?
+> > >   fprobe: use rhltable for fprobe_ip_table
+> > >=20
+> > > would be better to mention that..  is there latest version of that so=
+mewhere?
+> >=20
+> > Yeah, this is based on that version. That patch is applied
+> > to: https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.g=
+it/log/?h=3Dprobes%2Ffor-next
+> >=20
+> > And I do the testing on that branches.
+>=20
+> did you run 'test_progs -t kprobe_multi' ? it silently crashes the
+> kernel for me.. attaching config
 
-This is a 31-day syzbot report for the kernfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/kernfs
+Hi. I have tested the whole test_progs and it passed.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 26 issues are still open and 24 have already been fixed.
+In fact, your config will panic even without this patch.
+Please don't enable CONFIG_X86_KERNEL_IBT, the recursion
+of the is_endbr() still exist until this series apply:
 
-Some of the still happening issues:
+  tracing: fprobe: Protect return handler from recursion loop
 
-Ref  Crashes Repro Title
-<1>  1201    Yes   possible deadlock in kernfs_iop_getattr
-                   https://syzkaller.appspot.com/bug?extid=4bb2305559463e8f6a2a
-<2>  480     Yes   WARNING in kernfs_remove_by_name_ns (3)
-                   https://syzkaller.appspot.com/bug?extid=93cbdd0ab421adc5275d
-<3>  473     Yes   WARNING in kernfs_get (5)
-                   https://syzkaller.appspot.com/bug?extid=2f44671e54488d20f0e6
-<4>  359     No    possible deadlock in lookup_slow (3)
-                   https://syzkaller.appspot.com/bug?extid=65459fd3b61877d717a3
-<5>  121     Yes   INFO: task hung in kernfs_dop_revalidate (4)
-                   https://syzkaller.appspot.com/bug?extid=da20d108162166514db6
-<6>  109     Yes   INFO: task hung in fdget_pos
-                   https://syzkaller.appspot.com/bug?extid=0ee1ef35cf7e70ce55d7
-<7>  91      Yes   possible deadlock in kernfs_remove
-                   https://syzkaller.appspot.com/bug?extid=2d7d0fbb5fb979113ff3
-<8>  71      Yes   INFO: task hung in kernfs_add_one
-                   https://syzkaller.appspot.com/bug?extid=e4804edf2708e8b7d2a5
-<9>  59      Yes   INFO: rcu detected stall in sys_unshare (9)
-                   https://syzkaller.appspot.com/bug?extid=872bccd9a68c6ba47718
-<10> 52      No    possible deadlock in kernfs_fop_readdir
-                   https://syzkaller.appspot.com/bug?extid=8fd10d8928ed1f715290
+Thanks!
+Menglong Dong
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>=20
+> jirka
+>=20
+>=20
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
 
-You may send multiple commands in a single email message.
 
