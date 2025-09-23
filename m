@@ -1,123 +1,100 @@
-Return-Path: <linux-kernel+bounces-828704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BA3B953D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:25:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42A4EB953E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:27:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 806A11738F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:25:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E28A5172F2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D228A31812F;
-	Tue, 23 Sep 2025 09:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033F831DDBD;
+	Tue, 23 Sep 2025 09:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LmCzedfj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HV2yjE6P"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339ED213E9C;
-	Tue, 23 Sep 2025 09:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D0130F80C;
+	Tue, 23 Sep 2025 09:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758619532; cv=none; b=CSHm8ItP4z+aQIj7VAMQrgHMCbNWY2l7s3iziNXu6i8/UL5u7HFLUuNxh+A9lCBEhNaWihwD1QfmeOBG/CBOXC9mpwcwQhkxa6KZihLcv4/ahP4336aUFLBMwQDcC+3TIbwmfmeYkehfVEXog4o2zrFPi8ufQElDo0tfGGAcbMs=
+	t=1758619636; cv=none; b=PLLAaiuJq2jPf6ssUGOcycd31/OZy9pZ7cATXtb8u2a7u5WVon2lFz6bzyTPNs5ApLqdX6ugjMV/TFIWD5fUO+qVxlmVXftfHrLAqIA+5YSFdhQq9BAN/GtB5x+5reixNr25DowgdszNctj+2DE3hVp7qPbNm/t6ZQ42pHOWCGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758619532; c=relaxed/simple;
-	bh=oc4B0P3ZekiLRNlxPYAEckM5612A/iTDWIyBYwAAZfw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hyX+2aebUTW52DJwYrI2FWwoxMX9zz8zXNusc0nQHPlYkNBuF+VvAFBB995wWeXQir75vcDUKCNZDFfvfpUJx+2aUL/zdbMwguPdSdBpxGwrU6yWbO/iodik9sL1+OEyyYNjiOORA0Fhln4Azml3pQr64HB7h9zipWzNz4TTMUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LmCzedfj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07342C4CEF5;
-	Tue, 23 Sep 2025 09:25:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758619532;
-	bh=oc4B0P3ZekiLRNlxPYAEckM5612A/iTDWIyBYwAAZfw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LmCzedfjR1TQRQJsC8eJHNSLdo8tQLzVwOfYgDWuwQ9fBDk6xw7gNdFZqid4oHmRI
-	 39UFZ7Um2aI5z/1nMDzx4d5nIMlvkmfTD4dJsUGNiRj1bNA9qqEv9aInbZTgirMxIM
-	 rgi+N7/O+a6vzKonFe4LztLlmOxm7HZnMMHa8P8GlwEHGalbPb+K90mfKapgBYOCYo
-	 /etnkHpTNjPHBX8uKF8TyGlpVSvlUGIZfvy6gc3zvQ7ArdpuWWPKfcDNmFGl0xfIrr
-	 WsO5+/EyquYQKjG/jrCtpAnhPt9ehcUz39Tw9Wxi3V6Xb0CoTkl+6hPPQZ4VlBeuID
-	 48q8Ry8FkMoBw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v0zH7-00000008fg9-3QWo;
-	Tue, 23 Sep 2025 09:25:29 +0000
-Date: Tue, 23 Sep 2025 10:25:29 +0100
-Message-ID: <86ecrx1px2.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Priscilla Lam <prl@amazon.com>
-Cc: <oliver.upton@linux.dev>,
-	<christoffer.dall@arm.com>,
-	<dwmw@amazon.co.uk>,
-	<graf@amazon.com>,
-	<gurugubs@amazon.com>,
-	<jgrall@amazon.co.uk>,
-	<joey.gouly@arm.com>,
-	<kvmarm@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<suzuki.poulose@arm.com>,
-	<yuzenghui@huawei.com>
-Subject: Re: [PATCH] KVM: arm64: Implement KVM_TRANSLATE ioctl for arm64
-In-Reply-To: <20250923082955.66602-1-prl@amazon.com>
-References: <86frcd1tp4.wl-maz@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1758619636; c=relaxed/simple;
+	bh=EgyZAg7IWLbF7uolc6U0aVyAzfrK/3xHOO2YH23aqN0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=lVFigBWz6cSERj6Bcamq0yTxKQCUGv/WSRrkcG/2Kl2bwVS3lA1fiakxo25656iNmmMwX3hSYJ1RzZAUYVKoXEJ92AcYBVuvT7pVF7YdigeS2vDhstqGKjsZlrAhXhiCBKhKfs1UDuo9BGgwqkv+56YCxEBjiat9txVcboMJhqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HV2yjE6P; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758619634; x=1790155634;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=EgyZAg7IWLbF7uolc6U0aVyAzfrK/3xHOO2YH23aqN0=;
+  b=HV2yjE6Pqz+WL/8+FbI/+4oPOSOovCZRKGBpBhO32T7hFy+rGLcrklUZ
+   RAZWf3LhD74Oh0ZCarnNPQliLLoEyjlgyAoM3my3KSHQKIC78DITMf6ol
+   XiTEj/2dPJRKaSz8hd7wdU0QghqVKUKX+yeP5/YAFupEDYG5E9BVJ2S6W
+   aCuQ7BtgalzXOxw3NX4HzEOBOoMRMy3nH13zrT07JASjFqhnJ3FFUUN+h
+   3vVuNr42f17K4BiguxrGdi/2niDlZE0BDRlOY+JKotPprHBZmBBDRfaw8
+   lToUeL9yCSObnRxKh1lBq846kN4JoQT5vXbWiwZmp9v+kt8RfoB/0LDaK
+   w==;
+X-CSE-ConnectionGUID: z4J2HXaWQpOtohETU7rG+Q==
+X-CSE-MsgGUID: v8tvYRDiRISx2TkAIF1+Dg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="78499935"
+X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
+   d="scan'208";a="78499935"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 02:27:13 -0700
+X-CSE-ConnectionGUID: F8d9gNRiQKmT5YH02EMu5Q==
+X-CSE-MsgGUID: rVYgSoi6RFKK1vIyUpwrUw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
+   d="scan'208";a="207471582"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 02:27:11 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+ Hans de Goede <hansg@kernel.org>, Werner Sembach <wse@tuxedocomputers.com>
+Cc: Christoffer Sandberg <cs@tuxedo.de>, 
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250916164700.32896-1-wse@tuxedocomputers.com>
+References: <20250916164700.32896-1-wse@tuxedocomputers.com>
+Subject: Re: [PATCH v2] platform/x86/amd/pmc: Add Stellaris Slim Gen6 AMD
+ to spurious 8042 quirks list
+Message-Id: <175861962484.17451.9801626734323363648.b4-ty@linux.intel.com>
+Date: Tue, 23 Sep 2025 12:27:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: prl@amazon.com, oliver.upton@linux.dev, christoffer.dall@arm.com, dwmw@amazon.co.uk, graf@amazon.com, gurugubs@amazon.com, jgrall@amazon.co.uk, joey.gouly@arm.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, suzuki.poulose@arm.com, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Tue, 23 Sep 2025 09:29:55 +0100,
-Priscilla Lam <prl@amazon.com> wrote:
+On Tue, 16 Sep 2025 18:46:49 +0200, Werner Sembach wrote:
+
+> Prevents instant wakeup ~1s after suspend
 > 
-> Hi Oliver and Marc,
 > 
-> Thanks for the detailed feedback.
-> 
-> > But at the end of the day, what do you need KVM_TRANSLATE for? This
-> > interface is an absolute turd that is unable to represent the bare
-> > minimum of the architecture (writable by whom? physical address in
-> > which translation regime? what about S2 translations?), and is better
-> > left in the "utter brain fart" category.
-> 
-> Regarding motivation, this patch is intended to give a userspace vmm
-> the ability to handle non-ISV guest faults. The Arm Arm (DDI 0487L.b,
-> section B3.13.6) notes that for load/store pair faults, the syndrome
-> may not provide the specifics of the access that faulted. In those
-> cases, the vmm must manually decode the instruction to emulate it. The
-> introduction of KVM_CAP_ARM_NISV_TO_USER
-> (https://lore.kernel.org/kvm/20191120164236.29359-2-maz@kernel.org/)
-> seems to have anticipated that flow by allowing exits to userspace on
-> trapped NISV instructions. What is still missing is a reliable way for
-> userspace to query VA->IPA translations in order to complete emulation.
 
-A guest doing this is a sure indication that it is completely broken,
-and will fail on actual HW, because it clearly ignores small
-insignificant details such as *ordering*.
 
-My other question still remains: why can't you perform this page table
-walk in userspace? It is actually much safer to do so because you can
-stop other vcpus while inspecting the PTs, and avoid a vcpu playing
-tricks behind your back -- something the in-kernel PTW doesn't try to
-avoid.
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
 
-Thanks,
+The list of commits applied:
+[1/1] platform/x86/amd/pmc: Add Stellaris Slim Gen6 AMD to spurious 8042 quirks list
+      commit: 12a3dd4d2cd9232d4e4df3b9a5b3d745db559941
 
-	M.
+--
+ i.
 
--- 
-Without deviation from the norm, progress is not possible.
 
