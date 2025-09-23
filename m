@@ -1,179 +1,296 @@
-Return-Path: <linux-kernel+bounces-829348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D66CB96DD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:43:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A907B96DD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C33FE2E7017
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:43:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB3363B3A14
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B800A328979;
-	Tue, 23 Sep 2025 16:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B81732859B;
+	Tue, 23 Sep 2025 16:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ewkP4phN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RzhNiRle"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FA731E8B2;
-	Tue, 23 Sep 2025 16:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0037232340F;
+	Tue, 23 Sep 2025 16:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758645799; cv=none; b=L6joDDuv4NazhzAEN403Pxy/+yWecY5ITKhomoO/jlzJCcIG+MYkY4x3j32XZ9rp2C/MeLtzZhzTawqRISgwISampIQ7+gEuxpygz43zPQioxM+PtPpfXIJCkyynkLHR4xEu7kll/s227HP0R2FqaPi9nRaDQAk4iz7FpxEypaI=
+	t=1758645821; cv=none; b=OEZJEHbBjEm5aiXVUPbCA8DR5XnwoVFZhDmqlZ5CZbl0Ji4/HqlpXg5QhIYab6NsLEK1HG1a2ksZJdegQry1o2taiqzbVNm659vApXXNhpP5aMhN9CK0sWkXL1fJO6TLLlrWFDQh9JQxFN+OkPBWxH3rbKkq+uoRCcpST4a2XG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758645799; c=relaxed/simple;
-	bh=tXIN3dMNSmyreMc6qz8c86n84Qu3pVePNXNHqmI666A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZDlJ19T3aNHs//EcdGoS+fmxlcPfEhi+kc7aGXgKLkaf+Y/kqrkDNMWUTqsg0yPhMScmC3rbXwKYc/1KBqJYQsGutJy55JgkCisVaszkZmZrL4bfbYH2RgMmYjxGO9Hg+SRpzYjm/eqrYZ/OXUsGlxlVC8CVsvTtEO5fr+1bOIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ewkP4phN; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758645797; x=1790181797;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tXIN3dMNSmyreMc6qz8c86n84Qu3pVePNXNHqmI666A=;
-  b=ewkP4phN8FsE8wmjm/kN+UsT0COocg8PtOgwkAhNgEyKVB/2Q19wlhNP
-   g6WCc3C4DctcryC8Wt8Qthi+K0rfHovmaNsln1IFya6eJ2gXwLLXf5pPN
-   6p8ysGrFM+BPJ0YRaaV/KZ+58VUu+CW+zwa913VivjJ/7QHgyvqN+LYrB
-   E2MDXKLawjc/39VI5mwB2s0pA2eXsJuNzPLVkrVsx2I3rV5oeMF94M/8e
-   9O6ssZB3lBgBdizJfAPchpbVkkDSyp3y3F2ygMmzNsBOteY2J/+3g6IPQ
-   Ujosioul0nA5FcNAjKwDO3jERDog5avb3Phayf8MJp5itvgfopZvPXs+k
-   g==;
-X-CSE-ConnectionGUID: S+FnsbrsQ8aBMigtq4qWvA==
-X-CSE-MsgGUID: uyIXBBMLQ0iQ6OkCoBL6Kw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60148524"
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="60148524"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 09:43:17 -0700
-X-CSE-ConnectionGUID: dwEW9TTnRmONx5oJSbL0/g==
-X-CSE-MsgGUID: 9U4ASqWIQzGXkNKiv6TCFQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="200510113"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 23 Sep 2025 09:43:13 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v166h-0003KH-2P;
-	Tue, 23 Sep 2025 16:43:11 +0000
-Date: Wed, 24 Sep 2025 00:42:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sherry Sun <sherry.sun@nxp.com>, gregkh@linuxfoundation.org,
-	jirislaby@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, shenwei.wang@nxp.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH 1/2] tty: serial: imx: Only configure the wake register
- when device is set as wakeup source
-Message-ID: <202509240009.Q4htWwxE-lkp@intel.com>
-References: <20250923031613.2448073-2-sherry.sun@nxp.com>
+	s=arc-20240116; t=1758645821; c=relaxed/simple;
+	bh=k8jA/Vr6JqeHR8HYy1whNk2r3CDd2XljOKC50tsH8cU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PDXel8yOTPYHaLd4A0OjavfcbkGzEaRc92/U8LgQG7znt7VYt2Do67taDkMeg84fQPl9vkSYILl5AdArYwdNlOZTCLdnzEu+785ToFOurNB2FuOa6oeprdvQLd+ZFK3ZrfDpT23o3D2d4D6KJ7037xzzJz499zT2lR1iQOvRidQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RzhNiRle; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58NGhRSf1031169;
+	Tue, 23 Sep 2025 11:43:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758645807;
+	bh=fqSCirw/c8Z7cc7b3Ln2Cy6x+uK8X79dKr/wAnlsOcY=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=RzhNiRleFvGzFtS7QlTL31hOglTmJH+doc1mt1Goo1JfLD1M2wDGroJYO28Tx6QKx
+	 ioiVIohHXLfssICYHEtrtl8UjTO70dG/ri1aqVcxvAUGxcvrp5RtHC/wP3E9YWwSd2
+	 RdWYLTmg61BX1lVFsKEtTul7G2VHDRnDZe1dILvA=
+Received: from DLEE209.ent.ti.com (dlee209.ent.ti.com [157.170.170.98])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58NGhQGp1796207
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 23 Sep 2025 11:43:26 -0500
+Received: from DLEE206.ent.ti.com (157.170.170.90) by DLEE209.ent.ti.com
+ (157.170.170.98) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 23 Sep
+ 2025 11:43:26 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE206.ent.ti.com
+ (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 23 Sep 2025 11:43:26 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58NGhPYk346672;
+	Tue, 23 Sep 2025 11:43:26 -0500
+Date: Tue, 23 Sep 2025 22:13:24 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman
+	<khilman@baylibre.com>, <linux-pm@vger.kernel.org>,
+        Pavel Machek
+	<pavel@kernel.org>, Len Brown <len.brown@intel.com>,
+        Daniel Lezcano
+	<daniel.lezcano@linaro.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Maulik
+ Shah <quic_mkshah@quicinc.com>,
+        Prasad Sodagudi <psodagud@quicinc.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC/PATCH 1/3] PM: QoS: Introduce a system-wakeup QoS limit
+Message-ID: <20250923164324.mo6gkzlfb6y7spvo@lcpd911>
+References: <7hldnp6apf.fsf@baylibre.com>
+ <CAJZ5v0j=9RXHrcVEBp0yy1Ae4_kC1y-WFQyBf89r3NtoL-tYQw@mail.gmail.com>
+ <CAPDyKFpeVF_EHJDQ9u=LDuJ56g7ykYUQWHXV2WXTYLa-mYahVA@mail.gmail.com>
+ <CAPDyKFpc-PHC1QhoSrNt9KnaGov749H1AwFZUwnDDzG7RDYBRw@mail.gmail.com>
+ <CAJZ5v0hC=sEcC-mU8jArwVN3EA6+U=EmCa2e7TKO0sg6LJiz7g@mail.gmail.com>
+ <CAPDyKFqG=bFSP2rJ3PXt5=6_nLdpJ+ir80krU1DrRCCMhwKQng@mail.gmail.com>
+ <CAJZ5v0hYN5G_WpA6KDpeDgowc2i9AvrUBCq-egS==8RNVb6N=w@mail.gmail.com>
+ <CAPDyKFr0-yh8wt169QanAo3AmuXBq_9p3xiiqeFmmWz-ntNQsw@mail.gmail.com>
+ <CAJZ5v0h4nS7fm347ue0Kj_eGwAi=o1vzyJm25_Q67dWzyoXR+Q@mail.gmail.com>
+ <CAPDyKFos=rM6Y-6tFbifpFp8XxwA=t_aya-nWhz=6ME1FaBEoA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20250923031613.2448073-2-sherry.sun@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPDyKFos=rM6Y-6tFbifpFp8XxwA=t_aya-nWhz=6ME1FaBEoA@mail.gmail.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Sherry,
+Hi Ulf,
 
-kernel test robot noticed the following build warnings:
+On Sep 23, 2025 at 14:36:53 +0200, Ulf Hansson wrote:
+> On Tue, 23 Sept 2025 at 13:39, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Tue, Sep 23, 2025 at 11:42 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > >
+> > > On Mon, 22 Sept 2025 at 20:55, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > >
+> > > > On Thu, Sep 18, 2025 at 5:34 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > > >
+> > > > > On Wed, 17 Sept 2025 at 21:24, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > > > >
+> > > > > > Hi,
+> > > > > >
+> > > > > > Sorry for the delay.
+> > > > > >
+> > > > > > On Fri, Sep 12, 2025 at 3:58 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > > > > >
+> > > > > > > On Tue, 12 Aug 2025 at 11:26, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > > > > > >
+> > > > > > > > On Mon, 11 Aug 2025 at 21:16, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > > > > > > >
+> > > > > > > > > On Mon, Aug 11, 2025 at 7:16 PM Kevin Hilman <khilman@baylibre.com> wrote:
+> > > > > > > > > >
+> > > > > > > > > > "Rafael J. Wysocki" <rafael@kernel.org> writes:
+> > > > > > > > > >
+> > > > > > > > > > > On Wed, Jul 16, 2025 at 2:33 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > > > > > > > > >>
+> > > > > > > > > > >> Some platforms and devices supports multiple low-power-states than can be
+> > > > > > > > > > >> used for system-wide suspend. Today these states are selected on per
+> > > > > > > > > > >> subsystem basis and in most cases it's the deepest possible state that
+> > > > > > > > > > >> becomes selected.
+> > > > > > > > > > >>
+> > > > > > > > > > >> For some use-cases this is a problem as it isn't suitable or even breaks
+> > > > > > > > > > >> the system-wakeup latency constraint, when we decide to enter these deeper
+> > > > > > > > > > >> states during system-wide suspend.
+> > > > > > > > > > >>
+> > > > > > > > > > >> Therefore, let's introduce an interface for user-space, allowing us to
+> > > > > > > > > > >> specify the system-wakeup QoS limit. Subsequent changes will start taking
+> > > > > > > > > > >> into account the QoS limit.
+> > > > > > > > > > >
+> > > > > > > > > > > Well, this is not really a system-wakeup limit, but a CPU idle state
+> > > > > > > > > > > latency limit for states entered in the last step of suspend-to-idle.
+> > > > > > > > > > >
+> > > > > > > > > > > It looks like the problem is that the existing CPU latency QoS is not
+> > > > > > > > > > > taken into account by suspend-to-idle, so instead of adding an
+> > > > > > > > > > > entirely new interface to overcome this, would it make sense to add an
+> > > > > > > > > > > ioctl() to the existing one that would allow the user of it to
+> > > > > > > > > > > indicate that the given request should also be respected by
+> > > > > > > > > > > suspend-to-idle?
+> > > > > > > > > > >
+> > > > > > > > > > > There are two basic reasons why I think so:
+> > > > > > > > > > > (1) The requests that you want to be respected by suspend-to-idle
+> > > > > > > > > > > should also be respected by the regular "runtime" idle, or at least I
+> > > > > > > > > > > don't see a reason why it wouldn't be the case.
+> > > > > > > > > > > (2) The new interface introduced by this patch basically duplicates
+> > > > > > > > > > > the existing one.
+> > > > > > > > > >
+> > > > > > > > > > I also think that just using the existing /dev/cpu_dma_latency is the
+> > > > > > > > > > right approach here, and simply teaching s2idle to respect this value.
+> > > > > > > > > >
+> > > > > > > > > > I'm curious about the need for a new ioctl() though.  Under what
+> > > > > > > > > > conditions do you want normal/runtime CPUidle to respect this value and
+> > > > > > > > > > s2idle to not respect this value?
+> > > > > > > > >
+> > > > > > > > > In a typical PC environment s2idle is a replacement for ACPI S3 which
+> > > > > > > > > does not take any QoS constraints into account, so users may want to
+> > > > > > > > > set QoS limits for run-time and then suspend with the expectation that
+> > > > > > > > > QoS will not affect it.
+> > > > > > > >
+> > > > > > > > Yes, I agree. To me, these are orthogonal use-cases which could have
+> > > > > > > > different wakeup latency constraints.
+> > > > > > > >
+> > > > > > > > Adding an ioctl for /dev/cpu_dma_latency, as suggested by Rafael would
+> > > > > > > > allow this to be managed, I think.
+> > > > > > > >
+> > > > > > > > Although, I am not fully convinced yet that re-using
+> > > > > > > > /dev/cpu_dma_latency is the right path. The main reason is that I
+> > > > > > > > don't want us to limit the use-case to CPU latencies, but rather allow
+> > > > > > > > the QoS constraint to be system-wide for any type of device. For
+> > > > > > > > example, it could be used by storage drivers too (like NVMe, UFS,
+> > > > > > > > eMMC), as a way to understand what low power state to pick as system
+> > > > > > > > wide suspend. If you have a closer look at patch2 [1] , I suggest we
+> > > > > > > > extend the genpd-governor for *both* CPU-cluster-PM-domains and for
+> > > > > > > > other PM-domains too.
+> > > > > > > >
+> > > > > > > > Interested to hear your thoughts around this.
+> > > > > > >
+> > > > > > > Hey, just wanted to see if you have managed to digest this and have
+> > > > > > > any possible further comment?
+> > > > > >
+> > > > > > The reason why I thought about reusing /dev/cpu_dma_latency is because
+> > > > > > I think that the s2idle limit should also apply to cpuidle.  Of
+> > > > > > course, cpuidle may be limited further, but IMV it should observe the
+> > > > > > limit set on system suspend (it would be kind of inconsistent to allow
+> > > > > > cpuidle to use deeper idle states than can be used by s2idle).
+> > > > >
+> > > > > Agreed!
+> > > > >
+> > > > > >
+> > > > > > I also don't think that having a per-CPU s2idle limit would be
+> > > > > > particularly useful (and it might be problematic).
+> > > > > >
+> > > > > > Now, it is not as straightforward as I thought because someone may
+> > > > > > want to set a more restrictive limit on cpuidle, in which case they
+> > > > > > would need to open the same special device file twice etc and that
+> > > > > > would be quite cumbersome.
+> > > > > >
+> > > > > > So in the end I think that what you did in the $subject patch is
+> > > > > > better, but I still would like it to also affect cpuidle.
+> > > > >
+> > > > > Okay. I will update the patches according to your suggestions!
+> > > > >
+> > > > > >
+> > > > > > And it needs to be made clear that this is a limit on the resume
+> > > > > > latency of one device.  Worst case, the system wakeup latency may be a
+> > > > > > sum of those limits if the devices in question are resumed
+> > > > > > sequentially, so in fact this is a limit on the contribution of a
+> > > > > > given device to the system wakeup latency.
+> > > > >
+> > > > > Indeed, that's a very good point! I will keep this in mind when
+> > > > > working on adding the documentation part.
+> > > >
+> > > > Well, this also means that using one limit for all of the different
+> > > > devices is not likely to be very practical because the goal is to save
+> > > > as much energy as reasonably possible in system suspend while
+> > > > respecting a global resume latency constraint at the same time.
+> > > >
+> > > > Using the same limit on a local contribution from each device to the
+> > > > combined latency is not likely to be effective here.  Rather, I'd
+> > > > expect that the best results can be achieved by setting different
+> > > > resume latency limits on different devices, depending on how much
+> > > > power they draw in each of their idle states and what the exit latency
+> > > > values for all of those states are.  In other words, this appears to
+> > > > be an optimization problem in which the resume latency limits for
+> > > > individual devices need to be chosen to satisfy the global resume
+> > > > latency constraint and minimize the total system power.
+> > >
+> > > I am following your reasoning and I agree!
+> > >
+> > > Perhaps we should start with extending the cpu_dma_latency with an
+> > > ioctl after all? This would allow userspace to specify constraints to
+> > > be applicable for system-wide-suspend (s2idle), but it would still be
+> > > limited for CPUs/CPU-clusters.
+> >
+> > Right.
+> >
+> > Adding a separate device special file to represent the limit affecting
+> > s2idle may be somewhat cleaner though as mentioned before.
+> 
+> Okay, sounds good to me too!
+> 
+> >
+> > > For other devices, we should probably explore the per device PM QoS
+> > > (pm_qos_latency_tolerance_us) instead. Currently the
+> > > pm_qos_latency_tolerance_us is used for "runtime_suspend", so perhaps
+> > > adding another per device sysfs file, like
+> > > "pm_qos_system_wakeup_latency_us",  that we can use for the
+> > > system-wide-wakeup latency constraint?
+> > >
+> > > Would this make better sense, you think?
+> >
+> > I think that this can be made work.
+> 
+> Okay, I will explore this approach.
 
-[auto build test WARNING on shawnguo/for-next]
-[also build test WARNING on tty/tty-testing tty/tty-next tty/tty-linus usb/usb-testing usb/usb-next usb/usb-linus linus/master v6.17-rc7 next-20250922]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I think this is kind of similar to how we did it for the TI SCI
+pmdomains driver for TI SoC. See Kevin's patch [1] where we read from
+dev_pm_qos_read_value and then based on that we set some constraints on
+the firmware entity based on which the firmware entity chose which low
+power mode to enter. It's nice to see that the logic is finally getting
+into a much more central part of the kernel PM.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sherry-Sun/tty-serial-imx-Only-configure-the-wake-register-when-device-is-set-as-wakeup-source/20250923-111951
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250923031613.2448073-2-sherry.sun%40nxp.com
-patch subject: [PATCH 1/2] tty: serial: imx: Only configure the wake register when device is set as wakeup source
-config: arm-randconfig-004-20250923 (https://download.01.org/0day-ci/archive/20250924/202509240009.Q4htWwxE-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project cafc064fc7a96b3979a023ddae1da2b499d6c954)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250924/202509240009.Q4htWwxE-lkp@intel.com/reproduce)
+About this series itself, Kevin and I have been working to integrate a
+branch where we can have some platform specific support for the TI AM62L
+SoC along with this series applied on it on vendor kernel, but I think
+it should be good enough to test a proof of concept that we can finally
+do mode selection while using s2idle.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509240009.Q4htWwxE-lkp@intel.com/
+So yeah - I was able to write some values into
+/dev/system_wakeup_latency and then see that before setting any value it
+picked the deepest idle-state in the DT. When I programmed some latency
+constraint into /dev/system_wakeup_latency then I could see that the
+cpuidle_enter_s2idle picked the shallower idle-state.
 
-All warnings (new ones prefixed by >>):
+These idle-states we had were modelling 2 different low power mode
+variants of suspend to RAM, and based on the different suspend-param
+that I recieved in the firmware (in this case TF-A via PSCI), I did the
+mode selection bits and switched between low power modes purely based on
+system_wakeup_latency. There's definitely more work to do, and I will
+continue to closely monitor the next revisions of this series as well,
+so please feel free to include me in To/CC.
 
->> drivers/tty/serial/imx.c:2707:6: warning: variable 'may_wake' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-    2707 |         if (tty) {
-         |             ^~~
-   drivers/tty/serial/imx.c:2714:7: note: uninitialized use occurs here
-    2714 |         if (!may_wake)
-         |              ^~~~~~~~
-   drivers/tty/serial/imx.c:2707:2: note: remove the 'if' if its condition is always true
-    2707 |         if (tty) {
-         |         ^~~~~~~~
-   drivers/tty/serial/imx.c:2704:15: note: initialize the variable 'may_wake' to silence this warning
-    2704 |         bool may_wake;
-         |                      ^
-         |                       = 0
-   1 warning generated.
-
-
-vim +2707 drivers/tty/serial/imx.c
-
-  2696	
-  2697	/* called with irq off */
-  2698	static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
-  2699	{
-  2700		struct tty_port *port = &sport->port.state->port;
-  2701		struct tty_struct *tty;
-  2702		struct device *tty_dev;
-  2703		u32 ucr3;
-  2704		bool may_wake;
-  2705	
-  2706		tty = tty_port_tty_get(port);
-> 2707		if (tty) {
-  2708			tty_dev = tty->dev;
-  2709			may_wake = tty_dev && device_may_wakeup(tty_dev);
-  2710			tty_kref_put(tty);
-  2711		}
-  2712	
-  2713		/* only configure the wake register when device set as wakeup source */
-  2714		if (!may_wake)
-  2715			return;
-  2716	
-  2717		uart_port_lock_irq(&sport->port);
-  2718	
-  2719		ucr3 = imx_uart_readl(sport, UCR3);
-  2720		if (on) {
-  2721			imx_uart_writel(sport, USR1_AWAKE, USR1);
-  2722			ucr3 |= UCR3_AWAKEN;
-  2723		} else {
-  2724			ucr3 &= ~UCR3_AWAKEN;
-  2725		}
-  2726		imx_uart_writel(sport, ucr3, UCR3);
-  2727	
-  2728		if (sport->have_rtscts) {
-  2729			u32 ucr1 = imx_uart_readl(sport, UCR1);
-  2730			if (on) {
-  2731				imx_uart_writel(sport, USR1_RTSD, USR1);
-  2732				ucr1 |= UCR1_RTSDEN;
-  2733			} else {
-  2734				ucr1 &= ~UCR1_RTSDEN;
-  2735			}
-  2736			imx_uart_writel(sport, ucr1, UCR1);
-  2737		}
-  2738	
-  2739		uart_port_unlock_irq(&sport->port);
-  2740	}
-  2741	
+[1] https://lore.kernel.org/linux-pm/20241206-lpm-v6-10-constraints-pmdomain-v6-1-833980158c68@baylibre.com/
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
