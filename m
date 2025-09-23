@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-828892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63720B95C58
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:05:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA06AB95C5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8477189D4A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:05:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C6613AB5E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE94322DBD;
-	Tue, 23 Sep 2025 12:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41046323402;
+	Tue, 23 Sep 2025 12:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="L0C9g3J+"
-Received: from forwardcorp1d.mail.yandex.net (forwardcorp1d.mail.yandex.net [178.154.239.200])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="d0pypABu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731062FC86F;
-	Tue, 23 Sep 2025 12:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5945E322C87;
+	Tue, 23 Sep 2025 12:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758629101; cv=none; b=uxMhPYbOtRjlKMJSIdrreaCbQDAjrnrZxLJhp2AUyyacjdjTWRFOCAxVfjfczm0iezBn9k8GOWs7cvL5dexFHykYkY9g7LGftpxyA58W90ZoGCN3YJZ/8iJF5ce8nWPPOJOzxW5tiXubK/v8fgfXlGs2YdW2XgIx6yLk5dd0dII=
+	t=1758629109; cv=none; b=PfyZTHOqomhJjf5JKc1CuI737Y7SpfAdPUuCG500Mpns3tCqRMGJJRBWJG/s1XOC0Wswna2k1lOroEN4pOW6Ih2DA1fzke+0dxsU6SMsZRHB46I3R/BmVwOJSA6MZNPbWmrwrgQtiOKNottgDPZE1gINdAy79BBXpTxh3/TUNGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758629101; c=relaxed/simple;
-	bh=ThjKCuq/Gkaa6sxkQ2iw8pcH9Scy6bno0C+2htC9uZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g1vZbYLbMyZcOg6K/Kcrir6+QpsyFuaE00FAmwU5sPEDSDbWuhA81yNW3rpowGRatVO3CYzyFHJqGsiPoz+xz+NJgfTq1moAT1P77zezHczsf6RWfCOxYfiYwPZaVnhNvP92ndj9OXshGZZQv+z68oZXbjrQxSwQfhY4+fkHw10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=L0C9g3J+; arc=none smtp.client-ip=178.154.239.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:cf2d:0:640:140f:0])
-	by forwardcorp1d.mail.yandex.net (Yandex) with ESMTPS id 1672F80C96;
-	Tue, 23 Sep 2025 15:04:53 +0300 (MSK)
-Received: from [IPV6:2a02:6bf:8080:c77::1:3b] (unknown [2a02:6bf:8080:c77::1:3b])
-	by mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id o4WuUE0FriE0-fAFtdmJZ;
-	Tue, 23 Sep 2025 15:04:52 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1758629092;
-	bh=Vf6v1fCk8K2cHd1wSxGVsZZHow2DvCl4rn6gHJ3UDJw=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=L0C9g3J+Buq5IlPqK24blre2NyAlID7zKCiGaanAQ7d0uVqQ7U304SQTzWELPkSL8
-	 HMobw6+QoJSStHaluNL8R7Het0vAbLmykTCNFFkLIWSdda7hRKRd9vIeNFOXeEU84z
-	 XBO11aEutOxbdbL3c7nPknSeN0QFZpXNj6RbvJwM=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-Message-ID: <348f209e-89bc-4289-aaf9-e57437e31b0d@yandex-team.ru>
-Date: Tue, 23 Sep 2025 15:04:50 +0300
+	s=arc-20240116; t=1758629109; c=relaxed/simple;
+	bh=0msSo4fg/hc2N6geIprPCq94IsgEelg6pwxGWnUqShE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iU6sedLyozqn/7VmYpkdqyzlUsjgWrE/xfIJ5/MEMMFVrEoPRPae+rE3AEi2SEXgCbmrwZedcqMujE19TCVFlgTJvU/CeuXmHvjr4gtX5BbaXRpbR2iz/0YkP3STGasvuRAHCbcQii+z1FUIcqlLpaNgM9zJw0Eqa4evp9lXGfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=d0pypABu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FB13C4CEF5;
+	Tue, 23 Sep 2025 12:05:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1758629108;
+	bh=0msSo4fg/hc2N6geIprPCq94IsgEelg6pwxGWnUqShE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d0pypABuk7z/EvZo95dllRbH144Dn1haMGtx2S4Neo1V3Fw5KAjmBf8y96WnRBYdT
+	 MP4UBag1uakbGbOjXhsT3EsHTu12HeyMa62YjgXwlP0PFhprTOgfwZrBbph1WFFN78
+	 5sVt1FPGH58eOfPHnfeaZrHl+4P3Y5scA5D1xgvs=
+Date: Tue, 23 Sep 2025 14:05:06 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 0/2] rust: usb: add initial USB abstractions
+Message-ID: <2025092338-elbow-dash-373d@gregkh>
+References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] netfilter/x_tables: go back to using vmalloc for
- xt_table_info
-To: Florian Westphal <fw@strlen.de>
-Cc: Eric Dumazet <edumazet@google.com>,
- Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>, Phil Sutter <phil@nwl.cc>,
- "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <20250922194819.182809-1-d-tatianin@yandex-team.ru>
- <20250922194819.182809-2-d-tatianin@yandex-team.ru>
- <CANn89i+GoVZLcdHxuf33HpmgyPNKxGqEjXGpi=XiB-QOsAG52A@mail.gmail.com>
- <5f1ff52a-d2c2-40de-b00c-661b75c18dc7@yandex-team.ru>
- <aNKGWZSxY9RC0VWS@strlen.de>
-Content-Language: en-US
-From: Daniil Tatianin <d-tatianin@yandex-team.ru>
-In-Reply-To: <aNKGWZSxY9RC0VWS@strlen.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
 
-On 9/23/25 2:36 PM, Florian Westphal wrote:
+On Mon, Aug 25, 2025 at 03:18:04PM -0300, Daniel Almeida wrote:
+> This adds initial support for USB Rust drivers, not only because I see a
+> widespread use of module_usb_driver() in media (which is a subsystem I
+> aim to support) but also because I want to learn about USB in general
+> and this is a nice opportunity to start doing so.
+> 
+> I tried to keep things as consistent with pci.rs and platform.rs as
+> possible and tested it by manually binding a device (i.e.: my Logitech
+> mouse) to the sample driver via:
+> 
+> /sys/bus/usb/drivers/rust_driver_usb/new_id
+> 
+> This initial patch is therefore comprised of the same patterns that are
+> known to work for pci and platform already.
+> 
+> Physically disconnecting the device also worked, i.e.: nothing bad
+> showed up in dmesg.
+> 
+> Note that I did not touch MAINTAINERS at all. The objective is to
+> kickstart the discussion of what to do there here in v1.
 
-> Daniil Tatianin <d-tatianin@yandex-team.ru> wrote:
->>> On Mon, Sep 22, 2025 at 12:48 PM Daniil Tatianin
->>> <d-tatianin@yandex-team.ru> wrote:
->>>> This code previously always used vmalloc for anything above
->>>> PAGE_ALLOC_COSTLY_ORDER, but this logic was changed in
->>>> commit eacd86ca3b036 ("net/netfilter/x_tables.c: use kvmalloc() in xt_alloc_table_info()").
->>>>
->>>> The commit that changed it did so because "xt_alloc_table_info()
->>>> basically opencodes kvmalloc()", which is not actually what it was
->>>> doing. kvmalloc() does not attempt to go directly to vmalloc if the
->>>> order the caller is trying to allocate is "expensive", instead it only
->>>> uses vmalloc as a fallback in case the buddy allocator is not able to
->>>> fullfill the request.
->>>>
->>>> The difference between the two is actually huge in case the system is
->>>> under memory pressure and has no free pages of a large order. Before the
->>>> change to kvmalloc we wouldn't even try going to the buddy allocator for
->>>> large orders, but now we would force it to try to find a page of the
->>>> required order by waking up kswapd/kcompactd and dropping reclaimable memory
->>>> for no reason at all to satisfy our huge order allocation that could easily
->>>> exist within vmalloc'ed memory instead.
->>> This would hint at an issue with kvmalloc(), why not fixing it, instead
->>> of trying to fix all its users ?
-> I agree with Eric.  There is nothing special in xtables compared to
-> kvmalloc usage elsewhere in the stack.  Why "fix" xtables and not e.g.
-> rhashtable?
->
-> Please work with mm hackers to improve the situation for your use case.
->
-> Maybe its enough to raise __GFP_NORETRY in kmalloc_gfp_adjust() if size
-> results in >= PAGE_ALLOC_COSTLY_ORDER allocation.
+I tried to apply these, but I get the following build error when adding
+to the char-misc-testing tree:
 
-Thanks for your reply! Perhaps this is the way to go, although this 
-might have
-much broader implications since there are tons of other callers to take 
-into account.
+ld.lld: error: undefined symbol: usb_get_intf
+>>> referenced by kernel.1a949e63ee2acc6a-cgu.0
+>>>               rust/kernel.o:(<kernel::usb::Interface as kernel::sync::aref::AlwaysRefCounted>::inc_ref) in archive vmlinux.a
+>>> referenced by kernel.1a949e63ee2acc6a-cgu.0
+>>>               rust/kernel.o:(<kernel::sync::aref::ARef<kernel::usb::Interface> as core::convert::From<&kernel::usb::Interface<kernel::device::CoreInternal>>>::from) in archive vmlinux.a
 
-I'm not sure whether rhashtable's size also directly depends on user 
-input, I was only
-aware of x_table since this is the case we ran into specifically.
+ld.lld: error: undefined symbol: usb_put_intf
+>>> referenced by kernel.1a949e63ee2acc6a-cgu.0
+>>>               rust/kernel.o:(<kernel::usb::Interface as kernel::sync::aref::AlwaysRefCounted>::dec_ref) in archive vmlinux.a
 
->
->> Thanks for the quick reply! From my understanding, there is a lot of
->> callers of kvmalloc
->> who do indeed benefit from the physical memory being contiguous, because
->> it is then
->> used for hardware DMA etc., so I'm not sure that would be feasible.
-> How can that work?  kvmalloc won't make vmalloc backed memory
-> physically contiguous.
+ld.lld: error: undefined symbol: usb_get_dev
+>>> referenced by kernel.1a949e63ee2acc6a-cgu.0
+>>>               rust/kernel.o:(<kernel::usb::Device as kernel::sync::aref::AlwaysRefCounted>::inc_ref) in archive vmlinux.a
+>>> referenced by kernel.1a949e63ee2acc6a-cgu.0
+>>>               rust/kernel.o:(<kernel::sync::aref::ARef<kernel::usb::Device> as core::convert::From<&kernel::usb::Device<kernel::device::CoreInternal>>>::from) in archive vmlinux.a
 
-The allocated physical memory won't be contiguous only for fallback 
-cases (which should be rare),
-I assume in that case the hardware operation may end up being more 
-expensive with larger scatter-gather
-lists etc. So most of the time such code can take optimized paths for 
-fully contiguous memory. This is not
-the case for x_tables etc.
+ld.lld: error: undefined symbol: usb_put_dev
+>>> referenced by kernel.1a949e63ee2acc6a-cgu.0
+>>>               rust/kernel.o:(<kernel::usb::Device as kernel::sync::aref::AlwaysRefCounted>::dec_ref) in archive vmlinux.a
 
+
+Any hints?
+
+thanks,
+
+greg k-h
 
