@@ -1,106 +1,152 @@
-Return-Path: <linux-kernel+bounces-829627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB9DB977EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:28:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E194BB977F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DD0E4A3B90
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:28:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD6E22A688B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E325E30B50C;
-	Tue, 23 Sep 2025 20:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D595D30C0FB;
+	Tue, 23 Sep 2025 20:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="VomX3a6X"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="p2RpSxy1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BjYOQ1x1"
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2E923FC41;
-	Tue, 23 Sep 2025 20:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAC330B534;
+	Tue, 23 Sep 2025 20:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758659281; cv=none; b=ZcLuF7h5UgLy8hiu3uXjQ5mlCfX7lGwFet2ClEVhh9vqUB9E9kpLBjMcohJZ2XwErZOy71XTvg2gl6H5lFA8yUl+l+06JkauMje2ncTl0tZtqFtNKL0E1hp6vf7xNpjIZYL9g1lQffibr+NyKscCQMfH+E+HrbR5ILWUEXPmgZI=
+	t=1758659286; cv=none; b=VBmK48UGepQ5+LAMtbVEd71L4rxYeJwdxjSUaW9Ghwwf6tGiQyr0tl79l9VHD7tu/tAyWhT6X1yKx3KLtO2/SYtYirmURhfnXsjunGDkT3abasEmJRd0NRpX/WNtio9QiiTxhimzTKa0kXRv7jTaPjg2jgMJjhsCPKSTR2cPkP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758659281; c=relaxed/simple;
-	bh=PbSITlPaXx5Y8UlgR9GOOZrKlTQWOq6hJ8JkmNTj5uQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=luZEKv4p+J6Ezi6PjRjdCJmW+/zpzN6a70UQRma690popZg4GXbbMwL1NvgfGC/3RE73phtwhX5xjoeboV8AKWclGgI7miuXNh96N+roqGxkHgtqwht0j0VcPu+QD4AaY+Gdi3rjlb0F9Gfg2bH7AGbA/CjTNwoPqnuEWCz/is8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=VomX3a6X; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cWWkk13dBzlgqVr;
-	Tue, 23 Sep 2025 20:27:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1758659276; x=1761251277; bh=uaYIEPiqRFtw2MIEF/8uNfV6
-	VPl6EZC7+8v+F7docdE=; b=VomX3a6XaRm0yw7g4rxFFylz2RsmQj1fbcsCSQMB
-	3VJrq58maHA0VtNtQNFJZjC99JmvTHr4wNFerHI1Jl9uCbl6rOHK4mDnMdyZOrTq
-	pZLWB8DUwKFzGuEBNgx7AWXBEjb0IkoqKVblrWtPuLvvQUYs8Zm9UTU3exiFVf9C
-	QvVogKhGnCFKe+rHKQbXmu8m2nrmYQWKYBaJ8gGDNaYN62LkL1McH5O0dOTwhcsj
-	sdFP7R6SQrBe6Taz2SqMXflUWrOfEWXM3UWaGcxskVYk0IGerqGbspmWnsqzgP9u
-	NkpdpNKYyvmqw7MGMpXTCX1Yeh94Ih8+0BgkfVIvW0RjMw==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id v2df5XKNZCPz; Tue, 23 Sep 2025 20:27:56 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cWWkX2tp0zlgqVh;
-	Tue, 23 Sep 2025 20:27:46 +0000 (UTC)
-Message-ID: <b2ed97b4-bfef-4e4b-83ed-a172214e46e8@acm.org>
-Date: Tue, 23 Sep 2025 13:27:45 -0700
+	s=arc-20240116; t=1758659286; c=relaxed/simple;
+	bh=ZDi3YhpgKNuiA8C2o6Aww9+GP/AQl7UZ/GJyo6QlrLk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ieow262auTV3xTRrWn+UM4LlN06ika5eGAff50Me57ZvHlFjrxhp0/GwgUW8/ilwG959j+6RuRMXMw3Pv+qDWACYwusE5MT1nrzR/SoyuBsZLvDLujjE0c8jTZ0OI/OK+P6ovvAlFsDA/L/pLJWZCrroiNTdlRZmerw6Dne1DmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=p2RpSxy1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BjYOQ1x1; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id 543321D0032E;
+	Tue, 23 Sep 2025 16:28:01 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Tue, 23 Sep 2025 16:28:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1758659281; x=
+	1758745681; bh=TAjwu2nTa1m1E7lea16+hYCBQe7X9QJZoSoAAakz5Qo=; b=p
+	2RpSxy12FwYvIlO8s7l9U1plKdf+JfOL/b2JsA8vP20FQgz6J3MvfkGmpvECdJqB
+	YxJk7lw4B+NoBSDdOVD+fMj0mpPlEwPdOA0UU4ugJLpfPlmSzdZxT3dTsFdZI78h
+	lWpVKZurNDeJ7LmD0X+E/IBLGocOLeicF3hjL7zOmw2LLsBiWaLFZ98EmpMtU4j6
+	tQyJpMMdomuzrHl8+M2QpqfJ22Ih9KoTw123lhQMYJQWmxa/YGKglfw2nWd8SYVE
+	xk8D24WwRzY0/WOz+vPZvWKrZdQK/qelYGhKTN8jXS43ChDk9x4FRjO5vt0Z1W2u
+	Vs+4wF0qpryvLokXMaI7A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758659281; x=1758745681; bh=TAjwu2nTa1m1E7lea16+hYCBQe7X9QJZoSo
+	AAakz5Qo=; b=BjYOQ1x1PXxzCHMYNha5rFMKdbSDyZcwGYkVpdQC0oaQ1f9aHbp
+	+h+hN1nga4bn1PUQldfg3Axb0KD/bVgPy0FLxKsljeZH1B5Z0xUU8cIN/EzFZKE3
+	Rd4vq1hvDME9Cv+uiq+9RfaYdLztQEyKBPLjPjyaauCqSdUU1XgyGtOEWTWrDlC0
+	BCMnXKOqb9RWp0OBuO0Mtci79XH3VfHjQ1HwNn3U4anXuOsCMK8Q2PCInbUuNLat
+	LAyysDQcgcxGHV7q1CxqE/tpJCFVPmZT0T08V9zI3J8aWW5Cb/s/fOxdDynmztI2
+	UsTkhtr6J7CVNXolDoAIx1Ej35tbJ5NNAgA==
+X-ME-Sender: <xms:0ALTaG8k1On13dYK0bM456ecQhYwstoYLkR_v8FJv-Mb2bKt6YLT7Q>
+    <xme:0ALTaCkQSPc5GxskB4WIi0qTvEhCJ6gpIk5qoe__B8iy1LFLPBM4imu0W9LXQPWQ0
+    yFBXzKfCvl0WQnviyfBSwVTiwyhL-jGgFsxszwlqMh_MeKMQ5-hFEc>
+X-ME-Received: <xmr:0ALTaJDSykt--mvZfLnqGAltZ5M3cVtCZqX57ZsEg2EbEHVqJyh_dU-qCRTa>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiudeilecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpefurggsrhhinhgr
+    ucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrihhlrdhnvghtqeenucggtffrrg
+    htthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeegteehgeehieffgfeuvdeuffef
+    gfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghrtghpthhtohepuddupdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehguhhsthgrvhhosegvmhgsvgguuggvughorh
+    drtghomhdprhgtphhtthhopehguhhsthgrvhhorghrsheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpth
+    htohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvghmsegurghv
+    vghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtg
+    homhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohep
+    hhhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrh
+    drkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:0ALTaDVyejjspvjPx0W5uK5pLqwub9OaiSoN496QSyHzCIi38UfyFw>
+    <xmx:0ALTaP936xUOruTSnkqBH14D_GogcNCFTSXGOF0aaft7xrNq5U-xcg>
+    <xmx:0ALTaNRu09bcksrAergZiclF21QvspxNj_5XcJLQ5p00L2MrS8dVcA>
+    <xmx:0ALTaMQ-k7f0TKsYp0GHwzWnhRxiLuSGNqKKKVMtnaD5E0cCnThXgw>
+    <xmx:0QLTaAIyFO9F61PYAGpNTwly6T8T5pWhHPEZR7W69B5xla1vYPCPVvg2>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 23 Sep 2025 16:28:00 -0400 (EDT)
+Date: Tue, 23 Sep 2025 22:27:58 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] tls: Avoid -Wflex-array-member-not-at-end warning
+Message-ID: <aNMCznixxL2veGxK@krikkit>
+References: <aNFfmBLEoDSBSLJe@kspp>
+ <aNFpZ4zg5WIG6Rl6@krikkit>
+ <c9cd2ebb-ecdb-4ba9-8d54-f01e3cd54929@embeddedor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver for
- UFS devices
-To: Bean Huo <beanhuo@iokpp.de>, avri.altman@wdc.com,
- alim.akhtar@samsung.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
- can.guo@oss.qualcomm.com, ulf.hansson@linaro.org, beanhuo@micron.com,
- jens.wiklander@linaro.org
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250923153906.1751813-1-beanhuo@iokpp.de>
- <20250923153906.1751813-4-beanhuo@iokpp.de>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250923153906.1751813-4-beanhuo@iokpp.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c9cd2ebb-ecdb-4ba9-8d54-f01e3cd54929@embeddedor.com>
 
-On 9/23/25 8:39 AM, Bean Huo wrote:
-> +	ret = scsi_execute_cmd(sdev, cdb, send ? REQ_OP_DRV_OUT : REQ_OP_DRV_IN,
-> +	                       buffer, len,  /*timeout=*/30 * HZ, 0, NULL);
-> +	return ret <= 0 ? ret : -EIO;
+2025-09-23, 11:37:55 +0200, Gustavo A. R. Silva wrote:
+> 
+> 
+> On 9/22/25 17:21, Sabrina Dubroca wrote:
+> > 2025-09-22, 16:39:20 +0200, Gustavo A. R. Silva wrote:
+> > > -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> > > getting ready to enable it, globally.
+> > > 
+> > > Use the new TRAILING_OVERLAP() helper to fix the following warning:
+> > > 
+> > > net/tls/tls.h:131:29: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> > > 
+> > > This helper creates a union between a flexible-array member (FAM)
+> > > and a set of members that would otherwise follow it. This overlays
+> > > the trailing members onto the FAM while preserving the original
+> > > memory layout.
+> > 
+> > Do we need to keep aead_req_ctx in tls_rec? It doesn't seem to be
+> > used, and I don't see it ever being used since it was introduced in
+> > commit a42055e8d2c3 ("net/tls: Add support for async encryption of
+> > records for performance").
+> 
+> If this (flex array) is not going to be needed in the future, I'm
+> happy to remove it. :)
 
-scsi_execute_cmd() can return a negative value, zero, or a positive
-value. Both negative and positive values should be considered as an
-error.
+I don't see what we'd use it for, aead_request.__ctx contains private
+data from the crypto code (all accesses seem to be through
+aead_request_ctx defined in include/crypto/internal/aead.h, see also
+the kdoc: "Start of private context data").
+And we haven't seen the author of a42055e8d2c3 in a while, so we can't
+ask about the intention behind this field.
 
-> +MODULE_DESCRIPTION("UFS RPMB integration into the RPMB framework using SCSI Secure In/Out");
+So IMO, tls_rec.aead_req_ctx can simply go away. Would you send the
+patch?
 
-That's a very long module description ... Can this description be made
-shorter without reducing clarity?
-
-> +	u8 rpmb_region0_size;
-> +	u8 rpmb_region1_size;
-> +	u8 rpmb_region2_size;
-> +	u8 rpmb_region3_size;
-
-Why four separate members instead of an array?
-
-Thanks,
-
-Bart.
+-- 
+Sabrina
 
