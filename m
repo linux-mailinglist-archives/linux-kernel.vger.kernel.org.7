@@ -1,158 +1,149 @@
-Return-Path: <linux-kernel+bounces-828547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3854B94DC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:52:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65117B94DCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C0E34E2706
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:52:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73B9619033DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F2531771B;
-	Tue, 23 Sep 2025 07:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB883168EA;
+	Tue, 23 Sep 2025 07:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="O3vrN+cN"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Sfzk3iOs"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889292EDD5D
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03AA2EDD5D
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758613936; cv=none; b=X+QCnhCekXlxaHukZo9zoUQKN9A3gxffw0E8k53p1ZNZJgpDX4/L/JsbLbPGZ0Wh2JbD/JyFE1TfMM6a2ZZ2jRmXwkNUM0kSo2V8tY+MGYNS16mUW2bPA7oISuwa2rKFWxY3FOaFbSflZ8Jkd6ZPE4dX/hrYXxSMcvVzipvhTow=
+	t=1758613973; cv=none; b=NmVTBlN8MkjA7neezEqAYbk260gWQ1CB+ko4txQAuIztPxIuuj+oGHNfOUw3ivjokFAJBrS/OXrMn9uZCLBKr+cIXQ+UnTgOIRv2esBtTw3tSLbQWT+/o7r2O7Hs4kC6+Gp7ETju/xMZEuaYbFfuGN0GjiTevo4cBqgToX05aRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758613936; c=relaxed/simple;
-	bh=pf37Q7wzChkdluFPqksV7e+I8FpVOZKjC6mV81x3yYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=iyVoGp0fe6ciaInHWXkqNsxa+bGDUK6j/g29nLey106kvxFH0+Mu0fKOTjvtvQ7bXCNUX2xXlr4+JvK5uUq1Af2iuzzrQTpknTNcLxRPQdqt4rOG1lxG3ZyNElbc89OOMW+x2fumMmRxMf5R2MGY3spuarWnR3wFmdB7QwJ8+hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=O3vrN+cN; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250923075210euoutp02c13a89ecf7b4aff992561c34f6641a64~n2g1sgBs60712707127euoutp027
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:52:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250923075210euoutp02c13a89ecf7b4aff992561c34f6641a64~n2g1sgBs60712707127euoutp027
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758613930;
-	bh=TyeXzWHqzkRrxRkI+OKjBSuJ/O2L9PTGBMWtdzDt3bI=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=O3vrN+cNTLDpjLQh55St7Mvpc9nHg7KXFF2fNi1yTNisFYaoMSbnhob3WsWV5z3wg
-	 KgWx6X6gvJduDdpE2UTa+lExjuQ2BtnscWLx1TeopOhL8gS3HbRru+hZLNo46oBt8f
-	 hI/EvZxZbG1vKxgoCZiRmiYagE8KT8QO51h5v6ZA=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250923075210eucas1p2e2268ea8465a10df505cf86110e51c3d~n2g1fGgch1074310743eucas1p2J;
-	Tue, 23 Sep 2025 07:52:10 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250923075209eusmtip2088551d3840de5e4d012ae6fa85125ef~n2g08t4Xs2851428514eusmtip2V;
-	Tue, 23 Sep 2025 07:52:09 +0000 (GMT)
-Message-ID: <6d008809-c285-46d4-a604-6b34e4c73142@samsung.com>
-Date: Tue, 23 Sep 2025 09:52:09 +0200
+	s=arc-20240116; t=1758613973; c=relaxed/simple;
+	bh=QZF4SbfDPraY3a0t+sUh+3cyG7V6Za1PWzyHrOwBB0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ug8rgqAd+rF7f/281r5fRmckBoO6ZB5xF/cZg0dsPVQiH5nzvb0rheAlbSxifFhl3YlbBhyHD/ySrkCkjgSPMjNryih6O9Y2yDmQURNsdJ1PeldLb8O1LalJxUbH3aHOEcJYqp3JnFE8gwRKwwZxZS0jumGa4CVY6l+jlr2N+Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Sfzk3iOs; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Ry/70i496GYQd/L/jZNjZCWQ14QoDhhBilMzwzUUfTI=; b=Sfzk3iOskM8hOjTT5gz0WGwuRV
+	1+oHZrODxMNBCWYIQH3BhprNKiCjOC7TieFKx/4ddhfOawT7nh0K2i4JWa053FIA9Qcsthni4XvtJ
+	4S7j5B11qh/3TPdYkRtCgOLL0LWtRbM4Ff93zQMeWgSFmFLPkJ487dqtjyHlF39f/18sKJC/pTZwP
+	SAnVbgiYViY5iIehHTa5Wx4R4VYaZqkj2KuBIuR+8xg1LFdVOVif9ypeLSAOvvBZtu5CBpSd0vi+f
+	TGSThGB5LmDmOwmgrWFguv54ZPcYttKfp2xFHCDmaHmMuBevZ/ImgL73BR7ld87BmxU+9pJ3ua/S2
+	+3J6Zh7Q==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v0xpJ-000000077Na-0PE9;
+	Tue, 23 Sep 2025 07:52:41 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0FDBE303005; Tue, 23 Sep 2025 09:52:40 +0200 (CEST)
+Date: Tue, 23 Sep 2025 09:52:40 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: arnd@arndb.de, anna-maria@linutronix.de, frederic@kernel.org,
+	luto@kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	oliver.sang@intel.com
+Subject: Re: [RFC][PATCH 7/8] entry,hrtimer: Push reprogramming timers into
+ the interrupt return path
+Message-ID: <20250923075240.GT3245006@noisy.programming.kicks-ass.net>
+References: <20250918075219.091828500@infradead.org>
+ <20250918080206.180399724@infradead.org>
+ <875xdd8oag.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [tip: sched/urgent] sched/deadline: Fix dl_server getting stuck
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, John
-	Stultz <jstultz@google.com>, x86@kernel.org, 'Linux Samsung SOC'
-	<linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250923072506.GS3245006@noisy.programming.kicks-ass.net>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250923075210eucas1p2e2268ea8465a10df505cf86110e51c3d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd
-X-EPHeader: CA
-X-CMS-RootMailID: 20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd
-References: <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
-	<175817861820.709179.10538516755307778527.tip-bot2@tip-bot2>
-	<CGME20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd@eucas1p1.samsung.com>
-	<e56310b5-f7a9-4fad-b79a-dcbcdd3d3883@samsung.com>
-	<20250923072506.GS3245006@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <875xdd8oag.ffs@tglx>
 
-On 23.09.2025 09:25, Peter Zijlstra wrote:
-> On Mon, Sep 22, 2025 at 11:57:02PM +0200, Marek Szyprowski wrote:
->> On 18.09.2025 08:56, tip-bot2 for Peter Zijlstra wrote:
->>> The following commit has been merged into the sched/urgent branch of tip:
->>>
->>> Commit-ID:     077e1e2e0015e5ba6538d1c5299fb299a3a92d60
->>> Gitweb:        https://git.kernel.org/tip/077e1e2e0015e5ba6538d1c5299fb299a3a92d60
->>> Author:        Peter Zijlstra <peterz@infradead.org>
->>> AuthorDate:    Tue, 16 Sep 2025 23:02:41 +02:00
->>> Committer:     Peter Zijlstra <peterz@infradead.org>
->>> CommitterDate: Thu, 18 Sep 2025 08:50:05 +02:00
->>>
->>> sched/deadline: Fix dl_server getting stuck
->>>
->>> John found it was easy to hit lockup warnings when running locktorture
->>> on a 2 CPU VM, which he bisected down to: commit cccb45d7c429
->>> ("sched/deadline: Less agressive dl_server handling").
->>>
->>> While debugging it seems there is a chance where we end up with the
->>> dl_server dequeued, with dl_se->dl_server_active. This causes
->>> dl_server_start() to return without enqueueing the dl_server, thus it
->>> fails to run when RT tasks starve the cpu.
->>>
->>> When this happens, dl_server_timer() catches the
->>> '!dl_se->server_has_tasks(dl_se)' case, which then calls
->>> replenish_dl_entity() and dl_server_stopped() and finally return
->>> HRTIMER_NO_RESTART.
->>>
->>> This ends in no new timer and also no enqueue, leaving the dl_server
->>> 'dead', allowing starvation.
->>>
->>> What should have happened is for the bandwidth timer to start the
->>> zero-laxity timer, which in turn would enqueue the dl_server and cause
->>> dl_se->server_pick_task() to be called -- which will stop the
->>> dl_server if no fair tasks are observed for a whole period.
->>>
->>> IOW, it is totally irrelevant if there are fair tasks at the moment of
->>> bandwidth refresh.
->>>
->>> This removes all dl_se->server_has_tasks() users, so remove the whole
->>> thing.
->>>
->>> Fixes: cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling")
->>> Reported-by: John Stultz <jstultz@google.com>
->>> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->>> Tested-by: John Stultz <jstultz@google.com>
->>> ---
->> This patch landed in today's linux-next as commit 077e1e2e0015
->> ("sched/deadline: Fix dl_server getting stuck"). In my tests I found
->> that it breaks CPU hotplug on some of my systems. On 64bit
->> Exynos5433-based TM2e board I've captured the following lock dep warning
->> (which unfortunately doesn't look like really related to CPU hotplug):
-> Absolutely wild guess; does something like this help?
->
-> ---
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 18a30ae35441..bf78c46620a5 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -12972,6 +12972,8 @@ static void rq_offline_fair(struct rq *rq)
->   
->   	/* Ensure that we remove rq contribution to group share: */
->   	clear_tg_offline_cfs_rqs(rq);
-> +
-> +	dl_server_stop(&rq->fair_server);
->   }
->   
->   #ifdef CONFIG_SCHED_CORE
+On Sat, Sep 20, 2025 at 11:29:43AM +0200, Thomas Gleixner wrote:
+> On Thu, Sep 18 2025 at 09:52, Peter Zijlstra wrote:
+> > Currently hrtimer_interrupt() runs expired timers, which can re-arm
+> > themselves, after which it computes the next expiration time and
+> > re-programs the hardware.
+> >
+> > However, things like HRTICK, a highres timer driving preemption,
+> > cannot re-arm itself at the point of running, since the next task has
+> > not been determined yet. The schedule() in the interrupt return path
+> > will switch to the next task, which then causes a new hrtimer to be
+> > programmed.
+> >
+> > This then results in reprogramming the hardware at least twice, once
+> > after running the timers, and once upon selecting the new task.
+> >
+> > Notably, *both* events happen in the interrupt.
+> >
+> > By pushing the hrtimer reprogram all the way into the interrupt return
+> > path, it runs after schedule() and this double reprogram can be
+> > avoided.
+> >
+> > XXX: 0-day is unhappy with this patch -- it is reporting lockups that
+> > very much look like a timer goes missing. Am unable to reproduce.
+> > Notable: the lockup goes away when the workloads are ran without perf
+> > monitors.
+> 
+> After staring at it for a while, I have two observations.
+> 
+> 1) In the 0-day report the lockup detector triggers on a spinlock
+>    contention in futex_wait_setup()
+> 
+>    I'm not really seeing how that's related to a missing timer.
+> 
+>    Without knowing what the other CPUs are doing and what holds the
+>    lock, it's pretty much impossible to tell what the hell is going on.
+> 
+>    So that might need a back trace triggered on all CPUs and perhaps
+>    some debug output in the backtrace about the hrtimer state.
+> 
+>    On the CPU where the lockup is detected, the timer is working.
 
-Unfortunately not, same log.
+Fair enough; I was thinking it got stuck on a missing timeout, but
+indeed, that needs verifying.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> 2) I came up with the following scenario, which is broken with this
+>    delayed rearm.
+> 
+>    Assume this happens on the timekeeping CPU.
+> 
+>       hrtimer_interrupt()
+>         expire_timers();
+>         set(TIF_REARM);
+> 
+>       exit_to_user_mode_prepare()
+>         handle_tif_muck()
+>           ...
+>           to = jiffies + 2;
+>           while (!cond() && time_before(jiffies, to))
+>           	relax();
+> 
+>      If cond() does not become true for whatever reason, then this won't
+>      make progress ever because the tick hrtimer which increments
+>      jiffies is not happening.
+> 
+>      It can also be a wait on a remote CPU preventing progress
+>      indirectly or a subtle dependency on a timer (timer list or
+>      hrtimer) to expire.
+> 
+>   I have no idea whether that's related to the reported 0-day fallout,
+>   but it definitely is a real problem lurking in the dark.
 
+Argh... that exit_to_user_mode_loop() thing enables IRQs. Yes, buggered
+something mighty.
+
+Let me haz a poke.
 
