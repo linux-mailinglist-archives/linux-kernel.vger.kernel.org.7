@@ -1,138 +1,206 @@
-Return-Path: <linux-kernel+bounces-829564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48107B97599
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:31:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C7BB9759F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22A22442FDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:30:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18D5219C3738
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DC23043B7;
-	Tue, 23 Sep 2025 19:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E06828134F;
+	Tue, 23 Sep 2025 19:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S8Qb5JmT"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="DwDzWwiL"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013025.outbound.protection.outlook.com [52.101.72.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18FC213E9F
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758655845; cv=none; b=tVJ4MpSaihWUFLh3NdEPT9XZT4DNMJTd2AYhlNoyc5ge+bRQ5sWRLrTJrTidMFU+B6hGqIxhwcOExXgBSvCQzdmxqn7AI6A9zemfc9BUWvKMVIOonR5YpACubV+oHd6Tq8tNeV77AzUiKI5V1D+1wqjhxcDzP4zp2ozpPRQW5As=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758655845; c=relaxed/simple;
-	bh=UwNgaI77PBjLSUE+r6FEG3m9gYMM55QqcYE/BwPrKY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TgrpRHQVaTmSSjQ6wd1sVhi1c0xpzNj13eeTqBPrPpwFR7b/eQyvrTpxSenPmlaGnH1zU378ewc6D5ES5IrRe3jHpirN17s2Qo14yFwDRFAsKBXm4tAe2EOq3X+z649+ZI33mv0UUrF8T78zu4e9P2VFEnM6wvigPSxHhnPP0hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S8Qb5JmT; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45ddc7d5731so40632855e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:30:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758655842; x=1759260642; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l3XzVTxMO4iEx25I8nAUCxuLVUDgVKpjcSi8HGEwM1A=;
-        b=S8Qb5JmTNvWjbsOSb4GzAmhgHDdETKBTg3543IS3Qia6TNW0CFMuwioXGfbjDhE28K
-         RON5bUIKPcJTclpBw58c4LMKlfFRBuKp3GyL/Ba8nx1coiyCh73eB5mWnsgBtAE5lSNq
-         jqdmee3zlJOiddzbtHMebCOEWp3t/Ume8JpmwU3xOxaSngua8lW+tzuzA9AkFix29MfT
-         B3XJ+YVQ4k7I2S8XwBhzO82jA4f0kS3WQpiCiyLnShmPRT2JkjJXz/8uSwc1t/D+1VHS
-         yzv+YTq1J+nl+gV8zD3Z6DLKSx+B2spziF5klIYq0krcZqJzXRaqfDY4B58+FE2trT7i
-         7png==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758655842; x=1759260642;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l3XzVTxMO4iEx25I8nAUCxuLVUDgVKpjcSi8HGEwM1A=;
-        b=i7aLiG+PoTcOvCILWLJEnJI5lvfytG0A3098pN/0n919GbaMfruQSsP0IF4JWI6HFv
-         j3vADNadCaFx4lq27PzcgKYPkWnnzeMFzBLHSkR4cu4vSu7XReOTfT+Q1mRC2gPP17qg
-         XnQV05TFSALNnpb8HA+4OYJA0KF0L6Z09hJjHXBieuBs8QUvTQmOFF1Q3Oll+w2k4l8q
-         ofG5t9M5L4F/YKmTdORbVl8Kg9M8oZ3Va74jXigTELfLsRGwQmNf+5ccECoMmBUv4HXA
-         /Jqh0GBz16cuRkbw0BFuH1iqOJV6H6cxufcENNjlR4msRFtVQ+VhWFjg+NYjnyCDUf+l
-         QWzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzGFJKu6bYxVaL8HRNZNpWlzuYz+aKr0lCTd8aiVI3Mek8ah+8gI/Kvvuavr3AXrdz9nWwUvRwIGFORIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyieLkh6tmr4igEDFnKShpcHUTQaMl0hamG6khEAk8QDsqyWzRe
-	49ZaTrUKZClbxc6NLnyHKMmlEI2mR7A6FFkjLdeQ2wRuLqjeXllKnbnm
-X-Gm-Gg: ASbGncudTFkWyHiXFW5yL+9yh18SKp6OjXGzjS9mC2qHsyR7cqG2X//BcqrJUedJ5ju
-	kI+lo5WCvgpS+Mm2Vkk2kCK95p1tJ+ekkjIDOKEa0f7L/YMWJ3k5S5c3G/96MaWcoilypv/oxv+
-	HVaChzSruo6v8evcSKfju5ufhPh6kuINWt9TfuKiOOl88wBHx1sp9BQxFOWAT4VH8h5D7JsIUtW
-	R4vOwgze72647x8pFe4tOMpvB34cspMA6dyehpxXp+Er+4Se9AW48svkZW8DPuxd8JwS9UmLgPE
-	ectVlMlnxG5IFvH1AJAHtPz5ps0vN8j2xJAyU47btjF75Y0MdDGpxmLgkSlutmj5XBhlV6ufXiL
-	WO01Ft7bpuv+YAl1YOIo=
-X-Google-Smtp-Source: AGHT+IEfC1NNEAG6LGNFDwZmSsO6QvXxb0bSOmjC5mNFchosn0D8MEMu1s0ZAr8KAAjzIJEQm5U3VA==
-X-Received: by 2002:a05:600c:1c05:b0:45b:7ce0:fb98 with SMTP id 5b1f17b1804b1-46e1d97493fmr45353685e9.5.1758655841922;
-        Tue, 23 Sep 2025 12:30:41 -0700 (PDT)
-Received: from archlinux ([143.58.192.81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3f127660840sm19066278f8f.11.2025.09.23.12.30.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 12:30:40 -0700 (PDT)
-Date: Tue, 23 Sep 2025 20:30:39 +0100
-From: Andre Carvalho <asantostc@gmail.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v2 5/6] netconsole: resume previously
- deactivated target
-Message-ID: <4evp3lo4rg7lh2qs6gunocnk5xlx6iayruhb6eoolmah6qu3fp@bwwr3sf5tnno>
-References: <20250921-netcons-retrigger-v2-0-a0e84006237f@gmail.com>
- <20250921-netcons-retrigger-v2-5-a0e84006237f@gmail.com>
- <t32t7uopvipphrbo7zsnkbayhpj5vgogfcagkt5sumknchmsia@n6znkrsulm4p>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6AA1D798E;
+	Tue, 23 Sep 2025 19:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758655947; cv=fail; b=b3OdOcSNYfODt3Xfue/P4pcGq/AW/J/bGKSYoSuFTmLt9giOg4RC08EqQZ7B6GXr+knVv/1B448w1hC9M6aN+hKxZDIyfI6gmVSC5ajgIhjPB2bubMRp6lAbToZXho3QVaRQwx+VgSZy9PZlP9t/Sjpo5woB3T0LmCnJWJjA7e0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758655947; c=relaxed/simple;
+	bh=eoOsKNUZ2Sa9pvIGcPJCXeGFfEeaVwwUtDdo8PQoKrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Y/DRe+9Y40jcZ+TlO75KG8CKf+fvT59n4RF8JP89ag1yHr5ltFYcYk84XfmCZiH3RmXPF87EQ4tQH8mpbhA9D67uqygjuDVLnknXV9XoWI5GWa+Ys12NtN7an9GRzt88SKZIRMKPwSCojdGtZuzwDRnXrwxxXkTI268sQmsat+s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=DwDzWwiL; arc=fail smtp.client-ip=52.101.72.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aRjFpW9HgNJLmlfSH9/djAi9wzg8pGaFyP0F5TVBIdv6yQzn8EXSnfMSTLA8IAgNpoEysRF7A1SY+0KjZrSvTY4/mEbj2mlP0bo4vCpKZ35NijTc2vyLwd9loR23P1GB2VZhrStAqRteU2ZFeAtEPYBZOY0kB2E5/gexk37KgHHSvOx2gCu84KjeSTXPgq0DGQnV2sEPiavo6P11uj04cO+dw1PjxFcE0ND2hlyqAZVa2b3pASGv5IM7Mm1TkFBFXYJqa6d94Dk6bUkX2SqfBUd7PaWoPiUsxxWp8BltcRD41V+SVJIZavS69tXyw9HR8s7GOu4P667/esCJ/jxXAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9VTEm3eRjlVsOgvGkSdTi47HGwVGi/wK08OlovcfmH8=;
+ b=nVPYUt0271yzKDdfPslXk9e6lajyNz7LrfLv6WxZh0uNWor9Wq5I5/nmupjRw0o+VZLRt8Ywck/sEM5PYUB7AIjA7un6WAIguebw7teVHYus3FBzrEr7j4D5Z+eOvf5GxL+gnvlGtlyeQN4/ZrVf90JJqt9IrGXNadM62wB75T8rFlaS5ri+T2d11sDgHspp2AgAhET8MQY8Bg38pkgVtmQ6moc1YJ2AuHOXveGOT6c2odmrsw7emnxxkLFplq3cpiTZDPSKPRZzj9cS35SJ1sk9odJvu6q7UOA4bKVcFKcb2bhgyOpl+JHM4OUXF7UJgvfSDOLvsGzbtniFDcV6Tg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9VTEm3eRjlVsOgvGkSdTi47HGwVGi/wK08OlovcfmH8=;
+ b=DwDzWwiL5i+YrRRhpbXLl5Zcj/wUu4yA3+zj8t1Hd/8xIHA1EMMD18KqZGNccGO/vyPvIXOsEKJhNrhk/r5O1q/ukz2jtE0Og6LJ3h1eO5wnOC6ukp4oBPqH8r/4MzZoIGelouMDCyRWnIJxqnJIgbYF8IL1idXfMgs7cGfSVHwRRTddCW9yD0rnPrak+00i/dYRLL7iqZRhMVrs7ScI4wXx9o4QnujIENVqK0sblEvPmcFaoPmsmy/cdWQwiB3K+5CgZurjC//kJOuLZNssUSSmUbKxZ4U9nfvYzn5Z9M/U1X8Ok962voRzR2PVCCz86FUmj8DZZfolDQJPObqx2A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by AM7PR04MB6823.eurprd04.prod.outlook.com (2603:10a6:20b:102::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.11; Tue, 23 Sep
+ 2025 19:32:22 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9160.008; Tue, 23 Sep 2025
+ 19:32:22 +0000
+Date: Tue, 23 Sep 2025 15:32:14 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Sherry Sun <sherry.sun@nxp.com>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, shenwei.wang@nxp.com,
+	peng.fan@nxp.com, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH] tty: serial: fsl_lpuart: Add missing wakeup event
+ reporting
+Message-ID: <aNL1viY113RTSHvg@lizhi-Precision-Tower-5810>
+References: <20250923141051.2508077-1-sherry.sun@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923141051.2508077-1-sherry.sun@nxp.com>
+X-ClientProxiedBy: BYAPR08CA0008.namprd08.prod.outlook.com
+ (2603:10b6:a03:100::21) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <t32t7uopvipphrbo7zsnkbayhpj5vgogfcagkt5sumknchmsia@n6znkrsulm4p>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AM7PR04MB6823:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9dd2a092-55ef-4d60-31ac-08ddfad7eaa1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ebZJwq39/X4TFP0R78oLZRPh3mmrYi7coywU2umCg1Ea8Q1PqGjKvHWLcwNM?=
+ =?us-ascii?Q?4/a9TJ1mdqzyP0aNDYu7V+8aYd94tFiXdbm66r6jjd9E/AnUT/qn557u0f43?=
+ =?us-ascii?Q?DWlmY3nFqYyfXnLJRfzwp76p/EAI45ylxBInSfb8bM/Fc+vIsmEwmBm9T9FQ?=
+ =?us-ascii?Q?R6PaMXh0o5Gkfgu2WSRs0f8bHawBQofjfB0OhSEUhS3SlZDtcu/o0KWWKnf5?=
+ =?us-ascii?Q?r0pniYXv2kshdWvs0gYw5mo465g8KrPldvR6U5107zt7qhUDdAgfF0M0G48y?=
+ =?us-ascii?Q?HXvvRNGF6tz6l9s+hwKVzosrNknIUW0gPlydt5+vLzmSDrankSJ1aQSaJdWQ?=
+ =?us-ascii?Q?e0XOC7Wh0VkdBV2jyqS8VEG+1EQQPeSyHrlGnTBz+S4y4+ZSkAhLd+TazqvQ?=
+ =?us-ascii?Q?HDmrj1UtHSN9YhEuekvx2f9eTCVg4BvhlJFl4BbRXmTwm9HdiFnmOTVb9lUM?=
+ =?us-ascii?Q?vQbsE8KsN+fzJjte3dY3s1PUlB1brfRkxGXVU8ZhSRrB9S5mVpXZfzZ+z+x/?=
+ =?us-ascii?Q?WI56vpHuIpyhm0KWdTY1DZagZLk2uWnNItsoDXnZER4Mlz0Dk2Yo1u4iNVac?=
+ =?us-ascii?Q?xr+xsn100VdOJaPO0d/HVuFIsWhu85bk8GFehiwdqlNb33y+c8+nhVlbq3Bw?=
+ =?us-ascii?Q?/qZMfkuNYF4tXFiDUAE6DyUg4umH+uslPmBiB53NSZfe2Arded4iqKPBFJXD?=
+ =?us-ascii?Q?9YMhJLwsJ8gwm0G5NCIE3GEILAXu7gRw6iGzLPBqIqrtnboee/WjfGLwEop2?=
+ =?us-ascii?Q?5LmbVznR6M5evsURslmwytHr5SBhEpIIeBQdiyjwYmPcBEkaiaPu1WjX+X7l?=
+ =?us-ascii?Q?HDXEE5YOikSjNxhdawSfImvGX/5IcOR848VBpAr19pVxXY321djYIBsQCiDD?=
+ =?us-ascii?Q?FjNDVj7CiKCzDrtnApsDL1c9c/RqJvaIfzuqrffjUTB8KK/rmUngi+NYPpgO?=
+ =?us-ascii?Q?noI2biosHQExpcAN1bbNfvCkl9j6jaeSI6LciX/gEvyrULOyvgII2nuNwy72?=
+ =?us-ascii?Q?IbLEnh+Tr1CWyqsLa7VI+7UwWJMNNiyYruTZ60b7BXNpLCD3jgRG3uaAMF+0?=
+ =?us-ascii?Q?VOzg/XWU4uB0bLFqU4E7CtMC2BYVQlm8OUFX4F26zaTgNP4EcUChxpS+pnEW?=
+ =?us-ascii?Q?TUczaURBPIHd4PrZ3wlW025EZlFf1gWuoPPWFv+x76CghV4cWWLj5yqHvV+4?=
+ =?us-ascii?Q?pMTQyC0ftWh2APYYAha9mDPeSY2sbVIR5Mt4yLkyE0J4vP6/WYhCUTzYCKUM?=
+ =?us-ascii?Q?ScUrS+7UBaCGathszeA6fdjToSP6kylFZGin7O9pQYWK9a5SO6TMQlgqi9vG?=
+ =?us-ascii?Q?FnhgzUwiZqupD1BXkipf8mJ+ANAnfq4ZN49zKSnjjU+Woowh9+HRQLVEprP9?=
+ =?us-ascii?Q?+8XDo/llj9h6GocdjLZh+984ACV0uMSxaTx5IatMq+1QuDnJSSQHYGtvR9OF?=
+ =?us-ascii?Q?vRmiW7SULKED/qw8wrhOLltnu7fNezgg6/ihpAVUkKEL0n5K5DqqXQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?wP2oHZHH4M/BAkdu8dxXzFPgxkaRk30iorJ/Iy50alSjBKezxHsaKP8cnmxa?=
+ =?us-ascii?Q?mDRJ4/oj3iXiS8abNpuBZ8ZVOlGJXm5Dv8Ey/6hQupovc/udJJ2EPZ/1XrbL?=
+ =?us-ascii?Q?jZikMTsY8GxiEaeHRNOA28TRTT8WlaxaXsL0LE/cMWC0A/tSLHPIRjFnp4jg?=
+ =?us-ascii?Q?6jNq7rlFyc9es4IB3bHoNm2qjed3jcxZeS8bvmH4UFIJm9smXf+/3IwfbRy8?=
+ =?us-ascii?Q?NsMG6QNuJDHeSGiPZJFSAX+sOSXlZz21n08hI/Faw957m5qkPjsUyuY0pUPr?=
+ =?us-ascii?Q?NXOQHKtnB4AK8l6D/U2L2R7tLryABXPW/e2rwPkQfB8PPPj8kzDNL/Dfeayn?=
+ =?us-ascii?Q?6ZvbRl96QBGt3E1e2Hw+W/AEJQA43zOQM80HJayvW6Gq0+kiDrgsZhI3lQgX?=
+ =?us-ascii?Q?XADAUcfvbW748AgehbqN9WayvjpzOMjVqkiK6fqiBb8D2rMMsOurg+ABchmv?=
+ =?us-ascii?Q?kLMC37ehqeJLiIKfYnDvH1w6Uunu6HEMKYOzumNoFvrqnCYf7JJh6rpx0DSX?=
+ =?us-ascii?Q?SSP8bga4BxgnxwOIaX5fYHQKiHVkXnGsXTM/AxFMXoKX4kvdXh8E9E5sN8up?=
+ =?us-ascii?Q?0yUbaPx7Deq1pO8R/tNl8y8aJeedyoFy7OTMGQxxgh2DJh7EC9Rm2vT5u/hT?=
+ =?us-ascii?Q?iDbdAexSIKgFhdJkEf9VRW+/ZskFylDhXBj4rwAghOB/3lX3x3jhsz3JOXAq?=
+ =?us-ascii?Q?wlnGHqbli9LLz8ibmWslqA423NqANqD5u4ykTPCyfZSiBSwhpo1bbhCkIvaD?=
+ =?us-ascii?Q?zQqoL0Tllh4347O0KeMx5KlopSwAhFfVUH7S15qgXp9rGYkZISzcUgPQWTMq?=
+ =?us-ascii?Q?+aRtd2J566JFUTaqaDafy3prP+VQGsoFt3/Bouh56rVRAQqFCTHrM3Fm/g/W?=
+ =?us-ascii?Q?2+7lwZR98TXF3DMSxSNrOgA0q5RdP6DunaLPtv7YNWnNuz7OiFB1Y9IcNOYf?=
+ =?us-ascii?Q?PwaW038Wev7HjTkEwgd7wcJkiqAQe6yz1M3FSWj/QUfTnA92zHdnoSJjO2Jo?=
+ =?us-ascii?Q?C9f30dM95UpcKxUvQgpYUAZJdvLczCsO46zx5M0ZEH1JbqKze+kNTf1xZEGA?=
+ =?us-ascii?Q?nPR6gA1UYvQZnslXLZnrMWY+8cMHTYk6mywTXwerdgIezG80px1vUWc67aWw?=
+ =?us-ascii?Q?xG3Comj/yRlaAeF+4ZAj2JuKJxwVYNOzzLHztaLBReuxbZct7acPJIyh/Lh9?=
+ =?us-ascii?Q?wQD93QcuzrbNx06AVhdlW1sP2tCmabhbPQEl8UHeJctxHaqXJcP6B5bcTyYD?=
+ =?us-ascii?Q?TQvx0scNDa49oL3p4nSlcrU1OdTM6x8a0edQ/RQFdsfoYm2DvGJJg+BRYxX3?=
+ =?us-ascii?Q?IC6MlLlOTVU3kaOubF/qicL5L4T2i7ux/Znjo3eP2FRfXmyEUJpEaWJkdQNj?=
+ =?us-ascii?Q?c/Ps/5itA42stmVu5P0xlT9VHwgYXpMXmOVO6NZgnuEScgXivtNgnywiXmuz?=
+ =?us-ascii?Q?WxV0N1cFgvLNxmr+QcsdGNSHvJa8pDlmi1rG8o8snPv9kFle+EmUg6EP2+5A?=
+ =?us-ascii?Q?NTlGiTyS7QSuhklpztdcNANlyuc7Z5YUzxL3PYsvW8oCh6h5/ouXrekjvC9u?=
+ =?us-ascii?Q?hITWU5p/TIqZkYrZ9r4Rt7Vll7VHE2PbFUBydzn/?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9dd2a092-55ef-4d60-31ac-08ddfad7eaa1
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 19:32:22.0610
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: I7yookWmvF21asS+GZ8aFBuDKZsBCJxANwoD7CGrZRxw4kpmnw9MYwx9NEWLxXP+Vx1XcMxktiOQYEFksI/YdQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6823
 
-Hi Breno,
+On Tue, Sep 23, 2025 at 10:10:51PM +0800, Sherry Sun wrote:
+> Current lpuart wakeup event would not report itself through sysfs as
+> being the source of wakeup, so add pm_wakeup_event() to support this.
 
-On Tue, Sep 23, 2025 at 05:22:25AM -0700, Breno Leitao wrote:
-> For targets that are set by the mac address, they don't necessarily get
-> np.dev_name populated, do they?
-> 
-> I am double checking netpoll_setup(), and if
-> is_valid_ether_addr(np->dev_mac), I don't see np.dev_name being
-> populated.
+Current lpuart wakeup event would not report itself as wakeup source
+through sysfs. Add pm_wakeup_event() to support it.
 
-I was not expecting it to be the case either, bu my understanding is that 
-np.dev_name does get populated by __netpoll_setup, which is called unconditionally 
-at the end of netpoll_setup. __netpoll_setup eventually does:
+>
+> Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
+> ---
+>  drivers/tty/serial/fsl_lpuart.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+> index c9519e649e82..9625997758e1 100644
+> --- a/drivers/tty/serial/fsl_lpuart.c
+> +++ b/drivers/tty/serial/fsl_lpuart.c
+> @@ -3087,7 +3087,9 @@ static int lpuart_suspend_noirq(struct device *dev)
+>  static int lpuart_resume_noirq(struct device *dev)
+>  {
+>  	struct lpuart_port *sport = dev_get_drvdata(dev);
+> +	struct tty_port *port = &sport->port.state->port;
+>  	u32 stat;
+> +	bool wake_active;
 
-np->dev = ndev;
-strscpy(np->dev_name, ndev->name, IFNAMSIZ);
+move wake_active above u32 stat;.
 
-I've confirmed that for targets bound by mac, np->dev_name is empty before these
-lines but then it is correctly populated here. For targets create by name,
-np->dev_name is already correctly set prior to this. 
-Please, let me know if I'm missing something.
+>
+>  	pinctrl_pm_select_default_state(dev);
+>
+> @@ -3098,6 +3100,12 @@ static int lpuart_resume_noirq(struct device *dev)
+>  		if (lpuart_is_32(sport)) {
+>  			stat = lpuart32_read(&sport->port, UARTSTAT);
+>  			lpuart32_write(&sport->port, stat, UARTSTAT);
+> +
+> +			/* check whether lpuart wakeup was triggered */
+> +			wake_active = stat & UARTSTAT_RDRF || stat & UARTSTAT_RXEDGIF;
 
-> Should we also compare that the mac doesn't match before returning?
+wake_active = stat & (UARTSTAT_RDRF | UARTSTAT_RXEDGIF);
 
-Even though the above seem to work on my tests, I was not 100% sure we wanted
-to also check the dev_name when we initially bound by mac.
-I've also considered the approach below, which I think achieves what you are
-suggesting:
-
-if (!is_broadcast_ether_addr(nt->np.dev_mac)) {
-	if(memcmp(nt->np.dev_mac, ndev->dev_addr, ETH_ALEN))
-		return;
-} else if (strncmp(nt->np.dev_name, ndev->name, IFNAMSIZ)) {
-        return;
-}
-
-Let me know if you prefer this approach, it would allow resuming targets in case
-even if their dev_name changes.
-
-> --breno
+Frank
+> +
+> +			if (wake_active && irqd_is_wakeup_set(irq_get_irq_data(sport->port.irq)))
+> +				pm_wakeup_event(tty_port_tty_get(port)->dev, 0);
+>  		}
+>  	}
+>
+> --
+> 2.34.1
+>
 
