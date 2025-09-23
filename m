@@ -1,232 +1,156 @@
-Return-Path: <linux-kernel+bounces-829292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549DAB96B4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:03:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F50DB96ACE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347474881E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:03:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25402E22A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A97428850E;
-	Tue, 23 Sep 2025 16:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4345D267AF6;
+	Tue, 23 Sep 2025 15:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fwd.mgml.me header.i=@fwd.mgml.me header.b="ZalnO+BT"
-Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=allelesecurity.com header.i=@allelesecurity.com header.b="emwFha8+"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742AB261B8F;
-	Tue, 23 Sep 2025 16:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D497826057A
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758643386; cv=none; b=Wfk6NAJFSfSrfZbrYJ+jN5itKoGMWRq1IvaKSqlNGRJDteD/cXJhN/NFYEM8jEmrfKd9fe2sAb+m7GGnzM53pyj0mmF9g1jRhm67gIBKvl8W4XtW0AxG957IbUH5KwUAvnzfzsMdbc2uaoptbNtqlA2VxTBDXiqfcu+vszTc1+8=
+	t=1758642953; cv=none; b=KWn5777Fk7Rk9pZLMlAl/eo0I20/ejgJ8Ur1fNhNJezSHkt5whAPZRfyVQUtWtDTqV9Akuxqv+oKjqI6aRML8myEnmTa8YFkUfO3HlsQrYvZ8lJ9jPhXd7qRGDuqo9PnG0tN2Mj9n4AKrsKeLeNZ2Emgj+OT4afY/uCj6VsjZlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758643386; c=relaxed/simple;
-	bh=vLOGdTF7+Ao+lLx+LrCuOeAv9i6cbYC906WiQVFjOPk=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=brtepBASGdcSVFfO70Zu04uStoOBtRvo79LCQUO7eGLbPNRKTahLRBxz3K7M9voOjXV1dfIq3lZD2DgUntfE/iMQ/2Rvlne73BepBCuKWRgtY6I65kcVxmXtnEnSrlW4OkEY53JxFj9Qf5nAEFLGz2ggqmbznjBerfev/raJrjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fwd.mgml.me; spf=pass smtp.mailfrom=fwd.mgml.me; dkim=pass (2048-bit key) header.d=fwd.mgml.me header.i=@fwd.mgml.me header.b=ZalnO+BT; arc=none smtp.client-ip=133.167.8.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fwd.mgml.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fwd.mgml.me
-Received: from NEET (p3732025-ipxg00h01tokaisakaetozai.aichi.ocn.ne.jp [153.172.109.25])
-	(authenticated bits=0)
-	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 58NFsirj056416
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 24 Sep 2025 00:54:44 +0900 (JST)
-	(envelope-from k@fwd.mgml.me)
-DKIM-Signature: a=rsa-sha256; bh=1P58MihQU86aaurMmACMThCi4OU+oioqc88edmmWJTQ=;
-        c=relaxed/relaxed; d=fwd.mgml.me;
-        h=Message-ID:Date:Subject:To:From;
-        s=rs20250919; t=1758642884; v=1;
-        b=ZalnO+BTF8F2LtEt9Y9qGHR0Ps3Yl2kT3AxBPUJ10JQ0ftWw1iV4LUgcqfX331WS
-         hWcrJ6y6TYqp+YCF+s5yAEkzQJlRmgDeBGhPogfkfWDmzrl+3JI8q3kQ7wsk2IOu
-         ZuK/fsOSz/DtP6t8IN6Y9nlfZGRPqwhQnfs3cGetp7VxlPUoP5HcFAKK32JziiFD
-         NyQJFaISd47M1YNsExp9v5SbjKL7QXfCKVChSBiOlgPamK8vYOJ27IRROitiF1St
-         VhEKNGroSdahKaxtR1YK1nEb+XIpaH+EDd1R8+20ph+WznDZV5NzvHKWvajejd4a
-         tYYoRJHNorlkuse/ek5MxQ==
-Message-ID: <d0de7500-eac0-4d02-9b48-887cdefab4c1@fwd.mgml.me>
-Date: Wed, 24 Sep 2025 00:54:44 +0900
+	s=arc-20240116; t=1758642953; c=relaxed/simple;
+	bh=q60l6JkIwsADmqyQGpYtx9sLrvphoYRJZLMv49gW458=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=akydPffNjjfp2yWboKj6/Ajw+rpWT01fB9+HG02U2sTJlyf8SZ6hwoeEqSPPdKsyWAqo5W9BBR0o8aE+mCYtITsLJ5FLCBlTqyRSafU+aevHJ9Zaqe+7vJ7up46UA1mbbP+YtBN0iPSE9N1P+jdcw/FrqbyOqw8y2iaaxxHN0D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=allelesecurity.com; spf=pass smtp.mailfrom=allelesecurity.com; dkim=pass (1024-bit key) header.d=allelesecurity.com header.i=@allelesecurity.com header.b=emwFha8+; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=allelesecurity.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=allelesecurity.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-54aa4b86b09so1333171e0c.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:55:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=allelesecurity.com; s=google; t=1758642951; x=1759247751; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q60l6JkIwsADmqyQGpYtx9sLrvphoYRJZLMv49gW458=;
+        b=emwFha8+lIkyJjuQicmKIWCTlcDyZdd6pviWUvzD/h/qVt9O9CID3W1Vdk90XfMQjy
+         rfek5IJbWL5tDBZTKX+fXdvfuS+salDerQAGGU1PboVRyxtCWeZhz9rihXE7cfZ7FaxU
+         2mLIv5kSlEaEE0RXPQWSfH/GP7ZVIcDW5zfiY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758642951; x=1759247751;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q60l6JkIwsADmqyQGpYtx9sLrvphoYRJZLMv49gW458=;
+        b=wrm4AYmieWu8ka10UrrMC0l+2BzEd/RCY7Un5vnK/EMaEw3kP/50oUjfKDe7V1vC//
+         hszMly3yPESIukrMYFxWo2M3QtPFqffb1tDyGZMy+CUOwaYiHk4Wv+OyYwI9KLYHorX2
+         V0UdoHNAp2tkzRDRbXZ02c5Ha3IxPHjv223FfHJoF9bXkSw7B7Y3MF/RqsYDN1zrGYMz
+         S8PUOoJhmBr/mWm/qQ6poc6LhONWbH+F5/lnGy8BUQX7QGkpyE6dW2C+uybCL00RpkNY
+         qJzBgxn9/uuA66GXRCcs0jIb13bHVe/94wlg6xLxrEhECYUBdGy6SH6DIaNRS6/kRyTJ
+         CVxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFFd175v6p/MjOJAkdEVZMLVqoUdrbt4VsjcUEmJZbdDz2NgkB6SKij3VPYHYjo7kCGdacoBJY49b9k/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXQyyMK6mE6KxSTMxDLiIFTAYm0TMn9+LhEIMtenrVsLcjPoKS
+	K+RP19qweY7wyXdF5BJUIijOIDZbXOy6cPJb9HywMHqflJe+HwZUFVlDesxl0xv0pGzMh5nDR4l
+	GFJH4ARDmVe+crMfna5y4BHDZDewSuhphqDY7asddOA==
+X-Gm-Gg: ASbGncun6af4qmVRc06jAO5sFbAYe7tYfAGe9NwtJhV9fkf1lIPeBF4qqjsRJTBTPmQ
+	jpVYaT9vQEL2J03ZyV9xrb/NY/nBe+MMfjiwsFXvDKkXJ1XP97hEao/sQ/2vY74J4LbONhNNVVT
+	71IVdQ8nv5RgccKFHch+w9T/1MUBeg8FvZ/Fp9svR7868GCYX6JMSNQ6R8bLyJ/W3NFC4qW2jly
+	v6vSlrR
+X-Google-Smtp-Source: AGHT+IE8ZvWiTiGqXTWcpfVsTbk//TxRzsy5cpmA75sT4dqaycKQ5AGoujI4y1Wxl+s9LkZCTdJ/lchQSDdcK3BT5l4=
+X-Received: by 2002:a05:6122:3d04:b0:544:75d1:15ba with SMTP id
+ 71dfb90a1353d-54bcae9778amr849180e0c.8.1758642950707; Tue, 23 Sep 2025
+ 08:55:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yukuai3@huawei.com, Kenta Akagi <k@fwd.mgml.me>
-Subject: Re: [PATCH v4 4/9] md/raid1,raid10: Don't set MD_BROKEN on failfast
- bio failure
-To: Yu Kuai <hailan@yukuai.org.cn>, yukuai1@huaweicloud.com, song@kernel.org,
-        mtkaczyk@kernel.org, shli@fb.com, jgq516@gmail.com
-References: <010601995d6b88a4-423a9b3c-3790-4d65-86a4-20a9ddea0686-000000@ap-northeast-1.amazonses.com>
- <6ce45082-2913-4ca2-b382-5beff6a799c6@yukuai.org.cn>
- <e88ac955-9733-4e57-830b-d326557d189a@fwd.mgml.me>
- <0813d9d7-a0be-419b-a067-66854d35373a@yukuai.org.cn>
-Content-Language: en-US
-From: Kenta Akagi <k@fwd.mgml.me>
-In-Reply-To: <0813d9d7-a0be-419b-a067-66854d35373a@yukuai.org.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <0cc81bcf-b830-4ec3-8d5e-67afbc2e7c47@allelesecurity.com>
+ <20250909224520.GC5333@twin.jikos.cz> <CAPhRvkzgR+8L93VF8XtZDG9P_q7O0+BSBxnHtesLY5oj6uhwmg@mail.gmail.com>
+ <20250923151110.GV5333@suse.cz>
+In-Reply-To: <20250923151110.GV5333@suse.cz>
+From: Anderson Nascimento <anderson@allelesecurity.com>
+Date: Tue, 23 Sep 2025 12:55:39 -0300
+X-Gm-Features: AS18NWAXLSWsrK9SrcbyQoYBYwXUR7GXLiaQTIy3LWlL1HCKbnJYgWqOj7HIa0g
+Message-ID: <CAPhRvkwLg=5mKv3XKvfLUOPUcbNCAYW2reNub60s5pkLXP=xSQ@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: Avoid potential out-of-bounds in btrfs_encode_fh()
+To: dsterba@suse.cz
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Sep 23, 2025 at 12:11=E2=80=AFPM David Sterba <dsterba@suse.cz> wro=
+te:
+>
+> On Tue, Sep 23, 2025 at 11:37:33AM -0300, Anderson Nascimento wrote:
+> > On Tue, Sep 9, 2025 at 7:45=E2=80=AFPM David Sterba <dsterba@suse.cz> w=
+rote:
+> > >
+> > > On Mon, Sep 08, 2025 at 09:49:02AM -0300, Anderson Nascimento wrote:
+> > > > Hello all,
+> > > >
+> > > > The function btrfs_encode_fh() does not properly account for the th=
+ree
+> > > > cases it handles.
+> > > >
+> > > > Before writing to the file handle (fh), the function only returns t=
+o the
+> > > > user BTRFS_FID_SIZE_NON_CONNECTABLE (5 dwords, 20 bytes) or
+> > > > BTRFS_FID_SIZE_CONNECTABLE (8 dwords, 32 bytes).
+> > > >
+> > > > However, when a parent exists and the root ID of the parent and the
+> > > > inode are different, the function writes BTRFS_FID_SIZE_CONNECTABLE=
+_ROOT
+> > > > (10 dwords, 40 bytes).
+> > > >
+> > > > If *max_len is not large enough, this write goes out of bounds beca=
+use
+> > > > BTRFS_FID_SIZE_CONNECTABLE_ROOT is greater than
+> > > > BTRFS_FID_SIZE_CONNECTABLE originally returned.
+> > > >
+> > > > This results in an 8-byte out-of-bounds write at
+> > > > fid->parent_root_objectid =3D parent_root_id.
+> > > >
+> > > > A previous attempt to fix this issue was made but was lost.
+> > > >
+> > > > https://lore.kernel.org/all/4CADAEEC020000780001B32C@vpn.id2.novell=
+.com/
+> > > >
+> > > > Although this issue does not seem to be easily triggerable, it is a
+> > > > potential memory corruption bug that should be fixed. This patch
+> > > > resolves the issue by ensuring the function returns the appropriate=
+ size
+> > > > for all three cases and validates that *max_len is large enough bef=
+ore
+> > > > writing any data.
+> > > >
+> > > > Tested on v6.17-rc4.
+> > > >
+> > > > Fixes: be6e8dc0ba84 ("NFS support for btrfs - v3")
+> > > > Signed-off-by: Anderson Nascimento <anderson@allelesecurity.com>
+> > >
+> > > Thanks for finding the problem and the fix. It's 17 years old though =
+the
+> > > other patch was sent about 2 years after btrfs merge to linux kernel.
+> > > I'll add it to for-next, with the minor whitespace issues fixed.
+> >
+> > David, has it been queued somewhere? I don't see it in any of your bran=
+ches.
+>
+> That's strange, I thought I'd applied it the same day but the patch is
+> nowhere to be found. I'll add it to for-next again, sorry.
 
-On 2025/09/20 18:51, Yu Kuai wrote:
-> Hi,
-> 
-> 在 2025/9/20 14:30, Kenta Akagi 写道:
->> Hi,
->>
->> I have changed my email address because our primary MX server
->> suddenly started rejecting non-DKIM mail.
->>
->> On 2025/09/19 10:36, Yu Kuai wrote:
->>> Hi,
->>>
->>> 在 2025/9/18 23:22, Kenta Akagi 写道:
->>>>>> @@ -470,7 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
->>>>>>                 (bio->bi_opf & MD_FAILFAST) &&
->>>>>>                 /* We never try FailFast to WriteMostly devices */
->>>>>>                 !test_bit(WriteMostly, &rdev->flags)) {
->>>>>> -            md_error(r1_bio->mddev, rdev);
->>>>>> +            md_bio_failure_error(r1_bio->mddev, rdev, bio);
->>>>>>             }
->>>>> Can following check of faulty replaced with return value?
->>>> In the case where raid1_end_write_request is called for a non-failfast IO,
->>>> and the rdev has already been marked Faulty by another bio, it must not retry too.
->>>> I think it would be simpler not to use a return value here.
->>> You can just add Faulty check inside md_bio_failure_error() as well, and both
->>> failfast and writemostly check.
->> Sorry, I'm not sure I understand this part.
->> In raid1_end_write_request, this code path is also used for a regular bio,
->> not only for FailFast.
->>
->> You mean to change md_bio_failure_error as follows:
->> * If the rdev is Faulty, immediately return true.
->> * If the given bio is Failfast and the rdev is not the lastdev, call md_error.
->> * If the given bio is not Failfast, do nothing and return false.
-> 
-> Yes, doesn't that apply to all the callers?
+No worries, thank you very much.
 
-It's difficult because the flow differs depending on the function. 
-For example, in raid1_end_write_request, if rdev and bio are Failfast but not Writemostly,
-it calls md_error, and then performs a something if it is Faulty regardless
-of whether it is Failfast or not. This flow is specific to raid1_end_write_request.
-
-Other functions that need to be changed to md_bio_failure_error are handle_read_error
-and fix_sync_read_error, but the path for determining whether these are Faulty,
-regardless of whether they are Failfast, is not exists there functions.
-
-It may be possible with some refactoring,
-but I think raid1_end_write_request current style, that is
-if(Failfast) md_bio_failure_error();
-if(Faulty) something;
-would be better because We can see at a glance what is happening.
-
-BTW, fix_sync_read_error can use the return value of md_bio_failure_error as
-suggested. so I'll revise it as follows:
-
-@@ -2167,8 +2174,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
-        if (test_bit(FailFast, &rdev->flags)) {
-                /* Don't try recovering from here - just fail it
-                 * ... unless it is the last working device of course */
--               md_bio_failure_error(mddev, rdev, bio);
--               if (test_bit(Faulty, &rdev->flags))
-+               if (md_bio_failure_error(mddev, rdev, bio))
-                        /* Don't try to read from here, but make sure
-                         * put_buf does it's thing
-                         */
-
-> 
->>
->> And then apply this?
->> This is complicated. Wouldn't it be better to keep the Faulty check as it is?
->>
->> @@ -466,18 +466,12 @@ static void raid1_end_write_request(struct bio *bio)
->>                          set_bit(MD_RECOVERY_NEEDED, &
->>                                  conf->mddev->recovery);
->>
->> -               if (test_bit(FailFast, &rdev->flags) &&
->> -                   (bio->bi_opf & MD_FAILFAST) &&
->> -                   /* We never try FailFast to WriteMostly devices */
->> -                   !test_bit(WriteMostly, &rdev->flags)) {
->> -                       md_error(r1_bio->mddev, rdev);
->> -               }
->> -
->>                  /*
->>                   * When the device is faulty, it is not necessary to
->>                   * handle write error.
->>                   */
->> -               if (!test_bit(Faulty, &rdev->flags))
->> +               if (!test_bit(Faulty, &rdev->flags) ||
->> +                   !md_bio_failure_error(r1_bio->mddev, rdev, bio))
->>                          set_bit(R1BIO_WriteError, &r1_bio->state);
->>                  else {
->>                          /* Finished with this branch */
-> 
-> Faulty is set with lock held, so check Faulty with lock held as well can
-> prevent rdev to be Faulty concurrently, and this check can be added to all
-> callers, I think.
-> 
->>
->> Or do you mean a fix like this?
->>
->> @@ -466,23 +466,24 @@ static void raid1_end_write_request(struct bio *bio)
->>                          set_bit(MD_RECOVERY_NEEDED, &
->>                                  conf->mddev->recovery);
->>
->> -               if (test_bit(FailFast, &rdev->flags) &&
->> -                   (bio->bi_opf & MD_FAILFAST) &&
->> -                   /* We never try FailFast to WriteMostly devices */
->> -                   !test_bit(WriteMostly, &rdev->flags)) {
->> -                       md_error(r1_bio->mddev, rdev);
->> -               }
->> -
->>                  /*
->>                   * When the device is faulty, it is not necessary to
->>                   * handle write error.
->>                   */
->> -               if (!test_bit(Faulty, &rdev->flags))
->> -                       set_bit(R1BIO_WriteError, &r1_bio->state);
->> -               else {
->> +               if (test_bit(Faulty, &rdev->flags) ||
->> +                   (
->> +                   test_bit(FailFast, &rdev->flags) &&
->> +                   (bio->bi_opf & MD_FAILFAST) &&
->> +                   /* We never try FailFast to WriteMostly devices */
->> +                   !test_bit(WriteMostly, &rdev->flags) &&
->> +                   md_bio_failure_error(r1_bio->mddev, rdev, bio)
->> +                   )
->> +               ) {
->>                          /* Finished with this branch */
->>                          r1_bio->bios[mirror] = NULL;
->>                          to_put = bio;
->> +               } else {
->> +                       set_bit(R1BIO_WriteError, &r1_bio->state);
->>                  }
->>          } else {
->>                  /*
-> 
-> No, this just make code even more unreadable.
-
-Understood.
-
-Thanks,
-Akagi
-
-> 
-> Thanks,
-> Kuai
-> 
->> Thanks,
->> Akagi
->>
->>> Thanks,
->>> Kuai
->>>
->>>
->>>
-
+--=20
+Anderson Nascimento
+Allele Security Intelligence
+https://www.allelesecurity.com
 
