@@ -1,33 +1,34 @@
-Return-Path: <linux-kernel+bounces-828633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54EC3B950F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:47:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AB8CB950FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F4EB190126C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:47:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18FEF19027FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43BD31D750;
-	Tue, 23 Sep 2025 08:47:21 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (l-sdnproxy.icoremail.net [20.188.111.126])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A1D7081C;
-	Tue, 23 Sep 2025 08:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=20.188.111.126
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA3C31E0EA;
+	Tue, 23 Sep 2025 08:47:59 +0000 (UTC)
+Received: from zg8tmty1ljiyny4xntuumtyw.icoremail.net (zg8tmty1ljiyny4xntuumtyw.icoremail.net [165.227.155.160])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9047081C;
+	Tue, 23 Sep 2025 08:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=165.227.155.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758617241; cv=none; b=UtFyymcoIrO4M7nCI09J/tse6dD3yYieU1v8ctIUS8GF38jxazhqsJjOOdEQebdA2HS3pvm57/4DhqERiLBn5kvs2ABH8NBSpC0F7yB8FNkgjoEO45Bo4UfVKxShZhQ1jVRXj77k1Mo/B7Grqq1uMnRr8ANoMqfwSA23DBMpUnQ=
+	t=1758617278; cv=none; b=EPXcwipedHCy9rI9JXa8XZIBfVrwE5gda9pCfhOphLeWb7iLdodR/SPyOi7A1pzNG1xog5cUQDoW6lgz5/N47gHJPMvS7OU8QHMzxNmNfO7SV/fpQ0hHdX7O2tA/HCYBadIL0SjmRnnLc8s9lQr3W4Vy6eH51Dgc+mUoDphUZUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758617241; c=relaxed/simple;
-	bh=5NPAXxvZccCPf+vrcWg7vxCG2YGwT0BhMqdU7N6QsNI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t2sJAjgouZDbkdtrNcuAYwGXZBSdPunllFIbPHKI8iioloVoCQCcfjSgUHZb1MGEPBQFhEdPm219MJIyuEtPhuj9x7qljOMHBJgvZdxCqefTfYEpMgtsYnvWfIoG/Mqcy1Qe5b8cN7SSqX+ApVN8AUhnPs/Cz9TYe/+8jTEDzRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=20.188.111.126
+	s=arc-20240116; t=1758617278; c=relaxed/simple;
+	bh=PVU7sf6MK/9PDPXt6VRtZDC6pRogzzhxazcNJaUTjGk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mR5fScKGDMgGGWRuI0sslqIvyxTo2bnsDx94jCjHja8+6QY7OMG24/D9Vls5Yp0QPjlUEWCEOir8li0Y/kVZbbE+fLqq+AN9HreVXefi4kuYdgJ0fhZMxF9L/D4mXnUc+oLNS9kxclAt21tnCfHTtk4Bgt8Lpo84+DhWkvaqs7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=165.227.155.160
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
 Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
-	by app1 (Coremail) with SMTP id TAJkCgAXLxCFXtJoMhfYAA--.5175S2;
-	Tue, 23 Sep 2025 16:47:03 +0800 (CST)
+	by app1 (Coremail) with SMTP id TAJkCgAnTBKtXtJoPxfYAA--.29751S2;
+	Tue, 23 Sep 2025 16:47:43 +0800 (CST)
 From: dongxuyang@eswincomputing.com
 To: mturquette@baylibre.com,
 	sboyd@kernel.org,
@@ -42,10 +43,12 @@ Cc: ningyu@eswincomputing.com,
 	huangyifeng@eswincomputing.com,
 	pinkesh.vaghela@einfochips.com,
 	Xuyang Dong <dongxuyang@eswincomputing.com>
-Subject: [PATCH v5 0/2] Add driver support for ESWIN eic700 SoC clock controller
-Date: Tue, 23 Sep 2025 16:46:37 +0800
-Message-Id: <20250923084637.1223-1-dongxuyang@eswincomputing.com>
+Subject: [PATCH v5 1/2] dt-bindings: clock: eswin: Documentation for eic7700 SoC
+Date: Tue, 23 Sep 2025 16:47:39 +0800
+Message-Id: <20250923084739.1281-1-dongxuyang@eswincomputing.com>
 X-Mailer: git-send-email 2.31.1.windows.1
+In-Reply-To: <20250923084637.1223-1-dongxuyang@eswincomputing.com>
+References: <20250923084637.1223-1-dongxuyang@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,138 +56,470 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgAXLxCFXtJoMhfYAA--.5175S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3ArWrGFWkJrWfuFy5Cr48WFg_yoW7WF43pF
-	s7Gr98AFn0gryxXFs7ta4Igr93ZanxJFWUCryxX3WUZ345C34vyF4FqFy5AF9rAr1fAw1D
-	JrnFga10kF4UZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
-	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
-	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmjgxUUUUU=
+X-CM-TRANSID:TAJkCgAnTBKtXtJoPxfYAA--.29751S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfZF4UXF1ruFy8Zr47Xw4fZrb_yoW8Zw1kuo
+	W8C3ZxZ3yUKw1IvrsxGw1xX3yYkF4xJr1DXF13Xa4fKF1xJrnFkry8JrW0934ftryj9r90
+	kwsxKwn7ZrWY9FW7n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xva
+	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
+	x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
+	Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE-syl42
+	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
+	GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI4
+	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
+	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
+	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUrdb1DUUUU
 X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
 From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-This series depends on config option patch [1].
+Add device tree binding documentation for the ESWIN eic7700
+clock controller module.
 
-[1] https://lore.kernel.org/all/20250825132427.1618089-3-pinkesh.vaghela@einfochips.com/
-
-Updates:
-
-  Changes in v5:
-  - Removed vendor prefix patch dependency from cover letter, because the patch
-    was applied.
-  - Updated YAML file
-    - Placed the required after all properties.
-    - Removed patternProperties. Also removed compatible of eswin,pll-clock,
-      eswin,mux-clock, eswin,divider-clock and eswin,gate-clock as we have moved
-      clock tree from DTS to Linux driver.
-    - Removed the clock tree from DTS. Used clock-controller to manage all
-      clock. Removed all child nodes in clock-controller.
-    - Removed '#address-cells' and '#size-cells' properties, because the clock
-      controller did not need to define these properties.
-    - Removed eic7700-clocks.dtsi.
-    - Added dt-bindings header for clock IDs. Because used the IDs to register
-      clocks.
-  - Updated driver file
-    - Modified the commit for clock driver. Dropped indentation in commit.
-    - Removed CLK_OF_DECLARE(). Used *clk_hw_register* to register clocks. Used
-      devm_of_clk_add_hw_provider.
-    - Dropped singletons.
-    - Checked the value right after obtaining it.
-    - Removed the definitions of macro frequency in clk.h like CLK_FREQ_24M.
-    - Modified description of help in Kconfig.
-    - Added COMPILE_TEST. Added COMMON_CLK_ESWIN for clk.o. And added
-      "select COMMON_CLK_ESWIN" for clk-eic7700.c. Without COMMON_CLK_EIC7700,
-      clk.c could not be compiled.
-    - Used .determined_rate.
-    - Added macro definitions of EIC7700_DIV, EIC7700_FIXED, EIC7700_FACTOR,  
-      EIC7700_MUX and EIC7700_PLL to manage clock tree.
-    - Added clk-eic7700.h to place eic7700 SoC clock registers.
-    - Removed refdiv_val and postdiv1_val from clk_pll_recalc_rate(). Because
-      these values were unused.
-  - Link to v4: https://lore.kernel.org/all/20250815093539.975-1-dongxuyang@eswincomputing.com/
-
-  Changes in v4:
-  - Updated YAML file
-    - Changed name from cpu-default-frequency to cpu-default-freq-hz.
-    - Dropped $ref of cpu-default-frequency.
-    - Added cpu-default-frequency for required.
-    - Removed cpu-default-frequency in updated file, because there was no
-      need to add cpu-default-frequency.
-    - Moved DIVIDER to DIV.
-    - Arranged the IDs in order.
-    - Dropped EIC7700_NR_CLKS.
-    - Removed dt-bindings eswin,eic7700-clock.h. Because IDs was not used,
-      and used clock device nodes.
-    - According to the updated driver codes, the YAML has been updated.
-  - Updated driver file
-    - Remove undocumented parameters "cpu_no_boost_1_6ghz" and
-      "cpu-default-frequency".
-    - Modified the comment and used the correct Linux coding style.
-    - Removed codes of voltage, because it was not the clock driver.
-    - Updated the formula of clock frequency calculation. Removed the logic
-      that only used register selection.
-    - Used CLK_OF_DECLARE() to register clocks. Registered pll-clock,
-      mux-clock, divider-clock, and gate-clock in clk-eic7700.c.
-      The specific implementation of clock registration was in clk.c.
-    - Added eic7700-clocks.dtsi.
-    - Moved device information to DTS. Put all clocks' node in the
-      eic7700-clocks.dtsi.
-  - Link to v3: https://lore.kernel.org/all/20250624103212.287-1-dongxuyang@eswincomputing.com/
-
-  Changes in v3:
-  - Update example, drop child node and add '#clock-cells' to the parent
-    node.
-  - Change parent node from sys-crg to clock-controller for this yaml.
-  - Drop "syscon", "simple-mfd" to clear warnings/errors by using "make
-    dt_binding_check". And these are not necessary.
-  - Add "cpu-default-frequency" definition in yaml for "undocumented ABI".
-  - Drop Reviewed-by, this is misunderstanding. We have not received such
-    an email.
-  - Link to v2: https://lore.kernel.org/all/20250523090747.1830-1-dongxuyang@eswincomputing.com/
-
-  Changes in v2:
-  - Update example, drop child node.
-  - Clear warnings/errors for using "make dt_binding_check".
-  - Change to the correct format.
-  - Drop some non-stanard code.
-  - Use dev_err_probe() in probe functions.
-  - Link to v1: https://lore.kernel.org/all/20250514002233.187-1-dongxuyang@eswincomputing.com/
-
-Xuyang Dong (2):
-  dt-bindings: clock: eswin: Documentation for eic7700 SoC
-  clock: eswin: Add eic7700 clock driver
-
- .../bindings/clock/eswin,eic7700-clock.yaml   |   40 +
- drivers/clk/Kconfig                           |    1 +
- drivers/clk/Makefile                          |    1 +
- drivers/clk/eswin/Kconfig                     |   15 +
- drivers/clk/eswin/Makefile                    |    8 +
- drivers/clk/eswin/clk-eic7700.c               | 1042 +++++++++++++++++
- drivers/clk/eswin/clk-eic7700.h               |  122 ++
- drivers/clk/eswin/clk.c                       |  448 +++++++
- drivers/clk/eswin/clk.h                       |  242 ++++
- .../dt-bindings/clock/eswin,eic7700-clock.h   |  379 ++++++
- 10 files changed, 2298 insertions(+)
+Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
+Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
+---
+ .../bindings/clock/eswin,eic7700-clock.yaml   |  40 ++
+ .../dt-bindings/clock/eswin,eic7700-clock.h   | 379 ++++++++++++++++++
+ 2 files changed, 419 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
- create mode 100644 drivers/clk/eswin/Kconfig
- create mode 100644 drivers/clk/eswin/Makefile
- create mode 100644 drivers/clk/eswin/clk-eic7700.c
- create mode 100644 drivers/clk/eswin/clk-eic7700.h
- create mode 100644 drivers/clk/eswin/clk.c
- create mode 100644 drivers/clk/eswin/clk.h
  create mode 100644 include/dt-bindings/clock/eswin,eic7700-clock.h
 
+diff --git a/Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml b/Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+new file mode 100644
+index 000000000000..49053543ecfe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+@@ -0,0 +1,40 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/eswin,eic7700-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Eswin EIC7700 SoC clock controller
++
++maintainers:
++  - Yifeng Huang <huangyifeng@eswincomputing.com>
++  - Xuyang Dong <dongxuyang@eswincomputing.com>
++
++description:
++  The clock controller generates and supplies clock to all the modules
++  for eic7700 SoC.
++
++properties:
++  compatible:
++    const: eswin,eic7700-clock
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@51828000 {
++        compatible = "eswin,eic7700-clock";
++        reg = <0x51828000 0x200>;
++        #clock-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/eswin,eic7700-clock.h b/include/dt-bindings/clock/eswin,eic7700-clock.h
+new file mode 100644
+index 000000000000..c5cd67be3649
+--- /dev/null
++++ b/include/dt-bindings/clock/eswin,eic7700-clock.h
+@@ -0,0 +1,379 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright 2025, Beijing ESWIN Computing Technology Co.,
++ * Ltd.. All rights reserved.
++ *
++ * Device Tree binding constants for EIC7700 clock controller.
++ *
++ * Authors:
++ *	Yifeng Huang <huangyifeng@eswincomputing.com>
++ *	Xuyang Dong <dongxuyang@eswincomputing.com>
++ */
++
++#ifndef _DT_BINDINGS_ESWIN_EIC7700_CLOCK_H_
++#define _DT_BINDINGS_ESWIN_EIC7700_CLOCK_H_
++
++#define EIC7700_CLK_XTAL_24M				0
++#define EIC7700_CLK_XTAL_32K				1
++#define EIC7700_CLK_PLL_CPU				2
++#define EIC7700_CLK_SPLL0_FOUT1				3
++#define EIC7700_CLK_SPLL0_FOUT2				4
++#define EIC7700_CLK_SPLL0_FOUT3				5
++#define EIC7700_CLK_SPLL1_FOUT1				6
++#define EIC7700_CLK_SPLL1_FOUT2				7
++#define EIC7700_CLK_SPLL1_FOUT3				8
++#define EIC7700_CLK_SPLL2_FOUT1				9
++#define EIC7700_CLK_SPLL2_FOUT2				10
++#define EIC7700_CLK_SPLL2_FOUT3				11
++#define EIC7700_CLK_VPLL_FOUT1				12
++#define EIC7700_CLK_VPLL_FOUT2				13
++#define EIC7700_CLK_VPLL_FOUT3				14
++#define EIC7700_CLK_APLL_FOUT1				15
++#define EIC7700_CLK_APLL_FOUT2				16
++#define EIC7700_CLK_APLL_FOUT3				17
++#define EIC7700_CLK_EXT_MCLK				18
++#define EIC7700_CLK_PLL_DDR				19
++#define EIC7700_CLK_LPDDR_REF_BAK			20
++#define EIC7700_CLK_MUX_CPU_ROOT_3MUX1_GFREE		21
++#define EIC7700_CLK_MUX_CPU_ACLK_2MUX1_GFREE		22
++#define EIC7700_CLK_MUX_DSP_ACLK_ROOT_2MUX1_GFREE	23
++#define EIC7700_CLK_MUX_D2D_ACLK_ROOT_2MUX1_GFREE	24
++#define EIC7700_CLK_MUX_MSHCORE_ROOT_3MUX1_0		25
++#define EIC7700_CLK_MUX_MSHCORE_ROOT_3MUX1_1		26
++#define EIC7700_CLK_MUX_MSHCORE_ROOT_3MUX1_2		27
++#define EIC7700_CLK_MUX_NPU_LLCLK_3MUX1_GFREE		28
++#define EIC7700_CLK_MUX_NPU_CORE_3MUX1_GFREE		29
++#define EIC7700_CLK_MUX_VI_ACLK_ROOT_2MUX1_GFREE	30
++#define EIC7700_CLK_MUX_VI_DVP_ROOT_2MUX1_GFREE		31
++#define EIC7700_CLK_MUX_VI_DIG_ISP_ROOT_2MUX1_GFREE	32
++#define EIC7700_CLK_MUX_VO_ACLK_ROOT_2MUX1_GFREE	33
++#define EIC7700_CLK_MUX_VO_PIXEL_ROOT_2MUX1		34
++#define EIC7700_CLK_MUX_VO_CEC_2MUX1			35
++#define EIC7700_CLK_MUX_VCDEC_ROOT_2MUX1_GFREE		36
++#define EIC7700_CLK_MUX_VCACLK_ROOT_2MUX1_GFREE		37
++#define EIC7700_CLK_MUX_RTC_2MUX1			38
++#define EIC7700_CLK_MUX_SYSCFG_CLK_ROOT_2MUX1_GFREE	39
++#define EIC7700_CLK_MUX_NOCNSP_XTAL_2MUX1		40
++#define EIC7700_CLK_MUX_BOOTSPI_CLK_2MUX1_GFREE		41
++#define EIC7700_CLK_MUX_SCPU_CORE_CLK_2MUX1_GFREE	42
++#define EIC7700_CLK_MUX_LPCPU_CORE_CLK_2MUX1_GFREE	43
++#define EIC7700_CLK_MUX_GPU_ACLK_XTAL_2MUX1		44
++#define EIC7700_CLK_MUX_DSP_ACLK_XTAL_2MUX1		45
++#define EIC7700_CLK_MUX_D2D_ACLK_XTAL_2MUX1		46
++#define EIC7700_CLK_MUX_HSP_ACLK_XTAL_2MUX1		47
++#define EIC7700_CLK_MUX_PCIE_ACLK_XTAL_2MUX1		48
++#define EIC7700_CLK_MUX_NPU_ACLK_XTAL_2MUX1		49
++#define EIC7700_CLK_MUX_NPU_LLC_XTAL_2MUX1		50
++#define EIC7700_CLK_MUX_NPU_CORE_XTAL_2MUX1		51
++#define EIC7700_CLK_MUX_VI_ACLK_XTAL_2MUX1		52
++#define EIC7700_CLK_MUX_VI_DVP_XTAL_2MUX1		53
++#define EIC7700_CLK_MUX_VI_DIG_ISP_XTAL_2MUX1		54
++#define EIC7700_CLK_MUX_VI_SHUTTER_XTAL_2MUX1_0		55
++#define EIC7700_CLK_MUX_VI_SHUTTER_XTAL_2MUX1_1		56
++#define EIC7700_CLK_MUX_VI_SHUTTER_XTAL_2MUX1_2		57
++#define EIC7700_CLK_MUX_VI_SHUTTER_XTAL_2MUX1_3		58
++#define EIC7700_CLK_MUX_VI_SHUTTER_XTAL_2MUX1_4		59
++#define EIC7700_CLK_MUX_VI_SHUTTER_XTAL_2MUX1_5		60
++#define EIC7700_CLK_MUX_VO_ACLK_XTAL_2MUX1		61
++#define EIC7700_CLK_MUX_IESMCLK_XTAL_2MUX1		62
++#define EIC7700_CLK_MUX_VO_PIXEL_XTAL_2MUX1		63
++#define EIC7700_CLK_MUX_VO_MCLK_2MUX_EXT_MCLK		64
++#define EIC7700_CLK_MUX_VC_ACLK_XTAL_2MUX1		65
++#define EIC7700_CLK_MUX_JD_XTAL_2MUX1			66
++#define EIC7700_CLK_MUX_JE_XTAL_2MUX1			67
++#define EIC7700_CLK_MUX_VE_XTAL_2MUX1			68
++#define EIC7700_CLK_MUX_VD_XTAL_2MUX1			69
++#define EIC7700_CLK_MUX_SATA_PHY_2MUX1			70
++#define EIC7700_CLK_MUX_AONDMA_AXI2MUX1_GFREE		71
++#define EIC7700_CLK_MUX_CRYPTO_XTAL_2MUX1		72
++#define EIC7700_CLK_MUX_RMII_REF_2MUX			73
++#define EIC7700_CLK_MUX_ETH_CORE_2MUX1			74
++#define EIC7700_CLK_MUX_VI_DW_ROOT_2MUX1		75
++#define EIC7700_CLK_MUX_VI_DW_XTAL_2MUX1		76
++#define EIC7700_CLK_MUX_NPU_E31_3MUX1_GFREE		77
++#define EIC7700_CLK_MUX_DDR_ACLK_ROOT_2MUX1_GFREE	78
++#define EIC7700_CLK_DIV_SYS_CFG_DYNM			79
++#define EIC7700_CLK_DIV_NOC_NSP_DYNM			80
++#define EIC7700_CLK_DIV_BOOTSPI_DYNM			81
++#define EIC7700_CLK_DIV_SCPU_CORE_DYNM			82
++#define EIC7700_CLK_DIV_LPCPU_CORE_DYNM			83
++#define EIC7700_CLK_DIV_GPU_ACLK_DYNM			84
++#define EIC7700_CLK_DIV_DSP_ACLK_DYNM			85
++#define EIC7700_CLK_DIV_D2D_ACLK_DYNM			86
++#define EIC7700_CLK_DIV_HSP_ACLK_DYNM			87
++#define EIC7700_CLK_DIV_ETH_TXCLK_DYNM_0		88
++#define EIC7700_CLK_DIV_ETH_TXCLK_DYNM_1		89
++#define EIC7700_CLK_DIV_MSHC_CORE_DYNM_0		90
++#define EIC7700_CLK_DIV_MSHC_CORE_DYNM_1		91
++#define EIC7700_CLK_DIV_MSHC_CORE_DYNM_2		92
++#define EIC7700_CLK_DIV_PCIE_ACLK_DYNM			93
++#define EIC7700_CLK_DIV_NPU_ACLK_DYNM			94
++#define EIC7700_CLK_DIV_NPU_LLC_SRC0_DYNM		95
++#define EIC7700_CLK_DIV_NPU_LLC_SRC1_DYNM		96
++#define EIC7700_CLK_DIV_NPU_CORECLK_DYNM		97
++#define EIC7700_CLK_DIV_VI_ACLK_DYNM			98
++#define EIC7700_CLK_DIV_VI_DVP_DYNM			99
++#define EIC7700_CLK_DIV_VI_DIG_ISP_DYNM			100
++#define EIC7700_CLK_DIV_VI_SHUTTER_DYNM_0		101
++#define EIC7700_CLK_DIV_VI_SHUTTER_DYNM_1		102
++#define EIC7700_CLK_DIV_VI_SHUTTER_DYNM_2		103
++#define EIC7700_CLK_DIV_VI_SHUTTER_DYNM_3		104
++#define EIC7700_CLK_DIV_VI_SHUTTER_DYNM_4		105
++#define EIC7700_CLK_DIV_VI_SHUTTER_DYNM_5		106
++#define EIC7700_CLK_DIV_VO_ACLK_DYNM			107
++#define EIC7700_CLK_DIV_IESMCLK_DYNM			108
++#define EIC7700_CLK_DIV_VO_PIXEL_DYNM			109
++#define EIC7700_CLK_DIV_VO_MCLK_DYNM			110
++#define EIC7700_CLK_DIV_VC_ACLK_DYNM			111
++#define EIC7700_CLK_DIV_JD_DYNM				112
++#define EIC7700_CLK_DIV_JE_DYNM				113
++#define EIC7700_CLK_DIV_VE_DYNM				114
++#define EIC7700_CLK_DIV_VD_DYNM				115
++#define EIC7700_CLK_DIV_G2D_DYNM			116
++#define EIC7700_CLK_DIV_AONDMA_AXI_DYNM			117
++#define EIC7700_CLK_DIV_CRYPTO_DYNM			118
++#define EIC7700_CLK_DIV_VI_DW_DYNM			119
++#define EIC7700_CLK_DIV_NPU_E31_DYNM			120
++#define EIC7700_CLK_DIV_SATA_PHY_REF_DYNM		121
++#define EIC7700_CLK_DIV_DSP_0_ACLK_DYNM			122
++#define EIC7700_CLK_DIV_DSP_1_ACLK_DYNM			123
++#define EIC7700_CLK_DIV_DSP_2_ACLK_DYNM			124
++#define EIC7700_CLK_DIV_DSP_3_ACLK_DYNM			125
++#define EIC7700_CLK_DIV_DDR_ACLK_DYNM			126
++#define EIC7700_CLK_DIV_AON_RTC_DYNM			127
++#define EIC7700_CLK_DIV_U84_RTC_TOGGLE_DYNM		128
++#define EIC7700_CLK_DIV_VO_CEC_DYNM			129
++#define EIC7700_CLK_GATE_CPU_EXT_SRC_CORE_CLK_0		130
++#define EIC7700_CLK_GATE_CPU_EXT_SRC_CORE_CLK_1		131
++#define EIC7700_CLK_GATE_CPU_EXT_SRC_CORE_CLK_2		132
++#define EIC7700_CLK_GATE_CPU_EXT_SRC_CORE_CLK_3		133
++#define EIC7700_CLK_GATE_CPU_TRACE_CLK_0		134
++#define EIC7700_CLK_GATE_CPU_TRACE_CLK_1		135
++#define EIC7700_CLK_GATE_CPU_TRACE_CLK_2		136
++#define EIC7700_CLK_GATE_CPU_TRACE_CLK_3		137
++#define EIC7700_CLK_GATE_CPU_DEBUG_CLK			138
++#define EIC7700_CLK_GATE_CPU_TRACE_COM_CLK		139
++#define EIC7700_CLK_GATE_CPU_CLK			140
++#define EIC7700_CLK_GATE_SPLL0_FOUT2			141
++#define EIC7700_CLK_GATE_VPLL_FOUT2			142
++#define EIC7700_CLK_GATE_VPLL_FOUT3			143
++#define EIC7700_CLK_GATE_APLL_FOUT1			144
++#define EIC7700_CLK_GATE_APLL_FOUT2			145
++#define EIC7700_CLK_GATE_APLL_FOUT3			146
++#define EIC7700_CLK_GATE_EXT_MCLK			147
++#define EIC7700_CLK_GATE_1M				148
++#define EIC7700_CLK_GATE_SYS_CFG			149
++#define EIC7700_CLK_GATE_MIPI_TXESC			150
++#define EIC7700_CLK_GATE_NOC_CFG_CLK			151
++#define EIC7700_CLK_GATE_NOC_NSP_CLK			152
++#define EIC7700_CLK_GATE_BOOTSPI			153
++#define EIC7700_CLK_GATE_BOOTSPI_CFG			154
++#define EIC7700_CLK_GATE_U84_CORE_LP			155
++#define EIC7700_CLK_GATE_SCPU_CORE			156
++#define EIC7700_CLK_GATE_SCPU_BUS			157
++#define EIC7700_CLK_GATE_LPCPU_CORE			158
++#define EIC7700_CLK_GATE_LPCPU_BUS			159
++#define EIC7700_CLK_GATE_GPU_ACLK			160
++#define EIC7700_CLK_GATE_GPU_GRAY_CLK			161
++#define EIC7700_CLK_GATE_GPU_CFG_CLK			162
++#define EIC7700_CLK_GATE_DSP_ROOT			163
++#define EIC7700_CLK_GATE_DSPT_ACLK			164
++#define EIC7700_CLK_GATE_DSPT_CFG_CLK			165
++#define EIC7700_CLK_GATE_D2DDR_ACLK			166
++#define EIC7700_CLK_GATE_D2D_ACLK			167
++#define EIC7700_CLK_GATE_D2D_CFG_CLK			168
++#define EIC7700_CLK_GATE_CLK_HSP_ACLK			169
++#define EIC7700_CLK_GATE_HSP_CFGCLK			170
++#define EIC7700_CLK_GATE_TCU_ACLK			171
++#define EIC7700_CLK_GATE_TCU_CFG_CLK			172
++#define EIC7700_CLK_GATE_DDRT_CFG_CLK			173
++#define EIC7700_CLK_GATE_DDRT1_CFG_CLK			174
++#define EIC7700_CLK_GATE_DDRT0_P0_ACLK			175
++#define EIC7700_CLK_GATE_DDRT0_P1_ACLK			176
++#define EIC7700_CLK_GATE_DDRT0_P2_ACLK			177
++#define EIC7700_CLK_GATE_DDRT0_P3_ACLK			178
++#define EIC7700_CLK_GATE_DDRT0_P4_ACLK			179
++#define EIC7700_CLK_GATE_DDRT1_P0_ACLK			180
++#define EIC7700_CLK_GATE_DDRT1_P1_ACLK			181
++#define EIC7700_CLK_GATE_DDRT1_P2_ACLK			182
++#define EIC7700_CLK_GATE_DDRT1_P3_ACLK			183
++#define EIC7700_CLK_GATE_DDRT1_P4_ACLK			184
++#define EIC7700_CLK_GATE_HSP_ACLK			185
++#define EIC7700_CLK_GATE_HSP_CFG_CLK			186
++#define EIC7700_CLK_GATE_HSP_SATA_RBC_CLK		187
++#define EIC7700_CLK_GATE_HSP_SATA_OOB_CLK		188
++#define EIC7700_CLK_GATE_HSP_SATA_PMALIVE_CLK		189
++#define EIC7700_CLK_GATE_HSP_ETH_APP_CLK		190
++#define EIC7700_CLK_GATE_HSP_ETH_CSR_CLK		191
++#define EIC7700_CLK_GATE_HSP_ETH0_CORE_CLK		192
++#define EIC7700_CLK_GATE_HSP_ETH1_CORE_CLK		193
++#define EIC7700_CLK_GATE_HSP_MSHC0_CORE_CLK		194
++#define EIC7700_CLK_GATE_HSP_MSHC1_CORE_CLK		195
++#define EIC7700_CLK_GATE_HSP_MSHC2_CORE_CLK		196
++#define EIC7700_CLK_GATE_HSP_MSHC0_TMR_CLK		197
++#define EIC7700_CLK_GATE_HSP_MSHC1_TMR_CLK		198
++#define EIC7700_CLK_GATE_HSP_MSHC2_TMR_CLK		199
++#define EIC7700_CLK_GATE_HSP_USB0_SUSPEND_CLK		200
++#define EIC7700_CLK_GATE_HSP_USB1_SUSPEND_CLK		201
++#define EIC7700_CLK_GATE_PCIET_ACLK			202
++#define EIC7700_CLK_GATE_PCIET_CFG_CLK			203
++#define EIC7700_CLK_GATE_PCIET_CR_CLK			204
++#define EIC7700_CLK_GATE_PCIET_AUX_CLK			205
++#define EIC7700_CLK_GATE_NPU_ACLK			206
++#define EIC7700_CLK_GATE_NPU_CFG_CLK			207
++#define EIC7700_CLK_GATE_NPU_LLC_SRC0			208
++#define EIC7700_CLK_GATE_NPU_LLC_SRC1			209
++#define EIC7700_CLK_GATE_NPU_LLC_ACLK			210
++#define EIC7700_CLK_GATE_NPU_CORE_ST1			211
++#define EIC7700_CLK_GATE_NPU_CLK			212
++#define EIC7700_CLK_GATE_NPU_E31_CLK			213
++#define EIC7700_CLK_GATE_VI_ACLK_ST1			214
++#define EIC7700_CLK_GATE_VI_ACLK			215
++#define EIC7700_CLK_GATE_VI_DVP_CLK			216
++#define EIC7700_CLK_GATE_VI_CFG_CLK			217
++#define EIC7700_CLK_GATE_VI_DIG_DW_CLK			218
++#define EIC7700_CLK_GATE_VI_DIG_ISP_CLK			219
++#define EIC7700_CLK_GATE_VI_SHUTTER_0			220
++#define EIC7700_CLK_GATE_VI_SHUTTER_1			221
++#define EIC7700_CLK_GATE_VI_SHUTTER_2			222
++#define EIC7700_CLK_GATE_VI_SHUTTER_3			223
++#define EIC7700_CLK_GATE_VI_SHUTTER_4			224
++#define EIC7700_CLK_GATE_VI_SHUTTER_5			225
++#define EIC7700_CLK_GATE_VI_PHY_TXCLKESC		226
++#define EIC7700_CLK_GATE_VI_PHY_CFG			227
++#define EIC7700_CLK_GATE_VO_ACLK			228
++#define EIC7700_CLK_GATE_VO_CFG_CLK			229
++#define EIC7700_CLK_GATE_VO_HDMI_IESMCLK		230
++#define EIC7700_CLK_GATE_VO_PIXEL_CLK			231
++#define EIC7700_CLK_GATE_VO_I2S_MCLK			232
++#define EIC7700_CLK_GATE_VO_CR_CLK			233
++#define EIC7700_CLK_GATE_VO_CEC_CLK			234
++#define EIC7700_CLK_GATE_VC_ROOT			235
++#define EIC7700_CLK_GATE_VC_ACLK			236
++#define EIC7700_CLK_GATE_VC_CFG_CLK			237
++#define EIC7700_CLK_GATE_VC_JE_CLK			238
++#define EIC7700_CLK_GATE_VC_JD_CLK			239
++#define EIC7700_CLK_GATE_VC_VE_CLK			240
++#define EIC7700_CLK_GATE_VC_VD_CLK			241
++#define EIC7700_CLK_GATE_G2D_CFG_CLK			242
++#define EIC7700_CLK_GATE_G2D_ST2			243
++#define EIC7700_CLK_GATE_G2D_CLK			244
++#define EIC7700_CLK_GATE_G2D_ACLK			245
++#define EIC7700_CLK_GATE_PVT_INNER			246
++#define EIC7700_CLK_GATE_PVT_CLK_0			247
++#define EIC7700_CLK_GATE_PVT_CLK_1			248
++#define EIC7700_CLK_GATE_PVT_CLK_2			249
++#define EIC7700_CLK_GATE_PVT_CLK_3			250
++#define EIC7700_CLK_GATE_PVT_CLK_4			251
++#define EIC7700_CLK_GATE_AONDMA_CFG			252
++#define EIC7700_CLK_GATE_AONDMA_AXI_ST3			253
++#define EIC7700_CLK_GATE_AONDMA_ACLK			254
++#define EIC7700_CLK_GATE_AON_ACLK			255
++#define EIC7700_CLK_GATE_TIMER_CLK_0			256
++#define EIC7700_CLK_GATE_TIMER_CLK_1			257
++#define EIC7700_CLK_GATE_TIMER_CLK_2			258
++#define EIC7700_CLK_GATE_TIMER_CLK_3			259
++#define EIC7700_CLK_GATE_TIMER_PCLK_0			260
++#define EIC7700_CLK_GATE_TIMER_PCLK_1			261
++#define EIC7700_CLK_GATE_TIMER_PCLK_2			262
++#define EIC7700_CLK_GATE_TIMER_PCLK_3			263
++#define EIC7700_CLK_GATE_TIMER3_CLK8			264
++#define EIC7700_CLK_GATE_RTC_CFG			265
++#define EIC7700_CLK_GATE_RTC				266
++#define EIC7700_CLK_GATE_HSP_RMII_REF_0			267
++#define EIC7700_CLK_GATE_HSP_RMII_REF_1			268
++#define EIC7700_CLK_GATE_PKA_CFG			269
++#define EIC7700_CLK_GATE_SPACC_CFG			270
++#define EIC7700_CLK_GATE_CRYPTO				271
++#define EIC7700_CLK_GATE_TRNG_CFG			272
++#define EIC7700_CLK_GATE_OTP_CFG			273
++#define EIC7700_CLK_GATE_CLMM_CFG_CLK			274
++#define EIC7700_CLK_GATE_CLMM_DEB_CLK			275
++#define EIC7700_CLK_GATE_MAILBOX_0			276
++#define EIC7700_CLK_GATE_MAILBOX_1			277
++#define EIC7700_CLK_GATE_MAILBOX_2			278
++#define EIC7700_CLK_GATE_MAILBOX_3			279
++#define EIC7700_CLK_GATE_MAILBOX_4			280
++#define EIC7700_CLK_GATE_MAILBOX_5			281
++#define EIC7700_CLK_GATE_MAILBOX_6			282
++#define EIC7700_CLK_GATE_MAILBOX_7			283
++#define EIC7700_CLK_GATE_MAILBOX_8			284
++#define EIC7700_CLK_GATE_MAILBOX_9			285
++#define EIC7700_CLK_GATE_MAILBOX_10			286
++#define EIC7700_CLK_GATE_MAILBOX_11			287
++#define EIC7700_CLK_GATE_MAILBOX_12			288
++#define EIC7700_CLK_GATE_MAILBOX_13			289
++#define EIC7700_CLK_GATE_MAILBOX_14			290
++#define EIC7700_CLK_GATE_MAILBOX_15			291
++#define EIC7700_CLK_GATE_APLL_TEST_OUT			292
++#define EIC7700_CLK_GATE_CPLL_TEST_OUT			293
++#define EIC7700_CLK_GATE_HSP_DFT150M			294
++#define EIC7700_CLK_GATE_HSP_DFT300M			295
++#define EIC7700_CLK_GATE_HSP_DFT600M			296
++#define EIC7700_CLK_GATE_VI_DFT400M			297
++#define EIC7700_CLK_GATE_VI_DFT500M			298
++#define EIC7700_CLK_GATE_VO_DFT300M			299
++#define EIC7700_CLK_GATE_VO_DFT600M			300
++#define EIC7700_CLK_GATE_D2D_DFT300M			301
++#define EIC7700_CLK_GATE_D2D_DFT600M			302
++#define EIC7700_CLK_GATE_PCIE_DFT125M			303
++#define EIC7700_CLK_GATE_PCIE_DFT200M			304
++#define EIC7700_CLK_GATE_DDR_PLL_BYP_CLK		305
++#define EIC7700_CLK_GATE_DDR_RX_TEST_CLK		306
++#define EIC7700_CLK_GATE_LSP_I2C0_PCLK			307
++#define EIC7700_CLK_GATE_LSP_I2C1_PCLK			308
++#define EIC7700_CLK_GATE_LSP_I2C2_PCLK			309
++#define EIC7700_CLK_GATE_LSP_I2C3_PCLK			310
++#define EIC7700_CLK_GATE_LSP_I2C4_PCLK			311
++#define EIC7700_CLK_GATE_LSP_I2C5_PCLK			312
++#define EIC7700_CLK_GATE_LSP_I2C6_PCLK			313
++#define EIC7700_CLK_GATE_LSP_I2C7_PCLK			314
++#define EIC7700_CLK_GATE_LSP_I2C8_PCLK			315
++#define EIC7700_CLK_GATE_LSP_I2C9_PCLK			316
++#define EIC7700_CLK_GATE_LSP_WDT0_PCLK			317
++#define EIC7700_CLK_GATE_LSP_WDT1_PCLK			318
++#define EIC7700_CLK_GATE_LSP_WDT2_PCLK			319
++#define EIC7700_CLK_GATE_LSP_WDT3_PCLK			320
++#define EIC7700_CLK_GATE_LSP_SSI0_PCLK			321
++#define EIC7700_CLK_GATE_LSP_SSI1_PCLK			322
++#define EIC7700_CLK_GATE_LSP_PVT_PCLK			323
++#define EIC7700_CLK_GATE_AON_I2C0_PCLK			324
++#define EIC7700_CLK_GATE_AON_I2C1_PCLK			325
++#define EIC7700_CLK_GATE_LSP_UART0_PCLK			326
++#define EIC7700_CLK_GATE_LSP_UART1_PCLK			327
++#define EIC7700_CLK_GATE_LSP_UART2_PCLK			328
++#define EIC7700_CLK_GATE_LSP_UART3_PCLK			329
++#define EIC7700_CLK_GATE_LSP_UART4_PCLK			330
++#define EIC7700_CLK_GATE_LSP_TIMER_PCLK			331
++#define EIC7700_CLK_GATE_LSP_FAN_PCLK			332
++#define EIC7700_CLK_GATE_LSP_PVT0_CLK			333
++#define EIC7700_CLK_GATE_LSP_PVT1_CLK			334
++#define EIC7700_CLK_GATE_VC_JE_PCLK			335
++#define EIC7700_CLK_GATE_VC_JD_PCLK			336
++#define EIC7700_CLK_GATE_VC_VE_PCLK			337
++#define EIC7700_CLK_GATE_VC_VD_PCLK			338
++#define EIC7700_CLK_GATE_VC_MON_PCLK			339
++#define EIC7700_CLK_GATE_HSP_DMA0_CLK			340
++#define EIC7700_CLK_GATE_HSP_DMA0_CLK_TEST		341
++#define EIC7700_CLK_FIXED_FACTOR_CPU_DIV2		342
++#define EIC7700_CLK_FIXED_FACTOR_CLK_1M_DIV24		343
++#define EIC7700_CLK_FIXED_FACTOR_MIPI_TXESC_DIV10	344
++#define EIC7700_CLK_FIXED_FACTOR_U84_CORE_LP_DIV2	345
++#define EIC7700_CLK_FIXED_FACTOR_SCPU_BUS_DIV2		346
++#define EIC7700_CLK_FIXED_FACTOR_LPCPU_BUS_DIV2		347
++#define EIC7700_CLK_FIXED_FACTOR_PCIE_CR_DIV2		348
++#define EIC7700_CLK_FIXED_FACTOR_PCIE_AUX_DIV4		349
++#define EIC7700_CLK_FIXED_FACTOR_PVT_DIV20		350
++#define EIC7700_CLK_FIXED_FACTOR_DFT100M_DIV4		351
++#define EIC7700_CLK_FIXED_FACTOR_DFT125M_DIV2		352
++#define EIC7700_CLK_FIXED_FACTOR_DFT150M_DIV2		353
++#define EIC7700_CLK_FIXED_FACTOR_DFT100M_DIV2		354
++#define EIC7700_CLK_FIXED_FACTOR_DFT500M_DIV3		355
++#define EIC7700_CLK_FIXED_FACTOR_DFT500M_DIV2		356
++#define EIC7700_CLK_FIXED_FACTOR_SPLL0_TEST_DIV8	357
++#define EIC7700_CLK_FIXED_FACTOR_SPLL1_TEST_DIV6	358
++#define EIC7700_CLK_FIXED_FACTOR_SPLL2_TEST_DIV4	359
++#define EIC7700_CLK_FIXED_FACTOR_DDR_DIV8		360
++#define EIC7700_CLK_FIXED_FACTOR_HSP_RMII_REF_DIV6	361
++
++#endif /* _DT_BINDINGS_ESWIN_EIC7700_CLOCK_H_ */
 --
 2.43.0
 
