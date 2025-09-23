@@ -1,286 +1,358 @@
-Return-Path: <linux-kernel+bounces-828023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B8F7B93C0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:53:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F278AB93C1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 501C616DBA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:53:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE3AA19C157E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C3B1A9FB5;
-	Tue, 23 Sep 2025 00:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5996F2BD11;
+	Tue, 23 Sep 2025 00:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gpq/IUVU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="otohyrUY"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9312BD11
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 00:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011A61922F5
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 00:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758588824; cv=none; b=bncRYOzH1MsTpVgbSsnyznWQBKs52NvBCKHoUtkHXS7arYUS/CoDDOK/RZNgSzANR89U2tIdoZ43edFeP8zlO9slcYXI2CTttvabUeX5zDI8SChU3XSm6hwZipSuQZkW+k/uK9jMN4GXlNJo+GrUwlQcPEbEKg8bBdMt6l8okj0=
+	t=1758588846; cv=none; b=nalZwKsNGimSVlElOT7v2jV9SMtn1s/GFpTgq8L7jCnRl8j/XTBMaJGRxJuC3OK7JPYg6g6eEo3/VYlvM4O/R+P3vXv8r/ZHZwixaqaMCYoPGH9+Kt2xoTa5x804YtyE/QUIKpN8v7rfEqWZ7C4em0DweZ6FnD52XstoSVCgk6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758588824; c=relaxed/simple;
-	bh=WWWkHOpn3IgGqTtSIOg05sK4Ccj2qE6ABMFEkhUu9uY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJR1S/Q5a3J6dV5FEFF67PTQocww5gUSnIc0xSregTU/GsTNNv/2rMycZ4443MUIyrIkSKCCILBkFK4evs49RLql5ETkhS0ZeD933ajdvJAONKlkoHjeNl0fjjSiUg3wcuzck1SAbvoAM8R6dVgut+SXIfc32uOQ5uS6sRxDCEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gpq/IUVU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58MG8VOj008465
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 00:53:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=A0ejDteovNx3lutfqEZ0wERW
-	05YuCdNkebjmQBOXb0g=; b=gpq/IUVUQeuJL29Sk9CaWGVUYqwfP4WdpIRvhTAF
-	DGtqU5bpSnPDIFJ0xfnym2lQvxnN2xaf6HS4MCk/BAZlEb4e6cQf2uwqZ8xncyr+
-	Ev716gHbvECMHcvaZ5GcEym/6Bf0aWUReZHV/uFqoHp24zP2AVKXE0whJ0BUFdNh
-	vd4pXmThgaDkqgDSSaRLt0SXPiNzAC6UG72qEI6Ip62svVwx8a74Ms3RjL/F1vgT
-	XqMzumsgN4BVlfomQ+9OKYNvpUHlDTUtFjkhWZmy/Q9GviB55q73k5Mcoshpbzv0
-	rVqX8A/3N3g4mGkvwYN9/K3liaFlCuFiGNgsIrlWHzlMIw==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499mn7en7t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 00:53:41 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-795cd25af0aso47525976d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:53:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758588820; x=1759193620;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A0ejDteovNx3lutfqEZ0wERW05YuCdNkebjmQBOXb0g=;
-        b=Mf0XbzcKx6hzJDLxZaIRU7gzqAiIG4TWFQGfG7pcKJBB+9bdEzVJEBidb/jKx5ooIB
-         e5+h6Qf9zvfc7LYd8R6IhVqYiCmtBlfPRduUBD9wRRxHmxBheN1a6zyuCUVZON+kZKuU
-         yR50IYrRUcGqJr2vesQD7gmAFLIKIJU76DS61vaFKZmbqnMUnI6PhQD5M6lDtiw351Li
-         XCp0iQYqpJXIZUtjCAwk2DHxh8/CcOCz6NnK8jvN++Uqeynzjy0eGoO6cARe2lLKuL1Q
-         9aYdK60uwqV3oIshNt/APfTQ1ORiETmkh8m1jY7CK2i9bPDU1MQ6jmkihg6Lo7S+TE0h
-         UfrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVkMFgdh99PQ271Ua4WYo7MknTmCtQA2jvX6xGjml71zQkuHinLQVuT3/IINC+wp0lpNxPASGTXIj/AT+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl9ICgvpZbZdbQJlw6uS8dZIxSIjK1vZQKpihJJa25fFtCwWWB
-	e7bgymfyczLNMr/cJVQdy260iRnWKrstTXh0Sl+N8FXOoNqAhsxNkD2s3o0MSUcgsW9mEQMghjN
-	ozpj/eBxjavLWrVRMWrk//KBVu9XFn9oI9VRAY1OdvIox0QHJGN6Z5yXzCmyD1NdsZiA=
-X-Gm-Gg: ASbGnctQkUvAM4JwtXJqvcJFUTiUBrIKcnlcCpRHS0pB4YccZ87o/UyBqg4sP43BcsY
-	Y/4Wpp2j2mRHg/blsrM83dfDqkos/JNHn4KHB7bbvM6lbrZ7734PakHKg8JRvwvIcilzr2dY3dp
-	2pbgwgwWfTseeWo3+kgij79nfazn8cZP6n5+BX3P29vAp5Wfb4QF7qhy4Hg4PX6K+Ef6ry6PQD6
-	wM29EyQE7UIwuFgJi+Y7SqP08s24eO14CtdJNyY+gSq/qWTaXEBpk41xovVDtzNdCqIToqje56d
-	GhiAYB4JjJAJFxkfj+h58l6jXxL8BC13B7btIg3PY2Qv9dSZ7VR1QMzyQ40I6yHCv/Y3MomIpGZ
-	SyZpZnBDlcLQ5we49+SfVgRfEavA4StfSlEvxDC9rAwJ5xkPK9W0/
-X-Received: by 2002:a05:6214:dac:b0:792:50bd:2fa8 with SMTP id 6a1803df08f44-7e7027cf866mr10593236d6.30.1758588820090;
-        Mon, 22 Sep 2025 17:53:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFCVW+jgFymH6ugT8RZ+VX3dkHRF5VrlyFvp+GIT+bYXUiMJUgbOusL9ZRVnMDthCoKsQIBCA==
-X-Received: by 2002:a05:6214:dac:b0:792:50bd:2fa8 with SMTP id 6a1803df08f44-7e7027cf866mr10592946d6.30.1758588819402;
-        Mon, 22 Sep 2025 17:53:39 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-57b7e33b78bsm2160908e87.45.2025.09.22.17.53.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 17:53:38 -0700 (PDT)
-Date: Tue, 23 Sep 2025 03:53:36 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Drew Fustini <fustini@kernel.org>,
-        Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Michal Wilczynski <m.wilczynski@samsung.com>,
-        Han Gao <rabenda.cn@gmail.com>, Yao Zi <ziyao@disroot.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 3/8] drm: verisilicon: add a driver for Verisilicon
- display controllers
-Message-ID: <a46szgmjrwgqhv5issuijyvih4tof3xa45tdhxv4qjplekszpz@55tgbkeby7zr>
-References: <20250921083446.790374-1-uwu@icenowy.me>
- <20250921083446.790374-4-uwu@icenowy.me>
+	s=arc-20240116; t=1758588846; c=relaxed/simple;
+	bh=k3I4yoQWlYW8RaG3vYcx9XWCVtfKEFR4QSZqQ2hTEDI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=QZs2Irs1YzvUgAPVjt1HLpUnW+jsEdWmoHpxRVHCs12CC1FJD5Y6r/tPwGkWj2XJ4rTzU4349WWDDPr3WjVIk+Z4lX2yM2ityfKPbwD7mmHafns2U0PxqY3xI+gEV1A+i/riSqTW2gEZ1tGrBs1bwi3woYarZ6+2ZJIxV+DNTw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=otohyrUY; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250923005401epoutp0293336837d9bfbd179b5c62f3349a2238~nwzv5gLWv1943819438epoutp02T
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 00:54:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250923005401epoutp0293336837d9bfbd179b5c62f3349a2238~nwzv5gLWv1943819438epoutp02T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758588841;
+	bh=0icZwGq6l6trj5m8kiyot8z07Evuj931KewICxfmrA0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=otohyrUYrfg89CB6iep/4Blgcw316CaCY9Ze4fGymgPL3NLb4lAHCkiqU7sQZGoBw
+	 s8mB4UZjAndBJCZ09LyTRR5ofZz68puAE2yg7EZnBIba3fIKU0Sp3RixV1UzNpfGUu
+	 WhY8w4lDG50mlvgjH63gHJhONoRrx6lOcqT1xB0I=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250923005400epcas2p4d217865e5715affdeab93832c32ea661~nwzu8bTEn1878118781epcas2p4R;
+	Tue, 23 Sep 2025 00:54:00 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.36.70]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cW1h76Mw1z2SSKx; Tue, 23 Sep
+	2025 00:53:59 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250923005359epcas2p419655d2bdb7de8ea6e0e60556660ac14~nwzte59Ee2370523705epcas2p4p;
+	Tue, 23 Sep 2025 00:53:59 +0000 (GMT)
+Received: from KORCO115296 (unknown [12.80.207.128]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250923005359epsmtip26a98a0660041a34e46c9d4ee172226d5~nwztZPk940718307183epsmtip27;
+	Tue, 23 Sep 2025 00:53:59 +0000 (GMT)
+From: =?ks_c_5601-1987?B?vNW9xQ==?= <shin.son@samsung.com>
+To: "'Henrik Grimler'" <henrik@grimler.se>
+Cc: "'Bartlomiej Zolnierkiewicz'" <bzolnier@gmail.com>, "'Krzysztof
+ Kozlowski'" <krzk@kernel.org>, "'Rafael J . Wysocki'" <rafael@kernel.org>,
+	"'Daniel Lezcano'" <daniel.lezcano@linaro.org>, "'Zhang Rui'"
+	<rui.zhang@intel.com>, "'Lukasz Luba'" <lukasz.luba@arm.com>, "'Rob
+	Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>, "'Alim
+	Akhtar'" <alim.akhtar@samsung.com>, <linux-pm@vger.kernel.org>,
+ <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <20250922200430.GA4697@l14.localdomain>
+Subject: RE: [PATCH v4 2/3] thermal: exynos_tmu: Support new hardware and
+ update TMU interface
+Date: Tue, 23 Sep 2025 09:53:53 +0900
+Message-ID: <000001dc2c24$8be7a090$a3b6e1b0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250921083446.790374-4-uwu@icenowy.me>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzMyBTYWx0ZWRfXx17XExpqN4qk
- 96SAgjV82qhQL9iLBqtoMWups/G/fNiP9EEfOh1mGj9IUr7ea7KDURB/tKqQe8ni5ZAk9DXjASS
- 8J55Ls2KgfLXOYRpUbQ4coFbxVywtJbdY2ux2O+rX6LwZanUJfSQVijS6pbLkHqv9bvzEaUZzNk
- O0mzQ18NTNvGZSeRn0jYiOyhsBpwWhAZz4N4aPWhGY6hOedOHvzioX7Q/FQ4NWJFh+wSK5SH3aL
- TLLS1ibKAxIg48NjM3woqLdYd81+HIOBI7ho5JXEucT7O0DUKSqq2hT8p8r0aq2lO4wXSfloGFi
- sc4GE28dJ1WFX6eUTVzv09mENzxLCUpWzY4E7YkGaQuN8V5Zb6LxhxsEVa6arEJP1WEjfdnIQ3j
- 2Fx1j+JL
-X-Proofpoint-GUID: FVhOfC0f0pvgn4FlNQO9Jb3Xv7M4ujrG
-X-Proofpoint-ORIG-GUID: FVhOfC0f0pvgn4FlNQO9Jb3Xv7M4ujrG
-X-Authority-Analysis: v=2.4 cv=EZrIQOmC c=1 sm=1 tr=0 ts=68d1ef95 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=UYI74FSAo_19EvzY_j0A:9 a=CjuIK1q_8ugA:10
- a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-22_05,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 phishscore=0 suspectscore=0 priorityscore=1501
- impostorscore=0 bulkscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509200033
+Content-Type: text/plain; charset="ks_c_5601-1987"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQLNrO/s5c6r06mWwaZxWViDEkHfogKWIOg4AX/6Z7UBj0CC7bKPv5FA
+Content-Language: ko
+X-CMS-MailID: 20250923005359epcas2p419655d2bdb7de8ea6e0e60556660ac14
+X-Msg-Generator: CA
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250922041902epcas2p3e40ed58737b22b7af9d09f6ba362928d
+References: <20250922041857.1107445-1-shin.son@samsung.com>
+	<CGME20250922041902epcas2p3e40ed58737b22b7af9d09f6ba362928d@epcas2p3.samsung.com>
+	<20250922041857.1107445-3-shin.son@samsung.com>
+	<20250922200430.GA4697@l14.localdomain>
 
-On Sun, Sep 21, 2025 at 04:34:41PM +0800, Icenowy Zheng wrote:
-> This is a from-scratch driver targeting Verisilicon DC-series display
-> controllers, which feature self-identification functionality like their
-> GC-series GPUs.
+Hello Henrik Grimler
+
+> -----Original Message-----
+> From: Henrik Grimler [mailto:henrik@grimler.se]
+> Sent: Tuesday, September 23, 2025 5:05 AM
+> To: Shin Son <shin.son@samsung.com>
+> Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>; Krzysztof Kozlowski
+> <krzk@kernel.org>; Rafael J . Wysocki <rafael@kernel.org>; Daniel Lezcano
+> <daniel.lezcano@linaro.org>; Zhang Rui <rui.zhang@intel.com>; Lukasz Luba
+> <lukasz.luba@arm.com>; Rob Herring <robh@kernel.org>; Conor Dooley
+> <conor+dt@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>; linux-
+> pm@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH v4 2/3] thermal: exynos_tmu: Support new hardware and
+> update TMU interface
 > 
-> Only DC8200 is being supported now, and only the main framebuffer is set
-> up (as the DRM primary plane). Support for more DC models and more
-> features is my further targets.
+> Hi Shin,
 > 
-> As the display controller is delivered to SoC vendors as a whole part,
-> this driver does not use component framework and extra bridges inside a
-> SoC is expected to be implemented as dedicated bridges (this driver
-> properly supports bridge chaining).
+> On Mon, Sep 22, 2025 at 01:18:56PM +0900, Shin Son wrote:
+> > The Exynos tmu driver's private data structure has been extended to
+> > support the exynosautov920 hardware, which requires per-sensor
+> > interrupt enablement and multiple-zone handling:
+> >
+> > - Add 'slope_comp' : compensation parameter below 25 degrees.
+> > - Add 'calib_temp' : stores the fused calibaration temperature.
+> > - Add 'sensor_count' : reflects the maximum sensor numbers.
+> > - Rename 'tzd' -> 'tzd_array' to register multiple thermal zones.
+> >
+> > Since splitting this patch causes runtime errors during temperature
+> > emulation or problems where the read temperature feature fails to
+> > retrieve values, I have submitted it as a single commit. To add
+> > support for the exynosautov920 to the exisiting TMU interface, the
+> > following changes are included:
+> >
+> > 1. Simplify "temp_to_code" and "code_to_temp" to one computation path
+> >    by normalizing calib_temp.
+> > 2. Loop over 'sensor_count' in critical-point setup.
+> > 3. Introduce 'update_con_reg' for exynosautov920 control-register
+> updates.
+> > 4. Add exynosautov920-specific branch in 'exynos_tmu_update_temp'
+> function.
+> > 5. Skip high & low temperature threshold setup in exynosautov920.
+> > 6. Enable interrupts via sensor_count in exynosautov920.
+> > 7. Initialize all new members during 'exynosautov920_tmu_initialize'.
+> > 8. Clear IRQs by iterating the sensor_count in exynosautov920.
+> > 9. Register each zone with 'devm_thermal_of_zone_register()'
+> >    based on 'sensor_count'.
+> >
+> > Signed-off-by: Shin Son <shin.son@samsung.com>
+> > ---
+> >  drivers/thermal/samsung/exynos_tmu.c | 322
+> > ++++++++++++++++++++++++---
+> >  1 file changed, 285 insertions(+), 37 deletions(-)
+> >
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.c
+> > b/drivers/thermal/samsung/exynos_tmu.c
+> > index 47a99b3c5395..ebcc38f3fff6 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+> > @@ -121,8 +121,51 @@
+> >
+> >  #define EXYNOS_NOISE_CANCEL_MODE		4
+> >
+> > +/* ExynosAutov920 specific registers */
+> > +#define EXYNOSAUTOV920_SLOPE_COMP		25
+> > +#define EXYNOSAUTOV920_SLOPE_COMP_MASK		0xf
+> > +#define EXYNOSAUTOV920_CALIB_SEL_TEMP		30
+> > +#define EXYNOSAUTOV920_CALIB_SEL_TEMP_MASK	0x2
+> > +
+> > +#define EXYNOSAUTOV920_SENSOR0_TRIM_INFO	0x10
+> > +#define EXYNOSAUTOV920_TRIM_MASK		0x1ff
+> > +#define EXYNOSAUTOV920_TRIMINFO_25_SHIFT	0
+> > +#define EXYNOSAUTOV920_TRIMINFO_85_SHIFT	9
+> > +
+> > +#define EXYNOSAUTOV920_TMU_REG_TRIMINFO2	0x04
+> > +
+> > +#define EXYNOSAUTOV920_TMU_REG_THRESHOLD(p)	(((p)) * 0x50 +
+0x00d0)
+> > +#define EXYNOSAUTOV920_TMU_REG_INTEN(p)		(((p)) * 0x50 +
+> 0x00f0)
+> > +#define EXYNOSAUTOV920_TMU_REG_INT_PEND(p)	(((p)) * 0x50 + 0x00f8)
+> > +
+> > +#define EXYNOSAUTOV920_CURRENT_TEMP_P1_P0	0x084
+> > +#define EXYNOSAUTOV920_TMU_REG_EMUL_CON		0x0b0
+> > +
+> > +#define EXYNOSAUTOV920_TMU_REG_CONTROL		0x50
+> > +#define EXYNOSAUTOV920_TMU_REG_CONTROL1		0x54
+> > +#define EXYNOSAUTOV920_TMU_REG_AVG_CONTROL	0x58
+> > +#define EXYNOSAUTOV920_TMU_SAMPLING_INTERVAL	0x70
+> > +#define EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE0	0x74
+> > +#define EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE1	0x78
+> > +
+> > +#define EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_SHIFT		8
+> > +#define EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_MASK		0x1f
+> > +#define EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_SHIFT	3
+> > +#define EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_MASK		0xf
+> > +#define EXYNOSAUTOV920_TMU_NUM_PROBE_MASK		0xf
+> > +#define EXYNOSAUTOV920_TMU_NUM_PROBE_SHIFT		16
+> > +#define EXYNOSAUTOV920_TMU_LPI_MODE_MASK		1
+> > +#define EXYNOSAUTOV920_TMU_LPI_MODE_SHIFT		10
+> > +
+> > +#define EXYNOSAUTOV920_TMU_AVG_CON_UPDATE		0x0008011a
+> > +#define EXYNOSAUTOV920_TMU_COUNTER_VALUE0_UPDATE	0x030003c0
+> > +#define EXYNOSAUTOV920_TMU_COUNTER_VALUE1_UPDATE	0x03c0004d
+> > +
+> >  #define MCELSIUS	1000
+> >
+> > +#define EXYNOS_DEFAULT_SENSOR_COUNT			1
+> > +#define EXYNOS_MAX_SENSOR_COUNT				16
 > 
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> ---
-> Changes in v2:
-> - Changed some Control flows according to previous reviews.
-> - Added missing of_node_put when checking of endpoints for output type.
-> - Switched all userspace-visible modeset objects to be managed by drmm
->   instead of devm.
-> - Utilize devm_drm_bridge_alloc() in internal bridge.
-> - Prevented the usage of simple encoder helpers by passing a NULL funcs pointer.
-> - Let devm enable clocks when getting them.
-> - Removed explicit `.cache_type = REGCACHE_NONE` in regmap config.
-> - Fixed a debug print using a variable before initialization.
-> - Fixed a wrong index when using bulk to handle resets.
-> - Added missing configuration for DPI format (currently fixed RGB888).
+> In patch 1, sensor count is described as a value 0 <= sensor_count <= 15,
+> but here max sensor count value is set to 16. Shouldn't max value be the
+> same in these two places, what is the maximum number of thermal sensors
+> that the hardware can have?
+
+Sorry for the confusion. It actually refers to the maximum number of remote
+sensors.
+I'll change it to 15.
+
 > 
->  drivers/gpu/drm/Kconfig                       |   2 +
->  drivers/gpu/drm/Makefile                      |   1 +
->  drivers/gpu/drm/verisilicon/Kconfig           |  15 +
->  drivers/gpu/drm/verisilicon/Makefile          |   5 +
->  drivers/gpu/drm/verisilicon/vs_bridge.c       | 330 ++++++++++++++++++
->  drivers/gpu/drm/verisilicon/vs_bridge.h       |  40 +++
->  drivers/gpu/drm/verisilicon/vs_bridge_regs.h  |  54 +++
->  drivers/gpu/drm/verisilicon/vs_crtc.c         | 217 ++++++++++++
->  drivers/gpu/drm/verisilicon/vs_crtc.h         |  29 ++
->  drivers/gpu/drm/verisilicon/vs_crtc_regs.h    |  60 ++++
->  drivers/gpu/drm/verisilicon/vs_dc.c           | 205 +++++++++++
->  drivers/gpu/drm/verisilicon/vs_dc.h           |  39 +++
->  drivers/gpu/drm/verisilicon/vs_dc_top_regs.h  |  27 ++
->  drivers/gpu/drm/verisilicon/vs_drm.c          | 177 ++++++++++
->  drivers/gpu/drm/verisilicon/vs_drm.h          |  29 ++
->  drivers/gpu/drm/verisilicon/vs_hwdb.c         | 150 ++++++++
->  drivers/gpu/drm/verisilicon/vs_hwdb.h         |  29 ++
->  drivers/gpu/drm/verisilicon/vs_plane.c        | 102 ++++++
->  drivers/gpu/drm/verisilicon/vs_plane.h        |  68 ++++
->  .../gpu/drm/verisilicon/vs_primary_plane.c    | 157 +++++++++
->  .../drm/verisilicon/vs_primary_plane_regs.h   |  53 +++
->  21 files changed, 1789 insertions(+)
->  create mode 100644 drivers/gpu/drm/verisilicon/Kconfig
->  create mode 100644 drivers/gpu/drm/verisilicon/Makefile
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_bridge.c
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_bridge.h
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_bridge_regs.h
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_crtc.c
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_crtc.h
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_crtc_regs.h
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_dc.c
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_dc.h
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_dc_top_regs.h
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_drm.c
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_drm.h
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_hwdb.c
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_hwdb.h
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_plane.c
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_plane.h
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_primary_plane.c
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_primary_plane_regs.h
+> >  enum soc_type {
+> >  	SOC_ARCH_EXYNOS3250 = 1,
+> >  	SOC_ARCH_EXYNOS4210,
+> > @@ -133,6 +176,7 @@ enum soc_type {
+> >  	SOC_ARCH_EXYNOS5420_TRIMINFO,
+> >  	SOC_ARCH_EXYNOS5433,
+> >  	SOC_ARCH_EXYNOS7,
+> > +	SOC_ARCH_EXYNOSAUTOV920,
+> >  };
+> >
+
+...
+
+> >  static int temp_to_code(struct exynos_tmu_data *data, u8 temp)  {
+> > +	s32 temp_diff, code;
+> > +
+> >  	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
+> >  		return temp + data->temp_error1 - EXYNOS_FIRST_POINT_TRIM;
+> >
+> > -	return (temp - EXYNOS_FIRST_POINT_TRIM) *
+> > -		(data->temp_error2 - data->temp_error1) /
+> > -		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) +
+> > -		data->temp_error1;
+> > +	temp_diff = temp - EXYNOS_FIRST_POINT_TRIM;
+> > +
+> > +	code = temp_diff * (data->temp_error2 - data->temp_error1) *
+> MCELSIUS /
+> > +	       (data->calib_temp - EXYNOS_FIRST_POINT_TRIM);
+> > +
+> > +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920 && temp_diff < 0)
+> > +		code = code * (57 + data->slope_comp) / 65;
+> > +
+> > +	return code / MCELSIUS + data->temp_error1;
+> >  }
+> >
+> >  /*
+> > @@ -220,13 +277,20 @@ static int temp_to_code(struct exynos_tmu_data
+> *data, u8 temp)
+> >   */
+> >  static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
+> > {
+> > +	s32 code_diff, temp;
+> > +
+> >  	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
+> >  		return temp_code - data->temp_error1 +
+> EXYNOS_FIRST_POINT_TRIM;
+> >
+> > -	return (temp_code - data->temp_error1) *
+> > -		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
+> > -		(data->temp_error2 - data->temp_error1) +
+> > -		EXYNOS_FIRST_POINT_TRIM;
+> > +	code_diff = temp_code - data->temp_error1;
+> > +
+> > +	temp = code_diff * (data->calib_temp - EXYNOS_FIRST_POINT_TRIM) *
+> MCELSIUS /
+> > +	       (data->temp_error2 - data->temp_error1);
+> > +
+> > +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920 && code_diff < 0)
+> > +		temp = temp * 65 / (57 + data->slope_comp);
+> > +
+> > +	return temp / MCELSIUS + EXYNOS_FIRST_POINT_TRIM;
+> >  }
 > 
-> +
-> +static int vs_bridge_atomic_check(struct drm_bridge *bridge,
-> +				  struct drm_bridge_state *bridge_state,
-> +				  struct drm_crtc_state *crtc_state,
-> +				  struct drm_connector_state *conn_state)
-> +{
-> +	struct vs_bridge *vbridge = drm_bridge_to_vs_bridge(bridge);
-> +
-> +	if (vbridge->intf == VSDC_OUTPUT_INTERFACE_DP &&
-> +	    !vs_bridge_out_dp_fmt_supported(bridge_state->output_bus_cfg.format))
-> +		return -EINVAL;
+> Nice, these two functions looks much better compared to v2!
 
-I still think that it's better to have per-interface type bridge funcs
-rather than checking for the interface type inside the function.
+Thank you for your advice!
 
-> +
-> +	vbridge->output_bus_fmt = bridge_state->output_bus_cfg.format;
-> +
-> +	return 0;
-> +}
-> +
-> +
-> +	bridge = devm_drm_bridge_alloc(drm_dev->dev, struct vs_bridge, base,
-> +				       &vs_bridge_funcs);
-> +	if (!bridge)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	bridge->crtc = crtc;
-> +	bridge->intf = intf;
-> +	bridge->next = next;
-> +
-> +	if (intf == VSDC_OUTPUT_INTERFACE_DPI)
-> +		enctype = DRM_MODE_ENCODER_DPI;
-> +	else
-> +		enctype = DRM_MODE_ENCODER_NONE;
+> 
+> >  static void sanitize_temp_error(struct exynos_tmu_data *data, u32
+> > trim_info) @@ -262,6 +326,9 @@ static int exynos_tmu_initialize(struct
+> platform_device *pdev)
 
-Nit: DRM_MODE_ENCODER_TMDS ?
+...
 
-> +
-> +	bridge->enc = drmm_plain_encoder_alloc(drm_dev, NULL, enctype, NULL);
-> +	if (IS_ERR(bridge->enc)) {
-> +		dev_err(drm_dev->dev,
-> +			"Cannot initialize encoder for output %u\n", output);
-> +		ret = PTR_ERR(bridge->enc);
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	bridge->enc->possible_crtcs = drm_crtc_mask(&crtc->base);
-> +
-> +	ret = drm_bridge_attach(bridge->enc, &bridge->base, NULL,
-> +				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-> +	if (ret) {
-> +		dev_err(drm_dev->dev,
-> +			"Cannot attach bridge for output %u\n", output);
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	bridge->conn = drm_bridge_connector_init(drm_dev, bridge->enc);
-> +	if (IS_ERR(bridge->conn)) {
-> +		dev_err(drm_dev->dev,
-> +			"Cannot create connector for output %u\n", output);
-> +		ret = PTR_ERR(bridge->conn);
-> +		return ERR_PTR(ret);
-> +	}
-> +	drm_connector_attach_encoder(bridge->conn, bridge->enc);
-> +
-> +	return bridge;
-> +}
+> > @@ -865,6 +1079,10 @@ static int exynos_map_dt_data(struct
+> > platform_device *pdev)
+> >
+> >  	data->soc = (uintptr_t)of_device_get_match_data(&pdev->dev);
+> >
+> > +	data->sensor_count = EXYNOS_DEFAULT_SENSOR_COUNT;
+> > +
+> > +	data->calib_temp = EXYNOS_SECOND_POINT_TRIM;
+> > +
+> >  	switch (data->soc) {
+> >  	case SOC_ARCH_EXYNOS4210:
+> >  		data->tmu_set_low_temp = exynos4210_tmu_set_low_temp; @@ -
+> 945,6
+> > +1163,19 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+> >  		data->min_efuse_value = 15;
+> >  		data->max_efuse_value = 100;
+> >  		break;
+> > +	case SOC_ARCH_EXYNOSAUTOV920:
+> > +		data->tmu_set_low_temp = exynosautov920_tmu_set_low_temp;
+> > +		data->tmu_set_high_temp = exynosautov920_tmu_set_high_temp;
+> > +		data->tmu_disable_low = exynosautov920_tmu_disable_low;
+> > +		data->tmu_disable_high = exynosautov920_tmu_disable_high;
+> > +		data->tmu_set_crit_temp = exynosautov920_tmu_set_crit_temp;
+> > +		data->tmu_initialize = exynosautov920_tmu_initialize;
+> > +		data->tmu_control = exynosautov920_tmu_control;
+> > +		data->tmu_read = exynosautov920_tmu_read;
+> > +		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
+> > +		data->tmu_clear_irqs = exynosautov920_tmu_clear_irqs;
+> > +		data->sensor_count = EXYNOS_MAX_SENSOR_COUNT;
+> > +		break;
+> >  	default:
+> >  		dev_err(&pdev->dev, "Platform not supported\n");
+> >  		return -EINVAL;
+> > @@ -952,6 +1183,14 @@ static int exynos_map_dt_data(struct
+> > platform_device *pdev)
+> >
+> >  	data->cal_type = TYPE_ONE_POINT_TRIMMING;
+> >
+> > +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920) {
+> > +		if (of_property_read_u32(pdev->dev.of_node,
+> "samsung,sensors",
+> > +					 &data->sensor_count)) {
+> > +			dev_err(&pdev->dev, "failed to get sensor count\n");
+> > +			return -ENODEV;
+> > +		}
+> > +	}
+> 
+> Do we really need the `if (data->soc == SOC_ARCH_EXYNOSAUTOV920)` here, I
+> am sure there will be more socs that use samsung,sensors. Can't we simply
+> read samsung,sensors for all socs and use EXYNOS_DEFAULT_SENSOR_COUNT if
+> it fails, or would it be potentially dangerous if samsung,sensors is
+> missing for autov920 dtb and default value of 1 is used?
+> 
+> Best regards,
+> Henrik Grimler
+> 
 
-Other than that LGTM.
+Yes. Incorrect remote-sensor settings can affect TMU operation. For
+example, when the sensor count is set to 1,
+The thermal zone doesn't function properly and the hardware trip doesn't
+assert on the v920 variant.
+I consider that configuration unsafe, so I added variant-specific handling
+for that SoC.
+Meanwhile, the other variant legitimately uses only a single sensor.
 
--- 
-With best wishes
-Dmitry
+
 
