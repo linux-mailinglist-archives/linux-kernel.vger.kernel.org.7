@@ -1,198 +1,157 @@
-Return-Path: <linux-kernel+bounces-828823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22628B958FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:07:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85CEEB9592A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B391B3B5556
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:07:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CDBA4A454E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A695231197E;
-	Tue, 23 Sep 2025 11:07:09 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE8C321F25;
+	Tue, 23 Sep 2025 11:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j2zANbbo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAB0182B4;
-	Tue, 23 Sep 2025 11:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E429281530;
+	Tue, 23 Sep 2025 11:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758625629; cv=none; b=ZXSDsYyDFyOWDpBLRkLWp4ZVW1oUNL60fgQW/MRra52SEeX1qDZUt1iXbkAn5wrJzdTe/szbibdyorvPZr8YzUhdS4HP2UgDXsbk0HZ9a/wRWLG3Y3rM6i75KsImbbhZZMrV0bM541BrdroKQLEGq7+OclSyZ8Bzf7n0R4c+aKU=
+	t=1758625672; cv=none; b=tTsOcvGd9tHh+rSH5C0g9ZbPcX7i0Kc96eAkSAWyk3wX5zIY9JRy2U1o+Cm9RK4hjcy7CrUhgORGtZZdYn1+CD/Cjcft1eDlViqpIP6mTUs8W43pSmkNq6aucsU353NZFaAvweAC3Ui/p0GMZRlOygNgnhY3aQddpEz6uPCFxCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758625629; c=relaxed/simple;
-	bh=iqyLva5ENeFJt1XjKaPRFvMGlYqucYojIW/YfbuQ9gM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XXIwNrGa5YxrH7Sgvk0d1bDH8bujGtH9fyBAJwExqUfv/uhcPVOeBC2w28g+RyxykPTVnhl6mq9Z+vkGkAFsdswlLPK6qJzr7qrhQ8VMhAY93+Y3TtUckLSVYcHz+aHtYaIAzdnr+M6VnW0RoXCleLolguPc59fXHrulXOS7TXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cWHB75Np6z2CgP5;
-	Tue, 23 Sep 2025 19:02:23 +0800 (CST)
-Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
-	by mail.maildlp.com (Postfix) with ESMTPS id DAA421A016C;
-	Tue, 23 Sep 2025 19:07:01 +0800 (CST)
-Received: from huawei.com (10.50.85.135) by dggpemf200018.china.huawei.com
- (7.185.36.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 23 Sep
- 2025 19:07:01 +0800
-From: Quanmin Yan <yanquanmin1@huawei.com>
-To: <simona@ffwll.ch>
-CC: <deller@gmx.de>, <linux-kernel@vger.kernel.org>,
-	<linux-fbdev@vger.kernel.org>, <=dri-devel@lists.freedesktop.org>,
-	<yanquanmin1@huawei.com>, <wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>,
-	<sunnanyong@huawei.com>
-Subject: [PATCH] fbcon: Set fb_display[i]->mode to NULL when the mode is released
-Date: Tue, 23 Sep 2025 19:06:08 +0800
-Message-ID: <20250923110608.3385083-1-yanquanmin1@huawei.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758625672; c=relaxed/simple;
+	bh=Uf9bs5k9QG+5nyGAjqLHS32cg0hRvydRERDb3MH2K7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ICzNH6pCJaVtURPoryv6Fx+/J9WdBysKDPV18tCZt+pgjq2zU2qeUVPw11jCQ6aeRD2QnnXu7m93WScSPCFgolDjGIZ47kgpByOhDo4esPY7MWDZefFrT5a4WKyN2m3VWmrUYU/mA3X8wcvZfBj6CB/qkX8h4piqsCqYX7V1Oo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j2zANbbo; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758625671; x=1790161671;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Uf9bs5k9QG+5nyGAjqLHS32cg0hRvydRERDb3MH2K7s=;
+  b=j2zANbboPtxqqd35ajaF+PWJDU5URuSY6RNzKxf/hFEDY77Zyswdd86V
+   dWSqh2cz2PzTe0/v8OmCaPwAZnBfLl+lGdfvD51WOR8G7nUntKrAV49KV
+   W4/965nyqolq6+VNUeCrHHe8GKEfeiFnQjxIv7KJrbyIANbKAuevc/1Rs
+   cWrzzgmgO2utNIwqe+OKhbSg60dfu1dE8AVQZAcW8nPBvQgCXjkyJzc0H
+   Vd5Br+bFGnRdlUcngenQiexbDSNjdiGYx3IPw7pFImCLRrJZiT9YcbMyQ
+   LhMFnaCUT23gV9inWP11InT7CWqrd2G/OdZV7OGS4JMcqOFdZtISFcU1u
+   Q==;
+X-CSE-ConnectionGUID: ibS4eyNpT+GWpjPYlIIcwg==
+X-CSE-MsgGUID: y8LFd0ZcS9iXBoEjG/x0uQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60119383"
+X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
+   d="scan'208";a="60119383"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 04:07:50 -0700
+X-CSE-ConnectionGUID: A0hX7eCORfmMYV+pqUM0xw==
+X-CSE-MsgGUID: XFw+UBKWTTafDHqYtEDBUA==
+X-ExtLoop1: 1
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 23 Sep 2025 04:07:46 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v10s4-00032v-1w;
+	Tue, 23 Sep 2025 11:07:44 +0000
+Date: Tue, 23 Sep 2025 19:06:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	linux-pci@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] PCI: rcar-host: Add static assertion to check
+ !PCI_LOCKLESS_CONFIG
+Message-ID: <202509231859.HdRgUtEm-lkp@intel.com>
+References: <20250922153352.99197-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- dggpemf200018.china.huawei.com (7.185.36.31)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922153352.99197-1-marek.vasut+renesas@mailbox.org>
 
-Recently, we discovered the following issue through syzkaller:
+Hi Marek,
 
-BUG: KASAN: slab-use-after-free in fb_mode_is_equal+0x285/0x2f0
-Read of size 4 at addr ff11000001b3c69c by task syz.xxx
-...
-Call Trace:
- <TASK>
- dump_stack_lvl+0xab/0xe0
- print_address_description.constprop.0+0x2c/0x390
- print_report+0xb9/0x280
- kasan_report+0xb8/0xf0
- fb_mode_is_equal+0x285/0x2f0
- fbcon_mode_deleted+0x129/0x180
- fb_set_var+0xe7f/0x11d0
- do_fb_ioctl+0x6a0/0x750
- fb_ioctl+0xe0/0x140
- __x64_sys_ioctl+0x193/0x210
- do_syscall_64+0x5f/0x9c0
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
+kernel test robot noticed the following build errors:
 
-The issue occurs in the function fb_mode_is_equal(p->mode, mode), I also
-noticed that when freeing the memory related to fb_info->modelist, there's
-no attempt to set the corresponding fb_display[i]->mode to NULL after
-freeing. Based on analysis, the root cause of this bug appears to be that
-a certain p->mode has become a wild pointer.
+[auto build test ERROR on pci/next]
+[also build test ERROR on pci/for-linus linus/master v6.17-rc7 next-20250922]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I've identified two code paths for freeing modelist->mode:
-1. fb_delete_videomode - removes videomode entry from modelist.
-2. fb_destroy_modelist - destroys the entire modelist.
+url:    https://github.com/intel-lab-lkp/linux/commits/Marek-Vasut/PCI-rcar-host-Add-static-assertion-to-check-PCI_LOCKLESS_CONFIG/20250922-233709
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20250922153352.99197-1-marek.vasut%2Brenesas%40mailbox.org
+patch subject: [PATCH] PCI: rcar-host: Add static assertion to check !PCI_LOCKLESS_CONFIG
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250923/202509231859.HdRgUtEm-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250923/202509231859.HdRgUtEm-lkp@intel.com/reproduce)
 
-Analysis shows that fb_delete_videomode path should have been fixed in
-a previous patch[1]. Therefore, the current bug is likely triggered
-through the fb_destroy_modelist path. I've found a reproducible test case:
-1. With /dev/fb0 already registered in the system, load a kernel module
-   to register a new device /dev/fb1;
-2. Set fb1's mode to the global fb_display[] array (via FBIOPUT_CON2FBMAP);
-3. Switch console from fb to VGA (to allow normal rmmod of the ko);
-4. Unload the kernel module - at this point fb1's modelist is freed, leaving
-   a wild pointer in fb_display[];
-5. Trigger the bug via system calls through fb0 attempting to delete a mode
-   from fb0.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509231859.HdRgUtEm-lkp@intel.com/
 
-To prevent similar issues from recurring, consider traversing fb_display[]
-whenever releasing a mode from fb_info. If the corresponding mode exists
-in fb_display[], set its pointer to NULL.
+All errors (new ones prefixed by >>):
 
-[1] https://lore.kernel.org/all/20210712085544.2828-1-thunder.leizhen@huawei.com/
+   In file included from include/linux/bits.h:30,
+                    from include/linux/bitops.h:6,
+                    from drivers/pci/controller/pcie-rcar-host.c:14:
+>> include/linux/build_bug.h:78:41: error: static assertion failed: "!IS_ENABLED(CONFIG_PCI_LOCKLESS_CONFIG)"
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                         ^~~~~~~~~~~~~~
+   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                  ^~~~~~~~~~~~~~~
+   drivers/pci/controller/pcie-rcar-host.c:43:1: note: in expansion of macro 'static_assert'
+      43 | static_assert(!IS_ENABLED(CONFIG_PCI_LOCKLESS_CONFIG));
+         | ^~~~~~~~~~~~~
 
-Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
----
-This is my first time working on fb issues. If there are any misunderstandings
-in my analysis, I would appreciate corrections from the community.
 
- drivers/video/fbdev/core/fbcon.c  | 11 +++++++++++
- drivers/video/fbdev/core/modedb.c |  7 +++++++
- include/linux/fbcon.h             |  2 ++
- 3 files changed, 20 insertions(+)
+vim +78 include/linux/build_bug.h
 
-diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index b062b05f4128..bfbf79d6cd05 100644
---- a/drivers/video/fbdev/core/fbcon.c
-+++ b/drivers/video/fbdev/core/fbcon.c
-@@ -2803,6 +2803,17 @@ int fbcon_mode_deleted(struct fb_info *info,
- 	return found;
- }
- 
-+void fb_display_clean_videomode(struct fb_videomode *m)
-+{
-+	struct fbcon_display *p;
-+
-+	for (int i = first_fb_vc; i <= last_fb_vc; i++) {
-+		p = &fb_display[i];
-+		if (p->mode == m)
-+			p->mode = NULL;
-+	}
-+}
-+
- #ifdef CONFIG_VT_HW_CONSOLE_BINDING
- static void fbcon_unbind(void)
- {
-diff --git a/drivers/video/fbdev/core/modedb.c b/drivers/video/fbdev/core/modedb.c
-index 53a610948c4a..5a0ee96ebefa 100644
---- a/drivers/video/fbdev/core/modedb.c
-+++ b/drivers/video/fbdev/core/modedb.c
-@@ -16,6 +16,7 @@
- #include <linux/slab.h>
- #include <linux/fb.h>
- #include <linux/kernel.h>
-+#include <linux/fbcon.h>
- 
- #undef DEBUG
- 
-@@ -1100,6 +1101,7 @@ void fb_delete_videomode(const struct fb_videomode *mode,
- 		modelist = list_entry(pos, struct fb_modelist, list);
- 		m = &modelist->mode;
- 		if (fb_mode_is_equal(m, mode)) {
-+			fb_display_clean_videomode(m);
- 			list_del(pos);
- 			kfree(pos);
- 		}
-@@ -1113,8 +1115,13 @@ void fb_delete_videomode(const struct fb_videomode *mode,
- void fb_destroy_modelist(struct list_head *head)
- {
- 	struct list_head *pos, *n;
-+	struct fb_modelist *modelist;
-+	struct fb_videomode *m;
- 
- 	list_for_each_safe(pos, n, head) {
-+		modelist = list_entry(pos, struct fb_modelist, list);
-+		m = &modelist->mode;
-+		fb_display_clean_videomode(m);
- 		list_del(pos);
- 		kfree(pos);
- 	}
-diff --git a/include/linux/fbcon.h b/include/linux/fbcon.h
-index 81f0e698acbf..2b5e93aeaaff 100644
---- a/include/linux/fbcon.h
-+++ b/include/linux/fbcon.h
-@@ -18,6 +18,7 @@ void fbcon_suspended(struct fb_info *info);
- void fbcon_resumed(struct fb_info *info);
- int fbcon_mode_deleted(struct fb_info *info,
- 		       struct fb_videomode *mode);
-+void fb_display_clean_videomode(struct fb_videomode *m);
- void fbcon_new_modelist(struct fb_info *info);
- void fbcon_get_requirement(struct fb_info *info,
- 			   struct fb_blit_caps *caps);
-@@ -38,6 +39,7 @@ static inline void fbcon_suspended(struct fb_info *info) {}
- static inline void fbcon_resumed(struct fb_info *info) {}
- static inline int fbcon_mode_deleted(struct fb_info *info,
- 				     struct fb_videomode *mode) { return 0; }
-+static inline void fb_display_clean_videomode(struct fb_videomode *m) {}
- static inline void fbcon_new_modelist(struct fb_info *info) {}
- static inline void fbcon_get_requirement(struct fb_info *info,
- 					 struct fb_blit_caps *caps) {}
+bc6245e5efd70c Ian Abbott       2017-07-10  60  
+6bab69c65013be Rasmus Villemoes 2019-03-07  61  /**
+6bab69c65013be Rasmus Villemoes 2019-03-07  62   * static_assert - check integer constant expression at build time
+6bab69c65013be Rasmus Villemoes 2019-03-07  63   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  64   * static_assert() is a wrapper for the C11 _Static_assert, with a
+6bab69c65013be Rasmus Villemoes 2019-03-07  65   * little macro magic to make the message optional (defaulting to the
+6bab69c65013be Rasmus Villemoes 2019-03-07  66   * stringification of the tested expression).
+6bab69c65013be Rasmus Villemoes 2019-03-07  67   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  68   * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
+6bab69c65013be Rasmus Villemoes 2019-03-07  69   * scope, but requires the expression to be an integer constant
+6bab69c65013be Rasmus Villemoes 2019-03-07  70   * expression (i.e., it is not enough that __builtin_constant_p() is
+6bab69c65013be Rasmus Villemoes 2019-03-07  71   * true for expr).
+6bab69c65013be Rasmus Villemoes 2019-03-07  72   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  73   * Also note that BUILD_BUG_ON() fails the build if the condition is
+6bab69c65013be Rasmus Villemoes 2019-03-07  74   * true, while static_assert() fails the build if the expression is
+6bab69c65013be Rasmus Villemoes 2019-03-07  75   * false.
+6bab69c65013be Rasmus Villemoes 2019-03-07  76   */
+6bab69c65013be Rasmus Villemoes 2019-03-07  77  #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+6bab69c65013be Rasmus Villemoes 2019-03-07 @78  #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+6bab69c65013be Rasmus Villemoes 2019-03-07  79  
+07a368b3f55a79 Maxim Levitsky   2022-10-25  80  
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
