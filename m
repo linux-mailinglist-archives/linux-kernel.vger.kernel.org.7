@@ -1,192 +1,185 @@
-Return-Path: <linux-kernel+bounces-828542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BCC4B94D7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:45:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D7D2B94D84
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19FF13AE519
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:45:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 457A23BAABD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03FA315D4E;
-	Tue, 23 Sep 2025 07:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98603164A0;
+	Tue, 23 Sep 2025 07:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="l7ldCV20"
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012018.outbound.protection.outlook.com [40.107.209.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RtenWnvZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C517238C0D
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758613534; cv=fail; b=iTwmv4oZy/bipVi5lpdQrk8m5AB1o0hVsWnYHDQH4SsMahOQk/rcZaPdF5dHpgIRI/PgGFBufqyZEDh9v/is5mLoBTmXrURR28KB/lSiT+vdrPSpG4m4T0TUDvIQYCDOCQjBQU1RS2urJXv/t7VGAC51ebYuRf9u/iIxfOwMbQ0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758613534; c=relaxed/simple;
-	bh=+/M4HvruErV4jBnQCtcW5pa57okAh6ZZMgW/20bcihk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HW7yp+ywth3PTVvS3uj7grsyvE76qWuO/bMZNXvz07zYtO7XQKE3sMOsxfDB7GiwCz9M1EKR788TfOoE0s3YNI4johc6frH8NIz7XVeEpSCDoe7z2UxF6dIhCzRSa78MOAvfujUS9WNuiqEL9PLNWdJIjlB/Av9NvuYLe82ToGI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=l7ldCV20; arc=fail smtp.client-ip=40.107.209.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R8HK0G3xH9NRZHxUN2a0ze2YmPWzttA8E8/4tlCu2Xn9pInMKE9b+C9Lj4LrSs0L8j9frx9XRoYaWk3PnkO2S95LxgZ8Bhvf17qRi5X2x118ygjb0wTEkMsouNmqaINBrlPt3/mBj/qKZZfyXgRjJl1GPYZbLq8xU8nnciFDtYoL6uiWcN15xybQhT/TOMzGmpBaB8FuhtSsTvqhpP2VYHZUPhRlhB/FIResVp9xFLK44AAu/VvzQTp9mT46KLYZ2Vp5yxFqVnXW2+5S2pHoZdwt/nmLp9r+4QRfbenb7/dwc2TYC0OHs71e5oaq5KbDcgBvLpOxObfHiGwpJtxCQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZeN2vCBojHWiNmAM4k3hM5m23H1fWFe7Save76BtUXM=;
- b=rAmzQpaRmUPf6exF5tBxwosLXAjl9peYsMBEm42TaS20VU2hSsZz56pBCIxeZP4zt7YoJJP+rH1Cpv/3LaIPI35O9I+fhFVxxTr0ygDq5o4bTKV7PYhn04AN85zvEWkMgNeUh9+SPdZ9NFXWbaTUkNEgnpxSyPkmGIupY/2dC6vYvM8gGDJnrFmmOWC1WRptFm25/F2mvY/C+J7RyVWVl6gt+PkRNgbY0od5u02PiVu5SulrEP/NUgALYoAtfFeuEoMYqKDwvwoLnfUWOqawFlp4jrk6kwna6Pvps3c/Fj+uT9+EBAzPVQAVaxBx5Hm0ILlvKuKlDm4yZMvnz6vXpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZeN2vCBojHWiNmAM4k3hM5m23H1fWFe7Save76BtUXM=;
- b=l7ldCV20QzXfRmGy7oo5n9GpaEQMSqee/uHiRVn5kD+zdkCbTQrUM7iMprxWSItVCpQebycpEJ018Y1+AtEAFrGse7V3D346MYF0FQENgIvfCoWSd8x8aNSIwUk73pWtjwlvtdIusX7goqdf0htQegl6DVHEm9tYwrBkMYIyQfCoOCOplVkRvRdfuERToNXLTjyyy2pSUrgVOtgl94yzK9qXqy0s5rD2zhpW6nG3aw7YUzl7e/YtAXzvtf9Al9IuT+FXb9zi9/z01FYFVP8hoUdDflq8L+4N4MgyTrQlgjHgzR6nLjrPRWFWBfLPUC2Q+yKI8dmDQgt6T/jFISBYWw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by CH2PR12MB4231.namprd12.prod.outlook.com (2603:10b6:610:7d::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Tue, 23 Sep
- 2025 07:45:29 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 07:45:29 +0000
-Date: Tue, 23 Sep 2025 09:45:26 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
-Subject: Re: [PATCH 4/7] sched_ext: Use bitfields for boolean warning flags
-Message-ID: <aNJQFqg2R80VJc7p@gpd4>
-References: <20250922013246.275031-1-tj@kernel.org>
- <20250922013246.275031-4-tj@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922013246.275031-4-tj@kernel.org>
-X-ClientProxiedBy: PR1P264CA0171.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:347::17) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB9A238C0D;
+	Tue, 23 Sep 2025 07:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758613558; cv=none; b=YLAhgIFk47a8JN5MOmak/cVQ5xR6ZIfJ09VIDW+F2w3zt1fRjyn+JTSoaZn+IsA3Lnn75+35j5MEiEkzQ0o5ESHEMD6J3Q9vB7PTfrxjDlH5sRa5ElV0ALUq3YTwroIwX7eOPB9N+q1atnKvNiVhEwTTHvvE7pqlOmtZWRiUY28=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758613558; c=relaxed/simple;
+	bh=QjOVUv6N/38FhKzxHyEcHyndPdo/xaEAfc+lb6/Y+zw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pHSMJoV+KiTujjblaTeVZIEfHYHYqRU7JigNyk/kOVpk2yXikJ2KdtXlvQU+vF4lDpnFImivnbph+Qv4fNfhBDH/ZH127AQBac+NDpKv32fIZGl/44eFpta0+m6uwvyszfY4y+n4MS5U3szqiIZoVnyzwI50SWBiKbdXNwhqz+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RtenWnvZ; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758613556; x=1790149556;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=QjOVUv6N/38FhKzxHyEcHyndPdo/xaEAfc+lb6/Y+zw=;
+  b=RtenWnvZVnqKysXW2RyF+HxwwMl6g4oWJm5C2rS0Ib1d2fq0TpqEdZ7M
+   T8xR+XS9l3jdHxvrueCl/sc/Nvuv8KbtBUGzSa8mfG2GVGOAeVLpia7jA
+   uR+TGM+wHMoQIwqoNfK/FJy7oHEdO393kL5aXBhlcfSRFwmDFqG47Byc5
+   Uucd42ym+Bx4/aTG3TqhcZ9jGnQGrixPenBRdiJGh9yPNdpadeVoYb5iX
+   a1vBB+m0XR+rJCR7JmvSuE+ZYSrYAQLHyYZCEcp90vpsjqCXpeP8+uwQ0
+   8U2oIy2jtuvstj7W9Gp8s4FNaF8YjjG8E0sD102n3PtFwzyM2jNhw00Pa
+   A==;
+X-CSE-ConnectionGUID: x//NEh/BSwGIT0YqUDzaTg==
+X-CSE-MsgGUID: 7ID78B0QQTG9R0Hf9LK5JA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="64711073"
+X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
+   d="scan'208";a="64711073"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 00:45:55 -0700
+X-CSE-ConnectionGUID: yY7r16ZVR8OCZNQEBYwXTw==
+X-CSE-MsgGUID: WUkDkTurR2u61OLg4ILnMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
+   d="scan'208";a="177145492"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 00:45:51 -0700
+Message-ID: <47f8b553-1cb0-4fb0-993b-affd4468475e@linux.intel.com>
+Date: Tue, 23 Sep 2025 15:45:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|CH2PR12MB4231:EE_
-X-MS-Office365-Filtering-Correlation-Id: c9cffe18-037c-4dc0-da1a-08ddfa752af8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vMKmSV/yU8Bj+nIzuatgf1wqOiYmT5CjFCvJGG9DKoMtQEodzhpn+XymRc32?=
- =?us-ascii?Q?hFfVCYexx5w+aTzT7Lx7IyRfDNhOCoodSNlk1EOeCKAKAk3t3ngEnXn5mLdA?=
- =?us-ascii?Q?YmQZ7atJo76Nb2B5pPErhI96mj09+Kx96KD+MHWBnma5E+DZYacAd7FV1DB5?=
- =?us-ascii?Q?h97mrh3T9YXl25OYMUVeFfZVCW8jRu1bcfXvFWR917gLYgvR1tDXYvAmj3KP?=
- =?us-ascii?Q?KPKVhH2TorggooEtQCx599+ZZPWo2TDzYqVQmD4veI3nKzSb9MnkIHSE6vFi?=
- =?us-ascii?Q?J9I73Ww/iDFvBaUgsiVW5ocXnLIKLvzK79OFmM2fOGb+g9Crzv4rZJV9d9Vr?=
- =?us-ascii?Q?tEXKA9g4PAyIi4CopjiwZuvJM9/ee6qbzDGzg5H2EsvlWM6sNQrGeGHwOzzF?=
- =?us-ascii?Q?e2HfnFLD9cpfqTWjYsx500IYSZGu82Ljb/bNF9FJHsYFgIyOzJmC6F4NbDAw?=
- =?us-ascii?Q?GwO5pBwv30hF0w/9ZFkkKP48IQpfQm+2NV4kYnLbWaZnHbP03vU5GlC9ZO4u?=
- =?us-ascii?Q?SDfkLg/4eDGCoi7J60miQhnCy6I5QjnW1+w7UYRFG6nR/D9ap0mLMYCE11RM?=
- =?us-ascii?Q?hzssrwGFYufW4wlgGrnWJ02tlM9+DrDw5FCvZhUbrV5ntxryLcGH+aOulavC?=
- =?us-ascii?Q?0poGWu7T1VgIcGqfdmmJBjRkD2Wgl+3y/iFbsdvc7YVXzi9Uhh9KUfMkSeZs?=
- =?us-ascii?Q?rBaB84Jd13gzuN4IkpuUh1/mDIi973L6JgsY1iHA4I3juVodTlun32bYNzdw?=
- =?us-ascii?Q?nHjkITQ6iEb57c8vYpUyMUmkNLzy8qbwqrWw5mc2u5MH6sB3byH9yLqqtNIm?=
- =?us-ascii?Q?YDxnXwcDDHV3/GxeM4z+4ydq5r5V0TRQd7X+69Eisda/EjQGFOQYZ+dpH8j2?=
- =?us-ascii?Q?jUDzUYT0wTYlkp+6+9UDI+tw439TFU/x2YRENeoBBm3A3vj5GIebjcTNutwR?=
- =?us-ascii?Q?e9iNua8E4njYeq0DaUnltTl26aG9M/Syb5GAs2F55hsghx8iXYmF9gYZNNHd?=
- =?us-ascii?Q?8cbJPvZBmwfQr7zO1nEm4gIx8ZdxDxVo+ClvSKhps+5kuH2AQd4kIw9gVKy2?=
- =?us-ascii?Q?vnVq4dKU6Qrb6tyZdFdY/I2R+kGjiwDOwu778jAcRLdfchB/8mRdtpPNJhWv?=
- =?us-ascii?Q?bH70TG6YthmICuLmm+LwxMJgeypfEdGeheQm2RghhH9Ux2s4svTo1quFoOYy?=
- =?us-ascii?Q?/jCraANummq6Azk9niGvzXdDii8wCwRJT93bA2B3LLoG+L761DPFTleLwdFH?=
- =?us-ascii?Q?p53hIsWtNFCglIXFfURM+eQWXnzr+MFFEvRVAPGp8Gmi6mKfIHjQiojOqLkb?=
- =?us-ascii?Q?eaqbDjSsSosCSPfNf94ygNBR0uyQ8yq81ChMS2ETgHLQKomb1tiA6mAWZuVZ?=
- =?us-ascii?Q?1GcxZs4bQGvcjRETCqTZ2YP+YoDParglvIQ1jr+ZYkI/G9NgANP4AsHCNXda?=
- =?us-ascii?Q?+WjB8Y3iEMc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xggFiPb1YIYpjB+BE3uc/0z+nZMs1fZSsxvR37VlIsN+yLD0kekHVyey2Acc?=
- =?us-ascii?Q?G7NUzWMTCQviTU/k3I8cyYu6fQ5XSNlM/sBOTdBvXXQzHSOi8Y0PbdhWSglp?=
- =?us-ascii?Q?qu1l+/PpiMpr2agizQYHSP7N6lYoF91KjrklOLzdF//8FTSJOjwwvOAkYiXl?=
- =?us-ascii?Q?5O7jkKAZXU2BC+DXU+Mtiz181RvTS2KOV/SUX/2cvu07mrSM4DVeq9NnLJHE?=
- =?us-ascii?Q?rllOdD80uO425zS758VGRQmcmcL/5s1cxUGxVgupJp/N1yohM84IT5BctsvW?=
- =?us-ascii?Q?5Lv/737BnXOh2Qoxws7QPFwGnZh10ttaapKWaeCGhya+HHkB1D7AumeWxkjl?=
- =?us-ascii?Q?Ww+vZQMS2jkGHsysmc7qCXIrzd/glna9ztK0iRjoPRU6iFCPwfEvsEZLS4y3?=
- =?us-ascii?Q?PiHWY8dlm16GLTq35nx935bdzchXQHeZpaBA8eMo0zVTeJViUEE8dNn9maou?=
- =?us-ascii?Q?N55JXfTQIEEcCTnA+Fng5Li1DHtNNR2Pacj+GstNHv+5/aLmZ9gN2hbzdcv+?=
- =?us-ascii?Q?1aedmtKs/NxsQ5nxSgzfIeT6vjXKYmGeBuq6gmzcOVwz+VEjRUIUlWvUrR5S?=
- =?us-ascii?Q?ePD2yHiqFFvnXqILBYAzWBD+Yt06bIaIZADRGfKVAbTChcyzAxgL8FHi0kII?=
- =?us-ascii?Q?Ke/d/NDailXTyTTcqUeF6Cj3BXemOM8Epn2FtfdMTZZeu7pWc138fQjT643p?=
- =?us-ascii?Q?BY9Hp2OBtKO8XDnL81TQ8zQyXXMahOw1FD9LrXAIP3F+GKkrAWgQ20OoSLWc?=
- =?us-ascii?Q?DwzWJ3Ecdz+jOfk8Od9wOBcT49a7Yaw/PIh+ZhK9PieZaIeEWYl0MjXCxuAl?=
- =?us-ascii?Q?2crBdeBMp3EZv4o43yL8z30NxBwib44FAgANwTwYAWy2vl06NbXUDh1fulVq?=
- =?us-ascii?Q?Asc7GVMDjIArviI5GwsR1ZX3KEu/W86+I170FGq9HQrCmIXosCLw0tm075hH?=
- =?us-ascii?Q?DtzpNUP7qbs3VLrzmVDKNvBG8YMnYAjnRDcJpzdqAke5/d9Y4GUFtdEop2WJ?=
- =?us-ascii?Q?BS/sunOHYgO+6nYKSZeaIBZefgdetujLuKAwHmJfu22owM6OUTsE+rONNyKF?=
- =?us-ascii?Q?abuwMe4QlEQ5AFmwp0SP39oQCZIke2xrcQtKzqmEpKYVLY8+RCG3SaeMsEoP?=
- =?us-ascii?Q?mExlqU0L2tkzHacOmLIMtdZpIZRZgoflz1ZV45tIB3ssgenUDaegUdPNvmtF?=
- =?us-ascii?Q?YSlIrzgm76I6iP4QnVc6ilMgl1SxEfHMqvNNxt4Sz5RhaWLm1Gn6VICdLRSQ?=
- =?us-ascii?Q?WO87ywukIf5jZPHSvYEjWnHCUExL6Mc0rYOfbhz6V9ZpYKKyUyGHzxVFPhZc?=
- =?us-ascii?Q?bo8l7n4Ppu7gzYQm0KH9NfpKrjTlo8bsQlTBWIp++vI4lkAh7fnPzDCONXIv?=
- =?us-ascii?Q?5VjCjHhrNo5rvv4MSheOJqGZc6Wx0A/LAaXz+ZFF2dh7E3QkhvGR/KqZwCTv?=
- =?us-ascii?Q?yq3VnabbYgdX+07AF8GFQWbfFv5NRKLP8rYKjZPqnoznVOOaPVAO0HbJaHSi?=
- =?us-ascii?Q?f6k+p7vCilTTuZsGYz4Zmy7y1N4EXihJ9oKlelYWdTLBT13GaWVoqdZPYHLZ?=
- =?us-ascii?Q?3FCrvHheitu4ZZqOwQndFd0yW0iPTAujl6WRNQ3B?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9cffe18-037c-4dc0-da1a-08ddfa752af8
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 07:45:29.6817
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LqHjk/yrxIOaOM4OMSBV7tp5IlYYRqqx4IDYozSszSk+gzpnVrdy4Tu1ESe3KQ+TVf9Q0znrbPaF9cfWVMeeUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4231
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/16] x86/virt/tdx: Allocate reference counters for
+ PAMT memory
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: kas@kernel.org, bp@alien8.de, chao.gao@intel.com,
+ dave.hansen@linux.intel.com, isaku.yamahata@intel.com, kai.huang@intel.com,
+ kvm@vger.kernel.org, linux-coco@lists.linux.dev,
+ linux-kernel@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
+ seanjc@google.com, tglx@linutronix.de, x86@kernel.org, yan.y.zhao@intel.com,
+ vannapurve@google.com, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
+ <20250918232224.2202592-6-rick.p.edgecombe@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250918232224.2202592-6-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 21, 2025 at 03:32:43PM -1000, Tejun Heo wrote:
-> Convert warned_zero_slice and warned_deprecated_rq in scx_sched struct to
-> single-bit bitfields to reduce struct size.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
 
-Hm... I think the struct size remains the same, at least in my build:
- - before: /* size: 1072, cachelines: 17, members: 14 */
- - after:  /* size: 1072, cachelines: 17, members: 14 */
 
-Maybe if we add more attributes in the future?
-
-Thanks,
--Andrea
-
+On 9/19/2025 7:22 AM, Rick Edgecombe wrote:
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>
+> The PAMT memory holds metadata for TDX protected memory. With Dynamic
+> PAMT, the 4KB range of PAMT is allocated on demand. The kernel supplies
+> the TDX module with a page pair that covers 2MB of host physical memory.
+>
+> The kernel must provide this page pair before using pages from the range
+> for TDX. If this is not done, any SEAMCALL that attempts to use the memory
+> will fail.
+>
+> Allocate reference counters for every 2MB range to track PAMT memory usage.
+> This is necessary to accurately determine when PAMT memory needs to be
+> allocated and when it can be freed.
+>
+> This allocation will currently consume 2 MB for every 1 TB of address
+> space from 0 to max_pfn (highest pfn of RAM). The allocation size will
+> depend on how the ram is physically laid out. In a worse case scenario
+> where the entire 52 address space is covered this would be 8GB. Then
+                   ^
+                  52-bit
+> the DPAMT refcount allocations could hypothetically exceed the savings
+> from Dynamic PAMT, which is 4GB per TB. This is probably unlikely.
+>
+> However, future changes will reduce this refcount overhead to make DPAMT
+> always a net win.
+>
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> [Add feedback, update log]
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 > ---
->  kernel/sched/ext_internal.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/ext_internal.h b/kernel/sched/ext_internal.h
-> index 2e289931e567..1a80d01b1f0c 100644
-> --- a/kernel/sched/ext_internal.h
-> +++ b/kernel/sched/ext_internal.h
-> @@ -871,8 +871,8 @@ struct scx_sched {
->  	struct scx_dispatch_q	**global_dsqs;
->  	struct scx_sched_pcpu __percpu *pcpu;
->  
-> -	bool			warned_zero_slice;
-> -	bool			warned_deprecated_rq;
-> +	bool			warned_zero_slice:1;
-> +	bool			warned_deprecated_rq:1;
->  
->  	atomic_t		exit_kind;
->  	struct scx_exit_info	*exit_info;
-> -- 
-> 2.51.0
-> 
+> v3:
+>   - Split out lazily populate optimization to next patch (Dave)
+>   - Add comment around pamt_refcounts (Dave)
+>   - Improve log
+> ---
+>   arch/x86/virt/vmx/tdx/tdx.c | 47 ++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 46 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+> index 4e4aa8927550..0ce4181ca352 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.c
+> +++ b/arch/x86/virt/vmx/tdx/tdx.c
+> @@ -29,6 +29,7 @@
+>   #include <linux/acpi.h>
+>   #include <linux/suspend.h>
+>   #include <linux/idr.h>
+> +#include <linux/vmalloc.h>
+>   #include <asm/page.h>
+>   #include <asm/special_insns.h>
+>   #include <asm/msr-index.h>
+> @@ -50,6 +51,16 @@ static DEFINE_PER_CPU(bool, tdx_lp_initialized);
+>   
+>   static struct tdmr_info_list tdx_tdmr_list;
+>   
+> +/*
+> + * On a machine with Dynamic PAMT, the kernel maintains a reference counter
+> + * for every 2M range. The counter indicates how many users there are for
+> + * the PAMT memory of the 2M range.
+> + *
+> + * The kernel allocates PAMT memory when the first user arrives and
+> + * frees it when the last user has left.
+> + */
+> +static atomic_t *pamt_refcounts;
+> +
+>   static enum tdx_module_status_t tdx_module_status;
+>   static DEFINE_MUTEX(tdx_module_lock);
+>   
+> @@ -183,6 +194,34 @@ int tdx_cpu_enable(void)
+>   }
+>   EXPORT_SYMBOL_GPL(tdx_cpu_enable);
+>   
+> +/*
+> + * Allocate PAMT reference counters for all physical memory.
+> + *
+> + * It consumes 2MiB for every 1TiB of physical memory.
+> + */
+> +static int init_pamt_metadata(void)
+> +{
+> +	size_t size = max_pfn / PTRS_PER_PTE * sizeof(*pamt_refcounts);
+
+Is there guarantee that max_pfn is PTRS_PER_PTE aligned?
+If not, it should be rounded up.
+
+> +
+> +	if (!tdx_supports_dynamic_pamt(&tdx_sysinfo))
+> +		return 0;
+> +
+> +	pamt_refcounts = vmalloc(size);
+> +	if (!pamt_refcounts)
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
+> +
+>
+[...]
 
