@@ -1,338 +1,123 @@
-Return-Path: <linux-kernel+bounces-829180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4FB0B96771
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:59:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A40B9677D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9A41887D8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:57:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D0EC1603FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9431246BB4;
-	Tue, 23 Sep 2025 14:56:23 +0000 (UTC)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F8C2441A6;
+	Tue, 23 Sep 2025 14:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dbqiApKS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF002045B5
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D36814A0BC;
+	Tue, 23 Sep 2025 14:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758639382; cv=none; b=sTT8A2IeD9Mj/89bSh0tO+OHLElheazcUEBVl/JnF9UDXbM5+M0Wlcn92qEheLVmc+5c5w7Xd/VFxnQ+p7JKnEBMuaogd/jBZLxm1E2Yp0lgb2ztQbVwjSF9wp1/jk/4oTGy3nOWunqipsdWL/7eD7gCackyLN/PATwPhKzXmfY=
+	t=1758639418; cv=none; b=MbSgfpfz1fa1bgsT7nTrzYDXMyvTfxUEyaZhPcR8cxUynWM/59kiHXh3lW3ldQOxhKG3b9oo5nSNBWpSZLO1PvYG5TzHitfPzl/jsvDcGIhdNnV82JgxBsq2VNdt0qJy6ucilFbJIH2xsI+qCm5514ugQLIul3pzfi6v45SyIXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758639382; c=relaxed/simple;
-	bh=7aW9e8cubUxTRqTfec2l3k6QXfECC7YsX08hk1rU+IM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AFKxokKG5a0oY2AvWG0fBe5o7sRE2YKrkHkXq3hHzFQ5j8DkbLjvh2TlFtaRrquep9FSPt8ip7Zies1QNmNdD3e0o/5gAumK9Bmud2apD+IbB/isCDyG3sCp8LEKmLUNi6i/ZsR+kk9N4mF6N5yQNVXDY0MQDUSFI+uC9lAmHNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-89018ec3597so3543301241.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:56:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758639379; x=1759244179;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3G7wjvy1OAkzNfqF3dw65SxZ83AoLDimhh6nUJP1jTY=;
-        b=BJJ1Qht+FAWcR2si6PgXchgqiLZM6ynwmMvEFPYMYa/meluVkpZYDS4awTgD1YowEj
-         Bm9E+lIZn+qfbmJOgjCwo7rgPwsGrGuw3IqvTt1Ydysd/u7wyn198KL32PWp5tV8IPS3
-         KdTAAM83uC3e0IaGnwQ3np8aLraVjProJ1a0uB12BSYDBykQaY1XcqhLAeQJBQVMvoP6
-         rgs3ZBYNANusXmFvMd3liIJW8bACLrNxvsDyApITQbFqDK4kMK/OPMVKilYQQITEtZJ2
-         coyPGZsBvfgd1hJ0Nimi9utlHw9ryPd+VRP2uNUJAi1zj2QC0AOj4+dP8Z/Ru7BBCwHc
-         jFDw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1+8Hl5T6NSbVkN91TPPoFicAwMdLqoZzaxSLcbZbe6m0uwffXiq8Fv61JBxUPs915A66OH9Oo/NJH+ik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynGAZX1lgLlw/3luxnfuRblxJZZejuoXg3JMqm9ZhAavHP8fhp
-	qyF8ryVFKIk0oyrk6ctd7TNNPUuYx4HNAAPYzJOlFY0I04aHce33aiyroxldf11H
-X-Gm-Gg: ASbGnctZ2XgRDauMi2zeJw6otGhG1u4nXsfxQSc135Bue2W3+hK2c9rl8lk6eCUXqTK
-	kqNHz0HDP7VDiBORMcBe/5JmNvMGVeGdwSch5klJ4Ok9mRtanaukRZ/gFsVJJyfZde34UEyMniL
-	QXrUQuos8WBEQLVNBlIvax5YvzuP7VDqUti9JJxSPj5dID9u9WVdwqvLp+fHIiH7kKOIzPWTIDH
-	y/97yPc/z+rphWKGBOKw71Gctzc9OZFuekLrZtu3a7RDhfXjgbaYr/c5aJmfUa+wnsMQ5+VbOwK
-	15k/DnLoTNHhNQuYnVBMorkQNHiknnPSttsSUYqlgAIlHk1AQ7rDg8qsNc4daW1hiAt/8jLYIXF
-	WwN7nbp1/HPBb2a17uHaqYGbycOy0F9w1s1msmovsRbslrj/KzU/bTfZreVFz
-X-Google-Smtp-Source: AGHT+IHR5UdiddyVSMc+uu7BsBh3Vb5PONy4AQo5jUXtn5FV3baEh+jacJMrEHvCn4UryUrMvXC4sQ==
-X-Received: by 2002:a05:6102:5126:b0:52f:12b3:4505 with SMTP id ada2fe7eead31-5a578d93f25mr971227137.23.1758639377251;
-        Tue, 23 Sep 2025 07:56:17 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8e3e58e736csm2577859241.1.2025.09.23.07.56.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Sep 2025 07:56:16 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-5a2b3bb803bso1186090137.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:56:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX9TZr3YFLizhbDanJTJrmnNfd4O1my7zvfrSvjs1y6R0P/KVGfg5iGX+QeMhxZFbDmY/9FxHqcLRQ+qDg=@vger.kernel.org
-X-Received: by 2002:a05:6102:1606:b0:5a4:4f20:2ac9 with SMTP id
- ada2fe7eead31-5a575a9c5f0mr1079121137.8.1758639376419; Tue, 23 Sep 2025
- 07:56:16 -0700 (PDT)
+	s=arc-20240116; t=1758639418; c=relaxed/simple;
+	bh=nI4rWRfZtvQYN5NakqVwjaQ3OUxNgN9iPKmZBer+On8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ags4l6STkMrSPwe3xPuSoJ8s8wOGcHJsIIAO9VKRT94kQLnwkGV69TGXNr2Hg5pcImI60wy0nzJyEmpsmEDNG1JQZriBeTTpb70zROa9Gsr0qURsxnACLvaelDgfF16KeXJZhhXXbweA4oHxsHxI3DXaQ4mzD1Rg9e4ryd+pOWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dbqiApKS; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758639417; x=1790175417;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=nI4rWRfZtvQYN5NakqVwjaQ3OUxNgN9iPKmZBer+On8=;
+  b=dbqiApKSHIN6hN2Y/mHDkHUX2DlME38wjkRzPIBsdYoW8EU188J6cLfL
+   pN5SefrtnYSUGB45hNtxvxqHwf5n8bHGpEJKZrK3c9wUctrR0zInlHIPE
+   1Q625dS2xwxmKKYcdKHFzheF+u9YH3ocZCRJB+ImTyDHNGynhlU7cJHOy
+   uVyyiH7a3aRumpc//Mc5ERLdohBRB2yaIhVvWnBjaMHC25q+yu64GRJ/Y
+   G04Z1KEFXeR07UdvSY5RnL1y3NDRZaGY21IW+bfRI5a0VWe36kZbwNbpW
+   wPTl2hO5Z/1f0Sml/BgbfddxkksOwAcJChPzs4GgnpcderPznFxHGiCvF
+   Q==;
+X-CSE-ConnectionGUID: MJMwINTeTye15IuzKLKxLw==
+X-CSE-MsgGUID: noukLTDjSNKVYywjsEcQUQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="71593570"
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
+   d="scan'208";a="71593570"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:56:56 -0700
+X-CSE-ConnectionGUID: nnGWmcTCQBORqzHzD5ARyg==
+X-CSE-MsgGUID: ezUHpW+6RhmmSB/LfVq2Qg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
+   d="scan'208";a="180775880"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:56:51 -0700
+Message-ID: <5cb515e7-3d29-4b75-b581-f3e126d8b1c3@intel.com>
+Date: Tue, 23 Sep 2025 22:56:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910142657.1148696-1-niklas.soderlund+renesas@ragnatech.se> <20250910142657.1148696-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20250910142657.1148696-3-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 23 Sep 2025 16:56:05 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVKZn-YfBxvwA1wgjksvzZK=NPzaoTCPRur_Z=AneLA6w@mail.gmail.com>
-X-Gm-Features: AS18NWBc8on58vgX-WXiDDcyNSiELTcjMVkdNbb7hx8A_7Jlu8S8DdVVfRU0hxc
-Message-ID: <CAMuHMdVKZn-YfBxvwA1wgjksvzZK=NPzaoTCPRur_Z=AneLA6w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clocksource/drivers/sh_cmt: Do not power down
- channels used for events
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 26/51] KVM: x86: Disable support for Shadow Stacks if
+ TDP is disabled
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+References: <20250919223258.1604852-1-seanjc@google.com>
+ <20250919223258.1604852-27-seanjc@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250919223258.1604852-27-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Niklas,
+On 9/20/2025 6:32 AM, Sean Christopherson wrote:
+> Make TDP a hard requirement for Shadow Stacks, as there are no plans to
+> add Shadow Stack support to the Shadow MMU.  E.g. KVM hasn't been taught
+> to understand the magic Writable=0,Dirty=0 combination that is required
+> for Shadow Stack accesses, and so enabling Shadow Stacks when using
+> shadow paging will put the guest into an infinite #PF loop (KVM thinks the
+> shadow page tables have a valid mapping, hardware says otherwise).
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-On Wed, 10 Sept 2025 at 16:27, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> The CMT do runtime PM and call clk_enable()/clk_disable() when a new
-> clock event is register and the CMT is not already started. This is not
-> always possible as a spinlock is also needed to sync the internals of
-> the CMT. Running with PROVE_LOCKING uncovers one such issue.
->
->     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
->     [ BUG: Invalid wait context ]
->     6.17.0-rc3-arm64-renesas-03071-gb3c4f4122b28-dirty #21 Not tainted
->     -----------------------------
->     swapper/1/0 is trying to lock:
->     ffff00000898d180 (&dev->power.lock){-...}-{3:3}, at: __pm_runtime_res=
-ume+0x38/0x88
->     ccree e6601000.crypto: ARM CryptoCell 630P Driver: HW version 0xAF400=
-001/0xDCC63000, Driver version 5.0
->     other info that might help us debug this:
->     ccree e6601000.crypto: ARM ccree device initialized
->     context-{5:5}
->     2 locks held by swapper/1/0:
->      #0: ffff80008173c298 (tick_broadcast_lock){-...}-{2:2}, at: __tick_b=
-roadcast_oneshot_control+0xa4/0x3a8
->      #1: ffff0000089a5858 (&ch->lock){....}-{2:2}
->     usbcore: registered new interface driver usbhid
->     , at: sh_cmt_start+0x30/0x364
->     stack backtrace:
->     CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.17.0-rc3-arm64-ren=
-esas-03071-gb3c4f4122b28-dirty #21 PREEMPT
->     Hardware name: Renesas Salvator-X 2nd version board based on r8a77965=
- (DT)
->     Call trace:
->      show_stack+0x14/0x1c (C)
->      dump_stack_lvl+0x6c/0x90
->      dump_stack+0x14/0x1c
->      __lock_acquire+0x904/0x1584
->      lock_acquire+0x220/0x34c
->      _raw_spin_lock_irqsave+0x58/0x80
->      __pm_runtime_resume+0x38/0x88
->      sh_cmt_start+0x54/0x364
->      sh_cmt_clock_event_set_oneshot+0x64/0xb8
->      clockevents_switch_state+0xfc/0x13c
->      tick_broadcast_set_event+0x30/0xa4
->      __tick_broadcast_oneshot_control+0x1e0/0x3a8
->      tick_broadcast_oneshot_control+0x30/0x40
->      cpuidle_enter_state+0x40c/0x680
->      cpuidle_enter+0x30/0x40
->      do_idle+0x1f4/0x26c
->      cpu_startup_entry+0x34/0x40
->      secondary_start_kernel+0x11c/0x13c
->      __secondary_switched+0x74/0x78
->
-> Fix this by unconditionally powering on and enabling the needed clocks
-> for all CMT channels which are used for clock events. Do this before
-> registering any clock source or event to avid having to take the
-> spin lock at probe time.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+
 > ---
-> * Changes since v1
-> - Move the unconditional power on case before registering any clock
->   source or event to avoid having to use the spinlock to synchronize the
->   powerup sequence in probe.
-
-Thanks for your patch, which is now commit cfbc0f1d24030ff9
-("clocksource/drivers/sh_cmt: Do not power down channels used for
-events") in clockevents/timers/drivers/next.
-
-Unfortunately this commit introduces an s2ram regression on e.g.
-Atmark Techo Armadillo-800EVA with R-Mobile A1: the system wakes
-up immediately.  There is no evidence of a wake-up event shown in
-/sys/kernel/debug/wakeup_sources.  This happens with or without
-console_suspend enabled.
-
-Reverting this commit fixes the issue.  I suspect the system wakes up
-because the periodic clock event fires, and causes an interrupt.
-
-> --- a/drivers/clocksource/sh_cmt.c
-> +++ b/drivers/clocksource/sh_cmt.c
-> @@ -5,6 +5,7 @@
->   *  Copyright (C) 2008 Magnus Damm
->   */
->
-> +#include <linux/cleanup.h>
->  #include <linux/clk.h>
->  #include <linux/clockchips.h>
->  #include <linux/clocksource.h>
-> @@ -623,51 +624,6 @@ static void sh_cmt_stop_clocksource(struct sh_cmt_ch=
-annel *ch)
->         pm_runtime_put(&ch->cmt->pdev->dev);
->  }
->
-> -static int sh_cmt_start_clockevent(struct sh_cmt_channel *ch)
-> -{
-> -       int ret =3D 0;
-> -       unsigned long flags;
-> -
-> -       raw_spin_lock_irqsave(&ch->lock, flags);
-> -
-> -       if (!(ch->flags & (FLAG_CLOCKEVENT | FLAG_CLOCKSOURCE))) {
-> -               pm_runtime_get_sync(&ch->cmt->pdev->dev);
-> -               ret =3D sh_cmt_enable(ch);
-> -       }
-> -
-> -       if (ret)
-> -               goto out;
-> -
-> -       ch->flags |=3D FLAG_CLOCKEVENT;
-> - out:
-> -       raw_spin_unlock_irqrestore(&ch->lock, flags);
-> -
-> -       return ret;
-> -}
-> -
-> -static void sh_cmt_stop_clockevent(struct sh_cmt_channel *ch)
-> -{
-> -       unsigned long flags;
-> -       unsigned long f;
-> -
-> -       raw_spin_lock_irqsave(&ch->lock, flags);
-> -
-> -       f =3D ch->flags & (FLAG_CLOCKEVENT | FLAG_CLOCKSOURCE);
-> -
-> -       ch->flags &=3D ~FLAG_CLOCKEVENT;
-> -
-> -       if (f && !(ch->flags & (FLAG_CLOCKEVENT | FLAG_CLOCKSOURCE))) {
-> -               sh_cmt_disable(ch);
-> -               pm_runtime_put(&ch->cmt->pdev->dev);
-> -       }
-> -
-> -       /* adjust the timeout to maximum if only clocksource left */
-> -       if (ch->flags & FLAG_CLOCKSOURCE)
-> -               __sh_cmt_set_next(ch, ch->max_match_value);
-> -
-> -       raw_spin_unlock_irqrestore(&ch->lock, flags);
-> -}
-> -
->  static struct sh_cmt_channel *cs_to_sh_cmt(struct clocksource *cs)
->  {
->         return container_of(cs, struct sh_cmt_channel, cs);
-> @@ -774,19 +730,30 @@ static struct sh_cmt_channel *ced_to_sh_cmt(struct =
-clock_event_device *ced)
->
->  static void sh_cmt_clock_event_start(struct sh_cmt_channel *ch, int peri=
-odic)
->  {
-> -       sh_cmt_start_clockevent(ch);
-> -
->         if (periodic)
->                 sh_cmt_set_next(ch, ((ch->cmt->rate + HZ/2) / HZ) - 1);
->         else
->                 sh_cmt_set_next(ch, ch->max_match_value);
->  }
->
-> +static void sh_cmt_clock_event_stop(struct sh_cmt_channel *ch)
-> +{
-> +       unsigned long flags;
+>   arch/x86/kvm/cpuid.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 32fde9e80c28..499c86bd457e 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -955,6 +955,14 @@ void kvm_set_cpu_caps(void)
+>   	if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
+>   		kvm_cpu_cap_clear(X86_FEATURE_PKU);
+>   
+> +	/*
+> +	 * Shadow Stacks aren't implemented in the Shadow MMU.  Shadow Stack
+> +	 * accesses require "magic" Writable=0,Dirty=1 protection, which KVM
+> +	 * doesn't know how to emulate or map.
+> +	 */
+> +	if (!tdp_enabled)
+> +		kvm_cpu_cap_clear(X86_FEATURE_SHSTK);
 > +
-> +       raw_spin_lock_irqsave(&ch->lock, flags);
-> +
-> +       /* adjust the timeout to maximum if only clocksource left */
-> +       if (ch->flags & FLAG_CLOCKSOURCE)
-> +               __sh_cmt_set_next(ch, ch->max_match_value);
-> +
-> +       raw_spin_unlock_irqrestore(&ch->lock, flags);
-> +}
-> +
->  static int sh_cmt_clock_event_shutdown(struct clock_event_device *ced)
->  {
->         struct sh_cmt_channel *ch =3D ced_to_sh_cmt(ced);
->
-> -       sh_cmt_stop_clockevent(ch);
-> +       sh_cmt_clock_event_stop(ch);
->         return 0;
->  }
->
-> @@ -797,7 +764,7 @@ static int sh_cmt_clock_event_set_state(struct clock_=
-event_device *ced,
->
->         /* deal with old setting first */
->         if (clockevent_state_oneshot(ced) || clockevent_state_periodic(ce=
-d))
-> -               sh_cmt_stop_clockevent(ch);
-> +               sh_cmt_clock_event_stop(ch);
->
->         dev_info(&ch->cmt->pdev->dev, "ch%u: used for %s clock events\n",
->                  ch->index, periodic ? "periodic" : "oneshot");
-> @@ -968,6 +935,32 @@ static int sh_cmt_setup_channel(struct sh_cmt_channe=
-l *ch, unsigned int index,
->         ch->match_value =3D ch->max_match_value;
->         raw_spin_lock_init(&ch->lock);
->
-> +       if (clockevent) {
-> +               /*
-> +                * To support clock events the CMT must always be ready t=
-o
-> +                * accept new events, start it and leave no way for it to=
- be
-> +                * turned off.
-> +                *
-> +                * This is OK as we can't never unregister a CMT device. =
-If this
-> +                * is fixed in future an equal unconditional shutdown is =
-needed.
-> +                *
-> +                * We don't need to hold the channel lock here as we have=
- not
-> +                * yet register any clock source or event so there is no
-> +                * possible race. And holding the spinlock at probe time
-> +                * produces lockdep warnings.
-> +                */
-> +               pm_runtime_get_sync(&ch->cmt->pdev->dev);
-> +               ret =3D sh_cmt_enable(ch);
-> +               if (ret)
-> +                       return ret;
-> +
-> +               /*
-> +                * Flag that the channel is used as a clock event, it's n=
-ot
-> +                * allowed to be powered off!
-> +                */
-> +               ch->flags |=3D FLAG_CLOCKEVENT;
-> +       }
-> +
->         ret =3D sh_cmt_register(ch, dev_name(&cmt->pdev->dev),
->                               clockevent, clocksource);
->         if (ret) {
-> --
-> 2.51.0
->
+>   	kvm_cpu_cap_init(CPUID_7_EDX,
+>   		F(AVX512_4VNNIW),
+>   		F(AVX512_4FMAPS),
 
-
---
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
