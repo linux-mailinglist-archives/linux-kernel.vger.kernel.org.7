@@ -1,204 +1,500 @@
-Return-Path: <linux-kernel+bounces-829491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E5B3B97312
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:27:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFC4B9731E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD1A63AA1C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:27:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249C617D087
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FC62FFFB4;
-	Tue, 23 Sep 2025 18:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634EA3009C1;
+	Tue, 23 Sep 2025 18:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dpv3QQap"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="a4t/tPLj"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011032.outbound.protection.outlook.com [52.101.70.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED822FE56B;
-	Tue, 23 Sep 2025 18:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758652067; cv=none; b=C37nhdz0cMVZEew4zlL0zsszaYHM6KI36b+dBtuttMeK+RSN40CgzYadOMxR+NVcXc/Bj0kNDequXyaN3d/kr5Go8hpfl5T7B0pvyz7DUg7g5TPSpgb3ot9oauZn2srDkxe72HdIohm2kB+VcbdNualjv9MtDlTkf4+04Skny/0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758652067; c=relaxed/simple;
-	bh=u4+PrGZdgCauoOlW4112fdJ4hZl7Vp6GjCfbithZYI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eY4WVkDGtCDoVvESR/if39x25KOphDT8dq5CUj25RUlIa8+EoyByLpJcs6kopf3BjTKhlSzwAPG6GZwkKbYDskteLHf5xfYf/vs0Ry11bQYQDj26+zkKXFLSyursyFTVYpqv9bcqPh/Pf3ZxOLg9Ogo97zQiBzVI7FIxQA+TpPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dpv3QQap; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758652066; x=1790188066;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=u4+PrGZdgCauoOlW4112fdJ4hZl7Vp6GjCfbithZYI8=;
-  b=dpv3QQapc1zRrrn82nonv6qSg5gc5WcmlWR7LjHd55L2ltehNDfBnGux
-   NgRTmng98Yro6gxNE+NrcQl0ez4jbQsdBZB5eTiDvlegugHAbo+CYMU/q
-   I0nc9aPOU48BLIiuYjYLeKC0ddTutzonM8wK1jxn/us2jdDbj/CB9Gl1F
-   13t7+1HXnkHi4V9w/D7K8KOZR9pIrOO51ZYmk8HBb9joSjgReqdkSb9lR
-   a+VpqFH6m62tClHtk01a4JmZaRfA80aILyguZTsq+75Ir7CERmjDatdKa
-   sce6ql+NuwZQ/8FRgGc632F7spG00EdqoLKypoPmF+4LDWi8JDkOxfGkP
-   Q==;
-X-CSE-ConnectionGUID: Cn6/ClIbSRqVjLSag6tLNw==
-X-CSE-MsgGUID: 3PdZR3FhSXmE7uPmpnjTOQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="64580401"
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="64580401"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 11:27:40 -0700
-X-CSE-ConnectionGUID: stv7vfFCSdeHBPP5LF+uSw==
-X-CSE-MsgGUID: aPOfJi39TMSEQztG3b8yRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="177620568"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 23 Sep 2025 11:27:36 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v17ji-0003Q5-1C;
-	Tue, 23 Sep 2025 18:27:34 +0000
-Date: Wed, 24 Sep 2025 02:27:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sherry Sun <sherry.sun@nxp.com>, gregkh@linuxfoundation.org,
-	jirislaby@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, shenwei.wang@nxp.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH 2/2] tty: serial: imx: Add missing wakeup event reporting
-Message-ID: <202509240214.bHWiT4Db-lkp@intel.com>
-References: <20250923031613.2448073-3-sherry.sun@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F49272E6D;
+	Tue, 23 Sep 2025 18:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758652177; cv=fail; b=R7ZSjLyP7QgHwNEZpLxYQ1AydKERDkCW+MbJqPsgx0g42y409tuSnLe0i1BvONxE0Fli4ye8oIFjNwbD94/Ernq458MCvnJ23ju/0LCmsLTgC8f5n01omANeF9SD2bFSzw3UxebuIradXJD4lCeHqWPIa5oXNUCCab4NFl+S9jY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758652177; c=relaxed/simple;
+	bh=1e4tGtmJRMNC/QOmkqo6sDP4P56AfB3SHrB8Mg5iXFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=c0za/ZiBD7qZ/3MKyus1jPvNPgdSlcADujvT012ORF9uX2hOL3vnm0BI9rIh7Nr3qqs22uo3m44Yl5QLe7+6q4+MdLIyBG2wfhU7+G7SXY6PamwjjklWkyNz7nbLUNp6XzctaJRb6sqaq8hdcxbugnyKZ8nvTTlPAsyGZYgow4I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=a4t/tPLj; arc=fail smtp.client-ip=52.101.70.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SDLMgzJBbcuhMetuQNiK96h6zF/X3MQtjhnQTLKPl1Zl08gMSSgizI487zPnQHtSw2ZhqVYkvOBaXFQZ9tOdhnyaLmlRocrRl3z2oEinyoHJ63ZofEhJKhivzOIeND92zplrMS7A3NMurq/iFviv7/iAZIML/8k6B27F32H9FW6nXxmvc70iNlSYGHi9DGPJHtJq7sz765GD8vXf5IK5yklqP/UbJOk1/U4Jk+B+xZJjUHAsWVBcZiggYoQB+9mCs5NElQoJKa7Q4KecPSvj61zMb//R42V8S1HlUkWD9cc9WizFVg199vxkZiv8FK2XLhhdDVHHHZ0j1fteH8ew8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oSLdUX3+QJj7uJMhnq/eZQvgqqDlXGvRY+hHSsv5+Zs=;
+ b=KF+t8DDIZvbIV1n7xvhP2PIw4pmeYkgzYft3pr39B5uilnaDBYUFYnbHh1+WAbqmy5UXwHlUYNbloFAYUkyeHDZ4c99IMQxh57+PxDxAbUWGHHbtIfjQcFwAOVwkW2RlYYvSBUoWyibV8ZLCjSOjDN0gJUdb/5wui1zwD0iD0MV39sYdE7blkX1SRX+DOh4onuQVwmWv8+zTTqHj6vHNpZWxJz3iI/awhuZNObPGCYuk6smf1KijWpuHjw/EFx+uEC+eMJeWajRsnwlkmWDxGj2fcVupi3HbQQ+LUk5S+HKL+NlGvvz3F/HzrKiD2PtbgQ7M8EG11HnXOSwg6rZb/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oSLdUX3+QJj7uJMhnq/eZQvgqqDlXGvRY+hHSsv5+Zs=;
+ b=a4t/tPLj5xz46yg3up5tAf6qkbzFg00OxOsKr14uPzsJvqDcMB1vbslPlElgH8kvTKCYZUwDAyi8KTCXq6A34j/zn0THtbURiBoC89y2/xFcFo5KrINMeohLLu4YgAPtHXjRoY3tMF4+XxSmp4dhUYa8+9AS/lDXszSht0cflpGNogF9wHkRegO8BakiR2nOz8IWF8+XxrwF4cBE8OPRA0hq2H0gXZRf42CY3Tz7nK6KmXjEA/KBE8xwGAMntio0qudUXZwCHXj1VaLO1j1VklTOanQq7wliUaNvlEiWz7l1o9Z7g/dT/t+6xY/uccjoebZTJITprxmDKDSd7X+i7g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by AS8PR04MB7799.eurprd04.prod.outlook.com (2603:10a6:20b:2a4::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Tue, 23 Sep
+ 2025 18:29:31 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9160.008; Tue, 23 Sep 2025
+ 18:29:31 +0000
+Date: Tue, 23 Sep 2025 14:29:25 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 07/14] drm/imx: dc: Add DPR channel support
+Message-ID: <aNLnBbSr5BGDvmsG@lizhi-Precision-Tower-5810>
+References: <20250923-imx8-dc-prefetch-v2-0-5d69dc9ac8b5@nxp.com>
+ <20250923-imx8-dc-prefetch-v2-7-5d69dc9ac8b5@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923-imx8-dc-prefetch-v2-7-5d69dc9ac8b5@nxp.com>
+X-ClientProxiedBy: AM0PR04CA0089.eurprd04.prod.outlook.com
+ (2603:10a6:208:be::30) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250923031613.2448073-3-sherry.sun@nxp.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AS8PR04MB7799:EE_
+X-MS-Office365-Filtering-Correlation-Id: f8c18edd-3941-4d4b-f6a1-08ddfacf22e9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|19092799006|376014|7416014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?U8VBy1A1ETTKxS+9KukEI549V8/4j7waqvyqAKYMmkgaeywQgDNacroucxfO?=
+ =?us-ascii?Q?gdSNkaiGQb7XCop5n4Q8bfpBcDlEPOByHGYVPgLpPaQ3BeCoo6P6vNuMJyKk?=
+ =?us-ascii?Q?jXfQr5noEkOPgHI6LNOOO1Ub67Y7FWCKBTzJ2AqZCp7Ti6caI4BC780lpxhh?=
+ =?us-ascii?Q?FTltq4R26/LL3svazOq3pI10DEqyu7MKtgma+7lWcdw3nieoRQWEJmIwEU81?=
+ =?us-ascii?Q?jzwdD/UKUCdHb9QJw7hDZoqZgflIifPueWYlr2NP92UIJQSpR3JwTL2aBsUN?=
+ =?us-ascii?Q?e62g5h+ji/Te49YKHDd+W6ipXBhVAJL2F+lq1INcEpz22apUnjf/AOFqzkl8?=
+ =?us-ascii?Q?/LbJudLhrOGFYvEyhxG9zAKY2nxB+9tBKF3Ub9AA2z6s0qBbzj00mRvq390v?=
+ =?us-ascii?Q?7x7eF+SuHIcXMN+/uQ7AoxZaXbKiQCct5EIbDNgf7oGeE6NAvf+sr2hk+YfL?=
+ =?us-ascii?Q?wSXEGM1WG3aftK8i3L1AizSGU4AlSVTOHHYREI2XnblCOXrvkciQOYgGNEwF?=
+ =?us-ascii?Q?0dpbbyGdLUNyHaWaNbjghRvvHzDDKce+y2pIQ7Zc8sYD2TU/8cNFovOU6sHp?=
+ =?us-ascii?Q?zJQUBGGHGN61uECzZEk5fepNHuz3TE8XQlQtYW2OOqSSqqFOUHYnkP2NowCf?=
+ =?us-ascii?Q?Kbk8QDBqmP27n+Jfrz4/vFH3wmf6Be0PUAUyITyStFtI9l3YkCz3LYVgtq9M?=
+ =?us-ascii?Q?Y+jgvoZPmplaj2Steg5CaPb+LYYMjGrZ4j8CwA+9pu4dQWB4y8RMapHqKP1Z?=
+ =?us-ascii?Q?6gbjfzSwN/9QO8AHeDa85vIB5HzXylFvewB5c+MyUfEvOPYtINPIgUM+tsF9?=
+ =?us-ascii?Q?+c8XL2dnexSxUF6Hk0ewZ//jKhQuVN09PsuT4EjR0nOWqkpdOkheAvxSSF3K?=
+ =?us-ascii?Q?hC85qVFRzyJk2thrNFFN+3Q5FdYVNNJRKaPgKAT6U0dOw2xx8uItJrArrOLL?=
+ =?us-ascii?Q?BRCzRBlNYQHMDeIMcMCJTiXLDuXVsMpS/b38ex8xbRp0WLNAHXxBudz0RjAx?=
+ =?us-ascii?Q?VO0VCvOnTmxGMsv5mt8KrYgdn+NM2gxjCf7E4OnFPrtuxsileoHampVF0ZuT?=
+ =?us-ascii?Q?yagYpQAoyXH8Ud6H0MVT5cEAKX2+i5BiveKqWblzGEU8OeBijfUi+m1Mug9e?=
+ =?us-ascii?Q?RBp+yCjgux5uVLI0cXOFXjgYccYAZcyw+kv4XLV8Y4TheLYaLxKmfxowVF+C?=
+ =?us-ascii?Q?gxIW6GyiFT9OMAiVdaKlumMrxe/vzVmE6EGLKJT3jClIL1SLsRT5iedM+KDN?=
+ =?us-ascii?Q?54jvwC4nGryEpCRhVKGQpr11liB3nb0CFl49yvwDDxR7ZNxhCwSJWUwi+3bf?=
+ =?us-ascii?Q?WL4Hau3QthjN4GFfOiU6+06zF+kB1kmrEXvSn2o/t+JI051yaFXIPj1Vq8vu?=
+ =?us-ascii?Q?ol5TnrMvIO+uZ/cTufRwLeDYfX/K7TzIrCL3m69C21aWsc5rrW0auMaLWorr?=
+ =?us-ascii?Q?v9uT4a4yNsJcF0cjQuAtlHbPMl460X8tymG/0Dr9+1Cw7xmMBmcA/w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(376014)(7416014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?9i1rzS6YHezyy7SOY7YitIqbUuvM+XSujTFQC7uoVrvQpkUDtUOKwCVgYy64?=
+ =?us-ascii?Q?Qqq2WpDlg+TSa9x3PHvrC4k9uJqsMUbQ2pUhGeaw9rGqATTmWr2FKkUZFiwN?=
+ =?us-ascii?Q?aBMpqtVmdsSsAVPqF1ky3jjs7v/QNjFYyCr7ZhzxhTzmcZdopKOeRGoXkTBb?=
+ =?us-ascii?Q?qIgFoVtb5T0dXhyXuQjVhi1X5tbXJaBtxgdQB4UeZHSYXFBuOj32r1pFCAbp?=
+ =?us-ascii?Q?Pv5as9OCsvhVx5e2Qk+RGhcw3ha9ZsAz4PCIm8dt7jF6pX5Rva4g0mCQL3Ev?=
+ =?us-ascii?Q?qSxsZbOmMDLeqb85zZDXo8YU9zd9NZcnJcu/Oakm3yNN7XNYrBVeYhRkN5TZ?=
+ =?us-ascii?Q?ddewV0Kw7Ml9a7Qwn6hYoib7+BNjJIE6iH51CvInSj2iBO+Spzh6/k36g818?=
+ =?us-ascii?Q?/i+99T4ytaYcDi4QxwKC3OlZ1wd+HVVfpR8o2aEDwnXAM5VVyNcPwN8909aX?=
+ =?us-ascii?Q?ma44IFfbHmUbo9HzsRE1IIMpGF0Lf1Yox/qURUdTi2qfpFZfduSnAqR3IxKU?=
+ =?us-ascii?Q?bADX6y7bBsNMfl0thvFh7UitQXjDjYU57TH5rt1KVnGI6dVVmGScmXnwhU13?=
+ =?us-ascii?Q?hurgpkWgFuew1nMVQaqL3gDdyd9Qo4jhZp5qWD9ZW6GZyvqQOUov93zH8QKq?=
+ =?us-ascii?Q?HQ8gUaKA4Nn9jDmkvcvkSmzR0KnBqF0YuZIlpyjnHPspssXiJ/COXiiJ7Wbr?=
+ =?us-ascii?Q?o9OLjgqpeuARHmq9lUfdGEfKbUuBbybBq4gSZkeNWJYdwZLJGXNmtUF/7Vo5?=
+ =?us-ascii?Q?29sDVdsXsvFxjgH/ydwsbFTAcaW0IMKvg7Ki7m4gB6aKbiWcrFMLdFjaR6VS?=
+ =?us-ascii?Q?/DmJlpQe8X7DKgVA9vLpoM7MlDvX7NAs0LZpnyvf6cElX90Ew+6laaQzWLcv?=
+ =?us-ascii?Q?ahPgHmxc69Ouimb9YYRhb24mF9dUd6qEU0T07Uaen/D3eqP7kuUPoA59V6p6?=
+ =?us-ascii?Q?tc20QmJl/XPxxatBNxtxoNW4v5g08XkSRf4EDF2gaptwLpcsVCLKM6RfJJiN?=
+ =?us-ascii?Q?dOWLY9C2wnO9RED7Bv12GtajbPCo5g4An8JleGsiRQWIVY+aEfIWhigs6FE4?=
+ =?us-ascii?Q?epTzPwEJTH/nNOR9gulvGBZMfhn91cyU8xzqFzZMPPorIs0NxikQDHUDPAxt?=
+ =?us-ascii?Q?iq/nfRzFkp7u60tf7bfFD+7j7j4X2QaUdaP5AWhFDoHVUdNXep4Hx26gS5zW?=
+ =?us-ascii?Q?NOiWS1FLFKX8X3U5ohlOvxWb+4SS7NJ72EMXwcq6qEmoujWcjhwyPDdzuy6F?=
+ =?us-ascii?Q?YcyfT6Lq4RvlDVXREmdeFzQNKwn3cVhvAAgsMqgOtkY5F4ead95i30MwIwNg?=
+ =?us-ascii?Q?cj/eAH4ANrRPFb3kYn0dk18P1oI3PX8vyf35FQJdtu+Tr6lP8ExGLrISkY9K?=
+ =?us-ascii?Q?8SEgXteX/dddFh9cST4EUj1KCMypWennEuM5ld5JFerdIaAwZeH8IGErZU0h?=
+ =?us-ascii?Q?IOZzdG37f0/WkQSF0CpTRnXgz/JNdxvTBJWBRoQ6tcAkEXyOWYjD/x7CMj1v?=
+ =?us-ascii?Q?CzKfdGUjpNPBVgPxIIgb6SUnxqNast5okCSsQ1d4LNEU3oZajvSaqh8jmK9o?=
+ =?us-ascii?Q?7/vtdhKsiMznKp0O33+n5emK9ZwFPhDtG5SWE4uj?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8c18edd-3941-4d4b-f6a1-08ddfacf22e9
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 18:29:31.0756
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mkHudsmYVZVNAMnYpqOb5gXjsi6AbmDypvbB7DRNSMGuTvg4ZPqI2LyLbYheGyfBRr4NnNIh7qm/zHJOW4584w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7799
 
-Hi Sherry,
+On Tue, Sep 23, 2025 at 10:07:57AM +0800, Liu Ying wrote:
+> Display Prefetch Resolve Channel(DPRC) is a part of a prefetch engine.
+> It fetches display data, transforms it to linear format and stores it
+> to DPRC's RTRAM.  PRG, as the other part of a prefetch engine, acts as
+> a gasket between the RTRAM controller and a FetchUnit.  Add a platform
+> driver to support the DPRC.
+>
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> ---
+> v2:
+> - Manage clocks with bulk interfaces.  (Frank)
+> - Sort variables in probe function in reverse Christmas tree fashion.  (Frank)
+> ---
+>  drivers/gpu/drm/imx/dc/Kconfig   |   1 +
+>  drivers/gpu/drm/imx/dc/Makefile  |   6 +-
+>  drivers/gpu/drm/imx/dc/dc-dprc.c | 465 +++++++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/imx/dc/dc-dprc.h |  35 +++
+>  drivers/gpu/drm/imx/dc/dc-drv.c  |   1 +
+>  drivers/gpu/drm/imx/dc/dc-drv.h  |   1 +
+>  drivers/gpu/drm/imx/dc/dc-prg.c  |  12 +
+>  drivers/gpu/drm/imx/dc/dc-prg.h  |   4 +
+>  8 files changed, 522 insertions(+), 3 deletions(-)
+>
+...
+> +
+> +static void dc_dprc_reset(struct dc_dprc *dprc)
+> +{
+> +	regmap_write(dprc->reg, SYSTEM_CTRL0 + SET, SOFT_RESET);
+> +	fsleep(20);
+> +	regmap_write(dprc->reg, SYSTEM_CTRL0 + CLR, SOFT_RESET);
+> +	fsleep(20);
+> +}
+> +
+> +static void dc_dprc_enable(struct dc_dprc *dprc)
+> +{
+> +	dc_prg_enable(dprc->prg);
+> +}
+> +
+> +static void dc_dprc_reg_update(struct dc_dprc *dprc)
+> +{
+> +	dc_prg_reg_update(dprc->prg);
+> +}
+> +
+> +static void dc_dprc_enable_ctrl_done_irq(struct dc_dprc *dprc)
+> +{
+> +	guard(spinlock_irqsave)(&dprc->lock);
+> +	regmap_write(dprc->reg, IRQ_MASK + CLR, IRQ_DPR_CRTL_DONE);
+> +}
+> +
+> +void dc_dprc_configure(struct dc_dprc *dprc, unsigned int stream_id,
+> +		       unsigned int width, unsigned int height,
+> +		       unsigned int stride,
+> +		       const struct drm_format_info *format,
+> +		       dma_addr_t baddr, bool start)
+> +{
+> +	unsigned int prg_stride = width * format->cpp[0];
+> +	unsigned int bpp = format->cpp[0] * 8;
+> +	struct device *dev = dprc->dev;
+> +	unsigned int p1_w, p1_h;
+> +	u32 val;
+> +	int ret;
+> +
+> +	if (start) {
+> +		ret = pm_runtime_resume_and_get(dev);
+> +		if (ret < 0) {
+> +			dev_err(dev, "failed to get RPM: %d\n", ret);
+> +			return;
+> +		}
+> +
+> +		dc_dprc_set_stream_id(dprc, stream_id);
+> +	}
+> +
+> +	p1_w = round_up(width, format->cpp[0] == 2 ? 32 : 16);
+> +	p1_h = round_up(height, 4);
+> +
+> +	regmap_write(dprc->reg, FRAME_CTRL0, PITCH(stride));
+> +	regmap_write(dprc->reg, FRAME_1P_CTRL0, BYTE_1K);
+> +	regmap_write(dprc->reg, FRAME_1P_PIX_X_CTRL, NUM_X_PIX_WIDE(p1_w));
+> +	regmap_write(dprc->reg, FRAME_1P_PIX_Y_CTRL, NUM_Y_PIX_HIGH(p1_h));
+> +	regmap_write(dprc->reg, FRAME_1P_BASE_ADDR_CTRL0, baddr);
+> +	regmap_write(dprc->reg, FRAME_PIX_X_ULC_CTRL, CROP_ULC_X(0));
+> +	regmap_write(dprc->reg, FRAME_PIX_Y_ULC_CTRL, CROP_ULC_Y(0));
+> +
+> +	regmap_write(dprc->reg, RTRAM_CTRL0, THRES_LOW(3) | THRES_HIGH(7));
 
-kernel test robot noticed the following build warnings:
+Is it okay to access register if start is false since
+pm_runtime_resume_and_get() have not called.
 
-[auto build test WARNING on shawnguo/for-next]
-[also build test WARNING on tty/tty-testing tty/tty-next tty/tty-linus usb/usb-testing usb/usb-next usb/usb-linus linus/master v6.17-rc7 next-20250922]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> +
+> +	val = LINE4 | BUF2;
+> +	switch (format->format) {
+> +	case DRM_FORMAT_XRGB8888:
+> +		/*
+> +		 * It turns out pixel components are mapped directly
+> +		 * without position change via DPR processing with
+> +		 * the following color component configurations.
+> +		 * Leave the pixel format to be handled by the
+> +		 * display controllers.
+> +		 */
+> +		val |= A_COMP_SEL(3) | R_COMP_SEL(2) |
+> +		       G_COMP_SEL(1) | B_COMP_SEL(0);
+> +		val |= PIX_SIZE_32BIT;
+> +		break;
+> +	default:
+> +		dev_err(dev, "unsupported format 0x%08x\n", format->format);
+> +		return;
+> +	}
+> +	regmap_write(dprc->reg, MODE_CTRL0, val);
+> +
+> +	if (start) {
+> +		/* software shadow load for the first frame */
+> +		val = SW_SHADOW_LOAD_SEL | SHADOW_LOAD_EN;
+> +		regmap_write(dprc->reg, SYSTEM_CTRL0, val);
+> +
+> +		/* and then, run... */
+> +		val |= RUN_EN | REPEAT_EN;
+> +		regmap_write(dprc->reg, SYSTEM_CTRL0, val);
+> +	}
+> +
+> +	dc_prg_configure(dprc->prg, width, height, prg_stride, bpp, baddr, start);
+> +
+> +	dc_dprc_enable(dprc);
+> +
+> +	dc_dprc_reg_update(dprc);
+> +
+> +	if (start)
+> +		dc_dprc_enable_ctrl_done_irq(dprc);
+> +
+> +	dev_dbg(dev, "w: %u, h: %u, s: %u, fmt: 0x%08x\n",
+> +		width, height, stride, format->format);
+> +}
+> +
+> +void dc_dprc_disable_repeat_en(struct dc_dprc *dprc)
+> +{
+> +	regmap_write(dprc->reg, SYSTEM_CTRL0 + CLR, REPEAT_EN);
+> +	dev_dbg(dprc->dev, "disable REPEAT_EN\n");
+> +}
+> +
+> +void dc_dprc_disable(struct dc_dprc *dprc)
+> +{
+> +	dc_prg_disable(dprc->prg);
+> +
+> +	pm_runtime_put(dprc->dev);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sherry-Sun/tty-serial-imx-Only-configure-the-wake-register-when-device-is-set-as-wakeup-source/20250923-111951
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250923031613.2448073-3-sherry.sun%40nxp.com
-patch subject: [PATCH 2/2] tty: serial: imx: Add missing wakeup event reporting
-config: arm-randconfig-004-20250923 (https://download.01.org/0day-ci/archive/20250924/202509240214.bHWiT4Db-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project cafc064fc7a96b3979a023ddae1da2b499d6c954)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250924/202509240214.bHWiT4Db-lkp@intel.com/reproduce)
+You call pm_runtime_put() in dc_dprc_disable(), but not call
+pm_runtime_resume_and_get() at dc_dprc_enable().
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509240214.bHWiT4Db-lkp@intel.com/
+Is it more reasonable to call pm_runtime_resume_and_get() in dc_dprc_enable()
 
-All warnings (new ones prefixed by >>):
+dc_dprc_enable()
+{
+	...
+	pm_runtime_resume_and_get();
+}
 
->> drivers/tty/serial/imx.c:2721:6: warning: variable 'wake_active' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
-    2721 |         if (on) {
-         |             ^~
-   drivers/tty/serial/imx.c:2742:6: note: uninitialized use occurs here
-    2742 |         if (wake_active && irqd_is_wakeup_set(irq_get_irq_data(sport->port.irq)))
-         |             ^~~~~~~~~~~
-   drivers/tty/serial/imx.c:2721:2: note: remove the 'if' if its condition is always false
-    2721 |         if (on) {
-         |         ^~~~~~~~~
-    2722 |                 imx_uart_writel(sport, USR1_AWAKE, USR1);
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    2723 |                 ucr3 |= UCR3_AWAKEN;
-         |                 ~~~~~~~~~~~~~~~~~~~~
-    2724 |         } else {
-         |         ~~~~~~
-   drivers/tty/serial/imx.c:2704:28: note: initialize the variable 'wake_active' to silence this warning
-    2704 |         bool may_wake, wake_active;
-         |                                   ^
-         |                                    = 0
-   drivers/tty/serial/imx.c:2707:6: warning: variable 'may_wake' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-    2707 |         if (tty) {
-         |             ^~~
-   drivers/tty/serial/imx.c:2714:7: note: uninitialized use occurs here
-    2714 |         if (!may_wake)
-         |              ^~~~~~~~
-   drivers/tty/serial/imx.c:2707:2: note: remove the 'if' if its condition is always true
-    2707 |         if (tty) {
-         |         ^~~~~~~~
-   drivers/tty/serial/imx.c:2704:15: note: initialize the variable 'may_wake' to silence this warning
-    2704 |         bool may_wake, wake_active;
-         |                      ^
-         |                       = 0
-   2 warnings generated.
+dc_dprc_configure()
+{
+	unconditional call
+	pm_runtime_resume_and_get()
+	...
+	pm_runtime_put()
 
+	if (start) //look like only need enable when start is true
+		dc_dprc_enable(dprc);
+}
 
-vim +2721 drivers/tty/serial/imx.c
+> +
+> +	dev_dbg(dprc->dev, "disable\n");
+> +}
+> +
+> +void dc_dprc_disable_at_boot(struct dc_dprc *dprc)
+> +{
+> +	dc_prg_disable_at_boot(dprc->prg);
+> +
+> +	clk_bulk_disable_unprepare(dprc->num_clks, dprc->clks);
+> +
 
-c868cbb7e5c6d3 Eduardo Valentin 2015-08-11  2696  
-3c199ed5bd6469 Esben Haabendal  2024-09-13  2697  /* called with irq off */
-9d1a50a2cceb3a Uwe Kleine-König 2018-03-02  2698  static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
-189550b8644ef5 Eduardo Valentin 2015-08-11  2699  {
-519ca97b8a2e94 Sherry Sun       2025-09-23  2700  	struct tty_port *port = &sport->port.state->port;
-519ca97b8a2e94 Sherry Sun       2025-09-23  2701  	struct tty_struct *tty;
-519ca97b8a2e94 Sherry Sun       2025-09-23  2702  	struct device *tty_dev;
-2e33c984e6b3d6 Sherry Sun       2025-09-23  2703  	u32 ucr3, usr1;
-2e33c984e6b3d6 Sherry Sun       2025-09-23  2704  	bool may_wake, wake_active;
-519ca97b8a2e94 Sherry Sun       2025-09-23  2705  
-519ca97b8a2e94 Sherry Sun       2025-09-23  2706  	tty = tty_port_tty_get(port);
-519ca97b8a2e94 Sherry Sun       2025-09-23  2707  	if (tty) {
-519ca97b8a2e94 Sherry Sun       2025-09-23  2708  		tty_dev = tty->dev;
-519ca97b8a2e94 Sherry Sun       2025-09-23  2709  		may_wake = tty_dev && device_may_wakeup(tty_dev);
-519ca97b8a2e94 Sherry Sun       2025-09-23  2710  		tty_kref_put(tty);
-519ca97b8a2e94 Sherry Sun       2025-09-23  2711  	}
-519ca97b8a2e94 Sherry Sun       2025-09-23  2712  
-519ca97b8a2e94 Sherry Sun       2025-09-23  2713  	/* only configure the wake register when device set as wakeup source */
-519ca97b8a2e94 Sherry Sun       2025-09-23  2714  	if (!may_wake)
-519ca97b8a2e94 Sherry Sun       2025-09-23  2715  		return;
-189550b8644ef5 Eduardo Valentin 2015-08-11  2716  
-fbd22c4fa737f9 Xiaolei Wang     2024-12-11  2717  	uart_port_lock_irq(&sport->port);
-3c199ed5bd6469 Esben Haabendal  2024-09-13  2718  
-2e33c984e6b3d6 Sherry Sun       2025-09-23  2719  	usr1 = imx_uart_readl(sport, USR1);
-4444dcf1fe7ea5 Uwe Kleine-König 2018-03-02  2720  	ucr3 = imx_uart_readl(sport, UCR3);
-09df0b3464e528 Martin Kaiser    2018-01-05 @2721  	if (on) {
-27c844261b87f8 Uwe Kleine-König 2018-03-02  2722  		imx_uart_writel(sport, USR1_AWAKE, USR1);
-4444dcf1fe7ea5 Uwe Kleine-König 2018-03-02  2723  		ucr3 |= UCR3_AWAKEN;
-4444dcf1fe7ea5 Uwe Kleine-König 2018-03-02  2724  	} else {
-4444dcf1fe7ea5 Uwe Kleine-König 2018-03-02  2725  		ucr3 &= ~UCR3_AWAKEN;
-2e33c984e6b3d6 Sherry Sun       2025-09-23  2726  		wake_active = usr1 & USR1_AWAKE;
-09df0b3464e528 Martin Kaiser    2018-01-05  2727  	}
-4444dcf1fe7ea5 Uwe Kleine-König 2018-03-02  2728  	imx_uart_writel(sport, ucr3, UCR3);
-bc85734b126f81 Eduardo Valentin 2015-08-11  2729  
-38b1f0fb42f772 Fabio Estevam    2018-01-04  2730  	if (sport->have_rtscts) {
-4444dcf1fe7ea5 Uwe Kleine-König 2018-03-02  2731  		u32 ucr1 = imx_uart_readl(sport, UCR1);
-c67643b46c28fc Fugang Duan      2021-11-25  2732  		if (on) {
-c67643b46c28fc Fugang Duan      2021-11-25  2733  			imx_uart_writel(sport, USR1_RTSD, USR1);
-4444dcf1fe7ea5 Uwe Kleine-König 2018-03-02  2734  			ucr1 |= UCR1_RTSDEN;
-c67643b46c28fc Fugang Duan      2021-11-25  2735  		} else {
-4444dcf1fe7ea5 Uwe Kleine-König 2018-03-02  2736  			ucr1 &= ~UCR1_RTSDEN;
-2e33c984e6b3d6 Sherry Sun       2025-09-23  2737  			wake_active |= usr1 & USR1_RTSD;
-c67643b46c28fc Fugang Duan      2021-11-25  2738  		}
-4444dcf1fe7ea5 Uwe Kleine-König 2018-03-02  2739  		imx_uart_writel(sport, ucr1, UCR1);
-189550b8644ef5 Eduardo Valentin 2015-08-11  2740  	}
-3c199ed5bd6469 Esben Haabendal  2024-09-13  2741  
-2e33c984e6b3d6 Sherry Sun       2025-09-23  2742  	if (wake_active && irqd_is_wakeup_set(irq_get_irq_data(sport->port.irq)))
-2e33c984e6b3d6 Sherry Sun       2025-09-23  2743  		pm_wakeup_event(tty_port_tty_get(port)->dev, 0);
-2e33c984e6b3d6 Sherry Sun       2025-09-23  2744  
-fbd22c4fa737f9 Xiaolei Wang     2024-12-11  2745  	uart_port_unlock_irq(&sport->port);
-38b1f0fb42f772 Fabio Estevam    2018-01-04  2746  }
-189550b8644ef5 Eduardo Valentin 2015-08-11  2747  
+you have runtime functions dc_dprc_runtime_suspend()
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If runtime pm status is correct, needn't call clk_bulk_disable_unprepare().
+
+Look like call pm_runtime_put() here to let runtime pm management clks.
+
+otherwise, runtime pm state will not match clock enable/disable state.
+
+> +	dev_dbg(dprc->dev, "disable at boot\n");
+> +}
+> +
+> +static void dc_dprc_ctrl_done_handle(struct dc_dprc *dprc)
+> +{
+> +	regmap_write(dprc->reg, SYSTEM_CTRL0, REPEAT_EN);
+> +
+> +	dc_prg_shadow_enable(dprc->prg);
+> +
+> +	dev_dbg(dprc->dev, "CTRL done handle\n");
+> +}
+> +
+...
+> +
+> +static int dc_dprc_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct resource *res;
+> +	struct dc_dprc *dprc;
+> +	void __iomem *base;
+> +	int ret, wrap_irq;
+> +
+> +	dprc = devm_kzalloc(dev, sizeof(*dprc), GFP_KERNEL);
+> +	if (!dprc)
+> +		return -ENOMEM;
+> +
+> +	ret = imx_scu_get_handle(&dprc->ipc_handle);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to get SCU ipc handle\n");
+> +
+> +	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	dprc->reg = devm_regmap_init_mmio(dev, base, &dc_dprc_regmap_config);
+> +	if (IS_ERR(dprc->reg))
+> +		return PTR_ERR(dprc->reg);
+> +
+> +	wrap_irq = platform_get_irq_byname(pdev, "dpr_wrap");
+> +	if (wrap_irq < 0)
+> +		return -ENODEV;
+> +
+> +	dprc->num_clks = devm_clk_bulk_get_all(dev, &dprc->clks);
+> +	if (dprc->num_clks < 0)
+> +		return dev_err_probe(dev, dprc->num_clks, "failed to get clocks\n");
+> +
+> +	ret = of_property_read_u32(np, "fsl,sc-resource", &dprc->sc_resource);
+> +	if (ret) {
+> +		dev_err(dev, "failed to get SC resource %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	dprc->prg = dc_prg_lookup_by_phandle(dev, "fsl,prgs", 0);
+> +	if (!dprc->prg)
+> +		return dev_err_probe(dev, -EPROBE_DEFER,
+> +				     "failed to lookup PRG\n");
+> +
+> +	dc_prg_set_dprc(dprc->prg, dprc);
+> +
+> +	dprc->dev = dev;
+> +	spin_lock_init(&dprc->lock);
+> +
+> +	ret = devm_request_irq(dev, wrap_irq, dc_dprc_wrap_irq_handler,
+> +			       IRQF_SHARED, dev_name(dev), dprc);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to request dpr_wrap IRQ(%d): %d\n",
+> +			wrap_irq, ret);
+> +		return ret;
+> +	}
+> +
+> +	dev_set_drvdata(dev, dprc);
+> +
+> +	ret = devm_pm_runtime_enable(dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to enable PM runtime\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static int dc_dprc_runtime_suspend(struct device *dev)
+> +{
+> +	struct dc_dprc *dprc = dev_get_drvdata(dev);
+> +
+> +	clk_bulk_disable_unprepare(dprc->num_clks, dprc->clks);
+> +
+> +	return 0;
+> +}
+> +
+> +static int dc_dprc_runtime_resume(struct device *dev)
+> +{
+> +	struct dc_dprc *dprc = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = clk_bulk_prepare_enable(dprc->num_clks, dprc->clks);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable clocks: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	dc_dprc_reset(dprc);
+> +
+> +	/* disable all control IRQs and enable all error IRQs */
+> +	guard(spinlock_irqsave)(&dprc->lock);
+> +	regmap_write(dprc->reg, IRQ_MASK, IRQ_CTRL_MASK);
+
+write one 32bit register is atomic, look like needn't spinlock.
+
+Only other place use dprc->lock is in dc_dprc_enable_ctrl_done_irq(), which
+write 32bit clr register.
+
+Frank
+> +
+> +	return 0;
+> +}
+> +
+...
+> +void dc_prg_set_dprc(struct dc_prg *prg, struct dc_dprc *dprc)
+> +{
+> +	prg->dprc = dprc;
+> +}
+> +
+> +struct dc_dprc *dc_prg_get_dprc(struct dc_prg *prg)
+> +{
+> +	return prg->dprc;
+> +}
+> +
+>  static int dc_prg_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> diff --git a/drivers/gpu/drm/imx/dc/dc-prg.h b/drivers/gpu/drm/imx/dc/dc-prg.h
+> index 6fd9b050bfa12334720f83ff9ceaf337e3048a54..f29d154f7de597b9d20d5e71303049f6f8b022d6 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-prg.h
+> +++ b/drivers/gpu/drm/imx/dc/dc-prg.h
+> @@ -32,4 +32,8 @@ bool dc_prg_stride_supported(struct dc_prg *prg,
+>  struct dc_prg *
+>  dc_prg_lookup_by_phandle(struct device *dev, const char *name, int index);
+>
+> +void dc_prg_set_dprc(struct dc_prg *prg, struct dc_dprc *dprc);
+> +
+> +struct dc_dprc *dc_prg_get_dprc(struct dc_prg *prg);
+> +
+>  #endif
+>
+> --
+> 2.34.1
+>
 
