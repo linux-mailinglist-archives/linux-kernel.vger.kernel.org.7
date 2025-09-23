@@ -1,126 +1,109 @@
-Return-Path: <linux-kernel+bounces-828618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D23B95044
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:36:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0869B9504B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 178FE163DFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:36:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9014718A6F97
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C6431D376;
-	Tue, 23 Sep 2025 08:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F2B31D72D;
+	Tue, 23 Sep 2025 08:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="fHApz0RV"
-Received: from mail-06.mail-europe.com (mail-06.mail-europe.com [85.9.210.45])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/oEQTgv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BC031CA56
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B172C31D382;
+	Tue, 23 Sep 2025 08:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758616590; cv=none; b=Cf8FyCuPhdHnruDdP4+6f+e5I2ZBW+Phcn6hzR8JPCERIQl8YvHT7soI1LJVuOyPGsTdDgw3JPywgerF4pYvslC4MG1jQcvmw6tkuZ3a9RmjoaaKEthg8X9b9K2/iHqkngM/QCdkvuvAcwCCTH1QliCnCJgZsSsx94CggTK5Blk=
+	t=1758616591; cv=none; b=IXWKqZcFlT63mKksdSvgzhAFpRE1VF8WiQNrB1RXOsU1dY8Z3u5AhLAjXtdvH1XqedcBvL0YC7tbUGplsAj8q5u3x3X0a+lhhjjmgkiTsfw9hy0WgKd8iRTgHee6qAX6KIL6RZnsg+M8PzWWlDZpemuk7VRwlndQ+LjzecesWKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758616590; c=relaxed/simple;
-	bh=36wGYpuu29aWoxY4/k1QrrP8i5Y0zUpVWuiRxXPR8fY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VtzNUAbewZvLnZTaIXZ9Gzv+QrveoIxuPtYqA2JmSHICebrcZBbSg9BhguK6YHOHiVvxJb5EdiaG1B+Gr81ZxQ09OyDL4CwVeYJmqfPCK1i7hb+EUQJHfIZIRAA2oaqudsPobCLXogHMXUzYdaX+Z5QZga9RQB8zWEGCFQEttfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=fHApz0RV; arc=none smtp.client-ip=85.9.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
-	s=protonmail; t=1758616572; x=1758875772;
-	bh=36wGYpuu29aWoxY4/k1QrrP8i5Y0zUpVWuiRxXPR8fY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=fHApz0RVITdZg1tf9qnyf0aw2LS9nBnWe0dZJSTvAO/7tupXU8gAnmmkA4DFQKZdG
-	 F0LBghPLHLvZLiT8VKqkz++c1FgZrgs6YuFBZXdvF5PbhFUHVjm7+k+/4whxxXT1w/
-	 0dulULVJlDsb3yYotkQUTraHEiEdOhFheppQonoMtqAxrNWrCAMm75UlmxYgkd6A+W
-	 ASY3D0FhstmBDoVZSvxIUVkGwcuqlJo2DfPY1g6OUPAPLHzQWMj0OmSEHWih7ddYA5
-	 g92BzUzdx1aC8w0iNvVq6RR7AQfW3uz2AJ7eu4epnsq8C2KyUQKjx9eKk73/QDCmWO
-	 TRx4oT/M35f2g==
-Date: Tue, 23 Sep 2025 08:36:08 +0000
-To: Lee Jones <lee@kernel.org>
-From: Aleksandrs Vinarskis <alex@vinarskis.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Hans de Goede <hansg@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Konrad Dybcio <konradybcio@kernel.org>, Daniel Thompson <danielt@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, threeway@gmail.com, Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 3/4] leds: led-class: Add devicetree support to led_get()
-Message-ID: <L7z33cG0mE3y_WEFhvHRJ-wbjg2kxIBVMV0C9qCifJx1DTAyMYyokyKWErFXEuzra3Kjt4pcUZ1VtzRWLBbKVNewDvJtyqPdcHMXUp4h0G0=@vinarskis.com>
-In-Reply-To: <20250916160707.GA3893363@google.com>
-References: <20250910-leds-v5-0-bb90a0f897d5@vinarskis.com> <20250910-leds-v5-3-bb90a0f897d5@vinarskis.com> <20250911081540.GD9224@google.com> <b875f811-6371-4ff4-9cc2-a0a2c82a569c@kernel.org> <g7xkdervsknmcwjg4qgloj643b4itjlfeyiipvsrborszgrhlg@zrp65nvfueqk> <20250916160707.GA3893363@google.com>
-Feedback-ID: 158356072:user:proton
-X-Pm-Message-ID: 9fddac5264039b46b6df9b51ab3c5969c12c32b0
+	s=arc-20240116; t=1758616591; c=relaxed/simple;
+	bh=HwC3qAi4Vb/ZTI0/KBf5ye1cSkZqvV0nCwG9ZNJDA1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G8qnJkf7Em/YceVvSB9vXueMNJuKhSFt58dcjeSEabikktwz1b4DPbr2ZgVJdDvf3F23PkQ40yHOEQ21pDDDZ3vvwVA1ZRDTNUO36MTnOfvldelOBkdh7+uGALL9UrYcv8X8s2sU5pqYEbuFOdiOAWTUCIigayVzrgjoqyGn8tU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/oEQTgv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FFC9C4CEF5;
+	Tue, 23 Sep 2025 08:36:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758616591;
+	bh=HwC3qAi4Vb/ZTI0/KBf5ye1cSkZqvV0nCwG9ZNJDA1U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d/oEQTgvj9i4B2ilNtrcSXA4ixsg1NiVP7u3D5+EqITLW/PLpY2QiXybbLIVKMfry
+	 5EoYTG+7DgcSWJIxLVqWM26dLnd1K3bqQnKbEXf/wBrb2a/FxSIBlTdhLM+giVOjB0
+	 SQi8g5nFvyFeRKYZUQJJThdHDJUXk+crETMH6jlmz4JqoAcguvxkULGN2tl3EJgdA0
+	 NsdWjBYtTKDtYjOkbzqHSfHayiHixlt5/919Q8iqqMdfHmPqi/ylJyaco3F/+DDOxy
+	 lesTMHg254t2MNI249pVGSziCbFDLrLFCL/xT5jZsW03k/VujZH7c3ZQhnxlSxJsRh
+	 kJ26IaisnF4HQ==
+Date: Tue, 23 Sep 2025 09:36:27 +0100
+From: Will Deacon <will@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Dev Jain <dev.jain@arm.com>,
+	Kees Cook <kees@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the arm64 tree with the origin tree
+Message-ID: <aNJcC3aAfJ-gCv6m@willie-the-truck>
+References: <aNJZaJT9elF0TDqH@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNJZaJT9elF0TDqH@finisterre.sirena.org.uk>
 
+On Tue, Sep 23, 2025 at 10:25:12AM +0200, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the arm64 tree got a conflict in:
+> 
+>   arch/arm64/mm/mmu.c
+> 
+> between commit:
+> 
+>   ceca927c86e6f ("arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc function signature")
+> 
+> from the origin tree and commit:
+> 
+>   fa93b45fd397e ("arm64: Enable vmalloc-huge with ptdump")
+> 
+> from the arm64 tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc arch/arm64/mm/mmu.c
+> index 980d7745a5499,10c2580995814..0000000000000
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@@ -47,6 -49,15 +49,8 @@@
+>   #define NO_CONT_MAPPINGS	BIT(1)
+>   #define NO_EXEC_MAPPINGS	BIT(2)	/* assumes FEAT_HPDS is not used */
+>   
+>  -enum pgtable_type {
+>  -	TABLE_PTE,
+>  -	TABLE_PMD,
+>  -	TABLE_PUD,
+>  -	TABLE_P4D,
+>  -};
+>  -
+> + DEFINE_STATIC_KEY_FALSE(arm64_ptdump_lock_key);
+> + 
 
+Thanks, the the correct resolution. I'll merge in for-next/fixes soon
+(we have a dangling patch that depends on it) so this will disappear.
 
-
-
-
-On Tuesday, September 16th, 2025 at 18:07, Lee Jones <lee@kernel.org> wrote=
-:
-
->=20
->=20
-> On Tue, 16 Sep 2025, Bjorn Andersson wrote:
->=20
-> > On Thu, Sep 11, 2025 at 11:01:00AM +0200, Hans de Goede wrote:
-> >=20
-> > > Hi Lee,
-> > >=20
-> > > On 11-Sep-25 10:15 AM, Lee Jones wrote:
-> > >=20
-> > > > On Wed, 10 Sep 2025, Aleksandrs Vinarskis wrote:
-> > > >=20
-> > > > > From: Hans de Goede hansg@kernel.org
-> > > > >=20
-> > > > > Add 'name' argument to of_led_get() such that it can lookup LEDs =
-in
-> > > > > devicetree by either name or index.
-> > > > >=20
-> > > > > And use this modified function to add devicetree support to the g=
-eneric
-> > > > > (non devicetree specific) [devm_]led_get() function.
-> > > > >=20
-> > > > > This uses the standard devicetree pattern of adding a -names stri=
-ng array
-> > > > > to map names to the indexes for an array of resources.
-> > > > >=20
-> > > > > Reviewed-by: Andy Shevchenko andy.shevchenko@gmail.com
-> > > > > Reviewed-by: Lee Jones lee@kernel.org
-> > > >=20
-> > > > Remind me why this can't go in through LED again?
-> > >=20
-> > > I don't think anyone has discussed how to merge this yet.
-> > >=20
-> > > I believe that the LED tree is the correct tree to merge this
-> > > entire series through, once the DT bits have been reviewed.
-> >=20
-> > Unless there are some strong reasons (that I'm failing to spot), we
-> > should merge the DeviceTree binding and implementation through the LED
-> > tree. Then I merge the DTS change through the Qualcomm DT tree once the
-> > bindings are available in linux-next.
-
-Hi Bjorn,
-
-The bindings are now in linux-next. Could you please pick the DTS change?
-
-Thanks,
-Alex
-
->=20
->=20
-> 1-3 have been applied to the LED tree already.
->=20
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+Will
 
