@@ -1,98 +1,207 @@
-Return-Path: <linux-kernel+bounces-828782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FD30B95708
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:31:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5047AB95711
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A86419C032A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:31:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 502C219C038D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF924311C06;
-	Tue, 23 Sep 2025 10:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA90D321271;
+	Tue, 23 Sep 2025 10:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H8F3tls9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aMosvSrY"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="llxZup63"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98B8145B3F
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDC32609C5;
+	Tue, 23 Sep 2025 10:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758623488; cv=none; b=gnK2aw6qPEDPbhUgmedvvF1ZqxQk6P8tR5z3LOC+daKUKuTImd23BdxJo5YVCz3yJcXEtUoH9gDT3Ced7RYZRPurnPC91Plr9WL1ODUGxjcpPbW5AVIN69Ntwv489hLtyVc/qG77OiWTCrpH1jzmY3xN6/6MHuNjt6+nCKVHLHA=
+	t=1758623546; cv=none; b=NRUG0iP2qpbM3HeV/95vU+dtqdxxy3j/VZdtYKz/L7abAhHilOGXdoekQqZ8eg/upkHu4J03CKKs5P+mOgTzWdm4oSDcnAhhwDJeu2RuHc++govnLl8/ewR86Z/nV03Oh6EAhRrhdsWygaWhzRT5nNiKcXRT2IdQNlgeQb7z9SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758623488; c=relaxed/simple;
-	bh=9RykSRjNIPj1NJvs2Rad+6KBv1vqbjkVtRCYtSyzNy0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JaZSY8Oy+lEAAm2y6yYxtNDnO/az3OERorPabHT06suvE/1uDpn2jw72qqvgkmcwE+d/LDe7GO1GsrpwiAHTTNesAiln4eXtLHiOn7aHLtLsI2GQvoFXJRsPgpbPJ/SwOi8BAhDPtisOEv7OyoRlkDm7sruPyjDkViDCOCWL+Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H8F3tls9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aMosvSrY; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758623485;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XK4ggrsm1Y/KLQHwA7VNv6tE3tPrWGSLBy7jITuyRV0=;
-	b=H8F3tls9R6Fyb1WTtJEtq/g9vA5eBcsnV2gdBL1yyhGpXX+Z4oIs5EBMi9lSEq6ows8VjE
-	J2igXydcFT7KR3TO75SZzGwW09JfNn4eZQDPdJdyqU77TsbdwAUs09V6r3QYFyKHPxOxot
-	a1B3VEUL2Uc3zsz4kPgt1vxzW3tH8NWnkVBbVRIqoUe87hQENTIDoUrbDCmQ2mi6rqP3aq
-	8BmxeAsU+EM7xLMOh8SHC8barqURn5IFWuJ5nyqsXolDZTfwpO9utTY7D0jJMAisUEsOe7
-	3jHbNm60qlQR8AxTOZpB0XRZAny/4O2ZJKBjQ9e9HnFGsnKgUvVg9S7YeGaJIQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758623485;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XK4ggrsm1Y/KLQHwA7VNv6tE3tPrWGSLBy7jITuyRV0=;
-	b=aMosvSrY5KixHWXoKbet8mQnqYfly6B3Pt9Ei2QkgQp7HjYTaciekhXPCQ4r2l2V7S2jRv
-	Fjm3jL7/3OJfGLAg==
-To: Thorsten Sperber <lists+debian@aero2k.de>, Uwe =?utf-8?Q?Kleine-K?=
- =?utf-8?Q?=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>
-Cc: 1111027@bugs.debian.org, "Rafael J. Wysocki" <rafael@kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: NMI: IOCK error (debug interrupt?) for reason 71 on CPU 0
-In-Reply-To: <60c824f2-667f-4957-bfe1-145a79e01ac5@aero2k.de>
-References: <tfwuhg7fxlvb3iix2k4qqh74dcmwgcipprlehy7zlaz3btmtym@2x2vsccw5yzs>
- <2pdp3kq4qebdxizprbnaq6omh4dvxdlktokvr37b7nlkf4po3b@fxzmgmi47wxx>
- <60c824f2-667f-4957-bfe1-145a79e01ac5@aero2k.de>
-Date: Tue, 23 Sep 2025 12:31:23 +0200
-Message-ID: <87bjn14g04.ffs@tglx>
+	s=arc-20240116; t=1758623546; c=relaxed/simple;
+	bh=KLtU2Domg70B6qt1IxPQKFkXGlPsM7PrRt1CyEwI9y4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U77P9TBuTh0UbO5dv19eI8vgym5V/bvxEfFyUJdJocAUQXUvdSBpn0GU64XNhF+yOo1bjGRmaMXpj+3Yy3QVX+VneGTfn64XjvBwRmHkle7JnPTZqjDaSCw1ihse0JtjIVColq+OT4HNLPf7DqZqm6wyD64P4eTay+cOCLkpwUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=llxZup63; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QxQK5moMr9wL0LagnLqZcrNTSI/n1ADMFlNCPKQ5iE8=; b=llxZup63rhlI4Dg+OEYiwHZMBF
+	4EjJzhEKtXEcM5SWBx9uDNCWk2hfABeH41EiZN7IhJX1yqozxZHbm6o/LiGQuzMv9bW+q1MXHbM/J
+	CGqM6i1d/pRqDj8PIuBzdSL5UOBZHQN1OXztFGsiuXPIP9RERy9zMEPsb4lQD6iYoX7dISx41Hy/v
+	TW3RaG/7FQZdrUquiWeeFHe0dx24aMV3MnFadf5TnQpzlIBiZfWnZ/ss6egWu9B75jC4K0YRjiRUH
+	2n5kHQdyzBrde18OEdmThSpapq3xxLJxf399OfX0uHfXxCRaW/vXzTc3tetMf9nHXn5XMeewP5gee
+	Z1TRtPsQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v10Ji-00000009wwx-3L4c;
+	Tue, 23 Sep 2025 10:32:15 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id AB4F530049C; Tue, 23 Sep 2025 12:32:13 +0200 (CEST)
+Date: Tue, 23 Sep 2025 12:32:13 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, x86@kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: Re: [RESEND][PATCH v15 2/4] perf: Support deferred user callchains
+Message-ID: <20250923103213.GD3419281@noisy.programming.kicks-ass.net>
+References: <20250908171412.268168931@kernel.org>
+ <20250908171524.605637238@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908171524.605637238@kernel.org>
 
-On Mon, Sep 22 2025 at 19:33, Thorsten Sperber wrote:
->
-> thanks for your help. It's been four days now, I'd say above average
-> (last was five days) - and no crash yet. I'm going to wait at least
-> until the weekend before naming a winner, but that's already looking
-> pretty good.
+On Mon, Sep 08, 2025 at 01:14:14PM -0400, Steven Rostedt wrote:
+> +struct perf_callchain_deferred_event {
+> +	struct perf_event_header	header;
+> +	u64				cookie;
+> +	u64				nr;
+> +	u64				ips[];
+> +};
+> +
+> +static void perf_event_callchain_deferred(struct callback_head *work)
+> +{
+> +	struct perf_event *event = container_of(work, struct perf_event, pending_unwind_work);
+> +	struct perf_callchain_deferred_event deferred_event;
+> +	u64 callchain_context = PERF_CONTEXT_USER;
+> +	struct unwind_stacktrace trace;
+> +	struct perf_output_handle handle;
+> +	struct perf_sample_data data;
+> +	u64 nr;
+> +
+> +	if (!event->pending_unwind_callback)
+> +		return;
+> +
+> +	if (unwind_user_faultable(&trace) < 0)
+> +		goto out;
+> +
+> +	/*
+> +	 * All accesses to the event must belong to the same implicit RCU
+> +	 * read-side critical section as the ->pending_unwind_callback reset.
+> +	 * See comment in perf_pending_unwind_sync().
+> +	 */
+> +	guard(rcu)();
+> +
+> +	if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
+> +		goto out;
+> +
+> +	nr = trace.nr + 1 ; /* '+1' == callchain_context */
+> +
+> +	deferred_event.header.type = PERF_RECORD_CALLCHAIN_DEFERRED;
+> +	deferred_event.header.misc = PERF_RECORD_MISC_USER;
+> +	deferred_event.header.size = sizeof(deferred_event) + (nr * sizeof(u64));
+> +
+> +	deferred_event.nr = nr;
+> +	deferred_event.cookie = unwind_user_get_cookie();
+> +
+> +	perf_event_header__init_id(&deferred_event.header, &data, event);
+> +
+> +	if (perf_output_begin(&handle, &data, event, deferred_event.header.size))
+> +		goto out;
+> +
+> +	perf_output_put(&handle, deferred_event);
+> +	perf_output_put(&handle, callchain_context);
+> +	/* trace.entries[] are not guaranteed to be 64bit */
+> +	for (int i = 0; i < trace.nr; i++) {
+> +		u64 entry = trace.entries[i];
+> +		perf_output_put(&handle, entry);
+> +	}
+> +	perf_event__output_id_sample(event, &handle, &data);
+> +
+> +	perf_output_end(&handle);
+> +
+> +out:
+> +	event->pending_unwind_callback = 0;
+> +	local_dec(&event->ctx->nr_no_switch_fast);
+> +	rcuwait_wake_up(&event->pending_unwind_wait);
+> +}
+> +
 
-Thanks for trying.
+> +/*
+> + * Returns:
+> +*     > 0 : if already queued.
+> + *      0 : if it performed the queuing
+> + *    < 0 : if it did not get queued.
+> + */
+> +static int deferred_request(struct perf_event *event)
+> +{
+> +	struct callback_head *work = &event->pending_unwind_work;
+> +	int pending;
+> +	int ret;
+> +
+> +	/* Only defer for task events */
+> +	if (!event->ctx->task)
+> +		return -EINVAL;
+> +
+> +	if ((current->flags & (PF_KTHREAD | PF_USER_WORKER)) ||
+> +	    !user_mode(task_pt_regs(current)))
+> +		return -EINVAL;
+> +
+> +	guard(irqsave)();
+> +
+> +	/* callback already pending? */
+> +	pending = READ_ONCE(event->pending_unwind_callback);
+> +	if (pending)
+> +		return 1;
+> +
+> +	/* Claim the work unless an NMI just now swooped in to do so. */
+> +	if (!try_cmpxchg(&event->pending_unwind_callback, &pending, 1))
+> +		return 1;
+> +
+> +	/* The work has been claimed, now schedule it. */
+> +	ret = task_work_add(current, work, TWA_RESUME);
+> +	if (WARN_ON_ONCE(ret)) {
+> +		WRITE_ONCE(event->pending_unwind_callback, 0);
+> +		return ret;
+> +	}
+> +	return 0;
+> +}
 
-I suggested to try intel_idle.max_cstate=2 because these unknown NMI
-backtraces all originated from a MWAIT(C3).
+So the thing that stands out is that you're not actually using the
+unwind infrastructure you've previously created. Things like: struct
+unwind_work, unwind_deferred_{init,request,cancel}() all go unused, and
+instead you seem to have build a parallel set, with similar bugs to the
+ones I just had to fix in the unwind_deferred things :/
 
-Can you reboot into the working 6.1.y kernel at some point and check
-which idle driver is used there?
+I'm also not much of a fan of nr_no_switch_fast, and the fact that this
+patch is limited to per-task events, and you're then adding another 300+
+lines of code to support per-cpu events later on.
 
-    cat /sys/devices/system/cpu/cpuidle/current_driver
+Fundamentally we only have one stack-trace per task at any one point. We
+can have many events per task and many more per-cpu. Let us stick a
+struct unwind_work in task_struct and have the perf callback function
+use perf_iterate_sb() to find all events that want delivery or so (or we
+can add another per perf_event_context list for this purpose).
 
-and which states are advertised:
-
-    ls /sys/devices/system/cpu/cpu0/cpuidle/state
-
-Thanks,
-
-        tglx
+But duplicating all this seems 'unfortunate'.
 
