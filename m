@@ -1,153 +1,163 @@
-Return-Path: <linux-kernel+bounces-828537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68D7B94D36
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:43:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9D1B94D33
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 885127B381E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:39:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8F782E19C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51ECA3164C6;
-	Tue, 23 Sep 2025 07:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FACB31159E;
+	Tue, 23 Sep 2025 07:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="ET2oQpnq"
-Received: from r3-23.sinamail.sina.com.cn (r3-23.sinamail.sina.com.cn [202.108.3.23])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NjRX9D7N"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553473164B5
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED532E9721
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758613239; cv=none; b=XiD1CkMFiMfY5JyEPD2zStzYxN4rUslKe5D3V87eRAGL4kOXmtij7+LVOFhVFJBOYuTUrQHHxPRRJwNBnCYeckgfl7JJRyV657UtzTxQjmGWrxm5t8KovHfrCDAcmQIE8fRlU89eS/3M+R61ka3y70q1nL4iVtBZAVjR0l5RPyE=
+	t=1758613373; cv=none; b=Za2UiIkMtspZ8Px9rD8EdEexIscALIRIpfhNVcGA3bqlYpOvX5dVwKfctcVO/p7G8rzTjzoiU8xPd+nfsls3Yre8D/dZ1KEkCx/U1AzWuonODhWPDbJ7k2d5QQOhvw0QkSZgKVyk7qwyT9f+vMYuSJ1ce3IzALlvRkQtyC3Ty/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758613239; c=relaxed/simple;
-	bh=kWme69oaIgDqEmYO0BWtyTZcU3k7uABN4wDrg4YKr60=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p2+dyV3hi/ZjXBvlslPe/E4re7lGBu/Wrcllyegrb0XyxrTI3+DdxiWtN+UJz4qmRVZKAEbmk4ghiorHTCA0III76BhGz5rmjfkEnPryDrrPG0snKZPbDcP0cYk+eDp4zJQi3nkYNMfql3T8+X6pqp77ppdi9yQmEE1lBthCupY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=ET2oQpnq; arc=none smtp.client-ip=202.108.3.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1758613233;
-	bh=EZRAaOb0DRP7MFgJaaji7yQuVjvlpKct24/ueX2RLE0=;
-	h=From:Subject:Date:Message-ID;
-	b=ET2oQpnqSlPyi6Q4D3t4su4mar5IFOaMBKeQsAyfRk8k9ChhLgTbOpXTpD8bMcHEl
-	 YY/LL69R2gZt43+Z10gJVzlW1H2pXvaquiNNG3nMkFuQ+6X6Hdj29CmnV8FZ4pVVx2
-	 4CXYjgoRLPsq5LezpH3iikgXrwkZdgDJO3tu6NLM=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.31) with ESMTP
-	id 68D24EC0000029B1; Tue, 23 Sep 2025 15:39:48 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5380006816016
-X-SMAIL-UIID: 3D55CF71BFE3481ABB62F14C557B5DE3-20250923-153948-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+f02665daa2abeef4a947@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [sound?] [usb?] general protection fault in snd_usbmidi_do_output
-Date: Tue, 23 Sep 2025 15:39:34 +0800
-Message-ID: <20250923073935.7486-1-hdanton@sina.com>
-In-Reply-To: <68d17f44.050a0220.13cd81.05b7.GAE@google.com>
-References: 
+	s=arc-20240116; t=1758613373; c=relaxed/simple;
+	bh=N0p4seiEQYgUMNiAldtlxRn72O3KMiTj8G6qDvnQ53o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LJO7pyBTsO9LQcvRmeH8I5W3COriGh76k2UVV2z1Al4jSyGUaNJR+vQO/okCFqv4xkeDDKEi5PTx6m2Kcg3YKsV5CBiU6to4Cw70IA99CJZT0MxXp0VvJ83eVp2PZgVdWnqhjLIAeuinK9zwiMB9lMhuc3j37ZZm4D11sYN//2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NjRX9D7N; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758613371;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Y3Qv0LLTCUmjMWNaQL1ZnMdluzFHkPix+U/IfYErqFw=;
+	b=NjRX9D7Nil0EpFQ6jmdj6C9VB8NHcgZ9mRTIPlnoT5zjZbKeH2ME5s46e01DCmGhuzVtXl
+	1I+JxQUXK7w9Z9pmXUT76nQGcHfYnxpLvzPMV9goieUBi9ysfBjSVlzEIdrkLx2L483Vog
+	/9DcmpLZo5fitYDDWNf2BJOfhj/ZlI8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-70-Ku4QpCfFMG63ttry7wU-Iw-1; Tue, 23 Sep 2025 03:42:49 -0400
+X-MC-Unique: Ku4QpCfFMG63ttry7wU-Iw-1
+X-Mimecast-MFC-AGG-ID: Ku4QpCfFMG63ttry7wU-Iw_1758613368
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45de5fdda1aso26610025e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 00:42:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758613368; x=1759218168;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y3Qv0LLTCUmjMWNaQL1ZnMdluzFHkPix+U/IfYErqFw=;
+        b=uzhiQodk4yype50dCkO4of1b4aC0pXodYIj/5E1ys7g3+GP8d3df3dXaVuKy9sFnRr
+         ghJyF+iCmZk8QBoUHhX7VVM8ar8UVni5V6hgk+z0g+GlO6niBOGHuuU+EyVAKCjj44/S
+         rHbpnnwAaaxTsOwvlw/YVVvqepFCi6gGKsMThINHGQWGKYFxXspgI7FYVez2EyvR3Mub
+         MedhVbSTqc/72XIGqO0K5EaWn8HjHrR8VDD1k7R9kGDG4WZnqun6npKg1dEQnWXxQRy7
+         EzzfXtjBMvvec+gMS46Ja5wyLfBqIRVEdAPNldTlkQ9JqRM7f/k7YB48LA1KbL12NoGS
+         XD5g==
+X-Gm-Message-State: AOJu0YzyRK80caNHj/RguNZ0xuxTip2kM1LtfdvIfRzi3bZXIlB57sWp
+	nwl2Z0zzSMyzMNirPQKLDdTM1EycA6i3pZRuh152sFiHHsBV2KtRZ8jlp8kXRW1nttu/ZQv4Et5
+	wdvqV+uBTywADB5bPqlWFTvXPw/WiCTQsOlBBgYOvjBJsZZqiUB9bnw0YLUOmipOT0PXmEy7dY9
+	MM
+X-Gm-Gg: ASbGncvR/DSYT0kzH4OvLvpOrUrKD22yy5nVPqnZ/nYhUT6PCz/Uu/k7/0zougdOJ36
+	H2yOd3jtn4JAN8z2R4PGG31HJHmhUCU60sBwdjuhRIZfN4y8j5MCFwFMWNHKT246J+Bxe05gHut
+	/XWn9iBrFQSVmjCNODLfIw53DTswWHYoh5h7PQp17ZS5709w7KdTdHKhAA/bb6xe9pW6A1yJw6U
+	50kooUvR6gmVt5LPm+OMR1KCvla8UJLN/vnJtVotSjLJBKPcCnPnHyIgnFGQOjySne/BQ5vlHrc
+	7ea+wDPS1MJM1PSjAzlQ8MB/ZMRu80Uoyuv961fPBsa95+MTjiL5gLlXYQAdF4hLEg==
+X-Received: by 2002:a05:600c:4c15:b0:45d:e6b6:55fe with SMTP id 5b1f17b1804b1-46e1dacb263mr8066675e9.34.1758613368456;
+        Tue, 23 Sep 2025 00:42:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8EXoCWEiqTmNsvoTITySrgXSbYUp7vJCyWTL7RnUVLQ1KyYva3lHV7061HfZx4QliTREupA==
+X-Received: by 2002:a05:600c:4c15:b0:45d:e6b6:55fe with SMTP id 5b1f17b1804b1-46e1dacb263mr8066535e9.34.1758613368061;
+        Tue, 23 Sep 2025 00:42:48 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613d14d564sm307041065e9.14.2025.09.23.00.42.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 00:42:47 -0700 (PDT)
+Message-ID: <ced1cdde298d105ba2d789e4e4704caac8dec518.camel@redhat.com>
+Subject: Re: [PATCH] rv: Add signal reactor
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>, Thomas =?ISO-8859-1?Q?Wei=DFschuh?=
+	 <thomas.weissschuh@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers	 <mathieu.desnoyers@efficios.com>
+Date: Tue, 23 Sep 2025 09:42:46 +0200
+In-Reply-To: <20250922162900.eNwI7CS0@linutronix.de>
+References: <20250919-rv-reactor-signal-v1-1-fb0012034158@linutronix.de>
+	 <d0aaaf1f47f0d948b60b0575e179564e3c024188.camel@redhat.com>
+	 <20250922162900.eNwI7CS0@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
+ cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
+ T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
+ eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
+ 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-> Date: Mon, 22 Sep 2025 09:54:28 -0700	[thread overview]
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    3b08f56fbbb9 Merge tag 'x86-urgent-2025-09-20' of git://gi..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=176950e2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=927198eca77e75d9
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f02665daa2abeef4a947
-> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14006712580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e950e2580000
+On Mon, 2025-09-22 at 18:29 +0200, Nam Cao wrote:
+> On Fri, Sep 19, 2025 at 02:26:12PM +0200, Gabriele Monaco wrote:
+> > On Fri, 2025-09-19 at 12:49 +0200, Thomas Wei=C3=9Fschuh wrote:
+> > > +static void rv_reaction_signal(int signal, const char *fmt, va_list =
+args)
+> > > +{
+> > > +	struct rv_signal_work *work;
+> > > +	char message[256];
+> > > +
+> > > +	work =3D mempool_alloc_preallocated(rv_signal_task_work_pool);
+> > > +	if (!work) {
+> > > +		pr_warn_ratelimited("Unable to signal through task_work,
+> > > sending directly\n");
+> > > +		vsnprintf(message, sizeof(message), fmt, args);
+> > > +		rv_signal_force_sig(signal, message);
+> > > +		return;
+> > > +	}
+> >=20
+> > Why do you use the task_work at all instead of signalling directly?
+> > If that's something not safe from a (any) tracepoint because it can sle=
+ep
+>=20
+> If I remember correctly, sending signals requires a spinlock and therefor=
+e
+> may sleep on PREEMPT_RT.
 
-#syz test upstream master
+Yeah that's what I quickly glanced at. Which seems to be the case also for
+mempool_alloc_preallocated by the way, so I'm not sure that's safer than
+signalling directly on PREEMPT_RT.
 
---- x/sound/usb/midi.c
-+++ y/sound/usb/midi.c
-@@ -307,6 +307,8 @@ static void snd_usbmidi_do_output(struct
- 	for (;;) {
- 		if (!(ep->active_urbs & (1 << urb_index))) {
- 			urb = ep->urbs[urb_index].urb;
-+			if (!urb)
-+				goto next;
- 			urb->transfer_buffer_length = 0;
- 			ep->umidi->usb_protocol_ops->output(ep, urb);
- 			if (urb->transfer_buffer_length == 0)
-@@ -319,6 +321,7 @@ static void snd_usbmidi_do_output(struct
- 				break;
- 			ep->active_urbs |= 1 << urb_index;
- 		}
-+	next:
- 		if (++urb_index >= OUTPUT_URBS)
- 			urb_index = 0;
- 		if (urb_index == ep->next_urb)
-@@ -1396,13 +1399,19 @@ static int snd_usbmidi_in_endpoint_creat
- static void snd_usbmidi_out_endpoint_clear(struct snd_usb_midi_out_endpoint *ep)
- {
- 	unsigned int i;
-+	unsigned long flags;
- 
-+	spin_lock_irqsave(&ep->buffer_lock, flags);
- 	for (i = 0; i < OUTPUT_URBS; ++i)
- 		if (ep->urbs[i].urb) {
--			free_urb_and_buffer(ep->umidi, ep->urbs[i].urb,
--					    ep->max_transfer);
-+			struct urb *urb = ep->urbs[i].urb;
-+
- 			ep->urbs[i].urb = NULL;
-+			spin_unlock_irqrestore(&ep->buffer_lock, flags);
-+			free_urb_and_buffer(ep->umidi, urb, ep->max_transfer);
-+			spin_lock_irqsave(&ep->buffer_lock, flags);
- 		}
-+	spin_unlock_irqrestore(&ep->buffer_lock, flags);
- }
- 
- static void snd_usbmidi_out_endpoint_delete(struct snd_usb_midi_out_endpoint *ep)
-@@ -1522,15 +1531,23 @@ static void snd_usbmidi_free(struct snd_
- {
- 	int i;
- 
-+	timer_shutdown_sync(&umidi->error_timer);
- 	for (i = 0; i < MIDI_MAX_ENDPOINTS; ++i) {
- 		struct snd_usb_midi_endpoint *ep = &umidi->endpoints[i];
--		if (ep->out)
-+		int j;
-+
-+		if (ep->out) {
-+			for (j = 0; j < OUTPUT_URBS; ++j)
-+				usb_kill_urb(ep->out->urbs[j].urb);
- 			snd_usbmidi_out_endpoint_delete(ep->out);
--		if (ep->in)
-+		}
-+		if (ep->in) {
-+			for (j = 0; j < INPUT_URBS; ++j)
-+				usb_kill_urb(ep->in->urbs[j]);
- 			snd_usbmidi_in_endpoint_delete(ep->in);
-+		}
- 	}
- 	mutex_destroy(&umidi->mutex);
--	timer_shutdown_sync(&umidi->error_timer);
- 	kfree(umidi);
- }
- 
---
+Thomas, did you test your reactor on PREEMPT_RT? I'd expect a few fat warni=
+ngs
+when this is called from sched tracepoints. Unless you're lucky and never g=
+et
+contention. Lockdep (CONFIG_PROVE_LOCKING) may help here.
+
+Thanks,
+Gabriele
+
+>=20
+> > you should definitely not call it if allocation fails.
+>=20
+> Yep.
+>=20
+> We probably can get away with not reacting at all if allocation fails, by
+> crafting our tests such that only one reaction happens at a time, and
+> allocation won't fail.
+>=20
+> Nam
+
 
