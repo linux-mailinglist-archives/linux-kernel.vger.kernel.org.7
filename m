@@ -1,155 +1,138 @@
-Return-Path: <linux-kernel+bounces-828987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E67EB95FCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:17:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CC1EB95FC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6483219C37DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:17:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 858FD2E41F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6719327A0A;
-	Tue, 23 Sep 2025 13:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8E9327797;
+	Tue, 23 Sep 2025 13:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVDI0s9V"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="yGwEv5jd"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A17326D4C
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652C032341D
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758633428; cv=none; b=goJxgWizX95z+9Y1GyB54pXAanzq8SbKtHSomAo/+4wKvyfqqKzeNTNcttQNQBTq2OlomNY8h1eNbCyK808K4mReD3c3gR0ZWb/44yoQcwEUmVfbNh9nAhB1F/dprQqS0ONQy9CDTLpve0P7/SLJ6SBpXo2epbZSquEhSC9xwPA=
+	t=1758633427; cv=none; b=s5GcS+GOlqe6o0reZQR1uZExo0vJNkbpE2Y9R3kPu9jhuu5fVMxqNVYqXNp6l/aDQtv0LCBzLxh37QDlcU/uNZxiAbu5LHxwZm4JrgRnC82eIRbN3wzUkKiC6J3A47lxPus3lF1x0FQzXbbXo9GB1moz91sevMAKDPGS5lwJ92I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758633428; c=relaxed/simple;
-	bh=vLNOpzetH/Y5LAPNxv2ClxExpatuyCXuu8pR0a+rhFg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V1/b0+rbaUJwgcWoj26Eqs3DUb04xi6DMj6usriJYX+VYNVuH0eij6MO+GG7I9izCGlr2rJIxIvNkarebVFtiTzwOfnBPDb0Bh+UKKfcumzZjpzxPnMT/W0cNwCSX92tBnSZ8dRYzOiPU5ldxYo3xeSATmTqvzYkwFlAmuyD2GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVDI0s9V; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-746d7c469a8so4655163a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:17:06 -0700 (PDT)
+	s=arc-20240116; t=1758633427; c=relaxed/simple;
+	bh=MjdyuQrqVvsTBegSnd3yU00JR+DMJq7p6mLUJWTlZdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WcX86kEUGY8n+DqS9bzY4soDm4zBERuTCWZGcAQ09uy4aBqVqFE+QEAc/EaDbyWz35tJGcQEF0BtCEsx8l9v3gMddXhxsakYUTucwUlAA4n9Ip7/3oDK99m+4sl/RQQtamhuohwI3kVx8DBZ86jZSQ12P5UGD17oVABr6x76P2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=yGwEv5jd; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b54a74f9150so4103754a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:17:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758633425; x=1759238225; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f2WPlGw6ip7PYA/9tuI3OZb0vgkUfUYvz/dn9O4WHM8=;
-        b=MVDI0s9VR5W1ZBAo7u3H8+IS/P7Kl3XF1zwWEicTJV2eh80Q7iu51/7MTyTTVSvbX9
-         oMgHvhNDAXAj/Ym+5RbNdlO5tujFzjykhUn8RQQzJ4i5lHGI/PDhMRtPY6/tR0/1m3Ps
-         gnL8hpyufO/X6PO+PMxOBHd0CLktRtll+nu9sbSw2K8dnSoLzWTYhlw4hnFkZvWtqJ1p
-         mmHGaDNCQ+ZZdSWMpH0U45/JvXGtzuA174ESfDd4LGCqmXiXCfcwwrw9Ya7+KsaWbGdZ
-         SXRYCSKA2zLX9DN0RIsEGU8Q0otJTx5grO6kob4ldboENmpAjk5jw369l0GELidn28So
-         WkEw==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1758633424; x=1759238224; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DGZ8DWqCix+BtHtElOYwM96MkEfMXUBhKMzH5BSjHrU=;
+        b=yGwEv5jdMt4Rgfi0m0bN3rxya9s2FAbia8xtqcTwhc19IK5r4PXmdK+C7UWreg1NfH
+         4sk+1SJaFqWoZk8UMTPHgcndklOJpzScvLF5bjkG6gqoUSKB2k3ZVGlgvwgMKVkiX9tQ
+         HMMHDCD3TrzFuqxXTV9HAJcgYYX2He2h5yQzLxkZURdzd28u2rXo3M/TKNd/GoKCTF5R
+         SSJHzKnVcZ1kR/S8ehZjuwzeAqAlS4edQgRc1y0V8xkXIINs5b4r82gsRo8F8hz5liGg
+         WFWMrwFtm4OO2twE/EkvNGL9ESDPBnyP6iVe3AlnhcR6cmuUPbA6c7z1EUU5XrhnwxMP
+         WISA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758633425; x=1759238225;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f2WPlGw6ip7PYA/9tuI3OZb0vgkUfUYvz/dn9O4WHM8=;
-        b=S1eRgogBoq1bRWXnUxCDB4EqnH7h7o66B6U6QZyEaQnMP0pFUMSsfppwrdbSUQCXJe
-         sCoD5X5o365fgIUB3yiKHs5jHhugmCmNEEGNLUk9eXFJD7k/H1HNB6F44IyInkbgzJHw
-         cczLpJAG3W2zT2Y2SiKnzySKaAbC5plbHonlJMIvDPq3a5HKRQWIZAgfcr9NfkySDnmn
-         5d0FaN0nh67K0wRt1POhNiXFM0J9fez31c96pAOO3UMOv8aGuW4cyyPO5haUrIn0hJH8
-         tcRsNrud5B/qv5BvTTa2ZZgCbb0Dsu1NPjnJcAhFeSgBauAS0TwFm3vva+8mUHg7Xwri
-         PIAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNT0AIDU9niSE1qMiuAItxR9ylbMcJKwMKZ8ygLFzwwK5KYOFkpnHqas0NVEuoFzJ06iWwqj/s/B3NeFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJjkql3F6HaOX4ftE1C9wkmJQBnSnKPnkbSIepsbAWfPbnX9gx
-	b0b0POpYZQWu8VeB4pz908tMdHxNkMLKYB46i0BNixob83A9bE4ElH7Hscg5oXtOElJIZhLeyIZ
-	2kZXV9NNKHJgAylbD5ITDA87pVAdh/6A=
-X-Gm-Gg: ASbGnct2BDphjT9qRJHK+sqLTAuT28AApnVJ47xSl+9OnAlUULLoBc4Tu2c0TfJRyDj
-	SbyfkiKpNsOE91w5fnyAUv0xV53wadIimHHmgaTaZYCDL8Mp+CJifVqmuG2yh8bx8Rs/XN+hbH7
-	4S3bXJbwSFSqa/RDmjt2QicFKN5cYdMQSXpCaCkHgDRhvZiklxeJiK3Mc8Jf72wfscwQRPEwK84
-	xixNLD4IwKeDNyNlDA=
-X-Google-Smtp-Source: AGHT+IG8OdD4UhyFmVnw+1B4Hou6a7FTFOoQAxaWAXHib0ERshZVgibiY61D/fwCONr+Awn82RcI18YLm8tvlRhZT7k=
-X-Received: by 2002:a05:6808:3194:b0:43d:2dc4:9d16 with SMTP id
- 5614622812f47-43f2d355ee6mr1166642b6e.9.1758633425437; Tue, 23 Sep 2025
- 06:17:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758633424; x=1759238224;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DGZ8DWqCix+BtHtElOYwM96MkEfMXUBhKMzH5BSjHrU=;
+        b=s50dMnuns7jXtBRUCKKP4nmJR3vsjwruoNLK0EzukZVtF9vdSBRT3rbHX8M8Gi3lHO
+         9wfYdYKx5AqQBw4IsD92svShndfJc++yAWVSrxnyf62WI++myFvLCP/zyyzmRWf4Sse0
+         jI28/hL0PNbA6kjPbsg3SCaPWflPqduF99A6JMsZSlXT/6gJI1H31M6fis/lJ2bd4JN4
+         rnZS3Oi9uwsJ4a/tuumKfRUgJDOyBlAxsLMu3/B5+lveknp6/SWbcSWKNHkY7s+4Sz7l
+         QufQ2XCVEsFbneb+xxFdWOncqEsFYNRv25RHbwglg95togsk+RolBi0CzpaIMS9oxtgt
+         xpRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8a/E+86lyf17pEHV6ljm5poQUn9TjCXZEYHUUGMq8aqOiJmqoK/A9wBJ02s+xE9THnEO+Joq+dKzYaPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9yw/PjhQLIV58pNWL5S5ScTQ33byDwtiypa0B+Ub4HfJRe5QU
+	0hncarCsNX+D5/Xmd2pBUcnateCQFzzC3daqj+ov6x4SiErwSFrCv2srxJgPeTIaGYM=
+X-Gm-Gg: ASbGncsKCUNI3vIxcMB2cMVj42/JOp1Fyxgc82opLIEzyfvZxpisU4TigPQBpAK9h++
+	J9hgxDx95O2PsyLEVZUG8wXZvHJOF+FeIg8rYS9cLXIGUIHCNDf/n3eK3HJwhCr+vfDZ5kGvej+
+	lz+wPzuJzDIeScqKpX7m+igvNdgFDMnG7Ry542CyhhV15dysNZ89d8WsCVHQL44ssyYbY2+eZDA
+	ATPiHzDcfbeCHFPZJ6ZzYwhdrnssisuQpJpn/fxco1PMR9nNcpEWKioUc5N2x5V1UNvaJLTn1Jw
+	plwK/EPbjZW711PIK+wfG8kEZpB8ORSOa9NHSuqDYBmy/IpTCV8dQLZULHrpya5+1V6e5fAVEKw
+	M8DXO3NjHC5KnRWRSTkyk8f/4+AedLJrsjrx5K33lsvcyySg5ZrlFEOPwAMC1XFt3G0LNZQkYM0
+	4bSsnIjZh4
+X-Google-Smtp-Source: AGHT+IEK7PfWxNFc7fb1bUErPP+++ZIWocUE2B9M31SxyszIkGAjugG30aXgLbzSTbCpFRJZYYXACg==
+X-Received: by 2002:a17:90b:17cc:b0:32b:9750:10e4 with SMTP id 98e67ed59e1d1-332a95e0514mr2945365a91.27.1758633423462;
+        Tue, 23 Sep 2025 06:17:03 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b551705bd02sm12047994a12.41.2025.09.23.06.17.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 06:17:02 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1v12t9-00000005h4t-0IOy;
+	Tue, 23 Sep 2025 23:16:59 +1000
+Date: Tue, 23 Sep 2025 23:16:59 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com,
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] hide ->i_state behind accessors
+Message-ID: <aNKdy1vYsWoMvU3c@dread.disaster.area>
+References: <20250923104710.2973493-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822021217.1598-1-jjian.zhou@mediatek.com>
- <CAGXv+5F-L2+4PGixx7OG2+vp2yXc_2885yMzqWtkQDwhxVAPxw@mail.gmail.com>
- <CABb+yY3N2=01yKJon25_6_vmihj09H=T9pLwzdGPrqY5h=hRFQ@mail.gmail.com>
- <5789241.GXAFRqVoOG@workhorse> <CABb+yY2Ay+KqviJvOQC8X8kfzJN6-fQT04A+TCJAkLnWx+XwZg@mail.gmail.com>
- <a9dd348fd7df95ebd5ad9cc58d57b588a18ccc9d.camel@mediatek.com>
-In-Reply-To: <a9dd348fd7df95ebd5ad9cc58d57b588a18ccc9d.camel@mediatek.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Tue, 23 Sep 2025 08:16:53 -0500
-X-Gm-Features: AS18NWCOZv9Pv2u_322Xt4q4LUafUyRkH0j9o_POX7ZdoLtYf5wU82ru76Msenc
-Message-ID: <CABb+yY2bYh70A=n9+XBBqthjngZP2D8ebFje-F9TN7K0c+fmMA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] mailbox: mediatek: Add mtk-vcp-mailbox driver
-To: =?UTF-8?B?SmppYW4gWmhvdSAo5ZGo5bu6KQ==?= <Jjian.Zhou@mediatek.com>
-Cc: "nicolas.frattaroli@collabora.com" <nicolas.frattaroli@collabora.com>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "wenst@chromium.org" <wenst@chromium.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
-	"robh@kernel.org" <robh@kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923104710.2973493-1-mjguzik@gmail.com>
 
-On Mon, Sep 22, 2025 at 2:17=E2=80=AFAM Jjian Zhou (=E5=91=A8=E5=BB=BA) <Jj=
-ian.Zhou@mediatek.com> wrote:
->
+On Tue, Sep 23, 2025 at 12:47:06PM +0200, Mateusz Guzik wrote:
+> First commit message quoted verbatim with rationable + API:
+> 
+> [quote]
+> Open-coded accesses prevent asserting they are done correctly. One
+> obvious aspect is locking, but significantly more can checked. For
+> example it can be detected when the code is clearing flags which are
+> already missing, or is setting flags when it is illegal (e.g., I_FREEING
+> when ->i_count > 0).
+> 
+> Given the late stage of the release cycle this patchset only aims to
+> hide access, it does not provide any of the checks.
+> 
+> Consumers can be trivially converted. Suppose flags I_A and I_B are to
+> be handled, then:
+> 
+> state = inode->i_state          => state = inode_state_read(inode)
+> inode->i_state |= (I_A | I_B)   => inode_state_set(inode, I_A | I_B)
+> inode->i_state &= ~(I_A | I_B)  => inode_state_clear(inode, I_A | I_B)
+> inode->i_state = I_A | I_B      => inode_state_assign(inode, I_A | I_B)
+> [/quote]
+> 
+> Right now this is one big NOP, except for READ_ONCE/WRITE_ONCE for every access.
+> 
+> Given this, I decided to not submit any per-fs patches. Instead, the
+> conversion is done in 2 parts: coccinelle and whatever which was missed.
+> 
+> Generated against:
+> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.18.inode.refcount.preliminaries
 
-> > > > > >
-> > > > > > > +       void __iomem *base;
-> > > > > > > +       struct device *dev;
-> > > > > > > +       struct mbox_controller mbox;
-> > > > > > > +       const struct mtk_vcp_mbox_cfg *cfg;
-> > > > > > > +       struct mtk_ipi_info ipi_recv;
-> > > > > >
-> > > > > > Maybe also have "struct mbox_chan chan[1]; " so that you
-> > > > > > don't have to
-> > > > > > allocate one during the probe.
-> > > > > > Also if you have  "struct mbox_controller mbox;" as the first
-> > > > > > member,
-> > > > > > you could simply typecast that to get this structure.
-> > > > > > Something like "struct mpfs_mbox" in mailbox-mpfs.c
-> > > > >
-> > > > > I read somewhere that this way of subclassing is not
-> > > > > recommended.
-> > > > > Instead the base class should explicitly not be the first
-> > > > > member.
-> > > > > And then container_of() should be used.
-> > > > >
-> > > > > I don't remember where I read this though. But I think the
-> > > > > explicit
-> > > > > container_of() is easier for understanding the intent.
-> > > > >
-> > > >
-> > > > And how does container_of() work ? :)
-> > > > typcasting the first member to its parent is the simplest form of
-> > > > container_of.
-> > > >
-> > > > -j
-> > > >
-> > > >
-> > >
-> > > Which is why it's completely equivalent and since code is supposed
-> > > to communicate meaning to humans, container_of should be used.
-> > >
-> >
-> > Nobody is suggesting typecasting cfg, dev or anything else.
-> > Typecasting between mailbox controllers is fine and arguably easier
-> > on
-> > the eyes than using a container_of.
-> >
-> > -j
->
-> OK. How about:
-> struct mtk_vcp_mbox *priv =3D (struct mtk_vcp_mbox *)chan->con_priv;
->
-You don't need to typecast a void *. So simply do
-    struct mtk_vcp_mbox *priv =3D chan->con_priv;
+Much simpler and nicer than the earlier versions. Looks good.
+
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+
+-- 
+Dave Chinner
+david@fromorbit.com
 
