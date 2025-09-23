@@ -1,108 +1,116 @@
-Return-Path: <linux-kernel+bounces-829196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD9E9B96801
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:07:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 372B8B967F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41941886DB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:08:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E614B7AA9CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D78257830;
-	Tue, 23 Sep 2025 15:07:40 +0000 (UTC)
-Received: from psionic.psi5.com (psionic.psi5.com [185.187.169.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA26B257842;
+	Tue, 23 Sep 2025 15:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pKm4CGEm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE74246BB4;
-	Tue, 23 Sep 2025 15:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.187.169.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DFB22256B;
+	Tue, 23 Sep 2025 15:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758640059; cv=none; b=vBEfjfN3RHK3haxj02HnwP/0F1bK+zniEhlQoMzbxcdjiPIWNgHSEgEjnbFBX5IWig65z4Y8UAOHLAgJnJWld2Hq1vMmKpcuIm+QV25gBzDT6rKfQAQzOSyZHfFDpxQyXX9YECX/5rRFK9rrS1uZe5/ey0mfw2dMO9il4dSaQb8=
+	t=1758639995; cv=none; b=iU6ds6tFhtIc3EfOeU8ZLVp1dmsYcc4sl/Pwj4C8+JsjLGg4zKwGl2/axvmLzb/eoBRnDwwu9G10qCkaFmjluExf3u+EEP8HKBq0HWAz4ru/E6UG9kiic6XxGtGb+nOrIPK6kNMNJ9Q0W/Hzut0uswowQAoz9ILJp6xuhtCoGfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758640059; c=relaxed/simple;
-	bh=Ev8ok5cn/l8aR83oLAKn5J8yEAs/ij6LJ1LuS7Vhgts=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lOtkY1ybqkYKjAtoPflKmqgi5OxGWuB4t3xZXy8bGaHMo4LXXjYzLzPFg5UgXvpZEaeBSJi9YmeRJMO0Ypho34Gop6GcOsTWxOLBhB6mffAG4l7iptaW2LbP1lLevCer1G/JQFMBxGTdOrpWMsM6CmD3THiKSmvVs7yLpG2eoTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de; spf=pass smtp.mailfrom=hogyros.de; arc=none smtp.client-ip=185.187.169.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hogyros.de
-Received: from localhost.localdomain (unknown [IPv6:2400:2410:b120:f200:2e09:4dff:fe00:2e9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by psionic.psi5.com (Postfix) with ESMTPSA id 1FA9C3F116;
-	Tue, 23 Sep 2025 17:07:24 +0200 (CEST)
-From: Simon Richter <Simon.Richter@hogyros.de>
-To: linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: Simon Richter <Simon.Richter@hogyros.de>,
-	stable <stable@vger.kernel.org>
-Subject: [PATCH] fbcon: fix buffer overflow in fbcon_set_font
-Date: Wed, 24 Sep 2025 00:06:28 +0900
-Message-ID: <20250923150642.2441-1-Simon.Richter@hogyros.de>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1758639995; c=relaxed/simple;
+	bh=shE+6KLqFrMwrq0kg7jJcjUywO7EcJdZUSm6LuhUiBA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ej3QIgKDFpvkN/nQHfBl5x/CgAN3TlnSQJZ3wEi/1qPNoFizALz+lvfRZlwwpTBxCXhJf4gVoYUgLz3ZONjdqzKI6eHbQCclpUpOAm+/0vB85NPT+ZJtqudQoA5fzFQCFucdlqW9WwCO40CUbzqZJ3R6xVy3hsiVXsgP/riZjbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pKm4CGEm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E646CC4CEF5;
+	Tue, 23 Sep 2025 15:06:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758639994;
+	bh=shE+6KLqFrMwrq0kg7jJcjUywO7EcJdZUSm6LuhUiBA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pKm4CGEma9kMbnKbA2/d6o/IWJruByochbPJgIGb2r1HCftLX2j75GyJY7YFjrBWx
+	 osd15tv76Ok9MO/zXhWOKpguJaP+1UC7lPtL3YVX/NAlf54hzGXPDUuD7epRSAyY3t
+	 z6lkOFY3YyFwpdKcr+b9z/lSlCr/zGLm8MOQAxxXa4T4gB6r92CzFHlW3DhlGniFkD
+	 ElFsJlsUWzoMae23/DX5Xz9x2FtvrwAHyeZC3cLSR7FPxdsxwJMH4khiDWiD3siPfL
+	 17ntNOtglGwQ4K7h6kh7qU+WHZCZsPrAQ425sFL2GNYA2+vDETHtmIn34IOZwC7/jq
+	 1wBdsvRUJ7bRw==
+Message-ID: <96c45391-e6e3-4972-b8ec-b611be655624@kernel.org>
+Date: Tue, 23 Sep 2025 17:06:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] rust: usb: add basic USB abstractions
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
+ <20250825-b4-usb-v1-1-7aa024de7ae8@collabora.com>
+ <DD07LUJXNZN9.3RHH9NJNRFVNN@kernel.org>
+ <27AB9C59-BAE6-4F1F-8638-DF9244D0A616@collabora.com>
+ <DD08HWM0M68R.2R74OSODBIWSZ@kernel.org>
+ <2025092326-banked-resubmit-67c0@gregkh>
+ <DD0994IZMBVQ.2HZOA2ZMWT2I@kernel.org>
+ <2025092344-vacation-envelope-f0cf@gregkh>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <2025092344-vacation-envelope-f0cf@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Commit 1a194e6c8e1ee745e914b0b7f50fa86c89ed13fe introduced overflow
-checking for the font allocation size calculation, but in doing so moved
-the addition of the size for font housekeeping data out of the kmalloc
-call.
+On 9/23/25 4:52 PM, Greg Kroah-Hartman wrote:
+>> Having a &usb::Device<Bound> would mean that for the lifetime of the reference
+>> it is guaranteed that the usb::Device is bound to its USB device driver
+>> (struct usb_device_driver).
+> 
+> Wait, usb_device_driver shouldn't be used here, that's only for
+> "special" things like hubs and an odd Apple device.
 
-As a result, the calculated size now includes those extra bytes, which
-marks the same number of bytes beyond the allocation as valid font data.
+I only mentioned it because if a struct usb_device is bound, then it is bound to
+a struct usb_device_driver.
 
-The crc32() call and the later memcmp() in fbcon_set_font() already perform
-an out-of-bounds read, the latter is flagged on ppc64el:
+And because we're not doing this, I doubt that a *public* usb::Device
+abstraction is required (at least for now).
 
-    memcmp: detected buffer overflow: 4112 byte read of buffer size 4096
+The cases where we need a struct usb_device for operations on USB interface
+(such as usb_fill_bulk_urb(), usb_submit_urb(), etc.) can be dealt with
+internally in the abstraction itself, such that drivers only need to know about
+the interface.
 
-when loading Lat15-Fixed16.psf.gz.
+So, I wouldn't expose it just yet. If we see that further down the road we need
+usb_interface drivers to mess with the usb_device directly for some reason, we
+can still expose it.
 
-Since the addition of the extra size should only go into the kmalloc()
-call, calculate this size in a separate variable.
+>> The code above establishes that you can get a &usb::Device<Bound> from a
+>> &usb::Interface<Bound>, i.e. an interface that is bound to a USB driver
+>> (struct usb_driver).
+> 
+> Interfaces are bound to usb_driver, and are a child device of a struct
+> usb_device.  There is no need to worry if a driver is bound to a struct
+> usb_device at any time, it should be independent if a driver is bound to
+> a struct interface.  All that we should care about is the driver that is
+> bound to a usb_interface as that is what the rust binding should be for
+> here.
 
-Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
-Fixes: 1a194e6c8e1e ("fbcon: fix integer overflow in fbcon_do_set_font")
-Cc: stable <stable@vger.kernel.org> #v5.9+
----
- drivers/video/fbdev/core/fbcon.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Right, that's why I said I doubt that it is semantically useful to derive a
+&usb::Device<Bound> from a &usb::Interface<Bound> or a &usb::Device<Core> from a
+&usb::Interface<Core>.
 
-diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index 5fade44931b8..a3fbf42c57d9 100644
---- a/drivers/video/fbdev/core/fbcon.c
-+++ b/drivers/video/fbdev/core/fbcon.c
-@@ -2518,7 +2518,7 @@ static int fbcon_set_font(struct vc_data *vc, const struct console_font *font,
- 	unsigned charcount = font->charcount;
- 	int w = font->width;
- 	int h = font->height;
--	int size;
-+	int size, allocsize;
- 	int i, csum;
- 	u8 *new_data, *data = font->data;
- 	int pitch = PITCH(font->width);
-@@ -2551,10 +2551,10 @@ static int fbcon_set_font(struct vc_data *vc, const struct console_font *font,
- 		return -EINVAL;
- 
- 	/* Check for overflow in allocation size calculation */
--	if (check_add_overflow(FONT_EXTRA_WORDS * sizeof(int), size, &size))
-+	if (check_add_overflow(FONT_EXTRA_WORDS * sizeof(int), size, &allocsize))
- 		return -EINVAL;
- 
--	new_data = kmalloc(size, GFP_USER);
-+	new_data = kmalloc(allocsize, GFP_USER);
- 
- 	if (!new_data)
- 		return -ENOMEM;
--- 
-2.47.3
-
+But besides that I also think it's also just wrong, so we should remove the
+corresponding code.
 
