@@ -1,116 +1,122 @@
-Return-Path: <linux-kernel+bounces-828628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEFC7B950B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:41:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA9CB950D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4B8319012A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:42:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CFDB1902079
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B7831D736;
-	Tue, 23 Sep 2025 08:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6F131D393;
+	Tue, 23 Sep 2025 08:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wvg6wV3J"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gEYP3n4S"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E519A313295;
-	Tue, 23 Sep 2025 08:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFF02EAB61
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758616907; cv=none; b=cp0p/rcs9dMj1NPUDhPi3bCliignGXhVAOFra5j7BPCkPm6v47tQY2JCxU0Ix/ecikidM0k1CUSawf5tFHsf3ZZpB/bCk2SqjRMID6azUKlI0VFL6BRl/p8laB1J5iqCjmTMCz4ETtZ/zb3Ec9p4+WUS9doFFK3EPTde8jH0w50=
+	t=1758617039; cv=none; b=QsLMY0ZmfM6cVaFrh5RP3t8Q5Vf7v5fWl7DDoC+p9CkEbmYOW1pAF3Dghv2/CcDXnvESeivdZQU4Cl44W9ZLhQrBKFERel95HYw+PrWyZMr6JWVuE1f/olLx6L91g7K1aQDqmbX7g2yFqPsKUlfsXYTiq9xFOeGtc9fgV2tw04c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758616907; c=relaxed/simple;
-	bh=lRpdbF/4V+EkIq17vmldPHeUjul5knfmqsC1F6Yw/+8=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=QDqXKjvDLe1hgFG6RneA2r4YFqATrZjVGn/A6vR/uFX54cqua+paRE0bz4C0jSbG1XJ2XIMsD1FdA1H9FFohZYjtWPHp2fQxaeuYWI64uebMzulaFk2uILwpBQhft4QR0zyXlKuNzEubkba8r8SlwCbrosX9wCiactMzbaUU+Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wvg6wV3J; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758616906; x=1790152906;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=lRpdbF/4V+EkIq17vmldPHeUjul5knfmqsC1F6Yw/+8=;
-  b=Wvg6wV3J23WSOOpq1Q/NsJZ5XkT9wQA61uJztEXhLaICPkR5zcxevFzE
-   cJjssxcjnvF9DZy6Wg3u7WCk1DbcCvJUXYFp1r69lE8EhTRr2XqvnBUAq
-   WZeAIDW6rP5z1f7SBYncY7/oGrPmlSTunrUmpZ4XPNKZUmDmp0IVrjw1U
-   +hRnDt5EfxLb4NZFgRJ6A/Q7wIl1vneRHTUPVPVrzo3UYs/4X5Ha9esOX
-   NtH+hqT6hwhklnHbvDBe9NP6RSg9Hu67AZ7j8HNTGJWzVbcJy14noyh7k
-   sB7lGELEJL2tfdcLKtM0loBuHl+etwgOptViJw4R3bMxW34aqSsmOYIEj
-   Q==;
-X-CSE-ConnectionGUID: jVGWtnEzTxmov9oCeOcTfA==
-X-CSE-MsgGUID: zGGRHlRGQBGVzicR0r3Pgw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="71135645"
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="71135645"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 01:41:46 -0700
-X-CSE-ConnectionGUID: YdeeOyQlQzqkRAoii6E46w==
-X-CSE-MsgGUID: 42y7GCWgTR6Nm3sQ8NnySA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="176291562"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 01:41:39 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 23 Sep 2025 11:41:35 +0300 (EEST)
-To: Rob Herring <robh@kernel.org>
-cc: Sebastian Reichel <sre@kernel.org>, 
-    Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-    Conor Dooley <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>, 
-    Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-    Bjorn Andersson <andersson@kernel.org>, 
-    Konrad Dybcio <konradybcio@kernel.org>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    "Derek J. Clark" <derekjohn.clark@gmail.com>, 
-    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-    Neil Armstrong <neil.armstrong@linaro.org>, devicetree@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
-    linux-arm-msm@vger.kernel.org, 
-    Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v5 1/3] dt-bindings: platform: Add Lenovo Thinkpad T14s
- EC
-In-Reply-To: <20250919144042.GA875871-robh@kernel.org>
-Message-ID: <970a9db9-6bb4-7cf9-bd8f-249374580fef@linux.intel.com>
-References: <20250918-thinkpad-t14s-ec-v5-0-ac0bc6382c5c@collabora.com> <20250918-thinkpad-t14s-ec-v5-1-ac0bc6382c5c@collabora.com> <20250919144042.GA875871-robh@kernel.org>
+	s=arc-20240116; t=1758617039; c=relaxed/simple;
+	bh=gy4uqxOCIGLwvs84h8NOCEWXZqQgcCRkqfRUYk238eo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DWiMJXiyKhBHm5jbCTfjvmKVfckbHn7sClSt5dvOBLQm+ndwWcncdAQamZde7vLQsP+u7Cgpw+JrOwUH8+nBECVfifxifdPWSW2TOXb/le3jQ1GOxOcGPpq+1UMyND9QWBfpQQ+9GDNhU2LAgwGSrZHteStSqyrFL8eVIBCBzko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gEYP3n4S; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b0787fdb137so809706666b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:43:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758617036; x=1759221836; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/mGp4D0/N7zj9lqu2hqSY2BaksNmyzuS6a+IwtNsiCQ=;
+        b=gEYP3n4SnylJ6HmgLWL4EPmvr6WRgIuhlPf5K2vcl4Ce7Glm/itR9cPjv6/GdXk6Fu
+         6H28K+0qOZ5wU0gpHf7O3Qox/eUrk66lozP2EYmY2BPI4u93mundKgwyga3mxoPw5VAe
+         EoAs9tPOpiDl5TPDz30VlDU6M4HRBPUkKpGVjr1lNvME5sfjbCppZ4qJmUxqZ0qPxVtj
+         KZ6STeMGCfDIH8OiTuQF4fM612dbjNx749DfXj/tYIdcBb/W/4UdSK9xqnp3fX2FDuZQ
+         Dhd/jtGhNMHWsYr3Z8vNanPNV7OZogODuY+5qOuQfV1bjDO3mxR9jNEqKXg/lKu2nPgw
+         UMuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758617036; x=1759221836;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/mGp4D0/N7zj9lqu2hqSY2BaksNmyzuS6a+IwtNsiCQ=;
+        b=plEaZHxH1x723tjd857CTKQFMojWn6/MQ1UZ7qvqKMNGtIPyepg9+fNkscRkzH1+MQ
+         oASljI8feeOQF8zPFNXXD+Dio8jN3usjmFfsvPG9IjGQKo1siV3hTKpcxAD15kScJH9D
+         VfX96BzkXwUFf132ahRLpaxOH6VhlmN6SkPrvISPd9fdUUe2RBHEFHlQhyI+5uUsYCSd
+         ZyabtLU3p8C4FtrxbNoHIigDbkMZ3/EQXQc+IC80XzYAD+6QocPHyWKhHBS7pfFtGHDJ
+         hBYrtTkOKDgRxf0sXJohvSBthqv/mZd76N8JPwLJmPSaszoEmgKXOc2eKdoShaL081uZ
+         LjAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2fKCsT13rde2nXW0hfl4jIQJEk2GqdjSpcYHg2hcPdgp9XcVGR/wqg/NMXZnYr4VrqJFgPzrXDHhM9g4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1B93wElkXVM039hMELFD/SPFZK1R6Sifufwml2TEtxpMZGmCT
+	6ZxPGhpQthDtRsaZENZ7BET+KfrLqQ+2Od+HW5lzPn9qgMPdk9NonwLV
+X-Gm-Gg: ASbGncvlLmukYWJM2UoJj925qWC7lnRiXqeOkf/XBC5BIz2/k8j/UoCk6t2Yu1fU1Pm
+	lmQYjBhQnj0xkjsp3/vZy5Ln6DK+eWprquYiVTcny+4IQrbpHM2UhkL+eoKBbfNv6XIXW+KNdtO
+	Csd3Wia/IVcfLzjszU5wQo59B+XzlFQlqFaJLP+/8e7MLQbowaE+Jb1QqR8pd8Jhz2M5kv6PBNz
+	sout2MOIGgzH30jlgz0H284aedjC3kMWX2P93IAehdVOJ8aEg/9s5qnE4WZqAn1pg2d8aqBcnyD
+	bnls1oN4V2MQ77CbheQry7sek5whrmoHuyuWMWBhrD/T3kxaM4+rvgvCLtssnFKTiFLi7RZtMNt
+	JZ9KwCqbq2OmJFGg3e3A/Uz4Vug==
+X-Google-Smtp-Source: AGHT+IHZf6TnZmvJ/kWnGmv0GcPcYtIPGdUTBRc/Tnmg6bn8o3PfdZRyuZLiArXHvkr85ZYF6HZWCQ==
+X-Received: by 2002:a17:906:dc8d:b0:b2b:62f8:e490 with SMTP id a640c23a62f3a-b3027a4ace6mr168920566b.27.1758617035386;
+        Tue, 23 Sep 2025 01:43:55 -0700 (PDT)
+Received: from hsukr3.. ([141.70.88.200])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b261bdfe8d2sm943936766b.58.2025.09.23.01.43.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 01:43:55 -0700 (PDT)
+From: Sukrut Heroorkar <hsukrut3@gmail.com>
+To: Helge Deller <deller@gmx.de>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Sukrut Heroorkar <hsukrut3@gmail.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Gonzalo Silvalde Blanco <gonzalo.silvalde@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-fbdev@vger.kernel.org (open list:FRAMEBUFFER LAYER),
+	dri-devel@lists.freedesktop.org (open list:FRAMEBUFFER LAYER),
+	linux-kernel@vger.kernel.org (open list)
+Cc: skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com
+Subject: [PATCH] fbdev/radeon: Update stale product link in Kconfig/FB_RADEON
+Date: Tue, 23 Sep 2025 10:41:50 +0200
+Message-ID: <20250923084157.11582-1-hsukrut3@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Fri, 19 Sep 2025, Rob Herring wrote:
+The previous Radeon product page link was no longer valid. Repalce
+it with the current working link.
 
-> On Thu, Sep 18, 2025 at 11:20:26PM +0200, Sebastian Reichel wrote:
-> > Add binding for the EC found in the Thinkpad T14s Gen6 Snapdragon,
-> > which is based on the Qualcomm X1 Elite. Some of the system LEDs
-> > and extra keys are only accessible via the EC.
-> 
-> s/platform/embedded-controller/ in the subject.
+Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
+---
+ drivers/video/fbdev/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks Rob.
-
-I took care of that shortlog change while applying to the review-ilpo-next 
-branch so no need to submit v6 because of it.
-
-> > Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Sebastian Reichel <sre@kernel.org>
-> > ---
-> >  .../lenovo,thinkpad-t14s-ec.yaml                   | 50 ++++++++++++++++++++++
-> >  1 file changed, 50 insertions(+)
-> 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> 
-
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index c21484d15f0c..3037455adf48 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -949,7 +949,7 @@ config FB_RADEON
+ 	  don't need to choose this to run the Radeon in plain VGA mode.
+ 
+ 	  There is a product page at
+-	  https://products.amd.com/en-us/GraphicCardResult.aspx
++	  https://www.amd.com/en/products/specifications/graphics.html
+ 
+ config FB_RADEON_I2C
+ 	bool "DDC/I2C for ATI Radeon support"
 -- 
- i.
+2.43.0
 
 
