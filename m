@@ -1,181 +1,146 @@
-Return-Path: <linux-kernel+bounces-829705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FD8DB97AAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:56:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEBE2B97AAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B358165F91
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:56:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A616165B3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A6030EF72;
-	Tue, 23 Sep 2025 21:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D4630E859;
+	Tue, 23 Sep 2025 21:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IUQqxsZL"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="J535gKJn"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C681725783F
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 21:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72073019D3
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 21:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758664600; cv=none; b=q6ZV74gGJZLNO//q+W39HfD+nFINVv2qqIc3rGZDycpYdmwXwaLrkYUpmBA2y41YLIDdvNhRXTogSlZDEBTGHpg7n5OXfBHej6kRUQ5MYUvVxTZuitPotYjZboG35y78/8EkXH5eHklOQILjToXyky4od7WK+NDN6sROB68H1YY=
+	t=1758664777; cv=none; b=U5PhShZ8xDLS6FynBiObN3a1humQotg+tZumoVXikHfF2u0aL2CLq0OQdjwpQPLVRKqzEzNYMw7rwbXKcQZUJrbmERKYycZbNJUsIRGgtx0csLlsRwggAUUqM/EM1Dch8P5P8VoEiQxcTpbyN9VmgY3ngQu8O8lxBR3czz/muLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758664600; c=relaxed/simple;
-	bh=mXvFVuOjAEF3ZJcrTs/kyL/jzOQWNaY+j3LIfOTL/b8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r3PgvQMZx7dSr5sUN8F3Nivw5ZaVgGgCZJFu7QOGgnTblzWUd3bVQi3e9upHMl0jzgN8NWEYf7nFCihe2c19pZ2ufT/1QLBjSRFIqQylvawkYVdsdTqMtgiyj4Z5/HN3t3a14pB0CpCsGqfhRskphYDeVwVrUY0P2xn0vfLQl7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IUQqxsZL; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-84b690f94bdso245392785a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:56:38 -0700 (PDT)
+	s=arc-20240116; t=1758664777; c=relaxed/simple;
+	bh=n+Tna5yctFylnOzzw6gjcQZXM40ohuoeFQZ83Y8tx9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ulhyccoz6CL2/0700enWa4f8o7d3XUEdpcEx5glBt7QG46dCdYD/DRQrkEcYqv0MOL0vcsa0BDgzVkIk81DZ/s0AX7IBjehBzm+SC4SMW9b7Q6nDgJB1n751hBoCAOLHWuBV1JxKUNhSUhs5VrXk9GBfXiFcwaoRr1Bd3eTeG5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=J535gKJn; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b61161dd37so39875301cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:59:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758664598; x=1759269398; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qsIqVul5TrzdGcdS0u0ousn4U4O74/bcb+sGPFZsNyk=;
-        b=IUQqxsZLdnNVhWtymTksTK+1NCwEeNTUGv3aresyLmZJXXYDFOhh1dcV/Npy9POZbO
-         TKQpkWGOHU02/iyEkN/9grqqhdQP7PcdqaKi+LsQdz/ql2+ACRtGKIAGkh3xYHe3VoYK
-         1bdlQJbHaltQatT/Uz4z29MD3qNZAMp9cifSGGR02NccDS4rx6ld9Qr/YJQ7QcZEOLWn
-         1/7NzH/9ZQwAUo3ZEzgiK880Gi1+WWygV0b2bu5mX1mec/+WQgm/kMA2LhdTfUbsJXM1
-         8FNXUKvc6j+e0siEIQ8OP4kgCkg5/p2/S8P/1J1s5GSUm4gC2c9dQeFJnfppuP6ciXRB
-         Mk3w==
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1758664774; x=1759269574; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BX3qHs7drl3tKastKD1b5d2t8SLGFfBbCJAz2/e6rWo=;
+        b=J535gKJnABWs48sJs/MOp8H1tCxj8SysIjQ94ftPyZ6XArrXibq6ihiOS3Za6hfYsI
+         Q+Wk5cKla0Jl/ScRGWYRJQxdEuUnW512k72diF37wUgnkauITgW8GUPPaOYywcoFlr32
+         7QU+A8C2Z/ueLS9iVsWLeFKUbCVD0w47YUnaJcY/NbiQjE9n7Uv2WbZOn8AJ9jXf6ckc
+         cdQilJrmWFdaY6BeI7bTayP4zumjNfQdJW/aFUT01nuCPIunabAkHMFJOmpHvp/uwVNW
+         rX85/EN+jZUQDHUp2tl4fvl6T2yA7rOtZ09N2xRT892OpPolWKc3K/uaiejAslviSYAs
+         AG7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758664598; x=1759269398;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qsIqVul5TrzdGcdS0u0ousn4U4O74/bcb+sGPFZsNyk=;
-        b=KlvAnnHe0VAyyUsWoAJbsL8Og/x5YKkCOKl77VjI71SDyulFIYINp2hXef/pRuEsDZ
-         L7aYmrWh9KZd/DaLr0oZLncEAJoRTc2pzg4lv+xW+ISyDSs46BDoqZ7BHiXHnyTg9Kmv
-         wPJtMH0UEJ6dqdwda31qEkCEyTx22JgchEOiIH1k+jw2rnP5Z7q2BaxBpFqptb2NU18y
-         U1VdR3RxheYHjU184+N2PQa101k7gyIoezHdd1+DCPdGk/Ilebhd/ZcX41IFtbHW8yBx
-         G7nAUPwCP2b+91GGWySEIFrw2I+fuRhkVkF9ybYCWbBx04KctavWOJ8eVZJqGixPeNNC
-         eFnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtVsKqQtLOL/oS2hA5rsn9jNp5zn0vZGVd5+PE+xhQDXYuuH4SBkPT7cGDyS1HKScbTgB0keK0yCX6Q70=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2TAVNZka6ZrEHO0Fgh0sOV+orAinWsBT1S9lC4dB0/f+cHx8l
-	x2sWhTLIs2RetQ2MHxns2lHiDFHHLWB5J+6eT/LKAVz4766B5nWt/76jvq+WtUEAnYk3bICTgtd
-	8s2z8UGgAyTVj1TAoy9pv00RyKeInJbM=
-X-Gm-Gg: ASbGncsLowD7zIZyyKzinO6DHmxYXpg147slodvvsatIuNqt0vjU9a4+8wzEY6x/Emk
-	ak2CzojM381ZcALPgZxr4HXKJnH7+Csl2h5XSLx6JY6QuFsbFikpW/MMkFRjeMkUbwIkjRpkqd+
-	NxhOCwASOsyT7ZPYzBZPvBHJ7chjfH4bAiCUFgdCEH9l4prx1HgrKeAd/H4DptL94njOQqlR6yn
-	95G9U91kzQ/00vpj3G0zkQKnCseweIIxvwCd5t01g==
-X-Google-Smtp-Source: AGHT+IGZ2aYJhSmeR/Vq+qPj4UpUurfr8enMonGVPEnAiKZzoukE5Bl9aljg9I+ku/XMaK23RRJwT131b6anaju92hI=
-X-Received: by 2002:a05:620a:1723:b0:84a:f8a2:a4e6 with SMTP id
- af79cd13be357-85173700fe4mr518628285a.44.1758664597680; Tue, 23 Sep 2025
- 14:56:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758664774; x=1759269574;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BX3qHs7drl3tKastKD1b5d2t8SLGFfBbCJAz2/e6rWo=;
+        b=MTB6l/fnJgcA1iwI2Vvf1XxBe+KYpol8fAdbTT5UsH3NVG3l05IKSxUCPP7xodyzr4
+         wMCLsAkcejhcBvynGdWgvUuHf5/V5R9cL2XpX1wXaW9l4b883T2lCyRtz3aVW3UuhBqf
+         i4L+C7ye7zeOgqD+4fr7ppbk7NIyIEwpd5x5pepGUwWcOXd0604XbTN25H8dkc24wfI8
+         O4ZTKnvhJ34cSx9jD58sKcImQKHqf303l276muMV6zCemq9G/Ehl8Xx7eYoIPgsmmiVr
+         Z6wX98TeojztwqjUdhwtbQIYp8OYY1c0bfz01+2ohs1a3bfqDVECi1GaRGwbOlaoHCuS
+         wLrw==
+X-Forwarded-Encrypted: i=1; AJvYcCWn7+/OX5UbbRQ2/pvC8NRyEojkosmFj308oFwzP1Ol3iKMsuAtJ0+ZY6xwTNGAcPr3la/3Kms+51nhnGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU5mEaaRGqaBezFC646aKI7D1HCG/8FpQwROlC/nQ6BT/DcP0u
+	nonNkjAYL8ltpD1qwHukwigQDurAXRvFPgDZIsoBagrJbiXiqdSYo3eEsq3vWr3/9IU=
+X-Gm-Gg: ASbGnctZV/ZQfp4zsRLVOBPkcS98PvNLD1KIYT2DcKz0FVXeDyowiYXiWQuY9IS63ze
+	QHLMYn3N0O5kfT20lNxvQb4ZtZ9DxS/1gBuUSbxdDlpuxMHCysoBeJaCd2wyt/62RuiTZEBVCtT
+	2CBbAaeRPvBJn8xQPskFzNeLZUppmnwTehlx0NLo0jLvWvrpTYqL+A+Ka+JuV4z+pw8KFz57DGe
+	fPHzqTcNr/D7Gzdeewy4k+xfHhi6+TE1IT7EcELuS8rFm1WMuvjQN4oHEz0QHFgcaFDDkzI5sPo
+	cd95EYVUpnDfzpkS8h+M4kOXXKtD+i2IWusysIBxXsAKKEc1+BGVnQrQr8r3Iukq+RXnbwKS6qT
+	UzP6up8zvdTQodv7aAybdl4hGI80xRToW
+X-Google-Smtp-Source: AGHT+IGJK4Ixs84ITmfl21mhtnUIvulA36FWyfmqNajQjBuONg+Bop3F7SJyTIF2oLRK+xYnNqb3Tw==
+X-Received: by 2002:a05:622a:a15:b0:4ca:e5df:f266 with SMTP id d75a77b69052e-4d369510c3fmr47797661cf.37.1758664774448;
+        Tue, 23 Sep 2025 14:59:34 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:929a:4aff:fe16:c778])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4bda2c6d0c5sm93805981cf.21.2025.09.23.14.59.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 14:59:33 -0700 (PDT)
+Date: Tue, 23 Sep 2025 17:59:29 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: syzbot ci <syzbot+cica6a1c285444b25f@syzkaller.appspotmail.com>
+Cc: a.hindborg@kernel.org, akpm@linux-foundation.org, alex.gaynor@gmail.com,
+	aliceryhl@google.com, bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com, chengming.zhou@linux.dev, dakr@kernel.org,
+	david@redhat.com, gary@garyguo.net, gregkh@linuxfoundation.org,
+	liam.howlett@oracle.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, lorenzo.stoakes@oracle.com, lossin@kernel.org,
+	mhocko@suse.com, minchan@kernel.org, nphamcs@gmail.com,
+	ojeda@kernel.org, rppt@kernel.org, rust-for-linux@vger.kernel.org,
+	senozhatsky@chromium.org, surenb@google.com, tmgross@umich.edu,
+	vbabka@suse.cz, vitaly.wool@konsulko.se, yosry.ahmed@linux.dev,
+	syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot ci] Re: rust: zpool: add API for C and Rust
+Message-ID: <20250923215929.GA1122379@cmpxchg.org>
+References: <20250923102547.2545992-1-vitaly.wool@konsulko.se>
+ <68d2cfc2.a70a0220.4f78.000a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAEU-x4=Zs22b5LX_rsBVMu4BxvDfO+CZkkuWuVNaxv8mqvh9Gw@mail.gmail.com>
- <bjtev7sgmcafoysd53xrxih4nawn2dbq4odylwdglbub6td2a3@nhoxenprhjvy>
- <CAEU-x4kL45DAddmNahjR2C97+43jchpmXep++LbeP8cXLEWN-w@mail.gmail.com>
- <CAEU-x4nv3XnXchevtwN5mkVcxqnpgBobhavxZc7BjS7EgYG8Ng@mail.gmail.com>
- <c3plpgl2zsx4do2odwdeowodkkdnfqpexlwqg5a5mckyibxlge@qai35f5yeswy>
- <CAEU-x4mJiBM_zKg1DaeJkKB3W3Ay08bUTc-D3QjFjDxNiZGd0g@mail.gmail.com> <iav7hzeaarxifwxk7zlfnt6vipqkp4h4ldt634exlvcswz62gj@a7ongaeduylz>
-In-Reply-To: <iav7hzeaarxifwxk7zlfnt6vipqkp4h4ldt634exlvcswz62gj@a7ongaeduylz>
-From: Yinon Burgansky <yinonburgansky@gmail.com>
-Date: Wed, 24 Sep 2025 00:56:25 +0300
-X-Gm-Features: AS18NWBTRZRGoj3iMPuhGYLJ38hdiNJcbzwCCEFcO6dJB0f9EZaiwaFEfRuXlpw
-Message-ID: <CAEU-x4k_56w17y0DOKG2TRtegGvzVKS9USAERMa1MtO+3wZivA@mail.gmail.com>
-Subject: Re: Touchpad multitouch leaves ghost fingers
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68d2cfc2.a70a0220.4f78.000a.GAE@google.com>
 
-On Tue, Sep 23, 2025 at 7:30=E2=80=AFPM Benjamin Tissoires <bentiss@kernel.=
-org> wrote:
-> Got something out with https://gitlab.freedesktop.org/libevdev/udev-hid-b=
-pf/-/merge_requests/204
-> that seems to solve your case on the hid-recorder you provided.
+On Tue, Sep 23, 2025 at 09:50:10AM -0700, syzbot ci wrote:
+> syzbot ci has tested the following series
+> 
+> [v6] rust: zpool: add API for C and Rust
+> https://lore.kernel.org/all/20250923102547.2545992-1-vitaly.wool@konsulko.se
+> * [PATCH v6 1/2] mm: reinstate zpool as a thin API
+> * [PATCH v6 2/2] rust: zpool: add abstraction for zpool drivers
+> 
+> and found the following issues:
+> * BUG: unable to handle kernel NULL pointer dereference in zswap_store
+> * KASAN: slab-out-of-bounds Read in zpool_get_total_pages
+> * KASAN: slab-out-of-bounds Read in zswap_store
+> * KASAN: slab-use-after-free Read in zpool_get_total_pages
+> * KASAN: use-after-free Read in zpool_get_total_pages
+> 
+> Full report is available here:
+> https://ci.syzbot.org/series/e8b22352-ae56-4d7c-9113-75573acf2b64
+> 
+> ***
+> 
+> BUG: unable to handle kernel NULL pointer dereference in zswap_store
 
-Thank you so much!
-The install command didn't work properly for me:
-```
-$ ./install.sh "*DLL0945*"
-$ tree /usr/local/lib/firmware
-/usr/local/lib/firmware
-=E2=94=94=E2=94=80=E2=94=80 hid
-    =E2=94=94=E2=94=80=E2=94=80 bpf
-        =E2=94=94=E2=94=80=E2=94=80 0011-Synaptics__DLL0945.bpf.o
-$ reboot
-$ sudo tree /sys/fs/bpf
-/sys/fs/bpf
-0 directories, 0 files
-```
-I tried to add it manually and it seems to work now :)
-```
-$ sudo udev-hid-bpf add /sys/bus/hid/devices/0018:06CB:CE26.0005
-/usr/local/lib/firmware/hid/bpf/0011-Synaptics__DLL0945.bpf.o
-$ sudo tree /sys/fs/bpf
-/sys/fs/bpf
-=E2=94=94=E2=94=80=E2=94=80 hid
-    =E2=94=94=E2=94=80=E2=94=80 0018_06CB_CE26_0005
-        =E2=94=94=E2=94=80=E2=94=80 0011-Synaptics__DLL0945_bpf
-            =E2=94=94=E2=94=80=E2=94=80 synaptics_dll0945
+struct zpool {
+	void *pool;
+};
 
-4 directories, 1 file
-```
-But I have to do it manually every time.
-Not sure what's wrong, maybe the added udev rule:
-```
-$ cat /etc/udev/rules.d/81-hid-bpf.rules
-ACTION!=3D"add|remove|bind", GOTO=3D"hid_bpf_end"
-SUBSYSTEM!=3D"hid", GOTO=3D"hid_bpf_end"
+struct zpool *zpool_create_pool(const char *name) \
+{ \
+	return (struct zpool *) prefix ## _create_pool(name); \
+} \
 
-# We lookup the hwdb during bind to set the property, but we don't do
-anything else
-IMPORT{builtin}=3D"hwdb --subsystem=3Dhid --lookup-prefix=3Dhid-bpf:"
-#ACTION=3D=3D"add", ENV{.HID_BPF}=3D=3D"1",
-RUN{program}+=3D"@@BINDIR@@/udev-hid-bpf add $sys$devpath"
-#MARKER
-ACTION=3D=3D"add", ENV{.HID_BPF}=3D=3D"1",
-RUN{program}+=3D"/usr/local/bin/udev-hid-bpf add $sys$devpath"
-#ACTION=3D=3D"remove", ENV{.HID_BPF}=3D=3D"1",
-RUN{program}+=3D"@@BINDIR@@/udev-hid-bpf remove $sys$devpath"
-#MARKER
-ACTION=3D=3D"remove", ENV{.HID_BPF}=3D=3D"1",
-RUN{program}+=3D"/usr/local/bin/udev-hid-bpf remove $sys$devpath"
+u64 zpool_get_total_pages(struct zpool *zpool) \
+{ \
+	return prefix ## _get_total_pages(zpool->pool); \
+}
 
-LABEL=3D"hid_bpf_end"
-```
-this is the udevadm info (after reboot, it is sometimes hidraw3
-sometimes hidraw4):
-```
-$  udevadm info --query=3Dall --name=3D/dev/hidraw4
-P: /devices/pci0000:00/0000:00:15.1/i2c_designware.1/i2c-1/i2c-DLL0945:00/0=
-018:06CB:CE26.0005/hidraw/hidraw4
-M: hidraw4
-R: 4
-J: c242:4
-U: hidraw
-D: c 242:4
-N: hidraw4
-L: 0
-E: DEVPATH=3D/devices/pci0000:00/0000:00:15.1/i2c_designware.1/i2c-1/i2c-DL=
-L0945:00/0018:06CB:CE26.0005/hidraw/hidraw4
-E: DEVNAME=3D/dev/hidraw4
-E: MAJOR=3D242
-E: MINOR=3D4
-E: SUBSYSTEM=3Dhidraw
-E: USEC_INITIALIZED=3D3980846
-E: ID_VENDOR_FROM_DATABASE=3DDell Inc
-E: ID_PATH=3Dpci-0000:00:15.1-platform-i2c_designware.1
-E: ID_PATH_TAG=3Dpci-0000_00_15_1-platform-i2c_designware_1
-E: ID_FOR_SEAT=3Dhidraw-pci-0000_00_15_1-platform-i2c_designware_1
-E: TAGS=3D:seat:
-E: CURRENT_TAGS=3D:seat:
-```
+You create the zpool by simply casting the backend pool, but then you
+deref it twice as if it were an actual container for the backend pool.
 
-Thank you for the quick fix, it seems to work great so far!
-Yinon
+I'm guessing you didn't test this even superficially?
+
+This also still proposes an API with no in-kernel user.
+
+NAK
 
