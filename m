@@ -1,136 +1,156 @@
-Return-Path: <linux-kernel+bounces-828803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 216D9B95840
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:51:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B580B9585E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7B4F7A4FF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:50:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28ADA4A353E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297C63148AE;
-	Tue, 23 Sep 2025 10:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABCF3218BE;
+	Tue, 23 Sep 2025 10:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hxtp9JEG"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qFliFiXE"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39202594BD;
-	Tue, 23 Sep 2025 10:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46CF321454;
+	Tue, 23 Sep 2025 10:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758624698; cv=none; b=syHshpdFIcaDgIIwyn47i6aNFd/tLfaQJamnY+/QU7rnBmjtAuLi1JcNLq7thbE8AlHd6I5tdX5nXbqYE4mJndOalr3e3S6wvClodnRKXGezU9Etdt9b/hOBGIAcN1fC2p9ev/tE54Ivt/+lBMoow76jZlqupZyq16SrH2RhPR0=
+	t=1758624796; cv=none; b=HIJvCHgMOoCC+Y0cFElg/8WSkuye3+Zto7MVwc4pgqiFFDdZ74ZSbeRtqF66kKTAjouMcJkc4dAeKAd/BO1xBV782eBVpOXzVKT2uOeiGX5bSi9Dw2ZWcMWOZ0IS9mj1BiiSMqobWiTCZRkU5d7UO4juoigfiOpOPbfj0QYBBbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758624698; c=relaxed/simple;
-	bh=HK7XH7Zdx42B1St/VmVmTEivRyAOokNd58xFAhZnBeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Swii4myOI4C1qDUdORpZjxDr5LZalwTaROu0pRuByXQDaHdVhY6on7PpwyqukwWtQ/2FCYsfsarkZcsmL33SCQdmVAFfjBrozp8pH5Qx3KGISEMEaM5aTJe5DT42SsdE0xlXof6GMOvhTu8R0/Dqy5BxULABk++ap9q0MnInHw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Hxtp9JEG; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=6niV9LF8ivGxzBwxlAX/aJR2l+FBxOoCnfdCxOKaYiU=; b=Hxtp9JEGYAZAcCjZ+GRNlF6lbm
-	pwVpZaao1LImFc10D3RqIjfXB29iqwZzvQu408AmgpEC+8yQJfBbHo6skgtXgKDfAHQ1hYZSZgUYW
-	M8BkIeYrAPq1pp1XzYO+gGpUWHMxMk7uhi+jPbKXyyI3Vji5D2LrWsWXswrQvYJaj/1UgyrkrFx17
-	CHIeI6ckEFTB0jBwfBRaHpX8konRIXFlxg0VasiyrahI8wQHgGM57X0Ep0uuZkewuwpStOppvL2Pa
-	BiXuw1RcSwo8hgL5h0wmyTdllzxxeW3a2n9xpm68DatJkYESE3TtIy7fvRszRtZdAIBU34CdO1mEb
-	n3q7c2hg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v10cN-0000000AC75-0wKm;
-	Tue, 23 Sep 2025 10:51:31 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C775330049C; Tue, 23 Sep 2025 12:51:30 +0200 (CEST)
-Date: Tue, 23 Sep 2025 12:51:30 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>
-Subject: Re: [PATCH v2 1/2] unwind_user/x86: Enable frame pointer unwinding
- on x86
-Message-ID: <20250923105130.GG3419281@noisy.programming.kicks-ass.net>
-References: <20250827193644.527334838@kernel.org>
- <20250827193828.347397433@kernel.org>
+	s=arc-20240116; t=1758624796; c=relaxed/simple;
+	bh=vftLrYglkEsmeo6xHVwldIj2Sq5yIyO4FaXSOki0OoE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RbOoxevL/5yATGeOC4DQY+0Kd+UxzNwrzYlGWTul7NaWiMSzrfN+le7h/xii4bGs6nlMj4STfu+QNDgPH8DBfm94fGNGzCAeD7lKwmQqAiE3bf1rVThhH87+KdEUDkP5szvFs6CfnbQ0trcMRawsqn/N6q9tjpL0buYXoVtzftE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qFliFiXE; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58NAqblj1460248;
+	Tue, 23 Sep 2025 05:52:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758624757;
+	bh=m7JjzlXvIH0z19Y9RrAgsUMC9V31Bo4J2LmQf/wo/Uc=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=qFliFiXE6P2NK2UON0nLZDy9RZdrekE86Y5FUJ5zVnpa9RAESLivXAwJUmwXfj4Dq
+	 zffVJUpaaDUsi8/zpc8CtB9dka+qjWpJx3xZ1xna4Eo5VsLM64DHonPvEKcPlSCAxf
+	 A19Fs63yqS7Wvs67OGRNn/ufTD5lpgkLEU704gf8=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58NAqbth1022630
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 23 Sep 2025 05:52:37 -0500
+Received: from DLEE212.ent.ti.com (157.170.170.114) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 23
+ Sep 2025 05:52:36 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE212.ent.ti.com
+ (157.170.170.114) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 23 Sep 2025 05:52:36 -0500
+Received: from [172.24.233.14] (shark.dhcp.ti.com [172.24.233.14])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58NAqVUj188749;
+	Tue, 23 Sep 2025 05:52:32 -0500
+Message-ID: <5f508f1d-2d08-4687-86cd-d1944caa0a49@ti.com>
+Date: Tue, 23 Sep 2025 16:22:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827193828.347397433@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for NXP i.MX95
+To: Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Marco Felsch
+	<m.felsch@pengutronix.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Brian Masney
+	<bmasney@redhat.com>
+CC: Dan Carpenter <dan.carpenter@linaro.org>,
+        Geert Uytterhoeven
+	<geert@linux-m68k.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+References: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
+ <20250915-clk-ssc-version1-v4-5-5a2cee2f0351@nxp.com>
+Content-Language: en-US
+From: Sebin Francis <sebin.francis@ti.com>
+In-Reply-To: <20250915-clk-ssc-version1-v4-5-5a2cee2f0351@nxp.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Aug 27, 2025 at 03:36:45PM -0400, Steven Rostedt wrote:
-> From: Josh Poimboeuf <jpoimboe@kernel.org>
+Hi Peng
+
+On 15/09/25 13:59, Peng Fan wrote:
+> The PLL clocks on NXP i.MX95 SoCs support Spread Spectrum (SS).
+> This patch introduces scmi_clk_imx_set_spread_spectrum to pass SS
+> configuration to the SCMI firmware, which handles the actual
+> implementation.
 > 
-> Use ARCH_INIT_USER_FP_FRAME to describe how frame pointers are unwound
-> on x86, and enable CONFIG_HAVE_UNWIND_USER_FP accordingly so the
-> unwind_user interfaces can be used.
+> To ensure this feature is only enabled on NXP platforms,
+> scmi_clk_imx_extended_config_oem is added. Since SS is only applicable
+> to PLL clocks, config_oem_get is used to verify SS support for a given
+> clock.
 > 
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> i.MX95 SCMI firmware Spread Spectrum extConfigValue definition is as
+> below, no modulation method because firmware forces to use down spread.
+> 	 extConfigValue[7:0]   - spread percentage (%)
+> 	 extConfigValue[23:8]  - Modulation Frequency (KHz)
+> 	 extConfigValue[24]    - Enable/Disable
+> 	 extConfigValue[31:25] - Reserved
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  arch/x86/Kconfig                   |  1 +
->  arch/x86/include/asm/unwind_user.h | 11 +++++++++++
->  2 files changed, 12 insertions(+)
->  create mode 100644 arch/x86/include/asm/unwind_user.h
+
+...
+
+>   	if (WARN_ON(feats_key >= db_size))
+>   		return NULL;
+>   
+> @@ -459,7 +515,7 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+>   		 * to avoid sharing the devm_ allocated clk_ops between multiple
+>   		 * SCMI clk driver instances.
+>   		 */
+> -		scmi_ops = scmi_clk_ops_select(sclk, transport_is_atomic,
+> +		scmi_ops = scmi_clk_ops_select(handle, sclk, transport_is_atomic,
+>   					       atomic_threshold_us,
+>   					       scmi_clk_ops_db,
+>   					       ARRAY_SIZE(scmi_clk_ops_db));
+> diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
+> index aafaac1496b06a6e4f0ca32eee58a9edf7d4a70f..37f422b4b1ef2af2b4231a1677161aa24e07d0e2 100644
+> --- a/include/linux/scmi_protocol.h
+> +++ b/include/linux/scmi_protocol.h
+> @@ -80,9 +80,14 @@ enum scmi_clock_oem_config {
+>   	SCMI_CLOCK_CFG_DUTY_CYCLE = 0x1,
+>   	SCMI_CLOCK_CFG_PHASE,
+>   	SCMI_CLOCK_CFG_OEM_START = 0x80,
+> +	SCMI_CLOCK_CFG_IMX_SSC = 0x80,
+
+TI is also planning to implement the same in our upcoming platform. so 
+can we use a generic ID instead of vender specfic message ID?
+
+>   	SCMI_CLOCK_CFG_OEM_END = 0xFF,
+>   };
+>   
+> +#define SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK	GENMASK(7, 0)
+> +#define SCMI_CLOCK_IMX_SS_MOD_FREQ_MASK		GENMASK(23, 8)
+> +#define SCMI_CLOCK_IMX_SS_ENABLE_MASK		BIT(24)
+> +
+>   /**
+>    * struct scmi_clk_proto_ops - represents the various operations provided
+>    *	by SCMI Clock Protocol
 > 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 58d890fe2100..8f94c58d4de8 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -299,6 +299,7 @@ config X86
->  	select HAVE_SYSCALL_TRACEPOINTS
->  	select HAVE_UACCESS_VALIDATION		if HAVE_OBJTOOL
->  	select HAVE_UNSTABLE_SCHED_CLOCK
-> +	select HAVE_UNWIND_USER_FP		if X86_64
->  	select HAVE_USER_RETURN_NOTIFIER
->  	select HAVE_GENERIC_VDSO
->  	select VDSO_GETRANDOM			if X86_64
-> diff --git a/arch/x86/include/asm/unwind_user.h b/arch/x86/include/asm/unwind_user.h
-> new file mode 100644
-> index 000000000000..8597857bf896
-> --- /dev/null
-> +++ b/arch/x86/include/asm/unwind_user.h
-> @@ -0,0 +1,11 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_X86_UNWIND_USER_H
-> +#define _ASM_X86_UNWIND_USER_H
-> +
-> +#define ARCH_INIT_USER_FP_FRAME							\
-> +	.cfa_off	= (s32)sizeof(long) *  2,				\
-> +	.ra_off		= (s32)sizeof(long) * -1,				\
-> +	.fp_off		= (s32)sizeof(long) * -2,				\
-> +	.use_fp		= true,
-> +
-> +#endif /* _ASM_X86_UNWIND_USER_H */
 
-Moo, and now you have me look at unwind/user.c:
-
-        /* Make sure that the address is word aligned */
-        shift = sizeof(long) == 4 ? 2 : 3;
-        if (cfa & ((1 << shift) - 1))
-                return -EINVAL;
-
-Isn't that just:
-
-	if (cfa & (sizeof(long) - 1))
-
-?
-
-Let me go add a patch to clean that up...
+Thanks
+Sebin
 
