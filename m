@@ -1,198 +1,123 @@
-Return-Path: <linux-kernel+bounces-829023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8299CB96105
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:47:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EC8B9610B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A1CE17F781
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:47:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D8417B9AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA2A1DD0D4;
-	Tue, 23 Sep 2025 13:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC7B17A2FB;
+	Tue, 23 Sep 2025 13:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AcuNj27d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="imOyS2kf"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7199019644B
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BE119644B
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758635241; cv=none; b=V4U+1DWsuXAw3bILLPWQQ45HeG0zGCT886fjs5pL1XmnwP1D1BkwcvugZohFHPqNcg0Ubia8abeaYCKrSarEfCw15LDKTtQoCI2O7FgPqgfiiTu9+Y8BS7pcaj8PhmNfAEL/XqShdLC2mvQgUbEB+++WTBxtJWc2oUDv7hVIBiM=
+	t=1758635251; cv=none; b=qjH/AA1LGwo/znjeWyWKVMnfk/Vk+0iJZGlGD3sOMjHfF/r41eVa9eXiP1eP6ogIo5gWlhhph6p1Zb+DJpuFZ8MpRHI2l7Ld5WcasPgm5q0mVmQtz6mc6LmdzBTxvG2dGVJJRmQ1MbBSUs34Li8SJNWTMGdGETMW0kN3CI4gggM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758635241; c=relaxed/simple;
-	bh=XWo7hc3W1G/XBFjknU5aEryQawaYEkTAiJoCF9UqAUg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sZUk9/ThDC9UF3tdjYju9/pFDiViA9se/FoQFGE0giDHw31lJqUEysyRY5U4EZn+L6FvjBDK8Ljdbm7qnCWsZpdkJicLeoG6lT7vIHAeB24Ae13vNzkEGEiMipQ+1eIEkojlCK+2XUcRkOpLkhLE8r3c/vZQm5VaBA2S4SHVEm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AcuNj27d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC046C113CF
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:47:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758635240;
-	bh=XWo7hc3W1G/XBFjknU5aEryQawaYEkTAiJoCF9UqAUg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AcuNj27djzB3Wp1xn89y5x+86TJ++ogN+svUreeS5j7aGCMc1l/c8GzEE6u5Hkblz
-	 mJbH2HiTXZVVfWlxk1bClhSX/WD1oHKATmRN9bX9PEuqvaSutxZ/a+AsDB+zr6ocU1
-	 p2xzFvUSq8c4Ae6YQxy3js186B4sgPZM8iHwfECf8ZFMLQrIjiPhsca31ywkLcw5E3
-	 8KfnXfJw6z6gioYNDcQN0DXi2CuqwEk6ACrM8hoqeD/CJxKuU/FQXf/Jn1R0uzFpMI
-	 0yLw00BfPHTIeU4gzWeabuXCmUUULahgpcX3jxuf3Xn2hMWOUuqPaSTBVrHByuZ2dL
-	 kYmrK6fP9iB2g==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-62189987b47so3005418eaf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:47:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVqmog6+eUxknE6nB/rLhZCl/0aQycYczp3n93Fsd3t5RqsdEZeoeGaOELzHPIULGKvFa0QDS1hui7r+Os=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6QoQgC0CG/hMKbKLOH6qLg8UH96mfgf4QgCkMNSLbt9rv4L99
-	1u2M1FNChZvaIF8qDaxLH5G/4/5eEWBh7Cq1qsk02Mr7qmbFKXCf2xSXOkehX/zWOT1dbSyIHDd
-	qQDz9OfrfbkdZ8wNiwH875uMqY5sbkBQ=
-X-Google-Smtp-Source: AGHT+IEfJM8dwOTqmEkoNBUPaVoWBiO4yfLM60G6zYhYl0+BLYg3dTYuG5OA9+KtSRHe8t2nMfT13OAguwsu3LPjS20=
-X-Received: by 2002:a05:6808:6f87:b0:43d:2e87:5489 with SMTP id
- 5614622812f47-43f2d344920mr1442103b6e.13.1758635240169; Tue, 23 Sep 2025
- 06:47:20 -0700 (PDT)
+	s=arc-20240116; t=1758635251; c=relaxed/simple;
+	bh=fEMX99a4LLdufdD4JU/OLopt+VDI9F3h9V5l+JeNSDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S/Bmrx6Bq+nmoeOx+Wo9Vz+v6dgI0pdPKnPNQZasXM7zI9/NNArZFkQRnk7xU10esG48aGXeMZNu+nVfXzJqM6ubjKTcoMq9Ibf3x7oI8n+ohCRoj9eYUt1c3vC0S+ZFxgeq2GOAPqxms6c3hhwgplxzKYAdfoZ5jvnnR0Di64o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=imOyS2kf; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ecdf2b1751so3383916f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:47:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1758635248; x=1759240048; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=28l1fEqACwCBZqKhFY3KyPqEpdAA3HLg8xJ4dHMoe/Q=;
+        b=imOyS2kfayuhpDue+BHU1FYIl9kfeBysJFX7QhZmrnlI06e6VhcKxSYCssqBh0Ur/g
+         6htqDugTpG0Zs2NwkvgqGOYLqqdD9Wi4pE0t6CvTDbw/0yhrHmpWaGldwxA7g5ZW0fDF
+         h8YciSfx2OQI2O1P1lrpKwyk5UnVJqRb3LX+CIvE624sDJKB0OwFwYUzXd6WA6nzzPt8
+         W922NfeAg0yAUy7o5SoQ4TtSq3jTLMHFYB1u3WJOWGmAGxgne33cg0thcLY9u2ilSrUB
+         SoneZMgCGPKgON9zj1WL5lkNI8yCqtjiljIAhctVUnT7MrmSOYUb2oMcHiqkvITnUgUr
+         x+LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758635248; x=1759240048;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=28l1fEqACwCBZqKhFY3KyPqEpdAA3HLg8xJ4dHMoe/Q=;
+        b=RYrjetNJRK9CLy2d/ZxKWkSOW9dhPMNgniuxoxCDf6NlDl80otzYmTpZlFcBmTXds6
+         Jj4xjhTosAQgTSHJ6a1VPnOAe4jNhYkmwcm1F/ABQ6giQxopvxIxysWrDvykdRhRozFd
+         zLIi3TU9GuCoj6DQ+e4pppA/bICgi8kjeIv/B57HWZRgwyBbfPdUU5sUrK0Ats/mdJWp
+         ugZf24KwtVGe+0dHwTWUPQP279ePcirrbDHhausjdW2eqcN+2ph6QQUBVFRbm9/QdgLn
+         k9/oXWZ7RVA38YL8iKwh/z6l3r+5dshu1FmrT2/O6bx3HkRsfYHKIeNFN5dOyKR2/DIg
+         b0Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvG3L2GnAQaiYekUDWH3axJQpYOlqQSPlF6p5p6HcSFGiXobQ7PyEGUrKBv1xyEUMOQk5BB23aomhp8Vw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa6nrFmFGl5tZKZPXAvFm0QION1TYKcM5+GTWUXfCoTaaIU+Iw
+	7Rkh1cpqp3CD/y4Wm9L71oIaHfTJX/nmqUgN3AZliN87YmXLgbhgnSQ=
+X-Gm-Gg: ASbGnctHF4EQvCFKWzwA5ivCfJcsp2/gQFBF41jatmRfITnoOwWfE/F2/zm5+Drpf/j
+	AgHHE6TBtNz+qYSJp9Ydag83OXOHWaSQ+wR4n+7xYG1V2hBH0umk7CH9Ob5gpArOILXwK0Csqvu
+	uBPES40ijeF4BhrpRxeLRB4X7b8ewN2kH+TsSMd57jPkvqItKi4DEz6x/4jt0jCWqM8ERUC+wit
+	Z//MHnc5FWNA2e39kBQJC5BLkjxqmpWMdqHZBAWlXTVAaF+/2zLHqX8WkobafH2SqqsGPDAJbTj
+	Mig7v+i/pb3ndxwPNV0GuAhGZhwMP8o7j/tSnIdpwhyG8ppjOFLrR1/7Y39tIlXjN7z7xkDedRZ
+	VvSrz57nqaQDf+RqELmGU2oB0aTT04Tqw9WQWkbYm0LbDLOnmLWQyKXauWhBxtCCPcpvkcVn3qF
+	O0
+X-Google-Smtp-Source: AGHT+IEz0/K9oDXr/zLCHQ4dVkUmW53CD8fdbE0aFuXBqjyL0D4mn9goYVNMKiHIDqyrqbQhLjRZcg==
+X-Received: by 2002:a05:600c:4692:b0:45d:d609:1199 with SMTP id 5b1f17b1804b1-46e1dac9639mr27593965e9.30.1758635248308;
+        Tue, 23 Sep 2025 06:47:28 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2ac1a7.dip0.t-ipconnect.de. [91.42.193.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee073f3d73sm23740097f8f.8.2025.09.23.06.47.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 06:47:27 -0700 (PDT)
+Message-ID: <4d2d7e50-9853-4c8b-8a62-52c37004f4e4@googlemail.com>
+Date: Tue, 23 Sep 2025 15:47:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923013113.20615-1-a.jahangirzad@gmail.com>
-In-Reply-To: <20250923013113.20615-1-a.jahangirzad@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 23 Sep 2025 15:47:09 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gpa_75Lfah3X+FTso5RMRJBnW6FOv0WDMVYK-4oiB+tQ@mail.gmail.com>
-X-Gm-Features: AS18NWA7GKGdmIVaTde_9n69ZqkZmcA_1XhBcW_UpZM7UATs38g793bVlVhpoZk
-Message-ID: <CAJZ5v0gpa_75Lfah3X+FTso5RMRJBnW6FOv0WDMVYK-4oiB+tQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPI: debug: fix signedness issues in read/write helpers
-To: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.12 000/105] 6.12.49-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250922192408.913556629@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250922192408.913556629@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 23, 2025 at 3:31=E2=80=AFAM Amir Mohammad Jahangirzad
-<a.jahangirzad@gmail.com> wrote:
->
-> In the ACPI debugger interface, the helper functions for read and write
-> operations use an "int" type for the length parameter. When a large
-> "size_t count" is passed from the file operations, this cast to "int"
-> results in truncation and a negative value due to signed integer
-> representation.
->
-> Logically, this negative number propagates to the min() calculation,
-> where it is selected over the positive buffer space value, leading to
-> unexpected behavior. Subsequently, when this negative value is used in
-> copy_to_user() or copy_from_user(), it is interpreted as a large positive
-> value due to the unsigned nature of the size parameter in these functions=
-,
-> causing the copy operations to attempt handling sizes far beyond the
-> intended buffer limits.
->
-> Address the issue by:
-> - Changing the length parameters in acpi_aml_read_user() and
->   acpi_aml_write_user() from "int" to "size_t", aligning with the
->   expected unsigned size semantics.
-> - Updating return types and local variables in acpi_aml_read() and
->   acpi_aml_write() to "ssize_t" for consistency with kernel file
->   operation conventions.
-> - Using "size_t" for the "n" variable to ensure calculations remain
->   unsigned.
-> - Using min_t() for circ_count_to_end() and circ_space_to_end() to
->   ensure type-safe comparisons and prevent integer overflow.
->
-> Signed-off-by: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
-> ---
->  drivers/acpi/acpi_dbg.c | 26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/acpi/acpi_dbg.c b/drivers/acpi/acpi_dbg.c
-> index d50261d05f3a1..0ec12007fad31 100644
-> --- a/drivers/acpi/acpi_dbg.c
-> +++ b/drivers/acpi/acpi_dbg.c
-> @@ -569,11 +569,11 @@ static int acpi_aml_release(struct inode *inode, st=
-ruct file *file)
->         return 0;
->  }
->
-> -static int acpi_aml_read_user(char __user *buf, int len)
-> +static ssize_t acpi_aml_read_user(char __user *buf, size_t len)
->  {
-> -       int ret;
-> +       ssize_t ret;
->         struct circ_buf *crc =3D &acpi_aml_io.out_crc;
-> -       int n;
-> +       size_t n;
->         char *p;
->
->         ret =3D acpi_aml_lock_read(crc, ACPI_AML_OUT_USER);
-> @@ -582,7 +582,7 @@ static int acpi_aml_read_user(char __user *buf, int l=
-en)
->         /* sync head before removing logs */
->         smp_rmb();
->         p =3D &crc->buf[crc->tail];
-> -       n =3D min(len, circ_count_to_end(crc));
-> +       n =3D min_t(size_t, len, circ_count_to_end(crc));
->         if (copy_to_user(buf, p, n)) {
->                 ret =3D -EFAULT;
->                 goto out;
-> @@ -599,8 +599,8 @@ static int acpi_aml_read_user(char __user *buf, int l=
-en)
->  static ssize_t acpi_aml_read(struct file *file, char __user *buf,
->                              size_t count, loff_t *ppos)
->  {
-> -       int ret =3D 0;
-> -       int size =3D 0;
-> +       ssize_t ret =3D 0;
-> +       ssize_t size =3D 0;
->
->         if (!count)
->                 return 0;
-> @@ -639,11 +639,11 @@ static ssize_t acpi_aml_read(struct file *file, cha=
-r __user *buf,
->         return size > 0 ? size : ret;
->  }
->
-> -static int acpi_aml_write_user(const char __user *buf, int len)
-> +static ssize_t acpi_aml_write_user(const char __user *buf, size_t len)
->  {
-> -       int ret;
-> +       ssize_t ret;
->         struct circ_buf *crc =3D &acpi_aml_io.in_crc;
-> -       int n;
-> +       size_t n;
->         char *p;
->
->         ret =3D acpi_aml_lock_write(crc, ACPI_AML_IN_USER);
-> @@ -652,7 +652,7 @@ static int acpi_aml_write_user(const char __user *buf=
-, int len)
->         /* sync tail before inserting cmds */
->         smp_mb();
->         p =3D &crc->buf[crc->head];
-> -       n =3D min(len, circ_space_to_end(crc));
-> +       n =3D min_t(size_t, len, circ_space_to_end(crc));
->         if (copy_from_user(p, buf, n)) {
->                 ret =3D -EFAULT;
->                 goto out;
-> @@ -663,14 +663,14 @@ static int acpi_aml_write_user(const char __user *b=
-uf, int len)
->         ret =3D n;
->  out:
->         acpi_aml_unlock_fifo(ACPI_AML_IN_USER, ret >=3D 0);
-> -       return n;
-> +       return ret;
->  }
->
->  static ssize_t acpi_aml_write(struct file *file, const char __user *buf,
->                               size_t count, loff_t *ppos)
->  {
-> -       int ret =3D 0;
-> -       int size =3D 0;
-> +       ssize_t ret =3D 0;
-> +       ssize_t size =3D 0;
->
->         if (!count)
->                 return 0;
-> --
+Am 22.09.2025 um 21:28 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.12.49 release.
+> There are 105 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Applied with a few minor tweaks as 6.18 material, thanks!
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
+
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+
+
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
