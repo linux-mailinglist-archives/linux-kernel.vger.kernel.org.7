@@ -1,116 +1,102 @@
-Return-Path: <linux-kernel+bounces-828168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD73B9418D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 05:22:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A49E2B94193
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 05:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A7D918A5FAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:22:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59732481DA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D37260590;
-	Tue, 23 Sep 2025 03:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA8A25785B;
+	Tue, 23 Sep 2025 03:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kpMoLxaw"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CM+odUjY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E783258CC0
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 03:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473AA2512EE
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 03:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758597734; cv=none; b=SKZs+fp3P5gFrsrS6vXSAkiACNuhpFqQPtzMqt4PyvXIiz42fLU8gBnjQfNUxAioxKFlx8y1KWrParHGjx3KmSKNfRBc0CU1F8XvRBDN2SdKv6ip8i39zmrR6LT2XsqwfXHz+l2Isin48xL/DMUeriKuMNwJdfgrjZt+mZw/lok=
+	t=1758597768; cv=none; b=cpJ6hCEjtprpArKpD3sONwtwZijxHFumcD85hbLF0edDOsRJuKWGnU40DcqhCzq9xAmrsZOYd2eQ1P+loDVhLv4ENgmczrV+kkNLzoMjnc6WMVqwh/X+ZMHXEkXT8Uh13WdMHtLBkzwAgRqiOe0W7lmS77332YT6yFx/EYgbduQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758597734; c=relaxed/simple;
-	bh=bsw8t9ODvBJyW/fDD+gBzt83DN+MKjLzbqZA8VUIsbs=;
+	s=arc-20240116; t=1758597768; c=relaxed/simple;
+	bh=bUJcxQih4KiH7TxBpUbWKHnOijLpBfmdbFJuespwDCw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JI0xIiLJXsLyoqKL/4+dGG4+73f3CJ2DJcEfVBPvRiE/FdLZoByKEN6d2OiwvzZYUA52Ou1849TaY6uuwwG3r+1o/wfrppnlUR3XPPu2tzcGCyMe+aVuXcvYJ+YfZMv2lZsLoUZPS4jeuiR2F7Jdx+PsVB8krhnjMV1OGvFDrH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kpMoLxaw; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=j+iAIfnOCgF0ODhD6d1aWTdJCcP7/JYmF3oje6lYNQSkM14fs8eU4AxU12zF6M4rJbBI1P8+l9Fjb8YYT8fBIqnxaIZYTUJ2wQE+tBx3Joc9zethPP8XdxCe9RuOxkxulPiQKLfPEsG3LN+9kQzc1u5ylCFdCM+enbL3Q923vMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CM+odUjY; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58N2LNT9001605
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 03:22:11 GMT
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58MH5uRf011598
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 03:22:46 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oUnJ2CE0BnHDgBWcL76+TzXIrZ4HxTgehwBTbISxmcE=; b=kpMoLxaw5pxOjYcc
-	CKzOGh6j55O1iok4v8USxkJW92/TEHIvWEMIX2HoCD+QyCNCKQTMWZFBCR6vsjDO
-	mVO1uo8lPfJuI2O6eAFfXYgU/aSZHZ7rAFeOPKx3QxxydcsQj4fsPjwwZN0CwP2Q
-	CXbX42afkayRcQwlSti38gjZN3+aciVwO1eRvdh8JBL13zdiLuxLrDIXFXP3yBXr
-	S8K+Yk6HS9tE34d4EJYkCCP0ogAbwWWAwr0cZpuMN3IELugNUWvM81LB2MWI9YX8
-	Oc1Z+yIcC7wzetn+4IEBU0Ck/a9GCTtrCg4cydfqaE+BFgmzn1nTEpTiliahtu3N
-	amQ9kA==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bjpdr4mq-1
+	4BaStgRA9naaMpcfCvi59hb/GSqirNOjqp8oFnDbiF0=; b=CM+odUjYk9HSIgd5
+	DJaukv6vyEehW1eky22WBy+ltxZyyNXvmQrOGf2yB5dGEh0em48l38wcSuaUpHBm
+	qC+AyIYJIviechqUhVRhcZwuZlr8gEdI5ApWMMsWUO4AjzSujVzVAP/SH0CRUOGR
+	yV4Xd+AqSj0v+bOeAZph5LRLJ6oYz3ASjPXlgSbMIfKVWgpN3rDwva0YIqOHq4L1
+	rPHMbHnzR2Uf6U47R9jSC2xav5GZ3MwQhvlKsRNIWyD+3+6PI+QkSCoEUQbyKrHQ
+	VCsxFHeBIlzWN4PmlBtp/x4IezHd2YFNY8PPFQLMCtEeJBLza78JdvXi++splWxw
+	Dp2SiQ==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499kkhq275-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 03:22:10 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-78f28554393so75810366d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 20:22:10 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 03:22:45 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-78f2b1bacfcso83121176d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 20:22:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758597727; x=1759202527;
+        d=1e100.net; s=20230601; t=1758597765; x=1759202565;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oUnJ2CE0BnHDgBWcL76+TzXIrZ4HxTgehwBTbISxmcE=;
-        b=ITkIchcNHt3mLY7VVQOvOifHvUPrEi+wWjSJSsBQ7IHsNLf+XRao94s8Npr0TQvFag
-         LfXhCGTa4DA9vaHCDRNBFnea3NwbcaV6YGJjyrsWebMinyOp/xXfQm4ocYzAnlLUt8WK
-         kg9v9v+YWqdgVAu1SgesUohpMUEtQsieLww1rkdxHWdmRSTO0THr2FG+dc0JVzxYYyLW
-         IvJpoXYBl4EHLktGeyAFdtAJLZOa2rGG37ap+snLWxjXr5LCQwuINiGMKdxNMuNPTCAg
-         CnxlU2ayyEvCY2F1gE2djIRLyGbmO7wDb8UebyvCtuhjYVOiWpynhhj7co9j0iOCIKDc
-         36MA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPzGn58CaT7GDzi44mRGvJc1CMlvq9RBgSGC+IuzJXh8bZbz5cPXoIq3cg8oqR6n51ct0bd1dAzV+ql0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3nliCh7O1fQBNRPO+llgCNo+dMxm7JJb2YnIusByZTM49/Wwb
-	dp+SCO6EowrPKg7RqMuQMdD/nukc4PyGDRZ5n423QbbyO/twVwqs25mUAQ8lxull2ZaitOQ8z6R
-	nvF+TgrjFf3cSE01o30TeI15aFjgHwNoNJFiICBOFZ0/HKXHiNcVUNA+otIaX/W9/5ig=
-X-Gm-Gg: ASbGncsfjhlYf8IUtYe9dKq88nOj1P1p2Is5U0jijWr3GaRcjvin1HL8Qy9D27nqidJ
-	tpHVJiVok0qAEMuiKGAnk5f//96xnUrgHWPrTVf9sYlLXTy7t3BRC7EUWtNZCuFuyLWbY1kcHdq
-	mrfJGQW5Vw9WGsVFhFN208p7SYskeR53Awxxr4Vl1Kzy6H2yzXeGxo3j8EnJNbnAhwAmWZS3JwC
-	7sCOV0LWIjFCyiEc2BvXtyUai7o+exaKUuMonOyG0jJJO2N9PFx8Javzkd5Wv48FZTTFcSl2sLi
-	Vg+MnrTQXzn4lguLEfyctnAdNzPgYmkt60komLGWQLMKfH1vHKKRnItbuhc7lJqXKs9vZRfTw9W
-	RuFyHgHi+gtXs77qH8oWzD3cDp66m2QvLMMfzZMQKHldPWa4yRv1j
-X-Received: by 2002:a05:6214:19cc:b0:78b:e6ac:7169 with SMTP id 6a1803df08f44-7e7131d6edbmr13878276d6.32.1758597726896;
-        Mon, 22 Sep 2025 20:22:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEIgFDuQXlz78aQgFJIuN6m1QzDuD7QbClf/2Di5vm32tNyLwxeGQHA2RXdv8rX7kJSHv2lUw==
-X-Received: by 2002:a05:6214:19cc:b0:78b:e6ac:7169 with SMTP id 6a1803df08f44-7e7131d6edbmr13877966d6.32.1758597726347;
-        Mon, 22 Sep 2025 20:22:06 -0700 (PDT)
+        bh=4BaStgRA9naaMpcfCvi59hb/GSqirNOjqp8oFnDbiF0=;
+        b=J9xqH9Fr8YJUBx7sJKYQlqN6wgFAbrU+iLRAImmy3g/EzrRY+wo230hZwIu+mbG3jI
+         LuyKE/2mCOqKOA8CDsYf1y91LUfbhh8ae7FLXhER5hRaxzMXcEsOn+k6aG6XyQLJDE8f
+         0GMYcNBpjtprguWHOq3QvDnOvrsWd5tWf3UuU6v4LP9qo+1T9h+xZMeSON6aSsWOZOIS
+         QGbEeJRbR+PRwhsc8DEBz8CWXDFI1QAIttq43HfUkklDdqI+idEAHiJLg/eaLSVYhxhN
+         Xird1dQSD2xm6sB9RDu7CXD68L9KA9sJPVnig2bpRwWwPTUbbxmJMV7kgHtHjLedqJm2
+         OaIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1vuMK9vn2Jooy2MbGUUObdDk2TeOl8sPMi2zqw+q1093rQfgDrhh0u9PpjZKzcdYJAbY/Z0BzF7lKCw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj6YzSirFZ20pSCK89Xa6wnY8EhYLUFHok6NsV+WEVwgliFSdJ
+	HWRglyvAZ+VQhGJY+mh0BDcvTX+eEZYmZQhZohxaTzqQR270zy2YhDYZl0nnD+gGAg/1+dVte0t
+	kfxvT6ySx71Zz7KkcQE1CrUJ3ddAojdH9sHDBZQH+hcBDjqB1TtIZZZQthnR/tug5Po0=
+X-Gm-Gg: ASbGncskCG3e5t/Fos7/N+9bYm8wm82G22tZbgYn/oIwJpG7bm3SNjwLpuwwrZaETP3
+	jQuUBEIZ4HEk8ubdl0Xnsq988/3U7gNwwwyeD6tSLlrsV0jRc3HwwdrjNMF5WXVRnR/fnLwydkE
+	ncaxaWIkZYnSe28RWrz8/jicK1BQNEQV49lERZLIK34Ie6sYK6pA1/d/jC37BNHZOVa01fUvslR
+	ZJbVX+vJloG5zzxmV6U8rcaAEECM4ZQWmFqLHChmO69J7hNyTsL7xyzx+b2PuCLWR6wknWEaswG
+	CAQJ8RCg09uzoXOTFemMTtpNPC4OeWkRx+nRsDU7tq7iaHZtFWYmC43XTsU/TyeJt3/xrR0tR09
+	DTN7setku69nn2Sx1/7UCzR19xcKwOz9smc2KJubXR9cBydSzLfbH
+X-Received: by 2002:a05:6214:d61:b0:7dd:16b:2a01 with SMTP id 6a1803df08f44-7e71687bca6mr12820626d6.46.1758597764914;
+        Mon, 22 Sep 2025 20:22:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFve1xcjR3BgNxDtbA5JUCymBJBIBi80BRmHw8alfsOEhoUAytyNfVHKakjYTFor0qoU5hHgA==
+X-Received: by 2002:a05:6214:d61:b0:7dd:16b:2a01 with SMTP id 6a1803df08f44-7e71687bca6mr12820436d6.46.1758597764303;
+        Mon, 22 Sep 2025 20:22:44 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-578a8fad2b6sm3799691e87.69.2025.09.22.20.22.05
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-36be170a88esm8033581fa.70.2025.09.22.20.22.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 20:22:05 -0700 (PDT)
-Date: Tue, 23 Sep 2025 06:22:03 +0300
+        Mon, 22 Sep 2025 20:22:42 -0700 (PDT)
+Date: Tue, 23 Sep 2025 06:22:39 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-Cc: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Yubing Zhang <yubing.zhang@rock-chips.com>,
-        Frank Wang <frank.wang@rock-chips.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Amit Sunil Dhamne <amitsd@google.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
-        Diederik de Haas <didi.debian@cknow.org>,
-        Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 5/7] drm/rockchip: cdn-dp: Add multiple bridges to
- support PHY port selection
-Message-ID: <3n6gvt2lcf24smt6njiqoqt5h4733z36hwvc2zfyft62d25uu5@vwl26mmsfzbz>
-References: <20250922012039.323-1-kernel@airkyi.com>
- <20250922012039.323-6-kernel@airkyi.com>
- <idyrlzhd5sotg3ylr7vbwmczimglffc75nafxbnhhm3ot2jn4w@ixerm6elfmre>
- <e10484e2-fafb-4e50-866f-f409c12259a5@rock-chips.com>
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+        kong.kongxinwei@hisilicon.com, liangjian010@huawei.com,
+        chenjianmin@huawei.com, fengsheng5@huawei.com, libaihan@huawei.com,
+        shenjian15@huawei.com, shaojijie@huawei.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 drm-dp 1/4] drm/hisilicon/hibmc: fix dp
+ probabilistical detect errors after HPD irq
+Message-ID: <xlqffumhurbzcj6sfuu3tr6fafpxb4akwskvd45kqx2h4mprux@armcruouadfx>
+References: <20250922024943.311947-1-shiyongbang@huawei.com>
+ <20250922024943.311947-2-shiyongbang@huawei.com>
+ <4vtis3tmlxhmxjmzhi4jdfriexidtr5u2jdcpmfegyyc5gkznu@mpzganc4k5gp>
+ <5e9aad79-fef1-4258-83c4-6938ceafbaa5@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -120,192 +106,180 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e10484e2-fafb-4e50-866f-f409c12259a5@rock-chips.com>
-X-Proofpoint-ORIG-GUID: j7nh7-trGthu7cDX2ua-TiPF0-OxbP4U
-X-Authority-Analysis: v=2.4 cv=Pc//hjhd c=1 sm=1 tr=0 ts=68d21262 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=O6fFDK9WeBrGYpzTqrUA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=jGH_LyMDp9YhSvY-UuyI:22
-X-Proofpoint-GUID: j7nh7-trGthu7cDX2ua-TiPF0-OxbP4U
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDAyMCBTYWx0ZWRfX8N2NyWf7hHRT
- i4nyUMTKgD1pJx5T8C5I+PmQi86InV6b306E/pGuRnqqKp6YijaW6oRwKvjH+N1mIfl7ahmHgtV
- 2Y/sF/R1C5fBfT5PBhxS1Q0N8VN+rpAkooOBQLLhRodnPIViiwA9cV/RVdth1HdSWzxaxI5BTw0
- /6z2vce78jQUoSRM9i5CjyVYVgZkX78grkAjcwAp0xvMDu72ufZn+hvLb8s2cylT3u7J77pTkBM
- Rx0fJQA/YuBGGPODcYQdTG9ZwEvbvujs5A+ENfVGEVqLbqSeJM00VzWNjuF4sVvqAIeUuQNCNGg
- tFIgZNFNtvq3I9A5k1152psbNfcc8YD47SoSRxZlhwzMmb1UOHYZ6DhepH09YNoWp9EJ8jgRm1k
- lC/dvuhE
+In-Reply-To: <5e9aad79-fef1-4258-83c4-6938ceafbaa5@huawei.com>
+X-Proofpoint-ORIG-GUID: wWat4PQkuzml52r0T-wJ36t-6FDZOKIG
+X-Proofpoint-GUID: wWat4PQkuzml52r0T-wJ36t-6FDZOKIG
+X-Authority-Analysis: v=2.4 cv=JMo7s9Kb c=1 sm=1 tr=0 ts=68d21286 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=i0EeH86SAAAA:8 a=_EjEUeHQWHsufru9t1QA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyMiBTYWx0ZWRfX0YfwJc5UWM3b
+ +kaMAsOLM+Tj6t6P5JtLoC04xlnYFB26YEWpufX67ZrVPnx5sA9SgXg9yvn3irfjA/s+YUSQQEg
+ MT3JiFTbkGD5/ZxNOz+Utx5pbEHJLzVb6StVsyuBaBBr9AsElvq3ckYdJlzUgO0EaQSvvWAkd/Z
+ sPqGDxEpSdEUbXOmfPkuat99PUe/j66tvE5QsUf0WG9nfyHmKchSmURCZiXcl69zbNtbfcB36x+
+ L2Zufh95Nxd/erbou3Dc6tloi/nY7OcJqiKd9tIwHSLRB5gmobC6QsvqkRZ8BI+jD7rhQujGfIX
+ DwaHxSUvhGnMFu8xEzc7rb3cRKEoENKzFXQRuEL2F8+01W69yoauecHCHApnjeGlthMJ46InTDY
+ jEKMB7j6
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-23_01,2025-09-22_05,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 malwarescore=0 impostorscore=0
- spamscore=0 suspectscore=0 clxscore=1015 adultscore=0 classifier=typeunknown
+ impostorscore=0 suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0
+ clxscore=1015 adultscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
  authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509230020
+ engine=8.19.0-2507300000 definitions=main-2509200022
 
-On Tue, Sep 23, 2025 at 10:09:38AM +0800, Chaoyi Chen wrote:
-> On 9/23/2025 9:50 AM, Dmitry Baryshkov wrote:
+On Tue, Sep 23, 2025 at 10:57:56AM +0800, Yongbang Shi wrote:
+> > On Mon, Sep 22, 2025 at 10:49:40AM +0800, Yongbang Shi wrote:
+> > > From: Baihan Li <libaihan@huawei.com>
+> > > 
+> > > The issue is that drm_connector_helper_detect_from_ddc() returns wrong
+> > > status when plugging or unplugging the monitor. Use HPD pin status in
+> > > DP's detect_ctx() for real physcal monitor in/out, and keep using
+> > > detect_frome_ddc() if it's the first time to call detect because of
+> > > insmoding driver.
+> > If I understand correct, this is not quite right. Consider DP-to-HDMI or
+> > DP-to-DVI dongle being plugged without an actual monitor and then the
+> > monitor being plugged later on.
 > 
-> > On Mon, Sep 22, 2025 at 09:20:37AM +0800, Chaoyi Chen wrote:
-> > > From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> > > 
-> > > The RK3399 has two USB/DP combo PHY and one CDN-DP controller. And
-> > > the CDN-DP can be switched to output to one of the PHYs. If both ports
-> > > are plugged into DP, DP will select the first port for output.
-> > > 
-> > > This patch adds support for multiple bridges, enabling users to flexibly
-> > > select the output port. For each PHY port, a separate encoder and bridge
-> > > are registered.
-> > > 
-> > > The change is based on the DRM AUX HPD bridge, rather than the
-> > > extcon approach. This requires the DT to correctly describe the
-> > > connections between the PHY, USB connector, and DP controller.
-> > > And cdn_dp_parse_hpd_bridge_dt() will parses it and determines
-> > > whether to register one or two bridges.
-> > > 
-> > > Since there is only one DP controller, only one of the PHY ports can
-> > > output at a time. The key is how to switch between different PHYs,
-> > > which is handled by cdn_dp_switch_port() and cdn_dp_enable().
-> > > 
-> > > There are two cases:
-> > > 
-> > > 1. Neither bridge is enabled. In this case, both bridges can
-> > > independently read the EDID, and the PHY port may switch before
-> > > reading the EDID.
-> > > 
-> > > 2. One bridge is already enabled. In this case, other bridges are not
-> > > allowed to read the EDID.
-> > > 
-> > > Since the scenario of two ports plug in at the same time is rare,
-> > > I don't have a board which support two TypeC connector to test this.
-> > > Therefore, I tested forced switching on a single PHY port, as well as
-> > > output using a fake PHY port alongside a real PHY port.
-> > > 
-> > > Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> Hi Dmitry,
+> Thanks for your correction. So your point is that if the HPD comes in from a dongle.
+> Is that okay to add those checks at the end?
+> 
+>         ret = drm_dp_read_dpcd_caps(dp_dev->aux, dp_dev->dpcd);
+> 	if (ret)
+> 		return connector_status_disconnected;
+> 
+> 	if (!drm_dp_is_branch(dpcd))
+> 		return connector_status_connected;
+> 
+> 	if (drm_dp_read_sink_count_cap(connector, dp_dev->dpcd, &dp_dev->desc) &&
+> 	    dp_dev->dpcd[DP_DOWNSTREAM_PORT_0] & DP_DS_PORT_HPD) {
+> 		ret = drm_dp_read_sink_count(dp_dev->dpcd);
+> 		if (ret > 0)
+> 			return connector_status_connected;
+> 	}
+
+Yes
+
+> 
+> Thanks，
+> Baihan
+> 
+> 
+> > > Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
+> > > Signed-off-by: Baihan Li <libaihan@huawei.com>
+> > > Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
 > > > ---
-> > >   drivers/gpu/drm/rockchip/Kconfig       |   1 +
-> > >   drivers/gpu/drm/rockchip/cdn-dp-core.c | 398 +++++++++++++++++++++----
-> > >   drivers/gpu/drm/rockchip/cdn-dp-core.h |  23 +-
-> > >   3 files changed, 366 insertions(+), 56 deletions(-)
+> > > ChangeLog:
+> > > v5 -> v6:
+> > >    - use HPD status in DP detect_ctx(), suggested by Dmitry Baryshkov.
+> > > v4 -> v5:
+> > >    - fix the commit message and DP detect_ctx(), suggested by Dmitry Baryshkov.
+> > > ---
+> > >   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c     | 12 ++++++++++++
+> > >   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h     |  7 +++++++
+> > >   drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h    |  3 +++
+> > >   drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c | 13 +++++++++++--
+> > >   4 files changed, 33 insertions(+), 2 deletions(-)
 > > > 
-> > > diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
-> > > index faf50d872be3..3a6266279323 100644
-> > > --- a/drivers/gpu/drm/rockchip/Kconfig
-> > > +++ b/drivers/gpu/drm/rockchip/Kconfig
-> > > @@ -55,6 +55,7 @@ config ROCKCHIP_CDN_DP
-> > >   	select DRM_DISPLAY_HELPER
-> > >   	select DRM_BRIDGE_CONNECTOR
-> > >   	select DRM_DISPLAY_DP_HELPER
-> > > +	select DRM_AUX_HPD_BRIDGE
-> > >   	help
-> > >   	  This selects support for Rockchip SoC specific extensions
-> > >   	  for the cdn DP driver. If you want to enable Dp on
-> > > diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> > > index 1e27301584a4..784f5656fcc4 100644
-> > > --- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> > > +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> > > @@ -27,16 +27,17 @@
-> > >   #include "cdn-dp-core.h"
-> > >   #include "cdn-dp-reg.h"
-> > > -static inline struct cdn_dp_device *bridge_to_dp(struct drm_bridge *bridge)
-> > > +static int cdn_dp_switch_port(struct cdn_dp_device *dp, struct cdn_dp_port *prev_port,
-> > > +			      struct cdn_dp_port *port);
+> > > diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+> > > index 8f0daec7d174..4d8d3e4d4f84 100644
+> > > --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+> > > +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+> > > @@ -2,6 +2,7 @@
+> > >   // Copyright (c) 2024 Hisilicon Limited.
+> > >   #include <linux/io.h>
+> > > +#include <linux/iopoll.h>
+> > >   #include <linux/delay.h>
+> > >   #include "dp_config.h"
+> > >   #include "dp_comm.h"
+> > > @@ -305,3 +306,14 @@ void hibmc_dp_set_cbar(struct hibmc_dp *dp, const struct hibmc_dp_cbar_cfg *cfg)
+> > >   	hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, BIT(0), cfg->enable);
+> > >   	writel(HIBMC_DP_SYNC_EN_MASK, dp_dev->base + HIBMC_DP_TIMING_SYNC_CTRL);
+> > >   }
 > > > +
-> > > +static inline struct cdn_dp_bridge *bridge_to_dp_bridge(struct drm_bridge *bridge)
+> > > +void hibmc_dp_update_hpd_status(struct hibmc_dp *dp)
+> > > +{
+> > > +	int status;
+> > > +
+> > > +	readl_poll_timeout(dp->dp_dev->base + HIBMC_DP_HPD_STATUS, status,
+> > > +			   FIELD_GET(HIBMC_DP_HPD_CUR_STATE, status) != dp->hpd_status,
+> > > +			   1000, 100000); /* DP spec says 100ms */
+> > > +
+> > > +	dp->hpd_status = FIELD_GET(HIBMC_DP_HPD_CUR_STATE, status);
+> > > +}
+> > > diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+> > > index 665f5b166dfb..8348ad9e34a8 100644
+> > > --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+> > > +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+> > > @@ -14,6 +14,11 @@
+> > >   struct hibmc_dp_dev;
+> > > +enum hibmc_hpd_status {
+> > > +	HIBMC_HPD_OUT,
+> > > +	HIBMC_HPD_IN,
+> > > +};
+> > > +
+> > >   enum hibmc_dp_cbar_pattern {
+> > >   	CBAR_COLOR_BAR,
+> > >   	CBAR_WHITE,
+> > > @@ -50,6 +55,7 @@ struct hibmc_dp {
+> > >   	struct drm_dp_aux aux;
+> > >   	struct hibmc_dp_cbar_cfg cfg;
+> > >   	u32 irq_status;
+> > > +	int hpd_status;
+> > >   };
+> > >   int hibmc_dp_hw_init(struct hibmc_dp *dp);
+> > > @@ -60,5 +66,6 @@ void hibmc_dp_reset_link(struct hibmc_dp *dp);
+> > >   void hibmc_dp_hpd_cfg(struct hibmc_dp *dp);
+> > >   void hibmc_dp_enable_int(struct hibmc_dp *dp);
+> > >   void hibmc_dp_disable_int(struct hibmc_dp *dp);
+> > > +void hibmc_dp_update_hpd_status(struct hibmc_dp *dp);
+> > >   #endif
+> > > diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+> > > index 394b1e933c3a..64306abcd986 100644
+> > > --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+> > > +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+> > > @@ -24,6 +24,9 @@
+> > >   #define HIBMC_DP_CFG_AUX_READY_DATA_BYTE	GENMASK(16, 12)
+> > >   #define HIBMC_DP_CFG_AUX			GENMASK(24, 17)
+> > > +#define HIBMC_DP_HPD_STATUS			0x98
+> > > +#define HIBMC_DP_HPD_CUR_STATE		GENMASK(7, 4)
+> > > +
+> > >   #define HIBMC_DP_PHYIF_CTRL0			0xa0
+> > >   #define HIBMC_DP_CFG_SCRAMBLE_EN		BIT(0)
+> > >   #define HIBMC_DP_CFG_PAT_SEL			GENMASK(7, 4)
+> > > diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+> > > index d06832e62e96..48c9c97eef0e 100644
+> > > --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+> > > +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+> > > @@ -34,9 +34,16 @@ static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
+> > >   static int hibmc_dp_detect(struct drm_connector *connector,
+> > >   			   struct drm_modeset_acquire_ctx *ctx, bool force)
 > > >   {
-> > > -	return container_of(bridge, struct cdn_dp_device, bridge);
-> > > +	return container_of(bridge, struct cdn_dp_bridge, bridge);
+> > > -	mdelay(200);
+> > > +	struct hibmc_dp *dp = to_hibmc_dp(connector);
+> > > +
+> > > +	/* if no HPD just probe DDC */
+> > > +	if (!dp->irq_status)
+> > > +		return drm_connector_helper_detect_from_ddc(connector, ctx, force);
+> > > -	return drm_connector_helper_detect_from_ddc(connector, ctx, force);
+> > > +	if (dp->hpd_status == HIBMC_HPD_IN)
+> > > +		return connector_status_connected;
+> > > +
+> > > +	return connector_status_disconnected;
 > > >   }
-> > > -static inline struct cdn_dp_device *encoder_to_dp(struct drm_encoder *encoder)
-> > > +static inline struct cdn_dp_device *bridge_to_dp(struct drm_bridge *bridge)
-> > >   {
-> > > -	struct rockchip_encoder *rkencoder = to_rockchip_encoder(encoder);
-> > > -
-> > > -	return container_of(rkencoder, struct cdn_dp_device, encoder);
-> > > +	return bridge_to_dp_bridge(bridge)->parent;
-> > >   }
-> > >   #define GRF_SOC_CON9		0x6224
-> > > @@ -191,14 +192,27 @@ static int cdn_dp_get_sink_count(struct cdn_dp_device *dp, u8 *sink_count)
-> > >   static struct cdn_dp_port *cdn_dp_connected_port(struct cdn_dp_device *dp)
-> > >   {
-> > >   	struct cdn_dp_port *port;
-> > > -	int i, lanes;
-> > > +	int i, lanes[MAX_PHY];
-> > >   	for (i = 0; i < dp->ports; i++) {
-> > >   		port = dp->port[i];
-> > > -		lanes = cdn_dp_get_port_lanes(port);
-> > > -		if (lanes)
-> > > +		lanes[i] = cdn_dp_get_port_lanes(port);
-> > > +		if (!dp->hpd_bridge_valid)
-> > >   			return port;
+> > >   static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
+> > > @@ -128,6 +135,8 @@ irqreturn_t hibmc_dp_hpd_isr(int irq, void *arg)
+> > >   		hibmc_dp_reset_link(&priv->dp);
 > > >   	}
+> > > +	hibmc_dp_update_hpd_status(&priv->dp);
 > > > +
-> > > +	if (dp->hpd_bridge_valid) {
-> > > +		/* If more than one port is available, pick the last active port */
-> > > +		if (dp->active_port > 0 && lanes[dp->active_port])
-> > > +			return dp->port[dp->active_port];
-> > > +
-> > > +		/* If the last active port is not available, pick an available port in order */
-> > > +		for (i = 0; i < dp->bridge_count; i++) {
-> > > +			if (lanes[i])
-> > > +				return dp->port[i];
-> > > +		}
-> > > +	}
-> > > +
-> > >   	return NULL;
-> > >   }
-> > > @@ -239,10 +253,11 @@ static enum drm_connector_status
-> > >   cdn_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *connector)
-> > >   {
-> > >   	struct cdn_dp_device *dp = bridge_to_dp(bridge);
-> > > +	struct cdn_dp_bridge *dp_bridge = bridge_to_dp_bridge(bridge);
-> > >   	enum drm_connector_status status = connector_status_disconnected;
-> > >   	mutex_lock(&dp->lock);
-> > > -	if (dp->connected)
-> > > +	if (dp_bridge->connected && dp->connected)
-> > >   		status = connector_status_connected;
-> > >   	mutex_unlock(&dp->lock);
-> > > @@ -253,10 +268,36 @@ static const struct drm_edid *
-> > >   cdn_dp_bridge_edid_read(struct drm_bridge *bridge, struct drm_connector *connector)
-> > >   {
-> > >   	struct cdn_dp_device *dp = bridge_to_dp(bridge);
-> > > -	const struct drm_edid *drm_edid;
-> > > +	struct cdn_dp_bridge *dp_bridge = bridge_to_dp_bridge(bridge);
-> > > +	struct cdn_dp_port *port = dp->port[dp_bridge->id];
-> > > +	struct cdn_dp_port *prev_port;
-> > > +	const struct drm_edid *drm_edid = NULL;
-> > > +	int i, ret;
-> > >   	mutex_lock(&dp->lock);
-> > > +
-> > > +	/* More than one port is available */
-> > > +	if (dp->bridge_count > 1 && !port->phy_enabled) {
-> > > +		for (i = 0; i < dp->bridge_count; i++) {
-> > > +			/* Another port already enable */
-> > > +			if (dp->bridge_list[i] != dp_bridge && dp->bridge_list[i]->enabled)
-> > > +				goto unlock;
-> > > +			/* Find already enabled port */
-> > > +			if (dp->port[i]->phy_enabled)
-> > > +				prev_port = dp->port[i];
-> > > +		}
-> > > +
-> > > +		/* Switch to current port */
-> > > +		if (prev_port) {
-> > > +			ret = cdn_dp_switch_port(dp, prev_port, port);
-> > > +			if (ret)
-> > > +				goto unlock;
-> > > +		}
-> > > +	}
-> > > +
-> > >   	drm_edid = drm_edid_read_custom(connector, cdn_dp_get_edid_block, dp);
-> > So... If I try reading EDID for the PHY 2 while PHY 1 is enabled, will
-> > it return NULL, even if there is a monitor there? It totally feels like
-> > this is one of the rare cases when caching EDIDs might make sense.
-> 
-> Of course. I did consider using cache, but if the monitor changes, then caching the EDID doesn't seem to be of much use…
-
-Yes... It might still be better to invalidate the cache on the plug
-event rather than always reporting empty EDID when another monitor is
-enabled.
+> > >   	if (dev->registered)
+> > >   		drm_connector_helper_hpd_irq_event(&priv->dp.connector);
+> > > -- 
+> > > 2.33.0
+> > > 
 
 -- 
 With best wishes
