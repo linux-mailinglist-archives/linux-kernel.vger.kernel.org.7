@@ -1,111 +1,195 @@
-Return-Path: <linux-kernel+bounces-828785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4FF0B9572C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:35:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9286CB95747
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:39:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F8547B4727
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:34:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D5D4A17C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5C132129C;
-	Tue, 23 Sep 2025 10:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335E9321295;
+	Tue, 23 Sep 2025 10:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GiruQahY"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kael-k.io header.i=@kael-k.io header.b="x1ZP3QAC"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3C8311C06;
-	Tue, 23 Sep 2025 10:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07AA224F6;
+	Tue, 23 Sep 2025 10:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758623732; cv=none; b=ZvepdMd5oRL+8qEgwkORq5DKtxzk5QANivL1M4lK89kpz1kmWGi0Gicj2dxOTJ5ujberLAJimjTd1HNd29nsOPAIE+52S7/9C/LIytam0KeWsZfwo07ij4eNQ0pVr5Gj+meQZqu64DEzRp4+K11d2ISBh4XAyZE0zgYWd9gfRWg=
+	t=1758623963; cv=none; b=pzvaGM9i4Ku+cvL1HLdC72Z4rVRL0aRiOfN6Yim6POZxPQmxqq6Fz34VYzfJXop9LrWu879V6LQdpjyCUGhjGQPnQvjeouWrdz0dWCWTo8hlOucZoIUt3t1/fnjYuRH+1zwb83MZypy6dJmXOzfOGb+gPdasYRdGOLf61vX5lPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758623732; c=relaxed/simple;
-	bh=hKtlasTu+Pec5wqgu2DRT9vPhn9NvoXdM9NSLqk0tQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NPH6nTT+pzZo0+OTcR7nChA7R9FYZswvPDjZAG95u/UeudqOPUaKY96GGqXEWyA63rqcV6/XCAcXjasjnAC/KZXGuyz42RwuEsSLajULNz7StfRIsDUZJMKNTyCi6B/+8NRfO4F7QKcAwEln9jJneOZjKRVbTs4NT0perVIiylQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GiruQahY; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=HeOaKU5tHoybl2dUWsCR+5uXOJ8iXvJSyqpY+fXWH9o=; b=GiruQahYGe5n0qAWVrv5G/PHXV
-	oMytBez4tXFDX/hbgIAdHDQF0Yv2cnfR+c1oh+tkJUS9UvkEoZ7jUWh9YkCxxC7mjO8SW7UOJ8XFp
-	ABt+zg5LVBVp1BWxPCbiHbHeoi666finX1ni1OGllOPdT7R5VnVyZae1cI6eaIxGpULHHnOyOE1Kd
-	WKKJSUnwkpqAzYaVQeVJOcF4FGhB98S1y0Y3G4vngVfEos50gojgUxqy/PqrvGhViVh4dsztRD7B0
-	XZSrU9dwVmaNlQl6+NE+s84F1qAqfiRRjUT0Q5RoODcERdPYwEP3wZEZIY6UCwIiKq2SsH+fMTvlU
-	n2FXfMpw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v10Mf-00000008UgM-44wN;
-	Tue, 23 Sep 2025 10:35:18 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0150B30049C; Tue, 23 Sep 2025 12:35:16 +0200 (CEST)
-Date: Tue, 23 Sep 2025 12:35:16 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, x86@kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
-	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
-Subject: Re: [RESEND][PATCH v15 2/4] perf: Support deferred user
- callchainshttps://lore.kernel.org/linux-trace-kernel/20250827193644.527334838@kernel.org/
-Message-ID: <20250923103516.GE3419281@noisy.programming.kicks-ass.net>
-References: <20250908171412.268168931@kernel.org>
- <20250908171524.605637238@kernel.org>
- <20250923091935.GA3419281@noisy.programming.kicks-ass.net>
- <20250923053515.25a1713e@batman.local.home>
- <20250923093821.GB3419281@noisy.programming.kicks-ass.net>
- <20250923062848.0bc4ff2b@batman.local.home>
+	s=arc-20240116; t=1758623963; c=relaxed/simple;
+	bh=WIQ2syAd5sHKPevRR5Dcm64QJukAgwdcMdoewqU0A/U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U/I3WYGEf85HyNP9tHsiBpKdhg3pQ3rauncBbEIECSSxYb8wJmEikkSI3p+ZTXSj/aHUBcDigiqG8Jur9nf3+3dztHz0akjgBVmNlzMk674ROBxPUSzs7oOffZkKZZzkiIWSD5MaSEA3EDetFmEbzn59yHd4/1BMH7IG9063iGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kael-k.io; spf=pass smtp.mailfrom=kael-k.io; dkim=pass (2048-bit key) header.d=kael-k.io header.i=@kael-k.io header.b=x1ZP3QAC; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kael-k.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kael-k.io
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cWGgL4V5Yz9tJ1;
+	Tue, 23 Sep 2025 12:39:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kael-k.io; s=MBO0001;
+	t=1758623950;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ox8Mmwu/ehvmiRuJmtbvI2ttQH7ZUjO4FEYhPqIjfbk=;
+	b=x1ZP3QACkCwYIR/qc2c5Vju8DeS5/iby1c1Krq38IdYfN6jFkKPM+efs89YwrbI8KlGrIE
+	cw+tLOu9RzK4piJv5EB2kOxVt5zpnoDrs0qinkVaGD04co7TEBRIiPmHjQBYzUOpaDv77q
+	slzImdt1w7fp30nAUkxAYE81DHdegB/FcW5GItzzkOITO8XlbQgGWmS72JXgy5ppsdNJJm
+	zZ7k9ZMasAK5EJj7cFUXOLiPYCYQwiEYhXCuYqZdaf+Yj0nfWsI64j6h/Ry2m95VCAlgbN
+	WujZUTdMvF7mmRtSOkgZVNon8aBKjXurAXPCcFAf0k58LFqoYmgIxYhhCFnJBg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of dev@kael-k.io designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=dev@kael-k.io
+From: Kael D'Alcamo <dev@kael-k.io>
+To: Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: rng: sparc_sun_oracle_rng: convert to DT schema
+Date: Tue, 23 Sep 2025 12:38:22 +0200
+Message-ID: <20250923103900.136621-1-dev@kael-k.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923062848.0bc4ff2b@batman.local.home>
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4cWGgL4V5Yz9tJ1
 
-On Tue, Sep 23, 2025 at 06:28:48AM -0400, Steven Rostedt wrote:
-> On Tue, 23 Sep 2025 11:38:21 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > On Tue, Sep 23, 2025 at 05:35:15AM -0400, Steven Rostedt wrote:
-> > 
-> > > I even pushed this to a git tree. Not sure why it didn't get flagged.  
-> > 
-> > I've been looking at this... how do I enable CONFIG_UWIND_USER ?
-> 
-> Hmm, maybe that's why it wasn't flagged.
-> 
-> > 
-> > I suspect the problem is that its impossible to actually compile/use
-> > this code.
-> 
-> It needs an arch to enable it. Here's the x86 patches that I was hoping
-> would get in too:
-> 
->   https://lore.kernel.org/linux-trace-kernel/20250827193644.527334838@kernel.org/
+Convert the Devicetree binding documentation for:
+* SUNW,n2-rng
+* SUNW,vf-rng
+* SUNW,kt-rng
+* ORCL,m4-rng
+* ORCL,m7-rng
+from plain text to YAML.
 
-Hmm, let me go find that.
+Signed-off-by: Kael D'Alcamo <dev@kael-k.io>
+---
+ .../bindings/rng/sparc_sun_oracle_rng.txt     | 30 ---------
+ .../bindings/rng/sparc_sun_oracle_rng.yaml    | 61 +++++++++++++++++++
+ 2 files changed, 61 insertions(+), 30 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.txt
+ create mode 100644 Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.yaml
+
+diff --git a/Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.txt b/Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.txt
+deleted file mode 100644
+index b0b211194c71..000000000000
+--- a/Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.txt
++++ /dev/null
+@@ -1,30 +0,0 @@
+-HWRNG support for the n2_rng driver
+-
+-Required properties:
+-- reg		: base address to sample from
+-- compatible	: should contain one of the following
+-	RNG versions:
+-	- 'SUNW,n2-rng' for Niagara 2 Platform (SUN UltraSPARC T2 CPU)
+-	- 'SUNW,vf-rng' for Victoria Falls Platform (SUN UltraSPARC T2 Plus CPU)
+-	- 'SUNW,kt-rng' for Rainbow/Yosemite Falls Platform (SUN SPARC T3/T4), (UltraSPARC KT/Niagara 3 - development names)
+-	more recent systems (after Oracle acquisition of SUN)
+-	- 'ORCL,m4-rng' for SPARC T5/M5
+-	- 'ORCL,m7-rng' for SPARC T7/M7
+-
+-Examples:
+-/* linux LDOM on SPARC T5-2 */
+-Node 0xf029a4f4
+-	.node:  f029a4f4
+-	rng-#units:  00000002
+-	compatible: 'ORCL,m4-rng'
+-	reg:  0000000e
+-	name: 'random-number-generator'
+-
+-/* solaris on SPARC M7-8 */
+-Node 0xf028c08c
+-	rng-#units:  00000003
+-	compatible: 'ORCL,m7-rng'
+-	reg:  0000000e
+-	name:  'random-number-generator'
+-
+-PS: see as well prtconfs.git by DaveM
+diff --git a/Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.yaml b/Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.yaml
+new file mode 100644
+index 000000000000..fea6be544784
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/rng/sparc_sun_oracle_rng.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: HWRNG support for the n2_rng driver
++
++maintainers:
++  - David S. Miller <davem@davemloft.net>
++
++properties:
++  compatible:
++    enum:
++      - SUNW,n2-rng  # for Niagara 2 Platform (SUN UltraSPARC T2 CPU)
++      - SUNW,vf-rng  # for Victoria Falls Platform (SUN UltraSPARC T2 Plus CPU)
++      # for Rainbow/Yosemite Falls Platform (SUN SPARC T3/T4),
++      #  (UltraSPARC KT/Niagara 3 - development names)
++      #  more recent systems (after Oracle acquisition of SUN)
++      - SUNW,kt-rng
++      - ORCL,m4-rng  # for SPARC T5/M5
++      - ORCL,m7-rng  # for SPARC T7/M7
++
++  reg:
++    maxItems: 1
++
++  "rng-#units":
++    description: Number of RNG units
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++# PS: see as well prtconfs.git by DaveM
++examples:
++  - |
++    bus {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        rng@e {
++            compatible = "ORCL,m4-rng";
++            reg = <0xe>;
++            rng-#units = <2>;
++        };
++    };
++  - |
++    bus {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        rng@e {
++            compatible = "ORCL,m7-rng";
++            reg = <0xe>;
++            rng-#units = <3>;
++        };
++    };
+-- 
+2.51.0
+
 
