@@ -1,122 +1,129 @@
-Return-Path: <linux-kernel+bounces-828131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D074EB9401E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:32:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7342B9402A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C0B54403F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:32:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F8892E08C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5DA1D54E2;
-	Tue, 23 Sep 2025 02:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B060270572;
+	Tue, 23 Sep 2025 02:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a1L9VdhD"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JAFgLpih"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F40111A8
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE4D2472B1
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758594718; cv=none; b=cy3wGSpl9f96ZWvnipS007MX3OZpLLbvvXaHgiRDFRQpi7GqhRj5Flw8q3P+GPw7j1dCTYHtHXAbCpQdo2jCFlM6smmbfT6wFGmhOkk9Xm7qlW+QxQXQQtcgdYHWRApqBl21VslKLNW/rNGAWYWNKzUeSjzgEQtgGs8mOequbuw=
+	t=1758594770; cv=none; b=cn3iUFK9xlCstPB8CXdPbBa8GMIkZGWtqmt1MBbDvYxTZAY5/Q3Fp6SSesygu8pxPQCJUs//9dq5CJ7rlbQbs9Hgpf4y+U3qD1AfAfwkqHn6VB/tBwa6WWXIHOGM3awRV06DfdOBjqr0UTMl59Npg+3ViXUEEYWq1U6ED5ZlkxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758594718; c=relaxed/simple;
-	bh=FcPDJ0r5DC2wcBffd6nQD2vniyv49dIXa7kGnY4Szwc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O2g9eOQTFI6QD0VHGqZGMGMHzwBqVur11xjJaVbSC19X2Ajoat/kgTtJ/265yi687WKezmQEU3yXJQDhUyZNrgIhiKUJ6VYZKBQiVVMKNVVWke5/TzEzVjqbvAXpbkytJ9LcZIGJwvAFpiPSVPsJYXRIfGf5ZfotLACSkHcdbTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a1L9VdhD; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b5516ee0b0bso2711500a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 19:31:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758594716; x=1759199516; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZoweYivaZta7DUjVBF/vL7chb8GkjKFoKawijevmV4I=;
-        b=a1L9VdhDKAsav3yR9vx2VnNLqp3o6UoE6bnZ1JnLA7L7JLH5n2Bz5cY98B2BovZssc
-         R8B3oAq9vufqZZSrjYibPnD2tazrYAxpoolh0yy0QxdU15k+aib1ElWKVkT4iKfg5sn1
-         ydgfddvt3/Y2XifdCKUsKOpHmCrylXFHLdkFLC6euhNn3wEk4qbUj473r2tBdk5h9dOp
-         1c05WjQnv0ZKLdwWbixnQIPreoMn2dQE0JNJXMVB9IW0ZOu6FQR5PZnJOslghNFKphlj
-         5Op2Ps3haq8b/u7Yg+xN829LVzpa92kJR8Hj/fRCw8oyPy4H23a/pkj/lK/i+9l90nic
-         wCuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758594716; x=1759199516;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZoweYivaZta7DUjVBF/vL7chb8GkjKFoKawijevmV4I=;
-        b=EsvUsR8YXimyb2yVp2v+nsJ4CaDm27mg2hFAx8oGSJn9OIHbnoQkC63ImmkQbRju01
-         za/xARR9H/v3w68F3wzjnu2voiWx5TDuBEYMl0UHFgW2auanwAxlnycpYg2EBsuUkETD
-         YUgsq09rtJ1KG4CRv0PtBmNvnaudp3gKkl9rJqtHefX/oN107F9f+uJMsxFMXTmqtfAl
-         63yTQUpL+Um0FH52ACoaJuSFr6OYrRESYFsjbCfno9GKHJKFQObw3TvXJpMaZyxzX69Y
-         sKuCmcaTNt0MgtdlyyhbJgDm04AMJptLIQX2n58OUq0lIWZ7zrtg66CLrrhxTDAYYPzy
-         sPJQ==
-X-Gm-Message-State: AOJu0YwZx8e2Aih5qewrbftvDGOVJaH61ocf6gfudtGvy5YZfXOE4mJ5
-	f9cDi4Ln7E94bddtyi8+8+rU769QIq0Nepq7Ajge6+l8I/JXic8DbR6G
-X-Gm-Gg: ASbGncvpZ/SrH/YQRltCj6t4hGba5mLWY4TrFR4Xe7MDDw8/jFIEO3BglOzSbV6MhDe
-	4JsmH6E4GFV3LVPFMTVDLbDg91sEJAQ+k6nlG8P9xXxPpghbLlG3wscKkZC1cHxboK84J6T1vey
-	7K0lnK8hKjkO/8WCj6YC0cr6R9IXPL91bOUBE5vLjIZo47rYb0EUmpebLVuvNYteZ46wte622Ei
-	8xTryqS3c+THV41eZ4ptWsbMlWYqOoxSmaV15cX4w/XLsJGNw6jtxEcqd1sgAt0qyGb3zFknO5b
-	Y6gA0SpcaQc57qE/6aOjnwvay8WUJXlGEKwrCrw+dUnjYhbgTX4CIgcT/tiR3dl92QbxrAH2TUL
-	Zk4RGOkSlSOTpip6RapKhI3SsVOCj/wYVceFVdNOGMkvnk5vUdIW4p3Kronqgw6hNC+IX/s5PvG
-	albxaf3jEzRJ2HvA==
-X-Google-Smtp-Source: AGHT+IHjDCkxdWMBbTp6+RDlX2KF2TPM1PjQW+TbG++l9Td8pqqPZAA5pbSpxmC9m92VNg2tA/C9Lw==
-X-Received: by 2002:a05:6a21:3291:b0:2cb:93ab:7edb with SMTP id adf61e73a8af0-2cfdf479597mr1538070637.4.1758594716337;
-        Mon, 22 Sep 2025 19:31:56 -0700 (PDT)
-Received: from deepanshu-kernel-hacker.. ([2405:201:682f:3094:e2e5:573d:ece2:1f90])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f4952ee59sm2293502b3a.37.2025.09.22.19.31.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 19:31:55 -0700 (PDT)
-From: Deepanshu Kartikey <kartikey406@gmail.com>
-To: syzbot+4c9d23743a2409b80293@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	Deepanshu Kartikey <kartikey406@gmail.com>
-Subject: [PATCH] ext4: skip inode expansion on readonly filesystems
-Date: Tue, 23 Sep 2025 08:01:48 +0530
-Message-ID: <20250923023148.1074924-1-kartikey406@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758594770; c=relaxed/simple;
+	bh=s6xE7TdEQAnRwaTxux4s/PGfcxwqJAxkDLccQUgUC3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SxYS4fM6W1RB/EAoxk0OtUeHuoxlqM9IrBsNVWIVxjMPzf6AFkwA+B7dFNJqgrTcuHt3MzMesAPunJmCKBJ+6gAJZunW+UdHiXb511gymeSSmo81DR6CdLvf4nTuY+RwKWIaUqwhA1nue3hEhVyeo/8HJilQyPsgbrpkTx02gTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JAFgLpih; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758594769; x=1790130769;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=s6xE7TdEQAnRwaTxux4s/PGfcxwqJAxkDLccQUgUC3s=;
+  b=JAFgLpihh4G2aOte4dpPPoYsXXDvp6jNigJYIS8rndfhi21TCWSmGU9f
+   Q8qDnjKFvbMtRC1V0CG12bvgT4ZsOfo3XR2f6aaQ8hj3/fZaS+mFhv41s
+   IWoI3P5vm3xObMQJrIUagnMwkFC4//PiySugC37uIu0h4knPz3rY08fYQ
+   s6XidxVjswB2dqgi0iTqYBpdDlbkmLaVmD2rxLmh9AhJzv0Uw+78X5/I8
+   dIXPBPgjU4fM9WE7FwNsv63xuxl/2GlA5UFURgMbEhnxzkW+R4LUYBa/b
+   1/uZtuCbZnyvcLxxG3FliIaw2ZS6OO0BrvfJ8lVFvrZItG6zXFh0gBZEp
+   Q==;
+X-CSE-ConnectionGUID: xOZviHy6Rua7oznXsSUvQA==
+X-CSE-MsgGUID: AZVYUOcIS/+nt7r3w+623w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="86303371"
+X-IronPort-AV: E=Sophos;i="6.18,286,1751266800"; 
+   d="scan'208";a="86303371"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 19:32:48 -0700
+X-CSE-ConnectionGUID: nZ5wvhotQ66/ujLtceuvMw==
+X-CSE-MsgGUID: MLzt1+KRTpyAz8r4CNGICQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,286,1751266800"; 
+   d="scan'208";a="175919634"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 22 Sep 2025 19:32:44 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v0spd-0002g7-0u;
+	Tue, 23 Sep 2025 02:32:41 +0000
+Date: Tue, 23 Sep 2025 10:32:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bo Liu <liubo03@inspur.com>, xiang@kernel.org, chao@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	Bo Liu <liubo03@inspur.com>
+Subject: Re: [PATCH v4] erofs: Add support for FS_IOC_GETFSLABEL
+Message-ID: <202509231033.ADjNYvqL-lkp@intel.com>
+References: <20250922092937.2055-1-liubo03@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922092937.2055-1-liubo03@inspur.com>
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Hi Bo,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on xiang-erofs/dev-test]
+[also build test ERROR on xiang-erofs/dev xiang-erofs/fixes linus/master v6.17-rc7 next-20250922]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Bo-Liu/erofs-Add-support-for-FS_IOC_GETFSLABEL/20250922-173127
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git dev-test
+patch link:    https://lore.kernel.org/r/20250922092937.2055-1-liubo03%40inspur.com
+patch subject: [PATCH v4] erofs: Add support for FS_IOC_GETFSLABEL
+config: sparc64-randconfig-001-20250923 (https://download.01.org/0day-ci/archive/20250923/202509231033.ADjNYvqL-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project cafc064fc7a96b3979a023ddae1da2b499d6c954)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250923/202509231033.ADjNYvqL-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509231033.ADjNYvqL-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> fs/erofs/inode.c:372:47: error: call to undeclared function 'compat_ptr'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     372 |         return erofs_ioctl(filp, cmd, (unsigned long)compat_ptr(arg));
+         |                                                      ^
+   1 error generated.
 
 
-Fix WARNING in ext4_xattr_block_set() during orphan cleanup on readonly
-filesystems when debug_want_extra_isize mount option is used.
-The issue occurs when ext4_try_to_expand_extra_isize() attempts to modify
-inodes on readonly filesystems during orphan cleanup, leading to warnings
-when encountering invalid xattr entries. Add a readonly check to skip
-expansion in this case.
+vim +/compat_ptr +372 fs/erofs/inode.c
 
-Reported-by: syzbot+4c9d23743a2409b80293@syzkaller.appspotmail.com
-Link: https://syzkaller.appspot.com/bug?extid=4c9d23743a2409b80293
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/ext4/inode.c | 2 ++
- 1 file changed, 2 insertions(+)
+   367	
+   368	#ifdef CONFIG_COMPAT
+   369	long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
+   370				unsigned long arg)
+   371	{
+ > 372		return erofs_ioctl(filp, cmd, (unsigned long)compat_ptr(arg));
+   373	}
+   374	#endif
+   375	
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 5b7a15db4953..480f1f616e7b 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -6403,6 +6403,8 @@ static int ext4_try_to_expand_extra_isize(struct inode *inode,
- 					  struct ext4_iloc iloc,
- 					  handle_t *handle)
- {
-+	if (sb_rdonly(inode->i_sb))
-+		return 0;
- 	int no_expand;
- 	int error;
- 
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
