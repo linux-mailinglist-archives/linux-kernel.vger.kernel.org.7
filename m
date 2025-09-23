@@ -1,83 +1,111 @@
-Return-Path: <linux-kernel+bounces-828758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9797FB95638
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:08:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C81B95657
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:10:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AA917AEBF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:06:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38B1A18841C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F8231E0EC;
-	Tue, 23 Sep 2025 10:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E2430F809;
+	Tue, 23 Sep 2025 10:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VP7dVA7f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="seW6Yj2N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D5E30F52C;
-	Tue, 23 Sep 2025 10:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335AA126C1E;
+	Tue, 23 Sep 2025 10:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758622064; cv=none; b=W2L0STcTbRANV9z8g0Wz3Vny1ZSTctV2fKoJtwLiearCrIQ2eKV9A1QdO7AO1Lom9xQFoDiiXsUZn9MhGO4FpWYXhYs11IUE3ldykWRUkRw+xGYcbcEsxWa1eqKj1oXt2uM3CcmZ/WcCeaoLIoz3FTh/kw2ep8v4S5MS8jpKthM=
+	t=1758622189; cv=none; b=d8QTuHGOmCzz7E+0NauDuTTU3v1FyeJ1WiqNgvtO8hCmXi+5L/Xi5zOxmAU1iddvaSugQ0SYjVx+a8+MrPrgTjm5xALxCu569DjmiDVKsP1IMPB+mg+mNt1CUWzS+jVDbpqWu3G3vpJLJZ7dMza8w1Bu3d40FixwY6P87gjwumM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758622064; c=relaxed/simple;
-	bh=JQPAqskccYl3Rxza7uY7Mw27b9b3oqnTfLM5B4pIVVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DOLCF068NZTJd3UaXSZdm0SDDkfuAT0BevnJe9DMJKTC0uAVKyXwRfJitWdGmpVPrl96CRb9cUIajORU19LTr3c+qQNEJuozogESrNjQ9+MRpJg+QbSOoDtQgcQyrFRjE7/4GgfgPo4GzreX5c/jDSRTVm6ccYZ3v5Ad/i3i4Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VP7dVA7f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4090C19421;
-	Tue, 23 Sep 2025 10:07:41 +0000 (UTC)
+	s=arc-20240116; t=1758622189; c=relaxed/simple;
+	bh=iClNAKhq0Hy6XG3bFhlh4pWil/qWmpukallRfQVeiP4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g3syRK4dJbl1iRT9ni0sv7VAqKIMCF8s0iW5AypLw3jv6r37loqrhcQzmk7F2IoZE8l+/zpTpkmIkD2y6dJHoZW1+mtet775S1wOHdSNm/lsT2yc0JjX+44huXcBt18XHFBXnsyZrYlwZUNNSIl60pCfzaaFioprvJYKbfYGDCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=seW6Yj2N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D7CC4CEF5;
+	Tue, 23 Sep 2025 10:09:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758622064;
-	bh=JQPAqskccYl3Rxza7uY7Mw27b9b3oqnTfLM5B4pIVVo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VP7dVA7fiZT+f9JTBX3PYP82imk2wWP29Ua1ssvoaFoS6JAv2rhOL4XneI/s0U1ys
-	 fD8BTL3NCaQbOtOYGQvV0/5Yv89uYlLRcmky1kQpZx05UR2RwqR37RAgm5i3CGH6HX
-	 Pc0nakqEf7aoddoLep5X5v5ejvdq5m3VnZnAmcW+PkoVoJltOSPnVmVqWcXcgIdAWH
-	 7WYa/48+NGJtxrbVpWNhJVls/w9w3ydW4M3Zv6RyswF5Jfzy0nFOKZobvDaTu82sTJ
-	 WrGXV5WPzex7tqewFd0ihpEKs+ONE1WNa7v+8HpCXQS0T7+o0tDpdtwqUpjuY5ItUK
-	 1Eb11BWHQUeuA==
-Date: Tue, 23 Sep 2025 11:07:39 +0100
-From: Simon Horman <horms@kernel.org>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Networking <netdev@vger.kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH net-next 1/3] net: dns_resolver: Use reST bullet list for
- features list
-Message-ID: <20250923100739.GH836419@horms.kernel.org>
-References: <20250922095647.38390-2-bagasdotme@gmail.com>
- <20250922095647.38390-3-bagasdotme@gmail.com>
+	s=k20201202; t=1758622188;
+	bh=iClNAKhq0Hy6XG3bFhlh4pWil/qWmpukallRfQVeiP4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=seW6Yj2N6SQNetratlsVrPz2AdV07pSrpnUTDWLUV+puOcNVFnjFbStpUbp+J85pF
+	 qzltXioomJAJthuXgOkfKc/Wg1la6OvfMNbVWHHsvXGDFTUBPV/9Nczegz7JYBIj/m
+	 +Ysrh47XW30bnMAGt4XV5XuYMyx1JGp8TSjlWWckeiSN6Q2eFjk4pFryLn0PUNV2s4
+	 9ldio4OAqgJjTuF4rOicYhKESqSmWiEWLCTHvzRBY6lU3lT1V8Xm5CqOKPy3sXtngz
+	 xqCjwjUcEmQEC4WWYGSsmmNnfu5DeYkB1Ya2vslfDx4kaU0FCqZkqTp5GS2RN5fepu
+	 blaUbbKS3vLGQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v0zxy-00000008gSr-0JgH;
+	Tue, 23 Sep 2025 10:09:46 +0000
+Date: Tue, 23 Sep 2025 11:09:45 +0100
+Message-ID: <86cy7h1nva.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	James Clark <james.clark@linaro.org>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>
+Subject: Re: [PATCH v3 00/26] genirq: Add support for percpu_devid IRQ affinity
+In-Reply-To: <aNJvsJOZHD87WTx4@willie-the-truck>
+References: <20250922082833.2038905-1-maz@kernel.org>
+	<aNJvsJOZHD87WTx4@willie-the-truck>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922095647.38390-3-bagasdotme@gmail.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: will@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, tglx@linutronix.de, mark.rutland@arm.com, rafael@kernel.org, robh@kernel.org, saravanak@google.com, gregkh@linuxfoundation.org, sven@kernel.org, j@jannau.net, suzuki.poulose@arm.com, james.clark@linaro.org, jonathan.cameron@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Sep 22, 2025 at 04:56:46PM +0700, Bagas Sanjaya wrote:
-> Features overview list uses an asterisk in parentheses (``(*)``)
-> as bullet list marker, which isn't supported by Sphinx as proper
-> bullet. Replace it with just asterisk.
+On Tue, 23 Sep 2025 11:00:16 +0100,
+Will Deacon <will@kernel.org> wrote:
 > 
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> Hi Marc,
+> 
+> On Mon, Sep 22, 2025 at 09:28:07AM +0100, Marc Zyngier wrote:
+> > This is the third version of this series, originally posted at [1],
+> > which aims at allowing percpu_devid interrupt requests on the basis of
+> > an affinity mask. See the original submission for the details of why
+> > this is a desirable outcome.
+> 
+> FWIW, I backported this to 6.12 and tested it on a DT-based Android
+> device with heterogeneous PMUs and pNMI enabled. Perf appears to work
+> correctly, the pNMIs are configured as expected and the affinities
+> all look good to me.
+> 
+> Tested-by: Will Deacon <will@kernel.org>
 
-Thanks,
+Awesome, thanks a lot for that and for the help getting this thing up
+and running!
 
-I visually inspected the html output in a browser and confirmed
-that before '(*)' was rendered, and now a bullet is.
+	M.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+-- 
+Without deviation from the norm, progress is not possible.
 
