@@ -1,201 +1,220 @@
-Return-Path: <linux-kernel+bounces-829043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B9FB9625E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:06:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD8FBB96261
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 320C3189155C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:06:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC7E1789F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87C023BCF8;
-	Tue, 23 Sep 2025 14:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E9C226D1D;
+	Tue, 23 Sep 2025 14:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BOda4Zr+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rF1I5CBt"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010048.outbound.protection.outlook.com [52.101.201.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322D322D4E9
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758636299; cv=none; b=gmxIUSC4oj59MtxcqLGz2T35mbB5XdMTUAVHy6D4dw6d3vH8z78XSBgd0C3YTRjrE5nvPZfVIBmubLJM42uve8VTQEx8ZViQAktbtkPCwJmZxe/tDa+PkUq26UKAgXxAaPpoDaSq0woTzqX/Qeh0f+bvULS9kL2RLKNaxGTGnQI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758636299; c=relaxed/simple;
-	bh=2fousLnzCI9SazH0eEA8Hzz/eK34wqY0cplvtTgLdC0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=exOROfoX2Eug2uEOF1NID7PJzxV/w5qqiCsm77VspZv7hVRi3LiyMjJhqlwx2hOq+1hGy6eAQrmehuQuSGZhS/W0MWTr7nyqXNzZz3FHPmek2JySWbc9rjgqkuNMfmFv/KEP1QXd34WZC4tZYDfYFj6IJ37mLnTsJPyqFbAag3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BOda4Zr+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58N8H8gH020615
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:04:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=qF7JNnnC6auZa30uLt13ZSI6pihLUX73qMp
-	x0C1fb54=; b=BOda4Zr+Z+o0FBg4piDvNbmefDrgjEeT2fGTBubRDbKmioOlKb8
-	o5TfpFoeX070XHy9n41ON7M3QC1sGCjyCfETn+lH3ekRxxHKuSKtYOW3gZpAtsNW
-	YMtocaj/mjwqoTxfHbKDYENh6a7KM6maUvnkWWlTtOAlpBYnC3O77UfO0Ti6zZOG
-	Nnwh6MRZ7+wcMMA1i65+mc96kUSAmdskM7jNQ3pbJdWK5FOu3ZujvrqsQmb/8brr
-	/IPvgpn1oB8Tvh1WUMvRvJs8puGsq7QU+/7smkLVrrMvWCO+Ti4uFMjIfP1CSehh
-	vnj+s1BY5utHaJ3zzEVqSzNUAMCl1Y0JYMg==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bhvjt30n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:04:55 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-77b73bddbdcso5432194b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:04:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758636293; x=1759241093;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qF7JNnnC6auZa30uLt13ZSI6pihLUX73qMpx0C1fb54=;
-        b=TmC8w/wpPCB5a2hMlLs6EeMVYS+5362icJgpoFeMpNaBzkX8uGYSada8nbkGQe+PIB
-         TimMw7C+rDworZJFSNbBfOjJsvSApAwsaFSno/2VW5hrr/PgYqjMs6nbnf8FbO5IVdu1
-         9QoNXCQ8O3qLRNHGfcLLeI7Ir4SR1hKglTC+EWv/4sVKPjIojqsPNIlA183xv/hO6mV0
-         lqq6jyT7GZmCQLXUXah8o98wGAL+ePw9GKNQsXhaJY5y1aooOapJHLt2Z4b6TcYy/yRi
-         03DDRGWRv8gNf2AYXVuvqE90NKV9G2aoD8Ma8m5ytGep87d25yHM432BFzUy6jG/RaP5
-         bnRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEDiqIsYK99BLpVX2VD8mwNbRKoZQb/wbrxw107hJFVK12YPw8pVUxTTBcHqedceteGVc+nPBSoWoQxVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdaVECLjowY0OVm5jdemwaoCMSI/1vp69o/JeEUBA5YGG2VGAw
-	Xi/i+wg2WQHLIJGdYO/DF4nNHVpDoRtXbVBkzg3geIqCcdkcRqH0bVYHen+vlniY7vLH4Ou3xkY
-	PrMPdmubF4M3hSJFstnOJmOggDViGyJHBHUsIxkjFhLXuHoQ49pQFEyeAwnmX11Ehfcg=
-X-Gm-Gg: ASbGnctaF3QCaodb2SUe/5wgWkjCEoZqRRNVo4wYfnsuVHXywzrUm9kLrLGe7rKndg7
-	WTugysH/8el97a8GR/VOa3VJJXB0CVtBVkGjaPK6LvvHR7HmfcOH+hdzj8WSR+/nl07VLWyM5nF
-	CYi6V3P7ysikz4CW9nBJDQoJyb00Eu6gV5O+HU+W84CYe3eNPsD/nYTosoozwShap1m/1ektCM4
-	09ttBMyZjm4JyqBgnbtYFz+2Xq9bCfGyCRAZ4MI+q0yLXZL3UKShspUPljgppbWa21iKew3Q6Se
-	QZMWLmyKIiL8BihauVx6c66lsII6RLUeUsDRnlS910OQf038tFE=
-X-Received: by 2002:a05:6a00:2389:b0:77e:eb28:c59d with SMTP id d2e1a72fcca58-77f5483555bmr2964426b3a.5.1758636292702;
-        Tue, 23 Sep 2025 07:04:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHriibLVf2iW30g+eltTQYpwyfphiwc7EROq76RBdBzt9+tjnANNboDPlS44Gb5y7K/RblhCQ==
-X-Received: by 2002:a05:6a00:2389:b0:77e:eb28:c59d with SMTP id d2e1a72fcca58-77f5483555bmr2964368b3a.5.1758636291921;
-        Tue, 23 Sep 2025 07:04:51 -0700 (PDT)
-Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f2deca77asm7401739b3a.98.2025.09.23.07.04.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 07:04:51 -0700 (PDT)
-From: Rob Clark <robin.clark@oss.qualcomm.com>
-To: dri-devel@lists.freedesktop.org
-Cc: freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Stephan Gerhold <stephan.gerhold@linaro.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/msm: Fix GEM free for imported dma-bufs
-Date: Tue, 23 Sep 2025 07:04:40 -0700
-Message-ID: <20250923140441.746081-1-robin.clark@oss.qualcomm.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161A021C9F4;
+	Tue, 23 Sep 2025 14:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758636415; cv=fail; b=reBf/0viPlmYyTgn45iYUSPmDN8UGpNEfA0M/bVaGhzYPyhkNDRhu3FNRRau7v57ryyssJGl1rP4MpIi4TWI3c7ck2TmhJFF+YULaQ6VgfVCKkixnxE+I/cmNxCsupfindaC5/fqQCQpFRL1lKWQaPuQQT8/8cB8ZRRI8jX82lA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758636415; c=relaxed/simple;
+	bh=fsMesOOhDAIPPIO+mhOllpcRadV0mK7BcdfPH2WYLLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=CY9xgkKCzPJkdTL23KCgWA7t5FZ180Ee/lDsTuWfjgI8oZ5hcBAfFM4Q1/Mmg+Hyq5b6pvHdX87VIouXkBtEOCFdejq3pO7Hhxqg+PDl3F2OXj+N5J9tslwMu/U6UStOLS2tzXesMBZR9ue8bR4IjWLOTsrmI+7/uyclKedaFjA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rF1I5CBt; arc=fail smtp.client-ip=52.101.201.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LvfjTdxfpk/yBh/K7m6B81tPX9QmpEVlC7vEJ6c3PX+SPCEwxD1DIn0Efa6YQQ8aMSwRrJX9VQxxcAiRM2yfwYyp30jQEGDhbpAoDbppKe1iyjBa3FksFOK2h3aAvPXvzc2t6ikRtKI2ROQqqR2yscABgJGRrdcVPXiGk0YLJnJMTwz+letBv1puUc+bMzagJBNEqw9glj+kwLf1Jx1LNf6g+GS3TuIVa1LX042g4KCsAFM8XrYE/b87P0EZ8E2x6oJK8S1kWx/n2FYQEra/jwxxyJsvlY4uUxl90miA3O+DV6kBrfc/0dKGDV+2GwG94SXwXRDv7M4kY8HZRrGELg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dU8KG8TBt8VeNziA73m48MhcMtB5VIZ0N/0CxyFeAtQ=;
+ b=p/StxvgIiobUd99U0LYlKrHpA45kDqgvq52k2nSZFfLN3K9ywGmTQgujWvcqBg+x9++ZcoEDvgfdqH0Krg2OPF6ory+oaYmCBLfdKWz9wmkhB06Cjob25SWq4DH8Xu9Et0RDD1t0LwFtVB7/bepLoVNQku2/PbsMhy3vRgtI1UYGZboqjN1wCtRTqWcqm6zIyT3rTenoXFow617wj+WIrfYaDqLXTeYqwEVq9w0uOw37MUxL9Rqe8AkPJllvprH6y+uImVsI9z5Ov6TZudzPyiKcbJATFBOz6Jg45p0K9M3o7d0dycZGPYy9juGP/HhUS9voV1mCxswtV6oSwfB5GQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dU8KG8TBt8VeNziA73m48MhcMtB5VIZ0N/0CxyFeAtQ=;
+ b=rF1I5CBteYdjJRJQGFOLxyhBr3fqEGZl3mILc8q93+OHKE0OYU0cOczjP5uCJrtZKiRlGbyM8wMEwipj5l9+p8HEtgov6QAa0ZLQ6D0jcdt39SkgZ2QUDlsnyQPH4YZcY0d34gb9+SJ8Dgsg9Jjw/telyyGyEdsOGI+G5ZohJYMU/JSXK3Kw6EZbvXMPGoKHa/UyDOewSSBTtofj7xPz20FdVYM+PxADZ6fBEh9a7ZHEkr20t7aKdqM9Jr4z03mRQA82VKgnrkeeylzm1yPjhgOtF0bJ/s3u9Dz93U78+Vi6HkjiNatmUruyRDfv/tyhH4/93s1euGwf9tr2EPz9Rg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by PH7PR12MB7305.namprd12.prod.outlook.com (2603:10b6:510:209::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Tue, 23 Sep
+ 2025 14:06:49 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 14:06:48 +0000
+Date: Tue, 23 Sep 2025 11:06:46 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrew Jones <ajones@ventanamicro.com>, iommu@lists.linux.dev,
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	zong.li@sifive.com, tjeznach@rivosinc.com, joro@8bytes.org,
+	will@kernel.org, robin.murphy@arm.com, anup@brainfault.org,
+	atish.patra@linux.dev, alex.williamson@redhat.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, alex@ghiti.fr
+Subject: Re: [RFC PATCH v2 08/18] iommu/riscv: Use MSI table to enable IMSIC
+ access
+Message-ID: <20250923140646.GM1391379@nvidia.com>
+References: <20250920203851.2205115-20-ajones@ventanamicro.com>
+ <20250920203851.2205115-28-ajones@ventanamicro.com>
+ <20250922184336.GD1391379@nvidia.com>
+ <20250922-50372a07397db3155fec49c9@orel>
+ <20250922235651.GG1391379@nvidia.com>
+ <87ecrx4guz.ffs@tglx>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ecrx4guz.ffs@tglx>
+X-ClientProxiedBy: BL1PR13CA0255.namprd13.prod.outlook.com
+ (2603:10b6:208:2ba::20) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: fb1Pq9iiWGsRb9VysLqOawl4L4Uyxcch
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDAxMSBTYWx0ZWRfX5hRruGv6grEb
- hC6FOPwdPtXOapyHB8vbDRCs23iL83XFTcrRp/Gvj5nddFDjQTDYcQdXO82EDEfb/vSAvkFcSex
- QY2oanmb51ip6eo3K6FAW2G92/RYa9F1qpCdi9maHjw0xBNQLUejm9RdbEXKBhmPKlO4j4srkv6
- uKWm9cTQ0oZc6aImpPHqwxK+IRN+x/cLR+WXk+USy5rWVfHlLPDgXAaNaXgDa4i2CCBiHRoKxHG
- 1I4LVkA8Pe8dY3kAjebl1dJ7YU1VYGpIMmG4U7N+c6j05YEhHCIeLeeEm3up6BXh3LpsJpa4HgX
- J2Fb6e+tWGKNv/V0bQDxudWAJk4U3ZTLPUxG5YHnqz3R8siJ3VwiKIA5wj8NPekVmFYseyYRDNZ
- nwnKyO35
-X-Proofpoint-GUID: fb1Pq9iiWGsRb9VysLqOawl4L4Uyxcch
-X-Authority-Analysis: v=2.4 cv=Csq/cm4D c=1 sm=1 tr=0 ts=68d2a907 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=xqWC_Br6kY4A:10 a=yJojWOMRYYMA:10
- a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=9zJA0kw6ANc6jqlDSAsA:9
- a=2VI0MkxyNR6bbpdq8BZq:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-23_03,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 adultscore=0 impostorscore=0 phishscore=0
- clxscore=1015 spamscore=0 priorityscore=1501 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509230011
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|PH7PR12MB7305:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f4b83fb-74cf-4098-ca23-08ddfaaa7008
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6LUnmU4F31tWAVX0wmyJHkuSDeWyk8tHIv3uvIANe+NBBcZ0LCI0uCBVPr7n?=
+ =?us-ascii?Q?FWQvE0YjDCjn1xU8k/32TqXSnBBv0HVnjyjl9tR8CYMRAV/n0OvdK+yEICTY?=
+ =?us-ascii?Q?weHfMpsitRmnNlj2s4UbD8ldoHUSQTz4gQan5IvFWGtZFrj1rVLWqjwmgGpm?=
+ =?us-ascii?Q?1yY1sXwfwLFMn+9k7NMkc0FinU0OV0gEJht94EJh8eEohlhZnfQ2e7Nsa8/V?=
+ =?us-ascii?Q?RJZ29TO0UmR/xZMfFVqV6mVBk0Dy9fRUyurJkKuO41WFeRVCCYid8UQt9Xdw?=
+ =?us-ascii?Q?K2l0CnXRRG/qa1bmDq7jphMtJ+vZr0aHXMnZu+okzNYuNKThJlpap9rHLdSb?=
+ =?us-ascii?Q?5PxyP7XeScaLB9R/V3kAxkGfRskQZv+AWEg1/y7OqQG4qHfV+z2xEOX6T28Z?=
+ =?us-ascii?Q?I0Ep5z72YDt3DKVlStXv8FeHBXuXWGKpwXef1qbhc/PsaVGL6BCqaHCGyiIY?=
+ =?us-ascii?Q?wG1yOeDiaOVIV3Aoo2QJ0ezJpwdBjPXvI6jyiK1RmcLotBAVjSF2ZvWnGgeD?=
+ =?us-ascii?Q?8l5BPD4ztaWZu78loZ4usfZqWsX7q8IywZhQBsP+0Nrz2yfNCIIY5952B60g?=
+ =?us-ascii?Q?MU9PSt371qhGmjo/sjF5gq12dJb2Cmn/rI3I+V9fZEoq8X4/Xxw+l54dNlA5?=
+ =?us-ascii?Q?5pLnlTYbT1c6Ucl87MYp+ar5O0cjTvr9NR6C8KZaTpZbQIbg/EKE6bqy46pd?=
+ =?us-ascii?Q?4pXK3I0JPFUlBAbqjyUVw3sHug3dBcfQ2W1LlXfsM2mEjtuNP6aR0vGdxwfI?=
+ =?us-ascii?Q?C9UEwwesIMcLBwjQCfF1jSB9QgVZ1nK4ID/vAgMr40A/w+FF1PTBkubraF5T?=
+ =?us-ascii?Q?9cmIUPznQn8lOmAGQ1El3dJUdTVC1d2ucxyaQasKen5O4Hvr5RCNYrNlqh1v?=
+ =?us-ascii?Q?8Oacz7pxlqV3BURooJgEzg76t9SrugFcOKKFUpokiaO7vWiogro0jxoowngF?=
+ =?us-ascii?Q?kbA2wlLHQ+OGsIkSGpw659tRbhxEXOjnrCj4gIcW7jX9/fyjMU1mR5+HDcGX?=
+ =?us-ascii?Q?7fOD7M4vQcPIilz8Mz7mLPr1Pf1X5Wxj0vQASRDbC3uH3tfqSFSmom5fimes?=
+ =?us-ascii?Q?uGTxAcmRtx0r+U9vKkAclQCnVhG/sLKYzNIj3LigK8GtFOesUfcHLV6ScTtT?=
+ =?us-ascii?Q?/XUse/FXnAd2nnvtiQU47W+JAhfv7Ur3chUIkACeU4AukutdoYZccNx5Ylhk?=
+ =?us-ascii?Q?mqa1ux2IdGyjthTEyL+il0QNrA3ZWiA7iaLh3cp+agleCQtoLVQ2/LSWFHjp?=
+ =?us-ascii?Q?sJNk/9I8XIumRn16a6e/EcxjJOLLRsKi5aJcA+S9tqASqSxaXG/tD5eHrrYC?=
+ =?us-ascii?Q?U86Egwd97QOnhtt0oJxhCeI6Lj2JuJZvNh7L1SbpLzmj4WjsGTV5Q5+OaUYl?=
+ =?us-ascii?Q?h8m+vYUokdwzrTnABl8GGqKfqWOEC2Th7f3I91vGVa3ldGL+ZpG1rHy6uU+Z?=
+ =?us-ascii?Q?qcAiCER6T08=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?AhD6g4c6U+Ik2ZzHJc/5QhNVtXbtvnGfWZXuzl2nfIGKAG7XPk6VVJFdj1Fo?=
+ =?us-ascii?Q?72N4FQY0NLdSieLtofAgxMdFXGsQsCqSIYeP1CYIrttz8y46Fdq/5AlSDsNk?=
+ =?us-ascii?Q?bZrIjGaiDZr7FY0vRAO4BKt1FC0EMTcu3uJOFDtnDt02fiA31IBZc2bVB62d?=
+ =?us-ascii?Q?MyzItw+3SO8sOlPqy7HXhmZHnPuiF0bgDJy6+xu9M0De3o+BGNOFsbTj/q7s?=
+ =?us-ascii?Q?AgtnTBnz4wU9J1uWa6XQFRXQju+iKYhlEVLmhctheXRT98hJTh/opcY9KFKt?=
+ =?us-ascii?Q?MVCednDBhiuJihJoJAaj2GqalZ6cLpyVTYiUSbiGZ3LwKFK4sFpqkmmYhL1n?=
+ =?us-ascii?Q?TnBzf2KIpVC4nOM9xpn5SmFiO6pNiUtUzxZXOWxXx8ySVRRGdI9tQvRQYFi0?=
+ =?us-ascii?Q?6tVt+Sxg06PsMAZwTaDn/51pjW4V79Gu4+4QuQophP8RDIXuI1nZK7vWzx+U?=
+ =?us-ascii?Q?Iop6PQwqa1gQkBOx2MOoqNSenLexqfIGwEsDPGDk6EWALts1HNmamNk2yVVv?=
+ =?us-ascii?Q?OKT2BO25QJjKAOAtyndg4zSachoeW9jPRrRhacWLdbPXfUUYFbT8d7mdfpXY?=
+ =?us-ascii?Q?juYrAuxgUfn3XHV2nosP2jWUqxuZHGBfNPREtdXHKfwHURaSUCuzlieeIPWw?=
+ =?us-ascii?Q?8DguEdemMuHTjYRhs7EuU+VtCPyVxmIMKl2RlNWku27s9v5M9GP6TuaLZBqU?=
+ =?us-ascii?Q?SEoSliPdbp7BPm2ME3fKz7qsj6pkErbwfwH5f6XzGoaMIuU33S0zmoJv7sUz?=
+ =?us-ascii?Q?AuW2uj52FDtoClPkqLTC75kkCbwrpQCFgDUMukiLSuVfAhZxr/T4S/SxKHHY?=
+ =?us-ascii?Q?g8eXLd0R84e0qfWqO+4hUIWcJYMWdKwjNMfNNP68vvDed0JTkXOBYHBy+Bdi?=
+ =?us-ascii?Q?VitFbfd0okkSckQnzAknpxN6sDhuWYzvvZAlciEjPUAfpfm7R6oDff4xMFRf?=
+ =?us-ascii?Q?FXgkwEfrAMt2NruxK64GQ8wpP0p5sH8LrbFBE3oSYsdd9GRUz985sXtSolop?=
+ =?us-ascii?Q?LDZ5zlZx0jZUVwv5BUYKpQ5BTvYNPyqny/MdWaNDRoRGzNR3UulPQhMCW28R?=
+ =?us-ascii?Q?76V7VbBMGxclN80qbxf3nQjl7CON4d6Vo7bRqxCQzBRhatiJTXGK8r1a8rD8?=
+ =?us-ascii?Q?q5KFR1eP6e6Z6s5C6Vu2vYhJl5KaXN2S+bi1TeZUWTvPqjHYygFvxW8O6hWv?=
+ =?us-ascii?Q?ErZD/Lsxfw8rB1zVaNFxGaN0qBobaYf7pzqeQwdnOeEEfKyw6Ue1ditd67wv?=
+ =?us-ascii?Q?pf0UAnV7smpHp4Fl8Qv1WZcCqoTLJDnhPD5BHB9kTouEwQ1ptHFGlSlB5cV3?=
+ =?us-ascii?Q?FXP4Wt2tILBQvBjuTNpkkM8bPqTZsVVEFyCiyqo827bnuBvE8KXGWLv1+qHC?=
+ =?us-ascii?Q?yZWCqwG2MyEgnZg5sjLBCh3wWT6ol5mFsD5MtxHlovSfbgc3S+a32qqZYg+W?=
+ =?us-ascii?Q?B87V9GPJDa0rEsiz678SuQMs1lv1W/l2n/uxIGs/R/fW2MmhQ7YNANGOYdn5?=
+ =?us-ascii?Q?Witf8E0uwhA7QMzo5oUA8SwFHEREAhB8QdmqXHN5n9IbU0fgxDf4TLiJVQME?=
+ =?us-ascii?Q?FlEarxAK0Jo6biqYaKLEIdd5GSPpmY/C6Ymjf66P?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f4b83fb-74cf-4098-ca23-08ddfaaa7008
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 14:06:48.9050
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gkQ0ErG0wzG352s0T7LMQpQEo09+RV700Qvpxc42Okx4Tsz3hIU3sXRmNlpacncj
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7305
 
-Imported dma-bufs also have obj->resv != &obj->_resv.  So we should
-check both this condition in addition to flags for handling the
-_NO_SHARE case.
+On Tue, Sep 23, 2025 at 12:12:52PM +0200, Thomas Gleixner wrote:
+> With a remapping domain intermediary this looks like this:
+> 
+>      [ CPU domain ] --- [ Remap domain] --- [ MSI domain ] -- device
+>  
+>    device driver allocates an MSI interrupt in the MSI domain
+> 
+>    MSI domain allocates an interrupt in the Remap domain
+> 
+>    Remap domain allocates a resource in the remap space, e.g. an entry
+>    in the remap translation table and then allocates an interrupt in the
+>    CPU domain.
 
-Fixes this splat that was reported with IRIS video playback:
+Thanks!
 
-    ------------[ cut here ]------------
-    WARNING: CPU: 3 PID: 2040 at drivers/gpu/drm/msm/msm_gem.c:1127 msm_gem_free_object+0x1f8/0x264 [msm]
-    CPU: 3 UID: 1000 PID: 2040 Comm: .gnome-shell-wr Not tainted 6.17.0-rc7 #1 PREEMPT
-    pstate: 81400005 (Nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-    pc : msm_gem_free_object+0x1f8/0x264 [msm]
-    lr : msm_gem_free_object+0x138/0x264 [msm]
-    sp : ffff800092a1bb30
-    x29: ffff800092a1bb80 x28: ffff800092a1bce8 x27: ffffbc702dbdbe08
-    x26: 0000000000000008 x25: 0000000000000009 x24: 00000000000000a6
-    x23: ffff00083c72f850 x22: ffff00083c72f868 x21: ffff00087e69f200
-    x20: ffff00087e69f330 x19: ffff00084d157ae0 x18: 0000000000000000
-    x17: 0000000000000000 x16: ffffbc704bd46b80 x15: 0000ffffd0959540
-    x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
-    x11: ffffbc702e6cdb48 x10: 0000000000000000 x9 : 000000000000003f
-    x8 : ffff800092a1ba90 x7 : 0000000000000000 x6 : 0000000000000020
-    x5 : ffffbc704bd46c40 x4 : fffffdffe102cf60 x3 : 0000000000400032
-    x2 : 0000000000020000 x1 : ffff00087e6978e8 x0 : ffff00087e6977e8
-    Call trace:
-     msm_gem_free_object+0x1f8/0x264 [msm] (P)
-     drm_gem_object_free+0x1c/0x30 [drm]
-     drm_gem_object_handle_put_unlocked+0x138/0x150 [drm]
-     drm_gem_object_release_handle+0x5c/0xcc [drm]
-     drm_gem_handle_delete+0x68/0xbc [drm]
-     drm_gem_close_ioctl+0x34/0x40 [drm]
-     drm_ioctl_kernel+0xc0/0x130 [drm]
-     drm_ioctl+0x360/0x4e0 [drm]
-     __arm64_sys_ioctl+0xac/0x104
-     invoke_syscall+0x48/0x104
-     el0_svc_common.constprop.0+0x40/0xe0
-     do_el0_svc+0x1c/0x28
-     el0_svc+0x34/0xec
-     el0t_64_sync_handler+0xa0/0xe4
-     el0t_64_sync+0x198/0x19c
-    ---[ end trace 0000000000000000 ]---
-    ------------[ cut here ]------------
+And to be very crystal clear here, the meaning of
+IRQ_DOMAIN_FLAG_ISOLATED_MSI is that the remap domain has a security
+feature such that the device can only trigger CPU domain interrupts
+that have been explicitly allocated in the remap domain for that
+device. The device can never go through the remap domain and trigger
+some other device's interrupt.
 
-Reported-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-Fixes: de651b6e040b ("drm/msm: Fix refcnt underflow in error path")
-Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
----
- drivers/gpu/drm/msm/msm_gem.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+This is usally done by having the remap domain's HW take in the
+Addr/Data pair, do a per-BDF table lookup and then completely replace
+the Addr/Data pair with the "remapped" version. By fully replacing the
+remap domain prevents the device from generating a disallowed
+addr/data pair toward the CPU domain.
 
-diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
-index 9f0f5b77f1bd..3aea9b493375 100644
---- a/drivers/gpu/drm/msm/msm_gem.c
-+++ b/drivers/gpu/drm/msm/msm_gem.c
-@@ -1121,12 +1121,16 @@ static void msm_gem_free_object(struct drm_gem_object *obj)
- 		put_pages(obj);
- 	}
- 
--	if (obj->resv != &obj->_resv) {
-+	/*
-+	 * In error paths, we could end up here before msm_gem_new_handle()
-+	 * has changed obj->resv to point to the shared resv.  In this case,
-+	 * we don't want to drop a ref to the shared r_obj that we haven't
-+	 * taken yet.
-+	 */
-+	if ((msm_obj->flags & MSM_BO_NO_SHARE) && (obj->resv != &obj->_resv)) {
- 		struct drm_gem_object *r_obj =
- 			container_of(obj->resv, struct drm_gem_object, _resv);
- 
--		WARN_ON(!(msm_obj->flags & MSM_BO_NO_SHARE));
--
- 		/* Drop reference we hold to shared resv obj: */
- 		drm_gem_object_put(r_obj);
- 	}
--- 
-2.51.0
+It fundamentally must be done by having the HW do a per-RID/BDF table
+lookup based on the incoming MSI addr/data and fully sanitize the
+resulting output.
 
+There is some legacy history here. When MSI was first invented the
+goal was to make interrupts scalable by removing any state from the
+CPU side. The device would be told what Addr/Data to send to the CPU
+and the CPU would just take some encoded information in that pair as a
+delivery instruction. No state on the CPU side per interrupt.
+
+In the world of virtualization it was realized this is not secure, so
+the archs undid the core principal of MSI and the CPU HW has some kind
+of state/table entry for every single device interrupt source.
+
+x86/AMD did this by having per-device remapping tables in their IOMMU
+device context that are selected by incomming RID and effectively
+completely rewrite the addr/data pair before it reaches the APIC. The
+remap table alone now basically specifies where the interrupt is
+delivered.
+
+ARM doesn't do remapping, instead the interrupt controller itself has
+a table that converts (BDF,Data) into a delivery instruction. It is
+inherently secure.
+
+That flag has nothing to do with affinity.
+
+Jason
 
