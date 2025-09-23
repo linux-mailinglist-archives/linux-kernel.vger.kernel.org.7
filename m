@@ -1,96 +1,67 @@
-Return-Path: <linux-kernel+bounces-829772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E515B97CB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:21:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5519EB97CC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 381EB3B8D8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:21:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C8451AE1E7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A54B3101C6;
-	Tue, 23 Sep 2025 23:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9747A30FF29;
+	Tue, 23 Sep 2025 23:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/b+eHPV"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ft1eCxVU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD85930C617
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E614B2E972C;
+	Tue, 23 Sep 2025 23:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758669649; cv=none; b=LO2GPCoLgXN/dMUeT3YGG502M7ijvBu90bcv5t3wiaaF74DVfcw43VgtA6ihbevLrNjM8xilLPNLOM0B/5LJ0I/e8gyT+J+mbkep/fd8965Yb5VJNJE5csSqQJy13+R/9mgAnm886aAR2EumQrjdI1DftEM867kdT5rmSDylKvs=
+	t=1758670013; cv=none; b=trfxFzLWSNPlFAut8MZt746W/qYh5gvhH6OpePBz/6NHrsTenauKmnXA/g1+Id81E2ISTfylw24kAliH2xd+CQ+33w6dKZZ6KCqabyhHTfTVucO3gcAuYw0iNsAkWP4dTlJniWG1Yj1hGObM3jVG68PJqkXpHHBZ5ugKbPFBpkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758669649; c=relaxed/simple;
-	bh=vkZtgaI8+DwA2vFDCXnyuKa4Ewv+3A6r93k8zDXNbj8=;
+	s=arc-20240116; t=1758670013; c=relaxed/simple;
+	bh=lKlWiJd3M7QDuAOXQBGO4IRPr8x7/GMM9g9S7HUMktg=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kUrjHj7K1OoK4gjj8Udugi+2X/iXQmU4UuiQgWRMlBLkbh/ha7hqZ1c+Y/X1k1mAnKTRjMblBcbWVfZ/F8Le4GHZHAjkjWC+C5kG2DvXre8VXC8jCjr/XxdR/4Zng8r+oCKmXOeB+VSbbHbcpakg13u89U01+REzFvbdycrMajg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/b+eHPV; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57d93a4b5e5so3190480e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:20:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758669646; x=1759274446; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7kc5MQmgIpaNTBaT8ZNBy5t4B5Vp5p3q0VgcMo06yqw=;
-        b=a/b+eHPVxSEVzqwuiPJ8CzT3NtkU2uTRGYOVBG0a85NIM/V7LIgduFX43z4mfyuCTH
-         ztSwhGWtWXxbDlU4zJducKmaLowbqaDsVN7yHTA775POKH8ETdQg9Qs/pKLk2aWpHUi+
-         95f24pkm3Iq/CnoCiYkT+Rc0zku8deULAW9BkTGSic+lQ7Bv90Wo0lKkfzhJHmSUTg4J
-         0hTRj8exXcj0/AU+Dhus3unbM9hY9vN9AZ19M+sX1kq7dGnoy8WOCITzI+S+fk1CaZ12
-         u27xn34EmKwEeUHniWGYSuGyddyOBn/phkHsSRpWQzoP3UvU+w+O5EExE/aY+eX61E/t
-         6PxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758669646; x=1759274446;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7kc5MQmgIpaNTBaT8ZNBy5t4B5Vp5p3q0VgcMo06yqw=;
-        b=foKSUMYbvn5dRbX+WfIC6xxgPfsOg8SC2HXNL/rCdw+hcIATmEgzX8rgOGZgbVAoM/
-         mcF/sWKF/BOHrE+GE7Nf+NILij8r27rxsQdCXBK1LrL/Wimifm7RQDavOy71NArBfo7R
-         hVWEojHQ5jpgU+1Hgj33kcqM3P2mYWWRullcBX5bSwvvvSEXx1NKj/wQwQ3eX/Z8Gbb+
-         MBUvHq8cjU3JDTA8IiGCIh50vOYI3UNBkKgH7SnAwAICrcpwareZq19bA0fnumGJPDjn
-         XJ87VXKdrB5R8wH+ZPA3a1qdql+9aCkxywyhIeQp2fMzdoeFLDyhFhHm/z5E2hdqLVf0
-         ye3g==
-X-Forwarded-Encrypted: i=1; AJvYcCW3FDNpSiyfGdCLI2zRm2uwYTD0JF+ml9AR9EgWY2sSHaAPRCQrRyMElkP+VM8ZNysPvOP5VMPrnULav1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKgowGtUHLB602Iyd6UROytDS8wJb13oHxIyhXmi38u+b5+w11
-	MqZya9uuE4GTf/ZDtvHSO17fCrM/lIIxLe++ZZ8DwSoqp0VPwr2ppS/3
-X-Gm-Gg: ASbGncvSuyn0fMQ0iVwk9DrD1ytmDAvFGcZsH1P72jaY8r+YfBUAZz29TGOr0C+icV1
-	NU//mWus+3JrHdVkEQ04ZY0mpbIEFhfPabdMZ89dA/+3m/yfwbuK0JdHBxtKIlMw2bHdUKinE0u
-	JnZdfbuqq24JG/etZGK6l4AJ11O+3lX8fbsQP55FvDIqsdyaE5F74Y3W3NCq7sEG5uz/9GCFMet
-	pUmnJJZCLiF71LVq989llXlQY3HrMub6AVVAMRCK8J2bQ2nH8M32mrOnz7KKBSVOYRi0CjTtctv
-	VTL7twMHt882NzxhPvOBLncX/OxJebLH8NPAFRsmZBF9j5t5LmXOIrWYcIehoqnr30FUszKTUDN
-	YiBag5xIXH8ZXwL4RXe76GOp+/s8z9j8/DmM=
-X-Google-Smtp-Source: AGHT+IFVMR2s4ilEdfP5c3p3+7X515B1QLyMWkcy/0fTuDiMsgwVqSp4AmW8TfIdg0R7IgmgC3jp6A==
-X-Received: by 2002:a05:6512:6314:b0:560:9702:4fe6 with SMTP id 2adb3069b0e04-5807190a878mr1402555e87.24.1758669645455;
-        Tue, 23 Sep 2025 16:20:45 -0700 (PDT)
-Received: from foxbook (bfe191.neoplus.adsl.tpnet.pl. [83.28.42.191])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-57b43ff413asm3101295e87.144.2025.09.23.16.20.44
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 23 Sep 2025 16:20:45 -0700 (PDT)
-Date: Wed, 24 Sep 2025 01:20:39 +0200
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: I Viswanath <viswanathiyyappan@gmail.com>, andrew@lunn.ch,
- andrew+netdev@lunn.ch, davem@davemloft.net, david.hunter.linux@gmail.com,
- edumazet@google.com, linux-kernel-mentees@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, petkan@nucleusys.com,
- skhan@linuxfoundation.org,
- syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
-Subject: Re: [PATCH net v2] net: usb: Remove disruptive netif_wake_queue in
- rtl8150_set_multicast
-Message-ID: <20250924012039.66a2411c.michal.pecio@gmail.com>
-In-Reply-To: <20250923072809.1a58edaf@kernel.org>
-References: <83171a57-cb40-4c97-b736-0e62930b9e5c@lunn.ch>
-	<20250920181852.18164-1-viswanathiyyappan@gmail.com>
-	<20250922180742.6ef6e2d5@kernel.org>
-	<20250923094711.200b96f1.michal.pecio@gmail.com>
-	<20250923072809.1a58edaf@kernel.org>
+	 MIME-Version:Content-Type; b=l6RJuUe+XdiXbsltxeRFxbJ4wL4ajcYLzydscFfYdcMpmHIxiuHyGZWMTg5S4ugx5qLSjvFxrtgAU1Ao2vjkESgTVQKRQIKkH4+u4vvK30/57C3CYNKaqQJtUTtgwhvqe7hy5yGX0XyqcXfKZKGQrzxQCRYdl3MvCPH6Xg2JVJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ft1eCxVU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B188AC4CEF5;
+	Tue, 23 Sep 2025 23:26:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758670012;
+	bh=lKlWiJd3M7QDuAOXQBGO4IRPr8x7/GMM9g9S7HUMktg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ft1eCxVUKQlIQBZe2ba5m2uTpzxNcXPCMaQXUD+I1Hmr2l6lGLnzAwStdL6HhqjGy
+	 KCswBoNri8NK4J17QSL3p5Ps30rFwBiP1za2gbNOlS1y1WVE0HwwcPh+gQUFZr7bm+
+	 msrtxp18FYK6LY3BhrexBKImIgHaLYfT90cIGHmitrds6m5WBeFKUN9Q9+RXnDhAi/
+	 1VxWuWHthixphvhG9N6WGhNKIh4Or6AzdOELq2pRHxnDq+0/Mgi3yyqI/JufNKSZvG
+	 lL4zGTDIhb4ynx4NKyWBuKuAgpSRXJe4IEAIpI1pZb/vAkDR/oQj6i7zve+8Y3rFnS
+	 4luEf1q6U7M3A==
+Date: Tue, 23 Sep 2025 16:26:50 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Ilias Apalodimas
+ <ilias.apalodimas@linaro.org>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, Steven
+ Rostedt <rostedt@goodmis.org>, netdev@vger.kernel.org, Tariq Toukan
+ <tariqt@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH net-next] page_pool: add debug for release to cache from
+ wrong CPU
+Message-ID: <20250923162650.317f2527@kernel.org>
+In-Reply-To: <ztotepnqvbyzwtmqox5433lp6wix6jzj6tf3zkagwvfzf33trz@khcwhwwg7gxx>
+References: <20250918084823.372000-1-dtatulea@nvidia.com>
+	<20250919165746.5004bb8c@kernel.org>
+	<muuya2c2qrnmr3wzxslgkpeufet3rlnitw5dijcaq2gpy4tnwa@5p2xnefrp5rk>
+	<20250922161827.4c4aebd1@kernel.org>
+	<ncerbfkwxgdwvu57kmbdvtndc6ruxhwlbsugxzx7xnyjg5f6rv@x2rqjadywnuk>
+	<20250923083439.60c64f5e@kernel.org>
+	<ztotepnqvbyzwtmqox5433lp6wix6jzj6tf3zkagwvfzf33trz@khcwhwwg7gxx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,49 +71,19 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 23 Sep 2025 07:28:09 -0700, Jakub Kicinski wrote:
-> Excellent, could you check if there is any adverse effect of
-> repeatedly writing the RCR register under heavy Tx traffic (without
-> stopping/waking the Tx queue)? The driver seems to pause Tx when RCR
-> is written, seems like an odd thing to do without a reason, but
-> driver authors do the darndest things.
+On Tue, 23 Sep 2025 16:00:27 +0000 Dragos Tatulea wrote:
+> > But you get what I'm saying right? I'm questioning whether _rx_napi()
+> > flavor of calls even make sense these days. If they don't I'd think
+> > the drivers can't be wrong and the need for the debug check is
+> > diminished?  
+> I got the point for XDP. I am not sure if you are arguing the same thing
+> for the other users though. For example. there are many drivers
+> releasing netmems with direct=true.
 
-I don't know what's the point of this, because it doesn't prevent the
-async "set RCR" control request racing with an async TX URB submitted
-before the queue was stopped or after it was restarted.
-
-Such races could be prevented by net core not calling this while TX
-is outstanding and not issuing TX until the control request completes,
-but it doesn't look like any of that is the case?
-
-
-I sucessfully reproduced the double submit bug as follows:
-
-ifconfig eth1 10.9.9.9
-arp -s 10.9.8.7 87:87:87:87:87:87	# doesn't actually exist
-ping -f 10.9.8.7
-while :; do ifconfig eth1 allmulti; ifconfig eth1 -allmulti; done
-
-For some reason I had to use two instances of 'ping -f', not sure why.
-Then the double submission warning appears in a few seconds and also
-some refcount issues, probably on skbs (dev->tx_skb gets mixed up).
-
-With the patch, it all goes away and doesn't show up even after a few
-minutes. I also tried with two TCP streams to a real machine and only
-observed a 20KB/s decrease in throughput while the ifconfig allmulti
-loop is running, probably due to USB bandwidth. So it looks OK.
-
-
-But one annoying problem is that those control requests are posted
-asynchronously and under my test they seem to accumulate faster than
-they drain. I get brief or not so brief lockups when USB core cleans
-this up on sudden disconnection. And rtl8150_disconnect() should kill
-them, but it doesn't.
-
-Not sure how this is supposed to work in a well-behaved net driver? Is
-this callback expected to return without sleeping and have an immediate
-effect? I can't see this working with USB.
-
-Regards,
-Michal
+Right, I was thinking that XDP is the only complex case.
+The other direct=true cases generally happen on the Rx path
+when we are processing the frame. So chances that we get the 
+context wrong are much lower. XDP is using the recycling from
+Tx completions paths IIUC. So we need far more care in checking
+that the frame actually came from the local NAPI.
 
