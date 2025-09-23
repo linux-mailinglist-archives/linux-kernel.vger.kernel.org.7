@@ -1,179 +1,167 @@
-Return-Path: <linux-kernel+bounces-829768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13240B97C8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:07:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8F6B97C93
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 795FC4C29D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:07:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FAD619C51DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC2430FC18;
-	Tue, 23 Sep 2025 23:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C4730FC3E;
+	Tue, 23 Sep 2025 23:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XpigEz1u"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3xCdy4jj"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7060F30FF36
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632B825DB0A
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758668854; cv=none; b=psZB5AdQ/PB8YCkHKMNO8wl2zq7JyisoPimRnRJFJPiSQoeUPmq4Zjz97sjrWhhZthcnf5ecMymehaQGn9tSXRFGsMJvJgMLACxrwMY6sD+5ytr6ObanaR4GPrNkDbYxYa0gSh3NqA+fbhE1xdL1ZXl+11lIH0y8i7igNpfT7/E=
+	t=1758669266; cv=none; b=GHq3SK4SPm/hzaVbz0qfYjn51yKjlzcbsNWbmUPjxFWX0Y+XAEqZw4rQUDg29cA1EUL/xvnSFu2gg42KxEZtbpPn52gNIUomV5YxMgAhS4iWxjvZVZZX6sSlaFRqyfClY+QQtFY0qIR2dHvxQlwdsod3OZaVHJfRzRh/czKrSRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758668854; c=relaxed/simple;
-	bh=YnYd/gKeEekdgcs7OqQ/sMRYsiqPBgufePpEuqafhLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PTAYSV8JtTsILG07/YwQ6Ar+PxXOFufafuAA82jzxveilh4qDrZK2LjvukDwvNxewK82Q1JbhMe3Y5ORK1i1mKVozkMx1K3G5uvoJuES4bZ2gPfqpDpdwfqQVVJzdrVSjVe9uFYVtCPqua5c6obpMSNJSyVywn+yunTMQY5d1zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XpigEz1u; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b5241e51764so4846991a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:07:32 -0700 (PDT)
+	s=arc-20240116; t=1758669266; c=relaxed/simple;
+	bh=MpCZNf/GOy6NjD2pRT0oH9uqgGjRWpMlqYprIbTOK8Y=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=XbjTlHiiXJbOYvHPH9ukQF16QbfKIDddJpG1/ribHypdJ2Kq6kSLQ+YytRkneO+Q7xSt1E/qUCsN5FZmOD/xpDm5UE4iN5BwgHG344kcurzV5w+D1Vncq5ZqndQZ+/Fo26rteQ0yUn4csc25RMnxpnCrVWMawhV4Jgx1Xft7GgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3xCdy4jj; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32eb18b5529so5407342a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:14:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1758668852; x=1759273652; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nFOv8LRjpZLWIF9uYfzl4ykO48TjCgwNklWa0BlqT0g=;
-        b=XpigEz1uCSrov6c/1QrojDRCSgFjddeMlxAm1zT2fDyVz5yLJ38QjdUCX+2S83rBYN
-         bDZmuDv8DrRmhLMjqGD4CT3mjuu8aHaCqdxvRcUXYvgv7HzJl5SJIrBJt5ZI1Oh2gOJd
-         JetNBFmqHg5tk8eQKXh+XuUYksZD7icSMioxE=
+        d=google.com; s=20230601; t=1758669265; x=1759274065; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FTiou86pN61TAcjufn8tJnmM28G83FXY+P+7y8ivzfs=;
+        b=3xCdy4jjEQO8VNjQpRVsirO7yBb40rq8HGPYuL71iGKvKwCox4qHoUlRkWXb/Xnlwg
+         IhoQ5hskXcs5AOqK7Ef7JKT1Lh+yQfLEhm3UIh7w4HTQB+8asg5KZ+rqzlra4GMvvmCr
+         ts+C6WyaFcyGykjEqyEaoKPqH5YSo1dfA5QRC+4WLiz06BmgFlnSwUKH694JDE5k2vyN
+         /R+Ex7hY0PawyDwXmKUHPHihnfAQ7BSRGs3474ztzK2Gz9nrkoobfTiJ5BJA11ahTkUH
+         27KKSVpVAr5tGlWOKThQsEJWUBxc+I0Me9968+XDQ9ySUN2bPXHJXn8ItPO3uC33oLJh
+         BZxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758668852; x=1759273652;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nFOv8LRjpZLWIF9uYfzl4ykO48TjCgwNklWa0BlqT0g=;
-        b=Q2PpCZJRQ6nGeDPjGXL2gnCLlFra6oI/1uMtlZRuaJp9tdBufVyJB53r9HJJgifjJV
-         9DQXcVNTDVOx6fvXVzXJn7j56A+PVQUA9YjTGUSMgZGhkw2i4w+1j3XfURkdiTWMH8ur
-         FVPT3LNQTj9fHDaNSFy1q/TkAJwIC8BAdRosLtInwMkqPyMQBF4XHPcubTW+xTenJPzb
-         XcCCk0+rUqzcfGf+a8afM7ZJUi1clVu2KJ6u/gtxuCe1Hr98oSqWf8icA8RYLlB78yGg
-         s7XYquAiWghzT+ME9sq5H47QF8iKIZBgM1vLZbZalcq2+G9ab2QtOk0hUcoX+EY6oWV1
-         fz/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXVNUim3uzL6n3eNLbHwmKL9fK/WwZOcoFv5qhCROut8N719cXHb2YX23qVyExvZvNTwUaoYY7+LpZmi74=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEn3J+UMzbTXGzRTijCuYrIyDs2rQOjQ4DMhUMyElFMuoUWVru
-	Fd6VJyEghQ1mHj8ODKGxm0w3VxLtG3Couppoq9hZYTZBFmhl9beKbgBQ40njP+cVmQ==
-X-Gm-Gg: ASbGncvY5DjDkgiYnXjrto197RTizNHauM0hKkbygnFTota2Gree2HCysWoZD2QGNrf
-	YPb/UqAgHFSf5tQsWtzWo1NFybDOamCGS2VIvPJ7xE+3KdqNn3jyBWIVB0VMpt05A46xwYg6joF
-	W88wItuYcaekTeeM97RMhLfx48a4D2q4gYeiXhO5+OUs8sSF+psy+8DCFkjCaSm5CJo8kkWMbXp
-	bCMLGXd8ZkcPAXVOAA4e8nLqdTSastWy1aHaGLRALbiiaUzZ7SSzNvSxVGYyCdDeh1i3QGD1i3v
-	amSEO7WKS0iMImuI1kSY56u2ex8wRQMGzxMr3VLN0bdPv/GA3KBzCsiBL/d7rxrVivJIMXwr3Dv
-	ln+Rlw438IWdzVZ9XhKguiJ3sQDruXj+pegP1M7QfjXDMslVG477dr+FcfVGS
-X-Google-Smtp-Source: AGHT+IFVPYMKnS8TWlnAQXccka7DEPTB/RihRAWX3su86ixXqz/GV9aDNk1vsFjQk0na0d8kYCF0SQ==
-X-Received: by 2002:a17:903:37c7:b0:269:7427:fe37 with SMTP id d9443c01a7336-27cc678593amr52570955ad.29.1758668851792;
-        Tue, 23 Sep 2025 16:07:31 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e7c:8:26d9:5758:328a:50f8])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3341bdc1cfesm262574a91.23.2025.09.23.16.07.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Sep 2025 16:07:31 -0700 (PDT)
-Date: Tue, 23 Sep 2025 16:07:29 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, stable@vger.kernel.org,
-	Ethan Zhao <etzhao1900@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Subject: Re: [PATCH] PCI/sysfs: Ensure devices are powered for config reads
-Message-ID: <aNMoMY17CTR2_jQz@google.com>
-References: <20250820102607.1.Ibb5b6ca1e2c059e04ec53140cd98a44f2684c668@changeid>
- <20250923190231.GA2052830@bhelgaas>
+        d=1e100.net; s=20230601; t=1758669265; x=1759274065;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FTiou86pN61TAcjufn8tJnmM28G83FXY+P+7y8ivzfs=;
+        b=Ip9TAvxiPnrme5a9bwHqZsBBL3mao8z1WaycDJpXAzq6RjD/s15y9gcX7pGSZbc1sz
+         prZyontZpeq96L0M6G0bfN3C5iD3IXiFYa360GOf32exDrg1xP7sFju+zPaYzwPhdPG9
+         tPz5oh0IBBPK9razg21P24D7hTiPzhQcncEMp2gi7c62dmP8Fz725wMDAoZdSUqIMqUi
+         GtSxiLCuIOSZrzLTq35oFpyPy44+pnslOXCFsryo2Sz7fIPQZu+W3W74JGlyqfWKeZaZ
+         FJJXnqObt5w4+tPgxVTY+BlxEORBXGlodimiva1ObnLS9xFGu2DCaIgwil18yKDrpRO4
+         ohNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzn3d7DgJNjwiAfgrwk11RK7lovTIVyrDcH4mPlrE4xmp8GfM7+/Eu+N8nuDwzldYC+WGWTFDhEQK79jg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM0D+O6BK3etevja5DiGZ2kBDAXPdx3oCrtHXXhJgO3aN4egn8
+	18P1dh2wdjx3VCiktJSPR0thHJ96PEZdQ+1Py5V7wBjyD/6JQCObS2bkbsezBocXgwjoAqgC4v9
+	uyHeTpQ==
+X-Google-Smtp-Source: AGHT+IFU+CrjvrJHu/esfPz+HcGN3HFugrI+IxFF24KE5muZangbuUY6NmTSpKqTbb1DNw37VcIcYKwJVjE=
+X-Received: from pjbmw15.prod.google.com ([2002:a17:90b:4d0f:b0:32e:ddac:6ea5])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1f8d:b0:32e:1b1c:f8b8
+ with SMTP id 98e67ed59e1d1-332a95b42c2mr4833792a91.26.1758669264699; Tue, 23
+ Sep 2025 16:14:24 -0700 (PDT)
+Date: Tue, 23 Sep 2025 16:14:23 -0700
+In-Reply-To: <23f11dc1-4fd1-4286-a69a-3892a869ed33@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923190231.GA2052830@bhelgaas>
+Mime-Version: 1.0
+References: <20250813192313.132431-1-mlevitsk@redhat.com> <20250813192313.132431-3-mlevitsk@redhat.com>
+ <7c7a5a75-a786-4a05-a836-4368582ca4c2@redhat.com> <aNLtMC-k95pIYfeq@google.com>
+ <23f11dc1-4fd1-4286-a69a-3892a869ed33@redhat.com>
+Message-ID: <aNMpz96c9JOtPh-w@google.com>
+Subject: Re: [PATCH 2/3] KVM: x86: Fix a semi theoretical bug in kvm_arch_async_page_present_queued
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org, 
+	Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Bjorn,
-
-On Tue, Sep 23, 2025 at 02:02:31PM -0500, Bjorn Helgaas wrote:
-> [+cc Ethan, Andrey]
-> 
-> On Wed, Aug 20, 2025 at 10:26:08AM -0700, Brian Norris wrote:
-> > From: Brian Norris <briannorris@google.com>
+On Tue, Sep 23, 2025, Paolo Bonzini wrote:
+> On 9/23/25 20:55, Sean Christopherson wrote:
+> > On Tue, Sep 23, 2025, Paolo Bonzini wrote:
+> > > On 8/13/25 21:23, Maxim Levitsky wrote:
+> > > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > > > index 9018d56b4b0a..3d45a4cd08a4 100644
+> > > > --- a/arch/x86/kvm/x86.c
+> > > > +++ b/arch/x86/kvm/x86.c
+> > > > @@ -13459,9 +13459,14 @@ void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
+> > > >    void kvm_arch_async_page_present_queued(struct kvm_vcpu *vcpu)
+> > > >    {
+> > > > -	kvm_make_request(KVM_REQ_APF_READY, vcpu);
+> > > > -	if (!vcpu->arch.apf.pageready_pending)
+> > > > +	/* Pairs with smp_store_release in vcpu_enter_guest. */
+> > > > +	bool in_guest_mode = (smp_load_acquire(&vcpu->mode) == IN_GUEST_MODE);
+> > > > +	bool page_ready_pending = READ_ONCE(vcpu->arch.apf.pageready_pending);
+> > > > +
+> > > > +	if (!in_guest_mode || !page_ready_pending) {
+> > > > +		kvm_make_request(KVM_REQ_APF_READY, vcpu);
+> > > >    		kvm_vcpu_kick(vcpu);
+> > > > +	}
+> > > 
+> > > Unlike Sean, I think the race exists in abstract and is not benign
 > > 
-> > max_link_speed, max_link_width, current_link_speed, current_link_width,
-> > secondary_bus_number, and subordinate_bus_number all access config
-> > registers, but they don't check the runtime PM state. If the device is
-> > in D3cold, we may see -EINVAL or even bogus values.
-> > 
-> > Wrap these access in pci_config_pm_runtime_{get,put}() like most of the
-> > rest of the similar sysfs attributes.
+> > How is it not benign?  I never said the race doesn't exist, I said that consuming
+> > a stale vcpu->arch.apf.pageready_pending in kvm_arch_async_page_present_queued()
+> > is benign.
 > 
-> Protecting the config reads seems right to me.
+> In principle there is a possibility that a KVM_REQ_APF_READY is missed.
+
+I think you mean a kick (wakeup or IPI), is missed, not that the APF_READY itself
+is missed.  I.e. KVM_REQ_APF_READY will never be lost, KVM just might enter the
+guest or schedule out the vCPU with the flag set.
+
+All in all, I think we're in violent agreement.  I agree that kvm_vcpu_kick()
+could be missed (theoretically), but I'm saying that missing the kick would be
+benign due to a myriad of other barriers and checks, i.e. that the vCPU is
+guaranteed to see KVM_REQ_APF_READY anyways.
+
+E.g. my suggestion earlier regarding OUTSIDE_GUEST_MODE was to rely on the
+smp_mb__after_srcu_read_{,un}lock() barriers in vcpu_enter_guest() to ensure
+KVM_REQ_APF_READY would be observed before trying VM-Enter, and that if KVM might
+be in the process of emulating HLT (blocking), that either KVM_REQ_APF_READY is
+visible to the vCPU or that kvm_arch_async_page_present() wakes the vCPU.  Oh,
+hilarious, async_pf_execute() also does an unconditional __kvm_vcpu_wake_up().
+
+Huh.  But isn't that a real bug?  KVM doesn't consider KVM_REQ_APF_READY to be a
+wake event, so isn't this an actual race?
+
+  vCPU                                  async #PF
+  kvm_check_async_pf_completion()
+  pageready_pending = false
+  VM-Enter
+  HLT
+  VM-Exit
+                                        kvm_make_request(KVM_REQ_APF_READY, vcpu)
+                                        kvm_vcpu_kick(vcpu)  // nop as the vCPU isn't blocking, yet
+                                        __kvm_vcpu_wake_up() // nop for the same reason
+  vcpu_block()
+  <hang>
+
+On x86, the "page ready" IRQ is only injected from vCPU context, so AFAICT nothing
+is guarnateed wake the vCPU in the above sequence.
+
+
+
+> broken:
 > 
-> If the device is in D3cold, a config read will result in a Completion
-> Timeout.  On most x86 platforms that's "fine" and merely results in ~0
-> data.  But that's merely convention, not a PCIe spec requirement.
+> 	kvm_make_request(KVM_REQ_APF_READY, vcpu);
+> 	if (!vcpu->arch.apf.pageready_pending)
+>    		kvm_vcpu_kick(vcpu);
 > 
-> I think it's a potential issue with PCIe controllers used on arm64 and
-> might result in an SError or synchronous abort from which we don't
-> recover well.  I'd love to hear actual experience about how reading
-> "current_link_speed" works on a device in D3cold in an arm64 system.
+> It won't happen because set_bit() is written with asm("memory"), because x86
+> set_bit() does prevent reordering at the processor level, etc.
+> 
+> In other words the race is only avoided by the fact that compiler
+> reorderings are prevented even in cases that memory-barriers.txt does not
+> promise.
 
-I'm working on a few such arm64 systems :) (pcie-qcom Chromebooks, and
-non-upstream DWC-based Pixel phones; I have a little more knowledge of
-the latter.) The answers may vary by SoC, and especially by PCIe
-implementation. ARM SoCs are notoriously ... diverse.
 
-To my knowledge, it can be several of the above on arm64 + DWC.
-
-* pci_generic_config_read() -> pci_ops::map_bus() may return NULL, in
-  which case we get PCIBIOS_DEVICE_NOT_FOUND / -EINVAL. And specifically
-  on arm64 with DWC PCIe, dw_pcie_other_conf_map_bus() may see the link
-  down on a suspended bridge and return NULL.
-
-* The map_bus() check is admittedly racy, so we might still *actually*
-  hit the hardware, at which point this gets even more
-  implementation-defined:
-
-  (a) if the PCIe HW is not powered (for example, if we put the link to
-      L3 and fully powered off the controller to save power), we might
-      not even get a completion timeout, and it depends on how the
-      SoC is wired up. But I believe this tends to be SError, and a
-      crash.
-
-  (b) if the PCIe HW is powered but something else is down (e.g., link
-      in L2, device in D3cold, etc.), we'll get a Completion Timeout,
-      and a ~0 response. I also was under the impression a ~0 response
-      is not spec-mandated, but I believe it's noted in the Synopsys
-      documentation.
-
-NB: I'm not sure there is really great upstream support for arm64 +
-D3cold yet. If they're not using ACPI (as few arm64 systems do), they
-probably don't have the appropriate platform_pci_* hooks to really
-manage it properly. There have been some prior attempts at adding
-non-x86/ACPI hooks for this, although for different reasons:
-
-    https://lore.kernel.org/linux-pci/a38e76d6f3a90d7c968c32cee97604f3c41cbccf.camel@mediatek.com/
-    [PATCH] PCI:PM: Support platforms that do not implement ACPI
-
-That submission stalled because it didn't really have the whole picture
-(in that case, the wwan/modem driver in question).
-
-> As Ethan and Andrey pointed out, we could skip max_link_speed_show()
-> because pcie_get_speed_cap() already uses a cached value and doesn't
-> do a config access.
-
-Ack, I'll drop that part of the change.
-
-> max_link_width_show() is similar and also comes from PCI_EXP_LNKCAP
-> but is not currently cached, so I think we do need that one.  Worth a
-> comment to explain the non-obvious difference.
-
-Sure, I'll add a comment for max_link_width.
-
-> PCI_EXP_LNKCAP is ostensibly read-only and could conceivably be
-> cached, but the ASPM exit latencies can change based on the Common
-> Clock Configuration.
-
-I'll plan not to add additional caching, unless excess wakeups becomes a
-problem.
-
-Brian
 
