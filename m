@@ -1,114 +1,146 @@
-Return-Path: <linux-kernel+bounces-829540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E130B974E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:11:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E3AB974E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D1F216587C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:11:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 659D31AE0182
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187C7302CBF;
-	Tue, 23 Sep 2025 19:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA23302CDF;
+	Tue, 23 Sep 2025 19:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZhJwk5YN"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0fSWwDHz"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339A1279DCD
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B73027EFEF
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758654693; cv=none; b=kcgM4sXjdpSHfcJ5VshPMImjuN2BW+qAbKU3JF0tTuzXSQ9oY0a2R2E5gaEWfVTG1wOLa1vxA+4cvY+fY8hq8d646cEKyeE5yQ6H9VZNKsZJltrhdjBBfi/4xEVPhSm81hzNGIL1rX46t57zyH4oUqR9RRojeQqDRHNfwFQP7tw=
+	t=1758654700; cv=none; b=fn4/PEesfJDLJX0qDfvuQ/rk7gOR+gKHAAv+in6dVj3XJEr0Olv3IB2CUsG0Y9S9V6m9ffKIbIesGqZN7G46wTOJzaLN6loerLmMpdCSqrLULtoqsomwkgPIoqaKjSyCVnezl4Qqn4lOT59GzijkaD9EiqqH37ziOog9xkA1Pco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758654693; c=relaxed/simple;
-	bh=A3afEZdKgo5Z/7ZqEzvlNOe7esxm3ReOhyYgrzD0u4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V5GUaCmRR/3kRDMD8fLx5tb7TNgiyKkqA/kNDmfZ9CcjzyrnKMK5tviyjgHWKF9gte+MWsV4QJVeoM2eTD4fgvnpra66S4C4kL75exq3qrYswwuUcRa2vu9rEWSIYpyKBvQyebzz3OaFSAS4MUf4q/XzTLNIbkVDuSAhL5lKCa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZhJwk5YN; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=il7m
-	KIbhlLFMxwpLXF7xOPnLrfLY+tEzDRhciDghTCE=; b=ZhJwk5YND1dbL06X8MPs
-	hH3nvXXUbt7S+acll8W9ysH11+1S9wCRgQq/kF6l9nmma+iAzYksbry22NIGZbTu
-	+FyxUJuCNC0/8bDWLaPTmc6fYIoRn2M6hXUm7oVM9BruQk8S4pJ1LwBKuMiZKpT/
-	fKmxynKZ2OJO+o7BQjnYo1kFQ6234Oy5tNmDg30f/htbVuZ+gzFCYupWmnF1EGoJ
-	Y/fYZh1esjCxVaTTF3NE8U+ksgxNGgfV8RawhadUOITTs+wTEq1zoz0jp1zsXyJS
-	/XdV2R3XgWjFHRf2Z+CsuGP6WHbPmUig+b7Ps38j3uwRJzSXqETKF0GI/YDhAIx1
-	oA==
-Received: (qmail 1216493 invoked from network); 23 Sep 2025 21:11:23 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Sep 2025 21:11:23 +0200
-X-UD-Smtp-Session: l3s3148p1@qlyrs3w/DIYujnsp
-Date: Tue, 23 Sep 2025 21:11:22 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Remove myself as Synopsys DesignWare I2C
- maintainer
-Message-ID: <aNLw2qMlHYJXQhk0@shikoro>
-References: <20250923132603.50202-1-jarkko.nikula@linux.intel.com>
+	s=arc-20240116; t=1758654700; c=relaxed/simple;
+	bh=v2u3DDN1vJUVWkyENZTFaLudE3ZJMgsmiptpJTv/vfs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fIhHt22ZkhWs+GLFjlTUQdm6GnDd2XyDKwFy0le8E1Yx9x1C4xlGJ0db4fg7sqAmc9dF0hGCk2Ph4mSE+wE5s3X8Vdp77eqAiWQUGWc3LEsdFvhf/5fm/5hvTERrI7TMOLcIFIOY5DKJAzpJ3JK36P6rg2tqd4SxK1I2FiDIfhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0fSWwDHz; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2699ed6d473so40455ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:11:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758654698; x=1759259498; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F0aRp23onmuK1YI16vYV3557ffQNsqGxBUdhV7enEBI=;
+        b=0fSWwDHz0oIyjDBSo4CDVQuFl9xJlDzuTlUvj/68pPHCpLQwxgoQ8EXIvSIEftQi6I
+         wOogkB5BhbnuQV7sWlLgXmHJs3jDQ56uatQcsVK1Vh8tsSXVVQmBGoIHylLK929zNfAT
+         xx/Q6dtJHbphNKUWzZ4cSWHK8P1/l4I01Us6qK6i3/35R0KDH6hbzgnit0TGtIrkQYS5
+         Lue/8TH/JqY+KIE7DHHoeEK1fPunMJmaoR+4pUVqC6dPtmQ4X3Ig6DBTQ376t2E51azc
+         KiaVJe6jnsrAhdkI4zqvFsg60LRQ9XjczEPyL8/YgEgYcMyq7J+Y1ozH0C71GK7e+HCS
+         rtpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758654698; x=1759259498;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F0aRp23onmuK1YI16vYV3557ffQNsqGxBUdhV7enEBI=;
+        b=fz+GcL20mYmldOxNTokvWLuy2d0VWIfvRne1yu3hL4BaK67FcPr4uwEnZiIWFbOjTN
+         MrHzqZpV2tq9BsBSEBi6bsYZY9+/M92MI9QDm5ytcl0GQ3rHmTduywYzAB/QZSIUgBZy
+         KFoMYyyWRH30XxVhwQOjwCY2OUv5rH9c39wRwyuewhdBOz8tg2fKyu9mTqFgNDmd8dwG
+         wIMDD4J9XdqrUln2RC/50Y+LtJVKt1CD3ezDlkrJAlGdrKVA5YpSnEIohBahfwYcNosA
+         WZ9Gct0ydeL7/d1UXIK3pGwEv1+B/nLG4mQaqzbcUWzoVBFRHreptmiOAA8CmPZf8O5r
+         XfZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXjgQMF1HU/Ww/dZyEC2Si7cWjEVI4fl7NiJI4gYiyIl/5qZblVNDRJqp0u77++e2HMNbMTVJ/n01NFjQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFE3mt3M6DhGhDqBLFPKdGvbsQ2vKrDAQIu6Nxr69A0IWcUQcD
+	7YStoui7+deV4mc3lmIhMijc27kvYwngsotUV4NbBh61jMmMugaz/yEqoow//wbQgRXks1/eQdj
+	V4Bp0AwpXL9CMsaNWy52QjWld2tT6C8VCn9Q/FWwe
+X-Gm-Gg: ASbGnctTpjUoa4+zR3vJX0poTa/1Q19Ocszwd0F4annuU9fK9ep7DaWxP8lKGeO4aGg
+	OYpvlWzO5eymt6+XHAQcr1NsfabqePLH50niw8oQFmWDPne48ilcdIEyCS60QNeeIhfla5Xg1K0
+	aeUodk0YjJyq/WPjiJ/LOwQBYL8cTUf+tXwqWi/PA8arQlr0JWKVD62sEF5TTup9g2e00SnkOlG
+	PExB/OYJDr7hyaTOCTsoSFv4Mtrkz4y7I4U0MUkir/w
+X-Google-Smtp-Source: AGHT+IEpvMZS9o5jaVovIxZDwZ9QySAPJBblw7ubBZWZX7nsSiZOYR0nqp7c69ovmbFdYEiy+CLg6p+NRQ35tylvJe4=
+X-Received: by 2002:a17:903:1a2b:b0:26a:8171:daf8 with SMTP id
+ d9443c01a7336-27ebe65b3b6mr791355ad.8.1758654698276; Tue, 23 Sep 2025
+ 12:11:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9GH0E5554jnKP7h7"
-Content-Disposition: inline
-In-Reply-To: <20250923132603.50202-1-jarkko.nikula@linux.intel.com>
+References: <20250923174236.12372-1-suchitkarunakaran@gmail.com>
+In-Reply-To: <20250923174236.12372-1-suchitkarunakaran@gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 23 Sep 2025 12:11:27 -0700
+X-Gm-Features: AS18NWD5fQaeN06M8Yt6DM0g4l5r_sCqXJfp2FqaVb5LfSYPs2ldnjrBFJ--oqY
+Message-ID: <CAP-5=fXVFBewYhSmjVCGTbzEN82apECRLRnSeit8rqydCBJ1bg@mail.gmail.com>
+Subject: Re: [PATCH] perf/annotate: Use architecture-agnostic register limit
+To: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Sep 23, 2025 at 10:43=E2=80=AFAM Suchit Karunakaran
+<suchitkarunakaran@gmail.com> wrote:
+>
+> Remove the arch-specific guard around TYPE_STATE_MAX_REGS and define it
+> as 32 for all architectures. The architecture that perf is built on may
+> not match the architecture that produced the perf.data file, so relying
+> on __powerpc__ or similar is fragile. Using 32 as a fixed upper bound is
+> safe since it is greater than the previous maximum of 16.
+> Add a comment to clarify that TYPE_STATE_MAX_REGS is an arch-independent
+> maximum rather than a build-time choice.
+>
+> Suggested-by: Ian Rogers <irogers@google.com>
+> Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
 
---9GH0E5554jnKP7h7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-On Tue, Sep 23, 2025 at 04:26:03PM +0300, Jarkko Nikula wrote:
-> My address is going to bounce soon and I won't have access to the
-> Synopsys datasheets so I'm going step down being a maintainer for this
-> driver.
+Thanks,
+Ian
 
-Oh, noes! Hope to see you still around hacking the kernel. Thank you for
-all the work on this driver and I2C in general!
-
->  SYNOPSYS DESIGNWARE I2C DRIVER
-> -M:	Jarkko Nikula <jarkko.nikula@linux.intel.com>
->  R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->  R:	Mika Westerberg <mika.westerberg@linux.intel.com>
->  R:	Jan Dabros <jsd@semihalf.com>
-
-Maybe one of the reviewers wants to step up?
-
-Applied to for-current, thanks!
-
-
---9GH0E5554jnKP7h7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjS8NoACgkQFA3kzBSg
-KbaKeBAAoettWrl+Gsafmb2pihOEFpMpILB3Iu4T5Q7+qonUzay9rLSJNfY/KrqV
-JwA1l4xhBf58KJSdk0I45ePdfaLj55z+sovhdfpCgdq8wD0gyZPXTD4eQNy7RYHz
-jijgjK6DfA/SaAutzHjH8kpwiZUiqsNYhOrgIQgRbWbsnWIlB5wLeZDIEErZApAa
-3XOtATrbjqFRv/rWSRFk/wtEwDIY4yADRMmYry+ZgomiYRyAuuk6MOFNVQxpMs8I
-Q/A34r0BEwhj97z2hbQjtyFYJ02xrmITszMWQ3Bk+I9FS3r88FkQ6XQ/9vgHlVQK
-oiwKUmUyF5pEidiKlX+JbddLiWkB3NM5VEfbHK0Ssz8KdL2ul2iS/d9MWzpm2oHR
-eJd/o+v6iufvvYERWnouJG0ZLoT6vdM5IOa5Sc9D8ny/o39/A7c+UqyahzRRzhix
-I4YK1DkFA/K66i4PajLL7CxVJOhkW5asmvgd9zFbIVM9wupLP+berz360zFP/mSx
-fkOe/foEz4CDNhN8lFp6Ol2QZHT4RF7gUyRT+KRqhs976PQipiLeMT9yJGktwGtS
-V/3PdEsKlZrWkVRKzXKhigtZRTD+KMSSMPqK1tKd6IPGaWVAL6vf2UY0k1a3vjXu
-W4p96GiSNb4ZmXBiFy5g1JtE1D6SoTV0DxIA2yDv3hGUBM7M0cc=
-=ytPn
------END PGP SIGNATURE-----
-
---9GH0E5554jnKP7h7--
+> ---
+>  tools/perf/util/annotate-data.h | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+>
+> diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-d=
+ata.h
+> index 541fee1a5f0a..1f76885facb0 100644
+> --- a/tools/perf/util/annotate-data.h
+> +++ b/tools/perf/util/annotate-data.h
+> @@ -189,12 +189,15 @@ struct type_state_stack {
+>         u8 kind;
+>  };
+>
+> -/* FIXME: This should be arch-dependent */
+> -#ifdef __powerpc__
+> +/*
+> + * Maximum number of registers tracked in type_state.
+> + *
+> + * This limit must cover all supported architectures, since perf
+> + * may analyze perf.data files generated on systems with a different
+> + * register set. Use 32 as a safe upper bound instead of relying on
+> + * build-arch specific values.
+> + */
+>  #define TYPE_STATE_MAX_REGS  32
+> -#else
+> -#define TYPE_STATE_MAX_REGS  16
+> -#endif
+>
+>  /*
+>   * State table to maintain type info in each register and stack location=
+.
+> --
+> 2.51.0
+>
 
