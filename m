@@ -1,63 +1,76 @@
-Return-Path: <linux-kernel+bounces-828751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031A8B955BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:00:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A028DB955C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B889F170C4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:00:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EBD13ADFB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D96281376;
-	Tue, 23 Sep 2025 10:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EA82877E2;
+	Tue, 23 Sep 2025 10:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjNHRCyo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cwlNGojy"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E5018027;
-	Tue, 23 Sep 2025 10:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A431B13B797;
+	Tue, 23 Sep 2025 10:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758621623; cv=none; b=tM9lD9Fowejt6NVtU4oLSrC8K5V7lRQ+m2gASPM0shERYTjtYYWVX3Wk4Ty1J9dBePPDlydznNfBE7Slu8WKRasPMop7g41+eCMgeUMmfNzU+SFPOcKM16ZVdvn75BNIVkXLKT1pT8M37IgF1Pnqeu2s5OhNFkshmbI3j39rSKo=
+	t=1758621710; cv=none; b=BuhvGye+aSaosVYTK/in0e5FSv8ToBwuEo/y1epvP6XtN0w0HOfkqqymoQih9fUCBgYfxHJUOc6IdT+h+9HPskt2meeE3uKRiOSsHdg6dPSTKke2kQqbGp7/qGStpl0e14IgiB6LvBRYWCdMYFPeD75strelpFh5V6HeTSYIHOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758621623; c=relaxed/simple;
-	bh=ZmLDLSUhIgyW2E8XpVDH7PtXAL41rLjhjSwjbacf3Jw=;
+	s=arc-20240116; t=1758621710; c=relaxed/simple;
+	bh=H66pboQoJo8IfGy7SEDJFTFcAXDk7qmARTyg7LlRVCg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d4lnoi9Mqx8CfrJMaP12RDr9e8N3JE4kXe2qQ31PT0eq7ICwppQTC03wCz4UuXUXqyStIqi44reH+iAuxGZT8Vw3orvrSHBtBFoEFMoxpsPYWcCZcrzb6CGXu10jASLbJLuA9R5X+eoY9Nu6eKjKNWVTWLc9OY/f8+mmbcOtnec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjNHRCyo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E520C4CEF5;
-	Tue, 23 Sep 2025 10:00:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758621622;
-	bh=ZmLDLSUhIgyW2E8XpVDH7PtXAL41rLjhjSwjbacf3Jw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YjNHRCyoSIySI2JhgkojZyWPyLtiZig84JvxQ9PEE0iM67VwKEdkxgjrz7Sl+LLTA
-	 oNbfPYeLB/6BqR03oGyAlFOH5iTo3mngIYeR6I3Wcl1O3m8ZX5Jt99G0GOXCaA/lZa
-	 IA+9u5g6CggSnHPVLE77lZXdPpsEf8RKY8tkiF537g1CcQNhN//sk5kmD643Rb5ouQ
-	 pFL1yRhqCWOOeYRpt+174zdvVW+SenPm+0C5FrxfnJGC6JS0UmUlf6tH8V2tVXZvDe
-	 gHgZ9GjdWr8a8pePNZSPrAuKti1KPLl84otJjeXKoRT/6XMjwrKunapbB0cx5X70+V
-	 7VzrsPInmPLng==
-Date: Tue, 23 Sep 2025 11:00:16 +0100
-From: Will Deacon <will@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	James Clark <james.clark@linaro.org>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>
-Subject: Re: [PATCH v3 00/26] genirq: Add support for percpu_devid IRQ
- affinity
-Message-ID: <aNJvsJOZHD87WTx4@willie-the-truck>
-References: <20250922082833.2038905-1-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRfJgmRCBldGsakVxZdXVN965zt5AySm+gInG92z9uN8tDP94y/rohzOaxs0Z0AHDpOkVJUuaX6S9Y3BnrHdTt5MoBEyRI0/ACP/kz9vKif6anr/cD8I3rv1VjJuUsXSDtLINXRN6k1wv463V+p1xUYq8NPG6ZJtIgYjAd7QnK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cwlNGojy; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZJB/cAN/NZ934Eo6FWgaO0JE3BoJmkJPozs04WZwYr8=; b=cwlNGojyeXZkx1IDwcDvXrJ1w0
+	Ho0qAHQV8sMu2BD2cf4CHBuh83EGUUHL0rgtwpme1MxXaYg9y5xwEHe1MjE3HHTdgjsnmaH10lnsY
+	CBwRv1ksl3B3VuJyiPmwqB121G9AVfp5H9Q2MFDRwJV9A1+xKGb9Lk10NpJ86X14KkZ0riYgfK0L5
+	YcXj7QJs5S7mUhIVfkmlBk6ghEaTNs/HpPOIzOAFIkZM4+RzOlmZG4Pyw4afjuqm5Qi+ZqCR8Euz+
+	lVtmbn5F//doA+RkSYiQnZ9fSa6J+aengGUpvfH4aENuCuv/UJVff83Zygzwpgcc8/dMT5Nh8q/5C
+	P1zZaBeA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v0zq6-00000009YwE-1iUF;
+	Tue, 23 Sep 2025 10:01:39 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6334830049C; Tue, 23 Sep 2025 12:01:37 +0200 (CEST)
+Date: Tue, 23 Sep 2025 12:01:37 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, x86@kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: Re: [RESEND][PATCH v15 2/4] perf: Support deferred user callchains
+Message-ID: <20250923100137.GC3419281@noisy.programming.kicks-ass.net>
+References: <20250908171412.268168931@kernel.org>
+ <20250908171524.605637238@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,22 +79,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250922082833.2038905-1-maz@kernel.org>
+In-Reply-To: <20250908171524.605637238@kernel.org>
 
-Hi Marc,
+On Mon, Sep 08, 2025 at 01:14:14PM -0400, Steven Rostedt wrote:
+> +	/*
+> +	 * All accesses related to the event are within the same RCU section in
+> +	 * perf_event_callchain_deferred(). The RCU grace period before the
+> +	 * event is freed will make sure all those accesses are complete by then.
+> +	 */
+> +	rcuwait_wait_event(&event->pending_unwind_wait, !event->pending_unwind_callback, TASK_UNINTERRUPTIBLE);
 
-On Mon, Sep 22, 2025 at 09:28:07AM +0100, Marc Zyngier wrote:
-> This is the third version of this series, originally posted at [1],
-> which aims at allowing percpu_devid interrupt requests on the basis of
-> an affinity mask. See the original submission for the details of why
-> this is a desirable outcome.
+You need a narrower terminal, this is again excessive. I mostly code
+with my screen split in 4 columns (3 if I can't find my glasses), and
+that gets me around 90 character columns.
 
-FWIW, I backported this to 6.12 and tested it on a DT-based Android
-device with heterogeneous PMUs and pNMI enabled. Perf appears to work
-correctly, the pNMIs are configured as expected and the affinities
-all look good to me.
+> +	if (event->attr.defer_callchain)
+> +		init_task_work(&event->pending_unwind_work,
+> +			       perf_event_callchain_deferred);
 
-Tested-by: Will Deacon <will@kernel.org>
-
-Will
+And let me hand you a bucket of {}, I've heard they're getting expensive
+over in the US due to this tariff nonsense :-)
 
