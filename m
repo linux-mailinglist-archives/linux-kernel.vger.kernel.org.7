@@ -1,130 +1,133 @@
-Return-Path: <linux-kernel+bounces-829000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE67B96049
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:32:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346ADB9604F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6A6319C3905
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:32:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E56913BBCF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DF0327A13;
-	Tue, 23 Sep 2025 13:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF3C327A00;
+	Tue, 23 Sep 2025 13:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="aZViUv6j"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8U8uuKg"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8433233FE;
-	Tue, 23 Sep 2025 13:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758634324; cv=pass; b=N2YEh31gWtAiR2TLlQz0GhAs9FVaPeTSKe5yFPPARWPm0rXSPpWnz2Jac6sge/Jo5aHxgprrAHat8PKiT/9VA9ctatqgHgrbZ5y7NovWUXjttzlGmJ92GzKz/kIUbr69AUZR1HFWWPPsiYPmgb5pQZod9TIkJ+y4sbWvN/33juc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758634324; c=relaxed/simple;
-	bh=ayc7LDgpinbNwmiQ1ReylZwhBcwpCvzguEK9YRh99Dc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=CPP4wMewlyrI0SXXcW0l6xFBZZeJMWb+NciClGj32HkHranncsd/ytA9NnHVG1pTIvheWVEX8E69j1FIc/uFQpfuR0TnEWgidCvtxJtnYUMGZ6f24WWcoUdNhykBhnMkRdogHKC/gryW3BYUlwMhLt1EODTMgRYt+iMiNRdR6G0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=aZViUv6j; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758634306; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=DSY/UafVK7otGqfwkFudCbOCR63Ti9t0DC8WxF7EJGUZYbjti4g2WnZxo9hQv3gy1ClB5OVJb6LTZdBy2dkVyUqSbdwnVI0wrEr/JMnzGRv08PfEhaButfMYClcyf9PgD44dnTVrsZiBQjPGnTMkA9/j9/YY+babB8LeCEzuj74=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758634306; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=XhSfK3m6uQmEJ1qNWt9tVO6bvuYGSVJ4syxk3NSs+eY=; 
-	b=Ec+CWSRHFigvzY5OeS3DGP3DpWIvJvsJyrobSJ63vE1CINBKnWT+9KUc/HccZMQm1XeZi/8MpKt0YF+Zao0MEI3XybaoohG7ucI76eFBq/pDeC+sTMdx4f+OlPXGzKuGvoddTyFFRFNwWTF8d7HOHoXNn+SA4oUBAJp0/Ir+deQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758634306;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=XhSfK3m6uQmEJ1qNWt9tVO6bvuYGSVJ4syxk3NSs+eY=;
-	b=aZViUv6j+PiGcUS77Er8fDMbyyUb0bxTimap10ko28o8lTx08LT6JAGQSay3BXjc
-	+tbeB9moeT3vBxYDM+hitQgtuzgPtjGy5e31DzKyD70bNhbpDsGoCYSFKJj8/DTsHfL
-	y8M5Picco+nk381Es/BceHBLS8/E0e/i4uJbjfTA=
-Received: by mx.zohomail.com with SMTPS id 1758634303654976.8874865886604;
-	Tue, 23 Sep 2025 06:31:43 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FB710F1
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758634371; cv=none; b=VlaOqecAwEjeVRIQWxFw6bOesDCL9MqgtbZF3t2C0tHoaMpDdb9KdGXVNNqTAgLEfM4vS//kZyDA328P77LIcsb0E0bw6vZYtYxrboJa59KhmChitKrMFsIJPQEpgtogxph3D3wMdwp8beaCidJngurcARYNLJESbaEYN3B0nW0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758634371; c=relaxed/simple;
+	bh=wBKw9LwQW+XEjdEFwXUsCZBkjOUUTDtWyA5fwq82xbk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eXbxAG+OPqLdtluaLja5EkvitX2c1XtxoELcqJH0WST5/fRK2mmKzweTAxcn4Jv6oz6NorIulvXDQKpy2+Vg9nHAwN8Pn0jI0TDz/roGQpBg0yAhRo7jWu9jP6RfV5ww5USdthRXBIN7glLmF765WD+3bSM02m4FkZemW+MjcDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f8U8uuKg; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77f32d99a97so2062102b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:32:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758634369; x=1759239169; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YdNQB1ZGXvQWh3XKMx+CaBgdTFkZKFEai7KtP6jM1KU=;
+        b=f8U8uuKgzwGUIKrTqyKHHXKSlpiLPb0YwmZHKIAGA6i7sA+xtzIp49p/wYiIsFgccJ
+         I+YQ89rcWxNhFSZLVxS++mosw36gkXWHaLV0nuFyl5LEAVRDjwxLEZMlpGTz/T34C3ZS
+         gpGA4gjMIlx6PbTk60WLuK+UMrzkLatzt+Wwc0oyAC7Yn/8+Nok5Z3YlcDs+uxsWpB2v
+         QIHBBOYQVVKEKxn/nCRO18wZqs7EEcDOYoD0Q2hizcYK6JJPqu1iK2KUt/oTjKY6W++Z
+         fEPfjbTKYmEUAU7OuEQr7nO6BAFWiRXPGwCktOq7O1jCi8ElBCaOOg8kX58K2zkD4OVa
+         /8uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758634369; x=1759239169;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YdNQB1ZGXvQWh3XKMx+CaBgdTFkZKFEai7KtP6jM1KU=;
+        b=XVJebiFPXcI7DPkuwCx5aehp/GqLWPvfyj2Ypu62oOdwKNQ0pXdcvYclejFBMtVGYR
+         Fk1/DWGckN3jNIH8Zu2jk9pjmjbmXFt1/qlagusEwDFLyurEQZCeSYeIXbEdjXBIoz9Q
+         aMXRC/Pa5GbmPz7xiH051wgq3o3xzTmX/yfokQvXT/PMDhmsYlT9mQVxVNlDVpYY9rva
+         0Dm2E4efyWzvshBAatKSHwqHoIbQGnsZepuUI6Cd7TvucWXa/j/9+GG8ba0qpD6Yi8U0
+         DJ5Sa3BOoHpSU7mQ0bFX9qWKxL1VR/BYonY6j44344GpqRZX/b1TKocu1oIFB1Q/Ild/
+         Daeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVPYIhHpa6eTGy59BkItNXerkNwGVDogFf+jcXaLP4MqWMoKoq0C15c9cuu+qmSIe2I9KPrRwF6wHo8IIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVjN0okjL1HuMQZ5kuFVg5QxsXx7s1Y3Aag4cZA6AOG0k2VWgM
+	2cOgiZe064Ka7t6/xJrrUy//e8jHjBHq+sQVfkjYDCgIR6QgxzhV5sF9
+X-Gm-Gg: ASbGncvZzkUCJAzZIaigdHHM6anrU0M+lXUCwp0sgYn3eMPfzooGMgqPdN3ckomweIG
+	NBlM6vZYYhV0JFa89H3uT95PAsF9X7ZXzzEw+cp+qofKzfkrnemsb6GPQBH5ZiChoDsUI+1M2iE
+	evYcezcTsDUePXI4dTjP3A/nfBha8O6Hs8e0+E2fJiBUnWmIltdLawKiXkhV+SlD/bFbPvYd7rj
+	2werxonPof7ZSTA2CJ1OQtAE0wC5KFl6VK8+TuwbXvHtqI1OtMT13IUHrFd+gxDyITZmBNY/oB+
+	yVPBagy4dG5vm9pBlyGAfEPvb0vACv+8KrukZcm7znCdnrDp0bfzsTqnJCbxnlTDlK5LyA/6Edm
+	93ZzFGpbKayM4lg==
+X-Google-Smtp-Source: AGHT+IE6W4t4zmOFnWhJK8hWF/RIwTsnYRvhbOlZb0wiZzpWRN5aDrdCT9aya8IOqH6p/Q/J1JKHJA==
+X-Received: by 2002:a05:6a00:2da8:b0:77f:2f8b:7667 with SMTP id d2e1a72fcca58-77f5362ea1fmr3223982b3a.0.1758634369100;
+        Tue, 23 Sep 2025 06:32:49 -0700 (PDT)
+Received: from lgs.. ([36.255.193.30])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f2d435616sm7364041b3a.5.2025.09.23.06.32.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 06:32:48 -0700 (PDT)
+From: Guangshuo Li <lgs201920130244@gmail.com>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Guangshuo Li <lgs201920130244@gmail.com>,
+	"Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Subject: [PATCH v3] powerpc/smp: Add check for kcalloc() failure in parse_thread_groups()
+Date: Tue, 23 Sep 2025 21:32:35 +0800
+Message-ID: <20250923133235.1862108-1-lgs201920130244@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH 1/2] rust: usb: add basic USB abstractions
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <DD07LUJXNZN9.3RHH9NJNRFVNN@kernel.org>
-Date: Tue, 23 Sep 2025 15:31:26 +0200
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-usb@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <27AB9C59-BAE6-4F1F-8638-DF9244D0A616@collabora.com>
-References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
- <20250825-b4-usb-v1-1-7aa024de7ae8@collabora.com>
- <DD07LUJXNZN9.3RHH9NJNRFVNN@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Danilo,
+As kcalloc() may fail, check its return value to avoid a NULL pointer
+dereference when passing it to of_property_read_u32_array().
 
+Fixes: 790a1662d3a26 ("powerpc/smp: Parse ibm,thread-groups with multiple properties")
+Cc: stable@vger.kernel.org
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+---
+changelog:
+v3:
+- Move Signed-off-by above the '---' separator.
+- No code changes.
+changelog:
+v2:
+- Return -ENOMEM directly on allocation failure.
+---
+ arch/powerpc/kernel/smp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
->> +/// A USB device.
->> +///
->> +/// This structure represents the Rust abstraction for a C [`struct =
-usb_device`].
->> +/// The implementation abstracts the usage of a C [`struct =
-usb_device`] passed in
->> +/// from the C side.
->> +///
->> +/// # Invariants
->> +///
->> +/// A [`Device`] instance represents a valid [`struct usb_device`] =
-created by the C portion of the
->> +/// kernel.
->> +///
->> +/// [`struct usb_device`]: =
-https://www.kernel.org/doc/html/latest/driver-api/usb/usb.html#c.usb_devic=
-e
->> +#[repr(transparent)]
->> +pub struct Device<Ctx: device::DeviceContext =3D device::Normal>(
->> +    Opaque<bindings::usb_device>,
->> +    PhantomData<Ctx>,
->> +);
->=20
-> What do you use the struct usb_device abstraction for? I only see the =
-sample
-> driver probing a USB interface instead.
+diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+index 5ac7084eebc0..cfccb9389760 100644
+--- a/arch/powerpc/kernel/smp.c
++++ b/arch/powerpc/kernel/smp.c
+@@ -822,6 +822,8 @@ static int parse_thread_groups(struct device_node *dn,
+ 
+ 	count = of_property_count_u32_elems(dn, "ibm,thread-groups");
+ 	thread_group_array = kcalloc(count, sizeof(u32), GFP_KERNEL);
++	if (!thread_group_array)
++		return -ENOMEM;
+ 	ret = of_property_read_u32_array(dn, "ibm,thread-groups",
+ 					 thread_group_array, count);
+ 	if (ret)
+-- 
+2.43.0
 
-What I was brainstorming with Greg is to submit this initial support, =
-and then
-follow up with all the other abstractions needed to implement a Rust =
-version of
-usb-skeleton.c. IIUC, the plan is to submit any fixes as follow-ups, as =
-we're
-close to the merge window.
-
-struct usb_device would be used for the skeleton driver, so we should =
-keep it if
-we're following the plan above, IMHO.
-
-=E2=80=94 Daniel=
 
