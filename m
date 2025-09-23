@@ -1,93 +1,116 @@
-Return-Path: <linux-kernel+bounces-829106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C188CB96453
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:32:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F24B964B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD36C4E2EEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:32:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A38787B6324
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A95326D6B;
-	Tue, 23 Sep 2025 14:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF7625A340;
+	Tue, 23 Sep 2025 14:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQCgbZOt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iE/o9gZZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA092475C2;
-	Tue, 23 Sep 2025 14:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB4121FF46;
+	Tue, 23 Sep 2025 14:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758637690; cv=none; b=kuLLCr074C2upHXfC0xgvMvUlO+6iTez7aaU2o3Towb5juvdAAxICzAsoNizD8LylCCk9D463gwG/MVQjZP3EuvPehAsOgQ+PgQSi7JLjrwc/KTiSxafjxlFGT2mMqd+N9TlDr+IGnIMD9CTEwwnRdrhjmO4gkp+s5PHC4/EgQo=
+	t=1758637792; cv=none; b=Tm+WHRrpQbrQr4DSseEcuNdgi8nXIsPPNv11kJNJ/oMq/MN6TmathKafGN1JetRu49oGw74lwxeOuxNd3oNd9ApREhSIFeGEkI+cd+0pNBeEyohB0ox501m9xh4ZJmC30xbGLyA5LJHpYbnumbWfmjP+M33PbBnTCSxkl9adlO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758637690; c=relaxed/simple;
-	bh=cCAvArKYI9+1fdw3oMSRIGwzyIqwiRWzr2uSM38P/0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lmONpzLaq0fv4cidUc96CdlNGCeAEW0hjne+lZuDSefzWiIT6ZVPrQcstM2lzSbxx2+gFP9nXdqlwjf1ndl5rho8tAbM0o6RxrD8bk9lc6eUGGHESKtLHHAqVterHr6f0yYmb2I5d5/N2mF3Mqq8Dk9uG68dqmAbrfx0KPgi75Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vQCgbZOt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE700C4CEF5;
-	Tue, 23 Sep 2025 14:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758637690;
-	bh=cCAvArKYI9+1fdw3oMSRIGwzyIqwiRWzr2uSM38P/0Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vQCgbZOtZ5oeh//BAVBmA+97HegAbwdDGCSSP0v1UxIR3NPYx2UP2cV0PKKro9FGC
-	 vy/pFbHvzrZI4hx4FRzjcqW805+1xo8ImbsbA8VE2F9tzQFazOzrwY0cjTBsys5NU6
-	 9/fqE58/81Up+s0CSAJxCaHmWcEwRGBpAyjAmvsa2OvIi/XJOAiD3EmjUmqE9Bvukf
-	 sA0DFpnauMGQLqGkYAAq69B3owHwwxIt7CXPl5F0W4Bth7s6UcQEe3NWVedE484cQ4
-	 wq/y2F3LBU31fOG8KWSyRbcM45w8yp4mUcd7wDKkqdCKlOODn6oaqMZtYQtmDBVmz3
-	 SqE7gDi8hBqRQ==
-Date: Tue, 23 Sep 2025 07:28:09 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Michal Pecio <michal.pecio@gmail.com>
-Cc: I Viswanath <viswanathiyyappan@gmail.com>, andrew@lunn.ch,
- andrew+netdev@lunn.ch, davem@davemloft.net, david.hunter.linux@gmail.com,
- edumazet@google.com, linux-kernel-mentees@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, petkan@nucleusys.com,
- skhan@linuxfoundation.org,
- syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
-Subject: Re: [PATCH net v2] net: usb: Remove disruptive netif_wake_queue in
- rtl8150_set_multicast
-Message-ID: <20250923072809.1a58edaf@kernel.org>
-In-Reply-To: <20250923094711.200b96f1.michal.pecio@gmail.com>
-References: <83171a57-cb40-4c97-b736-0e62930b9e5c@lunn.ch>
-	<20250920181852.18164-1-viswanathiyyappan@gmail.com>
-	<20250922180742.6ef6e2d5@kernel.org>
-	<20250923094711.200b96f1.michal.pecio@gmail.com>
+	s=arc-20240116; t=1758637792; c=relaxed/simple;
+	bh=hruTljb0URqYxOL2QAbMu1/HycqOjx60ccVzZB6vPbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kN4OXMSX9C738RQQPcKHePUHjHcjLJZVplXg5otdzz9LPbpEHqjQUefc3xcXuUWXE6xbBQPvs4378YHU0r9Q1ukvPTxqD9ghI5r0233vEaZD2Zrv7AQVvAx789qCAd8thuhIkPNBV2ogqEze9QaasVeoYDKT55ajkH6LN2oZzZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iE/o9gZZ; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758637791; x=1790173791;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hruTljb0URqYxOL2QAbMu1/HycqOjx60ccVzZB6vPbg=;
+  b=iE/o9gZZa6qhv6aH3TvNeaNFFRta8IoVc16Z3VrkQvUTDEPkyR9+c90E
+   avwH7BAF1FgQbOKZmTKaKT7aZ7lZ7O2XcbG0ZfhK+ZDKDk4JJXBZi8VhU
+   +4NEPKPAzezyZNQ8eCgoaHejCqQxKAornwTd4bZuBS4oZriBKDKLGwKzU
+   P5zgushrFAsdJiz1GawY0/2MfrYIsybg41K2Q7CUnfZ3dmJ+mAMXqIWet
+   G6WnpuVzQGpiwbDu7ywWmSjPfxQ6oegfLp5cd4IXMWsB48FRaeaO6TDfG
+   y0jBw9INuhlqUkGgyUtj4hTqPXZVFcBZoIeSYQ9EFx0Em+NFRsGL/rpbF
+   A==;
+X-CSE-ConnectionGUID: iOSlJcQKRL2wRAvKC4kCeQ==
+X-CSE-MsgGUID: A7mmOGfaREW9o3e/uTxlnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60810329"
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
+   d="scan'208";a="60810329"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:29:50 -0700
+X-CSE-ConnectionGUID: sIBNKXhKTVOSMz4bTexYzw==
+X-CSE-MsgGUID: Rt9WRdoxSRWwfrJYkNjzYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
+   d="scan'208";a="177553911"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:29:46 -0700
+Message-ID: <cd2d17b2-59e8-45eb-ba1e-0f3160d5beb5@intel.com>
+Date: Tue, 23 Sep 2025 22:29:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 20/51] KVM: x86: Emulate SSP[63:32]!=0 #GP(0) for FAR
+ JMP to 32-bit mode
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+References: <20250919223258.1604852-1-seanjc@google.com>
+ <20250919223258.1604852-21-seanjc@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250919223258.1604852-21-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Tue, 23 Sep 2025 09:47:11 +0200 Michal Pecio wrote:
-> On Mon, 22 Sep 2025 18:07:42 -0700, Jakub Kicinski wrote:
-> > On Sat, 20 Sep 2025 23:48:52 +0530 I Viswanath wrote:  
-> > > rtl8150_set_multicast is rtl8150's implementation of ndo_set_rx_mode and
-> > > should not be calling netif_stop_queue and notif_start_queue as these handle 
-> > > TX queue synchronization.
-> > > 
-> > > The net core function dev_set_rx_mode handles the synchronization
-> > > for rtl8150_set_multicast making it safe to remove these locks.    
-> > 
-> > Last time someone tried to add device ID to this driver was 20 years
-> > ago. Please post a patch to delete this driver completely. If someone
-> > speaks up we'll revert the removal and ask them to test the fix.  
+On 9/20/2025 6:32 AM, Sean Christopherson wrote:
+> Emulate the Shadow Stack restriction that the current SSP must be a 32-bit
+> value on a FAR JMP from 64-bit mode to compatibility mode.  From the SDM's
+> pseudocode for FAR JMP:
 > 
-> These were quite common, I still have one.
+>    IF ShadowStackEnabled(CPL)
+>      IF (IA32_EFER.LMA and DEST(segment selector).L) = 0
+>        (* If target is legacy or compatibility mode then the SSP must be in low 4GB *)
+>        IF (SSP & 0xFFFFFFFF00000000 != 0); THEN
+>          #GP(0);
+>        FI;
+>      FI;
+>    FI;
 > 
-> What sort of testing do you need?
+> Note, only the current CPL needs to be considered, as FAR JMP can't be
+> used for inter-privilege level transfers, and KVM rejects emulation of all
+> other far branch instructions when Shadow Stacks are enabled.
+> 
+> To give the emulator access to GUEST_SSP, special case handling
+> MSR_KVM_INTERNAL_GUEST_SSP in emulator_get_msr() to treat the access as a
+> host access (KVM doesn't allow guest accesses to internal "MSRs").  The
+> ->get_msr() API is only used for implicit accesses from the emulator, i.e.
+> is only used with hardcoded MSR indices, and so any access to
+> MSR_KVM_INTERNAL_GUEST_SSP is guaranteed to be from KVM, i.e. not from the
+> guest via RDMSR.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Excellent, could you check if there is any adverse effect of repeatedly
-writing the RCR register under heavy Tx traffic (without stopping/waking
-the Tx queue)? The driver seems to pause Tx when RCR is written, seems
-like an odd thing to do without a reason, but driver authors do the
-darndest things.
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
