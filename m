@@ -1,259 +1,229 @@
-Return-Path: <linux-kernel+bounces-828466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67CA5B94A9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:04:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C5FFB94AA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19E244840DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:03:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA2122E3CEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDF03191C4;
-	Tue, 23 Sep 2025 07:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hn/+oDcy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756283112BF;
+	Tue, 23 Sep 2025 07:01:21 +0000 (UTC)
+Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED6A318136;
-	Tue, 23 Sep 2025 07:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0396630FC09
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758610817; cv=none; b=io3HXa0mXarUD46OtBT1JtnvKKLb9m/erBXwXLU8gk3DXtX3iGRg4+8fRU+4hyBlJDvhrpI4s7R5sypKkaxAHxVp6HwXdF5a7KyVC2fs/Ze9u67B00kE2zC4uC0UPLuWRpL36p2uxAQxQFf9bN2cQVgSFbUvDW7UD4GGoLN4KhA=
+	t=1758610881; cv=none; b=uc1Lr9coA4gOKnlfNuxtYnv9C73jVanSwOAmRUSRyGmw2txHVMf8oi7lCssK+MDmNiOMSGeI9vzl1TqaUN6dKwQb5CyhSFwHtI1+5HVQ6K3Y+FUgNtnUtqt70uBXxr4w4LmMgWfj8WjmpIaa3mCZ7oTxABvKK2rZ9h94ItX49Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758610817; c=relaxed/simple;
-	bh=1biZK1FFNfuf1m10cZY7+frVmMOJ5/zVUzkW14nYRTg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vj0NwMudMik+YhaYvea3CQ7ZBxtzfQZptGxV6CgTUaCM8HZj6i6xH9rdc6KnWyHoQrV+3Y5cChWV/XhrjpbQ5EossEvelqbPBfr9HsrQk/ysqZLLvLYiw9dLoYplOH1qQ2EIrGVH7g+a23w5HeDTFIsoF7Hi7KZ7eAQuyK7xN9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hn/+oDcy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B829C116C6;
-	Tue, 23 Sep 2025 07:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758610817;
-	bh=1biZK1FFNfuf1m10cZY7+frVmMOJ5/zVUzkW14nYRTg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=hn/+oDcys6MD6IEaciEtfO54CZjk9/ALUTWPMbL65ElJqv5gyCyfa+1zKnsN2LiFp
-	 78g2GP3QIY3/ykHBVrYL1v3THrawRQfkPdTjxgEg95b+rYQ54Zd00mCxZCtOamx1rW
-	 7lK4gUCro5t0bDjUL7FUw6348LcdzlnhwNikuFsuwOz8a8Se9ikC1JW5NuZ9jVPucO
-	 47RyCyQiX/P+MJgZQgwId/phrFeQKXbQinOp95jd87GLVexzNSElWbYbmMX4k3hCaz
-	 aeicXSSOLav/CtErNRTORaGsydD/3ir66oHqJjhrWA/5w2bSKLlfXkiytB3QAycwEL
-	 lmJVJhaqN31NQ==
-From: Vincent Mailhol <mailhol@kernel.org>
-Date: Tue, 23 Sep 2025 15:58:45 +0900
-Subject: [PATCH v4 20/20] can: netlink: add userland error messages
+	s=arc-20240116; t=1758610881; c=relaxed/simple;
+	bh=ZaQCXLU9bn132fc9GxMsTN99OoTm/vMoro/fMOEelLc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HLUOWSvfUYKJZpBJHj0RGYmQLffYkXG0r4azqVcZBzf9CQQOnRqKrXZ8UuoGFMQmEsFdmikDegmXl9KW1HsJOcEcMiZwhJlYngDYIA92qGdrR8XiPNinCXYNEVYPa2spqAC9KoXgLFzuUSIlBSxfRPzas0Y7msp+H44OXsKy5us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201610.home.langchao.com
+        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202509231500006238;
+        Tue, 23 Sep 2025 15:00:00 +0800
+Received: from localhost.localdomain.com (10.94.12.225) by
+ jtjnmail201610.home.langchao.com (10.100.2.10) with Microsoft SMTP Server id
+ 15.1.2507.58; Tue, 23 Sep 2025 15:00:01 +0800
+From: Bo Liu <liubo03@inspur.com>
+To: <xiang@kernel.org>, <chao@kernel.org>
+CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, Bo Liui
+	<liubo03@inspur.com>, Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH v5] erofs: Add support for FS_IOC_GETFSLABEL
+Date: Tue, 23 Sep 2025 14:59:48 +0800
+Message-ID: <20250923065948.16149-1-liubo03@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250923-canxl-netlink-prep-v4-20-e720d28f66fe@kernel.org>
-References: <20250923-canxl-netlink-prep-v4-0-e720d28f66fe@kernel.org>
-In-Reply-To: <20250923-canxl-netlink-prep-v4-0-e720d28f66fe@kernel.org>
-To: Marc Kleine-Budde <mkl@pengutronix.de>, 
- Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: Vincent Mailhol <mailhol@kernel.org>, 
- =?utf-8?q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>, 
- Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>, 
- Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6027; i=mailhol@kernel.org;
- h=from:subject:message-id; bh=1biZK1FFNfuf1m10cZY7+frVmMOJ5/zVUzkW14nYRTg=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDBmXXGOt1Bwfs/y/q6dTf+sfC/fzJ6FZZ3syI1nao9qDN
- v6wLX/QUcrCIMbFICumyLKsnJNboaPQO+zQX0uYOaxMIEMYuDgFYCLT2xn+Gd07V5lgWFR+XFvo
- d9bkUsXMgobXV5gkb/ZuLvx0IXdbLyPDhp5vl1jiNWY67jA/ucne/NDcVuuNDHyzfzxedtn54hM
- JLgA=
-X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+tUid: 202592315000012fb6a94e70ad676943dae2aa122e530
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Use NL_SET_ERR_MSG() and NL_SET_ERR_MSG_FMT() to return meaningful
-error messages to the userland whenever a -EOPNOTSUPP error is
-returned due to a failed validation of the CAN netlink arguments.
+From: Bo Liui (OpenAnolis) <liubo03@inspur.com>
 
-Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
+Add support for reading to the erofs volume label from the
+FS_IOC_GETFSLABEL ioctls.
+
+Signed-off-by: Bo Liu (OpenAnolis) <liubo03@inspur.com>
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 ---
- drivers/net/can/dev/netlink.c | 82 ++++++++++++++++++++++++++++++++-----------
- 1 file changed, 62 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/net/can/dev/netlink.c b/drivers/net/can/dev/netlink.c
-index 92d8df13e886c8832c4ed8450675c22dc2e5b009..0591406b6f3207f4db5ef1d25dc5e0289a1d06fe 100644
---- a/drivers/net/can/dev/netlink.c
-+++ b/drivers/net/can/dev/netlink.c
-@@ -64,15 +64,23 @@ static int can_validate_tdc(struct nlattr *data_tdc,
- 	bool tdc_auto = tdc_flags & CAN_CTRLMODE_TDC_AUTO_MASK;
- 	int err;
+v1: https://lore.kernel.org/linux-erofs/20250825120617.19746-1-liubo03@inspur.com/
+v2: https://lore.kernel.org/linux-erofs/20250826103926.4424-1-liubo03@inspur.com/
+v3: https://lore.kernel.org/linux-erofs/20250920060455.24002-1-liubo03@inspur.com/
+v4: https://lore.kernel.org/linux-erofs/20250922092937.2055-1-liubo03@inspur.com/
+
+change since v4:
+- fix 0day build errors.
+
+ fs/erofs/data.c     |  4 ++++
+ fs/erofs/dir.c      |  4 ++++
+ fs/erofs/inode.c    | 41 +++++++++++++++++++++++++++++++++++++----
+ fs/erofs/internal.h |  6 ++++++
+ fs/erofs/super.c    |  8 ++++++++
+ 5 files changed, 59 insertions(+), 4 deletions(-)
+
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index 3b1ba571c728..8ca29962a3dd 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -475,6 +475,10 @@ static loff_t erofs_file_llseek(struct file *file, loff_t offset, int whence)
+ const struct file_operations erofs_file_fops = {
+ 	.llseek		= erofs_file_llseek,
+ 	.read_iter	= erofs_file_read_iter,
++	.unlocked_ioctl = erofs_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl   = erofs_compat_ioctl,
++#endif
+ 	.mmap_prepare	= erofs_file_mmap_prepare,
+ 	.get_unmapped_area = thp_get_unmapped_area,
+ 	.splice_read	= filemap_splice_read,
+diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+index debf469ad6bd..32b4f5aa60c9 100644
+--- a/fs/erofs/dir.c
++++ b/fs/erofs/dir.c
+@@ -123,4 +123,8 @@ const struct file_operations erofs_dir_fops = {
+ 	.llseek		= generic_file_llseek,
+ 	.read		= generic_read_dir,
+ 	.iterate_shared	= erofs_readdir,
++	.unlocked_ioctl = erofs_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl   = erofs_compat_ioctl,
++#endif
+ };
+diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+index 9a2f59721522..a3c505e9425d 100644
+--- a/fs/erofs/inode.c
++++ b/fs/erofs/inode.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2021, Alibaba Cloud
+  */
+ #include "xattr.h"
++#include <linux/compat.h>
+ #include <trace/events/erofs.h>
  
--	/* CAN_CTRLMODE_TDC_{AUTO,MANUAL} are mutually exclusive */
--	if (tdc_auto && tdc_manual)
-+	if (tdc_auto && tdc_manual) {
-+		NL_SET_ERR_MSG(extack,
-+			       "TDC manual and auto modes are mutually exclusive");
- 		return -EOPNOTSUPP;
-+	}
- 
- 	/* If one of the CAN_CTRLMODE_TDC_* flag is set then TDC
- 	 * must be set and vice-versa
- 	 */
--	if ((tdc_auto || tdc_manual) != !!data_tdc)
-+	if ((tdc_auto || tdc_manual) && !data_tdc) {
-+		NL_SET_ERR_MSG(extack, "TDC parameters are missing");
- 		return -EOPNOTSUPP;
-+	}
-+	if (!(tdc_auto || tdc_manual) && data_tdc) {
-+		NL_SET_ERR_MSG(extack, "TDC mode (auto or manual) is missing");
-+		return -EOPNOTSUPP;
-+	}
- 
- 	/* If providing TDC parameters, at least TDCO is needed. TDCV
- 	 * is needed if and only if CAN_CTRLMODE_TDC_MANUAL is set
-@@ -86,15 +94,23 @@ static int can_validate_tdc(struct nlattr *data_tdc,
- 			return err;
- 
- 		if (tb_tdc[IFLA_CAN_TDC_TDCV]) {
--			if (tdc_auto)
-+			if (tdc_auto) {
-+				NL_SET_ERR_MSG(extack,
-+					       "TDCV is incompatible with TDC auto mode");
- 				return -EOPNOTSUPP;
-+			}
- 		} else {
--			if (tdc_manual)
-+			if (tdc_manual) {
-+				NL_SET_ERR_MSG(extack,
-+					       "TDC manual mode requires TDCV");
- 				return -EOPNOTSUPP;
-+			}
- 		}
- 
--		if (!tb_tdc[IFLA_CAN_TDC_TDCO])
-+		if (!tb_tdc[IFLA_CAN_TDC_TDCO]) {
-+			NL_SET_ERR_MSG(extack, "TDCO is missing");
- 			return -EOPNOTSUPP;
-+		}
- 	}
- 
+ static int erofs_fill_symlink(struct inode *inode, void *kaddr,
+@@ -213,10 +214,7 @@ static int erofs_fill_inode(struct inode *inode)
+ 	switch (inode->i_mode & S_IFMT) {
+ 	case S_IFREG:
+ 		inode->i_op = &erofs_generic_iops;
+-		if (erofs_inode_is_data_compressed(vi->datalayout))
+-			inode->i_fop = &generic_ro_fops;
+-		else
+-			inode->i_fop = &erofs_file_fops;
++		inode->i_fop = &erofs_file_fops;
+ 		break;
+ 	case S_IFDIR:
+ 		inode->i_op = &erofs_dir_iops;
+@@ -341,6 +339,41 @@ int erofs_getattr(struct mnt_idmap *idmap, const struct path *path,
  	return 0;
-@@ -105,6 +121,7 @@ static int can_validate_databittiming(struct nlattr *data[],
- 				      int ifla_can_data_bittiming, u32 flags)
- {
- 	struct nlattr *data_tdc;
-+	const char *type;
- 	u32 tdc_flags;
- 	bool is_on;
- 	int err;
-@@ -120,18 +137,31 @@ static int can_validate_databittiming(struct nlattr *data[],
- 		data_tdc = data[IFLA_CAN_TDC];
- 		tdc_flags = flags & CAN_CTRLMODE_FD_TDC_MASK;
- 		is_on = flags & CAN_CTRLMODE_FD;
-+		type = "FD";
- 	} else {
- 		return -EOPNOTSUPP; /* Place holder for CAN XL */
- 	}
+ }
  
- 	if (is_on) {
--		if (!data[IFLA_CAN_BITTIMING] || !data[ifla_can_data_bittiming])
-+		if (!data[IFLA_CAN_BITTIMING] || !data[ifla_can_data_bittiming]) {
-+			NL_SET_ERR_MSG_FMT(extack,
-+					   "Provide both nominal and %s data bittiming",
-+					   type);
- 			return -EOPNOTSUPP;
--	}
--
--	if (data[ifla_can_data_bittiming] || data_tdc) {
--		if (!is_on)
-+		}
-+	} else {
-+		if (data[ifla_can_data_bittiming]) {
-+			NL_SET_ERR_MSG_FMT(extack,
-+					   "%s data bittiming requires CAN %s",
-+					   type, type);
- 			return -EOPNOTSUPP;
-+		}
-+		if (data_tdc) {
-+			NL_SET_ERR_MSG_FMT(extack,
-+					   "%s TDC requires CAN %s",
-+					   type, type);
-+			return -EOPNOTSUPP;
-+		}
- 	}
- 
- 	err = can_validate_bittiming(data, extack, ifla_can_data_bittiming);
-@@ -178,8 +208,7 @@ static int can_ctrlmode_changelink(struct net_device *dev,
- {
- 	struct can_priv *priv = netdev_priv(dev);
- 	struct can_ctrlmode *cm;
--	u32 maskedflags;
--	u32 ctrlstatic;
-+	u32 ctrlstatic, maskedflags, notsupp, ctrlstatic_missing;
- 
- 	if (!data[IFLA_CAN_CTRLMODE])
- 		return 0;
-@@ -189,20 +218,28 @@ static int can_ctrlmode_changelink(struct net_device *dev,
- 		return -EBUSY;
- 
- 	cm = nla_data(data[IFLA_CAN_CTRLMODE]);
--	maskedflags = cm->flags & cm->mask;
- 	ctrlstatic = can_get_static_ctrlmode(priv);
-+	maskedflags = cm->flags & cm->mask;
-+	notsupp = maskedflags & ~(priv->ctrlmode_supported | ctrlstatic);
-+	ctrlstatic_missing = (maskedflags & ctrlstatic) ^ ctrlstatic;
- 
--	/* check whether provided bits are allowed to be passed */
--	if (maskedflags & ~(priv->ctrlmode_supported | ctrlstatic))
-+	if (notsupp) {
-+		NL_SET_ERR_MSG_FMT(extack,
-+				   "requested control mode %s not supported",
-+				   can_get_ctrlmode_str(notsupp));
- 		return -EOPNOTSUPP;
++static int erofs_ioctl_get_volume_label(struct inode *inode, void __user *arg)
++{
++	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
++	int ret;
++
++	if (!sbi->volume_name)
++		ret = clear_user(arg, 1);
++	else
++		ret = copy_to_user(arg, sbi->volume_name,
++				   strlen(sbi->volume_name));
++
++	return ret ? -EFAULT : 0;
++}
++
++long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
++{
++	struct inode *inode = file_inode(filp);
++	void __user *argp = (void __user *)arg;
++
++	switch (cmd) {
++	case FS_IOC_GETFSLABEL:
++		return erofs_ioctl_get_volume_label(inode, argp);
++	default:
++		return -ENOTTY;
 +	}
++}
++
++#ifdef CONFIG_COMPAT
++long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
++			unsigned long arg)
++{
++	return erofs_ioctl(filp, cmd, (unsigned long)compat_ptr(arg));
++}
++#endif
++
+ const struct inode_operations erofs_generic_iops = {
+ 	.getattr = erofs_getattr,
+ 	.listxattr = erofs_listxattr,
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 4ccc5f0ee8df..b70902e00586 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -166,6 +166,8 @@ struct erofs_sb_info {
+ 	struct erofs_domain *domain;
+ 	char *fsid;
+ 	char *domain_id;
++
++	char *volume_name;
+ };
  
- 	/* do not check for static fd-non-iso if 'fd' is disabled */
- 	if (!(maskedflags & CAN_CTRLMODE_FD))
- 		ctrlstatic &= ~CAN_CTRLMODE_FD_NON_ISO;
+ #define EROFS_SB(sb) ((struct erofs_sb_info *)(sb)->s_fs_info)
+@@ -535,6 +537,10 @@ static inline struct bio *erofs_fscache_bio_alloc(struct erofs_map_dev *mdev) {
+ static inline void erofs_fscache_submit_bio(struct bio *bio) {}
+ #endif
  
--	/* make sure static options are provided by configuration */
--	if ((maskedflags & ctrlstatic) != ctrlstatic)
-+	if (ctrlstatic_missing) {
-+		NL_SET_ERR_MSG_FMT(extack,
-+				   "missing required %s static control mode",
-+				   can_get_ctrlmode_str(ctrlstatic_missing));
- 		return -EOPNOTSUPP;
++long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
++long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
++			unsigned long arg);
++
+ #define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
+ 
+ #endif	/* __EROFS_INTERNAL_H */
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 1b529ace4db0..f1535ebe03ec 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -343,6 +343,13 @@ static int erofs_read_superblock(struct super_block *sb)
+ 	sbi->fixed_nsec = le32_to_cpu(dsb->fixed_nsec);
+ 	super_set_uuid(sb, (void *)dsb->uuid, sizeof(dsb->uuid));
+ 
++	if (dsb->volume_name[0]) {
++		sbi->volume_name = kstrndup(dsb->volume_name,
++					    sizeof(dsb->volume_name), GFP_KERNEL);
++		if (!sbi->volume_name)
++			return -ENOMEM;
 +	}
++
+ 	/* parse on-disk compression configurations */
+ 	ret = z_erofs_parse_cfgs(sb, dsb);
+ 	if (ret < 0)
+@@ -822,6 +829,7 @@ static void erofs_sb_free(struct erofs_sb_info *sbi)
+ 	kfree(sbi->domain_id);
+ 	if (sbi->dif0.file)
+ 		fput(sbi->dif0.file);
++	kfree(sbi->volume_name);
+ 	kfree(sbi);
+ }
  
- 	/* If a top dependency flag is provided, reset all its dependencies */
- 	if (cm->mask & CAN_CTRLMODE_FD)
-@@ -234,8 +271,10 @@ static int can_tdc_changelink(struct data_bittiming_params *dbt_params,
- 	const struct can_tdc_const *tdc_const = dbt_params->tdc_const;
- 	int err;
- 
--	if (!tdc_const)
-+	if (!tdc_const) {
-+		NL_SET_ERR_MSG(extack, "The device does not support TDC");
- 		return -EOPNOTSUPP;
-+	}
- 
- 	err = nla_parse_nested(tb_tdc, IFLA_CAN_TDC_MAX, nla,
- 			       can_tdc_policy, extack);
-@@ -450,8 +489,11 @@ static int can_changelink(struct net_device *dev, struct nlattr *tb[],
- 		const unsigned int num_term = priv->termination_const_cnt;
- 		unsigned int i;
- 
--		if (!priv->do_set_termination)
-+		if (!priv->do_set_termination) {
-+			NL_SET_ERR_MSG(extack,
-+				       "Termination is not configurable on this device");
- 			return -EOPNOTSUPP;
-+		}
- 
- 		/* check whether given value is supported by the interface */
- 		for (i = 0; i < num_term; i++) {
-
 -- 
-2.49.1
+2.31.1
 
 
