@@ -1,373 +1,479 @@
-Return-Path: <linux-kernel+bounces-828386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3071DB94841
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:12:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5740B9484A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157CF18A700A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:12:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A6177AEF0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFC330E836;
-	Tue, 23 Sep 2025 06:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A22E30E0F2;
+	Tue, 23 Sep 2025 06:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="h5wx1SZd"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LIBr1zEe"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5723C30E0F2
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AEA2E92BC
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758607937; cv=none; b=iETfLI3qPDpdnu2chiuf8Fd/H1KsW5CGF/ph5eJgfyKeANpCVrT065fETHTrhEhV9w0f1dTQDr1hAtEqCmdhwGZ2KcnaHIeDuOs5ze+ztFwbhtnRmL3FvU00NzFOFBeUCwQ4FDi1hzzqyZudnhui839tKdmAgqnJxXbbG7F9vIo=
+	t=1758607972; cv=none; b=A5ABBBwbzSCQ51uJ6yoL270Yu2cDxIILAJGxMYbvf2ixAQel9eKcmmYRTzqT82ecTIjHVqp/ODW1K29CvxVCmxK0w5T0RrfQRhpctCyzepwWwuuzsXItJ9ZHJS6bAPzrde575MBqTkJTOJJM0XO56BQstGxDKBb1fn5Gl2+1kxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758607937; c=relaxed/simple;
-	bh=JS+mgHQ2vIQQdgKuXUmiMSrAVGDj2DfRWQZOWqaCyyo=;
+	s=arc-20240116; t=1758607972; c=relaxed/simple;
+	bh=zCQM/5InL3xzYdezTp/8cg5PGBQqpHWZvo4aVBSn460=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Io6mswD/lsb6ulRUhn/46MUW00xcAvssljFWcNffWfrTGlOgwBdvvgBsKlMAnfyum/8nXZ/tmf6nv6xL5SGxdmdDG/vXQQVYqXyDMCiEAH2lWryCMAjtcgax8z6JtFAVn4Cff3NxVh+s00fkomp1zjO4FmSd8M2JUseEOupEe/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=h5wx1SZd; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-30cce892b7dso3412783fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:12:15 -0700 (PDT)
+	 To:Cc:Content-Type; b=B5up/1TXNnP+zAvdNDCQ2hFLV2cei8qYPIoSDJg9AtAHKwWqvBM/QeIsVH9sz+soFdU5l2U9ixe7xK93NLzK50cbVD/YF7LY7EBtfLr0eCfY/2KlfoR4PXTMGgrSqCg9LRtRu3P7uP5nYgKX/xSEcwow0040WO0M/37GzG97250=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LIBr1zEe; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-62ec5f750f7so8751517a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:12:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758607934; x=1759212734; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758607968; x=1759212768; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=otbxpskZQ2jszr6scN/t0l115iHPynAVTy5cD9xe/9s=;
-        b=h5wx1SZdIeKttxtB+tEtrI3HytRNqgOnqG5NlWKmtaftTIAQL/ZaTWrrSgITugT/7l
-         p+VwwNHcNYL/SYYCVdrMX1jE+DEgeW5WbGjf4a5zaggN1bwVL7tnNetxjkBE9MAxfvhk
-         GeeYZwVynbyVWCw2bbTFXtkGQGiHMHC05OrC7oNZkz9dq9z3yl2lzmzP2a9soXTzmbC0
-         yQUNIurtnxDRZ69dzdEf7Pp2tDRedIjrEg1SJDVWP48c0G3dfUQ7BFnndiYWBk5SGd5g
-         2bUQNc+oE439X4RVo7YJuE47E1yq1fnh9zzpeP5t2W6R5Dtvya7/F7GNk39+Go9kPkAU
-         nGQg==
+        bh=m1w9gNikfwvygbV6it/YPwZidTE5EG1bRuk6yafVjRA=;
+        b=LIBr1zEekZ2lnZH4T1LJO9B2/VYepdEcGAYA0b0dAHnmQ5DimPzyn01w6ipPBy0+U1
+         neiWYGGMfX4fTQLyejbTBGZRjphdaCWY/IxHiDVBNibCYDryKSTgNDoCYK1LH1EI7AsC
+         X8No6lcdJhoYYe4Wvu6wv+uJ1OJEOkcghZ7CNFkr/UO1u3SwLT/7wImU2O+9Z9fHhieZ
+         dQQxn5+xID1leUJKsXnMbiZy66EJecIvWB6vnGDfGkN22W+cJDjfUfLoaQEf8SjfNyj6
+         otMwfMnaMYEtWe/CPCW5m5i8ZqDLoxTcEYhCsVy5YMSdTJ1ioUHot7LrEpj3JG+ds+x2
+         FdeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758607934; x=1759212734;
+        d=1e100.net; s=20230601; t=1758607968; x=1759212768;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=otbxpskZQ2jszr6scN/t0l115iHPynAVTy5cD9xe/9s=;
-        b=Exp6eVM5oPO+NHcGSUfleksjBd+hC0jLSy9AAj6gy0XY3cenDavBhPtn/cQqrp1Trx
-         Ey359uacCC9RC/4L1QIWGxbUH+Nd2xPhSUPQkBm6/4UFi/xWpHTboDYo6HF9DRKaCG4g
-         VF5AfcmYxJFPOKTpZ6/u0sju5r7un7UhqLYAOIu6m8SE0n72UEJRCUsAP9EDgSVbMbOI
-         HHm2I1C3li7Z+gm7raLb6nquibsNhvjzuapBnx2WanO9s+002FOM51aUzw45vy65pVqL
-         F/Z9tbUAC7D87pF5FMy1ytHqb8PREmwOhjtK3AeS7CYdpmLxSf8lsrRtQJhTLoezET3v
-         bCTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqp8X2XbxfNOVxD7EKNNav9XmKHr+FPZqzMU7aquz6n4PcZABLD7HjhtTlxqzT6ZhN3q/lCoYGIcDqmBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkeTOmBkVIQhygr1YpAKzPIzDBdxjUKuwLqe/WJo3qUAF+8oNJ
-	ocwd1GAzUzNgAeUxZeBKgGlH7z8zb8zlTGEazJpVuNWHFbvPdct1NUh4C0xhUQpUiIvWlmGD3zn
-	kNE+AWBTwYokdhny9KubeyRxoS91zn69eNB7uQHM5Bg==
-X-Gm-Gg: ASbGncsmnKuOyEHN6Q8kadp330/zkPWRludTDEPJedAf9XVt4Gj3Xt9oBnuHrlraK8F
-	+o2MdHwJ9PDgrrRPPnyiL65mhyJZQkTQaCxLVB1m2fDw2DCsjrQt4QfVuSO4Ecx+mEDvtV5qpve
-	NVQxskee6ldQ8wrj7UHhFP9QC7MQiCnzJ64euOjK1Y2F6s38YukUGWGTxWlsUrJbJAmwhvhExPI
-	u5WFogL3g9g4A5qKFJbWOFfsLU=
-X-Google-Smtp-Source: AGHT+IEIzs7n1nl91TIN023GUF0KUu3vYki89SdmZKUjsJa36BUfXx8eHWGEvtkrF3jtxJ7k3zA0vEDE+kHUSzoN6S4=
-X-Received: by 2002:a05:6870:6591:b0:2d6:245:a9b3 with SMTP id
- 586e51a60fabf-34c7b236bfemr746748fac.6.1758607934210; Mon, 22 Sep 2025
- 23:12:14 -0700 (PDT)
+        bh=m1w9gNikfwvygbV6it/YPwZidTE5EG1bRuk6yafVjRA=;
+        b=nb+MK1oKyA4msPMSb12qz1CQiU1vm1Vob4OMLjprQ1NjizYyyv2HiXP+iPBkUqLzs7
+         OimsZhC3glGtMlvQQjwCfhoo5MVPjH2BwCHj3SiQd5StrTJNQ+ErUUKxvW5d561Y3shG
+         it4OcETUQCkTHoPHcxYvPzPUAIRrKkAWwUC0Fin0Mz0E9WLOFvKEY4HqNdNYBbtyC9u0
+         VPSi6d1vM990s0jkEBQfZebqW03uTHTw4yuXMwvWzEQjFmEs0eSE+EJXgUwq7zQ3Z+LB
+         Agw5aLqUF1DYa7y8Nc1RJqAr4D4ZICwj1Y2Vqr3+AvsGFWLTixTBLRjELJwFbV4LYB1I
+         5R1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUai2EwjjVUFAWhFiBuoffLaGKF184L5H4ecdeq1a684OCt861y38MEV2YtoVlPHGk7p+1jrY2IK37sgiU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQCHSQYhQTrW73Yen509mZCDzrrM9YFS76v3c1La48OFQx4j9N
+	/Cjd9BrxxhjreLoCjBlS6KWpfICouEnbJzHlBCXJfBFXXS+/Xf1/4Zc+q6A2b27ebrRs/I9KXcz
+	wSkPWJxoftYVkVSxEdeR3rdtbSRfPtOA=
+X-Gm-Gg: ASbGncsB9dHLv5T1XJ1DOmT1AR9HtXdFRSqrbFiIxkduricVRAaJR6j+p/TqctA5/zH
+	oSwo4xV4qByujFmtXtpv6tnlV02hfZJUDYQqbLAqj1WT5D1J67cHc/oD2NLIY2IEyBCJvDpqZAk
+	kejtHDkDEakIHGA1j6xKPaRWpDvAZL0WqYoSiwVca5GA9cQXQiSYAgnfvhIH2TaruS4+iHmjKGU
+	Am+/w==
+X-Google-Smtp-Source: AGHT+IEfgroAmNYQRwZEfIYrF8wJtV6S7XNygoK2N2Igw/bDMliejcEbfDXQlBRQFk4sov4X4b6qS9/azhAzLbPhcUQ=
+X-Received: by 2002:a17:907:bc97:b0:b30:852e:bea with SMTP id
+ a640c23a62f3a-b30852e0e98mr79735466b.63.1758607967971; Mon, 22 Sep 2025
+ 23:12:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250327-counter_delegation-v5-0-1ee538468d1b@rivosinc.com> <20250327-counter_delegation-v5-12-1ee538468d1b@rivosinc.com>
-In-Reply-To: <20250327-counter_delegation-v5-12-1ee538468d1b@rivosinc.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Tue, 23 Sep 2025 14:12:03 +0800
-X-Gm-Features: AS18NWCpz0zRDa7TiIE6jd6ds8giKZBrxub6MRRgBhuLhQx-LIu9q4wyCfRpBus
-Message-ID: <CAEEQ3wm-TGcRFjmb7cw5K-M13CicwgJSLZrgY1KMZA5SgUjziw@mail.gmail.com>
-Subject: Re: [External] [PATCH v5 12/21] RISC-V: perf: Modify the counter
- discovery mechanism
-To: Atish Patra <atishp@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, weilin.wang@intel.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Conor Dooley <conor@kernel.org>, devicetree@vger.kernel.org, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org
+References: <20250922082417.816331-1-rajasimandalos@gmail.com>
+ <20250922082417.816331-2-rajasimandalos@gmail.com> <d09c8506-6326-45e6-8687-8e0b002eff62@suse.com>
+In-Reply-To: <d09c8506-6326-45e6-8687-8e0b002eff62@suse.com>
+From: Shyam Prasad N <nspmangalore@gmail.com>
+Date: Tue, 23 Sep 2025 11:42:36 +0530
+X-Gm-Features: AS18NWACbxkiOakGZs7h9HRaSJJwdU0CskzkFIT_giAyrAUroOPsyTrRTYUKzI8
+Message-ID: <CANT5p=qsh+jJ2PD2vy1x7ZjE646Hh28n1epS7Fy=RSqmuht_=g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] cifs: client: allow changing multichannel mount
+ options on remount
+To: Henrique Carvalho <henrique.carvalho@suse.com>
+Cc: rajasimandalos@gmail.com, Rajasi Mandal <rajasimandal@microsoft.com>, sfrench@samba.org, 
+	pc@manguebit.org, ronniesahlberg@gmail.com, sprasad@microsoft.com, 
+	tom@talpey.com, bharathsm@microsoft.com, linux-kernel@vger.kernel.org, 
+	linux-cifs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Atish,
+On Tue, Sep 23, 2025 at 2:52=E2=80=AFAM Henrique Carvalho
+<henrique.carvalho@suse.com> wrote:
+>
+> Hi Rajasi,
+>
+> On 9/22/25 5:24 AM, rajasimandalos@gmail.com wrote:
+> > From: Rajasi Mandal <rajasimandal@microsoft.com>
+> >
+> > Previously, the client did not properly update the session's channel
+> > state when multichannel or max_channels mount options were changed
+> > during remount. This led to inconsistent behavior and prevented
+> > enabling or disabling multichannel support without a full
+> > unmount/remount.
+> >
+> > Enable dynamic reconfiguration of multichannel and max_channels
+> > options during remount by introducing smb3_sync_ses_chan_max() to
+> > safely update the session's chan_max field, and smb3_sync_ses_channels(=
+)
+> > to synchronize the session's channels with the new configuration.
+> > Replace cifs_disable_secondary_channels() with
+> > cifs_decrease_secondary_channels(), which now takes a from_reconfigure
+> > argument for more flexible channel cleanup. Update the remount logic
+> > to detect changes in multichannel or max_channels and trigger the
+> > appropriate session/channel updates.
+> >
+> > With this change, users can safely change multichannel and
+> > max_channels options on remount, and the client will correctly adjust
+> > the session's channel state to match the new configuration.
+> >
+> > Signed-off-by: Rajasi Mandal <rajasimandal@microsoft.com>
+> > ---
+> >  fs/smb/client/cifsproto.h  |  2 +-
+> >  fs/smb/client/fs_context.c | 29 ++++++++++++++++++
+> >  fs/smb/client/fs_context.h |  2 +-
+> >  fs/smb/client/sess.c       | 35 +++++++++++++++-------
+> >  fs/smb/client/smb2pdu.c    | 60 ++++++++++++++++++++++++++++++--------
+> >  fs/smb/client/smb2pdu.h    |  2 ++
+> >  6 files changed, 105 insertions(+), 25 deletions(-)
+> >
+> > diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
+> > index e8fba98690ce..ec3118457b26 100644
+> > --- a/fs/smb/client/cifsproto.h
+> > +++ b/fs/smb/client/cifsproto.h
+> > @@ -667,7 +667,7 @@ bool
+> >  cifs_chan_is_iface_active(struct cifs_ses *ses,
+> >                         struct TCP_Server_Info *server);
+> >  void
+> > -cifs_disable_secondary_channels(struct cifs_ses *ses);
+> > +cifs_decrease_secondary_channels(struct cifs_ses *ses, bool from_recon=
+figure);
+> >  void
+> >  cifs_chan_update_iface(struct cifs_ses *ses, struct TCP_Server_Info *s=
+erver);
+> >  int
+> > diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
+> > index 43552b44f613..96e80c70f25d 100644
+> > --- a/fs/smb/client/fs_context.c
+> > +++ b/fs/smb/client/fs_context.c
+> > @@ -1015,6 +1015,22 @@ int smb3_sync_session_ctx_passwords(struct cifs_=
+sb_info *cifs_sb, struct cifs_se
+> >       return 0;
+> >  }
+> >
+> > +/**
+> > + * smb3_sync_ses_chan_max - Synchronize the session's maximum channel =
+count
+> > + * @ses: pointer to the old CIFS session structure
+> > + * @max_channels: new maximum number of channels to allow
+> > + *
+> > + * Updates the session's chan_max field to the new value, protecting t=
+he update
+> > + * with the session's channel lock. This should be called whenever the=
+ maximum
+> > + * allowed channels for a session changes (e.g., after a remount or re=
+configure).
+> > + */
+> > +void smb3_sync_ses_chan_max(struct cifs_ses *ses, unsigned int max_cha=
+nnels)
+> > +{
+> > +     spin_lock(&ses->chan_lock);
+> > +     ses->chan_max =3D max_channels;
+> > +     spin_unlock(&ses->chan_lock);
+> > +}
+> > +
+>
+> The other writer of chan_max is when creating a session. Is this lock
+> really avoiding a race here?
 
-On Fri, Mar 28, 2025 at 3:42=E2=80=AFAM Atish Patra <atishp@rivosinc.com> w=
-rote:
+It's not just the writers, but also readers that we protect with this
+lock. I don't have major objections to the locking here.
+
 >
-> If both counter delegation and SBI PMU is present, the counter
-> delegation will be used for hardware pmu counters while the SBI PMU
-> will be used for firmware counters. Thus, the driver has to probe
-> the counters info via SBI PMU to distinguish the firmware counters.
+> >  static int smb3_reconfigure(struct fs_context *fc)
+> >  {
+> >       struct smb3_fs_context *ctx =3D smb3_fc2context(fc);
+> > @@ -1097,6 +1113,18 @@ static int smb3_reconfigure(struct fs_context *f=
+c)
+> >               ses->password2 =3D new_password2;
+> >       }
+> >
+> > +     /*
+> > +      * If multichannel or max_channels has changed, update the sessio=
+n's channels accordingly.
+> > +      * This may add or remove channels to match the new configuration=
+.
+> > +      */
+> > +     if ((ctx->multichannel !=3D cifs_sb->ctx->multichannel) ||
+> > +             (ctx->max_channels !=3D cifs_sb->ctx->max_channels)) {
+> > +             //Synchronize ses->chan_max with the new mount context
+> > +             smb3_sync_ses_chan_max(ses, ctx->max_channels);
+> > +             //Now update the session's channels to match the new conf=
+iguration
+> > +             rc =3D smb3_sync_ses_channels(cifs_sb);
+> > +     }
+> > +
+> >       mutex_unlock(&ses->session_mutex);
+> >
+> >       STEAL_STRING(cifs_sb, ctx, domainname);
+> > @@ -1110,6 +1138,7 @@ static int smb3_reconfigure(struct fs_context *fc=
+)
+> >       smb3_cleanup_fs_context_contents(cifs_sb->ctx);
+> >       rc =3D smb3_fs_context_dup(cifs_sb->ctx, ctx);
+> >       smb3_update_mnt_flags(cifs_sb);
+> > +
+> >  #ifdef CONFIG_CIFS_DFS_UPCALL
+> >       if (!rc)
+> >               rc =3D dfs_cache_remount_fs(cifs_sb);
+> > diff --git a/fs/smb/client/fs_context.h b/fs/smb/client/fs_context.h
+> > index b0fec6b9a23b..a75185858285 100644
+> > --- a/fs/smb/client/fs_context.h
+> > +++ b/fs/smb/client/fs_context.h
+> > @@ -371,7 +371,7 @@ static inline struct smb3_fs_context *smb3_fc2conte=
+xt(const struct fs_context *f
+> >  extern int smb3_fs_context_dup(struct smb3_fs_context *new_ctx, struct=
+ smb3_fs_context *ctx);
+> >  extern int smb3_sync_session_ctx_passwords(struct cifs_sb_info *cifs_s=
+b, struct cifs_ses *ses);
+> >  extern void smb3_update_mnt_flags(struct cifs_sb_info *cifs_sb);
+> > -
+> > +extern void smb3_sync_ses_chan_max(struct cifs_ses *ses, unsigned int =
+max_channels);
+> >  /*
+> >   * max deferred close timeout (jiffies) - 2^30
+> >   */
+> > diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
+> > index 0a8c2fcc9ded..42b5481c884a 100644
+> > --- a/fs/smb/client/sess.c
+> > +++ b/fs/smb/client/sess.c
+> > @@ -264,13 +264,16 @@ int cifs_try_adding_channels(struct cifs_ses *ses=
+)
+> >       return new_chan_count - old_chan_count;
+> >  }
+> >
+> > -/*
+> > - * called when multichannel is disabled by the server.
+> > - * this always gets called from smb2_reconnect
+> > - * and cannot get called in parallel threads.
+> > +/**
+> > + * cifs_decrease_secondary_channels - Reduce the number of active seco=
+ndary channels
+> > + * @ses: pointer to the CIFS session structure
+> > + * @from_reconfigure: if true, only reduce to chan_max; if false, redu=
+ce to a single channel
+> > + *
+> > + * This function disables and cleans up extra secondary channels for a=
+ CIFS session.
+> > + * If called during reconfiguration, it reduces the channel count to t=
+he new maximum (chan_max).
+> > + * Otherwise, it disables all but the primary channel.
+> >   */
+> > -void
+> > -cifs_disable_secondary_channels(struct cifs_ses *ses)
+> > +void cifs_decrease_secondary_channels(struct cifs_ses *ses, bool from_=
+reconfigure)
+> >  {
 >
-> The hybrid scheme also requires improvements of the informational
-> logging messages to indicate the user about underlying interface
-> used for each use case.
+> Maybe you could get rid of from_reconfigure parameter if you just set
+> chan_max to 1 before calling cifs_decrease_secondary_channels when this
+> function is not called from smb3_reconfigure. What do you think?
+
+chan_max today is set based on "max_channels" mount option that the user se=
+ts.
+I don't think we should be modifying that value. Unless we change it's
+meaning today. :)
+
 >
-> Signed-off-by: Atish Patra <atishp@rivosinc.com>
-> ---
->  drivers/perf/riscv_pmu_dev.c | 130 ++++++++++++++++++++++++++++++++-----=
-------
->  1 file changed, 96 insertions(+), 34 deletions(-)
->
-> diff --git a/drivers/perf/riscv_pmu_dev.c b/drivers/perf/riscv_pmu_dev.c
-> index 6cebbc16bfe4..c0397bd68b91 100644
-> --- a/drivers/perf/riscv_pmu_dev.c
-> +++ b/drivers/perf/riscv_pmu_dev.c
-> @@ -66,6 +66,20 @@ static bool sbi_v2_available;
->  static DEFINE_STATIC_KEY_FALSE(sbi_pmu_snapshot_available);
->  #define sbi_pmu_snapshot_available() \
->         static_branch_unlikely(&sbi_pmu_snapshot_available)
-> +static DEFINE_STATIC_KEY_FALSE(riscv_pmu_sbi_available);
-> +static DEFINE_STATIC_KEY_FALSE(riscv_pmu_cdeleg_available);
-> +
-> +/* Avoid unnecessary code patching in the one time booting path*/
-> +#define riscv_pmu_cdeleg_available_boot() \
-> +       static_key_enabled(&riscv_pmu_cdeleg_available)
-> +#define riscv_pmu_sbi_available_boot() \
-> +       static_key_enabled(&riscv_pmu_sbi_available)
-> +
-> +/* Perform a runtime code patching with static key */
-> +#define riscv_pmu_cdeleg_available() \
-> +       static_branch_unlikely(&riscv_pmu_cdeleg_available)
-> +#define riscv_pmu_sbi_available() \
-> +               static_branch_likely(&riscv_pmu_sbi_available)
->
->  static struct attribute *riscv_arch_formats_attr[] =3D {
->         &format_attr_event.attr,
-> @@ -88,7 +102,8 @@ static int sysctl_perf_user_access __read_mostly =3D S=
-YSCTL_USER_ACCESS;
->
->  /*
->   * This structure is SBI specific but counter delegation also require co=
-unter
-> - * width, csr mapping. Reuse it for now.
-> + * width, csr mapping. Reuse it for now we can have firmware counters fo=
-r
-> + * platfroms with counter delegation support.
->   * RISC-V doesn't have heterogeneous harts yet. This need to be part of
->   * per_cpu in case of harts with different pmu counters
->   */
-> @@ -100,6 +115,8 @@ static unsigned int riscv_pmu_irq;
->
->  /* Cache the available counters in a bitmask */
->  static unsigned long cmask;
-> +/* Cache the available firmware counters in another bitmask */
-> +static unsigned long firmware_cmask;
->
->  struct sbi_pmu_event_data {
->         union {
-> @@ -780,34 +797,38 @@ static int rvpmu_sbi_find_num_ctrs(void)
->                 return sbi_err_map_linux_errno(ret.error);
->  }
->
-> -static int rvpmu_sbi_get_ctrinfo(int nctr, unsigned long *mask)
-> +static u32 rvpmu_deleg_find_ctrs(void)
-> +{
-> +       /* TODO */
-> +       return 0;
-> +}
-> +
-> +static int rvpmu_sbi_get_ctrinfo(u32 nsbi_ctr, u32 *num_fw_ctr, u32 *num=
-_hw_ctr)
->  {
->         struct sbiret ret;
-> -       int i, num_hw_ctr =3D 0, num_fw_ctr =3D 0;
-> +       int i;
->         union sbi_pmu_ctr_info cinfo;
->
-> -       pmu_ctr_list =3D kcalloc(nctr, sizeof(*pmu_ctr_list), GFP_KERNEL)=
-;
-> -       if (!pmu_ctr_list)
-> -               return -ENOMEM;
-> -
-> -       for (i =3D 0; i < nctr; i++) {
-> +       for (i =3D 0; i < nsbi_ctr; i++) {
->                 ret =3D sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_GET_IN=
-FO, i, 0, 0, 0, 0, 0);
->                 if (ret.error)
->                         /* The logical counter ids are not expected to be=
- contiguous */
->                         continue;
->
-> -               *mask |=3D BIT(i);
-> -
->                 cinfo.value =3D ret.value;
-> -               if (cinfo.type =3D=3D SBI_PMU_CTR_TYPE_FW)
-> -                       num_fw_ctr++;
-> -               else
-> -                       num_hw_ctr++;
-> -               pmu_ctr_list[i].value =3D cinfo.value;
-> +               if (cinfo.type =3D=3D SBI_PMU_CTR_TYPE_FW) {
-> +                       /* Track firmware counters in a different mask */
-> +                       firmware_cmask |=3D BIT(i);
-> +                       pmu_ctr_list[i].value =3D cinfo.value;
-> +                       *num_fw_ctr =3D *num_fw_ctr + 1;
-> +               } else if (cinfo.type =3D=3D SBI_PMU_CTR_TYPE_HW &&
-> +                          !riscv_pmu_cdeleg_available_boot()) {
-> +                       *num_hw_ctr =3D *num_hw_ctr + 1;
-> +                       cmask |=3D BIT(i);
-> +                       pmu_ctr_list[i].value =3D cinfo.value;
-> +               }
->         }
->
-> -       pr_info("%d firmware and %d hardware counters\n", num_fw_ctr, num=
-_hw_ctr);
-> -
->         return 0;
->  }
->
-> @@ -1069,16 +1090,41 @@ static void rvpmu_ctr_stop(struct perf_event *eve=
-nt, unsigned long flag)
->         /* TODO: Counter delegation implementation */
->  }
->
-> -static int rvpmu_find_num_ctrs(void)
-> +static int rvpmu_find_ctrs(void)
->  {
-> -       return rvpmu_sbi_find_num_ctrs();
-> -       /* TODO: Counter delegation implementation */
-> -}
-> +       u32 num_sbi_counters =3D 0, num_deleg_counters =3D 0;
-> +       u32 num_hw_ctr =3D 0, num_fw_ctr =3D 0, num_ctr =3D 0;
-> +       /*
-> +        * We don't know how many firmware counters are available. Just a=
-llocate
-> +        * for maximum counters the driver can support. The default is 64=
- anyways.
-> +        */
-> +       pmu_ctr_list =3D kcalloc(RISCV_MAX_COUNTERS, sizeof(*pmu_ctr_list=
-),
-> +                              GFP_KERNEL);
-> +       if (!pmu_ctr_list)
-> +               return -ENOMEM;
->
-> -static int rvpmu_get_ctrinfo(int nctr, unsigned long *mask)
-> -{
-> -       return rvpmu_sbi_get_ctrinfo(nctr, mask);
-> -       /* TODO: Counter delegation implementation */
-> +       if (riscv_pmu_cdeleg_available_boot())
-> +               num_deleg_counters =3D rvpmu_deleg_find_ctrs();
-> +
-> +       /* This is required for firmware counters even if the above is tr=
-ue */
-> +       if (riscv_pmu_sbi_available_boot()) {
-> +               num_sbi_counters =3D rvpmu_sbi_find_num_ctrs();
-> +               /* cache all the information about counters now */
-> +               rvpmu_sbi_get_ctrinfo(num_sbi_counters, &num_hw_ctr, &num=
-_fw_ctr);
-> +       }
-> +
-> +       if (num_sbi_counters > RISCV_MAX_COUNTERS || num_deleg_counters >=
- RISCV_MAX_COUNTERS)
-> +               return -ENOSPC;
-> +
-> +       if (riscv_pmu_cdeleg_available_boot()) {
-> +               pr_info("%u firmware and %u hardware counters\n", num_fw_=
-ctr, num_deleg_counters);
-> +               num_ctr =3D num_fw_ctr + num_deleg_counters;
-> +       } else {
-> +               pr_info("%u firmware and %u hardware counters\n", num_fw_=
-ctr, num_hw_ctr);
-> +               num_ctr =3D num_sbi_counters;
-> +       }
-> +
-> +       return num_ctr;
->  }
->
->  static int rvpmu_event_map(struct perf_event *event, u64 *econfig)
-> @@ -1379,12 +1425,21 @@ static int rvpmu_device_probe(struct platform_dev=
-ice *pdev)
->         int ret =3D -ENODEV;
->         int num_counters;
->
-> -       pr_info("SBI PMU extension is available\n");
-> +       if (riscv_pmu_cdeleg_available_boot()) {
-> +               pr_info("hpmcounters will use the counter delegation ISA =
-extension\n");
-> +               if (riscv_pmu_sbi_available_boot())
-> +                       pr_info("Firmware counters will use SBI PMU exten=
-sion\n");
-> +               else
-> +                       pr_info("Firmware counters will not be available =
-as SBI PMU extension is not present\n");
-> +       } else if (riscv_pmu_sbi_available_boot()) {
-> +               pr_info("Both hpmcounters and firmware counters will use =
-SBI PMU extension\n");
-> +       }
-> +
->         pmu =3D riscv_pmu_alloc();
->         if (!pmu)
->                 return -ENOMEM;
->
-> -       num_counters =3D rvpmu_find_num_ctrs();
-> +       num_counters =3D rvpmu_find_ctrs();
->         if (num_counters < 0) {
->                 pr_err("SBI PMU extension doesn't provide any counters\n"=
+> >       int i, chan_count;
+> >       struct TCP_Server_Info *server;
+> > @@ -281,12 +284,13 @@ cifs_disable_secondary_channels(struct cifs_ses *=
+ses)
+> >       if (chan_count =3D=3D 1)
+> >               goto done;
+> >
+> > -     ses->chan_count =3D 1;
+> > -
+> > -     /* for all secondary channels reset the need reconnect bit */
+> > -     ses->chans_need_reconnect &=3D 1;
+> > +     // Update the chan_count to the new maximum
+> > +     if (from_reconfigure)
+> > +             ses->chan_count =3D ses->chan_max;
+> > +     else
+> > +             ses->chan_count =3D 1;
+> >
+> > -     for (i =3D 1; i < chan_count; i++) {
+> > +     for (i =3D ses->chan_max ; i < chan_count; i++) {
+> >               iface =3D ses->chans[i].iface;
+> >               server =3D ses->chans[i].server;
+> >
+> > @@ -318,6 +322,15 @@ cifs_disable_secondary_channels(struct cifs_ses *s=
+es)
+> >               spin_lock(&ses->chan_lock);
+> >       }
+> >
+> > +     /* For extra secondary channels, reset the need reconnect bit */
+> > +     if (ses->chan_count =3D=3D 1) {
+> > +             cifs_server_dbg(VFS, "server does not support multichanne=
+l anymore. Disable all other channels\n");
+> > +             ses->chans_need_reconnect &=3D 1;
+> > +     } else {
+> > +             cifs_server_dbg(VFS, "Disable extra secondary channels\n"=
 );
->                 goto out_free;
-> @@ -1396,9 +1451,6 @@ static int rvpmu_device_probe(struct platform_devic=
-e *pdev)
->                 pr_info("SBI returned more than maximum number of counter=
-s. Limiting the number of counters to %d\n", num_counters);
->         }
+> > +             ses->chans_need_reconnect &=3D ((1UL << ses->chan_max) - =
+1);
+> > +     }
+> > +
+> >  done:
+> >       spin_unlock(&ses->chan_lock);
+> >  }
+> > diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
+> > index c3b9d3f6210f..bf9a8dc0e8fc 100644
+> > --- a/fs/smb/client/smb2pdu.c
+> > +++ b/fs/smb/client/smb2pdu.c
+> > @@ -168,7 +168,7 @@ smb2_hdr_assemble(struct smb2_hdr *shdr, __le16 smb=
+2_cmd,
+> >  static int
+> >  cifs_chan_skip_or_disable(struct cifs_ses *ses,
+> >                         struct TCP_Server_Info *server,
+> > -                       bool from_reconnect)
+> > +                       bool from_reconnect, bool from_reconfigure)
+> >  {
+> >       struct TCP_Server_Info *pserver;
+> >       unsigned int chan_index;
+> > @@ -206,10 +206,49 @@ cifs_chan_skip_or_disable(struct cifs_ses *ses,
+> >               return -EHOSTDOWN;
+> >       }
+> >
+> > -     cifs_server_dbg(VFS,
+> > -             "server does not support multichannel anymore. Disable al=
+l other channels\n");
+> > -     cifs_disable_secondary_channels(ses);
+> > +     cifs_decrease_secondary_channels(ses, from_reconfigure);
+> >
+> > +     return 0;
+> > +}
+> > +
+> > +/**
+> > + * smb3_sync_ses_channels - Synchronize session channels
+> > + * with new configuration (cifs_sb_info version)
+> > + * @cifs_sb: pointer to the CIFS superblock info structure
+> > + * Returns 0 on success or -EINVAL if scaling is already in progress.
+> > + */
+> > +int smb3_sync_ses_channels(struct cifs_sb_info *cifs_sb)
+> > +{
+> > +     struct cifs_ses *ses =3D cifs_sb_master_tcon(cifs_sb)->ses;
+> > +     struct smb3_fs_context *ctx =3D cifs_sb->ctx;
+> > +     bool from_reconnect =3D false;
+> > +
+> > +     /* Prevent concurrent scaling operations */
+> > +     spin_lock(&ses->ses_lock);
+> > +     if (ses->flags & CIFS_SES_FLAG_SCALE_CHANNELS) {
+> > +             spin_unlock(&ses->ses_lock);
+> > +             return -EINVAL;
+> > +     }
+> > +     ses->flags |=3D CIFS_SES_FLAG_SCALE_CHANNELS;
+> > +     spin_unlock(&ses->ses_lock);
+> > +
+> > +     /*
+> > +      * If the old max_channels is less than the new chan_max,
+> > +      * try to add channels to reach the new maximum.
+> > +      * Otherwise, disable or skip extra channels to match the new con=
+figuration.
+> > +      */
+> > +     if (ctx->max_channels < ses->chan_max) {
+> > +             mutex_unlock(&ses->session_mutex);
+> > +             cifs_try_adding_channels(ses);
+> > +             mutex_lock(&ses->session_mutex);
+> > +     } else {
 >
-> -       /* cache all the information about counters now */
-> -       if (rvpmu_get_ctrinfo(num_counters, &cmask))
-> -               goto out_free;
+> Maybe you can avoid entering any cifs_chan_skip_or_disable if
+> ctx->max_channels =3D=3D ses->chan_max. There is a cost of holding locks
+> inside of it.
 >
->         ret =3D rvpmu_setup_irqs(pmu, pdev);
->         if (ret < 0) {
-> @@ -1488,13 +1540,23 @@ static int __init rvpmu_devinit(void)
->         int ret;
->         struct platform_device *pdev;
+> > +             cifs_chan_skip_or_disable(ses, ses->server, from_reconnec=
+t, true);
+> > +     }
+> > +
+> > +     /* Clear scaling flag after operation */
+> > +     spin_lock(&ses->ses_lock);
+> > +     ses->flags &=3D ~CIFS_SES_FLAG_SCALE_CHANNELS;
+> > +     spin_unlock(&ses->ses_lock);
+> >
+> >       return 0;
+> >  }
+> > @@ -356,7 +395,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tco=
+n *tcon,
+> >       if (ses->chan_count > 1 &&
+> >           !(server->capabilities & SMB2_GLOBAL_CAP_MULTI_CHANNEL)) {
+> >               rc =3D cifs_chan_skip_or_disable(ses, server,
+> > -                                            from_reconnect);
+> > +                                            from_reconnect, false);
+> >               if (rc) {
+> >                       mutex_unlock(&ses->session_mutex);
+> >                       goto out;
+> > @@ -439,7 +478,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tco=
+n *tcon,
+> >                        */
+> >
+> >                       rc =3D cifs_chan_skip_or_disable(ses, server,
+> > -                                                    from_reconnect);
+> > +                                                    from_reconnect, fa=
+lse);
+> >                       goto skip_add_channels;
+> >               } else if (rc)
+> >                       cifs_dbg(FYI, "%s: failed to query server interfa=
+ces: %d\n",
+> > @@ -1105,8 +1144,7 @@ SMB2_negotiate(const unsigned int xid,
+> >               req->SecurityMode =3D 0;
+> >
+> >       req->Capabilities =3D cpu_to_le32(server->vals->req_capabilities)=
+;
+> > -     if (ses->chan_max > 1)
+> > -             req->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_=
+CHANNEL);
+> > +     req->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_CHANNEL)=
+;
+> >
+> >       /* ClientGUID must be zero for SMB2.02 dialect */
+> >       if (server->vals->protocol_id =3D=3D SMB20_PROT_ID)
+> > @@ -1310,10 +1348,8 @@ int smb3_validate_negotiate(const unsigned int x=
+id, struct cifs_tcon *tcon)
+> >       if (!pneg_inbuf)
+> >               return -ENOMEM;
+> >
+> > -     pneg_inbuf->Capabilities =3D
+> > -                     cpu_to_le32(server->vals->req_capabilities);
+> > -     if (tcon->ses->chan_max > 1)
+> > -             pneg_inbuf->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP=
+_MULTI_CHANNEL);
+> > +     pneg_inbuf->Capabilities =3D cpu_to_le32(server->vals->req_capabi=
+lities);
+> > +     pneg_inbuf->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_C=
+HANNEL);
+> >
+> >       memcpy(pneg_inbuf->Guid, server->client_guid,
+> >                                       SMB2_CLIENT_GUID_SIZE);
+> > diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
+> > index 3c09a58dfd07..d3f63a4ef426 100644
+> > --- a/fs/smb/client/smb2pdu.h
+> > +++ b/fs/smb/client/smb2pdu.h
+> > @@ -420,6 +420,8 @@ struct smb2_create_ea_ctx {
+> >       struct smb2_file_full_ea_info ea;
+> >  } __packed;
+> >
+> > +int smb3_sync_ses_channels(struct cifs_sb_info *cifs_sb);
+> > +
+> >  #define SMB2_WSL_XATTR_UID           "$LXUID"
+> >  #define SMB2_WSL_XATTR_GID           "$LXGID"
+> >  #define SMB2_WSL_XATTR_MODE          "$LXMOD"
 >
-> -       if (sbi_spec_version < sbi_mk_version(0, 3) ||
-> -           !sbi_probe_extension(SBI_EXT_PMU)) {
-> -               return 0;
-> -       }
-> +       if (sbi_spec_version >=3D sbi_mk_version(0, 3) &&
-> +           sbi_probe_extension(SBI_EXT_PMU))
-> +               static_branch_enable(&riscv_pmu_sbi_available);
->
->         if (sbi_spec_version >=3D sbi_mk_version(2, 0))
->                 sbi_v2_available =3D true;
-> +       /*
-> +        * We need all three extensions to be present to access the count=
-ers
-> +        * in S-mode via Supervisor Counter delegation.
-> +        */
-> +       if (riscv_isa_extension_available(NULL, SSCCFG) &&
-> +           riscv_isa_extension_available(NULL, SMCDELEG) &&
+> I also agree with Enzo that we could have an update_channels that
+> centralizes the logic of rescaling channels, but that could also come in
+> another patch as Steve suggested.
+Ack. We'll review that.
 
-Is there no need to check SMCDELEG (Machine-level) in the kernel, and
-can it be done directly via SSCCFG or sbi_probe_extension?
-The #define RISCV_ISA_EXT_SMCDELEG 98 also doesn't need to be defined
-in the kernel.
-
-> +           riscv_isa_extension_available(NULL, SSCSRIND))
-> +               static_branch_enable(&riscv_pmu_cdeleg_available);
-> +
-> +       if (!(riscv_pmu_sbi_available_boot() || riscv_pmu_cdeleg_availabl=
-e_boot()))
-> +               return 0;
->
->         ret =3D cpuhp_setup_state_multi(CPUHP_AP_PERF_RISCV_STARTING,
->                                       "perf/riscv/pmu:starting",
 >
 > --
-> 2.43.0
->
+> Henrique
+> SUSE Labs
 >
 
-Thanks,
-Yunhui
+Thank you for reviewing.
+
+--=20
+Regards,
+Shyam
 
