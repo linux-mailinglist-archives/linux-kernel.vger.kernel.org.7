@@ -1,103 +1,158 @@
-Return-Path: <linux-kernel+bounces-828200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFAEB9429F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:00:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E82B0B941E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 05:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAEF1188B15D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:00:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39F7E444A2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08E526CE15;
-	Tue, 23 Sep 2025 03:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BFC264602;
+	Tue, 23 Sep 2025 03:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Drjoyeyh"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vz8X+aqm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF791B040B
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 03:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF12D154BF5;
+	Tue, 23 Sep 2025 03:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758599993; cv=none; b=Re2CfeegSaDD0hy1YRap+2+TsPr6+n9q1YsYGBkp/ioDzjqlA7VM7KqLSFQUtAb1ngC0kYQBzD5bWFf0AfdueCsx5V3kx5h1J33EjpGxfmIb49HG25YunypOoOD5kWaznZjrTpWkVyMYleesn9cv7WW99LTa/4gOTrOsys09Atg=
+	t=1758598709; cv=none; b=Zd+gxnj/ng3DMMrGbMpjTViHnVy120Ienm6218r1syxVTuXwiUs6J5BWmnUlGvCol2hWGLuNzVt6ImvVO2CL15Y3wKcH8UKw+656uN1vDJO55kq6yZ0Bxn/pWjIVp+KhMzI/O6rl/rdrQkKjqSgnfdlWIU9C1DE7i6HcHaZWEyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758599993; c=relaxed/simple;
-	bh=stufo5VaflHTD5Dch8msOtonFZ5qNNcz+IiyCZiyGe0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JlP0VT8sSl1REbTTTw78ui6n6iPfiaYvyHKQuv5WR1n/sWxH+Ub0jn8mBtFCx4q4xxFP4m/NRdVq8h+uVFv8mvo8mFav9s8XzX7ZZ0K31NHBEUxEfMrn3k+OLgagqpL5NfZMctG0ivFpI3KHEVeXxh91y6vi2Yqt9FncnzPGyAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Drjoyeyh; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <9067a88d-f5df-4d6e-b3b3-2e266ebcf3d0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758599979;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wBb7AifhcOJYVqzVR28gnq9RZ3Lo8WspOuJNKw0BLWU=;
-	b=DrjoyeyhpJzeaP9BvJa1Zj2N6qGxchqojKau7q5f6FSO7Y9Y42GNjix0LLb8EKXzkP9Hp5
-	NhJ/rTh7jV2hX0Rn++ixLA1iJSV46Yd9q7zVJVj3r0ocBnWP/ACAWDN8iLL5PU08UTxM0F
-	JBwmOYsd4uAYrhHjwp04CMtS+uDAd44=
-Date: Tue, 23 Sep 2025 11:59:30 +0800
+	s=arc-20240116; t=1758598709; c=relaxed/simple;
+	bh=FizkU2Y4iQmHbh9eGNnE1mk6hmTzfCGAiCcr2jNaicI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qr8PjwVBEU+rcJBjqnTmY3/U83md3XGtkfCpWVtLJ9mMHfMwFFywo1wBrEJk24GNByL1FSgTv5N2/DW+nsy/A1A44uCp5kOS+ujnjgVphw7WF7iev1L5XlHynkVxtwBRyJrUJKmNqzAt9lgToc8Gor6vusOYV78PwhOp+/i+R9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vz8X+aqm; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758598706; x=1790134706;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=FizkU2Y4iQmHbh9eGNnE1mk6hmTzfCGAiCcr2jNaicI=;
+  b=Vz8X+aqmgppxsBa/S5DIamFizRjTQDtSIR+xJRaBHyOgA4Q+DnLIBk0C
+   uWAZVz7mkxHccoRntYqn+EhPyxrGBzvDzPbFEDAze3xwHinOnsjNboxX5
+   Pyr+YZnYAnaBcyDiZ1ygQ4ViUSZMFCdHDAkont6Y4SP7pgv/k40pc/1LR
+   kK2jWVKUaHFuVXhJUhwFAvsaXZKZLQOuQ6rI87eYpuQqir/EUJ4L1oUbR
+   Ju7IdtzPVjRpP2y+nhBwC1niUA+07WSnJl7x8F4H8GwfxpOkAvVSbb0P2
+   IPbO8GzOo4oTkHWosRcN9EFsL3MegBv5QCSzCQjeeAUTlAVZC5UOF3CpA
+   A==;
+X-CSE-ConnectionGUID: Val9Na/OSjqutWAbRXhDAQ==
+X-CSE-MsgGUID: tJiYklCbRHSf+CIOuXgtCA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60810732"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="60810732"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 20:38:25 -0700
+X-CSE-ConnectionGUID: QmgsTgPHTca/mCjKADKtww==
+X-CSE-MsgGUID: khgnW+CHSdObyFHd7PV7xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,286,1751266800"; 
+   d="scan'208";a="176231201"
+Received: from alc-spr.sh.intel.com ([10.239.53.113])
+  by orviesa009.jf.intel.com with ESMTP; 22 Sep 2025 20:38:23 -0700
+From: Aubrey Li <aubrey.li@linux.intel.com>
+To: Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Nanhai Zou <nanhai.zou@intel.com>,
+	Gang Deng <gang.deng@intel.com>,
+	Tianyou Li <tianyou.li@intel.com>,
+	Vinicius Gomes <vinicius.gomes@intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Chen Yu <yu.c.chen@intel.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Aubrey Li <aubrey.li@linux.intel.com>
+Subject: [PATCH] mm/readahead: Skip fully overlapped range
+Date: Tue, 23 Sep 2025 11:59:46 +0800
+Message-ID: <20250923035946.2560876-1-aubrey.li@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH][RFC] hung_task: Support to panic when the maximum number
- of hung task warnings is reached
-Content-Language: en-US
-To: lirongqing <lirongqing@baidu.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: corbet@lwn.net, mhiramat@kernel.org, paulmck@kernel.org,
- pawan.kumar.gupta@linux.intel.com, mingo@kernel.org,
- dave.hansen@linux.intel.com, rostedt@goodmis.org, kees@kernel.org,
- arnd@arndb.de, feng.tang@linux.alibaba.com, pauld@redhat.com,
- joel.granados@kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250923033740.2696-1-lirongqing@baidu.com>
- <20250922204554.55dd890090b0f56ad10a61f5@linux-foundation.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20250922204554.55dd890090b0f56ad10a61f5@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+RocksDB sequential read benchmark under high concurrency shows severe
+lock contention. Multiple threads may issue readahead on the same file
+simultaneously, which leads to heavy contention on the xas spinlock in
+filemap_add_folio(). Perf profiling indicates 30%~60% of CPU time spent
+there.
 
+To mitigate this issue, a readahead request will be skipped if its
+range is fully covered by an ongoing readahead. This avoids redundant
+work and significantly reduces lock contention. In one-second sampling,
+contention on xas spinlock dropped from 138,314 times to 2,144 times,
+resulting in a large performance improvement in the benchmark.
 
-On 2025/9/23 11:45, Andrew Morton wrote:
-> On Tue, 23 Sep 2025 11:37:40 +0800 lirongqing <lirongqing@baidu.com> wrote:
-> 
->> Currently the hung task detector can either panic immediately or continue
->> operation when hung tasks are detected. However, there are scenarios
->> where we want a more balanced approach:
->>
->> - We don't want the system to panic immediately when a few hung tasks
->>    are detected, as the system may be able to recover
->> - And we also don't want the system to stall indefinitely with multiple
->>    hung tasks
->>
->> This commit introduces a new mode (value 2) for the hung task panic behavior.
->> When set to 2, the system will panic only after the maximum number of hung
->> task warnings (hung_task_warnings) has been reached.
->>
->> This provides a middle ground between immediate panic and potentially
->> infinite stall, allowing for automated vmcore generation after a reasonable
-> 
-> I assume the same argument applies to the NMI watchdog, to the
-> softlockup detector and to the RCU stall detector?
-> 
-> A general framework to handle all of these might be better.  But why do
-> it in kernel at all?  What about a userspace detector which parses
-> kernel logs (or new procfs counters) and makes such decisions?
+				w/o patch       w/ patch
+RocksDB-readseq (ops/sec)
+(32-threads)			1.2M		2.4M
 
-+1. I agree that a userspace detector seems more appropriate for this.
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Vinicius Gomes <vinicius.gomes@intel.com>
+Cc: Tianyou Li <tianyou.li@intel.com>
+Cc: Chen Yu <yu.c.chen@intel.com>
+Suggested-by: Nanhai Zou <nanhai.zou@intel.com>
+Tested-by: Gang Deng <gang.deng@intel.com>
+Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
+---
+ mm/readahead.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-We already have the hung_task_detect_count counter, so a userspace
-detector could easily use that to implement custom policies ;)
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 20d36d6b055e..57ae1a137730 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -337,7 +337,7 @@ void force_page_cache_ra(struct readahead_control *ractl,
+ 	struct address_space *mapping = ractl->mapping;
+ 	struct file_ra_state *ra = ractl->ra;
+ 	struct backing_dev_info *bdi = inode_to_bdi(mapping->host);
+-	unsigned long max_pages;
++	unsigned long max_pages, index;
+ 
+ 	if (unlikely(!mapping->a_ops->read_folio && !mapping->a_ops->readahead))
+ 		return;
+@@ -348,6 +348,19 @@ void force_page_cache_ra(struct readahead_control *ractl,
+ 	 */
+ 	max_pages = max_t(unsigned long, bdi->io_pages, ra->ra_pages);
+ 	nr_to_read = min_t(unsigned long, nr_to_read, max_pages);
++
++	index = readahead_index(ractl);
++	/*
++	 * Skip this readahead if the requested range is fully covered
++	 * by the ongoing readahead range. This typically occurs in
++	 * concurrent scenarios.
++	 */
++	if (index >= ra->start && index + nr_to_read  <= ra->start + ra->size)
++		return;
++
++	ra->start = index;
++	ra->size = nr_to_read;
++
+ 	while (nr_to_read) {
+ 		unsigned long this_chunk = (2 * 1024 * 1024) / PAGE_SIZE;
+ 
+@@ -357,6 +370,10 @@ void force_page_cache_ra(struct readahead_control *ractl,
+ 
+ 		nr_to_read -= this_chunk;
+ 	}
++
++	/* Reset readahead state to allow the next readahead */
++	ra->start = 0;
++	ra->size = 0;
+ }
+ 
+ /*
+-- 
+2.43.0
+
 
