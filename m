@@ -1,184 +1,131 @@
-Return-Path: <linux-kernel+bounces-828762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9708EB95668
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:13:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BB6B95674
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48501179B79
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:13:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22E213B7295
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794F031CA5A;
-	Tue, 23 Sep 2025 10:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CC531D381;
+	Tue, 23 Sep 2025 10:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bThBhpI0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bv0St62r"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2Va0reb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2302F2ECE86;
-	Tue, 23 Sep 2025 10:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93A42ECE86;
+	Tue, 23 Sep 2025 10:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758622376; cv=none; b=ZVI2JodmniURAuk4Gc6cFViKsabt6RbU2qlys0LdjYoIxBnsuNctIKglaezeFnVv4Xo8/PSzbWxP83w0QXDBdYv8FpZVpM+pnyWxAPfFCF0g4nIvYv6qQJ2SuMgYS2b/fyhI9Q3LqvPHpEMpTG2uaTB6MTYcyotC/4UJ0gU+4Xc=
+	t=1758622392; cv=none; b=rDI1j/LyDfGnfJWaqeuiTGA7ud4DeoP29Qw9Y6pZIZjODIDZx7sRFHDu28dBp61Ds6vardaEdC5uxub02DsF5XjeJl/rGMZKskYkWqx2chG1ErTKcZfnds+BYmnkiF/mfWHVQidBRrJRvdiCVrVMOgW0GTibC9q4YXYGjmp67Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758622376; c=relaxed/simple;
-	bh=vSTTYJFexJOXOPGbl9flNs1f8jdpO+hYI2JMuPrhH2M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qAPXoPv+TOGt0qoi25kRzQWocn/LuQU1teWseix6z0KZBCFrVuDwY/OAEQS0CObup7pijspnFJNMC9GtGEYOKuy0e3ZKJR49sWBm4887gAONNgNuMofPyBwwzdYOjwBNtSb/OUOWOVfFcNaxEmVsa7Pl6FMA/Vl6QA2jqL7HhW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bThBhpI0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bv0St62r; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758622373;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jbygUmzfw8XS2VUG0sJP6HEJcO918I6DxufbOrM/Lys=;
-	b=bThBhpI0ltJ1hqx0PKVweVeLpdM3xppi1mqlVS9P988dnElWJFcno5EqlUW2/LORt+1zHz
-	Wfycx0wfOOEs+0yZfXstUOoTY3leeQd5TumBF3E+fPfmgUpBgr3z2gUegc384kvbK/Fw2U
-	zMu21rf4c2ypNNk6Q4WKuorRAmddD+LkdASO7a+EzkZR353yMhnagecaosBIt3xUhYRNDU
-	sO0qyqawwncogrv4F2rhWO3Rg0Zvfj/jZJB14UU1T0RU54TGMg9OOPdIipGEy6os0k5wJf
-	HqsjAOG4y7wjMTQ921422R3Oyvo/iBZvs68IHSoJxmN/QMofzRMMkt5Gab7g/Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758622373;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jbygUmzfw8XS2VUG0sJP6HEJcO918I6DxufbOrM/Lys=;
-	b=bv0St62rsMuDh+7nigvQeW8MWJocEsM7XcTr5+GGEUrX8DshmHpEvAwaL6y/hDZduT7sB4
-	IDchlUJGMNv0/6Dw==
-To: Jason Gunthorpe <jgg@nvidia.com>, Andrew Jones <ajones@ventanamicro.com>
-Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org,
- kvm@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, zong.li@sifive.com, tjeznach@rivosinc.com,
- joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
- anup@brainfault.org, atish.patra@linux.dev, alex.williamson@redhat.com,
- paul.walmsley@sifive.com, palmer@dabbelt.com, alex@ghiti.fr
-Subject: Re: [RFC PATCH v2 08/18] iommu/riscv: Use MSI table to enable IMSIC
- access
-In-Reply-To: <20250922235651.GG1391379@nvidia.com>
-References: <20250920203851.2205115-20-ajones@ventanamicro.com>
- <20250920203851.2205115-28-ajones@ventanamicro.com>
- <20250922184336.GD1391379@nvidia.com>
- <20250922-50372a07397db3155fec49c9@orel>
- <20250922235651.GG1391379@nvidia.com>
-Date: Tue, 23 Sep 2025 12:12:52 +0200
-Message-ID: <87ecrx4guz.ffs@tglx>
+	s=arc-20240116; t=1758622392; c=relaxed/simple;
+	bh=BjUWFq46ZQch4IkuXbiRNszqG0RdslZ/OPhCHkN14Lc=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=R7jf/dqb63mbmXHUidpv9mIbi9OxaElFESiFputtgmtxnjvWy4NnxcOqHxSF8dvvrUFZtpEpIgfK1I8XlhszHRl/MdXFL27QjaE/1C2aUUwylB0b+rzzyConRaFKpP/Aq2NBxfgN7cgcDdvb1KxvQ9U/noWfILR2IyfUWOPdW0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W2Va0reb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 497BDC4CEF5;
+	Tue, 23 Sep 2025 10:13:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758622391;
+	bh=BjUWFq46ZQch4IkuXbiRNszqG0RdslZ/OPhCHkN14Lc=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=W2Va0rebdl5VOUh8BSEVgc2XMpiX5BCGIvk8cttUs23XsscvQkEa7wQURtFWH48rb
+	 oZOfapa7klZKEc3A7sBlzLRVllO1o1wZevL4jsnV7fQYI7ZlpF53j6EhwPHRKUYlkA
+	 12bLDtG6BWZ7BbfahTHwodhCU4pjZfX3DQkBk/2C59xRqH0tpjPq085DTwMx6jaqIH
+	 ymptmCC34ZUYCIx72v3AMazfD2RVwvFcpdQM/xmvnVV3Am7UGM5S2oczliaUcMM2ui
+	 oYmvqbS0Vzqz8aH4g/h7IrgR1SlhgWbqCD375ZGGLuB5kFZwxDQweK1vHVFAR/7fUO
+	 5GzpSXX8w5z1A==
+Date: Tue, 23 Sep 2025 05:13:09 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Ulf Hansson <ulf.hansson@linaro.org>, Will Deacon <will@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+ Ge Gordon <gordon.ge@bst.ai>, Adrian Hunter <adrian.hunter@intel.com>, 
+ Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev, 
+ BST Linux Kernel Upstream Group <bst-upstream@bstai.top>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-mmc@vger.kernel.org, 
+ Catalin Marinas <catalin.marinas@arm.com>
+To: Albert Yang <yangzh0906@thundersoft.com>
+In-Reply-To: <20250923-v4-patch-final-v1-4-2283ad7cbf88@thundersoft.com>
+References: <20250923-v4-patch-final-v1-0-2283ad7cbf88@thundersoft.com>
+ <20250923-v4-patch-final-v1-4-2283ad7cbf88@thundersoft.com>
+Message-Id: <175862238966.2427901.366123788055800395.robh@kernel.org>
+Subject: Re: [PATCH 4/9] dt-bindings: mmc: add binding for BST DWCMSHC
+ SDHCI controller
 
-On Mon, Sep 22 2025 at 20:56, Jason Gunthorpe wrote:
-> On Mon, Sep 22, 2025 at 04:20:43PM -0500, Andrew Jones wrote:
->> > It has to do with each PCI BDF having a unique set of
->> > validation/mapping tables for MSIs that are granular to the interrupt
->> > number.
->> 
->> Interrupt numbers (MSI data) aren't used by the RISC-V IOMMU in any way.
->
-> Interrupt number is a Linux concept, HW decodes the addr/data pair and
-> delivers it to some Linux interrupt. Linux doesn't care how the HW
-> treats the addr/data pair, it can ignore data if it wants.
 
-Let me explain this a bit deeper.
+On Tue, 23 Sep 2025 14:10:10 +0800, Albert Yang wrote:
+> Add device tree binding documentation for the Black Sesame Technologies
+> (BST) DWCMSHC SDHCI controller.
+> 
+> This binding describes the required and optional properties for the
+> bst,c1200-dwcmshc-sdhci compatible controller, including register layout,
+> interrupts, bus width, clock configuration, and other controller-specific
+> features.
+> 
+> Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
+> 
+> ---
+> Changes for v4:
+> - Remove Signed-off-by line for Ge Gordon
+> - Change `$ref: mmc-controller.yaml#` to `$ref: sdhci-common.yaml#`
+> - Change compatible string from `bst,c1200-dwcmshc-sdhci` to `bst,c1200-sdhci`
+> 
+> Changes for v3:
+> - Switch reg schema from maxItems to explicit items with per-entry descriptions
+> - Improve example: add irq.h include and wrap under a bus node with address/size cells
+> - Drop status = "disabled" from example; keep example concise
+> - Add Signed-off-by: Ge Gordon
+> 
+> Changes for v2:
+> - Simplify description, remove redundant paragraphs
+> - Update $schema to reference mmc-specific scheme
+> - Correct compatible to add soc name (bst,c1200-dwcmshc-sdhci)
+> - Remove all redundant property descriptions
+> - Drop invalid mmc_crm_base/size properties, use reg for all address ranges
+> - Clean up required properties to only essential entries
+> - Standardize example DTS format, fix reg syntax and property ordering
+> - Remove additionalProperties: true
+> ---
+>  .../devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml | 70 ++++++++++++++++++++++
+>  1 file changed, 70 insertions(+)
+> 
 
-As you said, the interrupt number is a pure kernel software construct,
-which is mapped to a hardware interrupt source.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-The interrupt domain, which is associated to a hardware interrupt
-source, creates the mapping and supplies the resulting configuration to
-the hardware, so that the hardware is able to raise an interrupt in the
-CPU.
+yamllint warnings/errors:
 
-In case of MSI, this configuration is the MSI message (address,
-data). That's composed by the domain according to the requirements of
-the underlying CPU hardware resource. This underlying hardware resource
-can be the CPUs interrupt controller itself or some intermediary
-hardware entity.
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.example.dtb: /example-0/bus/mmc@22200000: failed to match any schema with compatible: ['bst,c1200-dwcmshc-sdhci']
 
-The kernel reflects this in the interrupt domain hierarchy. The simplest
-case for MSI is:
+doc reference errors (make refcheckdocs):
 
-     [ CPU domain ] --- [ MSI domain ] -- device
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250923-v4-patch-final-v1-4-2283ad7cbf88@thundersoft.com
 
-The flow is as follows:
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-   device driver allocates an MSI interrupt in the MSI domain
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-   MSI domain allocates an interrupt in the CPU domain
+pip3 install dtschema --upgrade
 
-   CPU domain allocates an interrupt vector and composes the
-   address/data pair. If @data is written to @address, the interrupt is
-   raised in the CPU
-
-   MSI domain converts the address/data pair into device format and
-   writes it into the device.
-
-   When the device fires an interrupt it writes @data to @address, which
-   raises the interrupt in the CPU at the allocated CPU vector.  That
-   vector is then translated to the Linux interrupt number in the
-   interrupt handling entry code by looking it up in the CPU domain.
-
-With a remapping domain intermediary this looks like this:
-
-     [ CPU domain ] --- [ Remap domain] --- [ MSI domain ] -- device
- 
-   device driver allocates an MSI interrupt in the MSI domain
-
-   MSI domain allocates an interrupt in the Remap domain
-
-   Remap domain allocates a resource in the remap space, e.g. an entry
-   in the remap translation table and then allocates an interrupt in the
-   CPU domain.
-
-   CPU domain allocates an interrupt vector and composes the
-   address/data pair. If @data is written to @address, the interrupt is
-   raised in the CPU
-
-   Remap domain converts the CPU address/data pair to remap table format
-   and writes it to the alloacted entry in that table. It then composes
-   a new address/data pair, which points at the remap table entry.
-
-   MSI domain converts the remap address/data pair into device format
-   and writes it into the device.
-
-   So when the device fires an interrupt it writes @data to @address,
-   which triggers the remap unit. The remap unit validates that the
-   address/data pair is valid for the device and if so it writes the CPU
-   address/data pair, which raises the interrupt in the CPU at the
-   allocated vector. That vector is then translated to the Linux
-   interrupt number in the interrupt handling entry code by looking it
-   up in the CPU domain.
-
-So from a kernel POV, the address/data pairs are just opaque
-configuration values, which are written into the remap table and the
-device. Whether the content of @data is relevant or not, is a hardware
-implementation detail. That implementation detail is only relevant for
-the interrupt domain code, which handle a specific part of the
-hierarchy.
-
-The MSI domain does not need to know anything about the content and the
-meaning of @address and @data. It just cares about converting that into
-the device specific storage format.
-
-The Remap domain does not need to know anything about the content and
-the meaning of the CPU domain provided @address and @data. It just cares
-about converting that into the remap table specific format.
-
-The hardware entities do not know about the Linux interrupt number at
-all. That relationship is purely software managed as a mapping from the
-allocated CPU vector to the Linux interrupt number.
-
-Hope that helps.
-
-     tglx
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
