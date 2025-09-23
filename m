@@ -1,307 +1,351 @@
-Return-Path: <linux-kernel+bounces-828407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD771B948F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:30:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDFAB948FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76AE33A2FD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:30:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47A9C169C5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578DD30F936;
-	Tue, 23 Sep 2025 06:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31E530EF83;
+	Tue, 23 Sep 2025 06:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TRKO5+/+"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013039.outbound.protection.outlook.com [40.93.196.39])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MbPEdgtj"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB843242D91
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758609010; cv=fail; b=IVcGv/jBCNKhfXcIxx2isaVrHPBkCuvhnhn1fTkzfxwSeYbB7CGMGEqBSfn8iONwxb+avMQIewaZl6j9Wxx3/pZPfVn+B3lkbxhblY9N5iiwidKK2sXEYPcihWeAbUWLobz/9Uz0jTU5B2wyYosWvyrqwoB9MyCW1ktMNue5QAY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758609010; c=relaxed/simple;
-	bh=t2AFDdhY6dm91XxKS9LSVd94S/p5lzDrzvsajaxELE4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u2CPuNV5jzochq1xIWrw1AnO2Kiq3gJSsbhe8bwuDwTu25FBexvThJspFT8UJgi5JzUtIqoRDBVo0wNq6U/1CZU7ecWQJ8yrY3MldMi1vD7ZdcroeNFji4J6OFRZVRc9s3665XRCBsnTTThhUI8dqsvs4l3I8vWBOvznvKGRmj8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TRKO5+/+; arc=fail smtp.client-ip=40.93.196.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CJTnB7KfTrmXH54dc0wspoqq5g5QG/eNZixXqgZj3Vpr106LP0VHs3htAi2rhsFZOmVAa+iG5h8oDAuqIXGgs8+nF7K+xBhxhT7VguGil3rdkGpxhYSI7CbhKMRqeoXu3OTcMJ4R9WQjGEbgKHDBd6apuHtVATIW0sDIC0CUz+2sphGXNvf/1FY5sfeRlK4xfVi+BwXG2CP9EjxZuT+XE+VSTQtc4rEFu38mT0sEWd0y4etLecCkD7RRrm13m6OqMvSkDgR+JDXiKXqYmtAu1v+3FodewEayzyKBhkZHNIKM12hcbflCkOzb7wGkHwrL/Ko/G1kABhcCMOcz0rHdMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kQyY64GotFaz8Qs8Iv4UM22tDEmFHv7OmAO1tAvIo3A=;
- b=jomh/EhbH1B/Sj1+4UJkfixkbVXwKFF5E+MpB3PPrePePtj1+GzSZifEozSr/9+R2Ef+qfocuu3SFC/X2Y8bvHhSwVBvHGko96IodOLFpGqjJoax8oRqHNLmhv29syaMNqkMb5b2/Ea/ViNORk2AFStVNaG8610+vzq5o3oaRcJY0YXkBacVZKl1SrTqdjftwf7AwP2gUOMEoh10/ClVRIYAHL6Yi5CfLsX3a8mQ3rgEh5Ulq1OvYvEmz0vk9HLbtuJDrf8sr9p4JE9Dej+y6rdZIVuRYU5JsxsaAx/2cnjxySvnpbPnmiR1bIIq64GKUtSaRNnEKx/uF77Mtw5nvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=oracle.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kQyY64GotFaz8Qs8Iv4UM22tDEmFHv7OmAO1tAvIo3A=;
- b=TRKO5+/+1kiU7BZKDhwqwaxuhmro0cuAH9C15P5ByhuFCiRBv+8G5jlSB+gJ3lQEEqN0hI3jHaHIo2G0YHF3wdIjGrvySf7DP8FVScYzdIFZJhlSwbHhXa78juknB39SscPbLZbA+aeyka6VrO4DoPBdIyTGfkfCwGNAUD36aGU=
-Received: from DM6PR04CA0017.namprd04.prod.outlook.com (2603:10b6:5:334::22)
- by BY5PR12MB4321.namprd12.prod.outlook.com (2603:10b6:a03:204::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Tue, 23 Sep
- 2025 06:30:03 +0000
-Received: from DS2PEPF00003442.namprd04.prod.outlook.com
- (2603:10b6:5:334:cafe::e9) by DM6PR04CA0017.outlook.office365.com
- (2603:10b6:5:334::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.20 via Frontend Transport; Tue,
- 23 Sep 2025 06:30:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- DS2PEPF00003442.mail.protection.outlook.com (10.167.17.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Tue, 23 Sep 2025 06:30:02 +0000
-Received: from tunga.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 22 Sep
- 2025 23:29:55 -0700
-From: Raghavendra K T <raghavendra.kt@amd.com>
-To: <ankur.a.arora@oracle.com>
-CC: <acme@kernel.org>, <akpm@linux-foundation.org>,
-	<boris.ostrovsky@oracle.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<david@redhat.com>, <hpa@zytor.com>, <konrad.wilk@oracle.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <luto@kernel.org>,
-	<mingo@redhat.com>, <mjguzik@gmail.com>, <namhyung@kernel.org>,
-	<peterz@infradead.org>, <raghavendra.kt@amd.com>, <tglx@linutronix.de>,
-	<willy@infradead.org>, <x86@kernel.org>
-Subject: Re: [PATCH v7 00/16] mm: folio_zero_user: clear contiguous pages
-Date: Tue, 23 Sep 2025 06:29:35 +0000
-Message-ID: <20250923062935.2416128-1-raghavendra.kt@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250917152418.4077386-1-ankur.a.arora@oracle.com>
-References: <20250917152418.4077386-1-ankur.a.arora@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AF31DC198
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758609091; cv=none; b=uJYGgA2AtJ8i57/C14lRN2j6UzTE6hlFwnq2vmH7LSPYD5HR56BMBrfEWV32GV0HOQhxprkRfe4lF6B9BKHatv+O8secG+hk0oofo/NFu2wTdsqozjr2XvVwlPVn5BNRulHi+UADql6D8YkFV9PSYI1eP8po7AJCT75Wscn0MIw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758609091; c=relaxed/simple;
+	bh=7mFxlUoz+jCcP6rKZXNDXJ/o/NmYUhVbI84WFhXpjMY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=Y7QcZKsumFcnFQMUiOr6qHSlLR2L78vex3MtAoESwKYcPq8r7ErCwSUkRqzqLlqBxXvp3rgNT3+CmAoGBkg44Ybbwv2Ahhq/9t1JA3rB4frilBk2hJ5RvgMCZJ0w+xXTkiNq74NQiMAtHFD6J3PW6NVtjj98+7E485JSsa+h9DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=MbPEdgtj; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250923063127euoutp013717f4c6565a3268a19fd879fbd26b98~n1aXXO2lz0782907829euoutp01s
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:31:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250923063127euoutp013717f4c6565a3268a19fd879fbd26b98~n1aXXO2lz0782907829euoutp01s
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758609087;
+	bh=mey1jZcwAuCJC/IYycDLY8VErgZy5U0IXTS1bXXLblw=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=MbPEdgtjXVLIEwdRWKdaDdNA3gb4tVra5KMqtwozdNr4k4rkVnoobm8z9SdYRZGVI
+	 pOEFXT1aBxI/X9l9IoM30NWKR+vBi5NNFHlkP9xoteaBmEZVk14s3+mgnsbQlYcqcc
+	 CZYbj4R1KGumbmEqMd1N5B496fHtYpuWoqHrvVNE=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250923063127eucas1p26e39a1ed018e382f880e2e120c6555e4~n1aXPN0n-1731817318eucas1p2Q;
+	Tue, 23 Sep 2025 06:31:27 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250923063126eusmtip2a8efab38a6568b81a516261f0a4fe4b3~n1aWgkdVQ0941709417eusmtip2T;
+	Tue, 23 Sep 2025 06:31:26 +0000 (GMT)
+Message-ID: <47563570-7339-43da-af15-4acf7b93075c@samsung.com>
+Date: Tue, 23 Sep 2025 08:31:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [tip: sched/urgent] sched/deadline: Fix dl_server getting stuck
+To: John Stultz <jstultz@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, "Peter
+ Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org, Linux Samsung SOC
+	<linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <CANDhNCrztM1eK-6dab_-4hnX4miJH_pe49r=GVVqtD+Z235kgw@mail.gmail.com>
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003442:EE_|BY5PR12MB4321:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57cbeb73-3646-47ca-f17c-08ddfa6aa0d4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?g+rVpi8iT0CDmGVbv+mLhlIASJnEuX54O32DAf3MfJPq6NDFVRHJFL+E9Jk1?=
- =?us-ascii?Q?qyW9ahXCX2lTTXCQmAiMQwD6vHKy7mlR7PTs2VNicUicF42H9vS44tYh2jSk?=
- =?us-ascii?Q?zXIm6EbUqjwBr3sR/hz+As0/4vsBApaes8+03WezY+GK9bqhli/7DsSLwyxu?=
- =?us-ascii?Q?d4is8J1Z81k9y3dPeMQKd1OYu3GYHPGP71jZLyOueMJFhC7AcpedHeB6nsPp?=
- =?us-ascii?Q?TnvEAeHnOKfwoXVn5N6SHWiNOikN1ZKPOQiFs4WXqaVtne0urshsA+NZAHLm?=
- =?us-ascii?Q?uf+X4+ykxnLikfcnlZEoiKP4P1/ik4qWtGWb1laZ7zpAq9BXXhdof1jeggRk?=
- =?us-ascii?Q?Qr1pTvGRWjCFSzhPSsewynaOX+ZuJbWEudFfXrQQ6wG5tk9PRQDI6Cox5e5E?=
- =?us-ascii?Q?c7JRZ+pbwL82IeIJpl9kvGBA2A5fYTOTZoZ8V986RMw/TWeQN5AuYpPtSQ3Q?=
- =?us-ascii?Q?ZCFpCDHJ1pwy/88jqnUy1K15dKPbudIyUtegapH5/vDMAhLz1kcEG/SwxvtU?=
- =?us-ascii?Q?6UDXqLtzsW2XSDN0ZKy2VXDrPXRu0dLRiPxjGRgV+xlaxa/saAr2SNkAMVFw?=
- =?us-ascii?Q?JshqGAQifovO/t1HjjXhn/AzireAOY+ElGlQMgQiCiaugD3DRnf8qUb+Dpz3?=
- =?us-ascii?Q?VHjfcjG+xB7w6XzShj/xJlo7KZBnm2sQPFZ6C91/Gf+PH23xOCkaxAlm7NuO?=
- =?us-ascii?Q?6a2RLXe1yvVv6oG+Zgbgzuu8gKX5BFCkkqe32mnn6AhuVg0e2KU6aoCqfqQx?=
- =?us-ascii?Q?3MJOMH1bIBQvhBZ3N2+CuLx689YSGJ0i6lNhlc4XTJYPh4kSaawtfAEw9i1G?=
- =?us-ascii?Q?Xb4vw9s8s3Wb9N7RI5+Gnjxe6TWQzqXYH/eHGY2Xh2rHPMpUx2WNWfK5a5Ol?=
- =?us-ascii?Q?peqAiW7nuEFlQIPNa3JuYRq3HgkO30D/VRKLUn9K05rX/NZnahpIVp8T88op?=
- =?us-ascii?Q?UOFcQ55QjUQBb12HLY+FKcg9iPr+fnHp2Tl1yDuTRPSm9o9zg52jiR9svc1v?=
- =?us-ascii?Q?wmTVzFhWWui8NWU7i/9D8F4JvXscxNdirWuxvh0928vHDL0uUFsl7Tt6ptYa?=
- =?us-ascii?Q?4n8kQlOZXkyNeF7Ev3hLEDpQsMbFSN2euReHeQ+cMUddcVgKrHFGHyYHpfQn?=
- =?us-ascii?Q?K0U8vkjnWd2e7Eqqwz8XluhU+LvuN7+pnrPcuCjGVCwThwFpq/PBVE0jPnfG?=
- =?us-ascii?Q?PwMM+nsxue27n/amiF+TG8tvvpH+9haJSH9wlMqXNWskZfkWIt16dRa3nkRG?=
- =?us-ascii?Q?7ERnpnsUQ+cLrkQapAu2n1pa4k+EPoS/S2qJHqrEZ6G9euRHfu94YI+BrboU?=
- =?us-ascii?Q?jcpko2Cschhqc/4/g6hn3Ds7gfI8odkU+VY6gr1tTQ3+Iy8jD9l90yNny75e?=
- =?us-ascii?Q?pGq5No4rCEq8bEXbBjg0hchI8M//GTDrC/jos5DrjrnSz8f7MhUg37iX15WN?=
- =?us-ascii?Q?rUyTa93FxTkP1uPeWxcNeE47rrxCcxQaQ0kvzl9hA5mOvwYYWzqTzFmlSarB?=
- =?us-ascii?Q?hoMM7uchOlFi8cjqsLi0F9FWPUZEBFGMUX7N?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 06:30:02.7474
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57cbeb73-3646-47ca-f17c-08ddfa6aa0d4
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003442.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4321
+X-CMS-MailID: 20250923063127eucas1p26e39a1ed018e382f880e2e120c6555e4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd
+X-EPHeader: CA
+X-CMS-RootMailID: 20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd
+References: <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
+	<CGME20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd@eucas1p1.samsung.com>
+	<175817861820.709179.10538516755307778527.tip-bot2@tip-bot2>
+	<e56310b5-f7a9-4fad-b79a-dcbcdd3d3883@samsung.com>
+	<CANDhNCrztM1eK-6dab_-4hnX4miJH_pe49r=GVVqtD+Z235kgw@mail.gmail.com>
 
-On 9/17/2025 8:54 PM, Ankur Arora wrote:
-> This series adds clearing of contiguous page ranges for hugepages,
-> improving on the current page-at-a-time approach in two ways:
-> 
->   - amortizes the per-page setup cost over a larger extent
-> 
->   - when using string instructions, exposes the real region size
->     to the processor.
-> 
-> A processor could use a knowledge of the extent to optimize the
-> clearing. AMD Zen uarchs, as an example, elide allocation of
-> cachelines for regions larger than L3-size.
-[...]
+On 23.09.2025 01:46, John Stultz wrote:
+> On Mon, Sep 22, 2025 at 2:57 PM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> This patch landed in today's linux-next as commit 077e1e2e0015
+>> ("sched/deadline: Fix dl_server getting stuck"). In my tests I found
+>> that it breaks CPU hotplug on some of my systems. On 64bit
+>> Exynos5433-based TM2e board I've captured the following lock dep warning
+>> (which unfortunately doesn't look like really related to CPU hotplug):
+>>
+> Huh. Nor does it really look related to the dl_server change. Interesting...
+>
+>
+>> # for i in /sys/devices/system/cpu/cpu[1-9]; do echo 0 >$i/online; done
+>> Detected VIPT I-cache on CPU7
+>> CPU7: Booted secondary processor 0x0000000101 [0x410fd031]
+>> ------------[ cut here ]------------
+>> WARNING: CPU: 7 PID: 0 at kernel/rcu/tree.c:4329
+>> rcutree_report_cpu_starting+0x1e8/0x348
+>> Modules linked in: brcmfmac_wcc cpufreq_powersave cpufreq_conservative
+>> brcmfmac brcmutil sha256 snd_soc_wm5110 cfg80211 snd_soc_wm_adsp cs_dsp
+>> snd_soc_tm2_wm5110 snd_soc_arizona arizona_micsupp phy_exynos5_usbdrd
+>> s5p_mfc typec arizona_ldo1 hci_uart btqca s5p_jpeg max77693_haptic btbcm
+>> s3fwrn5_i2c exynos_gsc bluetooth s3fwrn5 nci v4l2_mem2mem nfc
+>> snd_soc_i2s snd_soc_idma snd_soc_hdmi_codec snd_soc_max98504
+>> snd_soc_s3c_dma videobuf2_dma_contig videobuf2_memops ecdh_generic
+>> snd_soc_core ir_spi videobuf2_v4l2 ecc snd_compress ntc_thermistor
+>> panfrost videodev snd_pcm_dmaengine snd_pcm rfkill drm_shmem_helper
+>> panel_samsung_s6e3ha2 videobuf2_common backlight pwrseq_core gpu_sched
+>> mc snd_timer snd soundcore ipv6
+>> CPU: 7 UID: 0 PID: 0 Comm: swapper/7 Not tainted 6.17.0-rc6+ #16012 PREEMPT
+>> Hardware name: Samsung TM2E board (DT)
+>> Hardware name: Samsung TM2E board (DT)
+>> Detected VIPT I-cache on CPU7
+>>
+>> ======================================================
+>> WARNING: possible circular locking dependency detected
+>> 6.17.0-rc6+ #16012 Not tainted
+>> ------------------------------------------------------
+>> swapper/7/0 is trying to acquire lock:
+>> ffff000024021cc8 (&irq_desc_lock_class){-.-.}-{2:2}, at:
+>> __irq_get_desc_lock+0x5c/0x9c
+>>
+>> but task is already holding lock:
+>> ffff800083e479c0 (&port_lock_key){-.-.}-{3:3}, at:
+>> s3c24xx_serial_console_write+0x80/0x268
+>>
+>> which lock already depends on the new lock.
+>>
+>>
+>> the existing dependency chain (in reverse order) is:
+>>
+>> -> #2 (&port_lock_key){-.-.}-{3:3}:
+>>          _raw_spin_lock_irqsave+0x60/0x88
+>>          s3c24xx_serial_console_write+0x80/0x268
+>>          console_flush_all+0x304/0x49c
+>>          console_unlock+0x70/0x110
+>>          vprintk_emit+0x254/0x39c
+>>          vprintk_default+0x38/0x44
+>>          vprintk+0x28/0x34
+>>          _printk+0x5c/0x84
+>>          register_console+0x3ac/0x4f8
+>>          serial_core_register_port+0x6c4/0x7a4
+>>          serial_ctrl_register_port+0x10/0x1c
+>>          uart_add_one_port+0x10/0x1c
+>>          s3c24xx_serial_probe+0x34c/0x6d8
+>>          platform_probe+0x5c/0xac
+>>          really_probe+0xbc/0x298
+>>          __driver_probe_device+0x78/0x12c
+>>          driver_probe_device+0xdc/0x164
+>>          __device_attach_driver+0xb8/0x138
+>>          bus_for_each_drv+0x80/0xdc
+>>          __device_attach+0xa8/0x1b0
+>>          device_initial_probe+0x14/0x20
+>>          bus_probe_device+0xb0/0xb4
+>>          deferred_probe_work_func+0x8c/0xc8
+>>          process_one_work+0x208/0x60c
+>>          worker_thread+0x244/0x388
+>>          kthread+0x150/0x228
+>>          ret_from_fork+0x10/0x20
+>>
+>> -> #1 (console_owner){..-.}-{0:0}:
+>>          console_lock_spinning_enable+0x6c/0x7c
+>>          console_flush_all+0x2c8/0x49c
+>>          console_unlock+0x70/0x110
+>>          vprintk_emit+0x254/0x39c
+>>          vprintk_default+0x38/0x44
+>>          vprintk+0x28/0x34
+>>          _printk+0x5c/0x84
+>>          exynos_wkup_irq_set_wake+0x80/0xa4
+>>          irq_set_irq_wake+0x164/0x1e0
+>>          arizona_irq_set_wake+0x18/0x24
+>>          irq_set_irq_wake+0x164/0x1e0
+>>          regmap_irq_sync_unlock+0x328/0x530
+>>          __irq_put_desc_unlock+0x48/0x4c
+>>          irq_set_irq_wake+0x84/0x1e0
+>>          arizona_set_irq_wake+0x5c/0x70
+>>          wm5110_probe+0x220/0x354 [snd_soc_wm5110]
+>>          platform_probe+0x5c/0xac
+>>          really_probe+0xbc/0x298
+>>          __driver_probe_device+0x78/0x12c
+>>          driver_probe_device+0xdc/0x164
+>>          __driver_attach+0x9c/0x1ac
+>>          bus_for_each_dev+0x74/0xd0
+>>          driver_attach+0x24/0x30
+>>          bus_add_driver+0xe4/0x208
+>>          driver_register+0x60/0x128
+>>          __platform_driver_register+0x24/0x30
+>>          cs_exit+0xc/0x20 [cpufreq_conservative]
+>>          do_one_initcall+0x64/0x308
+>>          do_init_module+0x58/0x23c
+>>          load_module+0x1b48/0x1dc4
+>>          init_module_from_file+0x84/0xc4
+>>          idempotent_init_module+0x188/0x280
+>>          __arm64_sys_finit_module+0x68/0xac
+>>          invoke_syscall+0x48/0x110
+>>          el0_svc_.common.c
+>>
+>> (system is frozen at this point).
+> So I've seen issues like this when testing scheduler changes,
+> particularly when I've added debug printks or WARN_ONs that trip while
+> we're deep in the scheduler core and hold various locks. I reported
+> something similar here:
+> https://lore.kernel.org/lkml/CANDhNCo8NRm4meR7vHqvP8vVZ-_GXVPuUKSO1wUQkKdfjvy20w@mail.gmail.com/
+>
+> Now, usually I'll see the lockdep warning, and the hang is much more rare.
+>
+> But I don't see right off how the dl_server change would affect this,
+> other than just changing the timing of execution such that you manage
+> to trip over the existing issue.
+>
+> So far I don't see anything similar testing hotplug on x86 qemu.  Do
+> you get any other console messages or warnings prior?
 
-Hello,
-
-Feel free to add
-
-Tested-by: Raghavendra K T <raghavendra.kt@amd.com>
- 
-for whole series.
-
-[ I do understand that there may be minor tweeks to clear page patches
-to convert nth_page once David's changes are in]
-
-SUT: AMD Zen5
-
-I also did a quick hack to unconditionally use CLZERO/MOVNT on top of
-Ankur's series to test how much additional benefits can architectural
-enhancements bring in. [ Inline with second part of Ankur's old series before
-preempt lazy changes ]. Please note that it is only for testing ideally
-for lower sizes we would want rep stosb only. and threshold at which
-we need to do non-temporal copy should be a function of L3 and / OR L2 size
-perhaps.
-
-Results:
-base      : 6.17-rc6 + perf bench patches
-clearpage : 6.17-rc6 + whole series from Ankur 
-clzero    : 6.17-rc6 + Ankur's series +  clzero (below patch)
-movnt     : 6.17-rc6 + Ankur's series +  movnt (below patch)
-
-Command run: ./perf bench mem mmap -p 2MB -f demand -s 64GB -l 10
-
-Higher = better
-
-                   preempt = lazy (GB/sec)  preempt = voluntary (GB/sec)
-
-base               20.655559                19.712500
-
-clearpage          35.060572                34.533414      
-
-clzero             66.948422                66.067265
-
-movnt              51.593506                51.403765
+Nope. But the most suspicious message that is there is the 'CPU7: Booted 
+secondary processor 0x0000000101' line, which I got while off-lining all 
+non-zero CPUs.
 
 
-CLZERO/MOVNT experimental patch. Hope I have not missed anything here :)
+> Looking at the backtrace, I wonder if changing the pr_info() in
+> exynos_wkup_irq_set_wake() to printk_deferred() might avoid this?
 
--- >8 --
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 52c8910ba2ef..26cef2b187b9 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -3170,6 +3170,8 @@ config HAVE_ATOMIC_IOMAP
- 	def_bool y
- 	depends on X86_32
- 
-+source "arch/x86/Kconfig.cpy"
-+
- source "arch/x86/kvm/Kconfig"
- 
- source "arch/x86/Kconfig.cpufeatures"
-diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
-index 2361066d175e..aa2e62bbfa62 100644
---- a/arch/x86/include/asm/page_64.h
-+++ b/arch/x86/include/asm/page_64.h
-@@ -84,11 +84,23 @@ static inline void clear_pages(void *addr, unsigned int npages)
- 	 */
- 	kmsan_unpoison_memory(addr, len);
- 	asm volatile(ALTERNATIVE_2("call memzero_page_aligned_unrolled",
--				   "shrq $3, %%rcx; rep stosq", X86_FEATURE_REP_GOOD,
--				   "rep stosb", X86_FEATURE_ERMS)
--			: "+c" (len), "+D" (addr), ASM_CALL_CONSTRAINT
--			: "a" (0)
--			: "cc", "memory");
-+				"shrq $3, %%rcx; rep stosq", X86_FEATURE_REP_GOOD,
-+#if defined(CONFIG_CLEARPAGE_CLZERO)
-+		"call clear_pages_clzero", X86_FEATURE_CLZERO)
-+		: "+c" (len), "+D" (addr), ASM_CALL_CONSTRAINT
-+		: "a" (0)
-+		: "cc", "memory");
-+#elif defined(CONFIG_CLEARPAGE_MOVNT)
-+		"call clear_pages_movnt", X86_FEATURE_XMM2)
-+		: "+c" (len), "+D" (addr), ASM_CALL_CONSTRAINT
-+		: "a" (0)
-+		: "cc", "memory");
-+#else
-+		"rep stosb", X86_FEATURE_ERMS)
-+		: "+c" (len), "+D" (addr), ASM_CALL_CONSTRAINT
-+		: "a" (0)
-+		: "cc", "memory");
-+#endif
- }
- #define clear_pages clear_pages
- 
-diff --git a/arch/x86/lib/clear_page_64.S b/arch/x86/lib/clear_page_64.S
-index 27debe0c018c..0848287446dd 100644
---- a/arch/x86/lib/clear_page_64.S
-+++ b/arch/x86/lib/clear_page_64.S
-@@ -4,6 +4,7 @@
- #include <linux/cfi_types.h>
- #include <linux/objtool.h>
- #include <asm/asm.h>
-+#include <asm/page_types.h>
- 
- /*
-  * Zero page aligned region.
-@@ -119,3 +120,40 @@ SYM_FUNC_START(rep_stos_alternative)
- 	_ASM_EXTABLE_UA(17b, .Lclear_user_tail)
- SYM_FUNC_END(rep_stos_alternative)
- EXPORT_SYMBOL(rep_stos_alternative)
-+
-+SYM_FUNC_START(clear_pages_movnt)
-+	.p2align 4
-+.Lstart:
-+	movnti  %rax, 0x00(%rdi)
-+	movnti  %rax, 0x08(%rdi)
-+	movnti  %rax, 0x10(%rdi)
-+	movnti  %rax, 0x18(%rdi)
-+	movnti  %rax, 0x20(%rdi)
-+	movnti  %rax, 0x28(%rdi)
-+	movnti  %rax, 0x30(%rdi)
-+	movnti  %rax, 0x38(%rdi)
-+	addq    $0x40, %rdi
-+	subl    $0x40, %ecx
-+	ja      .Lstart
-+	RET
-+SYM_FUNC_END(clear_pages_movnt)
-+EXPORT_SYMBOL_GPL(clear_pages_movnt)
-+
-+/*
-+ * Zero a page using clzero (On AMD, with CPU_FEATURE_CLZERO.)
-+ *
-+ * Caller needs to issue a sfence at the end.
-+ */
-+
-+SYM_FUNC_START(clear_pages_clzero)
-+	movq	%rdi,%rax
-+	.p2align 4
-+.Liter:
-+	clzero
-+	addq    $0x40, %rax
-+	subl    $0x40, %ecx
-+	ja      .Liter
-+	sfence
-+	RET
-+SYM_FUNC_END(clear_pages_clzero)
-+EXPORT_SYMBOL_GPL(clear_pages_clzero)
+
+I've removed that pr_info() from exynos_wkup_irq_set_wake() completely 
+and now I get the following warning:
+
+# for i in /sys/devices/system/cpu/cpu[1-9]; do echo 0 >$i/online; done
+# Detected VIPT I-cache on CPU7
+  CPU7: Booted secondary processor 0x0000000101 [0x410fd031]
+  ------------[ cut here ]------------
+  WARNING: CPU: 7 PID: 0 at kernel/rcu/tree.c:4329 
+rcutree_report_cpu_starting+0x1e8/0x348
+  Modules linked in: brcmfmac_wcc brcmfmac brcmutil sha256 
+cpufreq_powersave cpufreq_conservative cfg80211 snd_soc_tm2_wm5110 
+hci_uart btqca btbcm s3fwrn5_i2c snd_soc_wm5110 bluetooth 
+arizona_micsupp phy_exynos5_usbdrd s3fwrn5 s5p_mfc nci typec 
+snd_soc_wm_adsp s5p_jpeg cs_dsp nfc ecdh_generic max77693_haptic 
+snd_soc_arizona arizona_ldo1 ecc rfkill snd_soc_i2s snd_soc_idma 
+snd_soc_max98504 snd_soc_hdmi_codec snd_soc_s3c_dma pwrseq_core 
+snd_soc_core exynos_gsc ir_spi v4l2_mem2mem videobuf2_dma_contig 
+videobuf2_memops snd_compress snd_pcm_dmaengine videobuf2_v4l2 videodev 
+ntc_thermistor snd_pcm panfrost videobuf2_common drm_shmem_helper 
+gpu_sched snd_timer mc panel_samsung_s6e3ha2 backlight snd soundcore ipv6
+  CPU: 7 UID: 0 PID: 0 Comm: swapper/7 Not tainted 6.17.0-rc6+ #16014 
+PREEMPT
+  Hardware name: Samsung TM2E board (DT)
+  Hardware name: Samsung TM2E board (DT)
+  Detected VIPT I-cache on CPU7
+  CPU7: Booted secondary processor 0x0000000103 [0x410fd031]
+
+  ================================
+  WARNING: inconsistent lock state
+  6.17.0-rc6+ #16014 Not tainted
+  --------------------------------
+  inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
+  swapper/7/0 [HC0[0]:SC0[0]:HE0:SE1] takes:
+  ffff800083e479c0 (&port_lock_key){?.-.}-{3:3}, at: 
+s3c24xx_serial_console_write+0x80/0x268
+  {IN-HARDIRQ-W} state was registered at:
+    lock_acquire+0x1c8/0x354
+    _raw_spin_lock+0x48/0x60
+    s3c64xx_serial_handle_irq+0x6c/0x164
+    __handle_irq_event_percpu+0x9c/0x2d8
+    handle_irq_event+0x4c/0xac
+    handle_fasteoi_irq+0x108/0x198
+    handle_irq_desc+0x40/0x58
+    generic_handle_domain_irq+0x1c/0x28
+    gic_handle_irq+0x40/0xc8
+    call_on_irq_stack+0x30/0x48
+    do_interrupt_handler+0x80/0x84
+    el1_interrupt+0x34/0x64
+    el1h_64_irq_handler+0x18/0x24
+    el1h_64_irq+0x6c/0x70
+    default_idle_call+0xac/0x26c
+    do_idle+0x220/0x284
+    cpu_startup_entry+0x38/0x3c
+    rest_init+0xf4/0x184
+    start_kernel+0x70c/0x7d4
+    __primary_switched+0x88/0x90
+  irq event stamp: 63878
+  hardirqs last  enabled at (63877): [<ffff800080121d2c>] 
+do_idle+0x220/0x284
+  hardirqs last disabled at (63878): [<ffff80008132f3a4>] 
+el1_brk64+0x1c/0x54
+  softirqs last  enabled at (63812): [<ffff8000800c1164>] 
+handle_softirqs+0x4c4/0x4dc
+  softirqs last disabled at (63807): [<ffff800080010690>] 
+__do_softirq+0x14/0x20
+
+  other info that might help us debug this:
+   Possible unsafe locking scenario:
+
+         CPU0
+         ----
+    lock(&port_lock_key);
+    <Interrupt>
+      lock(&port_lock_key);
+
+   *** DEADLOCK ***
+
+  5 locks held by swapper/7/0:
+   #0: ffff800082d0aa98 (console_lock){+.+.}-{0:0}, at: 
+vprintk_emit+0x150/0x39c
+   #1: ffff800082d0aaf0 (console_srcu){....}-{0:0}, at: 
+console_flush_all+0x78/0x49c
+   #2: ffff800082d0acb0 (console_owner){+.-.}-{0:0}, at: 
+console_lock_spinning_enable+0x48/0x7c
+   #3: ffff800082d0acd8 
+(printk_legacy_map-wait-type-override){+...}-{4:4}, at: 
+console_flush_all+0x2b0/0x49c
+   #4: ffff800083e479c0 (&port_lock_key){?.-.}-{3:3}, at: 
+s3c24xx_serial_console_write+0x80/0x268
+
+  stack backtrace:
+  CPU: 7 UID: 0 PID: 0 Comm: swapper/7 Not tainted 6.17.0-rc6+ #16014 
+PREEMPT
+  Hardware name: Samsung TM2E board (DT)
+  Call trace:
+   show_stack+0x18/0x24 (C)
+   dump_stack_lvl+0x90/0xd0
+   dump_stack+0x18/0x24
+   print_usage_bug.part.0+0x29c/0x358
+   mark_lock+0x7bc/0x960
+   mark_held_locks+0x58/0x90
+   lockdep_hardirqs_on_prepare+0x104/0x214
+   trace_hardirqs_on+0x58/0x1d8
+   secondary_start_kernel+0x134/0x160
+   __secondary_switched+0xc0/0xc4
+  ------------[ cut here ]------------
+  WARNING: CPU: 7 PID: 0 at kernel/context_tracking.c:127 
+ct_kernel_exit.constprop.0+0x120/0x184
+  Modules linked in: brcmfmac_wcc brcmfmac brcmutil sha256 
+cpufreq_powersave cpufreq_conservative cfg80211 snd_soc_tm2_wm5110 
+hci_uart btqca btbcm s3fwrn5_i2c snd_soc_wm5110 bluetooth 
+arizona_micsupp phy_exynos5_usbdrd s3fwrn5 s5p_mfc nci typec 
+snd_soc_wm_adsp s5p_jpeg cs_dsp nfc ecdh_generic max77693_haptic 
+snd_soc_arizona arizona_ldo1 ecc rfkill snd_soc_i2s snd_soc_idma 
+snd_soc_max98504 snd_soc_hdmi_c
+
+(no more messages, system frozen)
+
+It looks that offlining CPUs 1-7 was successful (there is a prompt char 
+in the second line), but then CPU7 got somehow onlined again, what 
+causes this freeze.
+
+Best regards
 -- 
-2.43.0
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
