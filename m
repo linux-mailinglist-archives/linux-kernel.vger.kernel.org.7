@@ -1,67 +1,61 @@
-Return-Path: <linux-kernel+bounces-828557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C82F0B94E0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:55:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E82B94E1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816443B3649
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:55:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35F501635C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6188331D387;
-	Tue, 23 Sep 2025 07:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dBH9eflq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0027C31770E;
+	Tue, 23 Sep 2025 07:56:24 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B256031815E;
-	Tue, 23 Sep 2025 07:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20D1314B64;
+	Tue, 23 Sep 2025 07:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758614057; cv=none; b=gVMO/od8DYDFFm9o8kAxv2looy0fg77YH+x9X2uHIeVXkIFnSgGtSg4qffHSMcAMYiuWKI+92rOvpWZgKW7vddUj8tDdca0w23L9zQPZ2eJjpPMzpuvtqx0isYLRYfjltSaYE39mDm4hYNMbO8QsonBEGmxvjQ+sbVvDzgEEs44=
+	t=1758614183; cv=none; b=mE5ooLd9eio9QUjro0UuxFNRfheXKDFOmuqtQdInh5ETZl4mmr4ZutvWuQ1gf8yZJusGF640ITA0r3Nue5e0nRfN+gvBu5m05mkQUg3digjM0nKW6ufk+0xjNNkZyvFvk4PccsPVB0R6n1aw/WXjEUYYm9SxsoIIOV7HrX3hcWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758614057; c=relaxed/simple;
-	bh=THUGc4v7Y/ExVXfzj7FTsIjB1vKSzxAYZTfacIndzW8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EQSBEC7LL52HNDK8nfAYo5AV4wGEZa/uIhtiGFFsMEZvuWOEUP9i9nlPCymmLmfNidC5Havo/rDMqvFdgwoONbjN6lGqe6Efdyi5jlHLcZcFZhepVNh9zD3NFuDpqvq2efv3OdSShXtIwx5xt2M0+IuRSikdGjBTkfjRNZDmmEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dBH9eflq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 024E3C4CEF5;
-	Tue, 23 Sep 2025 07:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758614055;
-	bh=THUGc4v7Y/ExVXfzj7FTsIjB1vKSzxAYZTfacIndzW8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dBH9eflqvX69Gc/sheG0eTn6ugFiZVZPhb2LUZybOnl/zbPvNzfMydO2GTa0AmSlB
-	 ZnFebMRH0FHuotgfIO/NuRbyDRyaRi58XLjNFlKpc3wy9WQMSFKWMZQVXcftP52GJw
-	 RZSPHekjTmFR39pkhMO4+2QXKTPvk8BHjiTIiLXleoIX0EMl1EXmVq4Fzu/oUCRlyw
-	 RKypsQh12fJoN4nDsWbQC7B9haZYA83v8D3UJIVXLuBRWz6+J++VI5jNl66cQuO/Iz
-	 Qg2z50E8yQ1u39O5PUucYuZP7V1LzmUorS3YOwsEfPewSqjXOu67ckQq4IzK22vkgm
-	 rIj0249SSQRlg==
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Benson Leung <bleung@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <shuah@kernel.org>,
-	Dawid Niedzwiecki <dawidn@google.com>,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1758614183; c=relaxed/simple;
+	bh=cnkx++Shq2jwD04CEqQwNmyfrJmRTtqWhsvAJ5zdpV0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UzcxhLcnaFN/8OXXBUFlTdZSfNIudKjaStkz/Pobyju7RBvZkCl7EGHKT/Nto5IxBFrC2cOZF2W9UkJ7tzGzOoX+QvG/pqLe2haQCsJX8eXlgc4wT/Gnrbr6loMAuf1N8++Pw7fboUsd5b1aUuSRSLvuMbb3F2s5rRCKSxxDuN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: c6465822985211f08b9f7d2eb6caa7cf-20250923
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:5d64f1d0-3975-4023-81f6-aa8fbf00f935,IP:0,U
+	RL:0,TC:0,Content:30,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:30
+X-CID-META: VersionHash:6493067,CLOUDID:6fc2416127f5ecfd634d1a31a7cab7f3,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:4|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: c6465822985211f08b9f7d2eb6caa7cf-20250923
+X-User: zhangzihuan@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 699213372; Tue, 23 Sep 2025 15:56:12 +0800
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: "Rafael J . wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: zhenglifeng <zhenglifeng1@huawei.com>,
+	linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
-	tzungbi@kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v4 7/7] platform/chrome: cros_ec_chardev: Secure cros_ec_device via revocable
-Date: Tue, 23 Sep 2025 07:53:02 +0000
-Message-ID: <20250923075302.591026-8-tzungbi@kernel.org>
-X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
-In-Reply-To: <20250923075302.591026-1-tzungbi@kernel.org>
-References: <20250923075302.591026-1-tzungbi@kernel.org>
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [PATCH v2] cpufreq: Replace pointer subtraction with iteration macros
+Date: Tue, 23 Sep 2025 15:55:53 +0800
+Message-Id: <20250923075553.45532-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,60 +64,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Miscdevice now supports revocable fops replacement.  Use it to secure
-the cros_ec_device.
+The cpufreq documentation suggests avoiding direct pointer subtraction
+when working with entries in driver_freq_table, as it is relatively
+costly. Instead, the recommended approach is to use the provided
+iteration macros:
 
-Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
+- cpufreq_for_each_valid_entry_idx()
+
+Replace pointer subtraction in freq_table.c with the macros
+cpufreq_for_each_entry_idx() and cpufreq_for_each_valid_entry_idx(), as
+the index does not need initialization, avoiding unnecessary
+computation. This improves code clarity and follows the established
+cpufreq coding style.
+
+No functional change intended.
+
+Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+
+V2:
+ - Remove unnecessary initialization for current and remaining follow Rafael's suggestion
 ---
-PoC patch.
+ drivers/cpufreq/freq_table.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-v4:
-- New in the series.
-
- drivers/platform/chrome/cros_ec_chardev.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/platform/chrome/cros_ec_chardev.c b/drivers/platform/chrome/cros_ec_chardev.c
-index c9d80ad5b57e..cacc73635d6b 100644
---- a/drivers/platform/chrome/cros_ec_chardev.c
-+++ b/drivers/platform/chrome/cros_ec_chardev.c
-@@ -166,7 +166,6 @@ static int cros_ec_chardev_open(struct inode *inode, struct file *filp)
- 	if (!priv)
- 		return -ENOMEM;
+diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
+index d5111ee56e38..408fd8fee2e3 100644
+--- a/drivers/cpufreq/freq_table.c
++++ b/drivers/cpufreq/freq_table.c
+@@ -33,16 +33,17 @@ int cpufreq_frequency_table_cpuinfo(struct cpufreq_policy *policy)
+ 	struct cpufreq_frequency_table *pos, *table = policy->freq_table;
+ 	unsigned int min_freq = ~0;
+ 	unsigned int max_freq = 0;
++	unsigned int i;
+ 	unsigned int freq;
  
--	priv->ec_dev = ec_dev;
- 	priv->cmd_offset = ec->cmd_offset;
- 	filp->private_data = priv;
- 	INIT_LIST_HEAD(&priv->events);
-@@ -370,6 +369,18 @@ static const struct file_operations chardev_fops = {
- #endif
- };
+-	cpufreq_for_each_valid_entry(pos, table) {
++	cpufreq_for_each_valid_entry_idx(pos, table, i) {
+ 		freq = pos->frequency;
  
-+static int cros_ec_chardev_rev_try_access(struct revocable *rev, void *data)
-+{
-+	struct chardev_priv *priv = data;
-+
-+	priv->ec_dev = revocable_try_access(rev);
-+	return priv->ec_dev ? 0 : -ENODEV;
-+}
-+
-+static const struct revocable_operations cros_ec_chardev_rops = {
-+	.try_access = cros_ec_chardev_rev_try_access,
-+};
-+
- static int cros_ec_chardev_probe(struct platform_device *pdev)
- {
- 	struct cros_ec_dev *ec = dev_get_drvdata(pdev->dev.parent);
-@@ -385,6 +396,8 @@ static int cros_ec_chardev_probe(struct platform_device *pdev)
- 	misc->fops = &chardev_fops;
- 	misc->name = ec_platform->ec_name;
- 	misc->parent = pdev->dev.parent;
-+	misc->rp = ec->ec_dev->revocable_provider;
-+	misc->rops = &cros_ec_chardev_rops;
+ 		if ((!cpufreq_boost_enabled() || !policy->boost_enabled)
+ 		    && (pos->flags & CPUFREQ_BOOST_FREQ))
+ 			continue;
  
- 	dev_set_drvdata(&pdev->dev, misc);
+-		pr_debug("table entry %u: %u kHz\n", (int)(pos - table), freq);
++		pr_debug("table entry %u: %u kHz\n", i, freq);
+ 		if (freq < min_freq)
+ 			min_freq = freq;
+ 		if (freq > max_freq)
+@@ -126,7 +127,7 @@ int cpufreq_table_index_unsorted(struct cpufreq_policy *policy,
+ 	};
+ 	struct cpufreq_frequency_table *pos;
+ 	struct cpufreq_frequency_table *table = policy->freq_table;
+-	unsigned int freq, diff, i = 0;
++	unsigned int freq, diff, i;
+ 	int index;
  
+ 	pr_debug("request for target %u kHz (relation: %u) for cpu %u\n",
 -- 
-2.51.0.534.gc79095c0ca-goog
+2.25.1
 
 
