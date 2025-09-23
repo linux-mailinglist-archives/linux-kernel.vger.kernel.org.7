@@ -1,275 +1,269 @@
-Return-Path: <linux-kernel+bounces-828789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09954B95789
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:43:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAEB9B9578C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5FAD2E5716
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:43:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 655643ADC96
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36ED02BEC3F;
-	Tue, 23 Sep 2025 10:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60187321430;
+	Tue, 23 Sep 2025 10:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQ2F43NW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M1VxNaPM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645042D6E53
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F67275AE8
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758624215; cv=none; b=jxYxfWPyL1Ank32pAdAdQWi84qhelNeemvR5bspHJl1g7xzKvdCt7oSrzN5gKDXF1aPBfWgUBEy/FjWD9zwhEk5698vRNUaCRJqFbMkiHLyIKHM9UasWjKfKv6zv1ZjMLzL98n8mlN2g3DCSQBWd9jxdBcL5Ku62iykzzhDzbHQ=
+	t=1758624216; cv=none; b=szP+5RXElxz+0wQxdeauFO7vmkWvgZLFm6KNvjeXuFDnp+JljdT2zdVRCdoFmJxI7TpZFYGmJe9nIm/zLVmHyyq2yTfjYXlfO+6RMJKP65NiYiYaChiNMhxfGry97IfPLxVXm5iKYOA0Pc4yJikp5m7XSPNjb3mfaR/KF1hufRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758624215; c=relaxed/simple;
-	bh=PhQpgWYmL6Ae77aouOTVMF6UGjtRp/UBfJ/i4TcIbd0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=non7lEiJj9N25hSoItfmDZCRec8RPM6AG31bXrKv16Yiwxt2YmNz0z/v/adqNJL+pUwph49Giv/o1wRXHN44rYrwZWsJCZ4Z/hXw+DHwJ+25EUvh7VFspQ696lxsvQqQwfoxDuZio+U+c0Cpr55X/gbaaAESyAyBeon8kzxGNtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQ2F43NW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AEFDC116C6
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:43:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758624215;
-	bh=PhQpgWYmL6Ae77aouOTVMF6UGjtRp/UBfJ/i4TcIbd0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YQ2F43NWbByqrPCdddc/rVVBmCEvRgTnluFwtJEZv5CaSpjqrTAjdVNMbyYw9O35k
-	 RpeaHf6wbFOfUXNiwmVVJnBvkqdz5RcwN6cxbXrKjblVI9EEA0kazVejxEjDSyRiAT
-	 nAcEwvOeHXtufkX7PZcjBxqxqIlk9TzKhXYL6axRZTFyHwknZ0IVS85slDmFpcj6bB
-	 +8ZF/gxw1Y3Sq4LCAYUluLG4ryAM3o5OkxZjMjGx65GduWRB/omMa4uwxM+O+wGOGS
-	 AJgVNdMIFDP7HOYAhO6OJzUKnCrnVUUh0sY3SNuhGFpnxXA9jXiLU3PWHU6+84fkRC
-	 Xqp3+23OdyYPg==
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-786e9b51248so657289a34.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 03:43:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVtdFt49A3z5d2T5IDhlzFHyvI8XBb2IVsvuNkvQp2M4kBOnP1YGhyTIABWBhK+RQkdSOLLKWY6Q31o3y0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrZt1h3ajTL7X2b03WQkRmZ0cNvdRJhpyHEU0SYfiUcCJC7AWB
-	sfklvI/APCDVpwYf+iDcCFoRYtoCQ4EvM0rc3BJAjHbbziVRVmP3Mq5t0oNqFT3w9OVk4U+1yUi
-	irv77wKQSRO0iTEhuL/1LRZZJOTiXCCg=
-X-Google-Smtp-Source: AGHT+IFyv5x60tWKoEAiSRwgxwhv9eam3iNHMg3iUvzjO4YHNL7dKEIF4G8fxRLk2ZGca7oSTQprEjlgDvrig+jusGk=
-X-Received: by 2002:a05:6808:2f0d:b0:439:27db:51cb with SMTP id
- 5614622812f47-43f2d11320emr1095633b6e.0.1758624214306; Tue, 23 Sep 2025
- 03:43:34 -0700 (PDT)
+	s=arc-20240116; t=1758624216; c=relaxed/simple;
+	bh=z26i1DayibwJyGVFDaC6DyUUmuS+/angeN3ZhUP+0MU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=antpH68Jn/1Hw39saGrl0OuNr1J0K5D1LyuutzWjytpwOzIKk2Zi6OGILId2kngcig+tHyZL5Gjhbk/KAaPLGQqamBfGhPC7IMBa0QI516bGdo5jlzCT3jbKMEh+7Pa0lddQQGe71up2IodMpStVXy32EWY1diWn8OOx4UkBbo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M1VxNaPM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58N8HAfs020648
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:43:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BrOEuQI6Op7fIUBoJcp9SXhiXSbyKzi3wXrdvlXbTfk=; b=M1VxNaPM8tuPcY0H
+	xn4Oaaw1XxuO9UTTuaXxvW4hEY/S95TtZ/IedLMlLwZlEIG/FckTnYLV9zaJPc4U
+	CD1DpQAj77xgoTP3wfz1vCcqWpA0xv/rmO3QGyW5AL/Z20u1+D9p9xe+UjS/ezaD
+	NlaVacgbFcZxjgv7XLURjJmW+8+Hc2WxeTPWbF0juvgJwmUvAUlRqcwE2xEhTbaN
+	ekwEQQ0h1mDLDknkvODoFTuFJJugEx4ox1OkqEAvobmhmA7UGgITeC6jHLKNBnwM
+	U3wgTsBkdOss2d6xmXLiEnMcCKXnAN8UGXqns5UJ9hSM8TIOlHXtLCEE5+uLLQDb
+	fMHZNw==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bhvjsgut-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:43:33 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-798ab08dde5so71006286d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 03:43:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758624212; x=1759229012;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BrOEuQI6Op7fIUBoJcp9SXhiXSbyKzi3wXrdvlXbTfk=;
+        b=ofJ2voOTdEkv6P4hjiHdFlwoyT0O03z1FurtelCCLf5DZlil6bg5J+O4u4UcxTXg73
+         RBMZ7PO45FfkFKiLSi9b2xi+8I+cfwcqMiV14gLlgKw0al95n//HgB7Fp4x5a55wWEDp
+         LNC0A7F72MTUOaWmnFkBcBwdy7DAuQL7GN6ybZyBGjkUHbClpnUZwPLIQzNevZuRXTED
+         dnWz6jYUY+q/ijIH1zTDSeyMSri5dNKmUuvY3MkRPWQFwQDja8kow+VV3IiE+aLtCL9k
+         V1W9f+XnxU0MFNpDNCCLr6fGK2wl7Pnqhjt7T3ts9deFyqkzvFzfX+hA3ZWjrSFWcoGX
+         TKqA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/ocWnDP6GclBsVH73OZ5eEPctPGJN8rSjP3hdc8zRJj+WQ8nQxwn9hBbcfY9pFfC/qQHtmaqk21Sr0XE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV2eMxKLdclAu4vR8fU9ZNu+LbuEB08G1ctBccO4Z7uWezj2pW
+	p8HFDww5g8py4Jd8MNCajwKHGk3ZRw6JHKEdj60G0qRS5U5/TeGeVvLF3MV+PxEtTWyanvTtS8N
+	CUkuZP6ANX2xBOf/nsjs/De8irBeBTCjDBRX9clgcuNwbkZG4cb4Itbx0VSbcOAG3GU0=
+X-Gm-Gg: ASbGncuwSq47vYMvFxNhOSFjQlWsx+H6vuBluovkU1V9e0tFByQXfFSO7GJXPSW/+vB
+	7aESsvndoX2KSJnXbv6Ph8KTYeua7PcJSqNr5SZ+fz22kZfprXaLR3KzG0ASLu7qluFTpPQhcTd
+	4b8k31N+A3FXcHZVWPQZy5pbET+FtV/UpfD6dKgD1C/8oGaYWA3BO3d/AdoN60m+mKUXskvFaUM
+	YNbbH/lH+4RolUKRFdm2NswRf9lmtiUAlnvlDhEKDI4HFDxCnNf53lHrK/5ZY5M7nfq6OGxUWQn
+	hPEu97wxxw23Bb0OFUHWeb7VzvlBVXu5ClqQILRjFbWRXAH2vEFcivyj6NQa+Tj1i1evIjkGfGI
+	fhl1IDpGYAXp/OT5Jl1TOI07ggdaDyu11erMGTbOYwpa763inRR7w
+X-Received: by 2002:a05:6214:5012:b0:7c0:cbcd:8919 with SMTP id 6a1803df08f44-7e71133e61fmr20308516d6.37.1758624212508;
+        Tue, 23 Sep 2025 03:43:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFBjJ3Q0oGAVwYQIBeHLPfS7nx65eA95PPQdE1qaLA8fMoMNpI7sJhR/aE7ERM1o9EOw/89jw==
+X-Received: by 2002:a05:6214:5012:b0:7c0:cbcd:8919 with SMTP id 6a1803df08f44-7e71133e61fmr20308326d6.37.1758624212012;
+        Tue, 23 Sep 2025 03:43:32 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-578d5f4e53csm3867888e87.151.2025.09.23.03.43.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 03:43:31 -0700 (PDT)
+Date: Tue, 23 Sep 2025 13:43:29 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jyri Sarha <jyri.sarha@iki.fi>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/29] drm/atomic: Add atomic_state_readout infrastructure
+Message-ID: <6s3tqwwpb4syypxo4hic4mgchdexjxvfvzmk3eordn3fpvoqw5@6pj24rhxhyls>
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-10-14ad5315da3f@kernel.org>
+ <03240fae-544f-4753-96c5-a116b4b5a318@suse.de>
+ <20250915-active-placid-bustard-6e1faa@penduick>
+ <2ry3txigq3jyivtyz7i4c76g74vdgvlozsjkeswxalhu2vs5yx@jqswyjle632h>
+ <20250923-debonair-earwig-of-abracadabra-940fa8@penduick>
+ <osdt4teotc6qvja734dyo7be35nzy5lo4sw4dcniaqicqb3o5l@gabq5adeliha>
+ <20250923103223.GA15509@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12763087.O9o76ZdvQC@rafael.j.wysocki> <2399578.ElGaqSPkdT@rafael.j.wysocki>
- <20250923085323.sbetukdirhppecz5@lcpd911>
-In-Reply-To: <20250923085323.sbetukdirhppecz5@lcpd911>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 23 Sep 2025 12:43:21 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gF93Qm0_0jGQjAAo6qBJHmEEzByE243nZAyEccsvj=Bw@mail.gmail.com>
-X-Gm-Features: AS18NWDk9lzGqwPKuYxUK1IyDKA3OtAPmmtEchpQcRPiibkxHOk0SbKyhUU2I38
-Message-ID: <CAJZ5v0gF93Qm0_0jGQjAAo6qBJHmEEzByE243nZAyEccsvj=Bw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] PM: runtime: Add auto-cleanup macros for "resume
- and get" operations
-To: Dhruva Gole <d-gole@ti.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Takashi Iwai <tiwai@suse.de>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux PCI <linux-pci@vger.kernel.org>, Alex Williamson <alex.williamson@redhat.com>, 
-	Bjorn Helgaas <helgaas@kernel.org>, Zhang Qilong <zhangqilong3@huawei.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250923103223.GA15509@pendragon.ideasonboard.com>
+X-Proofpoint-ORIG-GUID: -G1AKFc9QSeRRZofOebkALfS-JlkfPwb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDAxMSBTYWx0ZWRfX5VvtLS4uvrmJ
+ 8tJxOpzVAizlsJ2jebUJBIZqEw+bU4QKWpAjJKeZA92xZlTjmRR45By6vtfFHLNP4hKtiew9RMd
+ W0KRudH5jjVV4hbdjiYmD+rK1nFZSD864JF7jX9AXPo1bkT/PQSoFmHx7genfpq/DwDFsuoiuB4
+ Qof0RCYVxc4SswqyyZYd48AEv0yepEtkwrZqQV4aNC98dh7LQhMHP+DDrr7CsSSpfRR2cONh2yV
+ S6R6XYMhK9HuW7qZnNFuF8Z4o5AzcO0hPgky2iw6Z1mfHiYphguAgrEZ0QABrmFVb7mHKRdUfEr
+ EtMp29elN626WLQwb72Z289O5WxEdjYocUqTr5gg3f1MiCWKXm9jj4CfRTcF+b81EPALAqM6o2G
+ 2tC7T1ht
+X-Proofpoint-GUID: -G1AKFc9QSeRRZofOebkALfS-JlkfPwb
+X-Authority-Analysis: v=2.4 cv=Csq/cm4D c=1 sm=1 tr=0 ts=68d279d6 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=yJojWOMRYYMA:10 a=ZwO8-XhQ80xaZHITHuEA:9 a=3ZKOabzyN94A:10
+ a=wPNLvfGTeEIA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-23_02,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 bulkscore=0 adultscore=0 impostorscore=0 phishscore=0
+ clxscore=1015 spamscore=0 priorityscore=1501 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509230011
 
-On Tue, Sep 23, 2025 at 10:53=E2=80=AFAM Dhruva Gole <d-gole@ti.com> wrote:
->
-> On Sep 22, 2025 at 17:30:43 +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > It is generally useful to be able to automatically drop a device's
-> > runtime PM usage counter incremented by runtime PM operations that
-> > resume a device and bump up its usage counter [1].
-> >
-> > To that end, add DEFINE_CLASS() macros allowing pm_runtime_put()
-> > and pm_runtime_put_autosuspend() to be used for the auto-cleanup in
-> > those cases.
-> >
-> > Simply put, a piece of code like below:
-> >
-> >       pm_runtime_get_sync(dev);
-> >       .....
-> >       pm_runtime_put(dev);
-> >       return 0;
-> >
-> > can be transformed with CLASS(pm_runtime_get_sync) like:
-> >
-> >       guard(pm_runtime_get_sync)(dev);
-> >       .....
-> >       return 0;
-> >
-> > (see pm_runtime_put() call is gone).
-> >
-> > However, it is better to do proper error handling in the majority of
-> > cases, so doing something like this instead of the above is recommended=
-:
-> >
-> >       CLASS(pm_runtime_get_active, pm)(dev);
-> >       if (IS_ERR(pm))
-> >               return PTR_ERR(pm);
-> >       .....
-> >       return 0;
-> >
-> > In all of the cases in which runtime PM is known to be enabled for the
-> > given device or the device can be regarded as operational (and so it ca=
-n
-> > be accessed) with runtime PM disabled, a piece of code like:
-> >
-> >       ret =3D pm_runtime_resume_and_get(dev);
-> >       if (ret < 0)
-> >               return ret;
-> >       .....
-> >       pm_runtime_put(dev);
-> >       return 0;
-> >
-> > can be simplified with CLASS() like:
-> >
-> >       CLASS(pm_runtime_get_active, pm)(dev);
-> >       if (IS_ERR(pm))
-> >               return PTR_ERR(pm);
-> >       .....
-> >       return 0;
-> >
-> > (again, see pm_runtime_put() call is gone).
-> >
-> > Still, if the device cannot be accessed unless runtime PM has been
-> > enabled for it, the CLASS(pm_runtime_get_active_enabled) variant
-> > needs to be used, that is (in the context of the example above):
-> >
-> >       CLASS(pm_runtime_get_active_enabled, pm)(dev);
-> >       if (IS_ERR(pm))
-> >               return PTR_ERR(pm);
-> >       .....
-> >       return 0;
-> >
-> > When the original code calls pm_runtime_put_autosuspend(), use one
-> > of the "auto" class variants, CLASS(pm_runtime_get_active_auto) or
-> > CLASS(pm_runtime_get_active_enabled_auto), so for example, a piece
-> > of code like:
-> >
-> >       ret =3D pm_runtime_resume_and_get(dev);
-> >       if (ret < 0)
-> >               return ret;
-> >       .....
-> >       pm_runtime_put_autosuspend(dev);
-> >       return 0;
-> >
-> > will become:
-> >
-> >       CLASS(pm_runtime_get_active_enabled_auto, pm)(dev);
-> >       if (IS_ERR(pm))
-> >               return PTR_ERR(pm);
-> >       .....
-> >       return 0;
-> >
-> > Note that the cases in which the return value of pm_runtime_get_sync()
-> > is checked can also be handled with the help of the new class macros.
-> > For example, a piece of code like:
-> >
-> >       ret =3D pm_runtime_get_sync(dev);
-> >       if (ret < 0) {
-> >               pm_runtime_put(dev);
-> >               return ret;
-> >       }
-> >       .....
-> >       pm_runtime_put(dev);
-> >       return 0;
-> >
-> > can be rewritten as:
-> >
-> >       CLASS(pm_runtime_get_active_enabled, pm)(dev);
-> >       if (IS_ERR(pm))
-> >               return PTR_ERR(pm);
-> >       .....
-> >       return 0;
-> >
-> > or CLASS(pm_runtime_get_active) can be used if transparent handling of
-> > disabled runtime PM is desirable.
-> >
->
-> Firstly, please can we add all this documentation in runtime_pm [1]
-> Otherwise there's just far less developers aware of the new APIs getting
-> introduced other than people directly involved. Not everyone is going to
-> come down here to look at git log for API docs (even though we proud
-> ourselves in having git log as our main source of Documentation in
-> kernel ;) )
->
-> [1] https://docs.kernel.org/power/runtime_pm.html
+On Tue, Sep 23, 2025 at 01:32:23PM +0300, Laurent Pinchart wrote:
+> On Tue, Sep 23, 2025 at 01:28:57PM +0300, Dmitry Baryshkov wrote:
+> > On Tue, Sep 23, 2025 at 11:38:17AM +0200, Maxime Ripard wrote:
+> > > On Mon, Sep 15, 2025 at 09:38:44PM +0300, Dmitry Baryshkov wrote:
+> > > > On Mon, Sep 15, 2025 at 10:42:22AM +0200, Maxime Ripard wrote:
+> > > > > On Tue, Sep 02, 2025 at 03:44:54PM +0200, Thomas Zimmermann wrote:
+> > > > > > > +/**
+> > > > > > > + * drm_atomic_build_readout_state - Creates an initial state from the hardware
+> > > > > > > + * @dev: DRM device to build the state for
+> > > > > > > + *
+> > > > > > > + * This function allocates a &struct drm_atomic_state, calls the
+> > > > > > > + * atomic_readout_state callbacks, and fills the global state old states
+> > > > > > > + * by what the callbacks returned.
+> > > > > > > + *
+> > > > > > > + * Returns:
+> > > > > > > + *
+> > > > > > > + * A partially initialized &struct drm_atomic_state on success, an error
+> > > > > > > + * pointer otherwise.
+> > > > > > > + */
+> > > > > > > +static struct drm_atomic_state *
+> > > > > > > +drm_atomic_build_readout_state(struct drm_device *dev)
+> > > > > > > +{
+> > > > > > > +	struct drm_connector_list_iter conn_iter;
+> > > > > > > +	struct drm_atomic_state *state;
+> > > > > > > +	struct drm_mode_config *config =
+> > > > > > > +		&dev->mode_config;
+> > > > > > > +	struct drm_connector *connector;
+> > > > > > > +	struct drm_printer p =
+> > > > > > > +		drm_info_printer(dev->dev);
+> > > > > > > +	struct drm_encoder *encoder;
+> > > > > > > +	struct drm_plane *plane;
+> > > > > > > +	struct drm_crtc *crtc;
+> > > > > > > +	int ret;
+> > > > > > > +
+> > > > > > > +	drm_dbg_kms(dev, "Starting to build atomic state from hardware state.\n");
+> > > > > > > +
+> > > > > > > +	state = drm_atomic_state_alloc(dev);
+> > > > > > > +	if (WARN_ON(!state))
+> > > > > > > +		return ERR_PTR(-ENOMEM);
+> > > > > > > +
+> > > > > > > +	state->connectors = kcalloc(config->num_connector, sizeof(*state->connectors), GFP_KERNEL);
+> > > > > > > +	if (WARN_ON(!state->connectors)) {
+> > > > > > > +		ret = -ENOMEM;
+> > > > > > > +		goto err_state_put;
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	state->private_objs = kcalloc(count_private_obj(dev), sizeof(*state->private_objs), GFP_KERNEL);
+> > > > > > > +	if (WARN_ON(!state->private_objs)) {
+> > > > > > > +		ret = -ENOMEM;
+> > > > > > > +		goto err_state_put;
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	drm_for_each_crtc(crtc, dev) {
+> > > > > > > +		const struct drm_crtc_funcs *crtc_funcs =
+> > > > > > > +			crtc->funcs;
+> > > > > > > +		struct drm_crtc_state *crtc_state;
+> > > > > > > +
+> > > > > > > +		drm_dbg_kms(dev, "Initializing CRTC %s state.\n", crtc->name);
+> > > > > > > +
+> > > > > > > +		if (crtc_funcs->atomic_readout_state) {
+> > > > > > > +			crtc_state = crtc_funcs->atomic_readout_state(crtc);
+> > > > > > > +		} else if (crtc_funcs->reset) {
+> > > > > > > +			crtc_funcs->reset(crtc);
+> > > > > > > +
+> > > > > > > +			/*
+> > > > > > > +			 * We don't want to set crtc->state field yet. Let's save and clear it up.
+> > > > > > > +			 */
+> > > > > > > +			crtc_state = crtc->state;
+> > > > > > > +			crtc->state = NULL;
+> > > > > > 
+> > > > > > Chancing the crtc->state pointer behind the back of the reset callback seems
+> > > > > > fragile. We never how if some other piece of the driver refers to it
+> > > > > > (although illegally).
+> > > > > 
+> > > > > I agree that it's clunky. I'm not sure who would use it at this point
+> > > > > though: we're in the middle of the drm_mode_config_reset(), so the
+> > > > > drivers' involvement is pretty minimal.
+> > > > > 
+> > > > > I did wonder if changing reset to return the object instead of setting
+> > > > > $OBJECT->state would be a better interface?
+> > > > > 
+> > > > > > For now, wouldn't it be better to require a read-out helper for all elements
+> > > > > > of the driver's mode-setting pipeline?  The trivial implementation would
+> > > > > > copy the existing reset function and keep crtc->state to NULL.
+> > > > > 
+> > > > > I also considered that, but I'm not sure we can expect bridges to have
+> > > > > readout hooks filled for every configuration in the wild.
+> > > > > 
+> > > > > But maybe we can look during drm_mode_config_reset() at whether all the
+> > > > > objects have their hook filled, and if not fall back on reset for
+> > > > > everything.
+> > > > > 
+> > > > > It would make the implementation easier, but missing bridges
+> > > > > implementations would trigger a mode change when it might actually work
+> > > > > just fine since bridge state is pretty minimal.
+> > > > 
+> > > > DP bridge drivers have a pretty big state (DPCD and all the features).
+> > > 
+> > > I meant drm_bridge_state. Subclasses would have their own implementation
+> > > anyway.
+> > > 
+> > > > Other bridge drivers randomly leak state to the non-state structs.
+> > > 
+> > > I'm not sure what you mean by that though. Can you expand?
+> > 
+> > I think I've seen bridge drivers which stored subclassed drm_bridge
+> > instead of drm_bridge_state or stored the data in the long-living data
+> > structures. YEs, that's a bug, which should be fixed on its own.
+> 
+> There's one exception to the "all state in state structure" rules if I
+> understand things correctly (and I'm mentioning it here partly to be
+> corrected if my understanding is wrong). Active state data that needs to
+> be accessed from a non-sleepable context need to be copied to the
+> device-specific structure when the state is applied, as we can't take
+> the mutex protecting state access there.
 
-That will happen when the early adopters tell me that it works for them.
+I'd even relax this slightly (please correct me if I'm wrong here): the
+state can be extracted to the device-specific structure in
+atomic_pre_enable() and cleared in atomic_post_disable().
 
-> > Link: https://lore.kernel.org/linux-pm/878qimv24u.wl-tiwai@suse.de/ [1]
-> > Co-developed-by: Takashi Iwai <tiwai@suse.de>
-> > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > v2 -> v3:
-> >    * Two more class definitions for the case in which resume errors can=
- be
-> >      neglected.
-> >    * Update of new code comments (for more clarity).
-> >    * Changelog update.
-> >
-> > v1 -> v2:
-> >    * Rename the new classes and the new static inline helper.
-> >    * Add two classes for handling disabled runtime PM.
-> >    * Expand the changelog.
-> >    * Adjust the subject.
-> >
-> > ---
-> >  drivers/base/power/runtime.c |    2 +
-> >  include/linux/pm_runtime.h   |   82 ++++++++++++++++++++++++++++++++++=
-+++++++++
-> >  2 files changed, 84 insertions(+)
->
-> >
-> > --- a/drivers/base/power/runtime.c
-> > +++ b/drivers/base/power/runtime.c
-> > @@ -796,6 +796,8 @@ static int rpm_resume(struct device *dev
-> >               if (dev->power.runtime_status =3D=3D RPM_ACTIVE &&
-> >                   dev->power.last_status =3D=3D RPM_ACTIVE)
-> >                       retval =3D 1;
-> > +             else if (rpmflags & RPM_TRANSPARENT)
-> > +                     goto out;
->
-> "TRANSPARENT" doesn't tell you exactly what happens. It should be somethi=
-ng like
-> RPM_IGNORE_DISABLED or RPM_ALLOW_DISABLED IMO.
+Likewise it's generally fine to store non-state changing data in the
+private data (e.g. hw params or infoframe from the HDMI codec data).
 
-There is a description in the header file and TRANSPARENT is shorter
-than the alternatives.  Besides, this is mostly for internal use.
+> I'd expect that to be uncommon
+> for bridges.
 
-> >               else
-> >                       retval =3D -EACCES;
-> >       }
-> > --- a/include/linux/pm_runtime.h
-> > +++ b/include/linux/pm_runtime.h
-> > @@ -21,6 +21,7 @@
-> >  #define RPM_GET_PUT          0x04    /* Increment/decrement the
-> >                                           usage_count */
-> >  #define RPM_AUTO             0x08    /* Use autosuspend_delay */
-> > +#define RPM_TRANSPARENT      0x10    /* Succeed if runtime PM is disab=
-led */
-> >
-> >  /*
-> >   * Use this for defining a set of PM operations to be used in all situ=
-ations
-> > @@ -533,6 +534,32 @@ static inline int pm_runtime_resume_and_
-> >  }
-> >
-> >  /**
-> > + * pm_runtime_get_active_dev - Resume a device and bump up its usage c=
-ounter.
->
-> I am getting no clue as to why this is different than regular
-> pm_runtime_get_sync then? Can we describe this API better?
-
-Again, this is for internal use.
-
-I may as well drop the kerneldoc for this function altogether, but I'm
-not going to send a v4 just for this purpose.
+-- 
+With best wishes
+Dmitry
 
