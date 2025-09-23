@@ -1,205 +1,232 @@
-Return-Path: <linux-kernel+bounces-829275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743E6B96ABC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:54:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549DAB96B4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B498A7A2C4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:53:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347474881E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFF4267AF6;
-	Tue, 23 Sep 2025 15:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A97428850E;
+	Tue, 23 Sep 2025 16:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HB0XYEnR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fwd.mgml.me header.i=@fwd.mgml.me header.b="ZalnO+BT"
+Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE7416DC28;
-	Tue, 23 Sep 2025 15:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742AB261B8F;
+	Tue, 23 Sep 2025 16:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758642886; cv=none; b=C+iY86QW4IqCp/OMmkKr2cuzVimiDemMrS9dWuInECierVRDl9uyPZGRuxQwcRBqEcXVvhO0IkExHI+zEqhIP9amZnr9849aaXdVIwMD/TCwsdgrcZslwXxcY8H922ku+aKYh3e2CBUBifh9faj5xQYvV6WulW/oK1fQY6YFaBk=
+	t=1758643386; cv=none; b=Wfk6NAJFSfSrfZbrYJ+jN5itKoGMWRq1IvaKSqlNGRJDteD/cXJhN/NFYEM8jEmrfKd9fe2sAb+m7GGnzM53pyj0mmF9g1jRhm67gIBKvl8W4XtW0AxG957IbUH5KwUAvnzfzsMdbc2uaoptbNtqlA2VxTBDXiqfcu+vszTc1+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758642886; c=relaxed/simple;
-	bh=9PAHk1M/py/wmr9FX/AJcB5+6ZJZbCQJMTHF0F98NFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=aJhAXGoz8E0BF8obKmfCE3BTf5J9Vlp7cahWXYRDanKMZtkQdKe80zBA6SKwmmPP3ACNGTVJIoevomp8KPvh08Sfzn4WdV2+u0gQvcN0btB0t+AIaFfOr4N5iDFsxkXekZJFlUHnRKhDqywpBzIDxPnZ6MeevLeLt8YAxOimQ28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HB0XYEnR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 552B6C113CF;
-	Tue, 23 Sep 2025 15:54:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758642885;
-	bh=9PAHk1M/py/wmr9FX/AJcB5+6ZJZbCQJMTHF0F98NFw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=HB0XYEnR4MNkE+vIXx7MKexzkD7sZteWlROImwjLYmOQTkC+TRO+FbdgUqwZjKTr0
-	 rdPY61ShmA5mZEfCZ+nh3Vk5sJbUDb6Am8Ar30yP+v4j3hLx66DUUqA3i33LD97yEM
-	 cOEP9MGIhgzOomPU26Q5Dvuyc80y9DnlBz+cyEBuJOJKnmJeAwcp9ZnA1qxBfUbwrV
-	 TR+TJnaVZYVGOjFhxqRu6xwY8iG4FPm433mVuJkL5aBQZ53fpkHzfGBPOCxe8/aG8I
-	 MjRySA+WP+fnJWjfcQ+ep6S00INskkZhdIZBsQeiWDVcH77tGiZSA8EbH+2zpELl7d
-	 oeT+tC+hUDsQg==
-Date: Tue, 23 Sep 2025 10:54:43 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Randolph Lin <randolph@andestech.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com,
-	krzk+dt@kernel.org, conor+dt@kernel.org, alex@ghiti.fr,
-	aou@eecs.berkeley.edu, palmer@dabbelt.com, paul.walmsley@sifive.com,
-	ben717@andestech.com, inochiama@gmail.com,
-	thippeswamy.havalige@amd.com, namcao@linutronix.de,
-	shradha.t@samsung.com, randolph.sklin@gmail.com,
-	tim609@andestech.com
-Subject: Re: [PATCH v3 4/5] PCI: andes: Add Andes QiLai SoC PCIe host driver
- support
-Message-ID: <20250923155443.GA2041202@bhelgaas>
+	s=arc-20240116; t=1758643386; c=relaxed/simple;
+	bh=vLOGdTF7+Ao+lLx+LrCuOeAv9i6cbYC906WiQVFjOPk=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=brtepBASGdcSVFfO70Zu04uStoOBtRvo79LCQUO7eGLbPNRKTahLRBxz3K7M9voOjXV1dfIq3lZD2DgUntfE/iMQ/2Rvlne73BepBCuKWRgtY6I65kcVxmXtnEnSrlW4OkEY53JxFj9Qf5nAEFLGz2ggqmbznjBerfev/raJrjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fwd.mgml.me; spf=pass smtp.mailfrom=fwd.mgml.me; dkim=pass (2048-bit key) header.d=fwd.mgml.me header.i=@fwd.mgml.me header.b=ZalnO+BT; arc=none smtp.client-ip=133.167.8.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fwd.mgml.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fwd.mgml.me
+Received: from NEET (p3732025-ipxg00h01tokaisakaetozai.aichi.ocn.ne.jp [153.172.109.25])
+	(authenticated bits=0)
+	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 58NFsirj056416
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 24 Sep 2025 00:54:44 +0900 (JST)
+	(envelope-from k@fwd.mgml.me)
+DKIM-Signature: a=rsa-sha256; bh=1P58MihQU86aaurMmACMThCi4OU+oioqc88edmmWJTQ=;
+        c=relaxed/relaxed; d=fwd.mgml.me;
+        h=Message-ID:Date:Subject:To:From;
+        s=rs20250919; t=1758642884; v=1;
+        b=ZalnO+BTF8F2LtEt9Y9qGHR0Ps3Yl2kT3AxBPUJ10JQ0ftWw1iV4LUgcqfX331WS
+         hWcrJ6y6TYqp+YCF+s5yAEkzQJlRmgDeBGhPogfkfWDmzrl+3JI8q3kQ7wsk2IOu
+         ZuK/fsOSz/DtP6t8IN6Y9nlfZGRPqwhQnfs3cGetp7VxlPUoP5HcFAKK32JziiFD
+         NyQJFaISd47M1YNsExp9v5SbjKL7QXfCKVChSBiOlgPamK8vYOJ27IRROitiF1St
+         VhEKNGroSdahKaxtR1YK1nEb+XIpaH+EDd1R8+20ph+WznDZV5NzvHKWvajejd4a
+         tYYoRJHNorlkuse/ek5MxQ==
+Message-ID: <d0de7500-eac0-4d02-9b48-887cdefab4c1@fwd.mgml.me>
+Date: Wed, 24 Sep 2025 00:54:44 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923113647.895686-5-randolph@andestech.com>
+User-Agent: Mozilla Thunderbird
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yukuai3@huawei.com, Kenta Akagi <k@fwd.mgml.me>
+Subject: Re: [PATCH v4 4/9] md/raid1,raid10: Don't set MD_BROKEN on failfast
+ bio failure
+To: Yu Kuai <hailan@yukuai.org.cn>, yukuai1@huaweicloud.com, song@kernel.org,
+        mtkaczyk@kernel.org, shli@fb.com, jgq516@gmail.com
+References: <010601995d6b88a4-423a9b3c-3790-4d65-86a4-20a9ddea0686-000000@ap-northeast-1.amazonses.com>
+ <6ce45082-2913-4ca2-b382-5beff6a799c6@yukuai.org.cn>
+ <e88ac955-9733-4e57-830b-d326557d189a@fwd.mgml.me>
+ <0813d9d7-a0be-419b-a067-66854d35373a@yukuai.org.cn>
+Content-Language: en-US
+From: Kenta Akagi <k@fwd.mgml.me>
+In-Reply-To: <0813d9d7-a0be-419b-a067-66854d35373a@yukuai.org.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 23, 2025 at 07:36:46PM +0800, Randolph Lin wrote:
-> Add driver support for DesignWare based PCIe controller in Andes
-> QiLai SoC. The driver only supports the Root Complex mode.
+Hi,
 
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -49,6 +49,19 @@ config PCIE_AMD_MDB
->  	  DesignWare IP and therefore the driver re-uses the DesignWare
->  	  core functions to implement the driver.
->  
-> +config PCIE_ANDES_QILAI
-> +	bool "ANDES QiLai PCIe controller"
-> +	depends on ARCH_ANDES || COMPILE_TEST
-> +	depends on PCI_MSI
-> +	select PCIE_DW_HOST
-> +	help
-> +	  Say Y here to enable PCIe controller support on Andes QiLai SoCs,
-> +	  which operate in Root Complex mode. The Andes QiLai SoCs PCIe
-> +	  controller is based on DesignWare IP (5.97a version) and therefore
-> +	  the driver re-uses the DesignWare core functions to implement the
-> +	  driver. The Andes QiLai SoC features three Root Complexes, each
-> +	  operating on PCIe 4.0.
+On 2025/09/20 18:51, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/9/20 14:30, Kenta Akagi 写道:
+>> Hi,
+>>
+>> I have changed my email address because our primary MX server
+>> suddenly started rejecting non-DKIM mail.
+>>
+>> On 2025/09/19 10:36, Yu Kuai wrote:
+>>> Hi,
+>>>
+>>> 在 2025/9/18 23:22, Kenta Akagi 写道:
+>>>>>> @@ -470,7 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
+>>>>>>                 (bio->bi_opf & MD_FAILFAST) &&
+>>>>>>                 /* We never try FailFast to WriteMostly devices */
+>>>>>>                 !test_bit(WriteMostly, &rdev->flags)) {
+>>>>>> -            md_error(r1_bio->mddev, rdev);
+>>>>>> +            md_bio_failure_error(r1_bio->mddev, rdev, bio);
+>>>>>>             }
+>>>>> Can following check of faulty replaced with return value?
+>>>> In the case where raid1_end_write_request is called for a non-failfast IO,
+>>>> and the rdev has already been marked Faulty by another bio, it must not retry too.
+>>>> I think it would be simpler not to use a return value here.
+>>> You can just add Faulty check inside md_bio_failure_error() as well, and both
+>>> failfast and writemostly check.
+>> Sorry, I'm not sure I understand this part.
+>> In raid1_end_write_request, this code path is also used for a regular bio,
+>> not only for FailFast.
+>>
+>> You mean to change md_bio_failure_error as follows:
+>> * If the rdev is Faulty, immediately return true.
+>> * If the given bio is Failfast and the rdev is not the lastdev, call md_error.
+>> * If the given bio is not Failfast, do nothing and return false.
+> 
+> Yes, doesn't that apply to all the callers?
 
-Sort these by vendor name:
+It's difficult because the flow differs depending on the function. 
+For example, in raid1_end_write_request, if rdev and bio are Failfast but not Writemostly,
+it calls md_error, and then performs a something if it is Faulty regardless
+of whether it is Failfast or not. This flow is specific to raid1_end_write_request.
 
-  AMD MDB Versal2 PCIe controller
-  Amlogic Meson PCIe controller
-  ANDES QiLai PCIe controller
-  Axis ARTPEC-6 PCIe controller (host mode)
+Other functions that need to be changed to md_bio_failure_error are handle_read_error
+and fix_sync_read_error, but the path for determining whether these are Faulty,
+regardless of whether they are Failfast, is not exists there functions.
 
->  config PCI_MESON
->  	tristate "Amlogic Meson PCIe controller"
+It may be possible with some refactoring,
+but I think raid1_end_write_request current style, that is
+if(Failfast) md_bio_failure_error();
+if(Faulty) something;
+would be better because We can see at a glance what is happening.
 
-> + * Refer to Table A4-5 (Memory type encoding) in the
-> + * AMBA AXI and ACE Protocol Specification.
-> + *
-> + * The selected value corresponds to the Memory type field:
-> + * "Write-back, Read and Write-allocate".
-> + */
-> +#define IOCP_ARCACHE				0b1111
-> +#define IOCP_AWCACHE				0b1111
+BTW, fix_sync_read_error can use the return value of md_bio_failure_error as
+suggested. so I'll revise it as follows:
 
-Deserves a note about why these values are identical.
+@@ -2167,8 +2174,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
+        if (test_bit(FailFast, &rdev->flags)) {
+                /* Don't try recovering from here - just fail it
+                 * ... unless it is the last working device of course */
+-               md_bio_failure_error(mddev, rdev, bio);
+-               if (test_bit(Faulty, &rdev->flags))
++               if (md_bio_failure_error(mddev, rdev, bio))
+                        /* Don't try to read from here, but make sure
+                         * put_buf does it's thing
+                         */
 
-> +struct qilai_pcie {
-> +	struct dw_pcie pci;
-> +	struct platform_device *pdev;
+> 
+>>
+>> And then apply this?
+>> This is complicated. Wouldn't it be better to keep the Faulty check as it is?
+>>
+>> @@ -466,18 +466,12 @@ static void raid1_end_write_request(struct bio *bio)
+>>                          set_bit(MD_RECOVERY_NEEDED, &
+>>                                  conf->mddev->recovery);
+>>
+>> -               if (test_bit(FailFast, &rdev->flags) &&
+>> -                   (bio->bi_opf & MD_FAILFAST) &&
+>> -                   /* We never try FailFast to WriteMostly devices */
+>> -                   !test_bit(WriteMostly, &rdev->flags)) {
+>> -                       md_error(r1_bio->mddev, rdev);
+>> -               }
+>> -
+>>                  /*
+>>                   * When the device is faulty, it is not necessary to
+>>                   * handle write error.
+>>                   */
+>> -               if (!test_bit(Faulty, &rdev->flags))
+>> +               if (!test_bit(Faulty, &rdev->flags) ||
+>> +                   !md_bio_failure_error(r1_bio->mddev, rdev, bio))
+>>                          set_bit(R1BIO_WriteError, &r1_bio->state);
+>>                  else {
+>>                          /* Finished with this branch */
+> 
+> Faulty is set with lock held, so check Faulty with lock held as well can
+> prevent rdev to be Faulty concurrently, and this check can be added to all
+> callers, I think.
+> 
+>>
+>> Or do you mean a fix like this?
+>>
+>> @@ -466,23 +466,24 @@ static void raid1_end_write_request(struct bio *bio)
+>>                          set_bit(MD_RECOVERY_NEEDED, &
+>>                                  conf->mddev->recovery);
+>>
+>> -               if (test_bit(FailFast, &rdev->flags) &&
+>> -                   (bio->bi_opf & MD_FAILFAST) &&
+>> -                   /* We never try FailFast to WriteMostly devices */
+>> -                   !test_bit(WriteMostly, &rdev->flags)) {
+>> -                       md_error(r1_bio->mddev, rdev);
+>> -               }
+>> -
+>>                  /*
+>>                   * When the device is faulty, it is not necessary to
+>>                   * handle write error.
+>>                   */
+>> -               if (!test_bit(Faulty, &rdev->flags))
+>> -                       set_bit(R1BIO_WriteError, &r1_bio->state);
+>> -               else {
+>> +               if (test_bit(Faulty, &rdev->flags) ||
+>> +                   (
+>> +                   test_bit(FailFast, &rdev->flags) &&
+>> +                   (bio->bi_opf & MD_FAILFAST) &&
+>> +                   /* We never try FailFast to WriteMostly devices */
+>> +                   !test_bit(WriteMostly, &rdev->flags) &&
+>> +                   md_bio_failure_error(r1_bio->mddev, rdev, bio)
+>> +                   )
+>> +               ) {
+>>                          /* Finished with this branch */
+>>                          r1_bio->bios[mirror] = NULL;
+>>                          to_put = bio;
+>> +               } else {
+>> +                       set_bit(R1BIO_WriteError, &r1_bio->state);
+>>                  }
+>>          } else {
+>>                  /*
+> 
+> No, this just make code even more unreadable.
 
-"pdev" appears to be set but never used; drop it if you don't need it.
+Understood.
 
-> +/*
-> + * Setup the Qilai PCIe IOCP (IO Coherence Port) Read/Write Behaviors to the
-> + * Write-Back, Read and Write Allocate mode.
+Thanks,
+Akagi
 
-Add blank line or rewrap into single paragraph.
+> 
+> Thanks,
+> Kuai
+> 
+>> Thanks,
+>> Akagi
+>>
+>>> Thanks,
+>>> Kuai
+>>>
+>>>
+>>>
 
-> + * The IOCP HW target is SoC last-level cache (L2 Cache), which serves as the
-> + * system cache. The IOCP HW helps maintain cache monitoring, ensuring that
-> + * the device can snoop data from/to the cache.
-> + */
-> +static void qilai_pcie_iocp_cache_setup(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	u32 val;
-> +
-> +	dw_pcie_dbi_ro_wr_en(pci);
-> +
-> +	dw_pcie_read(pci->dbi_base + PCIE_LOGIC_COHERENCY_CONTROL3,
-> +		     sizeof(val), &val);
-> +	FIELD_MODIFY(PCIE_CFG_MSTR_ARCACHE_MODE, &val, IOCP_ARCACHE);
-> +	FIELD_MODIFY(PCIE_CFG_MSTR_AWCACHE_MODE, &val, IOCP_AWCACHE);
-> +	FIELD_MODIFY(PCIE_CFG_MSTR_ARCACHE_VALUE, &val, IOCP_ARCACHE);
-> +	FIELD_MODIFY(PCIE_CFG_MSTR_AWCACHE_VALUE, &val, IOCP_AWCACHE);
-> +	dw_pcie_write(pci->dbi_base + PCIE_LOGIC_COHERENCY_CONTROL3,
-> +		      sizeof(val), val);
-> +
-> +	dw_pcie_dbi_ro_wr_dis(pci);
-> +}
-
-> +static int qilai_pcie_host_init(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct qilai_pcie *pcie = to_qilai_pcie(pci);
-> +
-> +	qilai_pcie_enable_msi(pcie);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct dw_pcie_host_ops qilai_pcie_host_ops = {
-> +	.init = qilai_pcie_host_init,
-> +};
-> +
-> +static int qilai_pcie_probe(struct platform_device *pdev)
-> +{
-> +	struct qilai_pcie *pcie;
-> +	struct dw_pcie *pci;
-> +	struct device *dev;
-> +	int ret;
-> +
-> +	pcie = devm_kzalloc(&pdev->dev, sizeof(*pcie), GFP_KERNEL);
-> +	if (!pcie)
-> +		return -ENOMEM;
-> +
-> +	pcie->pdev = pdev;
-> +	platform_set_drvdata(pdev, pcie);
-> +
-> +	pci = &pcie->pci;
-> +	dev = &pcie->pdev->dev;
-> +	pcie->pci.dev = dev;
-> +	pcie->pci.ops = &qilai_pcie_ops;
-> +	pcie->pci.pp.ops = &qilai_pcie_host_ops;
-> +	pci->use_parent_dt_ranges = true;
-> +
-> +	dw_pcie_cap_set(&pcie->pci, REQ_RES);
-> +
-> +	pcie->apb_base = devm_platform_ioremap_resource_byname(pdev, "apb");
-> +	if (IS_ERR(pcie->apb_base))
-> +		return PTR_ERR(pcie->apb_base);
-> +
-> +	ret = dw_pcie_host_init(&pcie->pci.pp);
-> +	if (ret) {
-> +		dev_err_probe(dev, ret, "Failed to initialize PCIe host\n");
-> +		return ret;
-> +	}
-> +
-> +	qilai_pcie_iocp_cache_setup(&pcie->pci.pp);
-
-I don't think we should be doing anything after dw_pcie_host_init()
-because by the time we get here, we've already enumerated downstream
-devices and potentially bound drivers to them.
-
-If you need things done in dw_pcie_host_init() before enumeration,
-qilai_pcie_host_init() and similar hooks are possibilities.
-
-> +	return 0;
-> +}
 
