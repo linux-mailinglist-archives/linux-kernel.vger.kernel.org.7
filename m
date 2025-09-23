@@ -1,260 +1,268 @@
-Return-Path: <linux-kernel+bounces-829337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44426B96D64
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:32:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D847DB96D6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05E894E123E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:32:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62FD016AB9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E93327A37;
-	Tue, 23 Sep 2025 16:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176B6327A34;
+	Tue, 23 Sep 2025 16:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="r0QC28qk"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012032.outbound.protection.outlook.com [52.101.43.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ieh7IMNu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C87327A22;
-	Tue, 23 Sep 2025 16:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758645158; cv=fail; b=C3xrR3X/lbIqfCeb1MOzl7TLYBtWFh1T3jEXbd1k0HdBMmuS+T9HcaZofltA7kXqis9GwXDybgXa/iCeCIoViJNEoz7S9HbQjUgTnGrX/oCHQZjR2buA6J+X1rUWamlBN/lhkSwiHuf4Sqiw3obAt7gjmf9ft8kxXV+FpyQSDuc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758645158; c=relaxed/simple;
-	bh=DFGKS6hPswIhAPieUQCw9LIPEk9H3eycdWMPvvECxhY=;
-	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZVqx0ARmZUtjyvZqlfKIpaOL+3quW2AfJN1SpKsATumZBHu2Xw0PM2Fyf6xpQRMIjTGNeFREVvy6AV6T5py9eJdEFUVyimEaZnoZmh8F7l9qhxLqVfrdKH3ZZzN9LGBrTODhhsYZWIddft6TX0HFyGJDoFvjK30Nc7Z5S+BSAUc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=r0QC28qk; arc=fail smtp.client-ip=52.101.43.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IfOP+9FER8s9g9d9o2g6KPFjXnEWnzGdICIsKd1n6FrQkf+et40ESYRxd/BgT8R3TFLXveSZsfID4QCpnydwJ1SBz19AKVCqeG3BjM4z+Hbwt9w0lq6fZsE0soyGGsBQoL83MPQG3hvjnjTRG07r0WXcRsw8UC8s173DPK8Q6ACATdi3kU65poB+73hQ7RT3brKIOwoz8Jtalg94FBrBs16veGoM63bToxOTxgqiqjwFegfz4MfqzTSbFVVN91nB1IqOb6KXRejN3QtJXtA8MohzYXgee7gIA4hj7oCpbusi2ACP8q4EzQyXaG7PO9GIPGGkhkjmKJTEQG4iQiobLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ywdnhuxb7B+5tDyG6tPQuKTat/VBdIu/qFh7wdpYCUM=;
- b=nJkaDYKlPHCavulU9SNq+6uNNKSQ0uOi3SWIb9/KkeTiZ3JWndGao7V0oDtB2Wy0KeHfMrrhrZiHyF4pLo2bz9soAyhTPhGriTZqS4CSvZp0gnV1NlJ+aFl29g04emd1c8zXetdHv4bgzqtNpW934pUkp6MLIBy7/soIBG7XxpBmPAKeDIU/7HY4YchtBUspVjTqL58i8mtPdvVfyVEjebjzzJxHDqtVwRoyN1VDDvG85ucHreNcX0Cp8TExihTy/BPh0gCc/GHGp/gBBX3yaMLEc/lfsVpmiKz50jh2VxOp+aqFwv4rduwCSNThG6r5li2jsRxptqoxKVQTFgky1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ywdnhuxb7B+5tDyG6tPQuKTat/VBdIu/qFh7wdpYCUM=;
- b=r0QC28qkrkW/J+bGN8UBvV9gA0Pui2RaQCXD3yo1nOlxw8lnYEDj0z/1tc2Ob+0Mr/dH3yl7uDq4oggXqtIXPtKJybn2u25PyiNEGvg19hu/41r+/yJavxSKfblvvF4i70iGh+zvRDOF5fsu0yeSt6oYWR3LCJ8HnfG9U8NwcP8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by PH7PR12MB6977.namprd12.prod.outlook.com (2603:10b6:510:1b7::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
- 2025 16:32:33 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%4]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 16:32:33 +0000
-Message-ID: <d2f7ae16-6326-3f62-ac0b-c83b68decc1a@amd.com>
-Date: Tue, 23 Sep 2025 11:32:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Content-Language: en-US
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, kvm@vger.kernel.org,
- seanjc@google.com, pbonzini@redhat.com
-Cc: linux-kernel@vger.kernel.org, nikunj@amd.com, Santosh.Shukla@amd.com,
- Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, bp@alien8.de,
- David.Kaplan@amd.com, huibo.wang@amd.com, naveen.rao@amd.com,
- tiala@microsoft.com
-References: <20250923050317.205482-1-Neeraj.Upadhyay@amd.com>
- <20250923050317.205482-16-Neeraj.Upadhyay@amd.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [RFC PATCH v2 15/17] KVM: SVM: Check injected timers for Secure
- AVIC guests
-In-Reply-To: <20250923050317.205482-16-Neeraj.Upadhyay@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7P222CA0019.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:124::13) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DB72E5B1B;
+	Tue, 23 Sep 2025 16:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758645176; cv=none; b=cX9lLbktUVydV8POOCxQ4Rvn3L7+WvlmJeCFyhDuggDw8CNMWM3khZh9d3KfDeii+nG1Sa61yhg0SXOivcpoOXgQq23fnsrBrQFx/PDW/DdV5Y8ExnxVVpsZKW30WIKO6dn/WYmd71Nn7PsX1l8K7NdGSLifzPnSxIM4gv24rA0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758645176; c=relaxed/simple;
+	bh=nXg/n5hpWCZLMQ+84dFs6XsSa3daE8FI7ZQaMSHDtw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Dl8wf+/SNZ2i4Zxdyeips5Sz/zKy4QJxznp73lvsXOISxldmk6j1wCNNNM20cIlSFc7bucTZjNllMimpe6Fy988xNc9LbgQvd+E8sYnSSqR9NleObla+wMQuGWHWY0lklhW3lpGagqucmtwHDL85kJgRLecNv8Yk7CBS22JKLhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ieh7IMNu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EB33C4CEF5;
+	Tue, 23 Sep 2025 16:32:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758645175;
+	bh=nXg/n5hpWCZLMQ+84dFs6XsSa3daE8FI7ZQaMSHDtw4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Ieh7IMNuWw1otot5GgD04hmcV4NCpwDR/tGMiwk4kPz2q60eWO87q4IJicdsVGqiA
+	 6JWmmkE36Y1PyI+XCZC67Q+XaJyAMXFU4K+0iVRZCHybewZwE/VqapHTWzmdX56NcE
+	 XoPM/nlaFTgFztZth9FMt+2h+p1x5/sLhh/+zN4D9MvIQAHDPd06pbc+Mua2CLNjtK
+	 bPlyyBqNHE4pJ3MUVE1txmF8EEjnHGBal4TplCcZaqLbJhVqQJL5L3YQvtEzdc8nIZ
+	 RGVZMZdCeN/grQU5bxQCtFeyBFhOdruEsA64RWW83IGdy2+MYM8CpXmZv7iOWfJrDW
+	 IeqfTl1qQgENA==
+Date: Tue, 23 Sep 2025 11:32:54 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: zhangsenchuan@eswincomputing.com
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de, johan+linaro@kernel.org,
+	quic_schintav@quicinc.com, shradha.t@samsung.com, cassel@kernel.org,
+	thippeswamy.havalige@amd.com, mayank.rana@oss.qualcomm.com,
+	inochiama@gmail.com, ningyu@eswincomputing.com,
+	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com,
+	Yanghui Ou <ouyanghui@eswincomputing.com>
+Subject: Re: [PATCH v3 2/2] PCI: EIC7700: Add Eswin PCIe host controller
+ driver
+Message-ID: <20250923163254.GA2042659@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|PH7PR12MB6977:EE_
-X-MS-Office365-Filtering-Correlation-Id: 960a0610-bc08-45c1-36fe-08ddfabecbe4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M1hsNEZQTEFFaTUwMDdFa1piajdWenBUaVovUGptREhZa3dSUVVTN3RWODZw?=
- =?utf-8?B?aTlKOFljMWNHRGRHQ1dhQTVBK0NjK2VZZVJaTEkzN010Q1FZRDRoN3Y5RUtR?=
- =?utf-8?B?YXZlMklaV0pZeFBHNG1ORmFDWm5MeVVOQkQ2N0FyS0FLRGdkdDRLTXA1NWhQ?=
- =?utf-8?B?NW81Z2ZZcitxOVdNeFo1aTVaS2JrWkVRdUNqaVFhamNiS3Vma2pRNTJTZWxi?=
- =?utf-8?B?MnZVNytsTmtTT3lUaXlhanhhcktZS1VQaEpObkJNMW9WKzZyWVFSN1NvVXNs?=
- =?utf-8?B?endHdm0wL0VJU1BiYWxHbXVpMytuaGhxNEZhM0NuYUFmWk9PYnVlYTdVa01v?=
- =?utf-8?B?K1p5SlVDRUNXT2tNRk9rdERTcFROb2NRYnVEaUtYc1pwNXMvZnRGWHJyUjI5?=
- =?utf-8?B?RXhnU1FWZ1NnY3hvbGQ5clROUk8yU2NxdFc5TCtUZ05ndUlpQ00vaG5CZ3F3?=
- =?utf-8?B?SzJlRDR5VWNhdTJZelNieFZRUEtyMEJRdk1MOG5Nd21BeHBYT3JDaWtSWkNL?=
- =?utf-8?B?R2FTUVE4ZjVSVWp4U3prK1MzWDNSbzBpTGlQYjlIcnliY2p6cFpVajVweHhW?=
- =?utf-8?B?aFo5WmxVeVY1NHM0eDRibVBuUTB3d292QUp2cFJXN3RCTUlVRFVwaGU5eE9w?=
- =?utf-8?B?dUZFRUxUd0ZwN0hRNisvSys1MXkvdFVHYklMNWFFOSt4Tmt6VWJvcUhRNUlY?=
- =?utf-8?B?U1prbFJCbGZHVk5Pc1JIY3FkL3M0cCtmamN4dUdDK2dZaVhBQ3pHakUzZjlH?=
- =?utf-8?B?QUZoZXkwZFVxSUJLMmlxVEFNMVZra0VWTFp6Y1dZRWRHL3hnS1d6SVR5bVF5?=
- =?utf-8?B?YjdMVFMwV1ZxTjBjbVNjd3h2alNRLzY1R3pockdLbElId1NxWVFhWURlZFBG?=
- =?utf-8?B?ME9SR21IL01kbERwRTB0d0pFc2R4SllOb0NsYlkrT3ZGcUsweHd0QTBMUGlM?=
- =?utf-8?B?bkdwMEtMOXZveWhVVkxWU1lqSHl2WC9PeDZJc041c3lSQTMrc2RzSVNDQUZJ?=
- =?utf-8?B?T2o1UjNqU2hKK2dmQ0Zua0RkMWpHQWZyb3pmaC9xSWRtTjJ5VzNtMWg0UE9o?=
- =?utf-8?B?Rzg3T0p0MjBKSWVhYWpub285Z1MyUWM1K1JVYURkdVJ3MFhGaUUrWGxzKzlN?=
- =?utf-8?B?R2tucjgyQjcwOGI0YnJUOFZuN05XSi9ZSTBnZ1kxV0xKMXBUQ1AweHkvM1V6?=
- =?utf-8?B?U2tZSlhxcVZFMjZucmxDVW9Sa3JKTkF1ck5kNFFjV000dUVtUVE1NXVCTmlQ?=
- =?utf-8?B?QkJlTTdOMGpDWjZIc0pOaU04YnB5S2REeWhXUUtIWWFQbXd0d0Z5SGtNNTBp?=
- =?utf-8?B?VUdhWnJnUTB5MktZcTlOR1lYWGt3UVNEOFUwTE9WMWszc3ZKVHIwT0JDR2c4?=
- =?utf-8?B?azB3WjVVNks1cXZONnFKV3gxenRKbS9obkEwVWsyK2xRbGxndWJZUkpKVGVz?=
- =?utf-8?B?YUw0UVJQbFZURFRFZ2R6NVg1UVp2bjVRdlFYRU9MbjF6MU5hc08wMjNyMDV5?=
- =?utf-8?B?Q2d4cDlEK0tucG9IeFI5YWQxVlZscGV5V3U2Y29BZnEwS2JSRmZLcElsOVM2?=
- =?utf-8?B?ZEYxd252YkVwTUQ0MUIzSWgrajBCY3BTbDQ3MWd5MlBrK1VLOFc1ZzB2UEgr?=
- =?utf-8?B?VlN6Y3Y3dCs3T3VLZm5rV0lTdzZRMFlOb1RtemtERFVlTGRld1V0UyszUEpD?=
- =?utf-8?B?azY4dlJ3QVRlOERXQklUUHU1SXRNekZ4UWU5cXVkdW95dEs3SUdvSlhnV0Zi?=
- =?utf-8?B?akphY0xiNGx4S0g3cThuK2FIMCtyL3lkQXNrUDNlcEgwd3Y5M0g5WTNtSzRE?=
- =?utf-8?B?alozMG5ZSFZaWGlXMURpVVpWc2pyL0VITGFKUGJKNEtqU3RudEFDR0ZFbmhh?=
- =?utf-8?B?dmpDWDBOR2ZIRmt1bFUzMVVCQUc1ZDlnYzVaYitubWpLd0ZlQTV6WTNRUEVW?=
- =?utf-8?Q?h2mHqwkEMBk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Vit0VUpNeUtwNHlNMlVGZEQzTDV6TkVtR2ZEeURRRE1YYnAxbUNrYjJ4dTRF?=
- =?utf-8?B?T09kRGFJZWs4a0ZGTmxaQmxWRURHSndvZS9kOWlDMzFVS28rSFRuOUtBczdj?=
- =?utf-8?B?T29sSi8zZ3doa3p2Wm5vN0N4WlV1V21hZGVJcUgvOXRXVmVjWHliRGl1N0Ru?=
- =?utf-8?B?dVBIOFE0WGhvVkFacUZ0cDQrV1JWUFVHMW1Od3JSR0pUM3dYb1BEeGxnQzFX?=
- =?utf-8?B?Y3BvamZIY1Bmc0Z3K2ZmTTl3TTBzNHdsdjA5blFOaVArcEgrckF5NUs3YTMw?=
- =?utf-8?B?ZXltOFRXOEVyQzhQbFkxUVNwTWpCb0ZMWXVqNTRvUm9wZnZtMUx6c1R0SXFC?=
- =?utf-8?B?RnVLS2ZSSDZCVmllbUF3ZW9LSTJQM25KeUFQUXBUZzg0SW9TWi80dXRFTkZO?=
- =?utf-8?B?eStpRkRscUZENEpzdklYTlJHbytOYUtjZEJsRWMyaVBJNWpLMmU3ZnU4YWtu?=
- =?utf-8?B?RW1TT0pJSXdsaGM5ZEZjbi9YcXpqSThMUUsvV09ORVBpM25hb0FGc3p6Sitw?=
- =?utf-8?B?dEJhS0NsaDZvUlFvYjBJWDkvTTRoOUdJcXRsMVJWTEpac0ZUdWgySnJ3T1FV?=
- =?utf-8?B?UTUrZ0M1OWttRm1USzZzTEdPcVZrWTh2RTZibk55SExIM2ZlbVpMTXMvZS9H?=
- =?utf-8?B?M05aZWxjSElqTWZSZFRhU3NuaklMVFJhSktlSGgram1vcXROcVFIbkZ5OUht?=
- =?utf-8?B?eVRKQUVGNHdUeDl0MzU2QnhXclh0YW9QQzEzUGgraEt3U052M1FEZ08yRldr?=
- =?utf-8?B?dWJBRGRsYWJWajZxOHVkOWdiYUZwMXI4aGJmWk01cmNYbVFTekhEQ1NGTzAw?=
- =?utf-8?B?cGprbERzenE2MXlNVFR3L256M2lqUE5PUFJlYmVBa3k1UGI1ZjU1S0M2bFRI?=
- =?utf-8?B?N2NwelFvd2RaZEtaQzAxNC91bnJiNy8rY0kwWXV3VW1tLzRxKzRKVDcwWkpv?=
- =?utf-8?B?NmlKczBhMWVacjJjMUxYazlDQjdJV0V4RStkeFhIVU4vTURVRFJPeGNIa0Zr?=
- =?utf-8?B?d25QVHVYbEMrQUdvaGtVSklUTlJlZkU0bjJjSTJoMjdkNmtjYlNRVWdaZm5I?=
- =?utf-8?B?SThkdjRFUHV6MGJMUks2THJ4RmIxL2ZDTkowQWJBNEdlRkVKNjRHak1Ebzkz?=
- =?utf-8?B?SU9DeFBEd2xMMWxXcTVJN1E1UDR2aGdNd0lyOXRrOHBTU0FRdE0wV3RvVVBt?=
- =?utf-8?B?aFh3UTBlS0RHQzlXb2FqYjZBYUpHYVVxMG5Ba0djUDViY2RpRG5YRGNWK01S?=
- =?utf-8?B?K1UvSGZRelNhZUg1KzBMNkUrK01vK3BzcFkrUSsxYWMvb1JjRHV6V00rb251?=
- =?utf-8?B?UWwwL3hqTk9ZSDl1UW9nVGdmeEUvTTc0eDhjUnhVb2ZSU2RPbm9IUjN4U2ht?=
- =?utf-8?B?ZVh2eHd1dDQ1OEJQSnZZZEMrMm5aU2kydkxZMHFkWkdvc2o5VU1HeVN0OFlN?=
- =?utf-8?B?eW5zQUF3eDdnWEwxUXhpbG40elZkUjRKeHkxWjdFejM3SU9mRnF3NFU2Wm5k?=
- =?utf-8?B?NEd5Tm02MG54cnhIM29JTGs0dUdKbWY0dzl2MWwvNklxRkdrd3lZajlqd25y?=
- =?utf-8?B?NjRmN0I5TC9kbnNKL0plYUZJSWpLR2x4UHR5bFhXMTY3L2pCWWg4d2ZRakov?=
- =?utf-8?B?M1JmMGt0R0o1QStUN3E4TmZPeGM5Z3ZZcjFyYmlkdGpXeUpaRkRzTFFIYnZE?=
- =?utf-8?B?b25DWmptOWJHSFE1ZEx1YTZ0dGNWbEVNUFA1WVZHRURjelJCckpZQ0xvOG1X?=
- =?utf-8?B?ZWY2U1o3akhzYmh0d1VpTXBVQTJyQUhjNFJ1NnFDOWQxL25oZWQxREtrVTJP?=
- =?utf-8?B?MGgzVk0zbVB0NnFCM1FOQUdIck5vR2VxQVoxUi93L29KZEtldm1NUXVnZGIx?=
- =?utf-8?B?RVd4ZjNJT0ZnTHdkUVRDZTVENkxCRzdGUCtsQXYvTERtYkNlcGNaZ3FTc2s3?=
- =?utf-8?B?cnorZ29TNEJHR3JVU2Ivc1ZCTzdubXUxZ0wrTEUxVC9tQVN1dTEzMndISU96?=
- =?utf-8?B?UXpCelkrUXRCQmtxZCtnYksvc0FlU2pWMXovZFE5TzhwNG9nUWJVS3JSdS9B?=
- =?utf-8?B?QVd1dW5QNU1ObzVrbk0wZWJEYkcxK2lLOVkzbzhwZTdwY2Z3L0ZBRzUrQ1dT?=
- =?utf-8?Q?gVDXF4aziCxMVYutFHX1lSsDI?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 960a0610-bc08-45c1-36fe-08ddfabecbe4
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 16:32:33.0121
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: A1dyx/yUTvk6yMaM/J4kGDu9tIBZBIHVSefttXJ7xtz0S8fkyDS2Z5qUwHXVlgNDjy2o/jDv5k2ZrMAH2+Q9gQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6977
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923121228.1255-1-zhangsenchuan@eswincomputing.com>
 
-On 9/23/25 00:03, Neeraj Upadhyay wrote:
-> The kvm_wait_lapic_expire() function is a pre-VMRUN optimization that
-> allows a vCPU to wait for an imminent LAPIC timer interrupt. However,
-> this function is not fully compatible with protected APIC models like
-> Secure AVIC because it relies on inspecting KVM's software vAPIC state.
-> For Secure AVIC, the true timer state is hardware-managed and opaque
-> to KVM. For this reason, kvm_wait_lapic_expire() does not check whether
-> timer interrupt is injected for the guests which have protected APIC
-> state.
-> 
-> For the protected APIC guests, the check for injected timer need to be
-> done by the callers of kvm_wait_lapic_expire(). So, for Secure AVIC
-> guests, check to be injected vectors in the requested_IRR for injected
-> timer interrupt before doing a kvm_wait_lapic_expire().
-> 
-> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> ---
->  arch/x86/kvm/svm/sev.c | 8 ++++++++
->  arch/x86/kvm/svm/svm.c | 3 ++-
->  arch/x86/kvm/svm/svm.h | 2 ++
->  3 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index 5be2956fb812..3f6cf8d5068a 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -5405,3 +5405,11 @@ bool sev_savic_has_pending_interrupt(struct kvm_vcpu *vcpu)
->  	return READ_ONCE(to_svm(vcpu)->sev_savic_has_pending_ipi) ||
->  		kvm_apic_has_interrupt(vcpu) != -1;
->  }
-> +
-> +bool sev_savic_timer_int_injected(struct kvm_vcpu *vcpu)
+On Tue, Sep 23, 2025 at 08:12:27PM +0800, zhangsenchuan@eswincomputing.com wrote:
+> Add driver for the Eswin EIC7700 PCIe host controller,the controller is
+> based on the DesignWare PCIe core, IP revision 6.00a The PCIe Gen.3
+> controller supports a data rate of 8 GT/s and 4 channels, support INTX
+> and MSI interrupts.
+
+s/host controller,the controller is/host controller, which is/
+
+Add period at end of first sentence.
+
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -375,6 +375,17 @@ config PCI_EXYNOS
+>  	  hardware and therefore the driver re-uses the DesignWare core
+>  	  functions to implement the driver.
+>  
+> +config PCIE_EIC7700
+> +	bool "ESWIN PCIe controller"
+> +	depends on ARCH_ESWIN || COMPILE_TEST
+> +	depends on PCI_MSI
+> +	select PCIE_DW_HOST
+> +	help
+> +	  Say Y here if you want PCIe controller support for the ESWIN.
+> +	  The PCIe controller on Eswin is based on DesignWare hardware,
+> +	  enables support for the PCIe controller in the Eswin SoC to
+> +	  work in host mode.
+
+Alphabetize by vendor name so the kconfig menus stay sorted:
+
+  Baikal-T1 PCIe controller
+  ESWIN PCIe controller
+  Freescale i.MX6/7/8 PCIe controller (host mode)
+
+> +++ b/drivers/pci/controller/dwc/pcie-eic7700.c
+
+> +/* Vendor and device id value */
+> +#define VENDOR_ID_VALUE			0x1fe1
+> +#define DEVICE_ID_VALUE			0x2030
+
+Use something like this to match definitions in
+include/linux/pci_ids.h, where this might eventually be moved if used
+in other drivers:
+
+  #define PCI_VENDOR_ID_ESWIN            0x1fe1
+
+> +/* Disable MSI-X cap register fields */
+> +#define PCIE_MSIX_DISABLE_MASK		GENMASK(15, 8)
+
+I think this value has nothing to do with MSI-X; it's just the "Next
+Capability Pointer" in the capability header, i.e., the
+PCI_CAP_LIST_NEXT_MASK added here:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?id=37d1ade89606
+
+That commit is queued but not merged, so you can't use it yet.  If
+this driver is merged after v6.17, you can switch to using it.
+
+> +static int eswin_pcie_parse_ports(struct eswin_pcie *pcie)
 > +{
-> +	u32 reg  = kvm_lapic_get_reg(vcpu->arch.apic, APIC_LVTT);
-
-Extra space before the "="
-
-> +	int vec = reg & APIC_VECTOR_MASK;
+> +	struct device *dev = pcie->pci.dev;
+> +	struct eswin_pcie_port *port, *tmp;
+> +	int ret;
 > +
-> +	return to_svm(vcpu)->vmcb->control.requested_irr[vec / 32] & BIT(vec % 32);
+> +	for_each_available_child_of_node_scoped(dev->of_node, of_port) {
+> +		ret = eswin_pcie_parse_port(pcie, of_port);
+> +		if (ret)
+> +			goto err_port;
+> +	}
+> +
+> +	return ret;
+
+"ret" is potentially uninitialized here, but you never get here if
+eswin_pcie_parse_port() fails, so I think you should "return 0"
+directly instead.
+
+> +static int eswin_pcie_probe(struct platform_device *pdev)
+> +{
+> +	const struct eswin_pcie_data *data;
+> +	struct eswin_pcie_port *port, *tmp;
+> +	struct device *dev = &pdev->dev;
+> +	struct eswin_pcie *pcie;
+> +	struct dw_pcie *pci;
+> +	int ret;
+> +
+> +	data = of_device_get_match_data(dev);
+> +	if (!data)
+> +		return dev_err_probe(dev, -EINVAL, "OF data missing\n");
+> +
+> +	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+> +	if (!pcie)
+> +		return -ENOMEM;
+> +
+> +	INIT_LIST_HEAD(&pcie->ports);
+> +
+> +	pci = &pcie->pci;
+> +	pci->dev = dev;
+> +	pci->ops = &dw_pcie_ops;
+> +	pci->pp.ops = &eswin_pcie_host_ops;
+> +	pcie->msix_cap = data->msix_cap;
+> +
+> +	pcie->mgmt_base = devm_platform_ioremap_resource_byname(pdev, "mgmt");
+> +	if (IS_ERR(pcie->mgmt_base))
+> +		return dev_err_probe(dev, PTR_ERR(pcie->mgmt_base),
+> +				     "Failed to map mgmt registers\n");
+> +
+> +	pcie->powerup_rst = devm_reset_control_get(&pdev->dev, "powerup");
+> +	if (IS_ERR(pcie->powerup_rst))
+> +		return dev_err_probe(dev, PTR_ERR(pcie->powerup_rst),
+> +				     "Failed to get powerup reset\n");
+> +
+> +	pcie->cfg_rst = devm_reset_control_get(&pdev->dev, "cfg");
+> +	if (IS_ERR(pcie->cfg_rst))
+> +		return dev_err_probe(dev, PTR_ERR(pcie->cfg_rst),
+> +				     "Failed to get cfg reset\n");
+> +
+> +	ret = eswin_pcie_parse_ports(pcie);
+> +	if (ret)
+> +		dev_err_probe(pci->dev, ret,
+> +			      "Failed to parse Root Port: %d\n", ret);
+> +
+> +	platform_set_drvdata(pdev, pcie);
+> +
+> +	ret = dw_pcie_host_init(&pci->pp);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to initialize host\n");
+> +		goto err_init;
+> +	}
+> +
+> +	return ret;
+
+Can "return 0" here since we know the value.
+
+> +err_init:
+> +	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
+> +		list_del(&port->list);
+> +		reset_control_put(port->perst);
+> +	}
+> +	return ret;
 > +}
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index a945bc094c1a..d0d972731ea7 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -4335,7 +4335,8 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
->  	    vcpu->arch.host_debugctl != svm->vmcb->save.dbgctl)
->  		update_debugctlmsr(svm->vmcb->save.dbgctl);
->  
-> -	kvm_wait_lapic_expire(vcpu);
-> +	if (!sev_savic_active(vcpu->kvm) || sev_savic_timer_int_injected(vcpu))
-> +		kvm_wait_lapic_expire(vcpu);
->  
->  	/*
->  	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
-> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-> index 8043833a1a8c..ecc4ea11822d 100644
-> --- a/arch/x86/kvm/svm/svm.h
-> +++ b/arch/x86/kvm/svm/svm.h
-> @@ -878,6 +878,7 @@ static inline bool sev_savic_active(struct kvm *kvm)
->  }
->  void sev_savic_set_requested_irr(struct vcpu_svm *svm, bool reinjected);
->  bool sev_savic_has_pending_interrupt(struct kvm_vcpu *vcpu);
-> +bool sev_savic_timer_int_injected(struct kvm_vcpu *vcpu);
->  #else
->  static inline struct page *snp_safe_alloc_page_node(int node, gfp_t gfp)
->  {
-> @@ -917,6 +918,7 @@ static inline struct vmcb_save_area *sev_decrypt_vmsa(struct kvm_vcpu *vcpu)
->  static inline void sev_free_decrypted_vmsa(struct kvm_vcpu *vcpu, struct vmcb_save_area *vmsa) {}
->  static inline void sev_savic_set_requested_irr(struct vcpu_svm *svm, bool reinjected) {}
->  static inline bool sev_savic_has_pending_interrupt(struct kvm_vcpu *vcpu) { return false; }
-> +static inline bool sev_savic_timer_int_injected(struct kvm_vcpu *vcpu) { return true; }
+> +
+> +static int eswin_pcie_suspend(struct device *dev)
+> +{
+> +	struct eswin_pcie *pcie = dev_get_drvdata(dev);
+> +	struct eswin_pcie_port *port;
+> +
+> +	/*
+> +	 * For controllers with active devices, resources are retained and
+> +	 * cannot be turned off.
+> +	 */
+> +	if (!dw_pcie_link_up(&pcie->pci)) {
+> +		list_for_each_entry(port, &pcie->ports, list)
+> +			reset_control_assert(port->perst);
+> +		eswin_pcie_assert(pcie);
+> +		clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+> +		pcie->suspended = true;
 
-Shouldn't this return false? If CONFIG_KVM_AMD_SEV isn't defined, then
-sev_savic_active() will always be false and this won't be called anyway.
+I'm a little dubious about this since none of the other drivers check
+dw_pcie_link_up().
 
-Thanks,
-Tom
+It also seems a little bit racy since dw_pcie_link_up() can always
+change after it's called.
 
->  #endif
->  
->  /* vmenter.S */
+And tracking pcie->suspended is also unusual if not unique.
+
+Should dw_pcie_suspend_noirq() and dw_pcie_resume_noirq() be used
+here?
+
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int eswin_pcie_resume(struct device *dev)
+> +{
+> +	struct eswin_pcie *pcie = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	if (!pcie->suspended)
+> +		return 0;
+> +
+> +	ret = eswin_pcie_host_init(&pcie->pci.pp);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to init host: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	dw_pcie_setup_rc(&pcie->pci.pp);
+> +	eswin_pcie_start_link(&pcie->pci);
+> +	dw_pcie_wait_for_link(&pcie->pci);
+> +
+> +	pcie->suspended = false;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops eswin_pcie_pm_ops = {
+> +	NOIRQ_SYSTEM_SLEEP_PM_OPS(eswin_pcie_suspend, eswin_pcie_resume)
+
+Suggest adding "_noirq" to the end of these function names since this
+sets .suspend_noirq, .resume_noirq, etc.  Also will match other drivers.
 
