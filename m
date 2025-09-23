@@ -1,268 +1,120 @@
-Return-Path: <linux-kernel+bounces-829338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D847DB96D6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:33:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0D8B96D85
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62FD016AB9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:33:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 150E77AD0AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176B6327A34;
-	Tue, 23 Sep 2025 16:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A435B328594;
+	Tue, 23 Sep 2025 16:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ieh7IMNu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IxSv1tFb"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DB72E5B1B;
-	Tue, 23 Sep 2025 16:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2A3328562
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758645176; cv=none; b=cX9lLbktUVydV8POOCxQ4Rvn3L7+WvlmJeCFyhDuggDw8CNMWM3khZh9d3KfDeii+nG1Sa61yhg0SXOivcpoOXgQq23fnsrBrQFx/PDW/DdV5Y8ExnxVVpsZKW30WIKO6dn/WYmd71Nn7PsX1l8K7NdGSLifzPnSxIM4gv24rA0=
+	t=1758645240; cv=none; b=LVV587bXNRD8Xe4GKBsWLVMWnOv/9f/s/MTGz+gKVnaCagmW2iNX0MaUY86NJNMqIVdOF65Flv31ExH4l0QNM/M1mx9NnZdGx44mhfK5ugmdWEPt+ICTQe11f/J5E0slfYUHWopBrzCxdh8MlRcnzzaknr9Z3sTmEo4AvSo5nLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758645176; c=relaxed/simple;
-	bh=nXg/n5hpWCZLMQ+84dFs6XsSa3daE8FI7ZQaMSHDtw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Dl8wf+/SNZ2i4Zxdyeips5Sz/zKy4QJxznp73lvsXOISxldmk6j1wCNNNM20cIlSFc7bucTZjNllMimpe6Fy988xNc9LbgQvd+E8sYnSSqR9NleObla+wMQuGWHWY0lklhW3lpGagqucmtwHDL85kJgRLecNv8Yk7CBS22JKLhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ieh7IMNu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EB33C4CEF5;
-	Tue, 23 Sep 2025 16:32:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758645175;
-	bh=nXg/n5hpWCZLMQ+84dFs6XsSa3daE8FI7ZQaMSHDtw4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Ieh7IMNuWw1otot5GgD04hmcV4NCpwDR/tGMiwk4kPz2q60eWO87q4IJicdsVGqiA
-	 6JWmmkE36Y1PyI+XCZC67Q+XaJyAMXFU4K+0iVRZCHybewZwE/VqapHTWzmdX56NcE
-	 XoPM/nlaFTgFztZth9FMt+2h+p1x5/sLhh/+zN4D9MvIQAHDPd06pbc+Mua2CLNjtK
-	 bPlyyBqNHE4pJ3MUVE1txmF8EEjnHGBal4TplCcZaqLbJhVqQJL5L3YQvtEzdc8nIZ
-	 RGVZMZdCeN/grQU5bxQCtFeyBFhOdruEsA64RWW83IGdy2+MYM8CpXmZv7iOWfJrDW
-	 IeqfTl1qQgENA==
-Date: Tue, 23 Sep 2025 11:32:54 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: zhangsenchuan@eswincomputing.com
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
-	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de, johan+linaro@kernel.org,
-	quic_schintav@quicinc.com, shradha.t@samsung.com, cassel@kernel.org,
-	thippeswamy.havalige@amd.com, mayank.rana@oss.qualcomm.com,
-	inochiama@gmail.com, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com,
-	Yanghui Ou <ouyanghui@eswincomputing.com>
-Subject: Re: [PATCH v3 2/2] PCI: EIC7700: Add Eswin PCIe host controller
- driver
-Message-ID: <20250923163254.GA2042659@bhelgaas>
+	s=arc-20240116; t=1758645240; c=relaxed/simple;
+	bh=oQO5uXI6/yKG4Ie6ao7EnmBkagYnHlh4OZll8X7T5H4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FkfNzXrtFjt3oboaygT/q+xYLMbJ2hKUABEkFhAJomzZ1M0dhc7k2Gq26JMgGq70hsfQVS9q4tvxk5HYDFKTrYTz7vJoufto1Npf+njvH9t9hWCOm4JOiuYx9bxFB5gwyS/byO+eVlauref2G2MsjlBUI3CKMx6jqn9yfnIrlk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IxSv1tFb; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 6A1F3C00787;
+	Tue, 23 Sep 2025 16:33:32 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 4701860690;
+	Tue, 23 Sep 2025 16:33:49 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D8CC2102F1960;
+	Tue, 23 Sep 2025 18:33:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758645227; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=Nf6TbTTKpnL7mG5m//aAjoL13/cGP7KHINrrFH8p8l8=;
+	b=IxSv1tFbbPL+umkvEM7djR6Yg3cz7Q2UpQOiuIDLVBOMNmPas+rqfuSPpYEwwmPnwbbhX7
+	iyU8gRAEFEJxOGVjk8oFOFWqQuy193oS6ZkWZpkcspm4SOvyMGLSOcQiClfSkZGuzzMd/x
+	mLJHUPoAEORo8qPGaXuGZD9o2RMTCUz/YiULpu35NKxe33xKoLQGEGmuntusBxIE+/PuAx
+	bvmgZZ8PVFakA5zNOGZgzYYrnHournuWPnsbUmBuK43eReNjZ28U2VPgEmhK/7LSESXVZ/
+	wngvVxssQbdW6trXKSOS0w4l66tKt7FP4VecgcIMU7IYm57HE55YXPI6spxjHw==
+Message-ID: <bbcca781-9ac4-4eec-b3fb-ff4e01950127@bootlin.com>
+Date: Tue, 23 Sep 2025 22:03:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923121228.1255-1-zhangsenchuan@eswincomputing.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/2] ethernet: eswin: Add eic7700 ethernet driver
+To: weishangjuan@eswincomputing.com, devicetree@vger.kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com, vladimir.oltean@nxp.com,
+ rmk+kernel@armlinux.org.uk, yong.liang.choong@linux.intel.com,
+ anthony.l.nguyen@intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ jan.petrous@oss.nxp.com, jszhang@kernel.org, inochiama@gmail.com,
+ 0x1207@gmail.com, boon.khai.ng@altera.com, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+ lizhi2@eswincomputing.com, pinkesh.vaghela@einfochips.com
+References: <20250918085612.3176-1-weishangjuan@eswincomputing.com>
+ <20250918090026.3280-1-weishangjuan@eswincomputing.com>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <20250918090026.3280-1-weishangjuan@eswincomputing.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Sep 23, 2025 at 08:12:27PM +0800, zhangsenchuan@eswincomputing.com wrote:
-> Add driver for the Eswin EIC7700 PCIe host controller,the controller is
-> based on the DesignWare PCIe core, IP revision 6.00a The PCIe Gen.3
-> controller supports a data rate of 8 GT/s and 4 channels, support INTX
-> and MSI interrupts.
+Hi,
 
-s/host controller,the controller is/host controller, which is/
+On 18/09/2025 14:30, weishangjuan@eswincomputing.com wrote:
+> From: Shangjuan Wei <weishangjuan@eswincomputing.com>
+> 
+> Add Ethernet controller support for Eswin's eic7700 SoC. The driver
+> implements hardware initialization, clock configuration, delay
+> adjustment functions based on DWC Ethernet controller, and supports
+> device tree configuration and platform driver integration.
+> 
+> Signed-off-by: Zhi Li <lizhi2@eswincomputing.com>
+> Signed-off-by: Shangjuan Wei <weishangjuan@eswincomputing.com>
+> ---
+>   drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
+>   drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+>   .../ethernet/stmicro/stmmac/dwmac-eic7700.c   | 230 ++++++++++++++++++
+>   3 files changed, 242 insertions(+)
+>   create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-eic7700.c
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> index 67fa879b1e52..a13b15ce1abd 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> @@ -67,6 +67,17 @@ config DWMAC_ANARION
+> 
+>   	  This selects the Anarion SoC glue layer support for the stmmac driver.
+> 
+> +config DWMAC_EIC7700
+> +	tristate "Support for Eswin eic7700 ethernet driver"
+> +	select CRC32
+> +	select MII
 
-Add period at end of first sentence.
+Seems like CRC32 and MII are already selected by STMMAC_ETH. I guess 
+this is inspired by CONFIG_DWMAC_DWC_QOS_ETH that also seems to have 
+these unnecessary dependencies.
 
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -375,6 +375,17 @@ config PCI_EXYNOS
->  	  hardware and therefore the driver re-uses the DesignWare core
->  	  functions to implement the driver.
->  
-> +config PCIE_EIC7700
-> +	bool "ESWIN PCIe controller"
-> +	depends on ARCH_ESWIN || COMPILE_TEST
-> +	depends on PCI_MSI
-> +	select PCIE_DW_HOST
-> +	help
-> +	  Say Y here if you want PCIe controller support for the ESWIN.
-> +	  The PCIe controller on Eswin is based on DesignWare hardware,
-> +	  enables support for the PCIe controller in the Eswin SoC to
-> +	  work in host mode.
+Maxime
 
-Alphabetize by vendor name so the kconfig menus stay sorted:
-
-  Baikal-T1 PCIe controller
-  ESWIN PCIe controller
-  Freescale i.MX6/7/8 PCIe controller (host mode)
-
-> +++ b/drivers/pci/controller/dwc/pcie-eic7700.c
-
-> +/* Vendor and device id value */
-> +#define VENDOR_ID_VALUE			0x1fe1
-> +#define DEVICE_ID_VALUE			0x2030
-
-Use something like this to match definitions in
-include/linux/pci_ids.h, where this might eventually be moved if used
-in other drivers:
-
-  #define PCI_VENDOR_ID_ESWIN            0x1fe1
-
-> +/* Disable MSI-X cap register fields */
-> +#define PCIE_MSIX_DISABLE_MASK		GENMASK(15, 8)
-
-I think this value has nothing to do with MSI-X; it's just the "Next
-Capability Pointer" in the capability header, i.e., the
-PCI_CAP_LIST_NEXT_MASK added here:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?id=37d1ade89606
-
-That commit is queued but not merged, so you can't use it yet.  If
-this driver is merged after v6.17, you can switch to using it.
-
-> +static int eswin_pcie_parse_ports(struct eswin_pcie *pcie)
-> +{
-> +	struct device *dev = pcie->pci.dev;
-> +	struct eswin_pcie_port *port, *tmp;
-> +	int ret;
-> +
-> +	for_each_available_child_of_node_scoped(dev->of_node, of_port) {
-> +		ret = eswin_pcie_parse_port(pcie, of_port);
-> +		if (ret)
-> +			goto err_port;
-> +	}
-> +
-> +	return ret;
-
-"ret" is potentially uninitialized here, but you never get here if
-eswin_pcie_parse_port() fails, so I think you should "return 0"
-directly instead.
-
-> +static int eswin_pcie_probe(struct platform_device *pdev)
-> +{
-> +	const struct eswin_pcie_data *data;
-> +	struct eswin_pcie_port *port, *tmp;
-> +	struct device *dev = &pdev->dev;
-> +	struct eswin_pcie *pcie;
-> +	struct dw_pcie *pci;
-> +	int ret;
-> +
-> +	data = of_device_get_match_data(dev);
-> +	if (!data)
-> +		return dev_err_probe(dev, -EINVAL, "OF data missing\n");
-> +
-> +	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
-> +	if (!pcie)
-> +		return -ENOMEM;
-> +
-> +	INIT_LIST_HEAD(&pcie->ports);
-> +
-> +	pci = &pcie->pci;
-> +	pci->dev = dev;
-> +	pci->ops = &dw_pcie_ops;
-> +	pci->pp.ops = &eswin_pcie_host_ops;
-> +	pcie->msix_cap = data->msix_cap;
-> +
-> +	pcie->mgmt_base = devm_platform_ioremap_resource_byname(pdev, "mgmt");
-> +	if (IS_ERR(pcie->mgmt_base))
-> +		return dev_err_probe(dev, PTR_ERR(pcie->mgmt_base),
-> +				     "Failed to map mgmt registers\n");
-> +
-> +	pcie->powerup_rst = devm_reset_control_get(&pdev->dev, "powerup");
-> +	if (IS_ERR(pcie->powerup_rst))
-> +		return dev_err_probe(dev, PTR_ERR(pcie->powerup_rst),
-> +				     "Failed to get powerup reset\n");
-> +
-> +	pcie->cfg_rst = devm_reset_control_get(&pdev->dev, "cfg");
-> +	if (IS_ERR(pcie->cfg_rst))
-> +		return dev_err_probe(dev, PTR_ERR(pcie->cfg_rst),
-> +				     "Failed to get cfg reset\n");
-> +
-> +	ret = eswin_pcie_parse_ports(pcie);
-> +	if (ret)
-> +		dev_err_probe(pci->dev, ret,
-> +			      "Failed to parse Root Port: %d\n", ret);
-> +
-> +	platform_set_drvdata(pdev, pcie);
-> +
-> +	ret = dw_pcie_host_init(&pci->pp);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to initialize host\n");
-> +		goto err_init;
-> +	}
-> +
-> +	return ret;
-
-Can "return 0" here since we know the value.
-
-> +err_init:
-> +	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
-> +		list_del(&port->list);
-> +		reset_control_put(port->perst);
-> +	}
-> +	return ret;
-> +}
-> +
-> +static int eswin_pcie_suspend(struct device *dev)
-> +{
-> +	struct eswin_pcie *pcie = dev_get_drvdata(dev);
-> +	struct eswin_pcie_port *port;
-> +
-> +	/*
-> +	 * For controllers with active devices, resources are retained and
-> +	 * cannot be turned off.
-> +	 */
-> +	if (!dw_pcie_link_up(&pcie->pci)) {
-> +		list_for_each_entry(port, &pcie->ports, list)
-> +			reset_control_assert(port->perst);
-> +		eswin_pcie_assert(pcie);
-> +		clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
-> +		pcie->suspended = true;
-
-I'm a little dubious about this since none of the other drivers check
-dw_pcie_link_up().
-
-It also seems a little bit racy since dw_pcie_link_up() can always
-change after it's called.
-
-And tracking pcie->suspended is also unusual if not unique.
-
-Should dw_pcie_suspend_noirq() and dw_pcie_resume_noirq() be used
-here?
-
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int eswin_pcie_resume(struct device *dev)
-> +{
-> +	struct eswin_pcie *pcie = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	if (!pcie->suspended)
-> +		return 0;
-> +
-> +	ret = eswin_pcie_host_init(&pcie->pci.pp);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to init host: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	dw_pcie_setup_rc(&pcie->pci.pp);
-> +	eswin_pcie_start_link(&pcie->pci);
-> +	dw_pcie_wait_for_link(&pcie->pci);
-> +
-> +	pcie->suspended = false;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct dev_pm_ops eswin_pcie_pm_ops = {
-> +	NOIRQ_SYSTEM_SLEEP_PM_OPS(eswin_pcie_suspend, eswin_pcie_resume)
-
-Suggest adding "_noirq" to the end of these function names since this
-sets .suspend_noirq, .resume_noirq, etc.  Also will match other drivers.
 
