@@ -1,128 +1,140 @@
-Return-Path: <linux-kernel+bounces-828707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E77B95400
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:29:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A51CB9540F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 280312E49C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:29:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5609E485106
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9366C320A01;
-	Tue, 23 Sep 2025 09:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6B92F3C23;
+	Tue, 23 Sep 2025 09:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZmaCJJWK"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="GG3ffdip"
+Received: from fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.64.237.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4A03191A6
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4AE2AD13
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.64.237.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758619742; cv=none; b=syArebKi/hJcJQxaBFTpy/yxDMYrSZ55XIasJ5CrYgKfQm96yWTYIqER3QKxvxLkxVEFi+EkaxUYXgk8Qf7nKhagQS/XU18DmtKRYMckcvHT9nFiWWw0+OOdViCr0Z0+g/BtgLVnR0yr8zG6C4YlEiSHvWbYxJ3q98ZEjnK6Ec0=
+	t=1758619867; cv=none; b=ajg1VW3xmE/IPUDGAyAY0JHbxB+SF3zS7ZSdCrvYV7De+TuHHUaXRIOXMIsp2tXd7fZLZO+K46yZ47roZ4Xt9B9vrMOGNsqZGNWR0ZkdU+zy7QX9pCkcXa1stpVJfXTIAsLWMuwcKRHB6cG32aVhbm2DwwWI5mTfW4y3yVhw3G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758619742; c=relaxed/simple;
-	bh=NBEQffd2H9uKpV++ZtU70NTiqjKCKVw4AAQiI8qHzlE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bBW++3PMK51m8Qqp4NBNnQsbJjftT1CFGgnVl8VwSBjk9UtopR4oCNCNRMMa0j3GXh6ynZNWa3krPpIRAkGkWMBMjkqA1qbHHYJkR5fSZZKKQNOFr8J5WdPm8KXwziynEV1tXsWrHeA/GzQqMzglC0ELmubjQmn0AvJ1rbssAP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZmaCJJWK; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ece0e4c5faso6129852f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:29:00 -0700 (PDT)
+	s=arc-20240116; t=1758619867; c=relaxed/simple;
+	bh=6CVDiZGbneDIBg7ydESwnYFddOUSkGMFy7QmurGQaVY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=libprrf///9nmQGFUrgRmzujcV3WGOJRcP6jn3p8oe5eepppNl1JkEUEqTEXDBK5jOL6UGQvTPlCPk2gDQn9y/t5gTEm4JpeKNzSEOPOAOCSDTfI7PGFRCa2AJyFVKj6LYpGW03+Z1EB0tBHRprBvgKesrVBJ5DiEe5+ZadR5JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=GG3ffdip; arc=none smtp.client-ip=3.64.237.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758619739; x=1759224539; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xbyITinY33OhIKJ5MBGUt4odwalHEaw3IqQgPt6HVIQ=;
-        b=ZmaCJJWKfyfPNMshhyqKIxZU6tW/9Q5gaOCKLbnTnxl5inQ7tBFJNshsHUeBdeb+f1
-         i+kwQWyo8cQphIhkeEWRNoyfSGczckqNdUcHcufyOQGOiOmsqVPVGHrethYMCbmTD7Rf
-         sX/PyhLipS5Zld5DywQ/w7d4VGz165Z7/k4eHzucq8bM0LTPx5eWmMx1SE8C4cSE+94k
-         nFNJlcwWh0VSESW2xcg2Ldz8PjdfrzUJV3xVXd3t/QcBlKAXSSTS8GvUFna8o24943C4
-         vfz+1so0SxWBOAIHL4SSPEu/CETD3PVZ1HqNAPkCBs/SawJDd8F5k7XP483uzHwn5PKo
-         LxVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758619739; x=1759224539;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xbyITinY33OhIKJ5MBGUt4odwalHEaw3IqQgPt6HVIQ=;
-        b=xC5rVEPjQSpSP20zpTWy8IpboqHKmm9V7MIhoOjZitiExxfEfAgjSDKFyZboy6sH0/
-         5BD7aHPltMLUE2vPlJzsSt5uyIdw8BRlU1jIverltii++bXznkjQNahFHdJQwK9Y9kEt
-         uEK9p4jVspWA6pZDuirDDcedW45LTX7noMgVAqo19iCHdKeygdR0pGhXj2SHvXpoKiyM
-         NrL2hNELNZ2jq08mB0+dDz0NxT+TlSHBa0em+IpKhgUHrhIMVzy17HKK9KuWETnvcVXp
-         zdy+FkAhMcIWhImE0qgmuu6X3qGe0yV+0iGY88MkxLjH7/DHYQkq4AqgdL7zEmtFVs9v
-         U9eQ==
-X-Gm-Message-State: AOJu0YyEIv0Pk0XSjtN9F9hbZ1cZtSxzTKPp0gqq/9oapbwquc2rysMP
-	CzC4JNkQ5i1Nas27PtI8V2lwmkMHAFj6ZiWhNQq2KfZm8i24OCH2IR3P
-X-Gm-Gg: ASbGncu/cRmM364lJY3KLkRd8YwoNZDdUx4ZQHyi+6STgS+9tZB6N0zjshZvGMBUwHZ
-	6jCHlzcNsQCx/MIVA+wxJdFI7Z+5Ja/2QuyI5MstC0wJ6rtdc8PmYsOp6Ekj/LHZIoB8xKTuXhc
-	NMnPrTlkQIzZVWe7EuKpFc8gPue1OpAUPwmIhFhUBRiyUaQ+DJFHmeuu7jR9mya13y9ljkXdMuF
-	6UYAa5/tcH7FfGCZJRZbOfWbR4b+NfNT0fJrEL+bph9JQLHdQKkOyird7CruXj72Y0d/27b2cGS
-	RzahXDKSgLOOQxzG6rO1ihWBolGEv6Opq7wBGLLMxmPVDgobtHlijzstw0QQJtgs1zycOqxkpGq
-	smBk80nZbxu6afuCTBt9kpXGUAAXyQlMzAGlyzERy7Uaitvs=
-X-Google-Smtp-Source: AGHT+IF7z73d2VuvQnNwt++NqM3EoWvKvnBFDLgcn+C2wjtH1EryvG8YXOQEMCGihX4URtIuIPau1Q==
-X-Received: by 2002:a05:6000:2f87:b0:3eb:7f7d:aefb with SMTP id ffacd0b85a97d-405ccbd73damr1680845f8f.53.1758619738435;
-        Tue, 23 Sep 2025 02:28:58 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:a5d1:59f5:ca88:d11c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-461391232e7sm271956435e9.6.2025.09.23.02.28.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 02:28:57 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] serial: sh-sci: Add missing header guard
-Date: Tue, 23 Sep 2025 10:28:46 +0100
-Message-ID: <20250923092846.74517-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.51.0
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1758619864; x=1790155864;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=rUxApQS5pvIzoR+rejlEoF4fBpZbgtQZWl+zAH6eupw=;
+  b=GG3ffdipR29vYAGCexFF2+h6lYIYzRsXkSzYfs1gCAhfzzHYBT2F0dYs
+   4n13HysaJFig/mWt8KnwNGrC90aDMOXYHSgrxKm/FgrCB4JtpjlgmCqXX
+   aCqkDE0LHOD1A19+m582VPKs/BZcpDK/m+BPqZWW0BEs0wDOk+AHr8jCj
+   ZTnD9xOeVxPTyL8mnUrKTexCGDPZHqFk92nEiZCGAFoujWs/RzyZluQZ3
+   hHmfnuxbM9ohPUnSRyJ9O1uqg2qPiEvJ0+oHf5G8tHIJeqXlZ5f2d/wZz
+   1A+bFMRCB/tjikngF8nKqxfWC29hOhREaATPIAGisT28LEgwEhvkUqCM/
+   A==;
+X-CSE-ConnectionGUID: LDWS2kOtTOart8kfBAqyBQ==
+X-CSE-MsgGUID: 2omzy+6rSTyhKif6wrqmuw==
+X-IronPort-AV: E=Sophos;i="6.18,287,1751241600"; 
+   d="scan'208";a="2431964"
+Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
+  by internal-fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 09:30:53 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:25590]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.23.230:2525] with esmtp (Farcaster)
+ id 54271866-6c4a-443e-8b89-6675b1b3b7db; Tue, 23 Sep 2025 09:30:53 +0000 (UTC)
+X-Farcaster-Flow-ID: 54271866-6c4a-443e-8b89-6675b1b3b7db
+Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Tue, 23 Sep 2025 09:30:52 +0000
+Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.223) by
+ EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Tue, 23 Sep 2025 09:30:45 +0000
+From: Fernand Sieber <sieberf@amazon.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+CC: <mingo@redhat.com>, <peterz@infradead.org>,
+	<linux-kernel@vger.kernel.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<bristot@redhat.com>, <vschneid@redhat.com>, <dwmw@amazon.co.uk>,
+	<jschoenh@amazon.de>, <liuyuxua@amazon.com>
+Subject: Re: [PATCH 4/4] sched/fair: Add more core cookie check in wake up fast path
+Date: Tue, 23 Sep 2025 11:30:00 +0200
+Message-ID: <20250923093001.1218488-1-sieberf@amazon.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <a1ff6b87-48a9-436a-9b62-8664d5207884@amd.com>
+References: <cover.1758543008.git.sieberf@amazon.com> <a68bf0acdad9995fab15105cb26bd25f7d0edc8b.1758543008.git.sieberf@amazon.com> <a1ff6b87-48a9-436a-9b62-8664d5207884@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D046UWA002.ant.amazon.com (10.13.139.39) To
+ EX19D003EUB001.ant.amazon.com (10.252.51.97)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Prateek,
 
-Add header guard to sh-sci.h to prevent multiple inclusions of the
-header file.
+On 9/23/2025 2:25 PM, K Prateek Nayak wrote:
+> So with Patch 1, you already check for cookie matching while entering
+> select_idle_smt() and now, each pass of the loop again does a
+> sched_core_cookie_match() which internally loops through the smt mask
+> again! Seems wasteful.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/tty/serial/sh-sci.h | 5 +++++
- 1 file changed, 5 insertions(+)
+Right. The change in select_idle_smt() is unnecessary.
 
-diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
-index 951681aba586..22f877e2a17e 100644
---- a/drivers/tty/serial/sh-sci.h
-+++ b/drivers/tty/serial/sh-sci.h
-@@ -1,4 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __SH_SCI_H__
-+#define __SH_SCI_H__
+> On an SMT-8 system, all the looping over smt mask per wakeup will add
+> up. Is that not a concern? A single task with core cookie enabled will
+> add massive overhead for all wakeup in the system.
+
+In such a scenario there should generally be no looping because I introduced an
+early return in patch 3 in __sched_core_cookie_match(). Perhaps it's worth
+extracting this early return as standalone optimization patch? Something like
+this:
+
+@@ -1404,10 +1404,12 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
+        if (!sched_core_enabled(rq))
+                return true;
+
++       if (rq->core->core_cookie == p->core_cookie)
++               return true;
 +
- #include <linux/bitops.h>
- #include <linux/serial_core.h>
- #include <linux/io.h>
-@@ -176,3 +179,5 @@ enum {
- 	(((port)->type == PORT_SCI) ? SCI_TDxE_CLEAR : SCIF_TDxE_CLEAR)
- #define SCxSR_BREAK_CLEAR(port) \
- 	(((port)->type == PORT_SCI) ? SCI_BREAK_CLEAR : SCIF_BREAK_CLEAR)
-+
-+#endif /* __SH_SCI_H__ */
--- 
-2.51.0
+        for_each_cpu(cpu, cpu_smt_mask(cpu_of(rq))) {
+                if (!available_idle_cpu(cpu)) {
+-                       idle_core = false;
+-                       break;
++                       return false;
+                }
+        }
+
+@@ -1415,7 +1417,7 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
+         * A CPU in an idle core is always the best choice for tasks with
+         * cookies.
+         */
+-       return idle_core || rq->core->core_cookie == p->core_cookie;
++       return true;
+ }
+
+Thanks,
+Fernand
+
+
+
+Amazon Development Centre (South Africa) (Proprietary) Limited
+29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
+Registration Number: 2004 / 034463 / 07
 
 
