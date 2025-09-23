@@ -1,39 +1,64 @@
-Return-Path: <linux-kernel+bounces-829053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B59B962B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:17:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39EFBB962C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D6B448160
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:17:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37F722E7C7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23CD214210;
-	Tue, 23 Sep 2025 14:16:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA2D1A01BF
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B457230BDB;
+	Tue, 23 Sep 2025 14:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aR+AoqiP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB88921019C;
+	Tue, 23 Sep 2025 14:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758637012; cv=none; b=Zqd3VXoST06uBRM5LbygNRa4e8WeeMbN50r+7wKalBqQLmlqahv6eiWf4SE8Ub4w/lgKPc7bgQ9Z9gG/JXFlWt/fdWaoE/ErfUfQSVCvd+qX9yDvBsjw245X9gC3tQEQ7C+u3cFFNPGkRZKZbAfV6yIIXlj2BqEJxIk+lIoEp7Y=
+	t=1758637026; cv=none; b=Grz+il3vUYWeDlr7MfLOmaj2euuC0mbqedV0uER+WOBHvAyThANoOvwCYuiejFfqVk4WT7TOfQQNNEXgXenbSGoABOX7j/SA70ePoIKt5RF7K07JANjaZVZ8uQ/+VF9d52QOXeCpwU08s5/7ge2zrZJcGQVsGCx7rp8ND3cpxik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758637012; c=relaxed/simple;
-	bh=q+nJLvi0Ow0ZIonPo3ESGN1uhM16JTeaSAejTrMZtt4=;
+	s=arc-20240116; t=1758637026; c=relaxed/simple;
+	bh=HhfQ8qFnuoue9N89ZUhfgvfqB9CtjDf8lF3wfCaFCP4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p0ThlKliVw0DxX63XHq1XJ8EFSIA+IKV3ckspkgHwjxe1QDrm5fnSgz6hy+REnyWsPT5qrhtL4DkVAbDG3dFHsSHge4H5+/NpDxkQxbt3e0NsJ44UPPVMPJ1+bgD9qii6dUYcs84NI8MvNEe866OVZlgSI6Z6nUcVvxxLcaqjP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65227497;
-	Tue, 23 Sep 2025 07:16:41 -0700 (PDT)
-Received: from [10.163.43.74] (unknown [10.163.43.74])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ED5293F694;
-	Tue, 23 Sep 2025 07:16:44 -0700 (PDT)
-Message-ID: <ecd6cdc5-7503-4fb4-96f2-1264d46e8fae@arm.com>
-Date: Tue, 23 Sep 2025 19:46:41 +0530
+	 In-Reply-To:Content-Type; b=AaVczR8X/i3hGCszHHiuKogLV7UuD7OsqkTvmFKp5LuNCe9BrLS9TmXqP7uwa+BnclpvE40TCwkaLYoSAgpmhWmFeb9xER0I+03KUhFICzEREf3HlFSTtYUfsrq9RfTwyqOkkmqz27mtItkHYiGV+bPHQ1aa7UVt2QvyEJhJnss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aR+AoqiP; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758637025; x=1790173025;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=HhfQ8qFnuoue9N89ZUhfgvfqB9CtjDf8lF3wfCaFCP4=;
+  b=aR+AoqiPRMvUaxvUL/EAN7Vdj1KudpN3DjgM8Gw+U+YpSqFm4x4AfJ9o
+   fQ6uyu8rqd1v2WOjI62ZHYNnVgZBGu95+BK0hLk4IoS5GPemUtHePNq5d
+   yHHttqfiJV63JcvO+Hx8lLLzxhvmWw4Y03CsYkshEExHxG3FhAsr1zVR5
+   /Ah5S4j1znY/LyAuuZplbyePuTMaD3Ab12+4+meW7V5ii5b1dH3P9IVtv
+   fouhrm0OEPHpaiv2D2Cz1lJ4Q27Qh+pm+kwG3YyK6EIcpFqtKSHCDpF1n
+   QSYvpLFVaQYnVeHV2mvPliQZ4Cjctervu34mY7fyXGhBmNoKjWGB83FMe
+   g==;
+X-CSE-ConnectionGUID: 9UlBbuPPSeW0WH7ZuJuWXQ==
+X-CSE-MsgGUID: hzqP2crLSNCNZekEn4Q2Tg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60968568"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="60968568"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:17:04 -0700
+X-CSE-ConnectionGUID: G5N869BDQt2GFauEQX/Rwg==
+X-CSE-MsgGUID: HicRN2vSSlS+9cE/bZiUcQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
+   d="scan'208";a="207532883"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:17:01 -0700
+Message-ID: <c93438be-642b-47f1-b4ff-9551b9192471@intel.com>
+Date: Tue, 23 Sep 2025 22:16:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,68 +66,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/memory-failure: not select MEMORY_ISOLATION
-To: Xie Yuanbin <xieyuanbin1@huawei.com>, linmiaohe@huawei.com,
- nao.horiguchi@gmail.com, akpm@linux-foundation.org, david@redhat.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com
-Cc: will@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250922143618.48640-1-xieyuanbin1@huawei.com>
+Subject: Re: [PATCH v16 19/51] KVM: x86: Don't emulate task switches when IBT
+ or SHSTK is enabled
+To: Sean Christopherson <seanjc@google.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z
+ <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+References: <20250919223258.1604852-1-seanjc@google.com>
+ <20250919223258.1604852-20-seanjc@google.com>
+ <b89600a2-c3ae-4bb6-8c91-ea9a1dd507fb@linux.intel.com>
+ <aNGGKm0Yzjvn3YVv@google.com>
 Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250922143618.48640-1-xieyuanbin1@huawei.com>
-Content-Type: text/plain; charset=UTF-8
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <aNGGKm0Yzjvn3YVv@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 22/09/25 8:06 PM, Xie Yuanbin wrote:
-> We added that "select MEMORY_ISOLATION" in commit ee6f509c3274 ("mm:
-> factor out memory isolate functions").
-> However, in commit add05cecef80 ("mm: soft-offline: don't free target
-> page in successful page migration") we remove the need for it,
-> where we removed the calls to set_migratetype_isolate() etc.
+On 9/23/2025 1:23 AM, Sean Christopherson wrote:
+> On Mon, Sep 22, 2025, Binbin Wu wrote:
+>>
+>>
+>> On 9/20/2025 6:32 AM, Sean Christopherson wrote:
+>>> Exit to userspace with KVM_INTERNAL_ERROR_EMULATION if the guest triggers
+>>> task switch emulation with Indirect Branch Tracking or Shadow Stacks
+>>> enabled,
+>>
+>> The code just does it when shadow stack is enabled.
 > 
-> What CONFIG_MEMORY_FAILURE soft-offline support wants is migrate_pages()
-> support. But that comes with CONFIG_MIGRATION.
-> And isolate_folio_to_list() has nothing to do with CONFIG_MEMORY_ISOLATION.
+> Doh.  Fixed that and the EMULATION_FAILED typo Chao pointed out:
 > 
-> Therefore, we can remove "select MEMORY_ISOLATION" of MEMORY_FAILURE.
-> 
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Xie Yuanbin <xieyuanbin1@huawei.com>
-> ---
->  mm/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 034a1662d8c1..0e26f4fc8717 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -742,21 +742,20 @@ config DEFAULT_MMAP_MIN_ADDR
->  	  This value can be changed after boot using the
->  	  /proc/sys/vm/mmap_min_addr tunable.
->  
->  config ARCH_SUPPORTS_MEMORY_FAILURE
->  	bool
->  
->  config MEMORY_FAILURE
->  	depends on MMU
->  	depends on ARCH_SUPPORTS_MEMORY_FAILURE
->  	bool "Enable recovery from hardware memory errors"
-> -	select MEMORY_ISOLATION
->  	select RAS
->  	help
->  	  Enables code to recover from some memory failures on systems
->  	  with MCA recovery. This allows a system to continue running
->  	  even when some of its memory has uncorrected errors. This requires
->  	  special hardware support and typically ECC memory.
->  
->  config HWPOISON_INJECT
->  	tristate "HWPoison pages injector"
->  	depends on MEMORY_FAILURE && DEBUG_KERNEL && PROC_FS
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 8b31dfcb1de9..06a88a2b08d7 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -12194,9 +12194,9 @@ int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int idt_index,
+>                   */
+>                  if (__kvm_emulate_msr_read(vcpu, MSR_IA32_U_CET, &u_cet) ||
+>                      __kvm_emulate_msr_read(vcpu, MSR_IA32_S_CET, &s_cet))
+> -                       return EMULATION_FAILED;
+> +                       goto unhandled_task_switch;
+>   
+> -               if ((u_cet | s_cet) & CET_SHSTK_EN)
+> +               if ((u_cet | s_cet) & (CET_ENDBR_EN | CET_SHSTK_EN))
+>                          goto unhandled_task_switch;
+>          }
 
-MEMORY_FAILURE does not need MEMORY_ISOLATION to be selected
-(and built) in order to be built independently.
-
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
-
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
