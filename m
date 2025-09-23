@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-829441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1991BB971C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:50:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47072B971EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BEDB4E2FF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:50:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCF8B4C0989
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317EF296BCB;
-	Tue, 23 Sep 2025 17:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498402D8762;
+	Tue, 23 Sep 2025 17:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lbpy0kcV"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011021.outbound.protection.outlook.com [40.107.208.21])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="x7midnkY"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011032.outbound.protection.outlook.com [40.107.208.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E82285045
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBFC2D47FF
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758649763; cv=fail; b=SKADiFMXffKd2s2K04kjwDZZHMdbLtVb9zOVDftWKb4KdwKsiVbZ/nQQ3AHQco+xquFL2SBK5SSh4fOS5aoNXeUw0u1Tqr9x/c29wSVkG5FZYB2FFGWhiqYpny2MCJ6Bv1eUIR/OGRR0oI4ntW/+SNKof7mTo53VDSZt/1M6Sjs=
+	t=1758649793; cv=fail; b=nbiKOZt1IkPi+yNT95m1f9LYA5HEjoDwfOWlb2kq5XewQzdom/xMkfUJrJLlB4r6QsIWbw0RgAXBDuvf+SRJ43IPEnFFnyyqw7GKNze+mQddqaj4M7X7tNsI2tHB+oDo8uTTj0zV+IwEDiOvx4VcJUJHm1lCXl6IZBQvPwINY+M=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758649763; c=relaxed/simple;
-	bh=2aXHevH31sgse920q2SqycuRycRgfLLUoyaqa3Utfpo=;
+	s=arc-20240116; t=1758649793; c=relaxed/simple;
+	bh=zkumftL6RQwa1kkcfJ6pHE0nt741JDi8aRrCOKrHzNQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OO2FVw7sH50pZLjAXUbkZPtvqTnWRACA2dcQqxlb5zkcQspobe5js7FXBvWu3/jJYapxfjr+spSQYNA63Ao5W6lqb7eIU2O6HYD5ObO5FtaYTS/XOvJ0MZefNLDOgar+CAYPyLkKrk+ixhs3374BBk1m43QgV6uFmoE+uKisoSM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lbpy0kcV; arc=fail smtp.client-ip=40.107.208.21
+	 MIME-Version:Content-Type; b=uiWD18Cfh8AZv3DM33M6odIKeR0wCVGFjyO0NfowAINDjGpf3ZjTK8rABE13tkkKkPKg/pFVwa/4vuEipX27RT+6E9IEYmW1TDvA75ZDkh4+NczahxSsOQzOsHQRrCaIhzi2/JJgdrGjR03hGy0npqGhBB3NjrBZPn+f0oNxORw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=x7midnkY; arc=fail smtp.client-ip=40.107.208.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=keRn8YfKTPOhPWrX6ILImKgAEIl2xiL9V0QBEEz9x0lHbPcJxsNmTy3ywzZItyaRgqe8tUYRQ2+YWPD/KcG/8bRUj0hKoeKRz+7go2YIGfaEzww6/6mQWf6UmWfAb+3mQq3l7PH3JWlNvUf7vgNFxwHkt+wRnOGrjaW+F8JdQB5HVk5o40r3H1fqQrNYC/pZOimzxb0/Y2JWYjdgyh2xOluPXg/1FQFAYFLMxAiOkB0iZWjztvA1D1Knu0cSNU2a4tueT3ErDm/qWY8SWt9CZ+rrcOjYd5AUbUU73eqpCjUpxHXF4B93hGRA3vGdlqw7A+eLFBVN2AbqmdIV6trBHw==
+ b=vTSDa/8qsPoGc6qDn+zm9zqKkYMa/Hz+M+OAjqSLDSqxG1xBx6U2feTRNu4iBe09BUK1ELQg/1QtFslhz5xNZjwy7nMymdZz3v8CR7HRDtVJskUGjmX/knovJ4aSx2EEGWYW54AGRBputiHxS/9RQz/QfV9ogARsHYZ8p605Ywq69d6nMzYWxqnxD93Sc+NRwJ3ut8SeiYXYWeFpHwEeNBIht+Vn1GTSEUl3H1U+cckryCmtAH5WWQ3XPtcgIujRIih7FkvHs1Q3dBOxGa/memQkhpsM1HxtuKPkfL9e5NOEU98XK59Sd/rCUUI9U+Ng7FdMLRMoJGUfb0S3njr9Rw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MRU306ef9zUm+sdej3oeM9RD3nGLOvTgHl+98pndOfo=;
- b=Cg9sy3ClYXxXo/O6CnTfVWKgaSlABqGUyL4BYfcS3LbRlAMRdyUVpUP2A1POt+ZprALTP+KbqEjUHrEyhSDPW2XbzJYpyjpP07f6snWAkmLRxZYXpilQCAr3ZgErVhadOlfBUfTeKyz8+Mmf2ockQVdyO8JBdkbVLStnx/PGvcK13dXidzoOuVJvirudEnBa2bi1XTPA9VcPzhmJEjZnO7+J7NwxYfjYZm5Y3Kqx3BxoyN81jdq97ub4h62vjlu/XSEEDGLNXxESq/eYY+0CbZoR0N5CVFVR9laLyw6hvv5oIzltH35IybjKEHYu5iSOFIkNtb4qkgSWm0MsLT2KNQ==
+ bh=0wFXi6tT2mAPntQV3UQ5NM7KkuZqtFOlhy0rFkInSa4=;
+ b=InU6Sqb+DAEevQ41h551tutzA4cwYR2IlIxrxiI+iJU/FJ/eRoq5iFfKpdGVuWGlXHCoKDcOouanpGRpxHlNLNme+Yffm9DQBuHvd5FYiCrJ+42QxI2z4bPWWjBuHguSy2usjUJoUEgFvfLHxs1Kk1D88S02jqWvspHkbuwFLx/rKL759r1620+l4jZ4rmhidesTAI5UIN2LeW5xlXY/7b6IIU8n5xm9G22Ft/XCsyCyDEJ/STFaw7NIOgcqI5rM7B6NX6NpVmosygWaVuFGJQFvIqwVwsFetmXaINcvoNV/+QjO45O5q0lKhvxXa1LqoRaE6pG28FvNHGNz+VPLiA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MRU306ef9zUm+sdej3oeM9RD3nGLOvTgHl+98pndOfo=;
- b=lbpy0kcV1fIAxzsj4G4sEOV1OBwdyX+vyziqDzfDGnAq786VOXGrRV0K10CGlNEfEE8CgCBr+8NydebiX6aZFK/dgkSeVuR7Ajy/vKIvt6qxihq27dNI5GB6vhZ62spWSwOBHAofHgxBleRi8SyOYKWT2ctoaDmAx/zkCF2MwaQ=
-Received: from BL1P222CA0026.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:2c7::31)
- by LV3PR12MB9187.namprd12.prod.outlook.com (2603:10b6:408:194::20) with
+ bh=0wFXi6tT2mAPntQV3UQ5NM7KkuZqtFOlhy0rFkInSa4=;
+ b=x7midnkYDsK/Q6I9yIjizpY3M56ktbUyNyYpJanx8xoZQJ8dPU/GAKjc1box06Y2aHen3O+CJJ+usegAzfx4h2WhGRcaxwfsH1b1QO07VLrhZrTanddA64ko4yPDOZ7NRdRwrvceW6DZKe1Fc9tlIF0mKPLux4Fvt7R2BKsbO7Q=
+Received: from BL1PR13CA0151.namprd13.prod.outlook.com (2603:10b6:208:2bd::6)
+ by BL3PR12MB6475.namprd12.prod.outlook.com (2603:10b6:208:3bb::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Tue, 23 Sep
- 2025 17:49:14 +0000
-Received: from MN1PEPF0000F0E1.namprd04.prod.outlook.com
- (2603:10b6:208:2c7:cafe::fb) by BL1P222CA0026.outlook.office365.com
- (2603:10b6:208:2c7::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.20 via Frontend Transport; Tue,
- 23 Sep 2025 17:49:13 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 23 Sep
+ 2025 17:49:33 +0000
+Received: from MN1PEPF0000F0DF.namprd04.prod.outlook.com
+ (2603:10b6:208:2bd:cafe::aa) by BL1PR13CA0151.outlook.office365.com
+ (2603:10b6:208:2bd::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.9 via Frontend Transport; Tue,
+ 23 Sep 2025 17:49:33 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- MN1PEPF0000F0E1.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ MN1PEPF0000F0DF.mail.protection.outlook.com (10.167.242.37) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Tue, 23 Sep 2025 17:49:13 +0000
+ 15.20.9160.9 via Frontend Transport; Tue, 23 Sep 2025 17:49:33 +0000
 Received: from kaveri.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 23 Sep
- 2025 10:49:05 -0700
+ 2025 10:49:13 -0700
 From: Shivank Garg <shivankg@amd.com>
 To: <akpm@linux-foundation.org>, <david@redhat.com>
 CC: <ziy@nvidia.com>, <willy@infradead.org>, <matthew.brost@intel.com>,
@@ -83,9 +83,9 @@ CC: <ziy@nvidia.com>, <willy@infradead.org>, <matthew.brost@intel.com>,
 	<Raghavendra.KodsaraThimmappa@amd.com>, <bharata@amd.com>,
 	<shivankg@amd.com>, <alirad.malek@zptcorp.com>, <yiannis@zptcorp.com>,
 	<weixugc@google.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
-Subject: [RFC V3 5/9] mm: add support for copy offload for folio Migration
-Date: Tue, 23 Sep 2025 17:47:40 +0000
-Message-ID: <20250923174752.35701-6-shivankg@amd.com>
+Subject: [RFC V3 6/9] mtcopy: introduce multi-threaded page copy routine
+Date: Tue, 23 Sep 2025 17:47:41 +0000
+Message-ID: <20250923174752.35701-7-shivankg@amd.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250923174752.35701-1-shivankg@amd.com>
 References: <20250923174752.35701-1-shivankg@amd.com>
@@ -101,288 +101,468 @@ X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E1:EE_|LV3PR12MB9187:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0c3d85d2-5d39-49cd-86ec-08ddfac9824d
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0DF:EE_|BL3PR12MB6475:EE_
+X-MS-Office365-Filtering-Correlation-Id: 736972ed-754a-42e8-0513-08ddfac98e1a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YcugHtTCi8P90NIBiPelIWFUAP3kOIzF15HP0+GDaH1BWP8bkG/gwzn41bNV?=
- =?us-ascii?Q?YHcrz9GyehL3ptbnWecLOUOAfgzFTxC5Wgcgj0e3ln+/Z5glAvreTR5bD8VU?=
- =?us-ascii?Q?IFNve/3/pdeSkooaYf3ZO5VOffbVgLCT12DYmy4FfBXo1srbTTjBx/N9b3BN?=
- =?us-ascii?Q?mngKS4jUbEMJSpwXksKYGF/FbmdH6hSQlrSNneKguNPEng4ihFWuDjtouQM2?=
- =?us-ascii?Q?BJIieTtTREc4U45LqyT2Sw8pyQZDEVo1QwY/h7r/FYrFmG4+HuGeOL7kK6EI?=
- =?us-ascii?Q?ypMZ7LJ2gc2RBvgIR3DnCaxf/iAs5OTGLl/O7lhaYSnMpeymdvFv3s9Km4vv?=
- =?us-ascii?Q?FwPpy1oddwMke1tI3nQN7p1tElo23y8ViGgh9XQv3xdwIIZY0WrkOMeFjQsW?=
- =?us-ascii?Q?hstPgHZ38+vGIBOEAVmcYFxxws3FV2hV2RBO0Rju2ldC1uIWlN/LcW8pCs60?=
- =?us-ascii?Q?lgbl6Sq3QROCayfILWuBoZVemY2xFCW1TyIKKnktUGKtaZpRkqpc2tYkxiP1?=
- =?us-ascii?Q?xqdor1pYRSOj88FcSFb0uyKzpd7n9v5dOtMgFx7A6GpnK0HAvLDloHojv5zN?=
- =?us-ascii?Q?VKa63Mt3RYhj7SIxQQxeTp7C+kv+Q2h4PM9s/ctSisjYq6JQF+QbCDaJMhpb?=
- =?us-ascii?Q?sw+wBo8vcURlMKWr4A4KT3MHnmXyMzEZYirm3SjCVJd7Dq+2uVCW9Pyiesbt?=
- =?us-ascii?Q?ArT1bK9DTMtoctaYMLAeZv4Y2AWwIyrXAdhFipRVtQp0F9/kQa3R/WBzt+vP?=
- =?us-ascii?Q?P2gO0MUKwKEq6sGnPdBYALSJuaCvd8To2QqL2n5MqcHwjMkVOiwHwutcP21X?=
- =?us-ascii?Q?hkDe4XyB9znX3HausYs0CV1DwmLA6DI4Xdj+aTm0OO9iFDlHSFLrgUXuPTHj?=
- =?us-ascii?Q?5s0EAbf7TscEUXqJtmix2f2eO07pdEHmDVy5Yt6+aSqopv059yLgvxB1sErk?=
- =?us-ascii?Q?+KbOdvd53TAzslsSG9yDh7dljK07qvWNswzhtVNnDHvMazixDKEnyruE3CCV?=
- =?us-ascii?Q?A+SQ+wxgF7RPOJ8CUBUgmjoyVNGk1R8aDSBcd7+osVVSW30mAFhXB7vGhMqA?=
- =?us-ascii?Q?B3QBPf9ovlVxiKdKfOPGuFk6KMO4N3x6Z95BzNWG5S5iybsgWh4AL5zpEa3S?=
- =?us-ascii?Q?rdwvkvQQm5fil+pYkRmooJ+jV27UVu3vK/ixhXaEpQcTJr5xO5UsuOh303Hh?=
- =?us-ascii?Q?eib+Mvps/FeLo76KaRD7gdisimo6VHfiJS6sBljcYW879aaSTr+Gq3GBG/Ls?=
- =?us-ascii?Q?KUTCp3G8RcG1tD5jvWSD5RyjnTN6hbdkUtz+9v8l4EimRhG+mG4alIJQHAeU?=
- =?us-ascii?Q?Mgmh206y8P9DNVBIn9PZCa/htiiynkvNd0Lemn1Fr56puhVm37hnDxqfke3o?=
- =?us-ascii?Q?UHYIRyYrI60WBOxnZ2jKoEumqo/MQzEXGtqi/6fhtOL5WO8aaboEYf4O4qau?=
- =?us-ascii?Q?T8BS2BP9X4ETIObxG110fiOHKc+9d7WLFefbn7dsF9izytEmHSS0NLJx7NQi?=
- =?us-ascii?Q?vueTKKEkAC4kXnvMvlgnVOBJVhGSJiVg0Cyt?=
+	=?us-ascii?Q?HQmF6aRZUWSXwMH7y/RR0z1RlyPdcwrT6YkJANnRZZeiIguhPyWByM6SMVSY?=
+ =?us-ascii?Q?FRXDCc8L9ElahyllY1eeMm1sLwrTvlW71esYF+2jddqmIzuV/9SWYl+fPrCz?=
+ =?us-ascii?Q?dhMcGc7q10RJpH7CH4UewMY+Kmc7N9FTvG5svf/9YJQ156OeOox6ZrKuUnqL?=
+ =?us-ascii?Q?CIto6DYqjmq70Wd2xNKYyxQDSKE6JS70eGVmIGF3LOMdfPrnda8ehQWoAtnF?=
+ =?us-ascii?Q?+0lEykx1Jf2LYHmFr0LW2oDTBNAwnvDJDhhn0jngWm+WFpm6SmcwydMDguqI?=
+ =?us-ascii?Q?aCvCTOp6BkO4XhdbaT8F9JpagVsavNseHHl8o05Z0cBojqxjdmZX2q8ZEMwb?=
+ =?us-ascii?Q?I/JGue2DIxwGSjDIcnN5BUGmv0Arc1NR8CnRgEBBJuoX12o2ko61eKctIneR?=
+ =?us-ascii?Q?AUhahQljos6zZL/Yc0SFAYVBKSEaTvsJHjH691pHuaguH03Wxj882/v3SUsX?=
+ =?us-ascii?Q?KSywmhYC/vzq7QO+15qnNit7J9PWOKZdt+1LZRxdSedhYZKGusoqUEg1HgiK?=
+ =?us-ascii?Q?Fa78VEx1sEaoge1hjdvmmtiEgRBHpUM9SbT3xZnox3vI8LI4fVeJymJcAWoH?=
+ =?us-ascii?Q?IZEN4PkIgjr/XzyeE1Gr7jkp088QY61brvRlW8pL6adh4NR1Kq9jJBdMoNeu?=
+ =?us-ascii?Q?UY4c9MpcwsLCne+HTUTeT76YFD5d89JrPVo/yklOjFU4CBDrg+GH7sFT0in+?=
+ =?us-ascii?Q?CqDWg9Hlcq2KnIM2lBCQl7ryKsI2p4yCuwfXxkUzZomaHW1FW+InM/e2mTJy?=
+ =?us-ascii?Q?quwT4MZxnB9y2DB8uZQTU59Wwh9ca/69M2JOR0KJkcF1woxh+Wvtz0S6aLN1?=
+ =?us-ascii?Q?LOqqNdN/kXqCDN0c053/YVkbv7NlVAkv04ouO9wL37qO9TTAS1qvwL4oUrYg?=
+ =?us-ascii?Q?lJZbk/pdLFlqPmox2aA+pHR7nGTOwjCeosUcZnzz60r9Epw/XYZjUegLXo2U?=
+ =?us-ascii?Q?GEG6JxSpW8HnCF8CmYqdcDN7ZUAX1tml5TEIMV57LXf/MAtmednQAa7qiPFr?=
+ =?us-ascii?Q?0g0sJAkFozQvZFiOO7zsiJAkkYc89rXMTUZnjOuGwwgGnA1XY8Xy5cVYjf3i?=
+ =?us-ascii?Q?YDdaiD2Q4AcjNEheKpdOT7TM6wIOlpf+z2vyPB4Jan8Mh4AbhPo5B0uwhtWp?=
+ =?us-ascii?Q?Q27IQinAfASNMbIg7bd+/LZN/PxMF5qT9E5vVfmuGUmUKcr8GdEN7ErQyFky?=
+ =?us-ascii?Q?et6tFErVhEK3bHmpNJnO5sh44pXu/FGXqojvlLm/X2jJIRHFK+QXXT4goDiF?=
+ =?us-ascii?Q?Lj+ZHrVTqyJ0tVefBjf/fPPRfROb1YzE9uO/Hv1CG79G8iamJMmxrb9ic1hb?=
+ =?us-ascii?Q?WMzOVw6rHS6UdC1t2cZPIvQwIy8FoH4GXos5/c3n2E0ckv1oziKslV78j2k8?=
+ =?us-ascii?Q?2fZn8wsZBlEUkhnyS2XcBwUaLI803Xi+igG2dNmr0ut2VIIdPOrCqXt2vv3O?=
+ =?us-ascii?Q?T5ZaU314STH6uFczncOBS6BUlM7NaKCMEpnxpXzlaTRgsxuNK1C7FtUxTkWS?=
+ =?us-ascii?Q?RflglKJOcMFNdoKULzjgxNRrptIiKo7jdkBM?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 17:49:13.7536
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 17:49:33.5480
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c3d85d2-5d39-49cd-86ec-08ddfac9824d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 736972ed-754a-42e8-0513-08ddfac98e1a
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000F0E1.namprd04.prod.outlook.com
+	MN1PEPF0000F0DF.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9187
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6475
 
-From: Mike Day <michael.day@amd.com>
+From: Zi Yan <ziy@nvidia.com>
 
-Offload-Copy drivers should implement following functions to enable folio
-migration offloading:
-migrate_offc() - This function takes src and dst folios list undergoing
-migration. It is responsible for transfer of page content between the
-src and dst folios.
-can_migrate_offc() - It performs necessary checks if offload copying
-migration is supported for the give src and dst folios.
+Now page copies are batched, multi-threaded page copy can be used to
+increase page copy throughput.
 
-Offload-Copy driver should include a mechanism to call start_offloading and
-stop_offloading for enabling and disabling migration offload respectively.
+Enable using:
+echo 1 >  /sys/kernel/cpu_mt/offloading
+echo NR_THREADS >  /sys/kernel/cpu_mt/threads
 
-Signed-off-by: Mike Day <michael.day@amd.com>
+Disable:
+echo 0 >  /sys/kernel/cpu_mt/offloading
+
+Signed-off-by: Zi Yan <ziy@nvidia.com>
 Co-developed-by: Shivank Garg <shivankg@amd.com>
 Signed-off-by: Shivank Garg <shivankg@amd.com>
 ---
- include/linux/migrate_offc.h | 34 +++++++++++++++++++++
- mm/Kconfig                   |  8 +++++
- mm/Makefile                  |  1 +
- mm/migrate.c                 | 49 +++++++++++++++++++++++++++++-
- mm/migrate_offc.c            | 58 ++++++++++++++++++++++++++++++++++++
- 5 files changed, 149 insertions(+), 1 deletion(-)
- create mode 100644 include/linux/migrate_offc.h
- create mode 100644 mm/migrate_offc.c
+ drivers/Kconfig                        |   2 +
+ drivers/Makefile                       |   3 +
+ drivers/migoffcopy/Kconfig             |   9 +
+ drivers/migoffcopy/Makefile            |   1 +
+ drivers/migoffcopy/mtcopy/Makefile     |   1 +
+ drivers/migoffcopy/mtcopy/copy_pages.c | 327 +++++++++++++++++++++++++
+ 6 files changed, 343 insertions(+)
+ create mode 100644 drivers/migoffcopy/Kconfig
+ create mode 100644 drivers/migoffcopy/Makefile
+ create mode 100644 drivers/migoffcopy/mtcopy/Makefile
+ create mode 100644 drivers/migoffcopy/mtcopy/copy_pages.c
 
-diff --git a/include/linux/migrate_offc.h b/include/linux/migrate_offc.h
+diff --git a/drivers/Kconfig b/drivers/Kconfig
+index 4915a63866b0..d2cbc97a7683 100644
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@ -251,4 +251,6 @@ source "drivers/hte/Kconfig"
+ 
+ source "drivers/cdx/Kconfig"
+ 
++source "drivers/migoffcopy/Kconfig"
++
+ endmenu
+diff --git a/drivers/Makefile b/drivers/Makefile
+index b5749cf67044..5326d88cf31c 100644
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@ -42,6 +42,9 @@ obj-y				+= clk/
+ # really early.
+ obj-$(CONFIG_DMADEVICES)	+= dma/
+ 
++# Migration copy Offload
++obj-$(CONFIG_OFFC_MIGRATION)	+= migoffcopy/
++
+ # SOC specific infrastructure drivers.
+ obj-y				+= soc/
+ obj-$(CONFIG_PM_GENERIC_DOMAINS)	+= pmdomain/
+diff --git a/drivers/migoffcopy/Kconfig b/drivers/migoffcopy/Kconfig
 new file mode 100644
-index 000000000000..e9e8a30f40f0
+index 000000000000..e73698af3e72
 --- /dev/null
-+++ b/include/linux/migrate_offc.h
-@@ -0,0 +1,34 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/drivers/migoffcopy/Kconfig
+@@ -0,0 +1,9 @@
++config MTCOPY_CPU
++       bool "Multi-Threaded Copy with CPU"
++       depends on OFFC_MIGRATION
++       default n
++       help
++         Interface MT COPY CPU driver for batch page migration
++         offloading. Say Y if you want to try offloading with
++         MultiThreaded CPU copy APIs.
 +
-+#ifndef _MIGRATE_OFFC_H
-+#define _MIGRATE_OFFC_H
-+#include <linux/migrate_mode.h>
+diff --git a/drivers/migoffcopy/Makefile b/drivers/migoffcopy/Makefile
+new file mode 100644
+index 000000000000..0a3c356d67e6
+--- /dev/null
++++ b/drivers/migoffcopy/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_MTCOPY_CPU) += mtcopy/
+diff --git a/drivers/migoffcopy/mtcopy/Makefile b/drivers/migoffcopy/mtcopy/Makefile
+new file mode 100644
+index 000000000000..b4d7da85eda9
+--- /dev/null
++++ b/drivers/migoffcopy/mtcopy/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_MTCOPY_CPU) += copy_pages.o
+diff --git a/drivers/migoffcopy/mtcopy/copy_pages.c b/drivers/migoffcopy/mtcopy/copy_pages.c
+new file mode 100644
+index 000000000000..68e50de602d6
+--- /dev/null
++++ b/drivers/migoffcopy/mtcopy/copy_pages.c
+@@ -0,0 +1,327 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Parallel page copy routine.
++ */
 +
-+#define MIGRATOR_NAME_LEN 32
-+struct migrator {
-+	char name[MIGRATOR_NAME_LEN];
-+	int (*migrate_offc)(struct list_head *dst_list, struct list_head *src_list,
-+			    unsigned int folio_cnt);
-+	struct rcu_head srcu_head;
-+	struct module *owner;
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/printk.h>
++#include <linux/init.h>
++#include <linux/sysctl.h>
++#include <linux/sysfs.h>
++#include <linux/highmem.h>
++#include <linux/workqueue.h>
++#include <linux/slab.h>
++#include <linux/migrate.h>
++#include <linux/migrate_offc.h>
++
++#define MAX_NUM_COPY_THREADS 64
++
++unsigned int limit_mt_num = 4;
++static int is_dispatching;
++
++static int copy_page_lists_mt(struct list_head *dst_folios,
++		struct list_head *src_folios, unsigned int nr_items);
++
++static DEFINE_MUTEX(migratecfg_mutex);
++
++/* CPU Multithreaded Batch Migrator */
++struct migrator cpu_migrator = {
++	.name = "CPU_MT_COPY\0",
++	.migrate_offc = copy_page_lists_mt,
++	.owner = THIS_MODULE,
 +};
 +
-+extern struct migrator migrator;
-+extern struct mutex migrator_mut;
-+extern struct srcu_struct mig_srcu;
++struct copy_item {
++	char *to;
++	char *from;
++	unsigned long chunk_size;
++};
 +
-+#ifdef CONFIG_OFFC_MIGRATION
-+void srcu_mig_cb(struct rcu_head *head);
-+int offc_update_migrator(struct migrator *mig);
-+unsigned char *get_active_migrator_name(void);
-+int start_offloading(struct migrator *migrator);
-+int stop_offloading(void);
-+#else
-+static inline void srcu_mig_cb(struct rcu_head *head) { };
-+static inline int offc_update_migrator(struct migrator *mig) { return 0; };
-+static inline unsigned char *get_active_migrator_name(void) { return NULL; };
-+static inline void start_offloading(struct migrator *migrator) { return 0; };
-+static inline void stop_offloading(void) { return 0; };
-+#endif /* CONFIG_OFFC_MIGRATION */
++struct copy_page_info {
++	struct work_struct copy_page_work;
++	int ret;
++	unsigned long num_items;
++	struct copy_item item_list[];
++};
 +
-+#endif /* _MIGRATE_OFFC_H */
-diff --git a/mm/Kconfig b/mm/Kconfig
-index e443fe8cd6cf..a9cbb8d1f1f6 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -689,6 +689,14 @@ config MIGRATION
- config DEVICE_MIGRATION
- 	def_bool MIGRATION && ZONE_DEVICE
- 
-+config OFFC_MIGRATION
-+	bool "Migrate Pages offloading copy"
-+	def_bool n
-+	depends on MIGRATION
-+	help
-+	 An interface allowing external modules or driver to offload
-+	 page copying in page migration.
-+
- config ARCH_ENABLE_HUGEPAGE_MIGRATION
- 	bool
- 
-diff --git a/mm/Makefile b/mm/Makefile
-index ef54aa615d9d..f609d3899992 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -96,6 +96,7 @@ obj-$(CONFIG_FAILSLAB) += failslab.o
- obj-$(CONFIG_FAIL_PAGE_ALLOC) += fail_page_alloc.o
- obj-$(CONFIG_MEMTEST)		+= memtest.o
- obj-$(CONFIG_MIGRATION) += migrate.o
-+obj-$(CONFIG_OFFC_MIGRATION) += migrate_offc.o
- obj-$(CONFIG_NUMA) += memory-tiers.o
- obj-$(CONFIG_DEVICE_MIGRATION) += migrate_device.o
- obj-$(CONFIG_TRANSPARENT_HUGEPAGE) += huge_memory.o khugepaged.o
-diff --git a/mm/migrate.c b/mm/migrate.c
-index ce94e73a930d..41bea48d823c 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -43,6 +43,7 @@
- #include <linux/sched/sysctl.h>
- #include <linux/memory-tiers.h>
- #include <linux/pagewalk.h>
-+#include <linux/migrate_offc.h>
- 
- #include <asm/tlbflush.h>
- 
-@@ -834,6 +835,52 @@ void folio_migrate_flags(struct folio *newfolio, struct folio *folio)
- }
- EXPORT_SYMBOL(folio_migrate_flags);
- 
-+#ifdef CONFIG_HAVE_STATIC_CALL
-+DEFINE_STATIC_CALL(_folios_copy, folios_mc_copy);
-+
-+#ifdef CONFIG_OFFC_MIGRATION
-+void srcu_mig_cb(struct rcu_head *head)
++static unsigned long copy_page_routine(char *vto, char *vfrom,
++	unsigned long chunk_size)
 +{
-+	static_call_query(_folios_copy);
++	return copy_mc_to_kernel(vto, vfrom, chunk_size);
 +}
 +
-+int offc_update_migrator(struct migrator *mig)
++static void copy_page_work_queue_thread(struct work_struct *work)
 +{
-+	struct module *old_owner, *new_owner;
-+	int index;
++	struct copy_page_info *my_work = (struct copy_page_info *)work;
++	int i;
++
++	my_work->ret = 0;
++	for (i = 0; i < my_work->num_items; ++i)
++		my_work->ret |= !!copy_page_routine(my_work->item_list[i].to,
++					my_work->item_list[i].from,
++					my_work->item_list[i].chunk_size);
++}
++
++static ssize_t mt_offloading_set(struct kobject *kobj, struct kobj_attribute *attr,
++		const char *buf, size_t count)
++{
++	int ccode;
++	int action;
++
++	ccode = kstrtoint(buf, 0, &action);
++	if (ccode) {
++		pr_debug("(%s:) error parsing input %s\n", __func__, buf);
++		return ccode;
++	}
++
++	/*
++	 * action is 0: User wants to disable MT offloading.
++	 * action is 1: User wants to enable MT offloading.
++	 */
++	switch (action) {
++	case 0:
++		mutex_lock(&migratecfg_mutex);
++		if (is_dispatching == 1) {
++			stop_offloading();
++			is_dispatching = 0;
++		} else
++			pr_debug("MT migration offloading is already OFF\n");
++		mutex_unlock(&migratecfg_mutex);
++		break;
++	case 1:
++		mutex_lock(&migratecfg_mutex);
++		if (is_dispatching == 0) {
++			start_offloading(&cpu_migrator);
++			is_dispatching = 1;
++		} else
++			pr_debug("MT migration offloading is already ON\n");
++		mutex_unlock(&migratecfg_mutex);
++		break;
++	default:
++		pr_debug("input should be zero or one, parsed as %d\n", action);
++	}
++	return sizeof(action);
++}
++
++static ssize_t mt_offloading_show(struct kobject *kobj,
++		struct kobj_attribute *attr, char *buf)
++{
++	return sysfs_emit(buf, "%d\n", is_dispatching);
++}
++
++static ssize_t mt_threads_set(struct kobject *kobj, struct kobj_attribute *attr,
++		const char *buf, size_t count)
++{
++	int ccode;
++	unsigned int threads;
++
++	ccode = kstrtouint(buf, 0, &threads);
++	if (ccode) {
++		pr_debug("(%s:) error parsing input %s\n", __func__, buf);
++		return ccode;
++	}
++
++	if (threads > 0 && threads <= MAX_NUM_COPY_THREADS) {
++		mutex_lock(&migratecfg_mutex);
++		limit_mt_num = threads;
++		mutex_unlock(&migratecfg_mutex);
++		pr_debug("MT threads set to %u\n", limit_mt_num);
++	} else {
++		pr_debug("Invalid thread count. Must be between 1 and %d\n", MAX_NUM_COPY_THREADS);
++		return -EINVAL;
++	}
++
++	return count;
++}
++
++static ssize_t mt_threads_show(struct kobject *kobj,
++		struct kobj_attribute *attr, char *buf)
++{
++	return sysfs_emit(buf, "%u\n", limit_mt_num);
++}
++
++int copy_page_lists_mt(struct list_head *dst_folios,
++		struct list_head *src_folios, unsigned int nr_items)
++{
++	struct copy_page_info *work_items[MAX_NUM_COPY_THREADS] = {0};
++	unsigned int total_mt_num = limit_mt_num;
++	struct folio *src, *src2, *dst, *dst2;
++	int max_items_per_thread;
++	int item_idx;
++	int err = 0;
++	int cpu;
++	int i;
++
++	if (IS_ENABLED(CONFIG_HIGHMEM))
++		return -EOPNOTSUPP;
++
++	/* Each threads get part of each page, if nr_items < totla_mt_num */
++	if (nr_items < total_mt_num)
++		max_items_per_thread = nr_items;
++	else
++		max_items_per_thread = (nr_items / total_mt_num) +
++				((nr_items % total_mt_num) ? 1 : 0);
++
++
++	for (cpu = 0; cpu < total_mt_num; ++cpu) {
++		work_items[cpu] = kzalloc(sizeof(struct copy_page_info) +
++						sizeof(struct copy_item) *
++							max_items_per_thread,
++					  GFP_NOWAIT);
++		if (!work_items[cpu]) {
++			err = -ENOMEM;
++			goto free_work_items;
++		}
++	}
++
++	if (nr_items < total_mt_num) {
++		for (cpu = 0; cpu < total_mt_num; ++cpu) {
++			INIT_WORK((struct work_struct *)work_items[cpu],
++					  copy_page_work_queue_thread);
++			work_items[cpu]->num_items = max_items_per_thread;
++		}
++
++		item_idx = 0;
++		dst = list_first_entry(dst_folios, struct folio, lru);
++		dst2 = list_next_entry(dst, lru);
++		list_for_each_entry_safe(src, src2, src_folios, lru) {
++			unsigned long chunk_size = PAGE_SIZE * folio_nr_pages(src) / total_mt_num;
++			char *vfrom = page_address(&src->page);
++			char *vto = page_address(&dst->page);
++
++			VM_WARN_ON(PAGE_SIZE * folio_nr_pages(src) % total_mt_num);
++			VM_WARN_ON(folio_nr_pages(dst) != folio_nr_pages(src));
++
++			for (cpu = 0; cpu < total_mt_num; ++cpu) {
++				work_items[cpu]->item_list[item_idx].to =
++					vto + chunk_size * cpu;
++				work_items[cpu]->item_list[item_idx].from =
++					vfrom + chunk_size * cpu;
++				work_items[cpu]->item_list[item_idx].chunk_size =
++					chunk_size;
++			}
++
++			item_idx++;
++			dst = dst2;
++			dst2 = list_next_entry(dst, lru);
++		}
++
++		for (cpu = 0; cpu < total_mt_num; ++cpu)
++			queue_work(system_unbound_wq,
++				   (struct work_struct *)work_items[cpu]);
++	} else {
++		int num_xfer_per_thread = nr_items / total_mt_num;
++		int per_cpu_item_idx;
++
++
++		for (cpu = 0; cpu < total_mt_num; ++cpu) {
++			INIT_WORK((struct work_struct *)work_items[cpu],
++					  copy_page_work_queue_thread);
++
++			work_items[cpu]->num_items = num_xfer_per_thread +
++					(cpu < (nr_items % total_mt_num));
++		}
++
++		cpu = 0;
++		per_cpu_item_idx = 0;
++		item_idx = 0;
++		dst = list_first_entry(dst_folios, struct folio, lru);
++		dst2 = list_next_entry(dst, lru);
++		list_for_each_entry_safe(src, src2, src_folios, lru) {
++			work_items[cpu]->item_list[per_cpu_item_idx].to =
++				page_address(&dst->page);
++			work_items[cpu]->item_list[per_cpu_item_idx].from =
++				page_address(&src->page);
++			work_items[cpu]->item_list[per_cpu_item_idx].chunk_size =
++				PAGE_SIZE * folio_nr_pages(src);
++
++			VM_WARN_ON(folio_nr_pages(dst) !=
++				   folio_nr_pages(src));
++
++			per_cpu_item_idx++;
++			item_idx++;
++			dst = dst2;
++			dst2 = list_next_entry(dst, lru);
++
++			if (per_cpu_item_idx == work_items[cpu]->num_items) {
++				queue_work(system_unbound_wq,
++					(struct work_struct *)work_items[cpu]);
++				per_cpu_item_idx = 0;
++				cpu++;
++			}
++		}
++		if (item_idx != nr_items)
++			pr_warn("%s: only %d out of %d pages are transferred\n",
++				__func__, item_idx - 1, nr_items);
++	}
++
++	/* Wait until it finishes  */
++	for (i = 0; i < total_mt_num; ++i) {
++		flush_work((struct work_struct *)work_items[i]);
++		/* retry if any copy fails */
++		if (work_items[i]->ret)
++			err = -EAGAIN;
++	}
++
++free_work_items:
++	for (cpu = 0; cpu < total_mt_num; ++cpu)
++		kfree(work_items[cpu]);
++
++	return err;
++}
++
++static struct kobject *mt_kobj_ref;
++static struct kobj_attribute mt_offloading_attribute = __ATTR(offloading, 0664,
++		mt_offloading_show, mt_offloading_set);
++static struct kobj_attribute mt_threads_attribute = __ATTR(threads, 0664,
++		mt_threads_show, mt_threads_set);
++
++static int __init cpu_mt_module_init(void)
++{
 +	int ret = 0;
 +
-+	mutex_lock(&migrator_mut);
-+	index = srcu_read_lock(&mig_srcu);
-+	old_owner = READ_ONCE(migrator.owner);
-+	new_owner = mig ? mig->owner : NULL;
++	mt_kobj_ref = kobject_create_and_add("cpu_mt", kernel_kobj);
++	if (!mt_kobj_ref)
++		return -ENOMEM;
 +
-+	if (new_owner && !try_module_get(new_owner)) {
-+		ret = -ENODEV;
-+		goto out_unlock;
-+	}
++	ret = sysfs_create_file(mt_kobj_ref, &mt_offloading_attribute.attr);
++	if (ret)
++		goto out_offloading;
 +
-+	strscpy(migrator.name, mig ? mig->name : "kernel", MIGRATOR_NAME_LEN);
-+	static_call_update(_folios_copy, mig ? mig->migrate_offc : folios_mc_copy);
-+	xchg(&migrator.owner, mig ? mig->owner : NULL);
-+	if (old_owner)
-+		module_put(old_owner);
++	ret = sysfs_create_file(mt_kobj_ref, &mt_threads_attribute.attr);
++	if (ret)
++		goto out_threads;
 +
-+out_unlock:
-+	WARN_ON(ret < 0);
-+	srcu_read_unlock(&mig_srcu, index);
-+	mutex_unlock(&migrator_mut);
++	is_dispatching = 0;
 +
-+	if (ret == 0) {
-+		call_srcu(&mig_srcu, &migrator.srcu_head, srcu_mig_cb);
-+		srcu_barrier(&mig_srcu);
-+	}
++	return 0;
++
++out_threads:
++	sysfs_remove_file(mt_kobj_ref, &mt_offloading_attribute.attr);
++out_offloading:
++	kobject_put(mt_kobj_ref);
 +	return ret;
 +}
 +
-+#endif /* CONFIG_OFFC_MIGRATION */
-+#endif /* CONFIG_HAVE_STATIC_CALL */
-+
- /************************************************************
-  *                    Migration functions
-  ***********************************************************/
-@@ -1870,7 +1917,7 @@ static void migrate_folios_batch_move(struct list_head *src_folios,
- 		goto out;
- 
- 	/* Batch copy the folios */
--	rc = folios_mc_copy(dst_folios, src_folios, nr_batched_folios);
-+	rc = static_call(_folios_copy)(dst_folios, src_folios, nr_batched_folios);
- 
- 	/* TODO:  Is there a better way of handling the poison
- 	 * recover for batch copy, instead of falling back to serial copy?
-diff --git a/mm/migrate_offc.c b/mm/migrate_offc.c
-new file mode 100644
-index 000000000000..a6530658a3f7
---- /dev/null
-+++ b/mm/migrate_offc.c
-@@ -0,0 +1,58 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/migrate.h>
-+#include <linux/migrate_offc.h>
-+#include <linux/rculist.h>
-+#include <linux/static_call.h>
-+
-+atomic_t dispatch_to_offc = ATOMIC_INIT(0);
-+EXPORT_SYMBOL_GPL(dispatch_to_offc);
-+
-+DEFINE_MUTEX(migrator_mut);
-+DEFINE_SRCU(mig_srcu);
-+
-+struct migrator migrator = {
-+	.name = "kernel",
-+	.migrate_offc = folios_mc_copy,
-+	.srcu_head.func = srcu_mig_cb,
-+	.owner = NULL,
-+};
-+
-+int start_offloading(struct migrator *m)
++static void __exit cpu_mt_module_exit(void)
 +{
-+	int offloading = 0;
-+	int ret;
-+
-+	pr_info("starting migration offload by %s\n", m->name);
-+	ret = offc_update_migrator(m);
-+	if (ret < 0) {
-+		pr_err("failed to start migration offload by %s, err=%d\n",
-+		       m->name, ret);
-+		return ret;
++	/* Stop the MT offloading to unload the module */
++	mutex_lock(&migratecfg_mutex);
++	if (is_dispatching == 1) {
++		stop_offloading();
++		is_dispatching = 0;
 +	}
-+	atomic_try_cmpxchg(&dispatch_to_offc, &offloading, 1);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(start_offloading);
++	mutex_unlock(&migratecfg_mutex);
 +
-+int stop_offloading(void)
-+{
-+	int offloading = 1;
-+	int ret;
-+
-+	pr_info("stopping migration offload by %s\n", migrator.name);
-+	ret = offc_update_migrator(NULL);
-+	if (ret < 0) {
-+		pr_err("failed to stop migration offload by %s, err=%d\n",
-+		       migrator.name, ret);
-+		return ret;
-+	}
-+	atomic_try_cmpxchg(&dispatch_to_offc, &offloading, 0);
-+	return 0;
++	sysfs_remove_file(mt_kobj_ref, &mt_threads_attribute.attr);
++	sysfs_remove_file(mt_kobj_ref, &mt_offloading_attribute.attr);
++	kobject_put(mt_kobj_ref);
 +}
-+EXPORT_SYMBOL_GPL(stop_offloading);
 +
-+unsigned char *get_active_migrator_name(void)
-+{
-+	return migrator.name;
-+}
-+EXPORT_SYMBOL_GPL(get_active_migrator_name);
++module_init(cpu_mt_module_init);
++module_exit(cpu_mt_module_exit);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Zi Yan");
++MODULE_DESCRIPTION("CPU_MT_COPY"); /* CPU Multithreaded Batch Migrator */
 -- 
 2.43.0
 
