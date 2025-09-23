@@ -1,178 +1,142 @@
-Return-Path: <linux-kernel+bounces-828467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4203B94AB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:05:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B820B94B5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CC3C7A531C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:02:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEC13162AEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDA8310636;
-	Tue, 23 Sep 2025 07:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AFhKP3lv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ik9UoiK6";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OzJIfg3A";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w61iBXI6"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8300430F95C;
+	Tue, 23 Sep 2025 07:11:21 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4843101B7
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008DF4502F;
+	Tue, 23 Sep 2025 07:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758610856; cv=none; b=pMlnxpFPQFTegvZovYnWORXXqD9M/fYdUlVBmK3dy97Kr9bKuHRIG9IIsSUVjlSRmnZYeBzht5kNqkRfozI6Cv2gNz7J5igVdgGJuTRpDhSGwBIDLVGnIQ0Dx/xPgvv7ScuvWE1odJeju7wNO/ok7KJ5tcqZ5rdX+7085pTMzKM=
+	t=1758611481; cv=none; b=f5tSwxtYd7M9ZmzKy3YVjlTsz5mq7fgUG+QTU/bDqj8tlgLXORIUIvPML6Knw/TMeCA3mxhiO+ejMJd9sOYnLPFMjXQH06j2oTMKyspVUH7r7fvEIRRDMPoMWxCbMmDmaP3eD/vGaptFO1RrNgZFoBf/tQQTdu3/wkVW7klM0UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758610856; c=relaxed/simple;
-	bh=AURb2/KdbkDqT0hqbAeKgrdQJAKGmX4edR0qFVa4fQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bbeDY54olc0P0z42vf72kgYNrBZ0Z5YPjDtPCwy0JuEng0QEk5GWjpSg1JztTvWoyfKJzfq291n9CKTp37vCwnxEOA8bUNPZZCuuXE+vBKqxrvt4Cz0evnfv01rA5tVK7sg7eEBKn1eaF/7rcdVPwSGr9IXJGZXAZSjApZhVY90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AFhKP3lv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ik9UoiK6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OzJIfg3A; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w61iBXI6; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id ABCD422091;
-	Tue, 23 Sep 2025 07:00:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758610852;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fS5CPlGQIx2nd+oD6afmoL7xZjRr/TZ1BNhf+ak9sg8=;
-	b=AFhKP3lvzcEkDHXwNSiIJKEGiHTpsYGAXlfF+Ymcho2ccFrNoqnSvWR4J3iuyJy0LKsg9c
-	lT+adhSEysqsGEeV5Q64M3/BPrdUwzc1xdIMadOpKpfCBkch6QVXDLpoIxHGOPa7bwY9OO
-	3VwZ8aNinGeFPK01eIPZFMq0jIe5ZeQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758610852;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fS5CPlGQIx2nd+oD6afmoL7xZjRr/TZ1BNhf+ak9sg8=;
-	b=Ik9UoiK68Oo/x4UxKxw5IWu/CZdcoEkCYq2zf4yq14EpDgmLLnEqx3QIUZhUkiRJHFJv5k
-	LlxTcS0BHAheXKAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=OzJIfg3A;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=w61iBXI6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758610851;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fS5CPlGQIx2nd+oD6afmoL7xZjRr/TZ1BNhf+ak9sg8=;
-	b=OzJIfg3AYF35YUKJ/ZUpJyQucNHQ8m3sYUUKdME3H17Fy9AByHmjZ3nrK+fXkwpCVmBOaC
-	lEP1FrlErSDBYaUVwqDULrhJ4HDIWZpH4aco1F7P+Y+GL0LusXdTwydgeHctXwLcb4dD9W
-	REGfYxE8WX6PjVjtAWIfQ2rHBlF/8LI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758610851;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fS5CPlGQIx2nd+oD6afmoL7xZjRr/TZ1BNhf+ak9sg8=;
-	b=w61iBXI6HPMUhmDFh972wIZAhD4Iw93UgPC4lAmTTGb6oFx44EGyKM02gcBlM2zmjtHh3c
-	BenSMMfg48Dj/BDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F2CB1388C;
-	Tue, 23 Sep 2025 07:00:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uT/FIqNF0misJAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 23 Sep 2025 07:00:51 +0000
-Date: Tue, 23 Sep 2025 09:00:46 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mssola@mssola.com>
-Cc: David Sterba <dsterba@suse.cz>, linux-btrfs@vger.kernel.org, clm@fb.com,
-	dsterba@suse.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] btrfs: Prevent open-coded arithmetic in kmalloc
-Message-ID: <20250923070045.GU5333@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20250919145816.959845-1-mssola@mssola.com>
- <20250919145816.959845-2-mssola@mssola.com>
- <20250922102850.GL5333@twin.jikos.cz>
- <20250923061344.GT5333@twin.jikos.cz>
- <87jz1p4qd4.fsf@>
+	s=arc-20240116; t=1758611481; c=relaxed/simple;
+	bh=waC9dgIqg8z/AIiVMHOz+qm2FlxkiISRWa2YwZxCvBM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uHgSMV9KDR6J67qCs1bpZAJRVEMRt3rol/giLDisJie+wPfVECFFWyi1I2ihhryA+cUNu48kS9PhdOxCWfc1dH2NG/ET60GHJwPNJIkGn2y5Dy7ijY/iqd1dq0m/uizKcNl0MAuxbZFtAoQpbAYKPBGZ2/eHpQl0enyW6iTokRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cWB3L3hclzKHMW3;
+	Tue, 23 Sep 2025 15:11:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 568E01A0F60;
+	Tue, 23 Sep 2025 15:11:15 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgD3CGEPSNJofU8hAg--.14578S4;
+	Tue, 23 Sep 2025 15:11:13 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	martin.petersen@oracle.com,
+	hare@suse.de,
+	ming.lei@redhat.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH] blk-mq: fix null-ptr-deref in blk_mq_free_tags() from error path
+Date: Tue, 23 Sep 2025 15:01:01 +0800
+Message-Id: <20250923070101.3507251-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87jz1p4qd4.fsf@>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: ABCD422091
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.21
+X-CM-TRANSID:gCh0CgD3CGEPSNJofU8hAg--.14578S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7AFy3Xr4UKrWrGrW5JF15XFb_yoW8uw4UpF
+	W3Ga1UK343KrnrZFsrta9rA340kanYqF4xGas3uw15ZrnxCrWagF1vqr45Zr10vrZ8CFsI
+	gF45tryrA3WDJ37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Tue, Sep 23, 2025 at 08:47:35AM +0200, Miquel Sabaté Solà wrote:
-> David Sterba @ 2025-09-23 08:13 +02:
-> 
-> > On Mon, Sep 22, 2025 at 02:47:13PM +0200, Miquel Sabaté Solà wrote:
-> >> Hello,
-> >>
-> >> David Sterba @ 2025-09-22 12:28 +02:
-> >>
-> >> > On Fri, Sep 19, 2025 at 04:58:15PM +0200, Miquel Sabaté Solà wrote:
-> >> >> As pointed out in the documentation, calling 'kmalloc' with open-coded
-> >> >> arithmetic can lead to unfortunate overflows and this particular way of
-> >> >> using it has been deprecated. Instead, it's preferred to use
-> >> >> 'kmalloc_array' in cases where it might apply so an overflow check is
-> >> >> performed.
-> >> >
-> >> > So this is an API cleanup and it makes sense to use the checked
-> >> > multiplication but it should be also said that this is not fixing any
-> >> > overflow because in all cases the multipliers are bounded small numbers
-> >> > derived from number of items in leaves/nodes.
-> >>
-> >> Yes, it's just an API cleanup and I don't think it fixes any current bug
-> >> in the code base. So no need to CC stable or anything like that.
-> >
-> > Still the changelog should say explicitly that it's not a bug fix before
-> > somebody assigns a CVE to it because it mentions overflow.
-> 
-> Got it! I will submit a v2 and make this more explicit.
+From: Yu Kuai <yukuai3@huawei.com>
 
-No need to, I've updated the changelog at commit time.
+blk_mq_free_tags() can be called after blk_mq_init_tags(), while
+tags->page_list is still not initialized, causing null-ptr-deref.
+
+Fix this problem by initializing tags->page_list at blk_mq_init_tags(),
+meanwhile, also free tags directly from error path because there is no
+srcu barrier.
+
+Fixes: ad0d05dbddc1 ("blk-mq: Defer freeing of tags page_list to SRCU callback")
+Reported-by: syzbot+5c5d41e80248d610221f@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/68d1b079.a70a0220.1b52b.0000.GAE@google.com/
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ block/blk-mq-tag.c | 9 +++++++++
+ block/blk-mq.c     | 2 --
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
+index a63d21a4aab4..23f7731f19d1 100644
+--- a/block/blk-mq-tag.c
++++ b/block/blk-mq-tag.c
+@@ -569,6 +569,8 @@ struct blk_mq_tags *blk_mq_init_tags(unsigned int total_tags,
+ 	tags->nr_tags = total_tags;
+ 	tags->nr_reserved_tags = reserved_tags;
+ 	spin_lock_init(&tags->lock);
++	INIT_LIST_HEAD(&tags->page_list);
++
+ 	if (bt_alloc(&tags->bitmap_tags, depth, round_robin, node))
+ 		goto out_free_tags;
+ 	if (bt_alloc(&tags->breserved_tags, reserved_tags, round_robin, node))
+@@ -606,6 +608,13 @@ void blk_mq_free_tags(struct blk_mq_tag_set *set, struct blk_mq_tags *tags)
+ {
+ 	sbitmap_queue_free(&tags->bitmap_tags);
+ 	sbitmap_queue_free(&tags->breserved_tags);
++
++	/* if tags pages is not allocated yet, free tags directly */
++	if (list_empty(&tags->page_list)) {
++		kfree(tags);
++		return;
++	}
++
+ 	call_srcu(&set->tags_srcu, &tags->rcu_head, blk_mq_free_tags_callback);
+ }
+ 
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 4ccf11cadf8c..09f579414161 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -3582,8 +3582,6 @@ static int blk_mq_alloc_rqs(struct blk_mq_tag_set *set,
+ 	if (node == NUMA_NO_NODE)
+ 		node = set->numa_node;
+ 
+-	INIT_LIST_HEAD(&tags->page_list);
+-
+ 	/*
+ 	 * rq_size is the size of the request plus driver payload, rounded
+ 	 * to the cacheline size
+-- 
+2.39.2
+
 
