@@ -1,114 +1,162 @@
-Return-Path: <linux-kernel+bounces-828180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4884B941DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 05:37:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 886A7B9428C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 05:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027FD189FB29
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:37:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47397440BFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A043264602;
-	Tue, 23 Sep 2025 03:37:17 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB00A2580E2;
+	Tue, 23 Sep 2025 03:54:08 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3B3154BF5;
-	Tue, 23 Sep 2025 03:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E638720C47C;
+	Tue, 23 Sep 2025 03:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758598636; cv=none; b=D9mf0GeL/xDoGaTJZZGCSVYmWmIkdGwn6J0gcKcwR3ppem5sRBt/FjIY266ulvwP2y2b+BjWdBt5UKCCmR0WNlBz3tNlRGSZU9Fgfxt6TVRy9f6XBMFyoSwEW28WaoeOQ7ZwM8L2Lj6g7ftJE1JUpxBTdf3j41a25n3w9Fzuyis=
+	t=1758599648; cv=none; b=rxHEFXcpx+HQEQfgxfGr/nZ7yvkeeCG9g/DS5BbSROSs+CMjLDdTMlxb6AoQhjK8CxR9De2YqNzWYHDfBW1CuOtNlJpc4O4RKbkLEVLgnAJoHwx2LbIYEjb+V89bgj763QQOgF8RLF34JwYwFIfC4j5b0NSSPFEfAl1RKF+RZyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758598636; c=relaxed/simple;
-	bh=bcJEabfV0YlHLCZPhsnZKRvf+73Hlm6DDVRVu8u4h/4=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=hEtgz4l4QfPUodJtb0zwaxDzZvNGYZJyQZK61ZnzjilkCuc1krM+LA1Z7GSCkBHP/yrC9/jDPIUByafdhTdZWZHuF6AGUtqe6rlMpcTHhLXGj6o4xUgb/GU7MqA2Irbl2Mnoc/J9tnPjzgsNcRtPL4tS+t8uOw7Pxqv/3qB7Tto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-05 (Coremail) with SMTP id zQCowADnhxHUFdJoI+xsBA--.55543S2;
-	Tue, 23 Sep 2025 11:37:00 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: sakari.ailus@linux.intel.com,
-	bingbu.cao@intel.com,
-	lixu.zhang@intel.com,
-	stanislaw.gruszka@linux.intel.com,
-	mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>
-Subject: [PATCH v4] media: pci: intel: ivsc: improve device reference counting in mei_ace driver
-Date: Tue, 23 Sep 2025 11:36:50 +0800
-Message-Id: <20250923033650.4408-1-make24@iscas.ac.cn>
+	s=arc-20240116; t=1758599648; c=relaxed/simple;
+	bh=Zg3FPoSHnAv2PObrg/i19fiiMx4nTL23ooT1KVwjkss=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GyvVcmrgkwtavki/i3+MOS5KGofkzlgo9ouOYFro8gFrXBJK2xb0OAkzI/YbKfWX0dlb7SZiRxHBiYTRprenaomzm7KcXsedUE/h57wZMJFPa4VkZaysQIkcIzPlZ6NZP1P9fn1qYzAG5SM3vGetWwkrnduSWdaqlmQiTRgfGHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: lirongqing <lirongqing@baidu.com>
+To: <corbet@lwn.net>, <akpm@linux-foundation.org>, <lance.yang@linux.dev>,
+	<mhiramat@kernel.org>, <paulmck@kernel.org>,
+	<pawan.kumar.gupta@linux.intel.com>, <mingo@kernel.org>,
+	<dave.hansen@linux.intel.com>, <rostedt@goodmis.org>, <kees@kernel.org>,
+	<arnd@arndb.de>, <lirongqing@baidu.com>, <feng.tang@linux.alibaba.com>,
+	<pauld@redhat.com>, <joel.granados@kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH][RFC] hung_task: Support to panic when the maximum number of hung task warnings is reached
+Date: Tue, 23 Sep 2025 11:37:40 +0800
+Message-ID: <20250923033740.2696-1-lirongqing@baidu.com>
 X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:zQCowADnhxHUFdJoI+xsBA--.55543S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WFWfWrWDAr1kCryDtF1fWFg_yoW8Ww47pr
-	W0gFZYkFWUXr4jgr1DAa48uFyrW3Zava9xJFW3Jw4xW3Z5Z347tryjqa48Ca40qFZ7CFyU
-	JF1agry3AF40yw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9C14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8GwCF04k20xvY0x0EwIxGrw
-	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
-	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
-	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxK
-	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
-	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU3kucUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-ClientProxiedBy: bjhj-exc12.internal.baidu.com (172.31.3.22) To
+ bjkjy-exc3.internal.baidu.com (172.31.50.47)
+X-FEAS-Client-IP: 172.31.50.47
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-The device reference counting in mei_ace_setup_dev_link() was
-incomplete, as the reference acquired by device_find_child_by_name()
-was not released immediately on the success path. Add put_device() to
-properly balance the reference count. Additionally, the redundant
-put_device() in mei_ace_remove() is removed.
+From: Li RongQing <lirongqing@baidu.com>
 
-Found by code review.
+Currently the hung task detector can either panic immediately or continue
+operation when hung tasks are detected. However, there are scenarios
+where we want a more balanced approach:
 
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+- We don't want the system to panic immediately when a few hung tasks
+  are detected, as the system may be able to recover
+- And we also don't want the system to stall indefinitely with multiple
+  hung tasks
+
+This commit introduces a new mode (value 2) for the hung task panic behavior.
+When set to 2, the system will panic only after the maximum number of hung
+task warnings (hung_task_warnings) has been reached.
+
+This provides a middle ground between immediate panic and potentially
+infinite stall, allowing for automated vmcore generation after a reasonable
+number of hung task incidents.
+
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
 ---
-Changes in v4:
-- updated the subject as suggestions;
-Changes in v3:
-- deleted the tag of Fixes and CC, and moved put_device() to immediately after device_link_add() as suggestions;
-Changes in v2:
-- modified the put_device() operations and the patch title as suggestions.
----
- drivers/media/pci/intel/ivsc/mei_ace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/admin-guide/kernel-parameters.txt | 15 ++++++++-------
+ Documentation/admin-guide/sysctl/kernel.rst     |  1 +
+ kernel/hung_task.c                              |  5 +++--
+ lib/Kconfig.debug                               |  4 ++--
+ 4 files changed, 14 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/media/pci/intel/ivsc/mei_ace.c b/drivers/media/pci/intel/ivsc/mei_ace.c
-index 98310b8511b1..9969c02da671 100644
---- a/drivers/media/pci/intel/ivsc/mei_ace.c
-+++ b/drivers/media/pci/intel/ivsc/mei_ace.c
-@@ -414,6 +414,7 @@ static int mei_ace_setup_dev_link(struct mei_ace *ace)
- 	/* setup link between mei_ace and mei_csi */
- 	ace->csi_link = device_link_add(csi_dev, dev, DL_FLAG_PM_RUNTIME |
- 					DL_FLAG_RPM_ACTIVE | DL_FLAG_STATELESS);
-+	put_device(csi_dev);
- 	if (!ace->csi_link) {
- 		ret = -EINVAL;
- 		dev_err(dev, "failed to link to %s\n", dev_name(csi_dev));
-@@ -522,7 +523,6 @@ static void mei_ace_remove(struct mei_cl_device *cldev)
- 	cancel_work_sync(&ace->work);
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 5a7a83c..f2a9876 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1993,13 +1993,14 @@
  
- 	device_link_del(ace->csi_link);
--	put_device(ace->csi_dev);
+ 	hung_task_panic=
+ 			[KNL] Should the hung task detector generate panics.
+-			Format: 0 | 1
+-
+-			A value of 1 instructs the kernel to panic when a
+-			hung task is detected. The default value is controlled
+-			by the CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time
+-			option. The value selected by this boot parameter can
+-			be changed later by the kernel.hung_task_panic sysctl.
++			Format: 0 | 1 | 2
++
++			A value of 1 instructs the kernel to panic when a hung task is detected.
++			A value of 2 instructs the kernel to panic when hung_task_warnings is
++			decreased to 0.  The default value is controlled by the
++			CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time option. The value selected
++			by this boot parameter can be changed later by the kernel.hung_task_panic
++			sysctl.
  
- 	pm_runtime_disable(&cldev->dev);
- 	pm_runtime_set_suspended(&cldev->dev);
+ 	hvc_iucv=	[S390]	Number of z/VM IUCV hypervisor console (HVC)
+ 				terminal devices. Valid values: 0..8
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index 8b49eab..6f77241 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -403,6 +403,7 @@ This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
+ = =================================================
+ 0 Continue operation. This is the default behavior.
+ 1 Panic immediately.
++2 Panic when hung_task_warnings is decreased to 0.
+ = =================================================
+ 
+ 
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 8708a12..b052ec7 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -219,7 +219,8 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 
+ 	trace_sched_process_hang(t);
+ 
+-	if (sysctl_hung_task_panic) {
++	if ((sysctl_hung_task_panic == 1) ||
++		(!sysctl_hung_task_warnings && sysctl_hung_task_panic == 2)) {
+ 		console_verbose();
+ 		hung_task_show_lock = true;
+ 		hung_task_call_panic = true;
+@@ -385,7 +386,7 @@ static const struct ctl_table hung_task_sysctls[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+ 		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
++		.extra2		= SYSCTL_TWO,
+ 	},
+ 	{
+ 		.procname	= "hung_task_check_count",
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index dc0e0c6..e7cf166 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1264,10 +1264,10 @@ config DEFAULT_HUNG_TASK_TIMEOUT
+ 	  Keeping the default should be fine in most cases.
+ 
+ config BOOTPARAM_HUNG_TASK_PANIC
+-	bool "Panic (Reboot) On Hung Tasks"
++	int "Panic (Reboot) On Hung Tasks"
+ 	depends on DETECT_HUNG_TASK
+ 	help
+-	  Say Y here to enable the kernel to panic on "hung tasks",
++	  Say 1|2 here to enable the kernel to panic on "hung tasks",
+ 	  which are bugs that cause the kernel to leave a task stuck
+ 	  in uninterruptible "D" state.
+ 
 -- 
-2.17.1
+2.9.4
 
 
