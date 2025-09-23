@@ -1,195 +1,131 @@
-Return-Path: <linux-kernel+bounces-828581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482DEB94ED2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:10:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DFF1B94EDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0BEA177EF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:10:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A346B1889DE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F423D3195F4;
-	Tue, 23 Sep 2025 08:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185793191C4;
+	Tue, 23 Sep 2025 08:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FJCjAhIf"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYN81oar"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F3A31815E;
-	Tue, 23 Sep 2025 08:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BDD31770E
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758615009; cv=none; b=IydRj0fp9X5VCdtH4azWqp6xjybCkMZJlCEkNt7fqRKr7T+hv13efRwcN55d7NoymwoY2nGfuSf3dYITmWxId3o0HSlY916AA3QbSN3zCsDsgL/60+kYIPyNAOhvxRPILSEuu2O1a9SIwTf7z5eBLGhF+U4ia+8uOkQ7dd5FVf0=
+	t=1758615021; cv=none; b=QYMvlZW7dSFzEk8SFSKsEavbE9+z3sVQgpbnRyvuJnaZmXifUMy95voHehT6u0lGB96EvsUw+XZhwl0127iBT1iczoQAD5oB0IT25pOD3nTZNtRZbudkAMg1Z0l1FKjpOrTScCBDcm8KqGYJsqGA3bVEYuTAj48nfvZk5Ue8QaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758615009; c=relaxed/simple;
-	bh=GK6W2o2yxoO4wKeHSfnhUxQ3k4NiNOnEOep+Li3hwfo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JCi3x9TdsXWAfVWtzaWZYLWG9soJX30RS9fQMQ5eLEWuvj1QXfjvlMar7QsWpJbw6U6kbdesww/r/WKhKhJ7lRpQdHDCJp5w3QyD5B2Xg9iiOSFRckknFlwZ+FaqMJs667XI/6SnSYcl/IioK2/qocbHl9MYW5TKk0sKxrOL6AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FJCjAhIf; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1758614997; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=kgV6N3k9/Wc8oyqFWj6fu9j0StoO2o5pi55D5FleEKo=;
-	b=FJCjAhIfcQv786hJJ5GzRUglpGucqmdS1N85jhjQrn+AL4ztiZVRXtTORKMmvZ/rYzII+TeS/CLja3MbcHFCyImHAr7DfF3lCcTJG+LkYHJsCP0EqkMFzImG57gAJfaheKLqJp89LOJ0n8lVHU6P/Ni9iPhXkSMI0VmmGZNqMrc=
-Received: from 30.246.179.19(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WoeFI1T_1758614994 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 23 Sep 2025 16:09:55 +0800
-Message-ID: <8706188e-23b2-4cb1-b279-3b462ba9b9de@linux.alibaba.com>
-Date: Tue, 23 Sep 2025 16:09:53 +0800
+	s=arc-20240116; t=1758615021; c=relaxed/simple;
+	bh=gC/ISLcvgB5Jm98EWNWSo1XbAxqmIYCEt3c+pgRRgAs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cim/2XtAARcqIsGRM1/Gg1gisrxReyI0dN+fNU/G00WMK+rdYVJwwRfZUfYGk6KA/8AJwihvsRia0wyONcHc7Di5tM3xFzdSE/nSi/0sVPKiE34Cx4DQvIBApG2F2pBjXP164h6gC3smc2Eizix0cSLLL4aS6qGF9pU1uANEt+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYN81oar; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-74435335177so30681357b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:10:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758615019; x=1759219819; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=68cmCK+lQ0dZ83mmbfpjA/lSPPyrshuXx8pjCum4+fo=;
+        b=HYN81oarcXYP2nKg5wRdgi9PVXQM+C7tdma/5dQ8RoKafL5+4shG6zM/m2+JLbtB0o
+         Z8VvoOa9Az1i+Cqx25sEJxa9U4/SlEiZzrOiS/iKLuJeCHev7SfJPwz/Fepqv7rRuTbh
+         OWwSaUcs6vEdszfVqLnpljv/LU/O/3vCROVeTxo3UKzbITyyNYEK8uOSVDgplrrRWr7F
+         R1Amocs2zg2GwNSgAhUbRmZpb1FvhsJ7dFp7NAS616vdZp3iNn1minwmMdX+V8rbUnys
+         lJrVSpVgekD49UJqsa1SLSN0UcXlATmFh1fKOxA9A4cGqKsTXEzxSdO4zPdmVVrqXdrY
+         CIfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758615019; x=1759219819;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=68cmCK+lQ0dZ83mmbfpjA/lSPPyrshuXx8pjCum4+fo=;
+        b=XEzKaFwQIMepD8AUXOC5v6YlDEbrLiWWjoiB7K7MuJq+RnlPqkH/VtX1mVfBc6P52k
+         kjg3prrGng9TDxKYAmzKqbVXm0PWIfj60MJqj2wgzHr+yDITrwfT3bQpdFm434yBwqkt
+         wNrAb6IICBhjxImjClrxXx4tUrL6mLNuGKpGOtuUHn1IlXP7PwMpvFpUKrPHNEWRcyEr
+         xmf+xsg4JinwwY+6+omA5C7VorF673emnRwb5Dg8mpGeP8mW1DqFYAZcfQpN+RD0s/9z
+         rkOQu0YxeP9skffISZOGzxEt/nJD8NR58WIB0ZYCZlvOvRCVlPigN9/hpW5LHF9C1is0
+         S0Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvX8jGHjINLipM6LM4cdkZtpTxR19fIKPEWirzo6LJbcqxnSWBoLU/l7MDsTTOGEtXTodU0vtyMNfdEDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqmCWzsw2JH2kPOqeb4R91Anup6CmIDfLznpBwg2+GoBUxroy3
+	6op0bcg9E42WRpyrOvIgm0mP2nUGLqYAN20eIoXxXbxJpk5Dfk22sMuA1c4cCCcnGiqk5szd3sl
+	SwOa5BBNVUb2Bprn9vpjPzf0BeB3/gqM=
+X-Gm-Gg: ASbGncu7rd5WqpqY4wXFnmdcRJ7/fXM6im8EStkxHxZwVSrb7KVaJv2ct13LNZRG+t2
+	mtIz1BLO9Gpu5VML2U6u0BGHQQKzjd64g9YbR8U62mom5HV6E6C6Bg63UhycYULmdGPn1YVrti5
+	rb8d70lDydfnSZ0EPI9U8Miou3j+cmjX9Fjzgl4OEoBIzUNbVC+024P1ViAU7Lur982Ib2b0l9X
+	fb7zC2dTtnW0Xy1hETAndePmjzgwOBiHeWtcYQTZv8sKTo=
+X-Google-Smtp-Source: AGHT+IEy+xvUqkVBZTsI7rKfFC4qJQsZuCAek2QZZLHNwQb10WCpz153wUiVWQTA1TtHdluPaXcrJXcwNTk+20jLli0=
+X-Received: by 2002:a05:690c:868e:20b0:71b:f46e:691 with SMTP id
+ 00721157ae682-7589155a662mr11239417b3.11.1758615018549; Tue, 23 Sep 2025
+ 01:10:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/3] PCI: trace: Add a generic RAS tracepoint for
- hotplug event
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: rostedt@goodmis.org, Lukas Wunner <lukas@wunner.de>,
- linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- helgaas@kernel.org, mattc@purestorage.com, Jonathan.Cameron@huawei.com,
- bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
- davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
- peterz@infradead.org, tianruidong@linux.alibaba.com
-References: <20250920060117.866-1-xueshuai@linux.alibaba.com>
- <20250920060117.866-2-xueshuai@linux.alibaba.com>
- <6bab311a-d5ba-133c-fddd-52899959445c@linux.intel.com>
- <12c84bff-6863-4730-b08a-631df904aa12@linux.alibaba.com>
- <fe2abb10-3847-af1c-12c2-193c32befe0c@linux.intel.com>
- <fb87ff46-ebcf-450d-bfd5-b1ef52cda4be@linux.alibaba.com>
- <acfde737-23b3-7b0a-65c6-01082a71e5e8@linux.intel.com>
- <453b792a-23f9-6d72-f35a-60526b3e04e0@linux.intel.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <453b792a-23f9-6d72-f35a-60526b3e04e0@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250923060706.10232-1-dqfext@gmail.com> <aNJINihPJop9s7IR@stanley.mountain>
+In-Reply-To: <aNJINihPJop9s7IR@stanley.mountain>
+From: Qingfang Deng <dqfext@gmail.com>
+Date: Tue, 23 Sep 2025 16:10:07 +0800
+X-Gm-Features: AS18NWC_W7OBcymaO0pGhN8pbXiCoKSVhciGuUrFqWsXt6IDIMeoR1I3bHZLZf4
+Message-ID: <CALW65jbwmP+Lms7x2w5BDjFdg_d2ainorAMTWmR_6NJmjV3JmA@mail.gmail.com>
+Subject: Re: [PATCH net-next] 6pack: drop redundant locking and refcounting
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Andreas Koensgen <ajk@comnets.uni-bremen.de>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-hams@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+5fd749c74105b0e1b302@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Sep 23, 2025 at 3:11=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+> checkpatch says:
+>
+> WARNING: Reported-by: should be immediately followed by Closes: with a UR=
+L to the report
+>
+> Which is relevant here because Google has apparently deleted their
+> search button and is only displaying the AI button.  "The email address
+> syzbot+5fd749c74105b0e1b302@syzkaller.appspotmail.com is an automated
+> sender used by ..."  Thanks, AI!  I can still press enter to do a Google
+> search but there are no results with syzbot ID.
+>
+> I can't find a search button on the syzbot website.
+>
+> Ah.  Let's check lore.  Hooray!  How did we ever survive before lore?
+> https://lore.kernel.org/all/000000000000e8231f0601095c8e@google.com/
+>
+> Please add the Closes tag and resend.  Otherwise it looks good.  Thanks!
 
+checkpatch also says:
+WARNING: The commit message has 'syzkaller', perhaps it also needs a
+'Fixes:' tag?
 
-在 2025/9/23 15:34, Ilpo Järvinen 写道:
-> On Tue, 23 Sep 2025, Ilpo Järvinen wrote:
-> 
->> On Tue, 23 Sep 2025, Shuai Xue wrote:
->>
->>>
->>>
->>> 在 2025/9/23 14:46, Ilpo Järvinen 写道:
->>>> On Tue, 23 Sep 2025, Shuai Xue wrote:
->>>>
->>>>>
->>>>>
->>>>> 在 2025/9/22 21:10, Ilpo Järvinen 写道:
->>>>>> On Sat, 20 Sep 2025, Shuai Xue wrote:
->>>>>>
->>>>>>> Hotplug events are critical indicators for analyzing hardware health,
->>>>>>> and surprise link downs can significantly impact system performance
->>>>>>> and
->>>>>>> reliability.
->>>>>>>
->>>>>>> Define a new TRACING_SYSTEM named "pci", add a generic RAS tracepoint
->>>>>>> for hotplug event to help health checks. Add enum pci_hotplug_event in
->>>>>>> include/uapi/linux/pci.h so applications like rasdaemon can register
->>>>>>> tracepoint event handlers for it.
->>>>>>>
->>>>>>> The following output is generated when a device is hotplugged:
->>>>>>>
->>>>>>> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
->>>>>>> $ cat /sys/kernel/debug/tracing/trace_pipe
->>>>>>>       irq/51-pciehp-88      [001] .....  1311.177459: pci_hp_event:
->>>>>>> 0000:00:02.0 slot:10, event:CARD_PRESENT
->>>>>>>
->>>>>>>       irq/51-pciehp-88      [001] .....  1311.177566: pci_hp_event:
->>>>>>> 0000:00:02.0 slot:10, event:LINK_UP
->>>>>>>
->>>>>>> Suggested-by: Lukas Wunner <lukas@wunner.de>
->>>>>>> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
->>>>>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->>>>>>> Reviewed-by: Lukas Wunner <lukas@wunner.de>
->>>>>>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->>>>>>> ---
->>>>>>>     drivers/pci/Makefile              |  2 +
->>>>>>>     drivers/pci/hotplug/Makefile      |  3 +-
->>>>>>>     drivers/pci/hotplug/pciehp_ctrl.c | 31 ++++++++++++---
->>>>>>>     drivers/pci/trace.c               | 11 ++++++
->>>>>>>     include/trace/events/pci.h        | 63
->>>>>>> +++++++++++++++++++++++++++++++
->>>>>>>     include/uapi/linux/pci.h          |  7 ++++
->>>>>>>     6 files changed, 110 insertions(+), 7 deletions(-)
->>>>>>>     create mode 100644 drivers/pci/trace.c
->>>>>>>     create mode 100644 include/trace/events/pci.h
->>>>>>>
->>>>>>> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
->>>>>>> index 67647f1880fb..bf389bc4dd3c 100644
->>>>>>> --- a/drivers/pci/Makefile
->>>>>>> +++ b/drivers/pci/Makefile
->>>>>>> @@ -45,3 +45,5 @@ obj-y				+= controller/
->>>>>>>     obj-y				+= switch/
->>>>>>>       subdir-ccflags-$(CONFIG_PCI_DEBUG) := -DDEBUG
->>>>>>> +
->>>>>>> +CFLAGS_trace.o := -I$(src)
->>>>>>> diff --git a/drivers/pci/hotplug/Makefile
->>>>>>> b/drivers/pci/hotplug/Makefile
->>>>>>> index 40aaf31fe338..d41f7050b072 100644
->>>>>>> --- a/drivers/pci/hotplug/Makefile
->>>>>>> +++ b/drivers/pci/hotplug/Makefile
->>>>>>> @@ -65,7 +65,8 @@ rpadlpar_io-objs	:=	rpadlpar_core.o \
->>>>>>>     pciehp-objs		:=	pciehp_core.o	\
->>>>>>>     				pciehp_ctrl.o	\
->>>>>>>     				pciehp_pci.o	\
->>>>>>> -				pciehp_hpc.o
->>>>>>> +				pciehp_hpc.o	\
->>>>>>> +				../trace.o
->>>>>>
->>>>>> To make it useful for any PCI tracing, not juse hotplug, this object
->>>>>> file
->>>>>> should be added in drivers/pci/Makefile, not here.
->>>>>
->>>>> Make sence. How about adding to the main CONFIG_PCI object:
->>>>>
->>>>> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
->>>>> index bf389bc4dd3c..d7f83d06351d 100644
->>>>> --- a/drivers/pci/Makefile
->>>>> +++ b/drivers/pci/Makefile
->>>>> @@ -5,7 +5,7 @@
->>>>>    obj-$(CONFIG_PCI)              += access.o bus.o probe.o host-bridge.o \
->>>>>                                      remove.o pci.o pci-driver.o search.o \
->>>>>                                      rom.o setup-res.o irq.o vpd.o \
->>>>> -                                  setup-bus.o vc.o mmap.o devres.o
->>>>> +                                  setup-bus.o vc.o mmap.o devres.o
->>>>> trace.o
->>>>>
->>>>>    obj-$(CONFIG_PCI)              += msi/
->>>>>    obj-$(CONFIG_PCI)              += pcie/
->>>>
->>>> Yes, that's the right place to add it.
->>>>
->>>
->>> Thanks for confirm.
->>> Will send a new version to fix it.
->>
->> I actually now started to wonder if it should be made depend on some
->> tracing related config (sending this out quickly if you were just
->> waiting for my confirmation to send quickly... I'm still investigating
->> what other subsystems do).
-> 
-> Probably this is what we actually want:
-> 
-> obj-$(CONFIG_TRACING)			+= trace.o
-> 
+Should I add a Fixes tag, even though this is not a bug in the code?
 
+>
+> This code was copy and pasted from drivers/net/ppp/ppp_synctty.c btw so
+> that's a similar thing if anyone wants to fix that.
+>
+> KTODO: remove sp_get/put() from ppp_synctty.c
+>
+> regards,
+> dan carpenter
+>
+>
 
-Thanks for the input, lots of trace.o, e.g. for cxl and nvme, are compiled
-under CONFIG_TRACING.
-
-Will use CONFIG_TRACING :)
-
-Thanks.
-Shuai
+-- Qingfang
 
