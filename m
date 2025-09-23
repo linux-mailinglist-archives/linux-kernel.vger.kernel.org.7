@@ -1,405 +1,139 @@
-Return-Path: <linux-kernel+bounces-829648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 150FFB9788F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:56:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5533BB97892
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E96091B21967
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:56:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F4C24A7459
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB8730B51E;
-	Tue, 23 Sep 2025 20:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EEC30BB81;
+	Tue, 23 Sep 2025 20:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Xh98IO6G"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010015.outbound.protection.outlook.com [52.101.69.15])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="UWgMXUTL"
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D99426CE17;
-	Tue, 23 Sep 2025 20:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758660970; cv=fail; b=niJGZA2qFCw3/26UNhqMfS5rX7EpVWJj6ySMZpEN6Hf9SDXA6qjvKGEgcpYCvy1vyz5xApxt/74sKEsINz1GU+9EgPgqSb2P5v2aAjWXhtEil4SPT5JHs/kWphSQIKIv6wMcuvK1mInnvhtLweaBHqUXjGzI/YHoBrFyq4vEjQY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758660970; c=relaxed/simple;
-	bh=ONouIOGeBNvyg/5wthcNiXckii/erCM1hcY52vJNOs8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=JMOEuq5IEzCTAm0s50NK3cSOaWOGphp3YZBF3DnPi8GOpFnp6y2Zi6rWrWW3wHwRa9Zjaff3I6bVsUrS+kJ2nWa0Wd/wlGsLMyKuG4pUfLV4Fs0Loz1xFOEFc98XMsZ6303dE3hxl98k5gZhQMes7pcWc1wYrnJNLscZY4o0BRU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Xh98IO6G; arc=fail smtp.client-ip=52.101.69.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LYvlcgqMgEj4GuuNJZImHaPjJ4SbSVAQKA89d0CjaaHwPhqhRzP7YLnpCzaFTrjJuvkMNaXCS1huJu5daVtHNnAFvqLiWka3tWR1LCmMn4+JvYfjhYVr0Y+8Usz/MBOj5edb8JbF3RFOnPHNe1o66laMNEngt8A/XnxANSXF0xGF1fyJiu+4VBOvbi2wLJJkFGzx9oMvtbCKfBDfkN11hweAGAcd/pzuT5Is85rY8flxMZikh55lT3G3gB0BEdTAPVOCHPd3O/zNwC606h2y9XfHJXDd/VKcyVPzmrJWb2nb1l26j3kKVYngKEIjxjf6vIXSswQSf4ZGtqnsEXobow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ymfGQpQJzkQ0wMe6hi2xKFeQEhyW9YtHndZe5tjn5D0=;
- b=b2qi4rjB//MFuXfQoaR+ZNq3Agm+aJqC4rvMiQCxRCs65b8t+Xj1KzU1XmhX5uMZiCuIEr+KLgx26Pth4ddbK5aDlZaLJ8GqylnLXM0wppL+WKUngvZ2m3IbXZKScIpcmt2tBaidiRYgqg38L6Fy+nmgDYfYW7BtI/j+DATeCVqhhpSvq6dTvohELSf+2zcMAsgLNBqhuOPa6tVowbpH1PtunBtY9ChJ54Wqu29s4g715d8lcfrEaAb3As4DCaSs2PxzvQmpcARZmj9uT0A6vyxAKlW1mxehPi7h6qbb3ub0+Lv/2COouO8YX2rEgH54tZWGtTHOozbyU/nCMymTIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ymfGQpQJzkQ0wMe6hi2xKFeQEhyW9YtHndZe5tjn5D0=;
- b=Xh98IO6GeBm3DN7DdcUbfK4aw7vCHsvFgqf13yTu7TEMdtH0PuxfUQqi5musOVW1VYxGt8V/pnuWb8c/ZJp4IldYya8mqDhOD0+MMOqcAAjmhWGxzwTxdpfcOsrWD1mxrD8OzWkp4oEnrv144NHYILsg5++A49u82k2cbCGN0sWJd8MpPER0oVHaV3ykATgiIs/cn9JxwjU5K0ka6cRUPapEsCqhBr5DNXngHaGmiNobtmdVTPSPdA70Q/Xag4VYYVCk3vCiOdrWfqduq+VDQfKToDMYVfLQaOJGFRNinU+HszWt37Cy/+609kNNTWDYP5Mu6BoNS7ThHZjGfw2Eog==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
- by DB9PR04MB9428.eurprd04.prod.outlook.com (2603:10a6:10:368::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Tue, 23 Sep
- 2025 20:56:05 +0000
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9160.008; Tue, 23 Sep 2025
- 20:56:05 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Senna Tschudin <peter.senna@gmail.com>,
-	Ian Ray <ian.ray@ge.com>,
-	Martyn Welch <martyn.welch@collabora.co.uk>,
-	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH v2 1/1] dt-bindings: display: bridge: convert megachips-stdpxxxx-ge-b850v3-fw.txt to yaml
-Date: Tue, 23 Sep 2025 16:55:48 -0400
-Message-Id: <20250923205549.200670-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PH7P220CA0167.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:33b::9) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B56130ACEF
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 20:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758660991; cv=none; b=Qep3+Pe+ScU0RicwHfvaEPn+LVL6k2UlD9KwThV2lfwyB4CO9IzXk5JwdotZScDSHzQJAIzFcvKbJ4/w94xe6yAEsXKBmmpIEiXMspMSXQsQwPbqvO1Sc52XY/6qIPMrXoUAM/QwVjm+wNAKDujvqP5O52IX+0Ia8I0oZgPCGH8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758660991; c=relaxed/simple;
+	bh=slnItvOVZAE6Oav3Q8+E0oSeQYKvZKoMeqNmgYxE3s8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gEKN0lXnlpRbMcz3psuxpaeErVAF1ASuLwi+YN11iiVVV7n2x6DFBmHNDArc0GTeVPtL0K04eXK+TNv24hMjrt44biWQN5RFb7a6uFPmPvYKUUaII71z/y93GEGBZdUiMkZTR1Q5LYioCna0keJCY5osbCaQHDQoW4DR7wcVZdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=UWgMXUTL; arc=none smtp.client-ip=44.202.169.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5003b.ext.cloudfilter.net ([10.0.29.155])
+	by cmsmtp with ESMTPS
+	id 15b8vZGyzKXDJ1A3pvICdJ; Tue, 23 Sep 2025 20:56:29 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 1A3ovEFAgtssb1A3ov3jbt; Tue, 23 Sep 2025 20:56:28 +0000
+X-Authority-Analysis: v=2.4 cv=Hb8UTjE8 c=1 sm=1 tr=0 ts=68d3097c
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=N332or4wHRcdzxpigiEmqg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=b_psskLWchTY9WQLhBIA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=R1xrpqBgU5VRolmF7QTk3y42QIWpKPlrjBX+KzL4FgQ=; b=UWgMXUTL32B3ppGQ/KieJsvITO
+	iVwEyvAE/fLiFemHW/d712vtKD/8quLIAqr8Ra04bZa80zyszwCpxABXejd3p2yp9m0GYxjBAJhLW
+	R+qZUeb4f7TU4uoAOzA3Z5bI/gwAAEg0B/Ttizir+kOEeBOJ+9yk1Lk1m0ylwUkXM+i7GIMVWJ+GH
+	4PE5qXTs2yjETMpNecS5LXOqCUnO4BZ5m0iJV2cOLRyeYmVyD3fFZjM/aPe6nT4qz0gVof7WQNW7o
+	kfW5HrPuleM/rjx15pKSguLzsQ/AsB1L3nnQWfR0dh7je8ojf6cGloMUttQvhRFUJobmCsYNhprcn
+	ep4BtMCA==;
+Received: from [83.214.155.155] (port=52914 helo=[192.168.1.104])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1v1A3k-00000003RJX-4Bcv;
+	Tue, 23 Sep 2025 15:56:25 -0500
+Message-ID: <e1c9e3e5-b04f-40d0-b05b-c119cf2d3cb3@embeddedor.com>
+Date: Tue, 23 Sep 2025 22:56:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|DB9PR04MB9428:EE_
-X-MS-Office365-Filtering-Correlation-Id: a1e665f4-ef51-4326-25ca-08ddfae39c81
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|19092799006|376014|52116014|7416014|1800799024|366016|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?OOX3pC9u/sXQc1gNEhHzaapQS8IRKpnCLRpwyyMrJ4RR5UVeqHC4eQfz+QWB?=
- =?us-ascii?Q?83OYZKiIzfmuxQ+IrVeNxdM92JdbiFisgofNCmpHfcY/zfLKZk6nPdLa1mln?=
- =?us-ascii?Q?ehKYMQheJcpp1Y4LLaDonmht3o0ZirA5itaexOAq/1XQrSWHfW99CDa3IDKR?=
- =?us-ascii?Q?wHZqqhMQ1AJBI1jE2F0eL1f3FzXySs1bSVLKGBsjIYrqnfEexd9o5AVANsgN?=
- =?us-ascii?Q?DTPxC4R8PpkhGDYKrrLZ3SqFDXtFDh3/8omfJ39jlM2ZthskZhzoUMETplz8?=
- =?us-ascii?Q?vAcDFlT9gl+aP7jk0EpSjKw7dtxyqmJi4g7rq4y/Zf5glE4hPkL7YSzX/VCd?=
- =?us-ascii?Q?fDxVKK5VfUqGfHcIAJ48ijuPKbO9W07Wm78LR8Ar1wXRLfvE0M+taiyJTFIk?=
- =?us-ascii?Q?l90o700LxlbmrtaQXcjIoJ64B3kqFxNLwMP7Lq/8H0veQPQr7yrTTTqbdjkc?=
- =?us-ascii?Q?zg79z2CWbOcV42wyNeyI+PnK73n/XLoBJOYczK5piUVktraLv7jOy1C1fCe4?=
- =?us-ascii?Q?ToIqKW0Z3+GShv02ZGyBUMisxLckEOMJe+8ebvnXqTyuvRQqPMYZuiUrM2NU?=
- =?us-ascii?Q?WOwkh+KeTelL3xNd3Ay1W+xI1ObtjGIE3VrtKDCgN4AC4JtEbH/GAT3vGgY+?=
- =?us-ascii?Q?PthDq1sttuM9beHtoqW3xUPgr+DJVSAP4VVaycRUQxL7emvdLhCnCPyAIzVe?=
- =?us-ascii?Q?vvpaZroCh2Vi9kYW6XnCh5y6hvDz9yBC/jvcVqWGe/Be8XZT3dxiqHBpjaEr?=
- =?us-ascii?Q?2iCZ/o2D8ODfYx5C/9SiNnBI0Aa4u2g0SO7WPvoekS/bZz9+dhH4txXL/TeO?=
- =?us-ascii?Q?9kFwsEYCzagPjubrTfOPjT+NJwaruGN8X3pmxuSExB2zjA0A2PFYCoMcjqnl?=
- =?us-ascii?Q?/rxLsst+hjkGl3dX60LEUG2kCvKJMC7jTM4bhKhzYAZU/eLgXMJt4U/QPwY7?=
- =?us-ascii?Q?gpQaFf3tewefC0yhKCURUGDNEpFrTYn1r/97KkU38IeKzc3ykPrvXdwcmZC5?=
- =?us-ascii?Q?6MvMo5XdRp1xdxUVDKfjzIbzwrTxSUnqM6LnNafoMNlBwK07M+rVj3yiwPl6?=
- =?us-ascii?Q?zHfmZeS6ars7kVeRbXy0O5ECwi1VdRTdOMTasu1kT/odN2KfK3jZMft28Du6?=
- =?us-ascii?Q?6njrRVAibAVOWakamWsyHooSOe/piM6X4/lz8h/TxDkrNBkY7nmnj5h7ZqVn?=
- =?us-ascii?Q?KdQGtVpXwUX9wSGdlIIgKMBhQhvkbhirrqQtsI2QL8w/vD5c8eq3Vhfly17i?=
- =?us-ascii?Q?lWpqC5ySbsx0mqzKn4HNCNA+vCH1c8VbNx6SDBpdth40hcUBkiN+Ob2hzkCM?=
- =?us-ascii?Q?6G2pJ/yPiK7J7rjW7z6IqmwOYCD2DGd5Efl2QDQa+7EhNCx1MD9xUsamUCdN?=
- =?us-ascii?Q?SzqLdFpaJVaU+MdIQPjcjFQAno/jEg61SfVu5DByVBjcs9P0w0bu9hBnXacu?=
- =?us-ascii?Q?+2rQZzbbvzMtGTM9xV2VDwVF5hRDOMbu?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(52116014)(7416014)(1800799024)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?z7fYcCLwUSgUs0J2OllQNFTOBn9EvOak679hhEEYD/y3UrOeidRw8bqMopc/?=
- =?us-ascii?Q?xraw6KXDd82Uaq8AyFcbteepaKEuiWSBIGCXcaaRqDOidOuB8Q/QzdAoJZcC?=
- =?us-ascii?Q?SSk6wtohWhLi53TsqZ7wqgLdsUJoI77I0FgSJPKXK1MVMhqwUlVDxfu7x9WF?=
- =?us-ascii?Q?GRq53kvuqHwmPTnR6mC43qcVu2QwzJSEuqzlxwizHzLmC/cS6UbXxv3fkI4z?=
- =?us-ascii?Q?lQDvfB+cC5/R+LS6FzP7qQHbdcuBu4zfaQv/k9FkEDpq0bOGkK68N6spxm87?=
- =?us-ascii?Q?skayg3gq3QRd2w6MY+IbjW/cGM+OxUcyFMdu8xd0r49kDM9NPKLocOopOcW2?=
- =?us-ascii?Q?MrZyuH6awxKo01BLzbcV7vRbR9U383wFEBIKFYopGG5vOtT3qTXLJYZLgVvC?=
- =?us-ascii?Q?m/HJMdrdWqWzqgTXRGZX4P7WpohHV5F0mlImpgkaRKa0B0eEBHi/7wlpD1eD?=
- =?us-ascii?Q?UDgcIRvWGadmQolSDplQKmBZ+t752JGEYs14JuPOdYED/iZwy6cdz/QFStHN?=
- =?us-ascii?Q?5uj7RYSOLEZpcj+OXa/bE5+spc8LD/3zHsctlsVyGpPssaVXf4zrZ8MzmCdf?=
- =?us-ascii?Q?rRU/+fSWo/cIQapeb+36KDIXKXqulsgG6w5mBGkaXH5z4GPY6Gyq7gF0p07U?=
- =?us-ascii?Q?hsujw5Ly/38GJ43odKYdVLTOc7P4s2Bfv1MdjKZpcH+N5yF8DP6ejcU5EyUS?=
- =?us-ascii?Q?9lDLutJiTBmDLNuRlfZLmv6oTWTo82/tWIFPhR/K99kiJDZ5K5MKR96W/56f?=
- =?us-ascii?Q?zogkDIGOqprB09zaPTR3sqVDlryqb4EKGqoeHbM5WGDnjBiaAmdUih7lbA7O?=
- =?us-ascii?Q?5AnrM1uaos7EUh7lZrkDAwJmdRgfG64+R5I0aRcIaC28JE1pQpG2s3ahTJ/8?=
- =?us-ascii?Q?Vzs02Anx8vL5vfr73oivl4jJqhZfDOKjyoFlDanM18f5BgHyTQbdAzkWJrGd?=
- =?us-ascii?Q?JpTET3Iq4UTsQ7GUxCEddBEA7h6nDUJnKs2iQg8GslKnNxEBqPZhw6rFsSc3?=
- =?us-ascii?Q?4YDuY4k1F296g4DRie15uCT/BMf4ktt86dblwbWBCcAtwqeidZguqK2QK8+d?=
- =?us-ascii?Q?3dCkg87Spg/VtUbUy+7TLdSQ9IBoExoMA1Vn7vhpwVfchcLLwxdixe/3k/Wr?=
- =?us-ascii?Q?vtrgvNcwCyHc0Zul9/6M0skcjWaH5hSEfq0QbKTLSLtE0yiU1K0V2jINhFu/?=
- =?us-ascii?Q?GNeQQG9fwCeOFztW+I7lfyXSWUqyZynS7ESskv6DNIimfQ3Yhpe5t1LBVstv?=
- =?us-ascii?Q?y2FAaOjgC78OYjJkM+bc3tOep5aN0J2jG+SRXOhwMlQIZY4EGQb9WK2UNblX?=
- =?us-ascii?Q?8gT8+HqNQKmvKupWYzJOVKAdNlrgIWNcAr5bkbISVbaH7c6cdARsdPY8H8T6?=
- =?us-ascii?Q?kCyzxtyOs9i1qHd/pTLdlc1qz65TH3embK/2mcGBZVSTgyY7N7vBpHFyVkAZ?=
- =?us-ascii?Q?ah0tjUYwusEazoR7ieQKHOX8phQ49NL39IxFuPKTCl+wr7npufJlEpXh/cht?=
- =?us-ascii?Q?VC8ePa8v/l+X9eb+bRBkVZPcG7STDxGLV8fLR55OGEoW3JwdfezkCDVX+WiP?=
- =?us-ascii?Q?YykGoooQoav1AMtiXn2Hf/TVdow+5QXwzk2OlOVc?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1e665f4-ef51-4326-25ca-08ddfae39c81
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 20:56:05.3057
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rxjAbuwMs1tHV1W2+eKJMh4qeZxGtGsaFCQ1nykwXchAYh+CjZzFtY1w17UZ4qpSuSZRGTmen4nqkTYwB5OdDg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9428
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] net: airoha: Avoid -Wflex-array-member-not-at-end
+ warning
+To: Simon Horman <horms@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <aNFYVYLXQDqm4yxb@kspp> <20250923185525.GL836419@horms.kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20250923185525.GL836419@horms.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 83.214.155.155
+X-Source-L: No
+X-Exim-ID: 1v1A3k-00000003RJX-4Bcv
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.104]) [83.214.155.155]:52914
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 13
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfCWQc72v8KPBTmHrfBokqM2z43RYQ/C+wOKwONhL3rN1Q66qb24DzNGVzjZ3bdmI2uOejqNFcld4Y5KlWf4s6vzKxf6fKZAJNnx+em6aERUCwcP7kmt2
+ lESq196df4ht0CBZXEUpezRI8VUXGvIT+MRz+sqqfcM0LrQWa9yvJrRlL3w2w0h5EdxEQhl2ieQc26jxev6/nqOvGcYKE/QfdG2l8Ybv2su4j550Da7pLDrL
 
-Convert megachips-stdpxxxx-ge-b850v3-fw.txt to yaml format.
 
-Additional changes:
-- Only keep one example.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-change in v2
-- add description for port@0 and port@1
-- add both ports to required list
----
- .../megachips,stdp2690-ge-b850v3-fw.yaml      | 111 ++++++++++++++++++
- .../megachips-stdpxxxx-ge-b850v3-fw.txt       |  91 --------------
- 2 files changed, 111 insertions(+), 91 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml
- delete mode 100644 Documentation/devicetree/bindings/display/bridge/megachips-stdpxxxx-ge-b850v3-fw.txt
+On 9/23/25 20:55, Simon Horman wrote:
+> On Mon, Sep 22, 2025 at 04:08:21PM +0200, Gustavo A. R. Silva wrote:
+>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+>> getting ready to enable it, globally.
+>>
+>> Move the conflicting declaration to the end of the corresponding
+>> structure. Notice that `struct airoha_foe_entry` is a flexible
+>> structure, this is a structure that contains a flexible-array
+>> member.
+>>
+>> Fix the following warning:
+>>
+>> drivers/net/ethernet/airoha/airoha_eth.h:474:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> FWIIW, I was able to reproduce this locally.
+> And it goes away with this patch applied.
+> 
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+>> ---
+>>   drivers/net/ethernet/airoha/airoha_eth.h | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> Reviewed-by: Simon Horman <horms@kernel.org>
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml b/Documentation/devicetree/bindings/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml
-new file mode 100644
-index 0000000000000..dfa6ff6f115e5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml
-@@ -0,0 +1,111 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: GE B850v3 video bridge
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+description: |
-+   STDP4028-ge-b850v3-fw bridges (LVDS-DP)
-+   STDP2690-ge-b850v3-fw bridges (DP-DP++)
-+
-+   The video processing pipeline on the second output on the GE B850v3:
-+
-+   Host -> LVDS|--(STDP4028)--|DP -> DP|--(STDP2690)--|DP++ -> Video output
-+
-+   Each bridge has a dedicated flash containing firmware for supporting the custom
-+   design. The result is that, in this design, neither the STDP4028 nor the
-+   STDP2690 behave as the stock bridges would. The compatible strings include the
-+   suffix "-ge-b850v3-fw" to make it clear that the driver is for the bridges with
-+   the firmware specific for the GE B850v3.
-+
-+   The hardware do not provide control over the video processing pipeline, as the
-+   two bridges behaves as a single one. The only interfaces exposed by the
-+   hardware are EDID, HPD, and interrupts.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - megachips,stdp4028-ge-b850v3-fw
-+      - megachips,stdp2690-ge-b850v3-fw
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  ports:
-+    $ref: /schemas/graph.yaml#/properties/ports
-+    properties:
-+      port@0:
-+        description: sink port
-+        $ref: /schemas/graph.yaml#/properties/port
-+
-+      port@1:
-+        description: source port
-+        $ref: /schemas/graph.yaml#/properties/port
-+
-+    required:
-+      - port@0
-+      - port@1
-+
-+required:
-+  - compatible
-+  - reg
-+  - ports
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: megachips,stdp4028-ge-b850v3-fw
-+    then:
-+      required:
-+        - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        bridge@73 {
-+            compatible = "megachips,stdp4028-ge-b850v3-fw";
-+            reg = <0x73>;
-+            interrupt-parent = <&gpio2>;
-+            interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
-+
-+            ports {
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+
-+                port@0 {
-+                    reg = <0>;
-+
-+                    endpoint {
-+                        remote-endpoint = <&lvds0_out>;
-+                    };
-+
-+                };
-+
-+                port@1 {
-+                    reg = <1>;
-+
-+                    endpoint {
-+                        remote-endpoint = <&stdp2690_in>;
-+                    };
-+               };
-+            };
-+        };
-+    };
-+
-diff --git a/Documentation/devicetree/bindings/display/bridge/megachips-stdpxxxx-ge-b850v3-fw.txt b/Documentation/devicetree/bindings/display/bridge/megachips-stdpxxxx-ge-b850v3-fw.txt
-deleted file mode 100644
-index 09e0a21f705ef..0000000000000
---- a/Documentation/devicetree/bindings/display/bridge/megachips-stdpxxxx-ge-b850v3-fw.txt
-+++ /dev/null
-@@ -1,91 +0,0 @@
--Drivers for the second video output of the GE B850v3:
--   STDP4028-ge-b850v3-fw bridges (LVDS-DP)
--   STDP2690-ge-b850v3-fw bridges (DP-DP++)
--
--The video processing pipeline on the second output on the GE B850v3:
--
--   Host -> LVDS|--(STDP4028)--|DP -> DP|--(STDP2690)--|DP++ -> Video output
--
--Each bridge has a dedicated flash containing firmware for supporting the custom
--design. The result is that, in this design, neither the STDP4028 nor the
--STDP2690 behave as the stock bridges would. The compatible strings include the
--suffix "-ge-b850v3-fw" to make it clear that the driver is for the bridges with
--the firmware specific for the GE B850v3.
--
--The hardware do not provide control over the video processing pipeline, as the
--two bridges behaves as a single one. The only interfaces exposed by the
--hardware are EDID, HPD, and interrupts.
--
--stdp4028-ge-b850v3-fw required properties:
--  - compatible : "megachips,stdp4028-ge-b850v3-fw"
--  - reg : I2C bus address
--  - interrupts : one interrupt should be described here, as in
--    <0 IRQ_TYPE_LEVEL_HIGH>
--  - ports : One input port(reg = <0>) and one output port(reg = <1>)
--
--stdp2690-ge-b850v3-fw required properties:
--    compatible : "megachips,stdp2690-ge-b850v3-fw"
--  - reg : I2C bus address
--  - ports : One input port(reg = <0>) and one output port(reg = <1>)
--
--Example:
--
--&mux2_i2c2 {
--	clock-frequency = <100000>;
--
--	stdp4028@73 {
--		compatible = "megachips,stdp4028-ge-b850v3-fw";
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		reg = <0x73>;
--
--		interrupt-parent = <&gpio2>;
--		interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				stdp4028_in: endpoint {
--					remote-endpoint = <&lvds0_out>;
--				};
--			};
--			port@1 {
--				reg = <1>;
--				stdp4028_out: endpoint {
--					remote-endpoint = <&stdp2690_in>;
--				};
--			};
--		};
--	};
--
--	stdp2690@72 {
--		compatible = "megachips,stdp2690-ge-b850v3-fw";
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		reg = <0x72>;
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				stdp2690_in: endpoint {
--					remote-endpoint = <&stdp4028_out>;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				stdp2690_out: endpoint {
--					/* Connector for external display */
--				};
--			};
--		};
--	};
--};
--- 
-2.34.1
+Thank you!
+
+-Gustavo
+
 
 
