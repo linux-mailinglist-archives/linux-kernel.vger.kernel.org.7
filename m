@@ -1,57 +1,46 @@
-Return-Path: <linux-kernel+bounces-828493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B820B94B5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:11:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D84EEB94AA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEC13162AEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:11:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C2E719023BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8300430F95C;
-	Tue, 23 Sep 2025 07:11:21 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7203115A0;
+	Tue, 23 Sep 2025 07:01:29 +0000 (UTC)
+Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008DF4502F;
-	Tue, 23 Sep 2025 07:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F30E311596
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758611481; cv=none; b=f5tSwxtYd7M9ZmzKy3YVjlTsz5mq7fgUG+QTU/bDqj8tlgLXORIUIvPML6Knw/TMeCA3mxhiO+ejMJd9sOYnLPFMjXQH06j2oTMKyspVUH7r7fvEIRRDMPoMWxCbMmDmaP3eD/vGaptFO1RrNgZFoBf/tQQTdu3/wkVW7klM0UM=
+	t=1758610888; cv=none; b=UVcQrX/q/8bXSUX/qHCe3OX9Bk9NdpOV1AOp4PllIji8IV+u1sbXAOcp4NZuyoZ0zB+YWyAFe/WXfbkFJCPPEGZQXWa41crLGY4r3XMMdFUUq011hhu24xecZKGTbMuB09QE7ldSV68Aiw1mfqIhcRR+WJD1JRSMXOOvG7HmP0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758611481; c=relaxed/simple;
-	bh=waC9dgIqg8z/AIiVMHOz+qm2FlxkiISRWa2YwZxCvBM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uHgSMV9KDR6J67qCs1bpZAJRVEMRt3rol/giLDisJie+wPfVECFFWyi1I2ihhryA+cUNu48kS9PhdOxCWfc1dH2NG/ET60GHJwPNJIkGn2y5Dy7ijY/iqd1dq0m/uizKcNl0MAuxbZFtAoQpbAYKPBGZ2/eHpQl0enyW6iTokRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cWB3L3hclzKHMW3;
-	Tue, 23 Sep 2025 15:11:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 568E01A0F60;
-	Tue, 23 Sep 2025 15:11:15 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgD3CGEPSNJofU8hAg--.14578S4;
-	Tue, 23 Sep 2025 15:11:13 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	martin.petersen@oracle.com,
-	hare@suse.de,
-	ming.lei@redhat.com
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH] blk-mq: fix null-ptr-deref in blk_mq_free_tags() from error path
-Date: Tue, 23 Sep 2025 15:01:01 +0800
-Message-Id: <20250923070101.3507251-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1758610888; c=relaxed/simple;
+	bh=bEympONcffM8pP9CJGCfq/a9OH5dUXml1a/N5U9O4AM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uPDzKPNO9H+0cBduXnEJyX0o3PLvwwk5D01QMh9vaOLgccw/pFCwNekUsKEGXnRAXoSgk2eqK3Spzei6cZbKH7TIjtjgPjsZY8Xx6NyI3yCvHkc2vwdVoY6MTIuoy2J0THdueADTzfSBUKuOF0akrCZGv2aUMTR2BTEa6gbmZuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201610.home.langchao.com
+        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202509231501193791;
+        Tue, 23 Sep 2025 15:01:19 +0800
+Received: from localhost.localdomain.com (10.94.12.225) by
+ jtjnmail201610.home.langchao.com (10.100.2.10) with Microsoft SMTP Server id
+ 15.1.2507.58; Tue, 23 Sep 2025 15:01:18 +0800
+From: Bo Liu <liubo03@inspur.com>
+To: <xiang@kernel.org>, <chao@kernel.org>
+CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, Bo Liu
+	<liubo03@inspur.com>, Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH v5] erofs: Add support for FS_IOC_GETFSLABEL
+Date: Tue, 23 Sep 2025 15:01:12 +0800
+Message-ID: <20250923070112.16644-1-liubo03@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,84 +48,182 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3CGEPSNJofU8hAg--.14578S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7AFy3Xr4UKrWrGrW5JF15XFb_yoW8uw4UpF
-	W3Ga1UK343KrnrZFsrta9rA340kanYqF4xGas3uw15ZrnxCrWagF1vqr45Zr10vrZ8CFsI
-	gF45tryrA3WDJ37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain
+tUid: 2025923150119d4a4ee5aa66719bd4aef14354bb679d1
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-From: Yu Kuai <yukuai3@huawei.com>
+From: Bo Liu (OpenAnolis) <liubo03@inspur.com>
 
-blk_mq_free_tags() can be called after blk_mq_init_tags(), while
-tags->page_list is still not initialized, causing null-ptr-deref.
+Add support for reading to the erofs volume label from the
+FS_IOC_GETFSLABEL ioctls.
 
-Fix this problem by initializing tags->page_list at blk_mq_init_tags(),
-meanwhile, also free tags directly from error path because there is no
-srcu barrier.
-
-Fixes: ad0d05dbddc1 ("blk-mq: Defer freeing of tags page_list to SRCU callback")
-Reported-by: syzbot+5c5d41e80248d610221f@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/68d1b079.a70a0220.1b52b.0000.GAE@google.com/
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Signed-off-by: Bo Liu (OpenAnolis) <liubo03@inspur.com>
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 ---
- block/blk-mq-tag.c | 9 +++++++++
- block/blk-mq.c     | 2 --
- 2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
-index a63d21a4aab4..23f7731f19d1 100644
---- a/block/blk-mq-tag.c
-+++ b/block/blk-mq-tag.c
-@@ -569,6 +569,8 @@ struct blk_mq_tags *blk_mq_init_tags(unsigned int total_tags,
- 	tags->nr_tags = total_tags;
- 	tags->nr_reserved_tags = reserved_tags;
- 	spin_lock_init(&tags->lock);
-+	INIT_LIST_HEAD(&tags->page_list);
-+
- 	if (bt_alloc(&tags->bitmap_tags, depth, round_robin, node))
- 		goto out_free_tags;
- 	if (bt_alloc(&tags->breserved_tags, reserved_tags, round_robin, node))
-@@ -606,6 +608,13 @@ void blk_mq_free_tags(struct blk_mq_tag_set *set, struct blk_mq_tags *tags)
- {
- 	sbitmap_queue_free(&tags->bitmap_tags);
- 	sbitmap_queue_free(&tags->breserved_tags);
-+
-+	/* if tags pages is not allocated yet, free tags directly */
-+	if (list_empty(&tags->page_list)) {
-+		kfree(tags);
-+		return;
-+	}
-+
- 	call_srcu(&set->tags_srcu, &tags->rcu_head, blk_mq_free_tags_callback);
+v1: https://lore.kernel.org/linux-erofs/20250825120617.19746-1-liubo03@inspur.com/
+v2: https://lore.kernel.org/linux-erofs/20250826103926.4424-1-liubo03@inspur.com/
+v3: https://lore.kernel.org/linux-erofs/20250920060455.24002-1-liubo03@inspur.com/
+v4: https://lore.kernel.org/linux-erofs/20250922092937.2055-1-liubo03@inspur.com/
+
+change since v4:
+- fix 0day build errors.
+
+ fs/erofs/data.c     |  4 ++++
+ fs/erofs/dir.c      |  4 ++++
+ fs/erofs/inode.c    | 41 +++++++++++++++++++++++++++++++++++++----
+ fs/erofs/internal.h |  6 ++++++
+ fs/erofs/super.c    |  8 ++++++++
+ 5 files changed, 59 insertions(+), 4 deletions(-)
+
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index 3b1ba571c728..8ca29962a3dd 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -475,6 +475,10 @@ static loff_t erofs_file_llseek(struct file *file, loff_t offset, int whence)
+ const struct file_operations erofs_file_fops = {
+ 	.llseek		= erofs_file_llseek,
+ 	.read_iter	= erofs_file_read_iter,
++	.unlocked_ioctl = erofs_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl   = erofs_compat_ioctl,
++#endif
+ 	.mmap_prepare	= erofs_file_mmap_prepare,
+ 	.get_unmapped_area = thp_get_unmapped_area,
+ 	.splice_read	= filemap_splice_read,
+diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+index debf469ad6bd..32b4f5aa60c9 100644
+--- a/fs/erofs/dir.c
++++ b/fs/erofs/dir.c
+@@ -123,4 +123,8 @@ const struct file_operations erofs_dir_fops = {
+ 	.llseek		= generic_file_llseek,
+ 	.read		= generic_read_dir,
+ 	.iterate_shared	= erofs_readdir,
++	.unlocked_ioctl = erofs_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl   = erofs_compat_ioctl,
++#endif
+ };
+diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+index 9a2f59721522..a3c505e9425d 100644
+--- a/fs/erofs/inode.c
++++ b/fs/erofs/inode.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2021, Alibaba Cloud
+  */
+ #include "xattr.h"
++#include <linux/compat.h>
+ #include <trace/events/erofs.h>
+ 
+ static int erofs_fill_symlink(struct inode *inode, void *kaddr,
+@@ -213,10 +214,7 @@ static int erofs_fill_inode(struct inode *inode)
+ 	switch (inode->i_mode & S_IFMT) {
+ 	case S_IFREG:
+ 		inode->i_op = &erofs_generic_iops;
+-		if (erofs_inode_is_data_compressed(vi->datalayout))
+-			inode->i_fop = &generic_ro_fops;
+-		else
+-			inode->i_fop = &erofs_file_fops;
++		inode->i_fop = &erofs_file_fops;
+ 		break;
+ 	case S_IFDIR:
+ 		inode->i_op = &erofs_dir_iops;
+@@ -341,6 +339,41 @@ int erofs_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 	return 0;
  }
  
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 4ccf11cadf8c..09f579414161 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -3582,8 +3582,6 @@ static int blk_mq_alloc_rqs(struct blk_mq_tag_set *set,
- 	if (node == NUMA_NO_NODE)
- 		node = set->numa_node;
++static int erofs_ioctl_get_volume_label(struct inode *inode, void __user *arg)
++{
++	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
++	int ret;
++
++	if (!sbi->volume_name)
++		ret = clear_user(arg, 1);
++	else
++		ret = copy_to_user(arg, sbi->volume_name,
++				   strlen(sbi->volume_name));
++
++	return ret ? -EFAULT : 0;
++}
++
++long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
++{
++	struct inode *inode = file_inode(filp);
++	void __user *argp = (void __user *)arg;
++
++	switch (cmd) {
++	case FS_IOC_GETFSLABEL:
++		return erofs_ioctl_get_volume_label(inode, argp);
++	default:
++		return -ENOTTY;
++	}
++}
++
++#ifdef CONFIG_COMPAT
++long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
++			unsigned long arg)
++{
++	return erofs_ioctl(filp, cmd, (unsigned long)compat_ptr(arg));
++}
++#endif
++
+ const struct inode_operations erofs_generic_iops = {
+ 	.getattr = erofs_getattr,
+ 	.listxattr = erofs_listxattr,
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 4ccc5f0ee8df..b70902e00586 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -166,6 +166,8 @@ struct erofs_sb_info {
+ 	struct erofs_domain *domain;
+ 	char *fsid;
+ 	char *domain_id;
++
++	char *volume_name;
+ };
  
--	INIT_LIST_HEAD(&tags->page_list);
--
- 	/*
- 	 * rq_size is the size of the request plus driver payload, rounded
- 	 * to the cacheline size
+ #define EROFS_SB(sb) ((struct erofs_sb_info *)(sb)->s_fs_info)
+@@ -535,6 +537,10 @@ static inline struct bio *erofs_fscache_bio_alloc(struct erofs_map_dev *mdev) {
+ static inline void erofs_fscache_submit_bio(struct bio *bio) {}
+ #endif
+ 
++long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
++long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
++			unsigned long arg);
++
+ #define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
+ 
+ #endif	/* __EROFS_INTERNAL_H */
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 1b529ace4db0..f1535ebe03ec 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -343,6 +343,13 @@ static int erofs_read_superblock(struct super_block *sb)
+ 	sbi->fixed_nsec = le32_to_cpu(dsb->fixed_nsec);
+ 	super_set_uuid(sb, (void *)dsb->uuid, sizeof(dsb->uuid));
+ 
++	if (dsb->volume_name[0]) {
++		sbi->volume_name = kstrndup(dsb->volume_name,
++					    sizeof(dsb->volume_name), GFP_KERNEL);
++		if (!sbi->volume_name)
++			return -ENOMEM;
++	}
++
+ 	/* parse on-disk compression configurations */
+ 	ret = z_erofs_parse_cfgs(sb, dsb);
+ 	if (ret < 0)
+@@ -822,6 +829,7 @@ static void erofs_sb_free(struct erofs_sb_info *sbi)
+ 	kfree(sbi->domain_id);
+ 	if (sbi->dif0.file)
+ 		fput(sbi->dif0.file);
++	kfree(sbi->volume_name);
+ 	kfree(sbi);
+ }
+ 
 -- 
-2.39.2
+2.31.1
 
 
