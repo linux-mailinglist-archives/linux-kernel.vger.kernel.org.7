@@ -1,123 +1,183 @@
-Return-Path: <linux-kernel+bounces-828058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FBB4B93D7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:27:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB13B93E11
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7A4E1907FE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:28:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69C7C2E2EF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8268B248893;
-	Tue, 23 Sep 2025 01:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927812D5427;
+	Tue, 23 Sep 2025 01:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lfeNbT1T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KD7BUALE"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6ABF2405FD;
-	Tue, 23 Sep 2025 01:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA06279335
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758590865; cv=none; b=rIcmmxCE4NI6g9iRcgudUvguTImFJeCtKaHFcQMSfqNzoJLr2nTazEypuzFBu4bYDjFIyDwxVDRvldKMGJLGVYCHqb6+sUPVCoGThPjUtyzD6R3t397PYusZxJTWM32vMhTZznKlxr/uwRGHobCnvDzoiBNBuU2k+5enfLc1DYM=
+	t=1758590979; cv=none; b=K6BhmtiJ/hxXHAg8FERP5/w7YXChUG7RK2cVJQhky0yo4/cUyv6rmG5tIB4ED/TwCimGy4jIZSj3DmmqRHUxReqow1VHZctED9k0G3KY5VMBHeWvT2rAdPFKamFNvP5rHmIbd47xIVngsxXmoJ2LS70oLThtWgO+qUFHZDqHwW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758590865; c=relaxed/simple;
-	bh=flxBSoftFjiAiP6heMicexlj4mz8YIbgAu/4NHMShZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eQIdHD5Hk+NKpCjozVn9mLjG8nBZZk4cwvefB4G3woA2hpmniu1tffpwUxoU2vTBNW7haN5WrpBqdb8RG+8JJ9HFjnKHqyDpoOa5QCJOtL79VWAe3vmt7i2U9KWciwsI2hXb4hypE8RJRcKOE1qWyizcWKDJFgk+GuxBRqy4svA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lfeNbT1T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D21BDC4CEF0;
-	Tue, 23 Sep 2025 01:27:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758590865;
-	bh=flxBSoftFjiAiP6heMicexlj4mz8YIbgAu/4NHMShZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lfeNbT1TuoFCTHW6Jg29BWRSn57TObXGwoSgkxzcGIWOtxUTUYlzJYnAgc4ewEoiQ
-	 JjX3AT1iC1k4WJwwi4/xB2zTjdHRxmkccgz3HYxWVxrfhqJJHH2UDjy82MKheoBSYM
-	 7N015kyTr6rMUqIarDtTyyLcqvF+O6ifox3lVTLaSMrraNZaunKbBApn/ZqnuQyJV0
-	 qv3EpkiJOS1Zfv2YbLX6h2Gz0al4U0q7DhOlnX8llNZBIy+D/MQTS2GTAMHvuilztN
-	 KxhHV3Y1rWXBEqhays1O7iQVorgG+VsP8g4UTwTyWIOqeUiy8+6OYqdPtLGapQ0BPZ
-	 NHymVK/kL7NaQ==
-Date: Mon, 22 Sep 2025 18:27:38 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Tony Krowiak <akrowiak@linux.ibm.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	Jason Herne <jjherne@linux.ibm.com>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	Holger Dengler <dengler@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
-	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] KVM: Export KVM-internal symbols for sub-modules
- only
-Message-ID: <20250923012738.GA4102030@ax162>
-References: <20250919003303.1355064-1-seanjc@google.com>
- <20250919003303.1355064-3-seanjc@google.com>
+	s=arc-20240116; t=1758590979; c=relaxed/simple;
+	bh=Keih4ozM2ClJ7bLKolp4rzu48rFOC9n6MVTSF0I4RXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZH0LWkSVUgsuxclEO8RRTd25IpxnaW9wPh/vfb7jgQdCp+boynNIUNg1vIc85oT0rynyMrLCZr+njVf2jIu1JVtN8r8RXAOChBttmKKPqZnH+6mY3L4iS4u0YXDv+Sgek+yfcRTPX9ECcaH31v8wq3yWjetk3r17bCssE29X/g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KD7BUALE; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-330b4739538so3132114a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 18:29:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758590977; x=1759195777; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UGIEsRlxQ6SB/60aNk9YuezwzaWruzT6GSumf3z2VMQ=;
+        b=KD7BUALE4v6krkpM1w5HFveuUWLHuqKX0i8IedmTFjKuihlgcte6bH0rnx/uwFWa42
+         uNysOBNbybAjUJmWGpM9dGQsSyC7tipoEiQswPILeP09U4LIFBI/0RcQob9IS+OQFY+n
+         zXpS21Ub3LESB8d/W7bUjw8xJWUdqbRrEA02S8nvqWJmcBZiXo0lSNRZ58r+CUW8wCTP
+         cRBkl+V1XaFjTjdJjS5foK5pzi2WgJiASaC/RXiAXi9M0kwFFUntcVoczNfELNfGysN/
+         oYqcIiHpu8gw+0ihek1QJnMU8o7FkNCVulheGXq33Oj43smU3sUL79pFlM2j+zZy6Ck/
+         ZApw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758590977; x=1759195777;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UGIEsRlxQ6SB/60aNk9YuezwzaWruzT6GSumf3z2VMQ=;
+        b=YLpkgYrk9FWyLBzgXOm14nxkLgkaNyC1iPrHK3I2Tj1LOi4DGODZssomwsNEAZU7dM
+         MhlzrYj9zhXXPle+tAeCA8JTwikstOlyyxM+cVTTNjTScTaCYajEmB3vqqvRi8mlYDge
+         Fy5qvMWcZYmP/6W+CHS681ickCpTyHgcM1imqKk2t4izTuo3H9DrrIBYLR9F1hKjD+ZQ
+         piwXF8juSAuNdp3dcpH3NrJLuDI+/dBWGXdQcoSI/N0lt5d9OZE6jJUzuYusqZU9Dr5k
+         1FGnFuBFj4Ycn8C0UhBfmPpsML3eP0D3fiR3BrMHtppTVarGwpTDf3idht0jEw6F2o2R
+         zVoA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7B9/W+9PoUTDD41HZAM5qQK2cJx1zZdZF6ETcpWA/3Ho0FHwre/shkKiIC1onEqvDv845DTXYK0K6a/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY01d5Efi4WNg9jVLazUdlHPanUcTWVmoAwM9RdYrXMJKrDG8h
+	eSfcqBpLuR+XYndXJfX0jsI0Z0xGEE0Lawr5LaAD2DOgVu32q6xGxXPjDcDSFaLNZl+CAjXqUDs
+	JncAyeMka/9kalWljWp+MFj9qC2WuC+Y=
+X-Gm-Gg: ASbGncsTNjC/FwNDDEghBLhqB1RpzVb6vt0HzmyvgnIZ4/fS5eprAOG15sinUHJlHwU
+	s5YCEAHBA59ROD1TPS7r8jvQDWUqctWq8tXGiR0eZ46O+UPNnsNqLogzmPXn0oPbPi3aUWtOYyH
+	83uNJrZ7voAnLuLf05kI92CTQQxT6blRFrjtV9jn/fKVlNaRH1xr8gc21SfAOjOhtDfSUfjQ7h4
+	RSj5EA=
+X-Google-Smtp-Source: AGHT+IGBT9LTfm84q4DXIRoJSFR8hZ2WWRU49SsvtumqUnLfaKU5tnx1duKBXoUog0HE+Dc5+BSde4IFSplat+4nyaY=
+X-Received: by 2002:a17:90b:33c8:b0:32d:f4cb:7486 with SMTP id
+ 98e67ed59e1d1-332a95e8e19mr1041351a91.19.1758590976762; Mon, 22 Sep 2025
+ 18:29:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919003303.1355064-3-seanjc@google.com>
+References: <20250821073131.2550798-1-shengjiu.wang@nxp.com>
+ <20250821073131.2550798-5-shengjiu.wang@nxp.com> <20250901185208.394cd162@booty>
+ <CAA+D8AOCTqb5jLeRapYk4wRGZrsrPiuAR=ow3OA1B0+M9X4k7w@mail.gmail.com>
+ <20250909-omniscient-honeybee-of-development-adca8a@houat>
+ <CAA+D8AM=aRU-0QcgtxZ+=YBZ2+kMrP2uzSE3e+NJs3Z3zkrSVg@mail.gmail.com> <97288c51-954a-48a9-92b9-e165ce480707@nxp.com>
+In-Reply-To: <97288c51-954a-48a9-92b9-e165ce480707@nxp.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Tue, 23 Sep 2025 09:29:23 +0800
+X-Gm-Features: AS18NWBhgiBnQW_QrjL4oCw3YUyblBEb719xz-MBTlZAVwouH205ucQ6fmr_z54
+Message-ID: <CAA+D8APA85PhWVkW7c=d_qWF7L1ERxe7cS3Gg00SV-3TSyLwQw@mail.gmail.com>
+Subject: Re: [PATCH v5 4/7] drm/bridge: dw-hdmi: Add API dw_hdmi_set_sample_iec958()
+ for iec958 format
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Maxime Ripard <mripard@kernel.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
+	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, 
+	dianders@chromium.org, cristian.ciocaltea@collabora.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	p.zabel@pengutronix.de, devicetree@vger.kernel.org, l.stach@pengutronix.de, 
+	perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sean,
+On Mon, Sep 22, 2025 at 11:01=E2=80=AFAM Liu Ying <victor.liu@nxp.com> wrot=
+e:
+>
+> On 09/10/2025, Shengjiu Wang wrote:
+> > Hi
+> >
+> > On Tue, Sep 9, 2025 at 2:39=E2=80=AFPM Maxime Ripard <mripard@kernel.or=
+g> wrote:
+> >>
+> >> Hi,
+> >>
+> >> On Wed, Sep 03, 2025 at 06:41:05PM +0800, Shengjiu Wang wrote:
+> >>> On Tue, Sep 2, 2025 at 12:52=E2=80=AFAM Luca Ceresoli <luca.ceresoli@=
+bootlin.com> wrote:
+> >>>>
+> >>>> Hello Shengjiu,
+> >>>>
+> >>>> On Thu, 21 Aug 2025 15:31:28 +0800
+> >>>> Shengjiu Wang <shengjiu.wang@nxp.com> wrote:
+> >>>>
+> >>>>> Add API dw_hdmi_set_sample_iec958() for IEC958 format because audio=
+ device
+> >>>>> driver needs IEC958 information to configure this specific setting.
+> >>>>>
+> >>>>> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> >>>>> Acked-by: Liu Ying <victor.liu@nxp.com>
+> >>>>
+> >>>> [...]
+> >>>>
+> >>>>> +void dw_hdmi_set_sample_iec958(struct dw_hdmi *hdmi, unsigned int =
+iec958)
+> >>>>> +{
+> >>>>> +     mutex_lock(&hdmi->audio_mutex);
+> >>>>> +     hdmi->sample_iec958 =3D iec958;
+> >>>>> +     mutex_unlock(&hdmi->audio_mutex);
+> >>>>> +}
+> >>>>
+> >>>> Apologies for jumping in the discussion as late as in v5, but I noti=
+ced
+> >>>> this patch and I was wondering whether this mutex_lock/unlock() is
+> >>>> really needed, as you're copying an int.
+> >>>
+> >>> Thanks for your comments.
+> >>>
+> >>> Seems it is not necessary to add mutex here. I just follow the code a=
+s
+> >>> other similar functions.  I will send a new version to update it.
+> >>
+> >> Let's not be smart about it. Next thing you know, someone will add
+> >> another field in there that would absolutely require a mutex and now
+> >> you're not race free anymore.
+> >>
+> >> Unless there's a real concern, the mutex must stay.
+> >>
+> >
+> > Ok, thanks for comments.  Then Patch v6 need to be dropped.
+>
+> To properly track the changelog with patchwork, can you send v7 to add
+> the mutex?
 
-On Thu, Sep 18, 2025 at 05:33:00PM -0700, Sean Christopherson wrote:
-> diff --git a/arch/powerpc/include/asm/kvm_types.h b/arch/powerpc/include/asm/kvm_types.h
-> new file mode 100644
-> index 000000000000..656b498ed3b6
-> --- /dev/null
-> +++ b/arch/powerpc/include/asm/kvm_types.h
-> @@ -0,0 +1,15 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_PPC_KVM_TYPES_H
-> +#define _ASM_PPC_KVM_TYPES_H
-> +
-> +#if IS_MODULE(CONFIG_KVM_BOOK3S_64_PR) && IS_MODULE(CONFIG_KVM_BOOK3S_64_HV)
-> +#define KVM_SUB_MODULES kvm-pr,kvm-hv
-> +#elif IS_MODULE(CONFIG_KVM_BOOK3S_64_PR)
-> +#define KVM_SUB_MODULES kvm-pr
-> +#elif IS_MODULE(CONFIG_KVM_INTEL)
+Yes, will send it.
 
-Typo :) which obviously breaks the ppc64_guest_defconfig build.
-Changing that to CONFIG_KVM_BOOK3S_64_HV fixes it.
+Best regards
 
-> +#define KVM_SUB_MODULES kvm-hv
-> +#else
-> +#undef KVM_SUB_MODULES
-> +#endif
-> +
-> +#endif
+Shengjiu wang
 
-Also, you'll want to drop kvm_types.h from generic-y to avoid
-
-  scripts/Makefile.asm-headers:39: redundant generic-y found in arch/powerpc/include/asm/Kbuild: kvm_types.h
-
-diff --git a/arch/powerpc/include/asm/Kbuild b/arch/powerpc/include/asm/Kbuild
-index e5fdc336c9b2..2e23533b67e3 100644
---- a/arch/powerpc/include/asm/Kbuild
-+++ b/arch/powerpc/include/asm/Kbuild
-@@ -3,7 +3,6 @@ generated-y += syscall_table_32.h
- generated-y += syscall_table_64.h
- generated-y += syscall_table_spu.h
- generic-y += agp.h
--generic-y += kvm_types.h
- generic-y += mcs_spinlock.h
- generic-y += qrwlock.h
- generic-y += early_ioremap.h
---
-
-Cheers,
-Nathan
+>
+> >
+> > Is there any other comments for this Patch v5?
+> > If no, can this series be accepted?
+> >
+> > Best regards
+> > Shengjiu Wang
+>
+>
+> --
+> Regards,
+> Liu Ying
 
