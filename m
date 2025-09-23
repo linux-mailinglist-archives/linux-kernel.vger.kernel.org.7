@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-828390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70027B9485C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:15:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CCA5B94995
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E5C518A6A50
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:16:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91CAD1901B38
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1337923D7CD;
-	Tue, 23 Sep 2025 06:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C63C30F94E;
+	Tue, 23 Sep 2025 06:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="SYy6zj8r"
-Received: from mail-m49206.qiye.163.com (mail-m49206.qiye.163.com [45.254.49.206])
+	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="Wti8Khl0"
+Received: from mail-m3291.qiye.163.com (mail-m3291.qiye.163.com [220.197.32.91])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2203261B83;
-	Tue, 23 Sep 2025 06:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C3530DD24;
+	Tue, 23 Sep 2025 06:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758608144; cv=none; b=NWRbxKks8E18z8oLbA944y9eN/1ziIXZ+joj8yRSrbJOTG5stn6LaIxm0emB2WG2623NSJaT6DgBf3KI7jsYfUfMiWp1LQJsCd/w5xtgiKtC+IW47+GQstMvuLVx6w+2Y5dr8WiQTq8K1oNbyEun7O/n9Q/Tgo9PWYiMJzRpke8=
+	t=1758609961; cv=none; b=ibJlcQj+pHC2TtfuqenIdJApeTBtrv4SvuKaEHRMPILZXRzj2n7BQLxWkuERVZac1DooTWX7iTWU6zdnEdnInxtMFIMFJnruHrHogxkykRotsYp8mQKIzZMdcWX21C3sVJmvvCCVyvvbik5HpoKTQRHQAmPsOO2NhSdYRtVfaWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758608144; c=relaxed/simple;
-	bh=mSj2WCLDiPXpaIZH40IfbgFImD3OHx7gQZfx8yjYYTw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sApSWtBQzriEUrAjSq1fS9DrGZ8E3l4F1wk0n0Z79QKUmaDXnkF6nJtTMUCMYehnDc9s5v3p2sjf3yXg0ocdLthChNQTAlku1JEXsouHghqJwRrcodSdc/AAzScRheu9twWAeshvDpXdpZa+yKPkwD0poMB8ryoPZKjv1z34QR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=SYy6zj8r; arc=none smtp.client-ip=45.254.49.206
+	s=arc-20240116; t=1758609961; c=relaxed/simple;
+	bh=eWqieNtDLZJBpQIXEibnf+P3a6GVeHnQ5dMPHSti1nI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QhGmBW3DUc6DsM30xfsgSIGwjrRkngzOTxo16ogI6ffq0o8Xbkz5mZRK6KbYOegLAGeEmRR3puFe5Vg6ta+uqgBIjie96oEb2AYBVcE7SzKzRm2cKCDBAQebVPNmIwHjUEtkf0xRiuY8EyyFsUwkgHUMbNtAjLP1sJR8AoBHtIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=Wti8Khl0; arc=none smtp.client-ip=220.197.32.91
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
 Received: from [127.0.1.1] (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 23bdebfbe;
-	Tue, 23 Sep 2025 14:10:28 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 23bdebfcf;
+	Tue, 23 Sep 2025 14:10:30 +0800 (GMT+08:00)
 From: Albert Yang <yangzh0906@thundersoft.com>
-Subject: [PATCH 0/9] arm64: introduce Black Sesame Technologies C1200 SoC
- and CDCU1.0 board
-Date: Tue, 23 Sep 2025 14:10:06 +0800
-Message-Id: <20250923-v4-patch-final-v1-0-2283ad7cbf88@thundersoft.com>
+Date: Tue, 23 Sep 2025 14:10:08 +0800
+Subject: [PATCH 2/9] dt-bindings: arm: add Black Sesame Technologies (bst)
+ SoC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,10 +45,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAL450mgC/x2MQQqAIBAAvxJ7bqGspPpKdBBdayEsNCQI/97Sc
- RhmXkgUmRLM1QuRMic+g0BbV2B3EzZCdsKgGjU0k+ow93iZ2+7oOZgDnbVO+9FrkSDRFcnz8w+
- XtZQPscQLrWAAAAA=
-X-Change-ID: 20250923-v4-patch-final-dccd6f8f6092
+Message-Id: <20250923-v4-patch-final-v1-2-2283ad7cbf88@thundersoft.com>
+References: <20250923-v4-patch-final-v1-0-2283ad7cbf88@thundersoft.com>
+In-Reply-To: <20250923-v4-patch-final-v1-0-2283ad7cbf88@thundersoft.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Ge Gordon <gordon.ge@bst.ai>, 
  BST Linux Kernel Upstream Group <bst-upstream@bstai.top>, 
@@ -60,190 +59,83 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  soc@lists.linux.dev, Albert Yang <yangzh0906@thundersoft.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758607828; l=9111;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758607828; l=1892;
  i=yangzh0906@thundersoft.com; s=20250814; h=from:subject:message-id;
- bh=mSj2WCLDiPXpaIZH40IfbgFImD3OHx7gQZfx8yjYYTw=;
- b=QbXwM+/QkULWaoRTEjiB2SFAGGHhK05AV3eE3cGqksU3ZIe4ntfM4DdPuXzaJW8BACGb3ukGc
- P5MrBqyrPTvAB72VmgNllpXXNvPCtoF7Ba9EVGP2qgandpHXzRVVG8B
+ bh=eWqieNtDLZJBpQIXEibnf+P3a6GVeHnQ5dMPHSti1nI=;
+ b=ooly4LSDwkrjPNsdIM9qUiMJZDxlx0PMeSMu/5TzTp+ZKRh97izHCDoR1OsTpaMc+4snOuWAN
+ CTb6obAD2pSBsdJzbQ4EWSyg7a8GzMTeBsk/vs81gUHuBc8UySKxFQr
 X-Developer-Key: i=yangzh0906@thundersoft.com; a=ed25519;
  pk=bEcgALL9KpUg/m7zH44r50xa/re91dI9SA0vGV1/bu4=
-X-HM-Tid: 0a997531e40109cckunmfc27e25b4e01c3
+X-HM-Tid: 0a997531ef2a09cckunmfc27e25b4e0226
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaGk5OVk5DT01CSxpNQklOT1YVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCQ0tMVktJQ0gaGBpNHkoZGFYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSk
 	tLVUpCS0tZBg++
 DKIM-Signature: a=rsa-sha256;
-	b=SYy6zj8rca17RJOuW4vA+kX7iL6G8V4+OykeS8g+1iGIr8L0Gb/pxUocTz7WbpgU0MMbKV1iP+BmsHA5KyJO38OiHw4f0NE5JOyi3q4ThCDYb3vczxy0blNJcer66lPvZDdmf+5wGjPm1wXHn/ljsXgKWYo/udEdBafGO9qVKnc=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=e7JXaXPfRHuobwQOQcVJlT2z1Yhiyju5p3cQ3WcHFhM=;
+	b=Wti8Khl09WilIY/Kt4OJjPDBGwcGXaCw+n0gqtJdKvcCeTP+jOulzXNVqjK8kwmjGJ1ZF8zM+5jrMHSmjWwDqLHSgw0HoLfQBZb1HBItN3+afVYw8Ejczy3tk3BDhtZ8omG21DBmtBIq8KwJh8rxyod14irEHFUTQlgadPRGtoY=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
+	bh=aWAYbqoYVtppRStnG1G4tD44qpuBAMIK8fz0sA1UFI4=;
 	h=date:mime-version:subject:message-id:from;
 
-This patch series introduces comprehensive support for Black Sesame Technologies
-(BST) C1200 SoC and CDCU1.0 ADAS 4C2G board. BST is a leading automotive-grade
-computing SoC provider focusing on intelligent driving, computer vision, and AI
-capabilities for ADAS and autonomous driving applications. You can find more information
-about the SoC and related boards at: https://bst.ai
-
-The series includes complete platform enablement from device tree bindings to
-drivers and board-level support:
-
-Patch 1: dt-bindings: vendor-prefixes: Add Black Sesame Technologies Co., Ltd.
-- Adds BST vendor prefix to device tree vendor prefixes
-- Provides company information and website link
-
-Patch 2: dt-bindings: arm: add Black Sesame Technologies (bst) SoC
-- Adds device tree bindings for BST ARM SoC family
-- Defines compatible strings for C1200 SoC and CDCU1.0 board
-
-Patch 3: arm64: Kconfig: add ARCH_BST for Black Sesame Technologies SoCs
-- Adds ARCH_BST configuration option for BST SoC family
-- Enables platform-specific features and driver dependencies
-
-Patch 4: dt-bindings: mmc: add binding for BST DWCMSHC SDHCI controller
-- Adds device tree binding for BST's DWCMSHC SDHCI controller
-- Defines register layout, clocks, and controller-specific properties
-
-Patch 5: mmc: sdhci: add Black Sesame Technologies BST C1200 controller driver
-- Comprehensive SDHCI driver for BST C1200 SoC
-- Addresses specific hardware constraints with 32-bit DMA limitations
-- Implements custom clock management, power management, and tuning
-- Uses SRAM-based bounce buffer for DMA operations
-
-Patch 6: mmc: sdhci: allow drivers to pre-allocate bounce buffer
-- SDHCI core enhancement to support driver-allocated bounce buffers
-- Enables platforms with specific DMA constraints to pre-allocate buffers
-- Suggested by Adrian Hunter for better platform integration
-
-Patch 7: arm64: dts: bst: add support for Black Sesame Technologies C1200 CDCU1.0 board
-- Complete device tree support for BST C1200 CDCU1.0 ADAS 4C2G board
-- Includes SoC dtsi and board-specific dts files
-- Defines CPU, memory, peripherals, and platform-specific configurations
-
-Patch 8: arm64: defconfig: enable BST platform and SDHCI controller support
-- Enables ARCH_BST and MMC_SDHCI_BST in ARM64 defconfig
-- Provides out-of-box support for BST platforms
-
-Patch 9: MAINTAINERS: add Black Sesame Technologies (BST) ARM SoC support
-- Adds maintainer entry for BST ARM SoC support
-- Covers device tree bindings, drivers, and board files
-
-Changes for v4:
-- rebase to 6.17-rc5
-- Patch 1 (dt-bindings: vendor-prefixes):
-	- Adjust ^bst to the correct alphabetical order
-	- Adjust Acked-by order
-- Patch 2 (dt-bindings: arm):
-	- Remove Signed-off-by: Ge Gordon
-	- Add Reviewed-by Krzysztof Kozlowski info
-- Patch 3 (arm64: Kconfig):
-	- Remove Signed-off-by: Ge Gordon
-- Patch 4 (dt-bindings: mmc):
-	- Remove Signed-off-by line for Ge Gordon
-	- Change `$ref: mmc-controller.yaml#` to `$ref: sdhci-common.yaml#`
-	- Change compatible string from `bst,c1200-dwcmshc-sdhci` to `bst,c1200-sdhci`
-- Patch 5 (mmc: sdhci driver):
-	- Rename all functions from bst_* to sdhci_bst_* for better namespace consistency
-	- Rename driver file from sdhci-of-bst-c1200.c to sdhci-of-bst.c
-	- Rename dwcmshc_priv structure to sdhci_bst_priv for clarity
-	- Update driver name from "sdhci-dwcmshc" to "sdhci-bst" throughout
-	- Add comprehensive register bit mask definitions and named constants
-	- Replace manual polling loops with read_poll_timeout() for clock stability
-	- Add dedicated sdhci_bst_wait_int_clk() function for internal clock management
-	- Completely rewrite power management with proper power-off handling
-	- Enhance clock control with read-modify-write operations to avoid clobbering
-	- Add MBIU burst mode configuration based on power state
-	- Improve error handling and cleanup in probe/remove functions
-	- Simplify bounce buffer allocation and remove redundant MMC parameter adjustments
-	- Add SDHCI_QUIRK_BROKEN_ADMA quirk for hardware limitation
-	- Replace ioread32/iowrite32 with readl/writel for consistency
-	- Update copyright year and simplify license text
-	- Improve tuning algorithm with clearer variable naming
-	- Enhance register access patterns with proper bit field manipulation
-	- Add power-off clock management to reduce idle power consumption
-	- Add Acked-by: Arnd Bergmann
-- Patch 6 (mmc: sdhci bounce buffer):
-	- Add new patch by suggestion from Adrian Hunter
-- Patch 7 (arm64: dts):
-	- Remove Signed-off-by line for Ge Gordon
-	- Reorder device tree node properties for better consistency
-	- CPU nodes: move `device_type` before `compatible`, add explicit `reg` values
-	- MMC node: change compatible from `bst,c1200-dwcmshc-sdhci` to `bst,c1200-sdhci`
-	- MMC node: remove `bus-width` and `non-removable` from SoC dtsi, move to board dts
-	- SoC node: reorder properties (`ranges` before address/size cells)
-	- UART node: reorder properties (clock-frequency before interrupts)
-	- GIC node: reorder properties for better readability
-	- Timer node: reorder properties (always-on before interrupt-parent)
-	- Board DTS: add `bus-width = <8>` and `non-removable` to MMC node
-	- Board DTS: reorder MMC and UART node references
-- Patch 8 (arm64: defconfig):
-	- move CONFIG_MMC_SDHCI_BST before CONFIG_MMC_SDHCI_F_SDH30
-	- Remove Signed-off-by line for Ge Gordon
-	- Simplify commit message (remove detailed description about eMMC/SD functionality)
-- Patch 9 (MAINTAINERS):
-	- Changed file name: sdhci-of-bst-c1200.c to sdhci-of-bst.c
-	- Change title from "add and consolidate" to just "add"
-	- Simplify commit message description
-	- Remove Signed-off-by line for Ge Gordon
-
-Changes for v3:
-- Patch 2: Add Signed-off-by: Ge Gordon
-- Patch 3: Reword subject from "for bst silicons" to "for Black Sesame Technologies SoCs"
-	and drop unrelated whitespace hunk
-- Patch 4: Switch reg schema from maxItems to explicit items with per-entry descriptions,
-	improve example with irq.h include and bus node wrapper, add Signed-off-by: Ge Gordon
-- Patch 5: Simplify dwcmshc_priv structure, improve helper functions, use
-	devm_platform_ioremap_resource(), clarify hardware limitations documentation
-- Patch 6: Split defconfig enablement out into dedicated patch, refine memory description,
-	adjust node ordering, remove gic mask
-- Patch 7: Also enable CONFIG_ARCH_BST in arm64 defconfig
-
-Changes for v2:
-- Patch 2: Remove unnecessary pipe in description, drop invalid compatible entry,
-	remove root node definition
-- Patch 3: Place configuration entry in correct alphabetical order, use generic family name,
-	follow upstream naming conventions
-- Patch 4: Simplify description, update $schema reference, correct compatible string,
-	remove redundant properties, clean up required properties, standardize example format
-- Patch 5: Remove COMMON_CLK dependency, add ARCH_BST || COMPILE_TEST dependency,
-	replace temporary ioremap with persistent mapping, refactor bounce buffer allocation,
-	prune unused headers, fix register access macros, improve error handling
-- Patch 6: Reorganize memory map, update MMC controller definition, remove deprecated
-	properties, standardize interrupt definitions, add root compatible string
+Add device tree bindings for Black Sesame Technologies Arm SoC,
+it consists several SoC models like C1200, etc.
 
 Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Albert Yang (9):
-      dt-bindings: vendor-prefixes: Add Black Sesame Technologies Co., Ltd.
-      dt-bindings: arm: add Black Sesame Technologies (bst) SoC
-      arm64: Kconfig: add ARCH_BST for Black Sesame Technologies SoCs
-      dt-bindings: mmc: add binding for BST DWCMSHC SDHCI controller
-      mmc: sdhci: add Black Sesame Technologies BST C1200 controller driver
-      mmc: sdhci: allow drivers to pre-allocate bounce buffer
-      arm64: dts: bst: add support for Black Sesame Technologies C1200 CDCU1.0 board
-      arm64: defconfig: enable BST platform and SDHCI controller support
-      MAINTAINERS: add Black Sesame Technologies (BST) ARM SoC support
+Changes for v4:
+- remove Signed-off-by: Ge Gordon
+- add Reviewed-by Krzysztof Kozlowski info
+Changes for v3:
+- Add Signed-off-by: Ge Gordon
 
- Documentation/devicetree/bindings/arm/bst.yaml     |  31 ++
- .../devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml |  70 +++
- .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
- MAINTAINERS                                        |  10 +
- arch/arm64/Kconfig.platforms                       |   8 +
- arch/arm64/boot/dts/Makefile                       |   1 +
- arch/arm64/boot/dts/bst/Makefile                   |   2 +
- .../boot/dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts    |  43 ++
- arch/arm64/boot/dts/bst/bstc1200.dtsi              | 115 +++++
- arch/arm64/configs/defconfig                       |   2 +
- drivers/mmc/host/Kconfig                           |  14 +
- drivers/mmc/host/Makefile                          |   1 +
- drivers/mmc/host/sdhci-of-bst.c                    | 544 +++++++++++++++++++++
- drivers/mmc/host/sdhci.c                           |   7 +
- 14 files changed, 850 insertions(+)
+Changes for v2:
+- Removed unnecessary pipe (`|`) in description
+- Dropped invalid `compatible` entry for standalone SoC
+- Removed root node (`$nodename: '/'`) definition
 ---
-base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
-change-id: 20250923-v4-patch-final-dccd6f8f6092
+ Documentation/devicetree/bindings/arm/bst.yaml | 31 ++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/arm/bst.yaml b/Documentation/devicetree/bindings/arm/bst.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..a3a7f424fd57f23efeed9b076c2612ba672be3e2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/bst.yaml
+@@ -0,0 +1,31 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/bst.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: BST platforms
++
++description:
++  Black Sesame Technologies (BST) is a semiconductor company that produces
++  automotive-grade system-on-chips (SoCs) for intelligent driving, focusing
++  on computer vision and AI capabilities. The BST C1200 family includes SoCs
++  for ADAS (Advanced Driver Assistance Systems) and autonomous driving
++  applications.
++
++maintainers:
++  - Ge Gordon <gordon.ge@bst.ai>
++
++properties:
++  $nodename:
++    const: '/'
++  compatible:
++    oneOf:
++      - description: BST C1200 CDCU1.0 ADAS 4C2G board
++        items:
++          - const: bst,c1200-cdcu1.0-adas-4c2g
++          - const: bst,c1200
++
++additionalProperties: true
++
++...
+
 -- 
-Albert Yang <yangzh0906@thundersoft.com>
+2.43.0
 
 
