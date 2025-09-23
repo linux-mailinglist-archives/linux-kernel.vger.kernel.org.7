@@ -1,143 +1,105 @@
-Return-Path: <linux-kernel+bounces-829777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6861B97CDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:34:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12237B97CE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4812E5115
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:34:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA4262E3E72
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B4D3101DF;
-	Tue, 23 Sep 2025 23:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8F73112A0;
+	Tue, 23 Sep 2025 23:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h6nCSaMO"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jBmKkQwR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC139302162
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14A117A5BE;
+	Tue, 23 Sep 2025 23:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758670469; cv=none; b=u51iz/6LYTC79NvwMICeZZER7qJxL+3PsiYVoQyU6CEKx3CdUcqJhCPWCxKxG8x+9WjtRKxCgJ1VzHZYwlo7MklVmsGVgTLmqyplcGqv8Mdu571qKRKNqqBOoH3nV/SKRPRghq144GdzTgVg4ker7ykenwDp7rEvAOCSRmFzX5g=
+	t=1758670650; cv=none; b=i+LMOePRCSDkxZH4ohKp14s9EJbtZYkK2imfO3ArM7v+Ytzxi/3ScxxbWYDYTxAe7e0IlnAm0VVakm6mPnPORzlK5/3rEzm8qzQZtIcn8IuKT7jq0wFh+SMECx8lurs4SoPu51VkIDdFIrRMDbp7jOCPpfP/T51KvSucYaWANsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758670469; c=relaxed/simple;
-	bh=8FWgTx5+BEMEgi+Q3Sb4O9xjeopCYpByXxsap7GYt0M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pcm8MjP8v6a+jSIQk6KKY5++VcZRTQutwFVbQmJiH2VxiPRjl37jH0EZzZXttJe3sAtTZN+kaqFyGSdZp9VzcLagOwogC23K4QDCSnYFz2VGXaG/lQa7y2OwVDlLYZX2HgR+g6aVwarm02KYeR1Lm7UqhOvd0aMbKrWG/kKCae0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h6nCSaMO; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45dd505a1dfso43744805e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:34:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758670466; x=1759275266; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=48kEwgQB4wWkI/XsNWVulCwz+LDSwRqAOLQwx1Koqjg=;
-        b=h6nCSaMOoYHqP0fUAeGTzFUDBkHGPRZA4GLvwEBz9dmA6eEPq/5EyJTmDf5wT0URNa
-         Dfi1MrGCIbuFxfQvP3JjmaGsPHcu3w/XKDZXja/KqXMvrxPX+i1k1BChPtEeQLp2VEiI
-         5clotj9ECNeiUwv6Fl89KrZoWifbyqESeUU1Cdacvsz1f/Tq+58f1Ty9Jx20aINb5zP+
-         oeZ8mTWjif+1Uc55FnehKKwtjYIEgIlU+WyR+uYw/cok1RFJb7Hd9LyyatR/aF3iBASQ
-         eswd3AWz/TtRRq3DlUMHea4VHTms92wswNbzzQw9m5HVw/Tu30UVj10RJ0XOx2a01svF
-         dbzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758670466; x=1759275266;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=48kEwgQB4wWkI/XsNWVulCwz+LDSwRqAOLQwx1Koqjg=;
-        b=YZgnpaQ6KsJoOa3NSeOHvU/MBLLmuwG/uvWabp4G26NNRW7L/dO194V9TzhOK0p2SF
-         GpoXva5nJDSif/IR4gx0o1IuY0zeGj5YzfLoeHVwNRViNgp4kbeqoRIKNKjxLp3EKnqY
-         r9nGhom2xtvqSfuxUURVDxhTbhEMD8bWEzf4251LIKjvOj2vQccjlPeKwd5HmKk654YP
-         0NdVudhfSc/HF/qHaQwnbTj3aST4pG1/NwtHjUFWah/bjr8kE/737ECneTJwiArEbUqt
-         7EaZSJHrdzbhT/xZJnKe4uy9AJmFgXsnMIJCgJmvzsLBPXDFPePuCRhdID25XGxTVC/5
-         8v4Q==
-X-Gm-Message-State: AOJu0YxuXFnG9ag3obpmJ4mRjBYw5MJZQVYrBMzJuUY3+i1SQTsTf4Jy
-	gjW56U8VuYbx7wnxmb0lZD026K8rpsxAfWchMbqk0OzYJgUFgM/lrs9HTqK1Y/fubLL4FnWov9x
-	ujQhdQulMwoOxKgg/nbabrz7G95dJztWZgmJzaN0=
-X-Gm-Gg: ASbGnctFyZexq6tbvE3YMyOzwK/TNEuua9CPB8WJHEDFj+Dju+dY9KeIOPZ9ZFbsrxG
-	laghnQs5RLOiHJnd5hHnPTG90ciq9TZRoDtQmKfGJM90zUKc6hR0ZMZpSIVSirgOmwjldiuRvKg
-	7anMwfvIK6gkzzli3Cz5CNHV5FtwY1FQ4m6Sd7xLEqOwgCisfhAMyGZo+D/kP9upmKyBWd/9DE/
-	fRQ2xf3Dv17gH/6cYx2RUCIPLI+T/gxjR/yBD0M2h1N/nQaGBvsFA==
-X-Google-Smtp-Source: AGHT+IHjYD2K/t0UHtRrupmKcR5o+CUOO0hQJJK1vGvlOg65qLL6tj5sV9HxMXJ6eNn0eu2MvPDyI8HyezK3pP9fjEo=
-X-Received: by 2002:a05:600c:198f:b0:45d:d9ab:b86d with SMTP id
- 5b1f17b1804b1-46e1dac6457mr44630825e9.31.1758670465734; Tue, 23 Sep 2025
- 16:34:25 -0700 (PDT)
+	s=arc-20240116; t=1758670650; c=relaxed/simple;
+	bh=x2oIkf/wqVXdqXEmFjopZYbSnwaDoqrJINY8rvjWOVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hxWIiSPLAcJeshHcxs9YZSrV0EzRS6MLH9nL/j/yqHP4hGue/7lJwhj9qU/r7ftcJ1gf+5/MpfTRyKsBZnJtas2JODQIYPNNlBXc9E2YMNgfJQtAFuyPdB+djU14P420vg58C4TzRpmJAeuWWxN1COLj2ntMXxg/8b67eAiuFXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jBmKkQwR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF9DDC4CEF5;
+	Tue, 23 Sep 2025 23:37:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758670649;
+	bh=x2oIkf/wqVXdqXEmFjopZYbSnwaDoqrJINY8rvjWOVY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jBmKkQwRKMcZLRN8J15vBjTDB8GP9MfHuPufNarhtwwET0Dur/jq3DidBgT5UmJMS
+	 9jLas1fCUrorvG5uVxf/MS0FWpxHDCRBZ87ulmnOjOdX5ZQqFLLd0pWB66oKm8Lz6X
+	 Y4jw3MQOvS5ZkvQzVZKmqyozAV9LAmEE4RKrGp3j3XzRREvOmtKW/NO/WeQDrHM/p+
+	 Y3GcQGG2TGCOO3fMh5yYF1V+eG94pEaBH/YS0WCi3Ke8MM0VTJJgPOyns68n5Bk0rt
+	 TZjVpnJ7J6abkuwna73JTZS52uHTrJe7BzFnj4/s+lnOHomRWfMnsSgjM2+vGg0eNH
+	 Ohex8td6/JVRw==
+Date: Tue, 23 Sep 2025 16:37:27 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Michal Pecio <michal.pecio@gmail.com>
+Cc: I Viswanath <viswanathiyyappan@gmail.com>, andrew@lunn.ch,
+ andrew+netdev@lunn.ch, davem@davemloft.net, david.hunter.linux@gmail.com,
+ edumazet@google.com, linux-kernel-mentees@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, petkan@nucleusys.com,
+ skhan@linuxfoundation.org,
+ syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
+Subject: Re: [PATCH net v2] net: usb: Remove disruptive netif_wake_queue in
+ rtl8150_set_multicast
+Message-ID: <20250923163727.5e97abdb@kernel.org>
+In-Reply-To: <20250924012039.66a2411c.michal.pecio@gmail.com>
+References: <83171a57-cb40-4c97-b736-0e62930b9e5c@lunn.ch>
+	<20250920181852.18164-1-viswanathiyyappan@gmail.com>
+	<20250922180742.6ef6e2d5@kernel.org>
+	<20250923094711.200b96f1.michal.pecio@gmail.com>
+	<20250923072809.1a58edaf@kernel.org>
+	<20250924012039.66a2411c.michal.pecio@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904002201.971268-1-jstultz@google.com> <20250904002201.971268-3-jstultz@google.com>
- <337322ea-6efe-4814-a813-e55d4c80fda7@amd.com> <CANDhNCpmQLF_03t3PMEtjBU_tpL10FJ_iL=x3zMG+Bs0PEFESw@mail.gmail.com>
- <d70e7e50-d5c3-4689-b91f-9dce0f1a0424@amd.com>
-In-Reply-To: <d70e7e50-d5c3-4689-b91f-9dce0f1a0424@amd.com>
-From: John Stultz <jstultz@google.com>
-Date: Tue, 23 Sep 2025 16:34:13 -0700
-X-Gm-Features: AS18NWD2-fnRjkF0LZG1rzixQhRVviz6IbB-TDJCK0HIwcIbpI7itXPc1EzB7k4
-Message-ID: <CANDhNCrPeJpNYtHEZY46etXb_c4H4dALELf2LbC1R8PnWJW97w@mail.gmail.com>
-Subject: Re: [RESEND][PATCH v21 2/6] sched/locking: Add blocked_on_state to
- provide necessary tri-state for proxy return-migration
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Suleiman Souhlal <suleiman@google.com>, 
-	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 18, 2025 at 8:28=E2=80=AFPM K Prateek Nayak <kprateek.nayak@amd=
-.com> wrote:
-> On 9/19/2025 4:27 AM, John Stultz wrote:
-> >> I didn't know that was possible! Neat. Since cleanup.h has a note
-> >> reading:
-> >>
-> >>     ... the expectation is that usage of "goto" and cleanup helpers is
-> >>     never mixed in the same function.
-> >>
-> >> are there any concerns w.r.t. compiler versions etc. or am I just bein=
-g
-> >> paranoid?
-> >
-> > Hrrrrmmmm.  I hadn't seen that detail. :/   I guess I was just lucky
-> > it worked with my toolchain.
->
-> I have been too. Maybe it is okay to use a goto if folks know what
-> they are doing =C2=AF\_(=E3=83=84)_/=C2=AF
->
-> Another idea is to have:
->
->     bool deactivate_donor =3D false;
->
->     for (p =3D donor; task_is_blocked(p); p =3D owner) {
->         guard(raw_spinlock)(...);
->         ...
->         if (<condition> {
->             deactivate_donor =3D true;
->             break;
->         }
->         ...
->     }
->     if (deactivate_donor)
->         return proxy_deactivate(rq, donor);
->
-> Can that work?
+On Wed, 24 Sep 2025 01:20:39 +0200 Michal Pecio wrote:
+> With the patch, it all goes away and doesn't show up even after a few
+> minutes. I also tried with two TCP streams to a real machine and only
+> observed a 20KB/s decrease in throughput while the ifconfig allmulti
+> loop is running, probably due to USB bandwidth. So it looks OK.
 
-Yeah, I've reworked the logic to switch() on an action enum, which
-will let us do something similar without gotos.
+Excellent, could you send an official Tested-by tag?
 
-thanks
--john
+> But one annoying problem is that those control requests are posted
+> asynchronously and under my test they seem to accumulate faster than
+> they drain. I get brief or not so brief lockups when USB core cleans
+> this up on sudden disconnection. And rtl8150_disconnect() should kill
+> them, but it doesn't.
+> 
+> Not sure how this is supposed to work in a well-behaved net driver? Is
+> this callback expected to return without sleeping and have an immediate
+> effect? I can't see this working with USB.
+
+The set_rx_mode callback is annoying because it can't sleep.
+Leading to no end of issues in the drivers.
+
+The best way to deal with this IMHO is to do the confirm from a work
+item. Don't try to kick off the config asynchronously, instead schedule
+a work which takes a snapshot of the config, and then synchronously
+configs the device. The work give us the dirty tracking for free 
+(if a config change is made while work is running it will get
+re-scheduled). And obviously if there's only one work we can't build
+up a queue, new request before work had a chance to run will do nothing.
+
+We have added a todo to do something along these lines in 
+the core 3+ years ago but nobody had the time to tackle this.
+The work and taking a snapshot of the rx config are not driver-specific,
+so it could all be done in the core and then call a (new) driver NDO.
 
