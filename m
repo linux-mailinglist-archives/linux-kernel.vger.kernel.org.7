@@ -1,203 +1,109 @@
-Return-Path: <linux-kernel+bounces-828163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743F5B94169
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 05:19:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A68B94175
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 05:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609FB18A77EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:19:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A272D2A7CD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD462472B1;
-	Tue, 23 Sep 2025 03:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8C424A066;
+	Tue, 23 Sep 2025 03:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LZV82vZI"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j86N3wRi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CC98F49;
-	Tue, 23 Sep 2025 03:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0AF5789D;
+	Tue, 23 Sep 2025 03:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758597556; cv=none; b=rjvCNpI+GAqEXWvXntIybk4Ae78LEOz99+d0VDpWojEIYqeT0Tt2LAtorW/xiUaAkwH/sYDzMevWwznJB09OpS8u3Un/67TTg81XCSGcx54eV27KOhPnBH7TmnEq8RgWNRTIpfyiIQMQUAWeJsAzU4EhrKFngcVDIjpmuyueg74=
+	t=1758597608; cv=none; b=YC1Mpagml/xWX8pP7tEIqWvPmuALTQ1QIRQAel8kxG88iIE8xo879vGYK0aCzJO2nPRHb2TZXsOrSty8/Smgjb0DTcLJk+jZJSS6NR0iKcja0kCswTh2U/bYLTgkha0UTijYHuTW4OgPyuXgrbMVgMCx6WGTsrDSbXH071BMAFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758597556; c=relaxed/simple;
-	bh=KXDi2j4Nbp116ocXPIYHvxY82ZnBPUMWbX0t8osWhDQ=;
+	s=arc-20240116; t=1758597608; c=relaxed/simple;
+	bh=UTNHV7EzYz2RCe0aUYcV/EvPLOr/POAF+JlFNQ/315o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aMMQJHf68H7HcHqxwajhEvNzUqLRnX5/TuDiAPEgclXu7upwPTC39tskPXfCKGFGWX8wKaiNdfssH50xVdhzQo9m/AmLYwsQaPrlp7UKfGGq71+GM/SB3M6h9/U9Rrx8KEAp/n/zXUG8LhhCrO1xaQ5lrOGVdErOpDwS2e3/1d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LZV82vZI; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e204e1fc-dcdf-48a8-ab3d-f136c3a0c8d5@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758597550;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JY3gLzohHtQ4KKbBN+vvykpngXqaOlwuy4NvFh6M764=;
-	b=LZV82vZIcd4jtZvfBLpK/DxHwIPTdb6oCSupffToRJsxKCO3F4xdIr2DY35rA6Okpc3Cay
-	8CUIFOyfCLYo7LhDUYbez/Z0dmKfsg6Msqef7yBbocDRveClN/eeca15VWJTZ/VJE1A5H8
-	K1fV1nn5aH2gTjjy+5Q04PZgeyIj2eQ=
-Date: Tue, 23 Sep 2025 11:18:41 +0800
+	 In-Reply-To:Content-Type; b=eep7XhsOUU1XpPPEsBk+tAuBob9CfNraqdgSiSETQag8DTvHlGw/Uu5JJfAPvw+b4h1DEJXkKpmi1klaH1SQWxlXaPKJimQQxxrSlDyeGuQHfJxcDSqvXRQpyrmEUTSMVENEzi+DcEeUrwfV5Wsxy/k6bQCiMei7zCvyMWCIiN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j86N3wRi; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758597607; x=1790133607;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=UTNHV7EzYz2RCe0aUYcV/EvPLOr/POAF+JlFNQ/315o=;
+  b=j86N3wRiQw1ZCIBq+liZsPqmzpjJ6plxGhA01oSXLJSDeWeRvtFqA5zY
+   5LQKoimoA/csSAa7xJ0g9ziFrOMNp0mWEV7b0BAiA51e10jC4IiGYpFiq
+   DNG2zEdlysMuNnA6zIc3ZV82OlBTiSKhUfbnKyyCLxjbUqUFOw75sP3rk
+   nvfGcGrDgtEgzWbwbZnkPB/rOKqW7Q9Ye8fAwb53bfglVoEJioubAdktO
+   0WganILJPATm96E6iQR+KJC12fRPCVnB2/tbslzSRZKI0Z/1vcs//b8o+
+   593trAH7OiXzGp8r+tFQG9ivLlStoDjkosPxEgEFZ/eY3iH+RW/z8/6iB
+   A==;
+X-CSE-ConnectionGUID: 5fRo1/ulRZGJ6gB6sdJGmQ==
+X-CSE-MsgGUID: +8L3Ci5mTCCHkFO7RUV4cA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="71975685"
+X-IronPort-AV: E=Sophos;i="6.18,286,1751266800"; 
+   d="scan'208";a="71975685"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 20:20:06 -0700
+X-CSE-ConnectionGUID: UmT/oRYQT1WqG/FnTyYOTA==
+X-CSE-MsgGUID: vqqZvvA/R2iKPAxHFPf6vg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,286,1751266800"; 
+   d="scan'208";a="207398169"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 20:20:04 -0700
+Message-ID: <25a7a16f-ec73-4311-81ff-3adf62748040@intel.com>
+Date: Tue, 23 Sep 2025 11:20:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [External] Re: [PATCH 0/3] Suppress undesirable hung task
- warnings.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: x86: Drop "cache" from user return MSR setter that
+ skips WRMSR
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yan Zhao <yan.y.zhao@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>
+References: <20250919214259.1584273-1-seanjc@google.com>
 Content-Language: en-US
-To: Julian Sun <sunjunchao@bytedance.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, mhiramat@kernel.org,
- viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, agruenba@redhat.com,
- hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
- shakeel.butt@linux.dev, muchun.song@linux.dev, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20250922094146.708272-1-sunjunchao@bytedance.com>
- <b31a538a-c361-4e3e-a5b6-6a3d2083ef3b@linux.dev>
- <20250922145754.31890092257495f70db3909d@linux-foundation.org>
- <9665ff9f-3e1d-4c39-8c8f-b9e12fb4d5f4@linux.dev>
- <CAHSKhtee3amv12XdBu0Wbfde_27pSm7WdRtifGhpfycLwmov0A@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <CAHSKhtee3amv12XdBu0Wbfde_27pSm7WdRtifGhpfycLwmov0A@mail.gmail.com>
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250919214259.1584273-1-seanjc@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7bit
 
+On 9/20/2025 5:42 AM, Sean Christopherson wrote:
+> Rename kvm_user_return_msr_update_cache() to __kvm_set_user_return_msr()
+> and use the helper kvm_set_user_return_msr() to make it obvious that the
+                      ^
+the helper *in* kvm_set_user_return_msrs() ..
 
-
-On 2025/9/23 10:45, Julian Sun wrote:
-> On Tue, Sep 23, 2025 at 10:30 AM Lance Yang <lance.yang@linux.dev> wrote:
->>
->>
->>
->> On 2025/9/23 05:57, Andrew Morton wrote:
->>> On Mon, 22 Sep 2025 19:38:21 +0800 Lance Yang <lance.yang@linux.dev> wrote:
->>>
->>>> On 2025/9/22 17:41, Julian Sun wrote:
->>>>> As suggested by Andrew Morton in [1], we need a general mechanism
->>>>> that allows the hung task detector to ignore unnecessary hung
->>>>
->>>> Yep, I understand the goal is to suppress what can be a benign hung task
->>>> warning during memcg teardown.
->>>>
->>>>> tasks. This patch set implements this functionality.
->>>>>
->>>>> Patch 1 introduces a PF_DONT_HUNG flag. The hung task detector will
->>>>> ignores all tasks that have the PF_DONT_HUNG flag set.
->>>>
->>>> However, I'm concerned that the PF_DONT_HUNG flag is a bit too powerful
->>>> and might mask real, underlying hangs.
->>>
->>> I think that's OK if the calling task is discriminating about it.  Just
->>> set PF_DONT_HUNG (unpleasing name!) around those bits of code where
->>> it's needed, clear it otherwise.
->>
->> Makes sense to me :)
->>
->>>
->>> Julian, did you take a look at what a touch_hung_task_detector() would
->>> involve?  It's a bit of an interface inconsistency - our various other
->>> timeout detectors (softlockup, NMI, rcu) each have a touch_ function.
->>
->> On second thought, I agree that a touch_hung_task_detector() would be a
->> much better approach for interface consistency.
->>
->> We could implement touch_hung_task_detector() to grant the task temporary
->> immunity from hung task checks for as long as it remains uninterruptible.
->> Once the task becomes runnable again, the immunity is automatically revoked.
+> double-underscores version is doing a subset of the work of the "full"
+> setter.
 > 
-> Yes, this looks much cleaner.  I didn’t think of this specific code
-> implementation method :)
->>
->> Something like this:
->>
->> ---
->> diff --git a/include/linux/hung_task.h b/include/linux/hung_task.h
->> index c4403eeb7144..fac92039dce0 100644
->> --- a/include/linux/hung_task.h
->> +++ b/include/linux/hung_task.h
->> @@ -98,4 +98,9 @@ static inline void *hung_task_blocker_to_lock(unsigned
->> long blocker)
->>    }
->>    #endif
->>
->> +void touch_hung_task_detector(struct task_struct *t)
->> +{
->> +       t->last_switch_count = ULONG_MAX;
->> +}
->> +
->>    #endif /* __LINUX_HUNG_TASK_H */
->> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
->> index 8708a1205f82..094a277b3b39 100644
->> --- a/kernel/hung_task.c
->> +++ b/kernel/hung_task.c
->> @@ -203,6 +203,9 @@ static void check_hung_task(struct task_struct *t,
->> unsigned long timeout)
->>          if (unlikely(!switch_count))
->>                  return;
->>
->> +       if (t->last_switch_count == ULONG_MAX)
->> +               return;
->> +
->>          if (switch_count != t->last_switch_count) {
->>                  t->last_switch_count = switch_count;
->>                  t->last_switch_time = jiffies;
->> @@ -317,6 +320,9 @@ static void
->> check_hung_uninterruptible_tasks(unsigned long timeout)
->>                      !(state & TASK_WAKEKILL) &&
->>                      !(state & TASK_NOLOAD))
->>                          check_hung_task(t, timeout);
->> +               else if (t->last_switch_count == ULONG_MAX)
->> +                       t->last_switch_count = t->nvcsw + t->nivcsw;
+> While the function does indeed update a cache, the nomenclature becomes
+> slightly misleading when adding a getter[1], as the current value isn't
+> _just_ the cached value, it's also the value that's currently loaded in
+> hardware.
 > 
-> Maybe we don't need this statement here, the if (switch_count !=
-> t->last_switch_count) statement inside the check_hung_task() will do
-> it automatically. Or am I missing something?
-
-IIUC, we do need that "else if" block. check_hung_task() is ONLY called
-for tasks that are currently in TASK_UNINTERRUPTIBLE state.
-
-Without the "else if" block, the task's last_switch_count would remain
-ULONG_MAX forever, effectively granting it permanent immunity from all
-future hung task checks. Unless I am missing something ;)
-
->> +
->>          }
->>     unlock:
->>          rcu_read_unlock();
->> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->> index 8dc470aa6c3c..3d5f36455b74 100644
->> --- a/mm/memcontrol.c
->> +++ b/mm/memcontrol.c
->> @@ -3910,8 +3910,10 @@ static void mem_cgroup_css_free(struct
->> cgroup_subsys_state *css)
->>          int __maybe_unused i;
->>
->>    #ifdef CONFIG_CGROUP_WRITEBACK
->> -       for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++)
->> +       for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++) {
->> +               touch_hung_task_detector(current);
->>                  wb_wait_for_completion(&memcg->cgwb_frn[i].done);
->> +       }
->>    #endif
->>          if (cgroup_subsys_on_dfl(memory_cgrp_subsys) && !cgroup_memory_nosocket)
->>                  static_branch_dec(&memcg_sockets_enabled_key);
->> ---
->>
->> Using ULONG_MAX as a marker to grant this immunity. As long as the task
->> remains in state D, check_hung_task() sees the marker and bails out.
+> Opportunistically rename "index" to "slot" in the prototypes.  The user-
+> return APIs deliberately use "slot" to try and make it more obvious that
+> they take the slot within the array, not the index of the MSR.
 > 
-> Thanks for your review, I will send patch v2 with this approach.
+> No functional change intended.
+> 
+> Cc: Yan Zhao <yan.y.zhao@intel.com>
+> Cc: Xiaoyao Li <xiaoyao.li@intel.com>
+> Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Link: https://lore.kernel.org/all/aM2EvzLLmBi5-iQ5@google.com [1]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Cheers!
-
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
