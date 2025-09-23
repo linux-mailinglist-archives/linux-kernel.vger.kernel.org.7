@@ -1,131 +1,369 @@
-Return-Path: <linux-kernel+bounces-828582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DFF1B94EDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:10:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 473F0B94EF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A346B1889DE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:10:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F143A48562C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185793191C4;
-	Tue, 23 Sep 2025 08:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F88B3191C4;
+	Tue, 23 Sep 2025 08:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYN81oar"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VQRTjGzR"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010039.outbound.protection.outlook.com [52.101.193.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BDD31770E
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758615021; cv=none; b=QYMvlZW7dSFzEk8SFSKsEavbE9+z3sVQgpbnRyvuJnaZmXifUMy95voHehT6u0lGB96EvsUw+XZhwl0127iBT1iczoQAD5oB0IT25pOD3nTZNtRZbudkAMg1Z0l1FKjpOrTScCBDcm8KqGYJsqGA3bVEYuTAj48nfvZk5Ue8QaM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758615021; c=relaxed/simple;
-	bh=gC/ISLcvgB5Jm98EWNWSo1XbAxqmIYCEt3c+pgRRgAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cim/2XtAARcqIsGRM1/Gg1gisrxReyI0dN+fNU/G00WMK+rdYVJwwRfZUfYGk6KA/8AJwihvsRia0wyONcHc7Di5tM3xFzdSE/nSi/0sVPKiE34Cx4DQvIBApG2F2pBjXP164h6gC3smc2Eizix0cSLLL4aS6qGF9pU1uANEt+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYN81oar; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-74435335177so30681357b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758615019; x=1759219819; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=68cmCK+lQ0dZ83mmbfpjA/lSPPyrshuXx8pjCum4+fo=;
-        b=HYN81oarcXYP2nKg5wRdgi9PVXQM+C7tdma/5dQ8RoKafL5+4shG6zM/m2+JLbtB0o
-         Z8VvoOa9Az1i+Cqx25sEJxa9U4/SlEiZzrOiS/iKLuJeCHev7SfJPwz/Fepqv7rRuTbh
-         OWwSaUcs6vEdszfVqLnpljv/LU/O/3vCROVeTxo3UKzbITyyNYEK8uOSVDgplrrRWr7F
-         R1Amocs2zg2GwNSgAhUbRmZpb1FvhsJ7dFp7NAS616vdZp3iNn1minwmMdX+V8rbUnys
-         lJrVSpVgekD49UJqsa1SLSN0UcXlATmFh1fKOxA9A4cGqKsTXEzxSdO4zPdmVVrqXdrY
-         CIfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758615019; x=1759219819;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=68cmCK+lQ0dZ83mmbfpjA/lSPPyrshuXx8pjCum4+fo=;
-        b=XEzKaFwQIMepD8AUXOC5v6YlDEbrLiWWjoiB7K7MuJq+RnlPqkH/VtX1mVfBc6P52k
-         kjg3prrGng9TDxKYAmzKqbVXm0PWIfj60MJqj2wgzHr+yDITrwfT3bQpdFm434yBwqkt
-         wNrAb6IICBhjxImjClrxXx4tUrL6mLNuGKpGOtuUHn1IlXP7PwMpvFpUKrPHNEWRcyEr
-         xmf+xsg4JinwwY+6+omA5C7VorF673emnRwb5Dg8mpGeP8mW1DqFYAZcfQpN+RD0s/9z
-         rkOQu0YxeP9skffISZOGzxEt/nJD8NR58WIB0ZYCZlvOvRCVlPigN9/hpW5LHF9C1is0
-         S0Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvX8jGHjINLipM6LM4cdkZtpTxR19fIKPEWirzo6LJbcqxnSWBoLU/l7MDsTTOGEtXTodU0vtyMNfdEDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqmCWzsw2JH2kPOqeb4R91Anup6CmIDfLznpBwg2+GoBUxroy3
-	6op0bcg9E42WRpyrOvIgm0mP2nUGLqYAN20eIoXxXbxJpk5Dfk22sMuA1c4cCCcnGiqk5szd3sl
-	SwOa5BBNVUb2Bprn9vpjPzf0BeB3/gqM=
-X-Gm-Gg: ASbGncu7rd5WqpqY4wXFnmdcRJ7/fXM6im8EStkxHxZwVSrb7KVaJv2ct13LNZRG+t2
-	mtIz1BLO9Gpu5VML2U6u0BGHQQKzjd64g9YbR8U62mom5HV6E6C6Bg63UhycYULmdGPn1YVrti5
-	rb8d70lDydfnSZ0EPI9U8Miou3j+cmjX9Fjzgl4OEoBIzUNbVC+024P1ViAU7Lur982Ib2b0l9X
-	fb7zC2dTtnW0Xy1hETAndePmjzgwOBiHeWtcYQTZv8sKTo=
-X-Google-Smtp-Source: AGHT+IEy+xvUqkVBZTsI7rKfFC4qJQsZuCAek2QZZLHNwQb10WCpz153wUiVWQTA1TtHdluPaXcrJXcwNTk+20jLli0=
-X-Received: by 2002:a05:690c:868e:20b0:71b:f46e:691 with SMTP id
- 00721157ae682-7589155a662mr11239417b3.11.1758615018549; Tue, 23 Sep 2025
- 01:10:18 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A27A1DD877
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758615083; cv=fail; b=sqKeuGwRV1OikUTsNCcjAEBAhqBByG13vvTXL7dbmdTiw2bRh/E8S2DtvdG/KAX+vkg0aNXBtJImh1MeP/X0PscnQy/KcVM9t/DNjyoCaSmuAJUvPXJbL45TqRPSDpRZyqmKQqlnlrSbpv98KYJmad8yXdtfB+nP8wAHrow6FM0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758615083; c=relaxed/simple;
+	bh=FAuZA/fGhL5Z6tEMU1yD7DNcWWo7FoQHG+FiFLGGjv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hh7gBnLzJjfDsFwo8/ZU1AJfo03xjZ27NVC33+R/ynpV/AuoQDWFGCHdXtjE9TcdZIC4cvWGWc84pcm8AKlO1PZc963FJ71bf1gJrhS831Pmlo6jldmOoISWSi/KYcLmShqHcm2Do4aYqBAzASRer/IhXEbdyoA2g/PTMbGnKM0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VQRTjGzR; arc=fail smtp.client-ip=52.101.193.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FgZryo24SCDKIqhZNd6reH8A/qsrdFlIjocMLIK+162fPTJRMmidIpGh+geppHqAq1PIr9a/l/Rr2deRZ+oYdvACDbRvWJ9ittaqODAX8lPutO7v/DXwfD9B4dYvVbcXrUp4bBQFcXyqwsKiTytFeWt7tr9rW9NLo51EwltXL91apyvwgd5Z3Ji+pa7SuwyKfblYDlDCwdFdvZxrxu5rB6SqujcddF3RW3+HvfaLgzbqSEKPqxFRRF/3S4UUtWDpltMu14lDC9UZsoDhA7vbPQQ3FxpKW6hKrdAWUA+fpeEiRLuv8I2JC5xRtGlc+7ioXsWvjH/nyh0e1oZpv1PXiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZtXUj6JrC4/ThgB0ID2AScAsmbqRXyvd9XjB9BuwA/Q=;
+ b=vR/UHdcEmJvTMEizTDqTELYjAJZA662+rIqnKpOFEemZV6N6AyaQjz2/J92SZpLYTPCNqZ5opBbtK7NmYJ/hReU/kJa+eAl4GLP/LLNXFqJoVhGf5fZGCuOIgsNem93nbKtCYdFV7uSZ+d1LlQbRLV4ay0uYCuCxYsovUD5nt8EYcsNkF1z+6lAOECzFr+LHwKeow2O5cmZ6RSD3hSHR3LL1nM0r0Tjc+vT8licHX/V7N3RgYwOevMT6Etlc2gilma1EyD30U35lWjIHsZyIGGJ7hv8CIUd1nHRIiovw4UgNnvtX4MwASPmcQaySsIN+YuK2I1uIj3FeQSrC4aj+5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZtXUj6JrC4/ThgB0ID2AScAsmbqRXyvd9XjB9BuwA/Q=;
+ b=VQRTjGzRpwLYPUhxk3lATmJRt20XJeNODQBq6HXS00PtRrqltON0NkvWHrJe8Ok/jZFXnAdr6KljEjB1UstoCUj1Nm+DGnIuPDGiA7AOBcJym+WQBnyVZMu82+H8FtvUwJtT6ptJlKratoa8jOg7OrSRD3MQUy8+LRowCUS05P8FTyVw/vFa6A38k+km/eIdDqZ390DD8051zJk8gT8BWKuxKqMmHJFhzhs9/wY8+0pxRQo4eQE04WOUFDPIWofF/5RTtwTozgwgkFZCH9hmSt0itO4AuLmyE1gXDulS9JpngOUaJGWSKc2f+gDo2y0MEL1HhwkV1XDPVssju3hPCA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by SA3PR12MB9129.namprd12.prod.outlook.com (2603:10b6:806:397::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
+ 2025 08:11:17 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 08:11:11 +0000
+Date: Tue, 23 Sep 2025 10:11:06 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
+Subject: Re: [PATCH 7/7] tools/sched_ext: scx_qmap: Make debug output quieter
+ by default
+Message-ID: <aNJWGrp08ucA4Ov2@gpd4>
+References: <20250922013246.275031-1-tj@kernel.org>
+ <20250922013246.275031-7-tj@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922013246.275031-7-tj@kernel.org>
+X-ClientProxiedBy: ZR0P278CA0101.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:23::16) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923060706.10232-1-dqfext@gmail.com> <aNJINihPJop9s7IR@stanley.mountain>
-In-Reply-To: <aNJINihPJop9s7IR@stanley.mountain>
-From: Qingfang Deng <dqfext@gmail.com>
-Date: Tue, 23 Sep 2025 16:10:07 +0800
-X-Gm-Features: AS18NWC_W7OBcymaO0pGhN8pbXiCoKSVhciGuUrFqWsXt6IDIMeoR1I3bHZLZf4
-Message-ID: <CALW65jbwmP+Lms7x2w5BDjFdg_d2ainorAMTWmR_6NJmjV3JmA@mail.gmail.com>
-Subject: Re: [PATCH net-next] 6pack: drop redundant locking and refcounting
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Andreas Koensgen <ajk@comnets.uni-bremen.de>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-hams@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+5fd749c74105b0e1b302@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SA3PR12MB9129:EE_
+X-MS-Office365-Filtering-Correlation-Id: 32b85249-6b5e-4a4c-de11-08ddfa78c21b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3QtZa3IKpWl173QAQg7Ll+dOpojnmy4gWm+O7rCLrNKhnB6ErYkxusDP0Wp+?=
+ =?us-ascii?Q?JBv+18FTR8Px2KGbCsVsUASrgcAAThArXOg4JQA1DGYh5wsF2c9WxF2oxXfy?=
+ =?us-ascii?Q?3RTslLfqY15lf+zfubPfYBlgofFMK185tHSaJ7DVXrp9F880F+03UFR1ZJHK?=
+ =?us-ascii?Q?wjURqLrFAx/TifbOMMlc8zQviX4tHb3icADOnGNyXvoHAoZyoxtmb5tJMwLB?=
+ =?us-ascii?Q?stPfmvcg6IL/DEZWYyAgFI5zT4jTYqkHXVQ8nmgCMULOFrAhgC0qJa+nTwfV?=
+ =?us-ascii?Q?b7JWlku1c/NHiFw9V7/90r/rYyt+QsNcCFndL2/dwJW0e8+u085XtA5CY02f?=
+ =?us-ascii?Q?7hwuqs99FWu5YAEHCv/QUtVSMFrkA6nmw0Cx2xv/qCepanwNEtTnuwj0DYvl?=
+ =?us-ascii?Q?anPE5byBwUnHX6mZhGu3r/PMzE8Pkw8afDaI0olh/bKIrzsTGJHlbFF3z3Y4?=
+ =?us-ascii?Q?plsPQN17Pq2M6s1RqBjEblHdRD0c+vvDEy0+InGozoTrHgmoQ9y33C38z+7i?=
+ =?us-ascii?Q?sZxmVo21L6TnXlqnrabhBCnfRDYUYOJxf+uU+EsOfNTaoc3HwW7d2ydtoPad?=
+ =?us-ascii?Q?a+wiyojRKqZmXsRxYt8fLFHlB1yy+k39RhWESVznreIvLRRkFXOMoYmAMp2n?=
+ =?us-ascii?Q?la9drOhAbEIEJxv7h9fDOnp+K7LN8iryIPEvM3lSbntxNN0hhFgGc6Tgj1zI?=
+ =?us-ascii?Q?I7Gv7bE5PPT7y6EKK91vZ++xtFrEwp5JVNA3SJIrA6ifsjLr4/9oO8IMm1fa?=
+ =?us-ascii?Q?o2Zpu6Z6yH83Bg5SrAf3SkxsM9Js4PFS/BmQghbo+YN9cinKnkHT9cWjL3gf?=
+ =?us-ascii?Q?3nMfUxxBznVUlkG0LeWprzL/UkdDFusSMUSDdqRJJ1YFZ94EOPQEnBDXjEmm?=
+ =?us-ascii?Q?NpjMn6U+2KLRL9eUFMjJ/r/v3KO4nlKE6gRG4FIBQlfwP5FYYFd9eHkyNjtR?=
+ =?us-ascii?Q?R89HPU0eWEkh8JfbY1EVYal4TvPwHFZ3Jq7nisI2yZekA1LItwGzORAx6bHi?=
+ =?us-ascii?Q?8SL9TUEgtlDp0R6HQz366idj2gBNDdkrQSRiDlEbJr7IPRlxqNTaqMNNrSyi?=
+ =?us-ascii?Q?xdntkakpk95VgWiYlfJiFfvtX7oSakyXnd2qPzpdE5W+OGX3saoKVecfSecB?=
+ =?us-ascii?Q?Q743Y32nZTM1yRkZe+uUbUEsuMEfUJ+0jAi7uUoNOX5nQ5s7+8PSR7VsAKA8?=
+ =?us-ascii?Q?JXYh8R9BBuL9tALCUx1P25ICTLWeDg26r/Cv2ByMvNPCaYrfRA/D+qyAwW3T?=
+ =?us-ascii?Q?+iqnMgVNYJh/RxEocmspqhD+0/X1ZJMYc1hNYTG2Lke0NlzjtRDWZIZJEfB8?=
+ =?us-ascii?Q?Z1htxo8xxJfoX58dW4Npx2mNcf6dztc/ZAzSTFoT01GxE1puE4kT93sP/eJP?=
+ =?us-ascii?Q?BDeMlFtuC0wL1Fcr+uXOYHLfZXc8t3qFJ7ZwUiZRhGHhBJn4jPV8Teu5CuHL?=
+ =?us-ascii?Q?EYZXaQ5jCc0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pGcLIgg9bdix7IuLSKDot+QADBvaiZAy0T0jQgv5Zs5Hp1ERYrRSf3DAqqZx?=
+ =?us-ascii?Q?rlz7KyuRw1g0t7rZ2TrU0fur7z1eSJQTsMl2q1ozCD9uMzO6rIbhRWydYqOe?=
+ =?us-ascii?Q?hQkTVaInS2ieHTZloZuaRGM9TVlxM8QBzXmtTmaDBovdXjHJtxE5dpUoPnty?=
+ =?us-ascii?Q?sC7TfK+INHJAq3nUjj0pc+rWIjmk6Wchq8bREIHU9ZwrmJ/c86kIjaFs81jV?=
+ =?us-ascii?Q?f7eRBibafIvpBcr9ioEwaTykb4JYv7INuuSAMNPmPLj86jw2VTLYhMDJHPVw?=
+ =?us-ascii?Q?l48b80TR+o9xpyJuXt7MesutVfVyZiuQbFTLmfFxDWOxHjeQ4PADIWOljoSB?=
+ =?us-ascii?Q?KwVvuB5oReFhWBSLJ/4jbt4rVed2PLB2SsQWf/URia3QCpItsm3XQQDhRkOl?=
+ =?us-ascii?Q?UzxSsqiDKoTv7UzP7fNJjE1qBwesYEUm1tj5LuJzUn/kGUQMWbsngbzQej1a?=
+ =?us-ascii?Q?xgbMzZ6mIahssS7/tysJ+AyPdFzzojgU7BHWlMyyV6io8f4mv4k00IO1sLvi?=
+ =?us-ascii?Q?D1SP3AapazkS87VivoBKqJ1q54qYxAV1XjDCO6wOIaKZI4ac+/p/D55cqIiD?=
+ =?us-ascii?Q?t6mnCRQaKjq5o34s/eNnxFmKl3mGzI2Fq44awgyJvWjELWhcuHOdjYxsDc90?=
+ =?us-ascii?Q?WJmWMDXhuLib9FKBjwcMh0oCoCnEGjgwDeBu+HLoxX0RQW3luKTvJdYWCe1N?=
+ =?us-ascii?Q?YwbUixVfp9ZW1WSs2H3vA85TDEdhtXhto+uJrVrDs4f/ydPEVquxa2A7Cd9R?=
+ =?us-ascii?Q?08Ui8o4pcZfrcMQqymt9qoNcTWq37E14XKGYjYeVfrgcAZvyutoLVIaEupJM?=
+ =?us-ascii?Q?H2zYCNokXKNMHkVIpFGkz4uCbz5K4rMaEPCug8RHa2NzgFmWY+iTtZL+vB+i?=
+ =?us-ascii?Q?thAuf31gI6UpZ8nkw5GOAZZyym1hTIioB+9ltyiZARVmC+ypD9XXsjAnzGst?=
+ =?us-ascii?Q?S3ZEKFbUXpA4s3BWzUKCvOmnr3rW6R5jMm6r/oT9lR+godXnwN8zESFbRYWa?=
+ =?us-ascii?Q?suqIlOJs+98/+I3HODZDWle2UtW2+tAo2UnBggXIHAgkdTxGTgvBy4tWo06U?=
+ =?us-ascii?Q?GVci550L+WhE2yGCwNzGP3jGa45gULcDYqM4GRqBAfJJhXS5lGFYinR6SbIy?=
+ =?us-ascii?Q?AKET3lKeYMO8itmT1NwgwGWKy5nA43tF3MfjSwU8pMQVaerHhxg4RWFuc5x/?=
+ =?us-ascii?Q?EeD34BBlXFEImNfrTVXD5fNPGwEMUZb95dI9YkQGqzmvSdhl/WPe5JqJV97M?=
+ =?us-ascii?Q?OoxLjyfHLfCL+OouIE33cqc2p8oYNTPTe6DKf4gd2/biBX3njfN/a4K321hZ?=
+ =?us-ascii?Q?sCeKjgoZVkDUm4YzznPFO8X7ibUVv0nTUHpAhTYS9+TEa4Ro3iRWWzDiwQmT?=
+ =?us-ascii?Q?n51ixX/F47V93rGqY3+xGztisjItepWXcfRwhzDaYEcZJ9tvO33gqtUfnAe0?=
+ =?us-ascii?Q?AcJyLAdYYObFFpHbRpKhByUu8VgTlUI4H8lwc72e80K1A6GbVc1lZ/Dkzlqv?=
+ =?us-ascii?Q?cX+fZ6ktBkiquSr+mp5eebCk4OhL9My9H4/1Lpfw0v7HtNLMEJk443APTb3x?=
+ =?us-ascii?Q?oWSB1BGOUhJ+ncgO2IrY9rQKWqDKYgit23qzAJtc?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32b85249-6b5e-4a4c-de11-08ddfa78c21b
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 08:11:11.8537
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7DXFz9jv7I18fHu4z9mOvXFZKiskwdwzAOpXqkHuUz/UL2d1JaIighX1bSG7vNLLmI1IckjBTt0UvOu/n34TMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9129
 
-On Tue, Sep 23, 2025 at 3:11=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
-> checkpatch says:
->
-> WARNING: Reported-by: should be immediately followed by Closes: with a UR=
-L to the report
->
-> Which is relevant here because Google has apparently deleted their
-> search button and is only displaying the AI button.  "The email address
-> syzbot+5fd749c74105b0e1b302@syzkaller.appspotmail.com is an automated
-> sender used by ..."  Thanks, AI!  I can still press enter to do a Google
-> search but there are no results with syzbot ID.
->
-> I can't find a search button on the syzbot website.
->
-> Ah.  Let's check lore.  Hooray!  How did we ever survive before lore?
-> https://lore.kernel.org/all/000000000000e8231f0601095c8e@google.com/
->
-> Please add the Closes tag and resend.  Otherwise it looks good.  Thanks!
+On Sun, Sep 21, 2025 at 03:32:46PM -1000, Tejun Heo wrote:
+> scx_qmap currently outputs verbose debug messages including cgroup operations
+> and CPU online/offline events by default, which can be noisy during normal
+> operation. While the existing -P option controls DSQ dumps and event
+> statistics, there's no way to suppress the other debug messages.
+> 
+> Split the debug output controls to make scx_qmap quieter by default. The -P
+> option continues to control DSQ dumps and event statistics
+> (print_dsqs_and_events), while a new -M option controls debug messages like
+> cgroup operations and CPU events (print_msgs). This allows users to run
+> scx_qmap with minimal output and selectively enable debug information as
+> needed.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
 
-checkpatch also says:
-WARNING: The commit message has 'syzkaller', perhaps it also needs a
-'Fixes:' tag?
+Acked-by: Andrea Righi <arighi@nvidia.com>
 
-Should I add a Fixes tag, even though this is not a bug in the code?
+Thanks,
+-Andrea
 
->
-> This code was copy and pasted from drivers/net/ppp/ppp_synctty.c btw so
-> that's a similar thing if anyone wants to fix that.
->
-> KTODO: remove sp_get/put() from ppp_synctty.c
->
-> regards,
-> dan carpenter
->
->
-
--- Qingfang
+> ---
+>  tools/sched_ext/scx_qmap.bpf.c | 80 +++++++++++++++++++---------------
+>  tools/sched_ext/scx_qmap.c     | 12 +++--
+>  2 files changed, 53 insertions(+), 39 deletions(-)
+> 
+> diff --git a/tools/sched_ext/scx_qmap.bpf.c b/tools/sched_ext/scx_qmap.bpf.c
+> index cd50a94326e3..3072b593f898 100644
+> --- a/tools/sched_ext/scx_qmap.bpf.c
+> +++ b/tools/sched_ext/scx_qmap.bpf.c
+> @@ -39,7 +39,8 @@ const volatile u32 stall_kernel_nth;
+>  const volatile u32 dsp_inf_loop_after;
+>  const volatile u32 dsp_batch;
+>  const volatile bool highpri_boosting;
+> -const volatile bool print_shared_dsq;
+> +const volatile bool print_dsqs_and_events;
+> +const volatile bool print_msgs;
+>  const volatile s32 disallow_tgid;
+>  const volatile bool suppress_dump;
+>  
+> @@ -633,22 +634,25 @@ void BPF_STRUCT_OPS(qmap_dump_task, struct scx_dump_ctx *dctx, struct task_struc
+>  
+>  s32 BPF_STRUCT_OPS(qmap_cgroup_init, struct cgroup *cgrp, struct scx_cgroup_init_args *args)
+>  {
+> -	bpf_printk("CGRP INIT %llu weight=%u period=%lu quota=%ld burst=%lu",
+> -		   cgrp->kn->id, args->weight, args->bw_period_us,
+> -		   args->bw_quota_us, args->bw_burst_us);
+> +	if (print_msgs)
+> +		bpf_printk("CGRP INIT %llu weight=%u period=%lu quota=%ld burst=%lu",
+> +			   cgrp->kn->id, args->weight, args->bw_period_us,
+> +			   args->bw_quota_us, args->bw_burst_us);
+>  	return 0;
+>  }
+>  
+>  void BPF_STRUCT_OPS(qmap_cgroup_set_weight, struct cgroup *cgrp, u32 weight)
+>  {
+> -	bpf_printk("CGRP SET %llu weight=%u", cgrp->kn->id, weight);
+> +	if (print_msgs)
+> +		bpf_printk("CGRP SET %llu weight=%u", cgrp->kn->id, weight);
+>  }
+>  
+>  void BPF_STRUCT_OPS(qmap_cgroup_set_bandwidth, struct cgroup *cgrp,
+>  		    u64 period_us, u64 quota_us, u64 burst_us)
+>  {
+> -	bpf_printk("CGRP SET %llu period=%lu quota=%ld burst=%lu", cgrp->kn->id,
+> -		   period_us, quota_us, burst_us);
+> +	if (print_msgs)
+> +		bpf_printk("CGRP SET %llu period=%lu quota=%ld burst=%lu",
+> +			   cgrp->kn->id, period_us, quota_us, burst_us);
+>  }
+>  
+>  /*
+> @@ -692,16 +696,20 @@ static void print_cpus(void)
+>  
+>  void BPF_STRUCT_OPS(qmap_cpu_online, s32 cpu)
+>  {
+> -	bpf_printk("CPU %d coming online", cpu);
+> -	/* @cpu is already online at this point */
+> -	print_cpus();
+> +	if (print_msgs) {
+> +		bpf_printk("CPU %d coming online", cpu);
+> +		/* @cpu is already online at this point */
+> +		print_cpus();
+> +	}
+>  }
+>  
+>  void BPF_STRUCT_OPS(qmap_cpu_offline, s32 cpu)
+>  {
+> -	bpf_printk("CPU %d going offline", cpu);
+> -	/* @cpu is still online at this point */
+> -	print_cpus();
+> +	if (print_msgs) {
+> +		bpf_printk("CPU %d going offline", cpu);
+> +		/* @cpu is still online at this point */
+> +		print_cpus();
+> +	}
+>  }
+>  
+>  struct monitor_timer {
+> @@ -799,35 +807,36 @@ static void dump_shared_dsq(void)
+>  
+>  static int monitor_timerfn(void *map, int *key, struct bpf_timer *timer)
+>  {
+> -	struct scx_event_stats events;
+> -
+>  	bpf_rcu_read_lock();
+>  	dispatch_highpri(true);
+>  	bpf_rcu_read_unlock();
+>  
+>  	monitor_cpuperf();
+>  
+> -	if (print_shared_dsq)
+> +	if (print_dsqs_and_events) {
+> +		struct scx_event_stats events;
+> +
+>  		dump_shared_dsq();
+>  
+> -	__COMPAT_scx_bpf_events(&events, sizeof(events));
+> -
+> -	bpf_printk("%35s: %lld", "SCX_EV_SELECT_CPU_FALLBACK",
+> -		   scx_read_event(&events, SCX_EV_SELECT_CPU_FALLBACK));
+> -	bpf_printk("%35s: %lld", "SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE",
+> -		   scx_read_event(&events, SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE));
+> -	bpf_printk("%35s: %lld", "SCX_EV_DISPATCH_KEEP_LAST",
+> -		   scx_read_event(&events, SCX_EV_DISPATCH_KEEP_LAST));
+> -	bpf_printk("%35s: %lld", "SCX_EV_ENQ_SKIP_EXITING",
+> -		   scx_read_event(&events, SCX_EV_ENQ_SKIP_EXITING));
+> -	bpf_printk("%35s: %lld", "SCX_EV_REFILL_SLICE_DFL",
+> -		   scx_read_event(&events, SCX_EV_REFILL_SLICE_DFL));
+> -	bpf_printk("%35s: %lld", "SCX_EV_BYPASS_DURATION",
+> -		   scx_read_event(&events, SCX_EV_BYPASS_DURATION));
+> -	bpf_printk("%35s: %lld", "SCX_EV_BYPASS_DISPATCH",
+> -		   scx_read_event(&events, SCX_EV_BYPASS_DISPATCH));
+> -	bpf_printk("%35s: %lld", "SCX_EV_BYPASS_ACTIVATE",
+> -		   scx_read_event(&events, SCX_EV_BYPASS_ACTIVATE));
+> +		__COMPAT_scx_bpf_events(&events, sizeof(events));
+> +
+> +		bpf_printk("%35s: %lld", "SCX_EV_SELECT_CPU_FALLBACK",
+> +			   scx_read_event(&events, SCX_EV_SELECT_CPU_FALLBACK));
+> +		bpf_printk("%35s: %lld", "SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE",
+> +			   scx_read_event(&events, SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE));
+> +		bpf_printk("%35s: %lld", "SCX_EV_DISPATCH_KEEP_LAST",
+> +			   scx_read_event(&events, SCX_EV_DISPATCH_KEEP_LAST));
+> +		bpf_printk("%35s: %lld", "SCX_EV_ENQ_SKIP_EXITING",
+> +			   scx_read_event(&events, SCX_EV_ENQ_SKIP_EXITING));
+> +		bpf_printk("%35s: %lld", "SCX_EV_REFILL_SLICE_DFL",
+> +			   scx_read_event(&events, SCX_EV_REFILL_SLICE_DFL));
+> +		bpf_printk("%35s: %lld", "SCX_EV_BYPASS_DURATION",
+> +			   scx_read_event(&events, SCX_EV_BYPASS_DURATION));
+> +		bpf_printk("%35s: %lld", "SCX_EV_BYPASS_DISPATCH",
+> +			   scx_read_event(&events, SCX_EV_BYPASS_DISPATCH));
+> +		bpf_printk("%35s: %lld", "SCX_EV_BYPASS_ACTIVATE",
+> +			   scx_read_event(&events, SCX_EV_BYPASS_ACTIVATE));
+> +	}
+>  
+>  	bpf_timer_start(timer, ONE_SEC_IN_NS, 0);
+>  	return 0;
+> @@ -839,7 +848,8 @@ s32 BPF_STRUCT_OPS_SLEEPABLE(qmap_init)
+>  	struct bpf_timer *timer;
+>  	s32 ret;
+>  
+> -	print_cpus();
+> +	if (print_msgs)
+> +		print_cpus();
+>  
+>  	ret = scx_bpf_create_dsq(SHARED_DSQ, -1);
+>  	if (ret)
+> diff --git a/tools/sched_ext/scx_qmap.c b/tools/sched_ext/scx_qmap.c
+> index c4912ab2e76f..ef701d45ba43 100644
+> --- a/tools/sched_ext/scx_qmap.c
+> +++ b/tools/sched_ext/scx_qmap.c
+> @@ -20,7 +20,7 @@ const char help_fmt[] =
+>  "See the top-level comment in .bpf.c for more details.\n"
+>  "\n"
+>  "Usage: %s [-s SLICE_US] [-e COUNT] [-t COUNT] [-T COUNT] [-l COUNT] [-b COUNT]\n"
+> -"       [-P] [-d PID] [-D LEN] [-p] [-v]\n"
+> +"       [-P] [-M] [-d PID] [-D LEN] [-p] [-v]\n"
+>  "\n"
+>  "  -s SLICE_US   Override slice duration\n"
+>  "  -e COUNT      Trigger scx_bpf_error() after COUNT enqueues\n"
+> @@ -28,7 +28,8 @@ const char help_fmt[] =
+>  "  -T COUNT      Stall every COUNT'th kernel thread\n"
+>  "  -l COUNT      Trigger dispatch infinite looping after COUNT dispatches\n"
+>  "  -b COUNT      Dispatch upto COUNT tasks together\n"
+> -"  -P            Print out DSQ content to trace_pipe every second, use with -b\n"
+> +"  -P            Print out DSQ content and event counters to trace_pipe every second\n"
+> +"  -M            Print out debug messages to trace_pipe\n"
+>  "  -H            Boost nice -20 tasks in SHARED_DSQ, use with -b\n"
+>  "  -d PID        Disallow a process from switching into SCHED_EXT (-1 for self)\n"
+>  "  -D LEN        Set scx_exit_info.dump buffer length\n"
+> @@ -66,7 +67,7 @@ int main(int argc, char **argv)
+>  
+>  	skel->rodata->slice_ns = __COMPAT_ENUM_OR_ZERO("scx_public_consts", "SCX_SLICE_DFL");
+>  
+> -	while ((opt = getopt(argc, argv, "s:e:t:T:l:b:PHd:D:Spvh")) != -1) {
+> +	while ((opt = getopt(argc, argv, "s:e:t:T:l:b:PMHd:D:Spvh")) != -1) {
+>  		switch (opt) {
+>  		case 's':
+>  			skel->rodata->slice_ns = strtoull(optarg, NULL, 0) * 1000;
+> @@ -87,7 +88,10 @@ int main(int argc, char **argv)
+>  			skel->rodata->dsp_batch = strtoul(optarg, NULL, 0);
+>  			break;
+>  		case 'P':
+> -			skel->rodata->print_shared_dsq = true;
+> +			skel->rodata->print_dsqs_and_events = true;
+> +			break;
+> +		case 'M':
+> +			skel->rodata->print_msgs = true;
+>  			break;
+>  		case 'H':
+>  			skel->rodata->highpri_boosting = true;
+> -- 
+> 2.51.0
+> 
 
