@@ -1,87 +1,95 @@
-Return-Path: <linux-kernel+bounces-829715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BFE9B97B28
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 00:21:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0A8B97B2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 00:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7AD37AF664
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:19:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A35702E4DBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578B62FFDF3;
-	Tue, 23 Sep 2025 22:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8248830DD0D;
+	Tue, 23 Sep 2025 22:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F/h0kwTp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="FBHKuC7Y";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VlKRxgAJ"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C3527A47F
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 22:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EDAC2E0;
+	Tue, 23 Sep 2025 22:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758666049; cv=none; b=TXOCyu5kpNCKvPbnBIcm1GG+sZFJrcXrTvHX9mzEV/wKdt1SQcHVba3QjciHIS5NJoUGbgrEHEopSOag9HGn6LQ6Gh7lQflt5Lo9ZE4VfSsvOTssaOSYaNOWB1YOvxozZXl/hLfSi2cXwTbit3c1fWz1fYoBaI3x3VYnQtOxNoY=
+	t=1758666078; cv=none; b=JWZuf45QE2QHswzHVkGNWIWuwIfTHf3ZPTDa2abK2vqKL34ivRRE1x8pHVBIVfsG9Q59A9bTM/d/At5J1uLcU5qvqcnzsuzeVIDnbU1hj+UaGx1K17exoV6iJ+LinuahimRYHY8f1oEpv9gGVRvFXxZIfieP3aTysHd5lx7rodc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758666049; c=relaxed/simple;
-	bh=pM6SrP+KFWtAPLiu/qBEKPbBVnygt7Ql8aDnlXuXu8E=;
+	s=arc-20240116; t=1758666078; c=relaxed/simple;
+	bh=Ik7YM5Q/FmmiZ1L/zyrrXdT0vMvQm7wIQuGJxxDp3VU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qqQPmoADXoVe8vZv4CGKs9ESLpoeA5OcDItDVhVq39+EmO+tiFRULvppH2xt3UJjKA9G98TVnzrnKB84EovQOqCDZBZzhH6U8EIrIG/rku1YzZMIem5xbnrz4kEFAosEJ0cvZmKvFPHImNOtPFqEZ7G39twtKPjkaEcE+0QOAbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F/h0kwTp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58NFuutu023758
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 22:20:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XCqgOa0zMg3bAGkPnVwXTeYirB6xruRZWHedTA8lg7c=; b=F/h0kwTpuzKJK9Si
-	C/vHQHBGXHXHcpUGOYGpWXmSYEgDE3kQXgXBZXjBZRqWKVAwdmfXBOk1F1Kmsirm
-	uEAScIhViYBsKBb6KarpaHr+0uWwz8czX2/9RqgY1YDFmb+ej+4IgAEkOz2hg506
-	RS0z876GscswgrouDyiwKBaZgIRbYbAL3aliex+xmh/gfvERGfOJQTaZrB6/X00P
-	zFoFuaotLPLHPa+lrD/ynOGx9YOBRvpa2+pYbQK5vtLiHMjQztJJ7kBYhJ6XJg5o
-	hhTbqhVIKPDW53cHFvasOg3/LupMjWsBw84aysd/4Oe9OBpQhYAsWnX7AXzwxWYP
-	hwQG9Q==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49b3nye0he-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 22:20:46 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b4f87c691a7so9976153a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:20:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758666032; x=1759270832;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XCqgOa0zMg3bAGkPnVwXTeYirB6xruRZWHedTA8lg7c=;
-        b=sKKqGslD3nySJhb7XMoZhxFBsJr7gdQBHdM3cpQAiOKqEv3nXoQmuLaInKEr3AWHpN
-         RWZWDYZAgetqkbXTCDDAh2+S2GuOpyLCexGx5yhg5PoB9JvhTPdXlavq8er1/8lBI69I
-         NNwqgbZl1vzcO7xCiznui1RNBugpgFKSf/hrMUzZKtjh6TCN6f1loILpmafVVeHc1rmX
-         TkXYJZL4FlIbb1CtOcaoExJDKwm9kSay1PWZV3HEIFoAew4fQdtj7mpjYsMdSgNquYLy
-         OJLfzTxRD0mjdoktZBxZ015KN9KFCUNiKzuhiSqFcTUldtoVwP6cxEPB6ztadnDb783l
-         yb6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXbnNHuHLnmPwIjEWxOBcj3jU4ABWmGy2tovk1JNqMkow52FCxHBfJ4LyYEJDqhwdrrnSi/2hYevDNSeoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJp1UKK0rIaGl8TUXdZ3sSvPzZNRBRSVyQQSX4JVtaZicPXLsW
-	LhHuqXrGYXf2ukgbRR3SuSit+SrYuFj/hFsIDd8/Yo2pcktP9tA3eeVnbvVd/NwnjKKKVryzqGZ
-	j9XDJvxh6aRKEkxEK5sCkXQhwYvWUVN6hM8148yt0ADz/9CD5/uhaqaFuReyJYC0+22M=
-X-Gm-Gg: ASbGncunUhbNOhADl7G2ut/TsULJaZTgYZ3MGP3s1sEy8TmPxtIDVejcLzdYgtgyKwr
-	wijGm00mm3gZ7xcPqjwehTXEqsZHz3+hoFFE+yOJn5Q62fs98gWg5bnqilAEEedEeS7aZOaZc6v
-	JcS6OiuQGtViFQZswmaDRJ0fHdSSCPwyKYzLQR4p/LznyB7FWRE3F06hQksUvxdGvlR0s3/NM/O
-	4pgo5oZ2WfrorIJem+nXoiMOYsES4Wb8q/Ye39/YdHq8FXakvq0IM7Sh/TG01ygBAYEL+G4bF1P
-	2JYg0H0J4zPjrWOY0mpAkV50tMi+3HuivN78wvVSMROJDs8vlqa/wHL1Gb9KSTya3tYI4OlWVgI
-	RB3ViwQIDYcKBsKj5CPODQg==
-X-Received: by 2002:a05:6a20:72a7:b0:2cc:692a:3a2b with SMTP id adf61e73a8af0-2cfdcfefdcbmr6109105637.16.1758666032109;
-        Tue, 23 Sep 2025 15:20:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHrs2A71G+cFUsubAv+Vc1pQAa4dVVMm+2irnjFOxF6C7V/RXWnkIMo3dVaiu2z3htTxPtYpQ==
-X-Received: by 2002:a05:6a20:72a7:b0:2cc:692a:3a2b with SMTP id adf61e73a8af0-2cfdcfefdcbmr6109080637.16.1758666031687;
-        Tue, 23 Sep 2025 15:20:31 -0700 (PDT)
-Received: from [10.134.71.99] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b554aa612e7sm6897265a12.8.2025.09.23.15.20.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Sep 2025 15:20:31 -0700 (PDT)
-Message-ID: <19bf97ed-3cb7-4b69-8d54-3cfef15f93f8@oss.qualcomm.com>
-Date: Tue, 23 Sep 2025 15:20:29 -0700
+	 In-Reply-To:Content-Type; b=BGW9/85dE5J1OmxzwC1tIcRMQoanwJTZ80DSSdarDT4mUQ1Yz1KU7b0gA2NBh+1KkOcyNsF8ya+Utl4Un3KRi+rHQK1zXgr+LarQdMIFnq05knY+cUhT521Phu2WxJngqphRJvAlXqxW+5HXC2GmbEoFIP6gKfDUZX2q9Dp9cgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=FBHKuC7Y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VlKRxgAJ; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id 2D55EEC0122;
+	Tue, 23 Sep 2025 18:21:16 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Tue, 23 Sep 2025 18:21:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1758666076;
+	 x=1758752476; bh=3nkMXYsQNPOfJyMM2epA6ZJ4KP4ztuWbczd1cO9jXWc=; b=
+	FBHKuC7YvPP1A0aKHGXlQx6H7dRJfuklX0Va64ptRJZjgjUGHt5au5lhM29t/ZbL
+	alNIDOk2Laz6iX4OLQ9KMYp8JRm3sTPJ4YlDlx/Jma6v6f4wjtQABjAKhzUuB2z8
+	MOiuUDZcvWAiT/mbQ0lkOSn7rJfFCMyrglbCLTZNlBPArv8MLlWLaiarUG8Ok/GQ
+	AUaO2UZkgS4frzjUjf9rUOaM4dGYt2a+F0u6abf4wFOhTPNl/lm1Ri1fPoXfhvG9
+	tXQ3kJ6pRHuGqend0/pkENQC8y6/TQMX9brIARSIISU27WsIWgDx3rVOvCjx4EdB
+	igBZkvrXJcbuTK94JtT6GQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758666076; x=
+	1758752476; bh=3nkMXYsQNPOfJyMM2epA6ZJ4KP4ztuWbczd1cO9jXWc=; b=V
+	lKRxgAJ7dYtQej9YMB5hqAIZAFn0EjdkDsLEMWQB8mwaMcI2r/g+MiSOR6h4a6L1
+	rhexDqV0UvuydO7WlmZkZqJyLUFXmOvm3RZ1KBcKNZjRAvfN+n+HHPaY02VBuAgS
+	DJr1+QP0Im4feovRIzdh/XpdszQWrLXAKFkFzBke6EhmNT2JGUEnhLDwGzB1jWjj
+	QxT74SdL2fdd18AMNIh+JhNFk/bNTfK4cfbu8FLo7bBm+w+JFkmi7HluFxCeRqNM
+	XmYtnzxzhOlafSRw/Eb7l2AemCXCAYEhPgAyMhNURaCtlzbZYbvYMBBJvpdIqtTS
+	UBm08E2mTeib/VkeEUSlQ==
+X-ME-Sender: <xms:Wx3TaF1zy_diO-dBaFSd_HN9kFj2vtLyg5iX6aNLwaykmXPHnStaRA>
+    <xme:Wx3TaCEkBCS3xXKmkmJ5GVwMS92jwMS8N-a1BW1lJYMbSUOY8qkJW7dBiRanqbNtm
+    cI1-44R1vxmCrRtJcblkBnRU7eIadJSmwCMcU1s3ZT5MaLVc3y84D0>
+X-ME-Received: <xmr:Wx3TaAtxZY411aTC7INIzKfDKyznzkWqms_8mZEJ_T1d826u4YR4Wn5irwaXyu2nmT54RBW_sDAawh3OwE9Nj8A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiudeludcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepgfhrihgtucfu
+    rghnuggvvghnuceoshgrnhguvggvnhesshgrnhguvggvnhdrnhgvtheqnecuggftrfgrth
+    htvghrnhepveeikeeuteefueejtdehfeefvdegffeivdejjeelfffhgeegjeeutdejueel
+    hfdvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsh
+    grnhguvggvnhesshgrnhguvggvnhdrnhgvthdpnhgspghrtghpthhtohepuddtpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopegrshhmrgguvghushestghouggvfihrvggtkh
+    drohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehsrghnuggvvghnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehvlehfsheslh
+    hishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
+    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvghrihgtvhhhsehkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehluhgthhhosehiohhnkhhovhdrnhgvthdprhgtph
+    htthhopehlihhnuhigpghoshhssegtrhhuuggvsgihthgvrdgtohhm
+X-ME-Proxy: <xmx:Wx3TaFoUV0d9T1VUoU3TrOW1_gPVHI335AcNk_qHubZHcmYRuuaQnA>
+    <xmx:Wx3TaHVIz_TQVJK5OhzdSQc-UrIYSBb4AkO2QdOY36p08zrZEnsOyA>
+    <xmx:Wx3TaN19rxvtPeE62WJNqvQ6PiwBbwGuete9CCckqq_O3h938przkQ>
+    <xmx:Wx3TaMto1xlI216iWHc2L-tm6mjiM8138FWzkSB0pkl9QjzPxdGUrw>
+    <xmx:XB3TaDINo6u7AVJ9MjgO-EOkFvSD77mEhy8FTk_Z1QZOF_MBMmSpKlGD>
+Feedback-ID: i2b59495a:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 23 Sep 2025 18:21:14 -0400 (EDT)
+Message-ID: <fe6ecd47-2c6d-45b4-a210-230a162b39b2@sandeen.net>
+Date: Tue, 23 Sep 2025 17:21:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,100 +97,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/dpu: Don't adjust mode clock if 3d merge is
- supported
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Abel Vesa <abel.vesa@linaro.org>
-References: <20250922-modeclk-fix-v1-1-a9b8faec74f8@oss.qualcomm.com>
- <cjoxzwkvzjv7pqelcxcepafanauxjt7p5b3qevjdr5bsomifce@i67l2hzavctj>
+Subject: Re: [PATCH V2 0/4] 9p: convert to the new mount API
+To: Dominique Martinet <asmadeus@codewreck.org>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Eric Sandeen <sandeen@redhat.com>, v9fs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ericvh@kernel.org, lucho@ionkov.net, linux_oss@crudebyte.com,
+ dhowells@redhat.com
+References: <20250730192511.2161333-1-sandeen@redhat.com>
+ <aIqa3cdv3whfNhfP@codewreck.org>
+ <6e965060-7b1b-4bbf-b99b-fc0f79b860f8@sandeen.net>
+ <aJ6SPLaYUEtkTFWc@codewreck.org>
+ <20250815-gebohrt-stollen-b1747c01ce40@brauner>
+ <aJ-eNBtjEuYidHiu@codewreck.org>
 Content-Language: en-US
-From: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-In-Reply-To: <cjoxzwkvzjv7pqelcxcepafanauxjt7p5b3qevjdr5bsomifce@i67l2hzavctj>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Eric Sandeen <sandeen@sandeen.net>
+In-Reply-To: <aJ-eNBtjEuYidHiu@codewreck.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=EuPSrTcA c=1 sm=1 tr=0 ts=68d31d3e cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=1kqHEmTGbaOex8fRdXYA:9 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: LTQbkZQtCk9hMOS4_ddEewMKfhYh5M5w
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDA5MCBTYWx0ZWRfXwCsyK+CmcEQ3
- FzRb17fofvALiSoJqni3CxsgrvpWp+gc1QMYqpqXYBp5tQHeNrD0ZVIjoZYxpxaMVy1yV5BMXEY
- OSh7G0uJ5AK5TcNzD9zueiMbiPyOFFZTaeWBy24AXrLWJPC7ReInpPEDFxDfv/pH+4OSDjF3gcT
- 9NlcMBSQxWIEg1d/gcxvaUInN0mUsWF6TA5MwRlYkHW/c+oF1Sl4k3COB4G+GI1HFGncLioDftg
- VYZNoOSmnS3q5993/DrR9eg+jUF7FOcYuMjPBc3pKmQnjNHvRgvsHcEBuwOaQ+dVuPmCFLC3mnf
- s1GtbaBNpr/szTiKaJvhkVA6AsJpCJzH96cAM44aF0pom3v/kOJ4NcmwFiSIfupZy6/ovXWPWWo
- ifRzjQB9
-X-Proofpoint-ORIG-GUID: LTQbkZQtCk9hMOS4_ddEewMKfhYh5M5w
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-23_06,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 malwarescore=0 spamscore=0 adultscore=0
- clxscore=1015 priorityscore=1501 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220090
 
-
-
-On 9/22/2025 4:50 PM, Dmitry Baryshkov wrote:
-> On Mon, Sep 22, 2025 at 04:32:39PM -0700, Jessica Zhang wrote:
->> Since 3D merge allows for higher mode clocks to be supported across
->> multiple layer mixers, filter modes based on adjusted mode clocks
->> only if 3D merge isn't supported.
->>
->> Reported-by: Abel Vesa <abel.vesa@linaro.org>
->> Fixes: 62b7d6835288 ("drm/msm/dpu: Filter modes based on adjusted mode clock")
->> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
->> ---
->>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
->> index 4b970a59deaf..5ac51863a189 100644
->> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
->> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
->> @@ -1549,7 +1549,8 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
->>   	 * The given mode, adjusted for the perf clock factor, should not exceed
->>   	 * the max core clock rate
->>   	 */
->> -	if (dpu_kms->perf.max_core_clk_rate < adjusted_mode_clk * 1000)
->> +	if (!dpu_kms->catalog->caps->has_3d_merge &&
+On 8/15/25 3:53 PM, Dominique Martinet wrote:
+> Christian Brauner wrote on Fri, Aug 15, 2025 at 03:55:13PM +0200:
+>> Fyi, Eric (Sandeen) is talking about me, Christian Brauner, whereas you
+>> seem to be thinking of Christian Schoenebeck...
 > 
-> Well, not quite. If 3D merge is available, we should allow 2x of the
-> clock, instead of skipping the check completely. I don't think that we
-> should allow 8k or 16k just because the platform has 3D Mux.
+> Ah, yes.. (He's also in cc, although is name doesn't show up in his
+> linux_oss@crudebyte mail)
+> 
+> Well, that makes more sense; I've picked up the patches now so I think
+> it's fine as it is but happy to drop the set if you have any reason to
+> want them, just let me know.
 
-Hi Dmitry,
-
-Ack, I'll fix the math here.
+Hi Dominique - not to be pushy, but any chance for this in the current
+merge window, if it's had enough soak time? If not it's not really urgent,
+I just don't want it to get lost.
 
 Thanks,
-
-Jessica Zhang
-
-> 
->> +	    dpu_kms->perf.max_core_clk_rate < adjusted_mode_clk * 1000)
->>   		return MODE_CLOCK_HIGH;
->>   
->>   	/*
->>
->> ---
->> base-commit: b5bad77e1e3c7249e4c0c88f98477e1ee7669b63
->> change-id: 20250922-modeclk-fix-a870375d9960
->>
->> Best regards,
->> --
->> Jessica Zhang <jessica.zhang@oss.qualcomm.com>
->>
-> 
-
+-Eric
 
