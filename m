@@ -1,82 +1,73 @@
-Return-Path: <linux-kernel+bounces-828624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D415B95083
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:40:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1390B95089
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B583ABEEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:40:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FCD219025E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F35E31D389;
-	Tue, 23 Sep 2025 08:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5740131D736;
+	Tue, 23 Sep 2025 08:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SuE8wWKR"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N3wXVvem"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B357D31D362;
-	Tue, 23 Sep 2025 08:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2036331BCA3;
+	Tue, 23 Sep 2025 08:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758616818; cv=none; b=mM6t1DNqyGx4e0aMTC4+6Q5epwzeL71kyncJVqTDq6ldyIXitQz2lXEWNNIiTjRNbUExqcPvuoNFSnOcha3LrvXdSij2fi9ShyUk3RlLR4ExDTS6VFyAM32+7XX/4k+COIO7fyid+LJgY/+hflGUETpdEqZZ2674Wy1M7yAOT8I=
+	t=1758616824; cv=none; b=h4HerdR522a7d4tj8onP6/Wd0UllRbC3sW2aEodUH2Ct7iyO6axvkoxWZLQWhLclJFAILmIYQ3kTZSpvrSqHW13S9ObEQiIZg6ghX5+rUMmT8SwUixQ4D06gg2ISaFsNQ682x0TNfWUCood5h2deFKVE0fhtIag5X2zvm7WQooA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758616818; c=relaxed/simple;
-	bh=CUDAyPmWzHGBHTlq0IqMu3RYBPGp4SCwqHs1KhIXCnw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=b/k8X/Q+cvXICIa7MWQvJ48CkWbojiEf4n/ApUW0Jw2DNJHRq2QjBAu4mmOWS/mPXIijQlHMOQlhgvzfJ3iHhosMoBMTEi5jwnRIPnt/WfI3Oa0S/lEGGZpv8h9euo/HMvKqPUjuAVMCGSmhSaLltAHKCkJ3S8bLHY3YNfwZ/WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SuE8wWKR; arc=none smtp.client-ip=198.175.65.11
+	s=arc-20240116; t=1758616824; c=relaxed/simple;
+	bh=0T5YvI7oXGfgfqD2MrSUTwY0OsPf11NBpOQYsioFh2Q=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=P5/TX2mvlfDxvPDp43J++zGmqtmZwYf8nFmhlrXSF5u5LW9Seg9QQFNoFWi5HmmvEyabmD2xocVHf8g4QjO9VlChTsRC9py61a3cp0GWLNBbcxT3N3ihp3farOF3ge3bqGMPq0BcLeWkh9He53c3hnjOGaV4TOXfBFU7HETKeT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N3wXVvem; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758616817; x=1790152817;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=CUDAyPmWzHGBHTlq0IqMu3RYBPGp4SCwqHs1KhIXCnw=;
-  b=SuE8wWKR/d5X0EcboGzmXfstHcZU/GitSksybT2KPgtwmsF4JIC8iVLV
-   zQbI4WvAAVvdC4R0+NCw17Uu3rgex2BJ9pYVJhzqUoRUc7fEWUTxRlDL8
-   FYtjR0UjGLpU0Yv4DOPfI+0m+R7V0lxumpm9szwJWuxbpq0at/rIxX4OV
-   C+A1ZRAV/b+AtKUYnqVnceVamPp9DyIdAqIZumz20Vp7Oayuj/BGmhDbL
-   6XMAt6i/m0PXR3s3y/bV3n4MAsNQFPR0x4vTdpHBwX/iJwuCMFHZJgzYu
-   Tr0TKhE5/bGanehSpk3pu53KvZd80roF+dnwsY90R0sN1SOXKPbYtrnxH
-   g==;
-X-CSE-ConnectionGUID: Oxc6Rm6tQV6OveijWHed1A==
-X-CSE-MsgGUID: q7+ProweQCmYUFmnb7fyKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="71135514"
+  t=1758616824; x=1790152824;
+  h=from:to:in-reply-to:references:subject:message-id:date:
+   mime-version:content-transfer-encoding;
+  bh=0T5YvI7oXGfgfqD2MrSUTwY0OsPf11NBpOQYsioFh2Q=;
+  b=N3wXVvemqT0WhlkTg+OydofygzbRASs+fRMLepSTKRoZkKMBKZg8eaOq
+   Bri/jOdQy9PL/Ja31cXknNG78hUy96weMMl5OQVZN4CZJAnWyXr5Y/QO0
+   7MBP7JoHqc/BnV47U1CvoYNJBLlWM9xTOgAcqigwZpWZkEK0lZZWi12Ll
+   vaAXUezzTmmBK4R9RkvZcy8n4ZOFtKFemZ3KCfn2pCDZfxK9G0nFTay56
+   GdUe67iemtAcINDiaJcD7oP64uqAtuszRAX7Ovll+qvAZ6Us2iXCuNK2j
+   h044W16SrW/dzeXd7/miT8gsjIkMkEHFDoAfZ/jRkPlrJ1ArP9FGlmJ6Z
+   w==;
+X-CSE-ConnectionGUID: R9fhJqRUTMa+aeYnkJGIiQ==
+X-CSE-MsgGUID: 8vagAAG5QFOAzNkDsuEM+w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="71135537"
 X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="71135514"
+   d="scan'208";a="71135537"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 01:40:15 -0700
-X-CSE-ConnectionGUID: u5BQTh96SKGMj6nk5qoIpA==
-X-CSE-MsgGUID: b2oRGV9nTt+/wNrGxJQjDQ==
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 01:40:23 -0700
+X-CSE-ConnectionGUID: PZCXSkOxQOmK6hUgWXdWAQ==
+X-CSE-MsgGUID: 1XknE6b0TCaoaqezrcQGWw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="176291302"
+   d="scan'208";a="176291354"
 Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 01:40:08 -0700
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 01:40:20 -0700
 From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Mark Pearson <mpearson-lenovo@squebb.ca>, 
- Sebastian Reichel <sre@kernel.org>
-Cc: "Derek J. Clark" <derekjohn.clark@gmail.com>, 
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
- Neil Armstrong <neil.armstrong@linaro.org>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250918-thinkpad-t14s-ec-v5-0-ac0bc6382c5c@collabora.com>
-References: <20250918-thinkpad-t14s-ec-v5-0-ac0bc6382c5c@collabora.com>
-Subject: Re: [PATCH v5 0/3] platform: arm64: thinkpad-t14s-ec: new driver
-Message-Id: <175861680092.3176.3763843003064695385.b4-ty@linux.intel.com>
-Date: Tue, 23 Sep 2025 11:40:00 +0300
+To: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Hans de Goede <hansg@kernel.org>, 
+ Xi Pardee <xi.pardee@linux.intel.com>
+In-Reply-To: <20250916191339.1748512-1-xi.pardee@linux.intel.com>
+References: <20250916191339.1748512-1-xi.pardee@linux.intel.com>
+Subject: Re: [PATCH] platform/x86:intel/pmc: Replace dev_warn() with
+ dev_dbg()
+Message-Id: <175861681457.3176.15667670615811075571.b4-ty@linux.intel.com>
+Date: Tue, 23 Sep 2025 11:40:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,22 +78,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
-On Thu, 18 Sep 2025 23:20:25 +0200, Sebastian Reichel wrote:
+On Tue, 16 Sep 2025 12:13:32 -0700, Xi Pardee wrote:
 
-> Introduce driver for the ThinkPad T14s Gen6 Snapdragon EC. In theory
-> it seems to be compatible with the ThinkPad ACPI driver, but these
-> devices are booted with device tree. As the name implies, the existing
-> ThinkPad ACPI driver only supports the ACPI interface. Looking at
-> the implementation, the ACPI DSDT contains many mapping functions
-> to translate the low level I2C messages into the interface used by
-> the ThinkPad ACPI driver. Adding DT support to the ThinkPad ACPI driver
-> would require adding all those translation functions, which would add
-> more or less the same amount of code as writing a separate driver using
-> the low level interface directly. I don't think it's sensible to make
-> the existing ACPI driver even more complicated, so I went for a separate
-> driver.
+> Replace dev_warn() with dev_dbg() to reduce unnecessary warning messages.
+> When the low power mode priority register contains invalid data, the Intel
+> PMC Core driver can still utilize the default priority list. This scenario
+> is more suited for debug information rather than warning.
 > 
-> [...]
+> 
 
 
 Thank you for your contribution, it has been applied to my local
@@ -111,12 +94,8 @@ platform-drivers-x86/review-ilpo-next branch only once I've pushed my
 local branch there, which might take a while.
 
 The list of commits applied:
-[1/3] dt-bindings: platform: Add Lenovo Thinkpad T14s EC
-      commit: bee278e18e641a4bc11513b0fa8f5eb2667b8a32
-[2/3] platform: arm64: thinkpad-t14s-ec: new driver
-      commit: 27221f91b83ff1435e550f57b8380a01bab0fc80
-[3/3] arm64: dts: qcom: x1e80100-t14s: add EC
-      commit: 7de8353e082d179a241dc4a4129c5d6916803399
+[1/1] platform/x86:intel/pmc: Replace dev_warn() with dev_dbg()
+      commit: bf726cdc9d4fabcf1ebd50f6fce5121acc7447bb
 
 --
  i.
