@@ -1,261 +1,210 @@
-Return-Path: <linux-kernel+bounces-828424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3544B94962
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:39:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B7FB94965
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7622A483AA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:39:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0788818A460D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F7A30FC31;
-	Tue, 23 Sep 2025 06:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FBC30FC02;
+	Tue, 23 Sep 2025 06:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="lTxG9JF/"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010036.outbound.protection.outlook.com [52.101.84.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rjHXCTMJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Bu9ELGvi";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fLJywFKC";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="y25WnlxJ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B81030F547;
-	Tue, 23 Sep 2025 06:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758609504; cv=fail; b=CJHDZ8bl3Art1JKKAd9z3xylIxaWr+8BLqs7QrJ856/BCFWc7f82o91mdM/CNH3l4SyGrE+SBKKYyFhQ7rWw6IpFKxg/ay8njpOxexyheaNyVU+je/qbhjmYHY3bCccEC+Mg/OR0S310wyEFNQ7bpZqaIqqxExrOG7TGLpjMkro=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758609504; c=relaxed/simple;
-	bh=5Ktrla/K/YLvkCWF4ghqVSyByzIzHljlaaFPiBASRQE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FtLGzKVzhX3TL2fLgUr22QJeDiCoTv4SWITze2p0pWEZt59xxmA2QCN+21ffJqXLkQCJdYDEDMbnGPqFgWIow4FvcWY2ugxllpvgZq+Q1BcRlXMDdNvKniqmjKS0pli4AEuon4GBJXk2lYx2kzX/IxQ1tkGW1GOrHaYRmGtP1Ng=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=lTxG9JF/; arc=fail smtp.client-ip=52.101.84.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nid9vuuGxeF82fD4tzDKShbpzMEzQFiXTpNEawsK9BYsJWGWHEztdN83yFGM0J1alz5Bcbv77pg/Z/UpW4YloujpZtb/XdgvCGu3l1kHMGuhIZqKOWZoSvEdZ6iGUNpxWArF5ZbHiuEsh62oIv5T5Y5vds3e3UwX7+73Q6K53msBgYdy76RZXb08NgEjx/5HsItcPbmxYhkyKA1M3KRliKEmR3dpMTHnsfD08y7fDL7EeIAoNgrDUBnw6sQuzmh37V1z9pU3Bjcir3tZMmcQ8J47cWKFOi6xXp8M8LWFmrCTO73EEUkxVFidB65izOvMulUoCek2XzpdXwku6v5wcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F5WoMTCzDYFuPK3Jz4DFJ+Kc68FVQSUZU9DekAWzAqU=;
- b=wCmV4Hra3RLUSNMLIDyd3P04Tsfg9DMFE+h6FEdM+Pme3QSvg9Kkv2+onjGZt7WxZXHoV9LEZ/BUKmnvS73xK1L0do5A6s1329py56EbZuRwS89vdzuSECCet0ESy1bEQQ8NEvh+egqfbUCFpx0vu8LaPQS8azBw5sHfF1z5WINkjJalWoqQpzLLPJYTJucBDlh8eT+91HK1F/7VsNgQGVGMsdvDwYyWIC8AJy2ubQ9hRcKgQo2IRAsN8ZlQgZngKZmh9u8ZYb7mk9k2iJr4fA7VcxDXoodgn6q8vz6jq5cyn17IkQX+jgtgFQQMgEXK3K2ZYIxwY0SyWchjO3oQjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 139.15.153.206) smtp.rcpttodomain=kernel.org smtp.mailfrom=de.bosch.com;
- dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F5WoMTCzDYFuPK3Jz4DFJ+Kc68FVQSUZU9DekAWzAqU=;
- b=lTxG9JF/fkbaZrxILO5ZlgiZO2JacWZaedJsW/lMB+xzTUKXLl1N5stFAglFPPL+71aZEcTNdpNRqr8TzNyEOjEmmh7kAymjVPEaCSfe1TXXN+oFCbb73qDIbGYXd5usNcM1544bxnMr7XJmfWt7BQugDpVo/Bmyidi4SUb6Ld04gXsV6hA191+dxF3AkRQPFT9J07uLmHnhJgdeZIV/Zym9vRPLmuKnS4YiM+m0rMqTL9JD341gxmIqK5okOjx2tprJ0C97Llkib3U0MqpPDxGV6Eju7eY/mGGbgrcGo7mK9m2Q/D6fGmQuVZhe95kHZVjDD0ZgO4TyIQ+3WKfmwQ==
-Received: from DUZPR01CA0054.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:469::10) by PA2PR10MB8912.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:102:41b::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
- 2025 06:38:17 +0000
-Received: from DU6PEPF00009528.eurprd02.prod.outlook.com
- (2603:10a6:10:469:cafe::46) by DUZPR01CA0054.outlook.office365.com
- (2603:10a6:10:469::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.20 via Frontend Transport; Tue,
- 23 Sep 2025 06:38:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.206)
- smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=de.bosch.com;
-Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
- 139.15.153.206 as permitted sender) receiver=protection.outlook.com;
- client-ip=139.15.153.206; helo=eop.bosch-org.com; pr=C
-Received: from eop.bosch-org.com (139.15.153.206) by
- DU6PEPF00009528.mail.protection.outlook.com (10.167.8.9) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Tue, 23 Sep 2025 06:38:17 +0000
-Received: from RNGMBX3003.de.bosch.com (10.124.11.208) by eop.bosch-org.com
- (139.15.153.206) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.27; Tue, 23 Sep
- 2025 08:38:04 +0200
-Received: from [10.34.219.93] (10.34.219.93) by smtp.app.bosch.com
- (10.124.11.208) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.27; Tue, 23 Sep
- 2025 08:38:03 +0200
-Message-ID: <10ebc82b-7d51-4724-8de6-b44435659a08@de.bosch.com>
-Date: Tue, 23 Sep 2025 08:38:03 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CBD30F93D
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758609535; cv=none; b=KzM7JHlYQIkcyIOzo6xAq8NQ7So9S7gmMIMncPK1ZkUPytwCjK4Xt7FFfeitn0GG49iQ5UQzyOsmpnRlHPYCgiaFy65iq99P6DuLgSeo25GBYNGd78F0ygJKb0Owxny4IlZrCU9us/xkYAPciHr0kRW0WFLprjmDCwmlvqid354=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758609535; c=relaxed/simple;
+	bh=DMH94pu9VGu2YOgC5xKd37Q5Ip6ER9SpFac88lCKB3k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KuwFIt5y6SL7k3y30hitEHG85YVeh/b20GCivGleVbGUWJNsEDkAenpcpYWUGEBonZdkpvc1bPFG/x5opC0uLcrlEDjBHn/xQy/8/YkzDej7+ZqvI59VKjDxqe+PeDCtPK0q9f3mxNm1dfC3XZp+hf5/7M+ubBA5tkb68Jcm6qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rjHXCTMJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Bu9ELGvi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fLJywFKC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=y25WnlxJ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E3DB8224E6;
+	Tue, 23 Sep 2025 06:38:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758609532; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NruCixlbESUV/i0bXh8NxRZIGuB+1RacNNbuxP9MCU4=;
+	b=rjHXCTMJ6WqW0SndCHqWDfgtfvrFcmJmxUvtdLXCYPVU7CqFjxkKipUB218v27sLye0NTp
+	coyx/PBWzJTPKjtTyAPNAfcsw6asuoCcaPoWnLAWQw2MQrKWq1S9Dty0/7FylgLPUHieki
+	yNDLsmV2cpWYmOfO8dZC/u2mACNx3Hw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758609532;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NruCixlbESUV/i0bXh8NxRZIGuB+1RacNNbuxP9MCU4=;
+	b=Bu9ELGvijHyU2/96UJ3hTvFZxr11r5YmaRa/wVYng/DmjFd72DoTZ6U7bSo/pgOLZHwou0
+	yE460Bm9KI/NZfAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758609531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NruCixlbESUV/i0bXh8NxRZIGuB+1RacNNbuxP9MCU4=;
+	b=fLJywFKC8Fgr3hEw2YlaziV56e1DqWmjzIDgra6DMRBXlJEO/QZ/kZMCSsk69ulWNWNZg7
+	hk9xMKjpmUbbX/6fmXwqJMnE69IzoJA4wIJUnh1YopTOr4wbp9qEC6+lpCzoU0XyqpaHFr
+	jE2ktpeIAfUp5z33LRwp1odK8YViT+g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758609531;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NruCixlbESUV/i0bXh8NxRZIGuB+1RacNNbuxP9MCU4=;
+	b=y25WnlxJCvce3z4cXbYTANV62uHo1NKTZGxkCq30sBj4aMd4Ur88dNKKsIssUXDjNDNNef
+	WHFB1zW+Pa3S9lBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9C961132C9;
+	Tue, 23 Sep 2025 06:38:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ndUHJXtA0mj4HQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 23 Sep 2025 06:38:51 +0000
+Message-ID: <53d8dd21-2c46-4c3c-b7f9-30696c6f6412@suse.de>
+Date: Tue, 23 Sep 2025 08:38:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v4 1/6] nova-core: bitfield: Move bitfield-specific code
- from register! into new macro
-To: Danilo Krummrich <dakr@kernel.org>, Greg KH <gregkh@linuxfoundation.org>
-CC: Benno Lossin <lossin@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <acourbot@nvidia.com>, Alistair Popple
-	<apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
-	<alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
-	<gary@garyguo.net>, <bjorn3_gh@protonmail.com>, Andreas Hindborg
-	<a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross
-	<tmgross@umich.edu>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	<joel@joelfernandes.org>, Elle Rhumsaa <elle@weathered-steel.dev>, Yury Norov
-	<yury.norov@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>,
-	<nouveau@lists.freedesktop.org>
-References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
- <20250920182232.2095101-2-joelagnelf@nvidia.com>
- <2025092157-pauper-snap-aad1@gregkh> <DCYHCLM67KRZ.366VS9PDKLYKY@kernel.org>
- <2025092125-urban-muppet-1c2f@gregkh> <DCYIX8URVIWM.2ZK3GHH3J82XQ@kernel.org>
-Content-Language: , en-GB
-From: "Behme Dirk (XC-CP/ESD1)" <dirk.behme@de.bosch.com>
-In-Reply-To: <DCYIX8URVIWM.2ZK3GHH3J82XQ@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/gud: fix accidentally deleted IS_ERR() check
+To: Ruben Wauters <rubenru09@aol.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, lkp@intel.com,
+ oe-kbuild@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250922173836.5608-1-rubenru09.ref@aol.com>
+ <20250922173836.5608-1-rubenru09@aol.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250922173836.5608-1-rubenru09@aol.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF00009528:EE_|PA2PR10MB8912:EE_
-X-MS-Office365-Filtering-Correlation-Id: e66fc2d3-1b81-4380-fa82-08ddfa6bc7de
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VEV2ekxyWlBITmdRUmQ1RlZMeklKci9hY3l3K1lkcEFjMHZwdnB5UXljWmRi?=
- =?utf-8?B?Z1BSOHdFTDg2MkhjUGxPSjBURTZwUjg3MXNJVlpOcE81QXJnRzJWaHo2M0pn?=
- =?utf-8?B?Mi80U3prZklCbkh4RlNBYlYvU2JtWHVXOXRPZEEvWHFjcGt4bjh0a2J5c0xL?=
- =?utf-8?B?eC9BRklTY0U3amd2dW5aM1JKTXFqMmcyZThxdjlEWk15OTNCbjFuOHRvNkpU?=
- =?utf-8?B?UndKUDV5ZGxWSFh6S0lrS3hJeFRLU2pzZk1QRTJlYlF3cGtka2N0OW1VNnJL?=
- =?utf-8?B?WG1XakllZmlndDRtbFUyaHltTmMzM3BwNWtUcmo2ZUVUb0hveUFEaVIzbDJi?=
- =?utf-8?B?SDdGMW00WExlbjkwa1NVSnlobFdEWi82U2RtSHp5dUd4dlpQUDZlNkxyeUQx?=
- =?utf-8?B?TDVaY1RtYU9vWm9KbEhhV0luMy92SE1Va2twYmlTaHlZRUhUbThZTk5neU10?=
- =?utf-8?B?UC95Wis0ajJ4UFZneG9XdWhiMlh3alFnUi90WDBLK1ljbStpNkV5dVUrVklm?=
- =?utf-8?B?V09JczU0YnFQUU1QWXhBdERtMUNvdGhBYVBRMGxwSnlrOEJiTExkR2dFbkV0?=
- =?utf-8?B?RHFRSDcwS0oyc05xQ284dVVoV2VxS3hYL29yK0tVeTJaY1hUdXZSNlNTVlBL?=
- =?utf-8?B?cHpEZWIzZFRXUzdXNEEvT2lKT0svaVg2cktnMi9rK0dYV0xIeVFmbHZxZ1Fl?=
- =?utf-8?B?N1lyMHNraUdkSjhQK2h5ckJJbTdHenBLZkZIWlJDNVhwa0Y4ZmM2NHNYVWxD?=
- =?utf-8?B?cGJiRENvdVVyT2lKYlM0MGdwRk10V3V6RGM4YnZoUERWTjNVd1FmaFRBcnJx?=
- =?utf-8?B?MkZIRlUyVnRobXN3bEhqalVMY1Q1V3JkallUeDFENkVEVFhwa01BOUp1bTZw?=
- =?utf-8?B?cnBsVmZHMjg5VFd6bVFnbmNXYWZnNEZ1M3E3VHJJK2daMXNYaWY0TnlhSWRy?=
- =?utf-8?B?SmNQd3YrQ3cwSk1EQ3Q5MWFWcU9IZGorMWtFWXAwd0k1UlBidjMrcFJlZFJI?=
- =?utf-8?B?YXl4K2g3R0VIRFlnWTVUaWM1OTJ0ZWE4dTg2NFRwdHhhaTd3UWtDMFZUOFJm?=
- =?utf-8?B?QllOSEIyV2ZITEdWemQrWkt2bVlya0tCVVh4dE03UDZFdFgydmlkOUdCT2NV?=
- =?utf-8?B?aUlCNWtvN2l4SjVWNGV0cjh4T29HTUQzekNZaGQ4aXpCZThuWGZjYVdnYUZl?=
- =?utf-8?B?bWdpR2lLZzdqWnNNTGJXS0o1Rnl3eDJjN3pTSFVwK3FISld3MkFjb2dOV2Jq?=
- =?utf-8?B?U2hvVW5FaVZPcXV0S0FabHNIMUw0M3U3bTUzcFluL0YrMTFEOVgwRFljd3pp?=
- =?utf-8?B?cEJ6c2ZsQnJOMVozaWI4QkJ4WGErZjNYMUkzQUtQL21CSHpzSUdpdzEvVGdr?=
- =?utf-8?B?SlVCUzd3Vk5ibmJITFk0SmxRbXR4TFd0aVczeFB1NldkcFNLN2sxaDBsWi8y?=
- =?utf-8?B?VzVVK1QzdmhkVEhzMzJBNFlTaDhhZk9PSWZweTlYM3M5VytDN3FXd3cyQm5j?=
- =?utf-8?B?SEs3ckFjamNWWjdteVJSL3M0TVJYU0EyVGljZmhBU2pnTVVNRjFJYzZ3ZTRE?=
- =?utf-8?B?ckFNRmJaWEVpclZSMUNGVmc0VVVvdWJsZXFodHRGd1BtVTRCcG4rUm5EWHJ3?=
- =?utf-8?B?MXFZbVQ2enFSZi9Xb3RTVWV6cVVMZWJxU2tQQ2VCZE5rOUlDNVRUbnZjZjBp?=
- =?utf-8?B?SE5OMTFlcElNV3VhYVZNZXZpaUNLaVBpbmJBa0NuZ0piU0Y1SXBzc1pweGFC?=
- =?utf-8?B?R29FWlN2bWE3ODl3R3l3ZmhYc29icnhrd2JYTTRONkNmQTVVazJXZkpoZVZr?=
- =?utf-8?B?NG9JekhiS1owcVZmYzU3TXZUNHZnOFA5OEFydUtBcTJFRjc2MGZDdlN2SjRR?=
- =?utf-8?B?SFdjYXhmZE9ZL2l3UDlJdVYvQWFpRDduSlBQUXN6UmQwY0U0elFhYmlZTi9Q?=
- =?utf-8?B?dGNhbDdHT29CQklGejYrU21Ea3lDWmZkL1ZjL3lVdzhJakVsejRkZHJaUWl6?=
- =?utf-8?B?NkxsL0tiV3p3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:139.15.153.206;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 06:38:17.7528
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e66fc2d3-1b81-4380-fa82-08ddfa6bc7de
-X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.206];Helo=[eop.bosch-org.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU6PEPF00009528.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR10MB8912
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[aol.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[aol.com,gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
 
-> On Sun Sep 21, 2025 at 2:45 PM CEST, Greg KH wrote:
->> Again, regmap handles this all just fine, why not just make bindings to
->> that api here instead?
-> 
-> The idea is to use this for the register!() macro, e.g.
-> 
-> 	register!(NV_PMC_BOOT_0 @ 0x00000000, "Basic revision information about the GPU" {
-> 	    28:24   architecture_0 as u8, "Lower bits of the architecture";
-> 	    23:20   implementation as u8, "Implementation version of the architecture";
-> 	    8:8     architecture_1 as u8, "MSB of the architecture";
-> 	    7:4     major_revision as u8, "Major revision of the chip";
-> 	    3:0     minor_revision as u8, "Minor revision of the chip";
-> 	});
-> 
-> (More examples in [1].)
-> 
-> This generates a structure with the relevant accessors; we can also implement
-> additional logic, such as:
-> 
-> 	impl NV_PMC_BOOT_0 {
-> 	    /// Combines `architecture_0` and `architecture_1` to obtain the architecture of the chip.
-> 	    pub(crate) fn architecture(self) -> Result<Architecture> {
-> 	        Architecture::try_from(
-> 	            self.architecture_0() | (self.architecture_1() << Self::ARCHITECTURE_0_RANGE.len()),
-> 	        )
-> 	    }
-> 	
-> 	    /// Combines `architecture` and `implementation` to obtain a code unique to the chipset.
-> 	    pub(crate) fn chipset(self) -> Result<Chipset> {
-> 	        self.architecture()
-> 	            .map(|arch| {
-> 	                ((arch as u32) << Self::IMPLEMENTATION_RANGE.len())
-> 	                    | u32::from(self.implementation())
-> 	            })
-> 	            .and_then(Chipset::try_from)
-> 	    }
-> 	}
-> 
-> This conviniently allows us to read the register with
-> 
-> 	let boot0 = regs::NV_PMC_BOOT_0::read(bar);
-> 
-> and obtain an instance of the entire Chipset structure with
-> 
-> 	let chipset = boot0.chipset()?;
-> 
-> or pass it to a constructor that creates a Revision instance
-> 
-> 	let rev = Revision::from_boot0(boot0);
-> 
-> Analogously it allows us to modify and write registers without having to mess
-> with error prone shifts, masks and casts, because that code is generated by the
-> register!() macro. (Of course, unless we have more complicated cases where
-> multiple fields have to be combined as illustrated above.)
-> 
-> Note that bar is of type pci::Bar<BAR0_SIZE> where BAR0_SIZE in our case is
-> SZ_16M.
-> 
-> However, the type required by read() as generated by the register!() macro
-> actually only requires something that implements an I/O backend, i.e
-> kernel::io::Io<SIZE>.
-> 
-> pci::Bar is a specific implementation of kernel::io::Io.
-> 
-> With this we can let the actual I/O backend handle the endianness of the bus.
-> 
-> (Actually, we could even implement an I/O backend that uses regmap.)
-> 
-> So, I think the register!() stuff is rather orthogonal.
-> 
-> - Danilo
-> 
-> [1] https://gitlab.freedesktop.org/drm/rust/kernel/-/blob/drm-rust-next/drivers/gpu/nova-core/regs.rs
 
+Am 22.09.25 um 19:32 schrieb Ruben Wauters:
+> During conversion of WARN_ON_ONCE to drm_WARN_ON_ONCE in commit
+> 2d2f1dc74cfb ("drm: gud: replace WARN_ON/WARN_ON_ONCE with drm
+> versions"), the IS_ERR check was accidentally removed, breaking the
+> gud_connector_add_properties() function, as any valid pointer in
+> state_val would produce an error.
+>
+> The warning was reported by kernel test robot, and is fixed in this patch.
+>
+> Fixes: 2d2f1dc74cfb ("drm: gud: replace WARN_ON/WARN_ON_ONCE with drm versions")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/r/202509212215.c8v3RKmL-lkp@intel.com/
+> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
 
-I really like this discussion with the thoughts and examples given above!
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-Some weeks ago I was wondering what might be the correct way for 
-accessing registers in RfL. There are various different examples 
-floating around what makes the selection of the correct one even harder. 
-Most probably I have selected the wrong one ;)
+> ---
+>   drivers/gpu/drm/gud/gud_connector.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/gud/gud_connector.c b/drivers/gpu/drm/gud/gud_connector.c
+> index 62e349b06dbe..1726a3fadff8 100644
+> --- a/drivers/gpu/drm/gud/gud_connector.c
+> +++ b/drivers/gpu/drm/gud/gud_connector.c
+> @@ -593,7 +593,7 @@ int gud_connector_fill_properties(struct drm_connector_state *connector_state,
+>   			unsigned int *state_val;
+>   
+>   			state_val = gud_connector_tv_state_val(prop, &connector_state->tv);
+> -			if (drm_WARN_ON_ONCE(connector_state->connector->dev, state_val))
+> +			if (drm_WARN_ON_ONCE(connector_state->connector->dev, IS_ERR(state_val)))
+>   				return PTR_ERR(state_val);
+>   
+>   			val = *state_val;
 
-So once this discussion comes to a conclusion (and gets merged?) we 
-might want to have a verbose documentation with background, examples, 
-possible options etc. Something like "Howto access registers (hardware?) 
-in RfL (correctly)". I think this would be quite helpful.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-Thanks!
-
-Dirk
 
 
