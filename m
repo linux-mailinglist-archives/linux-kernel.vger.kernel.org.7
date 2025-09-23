@@ -1,140 +1,132 @@
-Return-Path: <linux-kernel+bounces-828947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F93B95EA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:59:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9531BB95EAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4288E2E6B53
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:59:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC0FA2E6C41
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CF0323F69;
-	Tue, 23 Sep 2025 12:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B355E322C9B;
+	Tue, 23 Sep 2025 13:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="NoeKJXxz"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QKb1qztN"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B705257855;
-	Tue, 23 Sep 2025 12:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758632376; cv=pass; b=NZXwvATlhJ37IyDILK9SFYybc6VXMq2fyIgEW85kYBxYJ9vOndp6YgTPe490PPy4vjKUiSCfDjWo+TrS8htZRinZemd3FiRgUZORF41qi6cyzKwBFBYh/Dtw4yuWu02EaQBLZZ3Us4ACZ4e66ynKcqrSWWR4lF0NBYPNPoPMm2E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758632376; c=relaxed/simple;
-	bh=b/gXvAai58Z3/BunjYnHlKuHCeLqF6XF/9xh++A0QNE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pOMC6RVCOJDzQu9lymAEp9eM5aAuwIJluOQpNtA1aQfji2SU7AHpeCfnBag6Hjo9CxJQkGCp0xIzyaeaFFIyLffvCG2H9hLX5ntVgfpGWxIMfXsIRhrVFg46P/7QFUrhhwmZCJtcswmnvExiSePs1v0i/LewAtrvvFsDlvv5b/M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=NoeKJXxz; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758632349; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=k77UMTqJmyi8O2nA3KoHvI57c+HosSCH1Ou1azWNffy5QGBUVWBFfnUTRIKg2OucpjN6cryQXnnv/w3wgZZfNlcQnH23adjIZLPnXDqtE5xORsTdEhyRoIL0TNZOUIjqQAoZdlpoYt89q5NXnv27KS5QHmBWz6Ez+1Q3BOKo0U0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758632349; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Ld3Mu+4XpQpKlmKIXgeP8nj7CXPhFkTiSv19YHU59YY=; 
-	b=UcnwX4r1Ey2xc0knJtxLtzXrvxy5450xHhK8Jijj7jNBE+3rYoI6t5eK/U+c/RiyIP37dw5/ezIQlZSWTSX3+4808C9wtZZYSoQBnpApQSAaPF/UMZPK+HgcYUDitWGUERqQBO2JFMSUC34pvkCqCSeU8lUFbrWoo46fHnHhUMo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
-	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758632349;
-	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Ld3Mu+4XpQpKlmKIXgeP8nj7CXPhFkTiSv19YHU59YY=;
-	b=NoeKJXxzjZdD3HeMVr6Mp/cAvuNvpqqh0GE1nkkH/QFwH7kNl7xPsiKXvqO6p6SZ
-	4bbk62KQykKq0giD054Vju1jY9a/7PP3VBh2gV0bLItoJe0u2KaaXCT2WLH76NHMpsS
-	UnWThL1mSnpE6k0a5VJ2LXxsSp7tsY2Ja49Olu1s=
-Received: by mx.zohomail.com with SMTPS id 1758632346474290.83340183401606;
-	Tue, 23 Sep 2025 05:59:06 -0700 (PDT)
-Message-ID: <aafd2f8d-be8e-4929-a21c-c8f066e2f6f1@collabora.com>
-Date: Tue, 23 Sep 2025 14:59:02 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67452F6576
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758632416; cv=none; b=BupkVtV83lHolvLGHJ7NbDavwWodh88JhJLuSDIk8yDnaNz3WgF1I8ZZGInTvL0tiYVq4E4uhZJlJ73UmiMYXNzjypf26jh4ToFmgUeALxw/BakPU5+STMgtTubEt/z2CODtarWtcCEbCLqXOw81TljQb4dyQ2ShixQZWXSjt/c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758632416; c=relaxed/simple;
+	bh=fpgqG3PPMbLAJYHf4nYwntPFHa09JCf1vAbUPv7WyK4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cP6q/FJgjhyAlMYfR4zU3y5yIGmCMHxD09m3vJz8EBSzy5t4lHS0DNP1dfLFvuS8mIPAvSCuX5zRKmGZdb3/RuLVKHAu1lGgs8cYkb63Edbgqd7PW/x8+BcnfblkBGkPDFO3W0dBL7RxiX5O+11nYZu/zFnM3e0nkUmES92rZjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QKb1qztN; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3307de086d8so4898044a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:00:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758632414; x=1759237214; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nh5SwzIzASTLhVaTpXrHPJRdBlRjDqtp1v+iQDlbfos=;
+        b=QKb1qztNBsVv64+uUomfinPRzxWdml6FUnZQIp71Kmq9PLESlRpIdTjV2vm7xeMHBk
+         85vsJ/eGIsFErbUSnG0IBAIehA9RZdQRs7g9y7WyXxITRjh4DNgMA0oo/jTaKgis6qVB
+         g7Ngxbvy4I2FtYLe5+nxJWfmaAGL7NnB5T6r9Y9T8bTeXBFpg6VO5x/RPGjKHD9Hjgtz
+         zqnIu9sBSHV4epFaW4Eekc6uV4yjnmTCa5alBrpasj1U0IZ/eZ2d/vzIQ/G8HX0S12iy
+         5iBw+NdMirdPf168dvna9M+VoTUc+r2V1248smyNT10s/9J+jJ+potbqQkbXSHIdYnDP
+         KQ3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758632414; x=1759237214;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Nh5SwzIzASTLhVaTpXrHPJRdBlRjDqtp1v+iQDlbfos=;
+        b=ILYsTkM1kb5mJVS9Vs8doK/xbyUEyBhvvJyhTHaA3leBQJ71FVurd6Wk0STpcg8x7I
+         uAPvpl/3gfFNJTIUTERZKVXSckHLkRdfcYw8icKL5kQSs0Gl+aOSWz9o3QYYCQC4PpES
+         YFX6AIjxX3wVIR7Qo9Eoc0Og17WespBBZXULtKpvyMmBVgj6tfKRles5HYd6ENhGnz9a
+         yk0bPo4GGGduAhghVIkr8cKFOdH2PYb9msQJ9iFPRJmq6KUn5ThSMzNCBt3mnkiMokIz
+         8tbiXkf6MZBJgstIgqqvuTj+L3XWgBgUg64xoHTcun79jMCp9agEhVWbhcJN0AUsv4re
+         uCDA==
+X-Forwarded-Encrypted: i=1; AJvYcCURo+6CKKhKur5+rlP5foNvPM3yICb0WP8RMSwqH3sMKatg3qRRJZPy6ite7iEkHRb+WbA0oN0oYO2emKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwZVqPESmmAjSEhF8S1PEMQYsSKs/WP3z6dEDu6K68ZXWfnACA
+	YoBzkuOG2vj+pZd8bH64mGnYF5Lh8vjjSzxK6JehZFGDgfz85SW8ePD+zmyg15OmB8U=
+X-Gm-Gg: ASbGncuRQO7XHc72L13ciQn4sJmz7iiMGNQI2OuY8XFdDWC9tsDfv6U8UUQcufNY4fZ
+	7V9kk/Unpm3cLlbVHheuG0UfB+mkByAi3S9tiDkIyUnHCfRUzWRKt8mm+Iv12syasNY9YM83VVj
+	7c+WtyJmid5tMCZlx3e1iqK44k5w6w+dEpH2w6JZkWzF40ULTg3aNyQ+XlKry27vLW9FzFSTSyY
+	ihmAuQDV/IwHkw3SNdnCQrGMMezQapEZCTRzhfDE5LoGPlnrqPfWlWvB9Sqtnj/kuahfCr1/5lv
+	2XB8iaP/+GGaggnfbI7WpAuMcRTHxTHhwknmoj4NvCH1pt2N2oHa/ZppWWiIfNOOkDrqhVzX+Cf
+	f3IeXx44jFKCNmTH6p94vmzyRCH+6s8Op7w==
+X-Google-Smtp-Source: AGHT+IEVwoSV/1C7G9K+WLOLmPwik9m4PPFJYbHnIWzyucU6AzZaAx84ogTIVfkz9b6BwPzEVvys1w==
+X-Received: by 2002:a17:90b:3a8a:b0:32b:c9fc:8aa2 with SMTP id 98e67ed59e1d1-332a96fd4c8mr3170726a91.20.1758632413614;
+        Tue, 23 Sep 2025 06:00:13 -0700 (PDT)
+Received: from lgs.. ([2408:8418:1100:9530:4f2e:20bc:b03d:e78])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed273f557sm19059243a91.15.2025.09.23.06.00.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 06:00:13 -0700 (PDT)
+From: Guangshuo Li <lgs201920130244@gmail.com>
+To: Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Guangshuo Li <lgs201920130244@gmail.com>,
+	Santosh Sivaraj <santosh@fossix.org>,
+	nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Subject: [PATCH v2] nvdimm: ndtest: Return -ENOMEM if devm_kcalloc() fails in ndtest_probe()
+Date: Tue, 23 Sep 2025 20:59:53 +0800
+Message-ID: <20250923125953.1859373-1-lgs201920130244@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: verisilicon: Protect G2 HEVC decoder against
- invalid DPB index
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Hans Verkuil <hverkuil@kernel.org>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
- Stable@vger.kernel.org
-References: <20250922-imx8mq-hantro-g2-hang-v1-0-67d00eb6a548@collabora.com>
- <20250922-imx8mq-hantro-g2-hang-v1-2-67d00eb6a548@collabora.com>
-Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <20250922-imx8mq-hantro-g2-hang-v1-2-67d00eb6a548@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+devm_kcalloc() may fail. ndtest_probe() allocates three DMA address
+arrays (dcr_dma, label_dma, dimm_dma) and later unconditionally uses
+them in ndtest_nvdimm_init(), which can lead to a NULL pointer
+dereference under low-memory conditions.
 
-Le 22/09/2025 à 20:43, Nicolas Dufresne a écrit :
-> Fix the Hantro G2 HEVC decoder so that we use DPB index 0 whenever a
-> ninvalid index is received from user space. This protects the hardware
-> from doing faulty memory access which then leads to bus errors.
->
-> To be noted that when a reference is missing, userspace such as GStreamer
-> passes an invalid DPB index of 255. This issue was found by seeking to a
-> CRA picture using GStreamer. The framework is currently missing the code
-> to skip over RASL pictures placed after the CRA. This situation can also
-> occur while doing live streaming over lossy transport.
->
-> Fixes: cb5dd5a0fa518 ("media: hantro: Introduce G2/HEVC decoder")
-> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Check all three allocations and return -ENOMEM if any allocation fails.
+Do not emit an extra error message since the allocator already warns on
+allocation failure.
 
-Reviewed-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Fixes: 9399ab61ad82 ("ndtest: Add dimms to the two buses")
+Cc: stable@vger.kernel.org
+Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+---
+Changes in v2:
+- Drop pr_err() on allocation failure; only NULL-check and return -ENOMEM.
+- No other changes.
+---
+ tools/testing/nvdimm/test/ndtest.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> ---
->   drivers/media/platform/verisilicon/hantro_g2_hevc_dec.c | 15 +++++++++++++--
->   1 file changed, 13 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/platform/verisilicon/hantro_g2_hevc_dec.c b/drivers/media/platform/verisilicon/hantro_g2_hevc_dec.c
-> index f066636e56f98560d9b1c5036691e3c34dd13b1f..e8c2e83379def53ce7fd86d6929ed4f5e0db068e 100644
-> --- a/drivers/media/platform/verisilicon/hantro_g2_hevc_dec.c
-> +++ b/drivers/media/platform/verisilicon/hantro_g2_hevc_dec.c
-> @@ -283,6 +283,15 @@ static void set_params(struct hantro_ctx *ctx)
->   	hantro_reg_write(vpu, &g2_apf_threshold, 8);
->   }
->   
-> +static u32 get_dpb_index(const struct v4l2_ctrl_hevc_decode_params *decode_params,
-> +			 const u32 index)
-> +{
-> +	if (index > decode_params->num_active_dpb_entries)
-> +		return 0;
-> +
-> +	return index;
-> +}
-> +
->   static void set_ref_pic_list(struct hantro_ctx *ctx)
->   {
->   	const struct hantro_hevc_dec_ctrls *ctrls = &ctx->hevc_dec.ctrls;
-> @@ -355,8 +364,10 @@ static void set_ref_pic_list(struct hantro_ctx *ctx)
->   		list1[j++] = list1[i++];
->   
->   	for (i = 0; i < V4L2_HEVC_DPB_ENTRIES_NUM_MAX; i++) {
-> -		hantro_reg_write(vpu, &ref_pic_regs0[i], list0[i]);
-> -		hantro_reg_write(vpu, &ref_pic_regs1[i], list1[i]);
-> +		hantro_reg_write(vpu, &ref_pic_regs0[i],
-> +				 get_dpb_index(decode_params, list0[i]));
-> +		hantro_reg_write(vpu, &ref_pic_regs1[i],
-> +				 get_dpb_index(decode_params, list1[i]));
->   	}
->   }
->   
->
+diff --git a/tools/testing/nvdimm/test/ndtest.c b/tools/testing/nvdimm/test/ndtest.c
+index 68a064ce598c..abdbe0c1cb63 100644
+--- a/tools/testing/nvdimm/test/ndtest.c
++++ b/tools/testing/nvdimm/test/ndtest.c
+@@ -855,6 +855,9 @@ static int ndtest_probe(struct platform_device *pdev)
+ 	p->dimm_dma = devm_kcalloc(&p->pdev.dev, NUM_DCR,
+ 				  sizeof(dma_addr_t), GFP_KERNEL);
+ 
++	if (!p->dcr_dma || !p->label_dma || !p->dimm_dma)
++		return -ENOMEM;
++
+ 	rc = ndtest_nvdimm_init(p);
+ 	if (rc)
+ 		goto err;
+-- 
+2.43.0
+
 
