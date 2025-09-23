@@ -1,123 +1,99 @@
-Return-Path: <linux-kernel+bounces-828724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA898B9549F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:40:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8E1BB954B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D1502E630C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:40:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F9A61906A29
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE011320A3C;
-	Tue, 23 Sep 2025 09:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB29320CA4;
+	Tue, 23 Sep 2025 09:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gyx6BDuj"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="fuKvRG3W"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8434F258CF9;
-	Tue, 23 Sep 2025 09:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0354320A1B;
+	Tue, 23 Sep 2025 09:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758620445; cv=none; b=uqQXJ8G4SKKvYo+2jSo9AqsBb0B7vhj0hneFeavfM5OJ9boh8SNdROudj7wQgNg2Xkb9PzUQfGw23uPnRX09wxK5A2232NgC3jJ1gZ6iUEJ9QKLq9MPPSvy7kM6Cd6PA6Xyb0RLICS8Z8oVFxZj2vIZ+pnm9jUvZ7fnS+UTD+PA=
+	t=1758620508; cv=none; b=iRyD6/kJCMVMTpWr4p40JhsRG6u26hTig9j2Q5Pd2TnXG51TuFza3jQGr786qnWlUtn3hL+n6S9ADrCeoiTUz6JWzgCbSHr12CSM1b57Ijxbgzdbu1lLZTJ2lpyMNMQvjdaSyLI7rZAlztTKJnvADWgC5ow3Adj/Mo84rJg2Tag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758620445; c=relaxed/simple;
-	bh=q81kQ5xhqohdzpN6BRTaCRJ3bo8nUWkgVBAYZFL2f7M=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gxGr6BEE96iHtw1nuGef0fPX2CNUrE/8rcgY8sBbrXJ0WtIy6MM9dvSRE1cYfPQlPZk121Qe9o31kVVXc4QW8h0rTQVNzimB5Pc9581OY37vzIxAw8nQrbCQRm/0yB6TuJkLHA0O6NuAFQJrolaiJxTOyadxh6w4cE9JB0wIhVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=gyx6BDuj; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58N9eMLE1427212;
-	Tue, 23 Sep 2025 04:40:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1758620422;
-	bh=8bg8Oys3ldqONp1rkDm9KHUE8Nsow8X5TQBNQvmAkmM=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=gyx6BDujLPlhRSIYt1R2kGpS4iOH9Y3YRjwHY/C0QD8H6fmioS4w69VaCpOB71bsx
-	 /0tshFMmA7o5ZscQu5RjfNcJEDv4SObCuipjI1YnIz4lnrDlalxaIaQwTR02DdX3gD
-	 W1GsRLHs0bPL0l+QWJjZUco4UENx+pJHvJ5WKfV0=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58N9eMnJ986154
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 23 Sep 2025 04:40:22 -0500
-Received: from DFLE213.ent.ti.com (10.64.6.71) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 23
- Sep 2025 04:40:21 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE213.ent.ti.com
- (10.64.6.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 23 Sep 2025 04:40:21 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58N9eKtg101593;
-	Tue, 23 Sep 2025 04:40:21 -0500
-Date: Tue, 23 Sep 2025 15:10:20 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Peng Fan <peng.fan@nxp.com>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Danilo Krummrich <dakr@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Peter Chen <peter.chen@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha
- Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team
-	<kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Thinh Nguyen
-	<Thinh.Nguyen@synopsys.com>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v4 1/5] PM: wakeup: Add out-of-band system wakeup support
- for devices
-Message-ID: <20250923094020.ogc2nr5nxryxoavq@lcpd911>
-References: <20250922-pm-v4-v4-0-ef48428e8fe0@nxp.com>
- <20250922-pm-v4-v4-1-ef48428e8fe0@nxp.com>
+	s=arc-20240116; t=1758620508; c=relaxed/simple;
+	bh=23ktBBop4u/x7zNZgLlZ9TKFaiNhHwD9+DMajpKh+NY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u4vNkMi+vK/3zZi57AUDk/nExBM3WIVZ9zW4f7ez+XQt2jVNQsu4oGTVYhoaJ07tgjWEtkLEMGaLpeL6vx1qlVq8Nhcd3NbeDtMtnrBYhJx7i/ECwmckrlH4snf0T9CiT1L/uwl7YACW/eqZTF20cw9PkietW0i/g5GvQVdMtgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=fuKvRG3W; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58N9POWb004909;
+	Tue, 23 Sep 2025 02:41:25 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=JdMj8B8nXgt0VBenxcRLktJ
+	uo4S96i7ypAqb9pDdydU=; b=fuKvRG3WXdkgKVdbyzP1hsRKyw5xNDjNTRz72U8
+	uqd7/gyCz+6OQ5+c0v/sG29FKfzUTZV5dhU6iux1YoNrXYhMTZmQEeicHoP18FK9
+	SzZ6rUG6imgVf9aDRDEYGaculb3Bgn8kQ7wO2pcb7bFow71M/5mZkSv9/P0dZaUT
+	up6KRFHIsqIjePkbah7CQqWtf0QyKCCt5CF59kqJtAfhRYW/1+2tdD0I0wFiwQgo
+	u1FtO3PEq+k2JFf/v6kRAM1HQVjeJqhcaJfXrUPL8x5DRJLUDfIcvIxx7ZUc0h2v
+	04YSCL4Yt2t8v22+Nl4moqp01I66Xn+3XTIRoN0PuXZWGLw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49brw6019t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Sep 2025 02:41:25 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 23 Sep 2025 02:41:23 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Tue, 23 Sep 2025 02:41:23 -0700
+Received: from sburla-PowerEdge-T630.sclab.marvell.com (unknown [10.106.27.217])
+	by maili.marvell.com (Postfix) with ESMTP id 03E103F70E3;
+	Tue, 23 Sep 2025 02:41:23 -0700 (PDT)
+From: Sathesh B Edara <sedara@marvell.com>
+To: <linux-kernel@vger.kernel.org>, <sburla@marvell.com>, <vburru@marvell.com>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <netdev@vger.kernel.org>, <hgani@marvell.com>,
+        <andrew@lunn.ch>, <srasheed@marvell.com>
+CC: <sedara@marvell.com>
+Subject: [net-next PATCH v1 0/2 RESEND] Add support to retrieve hardware channel information
+Date: Tue, 23 Sep 2025 02:41:17 -0700
+Message-ID: <20250923094120.13133-1-sedara@marvell.com>
+X-Mailer: git-send-email 2.36.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250922-pm-v4-v4-1-ef48428e8fe0@nxp.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: adqpub6dw1nwK2Iml_AyN_CqnSU3JuTd
+X-Proofpoint-ORIG-GUID: adqpub6dw1nwK2Iml_AyN_CqnSU3JuTd
+X-Authority-Analysis: v=2.4 cv=ZfQdNtVA c=1 sm=1 tr=0 ts=68d26b45 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=yJojWOMRYYMA:10 a=PlYhftpBkXA4JvsghnwA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDA4NyBTYWx0ZWRfX1Ue+F6O3FIUP AAfw0TvfCbZLIjeEPkaPG95C2jcyp5kz11G8env2EywIPzm3XFIi9yZT9iGvPcF9VvrmGNAp1Ig CPHkK4fswnkZCw+nPcWHTBsrOESRQK6F/G/p2qOaTzzbKPaKXRJMK28JMELAdDUHRhMy8cainGL
+ kPt+ezuyKjTLzrXlxuTchcRpLhhMxAy2iD3n0t0TKXYL/dJCg339AE9ppZtjXh5IhoQ9pAx89UM 2af1fPsVWbaMtQflbqoEQYjjRxf3z0udpiGJTFEZ5ERtJwgDJg+JN1rtHKjekUPj/6v37EzZBiJ +hD7p+elNDunnr7MaQ5/r4yxz2WcHjhoKrj6obumu3umVMmuH+3dkohF/64C1dPYb1Wt9GegSJz KeE0nSBI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-23_02,2025-09-22_05,2025-03-28_01
 
-On Sep 22, 2025 at 10:21:06 +0800, Peng Fan wrote:
-> Some devices can wake up the system from suspend even when their power
-> domains are turned off. This is possible because their system-wakeup logic
-> resides in an always-on power domain - indicating that they support
-> out-of-band system wakeup.
-> 
-> Currently, PM domain core doesn't power off such devices if they are marked
-> as system wakeup sources. To better represent devices with out-of-band
+This patch series introduces support for retrieving hardware channel
+configuration through the ethtool interface for both PF and VF.
 
-This commit message makes things much clearer now. Thanks!
+Sathesh B Edara (2):
+  octeon_ep: Add support to retrieve hardware channel information
+  octeon_ep_vf: Add support to retrieve hardware channel information
 
-> wakeup capability, this patch introduces a new flag out_band_wakeup in
-> 'struct dev_pm_info'.
-> 
-> Two helper APIs are added:
->  - device_set_out_band_wakeup() - to mark a device as having out-of-band
->    wakeup capability.
->  - device_out_band_wakeup() - to query the flag.
-> 
-> Allow the PM core and drivers to distinguish between regular and
-> out-of-band wakeup sources, enable more accurate power management decision.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
+ .../net/ethernet/marvell/octeon_ep/octep_ethtool.c   | 12 ++++++++++++
+ .../ethernet/marvell/octeon_ep_vf/octep_vf_ethtool.c | 12 ++++++++++++
+ 2 files changed, 24 insertions(+)
 
 -- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+2.36.0
+
 
