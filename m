@@ -1,176 +1,395 @@
-Return-Path: <linux-kernel+bounces-829081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C566CB963E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:29:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C049B96348
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43E983B3167
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:26:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91EE619C3605
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E373329F1E;
-	Tue, 23 Sep 2025 14:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8B423A989;
+	Tue, 23 Sep 2025 14:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n+8huKaP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RKm4GZpo"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010065.outbound.protection.outlook.com [52.101.201.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BED6327A27;
-	Tue, 23 Sep 2025 14:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758637315; cv=none; b=Q/iXrYmQPKXdHfuakgF/0Wd5MA5Ycfhkl1vQWdGGHQYEUVqRR9Is6Mq0u+A7bpY4MdGYglIEW+X2HiqBVhNl8mCsGIhC3q8NUJ7hPQQ8WvwLL3ggR+dcDwuoUb2xPfjgnHH9SYAGa/Aa5tT3dqWlVeNMRXP8OucgbJbop37oxfo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758637315; c=relaxed/simple;
-	bh=81BLq8+oPnPePeqC2bm5XK2/WvvBNdRPQuuI5LrZL9M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Hmsxpy3+bjgV1VQ0CtRW7xILhe1i3Z9IKYOfjxXkevIJ8FEPBluYCs7J1E2/BcdEu2PcmAJyw2xib5bRj9S11ZtG4yv/5Dljr3AmeI5BzViIhkz8GIye6l4jyQUsS5X26zNgEi8x4rj9DKJUvXaLLsYGowwACV1Hjjwk0pH1W5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n+8huKaP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77750C16AAE;
-	Tue, 23 Sep 2025 14:21:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758637314;
-	bh=81BLq8+oPnPePeqC2bm5XK2/WvvBNdRPQuuI5LrZL9M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=n+8huKaP7fycL9AnrUIrxXI+dZAqhQLq2JfxdF1ZFU3VDn7qlsEJHNQTIzYE6qjgF
-	 RJnjc4lHq72JFyK5kD7tmSINoelcZGTUiyy3SKIvLYxElpx+UA/TIE8R/ltT5PgBjT
-	 SZho6F34eMNnw+XdidceYBYsKFa2seev/id1oUmgPc/zgHLLYMH2Q8uIYVurHwEarJ
-	 Uz5kVFAkv4+CtyD90x9OsZbUSFWQWezhIev0XGQKGsGEncEqBhWo0WVHHdQHRq8gMU
-	 wEeUpZ/RNxvsG0GhS8r2Xl2xFZCHDsMEXNTIP6BxYg+LDkcciRC5zywT9i7gQ7clxv
-	 3HeH1nEQzipZA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 1CADDCE1919; Tue, 23 Sep 2025 07:20:38 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	bpf@vger.kernel.org
-Subject: [PATCH 34/34] doc: Update for SRCU-fast definitions and initialization
-Date: Tue, 23 Sep 2025 07:20:36 -0700
-Message-Id: <20250923142036.112290-34-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <580ea2de-799a-4ddc-bde9-c16f3fb1e6e7@paulmck-laptop>
-References: <580ea2de-799a-4ddc-bde9-c16f3fb1e6e7@paulmck-laptop>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AAD86359;
+	Tue, 23 Sep 2025 14:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758637247; cv=fail; b=aZ0SVxxghIrGqcAGtyPqp9uWXojXf2wmdAyPrRU9IXFyANpYp3dC4APJZAM/jR5s58hFJACY4zAfcZSCR+QZ8NGbkMJwFK/K9e+TSd/gZsk8QvviFSWJDmOGZ4MdSXCf2xBzVGUn+uFmlU8ziRkCFUFbYfT43oP2V+yuGjIKhXY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758637247; c=relaxed/simple;
+	bh=6alNSOXhu7lGM+Uq/O/s5Av/mSwZvd9L/hs6Zg8VhL8=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=QJg/KoZDlSm0xYPfmGnZ6i1BgDCUHVhT9c2OZynDUzXhZx2IJBHt8m0GZ941AFRhlbhH1vUiDtL+eyUW/g6gn5W3imwmypWaInWZHICJV+VbutJAZkNl7g6tTD/GTcWMN9zO2+/0jOZoF6Baw2qZUnRBXR0nVWh6xEPXW3BzNXQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RKm4GZpo; arc=fail smtp.client-ip=52.101.201.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=emSaLy4qJytwq/01dK6SkrGGlhtHORZmtFEbfFW4tVVbNEayvUEBnsK7onABOi60vXCDiyOOc6yKEAYOlqdYzz4pNaJYhAPGIrmm9LRgqB1yV4K083BG/PTiyhwLg9dRCOeUdChtA9C1q4rC21+qFSgPzTnssJTK5CbtDmUXeoEBHcWPo2df5MXw0lSWc/77M1yP5xgCMrKqLYOoB0hpBj5sRpkbf6/BXJRoiTXZ4hhsM+ltzv2OlNDASfqSoiRNWWIxPkMO9TnVRWPyanznmtadB4MWJspENLgIDkOK/fvcnKpvuwu0ZS4p5K2bPK7G/z1K6eqxQn0SQddyZnUFFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tL2eLZrvjk7C6KwuBE33OUu0LyZDibXLdemZQezc+J8=;
+ b=kfj9gqui8LRA2+E8cI2FwReKkh5lhKWjD0U6Y788iPxfLj4tiVaUK2j5nRFCZ8c6CgzQMUZFcBaiXJN2bACJzpANCblxBUbRptZ+0qh0y9iKaVAFJ80SHaDOvQkpvXqzMjM92YpqzurAGFMKTDo4gKUgWUaqya+tIZQSFvTQrzAitarhZXWel2kzNicD25pqWExKryEpY1Xu3P2b0DJOE8oCv1BRVzT2bDZBEOvHZtVfrWjHD5H5m9OdBx80Kg/ovpIRwuqtmAU2SeBfl26T5z9azdi7sSJ7RmIan+fqhg7u6X54nZ69uX4VFEAUwbBEESEpDSlkgdkiaXeC0x50eg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tL2eLZrvjk7C6KwuBE33OUu0LyZDibXLdemZQezc+J8=;
+ b=RKm4GZpod1DxFfUovxBon4IwxPAtgk5f83BD2LU70qDtlv/8eLCx3nvgSjsa4KnG3spbH/otcVp+/PF6qPOyioV3cLi5UM6dJ+3veFaPxmjuCy2I0qznp7yELAWf1A7MABpyDRzVqdBpGXhYMRMZOkmhBCc61jXAeG5+orylq9O0L9D6xzf1hVDozP7kHu9gawN0AOKfT3W34G/8Y2OVSLA0S3lzVgEsYPz6xnt46XQFcHECZMHeCJgT3HnCYYy7mjDc6T45GSdyKFtVQgU3/IYa02uePUGsZC/Xp9w40op9jEzrReZu+YzRoxH2Mw0lQg1mRexCWf7dIBRSdEtAgw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by LV8PR12MB9230.namprd12.prod.outlook.com (2603:10b6:408:186::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Tue, 23 Sep
+ 2025 14:20:42 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 14:20:42 +0000
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 23 Sep 2025 23:20:37 +0900
+Message-Id: <DD08VDPA45X8.2VXMD1RJBAJER@nvidia.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH v2 02/10] gpu: nova-core: Create initial Gsp
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Alistair Popple" <apopple@nvidia.com>,
+ <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <dakr@kernel.org>, <acourbot@nvidia.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250922113026.3083103-1-apopple@nvidia.com>
+ <20250922113026.3083103-3-apopple@nvidia.com>
+In-Reply-To: <20250922113026.3083103-3-apopple@nvidia.com>
+X-ClientProxiedBy: TY4PR01CA0073.jpnprd01.prod.outlook.com
+ (2603:1096:405:36c::9) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|LV8PR12MB9230:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f6256f4-a56d-4d3f-f31b-08ddfaac5fe2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|1800799024|7416014|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TVNSWTlqM3hkT2pSWmFCMXJTckl5Z2JQSURKL3ZNeXV4T2czOWhZeW9lL2pZ?=
+ =?utf-8?B?TmVYdkVzV3kzYSs4ZkFreEdoNkZVU0tuYTE1emg5a2d2Zy9IUjZsenpqU0NS?=
+ =?utf-8?B?NDZPVmMzY2ZqSHFkSGxLTXhvbDA3OElNS1E3QnNTUDRNaWllVzllVFNUeVRs?=
+ =?utf-8?B?bUUveHBMVlBrdzU1bGRlK09VVHZVSlZtU3hWY0xYRWdUYmI0NWVPSWdCU2U5?=
+ =?utf-8?B?R3Rkb0R5SURXdTRHZ3d5T05VZzVEcHhsR2Zzck83K1dkSURyNEY1bDhnTXZL?=
+ =?utf-8?B?OEFJY0QxRFI1SmI5MzdLMGlOa2FvYnowWmVIQ214bmNsR3A1YVR5MWhtaWNP?=
+ =?utf-8?B?YTZLUysyQVhNdDQ1dkV1OXpRTXpxOHJqTlo0RHdONGtsVEVwajRSYUlLS2Nm?=
+ =?utf-8?B?MmZmMCt5Z254VVlaRktlMlVKWCsxY0NQbk1qMkVNRi9McHY5VW9KeHhOUThF?=
+ =?utf-8?B?L3NJRnkwVnFmemxETVZMY3MrUDMydTdzQ0NDaFhqcTNiYS9FOFlQWDJ1K05p?=
+ =?utf-8?B?TitQbmJUa2NrbnRvSEFMTkNIcm0xUW12SUoxdFIxNXVHNDI5T1IrT2pxNytz?=
+ =?utf-8?B?d0tkM0NPNU5vM0c1TmhaczdmV3JiNVdZdUhBcHdKY1VQbWJsTTZEU0dTQ1Er?=
+ =?utf-8?B?T0JuakpqT0hpSEdaQWc4eE5EZCtSdzhvSlV3NVdZZW1pNWFVWjhtVXkwYksv?=
+ =?utf-8?B?MzU1TVJUbHF6ZmZtMHlFUEU1SG5LUWxXN2NHVncwQ2RBTVlYMlMzOHRyaEJJ?=
+ =?utf-8?B?aEhXcmJWa1FaZXNHWXJ5TzZqMlljb1FzNzg1aktVNlA5MzViL2h0ZkxKQ3BU?=
+ =?utf-8?B?QWkva0J3SVRsQytDREkza1ZDT3FTQ2x4d25Da2l4bWROLzRiZG9mSGxEK08r?=
+ =?utf-8?B?a212RWVZV3lmejJzTUFrNEpaMlAzc1BlQXhiNitUMTJLYXZyRUsxNkVrRHZv?=
+ =?utf-8?B?ZnRqV2cyRDNEdm4rU0ZiMDhQZ0RsUXFJOERQd3BUWnFudHBITWR3WEsrczdP?=
+ =?utf-8?B?dHpIOVJaWnFsNDUxWjdJNThtS2hPZitlU2dMbDkzZkoyMU1XK2I1WnVrcTd6?=
+ =?utf-8?B?WWloK2syMDFJVkd2SGFQaTdTMXI2SThxMm9SMlJUNXFoVE1NcDBCUHIrbGpz?=
+ =?utf-8?B?UUl1UXQvTlIvMHlyd1BOd0dzZytjZUd2V1NRQmJ1RjhIQjliUDJ5VWhJc3dS?=
+ =?utf-8?B?VHErcmFPRkRnczBPVkd5bjRkckZKWDdmZlhncXpFRkRKK3dndGY4b3FzNEZk?=
+ =?utf-8?B?U3hTTDZnQ0ppYUwrYkFrdFViaE8vMUJDd3p1TWVlWStZajlubVpIcVBqNitO?=
+ =?utf-8?B?aWxoRW93TjRHKzVET0w1RnRWT2RvNUYyM01naTQ3Z20yRjRiN0dpY0pDUWdW?=
+ =?utf-8?B?S2x0N3ZrQTlpTzV4cWRHeTZYd2ZHZUxQVUdpVXhEdmptNUlaUmROMVJ6WVg1?=
+ =?utf-8?B?TFJJRXkwbzN5TWdDM0NqK1cxUDhEVzdKS1ZMS05WdXhzdS9FQ0hndm9nclln?=
+ =?utf-8?B?SDBSLzRjVEczaWVVZFlPcm9HYnEzU2lXdVNCdE9aalEzWENNbU5xRWtkTTFT?=
+ =?utf-8?B?VGxsQmZCMWFWZkdjY0tYWm5xaHlNSEhKc1VpeUorWDFVenM3OXNIRHZaYVpQ?=
+ =?utf-8?B?bUxqdnhqYy92b0N4MEcyakZleHR2ZkFZQkVwVksyY3dxU0hoUmU0ZGxKY3Y2?=
+ =?utf-8?B?ckxDcVdlM3RJQzBmdnIyS1Zxd0FkSDJZc20zS3ZYcFJuYjIxbHErTnVrUzNv?=
+ =?utf-8?B?dlZWY202Zm8zajUwVXVkUjdhYVFTOVo2VUxnK3BNZ2ZaMWcvK3VFSk1ERTla?=
+ =?utf-8?B?WlpUY3o2SVhtSlBJVEgxVnFTamt2VDE4VEw4U1RGWWZYR2NDM2s0ZHJXZDJL?=
+ =?utf-8?B?YWJZZ1llSjRJWFB0WDlsdktHMVU3TThGbStSYU4zS0U4bUluZ09zNGR4MVF6?=
+ =?utf-8?Q?6LpValaxHkQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q1lkYmRmcXk5YTcvZERpRVdoWnkyZXhIY210Skt3Tm1WOW8vbjhqbFgwN0Zv?=
+ =?utf-8?B?eXI4d3dPbkRCbndCTW9OcnJVZ1FpVmlxZWN2bDNjOVF2cUhCVmNsaENvcERN?=
+ =?utf-8?B?TjRYOStEalV1UjZrWXBXWmx4UWpUY3FjOEloaVIvbFVaWlBqMm1VeURQWDFp?=
+ =?utf-8?B?ZVl5aWk0cEE0ekVwTEM1Y0t3ZFpnaXFydHdZZklEMWhCWnNhcEpjMXN4UjJN?=
+ =?utf-8?B?aFMxOUVzYUkxQUVIZlROQmdWck9YWnZWelVMaFlZSk1PWWkyNzNMQVdpeGZN?=
+ =?utf-8?B?R1VzWi94Ri9CRjRGMkdkNjlGRXh0OGVKZkUyQ2hwMjkxZ1prbzJITWFqSUpV?=
+ =?utf-8?B?QTkxbUhiMWU1cUtObE1KN3VCa0hNSTV2Vk9BR01vMmkyeitYWkh1Smdwd0ha?=
+ =?utf-8?B?NVVFWWFhWjZmbi91YWZEUm9OOXdzbkNjQjlQK1dkM3JsUTRXQXVLZHRxUit5?=
+ =?utf-8?B?NVUyTVlPbDBOdmtzK0FPUFNNQktNWXVkT2ZPL2pBR2ZKRWJQeWFOU2RXMWYy?=
+ =?utf-8?B?TDc3c1M2U2JHRFZhOXI4cHBmRE5JazdGb1lZN1VFUm9zU1c2RExpbjVmaG5q?=
+ =?utf-8?B?MFpoYkJHQ2oraDFCSTJHb2NxVlNjbmk2dmVneGI1ZGU3MDJsVWI4cllpK2Vi?=
+ =?utf-8?B?c05USURsMVdiWW1pNWszOGpIRXI5QnZNQmtXVS9RZGVvQnQ4aVlYV0QzcVpS?=
+ =?utf-8?B?NnhHSm14WWVqZktSTHhTMTVIMmMrbXNGT25QM2I4WXFkSk0veExXK2ZpUDlV?=
+ =?utf-8?B?UEc4UlRMS3R0YUcrOEdHS05QWVlwaFdIQnpwbVVqRnBIY29UVVNwVDZwRzJw?=
+ =?utf-8?B?Zlc3TXRBYzhmdTh4aHFHRTU0Z0xmYjNkMmNVaDRMejB4TDloRDJvYnYxRW96?=
+ =?utf-8?B?OGRqT2U2VEhDQVJzOWJQc2VnOU1PbFpNNnZBcjhtZVlWOWxEclRFMTVCMHN4?=
+ =?utf-8?B?QndBeU1vNkRTODVUeENoWENOZ2loNUdDUUJQOFhCamxSUEc0ODRKUGF0Wjcr?=
+ =?utf-8?B?Tm11RWl1SEVUeCtMb3JuK0wra1lRak9rQ2hXSTMwaVJrUURmU3g4dUg2TmVP?=
+ =?utf-8?B?ZVBLRjhoblpGYUwxTUxwbThSc3lORlR0T1U2c05lQUFDTDFYMEJTc2Jhb3p1?=
+ =?utf-8?B?YklaYjdjMlBJZzFXWGJXeWN5TmdJL25EQ0VtcG4zeVFTdEhSazRPczNSM1kw?=
+ =?utf-8?B?YmF0V2dmUFBNcTljRzArMFVSVlhUUURSeVUxdWJtS2pXU2l3YjVYOEMwLzNk?=
+ =?utf-8?B?azlBRUNnQ3B0a3RIakR6NmFoT1RTQ2FuYWlyWFZIYzc2cnBkOTRqamx6YXBj?=
+ =?utf-8?B?RlVsdkdyeHd6MGNKT0JHdUJzTHJDQ0J4MFEyVkd5d0wvYms4U01QVnNRbG9p?=
+ =?utf-8?B?cmpHak1MbU1OUWt0WFgyczFFV0ZSbGxIVTN1TCtOOUltdEc1WW9RUUd6L0F1?=
+ =?utf-8?B?clBGYUFtUkhiYWY5MmxadWFFWnNaTE4xM2FSaXJZZmx5SlhDM01ONklzSTlE?=
+ =?utf-8?B?Q0htRzlhcXIrT0tVNk5ZT25sNTh0eDRQaG5hRU9Wd3h4Y0xXNnM3dnBadFZx?=
+ =?utf-8?B?M1ByNkt6VSt3VTdLNWRKR3dDblJhRllZOUtaTVlaa1ZSZ3BsaXpIQmZiSnBz?=
+ =?utf-8?B?djBhYTQyYmUyWVMwT29GYkxzQ29wZnhWUmI5NDM3dStTRUhqbVk5d3JhcmJq?=
+ =?utf-8?B?VUt2VVVqQWErc1NIU3dVWGJYNjQwVTJMTFNGMThEWE9OdCtXa25rb2liWWo4?=
+ =?utf-8?B?M0d0WDUwZTduY3NEK01DVVhIVUhxVUFjd0Zuazc3cStOWDlJcTlvVmVlUVJm?=
+ =?utf-8?B?ZDJZY3lDUnVhNUdxRWUxRVNVdUV2c1o5SldhN1k5NFhaMFpSeEZoTXpDcnBO?=
+ =?utf-8?B?SWk5N1lTUFM0cUwzN29uQ05RVWJpZGZBTDNSdXRHZ1FtbHpFL3lZN0Zha2ZI?=
+ =?utf-8?B?QzVTeklvcUVObDFiZTJxakxJeEtQL2NudlpRU1hWVTJwNCsxS3ZpbTdsQWFz?=
+ =?utf-8?B?eE9UWTJVV1FUYWl0b2pIQzQyWUc0bndrNGV0L3lOMjM3bEp2RHJrL01TU3du?=
+ =?utf-8?B?Wmxta3BaMXJxT1JWVHJDYkQ2V29WQVJ1aXpzUlVPYzZjWTJiL2RxT1RId2R5?=
+ =?utf-8?B?QklYNm1Gd0FmYzdpU2lzZTBPUEUvQ0hPbmhjNnRzRkxXbitlV05SenZNKzFm?=
+ =?utf-8?Q?pHi0fDUZfuGbAR56iG336zuWS1ui99d1+kjWO+dZWU5H?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f6256f4-a56d-4d3f-f31b-08ddfaac5fe2
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 14:20:41.9369
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pwCV3yk1qGvcMAOozRoPiuDIRSDYwmGK68JKr6rdFP5eP2tMgmDm2zPfds6RsVG0ir+IMkoHt6RoVtDEkA2hFw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9230
 
-This commit documents the DEFINE_SRCU_FAST(), DEFINE_STATIC_SRCU_FAST(),
-and init_srcu_struct_fast() API members.
+Hi Alistair,
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: <bpf@vger.kernel.org>
----
- .../RCU/Design/Requirements/Requirements.rst  | 33 ++++++++++---------
- Documentation/RCU/checklist.rst               | 12 ++++---
- Documentation/RCU/whatisRCU.rst               |  3 ++
- 3 files changed, 27 insertions(+), 21 deletions(-)
+On Mon Sep 22, 2025 at 8:30 PM JST, Alistair Popple wrote:
+> The GSP requires several areas of memory to operate. Each of these have
+> their own simple embedded page tables. Set these up and map them for DMA
+> to/from GSP using CoherentAllocation's. Return the DMA handle describing
+> where each of these regions are for future use when booting GSP.
+>
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+>
+> ---
+>
+> Changes for v2:
+>
+>  - Renamed GspMemOjbects to Gsp as that is what they are
+>  - Rebased on Alex's latest series
+> ---
+>  drivers/gpu/nova-core/gpu.rs                  |  2 +-
+>  drivers/gpu/nova-core/gsp.rs                  | 80 +++++++++++++++++--
+>  drivers/gpu/nova-core/gsp/fw.rs               | 39 +++++++++
+>  .../gpu/nova-core/gsp/fw/r570_144/bindings.rs | 19 +++++
+>  4 files changed, 131 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
+> index 5da9ad726483..c939b3868271 100644
+> --- a/drivers/gpu/nova-core/gpu.rs
+> +++ b/drivers/gpu/nova-core/gpu.rs
+> @@ -221,7 +221,7 @@ pub(crate) fn new<'a>(
+> =20
+>              sec2_falcon: Falcon::new(pdev.as_ref(), spec.chipset, bar, t=
+rue)?,
+> =20
+> -            gsp <- Gsp::new(),
+> +            gsp <- Gsp::new(pdev)?,
+> =20
+>              _: { gsp.boot(pdev, bar, spec.chipset, gsp_falcon, sec2_falc=
+on)? },
+> =20
+> diff --git a/drivers/gpu/nova-core/gsp.rs b/drivers/gpu/nova-core/gsp.rs
+> index 503ce8ee0420..0185f66971ff 100644
+> --- a/drivers/gpu/nova-core/gsp.rs
+> +++ b/drivers/gpu/nova-core/gsp.rs
+> @@ -1,27 +1,91 @@
+>  // SPDX-License-Identifier: GPL-2.0
+> =20
+>  mod boot;
+> -
+> -use kernel::prelude::*;
+> -
 
-diff --git a/Documentation/RCU/Design/Requirements/Requirements.rst b/Documentation/RCU/Design/Requirements/Requirements.rst
-index 4a116d7a564edc..b5cdbba3ec2e71 100644
---- a/Documentation/RCU/Design/Requirements/Requirements.rst
-+++ b/Documentation/RCU/Design/Requirements/Requirements.rst
-@@ -2637,15 +2637,16 @@ synchronize_srcu() for some other domain ``ss1``, and if an
- that was held across as ``ss``-domain synchronize_srcu(), deadlock
- would again be possible. Such a deadlock cycle could extend across an
- arbitrarily large number of different SRCU domains. Again, with great
--power comes great responsibility.
-+power comes great responsibility, though lockdep is now able to detect
-+this sort of deadlock.
- 
--Unlike the other RCU flavors, SRCU read-side critical sections can run
--on idle and even offline CPUs. This ability requires that
--srcu_read_lock() and srcu_read_unlock() contain memory barriers,
--which means that SRCU readers will run a bit slower than would RCU
--readers. It also motivates the smp_mb__after_srcu_read_unlock() API,
--which, in combination with srcu_read_unlock(), guarantees a full
--memory barrier.
-+Unlike the other RCU flavors, SRCU read-side critical sections can run on
-+idle and even offline CPUs, with the exception of srcu_read_lock_fast()
-+and friends.  This ability requires that srcu_read_lock() and
-+srcu_read_unlock() contain memory barriers, which means that SRCU
-+readers will run a bit slower than would RCU readers. It also motivates
-+the smp_mb__after_srcu_read_unlock() API, which, in combination with
-+srcu_read_unlock(), guarantees a full memory barrier.
- 
- Also unlike other RCU flavors, synchronize_srcu() may **not** be
- invoked from CPU-hotplug notifiers, due to the fact that SRCU grace
-@@ -2681,15 +2682,15 @@ run some tests first. SRCU just might need a few adjustment to deal with
- that sort of load. Of course, your mileage may vary based on the speed
- of your CPUs and the size of your memory.
- 
--The `SRCU
--API <https://lwn.net/Articles/609973/#RCU%20Per-Flavor%20API%20Table>`__
-+The `SRCU API
-+<https://lwn.net/Articles/609973/#RCU%20Per-Flavor%20API%20Table>`__
- includes srcu_read_lock(), srcu_read_unlock(),
--srcu_dereference(), srcu_dereference_check(),
--synchronize_srcu(), synchronize_srcu_expedited(),
--call_srcu(), srcu_barrier(), and srcu_read_lock_held(). It
--also includes DEFINE_SRCU(), DEFINE_STATIC_SRCU(), and
--init_srcu_struct() APIs for defining and initializing
--``srcu_struct`` structures.
-+srcu_dereference(), srcu_dereference_check(), synchronize_srcu(),
-+synchronize_srcu_expedited(), call_srcu(), srcu_barrier(),
-+and srcu_read_lock_held(). It also includes DEFINE_SRCU(),
-+DEFINE_STATIC_SRCU(), DEFINE_SRCU_FAST(), DEFINE_STATIC_SRCU_FAST(),
-+init_srcu_struct(), and init_srcu_struct_fast() APIs for defining and
-+initializing ``srcu_struct`` structures.
- 
- More recently, the SRCU API has added polling interfaces:
- 
-diff --git a/Documentation/RCU/checklist.rst b/Documentation/RCU/checklist.rst
-index c9bfb2b218e525..4b30f701225fdb 100644
---- a/Documentation/RCU/checklist.rst
-+++ b/Documentation/RCU/checklist.rst
-@@ -417,11 +417,13 @@ over a rather long period of time, but improvements are always welcome!
- 	you should be using RCU rather than SRCU, because RCU is almost
- 	always faster and easier to use than is SRCU.
- 
--	Also unlike other forms of RCU, explicit initialization and
--	cleanup is required either at build time via DEFINE_SRCU()
--	or DEFINE_STATIC_SRCU() or at runtime via init_srcu_struct()
--	and cleanup_srcu_struct().  These last two are passed a
--	"struct srcu_struct" that defines the scope of a given
-+	Also unlike other forms of RCU, explicit initialization
-+	and cleanup is required either at build time via
-+	DEFINE_SRCU(), DEFINE_STATIC_SRCU(), DEFINE_SRCU_FAST(),
-+	or DEFINE_STATIC_SRCU_FAST() or at runtime via either
-+	init_srcu_struct() or init_srcu_struct_fast() and
-+	cleanup_srcu_struct().	These last three are passed a
-+	`struct srcu_struct` that defines the scope of a given
- 	SRCU domain.  Once initialized, the srcu_struct is passed
- 	to srcu_read_lock(), srcu_read_unlock() synchronize_srcu(),
- 	synchronize_srcu_expedited(), and call_srcu().	A given
-diff --git a/Documentation/RCU/whatisRCU.rst b/Documentation/RCU/whatisRCU.rst
-index cf0b0ac9f4636a..a1582bd653d115 100644
---- a/Documentation/RCU/whatisRCU.rst
-+++ b/Documentation/RCU/whatisRCU.rst
-@@ -1227,7 +1227,10 @@ SRCU: Initialization/cleanup/ordering::
- 
- 	DEFINE_SRCU
- 	DEFINE_STATIC_SRCU
-+	DEFINE_SRCU_FAST        // for srcu_read_lock_fast() and friends
-+	DEFINE_STATIC_SRCU_FAST // for srcu_read_lock_fast() and friends
- 	init_srcu_struct
-+	init_srcu_struct_fast
- 	cleanup_srcu_struct
- 	smp_mb__after_srcu_read_unlock
- 
--- 
-2.40.1
+Oops, not sure why I put that here but thanks for fixing this.
 
+>  mod fw;
+> =20
+>  pub(crate) use fw::{GspFwWprMeta, LibosParams};
+> =20
+> +use kernel::device;
+> +use kernel::dma::CoherentAllocation;
+> +use kernel::dma_write;
+> +use kernel::pci;
+> +use kernel::prelude::*;
+>  use kernel::ptr::Alignment;
+> +use kernel::transmute::{AsBytes, FromBytes};
+> +
+> +use fw::LibosMemoryRegionInitArgument;
+> =20
+>  pub(crate) const GSP_PAGE_SHIFT: usize =3D 12;
+>  pub(crate) const GSP_PAGE_SIZE: usize =3D 1 << GSP_PAGE_SHIFT;
+>  pub(crate) const GSP_HEAP_ALIGNMENT: Alignment =3D Alignment::new::<{ 1 =
+<< 20 }>();
+> =20
+>  /// GSP runtime data.
+> -///
+> -/// This is an empty pinned placeholder for now.
+>  #[pin_data]
+> -pub(crate) struct Gsp {}
+> +pub(crate) struct Gsp {
+> +    libos: CoherentAllocation<LibosMemoryRegionInitArgument>,
+> +    pub loginit: CoherentAllocation<u8>,
+> +    pub logintr: CoherentAllocation<u8>,
+> +    pub logrm: CoherentAllocation<u8>,
+
+These don't need to be public for now.
+
+> +}
+> +
+> +/// Creates a self-mapping page table for `obj` at its beginning.
+> +fn create_pte_array(obj: &mut CoherentAllocation<u8>) {
+> +    let num_pages =3D obj.size().div_ceil(GSP_PAGE_SIZE);
+> +    let handle =3D obj.dma_handle();
+> +
+> +    // SAFETY:
+> +    //  - By the invariants of the CoherentAllocation ptr is non-NULL.
+> +    //  - CoherentAllocation CPU addresses are always aligned to a
+> +    //    page-boundary, satisfying the alignment requirements for
+> +    //    from_raw_parts_mut()
+> +    //  - The allocation size is at least as long as 8 * num_pages as
+> +    //    GSP_PAGE_SIZE is larger than 8 bytes.
+> +    let ptes =3D unsafe {
+> +        let ptr =3D obj.start_ptr_mut().cast::<u64>().add(1);
+> +        core::slice::from_raw_parts_mut(ptr, num_pages)
+> +    };
+
+I think we also need to provide the same guarantees as
+`CoherentAllocation::as_slice_mut`:=20
+
+* Callers must ensure that the device does not read/write to/from memory
+  while the returned slice is live.
+* Callers must ensure that this call does not race with a read or write
+  to the same region while the returned slice is live.
+
+Unfortunately I don't think these are covered by this function alone -
+it could perfectly be called on an allocation that is currently in use
+by the hardware. So technically `create_pte_arrays` in its present form
+should be unsafe, but that also would be overkill here since it is a
+local function and we control the conditions into which it is called.
+
+This PTE business, where we are taking any coherent allocation and
+reinterpreting its bytes to create a page table, does not look very
+clean to me anyway, so maybe we can solve this with a redesign. I'd
+rather have that part of the object explicitly laid out, as it is for
+`GspMem` later in this series (albeit with `u8` instead of `u64`):
+
+    struct GspMem {
+        ptes: [u8; GSP_PAGE_SIZE],
+        ...
+
+What would work best here IMHO would be to have a dedicated type for the
+array of PTEs, which is placed at the beginning of each object
+requesting one. Then we could have an init generic method for it that
+takes a reference to any object and `dma_write!`s its entries, avoiding
+the slice and having a guarantee that we have exclusive access to the
+object since we just created it one line above. I need to think a bit
+more about this but this should be a solid basis.
+
+As it happens, loginit, logintr and logrm all have the same size, so we
+should be able to declare a new type for these 3.
+
+> +
+> +    for (i, pte) in ptes.iter_mut().enumerate() {
+> +        *pte =3D handle + ((i as u64) << GSP_PAGE_SHIFT);
+> +    }
+> +}
+> +
+> +/// Creates a new `CoherentAllocation<A>` with `name` of `size` elements=
+, and
+> +/// register it into the `libos` object at argument position `libos_arg_=
+nr`.
+> +fn create_coherent_dma_object<A: AsBytes + FromBytes>(
+> +    dev: &device::Device<device::Bound>,
+> +    name: &'static str,
+> +    size: usize,
+> +    libos: &mut CoherentAllocation<LibosMemoryRegionInitArgument>,
+> +    libos_arg_nr: usize,
+> +) -> Result<CoherentAllocation<A>> {
+> +    let obj =3D CoherentAllocation::<A>::alloc_coherent(dev, size, GFP_K=
+ERNEL | __GFP_ZERO)?;
+> +
+> +    dma_write!(libos[libos_arg_nr] =3D LibosMemoryRegionInitArgument::ne=
+w(name, &obj))?;
+
+Once we have a dedicated type for DMA objects with PTEs, I suggest to
+move this `dma_write` outside of this function. It doesn't bring any
+value to have it here, and that way we can remove
+`create_coherent_dma_object` altogether. Let me clarify below.
+
+> +
+> +    Ok(obj)
+> +}
+> =20
+>  impl Gsp {
+> -    pub(crate) fn new() -> impl PinInit<Self> {
+> -        pin_init!(Self {})
+> +    pub(crate) fn new(pdev: &pci::Device<device::Bound>) -> Result<impl =
+PinInit<Self, Error>> {
+> +        let dev =3D pdev.as_ref();
+> +        let mut libos =3D CoherentAllocation::<LibosMemoryRegionInitArgu=
+ment>::alloc_coherent(
+> +            dev,
+> +            GSP_PAGE_SIZE / size_of::<LibosMemoryRegionInitArgument>(),
+> +            GFP_KERNEL | __GFP_ZERO,
+> +        )?;
+> +        let mut loginit =3D create_coherent_dma_object::<u8>(dev, "LOGIN=
+IT", 0x10000, &mut libos, 0)?;
+> +        create_pte_array(&mut loginit);
+> +        let mut logintr =3D create_coherent_dma_object::<u8>(dev, "LOGIN=
+TR", 0x10000, &mut libos, 1)?;
+> +        create_pte_array(&mut logintr);
+> +        let mut logrm =3D create_coherent_dma_object::<u8>(dev, "LOGRM",=
+ 0x10000, &mut libos, 2)?;
+> +        create_pte_array(&mut logrm);
+
+So with the proper PTE-prefixed type, this code would become:
+
+    let loginit =3D PteDmaObject::new(dev)?;
+    let logintr =3D PteDmaObject::new(dev)?;
+    let logrm =3D PteDmaObject::new(dev)?;
+
+    dma_write!(libos[0] =3D LibosMemoryRegionInitArgument::new("LOGINIT", &=
+loginit))?;
+    dma_write!(libos[1] =3D LibosMemoryRegionInitArgument::new("LOGINTR", &=
+logintr))?;
+    dma_write!(libos[2] =3D LibosMemoryRegionInitArgument::new("LOGRM", &lo=
+grm))?;
+
+Note how loginit and friends now don't need to be mutable anymore.
+
+It's getting late here so let me continue the review tomorrow. :)
 
