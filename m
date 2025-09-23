@@ -1,135 +1,183 @@
-Return-Path: <linux-kernel+bounces-828924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE29BB95DCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:45:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F9FBB95DC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57860486429
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:45:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24A381888EE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A7027F011;
-	Tue, 23 Sep 2025 12:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F00323400;
+	Tue, 23 Sep 2025 12:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jruc0i+w"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9yj99gL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60004323F57
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9288A184;
+	Tue, 23 Sep 2025 12:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758631493; cv=none; b=ZoGI61urW85nw5echFSYrPZ9uv9G9mt/uHaTeuejTLUoPM+hJjFY1p/UMxA2lq3g6ArHCVXkbhzLMjW5P/4N6YcV2I42AHAKSGwIcD+zNzgmTimuAPGVHS6xRMfIFqjlZOpEAXxX6IVF3hB8fGth1VPWoAAjUwFIB9D8v9LY46w=
+	t=1758631486; cv=none; b=fPftpTwLrYVo2PqhpRBDK1UzF/1wvynNvKKGhDH0swUkxRyJPiTB6zUvuxHk7+KlMLM2PcENfUrudgza9+deB5TIRzLZApXy/j3myvCs/ClkYMZM8Wz78zutU2EL0qfmQCpEpLzrt8BTrBA+Xj79cEdhAdV9AMOwCxtU+/FAUxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758631493; c=relaxed/simple;
-	bh=X5SCAiSiPiJEcYEiOxRFI7I4FHTBz2CQgSgz4A8sfdU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qsZNi1n79NSXmCFiShTncVum5ulYGJ+GHWz0Ri5zc5aK0QrK0zjB6UZ86UkmDW74eQfKyCwX15+Am7eLKV2qEbVKxrS3mxp1Dt/E/yQ/9ByyFqkBMLj14cem6ETe8f6vTnHFnoj3wDQp81yYfxDcbBozeEzCiJvmAL86AK0Y130=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jruc0i+w; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-77c1814ca1dso4237944b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 05:44:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758631491; x=1759236291; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cgc0zGHjqKsb6Mzy0/R8YmRgjX+eUzNJLvWfwmfdlbw=;
-        b=Jruc0i+wYSxjrQk6RIxskeS0j1RaZjlSXUnI5B9f7yoZ2k/KnOs2OGTIHy3Rht9kAt
-         4g9he9H2+3sfbxI1yTldJgVU2a73bO/f0wUu1/NpxjCpXd6v8ujvRyEK0dFdCS5l77Q5
-         cKUlBVoPEtUeo+8BHKKVsA8lBCjgcHs9IZPkHRWfX/4yEO37UyJjMD0bzljphwaVjJxb
-         AijAVsv74PJgREEzt3LCdq+EmhXVnkb5OhQZ60i3MGzaiaj/VUUq3JXXI5KfvpCGZaSW
-         x7VX5newM/msOWP67OX2rsB+nM1vAyT9EtlGUuos7Iu+a7B+B+yBNXI89C1kKdckUuQU
-         eMLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758631491; x=1759236291;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cgc0zGHjqKsb6Mzy0/R8YmRgjX+eUzNJLvWfwmfdlbw=;
-        b=N3/PNgoSaIAM6MB9aCAC+yQn3tYqBmO+ijdn/BHph8/5KgB5/RI75yg4PkNzMER8ai
-         6OigMO5P+/+/AGtd7RITLK8JJgFZY7rG5P6HhttLTfOrZrkuL4+kIRg0iwdyJs0Gwy2N
-         GGSdpFC9snDo/ycrwK0313MyHUtnJPOFQ3RMxcdMy5CYXmNZoWn7aiP6cP/Z8vfeVvAl
-         QHA8NgjHrwfBNUs3894QLYvIHa9/g6YaZRR9EsfqDjojsujEOcGP+F+NVJfTkM8ETJ/Q
-         IK7dem9IJO3atgSZ99S1QMiU9Rw1BNqbz4UTnzyy8fxyXlMhoYup/9j0FH/UaiHaWAGo
-         Z1QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxwTSKR5IYJEHrDR8umYmtHKBwB26o63zYc1PhCTC5YfnYKSZmc2XcOIv7mCLGRBcsr+Y9lWFVRut1Bms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXufkd2kBXF5F81lanxHSYEkiEiUZxE2wmQVe7uN45V0QvY8oQ
-	r2fQRLDtH4kq7sCQDCfUiM7KL4ERmu4BtSArs0n6WjcRhkz0ERLfBX77
-X-Gm-Gg: ASbGncsddc6cOpjGB87TyWxioPhVGnfNIRsYnrBo5UlYoh59+KIF+6FeDXv2RDKth5q
-	au8UVFT0FV3/RDyBOIi244fKMOUCdcT8mknJlswFo/+mLW2wrQck7LtGMGI6yj6PucS9dPU2wA/
-	HSVEUmFBby+yN70TXbLSDs3AeHEs9+kVGCrIkxWG18RFglT3jWsz7HTTDKSyiNzkCOKuKJgBdS2
-	7AIxnKmRGuV9Eoov4PzOhUDVi1GxUuthRvQuztjDU/G6H9KWRwrDmszbvPq0Hh9Vkmky3RYWulA
-	P/mXpgY8nFxgCx0blMmTQ5lnJ5ZBE1I2svd2Q295dCeP9L/uM1xOEBwlM3Ul+ww2UwD1NCVY5z5
-	mtKGc+9pbYlWwZXRp9328T4A=
-X-Google-Smtp-Source: AGHT+IF+Z+DXFn3bgpMwnAWPeSbLtcvFzn5fzKbQO8Hcx6cZEpx6vf9Jd5Y5Z7nnPoPYPWpaRcohgQ==
-X-Received: by 2002:a05:6a21:3398:b0:24d:38c:26bd with SMTP id adf61e73a8af0-2cffb042180mr4007968637.43.1758631491539;
-        Tue, 23 Sep 2025 05:44:51 -0700 (PDT)
-Received: from lgs.. ([2408:8418:1100:9530:4f2e:20bc:b03d:e78])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b553a0a8270sm8354998a12.17.2025.09.23.05.44.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 05:44:51 -0700 (PDT)
-From: Guangshuo Li <lgs201920130244@gmail.com>
-To: =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Gaurav Jain <gaurav.jain@nxp.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Victoria Milhoan (b42089)" <vicki.milhoan@freescale.com>,
-	Dan Douglass <dan.douglass@nxp.com>,
-	Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Guangshuo Li <lgs201920130244@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v3] crypto: caam: Add check for kcalloc() in test_len()
-Date: Tue, 23 Sep 2025 20:44:18 +0800
-Message-ID: <20250923124418.1857922-1-lgs201920130244@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758631486; c=relaxed/simple;
+	bh=ov3x/Bv7oV50KFhrwrPMRC8zciwGASqntR7tTgePSD8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=u7anxKOKzB/gXRGHtc0eLUyCGwtmYEJDtCTnPT/iZ/7M757nR9OKiS6VEdYeb6KweVp3aWCCaPzlDmFXVyIV2tgCROmk1vhFlM21u5ONEpUzO9yxU7qY+YsmvXkKUMm5R9K7UIdxUsq3Hj1Q+cf4kBb7W8V656RoP1MfHDg9zTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9yj99gL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0271BC4CEF5;
+	Tue, 23 Sep 2025 12:44:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758631486;
+	bh=ov3x/Bv7oV50KFhrwrPMRC8zciwGASqntR7tTgePSD8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=e9yj99gLWb6vn8o4oOOQNm7BxB6fejebVGtLUn5foBi7E6sibbmwebGzcvWzT0xVn
+	 iPoL6hD2yYK/J+p1k24PmgEgOLSU3K23YbvEw8Q4dar6REJ4AzUBZy34YsVvCHgspa
+	 9uu6c+ByYoGwJB4idWb2NC5/7mebyLOXtEPl29rHCGz5klbpViRW5jSIOZGk7cs9ro
+	 pV7AAm65xazyrqHkCX3p7ynrT+pwh2PS7yNYnjeRrtqANx4Ke51A5qb7rQEA7FUqIT
+	 5GSKi82jpchy/aJ6Qaa20A5IfjPbX6bTjznxF/o6djMwihOuqXxnL4wqkoWCGp/Aqu
+	 hQ5oPy0iX+QRg==
+Date: Tue, 23 Sep 2025 21:44:38 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig
+ <hch@infradead.org>, Julian Sun <sunjunchao@bytedance.com>,
+ cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+ lance.yang@linux.dev, mhiramat@kernel.org, agruenba@redhat.com,
+ hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
+ shakeel.butt@linux.dev, muchun.song@linux.dev
+Subject: Re: [PATCH 0/3] Suppress undesirable hung task warnings.
+Message-Id: <20250923214438.95e34fc1bbd5cfe5ac0b9dde@kernel.org>
+In-Reply-To: <20250923071607.GR3245006@noisy.programming.kicks-ass.net>
+References: <20250922094146.708272-1-sunjunchao@bytedance.com>
+	<20250922132718.GB49638@noisy.programming.kicks-ass.net>
+	<aNGQoPFTH2_xrd9L@infradead.org>
+	<20250922145045.afc6593b4e91c55d8edefabb@linux-foundation.org>
+	<20250923071607.GR3245006@noisy.programming.kicks-ass.net>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-As kcalloc() may fail, check its return value to avoid a NULL pointer
-dereference when passing the buffer to rng->read(). On allocation
-failure, log the error and return since test_len() returns void.
+On Tue, 23 Sep 2025 09:16:07 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Fixes: 2be0d806e25e ("crypto: caam - add a test for the RNG")
-Cc: stable@vger.kernel.org
-Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
----
-changelog:
-v3:
-- Fix build error: test_len() returns void; return without a value.
-- No functional changes beyond the allocation failure path.
+> On Mon, Sep 22, 2025 at 02:50:45PM -0700, Andrew Morton wrote:
+> > On Mon, 22 Sep 2025 11:08:32 -0700 Christoph Hellwig <hch@infradead.org> wrote:
+> > 
+> > > On Mon, Sep 22, 2025 at 03:27:18PM +0200, Peter Zijlstra wrote:
+> > > > > Julian Sun (3):
+> > > > >   sched: Introduce a new flag PF_DONT_HUNG.
+> > > > >   writeback: Introduce wb_wait_for_completion_no_hung().
+> > > > >   memcg: Don't trigger hung task when memcg is releasing.
+> > > > 
+> > > > This is all quite terrible. I'm not at all sure why a task that is
+> > > > genuinely not making progress and isn't killable should not be reported.
+> > > 
+> > > The hung device detector is way to aggressive for very slow I/O.
+> > > See blk_wait_io, which has been around for a long time to work
+> > > around just that.  Given that this series targets writeback I suspect
+> > > it is about an overloaded device as well.
+> > 
+> > Yup, it's writeback - the bug report is in
+> > https://lkml.kernel.org/r/20250917212959.355656-1-sunjunchao@bytedance.com
+> > 
+> > Memory is big and storage is slow, there's nothing wrong if a task
+> > which is designed to wait for writeback waits for a long time.
+> > 
+> > Of course, there's something wrong if some other task which isn't
+> > designed to wait for writeback gets stuck waiting for the task which
+> > *is* designed to wait for writeback, but we'll still warn about that.
+> > 
+> > 
+> > Regarding an implementation, I'm wondering if we can put a flag in
+> > `struct completion' telling the hung task detector that this one is
+> > expected to wait for long periods sometimes.  Probably messy and it
+> > only works for completions (not semaphores, mutexes, etc).  Just
+> > putting it out there ;)
+> 
+> So the problem is that there *is* progress (albeit rather slowly), the
+> watchdog just doesn't see that. Perhaps that is the thing we should look
+> at fixing.
+> 
+> How about something like the below? That will 'spuriously' wake up the
+> waiters as long as there is some progress being made. Thereby increasing
+> the context switch counters of the tasks and thus the hung_task watchdog
+> sees progress.
+> 
+> This approach should be safer than the blk_wait_io() hack, which has a
+> timer ticking, regardless of actual completions happening or not.
 
-v2:
-- Return on allocation failure to avoid possible NULL dereference.
----
- drivers/crypto/caam/caamrng.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I like this idea, because this does not priotize any task, but priotize
+context. The problem sounds like the kernel knows the operation
+should be slow. Then what we need is a "progress bar" for the hung task
+instead of an "ever-spinning circle".
 
-diff --git a/drivers/crypto/caam/caamrng.c b/drivers/crypto/caam/caamrng.c
-index b3d14a7f4dd1..0eb43c862516 100644
---- a/drivers/crypto/caam/caamrng.c
-+++ b/drivers/crypto/caam/caamrng.c
-@@ -181,7 +181,9 @@ static inline void test_len(struct hwrng *rng, size_t len, bool wait)
- 	struct device *dev = ctx->ctrldev;
- 
- 	buf = kcalloc(CAAM_RNG_MAX_FIFO_STORE_SIZE, sizeof(u8), GFP_KERNEL);
--
-+	if (!buf) {
-+		return;
-+	}
- 	while (len > 0) {
- 		read_len = rng->read(rng, buf, len, wait);
- 
+It seems that the task hang detector can be triggered by an IO device
+problem. This is not because IO is slow but in progress, but because
+removable devices, etc., may not return from IO.
+
+So, is it possible to reset such a watchdog only when it is confirmed
+that some IO is slow but in progress? No matter how slow the IO is or
+how throttled it is, I think it's rare for there to be no IO at all
+within a few seconds.
+
+Thank you,
+
+> 
+> ---
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index a07b8cf73ae2..1326193b4d95 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -174,9 +174,10 @@ static void finish_writeback_work(struct wb_writeback_work *work)
+>  		kfree(work);
+>  	if (done) {
+>  		wait_queue_head_t *waitq = done->waitq;
+> +		bool force_wake = (jiffies - done->stamp) > HZ/2;
+>  
+>  		/* @done can't be accessed after the following dec */
+> -		if (atomic_dec_and_test(&done->cnt))
+> +		if (atomic_dec_and_test(&done->cnt) || force_wake)
+>  			wake_up_all(waitq);
+>  	}
+>  }
+> @@ -213,7 +214,7 @@ static void wb_queue_work(struct bdi_writeback *wb,
+>  void wb_wait_for_completion(struct wb_completion *done)
+>  {
+>  	atomic_dec(&done->cnt);		/* put down the initial count */
+> -	wait_event(*done->waitq, !atomic_read(&done->cnt));
+> +	wait_event(*done->waitq, ({ done->stamp = jiffies; !atomic_read(&done->cnt); }));
+>  }
+>  
+>  #ifdef CONFIG_CGROUP_WRITEBACK
+> diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+> index 2ad261082bba..197593193ce3 100644
+> --- a/include/linux/backing-dev-defs.h
+> +++ b/include/linux/backing-dev-defs.h
+> @@ -63,6 +63,7 @@ enum wb_reason {
+>  struct wb_completion {
+>  	atomic_t		cnt;
+>  	wait_queue_head_t	*waitq;
+> +	unsigned long		stamp;
+>  };
+>  
+>  #define __WB_COMPLETION_INIT(_waitq)	\
+
+
 -- 
-2.43.0
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
