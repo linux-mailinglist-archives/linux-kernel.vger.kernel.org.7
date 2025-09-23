@@ -1,260 +1,134 @@
-Return-Path: <linux-kernel+bounces-829512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B92A1B973E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:52:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3693AB973ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1FC719C5A4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:52:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 796402E5F45
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E8A2F9DBC;
-	Tue, 23 Sep 2025 18:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8402FB630;
+	Tue, 23 Sep 2025 18:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lhntMgqe"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpozEqWp"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E544D18027;
-	Tue, 23 Sep 2025 18:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758653542; cv=fail; b=W76KEdQB2NqKz3OBz+/NPY1Rr1R2YZ5YWOxDvUkQdz5x/5WJSRZw9KCNeQo1u647Rs8CGQ+Ww7u0WAO/CXCNs5iPFTFAqB0ep8A+IQX1OwViolkYQsGBtknS58TatOVAICV64ew/yQf03fTQPdAjzIs1Cymo0ythXazGkb77qWI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758653542; c=relaxed/simple;
-	bh=eSBDXzwV2y+UVzwVvmX3sP2xU/F/852A9Z6p8S04lz4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=YMT3grHda0qdaPx+cD9L3c6SCBGiKnMmr8Bxjbz+xosysBjSjq4K6F6RGhUOE7jhhNuXokWIcAVoespPqNz8zh/sWnMNwM4L+tqt8RxihzBPfAmjv/FoeoO2dkmbfTMNNiESXXQ8X8oKT53AazEaJXUBvVJ1arDcFDnXaLm4jPA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lhntMgqe; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758653541; x=1790189541;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=eSBDXzwV2y+UVzwVvmX3sP2xU/F/852A9Z6p8S04lz4=;
-  b=lhntMgqekPxH6uL449O3JQSoQpFeximATnJnDuEGpHd9mykkownZUppc
-   OyrrEVk/WJlynZosHzcFtf7cjTSVOOsa0VmceZ6+0iYLzYmdxDZOgiZUn
-   orxxPROJrKDv3Ph6/f/HJ72yOJX2L1ACo84U0Xe2/b+OcbGMAnwEy1PWU
-   CozjEPTw1/baB6KsKj53MuqJhWaBSa2xy5VNq4C9tnPVuEbMDKTqXzhSS
-   DiWQH1ydrwpURDXq68FLZBwvLqzPRn7fohwBxg5cj02Tuz8rw4z9/F0wD
-   hBY4n0FTU+ua+hTURwA2CS3pqqmxu/AAghkSfpsHLEmNWcOhnx6mKkg+b
-   Q==;
-X-CSE-ConnectionGUID: XT4GpeyiQnq9MUl00ox8bg==
-X-CSE-MsgGUID: +Bjzk/f1QhOs+OYwbiuIzw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="83548594"
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="83548594"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 11:52:20 -0700
-X-CSE-ConnectionGUID: RgaZb9cjTj6DtoO5XoUurg==
-X-CSE-MsgGUID: F+uVSQejRLmrm6THiIQ93Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="182103547"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 11:52:19 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 23 Sep 2025 11:52:18 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Tue, 23 Sep 2025 11:52:18 -0700
-Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.41) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 23 Sep 2025 11:52:18 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kGnFYQHqq0XONCZ/O2A46+olzqhvLP8ebUfBlmd7gnEwTzYatcU9bpqJRzdeA1tfvxgA+CHr7amLCWngPX6AmSeNaP3pKcj30mDfwFCBiFkE9cWU5vCc7YpTnda+B8y3/iT8kB9oBVSFjMGDFpIxI2TGH3VeyFhB/vxVRpE7bkwnF+NxT+4W2FmgueRjCck/we6VEpvqP1nv5s18tfarQWLXK0fUX4gX/cj/hjmUyhL+TzplwSwLDCuBYDCXWcvRf1fU57mqinnNvWKZibuwbcxqMUAFQBjdCXQZ4p1+oUsiycAOd1Xc1eJHwBXGB9oF8Z1g+b7AmGdZ1L+iUeCe6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OEi11Y1Yig8xeaNDdSL6w7oirhiTMHwS+tlAGZRUNpY=;
- b=l9Sm5frDoV/TN+i1QCwPrLn5IVUwbbj5IIrFCH9aOjN8zrOpgwy3cB1VDSzsRtUhiDnX6vsXCoRg7gEpH9jfLLJXjg8mTrwnAjagFhP2vtXgG1uIEa2yXx+D7ORX2tlGiJW8CKTUyjhpexcC5fbYu+i/cm1DZbFDBlhabSsMa+GDfTa2TG1fCn872OgWsD4d0Um63BeWVpyYEEmVLM5DK8aPnftuaQyYVHAn1E02nGaF7T2t7EPqSw6RKeSMuPZKA+1SibG8ZpUH1geVeDID/i9Pvchh1RAHbsQwR2jXHo6qSu18K1aCZrAZTIRitrLEqdFT8q/kKF/jPGw1cWtMPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ5PPF0D43D62C4.namprd11.prod.outlook.com
- (2603:10b6:a0f:fc02::80b) by SJ5PPFC362E0A4E.namprd11.prod.outlook.com
- (2603:10b6:a0f:fc02::854) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.18; Tue, 23 Sep
- 2025 18:52:16 +0000
-Received: from SJ5PPF0D43D62C4.namprd11.prod.outlook.com
- ([fe80::4df9:6ae0:ba12:2dde]) by SJ5PPF0D43D62C4.namprd11.prod.outlook.com
- ([fe80::4df9:6ae0:ba12:2dde%8]) with mapi id 15.20.9137.012; Tue, 23 Sep 2025
- 18:52:16 +0000
-Date: Tue, 23 Sep 2025 11:52:13 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: Dave Jiang <dave.jiang@intel.com>
-CC: Guangshuo Li <lgs201920130244@gmail.com>, Dan Williams
-	<dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
- Weiny" <ira.weiny@intel.com>, Santosh Sivaraj <santosh@fossix.org>,
-	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH v2] nvdimm: ndtest: Return -ENOMEM if devm_kcalloc()
- fails in ndtest_probe()
-Message-ID: <aNLsXewwa0LXcRUk@aschofie-mobl2.lan>
-References: <20250923125953.1859373-1-lgs201920130244@gmail.com>
- <767ef629-519c-431d-9a89-224ceabf22be@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <767ef629-519c-431d-9a89-224ceabf22be@intel.com>
-X-ClientProxiedBy: BY5PR13CA0009.namprd13.prod.outlook.com
- (2603:10b6:a03:180::22) To SJ5PPF0D43D62C4.namprd11.prod.outlook.com
- (2603:10b6:a0f:fc02::80b)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB6A2BE644
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758653561; cv=none; b=OAlwaJ7e6sa53+cb2+YxRZJ5euw6uCR6gYoj1CX2jmB82gaIU3UgOHDqVKPGy03NtPc5FnkDSOPax0nqG8HipGQPS0X7H3t3gW8CRc7FFjl55aRlC0z7cFIMtTN9VEL3meCK0wOnu45nB1kz+o9sJRU/vM9le0ZYzpybTYjVy3o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758653561; c=relaxed/simple;
+	bh=cgONVmkhgMelsDdmMuAt/qU/DExf9Qngi25mO8xSTew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cFK2TJiV7xy/Rd+6yWgeDa7i3I1wDIk6p+m3DQm1/iL/wYMohndYHmt3XQ10GmyBf29cI+zxIIeQhWr5QSkayEXtIjyOJqfJ3l8UE9QDaf3wg31x+Wk46q0h/RS0h8qz5Bpa5s8Pi3gfNTAoMWYW9GJXQIlOHeOXXUQ+SZM9w3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpozEqWp; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46d25f99d5aso1296605e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:52:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758653558; x=1759258358; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jUn2OpHmm7pfo4BppeNZW2V1cfojK5GlgjBJHRJGklM=;
+        b=hpozEqWp2Dcg0CBYlV+BDbO+v4I8FQ90V6/QmuCwjbEvRgA5ETJUTY2sXvMC8DlNZx
+         oxHNEy6hgI1qhVw7V8DxrF28Qf88j/EXbMXSm+xx1OrYx+AfhWTsNnljvG8w8WoFaIHS
+         1x1ijLt9/CSRINFStPQh2gbczJ34EKtz6UHBA4C/oObYGxcv7zstFT96lKpOi66J6IKN
+         rByU36HKgmN+dT1PKnWLuBZWR6hmfFAp5AakOzWfeIXSJdCYhWnfw/N1tLqYgyqwT1m3
+         XJUyHrKjs3hG18IJeZBiMX0WzpkyTtcZ3szF7sORSL3LbAK/vfO9cEnOuwpAIjxTf4+q
+         lRxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758653558; x=1759258358;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jUn2OpHmm7pfo4BppeNZW2V1cfojK5GlgjBJHRJGklM=;
+        b=WMm1PfDMDtyhw/oWEWD81JiQFq15thRrEEv2CnawukVdR4FbiXxik/S1a5Wk5vuB+C
+         899aYJk3Jl5Trhe8dD1QfRiFi0TbS99BN8uw8YR12/dKW+58lLV/q2kCrIFmZ5GN3cFZ
+         snb9wm+J6soaA4sYlDIPST3I0sFN3bOUOzUJk3+fXrOJYczS4oz5+EmWP1uv23Von6wL
+         ebMsyoX1bT/u6PkFq05g2THRQog16vCmSpj6HQFXAlkXVBv9zX65xuW+krYv8Gw6dQMg
+         M1Oide14CHog7Txw3WFBSlUHyDI89P46SiClIyB5exnwD0v8XT3C/Yz1fI8RDXJOoI2C
+         XteQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzo7rG4mDqalwUg0j53tF+hL7mBWCumLO4h8UU7yGT4Hpl7x5pcRQJMRB1nwtz21bOYAtFlKPpvJ4bfE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/FUPV4A8Z/qSiuaCZRwlb1jzRhAs+/PMvhz33WBs5Xsjpa2P+
+	ieZThwQGiHWZANw3HfZeE1OvTovx93UqTWphX/sOP1BC76lR3tNKelgT4F+q1BxS32CWsBpn6TI
+	SG9JQaFjHy1uCDuyjldYv2Sr09olL3Bo=
+X-Gm-Gg: ASbGncsv2ehtn34UyU3J7WX8ivF1qOP6wY9Fd1qqBQQ8QgDicpWqB5lX0RYcPUuhBGx
+	uPFhBRwOz6pFur2q2mzoFDf2vbZoou8G/7w9fHlzVxmdTgYQHI/heFrikWrG100VyindkElKgo7
+	98IlOOorFGsDBeKRfnpu4g4U8dxl12Y3p/MzhXqcuPqg6pAXKAu1FFSKHgRPtyuzfUNAcDEZtIF
+	N5SMMs=
+X-Google-Smtp-Source: AGHT+IFXdr1qAFRKrRIhRvTAlUBj6EMd3fVOhJImQNL3jAjkCWTz1HxTEqxRjvy5Y2MiYiNM5folI9tZZzb0E6VAjPo=
+X-Received: by 2002:a05:6000:1885:b0:3f0:8d2f:5ed9 with SMTP id
+ ffacd0b85a97d-405ca2a64bfmr2999158f8f.1.1758653557938; Tue, 23 Sep 2025
+ 11:52:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PPF0D43D62C4:EE_|SJ5PPFC362E0A4E:EE_
-X-MS-Office365-Filtering-Correlation-Id: 70de4c7d-497f-4e96-f3e7-08ddfad25090
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?6kphsDA2Ku0zOLXjnxR+XNuJ+QCUCHgctnVRwJeFZNvVjK2M4KscF2Z1nrCO?=
- =?us-ascii?Q?y6xtRApvU+Th5IFRo23k/IcbQVyw1E21ZUWsWdYMmBa7cmO5FgzsivdxxHYX?=
- =?us-ascii?Q?Dm7W7+CAGKMBygMTGY0QTNxBtvfEYqoWaDt0WUW7gB94ikdVmxlC/4+tUZh8?=
- =?us-ascii?Q?Hhoppte8j6XDq3kOOWhrsVs0AyK+nQKiEtP+iDGzLFtuudT5QCYZRrt8HExx?=
- =?us-ascii?Q?KvfNto8ZCOtRarsiMRtLp7wm5YXR015b9NGv5VJeCxKz4k4aOTYE5KxMC4xa?=
- =?us-ascii?Q?sJdWYGBczWS4wXRKd+ZoXBrc0V1edjwywwbgEf2UEzLMEyEfZYRFA61kDRQf?=
- =?us-ascii?Q?lRYjTqNVyg53RYPqe2ckb6l6gt9TL7TC9RUErsS2yEPn7c3+wyaEjVi/+C2b?=
- =?us-ascii?Q?lDTmvW6cEuLz4eqgltof0aSQdvfYLw5l49zzMfWzzT5l0DYySDkM3wTlBXC4?=
- =?us-ascii?Q?O+QcyroFAXWjAexSh3UttcAeAXPerddQuD9+y+JS3oeAcsHevd2BPes4XGAa?=
- =?us-ascii?Q?C6nvpv90ieVnBe2PYKRYN+6+wrdYgo8Wvr05/V9salSh1cTbN9yjsizZHr/Z?=
- =?us-ascii?Q?z1OYP9BMHSM6sEnC005BbqCtohignKjjB0IA3cMfKHoXBmm7zw2yZIgzAqyf?=
- =?us-ascii?Q?v6L912OGjRV2hC7WnFYY8s5ic2DvIkl3petJSEz1/ypaKalvgZZZRpFC9+5r?=
- =?us-ascii?Q?BtIzep7v4p+mBDlMyHkzQC5IULs+K2EXSh8tyQNku9LamE3wrnYnxoEAfJ5d?=
- =?us-ascii?Q?Ia2GWxErHy/nA4j+1Ms7aHF9+C03vmqiRO8a/HNqDOqETwl3YjZiCpuBGa7r?=
- =?us-ascii?Q?X9lPwfxriqMZmjIcLbZxtBBHreJaV1NxD+qTt42ujT32l/w9NcZuKtOCcN9C?=
- =?us-ascii?Q?CsiQ+FUb3KPHt2PrC3CmYRS8pMAG07jh1sLt9ewqX19vtXLMb6v/w1i0dGjp?=
- =?us-ascii?Q?bPbBm4hhbfCoHFDO24TLVToQ2zSveoNkR4/9KUg5H53Bi2ymNnxbuo70BWft?=
- =?us-ascii?Q?Vs0rSTnRnUqKJMR9BP4snmw1QmBBi9HFdGNMmCS4zdTb/JkHNsPxZAxMDb5t?=
- =?us-ascii?Q?rpb5UOxWF0NsN+0b3D6U48600GjXeuGr8phyrYTmohoGRUsQZd/9HSURg+1e?=
- =?us-ascii?Q?gvwU8M/bcxLBmwe9L5G36xW2Yazxoh3SbyVJ3RrTXttGKcT/7je6c3r/2g9u?=
- =?us-ascii?Q?GeTonrG/bCDjPGp2Mg0A8/watt8UOBWePx1nOzPKwyJotI9ZDpzDJA6MyjQB?=
- =?us-ascii?Q?vS7ZLc8Mb87c5f2LoaUFn3fcWW9YTkImUY1HIZQ0ovdKkc9b3Nqh3zpSgvX+?=
- =?us-ascii?Q?2EcMtq+8ZXQo925QrejoD/AYZSahk010FJ5+oDZRb7g+nu0RmwjjpekAAR/k?=
- =?us-ascii?Q?2+jU5OFyj+4KYC+Fi4nyfqVQoInGNOwR2K2wD1DcxVSmkgPaSQEeDwEa0o4G?=
- =?us-ascii?Q?gmvKUFLkc9s=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ5PPF0D43D62C4.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?b8242lji/ERKVhJNTc3ROwYceQ2TaGfTOILy9S3YpL0rs3+3cDooorRyH14o?=
- =?us-ascii?Q?mmuaWfqPACpSytN+dyQfWhrXisNUW9c+P9RsO9JK1KBqAc8xM+T/ugGRUbvE?=
- =?us-ascii?Q?QuS4MvutblS2PG8h8rcTcrdYO+xHc6V4VjGdB7Smz5YXQ+1vSQHQPhBSIpbH?=
- =?us-ascii?Q?3d6dhElrufsJf7Yeq4hpMqz0eY+YhB2u4RgZW36upCuBAFVnJlqrMwDPjBAa?=
- =?us-ascii?Q?RR9OIouE4oS2XHyF+ypCn8DVk51dT2hilxhWutw6MEI8wGNr7XDi7S/yMri/?=
- =?us-ascii?Q?/NlqFPmq9yYweSy07WM3LA8c5brXpPRMrWSWl0Wujrf0/k31HwYoj43tB9JF?=
- =?us-ascii?Q?AmdKqxJX+gMvLkA3fvF6Pu8TwB2W/Z81CfsFRYeZaJRGekUOu5Q+4kHTYnFt?=
- =?us-ascii?Q?ChHDmdPLR1IIuyjXzceZ2c5THT1Qks7DhPB/ZcKYloBhTmXupFKmFqVlUfPm?=
- =?us-ascii?Q?lId8Ci35yTb2g7XiZYemgIDAoQZHy5LGh425E3PaHB9BkIrby1My8qENThby?=
- =?us-ascii?Q?N6PE1PfB7BsVp+dWhA7eFWtXP854zbA+KMpxMC8ROs12XrttJjjUNsKYjlO6?=
- =?us-ascii?Q?5WzZ7g9OLjcStp+zkcCkBSbjJCMDp9+zuoabi90Yg9MW62T/Du0dLcz6sWTh?=
- =?us-ascii?Q?6FAmpm2PlUASxqfA5qkjpIOUlLhVX8O/DIVgYngiY2wHmJQek/T/LUDRMShS?=
- =?us-ascii?Q?WR50Wna6klfUm6lWAcz17BbX0NPpM/pGzGt2vzK47/h2+u0kelE/Nj7JUltN?=
- =?us-ascii?Q?Uas03hZMvZLivL1JV18lJ8hnbEqib3A6zzofY4mZHLDaKBL1TvYrDgPZ5Wdh?=
- =?us-ascii?Q?F9a93kHJpsFCrkUwjSwKbmDyyF7d8Dm/Og1wzVT5YHQOoe8SBkqOsfoFDuUz?=
- =?us-ascii?Q?6iroSesiU5lO62ClGZwkScEfjs22ap+g44arG4ndaZMJIHJzMRHWAP8+4B/7?=
- =?us-ascii?Q?278Kli615A4sL06HSw7WLX+zShetrswgrIpGTbn3PU/+xfsUvI+FaT3sERT3?=
- =?us-ascii?Q?ptg0PcKFgfq11K+xqsc9t45K8WF+tw1tPZiKHYZzILC3dpWkDgb4uV5N3r2n?=
- =?us-ascii?Q?PmbrSlhxnlNaI0rAfGak4+zpLX8/vZebBmFnjjTbToeUXnFPaGe0khTzpCzu?=
- =?us-ascii?Q?BF5IkOvBZZ3tDSPCZ5PTnW4nwUJDSczDSLHaBEPGtfrqKAq2QxM7GyirNKb/?=
- =?us-ascii?Q?ASh0+ba7SbWRllMWiPKA1ye6Mn1wepbtZzHHWp/sAxP8hV71Z5YqLO2mHZRA?=
- =?us-ascii?Q?Ej7EH2Ui62uYy95SGjaA2CH5WSwwt+DKqvTy8WHw1EouLFDYSp1VYUKPzHQ6?=
- =?us-ascii?Q?o8eZpw4WotksMa6AC1GiB+0QdJlJXyZe4dnFRO/f8lMkslZiTV1PAQQQLK65?=
- =?us-ascii?Q?wSaIvzynE+vkj+erH1ghfaROvpuYKczhbO928T/h1K7agpg+EJEXwH5AJKtT?=
- =?us-ascii?Q?qUDpiEx0HG8p373TGVLAiARb4S3VDu2I2Zmto9XVT06WCc5mTf8wa1UeAbgD?=
- =?us-ascii?Q?jOXQ7z64Hqz2v1E0GPTccFrn6VolKur75WXb33lyIoWIzZH0acUxm+tSeH5p?=
- =?us-ascii?Q?SAKh8j9tohdoeGztNvI8VHBIwba/tJm4J9q5PRDDGGMo4YqgYcs0liwxcm4o?=
- =?us-ascii?Q?eg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70de4c7d-497f-4e96-f3e7-08ddfad25090
-X-MS-Exchange-CrossTenant-AuthSource: SJ5PPF0D43D62C4.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 18:52:16.0195
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +qUCTmuPAeigvLcgJI2b1Z1Ij3DY4mALFW/z9E0wBOJjwSbh7IFnt+BZX4SfoAOaCLtKtnY02X/2McjgDqwsVj0iNAO5cD7r+QrMpVU4VDQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPFC362E0A4E
-X-OriginatorOrg: intel.com
+References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com> <20250923164357.1578295-1-listout@listout.xyz>
+In-Reply-To: <20250923164357.1578295-1-listout@listout.xyz>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 23 Sep 2025 11:52:26 -0700
+X-Gm-Features: AS18NWD76Xqc7COam94wfoYJ9nOoP1gcYlOdh0b2K3xOtwaSSY20L2ccQKJi6N4
+Message-ID: <CAADnVQJva1iQbVk4h9sKEEBnfDVd4iJDKR499n=hj_JL1dMZ5g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] bpf: fix NULL pointer dereference in print_reg_state()
+To: Brahmajit Das <listout@listout.xyz>
+Cc: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com, 
+	Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Eduard <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
+	KP Singh <kpsingh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Stanislav Fomichev <sdf@fomichev.me>, Song Liu <song@kernel.org>, 
+	syzkaller-bugs <syzkaller-bugs@googlegroups.com>, Yonghong Song <yonghong.song@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 23, 2025 at 09:38:33AM -0700, Dave Jiang wrote:
-> 
-> 
-> On 9/23/25 5:59 AM, Guangshuo Li wrote:
-> > devm_kcalloc() may fail. ndtest_probe() allocates three DMA address
-> > arrays (dcr_dma, label_dma, dimm_dma) and later unconditionally uses
-> > them in ndtest_nvdimm_init(), which can lead to a NULL pointer
-> > dereference under low-memory conditions.
-> > 
-> > Check all three allocations and return -ENOMEM if any allocation fails.
-> > Do not emit an extra error message since the allocator already warns on
-> > allocation failure.
-> > 
-> > Fixes: 9399ab61ad82 ("ndtest: Add dimms to the two buses")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
-> > ---
-> > Changes in v2:
-> > - Drop pr_err() on allocation failure; only NULL-check and return -ENOMEM.
-> > - No other changes.
-> > ---
-> >  tools/testing/nvdimm/test/ndtest.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/tools/testing/nvdimm/test/ndtest.c b/tools/testing/nvdimm/test/ndtest.c
-> > index 68a064ce598c..abdbe0c1cb63 100644
-> > --- a/tools/testing/nvdimm/test/ndtest.c
-> > +++ b/tools/testing/nvdimm/test/ndtest.c
-> > @@ -855,6 +855,9 @@ static int ndtest_probe(struct platform_device *pdev)
-> >  	p->dimm_dma = devm_kcalloc(&p->pdev.dev, NUM_DCR,
-> >  				  sizeof(dma_addr_t), GFP_KERNEL);
-> >  
-> > +	if (!p->dcr_dma || !p->label_dma || !p->dimm_dma)
-> > +		return -ENOMEM;
-> 
-> Why not just check as it allocates instead of doing it all at the end? If an allocation failed, no need to attempt to allocate more (which probably leads to more failures).
+On Tue, Sep 23, 2025 at 9:44=E2=80=AFAM Brahmajit Das <listout@listout.xyz>=
+ wrote:
+>
+> Syzkaller reported a general protection fault due to a NULL pointer
+> dereference in print_reg_state() when accessing reg->map_ptr without
+> checking if it is NULL.
+>
+> The existing code assumes reg->map_ptr is always valid before
+> dereferencing reg->map_ptr->name, reg->map_ptr->key_size, and
+> reg->map_ptr->value_size.
+>
+> Fix this by adding explicit NULL checks before accessing reg->map_ptr
+> and its members. This prevents crashes when reg->map_ptr is NULL,
+> improving the robustness of the BPF verifier's verbose logging.
+>
+> Reported-by: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com
+> Signed-off-by: Brahmajit Das <listout@listout.xyz>
+> ---
+>  kernel/bpf/log.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/bpf/log.c b/kernel/bpf/log.c
+> index 38050f4ee400..b38efbbf22cf 100644
+> --- a/kernel/bpf/log.c
+> +++ b/kernel/bpf/log.c
+> @@ -716,11 +716,12 @@ static void print_reg_state(struct bpf_verifier_env=
+ *env,
+>         if (type_is_non_owning_ref(reg->type))
+>                 verbose_a("%s", "non_own_ref");
+>         if (type_is_map_ptr(t)) {
+> -               if (reg->map_ptr->name[0])
+> +               if (reg->map_ptr !=3D NULL && reg->map_ptr->name[0] !=3D =
+'\0')
+>                         verbose_a("map=3D%s", reg->map_ptr->name);
 
-Following on Dave's feedback and looking at the function as a whole,
-it does have a pattern that this patch can replicate:
+Looks like you're bandaiding a symptome instead of fixing
+underlying issue. For map types map_ptr should always be set.
 
-It does this now:
-	rc = do_something();
-	if (rc)
-		goto err;
-
-So, continue that pattern with the added NULL checks:
-
-	p->dcr_dma = devm_kcalloc(&p->pdev.dev, NUM_DCR,
-				  sizeof(dma_addr_t), GFP_KERNEL);
-	if (!p->dcr_dma) {
-		rc = -ENOMEM;
-		goto err;
-	}
-and repeat above for all 3 allocs.
-
-And, maybe even change that first ndtest_bus_register() failure
-to follow the same pattern.
-
---Alison
-
-> 
-> DJ
-> 
-> > +
-> >  	rc = ndtest_nvdimm_init(p);
-> >  	if (rc)
-> >  		goto err;
-> 
-> 
+pw-bot: cr
 
