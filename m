@@ -1,215 +1,163 @@
-Return-Path: <linux-kernel+bounces-829255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8A8B969E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:38:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C967B969ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0626F44829A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:38:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2BC7323A4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598CA26D4C7;
-	Tue, 23 Sep 2025 15:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04D025EFBF;
+	Tue, 23 Sep 2025 15:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yNOAllZQ"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LSEnORMK"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5F4264A65
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB3622759C
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758641870; cv=none; b=DdDtRP+FEHbRDRD/avqnGcIteqP9Ybu5D9eF9A5L3+bmCLlmlNjy/REUn0kYVcNRCsn1pTNajom2QPYDDidUBFxev8Yp6ffC09mNMwA1LmbJmLFr6CovhYtvpmfSzrZVkmVC5zeq4MRvQfJ1+l7ItxbrTo8YWBxJVTVIolpP0nM=
+	t=1758641882; cv=none; b=WMKN4iYCaB1hjldC2vgWQxETAAJR5czk0xxY7KQaz/aJrMZfrhhbW841/j94CbVSXux9caCqColkD1Pw8CJBOYTjo54RpuZsi6zo+KuoIaKsC7baANThD5x0cZmKzXFisn1Evh2td7If7b87UuYrjB33ZHwX2+cJXbxOk+rKEOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758641870; c=relaxed/simple;
-	bh=B760xSwQfEWkIUiBDKXN2fQZyP0tDYOfoa377R5ElHk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=l+Rc65adHeo3zjHS5uR7jgtBUdNaawQPF6uy3jQ5LQehGMlEiuH0Qa5J36yO1LtfEYMm/sfUCLnlhGjBfwT6NFm/LcbyAFFSPwLE/Q+5Q8j6ThoHnVSTathWHPfPsWGQRf1TrOVX/kEtCb4sbRIj2T7NcOvX1FGUhM8GK/wv1BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yNOAllZQ; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-27c62320f16so16096875ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:37:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758641868; x=1759246668; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=eMZ5s15QgA1LUZtAao1CO2w7ujCiWNFlBED3uUB7s0I=;
-        b=yNOAllZQF/f317VL46k2vqaZUIm+t1KqtKgaG2Ox57Ajk9vmWQ3Z+BnzVMnjvV9BmJ
-         u1H/gBw7jiPVIJ7sn/lgGWrRp4LbBoGNP4drmHxeNKfzh45yOjMbik3vFP/10xOSAgQK
-         /oNiUh2YUNrEkfPQUb36uAGSTGlvxXKbva6kpmoy56Is0Rl34KVQ4opG6XZMU8ARwXmp
-         tHE8keum1ZAqt9ge/YxCLr/iKqy+j+8zHybcIuNLrP9/oB2ZQDE5bbBtfnSyBnypkTr8
-         FGcyctA0oHVqZuJMztUt3EK7Is/xh0D2/AANWW9qPhsuVWP66mGfZ+DknGNwciOXntDK
-         gYEw==
+	s=arc-20240116; t=1758641882; c=relaxed/simple;
+	bh=cHWMRWpmElbbxnsvIVo4IfwpJwGptDDbWvG2sPBEoBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LaT1AbK04u4acm+O/dUC1wvdzce6Xp8KasqcczPgjAhdf7u7/O193uNS2AOBnz8TZBe0+956D5H9aF7LjyTBCiQFL0K4LgIcuv9aYXJi5esjdjnToUeH6zv4fqRiDzLAO+Vl0DruDLPkR1oBd/1lL7nfoqMvDpdYAnXX/GgL3Cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LSEnORMK; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58NEpo5l014597
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:37:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ufAuzNOrEuaR7kWSPEsTig4aXq8QsxU007pyQbw/68U=; b=LSEnORMK6xSFBWBG
+	WM96ZYe4AaIQpeGZOk2Er49cK60h4Jtp3xJir7zOjbnBWy/pK5c19aIPLng9oAsh
+	/tD+Vp91woA1wlD8w/rjgRiDi3+uCUoS2t6X4oW+Vm0Nc1Y/+pA6W/NhLo7V5hyc
+	3+3xsoMpLWCX572zLyw0ns0fzwN2KfZ1AlNj4gA2vYCD13CUMESeLBBjlah8z0al
+	HwBh0XW4zSjbmBLQp9u7UTD/7HfNcW8Q8t71VV6XYfWAtFfAe0bENnvRXyS4xnio
+	hbPYkKHvodJ2LlG8V2xMNAIkaXAdVJSK5WJ/UW5YxtvVZGPu5cKxcYuT7uyeXyI3
+	9NUVTQ==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bwp085r4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:37:59 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-32ecab3865dso8585264a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:37:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758641868; x=1759246668;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eMZ5s15QgA1LUZtAao1CO2w7ujCiWNFlBED3uUB7s0I=;
-        b=AmhNYAb3uCVdTAbC7kq2zv38KPa/Y11gEbTSOb2z+lJG3hELi2MoxLnNQT8Zb2hTqg
-         stByhqktOCLktV/hPBd6k7SR9xcSSdrt7spu0+oZG73aLrLxvrNprZvWUnON496lT9jv
-         2vA1z2T3lK34wYmKu1XTVZEbDnGe4AsCQD/0MZijG1bn5hjBskuwZY86L9hvpAKELyca
-         p9vM1piuFeMxdbzMIGPFcdnyIao60DujWJZ+L/kfb8BEwmqRz8X4Zm/6luf7xQimjqzf
-         ZSW2i4ik4sT1tEwxursm1UD0xuHlp2nz6IoSXafBJL0lONgiNW6DsjZDNpZGGlNqb208
-         hueg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFFKBso4YSFudrz2cmzXe3ZDoBPBDGDdQqm9zdkDN9H0RIWemSceVyqiGHNF2lUdP54C8TnwfGCGQJSrs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfEcwCy0aDqOmFH0seYG9QLwnTNu2ym7Vkgyzgbw3G4FW/5ARm
-	NSO+/vm5H2GzzS7LXeJjPHGYzqLOTU1Qa+UytwrPvT+w/HWzOSgYFla3LrZyPIchvhEhqNdX3S6
-	pjxihLw==
-X-Google-Smtp-Source: AGHT+IFuuXk4murZS4S1kiyk93K9qAop1IuBv5IVXqIopRy+jRfRnj6nw15yHZzr1S0Afco6H/UZC3PtVj0=
-X-Received: from plog5.prod.google.com ([2002:a17:902:8685:b0:269:7570:9ef0])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ea05:b0:24c:cca1:7cfc
- with SMTP id d9443c01a7336-27ccaae76b4mr36812845ad.59.1758641867982; Tue, 23
- Sep 2025 08:37:47 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 23 Sep 2025 08:37:38 -0700
-In-Reply-To: <20250923153738.1875174-1-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1758641878; x=1759246678;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ufAuzNOrEuaR7kWSPEsTig4aXq8QsxU007pyQbw/68U=;
+        b=tFqyc5FB+bCK/38Onokkuq/wvFoOZWKiaOo7PUfOFqysFcviudAmNCYzlIcNZHz1Zf
+         QJBcecn2Nb3WJl3jp9mxmClxxMBNeBpMWlECDp6OJkqHNMdvoAJJgFlu6U5a3d2ypCVa
+         sR5ctnMSfJkW/qYKABmktN4wvPQs987MGkVf/xn1GDim7E9PKkTRK8RzTsfZefznoEIK
+         JEosZM4G67nbgUEK4bAGauOjxW5hR7TGs5HtorxTUpUt3zop8mcW5AfMHf3IMHeBPH30
+         5u2V6DLhtdfjpiQb155rT0hSpCxa1+GjTFR0LYALxYy6qo7BQVADNadCg8g/RuafNbU9
+         QPbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Ur0XI2IXPJsOJIyaE1zNCOrYipzmeiSqXFqQCiDJQ6wcpcZopr1B9IBcbZmWp9EA8XANnsD1m91goz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLf0V2RHMFiqUAtLVkOeUiqhUYU5j1CBkAT/cHNxNvEPeZAeVF
+	qlyoOFQY4gPqthxgM1Tu9+e/D0IVSnHQUTlnCR2X3KWM8EWYWWquGq+kjgCikm2CALB3jhjAy0U
+	rUR9TFIHftatNDvAWPoq1nTTZyxldoFZ2zInhHBVDt8MIRXA7T9RcMTHzgZM8mHTyC4E=
+X-Gm-Gg: ASbGncuq+onW3ljHhMQTlrW3G3od9DrDtJlqHqKXiCWAfiyeqj1LVYBWXYPHdtddlqm
+	qaTi7tTH2kRWFn5Zy+zn2oijEmHTn/Lai5NFSOodnyWqLSMFtwSJYw+6pK1UIpkHuVFgkHXsRiU
+	R4SVNsW223CTdVcsrjZTrHe4NOAI+2LYP/ZL7cpt8rcDvOC+57dOOnIcOaMt23ol/L/v5b5+jml
+	gRpJbs/+wp53m5vdtQvhZja7wNUUzmAKGB8g7zziYdKUGQzszZOrlWmUdqY17GwYpf0ZHk1gX6L
+	z6A7pecU4NLKvGC7tUGU6TVwy9NEYwBet86LAOJuPLc7+6kSl6GqTQ==
+X-Received: by 2002:a17:90a:e184:b0:32b:623d:ee91 with SMTP id 98e67ed59e1d1-332a95df91emr3380129a91.27.1758641878006;
+        Tue, 23 Sep 2025 08:37:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEJ5jbKJKVF1FDLY8GLviHNw6cT/lbR2hSnQ4OQG1i2UHqwyS4SLyWKqPX7QqT4IcM9uxiqXQ==
+X-Received: by 2002:a17:90a:e184:b0:32b:623d:ee91 with SMTP id 98e67ed59e1d1-332a95df91emr3380091a91.27.1758641877466;
+        Tue, 23 Sep 2025 08:37:57 -0700 (PDT)
+Received: from work ([120.60.54.28])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b5526a9af62sm10960133a12.44.2025.09.23.08.37.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 08:37:56 -0700 (PDT)
+Date: Tue, 23 Sep 2025 21:07:49 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Joerg Roedel <jroedel@suse.de>, iommu@lists.linux.dev,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Pavankumar Kondeti <quic_pkondeti@quicinc.com>,
+        Xingang Wang <wangxingang5@huawei.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 0/2] PCI: Fix ACS enablement for Root Ports in DT
+ platforms
+Message-ID: <tzlbsnsoymhjlri5rm7dw5btb2m2tpzemtyqhjpa2eu3josf5c@uivuvkpx3wep>
+References: <20250910-pci-acs-v1-0-fe9adb65ad7d@oss.qualcomm.com>
+ <20250918141102.GO1326709@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250923153738.1875174-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
-Message-ID: <20250923153738.1875174-3-seanjc@google.com>
-Subject: [PATCH v3 2/2] KVM: SVM: Re-load current, not host, TSC_AUX on
- #VMEXIT from SEV-ES guest
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Hou Wenlong <houwenlong.hwl@antgroup.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Lai Jiangshan <jiangshan.ljs@antgroup.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250918141102.GO1326709@ziepe.ca>
+X-Authority-Analysis: v=2.4 cv=KNxaDEFo c=1 sm=1 tr=0 ts=68d2bed7 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=0rnFkIpAFraqCr9DAfvGIQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=X2H1Dzq6MFM7WdPJhOEA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-GUID: CZ-bvBRdyYO9OHn-GMtPiqzHXe8VhhUg
+X-Proofpoint-ORIG-GUID: CZ-bvBRdyYO9OHn-GMtPiqzHXe8VhhUg
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDEzOCBTYWx0ZWRfX0dmJbACm/yms
+ O+U4tO+U5v3FiPcwcXMhTyUKMzhJI1Uone4lQHiM4mnxWnaAW81aAvgnezt9n5RYXVGSjBfk8sI
+ pP0x7U3xQT+yzYRkmhzcRLl6vea/LuQ/juy7FCs28FddZl5DaLcce2VQGz3pz22A6zpxQ8g4dIb
+ nkt3svpa1YZ8N/1Xz/JWTSTGRGLl0JDpyaFgmZEmDCmtVXa/mZbx44MRahx7KMW9Gjn0XPUFBuc
+ L32S6qYDNqnGQG3NSUumtu3NAOuWh/PNqgEv/2xKbypQcyJXSgXleQsL6H5C8PnS6KRTmTJ23gs
+ B5OBtq1KjRFsxjRbFP1jupXEJQcyf9OxcKqNRzIuIpDPBcB72Pcxt7dRLcK6fIBKRqzx5sXgr/d
+ l3l/3I+M
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-23_03,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 clxscore=1015 phishscore=0 suspectscore=0
+ adultscore=0 bulkscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509230138
 
-From: Hou Wenlong <houwenlong.hwl@antgroup.com>
+On Thu, Sep 18, 2025 at 11:11:02AM -0300, Jason Gunthorpe wrote:
+> On Wed, Sep 10, 2025 at 11:09:19PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > This issue was already found and addressed with a quirk for a different device
+> > from Microsemi with 'commit, aa667c6408d2 ("PCI: Workaround IDT switch ACS
+> > Source Validation erratum")'. Apparently, this issue seems to be documented in
+> > the erratum #36 of IDT 89H32H8G3-YC, which is not publicly available.
+> 
+> This is a pretty broken device! I'm not sure this fix is good enough
+> though.
+> 
+> For instance if you reset a downstream device it should loose its RID
+> and then the config cycles waiting for reset to complete will trigger SV
+> and reset will fail?
+> 
 
-Prior to running an SEV-ES guest, set TSC_AUX in the host save area to the
-current value in hardware, as tracked by the user return infrastructure,
-instead of always loading the host's desired value for the CPU.  If the
-pCPU is also running a non-SEV-ES vCPU, loading the host's value on #VMEXIT
-could clobber the other vCPU's value, e.g. if the SEV-ES vCPU preempted
-the non-SEV-ES vCPU, in which case KVM expects the other vCPU's TSC_AUX
-value to be resident in hardware.
+No. Resetting the Ethernet controller connected to the switch downstream port
+doesn't fail and we could see that the reset succeeds.
 
-Note, unlike TDX, which blindly _zeroes_ TSC_AUX on TD-Exit, SEV-ES CPUs
-can load an arbitrary value.  Stuff the current value in the host save
-area instead of refreshing the user return cache so that KVM doesn't need
-to track whether or not the vCPU actually enterred the guest and thus
-loaded TSC_AUX from the host save area.
+Maybe the bus number was still captured by the device.
 
-Opportunistically tag tsc_aux_uret_slot as read-only after init to guard
-against unexpected modifications, and to make it obvious that using the
-variable in sev_es_prepare_switch_to_guest() is safe.
+> Maybe a better answer is to say these switches don't support SV and
+> prevent the kernel from enabling it in the first place?
+> 
 
-Fixes: 916e3e5f26ab ("KVM: SVM: Do not use user return MSR support for virtualized TSC_AUX")
-Cc: stable@vger.kernel.org
-Suggested-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
-Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
-[sean: handle the SEV-ES case in sev_es_prepare_switch_to_guest()]
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/svm/sev.c | 10 ++++++++++
- arch/x86/kvm/svm/svm.c | 25 ++++++-------------------
- arch/x86/kvm/svm/svm.h |  2 ++
- 3 files changed, 18 insertions(+), 19 deletions(-)
+I'm not sure though, as Windows seem to be running fine just with this erratum,
+without disabling SV.
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index cce48fff2e6c..887d0d6ad856 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -4712,6 +4712,16 @@ void sev_es_prepare_switch_to_guest(struct vcpu_svm *svm, struct sev_es_save_are
- 		hostsa->dr2_addr_mask = amd_get_dr_addr_mask(2);
- 		hostsa->dr3_addr_mask = amd_get_dr_addr_mask(3);
- 	}
-+
-+	/*
-+	 * TSC_AUX is always virtualized for SEV-ES guests when the feature is
-+	 * available, i.e. TSC_AUX is loaded on #VMEXIT from the host save area.
-+	 * Set the save area to the current hardware value, i.e. the current
-+	 * user return value, so that the correct value is restored on #VMEXIT.
-+	 */
-+	if (cpu_feature_enabled(X86_FEATURE_V_TSC_AUX) &&
-+	    !WARN_ON_ONCE(tsc_aux_uret_slot < 0))
-+		hostsa->tsc_aux = kvm_get_user_return_msr(tsc_aux_uret_slot);
- }
- 
- void sev_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector)
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 67f4eed01526..0df2e1a5fb77 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -195,7 +195,7 @@ static DEFINE_MUTEX(vmcb_dump_mutex);
-  * RDTSCP and RDPID are not used in the kernel, specifically to allow KVM to
-  * defer the restoration of TSC_AUX until the CPU returns to userspace.
-  */
--static int tsc_aux_uret_slot __read_mostly = -1;
-+int tsc_aux_uret_slot __ro_after_init = -1;
- 
- static int get_npt_level(void)
- {
-@@ -577,18 +577,6 @@ static int svm_enable_virtualization_cpu(void)
- 
- 	amd_pmu_enable_virt();
- 
--	/*
--	 * If TSC_AUX virtualization is supported, TSC_AUX becomes a swap type
--	 * "B" field (see sev_es_prepare_switch_to_guest()) for SEV-ES guests.
--	 * Since Linux does not change the value of TSC_AUX once set, prime the
--	 * TSC_AUX field now to avoid a RDMSR on every vCPU run.
--	 */
--	if (boot_cpu_has(X86_FEATURE_V_TSC_AUX)) {
--		u32 __maybe_unused msr_hi;
--
--		rdmsr(MSR_TSC_AUX, sev_es_host_save_area(sd)->tsc_aux, msr_hi);
--	}
--
- 	return 0;
- }
- 
-@@ -1406,10 +1394,10 @@ static void svm_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
- 		__svm_write_tsc_multiplier(vcpu->arch.tsc_scaling_ratio);
- 
- 	/*
--	 * TSC_AUX is always virtualized for SEV-ES guests when the feature is
--	 * available. The user return MSR support is not required in this case
--	 * because TSC_AUX is restored on #VMEXIT from the host save area
--	 * (which has been initialized in svm_enable_virtualization_cpu()).
-+	 * TSC_AUX is always virtualized (context switched by hardware) for
-+	 * SEV-ES guests when the feature is available.  For non-SEV-ES guests,
-+	 * context switch TSC_AUX via the user_return MSR infrastructure (not
-+	 * all CPUs support TSC_AUX virtualization).
- 	 */
- 	if (likely(tsc_aux_uret_slot >= 0) &&
- 	    (!boot_cpu_has(X86_FEATURE_V_TSC_AUX) || !sev_es_guest(vcpu->kvm)))
-@@ -3004,8 +2992,7 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 		 * TSC_AUX is always virtualized for SEV-ES guests when the
- 		 * feature is available. The user return MSR support is not
- 		 * required in this case because TSC_AUX is restored on #VMEXIT
--		 * from the host save area (which has been initialized in
--		 * svm_enable_virtualization_cpu()).
-+		 * from the host save area.
- 		 */
- 		if (boot_cpu_has(X86_FEATURE_V_TSC_AUX) && sev_es_guest(vcpu->kvm))
- 			break;
-diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-index 5d39c0b17988..bcbd651d04f2 100644
---- a/arch/x86/kvm/svm/svm.h
-+++ b/arch/x86/kvm/svm/svm.h
-@@ -52,6 +52,8 @@ extern bool x2avic_enabled;
- extern bool vnmi;
- extern int lbrv;
- 
-+extern int tsc_aux_uret_slot __ro_after_init;
-+
- /*
-  * Clean bits in VMCB.
-  * VMCB_ALL_CLEAN_MASK might also need to
+- Mani
+
 -- 
-2.51.0.534.gc79095c0ca-goog
-
+மணிவண்ணன் சதாசிவம்
 
