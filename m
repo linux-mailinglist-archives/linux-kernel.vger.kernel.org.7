@@ -1,175 +1,221 @@
-Return-Path: <linux-kernel+bounces-828036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD3AB93C8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:04:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D471B93C98
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09EBF2E18D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:04:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E48C1440A09
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BEC1DE8B5;
-	Tue, 23 Sep 2025 01:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C5A1DDC2A;
+	Tue, 23 Sep 2025 01:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="U2g7pwnx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KP/HyCKl"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010036.outbound.protection.outlook.com [52.101.201.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8BD2AD25
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758589440; cv=none; b=SKf99K2518p5TFWWBgb/xyyg2c7Au4TNYS1jeThvvQnxJWqd+vZTIsiPROdfpdpWuJ/HGyHYTGPZUcxEzLDJdKzwutz3bUtZXPqms8EieKpt/xaz1BUhW9ImWxP/vxwwPIKSamxRicUPU7p6ar5Z3mSqJoQ9qQIQK5BkN1fruKg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758589440; c=relaxed/simple;
-	bh=AkmFWqZWKDdWgx+k3IxAC0AsHW+/Je62e22sgXDU+2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NAlPiEaZmtohPMgW0t4cmhp3APpgn6uyPxEGZS8azGbnkte8iVx8NMMmN868BuRmMxKBgTRnPh8if69wUZ5u8WvLlZzspWpDMqto6mhCAHuxEW3IbU+z0BZxdh2bqpxlPeSC0HRRkzMGGEe2jr2JaRpksWcEvCsSfDoDmNe2fxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=U2g7pwnx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58MH6EIo028005
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:03:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3r2gyH2o9KM3Y4VR/nSiqz6V1kwzJFKLhM9PNywxZ9M=; b=U2g7pwnx7X8Zkxz2
-	z+R+FuWVj9i6fTjNhzSitDitg/0dKOsNgygJTVMxGczOSmW4fa/yp1tuZTSf09FV
-	geRntp4WiiFIei/DNOpNVcvDXmvNSQSZYkjWFgKioptWGMniAb63x8pXLKrDtVLf
-	UPBah2saDNqTLVn6h1RxHyuRa8ePxH6aOkXSpHospDU719xiWAK/mw8jZIafmXmp
-	J6gZeOpKqxXfCMGp2l9wZb4Fsl2hl5vOnbU23h/Uzy/9k2Hq8wgvNeL1kpssCtFn
-	T29DoN5oVUhwUJRkdd2l/zNMMyWbCDcVWHHNSu7ZUQuxO+14ZYvNKZcOOOYjJMuB
-	vAXjrg==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bajes3p9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:03:57 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-77e76a04e42so2919200b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 18:03:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758589437; x=1759194237;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3r2gyH2o9KM3Y4VR/nSiqz6V1kwzJFKLhM9PNywxZ9M=;
-        b=eTnKQSqNYkGuTycJKG1hm2ewmlVn+ZMChwCuXvYchbphWwGCW/mB1Ye54f4NgyK6cc
-         4gQGa9BT7hXQJZdHoNfKv098vVStjRS0VIe7da1kwhyTgnXGBC8UHO3VuXl65az31nUL
-         lfzcaTwSaZrYlAtpecF1QZGDea0Be5G98qQK9QpQaPg6WkKEp1V8KifXgw97WtyMhFv0
-         CTxST6ndRUllDfXycQvPvoihGz4fiGOidtCie4tuAVstLul3Rx6qTVeyo2bOyX0JpP+a
-         8u5eYSWJVoJR3yw2Qwsjx22Ila3Cg4C1zIzcjuEtNOSYw28sX6Cs1ZrfAYGa0Ds1L8wC
-         PQVg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4TgR1aPY5PqIE+Fqlg1b6dUZvVKr4EFjapEdp5J6zQjngZYZO11Gk5+k/VolW1NFzUcgEMJq4ns50xE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG+FrOSD2L/3mdiRnKEdvco3lSwwZqlT8L7Iic7o2Di76a+G00
-	BK75melE4muHh01qi30uCqN0mUx+rr+c4bDQkGBP2+dnYeCU9/eg1yzFBEny0RtqH5CGQYOmuiC
-	tUXP2SX+bAzL9WprXjrZOnmsmqEyOElbT8/MuG2D96OXjQgJIFsYatBFqscRGPdlTJOI=
-X-Gm-Gg: ASbGncvlbVfj6jcBXRafNaWoxduzbGGKo9WZKrSoe/6BBh71nIh5YC/d9NweEyeaOYA
-	qQWPNNMQHFqiY4Turm+yq9bp1EhinmZvQwh/19VO1ZzJX2boZldc6DuRkPHbcf99YZuAt0Xa3Nm
-	vgLYkbyHLz8D7Jg13CuVZdLeA2jr6vV2J3Wi7dQplbtAXjQvKOZvIza0JPeCj55/gj4SgN3xFnB
-	mHJlIKxs1w4re3KiWs9Wzqm6kEnyUIUR8iXIcqeIiYVMNwNzM2n4gNidu9DwBEfjNuLUmWXrBx5
-	w01nNsw11IFST+/faQLjKl6s5ARRpLr4f7zQsvSTk38s2etM2eTP38k9brdoBA32aLeb8PUtPpM
-	jAVFNDiLUzTYspaUhGjGsuLBxhGk3Z0k=
-X-Received: by 2002:a05:6a20:a10f:b0:246:3a6:3e47 with SMTP id adf61e73a8af0-2d10ea02f65mr823595637.12.1758589436708;
-        Mon, 22 Sep 2025 18:03:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZu5szyIQ3+/h2P8RAeWjsUwtJhLpq8SVRmJe1NhdUsMWX4SpcQc49bQMtqaOjrR0EYSzmzw==
-X-Received: by 2002:a05:6a20:a10f:b0:246:3a6:3e47 with SMTP id adf61e73a8af0-2d10ea02f65mr823558637.12.1758589436149;
-        Mon, 22 Sep 2025 18:03:56 -0700 (PDT)
-Received: from [192.168.1.239] (syn-075-080-180-230.res.spectrum.com. [75.80.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f2deca77asm5515903b3a.98.2025.09.22.18.03.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 18:03:55 -0700 (PDT)
-Message-ID: <95c59ba6-fd9c-ef59-c5c5-33cb2fb5db8e@oss.qualcomm.com>
-Date: Mon, 22 Sep 2025 18:03:54 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04511E4AE;
+	Tue, 23 Sep 2025 01:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758589662; cv=fail; b=GurgiUmqDLb55UEXn6asWR0B17Da0junZ1N5pwzjVIh3M4vTYj/s3LNmWdGeN1O79fNA2AMeYfTDBVIwVhESa/OODTffp57qgumA7SZ1gx6BBSNsoO/k628Mw+jFx0etCvHliZa3MUA3oQBi3nfl43QN8osSuomK9KjzTsDEKQQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758589662; c=relaxed/simple;
+	bh=4ci1PuZxvDyjPXhCHIczxaba3zL1EqUk6yh9ueN9iHs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=NREAuwRAbxcRkqPNReCrP2LJKDwerXvxG0NoMx/LqbuL7nh56zB9N08DREo1KnOB8+OiT2SmazYfN8HA4nKQzQXMjT/cGpbhUPWiMqwwRA+7q3Dix5RKoLRG30lAcQ87SCmFhm9k4lDbvN77eZ3oVTzhRpZGnBTYvM7DpKbfRwU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KP/HyCKl; arc=fail smtp.client-ip=52.101.201.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RT4as51lHwJOjsXsrrXQqfxSNq/pM+z1yk+xe0CAUd/QcJWhFfghKTyEOSBEtz0rjYqW82WzlKM/uWxb7ILc3K3BRqzLwxkOj5MXz6oppuUbNW+/VJYE6XgWl5gBi9gxAhRqdr2h/gexPRBfHG1Gb92taHdEbBqyJMhmYp5JOWZtyaZwSUgEZO9fzvvrhNq5X0RFKE9+DSEGQRj7jfHL1zdE2NgWDxxSSLPv7iMKZXJcbLP9SvX8BXtI5MknppKm/IBnrpJ+1ZxhJ4bOlSrzlSz8vfuBOxwk2mj/+1WnUxkKPpdtDQgFqWMyCdBADqxGetOaA6CtKZkh9Cmben3PUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aFqVfvuMIVTD6EOenxbIgfN/tvId5690+vLfqY+nbS0=;
+ b=birbhArYPVjU6wFTwjaHQ/9xt1biInrMgkM5dAa4bBD3G60FdD+r3kXgbpFTYQ/8Pc5a7rQkKTjEHUDieqyF7AtVY0RnaT0b233SIsOcEVg/MvTuZymN1AZ60CP5RFJjyC+2NsWdVW/o2pwhU3Kk18MJ3EHBIM7Kv5FkiLHKU08wC8S96hXFMTK8wwFJt4S/C6bDfI9sEmBUSCdRVixfFM7YlbO+chZUmwscPBaHv/+RoKktycx+viDitu202PhvMzou3O/O99fm3xRwoNctrIqt101vv79VbNJCwYgnIbbVt5Slv5Cjoul5+BG2qbpEdZ5THrByL64Lpl8k0RrAig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aFqVfvuMIVTD6EOenxbIgfN/tvId5690+vLfqY+nbS0=;
+ b=KP/HyCKlT0Qk2nTql993lXePJyEo0Q/hmXwiA7iG2N2CxabFApzjSOTAHSLtkgB6fTn9Ro8g6ii1VpC0oZFtqlOE+7A1qwdpFqWt/R8ORKltJQRDVmGu4qtl9DPCtDERzfa605FR2WFPfk27PSV4eOkghUW8YGzCSRZdSM8/W5NtpByC+1p8R/bLfNtydWtz2HpKblNW1gtfzn8DzVLZYE3Je7NgKhoVE8EkW4KSyrp4ntiYkX/90m9JbhuBM/6Gif+iXtmv3r6wKb2xrvOWYH17JpSvp04ks8l/TKP4hQAvSL9QBTXsAC50/fT4FrvPxGZJeTbPoezOexs4+CYuUw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by DS0PR12MB8441.namprd12.prod.outlook.com (2603:10b6:8:123::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Tue, 23 Sep
+ 2025 01:07:38 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 01:07:37 +0000
+Message-ID: <be96c39c-4ac5-4a4c-b5fc-6b1c1026db30@nvidia.com>
+Date: Mon, 22 Sep 2025 18:07:18 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/10] nova-core: falcon: Add support to check if
+ RISC-V is active
+To: Timur Tabi <ttabi@nvidia.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Alistair Popple <apopple@nvidia.com>, Alexandre Courbot
+ <acourbot@nvidia.com>, "dakr@kernel.org" <dakr@kernel.org>,
+ "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>
+Cc: "lossin@kernel.org" <lossin@kernel.org>,
+ "ojeda@kernel.org" <ojeda@kernel.org>,
+ "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+ "a.hindborg@kernel.org" <a.hindborg@kernel.org>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "tmgross@umich.edu" <tmgross@umich.edu>,
+ "alex.gaynor@gmail.com" <alex.gaynor@gmail.com>,
+ "simona@ffwll.ch" <simona@ffwll.ch>, "mripard@kernel.org"
+ <mripard@kernel.org>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+ "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "aliceryhl@google.com" <aliceryhl@google.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, "gary@garyguo.net" <gary@garyguo.net>
+References: <20250922113026.3083103-1-apopple@nvidia.com>
+ <20250922113026.3083103-9-apopple@nvidia.com>
+ <38bbcbbb7bdf88f3a06ed9925d4fa058d6352d51.camel@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <38bbcbbb7bdf88f3a06ed9925d4fa058d6352d51.camel@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BYAPR08CA0018.namprd08.prod.outlook.com
+ (2603:10b6:a03:100::31) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 9/9] phy: qualcomm: m31-eusb2: Make USB repeater optional
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, kishon@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org, robh@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-phy@lists.infradead.org
-References: <20250920032108.242643-1-wesley.cheng@oss.qualcomm.com>
- <20250920032108.242643-10-wesley.cheng@oss.qualcomm.com>
- <umoo45pmamr3qraaiommpqh37tgmqidylmtjh3iamlxs34s7wf@ouug53aqvdfd>
-From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-In-Reply-To: <umoo45pmamr3qraaiommpqh37tgmqidylmtjh3iamlxs34s7wf@ouug53aqvdfd>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 07uobzi7_bTytHfiRdTqaMiwSCk-n37e
-X-Authority-Analysis: v=2.4 cv=fY2ty1QF c=1 sm=1 tr=0 ts=68d1f1fd cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=agQD+r7xwyS+FYqxhQjztw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=2H1wgwkl3dmy4IbtCtkA:9
- a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDE2OCBTYWx0ZWRfX0UzwXxc4ZIYZ
- yOIR3zbpsFMYLZqTeWEc8dNoQVBg3HcdOOa7sOqDEDUcByHgeZWseD6c0W2dk9Tr+cdhO5XorD4
- zcIenMubfkz6VZ5KWDZw87gkdjrWH1y5EoRZxsDI2A+kNhcw0qp676lIsneygah9FBkvQ7Pgwu1
- h/bywP3zqblQ8ZZ85Q/YnZaHcVqj4QqhuBXSBkml1ZXnWUJG4yh5hUOi2vt/261sJy8mg01ZTxL
- RBirXmTTm87tIxfVcX15MKtaQBdCYZK5HSQgx3KlHB2c2jitScRoI0cPPxADLqZpejP8GY5hM/7
- 1fiPxLnvGrV1ZAJoipiSieVGferZ8tK3NCnzs1UX8L6Dbn4IBZWpO4hePyiFJIBEbYVd3l76ZAb
- zFanBk4g
-X-Proofpoint-ORIG-GUID: 07uobzi7_bTytHfiRdTqaMiwSCk-n37e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-22_05,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 spamscore=0 adultscore=0 impostorscore=0
- phishscore=0 bulkscore=0 priorityscore=1501 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220168
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|DS0PR12MB8441:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7c6ef8b5-6081-490f-ffa3-08ddfa3d963e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L0MxQmdyb0VZbFBHWWRjMFd4REVVbElKMjZUM0ZlckM1bXJKZ3FENXI0SklB?=
+ =?utf-8?B?V1FIUU1FM1RwaU04YStvUWhBcXBWMHBIRGlCS0pjWnJjb3hpZlNwU045UDNV?=
+ =?utf-8?B?TllGM1hzNjBjYUZBRmNSZXhnOENSbk56TUc3Vk9aMjhCY2V5cjF6bXM1RlVj?=
+ =?utf-8?B?akdVY3RRODlsTXFKbGJOV0dzSkRSTVBEck5rVEZ2SUwrWjF0eEg3Ti9tUllC?=
+ =?utf-8?B?Wi9CcUJyV0t3SkxyTkRHRFpXMVdha2E3a3hQZFlwWXVrcDhIOXNTemdaVkly?=
+ =?utf-8?B?RWRpb1RiWkdhRUUwbFJ0QnVvc09SUGlZaFZxOFB0dkxKMkF0UlZTQWwyTnpC?=
+ =?utf-8?B?L0lXbmVxaXh1RzNPTkkvd1RwQnMyVlZhMjkwQkNTemRTMlBMK1oxZFlJanMy?=
+ =?utf-8?B?cFFZTFZHQkw1Y0wzZ2tTb1FydUdla3lFNmJkTXNmM1Fwc2dKcXgrdytMMys5?=
+ =?utf-8?B?SEErM3o0OUtyNWNpb2o0dDJjK2ZiRmoyK1d4REJxUnZFZFlzTEp3WThEU3Vx?=
+ =?utf-8?B?RmFzQzlUWVBOanR3bzZ3bkprUUtVc09aOWRtYzh0aVRQRXRhN0x4V2xQRHcw?=
+ =?utf-8?B?T1RaZnBYREVFT0pHRkxDQ1l0ZWthV0owNFlyTDdRVUJIN2d2SjA0TmRGbGFj?=
+ =?utf-8?B?c01OZFJoSTdMUnNQZDIyR3BjMnpsRTErUUFtcFNzNElRWFo4elAwbFJTQzl1?=
+ =?utf-8?B?NWdzajJkZFdkbGhlQ2lJRGhIV2JpZVY3OHRMV2JaajlaWU5mR0txaytvSWdP?=
+ =?utf-8?B?dUpabjNzdThacURsaFRWc2pVZE1OS2h6bkVob2N0Z3piQTdGKzNoNUJRcnpD?=
+ =?utf-8?B?TERtU256NVBpcnNmZlVTcWxkOEZwSW9QUitnOXYzVnduZUdKK2toYXE3N25L?=
+ =?utf-8?B?V2dSUDVoa0hKU1B4RWVzcFU4djZmMzFhTTIrT0k4MEtnNkpOR2hJcDBWemQr?=
+ =?utf-8?B?REoyajgvRnZkUDhzSkxQMThGK0pJZ0E1bFFVZWhsSWtuYW5wZXoxeUNWenFJ?=
+ =?utf-8?B?blZnTk5tbjFOeFBuZzZlVi9pVHkrb3ordWZmSWpPOWZhd1BSOUNTa3ZsSEg3?=
+ =?utf-8?B?enVrYU4vems1QlpCVkt1NFNKNHkrRnB6aWx6UVJWQmRIbjc2blhCeWM4VmJ1?=
+ =?utf-8?B?T3lYU1JwQ1VtS2lVaGRFajZzcnhBZW5DUGRqcjAyRjJUZ2MxTURUR0dVbTEx?=
+ =?utf-8?B?SC95UGtpOVdFbzFiV2RneHk0L2xwL0NRZFhweDFjbkgvQXh5R3ZZYXNzQkUr?=
+ =?utf-8?B?b3l4OENMc01KVS9FaG1XWlNSM2Z6bmFjdHhhTjJma1F5eWhnTVJsekU4Q2NW?=
+ =?utf-8?B?alV6R3pHQUxSR2IzQnpjV0NRN09kaHVUbDA1MVpoaC9JeFZFZlNoT2tYaWl1?=
+ =?utf-8?B?UklBM1dzSS80RDJ2NTVteEdlNGZURDdLa2RpdzRhNmJMZlE0WkVOZHh1bUtw?=
+ =?utf-8?B?KytuRW1tcDRmOW9RYkNENzNvOXIxSjBpSzZRbUU3d01aSHZzTnVVejBaWE1l?=
+ =?utf-8?B?Y3VOS2taMi85ekEyY1AvWFVpUHZLTXg4MGRqT0FzbUJ6TlExYnNPa201RDZq?=
+ =?utf-8?B?amtyY0NPdXRTcXlVNFhaK0lsb2c0dEhZam5UMGVubHl4dFJTd3d5Mk5CNWJD?=
+ =?utf-8?B?a1dMRkY1MlBaamZGOG1LZGwzVUY2anZpSGJONXg4ZUxGcXpzK2JJeDl6R0xs?=
+ =?utf-8?B?Ni9sVENDMVhHbmZFUjljVjR0d0FabVAxUWo2VU1zdDg4TTlkUTlVVGZKQlRX?=
+ =?utf-8?B?VEdTbzNMNnVPSWFNaWdzY2hSRmYwTmtlYXhyTmQwSSsxa29Ec3NOS0JZUlRH?=
+ =?utf-8?B?MHFvRnlrUlFqSmo5YnNYUTJlOFpraFZ0aE1LSEJiZGZwNUhUVlBxNGswRTR2?=
+ =?utf-8?B?WDNGV0ZlaUlWQjBwTHJwMmJTOTkrYldPMkxrZWhlY2wxUkE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RlN4by9UYUtYY0lHc0JZcGxEdEZob3NNcXVSRU1tZTlnZmJnR28xdUhIb0M1?=
+ =?utf-8?B?YjQ2YTZlSkZzVmtNUHZTSmtuUEZsSm9hV0hHWTBsUnRzTHBtR0YzaWk5cFFX?=
+ =?utf-8?B?TkJBLzRjWmZwVlB0dDU0a2NwK1gzSXBJcUUxd1RhQVZZNURITTNFcmd6K3d2?=
+ =?utf-8?B?ZVZYQnFvZThyaGVmbEJjVGEvazNIYkh3dnBNQkpRQ25rUFBsUEU0TUV5K243?=
+ =?utf-8?B?TWlnMTRXTXRIL2lSM3Rya29PNUpYUVg1UGkrVjUxMUdnWTAweGhxcWk3YWRQ?=
+ =?utf-8?B?TTJMQ1lJdFNkVFVDeEtWaEVSMHN5ZmJsMkZrWWJyTnhsTHMxQkNndll6RVJw?=
+ =?utf-8?B?NzJBdlpiWUdic0tKdnRUOUlyWS9ZSEM4TWdXZTlNbXJ3b1ZiUzgyUDZPTEdC?=
+ =?utf-8?B?MUU0WDZja0JnYlNwVXhob3JPRUNGd2lJamNiazY3NGFSbUtqeEZSalNmRDBi?=
+ =?utf-8?B?VE5BSEF1S3J6QXM2RlZaYytlZ0R4U1IvWlBUOXZLQi9oY0NwS3ZtdVlFbnpN?=
+ =?utf-8?B?ZTZYaFNJNEQrN3J1OVl3WVJZeURUZEE0eWZpN29WZ1drMzdBNFNaNUZuMCta?=
+ =?utf-8?B?RU9va3IvREo0NGxsS0h3NUwrRytkZFg4RGphbDFoVDN4U1Frb09BN0J6ZWlK?=
+ =?utf-8?B?Ykg0bVFmeUY1RzVkUjVhZVJnb3djbXBzaEtRR2RnRkQ4QTM0TnBPMHFnTUJl?=
+ =?utf-8?B?YzVBQmRLSGFRLzBaTnFBak10QkdEUzFleDBTOC9YVUdpeGNERlVTWVF3TUFm?=
+ =?utf-8?B?QndMejFodW9sRmVmcmd5RjBRVmhTRS85S0cxTUlSa0x3aTNKSW5wcjlsczhs?=
+ =?utf-8?B?dWcvcmVzdk1UN3hrK01sNWRFTFo4blppUmlBSHZZNVZpcHFzKzJBUnp4TnVi?=
+ =?utf-8?B?a0lYUEFyTUN0TndIbTVTNlMzWDlKeEtXN0orQUhISWdPTnNKRDF0ckNLbCt1?=
+ =?utf-8?B?VjdpKzhUa2l3Q1JENHVsNTkybVYyYWRZZFR6V3ZIVlhhaFFYYk5ud0RZaHdy?=
+ =?utf-8?B?MmJiUU05eEh6dlgvVVBPejdxZjhMZjM0eUtrc2FrRkxBbE1XeVJiUDlNMngw?=
+ =?utf-8?B?d2dDWkVuWGY3NVRpUWNwUkUyTjYzMThBRm5CWGJlNkxxL3ZTc29CZjFvRHJv?=
+ =?utf-8?B?cmN6bTNuak55VytpQXZmTElSZ01sVWdSeERBTmhxMlBDazZGUkFFc3hNVHZn?=
+ =?utf-8?B?UjMwMXpPazFvdGFVMStnQmlKcURxNndtTXhER2daTGdqdjc5Z2JZNFh0TUFX?=
+ =?utf-8?B?UmZ6aDMzR0xHZHIwMy94d3cySEsxTERJQ0ZyZkx2cXJOK2RocUNnNUNhbzdF?=
+ =?utf-8?B?S3lNQ2hMSDkzYjFaeWJ5cmdqb2xlbXJ3cENEVVF5VFZNMS9TaVJiZHlXWUJl?=
+ =?utf-8?B?ck54cHlPUy80ZVltclFNU2o3d2t4MzRuclpqZ3BxMmw5dDRLUXhXeEtCRmMv?=
+ =?utf-8?B?QWtBbS9PUENacVQ3eE1FTCt1VXh3bFFvV3RXaGd2NjZ3bHBPUkgzTU5EU0NQ?=
+ =?utf-8?B?N1NBR2xsa3YybnZxUWw3TnpaajlPek1PWWdSNWlQdElaWWh5TUp5Tkp6UkVB?=
+ =?utf-8?B?TnRWY0tFNHBNNXNBM3NJanRnSXpLL01FbGRtT3ZaUlE2a0lXeks5YmxkdVZK?=
+ =?utf-8?B?SGI2ZmJxaHRMa05yeUZQRDVxdDRhNVc2eGZ3TFpQZVQrUlg3anVXS01QRVIx?=
+ =?utf-8?B?eUc2YXA5eWdvUUVFdSsyQWNJTHd3Ynd2aUJIOTF0aytTcXg4Y0F4V041RmU5?=
+ =?utf-8?B?V2w1UUFaQUN2SlhEZmFqMHlVdmF0VmhIOEcvWTQzMnlSbDhZRlJMUGNsRnho?=
+ =?utf-8?B?bXoxazlHNHV1RzdBVGtuWVZOVmVoanBRMUw3YXFIbUFWRU9MaHE3eThyRVJl?=
+ =?utf-8?B?a0RDWWhtc3FXUUVtNW9FeXpvT3BoWHY5cnRIa1U3OERuMVhaSEwyQkttT0M4?=
+ =?utf-8?B?RjNsWEtKbUw5Rmk1RGhUaWNCVStjMXRmMzVYZWc3VzE3YVpJanhqbTNKS285?=
+ =?utf-8?B?ZFNXdEZXR1RqSHVIcjB6Uzh0cnkveWpuSDBLSy9qcW5YdWkwZ1lTRzd0eEpO?=
+ =?utf-8?B?Wm93bVhCdml4M0x3WWxlMU9iTDhXYVd2NzczMzdTaStKTFIvb2FpSU5Cekgx?=
+ =?utf-8?Q?s8XEA69Ml2fM83UgV4PeWH2Nq?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c6ef8b5-6081-490f-ffa3-08ddfa3d963e
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 01:07:37.8537
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: orOyfF5EGxwGc/x+1EBmZZoHyb8DJfrF16BUlTuBWRvW17R8OKiPQ8c84jv1m5WePaJ5FBGXtT0Qadip30D16Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8441
 
-
-
-On 9/20/2025 8:42 AM, Dmitry Baryshkov wrote:
-> On Fri, Sep 19, 2025 at 08:21:08PM -0700, Wesley Cheng wrote:
->> Change the notation of making the USB repeater a required DT parameter.
->> Issues were seen when supporting USB2 across different form
->> factor/platforms, which led to enumeration issues due to improper eUSB2
->> repeater tuning.  By making the repeater optional, for SMB/QC PMIC based
->> repeaters, it can utilize repeater settings done in the bootloader,
->> which cover a wider range of platforms.
+On 9/22/25 12:12 PM, Timur Tabi wrote:
+> On Mon, 2025-09-22 at 21:30 +1000, Alistair Popple wrote:
+>> +
+>> +    /// Check if the RISC-V core is active.
+>> +    ///
+>> +    /// Returns `true` if the RISC-V core is active, `false` otherwise.
+>> +    #[expect(unused)]
+>> +    pub(crate) fn is_riscv_active(&self, bar: &Bar0) -> Result<bool> {
+>> +        let cpuctl = regs::NV_PRISCV_RISCV_CPUCTL::read(bar, &E::ID);
+>> +        Ok(cpuctl.active_stat())
+>> +    }
 > 
-> No, please don't depend on the bootloader settings. Instead we need to
-> implement proper prgramming / tuning for eUSB2 repeaters
+> This should be part of the HAL, because a different register is used on Turing.
 > 
+> You can leave it here if you want, and I'll move into a HAL when I post Turing support.  Your
+> choice.
 
-Hi Dmitry,
+Yes, it's similar to the DMA mask patch in that regard (Hopper/Blackwell needs
+a different value).
 
-Will update the next rev with the entries to support the SM2370 repeater.
+In the spirit of the current "soul" of patchsets, which is "get
+GPU firmware running on Ampere/Ada"), I think let's defer the HALs
+until the first patchset that needs them.
 
-Thanks
-Wesley Cheng
+thanks,
+-- 
+John Hubbard
 
->>
->> For other repeater vendors outside of the SMB/QC PMICs the repeater
->> should be defined and managed within the kernel.
->>
->> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
->> ---
->>   drivers/phy/qualcomm/phy-qcom-m31-eusb2.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c b/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c
->> index f4355d38aad9..b8ddadf78c53 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c
->> @@ -285,7 +285,7 @@ static int m31eusb2_phy_probe(struct platform_device *pdev)
->>   
->>   	phy_set_drvdata(phy->phy, phy);
->>   
->> -	phy->repeater = devm_of_phy_get_by_index(dev, dev->of_node, 0);
->> +	phy->repeater = devm_phy_optional_get(dev, NULL);
->>   	if (IS_ERR(phy->repeater))
->>   		return dev_err_probe(dev, PTR_ERR(phy->repeater),
->>   				     "failed to get repeater\n");
-> 
 
