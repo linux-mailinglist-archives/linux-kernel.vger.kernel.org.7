@@ -1,102 +1,159 @@
-Return-Path: <linux-kernel+bounces-828983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41EC9B95FAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:15:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30413B95EE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48B8C3B78EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:15:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40EA019C313F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AC2327798;
-	Tue, 23 Sep 2025 13:15:29 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0627F324B21;
+	Tue, 23 Sep 2025 13:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ko7ltZo1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4785F32341D
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5163E321F3E;
+	Tue, 23 Sep 2025 13:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758633329; cv=none; b=TtFBYbalME4oULMpndYdYuIHNi6NeN/k2JTFl/vWePuumuOm3WXFN/JUjXanq193suzSQonsD7qqoyU6jxnRr+4r7uTx/a1Sj8nQ0auOypVEVPZAgekoFxlobcB2zWZVA7HehV7yS5J1vWFuPR/3gbAPfgdkWSfME4LDDp1CNFI=
+	t=1758632754; cv=none; b=HpTe/w7JCyJ5DyzYdBYlCsGu6+hAKFBiSWkbHvpLV4+9Ncs7Vr0hLnZ4EJNh5DKT2GIlEsuaXutuaimLt21kNbsvWaOvvwPR3RhgS9i6Nj80T21A6ttTLiPRCN9o15LrykYNcLeCgSoCHlA3wDie66Mq4efGZJ8W5eaeFHhtqHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758633329; c=relaxed/simple;
-	bh=hUy9cPtn+0FbMG70hQxrb1OaBE0M7sholQty5UpEPJ8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e3CAAJ8zrNRut94FserYQdEuTVtrIZXj5hX4t+hCqjmRDk/0T9kZyf/iKgFug9YQw2I5WSuF1/3R52nBLdeKn+sbSnfbKCHD2/GyxgNoNHsMKhMSGYwwpXCRztdG23jHsU2bA3L4YQkiqPzO88NY72bQ2LfZ6/fLbp32YbClqhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cWL2G2QgpzddNf;
-	Tue, 23 Sep 2025 21:10:46 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id BAA791402CB;
-	Tue, 23 Sep 2025 21:15:24 +0800 (CST)
-Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 23 Sep 2025 21:15:24 +0800
-Received: from localhost.huawei.com (10.169.71.169) by
- kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 23 Sep 2025 21:15:24 +0800
-From: Yongbang Shi <shiyongbang@huawei.com>
-To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <dmitry.baryshkov@oss.qualcomm.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<fengsheng5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 drm-dp 4/4] drm/hisilicon/hibmc: Adding reset colorbar cfg in dp init.
-Date: Tue, 23 Sep 2025 21:04:11 +0800
-Message-ID: <20250923130411.2522339-5-shiyongbang@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250923130411.2522339-1-shiyongbang@huawei.com>
-References: <20250923130411.2522339-1-shiyongbang@huawei.com>
+	s=arc-20240116; t=1758632754; c=relaxed/simple;
+	bh=MuLqyGbDmJEGOco6kler3imRlJOQ0leMTzdLfvljYFI=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=h905Hs9jBFNULuNobQ+cwgt1xKrCV8J7nOrVPFjq1oJyywXhFteVC1iQNFS1WYfTyivqZmuUt20k+kVcypLpK9DGUuxNu+nuMTixtBLpF02AP3RykaX6OMOqeCdEeQFRtt6vKQRdgKwqYClvxcnyCCbRJdHB8dQkqltZrvnm300=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ko7ltZo1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB7BEC4CEF5;
+	Tue, 23 Sep 2025 13:05:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758632754;
+	bh=MuLqyGbDmJEGOco6kler3imRlJOQ0leMTzdLfvljYFI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ko7ltZo17TJgnO6B08CAg4BDOOY48y1Spb2eFdTAgYyqzzgAGUnMMkoNn4tUvAJnX
+	 ChKw41E99me4CZzPAUFUFf7HZ4g7bSlCq3hE1og+39wAVrJb3ky4qAMly5yT1fdIhz
+	 FDZAACZKOCHQOKICEEC61RcelBZXJK6K3jKKtwQrHKb8g4A7RFENuHdxQjj5v30Iw+
+	 UbcQukiDTJKAhpdQ+F6hqBpq/QS5UCdXPKko7PgsNW+F3VMCb2GokJWTGKfpZV1/aL
+	 hWb0BpcuwjFYSHBV90vixDL701QUVIVKfUEzmw4nU7+QgikpvgYbBwwFPQ5hmIbJS9
+	 SRCUEEBXaD+Dg==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1v12jh-0000000Cooe-2NAa;
+	Tue, 23 Sep 2025 09:07:13 -0400
+Message-ID: <20250923130457.901085554@kernel.org>
+User-Agent: quilt/0.68
+Date: Tue, 23 Sep 2025 09:04:57 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Takaya Saeki <takayas@google.com>,
+ Tom Zanussi <zanussi@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Ian Rogers <irogers@google.com>,
+ Douglas Raillard <douglas.raillard@arm.com>
+Subject: [PATCH v2 0/8] tracing: Show contents of syscall trace event user space fields
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemq100007.china.huawei.com (7.202.195.175)
 
-From: Baihan Li <libaihan@huawei.com>
 
-Add colorbar disable operation before reset chontroller, to make sure
-colorbar status is clear in the DP init, so if rmmod the driver and the
-previous colorbar configuration will not affect the next time insmod the
-driver.
+As of commit 654ced4a1377 ("tracing: Introduce tracepoint_is_faultable()")
+system call trace events allow faulting in user space memory. Have some of
+the system call trace events take advantage of this.
 
-Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
-Signed-off-by: Baihan Li <libaihan@huawei.com>
-Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
----
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c | 2 ++
- 1 file changed, 2 insertions(+)
+Introduce a way to read from user space addresses from the syscall trace
+event. The way this is accomplished is by creating a per CPU temporary
+buffer that is used to read unsafe user memory.
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-index 2954e3066923..b458cb7628d5 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-@@ -180,6 +180,8 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
- 	/* int init */
- 	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
- 	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
-+	/* clr colorbar */
-+	writel(0, dp_dev->base + HIBMC_DP_COLOR_BAR_CTRL);
- 	/* rst */
- 	writel(0, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
- 	usleep_range(30, 50);
--- 
-2.33.0
+When a syscall trace event needs to read user memory, it reads the per CPU
+sched switch counter. It then disables migration, enables preemption,
+copies the user space memory into this buffer, then disables preemption again.
+If the counter is the same as the original value the buffer is valid.
+Otherwise it needs to try again. This is similar to how seqcount works, but
+uses the per CPU sched switch counter as its sequence counter. If the counter
+is not the same, it means another task scheduled in, and that task could have
+used the same buffer and overwritten the data.
 
+A new file is created in the tracefs directory (and also per instance) that
+allows the user to shorten the amount copied from user space. It can be
+completely disabled if set to zero (it will only display "" or (, ...)
+but no copying from user space will be performed). The max size to copy is
+hard coded to 128, which should be enough for this purpose.
+
+This allows the output to look like this:
+
+ sys_access(filename: 0x7f8c55368470 "/etc/ld.so.preload", mode: 4)
+ sys_execve(filename: 0x564ebcf5a6b8 "/usr/bin/emacs", argv: 0x7fff357c0300, envp: 0x564ebc4a4820)
+ sys_write(fd: 1, buf: 0x56430f353be0 (2f:72:6f:6f:74:0a) "/root.", count: 6)
+ sys_sethostname(name: 0x5584310eb2a0 "debian", len: 6)
+ sys_renameat2(olddfd: 0xffffff9c, oldname: 0x7ffe02facdff "/tmp/x", newdfd: 0xffffff9c, newname: 0x7ffe02face06 "/tmp/y", flags: 1)
+
+
+Changes since v1: https://lore.kernel.org/linux-trace-kernel/20250805192646.328291790@kernel.org/
+
+- Removed __rcu annotation to the fields that do not need RCU to protect
+  them.
+
+- Hide newsfstat around
+  #if defined(__ARCH_WANT_NEW_STAT) || defined(__ARCH_WANT_STAT64)
+  as parisc failed to build without it. (kernel test robot)
+
+- Fixed allocation of sinfo which used sizeof(sinfo) and not
+  sizeof(*sinfo) (kernel test robot)
+
+- Instead of incrementing a counter via the sched_switch tracepoint, use
+  the nr_context_switches() API. (Mathieu Desnoyers).
+
+- Use the length saved in the meta data of the event to limit the size of
+  the string printed "%.*s", len, str.
+
+- Add comment describing that the method to read the memory from user
+  space is similar to how seqcount works.
+
+- Hide kexec_file_load around
+  #if defined(__ARCH_WANT_TIME32_SYSCALLS) || __BITS_PER_LONG != 32
+  to not break the i386 build.
+
+- Added __user annotation to variable copying from user (kernel test robot)
+
+- Change default to 63 (127 seemed too much)
+
+- Change the max to 165 to fill in the extra data.
+
+- Use the size macros of the max size and max args to calculate the size
+  of the buffer to save the values in.
+
+- Added new patch to show printable characters of binary arrays that are
+  displayed.    
+
+
+Steven Rostedt (8):
+      tracing: Replace syscall RCU pointer assignment with READ/WRITE_ONCE()
+      tracing: Have syscall trace events show "0x" for values greater than 10
+      tracing: Have syscall trace events read user space string
+      tracing: Have system call events record user array data
+      tracing: Display some syscall arrays as strings
+      tracing: Allow syscall trace events to read more than one user parameter
+      tracing: Add syscall_user_buf_size to limit amount written
+      tracing: Show printable characters in syscall arrays
+
+----
+ Documentation/trace/ftrace.rst |   8 +
+ include/trace/syscall.h        |   8 +-
+ kernel/trace/Kconfig           |  13 +
+ kernel/trace/trace.c           |  52 +++
+ kernel/trace/trace.h           |   7 +-
+ kernel/trace/trace_syscalls.c  | 700 +++++++++++++++++++++++++++++++++++++++--
+ 6 files changed, 756 insertions(+), 32 deletions(-)
 
