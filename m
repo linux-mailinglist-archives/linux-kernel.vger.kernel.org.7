@@ -1,261 +1,223 @@
-Return-Path: <linux-kernel+bounces-828665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156B9B9521E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:07:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36EAEB9522A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0887B18A6517
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:07:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7CEB3A689B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5759F31FEF7;
-	Tue, 23 Sep 2025 09:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31B93203A9;
+	Tue, 23 Sep 2025 09:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="kKRpg/SU"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OaJVwlxG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E62E26560A;
-	Tue, 23 Sep 2025 09:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E9D2594B9;
+	Tue, 23 Sep 2025 09:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758618433; cv=pass; b=m+6xlMFAAXwpRBptULKZDRuyZ5sZFO1dKy6t+B1t5NjciTUlGxoZ2E6Ctt0zSv1utAonPNOL3sqxb9GwzfBpTeJrH9vSZThMLyovUsJ8GvTH5EaCVHtkvlumDdPve6k7yj9QC2yRCS/3+pPWnf08Nm6pEEoyn5pR+t9gShIwpvo=
+	t=1758618452; cv=fail; b=qu01jY3W7db19lmbhuy114d1JWT7LyIui/iw9Y/4TuEIGj8JhdI5iwFRlcmsTJcpAFpHL4IbtrRwqSSvKOgnMnfQyDFA1KejffT+v8McYSwiz8y6GuThh63VJfDvPi3kwkyHgUHy0kUqavd55s9Nubzgsgod/ztnW6jaM4wz5lI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758618433; c=relaxed/simple;
-	bh=ukzqrYf9k9pS67YLftTtdCVwlVyx+OoIivE/4WwDr04=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=icmwfzok9G3eJFKSyIj24b2LX+/GV1ML29SLz2EU6+Zwea5FUI5IZh0VL+wFSg08yLsyu1O/h7X31LTnb4zuU8n/tzrVQBzehH04lh6zawYY4BBuvdpK3WtUYUxKzmEn4h8hlo5myhe5+DZ/DJmOYIu+UGvGSlJKMsnu01Sapro=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=kKRpg/SU; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758618417; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=WUVll49IQ+H3NMXdoaT6K2RFOubCRIh8nTVDC130XCwvQtEqkgW8odYao0QpHWGZA2xf2Jbv8o0qKuvI0tFfylr9/nxi3kCX+idBXWtpHEJcFAlKIaoz0hoVm71HDpVu5PMQLDiz3LNzcUdlHe2qJS4++ljbea0gqmb6pMpDexk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758618417; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=lDSLbWRe3/XSF6EHknU6DwHbBjpQeYWU/BRQOn+S+E0=; 
-	b=iyt1yQ/3U0uKZsgnULMdD3f/prailyEXuo2yvBU6agBfC9hJYFRVhlb6Br75wjrLOitUQtw/oerKm/d6sCnnBRwp/BkIBbf+1WO7F5bqfOdQ69Ip+9imwWwAsmSJODvnX4LhPC+z5yGpfklXY9EPiS0Ueu0imU4nidq3sY9DKDg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758618417;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=lDSLbWRe3/XSF6EHknU6DwHbBjpQeYWU/BRQOn+S+E0=;
-	b=kKRpg/SUMjRrSseNMULThv4AZ7il2w6TbWlp+iHoeVtfTNv9szWRJZDrbtPUkxQY
-	3GUrqSzx5yxcXQaVFMbe0AhUSJ4BSHR01kILwd2HHJGoM34dbY2Cc8uozi9d7FxMtwq
-	ftuXMxgrlPcDErDdb4GFWLL3L2WgpA9GKLS6HaLw=
-Received: by mx.zohomail.com with SMTPS id 1758618414479846.6177567826774;
-	Tue, 23 Sep 2025 02:06:54 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
- Jjian Zhou =?UTF-8?B?KOWRqOW7uik=?= <Jjian.Zhou@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "wenst@chromium.org" <wenst@chromium.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v5 2/2] mailbox: mediatek: Add mtk-vcp-mailbox driver
-Date: Tue, 23 Sep 2025 11:06:50 +0200
-Message-ID: <2382077.ElGaqSPkdT@workhorse>
-In-Reply-To: <eb9b0ea70abb09f45c50e88b6221948ae09be6f7.camel@mediatek.com>
-References:
- <20250822021217.1598-1-jjian.zhou@mediatek.com>
- <13850137.uLZWGnKmhe@workhorse>
- <eb9b0ea70abb09f45c50e88b6221948ae09be6f7.camel@mediatek.com>
+	s=arc-20240116; t=1758618452; c=relaxed/simple;
+	bh=idOvqFRBKtoEbXM39sxfbeGvnJn8HYhYr0ACFNmZ3AU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=VPaKZBV9XsvsgRO+u1HY3aaHf0kenrAhzBJa7AnOZvCvEQOIipGBaKG6EaJnmRIpuw+pueUo0FfLcGKR+uqd6g+t3QEuXRVqCbE090Y0kR8KsX4P4OCfwrEquM/QlrkviF/PiyDDSVOJKg0q94LoOfddcl2j54s6npQfZ6H5lmc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OaJVwlxG; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758618450; x=1790154450;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=idOvqFRBKtoEbXM39sxfbeGvnJn8HYhYr0ACFNmZ3AU=;
+  b=OaJVwlxG9Uy2+s3gnp31jkKhPP/6fEyN4iyY3Ak+UVtZNlX4ODeLyYEq
+   TiWKfPGz8DF2mjd+aCNJbHGeB8gmTIQPGNtu4qrHVoEMZAY6mqVUAcbtw
+   n2mc51woTC3lbEsakepI/lF/ahql79e9K2233wXzPAG7bIanskQTAk/IL
+   st463Eg3ySzHlZy8Mc+RUJQUTeyzpa6Oq5Zp1dSXWpvJl9HeJgAWjC84E
+   LUL0wyiHGYPe/MDfGm588hlk7mDTpgO5wHk5MgsTLvNi82cer1eC69Leo
+   uadV5ZhOKxkHV71OUBfzfZ17VIOH9elVMcDmrmjCUL12dEaIup2EI/aoe
+   Q==;
+X-CSE-ConnectionGUID: j2Ll//nVQuyzNBcfdYF8dA==
+X-CSE-MsgGUID: dFapoolTTyGbNL6Gq0BCVA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="61062098"
+X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
+   d="scan'208";a="61062098"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 02:07:30 -0700
+X-CSE-ConnectionGUID: onPXTqJ8QFaWXoL/x/iyDw==
+X-CSE-MsgGUID: oL1jaRZdST+4VD3BVpevCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
+   d="scan'208";a="181101541"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 02:07:29 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 23 Sep 2025 02:07:28 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Tue, 23 Sep 2025 02:07:28 -0700
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.27) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 23 Sep 2025 02:07:28 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KjIq2h3q/VOXktHep089luFjllr5Ye0KHSZYb6dhzbWvcc0lWjfbcB5yaKOnQMBmd7cLA45haWI5ljezVlelNaebtqZEdz8u1mt4U/eKHkEqfVW5v7MSHoAqbRh7xs+D+auAR2Y1mbIJ027BYecUP3RIr728d3WcVQuFC2av8n5dVIFvhISknbMgMOZyguZngfrqXuDFO8dpSnNWu43o2Np3BonnNgZjNm8/eveIeu3aYdor3eXyQK/YoYvinfT6RGQ94OZYlVsV2Ijp7xtbAHUQDK2Sq4EX1Bx7UgIc6LaB+qR+LpxIQ4PM4TCDOLuxR6/eIJZWXvEYZTgA92q1lg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OQMq/WDrJ2vwv+tuRySHF4qq5uJU+Z/f0wF2BVGh6z4=;
+ b=hVOIXM2y02uSmaZeWh5FoSpIt4WoP2l1hMwAMsMhdoG3Ie6ESM6tuCcbpk15LJ+PwDAHsDN1pRoOxJMCiLdSZYvYc4kUIAWhio1+Pz1n4SyvSRFaw2kV/45X7gEoDorCyG++V90uVN2OaV7OiUtNy4Jm9hzmUuvydLqZ5YrTg3numcPGtSR0NwGNIMEs5SjxxnLQcQwr7namaAeJc3CxTxXNRPeK7RgmYvp6DUQi/fOXJYRhUlLWL3plkmheV+SiFDO05rlVqJ8FwBbqNu8S4ukA2uAdum31LA5cJRyaM3QdlQHOML3GyrijPBDFcu5oKhf2jPGE6OpXrfIyBAED0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5057.namprd11.prod.outlook.com (2603:10b6:303:6c::15)
+ by IA1PR11MB7270.namprd11.prod.outlook.com (2603:10b6:208:42a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
+ 2025 09:07:25 +0000
+Received: from CO1PR11MB5057.namprd11.prod.outlook.com
+ ([fe80::3b75:a8d2:464e:30cc]) by CO1PR11MB5057.namprd11.prod.outlook.com
+ ([fe80::3b75:a8d2:464e:30cc%3]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 09:07:25 +0000
+Date: Tue, 23 Sep 2025 09:07:10 +0000
+From: Krzysztof Karas <krzysztof.karas@intel.com>
+To: Alexandr Sapozhnkiov <alsp705@gmail.com>
+CC: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>, <intel-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<linux-media@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: Re: [PATCH 5.10] gpu/i915: fix error return in mmap_offset_attach()
+Message-ID: <4u27n4orhmm4fn6xpxbdayqj3fz22lw3il7wjhtif5fjdyitps@d6i6i52giy4j>
+"Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173,
+ 80-298 Gdansk - KRS 101882 - NIP 957-07-52-316"
+References: <20250922144318.26-1-alsp705@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20250922144318.26-1-alsp705@gmail.com>
+X-ClientProxiedBy: TL2P290CA0016.ISRP290.PROD.OUTLOOK.COM
+ (2603:1096:950:3::18) To CO1PR11MB5057.namprd11.prod.outlook.com
+ (2603:10b6:303:6c::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5057:EE_|IA1PR11MB7270:EE_
+X-MS-Office365-Filtering-Correlation-Id: c9f7c614-4b9f-4bc9-a05a-08ddfa809d1b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Y1l5cm9vY3dnc3lmVUx4Zzh5Rmx0NGxmdDFyTlJ0dDV3YmxkcFlUUEpqN0RF?=
+ =?utf-8?B?TkZ0YWQvcmhtZlloN1ZOTEpyR1hleTBuWHBmMTR3bllxYTc1UkhSeWZqY24x?=
+ =?utf-8?B?dEFuT0VLQU9neVpvNG5LYzJjMnFPeXVYSEwzQnBqZjAzRkVJOVZFaUxqdExT?=
+ =?utf-8?B?QVZHZWJyREJVZy96N2tRS081SytDWm1QNlkwVVU5ZEZQSzg4Zytkemx6K2Iz?=
+ =?utf-8?B?SHovOHpjRjNZL1NZUHNHUEo3UHVzbUVNT0JoZEFTMDN1K3VKek4vd3VZUnJo?=
+ =?utf-8?B?OXVGaWtpeWltREp6ZldBcU1MTGlnMkQ5UWdJSVdrdU41OUVsemtERWVrYXVF?=
+ =?utf-8?B?dXQxaGpBR2VuQ3FqeEV3V1U0T2dFNGFPdXJJUTlQTzdpc3JEY1pYT3Bhcjdj?=
+ =?utf-8?B?MEZocytVaHhSWnQ0VlZBNjZVSlhUbEVBNTFaN3ZWSEEydExsT3o0TU1VTUww?=
+ =?utf-8?B?cmVJT1B0dllTOHRrdDRBYXZYQ3JCSFE2d2lRSVFIQWhKUXNxdno0WFRZMDdT?=
+ =?utf-8?B?bFFrS0VkUExWL2JEMTVqSVZaeDhLT2JkV3RzbFlzT0tlNnBvSVBWWWRRL2hY?=
+ =?utf-8?B?Sjc5NW55YlIyUlNyd21oRnpLVVYwOVlkOUlnb3pON09xVXhuNFZlOHJEZDJw?=
+ =?utf-8?B?dUdMd1Z5Z1h4NGp5a0pUVm9GMUNST21hRVJzMkVSblJIN2pWUzhpK2F0VnBs?=
+ =?utf-8?B?cEpUc2x4ZXJEY1FHM3NZT0xwUEpXU3BiU2t0OHpvZ051eXRWbkR4RVNTSVNT?=
+ =?utf-8?B?Y2ZHV3pTck1GVFFWWUg0ZmhCSUdnTDJKR1hpVVlqY0dUMDgzVnFNR1kxQ0hm?=
+ =?utf-8?B?Lys1UHYrVGlWYWc1VTFLek95OXdTS0dCT2VtRmpScktSU0tNV3paR3lZclcv?=
+ =?utf-8?B?VzkybzdZeU1UWVNLSis0aEYrWlRKbjI1V2kxSGxkbWtYbXQvbmJsc2VWV3hF?=
+ =?utf-8?B?N0Q0QTIwYWJJVEFwTnR2QWFaT2NhVWhWSkVmdEczMlhHeVY3Tm56NFdGZmtw?=
+ =?utf-8?B?MlBMSER6eEkyQmRRSnJwNkFNZUk4MXpvVXhZOW9wb3pZNGFJMzNUVWwzV0ln?=
+ =?utf-8?B?d25FbllQZGcreTJOUUdGYko3MGpxREpLb25zSnNTRWJoeU50SWxQdDF6cEFw?=
+ =?utf-8?B?YnQ3dk5VR3F2K3diZkczWnFVOXE0ejExRE5kN1REMndNMkVtTW9iak9SQnkv?=
+ =?utf-8?B?Z3p0S1BqdXBLNXJqQkRtWTRWZkd1Q01OMmdkSXZCTytFQnMxQ0NzQVAwTHZU?=
+ =?utf-8?B?MGVwcENUdkdzYlJzSXpJRVdVaE8zTnk2TFRicURMcUhYS0UxQXF3NWFER2xY?=
+ =?utf-8?B?UHh6ZVB4SjBpSW0vcmVKNE1TcFhJQ2ZJWUFXZHZZWGRVSjRiQ0tENWEvWFdr?=
+ =?utf-8?B?Y05sZldLVlBISzJpaWMvT2JqdTBYdDJLc3Bidm1yYWVjUVd3UzBaNDliLy95?=
+ =?utf-8?B?Mzc1YXdoc2ZCeXNVVzRQeXJNM1hrL2ZtbFZkS2dDYnp3WTF3ejJtRnUrdFFP?=
+ =?utf-8?B?STVNbXRkcVBncGN3ckViT1oxa0JmR2Z6OXVLakNuZnkvZnJaalNZNEVHS0tO?=
+ =?utf-8?B?bW5ENm05enQ2R0RtLzFiZlU5WURVclMrVXowNExjVVY4KzZnS214NW9GVU55?=
+ =?utf-8?B?N2tUajhRamhVelVMNU1VanlxYktmc29xWEJLZ1FnaXMwUnJtQUI1Wlg4ZjBo?=
+ =?utf-8?B?R1gwWDBuT002OGh1K2tnYzZ0ZnJSRGxBMklON1ZMOWpuVlplNjNaeHdaZGZ4?=
+ =?utf-8?B?NmhzbUtxTHBTSXlLSFVEbUZTMThxektxTm1BZFJCM0U3RXdGT3YvTk8zOVpy?=
+ =?utf-8?B?K2FLVXJZUnFBYk5OSU1XS2QvRVNtdHdRVTJxN21Ta3dXL0luRlVLb2paMlBF?=
+ =?utf-8?B?SHBNMFhGRDZkajdoSWR6djJlSTZ3dzBVWk55YUZhejJpSUVmZEhOK05HUEQz?=
+ =?utf-8?Q?wQBgLxqfNB4=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5057.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eUFSaUFEVy9FL3VlWlROMUlkZmY0VVkwdU5rOTFlTXRDcWsySzdtRWpTQ3k4?=
+ =?utf-8?B?RVNPUytYNzVnazBYUHFtZldWbktYR2Z2LzlFM1k1a0FYRXJCc2tobytCbzBM?=
+ =?utf-8?B?aHFzdDRqVEpDMVYxanBWektnbUNxUEU5cU80SkY5VVZFSjBzSjNjV003b09M?=
+ =?utf-8?B?NGdoc3lKdFpXQzBXclY5bURIL1hVcCtsY3BQbjF3R1UrTUg2SDRhQnlRVHNt?=
+ =?utf-8?B?YzQ1SzA2NTd6ZnYwU3AzakhmcUQ0dEp2ckR6bTZad0djME5OK0V1QWdTZG5m?=
+ =?utf-8?B?UkNWWEtHbWMyZTlJclRVNC95dXAvbm11NXhuUWdSaXo4WExlTmpoV3g4SFJB?=
+ =?utf-8?B?eVpsZzhrU1dhN3hsaVNIYS90MURRcWZmUVd6dWoyMDg4MlM2eGtNNVBGZ2Jz?=
+ =?utf-8?B?QUsvTEh4RTdReVJQTXZNNVRIdjFxVzh2dk1rQnEyTk9mR21DcUdiL1ZmaHNW?=
+ =?utf-8?B?aEFEdXF5cUJrMnplRnp5ajJUbVZqRkV3eUlFMVQ4Sm5vY2xSYmxFZzJpbnlh?=
+ =?utf-8?B?UzBRSC9xQkxKR29QZ1BISDQvQjBJSm5lOTdnRC9SdC9mWG9EcEp0UDgxQ1dy?=
+ =?utf-8?B?WDNRdjlic1BZekpja0Y3U3lNVUpBZXZJU2RjM2gwM1NRVnBpSmZtVnJDKzdV?=
+ =?utf-8?B?alJnam8xTkp6d2E0S28wTGRmRW40dUNLa0dKYXc4YnU3aHJWZWxwN3NnV0M5?=
+ =?utf-8?B?RkcrT1lpQnhLVEhCM1Vma2FRZjd2RmNOdFVtb0dnYjNtcXpCbjRtOURQcFl6?=
+ =?utf-8?B?MmpPc3BHZGZ1Wk8ycTBRWkNMT3NjQzFMWFkwQWRFWitwcHJuRGtDNlZTWFVH?=
+ =?utf-8?B?cnR5TERWaHdUODMxbzJyeHZKWWwyVGVxSTYveG5wc0tDdjJKRVF1dk94VWha?=
+ =?utf-8?B?N1VZM0FPM091SkkrRmhJMzcxUFoya0RJNDJURXcxWVdXSnZzT055aXBOaDhY?=
+ =?utf-8?B?VDZ4ejZjWk55TENDTUlrZ0JIWVRCaXBacGhTMVN5aXFYblVZc1pZSDAyY3lX?=
+ =?utf-8?B?VTk1NEN4RW5MeWszc3N3WmhiY1lKN0M3bnlFMldpejRzc3BxS1NwTWdrazgx?=
+ =?utf-8?B?VDBSMDBLWTVtakN6c3lPNmx6Q0xyVkhTNGxvY2VBZC95eEFmOEdaUjNURDhh?=
+ =?utf-8?B?OEp1U0NRNFJtbU42cnp1Zm9DU1JOdGd3K3ZLak16MnNIeWdXTk0yT1YxaWti?=
+ =?utf-8?B?RUJLRTdmQXN2WnRVbXhYK1JlVDVvL0grTzFLS1Jva2NhYU13eUV0ZUk5KzQv?=
+ =?utf-8?B?allZbis2WmNMRWU2LzlNeFZJRWpOVjNoN2MxQlNJOTFXSjV0ZXA4RGVxanR1?=
+ =?utf-8?B?WTZOVWFKOXoycGZRTGRhRkg0aTRnVEltTUFnUkErdXRLdzhULzlXNEtnQlo1?=
+ =?utf-8?B?Zi9XTG5ZNFkvS2RQOFNlYjVOcjJpb0hyenllK2pvdkJBQ29Idm4zN3NBV09a?=
+ =?utf-8?B?Y1VBMmkrS0FJaDNFRkV1VEpVL0lNV3gzNVJocThUNDFkMXRVUDROTmtGcUIz?=
+ =?utf-8?B?N0k4UXMwSzI0a3hPTUFqQTIvUEJLb3lZYU05dmw4U0JIakpFRkUvR1lzRHFZ?=
+ =?utf-8?B?YzB6emhSYWRiakoxUWUrTEVleHJnbkRyVzJaWmpPNE5NclF3QS9qWTh1MkRY?=
+ =?utf-8?B?TmVJUGxqdTV3WlBiY3JCa2hMYzVCYjRTK2hreENzSXA1dTdCaVllNlBGcVhN?=
+ =?utf-8?B?Z3UrV215aG1rOGJ3OFZCSTVyRzVsNnp2TWRCUFF6MW03VUtOVndGVmx1NEFZ?=
+ =?utf-8?B?VFZSYWcydFpyMDhZdmVOZ29iN04zWFZDRlM2RC9ZeStYeU0zSGZNT0VlOHJ1?=
+ =?utf-8?B?U1pCb0NnSkptOHZjYXd1bDF3NmpRRVlDT0IyY0N1Rm8wNkNGZDlHYngrTHRx?=
+ =?utf-8?B?ZzZsSFZ5cGd5dmQwc0FoKzNwS1BJTGU4NDBUWG5lNWZPT1lyVVdZZUdsaDRj?=
+ =?utf-8?B?NGJNcWFTMlIyOTNjSi9HMG1zUDJBenZ3eVdrOU9KWWp1ZldWMHV3dXN6eWNT?=
+ =?utf-8?B?RFhBZUY2M2Y1Qk56SlBuOUlxVDBQcUFldHQ4UENLRDRmYi9MR2xMai9HeU5M?=
+ =?utf-8?B?NmVtTVA0MFdRSEZpWXZCUmhTNDhPNVB5QjZzdUpVaEFFaUp2eGVRU28reHA4?=
+ =?utf-8?B?S3lDSVZxWjF4REVicnZSWEZNSTlCbnNDMXhpYjVUZVJ0SkEyOWM3K0gvak1F?=
+ =?utf-8?B?T2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9f7c614-4b9f-4bc9-a05a-08ddfa809d1b
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5057.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 09:07:25.6373
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d8PSVxdECLKrziGTyTaeosQnk53DHhvNQXEnNuMFVH5nXUq8y7V6yqWKmNP6yiNlUeeJ95sjVA32RvCjj2dLEXDZTq/0tWFHmez56c0Bo3s=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7270
+X-OriginatorOrg: intel.com
 
-On Tuesday, 23 September 2025 04:35:59 Central European Summer Time Jjian Z=
-hou (=E5=91=A8=E5=BB=BA) wrote:
-> On Mon, 2025-09-22 at 15:10 +0200, Nicolas Frattaroli wrote:
-> > External email : Please do not click links or open attachments until
-> > you have verified the sender or the content.
-> >=20
-> >=20
-> > On Monday, 22 September 2025 09:17:27 Central European Summer Time
-> > Jjian Zhou (=E5=91=A8=E5=BB=BA) wrote:
-> > > On Sat, 2025-09-20 at 23:02 -0500, Jassi Brar wrote:
-> > > > External email : Please do not click links or open attachments
-> > > > until
-> > > > you have verified the sender or the content.
-> > > >=20
-> > > >=20
-> > > > On Fri, Sep 19, 2025 at 2:02=E2=80=AFPM Nicolas Frattaroli
-> > > > <nicolas.frattaroli@collabora.com> wrote:
-> > > > >=20
-> > > > > On Friday, 19 September 2025 18:32:12 Central European Summer
-> > > > > Time
-> > > > > Jassi Brar wrote:
-> > > > > > On Fri, Sep 19, 2025 at 3:31=E2=80=AFAM Chen-Yu Tsai <
-> > > > > > wenst@chromium.org>
-> > > > > > wrote:
-> > > > > > >=20
-> > > > > > > On Fri, Sep 19, 2025 at 7:50=E2=80=AFAM Jassi Brar <
-> > > > > > > jassisinghbrar@gmail.com> wrote:
-> > > > > > > >=20
-> > > > > > > > On Thu, Aug 21, 2025 at 9:12=E2=80=AFPM Jjian Zhou <
-> > > > > > > > jjian.zhou@mediatek.com> wrote:
-> > > > > > > >=20
-> > > > > > > > .....
-> > > > > > > >=20
-> > > > > > > > > +#include <linux/module.h>
-> > > > > > > > > +#include <linux/of.h>
-> > > > > > > > > +#include <linux/platform_device.h>
-> > > > > > > > > +#include <linux/slab.h>
-> > > > > > > > > +
-> > > > > > > > > +struct mtk_vcp_mbox_priv {
-> > > > > > > >=20
-> > > > > > > > Maybe 'mtk_vcp_mbox' is a more appropriate name ?
-> > > > > > > >=20
-> > > > > > > > > +       void __iomem *base;
-> > > > > > > > > +       struct device *dev;
-> > > > > > > > > +       struct mbox_controller mbox;
-> > > > > > > > > +       const struct mtk_vcp_mbox_cfg *cfg;
-> > > > > > > > > +       struct mtk_ipi_info ipi_recv;
-> > > > > > > >=20
-> > > > > > > > Maybe also have "struct mbox_chan chan[1]; " so that you
-> > > > > > > > don't have to
-> > > > > > > > allocate one during the probe.
-> > > > > > > > Also if you have  "struct mbox_controller mbox;" as the
-> > > > > > > > first
-> > > > > > > > member,
-> > > > > > > > you could simply typecast that to get this structure.
-> > > > > > > > Something like "struct mpfs_mbox" in mailbox-mpfs.c
-> > > > > > >=20
-> > > > > > > I read somewhere that this way of subclassing is not
-> > > > > > > recommended.
-> > > > > > > Instead the base class should explicitly not be the first
-> > > > > > > member.
-> > > > > > > And then container_of() should be used.
-> > > > > > >=20
-> > > > > > > I don't remember where I read this though. But I think the
-> > > > > > > explicit
-> > > > > > > container_of() is easier for understanding the intent.
-> > > > > > >=20
-> > > > > >=20
-> > > > > > And how does container_of() work ? :)
-> > > > > > typcasting the first member to its parent is the simplest
-> > > > > > form of
-> > > > > > container_of.
-> > > > > >=20
-> > > > > > -j
-> > > > > >=20
-> > > > > >=20
-> > > > >=20
-> > > > > Which is why it's completely equivalent and since code is
-> > > > > supposed
-> > > > > to communicate meaning to humans, container_of should be used.
-> > > > >=20
-> > > >=20
-> > > > Nobody is suggesting typecasting cfg, dev or anything else.
-> > > > Typecasting between mailbox controllers is fine and arguably
-> > > > easier
-> > > > on
-> > > > the eyes than using a container_of.
-> > > >=20
-> > > > -j
-> > >=20
-> > > OK. How about:
-> > > struct mtk_vcp_mbox *priv =3D (struct mtk_vcp_mbox *)chan-
-> > > > con_priv;
-> > >=20
-> > > Thanks.
-> > >=20
-> >=20
-> > An explicit cast would be worse, as at that point you're telling
-> > C to completely ignore any semblance of a type system it has.
-> >=20
-> >=20
-> >=20
->      struct mtk_vcp_mbox *priv;=20
->      priv->dev =3D dev;
->      priv->chans[0].con_priv =3D priv;
-> The type of con_priv is "void *".=20
-> Would the conversion mentioned above also have the issue you mentioned?
->=20
-> Thanks.
->=20
+Hi Alexandr,
 
-No, in that case the cast is implicit. While void pointers do
-subvert the type system, they are needed in this case because
-the con_priv member needs to point at structs of any type.
+> Return value of function 'drm_vma_node_allow', called 
+> at i915_gem_mman.c:670, is not checked, but it is usually 
+> checked for this function
+Grepping for this function in the repo tells me this is currently
+the only place we call it. I'd rephrase the commit message to focus
+only on missing return code.
 
-The problem is that when you do something like
-
-  struct apple *a =3D something;
-  struct orange *o =3D (struct orange *)a;
-
-then if the two structs (apple and orange) are incompatible,
-the compiler won't even yell at you, because you're explicitly
-casting.
-
-With an implicit cast:
-
-  struct apple *a =3D something;
-  struct orange *o =3D a;
-
-the compiler will tell you if you're doing something wrong.
-Here's a userspace code example to illustrate the point:
-
-    #include <stdio.h>
-
-    struct apple {
-            const char *name;
-            unsigned int weight;
-    };
-
-    struct orange {
-            int x;
-            int y;
-            int z;
-    };
-
-    int main(int argc, char** argv)
-    {
-            struct apple a =3D {"Granny Smith", 200};
-            // won't compile, good!
-            /* struct orange *o =3D &a; */
-            // will compile, bad!
-            struct orange *o =3D (struct orange *)&a;
-
-            printf("%d\n", o->x);
-
-            return 0;
-    }
-
-If you comment out the second struct orange line and uncomment the
-first, then you'll get a compilation error, which is what we want
-because the two structs are incompatible and we don't want the
-assignment to work in this case, as that would be a bug.
-
-The second struct orange line always compiles, even though the two
-structs are incompatible, and will cause nonsense to be printed.
-
-I hope this illustrates the point I was trying to make, which is
-that explicit casts make it harder to find issues because they
-force the language to simply accept the cast rather than give us
-a compilation error when something nonsensical is being done.
-
-Kind regards,
-Nicolas Frattaroli
-
-
+After that:
+Reviewed-by: Krzysztof Karas <krzysztof.karas@intel.com>
+-- 
+Best Regards,
+Krzysztof
 
