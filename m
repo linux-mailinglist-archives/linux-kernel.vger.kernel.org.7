@@ -1,154 +1,179 @@
-Return-Path: <linux-kernel+bounces-829370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2400EB96E64
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:02:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17389B96E6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:03:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F508188F820
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:02:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6CE83ABCAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B684215198;
-	Tue, 23 Sep 2025 17:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CC6273D6F;
+	Tue, 23 Sep 2025 17:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="ZW0NuQrl"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hzgw2wD/"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BEB1D5CEA;
-	Tue, 23 Sep 2025 17:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570E21BCA07
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758646945; cv=none; b=GgaX5GB1VINYE/1P5DfVweKUdn6+qF5f/4KzhTtcf3OQmeTzcvzVORIgnobW7qyx89PbPd/hYEeVugLp03pS0/1MOZiKtE7fS5GxLkkx5csMZhZ5zLeAq8QP5uPKZ/nhW6hqLnHiX1DCUv7V1IyVlK3kAZO9XqZoOtmaYpJekt0=
+	t=1758646980; cv=none; b=WnVPB/jkkxzd2E1E14VPmg9h7O7ZD4NrA4t4CmzShA4C7HexGtCKp47rD4k3rSHBwhjGsCmwb7kbsV5mS9rCZjKGSCxNLP6UkRmf5OcAxT9naCx965WTuGujJkybfwX8g6UZCbR7aQVhctf20jAQARHoGjTd8N0LuBf+NCXT2cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758646945; c=relaxed/simple;
-	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=trB+2mHwAA3rqiLM5+5RNP7x1IMxbx6eYdc4hlFXLs3n7XXznFzEPtgVUJ+Wz1ZACsvXGALziAVrsIZu8HbJCTMbpoPsueMSMSsjrY8bxoT5mk1Nr7ynAz2PNRVFkcC1JH/7yJVErTCAeLXX06/SLVgMHnlUnv0PJZUWac5Cm1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=ZW0NuQrl; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1758646908; x=1759251708; i=rwarsow@gmx.de;
-	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ZW0NuQrld++N4h08x0kNs4Ux/Q6BrF0uabI7G9yk+Y2Euc3DogGZzKDhcrmCyf55
-	 pOS1Nd42AeAJE5XEtIgVBfi2q0RSDoSRqDqwr2CT0RaPs8uzlVnPK3x4ZMDURXXDc
-	 CsxKib7XiSmbrU06YY7UBV/Ft3hBoKB50w3YNoTYDpUT5xjiYsxMFpaH7ojeUyHjJ
-	 +SCSyxTyooVrXmEE5e80Y3qr+NSKrD+HG+K+nzCZNgsypYxM1RiyZcFjGZ3hwCEqn
-	 WucAKIYnA5F1EBZ2HdjDeHlQVckT2NPMlKONf9rhA0D+HbE/he2RtYt51jKJT//oi
-	 nlZxMSvdMl594H0roQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.200.20] ([46.142.32.209]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MK3Rs-1umC8r40II-00QGGx; Tue, 23
- Sep 2025 19:01:48 +0200
-Message-ID: <fd5e45d0-e94f-4ebe-bc23-64360fab0a52@gmx.de>
-Date: Tue, 23 Sep 2025 19:01:45 +0200
+	s=arc-20240116; t=1758646980; c=relaxed/simple;
+	bh=GIlHRf5XTE0COSH//hN6Zg+nEBdSq3ma/xn77n3FOg8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=T4Ov3Zcl71OVYdwt2GZe8onZZA1RUBj5AsNRfDrgy40ESIcGdFb3lFmqVZTN27+yZv4PqWr/YEk9EMfc5D0bGR6e/lJUNPafMlecsb2CVIGFA04GbUZ3aIAdiE9ltxvx83KynX6ySwSfZOtPRNYEOkGXNUDOAc4tjCdSIZyxsPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hzgw2wD/; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b54b37ba2d9so69677a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:02:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758646979; x=1759251779; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JXBGihq8A78t9Z1IiEI/Iicy+K3MCt/5X5iumq5Le3w=;
+        b=hzgw2wD//a9/k/I5IkOntEkkSo0wdK+uUHwjWXDLDDWAWVL/k7ryYzDJGdXX8IeqUF
+         BgZQ1huGbIJvF7b6KgiEahzSnN1jdRHXfX0YoLxxdBGbVRKnEe7AVE28+rFhE/0qytqA
+         1Qz8beXzEqeAchj7zwJGxdOfEKepS1bGsllshxL6cQqUppU8q3bG4mYkdEV6Ggz6L6Ua
+         /mfMmSXyuZoThMGZY1g/yeCvG7Oo48KhgUEugdTa/fEkCbeOM+TDaIC6ZtA2MTYRF7ID
+         4Wtw/rdQFn9P8hHrrF2amaLTbh/AP7X61uPzf5PNvYjUOf1EwHvwWwGavBOfnZGNhsHC
+         vxPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758646979; x=1759251779;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JXBGihq8A78t9Z1IiEI/Iicy+K3MCt/5X5iumq5Le3w=;
+        b=G2j9PbKguTqVGz5azmFPgx7IBrBT1LOxbPPb3pdob+xIWkL9WyjXPnDWTBWzwQlt0/
+         JkmJG43rKKZwPSTY5EM9SGz8NGvmnMAYpWDu2XhC3Ieo+DppqIW7e7PeZigw7rBxocPo
+         6CeyImD8WjezLulhzz2QJ2os8WH7VZbzUcyYe4/JNt9b7w2X/hYv8Qado5gVqrdYTSu4
+         tx9T8M6vYVrE4CIA5AS71x8dK5JjVGwf5nMwpGEaViksubQjVb/jNpzr5GKzzRgEtYlK
+         PIZrQLN/SoJalzA7PLMQJa803NfcNIchfdQ1iLa8hgklhAssNNg2s7STdkVRzM4amMX4
+         FkNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXR3dHdfTtFRt8dCeukBTRf++Su3ERiG7cAiKMjQzeonTKwVdmSb5ErVaEUVOUAIYTk262ctYLC171Vd8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznRcKZEBgWCCi0IQjza6RO5wcL0Oi9AlDlT/RYX2BIVK2ips+S
+	E5n+7QaP4aNjZS5vMe5HbP46Q/RUuetBCNurNyDldqL07QVw7nYrcXSi9LR9zpwvwx4qQ1IAxRo
+	K9Pm+6Q==
+X-Google-Smtp-Source: AGHT+IH4Kskgmch7JegC5v+NUo5paOR/XhwhXs3EqsmT9/QyBt92yY6pX0mhWpbs9SQZBDrzTmU7nahdad8=
+X-Received: from pgbds10.prod.google.com ([2002:a05:6a02:430a:b0:b47:34d0:d386])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:a111:b0:240:1e4a:64cc
+ with SMTP id adf61e73a8af0-2d10f57e829mr4372465637.12.1758646978582; Tue, 23
+ Sep 2025 10:02:58 -0700 (PDT)
+Date: Tue, 23 Sep 2025 10:02:57 -0700
+In-Reply-To: <aNJCNMGLIIVlyC/p@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.16 000/149] 6.16.9-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20250922192412.885919229@linuxfoundation.org>
-From: Ronald Warsow <rwarsow@gmx.de>
-Content-Language: de-DE, en-US
-In-Reply-To: <20250922192412.885919229@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:p1eE8tLbotFJkzMo9qTZH7XfdquOcS0xiktzFRIPmI174qNupiK
- uMabBKRLAxG4DlAvjvneThP2lRnz0YxUBr/TCYesQ1mQLeWJjK4A7OgSU1Kqamn3y0A9aBU
- OIYKsVE7wCM+o8YaIAhUpsCKHVH02oqL0JKeY2MdsaRHKyxf2zYNCYxPstMvFGAHjOJLus5
- wDNPWQreJ5WIs7t0Q5Z2Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:q/FwFBH+v0U=;qaydfvTVZF0YiJJzZYkUhUT18RZ
- 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
+Mime-Version: 1.0
+References: <20250919223258.1604852-1-seanjc@google.com> <20250919223258.1604852-51-seanjc@google.com>
+ <aNJCNMGLIIVlyC/p@intel.com>
+Message-ID: <aNLSwWM98jzs8NZh@google.com>
+Subject: Re: [PATCH v16 50/51] KVM: selftests: Verify MSRs are (not) in
+ save/restore list when (un)supported
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
+	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi
+On Tue, Sep 23, 2025, Chao Gao wrote:
+> On Fri, Sep 19, 2025 at 03:32:57PM -0700, Sean Christopherson wrote:
+> >Add a check in the MSRs test to verify that KVM's reported support for
+> >MSRs with feature bits is consistent between KVM's MSR save/restore lists
+> >and KVM's supported CPUID.
+> >
+> 
+> >To deal with Intel's wonderful decision to bundle IBT and SHSTK under CET,
+> >track the "second" feature to avoid false failures when running on a CPU
+> >with only one of IBT or SHSTK.
+> 
+> is this paragraph related to this patch? the tracking is done in a previous
+> patch instead of this patch. So maybe just drop this paragraph.
+> 
+> >
+> >Signed-off-by: Sean Christopherson <seanjc@google.com>
+> >---
+> > tools/testing/selftests/kvm/x86/msrs_test.c | 22 ++++++++++++++++++++-
+> > 1 file changed, 21 insertions(+), 1 deletion(-)
+> >
+> >diff --git a/tools/testing/selftests/kvm/x86/msrs_test.c b/tools/testing/selftests/kvm/x86/msrs_test.c
+> >index 7c6d846e42dd..91dc66bfdac2 100644
+> >--- a/tools/testing/selftests/kvm/x86/msrs_test.c
+> >+++ b/tools/testing/selftests/kvm/x86/msrs_test.c
+> >@@ -437,12 +437,32 @@ static void test_msrs(void)
+> > 	}
+> > 
+> > 	for (idx = 0; idx < ARRAY_SIZE(__msrs); idx++) {
+> >-		if (msrs[idx].is_kvm_defined) {
+> >+		struct kvm_msr *msr = &msrs[idx];
+> >+
+> >+		if (msr->is_kvm_defined) {
+> > 			for (i = 0; i < NR_VCPUS; i++)
+> > 				host_test_kvm_reg(vcpus[i]);
+> > 			continue;
+> > 		}
+> > 
+> >+		/*
+> >+		 * Verify KVM_GET_SUPPORTED_CPUID and KVM_GET_MSR_INDEX_LIST
+> >+		 * are consistent with respect to MSRs whose existence is
+> >+		 * enumerated via CPUID.  Note, using LM as a dummy feature
+> >+		 * is a-ok here as well, as all MSRs that abuse LM should be
+> >+		 * unconditionally reported in the save/restore list (and
+> 
+> I am not sure why LM is mentioned here. Is it a leftover from one of your
+> previous attempts?
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+Yeah, at one point I was using LM as the NONE feature.  I'll delete the entire
+sentence.
 
-Thanks
+> 
+> >+		 * selftests are 64-bit only).  Note #2, skip the check for
+> >+		 * FS/GS.base MSRs, as they aren't reported in the save/restore
+> >+		 * list since their state is managed via SREGS.
+> >+		 */
+> >+		TEST_ASSERT(msr->index == MSR_FS_BASE || msr->index == MSR_GS_BASE ||
+> >+			    kvm_msr_is_in_save_restore_list(msr->index) ==
+> >+			    (kvm_cpu_has(msr->feature) || kvm_cpu_has(msr->feature2)),
+> >+			    "%s %s save/restore list, but %s according to CPUID", msr->name,
+> 
+> 				  ^ an "in" is missing here.
 
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+Heh, I had added this in a local version when debugging, but forgot to push the
+fix.  Added now. 
 
+diff --git a/tools/testing/selftests/kvm/x86/msrs_test.c b/tools/testing/selftests/kvm/x86/msrs_test.c
+index c2ab75e5d9ea..40d918aedce6 100644
+--- a/tools/testing/selftests/kvm/x86/msrs_test.c
++++ b/tools/testing/selftests/kvm/x86/msrs_test.c
+@@ -455,17 +455,14 @@ static void test_msrs(void)
+                /*
+                 * Verify KVM_GET_SUPPORTED_CPUID and KVM_GET_MSR_INDEX_LIST
+                 * are consistent with respect to MSRs whose existence is
+-                * enumerated via CPUID.  Note, using LM as a dummy feature
+-                * is a-ok here as well, as all MSRs that abuse LM should be
+-                * unconditionally reported in the save/restore list (and
+-                * selftests are 64-bit only).  Note #2, skip the check for
+-                * FS/GS.base MSRs, as they aren't reported in the save/restore
+-                * list since their state is managed via SREGS.
++                * enumerated via CPUID.  Skip the check for FS/GS.base MSRs,
++                * as they aren't reported in the save/restore list since their
++                * state is managed via SREGS.
+                 */
+                TEST_ASSERT(msr->index == MSR_FS_BASE || msr->index == MSR_GS_BASE ||
+                            kvm_msr_is_in_save_restore_list(msr->index) ==
+                            (kvm_cpu_has(msr->feature) || kvm_cpu_has(msr->feature2)),
+-                           "%s %s save/restore list, but %s according to CPUID", msr->name,
++                           "%s %s in save/restore list, but %s according to CPUID", msr->name,
+                            kvm_msr_is_in_save_restore_list(msr->index) ? "is" : "isn't",
+                            (kvm_cpu_has(msr->feature) || kvm_cpu_has(msr->feature2)) ?
+                            "supported" : "unsupported");
 
