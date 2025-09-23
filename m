@@ -1,72 +1,51 @@
-Return-Path: <linux-kernel+bounces-828634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC88CB950F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54EC3B950F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11CE319022BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:48:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F4EB190126C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354A231D723;
-	Tue, 23 Sep 2025 08:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F5M8C8MF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1270F313536
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43BD31D750;
+	Tue, 23 Sep 2025 08:47:21 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (l-sdnproxy.icoremail.net [20.188.111.126])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A1D7081C;
+	Tue, 23 Sep 2025 08:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=20.188.111.126
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758617276; cv=none; b=oVscs6BXhCJ/hwuNLSRSeomuUC4spdeqcXR/SztHH+10geFyrDZjV88h+iNGfncO0KdyWfcBpmy3djsbRXL7GMTEaOzqM0s+fyrXtpEFEzjCEn34cxsnhcjxGZKdYkpCTt4PNWN6V6hXDYoUF336xuXIDfl2g+iaNc7HlGtp+TQ=
+	t=1758617241; cv=none; b=UtFyymcoIrO4M7nCI09J/tse6dD3yYieU1v8ctIUS8GF38jxazhqsJjOOdEQebdA2HS3pvm57/4DhqERiLBn5kvs2ABH8NBSpC0F7yB8FNkgjoEO45Bo4UfVKxShZhQ1jVRXj77k1Mo/B7Grqq1uMnRr8ANoMqfwSA23DBMpUnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758617276; c=relaxed/simple;
-	bh=EV1zd4AkkdxOI/08ptzWcjypgJi6CVByLQ/Rsmtx2e0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R1xgXivxDSMZBhVOc/ps8CKD6baeLr9aXE1b5E/MS9QP4sMilx9V3mysnRJEGSaV2A0OS93vUvZXELuzc3OSKNAvKNbROoDZsq9Bii4cxUTiPeNzDKePJQBBzZaPwfyzNDxRhFXwO6JgLrX/+MLu9Ex0cNMFJbD/BhivGYBlf14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F5M8C8MF; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758617276; x=1790153276;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=EV1zd4AkkdxOI/08ptzWcjypgJi6CVByLQ/Rsmtx2e0=;
-  b=F5M8C8MFsMY3Qk96jqMJzZGO5eYoGs0pqXTueuGFlwfkECeHF9d1Rf8Z
-   zLYURSMdpLbC+uJjFMla5y+8BNrvERUWliP+5vANRsxSl7RgPivvcWCRo
-   pckuFJZFyYg5JSuQ+Q1AcJUQqDryqrNIJyybbIxprPT6bw1kAzDrF1bUT
-   e5jZLj8V56UrBJXuj0u9upIT+uP2Fz+UKt3icqOdgdmEFvGMLYSPZlHnS
-   6LFAppRlVszwQOf5wRnRujeycFvau8g+YXAmV0xiuSdavHOLC/SPZZh4h
-   Qh3rpnNqXBP8dMvrLmgldmGAAy/lXKFVdDqCTO4oYElMWJLCCpGQmKdSW
-   w==;
-X-CSE-ConnectionGUID: QX/iA2ULQomBEcTlH/VjmQ==
-X-CSE-MsgGUID: ppBopSgbTd6PEqHNUSmf+g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60591199"
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="60591199"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 01:47:55 -0700
-X-CSE-ConnectionGUID: 7dlSf7j7T2GKgf5agGGDxw==
-X-CSE-MsgGUID: qabyeYXFTuiYYM1YSmOK8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="207463645"
-Received: from baandr0id001.iind.intel.com ([10.66.253.151])
-  by orviesa002.jf.intel.com with ESMTP; 23 Sep 2025 01:47:52 -0700
-From: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-To: sudeep.holla@arm.com,
-	gregkh@linuxfoundation.org,
-	dakr@kernel.org,
-	rafael@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-Subject: [PATCH v2] arch_topology: Fix incorrect error check in topology_parse_cpu_capacity()
-Date: Tue, 23 Sep 2025 14:16:10 +0530
-Message-Id: <20250923084610.3995594-1-kaushlendra.kumar@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758617241; c=relaxed/simple;
+	bh=5NPAXxvZccCPf+vrcWg7vxCG2YGwT0BhMqdU7N6QsNI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t2sJAjgouZDbkdtrNcuAYwGXZBSdPunllFIbPHKI8iioloVoCQCcfjSgUHZb1MGEPBQFhEdPm219MJIyuEtPhuj9x7qljOMHBJgvZdxCqefTfYEpMgtsYnvWfIoG/Mqcy1Qe5b8cN7SSqX+ApVN8AUhnPs/Cz9TYe/+8jTEDzRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=20.188.111.126
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app1 (Coremail) with SMTP id TAJkCgAXLxCFXtJoMhfYAA--.5175S2;
+	Tue, 23 Sep 2025 16:47:03 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: [PATCH v5 0/2] Add driver support for ESWIN eic700 SoC clock controller
+Date: Tue, 23 Sep 2025 16:46:37 +0800
+Message-Id: <20250923084637.1223-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,49 +53,139 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgAXLxCFXtJoMhfYAA--.5175S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3ArWrGFWkJrWfuFy5Cr48WFg_yoW7WF43pF
+	s7Gr98AFn0gryxXFs7ta4Igr93ZanxJFWUCryxX3WUZ345C34vyF4FqFy5AF9rAr1fAw1D
+	JrnFga10kF4UZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmjgxUUUUU=
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-Fix incorrect use of PTR_ERR_OR_ZERO() in topology_parse_cpu_capacity()
-which causes the code to proceed with NULL clock pointers. The current
-logic uses !PTR_ERR_OR_ZERO(cpu_clk) which evaluates to true for both
-valid pointers and NULL, leading to potential NULL pointer dereference
-in clk_get_rate().
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-Per include/linux/err.h documentation, PTR_ERR_OR_ZERO(ptr) returns:
-"The error code within @ptr if it is an error pointer; 0 otherwise."
+This series depends on config option patch [1].
 
-This means PTR_ERR_OR_ZERO() returns 0 for both valid pointers AND NULL
-pointers. Therefore !PTR_ERR_OR_ZERO(cpu_clk) evaluates to true (proceed)
-when cpu_clk is either valid or NULL, causing clk_get_rate(NULL) to be
-called when of_clk_get() returns NULL.
+[1] https://lore.kernel.org/all/20250825132427.1618089-3-pinkesh.vaghela@einfochips.com/
 
-Replace with !IS_ERR_OR_NULL(cpu_clk) which only proceeds for valid
-pointers, preventing potential NULL pointer dereference in clk_get_rate().
+Updates:
 
-Fixes: b8fe128dad8f ("arch_topology: Adjust initial CPU capacities with current freq")
+  Changes in v5:
+  - Removed vendor prefix patch dependency from cover letter, because the patch
+    was applied.
+  - Updated YAML file
+    - Placed the required after all properties.
+    - Removed patternProperties. Also removed compatible of eswin,pll-clock,
+      eswin,mux-clock, eswin,divider-clock and eswin,gate-clock as we have moved
+      clock tree from DTS to Linux driver.
+    - Removed the clock tree from DTS. Used clock-controller to manage all
+      clock. Removed all child nodes in clock-controller.
+    - Removed '#address-cells' and '#size-cells' properties, because the clock
+      controller did not need to define these properties.
+    - Removed eic7700-clocks.dtsi.
+    - Added dt-bindings header for clock IDs. Because used the IDs to register
+      clocks.
+  - Updated driver file
+    - Modified the commit for clock driver. Dropped indentation in commit.
+    - Removed CLK_OF_DECLARE(). Used *clk_hw_register* to register clocks. Used
+      devm_of_clk_add_hw_provider.
+    - Dropped singletons.
+    - Checked the value right after obtaining it.
+    - Removed the definitions of macro frequency in clk.h like CLK_FREQ_24M.
+    - Modified description of help in Kconfig.
+    - Added COMPILE_TEST. Added COMMON_CLK_ESWIN for clk.o. And added
+      "select COMMON_CLK_ESWIN" for clk-eic7700.c. Without COMMON_CLK_EIC7700,
+      clk.c could not be compiled.
+    - Used .determined_rate.
+    - Added macro definitions of EIC7700_DIV, EIC7700_FIXED, EIC7700_FACTOR,  
+      EIC7700_MUX and EIC7700_PLL to manage clock tree.
+    - Added clk-eic7700.h to place eic7700 SoC clock registers.
+    - Removed refdiv_val and postdiv1_val from clk_pll_recalc_rate(). Because
+      these values were unused.
+  - Link to v4: https://lore.kernel.org/all/20250815093539.975-1-dongxuyang@eswincomputing.com/
 
-Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
----
-Changes in v2:
-- Refined description based on documented macro properties (suggested by Markus Elfring)
-- Added proper Fixes
----
- drivers/base/arch_topology.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  Changes in v4:
+  - Updated YAML file
+    - Changed name from cpu-default-frequency to cpu-default-freq-hz.
+    - Dropped $ref of cpu-default-frequency.
+    - Added cpu-default-frequency for required.
+    - Removed cpu-default-frequency in updated file, because there was no
+      need to add cpu-default-frequency.
+    - Moved DIVIDER to DIV.
+    - Arranged the IDs in order.
+    - Dropped EIC7700_NR_CLKS.
+    - Removed dt-bindings eswin,eic7700-clock.h. Because IDs was not used,
+      and used clock device nodes.
+    - According to the updated driver codes, the YAML has been updated.
+  - Updated driver file
+    - Remove undocumented parameters "cpu_no_boost_1_6ghz" and
+      "cpu-default-frequency".
+    - Modified the comment and used the correct Linux coding style.
+    - Removed codes of voltage, because it was not the clock driver.
+    - Updated the formula of clock frequency calculation. Removed the logic
+      that only used register selection.
+    - Used CLK_OF_DECLARE() to register clocks. Registered pll-clock,
+      mux-clock, divider-clock, and gate-clock in clk-eic7700.c.
+      The specific implementation of clock registration was in clk.c.
+    - Added eic7700-clocks.dtsi.
+    - Moved device information to DTS. Put all clocks' node in the
+      eic7700-clocks.dtsi.
+  - Link to v3: https://lore.kernel.org/all/20250624103212.287-1-dongxuyang@eswincomputing.com/
 
-diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-index 1037169abb45..e1eff05bea4a 100644
---- a/drivers/base/arch_topology.c
-+++ b/drivers/base/arch_topology.c
-@@ -292,7 +292,7 @@ bool __init topology_parse_cpu_capacity(struct device_node *cpu_node, int cpu)
- 		 * frequency (by keeping the initial capacity_freq_ref value).
- 		 */
- 		cpu_clk = of_clk_get(cpu_node, 0);
--		if (!PTR_ERR_OR_ZERO(cpu_clk)) {
-+		if (!IS_ERR_OR_NULL(cpu_clk)) {
- 			per_cpu(capacity_freq_ref, cpu) =
- 				clk_get_rate(cpu_clk) / HZ_PER_KHZ;
- 			clk_put(cpu_clk);
--- 
-2.34.1
+  Changes in v3:
+  - Update example, drop child node and add '#clock-cells' to the parent
+    node.
+  - Change parent node from sys-crg to clock-controller for this yaml.
+  - Drop "syscon", "simple-mfd" to clear warnings/errors by using "make
+    dt_binding_check". And these are not necessary.
+  - Add "cpu-default-frequency" definition in yaml for "undocumented ABI".
+  - Drop Reviewed-by, this is misunderstanding. We have not received such
+    an email.
+  - Link to v2: https://lore.kernel.org/all/20250523090747.1830-1-dongxuyang@eswincomputing.com/
+
+  Changes in v2:
+  - Update example, drop child node.
+  - Clear warnings/errors for using "make dt_binding_check".
+  - Change to the correct format.
+  - Drop some non-stanard code.
+  - Use dev_err_probe() in probe functions.
+  - Link to v1: https://lore.kernel.org/all/20250514002233.187-1-dongxuyang@eswincomputing.com/
+
+Xuyang Dong (2):
+  dt-bindings: clock: eswin: Documentation for eic7700 SoC
+  clock: eswin: Add eic7700 clock driver
+
+ .../bindings/clock/eswin,eic7700-clock.yaml   |   40 +
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/eswin/Kconfig                     |   15 +
+ drivers/clk/eswin/Makefile                    |    8 +
+ drivers/clk/eswin/clk-eic7700.c               | 1042 +++++++++++++++++
+ drivers/clk/eswin/clk-eic7700.h               |  122 ++
+ drivers/clk/eswin/clk.c                       |  448 +++++++
+ drivers/clk/eswin/clk.h                       |  242 ++++
+ .../dt-bindings/clock/eswin,eic7700-clock.h   |  379 ++++++
+ 10 files changed, 2298 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+ create mode 100644 drivers/clk/eswin/Kconfig
+ create mode 100644 drivers/clk/eswin/Makefile
+ create mode 100644 drivers/clk/eswin/clk-eic7700.c
+ create mode 100644 drivers/clk/eswin/clk-eic7700.h
+ create mode 100644 drivers/clk/eswin/clk.c
+ create mode 100644 drivers/clk/eswin/clk.h
+ create mode 100644 include/dt-bindings/clock/eswin,eic7700-clock.h
+
+--
+2.43.0
 
 
