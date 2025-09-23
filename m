@@ -1,220 +1,382 @@
-Return-Path: <linux-kernel+bounces-829044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8FBB96261
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:07:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19CC0B9626A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC7E1789F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:07:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19A93188333E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E9C226D1D;
-	Tue, 23 Sep 2025 14:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24355224AF7;
+	Tue, 23 Sep 2025 14:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rF1I5CBt"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010048.outbound.protection.outlook.com [52.101.201.48])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X4sxZmu+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161A021C9F4;
-	Tue, 23 Sep 2025 14:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758636415; cv=fail; b=reBf/0viPlmYyTgn45iYUSPmDN8UGpNEfA0M/bVaGhzYPyhkNDRhu3FNRRau7v57ryyssJGl1rP4MpIi4TWI3c7ck2TmhJFF+YULaQ6VgfVCKkixnxE+I/cmNxCsupfindaC5/fqQCQpFRL1lKWQaPuQQT8/8cB8ZRRI8jX82lA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758636415; c=relaxed/simple;
-	bh=fsMesOOhDAIPPIO+mhOllpcRadV0mK7BcdfPH2WYLLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=CY9xgkKCzPJkdTL23KCgWA7t5FZ180Ee/lDsTuWfjgI8oZ5hcBAfFM4Q1/Mmg+Hyq5b6pvHdX87VIouXkBtEOCFdejq3pO7Hhxqg+PDl3F2OXj+N5J9tslwMu/U6UStOLS2tzXesMBZR9ue8bR4IjWLOTsrmI+7/uyclKedaFjA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rF1I5CBt; arc=fail smtp.client-ip=52.101.201.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LvfjTdxfpk/yBh/K7m6B81tPX9QmpEVlC7vEJ6c3PX+SPCEwxD1DIn0Efa6YQQ8aMSwRrJX9VQxxcAiRM2yfwYyp30jQEGDhbpAoDbppKe1iyjBa3FksFOK2h3aAvPXvzc2t6ikRtKI2ROQqqR2yscABgJGRrdcVPXiGk0YLJnJMTwz+letBv1puUc+bMzagJBNEqw9glj+kwLf1Jx1LNf6g+GS3TuIVa1LX042g4KCsAFM8XrYE/b87P0EZ8E2x6oJK8S1kWx/n2FYQEra/jwxxyJsvlY4uUxl90miA3O+DV6kBrfc/0dKGDV+2GwG94SXwXRDv7M4kY8HZRrGELg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dU8KG8TBt8VeNziA73m48MhcMtB5VIZ0N/0CxyFeAtQ=;
- b=p/StxvgIiobUd99U0LYlKrHpA45kDqgvq52k2nSZFfLN3K9ywGmTQgujWvcqBg+x9++ZcoEDvgfdqH0Krg2OPF6ory+oaYmCBLfdKWz9wmkhB06Cjob25SWq4DH8Xu9Et0RDD1t0LwFtVB7/bepLoVNQku2/PbsMhy3vRgtI1UYGZboqjN1wCtRTqWcqm6zIyT3rTenoXFow617wj+WIrfYaDqLXTeYqwEVq9w0uOw37MUxL9Rqe8AkPJllvprH6y+uImVsI9z5Ov6TZudzPyiKcbJATFBOz6Jg45p0K9M3o7d0dycZGPYy9juGP/HhUS9voV1mCxswtV6oSwfB5GQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dU8KG8TBt8VeNziA73m48MhcMtB5VIZ0N/0CxyFeAtQ=;
- b=rF1I5CBteYdjJRJQGFOLxyhBr3fqEGZl3mILc8q93+OHKE0OYU0cOczjP5uCJrtZKiRlGbyM8wMEwipj5l9+p8HEtgov6QAa0ZLQ6D0jcdt39SkgZ2QUDlsnyQPH4YZcY0d34gb9+SJ8Dgsg9Jjw/telyyGyEdsOGI+G5ZohJYMU/JSXK3Kw6EZbvXMPGoKHa/UyDOewSSBTtofj7xPz20FdVYM+PxADZ6fBEh9a7ZHEkr20t7aKdqM9Jr4z03mRQA82VKgnrkeeylzm1yPjhgOtF0bJ/s3u9Dz93U78+Vi6HkjiNatmUruyRDfv/tyhH4/93s1euGwf9tr2EPz9Rg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by PH7PR12MB7305.namprd12.prod.outlook.com (2603:10b6:510:209::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Tue, 23 Sep
- 2025 14:06:49 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 14:06:48 +0000
-Date: Tue, 23 Sep 2025 11:06:46 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andrew Jones <ajones@ventanamicro.com>, iommu@lists.linux.dev,
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	zong.li@sifive.com, tjeznach@rivosinc.com, joro@8bytes.org,
-	will@kernel.org, robin.murphy@arm.com, anup@brainfault.org,
-	atish.patra@linux.dev, alex.williamson@redhat.com,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, alex@ghiti.fr
-Subject: Re: [RFC PATCH v2 08/18] iommu/riscv: Use MSI table to enable IMSIC
- access
-Message-ID: <20250923140646.GM1391379@nvidia.com>
-References: <20250920203851.2205115-20-ajones@ventanamicro.com>
- <20250920203851.2205115-28-ajones@ventanamicro.com>
- <20250922184336.GD1391379@nvidia.com>
- <20250922-50372a07397db3155fec49c9@orel>
- <20250922235651.GG1391379@nvidia.com>
- <87ecrx4guz.ffs@tglx>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ecrx4guz.ffs@tglx>
-X-ClientProxiedBy: BL1PR13CA0255.namprd13.prod.outlook.com
- (2603:10b6:208:2ba::20) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD9518E20
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758636438; cv=none; b=TohtaoIbSO9zvd9+wYji4bPY3ImcDAlsO2RH1vPBVqwmQxdppr+iUoGgutRwHcAhsdgHlx+LbPIwGUdRsU/ne1ULgjiCJyZhZsDzM5Hk0wrN8yMEL9u1G66HMXB/GP6p7WpENQ7KhSEBf7pt9oDG+Av4ZlWkRgWSm1blQ2lKSHk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758636438; c=relaxed/simple;
+	bh=/2mleWLHIZh05MZ05yH7xTymq55hXfOh+CwN3zLm+GU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H/5IGJ5JE1jjjTFRw/f4RtNcvQOZQEwrizZqw6sDHA4U+K4e88LZyiPaYVGu/0YUoqG1hiuQDgqz8c4izKsONLI+FyKVqtTjYAgt0h05btunxP3BgQu9heLHjvWW7xHv+OLJW1C69gJ/IHE0qaBf4Lfzx5F8PyUXKUqAYFzlbAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X4sxZmu+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758636434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kjyw9mS8YzbSQhc83g2Zp4AXhZWU1Nn9EGqrXHlT0FA=;
+	b=X4sxZmu+nh/GUypMRlj673nSkiTDuBx0+OQnHjuLep9Fc/ClO7Wabm5GMTiEH82lBnS2+R
+	DRguzHkeZD7vNT/+rD3P9fAtFuYJM9jHStEUXfLT4Yfu1NhUShXh8bSmKCiSiAeUrjPCDq
+	dB6YZlsxeMk+lGat6s3/bQqrSJhd4pU=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-314-gCdM8DUgPMSkiMxJWwDZPA-1; Tue, 23 Sep 2025 10:07:13 -0400
+X-MC-Unique: gCdM8DUgPMSkiMxJWwDZPA-1
+X-Mimecast-MFC-AGG-ID: gCdM8DUgPMSkiMxJWwDZPA_1758636432
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-36d7405e232so3650471fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:07:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758636431; x=1759241231;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kjyw9mS8YzbSQhc83g2Zp4AXhZWU1Nn9EGqrXHlT0FA=;
+        b=gKZP+S6/YZ56n9VctdVt8LcapTgNlu7HcxA2RfkhwdH8dC65zQ0H9to8+6iFpFh2xz
+         KnViuWnZqAirnC5OKAsYEsQmvjvXMmpuCP2k1bTTwmwOVij/sqw/I4/R3VZcKZVQZg7V
+         Alo14PlnGVUWxdBwhSczHCZFJftdGYSG/UinguCUYCSU7XmOXHs8CWC6vpjezrPRD7b7
+         TsCRlXMKnFpAUlj3Gc71epk1IOWAyTRHRAJP2SK6hFksDxHnViMiqAYGWAr2CDC0jztF
+         bz3RkDqmrrVsCE9f2fixaYojgc1E7oePgDbH0weTcu/3EMkNsz9WmWnLQBefRAQ+72Mo
+         bLpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtm2In89xbSVlwB/qjGoFNqq/G6x72LMelJ0mcSMgnfJ64GKCuaRlCFPLKPyjso5EjXeZ2Awu9tg5FeUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye1TAQifAjkgLuEdOOwopD3W74wfZVPmMg5slSRxNmFG7LTgc9
+	SI137FjfsW/7HkRqNXg62OhD+dF4LSw0vA/3u8eWOQl4k7u93nRsFK9XZ9Z3AN005pLdg+Fu/4k
+	o/CpVsi/7aTmwDYAucL8hs6zxTHFenTdpoOC1wump7eshvsePwopY77Kmnx/oUeadx7Vf2JsVCe
+	u1y659VuXVHAZxu1pd6Hid9zLK0xzPaQZmCs/1AelF
+X-Gm-Gg: ASbGncsOqJ8/2DdBil4Z63NYnC03/ceEXyI5wSIrBUo9eY7B4TV5tVFlfaKonjzAFIS
+	VwXXJ4yLPM4rhQ996+R8xY71CnO8b/mKH7vCwAYpSlFLszCACDfJVXgq6rI9Jr4LDm5McowFVNo
+	JhWco2gZkqehLUUKdAit6Z5A==
+X-Received: by 2002:a2e:b8c2:0:b0:350:690e:219 with SMTP id 38308e7fff4ca-36d16dec9e3mr11195901fa.33.1758636431159;
+        Tue, 23 Sep 2025 07:07:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHnvdcfAZXkkguji5J5L9DB0ruMNmkGB0D8m4uGELGy0j9NTHF/TaRKRd8lfyRGyyozct9JnDYa8vkQaFkAT1Q=
+X-Received: by 2002:a2e:b8c2:0:b0:350:690e:219 with SMTP id
+ 38308e7fff4ca-36d16dec9e3mr11195701fa.33.1758636430471; Tue, 23 Sep 2025
+ 07:07:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|PH7PR12MB7305:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1f4b83fb-74cf-4098-ca23-08ddfaaa7008
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6LUnmU4F31tWAVX0wmyJHkuSDeWyk8tHIv3uvIANe+NBBcZ0LCI0uCBVPr7n?=
- =?us-ascii?Q?FWQvE0YjDCjn1xU8k/32TqXSnBBv0HVnjyjl9tR8CYMRAV/n0OvdK+yEICTY?=
- =?us-ascii?Q?weHfMpsitRmnNlj2s4UbD8ldoHUSQTz4gQan5IvFWGtZFrj1rVLWqjwmgGpm?=
- =?us-ascii?Q?1yY1sXwfwLFMn+9k7NMkc0FinU0OV0gEJht94EJh8eEohlhZnfQ2e7Nsa8/V?=
- =?us-ascii?Q?RJZ29TO0UmR/xZMfFVqV6mVBk0Dy9fRUyurJkKuO41WFeRVCCYid8UQt9Xdw?=
- =?us-ascii?Q?K2l0CnXRRG/qa1bmDq7jphMtJ+vZr0aHXMnZu+okzNYuNKThJlpap9rHLdSb?=
- =?us-ascii?Q?5PxyP7XeScaLB9R/V3kAxkGfRskQZv+AWEg1/y7OqQG4qHfV+z2xEOX6T28Z?=
- =?us-ascii?Q?I0Ep5z72YDt3DKVlStXv8FeHBXuXWGKpwXef1qbhc/PsaVGL6BCqaHCGyiIY?=
- =?us-ascii?Q?wG1yOeDiaOVIV3Aoo2QJ0ezJpwdBjPXvI6jyiK1RmcLotBAVjSF2ZvWnGgeD?=
- =?us-ascii?Q?8l5BPD4ztaWZu78loZ4usfZqWsX7q8IywZhQBsP+0Nrz2yfNCIIY5952B60g?=
- =?us-ascii?Q?MU9PSt371qhGmjo/sjF5gq12dJb2Cmn/rI3I+V9fZEoq8X4/Xxw+l54dNlA5?=
- =?us-ascii?Q?5pLnlTYbT1c6Ucl87MYp+ar5O0cjTvr9NR6C8KZaTpZbQIbg/EKE6bqy46pd?=
- =?us-ascii?Q?4pXK3I0JPFUlBAbqjyUVw3sHug3dBcfQ2W1LlXfsM2mEjtuNP6aR0vGdxwfI?=
- =?us-ascii?Q?C9UEwwesIMcLBwjQCfF1jSB9QgVZ1nK4ID/vAgMr40A/w+FF1PTBkubraF5T?=
- =?us-ascii?Q?9cmIUPznQn8lOmAGQ1El3dJUdTVC1d2ucxyaQasKen5O4Hvr5RCNYrNlqh1v?=
- =?us-ascii?Q?8Oacz7pxlqV3BURooJgEzg76t9SrugFcOKKFUpokiaO7vWiogro0jxoowngF?=
- =?us-ascii?Q?kbA2wlLHQ+OGsIkSGpw659tRbhxEXOjnrCj4gIcW7jX9/fyjMU1mR5+HDcGX?=
- =?us-ascii?Q?7fOD7M4vQcPIilz8Mz7mLPr1Pf1X5Wxj0vQASRDbC3uH3tfqSFSmom5fimes?=
- =?us-ascii?Q?uGTxAcmRtx0r+U9vKkAclQCnVhG/sLKYzNIj3LigK8GtFOesUfcHLV6ScTtT?=
- =?us-ascii?Q?/XUse/FXnAd2nnvtiQU47W+JAhfv7Ur3chUIkACeU4AukutdoYZccNx5Ylhk?=
- =?us-ascii?Q?mqa1ux2IdGyjthTEyL+il0QNrA3ZWiA7iaLh3cp+agleCQtoLVQ2/LSWFHjp?=
- =?us-ascii?Q?sJNk/9I8XIumRn16a6e/EcxjJOLLRsKi5aJcA+S9tqASqSxaXG/tD5eHrrYC?=
- =?us-ascii?Q?U86Egwd97QOnhtt0oJxhCeI6Lj2JuJZvNh7L1SbpLzmj4WjsGTV5Q5+OaUYl?=
- =?us-ascii?Q?h8m+vYUokdwzrTnABl8GGqKfqWOEC2Th7f3I91vGVa3ldGL+ZpG1rHy6uU+Z?=
- =?us-ascii?Q?qcAiCER6T08=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AhD6g4c6U+Ik2ZzHJc/5QhNVtXbtvnGfWZXuzl2nfIGKAG7XPk6VVJFdj1Fo?=
- =?us-ascii?Q?72N4FQY0NLdSieLtofAgxMdFXGsQsCqSIYeP1CYIrttz8y46Fdq/5AlSDsNk?=
- =?us-ascii?Q?bZrIjGaiDZr7FY0vRAO4BKt1FC0EMTcu3uJOFDtnDt02fiA31IBZc2bVB62d?=
- =?us-ascii?Q?MyzItw+3SO8sOlPqy7HXhmZHnPuiF0bgDJy6+xu9M0De3o+BGNOFsbTj/q7s?=
- =?us-ascii?Q?AgtnTBnz4wU9J1uWa6XQFRXQju+iKYhlEVLmhctheXRT98hJTh/opcY9KFKt?=
- =?us-ascii?Q?MVCednDBhiuJihJoJAaj2GqalZ6cLpyVTYiUSbiGZ3LwKFK4sFpqkmmYhL1n?=
- =?us-ascii?Q?TnBzf2KIpVC4nOM9xpn5SmFiO6pNiUtUzxZXOWxXx8ySVRRGdI9tQvRQYFi0?=
- =?us-ascii?Q?6tVt+Sxg06PsMAZwTaDn/51pjW4V79Gu4+4QuQophP8RDIXuI1nZK7vWzx+U?=
- =?us-ascii?Q?Iop6PQwqa1gQkBOx2MOoqNSenLexqfIGwEsDPGDk6EWALts1HNmamNk2yVVv?=
- =?us-ascii?Q?OKT2BO25QJjKAOAtyndg4zSachoeW9jPRrRhacWLdbPXfUUYFbT8d7mdfpXY?=
- =?us-ascii?Q?juYrAuxgUfn3XHV2nosP2jWUqxuZHGBfNPREtdXHKfwHURaSUCuzlieeIPWw?=
- =?us-ascii?Q?8DguEdemMuHTjYRhs7EuU+VtCPyVxmIMKl2RlNWku27s9v5M9GP6TuaLZBqU?=
- =?us-ascii?Q?SEoSliPdbp7BPm2ME3fKz7qsj6pkErbwfwH5f6XzGoaMIuU33S0zmoJv7sUz?=
- =?us-ascii?Q?AuW2uj52FDtoClPkqLTC75kkCbwrpQCFgDUMukiLSuVfAhZxr/T4S/SxKHHY?=
- =?us-ascii?Q?g8eXLd0R84e0qfWqO+4hUIWcJYMWdKwjNMfNNP68vvDed0JTkXOBYHBy+Bdi?=
- =?us-ascii?Q?VitFbfd0okkSckQnzAknpxN6sDhuWYzvvZAlciEjPUAfpfm7R6oDff4xMFRf?=
- =?us-ascii?Q?FXgkwEfrAMt2NruxK64GQ8wpP0p5sH8LrbFBE3oSYsdd9GRUz985sXtSolop?=
- =?us-ascii?Q?LDZ5zlZx0jZUVwv5BUYKpQ5BTvYNPyqny/MdWaNDRoRGzNR3UulPQhMCW28R?=
- =?us-ascii?Q?76V7VbBMGxclN80qbxf3nQjl7CON4d6Vo7bRqxCQzBRhatiJTXGK8r1a8rD8?=
- =?us-ascii?Q?q5KFR1eP6e6Z6s5C6Vu2vYhJl5KaXN2S+bi1TeZUWTvPqjHYygFvxW8O6hWv?=
- =?us-ascii?Q?ErZD/Lsxfw8rB1zVaNFxGaN0qBobaYf7pzqeQwdnOeEEfKyw6Ue1ditd67wv?=
- =?us-ascii?Q?pf0UAnV7smpHp4Fl8Qv1WZcCqoTLJDnhPD5BHB9kTouEwQ1ptHFGlSlB5cV3?=
- =?us-ascii?Q?FXP4Wt2tILBQvBjuTNpkkM8bPqTZsVVEFyCiyqo827bnuBvE8KXGWLv1+qHC?=
- =?us-ascii?Q?yZWCqwG2MyEgnZg5sjLBCh3wWT6ol5mFsD5MtxHlovSfbgc3S+a32qqZYg+W?=
- =?us-ascii?Q?B87V9GPJDa0rEsiz678SuQMs1lv1W/l2n/uxIGs/R/fW2MmhQ7YNANGOYdn5?=
- =?us-ascii?Q?Witf8E0uwhA7QMzo5oUA8SwFHEREAhB8QdmqXHN5n9IbU0fgxDf4TLiJVQME?=
- =?us-ascii?Q?FlEarxAK0Jo6biqYaKLEIdd5GSPpmY/C6Ymjf66P?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f4b83fb-74cf-4098-ca23-08ddfaaa7008
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 14:06:48.9050
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gkQ0ErG0wzG352s0T7LMQpQEo09+RV700Qvpxc42Okx4Tsz3hIU3sXRmNlpacncj
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7305
+References: <20250918115759.334067-1-linan666@huaweicloud.com>
+ <20250918115759.334067-3-linan666@huaweicloud.com> <CALTww2_4rEb9SojpVbwFy=ZEjUc0-4ECYZKYKgsay9XzDTs-cg@mail.gmail.com>
+ <b7fc02d2-7643-4bf1-1b15-c1ecdf883c87@huaweicloud.com>
+In-Reply-To: <b7fc02d2-7643-4bf1-1b15-c1ecdf883c87@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Tue, 23 Sep 2025 22:06:58 +0800
+X-Gm-Features: AS18NWDDDJ0K9e_QG6qURe6CQv1sgIdakMjaBaPZ9EzAF-b5kDVQqe-3LBBgdg4
+Message-ID: <CALTww2_knuDVWLtVzrqcuLH5dmiyMqkAaZr2DB_ZpCYPQsYH0A@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] md: allow configuring logical block size
+To: Li Nan <linan666@huaweicloud.com>
+Cc: corbet@lwn.net, song@kernel.org, yukuai3@huawei.com, hare@suse.de, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, martin.petersen@oracle.com, yangerkun@huawei.com, 
+	yi.zhang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 23, 2025 at 12:12:52PM +0200, Thomas Gleixner wrote:
-> With a remapping domain intermediary this looks like this:
-> 
->      [ CPU domain ] --- [ Remap domain] --- [ MSI domain ] -- device
->  
->    device driver allocates an MSI interrupt in the MSI domain
-> 
->    MSI domain allocates an interrupt in the Remap domain
-> 
->    Remap domain allocates a resource in the remap space, e.g. an entry
->    in the remap translation table and then allocates an interrupt in the
->    CPU domain.
+On Tue, Sep 23, 2025 at 9:37=E2=80=AFPM Li Nan <linan666@huaweicloud.com> w=
+rote:
+>
+>
+>
+> =E5=9C=A8 2025/9/23 19:36, Xiao Ni =E5=86=99=E9=81=93:
+> > Hi Li Nan
+> >
+> > On Thu, Sep 18, 2025 at 8:08=E2=80=AFPM <linan666@huaweicloud.com> wrot=
+e:
+> >>
+> >> From: Li Nan <linan122@huawei.com>
+> >>
+> >> Previously, raid array used the maximum logical block size (LBS)
+> >> of all member disks. Adding a larger LBS disk at runtime could
+> >> unexpectedly increase RAID's LBS, risking corruption of existing
+> >> partitions. This can be reproduced by:
+> >>
+> >> ```
+> >>    # LBS of sd[de] is 512 bytes, sdf is 4096 bytes.
+> >>    mdadm -CRq /dev/md0 -l1 -n3 /dev/sd[de] missing --assume-clean
+> >>
+> >>    # LBS is 512
+> >>    cat /sys/block/md0/queue/logical_block_size
+> >>
+> >>    # create partition md0p1
+> >>    parted -s /dev/md0 mklabel gpt mkpart primary 1MiB 100%
+> >>    lsblk | grep md0p1
+> >>
+> >>    # LBS becomes 4096 after adding sdf
+> >>    mdadm --add -q /dev/md0 /dev/sdf
+> >>    cat /sys/block/md0/queue/logical_block_size
+> >>
+> >>    # partition lost
+> >>    partprobe /dev/md0
+> >>    lsblk | grep md0p1
+> >> ```
+> >
+> > Thanks for the reproducer. I can reproduce it myself.
+> >
+> >>
+> >> Simply restricting larger-LBS disks is inflexible. In some scenarios,
+> >> only disks with 512 bytes LBS are available currently, but later, disk=
+s
+> >> with 4KB LBS may be added to the array.
+> >
+> > If we add a disk with 4KB LBS and configure it to 4KB by the sysfs
+> > interface, how can we make the partition table readable and avoid the
+> > problem mentioned above?
+> >
+>
 
-Thanks!
+Hi
 
-And to be very crystal clear here, the meaning of
-IRQ_DOMAIN_FLAG_ISOLATED_MSI is that the remap domain has a security
-feature such that the device can only trigger CPU domain interrupts
-that have been explicitly allocated in the remap domain for that
-device. The device can never go through the remap domain and trigger
-some other device's interrupt.
+> Thanks for your review.
+>
+> The main cause of partition loss is LBS changes. Therefore, we should
+> specify a 4K LBS at creation time, instead of modifying LBS after the RAI=
+D
+> is already in use. For example:
+>
+> mdadm -C --logical-block-size=3D4096 ...
+>
+> In this way, even if all underlying disks are 512-byte, the RAID will be
+> created with a 4096 LBS. Adding 4096-byte disks later will not cause any
+> issues.
 
-This is usally done by having the remap domain's HW take in the
-Addr/Data pair, do a per-BDF table lookup and then completely replace
-the Addr/Data pair with the "remapped" version. By fully replacing the
-remap domain prevents the device from generating a disallowed
-addr/data pair toward the CPU domain.
+It can work. But it looks strange to me to set LBS to 4096 but all
+devices' LBS is 512 bytes. I don't reject it anyway :)
 
-It fundamentally must be done by having the HW do a per-RID/BDF table
-lookup based on the incoming MSI addr/data and fully sanitize the
-resulting output.
+>
+> >>
+> >> Making LBS configurable is the best way to solve this scenario.
+> >> After this patch, the raid will:
+> >>    - store LBS in disk metadata
+> >>    - add a read-write sysfs 'mdX/logical_block_size'
+> >>
+> >> Future mdadm should support setting LBS via metadata field during RAID
+> >> creation and the new sysfs. Though the kernel allows runtime LBS chang=
+es,
+> >> users should avoid modifying it after creating partitions or filesyste=
+ms
+> >> to prevent compatibility issues.
+> >>
+> >> Only 1.x metadata supports configurable LBS. 0.90 metadata inits all
+> >> fields to default values at auto-detect. Supporting 0.90 would require
+> >> more extensive changes and no such use case has been observed.
+> >>
+> >> Note that many RAID paths rely on PAGE_SIZE alignment, including for
+> >> metadata I/O. A larger LBS than PAGE_SIZE will result in metadata
+> >> read/write failures. So this config should be prevented.
+> >>
+> >> Signed-off-by: Li Nan <linan122@huawei.com>
+> >> ---
+> >>   Documentation/admin-guide/md.rst |  7 +++
+> >>   drivers/md/md.h                  |  1 +
+> >>   include/uapi/linux/raid/md_p.h   |  3 +-
+> >>   drivers/md/md-linear.c           |  1 +
+> >>   drivers/md/md.c                  | 75 ++++++++++++++++++++++++++++++=
+++
+> >>   drivers/md/raid0.c               |  1 +
+> >>   drivers/md/raid1.c               |  1 +
+> >>   drivers/md/raid10.c              |  1 +
+> >>   drivers/md/raid5.c               |  1 +
+> >>   9 files changed, 90 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/Documentation/admin-guide/md.rst b/Documentation/admin-gu=
+ide/md.rst
+> >> index 1c2eacc94758..f5c81fad034a 100644
+> >> --- a/Documentation/admin-guide/md.rst
+> >> +++ b/Documentation/admin-guide/md.rst
+> >> @@ -238,6 +238,13 @@ All md devices contain:
+> >>        the number of devices in a raid4/5/6, or to support external
+> >>        metadata formats which mandate such clipping.
+> >>
+> >> +  logical_block_size
+> >> +     Configures the array's logical block size in bytes. This attribu=
+te
+> >> +     is only supported for RAID1, RAID5, RAID10 with 1.x meta. The va=
+lue
+> >
+> > s/RAID5/RAID456/g
+> >
+>
+> I will fix it later. Thanks.
+>
+> >> +     should be written before starting the array. The final array LBS
+> >> +     will use the max value between this configuration and all rdev's=
+ LBS.
+> >> +     Note that LBS cannot exceed PAGE_SIZE.
+> >> +
+> >>     reshape_position
+> >>        This is either ``none`` or a sector number within the devices o=
+f
+> >>        the array where ``reshape`` is up to.  If this is set, the thre=
+e
+> >> diff --git a/drivers/md/md.h b/drivers/md/md.h
+> >> index afb25f727409..b0147b98c8d3 100644
+> >> --- a/drivers/md/md.h
+> >> +++ b/drivers/md/md.h
+> >> @@ -432,6 +432,7 @@ struct mddev {
+> >>          sector_t                        array_sectors; /* exported ar=
+ray size */
+> >>          int                             external_size; /* size manage=
+d
+> >>                                                          * externally =
+*/
+> >> +       unsigned int                    logical_block_size;
+> >>          __u64                           events;
+> >>          /* If the last 'event' was simply a clean->dirty transition, =
+and
+> >>           * we didn't write it to the spares, then it is safe and simp=
+le
+> >> diff --git a/include/uapi/linux/raid/md_p.h b/include/uapi/linux/raid/=
+md_p.h
+> >> index ac74133a4768..310068bb2a1d 100644
+> >> --- a/include/uapi/linux/raid/md_p.h
+> >> +++ b/include/uapi/linux/raid/md_p.h
+> >> @@ -291,7 +291,8 @@ struct mdp_superblock_1 {
+> >>          __le64  resync_offset;  /* data before this offset (from data=
+_offset) known to be in sync */
+> >>          __le32  sb_csum;        /* checksum up to devs[max_dev] */
+> >>          __le32  max_dev;        /* size of devs[] array to consider *=
+/
+> >> -       __u8    pad3[64-32];    /* set to 0 when writing */
+> >> +       __le32  logical_block_size;     /* same as q->limits->logical_=
+block_size */
+> >> +       __u8    pad3[64-36];    /* set to 0 when writing */
+> >>
+> >>          /* device state information. Indexed by dev_number.
+> >>           * 2 bytes per device
+> >> diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
+> >> index 5d9b08115375..da8babb8da59 100644
+> >> --- a/drivers/md/md-linear.c
+> >> +++ b/drivers/md/md-linear.c
+> >> @@ -72,6 +72,7 @@ static int linear_set_limits(struct mddev *mddev)
+> >>
+> >>          md_init_stacking_limits(&lim);
+> >>          lim.max_hw_sectors =3D mddev->chunk_sectors;
+> >> +       lim.logical_block_size =3D mddev->logical_block_size;
+> >>          lim.max_write_zeroes_sectors =3D mddev->chunk_sectors;
+> >>          lim.io_min =3D mddev->chunk_sectors << 9;
+> >>          err =3D mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTE=
+GRITY);
+> >> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> >> index 40f56183c744..e0184942c8ec 100644
+> >> --- a/drivers/md/md.c
+> >> +++ b/drivers/md/md.c
+> >> @@ -1963,6 +1963,7 @@ static int super_1_validate(struct mddev *mddev,=
+ struct md_rdev *freshest, struc
+> >>                  mddev->layout =3D le32_to_cpu(sb->layout);
+> >>                  mddev->raid_disks =3D le32_to_cpu(sb->raid_disks);
+> >>                  mddev->dev_sectors =3D le64_to_cpu(sb->size);
+> >> +               mddev->logical_block_size =3D le32_to_cpu(sb->logical_=
+block_size);
+> >>                  mddev->events =3D ev1;
+> >>                  mddev->bitmap_info.offset =3D 0;
+> >>                  mddev->bitmap_info.space =3D 0;
+> >> @@ -2172,6 +2173,7 @@ static void super_1_sync(struct mddev *mddev, st=
+ruct md_rdev *rdev)
+> >>          sb->chunksize =3D cpu_to_le32(mddev->chunk_sectors);
+> >>          sb->level =3D cpu_to_le32(mddev->level);
+> >>          sb->layout =3D cpu_to_le32(mddev->layout);
+> >> +       sb->logical_block_size =3D cpu_to_le32(mddev->logical_block_si=
+ze);
+> >>          if (test_bit(FailFast, &rdev->flags))
+> >>                  sb->devflags |=3D FailFast1;
+> >>          else
+> >> @@ -5900,6 +5902,66 @@ static struct md_sysfs_entry md_serialize_polic=
+y =3D
+> >>   __ATTR(serialize_policy, S_IRUGO | S_IWUSR, serialize_policy_show,
+> >>          serialize_policy_store);
+> >>
+> >> +static int mddev_set_logical_block_size(struct mddev *mddev,
+> >> +                               unsigned int lbs)
+> >> +{
+> >> +       int err =3D 0;
+> >> +       struct queue_limits lim;
+> >> +
+> >> +       if (queue_logical_block_size(mddev->gendisk->queue) >=3D lbs) =
+{
+> >> +               pr_err("%s: incompatible logical_block_size %u, can no=
+t set\n",
+> >> +                      mdname(mddev), lbs);
+> >
+> > Is it better to print the mddev's LBS and give the message "it can't
+> > set lbs smaller than mddev logical block size"?
+> >
+>
+> I agree. Let me improve this.
+>
+> >> +               return -EINVAL;
+> >> +       }
+> >> +
+> >> +       lim =3D queue_limits_start_update(mddev->gendisk->queue);
+> >> +       lim.logical_block_size =3D lbs;
+> >> +       pr_info("%s: logical_block_size is changed, data may be lost\n=
+",
+> >> +               mdname(mddev));
+> >> +       err =3D queue_limits_commit_update(mddev->gendisk->queue, &lim=
+);
+> >> +       if (err)
+> >> +               return err;
+> >> +
+> >> +       mddev->logical_block_size =3D lbs;
+> >> +       return 0;
+> >> +}
+> >> +
+> >> +static ssize_t
+> >> +lbs_show(struct mddev *mddev, char *page)
+> >> +{
+> >> +       return sprintf(page, "%u\n", mddev->logical_block_size);
+> >> +}
+> >> +
+> >> +static ssize_t
+> >> +lbs_store(struct mddev *mddev, const char *buf, size_t len)
+> >> +{
+> >> +       unsigned int lbs;
+> >> +       int err =3D -EBUSY;
+> >> +
+> >> +       /* Only 1.x meta supports configurable LBS */
+> >> +       if (mddev->major_version =3D=3D 0)
+> >> +               return -EINVAL;
+> >
+> > It looks like it should check raid level here as doc mentioned above, r=
+ight?
+>
+> Yeah, kuai suggests supporting this feature only in 1.x meta.
 
-There is some legacy history here. When MSI was first invented the
-goal was to make interrupts scalable by removing any state from the
-CPU side. The device would be told what Addr/Data to send to the CPU
-and the CPU would just take some encoded information in that pair as a
-delivery instruction. No state on the CPU side per interrupt.
+I mean it should check if raid is raid0 here, right? As doc mentioned,
+it should return error if raid is level 0.
 
-In the world of virtualization it was realized this is not secure, so
-the archs undid the core principal of MSI and the CPU HW has some kind
-of state/table entry for every single device interrupt source.
+Regards
+Xiao
+>
+>
+> --
+> Thanks,
+> Nan
+>
+>
 
-x86/AMD did this by having per-device remapping tables in their IOMMU
-device context that are selected by incomming RID and effectively
-completely rewrite the addr/data pair before it reaches the APIC. The
-remap table alone now basically specifies where the interrupt is
-delivered.
-
-ARM doesn't do remapping, instead the interrupt controller itself has
-a table that converts (BDF,Data) into a delivery instruction. It is
-inherently secure.
-
-That flag has nothing to do with affinity.
-
-Jason
 
