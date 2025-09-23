@@ -1,140 +1,140 @@
-Return-Path: <linux-kernel+bounces-828946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29775B95E9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:58:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F93B95EA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AE8318A4F8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:59:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4288E2E6B53
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C196323418;
-	Tue, 23 Sep 2025 12:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CF0323F69;
+	Tue, 23 Sep 2025 12:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FUa/YYgH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="NoeKJXxz"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07798285058
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758632317; cv=none; b=oI9DCsnMd56h5m8c5qpFOE8VLDLJDtKk3nMTcTGdGH1eDmDU/VNKsliZdA38/uy4bQ4dURWyrM0CBjdNM0+AsQJYl5j51Xsa4tUY3jTF/RRod/Fkme46YcSlOdXxhPv5DksMTbd4dPu9rh+DmixAKvKsL/boHGr4T42HEEF1GcM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758632317; c=relaxed/simple;
-	bh=gjw7r1SS9jjJC0tPoCN02e3Ms3MVIaXIhqKnNBQgw+Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k2+om+fEa2l8HJ7OlS3naeXeHIIJOESPQq49zV4dr9y3laY+Vbqaq4JdLaPpI3yNthmh/DAc4dy/bShuXb3MfgnqlqJjg3NMnoDWv6Z/xhOk6WSPb1PZJDHXrsHC+MCi6VPqmweaCU3cmkCevjLEjZacrXsxyJGsdOZPwCmzgdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FUa/YYgH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758632315;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hwD096IZGmRO63mE/rtcWyoPAkv3ltYnE2YuvKgpdGE=;
-	b=FUa/YYgH1oyJBPEWZzLOW3HMMVncGvA0zIj1tBn/JEoDojIQwqC7OXcmqpE2ALO6M/lN+r
-	eWGrHC2DaiqUefNiMQwyRP7E4k20ltPf6tln9gapRd9aFAM0kBtESInbSW8YSRDerUqg+f
-	Kd67MHwKMStjzDUoe5qp+6u51aKt994=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-124-5URhde7xOnShGsFawDKd5g-1; Tue,
- 23 Sep 2025 08:58:31 -0400
-X-MC-Unique: 5URhde7xOnShGsFawDKd5g-1
-X-Mimecast-MFC-AGG-ID: 5URhde7xOnShGsFawDKd5g_1758632310
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A31071956055;
-	Tue, 23 Sep 2025 12:58:29 +0000 (UTC)
-Received: from o.redhat.com (unknown [10.44.33.178])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 06E2B195608E;
-	Tue, 23 Sep 2025 12:58:26 +0000 (UTC)
-From: Heinz Mauelshagen <heinzm@redhat.com>
-To: yukuai1@huaweicloud.com,
-	song@kernel.org
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Heinz Mauelshagen <heinzm@redhat.com>
-Subject: [PATCH V2] md raid: fix hang when stopping arrays with metadata through dm-raid
-Date: Tue, 23 Sep 2025 14:58:14 +0200
-Message-ID: <d4bab4c8921eaecae856447131c4f4f1aa190dd3.1758631268.git.heinzm@redhat.com>
-In-Reply-To: <414ae6e0-604a-f4d3-d7ce-260bd8564927@huaweicloud.com>
-References: <414ae6e0-604a-f4d3-d7ce-260bd8564927@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B705257855;
+	Tue, 23 Sep 2025 12:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758632376; cv=pass; b=NZXwvATlhJ37IyDILK9SFYybc6VXMq2fyIgEW85kYBxYJ9vOndp6YgTPe490PPy4vjKUiSCfDjWo+TrS8htZRinZemd3FiRgUZORF41qi6cyzKwBFBYh/Dtw4yuWu02EaQBLZZ3Us4ACZ4e66ynKcqrSWWR4lF0NBYPNPoPMm2E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758632376; c=relaxed/simple;
+	bh=b/gXvAai58Z3/BunjYnHlKuHCeLqF6XF/9xh++A0QNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pOMC6RVCOJDzQu9lymAEp9eM5aAuwIJluOQpNtA1aQfji2SU7AHpeCfnBag6Hjo9CxJQkGCp0xIzyaeaFFIyLffvCG2H9hLX5ntVgfpGWxIMfXsIRhrVFg46P/7QFUrhhwmZCJtcswmnvExiSePs1v0i/LewAtrvvFsDlvv5b/M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=NoeKJXxz; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1758632349; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=k77UMTqJmyi8O2nA3KoHvI57c+HosSCH1Ou1azWNffy5QGBUVWBFfnUTRIKg2OucpjN6cryQXnnv/w3wgZZfNlcQnH23adjIZLPnXDqtE5xORsTdEhyRoIL0TNZOUIjqQAoZdlpoYt89q5NXnv27KS5QHmBWz6Ez+1Q3BOKo0U0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758632349; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Ld3Mu+4XpQpKlmKIXgeP8nj7CXPhFkTiSv19YHU59YY=; 
+	b=UcnwX4r1Ey2xc0knJtxLtzXrvxy5450xHhK8Jijj7jNBE+3rYoI6t5eK/U+c/RiyIP37dw5/ezIQlZSWTSX3+4808C9wtZZYSoQBnpApQSAaPF/UMZPK+HgcYUDitWGUERqQBO2JFMSUC34pvkCqCSeU8lUFbrWoo46fHnHhUMo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
+	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758632349;
+	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=Ld3Mu+4XpQpKlmKIXgeP8nj7CXPhFkTiSv19YHU59YY=;
+	b=NoeKJXxzjZdD3HeMVr6Mp/cAvuNvpqqh0GE1nkkH/QFwH7kNl7xPsiKXvqO6p6SZ
+	4bbk62KQykKq0giD054Vju1jY9a/7PP3VBh2gV0bLItoJe0u2KaaXCT2WLH76NHMpsS
+	UnWThL1mSnpE6k0a5VJ2LXxsSp7tsY2Ja49Olu1s=
+Received: by mx.zohomail.com with SMTPS id 1758632346474290.83340183401606;
+	Tue, 23 Sep 2025 05:59:06 -0700 (PDT)
+Message-ID: <aafd2f8d-be8e-4929-a21c-c8f066e2f6f1@collabora.com>
+Date: Tue, 23 Sep 2025 14:59:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] media: verisilicon: Protect G2 HEVC decoder against
+ invalid DPB index
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Hans Verkuil <hverkuil@kernel.org>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
+ Stable@vger.kernel.org
+References: <20250922-imx8mq-hantro-g2-hang-v1-0-67d00eb6a548@collabora.com>
+ <20250922-imx8mq-hantro-g2-hang-v1-2-67d00eb6a548@collabora.com>
+Content-Language: en-US
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <20250922-imx8mq-hantro-g2-hang-v1-2-67d00eb6a548@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-When using device-mapper's dm-raid target, stopping a RAID array can cause the
-system to hang under specific conditions.
 
-This occurs when:
+Le 22/09/2025 à 20:43, Nicolas Dufresne a écrit :
+> Fix the Hantro G2 HEVC decoder so that we use DPB index 0 whenever a
+> ninvalid index is received from user space. This protects the hardware
+> from doing faulty memory access which then leads to bus errors.
+>
+> To be noted that when a reference is missing, userspace such as GStreamer
+> passes an invalid DPB index of 255. This issue was found by seeking to a
+> CRA picture using GStreamer. The framework is currently missing the code
+> to skip over RASL pictures placed after the CRA. This situation can also
+> occur while doing live streaming over lossy transport.
+>
+> Fixes: cb5dd5a0fa518 ("media: hantro: Introduce G2/HEVC decoder")
+> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 
-- A dm-raid managed device tree is suspended from top to bottom
-   (the top-level RAID device is suspended first, followed by its
-    underlying metadata and data devices)
+Reviewed-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
 
-- The top-level RAID device is then removed
-
-Removing the top-level device triggers a hang in the following sequence: the dm-raid
-destructor calls md_stop(), which tries to flush the write-intent bitmap by writing
-to the metadata sub-devices. However, these devices are already suspended, making
-them unable to complete the write operations and causing an indefinite block.
-
-Fix:
-
-- Prevent bitmap flushing when md_stop() is called from dm-raid destructor context
-  and avoid a quiescing/unquescing cycle which could also cause I/O
-
-- Still allow write-intent bitmap flushing when called from dm-raid suspend context
-
-This ensures that RAID array teardown can complete successfully even when the
-underlying devices are in a suspended state.
-
-This second patch uses md_is_rdwr() to distinguish between suspend and
-destructor paths as elaborated on above.
-
-Signed-off-by: Heinz Mauelshagen <heinzm@redhat.com>
----
- drivers/md/md.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 4e033c26fdd4..78408d2f78fc 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -6541,12 +6541,14 @@ static void __md_stop_writes(struct mddev *mddev)
- {
- 	timer_delete_sync(&mddev->safemode_timer);
- 
--	if (mddev->pers && mddev->pers->quiesce) {
--		mddev->pers->quiesce(mddev, 1);
--		mddev->pers->quiesce(mddev, 0);
--	}
-+	if (md_is_rdwr(mddev) || !mddev_is_dm(mddev)) {
-+		if (mddev->pers && mddev->pers->quiesce) {
-+			mddev->pers->quiesce(mddev, 1);
-+			mddev->pers->quiesce(mddev, 0);
-+		}
- 
--	mddev->bitmap_ops->flush(mddev);
-+		mddev->bitmap_ops->flush(mddev);
-+	}
- 
- 	if (md_is_rdwr(mddev) &&
- 	    ((!mddev->in_sync && !mddev_is_clustered(mddev)) ||
--- 
-2.51.0
-
+> ---
+>   drivers/media/platform/verisilicon/hantro_g2_hevc_dec.c | 15 +++++++++++++--
+>   1 file changed, 13 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/media/platform/verisilicon/hantro_g2_hevc_dec.c b/drivers/media/platform/verisilicon/hantro_g2_hevc_dec.c
+> index f066636e56f98560d9b1c5036691e3c34dd13b1f..e8c2e83379def53ce7fd86d6929ed4f5e0db068e 100644
+> --- a/drivers/media/platform/verisilicon/hantro_g2_hevc_dec.c
+> +++ b/drivers/media/platform/verisilicon/hantro_g2_hevc_dec.c
+> @@ -283,6 +283,15 @@ static void set_params(struct hantro_ctx *ctx)
+>   	hantro_reg_write(vpu, &g2_apf_threshold, 8);
+>   }
+>   
+> +static u32 get_dpb_index(const struct v4l2_ctrl_hevc_decode_params *decode_params,
+> +			 const u32 index)
+> +{
+> +	if (index > decode_params->num_active_dpb_entries)
+> +		return 0;
+> +
+> +	return index;
+> +}
+> +
+>   static void set_ref_pic_list(struct hantro_ctx *ctx)
+>   {
+>   	const struct hantro_hevc_dec_ctrls *ctrls = &ctx->hevc_dec.ctrls;
+> @@ -355,8 +364,10 @@ static void set_ref_pic_list(struct hantro_ctx *ctx)
+>   		list1[j++] = list1[i++];
+>   
+>   	for (i = 0; i < V4L2_HEVC_DPB_ENTRIES_NUM_MAX; i++) {
+> -		hantro_reg_write(vpu, &ref_pic_regs0[i], list0[i]);
+> -		hantro_reg_write(vpu, &ref_pic_regs1[i], list1[i]);
+> +		hantro_reg_write(vpu, &ref_pic_regs0[i],
+> +				 get_dpb_index(decode_params, list0[i]));
+> +		hantro_reg_write(vpu, &ref_pic_regs1[i],
+> +				 get_dpb_index(decode_params, list1[i]));
+>   	}
+>   }
+>   
+>
 
