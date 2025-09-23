@@ -1,124 +1,132 @@
-Return-Path: <linux-kernel+bounces-829350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9852B96DDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:44:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BBA0B96DE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE07218A87CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:44:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D96E24A01ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96800328963;
-	Tue, 23 Sep 2025 16:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45A832340F;
+	Tue, 23 Sep 2025 16:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="U8YDgu7f"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SnjKekBs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3005226CE26;
-	Tue, 23 Sep 2025 16:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480C12620D2;
+	Tue, 23 Sep 2025 16:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758645865; cv=none; b=bkKftqiUUdwz0ofAWLD4fuCeOZvYhBsATknBzdjerXYgx589a4keDb7NzyWvxWi3lclM8ictEEdN5NEmmDyGjgpJynq4+jNFu37qULNHIbGM2Dge7aoHV2umkN1WbSp9jIsjC9cqRJocb6IencWsslyrT+vtTFo3xngozrgxTW4=
+	t=1758645898; cv=none; b=uWrkanMZA4AkKf17YFJK+29d3F2oPXOF5qArcPG0S6H8JHuZRvswpOh+LxG+Cui4tzW0EHVYOVvcbbdKKjU8mAdlMsQEhEHhF8tRQ3/Z/nhX+KnWs9hugZxsHe1AsizvF5+mlVGXmZKDJXcjx2jj4coR0DkASOXQiFA0756haDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758645865; c=relaxed/simple;
-	bh=wwQGUX67SXUgd19z026AaJfNPsdTs79YkoW7C9G6CGw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tMmlaa9SnK18cJ7bYnsRGh+6wZGozUbQCN8UI2oMWTJSUjvbUUVGTF4WE4NRZIyku20igi7ur+3xhCbuLcgSPWNWwedGmfs4FFQxLbU2A/jh/6io8jhxnwGODGzbuuYfAwp4rmY2Ic7X+94Vmhs1QU8rl3dGWF4Z0gVJlT6rH4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=U8YDgu7f; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cWQmZ63KFz9t7M;
-	Tue, 23 Sep 2025 18:44:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
-	t=1758645854;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q1u+lufeuVfPK5/r4HgAV14Pb6sm9+d0eSksOaw4q24=;
-	b=U8YDgu7fzxRDvgBqxZLyNR6b9+ccFF9crov0/UC5TNq4c6FuPRzfdDfM6TERcPhVt40uq3
-	TCObwDvQ3DEFmzXI16Q74ECeU68MqC+8kkyFoL49UoMk/5WxJ5rFDEowKu4ahIyFOoVqEj
-	zEaD+JHWmT+aa6EEwMNFlAK9m5xk9F0r0wESydegqZVMEnebnH+ASMmeDwst3XqZ11wpLy
-	0bFuefHl9Caq6Zvnn8CMcBoyiDSirx2pWUnZAaIVEJGbhb7i0WtNzpL48XHR2/ddMoyaQF
-	yQkZEjik0FTKIs2X/gGMy+OsQXQOhXp2XhRD17QTTSrQLlPqtaGPH1vIuWKjJg==
-From: Brahmajit Das <listout@listout.xyz>
-To: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com
-Cc: listout@listout.xyz,
-	andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev,
-	sdf@fomichev.me,
-	song@kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	yonghong.song@linux.dev
-Subject: [PATCH 1/1] bpf: fix NULL pointer dereference in print_reg_state()
-Date: Tue, 23 Sep 2025 22:13:57 +0530
-Message-ID: <20250923164357.1578295-1-listout@listout.xyz>
-In-Reply-To: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
-References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
+	s=arc-20240116; t=1758645898; c=relaxed/simple;
+	bh=3XO3yH5QmqA4LLs++ItSyWPZoNja/iDbo2Loa5JKPW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XuBqqO/AEqxhxqZIIxuuOS+tTPtI79CDeqEgsNdLlrNf1MJYnUrJjD7CHMgETHy7j8GvimsWBR10tns1WQnX4cT8UlvVome5RCm2+lyiS3LEXDXz8L0L1eyCUZRIP3moMjFe7p5j8l9bBJaVpjnIZxFxcWfL+Z4DgwI1G1PoOms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SnjKekBs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F727C4CEF5;
+	Tue, 23 Sep 2025 16:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758645897;
+	bh=3XO3yH5QmqA4LLs++ItSyWPZoNja/iDbo2Loa5JKPW4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=SnjKekBsyeN/Vi9W51bnwli2auZRd7uu0AlPSXifnUQc8SIokPCtXvw2BY8NwsRH6
+	 Q8Ulubwax3TRL6RvnXF1Mq6mqoyexHdBbR4rqGTuSnhMj5ia+/XVfuU9Co5puMIig/
+	 t1+yNRagJdtxQk+CKeMPS1SlX4p5eYtrp7nFSeDSBrEjSX6YbP8Rc57aveavYPK11i
+	 ldmJ5IEHhywESDo4ptPavIQOZwEJhUjnHsmwgeS5LK8QmHV01JCoYEMNyKS5Fwbl8/
+	 6NXT01A/MhoVdFe3I3p5EFmhvXlNG//Zw/T/wX/ZOBYVz/3oFizwhLiGXdatV78gIb
+	 yN7NZ5MDxiLDA==
+Date: Tue, 23 Sep 2025 18:44:53 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the rust tree with the driver-core tree
+Message-ID: <aNLOhQyd0YmJnPco@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="j9SD9HJWL+yWAjW9"
+Content-Disposition: inline
 
-Syzkaller reported a general protection fault due to a NULL pointer
-dereference in print_reg_state() when accessing reg->map_ptr without
-checking if it is NULL.
 
-The existing code assumes reg->map_ptr is always valid before
-dereferencing reg->map_ptr->name, reg->map_ptr->key_size, and
-reg->map_ptr->value_size.
+--j9SD9HJWL+yWAjW9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix this by adding explicit NULL checks before accessing reg->map_ptr
-and its members. This prevents crashes when reg->map_ptr is NULL,
-improving the robustness of the BPF verifier's verbose logging.
+Hi all,
 
-Reported-by: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com
-Signed-off-by: Brahmajit Das <listout@listout.xyz>
----
- kernel/bpf/log.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Today's linux-next merge of the rust tree got a conflict in:
 
-diff --git a/kernel/bpf/log.c b/kernel/bpf/log.c
-index 38050f4ee400..b38efbbf22cf 100644
---- a/kernel/bpf/log.c
-+++ b/kernel/bpf/log.c
-@@ -716,11 +716,12 @@ static void print_reg_state(struct bpf_verifier_env *env,
- 	if (type_is_non_owning_ref(reg->type))
- 		verbose_a("%s", "non_own_ref");
- 	if (type_is_map_ptr(t)) {
--		if (reg->map_ptr->name[0])
-+		if (reg->map_ptr != NULL && reg->map_ptr->name[0] != '\0')
- 			verbose_a("map=%s", reg->map_ptr->name);
--		verbose_a("ks=%d,vs=%d",
--			  reg->map_ptr->key_size,
--			  reg->map_ptr->value_size);
-+		if (reg->map_ptr != NULL)
-+			verbose_a("ks=%d,vs=%d",
-+					reg->map_ptr->key_size,
-+					reg->map_ptr->value_size);
- 	}
- 	if (t != SCALAR_VALUE && reg->off) {
- 		verbose_a("off=");
--- 
-2.51.0
+  rust/kernel/lib.rs
 
+between commit:
+
+  842aedc3907de ("rust: Add cpu_relax() helper")
+
+=66rom the driver-core tree and commit:
+
+  ea60cea07d8c6 ("rust: add `Alignment` type")
+
+=66rom the rust tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc rust/kernel/lib.rs
+index fa083aa44cd6f,f910a5ab80ba5..0000000000000
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@@ -17,8 -17,8 +17,9 @@@
+  // the unstable features in use.
+  //
+  // Stable since Rust 1.79.0.
++ #![feature(generic_nonzero)]
+  #![feature(inline_const)]
+ +#![feature(pointer_is_aligned)]
+  //
+  // Stable since Rust 1.81.0.
+  #![feature(lint_reasons)]
+@@@ -115,7 -112,7 +117,8 @@@ pub mod pid_namespace
+  pub mod platform;
+  pub mod prelude;
+  pub mod print;
+ +pub mod processor;
++ pub mod ptr;
+  pub mod rbtree;
+  pub mod regulator;
+  pub mod revocable;
+
+--j9SD9HJWL+yWAjW9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjSzoUACgkQJNaLcl1U
+h9Dzwwf+MD6Oh6d/Gua3HoutZBkpMpPXEtM9sNN+R15EaozuzqaFn68B8UtJI52j
+4MSeVVDATv5Rq6onYyi7YLpF8fPDTc7xh8OowrONG1ULFZPN0QvJhr4qO9OF4iwj
+SE/Jkltpepf/RyqXEGKKablC6Oibind7U78xD0h2QGlrGaS/J6z953IoWh8tAu8Y
+CAZO5aLjJMgG37F1ON7UJDnCp5VmpB1mCtl9KKPhKtCa613/b21tw2pcp/rWpF8r
++UCTQ3k1pBV8TSRB/H2dyoQ6gKJrmr1WqZiUGMeHTVq70V3iDZzj+OGOPey3s2Sj
+4G6jiTf/SaMl5+AkqQj9bODjavrUDQ==
+=gSiq
+-----END PGP SIGNATURE-----
+
+--j9SD9HJWL+yWAjW9--
 
