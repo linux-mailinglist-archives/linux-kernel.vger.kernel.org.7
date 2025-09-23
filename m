@@ -1,395 +1,533 @@
-Return-Path: <linux-kernel+bounces-829058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C049B96348
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:23:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B6DB96342
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91EE619C3605
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:21:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA0F83B0FBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8B423A989;
-	Tue, 23 Sep 2025 14:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B61230BDF;
+	Tue, 23 Sep 2025 14:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RKm4GZpo"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010065.outbound.protection.outlook.com [52.101.201.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dzvWxCcJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wB21DUoU";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dzvWxCcJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wB21DUoU"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AAD86359;
-	Tue, 23 Sep 2025 14:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758637247; cv=fail; b=aZ0SVxxghIrGqcAGtyPqp9uWXojXf2wmdAyPrRU9IXFyANpYp3dC4APJZAM/jR5s58hFJACY4zAfcZSCR+QZ8NGbkMJwFK/K9e+TSd/gZsk8QvviFSWJDmOGZ4MdSXCf2xBzVGUn+uFmlU8ziRkCFUFbYfT43oP2V+yuGjIKhXY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758637247; c=relaxed/simple;
-	bh=6alNSOXhu7lGM+Uq/O/s5Av/mSwZvd9L/hs6Zg8VhL8=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=QJg/KoZDlSm0xYPfmGnZ6i1BgDCUHVhT9c2OZynDUzXhZx2IJBHt8m0GZ941AFRhlbhH1vUiDtL+eyUW/g6gn5W3imwmypWaInWZHICJV+VbutJAZkNl7g6tTD/GTcWMN9zO2+/0jOZoF6Baw2qZUnRBXR0nVWh6xEPXW3BzNXQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RKm4GZpo; arc=fail smtp.client-ip=52.101.201.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=emSaLy4qJytwq/01dK6SkrGGlhtHORZmtFEbfFW4tVVbNEayvUEBnsK7onABOi60vXCDiyOOc6yKEAYOlqdYzz4pNaJYhAPGIrmm9LRgqB1yV4K083BG/PTiyhwLg9dRCOeUdChtA9C1q4rC21+qFSgPzTnssJTK5CbtDmUXeoEBHcWPo2df5MXw0lSWc/77M1yP5xgCMrKqLYOoB0hpBj5sRpkbf6/BXJRoiTXZ4hhsM+ltzv2OlNDASfqSoiRNWWIxPkMO9TnVRWPyanznmtadB4MWJspENLgIDkOK/fvcnKpvuwu0ZS4p5K2bPK7G/z1K6eqxQn0SQddyZnUFFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tL2eLZrvjk7C6KwuBE33OUu0LyZDibXLdemZQezc+J8=;
- b=kfj9gqui8LRA2+E8cI2FwReKkh5lhKWjD0U6Y788iPxfLj4tiVaUK2j5nRFCZ8c6CgzQMUZFcBaiXJN2bACJzpANCblxBUbRptZ+0qh0y9iKaVAFJ80SHaDOvQkpvXqzMjM92YpqzurAGFMKTDo4gKUgWUaqya+tIZQSFvTQrzAitarhZXWel2kzNicD25pqWExKryEpY1Xu3P2b0DJOE8oCv1BRVzT2bDZBEOvHZtVfrWjHD5H5m9OdBx80Kg/ovpIRwuqtmAU2SeBfl26T5z9azdi7sSJ7RmIan+fqhg7u6X54nZ69uX4VFEAUwbBEESEpDSlkgdkiaXeC0x50eg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tL2eLZrvjk7C6KwuBE33OUu0LyZDibXLdemZQezc+J8=;
- b=RKm4GZpod1DxFfUovxBon4IwxPAtgk5f83BD2LU70qDtlv/8eLCx3nvgSjsa4KnG3spbH/otcVp+/PF6qPOyioV3cLi5UM6dJ+3veFaPxmjuCy2I0qznp7yELAWf1A7MABpyDRzVqdBpGXhYMRMZOkmhBCc61jXAeG5+orylq9O0L9D6xzf1hVDozP7kHu9gawN0AOKfT3W34G/8Y2OVSLA0S3lzVgEsYPz6xnt46XQFcHECZMHeCJgT3HnCYYy7mjDc6T45GSdyKFtVQgU3/IYa02uePUGsZC/Xp9w40op9jEzrReZu+YzRoxH2Mw0lQg1mRexCWf7dIBRSdEtAgw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by LV8PR12MB9230.namprd12.prod.outlook.com (2603:10b6:408:186::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Tue, 23 Sep
- 2025 14:20:42 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 14:20:42 +0000
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 23 Sep 2025 23:20:37 +0900
-Message-Id: <DD08VDPA45X8.2VXMD1RJBAJER@nvidia.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
- Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>
-Subject: Re: [PATCH v2 02/10] gpu: nova-core: Create initial Gsp
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Alistair Popple" <apopple@nvidia.com>,
- <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <dakr@kernel.org>, <acourbot@nvidia.com>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250922113026.3083103-1-apopple@nvidia.com>
- <20250922113026.3083103-3-apopple@nvidia.com>
-In-Reply-To: <20250922113026.3083103-3-apopple@nvidia.com>
-X-ClientProxiedBy: TY4PR01CA0073.jpnprd01.prod.outlook.com
- (2603:1096:405:36c::9) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C142C187
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758637289; cv=none; b=jClRs1TQR27z51WvYzYahqbkrGweY788ivJXomDxSFsATn4wl4nw9CyKA+0xqmxymC3v+QNffHtJT+Dyx2yC+PGieiTjvGxZMTXr2Urikx9NamN85dFmq8bDywiH/A0jOwkcTXIWbMlc/7NME491svTSLlb0IWUggsHDnpDz4zY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758637289; c=relaxed/simple;
+	bh=PvdKvf1S3JbHarINYQ+ipxP/u2nXOsLQS5dNFCnpIxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mnx2MTcVwW+h2VLcZp+y5GQGYiaitpoiQP7ZxUUvHcXSGlB7k6yfmXoIut10nWrM5dXuYQYNctZ6jFOqsS9tPtHi4QyTAdV+ZE+wxErze90YSMyHQie2GlL11KiGGiauqYt+XyJQmmtIW+bVIm89O0+dTnFgXEJNHRXqohMXT38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dzvWxCcJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wB21DUoU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dzvWxCcJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wB21DUoU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 17A781F7EE;
+	Tue, 23 Sep 2025 14:21:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758637285; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u7LGle4LkK6SZCj0hDxitRI/0FIhGAyL4PgBCyHIp4Q=;
+	b=dzvWxCcJuyZJJ2L7MMwKOW1MWzWa7c/ZN9S75Q6sC4cVqTBzU3c0OLzTYA80jojBcu183U
+	xbJQ1KSosmD23YZJtMz+p0aSDxGgcXtWkzY05PvNUaJ2PuJ0MuR3Tks+OFESmspVnKSfqF
+	5/np6lb4ZxLTxQ1yuQgmYjx7Ic8MpQI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758637285;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u7LGle4LkK6SZCj0hDxitRI/0FIhGAyL4PgBCyHIp4Q=;
+	b=wB21DUoU5Y46uraR45rk5tWCfoHiQbE6YRmtZKc9qEEFrYnEcISXQi+kNjmjyxVfKSSlic
+	4wGW5evhbsy60MAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758637285; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u7LGle4LkK6SZCj0hDxitRI/0FIhGAyL4PgBCyHIp4Q=;
+	b=dzvWxCcJuyZJJ2L7MMwKOW1MWzWa7c/ZN9S75Q6sC4cVqTBzU3c0OLzTYA80jojBcu183U
+	xbJQ1KSosmD23YZJtMz+p0aSDxGgcXtWkzY05PvNUaJ2PuJ0MuR3Tks+OFESmspVnKSfqF
+	5/np6lb4ZxLTxQ1yuQgmYjx7Ic8MpQI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758637285;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u7LGle4LkK6SZCj0hDxitRI/0FIhGAyL4PgBCyHIp4Q=;
+	b=wB21DUoU5Y46uraR45rk5tWCfoHiQbE6YRmtZKc9qEEFrYnEcISXQi+kNjmjyxVfKSSlic
+	4wGW5evhbsy60MAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 97948132C9;
+	Tue, 23 Sep 2025 14:21:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id co6lF+Ss0miwQQAAD6G6ig
+	(envelope-from <ematsumiya@suse.de>); Tue, 23 Sep 2025 14:21:24 +0000
+Date: Tue, 23 Sep 2025 11:21:18 -0300
+From: Enzo Matsumiya <ematsumiya@suse.de>
+To: Shyam Prasad N <nspmangalore@gmail.com>
+Cc: Henrique Carvalho <henrique.carvalho@suse.com>, 
+	rajasimandalos@gmail.com, Rajasi Mandal <rajasimandal@microsoft.com>, sfrench@samba.org, 
+	pc@manguebit.org, ronniesahlberg@gmail.com, sprasad@microsoft.com, tom@talpey.com, 
+	bharathsm@microsoft.com, linux-kernel@vger.kernel.org, linux-cifs@vger.kernel.org
+Subject: Re: [PATCH 2/2] cifs: client: allow changing multichannel mount
+ options on remount
+Message-ID: <mrcj7b6wyh5hyqwgufasxpwxytllzuboro4fjunrqro6eq3siz@6ncku7sdjpkn>
+References: <20250922082417.816331-1-rajasimandalos@gmail.com>
+ <20250922082417.816331-2-rajasimandalos@gmail.com>
+ <d09c8506-6326-45e6-8687-8e0b002eff62@suse.com>
+ <CANT5p=qsh+jJ2PD2vy1x7ZjE646Hh28n1epS7Fy=RSqmuht_=g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|LV8PR12MB9230:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f6256f4-a56d-4d3f-f31b-08ddfaac5fe2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|1800799024|7416014|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TVNSWTlqM3hkT2pSWmFCMXJTckl5Z2JQSURKL3ZNeXV4T2czOWhZeW9lL2pZ?=
- =?utf-8?B?TmVYdkVzV3kzYSs4ZkFreEdoNkZVU0tuYTE1emg5a2d2Zy9IUjZsenpqU0NS?=
- =?utf-8?B?NDZPVmMzY2ZqSHFkSGxLTXhvbDA3OElNS1E3QnNTUDRNaWllVzllVFNUeVRs?=
- =?utf-8?B?bUUveHBMVlBrdzU1bGRlK09VVHZVSlZtU3hWY0xYRWdUYmI0NWVPSWdCU2U5?=
- =?utf-8?B?R3Rkb0R5SURXdTRHZ3d5T05VZzVEcHhsR2Zzck83K1dkSURyNEY1bDhnTXZL?=
- =?utf-8?B?OEFJY0QxRFI1SmI5MzdLMGlOa2FvYnowWmVIQ214bmNsR3A1YVR5MWhtaWNP?=
- =?utf-8?B?YTZLUysyQVhNdDQ1dkV1OXpRTXpxOHJqTlo0RHdONGtsVEVwajRSYUlLS2Nm?=
- =?utf-8?B?MmZmMCt5Z254VVlaRktlMlVKWCsxY0NQbk1qMkVNRi9McHY5VW9KeHhOUThF?=
- =?utf-8?B?L3NJRnkwVnFmemxETVZMY3MrUDMydTdzQ0NDaFhqcTNiYS9FOFlQWDJ1K05p?=
- =?utf-8?B?TitQbmJUa2NrbnRvSEFMTkNIcm0xUW12SUoxdFIxNXVHNDI5T1IrT2pxNytz?=
- =?utf-8?B?d0tkM0NPNU5vM0c1TmhaczdmV3JiNVdZdUhBcHdKY1VQbWJsTTZEU0dTQ1Er?=
- =?utf-8?B?T0JuakpqT0hpSEdaQWc4eE5EZCtSdzhvSlV3NVdZZW1pNWFVWjhtVXkwYksv?=
- =?utf-8?B?MzU1TVJUbHF6ZmZtMHlFUEU1SG5LUWxXN2NHVncwQ2RBTVlYMlMzOHRyaEJJ?=
- =?utf-8?B?aEhXcmJWa1FaZXNHWXJ5TzZqMlljb1FzNzg1aktVNlA5MzViL2h0ZkxKQ3BU?=
- =?utf-8?B?QWkva0J3SVRsQytDREkza1ZDT3FTQ2x4d25Da2l4bWROLzRiZG9mSGxEK08r?=
- =?utf-8?B?a212RWVZV3lmejJzTUFrNEpaMlAzc1BlQXhiNitUMTJLYXZyRUsxNkVrRHZv?=
- =?utf-8?B?ZnRqV2cyRDNEdm4rU0ZiMDhQZ0RsUXFJOERQd3BUWnFudHBITWR3WEsrczdP?=
- =?utf-8?B?dHpIOVJaWnFsNDUxWjdJNThtS2hPZitlU2dMbDkzZkoyMU1XK2I1WnVrcTd6?=
- =?utf-8?B?WWloK2syMDFJVkd2SGFQaTdTMXI2SThxMm9SMlJUNXFoVE1NcDBCUHIrbGpz?=
- =?utf-8?B?UUl1UXQvTlIvMHlyd1BOd0dzZytjZUd2V1NRQmJ1RjhIQjliUDJ5VWhJc3dS?=
- =?utf-8?B?VHErcmFPRkRnczBPVkd5bjRkckZKWDdmZlhncXpFRkRKK3dndGY4b3FzNEZk?=
- =?utf-8?B?U3hTTDZnQ0ppYUwrYkFrdFViaE8vMUJDd3p1TWVlWStZajlubVpIcVBqNitO?=
- =?utf-8?B?aWxoRW93TjRHKzVET0w1RnRWT2RvNUYyM01naTQ3Z20yRjRiN0dpY0pDUWdW?=
- =?utf-8?B?S2x0N3ZrQTlpTzV4cWRHeTZYd2ZHZUxQVUdpVXhEdmptNUlaUmROMVJ6WVg1?=
- =?utf-8?B?TFJJRXkwbzN5TWdDM0NqK1cxUDhEVzdKS1ZMS05WdXhzdS9FQ0hndm9nclln?=
- =?utf-8?B?SDBSLzRjVEczaWVVZFlPcm9HYnEzU2lXdVNCdE9aalEzWENNbU5xRWtkTTFT?=
- =?utf-8?B?VGxsQmZCMWFWZkdjY0tYWm5xaHlNSEhKc1VpeUorWDFVenM3OXNIRHZaYVpQ?=
- =?utf-8?B?bUxqdnhqYy92b0N4MEcyakZleHR2ZkFZQkVwVksyY3dxU0hoUmU0ZGxKY3Y2?=
- =?utf-8?B?ckxDcVdlM3RJQzBmdnIyS1Zxd0FkSDJZc20zS3ZYcFJuYjIxbHErTnVrUzNv?=
- =?utf-8?B?dlZWY202Zm8zajUwVXVkUjdhYVFTOVo2VUxnK3BNZ2ZaMWcvK3VFSk1ERTla?=
- =?utf-8?B?WlpUY3o2SVhtSlBJVEgxVnFTamt2VDE4VEw4U1RGWWZYR2NDM2s0ZHJXZDJL?=
- =?utf-8?B?YWJZZ1llSjRJWFB0WDlsdktHMVU3TThGbStSYU4zS0U4bUluZ09zNGR4MVF6?=
- =?utf-8?Q?6LpValaxHkQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Q1lkYmRmcXk5YTcvZERpRVdoWnkyZXhIY210Skt3Tm1WOW8vbjhqbFgwN0Zv?=
- =?utf-8?B?eXI4d3dPbkRCbndCTW9OcnJVZ1FpVmlxZWN2bDNjOVF2cUhCVmNsaENvcERN?=
- =?utf-8?B?TjRYOStEalV1UjZrWXBXWmx4UWpUY3FjOEloaVIvbFVaWlBqMm1VeURQWDFp?=
- =?utf-8?B?ZVl5aWk0cEE0ekVwTEM1Y0t3ZFpnaXFydHdZZklEMWhCWnNhcEpjMXN4UjJN?=
- =?utf-8?B?aFMxOUVzYUkxQUVIZlROQmdWck9YWnZWelVMaFlZSk1PWWkyNzNMQVdpeGZN?=
- =?utf-8?B?R1VzWi94Ri9CRjRGMkdkNjlGRXh0OGVKZkUyQ2hwMjkxZ1prbzJITWFqSUpV?=
- =?utf-8?B?QTkxbUhiMWU1cUtObE1KN3VCa0hNSTV2Vk9BR01vMmkyeitYWkh1Smdwd0ha?=
- =?utf-8?B?NVVFWWFhWjZmbi91YWZEUm9OOXdzbkNjQjlQK1dkM3JsUTRXQXVLZHRxUit5?=
- =?utf-8?B?NVUyTVlPbDBOdmtzK0FPUFNNQktNWXVkT2ZPL2pBR2ZKRWJQeWFOU2RXMWYy?=
- =?utf-8?B?TDc3c1M2U2JHRFZhOXI4cHBmRE5JazdGb1lZN1VFUm9zU1c2RExpbjVmaG5q?=
- =?utf-8?B?MFpoYkJHQ2oraDFCSTJHb2NxVlNjbmk2dmVneGI1ZGU3MDJsVWI4cllpK2Vi?=
- =?utf-8?B?c05USURsMVdiWW1pNWszOGpIRXI5QnZNQmtXVS9RZGVvQnQ4aVlYV0QzcVpS?=
- =?utf-8?B?NnhHSm14WWVqZktSTHhTMTVIMmMrbXNGT25QM2I4WXFkSk0veExXK2ZpUDlV?=
- =?utf-8?B?UEc4UlRMS3R0YUcrOEdHS05QWVlwaFdIQnpwbVVqRnBIY29UVVNwVDZwRzJw?=
- =?utf-8?B?Zlc3TXRBYzhmdTh4aHFHRTU0Z0xmYjNkMmNVaDRMejB4TDloRDJvYnYxRW96?=
- =?utf-8?B?OGRqT2U2VEhDQVJzOWJQc2VnOU1PbFpNNnZBcjhtZVlWOWxEclRFMTVCMHN4?=
- =?utf-8?B?QndBeU1vNkRTODVUeENoWENOZ2loNUdDUUJQOFhCamxSUEc0ODRKUGF0Wjcr?=
- =?utf-8?B?Tm11RWl1SEVUeCtMb3JuK0wra1lRak9rQ2hXSTMwaVJrUURmU3g4dUg2TmVP?=
- =?utf-8?B?ZVBLRjhoblpGYUwxTUxwbThSc3lORlR0T1U2c05lQUFDTDFYMEJTc2Jhb3p1?=
- =?utf-8?B?YklaYjdjMlBJZzFXWGJXeWN5TmdJL25EQ0VtcG4zeVFTdEhSazRPczNSM1kw?=
- =?utf-8?B?YmF0V2dmUFBNcTljRzArMFVSVlhUUURSeVUxdWJtS2pXU2l3YjVYOEMwLzNk?=
- =?utf-8?B?azlBRUNnQ3B0a3RIakR6NmFoT1RTQ2FuYWlyWFZIYzc2cnBkOTRqamx6YXBj?=
- =?utf-8?B?RlVsdkdyeHd6MGNKT0JHdUJzTHJDQ0J4MFEyVkd5d0wvYms4U01QVnNRbG9p?=
- =?utf-8?B?cmpHak1MbU1OUWt0WFgyczFFV0ZSbGxIVTN1TCtOOUltdEc1WW9RUUd6L0F1?=
- =?utf-8?B?clBGYUFtUkhiYWY5MmxadWFFWnNaTE4xM2FSaXJZZmx5SlhDM01ONklzSTlE?=
- =?utf-8?B?Q0htRzlhcXIrT0tVNk5ZT25sNTh0eDRQaG5hRU9Wd3h4Y0xXNnM3dnBadFZx?=
- =?utf-8?B?M1ByNkt6VSt3VTdLNWRKR3dDblJhRllZOUtaTVlaa1ZSZ3BsaXpIQmZiSnBz?=
- =?utf-8?B?djBhYTQyYmUyWVMwT29GYkxzQ29wZnhWUmI5NDM3dStTRUhqbVk5d3JhcmJq?=
- =?utf-8?B?VUt2VVVqQWErc1NIU3dVWGJYNjQwVTJMTFNGMThEWE9OdCtXa25rb2liWWo4?=
- =?utf-8?B?M0d0WDUwZTduY3NEK01DVVhIVUhxVUFjd0Zuazc3cStOWDlJcTlvVmVlUVJm?=
- =?utf-8?B?ZDJZY3lDUnVhNUdxRWUxRVNVdUV2c1o5SldhN1k5NFhaMFpSeEZoTXpDcnBO?=
- =?utf-8?B?SWk5N1lTUFM0cUwzN29uQ05RVWJpZGZBTDNSdXRHZ1FtbHpFL3lZN0Zha2ZI?=
- =?utf-8?B?QzVTeklvcUVObDFiZTJxakxJeEtQL2NudlpRU1hWVTJwNCsxS3ZpbTdsQWFz?=
- =?utf-8?B?eE9UWTJVV1FUYWl0b2pIQzQyWUc0bndrNGV0L3lOMjM3bEp2RHJrL01TU3du?=
- =?utf-8?B?Wmxta3BaMXJxT1JWVHJDYkQ2V29WQVJ1aXpzUlVPYzZjWTJiL2RxT1RId2R5?=
- =?utf-8?B?QklYNm1Gd0FmYzdpU2lzZTBPUEUvQ0hPbmhjNnRzRkxXbitlV05SenZNKzFm?=
- =?utf-8?Q?pHi0fDUZfuGbAR56iG336zuWS1ui99d1+kjWO+dZWU5H?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f6256f4-a56d-4d3f-f31b-08ddfaac5fe2
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 14:20:41.9369
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pwCV3yk1qGvcMAOozRoPiuDIRSDYwmGK68JKr6rdFP5eP2tMgmDm2zPfds6RsVG0ir+IMkoHt6RoVtDEkA2hFw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9230
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CANT5p=qsh+jJ2PD2vy1x7ZjE646Hh28n1epS7Fy=RSqmuht_=g@mail.gmail.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.com,gmail.com,microsoft.com,samba.org,manguebit.org,talpey.com,vger.kernel.org];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-Hi Alistair,
+On 09/23, Shyam Prasad N wrote:
+>On Tue, Sep 23, 2025 at 2:52=E2=80=AFAM Henrique Carvalho
+><henrique.carvalho@suse.com> wrote:
+>>
+>> Hi Rajasi,
+>>
+>> On 9/22/25 5:24 AM, rajasimandalos@gmail.com wrote:
+>> > From: Rajasi Mandal <rajasimandal@microsoft.com>
+>> >
+>> > Previously, the client did not properly update the session's channel
+>> > state when multichannel or max_channels mount options were changed
+>> > during remount. This led to inconsistent behavior and prevented
+>> > enabling or disabling multichannel support without a full
+>> > unmount/remount.
+>> >
+>> > Enable dynamic reconfiguration of multichannel and max_channels
+>> > options during remount by introducing smb3_sync_ses_chan_max() to
+>> > safely update the session's chan_max field, and smb3_sync_ses_channels=
+()
+>> > to synchronize the session's channels with the new configuration.
+>> > Replace cifs_disable_secondary_channels() with
+>> > cifs_decrease_secondary_channels(), which now takes a from_reconfigure
+>> > argument for more flexible channel cleanup. Update the remount logic
+>> > to detect changes in multichannel or max_channels and trigger the
+>> > appropriate session/channel updates.
+>> >
+>> > With this change, users can safely change multichannel and
+>> > max_channels options on remount, and the client will correctly adjust
+>> > the session's channel state to match the new configuration.
+>> >
+>> > Signed-off-by: Rajasi Mandal <rajasimandal@microsoft.com>
+>> > ---
+>> >  fs/smb/client/cifsproto.h  |  2 +-
+>> >  fs/smb/client/fs_context.c | 29 ++++++++++++++++++
+>> >  fs/smb/client/fs_context.h |  2 +-
+>> >  fs/smb/client/sess.c       | 35 +++++++++++++++-------
+>> >  fs/smb/client/smb2pdu.c    | 60 ++++++++++++++++++++++++++++++--------
+>> >  fs/smb/client/smb2pdu.h    |  2 ++
+>> >  6 files changed, 105 insertions(+), 25 deletions(-)
+>> >
+>> > diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
+>> > index e8fba98690ce..ec3118457b26 100644
+>> > --- a/fs/smb/client/cifsproto.h
+>> > +++ b/fs/smb/client/cifsproto.h
+>> > @@ -667,7 +667,7 @@ bool
+>> >  cifs_chan_is_iface_active(struct cifs_ses *ses,
+>> >                         struct TCP_Server_Info *server);
+>> >  void
+>> > -cifs_disable_secondary_channels(struct cifs_ses *ses);
+>> > +cifs_decrease_secondary_channels(struct cifs_ses *ses, bool from_reco=
+nfigure);
+>> >  void
+>> >  cifs_chan_update_iface(struct cifs_ses *ses, struct TCP_Server_Info *=
+server);
+>> >  int
+>> > diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
+>> > index 43552b44f613..96e80c70f25d 100644
+>> > --- a/fs/smb/client/fs_context.c
+>> > +++ b/fs/smb/client/fs_context.c
+>> > @@ -1015,6 +1015,22 @@ int smb3_sync_session_ctx_passwords(struct cifs=
+_sb_info *cifs_sb, struct cifs_se
+>> >       return 0;
+>> >  }
+>> >
+>> > +/**
+>> > + * smb3_sync_ses_chan_max - Synchronize the session's maximum channel=
+ count
+>> > + * @ses: pointer to the old CIFS session structure
+>> > + * @max_channels: new maximum number of channels to allow
+>> > + *
+>> > + * Updates the session's chan_max field to the new value, protecting =
+the update
+>> > + * with the session's channel lock. This should be called whenever th=
+e maximum
+>> > + * allowed channels for a session changes (e.g., after a remount or r=
+econfigure).
+>> > + */
+>> > +void smb3_sync_ses_chan_max(struct cifs_ses *ses, unsigned int max_ch=
+annels)
+>> > +{
+>> > +     spin_lock(&ses->chan_lock);
+>> > +     ses->chan_max =3D max_channels;
+>> > +     spin_unlock(&ses->chan_lock);
+>> > +}
+>> > +
+>>
+>> The other writer of chan_max is when creating a session. Is this lock
+>> really avoiding a race here?
 
-On Mon Sep 22, 2025 at 8:30 PM JST, Alistair Popple wrote:
-> The GSP requires several areas of memory to operate. Each of these have
-> their own simple embedded page tables. Set these up and map them for DMA
-> to/from GSP using CoherentAllocation's. Return the DMA handle describing
-> where each of these regions are for future use when booting GSP.
+That locked write on ses creation is also useless as it's done before ses
+is even on list i.e. no other thread can even see this ses yet.
+
+>It's not just the writers, but also readers that we protect with this
+>lock. I don't have major objections to the locking here.
+
+I couldn't find any _locked_ readers of ses->chan_max, did I miss
+anything?
+
+>> >  static int smb3_reconfigure(struct fs_context *fc)
+>> >  {
+>> >       struct smb3_fs_context *ctx =3D smb3_fc2context(fc);
+>> > @@ -1097,6 +1113,18 @@ static int smb3_reconfigure(struct fs_context *=
+fc)
+>> >               ses->password2 =3D new_password2;
+>> >       }
+>> >
+>> > +     /*
+>> > +      * If multichannel or max_channels has changed, update the sessi=
+on's channels accordingly.
+>> > +      * This may add or remove channels to match the new configuratio=
+n.
+>> > +      */
+>> > +     if ((ctx->multichannel !=3D cifs_sb->ctx->multichannel) ||
+>> > +             (ctx->max_channels !=3D cifs_sb->ctx->max_channels)) {
+>> > +             //Synchronize ses->chan_max with the new mount context
+>> > +             smb3_sync_ses_chan_max(ses, ctx->max_channels);
+>> > +             //Now update the session's channels to match the new con=
+figuration
+>> > +             rc =3D smb3_sync_ses_channels(cifs_sb);
+>> > +     }
+>> > +
+>> >       mutex_unlock(&ses->session_mutex);
+>> >
+>> >       STEAL_STRING(cifs_sb, ctx, domainname);
+>> > @@ -1110,6 +1138,7 @@ static int smb3_reconfigure(struct fs_context *f=
+c)
+>> >       smb3_cleanup_fs_context_contents(cifs_sb->ctx);
+>> >       rc =3D smb3_fs_context_dup(cifs_sb->ctx, ctx);
+>> >       smb3_update_mnt_flags(cifs_sb);
+>> > +
+>> >  #ifdef CONFIG_CIFS_DFS_UPCALL
+>> >       if (!rc)
+>> >               rc =3D dfs_cache_remount_fs(cifs_sb);
+>> > diff --git a/fs/smb/client/fs_context.h b/fs/smb/client/fs_context.h
+>> > index b0fec6b9a23b..a75185858285 100644
+>> > --- a/fs/smb/client/fs_context.h
+>> > +++ b/fs/smb/client/fs_context.h
+>> > @@ -371,7 +371,7 @@ static inline struct smb3_fs_context *smb3_fc2cont=
+ext(const struct fs_context *f
+>> >  extern int smb3_fs_context_dup(struct smb3_fs_context *new_ctx, struc=
+t smb3_fs_context *ctx);
+>> >  extern int smb3_sync_session_ctx_passwords(struct cifs_sb_info *cifs_=
+sb, struct cifs_ses *ses);
+>> >  extern void smb3_update_mnt_flags(struct cifs_sb_info *cifs_sb);
+>> > -
+>> > +extern void smb3_sync_ses_chan_max(struct cifs_ses *ses, unsigned int=
+ max_channels);
+>> >  /*
+>> >   * max deferred close timeout (jiffies) - 2^30
+>> >   */
+>> > diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
+>> > index 0a8c2fcc9ded..42b5481c884a 100644
+>> > --- a/fs/smb/client/sess.c
+>> > +++ b/fs/smb/client/sess.c
+>> > @@ -264,13 +264,16 @@ int cifs_try_adding_channels(struct cifs_ses *se=
+s)
+>> >       return new_chan_count - old_chan_count;
+>> >  }
+>> >
+>> > -/*
+>> > - * called when multichannel is disabled by the server.
+>> > - * this always gets called from smb2_reconnect
+>> > - * and cannot get called in parallel threads.
+>> > +/**
+>> > + * cifs_decrease_secondary_channels - Reduce the number of active sec=
+ondary channels
+>> > + * @ses: pointer to the CIFS session structure
+>> > + * @from_reconfigure: if true, only reduce to chan_max; if false, red=
+uce to a single channel
+>> > + *
+>> > + * This function disables and cleans up extra secondary channels for =
+a CIFS session.
+>> > + * If called during reconfiguration, it reduces the channel count to =
+the new maximum (chan_max).
+>> > + * Otherwise, it disables all but the primary channel.
+>> >   */
+>> > -void
+>> > -cifs_disable_secondary_channels(struct cifs_ses *ses)
+>> > +void cifs_decrease_secondary_channels(struct cifs_ses *ses, bool from=
+_reconfigure)
+>> >  {
+>>
+>> Maybe you could get rid of from_reconfigure parameter if you just set
+>> chan_max to 1 before calling cifs_decrease_secondary_channels when this
+>> function is not called from smb3_reconfigure. What do you think?
 >
-> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+>chan_max today is set based on "max_channels" mount option that the user s=
+ets.
+>I don't think we should be modifying that value. Unless we change it's
+>meaning today. :)
 >
-> ---
+>>
+>> >       int i, chan_count;
+>> >       struct TCP_Server_Info *server;
+>> > @@ -281,12 +284,13 @@ cifs_disable_secondary_channels(struct cifs_ses =
+*ses)
+>> >       if (chan_count =3D=3D 1)
+>> >               goto done;
+>> >
+>> > -     ses->chan_count =3D 1;
+>> > -
+>> > -     /* for all secondary channels reset the need reconnect bit */
+>> > -     ses->chans_need_reconnect &=3D 1;
+>> > +     // Update the chan_count to the new maximum
+>> > +     if (from_reconfigure)
+>> > +             ses->chan_count =3D ses->chan_max;
+>> > +     else
+>> > +             ses->chan_count =3D 1;
+>> >
+>> > -     for (i =3D 1; i < chan_count; i++) {
+>> > +     for (i =3D ses->chan_max ; i < chan_count; i++) {
+>> >               iface =3D ses->chans[i].iface;
+>> >               server =3D ses->chans[i].server;
+>> >
+>> > @@ -318,6 +322,15 @@ cifs_disable_secondary_channels(struct cifs_ses *=
+ses)
+>> >               spin_lock(&ses->chan_lock);
+>> >       }
+>> >
+>> > +     /* For extra secondary channels, reset the need reconnect bit */
+>> > +     if (ses->chan_count =3D=3D 1) {
+>> > +             cifs_server_dbg(VFS, "server does not support multichann=
+el anymore. Disable all other channels\n");
+>> > +             ses->chans_need_reconnect &=3D 1;
+>> > +     } else {
+>> > +             cifs_server_dbg(VFS, "Disable extra secondary channels\n=
+");
+>> > +             ses->chans_need_reconnect &=3D ((1UL << ses->chan_max) -=
+ 1);
+>> > +     }
+>> > +
+>> >  done:
+>> >       spin_unlock(&ses->chan_lock);
+>> >  }
+>> > diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
+>> > index c3b9d3f6210f..bf9a8dc0e8fc 100644
+>> > --- a/fs/smb/client/smb2pdu.c
+>> > +++ b/fs/smb/client/smb2pdu.c
+>> > @@ -168,7 +168,7 @@ smb2_hdr_assemble(struct smb2_hdr *shdr, __le16 sm=
+b2_cmd,
+>> >  static int
+>> >  cifs_chan_skip_or_disable(struct cifs_ses *ses,
+>> >                         struct TCP_Server_Info *server,
+>> > -                       bool from_reconnect)
+>> > +                       bool from_reconnect, bool from_reconfigure)
+>> >  {
+>> >       struct TCP_Server_Info *pserver;
+>> >       unsigned int chan_index;
+>> > @@ -206,10 +206,49 @@ cifs_chan_skip_or_disable(struct cifs_ses *ses,
+>> >               return -EHOSTDOWN;
+>> >       }
+>> >
+>> > -     cifs_server_dbg(VFS,
+>> > -             "server does not support multichannel anymore. Disable a=
+ll other channels\n");
+>> > -     cifs_disable_secondary_channels(ses);
+>> > +     cifs_decrease_secondary_channels(ses, from_reconfigure);
+>> >
+>> > +     return 0;
+>> > +}
+>> > +
+>> > +/**
+>> > + * smb3_sync_ses_channels - Synchronize session channels
+>> > + * with new configuration (cifs_sb_info version)
+>> > + * @cifs_sb: pointer to the CIFS superblock info structure
+>> > + * Returns 0 on success or -EINVAL if scaling is already in progress.
+>> > + */
+>> > +int smb3_sync_ses_channels(struct cifs_sb_info *cifs_sb)
+>> > +{
+>> > +     struct cifs_ses *ses =3D cifs_sb_master_tcon(cifs_sb)->ses;
+>> > +     struct smb3_fs_context *ctx =3D cifs_sb->ctx;
+>> > +     bool from_reconnect =3D false;
+>> > +
+>> > +     /* Prevent concurrent scaling operations */
+>> > +     spin_lock(&ses->ses_lock);
+>> > +     if (ses->flags & CIFS_SES_FLAG_SCALE_CHANNELS) {
+>> > +             spin_unlock(&ses->ses_lock);
+>> > +             return -EINVAL;
+>> > +     }
+>> > +     ses->flags |=3D CIFS_SES_FLAG_SCALE_CHANNELS;
+>> > +     spin_unlock(&ses->ses_lock);
+>> > +
+>> > +     /*
+>> > +      * If the old max_channels is less than the new chan_max,
+>> > +      * try to add channels to reach the new maximum.
+>> > +      * Otherwise, disable or skip extra channels to match the new co=
+nfiguration.
+>> > +      */
+>> > +     if (ctx->max_channels < ses->chan_max) {
+>> > +             mutex_unlock(&ses->session_mutex);
+>> > +             cifs_try_adding_channels(ses);
+>> > +             mutex_lock(&ses->session_mutex);
+>> > +     } else {
+>>
+>> Maybe you can avoid entering any cifs_chan_skip_or_disable if
+>> ctx->max_channels =3D=3D ses->chan_max. There is a cost of holding locks
+>> inside of it.
+>>
+>> > +             cifs_chan_skip_or_disable(ses, ses->server, from_reconne=
+ct, true);
+>> > +     }
+>> > +
+>> > +     /* Clear scaling flag after operation */
+>> > +     spin_lock(&ses->ses_lock);
+>> > +     ses->flags &=3D ~CIFS_SES_FLAG_SCALE_CHANNELS;
+>> > +     spin_unlock(&ses->ses_lock);
+>> >
+>> >       return 0;
+>> >  }
+>> > @@ -356,7 +395,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tc=
+on *tcon,
+>> >       if (ses->chan_count > 1 &&
+>> >           !(server->capabilities & SMB2_GLOBAL_CAP_MULTI_CHANNEL)) {
+>> >               rc =3D cifs_chan_skip_or_disable(ses, server,
+>> > -                                            from_reconnect);
+>> > +                                            from_reconnect, false);
+>> >               if (rc) {
+>> >                       mutex_unlock(&ses->session_mutex);
+>> >                       goto out;
+>> > @@ -439,7 +478,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tc=
+on *tcon,
+>> >                        */
+>> >
+>> >                       rc =3D cifs_chan_skip_or_disable(ses, server,
+>> > -                                                    from_reconnect);
+>> > +                                                    from_reconnect, f=
+alse);
+>> >                       goto skip_add_channels;
+>> >               } else if (rc)
+>> >                       cifs_dbg(FYI, "%s: failed to query server interf=
+aces: %d\n",
+>> > @@ -1105,8 +1144,7 @@ SMB2_negotiate(const unsigned int xid,
+>> >               req->SecurityMode =3D 0;
+>> >
+>> >       req->Capabilities =3D cpu_to_le32(server->vals->req_capabilities=
+);
+>> > -     if (ses->chan_max > 1)
+>> > -             req->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP_MULTI=
+_CHANNEL);
+>> > +     req->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_CHANNEL=
+);
+>> >
+>> >       /* ClientGUID must be zero for SMB2.02 dialect */
+>> >       if (server->vals->protocol_id =3D=3D SMB20_PROT_ID)
+>> > @@ -1310,10 +1348,8 @@ int smb3_validate_negotiate(const unsigned int =
+xid, struct cifs_tcon *tcon)
+>> >       if (!pneg_inbuf)
+>> >               return -ENOMEM;
+>> >
+>> > -     pneg_inbuf->Capabilities =3D
+>> > -                     cpu_to_le32(server->vals->req_capabilities);
+>> > -     if (tcon->ses->chan_max > 1)
+>> > -             pneg_inbuf->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CA=
+P_MULTI_CHANNEL);
+>> > +     pneg_inbuf->Capabilities =3D cpu_to_le32(server->vals->req_capab=
+ilities);
+>> > +     pneg_inbuf->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_=
+CHANNEL);
+>> >
+>> >       memcpy(pneg_inbuf->Guid, server->client_guid,
+>> >                                       SMB2_CLIENT_GUID_SIZE);
+>> > diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
+>> > index 3c09a58dfd07..d3f63a4ef426 100644
+>> > --- a/fs/smb/client/smb2pdu.h
+>> > +++ b/fs/smb/client/smb2pdu.h
+>> > @@ -420,6 +420,8 @@ struct smb2_create_ea_ctx {
+>> >       struct smb2_file_full_ea_info ea;
+>> >  } __packed;
+>> >
+>> > +int smb3_sync_ses_channels(struct cifs_sb_info *cifs_sb);
+>> > +
+>> >  #define SMB2_WSL_XATTR_UID           "$LXUID"
+>> >  #define SMB2_WSL_XATTR_GID           "$LXGID"
+>> >  #define SMB2_WSL_XATTR_MODE          "$LXMOD"
+>>
+>> I also agree with Enzo that we could have an update_channels that
+>> centralizes the logic of rescaling channels, but that could also come in
+>> another patch as Steve suggested.
+>Ack. We'll review that.
 >
-> Changes for v2:
+>>
+>> --
+>> Henrique
+>> SUSE Labs
+>>
 >
->  - Renamed GspMemOjbects to Gsp as that is what they are
->  - Rebased on Alex's latest series
-> ---
->  drivers/gpu/nova-core/gpu.rs                  |  2 +-
->  drivers/gpu/nova-core/gsp.rs                  | 80 +++++++++++++++++--
->  drivers/gpu/nova-core/gsp/fw.rs               | 39 +++++++++
->  .../gpu/nova-core/gsp/fw/r570_144/bindings.rs | 19 +++++
->  4 files changed, 131 insertions(+), 9 deletions(-)
+>Thank you for reviewing.
 >
-> diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
-> index 5da9ad726483..c939b3868271 100644
-> --- a/drivers/gpu/nova-core/gpu.rs
-> +++ b/drivers/gpu/nova-core/gpu.rs
-> @@ -221,7 +221,7 @@ pub(crate) fn new<'a>(
-> =20
->              sec2_falcon: Falcon::new(pdev.as_ref(), spec.chipset, bar, t=
-rue)?,
-> =20
-> -            gsp <- Gsp::new(),
-> +            gsp <- Gsp::new(pdev)?,
-> =20
->              _: { gsp.boot(pdev, bar, spec.chipset, gsp_falcon, sec2_falc=
-on)? },
-> =20
-> diff --git a/drivers/gpu/nova-core/gsp.rs b/drivers/gpu/nova-core/gsp.rs
-> index 503ce8ee0420..0185f66971ff 100644
-> --- a/drivers/gpu/nova-core/gsp.rs
-> +++ b/drivers/gpu/nova-core/gsp.rs
-> @@ -1,27 +1,91 @@
->  // SPDX-License-Identifier: GPL-2.0
-> =20
->  mod boot;
-> -
-> -use kernel::prelude::*;
-> -
-
-Oops, not sure why I put that here but thanks for fixing this.
-
->  mod fw;
-> =20
->  pub(crate) use fw::{GspFwWprMeta, LibosParams};
-> =20
-> +use kernel::device;
-> +use kernel::dma::CoherentAllocation;
-> +use kernel::dma_write;
-> +use kernel::pci;
-> +use kernel::prelude::*;
->  use kernel::ptr::Alignment;
-> +use kernel::transmute::{AsBytes, FromBytes};
-> +
-> +use fw::LibosMemoryRegionInitArgument;
-> =20
->  pub(crate) const GSP_PAGE_SHIFT: usize =3D 12;
->  pub(crate) const GSP_PAGE_SIZE: usize =3D 1 << GSP_PAGE_SHIFT;
->  pub(crate) const GSP_HEAP_ALIGNMENT: Alignment =3D Alignment::new::<{ 1 =
-<< 20 }>();
-> =20
->  /// GSP runtime data.
-> -///
-> -/// This is an empty pinned placeholder for now.
->  #[pin_data]
-> -pub(crate) struct Gsp {}
-> +pub(crate) struct Gsp {
-> +    libos: CoherentAllocation<LibosMemoryRegionInitArgument>,
-> +    pub loginit: CoherentAllocation<u8>,
-> +    pub logintr: CoherentAllocation<u8>,
-> +    pub logrm: CoherentAllocation<u8>,
-
-These don't need to be public for now.
-
-> +}
-> +
-> +/// Creates a self-mapping page table for `obj` at its beginning.
-> +fn create_pte_array(obj: &mut CoherentAllocation<u8>) {
-> +    let num_pages =3D obj.size().div_ceil(GSP_PAGE_SIZE);
-> +    let handle =3D obj.dma_handle();
-> +
-> +    // SAFETY:
-> +    //  - By the invariants of the CoherentAllocation ptr is non-NULL.
-> +    //  - CoherentAllocation CPU addresses are always aligned to a
-> +    //    page-boundary, satisfying the alignment requirements for
-> +    //    from_raw_parts_mut()
-> +    //  - The allocation size is at least as long as 8 * num_pages as
-> +    //    GSP_PAGE_SIZE is larger than 8 bytes.
-> +    let ptes =3D unsafe {
-> +        let ptr =3D obj.start_ptr_mut().cast::<u64>().add(1);
-> +        core::slice::from_raw_parts_mut(ptr, num_pages)
-> +    };
-
-I think we also need to provide the same guarantees as
-`CoherentAllocation::as_slice_mut`:=20
-
-* Callers must ensure that the device does not read/write to/from memory
-  while the returned slice is live.
-* Callers must ensure that this call does not race with a read or write
-  to the same region while the returned slice is live.
-
-Unfortunately I don't think these are covered by this function alone -
-it could perfectly be called on an allocation that is currently in use
-by the hardware. So technically `create_pte_arrays` in its present form
-should be unsafe, but that also would be overkill here since it is a
-local function and we control the conditions into which it is called.
-
-This PTE business, where we are taking any coherent allocation and
-reinterpreting its bytes to create a page table, does not look very
-clean to me anyway, so maybe we can solve this with a redesign. I'd
-rather have that part of the object explicitly laid out, as it is for
-`GspMem` later in this series (albeit with `u8` instead of `u64`):
-
-    struct GspMem {
-        ptes: [u8; GSP_PAGE_SIZE],
-        ...
-
-What would work best here IMHO would be to have a dedicated type for the
-array of PTEs, which is placed at the beginning of each object
-requesting one. Then we could have an init generic method for it that
-takes a reference to any object and `dma_write!`s its entries, avoiding
-the slice and having a guarantee that we have exclusive access to the
-object since we just created it one line above. I need to think a bit
-more about this but this should be a solid basis.
-
-As it happens, loginit, logintr and logrm all have the same size, so we
-should be able to declare a new type for these 3.
-
-> +
-> +    for (i, pte) in ptes.iter_mut().enumerate() {
-> +        *pte =3D handle + ((i as u64) << GSP_PAGE_SHIFT);
-> +    }
-> +}
-> +
-> +/// Creates a new `CoherentAllocation<A>` with `name` of `size` elements=
-, and
-> +/// register it into the `libos` object at argument position `libos_arg_=
-nr`.
-> +fn create_coherent_dma_object<A: AsBytes + FromBytes>(
-> +    dev: &device::Device<device::Bound>,
-> +    name: &'static str,
-> +    size: usize,
-> +    libos: &mut CoherentAllocation<LibosMemoryRegionInitArgument>,
-> +    libos_arg_nr: usize,
-> +) -> Result<CoherentAllocation<A>> {
-> +    let obj =3D CoherentAllocation::<A>::alloc_coherent(dev, size, GFP_K=
-ERNEL | __GFP_ZERO)?;
-> +
-> +    dma_write!(libos[libos_arg_nr] =3D LibosMemoryRegionInitArgument::ne=
-w(name, &obj))?;
-
-Once we have a dedicated type for DMA objects with PTEs, I suggest to
-move this `dma_write` outside of this function. It doesn't bring any
-value to have it here, and that way we can remove
-`create_coherent_dma_object` altogether. Let me clarify below.
-
-> +
-> +    Ok(obj)
-> +}
-> =20
->  impl Gsp {
-> -    pub(crate) fn new() -> impl PinInit<Self> {
-> -        pin_init!(Self {})
-> +    pub(crate) fn new(pdev: &pci::Device<device::Bound>) -> Result<impl =
-PinInit<Self, Error>> {
-> +        let dev =3D pdev.as_ref();
-> +        let mut libos =3D CoherentAllocation::<LibosMemoryRegionInitArgu=
-ment>::alloc_coherent(
-> +            dev,
-> +            GSP_PAGE_SIZE / size_of::<LibosMemoryRegionInitArgument>(),
-> +            GFP_KERNEL | __GFP_ZERO,
-> +        )?;
-> +        let mut loginit =3D create_coherent_dma_object::<u8>(dev, "LOGIN=
-IT", 0x10000, &mut libos, 0)?;
-> +        create_pte_array(&mut loginit);
-> +        let mut logintr =3D create_coherent_dma_object::<u8>(dev, "LOGIN=
-TR", 0x10000, &mut libos, 1)?;
-> +        create_pte_array(&mut logintr);
-> +        let mut logrm =3D create_coherent_dma_object::<u8>(dev, "LOGRM",=
- 0x10000, &mut libos, 2)?;
-> +        create_pte_array(&mut logrm);
-
-So with the proper PTE-prefixed type, this code would become:
-
-    let loginit =3D PteDmaObject::new(dev)?;
-    let logintr =3D PteDmaObject::new(dev)?;
-    let logrm =3D PteDmaObject::new(dev)?;
-
-    dma_write!(libos[0] =3D LibosMemoryRegionInitArgument::new("LOGINIT", &=
-loginit))?;
-    dma_write!(libos[1] =3D LibosMemoryRegionInitArgument::new("LOGINTR", &=
-logintr))?;
-    dma_write!(libos[2] =3D LibosMemoryRegionInitArgument::new("LOGRM", &lo=
-grm))?;
-
-Note how loginit and friends now don't need to be mutable anymore.
-
-It's getting late here so let me continue the review tomorrow. :)
+>--=20
+>Regards,
+>Shyam
+>
 
