@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-829561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B07B9757E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:30:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9C4B97581
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BD4A1891594
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:30:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BA681B211A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0758305054;
-	Tue, 23 Sep 2025 19:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06693054F8;
+	Tue, 23 Sep 2025 19:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ctc9sJDq"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AgA28qNB"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF892E7F27
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860873043B7
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758655786; cv=none; b=CLk2hw/k4qi7ZV09gK/d/tXGQn9/bQiIwj0XKURbukAol3pZLHSaXBLgrlhuTdgb6ChOkFLOaaX7jQkFHuYqrqyGY22HohEkzNMrSlhrCr8UWBIRv2aJ5XaDdKZ9iM42y1Aeb8Y8zBoyuUeBnKEW/oeasK6sEWp/BwDyoQfG8Jg=
+	t=1758655787; cv=none; b=LA3pJV8gm/pZ/8dE/R8CpbeZjPQmiqeVhaUMicMzxK+oXlO7nO4UyNFnPyyfwc9yYRYZjgsUG68a1Y9mAtEKFyBDUXtTd626EDtOga+V/o0nm9lrElD6Vtuweu/GDWQEd1m2X9x+DZFWjGCNHwVvr3CPSlv7LJdtmk52+tIUkI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758655786; c=relaxed/simple;
-	bh=bNPIQa1hzSUEp21UxvqcCD/DXZb5BW2TnmlqseXqEIk=;
+	s=arc-20240116; t=1758655787; c=relaxed/simple;
+	bh=fP3thc+kVifTosgn3z97ZGSIOh9Iu49HneFiVEHzD6I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HRh8nCH/iFL8ak7VeyLexjNITyInxcPUE0OQSSxU2/T88eYGlmDHpFBz1joIgclx4c1s97l7DF/J2CTimlhogS2q5Z7rXluosbmqFu1v7gfL4jFiBOChTcMoHnLJMGaahEuC/3b/809QrLoB+rjIFsl38ZjZJOR355vzfRINjwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ctc9sJDq; arc=none smtp.client-ip=209.85.218.50
+	 MIME-Version; b=Wmkf9FqCbptJQNwOV3VVOQCiJCp7uKJ+lO2iGH5whWeSnx03Mwot5GrzpAp367Fi/aSC/3PcwzUNf7AcFGVf606igJUPromma72vIUb/MSViCZz9Q6pXvjEm+GsrZ2mKak+gQ+ksheHXVLvnBKchLj8HrjuP+TC5kxBr2mH4bUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AgA28qNB; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b0b6bf0097aso1084181566b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:29:44 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b2e66a2fb63so360108766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:29:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758655783; x=1759260583; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758655784; x=1759260584; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CvvR3TD1/hZKig5BdYwMjCQxtKWaPvP8LVDupYgSUE4=;
-        b=Ctc9sJDqwo8AQm2YQNJq3lrL3mgGpYCtgSAb6KnN6fjA7GCiCeUiGb4xJghtJUT8/P
-         CteZmkXX+lwZgcYtFIbzyCb1MB77uaB1o9mtMMX8ZX15pOJ8ecQGE+D8ikbTxRI1eVDw
-         VMMgmbzxQpGu9z4chiII8xj6bVouRypev0ePBoJN5DycEnqNoClHNoFcwIbN5tb6rpd2
-         jS7BRpJXB8vc8P3yfNNaZ4iuE2j5h0JnWuWdxf3ZiZ9UHQvd6uQUmr+MSXxamMoAUJaC
-         83wT7J2qVken2nrKdgUCpaYZoLnEfmqSz+k+5g2ZOFB0dvcQThAM2YPNuxD159DJA5wD
-         YnSQ==
+        bh=48AS41XIpjVoRU+0wgpEbU66QCbFruFApgvY2hxBZiI=;
+        b=AgA28qNBm3mHAQUw75KGYGhZe0eQ6vdW0+tECAWXr+Tf0leXkJKeiNAVryiI8NIamr
+         NWeSX3twMNWOfMiUvT8pTLRG2U3awMse+oX1+ts9etCEMalkyx0JDgt9+iSGzjX1fHBJ
+         Y3mNgRAyjwAyf73zhcBN0ZUlq7sXKITktKwdGP7sg4usiMW70UOAEL//o6Kqp7poPDbV
+         q/qn2RxfRIlBRRwPxleZokLE6x7hV2gycV7UKQTfbbZfjasE7rO3e113uYVGv5UhasnI
+         KEqw1G1odywluMM9h/EGgMJuBsFCmyBU8MHJ2czZMytixgXvTfbk33FKfIEOnkS2IUuy
+         Mv5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758655783; x=1759260583;
+        d=1e100.net; s=20230601; t=1758655784; x=1759260584;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CvvR3TD1/hZKig5BdYwMjCQxtKWaPvP8LVDupYgSUE4=;
-        b=Qfg9IqssUf0XaKiyfYt4d+SN4o/f6Ah2P3I3LjZaSFc7B9fzCaGvN3EfdY2U77IW4K
-         6BXql0xZ94y7O8bjU/YfXGulZhlCqdN+CIrpn/7mULnx9phFZWD+OrhELMm99mip4ZlO
-         HqDULRIoiZeaL/hY0qVcNf1TLdjev/0U1fqno0BSdEEnsUOAbh9Ndoi0glcVb6dMI1Eg
-         WZVJxXCsSzkUERr7Xl0D+MsOLLaJRBjKhvdQbm9Bx9nNsvXT0N+Pl+MateX+ItmT8RZ0
-         JI9msVhWNH7cmmzL3XoXiZLaCsMZ5eAgQzny3tp0IfPF3nSwASzI96YLUloicuAqHwaK
-         TmcA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEBoBU6bL+7efnK31T6strT0528/G6y9GX7jFhlFZeLpEv8LnWixGm0ID/mR+SQ8V6reZM2zSmVI34FDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEFHDL+xHSbXzE/+Dbbg0KlLnh4FhZmbOsw5uREZDfxCijfmdF
-	6MfIzvKMiXc+gy4vwBq2QSlAyY7ZhoRxj0Y//7y15P9oAa3ksKDHUTyn
-X-Gm-Gg: ASbGncszyj8gbGjEF0b/CQVcy9jVwgt0VyGt13l6JumpBBMj090yJqnxXvvmn25Hv1j
-	I+S1d8ulbHpxdagHZDiGDCGGW4FEpVmMfcv7H5quTcUYVTCgXZhjL2mDskcqCv21dB+K3cGSMdu
-	gp9d5QRhbwA1xV0A/iK28IKbFQkfiGfKeS45XO9zSG3DjNdqr5J5vy5hpB+sm8Yea0hvqqjesaP
-	DKwSKw8HfIJaGUAOPOUkbFkK08Wt0Fx02f1rwKKqi0QBuJzD9hFUA3kAz8RahhM3icF3KJnUe6H
-	x4vDvbxHRNFZvaCVvBuP6t9Mmh6NctRrXEAOESd0U5HA/dQFQUqADQCwvOHoG7ov3TlqdTRXWm1
-	TeLLoTOhWpQxDu1vFDTOgXb0O8b5ytM+4h0gyctSXz4U=
-X-Google-Smtp-Source: AGHT+IEI1qY18abvzA/F7kn9QvR+PwKMk7ak3Dt4UcaNlDekyOebnd5iqa0LFl9nA8m6jghAwB8cpA==
-X-Received: by 2002:a17:907:7f8b:b0:b28:f64f:2fd3 with SMTP id a640c23a62f3a-b302a17b9e9mr306236866b.35.1758655782832;
-        Tue, 23 Sep 2025 12:29:42 -0700 (PDT)
+        bh=48AS41XIpjVoRU+0wgpEbU66QCbFruFApgvY2hxBZiI=;
+        b=gvFEpslaqSlwQuCkHkTdSzXRg7V8l3Xa5fGQsDz7sgc49HQLhYrhlvw+r04a4DLXgR
+         bZT+Pp7ST9xN6VWXvfpI6/FQ5yUpgl1ooIQKEdQQMZRMBN/5WGeT3ESFZI+VNavu8IJL
+         YhOg6BDPGl5Y3b1IxZD2oy6prw7TyfxtvDZCZ3SiofdRDa7rBGxNYeACoEERRrkUBPMi
+         aqV8eXMRb77xdvOCc8NV8Af8Q/JeNmFdoMcUaGUlY3NbX+l6hGsdy7iexbe2IDZIgXRA
+         OuOIP85AvYFnZAvr2GZF7w8lo5P5NepjrWj3gKjxx4Fhz0nHYafYnU5BNvmaKfUhjPO9
+         OVZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpTBPJnYPQT1d/9yUaG3XAtlGEo01h7dzSiX1Y9dQ2rigCfjm8ydgASzJsxiZpKC0OXtoh30M/kmkU+wQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ8eGm0oT5i1sM9jxzAGBl2SZr9bYb2keyG/w0qDGz579hexGu
+	9cBNY2DId6nsAc0EY3fdsN7g2HBBqFrC7YunxNJuq+B6j6ci6ElTfF1Y
+X-Gm-Gg: ASbGncvspvDOs2L/LUwe+JHw4moOqELN6ZRABj12CA74NT2/9bjkvnIk8QCN2oIXn7X
+	7BTX9hTiPiQro3vo2Yg0Q036jfSsVOyFLvVjZsUnlmrYaQL5N/pp9FPq4O1xV1y1yIMwERcnFfb
+	ZRWSqaWXsdbIn7uA9gdgiZNplQVFDbSpjfZMmHh8AQukK0dQHPUWxV/VmGc8J1ftfaTrTQFfvvI
+	NBDhEX+A+FJgG8JTUnv/hNmlh1UFhRw6h4dZVvOZIGAXQp1M1jcwYkiQ5CrM1kE1TAjFJYI5TcY
+	oeBPH0pF97qiv2gmaP/4+MxYVw3zu7KLaQ9c7fJLCmLOBPsoUxy6Knc9weMMTDBFcooRAd15lYa
+	BP00dIF/X3X4aNetkiXATQNWlsJ4DH520L2p2vR+ySQw=
+X-Google-Smtp-Source: AGHT+IEJi5n4B3lRbxv0Dhubtahif4aO7G+ZtrfSFN8eZ2s95Bk6Owhctf2Hc2F2YFNV0l1GWudmIA==
+X-Received: by 2002:a17:907:3fa8:b0:b04:563f:e120 with SMTP id a640c23a62f3a-b302bd15aa4mr365987166b.53.1758655783835;
+        Tue, 23 Sep 2025 12:29:43 -0700 (PDT)
 Received: from puma.museclub.art ([2a00:6020:b3ea:9c00:26e7:b56a:5a2d:1d72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fd271f895sm1370710466b.97.2025.09.23.12.29.42
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fd271f895sm1370710466b.97.2025.09.23.12.29.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 12:29:42 -0700 (PDT)
+        Tue, 23 Sep 2025 12:29:43 -0700 (PDT)
 From: Eugene Shalygin <eugene.shalygin@gmail.com>
 To: eugene.shalygin@gmail.com
 Cc: Ben Copeland <ben.copeland@linaro.org>,
@@ -80,9 +80,9 @@ Cc: Ben Copeland <ben.copeland@linaro.org>,
 	linux-hwmon@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] hwmon: (asus-ec-sensors) add ROG STRIX X870E-E GAMING WIFI
-Date: Tue, 23 Sep 2025 21:26:55 +0200
-Message-ID: <20250923192935.11339-2-eugene.shalygin@gmail.com>
+Subject: [PATCH 2/2] hwmon: (asus-ec-sensors) increase timeout for locking ACPI mutex
+Date: Tue, 23 Sep 2025 21:26:56 +0200
+Message-ID: <20250923192935.11339-3-eugene.shalygin@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250923192935.11339-1-eugene.shalygin@gmail.com>
 References: <20250923192935.11339-1-eugene.shalygin@gmail.com>
@@ -96,58 +96,29 @@ Content-Transfer-Encoding: 8bit
 
 From: Ben Copeland <ben.copeland@linaro.org>
 
-Add support for ROG STRIX X870E-E GAMING WIFI
-
-This board uses the same sensor configuration as the
-ProArt X870E-CREATOR WIFI motherboard.
+Some motherboards require more time to acquire the ACPI mutex,
+causing "Failed to acquire mutex" messages to appear in the kernel log.
+Increase the timeout from 500ms to 800ms to accommodate these cases.
 
 Signed-off-by: Ben Copeland <ben.copeland@linaro.org>
 Signed-off-by: Eugene Shalygin <eugene.shalygin@gmail.com>
 ---
- Documentation/hwmon/asus_ec_sensors.rst |  1 +
- drivers/hwmon/asus-ec-sensors.c         | 10 ++++++++++
- 2 files changed, 11 insertions(+)
+ drivers/hwmon/asus-ec-sensors.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/hwmon/asus_ec_sensors.rst b/Documentation/hwmon/asus_ec_sensors.rst
-index 4a99b65338bf..a5a58c00c322 100644
---- a/Documentation/hwmon/asus_ec_sensors.rst
-+++ b/Documentation/hwmon/asus_ec_sensors.rst
-@@ -36,6 +36,7 @@ Supported boards:
-  * ROG STRIX X670E-E GAMING WIFI
-  * ROG STRIX X670E-I GAMING WIFI
-  * ROG STRIX X870-I GAMING WIFI
-+ * ROG STRIX X870E-E GAMING WIFI
-  * ROG STRIX Z390-F GAMING
-  * ROG STRIX Z490-F GAMING
-  * ROG STRIX Z690-A GAMING WIFI D4
 diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
-index dff13132847c..ce3ea0333fd9 100644
+index ce3ea0333fd9..34a8f6b834c9 100644
 --- a/drivers/hwmon/asus-ec-sensors.c
 +++ b/drivers/hwmon/asus-ec-sensors.c
-@@ -635,6 +635,14 @@ static const struct ec_board_info board_info_strix_x870_i_gaming_wifi = {
- 	.family = family_amd_800_series,
- };
+@@ -49,7 +49,7 @@ static char *mutex_path_override;
+  */
+ #define ASUS_EC_MAX_BANK	3
  
-+static const struct ec_board_info board_info_strix_x870e_e_gaming_wifi = {
-+	.sensors = SENSOR_TEMP_CPU | SENSOR_TEMP_CPU_PACKAGE |
-+		SENSOR_TEMP_MB | SENSOR_TEMP_VRM |
-+		SENSOR_FAN_CPU_OPT,
-+	.mutex_path = ASUS_HW_ACCESS_MUTEX_SB_PCI0_SBRG_SIO1_MUT0,
-+	.family = family_amd_800_series,
-+};
-+
- static const struct ec_board_info board_info_strix_z390_f_gaming = {
- 	.sensors = SENSOR_TEMP_CHIPSET | SENSOR_TEMP_VRM |
- 		SENSOR_TEMP_T_SENSOR |
-@@ -777,6 +785,8 @@ static const struct dmi_system_id dmi_table[] = {
- 					&board_info_strix_x670e_i_gaming_wifi),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX X870-I GAMING WIFI",
- 					&board_info_strix_x870_i_gaming_wifi),
-+	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX X870E-E GAMING WIFI",
-+					&board_info_strix_x870e_e_gaming_wifi),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX Z390-F GAMING",
- 					&board_info_strix_z390_f_gaming),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX Z490-F GAMING",
+-#define ACPI_LOCK_DELAY_MS	500
++#define ACPI_LOCK_DELAY_MS	800
+ 
+ /* ACPI mutex for locking access to the EC for the firmware */
+ #define ASUS_HW_ACCESS_MUTEX_ASMX	"\\AMW0.ASMX"
 -- 
 2.51.0
 
