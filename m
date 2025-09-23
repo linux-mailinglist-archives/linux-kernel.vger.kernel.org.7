@@ -1,96 +1,68 @@
-Return-Path: <linux-kernel+bounces-829032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53582B961E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:01:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC90B96221
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0EF024E2E9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:01:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7378119C2B1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECD21FAC4B;
-	Tue, 23 Sep 2025 14:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE59623D7ED;
+	Tue, 23 Sep 2025 14:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YuNG8HXR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZSih8M4O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED4B34BA36
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1052E221555;
+	Tue, 23 Sep 2025 14:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758636069; cv=none; b=oX0qD6TQLE1YS4UutBXgrfdrKzfHtIaqDLckwXeme84Q+aNAONesQO0gLxGpPZreQZYYtM68uoHxGZB252IAikmhRnwvFEKIRR8lZZde7LLmDyDEdswVXPD8hUaEZz2upiIKUYrd0I//dbYxqWQJPWJBqXPDWNdGutNOo1wh5ec=
+	t=1758636171; cv=none; b=Y2naCPQ2R4N1qsepnkz6qJZKJUjfvW4rFGVF/s4ATutfsTUYqOrRSnzTZRTCqWYrUVEqdSsdo6lwQ2ZTkg4cbtYI0qeje/SU2EephOkdBbNsUb8VSFWraYi+Em7i2+0FzjqYn+UpC6UtLFBEqfV6hBE2GH25SSmC6j4Hi+Ga8LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758636069; c=relaxed/simple;
-	bh=nb2IBQ5wTq0D5BxCpXD4CA8iasEixpkGBsX33b/sPRs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sgm3IbxKRGat9c41VARy/U9VRFdfeNs0oFqZ9ROihQ1FPl3q1dA5KyqNznG8/un+iRR5oJ0axXSDQKg7USwxEwbttOW95jTp3gaMYio6zK0AneI5k78S+cHELX3lf7yY6jHVkQBggrjiMxcneV/UXRuL2KZA4ekDlnXSiw39Odk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YuNG8HXR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758636066;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=r9zfyxkmjCESQ8duOa/Grq2TL8+r2DC084netIbpbPA=;
-	b=YuNG8HXRa98iIepGtGZDylj7kN4jEqS3m6hQetDUYOncQS/OseM0otOMmdeYd8jJAbLRuC
-	hsFlKlyx+5cpY0WkQSJ5azOUU4wCPiegMAAzY3U7iEBPSknrGARHR/RxpXQ+eWe9PMLdtd
-	xIs4utqA56EhxJcdtrKvTvkAstnEBpI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-274-kCPMfpzlN0ufvLtXTLA9uw-1; Tue, 23 Sep 2025 10:01:05 -0400
-X-MC-Unique: kCPMfpzlN0ufvLtXTLA9uw-1
-X-Mimecast-MFC-AGG-ID: kCPMfpzlN0ufvLtXTLA9uw_1758636064
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45e05ff0b36so11389385e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:01:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758636064; x=1759240864;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r9zfyxkmjCESQ8duOa/Grq2TL8+r2DC084netIbpbPA=;
-        b=m7mDH8tELaV55wEEqZk4X0LFIgK+zrNPeblHk1dpaLzrTiBwlISeNCiaAhP/dXEGDZ
-         VMuLp/XN600cD4SPTgikx3mmeaGxEVg24CjEdxZFNesfWyQruyrJr2EZgOubgVs7jHkU
-         38xZpJtgYFKzZpkxsopkkaK9kKbdLCQjc+HmgEf/68gbG9K+7sZUORXM1Or0cCvRFDg4
-         /L+g7kPeulXC4mViQdGThUlXdhDdrkDflqTMpIs0gpbLmJjIySAelSBf8C3ardO7FexY
-         +gkOei17VuwDScYxxmey7op8uVUDRbuzIQxKtsw5vBJeAFf6nOE6Ru2J5v0wdknrmwBw
-         6IiQ==
-X-Gm-Message-State: AOJu0Yw0W0sgFgQYT2LKy6+dtpYnS7y0yFzDfXHYROXjwAdYc4Gd3TeV
-	rteNV93XAfZ5w2ZZWzq/Onp0Pn8EhI7G6u9mTv6m7c7L2LMlTdDpx/UoqkgHHc1OSOxHxlAIWMK
-	+5JCDGsDi1WhybGwEkODjScRQuFQOJF5rurRPZHWDFJ0pvQBafHm2ldD3JMTA1rGh7cPZYCjD7o
-	v/HKuRQuA5HVeoZNMG+zUI5sRaYWZAgX3074+Xeugx5r7YmtkA
-X-Gm-Gg: ASbGnctEqrsy0M5xUXsbckLOuNM4LxxMoIF+7QYQ9vJKlkcGgw2YiwvxsaWexZb+5jF
-	SKjHnJMbrXYgKDw0z8NKsd6n5zQzdQ2pTCui9c+bxO2+zHypWh0M1vutjNBK1GtzDa2WugenUsa
-	EEmFVQw6caIpIH1YKUEibipyD6hP/6k1ZdCkWxITdvwqqMzUOA1RTlw21OB2FjRMvrt26n4OJdy
-	u7vIBhIDYMk7YvVUICILnzwjCsSLr/EPwH8dsbNI/zQ84igqoWv65EfRd+G41DP+yzhtprdq1E8
-	Ng8JpQI3CaN4gl3QgnaHqr9/CCOUrG1etsaFdLyaJfjjkbAZXkpevCQBLX3qFTAU0Ws=
-X-Received: by 2002:a05:600c:4fcf:b0:46d:1a9b:6d35 with SMTP id 5b1f17b1804b1-46e1e167fa7mr27764805e9.14.1758636062567;
-        Tue, 23 Sep 2025 07:01:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEzy72VmsUr7RNP34u9SB8i9Mn1d2HLUqmTAVbvDGWXn8O1Qe3RSKx5Tt/IQ9sqOIviJ/KYJA==
-X-Received: by 2002:a05:600c:4fcf:b0:46d:1a9b:6d35 with SMTP id 5b1f17b1804b1-46e1e167fa7mr27762765e9.14.1758636060590;
-        Tue, 23 Sep 2025 07:01:00 -0700 (PDT)
-Received: from localhost (p4ff1fd57.dip0.t-ipconnect.de. [79.241.253.87])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e23adce1bsm17786785e9.24.2025.09.23.07.00.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Sep 2025 07:01:00 -0700 (PDT)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>
-Subject: [PATCH v1] mm: convert folio_page() back to a macro
-Date: Tue, 23 Sep 2025 16:00:58 +0200
-Message-ID: <20250923140058.2020023-1-david@redhat.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758636171; c=relaxed/simple;
+	bh=Bdab41UPVGCNYNXeNsvpKwijaIhSb6VqLy0ymP3WGVo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qOYb7Qyu2yomP8uz7cKv+zt0DFyUTi1zC9akuewBDPWdFZlCacZzTUk8qhXdyllz/V8rIxJGg+Vv/VhagLZdvHwCAYEt1gHDneU37A4zSM5rGvbipCmTbmS8PE32C5GuC7yTz15n5FJsEMdMcPjx7o4JOA5kvLdkn+M0wRhN3Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZSih8M4O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 738F5C116D0;
+	Tue, 23 Sep 2025 14:02:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758636170;
+	bh=Bdab41UPVGCNYNXeNsvpKwijaIhSb6VqLy0ymP3WGVo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZSih8M4O23EyUehproFaHkLhOvx3ZozQSLHdN5XkFKixHU7vmzVbtnynwCiTQBZZu
+	 Wzdr8L5iUviZG2yqgLdV+qBldayuPioFtn2T4dDGHnjeCnC3HIvyEiLz9B+QxuRuEX
+	 hat+0hQYIYzud0uYC6XRE1ML1r2CaES8R6pYT/FrlTWEJcKs46ZsqqZj1MwW0zHkLt
+	 5vxvn+rJQsA/LreTtRmGbCRSQ66hRVlmIB1Syju8h1EcIgiIJ7K2x7iK+R7Hqum9B7
+	 3P0m3kNwyyNdoIgSzuwFbCcVMPmlO7ZvYB3K35vNMPDtQLESmFPp0ChfSfBP5siJiF
+	 u4YzPsfJszNhQ==
+Received: by wens.tw (Postfix, from userid 1000)
+	id 026905FC52; Tue, 23 Sep 2025 22:02:47 +0800 (CST)
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej@kernel.org>,
+	Samuel Holland <samuel@sholland.org>
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH net-next v7 0/6] net: stmmac: Add support for Allwinner A523 GMAC200
+Date: Tue, 23 Sep 2025 22:02:40 +0800
+Message-ID: <20250923140247.2622602-1-wens@kernel.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,47 +71,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In commit 73b3294b1152 ("mm: simplify folio_page() and folio_page_idx()")
-we converted folio_page() into a static inline function. However
-briefly afterwards in commit a847b17009ec ("mm: constify highmem related
-functions for improved const-correctness") we had to add some nasty
-const-away casting to make the compiler happy when checking const
-correctness.
+From: Chen-Yu Tsai <wens@csie.org>
 
-So let's just convert it back to a simple macro so the compiler can
-check const correctness properly. There is the alternative of
-using a _Generic() similar to page_folio(), but there is not a lot of
-benefit compared to just using a simple macro.
+Hi everyone,
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Mike Rapoport <rppt@kernel.org>
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- include/linux/page-flags.h | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+This is v7 of my Allwinner A523 GMAC200 support series. This is based on
+next-20250922.
 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 568011930e358..48e27768e7ba9 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -316,10 +316,7 @@ static __always_inline unsigned long _compound_head(const struct page *page)
-  * check that the page number lies within @folio; the caller is presumed
-  * to have a reference to the page.
-  */
--static inline struct page *folio_page(const struct folio *folio, unsigned long n)
--{
--	return (struct page *)(&folio->page + n);
--}
-+#define folio_page(folio, n)	(&(folio)->page + (n))
- 
- static __always_inline int PageTail(const struct page *page)
- {
+Changes since v6:
+- Collected acks for DT binding patch
+- Rebased onto next-20250922
+
+Changes since v5:
+- Use plat->phy_interface instead of plat->mac_interface (Russell)
+- Link to v5
+  https://lore.kernel.org/all/20250911174032.3147192-1-wens@kernel.org/
+
+Changes since v4:
+- Moved clock-names list to main schema in DT binding (Rob)
+- Dropped 4 patches that are already merged
+- Link to v4
+  https://lore.kernel.org/all/20250908181059.1785605-1-wens@kernel.org/
+
+Changes since v3:
+- driver
+  - Fixed printf format specifier warning
+- Link to v3
+  https://lore.kernel.org/all/20250906041333.642483-1-wens@kernel.org/
+
+Changes since v2:
+- DT binding
+  - Added "select" to avoid matching against all dwmac entries
+- driver
+  - Include "ps" unit in "... must be multiple of ..." error message
+  - Use FIELD_FIT to check if delay value is in range and FIELD_MAX to get
+    the maximum value
+  - Reword error message for delay value exceeding maximum
+  - Drop MASK_TO_VAL
+- Link to v2:
+  https://lore.kernel.org/all/20250813145540.2577789-1-wens@kernel.org/
+
+Changes since v1:
+- Dropped RFT tag
+- Switched to generic (tx|rx)-internal-delay-ps 
+- dwmac-sun55i driver bits
+  - Changed dev_err() + return to dev_err_probe()
+  - Added check of return value from syscon regmap write
+  - Changed driver name to match file name
+- sram driver bits
+  - Fixed check on return value
+  - Expanded commit message
+- dtsi
+  - Fixed typo in tx-queues-config
+- cubie a5e
+  - Add PHY regulator delay
+- Link to v1:
+  https://lore.kernel.org/all/20250701165756.258356-1-wens@kernel.org/
+
+This series adds support for the second Ethernet controller found on the
+Allwinner A523 SoC family. This controller, dubbed GMAC200, is a DWMAC4
+core with an integration layer around it. The integration layer is
+similar to older Allwinner generations, but with an extra memory bus
+gate and separate power domain.
+
+Patch 1 adds a new compatible string combo to the existing Allwinner
+EMAC binding.
+
+Patch 2 adds a new driver for this core and integration combo.
+
+Patch 3 adds a device node and pinmux settings for the GMAC200.
+
+Patches 4, 5, and 6 enable the GMAC200 on three boards. I only tested
+the Orangepi 4A and Radxa Cubie A5E.
+
+
+Please have a look and help test on the Avaota A1. I don't expect
+any issues there though, since the PHY is always on, unlike on the
+Cubie A5E.
+
+Patches 1 and 2 should go through net-next, and I will take all the
+other patches through the sunxi tree. Hopefully we can get this merged
+for v6.18.
+
+
+Thanks
+ChenYu
+
+Chen-Yu Tsai (6):
+  dt-bindings: net: sun8i-emac: Add A523 GMAC200 compatible
+  net: stmmac: Add support for Allwinner A523 GMAC200
+  arm64: dts: allwinner: a523: Add GMAC200 ethernet controller
+  arm64: dts: allwinner: a527: cubie-a5e: Enable second Ethernet port
+  arm64: dts: allwinner: t527: avaota-a1: enable second Ethernet port
+  arm64: dts: allwinner: t527: orangepi-4a: Enable Ethernet port
+
+ .../net/allwinner,sun8i-a83t-emac.yaml        |  95 ++++++++++-
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi |  55 ++++++
+ .../dts/allwinner/sun55i-a527-cubie-a5e.dts   |  28 ++-
+ .../dts/allwinner/sun55i-t527-avaota-a1.dts   |  26 ++-
+ .../dts/allwinner/sun55i-t527-orangepi-4a.dts |  23 +++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  12 ++
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ .../ethernet/stmicro/stmmac/dwmac-sun55i.c    | 159 ++++++++++++++++++
+ 8 files changed, 393 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-sun55i.c
+
 -- 
-2.51.0
+2.47.3
 
 
