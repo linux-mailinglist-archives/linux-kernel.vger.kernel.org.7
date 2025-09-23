@@ -1,165 +1,142 @@
-Return-Path: <linux-kernel+bounces-828428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7239AB94977
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:42:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE7FB9497A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 177AA2E342C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:42:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B2D01901DBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A4730F932;
-	Tue, 23 Sep 2025 06:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCAE30F81A;
+	Tue, 23 Sep 2025 06:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="KJ/uoZSP";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="n56CdQSY"
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rLzxBodV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8236822ACEB;
-	Tue, 23 Sep 2025 06:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0D222ACEB
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758609741; cv=none; b=d2hYS//AoQGPdm5GM5JFc4CqFkA/zAqLAm/mgmJ6hF8BqhvLmmE/Uxsun2TPuS77yPFfCYNQ1e5cgVkQZFYbxJOlpx3vWH18g2Xv9zl8oYitrVqfvKJVYS4yx0OYwdCr8mE8T7JGl+tfxvCpxJTvw0VINh+hNzgTxEJxFA9q9fE=
+	t=1758609831; cv=none; b=b9WtaDyhIR3uJuRO4CsUFYKZvZN4RsxXPGosSYyENZCDxqq9uLFMjcwoNDqDjRWm6iKQt5KRJsZET3Wm53p+dzCnEM1PBI+jH45KZLLASWg9nJG39u4b7uUrg8iqAF3zlgZPYb5EuhFsBnhgsIyc0y2dGT8wpnFAYWiSiSbvAvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758609741; c=relaxed/simple;
-	bh=P2NZE0n7MiiCBiDkONlBcF7pHNIFkrE7kKcJAW4C+7Y=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=cKEPh/6QQFESWxK2MRDz1NetKV8ke6aqSkkTiE0Cst3HXocAlw2VqW0V2Uau2gQm61ADvOKoXTawW6FHdd3U8RKzBeT6lrtLsyuSHiPB07igr9iA4041BTId5GeqoGefyPRdd63Jv1Doqf9VO2Gwd1Giq1jASDjHAX+mU2T8AbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=KJ/uoZSP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=n56CdQSY; arc=none smtp.client-ip=202.12.124.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 1A5831D001BB;
-	Tue, 23 Sep 2025 02:42:17 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Tue, 23 Sep 2025 02:42:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1758609736;
-	 x=1758696136; bh=FGIY+8FPwLmeSxHeWRctWFodP+GvxlDpxtszJgK+wmY=; b=
-	KJ/uoZSPCFOJF/mKFgRtiYu1BW8AHiIfxYaIFWTetBxkOrCIUxpEhCAAW3TJlbQQ
-	0QL46MDn6ciaqGC8hURh+jQ65BejQ43Qow1rNVI0TF+YLudXYfY95zyfiWzynenA
-	9Bcsn1vG1lZRKTQwSlzgjHIA90dIhc3IR0Dxmkf11iEHo3gKBJNej0c+ZjFVPItG
-	v7ljgd+EFeZgrzgP40bn4/oOoZr5O9Iti08vRjk0HfC+qAVpuAZ9SbJckuB4hWiC
-	q+SFU/TDhLGcM1bOc6YXaRWdBNcdHIAi+PN/1NRhw3pE9u88dLTobOSVDg/b6g5c
-	uh/1xT0AItgKwzwlLu0h7g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758609736; x=
-	1758696136; bh=FGIY+8FPwLmeSxHeWRctWFodP+GvxlDpxtszJgK+wmY=; b=n
-	56CdQSYqTIjhJCjuGCdY0FLYA/n9lhBI5Vc68IloiXWlubOZlhNhQWeCbQK4RCxV
-	dYBTORXZzzbTckttkIVMNL9j6qmtFXKGoeP5Olb2i7EL7Bolfe3XqRWPq0eekh/X
-	IGzYqUUABiNfj68HZy6M4+NA9xgX2MTbIYjSAbMhGOPARJGtNNPU3QM8BWTpjvC1
-	7PGGQOSZsoFb0LnEEwStmw+l064xTfHc4HjMYuhptSw3gfsy1RP/Sx3ZdvfHkDOS
-	e7U07P3Io0Wzr6f/XABZbWGn4TePEXRGlAR4VeBzvkNiVfZCbQsl27VEhw4jOl3t
-	/e+Rk6stMkJigX01TeKxw==
-X-ME-Sender: <xms:SEHSaLfRv4wJx3kGRpNW3f_6PEUSqSACtOysukxBvlg4sB0Toq5TsQ>
-    <xme:SEHSaMCIWSY3aMaH8h84iq5YQfeeyvRVzObM39zou4RDx-NvhNUrCyZ2HbL_lGE-L
-    Li-ZCvTyPM9t86JsPB-HHjGN2RFz-vvAdsLiicTZv-pncUUwIb-u1s>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeitddtgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtoh
-    epsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhii
-    sehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
-    pdhrtghpthhtohepfhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtth
-    hopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlrghntggv
-    rdihrghngheslhhinhhugidruggvvhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnh
-    gvth
-X-ME-Proxy: <xmx:SEHSaLZt85JBELa0ynK_Bqeo5OyYk9b6SWCDQSXJ7I2wvH-O7yXc2Q>
-    <xmx:SEHSaAy5aZBx2Pq5DuONae2JZN-M0sna_xwnxnAb7cyfKZUOjxPInQ>
-    <xmx:SEHSaKOzRPWWBb21wl8_cReV-OS-YBAdhaBJKkbJxo9VusRlBgJsFw>
-    <xmx:SEHSaPeNVoHHeB-I4CJbWy_BOVP4pPdW7FWLUSyQVoN-hx5h6hPtpg>
-    <xmx:SEHSaLWyzVYQtT6HT50iJTXYdiLL9IhC-DBs-1qMXnO5T5FCbQByWfMg>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 59C0A70006A; Tue, 23 Sep 2025 02:42:16 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1758609831; c=relaxed/simple;
+	bh=WI+kDG0NBORR0mxqib21mmZ3G6zmcmkGVUr+Cua6OwA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=WLOlUPZ75De6+PNS9Gdv1nkoidnfMqDj++axSV0uEWc53wq0gU7U4sHd7lAvX/dTjjVMyUc/a9dgNleQ3V+b/zvwGmD1CeeWOvqepDO0b1S1DFWSlu5Ku/Hvhxj9CTW4P6zTdZuQ/eXhQbE7GIPo90q1pR9TW/PUnEBsns4Am34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rLzxBodV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D928FC4CEF7;
+	Tue, 23 Sep 2025 06:43:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758609831;
+	bh=WI+kDG0NBORR0mxqib21mmZ3G6zmcmkGVUr+Cua6OwA=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=rLzxBodVlb5Dgqb5oDjWe+3JPhr19sb0jTaAKZHS2xKZQXmDaz7laeVruHSOcg2mo
+	 QTGa8itrh6LZsG64jjjJt7Ovhg+aTU3u5UaGVrEmA0k1eDNkyOcfnHyKblc1+zy30g
+	 NWUqa9beOMA1qngB8YZ65eajTe2ZQyBkgcP4iRnfVnMC49Vz5dT2nvatGz5pgOs/kN
+	 Je3lTO8amgzh1KHhJQQlqbl8YzEBK/QxcI/CobkF4N7X3QpJyOohs8kOIVGVHxqYH0
+	 XbYvIVZcQuhfpCzYzEA5UkgwcTyq+nnve/Fq0kHyVXY8f9KPgMQF/kAWLuaDUaS83I
+	 fpmF+z9tA6pqQ==
+Message-ID: <21aefe8c-b737-41ea-9efc-9390b6a23c76@kernel.org>
+Date: Tue, 23 Sep 2025 14:43:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Ah_uXtpTlO07
-Date: Tue, 23 Sep 2025 08:41:56 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Finn Thain" <fthain@linux-m68k.org>
-Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Will Deacon" <will@kernel.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Jonathan Corbet" <corbet@lwn.net>,
- "Mark Rutland" <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-m68k@vger.kernel.org,
- "Lance Yang" <lance.yang@linux.dev>
-Message-Id: <d707b875-8e3c-4c18-a26f-bf2c5f554bc2@app.fastmail.com>
-In-Reply-To: <86be5cf0-065e-d55d-fdb6-b9cf6655165e@linux-m68k.org>
-References: <cover.1757810729.git.fthain@linux-m68k.org>
- <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org>
- <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com>
- <6c295a4e-4d18-a004-5db8-db2e57afc957@linux-m68k.org>
- <57ac401b-222b-4c85-b719-9e671a4617cf@app.fastmail.com>
- <86be5cf0-065e-d55d-fdb6-b9cf6655165e@linux-m68k.org>
-Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and atomic64_t
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org
+Subject: Re: [PATCH 2/2] f2fs: Enhance the subsequent logic of
+ valid_thresh_ratio to prevent unnecessary background GC
+To: Liao Yuanhong <liaoyuanhong@vivo.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250909134418.502922-1-liaoyuanhong@vivo.com>
+ <20250909134418.502922-3-liaoyuanhong@vivo.com>
+ <b42b161d-cd5d-45dc-8e84-c2b28eb632e5@kernel.org>
+ <a508b9b8-3c81-4a2c-a525-baac822563b3@vivo.com>
+ <22d9f9d1-1db0-4bad-a782-212ab3da630e@kernel.org>
+ <3cd3bfb5-857f-4b61-a1c1-55805bed4609@vivo.com>
+ <b7b20efb-8cdc-4cf0-a057-d4d41ae66aba@kernel.org>
+ <c2c7fbdb-f71c-46aa-a47d-8bd4bec688d4@vivo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <c2c7fbdb-f71c-46aa-a47d-8bd4bec688d4@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 23, 2025, at 08:28, Finn Thain wrote:
-> On Mon, 22 Sep 2025, Arnd Bergmann wrote:
->> On Mon, Sep 22, 2025, at 10:16, Finn Thain wrote:
-> @@ -8,7 +8,7 @@ struct vfsmount;
->  struct path {
->         struct vfsmount *mnt;
->         struct dentry *dentry;
-> -} __randomize_layout;
-> +} __aligned(sizeof(long)) __randomize_layout;
->
-> There's no need: struct path contains a struct dentry, which contains a 
-> seqcount_spinlock_t, which contains a spinlock_t which contains an 
-> atomic_t member, which is explicitly aligned.
->
-> Despite that, there's still some kmem cache or other allocator somewhere 
-> that has produced some misaligned path and dentry structures. So we get 
-> misaligned atomics somewhere in the VFS and TTY layers. I was unable to 
-> find those allocations.
+On 9/20/25 10:49, Liao Yuanhong wrote:
+> 
+> On 9/18/2025 10:16 AM, Chao Yu wrote:
+>> On 9/17/25 16:13, Liao Yuanhong wrote:
+>>> On 9/17/2025 3:57 PM, Chao Yu wrote:
+>>>> On 9/17/25 15:08, Liao Yuanhong wrote:
+>>>>> On 9/15/2025 4:36 PM, Chao Yu wrote:
+>>>>>> On 9/9/25 21:44, Liao Yuanhong wrote:
+>>>>>>> When the proportion of dirty segments within a section exceeds the
+>>>>>>> valid_thresh_ratio, the gc_cost of that section is set to UINT_MAX,
+>>>>>>> indicating that these sections should not be released. However, if all
+>>>>>>> section costs within the scanning range of get_victim() are UINT_MAX,
+>>>>>>> background GC will still occur. Add a condition to prevent this situation.
+>>>>>> For this case, f2fs_get_victim() will return 0, and f2fs_gc() will use unchanged
+>>>>>> segno for GC?
+>>>>>>
+>>>>>> Thanks,
+>>>>> You're right, segno won't update in this scenario, and this patch feature is redundant.
+>>>> Oh, I meant, if f2fs_get_victim() fails to select a valid victim due to the reason you
+>>>> described, f2fs_get_victim() will return 0, and f2fs_gc() will migrate segment #NULL_SEGNO?
+>>>> Or am I missing something?
+>>>>
+>>>> Thanks,
+>>> Yes. In this scenario, since it won't enter the|p.min_cost > cost|condition,|p.min_segno|will retain its initial value|||NULL_SEGNO|. This is consistent with what you described.
+>> Do you have a script to reproduce this bug?
+>>
+>> Thanks,
+> 
+> I didn't explain it clearly. What I mean is that this patch is redundant, the original code is fine.
 
-Ok, I see. Those would certainly be good to find. I would assume that
-all kmem caches have a sensible alignment on each architecture, but
-I think the definition in linux/slab.h actually ends up setting the
-minimum to 2 here:
+Oh, I see. I don't see any problem in f2fs_get_victim() as well.
 
-#ifndef ARCH_KMALLOC_MINALIGN
-#define ARCH_KMALLOC_MINALIGN __alignof__(unsigned long long)
-#elif ARCH_KMALLOC_MINALIGN > 8
-#define KMALLOC_MIN_SIZE ARCH_KMALLOC_MINALIGN
-#define KMALLOC_SHIFT_LOW ilog2(KMALLOC_MIN_SIZE)
-#endif
+Thanks,
 
-#ifndef ARCH_SLAB_MINALIGN
-#define ARCH_SLAB_MINALIGN __alignof__(unsigned long long)
-#endif
+> 
+> 
+> Thanks,
+> 
+> Liao
+> 
+>>>
+>>> Thanks,
+>>>
+>>> Liao
+>>>
+>>>>> Thanks,
+>>>>>
+>>>>> Liao
+>>>>>
+>>>>>>> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+>>>>>>> ---
+>>>>>>>     fs/f2fs/gc.c | 5 +++++
+>>>>>>>     1 file changed, 5 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>>>>>> index 4a8c08f970e3..ffc3188416f4 100644
+>>>>>>> --- a/fs/f2fs/gc.c
+>>>>>>> +++ b/fs/f2fs/gc.c
+>>>>>>> @@ -936,6 +936,11 @@ int f2fs_get_victim(struct f2fs_sb_info *sbi, unsigned int *result,
+>>>>>>>             }
+>>>>>>>         }
+>>>>>>>     +    if (f2fs_sb_has_blkzoned(sbi) && p.min_cost == UINT_MAX) {
+>>>>>>> +        ret = -ENODATA;
+>>>>>>> +        goto out;
+>>>>>>> +    }
+>>>>>>> +
+>>>>>>>         /* get victim for GC_AT/AT_SSR */
+>>>>>>>         if (is_atgc) {
+>>>>>>>             lookup_victim_by_age(sbi, &p);
 
-Maybe we should just change __alignof__(unsigned long long)
-to a plain '8' here and make that the minimum alignment
-everywhere, same as the atomic64_t alignment change.
-
-Alternatively, we can keep the __alignof__ here in order
-to reduce padding on architectures with a default 4-byte
-alignment for __u64, but then override ARCH_SLAB_MINALIGN
-and ARCH_KMALLOC_MINALIGN on m68k to be '4' instead of '2'.
-
-     Arnd
 
