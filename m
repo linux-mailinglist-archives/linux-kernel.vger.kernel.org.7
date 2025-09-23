@@ -1,191 +1,125 @@
-Return-Path: <linux-kernel+bounces-828006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DD1B93AD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:20:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4493EB93AFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62B921890A26
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:20:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 041FF446958
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC6272623;
-	Tue, 23 Sep 2025 00:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53782148850;
+	Tue, 23 Sep 2025 00:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vII9/bnp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n1Aw0tWy"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F113BE5E;
-	Tue, 23 Sep 2025 00:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00DF8488
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 00:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758586809; cv=none; b=iniv7KRyYiLAPwfTztxywLudkjTtxpf6zv73apXrufKum+JNLz8eJd3hfnB4F2fIVqS+1p0F3wn3Muhc0z4A7+97mSduHfe92UDxc+qHvdW8skNM5f11lyYcf8flzHJGxzeBuR3DioPmjG7EuL/JzCAPhRlBp5FusRVpLXPXdb4=
+	t=1758587059; cv=none; b=Bv4T+CMXHCzSBIk7ULMaFYyI9okV0uOfBKcvqNVRUM9cTxQp4abRIDYAcbuskJ71wvoEygy+fR5iFvjoLNPDDO6EJKtbqyk6By6VFMroLEsamJFY6nX73fuMZC9ynGhv+nZPukZHIRhH6n7TqKBosL9lWrxPIndP46iflVCTIj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758586809; c=relaxed/simple;
-	bh=/YBR+R7LfGYnIdMOOdTLlGjgAGM0YwIAXCZB1PCXPHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l2wDSbTiHs7kDMuyBe3l4rLOLozshajoK8OZdt831apsoJN012xuhvZGK5cTFSvMyZ4APO/We1/b7jWNd9NrtHbaJZIfKImvIcr8ztXNbGDyDuS94SjE/An7j0iU3X+9oe0oocSw2LXIvaRxWpYYK19JbzqyTcgVUcoeVaCSvhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vII9/bnp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35AA2C4CEF0;
-	Tue, 23 Sep 2025 00:20:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758586809;
-	bh=/YBR+R7LfGYnIdMOOdTLlGjgAGM0YwIAXCZB1PCXPHo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vII9/bnpzWpioGSZ+2cDByaO4ZessAu6VxmjFltMYns07Rls7A8wbbyZHF1/bjJ02
-	 koohXi76kRLB7IK4L+eOiZzzgwHa+ruWeK3xlwVSE42zavkujpxJjXfE6ryrtcnGhy
-	 ZTvoRJaDo1aUiAtkOBaPgLZKjV5ywPjMnAMryNoPifDM2HgoaMkpjnMr6/vjmKeyVk
-	 0UexqKVtoSDX77iQKgC8JyM71ePPxSN8YKnv5+BgbFuVcZAoktl8z2ATpeMujz0k2i
-	 QQLbvr0X2A2IxAxzRKQzlhopS24Ku1Y/31bzbOzC4BS57ONvPDvjtZLHdUFj261K4H
-	 8h5WETmOROLUQ==
-Date: Mon, 22 Sep 2025 17:20:04 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rv: Fix wrong type cast in enabled_monitors_next()
-Message-ID: <20250923002004.GA2836051@ax162>
-References: <20250806120911.989365-1-namcao@linutronix.de>
+	s=arc-20240116; t=1758587059; c=relaxed/simple;
+	bh=We+6Oo/B3It4pfhVAUGEgzbLb7NyYjOXynbtMngh/Eo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tIutDH3BwJ5Mk77aJE0aI+Zp06AhLtTyXPpErf1vnfqYDUX7KjgsY7+B811r+iUEw0w7SQSIl7LI/HSZ6Fa80u82VARAoht6B4AQjyqyYsTiOCYN336RN3hzuRkvbaXrXUXafLSk8vatND9ljwnq1QR1c4gun3GnKGYzVW1HRbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n1Aw0tWy; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-57d8ff3944dso2162504e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:24:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758587054; x=1759191854; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6IqwzB6yl3psjgyq4ph4McKGH6xE5y0nJXDS5kOA8co=;
+        b=n1Aw0tWy6ezBwRca2BUqtrys8An1lkYIYVMri7j5qMD30tMv94gA6jFrdEVMYXZ2Hi
+         RG6M0KL92OBO9MoeuWEVCUGAvYftFOP1doWLBDksSfrhbI15SM8UdZSemGQwQr6/b/sS
+         vSt3vAxnCkG6SAJjARozR7m0AWOnypWIndumVvGKlwDdz+jDZh+t2X5HOucjYJ2g30Zo
+         e2uqieJFhSukkCtMzghq+HHWqWt+wfQRUgC1o8WquLyapS1ySHMDbg1cpgpJTgBBGLwB
+         ciAkIWIiSft6IYW7sdr0bVMgSRXNroFdRxva6BrQCa0RtywA7OT1woIKYJFxAfxPRB2s
+         QqMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758587054; x=1759191854;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6IqwzB6yl3psjgyq4ph4McKGH6xE5y0nJXDS5kOA8co=;
+        b=pKSVduonmznd+q+bCUpS0ZwfLahUko/Djou4fWjCgGoInL1jqzrOF90ghRHiF0A5On
+         CzZJWc1chvg1hYaeTYFmwW5bPZcdTihfKExt23XBGdoq3IuuxsdNIyPVXCwIrvjdjh5x
+         M4/5+tZCtvMHO//8SLiA5VZYcLF9yG44lzDvxDMRpwHjEJNgIaeXRnB+Bz9911kWrhjD
+         2UhRSxjT3Pfv2vt2WdbSlIIGlGZ61CJAsy8PDrd99BBbUrBRwlI/DQNF4sojZqHC2NBy
+         LGOypN+GLRnlvJQBde0vpLnVkuyJ0ru57s9N5dSadUUyj86+ytpnIzcu6optqy7ZeyVJ
+         g3lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlF5os3LfkSeiBNwBTJ/yus190rEhPoxiYPnXTEftK7hnfP03mzE2pRMOa3sgVMoGHLc4ionEu8VSbpkQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFuHYeiykBq0Gj0lvxzGda0byYNE+rVSpruvRtHOtLVg6AFZxk
+	E7i4Ikhw7Sfe/lY+BbIt6zIDcNR5zRXgcYIbV2PfXVhtHO8oVfCXQ2NrznGD8J5nIRRH5vcD38M
+	VuV+B4aYErcCD+QeJWrI++PUmfWem6DodSLIX21A=
+X-Gm-Gg: ASbGncsbQWfwHqT5aZFFpm3/mHTJnR9C9XoiuxIVe6TKzoqADyC6iugIu+jgIUzp/J3
+	cnSYikUZ3aH+3deYO8+5HUXsuTY71hU0ysagUtPPs34BroMiVo73mPpInoXvyMGVWn31QtraMac
+	aMPzfh53uoRIS8vxMMsMWq6fOuNpQuysP/t6bCJ5tggigNerhC/gChB80HhndTJ5OJyWKMzooLh
+	F3TsNDupKANFhbr9Bv+/Jg3R+WVKqHtNu3L
+X-Google-Smtp-Source: AGHT+IFdN2gHO4WykbivdCKetNJNZxMeVTvdLnoXGtLxAJC5ZsJVzBnaT4eywyMhlcKmiI+QyMamHNrqO7yCI2iAbzA=
+X-Received: by 2002:a05:6512:450a:b0:57e:4703:3b0a with SMTP id
+ 2adb3069b0e04-58072cf6687mr123242e87.31.1758587053782; Mon, 22 Sep 2025
+ 17:24:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250806120911.989365-1-namcao@linutronix.de>
+References: <20250918075219.091828500@infradead.org> <20250918080205.442967033@infradead.org>
+In-Reply-To: <20250918080205.442967033@infradead.org>
+From: John Stultz <jstultz@google.com>
+Date: Mon, 22 Sep 2025 17:24:01 -0700
+X-Gm-Features: AS18NWCTcK_8h024Wott-v_xedN8OzicPoyVhpMnQ9HLHwhEpS8zYovFK-qMvBs
+Message-ID: <CANDhNCr3hAsJRSMx9-yHA6Jv6ASCgjqGH=vVO4JhRSTp2v+0xg@mail.gmail.com>
+Subject: Re: [PATCH 1/8] sched: Fix hrtick() vs scheduling context
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: tglx@linutronix.de, arnd@arndb.de, anna-maria@linutronix.de, 
+	frederic@kernel.org, luto@kernel.org, mingo@redhat.com, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org, oliver.sang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nam,
-
-On Wed, Aug 06, 2025 at 02:09:11PM +0200, Nam Cao wrote:
-> Argument 'p' of enabled_monitors_next() is not a pointer to struct
-> rv_monitor, it is actually a pointer to the list_head inside struct
-> rv_monitor. Therefore it is wrong to cast 'p' to struct rv_monitor *.
-> 
-> This wrong type cast has been there since the beginning. But it still
-> worked because the list_head was the first field in struct rv_monitor_def.
-> This is no longer true since commit 24cbfe18d55a ("rv: Merge struct
-> rv_monitor_def into struct rv_monitor") moved the list_head, and this wrong
-> type cast became a functional problem.
-> 
-> Properly use container_of() instead.
-> 
-> Fixes: 24cbfe18d55a ("rv: Merge struct rv_monitor_def into struct rv_monitor")
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
+On Thu, Sep 18, 2025 at 1:06=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> The sched_class::task_tick() method is called on the donor
+> sched_class, and sched_tick() hands it rq->donor as argument, which is
+> consistent.
+>
+> However, while hrtick() uses the donor sched_class, it then passes
+> rq->curr, which is inconsistent. Fix it.
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > ---
->  kernel/trace/rv/rv.c | 2 +-
+>  kernel/sched/core.c |    2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
-> index bd7d56dbf6c2..6ce3495164d8 100644
-> --- a/kernel/trace/rv/rv.c
-> +++ b/kernel/trace/rv/rv.c
-> @@ -495,7 +495,7 @@ static void *available_monitors_next(struct seq_file *m, void *p, loff_t *pos)
->   */
->  static void *enabled_monitors_next(struct seq_file *m, void *p, loff_t *pos)
->  {
-> -	struct rv_monitor *mon = p;
-> +	struct rv_monitor *mon = container_of(p, struct rv_monitor, list);
->  
->  	(*pos)++;
+>
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -875,7 +875,7 @@ static enum hrtimer_restart hrtick(struc
+>
+>         rq_lock(rq, &rf);
+>         update_rq_clock(rq);
+> -       rq->donor->sched_class->task_tick(rq, rq->curr, 1);
+> +       rq->donor->sched_class->task_tick(rq, rq->donor, 1);
+>         rq_unlock(rq, &rf);
 
-I am seeing a crash when reading from /sys/kernel/tracing/rv/enabled_monitors
-on a couple of my arm64 boxes running Fedora after this change, which
-landed in mainline in 6.17-rc7. I can reproduce this in QEMU pretty
-easily.
+Ah. Thanks for catching this! I've run through with some stress
+testing on this and haven't seen any problems so far.
 
-  $ cat kernel/configs/repro.config
-  CONFIG_FTRACE=y
-  CONFIG_RV=y
-  CONFIG_RV_MON_WWNR=y
-  CONFIG_RV_PER_TASK_MONITORS=2
-  CONFIG_RV_REACTORS=y
-  CONFIG_RV_REACT_PANIC=y
-  CONFIG_RV_REACT_PRINTK=y
+Acked-by: John Stultz <jstultz@google.com>
 
-  $ git show -s --format='%h ("%s")'
-  097a6c336d00 ("Merge tag 'trace-rv-v6.17-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace")
-
-  $ make -skj"$(nproc)" ARCH=arm64 CROSS_COMPILE=aarch64-linux- clean virtconfig repro.config Image.gz
-
-  $ curl -LSs https://github.com/ClangBuiltLinux/boot-utils/releases/download/20241120-044434/arm64-rootfs.cpio.zst | zstd -d >rootfs.cpio
-
-  $ qemu-system-aarch64 \
-      -display none \
-      -nodefaults \
-      -cpu max,pauth-impdef=true \
-      -machine virt,gic-version=max,virtualization=true \
-      -append 'console=ttyAMA0 earlycon rdinit=/bin/sh'
-      -kernel arch/arm64/boot/Image.gz \
-      -initrd rootfs.cpio \
-      -m 512m \
-      -serial mon:stdio
-  ...
-  [    0.000000] Linux version 6.17.0-rc6-00143-g097a6c336d00 (nathan@aadp) (aarch64-linux-gcc (GCC) 15.2.0, GNU ld (GNU Binutils) 2.45) #1 SMP PREEMPT Mon Sep 22 17:03:48 MST 2025
-  ...
-  ~ # mount -t sysfs sysfs /sys &&
-  > mount -t tracefs tracing /sys/kernel/tracing &&
-  > cat /sys/kernel/tracing/rv/enabled_monitors
-  [  134.672494] Unable to handle kernel paging request at virtual address ffffffffffffffd0
-  [  134.675919] Mem abort info:
-  [  134.677233]   ESR = 0x0000000096000006
-  [  134.679118]   EC = 0x25: DABT (current EL), IL = 32 bits
-  [  134.680880]   SET = 0, FnV = 0
-  [  134.682180]   EA = 0, S1PTW = 0
-  [  134.683788]   FSC = 0x06: level 2 translation fault
-  [  134.685435] Data abort info:
-  [  134.687096]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-  [  134.688973]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  [  134.690889]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-  [  134.692687] swapper pgtable: 4k pages, 52-bit VAs, pgdp=00000000417a8000
-  [  134.694969] [ffffffffffffffd0] pgd=1000000041c8d003, p4d=0000000041bf2403, pud=0000000041bf3403, pmd=0000000000000000
-  [  134.700920] Internal error: Oops: 0000000096000006 [#1]  SMP
-  [  134.702603] Modules linked in:
-  [  134.703956] CPU: 0 UID: 0 PID: 53 Comm: cat Not tainted 6.17.0-rc6-00143-g097a6c336d00 #1 PREEMPT
-  [  134.705506] Hardware name: linux,dummy-virt (DT)
-  [  134.706481] pstate: a1402009 (NzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-  [  134.707595] pc : enabled_monitors_start+0x6c/0xa0
-  [  134.709324] lr : enabled_monitors_start+0x24/0xa0
-  [  134.710047] sp : ffff80008043bbf0
-  [  134.710557] x29: ffff80008043bbf0 x28: fff0000002e58000 x27: 0000000000000000
-  [  134.711889] x26: ffff80008043bca0 x25: fff0000002b44038 x24: 0000000000000000
-  [  134.712965] x23: 0000000000000001 x22: 0000000000000000 x21: ffff80008043bcc8
-  [  134.714028] x20: ffffa8bf4243e000 x19: ffffa8bf4243ed00 x18: 0000000000000000
-  [  134.714994] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-  [  134.716046] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
-  [  134.717110] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
-  [  134.718219] x8 : 0000000000000000 x7 : 0000000000000001 x6 : 0000000000000000
-  [  134.719246] x5 : 0000000000001000 x4 : fff000001fdea760 x3 : 0000000000000000
-  [  134.720195] x2 : 0000000000000000 x1 : fff0000002b44028 x0 : ffffffffffffffc0
-  [  134.721411] Call trace:
-  [  134.722173]  enabled_monitors_start+0x6c/0xa0 (P)
-  [  134.723088]  seq_read_iter+0xd4/0x47c
-  [  134.723752]  seq_read+0xec/0x12c
-  [  134.724200]  vfs_read+0xc4/0x33c
-  [  134.724791]  ksys_read+0x64/0x100
-  [  134.725255]  __arm64_sys_read+0x18/0x24
-  [  134.725860]  invoke_syscall.constprop.0+0x40/0xf0
-  [  134.726466]  el0_svc_common.constprop.0+0x38/0xd8
-  [  134.727092]  do_el0_svc+0x1c/0x28
-  [  134.727558]  el0_svc+0x34/0xe8
-  [  134.728112]  el0t_64_sync_handler+0xa0/0xe4
-  [  134.728763]  el0t_64_sync+0x198/0x19c
-  [  134.729790] Code: f9402001 d1010020 eb01027f 540000c0 (39404001)
-  [  134.731074] ---[ end trace 0000000000000000 ]---
-  Segmentation fault
-
-With this change reverted, there is no crash. As this change seems to
-have proper justification, is there some other latent bug here?
-
-If there is any other information I can provide or patches I can test, I
-am more than happy to do so.
-
-Cheers,
-Nathan
+thanks
+-john
 
