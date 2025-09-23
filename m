@@ -1,129 +1,176 @@
-Return-Path: <linux-kernel+bounces-828129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F38F4B94006
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:29:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C0BB94018
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 172A418A5917
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:29:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E680B4E232B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE76B26A0BD;
-	Tue, 23 Sep 2025 02:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9591CEAB2;
+	Tue, 23 Sep 2025 02:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="adXGa5+C"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bd65Eu2S"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77EB1CAB3
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89394111A8
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758594545; cv=none; b=sFJulQsKOOF5EFK2yxkKzFOBGmeithy1n5+AdJk206tynmLLkT0YVaibA9R2u3Rcpce/+mqbh94QFFO0E29DaKHRufS/KqZkOmFiqHbuvB8rcjI0AQo2YKDNSQZqZlCRKVW/F5IUHnMh48405qsX+iljG4/IXyhSqp/q+Ndki9o=
+	t=1758594652; cv=none; b=VtdRtyjKV4hl+/HZ5I8BTtIG3Kg+7cUB/a8YA7zN142lLq1KGa5JWvlupf0sJ9wl7CrFc6XJhF8GGpY20X+rXD4XpyAjowBpu82hrqBv/VEU16z7L80vVi0t41bhRcubcWks/zANP2FoYTN8wrDlv+eZU9sNmK0s3X5Jd5fL5sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758594545; c=relaxed/simple;
-	bh=QwwqmZNZOyX2bK6+W+0pGizSNfpwdAJV/geF5Gpep5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dr8pAW2+bXJfsuwafekFUeJKcC8HeTXtmEP4zzQMFRuHwXmO/oABlIJQJ3jxCUGSUFBgnEJ/4h9qYaI9sxMUv163HD1MGbX0HKerVXcxld/2uwvN+FEk6ZW2a7QkgobbQVAGHmniMesOEjkjyj2gSAtiX2BTNQCyN6qIVe4pedg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=adXGa5+C; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b0787fdb137so772955266b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 19:29:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758594542; x=1759199342; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UBqHLoQEf/Npt09p7CWAiUjG43kXXR8Q43uV99bdbew=;
-        b=adXGa5+C05ueWgc0pzXMR48oB80Tf+dfRvwu8NucQAJ+2VNmAINuiq1ad1g6o72GSS
-         s1g6suFzAj6YQO4ScdCgAtYu4faKUhMxQCtFS+3GGx+H+YoGrg7ke0S8AF7i5UqonqnB
-         wiKM2ubCipWku/FMvEhKz6JRS/9/T3+2B8p6oZNmSdDBn96dQ3AWDOObrTQCniX728dO
-         AC9za+C+CJ3tyE88mnQUbVGlT5XUOSR213zeFIK5bpZDBOhk/BuSK+Y76Cj6GqY1FjZ/
-         ivFor1VZ+bStDpdChlpqPNRj+eXKauHkrBxnbu7ig0wsP95H+LuEouhImW/lYzYZGB8B
-         5EKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758594542; x=1759199342;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UBqHLoQEf/Npt09p7CWAiUjG43kXXR8Q43uV99bdbew=;
-        b=DYvjZIndF2JvFCn1Me3Ye6yBCH64fF5CxzskRJjBBUwTQtP3L9WnxSxIZLQMYxdlVq
-         ujU0ldhZTsGj+cdt9pt7TU4YW72mpIIKX4SJd99Cdc6jACMwypHyzXIVW79LZYW63NeR
-         AA51o8HD8WF4+WwcKN1dvhdQj9mWJGdrMnDN3tjin9ZxcJZXb6h3BbOGHfwKvf+EDCML
-         Akt4Qpya6N4AyLPvUZedXQ72XmnEglghJQ9ix1a7/yTkqxVMOKrmNAHaAqphvtzwrYC+
-         XBfvKg120nmVYXVBVzaFcbpCDHY5WlLNj9a297mk8pA9jJ6ssCM5VDr4eRcNXTJh0QGl
-         hl8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXn2Gub/Z4Nkpx7L3Agzn2i5v2uNao9Q2yFaBQ8RosvDRmJuhhzlw3utQ5ZJdGj64+uutXnQDsk9uCqcBc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKWn2NlNpqht3rG2MDIGQf4OK9NgHCvgcJBxI6pujKstp/HsUV
-	mTqKeUpyjkvtNogq5rDhju/p0K2n3qa6Cd264+Lf5EEHl3CkyFBq7qDw
-X-Gm-Gg: ASbGncsGCQoE5QoIYW2jVSfqyosLl32V6rzoLJiTKv9YoODBI10ipp20KEJI+p7pRBN
-	lDVCqf3NLROAk4I+92bNufF/AUGpnDqkAxQ0QbEXcGfSirDE1vcUVRElpkfJdIEV7vvBK6B0Xum
-	m6qHafNDAwiaefwlOZtwQHcd/RJ8KpSavgOozFa19LIv3d5adrdaLlNM9dVTJaBLTx5OYbUXFbW
-	TPGoxzya8DWHAxZP5ItkozuM6TYy3R8rtB+TVHy4+sck1mjrZXuK36bzsvU2CkKgmEeBey7xn4y
-	fn8ps/N0wS26Ift+aH8LZJIKwyhXbjepyVErzBRRPEVYALqck9Jng3d09xPlKQB66x8gl3i+MgW
-	hpHNsYrO25KzfhODAorxgq0AbgX6K0ZL9
-X-Google-Smtp-Source: AGHT+IEIHMVCIffPBe/9Z5NBuOjCfg4C5FU/n65GHAiYlD0hvBLo36yOCIQ6ZXcmw0EH50gdL1sw8A==
-X-Received: by 2002:a17:907:6d16:b0:b0c:fdb7:4df2 with SMTP id a640c23a62f3a-b302705e540mr73287066b.21.1758594541891;
-        Mon, 22 Sep 2025 19:29:01 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b29e6597caesm580894566b.73.2025.09.22.19.29.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Sep 2025 19:29:01 -0700 (PDT)
-Date: Tue, 23 Sep 2025 02:29:01 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
-	ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-	Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
-	dev.jain@arm.com, baohua@kernel.org, ioworker0@gmail.com,
-	kirill@shutemov.name, hughd@google.com, mpenttil@redhat.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Kairui Song <kasong@tencent.com>
-Subject: Re: [PATCH mm-new v2 1/2] mm: make is_guard_pte_marker() available
- for hugepage collapse
-Message-ID: <20250923022901.mzjqkrkdrwn2r7n2@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250918050431.36855-1-lance.yang@linux.dev>
- <20250918050431.36855-2-lance.yang@linux.dev>
+	s=arc-20240116; t=1758594652; c=relaxed/simple;
+	bh=zVsvfzF7l8S37V68K7yE59UBHuIy/MHh6e3O4SFcG5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sqr9kDFjLNcNa799D8HRn8NeuR4at2ZGEXLKkIuAydQvbr7MkT1Gki8pDob8d9QCbzc0b5i7L7d+S0xN5FMMiaiRc6qvQLnVOs64JPMWGbz1QTm9XsYkYQHNkldVhhZp6uiB2PQm74/gczvsYlI9iVvW7sNunM3vA4H0beREP50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bd65Eu2S; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9665ff9f-3e1d-4c39-8c8f-b9e12fb4d5f4@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758594636;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b4s0MlcnpZmVcg3BNEOPRfxUXtgBs293LEDa79kz3gE=;
+	b=bd65Eu2SXHriQjtws44NJSLp1oJPai+UtRQ7VryME04ujiEP6HgCMkmlwobwmV1bjMTnev
+	E+L5ob/VfdXPCUXd0pmX46qini5ReYfjp3lVQJ6TV1EKSH1RD5ayZ1z1P8pGUF8tkQzjQr
+	dYDZyuJayMK6+FV8rxxpi931IMeak5Y=
+Date: Tue, 23 Sep 2025 10:30:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918050431.36855-2-lance.yang@linux.dev>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Subject: Re: [PATCH 0/3] Suppress undesirable hung task warnings.
+Content-Language: en-US
+To: Julian Sun <sunjunchao@bytedance.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: mhiramat@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+ agruenba@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org,
+ roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <20250922094146.708272-1-sunjunchao@bytedance.com>
+ <b31a538a-c361-4e3e-a5b6-6a3d2083ef3b@linux.dev>
+ <20250922145754.31890092257495f70db3909d@linux-foundation.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <20250922145754.31890092257495f70db3909d@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Sep 18, 2025 at 01:04:30PM +0800, Lance Yang wrote:
->From: Lance Yang <lance.yang@linux.dev>
->
->The hugepage collapsing code needs is_guard_pte_marker() to correctly
->handle PTE guard markers. Move the helper to a shared header and expose
->it.
->
->While at it, simplify the implementation. The current code is redundant
->as it effectively expands to:
->
->  is_swap_pte(pte) &&
->  is_pte_marker_entry(...) && // from is_pte_marker()
->  is_pte_marker_entry(...)    // from is_guard_swp_entry()
->
->While a modern compiler could likely optimize this away, let's have clean
->code and not rely on it.
->
->Cc: Kairui Song <kasong@tencent.com>
->Acked-by: David Hildenbrand <david@redhat.com>
->Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->Signed-off-by: Lance Yang <lance.yang@linux.dev>
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
--- 
-Wei Yang
-Help you, Help me
+On 2025/9/23 05:57, Andrew Morton wrote:
+> On Mon, 22 Sep 2025 19:38:21 +0800 Lance Yang <lance.yang@linux.dev> wrote:
+> 
+>> On 2025/9/22 17:41, Julian Sun wrote:
+>>> As suggested by Andrew Morton in [1], we need a general mechanism
+>>> that allows the hung task detector to ignore unnecessary hung
+>>
+>> Yep, I understand the goal is to suppress what can be a benign hung task
+>> warning during memcg teardown.
+>>
+>>> tasks. This patch set implements this functionality.
+>>>
+>>> Patch 1 introduces a PF_DONT_HUNG flag. The hung task detector will
+>>> ignores all tasks that have the PF_DONT_HUNG flag set.
+>>
+>> However, I'm concerned that the PF_DONT_HUNG flag is a bit too powerful
+>> and might mask real, underlying hangs.
+> 
+> I think that's OK if the calling task is discriminating about it.  Just
+> set PF_DONT_HUNG (unpleasing name!) around those bits of code where
+> it's needed, clear it otherwise.
+
+Makes sense to me :)
+
+> 
+> Julian, did you take a look at what a touch_hung_task_detector() would
+> involve?  It's a bit of an interface inconsistency - our various other
+> timeout detectors (softlockup, NMI, rcu) each have a touch_ function.
+
+On second thought, I agree that a touch_hung_task_detector() would be a
+much better approach for interface consistency.
+
+We could implement touch_hung_task_detector() to grant the task temporary
+immunity from hung task checks for as long as it remains uninterruptible.
+Once the task becomes runnable again, the immunity is automatically revoked.
+
+Something like this:
+
+---
+diff --git a/include/linux/hung_task.h b/include/linux/hung_task.h
+index c4403eeb7144..fac92039dce0 100644
+--- a/include/linux/hung_task.h
++++ b/include/linux/hung_task.h
+@@ -98,4 +98,9 @@ static inline void *hung_task_blocker_to_lock(unsigned 
+long blocker)
+  }
+  #endif
+
++void touch_hung_task_detector(struct task_struct *t)
++{
++	t->last_switch_count = ULONG_MAX;
++}
++
+  #endif /* __LINUX_HUNG_TASK_H */
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 8708a1205f82..094a277b3b39 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -203,6 +203,9 @@ static void check_hung_task(struct task_struct *t, 
+unsigned long timeout)
+  	if (unlikely(!switch_count))
+  		return;
+
++	if (t->last_switch_count == ULONG_MAX)
++		return;
++
+  	if (switch_count != t->last_switch_count) {
+  		t->last_switch_count = switch_count;
+  		t->last_switch_time = jiffies;
+@@ -317,6 +320,9 @@ static void 
+check_hung_uninterruptible_tasks(unsigned long timeout)
+  		    !(state & TASK_WAKEKILL) &&
+  		    !(state & TASK_NOLOAD))
+  			check_hung_task(t, timeout);
++		else if (t->last_switch_count == ULONG_MAX)
++			t->last_switch_count = t->nvcsw + t->nivcsw;
++
+  	}
+   unlock:
+  	rcu_read_unlock();
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 8dc470aa6c3c..3d5f36455b74 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -3910,8 +3910,10 @@ static void mem_cgroup_css_free(struct 
+cgroup_subsys_state *css)
+  	int __maybe_unused i;
+
+  #ifdef CONFIG_CGROUP_WRITEBACK
+-	for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++)
++	for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++) {
++		touch_hung_task_detector(current);
+  		wb_wait_for_completion(&memcg->cgwb_frn[i].done);
++	}
+  #endif
+  	if (cgroup_subsys_on_dfl(memory_cgrp_subsys) && !cgroup_memory_nosocket)
+  		static_branch_dec(&memcg_sockets_enabled_key);
+---
+
+Using ULONG_MAX as a marker to grant this immunity. As long as the task
+remains in state D, check_hung_task() sees the marker and bails out.
 
