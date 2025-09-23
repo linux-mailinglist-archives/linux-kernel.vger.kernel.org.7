@@ -1,149 +1,213 @@
-Return-Path: <linux-kernel+bounces-829117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7435CB96546
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:40:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2A8B96536
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A17DF3AE1BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:35:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06E1C7B7471
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E17B25C80D;
-	Tue, 23 Sep 2025 14:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BEF24886A;
+	Tue, 23 Sep 2025 14:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aVyagMFW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQrD8pIx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E92E23A989
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6B423A989;
+	Tue, 23 Sep 2025 14:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758638085; cv=none; b=jaQoqDC0otn+6ibL4BW/No0azFrtOqKTiwYoqFjO+OHtP25j47RDE99k5LY3Frz5Rk9vYEcHWNzFR1Pqz0VhpYgy3jUi4UDDt6r6nOjY9iSUbz39sc/VkADFzQ/4KfiKCaRMsc7H81fKt6//uUOJmq0jQWc4MQLQF4abp0QMLXk=
+	t=1758638112; cv=none; b=h92wZP3LlxCc4yF4VBUHw9/lt90FDSQ7rfGjNdAVwz17unUxkyU9Jn0L492ONVoSKxPl+FUmDwOuZ6aHTS3DHRrPn2Ef+1dPYOl0VV7OK+qGgfq1j61KIgTi9w18G1eFkYVr1XRWo9/pGkiSmHFl25RP473xhFeR8v4ePS5wUVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758638085; c=relaxed/simple;
-	bh=/lziSapCEzH2gqTs6jMXh7MDQ4LI28NR9zhl2YHnVE4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FRhzdkmnVafRnFs1tNQsZ6V5OtshvTxs81lFuqa4uXJSfp1jgVad/2vEbmum5ihdgudZKqOaPwFx3coQXHMUaC7jMIyOShS6q8gKg2nSCg7JmyxMrBKaX0g/yh508Wv6ZdGQuYUejfkTiDECn7pyQgFNggl63t3gkNJqEfBlN/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aVyagMFW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58N8HNpR004736
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:34:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=iHjpdqs7eCb9fs9KxqbTEla33T54OtQRS2i
-	QSrd1H1M=; b=aVyagMFWf7gJ3+5rtZNOb35mFxxF/ClZb+3MTCktfqcnDbHWfPK
-	Vi0iUnnNjM0dUWkyR3qPx1npO/vRMd70ozViV+8s5RNqGqrmgjYptKm2LkkbrV3f
-	ZFAyQ+4myrq2N6Pb+jNl/DFP8MxoAr+/01XZiO+RODF/MoEl15zz9SvWPZdVRBCl
-	5z3ebEAvnX79YJ66OtXUEmMR/iJqkzf1NyH3lIgt6SaTzssCrWOW40MHYLSJLfht
-	xiv2pqSt55jc98th59RotUbHAiWhbviByN0nnU0VMaTw0W0CVuGllXMxG/53+S3B
-	UqKj/dfIusAfqCIvPegVGkFO7k11b31tDXg==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hmns821-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:34:41 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-329c76f70cbso4774902a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:34:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758638080; x=1759242880;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iHjpdqs7eCb9fs9KxqbTEla33T54OtQRS2iQSrd1H1M=;
-        b=TwH+lEParmPAZwL+anxIJTFLSMNLkG3smsrB1pM6xcXS2AtQpsp/LXUMVHaInNjl72
-         FsaFDb51n8q1BYFn6guepztnRtyOMPLcZXeHZw1Gx1ybtjCDKbTZ5hvZiYFuY/h2jByo
-         apbd9d0/zDPNpoz+IBCr0hgHb3cmd8Ijde3gBPOO4AyExYj1dDw49HmQd1S5piU0KI83
-         3p9Skcb4XNC2/BZoAlu6c0ULOrDp5zpqQJEQ1Td3JmmGn7Nc6RQVQnIvxR/FzpWwk46Z
-         hlB4cxoYkswaGkAnVIew+EL0+kIeZ+4w7hFzJSG+NQxZIL7zdNnD5FeZQjT6c9OqGjCa
-         Gw6A==
-X-Forwarded-Encrypted: i=1; AJvYcCX3Nhpd8XGAhvhM+H+TswIuteX8TfLAozNQuPnn0sBPY4IKApnRC+z/FaRvRYdOhhSv9l+zz8SJWkb4Dac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjzdHBa104Gb4NMZUsKLwXAOcN8+ZvbKuqJkB5S9DByllg1ED8
-	krpQf/2n/UgdnmKrc4VU5KEXUQCqYoNzQ08hKcWhmWLzRqeuK3rel2i9rIp2/9SFv1m/73eOFG0
-	GPJKt+IDZ8Ae+7bdnE4tVhxvLZ0EbkugGj+5FIe+qbcf4Wwxs33HAuddUhY10yLtnY60=
-X-Gm-Gg: ASbGncteIcH6XN5SWUaG+GTFRQXX801ggP5X4NGuR6pwVUZAVK/ejsABvF4ee9U7iAk
-	LQwain8oGtxPFuUGF0+fX6jrmxIMf18lqYPUfvNJzsk+AI1phR/lQPaXiZM6q1NCvC3+cVvo/Nm
-	iXJIkaHLJypuo60o+tbLfNbVLWunyWXEOLaUAqiA/1vVb7qNWBDP48TVw+z3/8Xbvbf60CsJXYI
-	sDMsvtY1+yVyL+++vSThQE9kqJj8iWE/gfdLqTteO+5vdpwUv24BkC9sdYnNXYUZKHjJNyu4xwW
-	30IJi98AgyF33QsZWJFwh1Cv27QRPGrDxXjISPtqHEQcDJeGQz9TjEfiJP/Gq87EreSahP5bgmR
-	P
-X-Received: by 2002:a17:90b:560f:b0:31f:5ebe:fa1c with SMTP id 98e67ed59e1d1-332a8d243a4mr3540120a91.0.1758638080290;
-        Tue, 23 Sep 2025 07:34:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwGhl6ZWmSj85Mjuc7FJXLjxNRqQjqt729aWTla6N7ewM+DbD5u9AnCsCrlBb44Z46976trQ==
-X-Received: by 2002:a17:90b:560f:b0:31f:5ebe:fa1c with SMTP id 98e67ed59e1d1-332a8d243a4mr3540084a91.0.1758638079868;
-        Tue, 23 Sep 2025 07:34:39 -0700 (PDT)
-Received: from hu-vdadhani-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3306064f420sm16676047a91.11.2025.09.23.07.34.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 07:34:39 -0700 (PDT)
-From: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mka@chromium.org, luca.weiss@fairphone.com
-Cc: --cc=mukesh.savaliya@oss.qualcomm.com, anup.kulkarni@oss.qualcomm.com,
-        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-Subject: [PATCH v1] arm64: dts: qcom: qcs6490-rb3gen2: Add firmware-name to QUPv3 nodes
-Date: Tue, 23 Sep 2025 20:04:31 +0530
-Message-Id: <20250923143431.3490452-1-viken.dadhaniya@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758638112; c=relaxed/simple;
+	bh=lk7dIsuWICp06xrsWrHrfsHtjecVw9bVejsvuGuCMrE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PpNjaPygZtfLp/Quu/iplSv+5OAhwH5zqrxNGx+QQH+VU/4BXVnDOCl50yH+u7jnvpb+HCdRZkySPxb39QVJ9jUQH9A7rtd8ONEOnmMnVto6Q3WjbfaL/QTqY9/Df6vOisSzRyfbUAXaF2IsWMT7z8GKo8g4HK8FNhLs5YgJcEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQrD8pIx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65976C4CEF5;
+	Tue, 23 Sep 2025 14:35:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758638111;
+	bh=lk7dIsuWICp06xrsWrHrfsHtjecVw9bVejsvuGuCMrE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NQrD8pIxRlw9IDlRvkNgfGIILlA8hs0HUHOi3fE4LRYy67TuvSTLg7+YhApNbAsqG
+	 f5bGU8pm2nTQbJer6J8NVrv/051hj8i6IIzXvNkiWEYDqfEAiQlEfrbb2ng4PPOC6z
+	 wJ4JIcCj22LVnAaDjjjOuOzg8I5GpeAlKVa1ygxBOMarTRLMprJR9ng+sFffOs5noq
+	 JdqFjs1oNB/uX1Kk3IJR5FOBAY+GfcKBdoOgO/Cxja3JeCKvoMv2AUpWzOOizEY+aF
+	 uQLlfln8Vm4xcSeCYBDAKNOCvoRSziVAj9VCsdSycU6vyweN9spi7IV0LyL/DuwHwt
+	 eTmRFQX4j4LZA==
+Date: Tue, 23 Sep 2025 17:35:07 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: linux-integrity@vger.kernel.org,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	stable@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] tpm: Use -EPERM as fallback error code in tpm_ret_to_err
+Message-ID: <aNKwG2Q6AG3BNB2c@kernel.org>
+References: <20250922072332.2649135-1-jarkko@kernel.org>
+ <tnxfamnvxoanaihka3em7ktmzkervoea43zn2l3mqxvnuivb6n@p5nn34vns3zf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=YPqfyQGx c=1 sm=1 tr=0 ts=68d2b001 cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=pdVGFcHJ2_4qoVWHVlUA:9
- a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-ORIG-GUID: Vhc2bxM5ZSNbsfgpvx1gMnuUMjzYmFZi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwMCBTYWx0ZWRfX7mqbP10FAhYu
- 96hhlpA8Wr3Ok23ymiwRTO+G7kcqg6JavheUrhh/z8QJxo4/Myoi+v4i+Ne78eN0ZlFcI0hnHOT
- TVuuIqHFnmkcb9THEE7aO123kHkL7qvNagbTJXp+KU0X91rcJM38NdT09WrJ535WFljhHhvSQ0d
- zkRgn42u5mStVNkmy9IvlUrMPbnwODvTtK8h02loyeBEQdujJRNn8dIy4f/W8ktk8P/CKchiUUP
- DQetTZbQEpY4OYEt9cVyPwGuJ+f6U1lBvkh46Baxc7pJvHFFOZMj3hN/IDvZmJ1JBeJuYEdc2PH
- yMsUQkoJX/iu4M1QNws6iBDOd1xxKRHfycNDERpF0awR4njmJP471XJBFLJ6VhhKB0xSDKoLF5g
- swP/gZdy
-X-Proofpoint-GUID: Vhc2bxM5ZSNbsfgpvx1gMnuUMjzYmFZi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-23_03,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0 adultscore=0
- clxscore=1015 impostorscore=0 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tnxfamnvxoanaihka3em7ktmzkervoea43zn2l3mqxvnuivb6n@p5nn34vns3zf>
 
-Add firmware-name property to qupv3_id_0 and qupv3_id_1 to specify the
-QUPv3 firmware ELF (qupv3fw.elf).
+On Mon, Sep 22, 2025 at 11:25:42AM +0200, Stefano Garzarella wrote:
+> On Mon, Sep 22, 2025 at 10:23:32AM +0300, Jarkko Sakkinen wrote:
+> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > 
+> > Using -EFAULT here was not the best idea for tpm_ret_to_err as the fallback
+> > error code as it is no concise with trusted keys.
+> > 
+> > Change the fallback as -EPERM, process TPM_RC_HASH also in tpm_ret_to_err,
+> > and by these changes make the helper applicable for trusted keys.
+> > 
+> > Cc: stable@vger.kernel.org # v6.15+
+> > Fixes: 539fbab37881 ("tpm: Mask TPM RC in tpm2_start_auth_session()")
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > ---
+> > include/linux/tpm.h                       |  9 +++++---
+> > security/keys/trusted-keys/trusted_tpm2.c | 26 ++++++-----------------
+> > 2 files changed, 13 insertions(+), 22 deletions(-)
+> > 
+> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> > index dc0338a783f3..667d290789ca 100644
+> > --- a/include/linux/tpm.h
+> > +++ b/include/linux/tpm.h
+> > @@ -449,13 +449,16 @@ static inline ssize_t tpm_ret_to_err(ssize_t ret)
+> > 	if (ret < 0)
+> > 		return ret;
+> > 
+> > -	switch (tpm2_rc_value(ret)) {
+> > -	case TPM2_RC_SUCCESS:
+> 
+> I slightly prefer the `case TPM2_RC_SUCCESS` but I don't have a strong
+> opinion.
+> 
+> > +	if (!ret)
+> > 		return 0;
+> 
+> If we want to remove the `case TPM2_RC_SUCCESS`, can we just merge this
+> condition with the if on top, I mean:
+> 
+> 	if (ret <= 0)
+> 		return ret;
 
-Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 2 ++
- 1 file changed, 2 insertions(+)
+I can cope with this i.e. revert back, it's not really part of the scope
+and was totally intentional
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-index 18cea8812001..4e361580ddf1 100644
---- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-@@ -1009,10 +1009,12 @@ &qup_uart7_tx {
- };
- 
- &qupv3_id_0 {
-+	firmware-name = "qcom/qcs6490/qupv3fw.elf";
- 	status = "okay";
- };
- 
- &qupv3_id_1 {
-+	firmware-name = "qcom/qcs6490/qupv3fw.elf";
- 	status = "okay";
- };
- 
--- 
-2.34.1
+> 
+> > +
+> > +	switch (tpm2_rc_value(ret)) {
+> > 	case TPM2_RC_SESSION_MEMORY:
+> > 		return -ENOMEM;
+> > +	case TPM2_RC_HASH:
+> > +		return -EINVAL;
+> > 	default:
+> > -		return -EFAULT;
+> > +		return -EPERM;
+> > 	}
+> > }
+> > 
+> > diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+> > index 024be262702f..e165b117bbca 100644
+> > --- a/security/keys/trusted-keys/trusted_tpm2.c
+> > +++ b/security/keys/trusted-keys/trusted_tpm2.c
+> > @@ -348,25 +348,19 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> > 	}
+> > 
+> > 	blob_len = tpm2_key_encode(payload, options, &buf.data[offset], blob_len);
+> > +	if (blob_len < 0)
+> > +		rc = blob_len;
+> > 
+> > out:
+> > 	tpm_buf_destroy(&sized);
+> > 	tpm_buf_destroy(&buf);
+> > 
+> > -	if (rc > 0) {
+> > -		if (tpm2_rc_value(rc) == TPM2_RC_HASH)
+> > -			rc = -EINVAL;
+> > -		else
+> > -			rc = -EPERM;
+> > -	}
+> > -	if (blob_len < 0)
+> 
+> nit: since `blob_len` is not accessed anymore in the error path, can we
+> avoid to set it to 0 when declaring it?
+> 
+> Thanks,
+> Stefano
+> 
+> > -		rc = blob_len;
+> > -	else
+> > +	if (!rc)
+> > 		payload->blob_len = blob_len;
+> > 
+> > out_put:
+> > 	tpm_put_ops(chip);
+> > -	return rc;
+> > +	return tpm_ret_to_err(rc);
+> > }
+> > 
+> > /**
+> > @@ -468,10 +462,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+> > 		kfree(blob);
+> > 	tpm_buf_destroy(&buf);
+> > 
+> > -	if (rc > 0)
+> > -		rc = -EPERM;
+> > -
+> > -	return rc;
+> > +	return tpm_ret_to_err(rc);
+> > }
+> > 
+> > /**
+> > @@ -534,8 +525,6 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+> > 	tpm_buf_fill_hmac_session(chip, &buf);
+> > 	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
+> > 	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
+> > -	if (rc > 0)
+> > -		rc = -EPERM;
+> > 
+> > 	if (!rc) {
+> > 		data_len = be16_to_cpup(
+> > @@ -568,7 +557,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+> > 
+> > out:
+> > 	tpm_buf_destroy(&buf);
+> > -	return rc;
+> > +	return tpm_ret_to_err(rc);
+> > }
+> > 
+> > /**
+> > @@ -600,6 +589,5 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
+> > 
+> > out:
+> > 	tpm_put_ops(chip);
+> > -
+> > -	return rc;
+> > +	return tpm_ret_to_err(rc);
+> > }
+> > -- 
+> > 2.39.5
+> > 
+> 
 
+BR, Jarkko
 
