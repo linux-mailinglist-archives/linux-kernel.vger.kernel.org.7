@@ -1,592 +1,153 @@
-Return-Path: <linux-kernel+bounces-829495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E47B97345
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 844DAB97351
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2DEA3AEBA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:32:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EFAD3AE646
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416D630147A;
-	Tue, 23 Sep 2025 18:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B40301712;
+	Tue, 23 Sep 2025 18:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="C6qrgRWa"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013029.outbound.protection.outlook.com [40.107.162.29])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="es8n5gGP"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607FC2749EC;
-	Tue, 23 Sep 2025 18:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758652336; cv=fail; b=LkfyFQs2R4OuFJccDvyWjgEy1oZnVky9NDgZGCcvjBm/rGq7I95M9a+4mhivZmNdC8CGzcm8kHDkNVtcba4x2JueIMxr+qhqBkKCOf6o6+FX4T1j9xJbcw47fEhB2wKi+VjPktxkZMW8014QHpkXX+T7bVZTnhXkaDgJI1qQdX0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758652336; c=relaxed/simple;
-	bh=+tqAjtzr8Snlgpedr86cpvR8PWyHcMev3lUryWFXhaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=CEe3CqeOyRjVuhPBK7SWrjGS5jQVBi+ZUY/IKseCVxipAaytvYFilCy6ZXgSVExmsNgAlMuJStsMiTMv6cgnRjyOtvLsUwcohl/enQj2ib88UTCJJeKoPJFOpnLAQFavZYvYh4Sz06CT9Mxl13niq+dXZ7kjtz7FWa4+ThKmlnY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=C6qrgRWa; arc=fail smtp.client-ip=40.107.162.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y7g/WU714y2RYw6MZB5fCFKiEKHaKCUXIUHTb0nU+HeLkpXUijPIBzyoM4svgo9mEmxRCnSqbSFhDjOJYNEzUCYIHp+4vJN8eMBKXhX9dTitBRCwkt6rCV33eHotpv+VHX0QWD6IFCoJrlgAOLgRGdeFRpGGNDhR5SGULgQJfBymzdx2/BvaODCzxvwBR4/6lQkfd81RDlPOqbYtRPZlAPWGgUDOY1GO6iTbx+ZjvgmUAtWMioIl2+XQedK/jf6EJ22kDdYMqi/lNw3N5/9fDWZ7lCaw84mR0YOy1//5Q+KSlXC16pQFWkciC2s4qLMjG+/IcHtkwUui1F6lzBwp1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5VhY5vmvdXYFemfSsW9xAc4DQGbFGm0ze/vVzaVLl9A=;
- b=VyICbhAV/1ikSid570JV3Hu5rZerbL0LKmUaOTiS++bo/5s5jV0eoGl47MJ0kQ3U0vUKnbiiemAtZK77mWBjWnD4xU99eF6W/9S1kwhtMSD/O9UvV00w55shMVCftohjaawATJOC5YG1mXR9SxBXvyhM7zyJVuCCQMavXBfmQVZ+4TYazZ0dx65FS0sQkfyoCrmQ9HJrC3QbSi3tbwFteR1h0zxABWD+T4/ZTpdULd9ajznJ9TzhasNuJlCiD2ndNjiPVLuWSwWoNtOm9LGHIKhw1Q8F5Z5V/nUsKOWvxj0VBvnDxR4Y79GdrkwLTW7MnLk2BRvVISdtsNYgES/ihQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5VhY5vmvdXYFemfSsW9xAc4DQGbFGm0ze/vVzaVLl9A=;
- b=C6qrgRWauKMhER19HmNqbCfhhXN3VlAB2qjZUTZgwfImC7flBSjsXyy1pK2tAXYvEjKsu/CabuUOFB+OXutuw3y7eGJ2uriBSXJ0liUfofx4Q17FsX2NdD7txYEPLUro0XGO3CzV0S3Kr6OoO+ZjObKHj9zLsO2Q1SXzw+ELxG1BlkZK1BGfVrLKPlUIiIvKZDCR5sdwcFp7pT+z5wUjTrSkrEDvTFDInSw3ER4xAdNQH7VQdltG6hQWPBdbFj5HZeW+2J6B+rvFnWbN8KW/y5tvItJMiyUYGTwgkfgH7Lq+MzpCXGFsQ4PPk3TaMFTepBR8bI1qJRGB21sF4hCivw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
- by GV4PR04MB11851.eurprd04.prod.outlook.com (2603:10a6:150:2d7::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Tue, 23 Sep
- 2025 18:32:11 +0000
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9160.008; Tue, 23 Sep 2025
- 18:32:11 +0000
-Date: Tue, 23 Sep 2025 14:32:01 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 14/14] drm/imx: dc: Use prefetch engine
-Message-ID: <aNLnoZsMiWNogUEB@lizhi-Precision-Tower-5810>
-References: <20250923-imx8-dc-prefetch-v2-0-5d69dc9ac8b5@nxp.com>
- <20250923-imx8-dc-prefetch-v2-14-5d69dc9ac8b5@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923-imx8-dc-prefetch-v2-14-5d69dc9ac8b5@nxp.com>
-X-ClientProxiedBy: BY3PR10CA0012.namprd10.prod.outlook.com
- (2603:10b6:a03:255::17) To AS4PR04MB9621.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ff::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3254301020
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758652365; cv=none; b=bC6UThXZPycItwiqltncHfUSWVy4j0hhDTnyVwvphtaZjkazI+9AK7Z2Qlw951GXiEjCij8OGrN+/tg5t6G1R8b7RtwkQxvzxnxCm4MAgL+smf83f6gbEd3AyC3Kwcz0yALYOze5UVxyMoiVzHA99CWdT1eOQtTz8sgNdvbmuC0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758652365; c=relaxed/simple;
+	bh=xlUwMom0yQylASsa5GD7EC+5DktGsdejR5nEE2JCl+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ME4SQFYw6LvNBTg+UA3xN4uBJl41VrLQaNDzDom6GbJ82XEhoVOiZgwht8Eobw7FbBmtvSkxbvW8NCMMFUfuN+BV93S2yz4dlKv9SPS+Z4+XAR6CTX4WbEmak0/iqefqv9eie7Dd3b8VqYlX3BNaC5L4GfNcZO0i2K2QPvIpiMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=es8n5gGP; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58NF6lJp015045
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:32:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=0ywgl4YoydNFbxN0XRqWFqXQ
+	EgLsb3KzEP1PoHIEnTc=; b=es8n5gGPQGrm5R6zA26WUXGLiyn821zeBMRxFToR
+	CsxJJwtQ1/nIDVBeRUJTHoIf1vHpSgBUAGbePMCfqvfDwYwYgWVP3C4h/lNtAA1s
+	ktpt8/NOEPxpn5hYTo24YMoWhniTHCq7LrznEm4REwmA8qD7TRsVSVUhIkUchWxG
+	Z15SDM+n25tv6Oe+VEeBujJEQTsyIcB2VejohYt4/MDHFVVXds927/VFgG+7xCup
+	mPRuOZ2eARdaCyDvkE+POTNdL1gP/D03SaSDCkt2m8WAbgiNtTk/nWwX2lAy2ORq
+	X4URjki7i4uyh7gsyhBosT5L2b41fF1Ph47LWDq97IIg0Q==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49b3kk5kve-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:32:41 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4cdcff1c0b1so55721771cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:32:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758652361; x=1759257161;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0ywgl4YoydNFbxN0XRqWFqXQEgLsb3KzEP1PoHIEnTc=;
+        b=FtGHmYxrH9IwVu/MDo0Ltrq74pCEwpnwKVeA9i3qqySBavqVduUW3DtksgsjVO2jq9
+         2wW147CS2nkm6EHxSj+rrMhGzJpzXKo6GTrLGueGKUx3JElsVvlA9EAyu6YqZ0B+dMne
+         EvUOdxxhi21DGKObdydh7DUZKtz4ICVKxRqlxOrUvBGZb3GygbALlnBbkq8VQKZKF8l5
+         B7zO505ESkPCXrGaNkb0Wbm9sJvAGg3YpqxJ3tJ4QuCfCyY+Wuqkuzih4BujTRKbwzrS
+         Gl8P2wdCLP4yzEpRsuEBsl+GPI6fWb9TyMQg23cD1f4zxCgZ2nhawgg3D9LM6ZmJMBTW
+         TNRw==
+X-Forwarded-Encrypted: i=1; AJvYcCXX2RHDSwsi228XE4wTN/CzjP2a9tI+S6c/teNe6ZcEjZklUNYCZcgi0/+R9IiMNt3rUAqVHoB3vHXWNS8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4Gi07lpwU8mNE6dJr0ov2TNwNhIv073Cru5ZW2XjP8uOs0gzC
+	sWUK6+R+BgfjNrM8woFrD1p7coaGbgU3VBce1T/cNJiY1mISbonDeHTrmHr/dzKIwbsp3POlk67
+	Rn9KjqcBKxSdLnwE3y+Uhf5BqtydCWd+o5I5k+uatUZ7W3quSg90NYyMP6dvQaOdFXss=
+X-Gm-Gg: ASbGncuXXJdBElwVqdZ+RKOkw8wqjaTC7gjWRJyDauo25VcBbaa3m2nsyOHxsw/aADo
+	0SKGwoWDhyNK5fz7xZgcXUXh9baBLka2T/CdkMlN/qiPzUdyTQGBi8VNMWLf0Wec13V7VxNJaCg
+	lDv841LJin1H0QuthjgXViUNa5cn018+eD9S1G39R90B0kUx0E2mdM0eZPLDLWaXVHGxif0AfGi
+	dIKzojNPeTtMMwxjeWAy5QfQ+zBcBx/0yj5rz2IheS3kL2yDoKXSyqBbOFHN/hC8laUwDOdeNwz
+	XCFBY+KunJNenOVzeyPj7jjQhfgQZD77qcSiLEoa6UEXm3sAcjQVD1fPttmHKWznoNYH+/kM9Jq
+	vOUHm2o8C1DVWNeLxKGyL7xmkeJ4xpKk/E5UcPryUBNqd0gTVk0kX
+X-Received: by 2002:ac8:5f8f:0:b0:4c3:a0c1:335d with SMTP id d75a77b69052e-4d36b898548mr37820391cf.37.1758652360607;
+        Tue, 23 Sep 2025 11:32:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMBlvHXtNDgFyPI1NlAGqjKTycFvFqD7+JE0+3TxE26+LvFO3cH0FAg4wxgHNuHH6UPT3b5g==
+X-Received: by 2002:ac8:5f8f:0:b0:4c3:a0c1:335d with SMTP id d75a77b69052e-4d36b898548mr37819791cf.37.1758652359989;
+        Tue, 23 Sep 2025 11:32:39 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-57a0ed3d148sm3565534e87.84.2025.09.23.11.32.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 11:32:38 -0700 (PDT)
+Date: Tue, 23 Sep 2025 21:32:36 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mukesh.savaliya@oss.qualcomm.com, anup.kulkarni@oss.qualcomm.com
+Subject: Re: [PATCH v2] arm64: dts: qcom: qcs6490-rb3gen2: Add firmware-name
+ to QUPv3 nodes
+Message-ID: <kijycy56wjgztfgltj773opeu7zc2ct32msbfioliliming6im@r4imwgdv3x2h>
+References: <20250923161107.3541698-1-viken.dadhaniya@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|GV4PR04MB11851:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b726374-1021-42bb-6a0d-08ddfacf8287
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|376014|52116014|7416014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BkxWfcxL5DBqkGIY/XQ8ITcgD09Uun7Qn5osHabv4k6t2tir5GKkfs6kzldx?=
- =?us-ascii?Q?MchfLMP/qUKcos2KW8YyODWPgNv3f3/ObsO7GuZgxHbchPH0O6H5wJxntM91?=
- =?us-ascii?Q?WGEdOiE9ni60CaxjWxVz6mX7hyuBA/pQLTMqjQYPPqmCwhWQwZe+fKKhGHPV?=
- =?us-ascii?Q?rtmXNbKmsurfMgcexFYztRalEyEJELuNXhYIWN6kcLmYt73YciW0shnRQNYw?=
- =?us-ascii?Q?53ZRnuOmeSwTV4ZZkDDgidJEgEv86055DqLYIfOSz7e70jpmd6tbeudnGTK2?=
- =?us-ascii?Q?RKS4mKshaYFDrNoYxjc2Wmt2wDoyGUWTPw3C3Xg4uO69e3dvBURS/BFbERVC?=
- =?us-ascii?Q?9K4W40UTpyWqfcEuWn6J9i/H/7U1mV0kWRtyO/PujQFtDQsv5rmrFTnO9jAV?=
- =?us-ascii?Q?NgsDf9M5z0xMw6jofye+7xEiVl4eOeRFo/ehjI+CGb5Euj9/0rvA1wlDdtFq?=
- =?us-ascii?Q?L77MA4M/TQsr732hXDIk/eI7x1fk2wq/FAcv+NtdiAkuu828znoA7RwLw8xw?=
- =?us-ascii?Q?GhJkZXvXVLAC9Cg5OsWGNzCymUmaj+ko3+C6NWwCdWwGsX8u9ZGdBd827AsK?=
- =?us-ascii?Q?+3HdOScEMt+F2zsUQH1EQ5uzedUHnSQVS/EeDL56Avi95MyZ56w6HfZk0cyx?=
- =?us-ascii?Q?w+L1bBfJVV80PkM/+Q7JsUgjxP+eWtpt2VV943J0/+L7jG71nG5Mi2d0J63d?=
- =?us-ascii?Q?/DTZ0YqWWwOaNZn3m9fPfgFgxbvPNb6/Ad0TyHaXzwEwmgzbnlokNWugbCV7?=
- =?us-ascii?Q?W+I3dxzFKHjTUDoc7fkIzy8V84XKer8424YLvxBgcI1RkKV5KxMKjjnEI6FC?=
- =?us-ascii?Q?/LUGFErVfLzYNNvQiP+VQ1ZecHCV3YaNZyagrl3UUds+yJl25YkabzIDyZzO?=
- =?us-ascii?Q?TFlx/vGn2l2P5xSDYlhoeIK/UZYaFvNl2/RlvhR2XoaK7gGNJ25ScS2joGZR?=
- =?us-ascii?Q?tvb8XHBrocwB32pA3aXTmPY4b3eG9Esv7rfmNz7tEub9zM3eJYjRngYpOOWt?=
- =?us-ascii?Q?2DmLXUIicD6vTLQCea65PgkjcW/s4cLhR/4GnmSJWfzvhiyx6tZvL1fR9EkQ?=
- =?us-ascii?Q?DoY2XB5XxZSahMPcOKWA2DfTlREWLRyzhGpVJmoxZL+hmLOYvH14qGg9km1N?=
- =?us-ascii?Q?0XoFH+XN+hIDo1k65zvmnNQIIqktrMLlldsPb3/UgGwP4usMrANniyT6NBEE?=
- =?us-ascii?Q?ZdR4arM42m48fQDsBFystO/NJgQHEI7ubssp788mlkYh/SKu1rqyfaiAugKj?=
- =?us-ascii?Q?ghrRoDNjm5GUJx8bhWJ2oi3UrRx9NXLrKUq+XjJuXxjGp03/OdA/IVZWkuO9?=
- =?us-ascii?Q?EdwnDaLKGk4bUHGTrhukZjS17lloSegTKv+Jerkl69yp+Jy1DgWA2nyHA+CM?=
- =?us-ascii?Q?hbpoqHZtbX1LllqagwlhKNhshLAfY83CT2swIzR5vj2ej6ns3NFDwI6dPqXH?=
- =?us-ascii?Q?rt0Mi/irwQoVZe1vN+53YOzN4tzgihVsnI0TZAcvcDTakx/o/5PqyQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(52116014)(7416014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?MqdU3HX+Mc2ty7DQRej0HpnZEiA+5xi4WPKDH9D7LA36Bo6MxAOwVJ7DKBK6?=
- =?us-ascii?Q?iRqVZ8tpaOmsHQfQ/zmkNjXZUMKBBuBTCj9mz18y6+cmySKpA6J8qDK6G//j?=
- =?us-ascii?Q?DwcamJ2S7GurK0IpqtSIPNjajko7TVhyMyGhKKZ9ipVPa5uX3VDQw8yPZFKE?=
- =?us-ascii?Q?K5DL0HyciBq+3imtScgePpO/2P0PG1wKSE0X9i1ArlNhuASfRxqhOLrmv3F0?=
- =?us-ascii?Q?XeCkr9k/YahC1UfyA9gN1je/zZ0teddu4oKrC6Rk+v0CB5iT9IwXmvrKzQnQ?=
- =?us-ascii?Q?Y1ePLk50fNbXQBZQ0e/dWXLTGdZfRjBSzM23X6cUhnAiEDA+mggX6h5Nmodh?=
- =?us-ascii?Q?9gnKSlFqGX1uhQ5Hkt89B0ZvjTcpPRuDnnGGChoSxk03B4cri8wQyu+SnHii?=
- =?us-ascii?Q?pJcGVhN4zXv4n9q8UBcbaV4hxfCVuIWmP39M1xLWVuPQ0ACHGiqlVTcPwoFu?=
- =?us-ascii?Q?T0jnygWd4j7nQd++J/k55fl0dyrst7Agolm/aPtTPkWJvIfOdIMqX31qazsu?=
- =?us-ascii?Q?zquzdIGrFyUyBb8Rda3p/PqFvDRvzropTYmllh9CO5RmlqpWZ+TtPHww01cM?=
- =?us-ascii?Q?t7/33awgny+VkztTWiAjktXwTcJkF4ZplJcfbnPkRmYskL6uhn74VRmIBSDT?=
- =?us-ascii?Q?UdjxlX4eP2FL6VQF+wy9gq/mgMkwuKWPM/GAUk5cYH26buOSGVY5Ow06lrfW?=
- =?us-ascii?Q?KIbSgcxMdKnkj9aYVVvtRKNmYYTfGvPHVnC16YTRHdWELDcl4jDOlItYADDC?=
- =?us-ascii?Q?ZrSdJKDUUCVLmSYUtdfWP7+dc5JGB6o1QAv7Ut+j2X9sjKs3GmxDUNUpT4pS?=
- =?us-ascii?Q?+ef8DeRtGi58geh9zcRjMZOkCu9AfZUTngP1ibBcCkKf/1J2IN0nzQtmo3vz?=
- =?us-ascii?Q?6u7Yk+UTSEIPqQYLPE9xzb4cC6HzLnovoV6MXcrXi1kmB8woyWLYpN/DIZMn?=
- =?us-ascii?Q?9Cr3S8oNCsHSUmwSIk+N90bmlFNp/uzENmMmD+ga6FCIaULTrw8WBHE+TYFq?=
- =?us-ascii?Q?BZTeSIxILjULoZ1oWSgWDR8DwzXU5Mqit1Btm8Jqbcs6kNczLNqYwFZgVwHQ?=
- =?us-ascii?Q?vjrB1IO9YTB2aj5SjWTcpa+DpORQWb3c089JVhC74bSgd+6JJxhCTTMEdHwc?=
- =?us-ascii?Q?HxFK4eiGeIzK9gLguhhJRUXco7JFf6ID4BVIT/PejdtFfoFGJ5HTaHlbpa5z?=
- =?us-ascii?Q?YDca/brsxEwtzH4+4j1L40DPjSWnBIxMtdS4hUQSzS6CaY0UPF7pTAskSzgD?=
- =?us-ascii?Q?HxXuOrAxXrpBtqD5fogBkijmndCbht3bRnsCIkWmPuiA9iXhA1u/iGTEdyHF?=
- =?us-ascii?Q?cy4o6NDVYFDc/w+vSS2KEdLE3E9Rifd1W5FGDkFOLOYWgtd+Zkt+aTR0hKQA?=
- =?us-ascii?Q?pyC/WgdYrarkOSEieHsVIznOQwxYKwQeTSbdBeuUHNqh4ARsYhuuPmm/soAV?=
- =?us-ascii?Q?DQObDQD2QWwsFWAvN1BVYWKPQ/dgx1gm+gH4ZjbOPbrYRDjObkxR2imEkqLh?=
- =?us-ascii?Q?jyRlRZCLmwMdT9r8zCs4yn3DEhNd0JilJDHexWDRnIuJfyk+hADKaRO7AiJu?=
- =?us-ascii?Q?Hi7V6HvIgahLW4svGog=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b726374-1021-42bb-6a0d-08ddfacf8287
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 18:32:11.4792
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mZYJ9YyZCZ2lgbZ181Ww/RMG7QgqnY2SvF8752R8p5bS/PD7QG8bRlw0mNZPijabVanKbC8m2x3c8o97pLgMzg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV4PR04MB11851
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923161107.3541698-1-viken.dadhaniya@oss.qualcomm.com>
+X-Proofpoint-GUID: ZdhK8AxI7fsbNqaR-N-AsjSxg_iFmxL9
+X-Proofpoint-ORIG-GUID: ZdhK8AxI7fsbNqaR-N-AsjSxg_iFmxL9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDA4OSBTYWx0ZWRfX9+HFKjT/s2NY
+ wMQicD4fXih96ttooNFvVIuVvqdlHOkCRtmBgQVfTQdtoTm1n5WmOKip1Ei3YO+zA46s+0s/Erc
+ 0tdF70LFh7osfDuUhVjM68Bw7NXep9bEiH75RIx9M/r0IKVYYYFikI2zyz4oXfKscQwDJc7hF2x
+ 89ITeCoO1OkrrbNtpknEcEbzXatyNiGy+Yp43CV3jAHESB57YBVOb8wUIdb4uvHC7OMP+7GOi/6
+ k6MtJVuvxiFjqm7UC9pV2kBl/xL5LvUyIdJpzD4+4/yjKfs+MP+sddGDXJA/grufaRBvniokzxA
+ s1/tfk6xuMu4UC4sJwEGl/WuaDyMKvFE7sMIiiBfCOQYzn7pXaIEZpcPDfdjTMBeaUW8FaOIJX0
+ y0hzAwr6
+X-Authority-Analysis: v=2.4 cv=BabY0qt2 c=1 sm=1 tr=0 ts=68d2e7c9 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=N2x_zcOB-Zb5SKZ0QwgA:9
+ a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-23_04,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 phishscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 malwarescore=0 spamscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220089
 
-On Tue, Sep 23, 2025 at 10:08:04AM +0800, Liu Ying wrote:
-> One prefetch engine consists of one DPR channel and one or two PRGs.
-> Each PRG handles one planar in a pixel format.  Every FetchUnit used
-> by KMS may attach to a PRG and hence use a prefetch engine.  So, to
-> simplify driver code, always use prefetch engines for FetchUnits in
-> KMS driver and avoid supporting bypassing them.  Aside from configuring
-> and disabling a prefetch engine along with a FetchUnit for atomic
-> commits, properly disable the prefetch engine at boot and adapt burst
-> size/stride fixup requirements from PRG in FetchUnit driver.
->
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-
+On Tue, Sep 23, 2025 at 09:41:07PM +0530, Viken Dadhaniya wrote:
+> Traditionally, firmware loading for Serial Engines (SE) in the QUP hardware
+> of Qualcomm SoCs has been managed by TrustZone (TZ). While this approach
+> ensures secure SE assignment and access control, it limits flexibility for
+> developers who need to enable various protocols on different SEs.
+> 
+> Add the firmware-name property to QUPv3 nodes in the device tree to enable
+> firmware loading from the Linux environment. Handle SE assignments and
+> access control permissions directly within Linux, removing the dependency
+> on TrustZone.
+> 
+> Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
 > ---
->  drivers/gpu/drm/imx/dc/dc-crtc.c  | 139 +++++++++++++++++++++++++++++++++++---
->  drivers/gpu/drm/imx/dc/dc-fu.c    |  27 +++++++-
->  drivers/gpu/drm/imx/dc/dc-fu.h    |   2 +-
->  drivers/gpu/drm/imx/dc/dc-kms.h   |   5 ++
->  drivers/gpu/drm/imx/dc/dc-plane.c |  46 +++++++++++--
->  5 files changed, 197 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/gpu/drm/imx/dc/dc-crtc.c b/drivers/gpu/drm/imx/dc/dc-crtc.c
-> index 9e9e86cd5202bcb0bb4d5627dbcefcc3f4e2ead0..4c7aab360616cb1c84c31c83f16df703b1c2c6d7 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-crtc.c
-> +++ b/drivers/gpu/drm/imx/dc/dc-crtc.c
-> @@ -25,6 +25,7 @@
->  #include <drm/drm_vblank.h>
->
->  #include "dc-de.h"
-> +#include "dc-dprc.h"
->  #include "dc-drv.h"
->  #include "dc-kms.h"
->  #include "dc-pe.h"
-> @@ -204,7 +205,13 @@ dc_crtc_atomic_flush(struct drm_crtc *crtc, struct drm_atomic_state *state)
->  				drm_atomic_get_old_crtc_state(state, crtc);
->  	struct drm_crtc_state *new_crtc_state =
->  				drm_atomic_get_new_crtc_state(state, crtc);
-> +	struct drm_plane_state *old_plane_state =
-> +			drm_atomic_get_old_plane_state(state, crtc->primary);
-> +	struct drm_plane_state *new_plane_state =
-> +			drm_atomic_get_new_plane_state(state, crtc->primary);
-> +	struct dc_plane *dc_plane = to_dc_plane(crtc->primary);
->  	struct dc_crtc *dc_crtc = to_dc_crtc(crtc);
-> +	bool disabling_plane;
->  	int idx;
->
->  	if (drm_atomic_crtc_needs_modeset(new_crtc_state) ||
-> @@ -216,13 +223,40 @@ dc_crtc_atomic_flush(struct drm_crtc *crtc, struct drm_atomic_state *state)
->
->  	enable_irq(dc_crtc->irq_ed_cont_shdload);
->
-> -	/* flush plane update out to display */
-> -	dc_ed_pec_sync_trigger(dc_crtc->ed_cont);
-> +	disabling_plane = drm_atomic_plane_disabling(old_plane_state,
-> +						     new_plane_state);
-> +
-> +	if (disabling_plane) {
-> +		unsigned long flags;
-> +
-> +		dc_crtc_dbg(crtc, "disabling plane\n");
-> +
-> +		/*
-> +		 * Don't relinquish CPU until DPRC REPEAT_EN is disabled and
-> +		 * sync is triggered.
-> +		 */
-> +		local_irq_save(flags);
-> +		preempt_disable();
-> +
-> +		DC_CRTC_WAIT_FOR_FRAMEGEN_FRAME_INDEX_MOVING(dc_crtc->fg);
-> +		dc_dprc_disable_repeat_en(dc_plane->fu->dprc);
-> +		/* flush plane update out to display */
-> +		dc_ed_pec_sync_trigger(dc_crtc->ed_cont);
-> +
-> +		local_irq_restore(flags);
-> +		preempt_enable();
-> +	} else {
-> +		/* flush plane update out to display */
-> +		dc_ed_pec_sync_trigger(dc_crtc->ed_cont);
-> +	}
->
->  	DC_CRTC_WAIT_FOR_COMPLETION_TIMEOUT(ed_cont_shdload_done);
->
->  	disable_irq(dc_crtc->irq_ed_cont_shdload);
->
-> +	if (disabling_plane)
-> +		dc_dprc_disable(dc_plane->fu->dprc);
-> +
->  	DC_CRTC_CHECK_FRAMEGEN_FIFO(dc_crtc->fg);
->
->  	drm_dev_exit(idx);
-> @@ -320,14 +354,33 @@ dc_crtc_atomic_enable(struct drm_crtc *crtc, struct drm_atomic_state *state)
->  	dc_crtc_queue_state_event(new_crtc_state);
->  }
->
-> -static inline void __dc_crtc_disable_fg(struct drm_crtc *crtc)
-> +static inline void
-> +__dc_crtc_disable_fg_along_with_dprc_repeat_en(struct drm_crtc *crtc)
->  {
-> +	struct dc_plane *dc_plane = to_dc_plane(crtc->primary);
->  	struct dc_crtc *dc_crtc = to_dc_crtc(crtc);
-> +	unsigned long flags;
->
-> -	enable_irq(dc_crtc->irq_dec_seqcomplete);
-> +	/* Don't relinquish CPU until DPRC REPEAT_EN is disabled. */
-> +	local_irq_save(flags);
-> +	preempt_disable();
-> +
-> +	/*
-> +	 * Sync to FrameGen frame index moving so that
-> +	 * FrameGen can be disabled in the next frame.
-> +	 */
-> +	DC_CRTC_WAIT_FOR_FRAMEGEN_FRAME_INDEX_MOVING(dc_crtc->fg);
->  	dc_fg_disable(dc_crtc->fg);
-> -	DC_CRTC_WAIT_FOR_COMPLETION_TIMEOUT(dec_seqcomplete_done);
-> -	disable_irq(dc_crtc->irq_dec_seqcomplete);
-> +	/*
-> +	 * There is one frame leftover after FrameGen disablement.
-> +	 * Sync to FrameGen frame index moving so that DPRC REPEAT_EN
-> +	 * can be disabled in the next frame.
-> +	 */
-> +	DC_CRTC_WAIT_FOR_FRAMEGEN_FRAME_INDEX_MOVING(dc_crtc->fg);
-> +	dc_dprc_disable_repeat_en(dc_plane->fu->dprc);
-> +
-> +	local_irq_restore(flags);
-> +	preempt_enable();
->  }
->
->  static void
-> @@ -335,14 +388,29 @@ dc_crtc_atomic_disable(struct drm_crtc *crtc, struct drm_atomic_state *state)
->  {
->  	struct drm_crtc_state *new_crtc_state =
->  				drm_atomic_get_new_crtc_state(state, crtc);
-> +	struct drm_crtc_state *old_crtc_state =
-> +				drm_atomic_get_old_crtc_state(state, crtc);
->  	struct dc_drm_device *dc_drm = to_dc_drm_device(crtc->dev);
-> +	struct dc_plane *dc_plane = to_dc_plane(crtc->primary);
->  	struct dc_crtc *dc_crtc = to_dc_crtc(crtc);
->  	int idx, ret;
->
->  	if (!drm_dev_enter(crtc->dev, &idx))
->  		goto out;
->
-> -	__dc_crtc_disable_fg(crtc);
-> +	enable_irq(dc_crtc->irq_dec_seqcomplete);
-> +
-> +	if (old_crtc_state->plane_mask)
-> +		__dc_crtc_disable_fg_along_with_dprc_repeat_en(crtc);
-> +	else
-> +		dc_fg_disable(dc_crtc->fg);
-> +
-> +	DC_CRTC_WAIT_FOR_COMPLETION_TIMEOUT(dec_seqcomplete_done);
-> +	disable_irq(dc_crtc->irq_dec_seqcomplete);
-> +
-> +	if (old_crtc_state->plane_mask)
-> +		dc_dprc_disable(dc_plane->fu->dprc);
-> +
->  	dc_fg_disable_clock(dc_crtc->fg);
->
->  	/* request pixel engine power-off as plane is off too */
-> @@ -373,7 +441,10 @@ dc_crtc_atomic_disable(struct drm_crtc *crtc, struct drm_atomic_state *state)
->  void dc_crtc_disable_at_boot(struct drm_crtc *crtc)
->  {
->  	struct dc_drm_device *dc_drm = to_dc_drm_device(crtc->dev);
-> +	struct dc_plane *dc_plane = to_dc_plane(crtc->primary);
->  	struct dc_crtc *dc_crtc = to_dc_crtc(crtc);
-> +	enum dc_link_id ed_src, lb_sec;
-> +	bool disable_dprc = false;
->  	int ret;
->
->  	ret = pm_runtime_resume_and_get(dc_crtc->de->dev);
-> @@ -383,13 +454,53 @@ void dc_crtc_disable_at_boot(struct drm_crtc *crtc)
->  		return;
->  	}
->
-> +	ret = pm_runtime_resume_and_get(dc_drm->pe->dev);
-> +	if (ret) {
-> +		dc_crtc_err(crtc, "failed to get DC pixel engine RPM: %d\n",
-> +			    ret);
-> +		goto out1;
-> +	}
-> +
->  	if (!dc_fg_wait_for_frame_index_moving(dc_crtc->fg)) {
->  		dc_crtc_dbg(crtc, "FrameGen frame index isn't moving\n");
-> -		goto out;
-> +		goto out2;
-> +	}
-> +
-> +	ret = dc_ed_pec_src_sel_get(dc_crtc->ed_cont, &ed_src);
-> +	if (ret) {
-> +		dc_crtc_err(crtc, "failed to get content ExtDst's source\n");
-> +		goto out2;
-> +	}
-> +
-> +	if (ed_src == LINK_ID_CONSTFRAME0 || ed_src == LINK_ID_CONSTFRAME1)
-> +		goto disable;
-> +
-> +	ret = dc_lb_pec_dynamic_sec_sel_get(dc_plane->lb, &lb_sec);
-> +	if (ret) {
-> +		dc_crtc_err(crtc,
-> +			    "failed to get primary plane LayerBlend secondary source\n");
-> +		goto out2;
->  	}
->
-> -	dc_crtc_dbg(crtc, "disabling at boot\n");
-> -	__dc_crtc_disable_fg(crtc);
-> +	disable_dprc = true;
-> +
-> +disable:
-> +	enable_irq(dc_crtc->irq_dec_seqcomplete);
-> +
-> +	if (disable_dprc) {
-> +		dc_crtc_dbg(crtc, "disabling along with DPRC REPEAT_EN at boot\n");
-> +		__dc_crtc_disable_fg_along_with_dprc_repeat_en(crtc);
-> +	} else {
-> +		dc_crtc_dbg(crtc, "disabling at boot\n");
-> +		dc_fg_disable(dc_crtc->fg);
-> +	}
-> +
-> +	DC_CRTC_WAIT_FOR_COMPLETION_TIMEOUT(dec_seqcomplete_done);
-> +	disable_irq(dc_crtc->irq_dec_seqcomplete);
-> +
-> +	if (disable_dprc)
-> +		dc_dprc_disable_at_boot(dc_plane->fu->dprc);
-> +
->  	dc_fg_disable_clock(dc_crtc->fg);
->
->  	if (!dc_drm->pe_clk_axi_disabled) {
-> @@ -397,7 +508,13 @@ void dc_crtc_disable_at_boot(struct drm_crtc *crtc)
->  		dc_drm->pe_clk_axi_disabled = true;
->  	}
->
-> -out:
-> +out2:
-> +	ret = pm_runtime_put(dc_drm->pe->dev);
-> +	if (ret)
-> +		dc_crtc_err(crtc, "failed to put DC pixel engine RPM: %d\n",
-> +			    ret);
-> +
-> +out1:
->  	ret = pm_runtime_put(dc_crtc->de->dev);
->  	if (ret < 0)
->  		dc_crtc_err(crtc, "failed to put DC display engine RPM: %d\n",
-> diff --git a/drivers/gpu/drm/imx/dc/dc-fu.c b/drivers/gpu/drm/imx/dc/dc-fu.c
-> index 47d436abb65157de7cab74565e44b199be76de52..bc439c3520d45f894c0afab5b3d52f2f3309c2e2 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-fu.c
-> +++ b/drivers/gpu/drm/imx/dc/dc-fu.c
-> @@ -124,13 +124,28 @@ static inline void dc_fu_set_numbuffers(struct dc_fu *fu, unsigned int num)
->  			  SETNUMBUFFERS_MASK, SETNUMBUFFERS(num));
->  }
->
-> -static void dc_fu_set_burstlength(struct dc_fu *fu, dma_addr_t baddr)
-> +static unsigned int dc_fu_burst_size_fixup(dma_addr_t baddr)
->  {
-> -	unsigned int burst_size, burst_length;
-> +	unsigned int burst_size;
->
->  	burst_size = 1 << __ffs(baddr);
->  	burst_size = round_up(burst_size, 8);
->  	burst_size = min(burst_size, 128U);
-> +
-> +	return burst_size;
-> +}
-> +
-> +static unsigned int
-> +dc_fu_stride_fixup(unsigned int stride, unsigned int burst_size)
-> +{
-> +	return round_up(stride, burst_size);
-> +}
-> +
-> +static void dc_fu_set_burstlength(struct dc_fu *fu, dma_addr_t baddr)
-> +{
-> +	unsigned int burst_size, burst_length;
-> +
-> +	burst_size = dc_fu_burst_size_fixup(baddr);
->  	burst_length = burst_size / 8;
->
->  	regmap_write_bits(fu->reg_cfg, BURSTBUFFERMANAGEMENT,
-> @@ -150,8 +165,14 @@ void dc_fu_set_src_bpp(struct dc_fu *fu, enum dc_fu_frac frac, unsigned int bpp)
->  }
->
->  static void dc_fu_set_src_stride(struct dc_fu *fu, enum dc_fu_frac frac,
-> -				 unsigned int stride)
-> +				 unsigned int width, int bpp, dma_addr_t baddr)
->  {
-> +	unsigned int burst_size = dc_fu_burst_size_fixup(baddr);
-> +	unsigned int stride;
-> +
-> +	stride = width * (bpp / 8);
-> +	stride = dc_fu_stride_fixup(stride, burst_size);
-> +
->  	regmap_write_bits(fu->reg_cfg, fu->reg_sourcebufferattributes[frac],
->  			  STRIDE_MASK, STRIDE(stride));
->  }
-> diff --git a/drivers/gpu/drm/imx/dc/dc-fu.h b/drivers/gpu/drm/imx/dc/dc-fu.h
-> index 44b9497e53580589a05bcb180eb2312ea4449da4..09570955a5b92105ef7010f71fa615a1cefc9b7e 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-fu.h
-> +++ b/drivers/gpu/drm/imx/dc/dc-fu.h
-> @@ -87,7 +87,7 @@ struct dc_fu_ops {
->  	void (*set_baseaddress)(struct dc_fu *fu, enum dc_fu_frac frac,
->  				dma_addr_t baddr);
->  	void (*set_src_stride)(struct dc_fu *fu, enum dc_fu_frac frac,
-> -			       unsigned int stride);
-> +			       unsigned int width, int bpp, dma_addr_t baddr);
->  	void (*set_src_buf_dimensions)(struct dc_fu *fu, enum dc_fu_frac frac,
->  				       int w, int h);
->  	void (*set_fmt)(struct dc_fu *fu, enum dc_fu_frac frac,
-> diff --git a/drivers/gpu/drm/imx/dc/dc-kms.h b/drivers/gpu/drm/imx/dc/dc-kms.h
-> index a25d47eebd28792e4b53b4ecc89907ce00430c2c..8b45b21a6f8a7e6e6ed2563499753200bdd42ebc 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-kms.h
-> +++ b/drivers/gpu/drm/imx/dc/dc-kms.h
-> @@ -130,4 +130,9 @@ struct dc_plane {
->  	struct dc_ed *ed;
->  };
->
-> +static inline struct dc_plane *to_dc_plane(struct drm_plane *plane)
-> +{
-> +	return container_of(plane, struct dc_plane, base);
-> +}
-> +
->  #endif /* __DC_KMS_H__ */
-> diff --git a/drivers/gpu/drm/imx/dc/dc-plane.c b/drivers/gpu/drm/imx/dc/dc-plane.c
-> index d8b946fb90de638da2bf4667307f11b06f4e77f5..8ef754492b2dcb5d986a63f516328f8d2512c7b6 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-plane.c
-> +++ b/drivers/gpu/drm/imx/dc/dc-plane.c
-> @@ -17,6 +17,7 @@
->  #include <drm/drm_plane_helper.h>
->  #include <drm/drm_print.h>
->
-> +#include "dc-dprc.h"
->  #include "dc-drv.h"
->  #include "dc-fu.h"
->  #include "dc-kms.h"
-> @@ -44,11 +45,6 @@ static const struct drm_plane_funcs dc_plane_funcs = {
->  	.atomic_destroy_state	= drm_atomic_helper_plane_destroy_state,
->  };
->
-> -static inline struct dc_plane *to_dc_plane(struct drm_plane *plane)
-> -{
-> -	return container_of(plane, struct dc_plane, base);
-> -}
-> -
->  static int dc_plane_check_max_source_resolution(struct drm_plane_state *state)
->  {
->  	int src_h = drm_rect_height(&state->src) >> 16;
-> @@ -88,6 +84,28 @@ static int dc_plane_check_fb(struct drm_plane_state *state)
->  	return 0;
->  }
->
-> +static int dc_plane_check_dprc(struct drm_plane_state *state)
-> +{
-> +	struct dc_plane *dplane = to_dc_plane(state->plane);
-> +	struct drm_framebuffer *fb = state->fb;
-> +	dma_addr_t baseaddr = drm_fb_dma_get_gem_addr(fb, state, 0);
-> +	struct dc_dprc *dprc = dplane->fu->dprc;
-> +	u32 src_w = drm_rect_width(&state->src) >> 16;
-> +
-> +	if (!dc_dprc_rtram_width_supported(dprc, src_w)) {
-> +		dc_plane_dbg(state->plane, "bad RTRAM width for DPRC\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!dc_dprc_stride_supported(dprc, fb->pitches[0], src_w, fb->format,
-> +				      baseaddr)) {
-> +		dc_plane_dbg(state->plane, "fb bad pitches[0] for DPRC\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int
->  dc_plane_atomic_check(struct drm_plane *plane, struct drm_atomic_state *state)
->  {
-> @@ -123,7 +141,11 @@ dc_plane_atomic_check(struct drm_plane *plane, struct drm_atomic_state *state)
->  	if (ret)
->  		return ret;
->
-> -	return dc_plane_check_fb(plane_state);
-> +	ret = dc_plane_check_fb(plane_state);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return dc_plane_check_dprc(plane_state);
->  }
->
->  static void
-> @@ -131,6 +153,12 @@ dc_plane_atomic_update(struct drm_plane *plane, struct drm_atomic_state *state)
->  {
->  	struct drm_plane_state *new_state =
->  				drm_atomic_get_new_plane_state(state, plane);
-> +	struct drm_plane_state *old_state =
-> +				drm_atomic_get_old_plane_state(state, plane);
-> +	struct drm_crtc_state *new_crtc_state =
-> +				drm_atomic_get_new_crtc_state(state, new_state->crtc);
-> +	bool needs_modeset = drm_atomic_crtc_needs_modeset(new_crtc_state);
-> +	bool prefetch_start = needs_modeset || !old_state->fb;
->  	struct dc_plane *dplane = to_dc_plane(plane);
->  	struct drm_framebuffer *fb = new_state->fb;
->  	const struct dc_fu_ops *fu_ops;
-> @@ -152,7 +180,8 @@ dc_plane_atomic_update(struct drm_plane *plane, struct drm_atomic_state *state)
->
->  	fu_ops->set_layerblend(fu, lb);
->  	fu_ops->set_burstlength(fu, baseaddr);
-> -	fu_ops->set_src_stride(fu, DC_FETCHUNIT_FRAC0, fb->pitches[0]);
-> +	fu_ops->set_src_stride(fu, DC_FETCHUNIT_FRAC0, src_w,
-> +			       fb->format->cpp[0] * 8, baseaddr);
->  	fu_ops->set_src_buf_dimensions(fu, DC_FETCHUNIT_FRAC0, src_w, src_h);
->  	fu_ops->set_fmt(fu, DC_FETCHUNIT_FRAC0, fb->format);
->  	fu_ops->set_framedimensions(fu, src_w, src_h);
-> @@ -161,6 +190,9 @@ dc_plane_atomic_update(struct drm_plane *plane, struct drm_atomic_state *state)
->
->  	dc_plane_dbg(plane, "uses %s\n", fu_ops->get_name(fu));
->
-> +	dc_dprc_configure(fu->dprc, new_state->crtc->index, src_w, src_h,
-> +			  fb->pitches[0], fb->format, baseaddr, prefetch_start);
-> +
->  	dc_lb_pec_dynamic_prim_sel(lb, dc_cf_get_link_id(dplane->cf));
->  	dc_lb_pec_dynamic_sec_sel(lb, fu_ops->get_link_id(fu));
->  	dc_lb_mode(lb, LB_BLEND);
->
-> --
-> 2.34.1
->
+> v1 -> v2:
+> 
+> - Updated the commit log.
+> 
+> v1 Link: https://lore.kernel.org/all/20250923143431.3490452-1-viken.dadhaniya@oss.qualcomm.com/
+> ---
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+
+-- 
+With best wishes
+Dmitry
 
