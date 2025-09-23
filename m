@@ -1,93 +1,111 @@
-Return-Path: <linux-kernel+bounces-829516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4937DB97402
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:55:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7607EB97408
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05B383B59ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:55:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7A684C51D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C5B3019C1;
-	Tue, 23 Sep 2025 18:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9045C3019DC;
+	Tue, 23 Sep 2025 18:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNt2qT4A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xpM08QLW"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B052836BD;
-	Tue, 23 Sep 2025 18:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C112836BD
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758653730; cv=none; b=FlPm4gA9M0R9qpHJuWphunE2BN96Q2SsEeMT1yHhov//3EQUZG1gRAzBJwRO+C5X2NlBljZnYAwF2673UB9+z3SVUvcCQ/I7LTe0G+EruPyx4klMe0lk0ncTcpkkpOao/M/r3pzDWpHLwJ66Uxx/EFJgNvmcqv4fy5VfwyfQs2s=
+	t=1758653748; cv=none; b=SARCLPQUHnuCMDtf4R+99tuZmwmL5WW5PbaALvqpTU3FO2J+rHMlEg5YGOajok9PTU/bac0u78DkaRP/h/822zTXNdrw3RwcV0h9mQwUsIL8IN8UHEOUin94PgdMC2tyqe8GEP9nnljQM7019/NYIdUjA1mixC1l77M8nUu4J80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758653730; c=relaxed/simple;
-	bh=BHKsQeIexba7Xof1BMU4XKauM0mWGjlNxi5TOlT8IiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VswXQOdDM8kTv00UBnYPkNSwTgjEOTw8ctKDZHcmknG+iXs/UDlQYHg6tdadISpDeSRotsM8z//4iAneom+pZhgVm9Ze0E7lUnZ8A5ce6vXIOwtHG3kjc3gSR2ARrHgYFazdqTIIAjzsHr7MpZX7nVuUngdna5MylkqL7e8Vgzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNt2qT4A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41D3BC4CEF5;
-	Tue, 23 Sep 2025 18:55:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758653729;
-	bh=BHKsQeIexba7Xof1BMU4XKauM0mWGjlNxi5TOlT8IiI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fNt2qT4ASoSn3+NiZDbXtGZIyMzCkhROyTOK7aPLJKZg5pmSSLQ3zYhq4OisLnVWc
-	 +NPK8xV1rZsvVJarvIGR7iGDyezz0hBYRVMsFJdbV3N6dTvuFA3CpwaG5iGi9UYwNI
-	 xI+NR5fSPKRsepAmX1xU/IlBYwYHHOgjmNvSZWxRZSbAmKRBnaxVhqYDD+4V5Wfotu
-	 ixhH0QFA5W+EwO2d1kRn/a4nzGFzAek/XpOanANT+NzoVAn2BATZNAkq8mFlVf6zIZ
-	 ncr5Bmgml7RLhxtoxJvLUQi+E5o6FKgjME9gzMy5pcwB8/t3g9+qa0SwacaPOL15xk
-	 9n8bVe4wbx3CQ==
-Date: Tue, 23 Sep 2025 19:55:25 +0100
-From: Simon Horman <horms@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] net: airoha: Avoid -Wflex-array-member-not-at-end
- warning
-Message-ID: <20250923185525.GL836419@horms.kernel.org>
-References: <aNFYVYLXQDqm4yxb@kspp>
+	s=arc-20240116; t=1758653748; c=relaxed/simple;
+	bh=LLCA3eHwgHle6/iRRGE9AMFJM0Dss9KsHSuojAzEvug=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=HZkWFNIe+1wAPTZrgVMMA3l9jC3T9BpMCmB5+IHvofkGQRakYx11dwsdJvoz18+4oR0QfCIdYm6Z+g+ayxaWd9ECpgz584lAw/eME4f06/nPTHNa9xn5vHucz/9IaxV6BZ/ZUgHfDFnkUTip/jLAU7t/OeNGqJOMwp41zoJdG9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xpM08QLW; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-77ec1f25fedso4886666b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:55:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758653746; x=1759258546; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=64Tb0UtRymHWNSKcGNGEibZRf7V4wY076R1Uryq0wJc=;
+        b=xpM08QLWKR3WosjhTNW2j/+2wJRZIxDOEt8TaCwdbuYpVwH68W+QovUo/re87VyRL7
+         P20BhiM4eG2SMdqh56k2N9qwRuESagWTcuKECMW/RvNigpBcszP2T15e1bKiT55WTjU/
+         Fbl3kbspGEnt3qZY9jX8ZGeohUqZ0vHUtIz1ATu15aOK4IO8fMLhXvd2EKMlcCHLYWSv
+         6+ENZfYgO5hug57smLkWPB9L/SXH1vfJNxDbGZ0JOgx4sb5NV7SURfu07nnIe4zupKFK
+         WeImqOC14E94fabD9mdUU5CzowSx3p0AADmsQWWClIvM4vDDwim5nCBGxEweQ+iEq5O8
+         /gDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758653746; x=1759258546;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=64Tb0UtRymHWNSKcGNGEibZRf7V4wY076R1Uryq0wJc=;
+        b=NRJLrHC0tHqrdR3+fNkkLfCojYoBAyTtSu8Zl3+HZrS2z0QeJ+LGrOf1sC9aqZZsXX
+         1hUtcASXiTn7srxxQuzXXBL8imw/x7Mqj4H0kgnmZhJJ+AuUIsFGR1G3u9bINRMIkDCQ
+         fCEhzmHezXQkap+ufYENH1m+lxImYkLyUpEDDwFPuHHso+s7x/pHCevUlVEDjhcuVGwW
+         N3rcpF1GPDwSssdsKn7dpk6lzuDbrwPS37uL4QnhS2mroT0/4PH2jaiCmrw62dAfyHCO
+         91Dq2vRlDKJJeIiQgR5mTabPoWZctfbFqzEH9/ZgMJRYIKRr0WVqpbpnHKdbUXhR3RMQ
+         dgGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFw8tq12eFIJVjKsMidAaRx/cjE0iENopbhCnHmi+dqQ2b8JgiWjPOwa6uTa/yspNlnsVYJs9Sq61NYpk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxn6Eg0MhlpWiMOQ+MXD9n8ntsbl/jVR6I2yI+Fe3hirn0oe+h
+	gXn4yeMQmsqGEHXkiZu978x3vV69A9eCpU7IInvCFk37C58ED3XDi/rCZTworn44cywJlpJ13rn
+	REwrzsw==
+X-Google-Smtp-Source: AGHT+IEFKoTMqW3ZBSUC+7xU7rgYcYoI8KIAc0Yfk0u7tAjRZkaYdY7PJy/a8RlEIz3To4VwcxJe702x0pQ=
+X-Received: from pfbld22.prod.google.com ([2002:a05:6a00:4f96:b0:771:ea87:e37d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:3d10:b0:76b:e868:eedd
+ with SMTP id d2e1a72fcca58-77f53a77620mr5273284b3a.24.1758653745928; Tue, 23
+ Sep 2025 11:55:45 -0700 (PDT)
+Date: Tue, 23 Sep 2025 11:55:44 -0700
+In-Reply-To: <7c7a5a75-a786-4a05-a836-4368582ca4c2@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNFYVYLXQDqm4yxb@kspp>
+Mime-Version: 1.0
+References: <20250813192313.132431-1-mlevitsk@redhat.com> <20250813192313.132431-3-mlevitsk@redhat.com>
+ <7c7a5a75-a786-4a05-a836-4368582ca4c2@redhat.com>
+Message-ID: <aNLtMC-k95pIYfeq@google.com>
+Subject: Re: [PATCH 2/3] KVM: x86: Fix a semi theoretical bug in kvm_arch_async_page_present_queued
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org, 
+	Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Sep 22, 2025 at 04:08:21PM +0200, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
+On Tue, Sep 23, 2025, Paolo Bonzini wrote:
+> On 8/13/25 21:23, Maxim Levitsky wrote:
+> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > index 9018d56b4b0a..3d45a4cd08a4 100644
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -13459,9 +13459,14 @@ void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
+> >   void kvm_arch_async_page_present_queued(struct kvm_vcpu *vcpu)
+> >   {
+> > -	kvm_make_request(KVM_REQ_APF_READY, vcpu);
+> > -	if (!vcpu->arch.apf.pageready_pending)
+> > +	/* Pairs with smp_store_release in vcpu_enter_guest. */
+> > +	bool in_guest_mode = (smp_load_acquire(&vcpu->mode) == IN_GUEST_MODE);
+> > +	bool page_ready_pending = READ_ONCE(vcpu->arch.apf.pageready_pending);
+> > +
+> > +	if (!in_guest_mode || !page_ready_pending) {
+> > +		kvm_make_request(KVM_REQ_APF_READY, vcpu);
+> >   		kvm_vcpu_kick(vcpu);
+> > +	}
 > 
-> Move the conflicting declaration to the end of the corresponding
-> structure. Notice that `struct airoha_foe_entry` is a flexible
-> structure, this is a structure that contains a flexible-array
-> member.
-> 
-> Fix the following warning:
-> 
-> drivers/net/ethernet/airoha/airoha_eth.h:474:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> Unlike Sean, I think the race exists in abstract and is not benign
 
-FWIIW, I was able to reproduce this locally.
-And it goes away with this patch applied.
-
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
->  drivers/net/ethernet/airoha/airoha_eth.h | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-
-...
+How is it not benign?  I never said the race doesn't exist, I said that consuming
+a stale vcpu->arch.apf.pageready_pending in kvm_arch_async_page_present_queued()
+is benign.
 
