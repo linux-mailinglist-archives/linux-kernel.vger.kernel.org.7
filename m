@@ -1,381 +1,191 @@
-Return-Path: <linux-kernel+bounces-829323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E54DFB96CDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:22:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC0A1B96CE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98B531690AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:22:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 880387A42A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C8C30F554;
-	Tue, 23 Sep 2025 16:22:32 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC71322A36;
+	Tue, 23 Sep 2025 16:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pkuvilvR"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010030.outbound.protection.outlook.com [52.101.85.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004472701DC
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758644551; cv=none; b=KZdma0/VRChtq05pYmVWQSXlNsI718cf9jtgXAOAnv5eljCQco4l/8FnYujT83rRzh5h8kpXUFlX/txAlAi362kqG/E1emIlORAvLrcRfP7Hzv2CtG0O8WSa+NIkcLJvIYwMCuWPIcl7qgotNYJubzs9w4kmHjnpeqxrYryz+o4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758644551; c=relaxed/simple;
-	bh=zUt95NXzQVekPw1QiJmN+19DOtqkjLGuu95xE/jocbg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YCu/hcrrE4UG5WC3rCzCQwrT1rMJqAUddrnSyt6gBrIahndiRJfwJMlW226jcb7c9YAFJBWeBMPfaoZjsw3FcCMusLvJloKHR5GlA5eqp3TcieoG96O5BQxFv8saSpJHdvYuuj50cQvRkqeTcfyYcFNs8UweIvwHKPGHH8I3QyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-4257a4638e0so31113995ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:22:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758644548; x=1759249348;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fliOmompFcXDPLp5fyc4D6gMx/asPNTMNLo+cXzT8zs=;
-        b=W/0tfCPHoH/WvJJ82IAiFC/iy/fTpkjDF0+NYmddP0Pegu9swn8cTlsqa1In1IthtN
-         BbxkuXGL1B84Nmnag4X/w6EWxBNIxbvtolyzMmrUENy5fn1FXrmNWmGe+gWIYyHsO4xR
-         EuinS2ZBTHzRwkg6L7QFEmhKP7YgN8+M3p20SWThd6+Nyy8juuQycVZiVWwZvqMJRGEg
-         p562U7MF0DyXsn45PKMxALhfdth0ccJIM0Iao43Gqd8GViZ2TSYsgEeZyh+IbVnBvNYr
-         cUzDg84s1A3A/zb0zVxopoA1V4GagZ1+bVTONLdwDW1bfiRoQ4q3hmsPt3Dh0FvK7O86
-         Wspw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEW1H8SeVK6zcAOI4iMAxCAaThYBPIyQQ/1uatDQrdoKtibDxZvJqb6aUihLi5DDhx+65WWBRPkX5oCyc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytJxtP5yVZE9J3fvQ4Gvhd4hgAwfzPlDtZ440x38dCizolT1k7
-	6rnz1Qta4ojNZjfq6Mm4LJ/KIA8cvSHDONeI2QuaIzUUMCZf4Ujolao810yCB3pcEm+/w5w2qrs
-	z2PcWzXTo5W07QO3H+AJXZh0KDRLLig7BuqHV2SWvkUkY1D1GgSgnrS/B4yE=
-X-Google-Smtp-Source: AGHT+IHfgRC8BMqPaFSbGMJttCZaLVnmtyUOI5o+nYBtHge6b9pil9feGS+SabO7G3WmYb+l+4tOu/L7GNki4CrWFHoNGql+MRnS
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517F730F554;
+	Tue, 23 Sep 2025 16:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758644590; cv=fail; b=PF0o2ve05F9ajsYiYqAgh4Gk+46gucgDBjry9T1wzPGZ7u86EIg/fCR3AY8XuM3xDKRrxNhXmXE0sb+5VBQ0n6Iu3c2E8kJWIN1SJj1rsA+UzUlksbzl4EUSaEIWBwXf49TaKd9WUCtW92VIg5jeXj4zGnkcsz+5FMBsLUQxeV8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758644590; c=relaxed/simple;
+	bh=RjgR2OzECULxxVT0Kw72jgxSBepbHvZ2N+ekWJXA7W0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=QOVTua3N99XVC7yKHQjUQvDICUMFRacC4uAyN6jBsCAXpUTyZeM60vs8+d5vgesqusaB612LxwsuUfntapZrcS/0PDuGXFzrqbwBUGEVZTRwkYele5/ssNgq42Z1tH3S9+dfVCR9GCMLq7oGSmdYnOciG1GwEWSioy5BbFiOSoI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pkuvilvR; arc=fail smtp.client-ip=52.101.85.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=llCasDgSRgNzxFhKXjYPYElu+sZ6SqodTR1GJTyEfr8raGbQ/ISLtcJ8uSBbI38n39AS9CyneleC288qi6GFlQpQ7Geeddp8I3TgLmf8PirUu/CFUeOvdCrfRgXEL3okg3uVGD6InIce/3ett453pkg6fmtVu4j431NA3SRGt1BuTh2Fi6KgHI9IhFSM7WSE4Txaj97Dgf9QGNEIqma5VnPaOr3Fm9oONTteo9/0EOzyRo6cARin03vTG8ubt0vW81Ff/SrZHgvCLfa6t2+s4hNXfSF5u1T5fWSnpHcMaZBMcU13DuJ+5+76t9S5tedKD4wcrDliXs155Si71nbFrA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RjgR2OzECULxxVT0Kw72jgxSBepbHvZ2N+ekWJXA7W0=;
+ b=QtYIwQ7S0rn3HZmwV5W6wQ3zinZ4h8jXbdIFkb2hkOHTwu19Dzglzk7LQoEd78/qlpEOYx9D6tDwkIu90e+igK8DH0wBt674X4ugpfCZe+tO/f4iAE4CJYwUBwH9iavC2FUwvULeM7adK9MCc3K8QIYBNDrcmMDI3HyezlmJB5OFBn9CsjQSAaI2hWuAVa1s7/F+rW0cQ++mOvP6Pnh5ivsiIizrHSnA1P91NnLMm5jN9YkbLLa3TUZm69BfNM5nDuK5Dnt3DJ0af9Bd/rbJ4AfKqUfXUs6phnQfF7diwXG7PaCsZtyZuF32/oTvfXufg2CdMhnJLi9FpBAsAVLo6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RjgR2OzECULxxVT0Kw72jgxSBepbHvZ2N+ekWJXA7W0=;
+ b=pkuvilvRLA4XF0oyYwavKCcy2o2RSzBj+jPm1PRxT+wPtvzTLNsJKIevv8tHs6G38yg/vOLQSzqAzkGW+VNC1kdjqO+epwVx69IhzH0wHPiQ4yDc1X02ZI0hjxBZ2rKyjh+eFDbo5YkLTBZB0x5lgYk14F3BI9DRus4HAT/u9U4pz6Xm9riQ9sOX5sEFYJPQ8iMESCfxLy3uQkiNYs2QGf7R4Fdt+stguJ1Tv1geYP65hWvpsMFIiWx0u02+xpr7VuG7t9To6UlC9anyQyeROxn7HYM4nVZUeQam4m8RxFnEEbYE3k9l6IUMjBENYJK5AkKPKpW/0VVd61GqCXO+SA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by SJ2PR12MB8977.namprd12.prod.outlook.com (2603:10b6:a03:539::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
+ 2025 16:23:05 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 16:23:05 +0000
+Date: Tue, 23 Sep 2025 13:23:02 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, iommu@lists.linux.dev,
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	zong.li@sifive.com, tjeznach@rivosinc.com, joro@8bytes.org,
+	will@kernel.org, robin.murphy@arm.com, anup@brainfault.org,
+	atish.patra@linux.dev, alex.williamson@redhat.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, alex@ghiti.fr
+Subject: Re: [RFC PATCH v2 08/18] iommu/riscv: Use MSI table to enable IMSIC
+ access
+Message-ID: <20250923162302.GC2608121@nvidia.com>
+References: <20250920203851.2205115-20-ajones@ventanamicro.com>
+ <20250920203851.2205115-28-ajones@ventanamicro.com>
+ <20250922184336.GD1391379@nvidia.com>
+ <20250922-50372a07397db3155fec49c9@orel>
+ <20250922235651.GG1391379@nvidia.com>
+ <87ecrx4guz.ffs@tglx>
+ <20250923140646.GM1391379@nvidia.com>
+ <20250923-b85e3309c54eaff1cdfddcf9@orel>
+ <20250923152702.GB2608121@nvidia.com>
+ <20250923-e459316700c55d661c060b08@orel>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923-e459316700c55d661c060b08@orel>
+X-ClientProxiedBy: SJ0PR03CA0052.namprd03.prod.outlook.com
+ (2603:10b6:a03:33e::27) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:144b:b0:425:6f0b:a1db with SMTP id
- e9e14a558f8ab-42581e28e41mr43633795ab.9.1758644547759; Tue, 23 Sep 2025
- 09:22:27 -0700 (PDT)
-Date: Tue, 23 Sep 2025 09:22:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d2c943.a70a0220.1b52b.02b3.GAE@google.com>
-Subject: [syzbot] [mm?] WARNING in memory_failure
-From: syzbot <syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linmiaohe@huawei.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, nao.horiguchi@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|SJ2PR12MB8977:EE_
+X-MS-Office365-Filtering-Correlation-Id: d59f2327-9ae4-4cfa-f6ea-08ddfabd79ab
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?P8ZCB5ls9AsDUJ7CrtTXy5Zn4SnhSeJAAF56jecwk6/ll0KiahBDFEr/U4kL?=
+ =?us-ascii?Q?rnxooDBAvLUHSEV7/yBkWd8T8alzIZh43Z0OelGONwZfkyzKnkovozd43jbb?=
+ =?us-ascii?Q?f5V55G/3ZELHe9+otzx1jtEi29BszDiKjpKlznXOGfsZaVP/ZVPNWY1WYZcL?=
+ =?us-ascii?Q?Ij1H2iY+zB4FGylCR4sPToYuoJvs8fwji5kNw623wFq4dSQ6hSpGOagIkFy3?=
+ =?us-ascii?Q?MUIWX71YfwTfxBAKD+oCohoX0+2ynPC9enLG/iKBJ2DK62/z6ZLZWvpHmqJW?=
+ =?us-ascii?Q?ViRdOtubsAVEQYiNP+/IEispnwqwbq6k1ucMovK5TQpVHeEkzu62UqmcVS/b?=
+ =?us-ascii?Q?l3lhBVQlve5acsprizF1aEzifuIXNYc2TAEzfiMC7H4Vw/8A6Jy0iEfh8I4f?=
+ =?us-ascii?Q?M7Tv4wjVhnTruW6VDN04zGjBOMwcMFOid+LKn+8lFN4SJ9q/22zaMh68IkbU?=
+ =?us-ascii?Q?6y71oTJktb8O4G2NGqmBJx9rdvn6um0kMuaz3mkKwd5xES4Z3dLOklSfq1Zd?=
+ =?us-ascii?Q?DGQGBtfIEB1DDNvFwrLxRUjbXN9eBS2ExVpqllycR3QcUKNZNx5r0njjjm1Z?=
+ =?us-ascii?Q?/09JZO5Ya5ArnbMgjd6pUgSpcIXxbTZ/TYkUn96tWwvmBWqayl1fVAjEfDFJ?=
+ =?us-ascii?Q?h+nAj3wMucQZqszgUAet4rbeYy3dg3OLb9ZCYxdY8lhMFYOOVW/pRfVMyqcI?=
+ =?us-ascii?Q?bgor3HCkiGho+GaawhqzdBuuOKJhu8skUiSHKv9+i7sgFQrADF1fO9X/0jLO?=
+ =?us-ascii?Q?skoxqZK3n1NA4RO54djafTKkPnl2vTeEz3hR3eWlxvq7jsJ1+iGJXe2pbQ5X?=
+ =?us-ascii?Q?/wnaxkPvnMpqQ04FfZDORB8i8Kks/Ofp9RvpdaiJPsGpqQsmeiYjhSGgu+GJ?=
+ =?us-ascii?Q?D9wGOTSUCciW88LCWdewjbWDVsINuK5GHUe7uXM4iKciRqMDQxlaf+S44Wqj?=
+ =?us-ascii?Q?+cweiGNTjkZdyxkkVQ1HgmDUI7Lw7BaNCwMF6rzU0vNqpGJsZzVgP+6C3kmP?=
+ =?us-ascii?Q?erQHonP5FBdadOe0NOo7KMyHa1VtA7h6cG6DcDlVlgUxl4A82pC3O5iqQnHr?=
+ =?us-ascii?Q?90WXhV8uNGTY/KPeYlD+2N9ME4FBDzqsOShE9IQTJcbf42Q+EZnqhAxZELJ4?=
+ =?us-ascii?Q?kS542Xh0+w3D10m/kbja8wSAgkZrX1cBGfUV1Fch1YWh8B1jfh/81g0Ih4E+?=
+ =?us-ascii?Q?9eUs8TjR3nMRUbEKi1Ppk35GXbXhOBM6vKjY+JA8E0eqHCvrg7beFF2MKYjA?=
+ =?us-ascii?Q?ViGBwyahfmuCbDbcV9P2UZj5TuNOKuFfzTrZxWYvpusyiRM8PCsRFzirDy4F?=
+ =?us-ascii?Q?H6kgzt8SD2/IeXmRi3kE90ivhqDFFtQgGDTmRQS4oNMHIjcerIU85xwpnx9Q?=
+ =?us-ascii?Q?F184MiKvDy5kDxsFbWZe2zX1gBgE2gJ4OHOZ1AfDUHVXJOQdBW65bM5ScUl9?=
+ =?us-ascii?Q?1MnlRkwlvrE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?uMRNhT+a08cn27i4kIjGKSstq8TRNq96wdJ/ZF2UxD+Ya/4OTZsA38RVYC9f?=
+ =?us-ascii?Q?l/2uFxYObV//eo7sm9QCJmQ1Q4IDPE8o0BdLUTGtLvXvpNcaJApUOJw8RDpQ?=
+ =?us-ascii?Q?uROj+1soWblSjhZt88CUL3JXiLaNP6XV+1ItIB1WQwQgDCy0Ucw9pcl0i7lb?=
+ =?us-ascii?Q?u8oqH/btwFBMYidtldv840LAp4tIIkOtTW4yi0caA3kslqaXtwIFHdoBVX/z?=
+ =?us-ascii?Q?SNRE4l4MQ+pazCQje8TinaQZC8g8YeWM4NZOnXUpNmBnHvOpCHnj8N6UfRty?=
+ =?us-ascii?Q?A8Ofzx3zjHzdY49qs/SdzpplGUWFpXP+r4X6DbVAFepGIbXyAyxTdy98jYre?=
+ =?us-ascii?Q?5UMNtjNaQ+BxqdxeuluzH8bvI+LIKX40Fb0hSZN+Y8t8f7cPLC51HuBX2VIK?=
+ =?us-ascii?Q?nrQsJ7YLsF7SDL+Ti7kCDuat4pOCwPf5z3tp8o3oYCnPKVRQ9UjFcir9jcfc?=
+ =?us-ascii?Q?teUnTuMPWPsz2vNmtpMWtE2ycpjoKY0PJQE+hSmusyh1DY4UClqOhAtke9C8?=
+ =?us-ascii?Q?+AZipHbz3m0kDtd2mx1Vj/zbLQCxfdc+xrAVMzcUCJ8U0xCakSfQf3ZDZMHV?=
+ =?us-ascii?Q?HCTIFqDeYcaoSff+58P8h6PVsY0cEwGHpZlucMpZHDdvcxa4/iLkhFzRP7Ej?=
+ =?us-ascii?Q?s0Mc/Z+BJKGDKOIEumBnmOjlARt75+SxLDFJQSOzrs48QsaBBf2xVxsjpmnp?=
+ =?us-ascii?Q?capKAdA+TatCkLVMMAiZz6a1xW+XE/F6nJybkJg1djDqBKrOf62Z3A8dK7Xp?=
+ =?us-ascii?Q?rFap9jkmsM0M89PCG3/fHh9ZfXExl/jDNeXjpAfzhB75J3w1htnXuLENu8SE?=
+ =?us-ascii?Q?vIsbIwxkMCgjQBfgQQV/FymPX1w8B2A+9/Yc4qaLWtd/TCOcROgr6hkWYAoc?=
+ =?us-ascii?Q?Yq5OozSwpT/F2+mP6/ADzNNLbZHCLvXQ3FLKeiDi1SQvIl1mZips6uA0QAMZ?=
+ =?us-ascii?Q?WoLIrHXK7E1ko0H+txuXQLA2OpEkQaTrHKwOtFjciTdZavmbLdXeIvC1oMwQ?=
+ =?us-ascii?Q?33N9dPULhoWXiRZZlo9Gl5hOIgh/LaR74fyDtIEEGyojoJUwDXMSrzzJW+Ls?=
+ =?us-ascii?Q?k26jMh6rL+Za+GZYpyxQcT0IkY6FD3RP0MMTN95ZZ9AtVLIyUrdKErMjTkDC?=
+ =?us-ascii?Q?S/kX9lvJFDhaKTTx67rxvbdE6C31M/7ZDCenCVeS+xuEHnGYOWEj1fzU18Nj?=
+ =?us-ascii?Q?GQlwvulY784na36CPP0LWpCWa3C/q5E5W+K6mfnUx3/GSBKDHfBJy/tkHST/?=
+ =?us-ascii?Q?nzHoGBKhK1MQXzz7zwaubT/wO9uAHzNKK+r8c9n/Nkmtrmd1u9h2GGzQ2GjB?=
+ =?us-ascii?Q?q30AkLVLkQJSIM8e+2xXOXGxDDeEMNKu1FBNq0ToBASTXb8S4zpigaoXUojR?=
+ =?us-ascii?Q?bqPR1qwfQAPwZkYQ8HOdjahtuuYAv61iRdX5IQ049qmW9kZL1snf/NhRk9uT?=
+ =?us-ascii?Q?XH2iG/zX0ISOjuCAHgWQSTcwb1ih+/ATl/6ooF4k2e9p1Cp02v3bNdlLwedF?=
+ =?us-ascii?Q?JlXBJOci6EM3Emwu2JY9ETAqoZ7Op4mVVcxJKxnLun0sTaNg6eSK06y7x65o?=
+ =?us-ascii?Q?OfSW0Jv83wMJ7RXH5XMP66w0t/rh/i3BfcoIc7vR?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d59f2327-9ae4-4cfa-f6ea-08ddfabd79ab
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 16:23:05.5737
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TPPyGUz5g1dhhhgNXYINeStOmakIOGLb9zxetx4GfChKS+2To2NQYSg6wQw4XNEU
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8977
 
-Hello,
+On Tue, Sep 23, 2025 at 10:50:56AM -0500, Andrew Jones wrote:
+> Yes, this is the part that I'd like to lean on you for, since I understand
+> we want to avoid too much KVM/virt special casing for VFIO/IOMMUFD. I was
+> thinking that if I bit the bullet and implemented nested support than when
+> nesting was selected it would be apparent we're in virt context. However,
+> I was hoping to pull together a solution that works with current QEMU and
+> VFIO too.
 
-syzbot found the following issue on:
+You probably do have to make nested part of this, but I don't have a
+clear picture how you'd tie all the parts together through the nested
+API..
 
-HEAD commit:    b5db4add5e77 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=10edb8e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d2ae34a0711ff2f1
-dashboard link: https://syzkaller.appspot.com/bug?extid=e6367ea2fdab6ed46056
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14160f12580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1361627c580000
+Somehow you have to load a msiptp that is effectively linked to the
+KVM reliably into the DC for the iommufd controlled devices that are
+linked to that KVM. Then synchronize with VFIO that this is done and
+it can setup KVM only interrupts somehow. This kvm entanglement is the
+"virt" you have mentioned many times.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6eee2232d5c1/disk-b5db4add.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a8b00f2f1234/vmlinux-b5db4add.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/fc0d466f156c/Image-b5db4add.gz.xz
+The direct injection interrupt path is already quite a confusing
+thing..
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com
-
-Injecting memory failure for pfn 0x104000 at process virtual address 0x20000000
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6700 at mm/memory-failure.c:2391 memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-Modules linked in:
-CPU: 1 UID: 0 PID: 6700 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-lr : memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-sp : ffff8000a41478c0
-x29: ffff8000a41479a0 x28: 05ffc00000200868 x27: ffff700014828f20
-x26: 1fffffbff8620001 x25: 05ffc0000020086d x24: 1fffffbff8620000
-x23: fffffdffc3100008 x22: fffffdffc3100000 x21: fffffdffc3100000
-x20: 0000000000000023 x19: dfff800000000000 x18: 1fffe00033793888
-x17: ffff80008f7ee000 x16: ffff80008052aa64 x15: 0000000000000001
-x14: 1fffffbff8620000 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff8620001 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d7eedb80 x7 : ffff800080428910 x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000001 x3 : ffff800080cf5438
-x2 : 0000000000000001 x1 : 0000000000000040 x0 : 0000000000000000
-Call trace:
- memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391 (P)
- madvise_inject_error mm/madvise.c:1475 [inline]
- madvise_do_behavior+0x2c8/0x7c4 mm/madvise.c:1875
- do_madvise+0x190/0x248 mm/madvise.c:1978
- __do_sys_madvise mm/madvise.c:1987 [inline]
- __se_sys_madvise mm/madvise.c:1985 [inline]
- __arm64_sys_madvise+0xa4/0xc0 mm/madvise.c:1985
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 1544
-hardirqs last  enabled at (1543): [<ffff80008b042cd0>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-hardirqs last  enabled at (1543): [<ffff80008b042cd0>] _raw_spin_unlock_irq+0x30/0x80 kernel/locking/spinlock.c:202
-hardirqs last disabled at (1544): [<ffff80008b01a1ac>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
-softirqs last  enabled at (1528): [<ffff8000803da960>] softirq_handle_end kernel/softirq.c:425 [inline]
-softirqs last  enabled at (1528): [<ffff8000803da960>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
-softirqs last disabled at (1397): [<ffff800080022028>] __do_softirq+0x14/0x20 kernel/softirq.c:613
----[ end trace 0000000000000000 ]---
-Memory failure: 0x104000: recovery action for huge page: Recovered
-Injecting memory failure for pfn 0x131e00 at process virtual address 0x20200000
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6700 at mm/memory-failure.c:2391 memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-Modules linked in:
-CPU: 1 UID: 0 PID: 6700 Comm: syz.0.17 Tainted: G        W           syzkaller #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-lr : memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-sp : ffff8000a41478c0
-x29: ffff8000a41479a0 x28: 05ffc00000200868 x27: ffff700014828f20
-x26: 1fffffbff878f001 x25: 05ffc0000020086d x24: 1fffffbff878f000
-x23: fffffdffc3c78008 x22: fffffdffc3c78000 x21: fffffdffc3c78000
-x20: 0000000000000023 x19: dfff800000000000 x18: 00000000ffffffff
-x17: ffff80009353a000 x16: ffff80008052aa64 x15: 0000000000000001
-x14: 1fffffbff878f000 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff878f001 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d7eedb80 x7 : ffff800080a549a8 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff800080cf5438
-x2 : 0000000000000001 x1 : 0000000000000040 x0 : 0000000000000000
-Call trace:
- memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391 (P)
- madvise_inject_error mm/madvise.c:1475 [inline]
- madvise_do_behavior+0x2c8/0x7c4 mm/madvise.c:1875
- do_madvise+0x190/0x248 mm/madvise.c:1978
- __do_sys_madvise mm/madvise.c:1987 [inline]
- __se_sys_madvise mm/madvise.c:1985 [inline]
- __arm64_sys_madvise+0xa4/0xc0 mm/madvise.c:1985
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 2162
-hardirqs last  enabled at (2161): [<ffff800080ca8720>] __folio_split+0xf7c/0x1438 mm/huge_memory.c:3856
-hardirqs last disabled at (2162): [<ffff80008b01a1ac>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
-softirqs last  enabled at (1726): [<ffff8000803da960>] softirq_handle_end kernel/softirq.c:425 [inline]
-softirqs last  enabled at (1726): [<ffff8000803da960>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
-softirqs last disabled at (1547): [<ffff800080022028>] __do_softirq+0x14/0x20 kernel/softirq.c:613
----[ end trace 0000000000000000 ]---
-Memory failure: 0x131e00: recovery action for huge page: Recovered
-Injecting memory failure for pfn 0x134200 at process virtual address 0x20400000
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6700 at mm/memory-failure.c:2391 memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-Modules linked in:
-CPU: 1 UID: 0 PID: 6700 Comm: syz.0.17 Tainted: G        W           syzkaller #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-lr : memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-sp : ffff8000a41478c0
-x29: ffff8000a41479a0 x28: 05ffc00000200868 x27: ffff700014828f20
-x26: 1fffffbff87a1001 x25: 05ffc0000020086d x24: 1fffffbff87a1000
-x23: fffffdffc3d08008 x22: fffffdffc3d08000 x21: fffffdffc3d08000
-x20: 0000000000000023 x19: dfff800000000000 x18: 1fffe00033793888
-x17: 646461206c617574 x16: ffff80008052aa64 x15: 0000000000000001
-x14: 1fffffbff87a1000 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff87a1001 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d7eedb80 x7 : ffff800080a549a8 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff800080cf5438
-x2 : 0000000000000001 x1 : 0000000000000040 x0 : 0000000000000000
-Call trace:
- memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391 (P)
- madvise_inject_error mm/madvise.c:1475 [inline]
- madvise_do_behavior+0x2c8/0x7c4 mm/madvise.c:1875
- do_madvise+0x190/0x248 mm/madvise.c:1978
- __do_sys_madvise mm/madvise.c:1987 [inline]
- __se_sys_madvise mm/madvise.c:1985 [inline]
- __arm64_sys_madvise+0xa4/0xc0 mm/madvise.c:1985
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 2768
-hardirqs last  enabled at (2767): [<ffff800080ca8720>] __folio_split+0xf7c/0x1438 mm/huge_memory.c:3856
-hardirqs last disabled at (2768): [<ffff80008b01a1ac>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
-softirqs last  enabled at (2364): [<ffff8000803da960>] softirq_handle_end kernel/softirq.c:425 [inline]
-softirqs last  enabled at (2364): [<ffff8000803da960>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
-softirqs last disabled at (2321): [<ffff800080022028>] __do_softirq+0x14/0x20 kernel/softirq.c:613
----[ end trace 0000000000000000 ]---
-Memory failure: 0x134200: recovery action for huge page: Recovered
-Injecting memory failure for pfn 0x129000 at process virtual address 0x20600000
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6700 at mm/memory-failure.c:2391 memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-Modules linked in:
-CPU: 1 UID: 0 PID: 6700 Comm: syz.0.17 Tainted: G        W           syzkaller #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-lr : memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-sp : ffff8000a41478c0
-x29: ffff8000a41479a0 x28: 05ffc00000200868 x27: ffff700014828f20
-x26: 1fffffbff8748001 x25: 05ffc0000020086d x24: 1fffffbff8748000
-x23: fffffdffc3a40008 x22: fffffdffc3a40000 x21: fffffdffc3a40000
-x20: 0000000000000023 x19: dfff800000000000 x18: 1fffe00033793888
-x17: 646461206c617574 x16: ffff80008052aa64 x15: 0000000000000001
-x14: 1fffffbff8748000 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff8748001 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d7eedb80 x7 : ffff800080a549a8 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff800080cf5438
-x2 : 0000000000000001 x1 : 0000000000000040 x0 : 0000000000000000
-Call trace:
- memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391 (P)
- madvise_inject_error mm/madvise.c:1475 [inline]
- madvise_do_behavior+0x2c8/0x7c4 mm/madvise.c:1875
- do_madvise+0x190/0x248 mm/madvise.c:1978
- __do_sys_madvise mm/madvise.c:1987 [inline]
- __se_sys_madvise mm/madvise.c:1985 [inline]
- __arm64_sys_madvise+0xa4/0xc0 mm/madvise.c:1985
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 3024
-hardirqs last  enabled at (3023): [<ffff800080ca8720>] __folio_split+0xf7c/0x1438 mm/huge_memory.c:3856
-hardirqs last disabled at (3024): [<ffff80008b01a1ac>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
-softirqs last  enabled at (2986): [<ffff8000803da960>] softirq_handle_end kernel/softirq.c:425 [inline]
-softirqs last  enabled at (2986): [<ffff8000803da960>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
-softirqs last disabled at (2771): [<ffff800080022028>] __do_softirq+0x14/0x20 kernel/softirq.c:613
----[ end trace 0000000000000000 ]---
-Memory failure: 0x129000: recovery action for huge page: Recovered
-Injecting memory failure for pfn 0x134600 at process virtual address 0x20800000
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6700 at mm/memory-failure.c:2391 memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-Modules linked in:
-CPU: 1 UID: 0 PID: 6700 Comm: syz.0.17 Tainted: G        W           syzkaller #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-lr : memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-sp : ffff8000a41478c0
-x29: ffff8000a41479a0 x28: 05ffc0000020086c x27: ffff700014828f20
-x26: 1fffffbff87a3001 x25: 05ffc0000020186d x24: 1fffffbff87a3000
-x23: fffffdffc3d18008 x22: fffffdffc3d18000 x21: fffffdffc3d18000
-x20: 0000000000000023 x19: dfff800000000000 x18: 1fffe00033793888
-x17: ffff80009353a000 x16: ffff80008052aa64 x15: 0000000000000001
-x14: 1fffffbff87a3000 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff87a3001 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d7eedb80 x7 : ffff800080a549a8 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff800080cf5438
-x2 : 0000000000000001 x1 : 0000000000000040 x0 : 0000000000000000
-Call trace:
- memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391 (P)
- madvise_inject_error mm/madvise.c:1475 [inline]
- madvise_do_behavior+0x2c8/0x7c4 mm/madvise.c:1875
- do_madvise+0x190/0x248 mm/madvise.c:1978
- __do_sys_madvise mm/madvise.c:1987 [inline]
- __se_sys_madvise mm/madvise.c:1985 [inline]
- __arm64_sys_madvise+0xa4/0xc0 mm/madvise.c:1985
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 3462
-hardirqs last  enabled at (3461): [<ffff800080ca8720>] __folio_split+0xf7c/0x1438 mm/huge_memory.c:3856
-hardirqs last disabled at (3462): [<ffff80008b01a1ac>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
-softirqs last  enabled at (3064): [<ffff8000803da960>] softirq_handle_end kernel/softirq.c:425 [inline]
-softirqs last  enabled at (3064): [<ffff8000803da960>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
-softirqs last disabled at (3027): [<ffff800080022028>] __do_softirq+0x14/0x20 kernel/softirq.c:613
----[ end trace 0000000000000000 ]---
-Memory failure: 0x134600: recovery action for huge page: Recovered
-Injecting memory failure for pfn 0x134800 at proces
-Injecting memory failure for pfn 0x134800 at process virtual address 0x20a00000
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6700 at mm/memory-failure.c:2391 memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-Modules linked in:
-CPU: 0 UID: 0 PID: 6700 Comm: syz.0.17 Tainted: G        W           syzkaller #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-lr : memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
-sp : ffff8000a41478c0
-x29: ffff8000a41479a0 x28: 05ffc0000020086c x27: ffff700014828f20
-x26: 1fffffbff87a4001 x25: 05ffc0000020186d x24: 1fffffbff87a4000
-x23: fffffdffc3d20008 x22: fffffdffc3d20000 x21: fffffdffc3d20000
-x20: 0000000000000023 x19: dfff800000000000 x18: 1fffe0003378f088
-x17: ffff80008f7ee000 x16: ffff80008052aa64 x15: 0000000000000001
-x14: 1fffffbff87a4000 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff87a4001 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d7eedb80 x7 : ffff800080a549a8 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff800080cf5438
-x2 : 0000000000000001 x1 : 0000000000000040 x0 : 0000000000000000
-Call trace:
- memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391 (P)
- madvise_inject_error mm/madvise.c:1475 [inline]
- madvise_do_behavior+0x2c8/0x7c4 mm/madvise.c:1875
- do_madvise+0x190/0x248 mm/madvise.c:1978
- __do_sys_madvise mm/madvise.c:1987 [inline]
- __se_sys_madvise mm/madvise.c:1985 [inline]
- __arm64_sys_madvise+0xa4/0xc0 mm/madvise.c:1985
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 3538
-hardirqs last  enabled at (3537): [<ffff800080ca8720>] __folio_split+0xf7c/0x1438 mm/huge_memory.c:3856
-hardirqs last disabled at (3538): [<ffff80008b01a1ac>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
-softirqs last  enabled at (3500): [<ffff8000803da960>] softirq_handle_end kernel/softirq.c:425 [inline]
-softirqs last  enabled at (3500): [<ffff8000803da960>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
-softirqs last disabled at (3465): [<ffff800080022028>] __do_softirq+0x14/0x20 kernel/softirq.c:613
----[ end trace 0000000000000000 ]---
-Memory failure: 0x134800: recovery action for huge page: Recovered
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Jason
 
