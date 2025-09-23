@@ -1,141 +1,216 @@
-Return-Path: <linux-kernel+bounces-828860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F1F8B95AB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:31:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5FAB95B88
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE9DB1639B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:31:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C46E7481D0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC453218BD;
-	Tue, 23 Sep 2025 11:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="oLGph3EV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EtS0BnnY"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC65322C66;
+	Tue, 23 Sep 2025 11:44:19 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F9A1487F6;
-	Tue, 23 Sep 2025 11:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F3B322536;
+	Tue, 23 Sep 2025 11:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758627084; cv=none; b=ECB7b44X1IHt1MS2/WsFCIGoGsuQBN2hCxhyNW68js/c2lro0MrJYTr5PlIOwEsx25V0Bei1qT9Xo8pb+t7ISgM66iguyuJVzkBnfe7pReAjvE1tgkVa6a6A1dVVme9DCojNMg2YQjP7gqvkai9kAhFlkjAcfCxV7kklMpI8LKw=
+	t=1758627858; cv=none; b=Tl65YW2QzURHmI/y4lJfMWsKGQNU4Ye5FPDSdk7EbFmubzMGbNxtQES1rY/B24qbmW5/zu8mlsEmzA7zo+eTjKO2LOggs/mLqf10mtQW1BXKC5CBe8EQXfn7aaz+/2YLrBq/h6amM6cNt8fIwYGc8a/MToHQH/GGP+idb6gS+jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758627084; c=relaxed/simple;
-	bh=mCNJOTazPvqVqMaQhV2tfeF0FvD+Mm2uF3eK7Ojqa8g=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=rFYIjsiUZJ1Rldlckpg4bjQMYwtU8V8hiShieF9F8is4sRNyO6/kK3G6r5EV+HE6CTFJrXqsSD58KqCiNEtNkYHKGdxXtbxyXzt1YegsyM9oeHY2h6gCFM0nfAPgJCX27SckKiFgUCSsEafUsNhgwCeHrVAAsfQqRUCyw8tzrlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=oLGph3EV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EtS0BnnY; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id 1DE111D002A0;
-	Tue, 23 Sep 2025 07:31:20 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Tue, 23 Sep 2025 07:31:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
-	1758627079; x=1758713479; bh=XJAa74at5W3WFDosbUaDEhWc/w9NW9zUkT4
-	q5gGIozM=; b=oLGph3EVDopwXaQ09M4M9BXRIuQIKjVhpPdU/HLILXtSSkUbFCg
-	wUAMPDaNSl39d7FvqEnNKCuXWufYI28oASpbl2ogkwEuvwyXlzDxIDVj7PYwZ3Va
-	2RZGvH0jx6gOElp6/8qASdcNVV8LrNKTsViE0r4j0JpZ8so1Y5JpBs/Qrg+r8Ywk
-	x/8u1oczJJI90rcOdD2QI320N0Qpbl1UjeMboaPae8cJq9kzgqvYXEOw3+3R18nz
-	CGrt2Cg8sRMO2eT+qtSd9tmhquhzjxGDLVg/z/+3hzEUIg17yrH1KtWTnQ19dPI6
-	B6ZuLZTgE9B8xgmFKaOUDRReLKdFsSbBy8g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758627079; x=
-	1758713479; bh=XJAa74at5W3WFDosbUaDEhWc/w9NW9zUkT4q5gGIozM=; b=E
-	tS0BnnY4ZK6gJryMtpHSIWbXNQkGiz7APxIyXS+3or6PBCbS6j+rQI2lsA36BLXt
-	8KfBKnvBrCVt7mpF+3BLmP1PbaNMLhWQk9/8wKq/SjF0ucuKR4JQ0MSp5UR0faIY
-	mYgmLMk5K+xqcrwH6TR9khHKYLkdy2KB2RVmOTx1FqqJIpYPse2mpr6sTOIp8Ela
-	f/A+bN/ckqmEedt81PJJqQdzR2pKZbsKYcuphRYX3fHn9cvrsCmWJ66nzKUS9/u5
-	xUX13mg8W/KvzRYuOn0Ma0ROe252h9kbPrgGH99zHtLD3oQksqbnPxKsHftxiv7W
-	Q7lXzCYcW4+gaoSkVzc8w==
-X-ME-Sender: <xms:B4XSaC9omsIVkUWqV0QFUVMIhZIeaK62bY7a7NGc51k_Q70wpWe68A>
-    <xme:B4XSaLLwb6vvFVWpZGONLlJ2rREwkBrt8xuLC0AK_EUOInLBPqvHw2GNZ2-pgp2aM
-    7U1OEIfhMAN-mWEiNwe9CYLxJRIreuUESNQTKANVIi-PBVcbw>
-X-ME-Received: <xmr:B4XSaIfX7rS_gvUhKwqrGjR4eRl8lErg9iLSwxxLIoVgNNg5Leu1HI1zMkiRPP9kjsK_oV1CjV4YEfk8jWZp-ANPW06Wu5mKLseO1L-Piurd>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeitdeiudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpegtgfgghffvvefujghffffkrhesthhqredttddtjeenucfhrhhomheppfgvihhluehr
-    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    eljedtfeegueekieetudevheduveefffevudetgfetudfhgedvgfdtieeguedujeenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
-    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdgtrhihphhtohesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehtghhrrghfsehsuhhughdrtghhpdhrtghpthhtohephhgvrh
-    gsvghrthesghhonhguohhrrdgrphgrnhgrrdhorhhgrdgruhdprhgtphhtthhopehmvghn
-    ghhlohhnghekrdguohhnghesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:B4XSaK_dPsgsd7ji6EdrvdL5jlOS0Jl7WF8eA_tKp5CROFM1mDn2bg>
-    <xmx:B4XSaFq8c2x7K1AxAxAei67LRqANszDZLhfdYqezkajn1w-Td3jH1Q>
-    <xmx:B4XSaPCEgOWCWvv5Xuwvr6d28YW_FZm5xTGjO3SSYMeVxiQBfVrGJQ>
-    <xmx:B4XSaHw-Ntt0dkzUazLA8bmH7WpvfMz3wR0xhmPkoWF5xzeauomeBw>
-    <xmx:B4XSaJM1XAAV3ofZ9PsAt8d4BQIGeQJQCcyMI83r5Ogs4Eaqscm4zRgo>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 23 Sep 2025 07:31:17 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1758627858; c=relaxed/simple;
+	bh=7Emyyx9BuarRBPWVOBI+FuTRkVGZokBm1yhObHboraA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R6b444tgcqTqkDT4esXCtYmdSIPhe0J+hwu0XBWZip63+V1vuQKp1iFFouEagSkjkIkGE+Xo8jFSZVAZjvz5vAac4Bc/dCNoBYHDjFSI+B6D0PWLpeGAKSKxRaLIZqZUNCkeBJEFQfjmzeHbxsSfqb9stscMR0bXWsw1BqlTbAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BCB2D1A0329;
+	Tue, 23 Sep 2025 13:34:46 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 812A81A0477;
+	Tue, 23 Sep 2025 13:34:46 +0200 (CEST)
+Received: from lsv03900.swis.in-blr01.nxp.com (lsv03900.swis.in-blr01.nxp.com [10.12.177.15])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 543431800083;
+	Tue, 23 Sep 2025 19:34:45 +0800 (+08)
+From: Lakshay Piplani <lakshay.piplani@nxp.com>
+To: alexandre.belloni@bootlin.com,
+	linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org
+Cc: pankit.garg@nxp.com,
+	vikash.bansal@nxp.com,
+	priyanka.jain@nxp.com,
+	shashank.rebbapragada@nxp.com,
+	Lakshay Piplani <lakshay.piplani@nxp.com>
+Subject: [PATCH v4 1/2] dt-bindings: rtc: Add pcf85053 support
+Date: Tue, 23 Sep 2025 17:04:40 +0530
+Message-Id: <20250923113441.555284-1-lakshay.piplani@nxp.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Menglong Dong" <menglong8.dong@gmail.com>
-Cc: "Herbert Xu" <herbert@gondor.apana.org.au>, tgraf@suug.ch,
- linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rhashtable: add likely() to __rht_ptr()
-In-reply-to:
- <CADxym3YMX063-9S7ZgdMH9PPjmRXj9WG0sesn_och5G+js-P9A@mail.gmail.com>
-References: <20250923060614.539789-1-dongml2@chinatelecom.cn>,
- <aNI_-QHAzwrED-iX@gondor.apana.org.au>,
- <CADxym3YMX063-9S7ZgdMH9PPjmRXj9WG0sesn_och5G+js-P9A@mail.gmail.com>
-Date: Tue, 23 Sep 2025 21:31:13 +1000
-Message-id: <175862707333.1696783.11988392990379659217@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Tue, 23 Sep 2025, Menglong Dong wrote:
-> On Tue, Sep 23, 2025 at 2:36=E2=80=AFPM Herbert Xu <herbert@gondor.apana.or=
-g.au> wrote:
-> >
-> > Menglong Dong <menglong8.dong@gmail.com> wrote:
-> > > In the fast path, the value of "p" in __rht_ptr() should be valid.
-> > > Therefore, wrap it with a "likely". The performance increasing is tiny,
-> > > but it's still worth to do it.
-> > >
-> > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > > ---
-> > > include/linux/rhashtable.h | 5 +++--
-> > > 1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > It's not obvious that rht_ptr would be non-NULL.  It depends on the
-> > work load.  For example, if you're doing a lookup where most keys
-> > are non-existent then it would most likely be NULL.
->=20
-> Yeah, I see. In my case, the usage of the rhashtable will be:
-> add -> lookup, and rht_ptr is alway non-NULL. You are right,
-> it can be NULL in other situations, and it's not a good idea to
-> use likely() here ;)
+Add device tree bindings for NXP PCF85053 RTC chip.
 
-Have you measured a performance increase?  How tiny is it?
+Signed-off-by: Pankit Garg <pankit.garg@nxp.com>
+Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
+---
+V3 -> V4: Add dedicated nxp,pcf85053.yaml.
+          Remove entry from trivial-rtc.yaml.
+V2 -> V3: Moved MAINTAINERS file changes to the driver patch
+V1 -> V2: Handled dt-bindings by trivial-rtc.yaml
 
-It might conceivably make sense to have a rhashtable_lookup_likely() and
-rhashtable_lookup_unlikely(), but concrete evidence of the benefit would
-be needed.
+ .../devicetree/bindings/rtc/nxp,pcf85053.yaml | 128 ++++++++++++++++++
+ 1 file changed, 128 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/nxp,pcf85053.yaml
 
-Thanks,
-NeilBrown
+diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf85053.yaml b/Documentation/devicetree/bindings/rtc/nxp,pcf85053.yaml
+new file mode 100644
+index 000000000000..6b1c97358486
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rtc/nxp,pcf85053.yaml
+@@ -0,0 +1,128 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright 2025 NXP
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/rtc/nxp,pcf85053.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP PCF85053 Real Time Clock
++
++maintainers:
++  - Pankit Garg <pankit.garg@nxp.com>
++  - Lakshay Piplani <lakshay.piplani@nxp.com>
++
++properties:
++  compatible:
++    enum:
++      - nxp,pcf85053
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  nxp,interface:
++    $ref: /schemas/types.yaml#/definitions/string
++    enum: [ primary, secondary ]
++    description: |
++      Identifies this host's logical role in a multi-host topology for the
++      PCF85053 RTC. The device exposes a "TWO" ownership bit in the CTRL
++      register that gates which host may write time/alarm registers.
++        - "primary": Designated host that *may* claim write ownership (set
++          CTRL.TWO=1) **if** write-access is explicitly requested.
++        - "secondary": Peer host that writes only when CTRL.TWO=0 (default).
++
++  nxp,write-access:
++    type: boolean
++    description: |
++      Request the driver to claim write ownership at probe time by setting
++      CTRL.TWO=1. This property is only valid when nxp,interface="primary".
++      The driver will not modify any other CTRL bits (HF/DM/etc.) and will not
++      clear any status/interrupt flags at probe.
++
++required:
++  - compatible
++  - reg
++  - nxp,interface
++
++additionalProperties: false
++
++# Schema constraints matching driver:
++# 1) If nxp,write-access is present, nxp,interface must be "primary".
++#    Rationale: only the primary may claim ownership; driver will set TWO=1.
++# 2) If nxp,interface is "secondary", nxp,write-access must not be present.
++#    Rationale: secondary never claims ownership and cannot write CTRL/ST/alarm.
++#
++# Practical effect:
++# - Primary without 'nxp,write-access'; primary is read only; secondary may
++#   write time registers.
++# - Primary with 'nxp,write-access'; primary owns writes, secondary is read only.
++allOf:
++  - $ref: rtc.yaml#
++  - oneOf:
++      # Case 1: primary with write-access
++      - required: [ "nxp,write-access" ]
++        properties:
++          nxp,interface:
++            const: primary
++
++      # Case 2: primary without write-access
++      - properties:
++          nxp,interface:
++            const: primary
++        not:
++          required: [ "nxp,write-access" ]
++
++      # Case 3: secondary (must not have write-access)
++      - properties:
++          nxp,interface:
++            const: secondary
++        not:
++          required: [ "nxp,write-access" ]
++
++examples:
++  # Single host example.
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      rtc@6f {
++        compatible = "nxp,pcf85053";
++        reg = <0x6f>;
++        nxp,interface = "primary";
++        nxp,write-access;
++        interrupt-parent = <&gpio2>;
++        interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
++      };
++    };
++
++  # Dual-host example: one primary that claims writes; one secondary that never claims writes.
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    i2c0 {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      rtc@6f {
++        compatible = "nxp,pcf85053";
++        reg = <0x6f>;
++        nxp,interface = "primary";
++        nxp,write-access;
++        interrupt-parent = <&gpio2>;
++        interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
++      };
++    };
++
++    i2c1 {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      rtc@6f {
++        compatible = "nxp,pcf85053";
++        reg = <0x6f>;
++        nxp,interface = "secondary";
++      };
++    };
+-- 
+2.25.1
+
 
