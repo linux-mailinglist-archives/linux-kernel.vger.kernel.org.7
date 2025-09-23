@@ -1,134 +1,112 @@
-Return-Path: <linux-kernel+bounces-828438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E466B949CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:47:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA927B949D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C24571902023
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:48:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1DED44664C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5108F30F954;
-	Tue, 23 Sep 2025 06:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="U3D2+rBC"
-Received: from mout-y-111.mailbox.org (mout-y-111.mailbox.org [91.198.250.236])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7596F30DEDA;
+	Tue, 23 Sep 2025 06:49:29 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2868828A73A;
-	Tue, 23 Sep 2025 06:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6BF274B55
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758610065; cv=none; b=BJUR1tOyirhi+stue7TOkObdzuXQ8y7tU1Da3i3dMuWRV2VwrLvlGd6X1xD5YfcL/HuD2ur5EqL0kJkB/+YfF6gjEFblcI9LOLaf1TCJy4iOkDel5LPHYVOjiIug/slnC4Rbi8K9rpA5R877KdJY36RkU//K2y2OKYraAbDqck0=
+	t=1758610169; cv=none; b=LE5SZncWkoFyGik7Ml0C77sLwmXUw29P2fQD8FbJzAYHpEmOq5U3lddJskf0u/3rOO7vrN1f5Gs1QKgtMCENlcfvDavqXCygFYYhmEDtmGKtOnl6T4Kp/9WUKIzw59dG5ymalh3xpyhVa/cLl6qgPVf4KuHhofJHhzZlcuZp/gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758610065; c=relaxed/simple;
-	bh=AJwDIQh4P4pGox3htLAHN4DDLUXf37DWgaODkPPGWOg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=I1VFnv0Dy8zoC3JcIDe8PxPK+6AqJCTmyQ/veROd30Ddre8H69zKS2M8ViTp/Ofayyw35CWkopFEc4KIOMBT7rpyEtDeznGWUdXj44LY+ozuRouqimBRPK7oHTw/fgPOapypubj49tI+lAnOSIcvrwQ8fqrhs2gFGVqEBbgk8g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=U3D2+rBC; arc=none smtp.client-ip=91.198.250.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-y-111.mailbox.org (Postfix) with ESMTPS id 4cW9XB4Rv7z9xxd;
-	Tue, 23 Sep 2025 08:47:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
-	t=1758610058;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AJwDIQh4P4pGox3htLAHN4DDLUXf37DWgaODkPPGWOg=;
-	b=U3D2+rBCTUFhRhUmF3tgLc2clp9xvM45ry5llIwxug6KO+1CGmDWLrnnmwF5KXgMvvnKdy
-	JbW0mwU1YtGkMZoeBKb/yzGxgz1+mlwkoAhDiIL57r3Dnf77ArOPTU4RkJ+zZC7eigZAG/
-	WURGSBAA0SGvn6djSQv5anc6m93D+epnK0I9JChlFAo4cpd4CEn/TEZBKtYufIkYA/uZYA
-	453cC6T1m4NwiAkpZ6BnMhn/V7FF3Ro8tM7R4NJQjGxaouxBug2kfmi1w2h0W+gcWT4VID
-	g8x0S40C26mD8ApdP+XFt7Kb6WCtw86FvXjasmoWRdKIpPpS6smp0NIdqBMAWA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=softfail (outgoing_mbo_mout: 2001:67c:2050:b231:465::1 is neither permitted nor denied by domain of mssola@mssola.com) smtp.mailfrom=mssola@mssola.com
-From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mssola@mssola.com>
-To: David Sterba <dsterba@suse.cz>
-Cc: linux-btrfs@vger.kernel.org,  clm@fb.com,  dsterba@suse.com,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] btrfs: Prevent open-coded arithmetic in kmalloc
-In-Reply-To: <20250923061344.GT5333@twin.jikos.cz> (David Sterba's message of
-	"Tue, 23 Sep 2025 08:13:44 +0200")
-References: <20250919145816.959845-1-mssola@mssola.com>
-	<20250919145816.959845-2-mssola@mssola.com>
-	<20250922102850.GL5333@twin.jikos.cz>
-	<20250923061344.GT5333@twin.jikos.cz>
-Date: Tue, 23 Sep 2025 08:47:35 +0200
-Message-ID: <87jz1p4qd4.fsf@>
+	s=arc-20240116; t=1758610169; c=relaxed/simple;
+	bh=MPODFSa0LB+Kumxg3VaWBPcm4aie8Ump57xJcnaWcNw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hVvXHUZYnJNyVU7ZSaz8HVwvvXeo+aUuKTJPHp63MxtQarP8NOGHNqDzlEvztEJKH0uVbaBhSuUvjLebuHN9vrgauU9qMurBkaqDGYilh7I4tQ6VSQB8k52tZJLCK7FLWWHICRaRV6dHc1sqIejXeqDwAzqeP4DjHMLkpKxQgwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4257ba85609so27700775ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:49:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758610166; x=1759214966;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fp8qKM4BrjWQru6ag0msdw9SrawryFPII+VRZhnNmTc=;
+        b=lbGBblJMe7rRobuzNlBKxLsIhztD4nFq/vRYUNvLh3bxOIAM8mOHJ9Aq43O2ZD3ihG
+         QMRuHfpv/c+k9Ww/vuvj1LyDY4+ZN7ExscJj4kRbV6vjq+ItwMQw8hgIxqwubYAN5GV3
+         rhfEYjCoTxhcnNQ348P4ifDjYph/0dlt2OKzhE84rnSQ9LatXEVlroK4I6yNFUmUV393
+         HVG2lXFJ8/TjPvSX+vXHFDYhz1yYKdsK7AkwTQi66NDU0d7YPqpRSm9FBpj9xiVQPo8/
+         ehHkSzKGgykYThrJHEAaK2S8QTo8Y09ewDRlMQwhEYwBunfTHuQ4jxK7yTCRg6e8PLin
+         W4dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuCYrR55ESRRHf/gB+clv12KIgl92xjTv7o9jM8zAJ6ke5pv0JhOF5rJ9Oro40L/l/m5MQ0Es89bWoqlk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPTslzuVdJ4UP0lNnfzqhORM6/udfUg1sZdAjs8k7U8L+EarTu
+	B8ztmhBZVzM/0ZRIhHXFrag5WG6vBboj9VaZIf9o6WBo6x+jHhSBZTO3m3QU4cUDlm0hAOuNh53
+	2a0Or9QHib1j1jgVQ3Lv7yZXY+nXl3atSaQBEkWDgFzda3SkXmK9v351uu6s=
+X-Google-Smtp-Source: AGHT+IEBGF24zzOyubeneeFGtitQGCJWusqzPv2WHH8CjVfNVGRFNz6pN9Bdydodfv+1iOjpxp/pCH7PstDLtqYTIkBOrF+9/PRC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
-X-Rspamd-Queue-Id: 4cW9XB4Rv7z9xxd
+X-Received: by 2002:a05:6e02:1a25:b0:424:89d:5add with SMTP id
+ e9e14a558f8ab-42581e301fbmr20526255ab.10.1758610166402; Mon, 22 Sep 2025
+ 23:49:26 -0700 (PDT)
+Date: Mon, 22 Sep 2025 23:49:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d242f6.a70a0220.1b52b.0054.GAE@google.com>
+Subject: [syzbot] Monthly jfs report (Sep 2025)
+From: syzbot <syzbot+listafc63eacd78064f7d062@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Hello jfs maintainers/developers,
 
-David Sterba @ 2025-09-23 08:13 +02:
+This is a 31-day syzbot report for the jfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/jfs
 
-> On Mon, Sep 22, 2025 at 02:47:13PM +0200, Miquel Sabat=C3=A9 Sol=C3=A0 wr=
-ote:
->> Hello,
->>
->> David Sterba @ 2025-09-22 12:28 +02:
->>
->> > On Fri, Sep 19, 2025 at 04:58:15PM +0200, Miquel Sabat=C3=A9 Sol=C3=A0=
- wrote:
->> >> As pointed out in the documentation, calling 'kmalloc' with open-coded
->> >> arithmetic can lead to unfortunate overflows and this particular way =
-of
->> >> using it has been deprecated. Instead, it's preferred to use
->> >> 'kmalloc_array' in cases where it might apply so an overflow check is
->> >> performed.
->> >
->> > So this is an API cleanup and it makes sense to use the checked
->> > multiplication but it should be also said that this is not fixing any
->> > overflow because in all cases the multipliers are bounded small numbers
->> > derived from number of items in leaves/nodes.
->>
->> Yes, it's just an API cleanup and I don't think it fixes any current bug
->> in the code base. So no need to CC stable or anything like that.
->
-> Still the changelog should say explicitly that it's not a bug fix before
-> somebody assigns a CVE to it because it mentions overflow.
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 54 issues are still open and 64 have already been fixed.
 
-Got it! I will submit a v2 and make this more explicit.
+Some of the still happening issues:
 
-Thanks,
-Miquel
+Ref  Crashes Repro Title
+<1>  66285   Yes   kernel BUG in jfs_evict_inode
+                   https://syzkaller.appspot.com/bug?extid=9c0c58ea2e4887ab502e
+<2>  36894   Yes   WARNING in dbAdjTree
+                   https://syzkaller.appspot.com/bug?extid=ab18fa9c959320611727
+<3>  32836   Yes   kernel BUG in txUnlock
+                   https://syzkaller.appspot.com/bug?extid=a63afa301d1258d09267
+<4>  7150    Yes   general protection fault in lmLogSync (2)
+                   https://syzkaller.appspot.com/bug?extid=e14b1036481911ae4d77
+<5>  4620    Yes   kernel BUG in dbFindLeaf
+                   https://syzkaller.appspot.com/bug?extid=dcea2548c903300a400e
+<6>  3815    Yes   INFO: trying to register non-static key in txEnd (2)
+                   https://syzkaller.appspot.com/bug?extid=5b27962d84feb4acb5c1
+<7>  3690    Yes   INFO: task hung in lock_metapage
+                   https://syzkaller.appspot.com/bug?extid=1d84a1682e4673d5c4fb
+<8>  3382    Yes   KASAN: user-memory-access Write in __destroy_inode
+                   https://syzkaller.appspot.com/bug?extid=dcc068159182a4c31ca3
+<9>  2907    Yes   KASAN: slab-use-after-free Write in dtSplitPage
+                   https://syzkaller.appspot.com/bug?extid=a939a1121380d3212940
+<10> 2596    Yes   general protection fault in jfs_flush_journal
+                   https://syzkaller.appspot.com/bug?extid=194bfe3476f96782c0b6
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
------BEGIN PGP SIGNATURE-----
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-iQJiBAEBCgBMFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmjSQocbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTEsMiwyEhxtc3NvbGFAbXNzb2xhLmNvbQAKCRCWvoxv2J1l
-ZflsD/0eESI7rIzieHW/1dCgxTEQ+0Mce4FwxQ5ke5ZZiXSk6o5dGiyabApHLGEM
-XQ0wGf9HvHVXlUQKGvt0SVULw/y7OhxtiyGAetGAuVblnvHd6aU2KYpAYrqeVA19
-jvhazcswAr2sBP7Kz05pwxwdK5xjryVnG0zzrMxTVyLrsx/BBmhppTDOQA0oGtgD
-0ZojUwzJmOs9ZP602mhEREJ8NQtg0iAT2ApAcuyGK3SGYZE4yrSa8dwONMnkJpiN
-O4JOo4N7eYXHI4PwHd5D9wJBkIvAT/5UzADFuJUluO8lLgM1SFG3LNPu27cadfH+
-RRUabIYFNuxAcc6pDAcb2zlpWpSANzvunm37qVkyGWSFDQpGBSn/ulZsF6qlfE7J
-nllxZjEFC4PtK/EU9IwwW2iTLzdn5JD3rirqTTEG9byIDeNnc2SJMLwZWqf4lVXX
-AFWQMVueLlw1V39DuUHBlz9Tg05JBgiXBnEJoGrmhoU5luVhYYkWt58SnNZEpiV1
-yz/vV37HD9gDVMP7DpwIFLaVMZeqNEiKOR7cVzJ5BP8dWZ5IoGn4vm4+OsBqsq6i
-c4EI+gO4i/y33QwssOjuXEcXvghERPds9xrc/s9j/4UwEaOvEo/lG/YHzznUcBZN
-h3z8oa0cGqtFzzKZJnqkuUKs9q3gVOlY0u/S/I/GyjTi8ChuEg==
-=tsB8
------END PGP SIGNATURE-----
---=-=-=--
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
