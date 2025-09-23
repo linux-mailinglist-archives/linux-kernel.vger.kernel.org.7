@@ -1,358 +1,154 @@
-Return-Path: <linux-kernel+bounces-828024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F278AB93C1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:54:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FDCB93C2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE3AA19C157E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:54:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B979A7A4264
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5996F2BD11;
-	Tue, 23 Sep 2025 00:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8961B18FC97;
+	Tue, 23 Sep 2025 00:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="otohyrUY"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pZ3nCz3l"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011A61922F5
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 00:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDFB1A23A6
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 00:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758588846; cv=none; b=nalZwKsNGimSVlElOT7v2jV9SMtn1s/GFpTgq8L7jCnRl8j/XTBMaJGRxJuC3OK7JPYg6g6eEo3/VYlvM4O/R+P3vXv8r/ZHZwixaqaMCYoPGH9+Kt2xoTa5x804YtyE/QUIKpN8v7rfEqWZ7C4em0DweZ6FnD52XstoSVCgk6w=
+	t=1758588938; cv=none; b=d4oAAuJ3HXLNk4E1uAnnZQSArUEOUJ1/m0YkQRKGC+hZZ65GDl7+KhL+paT/xqg5QRIOjfcKgcTEDuBCckCMCzrCoHICrh16C54kVtILWEKmX+RPkqTGmgSDDpBuTubwNBFhCELsWNX2CxqTd4NUHT4OqroRasU2ym4sqLgXFXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758588846; c=relaxed/simple;
-	bh=k3I4yoQWlYW8RaG3vYcx9XWCVtfKEFR4QSZqQ2hTEDI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=QZs2Irs1YzvUgAPVjt1HLpUnW+jsEdWmoHpxRVHCs12CC1FJD5Y6r/tPwGkWj2XJ4rTzU4349WWDDPr3WjVIk+Z4lX2yM2ityfKPbwD7mmHafns2U0PxqY3xI+gEV1A+i/riSqTW2gEZ1tGrBs1bwi3woYarZ6+2ZJIxV+DNTw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=otohyrUY; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250923005401epoutp0293336837d9bfbd179b5c62f3349a2238~nwzv5gLWv1943819438epoutp02T
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 00:54:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250923005401epoutp0293336837d9bfbd179b5c62f3349a2238~nwzv5gLWv1943819438epoutp02T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758588841;
-	bh=0icZwGq6l6trj5m8kiyot8z07Evuj931KewICxfmrA0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=otohyrUYrfg89CB6iep/4Blgcw316CaCY9Ze4fGymgPL3NLb4lAHCkiqU7sQZGoBw
-	 s8mB4UZjAndBJCZ09LyTRR5ofZz68puAE2yg7EZnBIba3fIKU0Sp3RixV1UzNpfGUu
-	 WhY8w4lDG50mlvgjH63gHJhONoRrx6lOcqT1xB0I=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250923005400epcas2p4d217865e5715affdeab93832c32ea661~nwzu8bTEn1878118781epcas2p4R;
-	Tue, 23 Sep 2025 00:54:00 +0000 (GMT)
-Received: from epcas2p4.samsung.com (unknown [182.195.36.70]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cW1h76Mw1z2SSKx; Tue, 23 Sep
-	2025 00:53:59 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250923005359epcas2p419655d2bdb7de8ea6e0e60556660ac14~nwzte59Ee2370523705epcas2p4p;
-	Tue, 23 Sep 2025 00:53:59 +0000 (GMT)
-Received: from KORCO115296 (unknown [12.80.207.128]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250923005359epsmtip26a98a0660041a34e46c9d4ee172226d5~nwztZPk940718307183epsmtip27;
-	Tue, 23 Sep 2025 00:53:59 +0000 (GMT)
-From: =?ks_c_5601-1987?B?vNW9xQ==?= <shin.son@samsung.com>
-To: "'Henrik Grimler'" <henrik@grimler.se>
-Cc: "'Bartlomiej Zolnierkiewicz'" <bzolnier@gmail.com>, "'Krzysztof
- Kozlowski'" <krzk@kernel.org>, "'Rafael J . Wysocki'" <rafael@kernel.org>,
-	"'Daniel Lezcano'" <daniel.lezcano@linaro.org>, "'Zhang Rui'"
-	<rui.zhang@intel.com>, "'Lukasz Luba'" <lukasz.luba@arm.com>, "'Rob
-	Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>, "'Alim
-	Akhtar'" <alim.akhtar@samsung.com>, <linux-pm@vger.kernel.org>,
- <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20250922200430.GA4697@l14.localdomain>
-Subject: RE: [PATCH v4 2/3] thermal: exynos_tmu: Support new hardware and
- update TMU interface
-Date: Tue, 23 Sep 2025 09:53:53 +0900
-Message-ID: <000001dc2c24$8be7a090$a3b6e1b0$@samsung.com>
+	s=arc-20240116; t=1758588938; c=relaxed/simple;
+	bh=r3XfxCtze3N6fvQmIZENh4/4/Is2JvXIHoPY2CVVME0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=E0gWoGsC/IJlWAetN28rOEWH8p5UAHx/DamdMR/JVBuQuZXf7P4CvHQokCZ365JJtKfraufcrlCkXjEBcwvae1fv+9XCqEMJW/C6yU/WOqzw/+D6nHqPa5+QTw4l+I4j/J3Zpy/wOLNjx1UfXdmS9vBRALGMMNGp4jSL+bsMuk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pZ3nCz3l; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58MIDK9U029098
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 00:55:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1NOb1UnHXBdMvECMo2QSGZH2wkRTlB3W1x0spXCNEWg=; b=pZ3nCz3lXzeRJLMp
+	6plYcsHUyHfYocf5enSbYSuwcmM3ReJTcpMhk8VkHtfCCPOlYBMSGmagC0QgzrBO
+	p19aB+hsdHgSKb1ZpYu24dYu6xdGs2+oXpM2NhShBpKlUOeRAWSz7dytaRnoBxDl
+	QCbqzl4xjqnC1oxxWRcgwj/HtcBaGWy84TXDFMXLzWib6hv4rIgWqh7ZGrqT1i9r
+	9LY3i75SwnaFLS1ZpQv4PzSY0CgMhpC2TZKKltMHk5Jq2Yu4E6b4tl2JLnp+yzUf
+	+Y6nr8TYN+HBZM5y/Id2eCCOUbBY4BIcaNFzNk7yV+wy5rUbYL8iqCGf5jbhRbWp
+	flvabg==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49b3kk2gm2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 00:55:36 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-268149e1c28so58169775ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:55:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758588935; x=1759193735;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1NOb1UnHXBdMvECMo2QSGZH2wkRTlB3W1x0spXCNEWg=;
+        b=KONJRINpEMwjvP/w8C76aSCYmub7GfpjKtDwgu3LAjruVQDRVDKGzNYsV0J1iVmUqe
+         Tk0fWnoCUttsXCkGJ7H7R1CnXNZrFMZ9/s07CYOS1+Vu7XrONoHDw9hgjSPELrnjPPAH
+         xNqefIoCDtKpeTYuIHL7kiX27ET431JwLb+ilICGyhH/p+Pnk0f13nNbKPI0YHQyTQiZ
+         t7FOQvb3v3+iIh/Syg+Z7S5AUUG9vi/qKuP98icl2O2NF7VyYLkSLT/i/zeyIS50HbQA
+         rdtDZmH2IWcXDzWil0NiSIdhnHZiAWH7QTdRmS/Um9DSq1cN2kmDYRZ3olWCS/3xxZro
+         OIcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdesU0MCgzpzsrzMYTHOyYKcN5FqfN3YvKwWvvnjVCa1A6PNtms8JMw+FjLkfImA8NYiG1CwZ5ByU1Qsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIpctPRMCD2abH7G7yXwHj2L87EhW+43I4KsoH9x+dU6XaHmgy
+	M3o+1V1MYsanNIHVm62XEQfvjn18yF5C+P+QIWoVS2ue+ckzvaUWfd7qMUwGRUf30QvKQR75UIM
+	WlB425sFkoFeg+ryn61SR1FWc+/SpcGd+CRXY8rUahwCfMRS2e6N4XLnJppYxBdzuZ8M=
+X-Gm-Gg: ASbGncvbmiVFEViUN95tlKsaSzJU0qkvfdOSf39jVVyf+pZ/6k8YbkvbfaE7kXy3zel
+	ls0PMYkNtgsCMtc4aHQSZMKL19UpByeMOX7X742KDksfzVCuf0MS3Hpe87VLnp/gCb2Jg4IDm8z
+	v7QSj5Hwp32cUsAVPTBfDVOAQCepEWB5MriBXCHx0vfuHDMHGaT/qSs52tl78fZdlvDLsQN5Vmv
+	G/123XQWnGoyyhkXN0l9osUD3F+S/xG3oznnYjgJIYu/6Fz+msOT/xk56kpkWVrGdvpnk6vRqVg
+	u48Xpz3dEvQ2fbnmluYCqi0S5ngpnOAngUvF5RUs/nXxjlDNsIxUCrn19+1BC1761hj5lT/UoMV
+	K
+X-Received: by 2002:a17:902:d504:b0:246:de71:1839 with SMTP id d9443c01a7336-27cc696e83amr9635765ad.50.1758588935168;
+        Mon, 22 Sep 2025 17:55:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGgkK9eoU6vOWVlLO/FmLK8aalMDc859rdHBZhi4f6aTg1dHIeLHmkfnD2xmV3V5/OgUWynjw==
+X-Received: by 2002:a17:902:d504:b0:246:de71:1839 with SMTP id d9443c01a7336-27cc696e83amr9635475ad.50.1758588934766;
+        Mon, 22 Sep 2025 17:55:34 -0700 (PDT)
+Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980053248sm145381435ad.15.2025.09.22.17.55.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 17:55:34 -0700 (PDT)
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+To: Jeff Johnson <jjohnson@kernel.org>,
+        Manikanta Pubbisetty <quic_mpubbise@quicinc.com>,
+        kbuild test robot <lkp@intel.com>, Julia Lawall <julia.lawall@lip6.fr>,
+        Sven Eckelmann <sven@narfation.org>,
+        Sathishkumar Muruganandam <quic_murugana@quicinc.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: kernel@collabora.com, stable@vger.kernel.org,
+        Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
+        Muna Sinada <quic_msinada@quicinc.com>,
+        Anilkumar Kolli <quic_akolli@quicinc.com>,
+        Kalle Valo <kvalo@kernel.org>, Miles Hu <milehu@codeaurora.org>,
+        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20250722053121.1145001-1-usama.anjum@collabora.com>
+References: <20250722053121.1145001-1-usama.anjum@collabora.com>
+Subject: Re: [PATCH v3] wifi: ath11k: HAL SRNG: don't deinitialize and
+ re-initialize again
+Message-Id: <175858893357.360026.14313486300585429827.b4-ty@oss.qualcomm.com>
+Date: Mon, 22 Sep 2025 17:55:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ks_c_5601-1987"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQLNrO/s5c6r06mWwaZxWViDEkHfogKWIOg4AX/6Z7UBj0CC7bKPv5FA
-Content-Language: ko
-X-CMS-MailID: 20250923005359epcas2p419655d2bdb7de8ea6e0e60556660ac14
-X-Msg-Generator: CA
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250922041902epcas2p3e40ed58737b22b7af9d09f6ba362928d
-References: <20250922041857.1107445-1-shin.son@samsung.com>
-	<CGME20250922041902epcas2p3e40ed58737b22b7af9d09f6ba362928d@epcas2p3.samsung.com>
-	<20250922041857.1107445-3-shin.son@samsung.com>
-	<20250922200430.GA4697@l14.localdomain>
+X-Mailer: b4 0.14.2
+X-Proofpoint-GUID: TmGdmRHMbkO7NlzazmIlBePI8v81odJ0
+X-Proofpoint-ORIG-GUID: TmGdmRHMbkO7NlzazmIlBePI8v81odJ0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDA4OSBTYWx0ZWRfXx2DitXdvaLzc
+ tBBgEUk2voAWoxO9yA0DSdK+vlSG6ScLoe/RAUcok2fLIz1/oqVZ11wMrilXcekZ+3+ucs38zvZ
+ 2crAI2CxXbSegXcudzAz2PzDJkqI9XCYqJJNRCdSeB9JFhktqd6X/h4n9iXsTeOWOn0KRV6WxzD
+ Wmrpwe27e+c9aT9SZxX+Xtf3EYyjHcfseHZ4E4rTyKWG3xAtvshzRd12rl0VwU8xPGwM/bhD6pk
+ rbD+6t/bEFBmjfrT8+7HuRGoa1XDzMahVhw0NhiIF23uZxgd53YUvvTYv092bqaMFRjSo95DBaM
+ uPMaAEJFKdW9k2gR1S1lXvLhslLxmwMKRgv2ZrzXgmEFSYNpAOYPPC2ebSymjJWaNEn2fRw4cl+
+ CyRb6rPr
+X-Authority-Analysis: v=2.4 cv=BabY0qt2 c=1 sm=1 tr=0 ts=68d1f008 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=AgmplPYfmL6CJUdp4g8A:9
+ a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-22_05,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 phishscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 malwarescore=0 spamscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220089
 
-Hello Henrik Grimler
 
-> -----Original Message-----
-> From: Henrik Grimler [mailto:henrik@grimler.se]
-> Sent: Tuesday, September 23, 2025 5:05 AM
-> To: Shin Son <shin.son@samsung.com>
-> Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>; Krzysztof Kozlowski
-> <krzk@kernel.org>; Rafael J . Wysocki <rafael@kernel.org>; Daniel Lezcano
-> <daniel.lezcano@linaro.org>; Zhang Rui <rui.zhang@intel.com>; Lukasz Luba
-> <lukasz.luba@arm.com>; Rob Herring <robh@kernel.org>; Conor Dooley
-> <conor+dt@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>; linux-
-> pm@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH v4 2/3] thermal: exynos_tmu: Support new hardware and
-> update TMU interface
+On Tue, 22 Jul 2025 10:31:21 +0500, Muhammad Usama Anjum wrote:
+> Don't deinitialize and reinitialize the HAL helpers. The dma memory is
+> deallocated and there is high possibility that we'll not be able to get
+> the same memory allocated from dma when there is high memory pressure.
 > 
-> Hi Shin,
+> Tested-on: WCN6855 hw2.0 PCI WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
 > 
-> On Mon, Sep 22, 2025 at 01:18:56PM +0900, Shin Son wrote:
-> > The Exynos tmu driver's private data structure has been extended to
-> > support the exynosautov920 hardware, which requires per-sensor
-> > interrupt enablement and multiple-zone handling:
-> >
-> > - Add 'slope_comp' : compensation parameter below 25 degrees.
-> > - Add 'calib_temp' : stores the fused calibaration temperature.
-> > - Add 'sensor_count' : reflects the maximum sensor numbers.
-> > - Rename 'tzd' -> 'tzd_array' to register multiple thermal zones.
-> >
-> > Since splitting this patch causes runtime errors during temperature
-> > emulation or problems where the read temperature feature fails to
-> > retrieve values, I have submitted it as a single commit. To add
-> > support for the exynosautov920 to the exisiting TMU interface, the
-> > following changes are included:
-> >
-> > 1. Simplify "temp_to_code" and "code_to_temp" to one computation path
-> >    by normalizing calib_temp.
-> > 2. Loop over 'sensor_count' in critical-point setup.
-> > 3. Introduce 'update_con_reg' for exynosautov920 control-register
-> updates.
-> > 4. Add exynosautov920-specific branch in 'exynos_tmu_update_temp'
-> function.
-> > 5. Skip high & low temperature threshold setup in exynosautov920.
-> > 6. Enable interrupts via sensor_count in exynosautov920.
-> > 7. Initialize all new members during 'exynosautov920_tmu_initialize'.
-> > 8. Clear IRQs by iterating the sensor_count in exynosautov920.
-> > 9. Register each zone with 'devm_thermal_of_zone_register()'
-> >    based on 'sensor_count'.
-> >
-> > Signed-off-by: Shin Son <shin.son@samsung.com>
-> > ---
-> >  drivers/thermal/samsung/exynos_tmu.c | 322
-> > ++++++++++++++++++++++++---
-> >  1 file changed, 285 insertions(+), 37 deletions(-)
-> >
-> > diff --git a/drivers/thermal/samsung/exynos_tmu.c
-> > b/drivers/thermal/samsung/exynos_tmu.c
-> > index 47a99b3c5395..ebcc38f3fff6 100644
-> > --- a/drivers/thermal/samsung/exynos_tmu.c
-> > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > @@ -121,8 +121,51 @@
-> >
-> >  #define EXYNOS_NOISE_CANCEL_MODE		4
-> >
-> > +/* ExynosAutov920 specific registers */
-> > +#define EXYNOSAUTOV920_SLOPE_COMP		25
-> > +#define EXYNOSAUTOV920_SLOPE_COMP_MASK		0xf
-> > +#define EXYNOSAUTOV920_CALIB_SEL_TEMP		30
-> > +#define EXYNOSAUTOV920_CALIB_SEL_TEMP_MASK	0x2
-> > +
-> > +#define EXYNOSAUTOV920_SENSOR0_TRIM_INFO	0x10
-> > +#define EXYNOSAUTOV920_TRIM_MASK		0x1ff
-> > +#define EXYNOSAUTOV920_TRIMINFO_25_SHIFT	0
-> > +#define EXYNOSAUTOV920_TRIMINFO_85_SHIFT	9
-> > +
-> > +#define EXYNOSAUTOV920_TMU_REG_TRIMINFO2	0x04
-> > +
-> > +#define EXYNOSAUTOV920_TMU_REG_THRESHOLD(p)	(((p)) * 0x50 +
-0x00d0)
-> > +#define EXYNOSAUTOV920_TMU_REG_INTEN(p)		(((p)) * 0x50 +
-> 0x00f0)
-> > +#define EXYNOSAUTOV920_TMU_REG_INT_PEND(p)	(((p)) * 0x50 + 0x00f8)
-> > +
-> > +#define EXYNOSAUTOV920_CURRENT_TEMP_P1_P0	0x084
-> > +#define EXYNOSAUTOV920_TMU_REG_EMUL_CON		0x0b0
-> > +
-> > +#define EXYNOSAUTOV920_TMU_REG_CONTROL		0x50
-> > +#define EXYNOSAUTOV920_TMU_REG_CONTROL1		0x54
-> > +#define EXYNOSAUTOV920_TMU_REG_AVG_CONTROL	0x58
-> > +#define EXYNOSAUTOV920_TMU_SAMPLING_INTERVAL	0x70
-> > +#define EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE0	0x74
-> > +#define EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE1	0x78
-> > +
-> > +#define EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_SHIFT		8
-> > +#define EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_MASK		0x1f
-> > +#define EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_SHIFT	3
-> > +#define EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_MASK		0xf
-> > +#define EXYNOSAUTOV920_TMU_NUM_PROBE_MASK		0xf
-> > +#define EXYNOSAUTOV920_TMU_NUM_PROBE_SHIFT		16
-> > +#define EXYNOSAUTOV920_TMU_LPI_MODE_MASK		1
-> > +#define EXYNOSAUTOV920_TMU_LPI_MODE_SHIFT		10
-> > +
-> > +#define EXYNOSAUTOV920_TMU_AVG_CON_UPDATE		0x0008011a
-> > +#define EXYNOSAUTOV920_TMU_COUNTER_VALUE0_UPDATE	0x030003c0
-> > +#define EXYNOSAUTOV920_TMU_COUNTER_VALUE1_UPDATE	0x03c0004d
-> > +
-> >  #define MCELSIUS	1000
-> >
-> > +#define EXYNOS_DEFAULT_SENSOR_COUNT			1
-> > +#define EXYNOS_MAX_SENSOR_COUNT				16
 > 
-> In patch 1, sensor count is described as a value 0 <= sensor_count <= 15,
-> but here max sensor count value is set to 16. Shouldn't max value be the
-> same in these two places, what is the maximum number of thermal sensors
-> that the hardware can have?
+> [...]
 
-Sorry for the confusion. It actually refers to the maximum number of remote
-sensors.
-I'll change it to 15.
+Applied, thanks!
 
-> 
-> >  enum soc_type {
-> >  	SOC_ARCH_EXYNOS3250 = 1,
-> >  	SOC_ARCH_EXYNOS4210,
-> > @@ -133,6 +176,7 @@ enum soc_type {
-> >  	SOC_ARCH_EXYNOS5420_TRIMINFO,
-> >  	SOC_ARCH_EXYNOS5433,
-> >  	SOC_ARCH_EXYNOS7,
-> > +	SOC_ARCH_EXYNOSAUTOV920,
-> >  };
-> >
+[1/1] wifi: ath11k: HAL SRNG: don't deinitialize and re-initialize again
+      commit: 32be3ca4cf78b309dfe7ba52fe2d7cc3c23c5634
 
-...
-
-> >  static int temp_to_code(struct exynos_tmu_data *data, u8 temp)  {
-> > +	s32 temp_diff, code;
-> > +
-> >  	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
-> >  		return temp + data->temp_error1 - EXYNOS_FIRST_POINT_TRIM;
-> >
-> > -	return (temp - EXYNOS_FIRST_POINT_TRIM) *
-> > -		(data->temp_error2 - data->temp_error1) /
-> > -		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) +
-> > -		data->temp_error1;
-> > +	temp_diff = temp - EXYNOS_FIRST_POINT_TRIM;
-> > +
-> > +	code = temp_diff * (data->temp_error2 - data->temp_error1) *
-> MCELSIUS /
-> > +	       (data->calib_temp - EXYNOS_FIRST_POINT_TRIM);
-> > +
-> > +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920 && temp_diff < 0)
-> > +		code = code * (57 + data->slope_comp) / 65;
-> > +
-> > +	return code / MCELSIUS + data->temp_error1;
-> >  }
-> >
-> >  /*
-> > @@ -220,13 +277,20 @@ static int temp_to_code(struct exynos_tmu_data
-> *data, u8 temp)
-> >   */
-> >  static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
-> > {
-> > +	s32 code_diff, temp;
-> > +
-> >  	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
-> >  		return temp_code - data->temp_error1 +
-> EXYNOS_FIRST_POINT_TRIM;
-> >
-> > -	return (temp_code - data->temp_error1) *
-> > -		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
-> > -		(data->temp_error2 - data->temp_error1) +
-> > -		EXYNOS_FIRST_POINT_TRIM;
-> > +	code_diff = temp_code - data->temp_error1;
-> > +
-> > +	temp = code_diff * (data->calib_temp - EXYNOS_FIRST_POINT_TRIM) *
-> MCELSIUS /
-> > +	       (data->temp_error2 - data->temp_error1);
-> > +
-> > +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920 && code_diff < 0)
-> > +		temp = temp * 65 / (57 + data->slope_comp);
-> > +
-> > +	return temp / MCELSIUS + EXYNOS_FIRST_POINT_TRIM;
-> >  }
-> 
-> Nice, these two functions looks much better compared to v2!
-
-Thank you for your advice!
-
-> 
-> >  static void sanitize_temp_error(struct exynos_tmu_data *data, u32
-> > trim_info) @@ -262,6 +326,9 @@ static int exynos_tmu_initialize(struct
-> platform_device *pdev)
-
-...
-
-> > @@ -865,6 +1079,10 @@ static int exynos_map_dt_data(struct
-> > platform_device *pdev)
-> >
-> >  	data->soc = (uintptr_t)of_device_get_match_data(&pdev->dev);
-> >
-> > +	data->sensor_count = EXYNOS_DEFAULT_SENSOR_COUNT;
-> > +
-> > +	data->calib_temp = EXYNOS_SECOND_POINT_TRIM;
-> > +
-> >  	switch (data->soc) {
-> >  	case SOC_ARCH_EXYNOS4210:
-> >  		data->tmu_set_low_temp = exynos4210_tmu_set_low_temp; @@ -
-> 945,6
-> > +1163,19 @@ static int exynos_map_dt_data(struct platform_device *pdev)
-> >  		data->min_efuse_value = 15;
-> >  		data->max_efuse_value = 100;
-> >  		break;
-> > +	case SOC_ARCH_EXYNOSAUTOV920:
-> > +		data->tmu_set_low_temp = exynosautov920_tmu_set_low_temp;
-> > +		data->tmu_set_high_temp = exynosautov920_tmu_set_high_temp;
-> > +		data->tmu_disable_low = exynosautov920_tmu_disable_low;
-> > +		data->tmu_disable_high = exynosautov920_tmu_disable_high;
-> > +		data->tmu_set_crit_temp = exynosautov920_tmu_set_crit_temp;
-> > +		data->tmu_initialize = exynosautov920_tmu_initialize;
-> > +		data->tmu_control = exynosautov920_tmu_control;
-> > +		data->tmu_read = exynosautov920_tmu_read;
-> > +		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
-> > +		data->tmu_clear_irqs = exynosautov920_tmu_clear_irqs;
-> > +		data->sensor_count = EXYNOS_MAX_SENSOR_COUNT;
-> > +		break;
-> >  	default:
-> >  		dev_err(&pdev->dev, "Platform not supported\n");
-> >  		return -EINVAL;
-> > @@ -952,6 +1183,14 @@ static int exynos_map_dt_data(struct
-> > platform_device *pdev)
-> >
-> >  	data->cal_type = TYPE_ONE_POINT_TRIMMING;
-> >
-> > +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920) {
-> > +		if (of_property_read_u32(pdev->dev.of_node,
-> "samsung,sensors",
-> > +					 &data->sensor_count)) {
-> > +			dev_err(&pdev->dev, "failed to get sensor count\n");
-> > +			return -ENODEV;
-> > +		}
-> > +	}
-> 
-> Do we really need the `if (data->soc == SOC_ARCH_EXYNOSAUTOV920)` here, I
-> am sure there will be more socs that use samsung,sensors. Can't we simply
-> read samsung,sensors for all socs and use EXYNOS_DEFAULT_SENSOR_COUNT if
-> it fails, or would it be potentially dangerous if samsung,sensors is
-> missing for autov920 dtb and default value of 1 is used?
-> 
-> Best regards,
-> Henrik Grimler
-> 
-
-Yes. Incorrect remote-sensor settings can affect TMU operation. For
-example, when the sensor count is set to 1,
-The thermal zone doesn't function properly and the hardware trip doesn't
-assert on the v920 variant.
-I consider that configuration unsafe, so I added variant-specific handling
-for that SoC.
-Meanwhile, the other variant legitimately uses only a single sensor.
-
+Best regards,
+-- 
+Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 
 
