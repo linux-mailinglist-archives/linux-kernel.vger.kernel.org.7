@@ -1,302 +1,168 @@
-Return-Path: <linux-kernel+bounces-829012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A29DB960A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:37:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D966EB96043
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC52189596E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:38:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D423170C3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E073732857C;
-	Tue, 23 Sep 2025 13:37:32 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74518327A09;
+	Tue, 23 Sep 2025 13:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cyano.uk header.i=@cyano.uk header.b="qQCQCnXk"
+Received: from jupiter.guys.cyano.uk (jupiter.guys.cyano.uk [45.63.120.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7CB3595C
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA6010F1;
+	Tue, 23 Sep 2025 13:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.63.120.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758634652; cv=none; b=VqBEqVEoU7te5qc2pJ8YIyE/xlkdds8RQkbviW0CM64jEfqxb4LztXZRwBcENQqduRpKqfMKo517UhV4GFYGY0mV1fgh1UOrvcTQ+vy7hMfnINJSpN0D1U8RFJlojcaLiz9dZfZqSO9xe/aCMfDtoEVQlw8YIXOk5Izpn48McX8=
+	t=1758634300; cv=none; b=omPL4XBFXoQ1czwgHIKXHqUCuB6ZfYvQKiWpV895FDm5nf+croXiGEHXaeVLcZpHiXTKpF7IGcSP1NFmbsxfkLUcCNq4EPy1owANHsfZ2fkax8ZbsMCkEZCenQik/pN8RLtQi7nODERpMF6ffzg/fJwW8kIO/bsiy3y5Mtco3G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758634652; c=relaxed/simple;
-	bh=+2lQ+TuqqiVyx33/V9JZnkYYzZR22xBYswPJscjMXm0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LtOBxLVT8Jn4QiWmbuFEKuU756IuiBfqXftPztjdOR2CXql7kavrbFn1+Co8gP+7joIrdjEefb4nqnhlr4IX+eiVmdKovq4v1f9qr3rg+EG6jmgSom8pJCX+2VcDpRR43/LLolXe4EAB61PAXh5o5hB1q0mOm8bqodO+vY3T0PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cWLWj1Z2SzVgCP;
-	Tue, 23 Sep 2025 21:32:49 +0800 (CST)
-Received: from kwepemr500001.china.huawei.com (unknown [7.202.194.229])
-	by mail.maildlp.com (Postfix) with ESMTPS id 98ABD1401E9;
-	Tue, 23 Sep 2025 21:37:27 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by kwepemr500001.china.huawei.com
- (7.202.194.229) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 23 Sep
- 2025 21:37:25 +0800
-From: Yin Tirui <yintirui@huawei.com>
-To: <akpm@linux-foundation.org>, <david@redhat.com>,
-	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>, <ziy@nvidia.com>,
-	<baolin.wang@linux.alibaba.com>, <npache@redhat.com>, <ryan.roberts@arm.com>,
-	<dev.jain@arm.com>, <baohua@kernel.org>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
-	<aou@eecs.berkeley.edu>, <alex@ghiti.fr>, <anshuman.khandual@arm.com>,
-	<yangyicong@hisilicon.com>, <ardb@kernel.org>, <willy@infradead.org>,
-	<apopple@nvidia.com>, <samuel.holland@sifive.com>,
-	<luxu.kernel@bytedance.com>, <abrestic@rivosinc.com>,
-	<yongxuan.wang@sifive.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-riscv@lists.infradead.org>
-CC: <wangkefeng.wang@huawei.com>, <chenjun102@huawei.com>,
-	<yintirui@huawei.com>
-Subject: [PATCH RFC 2/2] mm: add PMD-level huge page support for remap_pfn_range()
-Date: Tue, 23 Sep 2025 21:31:04 +0800
-Message-ID: <20250923133104.926672-3-yintirui@huawei.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250923133104.926672-1-yintirui@huawei.com>
-References: <20250923133104.926672-1-yintirui@huawei.com>
+	s=arc-20240116; t=1758634300; c=relaxed/simple;
+	bh=j8byVeNX4TQDtD8QbMaEXYgRd9Te2VgWLANoo2ZQ9hw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KzfM1oqdqVSp6GLJf7uDxy0y2Vto3Pba+lVuzLE4XLukfCM0guboLpoptEtYkFKL3beBY/zI4hu3tlM4oMrVNmzT7HLqfLaTIp5VkSS7Ui/Wq5IQ/NXJjmxHC1cAfyeljxzsdnbIqSPra9Co5km/m91IOZLBnbsW/uak/YyIAic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cyano.uk; spf=pass smtp.mailfrom=cyano.uk; dkim=pass (2048-bit key) header.d=cyano.uk header.i=@cyano.uk header.b=qQCQCnXk; arc=none smtp.client-ip=45.63.120.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cyano.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyano.uk
+Message-ID: <c6a39939-b0cd-43a3-8b63-114909ba001e@cyano.uk>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyano.uk; s=dkim;
+	t=1758634297;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wlHpoIc6rMZqw0AZAsMkpyzs1nRv311zogcg+1Ko7i0=;
+	b=qQCQCnXkmXrE+HuC0wm2a0HeW5ioyMr4DLtjCpOQACNfRQCdNQoT+cuL9zS77/8vtoD7kG
+	7ARed9W19B/P3q4oa0SM724PIo/C1fyALocDzLjmFtO/xGIh6b/VlPtY8LvQgpk3Sf3xEu
+	WYcWrRrehOvtuEZABd1QnVp3TPb9POSBrDsdAjoOAoXSMp2KYcsrY8StZHoLPwqOd3+r5u
+	1J+q0LW5eQuBO8CEtANYkfCFri3HAI8BlkwSRvBuObPxhksBJgRvIKYH3hXe1WYSllIw3y
+	j4666uuJ7H24o3ao5o+P+2RVSc3LSGV4oupn+RLUju20UjuFgv5EIO5+DW0zXg==
+Authentication-Results: jupiter.guys.cyano.uk;
+	auth=pass smtp.mailfrom=cyan@cyano.uk
+Date: Tue, 23 Sep 2025 21:31:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH v3 2/2] scsi: dc395x: improve code formatting for the
+ macros
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+ linux-scsi@vger.kernel.org
+Cc: stable@vger.kernel.org, Mingcong Bai <jeffbai@aosc.io>,
+ Kexy Biscuit <kexybiscuit@aosc.io>, Oliver Neukum <oliver@neukum.org>,
+ Ali Akcaagac <aliakc@web.de>, Jamie Lenehan <lenehan@twibble.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250923125226.1883391-1-cyan@cyano.uk>
+ <20250923125226.1883391-3-cyan@cyano.uk>
+ <1ae97d061da14b0d85c0938c3000ed57ccd39382.camel@HansenPartnership.com>
+Content-Language: en-US
+From: Xinhui Yang <cyan@cyano.uk>
+In-Reply-To: <1ae97d061da14b0d85c0938c3000ed57ccd39382.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemr500001.china.huawei.com (7.202.194.229)
+X-Spamd-Bar: /
 
-Add PMD-level huge page support to remap_pfn_range(), automatically
-creating huge mappings when prerequisites are satisfied (size, alignment,
-architecture support, etc.) and falling back to normal page mappings
-otherwise.
+Hi James,
 
-Implement special huge PMD splitting by utilizing the pgtable deposit/
-withdraw mechanism. When splitting is needed, the deposited pgtable is
-withdrawn and populated with individual PTEs created from the original
-huge mapping, using pte_clrhuge() to clear huge page attributes.
+在 2025/9/23 21:09, James Bottomley 写道:
+> On Tue, 2025-09-23 at 20:52 +0800, Xinhui Yang wrote:
+>> These DC395x_* macros does not have white spaces around their
+>> arguments,
+>> thus checkpatch.pl throws an error for each change in the macros.
+>>
+>> Also, there are no surrounding parentheses in the expressions for the
+>> read and write macros, which checkpatch.pl also complained about.
+>>
+>> This patch does only formatting improvements to make the macro
+>> definitions align with the previous patch.
+>>
+>> Signed-off-by: Xinhui Yang <cyan@cyano.uk>
+>> ---
+>>  drivers/scsi/dc395x.c | 16 ++++++++--------
+>>  1 file changed, 8 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/scsi/dc395x.c b/drivers/scsi/dc395x.c
+>> index aed4f21e8143..cff6fa20e53c 100644
+>> --- a/drivers/scsi/dc395x.c
+>> +++ b/drivers/scsi/dc395x.c
+>> @@ -91,8 +91,8 @@
+>>  #endif
+>>  
+>>  
+>> -#define
+>> DC395x_LOCK_IO(dev,flags)		spin_lock_irqsave(((struct Scsi_Host *)dev)->host_lock,flags)
+>> -#define
+>> DC395x_UNLOCK_IO(dev,flags)		spin_unlock_irqrestore(((struct Scsi_Host*)dev)->host_lock,flags)
+>> +#define DC395x_LOCK_IO(dev,
+>> flags)		spin_lock_irqsave(((struct Scsi_Host *)dev)->host_lock, flags)
+>> +#define DC395x_UNLOCK_IO(dev,
+>> flags)		spin_unlock_irqrestore(((struct Scsi_Host *)dev)->host_lock, flags)
+>>  
+>>  /*
+>>   * read operations that may trigger side effects in the hardware,
+>> @@ -100,12 +100,12 @@
+>>   */
+>>  #define DC395x_peek8(acb, address)		((void)(inb(acb-
+>>> io_port_base + (address))))
+>>  /* normal read write operations goes here. */
+>> -#define DC395x_read8(acb,address)		(u8)(inb(acb-
+>>> io_port_base + (address)))
+>> -#define DC395x_read16(acb,address)		(u16)(inw(acb-
+>>> io_port_base + (address)))
+>> -#define DC395x_read32(acb,address)		(u32)(inl(acb-
+>>> io_port_base + (address)))
+>> -#define DC395x_write8(acb,address,value)	outb((value), acb-
+>>> io_port_base + (address))
+>> -#define DC395x_write16(acb,address,value)	outw((value), acb-
+>>> io_port_base + (address))
+>> -#define DC395x_write32(acb,address,value)	outl((value), acb-
+>>> io_port_base + (address))
+>> +#define DC395x_read8(acb, address)		((u8)    (inb(acb-
+>>> io_port_base + (address))))
+>> +#define DC395x_read16(acb, address)		((u16)   (inw(acb-
+>>> io_port_base + (address))))
+>> +#define DC395x_read32(acb, address)		((u32)   (inl(acb-
+>>> io_port_base + (address))))
+> 
+> This doesn't look right.  The problem checkpatch is complaining about
+> is surely that the cast makes it a compound statement.  However, since
+> inb inw and inl all return the types they're being cast to the correct
+> solution is surely to remove the cast making these single statements
+> that don't need parentheses.
 
-Update arch_needs_pgtable_deposit() to return true when PMD pfnmap
-support is enabled, ensuring proper pgtable management for huge
-pfnmap operations.
+Thanks, I checked the definitions and you are right - these read macros
+should have their casts removed, as they now return u8, u16 and u32
+respectively.
 
-Introduce pfnmap_max_page_shift parameter to control maximum page
-size and "nohugepfnmap" boot option to disable huge pfnmap entirely.
+>> +#define DC395x_write8(acb, address, value)	(outb((value), acb-
+>>> io_port_base + (address)))
+>> +#define DC395x_write16(acb, address, value)	(outw((value), acb-
+>>> io_port_base + (address)))
+>> +#define DC395x_write32(acb, address, value)	(outl((value), acb-
+>>> io_port_base + (address)))
+> 
+> And these are single statements which shouldn't need parentheses.  Are
+> you sure checkpatch is complaining about this, because if it is then
+> checkpatch needs fixing.
 
-Signed-off-by: Yin Tirui <yintirui@huawei.com>
----
- include/linux/pgtable.h |  6 +++-
- mm/huge_memory.c        | 22 ++++++++----
- mm/memory.c             | 74 ++++++++++++++++++++++++++++++++++++-----
- 3 files changed, 85 insertions(+), 17 deletions(-)
+Thanks for pointing this out, they don't need additional parentheses.
 
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index 4c035637eeb7..4028318552ca 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -1025,7 +1025,11 @@ extern pgtable_t pgtable_trans_huge_withdraw(struct mm_struct *mm, pmd_t *pmdp);
- #endif
- 
- #ifndef arch_needs_pgtable_deposit
--#define arch_needs_pgtable_deposit() (false)
-+#define arch_needs_pgtable_deposit arch_needs_pgtable_deposit
-+static inline bool arch_needs_pgtable_deposit(void)
-+{
-+	return IS_ENABLED(CONFIG_ARCH_SUPPORTS_PMD_PFNMAP);
-+}
- #endif
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 9c38a95e9f09..9f20adcbbb55 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2857,14 +2857,22 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
- 
- 	if (!vma_is_anonymous(vma)) {
- 		old_pmd = pmdp_huge_clear_flush(vma, haddr, pmd);
--		/*
--		 * We are going to unmap this huge page. So
--		 * just go ahead and zap it
--		 */
--		if (arch_needs_pgtable_deposit())
--			zap_deposited_table(mm, pmd);
--		if (!vma_is_dax(vma) && vma_is_special_huge(vma))
-+		if (!vma_is_dax(vma) && vma_is_special_huge(vma)) {
-+			pte_t entry;
-+
-+			pgtable = pgtable_trans_huge_withdraw(mm, pmd);
-+			if (unlikely(!pgtable))
-+				return;
-+			pmd_populate(mm, &_pmd, pgtable);
-+			pte = pte_offset_map(&_pmd, haddr);
-+			entry = pte_clrhuge(pfn_pte(pmd_pfn(old_pmd), pmd_pgprot(old_pmd)));
-+			set_ptes(mm, haddr, pte, entry, HPAGE_PMD_NR);
-+			pte_unmap(pte);
-+
-+			smp_wmb(); /* make pte visible before pmd */
-+			pmd_populate(mm, pmd, pgtable);
- 			return;
-+		}
- 		if (unlikely(is_pmd_migration_entry(old_pmd))) {
- 			swp_entry_t entry;
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index 0ba4f6b71847..c4aaf3bd9cad 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -2674,6 +2674,19 @@ vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
- 	return __vm_insert_mixed(vma, addr, pfn, true);
- }
- 
-+#ifdef CONFIG_ARCH_SUPPORTS_HUGE_PFNMAP
-+static unsigned int __ro_after_init pfnmap_max_page_shift = BITS_PER_LONG - 1;
-+
-+static int __init set_nohugepfnmap(char *str)
-+{
-+	pfnmap_max_page_shift = PAGE_SHIFT;
-+	return 0;
-+}
-+early_param("nohugepfnmap", set_nohugepfnmap);
-+#else /* CONFIG_ARCH_SUPPORTS_HUGE_PFNMAP */
-+static const unsigned int pfnmap_max_page_shift = PAGE_SHIFT;
-+#endif	/* CONFIG_ARCH_SUPPORTS_HUGE_PFNMAP */
-+
- /*
-  * maps a range of physical memory into the requested pages. the old
-  * mappings are removed. any references to nonexistent pages results
-@@ -2705,9 +2718,47 @@ static int remap_pte_range(struct mm_struct *mm, pmd_t *pmd,
- 	return err;
- }
- 
-+#ifdef CONFIG_ARCH_SUPPORTS_PMD_PFNMAP
-+static int remap_try_huge_pmd(struct mm_struct *mm, pmd_t *pmd,
-+			unsigned long addr, unsigned long end,
-+			unsigned long pfn, pgprot_t prot,
-+			unsigned int page_shift)
-+{
-+	pgtable_t pgtable;
-+	spinlock_t *ptl;
-+
-+	if (page_shift < PMD_SHIFT)
-+		return 0;
-+
-+	if ((end - addr) != PMD_SIZE)
-+		return 0;
-+
-+	if (!IS_ALIGNED(addr, PMD_SIZE))
-+		return 0;
-+
-+	if (!IS_ALIGNED(pfn, 1 << (PMD_SHIFT - PAGE_SHIFT)))
-+		return 0;
-+
-+	if (pmd_present(*pmd) && !pmd_free_pte_page(pmd, addr))
-+		return 0;
-+
-+	set_pmd_at(mm, addr, pmd, pmd_mkspecial(pmd_mkhuge(pfn_pmd(pfn, prot))));
-+
-+	pgtable = pte_alloc_one(mm);
-+	if (unlikely(!pgtable))
-+		return 1;
-+	mm_inc_nr_ptes(mm);
-+	ptl = pmd_lock(mm, pmd);
-+	pgtable_trans_huge_deposit(mm, pmd, pgtable);
-+	spin_unlock(ptl);
-+
-+	return 1;
-+}
-+#endif
-+
- static inline int remap_pmd_range(struct mm_struct *mm, pud_t *pud,
- 			unsigned long addr, unsigned long end,
--			unsigned long pfn, pgprot_t prot)
-+			unsigned long pfn, pgprot_t prot, unsigned int max_page_shift)
- {
- 	pmd_t *pmd;
- 	unsigned long next;
-@@ -2720,6 +2771,12 @@ static inline int remap_pmd_range(struct mm_struct *mm, pud_t *pud,
- 	VM_BUG_ON(pmd_trans_huge(*pmd));
- 	do {
- 		next = pmd_addr_end(addr, end);
-+#ifdef CONFIG_ARCH_SUPPORTS_PMD_PFNMAP
-+		if (remap_try_huge_pmd(mm, pmd, addr, next,
-+				pfn + (addr >> PAGE_SHIFT), prot, max_page_shift)) {
-+			continue;
-+		}
-+#endif
- 		err = remap_pte_range(mm, pmd, addr, next,
- 				pfn + (addr >> PAGE_SHIFT), prot);
- 		if (err)
-@@ -2730,7 +2787,7 @@ static inline int remap_pmd_range(struct mm_struct *mm, pud_t *pud,
- 
- static inline int remap_pud_range(struct mm_struct *mm, p4d_t *p4d,
- 			unsigned long addr, unsigned long end,
--			unsigned long pfn, pgprot_t prot)
-+			unsigned long pfn, pgprot_t prot, unsigned int max_page_shift)
- {
- 	pud_t *pud;
- 	unsigned long next;
-@@ -2743,7 +2800,7 @@ static inline int remap_pud_range(struct mm_struct *mm, p4d_t *p4d,
- 	do {
- 		next = pud_addr_end(addr, end);
- 		err = remap_pmd_range(mm, pud, addr, next,
--				pfn + (addr >> PAGE_SHIFT), prot);
-+				pfn + (addr >> PAGE_SHIFT), prot, max_page_shift);
- 		if (err)
- 			return err;
- 	} while (pud++, addr = next, addr != end);
-@@ -2752,7 +2809,7 @@ static inline int remap_pud_range(struct mm_struct *mm, p4d_t *p4d,
- 
- static inline int remap_p4d_range(struct mm_struct *mm, pgd_t *pgd,
- 			unsigned long addr, unsigned long end,
--			unsigned long pfn, pgprot_t prot)
-+			unsigned long pfn, pgprot_t prot, unsigned int max_page_shift)
- {
- 	p4d_t *p4d;
- 	unsigned long next;
-@@ -2765,7 +2822,7 @@ static inline int remap_p4d_range(struct mm_struct *mm, pgd_t *pgd,
- 	do {
- 		next = p4d_addr_end(addr, end);
- 		err = remap_pud_range(mm, p4d, addr, next,
--				pfn + (addr >> PAGE_SHIFT), prot);
-+				pfn + (addr >> PAGE_SHIFT), prot, max_page_shift);
- 		if (err)
- 			return err;
- 	} while (p4d++, addr = next, addr != end);
-@@ -2773,7 +2830,7 @@ static inline int remap_p4d_range(struct mm_struct *mm, pgd_t *pgd,
- }
- 
- static int remap_pfn_range_internal(struct vm_area_struct *vma, unsigned long addr,
--		unsigned long pfn, unsigned long size, pgprot_t prot)
-+		unsigned long pfn, unsigned long size, pgprot_t prot, unsigned int max_page_shift)
- {
- 	pgd_t *pgd;
- 	unsigned long next;
-@@ -2817,7 +2874,7 @@ static int remap_pfn_range_internal(struct vm_area_struct *vma, unsigned long ad
- 	do {
- 		next = pgd_addr_end(addr, end);
- 		err = remap_p4d_range(mm, pgd, addr, next,
--				pfn + (addr >> PAGE_SHIFT), prot);
-+				pfn + (addr >> PAGE_SHIFT), prot, max_page_shift);
- 		if (err)
- 			return err;
- 	} while (pgd++, addr = next, addr != end);
-@@ -2832,8 +2889,7 @@ static int remap_pfn_range_internal(struct vm_area_struct *vma, unsigned long ad
- int remap_pfn_range_notrack(struct vm_area_struct *vma, unsigned long addr,
- 		unsigned long pfn, unsigned long size, pgprot_t prot)
- {
--	int error = remap_pfn_range_internal(vma, addr, pfn, size, prot);
--
-+	int error = remap_pfn_range_internal(vma, addr, pfn, size, prot, pfnmap_max_page_shift);
- 	if (!error)
- 		return 0;
- 
--- 
-2.43.0
+> Regards,
+> 
+> James
+> 
+
+Thanks,
+Xinhui
+
 
 
