@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-829681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416BCB979F0
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AED4B979EF
 	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB2917A4F81
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:47:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2C9E2A5D42
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF34130F94D;
-	Tue, 23 Sep 2025 21:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA6330FC0B;
+	Tue, 23 Sep 2025 21:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="jA+U/Yto"
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="mm6vZ/Bp"
 Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11FE30DD08;
-	Tue, 23 Sep 2025 21:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608EF30E847;
+	Tue, 23 Sep 2025 21:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758664111; cv=none; b=ETecKIKKc5U9Q65zFIVx4F3IVGmA6WLkk7G03ktS0eMh3TiT8bSBgxgGc1zMElRgJqel/R9KdcWSwMij2AJw+rwuNqhjgRoUPVIIDDAGshOdputT7PGlyKlcvqUS50SrO7JiAPJxBwyQxae+R0U/MEECC6pV8Yd4m1gEQNA1kQ8=
+	t=1758664112; cv=none; b=b5f9TqLe7Ye3sCRJAgwoI7DX4O+IfNeIkD2Nd1VbAyx95vE7L/Plyx80Ox6l2yiSgs2bBqX87P+xqClRuDBC4fvNh1uatBwlNr0oHAjvAk53HWTaSktst6JDg52o8z3txwMHUbxJcVNn3o2h2l0+hGN47M+Rsv2yOy4qjHuASAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758664111; c=relaxed/simple;
-	bh=4+2FcMpYoV1isFVulU/5/4nG+kK10gGwl2gZX8VERNc=;
+	s=arc-20240116; t=1758664112; c=relaxed/simple;
+	bh=TybySjPSdI0AbM7DD7yiWdNvqREzv38/4l7szF/TwTw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=luJ3vCJZ2L8li4496tYQ60xgBxSZoJM0b6e6oPhzbC3jfyyMrgiwqs16+gU5jEH/L08F3yK8hCrtlRef0VqMzHh4Gh42RNlkr3ZsXdXlKllZPffLP2hJwBAyJQDGYrola2AmDnNenYvwdHSz/n/EDjLA/B3+BsHu9DDbNEALm6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=jA+U/Yto; arc=none smtp.client-ip=212.227.17.22
+	 MIME-Version; b=mUf1A6zfxJ1EwkFYloQVybnXWyy3um6iu4BFoSu8OmfLR3kxx2ue5EJHTlf2G0PEsnOCBgVB6BcYe3YUPRhNyoz54NRlYWAqonFAb8AUZ6k3AKarPG/QAxeLsxxLNxrTjBeHslEsyENALANiW0CjKP8Dw5vqRIjzI1DNO8hJYb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=mm6vZ/Bp; arc=none smtp.client-ip=212.227.17.22
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1758664106; x=1759268906; i=w_armin@gmx.de;
-	bh=beXBLL4rR2MYV0Cm2O+Z6Dc8eHAGdTeXJnBQr17Ny8E=;
+	s=s31663417; t=1758664108; x=1759268908; i=w_armin@gmx.de;
+	bh=bAbCz7UgPT4LDyKJA8LMJdrOGazj+Rx3x+iekx3ff9g=;
 	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=jA+U/YtoFhfc7eVUDtupNJUbwurQNre1H/aM6zN7R67lH1zXNlo1hmnoIRIL8saM
-	 0aHPV6T62lp6ZLymMua3MUXKXOLfxibeALrme71YMPRAVymF43UdVQg1EBMwWxtfb
-	 y76rm4tjcOgt9fSJ9h2DLH0k5vg/DknhCUbGT1HqyNtz/7QmyT8JuAAKXiXuE2j+X
-	 nvV1OskcGgd+7bNQCf4+koMGBEEorvY0hsofi5zwQlauHw1uVtbgXSoQjNpGyJE0B
-	 P3QoY9HbBbPr2bfU0k/0PM9a6jKZwdwqTFoiPG3uNl7AD/brX8jzyTd6APYEPNN1a
-	 oMdn2HjtkSkh0DeBAA==
+	b=mm6vZ/BpLTT3rO0TPnJ5fQir98xlgAeX/ye88t9/KZoB1Kp+lxaVza7Q8kKkEoDc
+	 4aDUcXHaC5ogXzDCFwIlRP0Cn+PL4wCD1zwyAB1soUscxST3GrscGdFV8pGqspZOe
+	 A7+lJ1W9n/d4if26gG+1o1fe11TJ0vjvC0/K3rgPW9Q1MgPW5gdY0muHwpKaO1/rd
+	 0B65w6pnHqAyWi15UocMvInXVHj790apBAMCFuNgp/0T64CWe7dFgrKXByoAsCRye
+	 KTgUDD4hBwfy1IP4/o55rU7zrAJmSV5wsc0lhnWIPViJgRZPUiOiUl6I/nzcp9/4A
+	 XHAt8/jFiUg4Uf+0AQ==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from mx-amd-b650.fritz.box ([93.202.247.91]) by mail.gmx.net
  (mrgmx104 [212.227.17.168]) with ESMTPSA (Nemesis) id
- 1MgNh1-1uQB1x0Q51-00jODo; Tue, 23 Sep 2025 23:48:26 +0200
+ 1MWRVb-1upRhv0d7j-00I8Fb; Tue, 23 Sep 2025 23:48:28 +0200
 From: Armin Wolf <W_Armin@gmx.de>
 To: jlee@suse.com,
 	basak.sb2006@gmail.com,
@@ -55,9 +55,9 @@ Cc: kuurtb@gmail.com,
 	ilpo.jarvinen@linux.intel.com,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] platform/x86: acer-wmi: Add fan control support
-Date: Tue, 23 Sep 2025 23:48:12 +0200
-Message-Id: <20250923214814.325808-3-W_Armin@gmx.de>
+Subject: [PATCH 3/4] platform/x86: acer-wmi: Enable fan control for PH16-72 and PT14-51
+Date: Tue, 23 Sep 2025 23:48:13 +0200
+Message-Id: <20250923214814.325808-4-W_Armin@gmx.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250923214814.325808-1-W_Armin@gmx.de>
 References: <20250923214814.325808-1-W_Armin@gmx.de>
@@ -68,454 +68,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:VPNEJHsS12UHsfCGfRsUHz4SDgMI6ZY4n0kW40uebmIpjm4V84a
- jz+zQS2Vo2JvJp5Az+ar/FOlbD/1UX0HX1Y4bRbCOZ0bmIyh1V6Jzl6sflH0JSM16Wudsg4
- vFaedKGSBuYG5MEI+cc6sF6tPJ4Z88RVrEJGZJGuPqSTe6vaS8UDk4f9RoKc3cVEqRQJ+aq
- 5CndKj8rcT469fkYmibAA==
+X-Provags-ID: V03:K1:ck7KzcwGNkSVGGqN2OA3AMWQTEHVy1vSl6MRc24f8UdPu5b9Y3e
+ yBfxl6O/tu4ifMalYxxb/XUOg+EAc316ssU+QOFw8yhVMmreiu/lXNX8i4TPtNZeJBDIxv8
+ 7qgRfSPK5lklphNYZX7PjqAmt2kRmLaAgVk6e7756Hei4cJlKcPlXrDKTrSo003O3HKyY4g
+ ZYwft7HghTmHGiIYCcWeQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:00VhLvQVaF0=;iJOPxjYoerrZLSp1B5fpm2caCOB
- 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
+UI-OutboundReport: notjunk:1;M01:P0:0aWWfpRrP8g=;i8gGhtUcaQhEm2DY46GBm3kpIwl
+ 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
 
-Add support for controlling the fan speed using the
-SetGamingFanSpeed() and GetGamingFanSpeed() WMI methods.
+Both machines support the necessary WMI methods, so enable fan control
+for them.
 
-This feature is only enabled if the machine has ACER_CAP_PWM enabled
-and depend on ACER_CAP_HWMON for detecting the number of available
-fans.
-
-Reviewed-by: Kurt Borja <kuurtb@gmail.com>
 Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 =2D--
- drivers/platform/x86/acer-wmi.c | 221 +++++++++++++++++++++++++++++++-
- 1 file changed, 219 insertions(+), 2 deletions(-)
+ drivers/platform/x86/acer-wmi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-w=
 mi.c
-index a41555ee8589..345b6e24ae31 100644
+index 345b6e24ae31..d2cee0bdfd16 100644
 =2D-- a/drivers/platform/x86/acer-wmi.c
 +++ b/drivers/platform/x86/acer-wmi.c
-@@ -12,10 +12,12 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-=20
- #include <linux/kernel.h>
-+#include <linux/minmax.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/types.h>
- #include <linux/dmi.h>
-+#include <linux/fixp-arith.h>
- #include <linux/backlight.h>
- #include <linux/leds.h>
- #include <linux/platform_device.h>
-@@ -69,11 +71,16 @@ MODULE_LICENSE("GPL");
- #define ACER_WMID_GET_GAMING_LED_METHODID 4
- #define ACER_WMID_GET_GAMING_SYS_INFO_METHODID 5
- #define ACER_WMID_SET_GAMING_FAN_BEHAVIOR_METHODID 14
-+#define ACER_WMID_GET_GAMING_FAN_BEHAVIOR_METHODID 15
-+#define ACER_WMID_SET_GAMING_FAN_SPEED_METHODID 16
-+#define ACER_WMID_GET_GAMING_FAN_SPEED_METHODID 17
- #define ACER_WMID_SET_GAMING_MISC_SETTING_METHODID 22
- #define ACER_WMID_GET_GAMING_MISC_SETTING_METHODID 23
-=20
-+#define ACER_GAMING_FAN_BEHAVIOR_STATUS_MASK GENMASK_ULL(7, 0)
- #define ACER_GAMING_FAN_BEHAVIOR_ID_MASK GENMASK_ULL(15, 0)
- #define ACER_GAMING_FAN_BEHAVIOR_SET_MODE_MASK GENMASK_ULL(23, 16)
-+#define ACER_GAMING_FAN_BEHAVIOR_GET_MODE_MASK GENMASK_ULL(23, 8)
-=20
- #define ACER_GAMING_FAN_BEHAVIOR_CPU BIT(0)
- #define ACER_GAMING_FAN_BEHAVIOR_GPU BIT(3)
-@@ -81,6 +88,10 @@ MODULE_LICENSE("GPL");
- #define ACER_GAMING_FAN_BEHAVIOR_CPU_MODE_MASK GENMASK(1, 0)
- #define ACER_GAMING_FAN_BEHAVIOR_GPU_MODE_MASK GENMASK(7, 6)
-=20
-+#define ACER_GAMING_FAN_SPEED_STATUS_MASK GENMASK_ULL(7, 0)
-+#define ACER_GAMING_FAN_SPEED_ID_MASK GENMASK_ULL(7, 0)
-+#define ACER_GAMING_FAN_SPEED_VALUE_MASK GENMASK_ULL(15, 8)
-+
- #define ACER_GAMING_MISC_SETTING_STATUS_MASK GENMASK_ULL(7, 0)
- #define ACER_GAMING_MISC_SETTING_INDEX_MASK GENMASK_ULL(7, 0)
- #define ACER_GAMING_MISC_SETTING_VALUE_MASK GENMASK_ULL(15, 8)
-@@ -130,6 +141,11 @@ enum acer_wmi_predator_v4_sensor_id {
- 	ACER_WMID_SENSOR_GPU_TEMPERATURE	=3D 0x0A,
+@@ -465,6 +465,7 @@ static struct quirk_entry quirk_acer_predator_ph16_72 =
+=3D {
+ 	.cpu_fans =3D 1,
+ 	.gpu_fans =3D 1,
+ 	.predator_v4 =3D 1,
++	.pwm =3D 1,
  };
 =20
-+enum acer_wmi_gaming_fan_id {
-+	ACER_WMID_CPU_FAN	=3D 0x01,
-+	ACER_WMID_GPU_FAN	=3D 0x04,
-+};
-+
- enum acer_wmi_gaming_fan_mode {
- 	ACER_WMID_FAN_MODE_AUTO		=3D 0x01,
- 	ACER_WMID_FAN_MODE_TURBO	=3D 0x02,
-@@ -292,6 +308,7 @@ struct hotkey_function_type_aa {
- #define ACER_CAP_TURBO_FAN		BIT(9)
- #define ACER_CAP_PLATFORM_PROFILE	BIT(10)
- #define ACER_CAP_HWMON			BIT(11)
-+#define ACER_CAP_PWM			BIT(12)
-=20
- /*
-  * Interface type flags
-@@ -386,6 +403,7 @@ struct quirk_entry {
- 	u8 cpu_fans;
- 	u8 gpu_fans;
- 	u8 predator_v4;
-+	u8 pwm;
+ static struct quirk_entry quirk_acer_predator_pt14_51 =3D {
+@@ -472,6 +473,7 @@ static struct quirk_entry quirk_acer_predator_pt14_51 =
+=3D {
+ 	.cpu_fans =3D 1,
+ 	.gpu_fans =3D 1,
+ 	.predator_v4 =3D 1,
++	.pwm =3D 1,
  };
 =20
- static struct quirk_entry *quirks;
-@@ -405,6 +423,9 @@ static void __init set_quirks(void)
- 	if (quirks->predator_v4)
- 		interface->capability |=3D ACER_CAP_PLATFORM_PROFILE |
- 					 ACER_CAP_HWMON;
-+
-+	if (quirks->pwm)
-+		interface->capability |=3D ACER_CAP_PWM;
- }
-=20
- static int __init dmi_matched(const struct dmi_system_id *dmi)
-@@ -1651,6 +1672,27 @@ static int WMID_gaming_set_fan_behavior(u16 fan_bit=
-map, u8 mode_bitmap)
- 	return 0;
- }
-=20
-+static int WMID_gaming_get_fan_behavior(u16 fan_bitmap, u8 *mode_bitmap)
-+{
-+	acpi_status status;
-+	u32 input =3D 0;
-+	u64 result;
-+
-+	input |=3D FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_ID_MASK, fan_bitmap);
-+	status =3D WMI_gaming_execute_u32_u64(ACER_WMID_GET_GAMING_FAN_BEHAVIOR_=
-METHODID, input,
-+					    &result);
-+	if (ACPI_FAILURE(status))
-+		return -EIO;
-+
-+	/* The return status must be zero for the operation to have succeeded */
-+	if (FIELD_GET(ACER_GAMING_FAN_BEHAVIOR_STATUS_MASK, result))
-+		return -EIO;
-+
-+	*mode_bitmap =3D FIELD_GET(ACER_GAMING_FAN_BEHAVIOR_GET_MODE_MASK, resul=
-t);
-+
-+	return 0;
-+}
-+
- static void WMID_gaming_set_fan_mode(u8 fan_mode)
- {
- 	u16 mode_bitmap =3D 0;
-@@ -1669,6 +1711,55 @@ static void WMID_gaming_set_fan_mode(u8 fan_mode)
- 	WMID_gaming_set_fan_behavior(fan_bitmap, mode_bitmap);
- }
-=20
-+static int WMID_gaming_set_gaming_fan_speed(u8 fan, u8 speed)
-+{
-+	acpi_status status;
-+	u64 input =3D 0;
-+	u64 result;
-+
-+	if (speed > 100)
-+		return -EINVAL;
-+
-+	input |=3D FIELD_PREP(ACER_GAMING_FAN_SPEED_ID_MASK, fan);
-+	input |=3D FIELD_PREP(ACER_GAMING_FAN_SPEED_VALUE_MASK, speed);
-+
-+	status =3D WMI_gaming_execute_u64(ACER_WMID_SET_GAMING_FAN_SPEED_METHODI=
-D, input, &result);
-+	if (ACPI_FAILURE(status))
-+		return -EIO;
-+
-+	switch (FIELD_GET(ACER_GAMING_FAN_SPEED_STATUS_MASK, result)) {
-+	case 0x00:
-+		return 0;
-+	case 0x01:
-+		return -ENODEV;
-+	case 0x02:
-+		return -EINVAL;
-+	default:
-+		return -ENXIO;
-+	}
-+}
-+
-+static int WMID_gaming_get_gaming_fan_speed(u8 fan, u8 *speed)
-+{
-+	acpi_status status;
-+	u32 input =3D 0;
-+	u64 result;
-+
-+	input |=3D FIELD_PREP(ACER_GAMING_FAN_SPEED_ID_MASK, fan);
-+
-+	status =3D WMI_gaming_execute_u32_u64(ACER_WMID_GET_GAMING_FAN_SPEED_MET=
-HODID, input,
-+					    &result);
-+	if (ACPI_FAILURE(status))
-+		return -EIO;
-+
-+	if (FIELD_GET(ACER_GAMING_FAN_SPEED_STATUS_MASK, result))
-+		return -ENODEV;
-+
-+	*speed =3D FIELD_GET(ACER_GAMING_FAN_SPEED_VALUE_MASK, result);
-+
-+	return 0;
-+}
-+
- static int WMID_gaming_set_misc_setting(enum acer_wmi_gaming_misc_setting=
- setting, u8 value)
- {
- 	acpi_status status;
-@@ -2840,6 +2931,16 @@ static const enum acer_wmi_predator_v4_sensor_id ac=
-er_wmi_fan_channel_to_sensor_
- 	[1] =3D ACER_WMID_SENSOR_GPU_FAN_SPEED,
- };
-=20
-+static const enum acer_wmi_gaming_fan_id acer_wmi_fan_channel_to_fan_id[]=
- =3D {
-+	[0] =3D ACER_WMID_CPU_FAN,
-+	[1] =3D ACER_WMID_GPU_FAN,
-+};
-+
-+static const u16 acer_wmi_fan_channel_to_fan_bitmap[] =3D {
-+	[0] =3D ACER_GAMING_FAN_BEHAVIOR_CPU,
-+	[1] =3D ACER_GAMING_FAN_BEHAVIOR_GPU,
-+};
-+
- static umode_t acer_wmi_hwmon_is_visible(const void *data,
- 					 enum hwmon_sensor_types type, u32 attr,
- 					 int channel)
-@@ -2851,6 +2952,11 @@ static umode_t acer_wmi_hwmon_is_visible(const void=
- *data,
- 	case hwmon_temp:
- 		sensor_id =3D acer_wmi_temp_channel_to_sensor_id[channel];
- 		break;
-+	case hwmon_pwm:
-+		if (!has_cap(ACER_CAP_PWM))
-+			return 0;
-+
-+		fallthrough;
- 	case hwmon_fan:
- 		sensor_id =3D acer_wmi_fan_channel_to_sensor_id[channel];
- 		break;
-@@ -2858,8 +2964,12 @@ static umode_t acer_wmi_hwmon_is_visible(const void=
- *data,
- 		return 0;
- 	}
-=20
--	if (*supported_sensors & BIT(sensor_id - 1))
-+	if (*supported_sensors & BIT(sensor_id - 1)) {
-+		if (type =3D=3D hwmon_pwm)
-+			return 0644;
-+
- 		return 0444;
-+	}
-=20
- 	return 0;
- }
-@@ -2868,8 +2978,10 @@ static int acer_wmi_hwmon_read(struct device *dev, =
-enum hwmon_sensor_types type,
- 			       u32 attr, int channel, long *val)
- {
- 	u64 command =3D ACER_WMID_CMD_GET_PREDATOR_V4_SENSOR_READING;
-+	u8 fan, speed, mode_bitmap;
-+	u16 fan_bitmap;
-+	int mode, ret;
- 	u64 result;
--	int ret;
-=20
- 	switch (type) {
- 	case hwmon_temp:
-@@ -2893,6 +3005,106 @@ static int acer_wmi_hwmon_read(struct device *dev,=
- enum hwmon_sensor_types type,
-=20
- 		*val =3D FIELD_GET(ACER_PREDATOR_V4_SENSOR_READING_BIT_MASK, result);
- 		return 0;
-+	case hwmon_pwm:
-+		switch (attr) {
-+		case hwmon_pwm_input:
-+			fan =3D acer_wmi_fan_channel_to_fan_id[channel];
-+			ret =3D WMID_gaming_get_gaming_fan_speed(fan, &speed);
-+			if (ret < 0)
-+				return ret;
-+
-+			*val =3D fixp_linear_interpolate(0, 0, 100, U8_MAX, speed);
-+			return 0;
-+		case hwmon_pwm_enable:
-+			fan_bitmap =3D acer_wmi_fan_channel_to_fan_bitmap[channel];
-+			ret =3D WMID_gaming_get_fan_behavior(fan_bitmap, &mode_bitmap);
-+			if (ret < 0)
-+				return ret;
-+
-+			switch (channel) {
-+			case 0:
-+				mode =3D FIELD_GET(ACER_GAMING_FAN_BEHAVIOR_CPU_MODE_MASK,
-+						 mode_bitmap);
-+				break;
-+			case 1:
-+				mode =3D FIELD_GET(ACER_GAMING_FAN_BEHAVIOR_GPU_MODE_MASK,
-+						 mode_bitmap);
-+				break;
-+			default:
-+				return -EINVAL;
-+			}
-+
-+			switch (mode) {
-+			case ACER_WMID_FAN_MODE_AUTO:
-+				*val =3D 2;
-+				return 0;
-+			case ACER_WMID_FAN_MODE_TURBO:
-+				*val =3D 0;
-+				return 0;
-+			case ACER_WMID_FAN_MODE_CUSTOM:
-+				*val =3D 1;
-+				return 0;
-+			default:
-+				return -ENXIO;
-+			}
-+		default:
-+			return -EOPNOTSUPP;
-+		}
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
-+static int acer_wmi_hwmon_write(struct device *dev, enum hwmon_sensor_typ=
-es type,
-+				u32 attr, int channel, long val)
-+{
-+	u8 fan, speed, mode_bitmap;
-+	u16 fan_bitmap;
-+	int mode;
-+
-+	switch (type) {
-+	case hwmon_pwm:
-+		switch (attr) {
-+		case hwmon_pwm_input:
-+			fan =3D acer_wmi_fan_channel_to_fan_id[channel];
-+			speed =3D fixp_linear_interpolate(0, 0, U8_MAX, 100,
-+							clamp_val(val, 0, U8_MAX));
-+
-+			return WMID_gaming_set_gaming_fan_speed(fan, speed);
-+		case hwmon_pwm_enable:
-+			fan_bitmap =3D acer_wmi_fan_channel_to_fan_bitmap[channel];
-+
-+			switch (val) {
-+			case 0:
-+				mode =3D ACER_WMID_FAN_MODE_TURBO;
-+				break;
-+			case 1:
-+				mode =3D ACER_WMID_FAN_MODE_CUSTOM;
-+				break;
-+			case 2:
-+				mode =3D ACER_WMID_FAN_MODE_AUTO;
-+				break;
-+			default:
-+				return -EINVAL;
-+			}
-+
-+			switch (channel) {
-+			case 0:
-+				mode_bitmap =3D FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_CPU_MODE_MASK,
-+							 mode);
-+				break;
-+			case 1:
-+				mode_bitmap =3D FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_GPU_MODE_MASK,
-+							 mode);
-+				break;
-+			default:
-+				return -EINVAL;
-+			}
-+
-+			return WMID_gaming_set_fan_behavior(fan_bitmap, mode_bitmap);
-+		default:
-+			return -EOPNOTSUPP;
-+		}
- 	default:
- 		return -EOPNOTSUPP;
- 	}
-@@ -2908,11 +3120,16 @@ static const struct hwmon_channel_info *const acer=
-_wmi_hwmon_info[] =3D {
- 			   HWMON_F_INPUT,
- 			   HWMON_F_INPUT
- 			   ),
-+	HWMON_CHANNEL_INFO(pwm,
-+			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
-+			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE
-+			   ),
- 	NULL
- };
-=20
- static const struct hwmon_ops acer_wmi_hwmon_ops =3D {
- 	.read =3D acer_wmi_hwmon_read,
-+	.write =3D acer_wmi_hwmon_write,
- 	.is_visible =3D acer_wmi_hwmon_is_visible,
- };
-=20
+ static struct quirk_entry quirk_acer_predator_v4 =3D {
 =2D-=20
 2.39.5
 
