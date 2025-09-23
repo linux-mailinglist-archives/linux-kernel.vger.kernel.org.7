@@ -1,120 +1,119 @@
-Return-Path: <linux-kernel+bounces-829364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BD8B96E33
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:59:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BDFCB96E3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AFF6321115
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:59:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE7597A9387
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3FC329F06;
-	Tue, 23 Sep 2025 16:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370E932951B;
+	Tue, 23 Sep 2025 16:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fgyMez20"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OODOazRL"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C1A3294EE
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F43B3294FF
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758646762; cv=none; b=YpyK/wVbGn+h4r8dEiOmquwz06eTiQfkPnG0riKe1BTNjGInhAWmZuldKv3Owi2QdV89Aoz30UnqfPsNBzdeunMYat1MmFY59Cmrk7d0RWe3HMHpZHBARYu+081lznHntIKCY8+d3/yE04kFYThGOKeSj26VreI41t3gXGMeKcc=
+	t=1758646773; cv=none; b=ZdPS9EOGPQ0jYH0jwNg2zEa/HB5tNCcAbzZkQIlwinYv8xaQ18kuJtjRNjt+KSbWna/rvdMT8cd843W5vxqkf81e2BdwOyiNLW1eCnvrpJJTVtX7iuaJNRUPZVyBtrzXB16OhKg9MnENPGyk3YZxCnwhRE09eVNn7ENdeV/1Abo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758646762; c=relaxed/simple;
-	bh=YJlkXO/ZITWmEi69lauof1/RW6YMbUVumNSLKe5TqAE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gE9VyfWcWap3uzgDczfNfQXIT3Z97Xhuipz6HlruqndNPDKvLIp4I7wrW4z4c2Cv2cksbRcKN83CQ46yf6Q13F7z8WtB0qEaqFBq/OwXDNXeuYLwe8bfZ2PP6fqjddUg+uO60kyzeWVr2S5Lknwt8AHmsQz6BXrpyTHPSEh7sFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fgyMez20; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46b7bf21fceso29369515e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:59:19 -0700 (PDT)
+	s=arc-20240116; t=1758646773; c=relaxed/simple;
+	bh=a+TGFSesu5VUUVAITEHREDz64pLmzeUXqCEahcC+ggo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=roGjD/FlijzpJSUWe5JTFVYZ6XmPDuv+9SiQum2VqT5JfpHnrAXb4CvLmJTSpfgFSEZXFC0+TbKDjzcRs6ZJYjdZsB2VAOsKFpwAGf0BgGLguZJJygw6YKYl6NOtb4a1K1l1P4MGakPw7o2p1K60eZYuW4uYbcm5zkkGUxkKZ/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OODOazRL; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b55251a4309so3159267a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:59:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758646758; x=1759251558; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TVJ0iQtlBKSgYr2iZSN1ZuLASEInLOEHg7PGBAMqWac=;
-        b=fgyMez20JRLSwWcli1Jk0ROBACIZjvnWelepnpaDUT2/0QfaA/I+/GLmQ3ICQH89Fa
-         cBIDizXdDuTbheA/BMS6DQym7S3U4I0hPT223ewd5rtWoMSHLM2hqsGmYikSQnpSJpfU
-         EuLUKqI4YXOFIRDJMqjIR2sgujj2pwQEImN80E9lly+tTwjwaHoSQ9QpJBazd3AEqgZq
-         DS8E986kKLRTfFf9Yn5+pgoRUTDBnc/cUt5ftnNcmr4aT8oU3VULdnpqYysHdTIbMwz9
-         C2emB0FWIDYSMHHEW0aMCnTvT86Bm4hAyS2GinO1tg92whWJM9g3Jd1SyEGuI8s1RS09
-         SUuQ==
+        d=google.com; s=20230601; t=1758646771; x=1759251571; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eugYmtKDYKJ7cH1F2PIlxiSwE2ftOyy84HNn6Ux5BoU=;
+        b=OODOazRLXSY+7BOG8XaXS54J1HXm7xf3qoAnHrZh5FKS+EW85awZoWLq8mQ80BNPqL
+         aE9WdJvra0ZnOULyRJxY6aZiRjNQLXXOOUlPBmGHvfSAbJ05i5ohJrJUnY47GMEOqz1B
+         uXPXiLaEVSUDZuOKNa8F83u7GX15gcCxNLa4HytleKLiND6giWgmLvSKTK46reCbt6we
+         NPZwg4GJ0IxjX7/0ffbqkSNxD0uzaSKRJI7IDriYM/4tpqbmUmR7LQWjgwIH5QnSv+9w
+         Ie5IyiKWqomVdcMcpVUuHie4LpWbkWxlEDcQEO1MNlf5w8Jx3cOy1Bt3Dors5MrJ9mmP
+         NxCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758646758; x=1759251558;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TVJ0iQtlBKSgYr2iZSN1ZuLASEInLOEHg7PGBAMqWac=;
-        b=fUlko0T0nqjtV6hoF1nVZSCmYrZ3ztZ0Qj0kZy7oCXN3AFaOgpmn6yX3RWS1hslLtU
-         DTVxjXCw7YIeyJiMn9AzoahN+ELXvmEseAVosYOFEA1ilIKh1+cNxUPxa6fLlNknZvyD
-         I8zoGbWMUzK/xC43wbmM0hT58r/qKPbONXTt1eI2/Xs3ZG71v1irqZbl47zw/LG/eVw6
-         iF1ZsAslrySMZ3wdVALe/uZ0Gr/QA3Bh1KXLiTpLuwHEcY0/NAeVMEHzU/J+o6G/1H8d
-         V2jIBor+QexNecgtlXC9sd15TjD3q0QoEyVg7ERuZWg2fuYjswnuWCUJAy/rc9VUvWha
-         xLlQ==
-X-Gm-Message-State: AOJu0Yzx073iV/94G5B51HgBi3U/sHuj+bhBskX72v9CZuXGVf7hXTwV
-	I7fLAsTPEr9SRq5o6wfqP4hv4oUAd8R37NTjD4hNueyLHGKi/A13hwQg+myC0HkWq+ZK23oZ9i8
-	i3J9O
-X-Gm-Gg: ASbGnctgEWt3XoZZ1YL5Tr+m1u/c7xojEziL8ga7kJzge/pnvF2yF76PzF5TAkb43/4
-	4qV8mf4RjwjRoQUN6ldZ942+eUEhCL/PVsgFBFqZ4SSTOdvGEdRfyLEKI7NjPmc2mzcAS2O6Dca
-	9AunnamhlLdlUhoWUw3o8Bn5CTYBx/VzTGBYovjBkDY7dZSThvI6yEvn8tWPGfGheW/AYE+lICo
-	KUnL1DHZeN1Qvw8meCcgznMsZa0Ng+m4bt3tmgUc5rmf17U5vUMLOq8gA7t6cVXfh41iN0IaEMS
-	wvQAzBwr5PXXaEVceMEWNiqZXu+cAQuwea5APIsgby9kLkJnXiPmIyPbiPMgdq6v4YhHrG8+j+h
-	oTDpDaPGxbmkxVOAqYblRGQQj6X/o+BKRvJp+2InsARI=
-X-Google-Smtp-Source: AGHT+IH6FsdRHwPLQobQ/I7blfetgrGu9IWl79+904uwLjysCfsJwBxPJRmS0Ytnh5dlEiMpfJnu3Q==
-X-Received: by 2002:a05:600c:4515:b0:45c:4470:271c with SMTP id 5b1f17b1804b1-46e1daacdc1mr36741925e9.18.1758646758594;
-        Tue, 23 Sep 2025 09:59:18 -0700 (PDT)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3f00cc58b91sm18616483f8f.1.2025.09.23.09.59.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 09:59:18 -0700 (PDT)
-From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH] tracing: Ensure optimized hashing works
-Date: Tue, 23 Sep 2025 18:59:07 +0200
-Message-ID: <20250923165908.2399256-1-mkoutny@suse.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1758646771; x=1759251571;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eugYmtKDYKJ7cH1F2PIlxiSwE2ftOyy84HNn6Ux5BoU=;
+        b=WbqeOVXz0EUaBIEabe+7le2kL6AWT1EvpxZL8CUsvAKl1T3fv3lJD8qfq/VO3Rk0iq
+         PiJfr2uf1MiM2l7pxaHfPZtWz/wdDsB7ZAgXUzfr4r7frZzAFqKCJo/AGJVrnSEkBFLv
+         1hFCiTNn2yfdu2XoyrJpNCZH28ZKgZafnilwXP6wiF9wRoobcWuzqdrBk2s4PI+Iuris
+         +2oTx57P5t7B+ac4g7dt4wzzys5g3x+GZP7JeqMkDGAD8p4Cf1mHtm8ZacNjGLIT/nQx
+         5Xh4998kL/EQZH12pdJC7/GQtjv7RYHLzIwmaeQhFWoTMyzfG7MHO+4JAt5Vt8ltW4DL
+         9w8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUMiCMOhlk6GfKMjK1LlS9MV2nBNErGHbDuIpIHDR5TYvcqSfAYVg7Cud2xnhIAjGgu8YPJ8JyNAxyUx8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOQePjtQZ1traICqTBcMZNU6xPhRJk4UqYaQCzVPjfbgdSvTlR
+	SGu+MotuDfUEsIU6GiSp6yCB3hcN+jMeQS6zDHj23E+Z7XDO4LuIp9BMGmgKb0n9TuKDjenJEWT
+	UAElEsg==
+X-Google-Smtp-Source: AGHT+IHoSbwpr9rrf3RNA1kZQWNfvix8mNMekKMDtf3Qj1cDaQChIBKNA8JvxkaNaWoibhMgYu/Ju9WbOW8=
+X-Received: from pgg21.prod.google.com ([2002:a05:6a02:4d95:b0:b54:ff79:96ad])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:914c:b0:2c8:85a5:c416
+ with SMTP id adf61e73a8af0-2cfd8a9aebdmr4825730637.18.1758646771547; Tue, 23
+ Sep 2025 09:59:31 -0700 (PDT)
+Date: Tue, 23 Sep 2025 09:59:29 -0700
+In-Reply-To: <aNI+07tytIMh/YvW@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250919223258.1604852-1-seanjc@google.com> <20250919223258.1604852-50-seanjc@google.com>
+ <aNI+07tytIMh/YvW@intel.com>
+Message-ID: <aNLR8WUn8mUtiAEi@google.com>
+Subject: Re: [PATCH v16 49/51] KVM: selftests: Add coverate for KVM-defined
+ registers in MSRs test
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
+	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
-If ever PID_MAX_DEFAULT changes, it must be compatible with tracing
-hashmaps assumptions.
+On Tue, Sep 23, 2025, Chao Gao wrote:
+> On Fri, Sep 19, 2025 at 03:32:56PM -0700, Sean Christopherson wrote:
+> >Add test coverage for the KVM-defined GUEST_SSP "register" in the MSRs
+> >test.  While _KVM's_ goal is to not tie the uAPI of KVM-defined registers
+> >to any particular internal implementation, i.e. to not commit in uAPI to
+> >handling GUEST_SSP as an MSR, treating GUEST_SSP as an MSR for testing
+> >purposes is a-ok and is a naturally fit given the semantics of SSP.
+> >
+> >Signed-off-by: Sean Christopherson <seanjc@google.com>
+> 
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
+> 
+> <snip>
+> 
+> >+static bool vcpu_has_reg(struct kvm_vcpu *vcpu, u64 reg)
+> >+{
+> >+	struct {
+> >+		struct kvm_reg_list list;
+> >+		u64 regs[KVM_X86_MAX_NR_REGS];
+> >+	} regs = {};
+> >+	int r, i;
+> >+
+> >+	/*
+> >+	 * If KVM_GET_REG_LIST succeeds with n=0, i.e. there are no supported
+> >+	 * regs, then the vCPU obviously doesn't support the reg.
+> >+	 */
+> >+	r = __vcpu_ioctl(vcpu, KVM_GET_REG_LIST, &regs.list.n);
+> 						 ^^^^^^^^^^^^
+> it would be more clear to use &reg.list here.
 
-Link: https://lore.kernel.org/r/20240409110126.651e94cb@gandalf.local.home/
-Signed-off-by: Michal Koutný <mkoutny@suse.com>
----
- kernel/trace/trace_sched_switch.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-Drive-by flushing an old idea. Take it or leave it.
-
-diff --git a/kernel/trace/trace_sched_switch.c b/kernel/trace/trace_sched_switch.c
-index cb49f7279dc80..aabae7daaac91 100644
---- a/kernel/trace/trace_sched_switch.c
-+++ b/kernel/trace/trace_sched_switch.c
-@@ -243,6 +243,8 @@ int trace_create_savedcmd(void)
- int trace_save_cmdline(struct task_struct *tsk)
- {
- 	unsigned tpid, idx;
-+	/* so that map_pid_to_cmdline indexing is efficient */
-+	BUILD_BUG_ON(!is_power_of_2(PID_MAX_DEFAULT));
- 
- 	/* treat recording of idle task as a success */
- 	if (!tsk->pid)
--- 
-2.51.0
-
+Fixed both.  No idea why I wrote it that way.
 
