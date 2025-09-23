@@ -1,146 +1,205 @@
-Return-Path: <linux-kernel+bounces-829437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EE9B9719B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:49:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF510B9720D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:54:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C3DE2A8AD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:49:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92157322636
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74885285075;
-	Tue, 23 Sep 2025 17:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d3LgF6Jv"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67A3281503
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8015D299AAA;
+	Tue, 23 Sep 2025 17:50:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCBE2DECD8
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758649758; cv=none; b=Ra8Mg+75wqQsUyOKEfE5NlhODe+l5zfU/HRQYrsFFOF0ivUz5TxIMcCvAYWr7pZbznXIofGxttS0Cu5bzw/axJH5+mlEJQIJwRmWRI3bEqiYmIifGE7MT+kTdpIxY2GueLqyW6pBCDOpRuEzL3p40+jeXiEl5+Un/z/GjqBUm5Q=
+	t=1758649822; cv=none; b=cHHBWMnfyMdAurujek+6o8hk4VU40X+kIkcFvUcTy7eS7W0v4K/SA8+3fdtVbjFwlXQJycJOo5SoDW9miInJdCiNB1OnVebEt+6hSfxo0JJ95Yk3qH7DPItuqj9BJimnLebwrP2Rhn97YKi12YAjjUm55bro6xfKiWpI7mrtM4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758649758; c=relaxed/simple;
-	bh=ak83w47Un+0YVkw6h4ejJTiciQnGZqbDFJcToiU+0xQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YDi86AokqAqeQ1+Nk1kc/WngHYx13U64SOQCTY/BuVE1NLrsTBdupmTpFtCWr9db7YFyhI+vIrAyYftAv09AsgQ+U7bTb4ZAtBQdN2kufNwxxQI3h1yajP28d6ImZGLXTKNU3G0r4DVAQbvt9+ZCvPXOMEZ6r9JNs0UtovQOspk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d3LgF6Jv; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3e8ef75b146so5524003f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:49:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758649755; x=1759254555; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ak83w47Un+0YVkw6h4ejJTiciQnGZqbDFJcToiU+0xQ=;
-        b=d3LgF6JvMtM5Vo9+fY573KOIj3qvM67QymJmVTviYCpzOCwmiZzhV9RSQEs+t3a/DL
-         fga8i1kQhM54QcdelpgjqI6RyUCyRysraF0yZ+m2gnWmrfYhNlQwTdfRayY1Fw7knisW
-         /XjcSEGMjRm1eKs2wIZBFHxSZFd3QuO06a641Z3P1yDKCIByw2pVGMUzHLSYiP1CN22R
-         954ivXD66e+eL1P9PKssQJngDExsIN80+mkrlEkAphwePMwdOYrfPsODtrPm7xcKo9Qz
-         M8G50FoA0FaBalMk1OznZkFsXsf0S++nD2TtmeY7gAwGZyqtMJ4cFRrMzRkXbqvwc412
-         Uy+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758649755; x=1759254555;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ak83w47Un+0YVkw6h4ejJTiciQnGZqbDFJcToiU+0xQ=;
-        b=NfaT1i7vkqbIdXlR6LsTN4LjdPLrmdFNoyYDaQ5+Mjo8DjRBMB+FT9pOHoBjRJtCxI
-         oAGN8xeH+sFTIv1VxKL2Ow/bBxefsLlcpVLDArMX43gpxEVnc87/5JqBRTBdwPs2vkW3
-         ykwiIWgtzqWhvGLPwGr0QT9OAuRb1hpQniDlsy1ibTpD9xdKfpBt3SevSsUBbsvteJyd
-         90r8oUaFFFaILoL+cH/esM51vqhxOFHGpqwtubGLjfVA3A1ADw/uO6O1RlbHVXW12Sjl
-         RfjpOm4Z7LBHAEnxYYROpxV4n388EH0MgABXoyE5nzx0zRqmpm300KVVdb4DuSthh+H4
-         yq0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWhMfgd2orf7OykxvUkXlOismddKulDRm9qbFXm8ruj+jnOKRjKEtzovadMhgdukrh51iw1C792hibgfx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyiWXGfqvh6uy1BAszDOSVv00pgmNIxDJyLsWWp01Hy+5AnrT+
-	hHfuFGz8H51/Wq1qMWOoEg/fkAuwRwxCfAWXvy8yFThQddl13YuvjrDGyXx1eltXQpF1wNujDHo
-	2qSQCrYdcMpbiFoVv2eeap4DE1Gz88XI=
-X-Gm-Gg: ASbGncu5uxu54ZopF5Spv/hPTn9GY0DrSHRy77Q4Ew+7Yw8Rtwv74y0Hg8L5I7aIbR3
-	w91jc7lYHX0OZfkrQIqJQ0sGmJO/JjfYoC3oHHDQ1h/e8JXdqCkTDhMxCcOUxnrYsexWh/R6VyR
-	i/I/basebaJXx5vTgjcU1d455sEezDQBVY/4W/qXoIaOJjbfho8tDf1rAgngOKz4jAq3qQfigSt
-	oJ1YA+kJg==
-X-Google-Smtp-Source: AGHT+IFSBc+NBD1jZsd0LSs+Pw95eV8L2vwpY4rCb+CqA5TPaGXD6Axn8yxp6z29u7E5i0MPRJJiZRdC/VoVJA9DlfM=
-X-Received: by 2002:a05:6000:2585:b0:3ea:c7ea:13da with SMTP id
- ffacd0b85a97d-405c4a9734bmr2645479f8f.9.1758649754815; Tue, 23 Sep 2025
- 10:49:14 -0700 (PDT)
+	s=arc-20240116; t=1758649822; c=relaxed/simple;
+	bh=2Skgx1MTi8lR+s4s9QJ+V8BEWAegpG4SfLkSTV2Coog=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=p1MTtWQVZomEm2Q5/LgpTxoA2EBpM7uv0+CF0BO7xE24qYngxqDyFvbYyfjbPpXMv6CTzfPSO6L1fEken0BxkwkqFat74rTUUwF0Kl3BEK3Ip+24h6BIFt4BYLVj9f5/qbipLCUSnkxCCtdeQiQKyCsHjwGKYj8gqr+6PPqdAL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E32FCFEC;
+	Tue, 23 Sep 2025 10:50:11 -0700 (PDT)
+Received: from e137867.cambridge.arm.com (e137867.arm.com [10.1.30.204])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0FD563F5A1;
+	Tue, 23 Sep 2025 10:50:15 -0700 (PDT)
+From: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	kasan-dev@googlegroups.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ada Couprie Diaz <ada.coupriediaz@arm.com>
+Subject: [RFC PATCH 16/16] arm64/io: rework Cortex-A57 erratum 832075 to use callback
+Date: Tue, 23 Sep 2025 18:49:03 +0100
+Message-ID: <20250923174903.76283-17-ada.coupriediaz@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250923174903.76283-1-ada.coupriediaz@arm.com>
+References: <20250923174903.76283-1-ada.coupriediaz@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250810125746.1105476-1-snovitoll@gmail.com> <20250810125746.1105476-2-snovitoll@gmail.com>
- <CA+fCnZdFp69ZHbccLSEKYH3i7g6r2WdQ0qzyf+quLnA0tjfXJg@mail.gmail.com> <CACzwLxh4pJOBbU2fHKCPWkHHCuLtDW-rh52788u2Q6+nG-+bTA@mail.gmail.com>
-In-Reply-To: <CACzwLxh4pJOBbU2fHKCPWkHHCuLtDW-rh52788u2Q6+nG-+bTA@mail.gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Tue, 23 Sep 2025 19:49:03 +0200
-X-Gm-Features: AS18NWAo7UnIsKkvCh16EnxIlUsef04XXrIh6VHPmyIq2HZ6eh0cMjqVLlDuPQw
-Message-ID: <CA+fCnZce3AR+pUesbDkKMtMJ+iR8eDrcjFTbVpAcwjBoZ=gJnQ@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] kasan: introduce ARCH_DEFER_KASAN and unify static
- key across modes
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: ryabinin.a.a@gmail.com, christophe.leroy@csgroup.eu, bhe@redhat.com, 
-	hca@linux.ibm.com, akpm@linux-foundation.org, zhangqing@loongson.cn, 
-	chenhuacai@loongson.cn, davidgow@google.com, glider@google.com, 
-	dvyukov@google.com, alexghiti@rivosinc.com, alex@ghiti.fr, 
-	agordeev@linux.ibm.com, vincenzo.frascino@arm.com, elver@google.com, 
-	kasan-dev@googlegroups.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
-	linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 15, 2025 at 6:30=E2=80=AFAM Sabyrzhan Tasbolatov
-<snovitoll@gmail.com> wrote:
->
-> > Why is the check removed here and in some other places below? This
-> > need to be explained in the commit message.
->
-> kasan_arch_is_ready which was unified with kasan_enabled, was removed
-> here because
-> __kasan_slab_pre_free is called from include/linux/kasan.h [1] where
-> there's already kasan_enabled() check.
->
-> [1] https://elixir.bootlin.com/linux/v6.16.7/source/include/linux/kasan.h=
-#L198
->
-> Please let me know if v7 is required with the change in the git commit
-> message only.
+The Cortex-A57 erratum 832075 fix implemented by the kernel
+replaces all device memory loads with their load-acquire versions.
+By using simple instruction-level alternatives to replace the 13k+
+instances of such loads, we add more than 50kB of data
+to the `.altinstructions` section, and thus the kernel image.
 
-No need, but next time please add such info into the commit message.
+Implement `alt_cb_patch_ldr_to_ldar()` as the alternative callback
+to patch LDRs to device memory into LDARs and use it instead
+of the alternative instructions.
 
-> > What I meant with these __wrappers was that we should add them for the
-> > KASAN hooks that are called from non-KASAN code (i.e. for the hooks
-> > defined in include/linux/kasan.h). And then move all the
-> > kasan_enabled() checks from mm/kasan/* to where the wrappers are
-> > defined in include/linux/kasan.h (see kasan_unpoison_range() as an
-> > example).
-> >
-> > kasan_save_free_info is a KASAN internal function that should need
-> > such a wrapper.
-> >
-> > For now, to make these patches simpler, you can keep kasan_enabled()
-> > checks in mm/kasan/*, where they are now. Later we can move them to
-> > include/linux/kasan.h with a separate patch.
->
-> Yes, I'd like to revisit this in the next separate patch series.
+This lightens the image by around 50kB as predicted, with the same result.
 
-Great!
+The new callback is safe to be used for alternatives as it is `noinstr`
+and the `aarch64_insn_...` functions it uses have been made safe
+in previous commits.
 
-But for now, please send a fix-up patch that removes the
-__kasan_save_free_info() wrapper (or a v8? But I see that your series
-is now in mm-stable, so I guess a separate fix-up patch is preferred).
+Add `alt_cb_patch_ldr_to_ldar()` to the nVHE namespace as
+`__vgic_v2_perform_cpuif_access()` uses one of the patched functions.
 
-I don't think you need a kasan_enabled() check in
-kasan_save_free_info() at all. Both the higher level paths
-(kasan_slab_free and kasan_mempool_poison_object) already contain this
-check.
+Signed-off-by: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+---
+ arch/arm64/include/asm/io.h    | 27 +++++++++++++++------------
+ arch/arm64/kernel/image-vars.h |  1 +
+ arch/arm64/kernel/io.c         | 21 +++++++++++++++++++++
+ 3 files changed, 37 insertions(+), 12 deletions(-)
 
-Thanks!
+diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
+index 9b96840fb979..ec75bd0a9d76 100644
+--- a/arch/arm64/include/asm/io.h
++++ b/arch/arm64/include/asm/io.h
+@@ -50,13 +50,16 @@ static __always_inline void __raw_writeq(u64 val, volatile void __iomem *addr)
+ 	asm volatile("str %x0, %1" : : "rZ" (val), "Qo" (*ptr));
+ }
+ 
++void noinstr alt_cb_patch_ldr_to_ldar(struct alt_instr *alt,
++			       __le32 *origptr, __le32 *updptr, int nr_inst);
++
+ #define __raw_readb __raw_readb
+ static __always_inline u8 __raw_readb(const volatile void __iomem *addr)
+ {
+ 	u8 val;
+-	asm volatile(ALTERNATIVE("ldrb %w0, [%1]",
+-				 "ldarb %w0, [%1]",
+-				 ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE)
++	asm volatile(ALTERNATIVE_CB("ldrb %w0, [%1]",
++				 ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE,
++				 alt_cb_patch_ldr_to_ldar)
+ 		     : "=r" (val) : "r" (addr));
+ 	return val;
+ }
+@@ -66,9 +69,9 @@ static __always_inline u16 __raw_readw(const volatile void __iomem *addr)
+ {
+ 	u16 val;
+ 
+-	asm volatile(ALTERNATIVE("ldrh %w0, [%1]",
+-				 "ldarh %w0, [%1]",
+-				 ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE)
++	asm volatile(ALTERNATIVE_CB("ldrh %w0, [%1]",
++				 ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE,
++				 alt_cb_patch_ldr_to_ldar)
+ 		     : "=r" (val) : "r" (addr));
+ 	return val;
+ }
+@@ -77,9 +80,9 @@ static __always_inline u16 __raw_readw(const volatile void __iomem *addr)
+ static __always_inline u32 __raw_readl(const volatile void __iomem *addr)
+ {
+ 	u32 val;
+-	asm volatile(ALTERNATIVE("ldr %w0, [%1]",
+-				 "ldar %w0, [%1]",
+-				 ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE)
++	asm volatile(ALTERNATIVE_CB("ldr %w0, [%1]",
++				 ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE,
++				 alt_cb_patch_ldr_to_ldar)
+ 		     : "=r" (val) : "r" (addr));
+ 	return val;
+ }
+@@ -88,9 +91,9 @@ static __always_inline u32 __raw_readl(const volatile void __iomem *addr)
+ static __always_inline u64 __raw_readq(const volatile void __iomem *addr)
+ {
+ 	u64 val;
+-	asm volatile(ALTERNATIVE("ldr %0, [%1]",
+-				 "ldar %0, [%1]",
+-				 ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE)
++	asm volatile(ALTERNATIVE_CB("ldr %0, [%1]",
++				 ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE,
++				 alt_cb_patch_ldr_to_ldar)
+ 		     : "=r" (val) : "r" (addr));
+ 	return val;
+ }
+diff --git a/arch/arm64/kernel/image-vars.h b/arch/arm64/kernel/image-vars.h
+index 714b0b5ec5ac..43ac41f87229 100644
+--- a/arch/arm64/kernel/image-vars.h
++++ b/arch/arm64/kernel/image-vars.h
+@@ -91,6 +91,7 @@ KVM_NVHE_ALIAS(spectre_bhb_patch_loop_mitigation_enable);
+ KVM_NVHE_ALIAS(spectre_bhb_patch_wa3);
+ KVM_NVHE_ALIAS(spectre_bhb_patch_clearbhb);
+ KVM_NVHE_ALIAS(alt_cb_patch_nops);
++KVM_NVHE_ALIAS(alt_cb_patch_ldr_to_ldar);
+ 
+ /* Global kernel state accessed by nVHE hyp code. */
+ KVM_NVHE_ALIAS(kvm_vgic_global_state);
+diff --git a/arch/arm64/kernel/io.c b/arch/arm64/kernel/io.c
+index fe86ada23c7d..d4dff119f78c 100644
+--- a/arch/arm64/kernel/io.c
++++ b/arch/arm64/kernel/io.c
+@@ -9,6 +9,27 @@
+ #include <linux/types.h>
+ #include <linux/io.h>
+ 
++noinstr void alt_cb_patch_ldr_to_ldar(struct alt_instr *alt,
++			       __le32 *origptr, __le32 *updptr, int nr_inst)
++{
++	u32 rt, rn, size, orinst, altinst;
++
++	BUG_ON(nr_inst != 1);
++
++	orinst = le32_to_cpu(origptr[0]);
++
++	rt = aarch64_insn_decode_register(AARCH64_INSN_REGTYPE_RT, orinst);
++	rn = aarch64_insn_decode_register(AARCH64_INSN_REGTYPE_RN, orinst);
++	/* The size field (31,30) matches the enum used in gen_load_acq below. */
++	size = orinst >> 30;
++
++	altinst = aarch64_insn_gen_load_acq_store_rel(rt, rn, size,
++		AARCH64_INSN_LDST_LOAD_ACQ);
++
++	updptr[0] = cpu_to_le32(altinst);
++}
++EXPORT_SYMBOL(alt_cb_patch_ldr_to_ldar);
++
+ /*
+  * This generates a memcpy that works on a from/to address which is aligned to
+  * bits. Count is in terms of the number of bits sized quantities to copy. It
+-- 
+2.43.0
+
 
