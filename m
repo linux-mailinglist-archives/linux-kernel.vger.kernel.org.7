@@ -1,107 +1,173 @@
-Return-Path: <linux-kernel+bounces-828672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1555B95272
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:09:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55620B9527B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35A921904B9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:09:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15FB12E58FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06E8253F20;
-	Tue, 23 Sep 2025 09:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B99A320A3C;
+	Tue, 23 Sep 2025 09:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="UXfEpc5V"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="g1sll7v0"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B54631E888;
-	Tue, 23 Sep 2025 09:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD41B3203A9;
+	Tue, 23 Sep 2025 09:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758618568; cv=none; b=ENOgGYngPwM3IiK1p0x4I1oZlZpxPIhWU7Sx5UxiMKqzR1kXu7Yuz+Kw7mqX2K+astdChTlEE+zmuiWBACd6hx+zXSzoLs4XjRjV+ft0GDTd2OCkxN71thD7ubwBpSx+DRtr3qYasuZGadxGfJy2W/QdguS9i3wHSb9VHEDslhg=
+	t=1758618572; cv=none; b=rBuD56fRnergBDgo5FlOqFdlnrpROWWCEpCNFohQkd/ysyqQwnVdI1cOEEOnz87V+RApW1lTbzw2p+jy6FY3VBlGTBBR2QtBwIF3g4sKsGXsm4rQWDmFDCNAfRMQqJzNhS/Gxgqcx2TuAsCunFcR5W//j0roNuC1qk959S7fkEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758618568; c=relaxed/simple;
-	bh=Bf18cj0HZKW8sv39LhYfAvcFyUTklun49FrjVhZCSkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AzX2M2Uu2Aql6Bllh2Yrvua/C3ioxLt89ONpGRSxaJP/cH94o8Aw8KlSSOu/MJ+hSoQukMZMn5ZIZXpJINMn01mrMcB1GgYhVYV8V339LEbanblL55X7SrZ0wgu8v4xx21KG/F7teMLBriH/0ll/4d7qGVNLnrP5NKfl/+KsNnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=UXfEpc5V; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=LNfWHKHbRyM/GBX0pKVevF1bo7N98M4gqN+Cm7IF6fk=; b=UXfEpc5VubhTvRh2RDuRRIh8YM
-	wHrPPSm8C2tHgvqzoDIfqk5TMwb2k4m1mgnmfhb57jFA+ehquSFq7dsoduoRpaanDbZDZLrYuRqLI
-	+9U6n+BiDgOP1U3DoVWYzWXrAFhuu2uP/VZa9LaZ9rF73VrsQStK5HypqZGevNgJoY0zGqTKn9kH3
-	u3wB7yiR64cNSEjnmx+d++TN++QcI+NaYMZ2cIZdogktMk4wtW4rHUP9r2n6Sx+YlW30DufLLJZgi
-	hkOYu+egUknb6FZx53Z59xf8bRp3IQVV6jXtvVtZLivTnVsknAh2L8lahjY8QxwTG3SfaGNGPBgd2
-	rT6EeylA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33712)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1v0z1P-000000006rv-3pdk;
-	Tue, 23 Sep 2025 10:09:16 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1v0z1G-0000000060w-2BgJ;
-	Tue, 23 Sep 2025 10:09:06 +0100
-Date: Tue, 23 Sep 2025 10:09:06 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: =?utf-8?B?6Z+m5bCa5aif?= <weishangjuan@eswincomputing.com>
-Cc: devicetree@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, vladimir.oltean@nxp.com,
-	yong.liang.choong@linux.intel.com, anthony.l.nguyen@intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, jan.petrous@oss.nxp.com,
-	jszhang@kernel.org, inochiama@gmail.com, 0x1207@gmail.com,
-	boon.khai.ng@altera.com, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, lizhi2@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com
-Subject: Re: Re: [PATCH v7 2/2] ethernet: eswin: Add eic7700 ethernet driver
-Message-ID: <aNJjshm4Z8H2Z8_V@shell.armlinux.org.uk>
-References: <20250918085612.3176-1-weishangjuan@eswincomputing.com>
- <20250918090026.3280-1-weishangjuan@eswincomputing.com>
- <aMw-dgNiXgPeqeSz@shell.armlinux.org.uk>
- <30080c70.16e1.199748921d3.Coremail.weishangjuan@eswincomputing.com>
+	s=arc-20240116; t=1758618572; c=relaxed/simple;
+	bh=7+3Ooj/bv0b+fzned/16t7uzOAswPQ/yY8I3sL3LuFc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N0u8SfhRg6mAEVh0KlfLJWIONG0+j+wFZ5rKj/R3J9rfFivDA2K/kIth+IvKvkwhTtmD1isAKXiWtmI1Z861/sV1KveIwgih4iCWcyHoFbpKFklbJA1MYu7qSQVDmaPb69RZLYMsBanogWLPaNDvEGD2g7UPrnxb7zTg6vr3RJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=g1sll7v0; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58N99Cui1422043;
+	Tue, 23 Sep 2025 04:09:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758618552;
+	bh=e7jRsRbX+EPN0LhpJRnnhNbtHSVEcdIQc5SmuwV1j+I=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=g1sll7v02Uit0xf86irWRYM2PR7Ry8BSQCP4AI2gGGp75H3vrWP1ehMx+bNp5OJta
+	 4YWBfe49TxM+zAlsPBOeTkRIcYpoG7gDy0PZLk8kVXXGsJKHlRwW7npRb0Qw6jn6+D
+	 izpg0Bad+cmtaw/k6tdNRUg1Wt7fP6/UtQfxl6g0=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58N99CeD1862321
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 23 Sep 2025 04:09:12 -0500
+Received: from lewvowa02.ent.ti.com (10.180.75.80) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 23
+ Sep 2025 04:09:11 -0500
+Received: from DLEE213.ent.ti.com (157.170.170.116) by lewvowa02.ent.ti.com
+ (10.180.75.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.55; Tue, 23 Sep
+ 2025 04:09:11 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE213.ent.ti.com
+ (157.170.170.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 23 Sep 2025 04:09:11 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58N99Asg3997589;
+	Tue, 23 Sep 2025 04:09:11 -0500
+Date: Tue, 23 Sep 2025 14:39:10 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+CC: "Rafael J . wysocki" <rafael@kernel.org>,
+        Viresh Kumar
+	<viresh.kumar@linaro.org>,
+        zhenglifeng <zhenglifeng1@huawei.com>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] cpufreq: Replace pointer subtraction with iteration
+ macros
+Message-ID: <20250923090910.6ojsyi333ijyjmmo@lcpd911>
+References: <20250923075553.45532-1-zhangzihuan@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <30080c70.16e1.199748921d3.Coremail.weishangjuan@eswincomputing.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250923075553.45532-1-zhangzihuan@kylinos.cn>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Sep 23, 2025 at 11:06:08AM +0800, 韦尚娟 wrote:
-> In the current eic7700_dwmac glue driver, the regmap_read()/write()
-> operations(for phy_ctrl1, axi_lp_ctrl1, and the RX/TX delay registers))are 
-> performed directly in the probe() function. Would it be cleaner to move these
-> register configurations into the init() callback instead, so that they are
-> also reapplied during resume()?
+On Sep 23, 2025 at 15:55:53 +0800, Zihuan Zhang wrote:
+> The cpufreq documentation suggests avoiding direct pointer subtraction
+> when working with entries in driver_freq_table, as it is relatively
+> costly. Instead, the recommended approach is to use the provided
+> iteration macros:
 
-This is a question I can't answer definitively as I don't know what
-happens during a suspend on your hardware, and thus which registers
-are lost / reset by the time the system resumes. So I can only give
-the obvious guidance.
+Thanks for the patch,
+Just say "macro" not "macros".
 
-If the settings in the delay registers are lost over a suspend/resume
-then they need to be re-initialised after resume.
+> 
+> - cpufreq_for_each_valid_entry_idx()
+> 
+> Replace pointer subtraction in freq_table.c with the macros
+> cpufreq_for_each_entry_idx() and cpufreq_for_each_valid_entry_idx(), as
+
+Where is "cpufreq_for_each_entry_idx" in this entire patch?
+Please drop this reference, why confuse people?
+
+> the index does not need initialization, avoiding unnecessary
+> computation. This improves code clarity and follows the established
+> cpufreq coding style.
+
+You don't need to add all this to the commit message about the
+unnecessary computation, code clarity, etc..
+Please keep it to the point.
+
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> 
+> V2:
+>  - Remove unnecessary initialization for current and remaining follow Rafael's suggestion
+
+You didn't fix Rafael's first comment [1] about the $subject, and also please
+add links to previous revisions for ease of review.
+
+[1] > In the subject, this is just one macro, not multiple macros.
+
+
+> ---
+>  drivers/cpufreq/freq_table.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
+> index d5111ee56e38..408fd8fee2e3 100644
+> --- a/drivers/cpufreq/freq_table.c
+> +++ b/drivers/cpufreq/freq_table.c
+> @@ -33,16 +33,17 @@ int cpufreq_frequency_table_cpuinfo(struct cpufreq_policy *policy)
+>  	struct cpufreq_frequency_table *pos, *table = policy->freq_table;
+>  	unsigned int min_freq = ~0;
+>  	unsigned int max_freq = 0;
+> +	unsigned int i;
+>  	unsigned int freq;
+>  
+> -	cpufreq_for_each_valid_entry(pos, table) {
+> +	cpufreq_for_each_valid_entry_idx(pos, table, i) {
+>  		freq = pos->frequency;
+>  
+>  		if ((!cpufreq_boost_enabled() || !policy->boost_enabled)
+>  		    && (pos->flags & CPUFREQ_BOOST_FREQ))
+>  			continue;
+>  
+> -		pr_debug("table entry %u: %u kHz\n", (int)(pos - table), freq);
+> +		pr_debug("table entry %u: %u kHz\n", i, freq);
+>  		if (freq < min_freq)
+>  			min_freq = freq;
+>  		if (freq > max_freq)
+> @@ -126,7 +127,7 @@ int cpufreq_table_index_unsorted(struct cpufreq_policy *policy,
+>  	};
+>  	struct cpufreq_frequency_table *pos;
+>  	struct cpufreq_frequency_table *table = policy->freq_table;
+> -	unsigned int freq, diff, i = 0;
+> +	unsigned int freq, diff, i;
+>  	int index;
+
+Usually, it isn't advised to touch code that's not strictly relevant to
+your patch. However since this seems like a minor fixup it's fine by
+me... Upto Rafael whether he prefers to have/not have this unrelated change.
+
+But atleast mention in your commit message that you're also removing the
+initialization from cpufreq_table_index_unsorted as part of some minor cleanup
+(which seems kinda unnecessary to me TBH in the first place)
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
