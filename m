@@ -1,126 +1,108 @@
-Return-Path: <linux-kernel+bounces-829193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A00B967EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:06:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD9E9B96801
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A1982A25B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:05:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41941886DB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D4C25782E;
-	Tue, 23 Sep 2025 15:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TZkEjTGb"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D78257830;
+	Tue, 23 Sep 2025 15:07:40 +0000 (UTC)
+Received: from psionic.psi5.com (psionic.psi5.com [185.187.169.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F6B19E975
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE74246BB4;
+	Tue, 23 Sep 2025 15:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.187.169.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758639888; cv=none; b=dY87P/GPCVWX27WLKn9xIcdbACc+WKulRU74Jjh4G65STqq4vQGoUTtNr2UsHuoTJu2+IHeEKfMn8q4drR7AP6pkRTplKckEa+h8wwsC7nMPwdC3yJcGC9ZRVmZfbPGPFiBdYhMrkNbRbOyjK7OENNITiRAzx4lU2c41qxGaaJk=
+	t=1758640059; cv=none; b=vBEfjfN3RHK3haxj02HnwP/0F1bK+zniEhlQoMzbxcdjiPIWNgHSEgEjnbFBX5IWig65z4Y8UAOHLAgJnJWld2Hq1vMmKpcuIm+QV25gBzDT6rKfQAQzOSyZHfFDpxQyXX9YECX/5rRFK9rrS1uZe5/ey0mfw2dMO9il4dSaQb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758639888; c=relaxed/simple;
-	bh=ozbjkzsxrfDX5twIBmcTO2kHly5O52Kundnyuo+ro30=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bbIWz4ZxWdD1N9hPjcUWeliNczXtSOLWybdczeLc2zGgrf+DfznVK4U6Hds5/VKR7Zxvg/bTFypLyXDb+jO9WZ4Y4+RLVr7x1zS7AvbGfg44XE5Oz/F1vNCrpEYTYAEJTpr76I6ANQVfOFButmx3+AJlf/QcXbcaFkXYnT1jSpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TZkEjTGb; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2697c4e7354so55815375ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:04:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758639886; x=1759244686; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ErECzswpmXilrcdrqAzLrqqOTo2DOFzxXEwQQ/WZhFU=;
-        b=TZkEjTGbTXzsIa3SiFaheml5bXlNHtUwac+3yWdW46MRtKjEqTLUXqgLnWzQAOZDIT
-         lFPxz98OQqXm+GZExC8zaXWf2QPh+8lifBwdnuyTFZV1kuW7yqr0fXXVE3ZcErJjaAkO
-         fodudtlZIF7IU3BnoRKfVNDqzUCrEtqajtBBGETeDHLsqK8lB7hTx6w48yBlmRm031x1
-         9r+jSEXpF7ejbyWVUsw0UJzdTSKELFWJ8CLi9Dr+QtlWU8APLOqxkM3UV4CWvw3AQIkf
-         uj6CkQwYROF9w9Hd0oW0/BAiSvPA/Iofm2RWelHtv8fgUCFyvic0crhtaU+zOTRu+GQS
-         1NyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758639886; x=1759244686;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ErECzswpmXilrcdrqAzLrqqOTo2DOFzxXEwQQ/WZhFU=;
-        b=WbJxBVe+dE+oHMOIz0XXw89k40vXWAn09RdJeWMIB+kqfDpwgfpx5w4Pvu0yX0zlt5
-         5tNfA76WYAhT4lF7KMNUyX2AuO+JhxEi0KAat0QJh7CAmG4hksjXpIjEyDQPyVgbwnGy
-         qYTOuGXjVMeTLpiQpzeqM9E4sXSq22XkE5P87Kfk3lyiageiJF962wJQZSvl3h15i5xv
-         rqrxW1PwTmSWGUnjtU1cokvi0wkF7LamlwdVrSTEbLAy1zpsF066DBr5Ee6TL61MVPZU
-         pJ1uwvKcn/08o6ssajrx2L7LPocV2RfjQpo7f9U8Dyblx8H7xyzWLyT0X22ftWHpCyYm
-         rivQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1QquiGATzFelYbwdX1ooFhufFyP5N+KKdiFePjOi2Dy9ozl4bwzqYRt6kN+AUO91Lx7H0TNwZmKfsgXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPEyjsPMGIA4AziUdRiq1kcY6LRt8VYRGDX1FMpPZMs8sWR6S1
-	xay2cclAJr0eWJ5dV00wf078sfxi6zjCFmMjPV4XJZMU1/sqncBMqp4vdguKbs0CyT7hlIEyRzq
-	wXIJloA==
-X-Google-Smtp-Source: AGHT+IF4ZDboFmV40ApjmHOAmwOGV2D+zkJJCq8GgZtfkHMqT5N+FHSoPo4NgY8Mi/pKYS+mmYiwXpjMrwQ=
-X-Received: from pjbsj18.prod.google.com ([2002:a17:90b:2d92:b0:32e:a3c3:df27])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ecce:b0:26c:4280:4860
- with SMTP id d9443c01a7336-27cd7268870mr34596895ad.8.1758639886056; Tue, 23
- Sep 2025 08:04:46 -0700 (PDT)
-Date: Tue, 23 Sep 2025 08:04:44 -0700
-In-Reply-To: <5dbc1100-6685-4eac-aa04-07f5621d3979@intel.com>
+	s=arc-20240116; t=1758640059; c=relaxed/simple;
+	bh=Ev8ok5cn/l8aR83oLAKn5J8yEAs/ij6LJ1LuS7Vhgts=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lOtkY1ybqkYKjAtoPflKmqgi5OxGWuB4t3xZXy8bGaHMo4LXXjYzLzPFg5UgXvpZEaeBSJi9YmeRJMO0Ypho34Gop6GcOsTWxOLBhB6mffAG4l7iptaW2LbP1lLevCer1G/JQFMBxGTdOrpWMsM6CmD3THiKSmvVs7yLpG2eoTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de; spf=pass smtp.mailfrom=hogyros.de; arc=none smtp.client-ip=185.187.169.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hogyros.de
+Received: from localhost.localdomain (unknown [IPv6:2400:2410:b120:f200:2e09:4dff:fe00:2e9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by psionic.psi5.com (Postfix) with ESMTPSA id 1FA9C3F116;
+	Tue, 23 Sep 2025 17:07:24 +0200 (CEST)
+From: Simon Richter <Simon.Richter@hogyros.de>
+To: linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Simon Richter <Simon.Richter@hogyros.de>,
+	stable <stable@vger.kernel.org>
+Subject: [PATCH] fbcon: fix buffer overflow in fbcon_set_font
+Date: Wed, 24 Sep 2025 00:06:28 +0900
+Message-ID: <20250923150642.2441-1-Simon.Richter@hogyros.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250919223258.1604852-1-seanjc@google.com> <20250919223258.1604852-28-seanjc@google.com>
- <5dbc1100-6685-4eac-aa04-07f5621d3979@intel.com>
-Message-ID: <aNK3DMk81Flftdaf@google.com>
-Subject: Re: [PATCH v16 27/51] KVM: x86: Disable support for IBT and SHSTK if
- allow_smaller_maxphyaddr is true
-From: Sean Christopherson <seanjc@google.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Chao Gao <chao.gao@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 23, 2025, Xiaoyao Li wrote:
-> On 9/20/2025 6:32 AM, Sean Christopherson wrote:
-> > Make IBT and SHSTK virtualization mutually exclusive with "officially"
-> > supporting setups with guest.MAXPHYADDR < host.MAXPHYADDR, i.e. if the
-> > allow_smaller_maxphyaddr module param is set.  Running a guest with a
-> > smaller MAXPHYADDR requires intercepting #PF, and can also trigger
-> > emulation of arbitrary instructions.  Intercepting and reacting to #PFs
-> > doesn't play nice with SHSTK, as KVM's MMU hasn't been taught to handle
-> > Shadow Stack accesses, and emulating arbitrary instructions doesn't play
-> > nice with IBT or SHSTK, as KVM's emulator doesn't handle the various side
-> > effects, e.g. doesn't enforce end-branch markers or model Shadow Stack
-> > updates.
-> > 
-> > Note, hiding IBT and SHSTK based solely on allow_smaller_maxphyaddr is
-> > overkill, as allow_smaller_maxphyaddr is only problematic if the guest is
-> > actually configured to have a smaller MAXPHYADDR.  However, KVM's ABI
-> > doesn't provide a way to express that IBT and SHSTK may break if enabled
-> > in conjunction with guest.MAXPHYADDR < host.MAXPHYADDR.  I.e. the
-> > alternative is to do nothing in KVM and instead update documentation and
-> > hope KVM users are thorough readers.
-> 
-> KVM_SET_CPUID* can return error to userspace. So KVM can return -EINVAL when
-> userspace sets a smaller maxphyaddr with SHSTK/IBT enabled.
+Commit 1a194e6c8e1ee745e914b0b7f50fa86c89ed13fe introduced overflow
+checking for the font allocation size calculation, but in doing so moved
+the addition of the size for font housekeeping data out of the kmalloc
+call.
 
-Generally speaking, I don't want to police userspace's vCPU model.  For
-allow_smaller_maxphyaddr in particular, I want to actively discourage its use.
-The entire concept is inherently flawed, e.g. only works for a relative narrow
-use case.
+As a result, the calculated size now includes those extra bytes, which
+marks the same number of bytes beyond the allocation as valid font data.
 
-And IIRC, Sierra Forest and future Atom-based server CPUs will be straight up
-incompatible with allow_smaller_maxphyaddr due to them setting accessed/dirty
-bits before generating the EPT Violation, which is what killed allow_smaller_maxphyaddr
-with NPT.
+The crc32() call and the later memcmp() in fbcon_set_font() already perform
+an out-of-bounds read, the latter is flagged on ppc64el:
 
-I.e. allow_smaller_maxphyaddr is doomed, and I want to help it die.  If someone
-really, really wants to enable CET on hosts with allow_smaller_maxphyaddr=true,
-then they can send patches and we can sort out how to communicate the various
-incompatibilities to userspace.
+    memcmp: detected buffer overflow: 4112 byte read of buffer size 4096
+
+when loading Lat15-Fixed16.psf.gz.
+
+Since the addition of the extra size should only go into the kmalloc()
+call, calculate this size in a separate variable.
+
+Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
+Fixes: 1a194e6c8e1e ("fbcon: fix integer overflow in fbcon_do_set_font")
+Cc: stable <stable@vger.kernel.org> #v5.9+
+---
+ drivers/video/fbdev/core/fbcon.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+index 5fade44931b8..a3fbf42c57d9 100644
+--- a/drivers/video/fbdev/core/fbcon.c
++++ b/drivers/video/fbdev/core/fbcon.c
+@@ -2518,7 +2518,7 @@ static int fbcon_set_font(struct vc_data *vc, const struct console_font *font,
+ 	unsigned charcount = font->charcount;
+ 	int w = font->width;
+ 	int h = font->height;
+-	int size;
++	int size, allocsize;
+ 	int i, csum;
+ 	u8 *new_data, *data = font->data;
+ 	int pitch = PITCH(font->width);
+@@ -2551,10 +2551,10 @@ static int fbcon_set_font(struct vc_data *vc, const struct console_font *font,
+ 		return -EINVAL;
+ 
+ 	/* Check for overflow in allocation size calculation */
+-	if (check_add_overflow(FONT_EXTRA_WORDS * sizeof(int), size, &size))
++	if (check_add_overflow(FONT_EXTRA_WORDS * sizeof(int), size, &allocsize))
+ 		return -EINVAL;
+ 
+-	new_data = kmalloc(size, GFP_USER);
++	new_data = kmalloc(allocsize, GFP_USER);
+ 
+ 	if (!new_data)
+ 		return -ENOMEM;
+-- 
+2.47.3
+
 
