@@ -1,256 +1,189 @@
-Return-Path: <linux-kernel+bounces-829475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72136B97287
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:03:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD63B9728A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F14D57B3C17
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:01:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FDC319C3C8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0722FB973;
-	Tue, 23 Sep 2025 18:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80AD2F9D86;
+	Tue, 23 Sep 2025 18:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NhDqg9mX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JbMLXiTV"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B725C2DD5F6;
-	Tue, 23 Sep 2025 18:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758650598; cv=fail; b=Idh4X6vRDMMsq6SdOCuRWIcD7VsMza0IXvFnexWJpfCqBH8hhGnU51Y501HHG5W5fvuKEZK0GsEpEA9Icmoclznp7//B01Z13uF+JXH41ZWG/t5eFXIxlIoEqoon16iHL52SDX7pnNeDWJ8h+ryjcIQdqxbFFxF/64ZDFvJopeM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758650598; c=relaxed/simple;
-	bh=BZI0gxCsHSDChiCx0E3JsdiOnt7rrytbJrqkim2lENo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=q2CUxitd5jFJ+M2zuvAeDOpef6acPwjfpjydvzyuEqAFsTBI3/FshpDQFo4R7LbV7WwNNZNk7I+Gfzpna5W/ubeBy/3KBF01gMuRtHy3OU4FpuJpiJR87uAKNGL0fjhKzK3NlTQSnqEMUBE/VG3QWsE/LcVshNZ6S0EMtZsc4RA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NhDqg9mX; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758650596; x=1790186596;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=BZI0gxCsHSDChiCx0E3JsdiOnt7rrytbJrqkim2lENo=;
-  b=NhDqg9mXCcdHxOMzsY8Yzbg4mitqLFff/EfuvALH0AqDdASme1Qi7eC9
-   Wjpgq7A85L5mbT6uhu6Y2/cDN5DgFmJsTuvkP8sHRFPbqhFystnbmiHKu
-   5No1D40j7yGpAQlpti47LxZA4/hGKwfnXUwUI99Tm8f37rhkRMBxWMI35
-   5TB/A7ifNGwmwi1B5JggH4cUOOG6ep77TNSbg+Hr65bJ8GkMOEmBlyHIR
-   eppYpndb+L4Q+UgY0qtwJEaUWt9sX4EEIipkhGZ70RPUXFAgqsVi0XtMq
-   aojyTFOisLgW4PJPlOYKi7rJQ13uwwBSvEaAhPkz0FRQ2qqQHj7d5wKSa
-   A==;
-X-CSE-ConnectionGUID: Epj+P0iISQe4DjOeJjbxHQ==
-X-CSE-MsgGUID: Jik+weCgRceHyXtJrJ8xng==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="71562771"
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="71562771"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 11:03:14 -0700
-X-CSE-ConnectionGUID: /NaK806/Q6KCgpq4vVzUdg==
-X-CSE-MsgGUID: Sj1yySeGS4e8DsQmb0YlcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="180827016"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 11:03:13 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 23 Sep 2025 11:03:12 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Tue, 23 Sep 2025 11:03:12 -0700
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.53)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 23 Sep 2025 11:03:11 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iYTrS3NxwAM587sosHznbiPIObQb2LSJVk35N1AAp1IPjr7NqEkn76KqrslAr73Q7bwZLE039rEGphPoKoE6RMN6npCtR8paQrxJXSP82y6voayIxMepUMaAveyIxv3gxnK6xYKUcaTIlJdGXXki1v2GpAd3ShjAZF37UfWgD1FcHgxbkCQe2xI2o2kSySSeEUClovtQB3TuO5CIDrBmLSnzZuf1EeXdwUuL5lrrrSBkelg8TgMz3Ilt7xkliRwy6D5HvOAA2JjF8PSAFkLt4lz/yWiIiQ3OBY+4FEbdJSCfwn4biC8lkM13lTz6b3Ki1KGm5ftE7UH6v/nA/ZeyOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BZI0gxCsHSDChiCx0E3JsdiOnt7rrytbJrqkim2lENo=;
- b=jSrnw/aVP0jKof8doLP0s3IZQ2/ZWdwobk4ubzbq+1hD0qSALkGtm2zZuZ8Hs4iSba2nqxV8xv53Geh77+xb6eYGZhThji7fk9YsQEIKWWfUbtqovn93GD7LtHGhZy4o+X8GhjfY72MLw14mKwVKVMSom6xDST/Vmi+U78bHUumDvT3ySLdmuHjSMFS3hFlW2ugWKVSWOsxqXODBf8KJN/ZP7dSOXAAcoa6jHCx8fXPTVKVL5Nc3IkHXYrQZAsaa1OrRXhjXkJMz97tD6c/kKGrTc9/+GkUhVd2c97HqYbltO/q+g/wIx575MK6KlX1ANyqzKe/1oSY7L019Zu0TCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from LV3PR11MB8768.namprd11.prod.outlook.com (2603:10b6:408:211::19)
- by IA1PR11MB6124.namprd11.prod.outlook.com (2603:10b6:208:3ec::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
- 2025 18:03:09 +0000
-Received: from LV3PR11MB8768.namprd11.prod.outlook.com
- ([fe80::154a:b33e:71c0:2308]) by LV3PR11MB8768.namprd11.prod.outlook.com
- ([fe80::154a:b33e:71c0:2308%6]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 18:03:08 +0000
-From: "Kumar, Kaushlendra" <kaushlendra.kumar@intel.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"dakr@kernel.org" <dakr@kernel.org>, "rafael@kernel.org" <rafael@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v3] arch_topology: Fix incorrect error check in
- topology_parse_cpu_capacity()
-Thread-Topic: [PATCH v3] arch_topology: Fix incorrect error check in
- topology_parse_cpu_capacity()
-Thread-Index: AQHcLHDWIFYTl/1hxUWN4SvO7PVnT7ShDpnQ
-Date: Tue, 23 Sep 2025 18:03:08 +0000
-Message-ID: <LV3PR11MB8768C62AFE6332ECDE9366EFF51DA@LV3PR11MB8768.namprd11.prod.outlook.com>
-References: <20250923094514.4068326-1-kaushlendra.kumar@intel.com>
- <20250923-lurking-gaur-of-flowers-bb68f6@sudeepholla>
-In-Reply-To: <20250923-lurking-gaur-of-flowers-bb68f6@sudeepholla>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR11MB8768:EE_|IA1PR11MB6124:EE_
-x-ms-office365-filtering-correlation-id: 67d9f9bc-5d63-458d-db88-08ddfacb7416
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700021;
-x-microsoft-antispam-message-info: =?us-ascii?Q?HqPbwmHfxdCLfuoz/s+VYVlVEIx4QGw8MnLCcAljbfOOwxNXjpoda03+6wrH?=
- =?us-ascii?Q?GtJ3UjoX32Qw52fjG5acF4M5nt6s83rOmMepS6oGm2tbHBDDXrR9B6Z8Jl8S?=
- =?us-ascii?Q?oS8afx+wMBYTzm6uKjIDjWjE7eDXix1CycQcb2HolYruSAq4iNI+F1OjYiKN?=
- =?us-ascii?Q?q4mQ7aq8op+53Gknki0JbPy1xNDBlCZU6B4zdj1MJI+IsXCLKb6Ta5gomxEI?=
- =?us-ascii?Q?D2eTAwzuWky2exUB7IeJW0zGQMovunRT3wz9cghxvu0Iq6vEANXDFHRsaO1C?=
- =?us-ascii?Q?eMWzvV0E5Pi00d6au+PrItoLM8Z44UGDFTWcR7ecJifpqxWs3ucMEj7AEQ+n?=
- =?us-ascii?Q?1HxxoY3JzzckOhP4wudw7Z1fWGnKVN2c5yPWBAauWJQjkxJYTNuf0M74FnQP?=
- =?us-ascii?Q?sXFHt3AeoeXy3/IIzTHEtMcYvGK4y3gGA5Wa+sel9BiW+2GHR5wKYShVlY6R?=
- =?us-ascii?Q?E+ClopnhcE9XAZxv7HsDoGPrRd9z2kxixap1J/pz5hQTKS+9A2g/TUIaqTUn?=
- =?us-ascii?Q?oi9T4uWI/W7UgsSpME/hCJ4kDFKO6XyQdRAg3oMIDtOdqkOmuCPRIFqAbMop?=
- =?us-ascii?Q?6mLIsaUybeRmE5dCFqioBqmv9sVdS5VwBJVruKs2uzoihXXRX+QlwQy/LfAy?=
- =?us-ascii?Q?cC0wEqtqEzz0+PhpVjKXXJSgxMER3JF2E7ea9rZ7McH8Ibpoqxt4I0ERj9Wm?=
- =?us-ascii?Q?b0FJQjSKqI+MaeBBJ0zfI6vG1wF9rIkRFLC13PdgW7rpuBcNGCJeVzwG7vq1?=
- =?us-ascii?Q?Vr62oFbSji6DKAKvoOz2cgvx+9Qo+vH3WrPz68JclkwHXjB0TQgXotuFttE1?=
- =?us-ascii?Q?kY0HJaWqtvlrGilyU0s1SfXBXYPTb4oqWEmqxlTqn66D23TvIRbH7Mb6rPQ7?=
- =?us-ascii?Q?+Ws4rRPmqJuqLfMSlE6fVOMLsItIFTanIgXX/hB1hAigvh8C5QYpW/v5xetS?=
- =?us-ascii?Q?WJiPn88Mkv/4hJGdYKbBvChKUyMYnpFrZmLlmvqnIR3Vqs8JKsh2bi7aU8ny?=
- =?us-ascii?Q?eKJ9klnUINm3X5aeCCM5+uP84ffeDBUbxC60ilM+KiHSIAa4TbW1CAREU1Xb?=
- =?us-ascii?Q?s/UN5B+tnUTm6/g/pZ64a48sl7kMWrjumfNPpXfQhX/p9K2z9rNvqIlJczq0?=
- =?us-ascii?Q?DsaRrufZmoUIAJDHB/qr4rpM1Dc8m5K2eLW2Pg8iy2W+wgvM4syZkCgvjWeW?=
- =?us-ascii?Q?u5AwZN2x2RqhB+J/LpgaSS6Q4ILlQM3NK5/4Q8nWXkFtJKJj/gqZNhwUEiO6?=
- =?us-ascii?Q?vWk7QcHjZZH7UtjENoaMwPX1yDlxSUV5VqYXREUmZ7mPWULLGoqsKsTy2fzu?=
- =?us-ascii?Q?oPoj1J2wF04DxR6Ae3AmOUQvK4QM6sA9vmdtG8BBizTXrFEbtbFpua9taA5I?=
- =?us-ascii?Q?86sWqhurerCzJzgDEZlSLj3OjDypKmkzgzkoZ91B3rVHEEkgVks3TAJq34Ij?=
- =?us-ascii?Q?wsLV75JU4doDx6z8hwCRXeiLrRCxa2jvT3vXhPhkxuMTBHFOhaZ5BpFpwiI1?=
- =?us-ascii?Q?1elegNeO92r/MEk=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8768.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?YLOl7LHTWsNm1uUPb1wCbMo3JKCgbbXIv5kPCyqMa5z99lwwldEqszAaqWSk?=
- =?us-ascii?Q?fDr7NGKHNUMj1nMJzKYugYEcxfySDrNlBZlZ7RTRA9V/sLFjbwO18g/uxOON?=
- =?us-ascii?Q?R54gwaxc1Ys0nqOBz8AnHNg8IF1fwONeOAbtjKYu+N9JgibY/FpbjBb3eX6t?=
- =?us-ascii?Q?OQNloc4ofoYRLYG8E34MsvONCCN1N9YgheWNzrRFuO4VHv0SW/2N9+NHh/RW?=
- =?us-ascii?Q?7deOyFTho3q8e1uO+YuDk4W5lTenQkwD6dbv0H/xEHcYGTv1dDxOBDcpiTq9?=
- =?us-ascii?Q?2vR8RIIqp5xvhk9mN5RQUzz7worSyIzAO37Mx8RhxWmxgtIrle6UT8G5Utkl?=
- =?us-ascii?Q?oVGW1ayIBurpYj8fjcZucZvWJwdyGPYD2RE85cvFmIibfrRUZU6CrLifLPLE?=
- =?us-ascii?Q?r44gappBqbuiVJ8mLXFlPAZ0C1vfVeaRMLG01ix+9bToiv2UmxWFvm5Kl65E?=
- =?us-ascii?Q?yNCK7b6QCNhEFtlwsuYksx6Zk8kvC+tkFbF3Yg+o7gWlTB3NZ+F8pCPvpu2j?=
- =?us-ascii?Q?WYLSXRRAEvCu15ml6zOWoNX77nlK9nsJP4d1wTERwusO99W2txhfX8hAe/CQ?=
- =?us-ascii?Q?6emXsO+AKN9MdJ/0i0YiM0l9bcDl4DdQ7uiARIILRSzLPol+W9nfSZIsUR8h?=
- =?us-ascii?Q?PKpGnXsOQR55WTtdhEaKm8Xr/H3lAW1ts0aZEcjKfqXFPlg33grA0gDiN1sa?=
- =?us-ascii?Q?+bwYuPp3boX/SR9p90iREvGpG6nlqtwS6qcouNii1EZxLjZqPRBKIN6ZvULn?=
- =?us-ascii?Q?pBVBApW+VNibCskiVJfXiRk6sueuM541Yhrfq20JrnHCkohCaYwEn3v8dt9V?=
- =?us-ascii?Q?dbF5NlQzdwQ675V37CNCJ3U+XqeQPCfYwNK86evUcP31HeSKSSU84JbDk/ia?=
- =?us-ascii?Q?4ZcQCXOKAw6zqyP9iSxe91pI0x0h+zDqgB2of77S2KF5Z2wqxfZuebazr4jq?=
- =?us-ascii?Q?ECZ57T5QScoyfs88CtcHvIDJ72v0g+3W1ODBpa+Hmbzw4c16Qit/V+66sRW/?=
- =?us-ascii?Q?Cv7/+txjaV1lSJGISOdSvtQV4DSpOmSlYPhJM1OrTSTmDbp+8ukHAlfrkDdg?=
- =?us-ascii?Q?G1ZcDDKbmvw9tihtg7MO2o2HZXGtsnIggfNmnSFj/UnwbbUiONQb6ipuIj1J?=
- =?us-ascii?Q?DXI2HYMJGw79xhDCT8QtVdLtDPmjBVLN0V7Ok8hnxLXILhrHriIs9LiqZv1Z?=
- =?us-ascii?Q?xgz8iDwTQ318pbtMn1cBLipNBFan/LVE02hzsR3bltLB8PyrUYslWAJNHUke?=
- =?us-ascii?Q?1/eHR0qjIaSa0aAgT9mqUlFl1emt2Km88te7dxpDodmtagAQbag1T1v5JgVU?=
- =?us-ascii?Q?sjEUHip3WcxqAO/zqXisLPh59nloDoaV226zNwo+gs0WfiJdLXwnmFP+eJP7?=
- =?us-ascii?Q?M7Y23HaYQO5cjLnCMDxpUDtU735Mw5qP/MKoJCFWk3vA3NGls+MlYD4axDNw?=
- =?us-ascii?Q?0gO9PEeoKChhG3HqLV75TrpCna2DX6TpZ7ggGLbsn6uLJSPIPMV7k6iEpMzg?=
- =?us-ascii?Q?cuHzD9UQ0a89f143vO1ZMYuIzv5S0N0rQwo+L/hvZs+ehe91CqvDxqtIbscE?=
- =?us-ascii?Q?7dQnCWEVsYhEDSVGOLVNf9dwFMbi8y26e9qv6LJ8C9Nbl7sDOp33T8jOCEop?=
- =?us-ascii?Q?yA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F522F7477
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758650606; cv=none; b=ZQOuF88aNTmjVM4td5aJi6fiof1cL1b2OJNsJHgmb1rtLSRa/mmcU8csoolPo3QcG2tIhN3icjRrZZK2xFGk2QcNE8xQRKLgdW1NDKSzOey9yuV9dlobKbW0BUV2FFwXY3EOeVJk2zF/d1bRX1+e9VpqqLpvF/HpItNg3SbzLt4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758650606; c=relaxed/simple;
+	bh=oUN/dB6Hd4xqb9dUex4iSz2XqtprQCX3xex50HmbAEc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=XQo6AeSTwCg5KBAmSNOfTlH2ygARcS75LRI6wBBlNVbDPvp0Me+p+Mbvo3yfmfqY/RsV06l6LGhqjJq8nghKOf1NnAAU/9+dTun8PKtNgTpAZ+jdYb2E66CxN/VnyPfHFzOISAXtsWGqfM21c9VujfTb1y6c7n0HwGU0fjgvBhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JbMLXiTV; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-27d4d6b7ab5so14021675ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:03:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758650604; x=1759255404; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=19tzoZHYNOC/V2f+ozUmR/P2PK0Vw1GmmrGvz3k+h2I=;
+        b=JbMLXiTV/5KARnaXgRHwIjJhkjGKmVB5K32ct7Hcp1eigkep/hwPzXEuKZdwnl9fF/
+         Ab6HuGVq96DTR46E/KOPb6gZeqqGetKXMqeDxQQ55kDJR1IqRrZmdgJcy+g7ZNjUnkQJ
+         Pnzf4MfzbcyK2uCkcBE66OHmQtddXddRZL3WJdLUw6wUp4cE6w842KknWw1OAOLPzaA+
+         R33eBERtNR1mavJ3Lm3yH+vrYz6Yp1/pz0sFP9ihAItkINKD4eFhX7kNUk711ml3Kehk
+         oaPehx6PCvk23XQ79HqvCg2ogUk7S4Vx1gWpRRsOExAj59F3f2rPMweCEZ/n2rEtZbf/
+         1BjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758650604; x=1759255404;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=19tzoZHYNOC/V2f+ozUmR/P2PK0Vw1GmmrGvz3k+h2I=;
+        b=X67aq5gCPgl15qHv6tTDBct0IZKW6mLPe3j+Z/4ARGPMZSGECR4QkLCIoHS+2G7pnZ
+         4mlPaSBdAre0i9k5RBxd1Qa+xhwYpRinBCA34TR423bn+dITEg5aBGnbRmlg00IqVOSl
+         72RF88qb0RgIuW4SM2lU+61FCftxqNoujdvnXptT4UPKLD8o+ps4933lGvZrlqDJZgsM
+         3kvQ/H4q2fckNJpdokRS7eupN1be+DSYOx2DsC74bI/2k5sHWCuF6tgXMeI+7y2G+le5
+         0m5AwcSRVZ0o1m1aLzAo12UvkCpMKr34iAZyMc65hdgBQwc9wtHD4YLuO42TRZAqzQrr
+         QI0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUnxXFJ5EyFe9UzGz4W/9SIexb8rwCjvm9nyk0EJd8HeLxKrO7PKOe7Bep4iADSdJdWMt+MJYvHgoH5Z1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRaNXCTMJNYcGxnSvOMNnA9WnkqvGtH43jEkS+29LpvFWUoFsE
+	2SEO67e59KorunLAe81MRkv2Fym9qmqpWFPxR/yGqe8kIiLxylVePVD+
+X-Gm-Gg: ASbGnctJmCTrsArVVWZBrr4EsMMbIx3mSC+MVCjnLnrwYKV7FZF4rsW+/EbxKQ6V6oD
+	N63WCjFPtopwIc4BnIgWH00M/GZWBJ7hPDOWCmFf7ebuWw9sA0t3JDqwPz13LXeiFs6pNxOVEG7
+	1Uz4iIECJCI6mUt8t5WojqeaxPhlwDK8hw7XHPqYQFKZP5fC4qLcow8qhd4BSyYQvkA2RqT1tsT
+	L90BE7Wcgy20L/vCjRq4d8NJ+vCDElygUBP5pMpbQhutjzNnmYNXTDuaQT0zDkgN7hffJ2lK7DL
+	+LaHcW5ShnjLtJR+6GNJ0n5hMPUNvRnVnj5dj23y4tqKECR0+4E2uX4R+7jMRFhBIU+7IgXcAys
+	uYN25UgJX51dvPkZ3JzLgerpR/m0mmQ8XPoNqhw==
+X-Google-Smtp-Source: AGHT+IEPZXVxTvQYVFWF/63TaN0wxmzYyWQOogj8xYSrHpWopNXMmB0k9UmB4Y7CeABL+enqE2uV7g==
+X-Received: by 2002:a17:903:4b2d:b0:24c:c8e7:60b5 with SMTP id d9443c01a7336-27cc2101e4dmr45450955ad.16.1758650603459;
+        Tue, 23 Sep 2025 11:03:23 -0700 (PDT)
+Received: from [10.230.0.228] ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2699363989fsm160895385ad.92.2025.09.23.11.03.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 11:03:23 -0700 (PDT)
+Message-ID: <88998fa9-b454-45c1-a8e2-164d2e2d94c0@gmail.com>
+Date: Tue, 23 Sep 2025 11:03:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8768.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67d9f9bc-5d63-458d-db88-08ddfacb7416
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Sep 2025 18:03:08.8829
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pU3+SrYIR0NR+AsKZXHdEBoyHXpPtnV40hPEnyKwHI7stFQrXD5SxX6zPehERDxX/0I40Qf3L3N1w4pu2afCnCzTBNhBCcaSqTe4mEPxJdU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6124
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] sched/deadline: only set free_cpus for online
+ runqueues
+From: Doug Berger <opendmb@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ linux-kernel@vger.kernel.org,
+ Florian Fainelli <florian.fainelli@broadcom.com>
+References: <20250815012236.4053467-1-opendmb@gmail.com>
+ <aKMja4BvgQ5vFaNN@jlelli-thinkpadt14gen4.remote.csb>
+ <20250903075436.GN3245006@noisy.programming.kicks-ass.net>
+ <5bb8ad3a-9d05-4d07-8d4b-207be28cceb1@gmail.com>
+Content-Language: en-US
+In-Reply-To: <5bb8ad3a-9d05-4d07-8d4b-207be28cceb1@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 23, 2025 at 3:30 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> On Tue, Sep 23, 2025 at 03:15:14PM +0530, Kaushlendra Kumar wrote:
-> > Fix incorrect use of PTR_ERR_OR_ZERO() in=20
-> > topology_parse_cpu_capacity() which causes the code to proceed with=20
-> > NULL clock pointers. The current logic uses !PTR_ERR_OR_ZERO(cpu_clk)=20
-> > which evaluates to true for both valid pointers and NULL, leading to=20
-> > potential NULL pointer dereference in clk_get_rate().
-> >=20
-> > Per include/linux/err.h documentation, PTR_ERR_OR_ZERO(ptr) returns:
-> > "The error code within @ptr if it is an error pointer; 0 otherwise."
-> >=20
-> > This means PTR_ERR_OR_ZERO() returns 0 for both valid pointers AND=20
-> > NULL pointers. Therefore !PTR_ERR_OR_ZERO(cpu_clk) evaluates to true=20
-> > (proceed) when cpu_clk is either valid or NULL, causing=20
-> > clk_get_rate(NULL) to be called when of_clk_get() returns NULL.
-> >=20
-> > Replace with !IS_ERR_OR_NULL(cpu_clk) which only proceeds for valid=20
-> > pointers, preventing potential NULL pointer dereference in clk_get_rate=
-().
-> >=20
-> > Fixes: b8fe128dad8f ("arch_topology: Adjust initial CPU capacities=20
-> > with current freq")
-> > Cc: stable@vger.kernel.org
-> >=20
->=20
-> I wonder if you missed my response on v1[1] before you sent v2/v3 so quic=
-kly.
-> The reviewed by tag still stands, just for sake of tools:
->=20
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
->=20
-> --
-> Regards,
-> Sudeep
->=20
-> [1] https://lore.kernel.org/all/20250923-spectral-rich-shellfish-3ab26c@s=
-udeepholla/
+On 9/4/2025 9:43 PM, Doug Berger wrote:
+> On 9/3/2025 12:54 AM, Peter Zijlstra wrote:
+>> On Mon, Aug 18, 2025 at 02:58:19PM +0200, Juri Lelli wrote:
+>>> Hello,
+>>>
+>>> On 14/08/25 18:22, Doug Berger wrote:
+>>>> Commit 16b269436b72 ("sched/deadline: Modify cpudl::free_cpus
+>>>> to reflect rd->online") introduced the cpudl_set/clear_freecpu
+>>>> functions to allow the cpu_dl::free_cpus mask to be manipulated
+>>>> by the deadline scheduler class rq_on/offline callbacks so the
+>>>> mask would also reflect this state.
+>>>>
+>>>> Commit 9659e1eeee28 ("sched/deadline: Remove cpu_active_mask
+>>>> from cpudl_find()") removed the check of the cpu_active_mask to
+>>>> save some processing on the premise that the cpudl::free_cpus
+>>>> mask already reflected the runqueue online state.
+>>>>
+>>>> Unfortunately, there are cases where it is possible for the
+>>>> cpudl_clear function to set the free_cpus bit for a CPU when the
+>>>> deadline runqueue is offline. When this occurs while a CPU is
+>>>> connected to the default root domain the flag may retain the bad
+>>>> state after the CPU has been unplugged. Later, a different CPU
+>>>> that is transitioning through the default root domain may push a
+>>>> deadline task to the powered down CPU when cpudl_find sees its
+>>>> free_cpus bit is set. If this happens the task will not have the
+>>>> opportunity to run.
+>>>>
+>>>> One example is outlined here:
+>>>> https://lore.kernel.org/lkml/20250110233010.2339521-1-opendmb@gmail.com
+>>>>
+>>>> Another occurs when the last deadline task is migrated from a
+>>>> CPU that has an offlined runqueue. The dequeue_task member of
+>>>> the deadline scheduler class will eventually call cpudl_clear
+>>>> and set the free_cpus bit for the CPU.
+>>>>
+>>>> This commit modifies the cpudl_clear function to be aware of the
+>>>> online state of the deadline runqueue so that the free_cpus mask
+>>>> can be updated appropriately.
+>>>>
+>>>> It is no longer necessary to manage the mask outside of the
+>>>> cpudl_set/clear functions so the cpudl_set/clear_freecpu
+>>>> functions are removed. In addition, since the free_cpus mask is
+>>>> now only updated under the cpudl lock the code was changed to
+>>>> use the non-atomic __cpumask functions.
+>>>>
+>>>> Signed-off-by: Doug Berger <opendmb@gmail.com>
+>>>> ---
+>>>
+>>> This looks now good to me.
+>>>
+>>> Acked-by: Juri Lelli <juri.lelli@redhat.com>
+>>
+>> So I just had a look at said patch because Juri here poked me; and I
+>> came away with the feeling that cpudl_clear() is now a misnomen, seeing
+>> how it is called from rq_online_dl().
+>>
+>> Would cpudl_update() be a better name?
+> Thanks for taking a look.
+> 
+> I don't really have a dog in any fights over naming here, but it seems 
+> to me that cpudl_clear and cpudl_set are intended to be complementary 
+> functions and the naming reflects that. It would appear that these are 
+> primarily intended to maintain the cpudl max-heap entries which is what 
+> are being set and cleared.
+> 
+> rq_online_dl() would now call one or the other based on whether any 
+> deadline tasks are running on the queue when it is onlined to ensure 
+> that the max-heap is valid. This either clears a stale entry that may 
+> occur from scenarios like the ones I'm running into or set the entry to 
+> the current deadline. In this context the names seem appropriate to me.
+> 
+> Renaming cpudl_clear to cpudl_update may be more confusing since the 
+> comment for cpudl_set reads "cpudl_set - update the cpudl max-heap".
+> 
+> I don't feel that the name change is relevant to my patch, but if we 
+> want to do it concurrently maybe cpudl_clear_max_heap() and 
+> cpudl_set_max_heap() would be more meaningful.
+> 
+> Please let me know how you would like to proceed,
+>      Doug
 
-Hi Sudeep,
+Is there any way I can help to move this patch forward?
 
-Thank you for the clarification and for providing the Reviewed-by tag!
-
-You're absolutely right - I apologize for missing your v1 response before=20
-sending v2/v3. I was focused on addressing the feedback from other reviewer=
-s=20
-(particularly Markus Elfring's suggestions about commit message improvement=
-s=20
-and documentation compliance) and didn't properly check for your response f=
-irst.
-
-I really appreciate you maintaining the Reviewed-by tag through the version=
-s,=20
-and I'll make sure to check all responses more carefully before sending=20
-subsequent versions in the future.
-
-If possible you can ignore the later version of patch.
-
-Thank you for the review and for pointing out this process oversight.
-
-Best regards,
-Kaushlendra
+Thanks,
+     Doug
 
