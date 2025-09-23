@@ -1,170 +1,212 @@
-Return-Path: <linux-kernel+bounces-828611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF3FB94FF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:30:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED4BB94FFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BE473A2E64
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:30:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D78E97B0E08
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA1D31BCA3;
-	Tue, 23 Sep 2025 08:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F1331C573;
+	Tue, 23 Sep 2025 08:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="An2XW3sm"
-Received: from pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.34.181.151])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EEDq8o49"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E3831CA7B
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.34.181.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B480311C22
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758616206; cv=none; b=JViZUrXagThrsVDbDxw7B2a9NNuKNSI4bI2Ra3/5wqSmN7HVCVwPtqDxTJcUhKQ8Q7shs9gm1AILDZBSXJYkwkF2bsXNFi+85PEOkLEmH+/RuBJWkF6kNvKJIpd9Ps4r1RF1dchOEn9hP2ZNscemi3YGmZMn0gbx8e+0kU9TcLE=
+	t=1758616226; cv=none; b=tw6RiKY7VQliiFBf5zAldaeiAiAgKiL3uOsg7U/UTMpUeMTzK4QTZ+lyvFRcq01I6VA1nPs07oXh6a6ouxx+o5XQoRCZVT9tHjiuZWVWehct2bXzHbdTqgqtDO5vC6nw6wnoHlyuizoc2WVByLpnCZgxqYj/xyrmB824f/KVJms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758616206; c=relaxed/simple;
-	bh=9fhFjemDaxrZP5fRDtkRJGTFA853obiHje/fluk36po=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iTRtIxNcuVvfBbLKivajqjp3uY5eIRbtabatNYfHWIqrf1CDp6s8SZ0i+F/XrdxYjDlAjwLbvXIw8bg2/2kTGbhWfXmGtdpcTRoe6iYM1y9yOtSaHaoVejrI0VBKa29WtZoGONvzLLEw7SIvN4AufuEHCpywsm+Uj0uJaKc6eCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=An2XW3sm; arc=none smtp.client-ip=52.34.181.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1758616205; x=1790152205;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=KeaqGM/dnSt7VQMXlKJMzUPAvYn4X0kFJnsfUt3Memw=;
-  b=An2XW3smu0r0KW6KRYLfGp5kuJ7dJ1sqQRd5ElueQ503Xm3mFVNytSXr
-   aPIgsRIRf+A4lAJwYTY+dHhWwuUaI90S8/3zFywRvKWG/ej4Cs522dB1v
-   GrSlbKV2R5PjnTNup7TSTiOHvsqkWYJ+GDOmpZ5BUtW8vwt7UGdAIbqBj
-   nPIkt94Fx2etEEtW2CVHq/ts3kARHfPmL0ErkTbE9WLINDJmw5uqr4daH
-   Y2ikNfHmV+PoSj4UO4JabTMrWcIEp2MD8+C8t88Fe0J/K0HyMpQVhFwMF
-   msI15C/dehBRrmQywWovceFtk9c+lGYvBycAyTdUAjXCSiasVnQtkg3E1
-   Q==;
-X-CSE-ConnectionGUID: Y+SxHihJTXaZjG3dAprjYQ==
-X-CSE-MsgGUID: xfFWRL0GTsqKazJJtxEOcA==
-X-IronPort-AV: E=Sophos;i="6.18,263,1751241600"; 
-   d="scan'208";a="3553817"
-Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
-  by internal-pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 08:30:04 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:11530]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.48.21:2525] with esmtp (Farcaster)
- id a2aa504d-997f-4357-87ea-aa2904c81b42; Tue, 23 Sep 2025 08:30:04 +0000 (UTC)
-X-Farcaster-Flow-ID: a2aa504d-997f-4357-87ea-aa2904c81b42
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 23 Sep 2025 08:30:02 +0000
-Received: from c889f3b3a561.amazon.com (10.106.101.44) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 23 Sep 2025 08:30:01 +0000
-From: Priscilla Lam <prl@amazon.com>
-To: <maz@kernel.org>, <oliver.upton@linux.dev>
-CC: <christoffer.dall@arm.com>, <dwmw@amazon.co.uk>, <graf@amazon.com>,
-	<gurugubs@amazon.com>, <jgrall@amazon.co.uk>, <joey.gouly@arm.com>,
-	<kvmarm@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <prl@amazon.com>, <suzuki.poulose@arm.com>,
-	<yuzenghui@huawei.com>
-Subject: Re: Re: [PATCH] KVM: arm64: Implement KVM_TRANSLATE ioctl for arm64
-Date: Tue, 23 Sep 2025 01:29:55 -0700
-Message-ID: <20250923082955.66602-1-prl@amazon.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: 86frcd1tp4.wl-maz@kernel.org
-References: <86frcd1tp4.wl-maz@kernel.org>
+	s=arc-20240116; t=1758616226; c=relaxed/simple;
+	bh=gxVi41BBFVqiXlIR5McjvQb3HkQdp51sbGUnGkhh6Uc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PsGUhKSyGfPA9K4S5+4FAvwXmukUYZnvIZwKofbjplcHEebmdleuMFEIo07HEcIAeX1vUuHDX2jB9tTiSAldCs30M45hGtuB2n4VbW1NnennxfE+6CCCCpoTWWSoZykUAxhiPBzKZK1L9k65rJF42rWs+2eAicpxcOICyR+d4+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EEDq8o49; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758616223;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DLx9R2EJC+i3aV/vbWh4PIETJlQdJjHc+jfvD0nSMck=;
+	b=EEDq8o49vLTve1IdpCniHh2gbO5hDeiFTk5TEUJZMaBE7eGSnQJoP05YECi8ZD4dw6i/cR
+	h9obWqvd2ujiwQVwQmjWSOwccR+q2IPYK4z5Rw8/xhpjgrp+5zdEXkO4HcD9hSgoLv3TNV
+	o9B18TwgJZRgbDXTwmKLAF3iPJ/rfvk=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-425-9KTU8Rq7PhCfesZYQdiSSQ-1; Tue, 23 Sep 2025 04:30:22 -0400
+X-MC-Unique: 9KTU8Rq7PhCfesZYQdiSSQ-1
+X-Mimecast-MFC-AGG-ID: 9KTU8Rq7PhCfesZYQdiSSQ_1758616221
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e1a2a28f4so8346515e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:30:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758616221; x=1759221021;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DLx9R2EJC+i3aV/vbWh4PIETJlQdJjHc+jfvD0nSMck=;
+        b=mrwFmd3+ruDHy8pSnuac/qqllXNqKCDvvjJmuUw9PwWeFsaSWMfJ75Rbr7Jgeb9W0+
+         PSZELSMjrKxO/8HNN4xgOVDPRuh+5nK0ROq+gdwatS4CkJmp6D8OaY8szRJd/WY9wPjo
+         emQn/Xd/zzZgLAuD+OUPTAlnh6m8HlKn7P/p7x7Q5REONgMxw0yNzfImRMAJhAzQv6DT
+         o+zD8YM08HA6AU+ZIaStCsBVf+lkBycBnU4Dp5Mc4y1rLr6bKkg9m1BEWWRApRKgwF20
+         xTBoB9maKv+WZtTELM88AlFHmhK7DW6Hui/KcH/96zOEmyXH9UsdvJNZeWh593qID6cl
+         z1qA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfUTR1IndRMFVgmvX2xGvH9MUM5djaBYlmSz/fenYA+t7ZhHG0IdjXusjPfvXhmpDJWU5tNxHysMqMUP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzewpj0CLu2h+plSQc8/2MYdSsofManWUD8tgAsI+0xEn8/+sH8
+	KM7xJbaSiTsTPz7mjSoxmMyrPUCvSu3rkLK9LxcEtT2pl5i8bQOhA7HEguR+3c2uOMklBOoEjiY
+	Dvzdxpz3lRIebnnon1Qnbayo3m7ejUp3IqKAnHL+d92/HD/U4NHdo4tYbh5FyT4OPqfl8gQyxT/
+	AW
+X-Gm-Gg: ASbGncu3vuGeolAT0XWzoiInr/PMN3h8xdxpQJSir5CYdsF7p8yrLIMPv+VjAHis90w
+	agu06Unto9etIe/U5X3cTBdkQpsohyddWATwmPxPCEy6Y3pE0Fxr8QcXtxf4n+I6CVh+eVNR1i5
+	Dj9ttLRKjrW2bBb9QSfkgGH2Vk88Dbt3NS6JeEdP3hH0Mp3bcMjokWAWgNAbm+oBZRvMlFlWNE6
+	QoiZaAmAZFghPZh3BR9HOvZAuuYfW6tmtBIOcyp8MGlmuYCGdqdr4HhwQjtntVPldAsYVR3qOUZ
+	bgHSvn5h3VDWzY+VznJCHtaP6m3S/1HgJggRSqWt2vu2z2k0aImpg1VNSWSgPJWG8w==
+X-Received: by 2002:a05:600c:4f12:b0:45f:2843:e76d with SMTP id 5b1f17b1804b1-46e1d973866mr18538015e9.4.1758616220810;
+        Tue, 23 Sep 2025 01:30:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEW0VkMOIN+fpxJPQSaM1wk6e9xJF4D82MSSPsILxiY2I4mZV59aGE2qlB9thG2n6jd0jvl2g==
+X-Received: by 2002:a05:600c:4f12:b0:45f:2843:e76d with SMTP id 5b1f17b1804b1-46e1d973866mr18537665e9.4.1758616220301;
+        Tue, 23 Sep 2025 01:30:20 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3f0e28c83d6sm17831553f8f.56.2025.09.23.01.30.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 01:30:19 -0700 (PDT)
+Message-ID: <aacdcc85c9f8d3a51a85b6429646c38d4b239449.camel@redhat.com>
+Subject: Re: [PATCH] rv: Fix wrong type cast in enabled_monitors_next()
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>, Nathan Chancellor <nathan@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 23 Sep 2025 10:30:18 +0200
+In-Reply-To: <87tt0t4u19.fsf@yellow.woof>
+References: <20250806120911.989365-1-namcao@linutronix.de>
+	 <20250923002004.GA2836051@ax162> <87tt0t4u19.fsf@yellow.woof>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
+ cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
+ T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
+ eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
+ 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D045UWC004.ant.amazon.com (10.13.139.203) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-Hi Oliver and Marc,
+On Tue, 2025-09-23 at 07:28 +0200, Nam Cao wrote:
+> Hi Nathan,
+>=20
 
-Thanks for the detailed feedback.
+Thanks for finding this!
 
-> But at the end of the day, what do you need KVM_TRANSLATE for? This
-> interface is an absolute turd that is unable to represent the bare
-> minimum of the architecture (writable by whom? physical address in
-> which translation regime? what about S2 translations?), and is better
-> left in the "utter brain fart" category.
+> Nathan Chancellor <nathan@kernel.org> writes:
+> > I am seeing a crash when reading from
+> > /sys/kernel/tracing/rv/enabled_monitors
+> > on a couple of my arm64 boxes running Fedora after this change, which
+> > landed in mainline in 6.17-rc7. I can reproduce this in QEMU pretty
+> > easily.
+> ...
+> > With this change reverted, there is no crash. As this change seems to
+> > have proper justification, is there some other latent bug here?
+>=20
+> Thanks for the report.
+>=20
+> Yes, this patch is broken, because argument 'p' of
+> enabled_monitors_next() *is* a pointer to struct rv_monitor. I'm not
+> sure how did I even test this patch...
 
-Regarding motivation, this patch is intended to give a userspace vmm
-the ability to handle non-ISV guest faults. The Arm Arm (DDI 0487L.b,
-section B3.13.6) notes that for load/store pair faults, the syndrome
-may not provide the specifics of the access that faulted. In those
-cases, the vmm must manually decode the instruction to emulate it. The
-introduction of KVM_CAP_ARM_NISV_TO_USER
-(https://lore.kernel.org/kvm/20191120164236.29359-2-maz@kernel.org/)
-seems to have anticipated that flow by allowing exits to userspace on
-trapped NISV instructions. What is still missing is a reliable way for
-userspace to query VA->IPA translations in order to complete emulation.
+Damn, I'm wondering the same :facepalm: ..
 
-> Please do selftests changes in a separate patch.
+> Steven is right, we really need something in kselftest for RV, another th=
+ing
+> in my RV TODO list.
 
-Ack, will split the kernel changes and selftests into 1/2 and 2/2.
+I can work on that, at least a few selftests for the sysfs, I think this ge=
+ts
+the top priority now.
 
-> So arch/arm64/kvm/at.c exists for this exact purpose: walking guest page
-> tables. While it was previously constrained to handling NV-enabled VMs,
-> Marc's SEA TTW series opens up the stage-1 walker for general use.
+>=20
+> But reverting is not the real fix, because monitors_show() still expects
+> a pointer to list_head. Changing monitors_show() is not an option,
+> because it is shared with the 'available_monitors' interface.
+>=20
+> So the real fix is completely changing the iterator to be list_head
+> instead of rv_monitor.
 
-Thanks for the reference, I wasn't aware of this. I'll drop the bespoke 
-VHE/NVHE paths and use the shared S1 walker in v2.
-
-> "linear_address" is a delightful x86-ism. I'd prefer naming that was
-> either architecture-generic -or- an arm64-specific struct that used our
-> architectural terms.
-
-I'll switch internal naming to VA/IPA. For uAPI, I'll retain the field
-for compatibility and translate internally.
-
-> Thanks to borken hardware, this needs to go through the write_sysreg_hcr()
-> accessor.
-
-Ack, will use write_sysreg_hcr().
-
-> KVM supports both FEAT_S1PIE and FEAT_S1POE, so this is not a complete
-> MMU context.
-
-Understood. v2 will rely on the shared walker to avoid missing S1PIE/S1POE.
-
-> The AT instruction can generate an exception, which is why __kvm_at()
-> exists.
->
-> And this is where reusing the existing translation infrastructure is
-> really important. The AT instruction *will* fail if the stage-1
-> translation tables are unmapped at stage-2. The only option at that
-> point is falling back to a software table walker that potentially faults
-> in the missing translation tables.
-
-v2 will use __kvm_at() and the fallback software walk.
-
-> What about permissions besides RW?
-
-I'll add support for the additional bit (execute and EL0) in v2.
-
-> Yet another interesting consideration around this entire infrastructure
-> is the guest's view of the translation that the VMM will now use. KVM
-> uses a pseudo-TLB for the guest's VNCR page and maintains it just like a
-> literal TLB.
->
-> How would the guest invalidate the translation fetched by the VMM when
-> unmapping/remapping the VA? Doesn't the stage-1 PTW need to set the
-> Access flag as this amounts to a TLB fill?
-> Understanding what it is you're trying to accomplish would be quite
-> helpful. I'm concerned this trivializes some of the gory details of
-> participating in the guest's virtual memory.
-
-My intent is for this ioctl to be side-effect free with no AF updates 
-and guest-visible TLB fills. I’ll send v2 as two patches with the above
-changes.
+Looks reasonable, can you work on the fix?
+I see Steve is out for conferences so this won't be too urgent.
 
 Thanks,
-Priscilla
+Gabriele
+
+>=20
+> Best regards,
+> Nam
+>=20
+> diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
+> index 48338520376f..43e9ea473cda 100644
+> --- a/kernel/trace/rv/rv.c
+> +++ b/kernel/trace/rv/rv.c
+> @@ -501,7 +501,7 @@ static void *enabled_monitors_next(struct seq_file *m=
+,
+> void *p, loff_t *pos)
+> =C2=A0
+> =C2=A0	list_for_each_entry_continue(mon, &rv_monitors_list, list) {
+> =C2=A0		if (mon->enabled)
+> -			return mon;
+> +			return &mon->list;
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	return NULL;
+> @@ -509,7 +509,7 @@ static void *enabled_monitors_next(struct seq_file *m=
+,
+> void *p, loff_t *pos)
+> =C2=A0
+> =C2=A0static void *enabled_monitors_start(struct seq_file *m, loff_t *pos=
+)
+> =C2=A0{
+> -	struct rv_monitor *mon;
+> +	struct list_head *head;
+> =C2=A0	loff_t l;
+> =C2=A0
+> =C2=A0	mutex_lock(&rv_interface_lock);
+> @@ -517,15 +517,15 @@ static void *enabled_monitors_start(struct seq_file=
+ *m,
+> loff_t *pos)
+> =C2=A0	if (list_empty(&rv_monitors_list))
+> =C2=A0		return NULL;
+> =C2=A0
+> -	mon =3D list_entry(&rv_monitors_list, struct rv_monitor, list);
+> +	head =3D &rv_monitors_list;
+> =C2=A0
+> =C2=A0	for (l =3D 0; l <=3D *pos; ) {
+> -		mon =3D enabled_monitors_next(m, mon, &l);
+> -		if (!mon)
+> +		head =3D enabled_monitors_next(m, head, &l);
+> +		if (!head)
+> =C2=A0			break;
+> =C2=A0	}
+> =C2=A0
+> -	return mon;
+> +	return head;
+> =C2=A0}
+> =C2=A0
+> =C2=A0/*
+
 
