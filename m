@@ -1,99 +1,103 @@
-Return-Path: <linux-kernel+bounces-828199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B94B94295
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 05:59:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EFAEB9429F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE6D72E1F14
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:59:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAEF1188B15D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9272026E706;
-	Tue, 23 Sep 2025 03:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08E526CE15;
+	Tue, 23 Sep 2025 03:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IXVptUzE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Drjoyeyh"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A66D1B040B;
-	Tue, 23 Sep 2025 03:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF791B040B
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 03:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758599942; cv=none; b=UJyEyLLTc8ESf1W8UvVdQpqEmbKzMSkzUERQQEfhbcMxQFR1T0IjciwhE9Goqvck21g051369spPwZJWX0I8qh0hQH1namS7/zv+Ed1pPbgaEWAtI5EmYsO7AGnMcg0eoR8l8QyeYZKxKleAv2yWtRwP3tXD9Pp+HQD4RCTmNX0=
+	t=1758599993; cv=none; b=Re2CfeegSaDD0hy1YRap+2+TsPr6+n9q1YsYGBkp/ioDzjqlA7VM7KqLSFQUtAb1ngC0kYQBzD5bWFf0AfdueCsx5V3kx5h1J33EjpGxfmIb49HG25YunypOoOD5kWaznZjrTpWkVyMYleesn9cv7WW99LTa/4gOTrOsys09Atg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758599942; c=relaxed/simple;
-	bh=pA57IBzvDw/balxYWpPYDXyB2BeYxA6lGokFTJCmhbw=;
+	s=arc-20240116; t=1758599993; c=relaxed/simple;
+	bh=stufo5VaflHTD5Dch8msOtonFZ5qNNcz+IiyCZiyGe0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pcBPuKC5lSQ8Y0+TO29zG9amxdcsLJ6c3wCLVoZk9QL+t57aiQIEcT5FAvc6uuDbhQoGrGN2au+SFtpqbkmlGspdC6RrMM7ldznM4SE2zPuCCAUmmp7tehofknsz1F9ZXcw5QHeUR5PuXA4FDa3fI6j13pObdvIHmjC9eiuykiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IXVptUzE; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758599940; x=1790135940;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=pA57IBzvDw/balxYWpPYDXyB2BeYxA6lGokFTJCmhbw=;
-  b=IXVptUzEyHw6Rs8Avm++1L77vGBflo4EysLD0WLqLO1MTxyZMjbwfaGY
-   Nl7ChXg/3VTzexLhIu4ju1snXCjTFZ/UrJYw8AIW39Gh9Vjt4yR4kHEz7
-   uS3ujEGAXs5qNnuBNbakkBxITHW5rcp/0PxBpXazcn+JGudh9/I0fI255
-   SMpC0e+Dp8pwZSRuYvVF8sTutP4tYu+Ch+yvGz5zjyiTu04onGOZvv5WZ
-   aBDNboZwd1XLdaL4relCnMv2LOWmGfbxRZnmt7njY9llAz1D+EmCXgqtR
-   ShU4y0urG24+Djri958r59M7NpyE05SAYGxhFPze81jh1DUOZxSchKiZz
-   g==;
-X-CSE-ConnectionGUID: K/fD0biTQG+BQT5ehCYSyQ==
-X-CSE-MsgGUID: RgLmVzZLQS6JMAqOG0ambw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60760060"
-X-IronPort-AV: E=Sophos;i="6.18,286,1751266800"; 
-   d="scan'208";a="60760060"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 20:59:00 -0700
-X-CSE-ConnectionGUID: mR1wRD7/SCKJRQ2OddijQA==
-X-CSE-MsgGUID: jfLdrXLIQPCwjrHzpAriiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,286,1751266800"; 
-   d="scan'208";a="176234743"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 20:58:59 -0700
-Message-ID: <064c1240-e7f0-4061-a43a-9d05a46953a0@intel.com>
-Date: Tue, 23 Sep 2025 11:58:55 +0800
+	 In-Reply-To:Content-Type; b=JlP0VT8sSl1REbTTTw78ui6n6iPfiaYvyHKQuv5WR1n/sWxH+Ub0jn8mBtFCx4q4xxFP4m/NRdVq8h+uVFv8mvo8mFav9s8XzX7ZZ0K31NHBEUxEfMrn3k+OLgagqpL5NfZMctG0ivFpI3KHEVeXxh91y6vi2Yqt9FncnzPGyAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Drjoyeyh; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9067a88d-f5df-4d6e-b3b3-2e266ebcf3d0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758599979;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wBb7AifhcOJYVqzVR28gnq9RZ3Lo8WspOuJNKw0BLWU=;
+	b=DrjoyeyhpJzeaP9BvJa1Zj2N6qGxchqojKau7q5f6FSO7Y9Y42GNjix0LLb8EKXzkP9Hp5
+	NhJ/rTh7jV2hX0Rn++ixLA1iJSV46Yd9q7zVJVj3r0ocBnWP/ACAWDN8iLL5PU08UTxM0F
+	JBwmOYsd4uAYrhHjwp04CMtS+uDAd44=
+Date: Tue, 23 Sep 2025 11:59:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] KVM: x86: Add helper to retrieve current value of
- user return MSR
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hou Wenlong <houwenlong.hwl@antgroup.com>,
- Lai Jiangshan <jiangshan.ljs@antgroup.com>
-References: <20250919213806.1582673-1-seanjc@google.com>
- <20250919213806.1582673-2-seanjc@google.com>
+Subject: Re: [PATCH][RFC] hung_task: Support to panic when the maximum number
+ of hung task warnings is reached
 Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20250919213806.1582673-2-seanjc@google.com>
+To: lirongqing <lirongqing@baidu.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: corbet@lwn.net, mhiramat@kernel.org, paulmck@kernel.org,
+ pawan.kumar.gupta@linux.intel.com, mingo@kernel.org,
+ dave.hansen@linux.intel.com, rostedt@goodmis.org, kees@kernel.org,
+ arnd@arndb.de, feng.tang@linux.alibaba.com, pauld@redhat.com,
+ joel.granados@kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250923033740.2696-1-lirongqing@baidu.com>
+ <20250922204554.55dd890090b0f56ad10a61f5@linux-foundation.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <20250922204554.55dd890090b0f56ad10a61f5@linux-foundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 9/20/2025 5:38 AM, Sean Christopherson wrote:
-> From: Hou Wenlong <houwenlong.hwl@antgroup.com>
-> 
-> In the user return MSR support, the cached value is always the hardware
-> value of the specific MSR. Therefore, add a helper to retrieve the
-> cached value, which can replace the need for RDMSR, for example, to
-> allow SEV-ES guests to restore the correct host hardware value without
-> using RDMSR.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
-> [sean: drop "cache" from the name, make it a one-liner, tag for stable]
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+
+On 2025/9/23 11:45, Andrew Morton wrote:
+> On Tue, 23 Sep 2025 11:37:40 +0800 lirongqing <lirongqing@baidu.com> wrote:
+> 
+>> Currently the hung task detector can either panic immediately or continue
+>> operation when hung tasks are detected. However, there are scenarios
+>> where we want a more balanced approach:
+>>
+>> - We don't want the system to panic immediately when a few hung tasks
+>>    are detected, as the system may be able to recover
+>> - And we also don't want the system to stall indefinitely with multiple
+>>    hung tasks
+>>
+>> This commit introduces a new mode (value 2) for the hung task panic behavior.
+>> When set to 2, the system will panic only after the maximum number of hung
+>> task warnings (hung_task_warnings) has been reached.
+>>
+>> This provides a middle ground between immediate panic and potentially
+>> infinite stall, allowing for automated vmcore generation after a reasonable
+> 
+> I assume the same argument applies to the NMI watchdog, to the
+> softlockup detector and to the RCU stall detector?
+> 
+> A general framework to handle all of these might be better.  But why do
+> it in kernel at all?  What about a userspace detector which parses
+> kernel logs (or new procfs counters) and makes such decisions?
+
++1. I agree that a userspace detector seems more appropriate for this.
+
+We already have the hung_task_detect_count counter, so a userspace
+detector could easily use that to implement custom policies ;)
 
