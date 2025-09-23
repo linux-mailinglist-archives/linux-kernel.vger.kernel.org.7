@@ -1,121 +1,179 @@
-Return-Path: <linux-kernel+bounces-829767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 037ECB97C81
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:07:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13240B97C8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1143A4C3443
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:07:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 795FC4C29D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B7D30FF32;
-	Tue, 23 Sep 2025 23:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC2430FC18;
+	Tue, 23 Sep 2025 23:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2Qew5BK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XpigEz1u"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D883830FC18;
-	Tue, 23 Sep 2025 23:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7060F30FF36
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758668846; cv=none; b=ZL+DoOZBPLCeHlXYJbuN4XN1/Rd2MrCt7hrwlvWE9GHxA5KaHK1icfaYJkRFWfEVWnTdjq1fyic7q5VD/FzFW+HvyJaTrHeGBFocJNXNL/GUMwUe3J1vTUoO6MUaZeQsUC1sHm8rTijbtmkMMcUK1QcCxBtLIWbhCamliZnjOPM=
+	t=1758668854; cv=none; b=psZB5AdQ/PB8YCkHKMNO8wl2zq7JyisoPimRnRJFJPiSQoeUPmq4Zjz97sjrWhhZthcnf5ecMymehaQGn9tSXRFGsMJvJgMLACxrwMY6sD+5ytr6ObanaR4GPrNkDbYxYa0gSh3NqA+fbhE1xdL1ZXl+11lIH0y8i7igNpfT7/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758668846; c=relaxed/simple;
-	bh=/wwR3ED/mCbX9z2pdXihUtvGg8rUhL2CF0R+Fqf4BOw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=kjf4hB0P95awsYKWe3g9JG/4cMIcjF85YGQihoSOH91XLMD3icxs9ezEZZhlt0BPoK1hfzcGjcOdF8szZ/e1+xEHKaRCNUAyOdV67LMZRJiQQccGawQz3ZA72CPYCYFdRJTFYRR/5tQtU+aA4C2ukt+jaeyDxyzf/m+QrUT8aj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2Qew5BK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A8B6C4CEF5;
-	Tue, 23 Sep 2025 23:07:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758668845;
-	bh=/wwR3ED/mCbX9z2pdXihUtvGg8rUhL2CF0R+Fqf4BOw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=M2Qew5BKPl8vgTTp03c2TFtF+oT/irvjoCzuP/eAyhPGkodlTkPHVdZdDvz755lmg
-	 24hUdSdXgalh6pjYWt1ibMEoDcmaD7k3D9iRK4VHawGbxOxACr3B5DDq6KTCi44YCp
-	 RDbNBpaB4WB2Q6NyXYS37xJB+ge7+qBH+Ytm3WIZvEp3Mgf5LkohEErrnFZB7VZ5i+
-	 QxK1NKsWK8a1kPddgolmtjtFyiDZme/cpouqsWPJqh/O8I2HuV/HfMaHnLfOGFQbLZ
-	 d+fcqAG+l7OtcRcyzDCiIqNolzKuJbOQPWQorNA+JsUA5swgo2oxcvjE6yft/axhHY
-	 H0HvMBH99z6KQ==
-Date: Wed, 24 Sep 2025 08:07:22 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Subject: Re: [PATCH 1/2] tracing: fprobe: rename fprobe_entry to
- fprobe_fgraph_entry
-Message-Id: <20250924080722.c05ac758a018be619d01b6a9@kernel.org>
-In-Reply-To: <20250923092001.1087678-1-dongml2@chinatelecom.cn>
-References: <20250923092001.1087678-1-dongml2@chinatelecom.cn>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758668854; c=relaxed/simple;
+	bh=YnYd/gKeEekdgcs7OqQ/sMRYsiqPBgufePpEuqafhLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PTAYSV8JtTsILG07/YwQ6Ar+PxXOFufafuAA82jzxveilh4qDrZK2LjvukDwvNxewK82Q1JbhMe3Y5ORK1i1mKVozkMx1K3G5uvoJuES4bZ2gPfqpDpdwfqQVVJzdrVSjVe9uFYVtCPqua5c6obpMSNJSyVywn+yunTMQY5d1zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XpigEz1u; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b5241e51764so4846991a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:07:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1758668852; x=1759273652; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nFOv8LRjpZLWIF9uYfzl4ykO48TjCgwNklWa0BlqT0g=;
+        b=XpigEz1uCSrov6c/1QrojDRCSgFjddeMlxAm1zT2fDyVz5yLJ38QjdUCX+2S83rBYN
+         bDZmuDv8DrRmhLMjqGD4CT3mjuu8aHaCqdxvRcUXYvgv7HzJl5SJIrBJt5ZI1Oh2gOJd
+         JetNBFmqHg5tk8eQKXh+XuUYksZD7icSMioxE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758668852; x=1759273652;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nFOv8LRjpZLWIF9uYfzl4ykO48TjCgwNklWa0BlqT0g=;
+        b=Q2PpCZJRQ6nGeDPjGXL2gnCLlFra6oI/1uMtlZRuaJp9tdBufVyJB53r9HJJgifjJV
+         9DQXcVNTDVOx6fvXVzXJn7j56A+PVQUA9YjTGUSMgZGhkw2i4w+1j3XfURkdiTWMH8ur
+         FVPT3LNQTj9fHDaNSFy1q/TkAJwIC8BAdRosLtInwMkqPyMQBF4XHPcubTW+xTenJPzb
+         XcCCk0+rUqzcfGf+a8afM7ZJUi1clVu2KJ6u/gtxuCe1Hr98oSqWf8icA8RYLlB78yGg
+         s7XYquAiWghzT+ME9sq5H47QF8iKIZBgM1vLZbZalcq2+G9ab2QtOk0hUcoX+EY6oWV1
+         fz/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXVNUim3uzL6n3eNLbHwmKL9fK/WwZOcoFv5qhCROut8N719cXHb2YX23qVyExvZvNTwUaoYY7+LpZmi74=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEn3J+UMzbTXGzRTijCuYrIyDs2rQOjQ4DMhUMyElFMuoUWVru
+	Fd6VJyEghQ1mHj8ODKGxm0w3VxLtG3Couppoq9hZYTZBFmhl9beKbgBQ40njP+cVmQ==
+X-Gm-Gg: ASbGncvY5DjDkgiYnXjrto197RTizNHauM0hKkbygnFTota2Gree2HCysWoZD2QGNrf
+	YPb/UqAgHFSf5tQsWtzWo1NFybDOamCGS2VIvPJ7xE+3KdqNn3jyBWIVB0VMpt05A46xwYg6joF
+	W88wItuYcaekTeeM97RMhLfx48a4D2q4gYeiXhO5+OUs8sSF+psy+8DCFkjCaSm5CJo8kkWMbXp
+	bCMLGXd8ZkcPAXVOAA4e8nLqdTSastWy1aHaGLRALbiiaUzZ7SSzNvSxVGYyCdDeh1i3QGD1i3v
+	amSEO7WKS0iMImuI1kSY56u2ex8wRQMGzxMr3VLN0bdPv/GA3KBzCsiBL/d7rxrVivJIMXwr3Dv
+	ln+Rlw438IWdzVZ9XhKguiJ3sQDruXj+pegP1M7QfjXDMslVG477dr+FcfVGS
+X-Google-Smtp-Source: AGHT+IFVPYMKnS8TWlnAQXccka7DEPTB/RihRAWX3su86ixXqz/GV9aDNk1vsFjQk0na0d8kYCF0SQ==
+X-Received: by 2002:a17:903:37c7:b0:269:7427:fe37 with SMTP id d9443c01a7336-27cc678593amr52570955ad.29.1758668851792;
+        Tue, 23 Sep 2025 16:07:31 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e7c:8:26d9:5758:328a:50f8])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3341bdc1cfesm262574a91.23.2025.09.23.16.07.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 16:07:31 -0700 (PDT)
+Date: Tue, 23 Sep 2025 16:07:29 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, stable@vger.kernel.org,
+	Ethan Zhao <etzhao1900@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Subject: Re: [PATCH] PCI/sysfs: Ensure devices are powered for config reads
+Message-ID: <aNMoMY17CTR2_jQz@google.com>
+References: <20250820102607.1.Ibb5b6ca1e2c059e04ec53140cd98a44f2684c668@changeid>
+ <20250923190231.GA2052830@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923190231.GA2052830@bhelgaas>
 
-On Tue, 23 Sep 2025 17:20:00 +0800
-Menglong Dong <menglong8.dong@gmail.com> wrote:
+Hi Bjorn,
 
-> The fprobe_entry() is used by fgraph_ops, so rename it to
-> fprobe_fgraph_entry to be more distinctive.
-
-Sorry, NAK. fprobe is based on fgraph by design.
-So "fprobe_fgraph" sounds redundant.
-
-Thanks,
-
+On Tue, Sep 23, 2025 at 02:02:31PM -0500, Bjorn Helgaas wrote:
+> [+cc Ethan, Andrey]
 > 
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> ---
->  kernel/trace/fprobe.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> On Wed, Aug 20, 2025 at 10:26:08AM -0700, Brian Norris wrote:
+> > From: Brian Norris <briannorris@google.com>
+> > 
+> > max_link_speed, max_link_width, current_link_speed, current_link_width,
+> > secondary_bus_number, and subordinate_bus_number all access config
+> > registers, but they don't check the runtime PM state. If the device is
+> > in D3cold, we may see -EINVAL or even bogus values.
+> > 
+> > Wrap these access in pci_config_pm_runtime_{get,put}() like most of the
+> > rest of the similar sysfs attributes.
 > 
-> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> index 6a205903b1ed..1785fba367c9 100644
-> --- a/kernel/trace/fprobe.c
-> +++ b/kernel/trace/fprobe.c
-> @@ -254,8 +254,8 @@ static inline int __fprobe_kprobe_handler(unsigned long ip, unsigned long parent
->  	return ret;
->  }
->  
-> -static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-> -			struct ftrace_regs *fregs)
-> +static int fprobe_fgraph_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-> +			       struct ftrace_regs *fregs)
->  {
->  	unsigned long *fgraph_data = NULL;
->  	unsigned long func = trace->func;
-> @@ -340,7 +340,7 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
->  	/* If any exit_handler is set, data must be used. */
->  	return used != 0;
->  }
-> -NOKPROBE_SYMBOL(fprobe_entry);
-> +NOKPROBE_SYMBOL(fprobe_fgraph_entry);
->  
->  static void fprobe_return(struct ftrace_graph_ret *trace,
->  			  struct fgraph_ops *gops,
-> @@ -379,7 +379,7 @@ static void fprobe_return(struct ftrace_graph_ret *trace,
->  NOKPROBE_SYMBOL(fprobe_return);
->  
->  static struct fgraph_ops fprobe_graph_ops = {
-> -	.entryfunc	= fprobe_entry,
-> +	.entryfunc	= fprobe_fgraph_entry,
->  	.retfunc	= fprobe_return,
->  };
->  static int fprobe_graph_active;
-> -- 
-> 2.51.0
+> Protecting the config reads seems right to me.
 > 
+> If the device is in D3cold, a config read will result in a Completion
+> Timeout.  On most x86 platforms that's "fine" and merely results in ~0
+> data.  But that's merely convention, not a PCIe spec requirement.
+> 
+> I think it's a potential issue with PCIe controllers used on arm64 and
+> might result in an SError or synchronous abort from which we don't
+> recover well.  I'd love to hear actual experience about how reading
+> "current_link_speed" works on a device in D3cold in an arm64 system.
 
+I'm working on a few such arm64 systems :) (pcie-qcom Chromebooks, and
+non-upstream DWC-based Pixel phones; I have a little more knowledge of
+the latter.) The answers may vary by SoC, and especially by PCIe
+implementation. ARM SoCs are notoriously ... diverse.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To my knowledge, it can be several of the above on arm64 + DWC.
+
+* pci_generic_config_read() -> pci_ops::map_bus() may return NULL, in
+  which case we get PCIBIOS_DEVICE_NOT_FOUND / -EINVAL. And specifically
+  on arm64 with DWC PCIe, dw_pcie_other_conf_map_bus() may see the link
+  down on a suspended bridge and return NULL.
+
+* The map_bus() check is admittedly racy, so we might still *actually*
+  hit the hardware, at which point this gets even more
+  implementation-defined:
+
+  (a) if the PCIe HW is not powered (for example, if we put the link to
+      L3 and fully powered off the controller to save power), we might
+      not even get a completion timeout, and it depends on how the
+      SoC is wired up. But I believe this tends to be SError, and a
+      crash.
+
+  (b) if the PCIe HW is powered but something else is down (e.g., link
+      in L2, device in D3cold, etc.), we'll get a Completion Timeout,
+      and a ~0 response. I also was under the impression a ~0 response
+      is not spec-mandated, but I believe it's noted in the Synopsys
+      documentation.
+
+NB: I'm not sure there is really great upstream support for arm64 +
+D3cold yet. If they're not using ACPI (as few arm64 systems do), they
+probably don't have the appropriate platform_pci_* hooks to really
+manage it properly. There have been some prior attempts at adding
+non-x86/ACPI hooks for this, although for different reasons:
+
+    https://lore.kernel.org/linux-pci/a38e76d6f3a90d7c968c32cee97604f3c41cbccf.camel@mediatek.com/
+    [PATCH] PCI:PM: Support platforms that do not implement ACPI
+
+That submission stalled because it didn't really have the whole picture
+(in that case, the wwan/modem driver in question).
+
+> As Ethan and Andrey pointed out, we could skip max_link_speed_show()
+> because pcie_get_speed_cap() already uses a cached value and doesn't
+> do a config access.
+
+Ack, I'll drop that part of the change.
+
+> max_link_width_show() is similar and also comes from PCI_EXP_LNKCAP
+> but is not currently cached, so I think we do need that one.  Worth a
+> comment to explain the non-obvious difference.
+
+Sure, I'll add a comment for max_link_width.
+
+> PCI_EXP_LNKCAP is ostensibly read-only and could conceivably be
+> cached, but the ASPM exit latencies can change based on the Common
+> Clock Configuration.
+
+I'll plan not to add additional caching, unless excess wakeups becomes a
+problem.
+
+Brian
 
