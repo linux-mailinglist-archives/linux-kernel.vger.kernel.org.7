@@ -1,136 +1,86 @@
-Return-Path: <linux-kernel+bounces-828396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0324BB9488D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:19:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99817B9489F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5486318A8484
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:20:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50191443779
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D419830F540;
-	Tue, 23 Sep 2025 06:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gL1XK90c"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5633730F7E2;
+	Tue, 23 Sep 2025 06:21:04 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906059475;
-	Tue, 23 Sep 2025 06:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B807E105;
+	Tue, 23 Sep 2025 06:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758608383; cv=none; b=hD9zk9YiAa77uejfiybk4rNqW67Ya4iFzR6xsfcn3+E16YM1EJaGJ31g1eBbSxoCs2coJ/2UrpQKmkctQhPtYI3OVdXBGN7+SuVlj3/vcPUzXwWUhDII6KLAMOwBc1nT6Gnfi8vJ/GfouAWY3yZmnj5pNgQfVuMvBqv8BRwgl6I=
+	t=1758608464; cv=none; b=H6Ccy5tx9offn/WMwuik0ZPlQWaA1GH4l43tdGnaa90GMQbBZsyoY1BdSLsR12EmC9LFVufxzynE0jEMXG7U2OTPTvCIiBntsCks4KUpTgBNfwn9wk7puNHeGvAVDaZlhSjzuExpQAe4LNs2BtF5Olcp0az+zZRMyhINdKzoiH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758608383; c=relaxed/simple;
-	bh=120YyptGHYoK0PLv0LMdqjCXd04nl/mVMf5yyM6umTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YbzpdmZFCWE+kgOl2vPu7jAoH9AD2G5QHm7qGZs6aXTI9pLGYzOfWbFDWmUYJKJ6uYTCysiQKzQ+ZZfQcfZyGZGmrBZEIk52ZraWjnYprp9vn4ebVkjicLKNNnUdXirGxtRkSR7AKN2+0DJ1RcFX01mVviKKJeD+cKIJTG/HHWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gL1XK90c; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758608381; x=1790144381;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=120YyptGHYoK0PLv0LMdqjCXd04nl/mVMf5yyM6umTM=;
-  b=gL1XK90cVekrCghPcy5M+3/1d2i4/VgpPKZTsbVXAPHvazDiYsmHzos9
-   N17FGDGbZMHkOHxkDXb9MGYbyaKCzN4BLJkdfcSPCYClQqTYy8a4DAwyY
-   Io/nd0h1ZBo5X6vTE0RB0eesJmxR4a+TVJwlzCbaVF+l2/k7+tGUugpxx
-   rHN71jhpOTPCx4OKwljsG4dWbHV37JiILWwQzrigiYp0fKMc1neAPnW0S
-   WyKvYoTlci4eLPuUkHAho4VkvPMMP6O5+NYWDJeGn1drONiKihLcTQIJ9
-   t160sA4OPMygPItKAuzwH9yk3UBHZNNvAmIw/l3PzDc9u6nGPgIBWxlCA
-   A==;
-X-CSE-ConnectionGUID: ZqyBPwVXQh+oRZ4xi3FIXA==
-X-CSE-MsgGUID: 9vA5hOqtQz6yVMFNVTaAGA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="72240637"
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="72240637"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 23:19:40 -0700
-X-CSE-ConnectionGUID: K372GqGFT7OueReZlcaCEQ==
-X-CSE-MsgGUID: CrnBlMbaQeyJSlq8x6go3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="207429272"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 23:19:36 -0700
-Message-ID: <8d861d33-142c-464e-8dc1-14a834eaa08a@linux.intel.com>
-Date: Tue, 23 Sep 2025 14:19:33 +0800
+	s=arc-20240116; t=1758608464; c=relaxed/simple;
+	bh=t2UgzLVFmZCwXaKwdxBZY5QQbU7YoHvc7ZF/NcPi84M=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sc2d1d6m73MfqpwRbXUw/fqvFAmTAkb0X4LwYNYw7k7pz6PLJu+bco9TKxz2jUTrlS1U+EnRubXcRUd89qB+mmnOGKt2FzZNpAk1V77rWqakEY7PwQfa0OLjYFAEAHlYyKnRd13gaKtDmgnpQaX58mfrVgYO176Ez2+eyh4UYmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Lance Yang <lance.yang@linux.dev>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: "corbet@lwn.net" <corbet@lwn.net>, "mhiramat@kernel.org"
+	<mhiramat@kernel.org>, "paulmck@kernel.org" <paulmck@kernel.org>,
+	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
+	"mingo@kernel.org" <mingo@kernel.org>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"kees@kernel.org" <kees@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>,
+	"feng.tang@linux.alibaba.com" <feng.tang@linux.alibaba.com>,
+	"pauld@redhat.com" <pauld@redhat.com>, "joel.granados@kernel.org"
+	<joel.granados@kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: =?utf-8?B?UkU6IFvlpJbpg6jpgq7ku7ZdIFJlOiBbUEFUQ0hdW1JGQ10gaHVuZ190YXNr?=
+ =?utf-8?B?OiBTdXBwb3J0IHRvIHBhbmljIHdoZW4gdGhlIG1heGltdW0gbnVtYmVyIG9m?=
+ =?utf-8?Q?_hung_task_warnings_is_reached?=
+Thread-Topic: =?utf-8?B?W+WklumDqOmCruS7tl0gUmU6IFtQQVRDSF1bUkZDXSBodW5nX3Rhc2s6IFN1?=
+ =?utf-8?B?cHBvcnQgdG8gcGFuaWMgd2hlbiB0aGUgbWF4aW11bSBudW1iZXIgb2YgaHVu?=
+ =?utf-8?Q?g_task_warnings_is_reached?=
+Thread-Index: AQHcLD6SwU5buVCi00+LlNrVaU6G67SgOukw//+DxwCAAIyp0A==
+Date: Tue, 23 Sep 2025 06:19:44 +0000
+Message-ID: <dfab5a3cc8984b56bf2d0d49ff06b47f@baidu.com>
+References: <20250923033740.2696-1-lirongqing@baidu.com>
+ <20250922204554.55dd890090b0f56ad10a61f5@linux-foundation.org>
+ <9067a88d-f5df-4d6e-b3b3-2e266ebcf3d0@linux.dev>
+ <bbdc2b5c2b374ed1801113148a72d83c@baidu.com>
+ <06facb7b-7d1b-44fd-b530-9a5300db7d4c@linux.dev>
+In-Reply-To: <06facb7b-7d1b-44fd-b530-9a5300db7d4c@linux.dev>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/16] x86/tdx: Add helpers to check return status
- codes
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: kas@kernel.org, bp@alien8.de, chao.gao@intel.com,
- dave.hansen@linux.intel.com, isaku.yamahata@intel.com, kai.huang@intel.com,
- kvm@vger.kernel.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
- seanjc@google.com, tglx@linutronix.de, x86@kernel.org, yan.y.zhao@intel.com,
- vannapurve@google.com, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
- <20250918232224.2202592-3-rick.p.edgecombe@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250918232224.2202592-3-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-FEAS-Client-IP: 172.31.3.13
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-
-
-On 9/19/2025 7:22 AM, Rick Edgecombe wrote:
-[...]
->   	/*
-> diff --git a/arch/x86/include/asm/shared/tdx_errno.h b/arch/x86/include/asm/shared/tdx_errno.h
-> index f98924fe5198..49ab7ecc7d54 100644
-> --- a/arch/x86/include/asm/shared/tdx_errno.h
-> +++ b/arch/x86/include/asm/shared/tdx_errno.h
-> @@ -2,8 +2,10 @@
->   #ifndef _X86_SHARED_TDX_ERRNO_H
->   #define _X86_SHARED_TDX_ERRNO_H
->   
-> +#include <asm/trapnr.h>
-> +
->   /* Upper 32 bit of the TDX error code encodes the status */
-> -#define TDX_SEAMCALL_STATUS_MASK		0xFFFFFFFF00000000ULL
-> +#define TDX_STATUS_MASK				0xFFFFFFFF00000000ULL
->   
->   /*
->    * TDX SEAMCALL Status Codes
-> @@ -52,4 +54,54 @@
->   #define TDX_OPERAND_ID_SEPT			0x92
->   #define TDX_OPERAND_ID_TD_EPOCH			0xa9
->   
-> +#ifndef __ASSEMBLER__
-> +#include <linux/bits.h>
-> +#include <linux/types.h>
-> +
-> +static inline u64 TDX_STATUS(u64 err)
-> +{
-> +	return err & TDX_STATUS_MASK;
-> +}
-
-TDX_STATUS() will be called in noinstr range.
-I suppose __always_inline is still needed even if it's a single statement
-function.
-
-...
-> @@ -903,7 +897,7 @@ static __always_inline u32 tdx_to_vmx_exit_reason(struct kvm_vcpu *vcpu)
->   	struct vcpu_tdx *tdx = to_tdx(vcpu);
->   	u32 exit_reason;
->   
-> -	switch (tdx->vp_enter_ret & TDX_SEAMCALL_STATUS_MASK) {
-> +	switch (TDX_STATUS(tdx->vp_enter_ret)) {
->   	case TDX_SUCCESS:
->   	case TDX_NON_RECOVERABLE_VCPU:
->   	case TDX_NON_RECOVERABLE_TD:
->
-[...]
+DQo+ID4+ICsxLiBJIGFncmVlIHRoYXQgYSB1c2Vyc3BhY2UgZGV0ZWN0b3Igc2VlbXMgbW9yZSBh
+cHByb3ByaWF0ZSBmb3IgdGhpcy4NCj4gPj4NCj4gPg0KPiA+IEkgdGhpbmsgdGhlIHVzZXItc3Bh
+Y2UgbWF5YmUgZmxleGliaWxpdHksIGJ1dCBpbmN1cnMgcmVsYXRpdmVseSBoaWdoZXIgb3Zlcmhl
+YWQNCj4gYW5kIGlzIGxlc3MgcmVsaWFibGUuIFdoZW4gdGhlIHN5c3RlbSBoYW5ncywgdGhpcyB0
+YXNrIG1heSBoYXZlIGFscmVhZHkgaHVuZyBhcw0KPiB3ZWxsLg0KPiANCj4gRW1tbS4uLiBpZiB0
+aGUgc3lzdGVtIGlzIHNvIGRlZ3JhZGVkIHRoYXQgYSB1c2Vyc3BhY2UgbW9uaXRvciBjYW5ub3Qg
+Z2V0DQo+IHNjaGVkdWxlZCwgaXQncyB2ZXJ5IGxpa2VseSB0aGF0IGtodW5ndGFza2QgaXRzZWxm
+IGlzIGFsc28gc3RydWdnbGluZyB0byBydW4sIHJpZ2h0Pw0KPiANCg0KWWVzDQoNCi1MaQ0KDQo+
+ID4NCj4gPg0KPiA+PiBXZSBhbHJlYWR5IGhhdmUgdGhlIGh1bmdfdGFza19kZXRlY3RfY291bnQg
+Y291bnRlciwgc28gYSB1c2Vyc3BhY2UNCj4gPj4gZGV0ZWN0b3IgY291bGQgZWFzaWx5IHVzZSB0
+aGF0IHRvIGltcGxlbWVudCBjdXN0b20gcG9saWNpZXMgOykNCg0K
 
