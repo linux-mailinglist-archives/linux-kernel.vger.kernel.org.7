@@ -1,239 +1,212 @@
-Return-Path: <linux-kernel+bounces-828570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21C4B94E8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:04:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B79EB94BC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE0564830BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:04:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B1577A2FB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4512F3C07;
-	Tue, 23 Sep 2025 08:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82A73112AB;
+	Tue, 23 Sep 2025 07:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cngXkU/t"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Hu9hy9nU"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010047.outbound.protection.outlook.com [52.101.84.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9612EDD5D
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758614676; cv=none; b=N1c6nVSu5+hpRrvLdaQRvQ9OsBPhXcy3k/xoSS1xLBdE7sWWxd1wx8z98EpUoYJzIlhu+yOeplhsUYFLEUNS0uW7tAxfJ8FmD9zE2w3VwaZpizZrRfcOT3QEMxXOnalFJpsZOGgc+rXiEtjzqnVN7wkpRAjlPDebXfmiuIimNFY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758614676; c=relaxed/simple;
-	bh=gJ61NuGrBrEUS0Q7teI7f/t0Z+b2dGi1lEXOjfYEC+c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jKmnopE3tzKsp35t6JZzZDK0fDVp3/9cXv5fAX39+aDuuKWihuHO4HbpfjBjsM6Bpo3d9SrIWeoFvkSQDuwMIDUjwSjX0HrE6w2It/QeluQxGHSyCnsUm8oKu1BHfWpBiFX1zXn3gnpugS1F0C+dNdTQuRpIb8a8j1Qi4rmVJ0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cngXkU/t; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758614673;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Askvh1O4f5Tsh0uDpTj1jyMFwNHEO9gAWdh5DB6xzag=;
-	b=cngXkU/totYZ+UBHRSs2rYJ6g4Q8Znt1IzhKmUUQI0QlRRbWXL+E5A5Nqq2UjTORiKuGgn
-	wLsxjuSpwltoVRUrVm03rBzct2uILDnmqtdpe9by8Zv2Oy3SF6nDt1kcbFTQHa83luR7ab
-	/JZVQM4cc8SuQ1yt3peAs3Gexq9DVb8=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-639-w5ulN1fONuuqCLYCpEqJEQ-1; Tue, 23 Sep 2025 04:04:31 -0400
-X-MC-Unique: w5ulN1fONuuqCLYCpEqJEQ-1
-X-Mimecast-MFC-AGG-ID: w5ulN1fONuuqCLYCpEqJEQ_1758614671
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ece14b9231so2543743f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:04:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758614670; x=1759219470;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Askvh1O4f5Tsh0uDpTj1jyMFwNHEO9gAWdh5DB6xzag=;
-        b=WIkQFnWyzgQBuvW/mG0Q+z62i2yWZgNK4s9wf1JVSxx2KnR0PGyzMQb6oQ7VtYLNdk
-         91hVHEfMdnEyXpSghIKUgPPsZMEyPO2PpVqfQhwftzupYprLwY0zBINCq5jZ1MnhpwS4
-         1stgZC7NA1zcF5byx6Nm/1W20KCJlij0op37LyiUw1VT+cI66cXXNqiuPpd6Fbu0jGFt
-         de5tzxkQk/ssB7x5ziVvIJq6d+M7UqiO4nkEV2BFnajWp0Kx0DX94gyogPEvgl/Lvb3Z
-         guNUtUips4aIAt7ksyFxSyQkc+2D7X687U60J+vSOwNhmfq+jSBKLz/r6fdWyQ/AS5+8
-         HD6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUnjE55jkNPMgcobA6IsoZoBPWjBbkLHdFMdeNqI/ecPA8Dw/RsoKAARTkWVt7Y06aFull+/FPeQEi/7cM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY941rC8w5hrte35xR1elYAObgKl36Hubut536jsG95LoNBTjJ
-	S0y0VJwNZ69Xd5H3kHJAQvSky2zHTfAliC1aGXGC4cLX2oGJa5CIN4xDkoAgEmX9Pk8ty5cyojy
-	br8iVYyA4UPZDdqJf+T1G/CiALctuzbUhEuYt9BsMIZc03+7hZZccfWlGzvUOx0SFHw==
-X-Gm-Gg: ASbGnct/SmaamXGCFgQxfZKpFlKFsNWA90Ku8icI/BS7b+l8QJXmOXm2EXsdPn4QdrP
-	xTC5xdmrvmEz3E2GBGL6sMti3v3gD9dTMafYC0GFwuVmMsMY2VWxtYcS82qI5mIps6D3XQjWpNM
-	L+qLI8dotki1LDYG3eT01exlSLxOk57Q6HBEY7/tlwxY+CU3qlm+9fWg4H/9WvzjA4x70grd8EQ
-	QB+BSrINc6OINyvub50P4XsZMc916vCFkTQlLOAE2oFk2NUvR1WrdE2VjyneVXos975+zIDzi33
-	qXzulkDeomOx36IYsdZoa7FuFXGTOnARKhWiV/q5d3Fe6jV4GJThFgO+GeyRjxsjSW/M3EM=
-X-Received: by 2002:a05:6000:2884:b0:3ee:15c6:9a60 with SMTP id ffacd0b85a97d-405c33a33f0mr1178434f8f.6.1758614670599;
-        Tue, 23 Sep 2025 01:04:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFpbmQG7jPygNYBQKqBxj357VhjdBy0/gBciPcLrIjmdT2uOD24mbn8y6yk8XI+xazCBSzTWg==
-X-Received: by 2002:a05:6000:2884:b0:3ee:15c6:9a60 with SMTP id ffacd0b85a97d-405c33a33f0mr1178400f8f.6.1758614670123;
-        Tue, 23 Sep 2025 01:04:30 -0700 (PDT)
-Received: from [192.168.3.141] (p4ff1fd57.dip0.t-ipconnect.de. [79.241.253.87])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbd63a2sm22761239f8f.48.2025.09.23.01.04.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Sep 2025 01:04:29 -0700 (PDT)
-Message-ID: <5ec85b0b-9848-4cee-98f4-37953d504773@redhat.com>
-Date: Tue, 23 Sep 2025 10:04:27 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14692E92BC;
+	Tue, 23 Sep 2025 07:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758612031; cv=fail; b=cW3GCLcGw1LalgWvg8R8DKZOQwLXoF+09GDjyhiUeBFGKOAgetV3rddmaOufy4TvRz7OU0PxQ/huvQiDjTz2tVWDptZnLFGfAxbBoKelkpuhKW0qVqJt8L+WogHFCEeryAe67H2OvvSpl1QlCv8wDkP+JkJavW4y1ZXntoiBJ3U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758612031; c=relaxed/simple;
+	bh=cefE388Ib2GapiblMktX5NMFxyZKkzPwAdAaPAuGSYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=AKEhDm/UlotrJr7dj26xYabNzKfNTlP4X9ux+qTss13MfgOF2R8b9TRqrYIdbWhs9CaYGG6IODT/adUc2uMJm8Pzz8lFiVv3PVgR7Z+tiUZ9b9zwbJpWfYe7kR9dEXKkv2tVleTWv/mIBM3+HbAx+bfMeHP/LpABAJkuiojlgnc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Hu9hy9nU; arc=fail smtp.client-ip=52.101.84.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TOnYaRv2pgcwmjni7yztU8aexXHbiX+iJtw50RCyu7gjb6js7cO2hDQU3/J7m34zaNiybJcpHzvYwU829hHlm60uc/j5DDkQhQw+gkAW+0u8ApeJO7cw94OaVfdPccPUpRIvjEndOPWEWGratDqOS5EfhKrNvuusciOWRHPS99KQfsN5Nlc7RHUwGZwEY7vBPMgYvtIpSvSZJgE/YQcq7iyiHItoCqpcrNmjbcluVyBPmuojWD1ynRvtm46YgEs7PXbQTYGqOusMMCYA2qePPM2A5B4WFXoHdYldgJN3hZqelpJbzWILKSX6TOOUp7jpNuHUzFAgtMyyqX/mPTAlSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=o1dOV3BJtuqz0XGGP99gOsJBQN1wtSL3KnW0fycszSA=;
+ b=lGdkb45qfWPdi8R/FAZ32y0liNWGl1GpFiSIq0M6ZxhhWkt0877NCff4iJ/q7vtlkMD8v63C4e8D1UQ9c9cgjX+WbnC3vrCtV5d0DPhQH0JkRQc1ThxnAZv2lJOx1/Y0OXnRj3PRZqug4X5vxuwdeddan6J4mwQMZ3qYVSyKZqe2hL86VexBsIcqfpMEdcRaVW+C56uFgftWvtn0z03es5RMlT3ObonBYZkoFVwzCcuEwnCfg2AmHbArATq6TiHPOAdDt7qm8SC09cJbbBxTD46KpB7f5tOUPhorFRYHW9ZubGhC/tVoc5ch7xMCK9M1QAdLm6sU+bn/PQWNMtcafg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=o1dOV3BJtuqz0XGGP99gOsJBQN1wtSL3KnW0fycszSA=;
+ b=Hu9hy9nUSJn4NCPPzlxm/Jl13gUjcys2BJiqxe4U5trDntv31/JeHtlWkSzSbYiRDpuJ7kpBfjSzYmazaVuHERYKQi4Rkm/7j/oWaHLkk0yFRJJZxT4Cwp7iEc/2eA3QDq33dy2ScHYGUl++YLmadwE7eH62F8RRsViCdv00zfNqx1nRsOi0e3iBrdImd+E79uZ6CyyM9HyTHzra7QxYgFKuRWse13gxG0rA2unPXm+NEDxzNk9K0yoy5q1qrGhO65ltNikNH3XeW5G1GK3VgGVpHrS7PoMZz+nYsh0x+xR60+4ACfyHImj9AmuWM+BuAT1FTHccf3/mrCq8+5H7Cw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by GV1PR04MB10427.eurprd04.prod.outlook.com (2603:10a6:150:1d1::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Tue, 23 Sep
+ 2025 07:20:23 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9160.008; Tue, 23 Sep 2025
+ 07:20:22 +0000
+Date: Tue, 23 Sep 2025 16:32:08 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Sherry Sun <sherry.sun@nxp.com>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	shenwei.wang@nxp.com, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH 1/2] tty: serial: imx: Only configure the wake register
+ when device is set as wakeup source
+Message-ID: <20250923083208.GC31170@nxa18884-linux.ap.freescale.net>
+References: <20250923031613.2448073-1-sherry.sun@nxp.com>
+ <20250923031613.2448073-2-sherry.sun@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923031613.2448073-2-sherry.sun@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SI2PR02CA0050.apcprd02.prod.outlook.com
+ (2603:1096:4:196::11) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 10/16] mm: define clear_pages(), clear_user_pages()
-To: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, x86@kernel.org
-Cc: akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
- hpa@zytor.com, mingo@redhat.com, mjguzik@gmail.com, luto@kernel.org,
- peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
- tglx@linutronix.de, willy@infradead.org, raghavendra.kt@amd.com,
- boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-References: <20250917152418.4077386-1-ankur.a.arora@oracle.com>
- <20250917152418.4077386-11-ankur.a.arora@oracle.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250917152418.4077386-11-ankur.a.arora@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|GV1PR04MB10427:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9cf1cadb-9ea5-4d2c-c359-08ddfa71a86b
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|19092799006|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ny5nZE6Wcomf+6ellMIicN3STiowRRI4eXiOjBb/eDsyWMoa9ZmyP/fXeDQG?=
+ =?us-ascii?Q?XY2M+Qr8pz37wivgxeTIfoKjnMON2xfMLNRoCar7b5C/V98pY9hzjIlKm1jm?=
+ =?us-ascii?Q?W5G4H0vkVtPN9+BYMjQqhJ/N5gZ6nk+/LVLOITwQa4WKGbAiVCJebLvk+PH4?=
+ =?us-ascii?Q?Z+wA+0V0v57Fr9ozuZsldP+Oi3tVqmfC3zLy51dfVi1frV8S9w8qAlOLlDuj?=
+ =?us-ascii?Q?yHgYPcVcrDKtnCNJZE199UGY8uoEDDs2/fdaTGTSlS2PR+VZAH/6+FQjYhgN?=
+ =?us-ascii?Q?SaOvgrTMGiMRDSPdKHTJCxF314aN3cNT/pHMxg4OMXxvlf5qWMhAtMNg/SfF?=
+ =?us-ascii?Q?gRgMsLYtRBNhaHTWWwyWVsu1LtY7rmvomh1Cq+HacDW9VcfcBOMrP0zjI/0m?=
+ =?us-ascii?Q?KRmyFFoGXNwaGKuiLj61P8NFnvgGxQ3p1fXYOFn5RXNKYdOUA8yfX59RMsI4?=
+ =?us-ascii?Q?bLDf9DTmlq8a6Cm5U2vDpn9NDN/8Paj8FVP1t9jG+9SToOoqFaV8C77xAs/B?=
+ =?us-ascii?Q?Jv4GfWI+M/1sNaIcTr5ajLokoO0mx4Vats4NvF0dcp7cJuD/QVZqqSXya0Ms?=
+ =?us-ascii?Q?XaU4UexsWOqwiuZfwX5xGHYywVoYZCmms8EKFztHAlFZSHp2BNsWnObxYVnM?=
+ =?us-ascii?Q?7S3LSrOvV6bGbztMZcXdYMZHhFVE0LHj4l2XVVhdSqWBlLF0ZN8mnGxPfC1Y?=
+ =?us-ascii?Q?B95YNCmu9zIr6wIdFVpylhtnWV7QyGAp65Kt/ho1dn6g13uDm84/CBavg8Nr?=
+ =?us-ascii?Q?SS9OJQjlArbpsjHDgH4R2ecG8hqY9obHXd+XH4vcbSPo8FuEqGdmSXpFU1gz?=
+ =?us-ascii?Q?zyJmofNjwGG8xFVaUcCuRgta00clxgyTMo7WixK2GE5QKpzhFvy/Eb6+g044?=
+ =?us-ascii?Q?FbN1ZuGlDXnUbMvbZMFIcT6v7UQr8HpF1u+2FeJK4Dly1cctIpSQXEBxI0NP?=
+ =?us-ascii?Q?lv/N+TvbZ1M9jg8izUXIuzmpUnPGI+ioqD6aHRiAyuOBSfT3OdslYdKkHxPd?=
+ =?us-ascii?Q?Y1ZzSeV9oVEoW1FQqjpSVohKql86WQYZNrJWa8NwcWmwbMU/rTP7cHM6UJod?=
+ =?us-ascii?Q?ZzlYcwR8m0+vXx92clAenFbhx1tnopFtjwmqn6YRLSoLjdVjclpEdW8u/HUT?=
+ =?us-ascii?Q?QEAXKXHU1n1oSjfcaqD4X60/kI2DhI26tRvSsUaZSnENWX+sA4zx6xoTqnxM?=
+ =?us-ascii?Q?0ZxpYQNER6d52LhBVtOFVGFycJ9T87Cw1DHEj1xxR5X3Sbdo6bZRRaKWRvyP?=
+ =?us-ascii?Q?iFbvpyCciWKH/TGLec75mj3fw9OJE7uQZCYyLpBqnGZRaaYFOa4YmDoZ7SCz?=
+ =?us-ascii?Q?AFIdqt/xppcdHdzX6ezDu9p8+iye2iGc1lNYT7KBGgnxjroc62TH3mmJvgNu?=
+ =?us-ascii?Q?wdxjz4jcAc1ogXda3jpqlmymzqW5gvsq8zh7rU9k8mWe63AaYFPOAs/sHVxJ?=
+ =?us-ascii?Q?zXL28sT9t7Qzr5h6z+cnxSmCsfDFYr88P4S/z/Phqhndw0Gfh0Jn0A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(19092799006)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WvPOfXMFDCN6eZDYiRTzumiw/SnrxmFi1hv9gKfYNNMeI0GW3wXnTQ2kBQke?=
+ =?us-ascii?Q?PtuAj77oB0fl5OfS8lBedJt6c3ku25bOrN8sdVU7+Xbyz34+g0fnLNbPGGAS?=
+ =?us-ascii?Q?WpbNjX23floKoZpCDXes53Ivqjrwn2n1mhwYz64Hf7d/7UFM4eJCTeKD1xr1?=
+ =?us-ascii?Q?ep2bG5nhKAqViZ+8bNy5TmNhEkD0YZAoY7E+vRLvgC3aSp55lc2HQCxbLE8k?=
+ =?us-ascii?Q?kelJkKN/gKpPDyrL9noltj/F3gVVexmKEixsY+rgy75Wm1uJeRbX4yTqwkqT?=
+ =?us-ascii?Q?imDqX41n8CFkqq3WfnfuUNcPCyCl8IA9zalw4Qh5y1UCOqC0T97khlxAIO8I?=
+ =?us-ascii?Q?S/PgDHlefYnXI82aweTAwr0mEFwjEQciGcInj3pLr346j4KPqUnw7w1QUwYw?=
+ =?us-ascii?Q?B/4Mar8geaJeDtwHCufTFIZSy/VXwgx9Pmn7FF2uDh3b4vkBhyIJ68B+QtMH?=
+ =?us-ascii?Q?L04hcrmEs8VbUvsfpx/WBL/c14nQiHnAU0V5PciruYCqm0/A9itupEuG0AbR?=
+ =?us-ascii?Q?RtgRQI019JHd2yFaojrE1gXFNQ0+MxBkXzDvprDpLHnQeSMaS4yoGICWzySo?=
+ =?us-ascii?Q?MoR78wzG1jutSKTrOhlG1ZgPcqTob3qdNLc0Ey7No8u58IrkamBPZDPXffM8?=
+ =?us-ascii?Q?zn+ZkV4q4UELIcj3OS55ubaPyCO0TaWj5A1jPGFhdofxJB7ZDMDYH+W7dUP6?=
+ =?us-ascii?Q?JkL2qgai+Rlrn25X/VGpaKkp85TufI0Q9IQNZeu0DI2fPQkpMdMPjLcqWANN?=
+ =?us-ascii?Q?dgV25h3tRdPVEKmLro+96Qe8KVwt6KO8Yi6ik+slIys7mAIBtxljxbIAOmfw?=
+ =?us-ascii?Q?89umQmkcmiuGa2HBRR+ZojW5VMheNr1h6+dQAVTpZI+//cCBrYHJRhtzxceV?=
+ =?us-ascii?Q?LY6I3SP4lBYp5luYWtfNZEZ3hM1MK5v0DbjAHDzO/0CGy2WxeVnhbK+EOe0V?=
+ =?us-ascii?Q?3wfzMPbsimmnIsRRLKCn0jKwlMv3dguTmppPg1fiV/fARZbr286DTwcwFxHi?=
+ =?us-ascii?Q?mwE1dwC81NfJrQLHalOrtIYSh+mIAaXKJDc0CXgV1jwnaQDVHnAy5OREVpTe?=
+ =?us-ascii?Q?dnvomyJJ4TWYAelxRuToKcpT98UIprN60AT6U108jOUK0A4biixSiJPml34k?=
+ =?us-ascii?Q?m1wNRHcWcuOdUWZe+4+ZOkzWwHr9F2wHQchuPdQTqzQqcbXxC78inpLAjapt?=
+ =?us-ascii?Q?9phFS9WVJyG8ef4I3vjaannUthT2ggdEVVS3KRAFCK2YZP22kFYs6PRNsmxE?=
+ =?us-ascii?Q?0XaXAj3VdbXHG85W918Vw3hbl/vA+GrAd2vQYpLbkIH7iJl7/LAEP/+09yjx?=
+ =?us-ascii?Q?MK6TZ/lET3fgGY40o1igH9FxQErGARt5UChlx+kIGLferoal8alpPdbih8QZ?=
+ =?us-ascii?Q?UH+e2GifUN7UnGrNIEFUW/MCG6MnWw+P6wtlM+BSjLJs69mSilZgZhWcG6pa?=
+ =?us-ascii?Q?c7jomAUlPPmKLlYu7vIpef/tmVALERiDzJoKyrX4X9ZPoirYQfoZzK2YfV7F?=
+ =?us-ascii?Q?ro0/MCLohOPVC+en3Myzm5jdcdNi5Iau2yul7sCG1sgseEMTrmJEw9F8Boe7?=
+ =?us-ascii?Q?fhbrf+w++Sf5wz3v4QgPNoEzcWpx7BAgjKcyG+Dr?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9cf1cadb-9ea5-4d2c-c359-08ddfa71a86b
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 07:20:22.6792
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7LWGzvqYamCo/Tvm/pBTa95mmTjddySuRvZ3wisluqmcEF5NM0QQGtTABDGNhX7kqrzfr0pkN0UdRtUmD0BPwA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10427
 
-On 17.09.25 17:24, Ankur Arora wrote:
-> Define fallback versions of clear_pages(), clear_user_pages().
-> 
-> In absence of architectural primitives, we just clear pages
-> sequentially.
-> 
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-> ---
->   include/linux/mm.h | 38 ++++++++++++++++++++++++++++++++++++++
->   1 file changed, 38 insertions(+)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 1ae97a0b8ec7..0cde9b01da5e 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -3768,6 +3768,44 @@ static inline void clear_page_guard(struct zone *zone, struct page *page,
->   				unsigned int order) {}
->   #endif	/* CONFIG_DEBUG_PAGEALLOC */
->   
-> +#ifndef clear_pages
-> +/**
-> + * clear_pages() - clear a page range using a kernel virtual address.
+On Tue, Sep 23, 2025 at 11:16:12AM +0800, Sherry Sun wrote:
+>Currently, imx uart defaults to enabling the wake related registers for
+>all uart devices. However, it is unnecessary for those devices not
+>configured as wakeup source, so add device_may_wakeup() check before
+>configuring the uart wake related registers.
 
-I'd just call this "clear a page range for kernel-internal use"
+I would rewrite as this:
+Currently, the i.MX UART driver enables wake-related registers for all UART
+devices by default. However, this is unnecessary for devices that are not
+configured as wakeup sources. To address this, add a device_may_wakeup()
+check before configuring the UART wake-related registers.
 
-> + * @addr: start address
-> + * @npages: number of pages
-> + *
-> + * Assumes that (@addr, +@npages) references a kernel region.
+>
+>Fixes: db1a9b55004c ("tty: serial: imx: Allow UART to be a source for wakeup")
+>Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
+>---
+> drivers/tty/serial/imx.c | 15 +++++++++++++++
+> 1 file changed, 15 insertions(+)
+>
+>diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+>index 500dfc009d03..4ddfc89816bf 100644
+>--- a/drivers/tty/serial/imx.c
+>+++ b/drivers/tty/serial/imx.c
+>@@ -2697,7 +2697,22 @@ static void imx_uart_save_context(struct imx_port *sport)
+> /* called with irq off */
+> static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
+> {
+>+	struct tty_port *port = &sport->port.state->port;
+>+	struct tty_struct *tty;
+>+	struct device *tty_dev;
+> 	u32 ucr3;
+>+	bool may_wake;
 
-And say here simply that "Use clear_user_pages() instead for clearing a 
-page range to be mapped to user space".
+'bool may_wake = false;' otherwise there might be report on using an
+uninitalized value by coverity or other tools.
 
-> + * Does absolutely no exception handling.
-> + */
-> +static inline void clear_pages(void *addr, unsigned int npages)
-> +{
-> +	do {
-> +		clear_page(addr);
-> +		addr += PAGE_SIZE;
-> +	} while (--npages);
-> +}
-> +#endif
-> +
-> +#ifndef clear_user_pages
-> +/**
-> + * clear_user_pages() - clear a page range mapped by the user.
+>+
+>+	tty = tty_port_tty_get(port);
+>+	if (tty) {
+>+		tty_dev = tty->dev;
+>+		may_wake = tty_dev && device_may_wakeup(tty_dev);
+>+		tty_kref_put(tty);
+>+	}
+>+
+>+	/* only configure the wake register when device set as wakeup source */
+>+	if (!may_wake)
+>+		return;
 
-I'd call this then "clear a page range to be mapped to user space"
-
-Because it's usually called before we actually map it and it will 
-properly flush the dcache if required.
-
-> + * @addr: kernel mapped address
-
-"start address"
-
-> + * @vaddr: user mapped address
-
-"start address of the user mapping" ?
-
-> + * @pg: start page
-
-Please just call it "page". I know, clear_user_page() has this weird 
-page vs. pg thingy, but let's do it better here.
-
-> + * @npages: number of pages
-> + *
-> + * Assumes that the region (@addr, +@npages) has been validated
-> + * already so this does no exception handling.
-> + */
-> +#define clear_user_pages(addr, vaddr, pg, npages)	\
-> +do {							\
-> +	clear_user_page(addr, vaddr, pg);		\
-> +	addr += PAGE_SIZE;				\
-> +	vaddr += PAGE_SIZE;				\
-> +	pg++;						\
-> +} while (--npages)
-> +#endif
-
-Should indent with one tab. Any reason this is not a static inline 
-function?
-
--- 
-Cheers
-
-David / dhildenb
-
+Regards,
+Peng
 
