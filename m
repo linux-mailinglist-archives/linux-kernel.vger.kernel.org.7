@@ -1,93 +1,73 @@
-Return-Path: <linux-kernel+bounces-829424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92861B97117
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:43:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E23B97138
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1CCE19C5F0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:44:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 001407ADA1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC45D285040;
-	Tue, 23 Sep 2025 17:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EAF28032D;
+	Tue, 23 Sep 2025 17:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dgnwIqd5"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZRKNmqGM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B081F280A20
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C682A284B2E;
+	Tue, 23 Sep 2025 17:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758649409; cv=none; b=sRS4a/lyjHsQVLSrPN3ugSWBlrfjnEFagIn30KPDQ6zn1qKuvWO4UvonGi0CxWa4hdaf0zkKJs+U8nc2cQ8mMBFZW0tGsSzpHuw0buqeV3Igx4/Wd4f2rZnVutFlLFmsd8HZKtJ8R10/hlKsycp/RI9qJIStpCjf+5ZtRc09jQs=
+	t=1758649494; cv=none; b=MxCJUZ42QXy0PgonzmVQonowvnNdf7ol2G8BwYIp616gTHlu95zjnS4FLfJsO6vnsKJru3uteii2p9cFdTZkL34zf0wAIaR+Xr2h5ed6sekyrcxrKE37N9sFud7JRUAsGJ7QqzDKjaPEJVGb1apM5TDRW0oUhl7zkQ7dcoRW1zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758649409; c=relaxed/simple;
-	bh=TBydUlaZwvjaoiWXQNjwVx4nHU3n7XPX1BEYGfUeY7U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SRqp8nwKamBMR3z6N13nPu63e3civ4UL8aZbbGN8LA3Xnw8kRcJWDWI0Ikx+t1sRURwAsBGpA0wswAKUaaYdn1TWcok6NzYhA1pKnDx3JK1NjIJY1cBhTgIoB9ShsvuCFcdNA3zeXer7z3hPtSdXohZaOwCQRKzpAHie2eh4iqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dgnwIqd5; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b5516ee0b0bso3239584a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:43:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758649407; x=1759254207; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=12Psv0L7KGLemGCvbz5saQeHawW9GRBxiy9osVzP4Fc=;
-        b=dgnwIqd5tQQFOwAxJIjv5aJUCnX3QDolOWplSTEitXAZF4l5ZQaAFezo80E9sslJms
-         FGmZBDmxuGFAGJWUbTS1L4d0+eSushVx+6v2/puY1f1cRdmwFz9uruinD0vzv3uS5ind
-         eRzzufSc0blTnnqGOyOeG8eclAKOvU4WSGm+QdAe2VHohX2Af9RpNI2I0NJ4sOm1x1nr
-         ks9fDMG3U8YPZRn4gRYZbMfFJY8JMYpMIsT1khA6eEg+mE7PE6I8cVn8JL8jKBRYOdC+
-         GmUnNvuuS0CnbUD1Yc/VDLOqBtBqsP1YO2z214BABOxWmO2JWLSHxDKpUiSFDZoqWqEO
-         yYmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758649407; x=1759254207;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=12Psv0L7KGLemGCvbz5saQeHawW9GRBxiy9osVzP4Fc=;
-        b=t+AATYfJsGa+8ZddaNVji3JpgOYEqXL/qJlvbbsae/e0C6okj7QSvhUsLKklKX0kOP
-         nqJP9dECk6MbrFcVB6ADYRIMbVHeJcYjnzQnkqIVrxPg/+D1EX/xWmIzWYTeUoA/J2NZ
-         W5WOWvQsi3aEnPkqiMdR9lqj9KYNzAXYjss1SIPm/eJ7BC3NsnpkpymoGauLlXFeWCEL
-         po/XF5zPBShKJ3D52sYST83Fz6XgWodBc1YEo61PVv6xyCXp65+nMGy3qt4M+VnacLzL
-         1sjLAUZFkmxIuwkVrcJ7Ma8WYLShX+QC3xjItmrWIqzsXS/y6NAXopJjHqIxPPMa8x2s
-         XPuA==
-X-Gm-Message-State: AOJu0YyzfdK1JUj86Ww+Hs7ULDN+UQxPYGPpnFR5otaixJ4axiYR2yYB
-	b5DYj7C7Gvgdx7QmHPKwfgCy0DDhhSMc2wyPfliiVGmtLCiCwc8o8Vqd
-X-Gm-Gg: ASbGncv9qNHPUdR2X1RlpLgi96VdT9WiOXLHqWQFTVbLEF+V6E0RoBZmZ5xiglqnFeP
-	Z+EuOP4t5RY0bHegC15EgBxRf+TQIyaTzou5ZEJM6B9mHHf8PTHy4oCrjoDy9r199bC3XAcQDAt
-	7qK02tOhyocf0trCYygg5kBVXFNl/rYWNQ/Bu20j9nq9yG0G8FhToZTtj4ti5dsWcFVj1aVZxf2
-	cPdZV/xjh4gmed2DPJcVGoWpupiyUOoGf/zbraRIRwgt5IjOCvjFOiIZ5qE9zsnLkzR7vJQYIsI
-	G+llfxw/aUciJcufGWwEfvKVf/oSyhjxYQT+/z6r/R3DevIjcOlrZvPJ0dPPmwVUoqmSf5+2Fpi
-	1/f1mBo9RHNykQEG9mTrcp/yndDzgQs0=
-X-Google-Smtp-Source: AGHT+IGHCtQSXDsLg+/XpjGWOyQYA66vNcWGwDZNAlzZTqpJwx4fxepOvpgiWPPekyfcQ3iavGr2cA==
-X-Received: by 2002:a17:90b:4c02:b0:32e:59e7:c37f with SMTP id 98e67ed59e1d1-332a92da740mr4865746a91.12.1758649406858;
-        Tue, 23 Sep 2025 10:43:26 -0700 (PDT)
-Received: from archlinux ([205.254.163.16])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3303ffe611csm18562321a91.9.2025.09.23.10.43.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 10:43:26 -0700 (PDT)
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org
+	s=arc-20240116; t=1758649494; c=relaxed/simple;
+	bh=JOexoZ5R9SLbzJLtYrMGrjPiOfLw4FQV5NzkJc9be6E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gQyWOO+JFqjpgw1Me38wzFJi/fBt+V+JxrnrRGJVvZz4FcFiFULa3gJbgEqnkBbj1Qo7lq+6SYZea3BvYz9EnjMnAGzSJhLQ6zx6j/fr/599z2ECZ1SV9j0OQqFGCYT+IFAb8YZz94sOM52fppMFUyrLeWxuopr2LOX/MI1gb8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZRKNmqGM; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758649493; x=1790185493;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=JOexoZ5R9SLbzJLtYrMGrjPiOfLw4FQV5NzkJc9be6E=;
+  b=ZRKNmqGMettpCmIG79n+qAW5voIDUJyL1QZw/jPU+ugPxT7uvz03X4G1
+   VjNMseqMT3N3OP0++aefbovBPG0MUBxNSZJ2AX0dSS20iII45x+Jo0wqp
+   p9w2K08hurfpFiakiRvcIwKk14NYkKdFjzkix62944XB0m9GxmkIuRVWI
+   PRlN/wlAYwBHwaQ7rKyIRjiAwwqDkuDsnIJSo9Er+vVcqwcI/ui2kRAXJ
+   ws4Kvkm62kAciNxbg6CVUpvH3JegTcMl0xVXkbnAQAd35LS3+ah4jWlwC
+   nkZB3okZnq/1GdfOLhJcATZ0i/iYS3VPudDbAeOan6DdW6ySh2q+eovJh
+   Q==;
+X-CSE-ConnectionGUID: AeqvM4hcR7uYF+DwBsO/yw==
+X-CSE-MsgGUID: R4fhUjDKQnekY7miWoAp0g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="59976681"
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
+   d="scan'208";a="59976681"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 10:44:52 -0700
+X-CSE-ConnectionGUID: ovezEIZLSmecp48n7Y4JBA==
+X-CSE-MsgGUID: kjVKrTtXTwyqi3lqEfYZNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
+   d="scan'208";a="176647347"
+Received: from baandr0id001.iind.intel.com ([10.66.253.151])
+  by orviesa007.jf.intel.com with ESMTP; 23 Sep 2025 10:44:50 -0700
+From: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+To: sudeep.holla@arm.com,
+	gregkh@linuxfoundation.org,
+	dakr@kernel.org,
+	rafael@kernel.org
 Cc: linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Subject: [PATCH] perf/annotate: Use architecture-agnostic register limit
-Date: Tue, 23 Sep 2025 23:12:36 +0530
-Message-ID: <20250923174236.12372-1-suchitkarunakaran@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	Kaushlendra Kumar <kaushlendra.kumar@intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v4] arch_topology: Fix incorrect error check in topology_parse_cpu_capacity()
+Date: Tue, 23 Sep 2025 23:13:08 +0530
+Message-Id: <20250923174308.1771906-1-kaushlendra.kumar@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,46 +76,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove the arch-specific guard around TYPE_STATE_MAX_REGS and define it
-as 32 for all architectures. The architecture that perf is built on may
-not match the architecture that produced the perf.data file, so relying
-on __powerpc__ or similar is fragile. Using 32 as a fixed upper bound is
-safe since it is greater than the previous maximum of 16.
-Add a comment to clarify that TYPE_STATE_MAX_REGS is an arch-independent
-maximum rather than a build-time choice.
+Fix incorrect use of PTR_ERR_OR_ZERO() in topology_parse_cpu_capacity()
+which causes the code to proceed with NULL clock pointers. The current
+logic uses !PTR_ERR_OR_ZERO(cpu_clk) which evaluates to true for both
+valid pointers and NULL, leading to potential NULL pointer dereference
+in clk_get_rate().
 
-Suggested-by: Ian Rogers <irogers@google.com>
-Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Per include/linux/err.h documentation, PTR_ERR_OR_ZERO(ptr) returns:
+"The error code within @ptr if it is an error pointer; 0 otherwise."
+
+This means PTR_ERR_OR_ZERO() returns 0 for both valid pointers AND NULL
+pointers. Therefore !PTR_ERR_OR_ZERO(cpu_clk) evaluates to true (proceed)
+when cpu_clk is either valid or NULL, causing clk_get_rate(NULL) to be
+called when of_clk_get() returns NULL.
+
+Replace with !IS_ERR_OR_NULL(cpu_clk) which only proceeds for valid
+pointers, preventing potential NULL pointer dereference in clk_get_rate().
+
+Fixes: b8fe128dad8f ("arch_topology: Adjust initial CPU capacities with current freq")
+Cc: stable@vger.kernel.org
+
+Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
 ---
- tools/perf/util/annotate-data.h | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+Changes in v4:
+- recipient list adjustment as per kernel patch review process
 
-diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
-index 541fee1a5f0a..1f76885facb0 100644
---- a/tools/perf/util/annotate-data.h
-+++ b/tools/perf/util/annotate-data.h
-@@ -189,12 +189,15 @@ struct type_state_stack {
- 	u8 kind;
- };
- 
--/* FIXME: This should be arch-dependent */
--#ifdef __powerpc__
-+/*
-+ * Maximum number of registers tracked in type_state.
-+ *
-+ * This limit must cover all supported architectures, since perf
-+ * may analyze perf.data files generated on systems with a different
-+ * register set. Use 32 as a safe upper bound instead of relying on
-+ * build-arch specific values.
-+ */
- #define TYPE_STATE_MAX_REGS  32
--#else
--#define TYPE_STATE_MAX_REGS  16
--#endif
- 
- /*
-  * State table to maintain type info in each register and stack location.
+Changes in v3:
+- Used accurate "function call properties" terminology in commit description
+  (suggested by Markus Elfring)
+- Added stable backport justification
+- Removed duplicate marker line per kernel documentation
+
+Changes in v2:
+- Refined description based on documented macro properties (suggested by Markus Elfring)
+- Added proper Fixes
+
+ drivers/base/arch_topology.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+index 1037169abb45..e1eff05bea4a 100644
+--- a/drivers/base/arch_topology.c
++++ b/drivers/base/arch_topology.c
+@@ -292,7 +292,7 @@ bool __init topology_parse_cpu_capacity(struct device_node *cpu_node, int cpu)
+ 		 * frequency (by keeping the initial capacity_freq_ref value).
+ 		 */
+ 		cpu_clk = of_clk_get(cpu_node, 0);
+-		if (!PTR_ERR_OR_ZERO(cpu_clk)) {
++		if (!IS_ERR_OR_NULL(cpu_clk)) {
+ 			per_cpu(capacity_freq_ref, cpu) =
+ 				clk_get_rate(cpu_clk) / HZ_PER_KHZ;
+ 			clk_put(cpu_clk);
 -- 
-2.51.0
+2.34.1
 
 
