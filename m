@@ -1,148 +1,111 @@
-Return-Path: <linux-kernel+bounces-828993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A70B95FEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:22:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6725CB960CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F2819C3870
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:22:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 239773BE6EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838C0324B36;
-	Tue, 23 Sep 2025 13:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DCC327A0F;
+	Tue, 23 Sep 2025 13:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b="EBOqwOt8"
-Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [93.188.205.243])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="hXbOO4+m"
+Received: from sonic308-19.consmr.mail.sg3.yahoo.com (sonic308-19.consmr.mail.sg3.yahoo.com [106.10.241.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4876A30F55D;
-	Tue, 23 Sep 2025 13:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.188.205.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2124204E
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.241.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758633745; cv=none; b=ogrzUMDqzvslOBtuPXb2IMUqGhAWmJj7U6NLaWPI23/Lv+L4IxDoWymGUIbQW4+JKWEl/dg3oPHUuJ8SGe8m4bbomc+ifn6e1EdCiv8DTGSY8idKwpxR2Wc26wyyuotwU+DRsPp1ku94lbnyzc7LtKVN+fn6SIEoRLkvrcWwLd4=
+	t=1758635053; cv=none; b=qxsL0NOYNs/uS2oTgA2WD9GfwOB8RJetrOxaDROhvnr1hQtryGdv67prYiFmC/005NH73hQLZbvWJEY10H345ii7g+0Akz9/8hOGU6AGI/nwHVvOQ9RtL6HmPmGIok3kCthbBD4rSWerow/VwI4GeIEH374IzSbRldsVZryDZWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758633745; c=relaxed/simple;
-	bh=LRQzmBa8kkt8wlTndgDV7ugHOqHHHTZMSQVXCNhqLHk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QXGYnOGYhGKbb1jZu0MI28eWy0FA1PbPdtBnkcFts1jYRnV7opBRkEm+sT0Y1ICeAvmnwZ1wF6XRyTa5aKlSl/fY2v3Z2nagdverJxe46dTGluWk3AgJieVtWmyEOYp1HUag1aGHnW2SWzdyGo2tgrtgekaTF5bocKfy/d03j1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b=EBOqwOt8; arc=none smtp.client-ip=93.188.205.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=astralinux.ru;
-	s=mail; t=1758633222;
-	bh=LRQzmBa8kkt8wlTndgDV7ugHOqHHHTZMSQVXCNhqLHk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=EBOqwOt8paXaBGErZhHhM84s9xKpv4sLSQ1tgt+bMJHQilcDY9munQeTy2UuuEpuR
-	 b8h5eqtg9dCT5NpzkNEA0h0auuHP/H2zxvnnRnkLflqs3DXWu7wzmec6f16uFad7/D
-	 4PKZXM1gokJJ4Qq1Y80gzypLf9jjreJMsImeTZxbZh/BRX0z+nq6IPOoKmOpS81zTu
-	 vrz/ukwrj+8+kc/2PD65+jBs38IIcRnQiaHJGdhQ0pLKEu23YzQJoWBt5tM3NqVUfc
-	 +8zNiAQJtcpANAhpa+WSUxb/uBIj7mZdvZQXhrnvi+5NBCiFqU61MYDEmZVprWOP3W
-	 V5fje/Ghtca5A==
-Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw02.astralinux.ru (Postfix) with ESMTP id 0A2201FADA;
-	Tue, 23 Sep 2025 16:13:42 +0300 (MSK)
-Received: from new-mail.astralinux.ru (unknown [10.177.185.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
-	Tue, 23 Sep 2025 16:13:40 +0300 (MSK)
-Received: from rbta-msk-lt-169874.astralinux.site (rbta-msk-lt-169874.astralinux.ru [10.198.22.153])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4cWL5Z2B5Xz2xBx;
-	Tue, 23 Sep 2025 16:13:38 +0300 (MSK)
-From: Mikhail Dmitrichenko <mdmitrichenko@astralinux.ru>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Mikhail Dmitrichenko <mdmitrichenko@astralinux.ru>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Brian Masney <bmasney@redhat.com>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1758635053; c=relaxed/simple;
+	bh=yd1cpLLfQcHwI3mATOIzXz5vu6mrl+DoW1ozUOgg5rQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RSSSj6bPnehZZrOSW0d3RoY+f5wsUMqkDSvnBru+a9Hv9qqK9CUOJdVESoAtaeBgRN/ypJQpVA3VUuowInCOUvCZabg33RGkgghpdL5qz9ApoX4TZKN+FnOtV+ueLSzS0cy0V3FGiiBelIezrkkU7vvezCTjdef40XLphQg8wdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=hXbOO4+m; arc=none smtp.client-ip=106.10.241.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1758635049; bh=yd1cpLLfQcHwI3mATOIzXz5vu6mrl+DoW1ozUOgg5rQ=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=hXbOO4+mTmAHD0npFiInbxb028PQHjgXyB622yYWTPCbJ06EyFTm8pLJgKqH35TseJG2XWlgXX99XNcm+ds1QCQ2IhlPxScA9OvLlnW6BIKIZchlAPAZiW9IKJLBIJztVn7UMv2T3amAre/AJt7j0JG2uRuLEwD8zSnaOMwNJxDktyBz/TIqlqSLL9Z/yKoCbMo5h+kNEMscBUvn+DKMadSrqJXWYzFgizWZKdUltPi0yeoiuVJKPQ8C/MWM/tPaXbo+NopW1yKvbRsKp0cvrvvl3JK+z/8kgGKaeYmehmEpXD2nEaNFxCCipsREG0ZiM9dssQo+bXH7XwD5HdoJvA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1758635049; bh=vJRWkDDRnIgjk5KVLqs9TlYlFfJci2wgcNt9bB5y7Jj=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=kObJHr0pYiiDCDdcXqeDqbVgE468Be+MrtujVrJYy37dU5m2RN8eH1Tec8vqr3SkbtliVCizYxybHg7Z05qKukdgt/s0ayXocYKeSIruBm1LRQzIbEjhz1UvIdnOCqbIoBmYy2K2GhfFcwZZ2ypwuHC8zMz6yCpv7Pa6MhE3QjkTKArtjmVfCGS1leTMKc9DoSrNjDgsa+52ZWGIwjB32g6vP69ymth3KLsayHQ4LNVR92TW+4+OYroIExi4OmCyzkSNRom7V44IJkMjCNhim/HHFPqHj0QPYW+s5qU3hPhCS87wMBqNYWVJWaz5dpmSmTDAqKSkE0bR74vboes6PQ==
+X-YMail-OSG: 5_2A6u8VM1lg9iSqldO9T0blGH2a37pYfr1RoFXtfy540X_d0xzb.ae4LTLmYuL
+ sNb8RgvVa4GWstzueDFGPIiEktycQk9QUiSAdViBX2xlsqjnrfvAhQHenek7y6DLROHx09R5mLKS
+ pZyPU7hyrlE1xW7071QZfzKYgyYEcaHkoSGBxS7oQ.D9lcLSZfMy3YPNzcbA7RxgNxXKYHv2hdmB
+ oA1Paun.adVuuF_ipiq.JO7tO8O0FABrokE29stZDCe3E9j1Xt2vPhWj5ScTmBMAyWZiUh.RXNhD
+ .jDwl7wOEe3qjvihVTpmNkEkBhESI4ePhsd_WqVdHZ14DPHCNQU0HorkA94gl29MPdi48NLoy4vr
+ jjsfqviFGZky84Rq919Hs_zjb7t7pWEqYaeoy.nv4lUZCXd9mb2evWbU6yon9vFdXkjfJJsvCHGt
+ se_5WGsnMVgDsb7Sg4EbERB7n3MWHtc0WTMfzmpv8vyP6mHfyIj0muLnhfrU83jqCwCxkJqTRjby
+ 1x.urFs0RBZUvNVXA8mybBkOeTIEnluCbNrCqZuIVcsDJwkyZ1gM7I67dH6ReLtHyloHQVM_1CTN
+ 9u.U_5r4I3G9c9qed9VRhbOV050AWrUVMXWExHgnVo9AtnOeGdJ0WkzqI0c4FKcDhacmrd5XgUWt
+ .cs1zf1k6Ki5x1n.FRXkSu1AeMpfxOFNWE.PaCCyjx6wi6oByowCfY3cZ8eW4mXZKpb8jEywd.gu
+ 734N04T8c_KL2GpSlEVUozaFUdSyyB0fUMRNrfEakw5ABmRmJ2NHdFeVNv1QXXUn0.M8GEWZqlub
+ 0SlOLQkpJgXTyMXX13OnfmmDQ7mgFUr1detYZILhLQEuIztnDXbDXceiHCwIT8n_7UwQeGDUJRos
+ Ase0DulDNz.8Of5kTCn2V58GsLtg_x8E53jza2LerUmssRrNh5wS2a9A9VOYn_2JrUm9qOwkCW1o
+ gdRO4E2zG5ukJJr7O9dMohSsbLd1fHrEuVgLojsVa4N4CThGQClA7e0n6BwWvAAVT1WHZz4mgOZK
+ C.b7iupdJEh48t6NV3Wj1WFKsGDKT.vpY9hWvaiosBpmAjFtKpXzmpB6i6DEEkVAWuhNXLbvDFQ0
+ ZvISFno48n.B_VMBgVVot2llBrarEg7OunXSagq3oyBKS3c1T4XyoKApV4oEpnr6rahosaOTfbil
+ ZN.qxOCTUiNhe831813.YSl1HKppB0MX7LyJOjqx_Rfr4I9s1KhWokVbMabelp7xtX2eXPWowdNR
+ oqQVwj5vZ3Ien1qO01dxMzTdGYw7NKMEKbluBNVncy8t4hqvE7igyCQdgXdHqjrBfzCOtqn9Rwk7
+ 7YXwOm8d5NkeML33vHfp_SWJ9ri3uHkie9vgupVtDXshzbImdS8vcAZYSFzq0Ddp6HSWoaKznFju
+ TFoLLeM4sIEt7XxNj3KaYpyOLE6QCl2eCPSgXGYGm3DQg15as3ZCH4BieUOG2wxlGJSEvcZYINR1
+ qGItpnwH1v6K9QecadLrRGs4ydZlGryZvd_doDzCjMuauB6.BpHASFvS8yWs5NVrfQZL_bDZhsu0
+ pPXL4tDVkVhtjwLRFgCeIkXOFFgYeQyGg3O8Yws.p7NmZbrSzS2t9DTwF.F7X8jSS1S2.RAnoDpk
+ FLNoAykUHKQmTzRPPF6VOFo9vw0QqHkyauk70rLEBWptMhmolGTSv4pUvop9PjsnUs4xFwK_wmXC
+ 2pgOxxzcoIy4v4Ahka0T16R96kxWXnG1Kr1cCy8PPlFaxU6FqrEsmobCHHzvSxPSvf53Q1xbSa8e
+ TaBGPAK_f9mGddj_jvma9LZMRnkGqell1yYRCvnYt1Cn2D8UrJKMmU0ugLC_xhYWlOSRW6uHZsZG
+ OA0cGpn7hFcExO5SgVChuHI_hXXGqcl.AikQuFe1XltcqKm2Ez6ZVePouW1dP6_tZq6Anbt9Zo7O
+ 9c_htrJqjvXNOWjzZTme1wWeS8xTboHPmdl4_BnLOtxnRrnWaWPsdDC_dPEN8t8NYazp5YqW3K5P
+ zZLo7.0N.1EK.rIpthjOud3iXR3eB2sSQ1.T54k4zzKJe9mr8P1CX39IoT0YaYCkR83QO71_J_an
+ Q2J4UYs6RPghFiM3GHOxiizD9P._O4NqKoKtmprSwijdlltHe4dhvZaWKKPKgai_s94RVPdzg4qO
+ d3kFqgAr.ohXVuDUhfpl1fNUs.dr4bC.2EIbVC73O2sxnKtc.lyCI1RFo8UEJPnx6hPD2NuXz5aO
+ ualRHkCZpIRVpuuEC3BbWmAM2ea1agZEb36tHsI4P2yuFwc5jFoZnd81UF8clrx7FUOER7rD1PX4
+ meoJTiYo0oF0-
+X-Sonic-MF: <sumanth.gavini@yahoo.com>
+X-Sonic-ID: 52be80ae-1744-43ee-96f7-11a0fc5dda32
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.sg3.yahoo.com with HTTP; Tue, 23 Sep 2025 13:44:09 +0000
+Received: by hermes--production-ne1-6b9c565dcd-npnnn (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ef9c3dcafa6eacd1c26e38b32d340bfb;
+          Tue, 23 Sep 2025 13:13:40 +0000 (UTC)
+From: Sumanth Gavini <sumanth.gavini@yahoo.com>
+To: tglx@linutronix.de
+Cc: boqun.feng@gmail.com,
+	clingutla@codeaurora.org,
+	elavila@google.com,
+	gregkh@linuxfoundation.org,
+	jstultz@google.com,
+	kprateek.nayak@amd.com,
 	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] clk: bcm: fix potential int overflow in bcm2835_measure_tcnt_mux
-Date: Tue, 23 Sep 2025 16:12:20 +0300
-Message-Id: <20250923131219.163463-1-mdmitrichenko@astralinux.ru>
-X-Mailer: git-send-email 2.39.2
+	mhiramat@kernel.org,
+	mingo@kernel.org,
+	rostedt@goodmis.org,
+	ryotkkr98@gmail.com,
+	sashal@kernel.org,
+	stable@vger.kernel.org,
+	sumanth.gavini@yahoo.com
+Subject: Re: [PATCH 6.1] softirq: Add trace points for tasklet entry/exit
+Date: Tue, 23 Sep 2025 08:13:33 -0500
+Message-ID: <20250923131334.66580-1-sumanth.gavini@yahoo.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <87ldnavsse.ffs@tglx>
+References: <87ldnavsse.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: mdmitrichenko@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 67 0.3.67 f6b3a124585516de4e61e2bf9df040d8947a2fd5, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;astralinux.ru:7.1.1;new-mail.astralinux.ru:7.1.1, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 196520 [Sep 23 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/09/23 12:50:00 #27847861
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
 
-If the value in CM_TCNTCNT is close to 2^24 (24 is the width of
-CM_TCNTCNT), then multiplication (count * 1000) will lead to integer
-overflow.
+Hi Thomas, John,
 
-Make bcm2835_measure_tcnt_mux return a u64 value instead of an unsigned
-long and cast count to u64 before multiplying it by 1000 to avoid
-overflow. Also correct the format string at bcm2835_clock_on for showing
-debug data, which includes the bcm2835_measure_tcnt_mux call result.
+Thanks for the feedback. Just to clarify — my intention here was only to backport the already accepted upstream changes into this branch. I do not plan to introduce any additional modifications or syzbot-only patches.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Thank you for your time and consideration.
 
-Fixes: 3f9195811d8d ("clk: bcm2835: Add leaf clock measurement support, disabled by default")
-Signed-off-by: Mikhail Dmitrichenko <mdmitrichenko@astralinux.ru>
----
- drivers/clk/bcm/clk-bcm2835.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 02215ea79403..9ffef2b0e820 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -345,7 +345,7 @@ static inline u32 cprman_read(struct bcm2835_cprman *cprman, u32 reg)
- /* Does a cycle of measuring a clock through the TCNT clock, which may
-  * source from many other clocks in the system.
-  */
--static unsigned long bcm2835_measure_tcnt_mux(struct bcm2835_cprman *cprman,
-+static u64 bcm2835_measure_tcnt_mux(struct bcm2835_cprman *cprman,
- 					      u32 tcnt_mux)
- {
- 	u32 osccount = 19200; /* 1ms */
-@@ -394,7 +394,7 @@ static unsigned long bcm2835_measure_tcnt_mux(struct bcm2835_cprman *cprman,
- out:
- 	spin_unlock(&cprman->regs_lock);
- 
--	return count * 1000;
-+	return (u64)count * 1000;
- }
- 
- static void bcm2835_debugfs_regset(struct bcm2835_cprman *cprman, u32 base,
-@@ -1093,7 +1093,7 @@ static int bcm2835_clock_on(struct clk_hw *hw)
- 	 */
- 	if (data->tcnt_mux && false) {
- 		dev_info(cprman->dev,
--			 "clk %s: rate %ld, measure %ld\n",
-+			 "clk %s: rate %ld, measure %llu\n",
- 			 data->name,
- 			 clk_hw_get_rate(hw),
- 			 bcm2835_measure_tcnt_mux(cprman, data->tcnt_mux));
--- 
-2.39.2
-
+Regards,
+Sumanth Gavini
 
