@@ -1,144 +1,284 @@
-Return-Path: <linux-kernel+bounces-828899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75E5B95C91
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:10:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0426DB95CB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87B8A7A841E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:09:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CB277A70A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E1B322DB3;
-	Tue, 23 Sep 2025 12:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f9lwHqiG"
-Received: from mail-yb1-f193.google.com (mail-yb1-f193.google.com [209.85.219.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AE5322A27
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0364322DB3;
+	Tue, 23 Sep 2025 12:12:28 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66AF1FBEB0;
+	Tue, 23 Sep 2025 12:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758629443; cv=none; b=MqkzTZgduhY+Ngasa4N0N4UtselialVnGFlu5IOBNrtgWVGSF0+2OwXG4bR1upO0RHc9yYPpSCa8vy1qnO71uf8yhlMHtg9+w5Z/L7rMu8/O4fGhvxsj/ofuGX5YOmviWG6ym6SSzTLmEcACFfZ3TjY1RoN5LjAv1GyxPOehQ6c=
+	t=1758629548; cv=none; b=KcR/YR5DmK27Lx4+qJoFsKLXMjGByivIpzX5qkHqKftBjwike8NeBIogXvosvqhZAAnDGRmR0k/03g6sh9LmHSis7DqU39CQhPYAcQzlrBmbcchXHPa6WKYuCUjANh0CIwgTYvs7g1K9cjGbsCjHZEIxD7sOytEp1dWcpxyfsZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758629443; c=relaxed/simple;
-	bh=a9DTXpGqgVHh9jVLGJdvu05e2qjfyRCHTw524yeXfSw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YPYWo2qihVVEu9vRebPfz97L9ibMJxsUVOfhQUv1V+s21PW+vcKkMIFrz+BdvKrJvViBqIqxvCKfZuMFA3bcpAztDD8yg7MWa1WBZpxAakZwNmeHWq2GyfJlj/XMRnyveseGuZv9QSe9hX1Nh2SUFEdzgWVMu0Uc1EWeGIA9q9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f9lwHqiG; arc=none smtp.client-ip=209.85.219.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f193.google.com with SMTP id 3f1490d57ef6-ea5b80bbfd6so4076404276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 05:10:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758629441; x=1759234241; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zq6ksWyCEtjP7L0EnAqqm+GnNsIY/ENqD77Iipk6ZkA=;
-        b=f9lwHqiGIvC1t0RL0A8FIfMY+yFFEv68o+GlOFdl+EB5W+Mu9iuBAV+DJLKXYmEBqu
-         11m5luBGjPeEQRcm3nTslM6pXWIZuTLY2WiAsBwzhLXb2zdjxp2Vx03Ciyo6LYDPSPPS
-         WDFcEcA4YjOWfYdoCORqYg9byx0H9LmWJ2P6QfvAt8IbKV7uc1EosJq/B0+l8DbhcUUl
-         rF8VdVHpXiDOUyVha8xbG4e0xQX/gsq7J8Gt6IPHlAuDkTzGfWxcBzFna6VX4XHYClB2
-         he0x1dmXQEXa2qOnxhZKbsPETcMN6Mu+j2+NZZlGetc2xFgvi57yppDEcL40qy4w/g0T
-         RNLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758629441; x=1759234241;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zq6ksWyCEtjP7L0EnAqqm+GnNsIY/ENqD77Iipk6ZkA=;
-        b=U4TyJ/UzVaTNGzxImxMR0M4eobCIcQuuTRj5ST0H6xgSNiT3KfuOdSzYbhv3TsFOYz
-         hrV0LtlPpbauWAhKN72acWiKNSKN6T0LJxsgdgS1C1R8KsOO4/TEK6eYYYmReY3USitw
-         iDh/NKeCN0P3dKxYeRHJ2Iv/RzBICQs4yoO+sQZ4bAfJjkC2DELOyCxr/75BeJWNEE+U
-         5bmZakySpwIXG7fQ3FLT/60+JPzVPblDIPnT4jkE9bptie2Eh5DqigM6BurhhNvdaiPf
-         R6ViOV2q99hx1X26SXntwB6PjRG7BfBNP4eejbFqrTrXi8UpY52ZyAwzt+H0ddcIO983
-         X5sw==
-X-Forwarded-Encrypted: i=1; AJvYcCWt427yAG4JKVKv5F/4rgc8ryegDwNcfIzJn55gBYdrb7LF4UhAN+8x1kxyVM/hTDDOf4GcxfuKvKv9weY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznqM+37d+HS7W2dwAIYHBwepdQc6Gb9LazqTkxWEZ7Hp8HPJcG
-	6dGRHSpsSFQQCyILR6Sq5OsKfn/ktiT2upGm3w9B1glVg1QoyWZuURhtzmwxSpNUFrnfbZUh96d
-	r5fKMDqSmGXmG+PyMc7TPMVP4Vwn4R70=
-X-Gm-Gg: ASbGncsuncAT20zAOXiuqK8CVzCda1j5uCmhSE9lQsTYJqs/ndkloBKCaUeOLKI0/Go
-	zaABhhqG1h75PPH51wvVq2VoeGAHvOEP5jhovaBD5AHUU/rYu7lhnz8QND9LsYnSGh7Z0mvqiq0
-	khaygKPKHABJiZkRXHWjXf/MxdbD9J+VWq6nipm+lfKwGsiZV/fb2o+fZVPz/mLDNhAtBNFVyc6
-	XY/5Qs=
-X-Google-Smtp-Source: AGHT+IEijeUDqCQWWk3DlJFuTl+beAlJlJjPVnGvdVX80F2lyDoY1c1I4/gd8BqOlIERvjiXSGd/JYk9RF17BzK7I6E=
-X-Received: by 2002:a05:6902:5408:b0:e93:48ae:fdaa with SMTP id
- 3f1490d57ef6-eb32fab5916mr2161664276.28.1758629441199; Tue, 23 Sep 2025
- 05:10:41 -0700 (PDT)
+	s=arc-20240116; t=1758629548; c=relaxed/simple;
+	bh=/6tcggY9PuJaW18j/AURzVRFMAu5mMPf+O7rN81ULxo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=J3WEtnKDBKVg9o9fiRn7YNBNm4SojXdC2+gRl36KQ/ncjL/e7JXgzAlSlOOCyYFkbJdNnUCeVh/lPKvQDesyzohlOEWJgE5OBT0dz70DEr4qBxqhk0fWzHNSrOnaoS+x4DvlGCIUjjZtZbYd/8zCp1gLfXOAnLlM8wT5MFUlIhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0004758DT.eswin.cn (unknown [10.12.96.83])
+	by app2 (Coremail) with SMTP id TQJkCgAHmZKTjtJomSnYAA--.60230S2;
+	Tue, 23 Sep 2025 20:12:05 +0800 (CST)
+From: zhangsenchuan@eswincomputing.com
+To: bhelgaas@google.com,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de,
+	johan+linaro@kernel.org,
+	quic_schintav@quicinc.com,
+	shradha.t@samsung.com,
+	cassel@kernel.org,
+	thippeswamy.havalige@amd.com,
+	mayank.rana@oss.qualcomm.com,
+	inochiama@gmail.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Senchuan Zhang <zhangsenchuan@eswincomputing.com>,
+	Yanghui Ou <ouyanghui@eswincomputing.com>
+Subject: [PATCH v3 1/2] dt-bindings: PCI: EIC7700: Add Eswin PCIe host controller
+Date: Tue, 23 Sep 2025 20:12:00 +0800
+Message-ID: <20250923121200.1235-1-zhangsenchuan@eswincomputing.com>
+X-Mailer: git-send-email 2.49.0.windows.1
+In-Reply-To: <20250923120946.1218-1-zhangsenchuan@eswincomputing.com>
+References: <20250923120946.1218-1-zhangsenchuan@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923060614.539789-1-dongml2@chinatelecom.cn>
- <aNI_-QHAzwrED-iX@gondor.apana.org.au> <CADxym3YMX063-9S7ZgdMH9PPjmRXj9WG0sesn_och5G+js-P9A@mail.gmail.com>
- <175862707333.1696783.11988392990379659217@noble.neil.brown.name>
-In-Reply-To: <175862707333.1696783.11988392990379659217@noble.neil.brown.name>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Tue, 23 Sep 2025 20:10:30 +0800
-X-Gm-Features: AS18NWCsSCb3go_4Vz04R9B0xSiDdbLE5rpM6dRGbXTaTxjX8nxOCkMEn9KQ16c
-Message-ID: <CADxym3b=_gb6o7xyozXekF4RbUoFe4h=zfegFuARFWqeWaisaQ@mail.gmail.com>
-Subject: Re: [PATCH] rhashtable: add likely() to __rht_ptr()
-To: NeilBrown <neil@brown.name>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, tgraf@suug.ch, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TQJkCgAHmZKTjtJomSnYAA--.60230S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZw4UKr1kCFW7JrW5tF4xJFb_yoWrCF1rpF
+	ZxGFy8Wr48Xr13Z3y5XF4jkFnxJwsYkFnYkr1xWa13tr9Yqa4qqw43K3W5Aa43Gr4jq34Y
+	qFsIvr1xtw17A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r4a6rW5MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRuHqcUUUUU=
+X-CM-SenderInfo: x2kd0wpvhquxxxdqqvxvzl0uprps33xlqjhudrp/
 
-On Tue, Sep 23, 2025 at 7:31=E2=80=AFPM NeilBrown <neilb@ownmail.net> wrote=
-:
->
-> On Tue, 23 Sep 2025, Menglong Dong wrote:
-> > On Tue, Sep 23, 2025 at 2:36=E2=80=AFPM Herbert Xu <herbert@gondor.apan=
-a.org.au> wrote:
-> > >
-> > > Menglong Dong <menglong8.dong@gmail.com> wrote:
-> > > > In the fast path, the value of "p" in __rht_ptr() should be valid.
-> > > > Therefore, wrap it with a "likely". The performance increasing is t=
-iny,
-> > > > but it's still worth to do it.
-> > > >
-> > > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > > > ---
-> > > > include/linux/rhashtable.h | 5 +++--
-> > > > 1 file changed, 3 insertions(+), 2 deletions(-)
-> > >
-> > > It's not obvious that rht_ptr would be non-NULL.  It depends on the
-> > > work load.  For example, if you're doing a lookup where most keys
-> > > are non-existent then it would most likely be NULL.
-> >
-> > Yeah, I see. In my case, the usage of the rhashtable will be:
-> > add -> lookup, and rht_ptr is alway non-NULL. You are right,
-> > it can be NULL in other situations, and it's not a good idea to
-> > use likely() here ;)
->
-> Have you measured a performance increase?  How tiny is it?
+From: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
 
-Hi. It is a bit difficult to accurately measure the performance
-improvement. I use it in the bpf global trampoline in [1], and
-the performance of the bpf bench testing increases from
-135M/s to 136M/s when I add the likely() to the __rht_ptr().
+Add Device Tree binding documentation for the Eswin EIC7700 PCIe
+controller module, the PCIe controller enables the core to correctly
+initialize and manage the PCIe bus and connected devices.
 
-https://lore.kernel.org/bpf/20250703121521.1874196-2-dongml2@chinatelecom.c=
-n/
-[1]
+Signed-off-by: Yu Ning <ningyu@eswincomputing.com>
+Signed-off-by: Yanghui Ou <ouyanghui@eswincomputing.com>
+Signed-off-by: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+---
+ .../bindings/pci/eswin,eic7700-pcie.yaml      | 173 ++++++++++++++++++
+ 1 file changed, 173 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
 
->
-> It might conceivably make sense to have a rhashtable_lookup_likely() and
-> rhashtable_lookup_unlikely(), but concrete evidence of the benefit would
-> be needed.
+diff --git a/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml b/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
+new file mode 100644
+index 000000000000..2f105d09e38e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
+@@ -0,0 +1,173 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pci/eswin,eic7700-pcie.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Eswin EIC7700 PCIe host controller
++
++maintainers:
++  - Yu Ning <ningyu@eswincomputing.com>
++  - Senchuan Zhang <zhangsenchuan@eswincomputing.com>
++  - Yanghui Ou <ouyanghui@eswincomputing.com>
++
++description:
++  The PCIe controller on EIC7700 SoC.
++
++allOf:
++  - $ref: /schemas/pci/pci-host-bridge.yaml#
++
++properties:
++  compatible:
++    const: eswin,eic7700-pcie
++
++  reg:
++    maxItems: 3
++
++  reg-names:
++    items:
++      - const: dbi
++      - const: config
++      - const: mgmt
++
++  ranges:
++    maxItems: 3
++
++  num-lanes:
++    maximum: 4
++
++  '#interrupt-cells':
++    const: 1
++
++  interrupts:
++    maxItems: 9
++
++  interrupt-names:
++    items:
++      - const: msi
++      - const: inta # Assert_INTA
++      - const: intb # Assert_INTB
++      - const: intc # Assert_INTC
++      - const: intd # Assert_INTD
++      - const: inte # Desassert_INTA
++      - const: intf # Desassert_INTB
++      - const: intg # Desassert_INTC
++      - const: inth # Desassert_INTD
++
++  interrupt-map:
++    maxItems: 4
++
++  interrupt-map-mask:
++    items:
++      - const: 0
++      - const: 0
++      - const: 0
++      - const: 7
++
++  clocks:
++    maxItems: 4
++
++  clock-names:
++    items:
++      - const: mstr
++      - const: dbi
++      - const: pclk
++      - const: aux
++
++  resets:
++    maxItems: 2
++
++  reset-names:
++    items:
++      - const: cfg
++      - const: powerup
++
++patternProperties:
++  "^pcie@":
++    type: object
++    $ref: /schemas/pci/pci-pci-bridge.yaml#
++
++    properties:
++      reg:
++        maxItems: 1
++
++      resets:
++        maxItems: 1
++
++      reset-names:
++        items:
++          - const: perst
++
++    required:
++      - reg
++      - ranges
++      - resets
++      - reset-names
++
++    unevaluatedProperties: false
++
++required:
++  - compatible
++  - reg
++  - ranges
++  - interrupts
++  - interrupt-names
++  - interrupt-map-mask
++  - interrupt-map
++  - '#interrupt-cells'
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    soc {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        pcie@54000000 {
++            compatible = "eswin,eic7700-pcie";
++            reg = <0x0 0x54000000 0x0 0x4000000>,
++                  <0x0 0x40000000 0x0 0x800000>,
++                  <0x0 0x50000000 0x0 0x100000>;
++            reg-names = "dbi", "config", "mgmt";
++            #address-cells = <3>;
++            #size-cells = <2>;
++            #interrupt-cells = <1>;
++            ranges = <0x01000000 0x0 0x40800000 0x0 0x40800000 0x0 0x800000>,
++                     <0x02000000 0x0 0x41000000 0x0 0x41000000 0x0 0xf000000>,
++                     <0x43000000 0x80 0x00000000 0x80 0x00000000 0x2 0x00000000>;
++            bus-range = <0x00 0xff>;
++            clocks = <&clock 203>,
++                     <&clock 204>,
++                     <&clock 205>,
++                     <&clock 206>;
++            clock-names = "mstr", "dbi", "pclk", "aux";
++            resets = <&reset 97>,
++                     <&reset 98>;
++            reset-names = "cfg", "powerup";
++            interrupts = <220>, <179>, <180>, <181>, <182>, <183>, <184>, <185>, <186>;
++            interrupt-names = "msi", "inta", "intb", "intc", "intd",
++                              "inte", "intf", "intg", "inth";
++            interrupt-parent = <&plic>;
++            interrupt-map-mask = <0x0 0x0 0x0 0x7>;
++            interrupt-map = <0x0 0x0 0x0 0x1 &plic 179>,
++                            <0x0 0x0 0x0 0x2 &plic 180>,
++                            <0x0 0x0 0x0 0x3 &plic 181>,
++                            <0x0 0x0 0x0 0x4 &plic 182>;
++            device_type = "pci";
++            pcie@0 {
++                reg = <0x0 0x0 0x0 0x0 0x0>;
++                #address-cells = <3>;
++                #size-cells = <2>;
++                ranges;
++                device_type = "pci";
++                num-lanes = <4>;
++                resets = <&reset 99>;
++                reset-names = "perst";
++            };
++        };
++    };
+-- 
+2.25.1
 
-I think such rhashtable_lookup_likely/rhashtable_lookup_unlikely make
-sense (to me at least), and I'm sure the evidence above is enough ;)
-
-Thanks!
-Menglong Dong
-
->
-> Thanks,
-> NeilBrown
 
