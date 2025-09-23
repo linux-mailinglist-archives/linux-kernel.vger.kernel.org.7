@@ -1,224 +1,205 @@
-Return-Path: <linux-kernel+bounces-828237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EFBFB943A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:26:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F320B943AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 424EF18A7D8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:27:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11E22A3F51
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16374285045;
-	Tue, 23 Sep 2025 04:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2CC2773EE;
+	Tue, 23 Sep 2025 04:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="np7XVXeh"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QLmXGGk9"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012061.outbound.protection.outlook.com [40.93.195.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4952836A4
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758601334; cv=none; b=oH4gUApUoVDVWZJpLwdkMIeZmFmOClgMDlhkA8j552BQ83h3ipiadx19qZa26Yk7yiHv86KBgt+29OuyGAEJxR8k4ISxbfjhnIvEhMz8CHR+iMD3yHCxjzT8DC6kP/HvpJqj93VFGkfbuwpfAjWaGEiHenSke7CFVSC5q0U5NZo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758601334; c=relaxed/simple;
-	bh=zpvEKZqLhwIOmRHUipSf1LyZBL80ITB37XK2LvCaT4g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C34RsPmbY6Lf7op4i90hN2zL1IN2qOrReppxbT/V8dbd+fisuBYueG+gVL8vzAzPSt9P04mTLsg8WwxCAn3vA0eXWhsP9WwFTAruz3VCmvvvw3JeiPKNjPti3EGh0upYSVNIOuxMD8v4eJs2eAoIIMO1MtFWWWpbAw3YAb8WQmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=np7XVXeh; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3322e6360bbso2332319a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:22:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758601331; x=1759206131; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1nDNxXFU6/HO7z5iXuMR9cVnSyuTgICPbquGVbvl6vg=;
-        b=np7XVXehliYilDBlAhJdCZXRHsSa4eV3yIB3vm1tEaexFoM4zthPU49+XCWe88jd9m
-         HTOC29E2ZbtC0Ybpqi7lL+PwBjAb+V420zF2u/NAjHoPcWnNAs1qfk8LloMGVSs8yBpc
-         xBJcmxeaX2kskV2tXhzhT76dUJUGC4Jchm5/1aq8wjojwXQFiwkAbwLBxxPxVcclNzdO
-         OAggBCuGk5YgvHo2MZqdxc3Z+5fHADOnK17xZoiKR4QlPlHSLY0X6T5ZF8fQZgz4MwNz
-         S/EDRVxKzyx9js7a3VywfYN3Y0zYZ/28Uvpy/2IVie7eJ4iFGfMQtgHTON9c45ceIzPq
-         Hwfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758601331; x=1759206131;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1nDNxXFU6/HO7z5iXuMR9cVnSyuTgICPbquGVbvl6vg=;
-        b=OhtsCbgJZ2epvZH+EZ8EyXNcVDXlkWGj4EcP8ldSbHllP/KpC0Fl+ZqWjOJd/lrcvT
-         4pbJLDMbsYk4Gyuk23VOoCPz4QmuePwJxyLdTNGf1oo9bQAlYzx+sZwdjrRSyqqYjELG
-         ysnXAF94/eUGwcwu+lYBJMQptSwktWwZnT9axcGpTpkYLKJJH1GE2+/QSCzGbcrmhhNf
-         SiPhmy4U3/6/T9+RDATM/WarROq0QMWDmD8HFmTODJXp1JNrw9wzhsswdVnHX/El7O94
-         0mmFOO5F4/HduqTw/ZhwFcGuGAh5881M80SRqQc++03XwfwF5j30i9D0J8vbkm9ux/Hf
-         kpSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiGQfnPwN5LYzy0mR2r6tWPlmCA/frEaCVPbdbAQGvbz+QP2VcQ0pC5uyqPaJ1Rtt9Y5wLgSPnz6RyyxI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzmrq9j4ODs0xPujcmcCeBXCccqjpYeXAloNqwD3LZ9OhEAXnjI
-	WA+CImYwJak4fxzXQS/SEGAlpT7qaQWN8/oSlrSQdSOpN9Jl67Fk6m3v
-X-Gm-Gg: ASbGncuwrA1ErL7ce+oz0qKbX4Fc8ujax46gYTuknxdRq3KmAVaovWi6UVy5s6M2HfN
-	pfYLeO+0Nz1dCagmr3CeOlXR7l0N+MdaBYFN9qXzeeRFEZX/LdjrdSVLssT9r1A/YP2gIpWcBhG
-	VQYPsz/ktrqeweS0U2m/lEfP3DRn6g5lJE5pOF5D97OslhsRpIAs15FDO8nJ+Jy9vwJOBCHjbsg
-	2H4KZK+zKx+NwbNGcIbMIeVgR86UF9N1UUyxFLMqUpZYunwHLA5+rnsqnhocPYICrf8TCoq3Yro
-	tmIkrRLkP2zz948JRqex+QfD6F9QhEVCIUaua3ksHPkcGPvN2ppAtoVC+Yb51VA4gSQFHMa3TbY
-	FNQRGdYXvVbTJD/g2ECnCRqXErFyytBe9YA==
-X-Google-Smtp-Source: AGHT+IF7vHoIXKK7ahfVkrWmvrmfXhwv4d6xCB5n1yI9ZZQycPuvOWR5cPz7VJstzs3WJ12MlmIo+Q==
-X-Received: by 2002:a17:90b:4b82:b0:330:604a:1009 with SMTP id 98e67ed59e1d1-332a95c82d3mr1254994a91.23.1758601330689;
-        Mon, 22 Sep 2025 21:22:10 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77d8c3adfd4sm13316513b3a.82.2025.09.22.21.22.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 21:22:10 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: brauner@kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	kernel@pankajraghav.com
-Cc: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH v5 4/4] iomap: don't abandon the whole copy when we have iomap_folio_state
-Date: Tue, 23 Sep 2025 12:21:58 +0800
-Message-ID: <20250923042158.1196568-5-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250923042158.1196568-1-alexjlzheng@tencent.com>
-References: <20250923042158.1196568-1-alexjlzheng@tencent.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF8E2701CE;
+	Tue, 23 Sep 2025 04:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758601390; cv=fail; b=UZ3ouSthv2fAc9DK8gJ7WMa5MX92Nfxx4Zdi7JpkKwGEDcoH/UMfkQNiT0FP1XaK0Qq068yPCegPbRpn6XrX6ZJIKVE1rD8AB89HAp94gwsFTMgr/82SmKEASAeqD9+27fEtAo2gzWW/mLg/8dG6ux7DvsCMRPJVCC578xUzmCU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758601390; c=relaxed/simple;
+	bh=IcAnmdrpr3ednq9qdMgRuQ7I+/3j8yVHBKXf0Qf9nNg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Bv3hAjDt53LW/TgZR5WyIh3hQxMMsrwIMayKvU83LqfY1/bNjhxQG6BuS/c5c0ujbI90kAsUcavgGbCtUdJO+NncmcePbaKp2ezdaJwy300E2iaDXf6ayfKFczBjCjH6AR1eFmiawpyifMlPtg6Jzkn0Gz9yHVijaSMpqcqdL2I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QLmXGGk9; arc=fail smtp.client-ip=40.93.195.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Gyffy6rl63ithef7PkBX7Nrjf2aRyd0rjvVbHNWXlzTdxodGlabZfSRy67WPsqebRSONUtjNv1DVUKCduyxXrOyOXUFTEnHslzEnu2aIQgyqdT5pGOeczaL0UpCq5HwZBTvRM34GJjLVeuDOZYNnv9BxvLz4l61bmoaTd0R/kJU3s6KCbq3uPLAtTByiJY1z45kN4pawbKTAGuqmkN8/PDvX725t+hEt0Izz9g6LmSV7EVwCHAxyCDITXgMmOT4Awt5/Kr54skvcV+3T+FjrGhpfegndvlVfmo+xESNu4VluZQafLWmHzt3n6oP/pCjqZMpHpiPmUBfb0m09e5+bug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IcAnmdrpr3ednq9qdMgRuQ7I+/3j8yVHBKXf0Qf9nNg=;
+ b=bdomanw5QSCLa/HqgbAS38NwBh8I9Ge2kIbexq6JhBBw4OLcpg8frN+wP9x3NFVkVhHJhmy8SPdEGv5IJ/NdAmFIKg4mt54m2sN/FxQEFZP7o2GcdYJNKTh2vQpfbSjGzXzCr7uXpFBJ9VEsV0E5//iYOMMSEsE35sLW4nn4sd7rEWJYOocbtBy/c8/ZBvHExHHpj3hxcSUBZETqtmXv0lW8BG4Tqb1uBFghEEuvU+NjuE7mLbx3ECnlhtooH0HDzk4JHcdwHwFm39S56Rj9s/jtZSl/REzbn6qnzhqQoFm+x4w3vAV2mmQBmuU8yESJfUR8nWGwcpzUPCn/j4NjcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IcAnmdrpr3ednq9qdMgRuQ7I+/3j8yVHBKXf0Qf9nNg=;
+ b=QLmXGGk9nzfRFu+kBOkIHeQJSa6e0pFJee7DaxUr0CTaPov+MIlkpguc9htVn07FdYN0ziaW2sED/V2sdeIp6l4y/iZtlsEnVN4pRWDQqPYmA+7FH59s05WByR7qdPmnaiTw9Z9fzH75WscTBVxS9pnvFgMya357Cy5pmoinOqIWhGq5f2VZQusgxvlbXyujEspaHER+SFT60UK1B18FadIuS+NMHWrVZv3YqIqN6eiQH4mZiagfKHLpQ6E1jzJYBjm/8p5Fdc9hbMD6qMk+sqNmID4dU2LBr1dNAuZerooqmUiN5iYub20GnXYoSq4G3k9R1I7HjC2dEpyi44CKRQ==
+Received: from CY5PR12MB6526.namprd12.prod.outlook.com (2603:10b6:930:31::20)
+ by DS0PR12MB8785.namprd12.prod.outlook.com (2603:10b6:8:14c::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
+ 2025 04:23:05 +0000
+Received: from CY5PR12MB6526.namprd12.prod.outlook.com
+ ([fe80::d620:1806:4b87:6056]) by CY5PR12MB6526.namprd12.prod.outlook.com
+ ([fe80::d620:1806:4b87:6056%3]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 04:23:05 +0000
+From: Timur Tabi <ttabi@nvidia.com>
+To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	Alistair Popple <apopple@nvidia.com>, Alexandre Courbot
+	<acourbot@nvidia.com>, "dakr@kernel.org" <dakr@kernel.org>, John Hubbard
+	<jhubbard@nvidia.com>, "rust-for-linux@vger.kernel.org"
+	<rust-for-linux@vger.kernel.org>
+CC: "lossin@kernel.org" <lossin@kernel.org>, "ojeda@kernel.org"
+	<ojeda@kernel.org>, "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+	"a.hindborg@kernel.org" <a.hindborg@kernel.org>, "tzimmermann@suse.de"
+	<tzimmermann@suse.de>, "tmgross@umich.edu" <tmgross@umich.edu>,
+	"alex.gaynor@gmail.com" <alex.gaynor@gmail.com>, "simona@ffwll.ch"
+	<simona@ffwll.ch>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "maarten.lankhorst@linux.intel.com"
+	<maarten.lankhorst@linux.intel.com>, "nouveau@lists.freedesktop.org"
+	<nouveau@lists.freedesktop.org>, "mripard@kernel.org" <mripard@kernel.org>,
+	"bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, "airlied@gmail.com"
+	<airlied@gmail.com>, "aliceryhl@google.com" <aliceryhl@google.com>, Joel
+ Fernandes <joelagnelf@nvidia.com>, "gary@garyguo.net" <gary@garyguo.net>
+Subject: Re: [PATCH v2 08/10] nova-core: falcon: Add support to check if
+ RISC-V is active
+Thread-Topic: [PATCH v2 08/10] nova-core: falcon: Add support to check if
+ RISC-V is active
+Thread-Index: AQHcK7RuFuxZ8CZ67ESqg+gi8zK57bSfkmOAgABjBACAADazgA==
+Date: Tue, 23 Sep 2025 04:23:05 +0000
+Message-ID: <80d69f5f58431f82f806599c620d31bd704b5b5d.camel@nvidia.com>
+References: <20250922113026.3083103-1-apopple@nvidia.com>
+	 <20250922113026.3083103-9-apopple@nvidia.com>
+	 <38bbcbbb7bdf88f3a06ed9925d4fa058d6352d51.camel@nvidia.com>
+	 <be96c39c-4ac5-4a4c-b5fc-6b1c1026db30@nvidia.com>
+In-Reply-To: <be96c39c-4ac5-4a4c-b5fc-6b1c1026db30@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.56.0-1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY5PR12MB6526:EE_|DS0PR12MB8785:EE_
+x-ms-office365-filtering-correlation-id: c43c858a-5f62-4a66-c886-08ddfa58e4b1
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?M3hlQzVNM0ZhVEFqb3JCOUw2ZklhanVVeWZINEp1aG5DY3psNDhwNCtlVnoy?=
+ =?utf-8?B?eU51UEdOQWtwMHBWT2JJaUR6VlVmSXViek8wNEl5VFZQSFQ4YXJSRXNQaXBQ?=
+ =?utf-8?B?V1ErRTZ4TWVxbndkc2Flek9IdjQzUkYxdHdLWlg1SDRBUHVBeUN6U1loVUhH?=
+ =?utf-8?B?aE1TV3hJQUdSUllYZXNHMS9TdnpSYjNPTGgyWTdPUGh4MFNvY3hxVU9ick1W?=
+ =?utf-8?B?enNhNVFQY3VEeWU2YWVlV0dvTDVIaEh2RlFuU0U4SUFvUFo1SFVLTG9KaWNI?=
+ =?utf-8?B?TzJuNng4SkdzS0t1d3VTaGV5OWVDQm5ZYkVDWWd1R1lYd3psUTNuUzdhcFEw?=
+ =?utf-8?B?OHBSekFHOE1PZ1lVcmRtZ21rSDUyaTVXWFVHdldDd0lPRERSSGRHVUNzelo2?=
+ =?utf-8?B?bWdhVm1UdG5rMC93Q1dmUWE5YkVwQk1RZ2pYeUw0ZEN1bHBRT1Z4cVhNUDEz?=
+ =?utf-8?B?ck5McFowZmJMSC9mYkM4bHZyMEdjUGUxYVVOVmpEL01oQS9tOGs2cE1BOEFF?=
+ =?utf-8?B?bmZzc3NqOWFOa2pKTFNPeDYxQ09VclJQUFFMTi92dUN5MlBWQWdIK3h6VExs?=
+ =?utf-8?B?S1dZb0lGWDE2ZHovc2lzZk1VZDlCL0NOSW82SlBISTJoN0NGa2RxTnB6d1BN?=
+ =?utf-8?B?a0tkRitvS3ZwV0RvdFpYNFBpbEhXWlU1QnNQN1drOFEyT1pITURkR0dYdm1O?=
+ =?utf-8?B?M1YyL3lzNTFKNFo2UGtWN0ZWdktEL0taWTFNcWFBa1dYSFRXMTIzMVo4Z2dr?=
+ =?utf-8?B?RHIwdHFwZ3NmZm5yOXRWN2c4a3RudVBmMlRWN0Z1TXZTbllIZURvTU5VRTQ3?=
+ =?utf-8?B?cGpib21MZXZXcEJZd1pnQjdUdWtIZHorNmdwdmJXdXc3Wi80ZzZ5SE16UUhR?=
+ =?utf-8?B?aTE5bE5BRTY1aFE3M24rMTRzUU9jVk1NK2N6NE1nQXplSnJEazRYR1hqSWJ0?=
+ =?utf-8?B?SE8xSjZSYUhrSndVZng5YVNhSXp3d3dxTlRPVGwyaUJ4Y29jVXAwWFFHS05S?=
+ =?utf-8?B?Y29nbWRtZEJudUJUdkplUU4yd1NrUjZYVmZua3dZNGZGRittOW1HSU8vQ0pK?=
+ =?utf-8?B?K1BhR25hbjQrMVNDNHR2cmw5VnJOV1o5b3dSRnN2L0kyUmNRQkFmWEF0Mk5O?=
+ =?utf-8?B?T2h5TU11Nk1RcXRCY3k0VkJlMXhoTHdabGxCTjY1cDdoV0xFWFhZTzJyckpz?=
+ =?utf-8?B?cFNmZmg3bGFTWUMxbTNrak80d1l1TDV3dCttTnpDZ1pDRVBvT0ZVbUllRXpE?=
+ =?utf-8?B?Q0VnSmFLb3YyaG0xNlZlYndZOEVmaENWQVB2MEF3ZXNuM0tpYTRxek9TTkFK?=
+ =?utf-8?B?Vm96NVV0MS9ZT3owakZMQ1lkT1QxYnFobnZWWXpDU1VmeEhJUjB6aGFXbFJp?=
+ =?utf-8?B?SnYxNGxkRDBEclVmSnZrVUpRRU40NlZOcnBTNzlQQ3FWQ0pGRWd2TElRMjFN?=
+ =?utf-8?B?YmpMRXVIQ3h0RlpqaWRVUzRBM1g1aEtGUDRxclRFWGw4dzFoeW0zNXpQMzVo?=
+ =?utf-8?B?dlljdXFzYlRPa05zaGVvVmhSNFd2ZEVqanlXemJyVVd1U2lDbWxnS2VFWDNU?=
+ =?utf-8?B?ZHVvVDBFQlpoRFB6akxQaCtOK0t6L1IwWHNiVSswbEdpSWtGdTVvRWtFckNn?=
+ =?utf-8?B?WGtsR29ETU4rSkNJYkVvZGVjOU9XbWhaMXptQkg5dWIvS0lXZ2RTb1lVQ2h0?=
+ =?utf-8?B?NktXWmxaa1dDWlVZVkwzcXg4T0QvdVNGR3RRa0VtMEk2dzY3VEl6WDgvQ2NM?=
+ =?utf-8?B?MzMxY2FLVWtBTWJEMFpVUnNsSUtKL3FJdjVhb3k5UkJzcFE3eUxrRjBKWjF2?=
+ =?utf-8?B?MG5mRjd1WDluTitreEJXUDVHOUgySGtOd2dzSnphdjY4ZGlUK0NWZmZjb1k0?=
+ =?utf-8?B?enVMWlhJOXhxd1V0S0RVNkZOaDd5SHFHbEFzMms0TTcyQU95UWRBL1lDTXl4?=
+ =?utf-8?B?V09ZRUFva0tQdGlNVkNaNUxOMUFCYlZYSmVzVG5ud2VmeHRLTTdhRG94Y3lV?=
+ =?utf-8?Q?bsjMZ3I0G9plk5g7L/LHWWpSQE5LYA=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6526.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?RVhSd3I3bUhIajZxeVZISVpIaDZUd05ONlM3R3RpQ3ZRZG1GcG03QzlMSlo0?=
+ =?utf-8?B?TWx2Y2Z2cGhOUXB1QXhQTDZZcUNPU2lMOFN5QTk0SnY1T0ZVNm9mNk9oQ0JS?=
+ =?utf-8?B?VzZ5bmh6UDI1QmFnbU15SklmeEJubEhFTFNaY3hGS1NEbkh2dkZOWkpqL1dn?=
+ =?utf-8?B?SmtoT3BUeUc1Y3N6bmNFTVVINlM0TjYyNzRFOGpkNnpFcklrZVAxanJlRVUy?=
+ =?utf-8?B?WmszcTNQZVZiV3kyWEhhQ244U1ZxRGgyV3YzT2xpUFdKckFlUGtLMGVIU0gz?=
+ =?utf-8?B?WFNDLzBDQnJxb1NNMy9aMU9pL2FpYWpuQXd0UC80d3dEQ3BnNDhyMWp6cnIw?=
+ =?utf-8?B?MmZFZ0g0bWxOSC9yaHUzT1BSRktoRUdxL2dZSURjOTFJaVh6eFZ4RlZlMnFH?=
+ =?utf-8?B?ZlA2aWpHWmVWZHZCQW1XZmpMVGtJODM1Yzk3aXVGSlNrdlhWd2M4MUdNU3Ar?=
+ =?utf-8?B?RjcwYWJ6QTdrVWFZU21lSkk3OXB0cGU2UzR1eWhYWlJ2UXduNjFKbTRDOUN4?=
+ =?utf-8?B?bjFXMTlpN1lTQU04b29JS2tHUGVoK1UxMzhveExQSkZHTVRlSFI4cCtxS1JL?=
+ =?utf-8?B?Y1dmc1Q0b1JyRnc4eGxET0pya1VnUisxcFlXZGFzZkprajgyMlVuQTVEbE1W?=
+ =?utf-8?B?WXZqaklBZFlPNVR0akNqWXhOcmhqcXRiU2ltQ0ErTzBoSVpLZWpRdnNFcTda?=
+ =?utf-8?B?OHNYdFRneUxsSGJUMXVaYWN3Z0lINU52SkFTMFR6K2p2dklJVEdLbklLNHF5?=
+ =?utf-8?B?SHV2OWdIdU83Um9BQXRVSlNrWk4va2ZERXcrbUVkSnEzMUdmTXJnbkRtS1hE?=
+ =?utf-8?B?R0N2Q1V3SnZteTZsS2F2VTNvZGFiZld0MHRkTTkzWFY1R2JRa1A5bWxDeWZ2?=
+ =?utf-8?B?NmsvZGJ6bzlYRU9MUHRnZnF5NXJYQzZJQnhkUzV4N0liL1dGV3dnSU84V2xr?=
+ =?utf-8?B?Nm5zRnllQUZtTGVhNFBxdzU4VWMwbjJEbXE0eW40dDkxQUduWE1QWEhlb252?=
+ =?utf-8?B?d01COGlZVmVhdkIzTGVMTlBjVUlwWGZhQUVaSTBodHgrQmMrdTI3SUMvMnhl?=
+ =?utf-8?B?M1A5MjhZd1BYdk1EWUdFNVBtQlZ0Q2ZXRFRTclpYMHRQNHRnR1dmUDBFT1Fq?=
+ =?utf-8?B?dkRXZ0pUVmZhYnJWTktwY2VIQUcvWW9PUDZ3VHUxMWpPRm9WZlE5MGxobENC?=
+ =?utf-8?B?Tk00SmVpT05QY1VMcTVJSnVQNzM0dGhhUnRyaEk3OHlESjJwd0RCZUxNOUxT?=
+ =?utf-8?B?eUZlaGNRTkZWWVZQVExrdEtQZjM3THF6VXZlYXFtWkoyaitCaVpWOGcvU1NO?=
+ =?utf-8?B?L0YzVmVVY1dtbGlaRFhLSktyTytDTE12M2I2bnNJOUFBMnhTLzN0WVpOem50?=
+ =?utf-8?B?eHMyTEFxQVFSUXhValBKZ3Z1b3R6d0ZIWENzUTUvRFVLNG9hbWM4VHg1Ulo0?=
+ =?utf-8?B?ai9nekc2ckZtZmlldjJNSVR2QVV5T3BTTVIzRXFpb2JBK1V1VTM1eHBPdEdn?=
+ =?utf-8?B?am8yZStWcytMNDA3QXEyWDVUVlNwSDc5TWM0TG9wSVByd2RBUWV0R1EvTTFU?=
+ =?utf-8?B?eGdJRDR3MTRRTmJLZXg4RHZtMk5aWk9NQ0hXNlpzOXRFaDIwOWViaEx0RTd2?=
+ =?utf-8?B?NGpTbnVQakJmbjgwb25TNU5lS3MxR1FLMHNRc1M3MFRsWFE1TXVhd25SWW03?=
+ =?utf-8?B?SHpqMFljSWR1dlRZT24wMzNYVTlQTC9VQXVRTDcyazFyZlpOZTgzOHJFTWZN?=
+ =?utf-8?B?Vlhqbm5WTTRwY0N2aVJvT0hEQ2J0cUdlTHBmbmNaTmJUQkZzY1BYc0hSTUpT?=
+ =?utf-8?B?SzMvVkpYZEU5MmRBbEVTT2MvRnF6c0VxTmw1dUxwenZhL0oxa2ovV3RyWEFt?=
+ =?utf-8?B?TXZlaWI3Und2d1BkY2NxR3NTd3FTL1BGSmRWM2ZPYTlwbk5BTU95VlpTMG5D?=
+ =?utf-8?B?YnBIUWlRSHpocFNaNkxtK1dTTWdndFdkMExKL3lZU1F2aS9vbXQwRngvcnFj?=
+ =?utf-8?B?YkpZYnNHdmE0YThHQkkyb2kvVWJ5RlBkWnBzVlZ2N2tEeXZCcTZvZi90bndL?=
+ =?utf-8?B?R0dVenJrL3FTalFPVERlUTJ5QnFvdHJNS1hwdThPRlcwWmRueVpLNkRjVXZE?=
+ =?utf-8?Q?66Z+jPQTLydJVWWS2fAwjR9II?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2F5E7028CC5E3345A9F514E1DAD1A535@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6526.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c43c858a-5f62-4a66-c886-08ddfa58e4b1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Sep 2025 04:23:05.6881
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OSyBqbQQXB2gceS0AvFxWeJOmSOLKzsXaGN1uod56isIuHIqDXMP0NbjwXao/1J6zbJ5Tr9lJbwdWe3PHub0XQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8785
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
-
-Currently, if a partial write occurs in a buffer write, the entire write will
-be discarded. While this is an uncommon case, it's still a bit wasteful and
-we can do better.
-
-With iomap_folio_state, we can identify uptodate states at the block
-level, and a read_folio reading can correctly handle partially
-uptodate folios.
-
-Therefore, when a partial write occurs, accept the block-aligned
-partial write instead of rejecting the entire write.
-
-For example, suppose a folio is 2MB, blocksize is 4kB, and the copied
-bytes are 2MB-3kB.
-
-Without this patchset, we'd need to recopy from the beginning of the
-folio in the next iteration, which means 2MB-3kB of bytes is copy
-duplicately.
-
- |<-------------------- 2MB -------------------->|
- +-------+-------+-------+-------+-------+-------+
- | block |  ...  | block | block |  ...  | block | folio
- +-------+-------+-------+-------+-------+-------+
- |<-4kB->|
-
- |<--------------- copied 2MB-3kB --------->|       first time copied
- |<-------- 1MB -------->|                          next time we need copy (chunk /= 2)
-                         |<-------- 1MB -------->|  next next time we need copy.
-
- |<------ 2MB-3kB bytes duplicate copy ---->|
-
-With this patchset, we can accept 2MB-4kB of bytes, which is block-aligned.
-This means we only need to process the remaining 4kB in the next iteration,
-which means there's only 1kB we need to copy duplicately.
-
- |<-------------------- 2MB -------------------->|
- +-------+-------+-------+-------+-------+-------+
- | block |  ...  | block | block |  ...  | block | folio
- +-------+-------+-------+-------+-------+-------+
- |<-4kB->|
-
- |<--------------- copied 2MB-3kB --------->|       first time copied
-                                         |<-4kB->|  next time we need copy
-
-                                         |<>|
-                              only 1kB bytes duplicate copy
-
-Although partial writes are inherently a relatively unusual situation and do
-not account for a large proportion of performance testing, the optimization
-here still makes sense in large-scale data centers.
-
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
----
- fs/iomap/buffered-io.c | 44 +++++++++++++++++++++++++++++++++---------
- 1 file changed, 35 insertions(+), 9 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 6e516c7d9f04..3304028ce64f 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -873,6 +873,25 @@ static int iomap_write_begin(struct iomap_iter *iter,
- 	return status;
- }
- 
-+static int iomap_trim_tail_partial(struct inode *inode, loff_t pos,
-+		size_t copied, struct folio *folio)
-+{
-+	struct iomap_folio_state *ifs = folio->private;
-+	unsigned block_size, last_blk, last_blk_bytes;
-+
-+	if (!ifs || !copied)
-+		return 0;
-+
-+	block_size = 1 << inode->i_blkbits;
-+	last_blk = offset_in_folio(folio, pos + copied - 1) >> inode->i_blkbits;
-+	last_blk_bytes = (pos + copied) & (block_size - 1);
-+
-+	if (!ifs_block_is_uptodate(ifs, last_blk))
-+		copied -= min(copied, last_blk_bytes);
-+
-+	return copied;
-+}
-+
- static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 		size_t copied, struct folio *folio)
- {
-@@ -881,17 +900,24 @@ static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 	/*
- 	 * The blocks that were entirely written will now be uptodate, so we
- 	 * don't have to worry about a read_folio reading them and overwriting a
--	 * partial write.  However, if we've encountered a short write and only
--	 * partially written into a block, it will not be marked uptodate, so a
--	 * read_folio might come in and destroy our partial write.
-+	 * partial write.
- 	 *
--	 * Do the simplest thing and just treat any short write to a
--	 * non-uptodate page as a zero-length write, and force the caller to
--	 * redo the whole thing.
-+	 * However, if we've encountered a short write and only partially
-+	 * written into a block, we must discard the short-written _tail_ block
-+	 * and not mark it uptodate in the ifs, to ensure a read_folio reading
-+	 * can handle it correctly via iomap_adjust_read_range(). It's safe to
-+	 * keep the non-tail block writes because we know that for a non-tail
-+	 * block:
-+	 * - is either fully written, since copy_from_user() is sequential
-+	 * - or is a partially written head block that has already been read in
-+	 *   and marked uptodate in the ifs by iomap_write_begin().
- 	 */
--	if (unlikely(copied < len && !folio_test_uptodate(folio)))
--		return 0;
--	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
-+	if (unlikely(copied < len && !folio_test_uptodate(folio))) {
-+		copied = iomap_trim_tail_partial(inode, pos, copied, folio);
-+		if (!copied)
-+			return 0;
-+	}
-+	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), copied);
- 	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
- 	filemap_dirty_folio(inode->i_mapping, folio);
- 	return copied;
--- 
-2.49.0
-
+T24gTW9uLCAyMDI1LTA5LTIyIGF0IDE4OjA3IC0wNzAwLCBKb2huIEh1YmJhcmQgd3JvdGU6DQo+
+IEluIHRoZSBzcGlyaXQgb2YgdGhlIGN1cnJlbnQgInNvdWwiIG9mIHBhdGNoc2V0cywgd2hpY2gg
+aXMgImdldA0KPiBHUFUgZmlybXdhcmUgcnVubmluZyBvbiBBbXBlcmUvQWRhIiksIEkgdGhpbmsg
+bGV0J3MgZGVmZXIgdGhlIEhBTHMNCj4gdW50aWwgdGhlIGZpcnN0IHBhdGNoc2V0IHRoYXQgbmVl
+ZHMgdGhlbS4NCg0KRmFpciBlbm91Z2gsIGJ1dCBtYXliZSB0aGlzIHBhdGNoc2V0IHNob3VsZCBt
+YWtlIGl0IGNsZWFyIHRoYXQgaXQgdXNlcyBBbXBlcmUtc3BlY2lmaWMNCnJlZ2lzdGVycz8gIEFs
+bCBvZiB0aGUgcGF0Y2hlcyBoYXZlIGRlc2NyaXB0aW9ucyB0aGF0IGltcGx5IHRoYXQgdGhleSBz
+dXBwb3J0IGFsbCBHU1AtY2FwYWJsZQ0KR1BVcy4NCg==
 
