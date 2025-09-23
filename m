@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-828816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF42B958E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:03:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 512FCB958E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 355E23B9F00
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:03:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 268C12E6841
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FE0274B55;
-	Tue, 23 Sep 2025 11:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0D43218DA;
+	Tue, 23 Sep 2025 11:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="AujJnepm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gBi3iRA2"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="X94OxRck";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eBykFhZL"
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52A3302147
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C09F321268
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758625401; cv=none; b=uPbsUvm/rw7ePdSYlT9fqX64fLc570o5XIj1kShNoBUR3nf72NqrgexIOnCpa2TBf6YdGllJ4ihEDKeSq7Gq7+SWM379BjRf1FMCCQVBTM6mxoRffpcw8xB3uNYa5odHAG0hVmQnstOss4cLwzqfJZODqJzIhkXoBqG5htwpv1k=
+	t=1758625404; cv=none; b=XzZk4PLOc/zX7lDfUR+aZ1f1gx30ltgWGEfyoWtJjvFfHImOOyfTCr2rIdd0AJfZQpsba7N7IX06qeA13L4Gfg0wIKICyroPm9cG4P06Ej13sYCetMc4KrTcQitn5J1XaYxYD4C2SKVQp4QTu/NQvPtMsxMiKIGhZgzsx6PiYZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758625401; c=relaxed/simple;
-	bh=7QCXYWOHwiU+p9/s4J6qDPLNsZQ85NJ6/lMLx1KnvP4=;
+	s=arc-20240116; t=1758625404; c=relaxed/simple;
+	bh=FO+dE9pku24uLN8N4NL+QT6mBqrNJmrCztRwBtxu04o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aQzgglBNrHueo+4jCnoIFe4PG6ZdC1doHqFfQG0rlSCvOswdYJKYLcsn0iBw/UQ3WAFAmiLTlYpXunirqyXRdY9WPXCUnZCWnDZk4oOpCQDfO7G71Ac19WADxH6WzY1WpKQcnAlUGMreeK89FqSrMnL8mIg2BA92GgG29sK7/vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=AujJnepm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gBi3iRA2; arc=none smtp.client-ip=103.168.172.150
+	 MIME-Version; b=Eb5xfinEgfnTJ5hwzzPUwdwKdWZDKNQws+Tz13BdiLbZITyF1AEuuSJrLh7uinWXDJG8E6WlHNQwcICoXqZf7ZFL/QG4uHFvh91iVKgXL8mCZMN4akZdlBRHDKNB64RKJbuGRMqOGhVK1jvEHdHKNLP1CfYA5gI/im75bWP2xUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=X94OxRck; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eBykFhZL; arc=none smtp.client-ip=103.168.172.156
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id DA7A3EC00A0;
-	Tue, 23 Sep 2025 07:03:18 -0400 (EDT)
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 13793140007F;
+	Tue, 23 Sep 2025 07:03:21 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Tue, 23 Sep 2025 07:03:18 -0400
+  by phl-compute-09.internal (MEProxy); Tue, 23 Sep 2025 07:03:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1758625398; x=
-	1758711798; bh=9h5a9glrsc1Q9FewltBTBylrIxsnIQry21VQ9ojF/aI=; b=A
-	ujJnepmyPZhX+WU2im5VqmQB3MvkTLXHej6jJZyzkNWzDWqCFIyVSqoAGpSMAboq
-	+b/122qzuZjnXko4oM/kCcXjJg14d1MLno35d5juDolhe13UfmmeHhiKC9rYmeCS
-	M/kFWQUxZvOuVThjgjJ4lW3bBxuFGd2Uz41duKqu31Sij7XXs2XFzehKo65XRSZS
-	dqzL9n//3JFY9Hka9eHl4kv5rC5m8jm7oCXvu/Ts6Y+a636NULVzhcBIoph2mRcH
-	7yf99Nt+Ur1WAkArYEems7E5zX00MaJhlxjUclyJT08c46yXcKtlNjKaDqlajZWp
-	dWklv5pxm2ETssA8/JMSg==
+	:reply-to:subject:subject:to:to; s=fm3; t=1758625401; x=
+	1758711801; bh=BDBl7oJGV3fWpTYYjjz2yGgNlw4zY/i9bG+IwFihDok=; b=X
+	94OxRck9RS3KXkLR2kgprjzcjR2TMNPXUrpCff15/MeG3qjwC5e622rJ3fpKHdhs
+	9+asmgb0zhY7IX7Ck0dG4w5SnIfuh2/G+v+NqNl5c+s5Jpz32JVn7Rws+F1fszDg
+	oVPUtP/0taH+vQs5dI+7uWH2Osh2RRHdM9Y190RPr4AhCB2FGJEhgPTej2+RF1A8
+	Aj3pdGm6lzGIBc/crz1NsHHkcUOhYs8jkv6KxWVRfZipfpP3vHMlrQN0zlxxE9u5
+	H5nXk+GsiciJ5LFP6dRl+oGdJy1MEH49sXBBPyD5o8y19D2V96nyaKPk2xtThu89
+	Rg65mVi+JhShKcqtUb/yQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1758625398; x=1758711798; bh=9
-	h5a9glrsc1Q9FewltBTBylrIxsnIQry21VQ9ojF/aI=; b=gBi3iRA2F5JjgzmV+
-	BbK3yEUYy5dVuMOaEa3mlJoVNS12UA9rh2MueCMl1WmzTCjNFt+McWKcbUJfSKNa
-	v02KmchecKc2952pY4HUFLGYscXlbISs1v1pwCsknGlBf2XJ/iOP9QLthZL8cyPg
-	slKOMCzS5kOd/5slgK1S4xJHSoMdoHunlQGB07mQQSOb3eG6CKdAieOgkubfEyvb
-	3v1W43vpahyJVPkQcLS3+xUFbnpc6p6nwyg2XKbu013ks/dlfMtmT4YfTgnElYmJ
-	yltiLz72DPp78PrQ4ntMvtfApoVMWushhaT6knITFRgN/lYSJdgrLc3uGMM+WgE0
-	6E8EQ==
-X-ME-Sender: <xms:dn7SaLCRyfOeMN-LirZgCNkSzzPe7I_uIkCiCeLwM4WiwYnzu31_zw>
-    <xme:dn7SaNfmOx0V162i6npcR1LRccL2LA9xRuwqa0Mdy0peFQhEl4FAkGAVm2f4moZYE
-    21gBS7uXrVsLBcOTZUgF-aYZDnc3NeSCFEkh8LM1YBtd6WOABsVKQ>
-X-ME-Received: <xmr:dn7SaMsP_EZTYkBeQOSCMcO1DqVRLUAB4h3EtXENojYIDjWIidJTQWMfoi6z5w>
+	:x-me-sender:x-sasl-enc; s=fm1; t=1758625401; x=1758711801; bh=B
+	DBl7oJGV3fWpTYYjjz2yGgNlw4zY/i9bG+IwFihDok=; b=eBykFhZL/pnhgwzO6
+	a0BLPrLSjos+DE2PcwOb9kjK8H0CQ57EunTyPSfwI3Ad2MsNxprbjJUfWzDR00hx
+	HP2OnZVn1FXOjZ2DRhmqA2Tft2UZ6ZowqItiSBUe6nAOvaWzBAnfEZDKQfpJsKoR
+	KAxydWbQfKGUdq7qp9OhmkjZakt/K2TZhETisaqg7D4RxL1I3Cgo8sbJqnfP9Y9M
+	+/5xDPT8m99Kl/AbzHYwIaT6DXye7uiRk1cLL+cb8AXhAL1ocpFrZOPIiED0VoFC
+	6EbfEX5AFNvt9j0HPFRyEK92PFqVbB0193DO1URMQgakrEoW5Lc7Zx6jgGQGgOKH
+	jdQ0g==
+X-ME-Sender: <xms:eH7SaEEnBouU8viGPz3Xt_tAS6xuib4V6q6OGVKV8nliqpNU7iBHIQ>
+    <xme:eH7SaJTbE5CPLWPozq3wuGgfIkGwJJtHMYLW7PJ4RIKpKWSZ3YUYsBWnQl_MS9ZQC
+    U--FM9mNPPzuxpfNwDbQ9KlH6IpVx4H5pgXKcpFIJzJJxTVmaQ-yAE>
+X-ME-Received: <xmr:eH7SaEQSDbdmbPYgKJOVjnz5DTXy-idgGla58KT7c6dHaAMTSyoKuYV-CemOWg>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeitdehiecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
@@ -80,14 +80,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeitdehiecutefuodetgg
     esohhrrggtlhgvrdgtohhmpdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgiipdhr
     tghpthhtoheprhhpphhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsuhhrvghnsg
     esghhoohhglhgvrdgtohhm
-X-ME-Proxy: <xmx:dn7SaEL0TGvqvagSgL1oJennoyf4z9ha436y9tH2hsoS4Ucx7SagVQ>
-    <xmx:dn7SaOb-zkhE9P-t6GzGXOs4qVOr8skp2iU7ZTFkNxzQNmuz0N7gWw>
-    <xmx:dn7SaKLHVQZqrQeZ__21eRWumkA-AugL1An9SFsrHotPAVtvoZ55Sg>
-    <xmx:dn7SaHqr2JMWXKEgqf8Z88pCc09vkLR1XVw3KFFjwTCHggyjvM3wDQ>
-    <xmx:dn7SaKHG10GWoGr7hoEXwpzOVcObPuZHFV7R6mCXVrrrmj0Dl6QnYO6V>
+X-ME-Proxy: <xmx:eH7SaMe3T6BWg8MY6sGH2CCqC4iHOBXQPXR089cvix5oJFJeR3ssaQ>
+    <xmx:eH7SaIe8QevXnGJyqPQtgBBDKAw3HFXrnzw6BwcAXYdGqJVj0LkGiQ>
+    <xmx:eH7SaC8r-7WkGxo-RTNrrc0lV3LFD1IYW92nGuQZHyjX0zEvydtjEQ>
+    <xmx:eH7SaIO8sAC4bkh_nT7UPOFSlXhHvnKCtpHQuH2lr4Zarh6wngMWDA>
+    <xmx:eX7SaGKy2F_9OJ82Xz3AodbFgkFVEbFqEZE10d0UKLiYX-M_Kidkzy7B>
 Feedback-ID: ie3994620:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 23 Sep 2025 07:03:17 -0400 (EDT)
+ 23 Sep 2025 07:03:19 -0400 (EDT)
 From: Kiryl Shutsemau <kirill@shutemov.name>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	David Hildenbrand <david@redhat.com>,
@@ -107,9 +107,9 @@ Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Kiryl Shutsemau <kas@kernel.org>
-Subject: [PATCHv3 1/5] mm/rmap: Fix a mlock race condition in folio_referenced_one()
-Date: Tue, 23 Sep 2025 12:03:06 +0100
-Message-ID: <20250923110310.689126-2-kirill@shutemov.name>
+Subject: [PATCHv3 2/5] mm/rmap: mlock large folios in try_to_unmap_one()
+Date: Tue, 23 Sep 2025 12:03:07 +0100
+Message-ID: <20250923110310.689126-3-kirill@shutemov.name>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250923110310.689126-1-kirill@shutemov.name>
 References: <20250923110310.689126-1-kirill@shutemov.name>
@@ -123,60 +123,44 @@ Content-Transfer-Encoding: 8bit
 
 From: Kiryl Shutsemau <kas@kernel.org>
 
-The mlock_vma_folio() function requires the page table lock to be held
-in order to safely mlock the folio. However, folio_referenced_one()
-mlocks a large folios outside of the page_vma_mapped_walk() loop where
-the page table lock has already been dropped.
+Currently, try_to_unmap_once() only tries to mlock small folios.
 
-Rework the mlock logic to use the same code path inside the loop for
-both large and small folios.
-
-Use PVMW_PGTABLE_CROSSED to detect when the folio is mapped across a
-page table boundary.
+Use logic similar to folio_referenced_one() to mlock large folios:
+only do this for fully mapped folios and under page table lock that
+protects all page table entries.
 
 Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
 Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
 ---
- mm/rmap.c | 59 ++++++++++++++++++++-----------------------------------
- 1 file changed, 21 insertions(+), 38 deletions(-)
+ mm/rmap.c | 31 ++++++++++++++++++++++++++++---
+ 1 file changed, 28 insertions(+), 3 deletions(-)
 
 diff --git a/mm/rmap.c b/mm/rmap.c
-index 568198e9efc2..3d0235f332de 100644
+index 3d0235f332de..a55c3bf41287 100644
 --- a/mm/rmap.c
 +++ b/mm/rmap.c
-@@ -851,34 +851,34 @@ static bool folio_referenced_one(struct folio *folio,
- {
- 	struct folio_referenced_arg *pra = arg;
- 	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, 0);
--	int referenced = 0;
--	unsigned long start = address, ptes = 0;
-+	int ptes = 0, referenced = 0;
+@@ -1870,6 +1870,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 	unsigned long nr_pages = 1, end_addr;
+ 	unsigned long pfn;
+ 	unsigned long hsz = 0;
++	int ptes = 0;
  
- 	while (page_vma_mapped_walk(&pvmw)) {
- 		address = pvmw.address;
- 
- 		if (vma->vm_flags & VM_LOCKED) {
--			if (!folio_test_large(folio) || !pvmw.pte) {
--				/* Restore the mlock which got missed */
--				mlock_vma_folio(folio, vma);
--				page_vma_mapped_walk_done(&pvmw);
--				pra->vm_flags |= VM_LOCKED;
--				return false; /* To break the loop */
--			}
--			/*
--			 * For large folio fully mapped to VMA, will
--			 * be handled after the pvmw loop.
--			 *
--			 * For large folio cross VMA boundaries, it's
--			 * expected to be picked  by page reclaim. But
--			 * should skip reference of pages which are in
--			 * the range of VM_LOCKED vma. As page reclaim
--			 * should just count the reference of pages out
--			 * the range of VM_LOCKED vma.
--			 */
- 			ptes++;
- 			pra->mapcount--;
--			continue;
+ 	/*
+ 	 * When racing against e.g. zap_pte_range() on another cpu,
+@@ -1910,10 +1911,34 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 		 */
+ 		if (!(flags & TTU_IGNORE_MLOCK) &&
+ 		    (vma->vm_flags & VM_LOCKED)) {
++			ptes++;
++
++			/*
++			 * Set 'ret' to indicate the page cannot be unmapped.
++			 *
++			 * Do not jump to walk_abort immediately as additional
++			 * iteration might be required to detect fully mapped
++			 * folio an mlock it.
++			 */
++			ret = false;
 +
 +			/* Only mlock fully mapped pages */
 +			if (pvmw.pte && ptes != pvmw.nr_pages)
@@ -190,40 +174,17 @@ index 568198e9efc2..3d0235f332de 100644
 +			 * only protect part of ptes.
 +			 */
 +			if (pvmw.flags & PVMW_PGTABLE_CROSSSED)
-+				continue;
++				goto walk_done;
 +
-+			/* Restore the mlock which got missed */
+ 			/* Restore the mlock which got missed */
+-			if (!folio_test_large(folio))
+-				mlock_vma_folio(folio, vma);
+-			goto walk_abort;
 +			mlock_vma_folio(folio, vma);
-+			page_vma_mapped_walk_done(&pvmw);
-+			pra->vm_flags |= VM_LOCKED;
-+			return false; /* To break the loop */
++			goto walk_done;
  		}
  
- 		/*
-@@ -914,23 +914,6 @@ static bool folio_referenced_one(struct folio *folio,
- 		pra->mapcount--;
- 	}
- 
--	if ((vma->vm_flags & VM_LOCKED) &&
--			folio_test_large(folio) &&
--			folio_within_vma(folio, vma)) {
--		unsigned long s_align, e_align;
--
--		s_align = ALIGN_DOWN(start, PMD_SIZE);
--		e_align = ALIGN_DOWN(start + folio_size(folio) - 1, PMD_SIZE);
--
--		/* folio doesn't cross page table boundary and fully mapped */
--		if ((s_align == e_align) && (ptes == folio_nr_pages(folio))) {
--			/* Restore the mlock which got missed */
--			mlock_vma_folio(folio, vma);
--			pra->vm_flags |= VM_LOCKED;
--			return false; /* To break the loop */
--		}
--	}
--
- 	if (referenced)
- 		folio_clear_idle(folio);
- 	if (folio_test_clear_young(folio))
+ 		if (!pvmw.pte) {
 -- 
 2.50.1
 
