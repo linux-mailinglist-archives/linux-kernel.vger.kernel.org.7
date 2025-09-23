@@ -1,162 +1,124 @@
-Return-Path: <linux-kernel+bounces-829055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE81FB962D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E32B962D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B63B21895D70
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:18:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66E8E1899A70
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794F71FDE01;
-	Tue, 23 Sep 2025 14:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B33D221F32;
+	Tue, 23 Sep 2025 14:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HPoluiIV"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="m61MBV/s"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4C61FAC4B
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF7018E20
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758637071; cv=none; b=ewsHoZfZVOMkAssJ0I/RgjilvwT1xes0DBKnp0XR+wps8+H+7vjPEnd5yW6wtwMp9m+yB3gqvcKNTEXq3MkcsvkDjZEfz3YxU2drB7Z10cfrOt+yjYH6z3t5mq0x6MFUmD9+PrRjEHdG4x5qJksY88/NRuWeeYgVRkmO226jC6Y=
+	t=1758637118; cv=none; b=RtSDcSlj+79wyE+idlmDc/ap8lS1dCIspfhiqpKLCq+khQ7oXa6Bj0/5q8NvWLEbvpzbUb20DdWOWvVEcOO9lPbQeizdlK3SGUrfmEggkoX50nL1CZGdVBsWph9I/v6VlD8c8JbOEJvKfPe/uYWcM9mxivUVuAcXLJ1rsswQzlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758637071; c=relaxed/simple;
-	bh=wSMFoqjyLN8Wd3bU4GJnrof3Pb9x9wfb4LqShQL8DPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f+J23ZdcwwN1z+bI8ELVs57qTL4EuF3AtcVi+B/ubc4L6Cyq51l4MZLI8wnlLsTmsBUSPAMfCy8MEOqWFtfzPOAw6GBoUsF9E+2TolSAazvILDGrCyEIxUnhxP+OWI95Nxp7IIbzPLkiyMqt6u5SdhdOLjN7wi5UIQA05kUK+Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HPoluiIV; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b2e0513433bso292338666b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:17:49 -0700 (PDT)
+	s=arc-20240116; t=1758637118; c=relaxed/simple;
+	bh=dGetF1qRy9QXK0P3a8VW8pHQYytO1lsKqc29yOoYSyU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ly/yH+lFhfWFr5xxkmdm5tsGfo36Flzb3J78Q1i050uk8LnJgQdK/3gLf7XSoyAn+Bs21gtK1wpO2Tk53ygtVQWB7oNZfL7Km/lDHNDeBXKwCD5Xlqj7xL7D9GzM4twJEOkYvnjvE4GoprRgWxNRLHHdZHTmrv6FdKo2Jp+jdgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=m61MBV/s; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3f2ae6fadb4so3708961f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:18:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758637068; x=1759241868; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=A5q5N3nLYy9yP+B4kwAaZrbrxG23b0NBI/IKB6m71lg=;
-        b=HPoluiIVEI38W28nZs0I9bpmzLGWwnUgG0QeoTFSqWFYAquFFnKABFmz2lJgoQXQPt
-         1SHB/luv8gnHY2J0+PfDl23RrHUOcaBhhV5RwhhJleefcdPfCRoMDOuicLNen2dztL5k
-         HkPJhtDwZ/oZnuyxz+vF2ttaMcrgVBcLtNti4JfRQ6n/pmEBWrE8sRjINKUElvzBUFvu
-         UO35SYugkY6eWBI0uB/APD9V1HxP+WP+kmcrk3/yeM0/pgXdF+xdg4HTeDdBkQFspaoJ
-         Zp3VOGMqXjL/Bai+BohEn5qm78FmwWCRZOcpKXhJ6WUT36eiDUhLyDFjI0DO66FCS7xF
-         /JFg==
+        d=tuxon.dev; s=google; t=1758637114; x=1759241914; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NFG4tL8lqUh/sVKHN37qHfPMPVZ9QDTBTj4893Vci9I=;
+        b=m61MBV/sTq4KrEQzQepc+JQRslZuNMRlDMsyd+DpfKD+ctGsIKwf67kMXHF6AcuHIx
+         BS20phdd5i5QJtk8933lRym78Gho+0qBAc1dPIa5C7swHwGbsqgxdf/G1yd6azoLo2IC
+         0gSK8fHPPYO/ath+2+tCnL5e1DiPtOJ7p3s8sqBcoF4O2S+DcXNT+YRnF1gEucCsQ0lk
+         PGPFjVWwB1LPkRRiVrptyzwDliYVcDl3/4l7ResTdcXdDC32YI8kqKoa3zFOoqwW7BFK
+         dvzwyF8Igf6H4rmaygLN4+sNvg4LovAcAeQM2YnrmN5lpwywpKE0xfARbD1iufLwW8eJ
+         5AIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758637068; x=1759241868;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A5q5N3nLYy9yP+B4kwAaZrbrxG23b0NBI/IKB6m71lg=;
-        b=IegUsuGPYlNJCpjrd0liCbrjAgwNFvsN2IaV2XkhhYndMVvoT7+pZse1AKv4s/85Bz
-         0Ub5/L94NUzSyqgAODtjuBCKCMl/5vO/69n5daufMuYx3YdEnNn138C80XL0vAmK8YfS
-         Gqxf5D5/g+g5Q3IdNCjCDzYM8m0TgaXSOo2wfhKBsP7B78wDR3BwhqIYfxQYObRCKlyX
-         Du+a1SmamsnC/h4EceLxRTqP71XXr+7HfKCjvGf2Lt3AQ1hzA+WjII5jb4nlIGBSYrPj
-         IXfp0F1444Bs3pF9o8PHFV1Vyh+RtM0NeEvdxv/jLgwEhXv1+RaiPBeoMHB5gvkJaM8L
-         IlkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdMydA6DIPZLoOdbjQxBRMA34x39c5fxs603m0Qia4ggeGAcJ0NLDwvjwatrJd7awW0G3i1ATGjoP+6dM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo+87wPrpflAqVP9k3d1OXkGUs3Os1l9ed4OY6S2QnJtdieO1A
-	txsbd+XTAIOD9187ObF6otH4X1JSwksnXPqJrgOuhPVLS6slL0R7uWRm9+1Ovo8YW5/4EyT4k+x
-	QjDK0
-X-Gm-Gg: ASbGnctnhvty+4FFp2KUN0Fy3h1nB7BtDO7iyloohB+EpkgS0nbsFwv5Cgv30FCDqP+
-	PmLYFG5abBJ+OeFkwpceBmrv3j4CcPhRjl0i6hamuK/IlIxdcRvVIVCDLzwsDi/79n86Zxl5VPy
-	gkGEBXd6AVzEtbvrIc3b3D73qI1BVCUQMxCnbeZQK/LrI+/F8ZHXHSE8lBasDK2KIczC/LJfZwh
-	NZVv7BFqEZKI98sleiV+VjaNag3r03zOBDdPU4Q4bS773WXvx8ZGnHo/vN2dQgNz3Ym0nBj1m1t
-	YpXL4UxdzAkonQhknv+FXpLkg5L/wSPZZHnqn1KPZcK3qJrXcT1c0PAeMiY0pwLKstEITT2f41Y
-	FaugbDZFza4fKUnMSkVJU7VRhnSJlFdAL3w==
-X-Google-Smtp-Source: AGHT+IHv8Ydnb9rIz0+NFvQxdeTcfROor571HxVvcaI2WdRaXpfHr1+DeTmXjRTVXNKfWFeK2MsapA==
-X-Received: by 2002:a17:907:707:b0:b24:6396:c643 with SMTP id a640c23a62f3a-b3028427c9amr256596166b.23.1758637068030;
-        Tue, 23 Sep 2025 07:17:48 -0700 (PDT)
-Received: from localhost (109-81-31-43.rct.o2.cz. [109.81.31.43])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b2aaeea5a1csm621323266b.95.2025.09.23.07.17.47
+        d=1e100.net; s=20230601; t=1758637114; x=1759241914;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NFG4tL8lqUh/sVKHN37qHfPMPVZ9QDTBTj4893Vci9I=;
+        b=tQXgl1K0hwQg9K2GdgotC8tMhsO93kiUa98qKTfg6Cjn3Y8u1yjjrImqtXMePXVoNF
+         MakJfgdqPInVQog0z2ZPjqC+RRy8Rv0ooZae3VEq9B4TD5W9xchAdvzyWdgZVY3jfzVe
+         GlDnlPVUTt8cFE2AaA4MVzapw9pZNGzPXNCrWAjo8vTZlmhU9jFNGf/SaFz/mgNHZUPC
+         Z3qrgAsUSwPgMKgHg9ip/hrlb8GN5iZtUONTjIV1GUgk5Vcp3kM1I4VNER1KR8SGH/sm
+         03eqyT65S8Wu+FxDE5Yb2TnOnJ3o1fhn6ivMfNWbC+bI7Vr7Q/CO8kf+h2UDlPNmffel
+         baVw==
+X-Forwarded-Encrypted: i=1; AJvYcCW12zJxL7euOTLhh6anB5+wldUEgUbQJao+Zu8tflX0NjQzmGbWLmRSjNcheuSaJt5Ophh1eoNqzL+R+aY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNFTYGDGyhIBxjClTTws2ld+6SfDS99zDqUM54KIgRrhFp5+ep
+	pHm/NSWPQh+TNFyFn7FUdfuqbLj+3P0Lyge3CHkB9jVG/iBiZgjqX5SM5SA8YIXe3ro=
+X-Gm-Gg: ASbGncsyBD71D5BwOiAStWCCz9eQdJOO92gs8OG0mHHFKiGXnVWn8o6JERjMq3Ph9xs
+	dAqc13yX7OuVg+vTe5SFgfLX9hkGwY5+GssyDIkUqcRGd/ITIDbcCj5/6o2UvwEUewGb64y+TeU
+	J81XMFfnXZaTiy494TTs6JiaI7wy1naM83jPJJ06Q733ZkCTrmur/xLbrM1NBYmyeLnINCHatM7
+	8eS485ClnS9AT5snYmE3TB03BEqIQCjmNg3oNmN/9wyByY/W7N6ApIVQhEwW2Q6zOrfv8xj93ie
+	vvm6Grrpnqif1eV30PhGZymIycV3el5gz9VKNA+rGuOlWt/cgGSt2sOynAyoJiVaDoiG12CN+k6
+	HyAZaYgXhpXsJe0EP0TXpiH6TuGGXhSWo5Xkh8XNl9fUR6pbivbaJ
+X-Google-Smtp-Source: AGHT+IF4vqcfWEYZtZ/S8nA08HR0jyyV0IaZblTvH4YW512bTSjwjlBru1lEZAr3DAhQSemddQNZLw==
+X-Received: by 2002:a05:6000:1866:b0:3ee:b126:6b6 with SMTP id ffacd0b85a97d-405ca76faa0mr2014826f8f.34.1758637114129;
+        Tue, 23 Sep 2025 07:18:34 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.153])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee141e9cf7sm23617713f8f.12.2025.09.23.07.18.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 07:17:47 -0700 (PDT)
-Date: Tue, 23 Sep 2025 16:17:46 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: xu.xin16@zte.com.cn
-Cc: akpm@linux-foundation.org, shakeel.butt@linux.dev, hannes@cmpxchg.org,
-	roman.gushchin@linux.dev, david@redhat.com,
-	chengming.zhou@linux.dev, muchun.song@linux.dev,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	cgroups@vger.kernel.org
-Subject: Re: =?utf-8?B?562U5aSNOiBbUEFUQw==?= =?utf-8?Q?H?= linux-next v3
- 0/6] memcg: Support per-memcg KSM metrics
-Message-ID: <aNKsCm-SUaxtq2Cl@tiehlicka>
-References: <aNEG5W0qLPKKflQA@tiehlicka>
- <20250922173158997VPIUgFcs8UoazWb_JQIc9@zte.com.cn>
+        Tue, 23 Sep 2025 07:18:33 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: chris.brandt@renesas.com,
+	andi.shyti@kernel.org,
+	wsa@kernel.org
+Cc: claudiu.beznea@tuxon.dev,
+	linux-renesas-soc@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH] i2c: riic: Allow setting frequencies lower than 50KHz
+Date: Tue, 23 Sep 2025 17:18:26 +0300
+Message-ID: <20250923141826.3765925-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250922173158997VPIUgFcs8UoazWb_JQIc9@zte.com.cn>
 
-On Mon 22-09-25 17:31:58, xu.xin16@zte.com.cn wrote:
-> > > From: xu xin <xu.xin16@zte.com.cn>
-> > > 
-> > > v2->v3:
-> > > ------
-> > > Some fixes of compilation error due to missed inclusion of header or missed
-> > > function definition on some kernel config.
-> > > https://lore.kernel.org/all/202509142147.WQI0impC-lkp@intel.com/
-> > > https://lore.kernel.org/all/202509142046.QatEaTQV-lkp@intel.com/
-> > > 
-> > > v1->v2:
-> > > ------
-> > > According to Shakeel's suggestion, expose these metric item into memory.stat
-> > > instead of a new interface.
-> > > https://lore.kernel.org/all/ir2s6sqi6hrbz7ghmfngbif6fbgmswhqdljlntesurfl2xvmmv@yp3w2lqyipb5/
-> > > 
-> > > Background
-> > > ==========
-> > > 
-> > > With the enablement of container-level KSM (e.g., via prctl [1]), there is
-> > > a growing demand for container-level observability of KSM behavior. However,
-> > > current cgroup implementations lack support for exposing KSM-related metrics.
-> > 
-> > Could you be more specific why this is needed and what it will be used
-> > for?
-> 
-> Yes. Some Linux application developers or vendors are eager to deploy container-level
-> KSM feature in containers (docker, containerd or runc and so on). They have found
-> significant memory savings without needing to modify application source code as
-> before—for example, by adding prctl to enable KSM in the container’s startup
-> program. Processes within the container can inherit KSM attributes via fork,
-> allowing the entire container to have KSM enabled.  
-> 
-> However, in practice, not all containers benefit from KSM’s memory savings. Some
-> containers may have few identical pages but incur additional memory overhead due
-> to excessive ksm_rmap_items generation from KSM scanning. Therefore, we need to
-> provide a container-level KSM monitoring method, enabling users to adjust their
-> strategies based on actual KSM merging performance.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-So what is the strategy here? You watch the runtime behavior and then
-disable KSM based on previous run? I do not think this could be changed
-during the runtime, rigtht? So it would only work for the next run and
-that would rely that the workload is consistent in that over re-runs
-right?
+The MR1.CKS field is 3 bits wide and all the possible values (from 0 to
+7) are valid. This is true for all the SoCs currently integrated in
+upstream Linux. Take into account CKS=7 which allows setting bus
+frequencies lower than 50KHz. This may be useful at least for debugging.
 
-I am not really convinced TBH, but not as much as to NAK this. What
-concerns me a bit is that these per memcg stats are slightly different
-from global ones without a very good explanation (or maybe I have just
-not understood it properly).
+Fixes: d982d6651419 ("i2c: riic: remove clock and frequency restrictions")
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/i2c/busses/i2c-riic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Also the usecase sounds a bit shaky as it doesn't really give admins
-great control other than a hope that a new execution of the container
-will behave consistently with previous runs. I thought the whole concept
-of per process KSM is based on "we know our userspace benefits" rather
-than "let's try and see". 
-
-All in all I worry this will turn out not really used in the end and we
-will have yet another counters to maintain without real users.
-
+diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
+index 9c164a4b9bb9..b0ee9ac45a97 100644
+--- a/drivers/i2c/busses/i2c-riic.c
++++ b/drivers/i2c/busses/i2c-riic.c
+@@ -386,7 +386,7 @@ static int riic_init_hw(struct riic_dev *riic)
+ 	 */
+ 	total_ticks = DIV_ROUND_UP(rate, t->bus_freq_hz ?: 1);
+ 
+-	for (cks = 0; cks < 7; cks++) {
++	for (cks = 0; cks <= 7; cks++) {
+ 		/*
+ 		 * 60% low time must be less than BRL + 2 + 1
+ 		 * BRL max register value is 0x1F.
 -- 
-Michal Hocko
-SUSE Labs
+2.43.0
+
 
