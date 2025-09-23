@@ -1,92 +1,121 @@
-Return-Path: <linux-kernel+bounces-828876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD40B95B7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:44:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0DFB95B97
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 579827A37EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:42:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F58D163413
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D371C322549;
-	Tue, 23 Sep 2025 11:44:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13EA322A38;
+	Tue, 23 Sep 2025 11:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J+ZVJ6EZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198342F6184
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA65C322A39
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758627845; cv=none; b=fuoanB50AQ0T/eODaTdvpo2zm/PAudLvJ4mHzEiv+ivhbr0Q1jHB4E1kAx2PNutNlwfkiTjunBMiti5nWVbWH13w9e6XzkTgf7u0F5nv4wfydWmJYA13Eu1Up7e1epDD3jG+3vlXpEWLyjmxCHsv9BdShdY3HSghuz8vI9xaJIo=
+	t=1758627875; cv=none; b=SX0Kag25iEUsP7FlMmdqw4m9RXu3VfBbJa+n8taexivp6NqD1WYFUNOIi1PrxDdc4XyqW8sZNnlKsxFYCNJAT1uQ7Bwbbdk42aeTqIUqp2yXmpH6Abumc5XyEAR87A3SOW+jjAE0gdnuSB/a+mvQPf2Pe+6Lx8x7R0An7SNiWas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758627845; c=relaxed/simple;
-	bh=MjgUiv1hiBVmGYAWbKukWHwYzxXC3U5WUKEUQFe8mHw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Lb1VGSOsolRLamNV+Oo12eSfPNvQB3DRTkLm2iBTYO8qnWcYPF8wEh7ji9EXBogaFU9jTOeb4lWfUorD5SxkIraLJmEMjhnDdRVi3ecoF8Iio6ZBymYNMGNGpgpMjzQ+lLeDyy6zERNbDxfS8hU9WfBXIxvo0snHX7jU2/vRtGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4257e203f14so40774215ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:44:03 -0700 (PDT)
+	s=arc-20240116; t=1758627875; c=relaxed/simple;
+	bh=IrwBtr41Ejbc9u6SFXsWNUvjyVGHc3eeq1h2neY22mQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=akhoPs2CLy9t7gWikrttdivGjj3AoAMpvR65J30PPofDM35jFreMvUcEmnkk+x+HUKr2cd0hJH9bn2ClFhKFgDz5ihwspvL48BlK2DOgtu0L9NFI0SuRCD3JpTIOZS0kRH/mFDZ+WVrYaCoykqxTM5byPgR8u825sL4PTnxWdFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J+ZVJ6EZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758627872;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IrwBtr41Ejbc9u6SFXsWNUvjyVGHc3eeq1h2neY22mQ=;
+	b=J+ZVJ6EZk1KU1FPzRJDxh41L5HoprE7Yob0Cc40Ss3rdV54UvxwXyY7+QPE0jP1QBRBJ0y
+	cmPG2v+wy37ubWAdTSahePq7YdlynSem2lbYa1oux4qD62agSO3Okn7VA5RVJpn2gMJjoX
+	/QGY9QcvLGbz/yAy2qGFBejOJSxiYII=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-449-n5OZDC73PKySGT0_DHwVKA-1; Tue, 23 Sep 2025 07:44:31 -0400
+X-MC-Unique: n5OZDC73PKySGT0_DHwVKA-1
+X-Mimecast-MFC-AGG-ID: n5OZDC73PKySGT0_DHwVKA_1758627870
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-25bdf8126ceso106344425ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:44:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758627843; x=1759232643;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WQVvBj5uZq6uuQ1nu4UWRVsR/gDk+9EG2enfLEYGBRo=;
-        b=g88eZlVKOM6l3gh3cCBSGkZiGK4q9T41bKiQX7RQ8gEZjtDR67bmBBszKRowMrsIsk
-         9tkMlVUihGfhi3IQmhuCeqhKj1kTMKmC+VVWdEgEQYqOkl4IF1/BYHiv7ZTWKNCCoIr+
-         XwoulEsduASBQhtohwbyJZDJxBJJ3Df4mQ3/1FTAqUranN2lZAbfBei1dMZGks5peN9n
-         jGWKLTHwEZLjKt81Je3wHZh32sg7PAqzOD5HKuA/1vfh5oVxkhshZw/+vXuQOBECUj2c
-         6YyDet2aYTfNlqGHdhLdH67s4gPPt/mE/+ouhVzdP9cNfvoBAZWZtFxtK+sUePmgcSgo
-         KQ2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWHKjzwjGsnldH6NHDk0qU1NF50cSIpDs5Samm+LXeY6FiFV+P0dFIZ4WlWj42SoUsvEjgsGcBmtgeQrJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxajzYcbaccr4wgHuLh6HXPd4XpmKqz+x7k2kDtqrHdkwNFQMLH
-	aqPdbjIyKjgKPwK2wnsrNCoyQdYqjhBvAAE2lzFzZQMBXc1d4pj6zWc1evdysk9Xt5CPghJuRXH
-	SwwkE6WlPiUA/wloWmBFPrBYYIJ3d1HdgiKUAeEnhfQCu9jFoZ8xXb5+2EWA=
-X-Google-Smtp-Source: AGHT+IFvOJRcG5WosHB0HMKe1uFAe6PQYbdY3i4QCDRSAtKAc7Sh8RXeNxUbnOUCvmi0umdlPKZnG7LEi2yQoCd/aYVeiM8/3Lnq
+        d=1e100.net; s=20230601; t=1758627870; x=1759232670;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IrwBtr41Ejbc9u6SFXsWNUvjyVGHc3eeq1h2neY22mQ=;
+        b=mX/k5sEg8H+Ndx47wJDRYko/+BvdY7oRnDSA4E93kpCwjwOIC2VwsS1cC2oxgkrQAE
+         DUiuAGu/B5ackCdtw07ifszIM5L8sxSpf/q8JcNhqlt6OcNmHxzkt4QIY5xdul4Wsu1t
+         9RmXl18TEi/ZXJyaK9T1C+/Y/A40gMCmqJvMu8jExX5u3T8oeRVP/ZEPBP9q7JchQS+l
+         sQM9QLUfDpnpBTNwdZ4GDlv8U8s3r9E42U+1HMmMDDdJKaQWpmzxO/Qljdw8Yo521XNG
+         UrZO8GAKWGC4R5VmSHBu6ZPFH2Qe2mKql2PBVNrg2qTbK8iyxkzUnVB0FeH6D/U95nFE
+         kutg==
+X-Gm-Message-State: AOJu0YyKXajxBRxmTIacXgON3hjRtJFPMWQ4hZxw9KjrvM4bMzYCamHO
+	dcayGFSRoTCtJv/2wOHo9vqxb3fyTvbqXRjyapJ+lL2dLusGm4wh1EtSOZ09V0zAcAgjGbcbpZU
+	8SV6nWYw2SUPp3GvbP4oZl25S/cssgDlW+aQdIUYEKZrj+aZYiyVQnCE06Z3fizrBZItk2Zi0K8
+	L/fqB73q5EuRf/QDVDYN/Mbn4eBOsv0odExm9wgyka
+X-Gm-Gg: ASbGncuSyAuKRmcKg/1JJ54l0H/XIqCQq3VgSkiS7XVtyJulQrhAgOnGD5+Zzt5lnbb
+	HGM9Agf+IX6v1k2JiOIlDInIUVc/E/vnZV0RZs787/mxFTUhXERO5pT+QHzrdGtpX7OmwBte4gT
+	iLQGYkAM4m3f1w5EZjQK8=
+X-Received: by 2002:a17:902:db12:b0:269:b2ff:5c0e with SMTP id d9443c01a7336-27cc836bddfmr30428295ad.46.1758627870530;
+        Tue, 23 Sep 2025 04:44:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH1Cwvw/2PZwtxl8crg/RvgpXu5cRzWVpQOiAlxqRp7folePTOl9sm88fsN+QGl4BwCYWwIjf0V3FoMcSkSUdA=
+X-Received: by 2002:a17:902:db12:b0:269:b2ff:5c0e with SMTP id
+ d9443c01a7336-27cc836bddfmr30428055ad.46.1758627870158; Tue, 23 Sep 2025
+ 04:44:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c23:b0:424:7d35:bce8 with SMTP id
- e9e14a558f8ab-42581eae244mr39857525ab.25.1758627843063; Tue, 23 Sep 2025
- 04:44:03 -0700 (PDT)
-Date: Tue, 23 Sep 2025 04:44:03 -0700
-In-Reply-To: <67d30ef2.050a0220.14e108.003a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d28803.a70a0220.4f78.0006.GAE@google.com>
-Subject: Re: [syzbot] [usb?] [input?] WARNING in hanwang_open/usb_submit_urb
-From: syzbot <syzbot+9fe8f6caeb5661802ca2@syzkaller.appspotmail.com>
-To: dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, oneukum@suse.com, stern@rowland.harvard.edu, 
-	syzkaller-bugs@googlegroups.com
+References: <20250911004416.8663-2-bagasdotme@gmail.com> <aNJ9yJ7XT4Pnsl9E@archie.me>
+In-Reply-To: <aNJ9yJ7XT4Pnsl9E@archie.me>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Tue, 23 Sep 2025 13:44:18 +0200
+X-Gm-Features: AS18NWBFz-QDudfkmwzdBEDlcV6uLY5XJ2s6wSqGZELeCos4n-LXvCn8eGBJ-fE
+Message-ID: <CAHc6FU7aGJZZzN8zhtnwDgXX9gVMh_fbi+sUpJ7tg1MWMa8XVA@mail.gmail.com>
+Subject: Re: [PATCH v4] Documentation: gfs2: Consolidate GFS2 docs into its
+ own subdirectory
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Documentation <linux-doc@vger.kernel.org>, Linux GFS2 <gfs2@lists.linux.dev>, 
+	Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Jan Kara <jack@suse.cz>, 
+	Christian Brauner <brauner@kernel.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Jeff Layton <jlayton@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, 
+	James Morse <james.morse@arm.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Chen Linxuan <chenlinxuan@uniontech.com>, Matthew Wilcox <willy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot suspects this issue was fixed by commit:
+On Tue, Sep 23, 2025 at 1:00=E2=80=AFPM Bagas Sanjaya <bagasdotme@gmail.com=
+> wrote:
+> On Thu, Sep 11, 2025 at 07:44:17AM +0700, Bagas Sanjaya wrote:
+> > Documentation for GFS2 is scattered in three docs that are in
+> > Documentation/filesystems/ directory. As these docs are standing out as
+> > a group, move them into separate gfs2/ subdirectory.
+>
+> Hi Andreas,
+>
+> It looks like this patch isn't in 6.18 PR [1]. Should I resend it after
+> merge window (and for 6.19 instead)?
 
-commit 503bbde34cc3dd2acd231f277ba70c3f9ed22e59
-Author: Oliver Neukum <oneukum@suse.com>
-Date:   Thu Jun 12 12:20:25 2025 +0000
+Ah, I was already wondering what had happened to that patch.
 
-    usb: core: usb_submit_urb: downgrade type check
+Can we just put this into the next (6.20?) merge window?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1066627c580000
-start commit:   038d61fd6422 Linux 6.16
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=515ec0b49771bcd1
-dashboard link: https://syzkaller.appspot.com/bug?extid=9fe8f6caeb5661802ca2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109ab1a2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136cf2f0580000
+Thanks,
+Andreas
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: usb: core: usb_submit_urb: downgrade type check
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
