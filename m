@@ -1,190 +1,153 @@
-Return-Path: <linux-kernel+bounces-828016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD346B93BDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:43:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BDEAB93BE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96672447927
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:43:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42F73B45E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A521A23A9;
-	Tue, 23 Sep 2025 00:43:20 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A089B1922F5;
+	Tue, 23 Sep 2025 00:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="ggG6wci5"
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3D133987;
-	Tue, 23 Sep 2025 00:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAADBB640;
+	Tue, 23 Sep 2025 00:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758588200; cv=none; b=qVe05l4eHHw8lxZa0K0N3aQFQbDTleHcpbgPe2xL4DoVumfJYOBnGW5Kv2lC+UEBtDEm9t/yyDSqkShv8bwNoBrHtY3ENpHaDKF7bzzgg8AASo/wMqM2U6u4S7l1QsDCK8SwLObPz0BHy++45nBXRcL8PnDlWctdkk4JnIyhpmk=
+	t=1758588384; cv=none; b=UabjOhGTDOVOb2w2cBqZeaVycoW1OI+8DcHfVFV/5z/1gmiQcYV0aVgwDg9TlbiTxfiSx+IKFYjR8FazmmpYpHocRkr8wOwxpOfkcoqbXsFxOgYT8vnaxH1hdGEoymTUFTT0P1WAE8xSelsANED6bQryzDq2RgUd9ykSMzDDTEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758588200; c=relaxed/simple;
-	bh=HE5mfb0LAC8q603gD5bfhbi27Q1T9M8MUnpbGnPCGu4=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=oXMuLj0uIVMDrFoIjXavrYpPPUu2BYMIIgdT4qRuJNsI3fWzoY3yk4wAWvjXFun1bZSTfMEMhwEo2TFKrAyJdpInrdnSt1mdOW+fwcmySf7sIxsVJXJ1t9ogAlLQP3R2S+Ep1LUjGYZnAeH16r3UXLQQO+5VFKzt8te3dCgD22U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cW1Rb0VBYzYQtv3;
-	Tue, 23 Sep 2025 08:43:07 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 315571A155D;
-	Tue, 23 Sep 2025 08:43:12 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDn+GAe7dFoNdsCAg--.10273S3;
-	Tue, 23 Sep 2025 08:43:12 +0800 (CST)
-Subject: Re: [PATCH] md raid: fix hang when stopping arrays with metadata
- through dm-raid
-To: Heinz Mauelshagen <heinzm@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
-References: <cover.1758201368.git.heinzm@redhat.com>
- <b58dddf537d5aa7519670a4df5838e7056a37c2a.1758201368.git.heinzm@redhat.com>
- <7df6e7be-0fd1-0277-038e-3cc4efe5bf9b@huaweicloud.com>
- <CAM23Vxp0wKNvo2+SvfEny+-BubGxebyErCiKR31G8HyA=9DH6g@mail.gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <414ae6e0-604a-f4d3-d7ce-260bd8564927@huaweicloud.com>
-Date: Tue, 23 Sep 2025 08:43:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1758588384; c=relaxed/simple;
+	bh=SSAG8ZqLLjqmA2/LB8zgFrt5gpqX/Ne2jmmb1/YY5L0=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VyDv+e2YlhSiU8F5ykHyTvXFV05jV/2P+Ad2sDDYMNUh7OLnuNRwj59yJmxk1qsdyNEUjKFuNFEWaIvjR+ZZJFGE2tsZ08/278affGWaCmvywwNAOOOSR5Mjwul1Sg7d240rIWKs43KmYhf+K8THaxD7MSefQC+x9x+UYSTeM54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=ggG6wci5; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1758588284;
+	bh=WsrPFKT04JwF/+NN0X0jvo2IhQv1F3c1l7SfYl9HJAQ=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=ggG6wci5flHFgvVvYbgZkYiHC2XKJYl9Wrf3J0/DbKDe3Toa/aV+2E5KxyrYf0zuO
+	 VrxoNl7jHQh363U1s01vvZ7m13hOIcnRTLnnY8vAMuD0ObgkISN6f59m3jgGYLs8+5
+	 g3F9jRC/4OFNrD2oDY3s+TeJn3Y/dFz1XQ65xMjU=
+X-QQ-mid: esmtpsz16t1758588276tf8687cc5
+X-QQ-Originating-IP: Fi93deYHvDT9F2DLXXCFuKniautpASWuu4Wvavpt5nA=
+Received: from = ( [61.145.255.150])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 23 Sep 2025 08:44:34 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 3523208988026414668
+EX-QQ-RecipientCnt: 9
+Date: Tue, 23 Sep 2025 08:44:34 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH 2/6] i2c: spacemit: remove stop function to avoid bus
+ error
+Message-ID: <B8E4D8DD9B16E81B+aNHtcoS_a4sGChZ7@LT-Guozexi>
+References: <20250827-k1-i2c-atomic-v1-0-e59bea02d680@linux.spacemit.com>
+ <20250827-k1-i2c-atomic-v1-2-e59bea02d680@linux.spacemit.com>
+ <aNG33WyGENMWI3Wl@aurel32.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAM23Vxp0wKNvo2+SvfEny+-BubGxebyErCiKR31G8HyA=9DH6g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDn+GAe7dFoNdsCAg--.10273S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxXFykZrWrArWxGFWxtr4DXFb_yoW5Zw1Up3
-	97K3WYkr4DXry5KwnFvF4vgFyrtFn2krZaqr17Cw1fCw1qqFn3GFWYgF4ru34qv34kAw4I
-	vw45trW3WF9YvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUbSfO7UUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNG33WyGENMWI3Wl@aurel32.net>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: MBoHLcWngaPNeg4qUvPHAc3DnZnF12hMCOQ96OqtUywXlIhZ4A+K6hbB
+	HhawCKZLDeDmDp9DFU/dAuAbvyKHCgPLIK0AnIwcg2bDhvngq8h24czjco74QyCh+NF/ISw
+	yGlgOuw0Nd+Fc2dRHJJOJqHm7Jik0D4hKE9PxKs7xuNbQAq4q4TI0rGvDCSohECewUQOL2a
+	+t1vDZ6+X4BTXvUPqw9iAcDe5howEOVMtR1JAJgisKIv72QNK3ku59TljUMRlzc+LciW+rG
+	TYIyzm1703DPwwe88xkCQUgU2Yb5crc89wR56jlKLW79WifJqHal48MZeCD32IMHewdTvbj
+	VzE98VFlsl7KiE2GJ7Zeo3mqYiJdgN1bk0xsGl8Zwn+wOIg1kGHi+TYEFO2O+syuvyQ0owE
+	l1WRCp2IYwvI9wOYpD8PIWzDYuL6zjt7u7XafHIxDjZp2BZux8iQ1eDbjcyHNBi85Esm3FV
+	/0gz3pnk3QU0s1RZ2z+Xb4EYmr84qszTrHPk7rEPZJYVYq0kCr1gWHqOQjeDoLjorQOgvOs
+	kS1PM2wojBSISS1WPPOJ/6HE246HaDkYuJJXiI18EZbQly0SLta65B80kWAk85/ydclhPjr
+	flDDK3IH+22tq4ISDV2MmvdF6qGIAUgiH394btU0TSIuW0BLO6pzrn6hg2Jr1mWMc+L1aAi
+	pNGrw54DKl8lvHyTPlXG9dQ0+CQorUwhmAm21qBTMx+jPhbN9C2WTg/n5H44A4NsVkUqzUb
+	I2sWHCuP6xYiiMJPdCOGg4KftMaMVM+6seMAIsz/59b+q2p50t0LauGiIeO9zK0z9dyb/3f
+	61uOmKoorKAB2j+IeCgKWuEP57+F3K6SgYBXCmmS+wis9QihXqSjZYvJNhwlY+su6mjdAfp
+	qlK6bjaf9I/plipNXppXalyF95Z9eFKzDEGnvPec4ZbDCpqJ/tg/ZHXtuRUIytzfHXpeH3A
+	+lT0iM33eVuhvZ6BIYGsOntAvl4dUt19Rv7dlyZaChMQJwraU3naaO1CFT+bCO87JWcUVsV
+	0L2ZR6b56t6yCTINum2IlAM//upgQUydVqZCvBbTMYVk+iZvoiysteGurf5DI=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-Hi,
-
-在 2025/09/22 21:32, Heinz Mauelshagen 写道:
-> Hi Kuai,
+On Mon, Sep 22, 2025 at 10:55:57PM +0200, Aurelien Jarno wrote:
+> On 2025-08-27 15:39, Troy Mitchell wrote:
+> > Previously, STOP handling was split into two separate steps:
+> >   1) clear TB/STOP/START/ACK bits
+> >   2) issue STOP by calling spacemit_i2c_stop()
+> > 
+> > This left a small window where the control register was updated
+> > twice, which can confuse the controller. While this race has not
+> > been observed with interrupt-driven transfers, it reliably causes
+> > bus errors in PIO mode.
+> > 
+> > Inline the STOP sequence into the IRQ handler and ensure that
+> > control register bits are updated atomically in a single writel().
+> > 
+> > Fixes: 5ea558473fa31 ("i2c: spacemit: add support for SpacemiT K1 SoC")
+> > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> > ---
+> >  drivers/i2c/busses/i2c-k1.c | 28 +++++++++-------------------
+> >  1 file changed, 9 insertions(+), 19 deletions(-)
+> > 
+> > diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
+> > index ee08811f4087c8e709d25dd314854ed643cc5a47..d342752030d077953adf84a2886211de96e843c4 100644
+> > --- a/drivers/i2c/busses/i2c-k1.c
+> > +++ b/drivers/i2c/busses/i2c-k1.c
+> > @@ -429,14 +415,18 @@ static irqreturn_t spacemit_i2c_irq_handler(int irq, void *devid)
+> >  	}
+> >  
+> >  	if (i2c->state != SPACEMIT_STATE_IDLE) {
+> > +		val |= SPACEMIT_CR_TB;
+> > +		if (i2c->is_pio)
+> > +			val |= SPACEMIT_CR_ALDIE;
+> > +
 > 
-> you're right, it should be flushed in the dm-raid's raid_postsuspend()
-> function by calling md_stop_writes() when upstack I/O is quiesced already.
-> So we can't use mddev_is_dm() in __md_stop_writes() as it prevents flushing
-> the bitmap with the current patch.
+> This needs to be moved to the last patch introducing PIO support.
+Nice catch!
+I'll fix it and send v2 today.
 > 
-> md_is_rdwr() looks is the appropriate condition, i.e. when true flush, when
-> false, don't.
+> >  		if (spacemit_i2c_is_last_msg(i2c)) {
+> >  			/* trigger next byte with stop */
+> > -			spacemit_i2c_stop(i2c);
+> > -		} else {
+> > -			/* trigger next byte */
+> > -			val |= SPACEMIT_CR_ALDIE | SPACEMIT_CR_TB;
+> > -			writel(val, i2c->base + SPACEMIT_ICR);
+> > +			val |= SPACEMIT_CR_STOP;
+> > +
+> > +			if (i2c->read)
+> > +				val |= SPACEMIT_CR_ACKNAK;
+> >  		}
+> > +		writel(val, i2c->base + SPACEMIT_ICR);
+> >  	}
+> >  
+> >  err_out:
 > 
-> If md_is_rdwr() is ok for that logic, I'll create another patch leaving it
-> true in postsuspend and false in the destructor call to md_stop() from
-> dm-raid.
+> Otherwise sounds good.
 > 
-> Thoughts?
+> -- 
+> Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+> aurelien@aurel32.net                     http://aurel32.net
 > 
-Yeah, this sounds correct.
-
-Thanks,
-Kuai
-
-> - lvmguy
-> 
-> 
-> On Mon, Sep 22, 2025 at 3:09 AM Yu Kuai <yukuai1@huaweicloud.com> wrote:
-> 
->> Hi,
->>
->> 在 2025/09/18 21:42, Heinz Mauelshagen 写道:
->>> When using device-mapper's dm-raid target, stopping a RAID array can
->> cause the
->>> system to hang under specific conditions.
->>>
->>> This occurs when:
->>>
->>> -  A dm-raid managed device tree is suspended from top to bottom
->>>      (the top-level RAID device is suspended first, followed by its
->>>       underlying metadata and data devices)
->>>
->>> -  The top-level RAID device is then removed
->>>
->>> The hang happens because removing the top-level device triggers
->> md_stop() from the
->>> dm-raid destructor.  This function attempts to flush the write-intent
->> bitmap, which
->>> requires writing bitmap superblocks to the metadata sub-devices.
->> However, since
->>> these metadata devices are already suspended, the write operations
->> cannot complete,
->>> causing the system to hang.
->>>
->>> Fix:
->>>
->>> -  Prevent bitmap flushing when md_stop() is called from dm-raid contexts
->>>      and avoid a quiescing/unquescing cycle which could also cause I/O
->>
->> If bitmap flush is skipped, then bitmap can still be dirty after dm-raid
->> is stopped, and the next time when dm-raid is reloaded, looks like there
->> will be unnecessary data resync because there are dirty bits?
->>
->> Thanks,
->> Kuai
->>
->>>
->>> -  Avoid any I/O operations that might occur during the
->> quiesce/unquiesce process in md_stop()
->>>
->>> This ensures that RAID array teardown can complete successfully even
->> when the
->>> underlying devices are in a suspended state.
->>>
->>> Signed-off-by: Heinz Mauelshagen <heinzm@redhat.com>
->>> ---
->>>    drivers/md/md.c | 12 +++++++-----
->>>    1 file changed, 7 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/md/md.c b/drivers/md/md.c
->>> index 4e033c26fdd4..53e15bdd9ab2 100644
->>> --- a/drivers/md/md.c
->>> +++ b/drivers/md/md.c
->>> @@ -6541,12 +6541,14 @@ static void __md_stop_writes(struct mddev *mddev)
->>>    {
->>>        timer_delete_sync(&mddev->safemode_timer);
->>>
->>> -     if (mddev->pers && mddev->pers->quiesce) {
->>> -             mddev->pers->quiesce(mddev, 1);
->>> -             mddev->pers->quiesce(mddev, 0);
->>> -     }
->>> +     if (!mddev_is_dm(mddev)) {
->>> +             if (mddev->pers && mddev->pers->quiesce) {
->>> +                     mddev->pers->quiesce(mddev, 1);
->>> +                     mddev->pers->quiesce(mddev, 0);
->>> +             }
->>>
->>> -     mddev->bitmap_ops->flush(mddev);
->>> +             mddev->bitmap_ops->flush(mddev);
->>> +     }
->>>
->>>        if (md_is_rdwr(mddev) &&
->>>            ((!mddev->in_sync && !mddev_is_clustered(mddev)) ||
->>>
->>
->>
-> 
-
 
