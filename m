@@ -1,167 +1,184 @@
-Return-Path: <linux-kernel+bounces-828232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA59B94372
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:24:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56EE9B94386
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690683BBF48
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:24:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C73A12E2613
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA132DAFCA;
-	Tue, 23 Sep 2025 04:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFB52765D1;
+	Tue, 23 Sep 2025 04:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="36FS5Acn"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRyJteT+"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F992D97B6
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF08275108
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758601186; cv=none; b=J+FDJRKEoS/x1aT9DKG53bm+kyRigee2iCMgcBtP8iTm1T0EymN/X184j0pDNeDf70uJ1CBaQBPrQQBEqWLTyBS9bT3MZVLfmhVbvzZlNyTKJQjhXxxdlFf9QtLmpwe23DDrAMkXj/ktE9gE0HcxNEJzslLVImhS9JNKLYp2dxo=
+	t=1758601324; cv=none; b=T0ywdt+xd+RKuNVVCPSZwNbJrpVqzKglkZj5DC5XdlKRxanEgLaLUS1UuAR6vMR7CK/SMUeShmR/mCrxelrW48eGEeL9eHHGxk60+4xsBwSkW2/nXhiOr7EUcSDj7hPgXEnXOJAKpax9TOPk6Q8/pqrQT0W1iX2kMcsvHB/FAPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758601186; c=relaxed/simple;
-	bh=6bAtb38zV9J/DL1V7CMqXHrxyyDh/espMrQBxm4h/pM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=dPRzvOvZ9GNWnxhAZp6Pr1LzT/KkAUa2mJNhK7nu0hOaHG5qmQe/sSNabTpErWORNbJFvVztnC43stim66YwJWuiVDU6ayvjHfLXS97qSNM6QUZJ5TWKZBd3ZBeAWJvcOGJEkZ7YxFl6TOTWmoYw2te5+r6IfCyoQ5JK3XC/V5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=36FS5Acn; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32edda89a37so4989261a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:19:44 -0700 (PDT)
+	s=arc-20240116; t=1758601324; c=relaxed/simple;
+	bh=+QlMXBX3fIO2WsSlIyfqccXfJ3O6cuDiaAdLlHzXzPY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qz23dlBbKzLLu9uY4wZ0zTS8lXcLEtub7OSDOo0Hic/4MTTnRSReme+6HtbYPspHNuyCy90DLosvEqj652ekdfTsqQOi8QIvoKoH6gH+cMpK5Z51N+E9AVZk4irGM1e3NuVYq2wUdO+S490O8l0SSEX3xhJSKR4VpSNYsYWZA7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dRyJteT+; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so4643411b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:22:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758601183; x=1759205983; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GD6dJGQu7Fkw7LxMA7kNIP84YIqKTjc1I229dIn5uGU=;
-        b=36FS5Acnpak+ApAf2uOEbtAQaaRNjcsNdJ3vCBeYUhL9BRofJf4kNgt8NpMpA/FTW4
-         bt1Pvv/Ffvl+vZny1eHhwCBQM6K9kTsXqyEFV2pe/8J3NGtXJFGH761+s84At2OPGwIr
-         YbXK10UZS2HiLB4KIQJvj8Gaene/A9FmoD/M3hGmOoDiUiSqlbE1NmyXba1NvzlQtm3v
-         0wp77JOhRqkPx4ARhDT7cg7TXOmBkQ5+VmVv4xdr4+UBY4At1ILhdqoKJmI1g9u9XTZw
-         4DCjTUAh/YQQG4oxYqtQofSuCvLhjiklCF86FFDh7Rl8tLRli/3KCB3sR3fTQClNk2cz
-         kQVQ==
+        d=gmail.com; s=20230601; t=1758601322; x=1759206122; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fgtSPBN4qoSsBifl7HF2PLKbfZ3YMsx958plJG8wRIM=;
+        b=dRyJteT+f6HjQ/KobfU6hmjRCXKruCQn405O+rf3M5sDOGWM+q2Pudeg/yzeTvWArw
+         SMS/4n7T+vXppHi+3dwMhjQUxCpDjcgygRjQU8FbcPAaWc/SKCiSUCMleRvvSy6fc/Zy
+         uYSF2RNOU0dVVT65eeuCa0Uo4CAQfyVHW49ktgZgnGfLr6uCU2B5CP2o4ahlhkE9bkDp
+         RLxf37sonEHc1jx02vpgxmgbVPkSy9v+eWr4U3xZDDj2sgoR1TtqxjFISaCcAaid1vwy
+         xdr/7SsYkMn9BL2UT4KDXXYLMv8Zb98uBJMtHNNHscd6EMhPJ5akfndDNKEeMFnCdOcG
+         ISuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758601183; x=1759205983;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GD6dJGQu7Fkw7LxMA7kNIP84YIqKTjc1I229dIn5uGU=;
-        b=BdI1yYFEPQ5K8ODvAHFlGVdWSJF3OFecMxYZZymfw7sxEQWN2raoYqJamF1zopHWsC
-         CRfhl054c9NdVs2v1oLscWyM1rHTvnRyhqN4kVrs98YiXry8mpGuPfwy0S3u/tNhWJu+
-         N4zvQBL9Obmh72RUV13EdXUhy6pzkU1wN0m9u8zRtoYeOz/w0+Ghuja3WsL1hObGP+14
-         5/vsinmPB6xu4svaJ4e2QhO1twj1qm67rmw27MYdo3MN33nWDdQqvqKSPySJcIXJiQwd
-         hYoe+YOstL8y7z48NXl0L2y5FMzY/zlzWIy+JxhF9uE/ntiKsyOZV94cPKsLHpZNXg8T
-         F4bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfwan1MYuc/vApYnDO/NBLNMhMUUPjuCo+cqS9fZY/LvcNVQkSRjbGzHSesGqauj+h4tP/Q1hUANe3Wco=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAA1GCC3u/XEbSFw2SKnYa2Tv5eh+Qa0RffGYH4vi4BcRgywiz
-	ojyESHTj23KCLLpErwhQxlcvC7jV6mvYoff/5Rye1os1FbyYkmejq82JjpHt710+m/4h4icvH73
-	oNQrCXKr3sA==
-X-Google-Smtp-Source: AGHT+IHEz625DgPgfCvdS8u12wp6hVm4KSQDVZQWJmPvAmlYj3P+j8YaXSnCyG6O61FyddtdSZfdsEtSQ9iC
-X-Received: from pjbmf6.prod.google.com ([2002:a17:90b:1846:b0:32e:bd90:3e11])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:ec8b:b0:32b:656f:5a5d
- with SMTP id 98e67ed59e1d1-332a95e4d90mr1628708a91.29.1758601183502; Mon, 22
- Sep 2025 21:19:43 -0700 (PDT)
-Date: Mon, 22 Sep 2025 21:18:44 -0700
-In-Reply-To: <20250923041844.400164-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1758601322; x=1759206122;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fgtSPBN4qoSsBifl7HF2PLKbfZ3YMsx958plJG8wRIM=;
+        b=oGPOvQNfPQjJR4Zi+rIbKUg6eGLWwIUCyqibE9c/83vhw7ueQtFnODmrYklNjkQVqi
+         7e7nUEpV6IKqOFakqjCjE3P8IKIUz94/ae247227I+CxCijh9l4QNspf2mHl+z1T0Nko
+         /ZfLVYrk8IiuTGju4M9eD5Uq0dqZQre40nU3SOsoj932tGssoN9HTj0rTDWYo7oEHq1D
+         Ff3BvbAutsqQSRrw+rM1QfCdryhZbH1W2O3skkalJp8emHlD1CIYiFP7hY0xeNB9U8g6
+         l6DzYpwGDdXjgxAREepHolPoHGxBfSjmBKyNszMhD3K2Y+CDIZY7iB1DIBOJ3riOyptG
+         9aVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGFFicGlzQgmf2GP89OyBPet8S9j+2Xvr31iqVMFL8QWfrEOV4YFlVK6WLWfGBq/fGy3u4hNGv5/pgNF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBsyL6Lc3orsasbKyWQLfEhH0GpriqPbvDwXXCp5LhVRhvWlGJ
+	y+oNyfuIyM/lIVrIMgBQMTWq5k+elXfrp3t6mQlj958vqa8at+24mPbE
+X-Gm-Gg: ASbGncuv9d+Qo8FErafztIt6J6D5T2E1b1WXAc5m4bThswnM3BiNJZlBOpZCbVFv2oT
+	hvFrMuRDwBB3Qux4GVduVt+cN93G22UuhSln7cDEjffaSu/eRu8Hj54teeN0LknsP101a04if8j
+	cC20r/qsDZX2FEjtw0gT4SnuCAZHSNOC8zOqhkCwHhvsgQaog434IyQBO2ikegyhaqOeSNJEDir
+	LrWe/iMnNNF0SQ1U8JQxGhPXu5HQH0SmMmjho3fQ7ltukem4sy40/lbtnxOaYgZYsWA1WI3ZDto
+	lrIINSm/k8WTPf3HRqECha/p3IMC+AGjWN47LPeUNAfZxkXWwGYGiQyS+HiBvaxoP7p/0Q2hpaQ
+	wRca4cylB7rn/H6RkFQXSf1ZJ/SDLT0uglA==
+X-Google-Smtp-Source: AGHT+IEI6I2Ch27KIHx7rue7mtAXNkIvBUrcrNNPpGcyDYBvbhGNyE2n2O4SQBbgRfem9JRoLD9FtA==
+X-Received: by 2002:a05:6a00:1706:b0:77e:76df:2705 with SMTP id d2e1a72fcca58-77f54866800mr1124514b3a.7.1758601322099;
+        Mon, 22 Sep 2025 21:22:02 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77d8c3adfd4sm13316513b3a.82.2025.09.22.21.22.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 21:22:01 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: brauner@kernel.org,
+	djwong@kernel.org,
+	hch@infradead.org,
+	kernel@pankajraghav.com
+Cc: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH v5 0/4] allow partial folio write with iomap_folio_state
+Date: Tue, 23 Sep 2025 12:21:54 +0800
+Message-ID: <20250923042158.1196568-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250923041844.400164-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
-Message-ID: <20250923041844.400164-26-irogers@google.com>
-Subject: [PATCH v5 25/25] perf test: Switch cycles event to cpu-cycles
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, Thomas Falcon <thomas.falcon@intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
-	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
-	Vince Weaver <vincent.weaver@maine.edu>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Without a PMU perf matches an event against any PMU with the
-event. Unfortunately some PMU drivers advertise a "cycles" event which
-is typically just a core event. As tests assume a core event, switch
-to use "cpu-cycles" that avoids the overloaded "cycles" event on
-troublesome PMUs and is so far not overloaded. Note, on x86 this
-changes a legacy event into a sysfs one.
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/code-reading.c     | 2 +-
- tools/perf/tests/keep-tracking.c    | 2 +-
- tools/perf/tests/perf-time-to-tsc.c | 4 ++--
- tools/perf/tests/switch-tracking.c  | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+Currently, if a partial write occurs in a buffer write, the entire write will
+be discarded. While this is an uncommon case, it's still a bit wasteful and
+we can do better.
 
-diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
-index 9c2091310191..4574a7e528ec 100644
---- a/tools/perf/tests/code-reading.c
-+++ b/tools/perf/tests/code-reading.c
-@@ -649,7 +649,7 @@ static int do_test_code_reading(bool try_kcore)
- 	struct map *map;
- 	bool have_vmlinux, have_kcore;
- 	struct dso *dso;
--	const char *events[] = { "cycles", "cycles:u", "cpu-clock", "cpu-clock:u", NULL };
-+	const char *events[] = { "cpu-cycles", "cpu-cycles:u", "cpu-clock", "cpu-clock:u", NULL };
- 	int evidx = 0;
- 	struct perf_env host_env;
- 
-diff --git a/tools/perf/tests/keep-tracking.c b/tools/perf/tests/keep-tracking.c
-index eafb49eb0b56..729cc9cc1cb7 100644
---- a/tools/perf/tests/keep-tracking.c
-+++ b/tools/perf/tests/keep-tracking.c
-@@ -90,7 +90,7 @@ static int test__keep_tracking(struct test_suite *test __maybe_unused, int subte
- 	perf_evlist__set_maps(&evlist->core, cpus, threads);
- 
- 	CHECK__(parse_event(evlist, "dummy:u"));
--	CHECK__(parse_event(evlist, "cycles:u"));
-+	CHECK__(parse_event(evlist, "cpu-cycles:u"));
- 
- 	evlist__config(evlist, &opts, NULL);
- 
-diff --git a/tools/perf/tests/perf-time-to-tsc.c b/tools/perf/tests/perf-time-to-tsc.c
-index d4437410c99f..cca41bd37ae3 100644
---- a/tools/perf/tests/perf-time-to-tsc.c
-+++ b/tools/perf/tests/perf-time-to-tsc.c
-@@ -101,11 +101,11 @@ static int test__perf_time_to_tsc(struct test_suite *test __maybe_unused, int su
- 
- 	perf_evlist__set_maps(&evlist->core, cpus, threads);
- 
--	CHECK__(parse_event(evlist, "cycles:u"));
-+	CHECK__(parse_event(evlist, "cpu-cycles:u"));
- 
- 	evlist__config(evlist, &opts, NULL);
- 
--	/* For hybrid "cycles:u", it creates two events */
-+	/* For hybrid "cpu-cycles:u", it creates two events */
- 	evlist__for_each_entry(evlist, evsel) {
- 		evsel->core.attr.comm = 1;
- 		evsel->core.attr.disabled = 1;
-diff --git a/tools/perf/tests/switch-tracking.c b/tools/perf/tests/switch-tracking.c
-index 5be294014d3b..15791fcb76b2 100644
---- a/tools/perf/tests/switch-tracking.c
-+++ b/tools/perf/tests/switch-tracking.c
-@@ -332,7 +332,7 @@ static int process_events(struct evlist *evlist,
- static int test__switch_tracking(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
- {
- 	const char *sched_switch = "sched:sched_switch";
--	const char *cycles = "cycles:u";
-+	const char *cycles = "cpu-cycles:u";
- 	struct switch_tracking switch_tracking = { .tids = NULL, };
- 	struct record_opts opts = {
- 		.mmap_pages	     = UINT_MAX,
+With iomap_folio_state, we can identify uptodate states at the block
+level, and a read_folio reading can correctly handle partially
+uptodate folios.
+
+Therefore, when a partial write occurs, accept the block-aligned
+partial write instead of rejecting the entire write.
+
+For example, suppose a folio is 2MB, blocksize is 4kB, and the copied
+bytes are 2MB-3kB.
+
+Without this patchset, we'd need to recopy from the beginning of the
+folio in the next iteration, which means 2MB-3kB of bytes is copy
+duplicately.
+
+ |<-------------------- 2MB -------------------->|
+ +-------+-------+-------+-------+-------+-------+
+ | block |  ...  | block | block |  ...  | block | folio
+ +-------+-------+-------+-------+-------+-------+
+ |<-4kB->|
+
+ |<--------------- copied 2MB-3kB --------->|       first time copied
+ |<-------- 1MB -------->|                          next time we need copy (chunk /= 2)
+                         |<-------- 1MB -------->|  next next time we need copy.
+
+ |<------ 2MB-3kB bytes duplicate copy ---->|
+
+With this patchset, we can accept 2MB-4kB of bytes, which is block-aligned.
+This means we only need to process the remaining 4kB in the next iteration,
+which means there's only 1kB we need to copy duplicately.
+
+ |<-------------------- 2MB -------------------->|
+ +-------+-------+-------+-------+-------+-------+
+ | block |  ...  | block | block |  ...  | block | folio
+ +-------+-------+-------+-------+-------+-------+
+ |<-4kB->|
+
+ |<--------------- copied 2MB-3kB --------->|       first time copied
+                                         |<-4kB->|  next time we need copy
+
+                                         |<>|
+                              only 1kB bytes duplicate copy
+
+Although partial writes are inherently a relatively unusual situation and do
+not account for a large proportion of performance testing, the optimization
+here still makes sense in large-scale data centers.
+
+This patchset has been tested by xfstests' generic and xfs group, and
+there's no new failed cases compared to the lastest upstream version kernel.
+
+Changelog:
+
+V5: patch[1]: use WARN_ON_ONCE() instead of WARN_ON(), suggested by Pankaj Raghav (Samsung)
+
+V4: https://lore.kernel.org/linux-fsdevel/eyyshgzsxupyen6ms3izkh45ydh3ekxycpk5p4dbets6mpyhch@q4db2ayr4g3r/
+    patch[4]: better documentation in code, and add motivation to the cover letter
+
+V3: https://lore.kernel.org/linux-xfs/aMPIDGq7pVuURg1t@infradead.org/
+    patch[1]: use WARN_ON() instead of BUG_ON()
+    patch[2]: make commit message clear
+    patch[3]: -
+    patch[4]: make commit message clear
+
+V2: https://lore.kernel.org/linux-fsdevel/20250810101554.257060-1-alexjlzheng@tencent.com/ 
+    use & instead of % for 64 bit variable on m68k/xtensa, try to make them happy:
+       m68k-linux-ld: fs/iomap/buffered-io.o: in function `iomap_adjust_read_range':
+    >> buffered-io.c:(.text+0xa8a): undefined reference to `__moddi3'
+    >> m68k-linux-ld: buffered-io.c:(.text+0xaa8): undefined reference to `__moddi3'
+
+V1: https://lore.kernel.org/linux-fsdevel/20250810044806.3433783-1-alexjlzheng@tencent.com/
+
+Jinliang Zheng (4):
+  iomap: make sure iomap_adjust_read_range() are aligned with block_size
+  iomap: move iter revert case out of the unwritten branch
+  iomap: make iomap_write_end() return the number of written length again
+  iomap: don't abandon the whole copy when we have iomap_folio_state
+
+ fs/iomap/buffered-io.c | 80 +++++++++++++++++++++++++++++-------------
+ 1 file changed, 55 insertions(+), 25 deletions(-)
+
 -- 
-2.51.0.534.gc79095c0ca-goog
+2.49.0
 
 
