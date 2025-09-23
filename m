@@ -1,156 +1,120 @@
-Return-Path: <linux-kernel+bounces-829470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3FFB97244
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:59:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86422B9725D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B56462E72C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:59:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80DF01895433
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5BA2D0C79;
-	Tue, 23 Sep 2025 17:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A102DF715;
+	Tue, 23 Sep 2025 18:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="v0DGtYaT"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="in0c0VEy"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965541FDD
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D013F2DF12A
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758650339; cv=none; b=qdNTietJcJ8P24aSdUASqRsroBEcQEuDyFb4Y8dJZg2deYDMqfAx0Fjryl4tjF4fXZenAewgRkmHm/gtpNnhFGUrypGTeM6aOe0dyxA3EIjbb1kLhodLGIOcQNgxQTU3uko6vrGuOl9CXgiz/R08Vm1dpK8W3PmEGvcutVBLUWs=
+	t=1758650406; cv=none; b=KlG1Xezc9naDDgosETS5kjC/WEvbTziiH7BBbE6Q9fk2ioPjSJ6av/Ux0g2sm2gAUy37FC9mYgOIC3BEPROdJk9BhnYGfRZMav0wo/qecGKR4S04tfDeyAqmjxlbSBO/B8WnDTztEJ22CC7uU/7aKGoCNkg0p1Dbc0ySPohy+Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758650339; c=relaxed/simple;
-	bh=j2d13GXcz450pDM3MQEavPsSldI+HSmDIxze10yD/q8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t8kH0ndpa+BJUwrHLlE35DlMwSkqLX6wiMHACh4RCZVp/3k4tEdZdwZp/0VbPmKlcP5vUsMjyR/oSysBDbsG8ZKv/fFaFOUYgHcvTVqugl3XTcecDqDCfzlNHMtDlQ4dxWaQ78hbMdVO89OQdCTgOrELQl3gwAKFddtLI+F/YHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=v0DGtYaT; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 23 Sep 2025 10:58:47 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758650334;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yYKyXs58ep6KuR+AMq5KlViCjagWm/Z5ncA3hHpUIH4=;
-	b=v0DGtYaTVzThHF6HsIWYKdJB/qBlprObAXIATcqkmwxmMa7V6QoGhVss3iKlYuSIRwPGGc
-	nG1tSqjYBS7hiT/YHjzG7YrQINl0nQ4gjEL/4PREyAph7Gi50E8x6XFX2RIKufm3NYgCRo
-	xD+0stdmC/cbEWobkH/e/YB9EgK6T8U=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: xu.xin16@zte.com.cn
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
-	roman.gushchin@linux.dev, david@redhat.com, chengming.zhou@linux.dev, 
-	muchun.song@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org
-Subject: Re: [PATCH linux-next v3 0/6] memcg: Support per-memcg KSM metrics
-Message-ID: <4sunwlleii5mrlwvnio4rm4uvrngzcdbsig7xer3ytyixpu543@7dlwpeeocjbl>
-References: <20250921230726978agBBWNsPLi2hCp9Sxed1Y@zte.com.cn>
+	s=arc-20240116; t=1758650406; c=relaxed/simple;
+	bh=7Bo1kzD0/rFjU3dEcXj4ae5Kzk5PeuyJqqmxduk1MfU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p/HhqE0vkFVXu1hmtLImK9oXrqllIe+2ntzS7kdqF5d6nVrJ4O3cCQP/0WZu9/nIg8gAqg0o9JnHOybQNjJ08mGUlbLQ4OGYRN/US8OKfXaIs9CiELSrtdLeMo5Ayuj5SXgaJlWBpAOqreYxsn8g9dapiHYFqwSIsZTzzNq4L3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=in0c0VEy; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-267dff524d1so43476415ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:00:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758650404; x=1759255204; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GPN+oc06mTdPxDaONBr5KXu8+tb7IBNS+Yxkpiu/3UU=;
+        b=in0c0VEywPEsCmDmyF9Mh9y/0tVbSnwScqRLuwG9aR3v8rE+SamUM+a6vizHm+BPAi
+         RXOkjJGZipXzKXOoOixY9isMZLj9zYUP7MRTUfabQh+tB78XEMHLSL+4Q/2F1pBZMd7B
+         WeTIm7bxVyG7ew/WQhRAbfHuW9zkpB5FUW2xxELpWD3scLVyYtNz7Iw6sLJdWF0Nilxy
+         zwNfGSJPSnqjtDwYg2GtzZuEbX/YwZyB6/I8e/uFGRnPNqqFa5XnuI5LklQaw9Zzj/qd
+         f8K/Phn0eXLtgFV+w9Lu3CiQKu5vB7jOk8ELeg+sbs6g4DWZF8KA3vCz78yihsK25HDj
+         C+Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758650404; x=1759255204;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GPN+oc06mTdPxDaONBr5KXu8+tb7IBNS+Yxkpiu/3UU=;
+        b=aAbGA0TIx7j8IpUBg8yEroUSr+1EeH+ezy5fiUZUobpH2moC0zRCOH+ivHbw4q1Lc2
+         ygxKduVf6a+9ntqW295YtpAS3Gazdsm3WC7Qqkt9/72a4JRlvGZUyTE1uN1ZMg83VDat
+         h0qv7/pPJuxCJx5klGVw0c1ux3xQyEUGBAcCPiS/XIWhWhlvqFxGzQ/W5oNbjL7zlvT0
+         zkgrimiEKcmLiAEez7truRBVPnw05FvkcBOOvDJwsZNRi59qD/nPptTqj5Db+JvZvYaU
+         3OrQbLrt1pb2Ics7n8v2J/mPwaZySw8/LMEuENSVCcagKQVDS+cgahuZxQT2qq5DJM0C
+         XB5A==
+X-Forwarded-Encrypted: i=1; AJvYcCU6QuiIe6fe8WTDamdwoFkOhCDZiGy6/718p98AQJZFa8ceUBoFcz1drdCSrmA1WLWc4ST7ZLE0EtDgS4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrhl0gjI7rsg+PU3Bdj4RQ6TmY3oicQNUQLv/S/eeLvaO2CUGc
+	Chexu/zNklIDcAApHAS6oJNQmmmu+Q9ulAENoFOfroVGIK6JiAZ2az3Q
+X-Gm-Gg: ASbGnct9JQqsbWHouJAP1dItM1ZDbav9yMHzj9JaBOsnPXutrC3kJHpQPcsK1XZsrwS
+	59iNbBRRT7cgiT1Z/iZem5x5b+jzDfbWLq22qPnPSH364UrRhhTH/+HmzWfHM35MhwI4X7syWTB
+	s+jeWadyRNB63YTL2LBFbSHdwUwVDcbym495ktV5CdDFjyWzAl/BbQGh9+9byDXLzKg5C8Nn1SB
+	SN8t4f9hzmw+kri7v/QmuFYTUKlW0RN7W5nYItORS6XEfu4bzIoHgOiYF8XB0QHrT0kupomVPHX
+	ZMyiEP7KHVEqcghXFFXO2a0zVbj1wUAC0+Wc43cPfir2taKLepp86CE9/ChXtTPCKOgGxy+GwPN
+	X5YFtjRTBcAAaVFcFaOddNHLlbw==
+X-Google-Smtp-Source: AGHT+IEWKPk22+IFda8QlIhnbmRUEgNAemmbBXNZ0koD7vh+dtohjy+qJSjFHMQPXGRYWGDbqNSDrA==
+X-Received: by 2002:a17:903:1590:b0:23f:f96d:7579 with SMTP id d9443c01a7336-27cc5431617mr44289415ad.37.1758650404028;
+        Tue, 23 Sep 2025 11:00:04 -0700 (PDT)
+Received: from Ubuntu24.. ([103.187.64.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980368dc1sm164122485ad.152.2025.09.23.11.00.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 11:00:03 -0700 (PDT)
+From: Shrikant Raskar <raskar.shree97@gmail.com>
+To: hverkuil@kernel.org,
+	mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shrikant Raskar <raskar.shree97@gmail.com>
+Subject: [PATCH] media: saa6588: Fix unsafe debug printk macro
+Date: Tue, 23 Sep 2025 23:29:27 +0530
+Message-ID: <20250923175927.4380-1-raskar.shree97@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250921230726978agBBWNsPLi2hCp9Sxed1Y@zte.com.cn>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-Hi Xu,
+The existing dprintk macro used an unwrapped `if` statement, which can lead
+to logic errors when used in if/else constructs. This patch wraps the macro
+in a do { } while (0) block to ensure safe usage.
 
-On Sun, Sep 21, 2025 at 11:07:26PM +0800, xu.xin16@zte.com.cn wrote:
-> From: xu xin <xu.xin16@zte.com.cn>
-> 
-> v2->v3:
-> ------
-> Some fixes of compilation error due to missed inclusion of header or missed
-> function definition on some kernel config.
-> https://lore.kernel.org/all/202509142147.WQI0impC-lkp@intel.com/
-> https://lore.kernel.org/all/202509142046.QatEaTQV-lkp@intel.com/
-> 
-> v1->v2:
-> ------
-> According to Shakeel's suggestion, expose these metric item into memory.stat
-> instead of a new interface.
-> https://lore.kernel.org/all/ir2s6sqi6hrbz7ghmfngbif6fbgmswhqdljlntesurfl2xvmmv@yp3w2lqyipb5/
-> 
-> Background
-> ==========
-> 
-> With the enablement of container-level KSM (e.g., via prctl [1]), there is
-> a growing demand for container-level observability of KSM behavior. However,
-> current cgroup implementations lack support for exposing KSM-related metrics.
-> 
-> So add the counter in the existing memory.stat without adding a new interface.
-> To diaplay per-memcg KSM statistic counters,  we traverse all processes of a
-> memcg and summing the processes' ksm_rmap_items counters instead of adding enum
-> item in memcg_stat_item or node_stat_item and updating the corresponding enum
-> counter when ksmd manipulate pages.
-> 
-> Now Linux users can look up all per-memcg KSM counters by:
-> 
-> # cat /sys/fs/cgroup/xuxin/memory.stat | grep ksm
-> ksm_rmap_items 0
-> ksm_zero_pages 0
-> ksm_merging_pages 0
-> ksm_profit 0
-> 
-> Q&A
-> ====
-> why don't I add enum item in memcg_stat_item or node_stat_item like
-> other items in memory.stat ?
-> 
-> I tried the way of adding enum item in memcg_stat_item and updating them when
-> ksmd manipulate pages, but it failed with error statistic ksm counters of
-> memcg. This is because of the following reasons:
-> 
-> 1) The KSM counter of memcgroup can be correctly incremented, but cannot be
-> properly decremented. E,g,, when ksmd scans pages of a process, it can use
-> the mm_struct of the struct ksm_rmap_item to reverse-lookup the memcg
-> and then increase the value via mod_memcg_state(memcg, MEMCG_KSM_COUNT, 1).
-> However, when the process exits abruptly, since ksmd asynchronously scans
-> the mmslot list in the background, it is no longer able to correctly locate
-> the original memcg through mm_struct by get_mem_cgroup_from_mm(), as the
-> task_struct has already been freed.
-> 
-> 2) The first issue could potentially be addressed by adding a memcg
-> pointer directly into the ksm_rmap_item structure. However, this
-> increases memory overhead, especially when there are a large
-> number of ksm_rmap_items in the system (due to a high volume of
-> pages being scanned by ksmd). Moreover, this approach does not
-> resolve the same problem for ksm_zero_pages, because updates to
-> ksm_zero_pages are not performed through ksm_rmap_item, but
-> rather directly during unmap or page table entry (pte) faults
-> based on the mm_struct. At that point, if the process has
-> already exited, the corresponding memcg can no longer be
-> accurately identified.
->
+This change resolves the following checkpatch error:
+ERROR: Macros starting with if should be enclosed by a do - while loop to
+avoid possible if/else logic defects
 
-Thanks for writing this up and sorry to disappoint you but this
-explanation is giving me more reasons that memcg is not the right place
-for these stats.
+Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com>
+---
+ drivers/media/i2c/saa6588.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If you take a look at the memcg stats exposed through memory.stat, there
-are two generally two types. First are the ones that describe the type
-or property of the underlying memory and that memory is associated or
-charged to the memcg e.g. anon or file or kernel (and other types)
-memory. Please note that this memory lifetime can be independent from
-the process that might have allocated them.
-
-Second are the events that are faced by the processes in that
-memcg like page faults, reclaim etc.
-
-The ksm stats are about the process and not about the memcg of the
-process. Process jumping from one memcg to another will take all these
-stats with it. You can easily get ksm stats in userspace by traversing
-/proc/pids/ksm_stats with the pids from cgroup.procs. You are just
-looking for an easier way to get such stats instead of manual traversal.
-I would suggest exploring cgroup iter based bpf program which can do
-the stats collect and expose to userspace for a given cgroup hierarchy.
+diff --git a/drivers/media/i2c/saa6588.c b/drivers/media/i2c/saa6588.c
+index fb09e4560d8a..71d34d229564 100644
+--- a/drivers/media/i2c/saa6588.c
++++ b/drivers/media/i2c/saa6588.c
+@@ -50,7 +50,7 @@ MODULE_LICENSE("GPL");
+ 
+ #define UNSET       (-1U)
+ #define PREFIX      "saa6588: "
+-#define dprintk     if (debug) printk
++#define dprintk(fmt, args...)  do { if (debug) printk(fmt, ##args); } while (0)
+ 
+ struct saa6588 {
+ 	struct v4l2_subdev sd;
+-- 
+2.43.0
 
 
