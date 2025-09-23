@@ -1,168 +1,130 @@
-Return-Path: <linux-kernel+bounces-828999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D966EB96043
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:31:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE67B96049
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D423170C3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:31:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6A6319C3905
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74518327A09;
-	Tue, 23 Sep 2025 13:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DF0327A13;
+	Tue, 23 Sep 2025 13:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyano.uk header.i=@cyano.uk header.b="qQCQCnXk"
-Received: from jupiter.guys.cyano.uk (jupiter.guys.cyano.uk [45.63.120.176])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="aZViUv6j"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA6010F1;
-	Tue, 23 Sep 2025 13:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.63.120.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758634300; cv=none; b=omPL4XBFXoQ1czwgHIKXHqUCuB6ZfYvQKiWpV895FDm5nf+croXiGEHXaeVLcZpHiXTKpF7IGcSP1NFmbsxfkLUcCNq4EPy1owANHsfZ2fkax8ZbsMCkEZCenQik/pN8RLtQi7nODERpMF6ffzg/fJwW8kIO/bsiy3y5Mtco3G0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758634300; c=relaxed/simple;
-	bh=j8byVeNX4TQDtD8QbMaEXYgRd9Te2VgWLANoo2ZQ9hw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KzfM1oqdqVSp6GLJf7uDxy0y2Vto3Pba+lVuzLE4XLukfCM0guboLpoptEtYkFKL3beBY/zI4hu3tlM4oMrVNmzT7HLqfLaTIp5VkSS7Ui/Wq5IQ/NXJjmxHC1cAfyeljxzsdnbIqSPra9Co5km/m91IOZLBnbsW/uak/YyIAic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cyano.uk; spf=pass smtp.mailfrom=cyano.uk; dkim=pass (2048-bit key) header.d=cyano.uk header.i=@cyano.uk header.b=qQCQCnXk; arc=none smtp.client-ip=45.63.120.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cyano.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyano.uk
-Message-ID: <c6a39939-b0cd-43a3-8b63-114909ba001e@cyano.uk>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyano.uk; s=dkim;
-	t=1758634297;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wlHpoIc6rMZqw0AZAsMkpyzs1nRv311zogcg+1Ko7i0=;
-	b=qQCQCnXkmXrE+HuC0wm2a0HeW5ioyMr4DLtjCpOQACNfRQCdNQoT+cuL9zS77/8vtoD7kG
-	7ARed9W19B/P3q4oa0SM724PIo/C1fyALocDzLjmFtO/xGIh6b/VlPtY8LvQgpk3Sf3xEu
-	WYcWrRrehOvtuEZABd1QnVp3TPb9POSBrDsdAjoOAoXSMp2KYcsrY8StZHoLPwqOd3+r5u
-	1J+q0LW5eQuBO8CEtANYkfCFri3HAI8BlkwSRvBuObPxhksBJgRvIKYH3hXe1WYSllIw3y
-	j4666uuJ7H24o3ao5o+P+2RVSc3LSGV4oupn+RLUju20UjuFgv5EIO5+DW0zXg==
-Authentication-Results: jupiter.guys.cyano.uk;
-	auth=pass smtp.mailfrom=cyan@cyano.uk
-Date: Tue, 23 Sep 2025 21:31:14 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8433233FE;
+	Tue, 23 Sep 2025 13:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758634324; cv=pass; b=N2YEh31gWtAiR2TLlQz0GhAs9FVaPeTSKe5yFPPARWPm0rXSPpWnz2Jac6sge/Jo5aHxgprrAHat8PKiT/9VA9ctatqgHgrbZ5y7NovWUXjttzlGmJ92GzKz/kIUbr69AUZR1HFWWPPsiYPmgb5pQZod9TIkJ+y4sbWvN/33juc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758634324; c=relaxed/simple;
+	bh=ayc7LDgpinbNwmiQ1ReylZwhBcwpCvzguEK9YRh99Dc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=CPP4wMewlyrI0SXXcW0l6xFBZZeJMWb+NciClGj32HkHranncsd/ytA9NnHVG1pTIvheWVEX8E69j1FIc/uFQpfuR0TnEWgidCvtxJtnYUMGZ6f24WWcoUdNhykBhnMkRdogHKC/gryW3BYUlwMhLt1EODTMgRYt+iMiNRdR6G0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=aZViUv6j; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1758634306; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=DSY/UafVK7otGqfwkFudCbOCR63Ti9t0DC8WxF7EJGUZYbjti4g2WnZxo9hQv3gy1ClB5OVJb6LTZdBy2dkVyUqSbdwnVI0wrEr/JMnzGRv08PfEhaButfMYClcyf9PgD44dnTVrsZiBQjPGnTMkA9/j9/YY+babB8LeCEzuj74=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758634306; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=XhSfK3m6uQmEJ1qNWt9tVO6bvuYGSVJ4syxk3NSs+eY=; 
+	b=Ec+CWSRHFigvzY5OeS3DGP3DpWIvJvsJyrobSJ63vE1CINBKnWT+9KUc/HccZMQm1XeZi/8MpKt0YF+Zao0MEI3XybaoohG7ucI76eFBq/pDeC+sTMdx4f+OlPXGzKuGvoddTyFFRFNwWTF8d7HOHoXNn+SA4oUBAJp0/Ir+deQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758634306;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=XhSfK3m6uQmEJ1qNWt9tVO6bvuYGSVJ4syxk3NSs+eY=;
+	b=aZViUv6j+PiGcUS77Er8fDMbyyUb0bxTimap10ko28o8lTx08LT6JAGQSay3BXjc
+	+tbeB9moeT3vBxYDM+hitQgtuzgPtjGy5e31DzKyD70bNhbpDsGoCYSFKJj8/DTsHfL
+	y8M5Picco+nk381Es/BceHBLS8/E0e/i4uJbjfTA=
+Received: by mx.zohomail.com with SMTPS id 1758634303654976.8874865886604;
+	Tue, 23 Sep 2025 06:31:43 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH v3 2/2] scsi: dc395x: improve code formatting for the
- macros
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
- linux-scsi@vger.kernel.org
-Cc: stable@vger.kernel.org, Mingcong Bai <jeffbai@aosc.io>,
- Kexy Biscuit <kexybiscuit@aosc.io>, Oliver Neukum <oliver@neukum.org>,
- Ali Akcaagac <aliakc@web.de>, Jamie Lenehan <lenehan@twibble.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250923125226.1883391-1-cyan@cyano.uk>
- <20250923125226.1883391-3-cyan@cyano.uk>
- <1ae97d061da14b0d85c0938c3000ed57ccd39382.camel@HansenPartnership.com>
-Content-Language: en-US
-From: Xinhui Yang <cyan@cyano.uk>
-In-Reply-To: <1ae97d061da14b0d85c0938c3000ed57ccd39382.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: /
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH 1/2] rust: usb: add basic USB abstractions
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <DD07LUJXNZN9.3RHH9NJNRFVNN@kernel.org>
+Date: Tue, 23 Sep 2025 15:31:26 +0200
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-usb@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <27AB9C59-BAE6-4F1F-8638-DF9244D0A616@collabora.com>
+References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
+ <20250825-b4-usb-v1-1-7aa024de7ae8@collabora.com>
+ <DD07LUJXNZN9.3RHH9NJNRFVNN@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-Hi James,
-
-在 2025/9/23 21:09, James Bottomley 写道:
-> On Tue, 2025-09-23 at 20:52 +0800, Xinhui Yang wrote:
->> These DC395x_* macros does not have white spaces around their
->> arguments,
->> thus checkpatch.pl throws an error for each change in the macros.
->>
->> Also, there are no surrounding parentheses in the expressions for the
->> read and write macros, which checkpatch.pl also complained about.
->>
->> This patch does only formatting improvements to make the macro
->> definitions align with the previous patch.
->>
->> Signed-off-by: Xinhui Yang <cyan@cyano.uk>
->> ---
->>  drivers/scsi/dc395x.c | 16 ++++++++--------
->>  1 file changed, 8 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/scsi/dc395x.c b/drivers/scsi/dc395x.c
->> index aed4f21e8143..cff6fa20e53c 100644
->> --- a/drivers/scsi/dc395x.c
->> +++ b/drivers/scsi/dc395x.c
->> @@ -91,8 +91,8 @@
->>  #endif
->>  
->>  
->> -#define
->> DC395x_LOCK_IO(dev,flags)		spin_lock_irqsave(((struct Scsi_Host *)dev)->host_lock,flags)
->> -#define
->> DC395x_UNLOCK_IO(dev,flags)		spin_unlock_irqrestore(((struct Scsi_Host*)dev)->host_lock,flags)
->> +#define DC395x_LOCK_IO(dev,
->> flags)		spin_lock_irqsave(((struct Scsi_Host *)dev)->host_lock, flags)
->> +#define DC395x_UNLOCK_IO(dev,
->> flags)		spin_unlock_irqrestore(((struct Scsi_Host *)dev)->host_lock, flags)
->>  
->>  /*
->>   * read operations that may trigger side effects in the hardware,
->> @@ -100,12 +100,12 @@
->>   */
->>  #define DC395x_peek8(acb, address)		((void)(inb(acb-
->>> io_port_base + (address))))
->>  /* normal read write operations goes here. */
->> -#define DC395x_read8(acb,address)		(u8)(inb(acb-
->>> io_port_base + (address)))
->> -#define DC395x_read16(acb,address)		(u16)(inw(acb-
->>> io_port_base + (address)))
->> -#define DC395x_read32(acb,address)		(u32)(inl(acb-
->>> io_port_base + (address)))
->> -#define DC395x_write8(acb,address,value)	outb((value), acb-
->>> io_port_base + (address))
->> -#define DC395x_write16(acb,address,value)	outw((value), acb-
->>> io_port_base + (address))
->> -#define DC395x_write32(acb,address,value)	outl((value), acb-
->>> io_port_base + (address))
->> +#define DC395x_read8(acb, address)		((u8)    (inb(acb-
->>> io_port_base + (address))))
->> +#define DC395x_read16(acb, address)		((u16)   (inw(acb-
->>> io_port_base + (address))))
->> +#define DC395x_read32(acb, address)		((u32)   (inl(acb-
->>> io_port_base + (address))))
-> 
-> This doesn't look right.  The problem checkpatch is complaining about
-> is surely that the cast makes it a compound statement.  However, since
-> inb inw and inl all return the types they're being cast to the correct
-> solution is surely to remove the cast making these single statements
-> that don't need parentheses.
-
-Thanks, I checked the definitions and you are right - these read macros
-should have their casts removed, as they now return u8, u16 and u32
-respectively.
-
->> +#define DC395x_write8(acb, address, value)	(outb((value), acb-
->>> io_port_base + (address)))
->> +#define DC395x_write16(acb, address, value)	(outw((value), acb-
->>> io_port_base + (address)))
->> +#define DC395x_write32(acb, address, value)	(outl((value), acb-
->>> io_port_base + (address)))
-> 
-> And these are single statements which shouldn't need parentheses.  Are
-> you sure checkpatch is complaining about this, because if it is then
-> checkpatch needs fixing.
-
-Thanks for pointing this out, they don't need additional parentheses.
-
-> Regards,
-> 
-> James
-> 
-
-Thanks,
-Xinhui
+Hi Danilo,
 
 
+>> +/// A USB device.
+>> +///
+>> +/// This structure represents the Rust abstraction for a C [`struct =
+usb_device`].
+>> +/// The implementation abstracts the usage of a C [`struct =
+usb_device`] passed in
+>> +/// from the C side.
+>> +///
+>> +/// # Invariants
+>> +///
+>> +/// A [`Device`] instance represents a valid [`struct usb_device`] =
+created by the C portion of the
+>> +/// kernel.
+>> +///
+>> +/// [`struct usb_device`]: =
+https://www.kernel.org/doc/html/latest/driver-api/usb/usb.html#c.usb_devic=
+e
+>> +#[repr(transparent)]
+>> +pub struct Device<Ctx: device::DeviceContext =3D device::Normal>(
+>> +    Opaque<bindings::usb_device>,
+>> +    PhantomData<Ctx>,
+>> +);
+>=20
+> What do you use the struct usb_device abstraction for? I only see the =
+sample
+> driver probing a USB interface instead.
+
+What I was brainstorming with Greg is to submit this initial support, =
+and then
+follow up with all the other abstractions needed to implement a Rust =
+version of
+usb-skeleton.c. IIUC, the plan is to submit any fixes as follow-ups, as =
+we're
+close to the merge window.
+
+struct usb_device would be used for the skeleton driver, so we should =
+keep it if
+we're following the plan above, IMHO.
+
+=E2=80=94 Daniel=
 
