@@ -1,117 +1,97 @@
-Return-Path: <linux-kernel+bounces-829114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFAF0B9650A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:38:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41912B9652E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C4B91884793
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:35:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFE80169D61
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2735248F58;
-	Tue, 23 Sep 2025 14:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23AA5253944;
+	Tue, 23 Sep 2025 14:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="foTog51+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFx06MeD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAC62B9BA;
-	Tue, 23 Sep 2025 14:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764867E105;
+	Tue, 23 Sep 2025 14:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758637995; cv=none; b=j/lUuH8dDWbpytsZ+B00twBjOcvQJgull4dvyVGbtuk6TcOFtuHER17oXFv2QVu5q7jrCO29QJ6udAB//qEG8259gbCXMMgdcr7rHpExVTPRdodutDxC3Eb+Sp3prTofGKkp69leB5IjbZLY9XTq/AaQon+EGmpbRKOLGxv48q4=
+	t=1758638051; cv=none; b=cJHM9CxDUBNOJFrasQQD3Taxcel4wqWFKMLQd7V+W/yhCaLfKkXvYbEdwrm7GlW29YN1TAIQsj1fV48Exc74DZRMTzDfuoB3Ef2Bf1125guuMK+YLSImXPtSUl9jtzV7/wkhy6oefGLQCdgISD8BkrigqcL1w7ehz7ivFF+TEl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758637995; c=relaxed/simple;
-	bh=6b/C0GA3CDu2NK6qET9/dvnZZBIEkc60GmnPLmmsZ/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hPQ5hT4MM4FZwh7udkHkZ8mXUGFAVlYqhuzozfvDLft7ugN6FUqUo6WlzmDgRGWHnzwQzy8XrQZN9qm3kiKKf0wPQzA7gOa6A+fgah+AGOlxXdHBzeWLB5C96w9cyXJ0N4IypH/jwM2aiVzgiCQ3bwlQFzXkr/0v82rMiYEGeFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=foTog51+; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758637993; x=1790173993;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6b/C0GA3CDu2NK6qET9/dvnZZBIEkc60GmnPLmmsZ/k=;
-  b=foTog51+jHhAMwMsL9708lqVtURQj2MsqY7H4EaUw7S/zLZJP190IeL3
-   lA7Yaa/hak4poGD2u1iU8Cf3TOMe6ncv+s7bmmgS40Q5tVcTg5oko2KGn
-   AIMU3kIoLxjJmNy84MFMWdz4Q88aYDbTZeEjA5lkI7T3SW+HXKcT7o4UW
-   SaBtRL/ZAHgTRjDBdUY5377ObmpHHinjMm72MbPPkJ5nhTTTQDV4Qodd1
-   RBqj4AWajq+jz3GG9yAS+8hofXxeVmHSpbR+3XJ5KG3zYvI6yg3JuNHJo
-   NOjoFfvuJYSWa31Imvs/2+JSwCPNaFv047XfkGFs+SBwiiUfsgOFd73Oq
-   w==;
-X-CSE-ConnectionGUID: EnDDT4IxSRmOJIEwdCtYUQ==
-X-CSE-MsgGUID: ikylLlpZTm+yy4EgAqGWPQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="61033991"
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="61033991"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:33:12 -0700
-X-CSE-ConnectionGUID: ikDk9zKsTgGsJxMhWPx+NA==
-X-CSE-MsgGUID: UYMI0pLUSq2kx+wwo+kXpg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="176615386"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:33:07 -0700
-Message-ID: <eb2465a7-359c-41b7-9687-984537f75d96@intel.com>
-Date: Tue, 23 Sep 2025 22:33:04 +0800
+	s=arc-20240116; t=1758638051; c=relaxed/simple;
+	bh=2rYZamDZNX6wQq9cq07mNFHSGR2Dy77Kpd8qr7CPXb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JcAeGdn0fXjQRyWpcNzjZYiR84JLtXpHk0x1sprMgjJJWBxig9p9LWIe2XSLSVtqlbwOSGTh+wxwB2+JJCayj3TI5CtBEzlpsI5iVxs0k1yu5uzTf6zhU2OggJMP/U5QZTNfuXgVbvJ1FnwF5yyIM2nhs4NyQUe0pMEd1qSUDuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFx06MeD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51504C4CEF5;
+	Tue, 23 Sep 2025 14:34:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758638051;
+	bh=2rYZamDZNX6wQq9cq07mNFHSGR2Dy77Kpd8qr7CPXb0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rFx06MeDNxfxPywptTy+TqsjjxZP8YKNNEsFJVJqUYlBQB99899SkCVtB9prtPqUI
+	 /yUss/sAos4mNSugcUhmu5gt6Uc0WR6yCR9/tEzj1knegKzDv7wexTVuKL2vViXYKU
+	 7Gw4sJ4k/rS81bthM2/lQGOPozZmrwBLKijsNgyr84a0Un8S/F2CD5/mv5o14ymDRS
+	 qKKOENIVRyO9hvTbKJCKUUD2jI8TIS19RdOKwAUR8SLvDBu8/PRTuX5scxkrr5ehYY
+	 0Tg2nV6z4I/YdG5yTTuCervWog9u4dVJjoU/gO8RKmhPXkTgxqy/9hWxpHQYYshnaO
+	 mnUYW3HpD632Q==
+Date: Tue, 23 Sep 2025 16:34:07 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, achill@achill.org
+Subject: Re: [PATCH 6.16 000/149] 6.16.9-rc1 review
+Message-ID: <aNKv36VSpih_kdaS@finisterre.sirena.org.uk>
+References: <20250922192412.885919229@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 21/51] KVM: x86/mmu: WARN on attempt to check
- permissions for Shadow Stack #PF
-To: Binbin Wu <binbin.wu@linux.intel.com>,
- Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z
- <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-References: <20250919223258.1604852-1-seanjc@google.com>
- <20250919223258.1604852-22-seanjc@google.com>
- <8b91ca86-6301-4645-a9c2-c2de3a16327c@linux.intel.com>
- <b12cac74-5a08-4338-bbab-510860e11a30@linux.intel.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <b12cac74-5a08-4338-bbab-510860e11a30@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="S64QTOEvVy5fyUko"
+Content-Disposition: inline
+In-Reply-To: <20250922192412.885919229@linuxfoundation.org>
+X-Cookie: Filmed before a live audience.
 
-On 9/22/2025 3:46 PM, Binbin Wu wrote:
-> 
-> 
-> On 9/22/2025 3:17 PM, Binbin Wu wrote:
->>
->>
->> On 9/20/2025 6:32 AM, Sean Christopherson wrote:
->>> Add PFERR_SS_MASK, a.k.a. Shadow Stack access, and WARN if KVM 
->>> attempts to
->>> check permissions for a Shadow Stack access as KVM hasn't been taught to
->>> understand the magic Writable=0,Dirty=0 combination that is required for
-> Typo:
-> 
-> Writable=0,Dirty=0 -> Writable=0,Dirty=1
 
-With it fixed,
+--S64QTOEvVy5fyUko
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+On Mon, Sep 22, 2025 at 09:28:20PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.16.9 release.
+> There are 149 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
->>> Shadow Stack accesses, and likely will never learn.  There are no 
->>> plans to
->>> support Shadow Stacks with the Shadow MMU, and the emulator rejects all
->>> instructions that affect Shadow Stacks, i.e. it should be impossible for
->>> KVM to observe a #PF due to a shadow stack access.
->>>
->>> Signed-off-by: Sean Christopherson <seanjc@google.com>
->>
->> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--S64QTOEvVy5fyUko
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjSr98ACgkQJNaLcl1U
+h9BQQAf9EcAvNopLQlKdTLN5Uvdb/HT3QovXojslpc0s9lLAeYfOQxrA3BXK1Gms
+lVkooh16JC9J0bdot7OVfIoo13fcGqCX1FCSy6tVmxhzy1bihSMxtbWoQq81hpZE
+fxTL4zBi0nrM42WHd3snq2JIFl/A/fxdSr1JMYzqPwYm85T8jT6zQt/P2bN049Kq
+IXAlJJNriym5uTS6ixuXwG+Xo4JUJZTX6i41IRPqlx5yTUOjXyZ3SM3FYynK1z7H
+LyToyv7lwVQWqeNSIzKI8v/+Athw24jO1HsdbGhy4EbVAPLoBnbCpSNW3OEDCdby
+yp8pGXRQPcYgLrrCRiSo1FZMuyvmrQ==
+=p7qe
+-----END PGP SIGNATURE-----
+
+--S64QTOEvVy5fyUko--
 
