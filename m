@@ -1,103 +1,153 @@
-Return-Path: <linux-kernel+bounces-829251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CAD0B969C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:34:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08571B969D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5BF848190D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17E00188E58D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B352D22256B;
-	Tue, 23 Sep 2025 15:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5784D233722;
+	Tue, 23 Sep 2025 15:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QEtC+gep"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="QYL8no54"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153AC3FB31;
-	Tue, 23 Sep 2025 15:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E581B4248
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758641681; cv=none; b=gb/3fr9hF3yGA4/bkjXPKWIcb3wZrvZO0VmElxeEtuGMyJhCp4uYRABPg//12LnAfa76QgrF8gSvkAT0FteE3OS2gNVt3D7ZSAmN+J44oMjp++47msbJjh66l5XKramcQQ2m/iYiZ8YRc1fgWxPbsD4k3szMFO5K+f8AFoxZNJE=
+	t=1758641854; cv=none; b=Gi8qrRVk8eLv3/sHXob6iZ11qhK/DGRLa3j5Xyp09/z5vZyDjhDoXRBrymfUMtw3g60UFdkubrQOzhLff/vUYXANqiOk62yUqRcAP5PaQWSF2GzFM5kjtQBV6jAJFHpZtpta5sXR4sa13+lCKE24mhSDgseY/V8aBKqiwApZ2ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758641681; c=relaxed/simple;
-	bh=QKHNV75aCp57Clg0EwLjV2C9do6/aTrn+yffdg935to=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R/2Dofa5lde+quxxqSnGL5SJvjnOnWpP6Kybi4P5I9nUSMoLOgKxIEvIRTq7ZCszemNkbshWvASSeF4kBAkQhrgBy6iNj9VY8DcOrlzQKYaS3hheRB84mCmDIhJo415rzT7GPa1U2v0Eu7hBRqaWFpqAIf1sLgGIHbcRGv6UjLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QEtC+gep; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6C29C4CEF5;
-	Tue, 23 Sep 2025 15:34:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758641680;
-	bh=QKHNV75aCp57Clg0EwLjV2C9do6/aTrn+yffdg935to=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QEtC+gepjHi7KdgVb+buA7TG5/0VvPkQCB0JDUlx3+lJo623+raxs5n0lA/Oigbqq
-	 YE0aT8jTJ2UCuGO234fvJstwDZntXJ/Sr48I6x+uWWFx/0hkSKAdAk7TKLqtZZMody
-	 LTQMX68hbytnn8T5E00XTd6L2r0VaDisdpLDh9WRmH4MnDhIedarTWG5G48ZTBJDOn
-	 vOvsRDiXjQIG1LsiBt1tKAx/bedIY6GaaW/6YeVN1v8oRlIOJvVI6nIToYsuGb5T0g
-	 KvRhIpkAyqXBEczb1x4Ypt3sCRQC8HrnXtATzD+itezLm/84IZV8s+Q/nGNoOI6Irs
-	 PEGisDEDFbnoQ==
-Date: Tue, 23 Sep 2025 08:34:39 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Ilias Apalodimas
- <ilias.apalodimas@linaro.org>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, Steven
- Rostedt <rostedt@goodmis.org>, netdev@vger.kernel.org, Tariq Toukan
- <tariqt@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH net-next] page_pool: add debug for release to cache from
- wrong CPU
-Message-ID: <20250923083439.60c64f5e@kernel.org>
-In-Reply-To: <ncerbfkwxgdwvu57kmbdvtndc6ruxhwlbsugxzx7xnyjg5f6rv@x2rqjadywnuk>
-References: <20250918084823.372000-1-dtatulea@nvidia.com>
-	<20250919165746.5004bb8c@kernel.org>
-	<muuya2c2qrnmr3wzxslgkpeufet3rlnitw5dijcaq2gpy4tnwa@5p2xnefrp5rk>
-	<20250922161827.4c4aebd1@kernel.org>
-	<ncerbfkwxgdwvu57kmbdvtndc6ruxhwlbsugxzx7xnyjg5f6rv@x2rqjadywnuk>
+	s=arc-20240116; t=1758641854; c=relaxed/simple;
+	bh=VPsPP97J7NiYsQImvFBzCd/NUWkzwiH5aWFfTBKY7ns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g7wt8z/qZqJ2XOiGLho3DMr2D1DfrmyV4hDInTmaJSoZxfSHqL0EdcIt7mngae+9ikpatqtUedhXFLEYTLRqTs5xHOZAUYH77OBr+VzjrG4gm9Ta6wR21Jd+irpGz33rZYCk45X0A0nb+qnWl4DNDBozJN343g910fj9I7DAShU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=QYL8no54; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-eb368d14a43so784206276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:37:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1758641852; x=1759246652; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wa5b2Ox9cKpFtfieebnhk7CueJ3gddY86USQDYphg/s=;
+        b=QYL8no544a9aasSptURayciMEqmX1gfPc6FXP5EPQr5zlyBcAwocQfTAxJpyWgVJnz
+         VZiZZ9zj9uoq71tUJd0wYfFnKwIgYzGJ9yfzv58+6R3pHjk+XRAN32I/hF7bmOEfX3JK
+         MdZyLoaPD6SUzuudvP8QJuJv9iPdkre4o6olZR4c8xa3dKPQHd3jdOYC4vjAq/nRujs2
+         9ol21MWNB+WpIFX9po+zB80WlJs7OhtQFJxGt6R8a5kFNpFm1Cc0osEcF71KcBxUOeBt
+         GCavLFtsY4s/leUcjp+GSke2dyRR491WddKoq3tUiw0fKc1ylD3OR4+V71MAZOgLYtu1
+         E8yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758641852; x=1759246652;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wa5b2Ox9cKpFtfieebnhk7CueJ3gddY86USQDYphg/s=;
+        b=nwh6Y5H/WUHSurI/+OjpRkI2K3fh+qPIgSn1TT7c8Szmth2Idq2TjG08kceH01egI9
+         wHKdi6XF5L1vr9foB7YQs+9Oak0ZAPz5upIL33AzwPSqpM1AJIrBGudRfkgEWADU6fOr
+         D3APFBtNWHWpJzEOM7NwG83+C8lMrZOVQLvZxzosBIvejDnsTLdjDe013NscJr71GuX5
+         QPcj4rowBHJcYw1p3rNjAGCCfwyMIP9/uLM7z748/X90FeOuWSWBQ7xBok544hHNi2uN
+         lbVhXqUXD1bAusaXyyaQTWtTDCl0oXkW0+YvkZggmhUnKEuwS84Ta7oekC2yNHLXFcH2
+         cgMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhGREnMTO6PQ0RuOlXsW/mOdPXSmTTuxPFckq0OBcz6+k+7KlAzDTivnVV4DSqjTtUZuiZnLOuEqJAIv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpSWkG5UPj8zrulPjU4/l8fVDSY47RaACYx2L+qGZtMYaTeGbr
+	reDihSzFq0Fou7q1Ybt/dOZXlAt+c2e7ImZGNvoKdBjTu0xYJvtxRNTD8heEW96opx0=
+X-Gm-Gg: ASbGncvWgZs7J4+sQ2EqLJeNDuprmogP3DSrsicZ1oCzMrswC5RlJjQenhkgFDJtFC2
+	WmSs8rno2gHzjwGOQ/MT5rgWvZBBqUWh+7U/YepA8hFR+IpxYI8ZyXPervkFRqMjfTL4RnvKhnt
+	l2zfEAU06gqv8c0P7vt/e6VchWgfUDm0wfJu+IkKZKKxE5rbJWYsKukcN7umyb5MTH/kDh/3xl6
+	REuItaWNB5AeZPAIkZWvR6na5jm7Z+MoNInMQhdwyNrLSpdrewTsG18MwR5jLQwFPC4jHcKWke+
+	UDySfSLT22RwVUMvV1OQ2FVFrOrmvhnVnkQySdCbKm4mrcnMj2C32BXklAeEM7rXBNmkUdXwvT9
+	phlDt63dYKOhqB48ZJ4Osd2Jj
+X-Google-Smtp-Source: AGHT+IEg1iVUs6leKP9cHj2cx58SzsL13TI+csDZL0P1k6w1OJijHfrbcJXnEnD/4J+xBKVTIxDONg==
+X-Received: by 2002:a05:6902:1381:b0:eb3:6e74:dd0c with SMTP id 3f1490d57ef6-eb36e74defcmr792195276.24.1758641851831;
+        Tue, 23 Sep 2025 08:37:31 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-ea5ce854f57sm5087789276.22.2025.09.23.08.37.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 08:37:31 -0700 (PDT)
+Date: Tue, 23 Sep 2025 10:37:30 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, iommu@lists.linux.dev, 
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, zong.li@sifive.com, tjeznach@rivosinc.com, joro@8bytes.org, 
+	will@kernel.org, robin.murphy@arm.com, anup@brainfault.org, atish.patra@linux.dev, 
+	alex.williamson@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com, alex@ghiti.fr
+Subject: Re: [RFC PATCH v2 08/18] iommu/riscv: Use MSI table to enable IMSIC
+ access
+Message-ID: <20250923-54e8e0f39d672845e2979286@orel>
+References: <20250920203851.2205115-20-ajones@ventanamicro.com>
+ <20250920203851.2205115-28-ajones@ventanamicro.com>
+ <20250922184336.GD1391379@nvidia.com>
+ <20250922-50372a07397db3155fec49c9@orel>
+ <20250922235651.GG1391379@nvidia.com>
+ <87ecrx4guz.ffs@tglx>
+ <20250923-de370be816db3ec12b3ae5d4@orel>
+ <20250923145251.GP1391379@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923145251.GP1391379@nvidia.com>
 
-On Tue, 23 Sep 2025 15:23:02 +0000 Dragos Tatulea wrote:
-> On Mon, Sep 22, 2025 at 04:18:27PM -0700, Jakub Kicinski wrote:
-> > On Sat, 20 Sep 2025 09:25:31 +0000 Dragos Tatulea wrote:  
-> > > The point is not to chase leaks but races from doing a recycle to cache
-> > > from the wrong CPU. This is how XDP issue was caught where
-> > > xdp_set_return_frame_no_direct() was not set appropriately for cpumap [1].
-> > > 
-> > > My first approach was to __page_pool_put_page() but then I figured that
-> > > the warning should live closer to where the actual assignment happens.
-> > > 
-> > > [1] https://lore.kernel.org/all/e60404e2-4782-409f-8596-ae21ce7272c4@kernel.org/  
-> > 
-> > Ah, that thing. I wonder whether the complexity in the driver-facing 
-> > xdp_return API is really worth the gain here. IIUC we want to extract
-> > the cases where we're doing local recycling and let those cases use
-> > the lockless cache. But all those cases should be caught by automatic
-> > local recycling detection, so caller can just pass false..
-> >  
-> This patch was simply adding the debugging code to catch the potential
-> misuse from any callers.
+On Tue, Sep 23, 2025 at 11:52:51AM -0300, Jason Gunthorpe wrote:
+> On Tue, Sep 23, 2025 at 09:37:31AM -0500, Andrew Jones wrote:
+> > undergoes a specified translation into an index of the MSI table. For the
+> > non-virt use case we skip the "composes a new address/data pair, which
+> > points at the remap table entry" step since we just forward the original
+> > with an identity mapping. For the virt case we do write a new addr,data
+> > pair (Patch15) since we need to map guest addresses to host addresses (but
+> > data is still just forwarded since the RISC-V IOMMU doesn't support data
+> > remapping). 
 > 
-> I was planning to send another patch for the xdp_return() API part
-> once/if this one got accepted. If it makes more sense I can bundle them
-> together in a RFC (as merge window is coming).
+> You should banish thinking of non-virt/virt from your lexicon. Linux
+> doesn't work that way, and trying to force it too is a loosing battle.
 
-Combined RFC would make sense, yes.
+Well, we need to consider virt when the hardware has virt-specific
+features that we want to control. We also need to consider virt when
+additional address translations to go from guest space to host space
+are needed, as in this case.
 
-But you get what I'm saying right? I'm questioning whether _rx_napi()
-flavor of calls even make sense these days. If they don't I'd think
-the drivers can't be wrong and the need for the debug check is
-diminished?
+> 
+> If you have a remap domain then it should always be remapping. There
+> is no such idea in Linux as a conditional IRQ domain dependent on
+> external factors (like how the IOMMU is configured, if the device is
+> "virt" or not, etc).
+
+The remap domain is created when the platform supports MSIs and always
+does remapping when the IOMMU supports the MSI table. It could even do
+remapping when the IOMMU doesn't support the MSI table since it could
+use the DMA table instead, but that's left for a later patch series if
+hardware actually shows up like that.
+
+The difference between virt and non-virt is what addresses get remapped
+for the remapping. For virt, guest addresses get remapped, for non-virt,
+we don't remap guest addresses. And, since we don't remap guest addresses
+for non-virt, then, rather than invent some new, arbitrary address, we
+just use the host address. Remapping is still in use, but, as I said
+above, it's an identity mapping.
+
+(Note, for the current riscv iommu, "remapping" for the non-virt case just
+means keeping the set of IMSICs that a device may reach limited to just
+what it should be allowed to reach.)
+
+> 
+> Be specific what you mean.
+
+I'm always happy to clarify when asked. I'm not sure what I said that
+would lead to thinking remapping was disabled for the non-virt case,
+but hopefully what I wrote now clarifies that it is not.
+
+Thanks,
+drew
 
