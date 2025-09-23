@@ -1,210 +1,195 @@
-Return-Path: <linux-kernel+bounces-828505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3016B94BCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:20:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB8BB94BCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 792167A3AD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:19:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 310467A4401
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CC630E0F9;
-	Tue, 23 Sep 2025 07:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0FD3112AB;
+	Tue, 23 Sep 2025 07:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ibKUIfmy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AbyAG1Re"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012037.outbound.protection.outlook.com [52.101.43.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5276B2E92BC;
-	Tue, 23 Sep 2025 07:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758612045; cv=none; b=skqXt5zK4jzmTGXqr8R7OEASnRGBNimXwEMwd+uP4v14wWTHBPvrnbB1NKbEx08DsYYzn4Cnl4pHH18Bb4DEOTiiDa8SXBwK6RYYx0mCysdtARt2aSbxOPwbR1xNNHOvWDr29qhDQj4un1IZWLflMJ8+p5KVM3o0N8j6VoDsHYA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758612045; c=relaxed/simple;
-	bh=NM+WVMMbwfyE2avIQz4XHEsgxzTEwWfCVzaJ5Wiw12s=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=nsP1H0whIDPTcZayPmkPZPS3dbmqUUZZe+QOpo351Z6hFiltDzQkwSI9zP6td3cIGGSKHwRPaPXxu3E0MnfQ13JigxFeoDhdxvTC/MTUctKGcYYGqMtZ7dC/qzvEn1GBuy6+NWKedscwR7qZA2CdNQw2o9DvOQzQEsgphjQ1Tmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ibKUIfmy; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758612043; x=1790148043;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=NM+WVMMbwfyE2avIQz4XHEsgxzTEwWfCVzaJ5Wiw12s=;
-  b=ibKUIfmyaU4eQM8puEblWBGM3iNObR7qyk3EhUJr/wetLbKdg0CosuuC
-   x9fgY59tFWp5S2PBV2BdQmX1g90o7KQBvTMeE9oCIZaRMH47Qsyq4ae0G
-   iDG4qO6odgANOME6MOvnv1+5Vw2MFWj9FdTI2v4+7tjS6v/IEApuXQa0J
-   1OLvvZW/gR6ne/s4JYLgdKI349m/smtECHWzNhGdXV4G2K0TRKSfyd4hr
-   HHatfeOQxyG7s6hyt7hpgT0ZWiEfGXUkqf8oBV70uUE/5WrMmlwUcLPIV
-   nGIBHzp2yB+bsg5UqKGp02iAOZeB6knjhnYmqjouEaO/wAaVb39CypCEz
-   w==;
-X-CSE-ConnectionGUID: PX6oJ4FbS0ewc+Q47R8ADg==
-X-CSE-MsgGUID: f88pb8RAT4+PlrLOfDyo5A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64688360"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64688360"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 00:20:43 -0700
-X-CSE-ConnectionGUID: YiTgV3tkSBexGCD1hWtrzA==
-X-CSE-MsgGUID: Dwz4Et+mQea9x4xlzLxoRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="175829638"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 00:20:35 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 23 Sep 2025 10:20:31 +0300 (EEST)
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-cc: rostedt@goodmis.org, Lukas Wunner <lukas@wunner.de>, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-    helgaas@kernel.org, mattc@purestorage.com, Jonathan.Cameron@huawei.com, 
-    bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de, 
-    mhiramat@kernel.org, mathieu.desnoyers@efficios.com, oleg@redhat.com, 
-    naveen@kernel.org, davem@davemloft.net, anil.s.keshavamurthy@intel.com, 
-    mark.rutland@arm.com, peterz@infradead.org, tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v10 1/3] PCI: trace: Add a generic RAS tracepoint for
- hotplug event
-In-Reply-To: <fb87ff46-ebcf-450d-bfd5-b1ef52cda4be@linux.alibaba.com>
-Message-ID: <acfde737-23b3-7b0a-65c6-01082a71e5e8@linux.intel.com>
-References: <20250920060117.866-1-xueshuai@linux.alibaba.com> <20250920060117.866-2-xueshuai@linux.alibaba.com> <6bab311a-d5ba-133c-fddd-52899959445c@linux.intel.com> <12c84bff-6863-4730-b08a-631df904aa12@linux.alibaba.com> <fe2abb10-3847-af1c-12c2-193c32befe0c@linux.intel.com>
- <fb87ff46-ebcf-450d-bfd5-b1ef52cda4be@linux.alibaba.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C682E3101A3
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758612060; cv=fail; b=baFQ6jJtR/1hd8jfoGy8tojzMmFzVwbXRgh2ZJBZv1WKHRRbT6wH82WMYhnJ3XXV1HDFkvKnkyIN5IAgaYzYrG1DKXp5z/4yM05X+KEjdH/IdDzkuWD8ELdKsSu/2xGNBUwQ76/LAN9QeXXVg0R6hHs8nOsR23amcdwBZhGWzpE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758612060; c=relaxed/simple;
+	bh=TljLFCba8Gcjk1mUvJ8ASNXvbOC8MgHqOKseNPfxC3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=porwKNJqywxnp/3gVN76WgkGVRQtDtWoe1z3f0ihAhJvcL6yOEQWXOtWkiOwPkoCm7Pzdg0r/119SxcjkPZftpo2Yd5UfA3pindK5lQIM3W2OFy/3V2+V0WHvTyoOXbkGjLb5qSU0I9lmdk36Xaa1U240iiF7oR9e0uWO+tXy2E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AbyAG1Re; arc=fail smtp.client-ip=52.101.43.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P+Tanrp4fgMeAnMXuQyRpsW6mDtJ1dU1dA3RkcVr+cwhWbqiCH3FtpvVZpTpaL/JT6QEbiKbHTsfKuIf7d1WGZUSwRLRMQAEonwR1MKneg92a1oedxdS0mLmlnDCRuwqivqAzCfdkcCOjZxfsc3OPyQVGH4qWeZMxP3lupryp+XO/Ehh7+2Cdkqwo2KRaNGuwibCOmt5UIvyuw5Qjw5sf92qfTkPEI92Par8bEH5n0+lmi3x17q7iyOwV4Oml/14/5016Ap6GOtE9IQjEDNBaKwHUR7Z2YGo5EFDrO1B2uNvd0QHuBIzhlUGddgR3TzNIcZ+cJskhnx0KRrAx7cEXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Kf5Imie3twugRh8pwjyjWc+6rempKsY8QDKMTbBtGX0=;
+ b=kttQz6Z6OVx1Rv/nb/UEoLunfN/Nv7vxdTN9+hbPtRIRh3QtpYytkqKWmqwISZvg9+r1KC8ca6IEx/cBFn8z4pe6ZE+wkSHw9gQX7YmulIAq27HMWx1b1R9wVskV2HANtdH+UYYOluLCPYh3L46gDfhs1pTAqLwGo+PM5+0SZPAZ0/LtGD/9cLuMNo6HSNvQbO95PhHHWsZNuAJiW10sW7QTuGb0Zi2SEle1/7F/ZG5m66O8UePUBg5kzSZdN1epPIiUxWn7riHaCbRgjKLyq9zeR4RfUVivA6HFND875LHjTPmAk4WfH+9M09ZGP3vAiqgsttf0i/ocMy3iMS9S3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Kf5Imie3twugRh8pwjyjWc+6rempKsY8QDKMTbBtGX0=;
+ b=AbyAG1Re+q7PcAtV5exVRwW3zop5in2+KwugywVjPKKy6A+ES6zuPUU6cE+fNSDpSnoxU/gWRRJJU8/zUcddG1avDjEjxbWkRZeXa9GXnrp4uigAou/PvRq4tf+zRDNTD7eWIN0V4jt6EUgeWXJI45FKmK+YMOjy1aSaL+bktOB6VlSF+dM5e8uKSqDUlyOHPlg69LlydXa/bPf2pIQmuwUvl2CDRmkuoAl3DOALX4hfGrBf5fjSy2IALsvbrGEAih7WDDoyVwrkpLM4RPAVlOgA4kEHjxyW3Ajy46HqKNldgpaWEXvWBrROQ8Sd53jFQF4y/amZS/CZgoGXJ6YT1w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by CYYPR12MB8940.namprd12.prod.outlook.com (2603:10b6:930:bd::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
+ 2025 07:20:56 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 07:20:56 +0000
+Date: Tue, 23 Sep 2025 09:20:53 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
+Subject: Re: [PATCH 2/7] sched_ext: Improve SCX_KF_DISPATCH comment
+Message-ID: <aNJKVav0vog6_Smc@gpd4>
+References: <20250922013246.275031-1-tj@kernel.org>
+ <20250922013246.275031-2-tj@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922013246.275031-2-tj@kernel.org>
+X-ClientProxiedBy: PA7P264CA0151.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:36c::19) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1081156175-1758612031=:961"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|CYYPR12MB8940:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7a9a0157-ac04-4cc9-ae36-08ddfa71bcca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5if5J39FEizcTbAf8X3y93OtDkn8CqItKncr6R+B+OakJB2X0orb/l2PvEye?=
+ =?us-ascii?Q?4Jhrrt6FBX7g3TPJ4VNu1OrWKNkD6JOZaC76J1Azp8N2+Kiuz8HYwQKcZwJa?=
+ =?us-ascii?Q?ZgCrQ4NqjJiDKsEvcTV0Hpj7TG2SUEaSCuNYTUfn/10BW9q+RTX1eMAkSBdV?=
+ =?us-ascii?Q?uH9r4yHwySHFHTT4kQiI313jvTxVVM+eJxUJElUntdC5fnBFaj3TwqEHY8T0?=
+ =?us-ascii?Q?jiYIh14ycOkDYiDS6geQdiDui5pzOFYS+mMhnNcH3kc2B1wLwjjQqgaRCuvi?=
+ =?us-ascii?Q?c0nPGnKj/uqo1OAP61HVXOvJt4MZNdJfi9ydC2chZzh9xRjFI47uu77Juu2y?=
+ =?us-ascii?Q?9Bno2SVRujnMa4zxv2g5RojplJD/sJc7cHI2U4Zc1Sp5bzdhaQbFfsq+VQMF?=
+ =?us-ascii?Q?TaUkeOmGGhqI/7FJrWrGLPIwUm9NJJaGzxb9gptKzLYZPmPE/he0omkd2C33?=
+ =?us-ascii?Q?WUW6GXNoBnGqL2szFH9KNXnfarTDV8VaDhMFJSm/CCXdtCkMyU2jcFglixEO?=
+ =?us-ascii?Q?lmkh0tTiTd1ad8AAQfmbeTePdv+YfxJ3J7ywYA6/eHu4pCzSlBikQL70WvtR?=
+ =?us-ascii?Q?JpOEOXzpCAPfxfmNR7Rf++4lZo1K046cQCFvNYnsD5BLTtKhDOqaqzHYEXFR?=
+ =?us-ascii?Q?SM7H8D2x95d3SBr3fkhCbhTxV3aSYd9eMgn3BOww+BA+hn9He0EpPP5LF7dB?=
+ =?us-ascii?Q?hzTn6cVNBEmEo90FAS1jmW5qgJlaC30wt+YTfNUHfghNbrq0kyoWpSDzY6Fz?=
+ =?us-ascii?Q?1rPRG24MG91ccDVVhvfZxSeWbT7HQkyE9IypIyhBLncJ8QsjddVKqdXAXOpJ?=
+ =?us-ascii?Q?lqUjRec+51e9K52YDItWF5L8hQhSTiJY09UPrh9WWi1ypHrvSn53vWSySq2b?=
+ =?us-ascii?Q?/jICiQoznVP9ZYqRe3eHAPjeMOf+RDTkcOTfWA7Thga8AqTLTSFTMEHfys5M?=
+ =?us-ascii?Q?yRc4cQPWbgl42ED+MbooevrjJqVzM3QswyTjtSRSOjAy2H/Lw7pjSmrl2ysb?=
+ =?us-ascii?Q?PUjEQcpKM9xjkU0eKxe5J7VZXJRkN8qgTQakCsNorUyJMnzn0IIaz/1tUvQc?=
+ =?us-ascii?Q?JncOBufziVFXH9W9ll2+Ijj/JX86GsawuK8zaFn8HRLq7rjUjjGdXnf4hddU?=
+ =?us-ascii?Q?+kSZAKQS972qupFBDQ4JMpVhEknY4r263MrthsicEYPM9YDXNFHaUi9iOKvk?=
+ =?us-ascii?Q?rc390ayshGyQyTavTzVL+BpPgfFyiIXY14rqjgfGNOpvWPrVu8dt1swXzhqM?=
+ =?us-ascii?Q?39L/EVnfCfquqpOqxq9GMe5p+0kCPQe4wy2COZnzzuzH/sHOUNe2pzq6Cp8i?=
+ =?us-ascii?Q?fKctoboSm9S/98sxjPA+yCsvO6n2AzbUeXmGbfj7o7gQB8XpZJU6e6Q1/VO4?=
+ =?us-ascii?Q?Y+GDAmXKc/o0a/CvJmWbQMyg/kxQ0uNIWvq99aHU8LZ+iU5ezA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Tn/BmOsZEPfVdaXXelES3sX0lCrNcU9OsOSH1ZNOycV8VA1naa71vz8u8vlN?=
+ =?us-ascii?Q?2uyWdUl1zu0pARW+P+hAgcR3jX6VhnOzH3pZ+sTBQ/l3FbtcK1+iYv5zjElb?=
+ =?us-ascii?Q?L87pDt2QcaLrCDkTEPdczI69KRQW6I6JpFm4rmw4WLxKibcV8JATkdd9KwNP?=
+ =?us-ascii?Q?3yMNPyFsdAQCF5ymzO43HMZwzS/xoYot/TJwyuWg6BvaH4uaOgAj16BdHiNd?=
+ =?us-ascii?Q?Dj09tTdzGREm5RVdMeYALufp8zZyxsINZEZbQhGpKkjoZxYCyXo1VJ/MlXMF?=
+ =?us-ascii?Q?kOeO5b30kZLXHppiroFbVF+xomjGWPWXgVWmWqGBMYf5DL69oVXDJlfbDA6B?=
+ =?us-ascii?Q?LOInpIjpcdKPH999pwHK55ygC7x4n6tgTk4IqgSPPLiNnIBSm6A0CpZPwa20?=
+ =?us-ascii?Q?f96njP9eBzjZ1ER2SIW9kzawOCeg9Wou1NfV8Q/9m5Ey2/D7jv4X/Fl6txc/?=
+ =?us-ascii?Q?hrFhsa0XuwBYv45aurNNqmmsk499aiSfhi7xzAAGjAcz/s1clRj8ghTewQv5?=
+ =?us-ascii?Q?TMiMQuyKFQ28rEOhHQYPDYkZIuKkySUnbiLaiiAuwTu8Xm0dTl4QpfJBdKZm?=
+ =?us-ascii?Q?FO63VkDm3I40Y2uR9ebWEHrvyFr/GsxF1r3+dFASi6L4dkVEQmS3QjKKgp2+?=
+ =?us-ascii?Q?nzbtWM7geaFKBRe1nLXM2YP81U041aWMK+O6kubpvc0g/c7s9utSOVvzl5bx?=
+ =?us-ascii?Q?tUvGpK8HQsrq8LvYV3hC8AtAD2xuqttxP91rwU2Y8tDeV+lnlwui9vOoWasc?=
+ =?us-ascii?Q?NRG4X0evhQ61paSG95Jxh+ZsStmVFirpGbg14FUjCOAIaTK4YzwM9eF6B1WY?=
+ =?us-ascii?Q?+zETrKLOz2eNWZsG/M2vIU9wqf0EKsfgDQ+g7wlfVNVJtW5HC3wteaM+A7Wv?=
+ =?us-ascii?Q?W8oc47B/30SCv/h6oYs11k2jyqKlRWpZal6VPWd8wfxnpus56Ptnb5cNL4qf?=
+ =?us-ascii?Q?QJre0VON0C8ldCyrNqlWKW+vG/D31dCPhg4tZYd3LsjMJYg1+JtdD3HnoZmj?=
+ =?us-ascii?Q?6AWKDJZD62n8kTDFjdRb6i/gzLCuhLFaSf8Fk3GkHF1TXUQJKR+GRsoJkYr/?=
+ =?us-ascii?Q?HsKPWYIZy95ggxVVjL7pxVA1dj0OwlT5mooANayjXFN7HrpcpI8HRq6svvH5?=
+ =?us-ascii?Q?NEMlvSmn6qw8vZ3XyltP7oLlMzfeMtjxQnx7RbbVIWnqedFgAOsrzRw7jyRm?=
+ =?us-ascii?Q?3I46llKDOW6eBBFnDHw47tGdyTiR8XHI4cn8T0o+a0h3AkMI4f0meaQIVQOT?=
+ =?us-ascii?Q?20tiaswfREuTjS7dvgFmoJOO9c4L+UxCqUNnJPFxHNjInO4QYCwEE9Yr31WW?=
+ =?us-ascii?Q?1QGqgM4EO1D0xwyYy+1JPtI4nsLSno6GGCBg3ywRMh8FhuVoj0XBQAaEKdV8?=
+ =?us-ascii?Q?Ip9LcjTIb/avX6SD35WPioh6dzfWy3oFQCY5DZXLHnPcpmPQ7QQ5iPxvMvUY?=
+ =?us-ascii?Q?9CYP87XzjAEpSLbHbkc815YgDhzaoGsqc//HKxZjPrCqY9VnnZ3fhRSSIB6U?=
+ =?us-ascii?Q?8DWPf6dbKl+4nEZ1hooo1dP1MaWgNfKlfXAZCe9Uju9qXoBdYAz1Me0ECdqB?=
+ =?us-ascii?Q?FTyunhFm+bz6kMuf3BQA7OgiUAyGldxl4Y5TNviA?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a9a0157-ac04-4cc9-ae36-08ddfa71bcca
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 07:20:56.3401
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BswFIOvnjulpTen1AHQKmWwV9fb1xvXPx1IE5Rc7d3r6/o8LDMoY0bakh4yDJCc+SjRQvwZMlbgKLV6nVAokzg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8940
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Sun, Sep 21, 2025 at 03:32:41PM -1000, Tejun Heo wrote:
+> The comment for SCX_KF_DISPATCH was incomplete and didn't explain that
+> ops.dispatch() may temporarily release the rq lock, allowing ENQUEUE and
+> SELECT_CPU operations to be nested inside DISPATCH contexts.
+> 
+> Update the comment to clarify this nesting behavior and provide better
+> context for when these operations can occur within dispatch.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
 
---8323328-1081156175-1758612031=:961
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Looks good.
 
-On Tue, 23 Sep 2025, Shuai Xue wrote:
+Acked-by: Andrea Righi <arighi@nvidia.com>
 
->=20
->=20
-> =E5=9C=A8 2025/9/23 14:46, Ilpo J=C3=A4rvinen =E5=86=99=E9=81=93:
-> > On Tue, 23 Sep 2025, Shuai Xue wrote:
-> >=20
-> > >=20
-> > >=20
-> > > =E5=9C=A8 2025/9/22 21:10, Ilpo J=C3=A4rvinen =E5=86=99=E9=81=93:
-> > > > On Sat, 20 Sep 2025, Shuai Xue wrote:
-> > > >=20
-> > > > > Hotplug events are critical indicators for analyzing hardware hea=
-lth,
-> > > > > and surprise link downs can significantly impact system performan=
-ce
-> > > > > and
-> > > > > reliability.
-> > > > >=20
-> > > > > Define a new TRACING_SYSTEM named "pci", add a generic RAS tracep=
-oint
-> > > > > for hotplug event to help health checks. Add enum pci_hotplug_eve=
-nt in
-> > > > > include/uapi/linux/pci.h so applications like rasdaemon can regis=
-ter
-> > > > > tracepoint event handlers for it.
-> > > > >=20
-> > > > > The following output is generated when a device is hotplugged:
-> > > > >=20
-> > > > > $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enab=
-le
-> > > > > $ cat /sys/kernel/debug/tracing/trace_pipe
-> > > > >      irq/51-pciehp-88      [001] .....  1311.177459: pci_hp_event=
-:
-> > > > > 0000:00:02.0 slot:10, event:CARD_PRESENT
-> > > > >=20
-> > > > >      irq/51-pciehp-88      [001] .....  1311.177566: pci_hp_event=
-:
-> > > > > 0000:00:02.0 slot:10, event:LINK_UP
-> > > > >=20
-> > > > > Suggested-by: Lukas Wunner <lukas@wunner.de>
-> > > > > Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-> > > > > Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> > > > > Reviewed-by: Lukas Wunner <lukas@wunner.de>
-> > > > > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > > > ---
-> > > > >    drivers/pci/Makefile              |  2 +
-> > > > >    drivers/pci/hotplug/Makefile      |  3 +-
-> > > > >    drivers/pci/hotplug/pciehp_ctrl.c | 31 ++++++++++++---
-> > > > >    drivers/pci/trace.c               | 11 ++++++
-> > > > >    include/trace/events/pci.h        | 63
-> > > > > +++++++++++++++++++++++++++++++
-> > > > >    include/uapi/linux/pci.h          |  7 ++++
-> > > > >    6 files changed, 110 insertions(+), 7 deletions(-)
-> > > > >    create mode 100644 drivers/pci/trace.c
-> > > > >    create mode 100644 include/trace/events/pci.h
-> > > > >=20
-> > > > > diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-> > > > > index 67647f1880fb..bf389bc4dd3c 100644
-> > > > > --- a/drivers/pci/Makefile
-> > > > > +++ b/drivers/pci/Makefile
-> > > > > @@ -45,3 +45,5 @@ obj-y=09=09=09=09+=3D controller/
-> > > > >    obj-y=09=09=09=09+=3D switch/
-> > > > >      subdir-ccflags-$(CONFIG_PCI_DEBUG) :=3D -DDEBUG
-> > > > > +
-> > > > > +CFLAGS_trace.o :=3D -I$(src)
-> > > > > diff --git a/drivers/pci/hotplug/Makefile
-> > > > > b/drivers/pci/hotplug/Makefile
-> > > > > index 40aaf31fe338..d41f7050b072 100644
-> > > > > --- a/drivers/pci/hotplug/Makefile
-> > > > > +++ b/drivers/pci/hotplug/Makefile
-> > > > > @@ -65,7 +65,8 @@ rpadlpar_io-objs=09:=3D=09rpadlpar_core.o \
-> > > > >    pciehp-objs=09=09:=3D=09pciehp_core.o=09\
-> > > > >    =09=09=09=09pciehp_ctrl.o=09\
-> > > > >    =09=09=09=09pciehp_pci.o=09\
-> > > > > -=09=09=09=09pciehp_hpc.o
-> > > > > +=09=09=09=09pciehp_hpc.o=09\
-> > > > > +=09=09=09=09../trace.o
-> > > >=20
-> > > > To make it useful for any PCI tracing, not juse hotplug, this objec=
-t
-> > > > file
-> > > > should be added in drivers/pci/Makefile, not here.
-> > >=20
-> > > Make sence. How about adding to the main CONFIG_PCI object:
-> > >=20
-> > > diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-> > > index bf389bc4dd3c..d7f83d06351d 100644
-> > > --- a/drivers/pci/Makefile
-> > > +++ b/drivers/pci/Makefile
-> > > @@ -5,7 +5,7 @@
-> > >   obj-$(CONFIG_PCI)              +=3D access.o bus.o probe.o host-bri=
-dge.o \
-> > >                                     remove.o pci.o pci-driver.o searc=
-h.o \
-> > >                                     rom.o setup-res.o irq.o vpd.o \
-> > > -                                  setup-bus.o vc.o mmap.o devres.o
-> > > +                                  setup-bus.o vc.o mmap.o devres.o
-> > > trace.o
-> > >=20
-> > >   obj-$(CONFIG_PCI)              +=3D msi/
-> > >   obj-$(CONFIG_PCI)              +=3D pcie/
-> >=20
-> > Yes, that's the right place to add it.
-> >=20
->=20
-> Thanks for confirm.
-> Will send a new version to fix it.
+> ---
+>  include/linux/sched/ext.h | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/sched/ext.h b/include/linux/sched/ext.h
+> index 7047101dbf58..d82b7a9b0658 100644
+> --- a/include/linux/sched/ext.h
+> +++ b/include/linux/sched/ext.h
+> @@ -108,7 +108,11 @@ enum scx_kf_mask {
+>  	SCX_KF_UNLOCKED		= 0,	  /* sleepable and not rq locked */
+>  	/* ENQUEUE and DISPATCH may be nested inside CPU_RELEASE */
+>  	SCX_KF_CPU_RELEASE	= 1 << 0, /* ops.cpu_release() */
+> -	/* ops.dequeue (in REST) may be nested inside DISPATCH */
+> +	/*
+> +	 * ops.dispatch() may release rq lock temporarily and thus ENQUEUE and
+> +	 * SELECT_CPU may be nested inside. ops.dequeue (in REST) may also be
+> +	 * nested inside DISPATCH.
+> +	 */
+>  	SCX_KF_DISPATCH		= 1 << 1, /* ops.dispatch() */
+>  	SCX_KF_ENQUEUE		= 1 << 2, /* ops.enqueue() and ops.select_cpu() */
+>  	SCX_KF_SELECT_CPU	= 1 << 3, /* ops.select_cpu() */
+> -- 
+> 2.51.0
+> 
 
-I actually now started to wonder if it should be made depend on some=20
-tracing related config (sending this out quickly if you were just=20
-waiting for my confirmation to send quickly... I'm still investigating
-what other subsystems do).
-
---=20
- i.
-
---8323328-1081156175-1758612031=:961--
+Thanks,
+-Andrea
 
