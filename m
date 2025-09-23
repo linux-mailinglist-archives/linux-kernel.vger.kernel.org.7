@@ -1,169 +1,177 @@
-Return-Path: <linux-kernel+bounces-828813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE95BB958CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:02:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF32B958DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6380E2A3D9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:02:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD6652E641C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0321531197E;
-	Tue, 23 Sep 2025 11:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28395311945;
+	Tue, 23 Sep 2025 11:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="U5m1fhyk"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="fgAra4gg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NcfKpGk4"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A909330F554
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D61528032D
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758625339; cv=none; b=QlqBojt88QQhwa5QYM3Yr1rgLXY5ysdxiBwM5jJ9e8X7rzw8GzWm15BfybOz2gzMt+Id8v0ln2xUszge+l9bmhrfI5RQfRL6+LCq88507kYkzJGqwAhLNN8ZIqLwqyVaWjprXoo/l7LogC1CzgZS+q6xoG266mifciEymCqLaWc=
+	t=1758625400; cv=none; b=lszXS25V4l/zq+rCiTkqLzWUyzP+4LWJYhk1bDq3L8XFPv7LIo0yuJlhtH/1yX1djphf2QFtHYLlVGUWwCIiynsI9qFsk5UdpESAHDEb4fvbg2chfc+zMV4bfYkJj/2lDl35O56CtN8mAPqV/NUXpYp+dpQlniq2NSVN5jmWnSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758625339; c=relaxed/simple;
-	bh=nmg8ZlcYEZMG3b3USmC8IWsN1nAvQ+q1W6R0Z70TWqg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KvsIoKZUX5kXZCgtj1EOamxdPjKOcywtM9x0RAaiLsTzt+ONJTm3IachaJENxqEb3L6jtHKdcfPbXhIhVISgAoYjwr316DNIVaqygE46HH3cx4fuLC22fWB6pGN8e8HkLgYWzpDETq3ZXPN5hnMxiZxEM7DG7oapbiWrktHNFzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=U5m1fhyk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58N8HFTg021013
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:02:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bggJiQ/iD8KdHvRZgnHspKOOae/kK+TXLCdGyJ5mH2I=; b=U5m1fhykudyq96cT
-	uIdvTH9hPwm5C/BfvYzxoI46mYv+5gqwcRq/uxb3ZM7Ilu87Oee2Rb3ITL5RryyW
-	LKOGsroRx80cXk3Iq2YzMibp/NSUAzx4iMlDiYqYrBW2NEReMR4OlhPCuiNH3oMx
-	8SqD+kbbzd/KSJO9vmddQA2Ou0/PTv8JwStszmNw6z+L8Gahws+dJdTNlo5p2ZrS
-	wemUuOaZPyElgFAU0jj+iFJ7A+IMqkpiaUEgiWsBVo+p3CYfrJujpsevG4ju+RPW
-	R9UcCWFHETG4d8WCLAyGCDyp0h98MH8XUuRBQa9UqVkbLwJeib9gafdAoiULC9AM
-	9DRxqg==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bhvjsjaa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:02:16 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4d374dd29d1so15623501cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:02:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758625335; x=1759230135;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bggJiQ/iD8KdHvRZgnHspKOOae/kK+TXLCdGyJ5mH2I=;
-        b=kpHxG6XaUDUMD8/xwCpnaH+eOkIS9vBL61WltXW+AjkNAe/KsQGpbi9g5+pe74RhLH
-         YGE94ozao3eREk9PAukZlAB3bKXdpocveke/QLYnSZQ/LhF1YZEbbU3807+ktlUf/zG1
-         jzhIbfJvVsrwju5rgkydfzlNY2emnldCRsbLQngRFbsEkSuB9vednhrvhCXv6pjADBvE
-         qb19XGtDLXgD7B3JR/7FYMjxcU6LwpKpz23OzBJWvEqlc0okdMXXNqOH86G/9EmOxpsg
-         fAK3UmF9V2M6dbBynVWrPqTQlEBrtNxY0+dmrgJRsicrQGFRLKW5HsAtRY1YIUTNKzCt
-         2Xew==
-X-Forwarded-Encrypted: i=1; AJvYcCUFOjOp2UqvcAUqbQ9a8uQ6MSlkRfnT6j1Y0bSByek4V+916v88sZ4slaUFsmplZ8aJoRkTTDEXo0kyBAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxstWezfwIieDlHU0WlcOjOBOkv73PsAxNXwOTIgjm/t9x3Hmx4
-	1tHDFCs5VV6xv9flvNVO5ZiZTVzHtf1iaD0gyVyDYMbVsqZtiIUMutb0UgRIK0ZydvGj+iqy/PY
-	L0yLtgfyEccPMOOLeKd8gMvAZlt/btNKSuWjBj8IGkt43EAmL6l+2tdrgekY+OLiJsZ0=
-X-Gm-Gg: ASbGncsVJ+otCer6tXTSaSwaSd9WALIWZq26TlJka+Rrs/lSEa+C6w/DvVBu0DO01mO
-	W/SMM8sLm5D2ybDkMY912Na2i3YFBCfcNLCOyhmGboGU3Cmtg1J1dqeugMKTXxpbFZaHFdykPOB
-	ZaWEmYsrl++BWHndmLkZRSNCOEUnhNRTXaaV6HBt4NHS465BkmWOfaxfRNj3nHjqi3xbWo4MTbo
-	vGqK4mQyBtih4mPA/6jRrZlQLSuRJEuhzqG9nkj/YUzw9NCiVMoJLRsj7uhFROF+4b702wd4smR
-	TBVu1ZBGCkA7gOc1MpNzR/r+92w1AcBSeCCo3wdIHQ6lySu0VpI5kl6wCp7L1w0vT81wYDQ3mfk
-	4c3h4MVZG4ltkIw0PKuDizPHX7v3YaCmlxJZ+m5tsLI+lMtsPh+eE
-X-Received: by 2002:ac8:5a47:0:b0:4b7:a6e7:655 with SMTP id d75a77b69052e-4d36f9242d7mr25932081cf.52.1758625335475;
-        Tue, 23 Sep 2025 04:02:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGJM2wgAB4zOJpUGy2PNrM5r0tqSOwBh0Qq3+wYbYrFPr1pIDnxhW6YrxdaQ/6gsBsHXah5uw==
-X-Received: by 2002:ac8:5a47:0:b0:4b7:a6e7:655 with SMTP id d75a77b69052e-4d36f9242d7mr25931201cf.52.1758625334760;
-        Tue, 23 Sep 2025 04:02:14 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-578a5f4537csm4075975e87.27.2025.09.23.04.02.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 04:02:14 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Tue, 23 Sep 2025 14:01:56 +0300
-Subject: [PATCH 3/3] arm64: dts: qcom: rename sm6150 to talos
+	s=arc-20240116; t=1758625400; c=relaxed/simple;
+	bh=RfBfpRKE/7ZMl8ykFEwP7BTiNT+16hYOqmKTOknndMs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ExGdVZTEdxPGt8dyh7FE9G6Eg+AEmaFe4qW3njMZXESGw5slSFr2qK3HWHkykDzfNkrWE+fLBQMv1c3jHl9Bl042ERUc6CI8TLOkBkQ3Ngv6oYCn1F7uX/aRnOIPOZl0xMzckZSlqoQ++m7hoMVCpXa6w/H/POvoJnKR0366ZiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=fgAra4gg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NcfKpGk4; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id 7DEBFEC0084;
+	Tue, 23 Sep 2025 07:03:16 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Tue, 23 Sep 2025 07:03:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm3; t=1758625396; x=1758711796; bh=v0Iv997UV6
+	fMyfR2AD4bwzcf2iZuLe+1+UK+1BwCASs=; b=fgAra4gg2KoWwsNTu4d4nbdT+b
+	+jCGJMm/fQRT9LT9eb65wq+PwizXsr5WB8wQgiFIe4x5Y0n471IwVE0UTPKhbGN/
+	341SJhS0Yx9eStfEMaAqIDlOK3/4n/14WOG0VA+cIn69pb22VMfvp+lffq6BSa0b
+	Z5unjyVg3onwA+qd0xu/d6RN7aK+iXv2TVlOj5BkmgdCGYXXzsdm0NZwzWEHD+LG
+	dxXh3pHzjC8gmL2DGu0amWnN/4rINNO3iFSUsUuQfUzhl1CUafNyyFtiVCFmNv7n
+	iZFf6WYXCRr7QqmLsoHQuHlxf2VaguXzO6QlTJ0pSfU2ILSQ9aplAtyxoNtA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758625396; x=1758711796; bh=v0Iv997UV6fMyfR2AD4bwzcf2iZuLe+1+UK
+	+1BwCASs=; b=NcfKpGk4ZgpwLCBkfJkXM/VA1m4shVyguCG9Nl76jfRigMPSdY2
+	Cd4TfM+5/bEbg8O/9VtMkjMWKiHfBQUcrfxrW1ac+nKfwIGIMauyKGAhXQm5UCLr
+	bxVCsW/H48yU3AXW97Ndc61jRjWSHn/Ogpf0jIJJlPcoUy96My96YUYcgwIZIqAQ
+	tHpG9j941tqAVSO6YUuBdnO9E+/NxqfRrCsHmg4sVxv8lN6IfrMVBlx0HEfgbbEo
+	4lpbvI4hPaxgO+DZtbU04XQDtmo4RC2ieBQblv+tF4r/zdW/iiDOZ8cXV35dzqGL
+	L2dsdQrIHekKp04LV2xD8ISuJ3igSZbcU8A==
+X-ME-Sender: <xms:cn7SaMGSdI08bEYpEzBg_SvLz-cWwgaI8dzA0-KcAkkRo6I9nSQm_Q>
+    <xme:cn7SaBShrOfa6qKWJZnbOEDb0BWfaMhJM3qmyMDVf-2KOsozUH2XgsobPLSmMjP3Z
+    abrUqUmJSiJll9VEFLLJM-fkO-b9QTaihGj9pNCmyFLK2FHdpyGuEA>
+X-ME-Received: <xmr:cn7SaMQpilZtF127zMbjMcKq5O-z6J7cWVwCVTzwpycWQe_I18unNnYXtlK8FQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeitdehiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefmihhrhihlucfuhhhu
+    thhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrg
+    htthgvrhhnpeetffduudehveejfedugeektddtvedthfehfeehteffleetieevhedvfeeg
+    tdehfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepudekpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnug
+    grthhiohhnrdhorhhgpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhr
+    tghpthhtohephhhughhhugesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhi
+    esihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghk
+    vghssehorhgrtghlvgdrtghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesoh
+    hrrggtlhgvrdgtohhmpdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgiipdhrtghp
+    thhtoheprhhpphhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsuhhrvghnsgesgh
+    hoohhglhgvrdgtohhm
+X-ME-Proxy: <xmx:cn7SaEe5r5WHRDSR68JoxWB4haNtAduHKyEGQYl90rnZPeWoAlAX7A>
+    <xmx:cn7SaAdgewjJ1ZxEoNxkJ8yTmuWYkL-4QRHpv-BpBU8JUaVIZigV1w>
+    <xmx:cn7SaK_IaqrwPiCoC9HY_Drgk9oy-Cd4i2EX__9reo1Jv2wTpo6JKA>
+    <xmx:cn7SaAPMt43Vpjl4Fic3wHtn8noiVWqE-s1M_25uk-6v8418F0ow-Q>
+    <xmx:dH7SaOaXb4iVhWti3Xbm-GHEMwARJY5XamyJ9Tfq2CT2SBLEURHh7iU4>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 23 Sep 2025 07:03:14 -0400 (EDT)
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Hugh Dickins <hughd@google.com>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Rik van Riel <riel@surriel.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Kiryl Shutsemau <kas@kernel.org>
+Subject: [PATCHv3 0/5] mm: Improve mlock tracking for large folios
+Date: Tue, 23 Sep 2025 12:03:05 +0100
+Message-ID: <20250923110310.689126-1-kirill@shutemov.name>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250923-rename-dts-v1-3-21888b68c781@oss.qualcomm.com>
-References: <20250923-rename-dts-v1-0-21888b68c781@oss.qualcomm.com>
-In-Reply-To: <20250923-rename-dts-v1-0-21888b68c781@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1200;
- i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=nmg8ZlcYEZMG3b3USmC8IWsN1nAvQ+q1W6R0Z70TWqg=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBo0n4xfCzTnIfaUX+kBEtJbkW6TRmEq6I3wAvIA
- QGorh2bV+2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaNJ+MQAKCRCLPIo+Aiko
- 1ZKsCACNAh4NZx6Oz1iqHNrJ01LzIFu2mI1rslysPPaWrGwe6gCbKSmVtRfPpeaE+NJtvGOo9BH
- nl8NDnCkh4BqAKWqAkcCdw1ngwSBoHlK1Ipy4xtl/Wj2Eyat/U90v5eAq2/JMLksG0hfytF0ifH
- QmhdPObBNF6gFi/Sye4OcevWbEJrpc4ZGQfWK7VNRVad1tCUvLd7OIBn9l7PpkCs1XW5mEmi8ZV
- 53UonGU8mkodAq2ibyJHlzD0nZNxE+E+/mTxChNdaHpv5r2FrfLTUrLJn96QLciburNEnqLQ54+
- JyBgUVOf1sU+SOxdf4DRU40OdaGp7qgcpgHWJSfR/zSAw4tZ
-X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-ORIG-GUID: SrBsEXZh5LESLpnDiW3qDQkz8AglYKA4
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDAxMSBTYWx0ZWRfX60pecP+RdETb
- HUcmDtk7j0ViReom15F9zIWPNzVwKwkrK5sCC2r6xDIvFgo+9VPw+cqW3iKqoRZ8/ViuB8bRCDL
- XLtq3HTQAJtUIcOdlwoBGngJl8cRGyVgK3jJ6+wyB7yzLe0cFZChOcc53epCJSgHwXn7N/HRNvf
- FtBuU8bG/ao6Dq0sLBT/qEdQ+M6U8Gn0/TV5MDYslnDTky/LF0omCXV9KccpYb2EJ4LTOMDaepz
- YFkmCwYgg1hmhFPyZHaPLb8xzUh3/wndoyqVxiod34ME5k9zRPMn4mBNKrnq4egL8cgde4AJNMx
- b+6U3lNMUnSWizfA+ndLprlJgzAY86/HJhzSgi+ePVcDH/GliCeXrtsFKVqEVIymZr5sQJjqgwN
- 6oqIfp0c
-X-Proofpoint-GUID: SrBsEXZh5LESLpnDiW3qDQkz8AglYKA4
-X-Authority-Analysis: v=2.4 cv=Csq/cm4D c=1 sm=1 tr=0 ts=68d27e38 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=WswDrooiZKutORAMSMgA:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-23_02,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 adultscore=0 impostorscore=0 phishscore=0
- clxscore=1015 spamscore=0 priorityscore=1501 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509230011
+Content-Transfer-Encoding: 8bit
 
-SM6150 and QCS615 are two names for the same die, collectively known as
-'talos'. Follow the example of other platforms and rename SM6150 to
-talos.dtsi.
+From: Kiryl Shutsemau <kas@kernel.org>
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts             | 2 +-
- arch/arm64/boot/dts/qcom/{sm6150.dtsi => talos.dtsi} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
+The patchset includes several fixes and improvements related to mlock
+tracking of large folios.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index 705ea71b07a10aea82b5789e8ab9f757683f678a..e8faa25da79f10e4c3b2849ab078e88b9b5d03ab 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -7,7 +7,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
- #include <dt-bindings/gpio/gpio.h>
--#include "sm6150.dtsi"
-+#include "talos.dtsi"
- #include "pm8150.dtsi"
- / {
- 	model = "Qualcomm Technologies, Inc. QCS615 Ride";
-diff --git a/arch/arm64/boot/dts/qcom/sm6150.dtsi b/arch/arm64/boot/dts/qcom/talos.dtsi
-similarity index 100%
-rename from arch/arm64/boot/dts/qcom/sm6150.dtsi
-rename to arch/arm64/boot/dts/qcom/talos.dtsi
+The main objective is to reduce the undercount of Mlocked memory in
+/proc/meminfo and improve the accuracy of the statistics.
+
+Patches 1-2:
+
+These patches address a minor race condition in folio_referenced_one()
+related to mlock_vma_folio().
+
+Currently, mlock_vma_folio() is called on large folio without the page
+table lock, which can result in a race condition with unmap (i.e.
+MADV_DONTNEED). This can lead to partially mapped folios on the
+unevictable LRU list.
+
+While not a significant issue, I do not believe backporting is
+necessary.
+
+Patch 3:
+
+This patch adds mlocking logic similar to folio_referenced_one() to
+try_to_unmap_one(), allowing for mlocking of large folios where
+possible.
+
+Patch 4-5:
+
+These patches modifies finish_fault() and faultaround to map in the
+entire folio when possible, enabling efficient mlocking upon addition to
+the rmap.
+
+Patch 6:
+
+This patch makes rmap mlock large folios if they are fully mapped,
+addressing the primary source of mlock undercount for large folios.
+
+v3:
+ - Map entire folios on faultaround where possible;
+ - Fix comments and commit messages;
+ - Apply tags;
+
+Kiryl Shutsemau (5):
+  mm/rmap: Fix a mlock race condition in folio_referenced_one()
+  mm/rmap: mlock large folios in try_to_unmap_one()
+  mm/fault: Try to map the entire file folio in finish_fault()
+  mm/filemap: Map entire large folio faultaround
+  mm/rmap: Improve mlock tracking for large folios
+
+ mm/filemap.c |  15 +++++++
+ mm/memory.c  |   9 +----
+ mm/rmap.c    | 109 ++++++++++++++++++++++++++++-----------------------
+ 3 files changed, 78 insertions(+), 55 deletions(-)
 
 -- 
-2.47.3
+2.50.1
 
 
