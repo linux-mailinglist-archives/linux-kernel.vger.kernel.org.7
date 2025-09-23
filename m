@@ -1,131 +1,232 @@
-Return-Path: <linux-kernel+bounces-828143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F0EB940C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:53:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F45B940CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6313E7AB27A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:52:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B26D18A35C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FB5265CDD;
-	Tue, 23 Sep 2025 02:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2e7WA2r"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF0B26CE35;
+	Tue, 23 Sep 2025 02:58:05 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2972D184
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA1C184
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758596029; cv=none; b=R9rkV1SL0o0WMzUplAsCg2yt17/TQcapnwNMVET59Xf2oHrN3haH9cgqE0QrS3mZdPhSfsOZCqsFKT09jeK6fetAjCFzXBiwArehH7hvcMwUY8GcxUNRCKRx2fEjrj7Wc17cMa21ZNkPzjKaRmTIdIl2ZdtUT8HE/qwEMntihCg=
+	t=1758596285; cv=none; b=i8lFE+eTWeh300mWn7OIy7Lg5m2TJAEulI0qj4ItfCkRX0/M7rBSTJHCG3ooTUvPJeHAn5LSEJ+Xe71WB+d5mW3jXICC89YcylMe8pzIpsetrSEIfZE8T2QI4WyBdvR6nBw9BRAVsxghkSxa/4SALJDkc9du7hMUXwVRG7KoOsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758596029; c=relaxed/simple;
-	bh=4KL5v3OTEDwbPW2YYJKsjCzONjJMxy1fcQiPQrMYEq8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XuUtGfJPHrMHAOCPnID9T0iIqhqynB0riIAadsTQypF3vuYShLZlMaRE/gbcFJqCazIxMlcJ0h1ypFCpAvJtGL4cucHJFi3QnfF9u2O6llA/S/U3ZKoq3pbL3FVc9z6RBppuoSkAe7seV05dEh+sAFgBu2TuMgsz1GvpKfedRVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2e7WA2r; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso2607772f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 19:53:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758596026; x=1759200826; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=woHeSz+wN8VLZBX1PJ6mCkAi00YzbMjWoGGz/eAoJTo=;
-        b=I2e7WA2rcN/NthinaUjp0Vr/GE3zHducsKM0DvTj9ZB4DO3l/GzIxby72VbegFqeXa
-         YkNRu8b+gATiCxEFTrrTrxeC0k/laOP/csWMozRecNgplquJcmOXV9i+fwidcW5uenV6
-         EF9wlUF/xOy2WJy1DTAWlfeizlh/oqRZoANb9Dk1aOK5n50niMQAa79r2Hg/wQGPL+Zx
-         jLGTskPt4WH7VCFongQN55TP85a/acNIu0eV8eG51aFEtHDGWfR5Ahr/mjwhuNFqLWqL
-         WLRQLS+ZpUiIqnla3wKA5Vn8FzDS6DW1t427QPUQSfiS4kFFLhQj8x5PmH3DET5SRm3i
-         nPvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758596026; x=1759200826;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=woHeSz+wN8VLZBX1PJ6mCkAi00YzbMjWoGGz/eAoJTo=;
-        b=PQ8hL+hE/kQrRTMnJbmU3IyiAcy5R4W9ruHRhaHmf59y3pViD4X6VWH+qB5XsFS7Kv
-         FUNMiO1CIH5Bfg3Q0Yuxcml3m68Guuli01Ls1WH/FTWaEeE2kJeDsgccfdpcr4YjFAip
-         AlNEe3hPaJlmBbjrnjJ23Df5zmxqjhlnZOBzoTAPcN/Q3bzXHmpYUH2bzbM2/Tv18uOi
-         agY3W1pVJi/F6I1vup2h6mUgrGoqbA7jCPVuPuFnCULqyKAaJ2q7emx789L885JQTLZK
-         wwzNZZWTRjvssAwZdc6SikvycS4mm7xXFc9t2DwJvUnw1XCWAsHEQ9P2UViSZVQjaE4d
-         Hyyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXD7e4cwblSOMI1ECy3IG6eoYUZZJwVwFw9iX7HTS0swIzUdNUQmjyurNZDa1W/+lAk29txgQZOyNvuG40=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywiio+8hTJDXxQ4ufCoZ2D+YhJLwwDt36vKqa1wFMH98stiUYck
-	Mspw0WEep4SHr4vIfQLVP+0h1qMs9+skJYH9r7RwuqEklgnT8yWkrHuq98On+HJJX2qKYAY6458
-	kZwDM79aop0/YKZH4hVQ7DFNloWRdQp4=
-X-Gm-Gg: ASbGncvkfmKCHcKdN7nceGq8GpxfojPBpnaW5Y1rn4rbANguROYaXPI8JCH/ma4+O8u
-	dFROXC4eweK5oXObt2AaoIiaNobbp6BFWYYvkK27JpI727aU7kClz6yeNVzq+MQtcSvvjmP2AmI
-	kG0W/yod4viXSTXCY2pQCPaxXZvPh3r8WPXKOjmtgpTXE+KaDzxhEvozNhY0EXZE7Xjmc2jJdW+
-	mfdEuMV0I8uYSWeRT1XCHyigss2q5HNQdgsSL+V
-X-Google-Smtp-Source: AGHT+IHCLyj57vgWvMHGuc9+n8xyMBPrUAj3lSER1jbbCPJgW8Up2JuNBFO+TEIk+iCTBVYGf1v1oerNxYwQ1LGj0Gc=
-X-Received: by 2002:a05:6000:40dc:b0:3f7:4637:f052 with SMTP id
- ffacd0b85a97d-405cb7bbb1bmr605565f8f.44.1758596026347; Mon, 22 Sep 2025
- 19:53:46 -0700 (PDT)
+	s=arc-20240116; t=1758596285; c=relaxed/simple;
+	bh=Iae//nvp9B8tGWtD5t/4BeZC+YINkDe/MB8n2g1lAfw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MUl7hcd2EUABC4JOUcbq1Gw645US0prG2RzvhRv5pDkqn4fE1H2FbABIG/2ySk5l9Ho7TOHdVGoEPlfhoVkIn5PIfXrTG/bWLTeL9hiGYz76VLBZOaqZnYIw9csMcwMbnlOViM7AOm7tjf1knok0wgm0wqETMAJgxbcWrbDnCa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cW4M60rJJz24hvM;
+	Tue, 23 Sep 2025 10:54:26 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id E93F314010D;
+	Tue, 23 Sep 2025 10:57:57 +0800 (CST)
+Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 23 Sep 2025 10:57:57 +0800
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 23 Sep 2025 10:57:57 +0800
+Message-ID: <5e9aad79-fef1-4258-83c4-6938ceafbaa5@huawei.com>
+Date: Tue, 23 Sep 2025 10:57:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922075333.1452803-1-chen.dylane@linux.dev>
-In-Reply-To: <20250922075333.1452803-1-chen.dylane@linux.dev>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 22 Sep 2025 19:53:35 -0700
-X-Gm-Features: AS18NWC4b7F3GzLWN_qWwWaDX6YXSurSDS7Ypc-IAWe_3G5_P_08uwhLNGAtxwk
-Message-ID: <CAADnVQKtOCXdv-LJ-T6K_meAS26C_i4Yc0hOpYS46umsPmuQAQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: Add preempt_disable to protect get_perf_callchain
-To: Tao Chen <chen.dylane@linux.dev>
-Cc: Song Liu <song@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 drm-dp 1/4] drm/hisilicon/hibmc: fix dp probabilistical
+ detect errors after HPD irq
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <fengsheng5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <20250922024943.311947-1-shiyongbang@huawei.com>
+ <20250922024943.311947-2-shiyongbang@huawei.com>
+ <4vtis3tmlxhmxjmzhi4jdfriexidtr5u2jdcpmfegyyc5gkznu@mpzganc4k5gp>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <4vtis3tmlxhmxjmzhi4jdfriexidtr5u2jdcpmfegyyc5gkznu@mpzganc4k5gp>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemq100007.china.huawei.com (7.202.195.175)
 
-On Mon, Sep 22, 2025 at 12:54=E2=80=AFAM Tao Chen <chen.dylane@linux.dev> w=
-rote:
->
-> As Alexei suggested, the return value from get_perf_callchain() may be
-> reused if another task preempts and requests the stack after BPF program
-> switched to migrate disable.
->
-> Reported-by: Alexei Starovoitov <ast@kernel.org>
-> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
-> ---
->  kernel/bpf/stackmap.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
->
-> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-> index 2e182a3ac4c..07892320906 100644
-> --- a/kernel/bpf/stackmap.c
-> +++ b/kernel/bpf/stackmap.c
-> @@ -314,8 +314,10 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, =
-struct bpf_map *, map,
->         if (max_depth > sysctl_perf_event_max_stack)
->                 max_depth =3D sysctl_perf_event_max_stack;
->
-> +       preempt_disable();
->         trace =3D get_perf_callchain(regs, 0, kernel, user, max_depth,
->                                    false, false);
-> +       preempt_enable();
+> On Mon, Sep 22, 2025 at 10:49:40AM +0800, Yongbang Shi wrote:
+>> From: Baihan Li <libaihan@huawei.com>
+>>
+>> The issue is that drm_connector_helper_detect_from_ddc() returns wrong
+>> status when plugging or unplugging the monitor. Use HPD pin status in
+>> DP's detect_ctx() for real physcal monitor in/out, and keep using
+>> detect_frome_ddc() if it's the first time to call detect because of
+>> insmoding driver.
+> If I understand correct, this is not quite right. Consider DP-to-HDMI or
+> DP-to-DVI dongle being plugged without an actual monitor and then the
+> monitor being plugged later on.
 
-This is obviously wrong.
-As soon as preemption is enabled, trace can be overwritten.
-guard(preempt)();
-can fix it, but the length of the preempt disabled section
-will be quite big.
-The way get_perf_callchain() api is written I don't see
-another option though. Unless we refactor it similar
-to bpf_try_get_buffers().
+Hi Dmitry,
+Thanks for your correction. So your point is that if the HPD comes in from a dongle.
+Is that okay to add those checks at the end?
 
-pw-bot: cr
+         ret = drm_dp_read_dpcd_caps(dp_dev->aux, dp_dev->dpcd);
+	if (ret)
+		return connector_status_disconnected;
+
+	if (!drm_dp_is_branch(dpcd))
+		return connector_status_connected;
+
+	if (drm_dp_read_sink_count_cap(connector, dp_dev->dpcd, &dp_dev->desc) &&
+	    dp_dev->dpcd[DP_DOWNSTREAM_PORT_0] & DP_DS_PORT_HPD) {
+		ret = drm_dp_read_sink_count(dp_dev->dpcd);
+		if (ret > 0)
+			return connector_status_connected;
+	}
+
+Thanks，
+Baihan
+
+
+>> Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
+>> Signed-off-by: Baihan Li <libaihan@huawei.com>
+>> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+>> ---
+>> ChangeLog:
+>> v5 -> v6:
+>>    - use HPD status in DP detect_ctx(), suggested by Dmitry Baryshkov.
+>> v4 -> v5:
+>>    - fix the commit message and DP detect_ctx(), suggested by Dmitry Baryshkov.
+>> ---
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c     | 12 ++++++++++++
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h     |  7 +++++++
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h    |  3 +++
+>>   drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c | 13 +++++++++++--
+>>   4 files changed, 33 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> index 8f0daec7d174..4d8d3e4d4f84 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> @@ -2,6 +2,7 @@
+>>   // Copyright (c) 2024 Hisilicon Limited.
+>>   
+>>   #include <linux/io.h>
+>> +#include <linux/iopoll.h>
+>>   #include <linux/delay.h>
+>>   #include "dp_config.h"
+>>   #include "dp_comm.h"
+>> @@ -305,3 +306,14 @@ void hibmc_dp_set_cbar(struct hibmc_dp *dp, const struct hibmc_dp_cbar_cfg *cfg)
+>>   	hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, BIT(0), cfg->enable);
+>>   	writel(HIBMC_DP_SYNC_EN_MASK, dp_dev->base + HIBMC_DP_TIMING_SYNC_CTRL);
+>>   }
+>> +
+>> +void hibmc_dp_update_hpd_status(struct hibmc_dp *dp)
+>> +{
+>> +	int status;
+>> +
+>> +	readl_poll_timeout(dp->dp_dev->base + HIBMC_DP_HPD_STATUS, status,
+>> +			   FIELD_GET(HIBMC_DP_HPD_CUR_STATE, status) != dp->hpd_status,
+>> +			   1000, 100000); /* DP spec says 100ms */
+>> +
+>> +	dp->hpd_status = FIELD_GET(HIBMC_DP_HPD_CUR_STATE, status);
+>> +}
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> index 665f5b166dfb..8348ad9e34a8 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> @@ -14,6 +14,11 @@
+>>   
+>>   struct hibmc_dp_dev;
+>>   
+>> +enum hibmc_hpd_status {
+>> +	HIBMC_HPD_OUT,
+>> +	HIBMC_HPD_IN,
+>> +};
+>> +
+>>   enum hibmc_dp_cbar_pattern {
+>>   	CBAR_COLOR_BAR,
+>>   	CBAR_WHITE,
+>> @@ -50,6 +55,7 @@ struct hibmc_dp {
+>>   	struct drm_dp_aux aux;
+>>   	struct hibmc_dp_cbar_cfg cfg;
+>>   	u32 irq_status;
+>> +	int hpd_status;
+>>   };
+>>   
+>>   int hibmc_dp_hw_init(struct hibmc_dp *dp);
+>> @@ -60,5 +66,6 @@ void hibmc_dp_reset_link(struct hibmc_dp *dp);
+>>   void hibmc_dp_hpd_cfg(struct hibmc_dp *dp);
+>>   void hibmc_dp_enable_int(struct hibmc_dp *dp);
+>>   void hibmc_dp_disable_int(struct hibmc_dp *dp);
+>> +void hibmc_dp_update_hpd_status(struct hibmc_dp *dp);
+>>   
+>>   #endif
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+>> index 394b1e933c3a..64306abcd986 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+>> @@ -24,6 +24,9 @@
+>>   #define HIBMC_DP_CFG_AUX_READY_DATA_BYTE	GENMASK(16, 12)
+>>   #define HIBMC_DP_CFG_AUX			GENMASK(24, 17)
+>>   
+>> +#define HIBMC_DP_HPD_STATUS			0x98
+>> +#define HIBMC_DP_HPD_CUR_STATE		GENMASK(7, 4)
+>> +
+>>   #define HIBMC_DP_PHYIF_CTRL0			0xa0
+>>   #define HIBMC_DP_CFG_SCRAMBLE_EN		BIT(0)
+>>   #define HIBMC_DP_CFG_PAT_SEL			GENMASK(7, 4)
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> index d06832e62e96..48c9c97eef0e 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> @@ -34,9 +34,16 @@ static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
+>>   static int hibmc_dp_detect(struct drm_connector *connector,
+>>   			   struct drm_modeset_acquire_ctx *ctx, bool force)
+>>   {
+>> -	mdelay(200);
+>> +	struct hibmc_dp *dp = to_hibmc_dp(connector);
+>> +
+>> +	/* if no HPD just probe DDC */
+>> +	if (!dp->irq_status)
+>> +		return drm_connector_helper_detect_from_ddc(connector, ctx, force);
+>>   
+>> -	return drm_connector_helper_detect_from_ddc(connector, ctx, force);
+>> +	if (dp->hpd_status == HIBMC_HPD_IN)
+>> +		return connector_status_connected;
+>> +
+>> +	return connector_status_disconnected;
+>>   }
+>>   
+>>   static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
+>> @@ -128,6 +135,8 @@ irqreturn_t hibmc_dp_hpd_isr(int irq, void *arg)
+>>   		hibmc_dp_reset_link(&priv->dp);
+>>   	}
+>>   
+>> +	hibmc_dp_update_hpd_status(&priv->dp);
+>> +
+>>   	if (dev->registered)
+>>   		drm_connector_helper_hpd_irq_event(&priv->dp.connector);
+>>   
+>> -- 
+>> 2.33.0
+>>
 
