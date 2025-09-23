@@ -1,369 +1,291 @@
-Return-Path: <linux-kernel+bounces-828583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 473F0B94EF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:11:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E44CB94F08
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F143A48562C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:11:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80FAA17027D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F88B3191C4;
-	Tue, 23 Sep 2025 08:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81929319864;
+	Tue, 23 Sep 2025 08:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VQRTjGzR"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010039.outbound.protection.outlook.com [52.101.193.39])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="CD/Ab+36"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A27A1DD877
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D00C30EF7C;
+	Tue, 23 Sep 2025 08:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.182.106
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758615083; cv=fail; b=sqKeuGwRV1OikUTsNCcjAEBAhqBByG13vvTXL7dbmdTiw2bRh/E8S2DtvdG/KAX+vkg0aNXBtJImh1MeP/X0PscnQy/KcVM9t/DNjyoCaSmuAJUvPXJbL45TqRPSDpRZyqmKQqlnlrSbpv98KYJmad8yXdtfB+nP8wAHrow6FM0=
+	t=1758615107; cv=fail; b=d8NppxMOxg26cqXNYjfAnCojn5r3kMCKW/LB6TB9YE0q1esVsKTqyzEE3rF+lQ7YpXFU1zOsNuYrcYimvpqRlK/q6VtZXdTPJ3ozbzKRXWUQga7IlRrH8uZpTe7JB0K7piaZSDQ0eHLb/T7yd7H/LjKZCzS3LWK0fOWf/uzkFw0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758615083; c=relaxed/simple;
-	bh=FAuZA/fGhL5Z6tEMU1yD7DNcWWo7FoQHG+FiFLGGjv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hh7gBnLzJjfDsFwo8/ZU1AJfo03xjZ27NVC33+R/ynpV/AuoQDWFGCHdXtjE9TcdZIC4cvWGWc84pcm8AKlO1PZc963FJ71bf1gJrhS831Pmlo6jldmOoISWSi/KYcLmShqHcm2Do4aYqBAzASRer/IhXEbdyoA2g/PTMbGnKM0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VQRTjGzR; arc=fail smtp.client-ip=52.101.193.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1758615107; c=relaxed/simple;
+	bh=43BAcB3X/hn87BSPSiYD6jybCgVJmBLfqMfocQyYoLc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tJSIQblJ96c46PJUk+ipLodRrpdSDtpxNIl2DdGSlL1N3kQB6I4+cXFPn8TK5QRbxf+00+V559U0apaCFLvZ8Y62Z5SkIuPaf5+a2p1QHtHgKjZen4ahWpIDe+E2CawEwD+dLiviY5/S2E6+eP2N/OT7bVIk5AkhtZii4QDVzjw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=CD/Ab+36; arc=fail smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58N7HDHD031289;
+	Tue, 23 Sep 2025 10:11:15 +0200
+Received: from gvxpr05cu001.outbound.protection.outlook.com (mail-swedencentralazon11013031.outbound.protection.outlook.com [52.101.83.31])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 499hpgmm5v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Sep 2025 10:11:15 +0200 (MEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FgZryo24SCDKIqhZNd6reH8A/qsrdFlIjocMLIK+162fPTJRMmidIpGh+geppHqAq1PIr9a/l/Rr2deRZ+oYdvACDbRvWJ9ittaqODAX8lPutO7v/DXwfD9B4dYvVbcXrUp4bBQFcXyqwsKiTytFeWt7tr9rW9NLo51EwltXL91apyvwgd5Z3Ji+pa7SuwyKfblYDlDCwdFdvZxrxu5rB6SqujcddF3RW3+HvfaLgzbqSEKPqxFRRF/3S4UUtWDpltMu14lDC9UZsoDhA7vbPQQ3FxpKW6hKrdAWUA+fpeEiRLuv8I2JC5xRtGlc+7ioXsWvjH/nyh0e1oZpv1PXiw==
+ b=yt71HLtx5qRXPt9rzID0WgAi1a3/4BU47fXFdse5a1sB6UtUwBdl9EZoDJwaXUotVyAi6pHTWnAYe1b7R3pkmy491HnmDn+nf8WoU9MVi8ab/ALZ99QeMS/EWvqwdvRcEzG7tV+cgSYaV7WCa8Ok95d92qKADj/V/1MDcU8b65Rm/+PUqLofMEY0nxW+XNTTsEpiHkHHrllAC5hnAtbEhq9CX1AJTka8+tlO6y6EaNjz/CJF+6Kevyb+PA63rVU2EKBIWgZrtUhvDvS4psAyPvLZQpjoYOjPb7OrLmdCr67PRJWrovOVV3WKjtvO5kSWBwmWxfEZl0Glb3Ayb+Sg5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZtXUj6JrC4/ThgB0ID2AScAsmbqRXyvd9XjB9BuwA/Q=;
- b=vR/UHdcEmJvTMEizTDqTELYjAJZA662+rIqnKpOFEemZV6N6AyaQjz2/J92SZpLYTPCNqZ5opBbtK7NmYJ/hReU/kJa+eAl4GLP/LLNXFqJoVhGf5fZGCuOIgsNem93nbKtCYdFV7uSZ+d1LlQbRLV4ay0uYCuCxYsovUD5nt8EYcsNkF1z+6lAOECzFr+LHwKeow2O5cmZ6RSD3hSHR3LL1nM0r0Tjc+vT8licHX/V7N3RgYwOevMT6Etlc2gilma1EyD30U35lWjIHsZyIGGJ7hv8CIUd1nHRIiovw4UgNnvtX4MwASPmcQaySsIN+YuK2I1uIj3FeQSrC4aj+5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ bh=PwBhvZiB43RK8oL9dmK0dt47rCw1E8NMx3f/Ba93Wr8=;
+ b=Dz53olFEUOj7CJVScLL6uknJPMI8NblWHMjb02m3t2O1sUxdsIh9wzIbiC8zXnlXiofV03iqCkSB+/a16QdAtlJKSk0L7PSukGEKrsffk2FnMOOQ9aZxBmHfQQxJDagMMdApmIKzfJQiDa0FFKwL0KwUi4Enpt8XYSNacO3hCseJsU8DmlDCQv2PVfo4Q9Mi0YTbw+kh1FSmr2+Q7FG14GRkEY0latBsVWoOab61YuiabpZ8z9iQyf1Vax1MMgQd4VCeBzOLctEaMp+iy0B/Ok+L8O5njqOwgADY6Ppmi+Oef0WEmXxmINtO5V7TVG7vGztSPsSn29WO8s0qVTz17g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.44) smtp.rcpttodomain=armlinux.org.uk smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZtXUj6JrC4/ThgB0ID2AScAsmbqRXyvd9XjB9BuwA/Q=;
- b=VQRTjGzRpwLYPUhxk3lATmJRt20XJeNODQBq6HXS00PtRrqltON0NkvWHrJe8Ok/jZFXnAdr6KljEjB1UstoCUj1Nm+DGnIuPDGiA7AOBcJym+WQBnyVZMu82+H8FtvUwJtT6ptJlKratoa8jOg7OrSRD3MQUy8+LRowCUS05P8FTyVw/vFa6A38k+km/eIdDqZ390DD8051zJk8gT8BWKuxKqMmHJFhzhs9/wY8+0pxRQo4eQE04WOUFDPIWofF/5RTtwTozgwgkFZCH9hmSt0itO4AuLmyE1gXDulS9JpngOUaJGWSKc2f+gDo2y0MEL1HhwkV1XDPVssju3hPCA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by SA3PR12MB9129.namprd12.prod.outlook.com (2603:10b6:806:397::16) with
+ bh=PwBhvZiB43RK8oL9dmK0dt47rCw1E8NMx3f/Ba93Wr8=;
+ b=CD/Ab+36ztrFAu/eBgvtpxEkn8n2OfmTqAZYNnPtVF7EFbqVfsJYIeM5s5y44EXBh4Mw+qiBCuzeLjnu57bHjf4LQPeHXNUNSv8CcoYCQeAv+dyw4/euZ+YCL7wgAXiXhqEhiIN6NKQ1kPvJRQcVkwHihUKTYM2oeesvKIXngx4xPSmCabRGPhbmjIDhZGLu9Q1oAHhSVM0AgqgtNMXTlEd4B522zJtapcpvJsIL1PCzaz8u9hBYWIOZvMQ2l7O6Vx7fPUS8baTU1pj4fD+lp7ZxYXY8nIMO0r08CnxViZ5ntBKGZHJZ4uRkKJJR3FKJ78z0h88H4CSIzkUnk7GIsQ==
+Received: from DB9PR06CA0017.eurprd06.prod.outlook.com (2603:10a6:10:1db::22)
+ by AM0PR10MB3331.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:18b::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
- 2025 08:11:17 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 08:11:11 +0000
-Date: Tue, 23 Sep 2025 10:11:06 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
-Subject: Re: [PATCH 7/7] tools/sched_ext: scx_qmap: Make debug output quieter
- by default
-Message-ID: <aNJWGrp08ucA4Ov2@gpd4>
-References: <20250922013246.275031-1-tj@kernel.org>
- <20250922013246.275031-7-tj@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922013246.275031-7-tj@kernel.org>
-X-ClientProxiedBy: ZR0P278CA0101.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:23::16) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+ 2025 08:11:12 +0000
+Received: from DU2PEPF00028D06.eurprd03.prod.outlook.com
+ (2603:10a6:10:1db:cafe::ea) by DB9PR06CA0017.outlook.office365.com
+ (2603:10a6:10:1db::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.20 via Frontend Transport; Tue,
+ 23 Sep 2025 08:11:12 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.44)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.44 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.44; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.44) by
+ DU2PEPF00028D06.mail.protection.outlook.com (10.167.242.166) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Tue, 23 Sep 2025 08:11:12 +0000
+Received: from SHFDAG1NODE1.st.com (10.75.129.69) by smtpO365.st.com
+ (10.250.44.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Tue, 23 Sep
+ 2025 10:03:51 +0200
+Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Tue, 23 Sep
+ 2025 10:11:10 +0200
+Message-ID: <64374318-f11e-4d02-9841-31ab60a97763@foss.st.com>
+Date: Tue, 23 Sep 2025 10:11:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 2/4] net: stmmac: stm32: add WoL from PHY
+ support
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Alexandre Torgue" <alexandre.torgue@foss.st.com>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "Heiner
+ Kallweit" <hkallweit1@gmail.com>,
+        Simon Horman <horms@kernel.org>,
+        Tristram
+ Ha <Tristram.Ha@microchip.com>,
+        Florian Fainelli
+	<florian.fainelli@broadcom.com>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250917-wol-smsc-phy-v2-0-105f5eb89b7f@foss.st.com>
+ <20250917-wol-smsc-phy-v2-2-105f5eb89b7f@foss.st.com>
+ <aMriVDAgZkL8DAdH@shell.armlinux.org.uk>
+ <72ad4e2d-42fa-41c2-960d-c0e7ea80c6ff@foss.st.com>
+ <aMwQKERA1p29BeKF@shell.armlinux.org.uk>
+ <64b32996-9862-4716-8d14-16c80c4a2b10@foss.st.com>
+ <aMwnCWT5JFY4jstm@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <aMwnCWT5JFY4jstm@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SA3PR12MB9129:EE_
-X-MS-Office365-Filtering-Correlation-Id: 32b85249-6b5e-4a4c-de11-08ddfa78c21b
+X-MS-TrafficTypeDiagnostic: DU2PEPF00028D06:EE_|AM0PR10MB3331:EE_
+X-MS-Office365-Filtering-Correlation-Id: f78f0cde-f370-45e2-5202-08ddfa78c28e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|82310400026|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3QtZa3IKpWl173QAQg7Ll+dOpojnmy4gWm+O7rCLrNKhnB6ErYkxusDP0Wp+?=
- =?us-ascii?Q?JBv+18FTR8Px2KGbCsVsUASrgcAAThArXOg4JQA1DGYh5wsF2c9WxF2oxXfy?=
- =?us-ascii?Q?3RTslLfqY15lf+zfubPfYBlgofFMK185tHSaJ7DVXrp9F880F+03UFR1ZJHK?=
- =?us-ascii?Q?wjURqLrFAx/TifbOMMlc8zQviX4tHb3icADOnGNyXvoHAoZyoxtmb5tJMwLB?=
- =?us-ascii?Q?stPfmvcg6IL/DEZWYyAgFI5zT4jTYqkHXVQ8nmgCMULOFrAhgC0qJa+nTwfV?=
- =?us-ascii?Q?b7JWlku1c/NHiFw9V7/90r/rYyt+QsNcCFndL2/dwJW0e8+u085XtA5CY02f?=
- =?us-ascii?Q?7hwuqs99FWu5YAEHCv/QUtVSMFrkA6nmw0Cx2xv/qCepanwNEtTnuwj0DYvl?=
- =?us-ascii?Q?anPE5byBwUnHX6mZhGu3r/PMzE8Pkw8afDaI0olh/bKIrzsTGJHlbFF3z3Y4?=
- =?us-ascii?Q?plsPQN17Pq2M6s1RqBjEblHdRD0c+vvDEy0+InGozoTrHgmoQ9y33C38z+7i?=
- =?us-ascii?Q?sZxmVo21L6TnXlqnrabhBCnfRDYUYOJxf+uU+EsOfNTaoc3HwW7d2ydtoPad?=
- =?us-ascii?Q?a+wiyojRKqZmXsRxYt8fLFHlB1yy+k39RhWESVznreIvLRRkFXOMoYmAMp2n?=
- =?us-ascii?Q?la9drOhAbEIEJxv7h9fDOnp+K7LN8iryIPEvM3lSbntxNN0hhFgGc6Tgj1zI?=
- =?us-ascii?Q?I7Gv7bE5PPT7y6EKK91vZ++xtFrEwp5JVNA3SJIrA6ifsjLr4/9oO8IMm1fa?=
- =?us-ascii?Q?o2Zpu6Z6yH83Bg5SrAf3SkxsM9Js4PFS/BmQghbo+YN9cinKnkHT9cWjL3gf?=
- =?us-ascii?Q?3nMfUxxBznVUlkG0LeWprzL/UkdDFusSMUSDdqRJJ1YFZ94EOPQEnBDXjEmm?=
- =?us-ascii?Q?NpjMn6U+2KLRL9eUFMjJ/r/v3KO4nlKE6gRG4FIBQlfwP5FYYFd9eHkyNjtR?=
- =?us-ascii?Q?R89HPU0eWEkh8JfbY1EVYal4TvPwHFZ3Jq7nisI2yZekA1LItwGzORAx6bHi?=
- =?us-ascii?Q?8SL9TUEgtlDp0R6HQz366idj2gBNDdkrQSRiDlEbJr7IPRlxqNTaqMNNrSyi?=
- =?us-ascii?Q?xdntkakpk95VgWiYlfJiFfvtX7oSakyXnd2qPzpdE5W+OGX3saoKVecfSecB?=
- =?us-ascii?Q?Q743Y32nZTM1yRkZe+uUbUEsuMEfUJ+0jAi7uUoNOX5nQ5s7+8PSR7VsAKA8?=
- =?us-ascii?Q?JXYh8R9BBuL9tALCUx1P25ICTLWeDg26r/Cv2ByMvNPCaYrfRA/D+qyAwW3T?=
- =?us-ascii?Q?+iqnMgVNYJh/RxEocmspqhD+0/X1ZJMYc1hNYTG2Lke0NlzjtRDWZIZJEfB8?=
- =?us-ascii?Q?Z1htxo8xxJfoX58dW4Npx2mNcf6dztc/ZAzSTFoT01GxE1puE4kT93sP/eJP?=
- =?us-ascii?Q?BDeMlFtuC0wL1Fcr+uXOYHLfZXc8t3qFJ7ZwUiZRhGHhBJn4jPV8Teu5CuHL?=
- =?us-ascii?Q?EYZXaQ5jCc0=3D?=
+	=?utf-8?B?b0tidDQ5Y09mZVVUdTM1ZG5ZM2VIdzZPQngvYm04OHY0TnZhdUlGWGhrNWM2?=
+ =?utf-8?B?M3hINHFMb1lkbjBmNVhGRmoyK0RmamlBRjE1N2h4UjFYeUE4aGRSOGthcWlv?=
+ =?utf-8?B?NkFpbVpCeFFUVzlSRzRlQ0Q3bWtvakh5N2JMbjlDVHBrTGplbXNrb0tYK0dC?=
+ =?utf-8?B?QlozRzgwbFZhdmhaTXloUnY5ZGY3TGdxMjBRZXV1bzhicGpoc0kwclhhOE8w?=
+ =?utf-8?B?cDY5SEE0S1F3UlFhZGNHQzZWVjd0WUU5bGwrblFFQURRcGVxbGFUc2RwSm1E?=
+ =?utf-8?B?RnRSbFNVL1ExUVdoU3ppREI0MDZkQm94MTVGclQ1Y3RReGp2a3FsOVJzQ2ZL?=
+ =?utf-8?B?a3NQZTEwZ1p6YThBMTZGbkVJT1JPSTFkdnlocmNhZzRwejNqS2F4UW5xOG8z?=
+ =?utf-8?B?N0JGY3NSV2Qyb3FoTHc1cWxRR3lucjY5V25pRVh0WlJvZ3g3VlZlSDVHWWZT?=
+ =?utf-8?B?eEQwUWViSUdyUVoxajY4SUc5U2trVWVPeTJDK2xNclNOMXEzb21nVTU4eWp4?=
+ =?utf-8?B?K2ZEWmF6cUNmVEQ4dm5FQTNtb1pJWHRWRk5OS2VsM0F1Y2Z3N21qbUhmUzJ6?=
+ =?utf-8?B?QlgvazZLeWxJaFBxWGFneFlHU25WMzJRT1dmekhFS29Scm5GcWU3QjkzTDlP?=
+ =?utf-8?B?dXRWS2ZLOWh5cDRlVW9OOEplRjhaSFQ0QWdZVnlDVHNQTDdSak12QzhVNldW?=
+ =?utf-8?B?Q2ljQ0kybWhTckxBWkdvdmZJbUJ3WTRJZ1NzNmoyVjl4S2txTHZPWVEzRDlh?=
+ =?utf-8?B?dDBhU2JIM0V4dGg3RFpLTEtuTTZJMEovdFYyQWFZWmJGeURRa2RLNTZqSm83?=
+ =?utf-8?B?a1R2RXAwTzlVank3Sm1PZFk4OVE3TmJrZlVKazBCcWlYUHNZMjJmV0hFZmtQ?=
+ =?utf-8?B?aWREZnpwd3VyNDJrQzBrOU14eGxiRGVmWjBHenFyb3d6Rms0Znhzc1RPUm15?=
+ =?utf-8?B?eUhkK2lIeGNRV1ZoZW5ianZiTnZWREYwQmtNQXIxZHp6VitBOTV6TWhSZzFn?=
+ =?utf-8?B?bkttR3ZCUk1NN3JSeEJsM1Z6TVlVelJSMHRlRUF4OGZDZi9LWEZ5L0w0VC9w?=
+ =?utf-8?B?WHpMNENNWGVnRXpremxLUHJWTUprVW1Ma1RjU3VxeEplbjEzbUloSTNsQlRm?=
+ =?utf-8?B?QmowWG9EbklDUkpJNGNFZVpoTFJUWTdSRzVGdUhIM2Rid2lKK0ozcGF3OTFO?=
+ =?utf-8?B?cGpMOVloSVg3ZC9jLy9JYm82T3NxNXJmdzBmNkVNODhkT0lOWk1jUnA4Rjlm?=
+ =?utf-8?B?ZSs0M2Vqdk9FdGdMeEF2czhUeVRnQTNsSHdoZVR2L0tJZ2VubEJNNkN4QUNR?=
+ =?utf-8?B?WHBnWDBlUTVGSnVpdjgzdU5meDRmQXU5TW5JSE1TU1g4a01BWnZhSXhKQTFT?=
+ =?utf-8?B?Z1h4eDdMOG4wcjV1NkF3b0xLR2c5RjhtSGRuMXM4amRLcDZtMkY5MkNzWHBS?=
+ =?utf-8?B?QkoyT2dDZlV0OXdqU0JhYVV4WTc0SjNQdW1lYUJNU1V6TVdnSkNhR3paTmw1?=
+ =?utf-8?B?R3NJVDd4cmN4cFBNM2duanFXMGFSQ0dzVDZYcm1aU1p3WHVZUk9Xb0V5V1cr?=
+ =?utf-8?B?WitTVm9GY2NnUUNMNFN4OHRpcXA4RVBkR1NvVURqL3dqU3E3QTN1RUxLbE1J?=
+ =?utf-8?B?YVFyTEtObG01aE45bHlsZEpLRUhENDBXZHhVZGpvWjhWT29HUGNvSjFPT211?=
+ =?utf-8?B?L200QXlvU0RTUHNwb1l1ZUdRWHF0UmVOWlNWUWlydXFDUzhmT3ozVTZsSHp3?=
+ =?utf-8?B?SWxIb1dqbmNkVlJBcGRQZ1ZOQnlCV0ZlRzYrU21OWnIrSldrdHRBVkJlVG0z?=
+ =?utf-8?B?eDd5c2FTZDJubWV1TktRMy94UFM0RE1BcFYxd3VqMURFUXYzUUxWN3VUUWdG?=
+ =?utf-8?B?bGdmQ1NIVk1tRUtReHZFUmNrSURiWGZUOHRHU0lYcG5JaHp5dHZ1eDAySHhM?=
+ =?utf-8?B?WThFcStCTFAyWTlhSUQvWlRwRlRCZFEwOXhJbFVJSEF6czhnd0tMQzB1bDVn?=
+ =?utf-8?B?YkJPem9WS3F6ajZiVXJyclRMV2V4djRqazVVaURuWS9oMDF4dU9ZSk5tUjlC?=
+ =?utf-8?Q?KZb85S?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pGcLIgg9bdix7IuLSKDot+QADBvaiZAy0T0jQgv5Zs5Hp1ERYrRSf3DAqqZx?=
- =?us-ascii?Q?rlz7KyuRw1g0t7rZ2TrU0fur7z1eSJQTsMl2q1ozCD9uMzO6rIbhRWydYqOe?=
- =?us-ascii?Q?hQkTVaInS2ieHTZloZuaRGM9TVlxM8QBzXmtTmaDBovdXjHJtxE5dpUoPnty?=
- =?us-ascii?Q?sC7TfK+INHJAq3nUjj0pc+rWIjmk6Wchq8bREIHU9ZwrmJ/c86kIjaFs81jV?=
- =?us-ascii?Q?f7eRBibafIvpBcr9ioEwaTykb4JYv7INuuSAMNPmPLj86jw2VTLYhMDJHPVw?=
- =?us-ascii?Q?l48b80TR+o9xpyJuXt7MesutVfVyZiuQbFTLmfFxDWOxHjeQ4PADIWOljoSB?=
- =?us-ascii?Q?KwVvuB5oReFhWBSLJ/4jbt4rVed2PLB2SsQWf/URia3QCpItsm3XQQDhRkOl?=
- =?us-ascii?Q?UzxSsqiDKoTv7UzP7fNJjE1qBwesYEUm1tj5LuJzUn/kGUQMWbsngbzQej1a?=
- =?us-ascii?Q?xgbMzZ6mIahssS7/tysJ+AyPdFzzojgU7BHWlMyyV6io8f4mv4k00IO1sLvi?=
- =?us-ascii?Q?D1SP3AapazkS87VivoBKqJ1q54qYxAV1XjDCO6wOIaKZI4ac+/p/D55cqIiD?=
- =?us-ascii?Q?t6mnCRQaKjq5o34s/eNnxFmKl3mGzI2Fq44awgyJvWjELWhcuHOdjYxsDc90?=
- =?us-ascii?Q?WJmWMDXhuLib9FKBjwcMh0oCoCnEGjgwDeBu+HLoxX0RQW3luKTvJdYWCe1N?=
- =?us-ascii?Q?YwbUixVfp9ZW1WSs2H3vA85TDEdhtXhto+uJrVrDs4f/ydPEVquxa2A7Cd9R?=
- =?us-ascii?Q?08Ui8o4pcZfrcMQqymt9qoNcTWq37E14XKGYjYeVfrgcAZvyutoLVIaEupJM?=
- =?us-ascii?Q?H2zYCNokXKNMHkVIpFGkz4uCbz5K4rMaEPCug8RHa2NzgFmWY+iTtZL+vB+i?=
- =?us-ascii?Q?thAuf31gI6UpZ8nkw5GOAZZyym1hTIioB+9ltyiZARVmC+ypD9XXsjAnzGst?=
- =?us-ascii?Q?S3ZEKFbUXpA4s3BWzUKCvOmnr3rW6R5jMm6r/oT9lR+godXnwN8zESFbRYWa?=
- =?us-ascii?Q?suqIlOJs+98/+I3HODZDWle2UtW2+tAo2UnBggXIHAgkdTxGTgvBy4tWo06U?=
- =?us-ascii?Q?GVci550L+WhE2yGCwNzGP3jGa45gULcDYqM4GRqBAfJJhXS5lGFYinR6SbIy?=
- =?us-ascii?Q?AKET3lKeYMO8itmT1NwgwGWKy5nA43tF3MfjSwU8pMQVaerHhxg4RWFuc5x/?=
- =?us-ascii?Q?EeD34BBlXFEImNfrTVXD5fNPGwEMUZb95dI9YkQGqzmvSdhl/WPe5JqJV97M?=
- =?us-ascii?Q?OoxLjyfHLfCL+OouIE33cqc2p8oYNTPTe6DKf4gd2/biBX3njfN/a4K321hZ?=
- =?us-ascii?Q?sCeKjgoZVkDUm4YzznPFO8X7ibUVv0nTUHpAhTYS9+TEa4Ro3iRWWzDiwQmT?=
- =?us-ascii?Q?n51ixX/F47V93rGqY3+xGztisjItepWXcfRwhzDaYEcZJ9tvO33gqtUfnAe0?=
- =?us-ascii?Q?AcJyLAdYYObFFpHbRpKhByUu8VgTlUI4H8lwc72e80K1A6GbVc1lZ/Dkzlqv?=
- =?us-ascii?Q?cX+fZ6ktBkiquSr+mp5eebCk4OhL9My9H4/1Lpfw0v7HtNLMEJk443APTb3x?=
- =?us-ascii?Q?oWSB1BGOUhJ+ncgO2IrY9rQKWqDKYgit23qzAJtc?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32b85249-6b5e-4a4c-de11-08ddfa78c21b
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 08:11:11.8537
+	CIP:164.130.1.44;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 08:11:12.2169
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7DXFz9jv7I18fHu4z9mOvXFZKiskwdwzAOpXqkHuUz/UL2d1JaIighX1bSG7vNLLmI1IckjBTt0UvOu/n34TMA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9129
+X-MS-Exchange-CrossTenant-Network-Message-Id: f78f0cde-f370-45e2-5202-08ddfa78c28e
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.44];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU2PEPF00028D06.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR10MB3331
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwMSBTYWx0ZWRfX7ko80snAg5Y2 qaW30j3YWnjbw4Lu0VfAoJz4yAhy3+llQBHCK/SOBQycRNg5o/y3M48ulb2dVH8XwzlHkWF6iUJ i9bUpVZXJJSZsw+5cAermcHfc7XmkOBlpVmccp+sVTQd+OH3rt6exDr18nA2ene9jsKYcXO9Fht
+ GXj0NbKPjM2d5dg+ujqJ7hjBT5KKQWz6vuoT9Cyc4Gtk3rshybNWGEeFdQkBepHNJCV0mDeestK i1U3yXP2aiZVQKHtUTr+t2I4++HjT50bajbaC+4b9efw4T4+n5GOHriHYDVIoRUk/QNRcBS9XR1 vPXXy+M0FWdFy4xsOk7lWMyhogSIQNrmORIUTQRip2PwL/vNymt1NbacBB9pCvJD6P1HfM+qGhk I1/2TA4p
+X-Proofpoint-ORIG-GUID: knBOxXk71hxkGghKZMY8jplHdGT31BuC
+X-Authority-Analysis: v=2.4 cv=PLMP+eqC c=1 sm=1 tr=0 ts=68d25623 cx=c_pps a=r3amAyZnyFs1+HRFMa/lSA==:117 a=Tm9wYGWyy1fMlzdxM1lUeQ==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=h8e1o3o8w34MuCiiGQrqVE4VwXA=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=ei1tl_lDKmQA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10 a=NQGlzXKa162JxgxB1IUA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: knBOxXk71hxkGghKZMY8jplHdGT31BuC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-23_01,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ bulkscore=0 phishscore=0 priorityscore=1501 spamscore=0 impostorscore=0
+ clxscore=1015 adultscore=0 classifier=typeunknown authscore=0 authtc=
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509200001
 
-On Sun, Sep 21, 2025 at 03:32:46PM -1000, Tejun Heo wrote:
-> scx_qmap currently outputs verbose debug messages including cgroup operations
-> and CPU online/offline events by default, which can be noisy during normal
-> operation. While the existing -P option controls DSQ dumps and event
-> statistics, there's no way to suppress the other debug messages.
+
+
+On 9/18/25 17:36, Russell King (Oracle) wrote:
+> On Thu, Sep 18, 2025 at 05:07:00PM +0200, Gatien CHEVALLIER wrote:
+>> On 9/18/25 15:59, Russell King (Oracle) wrote:
+>>>   > So no. In a situation like this, either we want to be in interrupt
+>>> mode (in which case we have an interrupt), or the pin is wired to
+>>> a power management controller and needs to be in PME mode, or it isn't
+>>> wired.
+>>>
+>>
+>> If you are in interrupt mode, plugging a cable would trigger a
+>> system wakeup in low-power mode if the INTB/PMEB line is wired to a
+>> power management controller and the WoL is enabled because we're no
+>> longer in polling mode, wouldn't it?
 > 
-> Split the debug output controls to make scx_qmap quieter by default. The -P
-> option continues to control DSQ dumps and event statistics
-> (print_dsqs_and_events), while a new -M option controls debug messages like
-> cgroup operations and CPU events (print_msgs). This allows users to run
-> scx_qmap with minimal output and selectively enable debug information as
-> needed.
+> What Andrew suggested, which is what I implemented for Realtek, other
+> interrupts get disabled when we enter suspend:
 > 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-
-Acked-by: Andrea Righi <arighi@nvidia.com>
-
-Thanks,
--Andrea
-
-> ---
->  tools/sched_ext/scx_qmap.bpf.c | 80 +++++++++++++++++++---------------
->  tools/sched_ext/scx_qmap.c     | 12 +++--
->  2 files changed, 53 insertions(+), 39 deletions(-)
+> static int rtl8211f_suspend(struct phy_device *phydev)
+> {
+> ...
+>          /* If a PME event is enabled, then configure the interrupt for
+>           * PME events only, disabling link interrupt. We avoid switching
+>           * to PMEB mode as we don't have a status bit for that.
+>           */
+>          if (device_may_wakeup(&phydev->mdio.dev)) {
+>                  ret = phy_write_paged(phydev, 0xa42, RTL821x_INER,
+>                                        RTL8211F_INER_PME);
 > 
-> diff --git a/tools/sched_ext/scx_qmap.bpf.c b/tools/sched_ext/scx_qmap.bpf.c
-> index cd50a94326e3..3072b593f898 100644
-> --- a/tools/sched_ext/scx_qmap.bpf.c
-> +++ b/tools/sched_ext/scx_qmap.bpf.c
-> @@ -39,7 +39,8 @@ const volatile u32 stall_kernel_nth;
->  const volatile u32 dsp_inf_loop_after;
->  const volatile u32 dsp_batch;
->  const volatile bool highpri_boosting;
-> -const volatile bool print_shared_dsq;
-> +const volatile bool print_dsqs_and_events;
-> +const volatile bool print_msgs;
->  const volatile s32 disallow_tgid;
->  const volatile bool suppress_dump;
->  
-> @@ -633,22 +634,25 @@ void BPF_STRUCT_OPS(qmap_dump_task, struct scx_dump_ctx *dctx, struct task_struc
->  
->  s32 BPF_STRUCT_OPS(qmap_cgroup_init, struct cgroup *cgrp, struct scx_cgroup_init_args *args)
->  {
-> -	bpf_printk("CGRP INIT %llu weight=%u period=%lu quota=%ld burst=%lu",
-> -		   cgrp->kn->id, args->weight, args->bw_period_us,
-> -		   args->bw_quota_us, args->bw_burst_us);
-> +	if (print_msgs)
-> +		bpf_printk("CGRP INIT %llu weight=%u period=%lu quota=%ld burst=%lu",
-> +			   cgrp->kn->id, args->weight, args->bw_period_us,
-> +			   args->bw_quota_us, args->bw_burst_us);
->  	return 0;
->  }
->  
->  void BPF_STRUCT_OPS(qmap_cgroup_set_weight, struct cgroup *cgrp, u32 weight)
->  {
-> -	bpf_printk("CGRP SET %llu weight=%u", cgrp->kn->id, weight);
-> +	if (print_msgs)
-> +		bpf_printk("CGRP SET %llu weight=%u", cgrp->kn->id, weight);
->  }
->  
->  void BPF_STRUCT_OPS(qmap_cgroup_set_bandwidth, struct cgroup *cgrp,
->  		    u64 period_us, u64 quota_us, u64 burst_us)
->  {
-> -	bpf_printk("CGRP SET %llu period=%lu quota=%ld burst=%lu", cgrp->kn->id,
-> -		   period_us, quota_us, burst_us);
-> +	if (print_msgs)
-> +		bpf_printk("CGRP SET %llu period=%lu quota=%ld burst=%lu",
-> +			   cgrp->kn->id, period_us, quota_us, burst_us);
->  }
->  
->  /*
-> @@ -692,16 +696,20 @@ static void print_cpus(void)
->  
->  void BPF_STRUCT_OPS(qmap_cpu_online, s32 cpu)
->  {
-> -	bpf_printk("CPU %d coming online", cpu);
-> -	/* @cpu is already online at this point */
-> -	print_cpus();
-> +	if (print_msgs) {
-> +		bpf_printk("CPU %d coming online", cpu);
-> +		/* @cpu is already online at this point */
-> +		print_cpus();
-> +	}
->  }
->  
->  void BPF_STRUCT_OPS(qmap_cpu_offline, s32 cpu)
->  {
-> -	bpf_printk("CPU %d going offline", cpu);
-> -	/* @cpu is still online at this point */
-> -	print_cpus();
-> +	if (print_msgs) {
-> +		bpf_printk("CPU %d going offline", cpu);
-> +		/* @cpu is still online at this point */
-> +		print_cpus();
-> +	}
->  }
->  
->  struct monitor_timer {
-> @@ -799,35 +807,36 @@ static void dump_shared_dsq(void)
->  
->  static int monitor_timerfn(void *map, int *key, struct bpf_timer *timer)
->  {
-> -	struct scx_event_stats events;
-> -
->  	bpf_rcu_read_lock();
->  	dispatch_highpri(true);
->  	bpf_rcu_read_unlock();
->  
->  	monitor_cpuperf();
->  
-> -	if (print_shared_dsq)
-> +	if (print_dsqs_and_events) {
-> +		struct scx_event_stats events;
-> +
->  		dump_shared_dsq();
->  
-> -	__COMPAT_scx_bpf_events(&events, sizeof(events));
-> -
-> -	bpf_printk("%35s: %lld", "SCX_EV_SELECT_CPU_FALLBACK",
-> -		   scx_read_event(&events, SCX_EV_SELECT_CPU_FALLBACK));
-> -	bpf_printk("%35s: %lld", "SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE",
-> -		   scx_read_event(&events, SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE));
-> -	bpf_printk("%35s: %lld", "SCX_EV_DISPATCH_KEEP_LAST",
-> -		   scx_read_event(&events, SCX_EV_DISPATCH_KEEP_LAST));
-> -	bpf_printk("%35s: %lld", "SCX_EV_ENQ_SKIP_EXITING",
-> -		   scx_read_event(&events, SCX_EV_ENQ_SKIP_EXITING));
-> -	bpf_printk("%35s: %lld", "SCX_EV_REFILL_SLICE_DFL",
-> -		   scx_read_event(&events, SCX_EV_REFILL_SLICE_DFL));
-> -	bpf_printk("%35s: %lld", "SCX_EV_BYPASS_DURATION",
-> -		   scx_read_event(&events, SCX_EV_BYPASS_DURATION));
-> -	bpf_printk("%35s: %lld", "SCX_EV_BYPASS_DISPATCH",
-> -		   scx_read_event(&events, SCX_EV_BYPASS_DISPATCH));
-> -	bpf_printk("%35s: %lld", "SCX_EV_BYPASS_ACTIVATE",
-> -		   scx_read_event(&events, SCX_EV_BYPASS_ACTIVATE));
-> +		__COMPAT_scx_bpf_events(&events, sizeof(events));
-> +
-> +		bpf_printk("%35s: %lld", "SCX_EV_SELECT_CPU_FALLBACK",
-> +			   scx_read_event(&events, SCX_EV_SELECT_CPU_FALLBACK));
-> +		bpf_printk("%35s: %lld", "SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE",
-> +			   scx_read_event(&events, SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE));
-> +		bpf_printk("%35s: %lld", "SCX_EV_DISPATCH_KEEP_LAST",
-> +			   scx_read_event(&events, SCX_EV_DISPATCH_KEEP_LAST));
-> +		bpf_printk("%35s: %lld", "SCX_EV_ENQ_SKIP_EXITING",
-> +			   scx_read_event(&events, SCX_EV_ENQ_SKIP_EXITING));
-> +		bpf_printk("%35s: %lld", "SCX_EV_REFILL_SLICE_DFL",
-> +			   scx_read_event(&events, SCX_EV_REFILL_SLICE_DFL));
-> +		bpf_printk("%35s: %lld", "SCX_EV_BYPASS_DURATION",
-> +			   scx_read_event(&events, SCX_EV_BYPASS_DURATION));
-> +		bpf_printk("%35s: %lld", "SCX_EV_BYPASS_DISPATCH",
-> +			   scx_read_event(&events, SCX_EV_BYPASS_DISPATCH));
-> +		bpf_printk("%35s: %lld", "SCX_EV_BYPASS_ACTIVATE",
-> +			   scx_read_event(&events, SCX_EV_BYPASS_ACTIVATE));
-> +	}
->  
->  	bpf_timer_start(timer, ONE_SEC_IN_NS, 0);
->  	return 0;
-> @@ -839,7 +848,8 @@ s32 BPF_STRUCT_OPS_SLEEPABLE(qmap_init)
->  	struct bpf_timer *timer;
->  	s32 ret;
->  
-> -	print_cpus();
-> +	if (print_msgs)
-> +		print_cpus();
->  
->  	ret = scx_bpf_create_dsq(SHARED_DSQ, -1);
->  	if (ret)
-> diff --git a/tools/sched_ext/scx_qmap.c b/tools/sched_ext/scx_qmap.c
-> index c4912ab2e76f..ef701d45ba43 100644
-> --- a/tools/sched_ext/scx_qmap.c
-> +++ b/tools/sched_ext/scx_qmap.c
-> @@ -20,7 +20,7 @@ const char help_fmt[] =
->  "See the top-level comment in .bpf.c for more details.\n"
->  "\n"
->  "Usage: %s [-s SLICE_US] [-e COUNT] [-t COUNT] [-T COUNT] [-l COUNT] [-b COUNT]\n"
-> -"       [-P] [-d PID] [-D LEN] [-p] [-v]\n"
-> +"       [-P] [-M] [-d PID] [-D LEN] [-p] [-v]\n"
->  "\n"
->  "  -s SLICE_US   Override slice duration\n"
->  "  -e COUNT      Trigger scx_bpf_error() after COUNT enqueues\n"
-> @@ -28,7 +28,8 @@ const char help_fmt[] =
->  "  -T COUNT      Stall every COUNT'th kernel thread\n"
->  "  -l COUNT      Trigger dispatch infinite looping after COUNT dispatches\n"
->  "  -b COUNT      Dispatch upto COUNT tasks together\n"
-> -"  -P            Print out DSQ content to trace_pipe every second, use with -b\n"
-> +"  -P            Print out DSQ content and event counters to trace_pipe every second\n"
-> +"  -M            Print out debug messages to trace_pipe\n"
->  "  -H            Boost nice -20 tasks in SHARED_DSQ, use with -b\n"
->  "  -d PID        Disallow a process from switching into SCHED_EXT (-1 for self)\n"
->  "  -D LEN        Set scx_exit_info.dump buffer length\n"
-> @@ -66,7 +67,7 @@ int main(int argc, char **argv)
->  
->  	skel->rodata->slice_ns = __COMPAT_ENUM_OR_ZERO("scx_public_consts", "SCX_SLICE_DFL");
->  
-> -	while ((opt = getopt(argc, argv, "s:e:t:T:l:b:PHd:D:Spvh")) != -1) {
-> +	while ((opt = getopt(argc, argv, "s:e:t:T:l:b:PMHd:D:Spvh")) != -1) {
->  		switch (opt) {
->  		case 's':
->  			skel->rodata->slice_ns = strtoull(optarg, NULL, 0) * 1000;
-> @@ -87,7 +88,10 @@ int main(int argc, char **argv)
->  			skel->rodata->dsp_batch = strtoul(optarg, NULL, 0);
->  			break;
->  		case 'P':
-> -			skel->rodata->print_shared_dsq = true;
-> +			skel->rodata->print_dsqs_and_events = true;
-> +			break;
-> +		case 'M':
-> +			skel->rodata->print_msgs = true;
->  			break;
->  		case 'H':
->  			skel->rodata->highpri_boosting = true;
-> -- 
-> 2.51.0
+> This disables all other interrupts when entering suspend _if_ WoL
+> is enabled and only if WoL is enabled.
+> 
+> If you're getting woken up when you unplug/replug the ethernet cable
+> when WoL is disabled, that suggests you have something wrong in your
+> interrupt controller - the wake-up state of the interrupt is managed
+> by core driver-model code. I tested this on nVidia Jetson Xavier NX
+> and if WoL wasn't enabled at the PHY, no wakeup occurred.
+> 
+
+I'll replicate what you've done for the masking of interrupt when
+going to low-power modes to the Microchip driver and see where it takes
+me. The wakeup occurred because I didn't mask the other interrupt
+sources in nINT mode... :)
+
+>> You can argue that as per the Realtek 8211F datasheet:
+>> "The interrupts can be individually enabled or disabled by setting or
+>> clearing bits in the interrupt enable register INER". That requires
+>> PHY registers handling when going to low-power mode.
+> 
+> ... which is what my patch does.
+> 
+>> There are PHYs like the LAN8742 on which 3 pins can be configured
+>> as nINT(equivalent to INTB), and 2 as nPME(equivalent to PMEB). The
+>> smsc driver, as is, contains hardcoded nPME mode on the
+>> LED2/nINT/nPME/nINTSEL pin. What if a manufacturer wired the power
+>> management controller to the LED1/nINT/nPME/nINTSEL?
+>> This is where the pinctrl would help even if I do agree it might be a
+>> bit tedious at first. The pinctrl would be optional though.
+> 
+> I'm not opposing the idea of pinctrl on PHYs. I'm opposing the idea
+> of tying it into the WoL code in a way that makes it mandatory.
+> Of course, if it makes sense for a PHY driver to do pinctrl stuff
+> then go ahead - and if from that, the driver can work out that
+> the PHY is wake-up capable, even better.
+> 
+> What I was trying to say is that in such a case as the Realtek
+> driver, I don't want to see pinctrl forced upon it unless there is
+> a real reason and benefit, especially when there are simpler ways
+> to do this.
+> 
+
+Yes, sure, I think there's a proper use-case for it. If it's going
+to happen, I think it would need a dedicated P-R. I'll send a V3 in
+the near future addressing what we discussed here. Thank you for
+the feedback.
+
+> I also think that it would be helpful to add the wakeup-source
+> property where PHYs are so capable even if the PHY driver doesn't
+> need it for two reasons. 1. OS independence. 2. it's useful docs.
+> 3. just because our driver as it stands at whatever moment in time
+> doesn't make use of it doesn't mean that will always be the case.
+> (e.g., we may want to have e.g. phylib looking at that property.)
 > 
 
