@@ -1,113 +1,294 @@
-Return-Path: <linux-kernel+bounces-828940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C17CEB95E56
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:56:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09079B95E4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E1A264E146C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:56:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8ACC18A23A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD58324B1B;
-	Tue, 23 Sep 2025 12:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA11532341C;
+	Tue, 23 Sep 2025 12:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EPu1TXqR"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cqWc4AFf"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CE6323F78
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857C6322C9C
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758632145; cv=none; b=BPOenTahP7jMpmoP4D+oz4aDgb50rSEDDj3vJIv8kXxp18NMxr4asI9u1pcYkPrwNE6NTQdF5ZWKNmt4d79OMn4PVHob37BM75zuwToIBt8K+M6Tq2XLk0WGyHgv9n4mWwlZBWSulsIcOZGd8zVCMyBmiBbWDw81j6OajG46HDQ=
+	t=1758632139; cv=none; b=PCiPBWm43XV5FN9UPoNUN2cEwq/swQpGYvn98xXBsD687+xJndbPbi3pM2Z9jixalN+05Ud1Ajm8Wq/xnLIxGe3KgsP1LcPpWGPGUJ9cjQ7OxwBGAGdBTQIVJNQLJQXtbWN4W4/iy62/yuCAMAKC7eRtWmpbt6lSERYkb8GnLAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758632145; c=relaxed/simple;
-	bh=bPsm5BeBlCI99myQ/NU1P5fqNGX5920h4zo3ax7qRNc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iV2vWeGpVd2iCNed5jnuBLip5DMAQ36izq+XM958s0QAOtYR0OV8b2Gi41PpjYff/CiyvaHqBHuX13ZY4E4XYoAXr8XWyNPVPwhpJts56uPI5mKxET7NcVYDglFFrU6boKnbc+brg5vlrg8Gve/xcTcylsq7iDPA19XK7TVSZ+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EPu1TXqR; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2699ef1b4e3so8034815ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 05:55:43 -0700 (PDT)
+	s=arc-20240116; t=1758632139; c=relaxed/simple;
+	bh=eLS+3L+WH/3oUK1KdScdYxGZmccSVzRYZZWCamfUCQc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SD53ZmEJ1Ml9AnTA+Yytv30r0/5php+eOh+zLnvse1CRvlP1/Pymbtjc1UwFtyOYmGo32Z65TXKec+Xe0ofVROSGF9WSxHS0EjetmtYYDFiLN5S5n/RfX7CaSyfgPZNFbTvJk7DXKdFgxvZzWN1PMEBF01vFS0LzRdieSxzKlIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cqWc4AFf; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so2914138f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 05:55:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758632143; x=1759236943; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bPsm5BeBlCI99myQ/NU1P5fqNGX5920h4zo3ax7qRNc=;
-        b=EPu1TXqRMV9c3MkOmonYDNOUzm7pwPqZjgIheS/l365/v4CTMDcXk+VMKryE/aPC6f
-         1c9Jte/mSTfShot6B9THGCB6V2z/fPSGGciuZ21zoFdcG7+aEpF73sAFRBlolzGV0HgH
-         O7pqPrSvTdbZfUU1FzOdsy1Vc6ng+1B/bELxO97Ecn3P0A4+mywoUi35c0YN5aYQ/eZt
-         /+k6lPXuFDOdbg7pwc+1hqKO6QbTZiK3Ik7WH4968x/fRvMD1VEdJddtQfjlgKyBeGKZ
-         FC3wGPHR3OIyAp6iPcwwTyLs2qyVacXGlYHBcx/xXsgX9Fy4qEmbb5Ek+tOM/GkMk5rQ
-         orOA==
+        d=suse.com; s=google; t=1758632136; x=1759236936; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xaIg4jDl9jFZTYzzE1kP2lbNTLyhNR0UhkVfuAOFPbU=;
+        b=cqWc4AFfAM96UtCVjz/5MIqSxFEpPwa+74UA3pacyceoShYe+nPmCjrueOs5X0idj9
+         QQEkIR2ZLsFpbqHA4WKPfAH/jyks3sNE4h6MlCnyGtpZE483XMy+nPYx3HQb11vjAmHX
+         yIJAZEp7V6PPxkPnC0fsMhlNGX8TJ/4q97r5AUEoY7wEBQLZMgjbCMbauzInMaWflFOx
+         iUO7aisFvjVCpxvgqKND8a0nJh05mzOTqR1t58tnmgsTV2QuotTYxa/PDbBi3rSxkdRz
+         K+cX3GmR2q3RSba0Jrq1vX1nAj1Km4dEEbA/5rjg5MLgr8cEv2GzieHQzp7xKIxxoYl0
+         j6kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758632143; x=1759236943;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bPsm5BeBlCI99myQ/NU1P5fqNGX5920h4zo3ax7qRNc=;
-        b=mQGc0d6vvoWh1p5u/+665EYsHPOyo88TCIUnbESDJ6RTF8IqsHKo+aaUlc6jGr6X2J
-         gCEL3TsYaD3aWD0IjI1R4n0tqz3hEo0hTmyq36aQ/rnf2BiwKyhTUi+h8LmnNtdRYZ3F
-         svRM2sN3HVslPhAkjMtcAew5dBwcT+vGW1pkeQsQn0S2O8VNwBe5OTW3c14mQmoM+Z6D
-         PPWwKD5gYFApvarGG1V+caSYT4Zq0TmXw1znUN+4k2xnspQdb38ZAR3Zk3onDi0rUfSh
-         gK+TQUcuXwqQ/bp0EMomDIYRg9pOC4ZaCOAg1PRPhkXIZMj7/lvqJteMYqP/qKgRZvBs
-         8bQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdXJTbB5pzk5Sknl+XP8Oab9jMAmTctGzfd6sHqwtuWly38LGSYwMzuHwhvPkM6kMpphO4ce4fPsAeWC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGU5m4sKvMYt7tE9AhPabV9fgK9QeCU+Siu8P/7AOLMBpMBes4
-	omoxqOtm7aIUYfoNYAMarXTlxDrPnBTHhpVLvwRty7/0goVIZ3mcBWhFjTiwUIYAhe/t5Sy1ywU
-	KHNwD8dE7aTXo8H3TxIm3z5apU4ohdTo=
-X-Gm-Gg: ASbGncvkOF4G3KTvrTgwTVo55G7m8HUwjVm6KCwB22HRKiWl0140snttOVMvQaqD3jE
-	6kQ96aR/+9dNHTVnaJhKi07YQBpm6llS4WiIMeEXZeUL6rIEGlYhV9AEYvygr3/GwGgN/H/cchN
-	hcf/ivr+cUr0BXAqiiPo/veZdVtYhdEX8wGY+ku0KzYpBcSjrBXh2NCZ1ETVowL8MX+IX96JoIG
-	7YAFJNdOBe8lrVbPB6B2CR49JFUGTDRykR/odx4H5xmBcffYGVMuTgl2B8i5/Vqk9z1hgMCvdc3
-	bCw1IK+Fq6X9vM4T+f35sl1jDA==
-X-Google-Smtp-Source: AGHT+IEVYX6ve7luR5GnSM4eICjSDTUTZRS+D8hMwmZQRsSzuaYCoXRh0iyJrxTjeZJZllU7L9GVHzx0ugS/+Ydl4II=
-X-Received: by 2002:a17:903:110e:b0:269:80e2:c5a8 with SMTP id
- d9443c01a7336-27cc94ca027mr19378695ad.7.1758632142902; Tue, 23 Sep 2025
- 05:55:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758632136; x=1759236936;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xaIg4jDl9jFZTYzzE1kP2lbNTLyhNR0UhkVfuAOFPbU=;
+        b=tz0BaPdqdtadltfl+tnSNLSziUZuxznIL62hqfOSd3sqEl3cxr5p8R8YXPw2xMbnco
+         e0dFNbBuxsGVpzd2Wh7/6bj2tlLthqI325ufcIJYAlkzWQUK67lBurmVUsK6e3RfIJa0
+         Rvg0ATFMefoMBkKp70gG9GMIJwg+HzhGZ5iWJYnSLxO5IpmOpdmqY/W/hetMB4gpUyB9
+         iX2A2EH2xMvIPrKsmwCQHCj/wzDEIVxni2WV96sonXbaR3/jOLqXfM5junH7FJZq05LL
+         gqr91BfAqeVruVkyBEt/+30ZKtd/uH2wwxUr8TdJV7GmKkmv9hFUObAKVFDRGzTN9iCc
+         PLIw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnB+nUZxA2ae7dKM7HF3uoe3Ne/mOezXmP3xhU6sNlPvnykW7T9Cev0LnGd+j8bXYt8KHSyVZhqTA/WMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoieSTSIH2/OfbXPzw0F0JVGJYG5u/q5hFBMSJb8TUQDr6gEwH
+	aZhwTJ6WMZ97j2lwIb5o9jU3hYlbotB9GR1bQZ46pQrkF4N73tEwLhdGSnZMXCBNqv0=
+X-Gm-Gg: ASbGncvJY5gi0zeY0GOd/atmZMWSY1weepXsQ6gm3VBnuhE40ElTsmDPaF11zVpwrSj
+	1d56xjAJdzFsHLvavmqwSF6tNFFBwqqcL5QxGtezxEftD1pgEKxS5hp07Uhfk9sl9w6ni7Z+201
+	C7Tm4uCyMC25bqFoRMjya1daSSboFOhbt6Cpl60/D2O8IrU3UytYMAltUSISJtZB3J4zyGDEauA
+	8iQ+QzKf0nzkykSICTC7i5W20A5cXKahixvlnUjjyP4BNPsV1PxpYpMbyA+y2CSfbNbaB1qW2Ia
+	NxGBBeBqJleLiD9yMk2sPu8gbm2J67Naz5YOmGq4k5nko6Uvo1XQCKxvg5Xs+mK2GR3wrnsWeag
+	RdeskFV1KHvqugLfzxLfgJLgp53tewXHw0UDjhH4GXbA=
+X-Google-Smtp-Source: AGHT+IG0uyoZNs0i41rqkNkMaZFqouCej55fWirbDUl/J5m3XVuK1w9+Aykmm/3MDPy3vac3H7+Wyg==
+X-Received: by 2002:a05:6000:4025:b0:3e4:957d:d00 with SMTP id ffacd0b85a97d-405cb9a5225mr1756055f8f.58.1758632135758;
+        Tue, 23 Sep 2025 05:55:35 -0700 (PDT)
+Received: from [10.100.51.209] (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f5a286edsm273702715e9.16.2025.09.23.05.55.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 05:55:35 -0700 (PDT)
+Message-ID: <c84d6952-7977-47cd-8f09-6ea223217337@suse.com>
+Date: Tue, 23 Sep 2025 14:55:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
- <2025092338-elbow-dash-373d@gregkh> <CAH5fLghm-syjWRrj=G2==W4PorPq47bkAPfkeJ1UAsGbbRhPfQ@mail.gmail.com>
- <B4D07104-0A10-4B04-88CC-3F138A783811@collabora.com>
-In-Reply-To: <B4D07104-0A10-4B04-88CC-3F138A783811@collabora.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 23 Sep 2025 14:55:30 +0200
-X-Gm-Features: AS18NWBm0VpH3EPBG5YoC1bxFDVvYN6YlJxnFunV3o7Ts-fF_Inb73M49AabG_c
-Message-ID: <CANiq72meH4zKk0P3y51+EQ2gZ2miBCmWSPYEJqVt2bBSrZ8t7A@mail.gmail.com>
-Subject: Re: [PATCH 0/2] rust: usb: add initial USB abstractions
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] PCI: Support FIXUP quirks in modules
+To: Brian Norris <briannorris@chromium.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain
+ <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
+ linux-pci@vger.kernel.org, David Gow <davidgow@google.com>,
+ Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ Johannes Berg <johannes@sipsolutions.net>,
+ Sami Tolvanen <samitolvanen@google.com>, Richard Weinberger
+ <richard@nod.at>, Wei Liu <wei.liu@kernel.org>,
+ Brendan Higgins <brendan.higgins@linux.dev>, kunit-dev@googlegroups.com,
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>, linux-um@lists.infradead.org
+References: <20250912230208.967129-1-briannorris@chromium.org>
+ <20250912230208.967129-2-briannorris@chromium.org>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250912230208.967129-2-briannorris@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 23, 2025 at 2:34=E2=80=AFPM Daniel Almeida
-<daniel.almeida@collabora.com> wrote:
->
-> Hmm, but the USB module is gated by #[cfg(CONFIG_USB) in lib.rs, so not h=
-aving
-> CONFIG_USB enabled should not return any errors and instead skip the USB
-> bindings completely.
->
-> I wonder if this has to be CONFIG_USB=3Dy?
+On 9/13/25 12:59 AM, Brian Norris wrote:
+> The PCI framework supports "quirks" for PCI devices via several
+> DECLARE_PCI_FIXUP_*() macros. These macros allow arch or driver code to
+> match device IDs to provide customizations or workarounds for broken
+> devices.
+> 
+> This mechanism is generally used in code that can only be built into the
+> kernel, but there are a few occasions where this mechanism is used in
+> drivers that can be modules. For example, see commit 574f29036fce ("PCI:
+> iproc: Apply quirk_paxc_bridge() for module as well as built-in").
+> 
+> The PCI fixup mechanism only works for built-in code, however, because
+> pci_fixup_device() only scans the ".pci_fixup_*" linker sections found
+> in the main kernel; it never touches modules.
+> 
+> Extend the fixup approach to modules.
+> 
+> I don't attempt to be clever here; the algorithm here scales with the
+> number of modules in the system.
+> 
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+> 
+>  drivers/pci/quirks.c   | 62 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/module.h | 18 ++++++++++++
+>  kernel/module/main.c   | 26 ++++++++++++++++++
+>  3 files changed, 106 insertions(+)
+> 
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index d97335a40193..db5e0ac82ed7 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -207,6 +207,62 @@ extern struct pci_fixup __end_pci_fixups_suspend_late[];
+>  
+>  static bool pci_apply_fixup_final_quirks;
+>  
+> +struct pci_fixup_arg {
+> +	struct pci_dev *dev;
+> +	enum pci_fixup_pass pass;
+> +};
+> +
+> +static int pci_module_fixup(struct module *mod, void *parm)
+> +{
+> +	struct pci_fixup_arg *arg = parm;
+> +	void *start;
+> +	unsigned int size;
+> +
+> +	switch (arg->pass) {
+> +	case pci_fixup_early:
+> +		start = mod->pci_fixup_early;
+> +		size = mod->pci_fixup_early_size;
+> +		break;
+> +	case pci_fixup_header:
+> +		start = mod->pci_fixup_header;
+> +		size = mod->pci_fixup_header_size;
+> +		break;
+> +	case pci_fixup_final:
+> +		start = mod->pci_fixup_final;
+> +		size = mod->pci_fixup_final_size;
+> +		break;
+> +	case pci_fixup_enable:
+> +		start = mod->pci_fixup_enable;
+> +		size = mod->pci_fixup_enable_size;
+> +		break;
+> +	case pci_fixup_resume:
+> +		start = mod->pci_fixup_resume;
+> +		size = mod->pci_fixup_resume_size;
+> +		break;
+> +	case pci_fixup_suspend:
+> +		start = mod->pci_fixup_suspend;
+> +		size = mod->pci_fixup_suspend_size;
+> +		break;
+> +	case pci_fixup_resume_early:
+> +		start = mod->pci_fixup_resume_early;
+> +		size = mod->pci_fixup_resume_early_size;
+> +		break;
+> +	case pci_fixup_suspend_late:
+> +		start = mod->pci_fixup_suspend_late;
+> +		size = mod->pci_fixup_suspend_late_size;
+> +		break;
+> +	default:
+> +		return 0;
+> +	}
+> +
+> +	if (!size)
+> +		return 0;
+> +
+> +	pci_do_fixups(arg->dev, start, start + size);
+> +
+> +	return 0;
+> +}
+> +
+>  void pci_fixup_device(enum pci_fixup_pass pass, struct pci_dev *dev)
+>  {
+>  	struct pci_fixup *start, *end;
+> @@ -259,6 +315,12 @@ void pci_fixup_device(enum pci_fixup_pass pass, struct pci_dev *dev)
+>  		return;
+>  	}
+>  	pci_do_fixups(dev, start, end);
+> +
+> +	struct pci_fixup_arg arg = {
+> +		.dev = dev,
+> +		.pass = pass,
+> +	};
+> +	module_for_each_mod(pci_module_fixup, &arg);
 
-Yes, the `kernel` crate is built-in and it is trying to call something
-from a module.
+The function module_for_each_mod() walks not only modules that are LIVE,
+but also those in the COMING and GOING states. This means that this code
+can potentially execute a PCI fixup from a module before its init
+function is invoked, and similarly, a fixup can be executed after the
+exit function has already run. Is this intentional?
 
-Cheers,
-Miguel
+>  }
+>  EXPORT_SYMBOL(pci_fixup_device);
+>  
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index 3319a5269d28..7faa8987b9eb 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -539,6 +539,24 @@ struct module {
+>  	int num_kunit_suites;
+>  	struct kunit_suite **kunit_suites;
+>  #endif
+> +#ifdef CONFIG_PCI_QUIRKS
+> +	void *pci_fixup_early;
+> +	unsigned int pci_fixup_early_size;
+> +	void *pci_fixup_header;
+> +	unsigned int pci_fixup_header_size;
+> +	void *pci_fixup_final;
+> +	unsigned int pci_fixup_final_size;
+> +	void *pci_fixup_enable;
+> +	unsigned int pci_fixup_enable_size;
+> +	void *pci_fixup_resume;
+> +	unsigned int pci_fixup_resume_size;
+> +	void *pci_fixup_suspend;
+> +	unsigned int pci_fixup_suspend_size;
+> +	void *pci_fixup_resume_early;
+> +	unsigned int pci_fixup_resume_early_size;
+> +	void *pci_fixup_suspend_late;
+> +	unsigned int pci_fixup_suspend_late_size;
+> +#endif
+>  
+>  
+>  #ifdef CONFIG_LIVEPATCH
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index c66b26184936..50a80c875adc 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -2702,6 +2702,32 @@ static int find_module_sections(struct module *mod, struct load_info *info)
+>  					      sizeof(*mod->kunit_init_suites),
+>  					      &mod->num_kunit_init_suites);
+>  #endif
+> +#ifdef CONFIG_PCI_QUIRKS
+> +	mod->pci_fixup_early = section_objs(info, ".pci_fixup_early",
+> +					    sizeof(*mod->pci_fixup_early),
+> +					    &mod->pci_fixup_early_size);
+> +	mod->pci_fixup_header = section_objs(info, ".pci_fixup_header",
+> +					     sizeof(*mod->pci_fixup_header),
+> +					     &mod->pci_fixup_header_size);
+> +	mod->pci_fixup_final = section_objs(info, ".pci_fixup_final",
+> +					    sizeof(*mod->pci_fixup_final),
+> +					    &mod->pci_fixup_final_size);
+> +	mod->pci_fixup_enable = section_objs(info, ".pci_fixup_enable",
+> +					     sizeof(*mod->pci_fixup_enable),
+> +					     &mod->pci_fixup_enable_size);
+> +	mod->pci_fixup_resume = section_objs(info, ".pci_fixup_resume",
+> +					     sizeof(*mod->pci_fixup_resume),
+> +					     &mod->pci_fixup_resume_size);
+> +	mod->pci_fixup_suspend = section_objs(info, ".pci_fixup_suspend",
+> +					      sizeof(*mod->pci_fixup_suspend),
+> +					      &mod->pci_fixup_suspend_size);
+> +	mod->pci_fixup_resume_early = section_objs(info, ".pci_fixup_resume_early",
+> +						   sizeof(*mod->pci_fixup_resume_early),
+> +						   &mod->pci_fixup_resume_early_size);
+> +	mod->pci_fixup_suspend_late = section_objs(info, ".pci_fixup_suspend_late",
+> +						   sizeof(*mod->pci_fixup_suspend_late),
+> +						   &mod->pci_fixup_suspend_late_size);
+> +#endif
+>  
+>  	mod->extable = section_objs(info, "__ex_table",
+>  				    sizeof(*mod->extable), &mod->num_exentries);
+
+Nit: I suggest writing the object_size argument passed to section_objs()
+here directly as "1" instead of using sizeof(*mod->pci_fixup_...) =
+sizeof(void). This makes the style consistent with the other code in
+find_module_sections().
+
+-- 
+Thanks,
+Petr
 
