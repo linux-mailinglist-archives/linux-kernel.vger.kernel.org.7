@@ -1,121 +1,195 @@
-Return-Path: <linux-kernel+bounces-828649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1B4B95185
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:58:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2235AB95191
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9204B2E277A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:58:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A671C1904C50
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C4431E0F4;
-	Tue, 23 Sep 2025 08:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A9131E880;
+	Tue, 23 Sep 2025 08:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cla9AxSm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zyt4risZ"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B8B31D733
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F18831E0E3
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758617888; cv=none; b=Z2Xsh6237IMdaeNr1QCoxF/Q1gP+NKB3boeQ6etNvRsd0SH1xGScLQO7GuP5R1lWHkjQ/rBd2BRhZhEas7QLHAfFnssXqhTSkgt+4n4TTteJua1WjO1jlKHf41BQ1jwZzriyLmypp2n3HVdAtw0bucVB2y9OwSDumYIPrYraNKA=
+	t=1758617963; cv=none; b=IZZhvuopRkI13TKGGoQ7kr5DE8v5iMVJBPyJSp4dt9o6nxJ88miZPbkYDCI9Lok4KO9ECKN9tIe6WqZri90rGO5wkWYySObyEDWoVQhx2L5WQwx4o+j9YfsRF0U9v1hK8dMkBRtGY8NFYrnFY9oTke62eIz/kQ9S2+qGlkCTxTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758617888; c=relaxed/simple;
-	bh=yuRoN1dn+1f0JPOW4j/gikUrJeQUMtdVNWCmANVYwA4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T75nFoAIl4fGcufLaWGRhjHTReCys4Lel4TFx0feWa1VbW2c8RQzp61las8AewCauA+2b9t/WWvDe3oiQ1gN0eaRKp4NK36f4u2/U5gstjkQiH1kHlbtObGONKb2QDELQ89zokIGqtthlldCE1Kfz8e/Jw5ULcrfiocwzOjSOug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cla9AxSm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758617885;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yuRoN1dn+1f0JPOW4j/gikUrJeQUMtdVNWCmANVYwA4=;
-	b=cla9AxSmwvYcMyPfpl+XuZ6lXI0bmsGA4mcDBS2IQD/2STfJLDdoUG1wtrqz9xhGk+IhaG
-	3f9RYH5EwgLcFFgd8AuUGI1TnEMiS7vJ3WnL4KOJJjSv7NlJnUoKi3EsEv3O58kVv1Qe/O
-	crfSsVUY27Bi66ySMn9UL+VAedo1jDA=
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
- [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-49-tat1o32pNBO7IMbELfqEUg-1; Tue, 23 Sep 2025 04:58:02 -0400
-X-MC-Unique: tat1o32pNBO7IMbELfqEUg-1
-X-Mimecast-MFC-AGG-ID: tat1o32pNBO7IMbELfqEUg_1758617882
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-55fc0c64597so927523137.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:58:02 -0700 (PDT)
+	s=arc-20240116; t=1758617963; c=relaxed/simple;
+	bh=Ff3wsakldoKjVsybc922K8tiJTSpuhb+b2u48dEYPnw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OHuVAZgOCbGijJwOc9YwNwGyYJE5OtlMMdeYvUN/Th0E2/YgNPm//6c6854uaJKrT8LzdmXmtw+h8z5iRVQ0L212HbZ6myhx2Pj6ATi68jB0gNprqGhZL3NedLeYCBYLrup6AmwsvdVPtVQ3huaYw6fbpJuzQ3oOAUX7mdsoA6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zyt4risZ; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45f2b062b86so35120715e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:59:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758617959; x=1759222759; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MFWyATSfpVmFqTHer4QnnzA9/eMYqpzK4W6xg6dmXUw=;
+        b=Zyt4risZ4tBBJdKBA6TND4A5v8on5gu9iqXOh1eBXeYsgSnOknn8gvFpdTojnQqccn
+         j6th114HA+9wvieUGlJw1iTyVsHw3uKXo7/KizTjpzzMqqDD0ytef4LwU9mWoRsg6HNt
+         0yd+3E66ndu6GhlrnGPP8z7Z2XxVT8EQGWu+M368jvuBUFHZJohtY4kWRFd6MTGrUZVr
+         bPcommV9Dmq4Ut71kXRgzDctcVQtjSBsKyGIQDhr5BQ9wcR2g0v0TAVXttOCKCIKo9eh
+         rOrc/o0RjIywADFKJVm5EfrmasHwmA2nJ8khcCK+zfg8jXlUEk8InfbD7yuSPRLKgCDJ
+         /gsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758617881; x=1759222681;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yuRoN1dn+1f0JPOW4j/gikUrJeQUMtdVNWCmANVYwA4=;
-        b=czxSl7yVaPJLlnUAkJM0g/43GmwpTz6WFtgt/Mer3hqRt8PncFCLB8scTQykSfumQ2
-         R4DH3iUjmTDYH9IPJaRlVHWPaE/Q12K4k66/kFtpvAWAsCppYxL3t3h8UxfUjEg6zogW
-         AOv5mtIHteVQqJXSrPbmIf2l5qvyU4iB7z4Ecuwsu218r/8XXR6RFZQuQbSYMB3Dvo1L
-         wlQPKQniG6amX8U6+aHVFlWDwNxXa0XRFLGUkeGVbFSbCDhS2mx5Dx4SFoTNUHMPDk8f
-         57NeO3m5d8L2A5aXLh1v8ySqfWL4skGd2TtPxqr2kLEeZIaQ7fCsdwXPljyy+qk5Alhk
-         Plyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVt4jrOt6YKycpUXFI9mnOUxoMCcHcwVI76fORbIRWG/5I068mpNm/5gu2t1FSTQDpzeVxBVNMpBhL69nY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6Fpms6tmsvwz/reOYOY5qq4+gSS5HhY52Gh4FUR12R46R4zJ5
-	aMZ3Bg9k0/W2qzjBCFD5JojHfKYL3PkUQnh3MIXLIBiZEkGG5EsZmsWU0r4fBjO2I8lwWJekmFV
-	nebAHmsc+T3v2baTcwGw2qKBrFuYs0Qmdq6Qg7a5fG1+x2akAJ+099NNtLSBDvkeqZX8o763jS3
-	VgQ3Zd3JaBfx2tbONrMv7vqFHvTfbB2gFwZInGumNT
-X-Gm-Gg: ASbGnctbG7U3ifiJhncMqzRsXgJkHec6CKy/xsw72S9cKL1rCh1X2Pz/pQhKWQRZ6HU
-	Y83MRDXyatJinzd0jGljTcHrCkkc30tHnaFm1p0k1tTsOINJbQTn7U4SpAwwlCrdmEpuCwGgPdP
-	kjGI5/wXSoPkZcByesSDOEcg==
-X-Received: by 2002:a05:6102:1610:b0:533:ff66:698c with SMTP id ada2fe7eead31-5a57e77391fmr588718137.2.1758617881706;
-        Tue, 23 Sep 2025 01:58:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFMg0OF+m3NO7yihYn0j1OQ6Ug6oQBHJjJXRrqGiDdaU1maoqXEtdKBL+w4PraBvKII/xnkas1KdvpyzDH3oAE=
-X-Received: by 2002:a05:6102:1610:b0:533:ff66:698c with SMTP id
- ada2fe7eead31-5a57e77391fmr588715137.2.1758617881399; Tue, 23 Sep 2025
- 01:58:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758617959; x=1759222759;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MFWyATSfpVmFqTHer4QnnzA9/eMYqpzK4W6xg6dmXUw=;
+        b=RO/kHDLDcd9TA0EwpBziGXl83GNA+gn7sH+mIqwKCy/SZ3hh1nfeZSQn7Dop46ih7L
+         T15apLqsn+81nEfQl7sPHTd11J+EwFNr2zAv8KykAWNVSApPQb3fxnugDF7LF4u23/AE
+         uti5zr7oqSzfal2c6LJRQ38p5KcBv6zDgtfllq10P8KXokqz9/bpGrghJ4vdMZjuDhpX
+         pOm/5YO4uT1ByAbwXUJqYXy6pGaBzX81UdJdblYmCNXkp+/9y5d7xroyep0M2Ta7dTgH
+         DR6uCXZSAWLp4rgaGAsoVKHhQwFpghAasbzj6MlIYihXVhAKNcZPYKB+lpZK8QbR//78
+         GDBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVps+M5C7LW4BpzpvIcDVZpNZsO+TUB/zYDCQLzdamJwp1gcn2cTGD9kCA6Vw76CpzQOfyg8PFsMx5Esbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykH3anPekwNquzbL9dD1oE6cGJ1DDYaAHJqS5mkv5mqkgeq38J
+	5S5ZBTE5jx1n5DOhd4Txd4ntMLZnkJc2kOOmRHVv8pDa3JoCBHYjdub8
+X-Gm-Gg: ASbGnctwMjcVubTHLx9J01c6CSkQOdOPCtEf5YrhHJhgDxBaiFICo06fsDKFiu76Ywp
+	U+s9MTVkefsMA8Ls6gbC6GZPYPvZCmz6D+eIVYT6sulhLcPI2cdIRWnm6uosVRX+d1wUC2rT9xH
+	G0NVr68CxI/6pAkGm4AxtmqwKbB5fAxePu7o66NemzD9o+4Cs/azaI3ifLaOdQDVICp8bozZkMN
+	i7VJeeDTIYrSotlNoyrlqbjGdLts83NKeKkc9zwolBm5d7kJC6ujK1nT1EGMYdscdlDKmdseWPH
+	ATXCIyS+syO3EyL676+UER2kBwfCwEcieVpNE/NfcmIclpXDJ+wmHIbdrS39fhmzkMEcNQ+naEY
+	Tu0Z2yX6FYVhC+sa8KYajur1G3xXQ/aWb8w==
+X-Google-Smtp-Source: AGHT+IFQa9rL2dZIKUFX147Vp+1LmNLcm+9xvb/xxS/UaSnExqtT1g3niRFM1wKoScQm4YkKXNNcmA==
+X-Received: by 2002:a05:600c:1c03:b0:46d:fe0b:d55a with SMTP id 5b1f17b1804b1-46e1dac7b3emr19082355e9.33.1758617959125;
+        Tue, 23 Sep 2025 01:59:19 -0700 (PDT)
+Received: from localhost ([45.10.155.11])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-461383b7b9csm277904675e9.2.2025.09.23.01.59.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 01:59:18 -0700 (PDT)
+From: Richard Gobert <richardbgobert@gmail.com>
+To: netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	ecree.xilinx@gmail.com,
+	willemdebruijn.kernel@gmail.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	horms@kernel.org,
+	corbet@lwn.net,
+	saeedm@nvidia.com,
+	tariqt@nvidia.com,
+	mbloch@nvidia.com,
+	leon@kernel.org,
+	dsahern@kernel.org,
+	ncardwell@google.com,
+	kuniyu@google.com,
+	shuah@kernel.org,
+	sdf@fomichev.me,
+	aleksander.lobakin@intel.com,
+	florian.fainelli@broadcom.com,
+	alexander.duyck@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-net-drivers@amd.com,
+	Richard Gobert <richardbgobert@gmail.com>
+Subject: [PATCH net-next v8 0/5] net: gso: restore outer ip ids correctly
+Date: Tue, 23 Sep 2025 10:59:03 +0200
+Message-Id: <20250923085908.4687-1-richardbgobert@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923070101.3507251-1-yukuai1@huaweicloud.com>
-In-Reply-To: <20250923070101.3507251-1-yukuai1@huaweicloud.com>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Tue, 23 Sep 2025 16:57:50 +0800
-X-Gm-Features: AS18NWAdzWR_qV7nOXeqhHug2ByGphmNpVqthkSHVtEUCe1xzom7oBjU8-rRLZo
-Message-ID: <CAFj5m9JW9apD56=9m2jrr7Bza_L7+DfbeP6tMZhmWjyvRuL7ow@mail.gmail.com>
-Subject: Re: [PATCH] blk-mq: fix null-ptr-deref in blk_mq_free_tags() from
- error path
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, martin.petersen@oracle.com, hare@suse.de, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, yukuai3@huawei.com, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 23, 2025 at 3:11=E2=80=AFPM Yu Kuai <yukuai1@huaweicloud.com> w=
-rote:
->
-> From: Yu Kuai <yukuai3@huawei.com>
->
-> blk_mq_free_tags() can be called after blk_mq_init_tags(), while
-> tags->page_list is still not initialized, causing null-ptr-deref.
->
-> Fix this problem by initializing tags->page_list at blk_mq_init_tags(),
-> meanwhile, also free tags directly from error path because there is no
-> srcu barrier.
->
-> Fixes: ad0d05dbddc1 ("blk-mq: Defer freeing of tags page_list to SRCU cal=
-lback")
-> Reported-by: syzbot+5c5d41e80248d610221f@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/68d1b079.a70a0220.1b52b.0000.GAE@goog=
-le.com/
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+GRO currently ignores outer IPv4 header IDs for encapsulated packets
+that have their don't-fragment flag set. GSO, however, always assumes
+that outer IP IDs are incrementing. This results in GSO mangling the
+outer IDs when they aren't incrementing. For example, GSO mangles the
+outer IDs of IPv6 packets that were converted to IPv4, which must
+have an ID of 0 according to RFC 6145, sect. 5.1.
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+GRO+GSO is supposed to be entirely transparent by default. GSO already
+correctly restores inner IDs and IDs of non-encapsulated packets. The
+tx-tcp-mangleid-segmentation feature can be enabled to allow the
+mangling of such IDs so that TSO can be used.
 
-Thanks,
+This series fixes outer ID restoration for encapsulated packets when
+tx-tcp-mangleid-segmentation is disabled. It also allows GRO to merge
+packets with fixed IDs that don't have their don't-fragment flag set.
+
+v7 -> v8:
+ - Directly reference documentation in comment
+
+v6 -> v7:
+ - Update comment and commit message
+ - Add BUILD_BUG_ON in tcp4_gro_complete
+
+v5 -> v6:
+ - Fix typo
+ - Fix formatting
+ - Update comment and commit message
+
+v4 -> v5:
+ - Updated documentation and comments
+ - Remove explicit inline keyword in fou_core.c
+ - Fix reverse xmas tree formatting in ef100_tx.c
+ - Remove added KSFT_MACHINE_SLOW check in selftest
+
+v3 -> v4:
+ - Specify that mangleid for outer ids cannot turn incrementing ids to fixed if DF is unset
+ - Update segmentation-offload documentation
+ - Fix setting fixed ids in ef100 TSO
+ - Reformat gro_receive_network_flush again
+
+v2 -> v3:
+ - Make argument const in fou_gro_ops helper
+ - Rename SKB_GSO_TCP_FIXEDID_OUTER to SKB_GSO_TCP_FIXEDID
+ - Fix formatting in selftest, gro_receive_network_flush and tcp4_gro_complete
+
+v1 -> v2:
+ - Add fou_gro_ops helper
+ - Clarify why sk_family check works
+ - Fix ipip packet generation in selftest
+
+Links:
+ - v1: https://lore.kernel.org/netdev/20250814114030.7683-1-richardbgobert@gmail.com/
+ - v2: https://lore.kernel.org/netdev/20250819063223.5239-1-richardbgobert@gmail.com/
+ - v3: https://lore.kernel.org/netdev/20250821073047.2091-1-richardbgobert@gmail.com/
+ - v4: https://lore.kernel.org/netdev/20250901113826.6508-1-richardbgobert@gmail.com/
+ - v5: https://lore.kernel.org/netdev/20250915113933.3293-1-richardbgobert@gmail.com/
+ - v6: https://lore.kernel.org/netdev/20250916144841.4884-1-richardbgobert@gmail.com/
+ - v7: https://lore.kernel.org/netdev/20250922084103.4764-1-richardbgobert@gmail.com/
+
+Richard Gobert (5):
+  net: gro: remove is_ipv6 from napi_gro_cb
+  net: gro: only merge packets with incrementing or fixed outer ids
+  net: gso: restore ids of outer ip headers correctly
+  net: gro: remove unnecessary df checks
+  selftests/net: test ipip packets in gro.sh
+
+ .../networking/segmentation-offloads.rst      | 22 ++++---
+ .../net/ethernet/mellanox/mlx5/core/en_rx.c   |  8 ++-
+ drivers/net/ethernet/sfc/ef100_tx.c           | 17 ++++--
+ include/linux/netdevice.h                     |  9 ++-
+ include/linux/skbuff.h                        |  8 ++-
+ include/net/gro.h                             | 32 ++++------
+ net/core/dev.c                                | 10 +++-
+ net/ipv4/af_inet.c                            | 10 +---
+ net/ipv4/fou_core.c                           | 32 +++++-----
+ net/ipv4/tcp_offload.c                        |  1 +
+ net/ipv4/udp_offload.c                        |  2 -
+ net/ipv6/udp_offload.c                        |  2 -
+ tools/testing/selftests/net/gro.c             | 58 ++++++++++++++-----
+ tools/testing/selftests/net/gro.sh            |  2 +-
+ 14 files changed, 129 insertions(+), 84 deletions(-)
+
+-- 
+2.36.1
 
 
