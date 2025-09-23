@@ -1,127 +1,118 @@
-Return-Path: <linux-kernel+bounces-828254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA5EB9443D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:54:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 896E4B94446
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91EEB481F7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:54:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D8172A76BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 05:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DACF30EF83;
-	Tue, 23 Sep 2025 04:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1e4VqdT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E02830DD00;
+	Tue, 23 Sep 2025 05:02:14 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74CD30E85A;
-	Tue, 23 Sep 2025 04:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D732594B9
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 05:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758603214; cv=none; b=tMhlqYvhNxhY7USYuBaJVM05eQJZd6RI9dUrLTGI43JQeM85FYJBzYBoth6x58KOtJteCVEhBSZbu1NuWapDOLDDXVRL5PzhZdHP7QytCflawtdPSyIgu26HmqSpSydHDOKC+lFJgm1WUKnNBVWfhEElH8ATkHMMBprRpY0wSEg=
+	t=1758603733; cv=none; b=taWPdQ4jDQfTJIO48l+r9KQiIB1e17IdfyOVy5ncoRH5lAGV0urFEyxQFdpKvqgAaIooQzxfaEYPzP4KwQJjFo8CdW/mmgVs9jPZTwNbq4xOi2FzZXQn7UWCnNvttcfxucFyBCE1CGGKv7rEUAYl4NgXgPSjRrPKKMgM3TtvgUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758603214; c=relaxed/simple;
-	bh=2/MlNtQVs67BhcBQu3mBYH5/+H7qem0YfGtT2lPXmQw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RONgtBJdfjnWlRRqXyb7o7ywRJFmaHe7N/LafodZSjnpmeeYRmDu2Z4ZoiO0ok3eiu0RMgWNVsvGgkS8He3mIopzKYbKl2GnK/BIrvRz0sW2MB6dkArnGCoadIgPO/R9kb8bQztQEpSQ4aZwNKDYBKwgS8kmncqEFrtlntfOFVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p1e4VqdT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91A14C116C6;
-	Tue, 23 Sep 2025 04:53:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758603214;
-	bh=2/MlNtQVs67BhcBQu3mBYH5/+H7qem0YfGtT2lPXmQw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=p1e4VqdTd1XpBlyJcpGd9iZpt3GYyG3z618tUvRHM1wZOhgAuIi4iBy54U5k5S12t
-	 d4Siuya0oLMgRQq0XiPbDObsR55JbRruFk1Hn7Qz/AHlINR33oxCwTanZBwS50Z1dR
-	 2PY78YqeH+7q1t4wX+URXOTVgFp1NSPRuFlwOYEuSmReJzyhty4mwQhtGcNqa96Pjw
-	 wuM+DJPwuXchBaTP0f3LTvII5m/+jR4ARr7WpK62D1c/4vQH1KOVvV0UMMQm1DGtLz
-	 5rD92kMIGlweLoRfYUYY/5moJAR+CIX26r8gEKZZJTaj/H8Ql3W5joH14kLDlnK7/c
-	 ic1Z5M7IDVC/g==
-From: Vincent Mailhol <mailhol@kernel.org>
-Date: Tue, 23 Sep 2025 13:52:44 +0900
-Subject: [PATCH v2 4/4] can: enable CAN XL for virtual CAN devices by
- default
+	s=arc-20240116; t=1758603733; c=relaxed/simple;
+	bh=0Gz0GZP6milVJYdXDS0YlBvYq6R48Ix10Jdx3hEsEME=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oQ0BtxS31eeraz94IN7t1XiO/eboN/Vz4v/D+puL6UnlPmyGaqi7bkw6uzIbr3TpoJxY0qSn+PQtXpfOdQrNNk7XosDAs1fLUxcI5qQ/a+13Nuvzk1mC2eLJtLMim24+HIRX0E6LZa0i/I12f1D8QyCkd8EcV4fEX+XliWN1H64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-425745467d1so29581415ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 22:02:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758603731; x=1759208531;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UCLnnymTGswt6uMOM9G22A8ODEAb1YKDnVoU6cDwTEs=;
+        b=vt0eYWOWFfeZPCpyFS4HHbUCRhuMaAZCUhbq9HHEYdiNq3hYOaXpa+TwJy1T+TODlO
+         XDAQQQzKFZTpeDzhtlGPeWU30HAoAinUXqrP43pSJl6pWehvH2UW/CZVCtm5wK4QQfAy
+         /HkPmPdAOrejk6EhMrlxKfvXXtbN0npMRwM+ka0h9dPioa6CRu+xPz7qcZUQv9m9X8y9
+         gm30MQkK9vR8Sn3dmQYV/qI3xX4ETo0VumjjNVWyUM9W7EKtIdhw/OwSjtLcy9DbH3pL
+         oZbGfwYMQYEIVvYiRviOyh6Z03k34CVk8qiC1vEZ3/TdxMAiF4Jc6GXcT6NGGMHvJkX8
+         nCSw==
+X-Gm-Message-State: AOJu0YznDkrlTXpyBwILO3iVrwIrKv9LlPD7G8IYS6MRx9gRsNL3C1L/
+	8Tv0kQd/AEPnxqjQJJB5EuIsE3Z+g307w2bYuhz5D2JIWgt1toaMk7I6Okrj9bHnwC+rpe4eORq
+	R3IwczV85v72jS4y63HO+InRrixW07zRNeWEEM+GDFRScHzhB4gwPIoLLgyU=
+X-Google-Smtp-Source: AGHT+IGIksMOSL95JQWZE4nK45m3y1mPdIM+TCozZhYRIEX6bY89YqihrdDl5IRP3B9Juh5XDmyrb5tB/CkJ26KWNklEaU6+sXfW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250923-can-fix-mtu-v2-4-984f9868db69@kernel.org>
-References: <20250923-can-fix-mtu-v2-0-984f9868db69@kernel.org>
-In-Reply-To: <20250923-can-fix-mtu-v2-0-984f9868db69@kernel.org>
-To: Oliver Hartkopp <socketcan@hartkopp.net>, 
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Vincent Mailhol <mailhol@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1737; i=mailhol@kernel.org;
- h=from:subject:message-id; bh=2/MlNtQVs67BhcBQu3mBYH5/+H7qem0YfGtT2lPXmQw=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDBmX1I89vKDqmLLM3PhNUlPpoT6HrbLz/8x93RxhfZLJ8
- rE/f8mEjlIWBjEuBlkxRZZl5ZzcCh2F3mGH/lrCzGFlAhnCwMUpABMJz2JkmB17+UfqqQvTEvXT
- csou1UanVH/4xu70WupN+V6WA2Fsixn+cHQp/A/8Mvvmv0Pu1f5szGvT2f/LP1i5MPDa0bw/q1c
- fZAQA
-X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
+X-Received: by 2002:a05:6e02:1949:b0:407:dc0b:7ba2 with SMTP id
+ e9e14a558f8ab-42581e116a1mr20726905ab.3.1758603731467; Mon, 22 Sep 2025
+ 22:02:11 -0700 (PDT)
+Date: Mon, 22 Sep 2025 22:02:11 -0700
+In-Reply-To: <68c9c3fc.050a0220.3c6139.0e66.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d229d3.a70a0220.1b52b.004e.GAE@google.com>
+Subject: Forwarded: [PATCH] ext4: skip inode expansion on  readonly filesystems
+From: syzbot <syzbot+4c9d23743a2409b80293@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-In commit 97edec3a11cf ("can: enable CAN FD for virtual CAN devices by
-default"), vcan and vxcan default MTU was set to CANFD_MTU by default.
-The reason was that users were confused on how to activate CAN FD on
-virtual interfaces.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Following the introduction of CAN XL, the same logic should be
-applied. Set the MTU to CANXL_MTU by default.
+***
 
-The users who really wish to use a Classical CAN only or a CAN FD
-virtual device can do respectively:
+Subject: [PATCH] ext4: skip inode expansion on  readonly filesystems
+Author: kartikey406@gmail.com
 
-  $ ip link set vcan0 mtu 16
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-or
 
-  $ ip link set vcan0 mtu 72
+Fix WARNING in ext4_xattr_block_set() during orphan cleanup on readonly
+filesystems when debug_want_extra_isize mount option is used.
+The issue occurs when ext4_try_to_expand_extra_isize() attempts to modify
+inodes on readonly filesystems during orphan cleanup, leading to warnings
+when encountering invalid xattr entries. Add a readonly check to skip
+expansion in this case.
 
-to force the old behaviour.
-
-Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
+Reported-by: syzbot+4c9d23743a2409b80293@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=4c9d23743a2409b80293
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
 ---
- drivers/net/can/vcan.c  | 2 +-
- drivers/net/can/vxcan.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fs/ext4/inode.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/can/vcan.c b/drivers/net/can/vcan.c
-index f67e858071007acd5f34fa00a76212f1a77997a6..fdc662aea2798125b3aa373f09958363b427ced2 100644
---- a/drivers/net/can/vcan.c
-+++ b/drivers/net/can/vcan.c
-@@ -156,7 +156,7 @@ static const struct ethtool_ops vcan_ethtool_ops = {
- static void vcan_setup(struct net_device *dev)
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 5b7a15db4953..ff51a4567c4f 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -6345,7 +6345,8 @@ static int __ext4_expand_extra_isize(struct inode *inode,
+ 	unsigned int inode_size = EXT4_INODE_SIZE(inode->i_sb);
+ 	struct ext4_inode_info *ei = EXT4_I(inode);
+ 	int error;
+-
++	if (sb_rdonly(inode->i_sb))
++		return 0;
+ 	/* this was checked at iget time, but double check for good measure */
+ 	if ((EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize > inode_size) ||
+ 	    (ei->i_extra_isize & 3)) {
+@@ -6403,6 +6404,8 @@ static int ext4_try_to_expand_extra_isize(struct inode *inode,
+ 					  struct ext4_iloc iloc,
+ 					  handle_t *handle)
  {
- 	dev->type		= ARPHRD_CAN;
--	dev->mtu		= CANFD_MTU;
-+	dev->mtu		= CANXL_MTU;
- 	dev->hard_header_len	= 0;
- 	dev->addr_len		= 0;
- 	dev->tx_queue_len	= 0;
-diff --git a/drivers/net/can/vxcan.c b/drivers/net/can/vxcan.c
-index 99a78a75716749bf858cc78eadb41ca2588fcf94..b2c19f8c5f8e5101b8be343401afe9a4f388c4da 100644
---- a/drivers/net/can/vxcan.c
-+++ b/drivers/net/can/vxcan.c
-@@ -156,7 +156,7 @@ static void vxcan_setup(struct net_device *dev)
- 	struct can_ml_priv *can_ml;
++	if (sb_rdonly(inode->i_sb))
++		return 0;
+ 	int no_expand;
+ 	int error;
  
- 	dev->type		= ARPHRD_CAN;
--	dev->mtu		= CANFD_MTU;
-+	dev->mtu		= CANXL_MTU;
- 	dev->hard_header_len	= 0;
- 	dev->addr_len		= 0;
- 	dev->tx_queue_len	= 0;
-
 -- 
-2.49.1
+2.43.0
 
 
