@@ -1,107 +1,145 @@
-Return-Path: <linux-kernel+bounces-828201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E59EB942A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:01:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07963B942AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC5C93BE290
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:01:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB9A57B1950
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CDE22A1C5;
-	Tue, 23 Sep 2025 04:01:02 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A112D270568;
+	Tue, 23 Sep 2025 04:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ltm/nIBi"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1996B249E5;
-	Tue, 23 Sep 2025 04:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E0D229B16
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758600061; cv=none; b=icg4j/zlO3nlnrH+GrjL/Ysg0YW0sjfR4nY8uknSFuUrLyTfTBN3Nr6ceTHfU4ci+qa7PZjTviNUUH2zvMCbxHc7XPV8BvYyPmcMtRM1y0NFitJ2mXStE0rY7jnce/Izyx3rcy0nngH7Dp65Uz9/JbyKqcLL+cZV2gPsKuqBOM4=
+	t=1758600188; cv=none; b=qUZtqxW6JUu4rwjwIT8n/Sni0u2W4Dfhr4pN8KYZc4UoXncrxt3XmefLRBQisw/+1Y8zWvGBkAuYyki4ulDswAm6dQ64j0DMRS7HK1Lck8RfIZ8R7nQesNNCDt8NatC2UyywEkELSdl7uWDAQRXJFb7OwKhrMC4f9bWQdWubquw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758600061; c=relaxed/simple;
-	bh=+sA7JeshJtfQ4g+oGvoDEApvUWPOG6PAyKJcP78c1LU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rsAswCG40VhTnUqL7c+kg1ZpTEng/PwhWhDkLptvHWPfIU/R51joJtNKRAk2XtAwjsvmxu6p08JUHEXfbbGd4ECcQ6IBO6Wdpw0rae7cr98umj+p3QhNRfi1xIyGxrv4Rf+1DhZBbk4s90WhmgDEifo4mKN9drr9oGjsXlMjC7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: "Li,Rongqing" <lirongqing@baidu.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-CC: "corbet@lwn.net" <corbet@lwn.net>, "lance.yang@linux.dev"
-	<lance.yang@linux.dev>, "mhiramat@kernel.org" <mhiramat@kernel.org>,
-	"paulmck@kernel.org" <paulmck@kernel.org>,
-	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
-	"mingo@kernel.org" <mingo@kernel.org>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"kees@kernel.org" <kees@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>,
-	"feng.tang@linux.alibaba.com" <feng.tang@linux.alibaba.com>,
-	"pauld@redhat.com" <pauld@redhat.com>, "joel.granados@kernel.org"
-	<joel.granados@kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [????] Re: [PATCH][RFC] hung_task: Support to panic when the
- maximum number of hung task warnings is reached
-Thread-Topic: [????] Re: [PATCH][RFC] hung_task: Support to panic when the
- maximum number of hung task warnings is reached
-Thread-Index: AQHcLDttVizJ2u6zwEeKMgiwnSexq7SfmowAgACJIFA=
-Date: Tue, 23 Sep 2025 04:00:03 +0000
-Message-ID: <f11f4dd1983f4073a8008112e55f92f8@baidu.com>
-References: <20250923033740.2696-1-lirongqing@baidu.com>
- <20250922204554.55dd890090b0f56ad10a61f5@linux-foundation.org>
-In-Reply-To: <20250922204554.55dd890090b0f56ad10a61f5@linux-foundation.org>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1758600188; c=relaxed/simple;
+	bh=CjypHTonfU2PuKnjzfba4IZNkvtM3Pi4QkFQXRJ9I6U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Nd/7SHgKauP4HDe83jWuqqKSCC6O1zN55N3mtm/WN09SBpixpn6vSeJhIYqFpBQnQ9k1iU6OQRAwmfoR5qMc9nCV1HZqOHhHCdfiZhuhPO/wHSEW+ry9UpNkO36wwlsmlYJr3Cta53S2EmojwTLls+CfQn4CtZ5YeBXMlr7dFtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ltm/nIBi; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2445805aa2eso52791105ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:03:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758600186; x=1759204986; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K9+aPj+lnXE4gCiejoLjoYIeVsmkQRlhBmkDWv3AzlU=;
+        b=ltm/nIBiOhTX+jSQbMp4nsatxbVrfwdH1v1KVdAfE0n1W62NC2s2Hp4NS1g9jvroft
+         TafNonWTX2kG/zYEQrB+OI8a1K0eTrGZYXQzg9AlmPVuTQR4dAsZRVO+o/ifdRxFx1KP
+         ihecXKpkkArDrcAZrk2o6BWfNNsTtpH2Vd2MV33hg1pbLDeogTDDbi/G3VNZKWQQ/wFw
+         Jyxg4JeQtggrOMuaQKYqQEL8G6c9KX5pv1pzrleA2KsHXYqI81djg0UtnJJdT84qwO5w
+         /qHiu+tN7F4JDNfrPw5Y+RSbDt+e41I9Fp9ey8H/z+iv7Wol6+SNO2DW5G83wFiwFbfJ
+         7VdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758600186; x=1759204986;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K9+aPj+lnXE4gCiejoLjoYIeVsmkQRlhBmkDWv3AzlU=;
+        b=KK9fsECs2MPtfJLglwHFVxWaXo/JHRKW3hkSxmkT+n3kcBOZ/sYiCLvP/DuD+b/lWr
+         2Z1kY7cVEXZA86F0aI4h+rBrq2C4ZpCcrNrCytmOx/5xbJzhBU7uOQBKXpvFu7ekG7KI
+         nu4g16OMOOPU4fz+biMuR98S+OxNOM8SR1B8mP5o4AdgKOOEBHcCfW79XsDYe8xQj81D
+         E7YzkJ5UGc6G5mA/VRaid3Hbc1MFwMgbDb6VMwrMXgLT+vAa+NQlLGzpeloNh0Pw0YTb
+         CaGeD88oxwdJ/oCtwRHMB3OPltmxmCtpblRfIT01J+HGX+mVRiQRo/kWOlr4a0M/QZzF
+         cvlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGrHH6DlD6ORDjDDlp0XQWQrc1b8pxVX/8yxe5e+KARUJNjW05wvUCdUgPG/aCJxTQsocN5mGtOmVRmV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAnI2RhL6kzrjhi5ui+fEcjnfbJCKuFxapjKQHQPnq7TMwoMac
+	EM7vDTMbMaG1uvv0CBjSKzC87OKn9pChthzjPtwLLSzdPRCCH2p9WJMC9EonaFOH
+X-Gm-Gg: ASbGnctCrLOeUK+iB7wwFIzrBdZxaLLnuZwZiOUGCzD/XlwEbH7c2M/rWOSfqGAWyw6
+	tH7tAbCDXYlPyG2ppfbqo0pbsAYoc0Qhj63glVHv02/O/l7exmrlU8+kqJAelxuFDLX6quvV10P
+	6ReNZSh/fl6qGZfCjC3zn3MspC6LDiUM5g/iiWQeR3ewYY9V99DGuMYU3U47adn0dXuNB2ti5Mx
+	ExQwmpBlxn81rRvA9nwgzLtkzOeMv7Dui/o3VjA1fFPyTxToaE9Y072Bz54ynFIOnMJfxRbiufY
+	OftzFe0WzmIdiBOq3qs0Xb+9aQ2lg0st/iRmtnzIKCz4l0hxon8RmEM7ijgaEHdz+DCmyYXTZ6+
+	/OLepMG7nuObs9vCRw6u72ud4ENlERvYxSw==
+X-Google-Smtp-Source: AGHT+IEixYpSxdSU4oB1lU9rbuUjobE4QlV/b4m6Br+aZmOnIABcgsaB2MYHx2Hinnp9uAOkJ10dAA==
+X-Received: by 2002:a17:902:db03:b0:266:ddd:772f with SMTP id d9443c01a7336-27cc28bef39mr14459835ad.9.1758600185700;
+        Mon, 22 Sep 2025 21:03:05 -0700 (PDT)
+Received: from embed-PC.. ([2401:4900:4e22:682f:9daa:270e:a331:7be2])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed273e8fasm17765485a91.18.2025.09.22.21.02.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 21:03:05 -0700 (PDT)
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: even.xu@intel.com,
+	xinpeng.sun@intel.com,
+	jikos@kernel.org,
+	bentiss@kernel.org
+Cc: mpearson-lenovo@squebb.ca,
+	srinivas.pandruvada@linux.intel.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: intel-thc-hid: intel-quickspi: Add ARL PCI Device Id's
+Date: Tue, 23 Sep 2025 09:32:54 +0530
+Message-Id: <20250923040254.7547-1-abhishektamboli9@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 172.31.3.11
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Transfer-Encoding: 8bit
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5kcmV3IE1vcnRvbiA8
-YWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZz4NCj4gU2VudDogMjAyNcTqOdTCMjPI1SAxMTo0Ng0K
-PiBUbzogTGksUm9uZ3FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPg0KPiBDYzogY29yYmV0QGx3
-bi5uZXQ7IGxhbmNlLnlhbmdAbGludXguZGV2OyBtaGlyYW1hdEBrZXJuZWwub3JnOw0KPiBwYXVs
-bWNrQGtlcm5lbC5vcmc7IHBhd2FuLmt1bWFyLmd1cHRhQGxpbnV4LmludGVsLmNvbTsgbWluZ29A
-a2VybmVsLm9yZzsNCj4gZGF2ZS5oYW5zZW5AbGludXguaW50ZWwuY29tOyByb3N0ZWR0QGdvb2Rt
-aXMub3JnOyBrZWVzQGtlcm5lbC5vcmc7DQo+IGFybmRAYXJuZGIuZGU7IGZlbmcudGFuZ0BsaW51
-eC5hbGliYWJhLmNvbTsgcGF1bGRAcmVkaGF0LmNvbTsNCj4gam9lbC5ncmFuYWRvc0BrZXJuZWwu
-b3JnOyBsaW51eC1kb2NAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJu
-ZWwub3JnDQo+IFN1YmplY3Q6IFs/Pz8/XSBSZTogW1BBVENIXVtSRkNdIGh1bmdfdGFzazogU3Vw
-cG9ydCB0byBwYW5pYyB3aGVuIHRoZQ0KPiBtYXhpbXVtIG51bWJlciBvZiBodW5nIHRhc2sgd2Fy
-bmluZ3MgaXMgcmVhY2hlZA0KPiANCj4gT24gVHVlLCAyMyBTZXAgMjAyNSAxMTozNzo0MCArMDgw
-MCBsaXJvbmdxaW5nIDxsaXJvbmdxaW5nQGJhaWR1LmNvbT4gd3JvdGU6DQo+IA0KPiA+IEN1cnJl
-bnRseSB0aGUgaHVuZyB0YXNrIGRldGVjdG9yIGNhbiBlaXRoZXIgcGFuaWMgaW1tZWRpYXRlbHkg
-b3INCj4gPiBjb250aW51ZSBvcGVyYXRpb24gd2hlbiBodW5nIHRhc2tzIGFyZSBkZXRlY3RlZC4g
-SG93ZXZlciwgdGhlcmUgYXJlDQo+ID4gc2NlbmFyaW9zIHdoZXJlIHdlIHdhbnQgYSBtb3JlIGJh
-bGFuY2VkIGFwcHJvYWNoOg0KPiA+DQo+ID4gLSBXZSBkb24ndCB3YW50IHRoZSBzeXN0ZW0gdG8g
-cGFuaWMgaW1tZWRpYXRlbHkgd2hlbiBhIGZldyBodW5nIHRhc2tzDQo+ID4gICBhcmUgZGV0ZWN0
-ZWQsIGFzIHRoZSBzeXN0ZW0gbWF5IGJlIGFibGUgdG8gcmVjb3Zlcg0KPiA+IC0gQW5kIHdlIGFs
-c28gZG9uJ3Qgd2FudCB0aGUgc3lzdGVtIHRvIHN0YWxsIGluZGVmaW5pdGVseSB3aXRoIG11bHRp
-cGxlDQo+ID4gICBodW5nIHRhc2tzDQo+ID4NCj4gPiBUaGlzIGNvbW1pdCBpbnRyb2R1Y2VzIGEg
-bmV3IG1vZGUgKHZhbHVlIDIpIGZvciB0aGUgaHVuZyB0YXNrIHBhbmljIGJlaGF2aW9yLg0KPiA+
-IFdoZW4gc2V0IHRvIDIsIHRoZSBzeXN0ZW0gd2lsbCBwYW5pYyBvbmx5IGFmdGVyIHRoZSBtYXhp
-bXVtIG51bWJlciBvZg0KPiA+IGh1bmcgdGFzayB3YXJuaW5ncyAoaHVuZ190YXNrX3dhcm5pbmdz
-KSBoYXMgYmVlbiByZWFjaGVkLg0KPiA+DQo+ID4gVGhpcyBwcm92aWRlcyBhIG1pZGRsZSBncm91
-bmQgYmV0d2VlbiBpbW1lZGlhdGUgcGFuaWMgYW5kIHBvdGVudGlhbGx5DQo+ID4gaW5maW5pdGUg
-c3RhbGwsIGFsbG93aW5nIGZvciBhdXRvbWF0ZWQgdm1jb3JlIGdlbmVyYXRpb24gYWZ0ZXIgYQ0K
-PiA+IHJlYXNvbmFibGUNCj4gDQo+IEkgYXNzdW1lIHRoZSBzYW1lIGFyZ3VtZW50IGFwcGxpZXMg
-dG8gdGhlIE5NSSB3YXRjaGRvZywgdG8gdGhlIHNvZnRsb2NrdXANCj4gZGV0ZWN0b3IgYW5kIHRv
-IHRoZSBSQ1Ugc3RhbGwgZGV0ZWN0b3I/DQoNClRydWUsIGVzcGVjaWFsIFJDVSBzdGFsbCBkZXRl
-Y3Rvcg0KDQo+IA0KPiBBIGdlbmVyYWwgZnJhbWV3b3JrIHRvIGhhbmRsZSBhbGwgb2YgdGhlc2Ug
-bWlnaHQgYmUgYmV0dGVyLiAgQnV0IHdoeSBkbyBpdCBpbg0KPiBrZXJuZWwgYXQgYWxsPyAgV2hh
-dCBhYm91dCBhIHVzZXJzcGFjZSBkZXRlY3RvciB3aGljaCBwYXJzZXMga2VybmVsIGxvZ3MgKG9y
-DQo+IG5ldyBwcm9jZnMgY291bnRlcnMpIGFuZCBtYWtlcyBzdWNoIGRlY2lzaW9ucz8NCg0KDQpC
-eSBsZXZlcmFnaW5nIGV4aXN0aW5nIGtlcm5lbCBtZWNoYW5pc21zLCBpbXBsZW1lbnRhdGlvbiBp
-biBrZXJuZWwgaXMgdmVyeSBzaW1wbGUgYW5kIHJlbGlhYmxlLCBJIHRoaW5rDQoNClRoYW5rcw0K
-DQotTGkNCg0K
+Add the missing PCI ID for the quickspi device used on
+the Lenovo Yoga Pro 9i 16IAH10.
+
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=220567
+
+Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+---
+ drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c | 6 ++++++
+ drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h | 2 ++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c b/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
+index 84314989dc53..49c8458f0118 100644
+--- a/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
++++ b/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
+@@ -33,6 +33,10 @@ struct quickspi_driver_data ptl = {
+ 	.max_packet_size_value = MAX_PACKET_SIZE_VALUE_LNL,
+ };
+
++struct quickspi_driver_data arl = {
++	.max_packet_size_value = MAX_PACKET_SIZE_VALUE_LNL,
++};
++
+ /* THC QuickSPI ACPI method to get device properties */
+ /* HIDSPI Method: {6e2ac436-0fcf-41af-a265-b32a220dcfab} */
+ static guid_t hidspi_guid =
+@@ -978,6 +982,8 @@ static const struct pci_device_id quickspi_pci_tbl[] = {
+ 	{PCI_DEVICE_DATA(INTEL, THC_PTL_U_DEVICE_ID_SPI_PORT2, &ptl), },
+ 	{PCI_DEVICE_DATA(INTEL, THC_WCL_DEVICE_ID_SPI_PORT1, &ptl), },
+ 	{PCI_DEVICE_DATA(INTEL, THC_WCL_DEVICE_ID_SPI_PORT2, &ptl), },
++	{PCI_DEVICE_DATA(INTEL, THC_ARL_DEVICE_ID_SPI_PORT1, &arl), },
++	{PCI_DEVICE_DATA(INTEL, THC_ARL_DEVICE_ID_SPI_PORT2, &arl), },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(pci, quickspi_pci_tbl);
+diff --git a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h
+index f3532d866749..7f0fb0056244 100644
+--- a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h
++++ b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h
+@@ -21,6 +21,8 @@
+ #define PCI_DEVICE_ID_INTEL_THC_PTL_U_DEVICE_ID_SPI_PORT2	0xE44B
+ #define PCI_DEVICE_ID_INTEL_THC_WCL_DEVICE_ID_SPI_PORT1 	0x4D49
+ #define PCI_DEVICE_ID_INTEL_THC_WCL_DEVICE_ID_SPI_PORT2 	0x4D4B
++#define PCI_DEVICE_ID_INTEL_THC_ARL_DEVICE_ID_SPI_PORT1		0x7749
++#define PCI_DEVICE_ID_INTEL_THC_ARL_DEVICE_ID_SPI_PORT2		0x774B
+
+ /* HIDSPI special ACPI parameters DSM methods */
+ #define ACPI_QUICKSPI_REVISION_NUM			2
+--
+2.34.1
+
 
