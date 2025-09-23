@@ -1,305 +1,147 @@
-Return-Path: <linux-kernel+bounces-828747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B53B9559E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:57:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3824FB955A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5844318A31D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:58:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0790B3AAB1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3614321275;
-	Tue, 23 Sep 2025 09:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F072F320CC2;
+	Tue, 23 Sep 2025 09:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eoSoaQgv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="c6MGZdNM"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0AA321263
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF978320CA4;
+	Tue, 23 Sep 2025 09:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758621449; cv=none; b=Ma3ORVg9EeILcoTueGLHZD/HazjwB/hxirrq65FnGA/oNblWZUsBX3iZqa0TPxT90XL4w3BOoypw+CeXfzxtIxfB0frsH4UDj+cvVexakFDbpypHGj4OYc9RZ/Q45AvBhkTNRT3o0+t7D+YD8BQjgtQ9QM9T2intzDEe3XzMAnM=
+	t=1758621471; cv=none; b=g8WwMD3T3y0GZZ3d4a70Gtchp/Hqksc7CTLFrIUYT4mz446cq0jj21nduSmcm1pqOd+Rv/IEVTvAdmFRGarrDR76EcDJcEuNYBT75CZ78Q5llpXOxg2zdfRUrxo0pWTKCYru5kXmPD3nb+d5lPeh4NL+f/yCuYtt/6Z09VFbI14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758621449; c=relaxed/simple;
-	bh=PmQj01fq68gwRFtG9+hBxQriDoWRfOd2B6z14pQfHtI=;
+	s=arc-20240116; t=1758621471; c=relaxed/simple;
+	bh=zPfKwdSR9oddwO9eHQJWJzuNQMmJ/mcIvCmXT6qq4Jo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gQ6sIXu8OWC+xPJs81vN+8qof1OyAFdWtxni6LKxEBhY/Z3HsL7eVsfTdkGHB/6P91IJPq99X1vu+BgvXNKEDkU2IPRq72BvAnxm8ECym8KommpbSUyK56vhWScn0ZZbvlvIiyW2R5z+bmS9lfUS/TLIg0CmSAOeGnPtnEo6mI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eoSoaQgv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11446C116C6;
-	Tue, 23 Sep 2025 09:57:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758621448;
-	bh=PmQj01fq68gwRFtG9+hBxQriDoWRfOd2B6z14pQfHtI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eoSoaQgvD07Ya3O1XBoSovaJEKnjj/DOYJxgjDCOT29Y0FfNB/JeVkXnhDVRU8Ipk
-	 3AiuTyKT3jdWLmPnc/BIuiWejajczlw53lueX+5W6Zl6H364xc35EXF9RsqmbejjKa
-	 3NV5iEKHEwCR3Sm5icxulcbt9H4HW6So8A/Ynv7AcjvszjK2e9Oqjey7SoIuy8RUa4
-	 pQUKseLCsaH9duLZaqIlKcjrR5p8okEX2nUQKjhtfQJyp9v4j9ZAfhzpgfcUPOhAYC
-	 gdxK7DFD1MdW+D1mWuYmrQVBzljzIOVa+TS9JcjYCnTRR2LmM8wo5zV2aFnHDzzzrW
-	 9wNSWoy9z2YfA==
-Date: Tue, 23 Sep 2025 11:57:25 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Jocelyn Falempe <jfalempe@redhat.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Javier Martinez Canillas <javierm@redhat.com>, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 2/3] drm/panic: Add kunit tests for drm_panic
-Message-ID: <20250923-silent-mole-of-luxury-9feabc@penduick>
-References: <20250908090341.762049-1-jfalempe@redhat.com>
- <20250908090341.762049-3-jfalempe@redhat.com>
- <20250910-fascinating-hungry-lemur-1d9f49@houat>
- <5e9dc5b5-9671-4a72-b926-8b526ebf9059@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bk44b5cCJQbnfcKBLrd3Q30P+Cx4ABGx5aKh5i4JcUfgK6uCpdD5DW3VF4aZdXICQP/gPvLXLBQqQdy35DfP9bMN2UQ46f5lGgC+dxmRt2zXWsb7f2u0eH+eDnYtLeWnVz8o+1e/eBZTIA9Cn9IbdNBItdNlO7OjRGCs00XryhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=c6MGZdNM; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To:
+	From:Date:cc:to:subject:message-id:date:from:reply-to;
+	bh=3ogVVRy+gjYuWJTEKyXU9wHZ16J+s+nW7RolmVRVlEg=; b=c6MGZdNMuuglNGPv2YGzuDT2p1
+	92oDMzfePYwJb7yqHuiwsmC0tcggR8xWbli0EXOH4gocPAbajRzD0g+MeicFa+OQGyn446UHQHUmL
+	ic5h53vqNS0YePGX49A0E09Q8h/IQD68WD1DYlyeAUlJ73U7aLS4VKOQmTn06DAmvHJRCApzJETx7
+	Msxx+rrdpl+eiab2vrnYO3NZ8EqDj8OPRe8FVikco5hyAO2Wma98OWyQ8RLzxb+tkkUthPDRtiqQ9
+	Cut/+6DXeDm7KOODKwW12MqjLm3wKKmIpB/JQbCSwJGIz97G6Fkl6WoahMptTgQZXz4JjvA4xJ8XW
+	VFYyshVQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1v0zmB-007e9Z-01;
+	Tue, 23 Sep 2025 17:57:36 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 23 Sep 2025 17:57:35 +0800
+Date: Tue, 23 Sep 2025 17:57:35 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Shivani Agarwal <shivani.agarwal@broadcom.com>
+Cc: davem@davemloft.net, smueller@chronox.de, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	ajay.kaher@broadcom.com, alexey.makhalov@broadcom.com,
+	tapas.kundu@broadcom.com, vamsi-krishna.brahmajosyula@broadcom.com,
+	srinidhi.rao@broadcom.com, stable@vger.kernel.org
+Subject: Re: [PATCH] crypto: zero initialize memory allocated via sock_kmalloc
+Message-ID: <aNJvD53QPva4Z7yo@gondor.apana.org.au>
+References: <20250923074515.295899-1-shivani.agarwal@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="fd6k3xj7eipdo577"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5e9dc5b5-9671-4a72-b926-8b526ebf9059@redhat.com>
+In-Reply-To: <20250923074515.295899-1-shivani.agarwal@broadcom.com>
 
+On Tue, Sep 23, 2025 at 12:45:15AM -0700, Shivani Agarwal wrote:
+>
+> diff --git a/crypto/af_alg.c b/crypto/af_alg.c
+> index ca6fdcc6c54a..6c271e55f44d 100644
+> --- a/crypto/af_alg.c
+> +++ b/crypto/af_alg.c
+> @@ -1212,15 +1212,14 @@ struct af_alg_async_req *af_alg_alloc_areq(struct sock *sk,
+>  	if (unlikely(!areq))
+>  		return ERR_PTR(-ENOMEM);
+>  
+> +	memset(areq, 0, areqlen);
+> +
+>  	ctx->inflight = true;
+>  
+>  	areq->areqlen = areqlen;
+>  	areq->sk = sk;
+>  	areq->first_rsgl.sgl.sgt.sgl = areq->first_rsgl.sgl.sgl;
+> -	areq->last_rsgl = NULL;
+>  	INIT_LIST_HEAD(&areq->rsgl_list);
+> -	areq->tsgl = NULL;
+> -	areq->tsgl_entries = 0;
+>  
+>  	return areq;
+>  }
+> diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
+> index e3f1a4852737..4d3dfc60a16a 100644
+> --- a/crypto/algif_hash.c
+> +++ b/crypto/algif_hash.c
+> @@ -416,9 +416,8 @@ static int hash_accept_parent_nokey(void *private, struct sock *sk)
+>  	if (!ctx)
+>  		return -ENOMEM;
+>  
+> -	ctx->result = NULL;
+> +	memset(ctx, 0, len);
+>  	ctx->len = len;
+> -	ctx->more = false;
+>  	crypto_init_wait(&ctx->wait);
+>  
+>  	ask->private = ctx;
+> diff --git a/crypto/algif_rng.c b/crypto/algif_rng.c
+> index 10c41adac3b1..1a86e40c8372 100644
+> --- a/crypto/algif_rng.c
+> +++ b/crypto/algif_rng.c
+> @@ -248,9 +248,8 @@ static int rng_accept_parent(void *private, struct sock *sk)
+>  	if (!ctx)
+>  		return -ENOMEM;
+>  
+> +	memset(ctx, 0, len);
+>  	ctx->len = len;
+> -	ctx->addtl = NULL;
+> -	ctx->addtl_len = 0;
+>  
+>  	/*
+>  	 * No seeding done at that point -- if multiple accepts are
 
---fd6k3xj7eipdo577
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/3] drm/panic: Add kunit tests for drm_panic
-MIME-Version: 1.0
+These changes look good.
 
-On Wed, Sep 10, 2025 at 05:16:49PM +0200, Jocelyn Falempe wrote:
-> On 10/09/2025 10:33, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Mon, Sep 08, 2025 at 11:00:30AM +0200, Jocelyn Falempe wrote:
-> > > Add kunit tests for drm_panic.
-> > > They check that drawing the panic screen doesn't crash, but they
-> > > don't check the correctness of the resulting image.
-> > >=20
-> > > Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> > > ---
-> > >=20
-> > > v2:
-> > >   * Add a few checks, and more comments in the kunit tests. (Maxime R=
-ipard).
-> > >=20
-> > >   MAINTAINERS                            |   1 +
-> > >   drivers/gpu/drm/drm_panic.c            |   4 +
-> > >   drivers/gpu/drm/tests/drm_panic_test.c | 198 ++++++++++++++++++++++=
-+++
-> > >   3 files changed, 203 insertions(+)
-> > >   create mode 100644 drivers/gpu/drm/tests/drm_panic_test.c
-> > >=20
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 402fe14091f1..e9be893d6741 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -8480,6 +8480,7 @@ T:	git https://gitlab.freedesktop.org/drm/misc/=
-kernel.git
-> > >   F:	drivers/gpu/drm/drm_draw.c
-> > >   F:	drivers/gpu/drm/drm_draw_internal.h
-> > >   F:	drivers/gpu/drm/drm_panic*.c
-> > > +F:	drivers/gpu/drm/tests/drm_panic_test.c
-> > >   F:	include/drm/drm_panic*
-> > >   DRM PANIC QR CODE
-> > > diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-> > > index 1e06e3a18d09..d89812ff1935 100644
-> > > --- a/drivers/gpu/drm/drm_panic.c
-> > > +++ b/drivers/gpu/drm/drm_panic.c
-> > > @@ -986,3 +986,7 @@ void drm_panic_exit(void)
-> > >   {
-> > >   	drm_panic_qr_exit();
-> > >   }
-> > > +
-> > > +#ifdef CONFIG_DRM_KUNIT_TEST
-> > > +#include "tests/drm_panic_test.c"
-> > > +#endif
-> > > diff --git a/drivers/gpu/drm/tests/drm_panic_test.c b/drivers/gpu/drm=
-/tests/drm_panic_test.c
-> > > new file mode 100644
-> > > index 000000000000..d5d20dd2aa7c
-> > > --- /dev/null
-> > > +++ b/drivers/gpu/drm/tests/drm_panic_test.c
-> > > @@ -0,0 +1,198 @@
-> > > +// SPDX-License-Identifier: GPL-2.0 or MIT
-> > > +/*
-> > > + * Copyright (c) 2025 Red Hat.
-> > > + * Author: Jocelyn Falempe <jfalempe@redhat.com>
-> > > + *
-> > > + * KUNIT tests for drm panic
-> > > + */
-> > > +
-> > > +#include <drm/drm_fourcc.h>
-> > > +#include <drm/drm_panic.h>
-> > > +
-> > > +#include <kunit/test.h>
-> > > +
-> > > +#include <linux/units.h>
-> > > +#include <linux/vmalloc.h>
-> > > +
-> > > +/* Check the framebuffer color only if the panic colors are the defa=
-ult */
-> > > +#if (CONFIG_DRM_PANIC_BACKGROUND_COLOR =3D=3D 0 && \
-> > > +	CONFIG_DRM_PANIC_FOREGROUND_COLOR =3D=3D 0xffffff)
-> > > +#define DRM_PANIC_CHECK_COLOR
-> > > +#endif
-> > > +
-> > > +struct drm_test_mode {
-> > > +	const int width;
-> > > +	const int height;
-> > > +	const u32 format;
-> > > +	void (*draw_screen)(struct drm_scanout_buffer *sb);
-> > > +	const char *fname;
-> > > +};
-> > > +
-> > > +/*
-> > > + * Run all tests for the 3 panic screens: user, kmsg and qr_code
-> > > + */
-> > > +#define DRM_TEST_MODE_LIST(func) \
-> > > +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_XRGB8888, func) \
-> > > +	DRM_PANIC_TEST_MODE(300, 200, DRM_FORMAT_XRGB8888, func) \
-> > > +	DRM_PANIC_TEST_MODE(1920, 1080, DRM_FORMAT_XRGB8888, func) \
-> > > +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB565, func) \
-> > > +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB888, func) \
-> > > +
-> > > +#define DRM_PANIC_TEST_MODE(w, h, f, name) { \
-> > > +	.width =3D w, \
-> > > +	.height =3D h, \
-> > > +	.format =3D f, \
-> > > +	.draw_screen =3D draw_panic_screen_##name, \
-> > > +	.fname =3D #name, \
-> > > +	}, \
-> > > +
-> > > +static const struct drm_test_mode drm_test_modes_cases[] =3D {
-> > > +	DRM_TEST_MODE_LIST(user)
-> > > +	DRM_TEST_MODE_LIST(kmsg)
-> > > +	DRM_TEST_MODE_LIST(qr_code)
-> > > +};
-> > > +#undef DRM_PANIC_TEST_MODE
-> > > +
-> > > +static int drm_test_panic_init(struct kunit *test)
-> > > +{
-> > > +	struct drm_scanout_buffer *priv;
-> > > +
-> > > +	priv =3D kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
-> > > +	KUNIT_ASSERT_NOT_NULL(test, priv);
-> > > +
-> > > +	test->priv =3D priv;
-> > > +
-> > > +	drm_panic_set_description("Kunit testing");
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +/*
-> > > + * Test drawing the panic screen, using a memory mapped framebuffer
-> > > + * Set the whole buffer to 0xa5, and then check that all pixels have=
- been
-> > > + * written.
-> > > + */
-> > > +static void drm_test_panic_screen_user_map(struct kunit *test)
-> > > +{
-> > > +	struct drm_scanout_buffer *sb =3D test->priv;
-> > > +	const struct drm_test_mode *params =3D test->param_value;
-> > > +	char *fb;
-> > > +	int fb_size;
-> > > +
-> > > +	sb->format =3D drm_format_info(params->format);
-> > > +	fb_size =3D params->width * params->height * sb->format->cpp[0];
-> > > +
-> > > +	fb =3D vmalloc(fb_size);
-> > > +	KUNIT_ASSERT_NOT_NULL(test, fb);
-> > > +
-> > > +	memset(fb, 0xa5, fb_size);
-> > > +
-> > > +	iosys_map_set_vaddr(&sb->map[0], fb);
-> > > +	sb->width =3D params->width;
-> > > +	sb->height =3D params->height;
-> > > +	sb->pitch[0] =3D params->width * sb->format->cpp[0];
-> > > +
-> > > +	params->draw_screen(sb);
-> > > +
-> > > +#ifdef DRM_PANIC_CHECK_COLOR
-> > > +	{
-> > > +		int i;
-> > > +
-> > > +		for (i =3D 0; i < fb_size; i++)
-> > > +			KUNIT_ASSERT_TRUE(test, fb[i] =3D=3D 0 || fb[i] =3D=3D 0xff);
-> > > +	}
-> > > +#endif
-> >=20
-> > I'm not really fond of the ifdef here. Could you turn this into a
-> > function, and return that it's valid if the colors don't match what you
-> > expect?
->=20
-> Yes, I can rework this.
-> >=20
-> > > +	vfree(fb);
-> > > +}
-> > > +
-> > > +/*
-> > > + * Test drawing the panic screen, using a list of pages framebuffer
-> > > + * No checks are performed
-> >=20
-> > What are you testing then if you aren't checking anything?
->=20
-> It tests that there are no access to an unmapped page.
-> But I can add the same check that with the "map" case.
-> It just requires more work to map the pages.
+> diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
+> index 125d395c5e00..f4ce5473324f 100644
+> --- a/crypto/algif_skcipher.c
+> +++ b/crypto/algif_skcipher.c
+> @@ -70,6 +70,7 @@ static int algif_skcipher_export(struct sock *sk, struct skcipher_request *req)
+>  	if (!ctx->state)
+>  		return -ENOMEM;
+>  
+> +	memset(ctx->state, 0, statesize);
+>  	err = crypto_skcipher_export(req, ctx->state);
+>  	if (err) {
+>  		sock_kzfree_s(sk, ctx->state, statesize);
 
-I wasn't really arguing about adding more stuff, just that the
-documentation didn't really explain what was going on. Just saying "I'm
-checking that doing this succeeds" is definitely enough for me.
+But this one should be dropped.  The ctx->state will immediately
+be overwritten by crypto_skcipher_export.  Even if it fails, the
+memory is immediately freed so no harm is done.
 
-> >=20
-> > > + */
-> > > +static void drm_test_panic_screen_user_page(struct kunit *test)
-> > > +{
-> > > +	struct drm_scanout_buffer *sb =3D test->priv;
-> > > +	const struct drm_test_mode *params =3D test->param_value;
-> > > +	int fb_size;
-> > > +	struct page **pages;
-> > > +	int i;
-> > > +	int npages;
-> > > +
-> > > +	sb->format =3D drm_format_info(params->format);
-> > > +	fb_size =3D params->width * params->height * sb->format->cpp[0];
-> > > +	npages =3D DIV_ROUND_UP(fb_size, PAGE_SIZE);
-> > > +
-> > > +	pages =3D kmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
-> > > +	KUNIT_ASSERT_NOT_NULL(test, pages);
-> > > +
-> > > +	for (i =3D 0; i < npages; i++) {
-> > > +		pages[i] =3D alloc_page(GFP_KERNEL);
-> > > +		KUNIT_ASSERT_NOT_NULL(test, pages[i]);
-> >=20
-> > KUNIT_ASSERT_* return immediately, so you're leaking the pages array
-> > here.
-> >=20
-> yes, I can fix that, but is it important to not leak when the test fails?
-
-kunit tests can be compiled as module and run on live systems, so yes.
-It can also lead to subsequent test failures if you deplete the system
-of a resource the next test will need.
-
-Maxime
-
---fd6k3xj7eipdo577
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaNJvBQAKCRAnX84Zoj2+
-dkl0AYCFocQZV3tvBiS0pm45PzS1/533CR/f6PAxB5IP8nHjkqphFpxzo1LZwDSP
-P9ccxFcBfj4Nd/Ct/8HOkqjgkeyuSMLKGKA+zEeKfBrawg4Cfb7ZMWaLo+s1F9rH
-SdVl80I4cg==
-=2e15
------END PGP SIGNATURE-----
-
---fd6k3xj7eipdo577--
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
