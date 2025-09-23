@@ -1,132 +1,181 @@
-Return-Path: <linux-kernel+bounces-829416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE286B970AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:35:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE8BB970BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A8871896F05
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:35:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88FE18A3DCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0DB27FD51;
-	Tue, 23 Sep 2025 17:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C1127A92F;
+	Tue, 23 Sep 2025 17:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OsCZajrd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cAN4upMG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5E22765E8
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866741D90C8;
+	Tue, 23 Sep 2025 17:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758648899; cv=none; b=UvD7RSGr4g7l6dNx1m/Hk/5U3bqmahXpITEvvPsra5fYOZ7iHCBUheIZela5A6ymP7ha0uNt9MlIPK9Y3FUmcw2JokmBvVNumtuBSRd3OgQXHiP7eUflxOrWo8tVYEK6Y5e5wzH/vfrahg/HMaqGOAqdATbKQByGDBHf49srR5I=
+	t=1758648971; cv=none; b=hY14xVrK/8nHaTq/PExbT0oJdzYKQ5QWZ93bYfBw4IhRAmH8UKNekf6dzXZrMtYsN9z4NrfSfaI5l2gtx6VaCES4vbUX77rwPy0oIz3m+QpBs53mkSc0YYmTB275zWvetKcqUkC5geAcFqihEe17O6QHH6RszSfREXjQZCeXwmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758648899; c=relaxed/simple;
-	bh=kiHYOV5tKHdiZHaewEhed9KwrpNMOwErNX95ewTe0bM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Po8Bp8VmSoGvCo3PiHkeRgPkQShBCSlPgoIZy2/qwrOaRPXUZOxSDmgEt0g7k+Trc/seDXjzZLlAWpMUaav3sdJdfiZ1HUYosNZ2K6zFjiuHiE9EAJk8xIR6Is7zSVBP4W5r4hFGISo7Dix6z7mc+lI/mCNiIhqQmCIoRLfncos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OsCZajrd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758648897;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SeHg931zRHI47gvkNWZ7vE3F3NuZSRm6Ea8fb1/M8s0=;
-	b=OsCZajrdvTWVOr9xcfb+DaOocHqY2wMyO5/FP5mqhofGmMhmXf1uFzAFNQDzVilAyto0yD
-	WzG8WIKcdZsonEwId365b6FYtLl41O9j0Gh15PM5w+y8Whxci6yEnAeOqUZ3LA+vQZCPT6
-	l1qqpR4gKZJqfacp5lfDMSGHYRN0moI=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-463-BOEUQwuAMKukL-2IpGDofQ-1; Tue, 23 Sep 2025 13:34:56 -0400
-X-MC-Unique: BOEUQwuAMKukL-2IpGDofQ-1
-X-Mimecast-MFC-AGG-ID: BOEUQwuAMKukL-2IpGDofQ_1758648895
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-b04a302fb7cso528118366b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:34:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758648894; x=1759253694;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SeHg931zRHI47gvkNWZ7vE3F3NuZSRm6Ea8fb1/M8s0=;
-        b=Z0r9sDmye6MNkGfPgTIpRVZtfQBmlileijQhvaQj00uV3bGpzTwn9qbmaqSbMbctiR
-         8KcxuX2b1XEu1KWqZ1qrq9Ihud8puwIQ13F7RI12BoBd9DvFfLqIqO4wlZhyJVCvfi1M
-         6YtDbolBwRsK0b2QSXtlL8hGY15kYNwhNYTZ+KV6sNTcg37WCCrRRIO/kaAoK5nqPoS5
-         DMYuv+ZBm/aJo3TYHujrLa9VQTipSfYHL+zAxboBe8Ki7FmQ93YdPHCcHOERF6KQBWkM
-         yY8cbB0tuoD0CY+gxLssoNxDZRE5go6spGTFD7WKpkWQ9YkEaow1hRbSfJoCO3cL7P3z
-         BdXA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6ylQy0TvG3aHF/ssMB08T2la7bhq6XXUETHIbT+50ZSsdroiWk0qsGFdjwYlYPN82ZehFhxtsS1H6nFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt+nsR/B4S+G8I4aZv3ouVnXHwF+znjJwyYP3JTGtjQtdbiunE
-	o6ZGhdJ2wMRxfCZ0wb3ocMUlMxMBPi8l3UlL6eEWTT2zrdQLhei+6TT5XrkFG4tqscWezCn6a15
-	MYjE7THo11oJxKPoLuLjpgIcWmP0N3F5FyXhF3nSQ9ChwDf7pwCs2n3ax3JizjTVM8YGxbtVRlo
-	oxS97dXtqxadOBbxi1TXCryAJN5JUihFcXIkRyWab/PC6W70db1HWtBw==
-X-Gm-Gg: ASbGncsPw8ue249xINHBdNln7C4ZJgfP4EupZ8m4qrmkq6iF3U5G2h6+FgrBtnAQ+GV
-	fL1gRbY2Ew4D3HHMZghkNu6ntTswHd2wPTvMHOfbLEv8WdhPGRE7mCbpBYBG2rUdT9nH1XLsomc
-	geuGu2dTZK8r69g1R+uKVTPhqafcNnDwSgkm6K9YqX8WAsHNuh1Rwr6Q==
-X-Received: by 2002:a17:906:9fcd:b0:b04:20c0:b1fd with SMTP id a640c23a62f3a-b302ae300ccmr331461966b.36.1758648894485;
-        Tue, 23 Sep 2025 10:34:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHq4BfWe8HxueShfdYzigmJ/VAJwF1XeJgNJ2hPk2d7C/yE2zIEX4Wl+YrY9HIBKFihHiry//0x0vN++dsU+uY=
-X-Received: by 2002:a17:906:9fcd:b0:b04:20c0:b1fd with SMTP id
- a640c23a62f3a-b302ae300ccmr331460766b.36.1758648894113; Tue, 23 Sep 2025
- 10:34:54 -0700 (PDT)
+	s=arc-20240116; t=1758648971; c=relaxed/simple;
+	bh=UO2O51VzC78DSwnhfdoePqLlffRPw7JsQtk2TxHv3IM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G2Y0eslnzedMLp0F7cjljTx31hQb/NnVEaXHHLPVI4hWj5PlZKjXIYaNjVjRfYTaefzCLLKzICRxLKuuut/LiuwRCSpm2z+eH0GlwZeHFwXwgaroXgycrI6fiK1kRlt/9nfbTA+OLQb1l0rL1P2psdNLDfF+RjYvSuGiYgAStD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cAN4upMG; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758648968; x=1790184968;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UO2O51VzC78DSwnhfdoePqLlffRPw7JsQtk2TxHv3IM=;
+  b=cAN4upMGN0mLp4Hxsg5dzxrC+K+q5kOXMymHs/g7OgOFW15OSL+dWG4g
+   SI40OYSib8oJpzjcKiNfrSd1Ppv32+LPVSHhmZe0AkznZmfrKrz5E4MgI
+   Wdyz5lUEuyyRgQvJGs1pUkF3qxLOA1ClJI/Ykqqw2KoFreFZg03rXZlWD
+   VhBx26+LpeTyuZWywIRt3TemniKzXbq7Sz+GbtxQaFOSgNUv32Ena3H2r
+   M2rUSezkF2G9YhRhfxh9g53DlVJ02IfishUT5uMzPEsXidCTYLE0eH633
+   JLX8CcXiiMjoLKqbFn3y4OFajtV5FtoxmCtM9+LdkDY6OLTPUlJ8A2pom
+   Q==;
+X-CSE-ConnectionGUID: QfZfV6NDQEKBgN0xea3LBw==
+X-CSE-MsgGUID: nutybuEuRUOBYdg3ijLUfA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60637900"
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
+   d="scan'208";a="60637900"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 10:36:07 -0700
+X-CSE-ConnectionGUID: zeCWYP7RRuqxfU0nURwVhg==
+X-CSE-MsgGUID: yvx2pBrOT+K/zO2LlHrCjw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
+   d="scan'208";a="176419047"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 23 Sep 2025 10:36:04 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v16vp-0003Nh-2B;
+	Tue, 23 Sep 2025 17:36:01 +0000
+Date: Wed, 24 Sep 2025 01:35:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sherry Sun <sherry.sun@nxp.com>, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, shenwei.wang@nxp.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH 2/2] tty: serial: imx: Add missing wakeup event reporting
+Message-ID: <202509240146.aj950Liu-lkp@intel.com>
+References: <20250923031613.2448073-3-sherry.sun@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922200942.1534414-1-rrobaina@redhat.com> <p4866orr-o8nn-6550-89o7-s3s12s27732q@vanv.qr>
-In-Reply-To: <p4866orr-o8nn-6550-89o7-s3s12s27732q@vanv.qr>
-From: Ricardo Robaina <rrobaina@redhat.com>
-Date: Tue, 23 Sep 2025 14:34:42 -0300
-X-Gm-Features: AS18NWBWOHf8rNDBSAWfxx9RxHlA_lLobyIxEA9zXAn2_ywMPGOuRbJS6DmvJVs
-Message-ID: <CAABTaaDaOu631q+BVa+tzDJdH62+HXO-s0FT_to6VyvyLi-JCQ@mail.gmail.com>
-Subject: Re: [PATCH v1] audit: include source and destination ports to NETFILTER_PKT
-To: Jan Engelhardt <ej@inai.de>
-Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, paul@paul-moore.com, 
-	eparis@redhat.com, pablo@netfilter.org, kadlec@netfilter.org, fw@strlen.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923031613.2448073-3-sherry.sun@nxp.com>
 
-On Mon, Sep 22, 2025 at 8:29=E2=80=AFPM Jan Engelhardt <ej@inai.de> wrote:
->
->
-> On Monday 2025-09-22 22:09, Ricardo Robaina wrote:
->
-> >NETFILTER_PKT records show both source and destination
-> >addresses, in addition to the associated networking protocol.
-> >However, it lacks the ports information, which is often
-> >valuable for troubleshooting.
-> >
-> >+      switch (ih->protocol) {
-> >+      case IPPROTO_TCP:
-> >+              sport =3D tcp_hdr(skb)->source;
-> >+              dport =3D tcp_hdr(skb)->dest;
-> >+              break;
-> >+      case IPPROTO_UDP:
-> >+              sport =3D udp_hdr(skb)->source;
-> >+              dport =3D udp_hdr(skb)->dest;
-> >+      }
->
-> Should be easy enough to add the cases for UDPLITE,
-> SCTP and DCCP, right?
->
+Hi Sherry,
 
-Thanks for reviewing this patch, Jan.
+kernel test robot noticed the following build errors:
 
-Yes, it should. I assume it=E2=80=99s safe to use udp_hdr() for the UDP-Lit=
-e
-case as well, right?
+[auto build test ERROR on shawnguo/for-next]
+[also build test ERROR on usb/usb-testing usb/usb-next usb/usb-linus linus/master v6.17-rc7 next-20250922]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-It seems DCCP has been retired by commit 2a63dd0edf38 (=E2=80=9Cnet: Retire
-DCCP socket.=E2=80=9D). I=E2=80=99ll work on a V2, adding cases for both UD=
-P-Lite and
-SCTP.
+url:    https://github.com/intel-lab-lkp/linux/commits/Sherry-Sun/tty-serial-imx-Only-configure-the-wake-register-when-device-is-set-as-wakeup-source/20250923-111951
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250923031613.2448073-3-sherry.sun%40nxp.com
+patch subject: [PATCH 2/2] tty: serial: imx: Add missing wakeup event reporting
+config: x86_64-buildonly-randconfig-004-20250923 (https://download.01.org/0day-ci/archive/20250924/202509240146.aj950Liu-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250924/202509240146.aj950Liu-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509240146.aj950Liu-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/tty/serial/imx.c:2742:21: error: call to undeclared function 'irqd_is_wakeup_set'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    2742 |         if (wake_active && irqd_is_wakeup_set(irq_get_irq_data(sport->port.irq)))
+         |                            ^
+>> drivers/tty/serial/imx.c:2742:40: error: call to undeclared function 'irq_get_irq_data'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    2742 |         if (wake_active && irqd_is_wakeup_set(irq_get_irq_data(sport->port.irq)))
+         |                                               ^
+   drivers/tty/serial/imx.c:2742:40: note: did you mean 'irq_set_irq_wake'?
+   include/linux/interrupt.h:481:12: note: 'irq_set_irq_wake' declared here
+     481 | extern int irq_set_irq_wake(unsigned int irq, unsigned int on);
+         |            ^
+   2 errors generated.
+
+
+vim +/irqd_is_wakeup_set +2742 drivers/tty/serial/imx.c
+
+  2696	
+  2697	/* called with irq off */
+  2698	static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
+  2699	{
+  2700		struct tty_port *port = &sport->port.state->port;
+  2701		struct tty_struct *tty;
+  2702		struct device *tty_dev;
+  2703		u32 ucr3, usr1;
+  2704		bool may_wake, wake_active;
+  2705	
+  2706		tty = tty_port_tty_get(port);
+  2707		if (tty) {
+  2708			tty_dev = tty->dev;
+  2709			may_wake = tty_dev && device_may_wakeup(tty_dev);
+  2710			tty_kref_put(tty);
+  2711		}
+  2712	
+  2713		/* only configure the wake register when device set as wakeup source */
+  2714		if (!may_wake)
+  2715			return;
+  2716	
+  2717		uart_port_lock_irq(&sport->port);
+  2718	
+  2719		usr1 = imx_uart_readl(sport, USR1);
+  2720		ucr3 = imx_uart_readl(sport, UCR3);
+  2721		if (on) {
+  2722			imx_uart_writel(sport, USR1_AWAKE, USR1);
+  2723			ucr3 |= UCR3_AWAKEN;
+  2724		} else {
+  2725			ucr3 &= ~UCR3_AWAKEN;
+  2726			wake_active = usr1 & USR1_AWAKE;
+  2727		}
+  2728		imx_uart_writel(sport, ucr3, UCR3);
+  2729	
+  2730		if (sport->have_rtscts) {
+  2731			u32 ucr1 = imx_uart_readl(sport, UCR1);
+  2732			if (on) {
+  2733				imx_uart_writel(sport, USR1_RTSD, USR1);
+  2734				ucr1 |= UCR1_RTSDEN;
+  2735			} else {
+  2736				ucr1 &= ~UCR1_RTSDEN;
+  2737				wake_active |= usr1 & USR1_RTSD;
+  2738			}
+  2739			imx_uart_writel(sport, ucr1, UCR1);
+  2740		}
+  2741	
+> 2742		if (wake_active && irqd_is_wakeup_set(irq_get_irq_data(sport->port.irq)))
+  2743			pm_wakeup_event(tty_port_tty_get(port)->dev, 0);
+  2744	
+  2745		uart_port_unlock_irq(&sport->port);
+  2746	}
+  2747	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
