@@ -1,288 +1,238 @@
-Return-Path: <linux-kernel+bounces-829754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 393A1B97BDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 00:40:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B14F2B97BE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 00:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84263B4C91
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:40:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5ED3B2F37
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F8D3101DF;
-	Tue, 23 Sep 2025 22:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC5C311950;
+	Tue, 23 Sep 2025 22:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dee6mSo2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oBW6V6+E"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1C030F522;
-	Tue, 23 Sep 2025 22:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14E230FC1C;
+	Tue, 23 Sep 2025 22:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758667082; cv=none; b=b6eageT2z6qaW6fQ+TzVeS2ggbzWHKtb7hYfQfT/DNJfaP6KfLA5ochbfo3J2J/H06OV8eadhrdiwOWQOfSbQeKIJQbvoJFp78jkAJkW8u4hhPEeIZkNXJzl2ey0REjT7ISOZwKW1vGP0B2aIX1iqfsl7ySTleXVbuvWjNQ8+eg=
+	t=1758667133; cv=none; b=ktFvNiGGlXWSJ0c0WG+ejP8NR0DAqQbZSQE31cKrver3Oh4uWBg2V5NDr7VQ9UsWOL2wW7yfq06SsIUWYtVJr+rzRFQc2uDmD4Dyw4FHNYoQjGXKO0l1tL3XxNjXNwZZi9FqoyCs9yUU92WaZdLa9WbvI21M6WOJzLpufyxe+w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758667082; c=relaxed/simple;
-	bh=18MRxfqbAerdt2DV+//v66GYQWGoRSGQpES+1chutj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N4N02zD5sjQmH7ETy1qnPwrmWpblPoT3YEoVzd/rCzq/n9YF/7LFW2WHb8yW5VxHvJ/pbHRAuDntx8c4nXeae17QvVu9IQR+6OSK5DwUxR5c5JwPYTaOKKZmftSkzw/YYzrDF/+siKZjWfJ+Gj/ldaJZWJ8N3JRAZp/FlGLOks0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dee6mSo2; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758667080; x=1790203080;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=18MRxfqbAerdt2DV+//v66GYQWGoRSGQpES+1chutj4=;
-  b=dee6mSo2QLHF5tm0fBe9JcW4KME4NoJQlXaBCT9z4CM9U+954/5oMCPO
-   8h7iRvk2PTJmR7g6EiS3dl/2F57DCOnGVkqPIgHkBBHeMTA5FeUlVGbjD
-   tnKDioopQOY2srUAr3h4dZV5rrX3NZrxvo1NJzcMogyunBUCAXreoTUN/
-   Thdrb7VlI/l8qQzWdI307fhMdwCXiSfdL22QOil5thyoJ+CixAklHDFJ/
-   w2NKevZiFIgiVymCfq4VcgiXCTM6n6HXfBpHeUNUPsN6EOUw1Ea2CzF7R
-   TeSkV5zR0nYC4JGHPrR0IG9jn+KLF7F4/H8pm5tTToJmHDTDkpBFX1TiR
-   g==;
-X-CSE-ConnectionGUID: 3jrBJCryRKK1wvxwxmc2Lw==
-X-CSE-MsgGUID: SQtEHI8lS4CGHTsAz/6CQg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="72315820"
-X-IronPort-AV: E=Sophos;i="6.18,289,1751266800"; 
-   d="scan'208";a="72315820"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 15:37:59 -0700
-X-CSE-ConnectionGUID: D8DZZWOHRRmLTOFJ33FWIw==
-X-CSE-MsgGUID: q74YHrNiSUaVslrb1S101A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,289,1751266800"; 
-   d="scan'208";a="176001422"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.108.174]) ([10.125.108.174])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 15:37:56 -0700
-Message-ID: <c7b41eb6-b946-4ac0-9ddd-e75ba4ceb636@intel.com>
-Date: Tue, 23 Sep 2025 15:37:54 -0700
+	s=arc-20240116; t=1758667133; c=relaxed/simple;
+	bh=3ClJm3GGCbKnrDe8xlc0T1sj5TO27qNztLWoK747IkM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oe0ByCs9vvKA+e+Ks8dWhosEk2MwWek6wS2gCDP0Q1wLcTUOwyxC/gJuiW3ZAi7etRRwlXS5Iu9JS15BQB4O7Dl3MuCpWPkYvcjI3biJ4WDLHlxNRLlzJyooeMKNlGDKnma0gM3+5yNe5HOdH90sXkQ/9dllPK/srzMP3XeZepo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oBW6V6+E; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version:
+	Content-Type; bh=TTWQOmGgkRlfr3lkdxz0rDPCmCvx7LmjjYcHdx7zUf0=;
+	b=oBW6V6+EYRbKWu59T12hc+AVpLa7QEzPlltRgEnLXAgqo5aWHe52DicBIkfqit
+	hkWKq7tMqmPIxKc8r5ZSVBl4tNBW6pmXZ/Za3YizyGEikvdwMfZmAnvgkY+PYA+u
+	g6/EFJVjBJLWinDp42qxFSxj21fK2pofDUd7sNUtRK77g=
+Received: from MS-CMFLBWVCLQRG.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDH2yRoIdNo2NsLDg--.8619S2;
+	Wed, 24 Sep 2025 06:38:33 +0800 (CST)
+From: GuangFei Luo <luogf2025@163.com>
+To: rafael@kernel.org
+Cc: dan.carpenter@linaro.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	luogf2025@163.com
+Subject: Re:[PATCH v6] ACPI: battery: prevent sysfs_add_battery re-entry on rapid events
+Date: Wed, 24 Sep 2025 06:38:29 +0800
+Message-ID: <20250923223831.1308685-1-luogf2025@163.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <5944379.DvuYhMxLoT@rafael.j.wysocki>
+References: <5944379.DvuYhMxLoT@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 13/20] cxl/mem: Refactor cxl pmem region
- auto-assembling
-To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
-Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
- cpgs@samsung.com
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
- <CGME20250917134157epcas5p1b30306bc8596b7b50548ddf3683c3b97@epcas5p1.samsung.com>
- <20250917134116.1623730-14-s.neeraj@samsung.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250917134116.1623730-14-s.neeraj@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDH2yRoIdNo2NsLDg--.8619S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3JF1xKrWrGryDuryUKF1kuFg_yoW7Xr45pa
+	yUCFWYkr4UJ3WUXw12qr4Yvry3Z3yFyrWjgr9rury0k34DWF1xJr15tF9rZrZxKryFka1r
+	ZF4xX3W5Zw17ZF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziDPEfUUUUU=
+X-CM-SenderInfo: poxrwwisqskqqrwthudrp/1tbiPQ-RmWjTEazrCAAAsf
 
-
-
-On 9/17/25 6:41 AM, Neeraj Kumar wrote:
-> In 84ec985944ef3, devm_cxl_add_nvdimm() sequence was changed and called
-> before devm_cxl_add_endpoint(). It's because cxl pmem region auto-assembly
-> used to get called at last in cxl_endpoint_port_probe(), which requires
-> cxl_nvd presence.
+> On Tuesday, September 23, 2025 7:12:03 PM CEST Rafael J. Wysocki wrote:
+> > On Tue, Sep 23, 2025 at 6:14 PM GuangFei Luo <luogf2025@163.com> wrote:
+> > >
+> > > The functions battery_hook_add_battery(), battery_hook_remove_battery(),
+> > > and sysfs_remove_battery() already acquire locks, so their internal
+> > > accesses are safe.
+> > 
+> > In fact, there are two locks in use, battery->sysfs_lock and
+> > hook_mutex.  The latter is used for managing hooks and the former is
+> > only used by sysfs_remove_battery(), so it only prevents that function
+> > from racing with another instance of itself.
+> > 
+> > I would suggest using battery->sysfs_lock for protecting battery->bat
+> > in general.
+> > 
+> > > acpi_battery_refresh() does check battery->bat, but its child
+> > > functions (sysfs_add_battery() and sysfs_remove_battery()) already
+> > > handle locking.
+> > 
+> > What locking?  Before the $subject patch, sysfs_add_battery() doesn't
+> > do any locking at all AFAICS.
+> > 
+> > > In acpi_battery_notify(), battery->bat has no lock. However, the
+> > > check of battery->bat is at the very end of the function. During
+> > > earlier calls, battery->bat has already been protected by locks, so
+> > > re-entry will not cause issues.
+> > 
+> > All of the battery->bat checks and the code depending on them need to
+> > go under the same lock.  I'd use battery->sysfs_lock for this as
+> > already mentioned above.
 > 
-> For cxl region persistency, region creation happens during nvdimm_probe
-> which need the completion of endpoint probe.
+> So my (untested) version of this fix is appended.
 > 
-> In order to accommodate both cxl pmem region auto-assembly and cxl region
-> persistency, refactored following
+> Note that it explicitly prevents acpi_battery_notify() from racing with
+> addition/removal, PM notifications, and resume.
 > 
-> 1. Re-Sequence devm_cxl_add_nvdimm() after devm_cxl_add_endpoint(). This
->    will be called only after successful completion of endpoint probe.
-> 
-> 2. Moved cxl pmem region auto-assembly from cxl_endpoint_port_probe() to
->    cxl_mem_probe() after devm_cxl_add_nvdimm(). It gurantees both the
->    completion of endpoint probe and cxl_nvd presence before its call.
-
-Given that we are going forward with this implementation [1] from Dan and drivers like the type2 enabling are going to be using it as well, can you please consider converting this change to Dan's mechanism instead of creating a whole new one?
-
-I think the region discovery can be done via the ops->probe() callback. Thanks.
-
-[1]: https://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git/commit/?h=for-6.18/cxl-probe-order&id=88aec5ea7a24da00dc92c7778df4851fe4fd3ec6
-
-DJ
-
-> 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
 > ---
->  drivers/cxl/core/region.c | 33 +++++++++++++++++++++++++++++++++
->  drivers/cxl/cxl.h         |  4 ++++
->  drivers/cxl/mem.c         | 24 +++++++++++++++---------
->  drivers/cxl/port.c        | 39 +--------------------------------------
->  4 files changed, 53 insertions(+), 47 deletions(-)
+>  drivers/acpi/battery.c |   36 +++++++++++++++++++++++-------------
+>  1 file changed, 23 insertions(+), 13 deletions(-)
 > 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 7a0cead24490..c325aa827992 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3606,6 +3606,39 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_add_to_region, "CXL");
+> --- a/drivers/acpi/battery.c
+> +++ b/drivers/acpi/battery.c
+> @@ -92,7 +92,7 @@ enum {
 >  
-> +static int discover_region(struct device *dev, void *unused)
-> +{
-> +	struct cxl_endpoint_decoder *cxled;
-> +	int rc;
-> +
-> +	if (!is_endpoint_decoder(dev))
-> +		return 0;
-> +
-> +	cxled = to_cxl_endpoint_decoder(dev);
-> +	if ((cxled->cxld.flags & CXL_DECODER_F_ENABLE) == 0)
-> +		return 0;
-> +
-> +	if (cxled->state != CXL_DECODER_STATE_AUTO)
-> +		return 0;
-> +
-> +	/*
-> +	 * Region enumeration is opportunistic, if this add-event fails,
-> +	 * continue to the next endpoint decoder.
-> +	 */
-> +	rc = cxl_add_to_region(cxled);
-> +	if (rc)
-> +		dev_dbg(dev, "failed to add to region: %#llx-%#llx\n",
-> +			cxled->cxld.hpa_range.start, cxled->cxld.hpa_range.end);
-> +
-> +	return 0;
-> +}
-> +
-> +void cxl_region_discovery(struct cxl_port *port)
-> +{
-> +	device_for_each_child(&port->dev, NULL, discover_region);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(cxl_region_discovery, "CXL");
-> +
->  u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa)
->  {
->  	struct cxl_region_ref *iter;
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 4fe3df06f57a..b57597e55f7e 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -873,6 +873,7 @@ struct cxl_pmem_region *to_cxl_pmem_region(struct device *dev);
->  int cxl_add_to_region(struct cxl_endpoint_decoder *cxled);
->  struct cxl_dax_region *to_cxl_dax_region(struct device *dev);
->  u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa);
-> +void cxl_region_discovery(struct cxl_port *port);
->  #else
->  static inline bool is_cxl_pmem_region(struct device *dev)
->  {
-> @@ -895,6 +896,9 @@ static inline u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint,
->  {
->  	return 0;
->  }
-> +static inline void cxl_region_discovery(struct cxl_port *port)
-> +{
-> +}
->  #endif
+>  struct acpi_battery {
+>  	struct mutex lock;
+> -	struct mutex sysfs_lock;
+> +	struct mutex update_lock;
+>  	struct power_supply *bat;
+>  	struct power_supply_desc bat_desc;
+>  	struct acpi_device *device;
+> @@ -904,15 +904,12 @@ static int sysfs_add_battery(struct acpi
 >  
->  void cxl_endpoint_parse_cdat(struct cxl_port *port);
-> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
-> index 6e6777b7bafb..54501616ff09 100644
-> --- a/drivers/cxl/mem.c
-> +++ b/drivers/cxl/mem.c
-> @@ -152,15 +152,6 @@ static int cxl_mem_probe(struct device *dev)
->  		return -ENXIO;
+>  static void sysfs_remove_battery(struct acpi_battery *battery)
+>  {
+> -	mutex_lock(&battery->sysfs_lock);
+> -	if (!battery->bat) {
+> -		mutex_unlock(&battery->sysfs_lock);
+> +	if (!battery->bat)
+>  		return;
+> -	}
+> +
+>  	battery_hook_remove_battery(battery);
+>  	power_supply_unregister(battery->bat);
+>  	battery->bat = NULL;
+> -	mutex_unlock(&battery->sysfs_lock);
+>  }
+>  
+>  static void find_battery(const struct dmi_header *dm, void *private)
+> @@ -1072,6 +1069,9 @@ static void acpi_battery_notify(acpi_han
+>  
+>  	if (!battery)
+>  		return;
+> +
+> +	guard(mutex)(&battery->update_lock);
+> +
+>  	old = battery->bat;
+>  	/*
+>  	 * On Acer Aspire V5-573G notifications are sometimes triggered too
+> @@ -1094,21 +1094,22 @@ static void acpi_battery_notify(acpi_han
+>  }
+>  
+>  static int battery_notify(struct notifier_block *nb,
+> -			       unsigned long mode, void *_unused)
+> +			  unsigned long mode, void *_unused)
+>  {
+>  	struct acpi_battery *battery = container_of(nb, struct acpi_battery,
+>  						    pm_nb);
+> -	int result;
+>  
+> -	switch (mode) {
+> -	case PM_POST_HIBERNATION:
+> -	case PM_POST_SUSPEND:
+> +	if (mode == PM_POST_SUSPEND || mode == PM_POST_HIBERNATION) {
+> +		guard(mutex)(&battery->update_lock);
+> +
+>  		if (!acpi_battery_present(battery))
+>  			return 0;
+>  
+>  		if (battery->bat) {
+>  			acpi_battery_refresh(battery);
+>  		} else {
+> +			int result;
+> +
+>  			result = acpi_battery_get_info(battery);
+>  			if (result)
+>  				return result;
+> @@ -1120,7 +1121,6 @@ static int battery_notify(struct notifie
+>  
+>  		acpi_battery_init_alarm(battery);
+>  		acpi_battery_get_state(battery);
+> -		break;
 >  	}
 >  
-> -	if (cxl_pmem_size(cxlds) && IS_ENABLED(CONFIG_CXL_PMEM)) {
-> -		rc = devm_cxl_add_nvdimm(parent_port, cxlmd);
-> -		if (rc) {
-> -			if (rc == -ENODEV)
-> -				dev_info(dev, "PMEM disabled by platform\n");
-> -			return rc;
-> -		}
-> -	}
-> -
->  	if (dport->rch)
->  		endpoint_parent = parent_port->uport_dev;
->  	else
-> @@ -184,6 +175,21 @@ static int cxl_mem_probe(struct device *dev)
->  	if (rc)
->  		dev_dbg(dev, "CXL memdev EDAC registration failed rc=%d\n", rc);
->  
-> +	if (cxl_pmem_size(cxlds) && IS_ENABLED(CONFIG_CXL_PMEM)) {
-> +		rc = devm_cxl_add_nvdimm(parent_port, cxlmd);
-> +		if (rc) {
-> +			if (rc == -ENODEV)
-> +				dev_info(dev, "PMEM disabled by platform\n");
-> +			return rc;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * Now that all endpoint decoders are successfully enumerated, try to
-> +	 * assemble region autodiscovery from committed decoders.
-> +	 */
-> +	cxl_region_discovery(cxlmd->endpoint);
-> +
->  	/*
->  	 * The kernel may be operating out of CXL memory on this device,
->  	 * there is no spec defined way to determine whether this device
-> diff --git a/drivers/cxl/port.c b/drivers/cxl/port.c
-> index cf32dc50b7a6..07bb909b7d2e 100644
-> --- a/drivers/cxl/port.c
-> +++ b/drivers/cxl/port.c
-> @@ -30,33 +30,6 @@ static void schedule_detach(void *cxlmd)
->  	schedule_cxl_memdev_detach(cxlmd);
->  }
->  
-> -static int discover_region(struct device *dev, void *unused)
-> -{
-> -	struct cxl_endpoint_decoder *cxled;
-> -	int rc;
-> -
-> -	if (!is_endpoint_decoder(dev))
-> -		return 0;
-> -
-> -	cxled = to_cxl_endpoint_decoder(dev);
-> -	if ((cxled->cxld.flags & CXL_DECODER_F_ENABLE) == 0)
-> -		return 0;
-> -
-> -	if (cxled->state != CXL_DECODER_STATE_AUTO)
-> -		return 0;
-> -
-> -	/*
-> -	 * Region enumeration is opportunistic, if this add-event fails,
-> -	 * continue to the next endpoint decoder.
-> -	 */
-> -	rc = cxl_add_to_region(cxled);
-> -	if (rc)
-> -		dev_dbg(dev, "failed to add to region: %#llx-%#llx\n",
-> -			cxled->cxld.hpa_range.start, cxled->cxld.hpa_range.end);
-> -
-> -	return 0;
-> -}
-> -
->  static int cxl_switch_port_probe(struct cxl_port *port)
+>  	return 0;
+> @@ -1198,6 +1198,8 @@ static int acpi_battery_update_retry(str
 >  {
->  	struct cxl_hdm *cxlhdm;
-> @@ -121,17 +94,7 @@ static int cxl_endpoint_port_probe(struct cxl_port *port)
->  	if (rc)
->  		return rc;
+>  	int retry, ret;
 >  
-> -	rc = devm_cxl_enumerate_decoders(cxlhdm, &info);
-> -	if (rc)
-> -		return rc;
-> -
-> -	/*
-> -	 * Now that all endpoint decoders are successfully enumerated, try to
-> -	 * assemble regions from committed decoders
-> -	 */
-> -	device_for_each_child(&port->dev, NULL, discover_region);
-> -
-> -	return 0;
-> +	return devm_cxl_enumerate_decoders(cxlhdm, &info);
+> +	guard(mutex)(&battery->update_lock);
+> +
+>  	for (retry = 5; retry; retry--) {
+>  		ret = acpi_battery_update(battery, false);
+>  		if (!ret)
+> @@ -1230,7 +1232,7 @@ static int acpi_battery_add(struct acpi_
+>  	if (result)
+>  		return result;
+>  
+> -	result = devm_mutex_init(&device->dev, &battery->sysfs_lock);
+> +	result = devm_mutex_init(&device->dev, &battery->update_lock);
+>  	if (result)
+>  		return result;
+>  
+> @@ -1262,6 +1264,8 @@ fail_pm:
+>  	device_init_wakeup(&device->dev, 0);
+>  	unregister_pm_notifier(&battery->pm_nb);
+>  fail:
+> +	guard(mutex)(&battery->update_lock);
+> +
+>  	sysfs_remove_battery(battery);
+>  
+>  	return result;
+> @@ -1281,6 +1285,9 @@ static void acpi_battery_remove(struct a
+>  
+>  	device_init_wakeup(&device->dev, 0);
+>  	unregister_pm_notifier(&battery->pm_nb);
+> +
+> +	guard(mutex)(&battery->update_lock);
+> +
+>  	sysfs_remove_battery(battery);
 >  }
 >  
->  static int cxl_port_probe(struct device *dev)
+> @@ -1297,6 +1304,9 @@ static int acpi_battery_resume(struct de
+>  		return -EINVAL;
+>  
+>  	battery->update_time = 0;
+> +
+> +	guard(mutex)(&battery->update_lock);
+> +
+>  	acpi_battery_update(battery, true);
+>  	return 0;
+>  }
+
+Thanks for the detailed explanation and the updated version of the fix.
+
+I will test your suggested changes on my platform.  
+After verification, I will send a v7 based on your suggestion.
 
 
