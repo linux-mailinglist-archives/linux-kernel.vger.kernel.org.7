@@ -1,177 +1,157 @@
-Return-Path: <linux-kernel+bounces-828714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D51B95448
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:33:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F33B95457
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E548F3B1A25
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:33:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC05B3AE13A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C007A3164B7;
-	Tue, 23 Sep 2025 09:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71ED131CA5D;
+	Tue, 23 Sep 2025 09:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ObE97Wtl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FumE7SRj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2284F22ACEB
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C941922ACEB;
+	Tue, 23 Sep 2025 09:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758619993; cv=none; b=I95IXzQQoddtkjU9klAdZlp/tXMsfDKc2ey1sL+U8jOGuIMIBLkRuHHI+C+idcRUD6m+01LTPCcP6CPYiFuRd9oXdNz8CWCpoY0uK6tX8ArK8fNJAMGUWNtFomA6dlmbDNeUZTuqGhB7pC67c9y/sWcw3vtnj+cPwDtmp+o8iJ8=
+	t=1758620125; cv=none; b=mRLceCyS5mPwnUeC0R7Sbojav5m3QTfx5/+V9/0GsCTvBWbCw5kAFkLiBSsNO6C0ZFWw9AqOGw3gtJVPvATu9Nd1cXvduIK8b6f1Vk/k+l+gnZCrYSxhomuV9g+xic2Z4kc3NPJ1FRH3KhJ9bCv27/E6XDxvDl31cFqtJU4G6y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758619993; c=relaxed/simple;
-	bh=EWvxTbo7vKi266KfFZvyHwLR/d5yx4trxnrUlnNyNwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jc6ShwZ4LWi+O5UmzrL1BhhI6tVrApa0aBATDCO9zaAvAIKDkG5ru0fY+YdIOyGlLyVoM6C0QAObhZyUxQhrvSVaXO9cs+a1fXtYL18BdhYP4EwDj28meiIPHzrT96/23c9M8ERighQmbtwQSUlyzPOFOdSoTi84LYpdroQkQfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ObE97Wtl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B9BAC4CEF5;
-	Tue, 23 Sep 2025 09:33:12 +0000 (UTC)
+	s=arc-20240116; t=1758620125; c=relaxed/simple;
+	bh=sGTPjkogMZc7blO0QGcTSkETJ00J0BsNpZHH9yhP6Es=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lehFwBAb8U6JK0uxq4It/yPKzXVl80/rEqTZxPj6/pC3OAZVh5zh4/XW91en3la1lSdGMkgyYLdrbuUbs5fttlHvoNe43Oz8OwnfOsReWb3AyNUbF1buquo0LN811ocaJLzW06hnrJpRLESfALRg72YVx63Nqpcd+uqEKkfqRpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FumE7SRj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3951BC4CEF7;
+	Tue, 23 Sep 2025 09:35:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758619992;
-	bh=EWvxTbo7vKi266KfFZvyHwLR/d5yx4trxnrUlnNyNwI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ObE97WtlSj/ZXle5qAaQvnjFddvcvPfzOkV18RSkebWHz2aqwzm4vbO9nMltqQCnb
-	 sFsFmV58LdkGCFn3PurFcb6vRQoAYMRqChq4/+JONjsDNq3LKezH4MqyfWYUe2nV2t
-	 DVW8VzAGkGD1wrFs+QVcoJ41teYCIw6Ea7k5MaBL4g3O1YMZnj+BWBOcoVC/wiyN0K
-	 4vGxSUoHvn/dbO9q1APgZlf1gntNX5JZBtDXv1vQ1mif6O62kpY16ZQSxC5hEkJ/oc
-	 RKfCTATJDeDGdMkE2ddBwmRxvHrY51TRKi47SJZVXLrvbeOmNVweB6CWgyuoABGXZG
-	 37KDynH5GHgEA==
-Date: Tue, 23 Sep 2025 11:33:09 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Jyri Sarha <jyri.sarha@iki.fi>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/29] drm/atomic_state_helper: Fix bridge state
- initialization
-Message-ID: <20250923-dynamic-bumblebee-of-luck-d31a19@penduick>
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <20250902-drm-state-readout-v1-5-14ad5315da3f@kernel.org>
- <9f17dfd9-a4d4-41e9-b988-bd8ca858e5e7@suse.de>
- <20250915-heavenly-athletic-lionfish-aa7b8b@penduick>
- <9520bcb5-df81-452c-902a-0c4c61156716@suse.de>
+	s=k20201202; t=1758620125;
+	bh=sGTPjkogMZc7blO0QGcTSkETJ00J0BsNpZHH9yhP6Es=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FumE7SRjhoGU9CPgsFuEblsbdY5jwRLcFzAXKdD+bA93EQjki286fn9nDRouWmXof
+	 pchJ5+tW9jXl++u6lfhKme4z58TYOPxZaYyvHPVYJAqkuzttBQWj44hOPG0KcCRL6w
+	 o+qj4FINHy6bjXqjPGPjp33qAoYFT2qdbCp+fuANzMA9F/8/G57LZtvx3QDcnRf1o4
+	 Xt9sLqTN09p87/Bx5jGHranNhAgGVjX9LsGnCBessu8h7KHJAPn+/4NK9D2N5GHaGy
+	 M8YR0Kli81hpKJhhMlgKa8afnmGpbgftKrcwuLyRxmgYl1uHjrLQ0IJ35ZAu3s7u4A
+	 gZLjoLbA/a36w==
+Date: Tue, 23 Sep 2025 05:35:15 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
+ <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Linus
+ Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>, Sam James
+ <sam@gentoo.org>, Kees Cook <kees@kernel.org>, Carlos O'Donell
+ <codonell@redhat.com>
+Subject: Re: [RESEND][PATCH v15 2/4] perf: Support deferred user callchains
+Message-ID: <20250923053515.25a1713e@batman.local.home>
+In-Reply-To: <20250923091935.GA3419281@noisy.programming.kicks-ass.net>
+References: <20250908171412.268168931@kernel.org>
+	<20250908171524.605637238@kernel.org>
+	<20250923091935.GA3419281@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="frbjwb35klyzeh7q"
-Content-Disposition: inline
-In-Reply-To: <9520bcb5-df81-452c-902a-0c4c61156716@suse.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 23 Sep 2025 11:19:35 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
---frbjwb35klyzeh7q
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 05/29] drm/atomic_state_helper: Fix bridge state
- initialization
-MIME-Version: 1.0
+> On Mon, Sep 08, 2025 at 01:14:14PM -0400, Steven Rostedt wrote:
+> 
+> > +static void perf_event_callchain_deferred(struct callback_head *work)
+> > +{
+> > +	struct perf_event *event = container_of(work, struct perf_event, pending_unwind_work);
+> > +	struct perf_callchain_deferred_event deferred_event;
+> > +	u64 callchain_context = PERF_CONTEXT_USER;
+> > +	struct unwind_stacktrace trace;
+> > +	struct perf_output_handle handle;
+> > +	struct perf_sample_data data;
+> > +	u64 nr;
+> > +
+> > +	if (!event->pending_unwind_callback)
+> > +		return;
+> > +
+> > +	if (unwind_user_faultable(&trace) < 0)
+> > +		goto out;  
+> 
+> This is broken. Because:
+> 
+> > +
+> > +	/*
+> > +	 * All accesses to the event must belong to the same implicit RCU
+> > +	 * read-side critical section as the ->pending_unwind_callback reset.
+> > +	 * See comment in perf_pending_unwind_sync().
+> > +	 */
+> > +	guard(rcu)();  
+> 
+> Here you start a guard, that lasts until close of function..
+> 
+> > +
+> > +	if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
+> > +		goto out;
+> > +
+> > +	nr = trace.nr + 1 ; /* '+1' == callchain_context */
+> > +
+> > +	deferred_event.header.type = PERF_RECORD_CALLCHAIN_DEFERRED;
+> > +	deferred_event.header.misc = PERF_RECORD_MISC_USER;
+> > +	deferred_event.header.size = sizeof(deferred_event) + (nr * sizeof(u64));
+> > +
+> > +	deferred_event.nr = nr;
+> > +	deferred_event.cookie = unwind_user_get_cookie();
+> > +
+> > +	perf_event_header__init_id(&deferred_event.header, &data, event);
+> > +
+> > +	if (perf_output_begin(&handle, &data, event, deferred_event.header.size))
+> > +		goto out;
+> > +
+> > +	perf_output_put(&handle, deferred_event);
+> > +	perf_output_put(&handle, callchain_context);
+> > +	/* trace.entries[] are not guaranteed to be 64bit */
+> > +	for (int i = 0; i < trace.nr; i++) {
+> > +		u64 entry = trace.entries[i];
+> > +		perf_output_put(&handle, entry);
+> > +	}
+> > +	perf_event__output_id_sample(event, &handle, &data);
+> > +
+> > +	perf_output_end(&handle);
+> > +
+> > +out:  
+> 
+> Which very much includes here, so your goto jumps into a scope, which is
+> not permitted.
 
-On Mon, Sep 15, 2025 at 03:12:11PM +0200, Thomas Zimmermann wrote:
-> Hi
->=20
-> Am 15.09.25 um 13:27 schrieb Maxime Ripard:
-> > On Tue, Sep 02, 2025 at 03:18:17PM +0200, Thomas Zimmermann wrote:
-> > > Hi
-> > >=20
-> > > Am 02.09.25 um 10:32 schrieb Maxime Ripard:
-> > > > Bridges implement their state using a drm_private_obj and an
-> > > > hand-crafted reset implementation.
-> > > >=20
-> > > > Since drm_private_obj doesn't have a set of reset helper like the o=
-ther
-> > > > states, __drm_atomic_helper_bridge_reset() was initializing both the
-> > > > drm_private_state and the drm_bridge_state structures.
-> > > >=20
-> > > > This initialization however was missing the drm_private_state.obj
-> > > > pointer to the drm_private_obj the state was allocated for, creatin=
-g a
-> > > > NULL pointer dereference when trying to access it.
-> > > >=20
-> > > > Fixes: 751465913f04 ("drm/bridge: Add a drm_bridge_state object")
-> > > > Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> > > > ---
-> > > >    drivers/gpu/drm/drm_atomic_state_helper.c | 8 ++++++++
-> > > >    1 file changed, 8 insertions(+)
-> > > >=20
-> > > > diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gp=
-u/drm/drm_atomic_state_helper.c
-> > > > index 7142e163e618ea0d7d9d828e1bd9ff2a6ec0dfeb..b962c342b16aabf4e3b=
-ea52a914e5deb1c2080ce 100644
-> > > > --- a/drivers/gpu/drm/drm_atomic_state_helper.c
-> > > > +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
-> > > > @@ -707,10 +707,17 @@ void drm_atomic_helper_connector_destroy_stat=
-e(struct drm_connector *connector,
-> > > >    	__drm_atomic_helper_connector_destroy_state(state);
-> > > >    	kfree(state);
-> > > >    }
-> > > >    EXPORT_SYMBOL(drm_atomic_helper_connector_destroy_state);
-> > > > +static void __drm_atomic_helper_private_obj_reset(struct drm_priva=
-te_obj *obj,
-> > > > +						  struct drm_private_state *state)
-> > > > +{
-> > > > +	memset(state, 0, sizeof(*state));
-> > > This argument is guaranteed to be zero'd, I think. No need for a mems=
-et.
-> > >=20
-> > > > +	state->obj =3D obj;
-> > > > +}
-> > > > +
-> > > >    /**
-> > > >     * __drm_atomic_helper_private_obj_duplicate_state - copy atomic=
- private state
-> > > >     * @obj: CRTC object
-> > > >     * @state: new private object state
-> > > >     *
-> > > > @@ -796,10 +803,11 @@ EXPORT_SYMBOL(drm_atomic_helper_bridge_destro=
-y_state);
-> > > >     */
-> > > >    void __drm_atomic_helper_bridge_reset(struct drm_bridge *bridge,
-> > > >    				      struct drm_bridge_state *state)
-> > > >    {
-> > > >    	memset(state, 0, sizeof(*state));
-> > > Another unnecessary memset?
-> > I guess the two can be seen as redundant, but I'd argue the one in
-> > __drm_atomic_helper_private_obj_reset should still be there.
-> >=20
-> > What guarantees that the pointer points to a zero'd structure?
->=20
-> We only call this helper after allocation AFAICT. And the DRM APIs already
-> assume that allocation clears to zero.
+Nice catch.
 
-Really? Do we have that documented anywhere?
+> 
+> GCC can fail to warn on this, but clang will consistently fail to
+> compile this. Surely the robot would've told you by now -- even if
+> you're not using clang yourself.
 
-And even then, there's nothing that requires that helper to be called
-straight-away after allocation.
+Unfortunately it hasn't :-(
 
-More importantly, do we really care about skipping them? Like, all the
-other reset helpers are doing it, it's cheap, safe, why should we remove
-it?
+I need to start building with clang more often.
 
-Maxime
+I even pushed this to a git tree. Not sure why it didn't get flagged.
 
---frbjwb35klyzeh7q
-Content-Type: application/pgp-signature; name="signature.asc"
+-- Steve
 
------BEGIN PGP SIGNATURE-----
-
-iJQEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaNJpVQAKCRAnX84Zoj2+
-duUvAX9Lzm4vCCIENysKhaUyq0wlGHpS5/QdST4wpfzZBpHGXCQaPi93H/c6SXgH
-EWuubC0BdiKzSrYEsYgRODAmMRZT2pNx4kZRxI43Y7LGFk1GEwML7YLFiC/n/0RP
-IqyeNqzk
-=a0IJ
------END PGP SIGNATURE-----
-
---frbjwb35klyzeh7q--
 
