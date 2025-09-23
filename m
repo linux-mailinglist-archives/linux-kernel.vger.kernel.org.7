@@ -1,198 +1,111 @@
-Return-Path: <linux-kernel+bounces-828784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B43B9571D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:33:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4FF0B9572C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7340B2E5733
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:33:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F8547B4727
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666DE320CD6;
-	Tue, 23 Sep 2025 10:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5C132129C;
+	Tue, 23 Sep 2025 10:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="esGpup0m"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GiruQahY"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B83311C06
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3C8311C06;
+	Tue, 23 Sep 2025 10:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758623580; cv=none; b=GIEekbQcrD8nePU5F1bWURnQvA3PFerWY0wa/HVd+O40O9nzO8eLNFoxAsV1cxg+n6QpsDLWcwujHlQh3YGNMZ6ox6dLbrAT4lpwmM8PMJ7xAy/tdV06a4waLc1l7vS3BY42E0mhMEwF3I2ip2tY5lHfdKtSSJ23zZQ6/8TsU3c=
+	t=1758623732; cv=none; b=ZvepdMd5oRL+8qEgwkORq5DKtxzk5QANivL1M4lK89kpz1kmWGi0Gicj2dxOTJ5ujberLAJimjTd1HNd29nsOPAIE+52S7/9C/LIytam0KeWsZfwo07ij4eNQ0pVr5Gj+meQZqu64DEzRp4+K11d2ISBh4XAyZE0zgYWd9gfRWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758623580; c=relaxed/simple;
-	bh=d7sHeCjp21JGXtNyyi43q1YjtCiEiLnBUGKa4jtQ4yg=;
+	s=arc-20240116; t=1758623732; c=relaxed/simple;
+	bh=hKtlasTu+Pec5wqgu2DRT9vPhn9NvoXdM9NSLqk0tQo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q74/vJ5LAiST4XWbK/1eMx5nLCDMjmSgkOMfx4LtMtK0j/4cW9jxDIl388qDX7swFr7aZuhlDbgfod34bp/ZGs7jfuN6U59NF7uGzuVYJoHd57ieLr1BqHK4/SWXRp1R1rN19QOzhWtKBnIOw3kvPyxCcV2NaAYlGPCI+razpgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=esGpup0m; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 1E4E3228;
-	Tue, 23 Sep 2025 12:31:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1758623492;
-	bh=d7sHeCjp21JGXtNyyi43q1YjtCiEiLnBUGKa4jtQ4yg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=esGpup0mP7XsjnW652ziBRpjO4diPl8FsM5hikzaoWlVA9uKnNn2AG7hGGAmT3TcM
-	 6LbEHUx7EjJZAGVUCaoWEXgqyMs8BKGb8nmcirFKiuhchawLU0CCm8cWa1zGSdHP4u
-	 NptGY2/H2JJ4lKJyO3tcccfDrc1Yq2jKpDgna0Rc=
-Date: Tue, 23 Sep 2025 13:32:23 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/29] drm/atomic: Add atomic_state_readout infrastructure
-Message-ID: <20250923103223.GA15509@pendragon.ideasonboard.com>
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <20250902-drm-state-readout-v1-10-14ad5315da3f@kernel.org>
- <03240fae-544f-4753-96c5-a116b4b5a318@suse.de>
- <20250915-active-placid-bustard-6e1faa@penduick>
- <2ry3txigq3jyivtyz7i4c76g74vdgvlozsjkeswxalhu2vs5yx@jqswyjle632h>
- <20250923-debonair-earwig-of-abracadabra-940fa8@penduick>
- <osdt4teotc6qvja734dyo7be35nzy5lo4sw4dcniaqicqb3o5l@gabq5adeliha>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NPH6nTT+pzZo0+OTcR7nChA7R9FYZswvPDjZAG95u/UeudqOPUaKY96GGqXEWyA63rqcV6/XCAcXjasjnAC/KZXGuyz42RwuEsSLajULNz7StfRIsDUZJMKNTyCi6B/+8NRfO4F7QKcAwEln9jJneOZjKRVbTs4NT0perVIiylQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GiruQahY; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=HeOaKU5tHoybl2dUWsCR+5uXOJ8iXvJSyqpY+fXWH9o=; b=GiruQahYGe5n0qAWVrv5G/PHXV
+	oMytBez4tXFDX/hbgIAdHDQF0Yv2cnfR+c1oh+tkJUS9UvkEoZ7jUWh9YkCxxC7mjO8SW7UOJ8XFp
+	ABt+zg5LVBVp1BWxPCbiHbHeoi666finX1ni1OGllOPdT7R5VnVyZae1cI6eaIxGpULHHnOyOE1Kd
+	WKKJSUnwkpqAzYaVQeVJOcF4FGhB98S1y0Y3G4vngVfEos50gojgUxqy/PqrvGhViVh4dsztRD7B0
+	XZSrU9dwVmaNlQl6+NE+s84F1qAqfiRRjUT0Q5RoODcERdPYwEP3wZEZIY6UCwIiKq2SsH+fMTvlU
+	n2FXfMpw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v10Mf-00000008UgM-44wN;
+	Tue, 23 Sep 2025 10:35:18 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0150B30049C; Tue, 23 Sep 2025 12:35:16 +0200 (CEST)
+Date: Tue, 23 Sep 2025 12:35:16 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, x86@kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: Re: [RESEND][PATCH v15 2/4] perf: Support deferred user
+ callchainshttps://lore.kernel.org/linux-trace-kernel/20250827193644.527334838@kernel.org/
+Message-ID: <20250923103516.GE3419281@noisy.programming.kicks-ass.net>
+References: <20250908171412.268168931@kernel.org>
+ <20250908171524.605637238@kernel.org>
+ <20250923091935.GA3419281@noisy.programming.kicks-ass.net>
+ <20250923053515.25a1713e@batman.local.home>
+ <20250923093821.GB3419281@noisy.programming.kicks-ass.net>
+ <20250923062848.0bc4ff2b@batman.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <osdt4teotc6qvja734dyo7be35nzy5lo4sw4dcniaqicqb3o5l@gabq5adeliha>
+In-Reply-To: <20250923062848.0bc4ff2b@batman.local.home>
 
-On Tue, Sep 23, 2025 at 01:28:57PM +0300, Dmitry Baryshkov wrote:
-> On Tue, Sep 23, 2025 at 11:38:17AM +0200, Maxime Ripard wrote:
-> > On Mon, Sep 15, 2025 at 09:38:44PM +0300, Dmitry Baryshkov wrote:
-> > > On Mon, Sep 15, 2025 at 10:42:22AM +0200, Maxime Ripard wrote:
-> > > > On Tue, Sep 02, 2025 at 03:44:54PM +0200, Thomas Zimmermann wrote:
-> > > > > > +/**
-> > > > > > + * drm_atomic_build_readout_state - Creates an initial state from the hardware
-> > > > > > + * @dev: DRM device to build the state for
-> > > > > > + *
-> > > > > > + * This function allocates a &struct drm_atomic_state, calls the
-> > > > > > + * atomic_readout_state callbacks, and fills the global state old states
-> > > > > > + * by what the callbacks returned.
-> > > > > > + *
-> > > > > > + * Returns:
-> > > > > > + *
-> > > > > > + * A partially initialized &struct drm_atomic_state on success, an error
-> > > > > > + * pointer otherwise.
-> > > > > > + */
-> > > > > > +static struct drm_atomic_state *
-> > > > > > +drm_atomic_build_readout_state(struct drm_device *dev)
-> > > > > > +{
-> > > > > > +	struct drm_connector_list_iter conn_iter;
-> > > > > > +	struct drm_atomic_state *state;
-> > > > > > +	struct drm_mode_config *config =
-> > > > > > +		&dev->mode_config;
-> > > > > > +	struct drm_connector *connector;
-> > > > > > +	struct drm_printer p =
-> > > > > > +		drm_info_printer(dev->dev);
-> > > > > > +	struct drm_encoder *encoder;
-> > > > > > +	struct drm_plane *plane;
-> > > > > > +	struct drm_crtc *crtc;
-> > > > > > +	int ret;
-> > > > > > +
-> > > > > > +	drm_dbg_kms(dev, "Starting to build atomic state from hardware state.\n");
-> > > > > > +
-> > > > > > +	state = drm_atomic_state_alloc(dev);
-> > > > > > +	if (WARN_ON(!state))
-> > > > > > +		return ERR_PTR(-ENOMEM);
-> > > > > > +
-> > > > > > +	state->connectors = kcalloc(config->num_connector, sizeof(*state->connectors), GFP_KERNEL);
-> > > > > > +	if (WARN_ON(!state->connectors)) {
-> > > > > > +		ret = -ENOMEM;
-> > > > > > +		goto err_state_put;
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	state->private_objs = kcalloc(count_private_obj(dev), sizeof(*state->private_objs), GFP_KERNEL);
-> > > > > > +	if (WARN_ON(!state->private_objs)) {
-> > > > > > +		ret = -ENOMEM;
-> > > > > > +		goto err_state_put;
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	drm_for_each_crtc(crtc, dev) {
-> > > > > > +		const struct drm_crtc_funcs *crtc_funcs =
-> > > > > > +			crtc->funcs;
-> > > > > > +		struct drm_crtc_state *crtc_state;
-> > > > > > +
-> > > > > > +		drm_dbg_kms(dev, "Initializing CRTC %s state.\n", crtc->name);
-> > > > > > +
-> > > > > > +		if (crtc_funcs->atomic_readout_state) {
-> > > > > > +			crtc_state = crtc_funcs->atomic_readout_state(crtc);
-> > > > > > +		} else if (crtc_funcs->reset) {
-> > > > > > +			crtc_funcs->reset(crtc);
-> > > > > > +
-> > > > > > +			/*
-> > > > > > +			 * We don't want to set crtc->state field yet. Let's save and clear it up.
-> > > > > > +			 */
-> > > > > > +			crtc_state = crtc->state;
-> > > > > > +			crtc->state = NULL;
-> > > > > 
-> > > > > Chancing the crtc->state pointer behind the back of the reset callback seems
-> > > > > fragile. We never how if some other piece of the driver refers to it
-> > > > > (although illegally).
-> > > > 
-> > > > I agree that it's clunky. I'm not sure who would use it at this point
-> > > > though: we're in the middle of the drm_mode_config_reset(), so the
-> > > > drivers' involvement is pretty minimal.
-> > > > 
-> > > > I did wonder if changing reset to return the object instead of setting
-> > > > $OBJECT->state would be a better interface?
-> > > > 
-> > > > > For now, wouldn't it be better to require a read-out helper for all elements
-> > > > > of the driver's mode-setting pipeline?  The trivial implementation would
-> > > > > copy the existing reset function and keep crtc->state to NULL.
-> > > > 
-> > > > I also considered that, but I'm not sure we can expect bridges to have
-> > > > readout hooks filled for every configuration in the wild.
-> > > > 
-> > > > But maybe we can look during drm_mode_config_reset() at whether all the
-> > > > objects have their hook filled, and if not fall back on reset for
-> > > > everything.
-> > > > 
-> > > > It would make the implementation easier, but missing bridges
-> > > > implementations would trigger a mode change when it might actually work
-> > > > just fine since bridge state is pretty minimal.
-> > > 
-> > > DP bridge drivers have a pretty big state (DPCD and all the features).
-> > 
-> > I meant drm_bridge_state. Subclasses would have their own implementation
-> > anyway.
-> > 
-> > > Other bridge drivers randomly leak state to the non-state structs.
-> > 
-> > I'm not sure what you mean by that though. Can you expand?
+On Tue, Sep 23, 2025 at 06:28:48AM -0400, Steven Rostedt wrote:
+> On Tue, 23 Sep 2025 11:38:21 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> I think I've seen bridge drivers which stored subclassed drm_bridge
-> instead of drm_bridge_state or stored the data in the long-living data
-> structures. YEs, that's a bug, which should be fixed on its own.
+> > On Tue, Sep 23, 2025 at 05:35:15AM -0400, Steven Rostedt wrote:
+> > 
+> > > I even pushed this to a git tree. Not sure why it didn't get flagged.  
+> > 
+> > I've been looking at this... how do I enable CONFIG_UWIND_USER ?
+> 
+> Hmm, maybe that's why it wasn't flagged.
+> 
+> > 
+> > I suspect the problem is that its impossible to actually compile/use
+> > this code.
+> 
+> It needs an arch to enable it. Here's the x86 patches that I was hoping
+> would get in too:
+> 
+>   https://lore.kernel.org/linux-trace-kernel/20250827193644.527334838@kernel.org/
 
-There's one exception to the "all state in state structure" rules if I
-understand things correctly (and I'm mentioning it here partly to be
-corrected if my understanding is wrong). Active state data that needs to
-be accessed from a non-sleepable context need to be copied to the
-device-specific structure when the state is applied, as we can't take
-the mutex protecting state access there. I'd expect that to be uncommon
-for bridges.
-
--- 
-Regards,
-
-Laurent Pinchart
+Hmm, let me go find that.
 
