@@ -1,136 +1,143 @@
-Return-Path: <linux-kernel+bounces-828662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D966B95209
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:05:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07871B9520C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:06:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B849190190C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:05:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14DBE18A518B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A30320391;
-	Tue, 23 Sep 2025 09:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6243831E89D;
+	Tue, 23 Sep 2025 09:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NhHdJAC5"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LHs9JRoe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A073101B4;
-	Tue, 23 Sep 2025 09:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A3226560A
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758618312; cv=none; b=VUbXM0k+DToK0IR/xybzgrsS70rRwSMeCz3hjB3aCJYkGCOJ0a8x1Zdk6VymgKEIPx2oh7tOCD5uHACR4/2VNTOHWuVMTmU8S7LJxdEHJtDAWd6H9PLdFBclqdrPTiRg/FVofT4zdRCxSg2bbq8tEnuiiNtHK32JmAZrfB3W6nw=
+	t=1758618362; cv=none; b=lEBlMHR7YiFrpKVvDQLxKGUU89Q5j7NBAp4TNTU3P1NEJbZWVC4RK3Yfx/Zy8MAGIGocw0qCt3eQX1XhhCgvVM3yk+r/kkISx/ArOn21UwnR2QRN0YBTwb6L1ETa0lQH3saNcLyCS10aSwtTuFEcfmhBEokQSZ/6ShGNe6VtuDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758618312; c=relaxed/simple;
-	bh=Hfg0snLcgfFu5drLfEucVNQPyA7ydLPTcft7R/VdprU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gFjywXgbMX6AL7iSYNHg5nKMMYOEeh1yaNy9cDnaqj5zXlgrZC4/OoKhTyYADaEfz79omIO1bIUlnmJPq8x3PPRjDi1QcTyT7zapb0p11jc31L1Zaruk78ZcY5oOoINgZ9qTUjFOpa6bRMFwPAMuydl/mq86s4aBD2lxoHtsiew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NhHdJAC5; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 63868C0078E;
-	Tue, 23 Sep 2025 09:04:50 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6829760690;
-	Tue, 23 Sep 2025 09:05:07 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 03226102F191C;
-	Tue, 23 Sep 2025 11:04:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758618306; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=QZg1/K8eQxDZg+ZHRMpx/uJpEdtJih4Wqz5DwLkTAs4=;
-	b=NhHdJAC5RIm/LtUIxmzXVoIFWuHVZ0tCPbKn0pTjLUJe6pbxoDHnFssRCVVJazDIyoeslC
-	9lJRS98MgiaLeEunfg/4U0rnpt8ZpQdifGbVj+RvPGY0g+dJPllOevjlony+90kaQyBDM8
-	BeAlnh+2Xwqz8l72iUmqF54fXOJq6/erK8tCqnowJE8Pix7ciruZWqDOhDhbcPYZ61rvWR
-	mCPCmPTd+RQ9oyYTx7r+ckw1nXbGChoo4phJ5TqYCP9IzJ+zE3usD6l0oUWB13JrxhtFGw
-	D74d7zj4fQOxVrtJhgxJSATe+vf2hPaOSyTvPNbVULi8fgTtvj3fo2Z74BMumg==
-Date: Tue, 23 Sep 2025 11:04:51 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko
- <jiri@resnulli.us>, Simon Horman <horms@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>,
- kernel@pengutronix.de, Dent Project <dentproject@linuxfoundation.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, linux-doc@vger.kernel.org, Kyle Swenson
- <kyle.swenson@est.tech>, Luka Perkov <luka.perkov@sartura.hr>, Robert Marko
- <robert.marko@sartura.hr>, Sridhar Rao <srao@linuxfoundation.org>
-Subject: Re: [PATCH net-next v3 0/5] net: pse-pd: pd692x0: Add permanent
- configuration management support
-Message-ID: <20250923110451.6d402a79@kmaincent-XPS-13-7390>
-In-Reply-To: <20250922110220.4909e58b@kernel.org>
-References: <20250915-feature_poe_permanent_conf-v3-0-78871151088b@bootlin.com>
-	<20250916165440.3d4e498a@kernel.org>
-	<20250917114655.6ed579eb@kmaincent-XPS-13-7390>
-	<20250917141912.314ea89b@kernel.org>
-	<20250922182002.6948586f@kmaincent-XPS-13-7390>
-	<20250922110220.4909e58b@kernel.org>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758618362; c=relaxed/simple;
+	bh=kT8s6gwf+wXNuvXsB0EF8P6HrX6Z/rG6zIPdauh44tA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WRvgilxL5B9m3y1r5rZx4M1vfSFVYTbKO0kCbIk9JqF4G3ktZ2zXZYDFPAtq4tDWHmwCD2cvzUdHBYq69CFU69TwhYBZs73r3KEXri8htwEVchl1tZ5hlovVs+UYxv8amZlULX8k/OtLER2b3lTnQDhhA4dlLmaocxg+D3bgUT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LHs9JRoe; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758618359;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XSxea5WDZPWuPXjp4CBCf/5w+mxqGo42GVbb5YJof8E=;
+	b=LHs9JRoexExsTK+0+NyPlxAJK1NvzmrdBgsgM/Zj60X7EvJhNj61tHu1UoYv5NEOkjuqLI
+	M2SjQ3DF3SAGwkCyF6wdTElzzCppyprp28MD3AUB6P0BMvd4w6b7C2FfUf4fQ/ZHsIoM3z
+	716pBQcFaZIw/VwSRr39uvphbp6APhc=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-252-_GOzLQJ3MriZnBBsk0ejjA-1; Tue,
+ 23 Sep 2025 05:05:55 -0400
+X-MC-Unique: _GOzLQJ3MriZnBBsk0ejjA-1
+X-Mimecast-MFC-AGG-ID: _GOzLQJ3MriZnBBsk0ejjA_1758618353
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EBB4519560BB;
+	Tue, 23 Sep 2025 09:05:52 +0000 (UTC)
+Received: from pasta.fast.eng.rdu2.dc.redhat.com (unknown [10.45.224.17])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3BE571800451;
+	Tue, 23 Sep 2025 09:05:50 +0000 (UTC)
+From: Andreas Gruenbacher <agruenba@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andreas Gruenbacher <agruenba@redhat.com>,
+	gfs2@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] gfs2 changes for 6.18
+Date: Tue, 23 Sep 2025 11:05:42 +0200
+Message-ID: <20250923090549.31521-1-agruenba@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Mon, 22 Sep 2025 11:02:20 -0700
-Jakub Kicinski <kuba@kernel.org> wrote:
+Dear Linus,
 
-> On Mon, 22 Sep 2025 18:20:02 +0200 Kory Maincent wrote:
->  [...] =20
-> > >=20
-> > > Right, subjectively I focused on the last sentence of Oleksij's reply.
-> > > I vote we leave it out for now.   =20
-> >=20
-> > I would like to restart the discussion as I have one more argument besi=
-des
-> > the boot time optimization coming from Luka Perkov in CC.
-> >=20
-> > According to him, not having this feature supported also brings an issue
-> > across reboot:
-> > "When a network switch reboots, any devices receiving Power over
-> > Ethernet (PoE) from that switch will lose power unless the PoE
-> > configuration is persisted across the reboot cycle. This creates a
-> > significant operational impact: WiFi access points and other
-> > PoE-powered devices will experience an unplanned hard power loss,
-> > forcing them offline without any opportunity for graceful shutdown.
-> >=20
-> > The critical issue is not the impact on the switch itself, but rather
-> > the cascading effect on all dependent infrastructure. Without
-> > kernel-level persistence of PoE settings, a simple switch reboot
-> > (whether for maintenance, updates, or recovery) forces all connected
-> > PoE devices into an abrupt power cycle. This results in extended
-> > downtime as these devices must complete their full boot sequence once
-> > power is restored, rather than remaining operational throughout the
-> > switch's reboot process." =20
->=20
-> Any sort of hot reset that maintains the pre-existing configuration=20
-> and doesn't issue resets is orthogonal to storing the configuration
-> into the flash.
+please consider pulling the following gfs2 changes for 6.18.
 
-Indeed if the switch reboot and the PSE lose its power supply, the devices =
-will
-in any cases face a power loss. While if the PSE does not lose its power the
-configuration won't be reset whether there is a permanent configuration or
-not. We just need to detect during the boot if the port matrix has already
-been flashed to not reconfigure all the ports. =20
-This argument is indeed not relevant.
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-Luka any other arguments in favor of permanent configuration support?
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gfs2-for-6.18
+
+for you to fetch changes up to 28c4d9bc0708956c1a736a9e49fee71b65deee81:
+
+  gfs2: Fix unlikely race in gdlm_put_lock (2025-09-12 12:03:01 +0200)
+
+----------------------------------------------------------------
+gfs2 changes
+
+- Partially revert "gfs2: do_xmote fixes" to ignore dlm_lock() errors
+  during withdraw; passing on those errors doesn't help.
+
+- Change the LM_FLAG_TRY and LM_FLAG_TRY_1CB logic in add_to_queue() to
+  check if the holder would actually block.
+
+- Move some more dlm specific code from glock.c to lock_dlm.c.
+
+- Remove the unused dlm alternate locking mode code.
+
+- Add proper locking to make sure that dlm lockspaces are never used
+  after being released.
+
+- Various other cleanups.
+
+----------------------------------------------------------------
+Andreas Gruenbacher (19):
+      gfs2: Remove unused GIF_FREE_VFS_INODE flag
+      gfs2: Remove unused sd_withdraw_wait field
+      gfs2: do_xmote cleanup
+      gfs2: Simplify refcounting in do_xmote
+      gfs2: Partially revert "gfs2: do_xmote fixes"
+      gfs2: Turn gfs2_withdraw into a void function
+      gfs2: Sanitize gfs2_meta_check, gfs2_metatype_check, gfs2_io_error
+      gfs2: Do not use atomic operations unnecessarily
+      gfs2: Further sanitize lock_dlm.c
+      gfs2: Remove DLM_LKF_ALTCW / DLM_LKF_ALTPR code
+      gfs2: Fix LM_FLAG_TRY* logic in add_to_queue
+      gfs2: Remove duplicate check in do_xmote
+      gfs2: Fix GLF_INVALIDATE_IN_PROGRESS flag clearing in do_xmote
+      gfs2: Get rid of GLF_INVALIDATE_IN_PROGRESS
+      gfs2: Simplify do_promote
+      gfs2: run_queue cleanup
+      gfs2: Minor run_queue fixes
+      gfs2: Add proper lockspace locking
+      gfs2: Fix unlikely race in gdlm_put_lock
+
+Colin Ian King (1):
+      gfs2: Remove space before newline
+
+ fs/gfs2/file.c       |  23 ++++---
+ fs/gfs2/glock.c      | 185 +++++++++++++++++++++++----------------------------
+ fs/gfs2/glock.h      |   4 ++
+ fs/gfs2/incore.h     |   5 +-
+ fs/gfs2/lock_dlm.c   | 100 +++++++++++++++++-----------
+ fs/gfs2/trace_gfs2.h |   1 -
+ fs/gfs2/util.c       |  38 ++++-------
+ fs/gfs2/util.h       |  36 +++++-----
+ 8 files changed, 199 insertions(+), 193 deletions(-)
+
 
