@@ -1,114 +1,175 @@
-Return-Path: <linux-kernel+bounces-829263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9797BB96A3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:46:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AAB1B96A7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4843A18A132A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:47:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC2C319C524F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65146266B66;
-	Tue, 23 Sep 2025 15:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsReMA/L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36F674040;
-	Tue, 23 Sep 2025 15:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583CC266580;
+	Tue, 23 Sep 2025 15:47:54 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F01A23815C;
+	Tue, 23 Sep 2025 15:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758642398; cv=none; b=G6gVRMhBihoZWgsJZ+Cf/S1EaHAL7s2umKe1gVQ0235cbwR5SrbvgkX25+37nW6DN5LjBYAnYbV2oB3unyc6HFbPprABmx9U28dSU7MaQwsIQq2iTduRMUzjWCud+WsSlLa56UP4lU6wqyXjl6caLUD7aoApismvyr9kXMY9Y3E=
+	t=1758642473; cv=none; b=A0H6eBLxJB6Eca+K5GgcNl4AyXMEllGp5VFQUHcyeHObItW20jjNnaFvZtR3MTOYjWDb5GB0BQS5hHSP1iwVrV/bfgQ4b5WnyDOoEOYw4Qxq0nM+SqzQ7mj3jdOCKE+6CzXXVNim4LQhwulIOJXJMshTeuhi8fdJMPFEn5Fjk4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758642398; c=relaxed/simple;
-	bh=rU/534+tAdpfK6fK/XepGxCqIklAAHyfOm0LbCWIfzs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=q0Bhl/a0Hg5spUBq7iMCCl4ZD8MDNYylPvIO1yrtFB66TPcTqYk8q6sS1YabYTa29iATZ7PcDPDIWon2aQcIbWtA092c41bJiKknm0E6AJvzMgSzHz4FH63tFuO8nFqdqynchquK4ZrI4uLY1qhH6LVJKLIPbWmbIrpYXI6Yzy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bsReMA/L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7055BC4CEF5;
-	Tue, 23 Sep 2025 15:46:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758642398;
-	bh=rU/534+tAdpfK6fK/XepGxCqIklAAHyfOm0LbCWIfzs=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=bsReMA/LJA7St2AhhGdm48V0/7J4VJ7M6SiGC5b+OEoH8e2ch0WfV7PkAUzVsdzOA
-	 Dy4wws80STalatkRqgdV6wGBPRw/HF1ZscQgAYVZqH7UF6DfwMX+dmGXv+PQZCUf6A
-	 NEyr87j267yz7gomDyDQsuIQttHpevvSPAnCmqNNYbVQWXlWNqUIGNYyMn/oASgnLu
-	 LU0rOOeLwwEzfEJ1dSesr1PNGKYT5EHEuAtklYH66U04llGDwwgWQuMxxDRZ0SR/A4
-	 W/qudvsujsvA4/1cCXZZHOvAGWMiL1nEzNBRe4O4d3FOlyBFegghl0zdu7+zInRy6A
-	 LjgPYlNIL2blw==
+	s=arc-20240116; t=1758642473; c=relaxed/simple;
+	bh=ExbNrBUxZz4jaMeIL7GyUCv6mgFwjLV9B32HM3yyxuA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ctd9JjPiwP/2BB0ejD3XoQIOno9OCrBuG8iyIixSM4/Z6uE6RA+X4qG8pHTu8FxV4w9h/QAFI87o1LT7j5ui+6nrcTt/vQEF4UGrt2G+yquIfXKvWYNJlK4WGrEAJkDJ2NuOCtIgS1Co/PaB/WjLVnipku9m8Cleb52TFTbS9ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: 9/t0SQo+QIqN5T6NqyHqMw==
+X-CSE-MsgGUID: 2CycLQvbQz+ZWDfthuQXRw==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 24 Sep 2025 00:47:44 +0900
+Received: from demon-pc.localdomain (unknown [10.226.93.64])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 981DE40062C5;
+	Wed, 24 Sep 2025 00:47:40 +0900 (JST)
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: 
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Nam Cao <namcao@linutronix.de>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] tty: serial: sh-sci: fix RSCI FIFO overrun handling
+Date: Tue, 23 Sep 2025 18:47:06 +0300
+Message-ID: <20250923154707.1089900-1-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 23 Sep 2025 17:46:33 +0200
-Message-Id: <DD0AP6DE36C8.V0537W5RGUIQ@kernel.org>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH 1/2] rust: usb: add basic USB abstractions
-Cc: "Oliver Neukum" <oneukum@suse.com>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
- Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
- Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-usb@vger.kernel.org>
-References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
- <20250825-b4-usb-v1-1-7aa024de7ae8@collabora.com>
- <DD07LUJXNZN9.3RHH9NJNRFVNN@kernel.org>
- <2025092356-rounding-eligibly-c4b7@gregkh>
- <f5a802a4-ac9b-4b45-8d1c-871e2e06d7ac@suse.com>
- <2025092307-scoop-challenge-4054@gregkh>
- <13ce0ad0-f0d5-4579-9a48-db727baa177f@kernel.org>
- <2025092356-glorious-unbundle-58f6@gregkh>
- <9995561f-7157-489d-b48e-fe6c92e1f408@kernel.org>
- <2025092303-squeeze-reformed-11ee@gregkh>
-In-Reply-To: <2025092303-squeeze-reformed-11ee@gregkh>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue Sep 23, 2025 at 4:49 PM CEST, Greg Kroah-Hartman wrote:
-> On Tue, Sep 23, 2025 at 04:42:11PM +0200, Danilo Krummrich wrote:
->> On 9/23/25 4:37 PM, Greg Kroah-Hartman wrote:
->> > Yes, you are right, it can be gotten that way.  But I can't wait to se=
-e
->> > how you wrap that C macro in rust :)
->>=20
->> We can either create a Rust helper function for it, or just re-implement=
- it; in
->> the end it boils down to just a container_of() on the parent device.
->
-> Yes, and it preserves the "const" of the pointer going into the function
-> call, can we do that in rust as well?
+The receive error handling code is shared between RSCI and all other
+SCIF port types, but the RSCI overrun_reg is specified as a memory
+offset, while for other SCIF types it is an enum value used to index
+into the sci_port_params->regs array, as mentioned above the
+sci_serial_in() function.
 
-Yes, the Rust container_of!() macro should preserve that.
+For RSCI, the overrun_reg is CSR (0x48), causing the sci_getreg() call
+inside the sci_handle_fifo_overrun() function to index outside the
+bounds of the regs array, which currently has a size of 20, as specified
+by SCI_NR_REGS.
 
-But despite that, I think it doesn't matter too much in this specific case.
+Because of this, we end up accessing memory outside of RSCI's
+rsci_port_params structure, which, when interpreted as a plat_sci_reg,
+happens to have a non-zero size, causing the following WARN when
+sci_serial_in() is called, as the accidental size does not match the
+supported register sizes.
 
-Abstractions of C structures are usually contained within the kernel's Opaq=
-ue<T>
-type, which allows for interior mutability.
+The existence of the overrun_reg needs to be checked because
+SCIx_SH3_SCIF_REGTYPE has overrun_reg set to SCLSR, but SCLSR is not
+present in the regs array.
 
-Actual mutability is controlled by the corresponding abstraction around the
-Opaque<T>.
+Avoid calling sci_getreg() for port types which don't use standard
+register handling.
 
-For instance, a struct device representation looks like this:
+Use the ops->read_reg() and ops->write_reg() functions to properly read
+and write registers for RSCI, and change the type of the status variable
+to accommodate the 32-bit CSR register.
 
-	 struct Device<Ctx: DeviceContext =3D Normal>(Opaque<bindings::device>, Ph=
-antomData<Ctx>);
+sci_getreg() and sci_serial_in() are also called with overrun_reg in the
+sci_mpxed_interrupt() interrupt handler, but that code path is not used
+for RSCI, as it does not have a muxed interrupt.
 
-In this case, we never give out a mutable reference to a Device, but rather
-control mutability internally with the help of the device context.
+------------[ cut here ]------------
+Invalid register access
+WARNING: CPU: 0 PID: 0 at drivers/tty/serial/sh-sci.c:522 sci_serial_in+0x38/0xac
+Modules linked in: renesas_usbhs at24 rzt2h_adc industrialio_adc sha256 cfg80211 bluetooth ecdh_generic ecc rfkill fuse drm backlight ipv6
+CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.17.0-rc1+ #30 PREEMPT
+Hardware name: Renesas RZ/T2H EVK Board based on r9a09g077m44 (DT)
+pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : sci_serial_in+0x38/0xac
+lr : sci_serial_in+0x38/0xac
+sp : ffff800080003e80
+x29: ffff800080003e80 x28: ffff800082195b80 x27: 000000000000000d
+x26: ffff8000821956d0 x25: 0000000000000000 x24: ffff800082195b80
+x23: ffff000180e0d800 x22: 0000000000000010 x21: 0000000000000000
+x20: 0000000000000010 x19: ffff000180e72000 x18: 000000000000000a
+x17: ffff8002bcee7000 x16: ffff800080000000 x15: 0720072007200720
+x14: 0720072007200720 x13: 0720072007200720 x12: 0720072007200720
+x11: 0000000000000058 x10: 0000000000000018 x9 : ffff8000821a6a48
+x8 : 0000000000057fa8 x7 : 0000000000000406 x6 : ffff8000821fea48
+x5 : ffff00033ef88408 x4 : ffff8002bcee7000 x3 : ffff800082195b80
+x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff800082195b80
+Call trace:
+ sci_serial_in+0x38/0xac (P)
+ sci_handle_fifo_overrun.isra.0+0x70/0x134
+ sci_er_interrupt+0x50/0x39c
+ __handle_irq_event_percpu+0x48/0x140
+ handle_irq_event+0x44/0xb0
+ handle_fasteoi_irq+0xf4/0x1a0
+ handle_irq_desc+0x34/0x58
+ generic_handle_domain_irq+0x1c/0x28
+ gic_handle_irq+0x4c/0x140
+ call_on_irq_stack+0x30/0x48
+ do_interrupt_handler+0x80/0x84
+ el1_interrupt+0x34/0x68
+ el1h_64_irq_handler+0x18/0x24
+ el1h_64_irq+0x6c/0x70
+ default_idle_call+0x28/0x58 (P)
+ do_idle+0x1f8/0x250
+ cpu_startup_entry+0x34/0x3c
+ rest_init+0xd8/0xe0
+ console_on_rootfs+0x0/0x6c
+ __primary_switched+0x88/0x90
+---[ end trace 0000000000000000 ]---
 
-For instance, if we have a &Device<Core>, we're guranteed that we're called=
- from
-a context where the device_lock() is guaranteed to be held, so we can allow=
- for
-some interior mutability.
+Cc: stable@vger.kernel.org
+Fixes: 0666e3fe95ab ("serial: sh-sci: Add support for RZ/T2H SCI")
+Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+---
+ drivers/tty/serial/sh-sci.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 538b2f991609..62bb62b82cbe 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1014,16 +1014,18 @@ static int sci_handle_fifo_overrun(struct uart_port *port)
+ 	struct sci_port *s = to_sci_port(port);
+ 	const struct plat_sci_reg *reg;
+ 	int copied = 0;
+-	u16 status;
++	u32 status;
+ 
+-	reg = sci_getreg(port, s->params->overrun_reg);
+-	if (!reg->size)
+-		return 0;
++	if (s->type != SCI_PORT_RSCI) {
++		reg = sci_getreg(port, s->params->overrun_reg);
++		if (!reg->size)
++			return 0;
++	}
+ 
+-	status = sci_serial_in(port, s->params->overrun_reg);
++	status = s->ops->read_reg(port, s->params->overrun_reg);
+ 	if (status & s->params->overrun_mask) {
+ 		status &= ~s->params->overrun_mask;
+-		sci_serial_out(port, s->params->overrun_reg, status);
++		s->ops->write_reg(port, s->params->overrun_reg, status);
+ 
+ 		port->icount.overrun++;
+ 
+-- 
+2.51.0
+
 
