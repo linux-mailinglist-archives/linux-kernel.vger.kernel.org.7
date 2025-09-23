@@ -1,181 +1,155 @@
-Return-Path: <linux-kernel+bounces-829417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDE8BB970BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:36:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F09B970C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88FE18A3DCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:36:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CB774A012E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C1127A92F;
-	Tue, 23 Sep 2025 17:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2092820A0;
+	Tue, 23 Sep 2025 17:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cAN4upMG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e4FZmDUr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866741D90C8;
-	Tue, 23 Sep 2025 17:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4760280A20
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758648971; cv=none; b=hY14xVrK/8nHaTq/PExbT0oJdzYKQ5QWZ93bYfBw4IhRAmH8UKNekf6dzXZrMtYsN9z4NrfSfaI5l2gtx6VaCES4vbUX77rwPy0oIz3m+QpBs53mkSc0YYmTB275zWvetKcqUkC5geAcFqihEe17O6QHH6RszSfREXjQZCeXwmI=
+	t=1758648996; cv=none; b=Zsg7GUlNdZp4t1eK5D8zKqWJzAb386lOPtwgnOIpjfdGOqdStYmPEdrWujs4YdKNnx8azm/4CZ3k/V0g7b6ZOnCj69erlAfQq7+egq9WtYWdUBcNGW8Y0dPqmiPnf6UNAqKEgQHlLeLk7W7X6N4rsoqp4v/LP+sxhgVNtQz3x3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758648971; c=relaxed/simple;
-	bh=UO2O51VzC78DSwnhfdoePqLlffRPw7JsQtk2TxHv3IM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G2Y0eslnzedMLp0F7cjljTx31hQb/NnVEaXHHLPVI4hWj5PlZKjXIYaNjVjRfYTaefzCLLKzICRxLKuuut/LiuwRCSpm2z+eH0GlwZeHFwXwgaroXgycrI6fiK1kRlt/9nfbTA+OLQb1l0rL1P2psdNLDfF+RjYvSuGiYgAStD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cAN4upMG; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758648968; x=1790184968;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UO2O51VzC78DSwnhfdoePqLlffRPw7JsQtk2TxHv3IM=;
-  b=cAN4upMGN0mLp4Hxsg5dzxrC+K+q5kOXMymHs/g7OgOFW15OSL+dWG4g
-   SI40OYSib8oJpzjcKiNfrSd1Ppv32+LPVSHhmZe0AkznZmfrKrz5E4MgI
-   Wdyz5lUEuyyRgQvJGs1pUkF3qxLOA1ClJI/Ykqqw2KoFreFZg03rXZlWD
-   VhBx26+LpeTyuZWywIRt3TemniKzXbq7Sz+GbtxQaFOSgNUv32Ena3H2r
-   M2rUSezkF2G9YhRhfxh9g53DlVJ02IfishUT5uMzPEsXidCTYLE0eH633
-   JLX8CcXiiMjoLKqbFn3y4OFajtV5FtoxmCtM9+LdkDY6OLTPUlJ8A2pom
-   Q==;
-X-CSE-ConnectionGUID: QfZfV6NDQEKBgN0xea3LBw==
-X-CSE-MsgGUID: nutybuEuRUOBYdg3ijLUfA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60637900"
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="60637900"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 10:36:07 -0700
-X-CSE-ConnectionGUID: zeCWYP7RRuqxfU0nURwVhg==
-X-CSE-MsgGUID: yvx2pBrOT+K/zO2LlHrCjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="176419047"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 23 Sep 2025 10:36:04 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v16vp-0003Nh-2B;
-	Tue, 23 Sep 2025 17:36:01 +0000
-Date: Wed, 24 Sep 2025 01:35:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sherry Sun <sherry.sun@nxp.com>, gregkh@linuxfoundation.org,
-	jirislaby@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, shenwei.wang@nxp.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH 2/2] tty: serial: imx: Add missing wakeup event reporting
-Message-ID: <202509240146.aj950Liu-lkp@intel.com>
-References: <20250923031613.2448073-3-sherry.sun@nxp.com>
+	s=arc-20240116; t=1758648996; c=relaxed/simple;
+	bh=XHPLJJt/KbJ1D5F44GPRNGElgwDacszgHxKIzWlExhk=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=W/tJ/wFatN9rnu9u1vFss1b1terchkCPoooPG/YekFR9X+Smp2lpf/Y+1vRO7h8y2YakqwSdGRFhyAiNnBbaQFKoppSFlhUCdxIjM2C+WGY3iVNMW+dEWCYU65w+rLJybDWrQs4Vb7S6Fn08bmk5yOxgMP6dl/eudYUQ1Dzsfh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e4FZmDUr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758648993;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wbwQJRq9OtjRzQDsrzY0ULWi7+7TtERNjKCPji+rNuQ=;
+	b=e4FZmDUrBTKtKGUA2oejG0cK6jaQ17EA2H6OKKZ2pFaglEaEYACoOgVXT70OR/UEQ8ii2z
+	EVw6qZjXURcvrmmV3bS9rZ8/Kxn2isX9uvhQUsMvJZkMwYKt+WVXR8/EzKa5q76mNGLdtb
+	wJcckGh/mHIg20WcxD6sV+jevuT1OQk=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-632-FmayRRJ9OYifmP-bLoZ9Zw-1; Tue,
+ 23 Sep 2025 13:36:28 -0400
+X-MC-Unique: FmayRRJ9OYifmP-bLoZ9Zw-1
+X-Mimecast-MFC-AGG-ID: FmayRRJ9OYifmP-bLoZ9Zw_1758648987
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7EFDC1955F56;
+	Tue, 23 Sep 2025 17:36:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.155])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1BD4B1800446;
+	Tue, 23 Sep 2025 17:36:22 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250919203208.GA8350@quark>
+References: <20250919203208.GA8350@quark> <20250919190413.GA2249@quark> <3936580.1758299519@warthog.procyon.org.uk> <3975735.1758311280@warthog.procyon.org.uk>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: dhowells@redhat.com, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+    Ard Biesheuvel <ardb@kernel.org>,
+    Harald Freudenberger <freude@linux.ibm.com>,
+    Holger Dengler <dengler@linux.ibm.com>,
+    Herbert Xu <herbert@gondor.apana.org.au>,
+    Stephan Mueller <smueller@chronox.de>, Simo Sorce <simo@redhat.com>,
+    linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org,
+    keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384, SHA-512, SHAKE128, SHAKE256
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923031613.2448073-3-sherry.sun@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <538562.1758648981.1@warthog.procyon.org.uk>
+Date: Tue, 23 Sep 2025 18:36:21 +0100
+Message-ID: <538563.1758648981@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hi Sherry,
+Eric Biggers <ebiggers@kernel.org> wrote:
 
-kernel test robot noticed the following build errors:
+> > > and that the functions can be called in any context.
+> > 
+> > "Context" as in?
+> 
+> See the "Function context" section of
+> Documentation/doc-guide/kernel-doc.rst
 
-[auto build test ERROR on shawnguo/for-next]
-[also build test ERROR on usb/usb-testing usb/usb-next usb/usb-linus linus/master v6.17-rc7 next-20250922]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Btw, in include/crypto/sha1.h:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sherry-Sun/tty-serial-imx-Only-configure-the-wake-register-when-device-is-set-as-wakeup-source/20250923-111951
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250923031613.2448073-3-sherry.sun%40nxp.com
-patch subject: [PATCH 2/2] tty: serial: imx: Add missing wakeup event reporting
-config: x86_64-buildonly-randconfig-004-20250923 (https://download.01.org/0day-ci/archive/20250924/202509240146.aj950Liu-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250924/202509240146.aj950Liu-lkp@intel.com/reproduce)
+/**
+ * hmac_sha1_update() - Update an HMAC-SHA1 context with message data
+ * @ctx: the HMAC context to update; must have been initialized
+ * @data: the message data
+ * @data_len: the data length in bytes
+ *
+ * This can be called any number of times.
+ *
+ * Context: Any context.
+ */
+static inline void hmac_sha1_update(struct hmac_sha1_ctx *ctx,
+				    const u8 *data, size_t data_len)
+{
+	sha1_update(&ctx->sha_ctx, data, data_len);
+}
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509240146.aj950Liu-lkp@intel.com/
+for example, your specification of "Context: Any context." is probably not
+correct if FPU/Vector registers are used by optimised assembly as part of the
+function.  See:
 
-All errors (new ones prefixed by >>):
+void kernel_fpu_begin_mask(unsigned int kfpu_mask)
+{
+	if (!irqs_disabled())
+		fpregs_lock();
 
->> drivers/tty/serial/imx.c:2742:21: error: call to undeclared function 'irqd_is_wakeup_set'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    2742 |         if (wake_active && irqd_is_wakeup_set(irq_get_irq_data(sport->port.irq)))
-         |                            ^
->> drivers/tty/serial/imx.c:2742:40: error: call to undeclared function 'irq_get_irq_data'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    2742 |         if (wake_active && irqd_is_wakeup_set(irq_get_irq_data(sport->port.irq)))
-         |                                               ^
-   drivers/tty/serial/imx.c:2742:40: note: did you mean 'irq_set_irq_wake'?
-   include/linux/interrupt.h:481:12: note: 'irq_set_irq_wake' declared here
-     481 | extern int irq_set_irq_wake(unsigned int irq, unsigned int on);
-         |            ^
-   2 errors generated.
+	WARN_ON_FPU(!irq_fpu_usable());
 
+	/* Toggle kernel_fpu_allowed to false: */
+	WARN_ON_FPU(!this_cpu_read(kernel_fpu_allowed));
+	this_cpu_write(kernel_fpu_allowed, false);
 
-vim +/irqd_is_wakeup_set +2742 drivers/tty/serial/imx.c
+	if (!(current->flags & (PF_KTHREAD | PF_USER_WORKER)) &&
+	    !test_thread_flag(TIF_NEED_FPU_LOAD)) {
+		set_thread_flag(TIF_NEED_FPU_LOAD);
+		save_fpregs_to_fpstate(x86_task_fpu(current));
+	}
+	__cpu_invalidate_fpregs_state();
 
-  2696	
-  2697	/* called with irq off */
-  2698	static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
-  2699	{
-  2700		struct tty_port *port = &sport->port.state->port;
-  2701		struct tty_struct *tty;
-  2702		struct device *tty_dev;
-  2703		u32 ucr3, usr1;
-  2704		bool may_wake, wake_active;
-  2705	
-  2706		tty = tty_port_tty_get(port);
-  2707		if (tty) {
-  2708			tty_dev = tty->dev;
-  2709			may_wake = tty_dev && device_may_wakeup(tty_dev);
-  2710			tty_kref_put(tty);
-  2711		}
-  2712	
-  2713		/* only configure the wake register when device set as wakeup source */
-  2714		if (!may_wake)
-  2715			return;
-  2716	
-  2717		uart_port_lock_irq(&sport->port);
-  2718	
-  2719		usr1 = imx_uart_readl(sport, USR1);
-  2720		ucr3 = imx_uart_readl(sport, UCR3);
-  2721		if (on) {
-  2722			imx_uart_writel(sport, USR1_AWAKE, USR1);
-  2723			ucr3 |= UCR3_AWAKEN;
-  2724		} else {
-  2725			ucr3 &= ~UCR3_AWAKEN;
-  2726			wake_active = usr1 & USR1_AWAKE;
-  2727		}
-  2728		imx_uart_writel(sport, ucr3, UCR3);
-  2729	
-  2730		if (sport->have_rtscts) {
-  2731			u32 ucr1 = imx_uart_readl(sport, UCR1);
-  2732			if (on) {
-  2733				imx_uart_writel(sport, USR1_RTSD, USR1);
-  2734				ucr1 |= UCR1_RTSDEN;
-  2735			} else {
-  2736				ucr1 &= ~UCR1_RTSDEN;
-  2737				wake_active |= usr1 & USR1_RTSD;
-  2738			}
-  2739			imx_uart_writel(sport, ucr1, UCR1);
-  2740		}
-  2741	
-> 2742		if (wake_active && irqd_is_wakeup_set(irq_get_irq_data(sport->port.irq)))
-  2743			pm_wakeup_event(tty_port_tty_get(port)->dev, 0);
-  2744	
-  2745		uart_port_unlock_irq(&sport->port);
-  2746	}
-  2747	
+	/* Put sane initial values into the control registers. */
+	if (likely(kfpu_mask & KFPU_MXCSR) && boot_cpu_has(X86_FEATURE_XMM))
+		ldmxcsr(MXCSR_DEFAULT);
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	if (unlikely(kfpu_mask & KFPU_387) && boot_cpu_has(X86_FEATURE_FPU))
+		asm volatile ("fninit");
+}
+
+If you try and access the function in IRQ mode, for example, you'll get a
+warning, and if IRQs are not disabled, it will disable BH/preemption.
+
+You also can't use it from inside something else that uses FPU registers.
+
+I suggest something like:
+
+ * Context: Arch-dependent: May use the FPU/Vector unit registers.
+
+David.
+
 
