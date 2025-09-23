@@ -1,231 +1,152 @@
-Return-Path: <linux-kernel+bounces-828112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0DBDB93F8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:11:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71030B93F84
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FF5218A64C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:11:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10DC2189E107
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02856274658;
-	Tue, 23 Sep 2025 02:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F4427381F;
+	Tue, 23 Sep 2025 02:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NhXrKeh4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="I6kXRpPt"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2B82749C1
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3CC86250;
+	Tue, 23 Sep 2025 02:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758593364; cv=none; b=q86SnycsTXQVHbA7RuzC17Eh9sBzE/q+SKEzEk2hhK+68cKHCaSllL3xNXb4MTNt10EgmmRKCVBbLkWswt5BqdxCe9trHoLnqQn+z0r/ftp0wReuQj7e2eQ35kDr2Cbp2W2CNlP7tHmRzADp5RrNefUC1k1OwaJNLK/KR01g648=
+	t=1758593348; cv=none; b=Dyq6tDIaA0Yh+u+l5vErqEzWcCFn54lr97U18w9QB0EcC6M4pX2xPx500gX7QLLJG5++kWcw8MpVanDp3ONYMtPk9dn43I5M7dwOGFLYFxLasAGQNrX2AwuSRpDThPg8eBX3V3kANNUY0TEvJxqcaCc6Cca9PJ6pkp0rJk83IWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758593364; c=relaxed/simple;
-	bh=g7DmpIPs15UHBB9LtMIq6t6tGz0g4/OwnNpVLGfrMDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fuss//xnu8CWG0PKZX+Vvmocx0pFfgCwaoPyGelMW81rdxVV3rpGwDDrzdzbRjWG+esSs3SBlm9FuZ+xHeVMpNBO10KyulQoyn6hS3Pe0YM5TgerUzDobcji2KG7BlEUHDnQOQ+xqSzmo+RQaRJ711TPxeel0g5eAdPr2wpbQxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NhXrKeh4; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758593362; x=1790129362;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=g7DmpIPs15UHBB9LtMIq6t6tGz0g4/OwnNpVLGfrMDs=;
-  b=NhXrKeh4aUOARIuwX/ITNuMbeHKA+DlKZvNtEW6QCusb+ABfe7zC8UWf
-   yQ2wS1uF2h/PMYA1Qewrwga6TlHKSHmrJkmesD+Cz6UAO3pi/A5KA9Ar4
-   CZbWm9v6AUmMk2xcFH+v+4/OS2Sk0IPe0QGWa06JxCEtYXTx2o0UYNx2S
-   hQjI3C7L6BWLQxotC3+80MjIAClLqXQk4DZwYCpFFPdJu6sMXmWrlpKRm
-   fuwWES+BS3iM02ccVkR9UF7gTwjWuRO4qALfou3W2Vx9jEfF6u+IGPmhO
-   gbxdYjRGCJ8Yg2MtJ0FgRKfrFWgIov/TM3yAmsQjHhbvt465FJ+v9t7we
-   w==;
-X-CSE-ConnectionGUID: MUMs3qM3Sm664dw0Zc8mxw==
-X-CSE-MsgGUID: n1i5re9WT8Gt6EIOTIU6Dg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60780559"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="60780559"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 19:09:22 -0700
-X-CSE-ConnectionGUID: sorZ0l60T5WHS+bcQyMbHQ==
-X-CSE-MsgGUID: 2X2TVSbzRm+e8OQWXwzEVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,286,1751266800"; 
-   d="scan'208";a="180632784"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 22 Sep 2025 19:09:19 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v0sSz-0002ef-06;
-	Tue, 23 Sep 2025 02:09:17 +0000
-Date: Tue, 23 Sep 2025 10:08:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chunhai Guo <guochunhai@vivo.com>, xiang@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, chao@kernel.org, zbestahu@gmail.com,
-	jefflexu@linux.alibaba.com, dhavale@google.com,
-	lihongbo22@huawei.com, linux-erofs@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, Chunhai Guo <guochunhai@vivo.com>
-Subject: Re: [PATCH] erofs: add direct I/O support for compressed data
-Message-ID: <202509231206.6HNck2h0-lkp@intel.com>
-References: <20250922124304.489419-1-guochunhai@vivo.com>
+	s=arc-20240116; t=1758593348; c=relaxed/simple;
+	bh=BIN2++nXrrEjpOR/Q8MksHajEschiLhf1eMdcW4DJzM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GAk8uZf/xsnMmnY/TpvFeltoLnojqYjoiSmpFdDnVQI91s9VVlqc4rk/AYfWmpyKSXqBToJAmfzcHLUfiw/x3+2rjSiVILjy2BglPdTIxaeCjts5rNSqJfuDYjmoGboKY+AVJHlU9KYoSFAlhBc/uLh9XHERUafHL9Ky2Zl4X5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=I6kXRpPt; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1758593335; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=onnl5Wp+8XFPJZ+pTEamEMBfmo09oBqvH7nZV0Gp9zo=;
+	b=I6kXRpPt7ZNeeAQesbu/4Zviwwc59CVXOeXZL4pLt0ZAfwU8jtJi5wm6Fp13NnKZiVCyWfItjTBkMieHxkl5np9LJVc1AqrNc3TCZWlZHa87kcgEN241efjd/ua+fITQwyMZ0x1QnhvKrZ0XnnLVvxJcIE0QCexpRc5v1nxImmo=
+Received: from 30.246.179.19(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wocz79X_1758593332 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 23 Sep 2025 10:08:53 +0800
+Message-ID: <12c84bff-6863-4730-b08a-631df904aa12@linux.alibaba.com>
+Date: Tue, 23 Sep 2025 10:08:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922124304.489419-1-guochunhai@vivo.com>
-
-Hi Chunhai,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on xiang-erofs/dev-test]
-[also build test WARNING on xiang-erofs/dev xiang-erofs/fixes linus/master v6.17-rc7 next-20250922]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Chunhai-Guo/erofs-add-direct-I-O-support-for-compressed-data/20250922-204843
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git dev-test
-patch link:    https://lore.kernel.org/r/20250922124304.489419-1-guochunhai%40vivo.com
-patch subject: [PATCH] erofs: add direct I/O support for compressed data
-config: loongarch-randconfig-r072-20250923 (https://download.01.org/0day-ci/archive/20250923/202509231206.6HNck2h0-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project cafc064fc7a96b3979a023ddae1da2b499d6c954)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250923/202509231206.6HNck2h0-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509231206.6HNck2h0-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> fs/erofs/zdata.c:2069:6: warning: variable 'tmp_cnt' set but not used [-Wunused-but-set-variable]
-    2069 |         int tmp_cnt = 0;
-         |             ^
-   1 warning generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 1/3] PCI: trace: Add a generic RAS tracepoint for
+ hotplug event
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: rostedt@goodmis.org, Lukas Wunner <lukas@wunner.de>,
+ linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ helgaas@kernel.org, mattc@purestorage.com, Jonathan.Cameron@huawei.com,
+ bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
+ davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
+ peterz@infradead.org, tianruidong@linux.alibaba.com
+References: <20250920060117.866-1-xueshuai@linux.alibaba.com>
+ <20250920060117.866-2-xueshuai@linux.alibaba.com>
+ <6bab311a-d5ba-133c-fddd-52899959445c@linux.intel.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <6bab311a-d5ba-133c-fddd-52899959445c@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-vim +/tmp_cnt +2069 fs/erofs/zdata.c
 
-  2056	
-  2057	static ssize_t z_erofs_dio_read_iter(struct kiocb *iocb, struct iov_iter *iter)
-  2058	{
-  2059		struct inode *inode = file_inode(iocb->ki_filp);
-  2060		Z_EROFS_DEFINE_FRONTEND(f, inode, iocb->ki_pos);
-  2061		ssize_t err, off0;
-  2062		loff_t offset = iocb->ki_pos;
-  2063		unsigned int i = 0, total_pages, nr_pages = 0;
-  2064		struct folio *head = NULL, *folio;
-  2065		struct dio_erofs dio;
-  2066		struct page **pages;
-  2067		loff_t i_size;
-  2068		struct iov_iter iter_saved = *iter;
-> 2069		int tmp_cnt = 0;
-  2070	
-  2071		if (!iov_iter_count(iter))
-  2072			return 0;
-  2073	
-  2074		i_size = i_size_read(inode);
-  2075		if (offset >= i_size)
-  2076			return 0;
-  2077	
-  2078		memset(&dio, 0, offsetof(struct dio_erofs, pages));
-  2079		atomic_set(&dio.ref, 1);
-  2080		dio.should_dirty = user_backed_iter(iter) && iov_iter_rw(iter) == READ;
-  2081		dio.iocb = iocb;
-  2082		dio.pos = ALIGN(min(iocb->ki_pos + (loff_t)iov_iter_count(iter),
-  2083					i_size), PAGE_SIZE);
-  2084		dio.is_pinned = iov_iter_extract_will_pin(iter);
-  2085		dio.waiter = current;
-  2086		f.dio = &dio;
-  2087		iter_saved = *iter;
-  2088		inode_dio_begin(inode);
-  2089		pages = dio.pages;
-  2090		total_pages = DIV_ROUND_UP(dio.pos - iocb->ki_pos, PAGE_SIZE);
-  2091		for (; total_pages > 0; total_pages -= nr_pages) {
-  2092			err = iov_iter_extract_pages(iter, &pages, LONG_MAX,
-  2093					min(ARRAY_SIZE(dio.pages), total_pages), 0,
-  2094					&off0);
-  2095			if (err <= 0) {
-  2096				err = -EFAULT;
-  2097				goto fail_dio;
-  2098			}
-  2099			DBG_BUGON(off0);
-  2100			iov_iter_revert(iter, err & ~PAGE_MASK);
-  2101			nr_pages = DIV_ROUND_UP(err, PAGE_SIZE);
-  2102			tmp_cnt += nr_pages;
-  2103			for (i = 0; i < nr_pages; i++) {
-  2104				folio = page_folio(pages[i]);
-  2105				if (folio_test_large(folio) ||
-  2106						folio_test_private(folio)) {
-  2107					err = -EFAULT;
-  2108					goto fail_dio;
-  2109				}
-  2110				folio->private = head;
-  2111				head = folio;
-  2112			}
-  2113		}
-  2114	
-  2115		z_erofs_pcluster_readmore(&f, NULL, true);
-  2116		while (head) {
-  2117			folio = head;
-  2118			head = folio_get_private(folio);
-  2119			dio.pos -= folio_size(folio);
-  2120			err = z_erofs_scan_folio(&f, folio, false);
-  2121			if (err && err != -EINTR)
-  2122				erofs_err(inode->i_sb, "readahead error at folio %lu @ nid %llu",
-  2123					  folio->index, EROFS_I(inode)->nid);
-  2124		}
-  2125		z_erofs_pcluster_end(&f);
-  2126	
-  2127		err = z_erofs_runqueue(&f, 0);
-  2128		erofs_put_metabuf(&f.map.buf);
-  2129		erofs_release_pages(&f.pagepool);
-  2130	
-  2131		if (!atomic_dec_and_test(&dio.ref)) {
-  2132			for (;;) {
-  2133				set_current_state(TASK_UNINTERRUPTIBLE);
-  2134				if (!READ_ONCE(dio.waiter))
-  2135					break;
-  2136	
-  2137				blk_io_schedule();
-  2138			}
-  2139			__set_current_state(TASK_RUNNING);
-  2140		}
-  2141	
-  2142		err = err ?: dio.eio;
-  2143		if (likely(!err)) {
-  2144			err = dio.size;
-  2145			if (offset + dio.size > i_size) /* check for short read */
-  2146				err = i_size - offset;
-  2147			iocb->ki_pos += err;
-  2148		}
-  2149		inode_dio_end(inode);
-  2150		return err;
-  2151	
-  2152	fail_dio:
-  2153		if (dio.is_pinned) {
-  2154			while (head) {
-  2155				folio = head;
-  2156				head = folio_get_private(folio);
-  2157				unpin_user_page(folio_page(folio, 0));
-  2158			}
-  2159			for (; i < nr_pages; i++)
-  2160				unpin_user_page(dio.pages[i]);
-  2161		}
-  2162		*iter = iter_saved;
-  2163		return err;
-  2164	}
-  2165	
+在 2025/9/22 21:10, Ilpo Järvinen 写道:
+> On Sat, 20 Sep 2025, Shuai Xue wrote:
+> 
+>> Hotplug events are critical indicators for analyzing hardware health,
+>> and surprise link downs can significantly impact system performance and
+>> reliability.
+>>
+>> Define a new TRACING_SYSTEM named "pci", add a generic RAS tracepoint
+>> for hotplug event to help health checks. Add enum pci_hotplug_event in
+>> include/uapi/linux/pci.h so applications like rasdaemon can register
+>> tracepoint event handlers for it.
+>>
+>> The following output is generated when a device is hotplugged:
+>>
+>> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
+>> $ cat /sys/kernel/debug/tracing/trace_pipe
+>>     irq/51-pciehp-88      [001] .....  1311.177459: pci_hp_event: 0000:00:02.0 slot:10, event:CARD_PRESENT
+>>
+>>     irq/51-pciehp-88      [001] .....  1311.177566: pci_hp_event: 0000:00:02.0 slot:10, event:LINK_UP
+>>
+>> Suggested-by: Lukas Wunner <lukas@wunner.de>
+>> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> Reviewed-by: Lukas Wunner <lukas@wunner.de>
+>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>> ---
+>>   drivers/pci/Makefile              |  2 +
+>>   drivers/pci/hotplug/Makefile      |  3 +-
+>>   drivers/pci/hotplug/pciehp_ctrl.c | 31 ++++++++++++---
+>>   drivers/pci/trace.c               | 11 ++++++
+>>   include/trace/events/pci.h        | 63 +++++++++++++++++++++++++++++++
+>>   include/uapi/linux/pci.h          |  7 ++++
+>>   6 files changed, 110 insertions(+), 7 deletions(-)
+>>   create mode 100644 drivers/pci/trace.c
+>>   create mode 100644 include/trace/events/pci.h
+>>
+>> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
+>> index 67647f1880fb..bf389bc4dd3c 100644
+>> --- a/drivers/pci/Makefile
+>> +++ b/drivers/pci/Makefile
+>> @@ -45,3 +45,5 @@ obj-y				+= controller/
+>>   obj-y				+= switch/
+>>   
+>>   subdir-ccflags-$(CONFIG_PCI_DEBUG) := -DDEBUG
+>> +
+>> +CFLAGS_trace.o := -I$(src)
+>> diff --git a/drivers/pci/hotplug/Makefile b/drivers/pci/hotplug/Makefile
+>> index 40aaf31fe338..d41f7050b072 100644
+>> --- a/drivers/pci/hotplug/Makefile
+>> +++ b/drivers/pci/hotplug/Makefile
+>> @@ -65,7 +65,8 @@ rpadlpar_io-objs	:=	rpadlpar_core.o \
+>>   pciehp-objs		:=	pciehp_core.o	\
+>>   				pciehp_ctrl.o	\
+>>   				pciehp_pci.o	\
+>> -				pciehp_hpc.o
+>> +				pciehp_hpc.o	\
+>> +				../trace.o
+> 
+> To make it useful for any PCI tracing, not juse hotplug, this object file
+> should be added in drivers/pci/Makefile, not here.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Make sence. How about adding to the main CONFIG_PCI object:
+
+diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
+index bf389bc4dd3c..d7f83d06351d 100644
+--- a/drivers/pci/Makefile
++++ b/drivers/pci/Makefile
+@@ -5,7 +5,7 @@
+  obj-$(CONFIG_PCI)              += access.o bus.o probe.o host-bridge.o \
+                                    remove.o pci.o pci-driver.o search.o \
+                                    rom.o setup-res.o irq.o vpd.o \
+-                                  setup-bus.o vc.o mmap.o devres.o
++                                  setup-bus.o vc.o mmap.o devres.o trace.o
+
+  obj-$(CONFIG_PCI)              += msi/
+  obj-$(CONFIG_PCI)              += pcie/
+
+Thanks.
+
+Best Regards,
+Shuai
 
