@@ -1,134 +1,520 @@
-Return-Path: <linux-kernel+bounces-829273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6BB6B96AAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:53:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD54B96AB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E37E119C5070
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:53:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9360D2E20DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDBB264A92;
-	Tue, 23 Sep 2025 15:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABF226A1CC;
+	Tue, 23 Sep 2025 15:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="QhCEAk9A"
-Received: from mail-il1-f226.google.com (mail-il1-f226.google.com [209.85.166.226])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OJJcSOU9"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BD02641D8
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BACF9C1
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758642779; cv=none; b=FybF6mgA1l3HDGKAOKmPQtR3Sl/t0/AnGFu0qjhuPQRsKl/nORuTD/th+izNqkRohv7fMVWGVYr3RTomZvlcxuBCAV6diKYQ6PqGl/Uch+02aHe4LmpQ3iWaoozH8npZfq2AFivmdbwyY4UcW4unIKTI9TG2eTJUP54se3n96Xk=
+	t=1758642787; cv=none; b=M8Uo84OmtEnhJ5VzJihAETsMkUt6sNgV6Qd8DO1FgT6S0sJpiuWyVtCLB119Moa9QzyB6jlITfCzPb8Cb7A1rwR+HrtwTpRTGxQvYm82lmTWhyegv5GopRUDX1DbhuPVstPJbWiFdxtBsvtidh5Oi2csqkbeJNPCQBWIS4rfFbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758642779; c=relaxed/simple;
-	bh=uAKJ5YIXpok4J2HO9I+jHEc/uFeWy79q0BkxKhz4i14=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nsObY0/efFa0m/ej0qAAmKHtt6m1IVkc84Lm87i+jdntnOovEUuqeonclni1u0pMQH77gY1wI1/RLYrn64Md6t2joYVWpSAzD9DpKgp0lDqEvR2HHlqhqdHml3MP8tjfO72JGD7WZXn1US+EZnIp8r2AIr2wkURmmPh5u3ehJYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=QhCEAk9A; arc=none smtp.client-ip=209.85.166.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-il1-f226.google.com with SMTP id e9e14a558f8ab-425775d02f4so1905915ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:52:55 -0700 (PDT)
+	s=arc-20240116; t=1758642787; c=relaxed/simple;
+	bh=z+uFfbT2+V0VN1QUBUBVU7Yf0yCZy6rUsLod9G1TZRo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=oSV+X75IW7axGA88jpSblwCzavZ7yeZ7RH6801OEib6d8fkkxOxFqy2/OfyZfadmNa3RaCPuexCfZEFPOkNgk0f9682G2bFidEp74p1SbZZF39uv+stjJd2XhfYdmMmH973lR3gFawpPr0QiCKZQ2UwP28X0vj38cwu2nfqL85Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OJJcSOU9; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2699ed6d473so239585ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:53:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1758642775; x=1759247575; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hr2andr6If2MhR9CesjDbJLb+O0VNW92c+JnTqVvT0g=;
-        b=QhCEAk9Agc5GwnTTK1rpkLqjWDIke11C7rceIsE6V+n1ef2yO1zXPU/zmGa8bddV/t
-         gK/N7JI8GFR0YMLGPmfg/HKv3wpkmMe7SviOBXYtK0YN7tkrGor04UNFtEXEEvDXRP0e
-         2VP5CXfVaLayK19pJ2fhqEm/MyuESRMaqLsZfXSIj/AgykSq3pNjVUmIokJB1BeucJ3w
-         vvLEsJYXWHOgnDT2kNMAmoNOjOby+86RCPOBSfxhVNAgjS6KO/2f33DXPnP+5VjAhiSJ
-         lmFWEg8XIk6nwRGuE4lUpGTeMfYtV4/sXkAm92S2glGVzojoXWmPmfaqgTI2g9ngvrhZ
-         Ez+A==
+        d=google.com; s=20230601; t=1758642785; x=1759247585; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s2P4DLa291UN5dMIrJwLdZEHxEo+piJsQetYJAPBjZk=;
+        b=OJJcSOU98RU4rsrPHI3eyZgynatz+5P6KZ8ax1EVUp5/iSCyyf5X/eci9Vl2YObDhp
+         27Z1IqJkUxRs2vuNsD+QXazaMot7qlk9IJntc8lLsRpqflequS7yvJYEe/d9sJyYEEmq
+         In5v13gaBf7xP9u57stnAsFwV6J0gsLCqSY0EbeZFFvhOiRnAWtr0lQL+xIDjM9UliFs
+         S2u5JmS5Sz1/HcA8b76tRu454ZsR87mwhdEaK7QjbV0DE1HknRrXmSkNcgZYxtqQkyZf
+         eb4ku7UIQmB18YxneGxnjogX/Gj6D19rwVVpzwIwCvLWR7lcPogh0fgG/okabS50Y88Z
+         wPLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758642775; x=1759247575;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hr2andr6If2MhR9CesjDbJLb+O0VNW92c+JnTqVvT0g=;
-        b=mcxPSw/Z0V3Ktg3jS0TmtyZVNUwKofdF8yoyLpPDFz7KG/ECk53p5k5ZWAHzonAC4h
-         scyvT0pxa42aapYGKpkotRPKfm7oMRlAFCVvaDLhrceTg6m2Li0BUwrXLh2Ad2FAr6ex
-         KFF/hqrDieADtkhKlbADjQZ9IVAK/a7kwN0E5ZNIuBXmXjjVaHvQCWIKZRjcgBjOL4dg
-         C2jggHSxswVErTm/keLZawCcwIALiQjWH235w6TSPb2BF3bROvrvLLDAFCjDG0VaZzxj
-         mQDkdpSWaP01yUrDvNKdkxGcOAx90RgwwRUp+z5Tx4CJV/6futRoo16DaypYZex0yEF7
-         /qTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbxeHdMiTmnOMCpZj3evVHSIRMUsNHAIHZ7uRmaawXT2x3c3O0NVyZnWDyr4WlmH+jL6uqgQi4E3T1RH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXLfR+woXA/SkcrlhW1wpNnQzMKLkc0xCWUYKIY1TOwameEbA2
-	l8LFq1Sv/oQRFk/frt9VBAP8eqqOIDYEewYAkU1ZgE4Nwz8QpsHKHunqd6KOr0TF6Rv72szl1Nk
-	eSDAuSgmchuffC3p5ERgxl9knHY2DX/wZDRD2
-X-Gm-Gg: ASbGncsQup31p5Ozk2JvM9z42dIYdEsygDFyYgdE8y1w/K2n5MUwFuG5qFJvXqGOaQI
-	B6bB3fto/Ie53xVymXImQiKJS2GBFB8rpgOs71Yg+yObu4iniPXB6l6J2LaNWtKb9rWdXBjGmym
-	m7Wmt7ciXBfPJgRh22MEpOSaeGcsnJ72twQ3VvSx0QKUI5hKP1ym2FZlQVKcCgHO12JF2CGvW0F
-	MTQUQ+xyTDU5MLbRXV7QbI1bivIy1FifRUR5DqRuW2dOSaDv3lw0fEhs6Xvzzr7Yd/dwAMKm/TY
-	OAp2V/BwOvD3vebQbJ2JtpPrcGd4qZEAjiEG9azAFRnu1p7NjbE5xUHaOM9XwGMRdA7rmJLp
-X-Google-Smtp-Source: AGHT+IEWTzAV4+l++tX2sIXCcXNEeWjLQ9JCB3xpPjwbjd5Z+dIR2mwEOpQQxTO5cYBdtzV5UuM+Ty87VSEF
-X-Received: by 2002:a05:6e02:12ef:b0:405:face:641b with SMTP id e9e14a558f8ab-42581eb0769mr19692455ab.6.1758642774589;
-        Tue, 23 Sep 2025 08:52:54 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-4244a369a9dsm10025335ab.8.2025.09.23.08.52.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 08:52:54 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 3B9A53401CC;
-	Tue, 23 Sep 2025 09:52:54 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 36094E41BAF; Tue, 23 Sep 2025 09:52:54 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ublk: remove redundant zone op check in ublk_setup_iod()
-Date: Tue, 23 Sep 2025 09:52:48 -0600
-Message-ID: <20250923155249.2891305-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1758642785; x=1759247585;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s2P4DLa291UN5dMIrJwLdZEHxEo+piJsQetYJAPBjZk=;
+        b=YJWjH8X7Czo0DV5zcE/GFIa8X0Pk6JDy/YlJiPB908IkHOy+TqvrUqLidj7WRe1i2s
+         F9ipU/1JVhY8jRKytZbw2xfgs7dzODngq6+gN5wlTRN8LvC+3k0z91Odqorhzv5xt+8h
+         dzY6wtsAv3jnjUy7O1RQAbmYjgnrK5Bm4miYpqZr7JWHCwMqpNM/+dYvOBILWGTQm5ib
+         YsruRUFHHbXVVFyT3NzaL4d0xL5p2xXimUUWiWP/M7BlgLdx2IylSOGRW5TRURB8KxHi
+         IAPkKRwq583sb5TuiOwt6wM32cE4ZK658/JDXiaZDfYJyqrsMxYPEkQGYFtbxC9XqQZx
+         8LXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwCYO502Nbk+BX6CAScmoJ+Ptz4pouipHMjDxeTTGm19H79L2SnO5n7wJvpK8TibciBkzw+1IoNYuy6vE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQxrAbHLYxkaqFNvOmVu5dEnGM9ivCjcHKh5Tvy7wFhymWhaU7
+	Py9t1Y+Lbo2LMCu4b/bGGfGULpIggPv6cv8SJzE3OemWy7NviQ6+V16Bh+OCQ/W4y9BIytYlzS3
+	cTlkD3gGvh4/6qwD7QOZpEjCGJPrBV9riXpC/0+QD
+X-Gm-Gg: ASbGncvcczfRLnXTR0g3tOEivGm4mID3bZD75XxXNpMoxpd9pvt/aCBP6rZWGYuXkFA
+	xvbP81f6uhMzC4PskNQysbdDcHhWDMK+zy2Pc6cZu81BduSy+bvFozJSZ8vWT1sfNBj7yT/ZA52
+	/TTNCit+v/gfYTNsPjjoYfdShkG5F5DktGJ2LVR8obIuomwb51xhRih4+elo4iMcgG4w5HFJzHw
+	dE8F+2/YGRZVrnlflFQwpIq7FaWOI3lzq0KAg==
+X-Google-Smtp-Source: AGHT+IG70m5QoiJJvuwAcevMWtg86TUItbecWmuxDqdihU/rHXvTVdXNsMfLpfuUdu+Ffaj4A8H5JLTcJWzV4vzsyGo=
+X-Received: by 2002:a17:902:e5c5:b0:274:506d:7fea with SMTP id
+ d9443c01a7336-27ebcbcc1b2mr357055ad.5.1758642784825; Tue, 23 Sep 2025
+ 08:53:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250923041844.400164-1-irogers@google.com> <20250923041844.400164-23-irogers@google.com>
+In-Reply-To: <20250923041844.400164-23-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 23 Sep 2025 08:52:53 -0700
+X-Gm-Features: AS18NWABI_j0UfirBS1qDjfAYkIAHiJq_Fz6ZmvM95S5kAUNEw1x-M1-JJ3_Amg
+Message-ID: <CAP-5=fUvDoyMW2pu-f4-Qoxr6RX_k2+NZ4STmeSDQRFyhvN89g@mail.gmail.com>
+Subject: Re: [PATCH v5 22/25] perf test parse-events: Remove cpu PMU requirement
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Xu Yang <xu.yang_2@nxp.com>, Thomas Falcon <thomas.falcon@intel.com>, 
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
+	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
+	Vince Weaver <vincent.weaver@maine.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ublk_setup_iod() checks first whether the request is a zoned operation
-issued to a device without zoned support and returns BLK_STS_IOERR if
-so. However, such a request would already hit the default case in the
-subsequent switch statement and fail the ublk_queue_is_zoned() check,
-which also results in a return of BLK_STS_IOERR. So remove the redundant
-early check for unsupported zone ops.
+On Mon, Sep 22, 2025 at 9:19=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> In the event parse string, switch "cpu" to "default_core" and then
+> rewrite this to the first core PMU name prior to parsing. This enables
+> testing with a PMU on hybrid x86 and other systems that don't use
+> "cpu" for the core PMU name. The name "default_core" is already used
+> by jevents. Update test expectations to match.
+>
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- drivers/block/ublk_drv.c | 5 -----
- 1 file changed, 5 deletions(-)
+This introduces a test failure on Intel hybrid that I'll fix in v6.
+Previously the failing tests weren't run and the test expectation was
+that, with a PMU or without a PMU, an event would be opened on all
+PMUs - which isn't true if the PMU is specified.
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 5ab7ff5f03f4..fcc8b3868137 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -1103,17 +1103,12 @@ static inline unsigned int ublk_req_build_flags(struct request *req)
- 
- static blk_status_t ublk_setup_iod(struct ublk_queue *ubq, struct request *req)
- {
- 	struct ublksrv_io_desc *iod = ublk_get_iod(ubq, req->tag);
- 	struct ublk_io *io = &ubq->ios[req->tag];
--	enum req_op op = req_op(req);
- 	u32 ublk_op;
- 
--	if (!ublk_queue_is_zoned(ubq) &&
--	    (op_is_zone_mgmt(op) || op == REQ_OP_ZONE_APPEND))
--		return BLK_STS_IOERR;
--
- 	switch (req_op(req)) {
- 	case REQ_OP_READ:
- 		ublk_op = UBLK_IO_OP_READ;
- 		break;
- 	case REQ_OP_WRITE:
--- 
-2.45.2
+Thanks,
+Ian
 
+> ---
+>  tools/perf/tests/parse-events.c | 141 ++++++++++++++------------------
+>  1 file changed, 63 insertions(+), 78 deletions(-)
+>
+> diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-eve=
+nts.c
+> index d0f1e05139ac..4f197f34621b 100644
+> --- a/tools/perf/tests/parse-events.c
+> +++ b/tools/perf/tests/parse-events.c
+> @@ -646,19 +646,22 @@ static int test__checkevent_list(struct evlist *evl=
+ist)
+>  static int test__checkevent_pmu_name(struct evlist *evlist)
+>  {
+>         struct evsel *evsel =3D evlist__first(evlist);
+> +       struct perf_pmu *core_pmu =3D perf_pmus__find_core_pmu();
+> +       char buf[256];
+>
+> -       /* cpu/config=3D1,name=3Dkrava/u */
+> +       /* default_core/config=3D1,name=3Dkrava/u */
+>         TEST_ASSERT_VAL("wrong number of entries", 2 =3D=3D evlist->core.=
+nr_entries);
+>         TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW =3D=3D evsel->core.at=
+tr.type);
+>         TEST_ASSERT_VAL("wrong config", 1 =3D=3D evsel->core.attr.config)=
+;
+>         TEST_ASSERT_VAL("wrong name", evsel__name_is(evsel, "krava"));
+>
+> -       /* cpu/config=3D2/u" */
+> +       /* default_core/config=3D2/u" */
+>         evsel =3D evsel__next(evsel);
+>         TEST_ASSERT_VAL("wrong number of entries", 2 =3D=3D evlist->core.=
+nr_entries);
+>         TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW =3D=3D evsel->core.at=
+tr.type);
+>         TEST_ASSERT_VAL("wrong config", 2 =3D=3D evsel->core.attr.config)=
+;
+> -       TEST_ASSERT_VAL("wrong name", evsel__name_is(evsel, "cpu/config=
+=3D2/u"));
+> +       snprintf(buf, sizeof(buf), "%s/config=3D2/u", core_pmu->name);
+> +       TEST_ASSERT_VAL("wrong name", evsel__name_is(evsel, buf));
+>
+>         return TEST_OK;
+>  }
+> @@ -667,7 +670,7 @@ static int test__checkevent_pmu_partial_time_callgrap=
+h(struct evlist *evlist)
+>  {
+>         struct evsel *evsel =3D evlist__first(evlist);
+>
+> -       /* cpu/config=3D1,call-graph=3Dfp,time,period=3D100000/ */
+> +       /* default_core/config=3D1,call-graph=3Dfp,time,period=3D100000/ =
+*/
+>         TEST_ASSERT_VAL("wrong number of entries", 2 =3D=3D evlist->core.=
+nr_entries);
+>         TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW =3D=3D evsel->core.at=
+tr.type);
+>         TEST_ASSERT_VAL("wrong config", 1 =3D=3D evsel->core.attr.config)=
+;
+> @@ -679,7 +682,7 @@ static int test__checkevent_pmu_partial_time_callgrap=
+h(struct evlist *evlist)
+>         TEST_ASSERT_VAL("wrong callgraph",  !evsel__has_callchain(evsel))=
+;
+>         TEST_ASSERT_VAL("wrong time",  !(PERF_SAMPLE_TIME & evsel->core.a=
+ttr.sample_type));
+>
+> -       /* cpu/config=3D2,call-graph=3Dno,time=3D0,period=3D2000/ */
+> +       /* default_core/config=3D2,call-graph=3Dno,time=3D0,period=3D2000=
+/ */
+>         evsel =3D evsel__next(evsel);
+>         TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW =3D=3D evsel->core.at=
+tr.type);
+>         TEST_ASSERT_VAL("wrong config", 2 =3D=3D evsel->core.attr.config)=
+;
+> @@ -702,7 +705,8 @@ static int test__checkevent_pmu_events(struct evlist =
+*evlist)
+>
+>         evlist__for_each_entry(evlist, evsel) {
+>                 TEST_ASSERT_VAL("wrong type", PERF_TYPE_RAW =3D=3D evsel-=
+>core.attr.type ||
+> -                                             strcmp(evsel->pmu->name, "c=
+pu"));
+> +                               !strncmp(evsel__name(evsel), evsel->pmu->=
+name,
+> +                                        strlen(evsel->pmu->name)));
+>                 TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.e=
+xclude_user);
+>                 TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.=
+exclude_kernel);
+>                 TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.excl=
+ude_hv);
+> @@ -735,7 +739,7 @@ static int test__checkevent_pmu_events_mix(struct evl=
+ist *evlist)
+>                 TEST_ASSERT_VAL("wrong pinned", !evsel->core.attr.pinned)=
+;
+>                 TEST_ASSERT_VAL("wrong exclusive", !evsel->core.attr.excl=
+usive);
+>         }
+> -       /* cpu/pmu-event/u*/
+> +       /* default_core/pmu-event/u*/
+>         evsel =3D evsel__next(evsel);
+>         TEST_ASSERT_VAL("wrong type", evsel__find_pmu(evsel)->is_core);
+>         TEST_ASSERT_VAL("wrong exclude_user",
+> @@ -1570,14 +1574,9 @@ static int test__checkevent_config_cache(struct ev=
+list *evlist)
+>         return test__checkevent_genhw(evlist);
+>  }
+>
+> -static bool test__pmu_cpu_valid(void)
+> +static bool test__pmu_default_core_event_valid(void)
+>  {
+> -       return !!perf_pmus__find("cpu");
+> -}
+> -
+> -static bool test__pmu_cpu_event_valid(void)
+> -{
+> -       struct perf_pmu *pmu =3D perf_pmus__find("cpu");
+> +       struct perf_pmu *pmu =3D perf_pmus__find_core_pmu();
+>
+>         if (!pmu)
+>                 return false;
+> @@ -2103,26 +2102,23 @@ static const struct evlist_test test__events[] =
+=3D {
+>
+>  static const struct evlist_test test__events_pmu[] =3D {
+>         {
+> -               .name  =3D "cpu/config=3D10,config1=3D1,config2=3D3,perio=
+d=3D1000/u",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/config=3D10,config1=3D1,config2=
+=3D3,period=3D1000/u",
+>                 .check =3D test__checkevent_pmu,
+>                 /* 0 */
+>         },
+>         {
+> -               .name  =3D "cpu/config=3D1,name=3Dkrava/u,cpu/config=3D2/=
+u",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/config=3D1,name=3Dkrava/u,defaul=
+t_core/config=3D2/u",
+>                 .check =3D test__checkevent_pmu_name,
+>                 /* 1 */
+>         },
+>         {
+> -               .name  =3D "cpu/config=3D1,call-graph=3Dfp,time,period=3D=
+100000/,cpu/config=3D2,call-graph=3Dno,time=3D0,period=3D2000/",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/config=3D1,call-graph=3Dfp,time,=
+period=3D100000/,default_core/config=3D2,call-graph=3Dno,time=3D0,period=3D=
+2000/",
+>                 .check =3D test__checkevent_pmu_partial_time_callgraph,
+>                 /* 2 */
+>         },
+>         {
+> -               .name  =3D "cpu/name=3D'COMPLEX_CYCLES_NAME:orig=3Dcycles=
+,desc=3Dchip-clock-ticks',period=3D0x1,event=3D0x2/ukp",
+> -               .valid =3D test__pmu_cpu_event_valid,
+> +               .name  =3D "default_core/name=3D'COMPLEX_CYCLES_NAME:orig=
+=3Dcycles,desc=3Dchip-clock-ticks',period=3D0x1,event=3D0x2/ukp",
+> +               .valid =3D test__pmu_default_core_event_valid,
+>                 .check =3D test__checkevent_complex_name,
+>                 /* 3 */
+>         },
+> @@ -2137,158 +2133,132 @@ static const struct evlist_test test__events_pm=
+u[] =3D {
+>                 /* 5 */
+>         },
+>         {
+> -               .name  =3D "cpu/L1-dcache-load-miss/",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/L1-dcache-load-miss/",
+>                 .check =3D test__checkevent_genhw,
+>                 /* 6 */
+>         },
+>         {
+> -               .name  =3D "cpu/L1-dcache-load-miss/kp",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/L1-dcache-load-miss/kp",
+>                 .check =3D test__checkevent_genhw_modifier,
+>                 /* 7 */
+>         },
+>         {
+> -               .name  =3D "cpu/L1-dcache-misses,name=3Dcachepmu/",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/L1-dcache-misses,name=3Dcachepmu=
+/",
+>                 .check =3D test__checkevent_config_cache,
+>                 /* 8 */
+>         },
+>         {
+> -               .name  =3D "cpu/instructions/",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/instructions/",
+>                 .check =3D test__checkevent_symbolic_name,
+>                 /* 9 */
+>         },
+>         {
+> -               .name  =3D "cpu/cycles,period=3D100000,config2/",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/cycles,period=3D100000,config2/"=
+,
+>                 .check =3D test__checkevent_symbolic_name_config,
+>                 /* 0 */
+>         },
+>         {
+> -               .name  =3D "cpu/instructions/h",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/instructions/h",
+>                 .check =3D test__checkevent_symbolic_name_modifier,
+>                 /* 1 */
+>         },
+>         {
+> -               .name  =3D "cpu/instructions/G",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/instructions/G",
+>                 .check =3D test__checkevent_exclude_host_modifier,
+>                 /* 2 */
+>         },
+>         {
+> -               .name  =3D "cpu/instructions/H",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/instructions/H",
+>                 .check =3D test__checkevent_exclude_guest_modifier,
+>                 /* 3 */
+>         },
+>         {
+> -               .name  =3D "{cpu/instructions/k,cpu/cycles/upp}",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "{default_core/instructions/k,default_core/cyc=
+les/upp}",
+>                 .check =3D test__group1,
+>                 /* 4 */
+>         },
+>         {
+> -               .name  =3D "{cpu/cycles/u,cpu/instructions/kp}:p",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "{default_core/cycles/u,default_core/instructi=
+ons/kp}:p",
+>                 .check =3D test__group4,
+>                 /* 5 */
+>         },
+>         {
+> -               .name  =3D "{cpu/cycles/,cpu/cache-misses/G}:H",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "{default_core/cycles/,default_core/cache-miss=
+es/G}:H",
+>                 .check =3D test__group_gh1,
+>                 /* 6 */
+>         },
+>         {
+> -               .name  =3D "{cpu/cycles/,cpu/cache-misses/H}:G",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "{default_core/cycles/,default_core/cache-miss=
+es/H}:G",
+>                 .check =3D test__group_gh2,
+>                 /* 7 */
+>         },
+>         {
+> -               .name  =3D "{cpu/cycles/G,cpu/cache-misses/H}:u",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "{default_core/cycles/G,default_core/cache-mis=
+ses/H}:u",
+>                 .check =3D test__group_gh3,
+>                 /* 8 */
+>         },
+>         {
+> -               .name  =3D "{cpu/cycles/G,cpu/cache-misses/H}:uG",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "{default_core/cycles/G,default_core/cache-mis=
+ses/H}:uG",
+>                 .check =3D test__group_gh4,
+>                 /* 9 */
+>         },
+>         {
+> -               .name  =3D "{cpu/cycles/,cpu/cache-misses/,cpu/branch-mis=
+ses/}:S",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "{default_core/cycles/,default_core/cache-miss=
+es/,default_core/branch-misses/}:S",
+>                 .check =3D test__leader_sample1,
+>                 /* 0 */
+>         },
+>         {
+> -               .name  =3D "{cpu/instructions/,cpu/branch-misses/}:Su",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "{default_core/instructions/,default_core/bran=
+ch-misses/}:Su",
+>                 .check =3D test__leader_sample2,
+>                 /* 1 */
+>         },
+>         {
+> -               .name  =3D "cpu/instructions/uDp",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/instructions/uDp",
+>                 .check =3D test__checkevent_pinned_modifier,
+>                 /* 2 */
+>         },
+>         {
+> -               .name  =3D "{cpu/cycles/,cpu/cache-misses/,cpu/branch-mis=
+ses/}:D",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "{default_core/cycles/,default_core/cache-miss=
+es/,default_core/branch-misses/}:D",
+>                 .check =3D test__pinned_group,
+>                 /* 3 */
+>         },
+>         {
+> -               .name  =3D "cpu/instructions/I",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/instructions/I",
+>                 .check =3D test__checkevent_exclude_idle_modifier,
+>                 /* 4 */
+>         },
+>         {
+> -               .name  =3D "cpu/instructions/kIG",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/instructions/kIG",
+>                 .check =3D test__checkevent_exclude_idle_modifier_1,
+>                 /* 5 */
+>         },
+>         {
+> -               .name  =3D "cpu/cycles/u",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/cycles/u",
+>                 .check =3D test__sym_event_slash,
+>                 /* 6 */
+>         },
+>         {
+> -               .name  =3D "cpu/cycles/k",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/cycles/k",
+>                 .check =3D test__sym_event_dc,
+>                 /* 7 */
+>         },
+>         {
+> -               .name  =3D "cpu/instructions/uep",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/instructions/uep",
+>                 .check =3D test__checkevent_exclusive_modifier,
+>                 /* 8 */
+>         },
+>         {
+> -               .name  =3D "{cpu/cycles/,cpu/cache-misses/,cpu/branch-mis=
+ses/}:e",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "{default_core/cycles/,default_core/cache-miss=
+es/,default_core/branch-misses/}:e",
+>                 .check =3D test__exclusive_group,
+>                 /* 9 */
+>         },
+>         {
+> -               .name  =3D "cpu/cycles,name=3Dname/",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/cycles,name=3Dname/",
+>                 .check =3D test__term_equal_term,
+>                 /* 0 */
+>         },
+>         {
+> -               .name  =3D "cpu/cycles,name=3Dl1d/",
+> -               .valid =3D test__pmu_cpu_valid,
+> +               .name  =3D "default_core/cycles,name=3Dl1d/",
+>                 .check =3D test__term_equal_legacy,
+>                 /* 1 */
+>         },
+> @@ -2378,15 +2348,30 @@ static int combine_test_results(int existing, int=
+ latest)
+>  static int test_events(const struct evlist_test *events, int cnt)
+>  {
+>         int ret =3D TEST_OK;
+> +       struct perf_pmu *core_pmu =3D perf_pmus__find_core_pmu();
+>
+>         for (int i =3D 0; i < cnt; i++) {
+> -               const struct evlist_test *e =3D &events[i];
+> +               struct evlist_test e =3D events[i];
+>                 int test_ret;
+> +               const char *pos =3D e.name;
+> +               char buf[1024], *buf_pos =3D buf, *end;
+> +
+> +               while ((end =3D strstr(pos, "default_core"))) {
+> +                       size_t len =3D end - pos;
+> +
+> +                       strncpy(buf_pos, pos, len);
+> +                       pos =3D end + 12;
+> +                       buf_pos +=3D len;
+> +                       strcpy(buf_pos, core_pmu->name);
+> +                       buf_pos +=3D strlen(core_pmu->name);
+> +               }
+> +               strcpy(buf_pos, pos);
+>
+> -               pr_debug("running test %d '%s'\n", i, e->name);
+> -               test_ret =3D test_event(e);
+> +               e.name =3D buf;
+> +               pr_debug("running test %d '%s'\n", i, e.name);
+> +               test_ret =3D test_event(&e);
+>                 if (test_ret !=3D TEST_OK) {
+> -                       pr_debug("Event test failure: test %d '%s'", i, e=
+->name);
+> +                       pr_debug("Event test failure: test %d '%s'", i, e=
+.name);
+>                         ret =3D combine_test_results(ret, test_ret);
+>                 }
+>         }
+> --
+> 2.51.0.534.gc79095c0ca-goog
+>
 
