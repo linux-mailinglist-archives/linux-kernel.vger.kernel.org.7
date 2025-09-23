@@ -1,186 +1,126 @@
-Return-Path: <linux-kernel+bounces-829027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F36CB96171
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:51:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F38BAB960CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C6A516C180
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:51:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B35A42A70E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABB41FFC49;
-	Tue, 23 Sep 2025 13:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912B2327A11;
+	Tue, 23 Sep 2025 13:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="qHAxEBYK";
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="Vngn7Hv+"
-Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b="g+Fnp81f"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5E61B9831;
-	Tue, 23 Sep 2025 13:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48ACF126C1E
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758635501; cv=none; b=sYYbJjpaLZazX4F6tcufmLmixwjl2R7oUHpE4oYjgCsGzezaIruJPH2wkz5gxpMCwvoORvlI+cxeKgm+2M8v/jP3GUFno0Z4vwJ7n1C7YdtcUCaOEoQyPmKigyxjsy560NAoNbSAlaQiFB3NgvfCmNaxBuDewxwhmntSk71saks=
+	t=1758634947; cv=none; b=fve+GEcgyk1k2s7Byk7Z+LJgBfPywZ1jwML0YIJMGOLM4hExa9IAx2DDQ3L8UcjfYB3Uqjmvf2DV8cth/FVY0dtvQ86M93hmqRg/dBuH3mmsJYEGtT2S5rjdmABjLUkYMpsM8pTHQrdVbAcJ2c+h5QuFpXO5t4OjSpi86RCdk+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758635501; c=relaxed/simple;
-	bh=jOTfBBuhp4/KXUmQRg6f3HjP0MtVrb5Hzovk33nxhfQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pVWNlqRTeJwllRsw8AyIuWN5gpvElEmOYNYVn2neijRs8iBO6qpBcgX7e2LRsu3ibsd8KHsy1/Sn5r2B5Tm2Xb8LbpHFnVLLV2eX1hTPwFhBdry4ZsGZKW1vOrZM1A5DeGDWF0UkFOzl9BlxdF/ak6AyMCXWPqbHSzDC1+iOo/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=qHAxEBYK; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=Vngn7Hv+; arc=none smtp.client-ip=24.134.29.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1758634954; bh=jOTfBBuhp4/KXUmQRg6f3HjP0MtVrb5Hzovk33nxhfQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=qHAxEBYKHjks72BqCNQ+G5xfgrM/gXCbUAOnkdslE3sv59JX7kwK4qACkeMJIFvxP
-	 04tDkTnbyO+jRauXBthoPt3BBZjstGTNzc5/qZQ9B+nVVsBIPfe/iXBmmBd8T1kuNh
-	 1NShXaa1in5wH+gbLL+nGyDzkPoP1coTrDhng6/moiRQwhITyKEa/7Ru2QSVraffPK
-	 VqZ3blcFYqnzKIfenJA0fiadC60D9DwmDD6CRC/7TrMj2ivEEMRoUlb9j3K8gmQ0jK
-	 0GPr9Ih2JXxMefsBr47BUemtoNOOzUKzLoQQrM+hhpG6SD6KvUijmzYE4wZGr8sVSO
-	 pLRQKKKXIoAKg==
-Received: from localhost (localhost [127.0.0.1])
-	by honk.sigxcpu.org (Postfix) with ESMTP id B3709FB03;
-	Tue, 23 Sep 2025 15:42:34 +0200 (CEST)
-Received: from honk.sigxcpu.org ([127.0.0.1])
-	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id ufJNWvGsT0oV; Tue, 23 Sep 2025 15:42:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1758634953; bh=jOTfBBuhp4/KXUmQRg6f3HjP0MtVrb5Hzovk33nxhfQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Vngn7Hv+T1WTNZWUBsVdmYRczXjmN8VFfA9+Fp+kf6Yz9roQ+phC2BDeSQ4olzng0
-	 CqNm+J2Zew4gFXQo5GO0LteHpnUGCWAPY7FQXIz5f78cfGyQC4HesOE/5naYq9cT+R
-	 5IrUhZCggwSvHbF2CvUFag8AfixZ0XXaXSR0HSLNI+LwQrf7mcnINNfQPbngWpvmf2
-	 mqxz056qrQXtkBuMZGT8wSHs1/PhoqOexuWHvBVWnlTuaoeyvy/Dz46DVqpYbQW3yg
-	 4Aqy+An+EGOmrhSHCVrRO/bOUDlGCB//Stg7HgiKMREY956T6UqkAiEIkQYZ+OxnXP
-	 oZIZec1foGEHQ==
-From: =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
-Date: Tue, 23 Sep 2025 15:42:09 +0200
-Subject: [PATCH] Input: edt-ft5x06 - Detect ft5452
+	s=arc-20240116; t=1758634947; c=relaxed/simple;
+	bh=HS9NBcbYrfF6iVaTRVwQjnuNP9ZIEYwzdwsQ7rWcF6Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hoCVu5YxGZteAhVnhfPVmgK1imF5Z5H4MviVk3iKY6Bx9cW3/OYFDTVY9ZG/ayTdWavalTh5lin5XHlcEaeP+NkfJSbjMJTSkD8XQqniyKzQYc3lZhYf4L243EhFPbU8UlvRqoV6t09zUtzvHv7GIgzYvGl5xOY2A9f9oJprnDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com; spf=pass smtp.mailfrom=ciq.com; dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b=g+Fnp81f; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ciq.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b5ed9d7e20so54396231cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:42:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ciq.com; s=s1; t=1758634943; x=1759239743; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BJZq8+MPLRJ3ip5LcrsBDiUfLaLP/BnDgi1MJHXazU8=;
+        b=g+Fnp81f8NEBFGQD+r4hiyqktMd9n/P398edJxqfW9gfCYwiY3SYI6AEP4Iw48rye/
+         HeDnl2QiPD7t6czMd+Tg1FhzJatV9ZBQbX67UPKo7V36l6vRd2h3rdsw8PDM66U/UFml
+         q7M1hPsAwHfnYIWgLkpt3UzthOR79jaKmLX8GvogszNQ5sG1bl3fABVWIamJ61c/WLpG
+         qvSegANZCOTtWDI8cBOwo9xv+J9vcvq1fEmeE4CisP8sgqjPacFCXsgB+LSpj8y6Sw19
+         DyxDYnEsWKaRoeBmq+EiWiAtRySfLUk+R7atXlG2ABxWJCa+BU9Qt3Y7Pr23/ZSGbg+q
+         48iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758634943; x=1759239743;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BJZq8+MPLRJ3ip5LcrsBDiUfLaLP/BnDgi1MJHXazU8=;
+        b=DqankvGkmS5GcgJ/jw7u+KMffbpddCYfcLdRibbdfpa/n6eaCVzA66QdDIzmoPRoPu
+         2lLioZXJ7mx4Aia4c2uv2QVRmF+BZ2Pwki/YDI7fhBZRRpBotvG2m87Zkz4rFtH9P/3S
+         YHeGqRIwG3xUVf9io24o/JXfKMWBytluiWaEOVw9/sfLmzzXQ6SFT50uExAm2QkUdVBl
+         oeL/ofgtPRK8NowD2mtgnR4WDpbVof4dw72i0+Upo4Q+M59WaT0jutB5nWiBuI1iOKmp
+         b9UdlCK6iunWiTY0G2TN2G7AJp5HZ1DvEzCtkAAEtvoMi1qTvBJ7vNq8gI728avuy1De
+         Tkxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFNXJ4fScYJhY5swixf/e+i+nKjn2eC6tqLymKxrzVlBe7IR+ZUT7c9VyYEaDhsVmQGbUdjKl+DGDrD70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxKA6AbQdF+tL2jHfHIUOd5U3TqD4l9xJLBLUgqEj7c2FgUZx7
+	qJBYkccmTDDF/vJhPnHlL3O2ElK0VH29TAvKK1qIiUevByk1itEtp1510TQ1KWIE0+uB9xY3Btc
+	7rmuMyj6tlPQl0Uc+d89zzmpL6nnGWuOp+DdIMU9+GQ==
+X-Gm-Gg: ASbGnctpnZocZo1+jdXIbbXJNC3Yl9ekNxk1Vp3nIdQWwbZL7hrZ6lOzrOJFIxbc0Fp
+	53uV8xWSzEAkkbmhuTrJVNiTNImfDQUDY6VAbgXEexBD3th23a66jbGDThY2qOB6IOTVozOcZLF
+	2BWftkTlx7pDUc26bhtbxmptlqQ6MiKd8CP4sLXgmkBAeL7gHWZi28e8fw9VKjHXe4PcvBF8NV2
+	E33Izj6
+X-Google-Smtp-Source: AGHT+IEqCByMJIyOisFneYcEhg1XccZAqMYXIft+cqIQMRrJVBiZ/D9q5dXHkPruO+JLDBqSs2MuwjOhSz0Yq99OO8o=
+X-Received: by 2002:a05:622a:4a18:b0:4d2:6ecf:9123 with SMTP id
+ d75a77b69052e-4d36a18d5c2mr26501131cf.34.1758634943106; Tue, 23 Sep 2025
+ 06:42:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250923-ft5452-v1-1-c9bc51608b7f@sigxcpu.org>
-X-B4-Tracking: v=1; b=H4sIALCj0mgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDSyNj3bQSUxNTI13zJKO0JHPTpDRjCwMloOKCotS0zAqwQdGxtbUAwMY
- a6VgAAAA=
-X-Change-ID: 20250923-ft5452-7b2fb75bf380
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
- phone-devel@vger.kernel.org, 
- =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2618; i=agx@sigxcpu.org;
- h=from:subject:message-id; bh=jOTfBBuhp4/KXUmQRg6f3HjP0MtVrb5Hzovk33nxhfQ=;
- b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0VCYlFLUy9aQU5Bd0FJQVNXL2hsSksvT
- UhqQWNzbVlnQm8wcVBCOVFzeEp6cWhuZFdYenQwb0Z2dGVSdDFyClhGL2hNWnRvZ1NHODZVcC9M
- ZjZKQWpNRUFBRUlBQjBXSVFSajlzemZsaUtkQ1NocktzTWx2NFpTU3Z6QjR3VUMKYU5LandRQUt
- DUkFsdjRaU1N2ekI0K2tHRC85L1NTSHdMZzVGK0pFTktTc0lJa1FuTHNOY0E1ZmdJVldWT3BxRw
- pMemZOdWxPWTNQQ1dseG5iYkVOeXFrcW43eWtKaW9GbTNRdUVDSjNoV0hPaStTUTFaNldYeVBsS
- EZVbDA2YkMyCmo2aUlnOURVdWxGblR3VlFNVDFoeWtkMWZldGluWWR1SWxyaGw3a2tla1ZYQ2RX
- ZE5veklhMlluQjAwOWlFcEYKYXdqVzJjZWFSNkI4WjViWGwrRmxmaDJJc2dMdUxQa2Fpd29UQnM
- 5WVBtTnRZN3NGWDBDeVFaME9wN3h1VHE4eQpGd21Eb2VxRlRvajh0cUlpSVJ1VjRvU0t3YnBXR0
- pvMmsvN3BWa3BRKzViSWExSkNuOFN6SkRDWU1KQjMycCtkCjdRaGo4QWtVU3hEdWo1dDJMelE3b
- m1oVlhaL09Mck4xYW1nT25ZQzFaRy9RQ3VZdFFRT3N3azlQRXpIZnZkWjQKWVlmZUNVRU9GV1Qv
- WXB3RnZzMk5kNUVCVk1ERFVtWDBLRmRqQ2NiaU5OS2c0RkNSaUgwSnN0WERLck9BNXRVTQozTmY
- yNlkrSHFyMURuMm5Kb1A5NFdCM0I2ODN3MHpvVnVvZDVzdnp1ZFVtNWhxaE1lK1NhS3grVE9idF
- R0Ni9PCkhPOHAwdkprTm1pVzB1R251dUJIUEtqUUhZRGlRdVQ3a3gzTytyTEs1b2c5RnE5YlhDS
- FhtVHoyZHo4MjE4OXkKOEloc1U1emJUVFlxT1JINmxVcDA1R0NuQVc3N1Z0TnFpMnhMWGRwNzVi
- R1RsRlNMMFEyakdsZXRxNzJlZXRDNAp5bmcyd3h6OXFBUm0wNDJ2bmZ5ckU2TlNKampYZVVDbGd
- DRjk1dVJxVWZSQ2pZT28ya3ZTdVVDREhScEQzYUlBCmhrbFFhdz09Cj1HbEZhCi0tLS0tRU5EIF
- BHUCBNRVNTQUdFLS0tLS0K
-X-Developer-Key: i=agx@sigxcpu.org; a=openpgp;
- fpr=0DB3932762F78E592F6522AFBB5A2C77584122D3
+References: <20250922192408.913556629@linuxfoundation.org>
+In-Reply-To: <20250922192408.913556629@linuxfoundation.org>
+From: Brett Mastbergen <bmastbergen@ciq.com>
+Date: Tue, 23 Sep 2025 09:42:12 -0400
+X-Gm-Features: AS18NWDivHJSj_z1iQ5jwb40ouc0fUOHoSfttu2yx42awG0vFzK1u2_FMqUyWE0
+Message-ID: <CAOBMUvhU3VMwD2OnmR3zewO=MQhT0o6WbE=4rEbZiC=xTn_xcQ@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/105] 6.12.49-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Detect the chip that is used in lots of smart phone models
-by different vendors (e.g. Xiaomi and SHIFT).
+On Mon, Sep 22, 2025 at 3:37=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.49 release.
+> There are 105 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 24 Sep 2025 19:23:52 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.49-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-We don't derive any properties from it yet but spare lots of people
-adding this code to figure out if their panel actually uses this chip.
+Builds successfully.  Boots and works on qemu and Dell XPS 15 9520 w/
+Intel Core i7-12600H
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
-I hope we can add more values to the chip-id switch once we identify
-them.
----
- drivers/input/touchscreen/edt-ft5x06.c | 31 ++++++++++++++++++++++++++++---
- 1 file changed, 28 insertions(+), 3 deletions(-)
+Tested-by: Brett Mastbergen <bmastbergen@ciq.com>
 
-diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-index bf498bd4dea9651ac939fe137b1c0f05e8557962..c0f98d622970846f47a61afa7ec042886a7b95d5 100644
---- a/drivers/input/touchscreen/edt-ft5x06.c
-+++ b/drivers/input/touchscreen/edt-ft5x06.c
-@@ -57,6 +57,9 @@
- #define EV_REGISTER_OFFSET_Y		0x45
- #define EV_REGISTER_OFFSET_X		0x46
- 
-+#define EV_REGISTER_CHIP_ID_H		0xA3
-+#define EV_REGISTER_CHIP_ID_L		0x9F
-+
- #define NO_REGISTER			0xff
- 
- #define WORK_REGISTER_OPMODE		0x3c
-@@ -849,6 +852,18 @@ static void edt_ft5x06_ts_teardown_debugfs(struct edt_ft5x06_ts_data *tsdata)
- 
- #endif /* CONFIG_DEBUGFS */
- 
-+static int edt_ft5x06_ts_check_chip_id(struct edt_ft5x06_ts_data *tsdata)
-+{
-+	int val, id;
-+
-+	regmap_read(tsdata->regmap, EV_REGISTER_CHIP_ID_H, &val);
-+	id = val << 8;
-+	regmap_read(tsdata->regmap, EV_REGISTER_CHIP_ID_L, &val);
-+	id |= val;
-+
-+	return id;
-+}
-+
- static int edt_ft5x06_ts_identify(struct i2c_client *client,
- 				  struct edt_ft5x06_ts_data *tsdata)
- {
-@@ -857,6 +872,7 @@ static int edt_ft5x06_ts_identify(struct i2c_client *client,
- 	int error;
- 	char *model_name = tsdata->name;
- 	char *fw_version = tsdata->fw_version;
-+	int chipid;
- 
- 	/* see what we find if we assume it is a M06 *
- 	 * if we get less than EDT_NAME_LEN, we don't want
-@@ -962,9 +978,18 @@ static int edt_ft5x06_ts_identify(struct i2c_client *client,
- 				 "EVERVISION-FT5726NEi");
- 			break;
- 		default:
--			snprintf(model_name, EDT_NAME_LEN,
--				 "generic ft5x06 (%02x)",
--				 rdbuf[0]);
-+			chipid = edt_ft5x06_ts_check_chip_id(tsdata);
-+			dev_dbg(&client->dev, "Chip ID = 0x%x", chipid);
-+			switch (chipid) {
-+			case 0x5452:
-+				snprintf(model_name, EDT_NAME_LEN,
-+					 "ft%04x", chipid);
-+				break;
-+			default:
-+				snprintf(model_name, EDT_NAME_LEN,
-+					 "generic ft5x06 (%02x)",
-+					 rdbuf[0]);
-+			}
- 			break;
- 		}
- 	}
-
----
-base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-change-id: 20250923-ft5452-7b2fb75bf380
-
-Best regards,
--- 
-Guido Günther <agx@sigxcpu.org>
-
+Thanks,
+Brett
 
