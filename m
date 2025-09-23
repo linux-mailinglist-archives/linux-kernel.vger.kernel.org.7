@@ -1,217 +1,134 @@
-Return-Path: <linux-kernel+bounces-828730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E48B954C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:43:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED82B954C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C981682AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:43:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69B2016F3DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACA23168EA;
-	Tue, 23 Sep 2025 09:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A507320A3F;
+	Tue, 23 Sep 2025 09:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtdvfn0W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dy7S9H/Y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4738320A1B
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EAA313536
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758620586; cv=none; b=dz3sUjLom4SDXGeF56YMqyAfDubCim42nQ+9WxXZMFnZBTCp26iKGt2bI+mEkVRJTKNfNpzpeZzYvT/LErnbK3ZxP/uvLGQQdM/jqBfpS2JPuKsjAxmgqIGOKoT+Ur6RT5XnTFXVT8ySzeZk1SdrqBPa1jWxFyeXXDOlaRmaq6M=
+	t=1758620601; cv=none; b=o0CJDBiZ1tsymqJBgMDm58/tdqXLsm+xHtLQ8LAsLyE6+Yb8rgUFau57es3LRFkQL4E4u1QoXr6i6S0Gln5t4aoTFz5ND86DwdK4b4L/G+glDTdeviCSPzK2IvQBBCCQxLABzQVIQHL8Er/kKZ66BmatVzLH8mfmT12Lm6a6AuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758620586; c=relaxed/simple;
-	bh=gWokNwz3211+7i9a8Ok4nVu/7HhmNCFwfkMWyXM6JLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q5zIvn/8FWaAiT+rUAMaxWg1ulihYmM+LIiIlrq+ycf6YMr1q3KMNF/4vkSlwqFDgTSqqUepLAFumsH8rJYURqSFlMNCWLEMtTaWNiFkGVyAQSx6L5yhzAXQ11QrYXvo1KMqQlkd85tZCBgJoUVT5eLLWXWAcx0StIMgWZXMS/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtdvfn0W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 308B9C4CEF5;
-	Tue, 23 Sep 2025 09:43:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758620586;
-	bh=gWokNwz3211+7i9a8Ok4nVu/7HhmNCFwfkMWyXM6JLM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gtdvfn0WpOajOmj3ZfSZI6HT1Bf01mf+RluxQVZnhoOf1GLEdPWH/DNeaXZxz+0gl
-	 9PzCTwd4bXC2EJkJ4trWwi85K2txKt4OKKYEiLGfkXQQ8z18SlGpZ22jRGYhG+NQwH
-	 si7mbRIXl7L6kCEU2phphXeIdqr76fem5rOICRl7DUrbGHftoyl80Veza6Vn7ccDEV
-	 w/rp9KagiKzXaqX72vkKkKEqpvZHboq7zWG46RFQTABPeJWqxPgZmAnqt0LmIcmAqJ
-	 Ds1GguVndQAd8eTo0G8ZvRcOSpGo6LQE/F6q1+slsNgWI2M+ICwQaAmLTsVj078G/f
-	 YDuJe+yiY+RjA==
-Date: Tue, 23 Sep 2025 11:43:03 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Waiman Long <llong@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 27/33] sched/arm64: Move fallback task cpumask to
- HK_TYPE_DOMAIN
-Message-ID: <aNJrp_IDiDXEx6N4@2a01cb069018a810e4ede1071806178f.ipv6.abo.wanadoo.fr>
-References: <20250829154814.47015-1-frederic@kernel.org>
- <20250829154814.47015-28-frederic@kernel.org>
- <26d5ced7-8f35-49b2-b342-c6b55dde9c66@redhat.com>
+	s=arc-20240116; t=1758620601; c=relaxed/simple;
+	bh=g/EVcz8uDvI82s1ruLcJAtX7El3t2V3I7i5nDyjqkLQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Z1UgXcCqtuKY6M0Jmax1rrzEhjxROjNt1AIxbCqUBoUgI3PUVtgFn+fhx/UuwCeBh6iyaUtzFfv23RGwVIQW3SictylWtDpMcfxfdPWHQLuakaEnsNT9CiDnKt5xKphucZRWXHOjDUMs9mFpT0UnruMQ9VyQD7po4MbjwKXp6qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dy7S9H/Y; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758620599;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=g/EVcz8uDvI82s1ruLcJAtX7El3t2V3I7i5nDyjqkLQ=;
+	b=dy7S9H/YKg1+z6wopWhzbX5vTEnq01VH2UisRH5S12uNd7hf/bX353sgF+NGWELfp4Zgn9
+	bYEUJFL/wTIrBYCthe3KOKHcjqdA58vhcyhk4AWny5CGkFp3DOCxf1vgSveCm/GUzrDC42
+	KHT1xUVRjuwQvp3emHn9l4KfWfpLYhU=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-125-OqtFnmhrOziLJH-60PLlUA-1; Tue, 23 Sep 2025 05:43:17 -0400
+X-MC-Unique: OqtFnmhrOziLJH-60PLlUA-1
+X-Mimecast-MFC-AGG-ID: OqtFnmhrOziLJH-60PLlUA_1758620596
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45e037fd142so46927685e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:43:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758620596; x=1759225396;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g/EVcz8uDvI82s1ruLcJAtX7El3t2V3I7i5nDyjqkLQ=;
+        b=wekv9DaED+n/V3ktGIAL4kgcFFXXoisnQW+gqTfoDZUAQJgse3DlyBnyV2pFFzgVBb
+         KVpb1WLzTL/jSOO2STH7tA3X4WwkhJpKA5i99FoTa2Zt6wyM+OuPpnADsyiZwLRXrHdg
+         6mvP/g1QHgwbJexJiYiEvCUWxEdl4A91VKS/AEg1bAjLbZdTzjrEe6Oax5RDeMeHqIw5
+         mGMHrLULJhVPGiIVfgmcHQ/hHZZgLOg668pTJydU/UOjJtmrAgcj2D446x3O3+63QfoQ
+         l03L+P/2KRgAhqrcEODLQ+kof1asuah90ZfGfRUXA6J9WxV/muLDI9pjmMPd9Xa3IZq8
+         VcLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU51iM0P2GShjkXTF3UWLXBUWLwH7fztoUtwDYsYrHH4S9kQAN0L0kaGy3ubX4kObcvFX2GEmdMqUu8Dw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3r7AVR9+ZkNHUnZHlQfaVTIQb3y0en6shQedDsF8Tlft2AMtz
+	itl4t1ZeGqzrhUoPmGBYJ+ZK0JfuekAdzfwDJnzla1JgbVGQqaCDiEUhRscO/xRGt8FeoCl0W31
+	jNjgL7EHmgitTNOpV5HYnDOGgvPAe47Ih+6ed6UqYBlWd40jMapton2a9N4WsbDQ3TA==
+X-Gm-Gg: ASbGncv59HRjzhdZiOGzPOxpzGGYlWTgaW2tSBwtY4/6Sej6K7uhMzXhndGHBtKSSrF
+	8iNOabdRu47t8vC9HwVoNXN8igT3YLzOtj+0P+z7OjFFfwhkmzINpZ7ZZ/zYox4Jjy9GXMWaDyy
+	D38VbeAOOVqHeZYpzhlR8guplytthl+U0nBnK5U8KMYeLhOXHZuWc8+afy3K4YCmqkqqlFSIJa/
+	brmYI0pmids5cdpNNSRVcBZbaJI/8VhFqPTdkSOdMsZLNK/G2JoBsQnmQBIAIc//GUK88NCWhSX
+	M0PbaE99t8Bh1FOKND4FWbO/P453G1b/WmMmwwZ+HD3rUOsBi341J1HUMBq5J98GBA==
+X-Received: by 2002:a05:600c:4fd4:b0:45b:7d77:b592 with SMTP id 5b1f17b1804b1-46e1d988d12mr21304915e9.12.1758620596471;
+        Tue, 23 Sep 2025 02:43:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGJXoBtXvTd2Kf4hEtQgZIhNcJSjfgeo+qO9jd2CEytfhVkTcGIYGRMzua4UGM/hH+Xob6mIQ==
+X-Received: by 2002:a05:600c:4fd4:b0:45b:7d77:b592 with SMTP id 5b1f17b1804b1-46e1d988d12mr21304705e9.12.1758620596079;
+        Tue, 23 Sep 2025 02:43:16 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-402188ef7b2sm5018824f8f.34.2025.09.23.02.43.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 02:43:15 -0700 (PDT)
+Message-ID: <f5836a1d3400581a6352d36474be4cc72a802342.camel@redhat.com>
+Subject: Re: [PATCH] rv: Fix wrong type cast in enabled_monitors_next()
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Nathan Chancellor <nathan@kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>,  Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, 
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 23 Sep 2025 11:43:14 +0200
+In-Reply-To: <87v7l9r225.fsf@yellow.woof>
+References: <20250806120911.989365-1-namcao@linutronix.de>
+	 <20250923002004.GA2836051@ax162> <87tt0t4u19.fsf@yellow.woof>
+	 <aacdcc85c9f8d3a51a85b6429646c38d4b239449.camel@redhat.com>
+	 <87v7l9r225.fsf@yellow.woof>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
+ cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
+ T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
+ eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
+ 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <26d5ced7-8f35-49b2-b342-c6b55dde9c66@redhat.com>
 
-Le Tue, Sep 02, 2025 at 12:43:16PM -0400, Waiman Long a écrit :
-> 
-> On 8/29/25 11:48 AM, Frederic Weisbecker wrote:
-> > When none of the allowed CPUs of a task are online, it gets migrated
-> > to the fallback cpumask which is all the non nohz_full CPUs.
-> > 
-> > However just like nohz_full CPUs, domain isolated CPUs don't want to be
-> > disturbed by tasks that have lost their CPU affinities.
-> > 
-> > And since nohz_full rely on domain isolation to work correctly, the
-> > housekeeping mask of domain isolated CPUs is always a subset of the
-> > housekeeping mask of nohz_full CPUs (there can be CPUs that are domain
-> > isolated but not nohz_full, OTOH there can't be nohz_full CPUs that are
-> > not domain isolated):
-> > 
-> > 	HK_TYPE_DOMAIN & HK_TYPE_KERNEL_NOISE == HK_TYPE_DOMAIN
-> > 
-> > Therefore use HK_TYPE_DOMAIN as the appropriate fallback target for
-> > tasks and since this cpumask can be modified at runtime, make sure
-> > that 32 bits support CPUs on ARM64 mismatched systems are not isolated
-> > by cpusets.
-> > 
-> > CC: linux-arm-kernel@lists.infradead.org
-> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> > ---
-> >   arch/arm64/kernel/cpufeature.c | 18 ++++++++++++---
-> >   include/linux/cpu.h            |  4 ++++
-> >   kernel/cgroup/cpuset.c         | 40 +++++++++++++++++++++++-----------
-> >   3 files changed, 46 insertions(+), 16 deletions(-)
-> > 
-> > diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> > index 9ad065f15f1d..38046489d2ea 100644
-> > --- a/arch/arm64/kernel/cpufeature.c
-> > +++ b/arch/arm64/kernel/cpufeature.c
-> > @@ -1653,6 +1653,18 @@ has_cpuid_feature(const struct arm64_cpu_capabilities *entry, int scope)
-> >   	return feature_matches(val, entry);
-> >   }
-> > +/*
-> > + * 32 bits support CPUs can't be isolated because tasks may be
-> > + * arbitrarily affine to them, defeating the purpose of isolation.
-> > + */
-> > +bool arch_isolated_cpus_can_update(struct cpumask *new_cpus)
-> > +{
-> > +	if (static_branch_unlikely(&arm64_mismatched_32bit_el0))
-> > +		return !cpumask_intersects(cpu_32bit_el0_mask, new_cpus);
-> > +	else
-> > +		return true;
-> > +}
-> > +
-> >   const struct cpumask *system_32bit_el0_cpumask(void)
-> >   {
-> >   	if (!system_supports_32bit_el0())
-> > @@ -1666,7 +1678,7 @@ const struct cpumask *system_32bit_el0_cpumask(void)
-> >   const struct cpumask *task_cpu_fallback_mask(struct task_struct *p)
-> >   {
-> > -	return __task_cpu_possible_mask(p, housekeeping_cpumask(HK_TYPE_TICK));
-> > +	return __task_cpu_possible_mask(p, housekeeping_cpumask(HK_TYPE_DOMAIN));
-> >   }
-> >   static int __init parse_32bit_el0_param(char *str)
-> > @@ -3963,8 +3975,8 @@ static int enable_mismatched_32bit_el0(unsigned int cpu)
-> >   	bool cpu_32bit = false;
-> >   	if (id_aa64pfr0_32bit_el0(info->reg_id_aa64pfr0)) {
-> > -		if (!housekeeping_cpu(cpu, HK_TYPE_TICK))
-> > -			pr_info("Treating adaptive-ticks CPU %u as 64-bit only\n", cpu);
-> > +		if (!housekeeping_cpu(cpu, HK_TYPE_DOMAIN))
-> > +			pr_info("Treating domain isolated CPU %u as 64-bit only\n", cpu);
-> >   		else
-> >   			cpu_32bit = true;
-> >   	}
-> > diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-> > index b91b993f58ee..8bb239080534 100644
-> > --- a/include/linux/cpu.h
-> > +++ b/include/linux/cpu.h
-> > @@ -228,4 +228,8 @@ static inline bool cpu_attack_vector_mitigated(enum cpu_attack_vectors v)
-> >   #define smt_mitigations SMT_MITIGATIONS_OFF
-> >   #endif
-> > +struct cpumask;
-> > +
-> > +bool arch_isolated_cpus_can_update(struct cpumask *new_cpus);
-> > +
-> >   #endif /* _LINUX_CPU_H_ */
-> > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> > index 8260dd699fd8..cf99ea844c1d 100644
-> > --- a/kernel/cgroup/cpuset.c
-> > +++ b/kernel/cgroup/cpuset.c
-> > @@ -1352,33 +1352,47 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
-> >   	return isolcpus_updated;
-> >   }
-> > +bool __weak arch_isolated_cpus_can_update(struct cpumask *new_cpus)
-> > +{
-> > +	return true;
-> > +}
-> > +
-> >   /*
-> > - * isolcpus_nohz_conflict - check for isolated & nohz_full conflicts
-> > + * isolated_cpus_can_update - check for conflicts against housekeeping and
-> > + *                            CPUs capabilities.
-> >    * @new_cpus: cpu mask for cpus that are going to be isolated
-> > - * Return: true if there is conflict, false otherwise
-> > + * Return: true if there no conflict, false otherwise
-> >    *
-> > - * If nohz_full is enabled and we have isolated CPUs, their combination must
-> > - * still leave housekeeping CPUs.
-> > + * Check for conflicts:
-> > + * - If nohz_full is enabled and there are isolated CPUs, their combination must
-> > + *   still leave housekeeping CPUs.
-> > + * - Architecture has CPU capabilities incompatible with being isolated
-> >    */
-> > -static bool isolcpus_nohz_conflict(struct cpumask *new_cpus)
-> > +static bool isolated_cpus_can_update(struct cpumask *new_cpus)
-> >   {
-> >   	cpumask_var_t full_hk_cpus;
-> > -	int res = false;
-> > +	bool res;
-> > +
-> > +	if (!arch_isolated_cpus_can_update(new_cpus))
-> > +		return false;
-> >   	if (!housekeeping_enabled(HK_TYPE_KERNEL_NOISE))
-> > -		return false;
-> > +		return true;
-> >   	if (!alloc_cpumask_var(&full_hk_cpus, GFP_KERNEL))
-> > -		return true;
-> > +		return false;
-> > +
-> > +	res = true;
-> >   	cpumask_and(full_hk_cpus, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE),
-> >   		    housekeeping_cpumask(HK_TYPE_DOMAIN));
-> >   	cpumask_andnot(full_hk_cpus, full_hk_cpus, isolated_cpus);
-> >   	cpumask_and(full_hk_cpus, full_hk_cpus, cpu_online_mask);
-> 
-> We should construct the new cpumask by adding new CPUs and removing old ones
-> from the existing isolated_cpus and pass it to
-> arch_isolated_cpus_can_update() for the checking to be correct.
+On Tue, 2025-09-23 at 10:44 +0200, Nam Cao wrote:
+> Gabriele Monaco <gmonaco@redhat.com> writes:
+> > Looks reasonable, can you work on the fix?
+> > I see Steve is out for conferences so this won't be too urgent.
+>=20
+> The fix is in my previous email.
 
-As for arch_isolated_cpus_can_update(), arm64 only cares about the new
-CPUs that are going to be isolated. But perhaps you're referring to the check
-above that excludes isolated_cpus while we don't care about the old set?
+I confirm enabled_monitors works with your fix. Feel free to post a patch a=
+nd
+I'll battle test it and include it.
 
-Thanks.
+Thanks,
+Gabriele
 
-> Cheers,
-> Longman
-> 
+>=20
+> I am guessing your email client is hiding the diff from you ;) (among
+> wrapping quoted reply, but that's not too important).
+>=20
+> Nam
 
--- 
-Frederic Weisbecker
-SUSE Labs
 
