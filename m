@@ -1,86 +1,45 @@
-Return-Path: <linux-kernel+bounces-828580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6462B94EC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:09:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 482DEB94ED2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C5493B601D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:09:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0BEA177EF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3163C3191CC;
-	Tue, 23 Sep 2025 08:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F423D3195F4;
+	Tue, 23 Sep 2025 08:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GJ36UmNq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FJCjAhIf"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC38274B55
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F3A31815E;
+	Tue, 23 Sep 2025 08:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758614988; cv=none; b=YJ+mr+9huwXbHZNqZR0v4182yqmWoaOOO5ujgDKK0wnOXOttfCpvgwosqKsW+DR2dJ2QyuuBU9JnBbZU560gLvFyhsDe8rGf1zQjASt5ta3RFvHNTZy8BWk5Lzwmps5clrbw7bd98x//5Po2ZUhysRKe3z2baR9KAnbfE4OPJSg=
+	t=1758615009; cv=none; b=IydRj0fp9X5VCdtH4azWqp6xjybCkMZJlCEkNt7fqRKr7T+hv13efRwcN55d7NoymwoY2nGfuSf3dYITmWxId3o0HSlY916AA3QbSN3zCsDsgL/60+kYIPyNAOhvxRPILSEuu2O1a9SIwTf7z5eBLGhF+U4ia+8uOkQ7dd5FVf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758614988; c=relaxed/simple;
-	bh=XbXMr+DHtmjBQ7kx6LVwr8HhiuD8bk+/gVj2rgPADac=;
+	s=arc-20240116; t=1758615009; c=relaxed/simple;
+	bh=GK6W2o2yxoO4wKeHSfnhUxQ3k4NiNOnEOep+Li3hwfo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nWL/gJ5FxQnTja19RV+lzZJPOJ+3Z7EBO7IVE7nemt4KhACqpdC6uvMCbWcOFZakpPzToc927NTf5LFuJH9OePVzjOkfc0i2oQ/FV6rPz/Xslqvm0hz/9Q3FqMjJODXHvrWibFQFny5DOU21CYnLoI2Lfa1jBXEo2hfN6zyPvKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GJ36UmNq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758614986;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sjew5omy6aBEynE/MbLFlpptKr9mVmWrE4MDs78qygI=;
-	b=GJ36UmNqf5w7K2mjBWFP51aeEWqle0Sy7fbnb74qc7UanxFuYyFYORC7+cbArCX8oY8H9x
-	UHVv72YmIoekPcUJF5fCxQLsWHcoeyn3A1RQRTFOUiRYPxcRq41rqawZLK0yALToTIGIqV
-	P8z28Q39bMGr863eCcHCI/aVTZKPFOU=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-217-6i6PZ5d_OEWpORLNbL2wwA-1; Tue, 23 Sep 2025 04:09:44 -0400
-X-MC-Unique: 6i6PZ5d_OEWpORLNbL2wwA-1
-X-Mimecast-MFC-AGG-ID: 6i6PZ5d_OEWpORLNbL2wwA_1758614983
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e19ee1094so15888295e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:09:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758614983; x=1759219783;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sjew5omy6aBEynE/MbLFlpptKr9mVmWrE4MDs78qygI=;
-        b=wbmP9IDlHCJdHPjhiiJWmmrFu2zmSvfbYr2vQe0N1XeXr+rUpwgCBjE5Cg9UQoFxNJ
-         hKQlJzOC5Dn/PBxk70kxBb/m1yBpONbC71RUetZmrLxYATUqCqBvZ12b8UPje6Iy2DQa
-         Y6bHGMQ2YIwqw+GOCEykL2qlU41dIoHhGbM2UqiekOfsIDeG/GCyosKQ65qc9Mu4p+m3
-         hzuXpyjHgcOtaq3CSIMoky3dyXE53Q8GKtJsutmrsvn8XPJ4uGom5XIxFP4d/OtMrqgv
-         7YeoFL0ILMKKYQ1Qs+8K+VYkUSapZf5W9/qlg67KipMToqDdo1C1rkO/pxb4XUldKa0C
-         yv4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVKqflgeiB0aCoAS/lB0s4OvnN6mNS0ZfZlabfiC9g8Y58XZCbgWW+tsYT1gpJv7wXAx1T5OkFArGYicu4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/DHD4tMU6f3yW9+n5YFnL9mhriATYTTqvBpyVmA6BvHt3iuD3
-	IPRCkuFSPG0Sa2Sfy8SoxuE/c4iZqa1L2z5BpwS6JYw88y3AA/VZLKD+l82VQCsF2hsWGxtrTgr
-	RgE3N7YUG+hBNNJF8Q3mfKSwCkUOBqzTfIjkoiFtZH1/xZ9+kq9JEmrqKS+6CgJrCMw==
-X-Gm-Gg: ASbGncvQreqgXFNAY7af6Ib1Wib62O9Pis9dC0uCvCOZvXGtaSgENjcpkp3lfPchHQj
-	U85Jr1uouMf613sNBqfCExsKhba3jYjZ3oDwzRguI21HCQK3PVMIY9/5b6T6Fib3Y5MgFFQ8dg+
-	TWIgOh1NcvPPfUqCLRw8Wheblkwbpm3FzLLod+COdHOuXBTHysSRqPqWxnd2/ixg9ANXMbJ0yC7
-	vUKsvjQCCsKi8sW1FcMYDxqchmFyshZAzyYUbCWll5lBWI2RfvPs1pZATJnJxunG7Vr7OSNzVGp
-	fcAsVZY6LwYfiSw6ZgK4tHIaMQdcoejCy/r16DGSBY99dFdGS/ydv5TJvMNI4+sMSjgHJSg=
-X-Received: by 2002:a05:600c:3b93:b0:468:7a5a:725 with SMTP id 5b1f17b1804b1-46e1d975205mr15348265e9.1.1758614983360;
-        Tue, 23 Sep 2025 01:09:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFqsDVDKIkEtvPSnkF6zOpO6YZVDfSuoPENxbkDrbFn5kbABwZWCfuv/jwB9uITJNaFWS+ksQ==
-X-Received: by 2002:a05:600c:3b93:b0:468:7a5a:725 with SMTP id 5b1f17b1804b1-46e1d975205mr15347915e9.1.1758614982971;
-        Tue, 23 Sep 2025 01:09:42 -0700 (PDT)
-Received: from [192.168.3.141] (p4ff1fd57.dip0.t-ipconnect.de. [79.241.253.87])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee1227cc37sm21400826f8f.7.2025.09.23.01.09.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Sep 2025 01:09:42 -0700 (PDT)
-Message-ID: <d2dca02c-ec5a-4b3d-92fe-2b3a3614b5df@redhat.com>
-Date: Tue, 23 Sep 2025 10:09:41 +0200
+	 In-Reply-To:Content-Type; b=JCi3x9TdsXWAfVWtzaWZYLWG9soJX30RS9fQMQ5eLEWuvj1QXfjvlMar7QsWpJbw6U6kbdesww/r/WKhKhJ7lRpQdHDCJp5w3QyD5B2Xg9iiOSFRckknFlwZ+FaqMJs667XI/6SnSYcl/IioK2/qocbHl9MYW5TKk0sKxrOL6AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FJCjAhIf; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1758614997; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=kgV6N3k9/Wc8oyqFWj6fu9j0StoO2o5pi55D5FleEKo=;
+	b=FJCjAhIfcQv786hJJ5GzRUglpGucqmdS1N85jhjQrn+AL4ztiZVRXtTORKMmvZ/rYzII+TeS/CLja3MbcHFCyImHAr7DfF3lCcTJG+LkYHJsCP0EqkMFzImG57gAJfaheKLqJp89LOJ0n8lVHU6P/Ni9iPhXkSMI0VmmGZNqMrc=
+Received: from 30.246.179.19(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WoeFI1T_1758614994 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 23 Sep 2025 16:09:55 +0800
+Message-ID: <8706188e-23b2-4cb1-b279-3b462ba9b9de@linux.alibaba.com>
+Date: Tue, 23 Sep 2025 16:09:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,81 +47,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 12/16] arm: mm: define clear_user_highpages()
-To: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, x86@kernel.org
-Cc: akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
- hpa@zytor.com, mingo@redhat.com, mjguzik@gmail.com, luto@kernel.org,
- peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
- tglx@linutronix.de, willy@infradead.org, raghavendra.kt@amd.com,
- boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-References: <20250917152418.4077386-1-ankur.a.arora@oracle.com>
- <20250917152418.4077386-13-ankur.a.arora@oracle.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250917152418.4077386-13-ankur.a.arora@oracle.com>
+Subject: Re: [PATCH v10 1/3] PCI: trace: Add a generic RAS tracepoint for
+ hotplug event
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: rostedt@goodmis.org, Lukas Wunner <lukas@wunner.de>,
+ linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ helgaas@kernel.org, mattc@purestorage.com, Jonathan.Cameron@huawei.com,
+ bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
+ davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
+ peterz@infradead.org, tianruidong@linux.alibaba.com
+References: <20250920060117.866-1-xueshuai@linux.alibaba.com>
+ <20250920060117.866-2-xueshuai@linux.alibaba.com>
+ <6bab311a-d5ba-133c-fddd-52899959445c@linux.intel.com>
+ <12c84bff-6863-4730-b08a-631df904aa12@linux.alibaba.com>
+ <fe2abb10-3847-af1c-12c2-193c32befe0c@linux.intel.com>
+ <fb87ff46-ebcf-450d-bfd5-b1ef52cda4be@linux.alibaba.com>
+ <acfde737-23b3-7b0a-65c6-01082a71e5e8@linux.intel.com>
+ <453b792a-23f9-6d72-f35a-60526b3e04e0@linux.intel.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <453b792a-23f9-6d72-f35a-60526b3e04e0@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17.09.25 17:24, Ankur Arora wrote:
-> For configurations with CONFIG_MMU we do not define clear_user_page().
-> This runs into issues for configurations with !CONFIG_HIGHMEM, because
-> clear_user_highpages() expects to clear_user_page() (via a default
-> version of clear_user_pages()).
 
-I'm confused. Can you elaborate once more why we cannot take care of 
-that in common code?
 
-If it's about clear_user_pages(), then you can just switch from 
-!IS_ENABLED(CONFIG_HIGHMEM) to ifdef in patch #11.
+在 2025/9/23 15:34, Ilpo Järvinen 写道:
+> On Tue, 23 Sep 2025, Ilpo Järvinen wrote:
+> 
+>> On Tue, 23 Sep 2025, Shuai Xue wrote:
+>>
+>>>
+>>>
+>>> 在 2025/9/23 14:46, Ilpo Järvinen 写道:
+>>>> On Tue, 23 Sep 2025, Shuai Xue wrote:
+>>>>
+>>>>>
+>>>>>
+>>>>> 在 2025/9/22 21:10, Ilpo Järvinen 写道:
+>>>>>> On Sat, 20 Sep 2025, Shuai Xue wrote:
+>>>>>>
+>>>>>>> Hotplug events are critical indicators for analyzing hardware health,
+>>>>>>> and surprise link downs can significantly impact system performance
+>>>>>>> and
+>>>>>>> reliability.
+>>>>>>>
+>>>>>>> Define a new TRACING_SYSTEM named "pci", add a generic RAS tracepoint
+>>>>>>> for hotplug event to help health checks. Add enum pci_hotplug_event in
+>>>>>>> include/uapi/linux/pci.h so applications like rasdaemon can register
+>>>>>>> tracepoint event handlers for it.
+>>>>>>>
+>>>>>>> The following output is generated when a device is hotplugged:
+>>>>>>>
+>>>>>>> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
+>>>>>>> $ cat /sys/kernel/debug/tracing/trace_pipe
+>>>>>>>       irq/51-pciehp-88      [001] .....  1311.177459: pci_hp_event:
+>>>>>>> 0000:00:02.0 slot:10, event:CARD_PRESENT
+>>>>>>>
+>>>>>>>       irq/51-pciehp-88      [001] .....  1311.177566: pci_hp_event:
+>>>>>>> 0000:00:02.0 slot:10, event:LINK_UP
+>>>>>>>
+>>>>>>> Suggested-by: Lukas Wunner <lukas@wunner.de>
+>>>>>>> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+>>>>>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>>>>>>> Reviewed-by: Lukas Wunner <lukas@wunner.de>
+>>>>>>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>>>>>>> ---
+>>>>>>>     drivers/pci/Makefile              |  2 +
+>>>>>>>     drivers/pci/hotplug/Makefile      |  3 +-
+>>>>>>>     drivers/pci/hotplug/pciehp_ctrl.c | 31 ++++++++++++---
+>>>>>>>     drivers/pci/trace.c               | 11 ++++++
+>>>>>>>     include/trace/events/pci.h        | 63
+>>>>>>> +++++++++++++++++++++++++++++++
+>>>>>>>     include/uapi/linux/pci.h          |  7 ++++
+>>>>>>>     6 files changed, 110 insertions(+), 7 deletions(-)
+>>>>>>>     create mode 100644 drivers/pci/trace.c
+>>>>>>>     create mode 100644 include/trace/events/pci.h
+>>>>>>>
+>>>>>>> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
+>>>>>>> index 67647f1880fb..bf389bc4dd3c 100644
+>>>>>>> --- a/drivers/pci/Makefile
+>>>>>>> +++ b/drivers/pci/Makefile
+>>>>>>> @@ -45,3 +45,5 @@ obj-y				+= controller/
+>>>>>>>     obj-y				+= switch/
+>>>>>>>       subdir-ccflags-$(CONFIG_PCI_DEBUG) := -DDEBUG
+>>>>>>> +
+>>>>>>> +CFLAGS_trace.o := -I$(src)
+>>>>>>> diff --git a/drivers/pci/hotplug/Makefile
+>>>>>>> b/drivers/pci/hotplug/Makefile
+>>>>>>> index 40aaf31fe338..d41f7050b072 100644
+>>>>>>> --- a/drivers/pci/hotplug/Makefile
+>>>>>>> +++ b/drivers/pci/hotplug/Makefile
+>>>>>>> @@ -65,7 +65,8 @@ rpadlpar_io-objs	:=	rpadlpar_core.o \
+>>>>>>>     pciehp-objs		:=	pciehp_core.o	\
+>>>>>>>     				pciehp_ctrl.o	\
+>>>>>>>     				pciehp_pci.o	\
+>>>>>>> -				pciehp_hpc.o
+>>>>>>> +				pciehp_hpc.o	\
+>>>>>>> +				../trace.o
+>>>>>>
+>>>>>> To make it useful for any PCI tracing, not juse hotplug, this object
+>>>>>> file
+>>>>>> should be added in drivers/pci/Makefile, not here.
+>>>>>
+>>>>> Make sence. How about adding to the main CONFIG_PCI object:
+>>>>>
+>>>>> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
+>>>>> index bf389bc4dd3c..d7f83d06351d 100644
+>>>>> --- a/drivers/pci/Makefile
+>>>>> +++ b/drivers/pci/Makefile
+>>>>> @@ -5,7 +5,7 @@
+>>>>>    obj-$(CONFIG_PCI)              += access.o bus.o probe.o host-bridge.o \
+>>>>>                                      remove.o pci.o pci-driver.o search.o \
+>>>>>                                      rom.o setup-res.o irq.o vpd.o \
+>>>>> -                                  setup-bus.o vc.o mmap.o devres.o
+>>>>> +                                  setup-bus.o vc.o mmap.o devres.o
+>>>>> trace.o
+>>>>>
+>>>>>    obj-$(CONFIG_PCI)              += msi/
+>>>>>    obj-$(CONFIG_PCI)              += pcie/
+>>>>
+>>>> Yes, that's the right place to add it.
+>>>>
+>>>
+>>> Thanks for confirm.
+>>> Will send a new version to fix it.
+>>
+>> I actually now started to wonder if it should be made depend on some
+>> tracing related config (sending this out quickly if you were just
+>> waiting for my confirmation to send quickly... I'm still investigating
+>> what other subsystems do).
+> 
+> Probably this is what we actually want:
+> 
+> obj-$(CONFIG_TRACING)			+= trace.o
+> 
 
--- 
-Cheers
 
-David / dhildenb
+Thanks for the input, lots of trace.o, e.g. for cxl and nvme, are compiled
+under CONFIG_TRACING.
 
+Will use CONFIG_TRACING :)
+
+Thanks.
+Shuai
 
