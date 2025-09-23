@@ -1,202 +1,192 @@
-Return-Path: <linux-kernel+bounces-829509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0EE3B973CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:48:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC2AFB973C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A7C52A5FC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:48:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E59D4A014F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DAE2E03F3;
-	Tue, 23 Sep 2025 18:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6923B2E040A;
+	Tue, 23 Sep 2025 18:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BVC648B9"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aZ43P1XN"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012035.outbound.protection.outlook.com [40.107.200.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A0F20A5C4
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758653276; cv=none; b=P/1r37oD/5dy8j5Zv98DQdJ/klqjZpZVGjr55NKoiT9Bwd88mSi5Mm2GYeFK2th66RWLXODpIwQKdRV7VNb36Qd/EyK+DzSM0XV9c+4jqaMhMhGnyQwFss1AMIGdq9QoMv6mw0eSuP4UTO9NL5rsOcp9TK+NhGO+AFwPD9c5ZcU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758653276; c=relaxed/simple;
-	bh=cy98AD+VvA17EAgjEI6Mid/6jxyY52MxEfyhK67L+9s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qO0wvIGhgVp4v9i2qNbJYwWTCPB3fUzSc/P4TrkqaG5vQ2OB4LiVhlRfVe3qnXhMR6TnMxYCpAjUl8jabTzaRBtpfE03voal4xcw581acyDMusdfSgzAoabfMtTGYLOtClDx6wu2lThtprfTvRY1iaUf/rzCyRkV/InPGroOd18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BVC648B9; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58NGWFMC001810;
-	Tue, 23 Sep 2025 18:47:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=HWyBjhPVJ9kEj0HOT
-	4mbQ4gfG9Y9bTTGVqTNTNBk6tY=; b=BVC648B9HlQljWqjRK/jiReSAc1o886UC
-	YyS4reWADYAbpByN/hQpk0FOGhLHWM3h5mps2AngAFiOXIY6Ppveu/SuDeeq1+65
-	pTwCS2l+OLnSA+ImWCG2IY5HVeHJ6jziwJu91G9PiT1XWLxeCiVZerRMnQIBdqDb
-	tHcZGt8ynYUyd6N/5rML0RXSuAT9z/ppcAk3BIyv8EAydbqy9ufKulJRDXpWgHNe
-	ZrQ1YV3jN/V4N4sLSW1yMk/B+6IGvd0HZzcpqYbOAByqndiqOd4uSa0/b8IlGEAN
-	PHbkYnqoMXTZ+hxGuD2NsLymWctm3hiPcrKeu5Y2L1N84jjQZp7rQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499hpqavsy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Sep 2025 18:47:35 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58NIXptq026441;
-	Tue, 23 Sep 2025 18:47:35 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499hpqavsw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Sep 2025 18:47:35 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58NHB2KJ030356;
-	Tue, 23 Sep 2025 18:47:34 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49a9a14ptr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Sep 2025 18:47:34 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58NIlUPG31850796
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 23 Sep 2025 18:47:30 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9E33A20043;
-	Tue, 23 Sep 2025 18:47:30 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D66DB20040;
-	Tue, 23 Sep 2025 18:47:27 +0000 (GMT)
-Received: from li-218185cc-29b5-11b2-a85c-9a1300ae2e6e.ibm.com.com (unknown [9.39.28.7])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 23 Sep 2025 18:47:27 +0000 (GMT)
-From: Donet Tom <donettom@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>,
-        Donet Tom <donettom@linux.ibm.com>
-Subject: [PATCH v3 2/2] selftests/mm: Added fork inheritance test for ksm_merging_pages counter
-Date: Wed, 24 Sep 2025 00:17:00 +0530
-Message-ID: <e7bb17d374133bd31a3e423aa9e46e1122e74971.1758648700.git.donettom@linux.ibm.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1758648700.git.donettom@linux.ibm.com>
-References: <cover.1758648700.git.donettom@linux.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0881978F39
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758653239; cv=fail; b=dnKa0TnZdJckNZ9NIAuLaF/pGjyCHO98k61CfnPPL4c+6jZ2Xmh9W+1BdYn0GTsg8xd5XsV9dFuLcxvsilpMwUZup6YsZ4sNJdRLLrsovVz2+kKc+1ocpVI82N3L8ffVzR81nQBCGWoeCSDtlUnTIMbgWQ3BKy+x7h3trwXH/4U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758653239; c=relaxed/simple;
+	bh=jN3we/1FlZ63ASNUXmerXaUznSU2qb4VAG+j/fy8XEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=olG81xUXzJZPuiKBF/LFWW+0/k4zotTZFHtVodPksnDIA3wWuGRRn1P+qr9W024Cy6gWtwxST0Mb+ShHUFozSytPb/UpvM77pyZxYLWd4E7yLpNXc2qYWvgJBMRb/RNYsbgtZmjT795ko2VLVm/A/OFdX39BJ8ChqRd21DbjJ9U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aZ43P1XN; arc=fail smtp.client-ip=40.107.200.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=W5H/fZmjggOR4inEvmrkppaqNItD3ByDvDne19uGKkeLt4dogsLnXakJlsVEmhq6V6n/xapd1UfJLNJp8X+plNxZi8YrSmlmG38dPo3urSDnc117W3e6mhLlreuIDhSZolxVcJSWp3UXDlvBpTzQodxaCD1MB68iRO4K6t1GsJw6Wz2oW3/3n4+DqsdmOPt/ld6Y5KWxHo/FIT++bBaEUYyQwyWxolUbx3zw+IqJqeLUtA9SI2haVLxj8dc5BuL5Rw345iE54Em9uGDNYvexNUviEPB/VOyy/1efO3PGCQ+CT48z6S/biJUinZzbs1lysLxYz77I9ebZ3XpfPDHz8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hKvIxvqwoW1RdsgX3I9pBbMCCwxb5r3d6XnR3nf77vE=;
+ b=rC0zACQqpP5Zrxe+w0ejryWQMEBK26Ir1c7cADqk7rGAmKRwfSja1uUhyjPlAN5k1pcvJ/li6XgSHFrSRcC6qiV5qQ6n/aQGz7i9Sw/wTeRi9aOyk/45k1D/3jEwip4zNfRdxbEQbj+RXKb6e2VMdThnnzy0Zv0zywtH7dV3i0VKQfXm6aroyYC5G51VupPQH6Kt3/Pd5xpq1FBxnGkO6WLpBzFFW7UU4DPe29D6ZZ64R9Zung8dMnmw1yvvJqAD03bGpLucTdRz6gOUdupGwmm9C3tA6fKc/xah+gzSJ+pXX/0CT2+7gHRooeC46gpzSKRUPBReXJOCqrJAhFHZTw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hKvIxvqwoW1RdsgX3I9pBbMCCwxb5r3d6XnR3nf77vE=;
+ b=aZ43P1XNEpUSVGAtRRrCtOi7diq/Qnmro6SpujumT1Onwfz/sruOwIq7nN5cR/4Fl7nxRXY4bvDWGXpEwj8sOsafqgGrUMnv4i71mVJlB/he/Z18lT52/oTaTVS6nX5RpAmZdqh6V0QPbCNqAnFgbFp1AQFCuuZNa6g+g0PHTeXDmD0d4dagQXkBw0N+RRbH6F6+HH0EznH7cRi7X8mrSl3lnB+xKzudESiAb8CLn8Fcsr6/plaG2JPChw9fM1daJu0mLi4QPlE8GFT9ceNoRCcQSyeJ8GC7NMM/Ye+B9YRbPUlYCeyQrBfcTBnfpcdDFdZrID2nwz9EeoBsqBloSg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by DS0PR12MB7632.namprd12.prod.outlook.com (2603:10b6:8:11f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.21; Tue, 23 Sep
+ 2025 18:47:13 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 18:47:13 +0000
+Date: Tue, 23 Sep 2025 20:47:11 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
+Subject: Re: [PATCH 1/7] sched_ext: Use rhashtable_lookup() instead of
+ rhashtable_lookup_fast()
+Message-ID: <aNLrL4QKoaljw01m@gpd4>
+References: <20250922013246.275031-1-tj@kernel.org>
+ <aNJJydxk8ItUpBJd@gpd4>
+ <aNLD8w2ZILVbERwG@slm.duckdns.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNLD8w2ZILVbERwG@slm.duckdns.org>
+X-ClientProxiedBy: PR3P191CA0052.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:102:55::27) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=FrEF/3rq c=1 sm=1 tr=0 ts=68d2eb47 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8 a=kDUdi5sUuU8vu5WplE8A:9
-X-Proofpoint-ORIG-GUID: vlt0YarwwCCxvHbw-JMZk4CEYbXmuZA8
-X-Proofpoint-GUID: a1KWKaFoKTLeUCEZkN4FVGuLStWLiyIR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE5MDIyNCBTYWx0ZWRfX6m/w6mNclBpP
- mncaMBnW6ImU+kpNZquOQScJDv76v9VLQr8mDpW0eDqVf5ekUqARuljD6GzslFba1aOngp8Biau
- q7z0UlD24w+YWAHqcKGjL4txIWGFjzJEu3H1dXtG1kGxX1H9P1khPgUBYdkjxoT4tAgSk+OLu+D
- mW+ipyyXalQqM2vVisSNC8hbgB+PEP9OFBX2wM8lmbQK8cfE0342o1X/oH6TJBwBUS3Wig/HKYA
- 7wYM7PqByMsMsAKzCro3Esm/1fRvh5IHwHjcXtSw5Ea1PPqLLkhh9OtntPfwa3PGFLud6EuT/QK
- sQtK63L1Hf4v1dhC4uXJ5WaEIoDArns8Kz9n9qF4rGV6lXXzw1RfEjMXWGtD8ugkzjeLkn6KeB3
- S5w+AZrP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-23_04,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- clxscore=1015 impostorscore=0 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509190224
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DS0PR12MB7632:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0b00a96a-ee7d-4d52-38d2-08ddfad19c6f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KJY7P5MP712SFCVbreThJLG5MS7+UFubRAp4m5SAq6r+GyMLSZGV7fWkh3Ku?=
+ =?us-ascii?Q?QS05xEYya0fg9SMJyflqCpu3T3YP6484u6AKVz88AhSgKqDMeIyoqBSUS8pj?=
+ =?us-ascii?Q?3cyZ2HwgQFv1EY4r9imHrtQSBRL2GzPRwHj3BiR3d1ybmfXTNu5SMNHy0j9R?=
+ =?us-ascii?Q?vw3RAqjjwej7EzyZn9UnBPTnTYUqJnRxTMQUMw3EbwqeMxuCPBclE57jlW8o?=
+ =?us-ascii?Q?KqQPyt9dI1Oa6vmi6lwbbcgzR4/6p9CH9Se1WOU3xkhT0TSRDXWvhaaM0fYt?=
+ =?us-ascii?Q?UYLb8S/3OypaYWout3EhtD7tb2rRB42mYQ0P53fJ0UvaddPT3oDjS6sMGYvx?=
+ =?us-ascii?Q?JRZykzr/JrPRsmXjMkC+qK+FOPCXN3dDqT22UH12a3OYtK35MUjdPbHfwxny?=
+ =?us-ascii?Q?8CHvQzw/hro88CPABIzbW6gZ3MHEJ1U6Qu7Mv9Y3UE+ZEdNT2j+3JZwfiRO9?=
+ =?us-ascii?Q?xxoMIN2tHbRKTfq+xq+rDjPcUNrh/qJpScL3u5T1CyFdr+hcfoLO4iaLQKhr?=
+ =?us-ascii?Q?93j8VxGVeASKaZ/4vXR/brpt8MNvG9xkgKzuppA9DwJh+PgaEC4/13vG5ref?=
+ =?us-ascii?Q?CbB8Ltj1QG/fT2k+6jZg9OG9kYyhxhpg8WnYnnRE24GeBHu9nn42KHjHVnES?=
+ =?us-ascii?Q?LYBkIk3u/DGv3bQw0zTp1MEZr/BWaJWd/bWL/xQ5EmpvVaRW9+wkK+5hzjK+?=
+ =?us-ascii?Q?sH8u4XZ25KI0VLCQszvz1S9B1LfqL6aH69fIWew+b5z2FKqwP2RASVg/Lqd2?=
+ =?us-ascii?Q?9ZFPWNylca6q+3WZUq85DF343oem6a43TYbUlHSuMiKOuf01fpVUhaHVCFb1?=
+ =?us-ascii?Q?UfedMbepYCLjXa+30DjmRU+Sqw/AOzVZzh2uglbVC0tG463kyoLVEdybncPU?=
+ =?us-ascii?Q?+2rMBKKC5gdqT0DbvnIsMimTqtzRZdtPGTSacGnamn4w5lXW6A1PoBPiZAYu?=
+ =?us-ascii?Q?zeJsYTueNWeAFkswJGU022auiO0jHbfb/wTPEvNzq23f0Wb8jMqxZ1C69DqF?=
+ =?us-ascii?Q?3pk/m1fjh4TkQ2GSt6umRHAt6dEp+kAJxl20hNmeJ/a1nkFOCM0qnD6N5gHL?=
+ =?us-ascii?Q?xzk/DOiMH5S8EHkJYfr4p7IZUmht+Wg95DL90hY8iJeVRdqpQJo5T5sLOxIj?=
+ =?us-ascii?Q?SMvBPMi3C2W7zXsLAbdyIuw1Y8nLQn3LClTC0j5rd0osp5WDpxpHQ6PvCLyw?=
+ =?us-ascii?Q?ZP3W3LmblM8WReogbaDYRcJdRBIL+gspz6wmxgz8pJ6I40RFYfH7atiyQTN2?=
+ =?us-ascii?Q?v+5wElD6LCUf9ELpprUXuJvI54rSi1ygrysUWyWSRqJDI+0VnW+qE/MBcJoI?=
+ =?us-ascii?Q?bAatQLCFwwF/gaEAS3RRELIVS94vmAa/JEME9nbzQn7jTat3VCbtNtzJwntc?=
+ =?us-ascii?Q?QDuYvTtLMrCSiI5kLO+CSD5Js4FV2mg4dN/Qtk1gZWn4EHRJ6rDChuPYQ4xt?=
+ =?us-ascii?Q?bpnvJlA/Gi8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?mAn3zHnEhhLfomY2PSxK1Ngy604vSVFptY9lGlOlFaLJMA2ZJfgGtzuyNXQ9?=
+ =?us-ascii?Q?YtI+hlCa/tjfnV386cm/WwsuxXpwES3ht5Qjhv45+S6vz8Itky4fNts4Sa6s?=
+ =?us-ascii?Q?gVSE0sr363NDPrE9sy5k67jKqTOAjyAAD8CChVASjcmPvga73KHH1pWwcFt/?=
+ =?us-ascii?Q?rY58P6fnRkDFfEJdF5Jpb2dXgkd9FlE+ELVHOp5E1afsKeg1MpdnUN654q0+?=
+ =?us-ascii?Q?IDenmMULnDDYA/eRDD9rgb1Xv9xD1nNY8kLmiyXj4JT+w+xY6DM7noidxjzJ?=
+ =?us-ascii?Q?95+wGpWNyAjuXgDlmx99r4fVa9DuVDsYp25ky2VmAJxekhWXo70rp6dYHmt7?=
+ =?us-ascii?Q?FlCsiQMo4Fa7Bs1d2oWmp8ys4+Vq6u9DajoXtUkoXqcOV8o8rSt12KnxSJ40?=
+ =?us-ascii?Q?wVU/rx6rAAKj9otm2Gl4+RSYJQfrvjAAjAtTpR4HTa5tbKzScOK89p++i7Mo?=
+ =?us-ascii?Q?QqhNJK0MQ7jRrXNBqxiqV/ycCDMKW1johE/wlYQ7kWuOKVJ8IiKLZwquW0YH?=
+ =?us-ascii?Q?gOUvaVtSqSaYCDTc2oABdXm5x83dGaDyNURwKYqlqu9SqAsyWvumet7aqWjF?=
+ =?us-ascii?Q?1u1Q3pt+xxONujYeMfET7o6pGdiDp87zXeQMFii6flEKxlHMKF7WVdPjvU7a?=
+ =?us-ascii?Q?S8Zy/D1yQE5Wce13W7OIx7SAL0ji4hWsjfOw2a7iTLXMzDe3VM80QehyVp4k?=
+ =?us-ascii?Q?gG0LGJxwvz2EEc0dhk5o5IVm5LwbLw5dQ35Tx2HRHfcMJRHAoRa7wWy4myap?=
+ =?us-ascii?Q?xGs1bZbesWiWd24U1AlbK6uNEyfvoUN0Xpwm2Xmhl4/Kn6TCP2oI52+Axrgs?=
+ =?us-ascii?Q?D9x4cP2dvD8C8+dt9/IdeMJ7Rr59I3hf8KF/mXA3xi10H5CPDzTlAa4JO9fu?=
+ =?us-ascii?Q?eOrHGaz1g+1Mn5c25oS98Ye9GMH2hhKvdNhanaY9f3HulBfdKOQg4tQy0VGz?=
+ =?us-ascii?Q?MFTVj6GeOd4I+Q7RoLcCn3mBmgUjLDvOvj6tV8+KwihOCTQraReMVsObzNzt?=
+ =?us-ascii?Q?2+efGx/04aHPb+6fa76iYO3g5OdLZztuGD2EMExlw2bBu3kGCVWQKh4tXxjG?=
+ =?us-ascii?Q?KfB3MvLYgv80wnHOFu5C8rwogUWHzmjup70iZPY7AILBlMQZ59zXExTr9Kpv?=
+ =?us-ascii?Q?R4wa4Oo9SLxw2qQFkRXsHEFJbXtqM8Li1hmGIdpBwaCYa9QlXkxzDdjmJclR?=
+ =?us-ascii?Q?9LgUzkYh4Gn5i0gjsfQKTgGF/kFhzS60T34n4GIVpUMSPbHyDrvmYZrrPNT5?=
+ =?us-ascii?Q?gOgCdHhD016fWTrpRoaKEFp4mte9mid/h+Fd5FqpxhHxPJ1CM8gE22pk9TYa?=
+ =?us-ascii?Q?dGShMyxPIgCM5PnokQuxpRjHe1j5XNSiY/snriKQH0EN/bJJ01zPsW3rz2zz?=
+ =?us-ascii?Q?za0u+rPLDZqdSGHGUnp1mkk25k3mw8cyPpZmsHXXvsto85ZlOmFBYFyHkx7R?=
+ =?us-ascii?Q?5fFucC8SsQCkncV2dL9K9BSy8MMXgBVPn3tdzjUw08/6mxLiTG0JExSzuM11?=
+ =?us-ascii?Q?SaPGPhX8GRz02QLIugkxf3P0z4FzlrwgA7Hpr7Bp1Qlhouif/br2fTU3+NuT?=
+ =?us-ascii?Q?xIp2JFL8l1EpvavpDJh0EKln3OMmDeMNeUdpLkk6?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b00a96a-ee7d-4d52-38d2-08ddfad19c6f
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 18:47:13.7237
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nnTz8T4Ci4mu+QGAq6sHR9RvD6No3IGTBCuo2Qh7VrKsNWbO0hL9EY2ax7NT8tV9waO2DPBcLXWLvp/MgyelyA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7632
 
-Added a new selftest to verify whether the `ksm_merging_pages` counter
-in `mm_struct` is not inherited by a child process after fork. This helps
-ensure correctness of KSM accounting across process creation.
+On Tue, Sep 23, 2025 at 05:59:47AM -1000, Tejun Heo wrote:
+> On Tue, Sep 23, 2025 at 09:18:33AM +0200, Andrea Righi wrote:
+> > Hi Tejun,
+> > 
+> > On Sun, Sep 21, 2025 at 03:32:40PM -1000, Tejun Heo wrote:
+> > > The find_user_dsq() function is called from contexts that are already
+> > > under RCU read lock protection. Switch from rhashtable_lookup_fast() to
+> > > rhashtable_lookup() to avoid redundant RCU locking.
+> > > 
+> > > Signed-off-by: Tejun Heo <tj@kernel.org>
+> > > ---
+> > >  kernel/sched/ext.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> > > index f5873f8ed669..df433f6fab4b 100644
+> > > --- a/kernel/sched/ext.c
+> > > +++ b/kernel/sched/ext.c
+> > > @@ -207,7 +207,7 @@ static struct scx_dispatch_q *find_global_dsq(struct task_struct *p)
+> > >  
+> > >  static struct scx_dispatch_q *find_user_dsq(struct scx_sched *sch, u64 dsq_id)
+> > >  {
+> > 
+> > Maybe we should add a WARN_ON_ONCE(!rcu_read_lock_held()) to make sure the
+> > assumption is correct and catch potential non RCU read locked usage in the
+> > future?
+> 
+> rhashtable_lookup() already has that as it uses rcu_dereference_check()
+> internally.
 
-Acked-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Donet Tom <donettom@linux.ibm.com>
----
- .../selftests/mm/ksm_functional_tests.c       | 43 ++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
+Oh that's right, I see it now. Then looks good.
 
-diff --git a/tools/testing/selftests/mm/ksm_functional_tests.c b/tools/testing/selftests/mm/ksm_functional_tests.c
-index 712f43c87736..ac136f04b8d6 100644
---- a/tools/testing/selftests/mm/ksm_functional_tests.c
-+++ b/tools/testing/selftests/mm/ksm_functional_tests.c
-@@ -602,6 +602,46 @@ static void test_prot_none(void)
- 	munmap(map, size);
- }
- 
-+static void test_fork_ksm_merging_page_count(void)
-+{
-+	const unsigned int size = 2 * MiB;
-+	char *map;
-+	pid_t child_pid;
-+	int status;
-+
-+	ksft_print_msg("[RUN] %s\n", __func__);
-+
-+	map = mmap_and_merge_range(0xcf, size, PROT_READ | PROT_WRITE, KSM_MERGE_MADVISE);
-+	if (map == MAP_FAILED)
-+		return;
-+
-+	child_pid = fork();
-+	if (!child_pid) {
-+		init_global_file_handles();
-+		exit(ksm_get_self_merging_pages());
-+	} else if (child_pid < 0) {
-+		ksft_test_result_fail("fork() failed\n");
-+		goto unmap;
-+	}
-+
-+	if (waitpid(child_pid, &status, 0) < 0) {
-+		ksft_test_result_fail("waitpid() failed\n");
-+		goto unmap;
-+	}
-+
-+	status = WEXITSTATUS(status);
-+	if (status) {
-+		ksft_test_result_fail("ksm_merging_page in child: %d\n", status);
-+		goto unmap;
-+	}
-+
-+	ksft_test_result_pass("ksm_merging_pages is not inherited after fork\n");
-+
-+unmap:
-+	ksm_stop();
-+	munmap(map, size);
-+}
-+
- static void init_global_file_handles(void)
- {
- 	mem_fd = open("/proc/self/mem", O_RDWR);
-@@ -620,7 +660,7 @@ static void init_global_file_handles(void)
- 
- int main(int argc, char **argv)
- {
--	unsigned int tests = 8;
-+	unsigned int tests = 9;
- 	int err;
- 
- 	if (argc > 1 && !strcmp(argv[1], FORK_EXEC_CHILD_PRG_NAME)) {
-@@ -652,6 +692,7 @@ int main(int argc, char **argv)
- 	test_prctl_fork();
- 	test_prctl_fork_exec();
- 	test_prctl_unmerge();
-+	test_fork_ksm_merging_page_count();
- 
- 	err = ksft_get_fail_cnt();
- 	if (err)
--- 
-2.51.0
+Acked-by: Andrea Righi <arighi@nvidia.com>
 
+-Andrea
 
