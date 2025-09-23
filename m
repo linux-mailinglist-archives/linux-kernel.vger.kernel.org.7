@@ -1,110 +1,161 @@
-Return-Path: <linux-kernel+bounces-828684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294D1B95314
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:16:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D17AB95320
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D602F17187A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:16:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25D2F1900F68
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B3430F547;
-	Tue, 23 Sep 2025 09:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A892F5320;
+	Tue, 23 Sep 2025 09:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BoGDgFtM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="InAwZqWU"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EEB2F0694
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C6731BCA3
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758618959; cv=none; b=FWFMWRMge92bTOP8m2l7kiRp375hoKtr8PhtVZLJ15GKl1Nit5ZRR4ksniuJ8jiCH8cqFjtcY4Uq/zzxISJIbWEe5GVKHRetPFt+7gD5wGPe36OrqeVrDTgBgXA8gApODMVRKHnPkTnwA/jfnnabGCVGMM2efKYoqS5WtK7PA9Q=
+	t=1758619009; cv=none; b=bjLdB2JaGUQggqRv7PEViexPyeoQFZuk37HN2QX/EO6tOWciqPmuT08KOqWnq6IdgmONkPTzKyEXdIuCe6BFMJmb7iY2eSod1dRwI6LybMI8uVCW+ODXKpKraCK53JBrYZvaxpC1Kz5CexDL0vUYoOQM9EVrJw/Dg8v8FEu/aCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758618959; c=relaxed/simple;
-	bh=r4W0Q7yRk/k7WLrEVInb2E7qxaBJKWjWLrpOkCyodBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=plpZzawqfvEBz1MnhH8Wq3y28vOsfKm2MW6p8yK1wkfhuWt0JQkxEmSSB+o1RMVlieSTXRiO4iQJ/3n3dfuZY2o6duaZD+uv/PJWY0+6ctFnmm7zvB76J2zSfWXEqkPX49i1GLJ+bbM7jljjk9MKo9Yfr0pyP/ATtDKFsJsAhaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BoGDgFtM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1553C4CEF5;
-	Tue, 23 Sep 2025 09:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758618958;
-	bh=r4W0Q7yRk/k7WLrEVInb2E7qxaBJKWjWLrpOkCyodBQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BoGDgFtMQq48xPvsST4FJIg46n8eXsOuP9ExIEtGDHMeBSocOKY1xAxDi+Vwzkz3B
-	 nyLRFTPQG2AHLGiQ5LkzSyDlmgkZY5B6wKs7RUhzbuJNyTMBHFvPGezBjF+ffVUwB1
-	 AZhdM9fGHLC+YH6AR1KFZQkJahAIJq7lPfEXVmWeWB5MFeNamh+IKKkBHFe97WepYl
-	 oQGjz1PdSrrUpHzLOR3onl3QMfQP7yJOO2wRlFeYMYk0uH/AmvUF7t+EGB8nuN0DOR
-	 3RIf87V6F1loyQ5nZcMTZQY6eyhLXFLmUNWqdI5zcXvsarigqZIRGG4wsOZwYQoDSD
-	 I4pA/yjUWybOA==
-Date: Tue, 23 Sep 2025 11:15:55 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Jyri Sarha <jyri.sarha@iki.fi>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/29] drm: Implement state readout support
-Message-ID: <20250923-spry-aloof-bullfrog-4febcc@penduick>
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <abd349f5-48eb-4646-aca3-d70dd9f4bff0@suse.de>
+	s=arc-20240116; t=1758619009; c=relaxed/simple;
+	bh=BqV7fnshOuZOLvnQTQDzPqM3jHRWFgEzs7aBVAUhzrk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GaMIblGhHWD+JRt6SQ1hdENCe4v5Q9RiqGpr5nB3AYbclMBOyZKde92T/psHCuhhSlMkdh0vVL8+KlvbHe3HRvUI8zx/BsPQ1UfYiU525qGn7Jc2LB0QSsvgAOyI1r6+EN78KazBA+UvlHqdpNeMcbL6UG/YosAX0mJ4PfPElwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=InAwZqWU; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-267fac63459so50715435ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:16:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1758619007; x=1759223807; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4mMHBSR6iVN6xpeCcQzalGxMENnFCjeMLhkVbx6JQl4=;
+        b=InAwZqWUOV4DkuiebfzFy3YvX3aQIXJCjq5zLEZ8rHuQtg0H6evzj/e1ShkZ3sPMdF
+         qRdg4OiUrJzmbV27uBFZGk/ELQQfFI9J5I679TeTwYg6aMAsnLvpCc+7SXLGA4YOItYW
+         04sbQbShSfZ/BMcqvGPM94A958muMpUOXR1Dt/D+rYt+x2Iu45Rd39X8uHoszkZYfcqm
+         Cu7NLgthrpOiHYgOatWyyPhohuzdrkpnWWBvGwrvu0aWKffwot/8vOm8VxJSTySSaJxO
+         gJwfAj2qVjTt2lZmn2dINESgiClWMSzbwR59mZICr+y2xDGXsXsMhrtwIi2xahclwgBJ
+         M0Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758619007; x=1759223807;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4mMHBSR6iVN6xpeCcQzalGxMENnFCjeMLhkVbx6JQl4=;
+        b=fC4jxtc6Y2of4HaM0KFLm1UhKLIC/6PR4CP2cQ33EMFiTincJEsDdr+iwZX2fhsmc/
+         LJJLQGf74v5csDCQcOjJB0ZeLlzCheb3mAslNGU994e8E7NLKn2QnryZ414yk8rPTFEU
+         1ZFB7EZ4kHrMuHALerQB/0+e/xIfszaBpobt9pG80GWZ9GtVdlu5B64rDeccp+Et25vJ
+         Ib4Bu/+tt/Qx3Ra7J5VRQ5M6N/+Em4AuSdiG4armRBHK+LljfdRN/crWehGEpw8URx0s
+         lWnLMO1+TG97ThlvJoKRfnNlRRg+DoRXjtJrjwq0fkCXz8QwMUuM0fCKSqyL+DjvLD+r
+         y5Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCW69L6RQ9wucwmfGSDINoHL2Ij3AdqVYbtFP7OxjVwJPme0F26vXDqvv1GnVtmhGciB/Rf7PF2Dxra8mXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpRTdeLUYgZMyMm2jBkJFZj7mp4jqKiiHpX0DtefiNPfh0HQSf
+	mhphSegI/Xm9KX50lNmU3K5f+XQp2OQPGETgOmOxx/FOQee9Uu7V507AlFFIiggn32QvAE8YsKI
+	c4Dwd
+X-Gm-Gg: ASbGncvbnDuphUOzuCE1TPVXiAlQcr98b18zOCiOUkEzz8+RyuUDbAY6rPn89OvfY8T
+	NoyoA+17huMBhNt7bS9M9AMIzuA45T415SoIfvCRWOKxYN/7j5zZ3tMhcASazk+FRX/uw8w6jQn
+	prD9dploHYNdanONUtDI/a1Ng1RVuRG4mBLSh/Av08lX8BsJkvBN4cajar716ghfeLvR0/JOS85
+	PoPpGzawCqEtve67e4zq7H+NdwdaUPzxLejRf6MHMDnLNVR8AjbZHL9P621+FxMoPOk0+NMuXHm
+	4A16QVIbcCBzYP3zXmou3052i/ID4xxk1tYzZqvUvSnU9nXuJyzovs4QKZ0mCPv51y8G70GmTMg
+	mMlQmpEPywpu9ok7t5ax/10ZlzIXLC129S9WudWScPoTWzlxb1NGN37yPcNtSciDEvYd/ySV1Bb
+	SVjedQ8g==
+X-Google-Smtp-Source: AGHT+IE+pTyYnuUeKNBnXn7u5n9qqZquO3ZZc8vyWV1I57TGD6s8tCb5Ogkdy4UaIq5TtfdFMCYfeg==
+X-Received: by 2002:a17:903:1983:b0:24c:da3b:7376 with SMTP id d9443c01a7336-27cc2d8ef77mr24868675ad.26.1758619006912;
+        Tue, 23 Sep 2025 02:16:46 -0700 (PDT)
+Received: from G7HT0H2MK4.bytedance.net ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed26a9993sm18724713a91.11.2025.09.23.02.16.38
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 23 Sep 2025 02:16:46 -0700 (PDT)
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+To: hannes@cmpxchg.org,
+	hughd@google.com,
+	mhocko@suse.com,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	ziy@nvidia.com,
+	harry.yoo@oracle.com,
+	baolin.wang@linux.alibaba.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	baohua@kernel.org,
+	lance.yang@linux.dev,
+	akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: [PATCH v2 0/4] reparent the THP split queue
+Date: Tue, 23 Sep 2025 17:16:21 +0800
+Message-ID: <cover.1758618527.git.zhengqi.arch@bytedance.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="v2ib37ztbiu2x2yg"
-Content-Disposition: inline
-In-Reply-To: <abd349f5-48eb-4646-aca3-d70dd9f4bff0@suse.de>
+Content-Transfer-Encoding: 8bit
 
+Changes in v2:
+ - fix build errors in [PATCH 2/4] and [PATCH 4/4]
+ - some cleanups for [PATCH 3/4] (suggested by David Hildenbrand)
+ - collect Acked-bys and Reviewed-bys
+ - rebase onto the next-20250922
 
---v2ib37ztbiu2x2yg
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 00/29] drm: Implement state readout support
-MIME-Version: 1.0
+Hi all,
 
-Hi Thomas,
+In the future, we will reparent LRU folios during memcg offline to eliminate
+dying memory cgroups, which requires reparenting the THP split queue to its
+parent memcg.
 
-On Tue, Sep 02, 2025 at 04:13:21PM +0200, Thomas Zimmermann wrote:
-> Hi Maxime,
->=20
-> there are a number of patches in this series that can be merged immediate=
-ly,
-> and likely should.
+Similar to list_lru, the split queue is relatively independent and does not need
+to be reparented along with objcg and LRU folios (holding objcg lock and lru
+lock). Therefore, we can apply the same mechanism as list_lru to reparent the
+split queue first when memcg is offine.
 
-Ack, I'll do a first pass to apply the preliminary patches if (or when)
-they get reviewed.
+The first three patches in this series are separated from the series
+"Eliminate Dying Memory Cgroup" [1], mainly to do some cleanup and preparatory
+work.
 
-> Is the state-compare code really necessary? Doing this separately might e=
-ase
-> the review.
+The last patch reparents the THP split queue to its parent memcg during memcg
+offline.
 
-My understanding was that Sima wanted to be part of it, but I guess we
-can introduce it later on if she agrees.
+Comments and suggestions are welcome!
 
-Maxime
+Thanks,
+Qi
 
---v2ib37ztbiu2x2yg
-Content-Type: application/pgp-signature; name="signature.asc"
+[1]. https://lore.kernel.org/all/20250415024532.26632-1-songmuchun@bytedance.com/
 
------BEGIN PGP SIGNATURE-----
+Muchun Song (3):
+  mm: thp: replace folio_memcg() with folio_memcg_charged()
+  mm: thp: introduce folio_split_queue_lock and its variants
+  mm: thp: use folio_batch to handle THP splitting in
+    deferred_split_scan()
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaNJlSgAKCRAnX84Zoj2+
-dg6/AYCLCBl5ysWRKi5mZbcjC5DsuKSAFM3rLn2lnmfAyFAr92hsAJ6rGxHuUd6Q
-SYmr8ocBf0JO+ObyHDBSZ3MjWrzUJbbxREa2/2dgEuw6K6wK4JPF0bQLWr87nEE2
-+04R+tcmpA==
-=CCPk
------END PGP SIGNATURE-----
+Qi Zheng (1):
+  mm: thp: reparent the split queue during memcg offline
 
---v2ib37ztbiu2x2yg--
+ include/linux/huge_mm.h    |   2 +
+ include/linux/memcontrol.h |  10 ++
+ include/linux/mmzone.h     |   1 +
+ mm/huge_memory.c           | 229 +++++++++++++++++++++++++------------
+ mm/memcontrol.c            |   1 +
+ mm/mm_init.c               |   1 +
+ 6 files changed, 172 insertions(+), 72 deletions(-)
+
+-- 
+2.20.1
+
 
