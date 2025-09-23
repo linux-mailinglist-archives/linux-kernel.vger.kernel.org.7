@@ -1,178 +1,169 @@
-Return-Path: <linux-kernel+bounces-828833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BECCB9593F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:10:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F06B95945
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B55D3B42F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:10:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 862382E6302
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E71321426;
-	Tue, 23 Sep 2025 11:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026563218CD;
+	Tue, 23 Sep 2025 11:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ae9YOFtj"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GmrbaONM"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BD72F6184
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE3E31D389
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758625840; cv=none; b=B2xXRAcB3EYQXQQHTlZA8JYRcQy1K6Ia6K71qaNvJk19TlDzS+aeIDy304fKqzogW9BwNQagPyH/J6ZZpSG4U9iCh+FDxA+1O72ubaiGeNIovF8zvJQVWCIUO3J6NIQzMA3mxMULE2nGhGpF7pMdeMkwh60oJ7B83q7Gz14ds1k=
+	t=1758625847; cv=none; b=VbRBMGgxdisbOadWCqQwxou3pHbDqWGB55HAn9pI3Uew1WLehMVZ53d0Ogz/wyNMSMRYi6xYxeGAwcgtJKbWIc+96nK9U9q8pytl2ah7PIHlMLUjVb9vagormSWns3Yk7CNrdgidkpQ63/uxKDlSTotjhBVrToyIutXf4WR/NSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758625840; c=relaxed/simple;
-	bh=wGRrexcrJiOYxex9LPSrvm70Gi0w/jmnAo5XesaOW1M=;
+	s=arc-20240116; t=1758625847; c=relaxed/simple;
+	bh=L8If8mhhgNYtNxzT0sBTVnoIcsxkhNehSrPzVwevgF0=;
 	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LzTh6M0p9pp9sXi8Awy9Hs17q1e91SERTSNaKkkUa1S+OoasLfh9r/OIJQtDJ29cbIlQselGCyEMGOfWnuNb1S+J0u1kGOUyxJJZrODt8zHzJwAbCAvDmSCa3cWB4GpXgBsWTIosBXNPbDp599LyVB265CqfEELNJ6BAFA6Qk5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ae9YOFtj; arc=none smtp.client-ip=209.85.221.43
+	 Content-Type:Content-Disposition:In-Reply-To; b=qYbxRayZROLMKpJDMyOvhx19lfD7i/gt0+to87kSiJJcsPQv1nyV/g4nixcYf+dqe+oq2ge8rDgxBC80xNVr6EiU52gJhaePIcvlaziVcSxG4Df7+gn1Dyzog0i8mNphSRfgmgC3ib9C6TZ8jY9bIOo2IELEUdNAppREIUeQQyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GmrbaONM; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ecde0be34eso3264778f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:10:37 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45de4ebe79eso5658065e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:10:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758625836; x=1759230636; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tUjJweEPB4TqONfwC9fpDlwaU6QM2qlfDS5A23MkLtU=;
-        b=Ae9YOFtjcOo9kCmzREoCWChl1wKvUdJjZlm+TsEylERaa1L4kkSYi+K4uNEbWmLv4K
-         XxmlPS0SsGU8mT51meZiuelPgpFr9j5DTe0ZuYhITHLvQQdjOpapgHuFPEUJE5Cfb5Ab
-         L32H9SewvMcaq18c7QfR5xDiFytSw5K8ZkY1sJewx77eVR9wLuxCSl9NLsJi1+zCT3X3
-         3IhXYZ/3XrZxcLudVDpJcGEWvGoOe0N7J6BLDsznSh1EIWBNtd3W7ZlBd3sBdPLU3M9F
-         DC7z4SPl1R2nk1S4iSqIfvNxFz+k2eb0mL4fqiI7ZDUwwYfzNSfr+/DOHpe7D74Mx4Bk
-         qo7Q==
+        d=gmail.com; s=20230601; t=1758625844; x=1759230644; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/M4chbTCwJie6GL25HuGRFhPc1V63zKjOJLKGItv6qU=;
+        b=GmrbaONMY567lYbR6vFpTH7gDvClnvBS96L6i7cxNJQyNpbldeX/PEB3xls2N49FEK
+         BMNuOctp1084ZTlxDwzeIsmyFRnvmWEj1fYBJ2UspJaYUxvrwMoZXRxfT0r1SFKeUr0r
+         ZiFWvMeUS/UCGkzIKbs24gOwhL681sh/wvvZY4qUZt7Q+AxzA6iPRCOof4pB2i5XAKNK
+         WAj9Y2AE5TvbsXVm4iZt+JzxERe9qLmvbZazZZo7+rYCy+DChCD8WctOTbtYD3ucCzng
+         4X2BR/6uqBd9Hq5VAZgRfr9oR90y2HqAIwJlLG4J1aq95N6oT0G6vZ++KJvqsUsFW0Nj
+         0+DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758625836; x=1759230636;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tUjJweEPB4TqONfwC9fpDlwaU6QM2qlfDS5A23MkLtU=;
-        b=l9sXn8DBYMeoN9de2CQiCrvZy+n8cGZW37vcI9A+MSCjl3dSsLrZGgRgd/+U1Wkff4
-         xR+sFIlpDsNkg//MOeQfdTQb6G02tvF3uqXY7WdyKGk2rVj1RWByvP/1HDGfG8A4ao/h
-         PNqDlQ4hBdPYzSr8EIs3dotS1vYyxggVq3PpAHsWeW02bqKoLw/XE7A1ba37VWnerCpQ
-         DYhhNwFHcdfRWsTxm3NoCzqooxipfd0esfT6HIVqDNOZ4CDe9vyTYEPJuYh+OQBdyr5q
-         sgU/D9sJgaojCfr1MaBG0F0JciRwNSi8L08dro6YJR8GdHvp385ZucJM/zhUadE/m6iB
-         CGwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXyoUVe1Oxi0fqU7juoQo/Q8RQWkR16ijnPuy86alNSJm+ysao8HFO9whZ/GXN+9Ex4oH+jaoQXL/wCJ+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5z04DuLiU2/HVpf3VCJsFD13cw3jpjZIGpNVLRepRxpXdkL/H
-	unIQrOxwCa3OTA8xmEp5ujB6I2F1dQIp2yjh4lrKJ7dkNrch5ZQon9Dm
-X-Gm-Gg: ASbGncvxhicCTpohCgXZO9id5i0dMzjqXzb2wMnvLW2c2uIHAwG/rM4PGGSggR1lwZc
-	1wRQpMXJt7Jirf+R4UihhF/xYJy9ifW+w2XPACD6EOP0jjUnDodDvkMj/QmA9dFGl69k+sL/b/Q
-	wsWnF1Y9Q7JLmTUCyqzpi5PMgeLGtMBr0mnflfBnwBi0FqYMYo9ykmvFcGvtMKjPaatpjwneHvB
-	YwxyvEmX5xcRasBYNrylAij8jh2wcY379zSaDm3LNVQRrwnlYOLAvNVJdO3lRB+/c2mk5tJNujp
-	vdh5J2kuKaZtdqX3B04I0LuTWAeKVffyVSBTNTfiXXw8ilKN97KVBx5t2TK5qb31hrtmSBXx
-X-Google-Smtp-Source: AGHT+IHgMX3BiSNRvfrTGGdpNnaqqWvHnAmBH8PkRL8VnvuR0hyv/WFqY9PPvGGhOMcdRD/JvBVOdg==
-X-Received: by 2002:a05:6000:186f:b0:3e7:428f:d33 with SMTP id ffacd0b85a97d-405d090c6d0mr2107024f8f.16.1758625836201;
-        Tue, 23 Sep 2025 04:10:36 -0700 (PDT)
-Received: from krava ([2a02:8308:a00c:e200::31e0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee07407fa3sm23503973f8f.21.2025.09.23.04.10.28
+        d=1e100.net; s=20230601; t=1758625844; x=1759230644;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/M4chbTCwJie6GL25HuGRFhPc1V63zKjOJLKGItv6qU=;
+        b=V7ChdpulqbgsTlFmPW6lddkQRsOFJExQlJ2mfRskOmuuoMMHLoL1tsbi5orPbgUsTh
+         bfLT2Q4r7CqiteHdbDpxya9+PrQNTdEKbHzYqCp7pLosSIfSTYb+NW6+WR9543CYNzrX
+         eW9MiWO2W7RnfFHNwi4lB6wiYaXzTAjoe/4pMselr0vjsn6le5F0WNcRR8FevGxdvVeA
+         tEWTV2yY4RKouQ1/hxzHUm2y9NLRas++BhCV6BuRMZUtCKFnXPR6exH6fsUxNtEvA19d
+         TLI29BKEOeTYDeadI02+FVP8i0YPaJJmL/8Wz/BaV4A9EDZQlhB/3kilrOS517FKYRjv
+         uH7A==
+X-Forwarded-Encrypted: i=1; AJvYcCU98VceWDzRCVQNW3/ZEN1p71Iv3MrKCOpMHln8WZX/DlX6/6AiECYkKBRh61+2BqYefkYD4Bd6k/fRXzo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwD4gUHVjIYB6ndLuQ/hvXXFQhZB+UThWpS1bOPCZbSSoa8C3k
+	nfbQ0ejqrearMGfijE8fObjvSjczxEqYxg5LXFOAqWPcUkvHeYlvc/YB
+X-Gm-Gg: ASbGncvhrZkExDpoQZ5Zo5Ks8B7QDDtXdO1PpXH67VSIAJgd5rGgGdm8cjoQH9qH8Tr
+	m4ekwt2crrH/cuRusPxhcCpGM4dh/NiWrrydAwYWuGTdHB5MgmvUXCW2hpqCvVKqp2QDtwifz6A
+	i8qpjsTRpx2joo4ybH0+9sSbZuSjF3DLCy8vbbMriN+A2qExg0uP62NXmQLRQPAWhCHSh3MvVMH
+	CG0Oe1EdaLtXfI7bfAJsyyDlyhLyCbE6t7KB1ewpSotqf/BC8T03lG9qCp5VG1BIS+xRjVOtGrA
+	DS2JKWl6GrGx7yN0/2TyQNGIEYYdvTg3eZ4fOM5KvV9QRafNLKKYKs3Z92uTSd0tWMCq+Xp6dSg
+	JEcd7sT3V5aDIGEBkmyQMWqU=
+X-Google-Smtp-Source: AGHT+IHhlp7t8Mif75guovtxrXuNcYEIzhCdfujdY3LaIWfy1jJmzn6mmtcb1ThUszzhbFiPUhqUdw==
+X-Received: by 2002:a05:600c:4ed3:b0:45f:2919:5e8d with SMTP id 5b1f17b1804b1-46e1d98c40bmr12841095e9.1.1758625842783;
+        Tue, 23 Sep 2025 04:10:42 -0700 (PDT)
+Received: from skbuf ([2a02:2f04:d005:3b00:2e0a:df05:253e:8b85])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e23adcce3sm3208595e9.11.2025.09.23.04.10.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 04:10:31 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 23 Sep 2025 13:10:26 +0200
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: mhiramat@kernel.org, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH 2/2] tracing: fprobe: optimization for entry only case
-Message-ID: <aNKAIsHQZySyrV4o@krava>
-References: <20250923092001.1087678-1-dongml2@chinatelecom.cn>
- <20250923092001.1087678-2-dongml2@chinatelecom.cn>
+        Tue, 23 Sep 2025 04:10:41 -0700 (PDT)
+From: Vladimir Oltean <olteanv@gmail.com>
+X-Google-Original-From: Vladimir Oltean <vladimir.oltean@nxp.com>
+Date: Tue, 23 Sep 2025 14:10:38 +0300
+To: Shawn Guo <shawnguo@kernel.org>, Frank Li <Frank.Li@nxp.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Olof Johansson <olof@lixom.net>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH 3/3] arm64: dts: fsl-lx2160a: include rev2 chip's dts
+Message-ID: <20250923111038.qluh2kjmc534ytig@skbuf>
+References: <20240826-2160r2-v1-0-106340d538d6@nxp.com>
+ <20240826-2160r2-v1-3-106340d538d6@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250923092001.1087678-2-dongml2@chinatelecom.cn>
+In-Reply-To: <20240826-2160r2-v1-3-106340d538d6@nxp.com>
 
-On Tue, Sep 23, 2025 at 05:20:01PM +0800, Menglong Dong wrote:
-> For now, fgraph is used for the fprobe, even if we need trace the entry
-> only. However, the performance of ftrace is better than fgraph, and we
-> can use ftrace_ops for this case.
+Hi Shawn,
+
+On Mon, Aug 26, 2024 at 05:38:34PM -0400, Frank Li wrote:
+> The mass production lx2160 rev2 use designware PCIe Controller. Old Rev1
+> which use mobivel PCIe controller was not supported. Although uboot
+> fixup can change compatible string fsl,lx2160a-pcie to fsl,ls2088a-pcie
+> since 2019, it is quite confused and should correctly reflect hardware
+> status in dtb. Change freescale's board to use rev2's dtsi firstly.
 > 
-> Then performance of kprobe-multi increases from 54M to 69M. Before this
-> commit:
-> 
->   $ ./benchs/run_bench_trigger.sh kprobe-multi
->   kprobe-multi   :   54.663 ± 0.493M/s
-> 
-> After this commit:
-> 
->   $ ./benchs/run_bench_trigger.sh kprobe-multi
->   kprobe-multi   :   69.447 ± 0.143M/s
-> 
-> Mitigation is disable during the bench testing above.
-> 
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  kernel/trace/fprobe.c | 88 +++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 81 insertions(+), 7 deletions(-)
+>  arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts | 2 +-
+>  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 2 +-
+>  arch/arm64/boot/dts/freescale/fsl-lx2162a-qds.dts | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> index 1785fba367c9..de4ae075548d 100644
-> --- a/kernel/trace/fprobe.c
-> +++ b/kernel/trace/fprobe.c
-> @@ -292,7 +292,7 @@ static int fprobe_fgraph_entry(struct ftrace_graph_ent *trace, struct fgraph_ops
->  				if (node->addr != func)
->  					continue;
->  				fp = READ_ONCE(node->fp);
-> -				if (fp && !fprobe_disabled(fp))
-> +				if (fp && !fprobe_disabled(fp) && fp->exit_handler)
->  					fp->nmissed++;
->  			}
->  			return 0;
-> @@ -312,11 +312,11 @@ static int fprobe_fgraph_entry(struct ftrace_graph_ent *trace, struct fgraph_ops
->  		if (node->addr != func)
->  			continue;
->  		fp = READ_ONCE(node->fp);
-> -		if (!fp || fprobe_disabled(fp))
-> +		if (unlikely(!fp || fprobe_disabled(fp) || !fp->exit_handler))
->  			continue;
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts
+> index 4d721197d837e..71d0d6745e44a 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts
+> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts
+> @@ -6,7 +6,7 @@
 >  
->  		data_size = fp->entry_data_size;
-> -		if (data_size && fp->exit_handler)
-> +		if (data_size)
->  			data = fgraph_data + used + FPROBE_HEADER_SIZE_IN_LONG;
->  		else
->  			data = NULL;
-> @@ -327,7 +327,7 @@ static int fprobe_fgraph_entry(struct ftrace_graph_ent *trace, struct fgraph_ops
->  			ret = __fprobe_handler(func, ret_ip, fp, fregs, data);
+>  /dts-v1/;
 >  
->  		/* If entry_handler returns !0, nmissed is not counted but skips exit_handler. */
-> -		if (!ret && fp->exit_handler) {
-> +		if (!ret) {
->  			int size_words = SIZE_IN_LONG(data_size);
+> -#include "fsl-lx2160a.dtsi"
+> +#include "fsl-lx2160a-rev2.dtsi"
 >  
->  			if (write_fprobe_header(&fgraph_data[used], fp, size_words))
-> @@ -384,6 +384,70 @@ static struct fgraph_ops fprobe_graph_ops = {
->  };
->  static int fprobe_graph_active;
+>  / {
+>  	model = "NXP Layerscape LX2160AQDS";
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> index 0c44b3cbef773..2373e1c371e8c 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> @@ -6,7 +6,7 @@
 >  
-> +/* ftrace_ops backend (entry-only) */
-> +static void fprobe_ftrace_entry(unsigned long ip, unsigned long parent_ip,
-> +	struct ftrace_ops *ops, struct ftrace_regs *fregs)
-> +{
-> +	struct fprobe_hlist_node *node;
-> +	struct rhlist_head *head, *pos;
-> +	struct fprobe *fp;
-> +
-> +	guard(rcu)();
-> +	head = rhltable_lookup(&fprobe_ip_table, &ip, fprobe_rht_params);
+>  /dts-v1/;
+>  
+> -#include "fsl-lx2160a.dtsi"
+> +#include "fsl-lx2160a-rev2.dtsi"
+>  
+>  / {
+>  	model = "NXP Layerscape LX2160ARDB";
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2162a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-lx2162a-qds.dts
+> index 9f5ff1ffe7d5e..7a595fddc0273 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-lx2162a-qds.dts
+> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2162a-qds.dts
+> @@ -6,7 +6,7 @@
+>  
+>  /dts-v1/;
+>  
+> -#include "fsl-lx2160a.dtsi"
+> +#include "fsl-lx2160a-rev2.dtsi"
+>  
+>  / {
+>  	model = "NXP Layerscape LX2162AQDS";
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
-hi,
-so this is based on yout previous patch, right?
-  fprobe: use rhltable for fprobe_ip_table
+Sorry for digging up an old thread, but I'm curious why you applied
+patch 2/3 but not this one? Currently,
+arch/arm64/boot/dts/freescale/fsl-lx2160a-rev2.dtsi has no user.
 
-would be better to mention that..  is there latest version of that somewhere?
-
-thanks,
-jirka
+Thread here.
+https://lore.kernel.org/lkml/20240826-2160r2-v1-0-106340d538d6@nxp.com/
 
