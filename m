@@ -1,105 +1,321 @@
-Return-Path: <linux-kernel+bounces-828920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF2E7B95DAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:36:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10734B95DB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 060737B00F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:34:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DDFB24E045F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150EB3233EF;
-	Tue, 23 Sep 2025 12:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CEA3233EF;
+	Tue, 23 Sep 2025 12:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t47aui4f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pbLgoEoL"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65013245006;
-	Tue, 23 Sep 2025 12:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC030245006
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758630986; cv=none; b=pEOAgRa3IBkBnJBNJc/BUQh5QYN7fAbqK5oNqB24qkHnEELuJHDKeSy4mMslEWZFcGRDz4N2bWs72NeaqwsdneJzZO48OnwyjFuy+vaZ3VDY2Vp4Y2D+5ntvYD3sj0HUqU3La0FF+tJBhmGFHnCylo3JeYs8B4kgt4VmLg5sl3U=
+	t=1758631052; cv=none; b=f3Sf8f3tXFoGNEitoHMkg3FVASxZVMf0RreiKlaepPWbKgocip0+w7xxD1Kusigro29U1Z8XPtJHB/pXnJv0G/awvB0j4W2GCzijp9wShaISl4GkyustQMpU1dMM/taBp+Azn0+BP+7IHlFEBImV82h5reoW0q9Bc959fBNyr5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758630986; c=relaxed/simple;
-	bh=BYP+piG4+h2S+71BxBsBcFE0M7inyCGui7t2SCh0h/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EucgIZu/d9ybkhfhBPlr9NZrMc5SXyVZsvTlMdsbNujoKNgC1T4kLV5zMHAS693PwtIS58JJcJS8XLoHL3yZ57/xDxQCMsySqid7cHZ2x/YNXYqyD6+5nvW4brikokRaap7q/IGHteORodNEhjlMzoACrHIHukTjeKx3x2Ok72E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t47aui4f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE7A0C113CF;
-	Tue, 23 Sep 2025 12:36:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758630985;
-	bh=BYP+piG4+h2S+71BxBsBcFE0M7inyCGui7t2SCh0h/Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=t47aui4fs9uGM4H0GkV9w2oqvo9NSKsp5psPxtP7VbHaYFqG0cP8PEcpuUHtCEI57
-	 lh4BnyqT8Wlh23l4vzQcI6j08kzOA+VvpAjrZdAKyLmfHtW/WQQtwhno5kdmWrPT1Y
-	 xI+HM9VZSNHKbUpTxdnc8HRNSuvK4QHL5iYuNrvpL367ixsst6kc7bqTROfzsIpt2n
-	 WrZ1ZFSi84XRZyjiJEp6tU51gVbYF4iRt32TMfb9naU5eobHeGI/LcK+HLV/pvr0Sb
-	 nkPjfkd4JnV3Rvm1S3kQdcx7c6OnIzfIcUT+R+49Ap+J7QPl1T3HdgzfqlQk7NB1nZ
-	 1p2dqq/T4NRnw==
-Date: Tue, 23 Sep 2025 08:36:16 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
- <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Linus
- Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>, Sam James
- <sam@gentoo.org>, Kees Cook <kees@kernel.org>, Carlos O'Donell
- <codonell@redhat.com>
-Subject: Re: [RESEND][PATCH v15 2/4] perf: Support deferred user callchains
-Message-ID: <20250923083616.0413966a@batman.local.home>
-In-Reply-To: <20250923103213.GD3419281@noisy.programming.kicks-ass.net>
-References: <20250908171412.268168931@kernel.org>
-	<20250908171524.605637238@kernel.org>
-	<20250923103213.GD3419281@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758631052; c=relaxed/simple;
+	bh=+QmtAQOVwpxlpSTVPwVX5yVKeytEpt+CoKE095FD3gQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fkU2hpiHuyAy7oaGUL6KR3Kz+s/xPUFP3UZM9EJD+6KDUWqdNmeQsLHrEsed1Lr4f2FALUEzsEs9RWVgnsrkUjnzJFfOvC+XXTKec/aEEW6sMb1VSRoJLQc8c71qLSHHq3vOj1cI2eLQC/qyh5dxW+vCMBepGovL6/aPhsU4SsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pbLgoEoL; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d5fe46572so56814897b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 05:37:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758631050; x=1759235850; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BvUwN9Vr9BKGSGisn6QzEhOZxHxE878oCjeyu30Gbsg=;
+        b=pbLgoEoLecEPVdRu2yfk3XwfUZ0s2lcyFSZg+Sg88KTLpKaDkaTq0mizeJUJ4ivr5h
+         tiGh4bN3Qsf4fD/UdkTFKfBO5JwZ7Mr00KBsXCyAOr4EqENKO0wZv85e9LI0Z5IAW/2E
+         SLVsSYGOQtqMBFJ6Guyw5JhFo6avmrldAwHw/oaKqEtNMvYnLN1lRplP/cuK/FVYkpCO
+         ycfmmg5Qu/8O38u4yA+KZ3fA7TFB73uYxGmw+mptgbwbhDRaKXkvSf4EZEvsHs/PJhxe
+         vjPdsOJeivC/jPLmvHxSxbDa2qv7eWVc0l6GB+0cryrkGYgVdxhiAwWysoqDubLHqrNX
+         CNpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758631050; x=1759235850;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BvUwN9Vr9BKGSGisn6QzEhOZxHxE878oCjeyu30Gbsg=;
+        b=JujEoa35dXtH3l7MbzphNPdrKovd4dFuuo5AaZ2VG5PuGdnmljK171KHRbv0h2vCqV
+         5PiMMD6F+hd1wQG6h9SIJ1ltoMWMJEprNjOlBeazmARoPuHKr6zX12pYKxe8zn1YANjp
+         COAmbOIEiJ9LBGeeeAHK24ZsrOJ7iWJqJVAkF6hhwfWzbksH/a4qmOlxRJa6b/Lg2HNk
+         7+kkK80VajZPGZBBIWsvyPqUpu7AStOSsfuJttwK8MGZ1IghWCmA5Cnm44YyQnN1rgM0
+         JXUNU1Isz49A3oUT1UM3sXJMKtQmz5QkE2Qfehg37M0/9vfWb9dYdJHfrjimJjpFgPnK
+         EO0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVEMJDrXPLm9olJpOOtkf1ZTLHHoRAI4a4yiQwqgO7dAlmq2tkWsgRAubiRznGMZb/lW89NggLj5BCA4e0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjHW9ykLEj8f7PhS8rHZ/A/glDXNMExfYf2JfJ+V2ANm6BuuRF
+	MOz6AV940NQs0E2HABYxSRfDK9T9+y521sE62XSqfWlmg9KdiSnXnNQR74Ia3qKlD7uUqRh3GKt
+	gqbSuKeFH/xfSAhwTJCb0Qdv/hrA/wVlvRL0btv1GKQ==
+X-Gm-Gg: ASbGncvER8UPiWLdfFsTUaVGc7GAIoUwN1oYobeujMi2+umuROF8r8GJFuYuq+EPjpI
+	bykSglKFvF9bip53O9M/TDJ6FszOks7EcDngD8AqiAibLaztkr8abUWjzrTO9+ECqBey1ZTufML
+	WAOLKgQiUQEfYZJhSftpQJGf24lN5G83ArAir+mMVTdjhpCRRCtt9R4pV1B6dA/2hcTjBgeEov5
+	tp3/L/a
+X-Google-Smtp-Source: AGHT+IHeB26D69gWYTNMT81JsyBb8j/6IpIJwLFyZe+h7iEpIJbeuVXfVhF5NDonGCkXKOQaFRnbcwFnhwo7/vnbCpY=
+X-Received: by 2002:a05:690c:700c:b0:729:e448:5005 with SMTP id
+ 00721157ae682-7589174476fmr18123057b3.7.1758631049666; Tue, 23 Sep 2025
+ 05:37:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250716123323.65441-1-ulf.hansson@linaro.org>
+ <20250716123323.65441-2-ulf.hansson@linaro.org> <CAJZ5v0iq7UODJ83fkwnzfFR3HpG2_R-YRnip_cLwyUHZZ+rXyg@mail.gmail.com>
+ <7hldnp6apf.fsf@baylibre.com> <CAJZ5v0j=9RXHrcVEBp0yy1Ae4_kC1y-WFQyBf89r3NtoL-tYQw@mail.gmail.com>
+ <CAPDyKFpeVF_EHJDQ9u=LDuJ56g7ykYUQWHXV2WXTYLa-mYahVA@mail.gmail.com>
+ <CAPDyKFpc-PHC1QhoSrNt9KnaGov749H1AwFZUwnDDzG7RDYBRw@mail.gmail.com>
+ <CAJZ5v0hC=sEcC-mU8jArwVN3EA6+U=EmCa2e7TKO0sg6LJiz7g@mail.gmail.com>
+ <CAPDyKFqG=bFSP2rJ3PXt5=6_nLdpJ+ir80krU1DrRCCMhwKQng@mail.gmail.com>
+ <CAJZ5v0hYN5G_WpA6KDpeDgowc2i9AvrUBCq-egS==8RNVb6N=w@mail.gmail.com>
+ <CAPDyKFr0-yh8wt169QanAo3AmuXBq_9p3xiiqeFmmWz-ntNQsw@mail.gmail.com> <CAJZ5v0h4nS7fm347ue0Kj_eGwAi=o1vzyJm25_Q67dWzyoXR+Q@mail.gmail.com>
+In-Reply-To: <CAJZ5v0h4nS7fm347ue0Kj_eGwAi=o1vzyJm25_Q67dWzyoXR+Q@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 23 Sep 2025 14:36:53 +0200
+X-Gm-Features: AS18NWDnPOAVdcWOXRUED9DoyrDaLAhsSSqCkfpsN6z7uIuZCk4j3YcyswbX_9I
+Message-ID: <CAPDyKFos=rM6Y-6tFbifpFp8XxwA=t_aya-nWhz=6ME1FaBEoA@mail.gmail.com>
+Subject: Re: [RFC/PATCH 1/3] PM: QoS: Introduce a system-wakeup QoS limit
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Kevin Hilman <khilman@baylibre.com>, linux-pm@vger.kernel.org, 
+	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
+	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 23 Sep 2025 12:32:13 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Tue, 23 Sept 2025 at 13:39, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Tue, Sep 23, 2025 at 11:42=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.=
+org> wrote:
+> >
+> > On Mon, 22 Sept 2025 at 20:55, Rafael J. Wysocki <rafael@kernel.org> wr=
+ote:
+> > >
+> > > On Thu, Sep 18, 2025 at 5:34=E2=80=AFPM Ulf Hansson <ulf.hansson@lina=
+ro.org> wrote:
+> > > >
+> > > > On Wed, 17 Sept 2025 at 21:24, Rafael J. Wysocki <rafael@kernel.org=
+> wrote:
+> > > > >
+> > > > > Hi,
+> > > > >
+> > > > > Sorry for the delay.
+> > > > >
+> > > > > On Fri, Sep 12, 2025 at 3:58=E2=80=AFPM Ulf Hansson <ulf.hansson@=
+linaro.org> wrote:
+> > > > > >
+> > > > > > On Tue, 12 Aug 2025 at 11:26, Ulf Hansson <ulf.hansson@linaro.o=
+rg> wrote:
+> > > > > > >
+> > > > > > > On Mon, 11 Aug 2025 at 21:16, Rafael J. Wysocki <rafael@kerne=
+l.org> wrote:
+> > > > > > > >
+> > > > > > > > On Mon, Aug 11, 2025 at 7:16=E2=80=AFPM Kevin Hilman <khilm=
+an@baylibre.com> wrote:
+> > > > > > > > >
+> > > > > > > > > "Rafael J. Wysocki" <rafael@kernel.org> writes:
+> > > > > > > > >
+> > > > > > > > > > On Wed, Jul 16, 2025 at 2:33=E2=80=AFPM Ulf Hansson <ul=
+f.hansson@linaro.org> wrote:
+> > > > > > > > > >>
+> > > > > > > > > >> Some platforms and devices supports multiple low-power=
+-states than can be
+> > > > > > > > > >> used for system-wide suspend. Today these states are s=
+elected on per
+> > > > > > > > > >> subsystem basis and in most cases it's the deepest pos=
+sible state that
+> > > > > > > > > >> becomes selected.
+> > > > > > > > > >>
+> > > > > > > > > >> For some use-cases this is a problem as it isn't suita=
+ble or even breaks
+> > > > > > > > > >> the system-wakeup latency constraint, when we decide t=
+o enter these deeper
+> > > > > > > > > >> states during system-wide suspend.
+> > > > > > > > > >>
+> > > > > > > > > >> Therefore, let's introduce an interface for user-space=
+, allowing us to
+> > > > > > > > > >> specify the system-wakeup QoS limit. Subsequent change=
+s will start taking
+> > > > > > > > > >> into account the QoS limit.
+> > > > > > > > > >
+> > > > > > > > > > Well, this is not really a system-wakeup limit, but a C=
+PU idle state
+> > > > > > > > > > latency limit for states entered in the last step of su=
+spend-to-idle.
+> > > > > > > > > >
+> > > > > > > > > > It looks like the problem is that the existing CPU late=
+ncy QoS is not
+> > > > > > > > > > taken into account by suspend-to-idle, so instead of ad=
+ding an
+> > > > > > > > > > entirely new interface to overcome this, would it make =
+sense to add an
+> > > > > > > > > > ioctl() to the existing one that would allow the user o=
+f it to
+> > > > > > > > > > indicate that the given request should also be respecte=
+d by
+> > > > > > > > > > suspend-to-idle?
+> > > > > > > > > >
+> > > > > > > > > > There are two basic reasons why I think so:
+> > > > > > > > > > (1) The requests that you want to be respected by suspe=
+nd-to-idle
+> > > > > > > > > > should also be respected by the regular "runtime" idle,=
+ or at least I
+> > > > > > > > > > don't see a reason why it wouldn't be the case.
+> > > > > > > > > > (2) The new interface introduced by this patch basicall=
+y duplicates
+> > > > > > > > > > the existing one.
+> > > > > > > > >
+> > > > > > > > > I also think that just using the existing /dev/cpu_dma_la=
+tency is the
+> > > > > > > > > right approach here, and simply teaching s2idle to respec=
+t this value.
+> > > > > > > > >
+> > > > > > > > > I'm curious about the need for a new ioctl() though.  Und=
+er what
+> > > > > > > > > conditions do you want normal/runtime CPUidle to respect =
+this value and
+> > > > > > > > > s2idle to not respect this value?
+> > > > > > > >
+> > > > > > > > In a typical PC environment s2idle is a replacement for ACP=
+I S3 which
+> > > > > > > > does not take any QoS constraints into account, so users ma=
+y want to
+> > > > > > > > set QoS limits for run-time and then suspend with the expec=
+tation that
+> > > > > > > > QoS will not affect it.
+> > > > > > >
+> > > > > > > Yes, I agree. To me, these are orthogonal use-cases which cou=
+ld have
+> > > > > > > different wakeup latency constraints.
+> > > > > > >
+> > > > > > > Adding an ioctl for /dev/cpu_dma_latency, as suggested by Raf=
+ael would
+> > > > > > > allow this to be managed, I think.
+> > > > > > >
+> > > > > > > Although, I am not fully convinced yet that re-using
+> > > > > > > /dev/cpu_dma_latency is the right path. The main reason is th=
+at I
+> > > > > > > don't want us to limit the use-case to CPU latencies, but rat=
+her allow
+> > > > > > > the QoS constraint to be system-wide for any type of device. =
+For
+> > > > > > > example, it could be used by storage drivers too (like NVMe, =
+UFS,
+> > > > > > > eMMC), as a way to understand what low power state to pick as=
+ system
+> > > > > > > wide suspend. If you have a closer look at patch2 [1] , I sug=
+gest we
+> > > > > > > extend the genpd-governor for *both* CPU-cluster-PM-domains a=
+nd for
+> > > > > > > other PM-domains too.
+> > > > > > >
+> > > > > > > Interested to hear your thoughts around this.
+> > > > > >
+> > > > > > Hey, just wanted to see if you have managed to digest this and =
+have
+> > > > > > any possible further comment?
+> > > > >
+> > > > > The reason why I thought about reusing /dev/cpu_dma_latency is be=
+cause
+> > > > > I think that the s2idle limit should also apply to cpuidle.  Of
+> > > > > course, cpuidle may be limited further, but IMV it should observe=
+ the
+> > > > > limit set on system suspend (it would be kind of inconsistent to =
+allow
+> > > > > cpuidle to use deeper idle states than can be used by s2idle).
+> > > >
+> > > > Agreed!
+> > > >
+> > > > >
+> > > > > I also don't think that having a per-CPU s2idle limit would be
+> > > > > particularly useful (and it might be problematic).
+> > > > >
+> > > > > Now, it is not as straightforward as I thought because someone ma=
+y
+> > > > > want to set a more restrictive limit on cpuidle, in which case th=
+ey
+> > > > > would need to open the same special device file twice etc and tha=
+t
+> > > > > would be quite cumbersome.
+> > > > >
+> > > > > So in the end I think that what you did in the $subject patch is
+> > > > > better, but I still would like it to also affect cpuidle.
+> > > >
+> > > > Okay. I will update the patches according to your suggestions!
+> > > >
+> > > > >
+> > > > > And it needs to be made clear that this is a limit on the resume
+> > > > > latency of one device.  Worst case, the system wakeup latency may=
+ be a
+> > > > > sum of those limits if the devices in question are resumed
+> > > > > sequentially, so in fact this is a limit on the contribution of a
+> > > > > given device to the system wakeup latency.
+> > > >
+> > > > Indeed, that's a very good point! I will keep this in mind when
+> > > > working on adding the documentation part.
+> > >
+> > > Well, this also means that using one limit for all of the different
+> > > devices is not likely to be very practical because the goal is to sav=
+e
+> > > as much energy as reasonably possible in system suspend while
+> > > respecting a global resume latency constraint at the same time.
+> > >
+> > > Using the same limit on a local contribution from each device to the
+> > > combined latency is not likely to be effective here.  Rather, I'd
+> > > expect that the best results can be achieved by setting different
+> > > resume latency limits on different devices, depending on how much
+> > > power they draw in each of their idle states and what the exit latenc=
+y
+> > > values for all of those states are.  In other words, this appears to
+> > > be an optimization problem in which the resume latency limits for
+> > > individual devices need to be chosen to satisfy the global resume
+> > > latency constraint and minimize the total system power.
+> >
+> > I am following your reasoning and I agree!
+> >
+> > Perhaps we should start with extending the cpu_dma_latency with an
+> > ioctl after all? This would allow userspace to specify constraints to
+> > be applicable for system-wide-suspend (s2idle), but it would still be
+> > limited for CPUs/CPU-clusters.
+>
+> Right.
+>
+> Adding a separate device special file to represent the limit affecting
+> s2idle may be somewhat cleaner though as mentioned before.
 
-> So the thing that stands out is that you're not actually using the
-> unwind infrastructure you've previously created. Things like: struct
-> unwind_work, unwind_deferred_{init,request,cancel}() all go unused, and
-> instead you seem to have build a parallel set, with similar bugs to the
-> ones I just had to fix in the unwind_deferred things :/
-> 
-> I'm also not much of a fan of nr_no_switch_fast, and the fact that this
-> patch is limited to per-task events, and you're then adding another 300+
-> lines of code to support per-cpu events later on.
-> 
-> Fundamentally we only have one stack-trace per task at any one point. We
-> can have many events per task and many more per-cpu. Let us stick a
-> struct unwind_work in task_struct and have the perf callback function
-> use perf_iterate_sb() to find all events that want delivery or so (or we
-> can add another per perf_event_context list for this purpose).
-> 
-> But duplicating all this seems 'unfortunate'.
+Okay, sounds good to me too!
 
-We could remove this and have perf only use the CPU version. That may
-be better in the long run anyway, as it gets rid of the duplication. In
-fact that was the original plan we had, but since Josh wrote this patch
-thinking it was all that perf needed (which ended not being the case),
-I still kept it in. But I believe this will work just the same as the
-CPU tracing which uses all the other infrastructure.
+>
+> > For other devices, we should probably explore the per device PM QoS
+> > (pm_qos_latency_tolerance_us) instead. Currently the
+> > pm_qos_latency_tolerance_us is used for "runtime_suspend", so perhaps
+> > adding another per device sysfs file, like
+> > "pm_qos_system_wakeup_latency_us",  that we can use for the
+> > system-wide-wakeup latency constraint?
+> >
+> > Would this make better sense, you think?
+>
+> I think that this can be made work.
 
--- Steve
+Okay, I will explore this approach.
 
+Thanks for your feedback!
+
+Kind regards
+Uffe
 
