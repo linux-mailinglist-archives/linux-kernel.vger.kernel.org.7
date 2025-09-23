@@ -1,178 +1,154 @@
-Return-Path: <linux-kernel+bounces-829781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF5AB97D03
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:44:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D488B97D1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EFE019C73FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:45:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0FEF4A8485
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF5130FC3B;
-	Tue, 23 Sep 2025 23:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D9A30FC0C;
+	Tue, 23 Sep 2025 23:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNdg7zw8"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="t6zq26Tf";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="uRo8Vx5j"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE32627FD56
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD6B223DF1;
+	Tue, 23 Sep 2025 23:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758671086; cv=none; b=et4mOzzH3FZnVQgIodUie5D+DuQp9/ypvGpeWSqiXVXoLJ1qWEvmLakjzbiqMfF5IY9dkPX3znYkXX5lbzvryrD2YXJYz/lhQK9sae+KzqZ+E2ND/2AKanQUFucaafzqqyzX4K4f9KYctV4AaZWY2OCX9fQLMUpt0dpQnupRD18=
+	t=1758671229; cv=none; b=e23S4TS6iCwaKWlNGVNhvwSywHEKCjqeWySw8bx7teH0jd6vj2CGr9W/+Xih/MT8FPCdLNxR3Xe62O7KdxoJFuWv4vdn+fCK+5jKotPPPdiGIntWchJD+K6MWRJ4LhN/3q6Ang4KvYt5mPor21GQmN5nxRxmRp0eRiL34T2x89E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758671086; c=relaxed/simple;
-	bh=q+ShdNu3mZLTF7V/TpTF+BaAtp8uVS6tAaTiAN+OxgU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hjG7jtF2Knp91yKmpFsXPI2zctXzLhZOma2LgvqJuvfAW2bP7bYmh+tJ5THyM1SatoBZ28sDuzG8Zxfgxx75Z6/mrVrRv18vha3IzzbmffWoXnOl6wpPK5kLYPEuGQysczfn5oXt3LlGbRm3OKhGJffT+2sxWAwxZDJJusQczHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNdg7zw8; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-33292adb180so2114189a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:44:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758671084; x=1759275884; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:in-reply-to:subject:cc:to:from
-         :message-id:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ljeySVlhO9O2RzXIms8aAw71D6omm7wNApUjDETNmPM=;
-        b=jNdg7zw8A9vH/v8yPEp3pUqHzkz9aFa3hCTY4U8DXD9XR75HwUwiBz9e6f9cTPdR5P
-         I+UaI+nAHiEkwoVx3ofXRwvhhFnRJcwdH9L7EQkqbk6o6/H0HG4tzvBPCNbE4+Tr+Rhb
-         2ygJsHnM2orV8Nw9J4OZO1WL/KS14nIznzVOLoM9dGe2ldmgpMDnjVlFbQxpnn+q47U5
-         V43kPT4BEdxfqoEVfMteoz/LwKLLHoMeQ3e4NzbWHkNI/uPqD6EifS9Gn42QmkHvryha
-         91BPPD1bPotVJcN+LzoIYARN29q8h5gBymmrRdmt+/1JXe3yloCcMd4Nu5ql/2z8liMm
-         Mr5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758671084; x=1759275884;
-        h=mime-version:user-agent:references:in-reply-to:subject:cc:to:from
-         :message-id:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ljeySVlhO9O2RzXIms8aAw71D6omm7wNApUjDETNmPM=;
-        b=OsJoD54b7VCw6n0ekxWMdo91Kv2mSvzsw3JKluB366aiE7Tpwy7Om+5nRCAGhM1G/p
-         mnhxayrVc52F+yKKDvWlWlt3/N8SyWhqM6Kce5M0VyeudmwtS5Bqgd80HUOaQa20JuWW
-         W/tFzNTwK2oT1IW6UfV1gMaDUp1kA+MpPxUl37m8e0UvwqrO5tTab8cIH1S0mImFpe/1
-         cuH/E3MliY/a7hagoHj68IHw17S2FPZBuQPzRIJH4ESV5doQwB9V0SPC3H3EvxPO+n82
-         fT6ffkzydg18RmfQiYG5FCQkzraP5mL8GHqfe8VkPmlT+QebnyALB5S9oEvcAqBMzA3Q
-         D4+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXh/o17vN08gjnZBf4aCTdvQsa9DXeBwNt+fXWyuC2G5YeejntfOELCQutq0ahuDvMWfg7NP1Lr97gt1bo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2Xwqb/3CRxs+YxUKeLnLAdDtRXOa+9ucUm/+FEYDBoSdecFNi
-	7tmiQYxrSzmJRRcQi3X9wnADYrcbxNZc3Sa5a32NLFQY1OPD5g8/6/Og
-X-Gm-Gg: ASbGncuwGnAl2grKOFXgEt0yrNIBGBVkDfLoxMMDlyoGFZdx9fJ5eCfKkLmFp7cY9uX
-	DzCfLw9CWCrjgTEtUqd7RCwFrY7qCX+618DE/lhbuj+jwq21JvuNjoNN6SBIEO7jjawZ8xeCbJP
-	oTCwlvEG1xcdtw4ViAz8DlGoRZ1sxQuSPMhIncK0EI/vTo6XDtfdpvr8KrkxJJ9rvFy63771X4S
-	jJZf3P8ZrwJoUoe9R0KlIAIuRcYu2Lmslkk+SiLBNB7Nbc1jTQ0EiKcnGqbR2RrW2t/xLMB+J+D
-	zzpdbvBtYYDWo8aMopMqbc8HVOuQbLG0Y1j+1bXrzJWROF3nKBwPv7O89586m9L1leEAKdd7eA+
-	5/dZx+pmpTmE15sncxU4xzj6iKeKAvo3sqHafBjDWew2rEEsSY8ylW6T40SK0TwOzWvsz7B2ZiC
-	SC40t2nzks
-X-Google-Smtp-Source: AGHT+IEVnZIbbqf2p9wMdtt8M+QLyi1YtUEPt/5HLeZ9i7P3juMXg/cqIvjxJL7ve5wKBdQZvEgNpg==
-X-Received: by 2002:a17:90b:38c3:b0:32b:65e6:ec48 with SMTP id 98e67ed59e1d1-332a94df134mr5552161a91.8.1758671083824;
-        Tue, 23 Sep 2025 16:44:43 -0700 (PDT)
-Received: from mars.local.gmail.com (221x241x217x81.ap221.ftth.ucom.ne.jp. [221.241.217.81])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341bdc1bd2sm311257a91.21.2025.09.23.16.44.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 16:44:42 -0700 (PDT)
-Date: Wed, 24 Sep 2025 08:44:39 +0900
-Message-ID: <m21pnw91js.wl-thehajime@gmail.com>
-From: Hajime Tazaki <thehajime@gmail.com>
-To: johannes@sipsolutions.net
-Cc: linux-um@lists.infradead.org,
-	ricarkol@google.com,
-	Liam.Howlett@oracle.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v11 10/13] um: nommu: a work around for MMU dependency to PCI driver
-In-Reply-To: <39692eca904137ce7d51fccdc948ae0b94b4fe4f.camel@sipsolutions.net>
-References: <cover.1758181109.git.thehajime@gmail.com>
-	<4a9dde10c586883d20a8201ca7d76e6d7d52eaf4.1758181109.git.thehajime@gmail.com>
-	<a58620ecefa207e141a435c36492647c3d5bd3df.camel@sipsolutions.net>
-	<m28qib8g1r.wl-thehajime@gmail.com>
-	<6b1abe384237c8129e8043ecdfdad77758d2fd2f.camel@sipsolutions.net>
-	<m27bxu949d.wl-thehajime@gmail.com>
-	<da39f51b76cca54e5304064f7e34a8863442605d.camel@sipsolutions.net>
-	<m25xde80qh.wl-thehajime@gmail.com>
-	<39692eca904137ce7d51fccdc948ae0b94b4fe4f.camel@sipsolutions.net>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1758671229; c=relaxed/simple;
+	bh=8YgpqE03TuFSZdkW7VrnoXlZj2IFVZpYR2gJHtHFLPo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sSsS1aWkUQyI6QTrKoovB8kLmT9q+U6S/LX7D6DFaBjcviMhn/vagAOz6JoxX2SgHTqSPQRqJXIrF1seBMGPpmwAzteZVXxU3OKDhhOa6EY1JmnNOTxrZdPQIyKHo7y+KHpMAQeN1mPZNtRJ2d59qw50a7PRldmNVnaOMuW2JlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=t6zq26Tf; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=uRo8Vx5j; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cWc8N3L1Tz9t0f;
+	Wed, 24 Sep 2025 01:47:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758671220;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=itgmMwd0vgP5PZhXQStLZwyQ5NKDgt2vMyRJtHWxfhY=;
+	b=t6zq26TfpmPurufgNe3Zr1qEwXCVwvEXQwTXv89gast/lvK/9D4xxihA3Fp0AwU2Zlkjhf
+	1tq+cD7uvxhZp8nTtk1wecIiyTJagtmz4FT3ls6fhq1cdLTd+hnq9xY2tULzEV3UmPt1Ot
+	S+pUXu3Li0KuavilQIi1oBtrb7X71vQaKN5ZPD82wXUoph+rlcMT/+rh0GpjywHmDIkRZR
+	eD4jD6BbVnPbTymh/uHYfOY+QOj6o+lj7R722vBfanmRKjNkWORKN1M3lNAgbj3TtJr7bv
+	s/SGpinoDhPOesEjQZvVUQh8DEj0dnJysgKVrvjTuxnB0g4RmIs+dD99E2zFtQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=uRo8Vx5j;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758671218;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=itgmMwd0vgP5PZhXQStLZwyQ5NKDgt2vMyRJtHWxfhY=;
+	b=uRo8Vx5jveMoobMXiFFJ7yE5V1j4GJBisPxrTO3Y1HPd0fRzWCw/+4IxgTQhiwKetqJ/e6
+	IE7TB5pVU0nDcysPMGsJEV7Vr1jx7hDH8GRczOJnUhWcGNKMmIdGUwzway/crNztzfwkV1
+	IoelGxcNFv7CDcNkpiZpJzSIpVdsG0prbl0Xhsi7mnUnXQEwVLtPRPdqN9qEz9PK97B61S
+	bHWkir6FejYAAcLURVj9xNTRwcugtaXEuHul/qmZcMsBaxSEBkApQMQizE0ZBFfbdotjKc
+	tyHvYoAu2N74yZ7ZRqbaaY0zC4pcxTbT36Wkv4EFM4sxS5Y5ce3ukhGhfhB3qQ==
+To: linux-pci@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2] PCI: rcar-host: Add static assertion to check !PCI_LOCKLESS_CONFIG
+Date: Wed, 24 Sep 2025 01:46:18 +0200
+Message-ID: <20250923234644.82890-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: e57ee752eec6cf1c657
+X-MBO-RS-META: cwmw45enrhaw5sa8tr4qxzks97g1geux
+X-Rspamd-Queue-Id: 4cWc8N3L1Tz9t0f
 
+This driver can not function correctly without PCIe subsystem level
+config space access serialization. In case PCI_LOCKLESS_CONFIG is
+ever enabled on ARM, complain loudly so the driver can be updated
+accordingly.
 
-On Mon, 22 Sep 2025 15:32:22 +0900,
-Johannes Berg wrote:
-> 
-> On Sat, 2025-09-20 at 08:46 +0900, Hajime Tazaki wrote:
-> > diff --git a/arch/um/drivers/Kconfig b/arch/um/drivers/Kconfig
-> > index 6a0354ca032f..04025207a077 100644
-> > --- a/arch/um/drivers/Kconfig
-> > +++ b/arch/um/drivers/Kconfig
-> > @@ -159,6 +159,7 @@ config UML_RTC
-> >  
-> >  config UML_PCI
-> >         bool
-> > +       depends on MMU
-> 
-> That won't do anything since you elsewhere have "select UML_PCI"
-> independent of MMU.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V2: Add depends on !PCI_LOCKLESS_CONFIG into Kconfig file, to prevent
+    this from being built when PCI_LOCKLESS_CONFIG is not set at all
+---
+ drivers/pci/controller/Kconfig          | 1 +
+ drivers/pci/controller/pcie-rcar-host.c | 8 ++++++++
+ 2 files changed, 9 insertions(+)
 
-i see.
+diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+index 41748d083b933..3f489bed289fb 100644
+--- a/drivers/pci/controller/Kconfig
++++ b/drivers/pci/controller/Kconfig
+@@ -244,6 +244,7 @@ config PCIE_RCAR_HOST
+ 	bool "Renesas R-Car PCIe controller (host mode)"
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+ 	depends on PCI_MSI
++	depends on !PCI_LOCKLESS_CONFIG
+ 	select IRQ_MSI_LIB
+ 	help
+ 	  Say Y here if you want PCIe controller support on R-Car SoCs in host
+diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
+index 213028052aa58..29e13f7ff7ff1 100644
+--- a/drivers/pci/controller/pcie-rcar-host.c
++++ b/drivers/pci/controller/pcie-rcar-host.c
+@@ -35,6 +35,14 @@
+ 
+ #include "pcie-rcar.h"
+ 
++/*
++ * This driver can not function correctly without PCIe subsystem level
++ * config space access serialization. In case PCI_LOCKLESS_CONFIG is
++ * ever enabled on ARM, complain loudly so the driver can be updated
++ * accordingly.
++ */
++static_assert(!IS_ENABLED(CONFIG_PCI_LOCKLESS_CONFIG));
++
+ struct rcar_msi {
+ 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+ 	struct irq_domain *domain;
+-- 
+2.51.0
 
-> > @@ -170,6 +171,7 @@ config UML_PCI_OVER_VIRTIO
-> >         bool "Enable PCI over VIRTIO device simulation"
-> >         # in theory, just VIRTIO is enough, but that causes recursion
-> >         depends on VIRTIO_UML
-> > +       depends on MMU
-> >         select UML_PCI
-> 
-> Right, but you also need that for UML_PCI_OVER_VFIO.
-
-thanks, I understand too.
-
-> > and do
-> >   ./tools/testing/kunit/kunit.py config  --kconfig_add CONFIG_MMU=n
-> > 
-> > the validation currently gives the following error:
-> > 
-> >  ERROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
-> >  This is probably due to unsatisfied dependencies.
-> >  Missing: CONFIG_UML_PCI_OVER_VIRTIO=y
-> 
-> Well, OK, but that's fair - you did specifically override MMU=n, and
-> virtio-over-pci needs it.
-> 
-> > 1) use --kconfig_add CONFIG_UML_PCI_OVER_VIRTIO=n when using kunit w/
-> >   !MMU, and drop this patch from the series (no modification to the tree)
-> > 2) prepare a different file for !MMU & ARCH=um testing (e.g.,
-> >   arch_uml_nommu.config), and add an option to kunit.py to switch MMU
-> >   or !MMU
-> > 3) implement virtio-pci for !MMU and propose to remove the restriction
-> >   of CONFIG_PCI depends on CONFIG_MMU.
-> > 
-> > 2) will be removed when 3) is done so, I'm hesitating to propose a
-> > patch used by whole tree.
-> > 
-> > so, I think 1) is (not the best but) a reasonable solution, with a
-> > note in nommu-uml specific document (i.e., [PATCH 12/13]).
-> 
-> I don't think (3) makes any sense at all, we should just _never_ do
-> that. !MMU is really here in UML for testing to support other
-> architectures that are !MMU, and since by today's definitions no other
-> architecture can have PCI without MMU, it makes no sense for UML to have
-> that (and complicate the PCI code unnecessarily, etc.)
-> 
-> I think it's entirely reasonable to have overriding CONFIG_MMU=n to also
-> necessitate overriding CONFIG_UML_PCI_OVER_VIRTIO, i.e. (1).
-
-okay, I'll go for this direction in the next series.
-
-> As to whether or not to add a specific config file, honestly I don't
-> really know or even care - you'd have to ask the people who actually
-> want to test !MMU.
-
-indeed, this will be the out of this series if needed.
-
--- Hajime
 
