@@ -1,115 +1,165 @@
-Return-Path: <linux-kernel+bounces-828427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D169EB94971
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:41:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7239AB94977
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 987094E2C99
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:41:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 177AA2E342C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA5A30F81A;
-	Tue, 23 Sep 2025 06:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A4730F932;
+	Tue, 23 Sep 2025 06:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DNxV5Mdu"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="KJ/uoZSP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="n56CdQSY"
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353F17081C
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8236822ACEB;
+	Tue, 23 Sep 2025 06:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758609660; cv=none; b=KflPD1ac+r/+nXbujVFYVTKy7jaVFcm3SU8yGCqkM3697JdRP57v8FukGqxgJhYRu8KOtgfhgf8RTOtgzhSFf6ziuHSyyjW4BTATLAnthnH2AOCAlaZZoza6oI8sZgA60G17lSzO7+h0jbn5e3KyzCEz9eWixxPMXl2fCKj9M6A=
+	t=1758609741; cv=none; b=d2hYS//AoQGPdm5GM5JFc4CqFkA/zAqLAm/mgmJ6hF8BqhvLmmE/Uxsun2TPuS77yPFfCYNQ1e5cgVkQZFYbxJOlpx3vWH18g2Xv9zl8oYitrVqfvKJVYS4yx0OYwdCr8mE8T7JGl+tfxvCpxJTvw0VINh+hNzgTxEJxFA9q9fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758609660; c=relaxed/simple;
-	bh=eAnQ3leTSF8Ab9KgIwHZdQwYj5FPMkNUZRFEH4T1CzM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vvb+i5FetL/Ta+CwLpB4UnDfxzWWjByJhyZYz9K8te4X/xkHh7e556C4gFv/WGe5SiVZ5K2NupVa8+kGGWpSNDXlZ8nGMm5aIcvtFjH98WDeYeKMV8d/FHO/2jmL5gNDJMtG10l8ERIWz1/nuk9/Bn9XZnz2haZ6I6Jy5SvTEKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DNxV5Mdu; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-329a41dc2ebso4169408a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:40:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758609658; x=1759214458; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3nTw98tKK7P7tEgubOAzlpdmS6udUpljFE7G8gB7lBA=;
-        b=DNxV5MduRqwN2R1Y+wsOXoviVA1y9y8RJPCX7+MNTYs60TLNbVALm9JcMJNQVMAuHf
-         +8zGrtDSKWZN8SmqxPD3OiOQVHZNPy8jWGx7eaursdoVYPhf4LeDa7EvH8fRB/sAZjhv
-         IkEFSxN/qcVUUP7a2c7FQFSkgVIrqRYi+h4C8r42tz1Otasv2FZFIRkT1ekGhY9liyXr
-         PuCU3bewN4yHa99IhDbrPH8SoT/Cmz8E/ANxCCI1AeO/IyLDyPJMV3BqUPuptdrSwgPu
-         qZ7K7m8lMLV/kjdJ0y97sal1MXINcG8yHNvObE5TB+Y04Iv4EX117Sw4pBkNZAn/eqmH
-         umJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758609658; x=1759214458;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3nTw98tKK7P7tEgubOAzlpdmS6udUpljFE7G8gB7lBA=;
-        b=HnaLXZcvorYyrVZ//4Q2zu/ndEoluptzcfkWtu2Ys8YS/o3+zA+30nya7Qaw29LiDF
-         cwVt1u+TqgPnklnYoo1V1o86pysWxtulNBjvFqprCqzeRqohlbEqcPE4xaCVbKLURUKN
-         uP4VGcWtGn5zAch2NlTqwkjMc/gWgshNiuSASpnc7KL27g3n1YqMz9nOLaHz6+v30eUP
-         BWKv5nF7sLKlpCD3vOms0MywhdVUcly8S+gT7TdkPhS2rawaoIBwHdE7g0rJ4C7TM5I3
-         mxI9IDwjch0ASKZz+soxQo5n06LtXMgJTWcO5aCS1CwH5DKE/nC0xnuYYGuYYgo2uGLZ
-         P8PA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMpITo6tN1agVULwBwLNIlK8nDbkLmBj7dUdnuUFwa0a9nHI9DfJEwPKP3WR4cqzTXV+6Okr0MvLuHUv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhPj/HGiUuaIPvk1pFeRRrxHLohcnuZSfU60/NWlwefbptF1/N
-	yBsuKxuQMYBvT6Z4XFUKHUcgmbpLYymGtd5bsFbTAXQLlTWwkphLWdHB
-X-Gm-Gg: ASbGncvirxKLGWF7TJEaRAnWmbM68mmenhDu7lKXF4xIQ/U1Ankc7JPxhHSsMTvf2o1
-	IdGngE7K9NP3REBXFnLukw+kaR831MWJJPpH8tJJlvaTmX9j0OXukYo5y2ZFiJxDr8LCLMUpL3L
-	8eF5wVC1UEbgJgtakEu+ABO//X5EfFWeM6PCDxiucvkcGBlmA0AAF8WfruN75Rpd1tld5F2vt0K
-	U536UHYnwlKMn0blj+Czku1+280sfy8MEeFWGcIjWNAtAy05mc7AZ68STukUuVqokT7zBMMpINY
-	KXZXHiSoWBZa5SGTj7MQDC4zvOSOkOlU/t2JmKfdy0TXTSOiEvQbpDIjxw1DRvvjglB07ivTgeY
-	/VVAgT0/BlahMV1uFDrspI86u5vp7
-X-Google-Smtp-Source: AGHT+IFK6RgS/JTJOAGBgBQ9nadK6aL449oMQckP6OC7pzz2TDJ4o81VHWX5cGBkkmJaH/3/4JAmvw==
-X-Received: by 2002:a17:90a:ec84:b0:32e:8c14:5cd2 with SMTP id 98e67ed59e1d1-332a95e8f03mr1673948a91.28.1758609658420;
-        Mon, 22 Sep 2025 23:40:58 -0700 (PDT)
-Received: from y740.local ([2401:4900:1f31:8167:ea30:c04b:15e8:3036])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed268813bsm18141932a91.1.2025.09.22.23.40.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 23:40:57 -0700 (PDT)
-From: Sidharth Seela <sidharthseela@gmail.com>
-To: almaz.alexandrovich@paragon-software.com
-Cc: ntfs3@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com,
-	sidharthseela@gmail.com
-Subject: [PATCH v1] ntfs3: Fix uninit buffer allocated by __getname()
-Date: Tue, 23 Sep 2025 12:10:16 +0530
-Message-ID: <20250923064015.178554-2-sidharthseela@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1758609741; c=relaxed/simple;
+	bh=P2NZE0n7MiiCBiDkONlBcF7pHNIFkrE7kKcJAW4C+7Y=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=cKEPh/6QQFESWxK2MRDz1NetKV8ke6aqSkkTiE0Cst3HXocAlw2VqW0V2Uau2gQm61ADvOKoXTawW6FHdd3U8RKzBeT6lrtLsyuSHiPB07igr9iA4041BTId5GeqoGefyPRdd63Jv1Doqf9VO2Gwd1Giq1jASDjHAX+mU2T8AbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=KJ/uoZSP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=n56CdQSY; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 1A5831D001BB;
+	Tue, 23 Sep 2025 02:42:17 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Tue, 23 Sep 2025 02:42:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1758609736;
+	 x=1758696136; bh=FGIY+8FPwLmeSxHeWRctWFodP+GvxlDpxtszJgK+wmY=; b=
+	KJ/uoZSPCFOJF/mKFgRtiYu1BW8AHiIfxYaIFWTetBxkOrCIUxpEhCAAW3TJlbQQ
+	0QL46MDn6ciaqGC8hURh+jQ65BejQ43Qow1rNVI0TF+YLudXYfY95zyfiWzynenA
+	9Bcsn1vG1lZRKTQwSlzgjHIA90dIhc3IR0Dxmkf11iEHo3gKBJNej0c+ZjFVPItG
+	v7ljgd+EFeZgrzgP40bn4/oOoZr5O9Iti08vRjk0HfC+qAVpuAZ9SbJckuB4hWiC
+	q+SFU/TDhLGcM1bOc6YXaRWdBNcdHIAi+PN/1NRhw3pE9u88dLTobOSVDg/b6g5c
+	uh/1xT0AItgKwzwlLu0h7g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758609736; x=
+	1758696136; bh=FGIY+8FPwLmeSxHeWRctWFodP+GvxlDpxtszJgK+wmY=; b=n
+	56CdQSYqTIjhJCjuGCdY0FLYA/n9lhBI5Vc68IloiXWlubOZlhNhQWeCbQK4RCxV
+	dYBTORXZzzbTckttkIVMNL9j6qmtFXKGoeP5Olb2i7EL7Bolfe3XqRWPq0eekh/X
+	IGzYqUUABiNfj68HZy6M4+NA9xgX2MTbIYjSAbMhGOPARJGtNNPU3QM8BWTpjvC1
+	7PGGQOSZsoFb0LnEEwStmw+l064xTfHc4HjMYuhptSw3gfsy1RP/Sx3ZdvfHkDOS
+	e7U07P3Io0Wzr6f/XABZbWGn4TePEXRGlAR4VeBzvkNiVfZCbQsl27VEhw4jOl3t
+	/e+Rk6stMkJigX01TeKxw==
+X-ME-Sender: <xms:SEHSaLfRv4wJx3kGRpNW3f_6PEUSqSACtOysukxBvlg4sB0Toq5TsQ>
+    <xme:SEHSaMCIWSY3aMaH8h84iq5YQfeeyvRVzObM39zou4RDx-NvhNUrCyZ2HbL_lGE-L
+    Li-ZCvTyPM9t86JsPB-HHjGN2RFz-vvAdsLiicTZv-pncUUwIb-u1s>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeitddtgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtoh
+    epsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhii
+    sehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+    pdhrtghpthhtohepfhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtth
+    hopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlrghntggv
+    rdihrghngheslhhinhhugidruggvvhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnh
+    gvth
+X-ME-Proxy: <xmx:SEHSaLZt85JBELa0ynK_Bqeo5OyYk9b6SWCDQSXJ7I2wvH-O7yXc2Q>
+    <xmx:SEHSaAy5aZBx2Pq5DuONae2JZN-M0sna_xwnxnAb7cyfKZUOjxPInQ>
+    <xmx:SEHSaKOzRPWWBb21wl8_cReV-OS-YBAdhaBJKkbJxo9VusRlBgJsFw>
+    <xmx:SEHSaPeNVoHHeB-I4CJbWy_BOVP4pPdW7FWLUSyQVoN-hx5h6hPtpg>
+    <xmx:SEHSaLWyzVYQtT6HT50iJTXYdiLL9IhC-DBs-1qMXnO5T5FCbQByWfMg>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 59C0A70006A; Tue, 23 Sep 2025 02:42:16 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: Ah_uXtpTlO07
+Date: Tue, 23 Sep 2025 08:41:56 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Finn Thain" <fthain@linux-m68k.org>
+Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Will Deacon" <will@kernel.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Jonathan Corbet" <corbet@lwn.net>,
+ "Mark Rutland" <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>, linux-m68k@vger.kernel.org,
+ "Lance Yang" <lance.yang@linux.dev>
+Message-Id: <d707b875-8e3c-4c18-a26f-bf2c5f554bc2@app.fastmail.com>
+In-Reply-To: <86be5cf0-065e-d55d-fdb6-b9cf6655165e@linux-m68k.org>
+References: <cover.1757810729.git.fthain@linux-m68k.org>
+ <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org>
+ <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com>
+ <6c295a4e-4d18-a004-5db8-db2e57afc957@linux-m68k.org>
+ <57ac401b-222b-4c85-b719-9e671a4617cf@app.fastmail.com>
+ <86be5cf0-065e-d55d-fdb6-b9cf6655165e@linux-m68k.org>
+Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and atomic64_t
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Fix uninit errors caused after buffer allocation given to 'de'; by
-initializing the buffer with zeroes. The fix was found by using KMSAN.
+On Tue, Sep 23, 2025, at 08:28, Finn Thain wrote:
+> On Mon, 22 Sep 2025, Arnd Bergmann wrote:
+>> On Mon, Sep 22, 2025, at 10:16, Finn Thain wrote:
+> @@ -8,7 +8,7 @@ struct vfsmount;
+>  struct path {
+>         struct vfsmount *mnt;
+>         struct dentry *dentry;
+> -} __randomize_layout;
+> +} __aligned(sizeof(long)) __randomize_layout;
+>
+> There's no need: struct path contains a struct dentry, which contains a 
+> seqcount_spinlock_t, which contains a spinlock_t which contains an 
+> atomic_t member, which is explicitly aligned.
+>
+> Despite that, there's still some kmem cache or other allocator somewhere 
+> that has produced some misaligned path and dentry structures. So we get 
+> misaligned atomics somewhere in the VFS and TTY layers. I was unable to 
+> find those allocations.
 
-Reported-by: syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com
-Fixes: 78ab59fee07f2 ("fs/ntfs3: Rework file operations")
-Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+Ok, I see. Those would certainly be good to find. I would assume that
+all kmem caches have a sensible alignment on each architecture, but
+I think the definition in linux/slab.h actually ends up setting the
+minimum to 2 here:
 
---
+#ifndef ARCH_KMALLOC_MINALIGN
+#define ARCH_KMALLOC_MINALIGN __alignof__(unsigned long long)
+#elif ARCH_KMALLOC_MINALIGN > 8
+#define KMALLOC_MIN_SIZE ARCH_KMALLOC_MINALIGN
+#define KMALLOC_SHIFT_LOW ilog2(KMALLOC_MIN_SIZE)
+#endif
 
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 37cbbee7fa58..6b14c13bda68 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -1716,6 +1716,7 @@ int ntfs_link_inode(struct inode *inode, struct dentry *dentry)
- 	de = __getname();
- 	if (!de)
- 		return -ENOMEM;
-+	memset(de, 0, PATH_MAX);
- 
- 	/* Mark rw ntfs as dirty. It will be cleared at umount. */
- 	ntfs_set_state(sbi, NTFS_DIRTY_DIRTY);
--- 
-2.47.3
+#ifndef ARCH_SLAB_MINALIGN
+#define ARCH_SLAB_MINALIGN __alignof__(unsigned long long)
+#endif
 
+Maybe we should just change __alignof__(unsigned long long)
+to a plain '8' here and make that the minimum alignment
+everywhere, same as the atomic64_t alignment change.
+
+Alternatively, we can keep the __alignof__ here in order
+to reduce padding on architectures with a default 4-byte
+alignment for __u64, but then override ARCH_SLAB_MINALIGN
+and ARCH_KMALLOC_MINALIGN on m68k to be '4' instead of '2'.
+
+     Arnd
 
