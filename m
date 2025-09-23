@@ -1,103 +1,109 @@
-Return-Path: <linux-kernel+bounces-828625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1390B95089
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:40:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E23B95092
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FCD219025E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:40:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF9FC19041EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5740131D736;
-	Tue, 23 Sep 2025 08:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N3wXVvem"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2036331BCA3;
-	Tue, 23 Sep 2025 08:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142F731D393;
+	Tue, 23 Sep 2025 08:40:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47A831D733
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758616824; cv=none; b=h4HerdR522a7d4tj8onP6/Wd0UllRbC3sW2aEodUH2Ct7iyO6axvkoxWZLQWhLclJFAILmIYQ3kTZSpvrSqHW13S9ObEQiIZg6ghX5+rUMmT8SwUixQ4D06gg2ISaFsNQ682x0TNfWUCood5h2deFKVE0fhtIag5X2zvm7WQooA=
+	t=1758616834; cv=none; b=Nqy1nactBW31xKKio94ZMLqkgLz4LvwfDRbvEJUTqJybL7i5wkcT8eUjhJ7QeRWpEAVoR3YR8haiRTDAojtDaXm+pM3KBLJyQThGW8mo3ppbf0TZrn7reCTS9pykB3TcNpGW/vXUCpYpIr97kBMD85A3owbyaTvXE6oj7OjzMis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758616824; c=relaxed/simple;
-	bh=0T5YvI7oXGfgfqD2MrSUTwY0OsPf11NBpOQYsioFh2Q=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=P5/TX2mvlfDxvPDp43J++zGmqtmZwYf8nFmhlrXSF5u5LW9Seg9QQFNoFWi5HmmvEyabmD2xocVHf8g4QjO9VlChTsRC9py61a3cp0GWLNBbcxT3N3ihp3farOF3ge3bqGMPq0BcLeWkh9He53c3hnjOGaV4TOXfBFU7HETKeT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N3wXVvem; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758616824; x=1790152824;
-  h=from:to:in-reply-to:references:subject:message-id:date:
-   mime-version:content-transfer-encoding;
-  bh=0T5YvI7oXGfgfqD2MrSUTwY0OsPf11NBpOQYsioFh2Q=;
-  b=N3wXVvemqT0WhlkTg+OydofygzbRASs+fRMLepSTKRoZkKMBKZg8eaOq
-   Bri/jOdQy9PL/Ja31cXknNG78hUy96weMMl5OQVZN4CZJAnWyXr5Y/QO0
-   7MBP7JoHqc/BnV47U1CvoYNJBLlWM9xTOgAcqigwZpWZkEK0lZZWi12Ll
-   vaAXUezzTmmBK4R9RkvZcy8n4ZOFtKFemZ3KCfn2pCDZfxK9G0nFTay56
-   GdUe67iemtAcINDiaJcD7oP64uqAtuszRAX7Ovll+qvAZ6Us2iXCuNK2j
-   h044W16SrW/dzeXd7/miT8gsjIkMkEHFDoAfZ/jRkPlrJ1ArP9FGlmJ6Z
-   w==;
-X-CSE-ConnectionGUID: R9fhJqRUTMa+aeYnkJGIiQ==
-X-CSE-MsgGUID: 8vagAAG5QFOAzNkDsuEM+w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="71135537"
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="71135537"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 01:40:23 -0700
-X-CSE-ConnectionGUID: PZCXSkOxQOmK6hUgWXdWAQ==
-X-CSE-MsgGUID: 1XknE6b0TCaoaqezrcQGWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="176291354"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 01:40:20 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, Hans de Goede <hansg@kernel.org>, 
- Xi Pardee <xi.pardee@linux.intel.com>
-In-Reply-To: <20250916191339.1748512-1-xi.pardee@linux.intel.com>
-References: <20250916191339.1748512-1-xi.pardee@linux.intel.com>
-Subject: Re: [PATCH] platform/x86:intel/pmc: Replace dev_warn() with
- dev_dbg()
-Message-Id: <175861681457.3176.15667670615811075571.b4-ty@linux.intel.com>
-Date: Tue, 23 Sep 2025 11:40:14 +0300
+	s=arc-20240116; t=1758616834; c=relaxed/simple;
+	bh=YUKrGPi1KmtXOh7IwelHIni70ayTxeBt0LKTKm51GP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hKPRTRMXZ2rNd+TMAnK2EKQNr4GDlD+V4LSoShU1Z03wgK791mwDPnzRnVhmt1duTeMiFbaV2QHQ3FEn7IAeT2vujTQ0dehiaJLuGG7rvoMBUBnlBWZOVmnIWUcL+1g7p0Nf6lBt9ExRz2qidvCSxea/rhM8s3aiEr4OEg899Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E6524497;
+	Tue, 23 Sep 2025 01:40:23 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E23533F694;
+	Tue, 23 Sep 2025 01:40:30 -0700 (PDT)
+Date: Tue, 23 Sep 2025 09:40:28 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+Cc: gregkh@linuxfoundation.org, dakr@kernel.org, rafael@kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arch_topology: Fix incorrect error check in
+ topology_parse_cpu_capacity()
+Message-ID: <20250923-spectral-rich-shellfish-3ab26c@sudeepholla>
+References: <20250923072520.3964688-1-kaushlendra.kumar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923072520.3964688-1-kaushlendra.kumar@intel.com>
 
-On Tue, 16 Sep 2025 12:13:32 -0700, Xi Pardee wrote:
-
-> Replace dev_warn() with dev_dbg() to reduce unnecessary warning messages.
-> When the low power mode priority register contains invalid data, the Intel
-> PMC Core driver can still utilize the default priority list. This scenario
-> is more suited for debug information rather than warning.
+On Tue, Sep 23, 2025 at 12:55:20PM +0530, Kaushlendra Kumar wrote:
+> Fix incorrect use of PTR_ERR_OR_ZERO() in topology_parse_cpu_capacity()
+> which causes the code to proceed with NULL clock pointers. The current
+> logic uses !PTR_ERR_OR_ZERO(cpu_clk) which evaluates to true for both
+> valid pointers and NULL, leading to potential NULL pointer dereference
+> in clk_get_rate().
 > 
+> PTR_ERR_OR_ZERO(cpu_clk) returns:
+> - 0 if cpu_clk is a valid pointer or NULL
+> - error code if cpu_clk is an error pointer
+> 
+> Therefore !PTR_ERR_OR_ZERO(cpu_clk) is true for both valid pointers and
+> NULL, causing the code to call clk_get_rate(NULL) when of_clk_get()
+> returns NULL. Replace with IS_ERR_OR_NULL() which correctly identifies
+> only valid pointers, ensuring clk_get_rate() is called only with valid
+> clock objects.
+>
+
+Nice catch, wonder how it survived so long unnoticed. I also checked
+if PTR_ERR_OR_ZERO() is used in similar way anywhere else. This happens
+to be the only occurrence.
+
+I think it needs,
+
+Fixes: b8fe128dad8f ("arch_topology: Adjust initial CPU capacities with current freq")
+
+With that,
+
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+
+> Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+> ---
+>  drivers/base/arch_topology.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+> index 1037169abb45..e1eff05bea4a 100644
+> --- a/drivers/base/arch_topology.c
+> +++ b/drivers/base/arch_topology.c
+> @@ -292,7 +292,7 @@ bool __init topology_parse_cpu_capacity(struct device_node *cpu_node, int cpu)
+>  		 * frequency (by keeping the initial capacity_freq_ref value).
+>  		 */
+>  		cpu_clk = of_clk_get(cpu_node, 0);
+> -		if (!PTR_ERR_OR_ZERO(cpu_clk)) {
+> +		if (!IS_ERR_OR_NULL(cpu_clk)) {
+>  			per_cpu(capacity_freq_ref, cpu) =
+>  				clk_get_rate(cpu_clk) / HZ_PER_KHZ;
+>  			clk_put(cpu_clk);
+> -- 
+> 2.34.1
 > 
 
-
-Thank you for your contribution, it has been applied to my local
-review-ilpo-next branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-next branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/1] platform/x86:intel/pmc: Replace dev_warn() with dev_dbg()
-      commit: bf726cdc9d4fabcf1ebd50f6fce5121acc7447bb
-
---
- i.
-
+-- 
+Regards,
+Sudeep
 
