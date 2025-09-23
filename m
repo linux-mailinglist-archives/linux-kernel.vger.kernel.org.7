@@ -1,64 +1,66 @@
-Return-Path: <linux-kernel+bounces-829182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B8EB96783
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:59:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41ACEB96789
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459FD18860F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:58:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6BE0188CCBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026DB2417D9;
-	Tue, 23 Sep 2025 14:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB39D23A98E;
+	Tue, 23 Sep 2025 14:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="htNc2LUV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="yPYHckoK"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDAD18E20;
-	Tue, 23 Sep 2025 14:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB34314A09C
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758639471; cv=none; b=Gq+vAvon+JIFOBV1el65rSevuNxZ6GKKnHJoedQRB7Qn+RfU8TVlN0NaT66Qy9QbZZPPulye9Tb/6ADVTOhUoonBsRa+tcy57iDhkcOb54I8flCq7inDn1jIn+PaEwypAyIjv+mf8Svv3iOYx5oxGt+Rjq2un7FOroN3WQxACH0=
+	t=1758639485; cv=none; b=GCVftzVvDaM4v0JObsDu/Dfi6tHIqkHE9dEU62kqay7XsgojLx2wWGrW2aXPfvYh3YP6TNiWtI70IAOKasLu5chOfCdWYJkyGo26AB2WfkA2bltX0DLHJjRaiovmG03desAYSvQrHAdnSSID38st9tAvxxKHTrR/caxF+GFfVrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758639471; c=relaxed/simple;
-	bh=vTCKBOU6gu1HJhYhBB8NUvymzBQoq30uzkOtkt6iYE8=;
+	s=arc-20240116; t=1758639485; c=relaxed/simple;
+	bh=fPgKhAXLtq1r+0p7DPCWl4qoTyUKru1c3B+IZWuMy88=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h/1J9Aw2kjN3XQntZHJtbHQiXjmfOeMEKkkr+ggDOalX4GBXqsHuwYa1xTB7LlbkQ54mNAfmySlWCVfJlHbMNu4TkYOOnCTvIMZV5htqt8iILVWyFWixy0vD2k1cLRQh4mJx8JQAxvXbcRSlhCYPGM4asxoXj5TNPjHUVvO8YL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=htNc2LUV; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758639470; x=1790175470;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=vTCKBOU6gu1HJhYhBB8NUvymzBQoq30uzkOtkt6iYE8=;
-  b=htNc2LUV5MMsonJ1CSa2NTGzgUGEHGB3INbPDSXaZlamrAgpMu57jkUr
-   PCLOd14b+tLNFd8uP1PstcTnv3TYrrHbrU58ipaBOApOjDpzq9G27bCRq
-   Vp6gumU3lq/M6Tc37qMKvkQQKoVmOugmgouh0XJkOvGwkNBXTBk5lzVnE
-   hqCmEGwUmigXo6q9osKIS+bj3Ov2k9n+Dxi1sHKCGjs01pNZEiimG+xCg
-   YGEnMcxCokAih8N/xkgt8Zhmb9km+7Hstfc9mOUk4n+ns5rktG00beG+0
-   qZzQanTxNTWWystLYSR3D2RH8yU8n0w9pEtU34AgdUMFa9IjYQtJ/LSzz
-   A==;
-X-CSE-ConnectionGUID: pHX7SOgHRbe69iD9VkIz0A==
-X-CSE-MsgGUID: +/Dim/H3Rx6db8sQwlpksA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="71542157"
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="71542157"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:57:49 -0700
-X-CSE-ConnectionGUID: 2N8S3d5oQGSCK8wI4ENGUw==
-X-CSE-MsgGUID: XPpvwklDTryEhJtOg03a/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
-   d="scan'208";a="213927921"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:57:45 -0700
-Message-ID: <5717b2dd-8a95-4200-a547-b724f46abaef@intel.com>
-Date: Tue, 23 Sep 2025 22:57:41 +0800
+	 In-Reply-To:Content-Type; b=Ug7TpydDxHo6Pg2MwQRc4l37N57lZQLJ8pu7mNBFTO/sU8VTiM04cu33yo1MbLbUmCrN//QEXZhxgWihbWRERSujBFRgQQJ56vOw9HmUdMt24Eq8+NRQsGGaL5tVBK6pCP6H2b+ApkKnVbqiNpivkft2L0flrP/96oJ49Ry19FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=yPYHckoK; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5004b.ext.cloudfilter.net ([10.0.29.208])
+	by cmsmtp with ESMTPS
+	id 11givxgSYjzfw14SpvTqHi; Tue, 23 Sep 2025 14:57:56 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 14SovJ0oGBc9y14Spv7559; Tue, 23 Sep 2025 14:57:55 +0000
+X-Authority-Analysis: v=2.4 cv=ZcMdNtVA c=1 sm=1 tr=0 ts=68d2b573
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=H2e1TcdlFpyve7uw5OEA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Ei7w3jLwdGgrHNAL8l1NYLiV0L5D5a+WqLWXWUhRPtc=; b=yPYHckoKdKLF13hMR+iCX+JnES
+	56HwZHhvEjHgkfo3bBgQiuhYzH2DlEKKbY7DTZAA3C472eWkWojSMLOyUnGfj43rB0iwFVHCjWpmn
+	/bJ/ziWb0nplp6aD4IDd0AKhTQTEfoDP9DQebeZd2+xAhNUGvtS4IcvqZ2LmwsOOn2X09CAq+OwH6
+	kuwbPz/PqMlifKb/CafzZpxY7y7GlPC1FYauLFuljO4r9d+bDcJIFmgQr3MUUPT9ONF3UG1Ya4VTb
+	60Tp7sQSVSx+aG1VsxaOGdOYdEP8PqzlLGRKCikeVMOfpTcSVvPwmJN3z0gSeW7tdexkjdUESaLPn
+	KHKo7gvg==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:36408 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1v14So-00000000s8B-0bpF;
+	Tue, 23 Sep 2025 08:57:54 -0600
+Message-ID: <a4cab218-3c25-426e-a5a5-fb49d89ce544@w6rz.net>
+Date: Tue, 23 Sep 2025 07:57:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,58 +68,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 28/51] KVM: x86: Enable CET virtualization for VMX and
- advertise to userspace
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Binbin Wu <binbin.wu@linux.intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-References: <20250919223258.1604852-1-seanjc@google.com>
- <20250919223258.1604852-29-seanjc@google.com>
+Subject: Re: [PATCH 6.16 000/149] 6.16.9-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250922192412.885919229@linuxfoundation.org>
 Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20250919223258.1604852-29-seanjc@google.com>
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250922192412.885919229@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1v14So-00000000s8B-0bpF
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:36408
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 17
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfL6DtO8UdVMk6hT8QVTB1Wy5DNAgS5ktj6NzKf4q1ooRGjbdbk3SOR7DKB6+ALmbGDaKGWpWpzwvzhfjoQubceDBfwgAf9OkrONBUTPUJDfY5pilUeVL
+ ZDXakHhPhfSZ3HrZAXuQJ27QtThPB2+4jICiScFuwcPJ0YO/Ok/feIuhoSb9J/BvyJlKXq6ypU6hxYIW5ORtQ6KpwPiSKMTVHLg=
 
-On 9/20/2025 6:32 AM, Sean Christopherson wrote:
-> From: Yang Weijiang <weijiang.yang@intel.com>
-> 
-> Add support for the LOAD_CET_STATE VM-Enter and VM-Exit controls, the
-> CET XFEATURE bits in XSS, and  advertise support for IBT and SHSTK to
-> userspace.  Explicitly clear IBT and SHSTK onn SVM, as additional work is
-> needed to enable CET on SVM, e.g. to context switch S_CET and other state.
-> 
-> Disable KVM CET feature if unrestricted_guest is unsupported/disabled as
-> KVM does not support emulating CET, as running without Unrestricted Guest
-> can result in KVM emulating large swaths of guest code.  While it's highly
-> unlikely any guest will trigger emulation while also utilizing IBT or
-> SHSTK, there's zero reason to allow CET without Unrestricted Guest as that
-> combination should only be possible when explicitly disabling
-> unrestricted_guest for testing purposes.
-> 
-> Disable CET if VMX_BASIC[bit56] == 0, i.e. if hardware strictly enforces
-> the presence of an Error Code based on exception vector, as attempting to
-> inject a #CP with an Error Code (#CP architecturally has an Error Code)
-> will fail due to the #CP vector historically not having an Error Code.
-> 
-> Clear S_CET and SSP-related VMCS on "reset" to emulate the architectural
-> of CET MSRs and SSP being reset to 0 after RESET, power-up and INIT.  Note,
-> KVM already clears guest CET state that is managed via XSTATE in
-> kvm_xstate_reset().
-> 
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Signed-off-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> [sean: move some bits to separate patches, massage changelog]
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+On 9/22/25 12:28, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.16.9 release.
+> There are 149 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 24 Sep 2025 19:23:52 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.9-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+
+Tested-by: Ron Economos <re@w6rz.net>
+
 
