@@ -1,105 +1,184 @@
-Return-Path: <linux-kernel+bounces-828086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E8AB93E8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:51:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CDFDB93E65
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4CEA18A4295
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:51:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 406987A43AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD2D26D4CE;
-	Tue, 23 Sep 2025 01:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB6726B747;
+	Tue, 23 Sep 2025 01:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="NRpkpxmo"
-Received: from mail3-165.sinamail.sina.com.cn (mail3-165.sinamail.sina.com.cn [202.108.3.165])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NsZlq29c"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A11526E717
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12D98635D
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758592255; cv=none; b=icP2fFJAtEcQT/gdrG1zvBAlJuDkY4Gcbo98PyvOvxP+i/KAVWDAqFJJ0WqFyDm1CJ8OSVbExYF//ZShYRsTshlMotoLZ4knGjrzIwkF6irgYzuU7RMyQarInlT26UDnRP1KFQj9Gq+VSMFFLDkJb3Rq1E3MJUcl6ryHID5i+PQ=
+	t=1758592167; cv=none; b=JLE8uhR/k1ZZ+88iAYTPcyYJ2s//luu9Q8omjWerAHbmMT0tFY179ue+2Qky7YRjsdDjEGCcbqx0c+hMGAzUfFWnODJY6RcSnf+shtyAOj7HY6a0eEeb/HGpF8T3gQrT/ZYZo7veGDWQE0vFYV+TtIf6XsEItZNThffcyRSxBFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758592255; c=relaxed/simple;
-	bh=qFbXdYqT/W9bCrTUTL6I/oX4JN2vs4G4Mvq32kUs0bU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rp9TVrHXI3Ex1O4hvnbXKN9HEXbCMJgCZH3OSPgJwi8rhsVsnai+HmyMDSqJFJzWe92s4vUQ598TzOibtU5w4JMqVmRWNureeQZCnH8wLePWvOCqdXTos/Jj5BSKeANdnVp8Twyk0+Lm6JhAnb8jUDkr0IHZDYacNgQSLPN0Aq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=NRpkpxmo; arc=none smtp.client-ip=202.108.3.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1758592249;
-	bh=EKuxRKBt9t+pPx6sY+B+LVWV7vggWpt4FNbzTZuuSYo=;
-	h=From:Subject:Date:Message-ID;
-	b=NRpkpxmoXXePTpatzW4ZGzf9fnVWtJGAfIquwjylgeSFdK3PxlzlRGAeRaYXb/jpH
-	 QWr7S+NB6opExZKCspPNA4vurql3QrWCb6fAxcKG8+nrYm5eACPm2ubYbLUtV100fk
-	 /zoyow/O0f7sqp7qyHlRYF5xDd5K7CgOkGiqdwaM=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 68D1FC63000001BD; Tue, 23 Sep 2025 09:48:21 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 2762746685190
-X-SMAIL-UIID: D0D6EE95DD86424096F9F7BCA767E5B9-20250923-094821-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+5c5d41e80248d610221f@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [block?] general protection fault in blk_mq_free_tags_callback
-Date: Tue, 23 Sep 2025 09:48:08 +0800
-Message-ID: <20250923014809.7447-1-hdanton@sina.com>
-In-Reply-To: <68d1b079.a70a0220.1b52b.0000.GAE@google.com>
-References: 
+	s=arc-20240116; t=1758592167; c=relaxed/simple;
+	bh=TkiTPMRoLkZWncaiZSIK+7gzZui0QKiQe9GqYXV8xvU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pYSGP8bbI+An1eujBAP7R1nM7ZohiozWtwOIXgrzTWBD0SaurZHvDaaI8YvpoisFo9wKVTGatBP393JCOLhJJ+isNqJfNRBfvvtaIRveX+JwIuDBMALwjs6KOgS9qKgRaYnyIZ2wxoxH0xilS3g/RNz3RAjvFaTyY4swoi6lQXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NsZlq29c; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9471bd83-911f-433d-8ce2-f83f080ed264@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758592150;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KiWATjJlRyNXagDcw5KRHJfeXKRLsAKy/bPmDguzbG0=;
+	b=NsZlq29cN7YJE4XCbL77ung8YpUPS/Ew9mPVomMh00fJjOeP0PekGP1EtxZgGpMCHL7cOg
+	hn8YGsfqo2M5EI3luUBnZUXQOc4F7+KZLHXZfeHrkKaRVyvNSVVMtRyO46aE7/0e6fCf2M
+	ugvJETzfOwEkWEw7g7wKHzc6mVClt/E=
+Date: Tue, 23 Sep 2025 09:48:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH 1/1] mm/thp: fix MTE tag mismatch when replacing
+ zero-filled subpages
+Content-Language: en-US
+To: Catalin Marinas <catalin.marinas@arm.com>,
+ David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
+ usamaarif642@gmail.com, yuzhao@google.com, ziy@nvidia.com,
+ baolin.wang@linux.alibaba.com, baohua@kernel.org, voidice@gmail.com,
+ Liam.Howlett@oracle.com, cerasuolodomenico@gmail.com, hannes@cmpxchg.org,
+ kaleshsingh@google.com, npache@redhat.com, riel@surriel.com,
+ roman.gushchin@linux.dev, rppt@kernel.org, ryan.roberts@arm.com,
+ dev.jain@arm.com, ryncsn@gmail.com, shakeel.butt@linux.dev,
+ surenb@google.com, hughd@google.com, willy@infradead.org,
+ matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
+ byungchul@sk.com, gourry@gourry.net, ying.huang@linux.alibaba.com,
+ apopple@nvidia.com, qun-wei.lin@mediatek.com, Andrew.Yang@mediatek.com,
+ casper.li@mediatek.com, chinwen.chang@mediatek.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-mm@kvack.org, ioworker0@gmail.com,
+ stable@vger.kernel.org
+References: <20250922021458.68123-1-lance.yang@linux.dev>
+ <aNGGUXLCn_bWlne5@arm.com> <a3412715-6d9d-4809-9588-ba08da450d16@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <a3412715-6d9d-4809-9588-ba08da450d16@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-> Date: Mon, 22 Sep 2025 13:24:25 -0700	[thread overview]
-> Hello,
+
+
+On 2025/9/23 01:59, David Hildenbrand wrote:
+> On 22.09.25 19:24, Catalin Marinas wrote:
+>> On Mon, Sep 22, 2025 at 10:14:58AM +0800, Lance Yang wrote:
+>>> From: Lance Yang <lance.yang@linux.dev>
+>>>
+>>> When both THP and MTE are enabled, splitting a THP and replacing its
+>>> zero-filled subpages with the shared zeropage can cause MTE tag mismatch
+>>> faults in userspace.
+>>>
+>>> Remapping zero-filled subpages to the shared zeropage is unsafe, as the
+>>> zeropage has a fixed tag of zero, which may not match the tag 
+>>> expected by
+>>> the userspace pointer.
+>>>
+>>> KSM already avoids this problem by using memcmp_pages(), which on arm64
+>>> intentionally reports MTE-tagged pages as non-identical to prevent 
+>>> unsafe
+>>> merging.
+>>>
+>>> As suggested by David[1], this patch adopts the same pattern, 
+>>> replacing the
+>>> memchr_inv() byte-level check with a call to pages_identical(). This
+>>> leverages existing architecture-specific logic to determine if a page is
+>>> truly identical to the shared zeropage.
+>>>
+>>> Having both the THP shrinker and KSM rely on pages_identical() makes the
+>>> design more future-proof, IMO. Instead of handling quirks in generic 
+>>> code,
+>>> we just let the architecture decide what makes two pages identical.
+>>>
+>>> [1] https://lore.kernel.org/all/ 
+>>> ca2106a3-4bb2-4457-81af-301fd99fbef4@redhat.com
+>>>
+>>> Cc: <stable@vger.kernel.org>
+>>> Reported-by: Qun-wei Lin <Qun-wei.Lin@mediatek.com>
+>>> Closes: https://lore.kernel.org/all/ 
+>>> a7944523fcc3634607691c35311a5d59d1a3f8d4.camel@mediatek.com
+>>> Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage 
+>>> when splitting isolated thp")
+>>> Suggested-by: David Hildenbrand <david@redhat.com>
+>>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>>
+>> Functionally, the patch looks fine, both with and without MTE.
+>>
+>> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+
+Thanks for taking time to review!
+
+>>
+>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>> index 32e0ec2dde36..28d4b02a1aa5 100644
+>>> --- a/mm/huge_memory.c
+>>> +++ b/mm/huge_memory.c
+>>> @@ -4104,29 +4104,20 @@ static unsigned long 
+>>> deferred_split_count(struct shrinker *shrink,
+>>>   static bool thp_underused(struct folio *folio)
+>>>   {
+>>>       int num_zero_pages = 0, num_filled_pages = 0;
+>>> -    void *kaddr;
+>>>       int i;
+>>>       for (i = 0; i < folio_nr_pages(folio); i++) {
+>>> -        kaddr = kmap_local_folio(folio, i * PAGE_SIZE);
+>>> -        if (!memchr_inv(kaddr, 0, PAGE_SIZE)) {
+>>> -            num_zero_pages++;
+>>> -            if (num_zero_pages > khugepaged_max_ptes_none) {
+>>> -                kunmap_local(kaddr);
+>>> +        if (pages_identical(folio_page(folio, i), ZERO_PAGE(0))) {
+>>> +            if (++num_zero_pages > khugepaged_max_ptes_none)
+>>>                   return true;
+>>
+>> I wonder what the overhead of doing a memcmp() vs memchr_inv() is. The
+>> former will need to read from two places. If it's noticeable, it would
+>> affect architectures that don't have an MTE equivalent.
+>>
+>> Alternatively we could introduce something like folio_has_metadata()
+>> which on arm64 simply checks PG_mte_tagged.
 > 
-> syzbot found the following issue on:
+> We discussed something similar in the other thread (I suggested 
+> page_is_mergable()). I'd prefer to use pages_identical() for now, so we 
+> have the same logic here and in ksm code.
 > 
-> HEAD commit:    846bd2225ec3 Add linux-next specific files for 20250919
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13c238e2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=135377594f35b576
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5c5d41e80248d610221f
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155e427c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17bb8142580000
+> (this patch here almost looks like a cleanup :) )
 
-#syz test linux-next  master
+Yeah, let's keep it as-is for now.
 
---- x/block/blk-mq-tag.c
-+++ y/block/blk-mq-tag.c
-@@ -565,6 +565,7 @@ struct blk_mq_tags *blk_mq_init_tags(uns
- 	if (!tags)
- 		return NULL;
- 
-+	INIT_LIST_HEAD(&tags->page_list);
- 	tags->nr_tags = total_tags;
- 	tags->nr_reserved_tags = reserved_tags;
- 	spin_lock_init(&tags->lock);
---- x/arch/x86/kvm/emulate.c
-+++ y/arch/x86/kvm/emulate.c
-@@ -3991,6 +3991,7 @@ static int check_perm_out(struct x86_emu
- #define MD(_f, _m) { .flags = ((_f) | ModeDual), .u.mdual = (_m) }
- #define E(_f, _e) { .flags = ((_f) | Escape | ModRM), .u.esc = (_e) }
- #define I(_f, _e) { .flags = (_f), .u.execute = (_e) }
-+#define F(_f, _e) { .flags = (_f) | Fastop, .u.fastop = (_e) }
- #define II(_f, _e, _i) \
- 	{ .flags = (_f)|Intercept, .u.execute = (_e), .intercept = x86_intercept_##_i }
- #define IIP(_f, _e, _i, _p) \
---
+Using the same pages_identical() pattern as KSM makes the logic
+consistent.
+
+And it's simple enough to be easily backported to stable trees ;)
+
+> 
+> If this becomes a problem, what we could do is in pages_identical() 
+> would be simply doing the memchr_inv() in case is_zero_pfn(). KSM might 
+> benefit from that as well when merging with the shared zeropage through 
+> try_to_merge_with_zero_page().
+
+Right, there is room for that optimization. I will look into it as a
+follow-up patch after this one is settled and backported, especially if
+the performance overhead turns out to be a real concern :)
+
+Cheers,
+Lance
 
