@@ -1,163 +1,438 @@
-Return-Path: <linux-kernel+bounces-828196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88AC2B94286
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 05:53:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D92B94259
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 05:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3466D2A788D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:53:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C015F3B8FC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F65B26658A;
-	Tue, 23 Sep 2025 03:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABB520E005;
+	Tue, 23 Sep 2025 03:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="pAvVdaGa"
-Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HHyAeHRc"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010070.outbound.protection.outlook.com [52.101.201.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1308220C47C;
-	Tue, 23 Sep 2025 03:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758599589; cv=none; b=Wl/GkMuTvlGjxzEYrIET7PzyIsyNAdJ4Z/6h5iMnJYnlVIK4hS7vQTHUgPIG53vRIlLAoa+IApgVpcLuQOSL1itIZqnPwc6+/+Vaak2WH1hYWRIkFRaWdrFX0XD9U4oCxfjx2n81JdQH64aJwjfFLayVJk0mK1eZZIJNDZA5sCg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758599589; c=relaxed/simple;
-	bh=1+TJfdADz+eyWxjucM1gnctJYZETTekOsnS1O0xVTmM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U1aka4fBC1x6msa9eAbRsR9VFo5CcZGptzq60UUePUDLOdzYD2/zBgtVffEEJIlw8Vur2ZnAevLTNSznrh4y02ni9INVXiw71sHn54qWOp4oj4S1s0/4qQDZJ6Mzpjeu1TuUQdwwi98g15p4oTntOzk70b4GuPudr6BqHs8J0mA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=pAvVdaGa; arc=none smtp.client-ip=178.154.239.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:a982:0:640:e49f:0])
-	by forward501a.mail.yandex.net (Yandex) with ESMTPS id 5487880784;
-	Tue, 23 Sep 2025 06:47:34 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id OlN5kY2MoGk0-2FrcghgG;
-	Tue, 23 Sep 2025 06:47:33 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1758599253;
-	bh=J9wh+/3satZdgSBE2bEzXkS8hEmnC4EYriUYMbJYZJE=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=pAvVdaGae1ycGPMu7vAsAsEfAPBPuj3sKQAyaWPxyul1/YXNRA44FAER+GHD640W0
-	 g+8+dmXbB1D9cezZ2Nc8Or3GJ7qID+MAkt+TKEXugTT4O8WA49u7IPH7+uiPmeKMx0
-	 WlhAMfu3VeLQhkayyYOPOsmyKHf/i6IzElKLQFxc=
-Authentication-Results: mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Tue, 23 Sep 2025 06:47:20 +0300
-From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
-To: Nicolas Schier <nicolas.schier@linux.dev>
-Cc: rust-for-linux@vger.kernel.org, ojeda@kernel.org, nathan@kernel.org,
- masahiroy@kernel.org, aliceryhl@google.com,
- thomas.weissschuh@linutronix.de, tamird@gmail.com,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
- bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org,
- tmgross@umich.edu, dakr@kernel.org
-Subject: Re: [PATCH v2 1/1] rust: add `rustcheck` make target for check-only
- builds
-Message-ID: <20250923064720.0b2ea467@nimda>
-In-Reply-To: <20250922-demonic-raccoon-of-will-1adb52@bergen>
-References: <20250915115311.3025-1-work@onurozkan.dev>
-	<20250915115311.3025-2-work@onurozkan.dev>
-	<20250922-demonic-raccoon-of-will-1adb52@bergen>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3957B20FAA4
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 03:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758599289; cv=fail; b=LeizKRDQwOQGtBXgwvv0XkojbEGLKVNetzAggumQoldziimCgelS7I/3OTGxT1a/M7KGmkrNlQDsZziF5EMXaTaJcyd38mzpxUh8cTLD0inpqjQ/M5HglvqbfKkSxxHxxn9FjzVGHXXLaTeYp3sYmDl2RvUHfm8jYdG2Ge9vxQY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758599289; c=relaxed/simple;
+	bh=WUdxF0ueS1zBRtp1dTmK+WXmXcWrpxpeLesgD7QmtKI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=L/tCq+GCxzTF+7AyFbmmAYq0ou/SNDU2kJMxLazqw9HtEZ/URc7FOPC3VfHN0Xk3bWj6W17E6T7dbH8p5imxoDnkZGqSwwLISqyAZrP9m+nY4JpylxL/nSEzsdU1dbn5+5wBPqmTrdCKWfPXAl08Q4GW59DUXhxKho2+WLRpPQg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HHyAeHRc; arc=fail smtp.client-ip=52.101.201.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VCyNandXeMMEIhktquYXZB+EMpKrfuXyWv+lIbzRddbsu76qpeksqL0KNBHDnae7RtWcmZLchF06c3LfQAUfxTjq+Fi1Yu+emwkV9XYNF3DoSU2GZtte03xtMlNMwEQ8LRCLrHuMacv7i116fi3PJhPfePHJwHrb2hIarvxpfwkQ6Im8bZIDHM9Zn8BqQKCCp2n85j1p2wuiPwtohkDK6HlFoKW5L4gR8lC2gw528NnLKTiPsQet90hjUX2rVr8VOE1ko8RU3tW7YczbiE9uNBNn6oGVI/ha6EIWOJuPPSe+Mne4f2qrOrZIgKSJJjwH9SwRNjOcacid1t/470c6wQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x/K41ljBPVxEHXZ0J1qudeIShkATOYdS3IYaXyg0OsU=;
+ b=Gf2rD4Gm3vehJ7lZmZfhFGJJ7SxF0Y5XdaPxRHndlvpxhQRx2tk7A7p0doXctbW9KZV+eDRcbONV1F66l8X3U7csvK7fDcRcgt+8YTO4uxDkcx8pf4tRemhZzOeDmojEYoQqu/v2Q2GHK2Q1aBAQwSlTkGEWVqzvYmtJwLu6Mr8pDCw1LEfu5Xw24C/mP5tJqaa90opJXYXsMjBujklYO+tlAvJA2bv+WaCTh4DoUW6mocyOX8j/5miFIc8BvxrR7+NEA+YVgc+vifUFE/8sWNXtTteBaCFW6BYS4V8rPCWB888/umlHLu3++yWNRFw2ynpV+PfbNS1E+F5qvC7lBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x/K41ljBPVxEHXZ0J1qudeIShkATOYdS3IYaXyg0OsU=;
+ b=HHyAeHRc0zBpcu+4CkSAAR2PehRsKPisK6+fXyklsSuBzRuQyO15y6cCcrTaEmXqgdl4IiPDZGGf9/z5VwIZ8FwUf+T2OHtT7biCxtM3vmPF4zeQNmwWQogzgZ/4txMA87dvwXMGSGaX9W0Yvol74YhP+4VUgNEuvJQ+RJYYJWaGnmz1GlS2kdQw1qIkwIvAgNFdVefphTypa4evidjajnhHsKGpRgWv2N5WhTPag0EHj8c2vVadc5bAZivXMP0s5MvWWnQTgPRySMgfjBwp1jE1sdRSSWhVQysr1CtDy5L3swSSJXKaWoEM8N/o4PN4VpO0sX88vBviw/n7IBtJqQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by SJ0PR12MB6781.namprd12.prod.outlook.com (2603:10b6:a03:44b::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
+ 2025 03:48:04 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 03:48:04 +0000
+Message-ID: <891b7840-3cde-49d0-bdde-8945e9767627@nvidia.com>
+Date: Tue, 23 Sep 2025 13:47:56 +1000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v6 01/15] mm/zone_device: support large zone device private
+ folios
+To: Zi Yan <ziy@nvidia.com>, Alistair Popple <apopple@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>, Oscar Salvador
+ <osalvador@suse.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250916122128.2098535-1-balbirs@nvidia.com>
+ <20250916122128.2098535-2-balbirs@nvidia.com>
+ <882D81FA-DA40-4FF9-8192-166DBE1709AF@nvidia.com>
+ <f026c5a1-ec51-4fa5-bc58-c2d690f9248c@nvidia.com>
+ <87F52459-85DC-49C3-9720-819FAA0D1602@nvidia.com>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <87F52459-85DC-49C3-9720-819FAA0D1602@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR13CA0192.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c3::17) To PH8PR12MB7277.namprd12.prod.outlook.com
+ (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|SJ0PR12MB6781:EE_
+X-MS-Office365-Filtering-Correlation-Id: 62b7c949-d2cf-47d5-4277-08ddfa53fff3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|10070799003|376014|7416014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cnR1QnB2WUYwSXJtOFozdEhteFd3K1lsb05oQXZBNk5OSWVZUExSU0xJdXg3?=
+ =?utf-8?B?TXNjekE3UktSN2MraEhzTVd3bTdxR2V5emRmSGJzVHl2T0IvcXFMQUNRT0VB?=
+ =?utf-8?B?UlBaQXpvam1XbWpsT0NkK2ZpZUhoTHpEWWtTUk1SSGxZUnpsN2VmSlREclA3?=
+ =?utf-8?B?cTVqOGJ4bnhUbUVKNmRDQ0JjZlphN1VHUU5WK1BVUXZ1eUlhcS84ZmxMMHdJ?=
+ =?utf-8?B?cUtlZ1hFdmRrY2dJZmxKSFFxYTY1MW5mWjdCMUwybWlrQks4WHpWMUZ5Smt5?=
+ =?utf-8?B?MmFBaEg5VWJ6R1l5K3dRdHM0QVFhSk1iVGMybG1yaXptMW9jODBXcHVpTkJl?=
+ =?utf-8?B?T1UrbjBIUFZTblErNSs2NzdCeENTRVZjZjl2QUliazR3dzVHR1JTcktpS1dk?=
+ =?utf-8?B?OXBsbFBSeUNONGJ0bGVQR05YVDJMVk1tYXFZSHJPRlhUYVJuNWpKVzZXbWxH?=
+ =?utf-8?B?NjBoODd4SDRncEVUT0lHNlcvSEh5Qm1GTmQ3TS9GbUtrOGgyNTVPODdCUFk4?=
+ =?utf-8?B?N01UTmdqc214MjlGK3JPNGEva2N1bnZYWmcxSHNGcGkzUGljb08xTFN6TUcy?=
+ =?utf-8?B?bE5kQzI2R21UOUV2cmhwbzRLRnlaRzNiMEt6RE85enRzWkR2SmxoSWJhNTJi?=
+ =?utf-8?B?Q3oydkI4RXZzUXBqWXlHS2JFaS8vS2RLYWpsL2cxQ2MxK2g0Z1kweCtUaGdl?=
+ =?utf-8?B?d2JqNDZmMjRSZy9URjZ5QVR3MWxCWVc2aTBMQWwwd2swOFdRU0FuRkdiMFdM?=
+ =?utf-8?B?dWRZTnFJeXN6Z1k3UHQ3NjU0MVNDQ0FmVE5vNnZKYXVqeUVFL3JjOXdLai9Z?=
+ =?utf-8?B?cGI5U0FmSFVsbFM2em8yKzRqSm1wcWo3bnpiZDF6alo4dlN2eGxqTFUycDBo?=
+ =?utf-8?B?WXhYM29ibHFZb29yenNjMktKL284RzhwbGhyTW1TaTVSemgzWkI4aXoyc3hH?=
+ =?utf-8?B?NlR3cWJiRERhcTVTODJjcHBZUGRLam9HQlVhUWVqWGhpV3daRTV2cXVwa3Rl?=
+ =?utf-8?B?dVRQMktkVUtKeU5SdC9RdXEwdjl6d1dpZXYrdWxieWRhSlBGTzJ6bzNnK3pV?=
+ =?utf-8?B?ZUlFWmJOMXRaYkExQTJ5cDV2V1dqNlQvUnR6QVkxVVNnc0JyT2dGOFBINVNY?=
+ =?utf-8?B?UHZtYUxnS3paRGJiN1RlRnlUR0toaVhhWVovQWhQU205U0g0aGFJakVIR052?=
+ =?utf-8?B?dXJzcmpEMHdSSjd2MjY1OHFJMDNJWUdkMGdyNEVoUmlYZW5yLzlFRDdkenFy?=
+ =?utf-8?B?bVJJUFBFSHFuZ1VHZFhsQ1orckFwUGYwbGF6NEJCSVlSVnArRXNEeVdnNWVx?=
+ =?utf-8?B?YjZ0VHNTRXI5OXZlTHV3OVR6ZjFUUkdrU0lmamN0YXM5Ymh6cnZtMkhIM3da?=
+ =?utf-8?B?YkwvZkNkRysyL1h5MFhjTER5RzFNU1MwU0RQczVCZ0xHSGxrQVA5MStHWFJY?=
+ =?utf-8?B?R0QxV3BWY2hvbVhZWENMVVFjYkpWQW9uZnhSUnlWVWhiMEhDSFFJKzdTMkQ0?=
+ =?utf-8?B?bE1UN1JubTBLaHRhMWl5YzZkb0t4ZWxIN29VYlJtSmd4c205ZWJIejFwUEVJ?=
+ =?utf-8?B?Y3M5WGt2WElPMmVUS1FVSDZPdnZzRk9MMFdUSitMNmdWbEtrTHFFcG0xM0sv?=
+ =?utf-8?B?b2JHQzZpYWlFVk1QNnNpQ21JWnZ5TEp1UDRieWQ2VWEzcGZIS2svdGhpU0cx?=
+ =?utf-8?B?RG9lcU9EcTBBVFBFOXJRTEdxdTZxOTI4c0JncHBOWTEvTmZ2NU9tcCtzYzRz?=
+ =?utf-8?B?UFZRSnNQSHMwZXJRVHdMeDhEdEcrS29FeVVvUW5TM0RXZmxtWTN2TDRERXZD?=
+ =?utf-8?B?U3VHaFVhdEJuMHJ6dWc2WjVVS2FPdk52MVNNb3lobDdqdUR0MFVDb3I1eXNE?=
+ =?utf-8?B?QW1ZUGc4SnRTbkdySW85bThpRW5SUHFsYUFIWllEeTV4ZGs1dUQ0QlF0ZXhP?=
+ =?utf-8?Q?NzRF3hL+cTA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eURNM3dlajFjc3B3aTgwMDVrb0QwWGtNYjFMQVU0eFB6WHJWYUxzVm1EZUJt?=
+ =?utf-8?B?c2F5d3kyWHZEdHIwcWpzclpmZ2k1T3hOQ2EwbXNxUU9tYWZJTzNZeXNCOWIv?=
+ =?utf-8?B?T2Y0ejFKR0pGdkZxRzltdEYzSkpVZndtbjczQ0VtMkJLbFlZVHBrR1ExL2li?=
+ =?utf-8?B?WURFWXVCNGJSaUlXYkNjdGpMRlB4ZkMxbHhPMVduU1h0SU9nUzFmdi9FSm4z?=
+ =?utf-8?B?bG1ZZ3VQc1I2am1NcWJhMlcxTTIxa2hzd2NuSU9vQkRnWU4xYi9UQ2JISkxY?=
+ =?utf-8?B?ZkkyRVAxbnZGd0FrUVhxQzhjdnRtZGhCMEY2aUtneG5ITEFSNzZGOUNjQXpC?=
+ =?utf-8?B?bWw5VWVlWFdQOTF4clJYYWlFMGxkb2ppNXRIdkl4MFhWYjVmM3JDWk8raDlI?=
+ =?utf-8?B?MVJKaUU3cjNlbXhEb2NJWXM1TjVWOWlUSGFVekxTVXloc2dVK3E2cE1wVFNU?=
+ =?utf-8?B?MTV1TWZXQVlINTRRWTQ5UlpJTEpkaGpDcHVIbkxyTk5ZUlI3Mi9hend5WXds?=
+ =?utf-8?B?c0s1ZTdoMW1aLzNxMk9jUTBqNWZnR3NzYUNkampjRUNwNW5qSnVqckJjeG5z?=
+ =?utf-8?B?RFVtT3pCdmpyYnNBczZoeDJRZ3pEMVlNcVBTQUxCdHhIMEtqcmVReUxGQSt5?=
+ =?utf-8?B?UTd5R21YMGgxLzJsUHRreG4vMmNmcFQ0NlI5MTBZbDlKV2Q1ekNXOVBJdHNM?=
+ =?utf-8?B?cU51M1dkbHN0Y1ZBRFpzRzRRVWt6VlFXK0dPcitaTkEvMExnRTZpZDlwTTU3?=
+ =?utf-8?B?YUNBTWp5N3hXTXhDMmhRN1QxZllVR3JzWGlsVVNNWTlNWnQvcGQwY2orUEdl?=
+ =?utf-8?B?MHpvd1dIeHRZMW9HR1FFTnN0UlJTSjVVRnJZenpJQ0pCMGtVUngvdmtQQnFi?=
+ =?utf-8?B?K210d3o3aE9DUWpVU0ZhODNWU243NUN1Yk1oS1RCOVd3QTkxNG5OdGZUbWYx?=
+ =?utf-8?B?Z2VyeVZDMHU4bjE4c0hsTTBRTWJzZmNjeUtTQU1PZlZGY3d4OEFjamtmNlp4?=
+ =?utf-8?B?d1N3cWxpVFYyK1k0R1RGNjVGQXFWbWtRR1ViTmFGdml0cmVGd0txTEh3Yzd2?=
+ =?utf-8?B?cmFhRnU4UmxFYU5UUUxrWVRZNDJJQmlPNG90T1BVK3VNRHp4ZEhMR1NmbXAz?=
+ =?utf-8?B?V2FvcUMyaW1jT0NSbWxqOU95NUQxUVJaOThKN1FFL2NOS2hWSDRIeHZNRzVH?=
+ =?utf-8?B?bnhwaFVBcXI1TXhVSzNBemkzQ1VqbytjRXFTN1hGTi9nVVV2MXpSYk93YkFN?=
+ =?utf-8?B?a1Nib3NOazRrdXhFUUxRbkFGeDZ4TTRqR0ZIS1ZqSkU1dllIMlBJZVFMc0xy?=
+ =?utf-8?B?MG9Yd2RxRnJpMjFtaFgwcXZmRGNSSHY1WW91Wld2ZE45b0UxLzc0L3pydE1a?=
+ =?utf-8?B?ejNzOVlxdEJ1WWxZcE8vRnhGRmwrNzFrZi8xdkswQTBWMmZDeW8ya2YydlUw?=
+ =?utf-8?B?L3E1Ym9Ud1VFRHhYZjFTcFdNdngwQkhEc21ZVW91OFZWVkdaaE0rK0hqSnVK?=
+ =?utf-8?B?cVloM2dQVW9wRW51MlNSYW5RclcrMVBsQzdZU3dkZm55RXlTbm1SbXB5WW8w?=
+ =?utf-8?B?dkNNOWsyWXU2NmJQZ0FlNHNybkV1a2VXZVBNQlB5N28rL1UwT2RWSTV6ZkV5?=
+ =?utf-8?B?UWxnSjVUV21FdGIwVERuNzhTcDNrVzRxSjRQVElKVnNyYUNoZjJkQ0hWb3BF?=
+ =?utf-8?B?M1RoeWx6S1dqeEhQUldoSFJDMmhuWll4ZC92cndyVlRITWlNT1M5S09LTnNq?=
+ =?utf-8?B?d2cvVWljK0dKcTE3M3NodGNmUGc0bGlSYmNyUEx3Z3VDanpyNmRhVTJCaVc5?=
+ =?utf-8?B?RkFxbFZ2Y0hyNFM4cm5jb2RUeHEzeE1jTmZBNHR0T2JXa245eklXbmNYdTFN?=
+ =?utf-8?B?ZUFRb1ltZWNPMm95OGxKNUNCVmRlc1hQcEtRNkJ1Um5rRlIrelVpeiswRVUv?=
+ =?utf-8?B?TVc5OGhVMlYxUXpEZTQzd2dKeXVnWFFTY3p6eDFWN0t6QVZoanpPYi96MFIx?=
+ =?utf-8?B?dTNpVUVsdmdDZk9BZ2ZJcjNsb1VXSTdsZm1MU1NhejJKTko5OFdnY28wN2Vl?=
+ =?utf-8?B?akhkQ0VtdW5oQXZHZDFocmhvU0cyWU1lSEhJTENQSk5NU3pZYWxNbnZyeFRZ?=
+ =?utf-8?B?ZDU2TFFPaDJmcUxGb1lvRloyZkdpSzAybC9zT0JZODVDVVp2T0llRTdpcHZv?=
+ =?utf-8?Q?Xt8jNVU/DM8sRoUk9sIZugK8Z3cpVLqZuOsaj8Q6gqlL?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62b7c949-d2cf-47d5-4277-08ddfa53fff3
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 03:48:04.1065
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 68fa8eH8JASfp9vcDX888lpadbaCGrh4CGhIsFZul1MlFDCXlZWxDM7wBozg4S+aW1EgIqrllKL3mVbi6YaPxA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6781
 
-On Mon, 22 Sep 2025 08:02:36 +0200
-Nicolas Schier <nicolas.schier@linux.dev> wrote:
+On 9/19/25 23:26, Zi Yan wrote:
+> On 19 Sep 2025, at 1:01, Balbir Singh wrote:
+> 
+>> On 9/18/25 12:49, Zi Yan wrote:
+>>> On 16 Sep 2025, at 8:21, Balbir Singh wrote:
+>>>
+>>>> Add routines to support allocation of large order zone device folios
+>>>> and helper functions for zone device folios, to check if a folio is
+>>>> device private and helpers for setting zone device data.
+>>>>
+>>>> When large folios are used, the existing page_free() callback in
+>>>> pgmap is called when the folio is freed, this is true for both
+>>>> PAGE_SIZE and higher order pages.
+>>>>
+>>>> Zone device private large folios do not support deferred split and
+>>>> scan like normal THP folios.
+>>>>
+>>>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+>>>> Cc: David Hildenbrand <david@redhat.com>
+>>>> Cc: Zi Yan <ziy@nvidia.com>
+>>>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+>>>> Cc: Rakie Kim <rakie.kim@sk.com>
+>>>> Cc: Byungchul Park <byungchul@sk.com>
+>>>> Cc: Gregory Price <gourry@gourry.net>
+>>>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+>>>> Cc: Alistair Popple <apopple@nvidia.com>
+>>>> Cc: Oscar Salvador <osalvador@suse.de>
+>>>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>>>> Cc: Nico Pache <npache@redhat.com>
+>>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>>> Cc: Dev Jain <dev.jain@arm.com>
+>>>> Cc: Barry Song <baohua@kernel.org>
+>>>> Cc: Lyude Paul <lyude@redhat.com>
+>>>> Cc: Danilo Krummrich <dakr@kernel.org>
+>>>> Cc: David Airlie <airlied@gmail.com>
+>>>> Cc: Simona Vetter <simona@ffwll.ch>
+>>>> Cc: Ralph Campbell <rcampbell@nvidia.com>
+>>>> Cc: Mika Penttilä <mpenttil@redhat.com>
+>>>> Cc: Matthew Brost <matthew.brost@intel.com>
+>>>> Cc: Francois Dugast <francois.dugast@intel.com>
+>>>> ---
+>>>>  include/linux/memremap.h | 10 +++++++++-
+>>>>  mm/memremap.c            | 34 +++++++++++++++++++++-------------
+>>>>  mm/rmap.c                |  6 +++++-
+>>>>  3 files changed, 35 insertions(+), 15 deletions(-)
+>>>>
+>>>> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+>>>> index e5951ba12a28..9c20327c2be5 100644
+>>>> --- a/include/linux/memremap.h
+>>>> +++ b/include/linux/memremap.h
+>>>> @@ -206,7 +206,7 @@ static inline bool is_fsdax_page(const struct page *page)
+>>>>  }
+>>>>
+>>>>  #ifdef CONFIG_ZONE_DEVICE
+>>>> -void zone_device_page_init(struct page *page);
+>>>> +void zone_device_folio_init(struct folio *folio, unsigned int order);
+>>>>  void *memremap_pages(struct dev_pagemap *pgmap, int nid);
+>>>>  void memunmap_pages(struct dev_pagemap *pgmap);
+>>>>  void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap);
+>>>> @@ -215,6 +215,14 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn);
+>>>>  bool pgmap_pfn_valid(struct dev_pagemap *pgmap, unsigned long pfn);
+>>>>
+>>>>  unsigned long memremap_compat_align(void);
+>>>> +
+>>>> +static inline void zone_device_page_init(struct page *page)
+>>>> +{
+>>>> +	struct folio *folio = page_folio(page);
+>>>> +
+>>>> +	zone_device_folio_init(folio, 0);
+>>>
+>>> I assume it is for legacy code, where only non-compound page exists?
+>>>
+>>> It seems that you assume @page is always order-0, but there is no check
+>>> for it. Adding VM_WARN_ON_ONCE_FOLIO(folio_order(folio) != 0, folio)
+>>> above it would be useful to detect misuse.
+>>>
+>>>> +}
+>>>> +
+>>>>  #else
+>>>>  static inline void *devm_memremap_pages(struct device *dev,
+>>>>  		struct dev_pagemap *pgmap)
+>>>> diff --git a/mm/memremap.c b/mm/memremap.c
+>>>> index 46cb1b0b6f72..a8481ebf94cc 100644
+>>>> --- a/mm/memremap.c
+>>>> +++ b/mm/memremap.c
+>>>> @@ -416,20 +416,19 @@ EXPORT_SYMBOL_GPL(get_dev_pagemap);
+>>>>  void free_zone_device_folio(struct folio *folio)
+>>>>  {
+>>>>  	struct dev_pagemap *pgmap = folio->pgmap;
+>>>> +	unsigned long nr = folio_nr_pages(folio);
+>>>> +	int i;
+>>>>
+>>>>  	if (WARN_ON_ONCE(!pgmap))
+>>>>  		return;
+>>>>
+>>>>  	mem_cgroup_uncharge(folio);
+>>>>
+>>>> -	/*
+>>>> -	 * Note: we don't expect anonymous compound pages yet. Once supported
+>>>> -	 * and we could PTE-map them similar to THP, we'd have to clear
+>>>> -	 * PG_anon_exclusive on all tail pages.
+>>>> -	 */
+>>>>  	if (folio_test_anon(folio)) {
+>>>> -		VM_BUG_ON_FOLIO(folio_test_large(folio), folio);
+>>>> -		__ClearPageAnonExclusive(folio_page(folio, 0));
+>>>> +		for (i = 0; i < nr; i++)
+>>>> +			__ClearPageAnonExclusive(folio_page(folio, i));
+>>>> +	} else {
+>>>> +		VM_WARN_ON_ONCE(folio_test_large(folio));
+>>>>  	}
+>>>>
+>>>>  	/*
+>>>> @@ -456,8 +455,8 @@ void free_zone_device_folio(struct folio *folio)
+>>>>  	case MEMORY_DEVICE_COHERENT:
+>>>>  		if (WARN_ON_ONCE(!pgmap->ops || !pgmap->ops->page_free))
+>>>>  			break;
+>>>> -		pgmap->ops->page_free(folio_page(folio, 0));
+>>>> -		put_dev_pagemap(pgmap);
+>>>> +		pgmap->ops->page_free(&folio->page);
+>>>> +		percpu_ref_put_many(&folio->pgmap->ref, nr);
+>>>>  		break;
+>>>>
+>>>>  	case MEMORY_DEVICE_GENERIC:
+>>>> @@ -480,14 +479,23 @@ void free_zone_device_folio(struct folio *folio)
+>>>>  	}
+>>>>  }
+>>>>
+>>>> -void zone_device_page_init(struct page *page)
+>>>> +void zone_device_folio_init(struct folio *folio, unsigned int order)
+>>>>  {
+>>>> +	struct page *page = folio_page(folio, 0);
+>>>
+>>> It is strange to see a folio is converted back to page in
+>>> a function called zone_device_folio_init().
+>>>
+>>>> +
+>>>> +	VM_WARN_ON_ONCE(order > MAX_ORDER_NR_PAGES);
+>>>> +
+>>>>  	/*
+>>>>  	 * Drivers shouldn't be allocating pages after calling
+>>>>  	 * memunmap_pages().
+>>>>  	 */
+>>>> -	WARN_ON_ONCE(!percpu_ref_tryget_live(&page_pgmap(page)->ref));
+>>>> -	set_page_count(page, 1);
+>>>> +	WARN_ON_ONCE(!percpu_ref_tryget_many(&page_pgmap(page)->ref, 1 << order));
+>>>> +	folio_set_count(folio, 1);
+>>>>  	lock_page(page);
+>>>> +
+>>>> +	if (order > 1) {
+>>>> +		prep_compound_page(page, order);
+>>>> +		folio_set_large_rmappable(folio);
+>>>> +	}
+>>>
+>>> OK, so basically, @folio is not a compound page yet when zone_device_folio_init()
+>>> is called.
+>>>
+>>> I feel that your zone_device_page_init() and zone_device_folio_init()
+>>> implementations are inverse. They should follow the same pattern
+>>> as __alloc_pages_noprof() and __folio_alloc_noprof(), where
+>>> zone_device_page_init() does the actual initialization and
+>>> zone_device_folio_init() just convert a page to folio.
+>>>
+>>> Something like:
+>>>
+>>> void zone_device_page_init(struct page *page, unsigned int order)
+>>> {
+>>> 	VM_WARN_ON_ONCE(order > MAX_ORDER_NR_PAGES);
+>>>
+>>> 	/*
+>>> 	 * Drivers shouldn't be allocating pages after calling
+>>> 	 * memunmap_pages().
+>>> 	 */
+>>>
+>>>     WARN_ON_ONCE(!percpu_ref_tryget_many(&page_pgmap(page)->ref, 1 << order));
+>>> 	
+>>> 	/*
+>>> 	 * anonymous folio does not support order-1, high order file-backed folio
+>>> 	 * is not supported at all.
+>>> 	 */
+>>> 	VM_WARN_ON_ONCE(order == 1);
+>>>
+>>> 	if (order > 1)
+>>> 		prep_compound_page(page, order);
+>>>
+>>> 	/* page has to be compound head here */
+>>> 	set_page_count(page, 1);
+>>> 	lock_page(page);
+>>> }
+>>>
+>>> void zone_device_folio_init(struct folio *folio, unsigned int order)
+>>> {
+>>> 	struct page *page = folio_page(folio, 0);
+>>>
+>>> 	zone_device_page_init(page, order);
+>>> 	page_rmappable_folio(page);
+>>> }
+>>>
+>>> Or
+>>>
+>>> struct folio *zone_device_folio_init(struct page *page, unsigned int order)
+>>> {
+>>> 	zone_device_page_init(page, order);
+>>> 	return page_rmappable_folio(page);
+>>> }
+>>>
+>>>
+>>> Then, it comes to free_zone_device_folio() above,
+>>> I feel that pgmap->ops->page_free() should take an additional order
+>>> parameter to free a compound page like free_frozen_pages().
+>>>
+>>>
+>>> This is my impression after reading the patch and zone device page code.
+>>>
+>>> Alistair and David can correct me if this is wrong, since I am new to
+>>> zone device page code.
+>>> 	
+>>
+>> Thanks, I did not want to change zone_device_page_init() for several
+>> drivers (outside my test scope) that already assume it has an order size of 0.
+> 
+> But my proposed zone_device_page_init() should still work for order-0
+> pages. You just need to change call site to add 0 as a new parameter.
+> 
 
-> On Mon, Sep 15, 2025 at 02:53:11PM +0300, Onur =C3=96zkan wrote:
-> > Adds a new `rustcheck` make target to run a check-only build
-> > similar to `cargo check`. This allows us to verify that the Rust
-> > sources can build without building/linking final artifacts,
-> > which speeds up the iteration (a lot) during development.
-> >=20
-> > The target also supports the CLIPPY flag (e.g., `make LLVM=3D1
-> > rustcheck CLIPPY=3D1) to run Clippy in a faster way.
-> >=20
-> > Also, unlike `make LLVM=3D1`, it doesn't compile large amounts of C
-> > code (on a fresh checkout) when the goal is only to check that
-> > Rust builds are not broken after some changes.
-> >=20
-> > Suggested-by: Benno Losin <lossin@kernel.org>
-> > Link:
-> > https://rust-for-linux.zulipchat.com/#narrow/channel/288089/topic/x/nea=
-r/539103602
-> > Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev> ---
-> >  Makefile      |  7 +++++
-> >  rust/Makefile | 73
-> > +++++++++++++++++++++++++++++++++++++++++++++++++++ 2 files
-> > changed, 80 insertions(+)
-> >=20
-> > diff --git a/Makefile b/Makefile
-> > index cf37b9407821..7812cdc72938 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -1716,6 +1716,8 @@ help:
-> >  	@echo  '		    is formatted, printing a diff
-> > otherwise.' @echo  '  rustdoc	  - Generate Rust
-> > documentation' @echo  '		    (requires kernel
-> > .config)'
-> > +	@echo  '  rustcheck       - Check that the Rust code
-> > builds'
-> > +	@echo  '                    (requires kernel .config)'
-> >  	@echo  '  rusttest        - Runs the Rust tests'
-> >  	@echo  '                    (requires kernel .config;
-> > downloads external repos)' @echo  '  rust-analyzer	  -
-> > Generate rust-project.json rust-analyzer support file' @@ -1821,6
-> > +1823,11 @@ PHONY +=3D rustdoc rustdoc: prepare
-> >  	$(Q)$(MAKE) $(build)=3Drust $@
-> > =20
-> > +# Checking Rust sources.
-> > +PHONY +=3D rustcheck
-> > +rustcheck: prepare0
->=20
-> Why do you let rustcheck depend on prepare0 instead of prepare?
->=20
+I did not want to change existing callers (increases testing impact)
+without a strong reason.
 
-Because "prepare" does more job which isn't necessary (therefore waste
-of time) for "rustcheck".
+> 
+> One strange thing I found in the original zone_device_page_init() is
+> the use of page_pgmap() in
+> WARN_ON_ONCE(!percpu_ref_tryget_many(&page_pgmap(page)->ref, 1 << order)).
+> page_pgmap() calls page_folio() on the given page to access pgmap field.
+> And pgmap field is only available in struct folio. The code initializes
+> struct page, but in middle it suddenly finds the page is actually a folio,
+> then treat it as a page afterwards. I wonder if it can be done better.
+> 
+> This might be a question to Alistair, since he made the change.
+> 
 
-> > +	$(Q)$(MAKE) $(build)=3Drust $@
-> > +
-> >  # Testing target
-> >  PHONY +=3D rusttest
-> >  rusttest: prepare
-> > diff --git a/rust/Makefile b/rust/Makefile
-> > index bfa915b0e588..b45878870207 100644
-> > --- a/rust/Makefile
-> > +++ b/rust/Makefile
-> > @@ -265,6 +265,79 @@ rusttest-kernel: $(src)/kernel/lib.rs
-> > rusttestlib-ffi rusttestlib-kernel \ rusttestlib-uapi
-> > rusttestlib-pin_init FORCE +$(call if_changed,rustc_test)
-> > =20
-> > +## Check-only compilation (similar to `cargo check`)
-> > +quiet_cmd_rustc_check_library =3D $(RUSTC_OR_CLIPPY_QUIET) CHECK $<
-> > +      cmd_rustc_check_library =3D \
-> > +        OBJTREE=3D$(abspath $(objtree)) \
->=20
-> Have you tried this?
->=20
->         OBJTREE=3D$(CURDIR) \
->=20
-> or
->=20
->         OBJTREE=3D$(abs_output) \
->=20
-> I'd favor using one of these instead.
->=20
+I'll let him answer it :)
 
-I don't have a strong opinion on any of them. I followed the existing
-approach from the other use cases used in the same file.
-
-Regards,
-Onur
+Thanks for the review
+Balbir
 
