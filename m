@@ -1,255 +1,219 @@
-Return-Path: <linux-kernel+bounces-828380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297CAB94811
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:07:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6737B94814
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4117D7ABC1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:05:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9C0A7ACD48
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D0130EF7C;
-	Tue, 23 Sep 2025 06:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59A430E829;
+	Tue, 23 Sep 2025 06:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFNm/XXN"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HBjTZ4c/"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E022D8396
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7374C25B1CE
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758607643; cv=none; b=kOc5a7QAl6h57nsDMATJgVh/GE4OdPlD3XGdgSUsJyC7iFNeGPK6/htlj2fFnIzbmVFzNGAOgl/rp7al7GZWdUPnBKo0ioz+gxRBe6s5fwPRTf2tLdfSS4Iga6Mr8oGwQ3ZtBegK+5FSpku6PCpWJkk9oTMyfHZzAHH457G3JEU=
+	t=1758607666; cv=none; b=auwklhwEXcbWfhCqJEtZMD7ahQXRCErMcjRaey5LuH1RdTycadzllYYKsX3K5SNT69MYB84MYLc9Espn6V1+d4Whr5ppPxU93VWRTpTpeC5NTYS327SY2qeyn0fyReJ345MgooUZABc7CnAJhYtPY1DJcSCLDOnLrJFRib5BZOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758607643; c=relaxed/simple;
-	bh=zIeebnKmD1CpAB3zNGRBqSsvaYPYnjzbweCaU4XO9wo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UISHaMuTsrPnTkepqBJ+adtcLcbxBZrEEOUHqIafz9n0QJdKm1tdY9cmMZ4NmSm6DLeSeNz4Ek6FO+LQUOtWx0HEj3yqeBQvX2dqHxk7szYerdZQ2E41YLZ69Wkts6LwjuMKCOyKrtSFXd290tS1OFITft8xRueiDmcMMRNvmy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFNm/XXN; arc=none smtp.client-ip=209.85.214.172
+	s=arc-20240116; t=1758607666; c=relaxed/simple;
+	bh=arDVeJ781a5JY4lU0Jvx71uXG6RVAnB7CUja4/NHmNM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MKvoFhSVttg+PpOyjZTtfn6724CLfmlMQENVpzVMAErBiqD758iCRARYWuRWKfmgc59KeqMPUJXzdFC1wHhMivtRChJZHdPAdw4JopanEdn2g9D2NOBx7IQ5bJns/aDUeWjxsSVTntf4gpOT9r10e71tD9lmq2c+thwqwUnsLs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HBjTZ4c/; arc=none smtp.client-ip=209.85.160.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-25669596921so55581785ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:07:21 -0700 (PDT)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4d21a3da5d8so10781761cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:07:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758607641; x=1759212441; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+3LxoSV41O4pRbEmBipgFoQjHZW3/tDYocGhgDPfNrI=;
-        b=TFNm/XXNFQvkuneWejVqEaiiob8bpxD+jiYbY7fgW7Ih4W7ePK6k7UNl6PJQcT1f4X
-         Tu8CrgkHPeiCsd18R0Eck8k61uPEw1NAzCu0yCGUC6dwjqapxKqYHCA9t5iBDE3Wsv+E
-         3TD9vBL3ZXO0iR8igNq8AFU9XqnP76N+Fnzf7Fst875/BKsXVl1hqiEx5FmBVUpirFqV
-         YEg5FdifwcsJarNhSU0Hmi5Dbq3577eBm6fBwwcbexFOPWcGKHG1ve8mVur17WcvMYYg
-         WsN0kWXSfBupIBLoRD9np0B2mFmlUdGtdcMQdPxfn+A19EdTjHrzt4Wn+117y6++9+kE
-         OtZg==
+        d=gmail.com; s=20230601; t=1758607663; x=1759212463; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EBw+oV2t8lt0sCTnWqXxyFqdNrsWHoU6HwpFH6UzjX0=;
+        b=HBjTZ4c/qzYcvSyEi9LKjg52ue2hHwdUgyQGqe82Jyc6Jy1Lj4wtGwbNT9BSlksOTS
+         jbnNEAJlro0XWsh7t8iNTbEv4RVk2qIbPwCKpqgKkUvkOxWYcUuaSq5ZQ9bnZqogSRmV
+         SJHChwgJawFNo+dZWNyyIEK1awivlnFBojD1ttrnFbcUFJj7bbabj3kuKwyVpXXYD+m9
+         tWmSFErSCEZSWj5Fm6IgowXHW8Wstvzt1NDVrcMyQicL9v2mOm8u2iak7lGrsF+Y0prJ
+         OyNaQ987t+p9ZKqcjzOY/lV8xXk6RHozvI4cNhONiKwmiH/VQrfAn2FQrsIvhwaWHNIc
+         Asjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758607641; x=1759212441;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+3LxoSV41O4pRbEmBipgFoQjHZW3/tDYocGhgDPfNrI=;
-        b=aAa6r5/TAY5wYHSUOZ0NrZTNmDfZQMkw+ow7Ic0Ti3lobi9Owja5smyiOQdnEkGs/N
-         vKXWASMLqGRbbbF1wNgdHRbu8pOrccklrjxAUrncDNrJsgEFx0YXIfo50PwUAlWUaAfK
-         6GREZ0FSi4lHDSeqLzNVYNpxZLv0UyeRiF6AYMZjfh0B90TaZuJeQ6rL0UaCMckA5jHz
-         q/e+5VW0qEbJMlHJZOXTWwSQ0IJOl59gdC5OsF5jSvoBvO2YcpxWe9kGD1NdexU6fbZE
-         INGIMQs09SJQBhDuMuVa5yQqUITU4besR04XAjH/OvyqRpNx4mtqrK/sBkWiywLhZWKt
-         T/Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXU/HWDEdRj7G1Sy4QN650QHUaJYxmwUZK85wXkfukyGeXkm4dGI26th44yZmIqRmuPPZjgeVuSCmi4ffs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbSUDT9a9gEaLBqOCwiMgNP1rAt21V9WxCvOKi4XGo3HrOZ2TT
-	aEmxRwI6gkX09oRf5ABOtb81CkS6zoa7cWbYJV/+JZ92s7tHayrcMs0j
-X-Gm-Gg: ASbGncvoXadNGK6b+zz55Q2dGIHdHPIwYn0O3bWuQ9s+fQOjScMr1TDoBi27oPZl+2X
-	O/tkEF3ZriKdD2Gm6roBqmmHBPLSxrtf0RJtRtsc8RvMHQSr/0CiwiZFZGz3xOMWwz1d30vOnVS
-	23F3gUipEHbWIgtgDr9NskM++xkj7ee7gEPMbUeYspao0T5yYdQXdMwD49tYvHpgrh4e4qFftzo
-	djgpqvHMV5hEy5QozNfpO3rVGSds+ZXVE2L9YgGV5Nfq1yM2IM4dBZP44/AAoG9MiTq37W8w6VV
-	Dl7HuHbDxBHD/MeEQJsOjb4lN/A68rPf6h9HmRJQRwzCUg0J4jwzZBfy02Hb40hxco0Civr0oHe
-	33QeXYSVFAcESfQ==
-X-Google-Smtp-Source: AGHT+IG9wVckl3J02PgzQlOHGCMc4gEZihFiU2EGjoVZPsvunoSERLnJSklfDM/IenyZlf2m3S479g==
-X-Received: by 2002:a17:903:2c0b:b0:275:b1cf:6dd7 with SMTP id d9443c01a7336-27cc48a0b06mr16117835ad.34.1758607640874;
-        Mon, 22 Sep 2025 23:07:20 -0700 (PDT)
-Received: from gmail.com ([223.166.84.15])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3306064edb8sm15220223a91.7.2025.09.22.23.07.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 23:07:20 -0700 (PDT)
-From: Qingfang Deng <dqfext@gmail.com>
-To: Andreas Koensgen <ajk@comnets.uni-bremen.de>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-hams@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: syzbot+5fd749c74105b0e1b302@syzkaller.appspotmail.com
-Subject: [PATCH net-next] 6pack: drop redundant locking and refcounting
-Date: Tue, 23 Sep 2025 14:07:06 +0800
-Message-ID: <20250923060706.10232-1-dqfext@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1758607663; x=1759212463;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EBw+oV2t8lt0sCTnWqXxyFqdNrsWHoU6HwpFH6UzjX0=;
+        b=dG351kN5KQzVuxS5sfA/IJ/WxdQkSvJRnLK1OrwBmGcFz7MFRa87YkTJiSw2cVVGiS
+         qitlxxawUAzAW+Y2FdiyYriOkyOIynPzHCFFyp2qXUMK/KyrydcseTK4z8MUr20+UWSh
+         v9QfJ2MxvKr1BtHIbA4yS4XOr0YEBaRniYWucsjy405x1kyA6bzkQQFzOM39o6c8ITT1
+         iQsYI4V5myCOv2WoinMxb69KSZZTxhlLNbS7BdZuyiHqrK63MdbSQqq6T+C+N2zj4Wto
+         kaE/Q4tsKyY80++FqR7EL3n+Z2J2yqpuNChqaODahH7m2/szv94pcoA/jNJMffM0FDxF
+         qECA==
+X-Forwarded-Encrypted: i=1; AJvYcCUK7L+1qcXmGw20ZGkyRyvPZLA262Es7oiRdR90VDCocmns3ZN4/8J9tJdNzpW04O71ICrmLXfQHEUcykA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf5FgqhLSJ6fnsNZWO3Ka1XIIUY9O0QJRoNKWj0ncOj5QdY4Hv
+	H8W97zngpcTF5wj6zsQrKLlUjpGRNT8Tq2yuPVvGOKOMhBTGjJZF2u+RbRFllytehOymTXP7lJw
+	f7Sr/353HhXq2ZN6kKH/ybuR76IouYOvvYV3p
+X-Gm-Gg: ASbGncsVEKIKO2uXkfnkEyEmwIusmO3PWFKJtv8MjvG8n6VqVz+/mk2uFBAjUpznp3r
+	2PAWyx1mnjJnp+LSlPF/bQ0S2LNgEueYOhPp6kenKYkdFqTYhHgGxYsmGc4lMS1du//1YOU+NW2
+	iYFrUg4eXHLrm6zBkzo8SYZgcMYuQpm/Cn1+iHM5flV0woercQMEXidKQAGX6zosFQb2riA+Hnw
+	mjqKLht
+X-Google-Smtp-Source: AGHT+IHhWRqdPSNilQ7NDnUa+avCQNXPtnb6Fc5TbS5XEzojG+bYtzwzS9TIxtwMvX3/Xea6oZTCTsf/6qwe2opyx8s=
+X-Received: by 2002:ac8:7dc5:0:b0:4d1:89c4:822 with SMTP id
+ d75a77b69052e-4d36fc044c4mr15282621cf.41.1758607663111; Mon, 22 Sep 2025
+ 23:07:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250911032823.19064-1-xuewen.yan@unisoc.com> <CAB8ipk-xqbsNh6EQ42JFV8CqPeJR0gjObOKvSs=-b=qcuLQxfg@mail.gmail.com>
+ <CAJuCfpHVjDrng2=bCh=DBdn_LBK3-qVF46Jwm3_TFzCjQhn9CA@mail.gmail.com>
+In-Reply-To: <CAJuCfpHVjDrng2=bCh=DBdn_LBK3-qVF46Jwm3_TFzCjQhn9CA@mail.gmail.com>
+From: Xuewen Yan <xuewen.yan94@gmail.com>
+Date: Tue, 23 Sep 2025 14:07:32 +0800
+X-Gm-Features: AS18NWBffMFJu4JOI5B0Q8gjJRvpvqantKvpvb0ig8H71YWrBOUW7-N7WP6ubeI
+Message-ID: <CAB8ipk-cCLWUg8A6tSMZW43fHj10XAzBU2O4Ed5TbDk73J8QBw@mail.gmail.com>
+Subject: Re: [RFC PATCH V3] sched: psi: Add psi events trace point
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, hannes@cmpxchg.org, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, peterz@infradead.org, 
+	rostedt@goodmis.org, mingo@redhat.com, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de, 
+	vschneid@redhat.com, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, ke.wang@unisoc.com, yuming.han@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The TTY layer already serializes line discipline operations with
-tty->ldisc_sem, so the extra disc_data_lock and refcnt in 6pack
-are unnecessary.
+On Tue, Sep 23, 2025 at 11:31=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
+com> wrote:
+>
+> On Mon, Sep 22, 2025 at 7:58=E2=80=AFPM Xuewen Yan <xuewen.yan94@gmail.co=
+m> wrote:
+> >
+> > A very gentle ping on this patch.
+> > Best regards,
+> > Thanks!
+>
+> Thanks! Sorry I missed it.
+Not at all, thanks for your reply:)
 
-Removing them simplifies the code and also resolves a lockdep warning
-reported by syzbot. The warning did not indicate a real deadlock, since
-the write-side lock was only taken in process context with hardirqs
-disabled.
+>
+> >
+> > On Thu, Sep 11, 2025 at 11:30=E2=80=AFAM Xuewen Yan <xuewen.yan@unisoc.=
+com> wrote:
+> > >
+> > > Add trace point to psi triggers. This is useful to
+> > > observe the psi events in the kernel space.
+> > >
+> > > One use of this is to monitor memory pressure.
+> > > When the pressure is too high, we can kill the process
+> > > in the kernel space to prevent OOM.
+> > >
+> > > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> > > ---
+> > > V3:
+> > > -export it in the tracefs;
+> > > ---
+> > > v2:
+> > > -fix compilation error;
+> > > -export the tp;
+> > > -add more commit message;
+> > > ---
+> > >  include/trace/events/sched.h | 27 +++++++++++++++++++++++++++
+> > >  kernel/sched/psi.c           |  4 ++++
+> > >  2 files changed, 31 insertions(+)
+> > >
+> > > diff --git a/include/trace/events/sched.h b/include/trace/events/sche=
+d.h
+> > > index 7b2645b50e78..db8b8f25466e 100644
+> > > --- a/include/trace/events/sched.h
+> > > +++ b/include/trace/events/sched.h
+> > > @@ -826,6 +826,33 @@ TRACE_EVENT(sched_wake_idle_without_ipi,
+> > >         TP_printk("cpu=3D%d", __entry->cpu)
+> > >  );
+> > >
+> > > +#ifdef CONFIG_PSI
+> > > +TRACE_EVENT(psi_event,
+> > > +
+> > > +       TP_PROTO(int aggregator, int state, u64 threshold, u64 win_si=
+ze),
+> > > +
+> > > +       TP_ARGS(aggregator, state, threshold, win_size),
+> > > +
+> > > +       TP_STRUCT__entry(
+> > > +               __field(int,    aggregator)
+> > > +               __field(int,    state)
+> > > +               __field(u64,    threshold)
+> > > +               __field(u64,    win_size)
+> > > +       ),
+> > > +
+> > > +       TP_fast_assign(
+> > > +               __entry->aggregator     =3D aggregator;
+> > > +               __entry->state          =3D state;
+> > > +               __entry->threshold      =3D threshold;
+> > > +               __entry->win_size       =3D win_size;
+> > > +       ),
+> > > +
+> > > +       TP_printk("aggregator=3D%d state=3D%d threshold=3D%llu window=
+_size=3D%llu",
+> > > +               __entry->aggregator, __entry->state, __entry->thresho=
+ld,
+> > > +               __entry->win_size)
+> > > +);
+> > > +#endif /* CONFIG_PSI */
+> > > +
+> > >  /*
+> > >   * Following tracepoints are not exported in tracefs and provide hoo=
+king
+> > >   * mechanisms only for testing and debugging purposes.
+> > > diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+> > > index 59fdb7ebbf22..5b7954b653ed 100644
+> > > --- a/kernel/sched/psi.c
+> > > +++ b/kernel/sched/psi.c
+> > > @@ -141,6 +141,8 @@
+> > >  #include <linux/psi.h>
+> > >  #include "sched.h"
+> > >
+> > > +EXPORT_TRACEPOINT_SYMBOL_GPL(psi_event);
+> > > +
+> > >  static int psi_bug __read_mostly;
+> > >
+> > >  DEFINE_STATIC_KEY_FALSE(psi_disabled);
+> > > @@ -509,6 +511,8 @@ static void update_triggers(struct psi_group *gro=
+up, u64 now,
+> > >                 if (now < t->last_event_time + t->win.size)
+> > >                         continue;
+> > >
+> > > +               trace_psi_event(aggregator, t->state, t->threshold, t=
+->win.size);
+>
+> Again, this trace event should be generated only after cmpxchg()
+> passes the check. Otherwise trace events might be generated when
+> actual PSI events are not (false positives). That disconnect is not
+> acceptable.
 
-Reported-by: syzbot+5fd749c74105b0e1b302@syzkaller.appspotmail.com
-Signed-off-by: Qingfang Deng <dqfext@gmail.com>
+You=E2=80=99re absolutely right. I=E2=80=99ll resolve it in the next patch.
+
+Thanks!
+
+BR
 ---
- drivers/net/hamradio/6pack.c | 57 ++++--------------------------------
- 1 file changed, 5 insertions(+), 52 deletions(-)
+xuewen
 
-diff --git a/drivers/net/hamradio/6pack.c b/drivers/net/hamradio/6pack.c
-index c5e5423e1863..885992951e8a 100644
---- a/drivers/net/hamradio/6pack.c
-+++ b/drivers/net/hamradio/6pack.c
-@@ -115,8 +115,6 @@ struct sixpack {
- 
- 	struct timer_list	tx_t;
- 	struct timer_list	resync_t;
--	refcount_t		refcnt;
--	struct completion	dead;
- 	spinlock_t		lock;
- };
- 
-@@ -353,42 +351,13 @@ static void sp_bump(struct sixpack *sp, char cmd)
- 
- /* ----------------------------------------------------------------------- */
- 
--/*
-- * We have a potential race on dereferencing tty->disc_data, because the tty
-- * layer provides no locking at all - thus one cpu could be running
-- * sixpack_receive_buf while another calls sixpack_close, which zeroes
-- * tty->disc_data and frees the memory that sixpack_receive_buf is using.  The
-- * best way to fix this is to use a rwlock in the tty struct, but for now we
-- * use a single global rwlock for all ttys in ppp line discipline.
-- */
--static DEFINE_RWLOCK(disc_data_lock);
--                                                                                
--static struct sixpack *sp_get(struct tty_struct *tty)
--{
--	struct sixpack *sp;
--
--	read_lock(&disc_data_lock);
--	sp = tty->disc_data;
--	if (sp)
--		refcount_inc(&sp->refcnt);
--	read_unlock(&disc_data_lock);
--
--	return sp;
--}
--
--static void sp_put(struct sixpack *sp)
--{
--	if (refcount_dec_and_test(&sp->refcnt))
--		complete(&sp->dead);
--}
--
- /*
-  * Called by the TTY driver when there's room for more data.  If we have
-  * more packets to send, we send them here.
-  */
- static void sixpack_write_wakeup(struct tty_struct *tty)
- {
--	struct sixpack *sp = sp_get(tty);
-+	struct sixpack *sp = tty->disc_data;
- 	int actual;
- 
- 	if (!sp)
-@@ -400,7 +369,7 @@ static void sixpack_write_wakeup(struct tty_struct *tty)
- 		clear_bit(TTY_DO_WRITE_WAKEUP, &tty->flags);
- 		sp->tx_enable = 0;
- 		netif_wake_queue(sp->dev);
--		goto out;
-+		return;
- 	}
- 
- 	if (sp->tx_enable) {
-@@ -408,9 +377,6 @@ static void sixpack_write_wakeup(struct tty_struct *tty)
- 		sp->xleft -= actual;
- 		sp->xhead += actual;
- 	}
--
--out:
--	sp_put(sp);
- }
- 
- /* ----------------------------------------------------------------------- */
-@@ -430,7 +396,7 @@ static void sixpack_receive_buf(struct tty_struct *tty, const u8 *cp,
- 	if (!count)
- 		return;
- 
--	sp = sp_get(tty);
-+	sp = tty->disc_data;
- 	if (!sp)
- 		return;
- 
-@@ -446,7 +412,6 @@ static void sixpack_receive_buf(struct tty_struct *tty, const u8 *cp,
- 	}
- 	sixpack_decode(sp, cp, count1);
- 
--	sp_put(sp);
- 	tty_unthrottle(tty);
- }
- 
-@@ -561,8 +526,6 @@ static int sixpack_open(struct tty_struct *tty)
- 
- 	spin_lock_init(&sp->lock);
- 	spin_lock_init(&sp->rxlock);
--	refcount_set(&sp->refcnt, 1);
--	init_completion(&sp->dead);
- 
- 	/* !!! length of the buffers. MTU is IP MTU, not PACLEN!  */
- 
-@@ -638,19 +601,11 @@ static void sixpack_close(struct tty_struct *tty)
- {
- 	struct sixpack *sp;
- 
--	write_lock_irq(&disc_data_lock);
- 	sp = tty->disc_data;
--	tty->disc_data = NULL;
--	write_unlock_irq(&disc_data_lock);
- 	if (!sp)
- 		return;
- 
--	/*
--	 * We have now ensured that nobody can start using ap from now on, but
--	 * we have to wait for all existing users to finish.
--	 */
--	if (!refcount_dec_and_test(&sp->refcnt))
--		wait_for_completion(&sp->dead);
-+	tty->disc_data = NULL;
- 
- 	/* We must stop the queue to avoid potentially scribbling
- 	 * on the free buffers. The sp->dead completion is not sufficient
-@@ -673,7 +628,7 @@ static void sixpack_close(struct tty_struct *tty)
- static int sixpack_ioctl(struct tty_struct *tty, unsigned int cmd,
- 		unsigned long arg)
- {
--	struct sixpack *sp = sp_get(tty);
-+	struct sixpack *sp = tty->disc_data;
- 	struct net_device *dev;
- 	unsigned int tmp, err;
- 
-@@ -725,8 +680,6 @@ static int sixpack_ioctl(struct tty_struct *tty, unsigned int cmd,
- 		err = tty_mode_ioctl(tty, cmd, arg);
- 	}
- 
--	sp_put(sp);
--
- 	return err;
- }
- 
--- 
-2.43.0
-
+>
+> > > +
+> > >                 /* Generate an event */
+> > >                 if (cmpxchg(&t->event, 0, 1) =3D=3D 0) {
+> > >                         if (t->of)
+> > > --
+> > > 2.25.1
+> > >
 
