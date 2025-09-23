@@ -1,91 +1,90 @@
-Return-Path: <linux-kernel+bounces-828844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673CDB959BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:19:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2788EB959CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 822F519C21FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:19:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D19B04E1F9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161783218B9;
-	Tue, 23 Sep 2025 11:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875103218DA;
+	Tue, 23 Sep 2025 11:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D37FU1jK"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i9wGKFr7"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00CC27280C
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB74286D70
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758626359; cv=none; b=uc39kaB6DMaLBNhlnAyFQknciKs9nIJfp1YhU8QSxgSxT3E3/2LKc4MY152E0pfFije3ujY+FbchqxblOx5Sz7BQAM0bOlVXw+n4W1UeNhm8ShlOEkFFPEmVbGmauHtPHJ9g1R4oFUMPbYECRbNU91ofV6ljo6uWi1XcSkF8hUw=
+	t=1758626422; cv=none; b=R7SZOxXo8raOWnqhbsOJS6t3P+ebB/zh28YoZo3+lUlr0HyEFVpTYAiIfmYfk8+k/BL1FVkC4Ugau8RnsohWfFaarq2QjM3iPrOW/OH6roVP+GerNS2SgJ7XC9DvdPs3x5OLCEQLSYkusafrCmNvPh8BYDYi4gVXll3FV6fGDzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758626359; c=relaxed/simple;
-	bh=FhrQh8wlJhkiGsJ13lu3sPHpZl+KsdORpiUvpf3eogg=;
+	s=arc-20240116; t=1758626422; c=relaxed/simple;
+	bh=B3fRnPBrL6bndjkV80Lqpltt+HotD1WV25scPuVekdg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Vch1pmEiyTXg/l42rM3/u2INyjccPt2QxfUuh31sSe39wYaXfiG85OJQ25+9bcHdXEX+7AcY+M7qpCgOAPrBnTO+3K/CdRIEpHsp59fIW5hh+OC1x0hX5Oti0DxJeC7WqKAWBg4KuE6TFBtw7IEGamtR/jFppoO8NH/sLwSw+OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D37FU1jK; arc=none smtp.client-ip=209.85.221.53
+	 Content-Disposition; b=ACgJkJbWGqYjiUbqdzwE5WcQTvZNb9GbJJWybMOSuAdEfMZMV1Nun9LJpAOtpSaEWmRdREl7JFAS4UimAOeGXdTThxrIBZ2/DxJxMrIPhyf0va10lBzPWYmYrToM/4HW+Wk8ULOd0e+gJn/eVmbE96kwkpAdv2Dl06pP7tye8i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i9wGKFr7; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso2871454f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:19:17 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3ee12a63af1so2402293f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:20:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758626356; x=1759231156; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1758626420; x=1759231220; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9vLuVuYkRxMOaPm/QX7PGxaAYbQhLbxbW+ekIalkme8=;
-        b=D37FU1jKSGczue9Dgn4zjh9Q/9VOAh+Yxhv0mQl+5nKSGCDiXZGY3pGN4lWAI7UK+K
-         Sr3m8eynRP4a1FkciFF9zEdU7/0a/CSr/F/zJXyewRCuD+KRCdsshMRGIbppC1JiklEU
-         i7gokirPy7078/H9d1e8jgklpRF3/NWc2xfPDSMUAT3kQzMpnQAiMPR59f1BS11i2EFW
-         L2xv5ldWrCMIdDNTg6lFyBIc/HcTjXomjswdeA0ENkpgQmwCyF6nNq2RUDaxXa/Z7ntJ
-         i7qeX4ioCj5dFUh6oPzktQjEn+3HFg+DoAdoqewsIrGAuCWKqUMb0lSkZIfQV92btOo3
-         h+rA==
+        bh=VE8TJpb+bgJUe79vS/3A1j4fTVnXxc+D4cm6eCdCSiM=;
+        b=i9wGKFr73N2dpnTDqR9wl7Mt41sJLnKWB/19jvnsgxsw0sbDnRHDjb9jZl8xTNBqzL
+         x3TIaMnHjMFQQQFTAyc7M/sHlm46TalPo3ChDHoDyqlgeBXSHRM+QOgnjsuM66Mi4CWy
+         FQ2n36iX7uVW2bULH7g2idNd5B7WNUoC1qn6dqmc/SzdtltQ91bO8OvenQqWTcy6bufn
+         UX3yLGMlmsWHTK4McIGcmRrNUtGpJfj8AVHbKFSmDkILr9Ur9eE9aB/QiaxpfZixxBGF
+         si7jWMjtCkB41RA96YLkY9KRzv8IAIzjYupmAgc9DADqGItAIpTUlNlJ1/1cv3ii41wp
+         FAFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758626356; x=1759231156;
+        d=1e100.net; s=20230601; t=1758626420; x=1759231220;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9vLuVuYkRxMOaPm/QX7PGxaAYbQhLbxbW+ekIalkme8=;
-        b=UmiJd9E0nb34Xy9/uZ0GaTDY9S2pnt8ugyPkZICXrLrYTROHgaygSd4CORfvxN5HSJ
-         GS+MdMztznlDhJxoKYmW/YlW66xsBuvyMClahWTi05SCJWUDouMfXJSzbPq5ksKFOXP4
-         nsmHTPthQJWzJqOIW7IGeXg+2ax4Ktgr3LNUbFvbUi6kmbbv0CtgFJL+vuht8C7oUZ9B
-         h+bUiFPhdOwVnqIeQpPdFwzW7ajHYGhT2uet+Vsbl7/HXfBl0KlEJW/ruR7Xns9DgrF7
-         Nu/eAsphGVVrImDJ1FPi0mgk9vm608KbVz+7LSoxZn8iTSwR4j6aDrejoRHP280/62TV
-         9fOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWD7yqwn1dTqUm01pA612ZuwCRLXQeodvh7vc9lzazKQ/79aIZOiIfn6fn5EW2UO0drtAoK+JvEewncKoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuZZ/yf+UkfBbI4j76u1AxRR234h3Rmik7zmDaB5ohLuQVJSHI
-	aRmPveCVq8p7BvIyfiIhGlLi4ccEVa7XUo1QR55Oj/bCPFh5U5CaBJuCR1/7C4xsJP8=
-X-Gm-Gg: ASbGncs1VF4CBwVzTg/7yzQ7opVMenODXqKTB5aOQH7sff1eq7PZMVYn5mlt6yqugcP
-	PaJWwjGl0uC3vMYwtDgJBOKCvsOZUL7C8LjvRs8zERzPu7dnwN6agEhMDZYUgD8pnnc0YjhlObm
-	NF3jr2oAXAVFXXJ8KWzCd1tuNBboh85snf0TvgNunkMK334FnmwuzOMmttcw8qi+LtjZl/rhY5a
-	3ht55zojHgR4CUw7HsANh+oCEluVyAUGlkRalta36Nwtw0btXkCeavpqVkIDaDnfADeIDxfG21v
-	Ik6wkbb77FckQQyxQtSNRlmNrVxIcMOUw1Ew1MmWNcHJy49tOCtpx/L+i0WmDXGcH5iifCROcn5
-	yeC8Qb5WVRcTeCx0/BODYGwDqHKAT
-X-Google-Smtp-Source: AGHT+IESbMFQk6ILiLYUPMLicqqy9m7l+w2rx4L3CO/8J2ovvY0DfEOMfixD2agK3xBqmlyogy/9iQ==
-X-Received: by 2002:a05:6000:25c1:b0:3ee:15b4:846c with SMTP id ffacd0b85a97d-405c5ccd2bdmr1761131f8f.28.1758626355940;
-        Tue, 23 Sep 2025 04:19:15 -0700 (PDT)
+        bh=VE8TJpb+bgJUe79vS/3A1j4fTVnXxc+D4cm6eCdCSiM=;
+        b=Z/6J2oKaG8RuEqq82osL7hBcZZox8K04qQ+SCsACQe+NipuU1tLNrmyHxLDf2p0ss5
+         BsFrBZIUb5eaa5YIsyZiJ92+H8gd8UzgTrCD9p/iJ33Wo0AW7m1BbQE2OiM1O5TXGRe7
+         TYXK8MUMgzmTJ9cioHtxWE2fAPLdmDi6a38h3/WsgFWgo75P3YPzAqAXUwcJy37OnZMx
+         Qa2JMdBEH34+7ZuV6YwFoclKfDs608WtOOgHdZcg7ZoF5L14/kme2ATMwrqVFPp04byT
+         kUcoQjntvGD6VdTENKejQ31sddvb6ej74Q6Ap1/BpxXSz/ivel3W90O4KYTo7BK8h6bO
+         oWxw==
+X-Forwarded-Encrypted: i=1; AJvYcCW070k43f3sGp3s3feX2LJnCpXHCk2HO7hvOn2JHvn3iiinu8x9ADAZCzwGDEshF2tRR5H0nhyt1CwF8Bg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2qzEmWDDfn4sNjjmwKaguH+4nfdqV4lDRXxlAfgEFVNz1O4r4
+	z8+ZFIu/+gLqn2Adhq3NM0YD1s42bOVvjhenqKYaO18CoIeHbrZEPO+IYSCgItSnJ6E=
+X-Gm-Gg: ASbGncuxW25/vwuuAA49P9yuf9Wl43JFHxDK97cFK7Eb4l7aaJMLGwMcxpeFTZcFFXE
+	uDLI7lYO+cgpKRdRjfZlvIHK/TsstTWUCGhvmowtz9qFNMmVyFArQjMMgc05dcZh4+lDsdgcr76
+	Jc+dCmt52cmtX8S2GwM4+qJEQUvytKseJ+W7Bmy3Xx195gLSldHfk3fTQr08oHJ5/itdLfXT5jE
+	g1l8t1ZHbLV+WvCCDuqXCKP9k3W7Q7IWWChkRUhU819UHyVbPlLQa4Xpvb9jnMTl8LjuuZfpMlL
+	KBaUv367TO4+AFeosm24IzqlKAt4/5iEZm043XpPQlenOdb2oIrDCGmJE4VMvZpPArDoqGZL0RA
+	iIq3UWyWehjGc/aZMFqRdmc2UVI82
+X-Google-Smtp-Source: AGHT+IH5ERjqItScX3GlaqMEPRqH6OH857XNBhEBSVVCeFpYjz1uRmIbad/KOH3nGEJlbG/jtig3mw==
+X-Received: by 2002:a05:6000:186d:b0:3e7:46bf:f8bd with SMTP id ffacd0b85a97d-405c5ccd210mr1652472f8f.23.1758626419495;
+        Tue, 23 Sep 2025 04:20:19 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3ee073f53c4sm24050430f8f.3.2025.09.23.04.19.14
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-464f0d8a2bfsm249409455e9.2.2025.09.23.04.20.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 04:19:15 -0700 (PDT)
-Date: Tue, 23 Sep 2025 14:19:11 +0300
+        Tue, 23 Sep 2025 04:20:19 -0700 (PDT)
+Date: Tue, 23 Sep 2025 14:20:16 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Subbaraya Sundeep <sbhatta@marvell.com>
-Cc: Sunil Goutham <sgoutham@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	hariprasad <hkelam@marvell.com>,
-	Bharat Bhushan <bbhushan2@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Cc: Johannes Berg <johannes.berg@intel.com>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	Somashekhar Puttagangaiah <somashekhar.puttagangaiah@intel.com>,
+	Pagadala Yesu Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
+	Daniel Gabay <daniel.gabay@intel.com>,
+	Avraham Stern <avraham.stern@intel.com>,
+	Shaul Triebitz <shaul.triebitz@intel.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH net] octeontx2-pf: Fix potential use after free in
- otx2_tc_add_flow()
-Message-ID: <aNKCL1jKwK8GRJHh@stanley.mountain>
+Subject: [PATCH] wifi: iwlwifi: fix potential use after free in
+ iwl_mld_remove_link()
+Message-ID: <aNKCcKlbSkkS4_gO@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,37 +95,41 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This code calls kfree_rcu(new_node, rcu) and then dereferences "new_node"
-and then dereferences it on the next line.  Two lines later, we take
-a mutex so I don't think this is an RCU safe region.  Re-order it to do
-the dereferences before queuing up the free.
+This code frees "link" by calling kfree_rcu(link, rcu_head) and then it
+dereferences "link" to get the "link->fw_id".  Save the "link->fw_id"
+first to avoid a potential use after free.
 
-Fixes: 68fbff68dbea ("octeontx2-pf: Add police action for TC flower")
+Fixes: d1e879ec600f ("wifi: iwlwifi: add iwlmld sub-driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/ethernet/marvell/octeontx2/nic/otx2_tc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/mld/link.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_tc.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_tc.c
-index 5f80b23c5335..26a08d2cfbb1 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_tc.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_tc.c
-@@ -1326,7 +1326,6 @@ static int otx2_tc_add_flow(struct otx2_nic *nic,
+diff --git a/drivers/net/wireless/intel/iwlwifi/mld/link.c b/drivers/net/wireless/intel/iwlwifi/mld/link.c
+index 738f80fe0c50..60d814bf5779 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mld/link.c
++++ b/drivers/net/wireless/intel/iwlwifi/mld/link.c
+@@ -501,6 +501,7 @@ void iwl_mld_remove_link(struct iwl_mld *mld,
+ 	struct iwl_mld_vif *mld_vif = iwl_mld_vif_from_mac80211(bss_conf->vif);
+ 	struct iwl_mld_link *link = iwl_mld_link_from_mac80211(bss_conf);
+ 	bool is_deflink = link == &mld_vif->deflink;
++	u8 fw_id = link->fw_id;
  
- free_leaf:
- 	otx2_tc_del_from_flow_list(flow_cfg, new_node);
--	kfree_rcu(new_node, rcu);
- 	if (new_node->is_act_police) {
- 		mutex_lock(&nic->mbox.lock);
+ 	if (WARN_ON(!link || link->active))
+ 		return;
+@@ -513,10 +514,10 @@ void iwl_mld_remove_link(struct iwl_mld *mld,
  
-@@ -1346,6 +1345,7 @@ static int otx2_tc_add_flow(struct otx2_nic *nic,
+ 	RCU_INIT_POINTER(mld_vif->link[bss_conf->link_id], NULL);
  
- 		mutex_unlock(&nic->mbox.lock);
- 	}
-+	kfree_rcu(new_node, rcu);
+-	if (WARN_ON(link->fw_id >= mld->fw->ucode_capa.num_links))
++	if (WARN_ON(fw_id >= mld->fw->ucode_capa.num_links))
+ 		return;
  
- 	return rc;
+-	RCU_INIT_POINTER(mld->fw_id_to_bss_conf[link->fw_id], NULL);
++	RCU_INIT_POINTER(mld->fw_id_to_bss_conf[fw_id], NULL);
  }
+ 
+ void iwl_mld_handle_missed_beacon_notif(struct iwl_mld *mld,
 -- 
 2.51.0
 
