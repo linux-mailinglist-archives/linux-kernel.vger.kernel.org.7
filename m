@@ -1,116 +1,148 @@
-Return-Path: <linux-kernel+bounces-829771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1997DB97CAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:15:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E515B97CB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:21:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C27E77AAE00
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:14:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 381EB3B8D8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808C130FC0C;
-	Tue, 23 Sep 2025 23:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A54B3101C6;
+	Tue, 23 Sep 2025 23:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cSjI8deF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/b+eHPV"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26A314EC73;
-	Tue, 23 Sep 2025 23:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD85930C617
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758669345; cv=none; b=Z2ocxhEaSVk/PHAguCqsCprPfLH3PawUlEH8Ns1/i120tqEu+pZw4Yhc4Kkc/ySp1fBP3GDyPxafjjf1hF15apeeOrglLqldtY50zD8YmJTd+eaf+CJ0NvL7wq69YT4ztZmzmsnKxoq3FZopxAb5ZGj2soZeUtbY1B/9nmqFrXI=
+	t=1758669649; cv=none; b=LO2GPCoLgXN/dMUeT3YGG502M7ijvBu90bcv5t3wiaaF74DVfcw43VgtA6ihbevLrNjM8xilLPNLOM0B/5LJ0I/e8gyT+J+mbkep/fd8965Yb5VJNJE5csSqQJy13+R/9mgAnm886aAR2EumQrjdI1DftEM867kdT5rmSDylKvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758669345; c=relaxed/simple;
-	bh=pvYfKhTpW3bGdjpAO4fy40xvT7yPgb7fyXYDyfDid0A=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=UxCnKERTBWu8LweGRteuFKcB2rmrAtEoAuf2HXAcYG6TBuvSnfWVQ1+LNJWrMDOrARwaKH7qnIjWK231pkPAbKqeH+ZHcMlVFVFi8b8nP4nfo29ygWYzFA+7vnRQI1ZH5oturURoER92lCg2HM3wTVWJcumq3C8XjqPu1azzTwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cSjI8deF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14A9AC4CEF5;
-	Tue, 23 Sep 2025 23:15:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758669345;
-	bh=pvYfKhTpW3bGdjpAO4fy40xvT7yPgb7fyXYDyfDid0A=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=cSjI8deF/T3Mix8vrvDs9Z9batQCsKLVzSU5rsijTocNND7sNti50XVFJjAh1zS8H
-	 dtLgwJuwWxDE3dTC8l0dLRYeAqtwzCHe/KB898BmFRWK74hJZITRdYuy5NTo5bL/C7
-	 rV3tRB2OlIjYLo0yY0cnkXFeeHS0FbYbSJY6JewMxjbcvNZNQ2CxzqZoD5W7pvaO6d
-	 q3ktcxqi2f+sl1QnqRf2I3SH/gdlsf0nq3RGg7uDqXvwyYh1ScMm/sli1e2WR4zOk/
-	 RSVg0S/0ySBriMcnbO+Th7axxEWa8PMA231+9bpQgnc+mpwwU13b0WoB+MgYT/ZwBI
-	 q+k+eNHNkzwfw==
-Date: Tue, 23 Sep 2025 18:15:44 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1758669649; c=relaxed/simple;
+	bh=vkZtgaI8+DwA2vFDCXnyuKa4Ewv+3A6r93k8zDXNbj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kUrjHj7K1OoK4gjj8Udugi+2X/iXQmU4UuiQgWRMlBLkbh/ha7hqZ1c+Y/X1k1mAnKTRjMblBcbWVfZ/F8Le4GHZHAjkjWC+C5kG2DvXre8VXC8jCjr/XxdR/4Zng8r+oCKmXOeB+VSbbHbcpakg13u89U01+REzFvbdycrMajg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/b+eHPV; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57d93a4b5e5so3190480e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:20:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758669646; x=1759274446; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7kc5MQmgIpaNTBaT8ZNBy5t4B5Vp5p3q0VgcMo06yqw=;
+        b=a/b+eHPVxSEVzqwuiPJ8CzT3NtkU2uTRGYOVBG0a85NIM/V7LIgduFX43z4mfyuCTH
+         ztSwhGWtWXxbDlU4zJducKmaLowbqaDsVN7yHTA775POKH8ETdQg9Qs/pKLk2aWpHUi+
+         95f24pkm3Iq/CnoCiYkT+Rc0zku8deULAW9BkTGSic+lQ7Bv90Wo0lKkfzhJHmSUTg4J
+         0hTRj8exXcj0/AU+Dhus3unbM9hY9vN9AZ19M+sX1kq7dGnoy8WOCITzI+S+fk1CaZ12
+         u27xn34EmKwEeUHniWGYSuGyddyOBn/phkHsSRpWQzoP3UvU+w+O5EExE/aY+eX61E/t
+         6PxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758669646; x=1759274446;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7kc5MQmgIpaNTBaT8ZNBy5t4B5Vp5p3q0VgcMo06yqw=;
+        b=foKSUMYbvn5dRbX+WfIC6xxgPfsOg8SC2HXNL/rCdw+hcIATmEgzX8rgOGZgbVAoM/
+         mcF/sWKF/BOHrE+GE7Nf+NILij8r27rxsQdCXBK1LrL/Wimifm7RQDavOy71NArBfo7R
+         hVWEojHQ5jpgU+1Hgj33kcqM3P2mYWWRullcBX5bSwvvvSEXx1NKj/wQwQ3eX/Z8Gbb+
+         MBUvHq8cjU3JDTA8IiGCIh50vOYI3UNBkKgH7SnAwAICrcpwareZq19bA0fnumGJPDjn
+         XJ87VXKdrB5R8wH+ZPA3a1qdql+9aCkxywyhIeQp2fMzdoeFLDyhFhHm/z5E2hdqLVf0
+         ye3g==
+X-Forwarded-Encrypted: i=1; AJvYcCW3FDNpSiyfGdCLI2zRm2uwYTD0JF+ml9AR9EgWY2sSHaAPRCQrRyMElkP+VM8ZNysPvOP5VMPrnULav1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKgowGtUHLB602Iyd6UROytDS8wJb13oHxIyhXmi38u+b5+w11
+	MqZya9uuE4GTf/ZDtvHSO17fCrM/lIIxLe++ZZ8DwSoqp0VPwr2ppS/3
+X-Gm-Gg: ASbGncvSuyn0fMQ0iVwk9DrD1ytmDAvFGcZsH1P72jaY8r+YfBUAZz29TGOr0C+icV1
+	NU//mWus+3JrHdVkEQ04ZY0mpbIEFhfPabdMZ89dA/+3m/yfwbuK0JdHBxtKIlMw2bHdUKinE0u
+	JnZdfbuqq24JG/etZGK6l4AJ11O+3lX8fbsQP55FvDIqsdyaE5F74Y3W3NCq7sEG5uz/9GCFMet
+	pUmnJJZCLiF71LVq989llXlQY3HrMub6AVVAMRCK8J2bQ2nH8M32mrOnz7KKBSVOYRi0CjTtctv
+	VTL7twMHt882NzxhPvOBLncX/OxJebLH8NPAFRsmZBF9j5t5LmXOIrWYcIehoqnr30FUszKTUDN
+	YiBag5xIXH8ZXwL4RXe76GOp+/s8z9j8/DmM=
+X-Google-Smtp-Source: AGHT+IFVMR2s4ilEdfP5c3p3+7X515B1QLyMWkcy/0fTuDiMsgwVqSp4AmW8TfIdg0R7IgmgC3jp6A==
+X-Received: by 2002:a05:6512:6314:b0:560:9702:4fe6 with SMTP id 2adb3069b0e04-5807190a878mr1402555e87.24.1758669645455;
+        Tue, 23 Sep 2025 16:20:45 -0700 (PDT)
+Received: from foxbook (bfe191.neoplus.adsl.tpnet.pl. [83.28.42.191])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-57b43ff413asm3101295e87.144.2025.09.23.16.20.44
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Tue, 23 Sep 2025 16:20:45 -0700 (PDT)
+Date: Wed, 24 Sep 2025 01:20:39 +0200
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: I Viswanath <viswanathiyyappan@gmail.com>, andrew@lunn.ch,
+ andrew+netdev@lunn.ch, davem@davemloft.net, david.hunter.linux@gmail.com,
+ edumazet@google.com, linux-kernel-mentees@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, petkan@nucleusys.com,
+ skhan@linuxfoundation.org,
+ syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
+Subject: Re: [PATCH net v2] net: usb: Remove disruptive netif_wake_queue in
+ rtl8150_set_multicast
+Message-ID: <20250924012039.66a2411c.michal.pecio@gmail.com>
+In-Reply-To: <20250923072809.1a58edaf@kernel.org>
+References: <83171a57-cb40-4c97-b736-0e62930b9e5c@lunn.ch>
+	<20250920181852.18164-1-viswanathiyyappan@gmail.com>
+	<20250922180742.6ef6e2d5@kernel.org>
+	<20250923094711.200b96f1.michal.pecio@gmail.com>
+	<20250923072809.1a58edaf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
- linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org, 
- Stephen Boyd <sboyd@kernel.org>, upstream@airoha.com, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Manivannan Sadhasivam <mani@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, Conor Dooley <conor+dt@kernel.org>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, devicetree@vger.kernel.org, 
- Jianjun Wang <jianjun.wang@mediatek.com>, 
- Ryder Lee <ryder.lee@mediatek.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-In-Reply-To: <20250923201244.952-2-ansuelsmth@gmail.com>
-References: <20250923201244.952-1-ansuelsmth@gmail.com>
- <20250923201244.952-2-ansuelsmth@gmail.com>
-Message-Id: <175866934419.400019.15611978179247377029.robh@kernel.org>
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: mediatek: Fix wrong
- compatible list for hifsys YAML
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Tue, 23 Sep 2025 07:28:09 -0700, Jakub Kicinski wrote:
+> Excellent, could you check if there is any adverse effect of
+> repeatedly writing the RCR register under heavy Tx traffic (without
+> stopping/waking the Tx queue)? The driver seems to pause Tx when RCR
+> is written, seems like an odd thing to do without a reason, but
+> driver authors do the darndest things.
+
+I don't know what's the point of this, because it doesn't prevent the
+async "set RCR" control request racing with an async TX URB submitted
+before the queue was stopped or after it was restarted.
+
+Such races could be prevented by net core not calling this while TX
+is outstanding and not issuing TX until the control request completes,
+but it doesn't look like any of that is the case?
 
 
-On Tue, 23 Sep 2025 22:12:29 +0200, Christian Marangi wrote:
-> While converting the hifsys to YAML schema, the "syscon" compatible was
-> dropped for the mt7623 and the mt2701 compatible.
-> 
-> Add back the compatible to mute DTBs warning on "make dtbs_check" and
-> reflect real state of the .dtsi.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  .../devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
+I sucessfully reproduced the double submit bug as follows:
 
-My bot found errors running 'make dt_binding_check' on your patch:
+ifconfig eth1 10.9.9.9
+arp -s 10.9.8.7 87:87:87:87:87:87	# doesn't actually exist
+ping -f 10.9.8.7
+while :; do ifconfig eth1 allmulti; ifconfig eth1 -allmulti; done
 
-yamllint warnings/errors:
+For some reason I had to use two instances of 'ping -f', not sure why.
+Then the double submission warning appears in a few seconds and also
+some refcount issues, probably on skbs (dev->tx_skb gets mixed up).
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.example.dtb: clock-controller@1a000000 (mediatek,mt2701-hifsys): compatible: 'oneOf' conditional failed, one must be fixed:
-	['mediatek,mt2701-hifsys'] is too short
-	'mediatek,mt7622-hifsys' was expected
-	'mediatek,mt2701-hifsys' is not one of ['mediatek,mt7623-hifsys']
-	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt2701-hifsys.yaml#
+With the patch, it all goes away and doesn't show up even after a few
+minutes. I also tried with two TCP streams to a real machine and only
+observed a 20KB/s decrease in throughput while the ifconfig allmulti
+loop is running, probably due to USB bandwidth. So it looks OK.
 
-doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250923201244.952-2-ansuelsmth@gmail.com
+But one annoying problem is that those control requests are posted
+asynchronously and under my test they seem to accumulate faster than
+they drain. I get brief or not so brief lockups when USB core cleans
+this up on sudden disconnection. And rtl8150_disconnect() should kill
+them, but it doesn't.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+Not sure how this is supposed to work in a well-behaved net driver? Is
+this callback expected to return without sleeping and have an immediate
+effect? I can't see this working with USB.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Regards,
+Michal
 
