@@ -1,157 +1,181 @@
-Return-Path: <linux-kernel+bounces-828831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85CEEB9592A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:09:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60575B95903
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CDBA4A454E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:08:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4114518A759C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE8C321F25;
-	Tue, 23 Sep 2025 11:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16AB731D389;
+	Tue, 23 Sep 2025 11:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j2zANbbo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="bnuNYp3z";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MOVq3Vcg"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E429281530;
-	Tue, 23 Sep 2025 11:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCE0182B4
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758625672; cv=none; b=tTsOcvGd9tHh+rSH5C0g9ZbPcX7i0Kc96eAkSAWyk3wX5zIY9JRy2U1o+Cm9RK4hjcy7CrUhgORGtZZdYn1+CD/Cjcft1eDlViqpIP6mTUs8W43pSmkNq6aucsU353NZFaAvweAC3Ui/p0GMZRlOygNgnhY3aQddpEz6uPCFxCk=
+	t=1758625640; cv=none; b=Q1p0Zi+wN7EifBrog2ZaRofcLZapcj6EXGpTCixXNVFpUHOcMbF69tj3HdZqeSnvyJXLyZlT+cFKHPQvedaVl0Oyq7LLfKgG8U3lCobi4PyMlYGnxbt3fgkJnaWi/EC1uczfbkpO6p2BUdub0zqVk0vlbUsVyAuMO73gjZsK3w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758625672; c=relaxed/simple;
-	bh=Uf9bs5k9QG+5nyGAjqLHS32cg0hRvydRERDb3MH2K7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ICzNH6pCJaVtURPoryv6Fx+/J9WdBysKDPV18tCZt+pgjq2zU2qeUVPw11jCQ6aeRD2QnnXu7m93WScSPCFgolDjGIZ47kgpByOhDo4esPY7MWDZefFrT5a4WKyN2m3VWmrUYU/mA3X8wcvZfBj6CB/qkX8h4piqsCqYX7V1Oo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j2zANbbo; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758625671; x=1790161671;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Uf9bs5k9QG+5nyGAjqLHS32cg0hRvydRERDb3MH2K7s=;
-  b=j2zANbboPtxqqd35ajaF+PWJDU5URuSY6RNzKxf/hFEDY77Zyswdd86V
-   dWSqh2cz2PzTe0/v8OmCaPwAZnBfLl+lGdfvD51WOR8G7nUntKrAV49KV
-   W4/965nyqolq6+VNUeCrHHe8GKEfeiFnQjxIv7KJrbyIANbKAuevc/1Rs
-   cWrzzgmgO2utNIwqe+OKhbSg60dfu1dE8AVQZAcW8nPBvQgCXjkyJzc0H
-   Vd5Br+bFGnRdlUcngenQiexbDSNjdiGYx3IPw7pFImCLRrJZiT9YcbMyQ
-   LhMFnaCUT23gV9inWP11InT7CWqrd2G/OdZV7OGS4JMcqOFdZtISFcU1u
-   Q==;
-X-CSE-ConnectionGUID: ibS4eyNpT+GWpjPYlIIcwg==
-X-CSE-MsgGUID: y8LFd0ZcS9iXBoEjG/x0uQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60119383"
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="60119383"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 04:07:50 -0700
-X-CSE-ConnectionGUID: A0hX7eCORfmMYV+pqUM0xw==
-X-CSE-MsgGUID: XFw+UBKWTTafDHqYtEDBUA==
-X-ExtLoop1: 1
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 23 Sep 2025 04:07:46 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v10s4-00032v-1w;
-	Tue, 23 Sep 2025 11:07:44 +0000
-Date: Tue, 23 Sep 2025 19:06:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	linux-pci@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] PCI: rcar-host: Add static assertion to check
- !PCI_LOCKLESS_CONFIG
-Message-ID: <202509231859.HdRgUtEm-lkp@intel.com>
-References: <20250922153352.99197-1-marek.vasut+renesas@mailbox.org>
+	s=arc-20240116; t=1758625640; c=relaxed/simple;
+	bh=WUyDAB4Yxde/aOTMdWuVuyxpTn6gvsi1HWQUSppt2HE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M+IC5VVu4wYuMSw1TNtkIj/ISGLYBCnF44HAYk8gMfmwNmUCpYjOrHj2+zV5rQoC1xq0Sbw6BvgDvG411zCXf6tJy/MMeqAwNEHjdeHgz/xbLuu4RNvI0KrvtPeressuYR/PmjJY9wEMXsMG3tKkgQZh1f0SrEp2hhoGGuy3gGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=bnuNYp3z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MOVq3Vcg; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id A810AEC0090;
+	Tue, 23 Sep 2025 07:07:17 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Tue, 23 Sep 2025 07:07:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm3; t=1758625637; x=1758712037; bh=wF9XK8/W3b
+	9Sjw1kBR6CJPdbErNROqE/otknq3MpBo0=; b=bnuNYp3ze7ElSDvbaKGWKAuErF
+	8OxgqAw2Z/kCMlbDfthEu13h+toRVOKGfnpOTAdaIKb1+y29K6MSyLOvFb6uMRLS
+	bhEnshhoc1wJSem1tlfdCNqpFgbZ5mboHdXxNPYwNjLOZ9R7CutOEKHmlZYkjkoG
+	kLXhajidW25W9AdV6fQYKStbNi3jNAEijYM3ATWnRwYsBI354s+T0mkkftFSlXOz
+	NVxNCtbXjJHOaA/Vd5i5KCaVWH50wmb9Ux8L1HRC86Lh8gjumkcj4bLTYWkENyiW
+	BCrROUIgTplguvEY++ZYbMG/Z0ZZYW8mRQgB3qy+mz6Z2Ngxvvc/1SIkJaSQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758625637; x=1758712037; bh=wF9XK8/W3b9Sjw1kBR6CJPdbErNROqE/otk
+	nq3MpBo0=; b=MOVq3VcgcZJYV+x+HzB/YzA2V7uJHuXV2M6/iwUA7SfCfBrldoQ
+	j9+XO30OsqujuSYBfV3pa9sQcpyA5lyxCkYAGGadC+gG9jpNk7rLgr+YXyTmvY/x
+	yqun7HbAw338+qJCkqOrUQCsu5Th6jMlz6a2JGrCkCdyz9ekPZUSDfyta6hRpEtx
+	vVf0Y/V72bFX014CEwTgTB3gt9pnpfk90zhE/b2Xov3mDTVfhhGgh7C3sMily15r
+	XoWXzL0y7AcUOTl9HlFm8U/La0ibcNa2w8XCzfzZ1CRW4fYZTP01bpevUNPa4k8D
+	DGpKqGZ+t6zsRlipF5v/aHj5iLl3R7jMaog==
+X-ME-Sender: <xms:ZX_SaD-jWDt9kHAdIB69kTTSm9VMA6hz3Y509f3D5WqGjPHu-gM0Bg>
+    <xme:ZX_SaLrawFAxeEp-OqxQf2Xa2z-pS-ZcWHMQhDQG7IyMc-MOmylyFMFYd9RUVoMAw
+    hSDLgz29XN1OvTF7n6pxCYFlajSE-ARlyxWp_vON0TatZ97lkpg6A>
+X-ME-Received: <xmr:ZX_SaHLZ-ViYDVbAYctjyBZH3qcFj21dGWZfqynzXxgVD9pgaFi3ckbmHNPF7Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeitdehjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefmihhrhihlucfuhhhu
+    thhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrg
+    htthgvrhhnpeetffduudehveejfedugeektddtvedthfehfeehteffleetieevhedvfeeg
+    tdehfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepudekpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnug
+    grthhiohhnrdhorhhgpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhr
+    tghpthhtohephhhughhhugesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhi
+    esihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghk
+    vghssehorhgrtghlvgdrtghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesoh
+    hrrggtlhgvrdgtohhmpdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgiipdhrtghp
+    thhtoheprhhpphhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsuhhrvghnsgesgh
+    hoohhglhgvrdgtohhm
+X-ME-Proxy: <xmx:ZX_SaF3ae89IQfljzisBLoPa6ddqv35V8N3DH5j-DtLfm08CymMSAw>
+    <xmx:ZX_SaGU6Z55yhj_KOWZrZelxAJeEuEyoEWcc0qKK4BuMpxBUtkmP_A>
+    <xmx:ZX_SaLU2rzh_h0ixl7EV1pvsgPC_IFwBo77FFYfq8VQB7F0inam5ug>
+    <xmx:ZX_SaJEIPD0AZY72ycv3FN-e6Qrt0SoOxmbzqL0IX8P6uwhC9Rz6cQ>
+    <xmx:ZX_SaJebJeGZSK2KcXa98vtabQGLUxjNOUoTvfzvNIx5tIdxzVWEC8U2>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 23 Sep 2025 07:07:16 -0400 (EDT)
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Hugh Dickins <hughd@google.com>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Rik van Riel <riel@surriel.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Kiryl Shutsemau <kas@kernel.org>
+Subject: [PATCHv3 0/6] mm: Improve mlock tracking for large folios
+Date: Tue, 23 Sep 2025 12:07:05 +0100
+Message-ID: <20250923110711.690639-1-kirill@shutemov.name>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922153352.99197-1-marek.vasut+renesas@mailbox.org>
+Content-Transfer-Encoding: 8bit
 
-Hi Marek,
+From: Kiryl Shutsemau <kas@kernel.org>
 
-kernel test robot noticed the following build errors:
+The patchset includes several fixes and improvements related to mlock
+tracking of large folios.
 
-[auto build test ERROR on pci/next]
-[also build test ERROR on pci/for-linus linus/master v6.17-rc7 next-20250922]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The main objective is to reduce the undercount of Mlocked memory in
+/proc/meminfo and improve the accuracy of the statistics.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Marek-Vasut/PCI-rcar-host-Add-static-assertion-to-check-PCI_LOCKLESS_CONFIG/20250922-233709
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20250922153352.99197-1-marek.vasut%2Brenesas%40mailbox.org
-patch subject: [PATCH] PCI: rcar-host: Add static assertion to check !PCI_LOCKLESS_CONFIG
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250923/202509231859.HdRgUtEm-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250923/202509231859.HdRgUtEm-lkp@intel.com/reproduce)
+Patches 1-2:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509231859.HdRgUtEm-lkp@intel.com/
+These patches address a minor race condition in folio_referenced_one()
+related to mlock_vma_folio().
 
-All errors (new ones prefixed by >>):
+Currently, mlock_vma_folio() is called on large folio without the page
+table lock, which can result in a race condition with unmap (i.e.
+MADV_DONTNEED). This can lead to partially mapped folios on the
+unevictable LRU list.
 
-   In file included from include/linux/bits.h:30,
-                    from include/linux/bitops.h:6,
-                    from drivers/pci/controller/pcie-rcar-host.c:14:
->> include/linux/build_bug.h:78:41: error: static assertion failed: "!IS_ENABLED(CONFIG_PCI_LOCKLESS_CONFIG)"
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                         ^~~~~~~~~~~~~~
-   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ^~~~~~~~~~~~~~~
-   drivers/pci/controller/pcie-rcar-host.c:43:1: note: in expansion of macro 'static_assert'
-      43 | static_assert(!IS_ENABLED(CONFIG_PCI_LOCKLESS_CONFIG));
-         | ^~~~~~~~~~~~~
+While not a significant issue, I do not believe backporting is
+necessary.
 
+Patch 3:
 
-vim +78 include/linux/build_bug.h
+This patch adds mlocking logic similar to folio_referenced_one() to
+try_to_unmap_one(), allowing for mlocking of large folios where
+possible.
 
-bc6245e5efd70c Ian Abbott       2017-07-10  60  
-6bab69c65013be Rasmus Villemoes 2019-03-07  61  /**
-6bab69c65013be Rasmus Villemoes 2019-03-07  62   * static_assert - check integer constant expression at build time
-6bab69c65013be Rasmus Villemoes 2019-03-07  63   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  64   * static_assert() is a wrapper for the C11 _Static_assert, with a
-6bab69c65013be Rasmus Villemoes 2019-03-07  65   * little macro magic to make the message optional (defaulting to the
-6bab69c65013be Rasmus Villemoes 2019-03-07  66   * stringification of the tested expression).
-6bab69c65013be Rasmus Villemoes 2019-03-07  67   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  68   * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
-6bab69c65013be Rasmus Villemoes 2019-03-07  69   * scope, but requires the expression to be an integer constant
-6bab69c65013be Rasmus Villemoes 2019-03-07  70   * expression (i.e., it is not enough that __builtin_constant_p() is
-6bab69c65013be Rasmus Villemoes 2019-03-07  71   * true for expr).
-6bab69c65013be Rasmus Villemoes 2019-03-07  72   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  73   * Also note that BUILD_BUG_ON() fails the build if the condition is
-6bab69c65013be Rasmus Villemoes 2019-03-07  74   * true, while static_assert() fails the build if the expression is
-6bab69c65013be Rasmus Villemoes 2019-03-07  75   * false.
-6bab69c65013be Rasmus Villemoes 2019-03-07  76   */
-6bab69c65013be Rasmus Villemoes 2019-03-07  77  #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-6bab69c65013be Rasmus Villemoes 2019-03-07 @78  #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-6bab69c65013be Rasmus Villemoes 2019-03-07  79  
-07a368b3f55a79 Maxim Levitsky   2022-10-25  80  
+Patch 4-5:
+
+These patches modifies finish_fault() and faultaround to map in the
+entire folio when possible, enabling efficient mlocking upon addition to
+the rmap.
+
+Patch 6:
+
+This patch makes rmap mlock large folios if they are fully mapped,
+addressing the primary source of mlock undercount for large folios.
+
+v3:
+ - Map entire folios on faultaround where possible;
+ - Fix comments and commit messages;
+ - Apply tags;
+
+Kiryl Shutsemau (6):
+  mm/page_vma_mapped: Track if the page is mapped across page table
+    boundary
+  mm/rmap: Fix a mlock race condition in folio_referenced_one()
+  mm/rmap: mlock large folios in try_to_unmap_one()
+  mm/fault: Try to map the entire file folio in finish_fault()
+  mm/filemap: Map entire large folio faultaround
+  mm/rmap: Improve mlock tracking for large folios
+
+ include/linux/rmap.h |   5 ++
+ mm/filemap.c         |  15 ++++++
+ mm/memory.c          |   9 +---
+ mm/page_vma_mapped.c |   1 +
+ mm/rmap.c            | 109 ++++++++++++++++++++++++-------------------
+ 5 files changed, 84 insertions(+), 55 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.50.1
+
 
