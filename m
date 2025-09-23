@@ -1,106 +1,109 @@
-Return-Path: <linux-kernel+bounces-829597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6582AB97691
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:49:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE445B976AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 921F21B22361
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A06B423E5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F31305054;
-	Tue, 23 Sep 2025 19:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7DD3043DB;
+	Tue, 23 Sep 2025 19:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="VSJlXNfC"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PvIaGTqH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5353C269AEE
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA731A238C;
+	Tue, 23 Sep 2025 19:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758656917; cv=none; b=jkza3g9DNW/tq6gBNFq3mQIcZa44KbjjGR1aMy8EllLRWnNIaXLrZSEDllsPDvDOLFpJWjA8Uq45ejJvbWEOYRbh4b1Dg3IPsYnWfY0focGlRt++LUrzDhzllF6+9rjfTAePxVVhktjuPqypUsKapcnTyAfb6bcHL/LJEKXR8ec=
+	t=1758656968; cv=none; b=uuKYpqOPB+gMwo7j50EgroWVs2YAhiEwbHSFUREg3e32oT2t0BrkpjUMv6E/fBz3qjP9e6eNOsQVtz0wEphoPz/tTQRUa4Zp+ke/na1xBj6dZnFEXmhhr+82+F1IM6Y4xJL+MgbuASJDjXoszLRG7147UTC9psKI8boph2bAFJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758656917; c=relaxed/simple;
-	bh=BnpAhBlz8Vxpj5OlMpCiUIBPap8Wj6cmNHFTw3boeDg=;
+	s=arc-20240116; t=1758656968; c=relaxed/simple;
+	bh=7gv2WzZ+nMC2bdsHIbBsKOEQPNt5h99Cw1wDY0M9npo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QDWZtDADiEQKSGHZuyd+X6GlXwN2pvqMX/glndI25zAFOimgqTIVaTK5/W0+Owk11C/Ve7R7HByem4rkG8Kr8BfG/QHK8uqNb1vV0uVJPL+vdY9OYuzfd7yVA4l3Y8z3A6S4t61zoA/aND+V/WPmYElUPn3w+4Xx7fO76m+BaSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=VSJlXNfC; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=BnpA
-	hBlz8Vxpj5OlMpCiUIBPap8Wj6cmNHFTw3boeDg=; b=VSJlXNfC9PfT6QX15qbA
-	P6uS33FZyEzD2z3LeM5doOBFMqMsrJXP1Fi/zePCUmlfRJZZPXsxX9R0J8GAiCV3
-	k89Y4wkSUFrW6oTWTzLxkhrutbSuaawPl6LCONXgYVveT7TcJIFk4MCsyr1hl7GI
-	pCU1IZpWZqJWo7sy4VD9hYfNXmDhVj5ezmUL1RbmLB7rLI8qCO5CvV4YO063jmGy
-	ZYf4O8UdQ8lEsLr8iGwMwylQ57ryGwz/Ujcp7FTEBHddFqDyGgUnRcSKdV9R6OR/
-	+lo3dYABhCPqotyPNo3+F9zg45X1coc81Lhp+BjoIvoDWPyi1wTfWCG60flHqdm0
-	YA==
-Received: (qmail 1224986 invoked from network); 23 Sep 2025 21:48:33 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Sep 2025 21:48:33 +0200
-X-UD-Smtp-Session: l3s3148p1@y0WTOH0/qNsujnsp
-Date: Tue, 23 Sep 2025 21:48:32 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] dt-bindings: i2c: exynos5: add
- samsung,exynos8890-hsi2c compatible
-Message-ID: <aNL5kI5VSJwHq303@shikoro>
-References: <20250914131620.2622667-1-ivo.ivanov.ivanov1@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WEmNC3iy9+3bX40MeouekeAX3QwOEgeb9KdjiK0A5906Uq+MV+r94y9K6Y0LXEA8q9DH3eiEax9HAxXye3Qt1E3xv9XkCAr3EhvD+yea707Y6NVigqw0aD5FQpV8TTQ36qKLxsOZrNa0KfBiyWkWQUttCIjNYSJ0YA5MHHaRuv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PvIaGTqH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C0DAC4CEF5;
+	Tue, 23 Sep 2025 19:49:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758656966;
+	bh=7gv2WzZ+nMC2bdsHIbBsKOEQPNt5h99Cw1wDY0M9npo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PvIaGTqHdNU7Q1p9iQCyi7SI8rzgs+Fd2F62Wvt4e7U9M5ZbQ8qxnT0LiSPe4PKVR
+	 gehyR0Rm0ghRXneZ4tzjafcgpCRITUKyHFvb6JN4O9cuxWgjIBHK2hM2MF5Y/HqnMX
+	 n3nuIsdb1r2D9GFRjzSab+/uI7K6xmpOdsNRSsCVySBQ9n2ybIX4gsztX3PGvijcvT
+	 Sp/fUhAnCreO1LjGnNn/IXq6su5QDyv6TUFvnwV57AFOt5ZY8qGMFKUOL3RBXFtVX+
+	 bbjgLfFkLzJt+rxjoewVtxndm0w4xC2WwbySLCvFHwFbb5zcONvgE0SDuPCi7+lbEf
+	 evcKd6295D9ag==
+Date: Tue, 23 Sep 2025 12:49:15 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Marco Elver <elver@google.com>
+Cc: Christoph Hellwig <hch@lst.de>, Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
+	Bill Wendling <morbo@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	linux-sparse@vger.kernel.org, llvm@lists.linux.dev,
+	rcu@vger.kernel.org
+Subject: Re: [PATCH v3 00/35] Compiler-Based Capability- and Locking-Analysis
+Message-ID: <20250923194915.GA2127565@ax162>
+References: <20250918140451.1289454-1-elver@google.com>
+ <20250918141511.GA30263@lst.de>
+ <20250918174555.GA3366400@ax162>
+ <20250919140803.GA23745@lst.de>
+ <20250919140954.GA24160@lst.de>
+ <aNEX46WJh2IWhVUc@elver.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uQiVu5BD+7Z6lLMt"
-Content-Disposition: inline
-In-Reply-To: <20250914131620.2622667-1-ivo.ivanov.ivanov1@gmail.com>
-
-
---uQiVu5BD+7Z6lLMt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aNEX46WJh2IWhVUc@elver.google.com>
 
-On Sun, Sep 14, 2025 at 04:16:20PM +0300, Ivaylo Ivanov wrote:
-> Add samsung,exynos8890-hsi2c compatible, reusing the 8895 support
-> since it's compatible with exynos8890's i2c controllers.
->=20
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+On Mon, Sep 22, 2025 at 11:33:23AM +0200, Marco Elver wrote:
+> [1] https://github.com/llvm/llvm-project/pull/159921
 
-Applied to for-next, thanks!
+Now that this is merged, I have pushed an updated snapshot for x86_64:
 
+https://mirrors.edge.kernel.org/pub/tools/llvm/files/prerelease/llvm-22.0.0-ca2e8fc928ad103f46ca9f827e147c43db3a5c47-20250923-185804-x86_64.tar.xz
 
---uQiVu5BD+7Z6lLMt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjS+YwACgkQFA3kzBSg
-KbYdKg/+PLwFRO5GJ69ibFyhHD4ER6dODjHUCFptee21h7vk3bhQD7DIwXYUY2+g
-BkXvYytPpiIGGtbT1E6sqssesZsjr4543htiaLyAvCLyBVZkBKMPLCCaK6lTCnbP
-6KOfIj9Ps+3yNaHDNv28/+SfNU/SaZV+E6ACdhOG2Rm2kz93fxCkHGfoQuPO1WqZ
-bJskh5r5QqNQBZwUymgWQy1naW5q/Asoimm+BKWk2zGMonSF6bGImQGgWoZLrCiq
-7bL1K4OFZuki/vyB2Rc28xccQUpmRgk84cfEXDoweMlgVYXYJjrL4MQfDhnrUz7+
-6nVlpOwhL7cjSCcK/F8rNpZC6cKVedEfmjm9japqUWtRqQx9ZUjnsSG3gnYLszgq
-aOQk+Q1BiQ7PkRRQMUy1WLWp/RPe4IczznHI6Z6Am4MJW6KSUs2J9lR/tAnq1kEA
-qucSkhveVoBf0p2FSzCybGcfwtIfSa/aQ2P7FGQBQBWeA/zPJkIwc10COpCzseFE
-GFuS1qHADiBW3NNEhvE0PSoh/1tjjk76kf9xWq8G5sz6NRR6dpwQESCB6VlxuaFS
-0dIcEsBKUF9a0CJzIN3JZUswj50M5PkOq7x7AiELIvsYNiTeb753o1Dr/x/e8Hn1
-JtHtjZRPZMRthBBGSi//HcvocdAdY0ODCsk6QqZuTqOtBGZBegE=
-=gmnO
------END PGP SIGNATURE-----
-
---uQiVu5BD+7Z6lLMt--
+Cheers,
+Nathan
 
