@@ -1,217 +1,107 @@
-Return-Path: <linux-kernel+bounces-828526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADF9CB94CAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:34:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DFBB94CB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACC391902E37
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:35:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6EC216E531
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1768C314A8F;
-	Tue, 23 Sep 2025 07:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DIXw5jTR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC32314D36;
+	Tue, 23 Sep 2025 07:34:44 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACD3BE49;
-	Tue, 23 Sep 2025 07:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EBD242938;
+	Tue, 23 Sep 2025 07:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758612882; cv=none; b=OPiYWD/j+TJyb7Oznlzd/+ydYnVOixaZXxX/MptClqv1314PPSX2v6H4rXk8450d5KH9A2WNPE0cBq2yFgpNkPNSTpNICqCNHeFkrxi0a9GfGxjIF6RywskgY62lZIh+QeCgpihEllb4eRYrvUAk4VYf7vFyu1j2NNrcoJRsnA4=
+	t=1758612883; cv=none; b=po0r8e9jKs2lJcaaGLmqVXh9AS+bZiynsZHSSgWkx6+0WSB9piQwuZEp4DVUlx7zNiB5UWeGwBGfQQLJHQ2e5VSP6f7CCvrRIqCF/2VfaboH4Jtsl/xNMU73brPFZK8OWhZ6uKXd0Tfth9dshXVRcj/TcMR5YooxI6GFLwwZlho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758612882; c=relaxed/simple;
-	bh=KuImyqyKNN76OPYNcqBrprXaC7zThCBm0Z1hOVDDaFg=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=TqqFKATPOxci1EsTmbDdan0/TT8QPpCeWCml6+AUAyJU/HwxNXIkpqm5ZvH8YzW5wkdpIRu4wZ5pH4S+6BxND0r9vvE9OFpNkAmgt769Ytpx92Ji+XJ0YNvZrgDl93WPp7luEu8/y3rIJeSTMiqp4FjBdd5IDHLiHcBEusB9RWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DIXw5jTR; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758612880; x=1790148880;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=KuImyqyKNN76OPYNcqBrprXaC7zThCBm0Z1hOVDDaFg=;
-  b=DIXw5jTRL8FAQIbyN7Zhg9quHJhKc7IrcOaVCwjyI4SxTULay3WK1q4S
-   QNRljS5iwRRaKvC+reqWRm1JCSDYE4ReZAjpQswWnWBkSn9TXdQWSwFC1
-   XB8xZf9uHGj9zAV4HczD0p7zUXxE6QliYqt+Z3fh5Mf+9SZsE2yU9ZSjp
-   WNac1KeXzWgr3TZzmG5ib5Zz/4Kh9Hi6eMnSH6zBji7XszZc7wSnlKSVl
-   J/dsz5xSnkOo7XadX+1YbJtNsFQBivxpkje7Iar5zVFUdkNo0iOKEdCZO
-   T5qZTW7xInQsrIYhr1CcjVXdVfZH4pcKmbhZqiDd2QzvjjkvYtL/R0Y8U
-   w==;
-X-CSE-ConnectionGUID: oXa+NlGTQAGQvckYz9w4ZQ==
-X-CSE-MsgGUID: urY/hGcEShO8IoDGCfjfpg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60585599"
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="60585599"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 00:34:39 -0700
-X-CSE-ConnectionGUID: glbmymB0TPa38tBYYPQl/A==
-X-CSE-MsgGUID: SCYVPC4tTMa1pbE4swgYsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="200394573"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 00:34:12 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 23 Sep 2025 10:34:08 +0300 (EEST)
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-cc: rostedt@goodmis.org, Lukas Wunner <lukas@wunner.de>, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-    helgaas@kernel.org, mattc@purestorage.com, Jonathan.Cameron@huawei.com, 
-    bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de, 
-    mhiramat@kernel.org, mathieu.desnoyers@efficios.com, oleg@redhat.com, 
-    naveen@kernel.org, davem@davemloft.net, anil.s.keshavamurthy@intel.com, 
-    mark.rutland@arm.com, peterz@infradead.org, tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v10 1/3] PCI: trace: Add a generic RAS tracepoint for
- hotplug event
-In-Reply-To: <acfde737-23b3-7b0a-65c6-01082a71e5e8@linux.intel.com>
-Message-ID: <453b792a-23f9-6d72-f35a-60526b3e04e0@linux.intel.com>
-References: <20250920060117.866-1-xueshuai@linux.alibaba.com> <20250920060117.866-2-xueshuai@linux.alibaba.com> <6bab311a-d5ba-133c-fddd-52899959445c@linux.intel.com> <12c84bff-6863-4730-b08a-631df904aa12@linux.alibaba.com> <fe2abb10-3847-af1c-12c2-193c32befe0c@linux.intel.com>
- <fb87ff46-ebcf-450d-bfd5-b1ef52cda4be@linux.alibaba.com> <acfde737-23b3-7b0a-65c6-01082a71e5e8@linux.intel.com>
+	s=arc-20240116; t=1758612883; c=relaxed/simple;
+	bh=hpwsI3FdxZKmmkhnouyPb8s1V33yJi/17bA4ZtYmFEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AAhS96OS+WZjnj5YE7SFH/MA1qahzcorZAMht9GbuoeZR6LCvSOug2+85fYA7/hEB2m2ZXiiNhz4Wn5Q3Ep10wiNWO36MjgVuIXL5QiJmuCrf5X+53kKdxkNi9a+DQV2uNL5o/9FiiXsucKLRhNn+NrPZ3QGtfyPsad70QU5yIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cWBYN6W1lztTWp;
+	Tue, 23 Sep 2025 15:33:44 +0800 (CST)
+Received: from kwepemf100007.china.huawei.com (unknown [7.202.181.221])
+	by mail.maildlp.com (Postfix) with ESMTPS id CF8AA1800B1;
+	Tue, 23 Sep 2025 15:34:37 +0800 (CST)
+Received: from [10.67.109.184] (10.67.109.184) by
+ kwepemf100007.china.huawei.com (7.202.181.221) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 23 Sep 2025 15:34:36 +0800
+Message-ID: <97c8e410-5482-42cc-85e1-5c22bfd1d192@huawei.com>
+Date: Tue, 23 Sep 2025 15:34:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-1382897340-1758612811=:961"
-Content-ID: <b1a397ee-b49e-33ef-175d-1210ca850424@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] riscv: bpf: Fix uninitialized symbol 'retval_off'
+Content-Language: en-US
+To: Chenghao Duan <duanchenghao@kylinos.cn>, <ast@kernel.org>,
+	<daniel@iogearbox.net>, <andrii@kernel.org>, <bjorn@kernel.org>,
+	<puranjay@kernel.org>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
+	<aou@eecs.berkeley.edu>
+CC: <martin.lau@linux.dev>, <eddyz87@gmail.com>, <song@kernel.org>,
+	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
+	<sdf@fomichev.me>, <haoluo@google.com>, <jolsa@kernel.org>, <alex@ghiti.fr>,
+	<bpf@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250922062244.822937-1-duanchenghao@kylinos.cn>
+ <20250922062244.822937-2-duanchenghao@kylinos.cn>
+From: Pu Lehui <pulehui@huawei.com>
+In-Reply-To: <20250922062244.822937-2-duanchenghao@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemf100007.china.huawei.com (7.202.181.221)
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323328-1382897340-1758612811=:961
-Content-Type: text/plain; CHARSET=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <e5568f24-5b70-9b4c-2c4f-d5c1282e52d9@linux.intel.com>
 
-On Tue, 23 Sep 2025, Ilpo J=C3=A4rvinen wrote:
+On 2025/9/22 14:22, Chenghao Duan wrote:
+> In the __arch_prepare_bpf_trampoline() function, retval_off is only
+> meaningful when save_ret is true, so the current logic is correct.
+> However, in the original logic, retval_off is only initialized under
+> certain conditions; for example, in the fmod_ret logic, the compiler is
+> not aware that the flags of the fmod_ret program (prog) have set
+> BPF_TRAMP_F_CALL_ORIG, which results in an uninitialized symbol
+> compilation warning.
+> 
+> So initialize retval_off unconditionally to fix it.
+> 
+> Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+> ---
+>   arch/riscv/net/bpf_jit_comp64.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
+> index 9883a55d61b5..8475a8ab5715 100644
+> --- a/arch/riscv/net/bpf_jit_comp64.c
+> +++ b/arch/riscv/net/bpf_jit_comp64.c
+> @@ -1079,10 +1079,9 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im,
+>   	stack_size += 16;
+>   
+>   	save_ret = flags & (BPF_TRAMP_F_CALL_ORIG | BPF_TRAMP_F_RET_FENTRY_RET);
+> -	if (save_ret) {
+> +	if (save_ret)
+>   		stack_size += 16; /* Save both A5 (BPF R0) and A0 */
+> -		retval_off = stack_size;
+> -	}
+> +	retval_off = stack_size;
+>   
+>   	stack_size += nr_arg_slots * 8;
+>   	args_off = stack_size;
 
-> On Tue, 23 Sep 2025, Shuai Xue wrote:
->=20
-> >=20
-> >=20
-> > =E5=9C=A8 2025/9/23 14:46, Ilpo J=C3=A4rvinen =E5=86=99=E9=81=93:
-> > > On Tue, 23 Sep 2025, Shuai Xue wrote:
-> > >=20
-> > > >=20
-> > > >=20
-> > > > =E5=9C=A8 2025/9/22 21:10, Ilpo J=C3=A4rvinen =E5=86=99=E9=81=93:
-> > > > > On Sat, 20 Sep 2025, Shuai Xue wrote:
-> > > > >=20
-> > > > > > Hotplug events are critical indicators for analyzing hardware h=
-ealth,
-> > > > > > and surprise link downs can significantly impact system perform=
-ance
-> > > > > > and
-> > > > > > reliability.
-> > > > > >=20
-> > > > > > Define a new TRACING_SYSTEM named "pci", add a generic RAS trac=
-epoint
-> > > > > > for hotplug event to help health checks. Add enum pci_hotplug_e=
-vent in
-> > > > > > include/uapi/linux/pci.h so applications like rasdaemon can reg=
-ister
-> > > > > > tracepoint event handlers for it.
-> > > > > >=20
-> > > > > > The following output is generated when a device is hotplugged:
-> > > > > >=20
-> > > > > > $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/en=
-able
-> > > > > > $ cat /sys/kernel/debug/tracing/trace_pipe
-> > > > > >      irq/51-pciehp-88      [001] .....  1311.177459: pci_hp_eve=
-nt:
-> > > > > > 0000:00:02.0 slot:10, event:CARD_PRESENT
-> > > > > >=20
-> > > > > >      irq/51-pciehp-88      [001] .....  1311.177566: pci_hp_eve=
-nt:
-> > > > > > 0000:00:02.0 slot:10, event:LINK_UP
-> > > > > >=20
-> > > > > > Suggested-by: Lukas Wunner <lukas@wunner.de>
-> > > > > > Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-> > > > > > Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> > > > > > Reviewed-by: Lukas Wunner <lukas@wunner.de>
-> > > > > > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > > > > ---
-> > > > > >    drivers/pci/Makefile              |  2 +
-> > > > > >    drivers/pci/hotplug/Makefile      |  3 +-
-> > > > > >    drivers/pci/hotplug/pciehp_ctrl.c | 31 ++++++++++++---
-> > > > > >    drivers/pci/trace.c               | 11 ++++++
-> > > > > >    include/trace/events/pci.h        | 63
-> > > > > > +++++++++++++++++++++++++++++++
-> > > > > >    include/uapi/linux/pci.h          |  7 ++++
-> > > > > >    6 files changed, 110 insertions(+), 7 deletions(-)
-> > > > > >    create mode 100644 drivers/pci/trace.c
-> > > > > >    create mode 100644 include/trace/events/pci.h
-> > > > > >=20
-> > > > > > diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-> > > > > > index 67647f1880fb..bf389bc4dd3c 100644
-> > > > > > --- a/drivers/pci/Makefile
-> > > > > > +++ b/drivers/pci/Makefile
-> > > > > > @@ -45,3 +45,5 @@ obj-y=09=09=09=09+=3D controller/
-> > > > > >    obj-y=09=09=09=09+=3D switch/
-> > > > > >      subdir-ccflags-$(CONFIG_PCI_DEBUG) :=3D -DDEBUG
-> > > > > > +
-> > > > > > +CFLAGS_trace.o :=3D -I$(src)
-> > > > > > diff --git a/drivers/pci/hotplug/Makefile
-> > > > > > b/drivers/pci/hotplug/Makefile
-> > > > > > index 40aaf31fe338..d41f7050b072 100644
-> > > > > > --- a/drivers/pci/hotplug/Makefile
-> > > > > > +++ b/drivers/pci/hotplug/Makefile
-> > > > > > @@ -65,7 +65,8 @@ rpadlpar_io-objs=09:=3D=09rpadlpar_core.o \
-> > > > > >    pciehp-objs=09=09:=3D=09pciehp_core.o=09\
-> > > > > >    =09=09=09=09pciehp_ctrl.o=09\
-> > > > > >    =09=09=09=09pciehp_pci.o=09\
-> > > > > > -=09=09=09=09pciehp_hpc.o
-> > > > > > +=09=09=09=09pciehp_hpc.o=09\
-> > > > > > +=09=09=09=09../trace.o
-> > > > >=20
-> > > > > To make it useful for any PCI tracing, not juse hotplug, this obj=
-ect
-> > > > > file
-> > > > > should be added in drivers/pci/Makefile, not here.
-> > > >=20
-> > > > Make sence. How about adding to the main CONFIG_PCI object:
-> > > >=20
-> > > > diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-> > > > index bf389bc4dd3c..d7f83d06351d 100644
-> > > > --- a/drivers/pci/Makefile
-> > > > +++ b/drivers/pci/Makefile
-> > > > @@ -5,7 +5,7 @@
-> > > >   obj-$(CONFIG_PCI)              +=3D access.o bus.o probe.o host-b=
-ridge.o \
-> > > >                                     remove.o pci.o pci-driver.o sea=
-rch.o \
-> > > >                                     rom.o setup-res.o irq.o vpd.o \
-> > > > -                                  setup-bus.o vc.o mmap.o devres.o
-> > > > +                                  setup-bus.o vc.o mmap.o devres.o
-> > > > trace.o
-> > > >=20
-> > > >   obj-$(CONFIG_PCI)              +=3D msi/
-> > > >   obj-$(CONFIG_PCI)              +=3D pcie/
-> > >=20
-> > > Yes, that's the right place to add it.
-> > >=20
-> >=20
-> > Thanks for confirm.
-> > Will send a new version to fix it.
->=20
-> I actually now started to wonder if it should be made depend on some=20
-> tracing related config (sending this out quickly if you were just=20
-> waiting for my confirmation to send quickly... I'm still investigating
-> what other subsystems do).
-
-Probably this is what we actually want:
-
-obj-$(CONFIG_TRACING)=09=09=09+=3D trace.o
-
---=20
- i.
---8323328-1382897340-1758612811=:961--
+Reviewed-by: Pu Lehui <pulehui@huawei.com>
 
