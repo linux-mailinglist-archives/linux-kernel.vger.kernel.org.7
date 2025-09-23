@@ -1,110 +1,135 @@
-Return-Path: <linux-kernel+bounces-828950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB0FB95EBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:02:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E56B95EE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CAFF18A6822
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:02:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7498C2E6FF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7071320CD6;
-	Tue, 23 Sep 2025 13:01:57 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A6914A9B
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74B0324B0B;
+	Tue, 23 Sep 2025 13:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u3YgpIsS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0557630FC3D;
+	Tue, 23 Sep 2025 13:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758632517; cv=none; b=BS+DgltQaqmC+8URFx/TYhj68WfqCw6xxH1fskTY3iXMdR5OVAF9K1eJcFV1re8LDdi4PzuwsFu9uETU2U2u90cxvk+9Ttjr+MQAghUAqdgjijBm5RmitdkvjJFUoXApzUCWgn+xIXjUgaBAPKzwKvNUix98o6gcdymYSXQZLZo=
+	t=1758632663; cv=none; b=iyubNHKnCZH/esjXg7cvsT5Ol/j/K+Atu85J3FJgPKALbvGtAPPp+osqTPuok1e5hBc57cit0laQdN7yQQomksE/7pxnSvW8sCMBhNEnK3s8BReXxtFflrBV67JOTLHqsZaS6/DXGVwl6x+0oh4u9T6SVzp6r+u/L4LJVZUigQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758632517; c=relaxed/simple;
-	bh=u2Zu3SbYsOko4xCdftQZw0rrh7SK+R8rMwwDRCnoEso=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GA1QyJdqXLlWONjdKW2QethViMMPwrNC8XQAi8V+LfDaAZlSxXyb+nLrzqvJNh/Yez0gqjD9biFiCSspc1GgySKjZnBlTvgjeuWIbYi+6CHebvFh63lsnAieZ77azhVu2JRxqtnt7Zkn6ug4dk7LqqfBdLQs7u9pbZ/sVoaIlY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.198])
-	by gateway (Coremail) with SMTP id _____8BxVNA6mtJo2akNAA--.29107S3;
-	Tue, 23 Sep 2025 21:01:46 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.198])
-	by front1 (Coremail) with SMTP id qMiowJDxK8EtmtJoyiGoAA--.9124S2;
-	Tue, 23 Sep 2025 21:01:45 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	Xuefeng Li <lixuefeng@loongson.cn>,
-	Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Nathan Chancellor <nathan@kernel.org>,
-	WANG Rui <wangrui@loongson.cn>
-Subject: [PATCH] LoongArch: Fix build error for LTO with LLVM-18
-Date: Tue, 23 Sep 2025 21:01:22 +0800
-Message-ID: <20250923130122.2321771-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1758632663; c=relaxed/simple;
+	bh=yhOpYhydXFOTnVyJEJ9WLdHPFnfzH5DQIG3kHF9WFQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gAl0E6Gjef2NFUtk+zbLFWN2GfeI4l/jq40ea34KT9mMBxnc4h90KkukyYuJoYqa1WX78b5ZvN2fL3a5Wfrd7jrmvrkyIdWuuM/StbFS3cRW0TkuIOcHohrOywtIr9xtbgyk8fZfXPMvYjihVODEYn5Gzuysix73CrOft+iWwxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u3YgpIsS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CCB5C4CEF5;
+	Tue, 23 Sep 2025 13:04:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758632662;
+	bh=yhOpYhydXFOTnVyJEJ9WLdHPFnfzH5DQIG3kHF9WFQo=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=u3YgpIsSAzRs7gbGciWsT76CbHblYIJASZ1shE1TjqCcWPLyEbA15JGORKPzvEXT+
+	 m02RpuKakAHjnfcH68v+foy9qD6o7ptAg8py/aNtIjMJeYSnh1rLlEaRzNorsKffqF
+	 4QqXB/lsl6YgLfFSxSpI5wFSiUh6UgsZzHV/XiWgtLvOW3upkjroP9vGaNReaLLSWB
+	 Qc5S3Q1Ms27ZRDR3QTqZeBl3Cx7Mcau+bAoMcL9ABVwWRmUyTiFBB3TlQYP3D7Rn2P
+	 4lSQxlgGnSePiHsuZj7whbhrZ1uTfqUK0CyXomKCn8eB/Wk7u6Ojze5rlHZyh7tlOi
+	 7WcLGSYIY4ORw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 00684CE0E5A; Tue, 23 Sep 2025 06:01:52 -0700 (PDT)
+Date: Tue, 23 Sep 2025 06:01:52 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [paulmck-rcu:dev.2025.09.15a 45/45] ERROR: modpost:
+ "init_srcu_struct_fast" [kernel/rcu/rcutorture.ko] undefined!
+Message-ID: <0e09e4cb-058d-40fb-aa8d-9da68fb86a24@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <202509201519.udl3bu3X-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJDxK8EtmtJoyiGoAA--.9124S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7CryUGFW5KFyUKFyxWr4xZrc_yoW8Xr15p3
-	9xCF90qrs5Gr4kK3s3JrWagrn5trsFya12gF1Sk3W8AFs5Xw4UXw18XF9rWFy8uws8JryI
-	qryrK345JFZ5G3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
-	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jOa93UUUUU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202509201519.udl3bu3X-lkp@intel.com>
 
-Commit b15212824a01 ("LoongArch: Make LTO case independent in Makefile")
-moves "KBUILD_LDFLAGS += -mllvm --loongarch-annotate-tablejump" out of
-CONFIG_CC_HAS_ANNOTATE_TABLEJUMP, which breaks the build for LLVM-18, as
-'--loongarch-annotate-tablejump' is unimplemented there:
+On Sat, Sep 20, 2025 at 03:10:55PM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2025.09.15a
+> head:   f81c21ec3fca688bfcb6fa0abaf70404655765dc
+> commit: f81c21ec3fca688bfcb6fa0abaf70404655765dc [45/45] rcutorture: Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast()
+> config: arm-randconfig-003-20250920 (https://download.01.org/0day-ci/archive/20250920/202509201519.udl3bu3X-lkp@intel.com/config)
+> compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7c861bcedf61607b6c087380ac711eb7ff918ca6)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250920/202509201519.udl3bu3X-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202509201519.udl3bu3X-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>, old ones prefixed by <<):
+> 
+> >> ERROR: modpost: "init_srcu_struct_fast" [kernel/rcu/rcutorture.ko] undefined!
 
-ld.lld: error: -mllvm: ld.lld: Unknown command line argument '--loongarch-annotate-tablejump'.
+I believe that this is fixed in current -rcu by the replacement commits
+headed by the following commit:
 
-Call ld-option to detect '--loongarch-annotate-tablejump' before use, so
-as to fix the build error.
+bd3acc50cf8c ("rcutorture: Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast()")
 
-Fixes: b15212824a01 ("LoongArch: Make LTO case independent in Makefile")
-Reported-by: Nathan Chancellor <nathan@kernel.org>
-Suggested-by: WANG Rui <wangrui@loongson.cn>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- arch/loongarch/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please see below for the diff that should fix the commit in which
+you found the failure.
 
-diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-index ae419e32f22e..fcfa793f9bb0 100644
---- a/arch/loongarch/Makefile
-+++ b/arch/loongarch/Makefile
-@@ -115,7 +115,7 @@ ifdef CONFIG_LTO_CLANG
- # The annotate-tablejump option can not be passed to LLVM backend when LTO is enabled.
- # Ensure it is aware of linker with LTO, '--loongarch-annotate-tablejump' also needs to
- # be passed via '-mllvm' to ld.lld.
--KBUILD_LDFLAGS			+= -mllvm --loongarch-annotate-tablejump
-+KBUILD_LDFLAGS			+= $(call ld-option,-mllvm --loongarch-annotate-tablejump)
- endif
- endif
+And thank you for your testing efforts!!!
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index c81d5dfaf73753..26de47820c58cd 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -48,7 +48,9 @@ int __init_srcu_struct_fast(struct srcu_struct *ssp, const char *name, struct lo
+ #else /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
  
--- 
-2.47.3
-
+ int init_srcu_struct(struct srcu_struct *ssp);
++#ifndef CONFIG_TINY_SRCU
+ int init_srcu_struct_fast(struct srcu_struct *ssp);
++#endif // #ifndef CONFIG_TINY_SRCU
+ 
+ #define __SRCU_DEP_MAP_INIT(srcu_name)
+ #endif /* #else #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
+index 4c2f2802393062..92e6ab53398fc0 100644
+--- a/include/linux/srcutiny.h
++++ b/include/linux/srcutiny.h
+@@ -45,9 +45,9 @@ void srcu_drive_gp(struct work_struct *wp);
+  */
+ #define DEFINE_SRCU(name) \
+ 	struct srcu_struct name = __SRCU_STRUCT_INIT(name, name, name, name)
+-#define DEFINE_SRCU_FAST(name) DEFINE_SRCU(name)
+ #define DEFINE_STATIC_SRCU(name) \
+ 	static struct srcu_struct name = __SRCU_STRUCT_INIT(name, name, name, name)
++#define DEFINE_SRCU_FAST(name) DEFINE_SRCU(name)
+ #define DEFINE_STATIC_SRCU_FAST(name) \
+ 	static struct srcu_struct name = __SRCU_STRUCT_INIT(name, name, name, name)
+ 
+@@ -55,6 +55,9 @@ void srcu_drive_gp(struct work_struct *wp);
+ struct srcu_usage { };
+ #define __SRCU_USAGE_INIT(name) { }
+ #define __init_srcu_struct_fast __init_srcu_struct
++#ifndef CONFIG_DEBUG_LOCK_ALLOC
++#define init_srcu_struct_fast init_srcu_struct
++#endif // #ifndef CONFIG_DEBUG_LOCK_ALLOC
+ 
+ void synchronize_srcu(struct srcu_struct *ssp);
+ 
 
