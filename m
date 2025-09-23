@@ -1,157 +1,107 @@
-Return-Path: <linux-kernel+bounces-829396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB37B96F6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:11:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09EA9B96F7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D7AC3214E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:11:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A7424A0211
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253462820DC;
-	Tue, 23 Sep 2025 17:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC4625FA0A;
+	Tue, 23 Sep 2025 17:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="X93kTL2h"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hFiXw4HX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B233F27A446;
-	Tue, 23 Sep 2025 17:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504A125A65B
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758647433; cv=none; b=VO0A/fkoTib91osp40fV1eUWi3IVQqPsrJRV30hfSWxxN3xFy5MWIRIjaPWzbZsu4udzWc4hUWkhXZ2DZkH1unH5Y2mXz21gKXwETf5A0Qlz9gJe4KwPT/51HmDwZIMX9Z0IpWj4jkKYL+aKb7uYZU4F6tv8pwzYTdVMYxlc9to=
+	t=1758647536; cv=none; b=MTG4BIacTSDtn6CPwR1g5yjvO+gbH/QWEq0Km3h5e4/oXtqtv4SFjiwdP7Gn8AXV7ZNRK2tGZDmZ/5ZdVXNZslmgoZV2kpGzU9x4biLrb8UmqvP0slj15DNEcnCDQrTmbZMGTtLf0BzCdROw+F+o4F2pKqgcV5pY42mC+IGvS1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758647433; c=relaxed/simple;
-	bh=epzen24Lm8XzZMpzLT7sc1zAzVAnYPLwQkRE282JBxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aHmDKmMXcQNhgTFbECU2KLQ1MZt4jN1IsUxTzfn9IRh7WKhd2DDJvNU5eMXppvjKu7TuWn9+mikziRIZuZIVYQCx7JYqwBWC3ptMBJDpW1Tf5loYvpjhqSKgjp/ewviSKJPlpFrHQ5QpOR1ENIf6+nc6rCl5J8vcnKe+JIcUx4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=X93kTL2h; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=/AClO5jmdv6vuid5xiiEBjr0hK793sZbq2gbKxWSDR0=; b=X93kTL2hChVR0+wDn6jAJ2b55t
-	Qe8OTtnj4H5jmhy+7/M0BQbDQW1pUQbZyQV1WVzWuhgNZakEAeBGnpEN6M9OPmYEQizaEDxkBrHTd
-	IRYYurViR2bMw01MFxVCv29FGW37+80M0faOgatpnGvpCYxdoeior0XVk8xkI+WEC6f5/DyLv+vOb
-	0wzYeEfQMitcfqobDxfsYNvBZEwlhBb1gUOnrKi6BIKLezFMmUfSDu1NaPNMxn4aN86eKrhw8p77o
-	z5/m/3XBY81wfXanGR13DMZDG3isOicwaqVOoNmyeoiazovbFm8K+qSkf4FX3Bhx7PUKqhiY/04fP
-	vfp/RRvw==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1v16X6-00CZpf-2E;
-	Tue, 23 Sep 2025 18:10:28 +0100
-Date: Tue, 23 Sep 2025 18:10:28 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] tpm: Require O_EXCL for exclusive /dev/tpm access
-Message-ID: <83a323d597819d928da45b5b3914b37375c67869.1758646791.git.noodles@meta.com>
-References: <cover.1758646791.git.noodles@meta.com>
+	s=arc-20240116; t=1758647536; c=relaxed/simple;
+	bh=zmjtE0Pg9ybScWl+KNxugj6NRHATWz4NuVjQRnO/EH4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UMbh8wwKIwL1ZJflkZrppVVOLDYEL5ZyGltkmPVLs8A6Sj2VV0/pF14fvkRbjTzZ1SSBBK8vgE6kuvxK4DU//gZk5lO3AD5WNN1Vntg0YSrAeYcxREvv/wh+g8TGx3PKvochXxCXzYysS+NEHBw066amY92qN4MbF0qF/C7wZFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hFiXw4HX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B37DC19424
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:12:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758647536;
+	bh=zmjtE0Pg9ybScWl+KNxugj6NRHATWz4NuVjQRnO/EH4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hFiXw4HXVUrg8mFx6KKpJWQ0zXf/ujKcPwAJVY8w9Pe8+GwDQlyEgjP9TPyHGRKqk
+	 qwN1/gBzoghKyIGpb/IjHqxv0JvBW28w0gS6eJqRhRmGKDUjFUFxFr4VJ+XeHB0s6M
+	 O3bxOkSoyHY4oX+YJ/tEaQkqEjJrHb78henzjV4qX/0hCUgcnJKvrimN/8Kohvyjth
+	 bLjtL6mSaUR3z7xmgi2rNbGg7ZTOsMAYgVjFaoa7NbqFsKx8ia2i62iyIZ7j7fsjIY
+	 V3RunUfoCb44Nw6xK6vFWE3HpdmzOi0DpW5oOqo1n7VOW0uXOv2hWw61lIpv+5Cmmw
+	 pJsS3+AJSX/yg==
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-62f926c7888so75063eaf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:12:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXiU0MbITgsyh+2toevfNTVsJk80hr0RrJ44ztcD2KrnnKvBxsmTTn2xfCtlhCWQq3GTYhTdecQzl/nE0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9NVPh/qjqFmwr58Ef59aKE24pmD8xElyLrBhmtloIecrnLQxe
+	pJ7s50z5yNORxn4m0CQ3WEPWyWjHBWOFrlIL0yLOVJpaebIU9g7LNXD1D4ple6rrObVAii08WDH
+	HvWHyShm9Ql5/Hk/D1+JCZDXxge6apBU=
+X-Google-Smtp-Source: AGHT+IHOSQyeOX2xQmbUmiEzFwBxhPqNMWpEZ/dCxFg/s6P9IdxrIKUnE1S3WMtRGifCWrHavSLPTmCtP0Eog9z2aqQ=
+X-Received: by 2002:a05:6808:80a6:b0:43b:ea80:d169 with SMTP id
+ 5614622812f47-43f2d19768dmr1755849b6e.8.1758647535301; Tue, 23 Sep 2025
+ 10:12:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1758646791.git.noodles@meta.com>
+References: <CAJZ5v0guEkbMuMjS=aQRQdiiyUG_hxgu0imBX0kgho2womB0Hw@mail.gmail.com>
+ <20250923161354.1307251-1-luogf2025@163.com>
+In-Reply-To: <20250923161354.1307251-1-luogf2025@163.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 23 Sep 2025 19:12:03 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0j2UH31wJKsAE0Ppek9sSiGFbePZymzbuaLVNfKHXjK4A@mail.gmail.com>
+X-Gm-Features: AS18NWD62UAzJRnQliopclNZf9FndoSJt3Hc02TH-qB6ft9kOc0CHGMVi2jrw98
+Message-ID: <CAJZ5v0j2UH31wJKsAE0Ppek9sSiGFbePZymzbuaLVNfKHXjK4A@mail.gmail.com>
+Subject: Re: [PATCH v6] ACPI: battery: prevent sysfs_add_battery re-entry on
+ rapid events
+To: GuangFei Luo <luogf2025@163.com>
+Cc: rafael@kernel.org, michal.wilczynski@intel.com, dan.carpenter@linaro.org, 
+	lenb@kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, lkp@intel.com, sre@kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Jonathan McDowell <noodles@meta.com>
+On Tue, Sep 23, 2025 at 6:14=E2=80=AFPM GuangFei Luo <luogf2025@163.com> wr=
+ote:
+>
+> The functions battery_hook_add_battery(), battery_hook_remove_battery(),
+> and sysfs_remove_battery() already acquire locks, so their internal
+> accesses are safe.
 
-Given that /dev/tpm has not had exclusive access to the TPM since the
-existence of the kernel resource broker and other internal users, stop
-defaulted to exclusive access to the first client that opens the device.
-Continue to support exclusive access, but only with the use of the
-O_EXCL flag on device open.
+In fact, there are two locks in use, battery->sysfs_lock and
+hook_mutex.  The latter is used for managing hooks and the former is
+only used by sysfs_remove_battery(), so it only prevents that function
+from racing with another instance of itself.
 
-Signed-off-by: Jonathan McDowell <noodles@meta.com>
----
- drivers/char/tpm/tpm-dev.c | 25 +++++++++++++++++++------
- drivers/char/tpm/tpm-dev.h |  1 +
- 2 files changed, 20 insertions(+), 6 deletions(-)
+I would suggest using battery->sysfs_lock for protecting battery->bat
+in general.
 
-diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
-index 80c4b3f3ad18..8921bbb541c1 100644
---- a/drivers/char/tpm/tpm-dev.c
-+++ b/drivers/char/tpm/tpm-dev.c
-@@ -19,15 +19,21 @@ static int tpm_open(struct inode *inode, struct file *file)
- {
- 	struct tpm_chip *chip;
- 	struct file_priv *priv;
-+	int rc;
- 
- 	chip = container_of(inode->i_cdev, struct tpm_chip, cdev);
- 
- 	/*
--	 * Only one client is allowed to have /dev/tpm0 open at a time, so we
--	 * treat it as a write lock. The shared /dev/tpmrm0 is treated as a
--	 * read lock.
-+	 * If a client uses the O_EXCL flag then it expects to be the only TPM
-+	 * user, so we treat it as a write lock. Otherwise we do as /dev/tpmrm
-+	 * and use a read lock.
- 	 */
--	if (!down_write_trylock(&chip->open_lock)) {
-+	if (file->f_flags & O_EXCL)
-+		rc = down_write_trylock(&chip->open_lock);
-+	else
-+		rc = down_read_trylock(&chip->open_lock);
-+
-+	if (!rc) {
- 		dev_dbg(&chip->dev, "Another process owns this TPM\n");
- 		return -EBUSY;
- 	}
-@@ -35,13 +41,17 @@ static int tpm_open(struct inode *inode, struct file *file)
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (priv == NULL)
- 		goto out;
-+	priv->exclusive = (file->f_flags & O_EXCL);
- 
- 	tpm_common_open(file, chip, priv, NULL);
- 
- 	return 0;
- 
-  out:
--	up_write(&chip->open_lock);
-+	if (file->f_flags & O_EXCL)
-+		up_write(&chip->open_lock);
-+	else
-+		up_read(&chip->open_lock);
- 	return -ENOMEM;
- }
- 
-@@ -53,7 +63,10 @@ static int tpm_release(struct inode *inode, struct file *file)
- 	struct file_priv *priv = file->private_data;
- 
- 	tpm_common_release(file, priv);
--	up_write(&priv->chip->open_lock);
-+	if (priv->exclusive)
-+		up_write(&priv->chip->open_lock);
-+	else
-+		up_read(&priv->chip->open_lock);
- 	kfree(priv);
- 
- 	return 0;
-diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
-index f3742bcc73e3..0ad8504c73e4 100644
---- a/drivers/char/tpm/tpm-dev.h
-+++ b/drivers/char/tpm/tpm-dev.h
-@@ -17,6 +17,7 @@ struct file_priv {
- 	ssize_t response_length;
- 	bool response_read;
- 	bool command_enqueued;
-+	bool exclusive;
- 
- 	u8 data_buffer[TPM_BUFSIZE];
- };
--- 
-2.51.0
+> acpi_battery_refresh() does check battery->bat, but its child
+> functions (sysfs_add_battery() and sysfs_remove_battery()) already
+> handle locking.
 
+What locking?  Before the $subject patch, sysfs_add_battery() doesn't
+do any locking at all AFAICS.
+
+> In acpi_battery_notify(), battery->bat has no lock. However, the
+> check of battery->bat is at the very end of the function. During
+> earlier calls, battery->bat has already been protected by locks, so
+> re-entry will not cause issues.
+
+All of the battery->bat checks and the code depending on them need to
+go under the same lock.  I'd use battery->sysfs_lock for this as
+already mentioned above.
 
