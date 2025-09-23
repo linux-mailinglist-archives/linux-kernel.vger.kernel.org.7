@@ -1,85 +1,101 @@
-Return-Path: <linux-kernel+bounces-828776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C3FB956E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:28:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37EC9B956ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5193248304D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:28:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE7C12E5CDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46E431E0F0;
-	Tue, 23 Sep 2025 10:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8281320CCB;
+	Tue, 23 Sep 2025 10:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=hardfalcon.net header.i=@hardfalcon.net header.b="NmryPoUk"
-Received: from 0.smtp.remotehost.it (0.smtp.remotehost.it [213.190.28.75])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aejIdIAX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834B031986C;
-	Tue, 23 Sep 2025 10:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.190.28.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E123595C;
+	Tue, 23 Sep 2025 10:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758623332; cv=none; b=bLcuRhb9C0Kad+IeHHu0U5XbRlR8Sa4rBi2SncU4ywH93P+/d+pN8gZs3GNF2x5NqCRTtxStsYKyboTqrdRMv5pRphZJ/gb3wh3ANjglpT6JHh21gqDKOL8yXnxqPFDWzwDYuKmjMsQAhTpR7yksp/31P0wlqbm2dNaAM1HvA/U=
+	t=1758623338; cv=none; b=MZ8CcbJiaerxLlIeyPMF6XfWM//ruPE4tH+dthwRt8kkeamz/ntLxd5d4rEARtQTLIZAfD6Bypbzl10eu6UykYA6+qloZQFPt+LNaEHvRROJav/myXYDFeSrRTxAFpDa1krqXnyL0/QIuI3mLlqvVY+zft18mIiN0L1dr86dp/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758623332; c=relaxed/simple;
-	bh=b8bcRx/n1OGRt62h2Bk98ANdLaycS6HGYHRPiFKofCI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qnySx+l7KwsIQMXABwLdB6UWQdbzlPBVjGOqxp+RKXWo8LcxBR1lxyT3Ut38/HikmNLYaSS+XEAhrd25In/isZLginc1tpp5Q9fWV3APzYyRNE6cIHQhQF0T8SbHiowi3SU6Hq1vAQ8L5Rk5OqM09pfLQB3re56echFAayZxieE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardfalcon.net; spf=pass smtp.mailfrom=hardfalcon.net; dkim=permerror (0-bit key) header.d=hardfalcon.net header.i=@hardfalcon.net header.b=NmryPoUk; arc=none smtp.client-ip=213.190.28.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardfalcon.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hardfalcon.net
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=hardfalcon.net;
-	s=dkim_2024-02-03; t=1758623320;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A+2z8cWCQfG8IRmhTODqUr/zfTopUrOovmHV0vclgM0=;
-	b=NmryPoUkW+EDPuxmcpz0h+LIrguoMTrlpez+D04mDUdKhJWjPOK+xk4aFGw8EL0PqbwXXO
-	X87ST627jpUqZcBQ==
-Message-ID: <d6c6182a-837d-4722-a6f6-b29f30c5f5a1@hardfalcon.net>
-Date: Tue, 23 Sep 2025 12:28:38 +0200
+	s=arc-20240116; t=1758623338; c=relaxed/simple;
+	bh=aandL0IO1TEN8UynBwUTcT5P8YA24LOKifzprqPZ8eA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Pcc23dDMJcLN6B2Vcw39u2otFPoh4nM7dDRyR9olsNdgqzE9QvsXUPq2BJlLoO9pMzpPpj2Tv76bM8iZouJB2N41j5ysKktPn8SRnqplrSut5lm01IpGAFqTsuNIWRm8w8KMF85Ev5Jg6/kZr8ZhnrQZVJ2U4eVvKoZ/yFH7Fkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aejIdIAX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E3DDC116B1;
+	Tue, 23 Sep 2025 10:28:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758623337;
+	bh=aandL0IO1TEN8UynBwUTcT5P8YA24LOKifzprqPZ8eA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aejIdIAXP8cB8XbFVTn50JUyxMDaOme7tAshtuA32csDbVeYckRFJ0MIV8BSNOgXk
+	 gjtw0QpWBTnEB/jQ96GSWvDf9eeSVldqBRkPpucPML5Yjy1fn7PypC1ZYyqcqYfGe8
+	 UW65g3ee59xTiyAywusKQzlIR8xLjCrJ9BZkTyRhzM/MaqqqEzq/GvTljuxxJNDpkp
+	 Yk9ZaroKQYxXLXH2w6+1lBP1D9mZRpSaPvBc6VFVV6GXixeQYvVacQWN018LsgtA3M
+	 eVpOdtukynX9BX/yZ+brGDqfdMIyRh1f/Jc3hi7FmGMpbClTAX8pLxsGoibwM8vECa
+	 0hJjYEBF/2TyA==
+Date: Tue, 23 Sep 2025 06:28:48 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
+ <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Linus
+ Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>, Sam James
+ <sam@gentoo.org>, Kees Cook <kees@kernel.org>, Carlos O'Donell
+ <codonell@redhat.com>
+Subject: Re: [RESEND][PATCH v15 2/4] perf: Support deferred user
+ callchainshttps://lore.kernel.org/linux-trace-kernel/20250827193644.527334838@kernel.org/
+Message-ID: <20250923062848.0bc4ff2b@batman.local.home>
+In-Reply-To: <20250923093821.GB3419281@noisy.programming.kicks-ass.net>
+References: <20250908171412.268168931@kernel.org>
+	<20250908171524.605637238@kernel.org>
+	<20250923091935.GA3419281@noisy.programming.kicks-ass.net>
+	<20250923053515.25a1713e@batman.local.home>
+	<20250923093821.GB3419281@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 6.16 000/149] 6.16.9-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250922192412.885919229@linuxfoundation.org>
-Content-Language: en-US, de-DE, en-US-large
-From: Pascal Ernster <git@hardfalcon.net>
-In-Reply-To: <20250922192412.885919229@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-[2025-09-22 21:28] Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.16.9 release.
-> There are 149 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, 23 Sep 2025 11:38:21 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> On Tue, Sep 23, 2025 at 05:35:15AM -0400, Steven Rostedt wrote:
 > 
-> Responses should be made by Wed, 24 Sep 2025 19:23:52 +0000.
-> Anything received after that time might be too late.
+> > I even pushed this to a git tree. Not sure why it didn't get flagged.  
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.9-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
-> and the diffstat can be found below.
+> I've been looking at this... how do I enable CONFIG_UWIND_USER ?
 
+Hmm, maybe that's why it wasn't flagged.
 
-Kernel 6.16.9-rc1 compiles fine for x86_64 using GCC 15.2.1+r22+gc4e96a094636 and binutils 2.45+r29+g2b2e51a31ec7, and the resulting kernel boots and runs without any discernible issues on various physical machines of mine (Ivy Bridge, Haswell, Kaby Lake, Coffee Lake) and on a Zen 2 VM and a bunch of Kaby Lake VMs.
+> 
+> I suspect the problem is that its impossible to actually compile/use
+> this code.
 
-Tested-by: Pascal Ernster <git@hardfalcon.net>
+It needs an arch to enable it. Here's the x86 patches that I was hoping
+would get in too:
+
+  https://lore.kernel.org/linux-trace-kernel/20250827193644.527334838@kernel.org/
+
+Hmm, but I had a branch that applied all the necessary patches :-/
+
+-- Steve
 
