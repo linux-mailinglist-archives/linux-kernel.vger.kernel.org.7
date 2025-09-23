@@ -1,145 +1,157 @@
-Return-Path: <linux-kernel+bounces-828598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFD5DB94F75
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:21:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673EBB94F6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7BC6B4E0510
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:21:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FC1D2E4F87
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556B231A072;
-	Tue, 23 Sep 2025 08:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96F9319864;
+	Tue, 23 Sep 2025 08:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RpdbT5++"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kUgkHBd0"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94A931A042;
-	Tue, 23 Sep 2025 08:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DE13101A3
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758615687; cv=none; b=mVb/EAKICYuJEXEz6LhYjg7YDn2CNB5YsAbNA4x6TeCAHnr0+Ku+8vD7i3zRaMJ536cBAq380ALYD7T+7E9hJD1hfjftDdbVMYGFfL/d+Ru+OILA2qKAw5PiAiwoTxgJqNO4bGDB+Vvht98FJiuAz61CqXE7709HLJm9Ve8YknQ=
+	t=1758615667; cv=none; b=QnslOXHvPxO7RXSLMVIDfFj//vWoSUQAno+15hT8zH/GYEozk78P4cFPwnZGy7u1HYJteKmJifE4991bpu6erCC7bQ71+AXQKutBp23bzhSjuShi8BjBkSqmjf0KOEH1i11CAyCa+7cj55pddwtHjy95V0XvKPgTezbge/tA9nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758615687; c=relaxed/simple;
-	bh=KoLRoy7R7Box1BqO6iHeia2s/gK2+w7RPQznI8A35og=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uHswYc2eC0uu0A/+uxDflpD//ldu9ivGQ/ol1VSnI6mwLXv+pqZ9cQnbBIcSaVfDzj5ZDGT8FoK5rKVKj6I4OOMIrVIjq8I+FMrjw3PXebqWuc98NI8hpAQg045Plxn/0Y1q4P8h7F6nEl3FuMa3EswSD2u/xrhBo99GsXKnFfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RpdbT5++; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758615686; x=1790151686;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KoLRoy7R7Box1BqO6iHeia2s/gK2+w7RPQznI8A35og=;
-  b=RpdbT5++POCN/gQqKutcOZmDLJ4M6BMQKhxgzectzNHD2HoLGOlUKuy6
-   O9Pmfbt9bJpnrnsfaZFmUufiUeU4kWNn1/Op6nJOEFQugS+ZWIJiSiyWw
-   cRwPTkPjREjPfJlyRYJp96sDBhfU9J8npic9ja575caiFynNkPB4exo3x
-   s0VTzFEBrZzPN9Rc0+0tC3UgvdHtQEIKaJvIUKxB/4T6XaYRm5oc+FCEL
-   rV4xJ0DI/Cq1NnE+14+WlPPUMDwhDCCGANiho3PT1+RMuUNXV4303Hto5
-   atZnHDM9dshBl8AKDbvKDME4yxTwxmXs39ca082mcjAKQGkXa0+acRWIx
-   Q==;
-X-CSE-ConnectionGUID: 5X+eM0SYQ4WHPl7bqYFeYg==
-X-CSE-MsgGUID: /qjI33iwSVOwzwenTte5Jg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="63518312"
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="63518312"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 01:21:25 -0700
-X-CSE-ConnectionGUID: wZNkPy8eStiwtO+mBMUv6A==
-X-CSE-MsgGUID: 6mKpF1JQR3uEjd0bfxHLLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="181001940"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.23])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 01:21:22 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id EE43C121ED8;
-	Tue, 23 Sep 2025 11:21:17 +0300 (EEST)
-Date: Tue, 23 Sep 2025 11:21:17 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: bingbu.cao@intel.com, lixu.zhang@intel.com,
-	stanislaw.gruszka@linux.intel.com, mchehab@kernel.org,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org
-Subject: Re: [PATCH v4] media: pci: intel: ivsc: improve device reference
- counting in mei_ace driver
-Message-ID: <aNJYfbpA9aR7I5Bx@kekkonen.localdomain>
-References: <20250923033650.4408-1-make24@iscas.ac.cn>
+	s=arc-20240116; t=1758615667; c=relaxed/simple;
+	bh=f7re57QCz3hpnfyc8Rk+bIVfVD27d6HuiXpGIteeQ8g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dOus59rc6gkw3WUcZYQyJn3ledcP2uzYUEYomk4dN6fXsHgoAqjbz1ICLKz/YD0wjwxk0KvQ2i+8wmkuPrn7+4uTBPa+2gBNxX4GR4qBwbFk8qe+XrwyPtucdKVSjoq8aLqEceXCCcyQMT51EMeTje8n1Htom91ku7fKmJHayug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kUgkHBd0; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b2d92b52149so303294166b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:21:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758615664; x=1759220464; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AhmhfqnvAeJncIKaG+WP0RlASLHv+hRZUaH7TN0Eo0g=;
+        b=kUgkHBd0AY+fJQiPpOEzXj2x2J+obg+iLvnYEPBE5npRKj+Hnsyco+iuangYe77heA
+         ksnpfZTD4aBfiMI0M14jksUh1CTLqWrLP54QUnQXddKEU2d1m1q6OEN5iSl57GAQEkdJ
+         MWQaf+JbUr+H+NAkwV9ryr+H1fbS6jGQbw6ZKJaNhRU+8AlU2cuqcdNCIYOGgNJyroFi
+         MbcpoBm4XguiugFcp8n0QDvbIPzuE9tXqyqLeeihW5hwBjfC0gpIkBxKRbk6FtJziJGV
+         mydFdb//4I0bDBq4LWcFaSKm5GDkGM7QQiAX3xiyMoie8gMsYWI7QaTM5RZxiZx3ftHB
+         +6IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758615664; x=1759220464;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AhmhfqnvAeJncIKaG+WP0RlASLHv+hRZUaH7TN0Eo0g=;
+        b=jnmGkRYIDOKHFc+ELCi5gWAW/bfyJOFLzZf2DxSvon8eyn/v2x6dmX/LbbIxgEeABh
+         Mzu1HknKf6H4H7fVlW/wfSwrHPuAd8QfNA6Z2FL3lfekO9S9PqnYEruSL0S9ei4cH0eL
+         cp/vRn8u3FZcBmGrSsI1QHxkadw+pzirOkyCclhY/stIvAOKXGmAeflp8kQNpYlUohtk
+         zQhk42OTU5TqRueiKMFdWKcK6oyRYRIrJG6nwWC8Z/7IMNIHi674XKLypKqNVYP3FW+1
+         LBMiEfut1iBeHRNl6cmhZTo75qSE8/nN+K7qHb7E80dREaXVQGZXHxYRECEDIgTSJMmp
+         3tcw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9XdU3Wv3peMKDy4A9yK3oYDEKTiD0WsoLl6mCspnckzcp4fsoa59Lb7/t5GOSNuuWpM4dBkbiIIWPlv4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2NZ4DD0AHB3+djD/89xc9gQ7eRblucpdrO/JLX0eIXY1MYpeC
+	mvrX7pFpd7r4bE8gyCPAfYNw4uliKbfC82OMkyjJx8D5jLGI7UxhB/lT
+X-Gm-Gg: ASbGnctxoupmV7duCQeI2ichMRYGXnLyS/cWOqi9kLvwBUnMQ+um8UrCNLZONW08eRm
+	KDGN4qbn0/e2if+dWpRI+iWaF8vbdgUJGky6jX89m4SyKO6Mh5z/u+uiYE0cq1zE9JoRjMfvEtY
+	qF3v3ckMMZuHrsWoWpojhK+v0GJs5hjWuiFJzdyR6x940zRt5cqtY6/f/1euf9d4D8M7dj9CXE6
+	uuwX0EouMg78fUKPB4CukchI7w+LHK0A/Zcv16BlyCBk7I0TokZ5NICDFWDZXnXfwpHrJ5jtpil
+	OhYyNN8QHktSMYdIdHvj+hvvX4vF8TEnDFCaQqY3mus5kklgoi1X/0RFfHBH5hpmpuv2MSuhMNM
+	AVfA1eHO/ToqYAJMdi+7s4hsV
+X-Google-Smtp-Source: AGHT+IGFMtMk1tU3B4zQBbIphTLmZaVJ9Ckxo/UCmlJ6T8uLNCcZMLmNfiD71dDZglBrDEV65/suyg==
+X-Received: by 2002:a17:907:7611:b0:b30:2f6b:448f with SMTP id a640c23a62f3a-b302f6b47f2mr152382266b.25.1758615663347;
+        Tue, 23 Sep 2025 01:21:03 -0700 (PDT)
+Received: from [10.5.0.2] ([91.205.230.222])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b29961979e5sm676840966b.0.2025.09.23.01.21.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 01:21:03 -0700 (PDT)
+Message-ID: <02c26151da7af1e05aecadf0e2ce20552c2908e0.camel@gmail.com>
+Subject: Re: [PATCH 2/2] iio: dac: adding support for Microchip MCP47FEB02
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Ariana Lazar
+	 <ariana.lazar@microchip.com>, Jonathan Cameron <jic23@kernel.org>, Nuno
+ =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	 <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 23 Sep 2025 09:21:30 +0100
+In-Reply-To: <3457c119-2f49-43a3-b96b-736b8f5de99b@baylibre.com>
+References: <20250922-mcp47feb02-v1-0-06cb4acaa347@microchip.com>
+	 <20250922-mcp47feb02-v1-2-06cb4acaa347@microchip.com>
+	 <859d8472a8f9e8d28b890ad565f9d3ce11e162d5.camel@gmail.com>
+	 <3457c119-2f49-43a3-b96b-736b8f5de99b@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923033650.4408-1-make24@iscas.ac.cn>
 
-Hi Ma,
+On Mon, 2025-09-22 at 17:15 -0500, David Lechner wrote:
+> On 9/22/25 3:10 PM, Nuno S=C3=A1 wrote:
+> > Hi Ariana,
+> >=20
+> > Thanks for your patches. Some initial comments from me...
+> >=20
+> > On Mon, 2025-09-22 at 14:30 +0300, Ariana Lazar wrote:
+>=20
+> ...
+>=20
+> > > +static IIO_DEVICE_ATTR(store_eeprom, 0200, NULL, mcp47feb02_store_ee=
+prom,
+> > > 0);
+> > > +static struct attribute *mcp47feb02_attributes[] =3D {
+> > > +	&iio_dev_attr_store_eeprom.dev_attr.attr,
+> > > +	NULL,
+> > > +};
+> > > +
+> >=20
+> > Not going to argue about the ABI for now but I don't think this is a
+> > standard one? So
+> > if acceptable you need an ABI doc.
+> >=20
+> Here's a random idea. (I would wait for Jonathan to weigh in first before
+> assuming it is an acceptable idea though :-p)
+>=20
+> The config registers are pretty much going to be a one-time deal. So thos=
+e
+> could be written to only if they need it during probe.
+>=20
+> For the voltage output registers, we could add extra out_voltageY channel=
+s
+> that are the power-on output state channels. So writing to out_voltageY_r=
+aw
+> wouldn't change any real output but would just be written to EEPROM. This
+> way these voltages could be controlled independently from the real output=
+s
+> and it uses existing ABI.
+>=20
+> In any case, it would be interesting to hear more about how this chips ar=
+e
+> actually used to better understand this EEPROM feature.
 
-Thanks for the update.
+I didn't really looked at the datasheet so this can be totally wrong. But w=
+e
+have some LTC parts (mainly hwmon stuff) that are also packed with an EEPRO=
+N.
+AFAIU, the usecase in there is to have some defaults you can program in the
+chips (and there's a feature we can enable so the chip can save things into=
+ the
+eeprom automatically). Now, in those drivers we don't really support doing
+anything with the eeprom at runtime so I'm curious to see how this unfolds =
+:)
 
-On Tue, Sep 23, 2025 at 11:36:50AM +0800, Ma Ke wrote:
-> The device reference counting in mei_ace_setup_dev_link() was
-> incomplete, as the reference acquired by device_find_child_by_name()
-> was not released immediately on the success path. Add put_device() to
-
-I wouldn't say it's incomplete, that reference is put in the driver's
-remove function. The reference may be put right after calling
-device_link_add() as device_link_add() takes a reference already. So this
-patch would be a cleanup, not a fix.
-
-> properly balance the reference count. Additionally, the redundant
-> put_device() in mei_ace_remove() is removed.
-> 
-> Found by code review.
-> 
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v4:
-> - updated the subject as suggestions;
-> Changes in v3:
-> - deleted the tag of Fixes and CC, and moved put_device() to immediately after device_link_add() as suggestions;
-> Changes in v2:
-> - modified the put_device() operations and the patch title as suggestions.
-> ---
->  drivers/media/pci/intel/ivsc/mei_ace.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/pci/intel/ivsc/mei_ace.c b/drivers/media/pci/intel/ivsc/mei_ace.c
-> index 98310b8511b1..9969c02da671 100644
-> --- a/drivers/media/pci/intel/ivsc/mei_ace.c
-> +++ b/drivers/media/pci/intel/ivsc/mei_ace.c
-> @@ -414,6 +414,7 @@ static int mei_ace_setup_dev_link(struct mei_ace *ace)
->  	/* setup link between mei_ace and mei_csi */
->  	ace->csi_link = device_link_add(csi_dev, dev, DL_FLAG_PM_RUNTIME |
->  					DL_FLAG_RPM_ACTIVE | DL_FLAG_STATELESS);
-> +	put_device(csi_dev);
->  	if (!ace->csi_link) {
->  		ret = -EINVAL;
->  		dev_err(dev, "failed to link to %s\n", dev_name(csi_dev));
-
-I believe there's still extra put_device() call some lines below from here
-on the error path.
-
-> @@ -522,7 +523,6 @@ static void mei_ace_remove(struct mei_cl_device *cldev)
->  	cancel_work_sync(&ace->work);
->  
->  	device_link_del(ace->csi_link);
-> -	put_device(ace->csi_dev);
->  
->  	pm_runtime_disable(&cldev->dev);
->  	pm_runtime_set_suspended(&cldev->dev);
-
--- 
-Regards,
-
-Sakari Ailus
+- Nuno S=C3=A1
 
