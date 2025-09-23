@@ -1,93 +1,127 @@
-Return-Path: <linux-kernel+bounces-829399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9034BB96F9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:14:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F761B96FA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B92B919C5E81
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:14:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33CF07B3648
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD96265292;
-	Tue, 23 Sep 2025 17:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F020D274B23;
+	Tue, 23 Sep 2025 17:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="tDJzBCbO"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F/d4uUN4"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836EF2AF00
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF13A1E8332
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758647641; cv=none; b=R3R8L7PHZcdEm52TwfNXxI5XJWwbz81XQHxjHjlbatkzRVfIfRxN5rnuACLC3jkg2KZmHx190PwPw5A8WR/QEQERTKo6Jlax8aYygvmVFaRvrtmqw0HwMTI1VWb4NB2gZigPyLqlxJr9SrAcwPgNOGVRZdRUMPeAsaTquZLHRXA=
+	t=1758647670; cv=none; b=uloqllpCGHN8+rJGPs59NQUziD0yhP2yJG+t8d6w1rES2YPxIGOnBP3cjiGOmshZgYis5wIuDQEq8Jfpjx5idVx37JLDGs7LuKVJuifQDH1nmjg3CscwWCSBNawDAuXUjCOHRawnZ7TpDqjOtzKZb2r3p/V5y4XrfwMzmb5CgA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758647641; c=relaxed/simple;
-	bh=5qXhkfgq5KWFqQHTaSZbilHlLFvR/X4je7D5Hm/lyaE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=akOIz8hDh2IZjKX6ZJ7zqGhVzuqx8hZHTflJm9uEcI0i5IjSDHpZftcIbK8lsmeAeWy4z68OrDvBtpukQHbislwCbPGAG8TQGb6ePo8cJUbIq8y1KE2llBCMYwmAB2puR1kkd8M3B675n/QjxmbBSz1GHPQZg8NHa+6BDEdx3gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=tDJzBCbO; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=vjZeveKFzDPAEd4GCEqvLjhW0pC9krDO5tPa8N+ao6c=;
-	t=1758647639; x=1759857239; b=tDJzBCbOYpn1g1ZJPhBQRulJAZnIr5zCUWRH6ngGo2jCZFi
-	IzqJRVzRTHJg3VnboN5/likzt5c5UzO9/TmA0GXPp5TZmH+oBLFfMeL7IiqQnBFvSE7IyuGm9NWlX
-	xcYNrk4I4ysduheBnnzzfGHj8U+GPM0WtxraLezrUeFEftHW2lyYgbr+fb+rrUigETmWjAvQ2Nytv
-	gmzvGq0wcpnyLpHb/yNGv6XyLh8vw7+PTKCyBlkR4mqPs1pwryRi4gr36/vW9nBSXfwaubMwN8f9e
-	qJCzgPv7BEOan55QLI3IxmuoE4OqUiu6Tr1n+ln5i1eHNOOp0EeF8LT3Og0av23g==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1v16aK-00000006pCz-1JN8;
-	Tue, 23 Sep 2025 19:13:48 +0200
-Message-ID: <23adb61e95275251e459513a03ab7d2bcf1f2e07.camel@sipsolutions.net>
-Subject: Re: [PATCH RESEND v11 10/13] um: nommu: a work around for MMU
- dependency to PCI driver
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Hajime Tazaki
-	 <thehajime@gmail.com>
-Cc: linux-um@lists.infradead.org, ricarkol@google.com,
- Liam.Howlett@oracle.com, 	linux-kernel@vger.kernel.org, Arnd Bergmann
- <arnd@arndb.de>
-Date: Tue, 23 Sep 2025 19:13:47 +0200
-In-Reply-To: <CAMuHMdWAdhiY=MiG5JtboffSo_=D7TD5vFM6Ui5E8eS_VJiJ=g@mail.gmail.com> (sfid-20250923_174311_655140_04935269)
-References: <cover.1758181109.git.thehajime@gmail.com>
-	 <4a9dde10c586883d20a8201ca7d76e6d7d52eaf4.1758181109.git.thehajime@gmail.com>
-	 <a58620ecefa207e141a435c36492647c3d5bd3df.camel@sipsolutions.net>
-	 <m28qib8g1r.wl-thehajime@gmail.com>
-	 <6b1abe384237c8129e8043ecdfdad77758d2fd2f.camel@sipsolutions.net>
-	 <m27bxu949d.wl-thehajime@gmail.com>
-	 <CAMuHMdWAdhiY=MiG5JtboffSo_=D7TD5vFM6Ui5E8eS_VJiJ=g@mail.gmail.com>
-	 (sfid-20250923_174311_655140_04935269)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1758647670; c=relaxed/simple;
+	bh=Eq1AOZS62E3U426nVTK/WCGChMfD99wRr7zuaKWdzzY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z/45XjqIWZOTeop6sLWyPJDyHaknpqHS5T5OsKQLTPuk830gLVrB46ET0D2G2uXVzintvvqyXqzK+Bw5Kk5wqGkfpGQY/2CAMwEXeSvcpA/J+NDiC3z/9dwq+zqe9aM90sKhLdkbp0bX+s6IVp/476bvf6L6KVD+uyr79ws6mNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F/d4uUN4; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62fb48315ddso8404660a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:14:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758647666; x=1759252466; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NXqXBnmiXImIakMVKpGGeYlSvR6C1NJ+HVUMvwnxdDk=;
+        b=F/d4uUN4h2UHvet+h32/A9jiWw67ksJhqX7aMqi4CJkj0JrRvRXkU14ezj476DdTns
+         0s1nyaLgt0X9YU/eHddqKCKlxpeecLs/lG2XCMrNvER1szzeks6UC9BmjEnh/t6i/Inj
+         /5f2K/szSECXG62W2oiukiA1nKr+yOqeFALkuWd/G1Vg8kKFxfuRQqv2KKBibypozaSy
+         sxM0/cpcozEXqPvrhGEFiHIGZZWg+NAvRhq1e1uj7w+WTB6nk8KAFm6BNFnZWkim/dDk
+         pOWLqUwL6XaCAjYXsjj3SD6PnrhjowCr9V0o+2CVoLZdCzQBNBdr6K4VjQUlCMMtBHE0
+         sBxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758647666; x=1759252466;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NXqXBnmiXImIakMVKpGGeYlSvR6C1NJ+HVUMvwnxdDk=;
+        b=ZkdNdf6klzAGB1I4s6B8OP/Sic4sUsg/DKxrUwWrgFeIS8CYWvlSWLFqTqTVmWb3uL
+         QKdCaRGCAetW5rbXjyMB/lUdpiG4kW7VVO3IXnmm8OGsEy2k/EuiAjtQIY8uuEF/kLB1
+         o6c5y3NBWOPKIVB+GjUq6j0I4cUamNoMeuCpsopink01QRUueebLGSLsYxGumTAzOgq7
+         ghZqnBPwiQi4G7xKhJoC+GS9yFL1ozfc5A0XE+NMyNy5CLBTvh9H9RmJzMyGDJY4kPM9
+         c97N+pbfmMmJswZZH/L2y+MM/IJddRKQHQot3NyDUUN+SPNzc6YQjA9Y9EEGWgrtjQi2
+         R3GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGi4i7JGPuliRZ3Fad0H+8eWcK98YJg8KBlgfCzCNN4HEAhDmzHMM12v9TF34XnaEPv1takWfMQ8hmF7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVv9aDj7C96D35qcpiKt4uXbpZbHqZLCqOmwt4yogR4XySDIbS
+	yHWc4EiULCAv5Kfb9yDN9idVbyf2GKg4IUXuo8ImNSGRhnRYSuRlq5bV
+X-Gm-Gg: ASbGnctLuEgcLjQz9Z1aP1UwSuRFzEV7Nx8fL+eMsVKM4Q/HatFF1Hcjo+mCPGJzTfY
+	K+gnVPJxTM4E+LjQ4A5EnE7DK2yuTOJ9EDQAL9XSCwr5HtzFQ04R/1VEh6atTOndxJ2fAHbrlkz
+	c7oSGjQk9BokF2GsHgoOkwOzWqRW2gZS2eGFA6RK+u/kX0/ojn10HioLf6WHPkV0jaLo0yWblAR
+	hYNR87i4i6Cfdz/oUf7tljJ/rBKP4FU9NQyleVasl3cBYiJiERExFFjKvnzirpy0Os6BdrSSG+A
+	OfdfohF4rVOvzmhDcIIt0dDyeHVeMABdyIEk9XAzJ1VgnNNqTeucNKHd0ZjHmbykxI6c5QDRZAM
+	rwt4dDNMjB1WaK4I=
+X-Google-Smtp-Source: AGHT+IGSyRbCpjt3M6fPL9Ny0dbed0xWG6GvMzBnFnctl3j3KrQXRZZdJVYOgLoC0uHRbRnhxPV+ww==
+X-Received: by 2002:a17:906:ef04:b0:b2a:7f08:23cd with SMTP id a640c23a62f3a-b302b5190e7mr331780266b.50.1758647665932;
+        Tue, 23 Sep 2025 10:14:25 -0700 (PDT)
+Received: from hsukr3.. ([141.70.88.200])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b2636394d79sm1043812466b.38.2025.09.23.10.14.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 10:14:25 -0700 (PDT)
+From: Sukrut Heroorkar <hsukrut3@gmail.com>
+To: Helge Deller <deller@gmx.de>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Sukrut Heroorkar <hsukrut3@gmail.com>,
+	Gonzalo Silvalde Blanco <gonzalo.silvalde@gmail.com>,
+	linux-fbdev@vger.kernel.org (open list:FRAMEBUFFER LAYER),
+	dri-devel@lists.freedesktop.org (open list:FRAMEBUFFER LAYER),
+	linux-kernel@vger.kernel.org (open list)
+Cc: skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com
+Subject: [PATCH v2] fbdev/radeon: Remove stale product link in Kconfig/FB_RADEON
+Date: Tue, 23 Sep 2025 19:14:04 +0200
+Message-ID: <20250923171409.25927-1-hsukrut3@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-09-23 at 17:42 +0200, Geert Uytterhoeven wrote:
-> >=20
-> > currently, drivers/pci/Kconfig (CONFIG_PCI) marks as depends on MMU,
-> > so we cannot select it when CONFIG_MMU=3Dn.
->=20
-> That is a fairly recent change, see commit 8fe743b5eba0abfb ("PCI:
-> Add CONFIG_MMU dependency") in v6.16-rc1.  As this is not a "hard"
-> dependency, perhaps it should be reverted, iff you are willing to take
-> care of the casual breakage?
+The product page referenced in the FB_RADEON is no longer valid.
+Remove it to avoid pointing to an invalid link.
 
-Why though? UML with PCI can't really be a functional thing, only a
-testing thing, and testing PCI on !MMU when that is actually impossible
-in non-simulation is pointless?
+Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
+---
+Changes since v1:
+- Dropped the link entirely as suggested
+(See: https://lore.kernel.org/all/CADnq5_NHu5=esJZrgy_S80jF68ZapRRYX4_L70DwDDSN3VXitQ@mail.gmail.com/)
 
-johannes
+ drivers/video/fbdev/Kconfig | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index c21484d15f0c..27639b2590d8 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -948,9 +948,6 @@ config FB_RADEON
+ 	  a framebuffer device.  There are both PCI and AGP versions.  You
+ 	  don't need to choose this to run the Radeon in plain VGA mode.
+ 
+-	  There is a product page at
+-	  https://products.amd.com/en-us/GraphicCardResult.aspx
+-
+ config FB_RADEON_I2C
+ 	bool "DDC/I2C for ATI Radeon support"
+ 	depends on FB_RADEON
+-- 
+2.43.0
+
 
