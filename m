@@ -1,83 +1,129 @@
-Return-Path: <linux-kernel+bounces-829148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C2BB96642
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:48:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A9F9B96645
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 720541620AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:43:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E886B1715F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6270A24635E;
-	Tue, 23 Sep 2025 14:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDDD230D35;
+	Tue, 23 Sep 2025 14:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k4KYFdok"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nKtzcs/r"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3F8233722;
-	Tue, 23 Sep 2025 14:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D3B1EE7B7;
+	Tue, 23 Sep 2025 14:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758638537; cv=none; b=eV2wBS6+yQ52GMTiHxR8UUBv5Q8+KO2ggvFAXUKcVftWOF4s7yUqbtMF6bYNyf8HIneqrMzefMIJrTQqPCBQTal6vkmw8hABqHuF3gKNz/ScH8blJFPhluW04QhmF1LEzwGJiDg9cHl8Ng5tvsHDxyb/q9mEUqcpmFP4E2MoL+4=
+	t=1758638545; cv=none; b=jhAY96CfZful7EXWPFEhz7j5TEr6u9BSsPi9B9f+NWHwXpF+UgC0voLp/VegNdDjoh+WDG9GpGT+AEphe8V7pJFPwsLYFLT1hiY0jb3TWy1BZZH5gGV6Wq5y7nNcQX3RXPjDgTFTCTUfhutwpxdKhj2Gj2l97tgU4Uggu1S7RPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758638537; c=relaxed/simple;
-	bh=6K077GRyfTK2Mk4OhbSpfWz0s8ygG0pgGdEAMzJ0nXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lZvPRgGF4GksIAtjazDREGtG4+rl0XaFyOKwCvBKpCIbH/CZZDZ7DEtvF+gGsSgsXA03IebCZO53XBb9SHHdBQAMUsz56r7GXwdQZCm89tM/bMb4djDZULz8JBxkc0ZF3F9Ko+dpnyfiPHG+lOdvJImCWeJfx8D1R9m7z2z4vFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k4KYFdok; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AB04C4CEF5;
-	Tue, 23 Sep 2025 14:42:13 +0000 (UTC)
+	s=arc-20240116; t=1758638545; c=relaxed/simple;
+	bh=LhjAgb6cgHNp6OL8pcGSJUCyxHEjPb4wLfpmEKTiQcA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=PV281gVUA1ryoL7x9tPtlRXzDu2u8diwWwrgJRsaW68mXA5rbB4xOMfKzF8XIhahNQwrSmZkiNfbQrdW3EHj17tV6DTHhfJwI3Oe96aaao1PThtzr1/uVeiDeeVR7orGj5FiF1aST99x0/uZvD2b3hqU4jT/kgcPeM+gDS6Tm3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nKtzcs/r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 550AEC4CEF5;
+	Tue, 23 Sep 2025 14:42:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758638536;
-	bh=6K077GRyfTK2Mk4OhbSpfWz0s8ygG0pgGdEAMzJ0nXU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=k4KYFdokLCC4nNzWNYnLowkJAh1u/E9xRoPhUzQrf84e+ppnPDO9jBlG2nKGjiYHK
-	 MfCo3vcqmAcumlXt/yM6KmziDVSCxYmYzINC9Ym4EysDnySbrYx1cDRhBByTofmNTa
-	 sKHlhfD5qSK0EywS3VqjJ2aPpbmJVCf63EIKHVv+tL8XwZT6jfcwiI43RoG19X2L8j
-	 nRcmMwGR/S3L6FzOxB6BAoMjboVwvt8Zw0ShnuOpZX+tn8bVbwCxvMy7wnbRjH2Qs/
-	 G7tMoFIy85cT1USkcevgSwbjugh2j7xv2i4bUXNe+BUUIABNV6Y7AGRep22Tg7ERB5
-	 Xgaf8qqXW7dWQ==
-Message-ID: <9995561f-7157-489d-b48e-fe6c92e1f408@kernel.org>
-Date: Tue, 23 Sep 2025 16:42:11 +0200
+	s=k20201202; t=1758638545;
+	bh=LhjAgb6cgHNp6OL8pcGSJUCyxHEjPb4wLfpmEKTiQcA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=nKtzcs/rDklsb7BBzw37q6GESHy8punJWjUaYFFkFxTKL3hNYgOWmFZaKEOuOVt4w
+	 SxGXiCsE6P46Un9IksGHBCl4UQneYfYuNwXg4MYJNDdxU9jTfAXGEn38FRK+ly9k3o
+	 vnn448Vp300VR7z4tG/XySg2wVyOq4+OwQKadoxeVBjdiLTEhw7WpV0A9T+WrTlOmy
+	 GV6mLRnDyxQWlal9FAhMGmU2FC9m3ua8xZ8PrfGQUJhuMY8WWsPR9WhnSESA0U/yxY
+	 weU1fSVzjyCNHwroccKHTheNdTkZ/4GPvTx/qDLncX3W8sUSFx0BrVQsiFWb3JYRjH
+	 pYc8/Xu9+QzQQ==
+Date: Tue, 23 Sep 2025 09:42:23 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Randolph Lin <randolph@andestech.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	krzk+dt@kernel.org, conor+dt@kernel.org, alex@ghiti.fr,
+	aou@eecs.berkeley.edu, palmer@dabbelt.com, paul.walmsley@sifive.com,
+	ben717@andestech.com, inochiama@gmail.com,
+	thippeswamy.havalige@amd.com, namcao@linutronix.de,
+	shradha.t@samsung.com, randolph.sklin@gmail.com,
+	tim609@andestech.com
+Subject: Re: [PATCH v3 1/5] PCI: dwc: Skip failed outbound iATU and continue
+Message-ID: <20250923144223.GA2032427@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] rust: usb: add basic USB abstractions
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Oliver Neukum <oneukum@suse.com>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
- <20250825-b4-usb-v1-1-7aa024de7ae8@collabora.com>
- <DD07LUJXNZN9.3RHH9NJNRFVNN@kernel.org>
- <2025092356-rounding-eligibly-c4b7@gregkh>
- <f5a802a4-ac9b-4b45-8d1c-871e2e06d7ac@suse.com>
- <2025092307-scoop-challenge-4054@gregkh>
- <13ce0ad0-f0d5-4579-9a48-db727baa177f@kernel.org>
- <2025092356-glorious-unbundle-58f6@gregkh>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <2025092356-glorious-unbundle-58f6@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923113647.895686-2-randolph@andestech.com>
 
-On 9/23/25 4:37 PM, Greg Kroah-Hartman wrote:
-> Yes, you are right, it can be gotten that way.  But I can't wait to see
-> how you wrap that C macro in rust :)
+On Tue, Sep 23, 2025 at 07:36:43PM +0800, Randolph Lin wrote:
+> Previously, outbound iATU programming included range checks based
+> on hardware limitations. If a configuration did not meet these
+> constraints, the loop would stop immediately.
+> 
+> This patch updates the behavior to enhance flexibility. Instead of
+> stopping at the first issue, it now logs a warning with details of
+> the affected window and proceeds to program the remaining iATU
+> entries.
+> 
+> This enables partial configuration to complete in cases where some
+> iATU windows may not meet requirements, improving overall
+> compatibility.
 
-We can either create a Rust helper function for it, or just re-implement it; in
-the end it boils down to just a container_of() on the parent device.
+It's not really clear why this is needed.  I assume it's related to
+dropping qilai_pcie_outbound_atu_addr_valid().
+
+I guess dw_pcie_prog_outbound_atu() must return an error for one of
+the QiLai ranges?  Which one, and what exactly is the problem?  I
+still suspect something wrong in the devicetree description.
+
+> Signed-off-by: Randolph Lin <randolph@andestech.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 952f8594b501..91ee6b903934 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -756,7 +756,7 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+>  		if (resource_type(entry->res) != IORESOURCE_MEM)
+>  			continue;
+>  
+> -		if (pci->num_ob_windows <= ++i)
+> +		if (pci->num_ob_windows <= i)
+>  			break;
+>  
+>  		atu.index = i;
+> @@ -773,9 +773,10 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+>  
+>  		ret = dw_pcie_prog_outbound_atu(pci, &atu);
+>  		if (ret) {
+> -			dev_err(pci->dev, "Failed to set MEM range %pr\n",
+> -				entry->res);
+> -			return ret;
+> +			dev_warn(pci->dev, "Failed to set MEM range %pr\n",
+> +				 entry->res);
+> +		} else {
+> +			i++;
+>  		}
+>  	}
+>  
+> -- 
+> 2.34.1
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
