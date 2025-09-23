@@ -1,434 +1,458 @@
-Return-Path: <linux-kernel+bounces-828375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3353B947E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:04:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 101CDB947ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6E0118A5195
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:04:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F21797A485E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962ED30EF76;
-	Tue, 23 Sep 2025 06:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE4F25B1CE;
+	Tue, 23 Sep 2025 06:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eMbh2+Zs"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010003.outbound.protection.outlook.com [52.101.193.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jcHTtwRt"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5525430DECF;
-	Tue, 23 Sep 2025 06:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.3
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758607461; cv=fail; b=PPx2dqYuXzd2sKGQ3G0eYnE3T24Jz8RLE4NgWX9X7aeaMyXP5doTbm9uW9wl/DyJRYsBIudgJYTm5ulatNqgAkPSk/kyotnozkHeay6wrPtxOqds5UxL94zLjOAImqFmoJmg/c83gf3jDzb3ppxwLkKgvhorO9tM9wcikJ1qhl8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758607461; c=relaxed/simple;
-	bh=uIdKApU6mIvTlCJjYUt2er9qJ1lPORrts1rErF1iyDI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Mx6occmaz/s5AVvFIj8wXFNt2jVn8sZDQl1fGqiIQrqBkbwY1MEcX1vlLR8W3Ff3Ajut8idEfvtV+4H9ntPPwoyIGlc2uLpGv1Y/MS5/v4Ue29c13T+kzB/i1/I9PW9yUUmX2lSuoFzwIr6yKZs0Evko/rvt3JEUTJNXt6mQvCM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eMbh2+Zs; arc=fail smtp.client-ip=52.101.193.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yW2zRgVJ27D+b2J3XXAegmLsE/2AAJabl5p2W8kMlKv5kAMdKff+rVy7j8VIrTprkJ9LQOTEggRBVIAXtVK7DVXdtpnIwgS2YUTW5rao3dByiu/rsPMcbeYhwpEZbg4NC4TVGbbpQvnLyQDsAXMEftNiTWABuEjB+h9UMczgEGqFF133TD38XjQcL9efw3HgYFHPi7gSkQduxxyT3zY60PU9wBU9lR1A39yv/TMFRgIwkrw/XhGBuQ6QQk3LFJiddxmvCE7hJWUNrz3p3SO/ltSxs+6q5ydNg2+mlXLzPWvtJWpCYBHJ1dNXQdwy84ziSGSiXkIGPXDzdoOLCgBRvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ge+vDOMbBlUkJXcGgzVWDnAOSBHpUu57ob+lgHfSWe4=;
- b=pYXakNMUmk64BZ/Lt4G8A3xQfhCa6vUiaXAl5ORVWuiRzqHM9GfqgpfM7XoLhJEc8E7WIMKQjedT2iNKQfC5LM42MnDKhkiuEYu3gBj0kY2e7+C1jqMp7MGJf7z04O3LGnHg5voEghagCXwXHyfg3Up5ZP+FrMYd2J8A4AKwmIoWhVTY9ocR1BrXW2O+yPow3XPgElZ8sWW0A36E6j3aMwhhEkAko2gKIACMGFxEc1IE3D01rFfSifjOS111a0h5f8xZD3PpSiKfnMcU+8SiiD7xwxBUFr4M4HnhfF0nlwU+db8dvwR92qeCbWM3yTos8HBvzNLBDyxXyTZlS8237g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ge+vDOMbBlUkJXcGgzVWDnAOSBHpUu57ob+lgHfSWe4=;
- b=eMbh2+ZsmkS1grpOyJBX+xcVAmfslzfr/YtV0eU2SD8Py/bAHJIrJf19rsdPk44sO7ZFB6rcHKDsI/CWewh/mmlJD7ml/ZUJuqB7WNLxcmUpGJK7yt6sIlHoKPz1rFWkNm4Cg2VamHG2NXPZAMvbKxfy83k6wzsHuEA7yqTBk+TjF/oPVG/c3r0c6yuLOHkwdriw3Ibq/GxFYPQ6StyMl7b3tz7hghS1WN9bSmSBRakppX7PCaaOtxQuS+VFryclWUjspeWtMzI8WYyo+ar4tAVnZRoGmwi/PGUgMrLZgHiADvWMWhVB16jiHLW/PSJS7cAvMiog9K3YlT3pXGQI4Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
- DS5PPFDB3A23D1A.namprd12.prod.outlook.com (2603:10b6:f:fc00::663) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Tue, 23 Sep
- 2025 06:04:15 +0000
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 06:04:15 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
- Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dmitry Osipenko <digetx@gmail.com>,
- Jonas =?UTF-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>,
- Charan Pedumuru <charan.pedumuru@gmail.com>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
-Subject:
- Re: [PATCH v2 16/23] staging: media: tegra-video: tegra20: simplify format
- align calculations
-Date: Tue, 23 Sep 2025 15:03:57 +0900
-Message-ID: <7680340.18pcnM708K@senjougahara>
-In-Reply-To:
- <CAPVz0n1ozJ13MB4eFMAJzESe8iQ7SKjMApZCLFAZ_eubCFs0tg@mail.gmail.com>
-References:
- <20250906135345.241229-1-clamor95@gmail.com>
- <3074302.Sgy9Pd6rRy@senjougahara>
- <CAPVz0n1ozJ13MB4eFMAJzESe8iQ7SKjMApZCLFAZ_eubCFs0tg@mail.gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0037.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:29d::12) To DM4PR12MB6494.namprd12.prod.outlook.com
- (2603:10b6:8:ba::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F083AC1C
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758607501; cv=none; b=PbCkElbIlmJl5TcBtWUvjtF2W/juWrJFc4JYEXpvoeaL7ZoASumZjOsuCDik55qMgM//W3yLp5ByQi63ryrLdhy7w6YGl0GJ16LHOiPznNJ5sj3ZosicfyJaFos8U7wq37ImshR5KcM0X6dUr/PE3fjerJ1F1iiyQK9aZbtloKk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758607501; c=relaxed/simple;
+	bh=Z3vWSBUKk4vPa5Dhi69BGEU0f4G5L8uTvqC8rKu89sc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZjM2AcsoB3y/La3b7zwP7DqEl19XH1sYUhPjlIMxzQYt/gnHa1EaKGUBQ5wS3G5OdmGdpurmn6o3TntQM1gfk+noUt4iI7BPcIMe1gKnHDnazBNFu4+BHVROING74wOwMPUQDF3hdEADk//39FLloEIvs1DizirxnH+3Xv3kzyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jcHTtwRt; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b2fcfef5600so77180466b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:04:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758607498; x=1759212298; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e22fIZQhYlC3/KF+d3LRMImuPrbyTUVTTfdpcAAK9oQ=;
+        b=jcHTtwRt4tMLw/2bSWfM3SwioCLb6kDeNt6BjS8lsBgpoYrs3nDol3fy6DVsIAuG6y
+         az2e43QweaBx8V1PCr8iNnFz0P1RXoLvt0H1I0f3gmzRR1lP9ptm15gblpBZjI5rj6z8
+         uuXJXam0MWnSjC5DY92xvMn+7lVc+jLxgolKmmt/QCOaOGSrEnFM1LO8Ra7TLtlaRddO
+         zlBMLQ600fN6doV9iA8+b7OhrhHGKV4bbIGtERj0C+giadqUUnpDyjhwJxJWJcfZsa5G
+         mzvCCAwHE9U2BSiB//bs+ZKX5oppuc+owWThOo3gQbfG5vnlWcW15+vYV14y7wGq3esq
+         Ov3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758607498; x=1759212298;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e22fIZQhYlC3/KF+d3LRMImuPrbyTUVTTfdpcAAK9oQ=;
+        b=wviBC+uhEITBJV0uXCu5fxcUgm9E8ocvjFk0zofRT3x6PhSghgh0jD6+YRgbtjN+V7
+         AgTGNTRUTkTCR/+Qib/lwKtcTXNPpUevFSF0mAjm4Yw8PcC8q1yPq2oDTtXuab2gYV+H
+         os5VVmro+c1OCVy/Qc7Cmx6D3okFjdZI2mCGELPB164x58d3Xz/6P4THLta4VS6WUlpX
+         8y/iVAAZjiC7vIWbVCwuvXpQ9NLfdiYTUX3r2alZk/724yo3FcDbKjVz/1xvRwAjc+yU
+         9Wq5Ls+QZoearsabvIuADMXOg6w7AQ70cZfaaMI1CDLYND4CvxUNBXu8n4iUgO05WXPV
+         BA8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXLFfuNREU6YN3G5RzAMr3igxRv8Rt6uW3chH4uS8cqri0hF9NdLAMq/M4tApuImdgixV+n757M1r4Lk/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywolcGJ/9aFx+BjjMnvBmeygTdU2Dv/o71Z4d4nQ0u64bppcuB
+	GR8ubVTqFB8pAOHiolwukiFrUdtLrlkultWzBwD2NL/RaXgDxHALp9qOF1v0UlZ9YYzNP0iO9c6
+	MQjNg8gfd8waiinEyjWSAcHEiZN6s3gU=
+X-Gm-Gg: ASbGncuuPw89eMVLC3jDRGbTZsEIR+CXXbjz+HWWSFQQi3Xlco9JlWSbW5dEqkBtl29
+	A/Os2UIwT1IGhdXfwYj8yG0he18s7wt83PZW03zyRZrLekGdH3Cid90q7a2RZOQTK6gNG02BcV5
+	696NdKYdrjiPWqavGiFMN3c39mgZJtCsmGOzY4dGQXLHWv7UIU9jlO/FJ2P6PrirD3Q06OT3Vs+
+	BLgMH57qCDNSgAe
+X-Google-Smtp-Source: AGHT+IHXPC0Qk0LRGZJjkY7SA/XSVwAw4qDoNZWUJwZfUSEPJLVRVevwB78H3aY3Bytrw30vv9KTgERvdEBWZa+rAvE=
+X-Received: by 2002:a17:907:6d16:b0:b24:b95e:87e5 with SMTP id
+ a640c23a62f3a-b302785d7demr118528866b.29.1758607497588; Mon, 22 Sep 2025
+ 23:04:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|DS5PPFDB3A23D1A:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d0f73a1-ac55-4d81-ba9a-08ddfa67066d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|7416014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z1ZNUTRsUjdlWFA2S2NQMmV2bnlNZG05MVR3MVJ6eVZjZDhkVjRRZElxWk1h?=
- =?utf-8?B?bVFsbmZiUlRaaFNpbE1zL2d5OEphc2drb2tPNTNreXZZWlpwZ2ozMk1vblkv?=
- =?utf-8?B?UWpHYVdjL2ErVzh0SnZiS1lSUU5MTjZJcFp0OXNFb1BhN2RwV1FnaVNHMC9x?=
- =?utf-8?B?SWVNWDhHQzJXRDlZeHJkRGNkcjV1c3UrbGh5S2JGd0thbVBRTjJqSFhvWHhN?=
- =?utf-8?B?bGN2Wk9OYVJCSW9QUlgrN0dicG9ja3phbFV5aEpIYnFhWVlBWlNCTjVtajFt?=
- =?utf-8?B?N2ZuL09NSGFNWG1QZjV5Y1FXc1ZBcXVENkovKzcxYy96ZVRSYm5aN3pvMHR1?=
- =?utf-8?B?dlpoQVFRUVo5cFZyMDJHVGJuK1gySkVueWNtT2ZlZzdjRVhGdnh6YXB5eStz?=
- =?utf-8?B?L3B2NW1xMjlPY0dNbEszemNDbFBCVzFnN2lSb3BSQ3JBYkhzSTNSd29NQk9F?=
- =?utf-8?B?QzhuMXIrVGgvTnpPU1Z1U2FlT3pLdVQ3NVYwSGJ3c0lnMTNjWTJMYnlYanF3?=
- =?utf-8?B?U2JqVXJNRnR1YUFwa2R2TDhJZDhqdE51eUNLdE5tRnVFSi9qNHFNeFVieUZZ?=
- =?utf-8?B?YjBwYVR3OHM1b1hLSUpHOW9Nb3lzS1BsSVUxUzZzdDE5RXdJOHRwMEhJKzYy?=
- =?utf-8?B?bm9QQ2IvMDJhVDNmdjVxQm5PYm0vVk9OVWVzOXdWUjBROUVaTnMyRUV3ZmJT?=
- =?utf-8?B?VHFIcWlkY1FmS0p2dUR0aXBZekxMazJIVndzRkxuY0VydUVBSlBZaG50QzhY?=
- =?utf-8?B?L29VVi9ra2pvMTkwMEJzZ1lrdEFIK0xlalBES2RvRldYOGVLTjNMQkw0TU1k?=
- =?utf-8?B?bmxHREIyaVAyUHZCcnBVcEFrd2swSWh1N1hJcm9rbEs3aGNlTWRpeGJmWWZU?=
- =?utf-8?B?N09CeXRPUVFDWGxyaExPSG9aUU5NbVEyWE5PRGUxVFpTWDdvUUJ4b1Y0NkQ5?=
- =?utf-8?B?VCttZmx4TXV4ZFpObFA3c0wrSzliYmltVENFMUZxOXFSOG1ZdlROaERIaVBR?=
- =?utf-8?B?TC9PQXZzU01wSkg0cEdOVXBrYllrWHRVbkdIcGlQSjhGYnMwUUFnVU1vSmtR?=
- =?utf-8?B?MHlSY28xempzbGYvekRub3dhQWp4ZzE0ODY2ZmJxRU95S1NhVXFCd0Y2a0Js?=
- =?utf-8?B?VllPd3J3OVJTYkwvdzA2bmlKSWJ0Yk53enZJb3YxNFFYTUdqZXhFVlNHMVNZ?=
- =?utf-8?B?ckw3RFhPKytBOGVDNmd3Z1FIUGVCM1VKRFpVeTU5VXR5b1Bqa21BTnJSTktD?=
- =?utf-8?B?cW9DNitoc1lXL0pmZVhCcGNSK1Bpd0ZEK05KVU5mbmVhYXNuN0dvdVlLcUtS?=
- =?utf-8?B?QnZ0anBPajBnMDdhaWFyYVVQM3luTTVLSTMzSFNOVmovYzNrUHVFa3IyVnVG?=
- =?utf-8?B?R3dQYjFLTGMzZGUxWEFNTWYweDQwMk1oNmZzTUFGaEVKQUxucytNRVRNalBq?=
- =?utf-8?B?WVBwV0hkTm1tMm1jemxTMitibzNIN2dhQU5SVmNRcmUraUpzVXg3UEdLOTQr?=
- =?utf-8?B?am5QRmlVaHBwWVVDSk1MOUk4YVdzZHZOdFJheTFMOEQ4eWNETG9GU2VZWnhz?=
- =?utf-8?B?QWxZSWlGYWVORGQrUlZnN2Znc0NXUmRpbWRLQVowOTFMYWp4V2p0WGxmZTZM?=
- =?utf-8?B?WTBqNmVLM280dTZVMGE2T1hCZkJtSVhDRWlmUlA5dmord2JwOE5DeS9yRSth?=
- =?utf-8?B?UEp1cUdiVFNlMTlDQUp5NGduTnU4QjNOc2Izbm1VaG55WVFuekJpUXRpamky?=
- =?utf-8?B?RGVHL2ZRMk0xSVN0WmFtSGRtem12NWRjd0tZNGprczlkb2pDUGhRS3psQlEz?=
- =?utf-8?B?VG1qaUtYaWZIV3hyQmdheFhHZTkrM1N0YWJ5Um10eEI3d01PTDdHVWVNcHFS?=
- =?utf-8?B?Q3VpRWd5eGpCU0JsQ05PaTUzcWRZRGVsU29aRGc4NTB2N1hyaXljWDJYK1ho?=
- =?utf-8?Q?Vrrk0/yCiU8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QkZFaTFFY2lTVDlhUGwwd2VUcStMbGRwV2FpSUNUaGRjVklrQ1ZhNXY1WXht?=
- =?utf-8?B?U21WZGdFaElLMXFOVVA2bXl3K3k4dmFYQ1JFRzkvMWRCQWExVVRQVjA1N3Ji?=
- =?utf-8?B?Y3daeGIzcytUNWVjdzdvcEFZNitic09HcWpobk1MRHBtS3k0YnppYUtNY1JJ?=
- =?utf-8?B?c09uODM2VmVUYmtuWS9UNVNqZ2dZWTIrNitKTGVzZE01VllXYyswQmlZY0FG?=
- =?utf-8?B?WGw0Wkp5MkJIcE1kcERNVkJNc0wrREMvaHBuajNvY2tKRTc1ZkNlVVBhMVZ0?=
- =?utf-8?B?V0ltRXl3cy9sR3U2Y0swc2NES1lpcERCU3ppWTZyNDZoWEU5eWJpZUdaRm9u?=
- =?utf-8?B?MmZoV2dFMTB2bUh0bWZ1TXNIYnJWWDhWbXk0djJiK25OUnRRZkdvNnJtcXNI?=
- =?utf-8?B?dDQrSkVWbGFNRmZldWpIeTlRSDBraEJkWllOb01ucUpMQ204UUZpUjBuRlJl?=
- =?utf-8?B?bkJDcmJ0cURPc2pkSWpOeGsxb0F6cVhySXJMaXB0UGFLd0hvSm5TM3lhQUhm?=
- =?utf-8?B?Y05vTG5INDZmekprRHVrd29yc2Y1M01nMUpNMTRnQXY1RHB2OTNOcTJLaFVw?=
- =?utf-8?B?bzBWZCtLVUs3Vy9DZ1BvNlVXdWh0OE50UWVSdkNoejdWUW5FQmt3K0g3V1ZH?=
- =?utf-8?B?TjlkMmZvOTB4ZTlHTDNOVDNMakNZMmg4cFhmQVNDUXUvUGYyVzVEQkFJTVRK?=
- =?utf-8?B?TlNFSmhGVDhQS0hPWU1zOTl0VGhjMmhxbVlrS05HRmtYWDlYUHVYRjRKa3lo?=
- =?utf-8?B?Vi9rVmUrT2Q2TFA4WVZ2TXVjajVWSnFKWlpvMVQ2NnZQdnBjckVNVElxSmE1?=
- =?utf-8?B?RXBHMW12dldZVjRmVXNTYTRBVHJleTIydXd2SHF5cXdDU0JmSitMSzB5TEpw?=
- =?utf-8?B?V1MzRWRGV3pvejFSZDlMNG1JVXVLUlVtRUsvcTUwemd5Ly9OaG5YRjdKL0xJ?=
- =?utf-8?B?RlpHVFJpU0M2M2pjMXVCUWdVcmxBN2d3RldSNkhMSlIrQ25tQzFDMmY4QW9o?=
- =?utf-8?B?TlU4MCtNTFdFNHdEclJXWm4vcGhxNGZ4WGFvMnRhb0pBK0p1ZnltQ0ZKbWJ1?=
- =?utf-8?B?SzFtcjR1UHpUSFRoWnRMWnpVMUhMeHJxaXhKV0liWnR4Rko1RHZDY09xMDh3?=
- =?utf-8?B?OWk3dE90SU1VSWN2OVQzMzdEV0h6RXZiY2ZkUkNrSGpOcU9tVDRRd2ZTOHp4?=
- =?utf-8?B?TFBqU3dWMFh1NXBQTGI4WGdpdExzOCtwdWdJa21KVzN0THFhWWZSTkJRQ1hX?=
- =?utf-8?B?dlJpUURSUDBScjd4RXp1SjI1aHRadHVrZU1VV1VxVEgvUjBLcjBWeW8wQVNR?=
- =?utf-8?B?ejhBNjQ0YmNxZnhUNFQ4V0QyVzZNejdJcVlpZlJCTWhnVFdweGdMNE5rM0lm?=
- =?utf-8?B?NnpwdjFUVjdQTmZUTVF3ME5PS2NXV1psOGROT0lxN2pCZFR4K3BHTWZlNHo2?=
- =?utf-8?B?U3V5dmM5UEdhS3JaM3k0SHJ0VzRHUTNDT1Z1TWJQNCtaWHA5UVpmVUMwczZE?=
- =?utf-8?B?TEM0ek9MVlhMR3NDSlgwbU1HaXBubTZDK1lJd2lOc0xCS1NCZ0pOTms3VmNn?=
- =?utf-8?B?YUJXTEFjQ2dwOS9vVEtyK0xrZGk1MWdDS0lMb0lhcGVuK2dSSFJLcHd6TTFN?=
- =?utf-8?B?d0dJQTFGam91WmZGcmlOK0FhZUZoVXgybjZzS1JVa1l6bThoNmpWUE1lK2to?=
- =?utf-8?B?TEhDRzBsM3I0c3lzZnFmOE0xdHBVdGVmazFTN3htNFgrTytweEdpRjc5dytF?=
- =?utf-8?B?Q0xOZ040OEt1c04rREM1c0Y4UWZhb1BmaUFUZGJPN3pqMnFQVWxsRVN2eXp4?=
- =?utf-8?B?aXBCS0hUeW1ERU9YUm5tTGlWZ1dUNURFNHdMUTBuell6b3lrMkNkaTdtbEJm?=
- =?utf-8?B?UjgyaU9pSS9WL0llc3RoMGVjclZxMHR2ait6V3k0c3RQdzVwVmYvNk1YLzFr?=
- =?utf-8?B?bmp3OUtYaWNsakhlLzlZOXJDdDVaZjJuemZkZ3RIYmRGUG9hS0xpOXZsaFRY?=
- =?utf-8?B?b0VBeWw3L2ZIdnJPWlVienhEZjRqbHo1aWVySUhudWZ5cnRKTFArZEE4QW1J?=
- =?utf-8?B?UFVCdDg5ZVZ5UDRqRTIwY09CNUc2dnN0ZGh2WnFHd0hvTGNLQnhQWFByU0RR?=
- =?utf-8?B?SHQvMTVVNUxQNEhrOFc4U0ExUU1wdWhhUyswOWJNUWhDei9lQ014QTdMZWhV?=
- =?utf-8?B?Z1FZd0w1WUdvcHVkNGZKeHpIWks3ZFdJNC9YcVd3aUprSS9iVVBuQ0VIMjJn?=
- =?utf-8?B?dm9NRTl4UXhjcC9CclUvRE1ESUdBPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d0f73a1-ac55-4d81-ba9a-08ddfa67066d
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 06:04:15.4982
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: u6Dx700leyO84wqE1Abt7OpaJUJu5kN1w/Ei+TW0cg3CmD0FXE6k8oXXHcshAM6R2kr2MZb7xv3HHCXGbcImFQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFDB3A23D1A
+References: <20250922082417.816331-1-rajasimandalos@gmail.com>
+ <20250922082417.816331-2-rajasimandalos@gmail.com> <4htyleuklcdod3togdqcjl5w7g3j5cmwcc4bww5knlwgwhtsbd@a7s2fa2nvcup>
+In-Reply-To: <4htyleuklcdod3togdqcjl5w7g3j5cmwcc4bww5knlwgwhtsbd@a7s2fa2nvcup>
+From: Shyam Prasad N <nspmangalore@gmail.com>
+Date: Tue, 23 Sep 2025 11:34:46 +0530
+X-Gm-Features: AS18NWD7yFAhyjvoORA4y21HuDx6Djlw300tcZDsGry0395_x6REr5brTqW3ch8
+Message-ID: <CANT5p=oQaYZEjrkroP8sHw73GgT6tTX=Do6q_Mu8zmKettufHA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] cifs: client: allow changing multichannel mount
+ options on remount
+To: Enzo Matsumiya <ematsumiya@suse.de>
+Cc: rajasimandalos@gmail.com, linux-cifs@vger.kernel.org, sfrench@samba.org, 
+	pc@manguebit.org, ronniesahlberg@gmail.com, sprasad@microsoft.com, 
+	tom@talpey.com, bharathsm@microsoft.com, linux-kernel@vger.kernel.org, 
+	Rajasi Mandal <rajasimandal@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Monday, September 22, 2025 4:36=E2=80=AFPM Svyatoslav Ryhel wrote:
-> =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 10:27 Mi=
-kko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+On Mon, Sep 22, 2025 at 8:43=E2=80=AFPM Enzo Matsumiya <ematsumiya@suse.de>=
+ wrote:
+>
+> On 09/22, rajasimandalos@gmail.com wrote:
+> >From: Rajasi Mandal <rajasimandal@microsoft.com>
 > >
-> > On Monday, September 22, 2025 3:30=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > > =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09:2=
-3 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > >
-> > > > On Monday, September 22, 2025 2:13=E2=80=AFPM Svyatoslav Ryhel wrot=
-e:
-> > > > > =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE =
-07:44 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > > >
-> > > > > > On Saturday, September 6, 2025 10:53=E2=80=AFPM Svyatoslav Ryhe=
-l wrote:
-> > > > > > > Simplify format align calculations by slightly modifying supp=
-orted formats
-> > > > > > > structure.
-> > > > > > >
-> > > > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > > > ---
-> > > > > > >  drivers/staging/media/tegra-video/tegra20.c | 41 ++++++++---=
-----------
-> > > > > > >  1 file changed, 16 insertions(+), 25 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/staging/media/tegra-video/tegra20.c b/dr=
-ivers/staging/media/tegra-video/tegra20.c
-> > > > > > > index 6e0b3b728623..781c4e8ec856 100644
-> > > > > > > --- a/drivers/staging/media/tegra-video/tegra20.c
-> > > > > > > +++ b/drivers/staging/media/tegra-video/tegra20.c
-> > > > > > > @@ -280,20 +280,8 @@ static void tegra20_fmt_align(struct v4l=
-2_pix_format *pix, unsigned int bpp)
-> > > > > > >       pix->width  =3D clamp(pix->width,  TEGRA20_MIN_WIDTH,  =
-TEGRA20_MAX_WIDTH);
-> > > > > > >       pix->height =3D clamp(pix->height, TEGRA20_MIN_HEIGHT, =
-TEGRA20_MAX_HEIGHT);
-> > > > > > >
-> > > > > > > -     switch (pix->pixelformat) {
-> > > > > > > -     case V4L2_PIX_FMT_UYVY:
-> > > > > > > -     case V4L2_PIX_FMT_VYUY:
-> > > > > > > -     case V4L2_PIX_FMT_YUYV:
-> > > > > > > -     case V4L2_PIX_FMT_YVYU:
-> > > > > > > -             pix->bytesperline =3D roundup(pix->width, 2) * =
-2;
-> > > > > > > -             pix->sizeimage =3D roundup(pix->width, 2) * 2 *=
- pix->height;
-> > > > > > > -             break;
-> > > > > > > -     case V4L2_PIX_FMT_YUV420:
-> > > > > > > -     case V4L2_PIX_FMT_YVU420:
-> > > > > > > -             pix->bytesperline =3D roundup(pix->width, 8);
-> > > > > > > -             pix->sizeimage =3D roundup(pix->width, 8) * pix=
-->height * 3 / 2;
-> > > > > > > -             break;
-> > > > > > > -     }
-> > > > > > > +     pix->bytesperline =3D DIV_ROUND_UP(pix->width * bpp, 8)=
+> >Previously, the client did not properly update the session's channel
+> >state when multichannel or max_channels mount options were changed
+> >during remount. This led to inconsistent behavior and prevented
+> >enabling or disabling multichannel support without a full
+> >unmount/remount.
+> >
+> >Enable dynamic reconfiguration of multichannel and max_channels
+> >options during remount by introducing smb3_sync_ses_chan_max() to
+> >safely update the session's chan_max field, and smb3_sync_ses_channels()
+> >to synchronize the session's channels with the new configuration.
+> >Replace cifs_disable_secondary_channels() with
+> >cifs_decrease_secondary_channels(), which now takes a from_reconfigure
+> >argument for more flexible channel cleanup. Update the remount logic
+> >to detect changes in multichannel or max_channels and trigger the
+> >appropriate session/channel updates.
+> >
+> >With this change, users can safely change multichannel and
+> >max_channels options on remount, and the client will correctly adjust
+> >the session's channel state to match the new configuration.
+> >
+> >Signed-off-by: Rajasi Mandal <rajasimandal@microsoft.com>
+> >---
+> > fs/smb/client/cifsproto.h  |  2 +-
+> > fs/smb/client/fs_context.c | 29 ++++++++++++++++++
+> > fs/smb/client/fs_context.h |  2 +-
+> > fs/smb/client/sess.c       | 35 +++++++++++++++-------
+> > fs/smb/client/smb2pdu.c    | 60 ++++++++++++++++++++++++++++++--------
+> > fs/smb/client/smb2pdu.h    |  2 ++
+> > 6 files changed, 105 insertions(+), 25 deletions(-)
+>
+> I think the fix is necessary, and the implementation works (at least
+> with the simple case I tested).  I just think we now have too many
+> functions related to channel adding/removing/updating and they're all
+> too similar.  IMHO they could all be merged into a single "update
+> channels" one.
+>
+> Do you think it's possible to do that?  Probably would require a bit
+> more work, but at least we would end up with a centralized place to deal
+> with channel management.
+
+That's a good option. Will explore this with Rajasi.
+
+>
+> >diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
+> >index e8fba98690ce..ec3118457b26 100644
+> >--- a/fs/smb/client/cifsproto.h
+> >+++ b/fs/smb/client/cifsproto.h
+> >@@ -667,7 +667,7 @@ bool
+> > cifs_chan_is_iface_active(struct cifs_ses *ses,
+> >                         struct TCP_Server_Info *server);
+> > void
+> >-cifs_disable_secondary_channels(struct cifs_ses *ses);
+> >+cifs_decrease_secondary_channels(struct cifs_ses *ses, bool from_reconf=
+igure);
+> > void
+> > cifs_chan_update_iface(struct cifs_ses *ses, struct TCP_Server_Info *se=
+rver);
+> > int
+> >diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
+> >index 43552b44f613..96e80c70f25d 100644
+> >--- a/fs/smb/client/fs_context.c
+> >+++ b/fs/smb/client/fs_context.c
+> >@@ -1015,6 +1015,22 @@ int smb3_sync_session_ctx_passwords(struct cifs_s=
+b_info *cifs_sb, struct cifs_se
+> >       return 0;
+> > }
+> >
+> >+/**
+> >+ * smb3_sync_ses_chan_max - Synchronize the session's maximum channel c=
+ount
+> >+ * @ses: pointer to the old CIFS session structure
+> >+ * @max_channels: new maximum number of channels to allow
+> >+ *
+> >+ * Updates the session's chan_max field to the new value, protecting th=
+e update
+> >+ * with the session's channel lock. This should be called whenever the =
+maximum
+> >+ * allowed channels for a session changes (e.g., after a remount or rec=
+onfigure).
+> >+ */
+> >+void smb3_sync_ses_chan_max(struct cifs_ses *ses, unsigned int max_chan=
+nels)
+> >+{
+> >+      spin_lock(&ses->chan_lock);
+> >+      ses->chan_max =3D max_channels;
+> >+      spin_unlock(&ses->chan_lock);
+> >+}
+> >+
+> > static int smb3_reconfigure(struct fs_context *fc)
+> > {
+> >       struct smb3_fs_context *ctx =3D smb3_fc2context(fc);
+> >@@ -1097,6 +1113,18 @@ static int smb3_reconfigure(struct fs_context *fc=
+)
+> >               ses->password2 =3D new_password2;
+> >       }
+> >
+> >+      /*
+> >+       * If multichannel or max_channels has changed, update the sessio=
+n's channels accordingly.
+> >+       * This may add or remove channels to match the new configuration=
+.
+> >+       */
+> >+      if ((ctx->multichannel !=3D cifs_sb->ctx->multichannel) ||
+> >+              (ctx->max_channels !=3D cifs_sb->ctx->max_channels)) {
+> >+              //Synchronize ses->chan_max with the new mount context
+> >+              smb3_sync_ses_chan_max(ses, ctx->max_channels);
+> >+              //Now update the session's channels to match the new conf=
+iguration
+> >+              rc =3D smb3_sync_ses_channels(cifs_sb);
+> >+      }
+> >+
+> >       mutex_unlock(&ses->session_mutex);
+> >
+> >       STEAL_STRING(cifs_sb, ctx, domainname);
+> >@@ -1110,6 +1138,7 @@ static int smb3_reconfigure(struct fs_context *fc)
+> >       smb3_cleanup_fs_context_contents(cifs_sb->ctx);
+> >       rc =3D smb3_fs_context_dup(cifs_sb->ctx, ctx);
+> >       smb3_update_mnt_flags(cifs_sb);
+> >+
+> > #ifdef CONFIG_CIFS_DFS_UPCALL
+> >       if (!rc)
+> >               rc =3D dfs_cache_remount_fs(cifs_sb);
+> >diff --git a/fs/smb/client/fs_context.h b/fs/smb/client/fs_context.h
+> >index b0fec6b9a23b..a75185858285 100644
+> >--- a/fs/smb/client/fs_context.h
+> >+++ b/fs/smb/client/fs_context.h
+> >@@ -371,7 +371,7 @@ static inline struct smb3_fs_context *smb3_fc2contex=
+t(const struct fs_context *f
+> > extern int smb3_fs_context_dup(struct smb3_fs_context *new_ctx, struct =
+smb3_fs_context *ctx);
+> > extern int smb3_sync_session_ctx_passwords(struct cifs_sb_info *cifs_sb=
+, struct cifs_ses *ses);
+> > extern void smb3_update_mnt_flags(struct cifs_sb_info *cifs_sb);
+> >-
+> >+extern void smb3_sync_ses_chan_max(struct cifs_ses *ses, unsigned int m=
+ax_channels);
+> > /*
+> >  * max deferred close timeout (jiffies) - 2^30
+> >  */
+> >diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
+> >index 0a8c2fcc9ded..42b5481c884a 100644
+> >--- a/fs/smb/client/sess.c
+> >+++ b/fs/smb/client/sess.c
+> >@@ -264,13 +264,16 @@ int cifs_try_adding_channels(struct cifs_ses *ses)
+> >       return new_chan_count - old_chan_count;
+> > }
+> >
+> >-/*
+> >- * called when multichannel is disabled by the server.
+> >- * this always gets called from smb2_reconnect
+> >- * and cannot get called in parallel threads.
+> >+/**
+> >+ * cifs_decrease_secondary_channels - Reduce the number of active secon=
+dary channels
+> >+ * @ses: pointer to the CIFS session structure
+> >+ * @from_reconfigure: if true, only reduce to chan_max; if false, reduc=
+e to a single channel
+> >+ *
+> >+ * This function disables and cleans up extra secondary channels for a =
+CIFS session.
+> >+ * If called during reconfiguration, it reduces the channel count to th=
+e new maximum (chan_max).
+> >+ * Otherwise, it disables all but the primary channel.
+> >  */
+> >-void
+> >-cifs_disable_secondary_channels(struct cifs_ses *ses)
+> >+void cifs_decrease_secondary_channels(struct cifs_ses *ses, bool from_r=
+econfigure)
+> > {
+> >       int i, chan_count;
+> >       struct TCP_Server_Info *server;
+> >@@ -281,12 +284,13 @@ cifs_disable_secondary_channels(struct cifs_ses *s=
+es)
+> >       if (chan_count =3D=3D 1)
+> >               goto done;
+> >
+> >-      ses->chan_count =3D 1;
+> >-
+> >-      /* for all secondary channels reset the need reconnect bit */
+> >-      ses->chans_need_reconnect &=3D 1;
+> >+      // Update the chan_count to the new maximum
+> >+      if (from_reconfigure)
+> >+              ses->chan_count =3D ses->chan_max;
+> >+      else
+> >+              ses->chan_count =3D 1;
+> >
+> >-      for (i =3D 1; i < chan_count; i++) {
+> >+      for (i =3D ses->chan_max ; i < chan_count; i++) {
+> >               iface =3D ses->chans[i].iface;
+> >               server =3D ses->chans[i].server;
+> >
+> >@@ -318,6 +322,15 @@ cifs_disable_secondary_channels(struct cifs_ses *se=
+s)
+> >               spin_lock(&ses->chan_lock);
+> >       }
+> >
+> >+      /* For extra secondary channels, reset the need reconnect bit */
+> >+      if (ses->chan_count =3D=3D 1) {
+> >+              cifs_server_dbg(VFS, "server does not support multichanne=
+l anymore. Disable all other channels\n");
+> >+              ses->chans_need_reconnect &=3D 1;
+> >+      } else {
+> >+              cifs_server_dbg(VFS, "Disable extra secondary channels\n"=
+);
+> >+              ses->chans_need_reconnect &=3D ((1UL << ses->chan_max) - =
+1);
+> >+      }
+> >+
+> > done:
+> >       spin_unlock(&ses->chan_lock);
+> > }
+> >diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
+> >index c3b9d3f6210f..bf9a8dc0e8fc 100644
+> >--- a/fs/smb/client/smb2pdu.c
+> >+++ b/fs/smb/client/smb2pdu.c
+> >@@ -168,7 +168,7 @@ smb2_hdr_assemble(struct smb2_hdr *shdr, __le16 smb2=
+_cmd,
+> > static int
+> > cifs_chan_skip_or_disable(struct cifs_ses *ses,
+> >                         struct TCP_Server_Info *server,
+> >-                        bool from_reconnect)
+> >+                        bool from_reconnect, bool from_reconfigure)
+> > {
+> >       struct TCP_Server_Info *pserver;
+> >       unsigned int chan_index;
+> >@@ -206,10 +206,49 @@ cifs_chan_skip_or_disable(struct cifs_ses *ses,
+> >               return -EHOSTDOWN;
+> >       }
+> >
+> >-      cifs_server_dbg(VFS,
+> >-              "server does not support multichannel anymore. Disable al=
+l other channels\n");
+> >-      cifs_disable_secondary_channels(ses);
+> >+      cifs_decrease_secondary_channels(ses, from_reconfigure);
+> >
+> >+      return 0;
+> >+}
+> >+
+> >+/**
+> >+ * smb3_sync_ses_channels - Synchronize session channels
+> >+ * with new configuration (cifs_sb_info version)
+> >+ * @cifs_sb: pointer to the CIFS superblock info structure
+> >+ * Returns 0 on success or -EINVAL if scaling is already in progress.
+> >+ */
+> >+int smb3_sync_ses_channels(struct cifs_sb_info *cifs_sb)
+> >+{
+> >+      struct cifs_ses *ses =3D cifs_sb_master_tcon(cifs_sb)->ses;
+> >+      struct smb3_fs_context *ctx =3D cifs_sb->ctx;
+> >+      bool from_reconnect =3D false;
+> >+
+> >+      /* Prevent concurrent scaling operations */
+> >+      spin_lock(&ses->ses_lock);
+> >+      if (ses->flags & CIFS_SES_FLAG_SCALE_CHANNELS) {
+> >+              spin_unlock(&ses->ses_lock);
+> >+              return -EINVAL;
+> >+      }
+> >+      ses->flags |=3D CIFS_SES_FLAG_SCALE_CHANNELS;
+> >+      spin_unlock(&ses->ses_lock);
+> >+
+> >+      /*
+> >+       * If the old max_channels is less than the new chan_max,
+> >+       * try to add channels to reach the new maximum.
+> >+       * Otherwise, disable or skip extra channels to match the new con=
+figuration.
+> >+       */
+> >+      if (ctx->max_channels < ses->chan_max) {
+> >+              mutex_unlock(&ses->session_mutex);
+> >+              cifs_try_adding_channels(ses);
+> >+              mutex_lock(&ses->session_mutex);
+> >+      } else {
+> >+              cifs_chan_skip_or_disable(ses, ses->server, from_reconnec=
+t, true);
+> >+      }
+> >+
+> >+      /* Clear scaling flag after operation */
+> >+      spin_lock(&ses->ses_lock);
+> >+      ses->flags &=3D ~CIFS_SES_FLAG_SCALE_CHANNELS;
+> >+      spin_unlock(&ses->ses_lock);
+> >
+> >       return 0;
+> > }
+> >@@ -356,7 +395,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon=
+ *tcon,
+> >       if (ses->chan_count > 1 &&
+> >           !(server->capabilities & SMB2_GLOBAL_CAP_MULTI_CHANNEL)) {
+> >               rc =3D cifs_chan_skip_or_disable(ses, server,
+> >-                                             from_reconnect);
+> >+                                             from_reconnect, false);
+> >               if (rc) {
+> >                       mutex_unlock(&ses->session_mutex);
+> >                       goto out;
+> >@@ -439,7 +478,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon=
+ *tcon,
+> >                        */
+> >
+> >                       rc =3D cifs_chan_skip_or_disable(ses, server,
+> >-                                                     from_reconnect);
+> >+                                                     from_reconnect, fa=
+lse);
+> >                       goto skip_add_channels;
+> >               } else if (rc)
+> >                       cifs_dbg(FYI, "%s: failed to query server interfa=
+ces: %d\n",
+>
+> (for all hunks above) Can we stick to /* */ comments instead of //
+> please?
+>
+> >@@ -1105,8 +1144,7 @@ SMB2_negotiate(const unsigned int xid,
+> >               req->SecurityMode =3D 0;
+> >
+> >       req->Capabilities =3D cpu_to_le32(server->vals->req_capabilities)=
 ;
-> > > > > >
-> > > > > > Assuming the bpp is coming from the format table below, this ch=
-anges the value of bytesperline for planar formats. With this it'll be (wid=
-th * 12) / 8 i.e. width * 3/2, which doesn't sound right.
-> > > > > >
-> > > > >
-> > > > > Downstream uses soc_mbus_bytes_per_line for this calculation whic=
-h was
-> > > > > deprecated some time ago, here is a fragment
-> > > > >
-> > > > > s32 soc_mbus_bytes_per_line(u32 width, const struct soc_mbus_pixe=
-lfmt *mf)
-> > > > > {
-> > > > >  if (mf->fourcc =3D=3D V4L2_PIX_FMT_JPEG)
-> > > > >  return 0;
-> > > > >
-> > > > >  if (mf->layout !=3D SOC_MBUS_LAYOUT_PACKED)
-> > > > >  return width * mf->bits_per_sample / 8;
-> > > > >
-> > > > >  switch (mf->packing) {
-> > > > >  case SOC_MBUS_PACKING_NONE:
-> > > > >   return width * mf->bits_per_sample / 8;
-> > > > >  case SOC_MBUS_PACKING_2X8_PADHI:
-> > > > >  case SOC_MBUS_PACKING_2X8_PADLO:
-> > > > >  case SOC_MBUS_PACKING_EXTEND16:
-> > > > >   return width * 2;
-> > > > >  case SOC_MBUS_PACKING_1_5X8:
-> > > > >   return width * 3 / 2;
-> > > > >  case SOC_MBUS_PACKING_VARIABLE:
-> > > > >   return 0;
-> > > > >  }
-> > > > >    return -EINVAL;
-> > > > > }
-> > > > >
-> > > > > V4L2_PIX_FMT_YUV420 and V4L2_PIX_FMT_YVU420 are classified as
-> > > > > SOC_MBUS_PACKING_1_5X8 hence we get width * 3/2
-> > > >
-> > > > Googling this brings up the entry
-> > > >
-> > > > {
-> > > >         .code =3D V4L2_MBUS_FMT_YUYV8_1_5X8,
-> > > >         .fmt =3D {
-> > > >                 .fourcc                 =3D V4L2_PIX_FMT_YUV420,
-> > > >                 .name                   =3D "YUYV 4:2:0",
-> > > >                 .bits_per_sample                =3D 8,
-> > > >                 .packing                        =3D SOC_MBUS_PACKIN=
-G_1_5X8,
-> > > >                 .order                  =3D SOC_MBUS_ORDER_LE,
-> > > >                 .layout                 =3D SOC_MBUS_LAYOUT_PACKED,
-> > > >         },
-> > > > }
-> > > >
-> > > > which matches that you're describing. It doesn't make sense to me, =
-since it at the same time specifies PIX_FMT_YUV420 (which is planar with 3 =
-planes, as documented by include/uapi/linux/videodev2.h), and LAYOUT_PACKED
-> > > >
-> > > > /**
-> > > >  * enum soc_mbus_layout - planes layout in memory
-> > > >  * @SOC_MBUS_LAYOUT_PACKED:             color components packed
-> > > >  * @SOC_MBUS_LAYOUT_PLANAR_2Y_U_V:      YUV components stored in 3 =
-planes (4:2:2)
-> > > >  * @SOC_MBUS_LAYOUT_PLANAR_2Y_C:        YUV components stored in a =
-luma and a
-> > > >  *                                      chroma plane (C plane is ha=
-lf the size
-> > > >  *                                      of Y plane)
-> > > >  * @SOC_MBUS_LAYOUT_PLANAR_Y_C:         YUV components stored in a =
-luma and a
-> > > >  *                                      chroma plane (C plane is th=
-e same size
-> > > >  *                                      as Y plane)
-> > > >  */
-> > > > enum soc_mbus_layout {
-> > > >         SOC_MBUS_LAYOUT_PACKED =3D 0,
-> > > >         SOC_MBUS_LAYOUT_PLANAR_2Y_U_V,
-> > > >         SOC_MBUS_LAYOUT_PLANAR_2Y_C,
-> > > >         SOC_MBUS_LAYOUT_PLANAR_Y_C,
-> > > > };
-> > > >
-> > > > i.e. non-planar. The code in the driver is handling it as three pla=
-nes as well, with addresses VB0_BASE_ADDRESS/VB0_BASE_ADDRESS_U/VB0_BASE_AD=
-DRESS_V. Since the planes are separate, there should be no need to have mor=
-e than 'width' samples per line.
-> > > >
-> > >
-> > > I did not invent this, I have just simplified this calculation from
-> > > downstream, output values remain same. I have no cameras which can
-> > > output V4L2_PIX_FMT_YUV420 or V4L2_PIX_FMT_YVU420 so I cannot test if
-> > > this works either. Other YUV and RAW formats were tested on real HW
-> > > and work perfectly fine.
+> >-      if (ses->chan_max > 1)
+> >-              req->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_=
+CHANNEL);
+> >+      req->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_CHANNEL)=
+;
 > >
-> > My understanding from the code was, that the MEDIA_BUS_FMT_ formats lis=
-ted in the video format table refer to the input formats from the camera, a=
-nd the V4L2_PIX_FMT_ formats to output formats from VI. Hence VI could inpu=
-t UYVY8_2X8 and write to memory in YUV420. The code dealing with V4L2_PIX_F=
-MT_ values seems to be related to the output to memory. Is it possible to t=
-est this (your camera -> VI converts to YUV420) or am I mistaken?
+> >       /* ClientGUID must be zero for SMB2.02 dialect */
+> >       if (server->vals->protocol_id =3D=3D SMB20_PROT_ID)
+> >@@ -1310,10 +1348,8 @@ int smb3_validate_negotiate(const unsigned int xi=
+d, struct cifs_tcon *tcon)
+> >       if (!pneg_inbuf)
+> >               return -ENOMEM;
 > >
->=20
-> Camera I am testing with has no YUV420 options available and from what
-> I can tell there is no way to force VI to output in YUV420 unless
-> camera supports it. Any format manipulations should requite hooking up
-> ISP, or am I missing smth?
+> >-      pneg_inbuf->Capabilities =3D
+> >-                      cpu_to_le32(server->vals->req_capabilities);
+> >-      if (tcon->ses->chan_max > 1)
+> >-              pneg_inbuf->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP=
+_MULTI_CHANNEL);
+> >+      pneg_inbuf->Capabilities =3D cpu_to_le32(server->vals->req_capabi=
+lities);
+> >+      pneg_inbuf->Capabilities |=3D cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_C=
+HANNEL);
+>
+> This effectively makes query_interfaces worker run even with
+> max_channels=3D1 -- just a heads up because it didn't look like your
+> original intention.
+>
+I discussed this with Rajasi during my review. We should probably have
+a comment in the code somewhere about this behaviour.
+We could disable the worker when multichannel gets disabled, and
+enable it when multichannel gets enabled.
+However, that needs careful changes. I didn't think that a worker to
+refresh server interfaces every ten minutes is such a big deal. So I
+was okay with this.
+Perhaps we can fix this in a future patch.
 
-From a quick look at the spec it looks to me like for YUV422 packed input f=
-ormats specifically, VI should be able to convert to YUV420. If that were n=
-ot the case, e.g. 'TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YUV420),'=
- would not make sense anyway as it's talking about both YUV422 packed input=
- data and then also YUV420.
-
->=20
-> > It's certainly possible that the current code is functional -- if bytes=
-perline is set to a too large value and that information flows to userspace=
-, it could still read the buffer. It would just waste memory.
-> >
-> > >
-> > > > >
-> > > > > > > +     pix->sizeimage =3D pix->bytesperline * pix->height;
-> > > > > > >  }
-> > > > > > >
-> > > > > > >  /*
-> > > > > > > @@ -576,20 +564,23 @@ static const struct tegra_vi_ops tegra2=
-0_vi_ops =3D {
-> > > > > > >       .vi_stop_streaming =3D tegra20_vi_stop_streaming,
-> > > > > > >  };
-> > > > > > >
-> > > > > > > -#define TEGRA20_VIDEO_FMT(MBUS_CODE, BPP, FOURCC)    \
-> > > > > > > -{                                                    \
-> > > > > > > -     .code    =3D MEDIA_BUS_FMT_##MBUS_CODE,           \
-> > > > > > > -     .bpp     =3D BPP,                                 \
-> > > > > > > -     .fourcc  =3D V4L2_PIX_FMT_##FOURCC,               \
-> > > > > > > +#define TEGRA20_VIDEO_FMT(DATA_TYPE, BIT_WIDTH, MBUS_CODE, B=
-PP, FOURCC)      \
-> > > > > > > +{                                                           =
-         \
-> > > > > > > +     .img_dt         =3D TEGRA_IMAGE_DT_##DATA_TYPE,        =
-           \
-> > > > > > > +     .bit_width      =3D BIT_WIDTH,                         =
-           \
-> > > > > > > +     .code           =3D MEDIA_BUS_FMT_##MBUS_CODE,         =
-           \
-> > > > > > > +     .bpp            =3D BPP,                               =
-           \
-> > > > > > > +     .fourcc         =3D V4L2_PIX_FMT_##FOURCC,             =
-           \
-> > > > > > >  }
-> > > > > > >
-> > > > > > >  static const struct tegra_video_format tegra20_video_formats=
-[] =3D {
-> > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 2, UYVY),
-> > > > > > > -     TEGRA20_VIDEO_FMT(VYUY8_2X8, 2, VYUY),
-> > > > > > > -     TEGRA20_VIDEO_FMT(YUYV8_2X8, 2, YUYV),
-> > > > > > > -     TEGRA20_VIDEO_FMT(YVYU8_2X8, 2, YVYU),
-> > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YUV420),
-> > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YVU420),
-> > > > > > > +     /* YUV422 */
-> > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 16, UYVY),
-> > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 16, VYUY),
-> > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 16, YUYV),
-> > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 16, YVYU),
-> > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YUV420),
-> > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YVU420),
-> > > > > > >  };
-> > > > > > >
-> > > > > > >  const struct tegra_vi_soc tegra20_vi_soc =3D {
-> > > > > > >
-> > > > > >
-> > > > > >
-> > > > > >
-> > > > > >
-> > > >
-> > > >
-> > > >
-> > > >
-> >
-> >
-> >
-> >
+>
+> Cheers,
+>
+> Enzo
+>
 
 
-
-
+--=20
+Regards,
+Shyam
 
