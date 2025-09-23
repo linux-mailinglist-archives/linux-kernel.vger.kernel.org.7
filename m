@@ -1,240 +1,172 @@
-Return-Path: <linux-kernel+bounces-829353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC1CB96DF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:46:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E8DB96E1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FACD19C683C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:46:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0E77484C61
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411892E2DDE;
-	Tue, 23 Sep 2025 16:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7B82E1F01;
+	Tue, 23 Sep 2025 16:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TahcP1yF"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tjd+jq+y"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54811F4295
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E8764A8F;
+	Tue, 23 Sep 2025 16:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758645984; cv=none; b=c/5Foyvt0QcIbeEHDSrcawSAzJh5OLlGzUVwaHX1Ilo5Rvt9td2bjiJHbDuUytRC9a1A+QRZ5a3o08QdIX41S/0Uu5A4AIEWx1wZiWv15n9pW2mxz5DZmtSb6uo21zdYRle0yzskhnNLvsIzRnjRnL7dMGv4zXhcqXHEUSBbrug=
+	t=1758646388; cv=none; b=ZZB8E1/8csM2AJFE2eXHXfJKGLManiApYRy2FAXIL9MuSR2Ptkhf/gir+/MU1i/q/nqmfLanvs8ndFbblW7+ZdSlq1qFQALoT1cIv9y2V1FQasJjZZvgcqh7Txo0hyMdG+FmZLiqdT5gpZDDm1QoK1BzIhMG88qvnU6SshIeoNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758645984; c=relaxed/simple;
-	bh=QaGJKywzMIg34PVw2pMJ12QoZsJVOXlA2Id5RVZ88k8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ErDT8O4y6fnlTNPsgvJwURigtTbN5S6HbwqRVUnFIDSljGgTGPSJ9pVA2am3bwSzbsQtlF2SOvJqR+bbqdh6YjjtMOIPE83nlNtlqG0nxgDS7amXn2feL93hHu4e7FQQr5+eIwQlKGZSKK6HommGoDb5v8jwZxyD93tIK1muql0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TahcP1yF; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-468973c184bso24414525e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:46:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758645980; x=1759250780; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=imzMF9eGcF1IvmXHD33jpPta8P3x9Urk2l5tDJ26VmM=;
-        b=TahcP1yFDAKiOKEOPu9wj2beFAoGJVGXaSP/4Eb2vLGrfK9u3mb33bCFKz+/A92wGX
-         bh8U0svbUCzR2Wcensn/nvznippgqKYFz06hAtrLQkOapSsv3We/kms2svXsxTGDxo7f
-         f/Q3I17t4uyDL12AMXO1K4yy7iiIC3lRX0Qg49OgdMCis7TnaXk0ERULolfoXM65DoKG
-         lUc3GzEFv5yO25TLmrZA8gaAcs2UX/ERme2rHXKEZeA+lRv4G95x2c9lAU0FqWSqObWA
-         6TOFa1eG3XTnaO1PlfIFh+OZQc0j6Uq5+Ycs6J6rVwNUTs9OOAc1FHPTdfwXk/Jm4eLz
-         nbfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758645980; x=1759250780;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=imzMF9eGcF1IvmXHD33jpPta8P3x9Urk2l5tDJ26VmM=;
-        b=RR4VwPFhWQ8PCn1tX0C+m0JRrADPZEyewIzzM5wf4wDjG9p6X0Z3EGb8Lpv3UdzqCc
-         yPA5+qv1rm/r9ULqsWQnE4H/uRTu8aR16Vfo69oOxOHNR7AWGathaOvozRwZkPc0Fel6
-         4IJTrB+wu/SO4vlhdmSdtkR5pmHNAg5y9FePcx2sx+vaS1NnM1dXmsh2kgmzvwAC0fvV
-         hq1Jco+h3w2/deDasSLC+zBa67vHrhAZ7xZdEZOb5cqW6Gw0423I3wMdLdjMxRKeBIk7
-         5rPYpfNvVHKwQV97UJQud9+ZFnOLQ155ir+lhYMqSATPyC+E5QsdGo3oBJzq5LqIhwGm
-         XqhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsvlwf/PgshlekVcoAS+70o+jgLiIAXNKT4VygaZr52s4P6UYp0SAtaEw8f9QUGdC50Q4vPwrQJoYQn7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHCBQ5xc9WORHNPicf0DwrOOIjjfFvsc5QCv2rx6SHJICcwWYa
-	i62WZGcqUeUDbG1NiNnLaQa/8QnH6Cvte7q1wglE6ooTMZtpUITcNbqCbAKMyCSAbInGjqA694o
-	oXjQoW9lbWCPW7EUtMXIhJhidmahMKwo=
-X-Gm-Gg: ASbGncuO0egXyexxWqWv4UN1ZgshNFJY9g80bkeHBVMjesDEZso6jlWCLZE41Z33j3B
-	howgMrPRdwazDX72qB1yMdxRJOsiThJrkoLMY/uftg6xl8x3WTK7HGy1gO6w50Y0rXtwu5JQy3g
-	ll2ZMnJoApxQSONrATxciSHwNLpod2WMfy1nmC5qOCnnxnUweBfEvCQoS+ns/vegRLxQPgfnTmT
-	3wWQEtehw==
-X-Google-Smtp-Source: AGHT+IFP8pTY+nYi3192pC7v/zVC0ylFZb4IKvnNmuLy2m/5DZrc79HwlN5a4NAdoI7tQpvEg0iRs5lwN2jl7QYp5Qg=
-X-Received: by 2002:a05:6000:25c8:b0:3e7:1f63:6e7d with SMTP id
- ffacd0b85a97d-405ccbd6d4cmr3017672f8f.45.1758645979885; Tue, 23 Sep 2025
- 09:46:19 -0700 (PDT)
+	s=arc-20240116; t=1758646388; c=relaxed/simple;
+	bh=1K1mi/bl+7i2PouXGTsjCEBwlvQksuDiwpDKl4ZTr50=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZWnwjakTP0yf/b7kZjo8sSyMT8DGxugVvZQYpPF1s3GSSegQNAb08vwbwg4pGpCteYHgxT5Q6qhszo4pIjx0h8dpIKHbnOAvceLPDpKMoOntPP1bRO2MrPG1Thei8fnzkHxbddQaQUELtVsf6BK7vKSxmeI2xO90i33O73UywX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tjd+jq+y; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58NGldSo1046240;
+	Tue, 23 Sep 2025 11:47:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758646059;
+	bh=1SPiAj1VzSaiRq0LoTi8vdftSIjlW0msepkj/D9IkoM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=tjd+jq+yxThU2zCSeUzfd5PzURTEfdN/BTASXaztGt+OxOcaW0v4TpAGHdjsG9fW/
+	 zYhg+8/QCUhzLUmpYK8g51Y4YbwZgUxC4ChfJWMR4S024nTO7gS/UAowokK0pLLtQ1
+	 nx/arhFb7Hr35g7P/7Wq1UwW+mh0knuBft0BgMWQ=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58NGldWP1219608
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 23 Sep 2025 11:47:39 -0500
+Received: from DLEE213.ent.ti.com (157.170.170.116) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 23
+ Sep 2025 11:47:38 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE213.ent.ti.com
+ (157.170.170.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 23 Sep 2025 11:47:38 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58NGlcUI350893;
+	Tue, 23 Sep 2025 11:47:38 -0500
+Message-ID: <fe45ac1d-e49b-4456-bbe1-5a04f400e73f@ti.com>
+Date: Tue, 23 Sep 2025 11:47:38 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919145750.3448393-1-ethan.w.s.graham@gmail.com> <20250919145750.3448393-2-ethan.w.s.graham@gmail.com>
-In-Reply-To: <20250919145750.3448393-2-ethan.w.s.graham@gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Tue, 23 Sep 2025 18:46:08 +0200
-X-Gm-Features: AS18NWC3Zatya8SBoZMxgc3ReWws0f2Kk0nbCOoRpJZnpr-tGokn7pV_jWkKaCg
-Message-ID: <CA+fCnZegSdAeLkutKP54BH19Kv+FAaFbW1oOvAgbTZZMsyu0sg@mail.gmail.com>
-Subject: Re: [PATCH v2 01/10] mm/kasan: implement kasan_poison_range
-To: Ethan Graham <ethan.w.s.graham@gmail.com>
-Cc: ethangraham@google.com, glider@google.com, andy@kernel.org, 
-	brauner@kernel.org, brendan.higgins@linux.dev, davem@davemloft.net, 
-	davidgow@google.com, dhowells@redhat.com, dvyukov@google.com, 
-	elver@google.com, herbert@gondor.apana.org.au, ignat@cloudflare.com, 
-	jack@suse.cz, jannh@google.com, johannes@sipsolutions.net, 
-	kasan-dev@googlegroups.com, kees@kernel.org, kunit-dev@googlegroups.com, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, lukas@wunner.de, rmoar@google.com, shuah@kernel.org, 
-	sj@kernel.org, tarasmadan@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Device tree representation of (hotplug) connectors: discussion at
+ ELCE
+To: Herve Codina <herve.codina@bootlin.com>,
+        Geert Uytterhoeven
+	<geert@linux-m68k.org>
+CC: David Gibson <david@gibson.dropbear.id.au>,
+        Ayush Singh
+	<ayush@beagleboard.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Luca
+ Ceresoli <luca.ceresoli@bootlin.com>,
+        <devicetree@vger.kernel.org>, Jason
+ Kridner <jkridner@gmail.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        <devicetree-compiler@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Thomas Petazzoni
+	<thomas.petazzoni@bootlin.com>
+References: <aL-2fmYsbexEtpNp@zatzit> <20250909114126.219c57b8@bootlin.com>
+ <aMD_qYx4ZEASD9A1@zatzit> <20250911104828.48ef2c0e@bootlin.com>
+ <aMebXe-yJy34kST8@zatzit> <20250916084631.77127e29@bootlin.com>
+ <aMt5kEI_WRDOf-Hw@zatzit> <20250918094409.0d5f92ec@bootlin.com>
+ <aMzhgDYOuG4qNcc0@zatzit>
+ <dcbeaff2-0147-4a27-bb46-e247e42810d7@beagleboard.org>
+ <aNJVqSpdAJzGliNx@zatzit> <20250923114849.2385736d@bootlin.com>
+ <CAMuHMdWmDwedyPnBERs-tSYEG15nMUuh9u1Q+W_FdquHpUC0-A@mail.gmail.com>
+ <20250923153646.754e86f8@bootlin.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250923153646.754e86f8@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Sep 19, 2025 at 4:58=E2=80=AFPM Ethan Graham <ethan.w.s.graham@gmai=
-l.com> wrote:
->
-> From: Ethan Graham <ethangraham@google.com>
->
-> Introduce a new helper function, kasan_poison_range(), to encapsulate
-> the logic for poisoning an arbitrary memory range of a given size, and
-> expose it publically in <include/linux/kasan.h>.
->
-> This is a preparatory change for the upcoming KFuzzTest patches, which
-> requires the ability to poison the inter-region padding in its input
-> buffers.
->
-> No functional change to any other subsystem is intended by this commit.
->
-> Signed-off-by: Ethan Graham <ethangraham@google.com>
-> Reviewed-by: Alexander Potapenko <glider@google.com>
->
-> ---
-> PR v1:
-> - Enforce KASAN_GRANULE_SIZE alignment for the end of the range in
->   kasan_poison_range(), and return -EINVAL when this isn't respected.
-> ---
-> ---
->  include/linux/kasan.h | 11 +++++++++++
->  mm/kasan/shadow.c     | 34 ++++++++++++++++++++++++++++++++++
->  2 files changed, 45 insertions(+)
->
-> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-> index 890011071f2b..cd6cdf732378 100644
-> --- a/include/linux/kasan.h
-> +++ b/include/linux/kasan.h
-> @@ -102,6 +102,16 @@ static inline bool kasan_has_integrated_init(void)
->  }
->
->  #ifdef CONFIG_KASAN
-> +
-> +/**
-> + * kasan_poison_range - poison the memory range [@addr, @addr + @size)
-> + *
-> + * The exact behavior is subject to alignment with KASAN_GRANULE_SIZE, d=
-efined
-> + * in <mm/kasan/kasan.h>: if @start is unaligned, the initial partial gr=
-anule
-> + * at the beginning of the range is only poisoned if CONFIG_KASAN_GENERI=
-C=3Dy.
-> + */
-> +int kasan_poison_range(const void *addr, size_t size);
-> +
->  void __kasan_unpoison_range(const void *addr, size_t size);
->  static __always_inline void kasan_unpoison_range(const void *addr, size_=
-t size)
->  {
-> @@ -402,6 +412,7 @@ static __always_inline bool kasan_check_byte(const vo=
-id *addr)
->
->  #else /* CONFIG_KASAN */
->
-> +static inline int kasan_poison_range(const void *start, size_t size) { r=
-eturn 0; }
->  static inline void kasan_unpoison_range(const void *address, size_t size=
-) {}
->  static inline void kasan_poison_pages(struct page *page, unsigned int or=
-der,
->                                       bool init) {}
-> diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
-> index d2c70cd2afb1..7faed02264f2 100644
-> --- a/mm/kasan/shadow.c
-> +++ b/mm/kasan/shadow.c
-> @@ -147,6 +147,40 @@ void kasan_poison(const void *addr, size_t size, u8 =
-value, bool init)
->  }
->  EXPORT_SYMBOL_GPL(kasan_poison);
->
-> +int kasan_poison_range(const void *addr, size_t size)
+On 9/23/25 8:36 AM, Herve Codina wrote:
+> On Tue, 23 Sep 2025 12:29:27 +0200
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> 
+>> Hi Hervé,
+>>
+>> On Tue, 23 Sept 2025 at 11:49, Herve Codina <herve.codina@bootlin.com> wrote:
+>>> On Tue, 23 Sep 2025 18:09:13 +1000
+>>> David Gibson <david@gibson.dropbear.id.au> wrote:
+>>>> Ah, right.  To be clear: we absolutely don't want multiple addons
+>>>> altering the same nodes.  But I think we could do that in ways other
+>>>> than putting everything under a connector.  This is exactly why I
+>>>> think we should think this through as an end-to-end problem, rather
+>>>> trying to do it as a tweak to the existing (crap) overlay system.
+>>>>
+>>>> So, if we're thinking of this as an entirely new way of updating the
+>>>> base dt - not "an overlay" - we can decide on the rules to ensure that
+>>>> addition and removal is sane.  Two obvious ones I think we should
+>>>> definitely have are:
+>>>>
+>>>> a) Addons can only add completely new nodes, never modify existing
+>>>>     ones.  This means that whatever addons are present at runtime,
+>>>>     every node has a single well defined owner (either base board or
+>>>>     addon).
+>>>
+>>> In this rule I suppose that "never modify existing ones" should be understood
+>>> as "never modify, add or remove properties in existing ones". Because, of course
+>>> adding a full node in a existing one is allowed (rule b).
+>>
+>> What if the add-on board contains a provider for the base board.
+>> E.g. the connector has a clock input, fed by an optional clock generator
+>> on the add-on board.  Hooking that into the system requires modifying
+>> a clocks property in the base board, cfr. [1].
+>> Or is there some other solution?
+>>
+>> I was also wondering about endpoints, as they have two sides: one on
+>> the base board, and one on the add-on board. But it seems that typically
+>> both ends are added by the extension, so these fall under rule b.
+>>
+>> Thanks!
+>>
+>> [1] https://elixir.bootlin.com/linux/v6.16/source/arch/arm64/boot/dts/renesas/white-hawk-ard-audio-da7212.dtso#L165
+>>
+> 
+> Hi Geert,
+> 
+> Addon DT we talk about is not a way to fine tune base board devices.
+> 
+> For the clock, you need a clock driver which is able to support clock hot-plugging.
+> Same for endpoint, the remote endpoint part should support hot-plugging.
 
-This should go into common.c, otherwise this won't be built with the
-HW_TAGS mode enabled.
+Why should these drivers need hot-plug support, they are attached and then
+the board is booted. Nothing is hot-plugged here.
 
-Also, you need a wrapper with a kasan_enabled() check; see how
-kasan_unpoison_range() is defined.
+> 
+> I don't think that addon DT should support what is done in the dtso you pointed out.
+> 
 
-> +{
-> +       uintptr_t start_addr =3D (uintptr_t)addr;
-> +       uintptr_t head_granule_start;
-> +       uintptr_t poison_body_start;
-> +       uintptr_t poison_body_end;
-> +       size_t head_prefix_size;
-> +       uintptr_t end_addr;
-> +
-> +       if ((start_addr + size) % KASAN_GRANULE_SIZE)
-> +               return -EINVAL;
+The pointed out DTSO is a good example of exactly what needs to be supported,
+clocks, pinmux, bidirectional endpoints will all be needed to support a large
+number of add-on boards.
 
-Other similar KASAN functions do a WARN_ON(bad alignment). I think
-printing a warning is fair for this to force the caller to enforce
-proper alignment.
+Andrew
 
-> +
-> +       end_addr =3D ALIGN_DOWN(start_addr + size, KASAN_GRANULE_SIZE);
+> Best regards,
+> Hervé
+> 
 
-I don't think we need to ALIGN_DOWN(): we already checked that
-(start_addr + size) % KASAN_GRANULE_SIZE =3D=3D 0.
-
-> +       if (start_addr >=3D end_addr)
-> +               return -EINVAL;
-
-Can also do a WARN_ON().
-
-> +
-> +       head_granule_start =3D ALIGN_DOWN(start_addr, KASAN_GRANULE_SIZE)=
-;
-> +       head_prefix_size =3D start_addr - head_granule_start;
-> +
-> +       if (IS_ENABLED(CONFIG_KASAN_GENERIC) && head_prefix_size > 0)
-> +               kasan_poison_last_granule((void *)head_granule_start,
-> +                                         head_prefix_size);
-
-Let's rename kasan_poison_last_granule() to kasan_poison_granule()
-then. Here the granule being poisoned is not the last one.
-
-
-> +
-> +       poison_body_start =3D ALIGN(start_addr, KASAN_GRANULE_SIZE);
-> +       poison_body_end =3D ALIGN_DOWN(end_addr, KASAN_GRANULE_SIZE);
-
-end_addr is already aligned.
-
-
-> +
-> +       if (poison_body_start < poison_body_end)
-> +               kasan_poison((void *)poison_body_start,
-> +                            poison_body_end - poison_body_start,
-> +                            KASAN_SLAB_REDZONE, false);
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL(kasan_poison_range);
-> +
->  #ifdef CONFIG_KASAN_GENERIC
->  void kasan_poison_last_granule(const void *addr, size_t size)
->  {
-> --
-> 2.51.0.470.ga7dc726c21-goog
->
 
