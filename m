@@ -1,114 +1,116 @@
-Return-Path: <linux-kernel+bounces-828627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7288B9509E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:41:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEFC7B950B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E11A444235
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:41:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4B8319012A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9527D313D49;
-	Tue, 23 Sep 2025 08:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B7831D736;
+	Tue, 23 Sep 2025 08:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PHtTiMYs"
-Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wvg6wV3J"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD51313295
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E519A313295;
+	Tue, 23 Sep 2025 08:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758616886; cv=none; b=NyEM9IHTSX+fN4oURd/uXZayN6cBMG0LS+6+f3oB4XkiKHKo+vX4dW8Tw4SFKiI2mLhk7uci1icEeWC9fPLX1CL+nCUmawoE9vNF31XOXjFw6C+XLOeCZTO4NnGVgh5YuDmrlSnEyBacg8twunzb7cJk7bJWboG8Y7DUi5nyRU8=
+	t=1758616907; cv=none; b=cp0p/rcs9dMj1NPUDhPi3bCliignGXhVAOFra5j7BPCkPm6v47tQY2JCxU0Ix/ecikidM0k1CUSawf5tFHsf3ZZpB/bCk2SqjRMID6azUKlI0VFL6BRl/p8laB1J5iqCjmTMCz4ETtZ/zb3Ec9p4+WUS9doFFK3EPTde8jH0w50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758616886; c=relaxed/simple;
-	bh=UPuPcX75oQ4AL5YVnkB+5pjIsnTNzRooi8XALzUgWoA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=c+SVaWPgkQhUAP2RboKKfmhSd1iABs0uVIgNhsHlrar/5O8IeXPPrjR5/4u51wp0OJJvQL7stekbdQyQ/oJImwhaMFxQDyg8m1akwd1vjuSlg1YZ/JVIhHkFSpi6OBAMi9R27PWaWmLs7n6s1mWBbAfcEkIWU0GmETD4Ty/21PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PHtTiMYs; arc=none smtp.client-ip=209.85.208.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-62fe4a1d872so488251a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:41:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758616883; x=1759221683; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cnwWdeWx6BR1kU+lh9ulv0ufZRbNl5SQ5ed/nJLAMrA=;
-        b=PHtTiMYseSTFBp+NpkAd056fXzO/uUGiBFNT4MLNgZE7CoA+UnOQ7EMSKB/csaRl+L
-         Wa3hZ2LFMhDnkQnuY+lpXwDToq2xMQFRKlNHKsveRBI+01+xXyVX8BoyZ5irWjz8nnkR
-         0D/5RaGw0ohp6/pUVp8u7YKifT/X2PBzbhkvU57+vTv3YDXXErXLjqi0BenWWlxExfHM
-         dQ0w2nC+pS3WOwCfTbzWwKoEKePdjGAvziVapfKukGHXdqSxPvrZKyjfgIBIv0QkkTMP
-         e+ddHy0oz+csIDOaKZqE4yoHQmNax2vmO6O7aL8bD+orCeULXkYejuJYUVvEzFp/Q0U7
-         Pmgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758616883; x=1759221683;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cnwWdeWx6BR1kU+lh9ulv0ufZRbNl5SQ5ed/nJLAMrA=;
-        b=lK0mC4rDUZLIlb9ZX1WX1vObvDEx/OVl+hFQVupEN5DLR9C6IbhfMRTmaJ+8H1ZNR3
-         fC3EupcUuLEsKrI1Oz+WI2uvAW4o8x9axXgVhlMlgdxboxl70Mt19DXDlKO9wgWTEuj3
-         Uk+C37X0wwSjXDCaANDtgpjeJitOfEpxDnCUtc46rmP0nAJn+V69L2Bc+otovnA8/XJn
-         VAblmQrsNE7DJ0vcCm30bViaeetPBufptqhJ78YIOGIVG4AVapx5GVLEiscuQasvyORf
-         KsDdIQfyyeiZMiA/A/eTL5XJhzMZKoZ8LV2/eKebt+NSL9R4ItMNXVlIO2Lx5omqDNOd
-         911w==
-X-Forwarded-Encrypted: i=1; AJvYcCV+Xe8tsgCGemG9oWw1fx2yZR6+b31J3HycNenHdMPPz8+j7TsoY02QoQReA4ibzHAy7vIRktZS0exnV9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7ZaStZ7G5AKjWoEF5lKSt0dcT02wDkXPSv5girLRF/ZQKRWj7
-	AkB5N3FvdRGu2XWYEu2tmtFrfWBo4EpOLPwW1s3CLygzAID3wZ7whf5onh5QaAjEnWUqiNUGxEt
-	iwItXiqOwZBYtGXAlzea7g+Ls1x/JGl8=
-X-Gm-Gg: ASbGncsY9iRj+5GjPGkCfWkXAu9wyGnwmhdO/uPN+uqSPMCR1t5zz5WEtimej6BHJX/
-	dEy1PsH6uvxLk+55O4GxPvgIFhcz4vDrKIRrG1D30Bu47HC90ZKV040kMxLE4iDlUNfEM/J9qez
-	hbJmGot0LXjcGSCkFMwq9/1LD7iHGPv//1OlxS4/Mx9LiC6+u6j8IP329xdYKIfzHphTOIIRpiM
-	9l4tuY=
-X-Google-Smtp-Source: AGHT+IFYi+zTjZ6GJpJjCED7cor1eRd2OHWUV3RBOMliTwSgmZulxQHwLSjbrIJF1H20ROTHseuXPrvDPn7AcoPt+SM=
-X-Received: by 2002:a05:6402:2812:b0:634:633e:78f3 with SMTP id
- 4fb4d7f45d1cf-634676778a7mr738716a12.1.1758616882622; Tue, 23 Sep 2025
- 01:41:22 -0700 (PDT)
+	s=arc-20240116; t=1758616907; c=relaxed/simple;
+	bh=lRpdbF/4V+EkIq17vmldPHeUjul5knfmqsC1F6Yw/+8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=QDqXKjvDLe1hgFG6RneA2r4YFqATrZjVGn/A6vR/uFX54cqua+paRE0bz4C0jSbG1XJ2XIMsD1FdA1H9FFohZYjtWPHp2fQxaeuYWI64uebMzulaFk2uILwpBQhft4QR0zyXlKuNzEubkba8r8SlwCbrosX9wCiactMzbaUU+Bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wvg6wV3J; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758616906; x=1790152906;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=lRpdbF/4V+EkIq17vmldPHeUjul5knfmqsC1F6Yw/+8=;
+  b=Wvg6wV3J23WSOOpq1Q/NsJZ5XkT9wQA61uJztEXhLaICPkR5zcxevFzE
+   cJjssxcjnvF9DZy6Wg3u7WCk1DbcCvJUXYFp1r69lE8EhTRr2XqvnBUAq
+   WZeAIDW6rP5z1f7SBYncY7/oGrPmlSTunrUmpZ4XPNKZUmDmp0IVrjw1U
+   +hRnDt5EfxLb4NZFgRJ6A/Q7wIl1vneRHTUPVPVrzo3UYs/4X5Ha9esOX
+   NtH+hqT6hwhklnHbvDBe9NP6RSg9Hu67AZ7j8HNTGJWzVbcJy14noyh7k
+   sB7lGELEJL2tfdcLKtM0loBuHl+etwgOptViJw4R3bMxW34aqSsmOYIEj
+   Q==;
+X-CSE-ConnectionGUID: jVGWtnEzTxmov9oCeOcTfA==
+X-CSE-MsgGUID: zGGRHlRGQBGVzicR0r3Pgw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="71135645"
+X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
+   d="scan'208";a="71135645"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 01:41:46 -0700
+X-CSE-ConnectionGUID: YdeeOyQlQzqkRAoii6E46w==
+X-CSE-MsgGUID: 42y7GCWgTR6Nm3sQ8NnySA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
+   d="scan'208";a="176291562"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 01:41:39 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 23 Sep 2025 11:41:35 +0300 (EEST)
+To: Rob Herring <robh@kernel.org>
+cc: Sebastian Reichel <sre@kernel.org>, 
+    Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+    Conor Dooley <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>, 
+    Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+    Bjorn Andersson <andersson@kernel.org>, 
+    Konrad Dybcio <konradybcio@kernel.org>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Neil Armstrong <neil.armstrong@linaro.org>, devicetree@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
+    linux-arm-msm@vger.kernel.org, 
+    Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v5 1/3] dt-bindings: platform: Add Lenovo Thinkpad T14s
+ EC
+In-Reply-To: <20250919144042.GA875871-robh@kernel.org>
+Message-ID: <970a9db9-6bb4-7cf9-bd8f-249374580fef@linux.intel.com>
+References: <20250918-thinkpad-t14s-ec-v5-0-ac0bc6382c5c@collabora.com> <20250918-thinkpad-t14s-ec-v5-1-ac0bc6382c5c@collabora.com> <20250919144042.GA875871-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: clingfei <clf700383@gmail.com>
-Date: Tue, 23 Sep 2025 16:41:11 +0800
-X-Gm-Features: AS18NWBE1R_lwEilUcHJMhsDHcng_jx7lcG6i0fbEByuCHJe6UghO-ZrOrdxUe8
-Message-ID: <CADPKJ-7cb9fcPbP3gDNauc22nSbqmddhYzmKeVSiLpkc_u88KA@mail.gmail.com>
-Subject: [PATCH] io_uring/rsrc: remove unnecessary check on resv2
-To: axboe@kernel.dk
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	clingfei <clf700383@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-From b52509776e0f7f9ea703d0551ccaeeaa49ab6440 Mon Sep 17 00:00:00 2001
-From: clingfei <clf700383@gmail.com>
-Date: Tue, 23 Sep 2025 16:30:30 +0800
-Subject: [PATCH] io_uring/rsrc: remove unnecessary check on resv2
+On Fri, 19 Sep 2025, Rob Herring wrote:
 
-The memset sets the up.resv2 to be 0,
-and the copy_from_user does not touch it,
-thus up.resv2 will always be false.
+> On Thu, Sep 18, 2025 at 11:20:26PM +0200, Sebastian Reichel wrote:
+> > Add binding for the EC found in the Thinkpad T14s Gen6 Snapdragon,
+> > which is based on the Qualcomm X1 Elite. Some of the system LEDs
+> > and extra keys are only accessible via the EC.
+> 
+> s/platform/embedded-controller/ in the subject.
 
-Signed-off-by: clingfei <clf700383@gmail.com>
----
- io_uring/rsrc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks Rob.
 
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index f75f5e43fa4a..7006b3ca5404 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -372,7 +372,7 @@ int io_register_files_update(struct io_ring_ctx
-*ctx, void __user *arg,
-    memset(&up, 0, sizeof(up));
-    if (copy_from_user(&up, arg, sizeof(struct io_uring_rsrc_update)))
-        return -EFAULT;
--   if (up.resv || up.resv2)
-+   if (up.resv)
-        return -EINVAL;
-    return __io_register_rsrc_update(ctx, IORING_RSRC_FILE, &up, nr_args);
- }
+I took care of that shortlog change while applying to the review-ilpo-next 
+branch so no need to submit v6 because of it.
+
+> > Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Signed-off-by: Sebastian Reichel <sre@kernel.org>
+> > ---
+> >  .../lenovo,thinkpad-t14s-ec.yaml                   | 50 ++++++++++++++++++++++
+> >  1 file changed, 50 insertions(+)
+> 
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> 
+
 -- 
-2.34.1
+ i.
+
 
