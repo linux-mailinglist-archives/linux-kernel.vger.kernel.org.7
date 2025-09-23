@@ -1,136 +1,260 @@
-Return-Path: <linux-kernel+bounces-829122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56F3B96558
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:41:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC6DB9654F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD66918884D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:38:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F8221893169
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6D8946A;
-	Tue, 23 Sep 2025 14:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11178231C91;
+	Tue, 23 Sep 2025 14:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JbbifZ/2"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="U7bTVO4k"
+Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA356157A6B
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544577E105
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758638266; cv=none; b=mqxEmc0FOf7skImHlZaqPaJheZP8x746/8ZWJSq18/XgTMTLD08CrQN5EQN3h8TaY2vKMgusqC2D//TDmN6TLemjOyNw9I9wSyiCNkb43GQh13A7o+rDpdYuCupRmxdcEUYqxm7LmaOfmrmXq3xtqIWI4ZQ87F0xdHJHOrQ0g80=
+	t=1758638256; cv=none; b=QtKWi5jf073W5BuewXU5ELrubei0cF6SUbyFA2o6P4krqYZpGq2cmtK2ZrAXedZ0yoVIPOkgSD1G8HwDna0XouODqIMl2oYApLhgK8WDsd/M0wPLEqbrLLjgRSu1rJ1Dikfdp3N7pE+JP2AIjQE5n3AxvFHpvHbJbML4wDzpMTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758638266; c=relaxed/simple;
-	bh=UcZep7l4gtYTIQyVGonuLQCx5rE2XP5lhttbFIWJNmA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jy8p7hl2vOiomC55+4JPIhjk4eCI1iXnc5zc1FgImAR2YUm5pet50xAZh17qLxkijEawajvjxt8+6S/yLiHz3VtujmdOoFc11FrDvtdTbVC72gWtzhlw7/Q/L9oXcT5cYCUTPygNmBqMEMVzlzrZNqtwOzvMMDe98fOTFy9GZOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JbbifZ/2; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-eb36a143370so609769276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:37:44 -0700 (PDT)
+	s=arc-20240116; t=1758638256; c=relaxed/simple;
+	bh=ii1yBZfzr5XAbkH9gYhRzHJnpG6GM5PNn2gR+ygqg1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jC7wvEh8CxiccHk7aJZ8d8Bm9Sas14az/cffnnxyvvqaQYLrchlopaFS5nbuheS06XWxubL7uNa+I2PDvpsqK7V6YckOc8sth52RsjuAdwdB214ERs4t7axk0viHNvsWkKP/8nHYtEdNlzngJwAmcF6e0s12N9lQrWhOp/mVA6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=U7bTVO4k; arc=none smtp.client-ip=74.125.224.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-633bca5451cso1949350d50.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:37:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758638264; x=1759243064; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oglCBmL4B4WbAybvmqD8cJJViYSD9fzgh1Gue4gY1UE=;
-        b=JbbifZ/2B5kh540y4ADqATKaX+xr2CitB/nPPXKxjCTyHS6M6pCn5GqUhRocs5KW7o
-         LyX1JTqQMa/rcZVXpjWiQrYjOoCxjxlSMiK6iOKFyBb6YXu6WTLt78pdVsYPb6lLIlAN
-         opUwBUSRF4mIKLdcmhqbBzY2h1k+JYf6OcdTW1vBJg9snbPlb4Id3meu8uXdrZP9bKYV
-         m7XtS5PkRAk98xKxzhBcDt87CUdcvNstgOb3Ht6K0nKqw2rCL1QoMMAnRj8pPA6e6g26
-         3JGY1r2VS1ATYJpLW3/M2fQL2T7KeDGgj3XzBoTYAHiEZyerSj95LyhkzsvZtG9gh4RC
-         lDBQ==
+        d=ventanamicro.com; s=google; t=1758638253; x=1759243053; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=utNQQqbrP26idrrirG5tFnz3mQu8N8BuujOARL7p3YA=;
+        b=U7bTVO4kz+A/IsC72vaAnX3zybMrDxrmvOnc8zUTIm0G4rY520mHJWc1smf9P75C3E
+         7V00C07MHDu1KslMYSOAbiM2MqtNF1/QQt33fRb121q9sPX2ZowSMtAzka4WE8iyDjOh
+         L0wADyluWfN3wW3RI16Qtu2kIOF7XyLOvKuYLeYbbwNapKwM0hMD/kgP/NmY97+9mKgm
+         phFBSy2jwh7TvCML8H46vMCF+AW57aBAwiCVPVnchkAhHQI7abTSqmF/m7KDnriDNmJ+
+         aA16ZICvT79/IeByhjXal0Xih8TSfHvA+HQNomB0O/S876Te+JqNap4qirLNMznsjMY+
+         jz8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758638264; x=1759243064;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oglCBmL4B4WbAybvmqD8cJJViYSD9fzgh1Gue4gY1UE=;
-        b=XvLtjPfjl4rmMTj2eplxAPeaiI/JWzXHs9mAxI6QlpKt95AZYl7fBH+N+gWB9cS3yn
-         IPjVZagVKyLoLaHw9Y4rqxu/1uF16K/WlTgasEeV4IkDWKhuDijB7WLxWe8lAgVbILLv
-         IkAsBcKDJEOLI65sVTmgoNqUOdT/PfeK2gLCk8p1zFIX1ziTi9Ue+xhqREyLx9HGHPvo
-         CRDORRSdkWALgHvP8z6MUHU+ez9OieMI+Py+TXPZY71GRHAhqS2f11WbU6Sf8K6/t1YL
-         iGOaPgZjAlOogblPetFx7ApTQhwBUvgXxK1mW7/tS4dY5OSZE8uIqlvOYm44guPS5kH5
-         ua9g==
-X-Forwarded-Encrypted: i=1; AJvYcCULU3ALAxbrzkSan0++67+Vk3JXe9vmaGe6ALNmij2UJvxvvWoAnfYF8EcYtzHa7kGu75MGLfRFklzb4mE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQAyywNk+DFFDZgBXpruQfaYtQcJJ4TVviQF1CxodGFGlEP/WU
-	Gce+AurdOrC4pqc3kUci4hcDh/i1vXet73O3rNZ/mdEup+IxmhCa8aJSgLm4t1fC+7Ld/75Mfp5
-	5SN3yFGfxExj8+uCm6NEGkm2AvEUVByoLU7IDsYVPIQ==
-X-Gm-Gg: ASbGncuAMwD+O2h2Kmt35cE37WLAN8b+BBJMSsTik42zHtj5m2FoQdmi+y81+W/QDjw
-	WKSS6C6ktSYYONFqmtd0cvGBPYycWokxt7Q19aAm1c6WaLs9xMG/qm3xOgKUgwSImlH9VQMVBPr
-	RB2wDWU7mwizQBwak/8ESyygyRqFZzmgqM6moPysS6lm10GlUJFeP7hY0OImINboJqtI1Omcqd5
-	dcB+fglhmhR
-X-Google-Smtp-Source: AGHT+IEXKuzIArBc91/KA3f/YzDK175N+zTx0haFXxYxlTGRRGGJLMlWHDTe/A1+uBFUxsZwnePdVwoGLZBFbpfcE78=
-X-Received: by 2002:a05:690e:42d3:b0:635:35a0:c5a0 with SMTP id
- 956f58d0204a3-636045219e6mr1586791d50.0.1758638263271; Tue, 23 Sep 2025
- 07:37:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758638253; x=1759243053;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=utNQQqbrP26idrrirG5tFnz3mQu8N8BuujOARL7p3YA=;
+        b=jlPwDCyd+1VIAuxkRaNRFvVIBVPXMYVsrTGN+LUuWYEqetfQNEVXaLuz9LpvE1Haw8
+         /2CMp93C2X4NSMQY9hgmUuzEhc+fJyv4JnLT2xkOlmEVDRFtk12xeGnr0opMD5zkPddK
+         aQYbJNJiHR9K4BQajEmLRR/1Ng/om7lbTLV/YdOafFjLstOXEutygFYZtBoU1JK8/pV8
+         MmDDalrKBhOBpgEreiQ7Gq1OJDKMgOB5suSoc13CKE3G/rFV+zT3Ei5kNGrBtD9Sy3wg
+         RR7uykVhQY+08mR5zbFwDQf74Y2/p8Sj9PN9VbNNFtOR8Z1wD4npIhx2iD4j09BUssAL
+         xRig==
+X-Forwarded-Encrypted: i=1; AJvYcCWcubncLyHDh9uN930HUTap0DWaxyrUr7hJQE/VF82DvSBajUuGXi7+GNuvkqU2cpW84ueeCeYu/U3kJsQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzIITJH/+nzxRYPYmwDo8U6hS01Gu0U8jl2ZTxu2jhYTx9Kok5
+	7dBsrTiXEgkR6ZbnbvUXD41qc1tt1VEHbzrSl181T62F1zPHLCAjlOcpP5NQqhv8cdw=
+X-Gm-Gg: ASbGncsaEpHk655O3VsTqIBgxrVmwEe0PL/Z96RJSYSNIPmCFKMDRAPecjOJyDT7AT4
+	rsMSTrkDpqdgNbmeWNnwGCj77gtyoHn0lW5SbpyhbVzDXM6fL0/4TYelUxLyajQ26HCFRfVmVgv
+	euRMnOpw17hY4/6b+qtnzazyPvrlhjWz37j9fPdXQQK4APaWG/3EQrKpqPCJ3mx2C5lAnMXe1Kc
+	zYTuERMoeLrNwyrKvyIhVQYZWqA6IrSog+z/QSFgCeNZ4QDtU9xWV99sd/BV1rUTM1S3KfrUyVY
+	UyWjXDaqQ4Zd4XJnQejFA6GLEploqZOKs/DUJd+5k4ocQC3JAuZQuhG+4MEbkijNo6AEC83mqHl
+	SkOyhwzLSEzagj/Bm5HX17PYg
+X-Google-Smtp-Source: AGHT+IHeqNbXj2cbwtsFZh/rWKxPR18F6VpXKZlRUUIrCTojwS6cSA2iuN5fMmUzLR1S4qkiXUoGiQ==
+X-Received: by 2002:a05:690e:2512:20b0:605:f6ea:1261 with SMTP id 956f58d0204a3-636046fe14cmr2120960d50.23.1758638252833;
+        Tue, 23 Sep 2025 07:37:32 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7438ac593ebsm28158097b3.55.2025.09.23.07.37.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 07:37:32 -0700 (PDT)
+Date: Tue, 23 Sep 2025 09:37:31 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, iommu@lists.linux.dev, 
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, zong.li@sifive.com, tjeznach@rivosinc.com, joro@8bytes.org, 
+	will@kernel.org, robin.murphy@arm.com, anup@brainfault.org, atish.patra@linux.dev, 
+	alex.williamson@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com, alex@ghiti.fr
+Subject: Re: [RFC PATCH v2 08/18] iommu/riscv: Use MSI table to enable IMSIC
+ access
+Message-ID: <20250923-de370be816db3ec12b3ae5d4@orel>
+References: <20250920203851.2205115-20-ajones@ventanamicro.com>
+ <20250920203851.2205115-28-ajones@ventanamicro.com>
+ <20250922184336.GD1391379@nvidia.com>
+ <20250922-50372a07397db3155fec49c9@orel>
+ <20250922235651.GG1391379@nvidia.com>
+ <87ecrx4guz.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923-mt8195-pmdomain-audio-fix-v1-1-782190385f46@collabora.com>
-In-Reply-To: <20250923-mt8195-pmdomain-audio-fix-v1-1-782190385f46@collabora.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 23 Sep 2025 16:37:07 +0200
-X-Gm-Features: AS18NWDFuHpbFMIzRsDGrqDtLAtiZBYWyMCQ67uXlma11BT4iPN9Gof36Ta3gH0
-Message-ID: <CAPDyKFrpwZ+7202Zzs=Hh3=AYqAOPpr98CubYw8dRp5Y+ScxpA@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: mediatek: set default off flag for MT8195 AUDIO
- power domain
-To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, kernel@collabora.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ecrx4guz.ffs@tglx>
 
-On Tue, 23 Sept 2025 at 10:52, Louis-Alexis Eyraud
-<louisalexis.eyraud@collabora.com> wrote:
+On Tue, Sep 23, 2025 at 12:12:52PM +0200, Thomas Gleixner wrote:
+> On Mon, Sep 22 2025 at 20:56, Jason Gunthorpe wrote:
+> > On Mon, Sep 22, 2025 at 04:20:43PM -0500, Andrew Jones wrote:
+> >> > It has to do with each PCI BDF having a unique set of
+> >> > validation/mapping tables for MSIs that are granular to the interrupt
+> >> > number.
+> >> 
+> >> Interrupt numbers (MSI data) aren't used by the RISC-V IOMMU in any way.
+> >
+> > Interrupt number is a Linux concept, HW decodes the addr/data pair and
+> > delivers it to some Linux interrupt. Linux doesn't care how the HW
+> > treats the addr/data pair, it can ignore data if it wants.
+> 
+> Let me explain this a bit deeper.
+> 
+> As you said, the interrupt number is a pure kernel software construct,
+> which is mapped to a hardware interrupt source.
+> 
+> The interrupt domain, which is associated to a hardware interrupt
+> source, creates the mapping and supplies the resulting configuration to
+> the hardware, so that the hardware is able to raise an interrupt in the
+> CPU.
+> 
+> In case of MSI, this configuration is the MSI message (address,
+> data). That's composed by the domain according to the requirements of
+> the underlying CPU hardware resource. This underlying hardware resource
+> can be the CPUs interrupt controller itself or some intermediary
+> hardware entity.
+> 
+> The kernel reflects this in the interrupt domain hierarchy. The simplest
+> case for MSI is:
+> 
+>      [ CPU domain ] --- [ MSI domain ] -- device
+> 
+> The flow is as follows:
+> 
+>    device driver allocates an MSI interrupt in the MSI domain
+> 
+>    MSI domain allocates an interrupt in the CPU domain
+> 
+>    CPU domain allocates an interrupt vector and composes the
+>    address/data pair. If @data is written to @address, the interrupt is
+>    raised in the CPU
+> 
+>    MSI domain converts the address/data pair into device format and
+>    writes it into the device.
+> 
+>    When the device fires an interrupt it writes @data to @address, which
+>    raises the interrupt in the CPU at the allocated CPU vector.  That
+>    vector is then translated to the Linux interrupt number in the
+>    interrupt handling entry code by looking it up in the CPU domain.
+> 
+> With a remapping domain intermediary this looks like this:
+> 
+>      [ CPU domain ] --- [ Remap domain] --- [ MSI domain ] -- device
+>  
+>    device driver allocates an MSI interrupt in the MSI domain
+> 
+>    MSI domain allocates an interrupt in the Remap domain
+> 
+>    Remap domain allocates a resource in the remap space, e.g. an entry
+>    in the remap translation table and then allocates an interrupt in the
+>    CPU domain.
+> 
+>    CPU domain allocates an interrupt vector and composes the
+>    address/data pair. If @data is written to @address, the interrupt is
+>    raised in the CPU
+> 
+>    Remap domain converts the CPU address/data pair to remap table format
+>    and writes it to the alloacted entry in that table. It then composes
+>    a new address/data pair, which points at the remap table entry.
+> 
+>    MSI domain converts the remap address/data pair into device format
+>    and writes it into the device.
+> 
+>    So when the device fires an interrupt it writes @data to @address,
+>    which triggers the remap unit. The remap unit validates that the
+>    address/data pair is valid for the device and if so it writes the CPU
+>    address/data pair, which raises the interrupt in the CPU at the
+>    allocated vector. That vector is then translated to the Linux
+>    interrupt number in the interrupt handling entry code by looking it
+>    up in the CPU domain.
+> 
+> So from a kernel POV, the address/data pairs are just opaque
+> configuration values, which are written into the remap table and the
+> device. Whether the content of @data is relevant or not, is a hardware
+> implementation detail. That implementation detail is only relevant for
+> the interrupt domain code, which handle a specific part of the
+> hierarchy.
+> 
+> The MSI domain does not need to know anything about the content and the
+> meaning of @address and @data. It just cares about converting that into
+> the device specific storage format.
+> 
+> The Remap domain does not need to know anything about the content and
+> the meaning of the CPU domain provided @address and @data. It just cares
+> about converting that into the remap table specific format.
+> 
+> The hardware entities do not know about the Linux interrupt number at
+> all. That relationship is purely software managed as a mapping from the
+> allocated CPU vector to the Linux interrupt number.
+> 
+> Hope that helps.
 >
-> In MT8195 power domain data array, set the KEEP_DEFAULT_OFF and
-> ACTIVE_WAKEUP flags for the AUDIO power domain entry to avoid
-> having this domain being on during boot sequence when unneeded.
->
-> Fixes: 0e789b491ba0 ("pmdomain: core: Leave powered-on genpds on until sync_state")
-> Fixes: 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until late_initcall_sync")
-> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 
-Applied for fixes, thanks!
+Thanks, Thomas! I always appreciate these types of detailed design
+descriptions which certainly help pull all the pieces together.
 
-Kind regards
-Uffe
+So, I think I got this right, as Patch4 adds the Remap domain, creating
+this hierarchy
+
+name:   IR-PCI-MSIX-0000:00:01.0-12
+ size:   0
+ mapped: 3
+ flags:  0x00000213
+            IRQ_DOMAIN_FLAG_HIERARCHY
+            IRQ_DOMAIN_NAME_ALLOCATED
+            IRQ_DOMAIN_FLAG_MSI
+            IRQ_DOMAIN_FLAG_MSI_DEVICE
+ parent: IOMMU-IR-0000:00:01.0-17
+    name:   IOMMU-IR-0000:00:01.0-17
+     size:   0
+     mapped: 3
+     flags:  0x00000123
+                IRQ_DOMAIN_FLAG_HIERARCHY
+                IRQ_DOMAIN_NAME_ALLOCATED
+                IRQ_DOMAIN_FLAG_ISOLATED_MSI
+                IRQ_DOMAIN_FLAG_MSI_PARENT
+     parent: :soc:interrupt-controller@28000000-5
+        name:   :soc:interrupt-controller@28000000-5
+         size:   0
+         mapped: 16
+         flags:  0x00000103
+                    IRQ_DOMAIN_FLAG_HIERARCHY
+                    IRQ_DOMAIN_NAME_ALLOCATED
+                    IRQ_DOMAIN_FLAG_MSI_PARENT
 
 
-> ---
-> Patch tested on Mediatek Genio 1200-EVK board (based on MT8395 SoC)
-> with a kernel based on linux-next (tag: next-20250922).
-> ---
->  drivers/pmdomain/mediatek/mt8195-pm-domains.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/pmdomain/mediatek/mt8195-pm-domains.h b/drivers/pmdomain/mediatek/mt8195-pm-domains.h
-> index 9405e8f62eaf07112d52a28e6545d26a4342c7c6..1d3ca195ac75806c458db71db4538940f37128a8 100644
-> --- a/drivers/pmdomain/mediatek/mt8195-pm-domains.h
-> +++ b/drivers/pmdomain/mediatek/mt8195-pm-domains.h
-> @@ -126,6 +126,7 @@ static const struct scpsys_domain_data scpsys_domain_data_mt8195[] = {
->                                     MT8195_TOP_AXI_PROT_EN_2_CLR,
->                                     MT8195_TOP_AXI_PROT_EN_2_STA1),
->                 },
-> +               .caps = MTK_SCPD_KEEP_DEFAULT_OFF | MTK_SCPD_ACTIVE_WAKEUP,
->         },
->         [MT8195_POWER_DOMAIN_MFG0] = {
->                 .name = "mfg0",
->
-> ---
-> base-commit: fba389ea7aa6401d3539456123cbadfa1a87231e
-> change-id: 20250922-mt8195-pmdomain-audio-fix-f7ebf2afb15f
->
-> Best regards,
-> --
-> Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
->
+But, Patch4 only introduces the irqdomain, the functionality is added with
+Patch8. Patch8 introduces riscv_iommu_ir_get_msipte_idx_from_target()
+which "converts the CPU address/data pair to remap table format". For the
+RISC-V IOMMU, the data part of the pair is not used and the address
+undergoes a specified translation into an index of the MSI table. For the
+non-virt use case we skip the "composes a new address/data pair, which
+points at the remap table entry" step since we just forward the original
+with an identity mapping. For the virt case we do write a new addr,data
+pair (Patch15) since we need to map guest addresses to host addresses (but
+data is still just forwarded since the RISC-V IOMMU doesn't support data
+remapping). The lack of data remapping is unfortunate, since the part of
+the design where "The remap unit validates that the address/data pair is
+valid for the device and if so it writes the CPU address/data pair" is
+only half true for riscv (since the remap unit always forwards data so we
+can't change it in order to implement validation of it). If we can't set
+IRQ_DOMAIN_FLAG_ISOLATED_MSI without data validation, then we'll need to
+try to fast-track an IOMMU extension for it before we can use VFIO without
+having to set allow_unsafe_interrupts.
+
+Thanks,
+drew
 
