@@ -1,355 +1,232 @@
-Return-Path: <linux-kernel+bounces-828124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C14FEB93FDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:23:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 097D9B93FE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C87A17D1A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:23:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6D3D18A65B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FED119258E;
-	Tue, 23 Sep 2025 02:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B682701CE;
+	Tue, 23 Sep 2025 02:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MEyc4lab"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012058.outbound.protection.outlook.com [52.101.53.58])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYfyom/V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDE11448E0
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758594221; cv=fail; b=jqi8KO5wbnxdtahWe96cGQwETLe5k5n2IuuSJUPvqgUSdzKDOUiIHqq5wxxp+4VKKXcEofBH5Sbj/m5YsOpz0tbfqo3U0eab/3c1DrYvp7SYAyM9jsJcaQ0Rp2FaSGvicbZIHJ/y741rXJCDcRERfl4ya1li0HI6BhiF95JgGyo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758594221; c=relaxed/simple;
-	bh=TSeRzyAy8PoaNKXpec6SfEBQXMIEk6ZLva2Eds1kN4Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ryZBDmx45OSVlechitcTNLDkGdaof2JqxjtdmXu3YBRwQtbG/vCUgnTgnfDN1EuHN6EPi0hfue7XQx/wr2ZoR2GKy94+Bbi8SUGHCBipAXETQirnpqC8St5sYAbSur7lDHW9bE2byoy6zpgxYTBQjzghsYUjaQ0mJzrUL60oEeQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MEyc4lab; arc=fail smtp.client-ip=52.101.53.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LgPa83eHoju0g+c22rqe7SjLQRdV4ED0ULTaM4JYsgxhqvNs/P2LfGM+j+LH7MWxH1f7WA36BtMLvfkXwA2R2kOeIT6rXq1JXfmjr3aM0f447OtEmM2hiPeei0b4y38Ngx8hPyeoPdGnkkhgOKI+nR7ZgODXkdwx/9RTwPsEnIalAv28cqeOxb0wyY/dmW0TNiuH+HE4uEwGvAltFgBAskYHDsZP5u1fBwzjGsfck0YAhWCedDuReBqyyZM+2WOWpk/OlNOY1pnjpKyFWCeCjbYdETssxMLv/wMa6Bowabx00cGWrpiNuAfeHXIaO+v5pBM0dX8cVQEFGCS8m6EO7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3qZi/RmJw1BECtEDQfzKvd0NfwQmUIU/fqfkSyvjBco=;
- b=XoTQesrMnrYlU7KEm0gZapd/nlOS4JbR8jQ/Ks0cs92phXWRhB0lsWb9SZ09tDXkiviGilI2Rqk5SQdPFE1VYElD1AkqNL5+Vzp0Ycva5uOl+uV1MBMch62uN0ZRvVZuBqHHNMnCDkAE/Qc2MyV3gxmznV/66YEvCGLnzhvwWOJp/mGfdeb4vc8NuvvLYoygMvQr//KFVIhDgQEdI5dUeHFtOUDtIng0FblHAwhqmE+ht7vdiZzN/v46viSfVBPF+9dx/bK97BQOT8miFz9qOtkSf6KpijoSehfMAAazRogUbppOM9DBKUXPN95BfHbTWj0O6y93yiKRa8TI1ZvEVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3qZi/RmJw1BECtEDQfzKvd0NfwQmUIU/fqfkSyvjBco=;
- b=MEyc4labKMV2u1/j/GFNV91wnU6+5xHJVDpLgD3Oahri26n5iCm3CMz9vAyNQm7S8QGKe4qKfAwcaV2KzDl7opC3K8wS2jntHvqCXacgx95cVP0hyLwCUJK2q73exoEn53EpedG2arc8UtI9M6VISOpYqp6wFFbdgvLc+LdWJ51V2vlZXMT7uqV6SshUGhifpz4wAoisN8wW1jc2zE+FRiCqsrICBqrWGpnAt8f/UdJnb27WI51SKLcF7Fo8DSO3EDYEfdD8CWtaay0yQr8aFWFSKGzb2ao+mHgrU6ucbyAhu9fTsz6yY3jbBcdWhI/5kVqkut4iFFwTX/HwJp5kmQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BL4PR12MB9478.namprd12.prod.outlook.com (2603:10b6:208:58e::9)
- by BN3PR12MB9571.namprd12.prod.outlook.com (2603:10b6:408:2ca::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
- 2025 02:23:35 +0000
-Received: from BL4PR12MB9478.namprd12.prod.outlook.com
- ([fe80::b90:212f:996:6eb9]) by BL4PR12MB9478.namprd12.prod.outlook.com
- ([fe80::b90:212f:996:6eb9%4]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 02:23:35 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Balbir Singh <balbirs@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, damon@lists.linux.dev,
- dri-devel@lists.freedesktop.org, David Hildenbrand <david@redhat.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- =?utf-8?q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-Subject: Re: [v6 05/15] mm/migrate_device: handle partially mapped folios
- during collection
-Date: Mon, 22 Sep 2025 22:23:34 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <3FE3F2B9-86F9-4EED-863A-093FE3959B1A@nvidia.com>
-In-Reply-To: <20250916122128.2098535-6-balbirs@nvidia.com>
-References: <20250916122128.2098535-1-balbirs@nvidia.com>
- <20250916122128.2098535-6-balbirs@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BN9PR03CA0724.namprd03.prod.outlook.com
- (2603:10b6:408:110::9) To BL4PR12MB9478.namprd12.prod.outlook.com
- (2603:10b6:208:58e::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3440126C3AC
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758594223; cv=none; b=I2So6Uo9yQO+gwnaX8NsHsBQQYAbreql/GzkXepkALwxS2hKDO80DN6txtgsT/EeK2dIw5EGTKQvEHqlDeXBTmRbMgosyIPgAEuqk2rzG6IlkMMML8vjLzg66MA/lVEZKbGhCECKnM25M8piqHc5Fa8S0R3U99mM6KowHB89lBw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758594223; c=relaxed/simple;
+	bh=AxEZsNUhk/mWV5vb+Fvf89PIeZjyYK9xKs2X6hoAXpA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NNEXYEmNbZYAmN1iM9aE08PqYMpyP/5dG68PSr0FoBY6IPOvC1qbjtrXeNqtnZ8dgxNchRyVW6tH7If+fP0pWMX3M28caSaR5GAXamzNzCdTuXbHJiITKwGhK+4xETLygfUQ4XqYc3K7TknLuSXUiYRL1jr24iT39Hn+z1x1BP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYfyom/V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A805EC113D0;
+	Tue, 23 Sep 2025 02:23:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758594222;
+	bh=AxEZsNUhk/mWV5vb+Fvf89PIeZjyYK9xKs2X6hoAXpA=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=AYfyom/V9Xs3eeRWmmzdsDC48p2NMprYig4B0Pryuu4r9wn86ccKqS0dGI2Ncbg9m
+	 u5E92o87p72tpN9rj5lZGP6q+YOy/xC626sxtwFGIYQ/CMq18FDg5feBG8wA0xixH5
+	 uAtdPE3VaQjc36TRXNOSuPaBeStqXTVu91LDORHgq7g57ejJ/GEKjXQREdQON2jizS
+	 0Zz7O92NS48xFBvU8J+fzy+8mWAe78oZg+oY9utACLmwEWcgRKWtL50VodMtRY8EQr
+	 FUC28H73XK5zUtadpKxz3O4c9lwcPQi9Rhkuu6MMuZOnT2RHPnanIIhb6vblqR/W+0
+	 qv2oDyx38510w==
+Message-ID: <906f54dd-5c7d-47b3-b591-50197786cf33@kernel.org>
+Date: Tue, 23 Sep 2025 10:23:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL4PR12MB9478:EE_|BN3PR12MB9571:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31dd1781-ebe2-45ac-2433-08ddfa4832eb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UlZGY3dsZkIyY01xd1JqaG1DTXZnUU82S1c1S0graFZpU2FjNjA1R2FEVlo2?=
- =?utf-8?B?N0VITjhuZFkvSVo3OXMvZ1ZDazN5VlBwOXUwMEdBdkJzRmpuQ09VdlhGL1lT?=
- =?utf-8?B?aTNUaFY3azRXTUdxdGQ3SEdDMDNCUW1kaElNLzdWN25OTFdBVm5jK0k3SFdm?=
- =?utf-8?B?UkN2UjRqTVFNN0hZcXJkL0RCT0ZJRHl2bHhkTDJMY1FROGNaTDNWOTJSNDNu?=
- =?utf-8?B?UC80d1ZUVGVKZHU0VmdaWW1wUzBweFZBRTdpa09GREZMVUNLRGtMMnliYkdQ?=
- =?utf-8?B?SWJmc2pQdE5NeEhuSjQyWm5YRHoyQmdqN2ZCRzgxR0tEMVdGVWlWS0I5dGJK?=
- =?utf-8?B?ZWhIQVJaTmRrZXE3V0thcWp0ZlFTdVVlN2E1eCtMK1cyc2lCbWFMcE9CZllp?=
- =?utf-8?B?U2VFU3E2SFQyZE13bnJ5cE0rS3JTMmhibUpjaUZ2L2NNUjZCbERBYU0xb2VQ?=
- =?utf-8?B?UVZWR25TdmlBY1QyOEdQeE01MU0vc0gwblBITlMvOEM1NExYMnN4dEs5V2pL?=
- =?utf-8?B?UDhtbHlYdU5zWk5CNDA4K0UxSmtNZmZyN0c3d0s1ampVWXp0MmNObzVMSVd6?=
- =?utf-8?B?TEthVVBnOVlGMnJkVjdKWXhMMTRmQlJvTVlteGZPQ2YrbHhWR3Y4bEl2VWpo?=
- =?utf-8?B?MkhKS0YxeHBtb0txOTkwb1puL0Z3eHI1NGVPY3MyaWEzN05weitSb3poYk9k?=
- =?utf-8?B?NG5YYjVwaTFwRlliSnVNNk5qN0h0aE5IclRuSUpFSjBRZUZabGgxOGZZQnI2?=
- =?utf-8?B?MHBpN3pPQXlwMlg5T0hNZjh1L05rVWNEWENCY1I1dGtTSnAzSnByTitBYmZF?=
- =?utf-8?B?SHRQejVsVWhiU0FOeHJ2bTRrOWtKNHdGZFhodFlKMm9yZjNHN2xMTVc2NzNu?=
- =?utf-8?B?alUxa0E1VTZKRjYrU2hvY0hEVkJZVmNFQWMrKzdORGJWaU45TmwzaUVlVlZT?=
- =?utf-8?B?ZnFXcmc5Tm9QelM2K2RCMjNpRzQzZ0tLaUhpLy9ySlpNelZaK3hid2RCakNK?=
- =?utf-8?B?U3BDRXRKcUNtQTB3Q2paSlBqaGxkdE5QYTk2MWttQnE3YkZ4MWpqcVhrUzZp?=
- =?utf-8?B?VEpQa2lTQzVJTWdoY2w0bloxVlkxSXlJbytQeTRYeWRhSWd0MjNvMEF3dm1O?=
- =?utf-8?B?Y2dudWVBTVV5QlQ2RzVYMlFsM0d3Vm95UUlndGFGUjE3N0JLbDhDeXJoNlpK?=
- =?utf-8?B?MXRocG9tdFNKWUJSLzc0VVNrcVgvNTgzUjFSSVVWSXA1YWI0YTVUT1ZyRWVY?=
- =?utf-8?B?Z3FLRmY1RnhGWTlmdWFFZURIVEs1aklNUnNHT0xaMk80SVFKZmlxZjI2SFRM?=
- =?utf-8?B?WUtwVTd1MisyK3JtRXRBNDJneWt6V3J0d0JIeFpxaEdhZk1CbVBUM3Y1dVo5?=
- =?utf-8?B?NC8vOEUvc2dmaFordFJla0k4ejlidmZRNTJVUmJ1UHhFeTI3UE1xbm4wMnU4?=
- =?utf-8?B?aUZwMHUyRnRPKzRCemJXOTNKQVBzT21PaFJNNENXWkViZXhUZkdlVFM2QzhC?=
- =?utf-8?B?NENGazBRdjRQK0FTUUw3QTVjMVFWakgzWDVMUjFXMjFVNkZDTHIycU9FTk8r?=
- =?utf-8?B?anpYeU5lL25qL3ZFbytPU0ZaM2psUmsxN00zdmhzcG1Pc1ZpWUlvamlGMFgr?=
- =?utf-8?B?Yy9OK2QxTmxndXhjbmpVRU9GQnpnbWhMN0tBWFU2bVZseS9KVDZNbnRUbGc5?=
- =?utf-8?B?aENEUFhFZ1ZDdVFZTmF4OTdUMWtZQVlyUkp1Mzhta2NmZUxyaEd0dDZxMm51?=
- =?utf-8?B?elZPSHRlRzQ1ZGp2bkZzV25GNDc5WE1DNFh4a3NqWEZCRW1ST25PdWs2WFg0?=
- =?utf-8?B?bWNPeUlNbDdvL0hDckVmRnBaWlIvNTljeTRhWE1NR1gweGMxcnBpM0kyUEJX?=
- =?utf-8?B?R0c5L3dWRFp1MTRxdnNjZXNSMVNMS1RycXZmNE1TOFRLVDdpL1JDa1Z6V1Rj?=
- =?utf-8?Q?O9ThEOltgMk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR12MB9478.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bTd2bkNQdWdvYlJJdnFzWXpqRWIvRzU0alE0RFhEdlBoaUt6K3ZNMTh3RStp?=
- =?utf-8?B?UE44clVKWTV1dWtqYnVLZ1RFNmJSODNiQ3NBTzJlSWtuZlNZcCtwdTd4R1Jp?=
- =?utf-8?B?QjZ1WXJQMDhCUmZoUGNiY2g2VFRhYXNUMUxaK0hhY2cyOHU0bHNOaDBiZUl4?=
- =?utf-8?B?MlVtMTRxWHB1OWhkd3h2UVBBWlFrUDc1cUx6d2VtRUxUVmZsMjhwaHREV084?=
- =?utf-8?B?cmhRc3c3eldDemNtaUkxZlMydlZ1VHlMZ2c1QXRsM3JKRVBCcnZBUFl1TkVS?=
- =?utf-8?B?OExpMkthV3grcmRsTTRDZ0ladWNaczFLSjBWZkZweHBtSWIrWENhYVg2TjQz?=
- =?utf-8?B?OXA0VjNkaXlXVkpYRTBpTE1NbklUb2xORXZXQkhvbFFaNjZUYWFuVVNDNjdk?=
- =?utf-8?B?ams3TzRFTzlHWi9wZ3JiMGpKbWh0cm13Y1haQkJ4ZmViN1hLL1RUU2Vvb3R5?=
- =?utf-8?B?Q3BqSTcyL2JsUXA0Nk0zM1J5Rno3cFQ3T3o3QjBaVkJaOVZnbnRxK01Wd0tu?=
- =?utf-8?B?UjlkSkVwclBlcG5rb3pES0hJRUhENlRlWktHMGh0S1lQb2U5NitsNmwzdEZ6?=
- =?utf-8?B?RG5NZy8weUVaNlg5eEszZDJZdDZzaEduTWhWY01rR3U2MUh3Q3oxYnhHUUlW?=
- =?utf-8?B?NXlvQlBpVFoxMVJWQmhNbXhXRURleUpVNXJWL20wMUZsRmUxNC8vNVFJbjBt?=
- =?utf-8?B?Z21ydDBTdCtQSXVMbkpkZjlFc0dSWGtVNFVwWUthYVE2UHZPQXFjazMxTmNh?=
- =?utf-8?B?R3lXWGsrZGZPeVpteFhEUVZZc2d3QTMrck9UT0ZHL0tFeStJY1V5WDNPQ0Vh?=
- =?utf-8?B?YUxwS2VlYWtkSk14U0tudVpkQUkvZGx4WWlKd0hZMmh6QnBlcGkxL1BqTE00?=
- =?utf-8?B?SXYraDNWcXRVeW81Y2krODdEbzVBT3lCUUthdjl5Y1ZHam1tam5GSUZ6WnB5?=
- =?utf-8?B?R1ZpNlJERUptWXkvTlFXN296ZkNLcFR6V1JmVTVmT2pucDQ1bTZVQUF1VjRC?=
- =?utf-8?B?ZkNZZld0eGYrNkVGRFVTRDF5MlFwb2hFT1RncUxuZ1VDZWg3T0xzRnZHSUJm?=
- =?utf-8?B?cE1DOXR5aUQvTWZvVWpIMzlTb3hRTHFneXhHL2lleE0vYVl6YjhKbFpGUkVp?=
- =?utf-8?B?WUpoVkVDZVlvdGdlVXdCY1cyUlNESERGMFdpYjhiR29hMUlBaWVqY2RDZFB4?=
- =?utf-8?B?RE4rZ1o4a0F6VHgvU3g2cXM5R2toUG5SU0NUZVNySVlVdGNYSWppMFhTMGFC?=
- =?utf-8?B?MWtQZENuMXhaWHQxWnY3YkwyWWFTZWtmeEpKclVmckJ0OUpyTG5iMXhvbGgr?=
- =?utf-8?B?dFJTM2Z3bFNtNytRLzNsZVRFcmVvOEE2MUFvdzZHMHFwdkJhYU1oNHQyNHB5?=
- =?utf-8?B?akp2YkdSQkUzWERhbVc1UFYwUUdkOTg0Rm9iSWtGYWtCK0pxNlovRlNTZVY2?=
- =?utf-8?B?aGVCWFlhSC8yV2sySkc0UERSMW1iajJUbi9ienI0cDYva2ZEdUpGUnoveHgv?=
- =?utf-8?B?TEdyMmJ3S3JiK2RJVTlmNC9YVi9SSDdsTzBDdW1jempyZzQrc3I0d1grZ2o5?=
- =?utf-8?B?OUo2N0l1ZmlFQmdxVXRBNjlZTnhwcmNZK1FSYmRrZUR6T08rNXdWUStDL0l1?=
- =?utf-8?B?cytFdlBaay9GT2ZhQklQMHdDbTMzTHdHSFpUVW5STmJId1NxR3ZhWnFzbFMy?=
- =?utf-8?B?V0d5VzQ2bmJnd3RHcWZQM0N6NThnQXJHZmRzNWZCNGcvZVE0dEdPZU84ajZp?=
- =?utf-8?B?bFhZMWVDQWt5UHJOWGlWUWV5WWZrWCs5Rzd5SVJrUENEVHR6OWh3Mmd3WVQ2?=
- =?utf-8?B?cGs2ZGZDdjFKYzlwVHlOczNGQ2F4VlZ0bVlKQ2ZsdmY0aDR2d1RWelJPdElu?=
- =?utf-8?B?a2xrT1BSdlMyaGV1bFV4ekZQYTViKy9kaDJYVjBkWGdPUzluMElWUzB4c296?=
- =?utf-8?B?SEpkd0VTcUVuSVpLOSs0U0IxSzhQWFU5MFQ4Qm5Qd2dNKzE2NytOOU5sZWNi?=
- =?utf-8?B?RGQySmJMeGdBRzZKL1RlbGRtRjEzOG81MUFUOHljUE9pSXJ0YUFIdzdtUkpy?=
- =?utf-8?B?UlJBZk9UWFBvcDZUdEV0WFFpVGk2cGYxdUdVTDRyQmZ2Z1VEZk9icmtKcEJM?=
- =?utf-8?Q?hnpAxPFi7x0kn7mkra5eAp34i?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31dd1781-ebe2-45ac-2433-08ddfa4832eb
-X-MS-Exchange-CrossTenant-AuthSource: BL4PR12MB9478.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 02:23:35.6614
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sjjbhpF6UG2g3u62Ud8/dyIdt0+FM1HkKFCRFf/O26Ls/9ut0jDNpEe+Y4VykHx9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR12MB9571
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] erofs: Add support for FS_IOC_GETFSLABEL
+To: Bo Liu <liubo03@inspur.com>, xiang@kernel.org
+References: <20250922092937.2055-1-liubo03@inspur.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250922092937.2055-1-liubo03@inspur.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 16 Sep 2025, at 8:21, Balbir Singh wrote:
-
-> Extend migrate_vma_collect_pmd() to handle partially mapped large folios
-> that require splitting before migration can proceed.
->
-> During PTE walk in the collection phase, if a large folio is only
-> partially mapped in the migration range, it must be split to ensure the
-> folio is correctly migrated.
->
-> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
-> Cc: Rakie Kim <rakie.kim@sk.com>
-> Cc: Byungchul Park <byungchul@sk.com>
-> Cc: Gregory Price <gourry@gourry.net>
-> Cc: Ying Huang <ying.huang@linux.alibaba.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Nico Pache <npache@redhat.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Dev Jain <dev.jain@arm.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: Lyude Paul <lyude@redhat.com>
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: Mika Penttilä <mpenttil@redhat.com>
-> Cc: Matthew Brost <matthew.brost@intel.com>
-> Cc: Francois Dugast <francois.dugast@intel.com>
+On 9/22/25 17:29, Bo Liu wrote:
+> From: Bo Liu (OpenAnolis) <liubo03@inspur.com>
+> 
+> Add support for reading to the erofs volume label from the
+> FS_IOC_GETFSLABEL ioctls.
+> 
+> Signed-off-by: Bo Liu (OpenAnolis) <liubo03@inspur.com>
 > ---
->  mm/migrate_device.c | 82 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 82 insertions(+)
->
-> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
-> index abd9f6850db6..70c0601f70ea 100644
-> --- a/mm/migrate_device.c
-> +++ b/mm/migrate_device.c
-> @@ -54,6 +54,53 @@ static int migrate_vma_collect_hole(unsigned long start,
+> 
+> v1: https://lore.kernel.org/linux-erofs/20250825120617.19746-1-liubo03@inspur.com/
+> v2: https://lore.kernel.org/linux-erofs/20250826103926.4424-1-liubo03@inspur.com/
+> v3: https://lore.kernel.org/linux-erofs/20250920060455.24002-1-liubo03@inspur.com/
+> 
+> change since v3:
+> - move functions into inode.
+> - remove useless comment.
+> 
+>  fs/erofs/data.c     |  4 ++++
+>  fs/erofs/dir.c      |  4 ++++
+>  fs/erofs/inode.c    | 40 ++++++++++++++++++++++++++++++++++++----
+>  fs/erofs/internal.h |  6 ++++++
+>  fs/erofs/super.c    |  8 ++++++++
+>  5 files changed, 58 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+> index 3b1ba571c728..8ca29962a3dd 100644
+> --- a/fs/erofs/data.c
+> +++ b/fs/erofs/data.c
+> @@ -475,6 +475,10 @@ static loff_t erofs_file_llseek(struct file *file, loff_t offset, int whence)
+>  const struct file_operations erofs_file_fops = {
+>  	.llseek		= erofs_file_llseek,
+>  	.read_iter	= erofs_file_read_iter,
+> +	.unlocked_ioctl = erofs_ioctl,
+> +#ifdef CONFIG_COMPAT
+> +	.compat_ioctl   = erofs_compat_ioctl,
+> +#endif
+>  	.mmap_prepare	= erofs_file_mmap_prepare,
+>  	.get_unmapped_area = thp_get_unmapped_area,
+>  	.splice_read	= filemap_splice_read,
+> diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+> index debf469ad6bd..32b4f5aa60c9 100644
+> --- a/fs/erofs/dir.c
+> +++ b/fs/erofs/dir.c
+> @@ -123,4 +123,8 @@ const struct file_operations erofs_dir_fops = {
+>  	.llseek		= generic_file_llseek,
+>  	.read		= generic_read_dir,
+>  	.iterate_shared	= erofs_readdir,
+> +	.unlocked_ioctl = erofs_ioctl,
+> +#ifdef CONFIG_COMPAT
+> +	.compat_ioctl   = erofs_compat_ioctl,
+> +#endif
+>  };
+> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+> index 9a2f59721522..7a9a9081f890 100644
+> --- a/fs/erofs/inode.c
+> +++ b/fs/erofs/inode.c
+> @@ -213,10 +213,7 @@ static int erofs_fill_inode(struct inode *inode)
+>  	switch (inode->i_mode & S_IFMT) {
+>  	case S_IFREG:
+>  		inode->i_op = &erofs_generic_iops;
+> -		if (erofs_inode_is_data_compressed(vi->datalayout))
+> -			inode->i_fop = &generic_ro_fops;
+> -		else
+> -			inode->i_fop = &erofs_file_fops;
+> +		inode->i_fop = &erofs_file_fops;
+>  		break;
+>  	case S_IFDIR:
+>  		inode->i_op = &erofs_dir_iops;
+> @@ -341,6 +338,41 @@ int erofs_getattr(struct mnt_idmap *idmap, const struct path *path,
 >  	return 0;
 >  }
->
-> +/**
-> + * migrate_vma_split_folio() - Helper function to split a THP folio
-> + * @folio: the folio to split
-> + * @fault_page: struct page associated with the fault if any
-> + *
-> + * Returns 0 on success
-> + */
-> +static int migrate_vma_split_folio(struct folio *folio,
-> +				   struct page *fault_page)
+>  
+> +static int erofs_ioctl_get_volume_label(struct inode *inode, void __user *arg)
 > +{
+> +	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
 > +	int ret;
-> +	struct folio *fault_folio = fault_page ? page_folio(fault_page) : NULL;
-> +	struct folio *new_fault_folio = NULL;
 > +
-> +	if (folio != fault_folio) {
-> +		folio_get(folio);
-> +		folio_lock(folio);
-> +	}
+> +	if (!sbi->volume_name)
+> +		ret = clear_user(arg, 1);
+> +	else
+> +		ret = copy_to_user(arg, sbi->volume_name,
+> +				   strlen(sbi->volume_name));
 > +
-> +	ret = split_folio(folio);
-> +	if (ret) {
-> +		if (folio != fault_folio) {
-> +			folio_unlock(folio);
-> +			folio_put(folio);
-> +		}
-> +		return ret;
-> +	}
-> +
-> +	new_fault_folio = fault_page ? page_folio(fault_page) : NULL;
-> +
-> +	/*
-> +	 * Ensure the lock is held on the correct
-> +	 * folio after the split
-> +	 */
-> +	if (!new_fault_folio) {
-> +		folio_unlock(folio);
-> +		folio_put(folio);
-> +	} else if (folio != new_fault_folio) {
-> +		folio_get(new_fault_folio);
-> +		folio_lock(new_fault_folio);
-> +		folio_unlock(folio);
-> +		folio_put(folio);
-> +	}
-> +
-> +	return 0;
+> +	return ret ? -EFAULT : 0;
 > +}
 > +
->  static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  				   unsigned long start,
->  				   unsigned long end,
-> @@ -136,6 +183,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  			 * page table entry. Other special swap entries are not
->  			 * migratable, and we ignore regular swapped page.
->  			 */
-> +			struct folio *folio;
+> +long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> +{
+> +	struct inode *inode = file_inode(filp);
+> +	void __user *argp = (void __user *)arg;
 > +
->  			entry = pte_to_swp_entry(pte);
->  			if (!is_device_private_entry(entry))
->  				goto next;
-> @@ -147,6 +196,23 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  			    pgmap->owner != migrate->pgmap_owner)
->  				goto next;
->
-> +			folio = page_folio(page);
-> +			if (folio_test_large(folio)) {
-> +				int ret;
+> +	switch (cmd) {
+> +	case FS_IOC_GETFSLABEL:
+> +		return erofs_ioctl_get_volume_label(inode, argp);
+> +	default:
+> +		return -ENOTTY;
+> +	}
+> +}
 > +
-> +				pte_unmap_unlock(ptep, ptl);
-> +				ret = migrate_vma_split_folio(folio,
-> +							  migrate->fault_page);
+> +#ifdef CONFIG_COMPAT
+> +long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
+> +			unsigned long arg)
+> +{
+> +	return erofs_ioctl(filp, cmd, (unsigned long)compat_ptr(arg));
+> +}
+> +#endif
 > +
-> +				if (ret) {
-> +					ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
-> +					goto next;
-> +				}
+>  const struct inode_operations erofs_generic_iops = {
+>  	.getattr = erofs_getattr,
+>  	.listxattr = erofs_listxattr,
+> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+> index 4ccc5f0ee8df..b70902e00586 100644
+> --- a/fs/erofs/internal.h
+> +++ b/fs/erofs/internal.h
+> @@ -166,6 +166,8 @@ struct erofs_sb_info {
+>  	struct erofs_domain *domain;
+>  	char *fsid;
+>  	char *domain_id;
 > +
-> +				addr = start;
-> +				goto again;
-> +			}
+> +	char *volume_name;
+>  };
+>  
+>  #define EROFS_SB(sb) ((struct erofs_sb_info *)(sb)->s_fs_info)
+> @@ -535,6 +537,10 @@ static inline struct bio *erofs_fscache_bio_alloc(struct erofs_map_dev *mdev) {
+>  static inline void erofs_fscache_submit_bio(struct bio *bio) {}
+>  #endif
+>  
+> +long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
 
-This does not look right to me.
+#ifdef CONFIG_COMPAT
 
-The folio here is device private, but migrate_vma_split_folio()
-calls split_folio(), which cannot handle device private folios yet.
-Your change to split_folio() is in Patch 10 and should be moved
-before this patch.
+> +long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
+> +			unsigned long arg);
+
+#endif
+
+Thanks,
 
 > +
->  			mpfn = migrate_pfn(page_to_pfn(page)) |
->  					MIGRATE_PFN_MIGRATE;
->  			if (is_writable_device_private_entry(entry))
-> @@ -171,6 +237,22 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  					pgmap->owner != migrate->pgmap_owner)
->  					goto next;
->  			}
-> +			folio = page ? page_folio(page) : NULL;
-> +			if (folio && folio_test_large(folio)) {
-> +				int ret;
+>  #define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
+>  
+>  #endif	/* __EROFS_INTERNAL_H */
+> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+> index 1b529ace4db0..f1535ebe03ec 100644
+> --- a/fs/erofs/super.c
+> +++ b/fs/erofs/super.c
+> @@ -343,6 +343,13 @@ static int erofs_read_superblock(struct super_block *sb)
+>  	sbi->fixed_nsec = le32_to_cpu(dsb->fixed_nsec);
+>  	super_set_uuid(sb, (void *)dsb->uuid, sizeof(dsb->uuid));
+>  
+> +	if (dsb->volume_name[0]) {
+> +		sbi->volume_name = kstrndup(dsb->volume_name,
+> +					    sizeof(dsb->volume_name), GFP_KERNEL);
+> +		if (!sbi->volume_name)
+> +			return -ENOMEM;
+> +	}
 > +
-> +				pte_unmap_unlock(ptep, ptl);
-> +				ret = migrate_vma_split_folio(folio,
-> +							  migrate->fault_page);
-> +
-> +				if (ret) {
-> +					ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
-> +					goto next;
-> +				}
-> +
-> +				addr = start;
-> +				goto again;
-> +			}
->  			mpfn = migrate_pfn(pfn) | MIGRATE_PFN_MIGRATE;
->  			mpfn |= pte_write(pte) ? MIGRATE_PFN_WRITE : 0;
->  		}
-> -- 
-> 2.50.1
+>  	/* parse on-disk compression configurations */
+>  	ret = z_erofs_parse_cfgs(sb, dsb);
+>  	if (ret < 0)
+> @@ -822,6 +829,7 @@ static void erofs_sb_free(struct erofs_sb_info *sbi)
+>  	kfree(sbi->domain_id);
+>  	if (sbi->dif0.file)
+>  		fput(sbi->dif0.file);
+> +	kfree(sbi->volume_name);
+>  	kfree(sbi);
+>  }
+>  
 
-
---
-Best Regards,
-Yan, Zi
 
