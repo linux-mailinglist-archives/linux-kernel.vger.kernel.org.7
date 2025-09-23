@@ -1,240 +1,174 @@
-Return-Path: <linux-kernel+bounces-829218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB3CB968C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:21:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC76EB968C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83B8C1898F0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:22:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385923B7452
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8C0242D6C;
-	Tue, 23 Sep 2025 15:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5052220F2D;
+	Tue, 23 Sep 2025 15:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A+gj0jP8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="M9O4+V5H";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A+gj0jP8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="M9O4+V5H"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIXubb8J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356B71DF247
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C87A230BDB
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758640901; cv=none; b=ecbe3jIRvEU/zyOeuvOtO2D+9Cc9LEFvkyhC2G5VfMahNjuD+AakpYFd6f4VIGsbT3MZ/Wyit7k9gauTf/DmEr27FN89GiaDeCmpCTDhLBjmgV4ivJIe4Ua3VeiETqG9LrNb6Uu3oYVfvkQG+/1zDGlHonRrxV7XK5daNnZl3hE=
+	t=1758640923; cv=none; b=T4+taUxb9dHh8RU7jz5PJLxq3mu/9If48u05slXH0XImIbHOUgwGDPjsdtYkZvPG4WVd5YkZEGE9xeu7g4/hoRr4PwQ9oA0f4TprRlnFwnNPd+5LptVJhxy+POYYVpSo4MYvuj+8xRlQ3kEnh4Y0nP5BoDx+OfzUlV8co5ujtco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758640901; c=relaxed/simple;
-	bh=qt+6KRyKxPkORPP5QEsbIBjsuDn3dRtpoy1rgq8l/Xo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o6mEWY602B9MbMYETDwoQOD8+YnbCtGiOHh2/bWBynre+0yD5ct9nD3MbqZM+B3Vq2NYCYsfMoSs6DewtACVmmTw+Db4jdvQhApdCIplfkXXB1umg5o86PH2aWWh82wt2nqDe7+PlcdE42rJorBHb7gt5EqGJ4Uz947S5EXg3Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A+gj0jP8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=M9O4+V5H; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A+gj0jP8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=M9O4+V5H; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6C2881F7F4;
-	Tue, 23 Sep 2025 15:21:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758640897; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=49VtfWcgbDap/wiXADPZ3BMXozuzKI2e+wmDabn0Ky0=;
-	b=A+gj0jP8IpXodEJAtAqqIcm+yqybcP8ofnj4kNvTsn5+osiEr3Vo2EztPp5hOfdde/qpwp
-	xnkDsp6/cOeb1ILvpvlDQ97tg1bPob/AD6TQZUgsA1bGL33ERViBkw13kDNH1to4Bz7xmy
-	EIUWp8lxb7XSNphbJesf0rlBHBPOCpo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758640897;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=49VtfWcgbDap/wiXADPZ3BMXozuzKI2e+wmDabn0Ky0=;
-	b=M9O4+V5HZH4bBeG27XOytmI/UqdnDJXq9IXjHTRauorPMvdvaINcEOVoMWuLsIBFQ0KysI
-	2KbRbnbp2qXlXJDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=A+gj0jP8;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=M9O4+V5H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758640897; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=49VtfWcgbDap/wiXADPZ3BMXozuzKI2e+wmDabn0Ky0=;
-	b=A+gj0jP8IpXodEJAtAqqIcm+yqybcP8ofnj4kNvTsn5+osiEr3Vo2EztPp5hOfdde/qpwp
-	xnkDsp6/cOeb1ILvpvlDQ97tg1bPob/AD6TQZUgsA1bGL33ERViBkw13kDNH1to4Bz7xmy
-	EIUWp8lxb7XSNphbJesf0rlBHBPOCpo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758640897;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=49VtfWcgbDap/wiXADPZ3BMXozuzKI2e+wmDabn0Ky0=;
-	b=M9O4+V5HZH4bBeG27XOytmI/UqdnDJXq9IXjHTRauorPMvdvaINcEOVoMWuLsIBFQ0KysI
-	2KbRbnbp2qXlXJDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 44C7F1388C;
-	Tue, 23 Sep 2025 15:21:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lTCbDwG70mjaVwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 23 Sep 2025 15:21:37 +0000
-Message-ID: <b76b8168-bca1-4374-9626-7d7d155d79ae@suse.de>
-Date: Tue, 23 Sep 2025 17:21:36 +0200
+	s=arc-20240116; t=1758640923; c=relaxed/simple;
+	bh=7bZSGMQ5mwqXO+sLkyQfULfqF0fom0fGvmRzs68vpHE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PQatNrKSnP3fn/kerh6FHQA93DUtUwNSmSNlrWZoCqJXC4Hvj9p7OhMDT9QXfraUJm6tMUjpU1A03Z/+CS+oRAXoSE7Pa7yhg+HPaMo1ZqymNnqNxrELC2/EV+s1wrJAtXiS8hdf1kdbYlxt75K2MA6dzuL8jjfJUsjnJRTxYgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIXubb8J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7376C4CEF5
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:22:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758640922;
+	bh=7bZSGMQ5mwqXO+sLkyQfULfqF0fom0fGvmRzs68vpHE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SIXubb8JFj6Tt6qq9r8LFxQcRvsmjylM67O5ceE92hg6FhM8e88QLElIOeEfhco2/
+	 l94P8hMJPszPIhENG4sEQVJB/uYrrceYeLAx2LQ+hV45sN7BGiBqZ7ibBMoHRdWJjU
+	 KoCmA28X0JdWp8a/T/UbzdTeKHY9vHvvVNbAnAnuzHDvrjv1Fq5bstsV3wjYvlYLKX
+	 RmRHRYC1PaCb+GTOywEc6mr5JAyJNo6GhwZUxNdu21Vv7+sF2GW9+os6tHHUbtPvK5
+	 Ht0K6zGJpjMDXhW3IYhFyMvPkmwASEGEXLYkzi1EcK/3Ss0dZDXOwi3lswT5A9rz17
+	 YHGvZ5r1HmA9w==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-621132816c8so2463510eaf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:22:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVFWwoOy7dC8DqIFriNrFvVdKVW8llzT4O5ihGf5bhAsDNOwTt1Nu3kXopRtMej6CONTqJYPBeo8CTEAp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0xOsigJEcPusg2mYsTLflRRbRdgerWaxSSUn9SEhja1mqoJNq
+	oaXuQlg+13wisUO01lKtFJeqCgOV6XxeBfjqZKzYRpyOWNQW9Ui9POJaLlKf+TDkMi/01IfOFEI
+	nfqqtB2X4bfNe+xCKP1zNkNNxHlpoo+0=
+X-Google-Smtp-Source: AGHT+IFiv1EPSVY/X4ywZhPtwQ4ZHqOSLQqaU6hYqeFwwOLfMIBaaMhovazKd0vF3COc0oBn8BzEhq+gBSMDZYj/MbQ=
+X-Received: by 2002:a05:6808:1307:b0:43f:2500:6531 with SMTP id
+ 5614622812f47-43f2d31b20fmr1344148b6e.9.1758640922031; Tue, 23 Sep 2025
+ 08:22:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbcon: fix buffer overflow in fbcon_set_font
-To: Simon Richter <Simon.Richter@hogyros.de>, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: stable <stable@vger.kernel.org>
-References: <20250923150642.2441-1-Simon.Richter@hogyros.de>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250923150642.2441-1-Simon.Richter@hogyros.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 6C2881F7F4
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+References: <20250923075553.45532-1-zhangzihuan@kylinos.cn> <20250923090910.6ojsyi333ijyjmmo@lcpd911>
+In-Reply-To: <20250923090910.6ojsyi333ijyjmmo@lcpd911>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 23 Sep 2025 17:21:51 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gp61N2e1VkPzJQtgXm-DTiP1TASoy=v9mWrP=CcybmJA@mail.gmail.com>
+X-Gm-Features: AS18NWDgAsoETywuw19E7PJiSb6qJSqn4soooqyvnKgSE_2MV3k0ckiq7jEAPxE
+Message-ID: <CAJZ5v0gp61N2e1VkPzJQtgXm-DTiP1TASoy=v9mWrP=CcybmJA@mail.gmail.com>
+Subject: Re: [PATCH v2] cpufreq: Replace pointer subtraction with iteration macros
+To: Dhruva Gole <d-gole@ti.com>, Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, zhenglifeng <zhenglifeng1@huawei.com>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-thanks for the patch. The fix at [1] has meanwhile been merged into the 
-DRM tree.
-
-[1] https://patchwork.freedesktop.org/series/154848/
-
-Best regards
-Thomas
-
-Am 23.09.25 um 17:06 schrieb Simon Richter:
-> Commit 1a194e6c8e1ee745e914b0b7f50fa86c89ed13fe introduced overflow
-> checking for the font allocation size calculation, but in doing so moved
-> the addition of the size for font housekeeping data out of the kmalloc
-> call.
+On Tue, Sep 23, 2025 at 11:09=E2=80=AFAM Dhruva Gole <d-gole@ti.com> wrote:
 >
-> As a result, the calculated size now includes those extra bytes, which
-> marks the same number of bytes beyond the allocation as valid font data.
+> On Sep 23, 2025 at 15:55:53 +0800, Zihuan Zhang wrote:
+> > The cpufreq documentation suggests avoiding direct pointer subtraction
+> > when working with entries in driver_freq_table, as it is relatively
+> > costly. Instead, the recommended approach is to use the provided
+> > iteration macros:
 >
-> The crc32() call and the later memcmp() in fbcon_set_font() already perform
-> an out-of-bounds read, the latter is flagged on ppc64el:
+> Thanks for the patch,
+> Just say "macro" not "macros".
 >
->      memcmp: detected buffer overflow: 4112 byte read of buffer size 4096
+> >
+> > - cpufreq_for_each_valid_entry_idx()
+> >
+> > Replace pointer subtraction in freq_table.c with the macros
+> > cpufreq_for_each_entry_idx() and cpufreq_for_each_valid_entry_idx(), as
 >
-> when loading Lat15-Fixed16.psf.gz.
+> Where is "cpufreq_for_each_entry_idx" in this entire patch?
+> Please drop this reference, why confuse people?
 >
-> Since the addition of the extra size should only go into the kmalloc()
-> call, calculate this size in a separate variable.
+> > the index does not need initialization, avoiding unnecessary
+> > computation. This improves code clarity and follows the established
+> > cpufreq coding style.
 >
-> Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
-> Fixes: 1a194e6c8e1e ("fbcon: fix integer overflow in fbcon_do_set_font")
-> Cc: stable <stable@vger.kernel.org> #v5.9+
-> ---
->   drivers/video/fbdev/core/fbcon.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
+> You don't need to add all this to the commit message about the
+> unnecessary computation, code clarity, etc..
+> Please keep it to the point.
 >
-> diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-> index 5fade44931b8..a3fbf42c57d9 100644
-> --- a/drivers/video/fbdev/core/fbcon.c
-> +++ b/drivers/video/fbdev/core/fbcon.c
-> @@ -2518,7 +2518,7 @@ static int fbcon_set_font(struct vc_data *vc, const struct console_font *font,
->   	unsigned charcount = font->charcount;
->   	int w = font->width;
->   	int h = font->height;
-> -	int size;
-> +	int size, allocsize;
->   	int i, csum;
->   	u8 *new_data, *data = font->data;
->   	int pitch = PITCH(font->width);
-> @@ -2551,10 +2551,10 @@ static int fbcon_set_font(struct vc_data *vc, const struct console_font *font,
->   		return -EINVAL;
->   
->   	/* Check for overflow in allocation size calculation */
-> -	if (check_add_overflow(FONT_EXTRA_WORDS * sizeof(int), size, &size))
-> +	if (check_add_overflow(FONT_EXTRA_WORDS * sizeof(int), size, &allocsize))
->   		return -EINVAL;
->   
-> -	new_data = kmalloc(size, GFP_USER);
-> +	new_data = kmalloc(allocsize, GFP_USER);
->   
->   	if (!new_data)
->   		return -ENOMEM;
+> >
+> > No functional change intended.
+> >
+> > Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> >
+> > V2:
+> >  - Remove unnecessary initialization for current and remaining follow R=
+afael's suggestion
+>
+> You didn't fix Rafael's first comment [1] about the $subject, and also pl=
+ease
+> add links to previous revisions for ease of review.
+>
+> [1] > In the subject, this is just one macro, not multiple macros.
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+@Dhruva, thanks for the review!
 
+I've fixed up the shortcomings pointed out above and applied the patch
+as 6.18 material.
 
+> > ---
+> >  drivers/cpufreq/freq_table.c | 7 ++++---
+> >  1 file changed, 4 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.=
+c
+> > index d5111ee56e38..408fd8fee2e3 100644
+> > --- a/drivers/cpufreq/freq_table.c
+> > +++ b/drivers/cpufreq/freq_table.c
+> > @@ -33,16 +33,17 @@ int cpufreq_frequency_table_cpuinfo(struct cpufreq_=
+policy *policy)
+> >       struct cpufreq_frequency_table *pos, *table =3D policy->freq_tabl=
+e;
+> >       unsigned int min_freq =3D ~0;
+> >       unsigned int max_freq =3D 0;
+> > +     unsigned int i;
+> >       unsigned int freq;
+> >
+> > -     cpufreq_for_each_valid_entry(pos, table) {
+> > +     cpufreq_for_each_valid_entry_idx(pos, table, i) {
+> >               freq =3D pos->frequency;
+> >
+> >               if ((!cpufreq_boost_enabled() || !policy->boost_enabled)
+> >                   && (pos->flags & CPUFREQ_BOOST_FREQ))
+> >                       continue;
+> >
+> > -             pr_debug("table entry %u: %u kHz\n", (int)(pos - table), =
+freq);
+> > +             pr_debug("table entry %u: %u kHz\n", i, freq);
+> >               if (freq < min_freq)
+> >                       min_freq =3D freq;
+> >               if (freq > max_freq)
+> > @@ -126,7 +127,7 @@ int cpufreq_table_index_unsorted(struct cpufreq_pol=
+icy *policy,
+> >       };
+> >       struct cpufreq_frequency_table *pos;
+> >       struct cpufreq_frequency_table *table =3D policy->freq_table;
+> > -     unsigned int freq, diff, i =3D 0;
+> > +     unsigned int freq, diff, i;
+> >       int index;
+>
+> Usually, it isn't advised to touch code that's not strictly relevant to
+> your patch. However since this seems like a minor fixup it's fine by
+> me... Upto Rafael whether he prefers to have/not have this unrelated chan=
+ge.
+>
+> But atleast mention in your commit message that you're also removing the
+> initialization from cpufreq_table_index_unsorted as part of some minor cl=
+eanup
+> (which seems kinda unnecessary to me TBH in the first place)
+
+Yeah, better to say about things like this in the patch changelog.
+I've fixed that too.
 
