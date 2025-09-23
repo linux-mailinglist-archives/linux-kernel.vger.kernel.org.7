@@ -1,200 +1,190 @@
-Return-Path: <linux-kernel+bounces-828015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A9DB93BD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:36:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD346B93BDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A01AA188CD4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:36:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96672447927
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF201DB375;
-	Tue, 23 Sep 2025 00:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="QNX/AYlC"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A521A23A9;
+	Tue, 23 Sep 2025 00:43:20 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2211D9324;
-	Tue, 23 Sep 2025 00:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758587659; cv=pass; b=nImtwVSQcg0rnjyJoq0Qn9ElXXPX38RI96EHQ+21aWFmBCyxQH5IVSSeGt3z6sc00L8ECovJ0QfpL3xxGr3yY04Pt1m6OhdL0DDQ0tEqEMrdUAuhiqqnzVLBk+JySzeFpAmYAzKNkkUDMcAqbd8vNU0pfsZcwGO1fAkEjjCE8vg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758587659; c=relaxed/simple;
-	bh=HbeO3YBWGox60Objn3VTwIIdB/sw8pCdIL68T2WMvZ8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NHrYcs4u88lKhrr04YtinJE8aKhUpnRGMTJVDVg9eTyZTkRFaBzf0rN+t6opTtsK2bujLQB9AT+tEycAxw5CBoj2OBzVaOPFtzPEuvR3rLQYrEj/xt5Qt0JJrmrTK0Wbjly9jC9UkRCu02qux8+Z0qt71JFcLihMEAMVPXcuCh4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=QNX/AYlC; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1758587604; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=GWHXx3RaYCl2YIghMtUCSjmz4roPUsaty/jxCKGWFWlNtkqaeiVz3cuIFUnpTFUGGl274P6mp7xQ5tR0l6Noayh0+WA4q/L+DfpC0eYu77M4q+0J0GtSubzVJ7KOSpX8xGMyqrCPlAVBIig2x4aPwQ0llckeGHsVSJCVfrbOs38=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758587604; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=HbeO3YBWGox60Objn3VTwIIdB/sw8pCdIL68T2WMvZ8=; 
-	b=P4hkCu2agr9ueQW9vQ9QG3YvCu42BtIzdmWPSdyEVQiXG7w5A0RqmtsnqY0/ymWSD6g34vFcyRxudOWyMRz1j/3rGuk9fe7Xxpnb95CwgZ80KFYS9dZJkFnqf5ybfZDbve42haPw92RVg4LzywoX2J9LdQxd4ZfUFX/zh/vIHGI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758587604;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=HbeO3YBWGox60Objn3VTwIIdB/sw8pCdIL68T2WMvZ8=;
-	b=QNX/AYlCXbXIryRoqPJCaF+o1qiW2eD+EvqNE7Jn+ak2jfVpIzM8UiRfMxn7cyp1
-	kCFFmazDp1VxXDIdlY3Xqr3mLPCqbrYPIKZwptRrsUGGdGFQaAMbxt3q1rgQB7Xe/QK
-	Hmy2NI1TP2Lc3EyXq84/nOSDBBSngpxUJC0V04//noXHKXKo030QbhB1sz5stU1gbzr
-	eCT/cT8RkP6q6fR9v8Pz4imYvlb7MmvEaQbCR1VpNsKLfylPWgLp4Txqd7aMSWN2upa
-	j84xg8idpAwmiEVzn9gd93Lzvpt9Tz6mNmWu6vx3lb7nY8iaU0qqcW+tFIF7wc1gs0e
-	5qfmdDIpXQ==
-Received: by mx.zohomail.com with SMTPS id 1758587601439456.5502364685383;
-	Mon, 22 Sep 2025 17:33:21 -0700 (PDT)
-Message-ID: <1ac8c72206abf9f3e0a13e1fcf44be5c605f6372.camel@icenowy.me>
-Subject: Re: [PATCH v2 2/8] dt-bindings: display: add verisilicon,dc
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Rob Herring <robh@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Drew Fustini
- <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
- <wefu@redhat.com>,  Philipp Zabel <p.zabel@pengutronix.de>, Heiko Stuebner
- <heiko@sntech.de>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>,  Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Michal
- Wilczynski <m.wilczynski@samsung.com>, Han Gao <rabenda.cn@gmail.com>, Yao
- Zi <ziyao@disroot.org>, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org
-Date: Tue, 23 Sep 2025 08:33:14 +0800
-In-Reply-To: <20250922204349.GA1290045-robh@kernel.org>
-References: <20250921083446.790374-1-uwu@icenowy.me>
-	 <20250921083446.790374-3-uwu@icenowy.me>
-	 <20250922204349.GA1290045-robh@kernel.org>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3D133987;
+	Tue, 23 Sep 2025 00:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758588200; cv=none; b=qVe05l4eHHw8lxZa0K0N3aQFQbDTleHcpbgPe2xL4DoVumfJYOBnGW5Kv2lC+UEBtDEm9t/yyDSqkShv8bwNoBrHtY3ENpHaDKF7bzzgg8AASo/wMqM2U6u4S7l1QsDCK8SwLObPz0BHy++45nBXRcL8PnDlWctdkk4JnIyhpmk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758588200; c=relaxed/simple;
+	bh=HE5mfb0LAC8q603gD5bfhbi27Q1T9M8MUnpbGnPCGu4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=oXMuLj0uIVMDrFoIjXavrYpPPUu2BYMIIgdT4qRuJNsI3fWzoY3yk4wAWvjXFun1bZSTfMEMhwEo2TFKrAyJdpInrdnSt1mdOW+fwcmySf7sIxsVJXJ1t9ogAlLQP3R2S+Ep1LUjGYZnAeH16r3UXLQQO+5VFKzt8te3dCgD22U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cW1Rb0VBYzYQtv3;
+	Tue, 23 Sep 2025 08:43:07 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 315571A155D;
+	Tue, 23 Sep 2025 08:43:12 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgDn+GAe7dFoNdsCAg--.10273S3;
+	Tue, 23 Sep 2025 08:43:12 +0800 (CST)
+Subject: Re: [PATCH] md raid: fix hang when stopping arrays with metadata
+ through dm-raid
+To: Heinz Mauelshagen <heinzm@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: song@kernel.org, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
+References: <cover.1758201368.git.heinzm@redhat.com>
+ <b58dddf537d5aa7519670a4df5838e7056a37c2a.1758201368.git.heinzm@redhat.com>
+ <7df6e7be-0fd1-0277-038e-3cc4efe5bf9b@huaweicloud.com>
+ <CAM23Vxp0wKNvo2+SvfEny+-BubGxebyErCiKR31G8HyA=9DH6g@mail.gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <414ae6e0-604a-f4d3-d7ce-260bd8564927@huaweicloud.com>
+Date: Tue, 23 Sep 2025 08:43:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+In-Reply-To: <CAM23Vxp0wKNvo2+SvfEny+-BubGxebyErCiKR31G8HyA=9DH6g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDn+GAe7dFoNdsCAg--.10273S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxXFykZrWrArWxGFWxtr4DXFb_yoW5Zw1Up3
+	97K3WYkr4DXry5KwnFvF4vgFyrtFn2krZaqr17Cw1fCw1qqFn3GFWYgF4ru34qv34kAw4I
+	vw45trW3WF9YvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbSfO7UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-5ZyoIDIwMjUtMDktMjLmmJ/mnJ/kuIDnmoQgMTU6NDMgLTA1MDDvvIxSb2IgSGVycmluZ+WGmemB
-k++8mgo+IE9uIFN1biwgU2VwIDIxLCAyMDI1IGF0IDA0OjM0OjQwUE0gKzA4MDAsIEljZW5vd3kg
-Wmhlbmcgd3JvdGU6Cj4gPiBWZXJpc2lsaWNvbiBoYXMgYSBzZXJpZXMgb2YgZGlzcGxheSBjb250
-cm9sbGVycyBwcmVmaXhlZCB3aXRoIERDCj4gPiBhbmQKPiA+IHdpdGggc2VsZi1pZGVudGlmaWNh
-dGlvbiBmYWNpbGl0eSBsaWtlIHRoZWlyIEdDIHNlcmllcyBHUFVzLgo+ID4gCj4gPiBBZGQgYSBk
-ZXZpY2UgdHJlZSBiaW5kaW5nIGZvciBpdC4KPiA+IAo+ID4gRGVwZW5kcyBvbiB0aGUgc3BlY2lm
-aWMgREMgbW9kZWwsIGl0IGNhbiBoYXZlIGVpdGhlciBvbmUgb3IgdHdvCj4gPiBkaXNwbGF5Cj4g
-PiBvdXRwdXRzLCBhbmQgZWFjaCBkaXNwbGF5IG91dHB1dCBjb3VsZCBiZSBzZXQgdG8gRFBJIHNp
-Z25hbCBvciAiRFAiCj4gPiBzaWduYWwgKHdoaWNoIHNlZW1zIHRvIGJlIHNvbWUgcGxhaW4gcGFy
-YWxsZWwgYnVzIHRvIEhETUkKPiA+IGNvbnRyb2xsZXJzKS4KPiA+IAo+ID4gU2lnbmVkLW9mZi1i
-eTogSWNlbm93eSBaaGVuZyA8dXd1QGljZW5vd3kubWU+Cj4gPiAtLS0KPiA+IENoYW5nZXMgaW4g
-djI6Cj4gPiAtIEZpeGVkIG1pc3NwZWx0ICJ2ZXJzaWxpY29uIiBpbiB0aXRsZS4KPiA+IC0gTW92
-ZWQgbWluSXRlbXMgaW4gY2xvY2sgcHJvcGVydGllcyB0byBiZSBlYXJsaWVyIHRoYW4gaXRlbXMu
-Cj4gPiAtIFJlLWFsaWduZWQgbXVsdGktbGluZSBjbG9ja3MgYW5kIHJlc2V0cyBpbiBleGFtcGxl
-Lgo+ID4gCj4gPiDCoC4uLi9iaW5kaW5ncy9kaXNwbGF5L3ZlcmlzaWxpY29uLGRjLnlhbWzCoMKg
-wqDCoMKgIHwgMTI3Cj4gPiArKysrKysrKysrKysrKysrKysKPiA+IMKgMSBmaWxlIGNoYW5nZWQs
-IDEyNyBpbnNlcnRpb25zKCspCj4gPiDCoGNyZWF0ZSBtb2RlIDEwMDY0NAo+ID4gRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvdmVyaXNpbGljb24sZGMueWFtbAo+ID4g
-Cj4gPiBkaWZmIC0tZ2l0Cj4gPiBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9k
-aXNwbGF5L3ZlcmlzaWxpY29uLGRjLnlhbWwKPiA+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL2Rpc3BsYXkvdmVyaXNpbGljb24sZGMueWFtbAo+ID4gbmV3IGZpbGUgbW9kZSAx
-MDA2NDQKPiA+IGluZGV4IDAwMDAwMDAwMDAwMDAuLjA3ZmVkYzRjN2NjMTMKPiA+IC0tLSAvZGV2
-L251bGwKPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5
-L3ZlcmlzaWxpY29uLGRjLnlhbWwKPiA+IEBAIC0wLDAgKzEsMTI3IEBACj4gPiArIyBTUERYLUxp
-Y2Vuc2UtSWRlbnRpZmllcjogKEdQTC0yLjAgT1IgQlNELTItQ2xhdXNlKQo+ID4gKyVZQU1MIDEu
-Mgo+ID4gKy0tLQo+ID4gKyRpZDogaHR0cDovL2RldmljZXRyZWUub3JnL3NjaGVtYXMvZGlzcGxh
-eS92ZXJpc2lsaWNvbixkYy55YW1sIwo+ID4gKyRzY2hlbWE6IGh0dHA6Ly9kZXZpY2V0cmVlLm9y
-Zy9tZXRhLXNjaGVtYXMvY29yZS55YW1sIwo+ID4gKwo+ID4gK3RpdGxlOiBWZXJpc2lsaWNvbiBE
-Qy1zZXJpZXMgZGlzcGxheSBjb250cm9sbGVycwo+ID4gKwo+ID4gK21haW50YWluZXJzOgo+ID4g
-K8KgIC0gSWNlbm93eSBaaGVuZyA8dXd1QGljZW5vd3kubWU+Cj4gPiArCj4gPiArcHJvcGVydGll
-czoKPiA+ICvCoCAkbm9kZW5hbWU6Cj4gPiArwqDCoMKgIHBhdHRlcm46ICJeZGlzcGxheUBbMC05
-YS1mXSskIgo+ID4gKwo+ID4gK8KgIGNvbXBhdGlibGU6Cj4gPiArwqDCoMKgIGNvbnN0OiB2ZXJp
-c2lsaWNvbixkYwo+IAo+IFRoaXMgbmVlZHMgYW4gU29DIHNwZWNpZmljIGNvbXBhdGlibGUuIEdl
-bmVyYWxseSBsaWNlbnNlZCBJUAo+IGNvbXBhdGlibGVzIAo+IGFyZSB1c2VsZXNzIGJlY2F1c2Ug
-dGhlIHNwZWNzIGFyZW4ndCBwdWJsaWMgYW5kIHRoZXJlJ3MgYWx3YXlzIAo+IGludGVncmF0aW9u
-IHF1aXJrcy4KClRoaXMgbWltaWNzIHRoZSBHUFUgSVBzIGJ5IHRoZSBzYW1lIHZlbmRvciwgc2Vl
-IGdwdS92aXZhbnRlLGdjLnlhbWwgLAp3aGljaCBjb250YWluIHRoZSBleGFjdCBzYW1lIHNldCBv
-ZiBpZGVudGlmaWNhdGlvbiByZWdpc3RlcnMgKGluY2x1ZGluZwphICJjdXN0b21lciBpZCIgb25l
-IHRoYXQgY2FuIGRpZmZlcmllbmF0ZSB0aGUgc2FtZSBjb25maWd1cmVkIElQIG9uClN0YXJGaXZl
-IEpINzExMCBhbmQgVC1IZWFkIFRIMTUyMCkuCgpJZiB3ZSBjYW4gZ2V0IHZpdmFudGUsZ2MgdG8g
-d29yayB3L28gU29DIHNwZWNpZmljIGNvbXBhdGlibGUsIHRoZW4gd2UKc2hvdWxkIGJlIGFibGUg
-dG8gZ2V0IHZlcmlzaWxpY29uLGRjIHRvIHdvcmsgdG9vLgoKPiAKPiA+ICsKPiA+ICvCoCByZWc6
-Cj4gPiArwqDCoMKgIG1heEl0ZW1zOiAxCj4gPiArCj4gPiArwqAgaW50ZXJydXB0czoKPiA+ICvC
-oMKgwqAgbWF4SXRlbXM6IDEKPiA+ICsKPiA+ICvCoCBjbG9ja3M6Cj4gPiArwqDCoMKgIG1pbkl0
-ZW1zOiA0Cj4gPiArwqDCoMKgIGl0ZW1zOgo+ID4gK8KgwqDCoMKgwqAgLSBkZXNjcmlwdGlvbjog
-REMgQ29yZSBjbG9jawo+ID4gK8KgwqDCoMKgwqAgLSBkZXNjcmlwdGlvbjogRE1BIEFYSSBidXMg
-Y2xvY2sKPiA+ICvCoMKgwqDCoMKgIC0gZGVzY3JpcHRpb246IENvbmZpZ3VyYXRpb24gQUhCIGJ1
-cyBjbG9jawo+ID4gK8KgwqDCoMKgwqAgLSBkZXNjcmlwdGlvbjogUGl4ZWwgY2xvY2sgb2Ygb3V0
-cHV0IDAKPiA+ICvCoMKgwqDCoMKgIC0gZGVzY3JpcHRpb246IFBpeGVsIGNsb2NrIG9mIG91dHB1
-dCAxCj4gPiArCj4gPiArwqAgY2xvY2stbmFtZXM6Cj4gPiArwqDCoMKgIG1pbkl0ZW1zOiA0Cj4g
-PiArwqDCoMKgIGl0ZW1zOgo+ID4gK8KgwqDCoMKgwqAgLSBjb25zdDogY29yZQo+ID4gK8KgwqDC
-oMKgwqAgLSBjb25zdDogYXhpCj4gPiArwqDCoMKgwqDCoCAtIGNvbnN0OiBhaGIKPiA+ICvCoMKg
-wqDCoMKgIC0gY29uc3Q6IHBpeDAKPiA+ICvCoMKgwqDCoMKgIC0gY29uc3Q6IHBpeDEKPiA+ICsK
-PiA+ICvCoCByZXNldHM6Cj4gPiArwqDCoMKgIGl0ZW1zOgo+ID4gK8KgwqDCoMKgwqAgLSBkZXNj
-cmlwdGlvbjogREMgQ29yZSByZXNldAo+ID4gK8KgwqDCoMKgwqAgLSBkZXNjcmlwdGlvbjogRE1B
-IEFYSSBidXMgcmVzZXQKPiA+ICvCoMKgwqDCoMKgIC0gZGVzY3JpcHRpb246IENvbmZpZ3VyYXRp
-b24gQUhCIGJ1cyByZXNldAo+ID4gKwo+ID4gK8KgIHJlc2V0LW5hbWVzOgo+ID4gK8KgwqDCoCBp
-dGVtczoKPiA+ICvCoMKgwqDCoMKgIC0gY29uc3Q6IGNvcmUKPiA+ICvCoMKgwqDCoMKgIC0gY29u
-c3Q6IGF4aQo+ID4gK8KgwqDCoMKgwqAgLSBjb25zdDogYWhiCj4gPiArCj4gPiArwqAgcG9ydHM6
-Cj4gPiArwqDCoMKgICRyZWY6IC9zY2hlbWFzL2dyYXBoLnlhbWwjL3Byb3BlcnRpZXMvcG9ydHMK
-PiA+ICsKPiA+ICvCoMKgwqAgcHJvcGVydGllczoKPiA+ICvCoMKgwqDCoMKgIHBvcnRAMDoKPiA+
-ICvCoMKgwqDCoMKgwqDCoCAkcmVmOiAvc2NoZW1hcy9ncmFwaC55YW1sIy9wcm9wZXJ0aWVzL3Bv
-cnQKPiA+ICvCoMKgwqDCoMKgwqDCoCBkZXNjcmlwdGlvbjogVGhlIGZpcnN0IG91dHB1dCBjaGFu
-bmVsLCBlbmRwb2ludCAwIHNob3VsZAo+ID4gYmUKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqAgdXNl
-ZCBmb3IgRFBJIGZvcm1hdCBvdXRwdXQgYW5kIGVuZHBvaW50IDEgc2hvdWxkIGJlIHVzZWQKPiA+
-ICvCoMKgwqDCoMKgwqDCoMKgwqAgZm9yIERQIGZvcm1hdCBvdXRwdXQuCj4gPiArCj4gPiArwqDC
-oMKgwqDCoCBwb3J0QDE6Cj4gPiArwqDCoMKgwqDCoMKgwqAgJHJlZjogL3NjaGVtYXMvZ3JhcGgu
-eWFtbCMvcHJvcGVydGllcy9wb3J0Cj4gPiArwqDCoMKgwqDCoMKgwqAgZGVzY3JpcHRpb246IFRo
-ZSBzZWNvbmQgb3V0cHV0IGNoYW5uZWwgaWYgdGhlIERDIHZhcmlhbnQKPiA+ICvCoMKgwqDCoMKg
-wqDCoMKgwqAgc3VwcG9ydHMgYW5kIHVzZWQuIEZvbGxvdyB0aGUgc2FtZSBlbmRwb2ludCBhZGRy
-ZXNzaW5nCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgIHJ1bGUgd2l0aCB0aGUgZmlyc3QgcG9ydC4K
-PiA+ICsKPiA+ICvCoMKgwqAgcmVxdWlyZWQ6Cj4gPiArwqDCoMKgwqDCoCAtIHBvcnRAMAo+ID4g
-Kwo+ID4gK3JlcXVpcmVkOgo+ID4gK8KgIC0gY29tcGF0aWJsZQo+ID4gK8KgIC0gcmVnCj4gPiAr
-wqAgLSBpbnRlcnJ1cHRzCj4gPiArwqAgLSBjbG9ja3MKPiA+ICvCoCAtIGNsb2NrLW5hbWVzCj4g
-PiArwqAgLSBwb3J0cwo+ID4gKwo+ID4gK2FkZGl0aW9uYWxQcm9wZXJ0aWVzOiBmYWxzZQo+ID4g
-Kwo+ID4gK2V4YW1wbGVzOgo+ID4gK8KgIC0gfAo+ID4gK8KgwqDCoCAjaW5jbHVkZSA8ZHQtYmlu
-ZGluZ3MvaW50ZXJydXB0LWNvbnRyb2xsZXIvaXJxLmg+Cj4gPiArwqDCoMKgICNpbmNsdWRlIDxk
-dC1iaW5kaW5ncy9jbG9jay90aGVhZCx0aDE1MjAtY2xrLWFwLmg+Cj4gPiArwqDCoMKgICNpbmNs
-dWRlIDxkdC1iaW5kaW5ncy9yZXNldC90aGVhZCx0aDE1MjAtcmVzZXQuaD4KPiA+ICvCoMKgwqAg
-c29jIHsKPiA+ICvCoMKgwqDCoMKgICNhZGRyZXNzLWNlbGxzID0gPDI+Owo+ID4gK8KgwqDCoMKg
-wqAgI3NpemUtY2VsbHMgPSA8Mj47Cj4gPiArCj4gPiArwqDCoMKgwqDCoCBkaXNwbGF5QGZmZWY2
-MDAwMDAgewo+ID4gK8KgwqDCoMKgwqDCoMKgIGNvbXBhdGlibGUgPSAidmVyaXNpbGljb24sZGMi
-Owo+ID4gK8KgwqDCoMKgwqDCoMKgIHJlZyA9IDwweGZmIDB4ZWY2MDAwMDAgMHgwIDB4MTAwMDAw
-PjsKPiA+ICvCoMKgwqDCoMKgwqDCoCBpbnRlcnJ1cHRzID0gPDkzIElSUV9UWVBFX0xFVkVMX0hJ
-R0g+Owo+ID4gK8KgwqDCoMKgwqDCoMKgIGNsb2NrcyA9IDwmY2xrX3ZvIENMS19EUFVfQ0NMSz4s
-Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgPCZjbGtfdm8gQ0xLX0RQVV9B
-Q0xLPiwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JmNsa192byBDTEtf
-RFBVX0hDTEs+LAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDwmY2xrX3Zv
-IENMS19EUFVfUElYRUxDTEswPiwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oCA8JmNsa192byBDTEtfRFBVX1BJWEVMQ0xLMT47Cj4gPiArwqDCoMKgwqDCoMKgwqAgY2xvY2st
-bmFtZXMgPSAiY29yZSIsICJheGkiLCAiYWhiIiwgInBpeDAiLCAicGl4MSI7Cj4gPiArwqDCoMKg
-wqDCoMKgwqAgcmVzZXRzID0gPCZyc3QgVEgxNTIwX1JFU0VUX0lEX0RQVV9DT1JFPiwKPiA+ICvC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JnJzdCBUSDE1MjBfUkVTRVRfSURfRFBV
-X0FYST4sCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgPCZyc3QgVEgxNTIw
-X1JFU0VUX0lEX0RQVV9BSEI+Owo+ID4gK8KgwqDCoMKgwqDCoMKgIHJlc2V0LW5hbWVzID0gImNv
-cmUiLCAiYXhpIiwgImFoYiI7Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqAgcG9ydHMgewo+ID4g
-K8KgwqDCoMKgwqDCoMKgwqDCoCAjYWRkcmVzcy1jZWxscyA9IDwxPjsKPiA+ICvCoMKgwqDCoMKg
-wqDCoMKgwqAgI3NpemUtY2VsbHMgPSA8MD47Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgIHBvcnRA
-MCB7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZWcgPSA8MD47Cj4gPiArwqDCoMKgwqDC
-oMKgwqDCoMKgIH07Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgIHBvcnRAMSB7Cj4gPiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZWcgPSA8MT47Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCAjYWRkcmVzcy1jZWxscyA9IDwxPjsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICNz
-aXplLWNlbGxzID0gPDA+Owo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZHB1X291
-dF9kcDE6IGVuZHBvaW50QDEgewo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJlZyA9
-IDwxPjsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZW1vdGUtZW5kcG9pbnQgPSA8
-JmhkbWlfaW4+Owo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfTsKPiA+ICvCoMKgwqDCoMKg
-wqDCoMKgwqAgfTsKPiA+ICvCoMKgwqDCoMKgwqDCoCB9Owo+ID4gK8KgwqDCoMKgwqAgfTsKPiA+
-ICvCoMKgwqAgfTsKPiA+IC0tIAo+ID4gMi41MS4wCj4gPiAKCg==
+Hi,
+
+在 2025/09/22 21:32, Heinz Mauelshagen 写道:
+> Hi Kuai,
+> 
+> you're right, it should be flushed in the dm-raid's raid_postsuspend()
+> function by calling md_stop_writes() when upstack I/O is quiesced already.
+> So we can't use mddev_is_dm() in __md_stop_writes() as it prevents flushing
+> the bitmap with the current patch.
+> 
+> md_is_rdwr() looks is the appropriate condition, i.e. when true flush, when
+> false, don't.
+> 
+> If md_is_rdwr() is ok for that logic, I'll create another patch leaving it
+> true in postsuspend and false in the destructor call to md_stop() from
+> dm-raid.
+> 
+> Thoughts?
+> 
+Yeah, this sounds correct.
+
+Thanks,
+Kuai
+
+> - lvmguy
+> 
+> 
+> On Mon, Sep 22, 2025 at 3:09 AM Yu Kuai <yukuai1@huaweicloud.com> wrote:
+> 
+>> Hi,
+>>
+>> 在 2025/09/18 21:42, Heinz Mauelshagen 写道:
+>>> When using device-mapper's dm-raid target, stopping a RAID array can
+>> cause the
+>>> system to hang under specific conditions.
+>>>
+>>> This occurs when:
+>>>
+>>> -  A dm-raid managed device tree is suspended from top to bottom
+>>>      (the top-level RAID device is suspended first, followed by its
+>>>       underlying metadata and data devices)
+>>>
+>>> -  The top-level RAID device is then removed
+>>>
+>>> The hang happens because removing the top-level device triggers
+>> md_stop() from the
+>>> dm-raid destructor.  This function attempts to flush the write-intent
+>> bitmap, which
+>>> requires writing bitmap superblocks to the metadata sub-devices.
+>> However, since
+>>> these metadata devices are already suspended, the write operations
+>> cannot complete,
+>>> causing the system to hang.
+>>>
+>>> Fix:
+>>>
+>>> -  Prevent bitmap flushing when md_stop() is called from dm-raid contexts
+>>>      and avoid a quiescing/unquescing cycle which could also cause I/O
+>>
+>> If bitmap flush is skipped, then bitmap can still be dirty after dm-raid
+>> is stopped, and the next time when dm-raid is reloaded, looks like there
+>> will be unnecessary data resync because there are dirty bits?
+>>
+>> Thanks,
+>> Kuai
+>>
+>>>
+>>> -  Avoid any I/O operations that might occur during the
+>> quiesce/unquiesce process in md_stop()
+>>>
+>>> This ensures that RAID array teardown can complete successfully even
+>> when the
+>>> underlying devices are in a suspended state.
+>>>
+>>> Signed-off-by: Heinz Mauelshagen <heinzm@redhat.com>
+>>> ---
+>>>    drivers/md/md.c | 12 +++++++-----
+>>>    1 file changed, 7 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>>> index 4e033c26fdd4..53e15bdd9ab2 100644
+>>> --- a/drivers/md/md.c
+>>> +++ b/drivers/md/md.c
+>>> @@ -6541,12 +6541,14 @@ static void __md_stop_writes(struct mddev *mddev)
+>>>    {
+>>>        timer_delete_sync(&mddev->safemode_timer);
+>>>
+>>> -     if (mddev->pers && mddev->pers->quiesce) {
+>>> -             mddev->pers->quiesce(mddev, 1);
+>>> -             mddev->pers->quiesce(mddev, 0);
+>>> -     }
+>>> +     if (!mddev_is_dm(mddev)) {
+>>> +             if (mddev->pers && mddev->pers->quiesce) {
+>>> +                     mddev->pers->quiesce(mddev, 1);
+>>> +                     mddev->pers->quiesce(mddev, 0);
+>>> +             }
+>>>
+>>> -     mddev->bitmap_ops->flush(mddev);
+>>> +             mddev->bitmap_ops->flush(mddev);
+>>> +     }
+>>>
+>>>        if (md_is_rdwr(mddev) &&
+>>>            ((!mddev->in_sync && !mddev_is_clustered(mddev)) ||
+>>>
+>>
+>>
+> 
 
 
