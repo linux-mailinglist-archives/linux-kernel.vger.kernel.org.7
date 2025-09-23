@@ -1,220 +1,110 @@
-Return-Path: <linux-kernel+bounces-829609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AAF6B97728
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:07:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DD6B9773D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BEA01B23126
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:08:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 657212A5200
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2228513B5AE;
-	Tue, 23 Sep 2025 20:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE60730AABE;
+	Tue, 23 Sep 2025 20:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZLFqnU6d"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FbT1835m"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935062F9DAE
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 20:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEBC2FD7BA
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 20:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758658053; cv=none; b=ejsm33BxJ44LKcrOyAMLFiiIiFbR9WhGITLhwnAr9JRazFkhb/G7c9pUdmcEgenX9MXEK4a2nYNNCkaafgU3KsYIJJ8JNm45FXMDbmICdYl2RGBWxegdbHK94niCd7bUW6tGkBczRnR/w1mso9fFWIEB9Rkbl7DywUyGc+hfvC8=
+	t=1758658306; cv=none; b=EDVUWDBBPN5DD2AoZSKxjINx55ujuRbtROCGXvzMX3M45pffibJxgJXwEM4i6hd7G5/J/t17vovIZrJWWcylEbbr9uCtMJIZI5uitsPqJcQIir6aDFFgiqPKcARqmoy+S5TbpSMxfe09CBlkwZ/NPmMdthJfdMNxZ46VAoSBiw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758658053; c=relaxed/simple;
-	bh=/cNMCmhs2+2GgzKjW2K7MV1lRjCXVMAS8z1dlxsrJ7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LFHtCmunNjDPdRP/dgaiHu9fsbkOH4h7u3KWNnjXWwD98O4+lIf3AZt1IlIPi/bjLXTjsKHixKW6Zm03tLs6N5pkloAlvy3fftmHJTDJg8VTClVVfgsEJ2aaqnFqWJl3dGoY5vXM+GVqysDOdpzwQeFBOGx8Ob41iK0sRKojBBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZLFqnU6d; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758658050;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TkF/1TIVCdQ8I35UWInq/5XGtjT7LO6t3DfocUuGzJk=;
-	b=ZLFqnU6d+6znjZm1pAwJ06tM7mu3sevqZlUrT8MjnxwlkXnkTcyAXiAA6TG2ugWnXotjoI
-	TdSoPOFUBZUupSa72gNvmK6pOUe++iUCJ2LAaZQ+ZbW03xt+Z/3dlVMHZjvF6jguJV9+zY
-	anHh/hhO8vGM/0FtG3uQIIO8IH4Ytj4=
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
- [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-662-_KnEq0x9Or-YIOCSP1MBIQ-1; Tue, 23 Sep 2025 16:07:29 -0400
-X-MC-Unique: _KnEq0x9Or-YIOCSP1MBIQ-1
-X-Mimecast-MFC-AGG-ID: _KnEq0x9Or-YIOCSP1MBIQ_1758658048
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8935214d60bso139783939f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:07:28 -0700 (PDT)
+	s=arc-20240116; t=1758658306; c=relaxed/simple;
+	bh=JTP+YEG1q5M0peS7PLFW88111RMYmHr0walTvZYiwtk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hmf4fI+wkmKTDPW5tac43AJNrBrYPljnuRwwksRHM8E7FagyJzEpwm7OYzTseNbvGLNWQOr5s9lUzWM0+S4uHS2ANgrvlFF4hcthvayECNCeOelPVJOUqfeyfpg6hS0yuijMRRFlG/XHm/aK54jMsfsaYgP1/hWfy75GOO9s5Co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FbT1835m; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3306b83ebdaso5210166a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:11:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1758658304; x=1759263104; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oUa4pObT86h1jy2D2nCUjbk/1KGY1/f7404WMtXBXxs=;
+        b=FbT1835mijmeaAO7VocKZXUr/Q6icQEosDqYzGJhWdi9A0CqCqjxDYES3BkFKmnjex
+         x5FcFRkD3x9ARqqa8dUjPYi26bvgQ8MLdbZRXi1vd3GUgq8HA2fhmcQf3TbU0ORlyazR
+         SNyzQEqw0tUjN3cZ6EpXrGA58nRfNn972erTw4sMiWe/s3j/F2BsEYGMMtPHB5ijdVES
+         G82xQP1PTAOKnwPvti1P8tq/JblgcOYqgd5866I0BeEk/az/GEfwKyItp1Z2qI5jx7M1
+         ZGPT/SfM7Rqt0M89mVfw2Bw/tJu+4KiDF+eUcFlYfJmJCBnaoAEqbo9bSMh4tVyPEZQ+
+         85MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758658048; x=1759262848;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1758658304; x=1759263104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TkF/1TIVCdQ8I35UWInq/5XGtjT7LO6t3DfocUuGzJk=;
-        b=B9AH2N8h7yRmREpLvM/i6i78P8vspOYtm0QVTrBJvTdkvRzf9Ef+9kaL9B0l7XysZ3
-         Iy3BQWIFe21vVigZNjwRjJgf9OPBV6DbJC5DgoMnsz5wxpNolj6V8atzrtI3FFrtDgCH
-         BctemTC21DghbsXtOhN5ShuGaX4uY3x/O8bW0uPq1NCpZNvzQK7CydvpXxvvpP++9YLa
-         nboV7/33B/pfyplRvQ+CjZxSqbfDBDixQso7ElLJnwECE4DnQvPQ+Ani/wL4NsQE2yTC
-         JjileudfS4asHftXyVGwM6yHCn7hxIvqUi4uXLIVXmOZhEmno6Rl/n41S9crSlNNQwDE
-         ikig==
-X-Forwarded-Encrypted: i=1; AJvYcCWxen/5xrXKu3TsdN/oKylLMboNoVoChbdzViQp9i7AE1AzAV/RE09YJBfruyLJnhSvStNAJ0ienQY/36I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYgj26Sq6xRWA8b2dkP6ZSzTCzNBj1VhkmnnhDqsYo1WH23ySN
-	LbdD8b32sCa19YT1OEFHTpwhQn014plx/InYqpNU8tAF6OLZLaPF0Va2cvKdkIYkPPisR7InVyQ
-	6HFfgfGXUpNoTWwrqE4LEOQYiLeJkF8jxpyGXlPzAm6d8PBrnDMkdGFKt1jXCLTfFlw==
-X-Gm-Gg: ASbGnctVQfjumbE6AFuBdyn7YlcBGJw3gnMxur5PwwbjeEqqpKF7ZRcREj8/JWMAuE5
-	zUITvXy53ruS+SS0ueYxWB8VdmOTc2EW5CPxaMkJH1F4jEPqLqwb2Q/0u8DI3GpXdEBNaRd8Z7X
-	T6dyCMBasYnxcpaDQO0ScRLlW58xIMwximA2bBSYI5Dx6Pm5hqVdZTtFUh9jC5xSpNI+oiTcOE4
-	z1VRLgcgvNaEij4HmEZ1wmWlWbVbmdcywOcy8VjbSLY0KP1R9NilNYn58n2+3w7K4Q9Bd/f6kRT
-	Zy7cSO3nhjbO3x70ZjtDzwTUGwTeUITrqoc1oAxke5s=
-X-Received: by 2002:a05:6e02:b27:b0:423:fd07:d3fe with SMTP id e9e14a558f8ab-42581e0924amr21638635ab.2.1758658048125;
-        Tue, 23 Sep 2025 13:07:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEmMxIqHNMDHwq6jPuldjwSxK84807XGPUliuEF5qCvF8SuPWmF0LqQLkrDELCWNHqAt6pi1g==
-X-Received: by 2002:a05:6e02:b27:b0:423:fd07:d3fe with SMTP id e9e14a558f8ab-42581e0924amr21638385ab.2.1758658047638;
-        Tue, 23 Sep 2025 13:07:27 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-425813f3053sm15141865ab.21.2025.09.23.13.07.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 13:07:26 -0700 (PDT)
-Date: Tue, 23 Sep 2025 14:07:23 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Andrew Morton
- <akpm@linux-foundation.org>, Bjorn Helgaas <bhelgaas@google.com>, Christian
- =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
- dri-devel@lists.freedesktop.org, iommu@lists.linux.dev, Jens Axboe
- <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mm@kvack.org, linux-pci@vger.kernel.org, Logan Gunthorpe
- <logang@deltatee.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin
- Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- Vivek Kasireddy <vivek.kasireddy@intel.com>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v2 03/10] PCI/P2PDMA: Refactor to separate core P2P
- functionality from memory allocation
-Message-ID: <20250923140723.14c63741.alex.williamson@redhat.com>
-In-Reply-To: <20250923171228.GL10800@unreal>
-References: <cover.1757589589.git.leon@kernel.org>
-	<1e2cb89ea76a92949d06a804e3ab97478e7cacbb.1757589589.git.leon@kernel.org>
-	<20250922150032.3e3da410.alex.williamson@redhat.com>
-	<20250923171228.GL10800@unreal>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        bh=oUa4pObT86h1jy2D2nCUjbk/1KGY1/f7404WMtXBXxs=;
+        b=M8Gf9ugOqGqgjkuBtqy0tEZTVKWFbe0YQu7oQpOqA2IhkJX3TVyhoQ8tSrtFh09elV
+         plCNpSQAQxvIiBp1edkQQGmTM74l6/UQnhqF84Yd03NmgDQIPTnMJp28bMJdOv8Q8FxD
+         WkJaQ6hd3qwXBYNnGAGMFsqtailf7tnMZ7ovXpv+63eEZ+LkW/dWnoFAE3vdXC+YRA6t
+         jLlHOFBZKbL/AuaKUL8BTHzHr5HryVaUCfxi1cMLNmUJEaveqGNZ9xxKfACXogY8LOB7
+         +dQ6CYq7cCLCudeo/GikYHnHBhdNBpE7Akume0yXwO0CR8hJY+U9zd6vOjLJtnl4qIR0
+         m+Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCVG+HJH6qUZTKxkwIZItdWvL1+mxA7d3KcnkFkKG4xzMheU+FnsEktEAznqty5fBQKKxnHtqAQrlkimE7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOL7jVnS0goX4+S/HOjpb0EgyTneQHQw1ywKh8ZqSxAO7tSZXZ
+	WNPQI6gq7X4xZkExva9/ch2m/UTSGTHkFQ0jYxlT548+HNfMt+Np0ACTH3J6BwfRXRi3DwNaeHI
+	6541Mv+lQHb2FhBhWyE64uhF8QHyQWomLmd242BdF
+X-Gm-Gg: ASbGncvWmaGYJDI+orIeJLN1nyOa3YO6yixJG2xDo0VgS2ivUsgZ+1J+zdh+sYoQqxj
+	+NTpRBsqOWNCJIRha143MSa8eCLKADmeLVbRfrwUjOWyMHSkcHFSTZ4Uf7+DluMLeae5hOiVd5v
+	1HhmhQdtSocogBsjlo13S8Mf2xaPS4LcMCiZEJOzTAPr+STCORWyqO0kEEw7DMusvucbyaXtDkl
+	e6782w=
+X-Google-Smtp-Source: AGHT+IFfr973oj/4RM14CnqVmiX2e4PE3O74vfP5owIc23SKETKDt7jPpQDpXbNLtGzX165ba6mvtEDFXWf/gKTzrCI=
+X-Received: by 2002:a17:90b:2e8d:b0:32e:d015:777b with SMTP id
+ 98e67ed59e1d1-332a96fd52fmr4559524a91.18.1758658303649; Tue, 23 Sep 2025
+ 13:11:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250922200942.1534414-1-rrobaina@redhat.com> <p4866orr-o8nn-6550-89o7-s3s12s27732q@vanv.qr>
+ <CAABTaaDaOu631q+BVa+tzDJdH62+HXO-s0FT_to6VyvyLi-JCQ@mail.gmail.com> <aNLcbUp5518F_GWL@strlen.de>
+In-Reply-To: <aNLcbUp5518F_GWL@strlen.de>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 23 Sep 2025 16:11:32 -0400
+X-Gm-Features: AS18NWAxG3daqHqw7bG2TIx-RGmTbVgn4C6ruCnGJ7CCWQmmYWHkT-7bWgCbXHA
+Message-ID: <CAHC9VhSJGas4uUivmOvncyTcC-UZkdqcqkVKPzDAQL8oGkSr-g@mail.gmail.com>
+Subject: Re: [PATCH v1] audit: include source and destination ports to NETFILTER_PKT
+To: Florian Westphal <fw@strlen.de>
+Cc: Ricardo Robaina <rrobaina@redhat.com>, Jan Engelhardt <ej@inai.de>, audit@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+	coreteam@netfilter.org, eparis@redhat.com, pablo@netfilter.org, 
+	kadlec@netfilter.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 23 Sep 2025 20:12:28 +0300
-Leon Romanovsky <leon@kernel.org> wrote:
+On Tue, Sep 23, 2025 at 1:44=E2=80=AFPM Florian Westphal <fw@strlen.de> wro=
+te:
+> Ricardo Robaina <rrobaina@redhat.com> wrote:
+> > It seems DCCP has been retired by commit 2a63dd0edf38 (=E2=80=9Cnet: Re=
+tire
+> > DCCP socket.=E2=80=9D). I=E2=80=99ll work on a V2, adding cases for bot=
+h UDP-Lite and
+> > SCTP.
+>
+> Thanks.  This will also need a formal ack from audit maintainers.
 
-> On Mon, Sep 22, 2025 at 03:00:32PM -0600, Alex Williamson wrote:
-> > On Thu, 11 Sep 2025 14:33:07 +0300
-> > Leon Romanovsky <leon@kernel.org> wrote:
-> >   
-> > > From: Leon Romanovsky <leonro@nvidia.com>
-> > > 
-> > > Refactor the PCI P2PDMA subsystem to separate the core peer-to-peer DMA
-> > > functionality from the optional memory allocation layer. This creates a
-> > > two-tier architecture:
-> > > 
-> > > The core layer provides P2P mapping functionality for physical addresses
-> > > based on PCI device MMIO BARs and integrates with the DMA API for
-> > > mapping operations. This layer is required for all P2PDMA users.
-> > > 
-> > > The optional upper layer provides memory allocation capabilities
-> > > including gen_pool allocator, struct page support, and sysfs interface
-> > > for user space access.
-> > > 
-> > > This separation allows subsystems like VFIO to use only the core P2P
-> > > mapping functionality without the overhead of memory allocation features
-> > > they don't need. The core functionality is now available through the
-> > > new pci_p2pdma_enable() function that returns a p2pdma_provider
-> > > structure.
-> > > 
-> > > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > > ---
-> > >  drivers/pci/p2pdma.c       | 129 +++++++++++++++++++++++++++----------
-> > >  include/linux/pci-p2pdma.h |   5 ++
-> > >  2 files changed, 100 insertions(+), 34 deletions(-)  
-> 
-> <...>
-> 
-> > > -static int pci_p2pdma_setup(struct pci_dev *pdev)
-> > > +/**
-> > > + * pcim_p2pdma_enable - Enable peer-to-peer DMA support for a PCI device
-> > > + * @pdev: The PCI device to enable P2PDMA for
-> > > + * @bar: BAR index to get provider
-> > > + *
-> > > + * This function initializes the peer-to-peer DMA infrastructure for a PCI
-> > > + * device. It allocates and sets up the necessary data structures to support
-> > > + * P2PDMA operations, including mapping type tracking.
-> > > + */
-> > > +struct p2pdma_provider *pcim_p2pdma_enable(struct pci_dev *pdev, int bar)
-> > >  {
-> > > -	int error = -ENOMEM;
-> > >  	struct pci_p2pdma *p2p;
-> > > +	int i, ret;
-> > > +
-> > > +	p2p = rcu_dereference_protected(pdev->p2pdma, 1);
-> > > +	if (p2p)
-> > > +		/* PCI device was "rebound" to the driver */
-> > > +		return &p2p->mem[bar];
-> > >    
-> > 
-> > This seems like two separate functions rolled into one, an 'initialize
-> > providers' and a 'get provider for BAR'.  The comment above even makes
-> > it sound like only a driver re-probing a device would encounter this
-> > branch, but the use case later in vfio-pci shows it to be the common
-> > case to iterate BARs for a device.
-> > 
-> > But then later in patch 8/ and again in 10/ why exactly do we cache
-> > the provider on the vfio_pci_core_device rather than ask for it on
-> > demand from the p2pdma?  
-> 
-> In addition to what Jason said about locking. The whole p2pdma.c is
-> written with assumption that "pdev->p2pdma" pointer is assigned only
-> once during PCI device lifetime. For example, see how sysfs files
-> are exposed and accessed in p2pdma.c.
+It's in my queue, but considering we're at -rc7 this is a few notches
+down on my priority list as this isn't something I would consider for
+the upcoming merge window.
 
-Except as Jason identifies in the other thread, the p2pdma is a devm
-object, so it's assigned once during the lifetime of the driver, not
-the device.  It seems that to get the sysfs attributes exposed, a
-driver would need to call pci_p2pdma_add_resource() to setup a pool,
-but that pool setup is only done if pci_p2pdma_add_resource() itself
-calls pcim_p2pdma_enable():
-
-        p2pdma = rcu_dereference_protected(pdev->p2pdma, 1);
-        if (!p2pdma) {
-                mem = pcim_p2pdma_enable(pdev, bar);
-                if (IS_ERR(mem))
-                        return PTR_ERR(mem);
-
-                error = pci_p2pdma_setup_pool(pdev);
-		...
-        } else
-                mem = &p2pdma->mem[bar];
-
-Therefore as proposed here a device bound to vfio-pci would never have
-these sysfs attributes.
-
-> Once you initialize p2pdma, it is much easier to initialize all BARs at
-> the same time.
-
-I didn't phrase my question above well.  We can setup all the providers
-on the p2pdma at once, that's fine.  My comment is related to the
-awkward API we're creating and what seems to be gratuitously caching
-the providers on the vfio_pci_core_device when it seems much more
-logical to get the provider for a specific dmabuf and cache it on the
-vfio_pci_dma_buf object in the device feature ioctl.  We could also
-validate the provider at that point rather than the ad-hoc, parallel
-checks for MMIO BARs.  Thanks,
-
-Alex
-
+--=20
+paul-moore.com
 
