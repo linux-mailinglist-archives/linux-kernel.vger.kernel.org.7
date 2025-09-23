@@ -1,135 +1,143 @@
-Return-Path: <linux-kernel+bounces-829676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B85B979C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:47:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 497C2B979CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2F3A4A57BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:47:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0B1E2A107B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C3F31159B;
-	Tue, 23 Sep 2025 21:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB3425783F;
+	Tue, 23 Sep 2025 21:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VnmFB5IC"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CB2302CBD;
-	Tue, 23 Sep 2025 21:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ATrY/tpm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057CE252900
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 21:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758663990; cv=none; b=GQaQ8SYi9aF1NyOOfAkR14p4sVDT0i0BrnfP977YOckLh/B1F/3y/cGrwFC6W18C0jL46Vo//TYoseiNWYgutng/NRJqtpBheLGOfEpvJBnwqn68atAMxVZV3KVFIaXH9Gil85P9rmbKsppW/ypVFLSO6B+txoAJUmGWALQXxMY=
+	t=1758664081; cv=none; b=T0OL0erL/98aJPHSKEthdjehnjKuQ/1no2e+AbD8sRIeGe2IGgAs8u3ENZbgFrA4yf/fC/BkCdoJ4wMHvWikHa96L4i+fFOc3bX2HSZ6ASp3/azEInnaNXJotW49uIkX11mSeM4kYY4nZ8a9I1QLQo7FHTbmb+ha2byj9hQkNYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758663990; c=relaxed/simple;
-	bh=c0talsjJ+Z2WNoUByEezA9K8avqHThlX+xsZdpzpl04=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HK5NjcfRC2dRO279VM4/8qcB1yqIdk6hO5o307KKGnqhRAlkbA2zc3icE3ViXwloAxLrxAx6Kj4G9vrw2LtnidqV/T21LHoJYnwRVaYKATknybf6xVFxeWO4lfBfIlPjHE0To0XJjHZ5Ksxlfi//i+QWdCRLcLgBmn9ZqZECsiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VnmFB5IC; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from mrdev.corp.microsoft.com (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 5F8FA201C94C;
-	Tue, 23 Sep 2025 14:46:28 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5F8FA201C94C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1758663988;
-	bh=AqiQrPrnDYRH34965IVGlS/fEWTJe0jV5/CD4sbHfgA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VnmFB5ICwa0Dl4P3A8HtK2Taf9r54hiULNV7tBuAbqMjzEHZjSSgIuT7tMKLJ99R5
-	 5bDLy72MERUaMsvl3iZFZbaXw4pOaVy1yY3tccyKjk+DNX7+6Iz1djIpHl7r8G7cgV
-	 ajTUkcYQzoODL8RgfaWWf9NM6/9LfgWhiWd/l2PU=
-From: Mukesh Rathor <mrathor@linux.microsoft.com>
-To: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Cc: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	arnd@arndb.de
-Subject: [PATCH v2 6/6] x86/hyperv: Enable build of hypervisor crashdump collection files
-Date: Tue, 23 Sep 2025 14:46:09 -0700
-Message-Id: <20250923214609.4101554-7-mrathor@linux.microsoft.com>
-X-Mailer: git-send-email 2.36.1.vfs.0.0
-In-Reply-To: <20250923214609.4101554-1-mrathor@linux.microsoft.com>
-References: <20250923214609.4101554-1-mrathor@linux.microsoft.com>
+	s=arc-20240116; t=1758664081; c=relaxed/simple;
+	bh=ueTXvYOaTGFnlsHbGUKhUluBx5Uj1EtJeF74+R0Vgys=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ls6H74a2S2iQu4SPNR+1KynobQcZLOm+4LU7bilS9kRTd0/qyWXiUYi2qrENHQqsL+rdAFTcysbGfoSiOXtYWoBcl39idBXz+DHhh/b8tc1IxQQHXJaOO5guntr2SjhP/Y9ehhwo1Ebdgw8bUJa45YTWidstleh86bcUiGRLvKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ATrY/tpm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758664078;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=gE1p9jvRg0lKTpk9XpwlgaFgqtSuJtcDtsDSqLMg4mo=;
+	b=ATrY/tpm6rFJ55hsbZsuP7MWrDIKs6uzwmNjzAh41YItDjwItOTTNx8zqbF5iNtUN1fqnd
+	5doIpvG/U+jFBheT3VkG9jLOtASL5fx6GDuufMLzQ7SCqk2wi4JbKto/RJKJcBkggNOkgK
+	wzZYTvxQG3iCfqkF3O3H5bXAkiw+cWA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-454-MIr2Qxj5O3arFcyHoabWdQ-1; Tue, 23 Sep 2025 17:47:57 -0400
+X-MC-Unique: MIr2Qxj5O3arFcyHoabWdQ-1
+X-Mimecast-MFC-AGG-ID: MIr2Qxj5O3arFcyHoabWdQ_1758664076
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3ee888281c3so3071237f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:47:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758664076; x=1759268876;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gE1p9jvRg0lKTpk9XpwlgaFgqtSuJtcDtsDSqLMg4mo=;
+        b=t8CtcCNCz4P5dmYwJSnJVpjP5Y4jdhAbQrBJYdl+Uo5aCi8nfDK4Fd/IMZyzOviF3Y
+         jesMMZeCDg6C7A+W31Co/hoRhcbs0wuxCJtQ6zEStWpDg3Mv3z6MniSdaXHT/yMO+W9i
+         OXaR/jwxnNVlVTlsgqXoic5tJC4imRzCx8iSb5qJfNOird0m9/IlChKM4UL+GmjDHzQC
+         nBNPvlZTKdweMD0aH/5ItTQMb+LvzZaoifRLLF6yJOi25Mg0tK3ucDEXsSf2tafe9CCw
+         vJY6eKxQ2EcpmQ5uQoWBtNHj3XfY9xKGgZruBBnmR5dw0Nm4YiryQ8rms8XBdI3QyF52
+         hsjQ==
+X-Gm-Message-State: AOJu0YxpZ5b2Tt6vsrJendq5qT7+/3+tMsO29yjdUEogNnQ//EiXhiY1
+	Y8Jn7C9sxytGZlOf7or3Qe0+/2CVyaqTp7fZCl3nZ9tg8Eqg2EoFPSNxWOd04bBhXNgpXCI+8ve
+	QUMGmojeTHEg32l2CLpw6F0sRJBjXA4YMSC6EfNUdrYABwTGiDLAfx4QSD7G4Cr/yxEAkVn239G
+	ygQyyxDdv6zVHsdWF7zDSXa6kw0eO0BwtMOd0fuJO3sF8=
+X-Gm-Gg: ASbGncsiFVM3NdKvoPq7DvUPTDP7qZewdxRhjgx6N7fvoR5dmH+hHNOIKw95VS84t7w
+	BRsg0Pee7ImVHadbA8LUPOVOBZbZ0EQQH0ES2XGmU+OIR8F5b8OEzLJI9x+i36fAdcbImF3rvP4
+	6Cj3uULxFr+K7IKd5DlNKplXVF7djuqMtGg323zqJ7BdVjB1De6rTn37cYbouYoAOGf6BY1qiNN
+	iE02PzPIoEp8oDsEsZ7XfT6FMRRNvNogAtkB+A7uPBe/gDxWv/AGYboDFffKe6+GBIvn3z5tQlq
+	B1bvdhTTdc1G5qFTw4wbH4syzY2/tdj3LmM=
+X-Received: by 2002:a05:6000:1885:b0:3cd:ef83:a9a1 with SMTP id ffacd0b85a97d-405c6751cabmr3721726f8f.20.1758664075858;
+        Tue, 23 Sep 2025 14:47:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IETV4Q7KUf/fsmOmIwTE27eO2P2KhRHj2pOb3/FmZCSUNeq3z+t0xn78V0pxCEhXhxYrElaFg==
+X-Received: by 2002:a05:6000:1885:b0:3cd:ef83:a9a1 with SMTP id ffacd0b85a97d-405c6751cabmr3721711f8f.20.1758664075279;
+        Tue, 23 Sep 2025 14:47:55 -0700 (PDT)
+Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3f61703b206sm15270816f8f.6.2025.09.23.14.47.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 14:47:54 -0700 (PDT)
+Date: Tue, 23 Sep 2025 17:47:53 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: zhang jiao <zhangjiao2@cmss.chinamobile.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
+	kvm@vger.kernel.org, virtualization@lists.linux.dev,
+	netdev@vger.kernel.org
+Subject: [PATCH] vhost: vringh: Fix copy_to_iter return value check
+Message-ID: <cd637504a6e3967954a9e80fc1b75e8c0978087b.1758664002.git.mst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
+X-Mutt-Fcc: =sent
 
-Enable build of the new files introduced in the earlier commits and add
-call to do the setup during boot.
+The return value of copy_to_iter can't be negative, check whether the
+copied length is equal to the requested length instead of checking for
+negative values.
 
-Signed-off-by: Mukesh Rathor <mrathor@linux.microsoft.com>
+Cc: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Link: https://lore.kernel.org/all/20250910091739.2999-1-zhangjiao2@cmss.chinamobile.com
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 ---
- arch/x86/hyperv/Makefile        |  6 ++++++
- arch/x86/hyperv/hv_init.c       |  1 +
- arch/x86/include/asm/mshyperv.h | 13 +++++++++++++
- 3 files changed, 20 insertions(+)
 
-diff --git a/arch/x86/hyperv/Makefile b/arch/x86/hyperv/Makefile
-index d55f494f471d..6f5d97cddd80 100644
---- a/arch/x86/hyperv/Makefile
-+++ b/arch/x86/hyperv/Makefile
-@@ -5,4 +5,10 @@ obj-$(CONFIG_HYPERV_VTL_MODE)	+= hv_vtl.o
+
+Lightly tested. zhang jiao could you pls also test, either ack or
+fold into your patch?
+
+ drivers/vhost/vringh.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/vhost/vringh.c b/drivers/vhost/vringh.c
+index 0c8a17cbb22e..925858cc6096 100644
+--- a/drivers/vhost/vringh.c
++++ b/drivers/vhost/vringh.c
+@@ -1162,6 +1162,7 @@ static inline int copy_to_iotlb(const struct vringh *vrh, void *dst,
+ 		struct iov_iter iter;
+ 		u64 translated;
+ 		int ret;
++		size_t size;
  
- ifdef CONFIG_X86_64
- obj-$(CONFIG_PARAVIRT_SPINLOCKS)	+= hv_spinlock.o
-+
-+ ifdef CONFIG_MSHV_ROOT
-+  CFLAGS_REMOVE_hv_trampoline.o += -pg
-+  CFLAGS_hv_trampoline.o        += -fno-stack-protector
-+  obj-$(CONFIG_CRASH_DUMP)      += hv_crash.o hv_trampoline.o
-+ endif
- endif
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index afdbda2dd7b7..577bbd143527 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -510,6 +510,7 @@ void __init hyperv_init(void)
- 		memunmap(src);
+ 		ret = iotlb_translate(vrh, (u64)(uintptr_t)dst,
+ 				      len - total_translated, &translated,
+@@ -1179,9 +1180,9 @@ static inline int copy_to_iotlb(const struct vringh *vrh, void *dst,
+ 				      translated);
+ 		}
  
- 		hv_remap_tsc_clocksource();
-+		hv_root_crash_init();
- 	} else {
- 		hypercall_msr.guest_physical_address = vmalloc_to_pfn(hv_hypercall_pg);
- 		wrmsrq(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index abc4659f5809..207d953d7b90 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -292,6 +292,19 @@ static __always_inline u64 hv_raw_get_msr(unsigned int reg)
- }
- int hv_apicid_to_vp_index(u32 apic_id);
+-		ret = copy_to_iter(src, translated, &iter);
+-		if (ret < 0)
+-			return ret;
++		size = copy_to_iter(src, translated, &iter);
++		if (size != translated)
++			return -EFAULT;
  
-+#if IS_ENABLED(CONFIG_MSHV_ROOT)
-+
-+#ifdef CONFIG_CRASH_DUMP
-+void hv_root_crash_init(void);
-+void hv_crash_asm32(void);
-+void hv_crash_asm64(void);
-+void hv_crash_asm_end(void);
-+#else   /* CONFIG_CRASH_DUMP */
-+static inline void hv_root_crash_init(void) {}
-+#endif  /* CONFIG_CRASH_DUMP */
-+
-+#endif  /* CONFIG_MSHV_ROOT */
-+
- #else /* CONFIG_HYPERV */
- static inline void hyperv_init(void) {}
- static inline void hyperv_setup_mmu_ops(void) {}
+ 		src += translated;
+ 		dst += translated;
 -- 
-2.36.1.vfs.0.0
+MST
 
 
