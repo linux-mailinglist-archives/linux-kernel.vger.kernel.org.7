@@ -1,159 +1,169 @@
-Return-Path: <linux-kernel+bounces-829270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 029FDB96A8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:51:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB625B96AA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 084CE7B52FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:49:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A668A4A0306
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574E3267B02;
-	Tue, 23 Sep 2025 15:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D992266B56;
+	Tue, 23 Sep 2025 15:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="GnQfH0T/"
-Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pCinNdp0"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2218E2641D8
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F6616DC28
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758642660; cv=none; b=APE/ztSZb0MK/TxuPun8vtTwJrocR4fp11epV1s3aVDIVyAIO204rxCkAzyDspHQy0cReCMAPBOdG4Lpn1eeePYeumANA+8ShYNMuraC9qagasVg9imYQZflBvpYBn2mBeznwwiJd2FGHZHAHz7O3PYTrk3o//KGEUv/FlM+M/M=
+	t=1758642754; cv=none; b=kDZAeFY2LBty/srlOVeM+9yGsisV8Ayp8CPve7X6yacyPIyNUtqn9wW5I/B2CJlnYkLpoFGTPsFkLC4UivxlzsB8fovPShHaVhPkHwL4obsxiXxVUDx2phK2HoaCgpCy1iUBHGL3CSCf2xKkIVLvo3NKH0/aUfEb7XNpA6xubT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758642660; c=relaxed/simple;
-	bh=y4VwCCCCWo6KKwueZ28Bgn8vy5ceg5kGAxCvv+C/JDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvyMrgAZnoJQWEJV3HT8uB9+oObuBnGna8PpgwZ6YxHxEDgeYNro5iUDkXciRyK0yBZvqDtz3t3oFpXZgvSRIm3t4psxgUSmd+HFny6+MLL3DWc8W37Ctl37NYota8AwCl5niH8OD8OtZ/3Mkp5o6dJ40+VtEUkB+udhvcNHhX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=GnQfH0T/; arc=none smtp.client-ip=74.125.224.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-635fde9cd06so908820d50.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:50:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1758642658; x=1759247458; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3CqX8wo4OIF9dVnHcV+vNQ/UyqzH0cRogmJfYlIiKHQ=;
-        b=GnQfH0T/1VDaxK9w1S/jyW/3VyzUygOU5OoNakd5PYzvSbc+cVygspptqBCpSLvKzH
-         7S2m3iSGsySshFqtSYdIR5WQkggYuM5Amjz5u/ADfpWGNCyGDIm3pQuwV0ZN+3NW/r7l
-         YgwlMn/ipWa9jPOJJLEIecSbkUYw38z6MboZ0pv7NCZh/DrcVIIJlM2v2CPDv0zWXD3X
-         eVHY/oBGpMOqIX2cEhyaUl6Es2u15jP0hAaP3efN4PVpnwTJHluKgl+Rrh7fQMVj6a1S
-         0r/RstOkbpz2IeymhpF4uxDt2TkN9sWRs6dNR56ovrpW+3ns/LDWtDZfjiD89GiD4ad/
-         Ynig==
+	s=arc-20240116; t=1758642754; c=relaxed/simple;
+	bh=CcpwlYGznwOeaJS/CyloewOqXqfoX9eS8cXkrWgOiE0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o3Er28qrBhnE4ezScJcWuuilnJaHG2YR3pBX/D1OJ7WJ61lD5czEGGOPjW9hfg2W/4MYTDQkLIZt7WNZeIHsX9haHIRFmQIzLuJqblpgfWScwWPJGIAxLiXVU5wcV6Dj4f+15BlPvOGR0WCX8aGouni0uPKhKvR6oSWCTrZehOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pCinNdp0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58NF6XOd026349
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:52:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jnk1sjZqjciZj1NSs1no/CPobCh/tOcCuUO4swDNXRs=; b=pCinNdp0eSGl93PM
+	AOAFUXYkdAKh9WWDaXUeMLb4SMbdw713sW+aBMr09W4+PgEL5VP9SQVIieuIQNAz
+	EIZX2DkpEO6GRmBhFVS8bc15EpnfRIyztBybvPAjAIye/t7lfNdVRreNOEcXKnhX
+	dwvqkbd4Zw8WK8mvsF/33QRMsqnsjWqAf4aEDwF3AqnrF/TxmFzMaiLIFCx893z+
+	eNJTxTPRDqIb6iJsGnOJEc9oYihq7kNa92TEqqwJB/wgbcFoWzb5BE96VfGJ+NJl
+	4hHugFWbed7E70FYEFXDD8iCA+DEkWmkfchw3IOGD1OXCmnyC8cXhq+zmOmS6RUU
+	rYl1pA==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hyesfh5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:52:30 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-244570600a1so155255ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:52:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758642658; x=1759247458;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3CqX8wo4OIF9dVnHcV+vNQ/UyqzH0cRogmJfYlIiKHQ=;
-        b=SF8YhM8A+z9yD6b5V5DKpcbPoc+mnlv4tV9ZBVfWldLInVv3r8hKmyFANjLY2FstNb
-         4k0Wx+GHxrsbYS7JE8gmEcgJET7ZVZfhRR0DIQ+KWfBaH7w8wuXQ25aMofvDp9M/hhga
-         fpmcwTkLBB38tJQZC5LmrRhyMkNTzyw2sIJcvK9GPbM3iOTTVjikoxQxah82UfLS0R7S
-         8mNhpRxXRDu/WeGmD5VBIKij88F4sCp/1QnM02QTPuS/9VyMrahpnrYVJcjc9WWUW2Da
-         KcNA3DW7REEi/SIdRrJKMsjAi9XXqQlvFfv7aUurz+8L7kvxz87iDE4SJr2g7aBDOkK0
-         IodQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAhFQH/SqWgBnp1KjU0bGLXFGGSEI+rFgvp7eQabPhuOOql6nt+2axsHE0p4ll0Z8fDJlrgqhhJl/sx5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWclUJ9kRHsUH+fN8fQ/PahaVdLcAxkWwZIYUN3allZ0Ev3W0K
-	Wsxpv/2cBjncNcqdXbShAI0hcXikfpixQMpMae5Z6ydw4krwzwIaxK2pSa0D2ZuRSVE=
-X-Gm-Gg: ASbGnctUm+WJKpj21NJnYS99+GUZ7zGadDDaeC4LnVmU8XH1AJ9+ZMbhriOJA8HrSCY
-	NzDxaTZ+RgP9NvUhmKY0D6tBEoF7mcL1xoiMqEVwYtxj7+Q/0XbGQ9b7+LOrk1o3q+P8eluVYl2
-	QjJBLkSgW2G6qHPAzb3Klyo0q7Yi/uQjYoT3l+FqievuyDsFlAWK55SqEG57OE2ZxoowAcIQowp
-	i5sIUGcV29pBwz8K1RYCJaLjJf7PUlN9WdXp+wBDbv10FKjU92dAtH/i97bkh3AUqxVwrO+/L/S
-	Rtuj1B+aGHu2vhg24s2cO9NeIe8441P/mpKAxsp0QxgAcOIWG0GyfTcorcxPwAqNtlw+L6Evs6E
-	RRZPQOSfbenlHS0NOzp/VGiFJ
-X-Google-Smtp-Source: AGHT+IG9zvGVFr+YOmFk29/0ncfJA3SG76AOSrmrzmJdcjBUK8KbuId/KM4G7ZMmRoUwWwnCaf4a6g==
-X-Received: by 2002:a53:83ce:0:b0:636:3cc:28b2 with SMTP id 956f58d0204a3-6360476fce8mr1873137d50.36.1758642658091;
-        Tue, 23 Sep 2025 08:50:58 -0700 (PDT)
-Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-633bcb601d6sm5411190d50.0.2025.09.23.08.50.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 08:50:57 -0700 (PDT)
-Date: Tue, 23 Sep 2025 10:50:56 -0500
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, iommu@lists.linux.dev, 
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, zong.li@sifive.com, tjeznach@rivosinc.com, joro@8bytes.org, 
-	will@kernel.org, robin.murphy@arm.com, anup@brainfault.org, atish.patra@linux.dev, 
-	alex.williamson@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com, alex@ghiti.fr
-Subject: Re: [RFC PATCH v2 08/18] iommu/riscv: Use MSI table to enable IMSIC
- access
-Message-ID: <20250923-e459316700c55d661c060b08@orel>
-References: <20250920203851.2205115-20-ajones@ventanamicro.com>
- <20250920203851.2205115-28-ajones@ventanamicro.com>
- <20250922184336.GD1391379@nvidia.com>
- <20250922-50372a07397db3155fec49c9@orel>
- <20250922235651.GG1391379@nvidia.com>
- <87ecrx4guz.ffs@tglx>
- <20250923140646.GM1391379@nvidia.com>
- <20250923-b85e3309c54eaff1cdfddcf9@orel>
- <20250923152702.GB2608121@nvidia.com>
+        d=1e100.net; s=20230601; t=1758642749; x=1759247549;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jnk1sjZqjciZj1NSs1no/CPobCh/tOcCuUO4swDNXRs=;
+        b=nGe0YRPNXhxGphF6E6BZ4e1sHSQdJYWUEf87AhTIWWtdRPRVEndzAmHEJ8XnYuQWHC
+         y7jYiBBLdOG5FSpK9h2FjkEzPInV1mZdQS9yLYy8LShuP3SeE6E4JIArRE/kLzXcWDsQ
+         XpivR0a+nJUmtlOfVh8CfM4zOQbFdpK6f9P8+j9pibddnPQ3xAhCa4VWUM+6KmbmpuED
+         bu068cWdwYimfZ81Hgi1pCs/NV+P7FLMDp7RdCjmN4T2r2GpIYgji4k7vrZJDQ4wAeAb
+         Si0AP9hfHo3mWcpeT5vFUvoC+bNlPFEEaEj5D5igDuereEKcgvV8GxP1JNfATgsnatIm
+         UUIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVW9+4PEX+fdyhCXr4KRYSMwjO/bLeXoIYMnJS1rC+X/NqKaaiHDRin+fgzNOjAAG6iOzmu2O4+dG38ywM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOQK12iz2noGfvz7bB8clOoBwMBM/K35n6LWaTYI4nJ8zB05Wb
+	m1s8jWWZBC0SraQolPDz3hxL6jm2c0eiFeetYFEKMaQ5im9kfTXmlQBhICNWVH5+sxflLwgkRem
+	KEsvU0Nf9vJ9PqfJJRuAetUgCdfgKXHVIQsoYM9w3hWZ6s/06/L7SjSvoZIv+RtdWnk8=
+X-Gm-Gg: ASbGncuK6dkgPaTzUByTBzeSFOmW+QhT+3edmRLyzlRdPKXnY5va2AJoS8BPF6r323K
+	tC6RqrmivtqwiBfb4ocFLnbRBxrOpgnQop0T1nq4bxXLC5q4yAIxTt+U4Ga+zbhWIRgN4VScrlz
+	MG/APfsugevZluGj1CCFoxPElX3I9Cl8D1e9TgwQrRge6Trb9oYDKgyXRLSCO3WavXhtSwE2CaZ
+	PcfMjuBqh9KqwgGFvl0NYYMspzKBfi+6AzPQ1lyans813xAE15NDSswrab3RF0eA4w+lccnv5AK
+	xhYtL4tYiT095A9CygnLtTOV9ZG67w36tLk3Nx/ErKfMwctcD/bAbpbWH9/Iu/wwDgXvV+Befdj
+	N
+X-Received: by 2002:a17:902:ec86:b0:264:8a8d:92e4 with SMTP id d9443c01a7336-27cd63d00cbmr36675835ad.2.1758642748603;
+        Tue, 23 Sep 2025 08:52:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFY0gUezkzMH9Q3U378qYMV2WlHC0rAlDu3HjPX3f+WdGE++O8MRSpNyCPTDPF0+I3PqGqDkA==
+X-Received: by 2002:a17:902:ec86:b0:264:8a8d:92e4 with SMTP id d9443c01a7336-27cd63d00cbmr36675235ad.2.1758642747958;
+        Tue, 23 Sep 2025 08:52:27 -0700 (PDT)
+Received: from [192.168.0.104] ([49.205.253.122])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698033c922sm161153415ad.131.2025.09.23.08.52.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 08:52:27 -0700 (PDT)
+Message-ID: <23174908-5dc4-f4d2-3f3f-1225f999a227@oss.qualcomm.com>
+Date: Tue, 23 Sep 2025 21:22:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923152702.GB2608121@nvidia.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v1] arm64: dts: qcom: qcs6490-rb3gen2: Add firmware-name
+ to QUPv3 nodes
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mka@chromium.org, luca.weiss@fairphone.com,
+        mukesh.savaliya@oss.qualcomm.com, anup.kulkarni@oss.qualcomm.com
+References: <20250923143431.3490452-1-viken.dadhaniya@oss.qualcomm.com>
+ <cr2ehxr4udit6ddzp3pspsdrhtf4rpl5fzo6jakw2uo3gm7r6a@v3hwvkya62hx>
+Content-Language: en-US
+From: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+In-Reply-To: <cr2ehxr4udit6ddzp3pspsdrhtf4rpl5fzo6jakw2uo3gm7r6a@v3hwvkya62hx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: rRGdd9gpHfA39C33FGrQMvNXVhrPpUpz
+X-Authority-Analysis: v=2.4 cv=YMOfyQGx c=1 sm=1 tr=0 ts=68d2c23e cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=RtG+38I8ePlRmB+m5sTI6w==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=DAzQPIN5ulxls2xLjgIA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwNCBTYWx0ZWRfX1pVwi7YWTqDl
+ GiRDx7bXmd4SUnDybWkulsyJouNmSPX4/QtlxOZefYs/jfMlX8K4yMPC9cSc0l2Q72zy9qv4H5K
+ VP0Yk3H9TEgoqRiPUalHKOpYVx9K0Jm9WtU9Rg3STMEwhZgqVDEqAAr4Esst1C5sfRzrRc1a6m+
+ NgyWLgMAQGoQm1WJWAv55I0lPvM4s9BL/hOg/3ErFOsWcsnnvZm7Sqixq07xABTMJ9Et1lUU8rX
+ 1bbrGXDMhZz02WMyM52gdWFiCL1Y8aT5IoyN921VjgBuyDngDsqomWtH8nwVjwFFSqtiPEZfjQ3
+ u4StUj6JrKQVF4QhraeaBvqtfurjmd+8Fkd4/vzsluObKsMU19G22+Bd4gPec0CEvbNVdqS4w7N
+ lBeVBQQj
+X-Proofpoint-ORIG-GUID: rRGdd9gpHfA39C33FGrQMvNXVhrPpUpz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-23_03,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200004
 
-On Tue, Sep 23, 2025 at 12:27:02PM -0300, Jason Gunthorpe wrote:
-> On Tue, Sep 23, 2025 at 10:12:42AM -0500, Andrew Jones wrote:
-> > be able to reach be reachable by managing the IOMMU MSI table. This gives
-> > us some level of isolation, but there is still the possibility a device
-> > may raise an interrupt it should not be able to when its irqs are affined
-> > to the same CPU as another device's
-> 
-> Yes, exactly, this is the problem with basic VFIO support as there is
-> no general idea of a virtualization context..
-> 
-> > and the malicious/broken device uses the wrong MSI data.
-> 
-> And to be clear it is not a malicious/broken device at issue here. In
-> PCI MSI is simple a DMA to a magic address. *ANY* device can be
-> commanded by system software to generate *ANY* address/data on PCIe.
-> 
-> So any VFIO user can effectively generate any MSI it wants. It isn't a
-> matter of device brokeness.
-> 
-> > near isolated enough. However, for the virt case, Addr is set to guest
-> > interrupt files (something like virtual IMSICs) which means there will be
-> > no other host device or other guest device irqs sharing those Addrs.
-> > Interrupts for devices assigned to guests are truly isolated (not within
-> > the guest, but we need nested support to fully isolate within the guest
-> > anyway).
-> 
-> At least this is something, and I do think this is enough security to
-> be a useful solution. However, Linux has no existing support for the
-> idea of a VFIO device that only has access to "guest" interrupt HW.
-> 
-> Presumably this is direct injection only now?
 
-Yup
+
+On 9/23/2025 8:43 PM, Dmitry Baryshkov wrote:
+> On Tue, Sep 23, 2025 at 08:04:31PM +0530, Viken Dadhaniya wrote:
+>> Add firmware-name property to qupv3_id_0 and qupv3_id_1 to specify the
+>> QUPv3 firmware ELF (qupv3fw.elf).
+> 
+> Please start by describing the problem you are trying to solve.
+
+Sure, I’ll update it and send v2.
 
 > 
-> I'm not even sure I could give you a sketch what that would look like,
-> it involves co-operation between so many orthogonal layers it is hard
-> to imagine :\
+>>
+>> Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> index 18cea8812001..4e361580ddf1 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> @@ -1009,10 +1009,12 @@ &qup_uart7_tx {
+>>  };
+>>  
+>>  &qupv3_id_0 {
+>> +	firmware-name = "qcom/qcs6490/qupv3fw.elf";
+>>  	status = "okay";
+>>  };
+>>  
+>>  &qupv3_id_1 {
+>> +	firmware-name = "qcom/qcs6490/qupv3fw.elf";
+>>  	status = "okay";
+>>  };
+>>  
+>> -- 
+>> 2.34.1
+>>
 > 
-> kvm provides the virt context, iommufd controls the MSI aperture, irq
-> remapping controls the remap table, vfio sets interrupts..
-> 
-> VFIO needs to say 'irq layer only establish an interrupt on this KVM'
-> as some enforced mode ?
->
-
-Yes, this is the part that I'd like to lean on you for, since I understand
-we want to avoid too much KVM/virt special casing for VFIO/IOMMUFD. I was
-thinking that if I bit the bullet and implemented nested support than when
-nesting was selected it would be apparent we're in virt context. However,
-I was hoping to pull together a solution that works with current QEMU and
-VFIO too.
-
-Thanks,
-drew
 
