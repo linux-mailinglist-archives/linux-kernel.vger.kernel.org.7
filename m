@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-828515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF94B94C23
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:26:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A0AB9499B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 512D8164618
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C6732E3524
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0460314B66;
-	Tue, 23 Sep 2025 07:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FC730F928;
+	Tue, 23 Sep 2025 06:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="mDWxXO5f"
-Received: from mail-m155104.qiye.163.com (mail-m155104.qiye.163.com [101.71.155.104])
+	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="V2V4U78C"
+Received: from mail-m32118.qiye.163.com (mail-m32118.qiye.163.com [220.197.32.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38F331196F;
-	Tue, 23 Sep 2025 07:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B8C30DD24;
+	Tue, 23 Sep 2025 06:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758612379; cv=none; b=kQPf+j3jfN6pXnQXKyCD2F2jyRnrRL4Nnh0K5deIdzCti3sV4xlcIcY1CzfyrAHjXQ1gGqQLz8hPd21xaaHXqBYTVSTN6ipIqIyQeBBMflaEuS69WT+5yklKjk477kuhRs/AH+IyTZ7Xq/fFEeJRxPQ/BFB31Ae15yFm/7JSDrw=
+	t=1758609968; cv=none; b=Pzku2L/UuhcSmaG4sKqFpjMF8AKVZahJCybeYytsZDhKjxBoMnh6aQtrbWR2qazKzpPyCb4Fu8g8HN1WdkK2nY8mVCMZ6Dt1qGMAW2Sy7kjzJWM0/UxnhAPp9NmkfuJjIbSOmkxlCuCmEU0e4pJ1bhucB9ErtC9bkLtV4fnEBTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758612379; c=relaxed/simple;
-	bh=D/w1Y1iVuxoaJKfCtX6pNsQnKymjUqB4eNMUUWKvWCY=;
+	s=arc-20240116; t=1758609968; c=relaxed/simple;
+	bh=DySTBlwx8SxAqSzT6Ick6Jr1zhm5KCXfBY5QxqKIbyw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=o+HIBvdWd/ihxosB5FvtpLK8mYj8UI8jR29U1u8tYzFEozvpTb10CeIzN3TDlo3+sqzRRocLkGJSPsghVvHch8i1kOnx3DpWrMs5vr0iYogl2dJp/G6mRAPKj1ZNjOUnIHJ7t15RsbTBLzlOAl834K2D9hjeRctb+yHijudOscM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=mDWxXO5f; arc=none smtp.client-ip=101.71.155.104
+	 In-Reply-To:To:Cc; b=EcHiPDgfdgXFzYxc+rw16K3Ca/ZI1dVB/g0AW1CatROEdCZB+A0JtskcZyqW75r0YiFjFDT3/wbDd0TYIHrtURVJFyzQjRcmx3rT94+Voxt4o6E/OO6gzUMsNPDIf55xamSBrc/is3lv0jqv6EDg69wntl26YSaGzBxHifPEVtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=V2V4U78C; arc=none smtp.client-ip=220.197.32.118
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
 Received: from [127.0.1.1] (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 23bdebfe3;
-	Tue, 23 Sep 2025 14:10:33 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 23bdebff2;
+	Tue, 23 Sep 2025 14:10:36 +0800 (GMT+08:00)
 From: Albert Yang <yangzh0906@thundersoft.com>
-Date: Tue, 23 Sep 2025 14:10:10 +0800
-Subject: [PATCH 4/9] dt-bindings: mmc: add binding for BST DWCMSHC SDHCI
- controller
+Date: Tue, 23 Sep 2025 14:10:12 +0800
+Subject: [PATCH 6/9] mmc: sdhci: allow drivers to pre-allocate bounce
+ buffer
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250923-v4-patch-final-v1-4-2283ad7cbf88@thundersoft.com>
+Message-Id: <20250923-v4-patch-final-v1-6-2283ad7cbf88@thundersoft.com>
 References: <20250923-v4-patch-final-v1-0-2283ad7cbf88@thundersoft.com>
 In-Reply-To: <20250923-v4-patch-final-v1-0-2283ad7cbf88@thundersoft.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -58,135 +58,77 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org, 
  soc@lists.linux.dev, Albert Yang <yangzh0906@thundersoft.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758607828; l=3433;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758607828; l=2071;
  i=yangzh0906@thundersoft.com; s=20250814; h=from:subject:message-id;
- bh=D/w1Y1iVuxoaJKfCtX6pNsQnKymjUqB4eNMUUWKvWCY=;
- b=9y70kes2Rz0dOny17wbciJHU43o4HZRoaSvtxFBCTfTF8Op4ezQn9gcxOb/9g/ZNiWUhalM15
- /1e4NP9405iBEucV5VDbo/AwX6oWNbK08gxPo3Jc9fit8GlVXsHzjIK
+ bh=DySTBlwx8SxAqSzT6Ick6Jr1zhm5KCXfBY5QxqKIbyw=;
+ b=ix7Cn5PKa7gJNY0yDsFsWNW8nlAWEJhuVied4sPs3/t6HoDAE1rrDpPzL4sWN7KI3HOEa6wER
+ xtlQvg6W2SxDUlvOWg09hjIBfy1okIjtpKO7HdTwkcnk6W89rj64E43
 X-Developer-Key: i=yangzh0906@thundersoft.com; a=ed25519;
  pk=bEcgALL9KpUg/m7zH44r50xa/re91dI9SA0vGV1/bu4=
-X-HM-Tid: 0a997531f9c209cckunmfc27e25b4e0298
+X-HM-Tid: 0a99753204e409cckunmfc27e25b4e02ee
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZQkIYVh1PShpNSk0dSBoZHlYVFAkWGhdVEwETFh
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaSkkaVhpISUIZHksfGE1MSFYVFAkWGhdVEwETFh
 	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
 	tLVUpCS0tZBg++
 DKIM-Signature: a=rsa-sha256;
-	b=mDWxXO5fUcYrzXAEpL6WHUPc1f8Y4Pa3BHfM/c7I4NxLWGD3shbVqN5OsblcVlLmcrFGBjHYKXHzgAAdhTnI8Ekci5CYMf+9zNK0eRVIkGLUHVYTxipu1cbbZ4j+RtywhMO0mpMzoKzjULkNTWR7wW+ZA5wN/rjhl99EQmwNRUI=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=kzr6ecyyae77VtZYq1ReJ86cHFdZjbBe3GMXfzbB9gc=;
+	b=V2V4U78ClyaDeCqDoYNIU6wni98ujkNU0fsI8Q634rn082Fjc6DyzYXjtUdnJHdQx2SOkllDk4xgZX2twmtmBI7Qa1EQGUFLDhlOJlojggJ02tl2G76z0jtUrSXTH9wAKzdJKcxaIxLarDBw5/eLdDdyRj84YkJoUJwhfz8B60g=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
+	bh=4zdOECm9UDt4mSRVWdAJlFg918s9UR2BUDdjk/GLuac=;
 	h=date:mime-version:subject:message-id:from;
 
-Add device tree binding documentation for the Black Sesame Technologies
-(BST) DWCMSHC SDHCI controller.
+In sdhci_allocate_bounce_buffer(), add an early path that respects a
+driver-provided pre-allocated bounce buffer (host->bounce_buffer).
 
-This binding describes the required and optional properties for the
-bst,c1200-dwcmshc-sdhci compatible controller, including register layout,
-interrupts, bus width, clock configuration, and other controller-specific
-features.
+If the buffer is already allocated by the driver (e.g. coherent/SRAM
+buffer needed for platforms with 32-bit DMA constraints), just compute
+max_blocks from host->bounce_buffer_size and jump to the common "out"
+path to set mmc->max_*.
 
+This enables platform drivers to allocate the bounce buffer before
+sdhci_add_host(), avoiding starting the host without the buffer ready
+and aligning with the guidance from review.
+
+No functional change for drivers that do not pre-allocate the buffer.
+
+drivers/mmc/host/sdhci.c (sdhci_allocate_bounce_buffer): Handle
+pre-allocated bounce buffer and fall through to set mmc->max_*.
+
+Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
+Link: https://lore.kernel.org/lkml/2b23bcb9-abc7-4667-b939-a19ecae935a2@intel.com/
 Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
 
 ---
 Changes for v4:
-- Remove Signed-off-by line for Ge Gordon
-- Change `$ref: mmc-controller.yaml#` to `$ref: sdhci-common.yaml#`
-- Change compatible string from `bst,c1200-dwcmshc-sdhci` to `bst,c1200-sdhci`
-
-Changes for v3:
-- Switch reg schema from maxItems to explicit items with per-entry descriptions
-- Improve example: add irq.h include and wrap under a bus node with address/size cells
-- Drop status = "disabled" from example; keep example concise
-- Add Signed-off-by: Ge Gordon
-
-Changes for v2:
-- Simplify description, remove redundant paragraphs
-- Update $schema to reference mmc-specific scheme
-- Correct compatible to add soc name (bst,c1200-dwcmshc-sdhci)
-- Remove all redundant property descriptions
-- Drop invalid mmc_crm_base/size properties, use reg for all address ranges
-- Clean up required properties to only essential entries
-- Standardize example DTS format, fix reg syntax and property ordering
-- Remove additionalProperties: true
+- Add new patch by Suggested-by: Adrian Hunter
 ---
- .../devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml | 70 ++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ drivers/mmc/host/sdhci.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..7f16e6db39690cb7621d167bf7bc492f814ea693
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml
-@@ -0,0 +1,70 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/bst,dwcmshc-sdhci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Black Sesame Technologies DWCMSHC SDHCI Controller
-+
-+maintainers:
-+  - Ge Gordon <gordon.ge@bst.ai>
-+
-+allOf:
-+  - $ref: sdhci-common.yaml#
-+
-+properties:
-+  compatible:
-+    const: bst,c1200-sdhci
-+
-+  reg:
-+    items:
-+      - description: Core SDHCI registers
-+      - description: CRM registers
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: core
-+
-+  memory-region:
-+    maxItems: 1
-+
-+  dma-coherent: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    bus {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        mmc@22200000 {
-+            compatible = "bst,c1200-dwcmshc-sdhci";
-+            reg = <0x0 0x22200000 0x0 0x1000>,
-+                  <0x0 0x23006000 0x0 0x1000>;
-+            interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks = <&clk_mmc>;
-+            clock-names = "core";
-+            memory-region = <&mmc0_reserved>;
-+            max-frequency = <200000000>;
-+            bus-width = <8>;
-+            non-removable;
-+            dma-coherent;
-+        };
-+    };
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 3a17821efa5ca92c6c29141d8fcb9ebf58355cc7..03fbe30cb205e16b924481caa44f0979d230f380 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -4193,6 +4193,12 @@ static void sdhci_allocate_bounce_buffer(struct sdhci_host *host)
+ 	unsigned int bounce_size;
+ 	int ret;
+ 
++	/* Drivers may have already allocated the buffer */
++	if (host->bounce_buffer) {
++		bounce_size = host->bounce_buffer_size;
++		max_blocks = bounce_size / 512;
++		goto out;
++	}
+ 	/*
+ 	 * Cap the bounce buffer at 64KB. Using a bigger bounce buffer
+ 	 * has diminishing returns, this is probably because SD/MMC
+@@ -4241,6 +4247,7 @@ static void sdhci_allocate_bounce_buffer(struct sdhci_host *host)
+ 
+ 	host->bounce_buffer_size = bounce_size;
+ 
++out:
+ 	/* Lie about this since we're bouncing */
+ 	mmc->max_segs = max_blocks;
+ 	mmc->max_seg_size = bounce_size;
 
 -- 
 2.43.0
