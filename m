@@ -1,225 +1,144 @@
-Return-Path: <linux-kernel+bounces-829248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37EF2B969AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:33:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CD8B96963
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E18D4320C23
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:33:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65EB517D240
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8B225DAFF;
-	Tue, 23 Sep 2025 15:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65389212551;
+	Tue, 23 Sep 2025 15:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHSLMlvH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hy5Vo7yB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6982236E8;
-	Tue, 23 Sep 2025 15:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014551E0B9C
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758641542; cv=none; b=QI15NKBRIv73w0XnW/RH1Gvrp2cZvZTw498RhkxP/0VUuwpVM2F03kRq47KvIV/gT1qiKmVtPrWzn6dZ0P4QAg5HeQWI2HBxlD0M+RKqqBGNRtbsdvtV9r34gOCqj/8TQGL3AsbEdQhrrVwMFcVReNdQcBwTsXibuJAfes1jM/M=
+	t=1758641457; cv=none; b=GKv8nAjcSdnVjX0Z/7prtWD6sa5HeycntJLix9lM3R+NTgMDWhS2E+XYpiE6iNgqCZ+J6JxnqJtEOqgmoRZcmWdJb038XYpiCkAcrHsGOhOCMuJrkLXIGdelrOTOsgUlUczM1KDdsYJd+HodB8xY578+9vcrDhhMXFlz24U9pWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758641542; c=relaxed/simple;
-	bh=Ech0Y3Z2+FahOw7djsuUKCEMTU+S4YVglkVd+9aU4ns=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=NFHQ9X9Z0dlwOaq0sgbJfoNIhAorJHFw8pzkpC5/7MDjDwL+ZPhRaJOJL7jIiC8tgH0S/vGHF/6zpmGW5tFNdwFSYJHx/t3L7LdMg0AujhOKT+IEDijgNlHrS4x/OXSBoEvtEf+13pkoOemP+Q8WP3qROqePAk3UZKuFoWfgCg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHSLMlvH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0292C4CEF5;
-	Tue, 23 Sep 2025 15:32:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758641541;
-	bh=Ech0Y3Z2+FahOw7djsuUKCEMTU+S4YVglkVd+9aU4ns=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GHSLMlvH0uosxIJgWDv6lK+8YwlFOPA3LKVR344Wf1iAzXdw4rLp1v66Shbv41RDN
-	 OI7WN+5f2R3ZlrwwVOrhKanqag20uq8KTaqscVnuaY28VMyMzkuhveQ6lg8feiLjGQ
-	 N2TrsCLjiagO4vnGdZZTRHytXFXq4FSBczsIUKy1rCEk6c5W7bWt6wGtZ4/JtUtQDE
-	 s8Kc+ul6rWHn/Aogd1b1IAnr8mKoGghEiuPrlZ4cTD2XJcjSbSepRWELfEf0k6hbMI
-	 kQFdJhTQNaZSOMui7KCnuKHbyfrIG+h4w6egVP45tFRGwL5i3A29fezCfy0nCUD2aV
-	 /Qqgv4FZk6Jzg==
-Date: Wed, 24 Sep 2025 00:32:15 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Feng Yang <yangfeng59949@163.com>
-Cc: alexei.starovoitov@gmail.com, andrii@kernel.org, ast@kernel.org,
- bpf@vger.kernel.org, daniel@iogearbox.net, eddyz87@gmail.com,
- haoluo@google.com, john.fastabend@gmail.com, jolsa@kernel.org,
- kpsingh@kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
- song@kernel.org, yonghong.song@linux.dev
-Subject: Re: [BUG] Failed to obtain stack trace via bpf_get_stackid on ARM64
- architecture
-Message-Id: <20250924003215.365db154e1fc79163d9d80fe@kernel.org>
-In-Reply-To: <20250922021531.105670-1-yangfeng59949@163.com>
-References: <20250921223037.f8df26b59d60b8b3f7cf2d53@kernel.org>
-	<20250922021531.105670-1-yangfeng59949@163.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758641457; c=relaxed/simple;
+	bh=rCVw1adcjYkdtfuE+IpJkIeek0eVQVlqCw6CkfcUBXA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=Tzz268Cz7VSWhDxGZ+bCti+IXpdJYvoELJCVZkgwWcm1kpM4b2ZDXzYQR6zAhcGxrxOJoV3/scfxspNTXIr5GG/NlXbRYqN+YzS0hQGuf9ZoQ5W8uYCuCCuH4ZFe0G2WWT5l4PpSlfsb+nc2I8GIfCtXWsYz7z74MaClIUYBN5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hy5Vo7yB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758641454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Gepj0GovVH3AS/Kf3XZjwnwXf+WGuvdxszVKLwmSkUk=;
+	b=Hy5Vo7yB5IdnkpSIQcwJKUOljxcXH37m3VjtcGfXVt7up2nu5AVvuQXTuZoqHrf1BGcIbe
+	JQao53dunhZhbcCEyv+UKRxkp3kjMB/uUotc7Fp+R25iFN38n7q+38CfPGf85th4yaSqaY
+	EGQR92lr1VQuw0cjZnuaQKjYc1kC5e4=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-653-Is6LQT77NyiaptB_lKTIGQ-1; Tue,
+ 23 Sep 2025 11:30:53 -0400
+X-MC-Unique: Is6LQT77NyiaptB_lKTIGQ-1
+X-Mimecast-MFC-AGG-ID: Is6LQT77NyiaptB_lKTIGQ_1758641451
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1821019560BB;
+	Tue, 23 Sep 2025 15:30:51 +0000 (UTC)
+Received: from t14ultra.redhat.com (unknown [10.45.224.118])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7C73B19560B8;
+	Tue, 23 Sep 2025 15:30:47 +0000 (UTC)
+From: Jan Stancek <jstancek@redhat.com>
+To: maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	linuxppc-dev@lists.ozlabs.org
+Cc: npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	jstancek@redhat.com,
+	linux-kernel@vger.kernel.org,
+	joe.lawrence@redhat.com
+Subject: [PATCH RESEND] powerpc/tools: drop `-o pipefail` in gcc check scripts
+Date: Tue, 23 Sep 2025 17:32:16 +0200
+Message-ID: <cc6cdd116c3ad9d990df21f13c6d8e8a83815bbd.1758641374.git.jstancek@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, 22 Sep 2025 10:15:31 +0800
-Feng Yang <yangfeng59949@163.com> wrote:
+We've been observing rare non-deterministic kconfig failures during
+olddefconfig, where ARCH_USING_PATCHABLE_FUNCTION_ENTRY was getting
+disabled and with it number of other config options that depend on it.
 
-> On Sun, 21 Sep 2025 22:30:37 +0900 Masami Hiramatsu wrote:
-> 
-> > On Fri, 19 Sep 2025 19:56:20 -0700
-> > Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-> > 
-> > > On Fri, Sep 19, 2025 at 12:19 AM Feng Yang <yangfeng59949@163.com> wrote:
-> > > >
-> > > > When I use bpf_program__attach_kprobe_multi_opts to hook a BPF program that contains the bpf_get_stackid function on the arm64 architecture,
-> > > > I find that the stack trace cannot be obtained. The trace->nr in __bpf_get_stackid is 0, and the function returns -EFAULT.
-> > > >
-> > > > For example:
-> > > > diff --git a/tools/testing/selftests/bpf/progs/kprobe_multi.c b/tools/testing/selftests/bpf/progs/kprobe_multi.c
-> > > > index 9e1ca8e34913..844fa88cdc4c 100644
-> > > > --- a/tools/testing/selftests/bpf/progs/kprobe_multi.c
-> > > > +++ b/tools/testing/selftests/bpf/progs/kprobe_multi.c
-> > > > @@ -36,6 +36,15 @@ __u64 kretprobe_test6_result = 0;
-> > > >  __u64 kretprobe_test7_result = 0;
-> > > >  __u64 kretprobe_test8_result = 0;
-> > > >
-> > > > +typedef __u64 stack_trace_t[2];
-> > > > +
-> > > > +struct {
-> > > > +       __uint(type, BPF_MAP_TYPE_STACK_TRACE);
-> > > > +       __uint(max_entries, 1024);
-> > > > +       __type(key, __u32);
-> > > > +       __type(value, stack_trace_t);
-> > > > +} stacks SEC(".maps");
-> > > > +
-> > > >  static void kprobe_multi_check(void *ctx, bool is_return)
-> > > >  {
-> > > >         if (bpf_get_current_pid_tgid() >> 32 != pid)
-> > > > @@ -100,7 +109,9 @@ int test_kretprobe(struct pt_regs *ctx)
-> > > >  SEC("kprobe.multi")
-> > > >  int test_kprobe_manual(struct pt_regs *ctx)
-> > > >  {
-> > > > +       int id = bpf_get_stackid(ctx, &stacks, 0);
-> > > 
-> > > ftrace_partial_regs() supposed to work on x86 and arm64,
-> > > but since multi-kprobe is the only user...
-> > 
-> > It should be able to unwind stack. It saves sp, pc, lr, fp.
-> > 
-> > 	regs->sp = afregs->sp;
-> > 	regs->pc = afregs->pc;
-> > 	regs->regs[29] = afregs->fp;
-> > 	regs->regs[30] = afregs->lr;
-> > 
-> > > I suspect the arm64 implementation wasn't really tested.
-> > > Or maybe there is some other issue.
-> > 
-> > It depends on how bpf_get_stackid() works. Some registers for that
-> > function may not be saved.
-> > 
-> > If it returns -EFAULT, the get_perf_callchain() returns NULL.
-> > 
-> 
-> During my test, the reason for returning -EFAULT was that trace->nr was 0.
-> 
-> static long __bpf_get_stackid(struct bpf_map *map,
-> 			      struct perf_callchain_entry *trace, u64 flags)
-> {
-> 	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
-> 	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
-> 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-> 	u32 hash, id, trace_nr, trace_len;
-> 	bool user = flags & BPF_F_USER_STACK;
-> 	u64 *ips;
-> 	bool hash_matches;
-> 
-> 	if (trace->nr <= skip)
-> 		/* skipping more than usable stack trace */
-> 		return -EFAULT;
-> 	......
+The reason is that gcc-check-fpatchable-function-entry.sh can fail
+if `grep -q` (or scripts/dummy-tools/gcc) is fast enough to exit while
+there is still someone writing on other side of pipe. `pipefail`
+propagates that error up to kconfig.
 
-Hmm. The "trace" is returned from get_perf_callchain()
+This can be seen for example with:
+  # (set -e; set -o pipefail; yes | grep -q y); echo $?
+  141
 
-get_perf_callchain(struct pt_regs *regs, u32 init_nr, bool kernel, bool user,
-		   u32 max_stack, bool crosstask, bool add_mark)
-{
-...
+or by running the actual check script in loop extensively:
+  ----------------------------- 8< -------------------------------
+  function kconfig()
+  {
+    for i in `seq 1 100`; do
+      arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh \
+        ./scripts/dummy-tools/gcc -mlittle-endian \
+        || { echo "Oops"; exit 1; }
+    done
+  }
 
-	if (kernel && !user_mode(regs)) {
-		if (add_mark)
-			perf_callchain_store_context(&ctx, PERF_CONTEXT_KERNEL);
-		perf_callchain_kernel(&ctx, regs);
-	}
+  for ((i=0; i<$(nproc); i++)); do kconfig & done
+  wait; echo "Done"
+  ----------------------------- >8 -------------------------------
 
-So this means `perf_callchain_kernel(&ctx, regs);` fails to unwind stack.
+Fixes: 0f71dcfb4aef ("powerpc/ftrace: Add support for -fpatchable-function-entry")
+Fixes: b71c9ffb1405 ("powerpc: Add arch/powerpc/tools directory")
+Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
+Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh | 1 -
+ arch/powerpc/tools/gcc-check-mprofile-kernel.sh           | 1 -
+ 2 files changed, 2 deletions(-)
 
-perf_callchain_kernel() -> arch_stack_walk() -> kunwind_stack_walk()
-
-That is `kunwind_init_from_regs()` and `do_kunwind()`.
-
-	if (regs) {
-		if (task != current)
-			return -EINVAL;
-		kunwind_init_from_regs(&state, regs);
-	} else if (task == current) {
-		kunwind_init_from_caller(&state);
-	} else {
-		kunwind_init_from_task(&state, task);
-	}
-
-	return do_kunwind(&state, consume_state, cookie);
-
-For initialization, it should be OK because it only refers pc and 
-fp(regs[29]), which are recovered by ftrace_partial_regs().
-
-static __always_inline void
-kunwind_init_from_regs(struct kunwind_state *state,
-		       struct pt_regs *regs)
-{
-	kunwind_init(state, current);
-
-	state->regs = regs;
-	state->common.fp = regs->regs[29];
-	state->common.pc = regs->pc;
-	state->source = KUNWIND_SOURCE_REGS_PC;
-}
-
-And do_kunwind() should work increase trace->nr before return
-unless `kunwind_recover_return_address()` fails.
-
-static __always_inline int
-do_kunwind(struct kunwind_state *state, kunwind_consume_fn consume_state,
-	   void *cookie)
-{
-	int ret;
-
-	ret = kunwind_recover_return_address(state);
-	if (ret)
-		return ret;
-
-	while (1) {
-		if (!consume_state(state, cookie)) <--- this increases trace->nr (*).
-			return -EINVAL;
-		ret = kunwind_next(state);
-		if (ret == -ENOENT)
-			return 0;
-		if (ret < 0)
-			return ret;
-	}
-}
-
-(*) consume_state() == arch_kunwind_consume_entry() 
-  ->  data->consume_entry == callchain_trace() -> perf_callchain_store().
-
-Hmm, can you also dump the regs and insert pr_info() to find
-which function fails?
-
-Thanks,
-
+diff --git a/arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh b/arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh
+index 06706903503b..baed467a016b 100755
+--- a/arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh
++++ b/arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh
+@@ -2,7 +2,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ set -e
+-set -o pipefail
+ 
+ # To debug, uncomment the following line
+ # set -x
+diff --git a/arch/powerpc/tools/gcc-check-mprofile-kernel.sh b/arch/powerpc/tools/gcc-check-mprofile-kernel.sh
+index 73e331e7660e..6193b0ed0c77 100755
+--- a/arch/powerpc/tools/gcc-check-mprofile-kernel.sh
++++ b/arch/powerpc/tools/gcc-check-mprofile-kernel.sh
+@@ -2,7 +2,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ set -e
+-set -o pipefail
+ 
+ # To debug, uncomment the following line
+ # set -x
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.47.1
+
 
