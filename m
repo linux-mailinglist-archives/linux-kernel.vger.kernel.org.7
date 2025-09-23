@@ -1,146 +1,131 @@
-Return-Path: <linux-kernel+bounces-829468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 370A7B97237
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:56:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C29EB97241
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D40632E483F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:56:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EB572A2868
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80CC2DF12B;
-	Tue, 23 Sep 2025 17:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bf/KHlXO"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDDB2D59F7;
+	Tue, 23 Sep 2025 17:58:12 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD03F25EFBC
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A562C026F
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758650200; cv=none; b=BMiXwWxOVO+XrwA/vYUglit5jMR9d6pi/0P2rpC8Wg+g7jPUhWStYitT13hWe74lAYeJgHz5wsYBeDvAY8evreJIys8CU2gkWYjGK+XMPqAtkuQqd4KoM5S7RHzMZg/DyE6f8+7M2LH1eLJEtb0AOW3wZ41jb0weAF+03BtbgK0=
+	t=1758650292; cv=none; b=TlCL4kO4blqNomAGsLQviahMzBkTTU9LM/kKRdt1vzyiQsOG154xQFWBHUKMY6+si+lyNNfolXEcsfrQAjx+x/UDbE5/0DUw3l8Z/709JVvqEDlBne9nhVgR22P4MyUsf6VOCu5N/KU3TVwYDOz25mjJrM84CKLR+DHTsloU/PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758650200; c=relaxed/simple;
-	bh=+2VyYQWo3bsBibTZIVLx3nWadN0J/BZKQdGjMX/uX1k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W6+sY53hIsQkMfL/L6mp/Cub+gqyPmBCMtF/g51WKTFtxdB86KvYO60pwlLv3Ar2CptVkdvrp9fZDGfl3XcPpygIdrZR1JxEDeuZUtLhHCiJsbS7DskfnfNtHDIWshFeEKhxsE6havRnaVRYGqdsLk8AIuyN++n2l/bwmjuNb1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bf/KHlXO; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-73ce0a60895so1757297b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758650197; x=1759254997; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7RBKxzZ6kU4c7lQtSNThN83j+ugKQYRphi2BaKEQ6gc=;
-        b=Bf/KHlXOgjHZvLypdVJ6KMhZjIsdWPT1SZTuztKu1b9MKovaRA45FM+cE+YgKik3dW
-         pGv3jcxcdsP+BTxn2pdGcCJAkAF7kP94iBGwtO5DVjpdoskAM4XXZyfhR6u3mFHESvet
-         KmcgP70wG9G5atqoxuTdzqaFO4GGtzMQlR2r2idBRDpP5q1V0k8fjrDPTOlrclbTAm3g
-         REjrHMurtmFUh83Vq+namEtqwudN/wBipDBNc1+clSSwqMnXDKpSI8YKkU2UqlDaLO5t
-         /NIEGbVzlFmEXHvLlNi4pHP/mHspqS9tMR10pP+H/I1lXgfwyDjhcwG1PEZmGGzJ9yh4
-         sUyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758650197; x=1759254997;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7RBKxzZ6kU4c7lQtSNThN83j+ugKQYRphi2BaKEQ6gc=;
-        b=cll5bRV8Htn95JgrNkLRhO8TSKw1qJb/M4dHbYsEEMMepCcMrNHho8kIINq0S0LZXF
-         4PTjaRXk4ovOpCTVFNuT5DxTjfJmb4vHgOF/HkKgcHscVmyc9SojfStN+oeEDTgy0dAw
-         sUNFUgTucpRsHeRfBZkNtKNfe7vFCIGH+Nsx0NypFzWqx2Mm7M5YxKHdcDwV3K7QNa/3
-         e8pH2HdHGizfF8dLnbcGl8+4lALIPLPaV1EmKj4RomBaGrWSzskpMzNmgNoCet39nhQ7
-         IqoNd4T0P4su1n1PXULUfuVXbQoCia0liDK5GygJmSsJpRSe2SABn7r9AHLmf3KWiv0i
-         rc2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXiQuMXyq32UW3AQxA16+4NDipBLtE0LNWtfMjNYwfx6R5+117/WLKshpTNgIWROVvPwsVjBvmdEa0odR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/3sDMeMxFnCh5URcyxFUB/DPxFZf1atx/pldrPuaAZxxyhqzY
-	Zwi94oQ+Fo1jjATlFWvr8SkJv9ErJ5cNKGMzFnggGDU3zh/DuzPkicqPMj8yKYZXzNszR0OySTa
-	YGTBXjZLx9WeRilfJ3eqyxvMuEFBFOD8=
-X-Gm-Gg: ASbGncv2QgxewZSe6y7i43CUdNxhi3Cb4CpZHchSB2fAXZeG8jC3mW4J9gj5uF3SPG2
-	AWPbohvEV7kuX5yzyD36T5v+6y6NDxBGKpnned3hRbO3BybfH8I1Q5ckB31HfFdSb6yBh09iC4u
-	o/QUcPOb1OzkFhCN2Qa/4JoEuniJfdp/uldwNkHkbWDVIeqKAAa8W43OPCL49fItyNbY0wY5BXK
-	15PRZBkKAUNraoILxKHKcPjtb2WQfUBh9b2PzRKNlMZVmfl/js=
-X-Google-Smtp-Source: AGHT+IHFYFnbDFoI8nXPm/DbKE6WwSpo1v/Alo1pPkP09kUWL9d8Oowjt7g3OspcbiGB8leMO3y3rMrtwX3aXsOxGiM=
-X-Received: by 2002:a53:e035:0:b0:628:3892:b666 with SMTP id
- 956f58d0204a3-636047726bbmr1466398d50.5.1758650196488; Tue, 23 Sep 2025
- 10:56:36 -0700 (PDT)
+	s=arc-20240116; t=1758650292; c=relaxed/simple;
+	bh=wqdHXYHD2mDbQ7QYKXLFy2xzEMRIBoD8MFVRb7pXMAA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hGKZePXvHp45kFN4YG0v9QKYfE2e+XulSqLBarhCHLrORnxsf67DnIzImDpEuini3Boa6jxJmWKwCUEdhFtwAQHtqXPiEjVHRcwehx1PPKZouV3SS7OG5efchqXIuorLAwu3rOiTrf0ubNIfZsyZOAdm8dpEb5Fz+Rwa0TacLdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id EACAF13B303;
+	Tue, 23 Sep 2025 17:58:02 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf08.hostedemail.com (Postfix) with ESMTPA id 7C73C20026;
+	Tue, 23 Sep 2025 17:58:00 +0000 (UTC)
+Message-ID: <e4b30be3891cf6e615c5079e7330c10f433520f9.camel@perches.com>
+Subject: Re: [PATCH v3 RESEND] checkpatch: suppress strscpy warnings for
+ userspace tools
+From: Joe Perches <joe@perches.com>
+To: Suchit Karunakaran <suchitkarunakaran@gmail.com>, apw@canonical.com, 
+	dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com, Andrew Morton
+	 <akpm@linux-foundation.org>
+Cc: skhan@linuxfoundation.org, linux-kernel@vger.kernel.org
+Date: Tue, 23 Sep 2025 10:57:59 -0700
+In-Reply-To: <20250923171722.7798-1-suchitkarunakaran@gmail.com>
+References: <20250923171722.7798-1-suchitkarunakaran@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820102607.1.Ibb5b6ca1e2c059e04ec53140cd98a44f2684c668@changeid>
-In-Reply-To: <20250820102607.1.Ibb5b6ca1e2c059e04ec53140cd98a44f2684c668@changeid>
-From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Date: Tue, 23 Sep 2025 19:56:12 +0200
-X-Gm-Features: AS18NWARQQsHpK2MdVqC8zgUyvOCYrPAmI9se1FvWZJ1HDiZT1pR2BaT5dqzbC8
-Message-ID: <CAPAsAGx6C4PdODuTVxc2un=wpDC1azcO5GUa5cH7KwC=bHF-7w@mail.gmail.com>
-Subject: Re: [PATCH] PCI/sysfs: Ensure devices are powered for config reads
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, Brian Norris <briannorris@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Stat-Signature: ao8a7a5y9bbsbr4dhoe5cs66o8sio5zu
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 7C73C20026
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX19+5JqIvS9md6f99LCPycD60LxX/ihyzuo=
+X-HE-Tag: 1758650280-101948
+X-HE-Meta: U2FsdGVkX18Vy9F5n1pDUPPpBRLknbyFoMBQtXLLEgEI5h+u8lk94VuDow/v0NPUyeclHAgyzhZqGZ/qwtb29ovMpvoA0WR9IB7gYB8xcN7+nWZY4IQWIg2nM/0d1SiF3b4VBpq0yOZhbNFlUQAPPaBuOcOM48E7X6B1Lnt22kdAbAOTd+6aVwg+isjTUQSlJh+uks78U3eK57cHmIDpPVhbFBTBWPwHqwnaEs8He8WCEzClKF3VoCagMbHzj+vzAsSRCLas5uY8vvAcMGafjKeCL2ZKHLJl8X+vsRaG6+ZacvZLX3bnnWXxaQehtBO+w4DqJdzza3y7WeunihY5ryTcEaDx8RRutW+EWZNNsn55vlDiQkvL9deg9XjzZdShKx+0Xqe2TznyENJqualbO01oHEeR3/gC2CfO/B0wJ6Q=
 
-On Fri, Aug 22, 2025 at 10:10=E2=80=AFPM Brian Norris <briannorris@chromium=
-.org> wrote:
->
-> From: Brian Norris <briannorris@google.com>
->
-> max_link_speed, max_link_width, current_link_speed, current_link_width,
-> secondary_bus_number, and subordinate_bus_number all access config
-> registers, but they don't check the runtime PM state. If the device is
-> in D3cold, we may see -EINVAL or even bogus values.
+On Tue, 2025-09-23 at 22:47 +0530, Suchit Karunakaran wrote:
+> The checkpatch.pl script currently warns against the use of strcpy,
+> strlcpy, and strncpy, recommending strscpy as a safer alternative.
+> However, these warnings are also triggered for code under tools/ and
+> scripts/, which are userspace utilities where strscpy is not available.
+> This patch suppresses these warnings for files in tools/ and scripts/.
+>=20
+> Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
 
-I've hit this bug as well, except in my case the device was behind a
-suspended PCI
-bridge, which seems to block config space accesses.
+Acked-by: Joe Perches <joe@perches.com>
 
->
-> Wrap these access in pci_config_pm_runtime_{get,put}() like most of the
-                       accesses
-
-> rest of the similar sysfs attributes.
->
-> Fixes: 56c1af4606f0 ("PCI: Add sysfs max_link_speed/width, current_link_s=
-peed/width, etc")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Brian Norris <briannorris@google.com>
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
 > ---
->
->  drivers/pci/pci-sysfs.c | 32 +++++++++++++++++++++++++++++---
->  1 file changed, 29 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 5eea14c1f7f5..160df897dc5e 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -191,9 +191,16 @@ static ssize_t max_link_speed_show(struct device *de=
-v,
->                                    struct device_attribute *attr, char *b=
-uf)
->  {
->         struct pci_dev *pdev =3D to_pci_dev(dev);
-> +       ssize_t ret;
+>=20
+> Changes since v1:
+> - Create is_userspace function to check if the file is in userspace
+>   directories
+>=20
+> Changes since v2:
+> - Change regex pattern to match top level directories only
+>=20
+>  scripts/checkpatch.pl | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index e722dd6fa8ef..fe580b0810f9 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -2636,6 +2636,11 @@ sub exclude_global_initialisers {
+>  		$realfile =3D~ m@/bpf/.*\.bpf\.c$@;
+>  }
+> =20
+> +sub is_userspace {
+> +    my ($realfile) =3D @_;
+> +    return ($realfile =3D~ m@^tools/@ || $realfile =3D~ m@^scripts/@);
+> +}
 > +
-> +       pci_config_pm_runtime_get(pdev);
->
-> -       return sysfs_emit(buf, "%s\n",
-> -                         pci_speed_string(pcie_get_speed_cap(pdev)));
-> +       ret =3D sysfs_emit(buf, "%s\n",
-> +                        pci_speed_string(pcie_get_speed_cap(pdev)));
-
-pci_speed_string() & pcie_get_speed_cap() don't access config space,
-so no need to change this one.
-
-> +
-> +       pci_config_pm_runtime_put(pdev);
-> +
-> +       return ret;
+>  sub process {
+>  	my $filename =3D shift;
+> =20
+> @@ -7018,21 +7023,20 @@ sub process {
+>  #				}
+>  #			}
+>  #		}
+> -
+>  # strcpy uses that should likely be strscpy
+> -		if ($line =3D~ /\bstrcpy\s*\(/) {
+> +		if ($line =3D~ /\bstrcpy\s*\(/ && !is_userspace($realfile)) {
+>  			WARN("STRCPY",
+>  			     "Prefer strscpy over strcpy - see: https://github.com/KSPP/linux=
+/issues/88\n" . $herecurr);
+>  		}
+> =20
+>  # strlcpy uses that should likely be strscpy
+> -		if ($line =3D~ /\bstrlcpy\s*\(/) {
+> +		if ($line =3D~ /\bstrlcpy\s*\(/ && !is_userspace($realfile)) {
+>  			WARN("STRLCPY",
+>  			     "Prefer strscpy over strlcpy - see: https://github.com/KSPP/linu=
+x/issues/89\n" . $herecurr);
+>  		}
+> =20
+>  # strncpy uses that should likely be strscpy or strscpy_pad
+> -		if ($line =3D~ /\bstrncpy\s*\(/) {
+> +		if ($line =3D~ /\bstrncpy\s*\(/ && !is_userspace($realfile)) {
+>  			WARN("STRNCPY",
+>  			     "Prefer strscpy, strscpy_pad, or __nonstring over strncpy - see:=
+ https://github.com/KSPP/linux/issues/90\n" . $herecurr);
+>  		}
 
