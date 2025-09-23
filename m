@@ -1,107 +1,123 @@
-Return-Path: <linux-kernel+bounces-829194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E33B967EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:06:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B8EB96783
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 591304E18AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:06:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459FD18860F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3228622256B;
-	Tue, 23 Sep 2025 15:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026DB2417D9;
+	Tue, 23 Sep 2025 14:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="UEmynh1u"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="htNc2LUV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B04C18E20
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDAD18E20;
+	Tue, 23 Sep 2025 14:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758639961; cv=none; b=P2Nr28XF7vXdtlINw3nzPGTJ4Xqsc8EbFD+g6xnZZxu0LIsfuhOYHtQ3izsTBjXbKkd70DTod+UzhVYfjdEZ5djPMzE31DUkPA40JJp8TLnQVdekRSBnrpGW/FAVo06EHsrXiwQbQnAIypLGkYqaybBWPUbOO8IRyInlK590lKo=
+	t=1758639471; cv=none; b=Gq+vAvon+JIFOBV1el65rSevuNxZ6GKKnHJoedQRB7Qn+RfU8TVlN0NaT66Qy9QbZZPPulye9Tb/6ADVTOhUoonBsRa+tcy57iDhkcOb54I8flCq7inDn1jIn+PaEwypAyIjv+mf8Svv3iOYx5oxGt+Rjq2un7FOroN3WQxACH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758639961; c=relaxed/simple;
-	bh=H/DoxZF7P4nKqwBqst7vh1I9d9VymNgrxJ0Xnlc4ZXo=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID; b=N5l9nflA73KydxS39T9iswjUS99I+ramh7Nzp2eC1TBUbd21T3FZGshopFv4iClecY0tU52HS5GYoABeuVP/5iYDAiwbeckDUYFUqj10WXV5KNlXGnezIt6V1hil7YQJ61RZezejcDZb62B0eiLj6vLmJYaGBPa4zeYjhvx0Xoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=UEmynh1u; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1758639943; bh=H/DoxZF7P4nKqwBqst7vh1I9d9VymNgrxJ0Xnlc4ZXo=;
-	h=From:To:Cc:Subject:Date;
-	b=UEmynh1uO8GFK2HusQzLDqqLoFzUOaIfi/zaJhA4T2P+rN4retGNCuRlFuDoBkBRU
-	 8ftUlMo4mZR0k5GgQKGuv9iBeTEDn3ktOZ6IvYwpJBssJPT2o/1iAEDQi8wNWKrwWE
-	 +x2bAQsymvDY3VdctFJb9sw5nMKZ6lzp1uckG9E8=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-XMAILINFO: N+XrBeZ/LGN6CuENrvAnMc4J53T/tB/LXoiayzw4dNn1ZjfUy5T2NEr1Y6v78s
-	 7s9Q9fJoa4gLONPRl99j6O5t50LhRJcj1QXsLtv5zuVQQDkHi6ebTbZthXmOWjmZ9xwbaPdZEzGCg
-	 wGO8N/rinrEVvaoBCeztVRLUhi8IF0QUbS+Vl6TDsgh1+q6GXbF82Zm3nqSNlVW0Wwqxj49ulY1qZ
-	 cORLaKqyas4IxU7drT+G16XcT7MDJwpGw4k45RTCApRv9bbz3w2Wir6dxFpSZoRnGTWQSbZsW567S
-	 pUq2HFu4V9Z5CSGpr8gqL/Aaq5EOKXkipW7wlmeix912747B2etp0QrD6l2tgxf14cIRAX0zUDqwb
-	 TchtBBMwMjnE1HoqBmUWm+r5lA+Xlcsr2QctR0YqDrvDmMam00gcQJqfedFUKItaOdVhmCImlEikg
-	 SUdVjukTnxe0XQmJij+UrV9JV6r0Zef3D9fCaeGq0hTiktn/B1dHfEw3AIs8NweoTEcTdsw8cxvKL
-	 BpszuypnKF3wNSphLRBJIpcZxkxWRNs8ULsTuPlPMIVHIxOXWF1GgAAGMZuKhzh1Q8LVhof7OW15c
-	 LWV47xRGL/w0zdfpsFACv+N+C0dFOxse4eIHr7Zz5SclBpMxU6NWdHZVAIqlECHTzoyXgeSl7VyIa
-	 Jp4WWsPn4573hMZFXTSSfJCzpB0e1RJjc9UvD07PR6LUP/PiceRWfZlCnwdTMBI47zTQx0vWx2Tjd
-	 H8vjV0A7Civv3b/arU9lKzH2500hnhKpttdTOqv8jeuvuo6gjEe39z8Ty9OCFNRuTawX04EmXE9YW
-	 Uk87H/8kEUzm7WcE7gQH3OkuadRS2UBYN8iVvEMrWq+DBnXxhHSM0vvnUY7LPyk6Na5IKU1Tltm9r
-	 6YlIQRas3LTrbMXC6IFNsI4FVbk8az1tsXkXQCn9aEllV7Xd5QV5yHAAkVyC2xrd6zwwn2SD67AYo
-	 PIYtaK89QgLJ7aOmVQxlwHlvbnj4kD1LFnGU8CYTyjDVk5Pc9o26Lj9fMHOQh5kEwAWt5C6VYW6Av
-	 SG4cg/tFieBsydgUTM5kpN+d4mfFHYOfIBuzsBp1H1YY3bOS/iySv1PlZdG3TxI1esvwPwfP+INPD
-	 hdRcvs+CihQk5ZrQorJQamgDAFhei2SzQvqRuebxbEe1xICR9FDhTWIAf4vHQbEddV8qrfHf61fu+
-	 w==
-From: "=?utf-8?B?c2hlbmdtaW5naHU1MTI=?=" <shengminghu512@qq.com>
-To: "=?utf-8?B?bGlubWlhb2hl?=" <linmiaohe@huawei.com>, "=?utf-8?B?bmFvLmhvcmlndWNoaQ==?=" <nao.horiguchi@gmail.com>, "=?utf-8?B?YWtwbQ==?=" <akpm@linux-foundation.org>
-Cc: "=?utf-8?B?bGludXgtbW0=?=" <linux-mm@kvack.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?aHUuc2hlbmdtaW5n?=" <hu.shengming@zte.com.cn>, "=?utf-8?B?c2hlbmdtaW5naHU1MTI=?=" <shengminghu512@qq.com>, "=?utf-8?B?emhhbmcucnVu?=" <zhang.run@zte.com.cn>
-Subject: [PATCH V2] mm/memory-failure: Ensure collect_procs is retried when  unmap fails
+	s=arc-20240116; t=1758639471; c=relaxed/simple;
+	bh=vTCKBOU6gu1HJhYhBB8NUvymzBQoq30uzkOtkt6iYE8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h/1J9Aw2kjN3XQntZHJtbHQiXjmfOeMEKkkr+ggDOalX4GBXqsHuwYa1xTB7LlbkQ54mNAfmySlWCVfJlHbMNu4TkYOOnCTvIMZV5htqt8iILVWyFWixy0vD2k1cLRQh4mJx8JQAxvXbcRSlhCYPGM4asxoXj5TNPjHUVvO8YL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=htNc2LUV; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758639470; x=1790175470;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vTCKBOU6gu1HJhYhBB8NUvymzBQoq30uzkOtkt6iYE8=;
+  b=htNc2LUV5MMsonJ1CSa2NTGzgUGEHGB3INbPDSXaZlamrAgpMu57jkUr
+   PCLOd14b+tLNFd8uP1PstcTnv3TYrrHbrU58ipaBOApOjDpzq9G27bCRq
+   Vp6gumU3lq/M6Tc37qMKvkQQKoVmOugmgouh0XJkOvGwkNBXTBk5lzVnE
+   hqCmEGwUmigXo6q9osKIS+bj3Ov2k9n+Dxi1sHKCGjs01pNZEiimG+xCg
+   YGEnMcxCokAih8N/xkgt8Zhmb9km+7Hstfc9mOUk4n+ns5rktG00beG+0
+   qZzQanTxNTWWystLYSR3D2RH8yU8n0w9pEtU34AgdUMFa9IjYQtJ/LSzz
+   A==;
+X-CSE-ConnectionGUID: pHX7SOgHRbe69iD9VkIz0A==
+X-CSE-MsgGUID: +/Dim/H3Rx6db8sQwlpksA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="71542157"
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
+   d="scan'208";a="71542157"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:57:49 -0700
+X-CSE-ConnectionGUID: 2N8S3d5oQGSCK8wI4ENGUw==
+X-CSE-MsgGUID: XPpvwklDTryEhJtOg03a/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; 
+   d="scan'208";a="213927921"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 07:57:45 -0700
+Message-ID: <5717b2dd-8a95-4200-a547-b724f46abaef@intel.com>
+Date: Tue, 23 Sep 2025 22:57:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Tue, 23 Sep 2025 22:57:09 +0800
-X-Priority: 3
-Message-ID: <tencent_EDEED996FC685E61AADA14A23BCE9CCDAF09@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
-X-QQ-mid: xmsezc43-1t1758639429tsinbf3h5
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 28/51] KVM: x86: Enable CET virtualization for VMX and
+ advertise to userspace
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+References: <20250919223258.1604852-1-seanjc@google.com>
+ <20250919223258.1604852-29-seanjc@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250919223258.1604852-29-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-RnJvbTogU2hlbmdtaW5nIEh1IDxzaGVuZ21pbmdodTUxMkBxcS5jb20+CkRhdGU6IFR1ZSwg
-MjMgU2VwIDIwMjUgMjA6NTY6MjggKzA4MDAKU3ViamVjdDogW1BBVENIIFYyXSBtbS9tZW1v
-cnktZmFpbHVyZTogRW5zdXJlIGNvbGxlY3RfcHJvY3MgaXMgcmV0cmllZCB3aGVuCiB1bm1h
-cCBmYWlscwoKSW4gdGhlIG1lbW9yeV9mYWlsdXJlIHByb2Nlc3MsIGlmIGNvbGxlY3RfcHJv
-Y3MgaXMgbm90IGV4ZWN1dGVkIHdpdGggdGhlCmZsYWcgc2V0LCB0aGUgdG9fa2lsbCBsaXN0
-IG1heSBiZSBlbXB0eS4gRXZlbiBpZiB0aGVyZSBhcmUgcGFnZXMgdGhhdCBmYWlsCnRvIGJl
-IHVubWFwcGVkLCBTSUdLSUxMIG9yIFNJR0JVUyBjYW5ub3QgYmUgc2VudCB0byB0aGUgcHJv
-Y2VzcyB2aWEKY29sbGVjdF9wcm9jcy4KClRoaXMgcGF0Y2ggZml4ZXMgdGhlIGlzc3VlIGJ5
-IHJlLWV4ZWN1dGluZyBjb2xsZWN0X3Byb2NzIHdoZW4gdGhlIHRvX2tpbGwKbGlzdCBpcyBl
-bXB0eSBhbmQgdW5tYXAgZmFpbHMuIFRoaXMgY29sbGVjdHMgcHJvY2Vzc2VzIHdpdGggdW5t
-YXAgZmFpbHVyZXMKaW50byB0aGUgdG9fa2lsbCBsaXN0LCBhbGxvd2luZyBTSUdCVVMgb3Ig
-U0lHS0lMTCB0byB0ZXJtaW5hdGUgdGhlbSBpbgpzdWJzZXF1ZW50IGNvZGUuCgpWMjoKICAt
-IFJlc2VudCBhcyBwbGFpbiB0ZXh0IChwcmV2aW91cyB2ZXJzaW9uIHdhcyBIVE1MKS4KICAt
-IE5vIGZ1bmN0aW9uYWwgY2hhbmdlcy4KClNpZ25lZC1vZmYtYnk6IFNoZW5nbWluZyBIdSA8
-aHUuc2hlbmdtaW5nQHp0ZS5jb20uY24+Ci0tLQogbW0vbWVtb3J5LWZhaWx1cmUuYyB8IDUg
-KysrKy0KIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkK
-CmRpZmYgLS1naXQgYS9tbS9tZW1vcnktZmFpbHVyZS5jIGIvbW0vbWVtb3J5LWZhaWx1cmUu
-YwppbmRleCBhMjQ4MDZiYjhlODIuLjgxNTc4MjNjN2ZiNyAxMDA2NDQKLS0tIGEvbW0vbWVt
-b3J5LWZhaWx1cmUuYworKysgYi9tbS9tZW1vcnktZmFpbHVyZS5jCkBAIC0xNjAwLDkgKzE2
-MDAsMTIgQEAgc3RhdGljIGJvb2wgaHdwb2lzb25fdXNlcl9tYXBwaW5ncyhzdHJ1Y3QgZm9s
-aW8gKmZvbGlvLCBzdHJ1Y3QgcGFnZSAqcCwKIAljb2xsZWN0X3Byb2NzKGZvbGlvLCBwLCAm
-dG9raWxsLCBmbGFncyAmIE1GX0FDVElPTl9SRVFVSVJFRCk7CiAKIAl1bm1hcF9zdWNjZXNz
-ID0gIXVubWFwX3BvaXNvbmVkX2ZvbGlvKGZvbGlvLCBwZm4sIGZsYWdzICYgTUZfTVVTVF9L
-SUxMKTsKLQlpZiAoIXVubWFwX3N1Y2Nlc3MpCisJaWYgKCF1bm1hcF9zdWNjZXNzKSB7CiAJ
-CXByX2VycigiJSNseDogZmFpbGVkIHRvIHVubWFwIHBhZ2UgKGZvbGlvIG1hcGNvdW50PSVk
-KVxuIiwKIAkJICAgICAgIHBmbiwgZm9saW9fbWFwY291bnQoZm9saW8pKTsKKwkJaWYgKGxp
-c3RfZW1wdHkoJnRva2lsbCkpCisJCQljb2xsZWN0X3Byb2NzKGZvbGlvLCBwLCAmdG9raWxs
-LCAxKTsKKwl9CiAKIAkvKgogCSAqIHRyeV90b191bm1hcCgpIG1pZ2h0IHB1dCBtbG9ja2Vk
-IHBhZ2UgaW4gbHJ1IGNhY2hlLCBzbyBjYWxsCi0tIAoyLjI1LjE=
+On 9/20/2025 6:32 AM, Sean Christopherson wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
+> 
+> Add support for the LOAD_CET_STATE VM-Enter and VM-Exit controls, the
+> CET XFEATURE bits in XSS, and  advertise support for IBT and SHSTK to
+> userspace.  Explicitly clear IBT and SHSTK onn SVM, as additional work is
+> needed to enable CET on SVM, e.g. to context switch S_CET and other state.
+> 
+> Disable KVM CET feature if unrestricted_guest is unsupported/disabled as
+> KVM does not support emulating CET, as running without Unrestricted Guest
+> can result in KVM emulating large swaths of guest code.  While it's highly
+> unlikely any guest will trigger emulation while also utilizing IBT or
+> SHSTK, there's zero reason to allow CET without Unrestricted Guest as that
+> combination should only be possible when explicitly disabling
+> unrestricted_guest for testing purposes.
+> 
+> Disable CET if VMX_BASIC[bit56] == 0, i.e. if hardware strictly enforces
+> the presence of an Error Code based on exception vector, as attempting to
+> inject a #CP with an Error Code (#CP architecturally has an Error Code)
+> will fail due to the #CP vector historically not having an Error Code.
+> 
+> Clear S_CET and SSP-related VMCS on "reset" to emulate the architectural
+> of CET MSRs and SSP being reset to 0 after RESET, power-up and INIT.  Note,
+> KVM already clears guest CET state that is managed via XSTATE in
+> kvm_xstate_reset().
+> 
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Signed-off-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> [sean: move some bits to separate patches, massage changelog]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
