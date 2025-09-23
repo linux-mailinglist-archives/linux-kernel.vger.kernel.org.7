@@ -1,214 +1,171 @@
-Return-Path: <linux-kernel+bounces-829759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F26B97C14
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 00:54:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604EAB97C2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 00:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F75119C7DAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:54:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E92412A54C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32B22FFDF3;
-	Tue, 23 Sep 2025 22:53:56 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD2C25F7A7;
+	Tue, 23 Sep 2025 22:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WcQai+j0"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B787725FA0A
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 22:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124842ECE86
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 22:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758668036; cv=none; b=QxI52v/rYlpIodVwH+Oz+76OpCzzbMAQA7OVp60gbsTimiaQmS63Hl439gqFafftid4J+NrIoDRvL9pfgeU1lvPqPgzZsOHfdixmjhp2j1GZIYvjEQ9QGXeJCx6cHeMMZfZZz61F6wExSXMzXgViRPozhG+SPL443CKvq7RSlT8=
+	t=1758668334; cv=none; b=NvbLKKAvX4qlVnd+Xx+M2E14/teN1wgQ4eZ7VHbpJmLoGB2IyaC67D5gSBBtosWmJEz7cCeG1ubSWm8WgyISDFz84lGsXeLyZi/jK4b18a78H/S+qRqEKyIqwYKqVzUGhB3kYVujvUm0GtsMPmKEmGuO7/N0FVU6vfi8wDgpT4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758668036; c=relaxed/simple;
-	bh=u5NcSoznVZvXkbOe/VUC93QSljPJGokAxJ38LnagxRg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=lONM20XwV/yZPrDc6YOHVdMzM8yT5IhKm1gx79wA13R1MMhodbonVLe0M3Et9UYEbfIVh6eTconVnKkHoLOt5lGczbf4q4MiVxdaS/yxxKxCEq73k7dnwZA/6VE1U8giyl1OeSKxUnXWRYdc+zNLEIRx6/M3A+IbXDAl1D7yxNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42571c700d2so67046775ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:53:54 -0700 (PDT)
+	s=arc-20240116; t=1758668334; c=relaxed/simple;
+	bh=jJCqJvo9Wg7KsNH+Nl6zXRZB5rkkcGtreL82+aY3PHI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pObkKctQBPE/J7VzL8A7YDKW1QqGwqb1pY/wTrjL0tFrQb+v9a3wMMh6e9iooTyAfJs9f6zkJjG+PJ0z1ZCRz3t6t43QSdNToxE2rtnSLcvDUDULc41idMIsWS+SVVHyztZQBPRtNh8QU5m5ReUAYmQolRZeUhkPDrQ0HuGrtiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WcQai+j0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58NFNwMd026446
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 22:58:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Lmv3cG7vx0Ui6SQJVFVyi0/fmzwzzBeQW90PDkfU/OA=; b=WcQai+j0BCi8zFxi
+	lUVpKNh8+whPNoxfUZKF6x6lfpg19BQSRbU+VGCMcLb9Iec0kDt6x0eIj3ahlrO6
+	5OGA4AJ0dlpJ4ej5W3PUBYp+2z88ocBM8qvTuR34paxqWwilZPS/Wp+2La2o3EYT
+	xKQ37A9vxiBACXVEazlnCy0+qr2Xh7NtSvk0Y76r2E1YXaQYYSyOmcdfgoDG24HD
+	pXho47cy1yEI+m7ZYSERv3BgAb8sWOFD8g4/0qOI4e2t2WmDeAqzEdp+/E68pH+2
+	hA80bK8SnWXSniCRgZLx6yi9QE2Cp574dc1yfFk0L5i5inHdQWS4vDKHhlg14XJ5
+	YUnHiA==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hyetk9k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 22:58:52 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-77f29b9e2aaso5362591b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 15:58:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758668034; x=1759272834;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1758668331; x=1759273131;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/wNTZlN6qLp4sqdyo6QTG1IaiR5Ni0PqLyc9Tnrd6w0=;
-        b=oVFUoxL5wCTpjDU4fzpmHBLFs20tD74QbW/gMJLrt7i0crxPxOb3zdk92PKLpyX2Sv
-         8NWGNorkeiOzKrxDYebIHr91VM9fOgdZ4T6fSZwWTgFM+VR+U+hPalBNTeYjxWR4xD1z
-         lUR2K8mwRQT9y96RjiHepWohnkVTQcZPt4g/1BcwyLUAqDaq93uOi6GxUbNVvQ4hOdh6
-         vVU9etfEFstOiXY2+6vO+NOi9rCdfEAimX/MVKTdXilsjK+rGdOzzfBOoiTYAyF2rdKA
-         blXBRKY3OZlzz3BSKSacx4kGuY7uMhQnaFBzNnlzPiRd5GV1ckrf/+YODf2mYgMN2HPi
-         P3Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkzDEpO9kvDMb/G6RRKRl9gbpwBLa0HTuRsCiEtFuHR6v3SHnprIuAafJOiYbD4ppnfGpUKwc6uN3+FFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx4nOd7RIcwKovFJ/3uStYmtHqs6m/1ZsbFJkM7yxPgrUxghO7
-	A5yOnAUYoG1hKhdXmrPX2ihMnyEYccTLw3fncH0Qs+L2way8I/SmPsZgdhxmt2O76gmI1r2r58q
-	PzP2JXk4MIxs48ewsUkS2b8ew1e5AHJJtZIdR1uN9C+v5StjCwaC5l2YF1NM=
-X-Google-Smtp-Source: AGHT+IGM2aCp+eZxlq2lYE2sv5q3yAtCF346ZsErV/J6qoFUIgD7WjAxOqZ9UCXOlxf3mNdh2dP0thvuweiArcx6FLx35qJXyTJ2
+        bh=Lmv3cG7vx0Ui6SQJVFVyi0/fmzwzzBeQW90PDkfU/OA=;
+        b=qDgRE9F84kpQMVDg6YK3wIPcXxJupLycC3C9r6bZaQaevQol5EDgxrargmi2Pr8vFl
+         egmu2/S8OQG8JFNHNohDXu6bpZ5yB6KSIwC0vwzpXQMrLNjVnxe9xKHBSFpKNowqEOaf
+         xf+4tj7oA9NsV0mfb9jmjAabnUZZiCsvzGSB3YhiU8QsEpF9B31zl3hsyJ80f7sCiYLM
+         C2FQ/dP+PUGaFIhVsSaHEmMyl3BK6f47lIMD+jtsBoLEDtsPiIh888cooor3RnCpFDsh
+         mKBNXRUi1CjcANQYQp/qnQxOQhJFwjRv7ps8dMp4v1Al/ubbTebyx5l5FbHiEmevYbDr
+         NHvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPrFV0W08Y7aKUnetFISK6bmC/uUMEB+c182pHguHLiGsk7gp2/GdNxszYmRFR6XEAVgGH+a5OLr0T5TE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZtSBIZat96cTWCakdLWpFntivhCNj69pTUkKkoxJh2TFXZqDK
+	ElnquAupytoYHvNrbLuW6qXSSpfqYI1M5Ke6qIdSJv8rH1TFylf9vZwCEkZXVeQk+HGBNFBSwiQ
+	a65Krq52f8bDWRk1vINQYXLid7JIp1HeMlzA75iEb9oeVlqoWMeU6KGF9CmGDFCEN5A==
+X-Gm-Gg: ASbGncslroYdBHlM9tR0MFh5kTkKj8/F0fnfi0eMWDojDBUpCtUTi0zmEWmgFzTFoV1
+	Otx6TptZriTjwhPpfVktakKK5wagXczXucKlty7fiFp8uccI0trLwgQJv7TQuJKWmD9e4lRj//J
+	frhjb4rjQ7uyCYOpnKZa9lUBBRhAkX51NrYLbfQDSkesV/HSbPa9ya2crpAKznSA7ceTFj/E/8A
+	zVr0KsbHCzSYSHSZNqJN7GA/UmVmuSay2ZA2y3F1vrSoaphIKqL6CZvqFW45Sy6X6hDuCRaMkzC
+	GXacObWbZksIbhNifY4f4Qp9RrJE5KpiSJxWEFzzsCxq+Cc4O3uD5LK/dnPyBbu4BojM4SFuOGP
+	Sha/izRm2NEFYR9NFQbHS4FAbSqrCMJx6u0Qo3g==
+X-Received: by 2002:a05:6a00:2e1f:b0:77f:2de7:eef3 with SMTP id d2e1a72fcca58-77f53897e35mr4420496b3a.5.1758668331363;
+        Tue, 23 Sep 2025 15:58:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHjDeSBvGVZUvhY8zB60DnQEjp9FD0V/JdWnCIwcciYRqCGw1BY9RbrvCylUoL7xIUUp1UWmw==
+X-Received: by 2002:a05:6a00:2e1f:b0:77f:2de7:eef3 with SMTP id d2e1a72fcca58-77f53897e35mr4420479b3a.5.1758668330964;
+        Tue, 23 Sep 2025 15:58:50 -0700 (PDT)
+Received: from [192.168.0.74] (n1-41-240-65.bla22.nsw.optusnet.com.au. [1.41.240.65])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfec40263sm16712568b3a.80.2025.09.23.15.58.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 15:58:50 -0700 (PDT)
+Message-ID: <bb776102-310b-4a84-943a-86d4138592d8@oss.qualcomm.com>
+Date: Wed, 24 Sep 2025 08:58:45 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2b:b0:425:7ae2:b8c1 with SMTP id
- e9e14a558f8ab-42581e10bfamr72471655ab.13.1758668033945; Tue, 23 Sep 2025
- 15:53:53 -0700 (PDT)
-Date: Tue, 23 Sep 2025 15:53:53 -0700
-In-Reply-To: <20250923133104.926672-1-yintirui@huawei.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d32501.a70a0220.4f78.0011.GAE@google.com>
-Subject: [syzbot ci] Re: mm: add huge pfnmap support for remap_pfn_range()
-From: syzbot ci <syzbot+ciae73d4d89faf898f@syzkaller.appspotmail.com>
-To: abrestic@rivosinc.com, akpm@linux-foundation.org, alex@ghiti.fr, 
-	anshuman.khandual@arm.com, aou@eecs.berkeley.edu, apopple@nvidia.com, 
-	ardb@kernel.org, baohua@kernel.org, baolin.wang@linux.alibaba.com, 
-	catalin.marinas@arm.com, chenjun102@huawei.com, david@redhat.com, 
-	dev.jain@arm.com, liam.howlett@oracle.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
-	lorenzo.stoakes@oracle.com, luxu.kernel@bytedance.com, mhocko@suse.com, 
-	npache@redhat.com, palmer@dabbelt.com, paul.walmsley@sifive.com, 
-	rppt@kernel.org, ryan.roberts@arm.com, samuel.holland@sifive.com, 
-	surenb@google.com, vbabka@suse.cz, wangkefeng.wang@huawei.com, 
-	will@kernel.org, willy@infradead.org, yangyicong@hisilicon.com, 
-	yintirui@huawei.com, yongxuan.wang@sifive.com, ziy@nvidia.com
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-syzbot ci has tested the following series
-
-[v1] mm: add huge pfnmap support for remap_pfn_range()
-https://lore.kernel.org/all/20250923133104.926672-1-yintirui@huawei.com
-* [PATCH RFC 1/2] pgtable: add pte_clrhuge() implementation for arm64 and riscv
-* [PATCH RFC 2/2] mm: add PMD-level huge page support for remap_pfn_range()
-
-and found the following issues:
-* BUG: non-zero pgtables_bytes on freeing mm: NUM
-* stack segment fault in pgtable_trans_huge_withdraw
-
-Full report is available here:
-https://ci.syzbot.org/series/633cbff7-ef54-4f3a-9133-71cc271396ee
-
-***
-
-BUG: non-zero pgtables_bytes on freeing mm: NUM
-
-tree:      torvalds
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
-base:      07e27ad16399afcd693be20211b0dfae63e0615f
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/72b4b6cf-5400-40d6-94b6-1cfc0e85050d/config
-C repro:   https://ci.syzbot.org/findings/3450ef75-3540-4c00-8b33-5625d4aa40ef/c_repro
-syz repro: https://ci.syzbot.org/findings/3450ef75-3540-4c00-8b33-5625d4aa40ef/syz_repro
-
-BUG: non-zero pgtables_bytes on freeing mm: 4096
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] tee: qcom: prevent potential off by one read
+From: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+        Sumit Garg <sumit.garg@kernel.org>, linux-arm-msm@vger.kernel.org,
+        op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <aMvV4kK386Sni10i@stanley.mountain>
+ <adbccfc0-0f9c-4b71-9fb5-5582c8180ac7@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <adbccfc0-0f9c-4b71-9fb5-5582c8180ac7@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: S83TS9rMcD00wT-_CIp9XF0XATe3vgDf
+X-Authority-Analysis: v=2.4 cv=YMOfyQGx c=1 sm=1 tr=0 ts=68d3262c cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=hi51d+lTLNy/RbqRqnOomQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=mbIkYJv0h8CN-5O4jtMA:9
+ a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwNCBTYWx0ZWRfX10V2Aw9BKEml
+ s31nStGacUgAWKUyLpWG80YkZt/z++5Tr5ydZkZma7CoSMLh11fVzoUqttrH4oER4f+oI0drPIp
+ rwyz7l9AVRMIk51AEFFe4Gfi+8G+OHogtVmm02P82i/sVxKokz2bHwmvmELwFYfEVYQ+b/mK4WR
+ k1T6F+ht8mubkHiX1kOLTMJUVM7Rz7ga0uR9gnOKvI/DAt5KPG0+D8NvWlFo7ooSigbb7Q9+I0s
+ +8NEf0+TBap1G1j95TovDMc5iETEOv2Vil6rzGbbYhvKqbTPZU+9Rm0ry8INOSvD0282hcbvoAo
+ 6ihShr6XSHApdPiV86C7X9v9zYCwA6m6b4AFKWeyST5tgmBEhoB4UpWz7CVZD6qh10kFbAjtrVz
+ 9CYnud3v
+X-Proofpoint-ORIG-GUID: S83TS9rMcD00wT-_CIp9XF0XATe3vgDf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-23_07,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200004
 
 
-***
 
-stack segment fault in pgtable_trans_huge_withdraw
+On 9/24/2025 8:48 AM, Amirreza Zarrabi wrote:
+> On 9/18/2025 7:50 PM, Dan Carpenter wrote:
+>> Re-order these checks to check if "i" is a valid array index before using
+>> it.  This prevents a potential off by one read access.
+>>
+>> Fixes: d6e290837e50 ("tee: add Qualcomm TEE driver")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>> ---
+>>  drivers/tee/qcomtee/call.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/tee/qcomtee/call.c b/drivers/tee/qcomtee/call.c
+>> index cc17a48d0ab7..ac134452cc9c 100644
+>> --- a/drivers/tee/qcomtee/call.c
+>> +++ b/drivers/tee/qcomtee/call.c
+>> @@ -308,7 +308,7 @@ static int qcomtee_params_from_args(struct tee_param *params,
+>>  	}
+>>  
+>>  	/* Release any IO and OO objects not processed. */
+>> -	for (; u[i].type && i < num_params; i++) {
+>> +	for (; i < num_params && u[i].type; i++) {
+>>  		if (u[i].type == QCOMTEE_ARG_TYPE_OO ||
+>>  		    u[i].type == QCOMTEE_ARG_TYPE_IO)
+>>  			qcomtee_object_put(u[i].o);
+> 
+> This is not required, considering the sequence of clean up, this
+> would never happen. `i` at least have been accessed once in the
+> switch above.
+> 
+> Regards,
+> Amir
+> 
+>
 
-tree:      torvalds
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
-base:      07e27ad16399afcd693be20211b0dfae63e0615f
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/72b4b6cf-5400-40d6-94b6-1cfc0e85050d/config
-C repro:   https://ci.syzbot.org/findings/dcfb72b5-c263-48da-830a-7f51aaa927db/c_repro
-syz repro: https://ci.syzbot.org/findings/dcfb72b5-c263-48da-830a-7f51aaa927db/syz_repro
+Also, size of u is always num_params + 1 for the ending 0.
+(basically means `i < num_params` can be removed).
 
-Oops: stack segment: 0000 [#1] SMP KASAN PTI
-CPU: 0 UID: 0 PID: 6000 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:pgtable_trans_huge_withdraw+0x115/0x310 mm/pgtable-generic.c:188
-Code: c3 10 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 5d 38 13 00 48 8b 03 48 89 04 24 4c 8d 78 08 4c 89 fd 48 c1 ed 03 <42> 80 7c 2d 00 00 74 08 4c 89 ff e8 3b 38 13 00 49 8b 07 48 8d 48
-RSP: 0018:ffffc90002d5f300 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: ffffea0000fb3dd0 RCX: ffff888107769cc0
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000001 R08: ffff888022b90843 R09: 1ffff11004572108
-R10: dffffc0000000000 R11: ffffed1004572109 R12: ffff88803ecf7000
-R13: dffffc0000000000 R14: ffff88803ecf7000 R15: 0000000000000008
-FS:  0000555576e7a500(0000) GS:ffff8880b8612000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000107d74000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- zap_deposited_table mm/huge_memory.c:2177 [inline]
- zap_huge_pmd+0xa25/0xf50 mm/huge_memory.c:2205
- zap_pmd_range mm/memory.c:1798 [inline]
- zap_pud_range mm/memory.c:1847 [inline]
- zap_p4d_range mm/memory.c:1868 [inline]
- unmap_page_range+0x9fe/0x4370 mm/memory.c:1889
- unmap_single_vma mm/memory.c:1932 [inline]
- unmap_vmas+0x399/0x580 mm/memory.c:1976
- exit_mmap+0x248/0xb50 mm/mmap.c:1280
- __mmput+0x118/0x430 kernel/fork.c:1129
- copy_process+0x2910/0x3c00 kernel/fork.c:2454
- kernel_clone+0x21e/0x840 kernel/fork.c:2605
- __do_sys_clone kernel/fork.c:2748 [inline]
- __se_sys_clone kernel/fork.c:2732 [inline]
- __x64_sys_clone+0x18b/0x1e0 kernel/fork.c:2732
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f96b638ec29
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc07e618c8 EFLAGS: 00000206 ORIG_RAX: 0000000000000038
-RAX: ffffffffffffffda RBX: 00007f96b65d5fa0 RCX: 00007f96b638ec29
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000002001000
-RBP: 00007f96b6411e41 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
-R13: 00007f96b65d5fa0 R14: 00007f96b65d5fa0 R15: 0000000000000006
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:pgtable_trans_huge_withdraw+0x115/0x310 mm/pgtable-generic.c:188
-Code: c3 10 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 5d 38 13 00 48 8b 03 48 89 04 24 4c 8d 78 08 4c 89 fd 48 c1 ed 03 <42> 80 7c 2d 00 00 74 08 4c 89 ff e8 3b 38 13 00 49 8b 07 48 8d 48
-RSP: 0018:ffffc90002d5f300 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: ffffea0000fb3dd0 RCX: ffff888107769cc0
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000001 R08: ffff888022b90843 R09: 1ffff11004572108
-R10: dffffc0000000000 R11: ffffed1004572109 R12: ffff88803ecf7000
-R13: dffffc0000000000 R14: ffff88803ecf7000 R15: 0000000000000008
-FS:  0000555576e7a500(0000) GS:ffff8880b8612000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000107d74000 CR4: 00000000000006f0
-----------------
-Code disassembly (best guess):
-   0:	c3                   	ret
-   1:	10 48 89             	adc    %cl,-0x77(%rax)
-   4:	d8 48 c1             	fmuls  -0x3f(%rax)
-   7:	e8 03 42 80 3c       	call   0x3c80420f
-   c:	28 00                	sub    %al,(%rax)
-   e:	74 08                	je     0x18
-  10:	48 89 df             	mov    %rbx,%rdi
-  13:	e8 5d 38 13 00       	call   0x133875
-  18:	48 8b 03             	mov    (%rbx),%rax
-  1b:	48 89 04 24          	mov    %rax,(%rsp)
-  1f:	4c 8d 78 08          	lea    0x8(%rax),%r15
-  23:	4c 89 fd             	mov    %r15,%rbp
-  26:	48 c1 ed 03          	shr    $0x3,%rbp
-* 2a:	42 80 7c 2d 00 00    	cmpb   $0x0,0x0(%rbp,%r13,1) <-- trapping instruction
-  30:	74 08                	je     0x3a
-  32:	4c 89 ff             	mov    %r15,%rdi
-  35:	e8 3b 38 13 00       	call   0x133875
-  3a:	49 8b 07             	mov    (%r15),%rax
-  3d:	48                   	rex.W
-  3e:	8d                   	.byte 0x8d
-  3f:	48                   	rex.W
+Anyway, it does not hurt :).
 
+Regards,
+Amir
 
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
