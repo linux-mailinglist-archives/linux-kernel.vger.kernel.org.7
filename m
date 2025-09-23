@@ -1,123 +1,152 @@
-Return-Path: <linux-kernel+bounces-828769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD77FB956B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:24:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8260BB956B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:26:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFE5C18809E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:25:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4421D7AAEF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECDA310645;
-	Tue, 23 Sep 2025 10:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B15831D72D;
+	Tue, 23 Sep 2025 10:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FQtuWJWp"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="On4c/9u6";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="Pv1Y85Bb"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A4A1F91E3
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEC427B4EE
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758623089; cv=none; b=Cifqjd/ELA4507s4Dl7ZUrTH9fkuzYWClvo1e+ft+eerXjspr2DyhQVANS3EU34s7g3soJDjjFxZpFnTobX+e//F8p6PQyrVun/r51bgVzK8NlSQMzWmSaGRmuO5wb51D+IkjMtp3AuWMppC+vmEMz/UWOl0RMbowmN0jMhzss4=
+	t=1758623192; cv=none; b=RKWcvmFNLF3lYpArirm87hpfq3/DhkdkGbqZCvy0L7USksHB4Pz4o35dzc8vMC56xSLw3TFtfMy9gR1T30tdGjJMra4e9G41NMw/spLEnE+BlF0MYQGQmiOwjJ+KHU/TuV1cgrif3su0Xc1r6ZDoBPs261EcDt7B6woIVZimQfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758623089; c=relaxed/simple;
-	bh=hxWT8ALareBd0uA5cYCp5G3aOWs5UczcjQ4vrqSt5qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FHf1/Bx9zOyxxtd4/I39pDuXpBI4ZHiMP/BA7R+2IPPYDA6iQ+Fzh2qoD7rw6/1q5EYTaKQ1CYm3mog+paZehS+fwAO5n290iaQGhnzjN92TRSbAadXs+VmKI/Gmpe8NbziK4Fp6bftcOwZHpBUWEPuwaqbPV4Evl9T6oOnUHAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FQtuWJWp; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45df7dc1b98so32692295e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 03:24:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758623086; x=1759227886; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YGeK0L8OvYq8qeWwb8RivqQQZlN1zmdA7Hijul02Hfc=;
-        b=FQtuWJWpj0HTJvDa+HVJ5ELcJyE8s5GInnkCtk7zifWlZpkhYnRPySlxqxAD20xNeX
-         TELcd40jy3nSxkoRjtN2G3nLk7RqPdIpKSOvdwBh+RgdUcET3IJuU9fB7AHLBSPg/Nnv
-         kyHuAhqajaaUQxzREvoW7TvxP5OcksFhKmIfsW6TQrL7T7jCUK2KgePeWiTrmaGegxhT
-         cTE/cytgE5h+WRFtjpOyGrfP3gmfY8Ki1+FW7Zy+svYtjuhLQ35yvaR0Ej8FjdhougxO
-         9M7Qwn7z/2/ShXBnQ6xMNnkeaeGmwhQ0T6BwAInchOBxsgnxOT5+oUpeNI/CGVM/gAUn
-         9fxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758623086; x=1759227886;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YGeK0L8OvYq8qeWwb8RivqQQZlN1zmdA7Hijul02Hfc=;
-        b=VxsOkJk7SqY47LU5INWXKH90tq5oxKdUhfoml/1978tR5HUsLmAo3CE7ahlNKxwdCJ
-         SROxg9RpCJRJ51KY+gwsD4GP9xJzqmNVa5wD7R14+KZsZ2YwE+4QOAlsSCwOE2svXcqY
-         pw5pPTBMwpHptJYkMbGrkcAHmdblodQtD2xvdLr4sr8WngX4uQdlh0eW75Sa0IkaxAWh
-         1dNMN3p6iZTjjTuANp+ctKMNCmRRvyWZxQVwgoCBJ1LA6jkcQErn3qjEsPbcqmLPwWiX
-         LRHIoNnKehso+AgBIpZbWH1cDMsc37whf7XxTvzxZxAZ0IqqA+iwfrGR2mmPbgojP1HV
-         qD5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUtHEsHU+t6lQna2Ug5AtnFFPQrcnaMdo5gm86KR/vhYQpF/oQQdSnTQUDgzoJPZxYFN27XTU3uWKm/+DM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqY0hQgG4F7vfbQiWKVnO0Qks51R4kKSfLF9jHZfbyo1hQfTrq
-	+uoprbg33zEJFFLUgZFqrvE1U7o7O2CU2o0vf9AJb9UbhoUvV0RN+yOU8bOgpzeGTJc=
-X-Gm-Gg: ASbGncsQrhHjQ5AJ45k2iWB6zCN32rDaI1rpxhkAtcCKpRiUAVqM/KU3BAZtTshKwpD
-	bl0WLvNWE/OH20hCl83PLXZE4RmBrItrNEIHgl019v6VONmRa4kV2Hiaffj0xS9iYl+7KSSkmU3
-	uwHrp7dOwacR21PLw7rkeS1nBGBt3yvY0xV7gzeOF0R8hjHlbc8okZY5E1hSBo07qiKtdidWeDO
-	6oE0f8J+F/MQeJDyRSQV9B/qq9DIVctXTyKuzNAX3z9Faz/+acZBQhwj2YMqDNX7bDR021qCsaS
-	MK1RK7PBEQ7qFWjsIpbdx3VkOgANjEH7AVds8L5q+j+SnrXNrrccL8pcmSzV39gLaxUlbFRwIRz
-	O4AJLzh3h+wXfam5Rd7GT8Tdp8Cy3
-X-Google-Smtp-Source: AGHT+IFKEEA8sGrJ6WwW5PMsMgfTwp6SLTsv7UjN+mB6CB4NO4UVOagsDVZF3Kbx3CzAzehCmN3qWA==
-X-Received: by 2002:a05:600c:198f:b0:456:13b6:4b18 with SMTP id 5b1f17b1804b1-46e1dae28cbmr21080655e9.31.1758623085755;
-        Tue, 23 Sep 2025 03:24:45 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e2439a62fsm5181495e9.10.2025.09.23.03.24.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 03:24:45 -0700 (PDT)
-Date: Tue, 23 Sep 2025 13:24:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Kaushlendra Kumar <kaushlendra.kumar@intel.com>,
-	gregkh@linuxfoundation.org, dakr@kernel.org, rafael@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arch_topology: Fix incorrect error check in
- topology_parse_cpu_capacity()
-Message-ID: <aNJ1aY0AuATEKjDN@stanley.mountain>
-References: <20250923072520.3964688-1-kaushlendra.kumar@intel.com>
- <20250923-spectral-rich-shellfish-3ab26c@sudeepholla>
+	s=arc-20240116; t=1758623192; c=relaxed/simple;
+	bh=+6KkPKPpTAxrAvWQ5zev/Zk8mSq4Vaj1I5f+VxwRvwc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u3bIJiHvKoqCF1Z6MNGTOLReuKtwnjC8AVL70oiad5jncm6bPwcA70WCMcSNLVSciqjooiigd1BYKIKZO++5iY5Zd+ISBUdb5rztV3R2drXYzFGfK2RzMGH95ucC4VhWR/zvKQAG4+V9mJrWHxQfEKNi4CuD7mqWilDsOBcf+3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=On4c/9u6; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=Pv1Y85Bb; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1758623181; x=1759227981;
+	d=konsulko.se; s=rsa2;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=wdDTHWqIIQrO4Z56Gwoii2btyUPVsS03K4kULpvGLhE=;
+	b=On4c/9u6+mPnFx+axc8y1FQ13QoBkGkkSIigzg6s2MTIDFm9fsDApEqNUZL4M1ZYfD5wG5q3UPFsL
+	 pbgbYfTjDY9SVqhhGT5go8Jz0MM0JUiezkrDgGZlwAcilwdTnPdo+0IJLVQASqKr8im2fXfSqCNKtC
+	 gGjTnjZnPXJO7uxRb3xiOoVdpAQWXohdwazGQpoqtAI0SPjssRvD8vxwQWHhXJIwFyIciYDd/xg630
+	 k4uiBtoRn+M+//+DYnS4+UA3mKEjdsQKlPfXD7LZNUXbB62qOKKi2/z/NBPXNbHZ054+QQDs5/a/Ty
+	 yMSTDTeJZ5y3y2OP7PnC+3bnVaCy8PA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1758623181; x=1759227981;
+	d=konsulko.se; s=ed2;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=wdDTHWqIIQrO4Z56Gwoii2btyUPVsS03K4kULpvGLhE=;
+	b=Pv1Y85Bbid3q4EqIpaUuZa0uJ39ubo4f1p3+Tk6z18By/Ib7BfokadvFbtCXPmJh6kSvMB3tNXe1B
+	 Akpp2p+Bg==
+X-HalOne-ID: bef8abd3-9867-11f0-9446-fb5fec76084d
+Received: from localhost.localdomain (host-95-203-13-255.mobileonline.telia.com [95.203.13.255])
+	by mailrelay3.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id bef8abd3-9867-11f0-9446-fb5fec76084d;
+	Tue, 23 Sep 2025 10:26:21 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: linux-mm@kvack.org,
+	rust-for-linux@vger.kernel.org
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: [PATCH v6 0/2] rust: zpool: add API for C and Rust
+Date: Tue, 23 Sep 2025 12:25:47 +0200
+Message-Id: <20250923102547.2545992-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923-spectral-rich-shellfish-3ab26c@sudeepholla>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 23, 2025 at 09:40:28AM +0100, Sudeep Holla wrote:
-> On Tue, Sep 23, 2025 at 12:55:20PM +0530, Kaushlendra Kumar wrote:
-> > Fix incorrect use of PTR_ERR_OR_ZERO() in topology_parse_cpu_capacity()
-> > which causes the code to proceed with NULL clock pointers. The current
-> > logic uses !PTR_ERR_OR_ZERO(cpu_clk) which evaluates to true for both
-> > valid pointers and NULL, leading to potential NULL pointer dereference
-> > in clk_get_rate().
-> > 
-> > PTR_ERR_OR_ZERO(cpu_clk) returns:
-> > - 0 if cpu_clk is a valid pointer or NULL
-> > - error code if cpu_clk is an error pointer
-> > 
-> > Therefore !PTR_ERR_OR_ZERO(cpu_clk) is true for both valid pointers and
-> > NULL, causing the code to call clk_get_rate(NULL) when of_clk_get()
-> > returns NULL. Replace with IS_ERR_OR_NULL() which correctly identifies
-> > only valid pointers, ensuring clk_get_rate() is called only with valid
-> > clock objects.
-> >
-> 
-> Nice catch, wonder how it survived so long unnoticed.
+zpool used to be a common frontend for memory storage pool
+implementations. With its removal the opportunity to select an
+allocation backend for zswap has been completely lost. However, with
+the recent advancements in the vmap/vmalloc field that allow for fast
+and simple allocation backends, and the initiative to implement one in
+Rust, the zpool API is still necessary, though it's enough to have it
+as a thin API for compile time backend selection.
 
-I don't think of_clk_get() can actually return NULL...  It's still worth
-fixing but I don't think it affects real life.
+This patchset provides such API and implements the interface to use
+it in Rust kernel code, thus enabling both C and Rust implementations
+of zpool allocators. zsmalloc and documentation are updated
+accordingly.
 
-regards,
-dan carpenter
-
+Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+---
+Changelog:
+v1 -> v2:
+* reworked to stick to the existing Rust driver infrastructure
+* removed raw pointers from the Rust API
+v2 -> v3:
+* detailed safety requirements for unsafe API functions
+* removed unwrap()
+* some typo corrections
+v3 -> v4:
+* added a working example of zpool Rust API usage in the
+  documentation part
+* change to Flags arranged as a separate patch
+* improved safety requirements for ZpoolDriver trait
+v4 -> v5:
+* created a new type ZpoolHandle for handle representation on the
+  Rust side
+* improved description of Flags::from_raw()
+* pool is no more borrowed as mutable for ZpoolDriver::malloc()
+* ZpoolDriver::destroy() removed
+* improved ZpoolDriver implementation example
+* typos/markup corrections
+v5 -> v6:
+* removed zpool API is partially restored (to the minimal required
+  extent)
+* no Adapter based runtime registration is necessary
+* a Rust macro for compile time registration is introduced instead
+---
+ Documentation/admin-guide/mm/zswap.rst |   14 +-
+ MAINTAINERS                            |    1 
+ include/linux/zpool.h                  |   62 ++++++++
+ mm/Kconfig                             |   22 ++-
+ mm/zsmalloc.c                          |    3 
+ mm/zswap.c                             |   30 ++--
+ rust/bindings/bindings_helper.h        |    1 
+ rust/kernel/lib.rs                     |    2 
+ rust/kernel/zpool.rs                   |  366 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 9 files changed, 479 insertions(+), 22 deletions(-)
 
 
