@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-829153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A52FB965DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:45:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921CDB96676
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A71DC7A3F62
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:44:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CAA117C6C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAE9258CDA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A93A25783C;
 	Tue, 23 Sep 2025 14:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OB85I1+j"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bGBhYd0w"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCC323A98E
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4105323D7DE
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758638732; cv=none; b=NHiSsOsoDLtfk50/p6xbDe8G2Fz+Izpe7sJYdBFw27rGzW2/wQJiRfVPyvc9EcsVw989wFr9ja6ElOuxcJBoiExHCPM1UqTxkisUwWpH4f45DnZw3QxHwmGsMgvk6AJPkE2g5I2u856qwEZmT6T4wWtMrVGvXYevsFKpsCMwcco=
+	t=1758638732; cv=none; b=ULBKohAdiheHD7Tq8mAv918BY6Oe3djQIlyCP0PLvRt+awaJKdu+h6qErFfHA8HHM2YUuZsG6hSni08glorRFx6j1CPDeLB+mWMcXL43bzSI9Bm4qWT/MVJFQub+KCo2jrH8AfYzvoDHL8YTOrkIIq0xMLUOuB1xYl9mmF3dFgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758638732; c=relaxed/simple;
-	bh=v/6yP43Xas8IL2SDwh5MqBaXKzliC0aaemzEd5pY6i8=;
+	bh=gHfJe2wkX0a4J0T2iaI/ZrXum2g8dABmTaj/MRvdciw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bnBfwNEfd+Yg81oNnfFc8ZLP9CKN7jSqW/fltn8sHcy8WxxZ4oNAey7SwyThGY4o45+2er3TUA45hYtNj5lvy2NFwpqMFQTlcTcaV/F5jFtfIKC2y11IQimJ2HCw0ulAglK9hDMU2tCKZuC16lrhV/IEV4tGY38doHoeNkApq3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OB85I1+j; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version; b=mRb9Iq0cMZ7mkWKQrIMULDdLhsmKcx6zF7NJ/JiQeHzrft3IaDMRmPmAlCVKvLdzGWH2QaikrTrsUHrVQ8ARWiNzDxqMeYcX+e0Es66OFNpPHMkVx6ieKXgSMLZPfz51PHlk4KtgM3vXXIM5E+KLs1hN5DCnVkjq83q+qxi3Zv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bGBhYd0w; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46b303f755aso28478655e9.1
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45dd5e24d16so54900565e9.3
         for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:45:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1758638728; x=1759243528; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7hWknpiUnT9ncdcJYksHsytZcbFmlaZdO2Pms9xtMZQ=;
-        b=OB85I1+ji4vjyb+s8CmATtkF+FseZjwU1pri18ws6xcn4Ppcu5gLemhXK0VwISNU5R
-         ujbQPQFHRLMN0f4pIAtWpu8fclGhlW+o+Oqfr7vRo9WLDNnRjpQdvnucdBON8VhV0pvq
-         Saz7Na/6gORltaeBsQuYLt2QImlV11us4MuWQD7FNzDbX5H7OTXWf/McQMJKHZ8hFkyT
-         VZmvoXr0Jv1dS+hKVXHPN4LjQUorCxfmeJIj5R4cVenurmJSkAi3poo8bQ9wqBnNCBvr
-         0p78RXUhJJIqKHYk4mlZELF7GXULpFgAdS6vrYduEwxO26TDRKRN4vL2Hu3ylBsn+eKk
-         1lHA==
+        bh=By9iTZQYVaW98aaM8/fCSAHAyxcTKcPpA3ibSeZs1YE=;
+        b=bGBhYd0w++KpcxU7aVvecVbsR5MQIPpvzfsnOQmGahz/yh6ivnTHGt904m3D0OViQA
+         JauHkmL+4FhKrV2OAgIGVLuXaGFDN5bmVWRTgWquXlIQrUTEqtmDqnLFX2w+bk+YGzd/
+         an5XtmHGtTCM5NyWRJYe9ftUmkBYNXmvBHX06tdd1SIElpvh3YverTe9gMyUW1tufHpX
+         hBIP0mQbTybk0fhQuYPYwvgUyQoYmRL+Fpfd0SlRfvUnTtl8pLvIqB3TJQGEeYAdEtjf
+         2+B1NG7T2tBl0LNUa2HSlPM752Fw70fsSE4Bq7naPZPf8UrOSD8GVBm1s9rKHlLMvzwA
+         66mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1758638728; x=1759243528;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7hWknpiUnT9ncdcJYksHsytZcbFmlaZdO2Pms9xtMZQ=;
-        b=cC7I17lvsNx93vxh+dxYdeq9mCG1hIVlESXvgf/pJC1GpBeSCZ/ZxY9YmJlk5nfMUq
-         dfuhMHSt20EN2ZZvyk+fs6p9zug8/0uTN5xDn+NB1R0n9sNdNtv+FMzUOhj8WTOHmBHE
-         B4885pMVvtwdud3Bl1Fg6B/fJDxe3sw85PAI+jOvlaINwtCMvMK+EG2ZrdABuRAQro1g
-         hatVxrAqU/vk23VE8ppQYtexm0WO4h6LUuDHIikoDrXDDZBjUcRtxERzMaK9PlkMx/pB
-         pRs9AWVtbzg8UtmI1WWQ4UVBGdmxWMq33wEiKolbS3I4y71UI41aDASuNxxA8oXyFjkR
-         G1Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCVdMpFcKSXzKjOTi9MFuU9dAjxPRnUftcDR2J0R/GD3EbRma/a5qxyPbK/GYpcjJ7EMydPbhOj+XXVrkR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh58BEFrdOrxSjiBy3upxSXmB7688AuDE8Wd4P83jfPD/hC43l
-	IMNI2UWMCzpOoa9M6bRl/BPvaD1sW5vrS7oaQsAfw8MS1iSQizeWpMYd
-X-Gm-Gg: ASbGncsr5lc/lJ8/Ay3///FVKM/ruM0ZEYdZ2s8cNpEdclFa2vGAuIK9v++HQmAlXzM
-	vyxeivu7IeE6cGiaK6mZI5ZmlQEDFP/u34o9j/GWF1Wqv8PyiqHFtQ0OAVAe2bsZdTUQWvbgtJR
-	Kz1CgX4kksrSwBgNnKkrvTEFMj5ll+f4taHLpy6YQPPGvtnbSaAJAU8TgFB+xK6HY4BFeuQ8jJx
-	LWSN8fJhAf/KOxVLMkimm3wjRWmoncIBzFwskRMeaQNgQ+j04LD1qqydr2nnpK3aUIvbNwXNW/L
-	/R/TN0Cxj2qHJkKwZzYs+9hqXDDIZwcfFlcsxsSd5TGxDbr6IHobPipnnR/ehJkHiBS2k42if9z
-	wYs4R3w+Kk3vzf53qm0cu3s4Bnb2vTgtfEGQzaveG3Q26YLp3rLOUc2CBQgOiCOgyaOOhEb9jZQ
-	sSiA==
-X-Google-Smtp-Source: AGHT+IEfEIkKW4I9tGlw8bA5Jwg+sH3rB4c1YHW3qG0pAgSBH5W2hvRjK+Ule13vT0cVygKWhd9FoQ==
-X-Received: by 2002:a05:600c:4595:b0:45f:2bc1:22d0 with SMTP id 5b1f17b1804b1-46e1dac9c58mr29386395e9.33.1758638727687;
-        Tue, 23 Sep 2025 07:45:27 -0700 (PDT)
+        bh=By9iTZQYVaW98aaM8/fCSAHAyxcTKcPpA3ibSeZs1YE=;
+        b=tOar6anReLC/ymtEykDnTZ8wNjKPf964VlAs7Ot6B1yM8ZVXvgn/QgFwsTdEQHigt6
+         2rhMnBHPMdx2fP70arIV5s63owqQcsSWa2kJrYhAaM4EfSTN7vfNpBfxh6+7SNTZPqIt
+         HZAYscC5fJy/i8+9CqE+o34MHCgj+a0qBi3CQr98xBnhpZ0vp0gaJIXfLzsIoF7LfdUv
+         O3soqDpzccrxreymAK4RuR8vQLdAhaIGrqcbnSEkD4gte52XBa8phgNVUnBKZw7VY1Aw
+         yp7LIAIKM3tEYA94wA84NOvbCMD59H/j6cgJ7vmTN8YGKa3phgUQ3tCrJR819545xlip
+         brVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVlSTOLfi3QsXWMkqb9pQVsvkhUN16orReyiKG6laegauApzkPnZCCInOQNU8raNshMejhbQSch5A/5Kl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys+OoQZn+yd7qllYwVuYYHs5uiLY5lVWRSF7ljuPcNXMcQROaz
+	680Pv55QUKcnAyFCCENSyVHQHnIH9zb+1i8o3PvGYWie8T1j9g1dDNJ+
+X-Gm-Gg: ASbGnctPomFZHEABVCx3HS9XZeeRpWqFw/U6ZvRB6aaReHeOEYdDFoP1vzdZJoAt90M
+	W1zER6mKHvzbCof9bnFHeOjyH/jQH5nwnEjBujEQTR0QwOOhIcHJEu29qTWTGbySiId+NWHdB3Q
+	NFlSlRIfFDm+l9DDfzuiHzmvSRhijlLisI+2PEymGe8f/huo5uU2+cCcRh6xTQc+lU3oTqNXebz
+	1iE3iegAtnfl4Bqg29uU1s0DnmfxLge9FLw3UH+jQEaoiDz9xrJvwEjrPZsEKCoAVMrhkYpwCEV
+	jfi5YjiO62Cs3Zo8Bb3gUd2QtQKhsUL/ZtfdFSUHOI8mGtzXRyKOyzV7jDQjGhKMTJna1a/62Ay
+	o/MrUwVObSomaDp4xk4Ktky5PIwIMeEbwEPkIDZ/v/KWSmWKxhiRxJLxCImb2xTVtghw5f+aMPz
+	ppJQ==
+X-Google-Smtp-Source: AGHT+IGeaLZNcziJFwxEnB+ujLHDeNr3b8C5SkLS7nPKFj5AlRt42fsuSfQ2qfOOoel3vyehbrlVsA==
+X-Received: by 2002:a05:600c:c171:b0:46e:1abc:1811 with SMTP id 5b1f17b1804b1-46e1dadca3cmr28239555e9.27.1758638728217;
+        Tue, 23 Sep 2025 07:45:28 -0700 (PDT)
 Received: from biju.lan (host86-139-30-37.range86-139.btcentralplus.com. [86.139.30.37])
         by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f0aac3fdsm238940435e9.1.2025.09.23.07.45.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
@@ -76,21 +76,18 @@ Received: from biju.lan (host86-139-30-37.range86-139.btcentralplus.com. [86.139
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v3 1/8] dt-bindings: pwm: Document RZ/G3E GPT support
-Date: Tue, 23 Sep 2025 15:45:05 +0100
-Message-ID: <20250923144524.191892-2-biju.das.jz@bp.renesas.com>
+	Biju Das <biju.das.au@gmail.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH v3 2/8] pwm: rzg2l-gpt: Add info variable to struct rzg2l_gpt_chip
+Date: Tue, 23 Sep 2025 15:45:06 +0100
+Message-ID: <20250923144524.191892-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250923144524.191892-1-biju.das.jz@bp.renesas.com>
 References: <20250923144524.191892-1-biju.das.jz@bp.renesas.com>
@@ -104,356 +101,114 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Document support for the GPT found on the Renesas RZ/G3E (R9A09G047)
-SoC.
+RZ/G3E GPT IP is similar to the one found on RZ/G2L GPT, but there are
+some differences. The field width of prescalar on RZ/G3E is 4 whereas on
+RZ/G2L it is 3. Add rzg2l_gpt_info variable to handle this differences.
+The FIELD_PREP and FIELD_GET macro is giving compilation issue as the
+parameters are not build time constants. So added Non-constant mask
+variant of FIELD_GET() and FIELD_PREP().
 
-The GPT is a 32-bit timer with 16 hardware channels (GPT0: 8 channel
-and GPT1: 8channels). The hardware supports simultaneous control of
-all channels. PWM waveforms can be generated by controlling the
-up-counter, downcounter, or up- and down-counter.
-
+Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
 v2->v3:
- * Added Rb tag from Rob.
+ * No change.
 v1->v2:
- * Created separate document for RZ/G3E GPT.
- * Updated commit header and description.
+ * Collected tag.
 ---
- .../bindings/pwm/renesas,rzg3e-gpt.yaml       | 323 ++++++++++++++++++
- 1 file changed, 323 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pwm/renesas,rzg3e-gpt.yaml
+ drivers/pwm/pwm-rzg2l-gpt.c | 33 ++++++++++++++++++++++++++++-----
+ 1 file changed, 28 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pwm/renesas,rzg3e-gpt.yaml b/Documentation/devicetree/bindings/pwm/renesas,rzg3e-gpt.yaml
-new file mode 100644
-index 000000000000..cb4ffab5f47f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pwm/renesas,rzg3e-gpt.yaml
-@@ -0,0 +1,323 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pwm/renesas,rzg3e-gpt.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/pwm/pwm-rzg2l-gpt.c b/drivers/pwm/pwm-rzg2l-gpt.c
+index 392bd129574b..1d09fb01c72f 100644
+--- a/drivers/pwm/pwm-rzg2l-gpt.c
++++ b/drivers/pwm/pwm-rzg2l-gpt.c
+@@ -33,6 +33,19 @@
+ #include <linux/time.h>
+ #include <linux/units.h>
+ 
++/* Non-constant mask variant of FIELD_GET() and FIELD_PREP() */
++#define field_get(_mask, _reg)	\
++({\
++	typeof(_mask) (mask) = (_mask); \
++	(((_reg) & (mask)) >> (ffs(mask) - 1)); \
++})
 +
-+title: Renesas RZ/G3E General PWM Timer (GPT)
++#define field_prep(_mask, _val)	\
++({\
++	typeof(_mask) (mask) = (_mask); \
++	(((_val) << (ffs(mask) - 1)) & (mask)); \
++})
 +
-+maintainers:
-+  - Biju Das <biju.das.jz@bp.renesas.com>
+ #define RZG2L_GET_CH(hwpwm)	((hwpwm) / 2)
+ #define RZG2L_GET_CH_OFFS(ch)	(0x100 * (ch))
+ 
+@@ -46,7 +59,6 @@
+ 
+ #define RZG2L_GTCR_CST		BIT(0)
+ #define RZG2L_GTCR_MD		GENMASK(18, 16)
+-#define RZG2L_GTCR_TPCS		GENMASK(26, 24)
+ 
+ #define RZG2L_GTCR_MD_SAW_WAVE_PWM_MODE	FIELD_PREP(RZG2L_GTCR_MD, 0)
+ 
+@@ -77,9 +89,14 @@
+ #define RZG2L_MAX_SCALE_FACTOR	1024
+ #define RZG2L_MAX_TICKS		((u64)U32_MAX * RZG2L_MAX_SCALE_FACTOR)
+ 
++struct rzg2l_gpt_info {
++	u32 gtcr_tpcs_mask;
++};
 +
-+description: |
-+  RZ/G3E General PWM Timer (GPT) composed of 16 channels with 32-bit
-+  timer. It supports the following functions
-+  * 32 bits x 16 channels.
-+  * Up-counting or down-counting (saw waves) or up/down-counting
-+    (triangle waves) for each counter.
-+  * Clock sources independently selectable for each channel.
-+  * Four I/O pins per channel.
-+  * Two output compare/input capture registers per channel.
-+  * For the two output compare/input capture registers of each channel,
-+    four registers are provided as buffer registers and are capable of
-+    operating as comparison registers when buffering is not in use.
-+  * In output compare operation, buffer switching can be at crests or
-+    troughs, enabling the generation of laterally asymmetric PWM waveforms.
-+  * Registers for setting up frame cycles in each channel (with capability
-+    for generating interrupts at overflow or underflow)
-+  * Generation of dead times in PWM operation.
-+  * Synchronous starting, stopping and clearing counters for arbitrary
-+    channels.
-+  * Count start, count stop, count clear, up-count, down-count, or input
-+    capture operation in response to a maximum of 8 ELC events.
-+  * Count start, count stop, count clear, up-count, down-count, or input
-+    capture operation in response to the status of two input pins.
-+  * Starting, clearing, stopping and up/down counters in response to a
-+    maximum of four external triggers.
-+  * Output pin disable function by detected short-circuits between output
-+    pins.
-+  * A/D converter start triggers can be generated.
-+  * Compare match A to F event and overflow/underflow event can be output
-+    to the ELC.
-+  * Enables the noise filter for input capture.
-+  * Logical operation between the channel output.
+ struct rzg2l_gpt_chip {
+ 	void __iomem *mmio;
+ 	struct mutex lock; /* lock to protect shared channel resources */
++	const struct rzg2l_gpt_info *info;
+ 	unsigned long rate_khz;
+ 	u32 period_ticks[RZG2L_MAX_HW_CHANNELS];
+ 	u32 channel_request_count[RZG2L_MAX_HW_CHANNELS];
+@@ -324,7 +341,7 @@ static int rzg2l_gpt_read_waveform(struct pwm_chip *chip,
+ 
+ 	guard(mutex)(&rzg2l_gpt->lock);
+ 	if (rzg2l_gpt_is_ch_enabled(rzg2l_gpt, pwm->hwpwm, &gtcr)) {
+-		wfhw->prescale = FIELD_GET(RZG2L_GTCR_TPCS, gtcr);
++		wfhw->prescale = field_get(rzg2l_gpt->info->gtcr_tpcs_mask, gtcr);
+ 		wfhw->gtpr = rzg2l_gpt_read(rzg2l_gpt, RZG2L_GTPR(ch));
+ 		wfhw->gtccr = rzg2l_gpt_read(rzg2l_gpt, RZG2L_GTCCR(ch, sub_ch));
+ 		if (wfhw->gtccr > wfhw->gtpr)
+@@ -364,8 +381,8 @@ static int rzg2l_gpt_write_waveform(struct pwm_chip *chip,
+ 		rzg2l_gpt_write(rzg2l_gpt, RZG2L_GTUDDTYC(ch), RZG2L_GTUDDTYC_UP_COUNTING);
+ 
+ 		/* Select count clock */
+-		rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTCR(ch), RZG2L_GTCR_TPCS,
+-				 FIELD_PREP(RZG2L_GTCR_TPCS, wfhw->prescale));
++		rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTCR(ch), rzg2l_gpt->info->gtcr_tpcs_mask,
++				 field_prep(rzg2l_gpt->info->gtcr_tpcs_mask, wfhw->prescale));
+ 
+ 		/* Set period */
+ 		rzg2l_gpt_write(rzg2l_gpt, RZG2L_GTPR(ch), wfhw->gtpr);
+@@ -430,6 +447,8 @@ static int rzg2l_gpt_probe(struct platform_device *pdev)
+ 	if (IS_ERR(rzg2l_gpt->mmio))
+ 		return PTR_ERR(rzg2l_gpt->mmio);
+ 
++	rzg2l_gpt->info = of_device_get_match_data(dev);
 +
-+properties:
-+  compatible:
-+    items:
-+      - const: renesas,r9a09g047-gpt  # RZ/G3E
+ 	rstc = devm_reset_control_get_exclusive_deasserted(dev, NULL);
+ 	if (IS_ERR(rstc))
+ 		return dev_err_probe(dev, PTR_ERR(rstc), "Cannot deassert reset control\n");
+@@ -472,8 +491,12 @@ static int rzg2l_gpt_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct rzg2l_gpt_info rzg2l_data = {
++	.gtcr_tpcs_mask = GENMASK(26, 24),
++};
 +
-+  reg:
-+    maxItems: 1
-+
-+  '#pwm-cells':
-+    const: 3
-+
-+  interrupts:
-+    items:
-+      - description: Input capture/compare match of the GTCCRA for channel GPT{0,1}.0
-+      - description: Input capture/compare match of the GTCCRB for channel GPT{0,1}.0
-+      - description: Compare match with the GTCCRC for channel GPT{0,1}.0
-+      - description: Compare match with the GTCCRD for channel GPT{0,1}.0
-+      - description: Compare match with the GTCCRE for channel GPT{0,1}.0
-+      - description: Compare match with the GTCCRF for channel GPT{0,1}.0
-+      - description: A and B both high interrupt for channel GPT{0,1}.0
-+      - description: A and B both low interrupt for channel GPT{0,1}.0
-+      - description: Input capture/compare match of the GTCCRA for channel GPT{0,1}.1
-+      - description: Input capture/compare match of the GTCCRB for channel GPT{0,1}.1
-+      - description: Compare match with the GTCCRC for channel GPT{0,1}.1
-+      - description: Compare match with the GTCCRD for channel GPT{0,1}.1
-+      - description: Compare match with the GTCCRE for channel GPT{0,1}.1
-+      - description: Compare match with the GTCCRF for channel GPT{0,1}.1
-+      - description: A and B both high interrupt for channel GPT{0,1}.1
-+      - description: A and B both low interrupt for channel GPT{0,1}.1
-+      - description: Input capture/compare match of the GTCCRA for channel GPT{0,1}.2
-+      - description: Input capture/compare match of the GTCCRB for channel GPT{0,1}.2
-+      - description: Compare match with the GTCCRC for channel GPT{0,1}.2
-+      - description: Compare match with the GTCCRD for channel GPT{0,1}.2
-+      - description: Compare match with the GTCCRE for channel GPT{0,1}.2
-+      - description: Compare match with the GTCCRF for channel GPT{0,1}.2
-+      - description: A and B both high interrupt for channel GPT{0,1}.2
-+      - description: A and B both low interrupt for channel GPT{0,1}.2
-+      - description: Input capture/compare match of the GTCCRA for channel GPT{0,1}.3
-+      - description: Input capture/compare match of the GTCCRB for channel GPT{0,1}.3
-+      - description: Compare match with the GTCCRC for channel GPT{0,1}.3
-+      - description: Compare match with the GTCCRD for channel GPT{0,1}.3
-+      - description: Compare match with the GTCCRE for channel GPT{0,1}.3
-+      - description: Compare match with the GTCCRF for channel GPT{0,1}.3
-+      - description: A and B both high interrupt for channel GPT{0,1}.3
-+      - description: A and B both low interrupt for channel GPT{0,1}.3
-+      - description: Input capture/compare match of the GTCCRA for channel GPT{0,1}.4
-+      - description: Input capture/compare match of the GTCCRB for channel GPT{0,1}.4
-+      - description: Compare match with the GTCCRC for channel GPT{0,1}.4
-+      - description: Compare match with the GTCCRD for channel GPT{0,1}.4
-+      - description: Compare match with the GTCCRE for channel GPT{0,1}.4
-+      - description: Compare match with the GTCCRF for channel GPT{0,1}.4
-+      - description: A and B both high interrupt for channel GPT{0,1}.4
-+      - description: A and B both low interrupt for channel GPT{0,1}.4
-+      - description: Input capture/compare match of the GTCCRA for channel GPT{0,1}.5
-+      - description: Input capture/compare match of the GTCCRB for channel GPT{0,1}.5
-+      - description: Compare match with the GTCCRC for channel GPT{0,1}.5
-+      - description: Compare match with the GTCCRD for channel GPT{0,1}.5
-+      - description: Compare match with the GTCCRE for channel GPT{0,1}.5
-+      - description: Compare match with the GTCCRF for channel GPT{0,1}.5
-+      - description: A and B both high interrupt for channel GPT{0,1}.5
-+      - description: A and B both low interrupt for channel GPT{0,1}.5
-+      - description: Input capture/compare match of the GTCCRA for channel GPT{0,1}.6
-+      - description: Input capture/compare match of the GTCCRB for channel GPT{0,1}.6
-+      - description: Compare match with the GTCCRC for channel GPT{0,1}.6
-+      - description: Compare match with the GTCCRD for channel GPT{0,1}.6
-+      - description: Compare match with the GTCCRE for channel GPT{0,1}.6
-+      - description: Compare match with the GTCCRF for channel GPT{0,1}.6
-+      - description: A and B both high interrupt for channel GPT{0,1}.6
-+      - description: A and B both low interrupt for channel GPT{0,1}.6
-+      - description: Input capture/compare match of the GTCCRA for channel GPT{0,1}.7
-+      - description: Input capture/compare match of the GTCCRB for channel GPT{0,1}.7
-+      - description: Compare match with the GTCCRC for channel GPT{0,1}.7
-+      - description: Compare match with the GTCCRD for channel GPT{0,1}.7
-+      - description: Compare match with the GTCCRE for channel GPT{0,1}.7
-+      - description: Compare match with the GTCCRF for channel GPT{0,1}.7
-+      - description: A and B both high interrupt for channel GPT{0,1}.7
-+      - description: A and B both low interrupt for channel GPT{0,1}.7
-+
-+  interrupt-names:
-+    items:
-+      - const: gtcia0
-+      - const: gtcib0
-+      - const: gtcic0
-+      - const: gtcid0
-+      - const: gtcie0
-+      - const: gtcif0
-+      - const: gtcih0
-+      - const: gtcil0
-+      - const: gtcia1
-+      - const: gtcib1
-+      - const: gtcic1
-+      - const: gtcid1
-+      - const: gtcie1
-+      - const: gtcif1
-+      - const: gtcih1
-+      - const: gtcil1
-+      - const: gtcia2
-+      - const: gtcib2
-+      - const: gtcic2
-+      - const: gtcid2
-+      - const: gtcie2
-+      - const: gtcif2
-+      - const: gtcih2
-+      - const: gtcil2
-+      - const: gtcia3
-+      - const: gtcib3
-+      - const: gtcic3
-+      - const: gtcid3
-+      - const: gtcie3
-+      - const: gtcif3
-+      - const: gtcih3
-+      - const: gtcil3
-+      - const: gtcia4
-+      - const: gtcib4
-+      - const: gtcic4
-+      - const: gtcid4
-+      - const: gtcie4
-+      - const: gtcif4
-+      - const: gtcih4
-+      - const: gtcil4
-+      - const: gtcia5
-+      - const: gtcib5
-+      - const: gtcic5
-+      - const: gtcid5
-+      - const: gtcie5
-+      - const: gtcif5
-+      - const: gtcih5
-+      - const: gtcil5
-+      - const: gtcia6
-+      - const: gtcib6
-+      - const: gtcic6
-+      - const: gtcid6
-+      - const: gtcie6
-+      - const: gtcif6
-+      - const: gtcih6
-+      - const: gtcil6
-+      - const: gtcia7
-+      - const: gtcib7
-+      - const: gtcic7
-+      - const: gtcid7
-+      - const: gtcie7
-+      - const: gtcif7
-+      - const: gtcih7
-+      - const: gtcil7
-+
-+  clocks:
-+    items:
-+      - description: Core clock (PCLKD)
-+      - description: Bus clock (PCLKA)
-+
-+  clock-names:
-+    items:
-+      - const: core
-+      - const: bus
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    items:
-+      - description: Reset for bus clock (PCLKA/PCLKD)
-+      - description: Reset for core clock (PCLKD)
-+
-+  reset-names:
-+    items:
-+      - const: rst_p
-+      - const: rst_s
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - resets
-+  - reset-names
-+
-+allOf:
-+  - $ref: pwm.yaml#
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/renesas,r9a09g047-cpg.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    pwm@13010000 {
-+        compatible = "renesas,r9a09g047-gpt";
-+        reg = <0x13010000 0x10000>;
-+        interrupts = <GIC_SPI 538 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 546 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 554 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 562 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 570 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 578 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 586 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 594 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 539 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 547 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 555 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 563 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 571 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 579 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 587 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 595 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 540 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 548 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 556 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 564 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 572 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 580 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 588 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 596 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 541 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 549 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 557 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 565 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 573 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 581 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 589 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 597 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 542 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 550 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 558 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 566 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 574 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 582 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 590 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 598 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 543 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 551 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 559 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 567 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 575 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 583 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 591 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 599 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 544 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 552 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 560 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 568 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 576 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 584 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 592 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 600 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 545 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 553 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 561 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 569 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 577 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 585 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 593 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 601 IRQ_TYPE_EDGE_RISING>;
-+        interrupt-names = "gtcia0", "gtcib0", "gtcic0", "gtcid0",
-+                          "gtcie0", "gtcif0", "gtcih0", "gtcil0",
-+                          "gtcia1", "gtcib1", "gtcic1", "gtcid1",
-+                          "gtcie1", "gtcif1", "gtcih1", "gtcil1",
-+                          "gtcia2", "gtcib2", "gtcic2", "gtcid2",
-+                          "gtcie2", "gtcif2", "gtcih2", "gtcil2",
-+                          "gtcia3", "gtcib3", "gtcic3", "gtcid3",
-+                          "gtcie3", "gtcif3", "gtcih3", "gtcil3",
-+                          "gtcia4", "gtcib4", "gtcic4", "gtcid4",
-+                          "gtcie4", "gtcif4", "gtcih4", "gtcil4",
-+                          "gtcia5", "gtcib5", "gtcic5", "gtcid5",
-+                          "gtcie5", "gtcif5", "gtcih5", "gtcil5",
-+                          "gtcia6", "gtcib6", "gtcic6", "gtcid6",
-+                          "gtcie6", "gtcif6", "gtcih6", "gtcil6",
-+                          "gtcia7", "gtcib7", "gtcic7", "gtcid7",
-+                          "gtcie7", "gtcif7", "gtcih7", "gtcil7";
-+        clocks = <&cpg CPG_MOD 0x31>, <&cpg CPG_MOD 0x31>;
-+        clock-names = "core", "bus";
-+        power-domains = <&cpg>;
-+        resets = <&cpg 0x59>, <&cpg 0x5a>;
-+        reset-names = "rst_p", "rst_s";
-+        #pwm-cells = <3>;
-+    };
+ static const struct of_device_id rzg2l_gpt_of_table[] = {
+-	{ .compatible = "renesas,rzg2l-gpt", },
++	{ .compatible = "renesas,rzg2l-gpt", .data = &rzg2l_data },
+ 	{ /* Sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, rzg2l_gpt_of_table);
 -- 
 2.43.0
 
