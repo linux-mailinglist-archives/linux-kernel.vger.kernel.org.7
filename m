@@ -1,157 +1,123 @@
-Return-Path: <linux-kernel+bounces-828716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F33B95457
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:35:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B0F6B95463
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC05B3AE13A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:35:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0A4117AE21
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71ED131CA5D;
-	Tue, 23 Sep 2025 09:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC9C320A3C;
+	Tue, 23 Sep 2025 09:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FumE7SRj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t7V9y+Ic"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C941922ACEB;
-	Tue, 23 Sep 2025 09:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24169320A10;
+	Tue, 23 Sep 2025 09:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758620125; cv=none; b=mRLceCyS5mPwnUeC0R7Sbojav5m3QTfx5/+V9/0GsCTvBWbCw5kAFkLiBSsNO6C0ZFWw9AqOGw3gtJVPvATu9Nd1cXvduIK8b6f1Vk/k+l+gnZCrYSxhomuV9g+xic2Z4kc3NPJ1FRH3KhJ9bCv27/E6XDxvDl31cFqtJU4G6y4=
+	t=1758620204; cv=none; b=CQ5XRsiTc15rNma8ha83j4MAz1P5FJt+pJ2oZiYt6ENHMnL1jaMiFspsvzc0G5OgTT4onNV5S4+nfkSfPQczJGeZdhneYpx1y39NqDKwJagMrkjc9BL6YDk8hhg0Qf4eSEfqNVWJ3jZd63RoZO+qn7MvaH0LIQLfWBjeJs7agak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758620125; c=relaxed/simple;
-	bh=sGTPjkogMZc7blO0QGcTSkETJ00J0BsNpZHH9yhP6Es=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lehFwBAb8U6JK0uxq4It/yPKzXVl80/rEqTZxPj6/pC3OAZVh5zh4/XW91en3la1lSdGMkgyYLdrbuUbs5fttlHvoNe43Oz8OwnfOsReWb3AyNUbF1buquo0LN811ocaJLzW06hnrJpRLESfALRg72YVx63Nqpcd+uqEKkfqRpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FumE7SRj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3951BC4CEF7;
-	Tue, 23 Sep 2025 09:35:20 +0000 (UTC)
+	s=arc-20240116; t=1758620204; c=relaxed/simple;
+	bh=e8XU199UYL7i9jjXvBMXYaDGxB2cTsLVSLpPL9wMVoU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=idNPRk8MGREC+/1YZAWUpj/67BHcs0SU2soD/t2FLNMXO4QTfBj0utymnUmPCc+8p6DEP1P3fNP+D2pck12E1Yt5QG5PKMrTL1ArLUNHwtZ3L8do2RJY7q9ImXcgws8H5BPqfKZI5foWfdP0aHAiEoslgigH0b3r3K1bAFjnYKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t7V9y+Ic; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D552EC116B1;
+	Tue, 23 Sep 2025 09:36:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758620125;
-	bh=sGTPjkogMZc7blO0QGcTSkETJ00J0BsNpZHH9yhP6Es=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FumE7SRjhoGU9CPgsFuEblsbdY5jwRLcFzAXKdD+bA93EQjki286fn9nDRouWmXof
-	 pchJ5+tW9jXl++u6lfhKme4z58TYOPxZaYyvHPVYJAqkuzttBQWj44hOPG0KcCRL6w
-	 o+qj4FINHy6bjXqjPGPjp33qAoYFT2qdbCp+fuANzMA9F/8/G57LZtvx3QDcnRf1o4
-	 Xt9sLqTN09p87/Bx5jGHranNhAgGVjX9LsGnCBessu8h7KHJAPn+/4NK9D2N5GHaGy
-	 M8YR0Kli81hpKJhhMlgKa8afnmGpbgftKrcwuLyRxmgYl1uHjrLQ0IJ35ZAu3s7u4A
-	 gZLjoLbA/a36w==
-Date: Tue, 23 Sep 2025 05:35:15 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
- <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Linus
- Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>, Sam James
- <sam@gentoo.org>, Kees Cook <kees@kernel.org>, Carlos O'Donell
- <codonell@redhat.com>
-Subject: Re: [RESEND][PATCH v15 2/4] perf: Support deferred user callchains
-Message-ID: <20250923053515.25a1713e@batman.local.home>
-In-Reply-To: <20250923091935.GA3419281@noisy.programming.kicks-ass.net>
-References: <20250908171412.268168931@kernel.org>
-	<20250908171524.605637238@kernel.org>
-	<20250923091935.GA3419281@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1758620204;
+	bh=e8XU199UYL7i9jjXvBMXYaDGxB2cTsLVSLpPL9wMVoU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=t7V9y+Icc/EBZ1dYb92mcrp9FObovYjl0ahkmEPqliHtpRY06Z7qEH4Krrv+yYOKV
+	 Nq/2kyx4QRTHszTBHLHL34DSjkHAxJmVI6ld0h2p5IFPaYvZXlqwFud3r5yIZU2MOo
+	 aERhnmAZ/SmV8hLm2WRrEq3omolQOXcl2f6Jb1E9j7rf4+2iiMS8YerCCPcTPyxFKK
+	 jpYThqqPP7FoigeqWY+MRfZYTdoNZ9Co7xAT7bifCQO+8cyklEPI1KDACRQT3YSFuq
+	 ltwmpngqZeNmg1JMBrJiKa39fQoYxzLqqCe6wsY66Xr13Hd847B9jcDm8rnm9IxoQZ
+	 ZuAmFA2c3bVPQ==
+Message-ID: <062cee74-2223-4814-bc23-647a2291aa45@kernel.org>
+Date: Tue, 23 Sep 2025 18:36:41 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/20] can: netlink: refactor
+ CAN_CTRLMODE_TDC_{AUTO,MANUAL} flag reset logic
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>,
+ =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
+ Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
+ Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250910-canxl-netlink-prep-v2-0-f128d4083721@kernel.org>
+ <20250910-canxl-netlink-prep-v2-7-f128d4083721@kernel.org>
+ <f9854748-78c1-4852-a610-e839e9c91df3@kernel.org>
+ <20250922-amber-spider-of-control-90be7c-mkl@pengutronix.de>
+ <9cfdcf56-2f47-4cfd-9fd6-2c6fa4476752@kernel.org>
+ <20250922-rational-mastodon-of-sufficiency-6b49f1-mkl@pengutronix.de>
+ <2528d3d7-2807-4ef6-8269-5e20de57cc41@kernel.org>
+ <20250923-bald-indigo-coati-2c3613-mkl@pengutronix.de>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol@kernel.org>
+Autocrypt: addr=mailhol@kernel.org; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
+ fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
+ F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
+ 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
+ YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
+ dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
+ zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20250923-bald-indigo-coati-2c3613-mkl@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Tue, 23 Sep 2025 11:19:35 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> On Mon, Sep 08, 2025 at 01:14:14PM -0400, Steven Rostedt wrote:
+On 23/09/2025 at 18:08, Marc Kleine-Budde wrote:
+> On 23.09.2025 16:04:41, Vincent Mailhol wrote:
+>>>> I will resend my two series in the next few days as soon as the MTU fix appears
+>>>> in net-next.
+>>>
+>>> I don't know how much time we have between the merge of net into
+>>> net-next and the acceptance of the last PR by the network team for the
+>>> next merge window. We will see.
+>>
+>> With the pull request to net/main being delayed, I decided to finally remove the
+>> patch which was in conflict and send the rest:
+>>
+>> https://lore.kernel.org/linux-can/20250923-can-fix-mtu-v3-0-581bde113f52@kernel.org/
+>>
+>> and:
+>>
+>> https://lore.kernel.org/linux-can/20250923-canxl-netlink-prep-v4-0-e720d28f66fe@kernel.org/
+>>
+>> These are my last two series for this development window (to be applied in order).
+>>
+>> Also, sorry for the noise when sending those twice.
 > 
-> > +static void perf_event_callchain_deferred(struct callback_head *work)
-> > +{
-> > +	struct perf_event *event = container_of(work, struct perf_event, pending_unwind_work);
-> > +	struct perf_callchain_deferred_event deferred_event;
-> > +	u64 callchain_context = PERF_CONTEXT_USER;
-> > +	struct unwind_stacktrace trace;
-> > +	struct perf_output_handle handle;
-> > +	struct perf_sample_data data;
-> > +	u64 nr;
-> > +
-> > +	if (!event->pending_unwind_callback)
-> > +		return;
-> > +
-> > +	if (unwind_user_faultable(&trace) < 0)
-> > +		goto out;  
-> 
-> This is broken. Because:
-> 
-> > +
-> > +	/*
-> > +	 * All accesses to the event must belong to the same implicit RCU
-> > +	 * read-side critical section as the ->pending_unwind_callback reset.
-> > +	 * See comment in perf_pending_unwind_sync().
-> > +	 */
-> > +	guard(rcu)();  
-> 
-> Here you start a guard, that lasts until close of function..
-> 
-> > +
-> > +	if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
-> > +		goto out;
-> > +
-> > +	nr = trace.nr + 1 ; /* '+1' == callchain_context */
-> > +
-> > +	deferred_event.header.type = PERF_RECORD_CALLCHAIN_DEFERRED;
-> > +	deferred_event.header.misc = PERF_RECORD_MISC_USER;
-> > +	deferred_event.header.size = sizeof(deferred_event) + (nr * sizeof(u64));
-> > +
-> > +	deferred_event.nr = nr;
-> > +	deferred_event.cookie = unwind_user_get_cookie();
-> > +
-> > +	perf_event_header__init_id(&deferred_event.header, &data, event);
-> > +
-> > +	if (perf_output_begin(&handle, &data, event, deferred_event.header.size))
-> > +		goto out;
-> > +
-> > +	perf_output_put(&handle, deferred_event);
-> > +	perf_output_put(&handle, callchain_context);
-> > +	/* trace.entries[] are not guaranteed to be 64bit */
-> > +	for (int i = 0; i < trace.nr; i++) {
-> > +		u64 entry = trace.entries[i];
-> > +		perf_output_put(&handle, entry);
-> > +	}
-> > +	perf_event__output_id_sample(event, &handle, &data);
-> > +
-> > +	perf_output_end(&handle);
-> > +
-> > +out:  
-> 
-> Which very much includes here, so your goto jumps into a scope, which is
-> not permitted.
+> I've merged both series to linux-can-next. Thanks. b4 was a bit
+> confused, it took the canxl-netlink-prep when asked to merge the
+> can-fix-mtu series and it added the prerequisite patches when merging
+> canxl-netlink-prep on top of can-fix-mtu.
 
-Nice catch.
+Yeh, I also had a lot of trouble on my side as you could see. This is the first
+time I deal with such a complex series, at least, I am happy it is now merge.
 
-> 
-> GCC can fail to warn on this, but clang will consistently fail to
-> compile this. Surely the robot would've told you by now -- even if
-> you're not using clang yourself.
+> My next net-next PR is prepared as linux-can-next-for-6.18-20250923. Can
+> you check if I took the correct patches?
 
-Unfortunately it hasn't :-(
+I just checked, everything is there and my WIP CAN XL patches rebase nicely on
+top. All good, thanks!
 
-I need to start building with clang more often.
 
-I even pushed this to a git tree. Not sure why it didn't get flagged.
-
--- Steve
+Yours sincerely,
+Vincent Mailhol
 
 
