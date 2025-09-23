@@ -1,116 +1,163 @@
-Return-Path: <linux-kernel+bounces-828508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE33DB94BDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:22:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 593A8B94BEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C93E31902B57
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:22:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66ADB1902811
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DD431077A;
-	Tue, 23 Sep 2025 07:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D796F311C10;
+	Tue, 23 Sep 2025 07:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="d+sI+hsb"
-Received: from r3-18.sinamail.sina.com.cn (r3-18.sinamail.sina.com.cn [202.108.3.18])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="sTTBQf/a"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A9E274FDE
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4C631158A;
+	Tue, 23 Sep 2025 07:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758612127; cv=none; b=YRAsTH+DNMLMVBRHpr7SoiHJzHf//3ZgZGntQsokZgzWM87qWetzGP47h+vlqCaTn1YdPaXaxHnmWHbKfAvDnRMuLKbpvDNWr29B9gBtG+CbR3uDZB58nMDdZ/z08i9d2h7th//EOv90sDAOU89YoOFGKPECb/Lhj3+RJE3IYwg=
+	t=1758612133; cv=none; b=IUWaBoK94Ccq0EW1te+N+1ny6S+wJ6664fa+MrZoab0ljtRxQx4tWohCaYZwOAeJs+UL5tRa7EZ9D1K8K2qu9inYN7t+i8z4Yo9ZvgWjrthWCdwBUYQBENbqqE3aVyf8bxyzG5vsPketDQWmVb18wUJoLvve1Z/1BxRWFThnM+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758612127; c=relaxed/simple;
-	bh=/F9txF44LQ9F0ShqkV89WJE6ZxqbGMBARkYVzbY0Wws=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nvA+spxActmUVOqi627qSlmkdbh+QpK555IrzCmlzAkUjTgArWeDI6XLNkgIr93EsjFHVa2/8qqIGVXvJAwInsnPiyiq2JlbrQvs+wJkfCW2FfRJGarAWANI4E4AogOoSRwrNnqD+a7G95MYK8Hsv8UrlGq5/bvW5AwwfPCDlxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=d+sI+hsb; arc=none smtp.client-ip=202.108.3.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1758612120;
-	bh=/XKimRw+DrkLBdfXw8ceaHS+QiQX8AF6397Lzy88B8E=;
-	h=From:Subject:Date:Message-ID;
-	b=d+sI+hsbCDSJavdX4v7Poi/iw350Iz6MXLnrRJYOpSYXJP0yRqR+HilwMDDjdtMij
-	 xrEzCOO13lQ/k52u56tU16CR2lta/8fViVli72/hhskyy1OSsW20Vp9giO2Komeyhh
-	 j014crTKKBKp2Bf5sP9FBTEHVYJL4Tvk3XxbL/80=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 68D24A8C00007703; Tue, 23 Sep 2025 15:21:49 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8998014456699
-X-SMAIL-UIID: 9CF76B1E7FA74EC5A382CC73D76570F0-20250923-152149-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+5c5d41e80248d610221f@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [block?] general protection fault in blk_mq_free_tags_callback
-Date: Tue, 23 Sep 2025 15:21:38 +0800
-Message-ID: <20250923072139.7466-1-hdanton@sina.com>
-In-Reply-To: <68d1b079.a70a0220.1b52b.0000.GAE@google.com>
-References: 
+	s=arc-20240116; t=1758612133; c=relaxed/simple;
+	bh=UXWIhJQT0UWxMfY/+J9fpbJB9h4hs4LLSoJ3ohNFBv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=smcRhb2ZtNw0nYSwmiN8CWyg2+6olJtj2jOFEaPQd49rMSfP7utWJO+Z/AD0sZVj+N21Idylc+9xH4YxDjcdTJH295CosSjiZxYq6XfES6FmQKNHZzuoyS7lgIsnRtW5mirur3QNZKBNI4gdD3QJ9EDvv7xHEOfRILcT3yKridw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=sTTBQf/a; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 0CBDD1C01D7; Tue, 23 Sep 2025 09:22:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1758612127;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hwzWkQrBN4TucShSte7+gBBGke3z5o+Bkhkg05nMEo4=;
+	b=sTTBQf/a2nzDFGyFnuAvY+ZoWD8Hosb9TzAxDaZiDAvOEHBXFt2Ry+MnJvCHTHajjKDe30
+	+6esiaJNy6v6yDUz49gjYVaUeMw3Eoiy4/0gLL1s/YKgW31/ZpI0TrH8W7O7EFLug/Kc3m
+	TK/E85C8luh+gvffde677ZQ3AhTp++0=
+Date: Tue, 23 Sep 2025 09:22:06 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: barnabas.czeman@mainlining.org
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Otto =?iso-8859-1?Q?Pfl=FCger?= <otto.pflueger@abscue.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Lee Jones <lee@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Adam Skladowski <a_skl39@protonmail.com>,
+	Sireesh Kodali <sireeshkodali@protonmail.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, iommu@lists.linux.dev,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+	linux@mainlining.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v7 6/6] arm64: dts: qcom: Add Xiaomi Redmi 3S
+Message-ID: <aNJKniJ46YuUsbQ+@duo.ucw.cz>
+References: <20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org>
+ <20250831-msm8937-v7-6-232a9fb19ab7@mainlining.org>
+ <aNGLPdmOyh/pfroq@duo.ucw.cz>
+ <97ee369f6ffbe42c72c57ebd72887b23@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="iO6C/R28FEPs1Luw"
+Content-Disposition: inline
+In-Reply-To: <97ee369f6ffbe42c72c57ebd72887b23@mainlining.org>
 
-> Date: Mon, 22 Sep 2025 13:24:25 -0700	[thread overview]
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    846bd2225ec3 Add linux-next specific files for 20250919
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13c238e2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=135377594f35b576
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5c5d41e80248d610221f
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155e427c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17bb8142580000
 
-#syz test linux-next  master
+--iO6C/R28FEPs1Luw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---- x/block/blk-mq-tag.c
-+++ y/block/blk-mq-tag.c
-@@ -565,6 +565,7 @@ struct blk_mq_tags *blk_mq_init_tags(uns
- 	if (!tags)
- 		return NULL;
- 
-+	INIT_LIST_HEAD(&tags->page_list);
- 	tags->nr_tags = total_tags;
- 	tags->nr_reserved_tags = reserved_tags;
- 	spin_lock_init(&tags->lock);
---- x/arch/x86/kvm/emulate.c
-+++ y/arch/x86/kvm/emulate.c
-@@ -4001,7 +4001,6 @@ static int check_perm_out(struct x86_emu
- #define D2bv(_f)      D((_f) | ByteOp), D(_f)
- #define D2bvIP(_f, _i, _p) DIP((_f) | ByteOp, _i, _p), DIP(_f, _i, _p)
- #define I2bv(_f, _e)  I((_f) | ByteOp, _e), I(_f, _e)
--#define F2bv(_f, _e)  F((_f) | ByteOp, _e), F(_f, _e)
- #define I2bvIP(_f, _e, _i, _p) \
- 	IIP((_f) | ByteOp, _e, _i, _p), IIP(_f, _e, _i, _p)
- 
-@@ -4088,8 +4087,8 @@ static const struct opcode group4[] = {
- };
- 
- static const struct opcode group5[] = {
--	F(DstMem | SrcNone | Lock,		em_inc),
--	F(DstMem | SrcNone | Lock,		em_dec),
-+	I(DstMem | SrcNone | Lock,		em_inc),
-+	I(DstMem | SrcNone | Lock,		em_dec),
- 	I(SrcMem | NearBranch | IsBranch | ShadowStack, em_call_near_abs),
- 	I(SrcMemFAddr | ImplicitOps | IsBranch | ShadowStack, em_call_far),
- 	I(SrcMem | NearBranch | IsBranch,       em_jmp_abs),
---
+Hi!
+> > Hi!
+> >=20
+> > > +	led-controller@45 {
+> > > +		compatible =3D "awinic,aw2013";
+> > > +		reg =3D <0x45>;
+> > > +		#address-cells =3D <1>;
+> > > +		#size-cells =3D <0>;
+> > > +
+> > > +		vcc-supply =3D <&pm8937_l10>;
+> > > +		vio-supply =3D <&pm8937_l5>;
+> > > +
+> > > +		led@0 {
+> > > +			reg =3D <0>;
+> > > +			function =3D LED_FUNCTION_STATUS;
+> > > +			led-max-microamp =3D <5000>;
+> > > +			color =3D <LED_COLOR_ID_RED>;
+> > > +		};
+> > > +
+> > > +		led@1 {
+> > > +			reg =3D <1>;
+> > > +			function =3D LED_FUNCTION_STATUS;
+> > > +			led-max-microamp =3D <5000>;
+> > > +			color =3D <LED_COLOR_ID_GREEN>;
+> > > +		};
+> > > +
+> > > +		led@2 {
+> > > +			reg =3D <2>;
+> > > +			function =3D LED_FUNCTION_STATUS;
+> > > +			led-max-microamp =3D <5000>;
+> > > +			color =3D <LED_COLOR_ID_BLUE>;
+> > > +		};
+> > > +	};
+> > > +};
+> >=20
+> > That's single, 3-color LED, right? Please see LED multicolor support.
+> As far as i know aw2013 driver does not have multicolor support.
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/=
+Documentation/devicetree/bindings/leds/leds-aw2013.yaml
+
+I believe that needs to be fixed before more bugs are added on top to
+work around that problem...
+
+=2E..and before that bug is cemented in the ABI.
+
+Best regards,
+								Pavel
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, Netanyahu and Musk!
+
+--iO6C/R28FEPs1Luw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaNJKngAKCRAw5/Bqldv6
+8rwwAKCAEqvmxyif1M2EfR+OkPL1Yc+kKACfXIQxtdTTJxoVlwLVcRR2GW3coKg=
+=tPlv
+-----END PGP SIGNATURE-----
+
+--iO6C/R28FEPs1Luw--
 
