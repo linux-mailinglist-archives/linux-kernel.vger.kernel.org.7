@@ -1,156 +1,184 @@
-Return-Path: <linux-kernel+bounces-828761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B873CB95665
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:12:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9708EB95668
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 217CC3B3AF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:12:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48501179B79
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351BE319601;
-	Tue, 23 Sep 2025 10:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794F031CA5A;
+	Tue, 23 Sep 2025 10:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="fw9/bMSM"
-Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bThBhpI0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bv0St62r"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AF13595C;
-	Tue, 23 Sep 2025 10:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2302F2ECE86;
+	Tue, 23 Sep 2025 10:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758622313; cv=none; b=Z+vm5qRN1fMFcHV5ij992YQQ3QzAq5ax7+AzMQXLe17bHnEDLwBt7/OWjgroqTW73zEQeMzf9ecbyLkJfGwx+feZfCSz1SYw2aOzcXq2bKczX+Q+PBDlwEsAVD4bc+02i2a4a8oNZmaCxEobH8rX0OWcrQMf6YTGhynRtWVdsaU=
+	t=1758622376; cv=none; b=ZVI2JodmniURAuk4Gc6cFViKsabt6RbU2qlys0LdjYoIxBnsuNctIKglaezeFnVv4Xo8/PSzbWxP83w0QXDBdYv8FpZVpM+pnyWxAPfFCF0g4nIvYv6qQJ2SuMgYS2b/fyhI9Q3LqvPHpEMpTG2uaTB6MTYcyotC/4UJ0gU+4Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758622313; c=relaxed/simple;
-	bh=GFmsJyXnqb++URYJgUqltJiv7Geg8m8D9ZUDLpR3hrE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KId7Xh8x1Q1byEl+KONBezGSUnEH51NGhJbDkq8xtLYCojyQWs3U69BVQlmaYXxzsO8bprX5GQVwyXchayEfwcrkA/zYyiEHpKq6eeaixxM4Lcd1DecFknp+X8ZkfUdisakqA7THKtYPyOFdpqpp0qaqd117nTfNprGR/VxTXI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=fw9/bMSM; arc=none smtp.client-ip=178.154.239.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net [IPv6:2a02:6b8:c2d:7394:0:640:5a8a:0])
-	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id D0034C028B;
-	Tue, 23 Sep 2025 13:11:46 +0300 (MSK)
-Received: from [IPV6:2a02:6bf:8080:d98::1:24] (unknown [2a02:6bf:8080:d98::1:24])
-	by mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id fBUo1C0GwGk0-UBWnQyRm;
-	Tue, 23 Sep 2025 13:11:46 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1758622306;
-	bh=mw66Zn9tRawIgkhwxW7ceJWPwiEJCHN3d99R4FBrImU=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=fw9/bMSMA9KYipgxy6El4P9xWafYO9DwKWVjYcukKtlDGR/uyXrR/mkXocJGqHjgZ
-	 cHIyLofjzoUP76KtrAsNtuPD9s7ExMg/ZgOrX7rRs0AUP+I95Vqvp1TKG1NBIBdy7C
-	 ZR3/FbZCjgI6D3rfSFs34JDy2gJ5C6a4flcKu25M=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-Message-ID: <5f1ff52a-d2c2-40de-b00c-661b75c18dc7@yandex-team.ru>
-Date: Tue, 23 Sep 2025 13:11:41 +0300
+	s=arc-20240116; t=1758622376; c=relaxed/simple;
+	bh=vSTTYJFexJOXOPGbl9flNs1f8jdpO+hYI2JMuPrhH2M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qAPXoPv+TOGt0qoi25kRzQWocn/LuQU1teWseix6z0KZBCFrVuDwY/OAEQS0CObup7pijspnFJNMC9GtGEYOKuy0e3ZKJR49sWBm4887gAONNgNuMofPyBwwzdYOjwBNtSb/OUOWOVfFcNaxEmVsa7Pl6FMA/Vl6QA2jqL7HhW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bThBhpI0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bv0St62r; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758622373;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jbygUmzfw8XS2VUG0sJP6HEJcO918I6DxufbOrM/Lys=;
+	b=bThBhpI0ltJ1hqx0PKVweVeLpdM3xppi1mqlVS9P988dnElWJFcno5EqlUW2/LORt+1zHz
+	Wfycx0wfOOEs+0yZfXstUOoTY3leeQd5TumBF3E+fPfmgUpBgr3z2gUegc384kvbK/Fw2U
+	zMu21rf4c2ypNNk6Q4WKuorRAmddD+LkdASO7a+EzkZR353yMhnagecaosBIt3xUhYRNDU
+	sO0qyqawwncogrv4F2rhWO3Rg0Zvfj/jZJB14UU1T0RU54TGMg9OOPdIipGEy6os0k5wJf
+	HqsjAOG4y7wjMTQ921422R3Oyvo/iBZvs68IHSoJxmN/QMofzRMMkt5Gab7g/Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758622373;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jbygUmzfw8XS2VUG0sJP6HEJcO918I6DxufbOrM/Lys=;
+	b=bv0St62rsMuDh+7nigvQeW8MWJocEsM7XcTr5+GGEUrX8DshmHpEvAwaL6y/hDZduT7sB4
+	IDchlUJGMNv0/6Dw==
+To: Jason Gunthorpe <jgg@nvidia.com>, Andrew Jones <ajones@ventanamicro.com>
+Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org,
+ kvm@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, zong.li@sifive.com, tjeznach@rivosinc.com,
+ joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+ anup@brainfault.org, atish.patra@linux.dev, alex.williamson@redhat.com,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, alex@ghiti.fr
+Subject: Re: [RFC PATCH v2 08/18] iommu/riscv: Use MSI table to enable IMSIC
+ access
+In-Reply-To: <20250922235651.GG1391379@nvidia.com>
+References: <20250920203851.2205115-20-ajones@ventanamicro.com>
+ <20250920203851.2205115-28-ajones@ventanamicro.com>
+ <20250922184336.GD1391379@nvidia.com>
+ <20250922-50372a07397db3155fec49c9@orel>
+ <20250922235651.GG1391379@nvidia.com>
+Date: Tue, 23 Sep 2025 12:12:52 +0200
+Message-ID: <87ecrx4guz.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] netfilter/x_tables: go back to using vmalloc for
- xt_table_info
-To: Eric Dumazet <edumazet@google.com>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>,
- Phil Sutter <phil@nwl.cc>, "David S. Miller" <davem@davemloft.net>,
- David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <20250922194819.182809-1-d-tatianin@yandex-team.ru>
- <20250922194819.182809-2-d-tatianin@yandex-team.ru>
- <CANn89i+GoVZLcdHxuf33HpmgyPNKxGqEjXGpi=XiB-QOsAG52A@mail.gmail.com>
-Content-Language: en-US
-From: Daniil Tatianin <d-tatianin@yandex-team.ru>
-In-Reply-To: <CANn89i+GoVZLcdHxuf33HpmgyPNKxGqEjXGpi=XiB-QOsAG52A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 9/23/25 12:12 AM, Eric Dumazet wrote:
-
-> On Mon, Sep 22, 2025 at 12:48 PM Daniil Tatianin
-> <d-tatianin@yandex-team.ru> wrote:
->> This code previously always used vmalloc for anything above
->> PAGE_ALLOC_COSTLY_ORDER, but this logic was changed in
->> commit eacd86ca3b036 ("net/netfilter/x_tables.c: use kvmalloc() in xt_alloc_table_info()").
->>
->> The commit that changed it did so because "xt_alloc_table_info()
->> basically opencodes kvmalloc()", which is not actually what it was
->> doing. kvmalloc() does not attempt to go directly to vmalloc if the
->> order the caller is trying to allocate is "expensive", instead it only
->> uses vmalloc as a fallback in case the buddy allocator is not able to
->> fullfill the request.
->>
->> The difference between the two is actually huge in case the system is
->> under memory pressure and has no free pages of a large order. Before the
->> change to kvmalloc we wouldn't even try going to the buddy allocator for
->> large orders, but now we would force it to try to find a page of the
->> required order by waking up kswapd/kcompactd and dropping reclaimable memory
->> for no reason at all to satisfy our huge order allocation that could easily
->> exist within vmalloc'ed memory instead.
-> This would hint at an issue with kvmalloc(), why not fixing it, instead
-> of trying to fix all its users ?
-
-Thanks for the quick reply! From my understanding, there is a lot of 
-callers of kvmalloc
-who do indeed benefit from the physical memory being contiguous, because 
-it is then
-used for hardware DMA etc., so I'm not sure that would be feasible.
-
+On Mon, Sep 22 2025 at 20:56, Jason Gunthorpe wrote:
+> On Mon, Sep 22, 2025 at 04:20:43PM -0500, Andrew Jones wrote:
+>> > It has to do with each PCI BDF having a unique set of
+>> > validation/mapping tables for MSIs that are granular to the interrupt
+>> > number.
+>> 
+>> Interrupt numbers (MSI data) aren't used by the RISC-V IOMMU in any way.
 >
-> There was a time where PAGE_ALLOC_COSTLY_ORDER was used.
+> Interrupt number is a Linux concept, HW decodes the addr/data pair and
+> delivers it to some Linux interrupt. Linux doesn't care how the HW
+> treats the addr/data pair, it can ignore data if it wants.
 
-Out of curiosity, do you mean kvmalloc used to always fall back to 
-vmalloc for > COSTLY_ORDER?
-If so, do you happen to know, which commit changed that behavior? I 
-tried grepping the logs and
-looking at the git blame of slub.c but I guess it was changed too long 
-ago so I wasn't successful.
+Let me explain this a bit deeper.
 
->
->
->
->> Revert the change to always call vmalloc, since this code doesn't really
->> benefit from contiguous physical memory, and the size it allocates is
->> directly dictated by the userspace-passed table buffer thus allowing it to
->> torture the buddy allocator by carefully crafting a huge table that fits
->> right at the maximum available memory order on the system.
->>
->> Signed-off-by: Daniil Tatianin <d-tatianin@yandex-team.ru>
->> ---
->>   net/netfilter/x_tables.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
->> index 90b7630421c4..c98f4b05d79d 100644
->> --- a/net/netfilter/x_tables.c
->> +++ b/net/netfilter/x_tables.c
->> @@ -1190,7 +1190,7 @@ struct xt_table_info *xt_alloc_table_info(unsigned int size)
->>          if (sz < sizeof(*info) || sz >= XT_MAX_TABLE_SIZE)
->>                  return NULL;
->>
->> -       info = kvmalloc(sz, GFP_KERNEL_ACCOUNT);
->> +       info = __vmalloc(sz, GFP_KERNEL_ACCOUNT);
->>          if (!info)
->>                  return NULL;
->>
->> @@ -1210,7 +1210,7 @@ void xt_free_table_info(struct xt_table_info *info)
->>                  kvfree(info->jumpstack);
->>          }
->>
->> -       kvfree(info);
->> +       vfree(info);
->>   }
->>   EXPORT_SYMBOL(xt_free_table_info);
->>
->> --
->> 2.34.1
->>
+As you said, the interrupt number is a pure kernel software construct,
+which is mapped to a hardware interrupt source.
+
+The interrupt domain, which is associated to a hardware interrupt
+source, creates the mapping and supplies the resulting configuration to
+the hardware, so that the hardware is able to raise an interrupt in the
+CPU.
+
+In case of MSI, this configuration is the MSI message (address,
+data). That's composed by the domain according to the requirements of
+the underlying CPU hardware resource. This underlying hardware resource
+can be the CPUs interrupt controller itself or some intermediary
+hardware entity.
+
+The kernel reflects this in the interrupt domain hierarchy. The simplest
+case for MSI is:
+
+     [ CPU domain ] --- [ MSI domain ] -- device
+
+The flow is as follows:
+
+   device driver allocates an MSI interrupt in the MSI domain
+
+   MSI domain allocates an interrupt in the CPU domain
+
+   CPU domain allocates an interrupt vector and composes the
+   address/data pair. If @data is written to @address, the interrupt is
+   raised in the CPU
+
+   MSI domain converts the address/data pair into device format and
+   writes it into the device.
+
+   When the device fires an interrupt it writes @data to @address, which
+   raises the interrupt in the CPU at the allocated CPU vector.  That
+   vector is then translated to the Linux interrupt number in the
+   interrupt handling entry code by looking it up in the CPU domain.
+
+With a remapping domain intermediary this looks like this:
+
+     [ CPU domain ] --- [ Remap domain] --- [ MSI domain ] -- device
+ 
+   device driver allocates an MSI interrupt in the MSI domain
+
+   MSI domain allocates an interrupt in the Remap domain
+
+   Remap domain allocates a resource in the remap space, e.g. an entry
+   in the remap translation table and then allocates an interrupt in the
+   CPU domain.
+
+   CPU domain allocates an interrupt vector and composes the
+   address/data pair. If @data is written to @address, the interrupt is
+   raised in the CPU
+
+   Remap domain converts the CPU address/data pair to remap table format
+   and writes it to the alloacted entry in that table. It then composes
+   a new address/data pair, which points at the remap table entry.
+
+   MSI domain converts the remap address/data pair into device format
+   and writes it into the device.
+
+   So when the device fires an interrupt it writes @data to @address,
+   which triggers the remap unit. The remap unit validates that the
+   address/data pair is valid for the device and if so it writes the CPU
+   address/data pair, which raises the interrupt in the CPU at the
+   allocated vector. That vector is then translated to the Linux
+   interrupt number in the interrupt handling entry code by looking it
+   up in the CPU domain.
+
+So from a kernel POV, the address/data pairs are just opaque
+configuration values, which are written into the remap table and the
+device. Whether the content of @data is relevant or not, is a hardware
+implementation detail. That implementation detail is only relevant for
+the interrupt domain code, which handle a specific part of the
+hierarchy.
+
+The MSI domain does not need to know anything about the content and the
+meaning of @address and @data. It just cares about converting that into
+the device specific storage format.
+
+The Remap domain does not need to know anything about the content and
+the meaning of the CPU domain provided @address and @data. It just cares
+about converting that into the remap table specific format.
+
+The hardware entities do not know about the Linux interrupt number at
+all. That relationship is purely software managed as a mapping from the
+allocated CPU vector to the Linux interrupt number.
+
+Hope that helps.
+
+     tglx
+
 
