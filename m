@@ -1,161 +1,210 @@
-Return-Path: <linux-kernel+bounces-828503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D519B94BBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:20:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3016B94BCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1059F3A38C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:20:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 792167A3AD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F78311592;
-	Tue, 23 Sep 2025 07:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CC630E0F9;
+	Tue, 23 Sep 2025 07:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V27zlUZt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ibKUIfmy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D8730F944;
-	Tue, 23 Sep 2025 07:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5276B2E92BC;
+	Tue, 23 Sep 2025 07:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758612011; cv=none; b=XjkeA+G3DSfV/ifog8JzaE6B/D4dv5TmoO0jvxT7ZEIBqT1NSmIpFWOUctEks4Mi2etkH6ii5Rptbl7aKdw7j5K0ekg8uKbXqj7MZ+QqtKxBsPnSvQFzUQd/Y/JWYRd8z1MbrS2CIy/ACnYjTDphlgeRkoT7yhp/B2uYAGYTn+k=
+	t=1758612045; cv=none; b=skqXt5zK4jzmTGXqr8R7OEASnRGBNimXwEMwd+uP4v14wWTHBPvrnbB1NKbEx08DsYYzn4Cnl4pHH18Bb4DEOTiiDa8SXBwK6RYYx0mCysdtARt2aSbxOPwbR1xNNHOvWDr29qhDQj4un1IZWLflMJ8+p5KVM3o0N8j6VoDsHYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758612011; c=relaxed/simple;
-	bh=lwJ9UOqD//PDM/RdW1ujxGd44CcPYvzNz6RKR54u+xI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yj1FISjaxTUCAGfusr+7oHk1yesMVustihRryI+bUbf0omv9otsul2J5KyAGycPAvnXEyg72001XTcz/8wU4YqXoU8z97XYdqtRi184DkTvwm8lddq0ZftU5QjkmZrMNyzWiRJU4F2H9L3OBbJGqTDCSII8xRftXZHS2vjpfKYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V27zlUZt; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1758612045; c=relaxed/simple;
+	bh=NM+WVMMbwfyE2avIQz4XHEsgxzTEwWfCVzaJ5Wiw12s=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=nsP1H0whIDPTcZayPmkPZPS3dbmqUUZZe+QOpo351Z6hFiltDzQkwSI9zP6td3cIGGSKHwRPaPXxu3E0MnfQ13JigxFeoDhdxvTC/MTUctKGcYYGqMtZ7dC/qzvEn1GBuy6+NWKedscwR7qZA2CdNQw2o9DvOQzQEsgphjQ1Tmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ibKUIfmy; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758612009; x=1790148009;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lwJ9UOqD//PDM/RdW1ujxGd44CcPYvzNz6RKR54u+xI=;
-  b=V27zlUZtetY/r9/AQeifUAGuFD7QaUmRDnDq7FBycNHBxIswHpwSHAIq
-   vZbBPCCCukaoMk26CpDrGlm6l6Dld3zxJyLPVOwmdM/SyGNTGFOXdEPNd
-   ZNIQfDKr8mncxv+NCxz5wiFbnA1OAE+1X3hJ4ltTAM4+z2/eJk/xt/zxl
-   E62Mr9JqWxGTo4U/EdyFMiUJiU26qk0Fs5ebPE7Cg1R71KHOCwKT4kmPK
-   MMLpDBS0W8U2PwR+s6Dk1PsV7OL73bM84IJnnxGzoLNI/Y/oV6bzH7+/c
-   OZmGPE8rOhsiQtGoIlAokvrgz+U3OC9tp1K1RlveVCbj5iJJ+73SXkOiq
-   A==;
-X-CSE-ConnectionGUID: ldYJDQNkRtylDdNddlP6bA==
-X-CSE-MsgGUID: nJqbN5ogQC68l4NrdimYhQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="72310800"
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="72310800"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 00:20:08 -0700
-X-CSE-ConnectionGUID: Yfyb9R4/Q+iN3TxSgmOafA==
-X-CSE-MsgGUID: tJaYf2dMRTq2G+2tFbHnZg==
+  t=1758612043; x=1790148043;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=NM+WVMMbwfyE2avIQz4XHEsgxzTEwWfCVzaJ5Wiw12s=;
+  b=ibKUIfmyaU4eQM8puEblWBGM3iNObR7qyk3EhUJr/wetLbKdg0CosuuC
+   x9fgY59tFWp5S2PBV2BdQmX1g90o7KQBvTMeE9oCIZaRMH47Qsyq4ae0G
+   iDG4qO6odgANOME6MOvnv1+5Vw2MFWj9FdTI2v4+7tjS6v/IEApuXQa0J
+   1OLvvZW/gR6ne/s4JYLgdKI349m/smtECHWzNhGdXV4G2K0TRKSfyd4hr
+   HHatfeOQxyG7s6hyt7hpgT0ZWiEfGXUkqf8oBV70uUE/5WrMmlwUcLPIV
+   nGIBHzp2yB+bsg5UqKGp02iAOZeB6knjhnYmqjouEaO/wAaVb39CypCEz
+   w==;
+X-CSE-ConnectionGUID: PX6oJ4FbS0ewc+Q47R8ADg==
+X-CSE-MsgGUID: f88pb8RAT4+PlrLOfDyo5A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64688360"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64688360"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 00:20:43 -0700
+X-CSE-ConnectionGUID: YiTgV3tkSBexGCD1hWtrzA==
+X-CSE-MsgGUID: Dwz4Et+mQea9x4xlzLxoRA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="181079366"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 23 Sep 2025 00:20:02 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v0xJf-0002rB-2I;
-	Tue, 23 Sep 2025 07:19:59 +0000
-Date: Tue, 23 Sep 2025 15:19:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tariq Toukan <tariqt@nvidia.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
-	Mark Bloch <mbloch@nvidia.com>, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Moshe Shemesh <moshe@nvidia.com>, Will Deacon <will@kernel.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Justin Stitt <justinstitt@google.com>, linux-s390@vger.kernel.org
-Subject: Re: [PATCH net-next V4] net/mlx5: Improve write-combining test
- reliability for ARM64 Grace CPUs
-Message-ID: <202509231437.exOuF9vQ-lkp@intel.com>
-References: <1758528951-817323-1-git-send-email-tariqt@nvidia.com>
+   d="scan'208";a="175829638"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 00:20:35 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 23 Sep 2025 10:20:31 +0300 (EEST)
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+cc: rostedt@goodmis.org, Lukas Wunner <lukas@wunner.de>, 
+    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+    helgaas@kernel.org, mattc@purestorage.com, Jonathan.Cameron@huawei.com, 
+    bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de, 
+    mhiramat@kernel.org, mathieu.desnoyers@efficios.com, oleg@redhat.com, 
+    naveen@kernel.org, davem@davemloft.net, anil.s.keshavamurthy@intel.com, 
+    mark.rutland@arm.com, peterz@infradead.org, tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v10 1/3] PCI: trace: Add a generic RAS tracepoint for
+ hotplug event
+In-Reply-To: <fb87ff46-ebcf-450d-bfd5-b1ef52cda4be@linux.alibaba.com>
+Message-ID: <acfde737-23b3-7b0a-65c6-01082a71e5e8@linux.intel.com>
+References: <20250920060117.866-1-xueshuai@linux.alibaba.com> <20250920060117.866-2-xueshuai@linux.alibaba.com> <6bab311a-d5ba-133c-fddd-52899959445c@linux.intel.com> <12c84bff-6863-4730-b08a-631df904aa12@linux.alibaba.com> <fe2abb10-3847-af1c-12c2-193c32befe0c@linux.intel.com>
+ <fb87ff46-ebcf-450d-bfd5-b1ef52cda4be@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1758528951-817323-1-git-send-email-tariqt@nvidia.com>
+Content-Type: multipart/mixed; boundary="8323328-1081156175-1758612031=:961"
 
-Hi Tariq,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-kernel test robot noticed the following build errors:
+--8323328-1081156175-1758612031=:961
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-[auto build test ERROR on 312e6f7676e63bbb9b81e5c68e580a9f776cc6f0]
+On Tue, 23 Sep 2025, Shuai Xue wrote:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tariq-Toukan/net-mlx5-Improve-write-combining-test-reliability-for-ARM64-Grace-CPUs/20250922-161859
-base:   312e6f7676e63bbb9b81e5c68e580a9f776cc6f0
-patch link:    https://lore.kernel.org/r/1758528951-817323-1-git-send-email-tariqt%40nvidia.com
-patch subject: [PATCH net-next V4] net/mlx5: Improve write-combining test reliability for ARM64 Grace CPUs
-config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20250923/202509231437.exOuF9vQ-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250923/202509231437.exOuF9vQ-lkp@intel.com/reproduce)
+>=20
+>=20
+> =E5=9C=A8 2025/9/23 14:46, Ilpo J=C3=A4rvinen =E5=86=99=E9=81=93:
+> > On Tue, 23 Sep 2025, Shuai Xue wrote:
+> >=20
+> > >=20
+> > >=20
+> > > =E5=9C=A8 2025/9/22 21:10, Ilpo J=C3=A4rvinen =E5=86=99=E9=81=93:
+> > > > On Sat, 20 Sep 2025, Shuai Xue wrote:
+> > > >=20
+> > > > > Hotplug events are critical indicators for analyzing hardware hea=
+lth,
+> > > > > and surprise link downs can significantly impact system performan=
+ce
+> > > > > and
+> > > > > reliability.
+> > > > >=20
+> > > > > Define a new TRACING_SYSTEM named "pci", add a generic RAS tracep=
+oint
+> > > > > for hotplug event to help health checks. Add enum pci_hotplug_eve=
+nt in
+> > > > > include/uapi/linux/pci.h so applications like rasdaemon can regis=
+ter
+> > > > > tracepoint event handlers for it.
+> > > > >=20
+> > > > > The following output is generated when a device is hotplugged:
+> > > > >=20
+> > > > > $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enab=
+le
+> > > > > $ cat /sys/kernel/debug/tracing/trace_pipe
+> > > > >      irq/51-pciehp-88      [001] .....  1311.177459: pci_hp_event=
+:
+> > > > > 0000:00:02.0 slot:10, event:CARD_PRESENT
+> > > > >=20
+> > > > >      irq/51-pciehp-88      [001] .....  1311.177566: pci_hp_event=
+:
+> > > > > 0000:00:02.0 slot:10, event:LINK_UP
+> > > > >=20
+> > > > > Suggested-by: Lukas Wunner <lukas@wunner.de>
+> > > > > Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+> > > > > Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> > > > > Reviewed-by: Lukas Wunner <lukas@wunner.de>
+> > > > > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > > > > ---
+> > > > >    drivers/pci/Makefile              |  2 +
+> > > > >    drivers/pci/hotplug/Makefile      |  3 +-
+> > > > >    drivers/pci/hotplug/pciehp_ctrl.c | 31 ++++++++++++---
+> > > > >    drivers/pci/trace.c               | 11 ++++++
+> > > > >    include/trace/events/pci.h        | 63
+> > > > > +++++++++++++++++++++++++++++++
+> > > > >    include/uapi/linux/pci.h          |  7 ++++
+> > > > >    6 files changed, 110 insertions(+), 7 deletions(-)
+> > > > >    create mode 100644 drivers/pci/trace.c
+> > > > >    create mode 100644 include/trace/events/pci.h
+> > > > >=20
+> > > > > diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
+> > > > > index 67647f1880fb..bf389bc4dd3c 100644
+> > > > > --- a/drivers/pci/Makefile
+> > > > > +++ b/drivers/pci/Makefile
+> > > > > @@ -45,3 +45,5 @@ obj-y=09=09=09=09+=3D controller/
+> > > > >    obj-y=09=09=09=09+=3D switch/
+> > > > >      subdir-ccflags-$(CONFIG_PCI_DEBUG) :=3D -DDEBUG
+> > > > > +
+> > > > > +CFLAGS_trace.o :=3D -I$(src)
+> > > > > diff --git a/drivers/pci/hotplug/Makefile
+> > > > > b/drivers/pci/hotplug/Makefile
+> > > > > index 40aaf31fe338..d41f7050b072 100644
+> > > > > --- a/drivers/pci/hotplug/Makefile
+> > > > > +++ b/drivers/pci/hotplug/Makefile
+> > > > > @@ -65,7 +65,8 @@ rpadlpar_io-objs=09:=3D=09rpadlpar_core.o \
+> > > > >    pciehp-objs=09=09:=3D=09pciehp_core.o=09\
+> > > > >    =09=09=09=09pciehp_ctrl.o=09\
+> > > > >    =09=09=09=09pciehp_pci.o=09\
+> > > > > -=09=09=09=09pciehp_hpc.o
+> > > > > +=09=09=09=09pciehp_hpc.o=09\
+> > > > > +=09=09=09=09../trace.o
+> > > >=20
+> > > > To make it useful for any PCI tracing, not juse hotplug, this objec=
+t
+> > > > file
+> > > > should be added in drivers/pci/Makefile, not here.
+> > >=20
+> > > Make sence. How about adding to the main CONFIG_PCI object:
+> > >=20
+> > > diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
+> > > index bf389bc4dd3c..d7f83d06351d 100644
+> > > --- a/drivers/pci/Makefile
+> > > +++ b/drivers/pci/Makefile
+> > > @@ -5,7 +5,7 @@
+> > >   obj-$(CONFIG_PCI)              +=3D access.o bus.o probe.o host-bri=
+dge.o \
+> > >                                     remove.o pci.o pci-driver.o searc=
+h.o \
+> > >                                     rom.o setup-res.o irq.o vpd.o \
+> > > -                                  setup-bus.o vc.o mmap.o devres.o
+> > > +                                  setup-bus.o vc.o mmap.o devres.o
+> > > trace.o
+> > >=20
+> > >   obj-$(CONFIG_PCI)              +=3D msi/
+> > >   obj-$(CONFIG_PCI)              +=3D pcie/
+> >=20
+> > Yes, that's the right place to add it.
+> >=20
+>=20
+> Thanks for confirm.
+> Will send a new version to fix it.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509231437.exOuF9vQ-lkp@intel.com/
+I actually now started to wonder if it should be made depend on some=20
+tracing related config (sending this out quickly if you were just=20
+waiting for my confirmation to send quickly... I'm still investigating
+what other subsystems do).
 
-All errors (new ones prefixed by >>):
+--=20
+ i.
 
-   In function 'mlx5_iowrite64_copy',
-       inlined from 'mlx5_wc_post_nop' at drivers/net/ethernet/mellanox/mlx5/core/wc.c:317:2:
->> drivers/net/ethernet/mellanox/mlx5/core/wc.c:268:17: error: unknown register name 'v0' in 'asm'
-     268 |                 asm volatile
-         |                 ^~~
-
-
-vim +268 drivers/net/ethernet/mellanox/mlx5/core/wc.c
-
-   261	
-   262	static void mlx5_iowrite64_copy(struct mlx5_wc_sq *sq, __be32 mmio_wqe[16],
-   263					size_t mmio_wqe_size, unsigned int offset)
-   264	{
-   265	#ifdef CONFIG_KERNEL_MODE_NEON
-   266		if (cpu_has_neon()) {
-   267			kernel_neon_begin();
- > 268			asm volatile
-   269			(".arch_extension simd;\n\t"
-   270			"ld1 {v0.16b, v1.16b, v2.16b, v3.16b}, [%0]\n\t"
-   271			"st1 {v0.16b, v1.16b, v2.16b, v3.16b}, [%1]"
-   272			:
-   273			: "r"(mmio_wqe), "r"(sq->bfreg.map + offset)
-   274			: "memory", "v0", "v1", "v2", "v3");
-   275			kernel_neon_end();
-   276			return;
-   277		}
-   278	#endif
-   279		__iowrite64_copy(sq->bfreg.map + offset, mmio_wqe,
-   280				 mmio_wqe_size / 8);
-   281	}
-   282	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--8323328-1081156175-1758612031=:961--
 
