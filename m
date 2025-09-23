@@ -1,96 +1,121 @@
-Return-Path: <linux-kernel+bounces-829669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2642B97986
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:42:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06F0CB9798A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 23:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D07B31B23525
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:42:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDED917AA40
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D5A30DECF;
-	Tue, 23 Sep 2025 21:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461D030C62B;
+	Tue, 23 Sep 2025 21:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKYPkq+6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B362EEB3;
-	Tue, 23 Sep 2025 21:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="s9zgRHtF"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324DB21348;
+	Tue, 23 Sep 2025 21:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758663715; cv=none; b=lob1n8njaq99wOPfugtAr01M3OiXJPysWh5iHDBcQ4OC4aLre+Z9XlrB/vnNqI+PuHc4ZqIaqApbpe8884LF3HpLiYJGoWo4NywSotwOhshEcw8eX0XNq/3EhzTI+0PZCSuj0V2XjQoE4rJxv7tELmySpCMwWg9wmJ0IiUPASSY=
+	t=1758663981; cv=none; b=OOCjZ2qysNNHzgx53MTQJFZ9IFHMOWkm/Wv48ahVGq6TUuHLrvXX+qfJfzIDhWD0KHWj+Fnpbm/kKk7JlFp9G6HsF/+vb012gPycWmfpeARqTmP4crzDrrZFXLp5V2h4CcMexpKNzwLFD8QgYb917Oih448vYwWO98OxJ4McSJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758663715; c=relaxed/simple;
-	bh=K2AFaAphLag2Ez54TqgVqGYTS8Wuz1j2Ec7u9TglbZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uuKDeSDQUmZi1Wsw8ZOOGjkuELv6mPqR0Q13ETCDfbZaunJMfaWJ9a0wUjEWReMrrP5HnfvrxzBbY2d7FQNsiFhlck4HZ00tKu2hRzOEVcvJP5+SnzWKEZYWXetkyXmG+4LICuWhIXxVlLXSUvTa4sf5t616NgBYpNchJf8haz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKYPkq+6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ED8DC4CEF5;
-	Tue, 23 Sep 2025 21:41:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758663715;
-	bh=K2AFaAphLag2Ez54TqgVqGYTS8Wuz1j2Ec7u9TglbZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PKYPkq+6h1XJ9wGM5liz75OrgDFlseHe0NHVyy5OBATAdDhhLl6qIsBVWjON4BALj
-	 ZiHkfUV3SznpvQb59DBKHUnG/7++D0QXpoIOXfpvH7QezalbMYSeoGjXFKOxgaywz0
-	 nIYp+j4Ub6fj5zAQCJ08Vm89NHxlyz7qvS2+EQ/6PfQ2f8DwJJT/U4CkD9mtjvmRzK
-	 ZM6hAohKtD19lHeS1AuMB+7dcsJilH5exq1kO3XGXUxBy8Sy7CaLCvQvBInusXcZf+
-	 IVsk/ng0JtXK7e+lIXpL2Dn4aVXjW6WzNM0XW6TwDOQTeE2BImZXhdHzCM3OM3SRUW
-	 BKY5R566k+9SA==
-Date: Tue, 23 Sep 2025 16:41:52 -0500
-From: Rob Herring <robh@kernel.org>
-To: Julien Massot <julien.massot@collabora.com>
-Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Ikjoon Jang <ikjn@chromium.org>,
-	Enric Balletbo i Serra <eballetbo@kernel.org>,
-	Chen-Yu Tsai <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>,
-	Eugen Hristev <eugen.hristev@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Julien Massot <jmassot@collabora.com>,
-	Sean Wang <sean.wang@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 3/6] dt-bindings: arm: mediatek: Support
- mt8183-audiosys variant
-Message-ID: <20250923214152.GB91441-robh@kernel.org>
-References: <20250826-mtk-dtb-warnings-v3-0-20e89886a20e@collabora.com>
- <20250826-mtk-dtb-warnings-v3-3-20e89886a20e@collabora.com>
+	s=arc-20240116; t=1758663981; c=relaxed/simple;
+	bh=+fzUxG4uJBGIobzZMn6pHnBeU7pVdq1x4ZUKJZUCh/M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HXRtdAjUG508R9cPQCH96lbBeb75eJoGR1Tdn/R8OFU2llv2RGhp+7DAufBRVx9l/p12cmwUkYOBnP+mTRQDunr7eeyHfZsaJOC3zjxwLint3ymdRPtIJwsl9MCcgd6qASas8ZP5SliLRxCVEMysWNr+8AUxoJFccJtQil3DYPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=s9zgRHtF; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from mrdev.corp.microsoft.com (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 187EB20154E0;
+	Tue, 23 Sep 2025 14:46:14 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 187EB20154E0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1758663974;
+	bh=zZjvijBXtw8zxOJAkrAm76lPjMrrZLDQmYMRv/Zsmo8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=s9zgRHtFPOddCD0xjjx/pyEuxwFepu9xQ7vK40QYVzn6a1qzsouZcgD5l2wkm81IX
+	 1X9vZ5UiTy+rNsWkGfHZ+ZEqBa9urynpZjOZIPY7ROj3UEN2TLHyGE+dK4BM2JRB19
+	 tijrXkwAGLNzvEBDbqcP8Rkgr3MG4JILr3MXqOsk=
+From: Mukesh Rathor <mrathor@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org
+Cc: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	arnd@arndb.de
+Subject: [PATCH v2 0/6] Hyper-V: Implement hypervisor core collection
+Date: Tue, 23 Sep 2025 14:46:03 -0700
+Message-Id: <20250923214609.4101554-1-mrathor@linux.microsoft.com>
+X-Mailer: git-send-email 2.36.1.vfs.0.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826-mtk-dtb-warnings-v3-3-20e89886a20e@collabora.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 26, 2025 at 09:39:36AM +0200, Julien Massot wrote:
-> Update the mediatek,audsys binding to support the mt8183-audiosys
-> compatible, which uses a different audio controller
-> (mediatek,mt8183-audio.yaml) compared to the legacy mt2701-audio
-> controller.
-> 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Julien Massot <julien.massot@collabora.com>
-> ---
->  .../bindings/arm/mediatek/mediatek,audsys.yaml           | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
+This patch series implements hypervisor core collection when running
+under Linux as root (aka dom0). By default initial hypervisor RAM is
+already mapped into Linux as reserved. Further any RAM deposited comes
+from Linux memory heap. The hypervisor locks all that RAM to protect
+it from dom0 or any other domains. At a high level, the methodology
+involes devirtualizing the system on the fly upon either Linux crash
+or the hypervisor crash, then collecting core as usual. This means
+hypervisor RAM is automatically collected into the vmcore.
+Devirtualization is the process of disabling the hypervisor and 
+taking control of the system.
 
-As this hasn't been picked up, I've applied it.
+Hypervisor pages are then accessible via crash command (using raw mem
+dump) or windbg which has the ability to read hypervisor pdb symbol
+file.
 
-Rob
+V2:
+ o change few comments and commit-messages
+ o add support for panic_timeout for better support if kdump kernel
+   is not loaded.
+ o some other minor changes, like change devirt_cr3arg to devirt_arg,
+   int to bool. 
+
+V1:
+ o Describe changes in imperative mood. Remove "This commit"
+ o Remove pr_emerg: causing unnecessary review noise
+ o Add missing kexec_crash_loaded()
+ o Remove leftover unnecessary memcpy in hv_crash_setup_trampdata
+ o Address objtool warnings via annotations
+
+Mukesh Rathor (6):
+  x86/hyperv: Rename guest crash shutdown function
+  hyperv: Add two new hypercall numbers to guest ABI public header
+  hyperv: Add definitions for hypervisor crash dump support
+  x86/hyperv: Add trampoline asm code to transition from hypervisor
+  x86/hyperv: Implement hypervisor RAM collection into vmcore
+  x86/hyperv: Enable build of hypervisor crashdump collection files
+
+ arch/x86/hyperv/Makefile        |   6 +
+ arch/x86/hyperv/hv_crash.c      | 647 ++++++++++++++++++++++++++++++++
+ arch/x86/hyperv/hv_init.c       |   1 +
+ arch/x86/hyperv/hv_trampoline.S | 101 +++++
+ arch/x86/include/asm/mshyperv.h |  13 +
+ arch/x86/kernel/cpu/mshyperv.c  |   5 +-
+ include/asm-generic/mshyperv.h  |   1 -
+ include/hyperv/hvgdk_mini.h     |   2 +
+ include/hyperv/hvhdk_mini.h     |  55 +++
+ 9 files changed, 828 insertions(+), 3 deletions(-)
+ create mode 100644 arch/x86/hyperv/hv_crash.c
+ create mode 100644 arch/x86/hyperv/hv_trampoline.S
+
+-- 
+2.36.1.vfs.0.0
+
 
