@@ -1,153 +1,160 @@
-Return-Path: <linux-kernel+bounces-829497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26B47B9736F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:38:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1B9BB97378
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1B144A35D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:38:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5BEC17F1EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D783019B9;
-	Tue, 23 Sep 2025 18:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0373019C6;
+	Tue, 23 Sep 2025 18:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="lJn6nA1H";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JYAXmHck"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SZ3u91zt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B454D15624D;
-	Tue, 23 Sep 2025 18:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2049F1D5141
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758652711; cv=none; b=eCzOD4lppXePyOahfRfIHHBHJ7T5ly6jDBDXrBNFT5k99KeqjDz2F73/N7iJTUIoBAvPLohKrq1Xkjr5silPRdzWG/P5OLA9TBLL3/pCLCyoNJzK0toSGgw/n39BoPBNRG+XhVbHYzfGAbr3DFmKXSQavtDSIWhDWlO/BCU5mtI=
+	t=1758652727; cv=none; b=gDCV/PGGiCBV4Y6SFZHAdvAk5ASiNYQbp0eziK8/fEHo88sJr4J4gY62wumQ3kIgitDu2oB46jqfmjPcv1vLppya2tJi2H1a5Jna7tkdbI4MuzgqZiR03W9EPLQikqTVHqNz1Trno6i8wC8ZWf4DHMXYA05ckp4a4mCT3YEoGsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758652711; c=relaxed/simple;
-	bh=t2EVhTFHcrFWdD8mGR/DN3WAjW3UGWDzKTUo9Nq/hHU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=ba4DqKov8Hs+ymGBQu7Sqfzm0N93RIDaX67dutQIHWRg8/fv8qCyGW49K4vztksHCot5qL6NavmX3XxtCJZzmNWUIFVkSOQuP5nxJNNGa9O76WRToAK7F3KRHCJNNPD7wDvG6b3x+qA36wF4T/HBO3wJZJTSTvNvapx9Fvi/+J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=lJn6nA1H; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JYAXmHck; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 386B37A005A;
-	Tue, 23 Sep 2025 14:38:26 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Tue, 23 Sep 2025 14:38:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1758652706;
-	 x=1758739106; bh=nrFGLCTqsqckTBO72y0mzJiE3AI4L/6qnMuJTwts27c=; b=
-	lJn6nA1HpgkmgmqwMc38pEELag25O4m7V1154CFjEaF2JMyFFxmEy3ky5K0Wvbjh
-	yEBVh2XTFkA4eGaO9e5WziEm/2NJI4XXh63+AIzc3NQwb37RmtIGXg5CZOJG4X76
-	gzqobwRnrswlXWsdKmio53LajbWZ3xI0Jwu+sAO7+MwhtDRYYaBS+YgzgEoqNZ7W
-	oTFx/DDHWRlKyXtoJbOuVng0PYJCRwGoZWHFzQkFEZaCTirKlL9dOWuGW/PrTCiX
-	jC1vLziFkOifmn67n5balgePsmEuYvbbFFF5I7U8vIYyHX1UnVX9RSLZjymTTBTd
-	d5PHIXb6fm8fetq6zUPt2Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758652706; x=
-	1758739106; bh=nrFGLCTqsqckTBO72y0mzJiE3AI4L/6qnMuJTwts27c=; b=J
-	YAXmHckyu4MQkIOlTYEc6J05OCQk7KMy0rYBvhKm+/KiQDgRTRxZlBjuzI6cvJxv
-	njBPteLk5DpaneGgjfPuiA/ByYRFTkdhdDsZ9l4xP0HNZ1GyxyyoNcNwhMfZqxO1
-	M3cTJZCaD9qE7FX4Cec+YH0V0sPB/TYweSAzdxQ6F5Bv7bI+IlcxNavD+1PbH65l
-	W2V5maIkVHUD3xRqPkSQVS65qkH68Fc52n3qzDIp3F0lsw6f5xhM0eVvFTSJu0DI
-	xNanhvIL6t4Ien8+l3w2WGC7qzmsB3l2Dzinm1uueUtss82fqCWJQmk2ZNSOaLKH
-	cOXUr5jq6EKcoCBo76YSg==
-X-ME-Sender: <xms:H-nSaPZowPSpN4ObvaPjHY1jIFD0LaqDAgXiXr23B5wn871_AGHJag>
-    <xme:H-nSaJOIkAbliPKAXAasNevLFglGIpEpjqmd68BcffpEwucw2MpCPZP8M9D1aR_nl
-    5HbUhaI7HcwyCXjiaazE31tXiOzMpMVfL5YVKcd0EoW7cND4_VpFZY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiudegjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvkedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepshhhhigrmhdqshhunhgurghrrdhsqdhksegrmhgurdgtohhmpdhrtg
-    hpthhtohepghhithesrghmugdrtghomhdprhgtphhtthhopehmrghnihhkrghnthgrrdhg
-    uhhnthhuphgrlhhlihesrghmugdrtghomhdprhgtphhtthhopehmihgthhgrlhdrshhimh
-    gvkhesrghmugdrtghomhdprhgtphhtthhopehrrgguhhgvhidrshhhhigrmhdrphgrnhgu
-    vgihsegrmhgurdgtohhmpdhrtghpthhtohepshhhuhgshhhrrghjhihothhirdgurghtth
-    grsegrmhgurdgtohhmpdhrtghpthhtohepshhrihhnihhvrghsrdhgohhuugesrghmugdr
-    tghomhdprhgtphhtthhopehjohhrghgvrdhmrghrqhhuvghssegrnhgrlhhoghdrtghomh
-    dprhgtphhtthhopegsihhllhihpghtshgrihesrghsphgvvgguthgvtghhrdgtohhm
-X-ME-Proxy: <xmx:H-nSaFBWn68svDp462uoZMn7DaJxZR9ykjAminvbrPesSi1cjHpcwg>
-    <xmx:H-nSaFdOPTr3hanxMTPGv8vnrYSE9G3UU2l3Ky8Lr8UsSzCwb-mxng>
-    <xmx:H-nSaK94NjpD3eg0hYqCK5Wqdb8sjguBgaZCFvTczesvvexkmohbZg>
-    <xmx:H-nSaNHCZKDKQnAY0Ntz2XWSItuejCrSVw1e1jm7X4alD8fCeksUAw>
-    <xmx:IunSaAHS6yrl0ixjA0hmHQn6FInEVKycskBZTF3F8YsXkHnTmo3xiJwj>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C605F70006B; Tue, 23 Sep 2025 14:38:23 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1758652727; c=relaxed/simple;
+	bh=Sb5UShRUU4nS9qa42rFaj2iOMPPLKIv2ZgL3lYceuN4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GcpDLJnsq+npHVvBYfIu4uzebQYZXe5bu/FsZLKVOzE47r/lUag5+Ea3xbVS/q0dEf7F2LUruZMOll/wphGjVx6JaKgxkob0sfMYoWRR1KaEHxqj8b/+nWKWGMae3xIEhM9pXgpFkKvhVmp850B4XO7orjOSPL8FoUNnILI7Ybg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SZ3u91zt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58NCGspF012227
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:38:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=PpmjLuxmp2spV4egFFC5nK
+	8iX/6rY6ZR0GuyNkpgIV4=; b=SZ3u91ztvNpz+R1YNO7mLrhDlqdqTztThSWvnW
+	Zwp/hdsMOyENPeQgmPSRjNOu/fVSkE5+kOZJsOxzQbkZL6H9YM3u0ot2y9TqwaBF
+	hFKrgtdO+YyPTbIQZoWlAgnst6MeYKElq/dQrxiTtc4TN0VBVw//e63elRDd75fp
+	+RXMoJEM/NsKKuElU1FHA6HNo8g8Tur2kpvwPxGg8IRZ5rfEOq4NkFyewXTXxgAl
+	jeiXWPucxlvD73S8Jkm7su9hzkflGyUU/bGZDqWC6mx7dBAtVE4WZEoK+x6JM8Pv
+	I9yDqOdg50unPdDLZNIG+6nz2ylfnIYMuSdlrCqB5kMisWlQ==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49buda98sn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:38:45 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b5527f0d39bso5323753a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:38:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758652723; x=1759257523;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PpmjLuxmp2spV4egFFC5nK8iX/6rY6ZR0GuyNkpgIV4=;
+        b=DgqhFiwMAQY/XbECG+fqzaNNOz5QpZnDtevKPoULY9koRAdr5x2ojt0NnNd4GEmvQ2
+         pKgiJcQsndMwm6MBxXNhgEtsOKfGdg86hIaAP7XSxY5V5Vu0sguy13GXIB9q7yp2BVrv
+         pJP9dvx6MsU3N7XXbvjX4/tK165YbgvOm4XVK+ScipBmmXuDWp4SDuDppCtBZ268sSGq
+         5TjrQl+GpapHcrJUEPw/tcbmt0/Pqy4iC/AblU5XRZGoZ1pkUgieBRHDiwnhiQp+QC9Z
+         JA+iNe3iqWwtzIPrH0yNR9pOnraiU3e+ZRALgGsUFgnQ44Z+dBer6JTMnZFGN5tFCSnf
+         +V+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUCf/uxJvgfoaau7gRkGg0Fjh/Oh0hZm+d2ZVs6u7BY8X35nHoCjJientgiEGQlIRFln6wyR2HDf/aXIe4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0HWrOfe6UD1d6ComRh6nYYu7RqbiMELWvCg3GaqF/1WrfzouP
+	d06oWSTcJOJJ8oj0GIrnQkGsvZ9sNOVCe73Zbtc3vZKSO6WNhus3k3CQ06VNxM4pqFek5DYakAk
+	kujngvLd3gYpeTC7nAUW5Qg/1NlCvh/zx4SdZMTkTuMjBnEJ1uXPfOgxys+WMMrRDFFU=
+X-Gm-Gg: ASbGncuRu/KfQBr3N34uv4b/YErYwoKEWjZ24VYDRHXYK/qPnWCdnZsiitnBY8boS31
+	NjuRm6OvKfNQt1geBpp1wedJRebrfjFP/u3Fv7Dvmj9xWF0crdrFXsWAyA5I40T/u1d7kgUG36k
+	TYNiKHu6rZSDm5OxXJ5CxKKzLD6e3DWABHcelSBF2aXvQ0rfY9PGOAgBRMPwtwrljNUB43EgK4p
+	EmeeSZg3EzTcbJWeHuxlggF91BtDP5hwKvkt+IwMLCOThAXNZKlYuBRfTfBHqRWOQpNMxetHeVj
+	L+MMpN4pvGLq1BJhUu0RhRmTAPW75kCSHwysYNQ3D9UauexKNh5Su59/G717ekaV
+X-Received: by 2002:a05:6a21:33a0:b0:279:e1df:e62e with SMTP id adf61e73a8af0-2cfe89904fcmr5312533637.33.1758652723490;
+        Tue, 23 Sep 2025 11:38:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGXVKYMbhJ7Op4WfVtc3IOETl6QNgVCQ3ov1ovGOrF2/AQJsnpr3zbM9dR3JuHZMktYi88O6Q==
+X-Received: by 2002:a05:6a21:33a0:b0:279:e1df:e62e with SMTP id adf61e73a8af0-2cfe89904fcmr5312505637.33.1758652723091;
+        Tue, 23 Sep 2025 11:38:43 -0700 (PDT)
+Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77dbc8e7cc4sm14722384b3a.29.2025.09.23.11.38.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 11:38:42 -0700 (PDT)
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+Date: Wed, 24 Sep 2025 00:08:30 +0530
+Subject: [PATCH] clk: qcom: gcc-sm8750: Add a new frequency for sdcc2 clock
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A5BcZzk33eMV
-Date: Tue, 23 Sep 2025 20:38:03 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Manikanta Guntupalli" <manikanta.guntupalli@amd.com>, git@amd.com,
- "Michal Simek" <michal.simek@amd.com>,
- "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
- "Frank Li" <Frank.Li@nxp.com>, "Rob Herring" <robh@kernel.org>,
- krzk+dt@kernel.org, "Conor Dooley" <conor+dt@kernel.org>,
- =?UTF-8?Q?Przemys=C5=82aw_Gaj?= <pgaj@cadence.com>,
- "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
- tommaso.merciai.xr@bp.renesas.com, quic_msavaliy@quicinc.com,
- Shyam-sundar.S-k@amd.com, "Sakari Ailus" <sakari.ailus@linux.intel.com>,
- "'billy_tsai@aspeedtech.com'" <billy_tsai@aspeedtech.com>,
- "Kees Cook" <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- "Jarkko Nikula" <jarkko.nikula@linux.intel.com>,
- "Jorge Marques" <jorge.marques@analog.com>,
- "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-hardening@vger.kernel.org
-Cc: radhey.shyam.pandey@amd.com, srinivas.goud@amd.com,
- shubhrajyoti.datta@amd.com, manion05gk@gmail.com
-Message-Id: <cde37e36-4763-48ca-a038-4a19eb1ef914@app.fastmail.com>
-In-Reply-To: <20250923154551.2112388-3-manikanta.guntupalli@amd.com>
-References: <20250923154551.2112388-1-manikanta.guntupalli@amd.com>
- <20250923154551.2112388-3-manikanta.guntupalli@amd.com>
-Subject: Re: [PATCH V7 2/4] asm-generic/io.h: Add big-endian MMIO accessors
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250924-sm8750_gcc_sdcc2_frequency-v1-1-541fd321125f@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIACXp0mgC/x3MwQqDMAwA0F+RnC10FZnuV0SKSVOXg91sUDbEf
+ 7d4fJd3gHIWVnhVB2TeReWTCh51BfSe0sxGQjE461rbu8bo0j1b62cir4HI+Zh53TjR3wTGGBA
+ n7LCBEnwzR/nd+TCe5wWzky54bAAAAA==
+X-Change-ID: 20250923-sm8750_gcc_sdcc2_frequency-debfdbbab8b3
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-aa3f6
+X-Proofpoint-GUID: DO7xM-Ns9JS8YPSwBkFj-mItU5uDMrx9
+X-Proofpoint-ORIG-GUID: DO7xM-Ns9JS8YPSwBkFj-mItU5uDMrx9
+X-Authority-Analysis: v=2.4 cv=Yaq95xRf c=1 sm=1 tr=0 ts=68d2e935 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=CSdScD5nXC4I9MN_FnYA:9
+ a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDExMyBTYWx0ZWRfXwXY0KLWEUdy0
+ O+Mo5sPx02DxC9GQaEKRXB7k2HfaBgnmwGABcjjO9crGi8Dwy4chlAGyna4Cg/PGXCcJvLc8/A0
+ cqaPI0U4qpgWHHRp1fwVOdIN6w3z9fCu27DFWlnBsizva97Bi5QdQeaXpx1HeC0NjDRcHWVRunM
+ UAfWpdNKq/SNPiIshgibgqUYcYt1xeTiE4rVM/L7/ePlwCMYMiU+Gz0R9XE9iNuGFBKxrZlEYdo
+ q5fc50IkY1y5WHrLwRjXDhHXGuNXRSx66eIDLCEk+V6dX6LZn21496EfdDHYecMOjgkZBXafkT5
+ DvJbp1zG6YyT/SkzjOg/w+aY2WCM0bnrl9sQPIZIf5WzKCg7NZjJ1T0FInkQOlr+H8IQ9YOQI7Z
+ VEmaH1d1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-23_04,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 phishscore=0
+ adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509230113
 
-On Tue, Sep 23, 2025, at 17:45, Manikanta Guntupalli wrote:
-> Add MMIO accessors to support big-endian memory operations. These help=
-ers
-> include {read, write}{w, l, q}_be() and {read, write}s{w, l, q}_be(),
-> which allows to access big-endian memory regions while returning
-> the results in the CPU=E2=80=99s native endianness.
->
-> This provides a consistent interface to interact with hardware using
-> big-endian register layouts.
->
-> Signed-off-by: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
+The SD card support requires a 37.5MHz clock; add it to the frequency
+list for the storage SW driver to be able to request for the frequency.
 
-I feel like we already have too many accessor functions like these,
-what's wrong with just using io{read,write}{8,16,32,64}be() in
-your driver?
+Fixes: 3267c774f3ff ("clk: qcom: Add support for GCC on SM8750")
+Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+---
+ drivers/clk/qcom/gcc-sm8750.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On most architectures (including arm, riscv, powerpc and microblaze,
-but not x86), the ioread/write helpers are identical to the
-readl/writel style helpers, the only difference being that on x86
-they add an extra indirection for the port I/O check.
+diff --git a/drivers/clk/qcom/gcc-sm8750.c b/drivers/clk/qcom/gcc-sm8750.c
+index 8092dd6b37b56f4fd786e33d4f0e8aabcd6ecdfe..def86b71a3da534f07844f01ecb73b424db3bddc 100644
+--- a/drivers/clk/qcom/gcc-sm8750.c
++++ b/drivers/clk/qcom/gcc-sm8750.c
+@@ -1012,6 +1012,7 @@ static struct clk_rcg2 gcc_qupv3_wrap2_s7_clk_src = {
+ static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] = {
+ 	F(400000, P_BI_TCXO, 12, 1, 4),
+ 	F(25000000, P_GCC_GPLL0_OUT_EVEN, 12, 0, 0),
++	F(37500000, P_GCC_GPLL0_OUT_EVEN, 8, 0, 0),
+ 	F(50000000, P_GCC_GPLL0_OUT_EVEN, 6, 0, 0),
+ 	F(100000000, P_GCC_GPLL0_OUT_EVEN, 3, 0, 0),
+ 	F(202000000, P_GCC_GPLL9_OUT_MAIN, 4, 0, 0),
 
-At the moment, there are only six drivers that use the
-io{read,write}{8,16,32,64}be() style helpers. They
-are all powerpc specific and can probably be changed
-to io{read,write}be.
+---
+base-commit: ce7f1a983b074f6cf8609068088ca3182c569ee4
+change-id: 20250923-sm8750_gcc_sdcc2_frequency-debfdbbab8b3
 
-      Arnd
+Best regards,
+-- 
+Taniya Das <taniya.das@oss.qualcomm.com>
+
 
