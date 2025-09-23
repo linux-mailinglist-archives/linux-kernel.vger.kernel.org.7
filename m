@@ -1,132 +1,193 @@
-Return-Path: <linux-kernel+bounces-828948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9531BB95EAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:00:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C45AB95EB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC0FA2E6C41
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:00:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0777188ADE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B355E322C9B;
-	Tue, 23 Sep 2025 13:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74D4322C9B;
+	Tue, 23 Sep 2025 13:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QKb1qztN"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="tzLIuP0y"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67452F6576
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B36A2D739F
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758632416; cv=none; b=BupkVtV83lHolvLGHJ7NbDavwWodh88JhJLuSDIk8yDnaNz3WgF1I8ZZGInTvL0tiYVq4E4uhZJlJ73UmiMYXNzjypf26jh4ToFmgUeALxw/BakPU5+STMgtTubEt/z2CODtarWtcCEbCLqXOw81TljQb4dyQ2ShixQZWXSjt/c=
+	t=1758632423; cv=none; b=oZ5UEqFgfEdfg1PgFiFPVtKp3lbFYrThpx0Y7bjL7k+YK68n6j35pUyQrD587bbM/LS8X8+S8Yp7479ClBKfmtMLiY7Q/UihXmYUjGs8WB7Pk869eh4yItA670+uioU3+q8L4mx/n7Jkp/GabyM1eFXnGd/6DF9GS52qUTuv7qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758632416; c=relaxed/simple;
-	bh=fpgqG3PPMbLAJYHf4nYwntPFHa09JCf1vAbUPv7WyK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cP6q/FJgjhyAlMYfR4zU3y5yIGmCMHxD09m3vJz8EBSzy5t4lHS0DNP1dfLFvuS8mIPAvSCuX5zRKmGZdb3/RuLVKHAu1lGgs8cYkb63Edbgqd7PW/x8+BcnfblkBGkPDFO3W0dBL7RxiX5O+11nYZu/zFnM3e0nkUmES92rZjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QKb1qztN; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3307de086d8so4898044a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:00:14 -0700 (PDT)
+	s=arc-20240116; t=1758632423; c=relaxed/simple;
+	bh=vy+E1zYorab2a2XzZaWSJSTfgNU9c2BkfDyhamaFdNs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=hnZHTYdIDfs4ZdQJhnsT9pJZL4bMhFXw3PF4E2yCSE1lvh5RTRt84lCLCn6gKY9CZi+Jzbe4fYztlLrOB2gsEanB9eP9kGk1ceX7Uw6MyEYtSMSrEswrpqKO+zmj7VFR8DgdykFvjBrwq5EG9BAaoNC6LFguloViRTN6pXSHB6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=tzLIuP0y; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so775210366b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 06:00:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758632414; x=1759237214; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nh5SwzIzASTLhVaTpXrHPJRdBlRjDqtp1v+iQDlbfos=;
-        b=QKb1qztNBsVv64+uUomfinPRzxWdml6FUnZQIp71Kmq9PLESlRpIdTjV2vm7xeMHBk
-         85vsJ/eGIsFErbUSnG0IBAIehA9RZdQRs7g9y7WyXxITRjh4DNgMA0oo/jTaKgis6qVB
-         g7Ngxbvy4I2FtYLe5+nxJWfmaAGL7NnB5T6r9Y9T8bTeXBFpg6VO5x/RPGjKHD9Hjgtz
-         zqnIu9sBSHV4epFaW4Eekc6uV4yjnmTCa5alBrpasj1U0IZ/eZ2d/vzIQ/G8HX0S12iy
-         5iBw+NdMirdPf168dvna9M+VoTUc+r2V1248smyNT10s/9J+jJ+potbqQkbXSHIdYnDP
-         KQ3Q==
+        d=fairphone.com; s=fair; t=1758632420; x=1759237220; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2jQgMsYwYsxfq6lp2ULuttB6hJRdnd9uyWFcrhi5sA4=;
+        b=tzLIuP0ytWEKt28m+XgNKc3A38n1kYglPDYpLPKQ9pf3nF2bth1ydLw7MKzk1XCPHP
+         88V9fU2Aa/9Q8j4ya8cbO+uwwnT1qsToam7ZlXsPujzjSyGWj0Zp8hX9Vsf17dSs7i80
+         v94pugzz43u4mdrhFVA65m0SpvgIVzU8gVTOT/1YyUOuyUQzrc1DI9g5w/c2OPb0Xjz+
+         ewS8OYNry6V19co0fcnvGVh3Cg3Z/0yS3mnQRpmB+Slfr1QlD1WNOEl/6+bdxXHL6VZN
+         QCHeNpiLfmYrDTYGJWiFNTBOm59xu8czIzBPkYEXW4UOBi+MdpRksHUkG8OZlxs98Kmy
+         7Oqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758632414; x=1759237214;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Nh5SwzIzASTLhVaTpXrHPJRdBlRjDqtp1v+iQDlbfos=;
-        b=ILYsTkM1kb5mJVS9Vs8doK/xbyUEyBhvvJyhTHaA3leBQJ71FVurd6Wk0STpcg8x7I
-         uAPvpl/3gfFNJTIUTERZKVXSckHLkRdfcYw8icKL5kQSs0Gl+aOSWz9o3QYYCQC4PpES
-         YFX6AIjxX3wVIR7Qo9Eoc0Og17WespBBZXULtKpvyMmBVgj6tfKRles5HYd6ENhGnz9a
-         yk0bPo4GGGduAhghVIkr8cKFOdH2PYb9msQJ9iFPRJmq6KUn5ThSMzNCBt3mnkiMokIz
-         8tbiXkf6MZBJgstIgqqvuTj+L3XWgBgUg64xoHTcun79jMCp9agEhVWbhcJN0AUsv4re
-         uCDA==
-X-Forwarded-Encrypted: i=1; AJvYcCURo+6CKKhKur5+rlP5foNvPM3yICb0WP8RMSwqH3sMKatg3qRRJZPy6ite7iEkHRb+WbA0oN0oYO2emKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwZVqPESmmAjSEhF8S1PEMQYsSKs/WP3z6dEDu6K68ZXWfnACA
-	YoBzkuOG2vj+pZd8bH64mGnYF5Lh8vjjSzxK6JehZFGDgfz85SW8ePD+zmyg15OmB8U=
-X-Gm-Gg: ASbGncuRQO7XHc72L13ciQn4sJmz7iiMGNQI2OuY8XFdDWC9tsDfv6U8UUQcufNY4fZ
-	7V9kk/Unpm3cLlbVHheuG0UfB+mkByAi3S9tiDkIyUnHCfRUzWRKt8mm+Iv12syasNY9YM83VVj
-	7c+WtyJmid5tMCZlx3e1iqK44k5w6w+dEpH2w6JZkWzF40ULTg3aNyQ+XlKry27vLW9FzFSTSyY
-	ihmAuQDV/IwHkw3SNdnCQrGMMezQapEZCTRzhfDE5LoGPlnrqPfWlWvB9Sqtnj/kuahfCr1/5lv
-	2XB8iaP/+GGaggnfbI7WpAuMcRTHxTHhwknmoj4NvCH1pt2N2oHa/ZppWWiIfNOOkDrqhVzX+Cf
-	f3IeXx44jFKCNmTH6p94vmzyRCH+6s8Op7w==
-X-Google-Smtp-Source: AGHT+IEVwoSV/1C7G9K+WLOLmPwik9m4PPFJYbHnIWzyucU6AzZaAx84ogTIVfkz9b6BwPzEVvys1w==
-X-Received: by 2002:a17:90b:3a8a:b0:32b:c9fc:8aa2 with SMTP id 98e67ed59e1d1-332a96fd4c8mr3170726a91.20.1758632413614;
-        Tue, 23 Sep 2025 06:00:13 -0700 (PDT)
-Received: from lgs.. ([2408:8418:1100:9530:4f2e:20bc:b03d:e78])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed273f557sm19059243a91.15.2025.09.23.06.00.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 06:00:13 -0700 (PDT)
-From: Guangshuo Li <lgs201920130244@gmail.com>
-To: Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Guangshuo Li <lgs201920130244@gmail.com>,
-	Santosh Sivaraj <santosh@fossix.org>,
-	nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: [PATCH v2] nvdimm: ndtest: Return -ENOMEM if devm_kcalloc() fails in ndtest_probe()
-Date: Tue, 23 Sep 2025 20:59:53 +0800
-Message-ID: <20250923125953.1859373-1-lgs201920130244@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1758632420; x=1759237220;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2jQgMsYwYsxfq6lp2ULuttB6hJRdnd9uyWFcrhi5sA4=;
+        b=WTGoIedvmSmKxcAa2f9BHZdAT4+fcdQ9vyUcEIqSEd/Aq4TyytnQXEXoOTaoHm7lGA
+         se/LRdbUKPjkof5KnDd8Q9ASJAFgUP+6+T8/Bn3qf4K9+S/vPoL3fYEHww1P77mjJ0/8
+         FwRTLW2pG4xDFmRY1V6O1OooG2ucASwBgAw1eP0YFXoDceho9QBjuy7EoheBcXDdpQgc
+         f/5yWhDoVO7wSk/9z8Y705F4Tb4A4n7xwZvrMY4NulmsDDoH25BRBQWlKtnSOgPX0+HO
+         BRfEdgN6aYU1Qd2R1Z10PaLcp4TWkILoT9jJHG7j454gYN0EFYZpeyz06WYEbQW89M41
+         djVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCwJCpOdaDLmvvBFKJTNfGxi4LsRvsvITotNvwLKUGB456VDpV+yD3fn1NYFL/lgi5zhCTI7WEmnnNWa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMx4cZCs2fGnAo2+Jv/UviRrrwXiVLT9ZQW/Qh4rFrNQpZGCeY
+	7cdvxIyie/lppTENGPeFcB6nQMtb89De+TxA5LL01gh0i21Jh4wYj6ReaIz9eDV/iBk=
+X-Gm-Gg: ASbGncv3y2ztE9iULeFGN5YKSMoTHByuSfwWZLN7Vxh5PIU+DUa9gNCH1sVhJoNFm66
+	W31soAWVhHAaBnY2QzCTdB/qAfNX0KWEpvsvbgWITVDAevhJPXYFuavFFP09USeQHs6cz26OUFS
+	Q3CTzxuTwG6vMrnua7JDNLB8jLXH9jl9PEn/RVxwN/AK/wSp6ndvI2A/exVT8EHWPmY6/vPtH8O
+	oFIf/JxEoHPpY9+l6/XNaDpIgDVufJzFpQrLtAW4T0y9zaE0VcToj4MpTblFNnCc06HUk8uloP3
+	etGE0QkALfPa8cgznOKJsBsKeX71L7gLrBFZwUlxIsa6SP9lAaHHAzR7apH26c0ZwNayr1oqppP
+	a8QiNhPnE0oivshD6sUz/HA2PXHJ8Kfkv5jwJ5jqik3nmkO/bJsCp2s1jzSKxNGXx5KlL
+X-Google-Smtp-Source: AGHT+IGD3NrE0KKZ/8qWAbi1hdO1vb3x/gJtMsj6xAGGJGo8t9h8hbseK2tTsAYUn9WPQe0nC385bA==
+X-Received: by 2002:a17:906:6a1e:b0:b2b:f498:e2f7 with SMTP id a640c23a62f3a-b302b80a6f0mr239870866b.47.1758632420275;
+        Tue, 23 Sep 2025 06:00:20 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b264fc79404sm978329866b.10.2025.09.23.06.00.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 06:00:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 23 Sep 2025 15:00:19 +0200
+Message-Id: <DD075WC7A6KR.NJJA1Q4WAJUZ@fairphone.com>
+Subject: Re: [PATCH 0/3] arm64: dts: qcom: rename dtsi files for sm6150,
+ x1e80100 and qcs8300
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Bjorn
+ Andersson" <andersson@kernel.org>, "Konrad Dybcio"
+ <konradybcio@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
+Cc: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250923-rename-dts-v1-0-21888b68c781@oss.qualcomm.com>
+In-Reply-To: <20250923-rename-dts-v1-0-21888b68c781@oss.qualcomm.com>
 
-devm_kcalloc() may fail. ndtest_probe() allocates three DMA address
-arrays (dcr_dma, label_dma, dimm_dma) and later unconditionally uses
-them in ndtest_nvdimm_init(), which can lead to a NULL pointer
-dereference under low-memory conditions.
+On Tue Sep 23, 2025 at 1:01 PM CEST, Dmitry Baryshkov wrote:
+> Bjorn said to me that he disliked the conseqeuences of renaming
+> qcs615.dtsi to sm6150.dtsi. Let's increase entropy even more and rename
+> even more base DTSI files.
+>
+> Leaving jokes aside. It's not uncommon to see different names for the
+> same SoC (or almost same SoC, with no visible differences from the Linux
+> side). The platform now known as 'lemans' is a good example, because it
+> had been using SA8775P, QCS9100 and QCS9075 in different contexts for
+> slightly different modifications. QCS8300 / QCS8275 is another example.
+> All such names cause a lot of confusion when somebody tries to follow
+> the actual SoC used by the platform.
+>
+> For 'lemans' after a lot of trial, error, Naks and reviews we've settled
+> upon having 'lemans.dtsi', the core DT file for the platform and then
+> naming individual DT files following the marketing name for the platform
+> or for the SoC.
+>
+> Apply the same approach to several other platforms, renaming the base
+> DTSI and keeping the DT names as is.
 
-Check all three allocations and return -ENOMEM if any allocation fails.
-Do not emit an extra error message since the allocator already warns on
-allocation failure.
+If we're doing this already, sc7280 -> kodiak? That also covers sc7280,
+qc{m,s}6490 & 5430 and sm7325.
 
-Fixes: 9399ab61ad82 ("ndtest: Add dimms to the two buses")
-Cc: stable@vger.kernel.org
-Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
----
-Changes in v2:
-- Drop pr_err() on allocation failure; only NULL-check and return -ENOMEM.
-- No other changes.
----
- tools/testing/nvdimm/test/ndtest.c | 3 +++
- 1 file changed, 3 insertions(+)
+Also, does this mean that milos-based Fairphone 6 the dtsi should be
+milos.dtsi while dts should be sm7635-fairphone-fp6? The latest patch
+series uses milos-fairphone-fp6.dts.
 
-diff --git a/tools/testing/nvdimm/test/ndtest.c b/tools/testing/nvdimm/test/ndtest.c
-index 68a064ce598c..abdbe0c1cb63 100644
---- a/tools/testing/nvdimm/test/ndtest.c
-+++ b/tools/testing/nvdimm/test/ndtest.c
-@@ -855,6 +855,9 @@ static int ndtest_probe(struct platform_device *pdev)
- 	p->dimm_dma = devm_kcalloc(&p->pdev.dev, NUM_DCR,
- 				  sizeof(dma_addr_t), GFP_KERNEL);
- 
-+	if (!p->dcr_dma || !p->label_dma || !p->dimm_dma)
-+		return -ENOMEM;
-+
- 	rc = ndtest_nvdimm_init(p);
- 	if (rc)
- 		goto err;
--- 
-2.43.0
+Regards
+Luca
+
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+> Dmitry Baryshkov (3):
+>       arm64: dts: qcom: rename qcs8300 to monaco
+>       arm64: dts: qcom: rename x1e80100 to hamoa
+>       arm64: dts: qcom: rename sm6150 to talos
+>
+>  arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi                        | 4 +=
++--
+>  arch/arm64/boot/dts/qcom/{x1e80100-pmics.dtsi =3D> hamoa-pmics.dtsi} | 0
+>  arch/arm64/boot/dts/qcom/{x1e80100.dtsi =3D> hamoa.dtsi}             | 0
+>  arch/arm64/boot/dts/qcom/monaco-evk.dts                            | 4 +=
++--
+>  arch/arm64/boot/dts/qcom/{qcs8300-pmics.dtsi =3D> monaco-pmics.dtsi} | 0
+>  arch/arm64/boot/dts/qcom/{qcs8300.dtsi =3D> monaco.dtsi}             | 0
+>  arch/arm64/boot/dts/qcom/qcs615-ride.dts                           | 2 +=
+-
+>  arch/arm64/boot/dts/qcom/qcs8300-ride.dts                          | 4 +=
++--
+>  arch/arm64/boot/dts/qcom/{sm6150.dtsi =3D> talos.dtsi}               | 0
+>  arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi                  | 2 +=
+-
+>  arch/arm64/boot/dts/qcom/x1-crd.dtsi                               | 2 +=
+-
+>  arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi                        | 2 +=
+-
+>  arch/arm64/boot/dts/qcom/x1e001de-devkit.dts                       | 4 +=
++--
+>  arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi        | 4 +=
++--
+>  arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts            | 4 +=
++--
+>  arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dts             | 2 +=
+-
+>  arch/arm64/boot/dts/qcom/x1e80100-crd.dts                          | 2 +=
+-
+>  arch/arm64/boot/dts/qcom/x1e80100-dell-inspiron-14-plus-7441.dts   | 2 +=
+-
+>  arch/arm64/boot/dts/qcom/x1e80100-dell-latitude-7455.dts           | 2 +=
+-
+>  arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts              | 4 +=
++--
+>  arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts              | 4 +=
++--
+>  arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts           | 4 +=
++--
+>  arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi           | 4 +=
++--
+>  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts                          | 4 +=
++--
+>  arch/arm64/boot/dts/qcom/x1p42100-hp-omnibook-x14.dts              | 2 +=
+-
+>  arch/arm64/boot/dts/qcom/x1p42100-lenovo-thinkbook-16.dts          | 2 +=
+-
+>  arch/arm64/boot/dts/qcom/x1p42100.dtsi                             | 4 +=
++--
+>  27 files changed, 34 insertions(+), 34 deletions(-)
+> ---
+> base-commit: bf2602a3cb2381fb1a04bf1c39a290518d2538d1
+> change-id: 20250923-rename-dts-5d74d6132f40
+>
+> Best regards,
 
 
