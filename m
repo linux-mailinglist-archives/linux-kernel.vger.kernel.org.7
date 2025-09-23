@@ -1,134 +1,236 @@
-Return-Path: <linux-kernel+bounces-828647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1DB2B9516A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:55:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E03BB95176
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D59AC1904C1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:55:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90EC13B3748
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D16431E10C;
-	Tue, 23 Sep 2025 08:55:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB6831DDBB;
+	Tue, 23 Sep 2025 08:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JmZTBQHk"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010053.outbound.protection.outlook.com [52.101.56.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542C931E0E3
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758617705; cv=none; b=W03o6cBVmO6GP5JfMZsWRMbJAlrX+Ti3GuMKPK7tfhG8zKCS6RhTDb3zk7+BBHHxiCwNKO1aQXPkuNjSRHrdWsFHKOH5sEboGC53JoihHAyiRSwatrbrLci+xQUTImZEL1mXdbtOI8pogoQMMwR6D5eRENFOZ7TRb5qqeXRCjvo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758617705; c=relaxed/simple;
-	bh=DXQlJowcRFBZPhluBPiC1Zrx/U49JyzVn+5m9VxoX+4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=N2xRs3rAFLMZT5e4Cb2YJWOGuOTbL6rwXDWAHXcjxqMG8YUN/ZkfUMGDsAt9RV1jQDPnp1bjS5Iaee2YivGCx3nbyJUTsYbYFhWH3iw7pZ0MiCQAaijutz5yLfbtBA57I+YLXOB3mGYaMP5d/nfUvemc1OEDPzrrlJmZ0MWWPoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8df2aa81574so104912839f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:55:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758617702; x=1759222502;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZjoZQqw6CRZesjFTMqUfi5tAwGxISXqHyO5s/obJZWA=;
-        b=kFszPlS1jWEWoqf8wmI1twBj9azm+R5ZKEuZFxRaPlGdGkOF3S9sG2cwbKaHnm9eex
-         Xxrd1uqXa3FyhGhgHIN1tn9kcfTpI6eIh8PZ8fA3COaThmcmZClTzYr3wPhbvD62zMJ2
-         jRfSdM6UBhPSGZuQZ9Hh0nBYXCCmFfNbrFCk6+hpGpNQam6V3hUbdZYJ+kMHmhznkP1J
-         OPPKy1G2YT5qU+3Vpkvc7MN2K2T80CAV6N3wWxp6q7yD82nWLH2uW3/K3LPwd0nrofw2
-         qNLo2i839pEo7VgG+k03knuXInVA6gijeFepQxghrlNPjg+vuOTxTJiYAkpFUeIZUla7
-         Q9jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnJWOAt958qF6+9E6D5QA9hTA3LYM9oUdCkTkc6GoZCVpzVwE7zmuiRsaaSEpH4W984otL+k1engo9Ukw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBOXL/p/pOPZhcl9PkJoBMCxYTtqxXy7joUVY6xS8lA+Z+8WQh
-	UZewinktAx3ZwgRLcTXXSp5Bl3WgLf8//l165S7agkh9vCX72wb44d/TlDkUOL4qmKUHebIHHKa
-	mIhjQZvjqE2SIZ9ceQA06KwGzFQTDD/hu2YFYHGriiMXuJawRmIKJi6rU3Qg=
-X-Google-Smtp-Source: AGHT+IFpBgMHseKozChNY0XMytOE9lxBERX10w7/i5gGoIF/y1MPiqBX80/S8wWyTBtFcCeH68/hy16sqcPUhnJ8jZXBXh/kcRhM
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB0231812F
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758617736; cv=fail; b=UeGsY9WB+tfHiutPqCKwsttOWgU5G2cgpy7gEcUuqybKyUV9CDF8ZtIsCkxE+OK/nlU88rAdmpNKLpr6W6J0e4qyxt5x4vK1GRU+cdTOgwYAFzY3yLQWT5hqknZ80p8nXpOLxIwN4BrNetK6HAmkfaWYke0bi7ed0I0hZk9/BG0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758617736; c=relaxed/simple;
+	bh=GYyjXhm0fKzmhvLcxX88tAaKaHttSPocMDOsV3rs7Tk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=s67GAMU1ijgbUfMauwpptZmRy/rC0ppUGYLYka8zePWZUSGFAFOMwlVHf0z3vQ0NP8zbWiBdjPpa0bkQWC6at53j8uzHniyiKeNKraJHMy4tjDGMH7Tg6S5QEcZnJEIjbUb5ue+Dz5BJxZNKsnzf3ITzXTEfUm5CSYOp7ndireE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JmZTBQHk; arc=fail smtp.client-ip=52.101.56.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PVpSqr5ODNz4QN7MlJftTO0esNGjcDH//kdk7sMfMY42QyNuHZotNWiPJAMR/NrS6hNuY1zJlT4jPnJzM0SoaYDv3SnYfunIDqprPn+5vrmdZ2yBGDdXUXQgAGmou+Cbd6Thyo497Pw9pSG5pMa0ok+PO+lrORPafqsybqHljd1IIxKVt2uh07CU5PXaqIQ2w5LgRPFq4BT9dDAjjqdrj1Vxz32Q6G4QXMZpU8W6mS1Q5yDjyF6CmMQLWJ0SPYDMalAlqHPR8fQsSnZvbAGjzL2xJ22J0rJjoLoY4Modu+/TRY1tuyfJQGbnmby8irPs4SKzWF20AyXfJfTxzY4sXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yWGSG+UEufXkHIitUtulNj1m1fXCQie9PqSCHiLa4Ns=;
+ b=hH61YAs659fA6ZkhPdcgbXA6NdyOvSTJGoH+2NSG2zhVyuEJbbFJfYoX43MJBzAvfyHuZKZ1EDTalfX2Ol/A53Mp97mvkpXqM5uWl4xTU5mUo40E0r+3tVRimxtUFgaq1NxoEYCMUqaNXy12EqOZ/AxkDsrXuksZqyolq+le4iMet+vFUCDnqMvDGt1XH1+561DZJeaMJcmn8k60aK/5xFIok1EEnYMlNco4WDgxOadASyUTUpwpez5QpPsK0M5jI/FL/TT81pkao2ZI6HSkHKpzRiUHwvv/fAGKXvvpIGxavwF/cN2jtA+aSFybwHtkqTx2ckNMNPkEHXUP+eFS9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=amazon.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yWGSG+UEufXkHIitUtulNj1m1fXCQie9PqSCHiLa4Ns=;
+ b=JmZTBQHklEfBBASzLbSFEkuD8xRM2S7hFWhp3pLjBXjOcAlOhR84DgFhBZPlJZPwkYxZtNNpHYXaG6yO8vA86y/HdjDKaSm0huqRoWC8krHZvO+r8YD8I/lQnreEYP6un7V6BdfGxQF7+XH1prE8430ietM9sK2yRgjBGaOpGIQ=
+Received: from MN2PR14CA0003.namprd14.prod.outlook.com (2603:10b6:208:23e::8)
+ by DM4PR12MB7549.namprd12.prod.outlook.com (2603:10b6:8:10f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
+ 2025 08:55:30 +0000
+Received: from BN2PEPF00004FC0.namprd04.prod.outlook.com
+ (2603:10b6:208:23e:cafe::80) by MN2PR14CA0003.outlook.office365.com
+ (2603:10b6:208:23e::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.17 via Frontend Transport; Tue,
+ 23 Sep 2025 08:55:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ BN2PEPF00004FC0.mail.protection.outlook.com (10.167.243.186) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Tue, 23 Sep 2025 08:55:30 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Tue, 23 Sep
+ 2025 01:55:29 -0700
+Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 23 Sep
+ 2025 03:55:29 -0500
+Received: from [10.136.47.65] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Tue, 23 Sep 2025 01:55:25 -0700
+Message-ID: <a1ff6b87-48a9-436a-9b62-8664d5207884@amd.com>
+Date: Tue, 23 Sep 2025 14:25:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8992:0:b0:887:45ad:fcc6 with SMTP id
- ca18e2360f4ac-8e202540344mr289049339f.15.1758617702389; Tue, 23 Sep 2025
- 01:55:02 -0700 (PDT)
-Date: Tue, 23 Sep 2025 01:55:02 -0700
-In-Reply-To: <20250923083522.1086124-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d26066.050a0220.139b6.0025.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] WARNING in ext4_xattr_block_set (3)
-From: syzbot <syzbot+4c9d23743a2409b80293@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] sched/fair: Add more core cookie check in wake up
+ fast path
+To: Fernand Sieber <sieberf@amazon.com>, <mingo@redhat.com>,
+	<peterz@infradead.org>
+CC: <linux-kernel@vger.kernel.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<bristot@redhat.com>, <vschneid@redhat.com>, <dwmw@amazon.co.uk>,
+	<jschoenh@amazon.de>, <liuyuxua@amazon.com>
+References: <cover.1758543008.git.sieberf@amazon.com>
+ <a68bf0acdad9995fab15105cb26bd25f7d0edc8b.1758543008.git.sieberf@amazon.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <a68bf0acdad9995fab15105cb26bd25f7d0edc8b.1758543008.git.sieberf@amazon.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Received-SPF: None (SATLEXMB03.amd.com: kprateek.nayak@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF00004FC0:EE_|DM4PR12MB7549:EE_
+X-MS-Office365-Filtering-Correlation-Id: f66447a9-6f42-434d-0652-08ddfa7ef2c5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|82310400026|36860700013|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Yys0QW5NZFdKaVcvSGZWZDgxckNQZjBhNEFKSDhVZllxUG4xNkt1amlZSjVC?=
+ =?utf-8?B?VFhsaFY2ZVhubHZTR0NXVlpILzlIQmI5L0ZCNXlCdjVtZ0ZHSXF4c0lnZ1Ra?=
+ =?utf-8?B?b2FnODhDSk0yd2lPeU9Ca2c4WWRrc3Bwa0RmNXgwR0RHeWZvTkQ4YUlNMXky?=
+ =?utf-8?B?VG1Od1VEMFNHd2tRbnF5bG1XbGRsdmloOFpzMFRrRjVjYk9yVGw0cnBVUTlD?=
+ =?utf-8?B?TjlXbWxoZUJVUW9jaWZPQW5FUlhXMDAydEFIUHVIeDU1VTd0UDZMR0NwcVhs?=
+ =?utf-8?B?UVN4RHdzWWhCdzk5anJ2eUk0by9aSWd6bmwreDJsdWFQWS9YWVR0ZVpueXlZ?=
+ =?utf-8?B?U0x1VGVVZGlLM0VMbUpaU1RlMEVSRWl3OERFUkNhYnI4NlQyZWdzdnhLM2xr?=
+ =?utf-8?B?VlFUcEpHTGltMlo3V09BK0V0cWk3SlhNV0t3dnplNllMVG9qSklOUDRvVTF0?=
+ =?utf-8?B?WDlEOW03RSttN0syLzRaMTQ0RkhKcktXZlJOQ0kvZFhtSEZUYkljZjdMRjhG?=
+ =?utf-8?B?aUxKaWFjbG4zcStEZFpLYm9iU3JiNGZlQ2tIS09mRll5dFA3N1N2TC9aZjJ3?=
+ =?utf-8?B?cGRpV1UvNXY1VXl4cnJqaDhoSDdUVmU0elBtREc2aHJOMVd1S3kvQmtUanNT?=
+ =?utf-8?B?S1pLSE1XVHJWY2hseHQ2eFhLWlN3Skg2aElPTzN0VEk5b0RnWmxaeVJGTVVP?=
+ =?utf-8?B?WG1VTkpKZ0lvYXp5ZnV6VXkwMW9yekhSUmphc2hzSHdKSWd3dE5jN3dicDNu?=
+ =?utf-8?B?UnUveXR3d21EcTRWWUExQTBUQWI3dzFVZFNNb250RkFnQkI4ditwS2x5ZlNZ?=
+ =?utf-8?B?cUk4c1hKbXhEY2RMSUFkTThZVWZQZ1lpY1FJZG9DZUJndVR6c0wxYjEzRUlJ?=
+ =?utf-8?B?WXc1NEUxbmFBU1lNVTBLcURJRjN0Y3Fld0lQK255NUV2Wm9LbGZLUUxKcS8x?=
+ =?utf-8?B?ZWZsZitOSllXck5pUk1obStqV1hjTmFBbi9YZXg5S0VKaFR4WklLSVoxUWoy?=
+ =?utf-8?B?bXpldG9OYzUxRFZQVXdoeENBeTM0dTlHcnd3Z3UrdzlIQXFHZFVKMEFvZWQr?=
+ =?utf-8?B?d3cxRXRETmxIbFB2cWwvMGdtZk1EaTljZ0g0RmlnemVwM0FDUnFWTGN2MHFw?=
+ =?utf-8?B?d1VwenVuNTlzdHdkc015bmpzOGFLRXpQekpFeWxrV3NMdlRuVFcra01KdXEv?=
+ =?utf-8?B?Z2VCOW03OUhQT3FEWFdTN0lyYlhYcHhYVDFiQWx6UWxjTStoczEwUVo1UnMx?=
+ =?utf-8?B?KzdXNVIyT0lQakY3bGRyR2NqUkJWRXdmcnROWUdYYkdlOWsxeS92aEdjZ2dP?=
+ =?utf-8?B?a1NKTHJuOGY1UGpTRWZkWERJZUlvVmJyQkFySCtDM1FWSUd3NWJtam9RRytC?=
+ =?utf-8?B?VkUzRUV2RUU1a1ByNHRaam55dUhiNHNvQnNTVnJxa3Q3cmxGUnA1VGNTSHcv?=
+ =?utf-8?B?SUh3ZXRhMW9MYWJsRDdQS0RKNUJsUjRlYm9xRVZwZjJUa2pOVG9QVkZ2a2pQ?=
+ =?utf-8?B?L1NlS0lwNlhLYTFCSEpXT0cySnZCNUltalZkTDRwbVYvNDV3bUFuSHhpRW0z?=
+ =?utf-8?B?R1o3RVRsUm9EaktGazRIeW5GM2xkNThNQ0hqZjB3NE5xVWZXOVU4Qm44OWph?=
+ =?utf-8?B?clgrcXFNRlVnUmdZTEJodEVRSHdMSmkrNDdwdDVDcGdUOFFZODRKU3krOW9G?=
+ =?utf-8?B?VkFuUDFVdm9haENlMWgyMk5XeU9DQWU0RHg0NXZaZ3dxalJ3SEhidkduVkJX?=
+ =?utf-8?B?T01kbFRQS3JoNzYzMDQ2a1M3VjdLYjFUMlhReGMwNkdxMzBkNy9TV1dmaFpn?=
+ =?utf-8?B?bDFaU3FDVDBSRzdhYW52UWlFcGdTR2Ryd2JuM2h2UEpCVE5JNEN0YWJIemRR?=
+ =?utf-8?B?aXN0UVdTQmduY3oxOEtKOEJVbk9BRG9VL21jZTNha2xMRUE4QndEVGxJQ2VW?=
+ =?utf-8?B?Z3k4ZnlMekpTUG1HQkIxeDdWWDdHYnNRVjVLWm1BMG9zZGphbGVFNE1DQ2Fk?=
+ =?utf-8?B?MTNwNDBYRXVlWmZaTUNvTUVjR25UOWZFLzZ1amd3UWZoWnBKWEFjRHA2cVUw?=
+ =?utf-8?Q?1iKyIh?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(82310400026)(36860700013)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 08:55:30.1874
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f66447a9-6f42-434d-0652-08ddfa7ef2c5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF00004FC0.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7549
 
-Hello,
+Hello Fernand,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in ext4_xattr_inode_update_ref
+On 9/22/2025 6:09 PM, Fernand Sieber wrote:
+> The fast path in select_idle_sibling() can place tasks on CPUs without
+> considering core scheduling constraints, potentially causing immediate
+> force idle when the sibling runs an incompatible task.
+> 
+> Add cookie compatibility checks before selecting a CPU in the fast path.
+> This prevents placing waking tasks on CPUs where the sibling is running
+> an incompatible task, reducing force idle occurrences.
+> 
+> Signed-off-by: Fernand Sieber <sieberf@amazon.com>
+> ---
+>  kernel/sched/fair.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 78b36225a039..a9cbb0e9bb43 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -7578,7 +7578,7 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
+>  		 */
+>  		if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
+>  			continue;
+> -		if (available_idle_cpu(cpu) || sched_idle_cpu(cpu))
+> +		if (__select_idle_cpu(cpu, p) != -1)
 
-loop0: detected capacity change from 0 to 512
-EXT4-fs (loop0): orphan cleanup on readonly fs
-EXT4-fs warning (device loop0): ext4_expand_extra_isize_ea:2851: Unable to expand inode 15. Delete some EAs or run e2fsck.
-------------[ cut here ]------------
-EA inode 11 i_nlink=2
-WARNING: CPU: 1 PID: 6503 at fs/ext4/xattr.c:1053 ext4_xattr_inode_update_ref+0x534/0x5d0 fs/ext4/xattr.c:1051
-Modules linked in:
-CPU: 1 UID: 0 PID: 6503 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:ext4_xattr_inode_update_ref+0x534/0x5d0 fs/ext4/xattr.c:1051
-Code: 00 00 00 00 00 fc ff df 41 0f b6 44 05 00 84 c0 0f 85 86 00 00 00 41 8b 14 24 48 c7 c7 e0 70 1f 8b 4c 89 fe e8 ed 87 07 ff 90 <0f> 0b 90 90 48 bb 00 00 00 00 00 fc ff df e9 bb fd ff ff e8 74 59
-RSP: 0018:ffffc900042af2e0 EFLAGS: 00010246
-RAX: ce552e21466e5d00 RBX: dffffc0000000000 RCX: ffff88802f2e8000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc900042af3d0 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: ffffed1017124863 R12: ffff888057ec8f58
-R13: 1ffff1100afd91eb R14: 00000000ffffffff R15: 000000000000000b
-FS:  00007f61d52b66c0(0000) GS:ffff8881269bc000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0c2b6a1000 CR3: 0000000025d4e000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- ext4_xattr_inode_dec_ref fs/ext4/xattr.c:1076 [inline]
- ext4_xattr_inode_dec_ref_all+0x867/0xda0 fs/ext4/xattr.c:1218
- ext4_xattr_delete_inode+0xa4c/0xc10 fs/ext4/xattr.c:2945
- ext4_evict_inode+0xac9/0xee0 fs/ext4/inode.c:271
- evict+0x501/0x9c0 fs/inode.c:810
- ext4_orphan_cleanup+0xc20/0x1460 fs/ext4/orphan.c:474
- __ext4_fill_super fs/ext4/super.c:5609 [inline]
- ext4_fill_super+0x57fa/0x60b0 fs/ext4/super.c:5728
- get_tree_bdev_flags+0x40b/0x4d0 fs/super.c:1692
- vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
- do_mount fs/namespace.c:4136 [inline]
- __do_sys_mount fs/namespace.c:4347 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4324
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f61d5c5066a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f61d52b5e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f61d52b5ef0 RCX: 00007f61d5c5066a
-RDX: 0000200000000180 RSI: 00002000000001c0 RDI: 00007f61d52b5eb0
-RBP: 0000200000000180 R08: 00007f61d52b5ef0 R09: 000000000080078b
-R10: 000000000080078b R11: 0000000000000246 R12: 00002000000001c0
-R13: 00007f61d52b5eb0 R14: 0000000000000473 R15: 0000200000000680
- </TASK>
+So with Patch 1, you already check for cookie matching while entering
+select_idle_smt() and now, each pass of the loop again does a
+sched_core_cookie_match() which internally loops through the smt mask
+again! Seems wasteful.
 
+>  			return cpu;
+>  	}
+>  
+> @@ -7771,7 +7771,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+>  	 */
+>  	lockdep_assert_irqs_disabled();
+>  
+> -	if ((available_idle_cpu(target) || sched_idle_cpu(target)) &&
+> +	if ((__select_idle_cpu(target, p) != -1) &&
+>  	    asym_fits_cpu(task_util, util_min, util_max, target))
+>  		return target;
+>  
+> @@ -7779,7 +7779,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+>  	 * If the previous CPU is cache affine and idle, don't be stupid:
+>  	 */
+>  	if (prev != target && cpus_share_cache(prev, target) &&
+> -	    (available_idle_cpu(prev) || sched_idle_cpu(prev)) &&
+> +	    (__select_idle_cpu(prev, p) != -1) &&
+>  	    asym_fits_cpu(task_util, util_min, util_max, prev)) {
+>  
+>  		if (!static_branch_unlikely(&sched_cluster_active) ||
+> @@ -7811,7 +7811,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+>  	if (recent_used_cpu != prev &&
+>  	    recent_used_cpu != target &&
+>  	    cpus_share_cache(recent_used_cpu, target) &&
+> -	    (available_idle_cpu(recent_used_cpu) || sched_idle_cpu(recent_used_cpu)) &&
+> +	    (__select_idle_cpu(recent_used_cpu, p) != -1) &&
 
-Tested on:
+On an SMT-8 system, all the looping over smt mask per wakeup will add
+up. Is that not a concern? A single task with core cookie enabled will
+add massive overhead for all wakeup in the system.
 
-commit:         cec1e6e5 Merge tag 'sched_ext-for-6.17-rc7-fixes' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16fd04e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5b21423ca3f0a96
-dashboard link: https://syzkaller.appspot.com/bug?extid=4c9d23743a2409b80293
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=132d04e2580000
+>  	    cpumask_test_cpu(recent_used_cpu, p->cpus_ptr) &&
+>  	    asym_fits_cpu(task_util, util_min, util_max, recent_used_cpu)) {
+>  
+
+-- 
+Thanks and Regards,
+Prateek
 
 
