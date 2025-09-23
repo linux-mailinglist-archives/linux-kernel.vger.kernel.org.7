@@ -1,192 +1,160 @@
-Return-Path: <linux-kernel+bounces-828167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305D5B94184
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 05:22:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F377CB942C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24AB418A617A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 03:22:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E2A816C138
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281A8258CE7;
-	Tue, 23 Sep 2025 03:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="aF6cJdUb"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010041.outbound.protection.outlook.com [52.101.84.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C1227381F;
+	Tue, 23 Sep 2025 04:10:25 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D39325785B;
-	Tue, 23 Sep 2025 03:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758597731; cv=fail; b=VlemI5gjQH16ogz9/qbf6S2jHR09kig9cHOBTC6RLCpamnRv4XAB6L0TxP/YAiZcN9IqrfakY0Fij0wJFR98jPck+WlRQvIdHLwhwll2vcrqBFzkzBEnikH+7NVLtDwgpBr7/olD4GbTayGptzGUvW5V8pgqcprvlifUGteucwY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758597731; c=relaxed/simple;
-	bh=RYNnwG+n1kf8ygBHxItC3ztL6eRreg74qWxtY4nzmWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=icd8JySwszNlLziBtcPNerP5MF8fCLoLUQSq+TH9YOZOr6OhfqEBjuN484OPgtF7PThb4ULha78nxuSFXbspffwn74Jros3zPYCdskh1relAEYqH0/gLrkFWio2cZoInMvjzBlogHR+hPARhNY1dDGDXZ+dKH9s3pY+qR1H6+UY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=aF6cJdUb; arc=fail smtp.client-ip=52.101.84.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kISQIgKIXVnktTzPH1/p0BewZFY56Fl320tXep75xFckMGUbJK+AB52sMITp/PGCPcd2kLNn55I/d9giTyAeIlge0XSNU8bpyi0/pok7PtKE5Oq+bELXHGgaZN54IaeF7fMKGVN5ibNe3bcNoi2b3vIw2Ue9RSAuSokYlCIIqNzqQ5TmJXNdKCDuCEh2yj16qjkfIqXXlVgsXHuVY1n4TxgumtekpEwTReZn2maySt1TQJ4dkw2C6I8LreGm2vtgFwSmgHs7KyLi2AIfycBKG2XofVIK4owAhmbAsqWQGw236NgPbDNg8+6WGZj4RUAdXqSpjrcmJvMpVOp9bRcDPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TZLyqG1VAtxyZg+U2Ocs3m1dLR/+E5XmjX1hlUPA8VA=;
- b=v9A64cZYF/U/I+SPY+zQDyW7bljIkMDX2qASiWEj5wwZG0Cbdj5POQwc/3/JiBUQ+1jJShBi2U2hk+hl0zaeq7f823iK2IV+r3XC5HoGee/YH+du/kuAo4MwOBy+ztLaRxX3PJrm2MZVOCkzwMIe8AoOffvFNMTzXPhcEQeGLOgy0allSJ0hebqBWFZlOvq2+9jPykJw65CScXsqE/y2k57NMX4WZ4ezCN/kmlbXp7176CZ6eOoEdpdoPUTlE4azTOipsnkhWEstJ5d58W/R+ucCS/RBiSvRlbq+xW240sAiBvjYOtcmUjX4VJtQB/E8zRFjzSDpLi3GsIn+ZjKKwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TZLyqG1VAtxyZg+U2Ocs3m1dLR/+E5XmjX1hlUPA8VA=;
- b=aF6cJdUbzdXegKcTL/lputebFISJXNzIwv1Fks5BT79I4qX9nfY/YIV4WAufi/MmKaNUQmCo19xEbtrIQ5FvJDhhdLenYyyKCI3/FcnGMgr0lfC7ZUBqPxiiaY8Yg+K4qp3R6obNeForgZRna1O45oGUQtjuoEd9OG69NJEJ14WlOOlRM57i8Fke9TIX+wEgYMfGqSDUxjEHYIekPKZMdD6LaoAQIJhMu/gdpre974t9jFyId0WILiswq0tIIVRrCS7vT60rc2P11v7ogHi8XRRpfXMeq+eTcZ/mqr334s++3boA2oALrtHIqlYlVsfElyCtvopxMIN0+oMROaOb3g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by VI2PR04MB11193.eurprd04.prod.outlook.com (2603:10a6:800:291::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Tue, 23 Sep
- 2025 03:22:04 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9160.008; Tue, 23 Sep 2025
- 03:22:03 +0000
-Date: Tue, 23 Sep 2025 12:33:48 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] remoteproc: imx_rproc: Use devm_clk_get_enabled()
- and simplify cleanup
-Message-ID: <20250923043348.GB31170@nxa18884-linux.ap.freescale.net>
-References: <20250917-imx_rproc_c2-v1-0-00ce23dc9c6e@nxp.com>
- <20250917-imx_rproc_c2-v1-4-00ce23dc9c6e@nxp.com>
- <aNF8GgKGvokLq0mf@p14s>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNF8GgKGvokLq0mf@p14s>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SI2PR01CA0043.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::12) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32183AD5A
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758600625; cv=none; b=Ieg9FjwTpz30IaJsShfXGRodtdfFi4B1h/JU/6pFIjjm12uT/oEHdZ4Zet+cQuKWHLFMKw2cAtc4qa/NFz0TQ8iqM58dL1Rzv7HSGIxYPRCVq7B54m4ZhE8NLrujxPZFF859k2+x8onqWv+aJKDi54El48Gl8UwIXYXuh3nOuUI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758600625; c=relaxed/simple;
+	bh=DCSwt1IsfVly5T/2MV76YHppCE2j0ni5IpDIvlW7YDU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QQivACgRoOrNoLqbrfiyHJ5zRKQcW6tgnNfnuC0k4pBM9iBX2dEbR/84ZpFxmtN03pB8282ynLzYchmHZDb+jJ1WHW4ee+a11if5oFb9j/MU5VaNbPXCW08z2lFV7R5sQJksQv1Iz3I0nzrp1CnkzPv/t8G8lHViHj90aaEL/L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cW5x869rMzddRl;
+	Tue, 23 Sep 2025 12:05:32 +0800 (CST)
+Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id 178EE147E9C;
+	Tue, 23 Sep 2025 12:10:11 +0800 (CST)
+Received: from DESKTOP-A37P9LK.huawei.com (10.67.108.232) by
+ kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 23 Sep 2025 12:10:09 +0800
+From: Xie Yuanbin <xieyuanbin1@huawei.com>
+To: <linux@armlinux.org.uk>, <akpm@linux-foundation.org>, <david@redhat.com>,
+	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>,
+	<linmiaohe@huawei.com>, <nao.horiguchi@gmail.com>,
+	<rmk+kernel@armlinux.org.uk>, <ardb@kernel.org>, <nathan@kernel.org>,
+	<ebiggers@kernel.org>, <arnd@arndb.de>, <rostedt@goodmis.org>,
+	<kees@kernel.org>, <dave@vasilevsky.ca>, <peterz@infradead.org>
+CC: <will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <liaohua4@huawei.com>,
+	<lilinjie8@huawei.com>, <xieyuanbin1@huawei.com>
+Subject: Re: [RFC PATCH 1/2] ARM: mm: support memory-failure
+Date: Tue, 23 Sep 2025 12:10:05 +0800
+Message-ID: <20250923041005.9831-1-xieyuanbin1@huawei.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <9c0cd24c-559b-4550-9fc8-5dc4bcc20bf7@app.fastmail.com>
+References: <9c0cd24c-559b-4550-9fc8-5dc4bcc20bf7@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|VI2PR04MB11193:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4dc14cee-277a-476f-2478-08ddfa505dd0
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|7416014|376014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?r0KJFSi486//7poypEMbHkEd83hm5vYiP3rTufJXb3/IYT0DiTB7rlMwpoa/?=
- =?us-ascii?Q?YJzh/C5a0vTdh5Z6xA2kuC/30yKfumURI9+ECZEYdqtHHtrTQ6/KVtxN4I9r?=
- =?us-ascii?Q?3be1xrXOYZqmV+d4dvLixq9nHH1gV8T1b/ejQBlc7tpeC4E4s353geExAraF?=
- =?us-ascii?Q?kICtwkopm19Ph56F+ncj8n6ZVJuVOmHs+6akF6m9iG6U5VArahHweF/79wiA?=
- =?us-ascii?Q?U838poPTJAqfXGPukXYpagVyhcD+pAE+LVIfwhmQxHB4MItm74828kO1+YXH?=
- =?us-ascii?Q?HSbva2h2xKnL1VXxEqHuTqNSkvIXwYnT7JPD7IgMzxtky4UTXXDas0kqxRoE?=
- =?us-ascii?Q?lIcBKk1l+36NxLPb0FFDUGYeKPKHmQAggBha6R1n9mDqAD7i7R84ufhz8FkK?=
- =?us-ascii?Q?SyOIRWLp2MUKbW9pe7G3KU82O9aYJjq+EYG1Sxz4uGKZ8ptCXPFtnepUsaRt?=
- =?us-ascii?Q?m/Hso9SrD2CGNPE3xrjP3C0O1noU74NMa2eMhLtIFyyuq+8uofrC/scB/NX1?=
- =?us-ascii?Q?peZaTXmrV7B6hlPWSdEPxLv46E+zvkgf6iChlYzzsIytunbCy9yWVdTXq0s2?=
- =?us-ascii?Q?y0oClL0c0mMY6Sk9AlGz9s1TPVOITFjZ4MCBkSls8vQB8mp9yF+OfLtNI0F4?=
- =?us-ascii?Q?gcegYYk1tRnn22g1JRAH4mvjvNEE4WHHMq/eyWm+W5I6QUDD3wXdy5dxqBcg?=
- =?us-ascii?Q?ldg/P33fLY9V4CRMTy3SQnyRu/1WE7y4qxkMDvbit7HitjHnEoKEHejM4kSZ?=
- =?us-ascii?Q?78ZA7viUy5Rb3JZ9d93j2r/1cI6sZebIaMCWkMq8BngTg2t93XiMGkHjT8yr?=
- =?us-ascii?Q?xkQcs0wMhFLw5Jzh+Bi9whk2+Iqo2C7ZOe0GmX9AzgBf4eqUMgLxysM6KAS6?=
- =?us-ascii?Q?/DcO+YJ+Vjd1GazTbMH2XAOlego3g1rHURauzW6D/RMK0nit8loNOLEuVrRR?=
- =?us-ascii?Q?CyuQ78iPN2L+6su/Z/HtOBpFk5TRvW8beM13whH6PSF08wtO/7ICKiNm/kHI?=
- =?us-ascii?Q?E4ZUgaVwB7JUxWpSQqo59Ln4TzSWapL0bsI1X9JWFYRrgae+/S3dQoztfTNa?=
- =?us-ascii?Q?gQvttDORmN+g+KCdz7zMh5SEDERUiYOWMq1baw3NbvdLUZpgpNvZGlT1cxw2?=
- =?us-ascii?Q?rHyOHdx4jOGvH8Ok7x6deIKVTFJMrSPDFGtQ67MMRYAStZ/OFp7wQiMxqS7h?=
- =?us-ascii?Q?rp/3M/OBPc1hCPAXyYEOtsm007j1hAjZpNjhuwuCgZ5tEvK33YvURf/zLpzT?=
- =?us-ascii?Q?oRIaNUrfR+4WzG9gsf47DnS5ZakRxs1KTsn9MdFrLZOYxP4FLVPMjzwJ4UhA?=
- =?us-ascii?Q?0bSVG112R7TfUOQ9GltQUehEiv/u6vAaO6KE36puy/+dvdNhPiCTDoX+Zx2Z?=
- =?us-ascii?Q?81rjlcSPkT5Hx8csAlOEw3T47FPTVOmOKBBn8soVOQMnF6jGbfd3BIxAJZQw?=
- =?us-ascii?Q?nI82DyuZkw8Hz+ttmM1t8ByY6hCKONdItJM6A8ImpgXTaIk59Fdn8g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/ixrBrv/ZxIJrR4yHOOtYGmmCYhcU8ztOu63+s+M/CaU0wWRzZ0bjIJ8Db+l?=
- =?us-ascii?Q?zkgeUGyeujMAfTkOUBh+urkmBZaPuWDij5/GuxBmIj/jmwgMhoDGGto+G0L2?=
- =?us-ascii?Q?J7A1XEPSiCWjkfaAPmCBwiapp6Xzw8fXIefzxgd3OZZrlbSXHJZ9YKiqzQSu?=
- =?us-ascii?Q?LcH582m65grPHtmjxg9ljYgVe2RG23x0nIId2tM+8eVTnne2xYRD2eKCK9pq?=
- =?us-ascii?Q?Ye3b6a6y00uZuFZwonQhTGClXnPknGuz0k4B41wB6ma1H3czVm8bxl2ucPcH?=
- =?us-ascii?Q?YUhaM6LaxovuUflly+o/Q5Mx0LVQxQvBe4FiBEU3vSn5ctQMO5Zx6ZcZgE2h?=
- =?us-ascii?Q?s11ch+SSThoz0t5pGzTivvOZemt9eppzQTYfhvel7i8P13fdGsjqKe6WDcL+?=
- =?us-ascii?Q?s2shv6oXk1BqKZrK5XWuRH20tra3ca9WZOJpt0pgv8BHNGiciwgjYV91tt4W?=
- =?us-ascii?Q?TEmpEdoHvz/LvsSElLJjxfyaJUSsxI/t2XTLbK7yt2dsAWYvsqDoz2PWSUHv?=
- =?us-ascii?Q?sFjQqWKVeLH9vDZQkFU3Na027fmFXGHzoqCJ0YEpq6LggCmYN4Tsi+X/mpsW?=
- =?us-ascii?Q?DAi/V/sYoeOho+VjZliUE8jCL64eKKAoT47bcYT3wVlKmwy6LCXmJljVe0an?=
- =?us-ascii?Q?a5Xhbni8OA5uX75iuA4L2JiAyqHEiNGr52vR2ZHwvvTUrU68qK9P9OR4FouE?=
- =?us-ascii?Q?wfREe86XefWuUAlFsMaLqZ9jedXA8spZiRtb2sQ9j7AREdMoZdP6QccbQN3u?=
- =?us-ascii?Q?EbnIG0zDXGXyp2Tld7Xj+8cSsKdMBbV46BQq8ursG1bzpnxcprzJJGbbTkPn?=
- =?us-ascii?Q?L/j9gBry65RyOaa9svXjjOU0TCXkDt/4EqNks+WUzi1m3wjOAU64RjVhZJo3?=
- =?us-ascii?Q?ReUHJ7V3rl37H4U4IsGbh1VUjgy24j1thirmbV5RZOMFXvmjm+4uBHIvi2TM?=
- =?us-ascii?Q?M3asR9FzsdKlf78U3E6AAD1CziByYCxFHf7/5OKVxQ8NoxT2F3szxDow3W16?=
- =?us-ascii?Q?T/sYPzzQQhgt1AKRK8c8Lwwb5J6u77c4nPWex6ZGvC1tnUl/oZXPCT6aaB0E?=
- =?us-ascii?Q?LDSRnWLZghmbm1EQOiyxx96IZl/A9na9wYMZBEmYk8NxWA15pj+wHVWjBBhc?=
- =?us-ascii?Q?ZH7cAbC/o+tHufjxHn/wwnUBX1O3rIbwCp1yBPm6FLAEJMv0stQQoGX7c14+?=
- =?us-ascii?Q?t0Q+6cUEzFPmOzkNiSJLFzn4iKwUi//KYqyD/zAOt85CGB4e22IUa9/1Wmur?=
- =?us-ascii?Q?GQPu2RCd4WpX3X+QCBFHZfdEhrazHqRai5aBu+iXOj/RysiXPclLbVACOxKE?=
- =?us-ascii?Q?Q5kVGHcbjwPyrsvbcNLQmbN38NraTcQ9qgqYsLQ250PP2TdsgNCWs2kkhXxs?=
- =?us-ascii?Q?ipqTcUjtlSz8E2S7dJAkvC2LU31mtKLrhaBvlKryQG9xSL13aQ3pIY4GKoy9?=
- =?us-ascii?Q?kCZ+JywSCtc7HmB4cagUyYl9/i1XY1umxFIHDhtEIIpZ9phb9VmBZ5p0kOLS?=
- =?us-ascii?Q?o76dJHZo/BAz4oLGRemjDisaWoUVJfVQKcryI4mFzl+lhP2sOB9EGTqGfir7?=
- =?us-ascii?Q?EWZGLoJvOe3s9VMedc4NOXB7TibpkEDCV7SHvmDB?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4dc14cee-277a-476f-2478-08ddfa505dd0
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 03:22:03.6833
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4EkIxZjrn2T20cRzD3TMJXoDtVgOh+pYrqqht4oWD1Re3E1boW2iPKxjrd54ToeD0RAddBgK0UxB3nme8ENkBg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB11193
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemj100009.china.huawei.com (7.202.194.3)
 
-On Mon, Sep 22, 2025 at 10:40:58AM -0600, Mathieu Poirier wrote:
->On Wed, Sep 17, 2025 at 09:19:16PM +0800, Peng Fan wrote:
->> Replace separate calls to devm_clk_get() and clk_prepare_enable() with
-...
->>  
->> @@ -1187,7 +1178,6 @@ static void imx_rproc_remove(struct platform_device *pdev)
->>  	struct rproc *rproc = platform_get_drvdata(pdev);
->>  	struct imx_rproc *priv = rproc->priv;
->>  
->> -	clk_disable_unprepare(priv->clk);
+Arnd Bergmann wrote:
+>>> It would be helpful to be more specific about what you
+>>> want to do with this.
+>>> 
+>>> Are you working on a driver that would actually make use of
+>>> the exported interface?
+>>
+>> Thanks for your reply.
+>>
+>> Yes, In fact, we have developed a hardware component to detect DDR bit
+>> transitions (software does not sense the detection behavior). Once a bit
+>> transition is detected, an interrupt is reported to the CPU.
+>>
+>> On the software side, we have developed a driver module ko to register
+>> the interrupt callback to perform soft page offline to the corresponding
+>> physical pages.
+>>
+>> In fact, we will export `soft_offline_page` for ko to use (we can ensure
+>> that it is not called in the interrupt context), but I have looked at the
+>> code and found that `memory_failure_queue` and `memory_failure` can also
+>> be used, which are already exported.
 >
->/home/mpoirier/work/remoteproc/kernel/drivers/remoteproc/imx_rproc.c: In
->function ???imx_rproc_remove???:
->/home/mpoirier/work/remoteproc/kernel/drivers/remoteproc/imx_rproc.c:1179:27:
->warning: unused variable ???priv??? [-Wunused-variable]
-> 1179 |         struct imx_rproc *priv = rproc->priv;
->      |                           ^~~~
+> Ok
+>
+>>> I see only a very small number of
+>>> drivers that call memory_failure(), and none of them are
+>>> usable on Arm.
+>>
+>> I think that not all drivers are in the open source kernel code.
+>> As far as I know, there should be similar third-party drivers in other
+>> architectures that use memory-failure functions, like x86 or arm64.
+>> I am not a specialist in drivers, so if I have made any mistakes,
+>> please correct me.
+>
+> I'm not familiar with the memory-failure support, but this sounds
+> like something that is usually done with a drivers/edac/ driver.
+> There are many SoC specific drivers, including for 32-bit Arm
+> SoCs.
+>
+> Have you considered adding an EDAC driver first? I don't know
+> how the other platforms that have EDAC drivers handle failures,
+> but I would assume that either that subsystem already contains
+> functionality for taking pages offline,
 
-Oops, this variable is removed in patch 5/6 which should be in this patch.
+I'm very sorry, I tried my best to do this,
+but it seems impossible to achieve.
+I am a kernel developer rathder than a driver developer. I have tried to
+communicate with driver developers, but open source is very difficult due
+to the involvement of proprietary hardware and algorithms.
 
-V2 will have this fixed.
+> or this is something
+> that should be done in a way that works for all of them without
+> requiring an extra driver.
 
-Thanks,
-Peng
+Yes, I think that the memory-failure feature should not be associated with
+specific architectures or drivers.
+
+I have read the memory-failure's doc and code,
+and found the following features, which are user useable,
+are not associated with specific drivers:
+
+1. `/sys/devices/system/memory/soft_offline_page`:
+see https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-memory-page-offline
+
+This interface only exists when CONFIG_MEMORY_HOTPLUG is enabled, but
+ARM cannot enable it.
+However, I have read the code and believe that it should not require a
+lot of effort to decouple these two, allowing the interface to exist
+even if mem-hotplug is disabled.
+
+2. The syscall madvise with `MADV_SOFT_OFFLINE/MADV_HWPOISON` flags:
+
+According to the documentation, this interface is currently only used for
+testing. However, if the user program can map the specified physical
+address, it can actually be used for memory-failure.
+
+3. The CONFIG_HWPOISON_INJECT which depends on CONFIG_MEMORY_FAILURE:
+see https://docs.kernel.org/mm/hwpoison.html
+
+It seems to allow input of physical addresses and trigger memory-failure,
+but according to the doc, it seems to be used only for testing.
+
+
+Additionally, I noticed that in the memory-failure doc
+https://docs.kernel.org/mm/hwpoison.html, it mentions that
+"The main target right now is KVM guests, but it works for all kinds of
+applications." This seems to confirm my speculation that the
+memory-failure feature should not be associated with specific
+architectures or drivers.
+
+Xie Yuanbin
 
