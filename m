@@ -1,121 +1,138 @@
-Return-Path: <linux-kernel+bounces-828696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8A9B9538B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:21:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D7BB953A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 313522E3694
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:21:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A56CF1893BF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CF431D38F;
-	Tue, 23 Sep 2025 09:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED5C31D379;
+	Tue, 23 Sep 2025 09:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h4u4AjKV"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZVlB0dd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6091B285041
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB13C2701CF
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758619279; cv=none; b=fAZogrVUbcHCUod+y3GMun/mu4gOqgVRxQecN3AICYTeo3MYLmOMNBVUZu55httAMuLNeD3u8Rj6PYG69v6yt6TvJAg59FqoJvYWYUO749jkupWhsyikDAwxosZulHNfSIp7FnJbU3S3GFJjajxAFPwREhiUliXuAQcSuNBfBow=
+	t=1758619344; cv=none; b=LkGbuM0zOe8uZjCef9epgoBoZmEKFkSusnsU+OlvZ3SQqZOphPNjMBw9FFafYpieOCT+zaLkg5P9SRqDW6FrvY63P80sPpZVHWLC8NJWKHX9SSpHXVtjdwOlZLBm+L0coZK10REtUsOjyim8tbEM+Ngrzm+bYp7hmjaDQg1TCN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758619279; c=relaxed/simple;
-	bh=Cswo0LzDGBX49wI8j9kkVMGd7/Ano3IZZWfL4sip6E0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KIKc7k9DhanLZJoPiKVMHHHpH3B3MGFYlN8wWHoGBJiMe1mxvGRwe+hsMHoHEn+klzzrHyxdpyi+6PHAdLdOb6b7TfOy6H8Tly9AhDFesP0raGVMUz7F1S6aLEZHoAAxpjtKuA530S4rHiMryGj9++bLPerZp7ZP1JA4r5j+BuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h4u4AjKV; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-267facf9b58so39133155ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:21:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758619276; x=1759224076; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cswo0LzDGBX49wI8j9kkVMGd7/Ano3IZZWfL4sip6E0=;
-        b=h4u4AjKVfmAEskwkOvwzqAgL88xwomHfGrvqa/5xhZTFEvKPRDxQ3mzuuNdgvUhCoK
-         kf8eytRgKJqhaVcHEnd14tfDLk4r7F0OulEsicASVZuyYg0kGQVOdiS3RVqTmXs+RKfF
-         5CMt5HxvdXkogUdqNdiB6nrFAVo7BZlFfk5fDdN7/YUVJGhWfK2vX2Czbky8A8EHk9Wz
-         xmheSDvK9GN7pax/RoyTCabh7iBQUZAZHIhVaSIRi7HFJOdLpxbjv/FrtG/4C3KHWm3T
-         6nxbMtXQ462veq5po0xK5zqGjkv5OfgiVKrhGSWLHCy56WGWB2HWeV5rrvxhxsKaxH7a
-         vkAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758619276; x=1759224076;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cswo0LzDGBX49wI8j9kkVMGd7/Ano3IZZWfL4sip6E0=;
-        b=Vnv4TFpWRggF4YcfnPwitX0q6ZcLRR8RewzB8lZUrcSV5SxIp45dc9oHCz1G/hatr2
-         Z7Cu0B9MxvcnkgiHKMat/U91ijcMtZiKMM59ETC7qekalswhPZUrnvIL6f56HQcGQ3rb
-         jDanJDGy89xmpN/xaExSLB2y9HL0595HpURgHRLzVVZdhi23PGhR1vkB+oB+LXdfCZXk
-         p+9rwsWcyVCpmrm+/hHjYnyKIMeYa3MzHeo23m+5BVF/bTzZCuNrGOVqJAZxQUWEETl3
-         xkrR4/B+FaiRQijOMP1rexO6zu41eigHdIsuadcBoN6EbQ5ScE6SNne11K4toQamkEZY
-         WgNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPe/xKpBYHjooWna06MmD9pSDqkJhaGRvbggO+bjrycaPpa6cSKkx5WxZpLvJwEpLlUU/oSgnbz1T0XRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywgfBughZW9YbqlUukr4ByWnIr+31eMfhb94UNEHmNZCCiaFuT
-	I4jb7uKFIv7E7hVHD9ogoK86GdylZmql3dvFqCtrDXcEtD4bJfs181r1rQmITtTwxBuq7WP46Me
-	DtDMaU4l0I+fq3RyJNVPlB7R6yovVh4o=
-X-Gm-Gg: ASbGncsndTsL9NRzQ4rTHIRPQkNRmAAil+fpyJ3JyCLsEypsLFmnSw03WbC5O0ljQbI
-	qRZpDCdghGsA2pUjANLlo8/nOPUO171Aq+7VKZXE5irJV21jukSx16i4oX77q3HBN6AhfbbKDA8
-	Gw6L86JkQTDiT5BVEv4PtzCzHLvVpvIWj5QTaqE5yRFX/K6Mf/G8ySsH3ye7QlxmzxifYhWVCtD
-	+Y5p9c=
-X-Google-Smtp-Source: AGHT+IEXMKhCjwTKhodebRPoXK/OAjJWAlGGH8OjPPnekcnhylOt4yiZehwUT2NqIW2Pj2CyhcJ/iwqTogEC2ndcvmA=
-X-Received: by 2002:a17:902:e790:b0:269:a4c5:f442 with SMTP id
- d9443c01a7336-27cc712289emr25047665ad.47.1758619276576; Tue, 23 Sep 2025
- 02:21:16 -0700 (PDT)
+	s=arc-20240116; t=1758619344; c=relaxed/simple;
+	bh=re8iyrzRlnW2KmH2O/yo6Zjt7gcZw/+zmt+4s8KfKJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oYVnaHegtu4AkzUZz1DZ5MkAkzHFQLVcR5kVEa58H1p0jeZyO4naY2nXYkyoNQJNHukT+NhQk9fD2M8jfhYQxNezxwIhNiwMQ7gTs1U+XLV/xTFLRR24oCB4keULcospJUqA0r4EpJonVJgshMbet3quHyP7ZRFIu38skO+8sRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZVlB0dd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18395C4CEF5;
+	Tue, 23 Sep 2025 09:22:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758619344;
+	bh=re8iyrzRlnW2KmH2O/yo6Zjt7gcZw/+zmt+4s8KfKJE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MZVlB0ddvj5BrCyX8+ae5Roxf7FrqnvhgP+C8nOr9ITCQSYRfy91wOyjgSOap7W2H
+	 CPl5bTP8c9yjRdf7xW6popjRiqN1rZfjAU6b3Umlb05hD0wt7a+A8v6c43GoKHGD9R
+	 ls0ct7WS0zdiV/zJdzcoWkB+wtXbXhKkp3SAh5jyHLgyQhU5VFDEdlKX6LL/aZWMxo
+	 3vnyeOBWZLnmGsmvNrPT6JtA/x2O8Ev6zrJwGXQYmF4sTDa423G79ByHiCZp3x+Zm2
+	 on0WYinRNSv8ygYdKj/cj+vMUStafrzz/nKran23FtTQy8ExGnaKfQ700qtcWPmEIj
+	 Nh2L5zTdbiyXA==
+Date: Tue, 23 Sep 2025 11:22:21 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jyri Sarha <jyri.sarha@iki.fi>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/29] drm/atomic: Document atomic state lifetime
+Message-ID: <20250923-quantum-resolute-crayfish-681be7@penduick>
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-1-14ad5315da3f@kernel.org>
+ <d807d181-6b14-4711-b297-72dcd49b4937@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827013539.903682-1-terry.bowman@amd.com> <aNIUAy6VbNdSzplJ@gourry-fedora-PF4VCD3F>
-In-Reply-To: <aNIUAy6VbNdSzplJ@gourry-fedora-PF4VCD3F>
-From: Srinivasulu Thanneeru <dev.srinivasulu@gmail.com>
-Date: Tue, 23 Sep 2025 14:51:04 +0530
-X-Gm-Features: AS18NWBwICuC4DXdolnXhBDgNb4F3syXj6-2puxjUsRmcPuIhwxe03vFc-A6n2I
-Message-ID: <CAMtOeKLe-HtjpNze4WPj-knDDZTw3GRq6qMwpig6ygKH+Mq7AQ@mail.gmail.com>
-Subject: Re: [PATCH v11 00/23] Enable CXL PCIe Port Protocol Error handling
- and logging
-To: Gregory Price <gourry@gourry.net>
-Cc: Terry Bowman <terry.bowman@amd.com>, dave@stgolabs.net, jonathan.cameron@huawei.com, 
-	dave.jiang@intel.com, alison.schofield@intel.com, dan.j.williams@intel.com, 
-	bhelgaas@google.com, shiju.jose@huawei.com, ming.li@zohomail.com, 
-	Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com, 
-	dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com, 
-	lukas@wunner.de, Benjamin.Cheatham@amd.com, 
-	sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org, 
-	alucerop@amd.com, ira.weiny@intel.com, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="xcj2dhr6gp5yfski"
+Content-Disposition: inline
+In-Reply-To: <d807d181-6b14-4711-b297-72dcd49b4937@suse.de>
+
+
+--xcj2dhr6gp5yfski
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 01/29] drm/atomic: Document atomic state lifetime
+MIME-Version: 1.0
 
-I had tested these series, Thank you Terry.
+Hi Thomas,
 
-Tested-by: Srinivasulu Thanneeru <sthanneeru.opensrc@micron.com>
+On Tue, Sep 02, 2025 at 03:08:12PM +0200, Thomas Zimmermann wrote:
+> > + *     or a newer one if a commit has been made. The new state is the
+> > + *     state we just allocated and we might eventually commit to the
+> > + *     hardware. The existing state points to the state we'll eventual=
+ly
+> > + *     have to free, the new state for now.
+>=20
+> That final sentence is confusing. What are we doing with the existing sta=
+te?
 
-On Tue, Sep 23, 2025 at 8:59=E2=80=AFAM Gregory Price <gourry@gourry.net> w=
-rote:
->
-> On Tue, Aug 26, 2025 at 08:35:15PM -0500, Terry Bowman wrote:
-> > This patchset adds CXL Protocol Error handling for CXL Ports and update=
-s CXL
-> > Endpoints (EP) handling. Previous versions of this series can be found =
-here:
-> > https://lore.kernel.org/linux-cxl/20250626224252.1415009-1-terry.bowman=
-@amd.com/
-> >
->
-> I know there's still some in-flight work, but for the series so far:
->
-> Tested-by: Gregory Price <gourry@gourry.net>
->
-> Please ping me if major logical rework gets done and i'll roll through it=
- again.
->
+After the other cleanup series I have, existing state is only ever used
+to point to the state we should free.
+
+> Will the old state ever become the existing state? You also never explain
+> this below.
+
+Yes, after we run an atomic commit. If the commit is only allocated and
+freed, or if the atomic is only checked, then we'll free new state. It's
+what I tried to explain in the next paragraph, but maybe it's not clear
+enough?
+
+> Maybe only focus on the old and new state for now and explain the meaning=
+ of
+> the existing state in a separate bullet point.
+
+I'll try to do that then, thanks!
+
+> > + *
+> > + *   + Once we run a commit, it is first checked and if the check is
+> > + *     successful, it is committed. Part of the commit is a call to
+> > + *     drm_atomic_helper_swap_state() which will turn the new state in=
+to
+> > + *     the active state. Doing so involves updating the entity state
+> > + *     pointer (&drm_crtc.state or similar) to point to the new state,
+> > + *     and the existing state will now point to the old state, that us=
+ed
+> > + *     to be active but isn't anymore.
+> > + *
+> > + *   + When the commit is done, and when all references to our &struct
+> > + *     drm_atomic_state are put, drm_atomic_state_clear() runs and will
+> > + *     free all the old states.
+> > + *
+> > + *   + Now, we don't have any active &struct drm_atomic_state anymore,
+> > + *     and only the entity active states remain allocated.
+> > + */
+
+--xcj2dhr6gp5yfski
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaNJmzAAKCRAnX84Zoj2+
+djruAXwN4+6FidGF/ogsD+nFQGj6eOw3CtbeBVxDiAJdGguaREseAmRxHo/1MtH2
+4esqsqsBgNbbzRjH+nCW82lbiNUAaXXEEa9Y1r25647rSbVbuv6YNkr7nTwGIZ4f
+avLp25jN3Q==
+=XmOB
+-----END PGP SIGNATURE-----
+
+--xcj2dhr6gp5yfski--
 
