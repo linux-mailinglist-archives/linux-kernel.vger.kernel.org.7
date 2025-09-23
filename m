@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-828231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEBB0B9436C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:24:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA59B94372
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 06:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 411547A3690
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:22:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690683BBF48
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 04:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0712D8DDF;
-	Tue, 23 Sep 2025 04:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA132DAFCA;
+	Tue, 23 Sep 2025 04:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J0mG1B4k"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="36FS5Acn"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB462D8DCF
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F992D97B6
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758601184; cv=none; b=DB2NVDX79iZ0IJkesLTXSt8g/CWZz7vkCTkl/P0YO59VBm5I9a4rnSNa6VgCVxuttyIGXEFDC4xuS71AaDWovJAXyPKj1GCP8seZNFK9n/7mDMfheV8iwACJl0psImyj1cbFRrhqawfcSQXktvG6IeCBOpMdv1U5jfK7NamWfwg=
+	t=1758601186; cv=none; b=J+FDJRKEoS/x1aT9DKG53bm+kyRigee2iCMgcBtP8iTm1T0EymN/X184j0pDNeDf70uJ1CBaQBPrQQBEqWLTyBS9bT3MZVLfmhVbvzZlNyTKJQjhXxxdlFf9QtLmpwe23DDrAMkXj/ktE9gE0HcxNEJzslLVImhS9JNKLYp2dxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758601184; c=relaxed/simple;
-	bh=luwZRNv0cwausX9DyzkSxwPPCb+bpc4Fbcw7XNow1CY=;
+	s=arc-20240116; t=1758601186; c=relaxed/simple;
+	bh=6bAtb38zV9J/DL1V7CMqXHrxyyDh/espMrQBxm4h/pM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=HGI/D3xyThJ08v4swmT4JKnWIUyhhcqt7b9e1d25aMyklE8EAbF2b0NfNwQ76CViQXEYBLcJ3MLT68pu4B1kgzNqopDV7VeZrf8dN1jCbTkLnMTAg7P06Zj+y1R5GNYUyGaCh6IUbqwvPNYIMeV2R0AMmCOsVUxD/qX+1x0UCt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J0mG1B4k; arc=none smtp.client-ip=209.85.210.201
+	 To:Content-Type; b=dPRzvOvZ9GNWnxhAZp6Pr1LzT/KkAUa2mJNhK7nu0hOaHG5qmQe/sSNabTpErWORNbJFvVztnC43stim66YwJWuiVDU6ayvjHfLXS97qSNM6QUZJ5TWKZBd3ZBeAWJvcOGJEkZ7YxFl6TOTWmoYw2te5+r6IfCyoQ5JK3XC/V5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=36FS5Acn; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76e2ea9366aso4474648b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:19:42 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32edda89a37so4989261a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:19:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758601181; x=1759205981; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758601183; x=1759205983; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UaTTG9m1t55nqlYCplpxcuoDY1QX8geYe7NsmZ1Ka2k=;
-        b=J0mG1B4kGtEzPmBltkx55ptflGOAi3ZKEvzvkIuhUFCtl3xsRleg6CrnMxbIvH/LVh
-         63WQ5u4Hmdk8xweBlhiorOJEDO0OpvE5MrhyzuSDkEEaycuG/0o5ldem4jftLm/3Ytyj
-         8lhQxcEOZRlINdlNQ3wCYe85k5HAHUktbd5Qqe2t6ljzQqvK077lKUFaC8GFWCCYSpAy
-         0wAonsgkNTUiyWhQJLomlSPOzyBPkM09Qce0uSQzm1iCKDmm+i7LE0LtxXcJTHL/tBRN
-         KoThFLD/8C6i/WbeZeoYtqLfOYpphX4DlruEVLMbMB6umD98/4GvYrdn+kM7ijFW7ouY
-         xdaw==
+        bh=GD6dJGQu7Fkw7LxMA7kNIP84YIqKTjc1I229dIn5uGU=;
+        b=36FS5Acnpak+ApAf2uOEbtAQaaRNjcsNdJ3vCBeYUhL9BRofJf4kNgt8NpMpA/FTW4
+         bt1Pvv/Ffvl+vZny1eHhwCBQM6K9kTsXqyEFV2pe/8J3NGtXJFGH761+s84At2OPGwIr
+         YbXK10UZS2HiLB4KIQJvj8Gaene/A9FmoD/M3hGmOoDiUiSqlbE1NmyXba1NvzlQtm3v
+         0wp77JOhRqkPx4ARhDT7cg7TXOmBkQ5+VmVv4xdr4+UBY4At1ILhdqoKJmI1g9u9XTZw
+         4DCjTUAh/YQQG4oxYqtQofSuCvLhjiklCF86FFDh7Rl8tLRli/3KCB3sR3fTQClNk2cz
+         kQVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758601181; x=1759205981;
+        d=1e100.net; s=20230601; t=1758601183; x=1759205983;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UaTTG9m1t55nqlYCplpxcuoDY1QX8geYe7NsmZ1Ka2k=;
-        b=v7BDao/6YFw4CkQaH3Nl7VrPuHypTebN5ODA9QuD4pdBBYGKW2OpnuFrX4obaujXVk
-         V7ujrYqi1w0buKtVc0QFspxs6L6fjE774QFpXp2ElwzXwZkgP562ofkndkHJ9uX7jxwZ
-         0M0hTJFvK7ojm+hZU6EYXzg5o2FlaOSxkCLS2AOH4B5xrq+ld7mitNmsupAISARj4T/M
-         4hRFvsOnqZFVza/EytpcmUJSe/K4NYrtMEClD3DZoitFdX/J7DWXVLm0NaNdef7aRpoX
-         asejqQIUbZjZXHLBxx86Q3TOAhMCcgv5SZaFNLafRgxQDb8Qa5a8NCR4DCxoyIcrzMF0
-         uwsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvQ0PLA3za/fLTA8qv5lIzTehhPQ0urwaYDMsB1msTJ9EbjUo6MuuMYbXyX/M0HjOP1B1qFEyIqoErg74=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrb3oBafKkiqDOfn4yTR+fNfwfQnOJxEkvPFONL3QDfUS4v+u9
-	UZOUjVVKQgamMxC/rwZGgBAgrkNQmLb9ynRw33z9ly2gRcXimnppQ589FP7uYTNgvn+/GUdpOQr
-	epKdREVhO7g==
-X-Google-Smtp-Source: AGHT+IHYlj20vqeSEohxb2vor4OR+20tRstlEetpT7hA32d1j73qpPueIZCh6ZHCax6hgPVse5eSBaKMNOgY
-X-Received: from pfll11.prod.google.com ([2002:a05:6a00:158b:b0:77f:352f:809])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:e083:b0:263:71ee:51f7
- with SMTP id adf61e73a8af0-2cfdb1f0de5mr2191703637.24.1758601181574; Mon, 22
- Sep 2025 21:19:41 -0700 (PDT)
-Date: Mon, 22 Sep 2025 21:18:43 -0700
+        bh=GD6dJGQu7Fkw7LxMA7kNIP84YIqKTjc1I229dIn5uGU=;
+        b=BdI1yYFEPQ5K8ODvAHFlGVdWSJF3OFecMxYZZymfw7sxEQWN2raoYqJamF1zopHWsC
+         CRfhl054c9NdVs2v1oLscWyM1rHTvnRyhqN4kVrs98YiXry8mpGuPfwy0S3u/tNhWJu+
+         N4zvQBL9Obmh72RUV13EdXUhy6pzkU1wN0m9u8zRtoYeOz/w0+Ghuja3WsL1hObGP+14
+         5/vsinmPB6xu4svaJ4e2QhO1twj1qm67rmw27MYdo3MN33nWDdQqvqKSPySJcIXJiQwd
+         hYoe+YOstL8y7z48NXl0L2y5FMzY/zlzWIy+JxhF9uE/ntiKsyOZV94cPKsLHpZNXg8T
+         F4bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfwan1MYuc/vApYnDO/NBLNMhMUUPjuCo+cqS9fZY/LvcNVQkSRjbGzHSesGqauj+h4tP/Q1hUANe3Wco=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAA1GCC3u/XEbSFw2SKnYa2Tv5eh+Qa0RffGYH4vi4BcRgywiz
+	ojyESHTj23KCLLpErwhQxlcvC7jV6mvYoff/5Rye1os1FbyYkmejq82JjpHt710+m/4h4icvH73
+	oNQrCXKr3sA==
+X-Google-Smtp-Source: AGHT+IHEz625DgPgfCvdS8u12wp6hVm4KSQDVZQWJmPvAmlYj3P+j8YaXSnCyG6O61FyddtdSZfdsEtSQ9iC
+X-Received: from pjbmf6.prod.google.com ([2002:a17:90b:1846:b0:32e:bd90:3e11])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:ec8b:b0:32b:656f:5a5d
+ with SMTP id 98e67ed59e1d1-332a95e4d90mr1628708a91.29.1758601183502; Mon, 22
+ Sep 2025 21:19:43 -0700 (PDT)
+Date: Mon, 22 Sep 2025 21:18:44 -0700
 In-Reply-To: <20250923041844.400164-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250923041844.400164-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
-Message-ID: <20250923041844.400164-25-irogers@google.com>
-Subject: [PATCH v5 24/25] perf stat: Avoid wildcarding PMUs for default events
+Message-ID: <20250923041844.400164-26-irogers@google.com>
+Subject: [PATCH v5 25/25] perf test: Switch cycles event to cpu-cycles
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -91,190 +91,76 @@ Content-Type: text/plain; charset="UTF-8"
 
 Without a PMU perf matches an event against any PMU with the
 event. Unfortunately some PMU drivers advertise a "cycles" event which
-is typically just a core event. To make perf's behavior consistent,
-just look up default events with their designated PMU types.
+is typically just a core event. As tests assume a core event, switch
+to use "cpu-cycles" that avoids the overloaded "cycles" event on
+troublesome PMUs and is so far not overloaded. Note, on x86 this
+changes a legacy event into a sysfs one.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-stat.c | 133 +++++++++++++++++++++++++++-----------
- 1 file changed, 94 insertions(+), 39 deletions(-)
+ tools/perf/tests/code-reading.c     | 2 +-
+ tools/perf/tests/keep-tracking.c    | 2 +-
+ tools/perf/tests/perf-time-to-tsc.c | 4 ++--
+ tools/perf/tests/switch-tracking.c  | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 303628189004..4615aa3f2b7f 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -1824,6 +1824,38 @@ static int perf_stat_init_aggr_mode_file(struct perf_stat *st)
- 	return 0;
- }
+diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
+index 9c2091310191..4574a7e528ec 100644
+--- a/tools/perf/tests/code-reading.c
++++ b/tools/perf/tests/code-reading.c
+@@ -649,7 +649,7 @@ static int do_test_code_reading(bool try_kcore)
+ 	struct map *map;
+ 	bool have_vmlinux, have_kcore;
+ 	struct dso *dso;
+-	const char *events[] = { "cycles", "cycles:u", "cpu-clock", "cpu-clock:u", NULL };
++	const char *events[] = { "cpu-cycles", "cpu-cycles:u", "cpu-clock", "cpu-clock:u", NULL };
+ 	int evidx = 0;
+ 	struct perf_env host_env;
  
-+/* Add given software event to evlist without wildcarding. */
-+static int parse_software_event(struct evlist *evlist, const char *event,
-+				struct parse_events_error *err)
-+{
-+	char buf[256];
-+
-+	snprintf(buf, sizeof(buf), "software/%s,name=%s/", event, event);
-+	return parse_events(evlist, buf, err);
-+}
-+
-+/* Add legacy hardware/hardware-cache event to evlist for all core PMUs without wildcarding. */
-+static int parse_hardware_event(struct evlist *evlist, const char *event,
-+				struct parse_events_error *err)
-+{
-+	char buf[256];
-+	struct perf_pmu *pmu = NULL;
-+
-+	while ((pmu = perf_pmus__scan_core(pmu)) != NULL) {
-+		int ret;
-+
-+		if (perf_pmus__num_core_pmus() == 1)
-+			snprintf(buf, sizeof(buf), "%s/%s,name=%s/", pmu->name, event, event);
-+		else
-+			snprintf(buf, sizeof(buf), "%s/%s/", pmu->name, event);
-+
-+		ret = parse_events(evlist, buf, err);
-+		if (ret)
-+			return ret;
-+	}
-+	return 0;
-+}
-+
- /*
-  * Add default events, if there were no attributes specified or
-  * if -d/--detailed, -d -d or -d -d -d is used:
-@@ -1947,26 +1979,31 @@ static int add_default_events(void)
+diff --git a/tools/perf/tests/keep-tracking.c b/tools/perf/tests/keep-tracking.c
+index eafb49eb0b56..729cc9cc1cb7 100644
+--- a/tools/perf/tests/keep-tracking.c
++++ b/tools/perf/tests/keep-tracking.c
+@@ -90,7 +90,7 @@ static int test__keep_tracking(struct test_suite *test __maybe_unused, int subte
+ 	perf_evlist__set_maps(&evlist->core, cpus, threads);
  
- 	if (!evlist->core.nr_entries && !evsel_list->core.nr_entries) {
- 		/* No events so add defaults. */
--		if (target__has_cpu(&target))
--			ret = parse_events(evlist, "cpu-clock", &err);
--		else
--			ret = parse_events(evlist, "task-clock", &err);
--		if (ret)
--			goto out;
--
--		ret = parse_events(evlist,
--				"context-switches,"
--				"cpu-migrations,"
--				"page-faults,"
--				"instructions,"
--				"cycles,"
--				"stalled-cycles-frontend,"
--				"stalled-cycles-backend,"
--				"branches,"
--				"branch-misses",
--				&err);
--		if (ret)
--			goto out;
-+		const char *sw_events[] = {
-+			target__has_cpu(&target) ? "cpu-clock" : "task-clock",
-+			"context-switches",
-+			"cpu-migrations",
-+			"page-faults",
-+		};
-+		const char *hw_events[] = {
-+			"instructions",
-+			"cycles",
-+			"stalled-cycles-frontend",
-+			"stalled-cycles-backend",
-+			"branches",
-+			"branch-misses",
-+		};
-+
-+		for (size_t i = 0; i < ARRAY_SIZE(sw_events); i++) {
-+			ret = parse_software_event(evlist, sw_events[i], &err);
-+			if (ret)
-+				goto out;
-+		}
-+		for (size_t i = 0; i < ARRAY_SIZE(hw_events); i++) {
-+			ret = parse_hardware_event(evlist, hw_events[i], &err);
-+			if (ret)
-+				goto out;
-+		}
+ 	CHECK__(parse_event(evlist, "dummy:u"));
+-	CHECK__(parse_event(evlist, "cycles:u"));
++	CHECK__(parse_event(evlist, "cpu-cycles:u"));
  
- 		/*
- 		 * Add TopdownL1 metrics if they exist. To minimize
-@@ -2008,35 +2045,53 @@ static int add_default_events(void)
- 		 * Detailed stats (-d), covering the L1 and last level data
- 		 * caches:
- 		 */
--		ret = parse_events(evlist,
--				"L1-dcache-loads,"
--				"L1-dcache-load-misses,"
--				"LLC-loads,"
--				"LLC-load-misses",
--				&err);
-+		const char *hw_events[] = {
-+			"L1-dcache-loads",
-+			"L1-dcache-load-misses",
-+			"LLC-loads",
-+			"LLC-load-misses",
-+		};
-+
-+		for (size_t i = 0; i < ARRAY_SIZE(hw_events); i++) {
-+			ret = parse_hardware_event(evlist, hw_events[i], &err);
-+			if (ret)
-+				goto out;
-+		}
- 	}
- 	if (!ret && detailed_run >=  2) {
- 		/*
- 		 * Very detailed stats (-d -d), covering the instruction cache
- 		 * and the TLB caches:
- 		 */
--		ret = parse_events(evlist,
--				"L1-icache-loads,"
--				"L1-icache-load-misses,"
--				"dTLB-loads,"
--				"dTLB-load-misses,"
--				"iTLB-loads,"
--				"iTLB-load-misses",
--				&err);
-+		const char *hw_events[] = {
-+			"L1-icache-loads",
-+			"L1-icache-load-misses",
-+			"dTLB-loads",
-+			"dTLB-load-misses",
-+			"iTLB-loads",
-+			"iTLB-load-misses",
-+		};
-+
-+		for (size_t i = 0; i < ARRAY_SIZE(hw_events); i++) {
-+			ret = parse_hardware_event(evlist, hw_events[i], &err);
-+			if (ret)
-+				goto out;
-+		}
- 	}
- 	if (!ret && detailed_run >=  3) {
- 		/*
- 		 * Very, very detailed stats (-d -d -d), adding prefetch events:
- 		 */
--		ret = parse_events(evlist,
--				"L1-dcache-prefetches,"
--				"L1-dcache-prefetch-misses",
--				&err);
-+		const char *hw_events[] = {
-+			"L1-dcache-prefetches",
-+			"L1-dcache-prefetch-misses",
-+		};
-+
-+		for (size_t i = 0; i < ARRAY_SIZE(hw_events); i++) {
-+			ret = parse_hardware_event(evlist, hw_events[i], &err);
-+			if (ret)
-+				goto out;
-+		}
- 	}
- out:
- 	if (!ret) {
-@@ -2045,7 +2100,7 @@ static int add_default_events(void)
- 			 * Make at least one event non-skippable so fatal errors are visible.
- 			 * 'cycles' always used to be default and non-skippable, so use that.
- 			 */
--			if (strcmp("cycles", evsel__name(evsel)))
-+			if (!evsel__match(evsel, HARDWARE, HW_CPU_CYCLES))
- 				evsel->skippable = true;
- 		}
- 	}
+ 	evlist__config(evlist, &opts, NULL);
+ 
+diff --git a/tools/perf/tests/perf-time-to-tsc.c b/tools/perf/tests/perf-time-to-tsc.c
+index d4437410c99f..cca41bd37ae3 100644
+--- a/tools/perf/tests/perf-time-to-tsc.c
++++ b/tools/perf/tests/perf-time-to-tsc.c
+@@ -101,11 +101,11 @@ static int test__perf_time_to_tsc(struct test_suite *test __maybe_unused, int su
+ 
+ 	perf_evlist__set_maps(&evlist->core, cpus, threads);
+ 
+-	CHECK__(parse_event(evlist, "cycles:u"));
++	CHECK__(parse_event(evlist, "cpu-cycles:u"));
+ 
+ 	evlist__config(evlist, &opts, NULL);
+ 
+-	/* For hybrid "cycles:u", it creates two events */
++	/* For hybrid "cpu-cycles:u", it creates two events */
+ 	evlist__for_each_entry(evlist, evsel) {
+ 		evsel->core.attr.comm = 1;
+ 		evsel->core.attr.disabled = 1;
+diff --git a/tools/perf/tests/switch-tracking.c b/tools/perf/tests/switch-tracking.c
+index 5be294014d3b..15791fcb76b2 100644
+--- a/tools/perf/tests/switch-tracking.c
++++ b/tools/perf/tests/switch-tracking.c
+@@ -332,7 +332,7 @@ static int process_events(struct evlist *evlist,
+ static int test__switch_tracking(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
+ {
+ 	const char *sched_switch = "sched:sched_switch";
+-	const char *cycles = "cycles:u";
++	const char *cycles = "cpu-cycles:u";
+ 	struct switch_tracking switch_tracking = { .tids = NULL, };
+ 	struct record_opts opts = {
+ 		.mmap_pages	     = UINT_MAX,
 -- 
 2.51.0.534.gc79095c0ca-goog
 
