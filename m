@@ -1,170 +1,158 @@
-Return-Path: <linux-kernel+bounces-828548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1894DB94DC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:52:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3854B94DC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D357F1903333
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:52:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C0E34E2706
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4001831815E;
-	Tue, 23 Sep 2025 07:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F2531771B;
+	Tue, 23 Sep 2025 07:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T3HIODO9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="O3vrN+cN"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7613164D8;
-	Tue, 23 Sep 2025 07:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889292EDD5D
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758613936; cv=none; b=AWK+SkW9pSyz1rJEzo97qm738hz2eko6wTa85nen38xUWIClzDQbeOrU2ntebJp8UtEsALeuXgJH1SH3x5iy7DOVLqNU02Y05zdcL/TcrJf/U7p4bRoxi73k8/9yOb00pDZHeZTs9a6PO+N9xq+2R4K/Yvy8CbMjwLFHYsKNi8A=
+	t=1758613936; cv=none; b=X+QCnhCekXlxaHukZo9zoUQKN9A3gxffw0E8k53p1ZNZJgpDX4/L/JsbLbPGZ0Wh2JbD/JyFE1TfMM6a2ZZ2jRmXwkNUM0kSo2V8tY+MGYNS16mUW2bPA7oISuwa2rKFWxY3FOaFbSflZ8Jkd6ZPE4dX/hrYXxSMcvVzipvhTow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758613936; c=relaxed/simple;
-	bh=licSeWjFUdzBHCsxcp537nwdX+A34/7NtoD2kX8d7ys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H1DfrvX1HPE9gTfUaAMsGGc0GFQ/6QDRHh70wWuXX26gm7VB9MwdDZ2nqvo+1yn5oTHD0/4jwLhO2MDe4pVBsfDZvlYmhJ3etMJDbYSbzNktWs0GsmLoKZFTTo6HRtlwtwZ34gFzuAREyQWpv7St00AHixjV6d3oWVRwq4pIbug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T3HIODO9; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758613935; x=1790149935;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=licSeWjFUdzBHCsxcp537nwdX+A34/7NtoD2kX8d7ys=;
-  b=T3HIODO9fdhfJ8xjLAHpIS9zXzcK/I79dlA/guMvsRnhJMdZJf0MChbQ
-   hxz23ll3p5HFodAVgpsyEE+w67Zve+yHxPBu4iqXJQZEu3PGDiwak/k8y
-   /aQlyUC9uP/VzTTmu84M2z+EKI6USDR8ekLqMZboxjdvPqFkM0BoGHysh
-   PHsot8WFfjDbG9/1gIoLayTZyeb8gs//w8pjzlyC+AyC6NroOJWCHdyjM
-   6FyFHBt+MfRwz66n1VHTfkZmO4ECbQLtinUqClYpo/COk5LEW0ofh9WTt
-   CUCuT07fAMYr2/93g4MJwAnaePWQ5AAyVouJ1vkWumeJE6QjTqCFuMmzP
-   Q==;
-X-CSE-ConnectionGUID: asVuIpXDSea65eN9R50yIg==
-X-CSE-MsgGUID: RXvx1x50QVW2yQAIH4KKLA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60942159"
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="60942159"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 00:52:14 -0700
-X-CSE-ConnectionGUID: ky0FkstCS4y0RA7/+g+A0Q==
-X-CSE-MsgGUID: 7rquwNaGRXC45vaKXV5jgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="176774466"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 23 Sep 2025 00:52:09 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v0xok-0002sP-2l;
-	Tue, 23 Sep 2025 07:52:06 +0000
-Date: Tue, 23 Sep 2025 15:52:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Menglong Dong <menglong8.dong@gmail.com>, jolsa@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, kpsingh@kernel.org,
-	mattbobrowski@google.com, song@kernel.org, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
-	eddyz87@gmail.com, yonghong.song@linux.dev,
-	john.fastabend@gmail.com, sdf@fomichev.me, haoluo@google.com,
-	rostedt@goodmis.org, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next] bpf: remove is_return in struct
- bpf_session_run_ctx
-Message-ID: <202509231550.BWhLcP9e-lkp@intel.com>
-References: <20250922095705.252519-1-dongml2@chinatelecom.cn>
+	bh=pf37Q7wzChkdluFPqksV7e+I8FpVOZKjC6mV81x3yYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=iyVoGp0fe6ciaInHWXkqNsxa+bGDUK6j/g29nLey106kvxFH0+Mu0fKOTjvtvQ7bXCNUX2xXlr4+JvK5uUq1Af2iuzzrQTpknTNcLxRPQdqt4rOG1lxG3ZyNElbc89OOMW+x2fumMmRxMf5R2MGY3spuarWnR3wFmdB7QwJ8+hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=O3vrN+cN; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250923075210euoutp02c13a89ecf7b4aff992561c34f6641a64~n2g1sgBs60712707127euoutp027
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:52:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250923075210euoutp02c13a89ecf7b4aff992561c34f6641a64~n2g1sgBs60712707127euoutp027
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758613930;
+	bh=TyeXzWHqzkRrxRkI+OKjBSuJ/O2L9PTGBMWtdzDt3bI=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=O3vrN+cNTLDpjLQh55St7Mvpc9nHg7KXFF2fNi1yTNisFYaoMSbnhob3WsWV5z3wg
+	 KgWx6X6gvJduDdpE2UTa+lExjuQ2BtnscWLx1TeopOhL8gS3HbRru+hZLNo46oBt8f
+	 hI/EvZxZbG1vKxgoCZiRmiYagE8KT8QO51h5v6ZA=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250923075210eucas1p2e2268ea8465a10df505cf86110e51c3d~n2g1fGgch1074310743eucas1p2J;
+	Tue, 23 Sep 2025 07:52:10 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250923075209eusmtip2088551d3840de5e4d012ae6fa85125ef~n2g08t4Xs2851428514eusmtip2V;
+	Tue, 23 Sep 2025 07:52:09 +0000 (GMT)
+Message-ID: <6d008809-c285-46d4-a604-6b34e4c73142@samsung.com>
+Date: Tue, 23 Sep 2025 09:52:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922095705.252519-1-dongml2@chinatelecom.cn>
+User-Agent: Betterbird (Windows)
+Subject: Re: [tip: sched/urgent] sched/deadline: Fix dl_server getting stuck
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, John
+	Stultz <jstultz@google.com>, x86@kernel.org, 'Linux Samsung SOC'
+	<linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250923072506.GS3245006@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250923075210eucas1p2e2268ea8465a10df505cf86110e51c3d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd
+X-EPHeader: CA
+X-CMS-RootMailID: 20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd
+References: <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
+	<175817861820.709179.10538516755307778527.tip-bot2@tip-bot2>
+	<CGME20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd@eucas1p1.samsung.com>
+	<e56310b5-f7a9-4fad-b79a-dcbcdd3d3883@samsung.com>
+	<20250923072506.GS3245006@noisy.programming.kicks-ass.net>
 
-Hi Menglong,
+On 23.09.2025 09:25, Peter Zijlstra wrote:
+> On Mon, Sep 22, 2025 at 11:57:02PM +0200, Marek Szyprowski wrote:
+>> On 18.09.2025 08:56, tip-bot2 for Peter Zijlstra wrote:
+>>> The following commit has been merged into the sched/urgent branch of tip:
+>>>
+>>> Commit-ID:     077e1e2e0015e5ba6538d1c5299fb299a3a92d60
+>>> Gitweb:        https://git.kernel.org/tip/077e1e2e0015e5ba6538d1c5299fb299a3a92d60
+>>> Author:        Peter Zijlstra <peterz@infradead.org>
+>>> AuthorDate:    Tue, 16 Sep 2025 23:02:41 +02:00
+>>> Committer:     Peter Zijlstra <peterz@infradead.org>
+>>> CommitterDate: Thu, 18 Sep 2025 08:50:05 +02:00
+>>>
+>>> sched/deadline: Fix dl_server getting stuck
+>>>
+>>> John found it was easy to hit lockup warnings when running locktorture
+>>> on a 2 CPU VM, which he bisected down to: commit cccb45d7c429
+>>> ("sched/deadline: Less agressive dl_server handling").
+>>>
+>>> While debugging it seems there is a chance where we end up with the
+>>> dl_server dequeued, with dl_se->dl_server_active. This causes
+>>> dl_server_start() to return without enqueueing the dl_server, thus it
+>>> fails to run when RT tasks starve the cpu.
+>>>
+>>> When this happens, dl_server_timer() catches the
+>>> '!dl_se->server_has_tasks(dl_se)' case, which then calls
+>>> replenish_dl_entity() and dl_server_stopped() and finally return
+>>> HRTIMER_NO_RESTART.
+>>>
+>>> This ends in no new timer and also no enqueue, leaving the dl_server
+>>> 'dead', allowing starvation.
+>>>
+>>> What should have happened is for the bandwidth timer to start the
+>>> zero-laxity timer, which in turn would enqueue the dl_server and cause
+>>> dl_se->server_pick_task() to be called -- which will stop the
+>>> dl_server if no fair tasks are observed for a whole period.
+>>>
+>>> IOW, it is totally irrelevant if there are fair tasks at the moment of
+>>> bandwidth refresh.
+>>>
+>>> This removes all dl_se->server_has_tasks() users, so remove the whole
+>>> thing.
+>>>
+>>> Fixes: cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling")
+>>> Reported-by: John Stultz <jstultz@google.com>
+>>> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>>> Tested-by: John Stultz <jstultz@google.com>
+>>> ---
+>> This patch landed in today's linux-next as commit 077e1e2e0015
+>> ("sched/deadline: Fix dl_server getting stuck"). In my tests I found
+>> that it breaks CPU hotplug on some of my systems. On 64bit
+>> Exynos5433-based TM2e board I've captured the following lock dep warning
+>> (which unfortunately doesn't look like really related to CPU hotplug):
+> Absolutely wild guess; does something like this help?
+>
+> ---
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 18a30ae35441..bf78c46620a5 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -12972,6 +12972,8 @@ static void rq_offline_fair(struct rq *rq)
+>   
+>   	/* Ensure that we remove rq contribution to group share: */
+>   	clear_tg_offline_cfs_rqs(rq);
+> +
+> +	dl_server_stop(&rq->fair_server);
+>   }
+>   
+>   #ifdef CONFIG_SCHED_CORE
 
-kernel test robot noticed the following build warnings:
+Unfortunately not, same log.
 
-[auto build test WARNING on bpf-next/master]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Menglong-Dong/bpf-remove-is_return-in-struct-bpf_session_run_ctx/20250922-175833
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20250922095705.252519-1-dongml2%40chinatelecom.cn
-patch subject: [PATCH bpf-next] bpf: remove is_return in struct bpf_session_run_ctx
-config: i386-randconfig-r113-20250923 (https://download.01.org/0day-ci/archive/20250923/202509231550.BWhLcP9e-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250923/202509231550.BWhLcP9e-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509231550.BWhLcP9e-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   kernel/trace/bpf_trace.c:833:41: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void [noderef] __user *[addressable] [assigned] [usertype] sival_ptr @@     got void * @@
-   kernel/trace/bpf_trace.c:833:41: sparse:     expected void [noderef] __user *[addressable] [assigned] [usertype] sival_ptr
-   kernel/trace/bpf_trace.c:833:41: sparse:     got void *
->> kernel/trace/bpf_trace.c:3059:62: sparse: sparse: dubious: x | !y
-   kernel/trace/bpf_trace.c:3512:52: sparse: sparse: cast removes address space '__user' of expression
-   kernel/trace/bpf_trace.c:3526:56: sparse: sparse: cast removes address space '__user' of expression
-   kernel/trace/bpf_trace.c:3540:52: sparse: sparse: cast removes address space '__user' of expression
-   kernel/trace/bpf_trace.c:3547:56: sparse: sparse: cast removes address space '__user' of expression
-   kernel/trace/bpf_trace.c:3555:52: sparse: sparse: cast removes address space '__user' of expression
-   kernel/trace/bpf_trace.c:3563:56: sparse: sparse: cast removes address space '__user' of expression
-   kernel/trace/bpf_trace.c: note: in included file (through include/linux/rbtree.h, include/linux/mm_types.h, include/linux/mmzone.h, ...):
-   include/linux/rcupdate.h:869:9: sparse: sparse: context imbalance in 'uprobe_prog_run' - unexpected unlock
-
-vim +3059 kernel/trace/bpf_trace.c
-
-  3050	
-  3051	static int uprobe_prog_run(struct bpf_uprobe *uprobe,
-  3052				   unsigned long entry_ip,
-  3053				   struct pt_regs *regs,
-  3054				   bool is_return, void *data)
-  3055	{
-  3056		struct bpf_uprobe_multi_link *link = uprobe->link;
-  3057		struct bpf_uprobe_multi_run_ctx run_ctx = {
-  3058			.session_ctx = {
-> 3059				.data = (void *)((unsigned long)data | !!is_return),
-  3060			},
-  3061			.entry_ip = entry_ip,
-  3062			.uprobe = uprobe,
-  3063		};
-  3064		struct bpf_prog *prog = link->link.prog;
-  3065		bool sleepable = prog->sleepable;
-  3066		struct bpf_run_ctx *old_run_ctx;
-  3067		int err;
-  3068	
-  3069		if (link->task && !same_thread_group(current, link->task))
-  3070			return 0;
-  3071	
-  3072		if (sleepable)
-  3073			rcu_read_lock_trace();
-  3074		else
-  3075			rcu_read_lock();
-  3076	
-  3077		migrate_disable();
-  3078	
-  3079		old_run_ctx = bpf_set_run_ctx(&run_ctx.session_ctx.run_ctx);
-  3080		err = bpf_prog_run(link->link.prog, regs);
-  3081		bpf_reset_run_ctx(old_run_ctx);
-  3082	
-  3083		migrate_enable();
-  3084	
-  3085		if (sleepable)
-  3086			rcu_read_unlock_trace();
-  3087		else
-  3088			rcu_read_unlock();
-  3089		return err;
-  3090	}
-  3091	
-
+Best regards
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
