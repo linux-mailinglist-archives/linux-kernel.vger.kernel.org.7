@@ -1,113 +1,163 @@
-Return-Path: <linux-kernel+bounces-828498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 378B0B94B83
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:16:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC6DB94B8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA380174341
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:16:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479CC3AD7C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 07:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5A73115BC;
-	Tue, 23 Sep 2025 07:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC3D31158A;
+	Tue, 23 Sep 2025 07:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U9FJGxNN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i/vFblrX"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE001AF0BB;
-	Tue, 23 Sep 2025 07:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C539430F7FE;
+	Tue, 23 Sep 2025 07:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758611755; cv=none; b=o2iHYEgsbXf49tZ84dnbrwaPPlvmBsGmGy98f1M87CwW8QrO87HvOYMD4iQ5ETFb0GS7BA6cvrhZLO8VyVwY7yyM1BJT3klTHXjRMewJr7lN/kfUqgJadQyjbmpGuA9uFeTWSPcou7Af6emzR1WPNlr8fqcXgEwj2E0QK4dmzLE=
+	t=1758611792; cv=none; b=Hb11jqLm+lEJylViVLXJN7/YsJe5V7R+MeRJXGs+hLsrmZsnSXNRZcIgDoG9kfDxYRj4qdPiEdj7dBxiMZaG2DonNfTvLoBJhpNaASOuijFl7gfQoEOqmMPUx9Zg+xibw9U7mI85rMTUGxMNeKzVPkp7PWFrMw5j0Bietn3jHq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758611755; c=relaxed/simple;
-	bh=2mraov1yvl5ZGj51GJTQCYVmyaRxsWBXgzmBcHowq5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZB5zgHBdUGXT1itcP1DXvEzSiwqZ2FA0C8ZvABSMe47Qn2yGOYwFwLQ2Hf/vg5/yPeIJ7RunM2VXWq15cRvMje9IpO4TelzlmI8/JdabNjkv2lceZhLQKnDy15wY5O/H/HvxBx7PPzIzWuf8FUAhyfnbtcYHPymm5oD+lns/FBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U9FJGxNN; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758611754; x=1790147754;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2mraov1yvl5ZGj51GJTQCYVmyaRxsWBXgzmBcHowq5E=;
-  b=U9FJGxNNkf58vGenDRC6i+mGq2I9/tUFicoxR1bnQwDdPiKN4aTIljPW
-   j+A0LCxVnYWy8RfIYo02/r8DPU4YLAW+VHyaS1CY2o0VxuLD7vK1oYlB1
-   tesVJ73zmezwrPiIu6W8ZNsY3WbNGz4hA3hW9DOVjPYKBp/S+0uTjc+g1
-   RgzLNxHCxUsO0Dbe17DW5xV1VXwKUnspAkQ7sX66fBk9nOTT0vP6mqDm6
-   53dHzClDPr5YZpAEAguEz+sxhXofKC+PHgDrcxSjfqdJM5rcGLeWk+sFT
-   VI4xZ1NWWNSqC8O7MIrK+r0fXZyT+PlBKHGl/youG93QJlQruolVeIWQn
-   Q==;
-X-CSE-ConnectionGUID: wMFLYzL9RvKZZaMBpy/azA==
-X-CSE-MsgGUID: ovXDnKMwQE2nDCUr7ATwrQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="64523012"
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="64523012"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 00:15:53 -0700
-X-CSE-ConnectionGUID: OHZ11it7Sv+TESQ+tTBi7w==
-X-CSE-MsgGUID: OobGl40qTYS7qmAo6j0IMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,287,1751266800"; 
-   d="scan'208";a="175983762"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 00:15:49 -0700
-Message-ID: <90fdfc53-ad71-44f8-846b-dd3f859331dc@linux.intel.com>
-Date: Tue, 23 Sep 2025 15:15:46 +0800
+	s=arc-20240116; t=1758611792; c=relaxed/simple;
+	bh=5fDKVF0izRWroWruPprDXuZ/aZYH/dSrSsguDThEDK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YN8gflZW+rQoOdUETs1w/aNfDp8LesnZYEP9iderT+NXDK+A5mYYfnzI2GTiLHuRuen80m63ZP6kdQYdk8CUlEYg32nwofTFM0K4qcjWb9G4EEeh96XIwH2MAUqijRtcdvtteVgCgnrSIwcJabNBF7u17VZ6vLoXUuzrzrV12cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i/vFblrX; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gr21sE64KSAPJhmA+bz5GYsvn97jNvphWwGOnPhZYQg=; b=i/vFblrX/G8e6OLXGvktviUrqu
+	/dRaH+KC6I+ldSGmqV3SNGsnvCGwKxxSjC/TZXOWTGXpu4M3dsH17R6MkBkL/d8egR7H16VbAeirY
+	Ej6qwCrx8QSEpuTVex8yVeSs2Owfi2RgeO7SIohXpFb3yaspKtUnnyoBw8GETWq0R+tZPqh/zooX5
+	xYKtBQiZF3wgomx3Bku5NXcBN2yrtijVKq+1WTMU3t1Q+20sVRACkOLDCWHWusoJ85isXxfd5XQqh
+	LRKaggUGUYY/30UY6nFEJQ7YcBf90Tv3/Y/P3sqsLoBsgRIH+ebgSP1KtoCOE6wX9mkIgxktnUWAz
+	rY4pPfig==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v0xFw-00000008Ti2-468P;
+	Tue, 23 Sep 2025 07:16:09 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A3CC530049C; Tue, 23 Sep 2025 09:16:07 +0200 (CEST)
+Date: Tue, 23 Sep 2025 09:16:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Julian Sun <sunjunchao@bytedance.com>, cgroups@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, lance.yang@linux.dev,
+	mhiramat@kernel.org, agruenba@redhat.com, hannes@cmpxchg.org,
+	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev
+Subject: Re: [PATCH 0/3] Suppress undesirable hung task warnings.
+Message-ID: <20250923071607.GR3245006@noisy.programming.kicks-ass.net>
+References: <20250922094146.708272-1-sunjunchao@bytedance.com>
+ <20250922132718.GB49638@noisy.programming.kicks-ass.net>
+ <aNGQoPFTH2_xrd9L@infradead.org>
+ <20250922145045.afc6593b4e91c55d8edefabb@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/16] x86/virt/tdx: Allocate page bitmap for Dynamic
- PAMT
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: kas@kernel.org, bp@alien8.de, chao.gao@intel.com,
- dave.hansen@linux.intel.com, isaku.yamahata@intel.com, kai.huang@intel.com,
- kvm@vger.kernel.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
- seanjc@google.com, tglx@linutronix.de, x86@kernel.org, yan.y.zhao@intel.com,
- vannapurve@google.com, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
- <20250918232224.2202592-5-rick.p.edgecombe@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250918232224.2202592-5-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922145045.afc6593b4e91c55d8edefabb@linux-foundation.org>
 
+On Mon, Sep 22, 2025 at 02:50:45PM -0700, Andrew Morton wrote:
+> On Mon, 22 Sep 2025 11:08:32 -0700 Christoph Hellwig <hch@infradead.org> wrote:
+> 
+> > On Mon, Sep 22, 2025 at 03:27:18PM +0200, Peter Zijlstra wrote:
+> > > > Julian Sun (3):
+> > > >   sched: Introduce a new flag PF_DONT_HUNG.
+> > > >   writeback: Introduce wb_wait_for_completion_no_hung().
+> > > >   memcg: Don't trigger hung task when memcg is releasing.
+> > > 
+> > > This is all quite terrible. I'm not at all sure why a task that is
+> > > genuinely not making progress and isn't killable should not be reported.
+> > 
+> > The hung device detector is way to aggressive for very slow I/O.
+> > See blk_wait_io, which has been around for a long time to work
+> > around just that.  Given that this series targets writeback I suspect
+> > it is about an overloaded device as well.
+> 
+> Yup, it's writeback - the bug report is in
+> https://lkml.kernel.org/r/20250917212959.355656-1-sunjunchao@bytedance.com
+> 
+> Memory is big and storage is slow, there's nothing wrong if a task
+> which is designed to wait for writeback waits for a long time.
+> 
+> Of course, there's something wrong if some other task which isn't
+> designed to wait for writeback gets stuck waiting for the task which
+> *is* designed to wait for writeback, but we'll still warn about that.
+> 
+> 
+> Regarding an implementation, I'm wondering if we can put a flag in
+> `struct completion' telling the hung task detector that this one is
+> expected to wait for long periods sometimes.  Probably messy and it
+> only works for completions (not semaphores, mutexes, etc).  Just
+> putting it out there ;)
 
+So the problem is that there *is* progress (albeit rather slowly), the
+watchdog just doesn't see that. Perhaps that is the thing we should look
+at fixing.
 
-On 9/19/2025 7:22 AM, Rick Edgecombe wrote:
-[...]
-> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-> index 38dae825bbb9..4e4aa8927550 100644
-> --- a/arch/x86/virt/vmx/tdx/tdx.c
-> +++ b/arch/x86/virt/vmx/tdx/tdx.c
-> @@ -440,6 +440,18 @@ static int fill_out_tdmrs(struct list_head *tmb_list,
->   	return 0;
->   }
->   
-> +static unsigned long tdmr_get_pamt_bitmap_sz(struct tdmr_info *tdmr)
-> +{
-> +	unsigned long pamt_sz, nr_pamt_entries;
-> +	int bits_per_entry;
-> +
-> +	bits_per_entry = tdx_sysinfo.tdmr.pamt_page_bitmap_entry_bits;
-> +	nr_pamt_entries = tdmr->size >> PAGE_SHIFT;
-> +	pamt_sz = DIV_ROUND_UP(nr_pamt_entries * bits_per_entry, BITS_PER_BYTE);
-> +
-> +	return ALIGN(pamt_sz, PAGE_SIZE);
+How about something like the below? That will 'spuriously' wake up the
+waiters as long as there is some progress being made. Thereby increasing
+the context switch counters of the tasks and thus the hung_task watchdog
+sees progress.
 
-Nit:
-return PAGE_ALIGN(pamt_sz);
+This approach should be safer than the blk_wait_io() hack, which has a
+timer ticking, regardless of actual completions happening or not.
 
+---
 
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index a07b8cf73ae2..1326193b4d95 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -174,9 +174,10 @@ static void finish_writeback_work(struct wb_writeback_work *work)
+ 		kfree(work);
+ 	if (done) {
+ 		wait_queue_head_t *waitq = done->waitq;
++		bool force_wake = (jiffies - done->stamp) > HZ/2;
+ 
+ 		/* @done can't be accessed after the following dec */
+-		if (atomic_dec_and_test(&done->cnt))
++		if (atomic_dec_and_test(&done->cnt) || force_wake)
+ 			wake_up_all(waitq);
+ 	}
+ }
+@@ -213,7 +214,7 @@ static void wb_queue_work(struct bdi_writeback *wb,
+ void wb_wait_for_completion(struct wb_completion *done)
+ {
+ 	atomic_dec(&done->cnt);		/* put down the initial count */
+-	wait_event(*done->waitq, !atomic_read(&done->cnt));
++	wait_event(*done->waitq, ({ done->stamp = jiffies; !atomic_read(&done->cnt); }));
+ }
+ 
+ #ifdef CONFIG_CGROUP_WRITEBACK
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index 2ad261082bba..197593193ce3 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -63,6 +63,7 @@ enum wb_reason {
+ struct wb_completion {
+ 	atomic_t		cnt;
+ 	wait_queue_head_t	*waitq;
++	unsigned long		stamp;
+ };
+ 
+ #define __WB_COMPLETION_INIT(_waitq)	\
 
