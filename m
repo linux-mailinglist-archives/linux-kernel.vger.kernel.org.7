@@ -1,116 +1,120 @@
-Return-Path: <linux-kernel+bounces-829335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56383B96D4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:30:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0EADB96D55
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:31:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F399188F94E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:31:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89BB0165380
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C533327A0D;
-	Tue, 23 Sep 2025 16:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B8A263F44;
+	Tue, 23 Sep 2025 16:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWdG3qKa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NpXj9/wa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86F2211A05;
-	Tue, 23 Sep 2025 16:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFEC23B0
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758645037; cv=none; b=qXXkUyu23MKuiE3dy0dyWQ2j2ha8ZCNYyIxD3mpoyu5WqKbswouVi60diVdXUdMOyXqZMsA9H3mEJYeQgaXEGzZaAkuAHoErshZnc5gpGezS2TrNjHNHePR6Jvy8lOpZjg4UJ8XWJsxpkn9fo8jdBiDL3XpRK54rUn8b3PHk4hs=
+	t=1758645093; cv=none; b=Y5+tCztbacOIGuaCPaMqbdRfkgQT3y+kPzk+YxLs15djSXjlyZs3ocD9zUta+EWXwtIOtsGZt/W8YTNYFVZ715sTXjLycgi2WbuwwuXX5j4OeJ6dBH/DlvTzFfhHpfa2mvgNR94Kg5azR4SfJrFX1tkt+b/JyMd1DV3YV9Ya8aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758645037; c=relaxed/simple;
-	bh=5tiBPtvgesyhnR47lrccS9gc7BUlsPB/UX6Ph/bryO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gi9cM3OWxigJKFz8Nqj6w4YS10+x9b/EEzcY+Vt8rxK+YjXYd3A/DMop3t8D8mASgFlS8VArzHVcUz9s+2o5+LbZnHhc/e24I3L1SDVlRJrQnYOOhd+O4Qr2Z12tb+uNeKyf3HomZNldR7K2exBfoWI5Ez+ANpvpi+xZqVITLi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWdG3qKa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63554C4CEF7;
-	Tue, 23 Sep 2025 16:30:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758645037;
-	bh=5tiBPtvgesyhnR47lrccS9gc7BUlsPB/UX6Ph/bryO8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aWdG3qKaD3dQpRSfft7dkP56jbtFkmlXyV/sGPLG/+35MnCJrm8IygZxeHMsuktex
-	 F6E8JHHHPCurlXMz1H/2VA+t0WBfIJEdO5iM0MBnIbnlbS9YL/pXL/4JOGcXjV3g7s
-	 x57oHnCYP631KXx4iXl/mn+eH9KFDn+3cQ+8uAeS9NNBWlfDz/ijCg5mSCigeaLRte
-	 X8gijx+Rn72fCZizw1oN6juT4EEbCQzYRxkMjnzYC9eJoMq/0XhGJu2GboqinhFXn/
-	 TYY1rJxQfUB1wOoK8DzSxLOUQaUbNWEC2eyqnzLRT1VZ1oeD/oT7Vu9pCyy5msKpDn
-	 uiXkSRS8WHsWA==
-Date: Tue, 23 Sep 2025 18:30:33 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Yinon Burgansky <yinonburgansky@gmail.com>
-Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: Touchpad multitouch leaves ghost fingers
-Message-ID: <iav7hzeaarxifwxk7zlfnt6vipqkp4h4ldt634exlvcswz62gj@a7ongaeduylz>
-References: <CAEU-x4=Zs22b5LX_rsBVMu4BxvDfO+CZkkuWuVNaxv8mqvh9Gw@mail.gmail.com>
- <bjtev7sgmcafoysd53xrxih4nawn2dbq4odylwdglbub6td2a3@nhoxenprhjvy>
- <CAEU-x4kL45DAddmNahjR2C97+43jchpmXep++LbeP8cXLEWN-w@mail.gmail.com>
- <CAEU-x4nv3XnXchevtwN5mkVcxqnpgBobhavxZc7BjS7EgYG8Ng@mail.gmail.com>
- <c3plpgl2zsx4do2odwdeowodkkdnfqpexlwqg5a5mckyibxlge@qai35f5yeswy>
- <CAEU-x4mJiBM_zKg1DaeJkKB3W3Ay08bUTc-D3QjFjDxNiZGd0g@mail.gmail.com>
+	s=arc-20240116; t=1758645093; c=relaxed/simple;
+	bh=8gpgB9krcgBlyteR9tCAHO5d8oJyWBI/UU/Aw1H8BR0=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=iLnsLbO1ttGCSLMgcJdmUnn+SiejxwcZxHcWdgcD+ZTyjT0RBao1Z6g2V4iWFA3yDDfX0MqYeqPrzgnylG4QDGIP6DSrBF3q9rTYbB07A1qeiAHK3vieJNaaCvhF/Gwh+bFe+PJsDXvf7+Tdd7qzO+fBuNXjMvfhEvSCpCQoDjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NpXj9/wa; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758645090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YwlmPK3UG+oIIpSf2yvcGnvIBVSerhRFYtDaAohmy7U=;
+	b=NpXj9/wapIFuM2R//5QfG9H/az3r0XceUb/tJeGzNiodrXwcQyitdtelIOr1dCKXe+CznN
+	QfFJ0Kb8PaknG7Kge4EzFMrfkk2PS4Lztp8skVuPGu0QQXkHrnCOBCE3vUfO9ihp0zPRMt
+	UVtp48onylm8jXqye+jP4zPyieGLoiA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-636-dr9SHAYUNr6hjxgHNREwig-1; Tue,
+ 23 Sep 2025 12:31:25 -0400
+X-MC-Unique: dr9SHAYUNr6hjxgHNREwig-1
+X-Mimecast-MFC-AGG-ID: dr9SHAYUNr6hjxgHNREwig_1758645083
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 092EF1956089;
+	Tue, 23 Sep 2025 16:31:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.155])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 88A7A180044F;
+	Tue, 23 Sep 2025 16:31:19 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <529581.1758644752@warthog.procyon.org.uk>
+References: <529581.1758644752@warthog.procyon.org.uk> <20250923153228.GA1570@sol> <20250921192757.GB22468@sol> <3936580.1758299519@warthog.procyon.org.uk> <506171.1758637355@warthog.procyon.org.uk>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: dhowells@redhat.com, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+    Ard Biesheuvel <ardb@kernel.org>,
+    Harald Freudenberger <freude@linux.ibm.com>,
+    Holger Dengler <dengler@linux.ibm.com>,
+    Herbert Xu <herbert@gondor.apana.org.au>,
+    Stephan Mueller <smueller@chronox.de>, Simo Sorce <simo@redhat.com>,
+    linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org,
+    keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384, SHA-512, SHAKE128, SHAKE256
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEU-x4mJiBM_zKg1DaeJkKB3W3Ay08bUTc-D3QjFjDxNiZGd0g@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <530339.1758645078.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 23 Sep 2025 17:31:18 +0100
+Message-ID: <530340.1758645078@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Sep 22 2025, Yinon Burgansky wrote:
-> On Mon, Sep 22, 2025 at 7:51 PM Benjamin Tissoires <bentiss@kernel.org> wrote:
-> > Well, I was meaning that I would provide a HID-BPF MR ready to install
-> > for you.
-> That would be awesome! Thank you very much!
+David Howells <dhowells@redhat.com> wrote:
 
-Got something out with https://gitlab.freedesktop.org/libevdev/udev-hid-bpf/-/merge_requests/204
-that seems to solve your case on the hid-recorder you provided.
+> Eric Biggers <ebiggers@kernel.org> wrote:
+> =
 
-> 
-> > But if you want to play with it, feel free to do so :)
-> > For a jump start on HID-BPF:
-> > https://libevdev.pages.freedesktop.org/udev-hid-bpf/tutorial.html
-> Thank you for the reference. I’m feeling quite fatigued from the
-> debugging process, as it took me a considerable amount of time to
-> identify the issue.
-> It was surprisingly difficult to determine what exactly was wrong with
-> the touchpad and to uncover the root cause; perhaps I didn’t search
-> for the right terms.
-> However, I’m glad I finally took the time to debug it, submit the bug
-> report, and find out what was wrong. Thank you!
-> 
-> > The advantage of HID-BPF is that we can drop the file in the filesystem
-> > and then forget about it.
-> > My plan is to have the HID-BPF detect whether the quirk has been applied
-> > or not and would gracefully remove itself once the kernel is fixed.
-> That's cool, nice design.
+> > > I assume that pertains to the comment about inlining in some way.  T=
+his
+> > > is as is in sha3_generic.c.  I can move it into the round function i=
+f
+> > > you like, but can you tell me what the effect will be?
+> > =
 
-Unfortunately I spoke too fast. The NSMU quirk is internal to the
-hid-multitouch driver, and not exported in the struct hid_device. Thus
-we don't have a direct access to the quirk. It should also be present in
-the driver data of the hid_device or in the input_device, but in both
-cases BPF prevents us to simply follow the pointers.
+> > The effect will be that the code will align more closely with how the
+> > algorithm is described in the SHA-3 spec and other publications.
+> =
 
-In the end, it shouldn't be an issue if you have both the fixed kernel
-and the BPF because both fixes are not mutually exclusive.
+> I meant on the code produced and the stack consumed.  It may align with =
+other
+> code, but if it runs off of the end of the stack then alignment is irrel=
+evant.
 
-> 
-> > PS: please try to refrain from top-posting your reply. The usage is to
-> > inline your reply or reply below,
-> Sorry about that, hopefully I did it right this time.
+See commit 4767b9ad7d762876a5865a06465e13e139a01b6b
 
-Yep, much better this time. I didn't meant to be rude, but if you want
-to interact with the LKML, some people gets angry about top posting and
-would just send you a link without even reading your email. So better
-having better habits :)
+"crypto: sha3-generic - deal with oversize stack frames"
 
-Cheers,
-Benjamin
+For some reason (maybe Ard can comment on it), he left the Iota function o=
+ut
+of the keccakf_round() function.
+
+David
+
 
