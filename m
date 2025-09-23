@@ -1,165 +1,135 @@
-Return-Path: <linux-kernel+bounces-828600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50379B94F9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:23:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABC3B94FA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0948F3A5F38
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1BE5168241
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C507F31B11A;
-	Tue, 23 Sep 2025 08:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAA531A550;
+	Tue, 23 Sep 2025 08:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UATZU/Ep"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z4VNFD/i"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692142E92BC
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE9A25785B
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758615792; cv=none; b=qxrvmyMC8VY6zAkGYRXrg+eezuB2gfQx6hO8LWXH6Cg1ooXQMO3cRa6q6TTzG/+eVyPlhQwa3Cps1WLEfpzEAkIvqDT1CODMhZFh3X+eUpAi34LmWuu/RDgw2Zs7kiN7upOCvtIWuMy/QzBVU818uZuHG44E/CPjrjxS9fUgkYs=
+	t=1758615890; cv=none; b=DE0fuaMuhMmlTA2jD+0af14DlNHxOdlx3acStseA+y+MS95FZxmnZGxRznAxNHYE5LxZKvP3+hJUlzhT2HC8BdcEKvLBtDT4UqHZJrkFmI2tIsfbnSFGj+uWqhVB8TJM9pKvX9WMlT8xkGo0GDFTlV/kvupBR/XQZOQ0D0yIFy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758615792; c=relaxed/simple;
-	bh=hZL8cMemp35OvsvtLi/PbzQZ983k0IxZK/KFVRezPOk=;
+	s=arc-20240116; t=1758615890; c=relaxed/simple;
+	bh=dxCnlkJxXq2EGJPZ1tZ94V08MX2xLllvGQdXxEda/2g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uRun5AgxzvI2InMRUrXZhOFDAYbB2ksK8zKEAgMlwz8sJxK6hgUXxLtot7VfdhQca9nq05BCqPd1aRFOmcqke9oKNg47xpI0E4j0eddgh4jMqAkAk6ZnTuINmPigtV8GVJ4m4E1f4d51D+v3C9o+a5TlmQ/NlUlrEuRTSprraMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UATZU/Ep; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58N8HP1i003116
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:23:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=lHIoF9YFlreh6iJ8DpMNf8z2
-	sMgb4aI7tWDoMnOWm5U=; b=UATZU/EpeZ1vemuj47fpIcgU1Xz+7dQoj49/0Yff
-	K+e1VhS8Vyiw0VcCzfOBFYxjlE31+AIkYEAuL15/vh99u9NhznHxefweDKMsC0lB
-	mjqUg0l7t/3FNzk05EdCxHD2dA59sV2N3Q/MZ77LMMGtr6AItWHMPJqj/soTWtMS
-	kckFZs9rjlcXMzFgUVIcM9wXJEJMisodD/1aqnvnjYduhEuSapKlEbJmN/KtM8uH
-	ozbSeFfjFAA8xyaDPVL44BfuaDhtJVE82cARAhzilQfePQUiCLkyQ87bSaTIyW+x
-	jguOPuo/QLtBaAB2R9DqN5meit2XqhCJBZhiJQYJ7Ngk1A==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499kv0ysnx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 08:23:09 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-78e4e07aa39so86601416d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:23:09 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oLL20GsQv0DrIxaxMseyrPwLAtM5dhTqmvOtVUvP12Nr2nQCeqM+WREW9EjVzLpdRHsfY5viiw6dkxU7uLNP65/eMwOgQWBP8HWh4MK81HLGVHFTHzorrZW5AzTm53rMCAzQ+UPY+5cgkymOkm7eCZ78W6NZlQCZxIGur2Ivp0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z4VNFD/i; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ece1102998so3306656f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 01:24:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758615886; x=1759220686; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ZxNhYZvdVjbbAA7O2nlWpIW8uXfLnzpFm+bfSFng/Xs=;
+        b=z4VNFD/iCANumGus/QVtgCGUHwfTIapzG0+MDEMXczLkJbRXhGvfrV+Z5TJQiSosP2
+         ohkFe1kqjlIxLfYPI68ZqaDBLO1AU3/U+xySWq33PF912I4w5+2yLPfmg5yxsGnz9/Oz
+         +q7S0NTox7WOR7JeUbQxI5TG/iY33j2HfcfjbBShYwLzPOprnvYTO7HcXuvKHFN0oH5D
+         7lQYYpzYCgl0fHZpS00MfCCJip9p0wI3ApAFAGZ3FshAMjVyPfeFhGV98xyfQzsinOQz
+         pEU4kjmuiJGfIFJlF33pl6kOT22yTVvBpFXKa4pO4DL2RIkz9XKs2CSAcBHXMgS+Rtkn
+         8XXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758615788; x=1759220588;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lHIoF9YFlreh6iJ8DpMNf8z2sMgb4aI7tWDoMnOWm5U=;
-        b=R+wVBFFyytABrmENeNsI2m2ts37XzMb7psx6xzgGlSITZV3BCPc9suI6DnIR3N16kw
-         jxucOX3yaXeZ3QSxMlkwMdsleipRihp1RrEX+3xsfY/SfPh/C4uvIx6kU4+JnWNCAhA4
-         XqljTqs9iXbjjxNFF26IVlH8tpCqhOnQAZFHILiUTkJH8OxiYEc3u4tBjUfNqpQ0bMLT
-         aOb/V3xU11MJRu2Ha4j/urpe1h+CelpVzp2k7oTLDzFWNO3RM2z6kznxg3v8a1Qkehlj
-         5Q8qOE8A6v3lPf/b8NBc4SvWG3ek/JuhQsZQUeNHGwebJEB6zSDxvejNYioOhdWpaPMn
-         kTfA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2mX3BSPUk0tT9Geagibv97r5P9DGJlcLbI2qIQ5aPJ8jqp3kh+9B+V9JMJEOiUGP82CxVABglsFxE1IY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+zpfrGt66EezxAshfkjduo7Ss1z3/40qukI/JB2JEZBAu6sKc
-	Xi30CYjRu0TlDpEQfv8K/5w3UeYoFg0ZFwLFbkVtznX8fWQx7fzxgRTAvNLsOV0ootxiYpHXOyz
-	BR7Q39AXhE1y0agb7aH7vqNh1y/kJiLvetfh3aCqU6m08XTv4GyP7VC+tsNY1BbL8JDo=
-X-Gm-Gg: ASbGncsVZgB2ZmCyFsl3RGQtwsXYoKJkjcnvpoGoVFCy/5gSFSLigO+Nv7REOTtXuZN
-	uR3H2Dph8KUrGQsImv916l9oiiZ1QcyIsLLwZ4lhR9f8Z2kcBGUzv2iXjyb5zsv3j4tobQwPGpd
-	YV7Wcxh606vaojYX/SLZudDnKzWYDBquqq1ivTPd5yBbKVtnYgYiO/92CZHijXSc2/3ElT8o3J0
-	v4mCeWHFAbzsoIE9J0HbHCuoJ5ZksfdnJInIDdv4G7IXVlRDp9WXEW7oW0VLTuslN874GiKl74a
-	t9Hk+yy9PnrMIoKz3uwHFKK/FsNLKMW5EezcapbBgCalnK+JdM63TbCxgzXyum9NcKNb4mEkrh5
-	IN1k/UcJU8/Fb6QHWe18LAj/naZTKHJHh6poURzak7ZhljFwWPxwb
-X-Received: by 2002:a05:6214:2a88:b0:786:8f81:42f with SMTP id 6a1803df08f44-7e71133eaabmr18299886d6.39.1758615788362;
-        Tue, 23 Sep 2025 01:23:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFTqf6gCEvg93UnurQ8vVB2x/PoLj6l4bFsWeAr6cog3AY0TdhZBUmDyx4Na73stVCrlcsG3A==
-X-Received: by 2002:a05:6214:2a88:b0:786:8f81:42f with SMTP id 6a1803df08f44-7e71133eaabmr18299596d6.39.1758615787733;
-        Tue, 23 Sep 2025 01:23:07 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-57b3528c49dsm2473961e87.134.2025.09.23.01.23.05
+        d=1e100.net; s=20230601; t=1758615886; x=1759220686;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZxNhYZvdVjbbAA7O2nlWpIW8uXfLnzpFm+bfSFng/Xs=;
+        b=lnO3Hubo1MRnn8cLj6hcAVcYtupnh0EcfLNKPkl6bR+8oKt7jx5Hwb8Li1mo+swlcR
+         ugE8Foh0eteb5LYF4iNnD75XHzGdcvrE0E2piw+NO62zD2dJpJ1Q2ZcN9fmaJVxRH9hC
+         zp0b7kwFLktUMu0gffbjG71WzqsJPhYhfF5LuQGZGBCKaxCZWkKZltKqNOpGs5vMLXx8
+         XBlmnd02YgJxrdwXyH5D+x7sWOStLXuBWeK8ER/D5tOI+NG3iM/smxhabOdCACfWf47E
+         rOAZqHw9gjgqId9lLgOTjS+YPQnIKMPcGkGSFL6Q+enIx91VjDjJXYOamTl1K5veHdwC
+         viKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVF18XKIo0bLQ2LKphQJTKJVCcQECB14XpQxOidPxI9/qdhkKdEJitJzll/L6LxoBqaL1ezwmq2YwK9te0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNPIERjeH0f+uJsRkPb6FzUMc3G9LuM5hhV6R7cTg05mH+A5/m
+	dWa9L4gJmNiGkY3qR2VZEHClgSgSHZA1t9yG7pEKDoqIxkjVePDtOY/rTDlUmyfo8kw=
+X-Gm-Gg: ASbGnctksaSRcoFhJii6fXMKnh5VjvS8P+1Wuk+2zPWwgIhhYoEmdalOfjV7tHdcs76
+	QyQJihGBSTlF4wyh6NmIStq/py4iyGxnFGl6fzAv9ebh2xFo8O8CxVoLJchVoWqmKzBHCs8XILO
+	zI3DDZON1/BwByk4VzaqyyFLcBxyLpLllBORSNPxz48hxD1h5mYGjs43R3yx9hqrwdpvYr+BVhq
+	mZ7vcMMdbidnOXn5++hPO0hVmqVBih5oqerNbZE46B92c+9UHVp2IALHKqtmyzbyfdihUa8dkJV
+	HxXtH8QGSlu+jKHBPabSDefgZsi/2hrHjswR7OLQcVQWcLQn+V0ACAlAQOwtbJRL3AMQxkRrarB
+	sUFYJL+4g3/MVA+zgG7gjeBPlQDbCF+KIzs8A8Tg=
+X-Google-Smtp-Source: AGHT+IFU+sjP7a8s/NZmPKRBLF84hn5GUX0iuTuvGDJtszkIku+WbxTqwewJG5TmfqMf4a997/HbmA==
+X-Received: by 2002:a05:6000:200e:b0:3ee:b126:6bd with SMTP id ffacd0b85a97d-405cb7bbd33mr1319369f8f.50.1758615886417;
+        Tue, 23 Sep 2025 01:24:46 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3ee073f3d68sm23104079f8f.10.2025.09.23.01.24.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 01:23:07 -0700 (PDT)
-Date: Tue, 23 Sep 2025 11:23:03 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: srini@kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, pierre-louis.bossart@linux.dev,
-        linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v4] ASoC: wcd934x: fix error handling in
- wcd934x_codec_parse_data()
-Message-ID: <a5o4iivd7ph4h7hb5mhfwgijob3celkn5l5dci635a7owzga6t@pjmf37gcmai6>
-References: <20250923065212.26660-1-make24@iscas.ac.cn>
+        Tue, 23 Sep 2025 01:24:45 -0700 (PDT)
+Date: Tue, 23 Sep 2025 11:24:42 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Qingfang Deng <dqfext@gmail.com>
+Cc: Andreas Koensgen <ajk@comnets.uni-bremen.de>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-hams@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+5fd749c74105b0e1b302@syzkaller.appspotmail.com
+Subject: Re: [PATCH net-next] 6pack: drop redundant locking and refcounting
+Message-ID: <aNJZSugLwx-ZkbAj@stanley.mountain>
+References: <20250923060706.10232-1-dqfext@gmail.com>
+ <aNJINihPJop9s7IR@stanley.mountain>
+ <CALW65jbwmP+Lms7x2w5BDjFdg_d2ainorAMTWmR_6NJmjV3JmA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250923065212.26660-1-make24@iscas.ac.cn>
-X-Proofpoint-GUID: ZXWLmekHuYaoB-MfoSYPORa1nLsJIRK3
-X-Authority-Analysis: v=2.4 cv=RO2zH5i+ c=1 sm=1 tr=0 ts=68d258ed cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=TWLRxeszWchEVqlQ-2MA:9
- a=CjuIK1q_8ugA:10 a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyNSBTYWx0ZWRfX2+qE/+ET7M/D
- prH9nRFSVQoHZIIx6xcMBPqHC3ra3oNTJDRN/MXOiiaMaODI/ibxA8OMJXkncIxeSGB0Oqapu+T
- VroQPoUf6tOH4OW5FcabYcHRd2cD0BKVmr0FdgdAWTmlqhVwZOKS9XuW8ytSBp6Wbvrv5w1DGh/
- r4NNOhaYM9FE3yJjRlbB24lWFhPJMrqbB6j7a+jyWep7QCtUhGCEVaYflfU0ySNFAICodFAVgQ3
- Rr5+zA3/XUjzOojLq0cU/zyu/nTjgPF2640HVjDaEnMtLWjGYCgFs005YiozELYby5m0ohv8tKV
- XQg1y6ubAnhomG9DU0VZtNqPf1Cy4y49k/J7rl6TmbZptuVyPKFfUcfxZ+6gVqJVJKxECXun7MM
- 7e4SZOts
-X-Proofpoint-ORIG-GUID: ZXWLmekHuYaoB-MfoSYPORa1nLsJIRK3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-23_01,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 suspectscore=0 priorityscore=1501
- impostorscore=0 spamscore=0 adultscore=0 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200025
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALW65jbwmP+Lms7x2w5BDjFdg_d2ainorAMTWmR_6NJmjV3JmA@mail.gmail.com>
 
-On Tue, Sep 23, 2025 at 02:52:12PM +0800, Ma Ke wrote:
-> wcd934x_codec_parse_data() contains a device reference count leak in
-> of_slim_get_device() where device_find_child() increases the reference
-> count of the device but this reference is not properly decreased in
-> the success path. Add put_device() in wcd934x_codec_parse_data() and
-> add devm_add_action_or_reset() in the probe function, which ensures
-> that the reference count of the device is correctly managed.
+On Tue, Sep 23, 2025 at 04:10:07PM +0800, Qingfang Deng wrote:
+> On Tue, Sep 23, 2025 at 3:11 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > checkpatch says:
+> >
+> > WARNING: Reported-by: should be immediately followed by Closes: with a URL to the report
+> >
+> > Which is relevant here because Google has apparently deleted their
+> > search button and is only displaying the AI button.  "The email address
+> > syzbot+5fd749c74105b0e1b302@syzkaller.appspotmail.com is an automated
+> > sender used by ..."  Thanks, AI!  I can still press enter to do a Google
+> > search but there are no results with syzbot ID.
+> >
+> > I can't find a search button on the syzbot website.
+> >
+> > Ah.  Let's check lore.  Hooray!  How did we ever survive before lore?
+> > https://lore.kernel.org/all/000000000000e8231f0601095c8e@google.com/
+> >
+> > Please add the Closes tag and resend.  Otherwise it looks good.  Thanks!
 > 
-> Memory leak in regmap_init_slimbus() as the allocated regmap is not
-> released when the device is removed. Using devm_regmap_init_slimbus()
-> instead of regmap_init_slimbus() to ensure automatic regmap cleanup on
-> device removal.
+> checkpatch also says:
+> WARNING: The commit message has 'syzkaller', perhaps it also needs a
+> 'Fixes:' tag?
 > 
-> Calling path: of_slim_get_device() -> of_find_slim_device() ->
-> device_find_child(). As comment of device_find_child() says, 'NOTE:
-> you will need to drop the reference with put_device() after use.'.
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: a61f3b4f476e ("ASoC: wcd934x: add support to wcd9340/wcd9341 codec")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v4:
-> - removed the redundant NULL check as put_device() can handle the NULL dev;
-> Changes in v3:
-> - added a wrapper function due to the warning report from kernel test robot;
-> Changes in v2:
-> - modified the handling in the success path and fixed the memory leak for regmap as suggestions.
-> ---
->  sound/soc/codecs/wcd934x.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
+> Should I add a Fixes tag, even though this is not a bug in the code?
 > 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+I don't have strong feelings about this since it doesn't affect real
+life users.  Some people would say yes, other people would say no.
+Probably you should since it technically is a bug.
 
+regards,
+dan carpenter
 
--- 
-With best wishes
-Dmitry
 
