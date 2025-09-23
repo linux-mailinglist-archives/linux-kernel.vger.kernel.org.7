@@ -1,189 +1,196 @@
-Return-Path: <linux-kernel+bounces-828745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD823B95577
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:55:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7361B9559B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26DB07AE209
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:54:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 623C93A76D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E24325A33A;
-	Tue, 23 Sep 2025 09:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EEF320CBA;
+	Tue, 23 Sep 2025 09:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="haF24h/w"
-Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UHX7qx7o";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ruU2lr8c";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UHX7qx7o";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ruU2lr8c"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8186320A20
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2622513AD26
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758621346; cv=none; b=BZPnGAUPIrwlr7TFsf0C5oMzOP38FpRqZaeF/0spG8QKZ1nSU61LBDV5zxHT42/B8nkRFICvTeen50Ah8sm2qTkqW4tEh6MugAf9D+eeHa/Ly1PW5tDX2dgwsxaFgyHUoiLu6nnI7eTw4vFIWkrXGDKeYm6aCEsmBf9cMjIoj5M=
+	t=1758621445; cv=none; b=LBouHFsxEVc98R94lWjXc44drGejnY9R/eqJ5SowzEBw3nnLYC6lzpOYD+a8RmIzZQoF8Q6B4WEA02Wjs744EI5H3So+RPexc9muBAv6/CMFH7coe6CKlzbwFYXadHZOUGGCEg7zVIV+55/lW8dd7w0OxzBlh0Ode6sqmjVZP0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758621346; c=relaxed/simple;
-	bh=e5NOGt0T1QOZxsKIPNmxZjkQ42IMvdnLCXJEh6LT0RM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=untaQqx9lj1UI4Ei4DMp8KS9oIkdwKI+sTH6lkLHHrNuJEYbmcOShzu3rlbMwSdCZgKHcUDQ5tcNrDJBp7d85ms6RSe/useiafXUCRYZYmljEsCR7XG17p6wBe0TIwx4ISjE8rKKrnLNR0WDuxPuk7m80/HQ4CR29I1w1IUGSUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=haF24h/w; arc=none smtp.client-ip=209.85.208.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-61cc281171cso8624976a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 02:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1758621342; x=1759226142; darn=vger.kernel.org;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rJ4iR0ikwChD7GAZnfT4r7240QnDqgcDQ/DHGsIuO5k=;
-        b=haF24h/wrJPNnq2IKcLfxamIIVmyfAVz3ySeeAziwS96OL1SeDhCIiqlWF4E2eueiU
-         LZ5vfILTwTTJ1dO5nZ695CDsD9TcarihFxjCNVZoN/0Hg1p/KZp3RtTg3mBoGFqvLps8
-         ynI+pIUhDGeN7hRVvGDpJ2rrD49kkb2sLEdnV6ZXa1ot+QLkkK6uwsOnmmMlMKeQBRhf
-         D67J3hRYOEtpm0x06YWsPhuTCdDDJtcdxZcF5QRV9Y0f00uEAlaY9Dq5VhAe/q/qfic2
-         XarCYdkmAmP+trDiAHj5wC6oqYBOxwi8e4Z8SZhW98xkhA3fE4UnWWZGbcW4yD8tG+DQ
-         ZOEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758621342; x=1759226142;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rJ4iR0ikwChD7GAZnfT4r7240QnDqgcDQ/DHGsIuO5k=;
-        b=i7eYIJkZz97tQb4zfXA+Eyr5Ujw/ZyL6ULNjtaXnI0ctMLMFk9NIeq+SmaQFHX4mQL
-         yfMfp+Auu30kK+HwT7CKNen6o8mjsoWMpGZnwiErT9Eo3KLNpuWB/sm1gMyPjfz7gKSK
-         flMv8Ltiur2WaKxosV1BWa+Uw7dJLo0IxG3EnCUEVQarQUqyHEMv9y7anqr5So6FhMrK
-         IJGbnPwy0T1QJKkTolnPmEHirtry+TXuJZM5pOPJ3GL5yk9a3v1k6dnMkyg7kISEwm8b
-         3nbqYYhsjgD3kyaOTWGxk95auFTqjTG2bu3khjo0OEtFqW/i3ldyW3uXRxZdK7iCPWPP
-         gY3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVhSw1UMJFGZjQGv1/nqGnrBBTcg2ICtnVKqsMjc0R7inOe1yd/CVh3r7oP32YSyrfaqAsni+FreFNlQvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXN9S2zXRRoaxHpDdhNaLWdS6MnHIUBajtW6EiUo3pw0FC4GUs
-	rT9hvsSYcYcLEuAp8av9v/W1BS+D/OhffSKZGhBqQE3MHr8N+BMwoZQgnRE2sz0TfDI=
-X-Gm-Gg: ASbGncuvCEMVHcoNAse/Kr3Jmi9OCGBUsvRq6qoDFrE/DzV05Iu/+4LPJJSZNwGq1TY
-	wOknxVO5RicSMnbGNbNIBg5dEGtWuQvLhkTlfaNmgQqIP9yLcgvcBcXZsm99rQ837fT6ifH5ugx
-	3b2x1HZKWJ6/JVC/JGF+/FrUa4teD7g9cj0WbTPtOGVbR2W4dgDFrx9KHF1zlv1JsXy5iEAwtYa
-	XSZdx+yPHphjRy1V4k2TrgdhwTJo9NB8hY4Pnf0fcBogKgkbGLnJeeCGV8+q6CtMpjQ+f6cHMi/
-	k2V29tpYB//5I2FhXh5CCICoQ342MML5rZy0PsT2T8el5mXrjF02vwpGDSdPoE9de0rWWsTS623
-	f19t2uuF8tp52KJdoxA2oJlwlZobXvPAtlEY4usiL51uHe1OgKgHwh8+z5NdLdsCUAvcj
-X-Google-Smtp-Source: AGHT+IF4qTxhg5Hb9sQ/tJAzBa4Ees7FfG50FOAI9GBuf35fyxLYwKPlFRuv+uHkCbA78L9NSJbk0w==
-X-Received: by 2002:a05:6402:4389:b0:634:4e0:8360 with SMTP id 4fb4d7f45d1cf-6346779a012mr1708846a12.2.1758621342052;
-        Tue, 23 Sep 2025 02:55:42 -0700 (PDT)
-Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62fa5cfa6f2sm10771105a12.6.2025.09.23.02.55.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Sep 2025 02:55:41 -0700 (PDT)
+	s=arc-20240116; t=1758621445; c=relaxed/simple;
+	bh=/MMAFSrPWQcfJiRsKFcdCNayN8FwsiJm0spR01tbdAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YlXPT2+GGTPuuPnaEOkygvjVfN5+r2rmkB2x0wlOdlV4r7qWlz3h/KNO+1IFum6uzKVBklXuCCqTks6p9p6RntqyMnWYuS+Ruj93Fm1w5ANs1onfXnjy/6iWIEP+/IFiJYcaiGgH78te7moYzSR1rmjdPERi9jG7KgEPYijZj1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UHX7qx7o; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ruU2lr8c; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UHX7qx7o; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ruU2lr8c; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1B2A421FCE;
+	Tue, 23 Sep 2025 09:57:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758621442; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPVjjucApSRx+R2misnP6FirOYmaZeSfZK2uZlsWJVE=;
+	b=UHX7qx7o2b6ey5mBgk7knXhSh5NAomprqW21FOo3+i6AoaYjVxzuMInDFqJq5xlD0jN7jE
+	l9RdrJAOT9uA5RmNnoc82zw3jNRxsSqGPknIFbKilV4hihF0zw/YTsm6ByAapLHTsAV9VO
+	57CJylLPXR5bzh84ywSpKTnl/NrVnCw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758621442;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPVjjucApSRx+R2misnP6FirOYmaZeSfZK2uZlsWJVE=;
+	b=ruU2lr8cQiR7fVNcl8XuNGkvChlzJ0Fo5o5rGdZZM/dtI4Hc971GO4eoOvVJcuZVXmHi3x
+	ko66sHZwAV6xxTDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UHX7qx7o;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ruU2lr8c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758621442; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPVjjucApSRx+R2misnP6FirOYmaZeSfZK2uZlsWJVE=;
+	b=UHX7qx7o2b6ey5mBgk7knXhSh5NAomprqW21FOo3+i6AoaYjVxzuMInDFqJq5xlD0jN7jE
+	l9RdrJAOT9uA5RmNnoc82zw3jNRxsSqGPknIFbKilV4hihF0zw/YTsm6ByAapLHTsAV9VO
+	57CJylLPXR5bzh84ywSpKTnl/NrVnCw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758621442;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPVjjucApSRx+R2misnP6FirOYmaZeSfZK2uZlsWJVE=;
+	b=ruU2lr8cQiR7fVNcl8XuNGkvChlzJ0Fo5o5rGdZZM/dtI4Hc971GO4eoOvVJcuZVXmHi3x
+	ko66sHZwAV6xxTDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0A5E5132C9;
+	Tue, 23 Sep 2025 09:57:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BUaAAgJv0mh0YQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 23 Sep 2025 09:57:22 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A67B1A09AF; Tue, 23 Sep 2025 11:57:21 +0200 (CEST)
+Date: Tue, 23 Sep 2025 11:57:21 +0200
+From: Jan Kara <jack@suse.cz>
+To: Aubrey Li <aubrey.li@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Nanhai Zou <nanhai.zou@intel.com>, 
+	Gang Deng <gang.deng@intel.com>, Tianyou Li <tianyou.li@intel.com>, 
+	Vinicius Gomes <vinicius.gomes@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>, 
+	Chen Yu <yu.c.chen@intel.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>
+Subject: Re: [PATCH] mm/readahead: Skip fully overlapped range
+Message-ID: <cghebadvzchca3lo2cakcihwyoexx7fdqtibfywfm4xjo7eyp2@vbccezepgtoe>
+References: <20250923035946.2560876-1-aubrey.li@linux.intel.com>
+ <20250922204921.898740570c9a595c75814753@linux-foundation.org>
+ <93f7e2ad-563b-4db5-bab6-4ce2e994dbae@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 23 Sep 2025 11:55:41 +0200
-Message-Id: <DD038IVOWESM.24X3EZZXH3UE@fairphone.com>
-To: "Pavel Machek" <pavel@ucw.cz>, <barnabas.czeman@mainlining.org>
-Cc: "Bjorn Andersson" <andersson@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Stephan Gerhold" <stephan@gerhold.net>,
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, "Linus Walleij"
- <linus.walleij@linaro.org>, "Lee Jones" <lee@kernel.org>, "Joerg Roedel"
- <joro@8bytes.org>, "Will Deacon" <will@kernel.org>, "Robin Murphy"
- <robin.murphy@arm.com>, "Konrad Dybcio" <konradybcio@kernel.org>, "Sean
- Paul" <sean@poorly.run>, "Abhinav Kumar" <quic_abhinavk@quicinc.com>,
- "Marijn Suijten" <marijn.suijten@somainline.org>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "Dmitry Baryshkov"
- <lumag@kernel.org>, "Adam Skladowski" <a_skl39@protonmail.com>, "Sireesh
- Kodali" <sireeshkodali@protonmail.com>, "Rob Clark"
- <robin.clark@oss.qualcomm.com>, "Abhinav Kumar" <abhinav.kumar@linux.dev>,
- "Jessica Zhang" <jessica.zhang@oss.qualcomm.com>, "Srinivas Kandagatla"
- <srini@kernel.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
- <iommu@lists.linux.dev>, <dri-devel@lists.freedesktop.org>,
- <freedreno@lists.freedesktop.org>, <phone-devel@vger.kernel.org>,
- <~postmarketos/upstreaming@lists.sr.ht>, <linux@mainlining.org>, "Konrad
- Dybcio" <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v7 6/6] arm64: dts: qcom: Add Xiaomi Redmi 3S
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org>
- <20250831-msm8937-v7-6-232a9fb19ab7@mainlining.org>
- <aNGLPdmOyh/pfroq@duo.ucw.cz>
- <97ee369f6ffbe42c72c57ebd72887b23@mainlining.org>
- <aNJKniJ46YuUsbQ+@duo.ucw.cz>
-In-Reply-To: <aNJKniJ46YuUsbQ+@duo.ucw.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <93f7e2ad-563b-4db5-bab6-4ce2e994dbae@linux.intel.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 1B2A421FCE
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	RCVD_COUNT_THREE(0.00)[3];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.01
 
-Hi Pavel and Barnabas,
+On Tue 23-09-25 13:11:37, Aubrey Li wrote:
+> On 9/23/25 11:49, Andrew Morton wrote:
+> > On Tue, 23 Sep 2025 11:59:46 +0800 Aubrey Li <aubrey.li@linux.intel.com> wrote:
+> > 
+> >> RocksDB sequential read benchmark under high concurrency shows severe
+> >> lock contention. Multiple threads may issue readahead on the same file
+> >> simultaneously, which leads to heavy contention on the xas spinlock in
+> >> filemap_add_folio(). Perf profiling indicates 30%~60% of CPU time spent
+> >> there.
+> >>
+> >> To mitigate this issue, a readahead request will be skipped if its
+> >> range is fully covered by an ongoing readahead. This avoids redundant
+> >> work and significantly reduces lock contention. In one-second sampling,
+> >> contention on xas spinlock dropped from 138,314 times to 2,144 times,
+> >> resulting in a large performance improvement in the benchmark.
+> >>
+> >> 				w/o patch       w/ patch
+> >> RocksDB-readseq (ops/sec)
+> >> (32-threads)			1.2M		2.4M
+> > 
+> > On which kernel version?  In recent times we've made a few readahead
+> > changes to address issues with high concurrency and a quick retest on
+> > mm.git's current mm-stable branch would be interesting please.
+> 
+> I'm on v6.16.7. Thanks Andrew for the information, let me check with mm.git.
 
-On Tue Sep 23, 2025 at 9:22 AM CEST, Pavel Machek wrote:
-> Hi!
->> > Hi!
->> >=20
->> > > +	led-controller@45 {
->> > > +		compatible =3D "awinic,aw2013";
->> > > +		reg =3D <0x45>;
->> > > +		#address-cells =3D <1>;
->> > > +		#size-cells =3D <0>;
->> > > +
->> > > +		vcc-supply =3D <&pm8937_l10>;
->> > > +		vio-supply =3D <&pm8937_l5>;
->> > > +
->> > > +		led@0 {
->> > > +			reg =3D <0>;
->> > > +			function =3D LED_FUNCTION_STATUS;
->> > > +			led-max-microamp =3D <5000>;
->> > > +			color =3D <LED_COLOR_ID_RED>;
->> > > +		};
->> > > +
->> > > +		led@1 {
->> > > +			reg =3D <1>;
->> > > +			function =3D LED_FUNCTION_STATUS;
->> > > +			led-max-microamp =3D <5000>;
->> > > +			color =3D <LED_COLOR_ID_GREEN>;
->> > > +		};
->> > > +
->> > > +		led@2 {
->> > > +			reg =3D <2>;
->> > > +			function =3D LED_FUNCTION_STATUS;
->> > > +			led-max-microamp =3D <5000>;
->> > > +			color =3D <LED_COLOR_ID_BLUE>;
->> > > +		};
->> > > +	};
->> > > +};
->> >=20
->> > That's single, 3-color LED, right? Please see LED multicolor support.
->> As far as i know aw2013 driver does not have multicolor support.
->> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree=
-/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
->
-> I believe that needs to be fixed before more bugs are added on top to
-> work around that problem...
->
-> ...and before that bug is cemented in the ABI.
+I don't expect much of a change for this load but getting test result with
+mm.git as a confirmation would be nice. Also, based on the fact that the
+patch you propose helps, this looks like there are many threads sharing one
+struct file which race to read the same content. That is actually rather
+problematic for current readahead code because there's *no synchronization*
+on updating file's readhead state. So threads can race and corrupt the
+state in interesting ways under one another's hands. On rare occasions I've
+observed this with heavy NFS workload where the NFS server is
+multithreaded. Since the practical outcome is "just" reduced read
+throughput / reading too much, it was never high enough on my priority list
+to fix properly (I do have some preliminary patch for that laying around
+but there are some open questions that require deeper thinking - like how
+to handle a situation where one threads does readahead, filesystem requests
+some alignment of the request size after the fact, so we'd like to update
+readahead state but another thread has modified the shared readahead state
+in the mean time).  But if we're going to work on improving behavior of
+readahead for multiple threads sharing readahead state, fixing the code so
+that readahead state is at least consistent is IMO the first necessary
+step. And then we can pile more complex logic on top of that.
 
-Honestly I don't think it's reasonable to expect people contributing dts
-to then first start patching existing LED drivers and adding support for
-x y or z to it, and block dts addition on that.
-
-At least in postmarketOS the user space components we have (e.g.
-feedbackd) detect the LED things (and most others) automatically since
-various devices have various different setups. So once/if aw2013 gets
-multicolor support, the dts can be updated without problems.
-
-Sure, maybe today changing something on the N900 which would change
-sysfs paths is not the best idea because people will probably have 10+
-years of random shell scripts lying around, but nowadays we usually have
-better ways of abstraction that can handle that.
-
-Regards
-Luca
-
->
-> Best regards,
-> 								Pavel
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
