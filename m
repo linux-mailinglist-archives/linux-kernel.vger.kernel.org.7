@@ -1,893 +1,434 @@
-Return-Path: <linux-kernel+bounces-828878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D91CB95B91
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:44:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D60E2B95ADE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:37:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2A7917C0F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:44:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49DE44482D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA993322C89;
-	Tue, 23 Sep 2025 11:44:20 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5B9322745;
+	Tue, 23 Sep 2025 11:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JgAhI4VM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CB9322A27;
-	Tue, 23 Sep 2025 11:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA30330F554
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 11:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758627859; cv=none; b=FnbJ1DBrLkM1M7NhQrYZBTtIZ9Ps2il3Un1wLVBeinVohRAXdJzgpyhsLJWDDJpPNdrvLc5aZOe3rFZBbeQQQQzQbFRe8J7kMxwhelRT3l9/BG+vnOvWvSX6iLUQj8WJ6pkQfoP6ZZzQ2mcu2xxqwe/5beziI8MTNNUoGq06BhQ=
+	t=1758627430; cv=none; b=iwI5fqqc0thtAFwUrbTVkp+O87fz8NAQowTLfjfF0k5XXI12bDreOty30dc4oF24Srkt/N9VUBWDWgC5/erFUUGEys6ZOl1nOV5pQNC9TlZIkFZqTDgNJ287eg+Ej0CoeIqWvUUl9wmA15/mwtAm3FacD9pOpBp1qgbj4xBPxXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758627859; c=relaxed/simple;
-	bh=X0GoBXQiamwTs49HHAfrgWy9yJSLkpz6UgBx5t1tntk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PJe7ygBjH8q8eLfShuKNmlf77mpM91cDAHPfK4M6hWDB2i1Q2JX+Bw4wKsG1eIbYVquXTYWdIZ+JOnA75F6K/LHAyNe9tuW4SxnKmyS/0elCUUf5ZP9yW/E+hEtlmJYvTzuXFoZXdWbOjlK1MBJwkcBtgKbHYhNHBDRDt/+61iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C96791A045F;
-	Tue, 23 Sep 2025 13:34:48 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3CBE51A0458;
-	Tue, 23 Sep 2025 13:34:48 +0200 (CEST)
-Received: from lsv03900.swis.in-blr01.nxp.com (lsv03900.swis.in-blr01.nxp.com [10.12.177.15])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 52ADE1800086;
-	Tue, 23 Sep 2025 19:34:47 +0800 (+08)
-From: Lakshay Piplani <lakshay.piplani@nxp.com>
-To: alexandre.belloni@bootlin.com,
-	linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org
-Cc: pankit.garg@nxp.com,
-	vikash.bansal@nxp.com,
-	priyanka.jain@nxp.com,
-	shashank.rebbapragada@nxp.com,
-	Lakshay Piplani <lakshay.piplani@nxp.com>,
-	Daniel Aguirre <daniel.aguirre@nxp.com>
-Subject: [PATCH v4 2/2] rtc: Add NXP PCF85053 driver support
-Date: Tue, 23 Sep 2025 17:04:41 +0530
-Message-Id: <20250923113441.555284-2-lakshay.piplani@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250923113441.555284-1-lakshay.piplani@nxp.com>
-References: <20250923113441.555284-1-lakshay.piplani@nxp.com>
+	s=arc-20240116; t=1758627430; c=relaxed/simple;
+	bh=bz8zEXS2kno28udwQn9LqphaG+T7ar/NReFOwH0CHYE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yb25bpiK82ZEOn48gowhU2rb9DPVok2uYFmARsez4ymwdYus2awftghSdlxp66/IKRaf2F8Y3AYffA0Jz/VOQ6AGE8zY5xUfQFXEE3USXamAIjf2mU5qvCk9RemA72Ha+cbQN4Ici3Vi01hkOBLBez++/PDQ2qOpwTey6TbtY7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JgAhI4VM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758627426;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xSSiJLHsqCjUDHZKhvMchuN/CKX3ll1xMRDAkpH/lBI=;
+	b=JgAhI4VMaDeT9pMGytgiwMtfId799s80kPgrBnEwzZ5Dw8HnpWpNt+pXcqstreKVDbXGOd
+	trcN1MOwd5Y8zj/dPWqdd/OoYkjut6AR3ztXkdiIr6I+hkKJ3m/1bUBOP1pydSDS0aiAet
+	4Hwt1ZfFKJR0d635ct1msmtPlwavNNE=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-38-mB8ZYkwqPsa-mRh1U6bxgg-1; Tue, 23 Sep 2025 07:37:05 -0400
+X-MC-Unique: mB8ZYkwqPsa-mRh1U6bxgg-1
+X-Mimecast-MFC-AGG-ID: mB8ZYkwqPsa-mRh1U6bxgg_1758627424
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-36c0f8f1095so7251051fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 04:37:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758627424; x=1759232224;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xSSiJLHsqCjUDHZKhvMchuN/CKX3ll1xMRDAkpH/lBI=;
+        b=p5V9bhDlFsv3A1Ib2SmCcHNJ2tkAVcQ1dA6Mymy815tc0OA3vzcMJ54S4Zb/8QLUtz
+         7sCI4N8aXva/L6kTKbz/fdbGMWe4py9Kmy+Ch+cIAHBVJ0RG9rLsZU5AX/eiew5HIDAY
+         SAKdIY2N0mnO+tY9953SXDT/RhgLtZ9TIgd2UtD7jqWPx3Rq/NYsncnAlHTm6GUWAfam
+         Zp8pLNb97HfwBZJohTfaidxEQlQhdYWLM2gBAfwBgC9WxzY4b5IhQeVQR/yZcJXPAJvt
+         7NWog61ZX6Rx94DfWRfWfUNAo9DR6G1RzsOJS0CsiBHObKhINP+vpMz1NBYiryz99UzM
+         un5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXKrmv0B80FGIiOSc886W3JjrQKbOx+cSwgJ4+ygkxykVRRJhzuahmcEQrGT6jcByebha4wf5n83JhQLe0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdZWTyX3EswqeGbha5kYUZSJEnUiS3bHUSNpQO3PS4RVKVP5cd
+	IDg3C1BR493jjdDfAMZp7wMP/6mFhrE1d96hGjLdQ/O014GbJEVt6qyyFeUeVIvCzetdP4vofoW
+	Zt8kPp+eLY00r76cPCSuw+8n5ct7DW3FCsUFPG0IpXPTKK7PYA0VnPsRXU9FJhWHwPDyX3Ql3FT
+	RFFilUZS1XS6in+Ym3+rS/Wcms5JC0A15NRjqsTQGY
+X-Gm-Gg: ASbGncsIEELd4qD5x2P4PAxH/xGTWeDpy71tJ7JyMf8+R0+UmegD10kf42tOqLRQpbQ
+	WzZG/1ZMACozeKpQ4QUrpT3gBs/DUfB23YVpBdpnn1WPI4wPrnn0NOIsY/4SmJdNGDRub3QxHbI
+	ju1NDTy3qHxGnbhC2igH5HrQ==
+X-Received: by 2002:a2e:989a:0:b0:350:8cfc:7129 with SMTP id 38308e7fff4ca-36d187f0b74mr4768151fa.13.1758627423320;
+        Tue, 23 Sep 2025 04:37:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEP3jS1XE+/gQE241YLqISlCQKgxH5HIGjLN038fnWAM2xez41PawWm+eZSgubVPdVcFcAn91mYJ+cFBh0jXB4=
+X-Received: by 2002:a2e:989a:0:b0:350:8cfc:7129 with SMTP id
+ 38308e7fff4ca-36d187f0b74mr4768071fa.13.1758627422796; Tue, 23 Sep 2025
+ 04:37:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+References: <20250918115759.334067-1-linan666@huaweicloud.com> <20250918115759.334067-3-linan666@huaweicloud.com>
+In-Reply-To: <20250918115759.334067-3-linan666@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Tue, 23 Sep 2025 19:36:50 +0800
+X-Gm-Features: AS18NWCHLpFrxCHiUGLHcZLQBtF_JvVHrNjfp_zdj57VsxNqTT5PvQaD9Clr2vw
+Message-ID: <CALTww2_4rEb9SojpVbwFy=ZEjUc0-4ECYZKYKgsay9XzDTs-cg@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] md: allow configuring logical block size
+To: linan666@huaweicloud.com
+Cc: corbet@lwn.net, song@kernel.org, yukuai3@huawei.com, linan122@huawei.com, 
+	hare@suse.de, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, martin.petersen@oracle.com, yangerkun@huawei.com, 
+	yi.zhang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PCF85053 is i2c based RTC which supports timer and calendar
-functionality.
+Hi Li Nan
 
-Features supported:
-1. Read/Write time
-2. Get/Set Alarm
-3. Wakeup Source
-4. Generate up to 32768Hz clock output
-5. Primary/Secondary i2c bus
+On Thu, Sep 18, 2025 at 8:08=E2=80=AFPM <linan666@huaweicloud.com> wrote:
+>
+> From: Li Nan <linan122@huawei.com>
+>
+> Previously, raid array used the maximum logical block size (LBS)
+> of all member disks. Adding a larger LBS disk at runtime could
+> unexpectedly increase RAID's LBS, risking corruption of existing
+> partitions. This can be reproduced by:
+>
+> ```
+>   # LBS of sd[de] is 512 bytes, sdf is 4096 bytes.
+>   mdadm -CRq /dev/md0 -l1 -n3 /dev/sd[de] missing --assume-clean
+>
+>   # LBS is 512
+>   cat /sys/block/md0/queue/logical_block_size
+>
+>   # create partition md0p1
+>   parted -s /dev/md0 mklabel gpt mkpart primary 1MiB 100%
+>   lsblk | grep md0p1
+>
+>   # LBS becomes 4096 after adding sdf
+>   mdadm --add -q /dev/md0 /dev/sdf
+>   cat /sys/block/md0/queue/logical_block_size
+>
+>   # partition lost
+>   partprobe /dev/md0
+>   lsblk | grep md0p1
+> ```
 
-Signed-off-by: Daniel Aguirre <daniel.aguirre@nxp.com>
-Signed-off-by: Pankit Garg <pankit.garg@nxp.com>
-Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
----
-V3 -> V4: - Handle multi-host ownership explicitly using primary/secondary bus hadling.
-          - Probe no longer changes any CTRL bits unconditionally and do not clear ST/AF/OF
-            avoiding lost interrupts or silent mode changes.
-          - Read/Set time & alarm now respect HF(12/24h) and DM(BCD/BIN) converting
-            hour fields correctly for all combinations.
-          - Minor changes: drop noisy warnings, tidy error paths/comments.
-V2 -> V3: Add MAINTAINERS file changes to this patch
-V1 -> V2: no changes
+Thanks for the reproducer. I can reproduce it myself.
 
- MAINTAINERS                |   7 +
- drivers/rtc/Kconfig        |  10 +
- drivers/rtc/Makefile       |   1 +
- drivers/rtc/rtc-pcf85053.c | 734 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 752 insertions(+)
- create mode 100644 drivers/rtc/rtc-pcf85053.c
+>
+> Simply restricting larger-LBS disks is inflexible. In some scenarios,
+> only disks with 512 bytes LBS are available currently, but later, disks
+> with 4KB LBS may be added to the array.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6bbe4b4f8ec0..b835c2787e63 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18352,6 +18352,13 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
- F:	sound/soc/codecs/tfa989x.c
- 
-+NXP RTC PCF85053 DRIVER
-+M:	Pankit Gargi <pankit.garg@nxp.com>
-+M:	Lakshay Piplani <lakshay.piplani@nxp.com>
-+L:	linux-kernel@vger.kernel.org
-+S:	Maintained
-+F:	drivers/rtc/rtc-pcf85053.c
-+
- NZXT-KRAKEN2 HARDWARE MONITORING DRIVER
- M:	Jonas Malaco <jonas@protocubo.io>
- L:	linux-hwmon@vger.kernel.org
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 64f6e9756aff..59ef0b6a53a7 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -974,6 +974,16 @@ config RTC_DRV_PCF85063
- 	  This driver can also be built as a module. If so, the module
- 	  will be called rtc-pcf85063.
- 
-+config RTC_DRV_PCF85053
-+        tristate "NXP PCF85053"
-+        depends on OF
-+        help
-+          If you say yes here you get support for the NXP PCF85053 I2C Bootable CPU RTC
-+          chip.
-+
-+          This driver can also be built as a module. If so, the module
-+          will be called rtc-pcf85053.
-+
- config RTC_DRV_RV3029C2
- 	tristate "Micro Crystal RV3029/3049"
- 	depends on RTC_I2C_AND_SPI
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index 789bddfea99d..7b2f379d10a9 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -128,6 +128,7 @@ obj-$(CONFIG_RTC_DRV_PCAP)	+= rtc-pcap.o
- obj-$(CONFIG_RTC_DRV_PCF2123)	+= rtc-pcf2123.o
- obj-$(CONFIG_RTC_DRV_PCF2127)	+= rtc-pcf2127.o
- obj-$(CONFIG_RTC_DRV_PCF85063)	+= rtc-pcf85063.o
-+obj-$(CONFIG_RTC_DRV_PCF85053)  += rtc-pcf85053.o
- obj-$(CONFIG_RTC_DRV_PCF8523)	+= rtc-pcf8523.o
- obj-$(CONFIG_RTC_DRV_PCF85363)	+= rtc-pcf85363.o
- obj-$(CONFIG_RTC_DRV_PCF8563)	+= rtc-pcf8563.o
-diff --git a/drivers/rtc/rtc-pcf85053.c b/drivers/rtc/rtc-pcf85053.c
-new file mode 100644
-index 000000000000..4eec1a661b6b
---- /dev/null
-+++ b/drivers/rtc/rtc-pcf85053.c
-@@ -0,0 +1,734 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright 2025 NXP
-+
-+#include <linux/bcd.h>
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/rtc.h>
-+#include <linux/slab.h>
-+#include <linux/pm_wakeirq.h>
-+#include <linux/regmap.h>
-+
-+#define PCF85053_REG_SC		0x00 /* seconds */
-+#define PCF85053_REG_SCA	0x01 /* alarm */
-+#define PCF85053_REG_MN		0x02 /* minutes */
-+#define PCF85053_REG_MNA	0x03 /* alarm */
-+#define PCF85053_REG_HR		0x04 /* hour */
-+#define PCF85053_REG_HRA	0x05 /* alarm */
-+#define PCF85053_REG_DW		0x06 /* day of week */
-+#define PCF85053_REG_DM		0x07 /* day of month */
-+#define PCF85053_REG_MO		0x08 /* month */
-+#define PCF85053_REG_YR		0x09 /* year */
-+#define PCF85053_REG_CTRL	0x0A /* timer control */
-+#define PCF85053_REG_ST		0x0B /* status */
-+#define PCF85053_REG_CLKO	0x0C /* clock out */
-+#define PCF85053_REG_ACC	0x14 /* xclk access */
-+
-+#define PCF85053_BIT_AF		BIT(7)
-+#define PCF85053_BIT_ST		BIT(7)
-+#define PCF85053_BIT_DM		BIT(6)
-+#define PCF85053_BIT_HF		BIT(5)
-+#define PCF85053_BIT_DSM	BIT(4)
-+#define PCF85053_BIT_AIE	BIT(3)
-+#define PCF85053_BIT_OFIE	BIT(2)
-+#define PCF85053_BIT_CIE	BIT(1)
-+#define PCF85053_BIT_TWO	BIT(0)
-+#define PCF85053_BIT_XCLK	BIT(7)
-+
-+#define PCF85053_REG_BAT_MASK	0x07 /* Battery mask */
-+#define PCF85053A_BVL_MASK 0x07
-+#define PCF85053A_BVL_LOW_THRESHOLD 0x02
-+#define PCF85053_REG_CLKO_F_MASK	0x03 /* Frequenc mask */
-+#define PCF85053_REG_CLKO_CKE	0x80 /* clock out enabled */
-+#define PCF85053_BIT_OF	BIT(6)
-+
-+#define PCF85053_HR_PM	BIT(7)
-+#define PCF85053_HR_24H_MASK	GENMASK(5, 0)
-+
-+struct pcf85053_config {
-+	const struct regmap_config regmap;
-+	unsigned has_alarms:1;
-+};
-+
-+struct pcf85053 {
-+	struct rtc_device *rtc;
-+	struct i2c_client *client;
-+	struct regmap	*regmap;
-+#ifdef CONFIG_COMMON_CLK
-+	struct clk_hw clkout_hw;
-+#endif
-+	bool is_primary;
-+};
-+
-+static inline int pcf85053_read_two_bit(struct pcf85053 *pcf85053, bool *two)
-+{
-+	unsigned int ctrl;
-+	int err;
-+
-+	err = regmap_read(pcf85053->regmap, PCF85053_REG_CTRL, &ctrl);
-+	if (err)
-+		return err;
-+
-+	*two = !!(ctrl & PCF85053_BIT_TWO);
-+
-+	return 0;
-+}
-+
-+static inline bool pcf85053_time_write_access(struct pcf85053 *pcf85053)
-+{
-+	bool two;
-+
-+	if (pcf85053_read_two_bit(pcf85053, &two))
-+		return false;
-+
-+	/* Primary writes iff TWO=1; secondary writes iff TWO=0 */
-+	return pcf85053->is_primary ? two : !two;
-+}
-+
-+static int pcf85053_set_alarm_mode(struct device *dev, bool on)
-+{
-+	struct pcf85053 *pcf85053 = dev_get_drvdata(dev);
-+	unsigned int val;
-+	int err;
-+
-+	val = on ? PCF85053_BIT_AIE : 0;
-+	val &= ~(PCF85053_BIT_CIE | PCF85053_BIT_OFIE);
-+
-+	err = regmap_update_bits(pcf85053->regmap, PCF85053_REG_CTRL,
-+				 PCF85053_BIT_AIE | PCF85053_BIT_CIE | PCF85053_BIT_OFIE,
-+				 val);
-+	if (err)
-+		return err;
-+
-+	return regmap_update_bits(pcf85053->regmap, PCF85053_REG_ST,
-+				  PCF85053_BIT_AF, 0);
-+}
-+
-+static int pcf85053_get_alarm_mode(struct device *dev,
-+				   unsigned char *alarm_enable, unsigned char *alarm_flag)
-+{
-+	struct pcf85053 *pcf85053 = dev_get_drvdata(dev);
-+	unsigned int val;
-+	int err;
-+
-+	if (alarm_enable) {
-+		err = regmap_read(pcf85053->regmap, PCF85053_REG_CTRL, &val);
-+		if (err)
-+			return err;
-+
-+		*alarm_enable = val & PCF85053_BIT_AIE;
-+	}
-+
-+	if (alarm_flag) {
-+		err = regmap_read(pcf85053->regmap, PCF85053_REG_ST, &val);
-+		if (err)
-+			return err;
-+
-+		*alarm_flag = val & PCF85053_BIT_AF;
-+	}
-+
-+	return 0;
-+}
-+
-+static irqreturn_t pcf85053_irq(int irq, void *dev_id)
-+{
-+	struct pcf85053 *pcf85053 = i2c_get_clientdata(dev_id);
-+	unsigned char alarm_flag;
-+	unsigned char alarm_enable;
-+	int err;
-+
-+	err = pcf85053_get_alarm_mode(&pcf85053->client->dev, &alarm_enable, &alarm_flag);
-+	if (err)
-+		return IRQ_NONE;
-+
-+	if (!alarm_flag)
-+		return IRQ_NONE;
-+
-+	rtc_update_irq(pcf85053->rtc, 1, RTC_IRQF | RTC_AF);
-+	pcf85053_set_alarm_mode(&pcf85053->client->dev, false);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/*
-+ * In the routines that deal directly with the PCF85053 hardware, we use
-+ * rtc_time -- month 0-11, hour 0-23, yr = calendar year-epoch.
-+ */
-+static int pcf85053_rtc_read_time(struct device *dev, struct rtc_time *tm)
-+{
-+	struct pcf85053 *pcf85053 = dev_get_drvdata(dev);
-+	unsigned int ctrl, st, h12;
-+	bool is_24h, is_bin;
-+	u8 regs[10], hr;
-+	int err;
-+
-+	err = regmap_read(pcf85053->regmap, PCF85053_REG_CTRL, &ctrl);
-+	if (err)
-+		return err;
-+
-+	err = regmap_read(pcf85053->regmap, PCF85053_REG_ST, &st);
-+	if (err)
-+		return err;
-+
-+	if (ctrl & PCF85053_BIT_ST)
-+		dev_warn(dev, "RTC is stopped; time may be invalid\n");
-+
-+	err = regmap_bulk_read(pcf85053->regmap, PCF85053_REG_SC, regs, sizeof(regs));
-+	if (err)
-+		return err;
-+
-+	if (ctrl & PCF85053_BIT_DM) {
-+		tm->tm_sec = regs[PCF85053_REG_SC] & 0x7F;
-+		tm->tm_min = regs[PCF85053_REG_MN] & 0x7F;
-+		tm->tm_mday = regs[PCF85053_REG_DM] & 0x3F;
-+		tm->tm_mon = (regs[PCF85053_REG_MO] & 0x1F) - 1;
-+		tm->tm_year = regs[PCF85053_REG_YR] + 100;
-+	} else {
-+		tm->tm_sec = bcd2bin(regs[PCF85053_REG_SC] & 0x7F);
-+		tm->tm_min = bcd2bin(regs[PCF85053_REG_MN] & 0x7F);
-+		tm->tm_mday = bcd2bin(regs[PCF85053_REG_DM] & 0x3F);
-+		tm->tm_mon = bcd2bin(regs[PCF85053_REG_MO] & 0x1F) - 1;
-+		tm->tm_year = bcd2bin(regs[PCF85053_REG_YR]) + 100;
-+	}
-+	tm->tm_wday = regs[PCF85053_REG_DW] & 0x07;
-+
-+	hr = regs[PCF85053_REG_HR];
-+	is_24h = ctrl & PCF85053_BIT_HF;
-+	is_bin = ctrl & PCF85053_BIT_DM;
-+
-+	if (is_24h) {
-+		tm->tm_hour = is_bin
-+		? (hr & PCF85053_HR_24H_MASK)
-+		: bcd2bin(hr & PCF85053_HR_24H_MASK);
-+	} else {
-+		if (is_bin) {
-+			h12 = hr & PCF85053_HR_24H_MASK;
-+		} else {
-+			h12 = is_bin ? (hr & PCF85053_HR_24H_MASK) :
-+					   bcd2bin(hr & PCF85053_HR_24H_MASK);
-+
-+			tm->tm_hour = (h12 == 12) ? ((hr & PCF85053_HR_PM) ? 12 : 0) :
-+				       ((hr & PCF85053_HR_PM) ? h12 + 12 : h12);
-+			}
-+		}
-+
-+	return 0;
-+}
-+
-+static int pcf85053_rtc_set_time(struct device *dev, struct rtc_time *tm)
-+
-+{
-+	struct pcf85053 *pcf85053 = dev_get_drvdata(dev);
-+	unsigned int ctrl, h12;
-+	int err, ret;
-+	u8 buf[10];
-+	bool pm;
-+
-+	/*
-+	 * By default, secondary have write access to time registers as TWO
-+	 * bit is 0 by default, if we set nxp,interface = "primary" and the
-+	 * nxp,write-access in device tree, then TWO bits gets set and primary
-+	 * gets write access to time registers.
-+	 */
-+	if (!pcf85053_time_write_access(pcf85053))
-+		return -EACCES;
-+
-+	err = regmap_read(pcf85053->regmap, PCF85053_REG_CTRL, &ctrl);
-+	if (err)
-+		return err;
-+
-+	buf[0] = tm->tm_sec & 0x7F;
-+	buf[1] = 0;
-+	buf[2] = tm->tm_min & 0x7F;
-+	buf[3] = 0;
-+	buf[5] = 0;
-+	buf[6] = tm->tm_wday & 0x07;
-+	buf[7] = tm->tm_mday & 0x3F;
-+	buf[8] = (tm->tm_mon + 1) & 0x1F;
-+	buf[9] = (tm->tm_year - 100) & 0xFF;
-+
-+	if (ctrl & PCF85053_BIT_HF) {
-+		buf[4] = tm->tm_hour & PCF85053_HR_24H_MASK;
-+	} else {
-+		pm = tm->tm_hour >= 12;
-+		h12 = (tm->tm_hour % 12) ? (tm->tm_hour % 12) : 12;
-+		buf[4] = (h12 & PCF85053_HR_24H_MASK) | (pm << 7);
-+	}
-+
-+	if (!(ctrl & PCF85053_BIT_DM)) {
-+		buf[0] = bin2bcd(buf[0]);
-+		buf[2] = bin2bcd(buf[2]);
-+		buf[4] = bin2bcd(buf[4] & PCF85053_HR_24H_MASK) | (buf[4] & PCF85053_HR_PM);
-+		buf[7] = bin2bcd(buf[7]);
-+		buf[8] = bin2bcd(buf[8]);
-+		buf[9] = bin2bcd(buf[9]);
-+	}
-+
-+	if (pcf85053->is_primary) {
-+		err = regmap_update_bits(pcf85053->regmap, PCF85053_REG_CTRL,
-+					 PCF85053_BIT_ST, PCF85053_BIT_ST);
-+		if (err)
-+			return err;
-+
-+		ret = regmap_bulk_write(pcf85053->regmap, PCF85053_REG_SC, buf, sizeof(buf));
-+		err = regmap_update_bits(pcf85053->regmap, PCF85053_REG_CTRL,
-+					 PCF85053_BIT_ST, 0);
-+		return ret ? ret : err;
-+	}
-+
-+	return regmap_bulk_write(pcf85053->regmap, PCF85053_REG_SC, buf, sizeof(buf));
-+}
-+
-+static int pcf85053_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *tm)
-+{
-+	struct pcf85053 *pcf85053 = dev_get_drvdata(dev);
-+	unsigned int ctrl, h12;
-+	bool is_24h, is_bin, pm;
-+	u8 buf[5];
-+	u8 hr;
-+	int err;
-+
-+	err = regmap_read(pcf85053->regmap, PCF85053_REG_CTRL, &ctrl);
-+	if (err)
-+		return err;
-+
-+	err = regmap_bulk_read(pcf85053->regmap, PCF85053_REG_SCA, buf, sizeof(buf));
-+	if (err)
-+		return err;
-+
-+	if (ctrl & PCF85053_BIT_DM) {
-+		tm->time.tm_sec = buf[0] & 0x7F; /* SCA */
-+		tm->time.tm_min = buf[2] & 0x7F; /* MNA */
-+	} else {
-+		tm->time.tm_sec = bcd2bin(buf[0] & 0x7F);
-+		tm->time.tm_min = bcd2bin(buf[2] & 0x7F);
-+	}
-+
-+	hr = buf[4];
-+	is_24h = !!(ctrl & PCF85053_BIT_HF);
-+	is_bin = !!(ctrl & PCF85053_BIT_DM);
-+
-+	if (is_24h) {
-+		tm->time.tm_hour = is_bin
-+		? (hr & PCF85053_HR_24H_MASK)
-+		: bcd2bin(hr & PCF85053_HR_24H_MASK);
-+	} else {
-+		pm = !!(hr & PCF85053_HR_PM);
-+
-+		if (is_bin)
-+			h12 = (hr & PCF85053_HR_24H_MASK);
-+		else
-+			h12 = (bcd2bin(hr & PCF85053_HR_24H_MASK));
-+
-+		if (h12 == 12)
-+			h12 = 0;
-+		tm->time.tm_hour = pm ? (h12 + 12) : h12;
-+	}
-+
-+	return pcf85053_get_alarm_mode(dev, &tm->enabled, &tm->pending);
-+}
-+
-+static int pcf85053_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *tm)
-+{
-+	struct pcf85053 *pcf85053 = dev_get_drvdata(dev);
-+	bool is_24h, is_bin, pm;
-+	unsigned int ctrl, h12;
-+	u8 sec, min, hra;
-+	int err;
-+
-+	/*
-+	 * Only primary can set alarm, as secondary have read only access
-+	 * to alarm, control and status registers
-+	 */
-+	if (!pcf85053->is_primary)
-+		return -EACCES;
-+
-+	err = regmap_read(pcf85053->regmap, PCF85053_REG_CTRL, &ctrl);
-+	if (err)
-+		return err;
-+
-+	err = regmap_update_bits(pcf85053->regmap, PCF85053_REG_ST,
-+				 PCF85053_BIT_AF, 0);
-+	if (err)
-+		return err;
-+
-+	is_24h = !!(ctrl & PCF85053_BIT_HF);
-+	is_bin = !!(ctrl & PCF85053_BIT_DM);
-+
-+	sec = tm->time.tm_sec & 0x7F;
-+	min = tm->time.tm_min & 0x7F;
-+
-+	if (is_24h) {
-+		hra = tm->time.tm_hour & PCF85053_HR_24H_MASK;
-+		if (!is_bin)
-+			hra = bin2bcd(hra) & PCF85053_HR_24H_MASK;
-+	} else {
-+		h12 = tm->time.tm_hour % 12;
-+		pm = tm->time.tm_hour >= 12;
-+		if (h12 == 0)
-+			h12 = 12;
-+
-+		if (is_bin)
-+			hra = (h12 & PCF85053_HR_24H_MASK) | (pm << 7);
-+		else
-+			hra = (bin2bcd(h12) & PCF85053_HR_24H_MASK) | (pm << 7);
-+	}
-+
-+	if (!is_bin) {
-+		sec = bin2bcd(sec);
-+		min = bin2bcd(min);
-+	}
-+
-+	err = regmap_write(pcf85053->regmap, PCF85053_REG_SCA, sec);
-+	if (err)
-+		return err;
-+
-+	err = regmap_write(pcf85053->regmap, PCF85053_REG_MNA, min);
-+	if (err)
-+		return err;
-+
-+	err = regmap_write(pcf85053->regmap, PCF85053_REG_HRA, hra);
-+	if (err)
-+		return err;
-+
-+	return pcf85053_set_alarm_mode(dev, tm->enabled);
-+}
-+
-+static int pcf85053_irq_enable(struct device *dev, unsigned int enabled)
-+{
-+	dev_dbg(dev, "%s: alarm enable=%d\n", __func__, enabled);
-+
-+	return pcf85053_set_alarm_mode(dev, enabled);
-+}
-+
-+static int pcf85053_ioctl(struct device *dev, unsigned int cmd, unsigned long arg)
-+{
-+	struct pcf85053 *pcf85053 = dev_get_drvdata(dev);
-+	unsigned int val = 0, vl_status = 0;
-+	unsigned int bvl;
-+	int status;
-+
-+	switch (cmd) {
-+	case RTC_VL_READ:
-+		status = regmap_read(pcf85053->regmap, PCF85053_REG_ST, &val);
-+		if (status)
-+			return status;
-+
-+		if (val & PCF85053_BIT_OF)
-+			vl_status |= RTC_VL_DATA_INVALID;
-+
-+		bvl = val & PCF85053A_BVL_MASK;
-+
-+		if (bvl == 0x00)
-+			vl_status |= RTC_VL_BACKUP_EMPTY;
-+		else if (bvl <= PCF85053A_BVL_LOW_THRESHOLD)
-+			vl_status |= RTC_VL_BACKUP_LOW;
-+
-+		return put_user(vl_status, (unsigned int __user *)arg);
-+
-+	default:
-+		return -ENOIOCTLCMD;
-+	}
-+}
-+
-+#ifdef CONFIG_COMMON_CLK
-+/*
-+ * Handling of the clkout
-+ */
-+
-+#define clkout_hw_to_pcf85053(_hw) container_of(_hw, struct pcf85053, clkout_hw)
-+
-+static const int clkout_rates[] = {
-+	32768,
-+	1024,
-+	32,
-+	1,
-+};
-+
-+static unsigned long pcf85053_clkout_recalc_rate(struct clk_hw *hw,
-+						 unsigned long parent_rate)
-+{
-+	struct pcf85053 *pcf85053 = clkout_hw_to_pcf85053(hw);
-+	unsigned int val = 0;
-+	int err;
-+
-+	err = regmap_read(pcf85053->regmap, PCF85053_REG_CLKO, &val);
-+	if (err)
-+		return 0;
-+
-+	val &= PCF85053_REG_CLKO_F_MASK;
-+	return clkout_rates[val];
-+}
-+
-+static int pcf85053_clkout_determine_rate(struct clk_hw *hw,
-+					  struct clk_rate_request *req)
-+{
-+	int i;
-+	unsigned long best = 0;
-+
-+	for (i = 0; i < ARRAY_SIZE(clkout_rates); i++) {
-+		if (clkout_rates[i] <= req->rate) {
-+			best = clkout_rates[i];
-+			break;
-+		}
-+	}
-+	if (!best)
-+		best = clkout_rates[ARRAY_SIZE(clkout_rates) - 1];
-+
-+	req->rate = best;
-+	return 0;
-+}
-+
-+static int pcf85053_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	struct pcf85053 *pcf85053 = clkout_hw_to_pcf85053(hw);
-+	unsigned int val = 0;
-+	int err, i;
-+
-+	err = regmap_read(pcf85053->regmap, PCF85053_REG_CLKO, &val);
-+	if (err)
-+		return err;
-+
-+	for (i = 0; i < ARRAY_SIZE(clkout_rates); i++)
-+		if (clkout_rates[i] == rate) {
-+			val &= ~PCF85053_REG_CLKO_F_MASK;
-+			val |= i;
-+			return regmap_write(pcf85053->regmap, PCF85053_REG_CLKO, val);
-+		}
-+
-+	return -EINVAL;
-+}
-+
-+static int pcf85053_clkout_control(struct clk_hw *hw, bool enable)
-+{
-+	struct pcf85053 *pcf85053 = clkout_hw_to_pcf85053(hw);
-+	unsigned int val = 0;
-+	int err;
-+
-+	if (!pcf85053->is_primary)
-+		return -EACCES;
-+
-+	val = PCF85053_BIT_XCLK;
-+	err = regmap_write(pcf85053->regmap, PCF85053_REG_ACC, val);
-+	if (err)
-+		return err;
-+
-+	err = regmap_read(pcf85053->regmap, PCF85053_REG_CLKO, &val);
-+	if (err)
-+		return err;
-+
-+	if (enable)
-+		val |= PCF85053_REG_CLKO_CKE;
-+	else
-+		val &= ~PCF85053_REG_CLKO_CKE;
-+
-+	return regmap_write(pcf85053->regmap, PCF85053_REG_CLKO, val);
-+}
-+
-+static int pcf85053_clkout_prepare(struct clk_hw *hw)
-+{
-+	return pcf85053_clkout_control(hw, 1);
-+}
-+
-+static void pcf85053_clkout_unprepare(struct clk_hw *hw)
-+{
-+	pcf85053_clkout_control(hw, 0);
-+}
-+
-+static int pcf85053_clkout_is_prepared(struct clk_hw *hw)
-+{
-+	struct pcf85053 *pcf85053 = clkout_hw_to_pcf85053(hw);
-+	unsigned int val = 0;
-+	int err;
-+
-+	err = regmap_read(pcf85053->regmap, PCF85053_REG_CLKO, &val);
-+	if (err)
-+		return err;
-+
-+	return val & PCF85053_REG_CLKO_CKE;
-+}
-+
-+static const struct clk_ops pcf85053_clkout_ops = {
-+	.prepare = pcf85053_clkout_prepare,
-+	.unprepare = pcf85053_clkout_unprepare,
-+	.is_prepared = pcf85053_clkout_is_prepared,
-+	.recalc_rate = pcf85053_clkout_recalc_rate,
-+	.determine_rate = pcf85053_clkout_determine_rate,
-+	.set_rate = pcf85053_clkout_set_rate,
-+};
-+
-+static struct clk *pcf85053_clkout_register_clk(struct pcf85053 *pcf85053)
-+{
-+	struct i2c_client *client = pcf85053->client;
-+	struct device_node *node = client->dev.of_node;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	init.name = "pcf85053-clkout";
-+	init.ops = &pcf85053_clkout_ops;
-+	init.flags = 0;
-+	init.parent_names = NULL;
-+	init.num_parents = 0;
-+	pcf85053->clkout_hw.init = &init;
-+
-+	/* optional override of the clockname */
-+	of_property_read_string(node, "clock-output-names", &init.name);
-+
-+	/* register the clock */
-+	clk = devm_clk_register(&client->dev, &pcf85053->clkout_hw);
-+
-+	if (!IS_ERR(clk))
-+		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+
-+	return clk;
-+}
-+#endif
-+
-+static const struct rtc_class_ops pcf85053_rtc_ops = {
-+	.read_time	= pcf85053_rtc_read_time,
-+	.set_time	= pcf85053_rtc_set_time,
-+	.read_alarm	= pcf85053_rtc_read_alarm,
-+	.set_alarm	= pcf85053_rtc_set_alarm,
-+	.alarm_irq_enable = pcf85053_irq_enable,
-+	.ioctl		= pcf85053_ioctl,
-+};
-+
-+static const struct pcf85053_config config_pcf85053 = {
-+	.regmap = {
-+		.reg_bits = 8,
-+		.val_bits = 8,
-+		.max_register = 0x1D,
-+	},
-+	.has_alarms = 1,
-+};
-+
-+static int pcf85053_probe(struct i2c_client *client)
-+{
-+	struct pcf85053 *pcf85053;
-+	const struct pcf85053_config *config;
-+	const char *iface = NULL;
-+	int err;
-+
-+	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C |
-+				     I2C_FUNC_SMBUS_BYTE |
-+				     I2C_FUNC_SMBUS_BLOCK_DATA))
-+		return -ENODEV;
-+
-+	pcf85053 = devm_kzalloc(&client->dev, sizeof(struct pcf85053),
-+				GFP_KERNEL);
-+	if (!pcf85053)
-+		return -ENOMEM;
-+
-+	config = i2c_get_match_data(client);
-+	if (!config)
-+		return -ENODEV;
-+
-+	pcf85053->regmap = devm_regmap_init_i2c(client, &config->regmap);
-+	if (IS_ERR(pcf85053->regmap))
-+		return PTR_ERR(pcf85053->regmap);
-+
-+	i2c_set_clientdata(client, pcf85053);
-+
-+	pcf85053->client = client;
-+	device_set_wakeup_capable(&client->dev, 1);
-+
-+	pcf85053->is_primary = true;
-+
-+	if (of_property_read_string(client->dev.of_node, "nxp,interface", &iface))
-+		return dev_err_probe(&client->dev, -EINVAL,
-+				     "Missing mandatory property: nxp,interface\n");
-+	if (!strcmp(iface, "primary"))
-+		pcf85053->is_primary = true;
-+	else if (!strcmp(iface, "secondary"))
-+		pcf85053->is_primary = false;
-+	else
-+		return dev_err_probe(&client->dev, -EINVAL,
-+				     "Invalid value for nxp,interface: %s\n", iface);
-+
-+	if (pcf85053->is_primary) {
-+		unsigned int ctrl;
-+		int err;
-+
-+		err = regmap_read(pcf85053->regmap, PCF85053_REG_CTRL, &ctrl);
-+		if (err)
-+			return err;
-+
-+		if (of_property_read_bool(client->dev.of_node, "nxp,write-access")) {
-+			if (!(ctrl & PCF85053_BIT_TWO)) {
-+				err = regmap_update_bits(pcf85053->regmap, PCF85053_REG_CTRL,
-+							 PCF85053_BIT_TWO, PCF85053_BIT_TWO);
-+				if (err)
-+					return err;
-+			}
-+			dev_dbg(&client->dev, "Ownership set: TWO=1 (primary writes)\n");
-+		} else {
-+			/* TWO (Time Write Ownership) bit defaults to 0 (Secondary) */
-+			dev_dbg(&client->dev, "Default ownership set: TWO=0 (secondary writes)\n");
-+		}
-+	}
-+
-+	pcf85053->rtc = devm_rtc_allocate_device(&client->dev);
-+	if (IS_ERR(pcf85053->rtc))
-+		return PTR_ERR(pcf85053->rtc);
-+
-+	pcf85053->rtc->ops = &pcf85053_rtc_ops;
-+	pcf85053->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-+	pcf85053->rtc->range_max = RTC_TIMESTAMP_END_2099;
-+	clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, pcf85053->rtc->features);
-+	clear_bit(RTC_FEATURE_ALARM, pcf85053->rtc->features);
-+
-+	if (config->has_alarms && client->irq > 0) {
-+		err = devm_request_threaded_irq(&client->dev, client->irq,
-+						NULL, pcf85053_irq,
-+						IRQF_ONESHOT | IRQF_TRIGGER_FALLING,
-+						"pcf85053", client);
-+		if (err) {
-+			dev_err(&client->dev, "unable to request IRQ %d\n", client->irq);
-+		} else {
-+			set_bit(RTC_FEATURE_ALARM, pcf85053->rtc->features);
-+			device_init_wakeup(&client->dev, true);
-+			err = dev_pm_set_wake_irq(&client->dev, client->irq);
-+			if (err)
-+				dev_err(&client->dev, "failed to enable irq wake\n");
-+		}
-+	}
-+
-+#ifdef CONFIG_COMMON_CLK
-+	/* register clk in common clk framework */
-+	pcf85053_clkout_register_clk(pcf85053);
-+#endif
-+
-+	return devm_rtc_register_device(pcf85053->rtc);
-+}
-+
-+static const struct i2c_device_id pcf85053_id[] = {
-+	{ "pcf85053", .driver_data = (kernel_ulong_t)&config_pcf85053 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, pcf85053_id);
-+
-+static const struct of_device_id pcf85053_of_match[] = {
-+	{ .compatible = "nxp,pcf85053", .data = &config_pcf85053 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, pcf85053_of_match);
-+
-+static struct i2c_driver pcf85053_driver = {
-+	.driver		= {
-+		.name	= "rtc-pcf85053",
-+		.of_match_table = of_match_ptr(pcf85053_of_match),
-+	},
-+	.probe		= pcf85053_probe,
-+	.id_table	= pcf85053_id,
-+};
-+
-+module_i2c_driver(pcf85053_driver);
-+
-+MODULE_AUTHOR("Pankit Garg <pankit.garg@nxp.com>");
-+MODULE_AUTHOR("Lakshay Piplani <lakshay.piplani@nxp.com>");
-+MODULE_DESCRIPTION("NXP pcf85053 RTC driver");
-+MODULE_LICENSE("GPL");
--- 
-2.25.1
+If we add a disk with 4KB LBS and configure it to 4KB by the sysfs
+interface, how can we make the partition table readable and avoid the
+problem mentioned above?
+
+>
+> Making LBS configurable is the best way to solve this scenario.
+> After this patch, the raid will:
+>   - store LBS in disk metadata
+>   - add a read-write sysfs 'mdX/logical_block_size'
+>
+> Future mdadm should support setting LBS via metadata field during RAID
+> creation and the new sysfs. Though the kernel allows runtime LBS changes,
+> users should avoid modifying it after creating partitions or filesystems
+> to prevent compatibility issues.
+>
+> Only 1.x metadata supports configurable LBS. 0.90 metadata inits all
+> fields to default values at auto-detect. Supporting 0.90 would require
+> more extensive changes and no such use case has been observed.
+>
+> Note that many RAID paths rely on PAGE_SIZE alignment, including for
+> metadata I/O. A larger LBS than PAGE_SIZE will result in metadata
+> read/write failures. So this config should be prevented.
+>
+> Signed-off-by: Li Nan <linan122@huawei.com>
+> ---
+>  Documentation/admin-guide/md.rst |  7 +++
+>  drivers/md/md.h                  |  1 +
+>  include/uapi/linux/raid/md_p.h   |  3 +-
+>  drivers/md/md-linear.c           |  1 +
+>  drivers/md/md.c                  | 75 ++++++++++++++++++++++++++++++++
+>  drivers/md/raid0.c               |  1 +
+>  drivers/md/raid1.c               |  1 +
+>  drivers/md/raid10.c              |  1 +
+>  drivers/md/raid5.c               |  1 +
+>  9 files changed, 90 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/admin-guide/md.rst b/Documentation/admin-guide=
+/md.rst
+> index 1c2eacc94758..f5c81fad034a 100644
+> --- a/Documentation/admin-guide/md.rst
+> +++ b/Documentation/admin-guide/md.rst
+> @@ -238,6 +238,13 @@ All md devices contain:
+>       the number of devices in a raid4/5/6, or to support external
+>       metadata formats which mandate such clipping.
+>
+> +  logical_block_size
+> +     Configures the array's logical block size in bytes. This attribute
+> +     is only supported for RAID1, RAID5, RAID10 with 1.x meta. The value
+
+s/RAID5/RAID456/g
+
+> +     should be written before starting the array. The final array LBS
+> +     will use the max value between this configuration and all rdev's LB=
+S.
+> +     Note that LBS cannot exceed PAGE_SIZE.
+> +
+>    reshape_position
+>       This is either ``none`` or a sector number within the devices of
+>       the array where ``reshape`` is up to.  If this is set, the three
+> diff --git a/drivers/md/md.h b/drivers/md/md.h
+> index afb25f727409..b0147b98c8d3 100644
+> --- a/drivers/md/md.h
+> +++ b/drivers/md/md.h
+> @@ -432,6 +432,7 @@ struct mddev {
+>         sector_t                        array_sectors; /* exported array =
+size */
+>         int                             external_size; /* size managed
+>                                                         * externally */
+> +       unsigned int                    logical_block_size;
+>         __u64                           events;
+>         /* If the last 'event' was simply a clean->dirty transition, and
+>          * we didn't write it to the spares, then it is safe and simple
+> diff --git a/include/uapi/linux/raid/md_p.h b/include/uapi/linux/raid/md_=
+p.h
+> index ac74133a4768..310068bb2a1d 100644
+> --- a/include/uapi/linux/raid/md_p.h
+> +++ b/include/uapi/linux/raid/md_p.h
+> @@ -291,7 +291,8 @@ struct mdp_superblock_1 {
+>         __le64  resync_offset;  /* data before this offset (from data_off=
+set) known to be in sync */
+>         __le32  sb_csum;        /* checksum up to devs[max_dev] */
+>         __le32  max_dev;        /* size of devs[] array to consider */
+> -       __u8    pad3[64-32];    /* set to 0 when writing */
+> +       __le32  logical_block_size;     /* same as q->limits->logical_blo=
+ck_size */
+> +       __u8    pad3[64-36];    /* set to 0 when writing */
+>
+>         /* device state information. Indexed by dev_number.
+>          * 2 bytes per device
+> diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
+> index 5d9b08115375..da8babb8da59 100644
+> --- a/drivers/md/md-linear.c
+> +++ b/drivers/md/md-linear.c
+> @@ -72,6 +72,7 @@ static int linear_set_limits(struct mddev *mddev)
+>
+>         md_init_stacking_limits(&lim);
+>         lim.max_hw_sectors =3D mddev->chunk_sectors;
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.max_write_zeroes_sectors =3D mddev->chunk_sectors;
+>         lim.io_min =3D mddev->chunk_sectors << 9;
+>         err =3D mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRIT=
+Y);
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 40f56183c744..e0184942c8ec 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -1963,6 +1963,7 @@ static int super_1_validate(struct mddev *mddev, st=
+ruct md_rdev *freshest, struc
+>                 mddev->layout =3D le32_to_cpu(sb->layout);
+>                 mddev->raid_disks =3D le32_to_cpu(sb->raid_disks);
+>                 mddev->dev_sectors =3D le64_to_cpu(sb->size);
+> +               mddev->logical_block_size =3D le32_to_cpu(sb->logical_blo=
+ck_size);
+>                 mddev->events =3D ev1;
+>                 mddev->bitmap_info.offset =3D 0;
+>                 mddev->bitmap_info.space =3D 0;
+> @@ -2172,6 +2173,7 @@ static void super_1_sync(struct mddev *mddev, struc=
+t md_rdev *rdev)
+>         sb->chunksize =3D cpu_to_le32(mddev->chunk_sectors);
+>         sb->level =3D cpu_to_le32(mddev->level);
+>         sb->layout =3D cpu_to_le32(mddev->layout);
+> +       sb->logical_block_size =3D cpu_to_le32(mddev->logical_block_size)=
+;
+>         if (test_bit(FailFast, &rdev->flags))
+>                 sb->devflags |=3D FailFast1;
+>         else
+> @@ -5900,6 +5902,66 @@ static struct md_sysfs_entry md_serialize_policy =
+=3D
+>  __ATTR(serialize_policy, S_IRUGO | S_IWUSR, serialize_policy_show,
+>         serialize_policy_store);
+>
+> +static int mddev_set_logical_block_size(struct mddev *mddev,
+> +                               unsigned int lbs)
+> +{
+> +       int err =3D 0;
+> +       struct queue_limits lim;
+> +
+> +       if (queue_logical_block_size(mddev->gendisk->queue) >=3D lbs) {
+> +               pr_err("%s: incompatible logical_block_size %u, can not s=
+et\n",
+> +                      mdname(mddev), lbs);
+
+Is it better to print the mddev's LBS and give the message "it can't
+set lbs smaller than mddev logical block size"?
+
+> +               return -EINVAL;
+> +       }
+> +
+> +       lim =3D queue_limits_start_update(mddev->gendisk->queue);
+> +       lim.logical_block_size =3D lbs;
+> +       pr_info("%s: logical_block_size is changed, data may be lost\n",
+> +               mdname(mddev));
+> +       err =3D queue_limits_commit_update(mddev->gendisk->queue, &lim);
+> +       if (err)
+> +               return err;
+> +
+> +       mddev->logical_block_size =3D lbs;
+> +       return 0;
+> +}
+> +
+> +static ssize_t
+> +lbs_show(struct mddev *mddev, char *page)
+> +{
+> +       return sprintf(page, "%u\n", mddev->logical_block_size);
+> +}
+> +
+> +static ssize_t
+> +lbs_store(struct mddev *mddev, const char *buf, size_t len)
+> +{
+> +       unsigned int lbs;
+> +       int err =3D -EBUSY;
+> +
+> +       /* Only 1.x meta supports configurable LBS */
+> +       if (mddev->major_version =3D=3D 0)
+> +               return -EINVAL;
+
+It looks like it should check raid level here as doc mentioned above, right=
+?
+> +
+> +       if (mddev->pers)
+> +               return -EBUSY;
+> +
+> +       err =3D kstrtouint(buf, 10, &lbs);
+> +       if (err < 0)
+> +               return -EINVAL;
+> +
+> +       err =3D mddev_lock(mddev);
+> +       if (err)
+> +               goto unlock;
+> +
+> +       err =3D mddev_set_logical_block_size(mddev, lbs);
+> +
+> +unlock:
+> +       mddev_unlock(mddev);
+> +       return err ?: len;
+> +}
+> +
+> +static struct md_sysfs_entry md_logical_block_size =3D
+> +__ATTR(logical_block_size, S_IRUGO|S_IWUSR, lbs_show, lbs_store);
+>
+>  static struct attribute *md_default_attrs[] =3D {
+>         &md_level.attr,
+> @@ -5933,6 +5995,7 @@ static struct attribute *md_redundancy_attrs[] =3D =
+{
+>         &md_scan_mode.attr,
+>         &md_last_scan_mode.attr,
+>         &md_mismatches.attr,
+> +       &md_logical_block_size.attr,
+>         &md_sync_min.attr,
+>         &md_sync_max.attr,
+>         &md_sync_io_depth.attr,
+> @@ -6052,6 +6115,17 @@ int mddev_stack_rdev_limits(struct mddev *mddev, s=
+truct queue_limits *lim,
+>                         return -EINVAL;
+>         }
+>
+> +       /*
+> +        * Before RAID adding folio support, the logical_block_size
+> +        * should be smaller than the page size.
+> +        */
+> +       if (lim->logical_block_size > PAGE_SIZE) {
+> +               pr_err("%s: logical_block_size must not larger than PAGE_=
+SIZE\n",
+> +                       mdname(mddev));
+> +               return -EINVAL;
+> +       }
+> +       mddev->logical_block_size =3D lim->logical_block_size;
+> +
+>         return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(mddev_stack_rdev_limits);
+> @@ -6690,6 +6764,7 @@ static void md_clean(struct mddev *mddev)
+>         mddev->chunk_sectors =3D 0;
+>         mddev->ctime =3D mddev->utime =3D 0;
+>         mddev->layout =3D 0;
+> +       mddev->logical_block_size =3D 0;
+>         mddev->max_disks =3D 0;
+>         mddev->events =3D 0;
+>         mddev->can_decrease_events =3D 0;
+> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+> index f1d8811a542a..705889a09fc1 100644
+> --- a/drivers/md/raid0.c
+> +++ b/drivers/md/raid0.c
+> @@ -382,6 +382,7 @@ static int raid0_set_limits(struct mddev *mddev)
+>         md_init_stacking_limits(&lim);
+>         lim.max_hw_sectors =3D mddev->chunk_sectors;
+>         lim.max_write_zeroes_sectors =3D mddev->chunk_sectors;
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.io_min =3D mddev->chunk_sectors << 9;
+>         lim.io_opt =3D lim.io_min * mddev->raid_disks;
+>         lim.chunk_sectors =3D mddev->chunk_sectors;
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index d0f6afd2f988..de0c843067dc 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -3223,6 +3223,7 @@ static int raid1_set_limits(struct mddev *mddev)
+>
+>         md_init_stacking_limits(&lim);
+>         lim.max_write_zeroes_sectors =3D 0;
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.features |=3D BLK_FEAT_ATOMIC_WRITES;
+>         err =3D mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRIT=
+Y);
+>         if (err)
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index c3cfbb0347e7..68c8148386b0 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -4005,6 +4005,7 @@ static int raid10_set_queue_limits(struct mddev *md=
+dev)
+>
+>         md_init_stacking_limits(&lim);
+>         lim.max_write_zeroes_sectors =3D 0;
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.io_min =3D mddev->chunk_sectors << 9;
+>         lim.chunk_sectors =3D mddev->chunk_sectors;
+>         lim.io_opt =3D lim.io_min * raid10_nr_stripes(conf);
+> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+> index c32ffd9cffce..ff0daa22df65 100644
+> --- a/drivers/md/raid5.c
+> +++ b/drivers/md/raid5.c
+> @@ -7747,6 +7747,7 @@ static int raid5_set_limits(struct mddev *mddev)
+>         stripe =3D roundup_pow_of_two(data_disks * (mddev->chunk_sectors =
+<< 9));
+>
+>         md_init_stacking_limits(&lim);
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.io_min =3D mddev->chunk_sectors << 9;
+>         lim.io_opt =3D lim.io_min * (conf->raid_disks - conf->max_degrade=
+d);
+>         lim.features |=3D BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE;
+> --
+> 2.39.2
+>
+
+Best Regards
+Xiao
 
 
