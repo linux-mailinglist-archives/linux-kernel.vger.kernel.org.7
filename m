@@ -1,108 +1,188 @@
-Return-Path: <linux-kernel+bounces-829545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B5EB974F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:14:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF57B97502
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F07F716A8CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:14:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5904C74E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FABF302CDB;
-	Tue, 23 Sep 2025 19:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E738303CB0;
+	Tue, 23 Sep 2025 19:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ONh4mnwL"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="Zp2S/ayo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OFHFZW/s"
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0E026B971
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0160A253B40;
+	Tue, 23 Sep 2025 19:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758654866; cv=none; b=ZdbGtQfM7UlEw4inCdvC+wiRWZFH3clI8HyzA5AhivLjz7XeLy7GZKxhE7IlhboUG8q3NaJw0L35dAyhjddL3Za9xBh3nRdrk5MgYF9CWIV8nIIrcm9r1pQIq+1TPdUwRAsbEwUGYlJax7UnbkkUaaSfOJ8pLZjXIytmPab+W+o=
+	t=1758654992; cv=none; b=mfjMlXsoFDIHfCzirOV6b/EwWzg+YW2LcP99MkKK0YtA4o0mAnzHLdSslDQ1yDo1vWpyxMAqbJeHpRWyZcdKJ1PTYoXiuhKxH5BFrcmJWHC4qcMD+SSsP36INGZ0eXHCBBL4m48BF5MiX6aXyCzC5bS2dMjMd623YEXAR9rd/94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758654866; c=relaxed/simple;
-	bh=jJ9cN/DYo2vq0Mrw3OGwNIh02VJj1UV39hWhXZ3qfo8=;
+	s=arc-20240116; t=1758654992; c=relaxed/simple;
+	bh=IJHG6yycS6S8dldJrHLDiinG/3420rWau44WtRsz5q0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LINabPtueYOB0WgvIBfUpdAeRhTYf99C6oSehrRVs2nlboqUvHNPC9mwpTGULHarbU3H+/uvtBPPwlyGXJJayK55G739pzZGHvh9bSmNN+RQ/jYbA9DA78p1UMsjqVHzz6u9GPz1oLugeP8ug7lkR9zP0dnhmfo7QqSsM1qjWxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ONh4mnwL; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=lkRd0CoaTZ+5v2abolPphHTDGVyCn7kVcR2A4zqnV+ej9UYbWkhEVBrRY+1aPUpgDq0Cs1cAd/vtUWsqmnEbUoKbmv0wOr7bMr1M0MpWOE0e8dEk4+wBaJbYUnpDULBjeRtkQZDkNCt4Kb25GrFjmELvdqpM6dqg11ywtylJElM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=Zp2S/ayo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OFHFZW/s; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 974861D00326;
+	Tue, 23 Sep 2025 15:16:27 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Tue, 23 Sep 2025 15:16:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1758654987; x=
+	1758741387; bh=F/lIzpuxwbfLK3RKvJxbBVrGA9PfZ7e710XDlbp9jgs=; b=Z
+	p2S/ayoXVO+HI7g3BAgXLwthV48phD7tr4tP8ykV8a2Ec85+9fMFT9oR/4nGsgmk
+	fLf3XfQbxwx2v6jvtwjT5QCwUFeVnHQA9Gpch5F1VqvfCM9/Zc/jGOH0GbzdEsqt
+	7Qt/YAVIQRLXgM5b2p0/uQ3yVY92BoBHHWnE196tvcbIABqQfyNjR6dPopZ3qvmh
+	ZQcl2BERGPJ6PY9AGbYofPskwGU5EGK27Bc9KlwHKZknbPGwiHw4q7gZ5Oya2TP0
+	JenGySNPJ2lGQOe5k4dAi/vRNHPI1h4btt24fFqzOMmdivPy6wBWP1cs+KmxyCNs
+	dy9ovO8XTWYlNTa06uOrQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=jJ9c
-	N/DYo2vq0Mrw3OGwNIh02VJj1UV39hWhXZ3qfo8=; b=ONh4mnwLtQjjme5jBfjj
-	/V97gDh495tc0pCNXdvUH530j/BFt9+imSrij29NxltvgTXJQUokojbeS8xVJ1t3
-	uGSzs0JUNvA5CkGpmEcepLereVkHdGejyD2CHYVERlpJ/yDQ0YvxEe0iWda05Uqx
-	xBkG1mlzB/PMxpK7N3/Qiybx3Su/a0I99mgrQlyuXIeDExU7XJgmRSpHYyelym2E
-	oHGQSyJSMjEWwkjYKFFXZyyXKxR6FUZHbD3/UdCGHSvsp8PS14EVsV31KXIf7M5P
-	amJttrK2XQTQYaS2KESpN3p/BYddhvFmPpUuesvrpn02u/kaeZDCjMP1tmFvtxuO
-	XA==
-Received: (qmail 1217279 invoked from network); 23 Sep 2025 21:14:22 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Sep 2025 21:14:22 +0200
-X-UD-Smtp-Session: l3s3148p1@8JJevnw/Uqsujnsp
-Date: Tue, 23 Sep 2025 21:14:22 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, wsa@kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH] i2c: riic: Allow setting frequencies lower than 50KHz
-Message-ID: <aNLxjmOj5Vy26BpE@shikoro>
-References: <20250923141826.3765925-1-claudiu.beznea.uj@bp.renesas.com>
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758654987; x=1758741387; bh=F/lIzpuxwbfLK3RKvJxbBVrGA9PfZ7e710X
+	Dlbp9jgs=; b=OFHFZW/sIg67aGl6Yddf7/hyD+N1RIzVTNqC4LmN+T0VF4N73yr
+	g/6UtKf8tJDSTm1eECZbsZC+sGvAxew39aZM9e2/xQMUg62fwtJBEWX7/9oGy98x
+	5kDKieG27fJYX62dcZZIizJ8AnJLquFSLJYTSY8PCwZEbcSvTqto5UxYWWwYVFR+
+	Sb/KFSd83AojfQnlcwkI38GwR27t9aJGtcfDDrUZWI/Sb1DWN664fUZf3VCTMlQm
+	LkzcKEVI6qGuNyvC2DM56o11UR0tZig7/ZzpD6mWdMtodzcCZMIzIU0LbkZwgs1L
+	e+6JSE/dQgD7dycGuzO4eTqaOsM0Uy5IFYw==
+X-ME-Sender: <xms:CvLSaIRCE3IocT8oBuUSiLzmkiYJilE417w2_tgXm_o-3OBKwaaJAg>
+    <xme:CvLSaLVJWV3MkYPnWr4rPpbFKgvBt3hagsJpyp_4H-ijTorrZ4UbFw4NFtB3qjG8r
+    nGWDYELvR9utGsCMKafXbkc3AF53SMh-s0vmSXBU2AppAUpXgPAfdM>
+X-ME-Received: <xmr:CvLSaPaHavSWPrp2oeLH1OtGRnyF-Wv6yJmnpB2BWmIzIQE5QXEM5f95tRFn>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiudehgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpefurggsrhhinhgr
+    ucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrihhlrdhnvghtqeenucggtffrrg
+    htthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeegteehgeehieffgfeuvdeuffef
+    gfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghrtghpthhtohepudeipdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehshhhshhhithhrihhtsehnvhhiughirgdrtg
+    homhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthgr
+    rhhiqhhtsehnvhhiughirgdrtghomhdprhgtphhtthhopegvughumhgriigvthesghhooh
+    hglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgt
+    phhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepug
+    grvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehsrggvvggumhesnhhv
+    ihguihgrrdgtohhmpdhrtghpthhtoheplhgvohhnsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:CvLSaM4l0VHBL52m8YbDUjN_2xpX4o4gAvoWpb2i_-Rp5aa_onz0_w>
+    <xmx:CvLSaIxI6LHQWvm3cMn3vSLwTmVqjIZo5TVvrfmVEXW3qwf_o-FSJQ>
+    <xmx:CvLSaFr3iosz6xs2rtibVgzqal1gFEAl8yfcqLbb7lzYnrbdtQus4g>
+    <xmx:CvLSaC1rXSezqHQ9Ufy7RNR0wdZpk0-Ogh2pIbs02vzqb_hg6QxtjA>
+    <xmx:C_LSaHfGXPGZQmTdGWCPeJlxK_1l_NZe7FLFfFh6cqbYPtHDrZ7LxRjn>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 23 Sep 2025 15:16:26 -0400 (EDT)
+Date: Tue, 23 Sep 2025 21:16:24 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Shahar Shitrit <shshitrit@nvidia.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Boris Pismenny <borisp@nvidia.com>
+Subject: Re: [PATCH net 2/3] net: tls: Cancel RX async resync request on
+ rdc_delta overflow
+Message-ID: <aNLyCP9gXWgaAUkm@krikkit>
+References: <1757486861-542133-1-git-send-email-tariqt@nvidia.com>
+ <1757486861-542133-3-git-send-email-tariqt@nvidia.com>
+ <aMQ48Ba7BcHKjhP_@krikkit>
+ <b5790517-a15e-43be-ba70-fbc9dbe2b6c9@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hkrmgQDHtEnJrbgn"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250923141826.3765925-1-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <b5790517-a15e-43be-ba70-fbc9dbe2b6c9@nvidia.com>
+
+2025-09-22, 10:16:21 +0300, Shahar Shitrit wrote:
+> 
+> 
+> On 12/09/2025 18:14, Sabrina Dubroca wrote:
+> > 2025-09-10, 09:47:40 +0300, Tariq Toukan wrote:
+> >> From: Shahar Shitrit <shshitrit@nvidia.com>
+> >>
+> >> When a netdev issues an RX async resync request, the TLS module
+> >> increments rcd_delta for each new record that arrives. This tracks
+> >> how far the current record is from the point where synchronization
+> >> was lost.
+> >>
+> >> When rcd_delta reaches its threshold, it indicates that the device
+> >> response is either excessively delayed or unlikely to arrive at all
+> >> (at that point, tcp_sn may have wrapped around, so a match would no
+> >> longer be valid anyway).
+> >>
+> >> Previous patch introduced tls_offload_rx_resync_async_request_cancel()
+> >> to explicitly cancel resync requests when a device response failure
+> >> is detected.
+> >>
+> >> This patch adds a final safeguard: cancel the async resync request when
+> >> rcd_delta crosses its threshold, as reaching this point implies that
+> >> earlier cancellation did not occur.
+> >>
+> >> Signed-off-by: Shahar Shitrit <shshitrit@nvidia.com>
+> >> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> >> ---
+> >>  net/tls/tls_device.c | 5 ++++-
+> >>  1 file changed, 4 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/net/tls/tls_device.c b/net/tls/tls_device.c
+> >> index f672a62a9a52..56c14f1647a4 100644
+> >> --- a/net/tls/tls_device.c
+> >> +++ b/net/tls/tls_device.c
+> >> @@ -721,8 +721,11 @@ tls_device_rx_resync_async(struct tls_offload_resync_async *resync_async,
+> >>  		/* shouldn't get to wraparound:
+> >>  		 * too long in async stage, something bad happened
+> >>  		 */
+> >> -		if (WARN_ON_ONCE(resync_async->rcd_delta == USHRT_MAX))
+> >> +		if (WARN_ON_ONCE(resync_async->rcd_delta == USHRT_MAX)) {
+> > 
+> > Do we still need to WARN here? It's a condition that can actually
+> > happen (even if it's rare), and that the stack can handle, so maybe
+> > not?
+> > 
+> You are right that now the stack handles this, but removing the WARN
+> without any alternative, will remove any indication that something went
+> wrong and will prevent us from improving by searching the error flow
+> where we didn't cancel the request before reaching here. We can maybe
+> replace the WARN with a counter. what do you think?
+
+Do you use CONFIG_DEBUG_NET in your devel/test kernels? If so,
+DEBUG_NET_WARN_ONCE would be an option. Or is it more so that
+users/customers can report the problem (ie on production kernels
+without CONFIG_DEBUG_NET) - in that case, the counter would work
+better.
+But if you really think that this condition indicates a driver bug,
+maybe the WARN is still appropriate. Jakub, what do you think?
 
 
---hkrmgQDHtEnJrbgn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+BTW, I was also thinking that the documentation
+(Documentation/networking/tls-offload.rst) could maybe be improved a
+bit with a description of how async resync works and how the driver is
+expected to use the tls_offload_rx_resync_async_request_{start,end}
+(and now _cancel) helpers. The section on "Stream scan
+resynchronization" is pretty abstract.
 
-On Tue, Sep 23, 2025 at 05:18:26PM +0300, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->=20
-> The MR1.CKS field is 3 bits wide and all the possible values (from 0 to
-> 7) are valid. This is true for all the SoCs currently integrated in
-> upstream Linux. Take into account CKS=3D7 which allows setting bus
-> frequencies lower than 50KHz. This may be useful at least for debugging.
->=20
-> Fixes: d982d6651419 ("i2c: riic: remove clock and frequency restrictions")
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-Applied to for-current, thanks!
-
-
---hkrmgQDHtEnJrbgn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjS8Y4ACgkQFA3kzBSg
-Kba9nw/6Ah5MqRiLYqFos9kaw02e/QAN/iTO9X9TSSX1uzG4KoFseArQM0Nk05Qy
-vwCKmv66MquakRFcmlZX70evqxehap1ciJPB5CkrmFpA3g+HKIkGSfZcXNttX0Dx
-hhbx1ZQXnwi6eK3t370bCT27aGJcA4SyVVZJXteDh7urbQQ1/S3CdQTfCDrn37Yi
-u1wdLly4F5sZY+PYYfDv0+mNHlELQxhdiC43vYnGadgunIzFOGfZ3DVSF3iOwKMv
-XYRzaviM2A5q/5i3+CnjlLUKONe8QtjZgfHlfZl89TdTUFsgTvM2Qm6sgAGclU9l
-fcmFBlSG1MquQThuufQwhncBeDUfxqo3rAHd/otSeUcGSxrhnHLLdP9cH+Qrd+i5
-cC8BDW1JopxSDRPq1ofiQiGV9L5qn5uu0ctCM34xbFy3q4khuDMccAPUnWcLIcMm
-1Mq1wrDfAkF1zSYWybKOGxIbbA3NZCGJBwsx+PV8BfZSFB9aNf+0ssLTzQnyGGdt
-ytqtHnp8IOYWSXJbXN1B26llgSztecaZRnAmIO7gjMfVNTR4MY+yzPeoLBYvXOi8
-Uh3ShU9O/vxisQrn0YTWmJSQkrNmPaOygReZpQOegFtYik0kotrkvuhXs2/V+AGS
-2DBKr0kMtL0658bbPeVTbzx302DiLM9/eWVocrw3vSZ+e7kRI+E=
-=iUJO
------END PGP SIGNATURE-----
-
---hkrmgQDHtEnJrbgn--
+-- 
+Sabrina
 
