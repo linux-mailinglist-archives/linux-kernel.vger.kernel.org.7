@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-829029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB41CB96186
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:55:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 032F5B96195
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 15:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 561EF3A724B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:55:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8BD63ACCD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 13:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72C01FFC49;
-	Tue, 23 Sep 2025 13:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F05A2040AB;
+	Tue, 23 Sep 2025 13:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Yl2sLH/a"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012000.outbound.protection.outlook.com [52.101.126.0])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eN2qW44h"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013025.outbound.protection.outlook.com [40.93.196.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307381F8724
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89B21FDE01;
+	Tue, 23 Sep 2025 13:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.25
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758635723; cv=fail; b=Qdr0EdhS8mNCDhRcK18jKYZhKa/O24B5mM+f/Wfan5bJBCegOLZ0S4Kzg+jDTOZ514X/as9vLt0rygeE/LgztrZ6OdqcLu+IUOzOYdI49XQ0zyaoYGiXMLCmvCopzQbWo+jdl8pqw6n2rsDi+aPEqG2doPMp62QXprwQcKpV8Ks=
+	t=1758635738; cv=fail; b=uZrrvKQAcWk1pYDz0bcZneJy7hzBXIfpGesXXkBnD8kRmZ5+Z0Jd4z0+CzYiCsOSF99eULpm1NasJO2D6NgUuIadaz5u5B+LMVXmePQ1WYI8PdRZq2ZwPwVVxpIDDObK5v1GSfqL1mvzvcDnkq31Io6rGwUfnk6Iur4FwmH6mR0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758635723; c=relaxed/simple;
-	bh=tQcqISyiGb81pYbB61ECVvt14AZiyOGQMFkZtUZh4SQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=lLzT5z5xpCbMmXzQEqtZyv2cyri3edXWTH/j1GPPCuYZHFcwtZ6zN/LAgpMfJ/z4Q3vDB4VnErM2WZ3nt/xWi8ZUb1jgBLLHIW9hOeNnLXrAoRD8bCfg+LOeLkx5aXACOWzm6zhbrFq8o65yckUYvuEnxKR0DNwvp8D3SYYgPlw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Yl2sLH/a; arc=fail smtp.client-ip=52.101.126.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+	s=arc-20240116; t=1758635738; c=relaxed/simple;
+	bh=vE9wAHrfQeFVzDErQBqkpA3piNvoxOi8uhSde2Ck6D0=;
+	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
+	 Content-Type:MIME-Version; b=TCuvELMU4xJtrRqcjHsupuEjbJ1NvlIK039Y7S1qmkYLzR0USTDGuciB3s9e2rYxLmPHvTdUDJ17RcWYClrMaFcvA/fedxrBHnzzURSbnh5neMNVtnC1i6Whtihg+2qIQD1An5GXt1NjGPUZ4J2APHpBviorPaGBM50kW+8cNZ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eN2qW44h; arc=fail smtp.client-ip=40.93.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Yxmi5gIie2xSOA7baWba1kApxPXLpJzwGhVt2GPFNkhXeXYUr1KRpjR5kbYNvI7Y2WnrfiVkHHuw1b/qjfvYTwQkM9aExfsbBJzYosxpifQGSalHa+cpFZMmmbGZLVQp8MViL7ELGkJAYotAhtzqWAOwRU3TwbvppQ+dp6pbn6Z/9E4eC7ThXT7av1AugxeSqBNmK7U2Ora3fCbo9INW8o9cYKRZXBHmzSOTDOypuyTuXa+tfLJCG5Sms4dxD1QX+JZYko3DtJFti7FrIsRHb7qfJLenDQcmu3paHt0gDloH9rz6dtcxZ7r2winDeYubNWwUDQ4abC/4Hci6CTm5LQ==
+ b=hSdyoB9Bpgb8uCnyyDr1mWjW2ojqLrWWZqFw6JsgplvmPyBKDFfnc+HdHV3bTKl6N7FsGSSMrHUy3eCkmWNo/T8Fse0eCVM+6X0oG6eHxejMY22iNv6cq4G1gtC3SooSgeInFClNGpU9nR35bfYdkq54ymbag6+Vs7CihAdT0VQnoh8HskPRNTi6TO80ZMNLEo45LJBMMcjeOvy52u6UofP5ig8vAT36rK013XRXtJc4Gv795N36jap4n8o1bqybSWlMUXDyCVn1OOrH7bE+Bv56USbGLTqCgNahjEnIO0n+GZkKVW2g1Mqbj3y5Shlb4sAQv6Hp1G6TM4wrMkA2ug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AkvvTcWdeplUYVEnWV7M+R36lPmcK7OnxoywPv20OhI=;
- b=yrI9pGVx/70ckVTeB2V54r20I7tbWdKv6hCfWkCqLfQ2RtpL+bPYP/R/YIK1NB3/ngFfYC6uzM1lua4FEi1bi8ElF9EP3+Un7Gvl3h59EiF7Z6AF29rBKwFrn/kihQtSyVR+v78QZiDDhFEaRPMwumSTnU88zrT6VRoLung57dXpvH/15WcPeQfxLBpFBsn6aiGc74kTok3CZGVJPWrv4Ld2lrZxdlCcdiIweJLW3MqZI9cZmu4INdGBu7PWGMOw4lFSbOHDTGCDAZtu8v1PFIwFqGifXESsmh5nqvf92RX+ODAsNqejYmuX8YsXYNeCsGAmdmnc9+Bc4f4w9gbpvA==
+ bh=i0B39goFhWNZfNASQjG0gzgbTecj0gYZtkzI0VJkq6o=;
+ b=W0mobvrUEk6QsOLbzLymgBS9utopWvViGIrjm6jsRmlmjiLduo3RTE6oAPR2fWqfq0mRCGYRBmPoL9bIOezC6enrZG8tVciyhDGs6Za/sEn1BKZf+P7LuWE+E9/05DETt4dfwNr+Gua0nHLWJT6/yyq1m32I5pA3+s7iT7GV+cXqy6MZ7XYrYdk9DUacsN2tD6LrQYzefGl7LJ17LfS2k17CMG2woVNmPP9Tg+KRiU5NSa84FGzTjegKMEAk4e16aS0ne5dGrIYpW/YnoHP8DrbKOKQkA2lFZopqvTI2mY5Gc1gxSciGxfyCu4yq8c+W/uiPeRmZiL03B6jUFSThBg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AkvvTcWdeplUYVEnWV7M+R36lPmcK7OnxoywPv20OhI=;
- b=Yl2sLH/aTQRQcosFdVDT7l1BA9K8oITGkf/0CCggwuaDymQFYyqthrC1F3GcIyBPKAZFe2iEwD91GUCFuluatd3E82H1PXs8E18qHoFlHSppTt2eS6bx7qMNwckpv7YUxH/ak4swfUptO/r3aguw4xC5XoMKnl1OfqxK2p5YSpRq545bPfA3QDP8eUQL/Q64J6M2dUulbJnCm1vAgLTzn7npQG/49E/JfBBf89vph8uj4o5ho5Uo6qJFlqL5cLpueND/mFNEMBxWQ7ALYU7zwLHrXSrSLRCLECmAtusLz67/80xm2PUm+e9LdJ01+F1zfBiJZqC0OufWkeFH0JRAKQ==
+ bh=i0B39goFhWNZfNASQjG0gzgbTecj0gYZtkzI0VJkq6o=;
+ b=eN2qW44hPqCStcu38xn/kpUHyf7UsxIzMxA3YRR6Zig5uK59HOZUqBZgWrow58wti3GX4xEiRSZdhw1Cb0RbHoiM5cKElPDMpOU47D0yACf5wHTlGYelGxaoxr3J4iUFabJUXfddJh+cEegl8LTI00+rwYSF9b26izzqpXeqQnA=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SE1PPF1EB5504E5.apcprd06.prod.outlook.com
- (2603:1096:108:1::40d) by SEZPR06MB5786.apcprd06.prod.outlook.com
- (2603:1096:101:ac::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Tue, 23 Sep
- 2025 13:55:17 +0000
-Received: from SE1PPF1EB5504E5.apcprd06.prod.outlook.com
- ([fe80::65d2:75b:baf:a4a4]) by SE1PPF1EB5504E5.apcprd06.prod.outlook.com
- ([fe80::65d2:75b:baf:a4a4%8]) with mapi id 15.20.9115.018; Tue, 23 Sep 2025
- 13:55:16 +0000
-From: Chunhai Guo <guochunhai@vivo.com>
-To: xiang@kernel.org
-Cc: chao@kernel.org,
-	zbestahu@gmail.com,
-	jefflexu@linux.alibaba.com,
-	dhavale@google.com,
-	lihongbo22@huawei.com,
-	linux-erofs@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Chunhai Guo <guochunhai@vivo.com>
-Subject: [PATCH v2] erofs: add direct I/O support for compressed data
-Date: Tue, 23 Sep 2025 21:54:21 +0800
-Message-Id: <20250923135421.460215-1-guochunhai@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYWP286CA0007.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:178::15) To SE1PPF1EB5504E5.apcprd06.prod.outlook.com
- (2603:1096:108:1::40d)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by SA1PR12MB9515.namprd12.prod.outlook.com (2603:10b6:806:45a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Tue, 23 Sep
+ 2025 13:55:34 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%4]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 13:55:34 +0000
+Message-ID: <82e85267-460e-39d5-98aa-427dd31cfadc@amd.com>
+Date: Tue, 23 Sep 2025 08:55:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, kvm@vger.kernel.org,
+ seanjc@google.com, pbonzini@redhat.com
+Cc: linux-kernel@vger.kernel.org, nikunj@amd.com, Santosh.Shukla@amd.com,
+ Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, bp@alien8.de,
+ David.Kaplan@amd.com, huibo.wang@amd.com, naveen.rao@amd.com,
+ tiala@microsoft.com
+References: <20250923050317.205482-1-Neeraj.Upadhyay@amd.com>
+ <20250923050317.205482-6-Neeraj.Upadhyay@amd.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [RFC PATCH v2 05/17] KVM: SVM: Do not intercept
+ SECURE_AVIC_CONTROL MSR for SAVIC guests
+In-Reply-To: <20250923050317.205482-6-Neeraj.Upadhyay@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR10CA0006.namprd10.prod.outlook.com
+ (2603:10b6:806:a7::11) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,818 +84,156 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SE1PPF1EB5504E5:EE_|SEZPR06MB5786:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1461effe-3259-4ca5-c091-08ddfaa8d37a
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|SA1PR12MB9515:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2bc90738-94fb-4f05-7a84-08ddfaa8dd95
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hJUzNBNOwHWjGH2AO0gp+WTEnRq5B2L0az1E/4X4Pkl8yhe8IBtjP+bBcwe0?=
- =?us-ascii?Q?DQ5C08pOKpgisRrBo6E0CKEvqCOAEQc2YnWyr5ZCaVW3I8m6tRBEYaxmqQ1F?=
- =?us-ascii?Q?HgOmCtuePcaZRFlvvlr5pMPE2bZZVdl3VBEWmaFPwDoHoES9lrjQfDJ5U5Yb?=
- =?us-ascii?Q?GvMMfq1K5O6IObEpBWi7xRFkjLyidssx/7z2xV1fOIy2fthbPkP0HKWlTa3m?=
- =?us-ascii?Q?WgVbW+mVCCZ1ulnWmp/7uvn3PD91GlRHhQ/MG7cSK4sMvspiFSN6/tGZpo8Z?=
- =?us-ascii?Q?eLtpqAbbATHYzc9lBNKyVKUkmIfDepX9X1edBFvb7DY4Z1zc7iwGJFyOSwae?=
- =?us-ascii?Q?VbIyRBMDMqnmlaQmQBMc7mJwnN66kfXYFsjg7wJS1VTphJcSfuEl2VmI/yBX?=
- =?us-ascii?Q?ZW1ll1QoJQWQVLxqZMY0pFOrgouM2EfXc6C6W8sVX9XGGwp1KVK2bQa/e39A?=
- =?us-ascii?Q?AFQbb5Bp0ExwYZkkDFNPGLFVnZsGnwY6Seo2zQGpFoP7+oDWGWQKGORLBRlb?=
- =?us-ascii?Q?tt2GUn1muQDRQfEK7Fwy9O6UVs37Mt5/JxWNj46Sw7E8Rst9NRrRR9wWIjlT?=
- =?us-ascii?Q?S8ScNkraDjd19FMt5GO2uhcky9bS50LD5Ce6pEFBAj130agZ5Vg//CGLPd2L?=
- =?us-ascii?Q?9nvkHFkEuYmPeZ1JqxkhCryybAU+gsaHLrU8/4QDxcDEoHD3L0raGY7ftNz+?=
- =?us-ascii?Q?NJztRhqwfOFStENCuMvbycr6seMx2mn695zXUdkDcicc2XFLFJmmsULBUZQb?=
- =?us-ascii?Q?4N4AYIaf4UFc7VzwPWA63OmBMurlrdienSEdDGH5A3k3jeCmqyzHgeDDyy74?=
- =?us-ascii?Q?5M20dKVEhSYedgXPXmjpVHfdgztF6/iwmFD2hXzH1cYqZVqoSqBudN8/NMQh?=
- =?us-ascii?Q?bgvOYA1kvppu2GfsPhva5ahroZJ8cLFl2Q0ZaPDqbkqbYNJfFubNl4guZlTT?=
- =?us-ascii?Q?zR/UJSHOfF6x6URSGSr3NyeJu2fx3BKvnL85qs1K9aiPcPqJaC/x7GcvTRHe?=
- =?us-ascii?Q?A0/HW9SftIRNn9RtnhQ7ixMCqwf0CWs5ZechOA2oDCTyYz86UCq4hORbPScr?=
- =?us-ascii?Q?+g6Rcs+cOYo5x3uKSeC9WNEKk5Hu0t6xOnLSwLJMo3DBvA9rBkKlpyaDY3bH?=
- =?us-ascii?Q?hkighKm7Ajob50Ou0ZvLj3EJgE4qYfXzDdGFqvrcTOemAqfI4HjDQE8XvyI2?=
- =?us-ascii?Q?PJYwkw6R3sVSBDdeLd1n4eFWqmFcbC21mB7jSHRI4zfG/M67VPAAni1tsK6Q?=
- =?us-ascii?Q?qPZTpjBN8czZWWDM93kxGCPzsnxlXhF3OZBB2z/COpKIMEu/sVQDbPyUSWuh?=
- =?us-ascii?Q?NrZ28iqRdH5Ua/Ghtui3KftbxGWzlZxR7hF/+uTT/4eci1UkEQkapwvOyNTK?=
- =?us-ascii?Q?AXm4sRaJGxLDpiDrYvcQ62/MTkKDA2gqFZTF24P62AeMEIAJBVyHAJLAft6j?=
- =?us-ascii?Q?Xe2DKw0XtVc=3D?=
+	=?utf-8?B?d2pZY1VUY1E4M2N5Y2lId3RMdjBJUFk2a3JWT2hhZnBOZjdpZVV3akI4SDB6?=
+ =?utf-8?B?TlJGT3RQKzBhN0p1anR3N0ZYdEFXTlhLSkcranp4YUFzM3FNODJyTS9IRXpQ?=
+ =?utf-8?B?Q0IzQnlaU0VieExjSVVjZE5PeGZqNDZZUjNQQUtnbFFWbTRPOWNMbWtEZUk0?=
+ =?utf-8?B?aXg3VjNnTkNsUE5zS29TeStUUzhsRFhyOVJ2RE5nVENma2RmK2U4NlBOZlZl?=
+ =?utf-8?B?cEpNK1NuWTJhSUxxVjRIR2ovanY3VFlhM2JzUGRzemtOak9DWDJ1cnkrS1Qv?=
+ =?utf-8?B?VnBHSGZZN1dFNU9rR1RMc0ZHcjBkT0wrQkdqcy84aDdXalR6cnJYcWZHc2Jz?=
+ =?utf-8?B?V2tqeHJQVHNTaFA0VzdpSjVObXAwcnRGbTByZmE2SXdCQVB0VVZiMWxhM25V?=
+ =?utf-8?B?YmVSMEQxQ1JPRUg5Z3pKOENVUnU2dUllTFFCNUtXNlZ6YXlMVXVORS9LTGE4?=
+ =?utf-8?B?ZlhTMVA5ZzJTRHhySlRDYXppNXQ2b2l6V25rSVp3R3FQbjQxcUJpeU95RXlQ?=
+ =?utf-8?B?QmY0WW4zRmNnZm1GTElpOGMyL28rNC9BajFuNGN0N2xNb2dqVXN0RVJMSUkx?=
+ =?utf-8?B?WDhxL3E5U3RYZCt4bC93dHcwZTNVdlY0NDYzcENUYzJOcGxpVGtKQTF4WSs5?=
+ =?utf-8?B?MHZkR2ZxVVg3dlk5THNrY1FwOUtUMzMrd254V0hmb3I4bmF6S3o1MlZybC9u?=
+ =?utf-8?B?cks1QUxheTViVG5XWnpuUU9oVmZQOHBrNERkanVMekdNbXduMFBDZ1BrdFo1?=
+ =?utf-8?B?NTR4Nm8ra2I5dzJmaFQ2QmVCM3hvdmlzM2ZTTFg1cDF0SzMvSUVxR21YUXlh?=
+ =?utf-8?B?aTk4T29XbnNleUpPaGwvc0sxVHJmVHRpZ3N1d21iaVJJZmhnZjZoQVVQaFdh?=
+ =?utf-8?B?TGlMSVFleGhkZThXNWRZeXJVcjJBMkIvS0E2Q29WbkY2VjB6b3IzaWwvYjZC?=
+ =?utf-8?B?eitpdUhJNDNFa25YNVB4U1hNUmlsdDlFUXo3UUZoWnhlNnNHUW1FOVl6MGd2?=
+ =?utf-8?B?QmpydWY1ZHRId0k3L295VGNCYnYrMzNud0luV01uak5YdWNNRlB1NGlZWnIz?=
+ =?utf-8?B?QWF1K1F5MFFOMURCdHRMTk9nV2YzazhJcitvV3U1SzQrQ0orSXMyMWJmeWl6?=
+ =?utf-8?B?UkJVUXpiY053Uk1XMmwyV1FvZ283YVNKR2lBZ0pyMXVOWGJPWUxvYVdsbndo?=
+ =?utf-8?B?SmhnREJQNldBWWM2UUJZbUVvSks3NUVBZUhHV1NYSkhsbEMzSTlSZWJsbXdL?=
+ =?utf-8?B?OUdZUndWMHQ0RzFBWUVsN21kT0lTRmpTWHUwWENCRmJBRDVocTM2cVdoOWVP?=
+ =?utf-8?B?R21ocGFlY01GTHpVclVFRWk1SzNhRTV2d0hnVk4xQTVXd21TMWtoT0dpMG1w?=
+ =?utf-8?B?S29nTjZWTW9GaGtRLzZDaFpOUUlVS2RRK0t3aGZhc2R5M21aaHZuMXltOHZW?=
+ =?utf-8?B?SHVoWWxVRlRndzJSUWcwS05ra3dkNDBSN2tMYUFralRjUzczWEhMeXVHa2Fl?=
+ =?utf-8?B?YUgxODlRTWhyMSt4cXJoVzNkUXZVR1dVTTRwdFpZTEFhTlZ5emFwOUZoTGR2?=
+ =?utf-8?B?NzJQSFVvRVdncTFFU2RrRVVlbVZzKzBhMDBtcG5qY1pyMGZ4STdkNkd5TW9r?=
+ =?utf-8?B?YXZPVW1TSE5SU3kyaDM4dzlDME01cVIvUE5SdEV1OXZkL1lPMUF2aXZ5a1pa?=
+ =?utf-8?B?SFpEVGx6OW5CbU9XRHpnTXRtSnV1dXl4MS9GRHhtTmJvcFZHNG43ZVRIUU9Y?=
+ =?utf-8?B?RDFTcUdtMmp1ZUNHbXhSMExiV3hKQ1gxYnk3UGxZMEJ5NUpvdERnVE10bkxn?=
+ =?utf-8?B?ckttODYrbm0xajNhd0JDR2dFWE1zSjhxQUVrckRiVUN0MEpKLzArTlp5K3BH?=
+ =?utf-8?B?YU8yUTJqSkhadVdkbjl3ZmF3c2VNQURxaHdQT3dyS1M2bGRWTUR1UHEwWEtB?=
+ =?utf-8?Q?7+DlNNA9tAM=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SE1PPF1EB5504E5.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BZUgYeTcYI2F4BBdvYa0bMgaUNWoqNQYOVGwMozfjZkPnrWy5NgOazQBYgM4?=
- =?us-ascii?Q?Vcnzxe1Gboe2xuUd4oX1+wdYlws71NHZv5bqt5zjcPXx/qhARGN5FQmti8gl?=
- =?us-ascii?Q?pQxobVrvYQyriaB+PzAclAeofh6Go3DyqhzxtPV//IaTCz39wjbRsQ9pDbIf?=
- =?us-ascii?Q?Ejr8vJIvog0lI8BIp6D7+5DOS7Zmm31u84xtypGbaFHhCgPdQXhWk0FSXLOA?=
- =?us-ascii?Q?t5xdkWvcYgN0e+/kf/7O2bxjLd7G5GdtnKRbEHSmQMAOJh7kv1Pv3Yvb4kf9?=
- =?us-ascii?Q?1YinJdqOlkn4AFUDJ4ADr3AFzbGZbdQbPRDOmR85HpmQH7TPw1hvnxSI4fjx?=
- =?us-ascii?Q?xmzHlcdnlGkzAn+pUmj1Xg8FScVtV/JaNIR0eJk2rijDgjOdoW5dBIz0cf+D?=
- =?us-ascii?Q?WIMn2DuePfz+iObYsM72Wn/rUJl+v4dz7hmsB3/eYeMb+64GQ/RvID7mkBYJ?=
- =?us-ascii?Q?i1W/sWdCQ/N4CEIrnxwx/I2W6tdrk5Q3S5wLR/h8qfVe6wK+XrzwJM3ns98i?=
- =?us-ascii?Q?ahH2efdoLCHeOwyJqbsjq7Aldqo0uZO46X4Gnct3JGaOpWuwu2QFMMMaa4gI?=
- =?us-ascii?Q?9hAvCbFLsd7AnWkgzV9p309ZYjnSF6UJBSTOjflYfqHGi6Igv4t9slp6LKiL?=
- =?us-ascii?Q?42zGvwP8C6oj/KsJZueeBakF8mm18Q8z8J/Z7SJGjWCNax9TA95V1nPErc7X?=
- =?us-ascii?Q?73hB70HDV2fQS4/J7FDaCh7MijGgmVxYWZTGqEHpl5BrZXC+NGjst8J/tCr4?=
- =?us-ascii?Q?yCsdBsWyGjjcXw4s6+824I5/3j28pHM95aDfQMekW0gFyTP/bRdwYAYBnMN3?=
- =?us-ascii?Q?daXSpdMu0sZNo/tpmWiEhBYC62ZveYZmsaqIDgQv7Wl6GbUY/U9V14AQv4mM?=
- =?us-ascii?Q?LGgXEKqC5gTwQcMxnSsAigI7JZO5N8kkypScmthuaZJ4NId95WgNUQszZz1Z?=
- =?us-ascii?Q?LgMUh6VzLnJ2E8SjtpGh3Rq4jWIfyTLhKs7mgLk+y7c9/3DXj6bvFwQOGcOR?=
- =?us-ascii?Q?ayzEmTqbkMqXP7eGVHFGbGALX/L+HPIRg/Cf1hDlxpdsZOuoC0tgyZiRE5G5?=
- =?us-ascii?Q?QhM99WkktVAX8tBaET1LzekTJdruOUw/i/srU4NIliBtcspMlUiRbXUCyLIT?=
- =?us-ascii?Q?S24OfYPLmu/NuFVPHYy709m3iwXfVaTd4ALBXCrVtuQiL1CuU7jEVqXh4Rr2?=
- =?us-ascii?Q?v7Hg2sxwYy/SZ+FE0x1vSHR03Q1C7R9gtiiaMTDlPDrBe506gjZAp2Y1Kf68?=
- =?us-ascii?Q?iduOtuzd2C+uT47UY32OF6sS+x6gwzIyjYKUrZM/tDA3TbnvrQHNOqzcDJyi?=
- =?us-ascii?Q?tNQO+M23E7KCqYcBN5i+y5wBXRwF9Jm+gOQ3BCv1T9+5l3xSGG81y4KWtlv6?=
- =?us-ascii?Q?mMmoPIrEjHvt367JvV30+P19K9VGO1KxsI9dsqpDHMAxlf10BZkavWM9KldC?=
- =?us-ascii?Q?6XGEqU3o//vNRztYG717xnAfv+diPAYoXX/o+AqEUdl0L5bQkySfxHauycoC?=
- =?us-ascii?Q?/WZp1s976VPCUtmuyQfz0vJJtBAi8Dutiyfgk/DBSkBjOyEExz/R9+IrpUbt?=
- =?us-ascii?Q?dGJkdcGl/3EDb06uZa8Uz7d0y+dRzXwNQMlt4xGX?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1461effe-3259-4ca5-c091-08ddfaa8d37a
-X-MS-Exchange-CrossTenant-AuthSource: SE1PPF1EB5504E5.apcprd06.prod.outlook.com
+	=?utf-8?B?bUhKZ3pObks3dk5ERjR2Vms4cTB2V1N1OWFESE1rMk9nYVh0ZXRtR3MxQTFi?=
+ =?utf-8?B?Ym1GejcraElRZ0pJQk93OFBlZGhTMWFKQ1BWZk9QQTFHYWVlN3Z4anVkTnNF?=
+ =?utf-8?B?NldueWxnVGFOdlo3YjB5VEthN2xXOS9ybEVUbDRXeXd0SDIyTXlVZnBYTzZh?=
+ =?utf-8?B?N01VekdiRVhpYk9PTXpXSTN1Q1BWVXB5NVVmT0tUaW1uMHREQ3FvRzA0c2ZK?=
+ =?utf-8?B?OU5tRXhhNFo2OU9pRWxhc1FiUnZGMnVPT0ZhaDllRUM2Z0JBNHU3ZTlRWGRu?=
+ =?utf-8?B?S0lwL04wd29WajRaNW9MQjB2NmhGb2Q1citDaWtabUo4dnN4VXN6cUhwMTBK?=
+ =?utf-8?B?c3ZHc2U4YUdxU0ZxVkZueW03bHEzTnVvdldOZE1qdGJkYXNNdjBTaU5Sb1J4?=
+ =?utf-8?B?N2tzTXVUdnVGTnNKU1RpWmhUNEJ1RWtUWmp1YzVNN3pBSVVGNmJXWmNkY0R1?=
+ =?utf-8?B?V29uOUV4ZUM0K1BYSkYrQ3NDMFgvNmJpeDRXV2xlOTlzdHB2cWl3bmxNdFI0?=
+ =?utf-8?B?NXRrZlBIV1RFWVQ4Tk9iMmZtWGNYaXdNMFFvZ1NidFhxM29lL0tibzNHZ1lm?=
+ =?utf-8?B?dmxQNGNCOVE1RTJyUldIRWRBTWNnNjFOODZ2dTRNRHcvOWxTOEw4MVNCVWVm?=
+ =?utf-8?B?dVlCNFVCaHZ0YUU0WXhJcGIzTStmTVlmVzdTVjVadjk5Y1RuQkM3TkpSL3dO?=
+ =?utf-8?B?RnpkejJVNGE4VWdwaVQyaXFUL2VBNVFjbGVSeEhkQUMxbWlLdW1rL2grQzNz?=
+ =?utf-8?B?bnFaaGNOTWxEZ2RoRmpNbXB4ZFpvZm1XdkowajdiYkY5L3N5bzJsV1VxV1pi?=
+ =?utf-8?B?NnRnOVQrNStkSkVsRlppd3B6S0t1TnZkWjN6RGFtRnJOT1graXpTQ1ZmZkdI?=
+ =?utf-8?B?Qi9oOTFaaWxHbkFSWEI5VzN6aTZyWXUyL0dZRytySmMrRnhlU1dPOGpzTWZW?=
+ =?utf-8?B?L2JmQWdCUkFDK3p0ZjQycXcvSU9vcDB5d0hPeGdGNFJhVHRDZEh2bGY2LzRR?=
+ =?utf-8?B?dFdrSUxCRTRLT0pRMjNWamJFMi8xNzdUdEl1bmVoaTE5MU8xTU0zeS8ybkRm?=
+ =?utf-8?B?NGhpQlRDcVJtUHJoRllUSlZrNGpFZFlEbG5wZ3Nud3l5cWlCSmxsQ1N3NjJY?=
+ =?utf-8?B?a1ZKOVZpTlFEaHhjOFBBdG1mK1ZXMTFhdkNZcjBCVi9hZm1HN3lCNTJ6REMy?=
+ =?utf-8?B?RnhoaUdiZk9IQjZIQzBybTFIQ1duT3NZblA3TXhQS0RPMDhPMDhXc01QemM3?=
+ =?utf-8?B?Vlgzczl5aFUvZHF3MmpPcVJZb3NqM3Bqa3pHWjhtL09sNTdieDF3MUYvVjBH?=
+ =?utf-8?B?N2QzaUhOMlk5MlAyTU1RZTBFaHQyRlBNVmdNR3VjZVRHci9PTmkwZ3V6cTVT?=
+ =?utf-8?B?ZEEzMFk0M0lWSTVzdGNGZlkyajdzcWEwaUN6U29JQ2VYZzcva1QzaTNNQXFC?=
+ =?utf-8?B?MWNnazRlcVpxUEVXSmc2R3BuNVFCRDVHZVVUblovQmxyeGhsa25HckVaRUpD?=
+ =?utf-8?B?T3hrNVI2MFhsbm5mV2NUbXkwM3Yrazc4cHE2SFc0LytGdklLTWZlWVlIczJF?=
+ =?utf-8?B?ZkpLOVZWU2NVQ2dtcXRpYnNxemNSdmltMmRwbDROVlFlQzhEK0loWnFndTZw?=
+ =?utf-8?B?dmhOdDRCVXBmVDJXYWpBUHR3TGVTVDFMbXNqeUUvaDlBeXZIaXl1MjFPSitI?=
+ =?utf-8?B?QU1DY1pWZmlGQlEwbitwaE9UQVM5YlJsODgrV2JWaDlOS2FtTXYzNlR1VVl5?=
+ =?utf-8?B?QVVqRUFRa2xXSy9LY3BzY2lsSEs5Um8rcDdZck5KOVVpSjc4Y1dvbk5MUHN1?=
+ =?utf-8?B?aEg3bDdoRnA0QTBnV1Bhbzg0Q1NHNXZIZ2Q5L083aVVKdjJ4RGxEYWhMS09z?=
+ =?utf-8?B?enZueXg2NGhQRVMwbGltUlZLQUQyN0RBbFNabytJanBRWEVYbFJ6am42V0Jl?=
+ =?utf-8?B?RFlOL1hHbFZNdVlMV09pNldLdzZqZUVRNVVVdnhmV1lSMTNrakh4QjNpY3d2?=
+ =?utf-8?B?T1YrYVVhR3JNWVZUTzdMcG1DbUhBODR5LytQUDlLeEc1V2wrQ3cvdlkwZDRm?=
+ =?utf-8?B?Z2p5VGQyM2h4ZFJOUWswYnAxSnVaejJ3NW5leWJ6UDBjWkxMMmVacEpWbzFj?=
+ =?utf-8?Q?wwNWIwQC44WPDb2unveh6qqhC?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2bc90738-94fb-4f05-7a84-08ddfaa8dd95
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 13:55:16.8255
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 13:55:33.7944
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qnWluxr9vFIjKd80Af03vys707HNh2uXzsGJXeeUBoJfzLPJPbthfTyAyq3CKqJAtJ0wOzgXyh8HhbATWgwFNA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5786
+X-MS-Exchange-CrossTenant-UserPrincipalName: +G8ALPTw7f1m2ha3ypjg+nCVB5BzBV55xJSmfZr+wiDDSYHgBAGlzwDkCOfE/ILdd5kzS0Ko3gI9hQVtHKm4QQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9515
 
-Direct I/O is particularly useful in memory-sensitive scenarios, as it
-provides more predictable performance by avoiding unnecessary page cache
-overheads. For example, when accessing large files such as AI model files
-that are typically read only once, buffered I/O introduces redundant page
-cache usage and extra page copies, leading to unstable performance and
-increased CPU load due to memory reclaim. While Direct I/O can avoid these.
+On 9/23/25 00:03, Neeraj Upadhyay wrote:
+> Disable interception for SECURE_AVIC_CONTROL MSR for Secure AVIC
+> enabled guests. The SECURE_AVIC_CONTROL MSR holds the GPA of the
+> guest APIC backing page and bitfields to control enablement of Secure
+> AVIC and whether the guest allows NMIs to be injected by the hypervisor.
+> This MSR is populated by the guest and can be read by the guest to get
+> the GPA of the APIC backing page. The MSR can only be accessed in Secure
+> AVIC mode; accessing it when not in Secure AVIC mode results in #GP. So,
+> KVM should not intercept it.
 
-The table below shows that the performance of direct I/O is up to 54.6%
-higher than buffered I/O in the low-memory scenario. The results were
-obtained using the fio benchmark with 8 threads, each thread read a 2.5GB
-file, on ARM64 Android devices running the 6.6 kernel with an 8-core CPU
-and 12GB of memory.
+The reason KVM should not intercept the MSR access is that the guest
+would not be able to actually set the MSR if it is intercepted.
 
-+--------------------------------------------------------------------------+
-| fio benchmark       | buffered I/O (MiB/s) | direct I/O (MiB/s) |  diff  |
-|---------------------+----------------------+--------------------+--------|
-| normal scenario     |        2629.8        |       3648.7       | +38.7% |
-|---------------------+----------------------+--------------------+--------|
-| low memory scenario |        2350.0        |       3633.9       | +54.6% |
-+--------------------------------------------------------------------------+
+Thanks,
+Tom
 
-This patch does not support the following two cases. They will fall back to
-buffered I/O:
-(1) large folios, which will be supported in a follow-up patch.
-(2) folios with private data attached, as the private data is required by
-this direct I/O implementation.
-
-Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
----
-v2: remove debugging variable tmp_cn and fix compliling errors when
-    CONFIG_EROFS_FS_ZIP is disabled.
-v1: https://lore.kernel.org/linux-erofs/20250922124304.489419-1-guochunhai@vivo.com/T/#u
----
- fs/erofs/data.c     |  22 ++-
- fs/erofs/fileio.c   |   2 +-
- fs/erofs/inode.c    |   4 +
- fs/erofs/internal.h |  15 +-
- fs/erofs/zdata.c    | 330 +++++++++++++++++++++++++++++++++++++++-----
- 5 files changed, 323 insertions(+), 50 deletions(-)
-
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 3b1ba571c728..3762e7efc94b 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -224,20 +224,12 @@ int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *map)
- 	return 0;
- }
- 
--/*
-- * bit 30: I/O error occurred on this folio
-- * bit 29: CPU has dirty data in D-cache (needs aliasing handling);
-- * bit 0 - 29: remaining parts to complete this folio
-- */
--#define EROFS_ONLINEFOLIO_EIO		30
--#define EROFS_ONLINEFOLIO_DIRTY		29
--
--void erofs_onlinefolio_init(struct folio *folio)
-+void erofs_onlinefolio_init(struct folio *folio, bool dio)
- {
- 	union {
- 		atomic_t o;
- 		void *v;
--	} u = { .o = ATOMIC_INIT(1) };
-+	} u = { .o = ATOMIC_INIT(dio ? BIT(EROFS_ONLINEFOLIO_DIO) + 1 : 1) };
- 
- 	folio->private = u.v;	/* valid only if file-backed folio is locked */
- }
-@@ -247,7 +239,7 @@ void erofs_onlinefolio_split(struct folio *folio)
- 	atomic_inc((atomic_t *)&folio->private);
- }
- 
--void erofs_onlinefolio_end(struct folio *folio, int err, bool dirty)
-+bool erofs_onlinefolio_end(struct folio *folio, int err, bool dirty)
- {
- 	int orig, v;
- 
-@@ -258,12 +250,14 @@ void erofs_onlinefolio_end(struct folio *folio, int err, bool dirty)
- 		v |= (orig - 1) | (!!err << EROFS_ONLINEFOLIO_EIO);
- 	} while (atomic_cmpxchg((atomic_t *)&folio->private, orig, v) != orig);
- 
--	if (v & (BIT(EROFS_ONLINEFOLIO_DIRTY) - 1))
--		return;
-+	if (v & (BIT(EROFS_ONLINEFOLIO_DIO) - 1))
-+		return false;
- 	folio->private = 0;
- 	if (v & BIT(EROFS_ONLINEFOLIO_DIRTY))
- 		flush_dcache_folio(folio);
--	folio_end_read(folio, !(v & BIT(EROFS_ONLINEFOLIO_EIO)));
-+	if (!(v & BIT(EROFS_ONLINEFOLIO_DIO)))
-+		folio_end_read(folio, !(v & BIT(EROFS_ONLINEFOLIO_EIO)));
-+	return true;
- }
- 
- static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
-diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
-index b7b3432a9882..aeecb861faa1 100644
---- a/fs/erofs/fileio.c
-+++ b/fs/erofs/fileio.c
-@@ -98,7 +98,7 @@ static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
- 	loff_t pos = folio_pos(folio), ofs;
- 	int err = 0;
- 
--	erofs_onlinefolio_init(folio);
-+	erofs_onlinefolio_init(folio, false);
- 	while (cur < end) {
- 		if (!in_range(pos + cur, map->m_la, map->m_llen)) {
- 			map->m_la = pos + cur;
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index 9a2f59721522..1fbfc7fd2456 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -214,7 +214,11 @@ static int erofs_fill_inode(struct inode *inode)
- 	case S_IFREG:
- 		inode->i_op = &erofs_generic_iops;
- 		if (erofs_inode_is_data_compressed(vi->datalayout))
-+#ifdef CONFIG_EROFS_FS_ZIP
-+			inode->i_fop = &z_erofs_file_fops;
-+#else
- 			inode->i_fop = &generic_ro_fops;
-+#endif
- 		else
- 			inode->i_fop = &erofs_file_fops;
- 		break;
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 9319c66e86c3..f194ae889a73 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -407,6 +407,7 @@ extern const struct file_operations erofs_file_fops;
- extern const struct file_operations erofs_dir_fops;
- 
- extern const struct iomap_ops z_erofs_iomap_report_ops;
-+extern const struct file_operations z_erofs_file_fops;
- 
- /* flags for erofs_fscache_register_cookie() */
- #define EROFS_REG_COOKIE_SHARE		0x0001
-@@ -425,9 +426,9 @@ int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *dev);
- int erofs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 		 u64 start, u64 len);
- int erofs_map_blocks(struct inode *inode, struct erofs_map_blocks *map);
--void erofs_onlinefolio_init(struct folio *folio);
-+void erofs_onlinefolio_init(struct folio *folio, bool dio);
- void erofs_onlinefolio_split(struct folio *folio);
--void erofs_onlinefolio_end(struct folio *folio, int err, bool dirty);
-+bool erofs_onlinefolio_end(struct folio *folio, int err, bool dirty);
- struct inode *erofs_iget(struct super_block *sb, erofs_nid_t nid);
- int erofs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 		  struct kstat *stat, u32 request_mask,
-@@ -467,6 +468,16 @@ static inline void erofs_pagepool_add(struct page **pagepool, struct page *page)
- }
- void erofs_release_pages(struct page **pagepool);
- 
-+/*
-+ * bit 30: I/O error occurred on this folio
-+ * bit 29: CPU has dirty data in D-cache (needs aliasing handling);
-+ * bit 28: FOLIO is read by direct I/O
-+ * bit 0 - 27: remaining parts to complete this folio
-+ */
-+#define EROFS_ONLINEFOLIO_EIO		30
-+#define EROFS_ONLINEFOLIO_DIRTY		29
-+#define EROFS_ONLINEFOLIO_DIO	        28
-+
- #ifdef CONFIG_EROFS_FS_ZIP
- #define MNGD_MAPPING(sbi)	((sbi)->managed_cache->i_mapping)
- 
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 625b8ae8f67f..ed8c232563d3 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -27,6 +27,20 @@ struct name { \
- __Z_EROFS_BVSET(z_erofs_bvset,);
- __Z_EROFS_BVSET(z_erofs_bvset_inline, Z_EROFS_INLINE_BVECS);
- 
-+#define Z_EROFS_ONSTACK_PAGES		32
-+
-+struct dio_erofs {
-+	bool is_pinned;			/* T if we have pins on the pages */
-+	bool should_dirty;		/* if pages should be dirtied */
-+	int eio;			/* IO error */
-+	atomic_t ref;			/* refcount for AIO completion of pcl */
-+	struct task_struct *waiter;	/* waiting task (NULL if none) */
-+	struct kiocb *iocb;		/* kiocb */
-+	loff_t pos;			/* current file position we are operating on */
-+	loff_t size;			/* IO size */
-+	struct page *pages[Z_EROFS_ONSTACK_PAGES];  /*  page buffer */
-+};
-+
- /*
-  * Structure fields follow one of the following exclusion rules.
-  *
-@@ -39,6 +53,7 @@ __Z_EROFS_BVSET(z_erofs_bvset_inline, Z_EROFS_INLINE_BVECS);
-  */
- struct z_erofs_pcluster {
- 	struct mutex lock;
-+	struct mutex dio_lock;
- 	struct lockref lockref;
- 
- 	/* A: point to next chained pcluster or TAILs */
-@@ -82,6 +97,9 @@ struct z_erofs_pcluster {
- 	/* L: whether extra buffer allocations are best-effort */
- 	bool besteffort;
- 
-+	/* L: store direct I/O-related information */
-+	struct dio_erofs *dio;
-+
- 	/* A: compressed bvecs (can be cached or inplaced pages) */
- 	struct z_erofs_bvec compressed_bvecs[];
- };
-@@ -112,8 +130,11 @@ static bool erofs_folio_is_managed(struct erofs_sb_info *sbi, struct folio *fo)
- 	return fo->mapping == MNGD_MAPPING(sbi);
- }
- 
--#define Z_EROFS_ONSTACK_PAGES		32
--
-+static inline void z_erofs_dio_size_add(struct dio_erofs *dio, loff_t len)
-+{
-+	if (dio)
-+		dio->size += len;
-+}
- /*
-  * since pclustersize is variable for big pcluster feature, introduce slab
-  * pools implementation for different pcluster sizes.
-@@ -506,16 +527,22 @@ struct z_erofs_frontend {
- 
- 	/* a pointer used to pick up inplace I/O pages */
- 	unsigned int icur;
-+
-+	struct dio_erofs *dio;
- };
- 
- #define Z_EROFS_DEFINE_FRONTEND(fe, i, ho) struct z_erofs_frontend fe = { \
- 	.inode = i, .head = Z_EROFS_PCLUSTER_TAIL, \
--	.mode = Z_EROFS_PCLUSTER_FOLLOWED, .headoffset = ho }
-+	.mode = Z_EROFS_PCLUSTER_FOLLOWED, .headoffset = ho, \
-+	.dio = NULL }
- 
- static bool z_erofs_should_alloc_cache(struct z_erofs_frontend *fe)
- {
- 	unsigned int cachestrategy = EROFS_I_SB(fe->inode)->opt.cache_strategy;
- 
-+	if (fe->dio)
-+		return false;
-+
- 	if (cachestrategy <= EROFS_ZIP_CACHE_DISABLED)
- 		return false;
- 
-@@ -736,6 +763,24 @@ static bool z_erofs_get_pcluster(struct z_erofs_pcluster *pcl)
- 	return true;
- }
- 
-+static void z_erofs_pcl_unlock(struct z_erofs_pcluster *pcl, int err)
-+{
-+	struct dio_erofs *dio = pcl->dio;
-+
-+	mutex_unlock(&pcl->lock);
-+	if (dio) {
-+		dio->eio = dio->eio ?: err;
-+		if (atomic_dec_and_test(&dio->ref)) {
-+			struct task_struct *waiter = dio->waiter;
-+
-+			WRITE_ONCE(dio->waiter, NULL);
-+			wake_up_process(waiter);
-+		}
-+		pcl->dio = NULL;
-+		mutex_unlock(&pcl->dio_lock);
-+	}
-+}
-+
- static int z_erofs_register_pcluster(struct z_erofs_frontend *fe)
- {
- 	struct erofs_map_blocks *map = &fe->map;
-@@ -766,7 +811,13 @@ static int z_erofs_register_pcluster(struct z_erofs_frontend *fe)
- 	 * lock all primary followed works before visible to others
- 	 * and mutex_trylock *never* fails for a new pcluster.
- 	 */
-+	mutex_init(&pcl->dio_lock);
- 	mutex_init(&pcl->lock);
-+	if (fe->dio) {
-+		DBG_BUGON(!mutex_trylock(&pcl->dio_lock));
-+		pcl->dio = fe->dio;
-+		atomic_inc(&fe->dio->ref);
-+	}
- 	DBG_BUGON(!mutex_trylock(&pcl->lock));
- 
- 	if (!pcl->from_meta) {
-@@ -795,7 +846,7 @@ static int z_erofs_register_pcluster(struct z_erofs_frontend *fe)
- 	return 0;
- 
- err_out:
--	mutex_unlock(&pcl->lock);
-+	z_erofs_pcl_unlock(pcl, (err == -EEXIST) ? 0 : err);
- 	z_erofs_free_pcluster(pcl);
- 	return err;
- }
-@@ -835,12 +886,23 @@ static int z_erofs_pcluster_begin(struct z_erofs_frontend *fe)
- 		ret = z_erofs_register_pcluster(fe);
- 	}
- 
-+	pcl = fe->pcl;
- 	if (ret == -EEXIST) {
--		mutex_lock(&fe->pcl->lock);
-+		if (fe->dio) {
-+			if (!mutex_is_locked(&pcl->dio_lock) ||
-+					(mutex_get_owner(&pcl->dio_lock) !=
-+					 (unsigned long)current)) {
-+				mutex_lock(&pcl->dio_lock);
-+				DBG_BUGON(pcl->dio);
-+				pcl->dio = fe->dio;
-+				atomic_inc(&fe->dio->ref);
-+			}
-+		}
-+		mutex_lock(&pcl->lock);
- 		/* check if this pcluster hasn't been linked into any chain. */
--		if (!cmpxchg(&fe->pcl->next, NULL, fe->head)) {
-+		if (!cmpxchg(&pcl->next, NULL, fe->head)) {
- 			/* .. so it can be attached to our submission chain */
--			fe->head = fe->pcl;
-+			fe->head = pcl;
- 			fe->mode = Z_EROFS_PCLUSTER_FOLLOWED;
- 		} else {	/* otherwise, it belongs to an inflight chain */
- 			fe->mode = Z_EROFS_PCLUSTER_INFLIGHT;
-@@ -849,9 +911,9 @@ static int z_erofs_pcluster_begin(struct z_erofs_frontend *fe)
- 		return ret;
- 	}
- 
--	z_erofs_bvec_iter_begin(&fe->biter, &fe->pcl->bvset,
--				Z_EROFS_INLINE_BVECS, fe->pcl->vcnt);
--	if (!fe->pcl->from_meta) {
-+	z_erofs_bvec_iter_begin(&fe->biter, &pcl->bvset,
-+				Z_EROFS_INLINE_BVECS, pcl->vcnt);
-+	if (!pcl->from_meta) {
- 		/* bind cache first when cached decompression is preferred */
- 		z_erofs_bind_cache(fe);
- 	} else {
-@@ -866,12 +928,12 @@ static int z_erofs_pcluster_begin(struct z_erofs_frontend *fe)
- 			return ret;
- 		}
- 		folio_get(page_folio(map->buf.page));
--		WRITE_ONCE(fe->pcl->compressed_bvecs[0].page, map->buf.page);
--		fe->pcl->pageofs_in = map->m_pa & ~PAGE_MASK;
-+		WRITE_ONCE(pcl->compressed_bvecs[0].page, map->buf.page);
-+		pcl->pageofs_in = map->m_pa & ~PAGE_MASK;
- 		fe->mode = Z_EROFS_PCLUSTER_FOLLOWED_NOINPLACE;
- 	}
- 	/* file-backed inplace I/O pages are traversed in reverse order */
--	fe->icur = z_erofs_pclusterpages(fe->pcl);
-+	fe->icur = z_erofs_pclusterpages(pcl);
- 	return 0;
- }
- 
-@@ -1005,19 +1067,52 @@ static int z_erofs_read_fragment(struct super_block *sb, struct folio *folio,
- 	return 0;
- }
- 
-+static bool erofs_is_dio_folio(struct folio *folio)
-+{
-+	return atomic_read((atomic_t *)&folio->private) &
-+		BIT(EROFS_ONLINEFOLIO_DIO);
-+}
-+
-+static bool z_erofs_page_is_invalidated(struct page *page)
-+{
-+	return !page_folio(page)->mapping &&
-+		!z_erofs_is_shortlived_page(page) &&
-+		!erofs_is_dio_folio(page_folio(page));
-+}
-+
-+static void z_erofs_onlinefolio_end(struct folio *folio, int err, bool dirty,
-+		struct dio_erofs *dio)
-+{
-+	bool ret, is_dfolio = erofs_is_dio_folio(folio);
-+
-+	DBG_BUGON(is_dfolio && !dio);
-+	ret = erofs_onlinefolio_end(folio, err, dirty);
-+	if (!ret || !dio || !is_dfolio)
-+		return;
-+
-+	if (dio->should_dirty && !folio_test_dirty(folio)) {
-+		DBG_BUGON(folio_test_locked(folio));
-+		folio_lock(folio);
-+		folio_mark_dirty(folio);
-+		folio_unlock(folio);
-+	}
-+	if (dio->is_pinned)
-+		unpin_user_folio(folio, 1);
-+}
-+
- static int z_erofs_scan_folio(struct z_erofs_frontend *f,
- 			      struct folio *folio, bool ra)
- {
- 	struct inode *const inode = f->inode;
- 	struct erofs_map_blocks *const map = &f->map;
--	const loff_t offset = folio_pos(folio);
-+	const loff_t offset = f->dio ? f->dio->pos : folio_pos(folio);
- 	const unsigned int bs = i_blocksize(inode);
- 	unsigned int end = folio_size(folio), split = 0, cur, pgs;
- 	bool tight, excl;
- 	int err = 0;
- 
- 	tight = (bs == PAGE_SIZE);
--	erofs_onlinefolio_init(folio);
-+	erofs_onlinefolio_init(folio, f->dio);
- 	do {
- 		if (offset + end - 1 < map->m_la ||
- 		    offset + end - 1 >= map->m_la + map->m_llen) {
-@@ -1036,15 +1131,18 @@ static int z_erofs_scan_folio(struct z_erofs_frontend *f,
- 
- 		if (!(map->m_flags & EROFS_MAP_MAPPED)) {
- 			folio_zero_segment(folio, cur, end);
-+			z_erofs_dio_size_add(f->dio, end - cur);
- 			tight = false;
- 		} else if (map->m_flags & __EROFS_MAP_FRAGMENT) {
- 			erofs_off_t fpos = offset + cur - map->m_la;
-+			u64 len = min(map->m_llen - fpos, end - cur);
- 
- 			err = z_erofs_read_fragment(inode->i_sb, folio, cur,
--					cur + min(map->m_llen - fpos, end - cur),
-+					cur + len,
- 					EROFS_I(inode)->z_fragmentoff + fpos);
- 			if (err)
- 				break;
-+			z_erofs_dio_size_add(f->dio, len);
- 			tight = false;
- 		} else {
- 			if (!f->pcl) {
-@@ -1094,7 +1192,7 @@ static int z_erofs_scan_folio(struct z_erofs_frontend *f,
- 			tight = (bs == PAGE_SIZE);
- 		}
- 	} while ((end = cur) > 0);
--	erofs_onlinefolio_end(folio, err, false);
-+	z_erofs_onlinefolio_end(folio, err, false, f->dio);
- 	return err;
- }
- 
-@@ -1113,11 +1211,6 @@ static bool z_erofs_is_sync_decompress(struct erofs_sb_info *sbi,
- 	return false;
- }
- 
--static bool z_erofs_page_is_invalidated(struct page *page)
--{
--	return !page_folio(page)->mapping && !z_erofs_is_shortlived_page(page);
--}
--
- struct z_erofs_backend {
- 	struct page *onstack_pages[Z_EROFS_ONSTACK_PAGES];
- 	struct super_block *sb;
-@@ -1152,6 +1245,16 @@ static void z_erofs_do_decompressed_bvec(struct z_erofs_backend *be,
- 		page = be->decompressed_pages + (poff >> PAGE_SHIFT);
- 		if (!*page) {
- 			*page = bvec->page;
-+			if (be->pcl->dio &&
-+				erofs_is_dio_folio(page_folio(bvec->page))) {
-+				unsigned int end, cur;
-+
-+				end = min_t(unsigned int,
-+						be->pcl->length - bvec->offset,
-+						bvec->end);
-+				cur = bvec->offset < 0 ? -bvec->offset : 0;
-+				z_erofs_dio_size_add(be->pcl->dio, end - cur);
-+			}
- 			return;
- 		}
- 	} else {
-@@ -1197,9 +1300,13 @@ static void z_erofs_fill_other_copies(struct z_erofs_backend *be, int err)
- 			memcpy(dst + cur, src + scur, len);
- 			kunmap_local(src);
- 			cur += len;
-+			if (!err && be->pcl->dio &&
-+				erofs_is_dio_folio(page_folio(bvi->bvec.page)))
-+				z_erofs_dio_size_add(be->pcl->dio, len);
- 		}
- 		kunmap_local(dst);
--		erofs_onlinefolio_end(page_folio(bvi->bvec.page), err, true);
-+		z_erofs_onlinefolio_end(page_folio(bvi->bvec.page), err, true,
-+				be->pcl->dio);
- 		list_del(p);
- 		kfree(bvi);
- 	}
-@@ -1251,7 +1358,8 @@ static int z_erofs_parse_in_bvecs(struct z_erofs_backend *be, bool *overlapped)
- 
- 		if (pcl->from_meta ||
- 		    erofs_folio_is_managed(EROFS_SB(be->sb), page_folio(page))) {
--			if (!PageUptodate(page))
-+			if (!PageUptodate(page) &&
-+					!erofs_is_dio_folio(page_folio(page)))
- 				err = -EIO;
- 			continue;
- 		}
-@@ -1357,7 +1465,8 @@ static int z_erofs_decompress_pcluster(struct z_erofs_backend *be, int err)
- 
- 		DBG_BUGON(z_erofs_page_is_invalidated(page));
- 		if (!z_erofs_is_shortlived_page(page)) {
--			erofs_onlinefolio_end(page_folio(page), err, true);
-+			z_erofs_onlinefolio_end(page_folio(page), err, true,
-+					pcl->dio);
- 			continue;
- 		}
- 		if (pcl->algorithmformat != Z_EROFS_COMPRESSION_LZ4) {
-@@ -1383,8 +1492,7 @@ static int z_erofs_decompress_pcluster(struct z_erofs_backend *be, int err)
- 
- 	/* pcluster lock MUST be taken before the following line */
- 	WRITE_ONCE(pcl->next, NULL);
--	mutex_unlock(&pcl->lock);
--
-+	z_erofs_pcl_unlock(pcl, err);
- 	if (pcl->from_meta)
- 		z_erofs_free_pcluster(pcl);
- 	else
-@@ -1520,7 +1628,8 @@ static void z_erofs_fill_bio_vec(struct bio_vec *bvec,
- 	 * File-backed folios for inplace I/Os are all locked steady,
- 	 * therefore it is impossible for `mapping` to be NULL.
- 	 */
--	if (mapping && mapping != mc) {
-+	if ((mapping && mapping != mc) ||
-+		(!folio_test_private(folio) && erofs_is_dio_folio(folio))) {
- 		if (zbv.offset < 0)
- 			bvec->bv_offset = round_up(-zbv.offset, bs);
- 		bvec->bv_len = round_up(zbv.end, bs) - bvec->bv_offset;
-@@ -1641,16 +1750,17 @@ static void z_erofs_endio(struct bio *bio)
- 	bio_for_each_folio_all(fi, bio) {
- 		struct folio *folio = fi.folio;
- 
--		DBG_BUGON(folio_test_uptodate(folio));
-+		DBG_BUGON(!erofs_is_dio_folio(folio) &&
-+				folio_test_uptodate(folio));
- 		DBG_BUGON(z_erofs_page_is_invalidated(&folio->page));
- 		if (!erofs_folio_is_managed(EROFS_SB(q->sb), folio))
- 			continue;
- 
--		if (!err)
-+		if (err == BLK_STS_OK)
- 			folio_mark_uptodate(folio);
- 		folio_unlock(folio);
- 	}
--	if (err)
-+	if (err != BLK_STS_OK)
- 		q->eio = true;
- 	z_erofs_decompress_kickoff(q, -1);
- 	if (bio->bi_bdev)
-@@ -1672,6 +1782,7 @@ static void z_erofs_submit_queue(struct z_erofs_frontend *f,
- 	struct bio *bio = NULL;
- 	unsigned long pflags;
- 	int memstall = 0;
-+	struct dio_erofs *dio = f->dio;
- 
- 	/* No need to read from device for pclusters in the bypass queue. */
- 	q[JQ_BYPASS] = jobqueue_init(sb, fgq + JQ_BYPASS, NULL);
-@@ -1748,6 +1859,13 @@ static void z_erofs_submit_queue(struct z_erofs_frontend *f,
- 				else
- 					bio = bio_alloc(mdev.m_bdev, BIO_MAX_VECS,
- 							REQ_OP_READ, GFP_NOIO);
-+				if (dio) {
-+					bio->bi_write_hint =
-+						f->inode->i_write_hint;
-+					bio->bi_ioprio = dio->iocb->ki_ioprio;
-+					if (dio->is_pinned)
-+						bio_set_flag(bio, BIO_PAGE_PINNED);
-+				}
- 				bio->bi_end_io = z_erofs_endio;
- 				bio->bi_iter.bi_sector =
- 						(mdev.m_dif->fsoff + cur) >> 9;
-@@ -1796,7 +1914,7 @@ static int z_erofs_runqueue(struct z_erofs_frontend *f, unsigned int rapages)
- {
- 	struct z_erofs_decompressqueue io[NR_JOBQUEUES];
- 	struct erofs_sb_info *sbi = EROFS_I_SB(f->inode);
--	bool force_fg = z_erofs_is_sync_decompress(sbi, rapages);
-+	bool force_fg = !!f->dio || z_erofs_is_sync_decompress(sbi, rapages);
- 	int err;
- 
- 	if (f->head == Z_EROFS_PCLUSTER_TAIL)
-@@ -1830,6 +1948,8 @@ static void z_erofs_pcluster_readmore(struct z_erofs_frontend *f,
- 	if (backmost) {
- 		if (rac)
- 			end = headoffset + readahead_length(rac) - 1;
-+		else if (f->dio)
-+			end = f->dio->pos - 1;
- 		else
- 			end = headoffset + PAGE_SIZE - 1;
- 		map->m_la = end;
-@@ -1843,7 +1963,8 @@ static void z_erofs_pcluster_readmore(struct z_erofs_frontend *f,
- 			cur = round_up(map->m_la + map->m_llen, PAGE_SIZE);
- 			readahead_expand(rac, headoffset, cur - headoffset);
- 			return;
--		}
-+		} else if (f->dio)
-+			return;
- 		end = round_up(end, PAGE_SIZE);
- 	} else {
- 		end = round_up(map->m_la, PAGE_SIZE);
-@@ -1930,4 +2051,147 @@ static void z_erofs_readahead(struct readahead_control *rac)
- const struct address_space_operations z_erofs_aops = {
- 	.read_folio = z_erofs_read_folio,
- 	.readahead = z_erofs_readahead,
-+	.direct_IO = noop_direct_IO,
-+};
-+
-+static ssize_t z_erofs_dio_read_iter(struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+	Z_EROFS_DEFINE_FRONTEND(f, inode, iocb->ki_pos);
-+	ssize_t err, off0;
-+	loff_t offset = iocb->ki_pos;
-+	unsigned int i = 0, total_pages, nr_pages = 0;
-+	struct folio *head = NULL, *folio;
-+	struct dio_erofs dio;
-+	struct page **pages;
-+	loff_t i_size;
-+	struct iov_iter iter_saved = *iter;
-+
-+	if (!iov_iter_count(iter))
-+		return 0;
-+
-+	i_size = i_size_read(inode);
-+	if (offset >= i_size)
-+		return 0;
-+
-+	memset(&dio, 0, offsetof(struct dio_erofs, pages));
-+	atomic_set(&dio.ref, 1);
-+	dio.should_dirty = user_backed_iter(iter) && iov_iter_rw(iter) == READ;
-+	dio.iocb = iocb;
-+	dio.pos = ALIGN(min(iocb->ki_pos + (loff_t)iov_iter_count(iter),
-+				i_size), PAGE_SIZE);
-+	dio.is_pinned = iov_iter_extract_will_pin(iter);
-+	dio.waiter = current;
-+	f.dio = &dio;
-+	iter_saved = *iter;
-+	inode_dio_begin(inode);
-+	pages = dio.pages;
-+	total_pages = DIV_ROUND_UP(dio.pos - iocb->ki_pos, PAGE_SIZE);
-+	for (; total_pages > 0; total_pages -= nr_pages) {
-+		err = iov_iter_extract_pages(iter, &pages, LONG_MAX,
-+				min(ARRAY_SIZE(dio.pages), total_pages), 0,
-+				&off0);
-+		if (err <= 0) {
-+			err = -EFAULT;
-+			goto fail_dio;
-+		}
-+		DBG_BUGON(off0);
-+		iov_iter_revert(iter, err & ~PAGE_MASK);
-+		nr_pages = DIV_ROUND_UP(err, PAGE_SIZE);
-+		for (i = 0; i < nr_pages; i++) {
-+			folio = page_folio(pages[i]);
-+			if (folio_test_large(folio) ||
-+					folio_test_private(folio)) {
-+				err = -EFAULT;
-+				goto fail_dio;
-+			}
-+			folio->private = head;
-+			head = folio;
-+		}
-+	}
-+
-+	z_erofs_pcluster_readmore(&f, NULL, true);
-+	while (head) {
-+		folio = head;
-+		head = folio_get_private(folio);
-+		dio.pos -= folio_size(folio);
-+		err = z_erofs_scan_folio(&f, folio, false);
-+		if (err && err != -EINTR)
-+			erofs_err(inode->i_sb, "readahead error at folio %lu @ nid %llu",
-+				  folio->index, EROFS_I(inode)->nid);
-+	}
-+	z_erofs_pcluster_end(&f);
-+
-+	err = z_erofs_runqueue(&f, 0);
-+	erofs_put_metabuf(&f.map.buf);
-+	erofs_release_pages(&f.pagepool);
-+
-+	if (!atomic_dec_and_test(&dio.ref)) {
-+		for (;;) {
-+			set_current_state(TASK_UNINTERRUPTIBLE);
-+			if (!READ_ONCE(dio.waiter))
-+				break;
-+
-+			blk_io_schedule();
-+		}
-+		__set_current_state(TASK_RUNNING);
-+	}
-+
-+	err = err ?: dio.eio;
-+	if (likely(!err)) {
-+		err = dio.size;
-+		if (offset + dio.size > i_size) /* check for short read */
-+			err = i_size - offset;
-+		iocb->ki_pos += err;
-+	}
-+	inode_dio_end(inode);
-+	return err;
-+
-+fail_dio:
-+	if (dio.is_pinned) {
-+		while (head) {
-+			folio = head;
-+			head = folio_get_private(folio);
-+			unpin_user_page(folio_page(folio, 0));
-+		}
-+		for (; i < nr_pages; i++)
-+			unpin_user_page(dio.pages[i]);
-+	}
-+	*iter = iter_saved;
-+	return err;
-+}
-+
-+static bool erofs_should_use_dio(struct inode *inode, struct kiocb *iocb,
-+				struct iov_iter *iter)
-+{
-+
-+	if (!(iocb->ki_flags & IOCB_DIRECT))
-+		return false;
-+
-+	if (!IS_ALIGNED(iocb->ki_pos | iov_iter_alignment(iter),
-+				i_blocksize(inode)))
-+		return false;
-+
-+	return true;
-+}
-+
-+static ssize_t z_erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	ssize_t ret;
-+
-+	if (erofs_should_use_dio(file_inode(iocb->ki_filp), iocb, iter)) {
-+		ret = z_erofs_dio_read_iter(iocb, iter);
-+		if (ret != -EFAULT)
-+			return ret;
-+	}
-+
-+	/*  fallback to buffered I/O */
-+	return filemap_read(iocb, iter, 0);
-+}
-+
-+const struct file_operations z_erofs_file_fops = {
-+	.llseek		= generic_file_llseek,
-+	.read_iter	= z_erofs_file_read_iter,
-+	.mmap		= generic_file_readonly_mmap,
-+	.splice_read	= filemap_splice_read,
- };
--- 
-2.34.1
-
+> 
+> Co-developed-by: Kishon Vijay Abraham I <kvijayab@amd.com>
+> Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
+> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> ---
+>  arch/x86/include/asm/msr-index.h | 1 +
+>  arch/x86/kvm/svm/sev.c           | 6 +++++-
+>  2 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+> index b65c3ba5fa14..9f16030dd849 100644
+> --- a/arch/x86/include/asm/msr-index.h
+> +++ b/arch/x86/include/asm/msr-index.h
+> @@ -707,6 +707,7 @@
+>  #define MSR_AMD64_SEG_RMP_ENABLED_BIT	0
+>  #define MSR_AMD64_SEG_RMP_ENABLED	BIT_ULL(MSR_AMD64_SEG_RMP_ENABLED_BIT)
+>  #define MSR_AMD64_RMP_SEGMENT_SHIFT(x)	(((x) & GENMASK_ULL(13, 8)) >> 8)
+> +#define MSR_AMD64_SAVIC_CONTROL		0xc0010138
+>  
+>  #define MSR_SVSM_CAA			0xc001f000
+>  
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index b2eae102681c..afe4127a1918 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -4487,7 +4487,8 @@ void sev_vcpu_after_set_cpuid(struct vcpu_svm *svm)
+>  
+>  static void sev_es_init_vmcb(struct vcpu_svm *svm)
+>  {
+> -	struct kvm_sev_info *sev = to_kvm_sev_info(svm->vcpu.kvm);
+> +	struct kvm_vcpu *vcpu = &svm->vcpu;
+> +	struct kvm_sev_info *sev = to_kvm_sev_info(vcpu->kvm);
+>  	struct vmcb *vmcb = svm->vmcb01.ptr;
+>  
+>  	svm->vmcb->control.nested_ctl |= SVM_NESTED_CTL_SEV_ES_ENABLE;
+> @@ -4546,6 +4547,9 @@ static void sev_es_init_vmcb(struct vcpu_svm *svm)
+>  
+>  	/* Can't intercept XSETBV, HV can't modify XCR0 directly */
+>  	svm_clr_intercept(svm, INTERCEPT_XSETBV);
+> +
+> +	if (sev_savic_active(vcpu->kvm))
+> +		svm_set_intercept_for_msr(vcpu, MSR_AMD64_SAVIC_CONTROL, MSR_TYPE_RW, false);
+>  }
+>  
+>  void sev_init_vmcb(struct vcpu_svm *svm)
 
