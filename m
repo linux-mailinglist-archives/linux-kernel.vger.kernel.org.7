@@ -1,124 +1,284 @@
-Return-Path: <linux-kernel+bounces-829420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 857D3B970E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:38:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B58AB970F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C5897A3310
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:36:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 181AC19C176F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EA9281503;
-	Tue, 23 Sep 2025 17:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F952836A4;
+	Tue, 23 Sep 2025 17:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="AemZ1BTB"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wDm0ReiT"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B4327E041
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0585C280004
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758649090; cv=none; b=qZK6C+2pui+A4K7sdGtwhiWhp1fENGdhdX/QND7VCaWXrJGBqZyHGXY9NardyPWQf00eWbcnr2p9MN6zw803rph+WFpi4BWexiZ/69VDRgcotPltP/CatjjWxEtIfM+6ATKeKMSgK7QR9Lfjo1+TXmUme+WAIRGc94qOUK+ut4M=
+	t=1758649256; cv=none; b=pAqNZ3LDi/tfTIUmfs+Pttek0RMIf001sJqIPYeVAVg8Z9WB/1N8k8GTb9O8uHuMjuOv3+7qspWR0/Z7nhuF5k3BlyuTzYKbSWgcFdlS3BTfmxnav4/Vh970oxlUyGeiD+6NrZUB6p9S5boLzUV8xHT8FzX4Z6f13fbENZzLtY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758649090; c=relaxed/simple;
-	bh=nKAZfoAjOKM9CWFiJ6E1W5BaQQoUhnD1jwF7C/Ohzg8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KV8sLa4279fC+DpguXCXr/EAz/MorxBIQT9n6qQ5Y0LV/lcLoCrM0BOX899ybvLCa5QjvJXMTpTsn5zFyumdLlWj67wqLluZGPQcSNH8F53hi205jU54INPjpTsAVNn9+fxU+NWtPoEVeG00r+DHN6VeZu0U5dNhvY24j6HCPkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=AemZ1BTB; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-30cce50dfb4so4417269fac.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:38:09 -0700 (PDT)
+	s=arc-20240116; t=1758649256; c=relaxed/simple;
+	bh=gnYeGB2B1v903Xtz4VVWD8MoJQwc4kIonn9k6NGquuU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HVFMCFYCPqQvTWO6ArwvQNJUwO9+j+4o+23BY7uk96+1ENoJgNDc7kuc/GbnPJzKdzPO7GMjyj/J6kOKjviE4CaZ72lEUsbk6FHz4KexUjpByij7dYLCenFm7C7gxbLmDqwM2JmpyVilKAbZyFw1T3J97aSgeMJWz062vO3AyT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wDm0ReiT; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61cc281171cso9516128a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:40:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1758649088; x=1759253888; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZBIJqbmEZbrWURHaKZlCYT/zn1TgwW+8+aRFRZatnkY=;
-        b=AemZ1BTBlQTbK34gqUlSZbT4wMx7cVUIZWf2btapVA6G6w7wnM3iSZDa78oWRnYQZ2
-         YqNr+C8nLBIeHBD/48uLu7Bct2iR2CEVV+9SW/+GUZIJyHljgMIFGujyMh3gAWwvtI3D
-         nTbNGMvgmuk2/wgmRo4FbRpv86dZDenMJKa9tXhVFaTdlOYa6WUF5I1W9x02K2FVhVBc
-         pRUa0MaW/FkUKpIZ3h8wzsF7zhoa1Bn0503UK366Oveknbx1cWReDZegBlCG5r8oTXeS
-         WCdYf9ArBWuZ3rt4txP2WxYGH+1Me0WBzUe56FlWTYO+8h+aCRcTMdTpXsy/tCEZgv1V
-         QEXQ==
+        d=linaro.org; s=google; t=1758649252; x=1759254052; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QKpIP4JHqz6cG4UOF6o0Lt4gug+UcA+CBt0Oa3txFso=;
+        b=wDm0ReiT0JO33GRnQsUmiItMDDpOTtlKqwY9GjFzmuoUNUWXlbGD2CboD23oAm5VTD
+         geImEzahHyJH0HF9h/74NVN2TAJkWHBK64r1P5Z0mv/HHSyMQu0ZJKpVy13NKwGH+z3Z
+         5URL+Xdex3XiH+cO9VxhNfafppqkVmIvaYAUBXUUrTDpyRNPM1HxMjLbm8GpDMnzf0mA
+         6jM1475eDg24yW1NWFRXizXCKqScxB5AKA0x0VQH/oH3YEldsdkR7CI5GCyeLulThbEF
+         F5Qu5qUwLg5uW15wI6bG+gny1kioeFU6GvK4sUksb9p1V36V2EPucHaw25HSw26AP+6l
+         ytlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758649088; x=1759253888;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZBIJqbmEZbrWURHaKZlCYT/zn1TgwW+8+aRFRZatnkY=;
-        b=ZgnA7PRiUjMyUiOxuGuZTVzNCGZpbadfqc6e0XXK2SA65KOGLtR8hFuHkh8wqZ4M0D
-         T+UlDOr+CmNwzH11EjYrJiRIJUpZdVpDOZoEwk1pj9ddUzIhM1ltnlF8TQGwEQjAgjiH
-         32JkA4v9XNnR0c51Zt/NNz5mh5q4V2ano/76aZ9ffpfsYfvhUwAVV67KnDL6+N69Qv7M
-         Y0qZohRtGXUN728OrRLHQ0Xu4ACQ99cnOgyKpVxo3KYzBKPgGkTOVMiDZ1juf9AMRJqC
-         1PZhMxWl9Lkq1RzuJkuI4O37FRqYWw+sLCdbAXrQAyFPgqVkr13XfZr43LUhqSHMPfx0
-         F5XA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnz8gcjhbfzPKeX6jmFicaqa/fS3pAY15q5WyaV1jbopcs/W7cys2VtOT8Yz6PHWOEooATMGsapN07W/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyJCwizDb7rQnTz7+6kM2EKFFVF+6E+bx5BJ/sIyjV3kqn5Y6Y
-	xHg5uD+zD1Gnt5ZrK3a3CYKmjGdaTy/jXXz6EdZ5qLDumy1GOoHdkcpUjs9p58ZRTS8=
-X-Gm-Gg: ASbGncvq6bVVDInd9usLWHJys1dX/jHOiW4feySsfu6dxXRC1YpbH7VoowiA9nPmt+U
-	5CH7+K9EzwL9EJaYLoVDWTufMRu8Oz2v1E1AoBMWRo6HDXcfp1rnOqB01Soto6S7GvGtnNfTUor
-	aw8/RgECfgOyAcKvVTE9B06HoGYVQEYFyCmpu7SOgGNB0wfSTfChfwYZpCbgcq/eQwZ+NsRBFR0
-	i5+Y8prK3gn4DfJjRcAsX8Vhzs5yCiv/e6kIEd+2BXJMn+pKrrnSMJk8ZZSlOWb8oAciJWsslA/
-	95JAH04z/6mmNFpRN406ZGjJqsr43Xsf8vck85hQRCaWWKXzDcUCha7XrV7Y/bswBz7E3i57
-X-Google-Smtp-Source: AGHT+IEiUq4ZNiIQ/kvtshlpB8TY+qUCVv3sM7ttZqsjKZyYCVp5SpveErcNASTGPSdrjl/Eyj3Y1g==
-X-Received: by 2002:a05:6870:15ca:b0:32f:ec51:a716 with SMTP id 586e51a60fabf-34c83545b23mr2456188fac.29.1758649088337;
-        Tue, 23 Sep 2025 10:38:08 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-336e3af73f5sm9720934fac.6.2025.09.23.10.38.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 10:38:07 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v16xq-0000000AySS-4AaP;
-	Tue, 23 Sep 2025 14:38:07 -0300
-Date: Tue, 23 Sep 2025 14:38:06 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, maz@kernel.org, oliver.upton@linux.dev,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 15/28] iommu/arm-smmu-v3: Load the driver later in KVM
- mode
-Message-ID: <20250923173806.GF2547959@ziepe.ca>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-16-smostafa@google.com>
- <aMQmA9cLaeYWG5_C@willie-the-truck>
- <aNKwROPzDCWgJBGQ@google.com>
+        d=1e100.net; s=20230601; t=1758649252; x=1759254052;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QKpIP4JHqz6cG4UOF6o0Lt4gug+UcA+CBt0Oa3txFso=;
+        b=PYY5b46R2GPI6pvjdkPPi+F5R46RJtbphueZmHlotTpp/z9ZTMeGoD+Rm6JO+mhlVW
+         c6lnwnapSpIOpPLlrQpmc1EN5FHPpBrOp//c5WOwAYhvJUHaLVRUbX1J2vFndIlzXZfU
+         Smh5PMKGLb0ZpNurKYIfZPVthb6jfZR6RgZrZbu5chEFPDeyGvKjGKyhL9uleLHZy/1S
+         EmV1703143HrNd/AsxLpiCx8BE3wU8OHaTFMxcTbMHqUmPt4koKw/DpFkaQXrcyv8/ac
+         rRjxPCbiKBn6C5+Ushl4rjjPGCzvVJvxImrWugndAgdDnA58XYHcbkyXFdNa1F762tw0
+         1/eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+7E//dO+QSmVCR2bzOLodPbMOgE3aCfxe8f+2Lk7MMpQtEakB4HjEBKkmzKkF4FXq5MLLJ9zmDGom3ig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJYI7rUzduZqtfHg1AVnBEHL7wzLV6FHACyjr7ebzrZ5rhDFoy
+	IrSHcNuR+EMlh0wqVR/SieI1avbet7EISIzCHx7HC0bhkCLlVA8KBgcveks077nEGz0DwvIzhTN
+	PT17tSK7i366fT6QjNby0VfGpNqUmwtjYkCTSeP0/fw==
+X-Gm-Gg: ASbGncthp5Re3zv3uBpFEUdzmBiU8c6ye0v/O+xaENdQKfay1SpJiYxL/O6+mCcyFWv
+	EdbwzLlFvbWhfL5DAp5XYBo+C9GCI910GLcNYe0wVu/lXKLbsRf0hmewEttQmeBlK0ipgSLSbOf
+	pcg1XMPhgXM9oELcKz3wAqyeuMpBzQO5UXNORXsePrlS7u8iKqRBlihfvcNm21+yaoKffOuLZ09
+	CrJbPmn3zNAcJugduD1tNTN8G2Ddjtc1+D0
+X-Google-Smtp-Source: AGHT+IGKj6Y7Rbxbcuv/p78PYY4VhOn0VuHWkuzF4bBzMgRnn4BUqA5lXuES789K8QEVi7gDnX95FchYWyP/N+Yb7J4=
+X-Received: by 2002:a05:6402:42d4:b0:634:66c8:9e6d with SMTP id
+ 4fb4d7f45d1cf-63467a196c6mr3151558a12.35.1758649252279; Tue, 23 Sep 2025
+ 10:40:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aNKwROPzDCWgJBGQ@google.com>
+References: <20250919155821.95334-1-vincent.guittot@linaro.org>
+ <20250919155821.95334-2-vincent.guittot@linaro.org> <iom65w7amxqf7miopujxeulyiglhkyjszjc3nd4ivknj5npcz2@bvxej6ymkecd>
+In-Reply-To: <iom65w7amxqf7miopujxeulyiglhkyjszjc3nd4ivknj5npcz2@bvxej6ymkecd>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 23 Sep 2025 19:40:40 +0200
+X-Gm-Features: AS18NWBNIKbQJlsVTlHAuM-w_iiTyLoHRH4gz5lC-pFfTqvjXuoI-RD55es6jyQ
+Message-ID: <CAKfTPtD2MH9_xT+Fq4vvpGNMJPSkwh3CMaVCLRcNxrn_Ab7eLQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3 v2] dt-bindings: PCI: s32g: Add NXP PCIe controller
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: chester62515@gmail.com, mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, 
+	s32@nxp.com, bhelgaas@google.com, jingoohan1@gmail.com, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com, 
+	Ghennadi.Procopciuc@nxp.com, ciprianmarian.costea@nxp.com, 
+	bogdan.hamciuc@nxp.com, Frank.li@nxp.com, 
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	cassel@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 23, 2025 at 02:35:48PM +0000, Mostafa Saleh wrote:
-> If we really want to avoid the current approach, we can keep deferring probe,
-> until a check for a new flag set from “finalize_pkvm” which is called
-> unconditionally of KVM state.
+On Mon, 22 Sept 2025 at 08:21, Manivannan Sadhasivam <mani@kernel.org> wrot=
+e:
+>
+> On Fri, Sep 19, 2025 at 05:58:19PM +0200, Vincent Guittot wrote:
+> > Describe the PCIe controller available on the S32G platforms.
+> >
+>
+> You should mention that this binding is for the controller operating in '=
+Root
+> Complex' mode.
+>
+> > Co-developed-by: Ionut Vicovan <Ionut.Vicovan@nxp.com>
+> > Signed-off-by: Ionut Vicovan <Ionut.Vicovan@nxp.com>
+> > Co-developed-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
+> > Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
+> > Co-developed-by: Larisa Grigore <larisa.grigore@nxp.com>
+> > Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
+> > Co-developed-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+> > Signed-off-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+> > Co-developed-by: Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
+> > Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
+> > Co-developed-by: Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
+> > Signed-off-by: Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >  .../devicetree/bindings/pci/nxp,s32-pcie.yaml | 131 ++++++++++++++++++
+> >  1 file changed, 131 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pci/nxp,s32-pcie.=
+yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/pci/nxp,s32-pcie.yaml b/=
+Documentation/devicetree/bindings/pci/nxp,s32-pcie.yaml
+> > new file mode 100644
+> > index 000000000000..cabb8b86c042
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pci/nxp,s32-pcie.yaml
+> > @@ -0,0 +1,131 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/pci/nxp,s32-pcie.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: NXP S32G2xx/S32G3xx PCIe controller
+> > +
+> > +maintainers:
+> > +  - Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
+> > +  - Ionut Vicovan <ionut.vicovan@nxp.com>
+> > +
+> > +description:
+> > +  This PCIe controller is based on the Synopsys DesignWare PCIe IP.
+> > +  The S32G SoC family has two PCIe controllers, which can be configure=
+d as
+> > +  either Root Complex or Endpoint.
+> > +
+>
+> But this binding is going to cover only the 'Root Complex' mode, isn't it=
+?
 
-I still think the pkvm drivers should be bound to some special pkvm
-device_driver and the driver core should handle all this special
-dancing:
- - Wait for pkvm to decide if it will start or not
- - Claim a device for pkvm and make it visible in some generic way,eg
-   in sysfs
- - Fall back to using the normal driver once we conclude pkvm won't
-   run.
+I was planning to add the endpoint in the same file as the hardware
+description remains the same between RC and EP but only the use of the
+HW is different. But it looks like I have to separate binding for RC
+and endpoint
 
-It sounds like a pain to open code all this logic in every pkvm
-driver? How many do you have?
+>
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+> > +      - enum:
+> > +          - nxp,s32g2-pcie     # S32G2 SoCs RC mode
+> > +      - items:
+> > +          - const: nxp,s32g3-pcie
+> > +          - const: nxp,s32g2-pcie
+> > +
+> > +  reg:
+> > +    maxItems: 7
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - const: dbi
+> > +      - const: dbi2
+> > +      - const: atu
+> > +      - const: dma
+> > +      - const: ctrl
+> > +      - const: config
+> > +      - const: addr_space
+> > +
+> > +  interrupts:
+> > +    maxItems: 8
+> > +
+> > +  interrupt-names:
+> > +    items:
+> > +      - const: link-req-stat
+> > +      - const: dma
+> > +      - const: msi
+> > +      - const: phy-link-down
+> > +      - const: phy-link-up
+> > +      - const: misc
+> > +      - const: pcs
+> > +      - const: tlp-req-no-comp
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - reg-names
+> > +  - interrupts
+> > +  - interrupt-names
+> > +  - ranges
+> > +  - phys
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/pci/snps,dw-pcie-common.yaml#
+> > +  - $ref: /schemas/pci/pci-bus.yaml#
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +    #include <dt-bindings/phy/phy.h>
+> > +
+> > +    bus {
+> > +        #address-cells =3D <2>;
+> > +        #size-cells =3D <2>;
+> > +
+> > +        pcie@40400000 {
+> > +            compatible =3D "nxp,s32g3-pcie",
+> > +                         "nxp,s32g2-pcie";
+> > +            reg =3D <0x00 0x40400000 0x0 0x00001000>,   /* dbi registe=
+rs */
+> > +                  <0x00 0x40420000 0x0 0x00001000>,   /* dbi2 register=
+s */
+> > +                  <0x00 0x40460000 0x0 0x00001000>,   /* atu registers=
+ */
+> > +                  <0x00 0x40470000 0x0 0x00001000>,   /* dma registers=
+ */
+> > +                  <0x00 0x40481000 0x0 0x000000f8>,   /* ctrl register=
+s */
+> > +                  /*
+> > +                   * RC configuration space, 4KB each for cfg0 and cfg=
+1
+> > +                   * at the end of the outbound memory map
+> > +                   */
+> > +                  <0x5f 0xffffe000 0x0 0x00002000>,
+> > +                  <0x58 0x00000000 0x0 0x40000000>; /* 1GB EP addr spa=
+ce */
+> > +            reg-names =3D "dbi", "dbi2", "atu", "dma", "ctrl",
+> > +                        "config", "addr_space";
+> > +            dma-coherent;
+> > +            #address-cells =3D <3>;
+> > +            #size-cells =3D <2>;
+> > +            device_type =3D "pci";
+> > +            ranges =3D
+> > +                  /*
+> > +                   * downstream I/O, 64KB and aligned naturally just
+> > +                   * before the config space to minimize fragmentation
+> > +                   */
+> > +                  <0x81000000 0x0 0x00000000 0x5f 0xfffe0000 0x0 0x000=
+10000>,
+>
+> s/0x81000000/0x01000000
+>
+> since the 'relocatable' is irrelevant.
+>
+> > +                  /*
+> > +                   * non-prefetchable memory, with best case size and
+> > +                   * alignment
+> > +                   */
+> > +                  <0x82000000 0x0 0x00000000 0x58 0x00000000 0x7 0xfff=
+e0000>;
+>
+> s/0x82000000/0x02000000
+>
+> And the PCI address really starts from 0x00000000? I don't think so.
 
-Jason
+I'm going to check why they set this value
+
+
+
+>
+> - Mani
+>
+> --
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
 
