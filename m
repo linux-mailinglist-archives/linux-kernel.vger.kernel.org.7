@@ -1,110 +1,69 @@
-Return-Path: <linux-kernel+bounces-829607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495F3B97706
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:02:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBFD9B97868
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A06716BD6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:02:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67EC23AEE34
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8650D30DD03;
-	Tue, 23 Sep 2025 20:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F8D30BBB2;
+	Tue, 23 Sep 2025 20:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c4jOnM9Q"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="LxDvNElP"
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE1E30C61C
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 20:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A502773C1;
+	Tue, 23 Sep 2025 20:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758657658; cv=none; b=bf0Zx9GLn/RuASr+6fl3NTDjlJ/7PtRnL/BtR8uYw/IhhTWC46AUOJeQbq/gmj199T3eHp1fuY0Iq6Ojjy3AGMLDctggaJII2m9WO0IWLrdlk4bE3l2veTJQhGvE5zewd9/FCc4a92SJ5/hs5ZuSer3RbezUZGRM5KvoqoqMY8w=
+	t=1758660655; cv=none; b=On+RcnunckSapbRIRlpLDBTqZywSEcuSXFpcEfKZMF9p/JKsKk7PLUZCIAPYRQQOYD/jnFz5k1bil9coLouSRA2WICcJNUgBd+lUuZj7c5GRB0NYfJFUsg23UP1lzIgflA2ha09RntY29ix9G4bTQJcmLxmRwUkcqDRNeMsVJN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758657658; c=relaxed/simple;
-	bh=za6eoflza+eI0daPO52VrArrXQQh9oKqLFL2yU7G4qY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Zm6p8CfojwXez2r1shtwlqfnRt8NDsMa1WuBMrTZZFtRoaXqpAIT05LyBlNJJ/zDuiVcgs4WS2sqTr0q3K8Rgji1zg+nMEHb3/OtePkhj8s5sPcJpPCZTlsJI8xDbI9TLECq5zd2s+i9F7pMZO4dI40r7eu2av9nNk25x+mO9uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c4jOnM9Q; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b2a1a166265so49778766b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:00:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758657656; x=1759262456; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jvM5EG3LMIQuZITndtrZP0Eki684ON50PFEBay054lA=;
-        b=c4jOnM9QEkWDqPrR+CsDuHhhX2WaAYDyMzb0l2y9LULpcKUAItkDpwx5lt6sjg4kE+
-         UyPAFDmu4aR2C5snhubvV28QfEVemUgyCWRvisVCCCtw36vDRb/fgyIausDx0hNS7+xB
-         57jqpD25HqdsXSXljGRYdGUfnjEXAFbQ7tRukTAtUzlFgb7gjcHlLxIdbLmijBrHhplW
-         QXCoglWLdYwq97XzTljwFvTr1dlmJZse6/8/FGPS3aNtVUUL+cq8i55XS+mWTpYQcdLZ
-         suuPqkJnieST71cj0UPW5T8J/XmqrgQFIarUYWIDiIAHpbJN4c6bRBxXmyh+4IEipQrM
-         Z5Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758657656; x=1759262456;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jvM5EG3LMIQuZITndtrZP0Eki684ON50PFEBay054lA=;
-        b=lgCO2IgC8eXMHrz9hwy7fHuRhb6WZ74NPU9aAFtoD/CvDLmfy/MzWJhFY+iPF5mNQK
-         9lhmopMY9h1Ha5LyLSa7VujauqjlDW8ROTeNAEoSq1bUg3koqpabjJOvhMvPeoknpRL3
-         AC+YrX1iazuGLI07lXzl6TVTDd3CKUUw5n6GNqQYzZZbAJXFjX/6Sp0K8eyjSYiYHnj3
-         /P3Xk/2mbw0isg502xquTmRw9qX3lJUkHx1CmP/W95wRDjzZ56Q4rIadaKGXTUGhl31V
-         pr1Qj8QfbLWm0p8hIWTrxfmm3nKnYs9KcdW7aPbFTR7zk+KWWpnIUhHS9mSuIDLUZDba
-         C8Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCWP6PhenimrJrxYv0FHMv/J/ZeADJSztOFFb7yNVuDO7AnfWgvtANJ1HOlQ9MK5CB1eYK34KOt+P88rKIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbUPE0HAJRMuhEX/Pp+YJJRCmhVfgQ/OEAV5yXoRDuGTIytGzq
-	XzIgp+iBTPLZ8CaZ1Ry4HSeLeSQvSvVJL+Xgae9/7qSSg0G0hdpGocI1
-X-Gm-Gg: ASbGnctCvNBEU6r3DOiG9chCxewhLPe0LF/uQxfj4j9asgEpweKvjdmxmqm8+Ui4kO2
-	eR80jeoOM5hwiCv72hcH5T6D56GpeQw0LGltjiks1SDRtxP8WZJbDN61Uq7Vm4TeCAp2eFRaoBj
-	tAOdcmjNFr6cqfvRbtUcMn/z+cyCnYq2bMAFye8kFjKqXq6lP3+1dY4ViidORrTD/0/Sl+OzOQ1
-	Sst5qz3236VFl1dq6LJHfD8m7bWoMyhvmZzpR05hofPDYkFB7Ka7tlbMD6e3CDlvqKdgE8YA4qO
-	MgHvWZOr0pSwiiVoQ3ciI26LuoBi3ncL5QNthohxEGNXucEo9uAoVItPuJ1kCETraRuP9qOQiDG
-	Uyil2O3hfGGH6WZn1sFUlm3Z0
-X-Google-Smtp-Source: AGHT+IFnbqnzDpvcF1npAo3gJlRiN0aWJNOZlV40ujMaGftot7QGowUdecTibpSbqF5TWABjiIk+nA==
-X-Received: by 2002:a17:907:3f1b:b0:afe:88ac:ab9 with SMTP id a640c23a62f3a-b302c10a6acmr180708366b.9.1758657655543;
-        Tue, 23 Sep 2025 13:00:55 -0700 (PDT)
-Received: from bhk ([165.50.1.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b2ac72dbe92sm672074066b.111.2025.09.23.13.00.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 13:00:55 -0700 (PDT)
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	donald.hunter@gmail.com,
-	andrew+netdev@lunn.ch,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	hawk@kernel.org,
-	john.fastabend@gmail.com,
-	matttbe@kernel.org,
-	chuck.lever@oracle.com,
-	jdamato@fastly.com,
-	skhawaja@google.com,
-	dw@davidwei.uk,
-	mkarsten@uwaterloo.ca,
-	yoong.siang.song@intel.com,
-	david.hunter.linux@gmail.com,
-	skhan@linuxfoundation.org
-Cc: horms@kernel.org,
-	sdf@fomichev.me,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-Subject: [PATCH RFC 4/4] net: veth: Implement RX queue index XDP hint
-Date: Tue, 23 Sep 2025 22:00:15 +0100
-Message-ID: <20250923210026.3870-5-mehdi.benhadjkhelifa@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250923210026.3870-1-mehdi.benhadjkhelifa@gmail.com>
-References: <20250923210026.3870-1-mehdi.benhadjkhelifa@gmail.com>
+	s=arc-20240116; t=1758660655; c=relaxed/simple;
+	bh=k2jzIDDmspjwXyj4GUO5SC1gH9x7vbHoHrWV1a9+8jo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MgHpqt3SUFfh3nSrKyNPDsPoWMFEyXZsCTVxOlArQz8DjVjyMZXFKh9pnjBIrRgdAqmQsYSm3hI52SKszT0ePMw4nXTYEAAQcPFjnQ9YiEWu5us7Pqtg269jWgJCv5oD0JuOKhhRKL9LUuAAkfq6KnzUNGkCSV2w7sMuhq+wNWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=LxDvNElP; arc=none smtp.client-ip=195.154.113.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Content-Type:From:Reply-To:Subject:Content-ID:
+	Content-Description:In-Reply-To:References:X-Debbugs-Cc;
+	bh=S782zCaiS6n+iFj//HOlJ9oomrbwBysU57bfvWdg/Ng=; b=LxDvNElPgk5gLFeu6Kcq74YXve
+	7aeh0EZNYcnYz7ScFUCjqwjqHhzLdJjVBUUP4puXPvT69tg6GN11GGyGy0+JhPqAYEchlNdeK1Zre
+	iPCVWpQagZAh1neyLI4flPI1NTHOdMyuHIHbYHr/i5Nc2HSp54pMpmnql9DMv673xIkE8uDqDrAHB
+	y4jNuo/TTeCI5oSw2tllsod/24V7PCiRRxx8ZLdF9+aeVRhxghvrlf/7fjz5zUOjA4+OWNq2sK2xo
+	Uc8Jmf0lepEToiP7o3Wl8MqFaFmjXM4Qdda5MxGIZle6e/3Z29Bvi4A6P/aHZzedO61hIYN7354bM
+	uQF1bzyQ==;
+Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
+	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1v19yH-00CFUe-1x;
+	Tue, 23 Sep 2025 22:50:45 +0200
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Yixun Lan <dlan@gentoo.org>,
+	Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: Aurelien Jarno <aurelien@aurel32.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
+Subject: [PATCH v2 0/3] riscv: dts: spacemit: add 24c02 eeprom on BPI-F3
+Date: Tue, 23 Sep 2025 21:45:40 +0200
+Message-ID: <20250923205028.2355244-1-aurelien@aurel32.net>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -113,45 +72,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implement xmo_rx_queue_index callback in veth driver
-to export queue_index for use in eBPF programs.
+The BPI-F3 board has a 24c02 eeprom connected to the i2c bus #2. It
+holds board data. This patchset adds support for it.
 
-Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Version 2 incorporates changes suggested during review of v1.
+
+Changes between version 1 and version 2:
+ - Rename i2c2-0-cfg and i2c2-0-pins into i2c2-4-cfg and i2c2-4-pins to match
+   the naming convention encoding the function number in the second cell.
+ - Rename the 24c02 supply name label to buck3_1v8
+ - Add a onie,tlv-layout nvmem layout describing the content of the 24c02 eeprom
+
 ---
- drivers/net/veth.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-index a3046142cb8e..be76dd292819 100644
---- a/drivers/net/veth.c
-+++ b/drivers/net/veth.c
-@@ -1692,6 +1692,17 @@ static int veth_xdp_rx_vlan_tag(const struct xdp_md *ctx, __be16 *vlan_proto,
- 	return err;
- }
- 
-+static int veth_xdp_rx_queue_index(const struct xdp_md *ctx, u32 *queue_index)
-+{
-+	const struct veth_xdp_buff *_ctx = (void *)ctx;
-+
-+	if (!_ctx->xdp.rxq)
-+		return -ENODATA;
-+
-+	*queue_index = _ctx->xdp.rxq->queue_index;
-+	return 0;
-+}
-+
- static const struct net_device_ops veth_netdev_ops = {
- 	.ndo_init            = veth_dev_init,
- 	.ndo_open            = veth_open,
-@@ -1717,6 +1728,7 @@ static const struct xdp_metadata_ops veth_xdp_metadata_ops = {
- 	.xmo_rx_timestamp		= veth_xdp_rx_timestamp,
- 	.xmo_rx_hash			= veth_xdp_rx_hash,
- 	.xmo_rx_vlan_tag		= veth_xdp_rx_vlan_tag,
-+	.xmo_rx_queue_index		= veth_xdp_rx_queue_index,
- };
- 
- #define VETH_FEATURES (NETIF_F_SG | NETIF_F_FRAGLIST | NETIF_F_HW_CSUM | \
+Aurelien Jarno (3):
+  riscv: dts: spacemit: enable the i2c2 adapter on BPI-F3
+  riscv: dts: spacemit: add 24c02 eeprom on BPI-F3
+  riscv: dts: spacemit: add i2c aliases on BPI-F3
+
+ .../boot/dts/spacemit/k1-bananapi-f3.dts      | 33 ++++++++++++++++++-
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  |  7 ++++
+ arch/riscv/boot/dts/spacemit/k1.dtsi          | 13 ++++++++
+ 3 files changed, 52 insertions(+), 1 deletion(-)
+
 -- 
-2.51.0
+2.47.2
 
 
