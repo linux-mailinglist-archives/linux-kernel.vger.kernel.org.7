@@ -1,113 +1,137 @@
-Return-Path: <linux-kernel+bounces-828675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31AA1B9528D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:10:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DEB3B952A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 11:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAD722E59B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:10:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 778173B4F12
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 09:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2943B320A0E;
-	Tue, 23 Sep 2025 09:10:08 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0133203B5;
+	Tue, 23 Sep 2025 09:10:22 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4588731E89D
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532EB320391;
+	Tue, 23 Sep 2025 09:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758618607; cv=none; b=AcS4b2RtBlx087gAurm6TYN0BGxnKdIoayAYTMVzmlf/UUjKJ3kHCDcZL4jIHZwqQhEXLuRhq/O3jJ5Yjug+bNVJaAjikAXinJbguGzGfRYty0MKkBRDsfwjexqzIWdJ1xtvH85e2FKxAKFhZ5mlEXKJUr/XGK7RDZD9bmQXwwk=
+	t=1758618622; cv=none; b=PXHpCWPRN8xMew382+N0grznn5TnhTbelC9YAj8PjJ7uU0+NlwEc8hpj4aObWCkoZPVky8fPII3IUngBrX24g0yhCiZvwLD45dpCVWGhLMcDwoiM25CQR9JIt3sDX14svAwPNHWmS4owq4SekqU7UWwRLPin4cACl5GnyvzRfqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758618607; c=relaxed/simple;
-	bh=3uiVWDC+K1mTEDs7IYhQ7LD4JR2CO/i8/RxDhuTB2/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aLyNntsfj0A39C8tHSuGTfp7inlbQW0DxNEw7C72LUz2uJI1SvDC2/kTsQBUy9HC4YaCHnkpj4HhrpbM1YCimqjasoyVUWA7Ogz3dRxngHxsfxLNo5kYM46NzsDvWDpkRrIdCquAxzzZGEYlQUG3tStxKBibocgUBDyeXEcP4Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v0z29-0005jd-32; Tue, 23 Sep 2025 11:10:01 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v0z28-00049Y-2m;
-	Tue, 23 Sep 2025 11:10:00 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 9691F477BEE;
-	Tue, 23 Sep 2025 09:10:00 +0000 (UTC)
-Date: Tue, 23 Sep 2025 11:10:00 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Vincent Mailhol <mailhol@kernel.org>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>, linux-can@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] can: rework the CAN MTU logic (CAN XL preparation
- step 2/3)
-Message-ID: <20250923-saffron-caribou-from-hyperborea-e6994c-mkl@pengutronix.de>
-References: <20250923-can-fix-mtu-v3-0-581bde113f52@kernel.org>
+	s=arc-20240116; t=1758618622; c=relaxed/simple;
+	bh=Ie3KuNDVsGGcq2MePqHSIBuVXMHsD/6PiGILJ+mecn4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=HLQ5ZFDGgarrg9mAS4dsrQOMbezMMdeQsevmwIVKezNpymW2Zz5rIULe9nd7LFsv31t3SiFFLfnwHYLvgCMF/YQx3Og3nDz49UIIVYVe3Frn4ZaqtFGW65p4dZjplH+y4LxcSMGxslZrY51ODFFOCUYTTUvHP+Ekw51B5GFZGNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cWDhf4w1KzKHMS5;
+	Tue, 23 Sep 2025 17:10:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A15E21A14C4;
+	Tue, 23 Sep 2025 17:10:15 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgDn+GDzY9Jo2psqAg--.16669S3;
+	Tue, 23 Sep 2025 17:10:12 +0800 (CST)
+Subject: Re: [PATCH] md/md-linear: Enable atomic writes
+To: John Garry <john.g.garry@oracle.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ song@kernel.org
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ martin.petersen@oracle.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250903161052.3326176-1-john.g.garry@oracle.com>
+ <b6820280-cc1f-beae-2c1c-077d46bbf721@huaweicloud.com>
+ <557f39a4-a760-4b10-80e3-229f7a4892cb@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <84bbff83-b5db-6789-a668-61cc5cb7c761@huaweicloud.com>
+Date: Tue, 23 Sep 2025 17:10:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pcknaa4a7zbqxy6n"
-Content-Disposition: inline
-In-Reply-To: <20250923-can-fix-mtu-v3-0-581bde113f52@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <557f39a4-a760-4b10-80e3-229f7a4892cb@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDn+GDzY9Jo2psqAg--.16669S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw4DXr1fKw4DWw1xGF47CFg_yoW8ZFyrpr
+	Z7XFWIyFyDJFy8X3yjq347uFWFqrWDJw42qF15X3W8Kr4qgrnFgFWSqw4qgFnrAw4rAwnr
+	J3W0ka9FvF1DWr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUBVbkUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+Hi,
 
---pcknaa4a7zbqxy6n
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 0/4] can: rework the CAN MTU logic (CAN XL preparation
- step 2/3)
-MIME-Version: 1.0
+在 2025/09/23 16:21, John Garry 写道:
+> On 05/09/2025 10:02, Yu Kuai wrote:
+>> 在 2025/09/04 0:10, John Garry 写道:
+>>> All the infrastructure has already been plumbed to support this for
+>>> stacked devices, so just enable the request_queue limits features flag.
+>>>
+>>> A note about chunk sectors for linear arrays:
+>>> While it is possible to set a chunk sectors param for building a linear
+>>> array, this is for specifying the granularity at which data sectors from
+>>> the device are used. It is not the same as a stripe size, like for 
+>>> RAID0.
+>>>
+>>> As such, it is not appropriate to set chunk_sectors request queue 
+>>> limit to
+>>> the same value, as chunk_sectors request limit is a boundary for which
+>>> requests cannot straddle.
+>>>
+>>> However, request_queue limit max_hw_sectors is set to chunk sectors, 
+>>> which
+>>> almost has the same effect as setting chunk_sectors limit.
+>>>
+>>> Signed-off-by: John Garry <john.g.garry@oracle.com>
+>>>
+>>> diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
+>>> index 5d9b081153757..30ac29b990c9b 100644
+>>> --- a/drivers/md/md-linear.c
+>>> +++ b/drivers/md/md-linear.c
+>>> @@ -74,6 +74,7 @@ static int linear_set_limits(struct mddev *mddev)
+>>>       lim.max_hw_sectors = mddev->chunk_sectors;
+>>>       lim.max_write_zeroes_sectors = mddev->chunk_sectors;
+>>>       lim.io_min = mddev->chunk_sectors << 9;
+>>> +    lim.features |= BLK_FEAT_ATOMIC_WRITES;
+>>>       err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
+>>>       if (err)
+>>>           return err;
+>>>
+>>
+>> LGRM
+>> Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+>>
+> 
+> thanks
+> 
+> Could I have this picked up now? Maybe it was missed.
+> 
+Already picked last weekend, sorry that I forgot to reply.
 
-On 23.09.2025 15:37:07, Vincent Mailhol wrote:
-> The CAN MTU logic is currently broken. can_change_mtu() will update
-> both the MTU and the CAN_CTRLMODE_FD flag.
-
-Added to linux-can-next.
+https://git.kernel.org/pub/scm/linux/kernel/git/mdraid/linux.git/commit/?h=md-6.18&id=b481e72d24feac15017b579232370aa4b33d4129
 
 Thanks,
-Marc
+Kuai
+> .
+> 
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---pcknaa4a7zbqxy6n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjSY+UACgkQDHRl3/mQ
-kZzTNAf/Rt16Dt0GIebbaiwq8iVBNGbSmvGVjlXAUqTNvEHCZpVFWT43NMqWZsGq
-MfLFm9V5y1tb+oR8xnzexS0tnmGt4Sc8SRY9lFIvKuCbV+ZqGud9OpUYAUSvzIS2
-FyNnh+lXpXoNlCjLHFJ/lmS3FBYucx8QnF7VBW6TDyCd8EVHOh7FP0ZoBIpRwAXT
-ffLY+uPpequCFKDb89c48Gj/LoOIEOHfapPJPPaMHgV2TkQ7ipOF8GRNauf9GSDC
-rKfYoMXnr2tRf9YJORpruN/UN1P0ES2gqsTy/2W2XywxcuRCOtvALFdhjWQaDVWq
-j59A15G3y9pSLJDuVhvB0pNR01ofNQ==
-=PIAv
------END PGP SIGNATURE-----
-
---pcknaa4a7zbqxy6n--
 
