@@ -1,117 +1,108 @@
-Return-Path: <linux-kernel+bounces-829328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D803EB96CFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:24:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C418B96D26
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 18:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B963B19C671F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:25:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA33A3B5C74
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C664327A16;
-	Tue, 23 Sep 2025 16:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D01327A0E;
+	Tue, 23 Sep 2025 16:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y/jKNSRI"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f2EUQBel"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44172322DCA
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA5F327A00
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 16:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758644646; cv=none; b=R9aqV5DAJcy8EXrLCJzdghqae3hbXgLhY9pzh5goYFx1TUCAVfm7pInRR3M75TMHa0a4ZLdoqH0uZE73N3FxZiYLaVY3f0ls3w0A6a4o72gIGG1UUDAlSWRftSDTj3nZLYN3BksewM72dqfIuAXnLTHDVYNau9UtdUahOfy6A8M=
+	t=1758644767; cv=none; b=eaEsdf/B+ATR4i8nADHoRalevz/5zU9l69ohnuSD8CXczOdgm7iDJGVO/T+h8huBFrRwF1qRPud7r5EkDKJ+rrAlVZoxfjQTpqIbjP1izQadFi/ZgVyTt8+aOcEo+eHELgSR4j6SAPmKdG6UXk4n3BqAGHVAcgAJRAo7tORSDA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758644646; c=relaxed/simple;
-	bh=agu8t+GtnRdTt7ziIGD3+jvwpGAKVQuk0ov+fLZVyEU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=m1ov1g4PxXwTk7BnFhDDfzffETnBdT/zJtUxr38V0tPNOxuuGE15flSENt98lSj29NyEt3+gtRZsLXG0XsLYuxmATJakFzajmEDCBsy3JQq2bMYZfRJ7VwESSbr58DfflySPgutNOTw9x7ucZ4+UYQGYxpAK1a5tmY4uZYkZIYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y/jKNSRI; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24458274406so119096125ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 09:24:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758644643; x=1759249443; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ct6l4fU3rAG1+iOUtrDMwT6jHIL6tdfk6HjiAM8alg=;
-        b=y/jKNSRIeIGfW6GzKfcGD3UY6i7W0zmQn/LNgl7dBD58LKDY17G4DPkzn4VtGhESI+
-         oBT9litmmXfiOYgexjJ8F2ZKkAcyLbbbyREyLhlGYbHh9pawWM89SWFGFcBf+V7FoQD9
-         aK7VsfD/NsVeV0npfdnh+6j7q7O+BoDqLj2sYmSY02B/pi+ZOGkVQKZG+YE9PcBs9jJm
-         RHQTcC96MfwvyV4SEe3U4hDkVstO8T+JZYkfJsz9qiCUn+LP75JL7p1PGSRiqUUN/QT6
-         /VVRGTG3js1ptpP+j+v0/3xYD3T3MAJQ+Yxtn8oFwhAQctdX8ZXlXZ4i9RJb9no1CFBt
-         aqAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758644643; x=1759249443;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ct6l4fU3rAG1+iOUtrDMwT6jHIL6tdfk6HjiAM8alg=;
-        b=u+bNer0V9rOnTJcJmJ1qGAzHKZivl3FPH2Nu3kWsg5MmEJfgFhlbkkq0Fju9KHMM+L
-         fJWg/7G5bEZ3vdIglLw2q7BmC/ikx0pDbJVnzb3P536H/BpWppB+SzfH7m8HUR8uQAdN
-         VRti7M4ZQmZ8QxzTPwzHd7Wcxzt7r24Jgq8REFTmO3pAUjvY5DJklKt0ZDpFCHIFGOcm
-         mcY216ofSUFRm0wtFO00QZWPv1zEUJ0rKMDU6WJmCkrXiTjcKIj6oujoZuyz3BFisOLb
-         hQoUfYtPCzucV8aBUXAjRSIK0QnH/fUL8GsZHLwk0OUWeiVj1OSYv9CZDT3HmChSUZ0g
-         pFSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWcEklooVCSzoU49xEgdIuUTjuVXbMA6KpFE4BQ4mqpm2wngvgVt2NCNpeD2u138g1HPLlhfsMtFb+T774=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKjyEoDVK0AGHdZ56x4PUffdshvH1+kj7z+PGgGtnmdFY+ezEo
-	LsbIsllMN58Xjz/kXVR35XA5EIoY/+YaCrK/eDhAumkWr5FADZSQ6JuEgcreYS17KD9fHQJWtw9
-	NlE4KPA==
-X-Google-Smtp-Source: AGHT+IEHue5KcLk/QqnBm3y2Ig9Ta51qNFW7n2QuwkMnly9TqOobukS1vav1nBv/4Yz6svZXoVmoDEzQJWA=
-X-Received: from plbkf5.prod.google.com ([2002:a17:903:5c5:b0:269:b2a5:8823])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:c94d:b0:268:1623:f8ce
- with SMTP id d9443c01a7336-27cc1572011mr36976535ad.10.1758644643566; Tue, 23
- Sep 2025 09:24:03 -0700 (PDT)
-Date: Tue, 23 Sep 2025 09:24:02 -0700
-In-Reply-To: <aNIH/ozYmopOuCui@intel.com>
+	s=arc-20240116; t=1758644767; c=relaxed/simple;
+	bh=4Mc9Q6PQylD2t0RKa4Q4f8xnlX/14BtbSBzktsM+ZOg=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=mI36pXXufWnQI5PlWgyhgPDfdIaIVn74TNP+oAGaf+spC24YyL7OeIb0x/aHrKiQ2hGjexyvZeXiPw+Yxnmz4HUuO2/5pXsI5wUJDgjG5ruMbN5BbGWNFBnAu6nH3K9mtHS/8FXS7wv6NeQFv4QIN/t6dZmYrDypya0pNdD8O6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f2EUQBel; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758644763;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VzZvjXc/oWUBSY20iVnbRYYeB0xoWq970oaHaOnshgA=;
+	b=f2EUQBelBImHtm2CKckO+x/vEmiuAQ/mH3+wnIKnuRygTMjhZ4mULyQNjp+vuknhwyhzgn
+	1SqwxEwVbAVXFeuHGBC7S4IU2XHt7sRVU3kEKbYCT0FKwlgctqouE8Qbw4dDXZCloO6GGG
+	RlBfH1JDWhNOxvBxMG0FEr0c0TpaknU=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-443-ZbBLqFZFMzuS3pTKtgLbqw-1; Tue,
+ 23 Sep 2025 12:25:59 -0400
+X-MC-Unique: ZbBLqFZFMzuS3pTKtgLbqw-1
+X-Mimecast-MFC-AGG-ID: ZbBLqFZFMzuS3pTKtgLbqw_1758644758
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8150019560B2;
+	Tue, 23 Sep 2025 16:25:57 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.155])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B26C41800451;
+	Tue, 23 Sep 2025 16:25:53 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250923153228.GA1570@sol>
+References: <20250923153228.GA1570@sol> <20250921192757.GB22468@sol> <3936580.1758299519@warthog.procyon.org.uk> <506171.1758637355@warthog.procyon.org.uk>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: dhowells@redhat.com, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+    Ard Biesheuvel <ardb@kernel.org>,
+    Harald Freudenberger <freude@linux.ibm.com>,
+    Holger Dengler <dengler@linux.ibm.com>,
+    Herbert Xu <herbert@gondor.apana.org.au>,
+    Stephan Mueller <smueller@chronox.de>, Simo Sorce <simo@redhat.com>,
+    linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org,
+    keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384, SHA-512, SHAKE128, SHAKE256
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250919223258.1604852-1-seanjc@google.com> <20250919223258.1604852-30-seanjc@google.com>
- <aNIH/ozYmopOuCui@intel.com>
-Message-ID: <aNLJosN_1gZ7z4VF@google.com>
-Subject: Re: [PATCH v16 29/51] KVM: VMX: Configure nested capabilities after
- CPU capabilities
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-ID: <529580.1758644752.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 23 Sep 2025 17:25:52 +0100
+Message-ID: <529581.1758644752@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue, Sep 23, 2025, Chao Gao wrote:
-> On Fri, Sep 19, 2025 at 03:32:36PM -0700, Sean Christopherson wrote:
-> >Swap the order between configuring nested VMX capabilities and base CPU
-> >capabilities, so that nested VMX support can be conditioned on core KVM
-> >support, e.g. to allow conditioning support for LOAD_CET_STATE on the
-> >presence of IBT or SHSTK.  Because the sanity checks on nested VMX config
-> >performed by vmx_check_processor_compat() run _after_ vmx_hardware_setup(),
-> >any use of kvm_cpu_cap_has() when configuring nested VMX support will lead
-> >to failures in vmx_check_processor_compat().
-> >
-> >While swapping the order of two (or more) configuration flows can lead to
-> >a game of whack-a-mole, in this case nested support inarguably should be
-> >done after base support.  KVM should never condition base support on nested
-> >support, because nested support is fully optional, while obviously it's
-> >desirable to condition nested support on base support.  And there's zero
-> >evidence the current ordering was intentional, e.g. commit 66a6950f9995
-> >("KVM: x86: Introduce kvm_cpu_caps to replace runtime CPUID masking")
-> >likely placed the call to kvm_set_cpu_caps() after nested setup because it
-> >looked pretty.
-> >
-> >Signed-off-by: Sean Christopherson <seanjc@google.com>
-> 
-> Reviewed-by: Chao Gao <chao.gao@intel.com>
-> 
-> I had a feeling I'd seen this patch before :). After some searching in lore, I
-> tracked it down:
-> https://lore.kernel.org/kvm/20241001050110.3643764-22-xin@zytor.com/
+Eric Biggers <ebiggers@kernel.org> wrote:
 
-Gah, sorry Xin :-/
+> > I assume that pertains to the comment about inlining in some way.  Thi=
+s is as
+> > is in sha3_generic.c.  I can move it into the round function if you li=
+ke, but
+> > can you tell me what the effect will be?
+> =
+
+> The effect will be that the code will align more closely with how the
+> algorithm is described in the SHA-3 spec and other publications.
+
+I meant on the code produced and the stack consumed.  It may align with ot=
+her
+code, but if it runs off of the end of the stack then alignment is irrelev=
+ant.
+
+David
+
 
