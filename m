@@ -1,105 +1,100 @@
-Return-Path: <linux-kernel+bounces-828585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 177ABB94F0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:12:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3BD2B94F14
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 10:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBB0E3BB52F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:12:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1E6F16D0DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 08:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2023195EE;
-	Tue, 23 Sep 2025 08:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399083191A6;
+	Tue, 23 Sep 2025 08:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9sRTqk7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=anirudhrb.com header.i=anirudh@anirudhrb.com header.b="ZK+rYXV9"
+Received: from sender4-of-o54.zoho.com (sender4-of-o54.zoho.com [136.143.188.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FEE831281E;
-	Tue, 23 Sep 2025 08:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758615126; cv=none; b=Rvn1TnC0guWqZVoo9zyu1mEK5lkqzbEjx5FaFAVbsrlzTZOyRGNwTbhQAde7mMWLXFZ7PQE0dzCdF7Sxz3FA+muLuQg0ehRptqKZlyEy8PZ2ZPRouyj5oZOh6m73ITzMQgkg3rrKg5XmC/Y0UgFj5+1q5GSXVIfPx9AvZJUOy94=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758615126; c=relaxed/simple;
-	bh=566otoRWAnEBEEivKzD8NdegKSs9W4HSXaOAAZWA9CA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=m88LicDxAGYsPMaB7824J2aCqsJwvU9f7mgWyohA3Yu8MUKN5a1POTJuHkTNnrtfExZ8djkcsG1gm8zWCteAmjdwmai+0CVJqKea1I3oZ/k1os55sELQXy1dHeaQ8/ZkIVT8yOeQZj7pYhaHM720+k2J+H1Gf44hxbcWoByn0No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K9sRTqk7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0EAAC4CEF5;
-	Tue, 23 Sep 2025 08:12:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758615126;
-	bh=566otoRWAnEBEEivKzD8NdegKSs9W4HSXaOAAZWA9CA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=K9sRTqk7Bq11Phsy37SomLcDtRpxfIu0N5D0SszWNFZ/p9XLS0gT255Ewy1fPHKTb
-	 +mD5GuiSF66F7LsK4daHhUj+z6L9XfnyXD31c0rh8dd8DYcEDanptJ12A/BFK5t+/j
-	 g9LyAbthe1huyexHbA7GgmXRuLA1W597YufMVogg662zj6GAnGLGN5c230C+x8Q/iS
-	 jcGXu73IMfitmv/rWj0QXi6eE4p6OSanCa1rVtDWJ6y4WkD6+1Y+gXt/AxsQbJWQlz
-	 ku1sMqTMqbPYxYvOPaWiEEF0pghEfU4vjO+b2hOnM2dgfticanMue5E4ufgB0Q74jK
-	 J6NCoVp2ldmyA==
-From: Mark Brown <broonie@kernel.org>
-To: "Bastien Curutchet (Schneider Electric)" <bastien.curutchet@bootlin.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
- Pascal Eberhard <pascal.eberhard@se.com>, linux-spi@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250912-omap-spi-fix-v1-1-f925b0d27ede@bootlin.com>
-References: <20250912-omap-spi-fix-v1-1-f925b0d27ede@bootlin.com>
-Subject: Re: [PATCH] spi: omap2-mcspi: drive SPI_CLK on transfer_setup()
-Message-Id: <175861512446.967375.4560580577067542022.b4-ty@kernel.org>
-Date: Tue, 23 Sep 2025 10:12:04 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5EB26D4DA;
+	Tue, 23 Sep 2025 08:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758615221; cv=pass; b=P7vZsjiabTndCdD8U9g1Y7m3yAli0RmaENjJtCC1g1nm24Ilc4lRhtiFSeU6hQYGNmr77TFnyJyw9OA75pZmCYtbYOmSiiPC5BhPnqnkH4seAQ4rnWnhamBHLzh88KfmMRHpVipZuQN/drZZrxNEFC4b10gVltE0W1+r4j7Gims=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758615221; c=relaxed/simple;
+	bh=v1z8I7LHTd1S54Kk6OtZb6YZesD83PEak2QvUknS/5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HrnGEoCYhhtRvikn9jVu1yQSvV//u7GcOKhzDZRMs5qnerS/raKFtoRw2vkKEuW8CM7W+ICEhWzUdMNN90nuR6h1dmKSHNT2gmBhfcqPPqrV9eztZVWnbUeb077U76VI5Yx0nClsE0qbJOiqDstQ/TwNU7Ub5bp8I/6x+2+VY5Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=anirudhrb.com; spf=pass smtp.mailfrom=anirudhrb.com; dkim=pass (1024-bit key) header.d=anirudhrb.com header.i=anirudh@anirudhrb.com header.b=ZK+rYXV9; arc=pass smtp.client-ip=136.143.188.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=anirudhrb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anirudhrb.com
+ARC-Seal: i=1; a=rsa-sha256; t=1758615209; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=EL3aqBndY/x6L3pCRV1JTt+N+nm6SAoT8mHdK5bYNmGcX0fbu8FeqEpwGBx57WYN0Plczd+jN/Ep5WI6oYuXWWQteVtsoSH2aJO3hogLCdQVTtUdneLx3WoUEMFF1/wvSB8d0CVaAMcuIUV0FHLRDnb8LWf9gCjbGpTvdIVHR8M=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758615209; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=C9DTAoEOjasD6g9mOY3kW7X/PBdvh2Nm82DUSoq0Gvw=; 
+	b=HkA3R6FfoeeLgtL4dj/iChjaiVNEYGn+xSsAyWoJVQPwL4Yza5h30msSnKeLxe0kD0/is+b+GKiDzPbvksoTT283HJ3FajjYLK3/73BGnNaI+Rk5/29cZz8/XT5fij25IKxB0JWpNirvGi6Z/XdrovxUz0incU9/HtdIl/NJbGc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=anirudhrb.com;
+	spf=pass  smtp.mailfrom=anirudh@anirudhrb.com;
+	dmarc=pass header.from=<anirudh@anirudhrb.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758615209;
+	s=zoho; d=anirudhrb.com; i=anirudh@anirudhrb.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=C9DTAoEOjasD6g9mOY3kW7X/PBdvh2Nm82DUSoq0Gvw=;
+	b=ZK+rYXV9a+WgPL/BonwKZ5F1y3tS3SS7JF7wNrY1Y2YvkVa7k1V61JKVJM6Viv1y
+	6/TUjc1ElK3ELtcdZ4mWoaOXRb5nVGqmuQA6zo0pW2/Pz9iftW7xlFujFVnHB704f/O
+	fk+zK9K5Xk+AOQs8dfLgQiv1u+GjQByhhDo241rg=
+Received: by mx.zohomail.com with SMTPS id 1758615207097808.8085793888619;
+	Tue, 23 Sep 2025 01:13:27 -0700 (PDT)
+Date: Tue, 23 Sep 2025 08:13:21 +0000
+From: Anirudh Rayabharam <anirudh@anirudhrb.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com,
+	tiala@microsoft.com, paekkaladevi@linux.microsoft.com,
+	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, Jinank Jain <jinankjain@linux.microsoft.com>
+Subject: Re: [PATCH v3 4/5] mshv: Allocate vp state page for
+ HVCALL_MAP_VP_STATE_PAGE on L1VH
+Message-ID: <aNJWoV0H-7U85GMX@anirudh-surface.localdomain>
+References: <1758066262-15477-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1758066262-15477-5-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-a9b2a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1758066262-15477-5-git-send-email-nunodasneves@linux.microsoft.com>
+X-ZohoMailClient: External
 
-On Fri, 12 Sep 2025 09:08:58 +0200, Bastien Curutchet (Schneider Electric) wrote:
-> If the cached contents of the CHCONF register doesn't have the FORCE bit
-> set, the setup() function failed to set the relevant idle state of the
-> SPI_CLK pin. In such case, the SPI_CLK's idle state is reached later with
-> set_cs(), but it's too late for the first SPI transfer which fails since
-> the CS is asserted before the clock reaching its idle state.
+On Tue, Sep 16, 2025 at 04:44:21PM -0700, Nuno Das Neves wrote:
+> From: Jinank Jain <jinankjain@linux.microsoft.com>
 > 
-> Add a first write in setup() that always sets the FORCE bit.
-> Keep the current write afterwards to ensure the FORCE bit won't stay in
-> the cached contents of the CHCONF register unless it's intended.
+> Introduce mshv_use_overlay_gpfn() to check if a page needs to be
+> allocated and passed to the hypervisor to map VP state pages. This is
+> only needed on L1VH, and only on some (newer) versions of the
+> hypervisor, hence the need to check vmm_capabilities.
 > 
-> [...]
+> Introduce functions hv_map/unmap_vp_state_page() to handle the
+> allocation and freeing.
+> 
+> Signed-off-by: Jinank Jain <jinankjain@linux.microsoft.com>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> Reviewed-by: Praveen K Paladugu <prapal@linux.microsoft.com>
+> Reviewed-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+> ---
+>  drivers/hv/mshv_root.h         | 11 ++---
+>  drivers/hv/mshv_root_hv_call.c | 61 ++++++++++++++++++++++++---
+>  drivers/hv/mshv_root_main.c    | 76 +++++++++++++++++-----------------
+>  3 files changed, 98 insertions(+), 50 deletions(-)
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: omap2-mcspi: drive SPI_CLK on transfer_setup()
-      commit: 398a8a4e51dbd03e4103ea596ea4ea037fe67175
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Reviewed-by: Anirudh Rayabharam <anirudh@anirudhrb.com>
 
 
