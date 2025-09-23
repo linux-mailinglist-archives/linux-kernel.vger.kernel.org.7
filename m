@@ -1,165 +1,88 @@
-Return-Path: <linux-kernel+bounces-829618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4757CB97792
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:18:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFA21B97795
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 22:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 021DE4A05D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:18:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97E0F2E818B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 20:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ED1BE49;
-	Tue, 23 Sep 2025 20:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A691F27F011;
+	Tue, 23 Sep 2025 20:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lRTmUeQy"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PCtszWtQ"
+Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BB73207
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 20:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B23BE49
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 20:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758658696; cv=none; b=uxdwf7VgKJ4ydqJpSCNK7W8p5iHXdD9OmpD+WJQ8JJLPwa4TZforKP03sFzYRFTYH8+Gld1+KwkHJq54wF6Tpwl70p0Vmyz2IF5gJkcXbGeG8HwPnDXS+kGxCTULmUfAhDPBf7eYW5SUnbBeiTlvDycGaqL13RoZMjp29OktgI4=
+	t=1758658710; cv=none; b=G/Wsi+RCjJx7734TDSNKKYZDnJ4Xqejed6hkTEHmQSgQtOD6fQJz875xmxLEtaX14Iv2jwlzUNdf7D8sSwCU1FkaH/9yOt6q0SFz+LAs/V22+faSXlKv98MjgH1mWwlVFMJVFv5hb+JNIMXIBSXZajIT81wbwQ7E0TIWjmNF+PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758658696; c=relaxed/simple;
-	bh=PdloU9lUcNigpqawRG614VYXEABIgO+DNrSDB0byo0w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZgqRkpVSC4bRROzT3s/ElDl3UD9uCJDtKwHKbbr2Eq3xTeGEE/BsrbeGXqx6jEqq1ff2giN0o/id/HeqLgS8pkMbLw7Hfa3nJxn3JymVW5ICbecrBsraxMzyYGoKcmYaEf3PDd17iZhpGfay9JDYBQ40KiChRVk9EZdkfPsxQAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lRTmUeQy; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7827025e548so1451036a34.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:18:13 -0700 (PDT)
+	s=arc-20240116; t=1758658710; c=relaxed/simple;
+	bh=OzA0m3dkIkJmA+BOT2+7JJ4lfxn50ByBk5+5Fb9h9j0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=ZLN9GD48U2IUAaUVOETCINo0uCg6hTxT2R62WB8proqPDKeC7j9zvlYzRsU50CTtH/5+5XItnPE4ClESii18EnzmGhkXOM8IF3MLyeTnRsS+SfJLdNvHYcxNCECdO2wGL+ZcppokXFGCWqyfyABCmDGjdmVwjy6BuWfeELxrWIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PCtszWtQ; arc=none smtp.client-ip=209.85.208.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-61feb87fe26so7791601a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 13:18:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758658693; x=1759263493; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aDPZEX1Se6QeCt3KvdyPFqtPVMI5PCpL90eCVP8oByc=;
-        b=lRTmUeQyOOsDCS3VUdXlDYgZ9rXyySEvuq6gD+9luT4K1xSBKzbhOLgj0JRwgFrU92
-         jXDJI17LULLBk3yTHsX82HX0RN5wCP8Lh2YFCdkLTYRQ4AzUreW8iuSIgwET8+Nkb0mY
-         bVUldWtf2LbZekvs+UlIZIFaqzJcPtewNhTmgqxSttnfJUrCDATgsqFJ9tJCFymNja31
-         zU4vtvyRQjXh+KowWbSbHOompySNQeCjV45cXLidPe7mc0De3RSwNbgFueq02kCzPYRv
-         d4ovEjuXIItaTGFNP3lg8EcjQaRcfalbZHfBA7z+tL2Cvt9+sBjibIghW25FN65GgN7a
-         SHdg==
+        d=gmail.com; s=20230601; t=1758658706; x=1759263506; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OzA0m3dkIkJmA+BOT2+7JJ4lfxn50ByBk5+5Fb9h9j0=;
+        b=PCtszWtQIpR0PNUnJddttAaisb0KGgz7HNbVcbysVLewFSgzNfJ5cIt4oTsgiS0oK/
+         k95gIyqjS28G3fpqMlT4Gm6prWq4yRmx1txQhmmO7tOnJRwlFtXixOM1bjv1e1zmChyq
+         p7LxTKpb7DFYmnoB5PxCGxYaDV8EUK8Stfnbl2sWx/hRid9Rxg81lg7RMSgoMRd6YeOE
+         9W+PvYXDap1uqNrWQODQcgxQ+jCsVLjEKRudo1oZbCwNjZZo4q0P79420kUbJOeCSz8J
+         AKEFHWLnHU9nmjyAz0hDa/Fi3TA4KaGBjwRf8sFxDi/vhzGolbaiHPzBoJ8l1vVqRgwR
+         qzNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758658693; x=1759263493;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aDPZEX1Se6QeCt3KvdyPFqtPVMI5PCpL90eCVP8oByc=;
-        b=XVREkJ2dTRHGfGq5m58LBk93aVjszxP4L7SRboCXOv4yYM6KM2Dd/aA4t9spd4ZiNN
-         wqn2UOa2lUB2/ZexkNt908DTlg35AnaxRfBFkuvjQu8ik5ymHvAdE85luPRIiMOyUizG
-         TjSwPLkLP9UEYGIeJ5bEptRHW7O87gG0COym4PWVGhBu7rdLnkxjQzyRZijgFyoswFy4
-         m5MJo8ahSGmktD6DbdWKZCEnQ7PVKK3xDoIFWWA3IDRsOUNhU3O0iAtUHu5RT8cSUYEp
-         BcUPbw9OwsRdiMSBCoOaW1AKwFUMGIv9m8VlW4WoBFn+T1aOTfOjSb0hK0C2xYyuwN8F
-         CRJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNvmjpXJtW8TKy4yTAFjTgRWFCBLsPLgDmfpD8HCDGyaq20GYxo7iYWQVEL6SDVmbmtaqkzbJZzVw9PFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvRecvv3EOgQ+RsgOjxmBcrcyy2SI7MmC3UzkNQIaK6qvmzzxo
-	7mmWVks31p/J9kdxF7UHdQFa5KV5c2LSluU8vTOAhsYE8934Xr9i2qPVUPpCMYiFMBk=
-X-Gm-Gg: ASbGncv9RZJjuK+JJd0llSi/GSuq9WKQwATeGoGaOjpYwA0wExOnhJTQtuMta6hOOVr
-	NNgRX5J1nPHmmyv6Ct5ajuYxUzg6wrG94QJb/eeFC7N+E9qdnKL+P9ukHAXawSzNbKFokvmbN1R
-	IP/cwDL8+rQGN/6m2fI3VfEJTDTKSGjtXIquFklCSGJJoIVvDISKrt27YuCKTmaWNLm2wU7nCZ9
-	AlCFr9gglkbVuUFkJK70WlHx8e4h30pclkpqw+6/r+GELdUl2NmYxc7JWDEHnM9iarawVmBlrxD
-	btQX31uY8Ii7Cofmmx1TcOBfADS8wlKxUtYDdpdnR2/afGONqREo77Ufn6Z/0HPdhj6C80vF+K/
-	tzLy7hSpFabgifEoZFV7ytAavEc25
-X-Google-Smtp-Source: AGHT+IGYuFMOBtN+MRlBqbaM3vIufu2aQP+VIVxkfJ3IU7O/Q6FGwWPAvlE8f/F4JRy9gSs1s6xtUw==
-X-Received: by 2002:a05:6830:6ac5:b0:748:8b42:779e with SMTP id 46e09a7af769-791590a4e7fmr2703856a34.27.1758658692847;
-        Tue, 23 Sep 2025 13:18:12 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:505f:96cd:1359:fff4])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-787303d25bfsm2199731a34.15.2025.09.23.13.18.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 13:18:12 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Tue, 23 Sep 2025 15:18:02 -0500
-Subject: [PATCH] iio: adc: ad7124: fix temperature channel
+        d=1e100.net; s=20230601; t=1758658706; x=1759263506;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OzA0m3dkIkJmA+BOT2+7JJ4lfxn50ByBk5+5Fb9h9j0=;
+        b=B6zoAjUqUQ4fIyWWJmeK6URoGc4vDgrNr3uqtXLKLDqf+1qP9upHw3vMGNnmVHUzX2
+         CrLRyMna6IobD5bfUee1ealtn6O4zJNNZpK0TsiIZi69+ymjxv5seESvPp3yhYyyvhmO
+         noZ6ITDQRZIXG14VQ61CBX9icp40uNOkmN9irhjkRgVdm1HyQJ+WmcIPdYbUTqf2y9Xu
+         Ebg/iajQvLvUyKsgP9zRMfWYmh0SpSRhB4kHphmHrDnpz4j0zvOFU1kazf5/1OOc+/oE
+         rOgir0+hiImzufQ1o0ZhFbUprvnriEUdMgNBjHnyVKGpPP0cRBWtMxaaskFb8idzRS/a
+         ZWFQ==
+X-Gm-Message-State: AOJu0YztRbMZuIQpoCqh39zsUXGvkt4CRtwXCi5eAkk0PiQRYWehqMBe
+	fiMfoIucQxT3b51NH91yJhKfDLvIxxboWBRuFYhxdFpB2ZUhOuXIojSWRmNIJPUmw8qS4DuzaSI
+	htU3cCtJPA+yUm7xc7LwL5KuxkSvxMDiENdz8ZzJCuw==
+X-Gm-Gg: ASbGncvzS8lW2Yf0/mtwrf9htF5HTzoDSFj03LpS/0Lcz5k/TbCzFYAoH4aMWbiRjCx
+	jzVNlcs1xhz+pn4Eba5iAYve1Bbc0l9STRM8ur4e3nBDC4ljLL6VvP+YL/MJJO/jRXbM7oDYsZm
+	V2vCKM0vHGHCPCPRwUSj0JyEh2dBsQcYyLHkkJKl2p1yv3PbA4tuty9sTPM9xTHrwdKHbTo/iDB
+	QTKfeA6gZmqDBn5D8cdoUp+MHxqKs7cWRWYR6WgqYNfALDj/dRy
+X-Google-Smtp-Source: AGHT+IFCdJM1d+HYE4OeorJgb9cMDQXKrIKH++h+M5gfUVtmHBO8NR3rAjmKYTk/zUD9YFSLiX92hmOByy/3aXZ3JzM=
+X-Received: by 2002:a05:6402:438d:b0:631:d76b:4c7 with SMTP id
+ 4fb4d7f45d1cf-63467678ca7mr3278948a12.4.1758658706493; Tue, 23 Sep 2025
+ 13:18:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250923-iio-adc-ad7124-fix-temperature-channel-v1-1-e421c98c0d72@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAHkA02gC/x2NywqDUAxEf0WyNhBjrY9fKV1cNNpAe5VcWwTx3
- 01dzOLAnJkdkphKgi7bweSnSefoUOQZ9K8QJ0EdnIGJK2q5RNUZw9B76oJvOOqGq3wWsbB+TfA
- vRXlj1RKNdUncNHfwscXEq9fR43kcJ8u74oR4AAAA
-X-Change-ID: 20250923-iio-adc-ad7124-fix-temperature-channel-5900f7302886
-To: Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2032; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=PdloU9lUcNigpqawRG614VYXEABIgO+DNrSDB0byo0w=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBo0wB8eCDSh+bOkroC6WLZKngB6ZWixGjr4TgtX
- YZ11zWDRkeJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaNMAfAAKCRDCzCAB/wGP
- wB5PCACMNUp9YoiBK0muwuQDUUbDJGbEOhUdY8z6+dY3vIqNwzK/UOXbumhdQTs41fzje2I/DGi
- rAoE/Vt+m28mAUSVpbX2DQu3HDjwMJGFNrWsImQBqS9SQxtlWlvtVxHY4Scn/ZUQut09tIG5JBB
- ewmqBTbJQWhVD0w5NyhXfZhRTC1VC0QDz8GI/yYhOwknjShGh6hKfx/LXLSyk/AQnoGs2uRJQrQ
- DiX+GO1/Fd3AtjbCB4uWXKJjqoOqdVie4pD0II2Tw8BC0gMCFp8KDG5beyw8+2mkJjekOShOUAC
- GBjZ/bvcoKzHAui5Cn0pXnS2Xck3mV5Jb+e74VB6yWv5R3rj
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+From: "???" <domforeves@gmail.com>
+Date: Tue, 23 Sep 2025 13:18:14 -0700
+X-Gm-Features: AS18NWAmsH0ekS7cgk6gK5j24tihWsTvH53gGGMIiGkMxB1pt_5-RJG8VebaL2U
+Message-ID: <CABKptHWYBQZ07KVWHDB_phBfsJkbOtJ3ix2QnBZ+amQVTm+V1g@mail.gmail.com>
+Subject: Pls read
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Fix temperature channel not working due to gain and offset not being
-initialized. This was causing the raw temperature readings to be always
-8388608 (0x800000).
+Hello, I'm a 10 yr old fascinated with linux. I've been running Ubuntu
+on one of my computers ever since I've seen linux. It's been my go to
+for programming. I love how everything works. I also think it's really
+neat and tidy when it comes to the kernel. I've been working on my own
+distro and hope to release it soon.
 
-To fix it, we just make sure the gain and offset values are set to the
-default values and still return early without doing an internal
-calibration.
-
-While here, add a comment explaining why we don't bother calibrating
-the temperature channel.
-
-Fixes: 47036a03a303 ("iio: adc: ad7124: Implement internal calibration at probe time")
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/iio/adc/ad7124.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index 374e39736584f55c1290db3e257dff2c60f884d2..94d90a63987c0f9886586db0c4bc1690855be2c1 100644
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -1518,10 +1518,6 @@ static int __ad7124_calibrate_all(struct ad7124_state *st, struct iio_dev *indio
- 	int ret, i;
- 
- 	for (i = 0; i < st->num_channels; i++) {
--
--		if (indio_dev->channels[i].type != IIO_VOLTAGE)
--			continue;
--
- 		/*
- 		 * For calibration the OFFSET register should hold its reset default
- 		 * value. For the GAIN register there is no such requirement but
-@@ -1531,6 +1527,13 @@ static int __ad7124_calibrate_all(struct ad7124_state *st, struct iio_dev *indio
- 		st->channels[i].cfg.calibration_offset = 0x800000;
- 		st->channels[i].cfg.calibration_gain = st->gain_default;
- 
-+		/*
-+		 * Only the main voltage input channels are important enough
-+		 * to be automatically calibrated here.
-+		 */
-+		if (indio_dev->channels[i].type != IIO_VOLTAGE)
-+			continue;
-+
- 		/*
- 		 * Full-scale calibration isn't supported at gain 1, so skip in
- 		 * that case. Note that untypically full-scale calibration has
-
----
-base-commit: 411e8b72c181e4f49352c12ced0fd8426eb683aa
-change-id: 20250923-iio-adc-ad7124-fix-temperature-channel-5900f7302886
-
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
-
+P.S your biggest fan
 
