@@ -1,53 +1,56 @@
-Return-Path: <linux-kernel+bounces-828005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F9F4B93ACF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:19:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DD1B93AD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 02:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23D7B442522
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:19:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62B921890A26
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C3215E5C2;
-	Tue, 23 Sep 2025 00:19:37 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC6272623;
+	Tue, 23 Sep 2025 00:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vII9/bnp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BC11D554;
-	Tue, 23 Sep 2025 00:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F113BE5E;
+	Tue, 23 Sep 2025 00:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758586777; cv=none; b=KXaWv3JA6UWnlFYoyTXi8DGoXnlaApo1pzPCKdumzJkwB7sgGzBqsx4TKRxv9p179opBQYcAZ86gxqEJbS82fLQRZD25y8XzCvnWqBtPmKmMAaWqduonh2hvP5hvy8obWEi+Ov3aayldhXMnDPY7cndQ8fdTyCej+WZBH+gupaI=
+	t=1758586809; cv=none; b=iniv7KRyYiLAPwfTztxywLudkjTtxpf6zv73apXrufKum+JNLz8eJd3hfnB4F2fIVqS+1p0F3wn3Muhc0z4A7+97mSduHfe92UDxc+qHvdW8skNM5f11lyYcf8flzHJGxzeBuR3DioPmjG7EuL/JzCAPhRlBp5FusRVpLXPXdb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758586777; c=relaxed/simple;
-	bh=m3PbYU+2V1fFSBAd5hXu+XYNk9LQPcAQq5Ha2JxlPGM=;
+	s=arc-20240116; t=1758586809; c=relaxed/simple;
+	bh=/YBR+R7LfGYnIdMOOdTLlGjgAGM0YwIAXCZB1PCXPHo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W+t1R9KnT0qgq1CASkFfOTbzpSkxHdAG8TJv7pFbHTWaB3V9CTQEsh9hyjS7fbum5BChJXCnvhr9kxvSNnTJdOQYSvx0nyvvtwyQimLG10Cl3k0pK9bqAUj+OdU2NYOSGlertiR+Xl05P4JKphSzfEo6AsHB+LSKvSXzJzPt55c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [180.158.240.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id BE58B340F71;
-	Tue, 23 Sep 2025 00:19:34 +0000 (UTC)
-Date: Tue, 23 Sep 2025 08:19:30 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ziyao@disroot.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	p.zabel@pengutronix.de, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] riscv: dts: spacemit: define a SPI controller node
-Message-ID: <20250923001930-GYB1303776@gentoo.org>
-References: <20250922161717.1590690-1-elder@riscstar.com>
- <20250922161717.1590690-4-elder@riscstar.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l2wDSbTiHs7kDMuyBe3l4rLOLozshajoK8OZdt831apsoJN012xuhvZGK5cTFSvMyZ4APO/We1/b7jWNd9NrtHbaJZIfKImvIcr8ztXNbGDyDuS94SjE/An7j0iU3X+9oe0oocSw2LXIvaRxWpYYK19JbzqyTcgVUcoeVaCSvhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vII9/bnp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35AA2C4CEF0;
+	Tue, 23 Sep 2025 00:20:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758586809;
+	bh=/YBR+R7LfGYnIdMOOdTLlGjgAGM0YwIAXCZB1PCXPHo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vII9/bnpzWpioGSZ+2cDByaO4ZessAu6VxmjFltMYns07Rls7A8wbbyZHF1/bjJ02
+	 koohXi76kRLB7IK4L+eOiZzzgwHa+ruWeK3xlwVSE42zavkujpxJjXfE6ryrtcnGhy
+	 ZTvoRJaDo1aUiAtkOBaPgLZKjV5ywPjMnAMryNoPifDM2HgoaMkpjnMr6/vjmKeyVk
+	 0UexqKVtoSDX77iQKgC8JyM71ePPxSN8YKnv5+BgbFuVcZAoktl8z2ATpeMujz0k2i
+	 QQLbvr0X2A2IxAxzRKQzlhopS24Ku1Y/31bzbOzC4BS57ONvPDvjtZLHdUFj261K4H
+	 8h5WETmOROLUQ==
+Date: Mon, 22 Sep 2025 17:20:04 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rv: Fix wrong type cast in enabled_monitors_next()
+Message-ID: <20250923002004.GA2836051@ax162>
+References: <20250806120911.989365-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,134 +59,133 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250922161717.1590690-4-elder@riscstar.com>
+In-Reply-To: <20250806120911.989365-1-namcao@linutronix.de>
 
-Hi Alex,
+Hi Nam,
 
-On 11:17 Mon 22 Sep     , Alex Elder wrote:
-> Define a node for the fourth SoC SPI controller (number 3) on
-> the SpacemiT K1 SoC.
+On Wed, Aug 06, 2025 at 02:09:11PM +0200, Nam Cao wrote:
+> Argument 'p' of enabled_monitors_next() is not a pointer to struct
+> rv_monitor, it is actually a pointer to the list_head inside struct
+> rv_monitor. Therefore it is wrong to cast 'p' to struct rv_monitor *.
 > 
-> Enable it on the Banana Pi BPI-F3 board, which exposes this feature
-> via its GPIO block:
->   GPIO PIN 19:  MOSI
->   GPIO PIN 21:  MISO
->   GPIO PIN 23:  SCLK
->   GPIO PIN 24:  SS (inverted)
+> This wrong type cast has been there since the beginning. But it still
+> worked because the list_head was the first field in struct rv_monitor_def.
+> This is no longer true since commit 24cbfe18d55a ("rv: Merge struct
+> rv_monitor_def into struct rv_monitor") moved the list_head, and this wrong
+> type cast became a functional problem.
 > 
-> Define pincontrol configurations for the pins as used on that board.
+> Properly use container_of() instead.
 > 
-> (This was tested using a GigaDevice GD25Q64E SPI NOR chip.)
-> 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
+> Fixes: 24cbfe18d55a ("rv: Merge struct rv_monitor_def into struct rv_monitor")
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
 > ---
-> v3: - Moved the SPI controller into the dma-bus memory region
+>  kernel/trace/rv/rv.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->  .../boot/dts/spacemit/k1-bananapi-f3.dts      |  7 +++++++
->  arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  | 20 +++++++++++++++++++
->  arch/riscv/boot/dts/spacemit/k1.dtsi          | 16 +++++++++++++++
->  3 files changed, 43 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> index 2aaaff77831e1..d9d865fbe320e 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> @@ -14,6 +14,7 @@ aliases {
->  		ethernet0 = &eth0;
->  		ethernet1 = &eth1;
->  		serial0 = &uart0;
-> +		spi3 = &spi3;
->  	};
+> diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
+> index bd7d56dbf6c2..6ce3495164d8 100644
+> --- a/kernel/trace/rv/rv.c
+> +++ b/kernel/trace/rv/rv.c
+> @@ -495,7 +495,7 @@ static void *available_monitors_next(struct seq_file *m, void *p, loff_t *pos)
+>   */
+>  static void *enabled_monitors_next(struct seq_file *m, void *p, loff_t *pos)
+>  {
+> -	struct rv_monitor *mon = p;
+> +	struct rv_monitor *mon = container_of(p, struct rv_monitor, list);
 >  
->  	chosen {
-> @@ -92,6 +93,12 @@ &pdma {
->  	status = "okay";
->  };
->  
-> +&spi3 {
-> +	pinctrl-0 = <&ssp3_0_cfg>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +};
-> +
->  &uart0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&uart0_2_cfg>;
-> diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> index aff19c86d5ff3..205c201a3005c 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> +++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> @@ -76,4 +76,24 @@ pwm14-1-pins {
->  			drive-strength = <32>;
->  		};
->  	};
-> +
-> +	ssp3_0_cfg: ssp3-0-cfg {
-..
-> +		ssp3-0-no-pull-pins {
-I'd prefer not to enforce "pull" info inside the name, you can't embed
-all property info, besides, what's if you want to change/override later?
+>  	(*pos)++;
 
-how about just name it as ssp3-0-defaul-pins or simply ssp3-0-pins?
+I am seeing a crash when reading from /sys/kernel/tracing/rv/enabled_monitors
+on a couple of my arm64 boxes running Fedora after this change, which
+landed in mainline in 6.17-rc7. I can reproduce this in QEMU pretty
+easily.
 
-> +			pinmux = <K1_PADCONF(75, 2)>,	/* SCLK */
-> +				 <K1_PADCONF(77, 2)>,	/* MOSI  */
-> +				 <K1_PADCONF(78, 2)>;	/* MISO */
-> +
-> +			bias-disable;
-> +			drive-strength = <19>;
-> +			power-source = <3300>;
-> +		};
-> +
-> +		ssp3-0-frm-pins {
-> +			pinmux = <K1_PADCONF(76, 2)>;	/* FRM (frame) */
-> +
-> +			bias-pull-up = <0>;
-> +			drive-strength = <19>;
-> +			power-source = <3300>;
-> +		};
-> +	};
->  };
-> diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> index 6cdcd80a7c83b..eb8a14dd72ea4 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-> +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> @@ -797,6 +797,22 @@ uart9: serial@d4017800 {
->  				status = "disabled";
->  			};
->  
-> +			spi3: spi@d401c000 {
-> +				compatible = "spacemit,k1-spi";
-> +				reg = <0x0 0xd401c000 0x0 0x30>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				clocks = <&syscon_apbc CLK_SSP3>,
-> +					 <&syscon_apbc CLK_SSP3_BUS>;
-> +				clock-names = "core", "bus";
-> +				resets = <&syscon_apbc RESET_SSP3>;
-> +				interrupts = <55>;
-..
-> +				dmas = <&pdma 20>,
-> +				       <&pdma 19>;
-can we also squash the dmas into one line? but, do split if there are too many..
+  $ cat kernel/configs/repro.config
+  CONFIG_FTRACE=y
+  CONFIG_RV=y
+  CONFIG_RV_MON_WWNR=y
+  CONFIG_RV_PER_TASK_MONITORS=2
+  CONFIG_RV_REACTORS=y
+  CONFIG_RV_REACT_PANIC=y
+  CONFIG_RV_REACT_PRINTK=y
 
-yes, it's simply a style change that I'd like to keep them consistent at DT level,
-besides you might also want to adjust dt-binding examples to align with them here..
+  $ git show -s --format='%h ("%s")'
+  097a6c336d00 ("Merge tag 'trace-rv-v6.17-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace")
 
-thanks
+  $ make -skj"$(nproc)" ARCH=arm64 CROSS_COMPILE=aarch64-linux- clean virtconfig repro.config Image.gz
 
-> +				dma-names = "rx", "tx";
-> +				status = "disabled";
-> +			};
-> +
->  			/* sec_uart1: 0xf0612000, not available from Linux */
->  		};
->  
-> -- 
-> 2.48.1
-> 
-> 
+  $ curl -LSs https://github.com/ClangBuiltLinux/boot-utils/releases/download/20241120-044434/arm64-rootfs.cpio.zst | zstd -d >rootfs.cpio
 
--- 
-Yixun Lan (dlan)
+  $ qemu-system-aarch64 \
+      -display none \
+      -nodefaults \
+      -cpu max,pauth-impdef=true \
+      -machine virt,gic-version=max,virtualization=true \
+      -append 'console=ttyAMA0 earlycon rdinit=/bin/sh'
+      -kernel arch/arm64/boot/Image.gz \
+      -initrd rootfs.cpio \
+      -m 512m \
+      -serial mon:stdio
+  ...
+  [    0.000000] Linux version 6.17.0-rc6-00143-g097a6c336d00 (nathan@aadp) (aarch64-linux-gcc (GCC) 15.2.0, GNU ld (GNU Binutils) 2.45) #1 SMP PREEMPT Mon Sep 22 17:03:48 MST 2025
+  ...
+  ~ # mount -t sysfs sysfs /sys &&
+  > mount -t tracefs tracing /sys/kernel/tracing &&
+  > cat /sys/kernel/tracing/rv/enabled_monitors
+  [  134.672494] Unable to handle kernel paging request at virtual address ffffffffffffffd0
+  [  134.675919] Mem abort info:
+  [  134.677233]   ESR = 0x0000000096000006
+  [  134.679118]   EC = 0x25: DABT (current EL), IL = 32 bits
+  [  134.680880]   SET = 0, FnV = 0
+  [  134.682180]   EA = 0, S1PTW = 0
+  [  134.683788]   FSC = 0x06: level 2 translation fault
+  [  134.685435] Data abort info:
+  [  134.687096]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+  [  134.688973]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  [  134.690889]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+  [  134.692687] swapper pgtable: 4k pages, 52-bit VAs, pgdp=00000000417a8000
+  [  134.694969] [ffffffffffffffd0] pgd=1000000041c8d003, p4d=0000000041bf2403, pud=0000000041bf3403, pmd=0000000000000000
+  [  134.700920] Internal error: Oops: 0000000096000006 [#1]  SMP
+  [  134.702603] Modules linked in:
+  [  134.703956] CPU: 0 UID: 0 PID: 53 Comm: cat Not tainted 6.17.0-rc6-00143-g097a6c336d00 #1 PREEMPT
+  [  134.705506] Hardware name: linux,dummy-virt (DT)
+  [  134.706481] pstate: a1402009 (NzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+  [  134.707595] pc : enabled_monitors_start+0x6c/0xa0
+  [  134.709324] lr : enabled_monitors_start+0x24/0xa0
+  [  134.710047] sp : ffff80008043bbf0
+  [  134.710557] x29: ffff80008043bbf0 x28: fff0000002e58000 x27: 0000000000000000
+  [  134.711889] x26: ffff80008043bca0 x25: fff0000002b44038 x24: 0000000000000000
+  [  134.712965] x23: 0000000000000001 x22: 0000000000000000 x21: ffff80008043bcc8
+  [  134.714028] x20: ffffa8bf4243e000 x19: ffffa8bf4243ed00 x18: 0000000000000000
+  [  134.714994] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+  [  134.716046] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+  [  134.717110] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+  [  134.718219] x8 : 0000000000000000 x7 : 0000000000000001 x6 : 0000000000000000
+  [  134.719246] x5 : 0000000000001000 x4 : fff000001fdea760 x3 : 0000000000000000
+  [  134.720195] x2 : 0000000000000000 x1 : fff0000002b44028 x0 : ffffffffffffffc0
+  [  134.721411] Call trace:
+  [  134.722173]  enabled_monitors_start+0x6c/0xa0 (P)
+  [  134.723088]  seq_read_iter+0xd4/0x47c
+  [  134.723752]  seq_read+0xec/0x12c
+  [  134.724200]  vfs_read+0xc4/0x33c
+  [  134.724791]  ksys_read+0x64/0x100
+  [  134.725255]  __arm64_sys_read+0x18/0x24
+  [  134.725860]  invoke_syscall.constprop.0+0x40/0xf0
+  [  134.726466]  el0_svc_common.constprop.0+0x38/0xd8
+  [  134.727092]  do_el0_svc+0x1c/0x28
+  [  134.727558]  el0_svc+0x34/0xe8
+  [  134.728112]  el0t_64_sync_handler+0xa0/0xe4
+  [  134.728763]  el0t_64_sync+0x198/0x19c
+  [  134.729790] Code: f9402001 d1010020 eb01027f 540000c0 (39404001)
+  [  134.731074] ---[ end trace 0000000000000000 ]---
+  Segmentation fault
+
+With this change reverted, there is no crash. As this change seems to
+have proper justification, is there some other latent bug here?
+
+If there is any other information I can provide or patches I can test, I
+am more than happy to do so.
+
+Cheers,
+Nathan
 
