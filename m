@@ -1,366 +1,187 @@
-Return-Path: <linux-kernel+bounces-829569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C01B975D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:35:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B903B975DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 21:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C47271889CA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:36:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03B427B34E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FEA3019DC;
-	Tue, 23 Sep 2025 19:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E73A2D948A;
+	Tue, 23 Sep 2025 19:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="mEafU3s+"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011000.outbound.protection.outlook.com [52.101.70.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g5UVmDA9"
+Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA038C2FB;
-	Tue, 23 Sep 2025 19:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758656133; cv=fail; b=Jy8RQyPlaWJ68vIUYizpM5BDI86IPsuXL9//4I2mqAwJKpOmAP7dEcOcE9Bh8wVH5Jm5TTdp43scEBqAbypDYFJ7srqzuyC1nDOVf8au0gLW6H2K6wj5hktINbi9Hb48MpgGA7QfcTumcHJa9jQtgVoeXo1gOyexxmz7uBr70Qk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758656133; c=relaxed/simple;
-	bh=VfnhY9HOMExcmzN6ibjvK9zl+RMN3rNLYOAflldgDng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=V+8gRMNoGN7ytzy7TkgsmNcR9azL9v0dJy3FS8dn6IPO+NbumQ0d2J8/YMTw2iLJ37DdUPzk2iNyC7IE8l484j6bSk0HWnLpoUxvqpbtYxOPwizh8FbYH3/3w8t5jYSSdATdj3fOaUh5t+Zmy7oyc8ne6h6KddJIBaBjwLPbhPA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=mEafU3s+; arc=fail smtp.client-ip=52.101.70.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wMNd0gzVC0pf2MHqpMRUvqosNRzBDqIEKJwnKW9DC6sT8g3qwpx4V0CbzKYN3R1nXgjVE0vFfCUR1NSy0T9B2mcgSFcY3Owb1v9B2lupGR3wFOdjkLyAGlEr4WfgICpds3scnU0iUQttCEB2zLBc4bi8NEnsaXfhFO+EUwKYNlsLhpOitDIC7szZMAj3nFl2gpn0REL0EwYGnuUooO4ERsvQvvATsf8ZDSXu267fVQvh4qD7hdPXYE7qGwYYlpwZ7Br3hf7t1ATalt2Z1gFC/6DCqT5TwS7PTvworc7JHnE2ANGNMOvHpBXTYSbWmQdfViHZkN3l5rDCHakGuJJQbQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L9U5Zw1xv5JgRHot6C1hu5aXHRRuEsxWBc72kGiWjM0=;
- b=Ig8TrW3wQfG4Td8R82uH+XwXwai4rYcqwxLjwGBYMfw1PGQA7ZuCWkuv4oJCXLuex6YxPaa+FDz2B+UM/fieCi+NbV50SMsk3occ3bbcvNtk0Q/0tjWOUhePTL3c3sUb8acVmzmrGeaS9Wd9tKKjlFzZyq1gqNEz+8xocht3onAFyjQX7zCppJbLZE/zf+NMlEli4nXUcIj40OPTgcIt/2mypU4qM9Wv+k6Q2wQLFG9SJkml4pykD1/gXuj1iuyr/Sh0yDcOgAwVlmLsyAQqFHDQ8COgIKoMmBYLVO8Nr5whGoR1mbZHX3Xd2G9kzKU2/Iqa1RvudbGbULSHOxcm0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L9U5Zw1xv5JgRHot6C1hu5aXHRRuEsxWBc72kGiWjM0=;
- b=mEafU3s+lCn9xaM6WYP3Rd8vyVUH+qw+EeXzSW9ouoCH2Mf3oRCchJPQlashoK1dUU38CJ/+I6Tc/2IjCIwP05TVO1fSgbc4apJWuHJrYJz1hMInlZBV3yT91HJ1ZXyWIVScg+l+K6M8SmLMHyHjzqDFGsQc1XB9KtUW+fz2DhV/0+JMRoaDuYGeJlCmb/MQ/5/fIkfJNE+Fnrh/zlk3bCpESU+A258G5yl0pvpooEQ4uhLmF7tVZa1+f25FiscmKssz1LofrOE65fP1DR2XSrfZ/wAdn8nUbyQlQUP1NRnpnmXQsqyhkwNNOHjOmAF0drK91UsjqY51kfCyerz6PQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
- by AM7PR04MB6823.eurprd04.prod.outlook.com (2603:10a6:20b:102::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.11; Tue, 23 Sep
- 2025 19:35:29 +0000
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9160.008; Tue, 23 Sep 2025
- 19:35:29 +0000
-Date: Tue, 23 Sep 2025 15:35:18 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: zhangsenchuan@eswincomputing.com
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
-	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de, johan+linaro@kernel.org,
-	quic_schintav@quicinc.com, shradha.t@samsung.com, cassel@kernel.org,
-	thippeswamy.havalige@amd.com, mayank.rana@oss.qualcomm.com,
-	inochiama@gmail.com, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com,
-	Yanghui Ou <ouyanghui@eswincomputing.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: PCI: EIC7700: Add Eswin PCIe host
- controller
-Message-ID: <aNL2dnv6doUGenHh@lizhi-Precision-Tower-5810>
-References: <20250923120946.1218-1-zhangsenchuan@eswincomputing.com>
- <20250923121200.1235-1-zhangsenchuan@eswincomputing.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923121200.1235-1-zhangsenchuan@eswincomputing.com>
-X-ClientProxiedBy: BY1P220CA0002.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:a03:59d::6) To AS4PR04MB9621.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ff::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E715B305042
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758656140; cv=none; b=VpCJnY24AiHprWifSf2SOwVjsMarT+0/z8YhLMFnj9To+WdUVCAEZ7igp08w0H/ZgLMD2OXgnclMI7lC79xcPb7kG4dF6Fi+fzsLN+4OikoFObXxzeAbJNAnpSc+XXS/epxmhjsWs7vy0jlJkKKT9CpY/kmmud/TRxlev0G394I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758656140; c=relaxed/simple;
+	bh=gQhVQ/hOCkTcdnwSSz2KO4lLuFDJKV9Qc89qI1845po=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hRSPEmzJFM6cWuyQTOTDspLyoxHPv2SH26hFNuiTYkR3v0hiEiCCitKG8IHYVj8K0nCTI+h9H181Xrd2jL0LKzgyHPZ9nQGMD1UT19UuV9cHdi03Nq3lYkzuNvQ2hGONZt6vGGiHGQJqMKMaX5isj5mOnC6kuk1900PmrS2nnhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g5UVmDA9; arc=none smtp.client-ip=209.85.208.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-62fa062a1abso9627279a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:35:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758656136; x=1759260936; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qdwjSx6yqDrwznedzComO+rifSLut17oWkmQ13N72Tc=;
+        b=g5UVmDA9yezndhgzwoHmBRrm0163Hcji8O4wzBRk6mh7nMds20k7ZeXdVj8hAaUEYY
+         1D2xbG0A+2d8o+TLaW0pPemXx7U9jor8B6HRmObb9qh5WpxLFq9x1Of51TTDN8VHMYNg
+         Bi34B8XXpYqaXff0EmeVgE9l1gTCHiHv2U8RI1/GaGFKYtN6bEbG2WPa75c9Fa6djjvS
+         Uu1Ke9/E268rk5NLtZFE0BxDlyUQZH3TcM//EBq5Se+zfs0zGy2UjLUYENGSk7E3BCGg
+         AodEZaUuHyTUjbo067a1ZWkMSCQdaL9xCZCEgW5412nEDz8dPM/P0Hkz5mWy1DQW28I6
+         jfUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758656136; x=1759260936;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qdwjSx6yqDrwznedzComO+rifSLut17oWkmQ13N72Tc=;
+        b=nh7dTaBWumyr+ohglrig15XfgxY+Oe3ANvV/2XYJ6LAJwmb4/S07RDE8CmLAG4Qm/Y
+         m69E8vAGLG4GQCK8RIc4HQu9Us2kx8fjZjaeoZJsBBLi2C916kucTHd62MUMkVttSLmI
+         sLq6AN/30mgGikAx/KWh0DkzLtKfY40ZGNkGzgv/avoiA9N1JCDcCDGnZDY9sZUbLHoP
+         k4kky++FeGFXDCTO+9JazWxh45IDxkgypV7WEbsZPACznwzVffSR8KXfG6bsyX2La3M8
+         Af2FA7SjDOzpjEEB+AhRDiU6H8HHiTUnIYvY+3PZNM/Vj38IfUpeey7lilAPUcdiyvai
+         HAFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtZCWvTTwxkSZflvsNc6dGT+Ir1dN12uaGsP6iGoFYC4GxqEqVOREUZT8utVO6m5o6PWZrhtzF+fmJD30=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkEglMh2vWFODNtl1jUGUJn594hrHk46ukuZMsuyoNR0p1wmMu
+	NMKHKkP1Ld6uF3cFti9/LeSLvTB/LIQQhkW7aFRDGeI4R0VzT+quZYFSvZO3pbr5iRU=
+X-Gm-Gg: ASbGncsmb/AFAP1Ok/JnL1xuY7EG4OlLvrtQqp3qqfLAjnE+aHG+BoehMbVl39N8Ffy
+	qd6UG6BmYtFUufjKqTTfeLc+faPINle7z/L/pp5hiyfuXZBGXRrex29leNFP3ExwlZyqUhQ18y9
+	hzvw76LlScW8FHK+MtgWqg5VlyqDfwX8o37Q6b9DaDSDhVmpPKyurlGTVM9MzzT5Kj6fL0hJbs7
+	8gtxTXaWXswOTnDNv3GfkAjLzTys2mo44TInDBiQf0VojNfPxEWcxdMKsUWeHju8TvP/OTAjPV6
+	66RLxA05SYzV4qHskX9d9C2j21z8xn1gP0PQzrZVNoffIzQD5uu/BMl37llKK4WReSaOSigsGIE
+	c/aOp76CCO/k/f5LPMQZpKeANrmfZjs6t
+X-Google-Smtp-Source: AGHT+IGlCvK6yuqIUQUFOgGwHK0uqqneA6mTN1hmeGJkoLmdyjKHvGizIk+emNFkQbBfTqMzUbXl5A==
+X-Received: by 2002:a17:907:d25:b0:b0e:8cd4:e2d3 with SMTP id a640c23a62f3a-b302705ebc2mr337045066b.19.1758656136185;
+        Tue, 23 Sep 2025 12:35:36 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:30:bd4e:c20d:5910:982f])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b27217f616esm995766666b.72.2025.09.23.12.35.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 12:35:35 -0700 (PDT)
+Date: Tue, 23 Sep 2025 21:35:31 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Rob Clark <robin.clark@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org, Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/msm: Fix GEM free for imported dma-bufs
+Message-ID: <aNL2g40S03YUs9wR@linaro.org>
+References: <20250923140441.746081-1-robin.clark@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AM7PR04MB6823:EE_
-X-MS-Office365-Filtering-Correlation-Id: f720ad2c-21fb-442c-234f-08ddfad85a20
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|1800799024|376014|52116014|19092799006|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pzJulTmIp8s0rcIJFp8xi30rD/Tdn4ri7WvTG0byy30uhmuDAZqut89i52Zv?=
- =?us-ascii?Q?2nijeACuAqSXVhIJ8VXWmwTBDJv1JuKxbvzVzE4STU0q45VpGbrf78QbtVCJ?=
- =?us-ascii?Q?VrNSZkvQRK6360VcpZIPJGNZP5Td/2mmiB8az4onjMCCVaZHHKWsiKnAVoF6?=
- =?us-ascii?Q?5aLW3NLGQsBaY5heqbprEQ2xr+snbw1fEajyiu20NzuKM9/aHPKwRmNeQUNn?=
- =?us-ascii?Q?30pKaeorRfwyLDXOALmfcM1dhawm1bsipLcaN4IW4zdM8KpfcmeVpjvgWvB8?=
- =?us-ascii?Q?fRvLDm1IPw3kDViwUuyr7UmIq3op6xIP38r3u0sCwntaeHbDar/EqyOPc2OK?=
- =?us-ascii?Q?dH7wozepdFkDflhYRzXvlA2F82MCuzF03MBMIt4IDVtEGuNJkxMTEp8RNAYc?=
- =?us-ascii?Q?FS+lbvNY5IaotIXdxETTfHwFc5Dk0083Zw2Xrg6E/nMhlVFsjTAhM3/OcWi0?=
- =?us-ascii?Q?tEFTVJ8Zk3Wyiw5iMv2pUOfR08Qj6FHvUoXnzvVLLFmvCCIeAs3nrxxQprP+?=
- =?us-ascii?Q?qQUobaq0VWGC1m+Xoc6z1/tY/aHXm8Q2aPj7y59/EJlreC5noRDDYHZcQ+HG?=
- =?us-ascii?Q?zHIJMuPZBx0bXFtoy/wjyr7QO+ji4s9eAuj423PSIxA9HAKcQ/k740Ijmsc/?=
- =?us-ascii?Q?ZAxqC6Pl4pLnpQfVlFP7HIfU2yRwKEOFTOfFQ/HzPK2iwbf/qQpga/DJydvE?=
- =?us-ascii?Q?q5Slx5+uuBew3FuUsFGaKvJMt2k0UzEY6uOr9r1H6MNvslCZ7dpSpLinD/Ce?=
- =?us-ascii?Q?CSf5ugSOYYY99G7Q6mvObEl9eCtycxgU78SgdrE+RzJoMs/IjibhO8EH8z44?=
- =?us-ascii?Q?Czr9UpwZzHBY7SYDhyjdg2scR12h8FhdrRRQ4/jZ/NitXMHMnnLUeQM03+fL?=
- =?us-ascii?Q?Npdf/iQYKtoMfrZC19vLcOeaaECidb6bh9Lpvh/Mb/rP0oZviO0d0GHTJX3t?=
- =?us-ascii?Q?sAGBuM6Xhtf7ZSzeShwJY2s0NBuZ8fJWjpk/FbdCV7jyuU5pd7s6mq4HjY1e?=
- =?us-ascii?Q?IRDokg+EqoI174Afxoub34IUsaEfwvUOBNZ/VcIx+18CeExmON2VedBOxdVg?=
- =?us-ascii?Q?n7eDGAAAIcMCRw+43DOaA/HbVXdwVUwDwS9ijDoN4LJW01Stti0QttXrVCxg?=
- =?us-ascii?Q?azfu8D5OL6cPW6uabfKawnUbULylNC5hWS/v1RkFiiMFblFdk1VNKFBMtvLA?=
- =?us-ascii?Q?PwXNCCh+QAs718q2WRBtxcL/76MbfcaAlxkkbHIxVRZaMdezwl8D+sO2lu5o?=
- =?us-ascii?Q?cvkLrpDglaFIrD2AB8dYebDJICXxYfbGQ0l4vOy8j9ifDS+7TJtvBB0csqfE?=
- =?us-ascii?Q?EYxz+r9BjST2y1axMjOJ5SCKisdlINLGSDejc+FWxeriLyR/fen3de+cCjfN?=
- =?us-ascii?Q?y6FidUaunxt+Ayj4/ekzw0O/FgHTiu7+hYjZH5NKUN91kIvS252pq5No6K3F?=
- =?us-ascii?Q?jK+TCFunPps=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014)(52116014)(19092799006)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nSCRMdgof8eBLUsvgXFTA3jewwtWewgfRy/b/Lbilixis4L7ccA6Rav6Csio?=
- =?us-ascii?Q?ZitOGXNVSgUxv5VPTNRjvVqD40rAbt9lF66RIecoc7zIytx3XqHMIgSuB3LS?=
- =?us-ascii?Q?k8p4uogoK359sJsJSETCzB45O1Fr5G+qqcFUr3TSEQHrfiWB+CYYVfbYWHqY?=
- =?us-ascii?Q?Gh4R5iSMWJdWqusD4+9DxKYLCMzgjxtt10gixwAHFcXcYS8bJCkXNWXYUt9z?=
- =?us-ascii?Q?KSfUykbD4iu5nQstAWCE/9c/RrX0Oqj/GlmQ+2SpP2jKXkp/qO0QuIrbYpyI?=
- =?us-ascii?Q?mNwAgjXMyYvNT2oZjCNCLbiJZPcR8C/IZ3fPGkqT6znR3jjuv5aVSV9VJ9T+?=
- =?us-ascii?Q?lmr8G7Qb8V0BqXxVCwWS+RAFTsNDGgVDCpUZcdcbOhur+fjTvp4jqydAyWgc?=
- =?us-ascii?Q?EdBdhwmUJDwh0tpjBpe9CI6Dk4H+V3ScKup2mi5uMT9I2dYbZlkpJswQ27U0?=
- =?us-ascii?Q?tGES48XR/6i4JqMR/GUAZe7xATK3Lg77IUl+m9SFwXxlprv2lKCJ6HWC2Et4?=
- =?us-ascii?Q?cIiNnujiTz/haJS9LsH83gfGbIayrK2B2p389sg0erZCSsJWee4QhUkPxyZP?=
- =?us-ascii?Q?caj3wxbBIBbnFewlPMze5WSaHPWTyI4IiCImA7jh1WfJcFQZ2p6G4oVXuxRK?=
- =?us-ascii?Q?XkyjnPD181aekvpZdrKevEYKT3npLT8Jr+pkVQ+LCIPq5OuJ9hc7QmBy5fb4?=
- =?us-ascii?Q?mgWbFr2v6NZ8+a7wF9Fbt4nozNkLQAjihvgZVHw5xSohmp1zS9G86yTCuW2M?=
- =?us-ascii?Q?CPpUKjXy+WPZcl5dDlJwo3HjSdqbIIOlGHQ9k9kz+O3JTsTEtRpkYXb+/8pL?=
- =?us-ascii?Q?FbTu5pdaiDBIlxBDOEzQ/uZ5UiV1HFE9Bt5CuqMD/9DoLpG/lbHKlF7Eb6AU?=
- =?us-ascii?Q?uozEnCW89+hAOFZSVmSGLuti1JV0YTWtA1q7NXEUXG7zsPEzu4TILtSshWOc?=
- =?us-ascii?Q?XmdmP+h8lJUe5Vqdrz2fYqKH37+KNtEWDXUcs4FyiSJHUtNkpMZn9cc2QChy?=
- =?us-ascii?Q?/STtv6N+hds+4I0HwH+1J+BDxVlDGl1NZ/1W6kcZfHLTMTafF0a+uo8EREcG?=
- =?us-ascii?Q?ohTEjKHn/q7/aqPo91wWYVvQfQSa8BwCfmK3/LZp/HW51KjPMaVco87s73Gd?=
- =?us-ascii?Q?B6b+l0FA/V5+mo3F5+Rr74odjf5xQYC4udDafkZoYeXGr+Dy1xO9GtRIpTBp?=
- =?us-ascii?Q?bdYcA4ZoJPlV8jHwX/GdZwdd+xOTCWKrMjHXTX7vKdrGC+aLjbX8W3n2BDIR?=
- =?us-ascii?Q?9rQgd4t4VrS+2icfTwxi5geIZNSuXA50PFiwqtxN4lwnX8o4cI2ylwP8HpHR?=
- =?us-ascii?Q?QlT9AmEc+BZVdhxJF6Fx+zRKiQ3gacaaeKZpE3h9Rimtw7P9J32rjlFpryU0?=
- =?us-ascii?Q?c7dRRSqtCS7RxWjh189IKxESQzHVck41+Lt3McdzQxpE4iXtTo2BfHroXhN1?=
- =?us-ascii?Q?eJ6jvQXxkUgkAcDUy+PICGenssZzqyR9BRsNkZ1Kcc29XXczHXgRZRT3vLGA?=
- =?us-ascii?Q?kXhokaofOP8Xb9Mk/Z8qlAIXpBFbjiXYjVl9qMrLdbxm3Jjeh7QWAgD3tlBB?=
- =?us-ascii?Q?EhotGwfSb+8egHLvZqlvGD9e3el/cZYDRW1+bLdU?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f720ad2c-21fb-442c-234f-08ddfad85a20
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 19:35:28.9908
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zSha3OZ5wCXYzMPQS+teVzAuy9WWURpf44ygbebwxP2bLnN7JR7orDjUPDg5tv4GhQ/kft09t73L7USwqEECcw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6823
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923140441.746081-1-robin.clark@oss.qualcomm.com>
 
-On Tue, Sep 23, 2025 at 08:12:00PM +0800, zhangsenchuan@eswincomputing.com wrote:
-> From: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
->
-> Add Device Tree binding documentation for the Eswin EIC7700 PCIe
-> controller module, the PCIe controller enables the core to correctly
-> initialize and manage the PCIe bus and connected devices.
->
-> Signed-off-by: Yu Ning <ningyu@eswincomputing.com>
-> Signed-off-by: Yanghui Ou <ouyanghui@eswincomputing.com>
-> Signed-off-by: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+On Tue, Sep 23, 2025 at 07:04:40AM -0700, Rob Clark wrote:
+> Imported dma-bufs also have obj->resv != &obj->_resv.  So we should
+> check both this condition in addition to flags for handling the
+> _NO_SHARE case.
+> 
+> Fixes this splat that was reported with IRIS video playback:
+> 
+>     ------------[ cut here ]------------
+>     WARNING: CPU: 3 PID: 2040 at drivers/gpu/drm/msm/msm_gem.c:1127 msm_gem_free_object+0x1f8/0x264 [msm]
+>     CPU: 3 UID: 1000 PID: 2040 Comm: .gnome-shell-wr Not tainted 6.17.0-rc7 #1 PREEMPT
+>     pstate: 81400005 (Nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+>     pc : msm_gem_free_object+0x1f8/0x264 [msm]
+>     lr : msm_gem_free_object+0x138/0x264 [msm]
+>     sp : ffff800092a1bb30
+>     x29: ffff800092a1bb80 x28: ffff800092a1bce8 x27: ffffbc702dbdbe08
+>     x26: 0000000000000008 x25: 0000000000000009 x24: 00000000000000a6
+>     x23: ffff00083c72f850 x22: ffff00083c72f868 x21: ffff00087e69f200
+>     x20: ffff00087e69f330 x19: ffff00084d157ae0 x18: 0000000000000000
+>     x17: 0000000000000000 x16: ffffbc704bd46b80 x15: 0000ffffd0959540
+>     x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+>     x11: ffffbc702e6cdb48 x10: 0000000000000000 x9 : 000000000000003f
+>     x8 : ffff800092a1ba90 x7 : 0000000000000000 x6 : 0000000000000020
+>     x5 : ffffbc704bd46c40 x4 : fffffdffe102cf60 x3 : 0000000000400032
+>     x2 : 0000000000020000 x1 : ffff00087e6978e8 x0 : ffff00087e6977e8
+>     Call trace:
+>      msm_gem_free_object+0x1f8/0x264 [msm] (P)
+>      drm_gem_object_free+0x1c/0x30 [drm]
+>      drm_gem_object_handle_put_unlocked+0x138/0x150 [drm]
+>      drm_gem_object_release_handle+0x5c/0xcc [drm]
+>      drm_gem_handle_delete+0x68/0xbc [drm]
+>      drm_gem_close_ioctl+0x34/0x40 [drm]
+>      drm_ioctl_kernel+0xc0/0x130 [drm]
+>      drm_ioctl+0x360/0x4e0 [drm]
+>      __arm64_sys_ioctl+0xac/0x104
+>      invoke_syscall+0x48/0x104
+>      el0_svc_common.constprop.0+0x40/0xe0
+>      do_el0_svc+0x1c/0x28
+>      el0_svc+0x34/0xec
+>      el0t_64_sync_handler+0xa0/0xe4
+>      el0t_64_sync+0x198/0x19c
+>     ---[ end trace 0000000000000000 ]---
+>     ------------[ cut here ]------------
+> 
+> Reported-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+
+Tested-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+
+Perhaps also add
+
+Closes: https://lore.kernel.org/r/aNF6N8u1VIFSTaRM@linaro.org/
+
+when applying.
+
+Thanks!
+Stephan
+
+> Fixes: de651b6e040b ("drm/msm: Fix refcnt underflow in error path")
+> Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
 > ---
->  .../bindings/pci/eswin,eic7700-pcie.yaml      | 173 ++++++++++++++++++
->  1 file changed, 173 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
->
-> diff --git a/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml b/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
-> new file mode 100644
-> index 000000000000..2f105d09e38e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
-> @@ -0,0 +1,173 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/eswin,eic7700-pcie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Eswin EIC7700 PCIe host controller
-> +
-> +maintainers:
-> +  - Yu Ning <ningyu@eswincomputing.com>
-> +  - Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-> +  - Yanghui Ou <ouyanghui@eswincomputing.com>
-> +
-> +description:
-> +  The PCIe controller on EIC7700 SoC.
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
-
-suggest move it after required, incase add if-else in future.
-
-Frank
-
-> +
-> +properties:
-> +  compatible:
-> +    const: eswin,eic7700-pcie
-> +
-> +  reg:
-> +    maxItems: 3
-> +
-> +  reg-names:
-> +    items:
-> +      - const: dbi
-> +      - const: config
-> +      - const: mgmt
-> +
-> +  ranges:
-> +    maxItems: 3
-> +
-> +  num-lanes:
-> +    maximum: 4
-> +
-> +  '#interrupt-cells':
-> +    const: 1
-> +
-> +  interrupts:
-> +    maxItems: 9
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: msi
-> +      - const: inta # Assert_INTA
-> +      - const: intb # Assert_INTB
-> +      - const: intc # Assert_INTC
-> +      - const: intd # Assert_INTD
-> +      - const: inte # Desassert_INTA
-> +      - const: intf # Desassert_INTB
-> +      - const: intg # Desassert_INTC
-> +      - const: inth # Desassert_INTD
-> +
-> +  interrupt-map:
-> +    maxItems: 4
-> +
-> +  interrupt-map-mask:
-> +    items:
-> +      - const: 0
-> +      - const: 0
-> +      - const: 0
-> +      - const: 7
-> +
-> +  clocks:
-> +    maxItems: 4
-> +
-> +  clock-names:
-> +    items:
-> +      - const: mstr
-> +      - const: dbi
-> +      - const: pclk
-> +      - const: aux
-> +
-> +  resets:
-> +    maxItems: 2
-> +
-> +  reset-names:
-> +    items:
-> +      - const: cfg
-> +      - const: powerup
-> +
-> +patternProperties:
-> +  "^pcie@":
-> +    type: object
-> +    $ref: /schemas/pci/pci-pci-bridge.yaml#
-> +
-> +    properties:
-> +      reg:
-> +        maxItems: 1
-> +
-> +      resets:
-> +        maxItems: 1
-> +
-> +      reset-names:
-> +        items:
-> +          - const: perst
-> +
-> +    required:
-> +      - reg
-> +      - ranges
-> +      - resets
-> +      - reset-names
-> +
-> +    unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - ranges
-> +  - interrupts
-> +  - interrupt-names
-> +  - interrupt-map-mask
-> +  - interrupt-map
-> +  - '#interrupt-cells'
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        pcie@54000000 {
-> +            compatible = "eswin,eic7700-pcie";
-> +            reg = <0x0 0x54000000 0x0 0x4000000>,
-> +                  <0x0 0x40000000 0x0 0x800000>,
-> +                  <0x0 0x50000000 0x0 0x100000>;
-> +            reg-names = "dbi", "config", "mgmt";
-> +            #address-cells = <3>;
-> +            #size-cells = <2>;
-> +            #interrupt-cells = <1>;
-> +            ranges = <0x01000000 0x0 0x40800000 0x0 0x40800000 0x0 0x800000>,
-> +                     <0x02000000 0x0 0x41000000 0x0 0x41000000 0x0 0xf000000>,
-> +                     <0x43000000 0x80 0x00000000 0x80 0x00000000 0x2 0x00000000>;
-> +            bus-range = <0x00 0xff>;
-> +            clocks = <&clock 203>,
-> +                     <&clock 204>,
-> +                     <&clock 205>,
-> +                     <&clock 206>;
-> +            clock-names = "mstr", "dbi", "pclk", "aux";
-> +            resets = <&reset 97>,
-> +                     <&reset 98>;
-> +            reset-names = "cfg", "powerup";
-> +            interrupts = <220>, <179>, <180>, <181>, <182>, <183>, <184>, <185>, <186>;
-> +            interrupt-names = "msi", "inta", "intb", "intc", "intd",
-> +                              "inte", "intf", "intg", "inth";
-> +            interrupt-parent = <&plic>;
-> +            interrupt-map-mask = <0x0 0x0 0x0 0x7>;
-> +            interrupt-map = <0x0 0x0 0x0 0x1 &plic 179>,
-> +                            <0x0 0x0 0x0 0x2 &plic 180>,
-> +                            <0x0 0x0 0x0 0x3 &plic 181>,
-> +                            <0x0 0x0 0x0 0x4 &plic 182>;
-> +            device_type = "pci";
-> +            pcie@0 {
-> +                reg = <0x0 0x0 0x0 0x0 0x0>;
-> +                #address-cells = <3>;
-> +                #size-cells = <2>;
-> +                ranges;
-> +                device_type = "pci";
-> +                num-lanes = <4>;
-> +                resets = <&reset 99>;
-> +                reset-names = "perst";
-> +            };
-> +        };
-> +    };
-> --
-> 2.25.1
->
+>  drivers/gpu/drm/msm/msm_gem.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+> index 9f0f5b77f1bd..3aea9b493375 100644
+> --- a/drivers/gpu/drm/msm/msm_gem.c
+> +++ b/drivers/gpu/drm/msm/msm_gem.c
+> @@ -1121,12 +1121,16 @@ static void msm_gem_free_object(struct drm_gem_object *obj)
+>  		put_pages(obj);
+>  	}
+>  
+> -	if (obj->resv != &obj->_resv) {
+> +	/*
+> +	 * In error paths, we could end up here before msm_gem_new_handle()
+> +	 * has changed obj->resv to point to the shared resv.  In this case,
+> +	 * we don't want to drop a ref to the shared r_obj that we haven't
+> +	 * taken yet.
+> +	 */
+> +	if ((msm_obj->flags & MSM_BO_NO_SHARE) && (obj->resv != &obj->_resv)) {
+>  		struct drm_gem_object *r_obj =
+>  			container_of(obj->resv, struct drm_gem_object, _resv);
+>  
+> -		WARN_ON(!(msm_obj->flags & MSM_BO_NO_SHARE));
+> -
+>  		/* Drop reference we hold to shared resv obj: */
+>  		drm_gem_object_put(r_obj);
+>  	}
+> -- 
+> 2.51.0
+> 
 
