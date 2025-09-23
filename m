@@ -1,260 +1,115 @@
-Return-Path: <linux-kernel+bounces-829394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E258B96F75
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:11:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA19EB96F60
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 19:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EEF64A1509
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:11:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCDA14E2FC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 17:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655E4278157;
-	Tue, 23 Sep 2025 17:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="kGZX5MMY"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5776280CFA;
+	Tue, 23 Sep 2025 17:10:27 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30E61E2614;
-	Tue, 23 Sep 2025 17:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD17F277008
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758647425; cv=none; b=htY6VCegPNX+mN43Bz4flv1uMbq0A6W3lElDCEpVJF41bU6c2R7v+QVFPlAgcFn1jZ10xaj8hEGYVvC/juwWwq5N5NW5XzKM4XSRKkszbaCIhD67gbY4AjapkJUA41uvPLdeg8GD6Wpr9B3lBMPKLk/ARMF0GOLkT5tjQdFSF+E=
+	t=1758647427; cv=none; b=MfrNQ9jlNc3E2Akr8zrWIOb7kJf5ULoAdtdIXMPP9sU2j/UsXqKYrQ6Ex8J+6J/Ur4alklT8sXDzOt5gtLDwK1q62+a/+DZoLiJi/kQvjRIqIlIsI9BMIQY2BKY+srG2beVJYkwlISSI5kvra9JoIi+mv2YNaDzbIupy+KOfHfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758647425; c=relaxed/simple;
-	bh=ZOzu9BdZ0SlwHBmXmTTqAUFZJ8YWSzPhWk3/MnnRPCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PAuBWma1tRKOlW45rb9j27ddnqFlqq/0CJhQRqPVUMaEvDMMhwJHt4/uair90LKGbxSXBh+Ijpw1LxmwqkvIKNrnFwOkf0InSesV4VCAWiTNh40TZcd7iBrHBuLnPk10YoApBQATI6Ic+AO1ueIsbmncAzHSVU4BrL6rpiY4ztY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=kGZX5MMY; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=AkJbGSmYgk7y1LEJPqfv5uvY4sEAiOWetkFPsQTO1RI=; b=kGZX5MMYK0xSsHQq4NbkyhaP+6
-	YEMFQQHdmHk6lEdDizpbaFfZHurqG1serbJ/2h1skupTSQeQ2pIoolneB+kfVkLLY9n54LMiOm2SY
-	3RLNGzCOBIuZlK/ak1jtI97Q/zFyXdmcPZb8JExoNNu2cQDlOLAVcsjr/mUQdl80CWGyT9CqGe9w4
-	HpItYmLirhR5Igdbv1fBmyvVGnLs38mThLwP0bvWdjrJjJSOWXDQihVAQcnM/gybmk3rNMZT1877j
-	Ah1hqcMYBe5wIxMxbn859zb4Cm/XYBkCBRwae36onHeJzGulzW/qK0GZR5uaYWD5qYTL3oUY5kJ9s
-	2jCbBq+Q==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1v16Wx-00CZmE-2e;
-	Tue, 23 Sep 2025 18:10:19 +0100
-Date: Tue, 23 Sep 2025 18:10:19 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/4] tpm: Allow for exclusive TPM access when using
- /dev/tpm<n>
-Message-ID: <efb33d755aec0f557407fd69b0f68d9a69c33435.1758646791.git.noodles@meta.com>
-References: <cover.1758646791.git.noodles@meta.com>
+	s=arc-20240116; t=1758647427; c=relaxed/simple;
+	bh=QooaIIVUkVLqBfQHJYm+YtWViKyaB+15BcUdn5kj5kM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=XpLEIfAY1ksLAjpJZ6tYHjC5HSck84yNlsazhoGbCYLxtUUMA7FuGXWbI+29z9HC5QqAzwT+vvoJ3NW9oaovMUIuOzZDaIqFy7bkj7kJkAcGjs4Bnot3u274SGu2N1y45duAoC4RBH/jLozmDbnbv2TVxG0IlNH0VgVeAMytxvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-88d4b38d080so523503339f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 10:10:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758647425; x=1759252225;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KyEjEW0FvUQ1TaeESdEByryj9qh221cm1USXwPkZsYc=;
+        b=IRb2Qy5JGR29qwpuV7ldpR9S1um2C9BMrzPOrtYfqQMfqcnay4pgOBsD73oFMBEM5C
+         KK8qArNmQgplJEVDmdaZCH7N3FYlcEf1sLPsXJ1VibM07HVviMOPyb40L3KxRoW8wRqL
+         qudBAFAp6jShh82x8eI+7ucUu8F14NwrAj9GVb5rFQwtbl/qTlN7s9XxKXZnR64yMdGp
+         CcClAGguAbqtF5qqjT/nRFMXOmz52dOennnKcWwSc/GwXevcfciO2Zi0o/oP76U2VfPq
+         4FsIvfteFWjSoWMdSU4g6PgT0PTyvWKp2YZU/a4BtgIP0OZt2wlHborDCZhRBhJIZUxk
+         gweA==
+X-Gm-Message-State: AOJu0Yx9ODHyJvpk9WMx0r+xnBrs7DarZCBFuQ/3ckhzNHN+qQNADYli
+	zVs9gt2b5svKBh/slufsDBKybTHBJghbLo0OKfNpspT4i6ZhJqoDgWIpRVou/nL7ftRXBL5KYi6
+	zwdElZW1xXgR6A/gNrb1zQgFU0HDy802f5g7fIemyfmgclNI7EUWIGF4EOXM=
+X-Google-Smtp-Source: AGHT+IGAbBSIA/jNrO9HGegJvEXVVowu9Io0nRLEz/W5fEdaz38/E0lI8b5uwx427TV1809/103HDRphTnNGbHoWSeEBa7tBvXJ5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1758646791.git.noodles@meta.com>
+X-Received: by 2002:a05:6e02:218f:b0:3ec:e669:7d76 with SMTP id
+ e9e14a558f8ab-42581e3e060mr54335975ab.14.1758647424845; Tue, 23 Sep 2025
+ 10:10:24 -0700 (PDT)
+Date: Tue, 23 Sep 2025 10:10:24 -0700
+In-Reply-To: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d2d480.a70a0220.1b52b.02b4.GAE@google.com>
+Subject: Forwarded: [PATCH] bpf: fix NULL pointer dereference in print_reg_state()
+From: syzbot <syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Jonathan McDowell <noodles@meta.com>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-There are situations where userspace might reasonably desire exclusive
-access to the TPM, or the kernel's internal context saving + flushing
-may cause issues, for example when performing firmware upgrades. Extend
-the locking already used for avoiding concurrent userspace access to
-prevent internal users of the TPM when /dev/tpm<n> is in use.
+***
 
-The few internal users who already hold the open_lock are changed to use
-tpm_(try_get|put)_ops_locked, with the old tpm_(try_get|put)_ops
-functions changing to obtain read access to the open_lock.  We return
--EBUSY when another user has exclusive access, rather than adding waits.
+Subject: [PATCH] bpf: fix NULL pointer dereference in print_reg_state()
+Author: listout@listout.xyz
 
-Signed-off-by: Jonathan McDowell <noodles@meta.com>
+#syz test
+
+Syzkaller reported a general protection fault due to a NULL pointer
+dereference in print_reg_state() when accessing reg->map_ptr without
+checking if it is NULL.
+
+The existing code assumes reg->map_ptr is always valid before
+dereferencing reg->map_ptr->name, reg->map_ptr->key_size, and
+reg->map_ptr->value_size.
+
+Fix this by adding explicit NULL checks before accessing reg->map_ptr
+and its members. This prevents crashes when reg->map_ptr is NULL,
+improving the robustness of the BPF verifier's verbose logging.
+
+Reported-by: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com
+Signed-off-by: Brahmajit Das <listout@listout.xyz>
 ---
-v2: Switch to _locked instead of _internal_ for function names.
+ kernel/bpf/log.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
- drivers/char/tpm/tpm-chip.c       | 53 +++++++++++++++++++++++++------
- drivers/char/tpm/tpm-dev-common.c |  8 ++---
- drivers/char/tpm/tpm.h            |  2 ++
- drivers/char/tpm/tpm2-space.c     |  5 ++-
- 4 files changed, 52 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index ba906966721a..687f6d8cd601 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -144,7 +144,7 @@ void tpm_chip_stop(struct tpm_chip *chip)
- EXPORT_SYMBOL_GPL(tpm_chip_stop);
- 
- /**
-- * tpm_try_get_ops() - Get a ref to the tpm_chip
-+ * tpm_try_get_ops_locked() - Get a ref to the tpm_chip
-  * @chip: Chip to ref
-  *
-  * The caller must already have some kind of locking to ensure that chip is
-@@ -154,7 +154,7 @@ EXPORT_SYMBOL_GPL(tpm_chip_stop);
-  *
-  * Returns -ERRNO if the chip could not be got.
-  */
--int tpm_try_get_ops(struct tpm_chip *chip)
-+int tpm_try_get_ops_locked(struct tpm_chip *chip)
- {
- 	int rc = -EIO;
- 
-@@ -185,22 +185,57 @@ int tpm_try_get_ops(struct tpm_chip *chip)
- 	put_device(&chip->dev);
- 	return rc;
- }
--EXPORT_SYMBOL_GPL(tpm_try_get_ops);
- 
- /**
-- * tpm_put_ops() - Release a ref to the tpm_chip
-+ * tpm_put_ops_locked() - Release a ref to the tpm_chip
-  * @chip: Chip to put
-  *
-- * This is the opposite pair to tpm_try_get_ops(). After this returns chip may
-- * be kfree'd.
-+ * This is the opposite pair to tpm_try_get_ops_locked(). After this returns
-+ * chip may be kfree'd.
-  */
--void tpm_put_ops(struct tpm_chip *chip)
-+void tpm_put_ops_locked(struct tpm_chip *chip)
- {
- 	tpm_chip_stop(chip);
- 	mutex_unlock(&chip->tpm_mutex);
- 	up_read(&chip->ops_sem);
- 	put_device(&chip->dev);
- }
-+
-+/**
-+ * tpm_try_get_ops() - Get a ref to the tpm_chip
-+ * @chip: Chip to ref
-+ *
-+ * The caller must already have some kind of locking to ensure that chip is
-+ * valid. This function will attempt to get the open_lock for the chip,
-+ * ensuring no other user is expecting exclusive access, before locking the
-+ * chip so that the ops member can be accessed safely. The locking prevents
-+ * tpm_chip_unregister from completing, so it should not be held for long
-+ * periods.
-+ *
-+ * Returns -ERRNO if the chip could not be got.
-+ */
-+int tpm_try_get_ops(struct tpm_chip *chip)
-+{
-+	if (!down_read_trylock(&chip->open_lock))
-+		return -EBUSY;
-+
-+	return tpm_try_get_ops_locked(chip);
-+}
-+EXPORT_SYMBOL_GPL(tpm_try_get_ops);
-+
-+/**
-+ * tpm_put_ops() - Release a ref to the tpm_chip
-+ * @chip: Chip to put
-+ *
-+ * This is the opposite pair to tpm_try_get_ops(). After this returns
-+ * chip may be kfree'd.
-+ */
-+void tpm_put_ops(struct tpm_chip *chip)
-+{
-+	tpm_put_ops_locked(chip);
-+
-+	up_read(&chip->open_lock);
-+}
- EXPORT_SYMBOL_GPL(tpm_put_ops);
- 
- /**
-@@ -644,10 +679,10 @@ void tpm_chip_unregister(struct tpm_chip *chip)
- #ifdef CONFIG_TCG_TPM2_HMAC
- 	int rc;
- 
--	rc = tpm_try_get_ops(chip);
-+	rc = tpm_try_get_ops_locked(chip);
- 	if (!rc) {
- 		tpm2_end_auth_session(chip);
--		tpm_put_ops(chip);
-+		tpm_put_ops_locked(chip);
+diff --git a/kernel/bpf/log.c b/kernel/bpf/log.c
+index 38050f4ee400..14c0a442a85b 100644
+--- a/kernel/bpf/log.c
++++ b/kernel/bpf/log.c
+@@ -715,11 +715,10 @@ static void print_reg_state(struct bpf_verifier_env *env,
+ 		verbose_a("ref_obj_id=%d", reg->ref_obj_id);
+ 	if (type_is_non_owning_ref(reg->type))
+ 		verbose_a("%s", "non_own_ref");
+-	if (type_is_map_ptr(t)) {
++	if (type_is_map_ptr(t) && reg->map_ptr) {
+ 		if (reg->map_ptr->name[0])
+ 			verbose_a("map=%s", reg->map_ptr->name);
+-		verbose_a("ks=%d,vs=%d",
+-			  reg->map_ptr->key_size,
++		verbose_a("ks=%d,vs=%d", reg->map_ptr->key_size,
+ 			  reg->map_ptr->value_size);
  	}
- #endif
- 
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index f2a5e09257dd..0f5bc63411aa 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -65,7 +65,7 @@ static void tpm_dev_async_work(struct work_struct *work)
- 
- 	mutex_lock(&priv->buffer_mutex);
- 	priv->command_enqueued = false;
--	ret = tpm_try_get_ops(priv->chip);
-+	ret = tpm_try_get_ops_locked(priv->chip);
- 	if (ret) {
- 		priv->response_length = ret;
- 		goto out;
-@@ -73,7 +73,7 @@ static void tpm_dev_async_work(struct work_struct *work)
- 
- 	ret = tpm_dev_transmit(priv->chip, priv->space, priv->data_buffer,
- 			       sizeof(priv->data_buffer));
--	tpm_put_ops(priv->chip);
-+	tpm_put_ops_locked(priv->chip);
- 
- 	/*
- 	 * If ret is > 0 then tpm_dev_transmit returned the size of the
-@@ -220,14 +220,14 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 	 * lock during this period so that the tpm can be unregistered even if
- 	 * the char dev is held open.
- 	 */
--	if (tpm_try_get_ops(priv->chip)) {
-+	if (tpm_try_get_ops_locked(priv->chip)) {
- 		ret = -EPIPE;
- 		goto out;
- 	}
- 
- 	ret = tpm_dev_transmit(priv->chip, priv->space, priv->data_buffer,
- 			       sizeof(priv->data_buffer));
--	tpm_put_ops(priv->chip);
-+	tpm_put_ops_locked(priv->chip);
- 
- 	if (ret > 0) {
- 		priv->response_length = ret;
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 9c158c55c05f..c2ec56e2cd24 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -272,6 +272,8 @@ struct tpm_chip *tpm_chip_alloc(struct device *dev,
- 				const struct tpm_class_ops *ops);
- struct tpm_chip *tpmm_chip_alloc(struct device *pdev,
- 				 const struct tpm_class_ops *ops);
-+int tpm_try_get_ops_locked(struct tpm_chip *chip);
-+void tpm_put_ops_locked(struct tpm_chip *chip);
- int tpm_chip_register(struct tpm_chip *chip);
- void tpm_chip_unregister(struct tpm_chip *chip);
- 
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index 60354cd53b5c..0ad5e18355e0 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -58,10 +58,9 @@ int tpm2_init_space(struct tpm_space *space, unsigned int buf_size)
- 
- void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)
- {
--
--	if (tpm_try_get_ops(chip) == 0) {
-+	if (tpm_try_get_ops_locked(chip) == 0) {
- 		tpm2_flush_sessions(chip, space);
--		tpm_put_ops(chip);
-+		tpm_put_ops_locked(chip);
- 	}
- 
- 	kfree(space->context_buf);
+ 	if (t != SCALAR_VALUE && reg->off) {
 -- 
 2.51.0
 
