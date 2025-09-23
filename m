@@ -1,116 +1,93 @@
-Return-Path: <linux-kernel+bounces-828910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-828911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F54B95D07
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:20:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5063EB95D1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD92B1897661
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:20:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E2F9169950
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 12:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9B8322DD2;
-	Tue, 23 Sep 2025 12:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C430322DD8;
+	Tue, 23 Sep 2025 12:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qPSCy4mV"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRXpU6AN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEFA322DA8
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 12:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA53322DCC;
+	Tue, 23 Sep 2025 12:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758629997; cv=none; b=uWhvEI/CHqd/+CdY+kh/sD81QOlllRpxAdIb3j9XpL1UtnJ4Jh+Jb/o12toDFgZ3yGxda1fInNeocIpcH287FR+wC8nO1s1KUkSzmEnWwnaiSJ46XGraK3+TLgqFSyTlBnXt0tPsXGmac1oc+/OF/pALBe3BtDBYqfcgaOEU4vw=
+	t=1758630067; cv=none; b=uYes0SxrRyg7dY/voKdkazuv0DPE2Inme2y38oNfle+1ILKJqR94zz1oVWJcVF2uRGsvq2qynWax7Gz4a4rQjb9dILOTZFrff5t50yUe8RQ592vPPHognMsUT/x2CwljJ+lm93LD/wEFtazFNMe1wea8wcffMQpaqQaJKmITyGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758629997; c=relaxed/simple;
-	bh=DL5/MM4QMDxu+y6pVcFung9FsS2xYx7OXCyD3ag7/vQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HQngG7eNU8cA8x9DYOqXOxkWOMEd8OD/+cQL4RuGGvCpCzXVD1dwD0vswj/CVowTif/H9xSdIbiYMO3d1mIZRmDp2kI3P/5x1mGCro83o77lEfrshxbe1NtjMns6Ik1sP48P2tlYqlnIbxixRhoDmbzXIUOVNCNzQp8MnnUCc9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qPSCy4mV; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3e8ef75b146so5190592f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 05:19:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758629994; x=1759234794; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sTK3npgW5FQLE4nPFWDBCNYEm3feIUUETDGkLbnmceI=;
-        b=qPSCy4mVgUrc5XMvGxFAdeywp3Mz5TFMNGeFc7j4ZKOdxpukJteJ1AFNLQDgg6EUqZ
-         Q0E+bWNit9SItr1nKM2vPruTJioq4OJL2XqxiCpDekrkxekEwZUzVi+FjLVErCRCNyoC
-         d39zdLBFfJhskeZC6zMiDIrSbZ5dpDD8w+1LM8qG1fX2BPcskeua2FnRUuXnAsAt+itQ
-         hAu1atZLae5GuViBhoGd5YeXgRmbGA8Txfx0M5sMr+2r0TQwE4ylMRfSDFYrA0minkq0
-         GdmJYacqdVuFspp8EakkZRTyMbVOYXvni3yZdJ8+eU54lFW5xgWy+gsSXN5wmAtYKiSu
-         3Krg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758629994; x=1759234794;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sTK3npgW5FQLE4nPFWDBCNYEm3feIUUETDGkLbnmceI=;
-        b=uvAIopKl4t9q8eWXASHEqCMtmRJju6+Ok42kV1dvf22kJM/zKpUPCvNVNlI0u7ISIf
-         zzfu2xBpay9UcyQArAGcA1CzChZOdVxe75oL+F5pY7AugE5MQshYQIpsbnlPV+l7wHUM
-         zwuQpOm1r/zZAxFf+lx5HxuGDHgf8pV9XJRHwCzgHOtzfK7uFt3P1U36YAwpkpC3+SCC
-         6/vVJWnUterjt2vvvGdBAPVu9pM1TY6CZFn0LWpFpTfzxfssYX3kY3vhrJyIgGVr35Rw
-         S2Z0ATTyBuANjYQKuaWwORH5QWK4Ta28xhzrrN5slHaLxiY4YxgmSEWjalGyTl4IQpyI
-         jnqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWEZe4vOWvMXtJxzrKvylETRrWdEFlYFlUt2c9aJoCeibG3byHhGJQrkr3/GcK5ANSZHN4xGAhx3JZyZnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCh+CVnyM8wGeFfnMD/4KQl7bPp+ppa6w49Ng1clqvYWyJep19
-	J3tmTcAhAtA1NqFHNR2i6w5uPlEb+HuDHpcdtk6w0ecWzF0ukONiX1zEiRUxzG5XY4s=
-X-Gm-Gg: ASbGnct0aGMEGgbqvCOZYZY/a3O/Htq7BwK8/NFpWCcdwgBkftzjOj5feOE5JaSuUvU
-	jxOXfx8ilufYcY57kbRomTzVx0qSuAvcFh3B5ARDI9uf7DA1c6ohOVNyXTPBVFQlzheCriHyxI3
-	PTB+Afc9Xl5dumPwUYJXG3mHlclEYcA8lFJEVz0/FzO89KX+XXjNaZI6bdEysT9T+oy870+UiOI
-	o91lIFomcxoznLkboT6AvpS+7PGM+8z1UfsY1rlnQM1HBTQc/8WXqImxUM/yfosshwnqft7wTY5
-	Hps0EH5Hndp6GwLW6L/AumJp6z9sOfpoY0Vv3IB+eYG+FWs6FE9sOsa3+KwLtRbYkExdGvsbt/T
-	D3gzI6gWie2sfzP9XAh6Zok5y+pVN
-X-Google-Smtp-Source: AGHT+IHzh4QmoPQ01FP6OX2MtxPxTNk8wndU9qAYqgeeBa3Ms/9nlpcl+WJEjK2427UHhz9Vf1Arow==
-X-Received: by 2002:a5d:5f49:0:b0:3ea:80ec:854c with SMTP id ffacd0b85a97d-405c5ccc9fcmr1639265f8f.19.1758629994203;
-        Tue, 23 Sep 2025 05:19:54 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3f61703b206sm13621550f8f.6.2025.09.23.05.19.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 05:19:53 -0700 (PDT)
-Date: Tue, 23 Sep 2025 15:19:50 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>,
-	Simona Vetter <simona.vetter@ffwll.ch>, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] dma-buf: fix reference count leak in
- dma_buf_poll_add_cb()
-Message-ID: <aNKQZqWwWu_8WesG@stanley.mountain>
-References: <aNKBIcpF6kZRG6Mg@stanley.mountain>
- <7bb48401-ed99-4263-addd-ec1462d68168@amd.com>
+	s=arc-20240116; t=1758630067; c=relaxed/simple;
+	bh=ABLo2jswb6oVMptEftv8ZsbLxy2tNSDg2uZzb2foPKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i/jlHA9vN4xuQ7XxykJ/V2LAstezABuN8MEUcu6Eyt/pKjIjMTajv45u9PR59+p6oPMHH8RxECY79Z64usFQ4unHhTqvtV3L63fkruktUbsb9CZtM4JUHBG9wlDjsbOte12zddK+L1M/JdcRmMFyeo83ijvNg10ET2bnF9ecjkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRXpU6AN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95A36C113D0;
+	Tue, 23 Sep 2025 12:21:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758630066;
+	bh=ABLo2jswb6oVMptEftv8ZsbLxy2tNSDg2uZzb2foPKI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bRXpU6ANnB781R/HoWY2ijE1V6SscU6ceJfwsdq2n0wLyZ02tPZWI1hMLNBO92udT
+	 VvzwAe5tw5TVPNG8O6zfHO/v+3okXetiZZsBlJSY+DPa5uBZLkCyxOIjdIpoKcj7Ek
+	 q4s6o/Y1MPVzI4rXsf/lGXLTSPIhqPDxUvS5V7I3lY03k+DzhxihWwplVgVSNpc6kJ
+	 rfDqHavPNTK8YABIMcW7L6DTxd6mxGh/UMub9n2ggVs8vm+aG1Ltg8Npw0eZZk6aND
+	 t8KhqXeeNPCpoU9H1AzhXpVn9V5tenTAmAudni+b4WR89hprP/QbeCzyu4iQHEbva2
+	 3UEps51yVTLlw==
+Date: Tue, 23 Sep 2025 08:20:59 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Josh Poimboeuf <jpoimboe@kernel.org>
+Subject: Re: [PATCH v2 1/2] unwind_user/x86: Enable frame pointer unwinding
+ on x86
+Message-ID: <20250923082059.15fc17bc@batman.local.home>
+In-Reply-To: <20250923105130.GG3419281@noisy.programming.kicks-ass.net>
+References: <20250827193644.527334838@kernel.org>
+	<20250827193828.347397433@kernel.org>
+	<20250923105130.GG3419281@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7bb48401-ed99-4263-addd-ec1462d68168@amd.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 23, 2025 at 02:00:28PM +0200, Christian König wrote:
-> On 23.09.25 13:14, Dan Carpenter wrote:
-> > Call dma_fence_put(fence) if dma_fence_add_callback() fails.
-> 
-> Well that change is obviously incorrect.
->
-> When dma_fence_add_callback() fails we already call dma_fence_put() and drop the reference.
-> 
-> When the dma_fence_add_callback() call succeeds the callback will drop the reference.
-> 
-> The problem here is that the return code of dma_fence_add_callback() is an integer error code instead of a bool and basically has the reverse meaning than what people usually expect.
-> 
+On Tue, 23 Sep 2025 12:51:30 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Ah, yes.  You're exactly correct of course.  Sorry about that.
+> Moo, and now you have me look at unwind/user.c:
+> 
+>         /* Make sure that the address is word aligned */
+>         shift = sizeof(long) == 4 ? 2 : 3;
+>         if (cfa & ((1 << shift) - 1))
+>                 return -EINVAL;
+> 
+> Isn't that just:
+> 
+> 	if (cfa & (sizeof(long) - 1))
+> 
+> ?
+> 
+> Let me go add a patch to clean that up...
 
-regards,
-dan carpenter
+Sure, as long as it's commented.
 
+Thanks,
+
+-- Steve
 
