@@ -1,213 +1,182 @@
-Return-Path: <linux-kernel+bounces-829118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E2A8B96536
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:39:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41916B96555
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 16:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06E1C7B7471
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:34:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F19B3B8CA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 14:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BEF24886A;
-	Tue, 23 Sep 2025 14:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC9F22A7F1;
+	Tue, 23 Sep 2025 14:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQrD8pIx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vKkYbL9/"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6B423A989;
-	Tue, 23 Sep 2025 14:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A454618E20
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 14:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758638112; cv=none; b=h92wZP3LlxCc4yF4VBUHw9/lt90FDSQ7rfGjNdAVwz17unUxkyU9Jn0L492ONVoSKxPl+FUmDwOuZ6aHTS3DHRrPn2Ef+1dPYOl0VV7OK+qGgfq1j61KIgTi9w18G1eFkYVr1XRWo9/pGkiSmHFl25RP473xhFeR8v4ePS5wUVg=
+	t=1758638156; cv=none; b=PgDBKdYCb6DxERvEd+voEX7sS7dHNO1uXofKrY0M6SQFP54R4sviVnItoLLHwhzPjUNP4XHlBAYi+GUrHBV8Qf6sg1VF9/ypN8LO+D5Z1RPOPM7ehcX/3im2op53shJZgSeLnqtFbn/Kymf3K98eTjVYlVaz3EEZhg9ACQe+Szo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758638112; c=relaxed/simple;
-	bh=lk7dIsuWICp06xrsWrHrfsHtjecVw9bVejsvuGuCMrE=;
+	s=arc-20240116; t=1758638156; c=relaxed/simple;
+	bh=+qI76m61UBIiYSKYa7PKpe19ghecX989zXs+Qyuqc5Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PpNjaPygZtfLp/Quu/iplSv+5OAhwH5zqrxNGx+QQH+VU/4BXVnDOCl50yH+u7jnvpb+HCdRZkySPxb39QVJ9jUQH9A7rtd8ONEOnmMnVto6Q3WjbfaL/QTqY9/Df6vOisSzRyfbUAXaF2IsWMT7z8GKo8g4HK8FNhLs5YgJcEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQrD8pIx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65976C4CEF5;
-	Tue, 23 Sep 2025 14:35:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758638111;
-	bh=lk7dIsuWICp06xrsWrHrfsHtjecVw9bVejsvuGuCMrE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NQrD8pIxRlw9IDlRvkNgfGIILlA8hs0HUHOi3fE4LRYy67TuvSTLg7+YhApNbAsqG
-	 f5bGU8pm2nTQbJer6J8NVrv/051hj8i6IIzXvNkiWEYDqfEAiQlEfrbb2ng4PPOC6z
-	 wJ4JIcCj22LVnAaDjjjOuOzg8I5GpeAlKVa1ygxBOMarTRLMprJR9ng+sFffOs5noq
-	 JdqFjs1oNB/uX1Kk3IJR5FOBAY+GfcKBdoOgO/Cxja3JeCKvoMv2AUpWzOOizEY+aF
-	 uQLlfln8Vm4xcSeCYBDAKNOCvoRSziVAj9VCsdSycU6vyweN9spi7IV0LyL/DuwHwt
-	 eTmRFQX4j4LZA==
-Date: Tue, 23 Sep 2025 17:35:07 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: linux-integrity@vger.kernel.org,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	stable@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] tpm: Use -EPERM as fallback error code in tpm_ret_to_err
-Message-ID: <aNKwG2Q6AG3BNB2c@kernel.org>
-References: <20250922072332.2649135-1-jarkko@kernel.org>
- <tnxfamnvxoanaihka3em7ktmzkervoea43zn2l3mqxvnuivb6n@p5nn34vns3zf>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B+j4GBkka+22G8kwXTWcY+k3mCGkWSoJDDxK7UdWVqS6397ykmXKPgELFwJoRhuUq2eDvr2t49KQYvRAkDbj+4yIfxe6bUv5Rh2LA0NOtu/yeCjfY34HGJJYr/u643WtPQbXCBSuqSeGbIYk9YYEUzWNfeVSt81jgtRZcaSo4e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vKkYbL9/; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46d72711971so77915e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 07:35:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758638153; x=1759242953; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=w7gFiyv7OnRS5nGrN+3NtlLFQvUag+pzI6L45ZXC1s8=;
+        b=vKkYbL9/Fi/ixAGHhFsK9n6bsVeIB7w7nnXJr4B0Y+gYU91UK28S+M/dR3xieloMGR
+         MoKSm7ZHyOEjW5Ur7ezUB6pvD0uL5IvQuMjtKIqIS4nZnFEUhyLcTqs1thZboePCTnH2
+         qHmfTcxDeW8aqSmLb7tcGmYFwY5YXadnxvx5OrE2MD49U5KQqqI0vVjhE8sKLgOW+RlR
+         Hv5myhYS7FSHypMtE+7J5UKb0HAPIBHZa+gps0irw+6P17grdiCikQoGlPnulrh2/8gX
+         XVes2DmNx9qsGXhyObUkmMegRdJen8uchi1My/5MSLPlIvZ0dOhKhr5LRs8n2tM7zi9v
+         Pvsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758638153; x=1759242953;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w7gFiyv7OnRS5nGrN+3NtlLFQvUag+pzI6L45ZXC1s8=;
+        b=qwx+ahDfm/BcyI/HPH6+qzbaX8sUpp2pTOoY8JWgrdhBuQ/Lgpm+vwU5o/DmGSylq4
+         gTJ3HGe4hXHuBSv/ml/sN5yMeK1m47RFDF32ArUpMg8cA+qIEVwVgz7Pqz2IZC0Wwsf6
+         KBx9JMGIQHtaDCM+9PlzJNGQ+ixYHsIJIadP8h/x22TIkydM2ar6heDFDE9V0ZU19acJ
+         CJlanA/IMcFn7gSFBF1SdAkUKCoKLmw+7frPFYDWY08fyDt7cZauQBB+D8BsrWKMViyg
+         WNeEMmWikz55Ff3vWP3E4Kmk+8VDMP8C6dIhL94AgC5levdIcWUmu2ngFBogpAuRRseC
+         FQgA==
+X-Gm-Message-State: AOJu0YwDX5T43UKfo0yvxejvJsroFVbO+0ecwpVUq6k3f++QzPvhJ0En
+	vijAg5SaYXhWnAgmcAG1S8prSMF2mOK1+iam3lLi3PgVh1pE5koQoKLGwTetHaRREg==
+X-Gm-Gg: ASbGncuB89CInLEo6U+lx0Wb1lt6gaarJh4ESj52IXZORyh3zsRwym3E3enlwFcwe2m
+	5ThHUtT7tZxUch8jXy2Jnn7gju7VqdQDLwoDy0532mtFhWIXOmumznbvLocuAAfmyLoQyaxaxu5
+	+22ZVwdeWLEEZUVCGibLDufPvwxEJ1GltCXhV/3sr7Ls2uyLJ7TdK04AFjaGbjrG9fKJhB6CtfB
+	f58ZdifPmnJEfgHcj/Gx/dwzjE6+JPrhxsFaOazDN3T1SXBZyxNj945E43Uq3FQuLWj34ahKh5x
+	XFonTJGYo9Gjl/YdyaEQlGjOaH8PVLSh9DDBauzs5egsEGNSKXSzSGo6Vu5r9q+ROrGFkENyOeq
+	lkVFe/jgxWA0Roxko7qQCisLzWELXewJ41ijuUJu6UhPTm/5gwHBYBZV0CfYYz0fzWE8=
+X-Google-Smtp-Source: AGHT+IFvUZC8hU4aVaM+B2ZVSTNY2pCK/nLLcGd0XFRXs64IKLx9ZNGK9gnrvBoN85r9vD2bqa+nEg==
+X-Received: by 2002:a05:600c:a40a:b0:45f:2e6d:ca01 with SMTP id 5b1f17b1804b1-46e1dc7b863mr1452625e9.4.1758638152887;
+        Tue, 23 Sep 2025 07:35:52 -0700 (PDT)
+Received: from google.com (140.240.76.34.bc.googleusercontent.com. [34.76.240.140])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee07408258sm24481309f8f.19.2025.09.23.07.35.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 07:35:52 -0700 (PDT)
+Date: Tue, 23 Sep 2025 14:35:48 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	jgg@ziepe.ca, mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v4 15/28] iommu/arm-smmu-v3: Load the driver later in KVM
+ mode
+Message-ID: <aNKwROPzDCWgJBGQ@google.com>
+References: <20250819215156.2494305-1-smostafa@google.com>
+ <20250819215156.2494305-16-smostafa@google.com>
+ <aMQmA9cLaeYWG5_C@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <tnxfamnvxoanaihka3em7ktmzkervoea43zn2l3mqxvnuivb6n@p5nn34vns3zf>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aMQmA9cLaeYWG5_C@willie-the-truck>
 
-On Mon, Sep 22, 2025 at 11:25:42AM +0200, Stefano Garzarella wrote:
-> On Mon, Sep 22, 2025 at 10:23:32AM +0300, Jarkko Sakkinen wrote:
-> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+On Fri, Sep 12, 2025 at 02:54:11PM +0100, Will Deacon wrote:
+> On Tue, Aug 19, 2025 at 09:51:43PM +0000, Mostafa Saleh wrote:
+> > While in KVM mode, the driver must be loaded after the hypervisor
+> > initializes.
 > > 
-> > Using -EFAULT here was not the best idea for tpm_ret_to_err as the fallback
-> > error code as it is no concise with trusted keys.
-> > 
-> > Change the fallback as -EPERM, process TPM_RC_HASH also in tpm_ret_to_err,
-> > and by these changes make the helper applicable for trusted keys.
-> > 
-> > Cc: stable@vger.kernel.org # v6.15+
-> > Fixes: 539fbab37881 ("tpm: Mask TPM RC in tpm2_start_auth_session()")
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > Signed-off-by: Mostafa Saleh <smostafa@google.com>
 > > ---
-> > include/linux/tpm.h                       |  9 +++++---
-> > security/keys/trusted-keys/trusted_tpm2.c | 26 ++++++-----------------
-> > 2 files changed, 13 insertions(+), 22 deletions(-)
+> >  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 25 ++++++++++++++++-----
+> >  1 file changed, 19 insertions(+), 6 deletions(-)
 > > 
-> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> > index dc0338a783f3..667d290789ca 100644
-> > --- a/include/linux/tpm.h
-> > +++ b/include/linux/tpm.h
-> > @@ -449,13 +449,16 @@ static inline ssize_t tpm_ret_to_err(ssize_t ret)
-> > 	if (ret < 0)
-> > 		return ret;
-> > 
-> > -	switch (tpm2_rc_value(ret)) {
-> > -	case TPM2_RC_SUCCESS:
-> 
-> I slightly prefer the `case TPM2_RC_SUCCESS` but I don't have a strong
-> opinion.
-> 
-> > +	if (!ret)
-> > 		return 0;
-> 
-> If we want to remove the `case TPM2_RC_SUCCESS`, can we just merge this
-> condition with the if on top, I mean:
-> 
-> 	if (ret <= 0)
-> 		return ret;
-
-I can cope with this i.e. revert back, it's not really part of the scope
-and was totally intentional
-
-> 
+> > diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> > index 10ca07c6dbe9..a04730b5fe41 100644
+> > --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> > +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> > @@ -4576,12 +4576,6 @@ static const struct of_device_id arm_smmu_of_match[] = {
+> >  };
+> >  MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
+> >  
+> > -static void arm_smmu_driver_unregister(struct platform_driver *drv)
+> > -{
+> > -	arm_smmu_sva_notifier_synchronize();
+> > -	platform_driver_unregister(drv);
+> > -}
+> > -
+> >  static struct platform_driver arm_smmu_driver = {
+> >  	.driver	= {
+> >  		.name			= "arm-smmu-v3",
+> > @@ -4592,8 +4586,27 @@ static struct platform_driver arm_smmu_driver = {
+> >  	.remove = arm_smmu_device_remove,
+> >  	.shutdown = arm_smmu_device_shutdown,
+> >  };
 > > +
-> > +	switch (tpm2_rc_value(ret)) {
-> > 	case TPM2_RC_SESSION_MEMORY:
-> > 		return -ENOMEM;
-> > +	case TPM2_RC_HASH:
-> > +		return -EINVAL;
-> > 	default:
-> > -		return -EFAULT;
-> > +		return -EPERM;
-> > 	}
-> > }
-> > 
-> > diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-> > index 024be262702f..e165b117bbca 100644
-> > --- a/security/keys/trusted-keys/trusted_tpm2.c
-> > +++ b/security/keys/trusted-keys/trusted_tpm2.c
-> > @@ -348,25 +348,19 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
-> > 	}
-> > 
-> > 	blob_len = tpm2_key_encode(payload, options, &buf.data[offset], blob_len);
-> > +	if (blob_len < 0)
-> > +		rc = blob_len;
-> > 
-> > out:
-> > 	tpm_buf_destroy(&sized);
-> > 	tpm_buf_destroy(&buf);
-> > 
-> > -	if (rc > 0) {
-> > -		if (tpm2_rc_value(rc) == TPM2_RC_HASH)
-> > -			rc = -EINVAL;
-> > -		else
-> > -			rc = -EPERM;
-> > -	}
-> > -	if (blob_len < 0)
+> > +#ifndef CONFIG_ARM_SMMU_V3_PKVM
+> > +static void arm_smmu_driver_unregister(struct platform_driver *drv)
+> > +{
+> > +	arm_smmu_sva_notifier_synchronize();
+> > +	platform_driver_unregister(drv);
+> > +}
+> > +
+> >  module_driver(arm_smmu_driver, platform_driver_register,
+> >  	      arm_smmu_driver_unregister);
+> > +#else
+> > +/*
+> > + * Must be done after the hypervisor initializes at module_init()
+> > + * No need for unregister as this is a built in driver.
+> > + */
+> > +static int arm_smmu_driver_register(void)
+> > +{
+> > +	return platform_driver_register(&arm_smmu_driver);
+> > +}
+> > +device_initcall_sync(arm_smmu_driver_register);
+> > +#endif /* !CONFIG_ARM_SMMU_V3_PKVM */
 > 
-> nit: since `blob_len` is not accessed anymore in the error path, can we
-> avoid to set it to 0 when declaring it?
-> 
-> Thanks,
-> Stefano
-> 
-> > -		rc = blob_len;
-> > -	else
-> > +	if (!rc)
-> > 		payload->blob_len = blob_len;
-> > 
-> > out_put:
-> > 	tpm_put_ops(chip);
-> > -	return rc;
-> > +	return tpm_ret_to_err(rc);
-> > }
-> > 
-> > /**
-> > @@ -468,10 +462,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
-> > 		kfree(blob);
-> > 	tpm_buf_destroy(&buf);
-> > 
-> > -	if (rc > 0)
-> > -		rc = -EPERM;
-> > -
-> > -	return rc;
-> > +	return tpm_ret_to_err(rc);
-> > }
-> > 
-> > /**
-> > @@ -534,8 +525,6 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
-> > 	tpm_buf_fill_hmac_session(chip, &buf);
-> > 	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
-> > 	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
-> > -	if (rc > 0)
-> > -		rc = -EPERM;
-> > 
-> > 	if (!rc) {
-> > 		data_len = be16_to_cpup(
-> > @@ -568,7 +557,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
-> > 
-> > out:
-> > 	tpm_buf_destroy(&buf);
-> > -	return rc;
-> > +	return tpm_ret_to_err(rc);
-> > }
-> > 
-> > /**
-> > @@ -600,6 +589,5 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
-> > 
-> > out:
-> > 	tpm_put_ops(chip);
-> > -
-> > -	return rc;
-> > +	return tpm_ret_to_err(rc);
-> > }
-> > -- 
-> > 2.39.5
-> > 
-> 
+> I think this is a bit grotty as we now have to reason about different
+> initialisation ordering based on CONFIG_ARM_SMMU_V3_PKVM. Could we
+> instead return -EPROBE_DEFER if the driver tries to probe before the
+> hypervisor is up?
 
-BR, Jarkko
+I looked a bit into this and I think the current approach would be
+better because:
+1- In case KVM fails to initialise or was disabled from command line,
+   waiting for the hypervisor means SMMUs may never probe.
+   One of the things I was cautious to get right is the error path,
+   so if KVM or if the nested driver fails at any point at initialization,
+   the SMMUs should still be probed and the systems should still be running
+   even without KVM.
+
+2- That's not as bad, but it leaks some KVM internals as we need to either
+   check (is_kvm_arm_initialised()\or kvm_protected_mode_initialized) from
+   driver code, as opposed to registering the driver late based on a kernel
+   config for the nested SMMUv3.
+
+If we really want to avoid the current approach, we can keep deferring probe,
+until a check for a new flag set from “finalize_pkvm” which is called
+unconditionally of KVM state.
+
+Thanks,
+Mostafa
+
+> 
+> Will
 
