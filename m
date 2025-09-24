@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-830586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8CCB9A0B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:34:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A3F9B9A0CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 024CE17A175
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:34:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FDBF3B9535
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B6E30277D;
-	Wed, 24 Sep 2025 13:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22952302156;
+	Wed, 24 Sep 2025 13:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tK4g8xF3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iYMvsJgr"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF4A2E0413
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2531F218AD4
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758720868; cv=none; b=D5CdIbD/tBEGXUeuovfs0b9oWwsyWJSjm9VGbgwR9gApH6fuvaZWyisIDWsVgLwk3JDNlx/2In87I7/jqZakmyzo8qHLcSSwAAHBtcspEBAFxKt2WhfvwTpFtblWoUryedIAkr/RDOIELk8wovWH+b1TkQeXVlYYLMyOBY5FKDo=
+	t=1758720927; cv=none; b=qf6XNDyuHipl0evH5nPPmKH806+fL8Dvh/T4ngLkJpCjV1y3xwaST9sit228CTp3xH0BgEQrDWgmrnRrQ3ftymnMfllbX+7mAv0BFXHM0gDVtpEFJIwQpX87O5DacKbjmaSZzcHGh2d9BRjxyfFpLY048Po4ECh0Q5sevrJ3+Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758720868; c=relaxed/simple;
-	bh=3Z6XTJa/2I09pYSflW4MDbMqly8jjfPgHvxuTYEtOvk=;
+	s=arc-20240116; t=1758720927; c=relaxed/simple;
+	bh=KmA+ZlB3PPUevAH0ozfRwMtw7syrS0981/eiRP93wNE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K35mp8SqtbtXxwwRhXeajwocRSWy62U1vRtublEpziw1zU3MSKB7BQ1jOkmmHhDm0F0CvdGzsgaoaGo4eZVKAr/9CJ3wiiCdQizpFlveKXDG++8JKnpCF8cmWAz5qukZwmdxKtTLEUpNw9qdvwpBOe3YnxroPlJV8GA9wNoV980=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tK4g8xF3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9351C19422
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:34:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758720867;
-	bh=3Z6XTJa/2I09pYSflW4MDbMqly8jjfPgHvxuTYEtOvk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tK4g8xF3KJeMYnB9VZ4gO8VRMtQvT117WCk3DHhVlEegaKquqejM1Ot5xjEhSSEOK
-	 43WmDcGlPeFBVd6oCpGsmL+8tu5/12oZs4cT3CBOvCTcpV/9ieFFCe0OnqgT5j3e+E
-	 kamp4muCI1+ku/3UZUUk43jADlPfZFB/OGQbWFEL1yIieBn5z+BjOVZvX1yaSW2VRG
-	 8hor0XFKZBCNhDYppKwVU3Vmmj4G7OBcqnycvEma7dxeTlVQ9NQ7zdf/KO//cZhphQ
-	 zs6/ZVsvHe5w9Ygt933ZX8EDJqUdOzRtNRnuAu0X9OGJH948CqCf7TfTwDLEtb4W2w
-	 atUla77I4Zl5A==
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-62fa99bcfcdso10390837a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:34:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW805c11qubmwwrtKeAG+gS+w3Z27TewxteoY629fS830yQnmCFv2ajZoZhdqBB4uRZR4VXS1z6A2lYjts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPOppLo5fOlPU4onOvmSe7uir9YIauUmNa1DYUfCmKJqYJBnRP
-	9Ntt9EpG+R1tAnmwglNLPhIIrIWi6fuc/+GUcELo/nXuqlHp9ytWrFmYpU7VaZ01GGTWkfZlscL
-	BD+xK6JYhqcZwu74pAFKHow13FZBOrA==
-X-Google-Smtp-Source: AGHT+IE6gNa61RcE9DKf2iXVRg4jwELeBK0rbWB2RUsPPFiJAgwlJN43oTxNrNqM4YRqC7tDc6X2gwE56i96k2A7jt0=
-X-Received: by 2002:a05:6402:a00e:b0:62f:b6bd:eff7 with SMTP id
- 4fb4d7f45d1cf-63467813addmr5004269a12.38.1758720866242; Wed, 24 Sep 2025
- 06:34:26 -0700 (PDT)
+	 To:Cc:Content-Type; b=hIjszgY3Mg8wg4pp9+sZ7/5dZmBvLIIB30oWJWTDw52pPJy1VxBMTpmMhzqB+2PqeMdx5Mslip+35uRzdTdXEgGsnhrbJODooHIFUHEQRbFjvOjUChjGnY1QIuKkaYW8ElvBbxCUp7jzL7nqwcAmWogcEcahMobG6q0rtAU/PoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iYMvsJgr; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24456ce0b96so12118705ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:35:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758720925; x=1759325725; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pe50O/RrUQLZAFgmjB7HU4D9kzr+KcVI1Eg33NkTII8=;
+        b=iYMvsJgr0VUpKShL7Lzarsr9QpSlMltPrvw/kj3bCrhvafo6EDcUxoodaRsaUgbEvV
+         oj83EyypeA4M/UheXO+Y3im0CxJlPGUTBQ5vrJ/3xlD6urZ4ymhmEwhAgrweSm3pLzjS
+         wQUidfObTf+83peICbRmz2C06K/fzTAtZK7ZUtpG1enH8tL6UE4lTh6TnBB8UsjjEmYN
+         P8fSO+LkUEfGBiU8P+MK8dWXWvVhTJ9Ta8ny6A4dl9cGxyuIAAGb4ixZioV/YC+Kf8Xf
+         YrO9IXPn2S1PJn8eUlyfuoLfZ6J7ie66nSc03UL7bdUXm4nTQflcPhG9uBIu+sATCio8
+         bV0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758720925; x=1759325725;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pe50O/RrUQLZAFgmjB7HU4D9kzr+KcVI1Eg33NkTII8=;
+        b=HFTzSFUZnr32o1PMR2tcf4jJAhUhC3ZWIe33KDGrKk4zSnhKXD9ZzbSvehtFAjlGpt
+         rjUZWSb/l1YnuOXQGK52ycVxJbYr5HKCUYYD8v81PL2fFUTfchigpXZ2vXuU/sjf2Bmz
+         DX1XbpuNln2OchxO2otLcqw8tPWqd/3627KGq6DT5NN/CEQmeiAGEhS92i/QFmmdD8iz
+         fHh9C0Lk43ZCNAtlZK8sifMhenaErr46qL8OdRua0VF72FdRFBxt7KEnfwKk+VxP74J0
+         dQfE4sdayIKf6RwUSNPl7NVjs4rH19Pk/HowTk1DpccWoTOG3XXrVIIN+VRamTzql+vM
+         b8Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCWp2/Ibu+GLC9AkR+medj46sM81BadB0S2BkCESKrLb61Yj5aCoFiIhTddJQkGjgOkVvR06pnnrBLA60Oc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD+G3mVe8ygRvFmC58ITxN49mcOKRgwk0mcO454lFCrd3EsBsp
+	rvocoIdyQbSN1iWhhOkA2GpN5rHkCc5xdkKocyTnTGYu1siw7XLwDq0qlrM4pOCX6+P7VMizcyk
+	GO8DbQa+8DwsEE61G8bC0+U3TJXwGgjQq2G2VQ9gdRuqfHUscHsi4yR2/
+X-Gm-Gg: ASbGncvy+k2wRCKF/1AD6TYbQosI6NKL64G3xfiNFHGUcpVFu3NTJIkvfVrYP6P159t
+	te5Ojl0x2nyYKIrz73wEu1bZbmJHXQOe1LmvaZ04w6rT7mvcw5s1UsCd9l2u2aQ63P7/sw9b27j
+	P2JJg+5GsQZIolJheAyHEfOwBeir+kwNZe2EtGlPcPDmbbqqYIJjSksuQvtnF23B2hChkYLhDlZ
+	ZSlKfS9/DZJDTttB4kaxWle2CQIvKgyb1zMobap7P1R
+X-Google-Smtp-Source: AGHT+IEZB79FDy23Au1RBe1FRu0hDgBKlEfPABN0JOWEdfyHHG/R0n9grDY3ffSzMtedVDlArhR4HwkfTvUWJ+J5oOQ=
+X-Received: by 2002:a17:902:f64f:b0:274:823c:8642 with SMTP id
+ d9443c01a7336-27ec1199cbbmr30080495ad.10.1758720925041; Wed, 24 Sep 2025
+ 06:35:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917074812.4042797-1-kevin.tung.openbmc@gmail.com>
- <9bb9929a-8130-48da-983e-2901a7c3da36@lunn.ch> <CABh9gBew1=hbJvg1Mhg5dE7Lr_Z442_kbBX6zTs_6_C2NRyLbw@mail.gmail.com>
- <7e6f568da28d7a63738b6ed22b33db3df4c478c9.camel@codeconstruct.com.au> <CABh9gBcoWbXurPo0f9U9+gz8k6gttUvj=NMMDVfgjo5dgaTLSA@mail.gmail.com>
-In-Reply-To: <CABh9gBcoWbXurPo0f9U9+gz8k6gttUvj=NMMDVfgjo5dgaTLSA@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 24 Sep 2025 08:34:15 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+zBK1CBJX0XcaqaYeOPUhoRE-nMeYvkTNwQovJ+dakGg@mail.gmail.com>
-X-Gm-Features: AS18NWBRbwk465MJYJkBc3f6vXfBHLpagMAmj_NyZMMJpbB87hfWSByQAiUtoWU
-Message-ID: <CAL_Jsq+zBK1CBJX0XcaqaYeOPUhoRE-nMeYvkTNwQovJ+dakGg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] Add Meta (Facebook) Yosemite5 BMC (AST2600)
-To: Kevin Tung <kevin.tung.openbmc@gmail.com>
-Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, Andrew Lunn <andrew@lunn.ch>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
+References: <20250924100301.1558645-1-glider@google.com> <8f0366c8-f05e-4687-817f-90a5b47922c9@web.de>
+In-Reply-To: <8f0366c8-f05e-4687-817f-90a5b47922c9@web.de>
+From: Marco Elver <elver@google.com>
+Date: Wed, 24 Sep 2025 15:34:48 +0200
+X-Gm-Features: AS18NWAZTmBr2I7oYM4SLQ_DoH6Vcj7XLTdfUyItYT_CFFhymyeJQEwdn2xWFgc
+Message-ID: <CANpmjNO8J_cN-mCepSsqkG+az3QKbxZvD1zSKi29oi4prW9v5g@mail.gmail.com>
+Subject: Re: [PATCH v2] mm/memblock: Correct totalram_pages accounting with KMSAN
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Alexander Potapenko <glider@google.com>, linux-mm@kvack.org, kasan-dev@googlegroups.com, 
+	LKML <linux-kernel@vger.kernel.org>, Aleksandr Nogikh <nogikh@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Mike Rapoport <rppt@kernel.org>, Vlastimil Babka <vbabka@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 24, 2025 at 8:05=E2=80=AFAM Kevin Tung <kevin.tung.openbmc@gmai=
-l.com> wrote:
+On Wed, 24 Sept 2025 at 15:23, Markus Elfring <Markus.Elfring@web.de> wrote=
+:
 >
-> On Mon, Sep 22, 2025 at 10:47=E2=80=AFAM Andrew Jeffery
-> <andrew@codeconstruct.com.au> wrote:
-> >
-> > On Thu, 2025-09-18 at 10:21 +0800, Kevin Tung wrote:
-> > > On Wed, Sep 17, 2025 at 11:12=E2=80=AFPM Andrew Lunn <andrew@lunn.ch>=
- wrote:
-> > > >
-> > > > On Wed, Sep 17, 2025 at 03:48:08PM +0800, Kevin Tung wrote:
-> > > > > Summary:
-> > > > > Add device tree for the Meta (Facebook) Yosemite5 compute node,
-> > > > > based on the AST2600 BMC.
-> > > > >
-> > > > > The Yosemite5 platform provides monitoring of voltages, power,
-> > > > > temperatures, and other critical parameters across the motherboar=
-d,
-> > > > > CXL board, E1.S expansion board, and NIC components. The BMC also
-> > > > > logs relevant events and performs appropriate system actions in
-> > > > > response to abnormal conditions.
-> > > > >
-> > > > > Kevin Tung (2):
-> > > > >   dt-bindings: arm: aspeed: add Meta Yosemite5 board
-> > > > >   ARM: dts: aspeed: yosemite5: Add Meta Yosemite5 BMC
-> > > >
-> > > > The threading between your patches are broken? How did you send the=
-m?
-> > > > git send-email? b4 send?
-> > >
-> > > Yes, the threading is broken. I initially used git send-email, but fo=
-r
-> > > some reason, only the cover letter was sent. I then sent the remainin=
-g
-> > > dt-bindings and DTS patches separately as a follow-up.
-> >
-> > I recommend using b4, it helps blunt some of the sharp edges of git-
-> > send-email.
-> >
-> > https://b4.docs.kernel.org/en/latest/
-> >
-> > Can you please send v2 of the series so that it's properly threaded,
-> > after applying tags you've collected for the involved patches, and
-> > checking your work with `make CHECK_DTBS=3Dy aspeed/aspeed-bmc-facebook=
--
-> > yosemite5.dtb`?
-> >
-> > Andrew
+> =E2=80=A6
+> > +++ b/mm/mm_init.c
+> > @@ -2548,24 +2548,25 @@ void *__init alloc_large_system_hash(const char=
+ *tablename,
+> =E2=80=A6
+> > +unsigned long __init memblock_free_pages(struct page *page, unsigned l=
+ong pfn,
+> > +                                      unsigned int order)
+> >  {
+> =E2=80=A6
+> >       if (!kmsan_memblock_free_pages(page, order)) {
+> >               /* KMSAN will take care of these pages. */
+> > -             return;
+> > +             return 0;
+> >       }
+> =E2=80=A6
 >
-> Sure! I have sent v2 of the series using b4, and the patches are now
-> properly threaded.
-> I also checked the work with `make CHECK_DTBS=3Dy
-> aspeed/aspeed-bmc-facebook- yosemite5.dtb`,
-> and the warnings that appear are not related to these patches.
+> How do you think about to omit curly brackets for this if statement?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/coding-style.rst?h=3Dv6.17-rc7#n197
 
-Um, they are related because they are warnings for *your* platform.
-You don't care that there are warnings for your platform?
-
-Rob
+No - with the /* .. */ comment there are 2 lines in this block.
 
