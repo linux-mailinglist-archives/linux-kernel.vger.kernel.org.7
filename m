@@ -1,186 +1,137 @@
-Return-Path: <linux-kernel+bounces-831350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4536CB9C6DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:02:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A356B9C6E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 545BC7B7238
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:00:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 702C27B867F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954AF2BD001;
-	Wed, 24 Sep 2025 22:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6EB28851C;
+	Wed, 24 Sep 2025 23:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddeyTkrK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VZDYvIse"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93D6296BAA;
-	Wed, 24 Sep 2025 22:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAAD27FD7C;
+	Wed, 24 Sep 2025 23:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758754778; cv=none; b=hpS9wx5o4xWaCfyPH60j1iMpVfWoNQwKxF2tEdDSjFpfw3DrxQyqg6DwiBW45qJefrN2w4DIsy7ma92zyniw90slGV3x0GUgWcJoo8juSD75Ji+kp77rE7a4w3oyLUV0tmfh0++JOBNVexodYNyARgVrszpqvkHCQANRKl0ySC4=
+	t=1758754934; cv=none; b=aBqwAnTugZR9XoxKp729SYxI1qKcEmqm3mbyhRyEJJI7/7tEIJgyN93BVhLjoJLDwHge1uJZBmRSgBv1NepTWnN6yRUefBLlyual6csRE/LbrAisWJi8OjEo8osXaOGu/aGjy/nleTjwcqJnqv467E+tYS0mL4w5X+UTwmj8bb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758754778; c=relaxed/simple;
-	bh=FwPAG6Tqt4tHEI1fba+e5TRJnDq+yr6G/c1OrQir9Vo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=YDWFEezb0UmfrmcYg5XD9imoTzTKHYl6HmV4T01p1SAu0+7bC6ccMQEpALLh3irEEMbuayT2U/oeot+l+wtTWgeMKTIJrvcxiSvhL/Mz+9D1dgwNz8NOrKho2w7UQAcCTA5k5uv6GaZPNq3M2jJRq3Py6lakx/xiiRjzEDhJI7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddeyTkrK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9DCCC4CEF7;
-	Wed, 24 Sep 2025 22:59:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758754778;
-	bh=FwPAG6Tqt4tHEI1fba+e5TRJnDq+yr6G/c1OrQir9Vo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ddeyTkrK1h52KcVAHNBPgxXUQblsijnomTe+Om0ar+O5gdPuNEHOWfLxnRDAKHZel
-	 B5ZY72VuAOvDuWF/0htNlzxsmzcF/tgvzlO0mhHYKt2Jb50DaA55jqOGjA1TwPuGE6
-	 1O8vZbmPzcI9UEdmpF0xgVJlinjDJpO1IYsKeGcYo4pHsJCrHmSlUCgkdgGzhrmCaQ
-	 /SZYf9mwiXdgSkA6Nx4DvVAHhd6R0ndeY3msXnN03OJI7RA3ODrVGQk1vanPAUo5Gg
-	 bq0hSp7a6xMj8wXMmCkK43n8xtFl2idR6EQXyzUfeq31RMAeFzH5DZjJrNSKuOLo1M
-	 FOGMBA9yee/zg==
-Date: Thu, 25 Sep 2025 07:59:32 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: Menglong Dong <menglong.dong@linux.dev>, Peter Zijlstra
- <peterz@infradead.org>, Menglong Dong <menglong8.dong@gmail.com>,
- jolsa@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- kees@kernel.org, samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
- ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Subject: Re: [PATCH] tracing: fgraph: Protect return handler from recursion
- loop
-Message-Id: <20250925075932.e42ead81f0c7d0ba6eb31511@kernel.org>
-In-Reply-To: <20250921190056.2a17d4cc@batman.local.home>
-References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
-	<175828305637.117978.4183947592750468265.stgit@devnote2>
-	<5974303.DvuYhMxLoT@7950hx>
-	<20250921130647.9bd0cba7d49b15d0b0ebe6f7@kernel.org>
-	<20250921190056.2a17d4cc@batman.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758754934; c=relaxed/simple;
+	bh=Q5YFsOJ7XCzH8+bUU/hbYov5uunGn8Ck7KzYUVjjdpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=le2MCZOZ4p5wcT8ilIobB55LqXkUnv032T5hYyN0E5r8RDH5QC7tLvuIk4hnYV261YuUtQjasN0aL0kLbb58IKdXDek4EydWiHU1/7SVFQOLMdwjutmma4vBUks7DULtZc0YPJzX4uUht/Az2WR/CVUf6L7bhFJhrT8iPHffJQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VZDYvIse; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758754933; x=1790290933;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Q5YFsOJ7XCzH8+bUU/hbYov5uunGn8Ck7KzYUVjjdpw=;
+  b=VZDYvIsetULuApyQbl++/CCgL6VsgUsiQOR2H10ozjFKBh8tfcnJq7XU
+   +SsIviYn7cJ8QEAlOnmDb5bdHGpPr2zMu41uH45yUr50Snj3SXQqF9LbR
+   PGoquWiG2HI7mHvOf0sTH+pUtvEKOlFPQviR4uG+cqKhQ+ILzCByUqBYC
+   dXVrSnSQyc44oUWMDGQGGotl5YOxHiTjxxZyWeOG/zz+e0R5nb96oRPAz
+   h1msWKfjys36WH/yMo2lKL4Y35d8S3TZlvrG4zvvb3W4Uepo8qPnTy/cf
+   bOX2T72FqCJvy8M46Qza45oT4npmVQtLO8vSDw1Z8o8Opd4hL4m1grmZR
+   w==;
+X-CSE-ConnectionGUID: 4Oek4HLrT56NN7XL+HBZuQ==
+X-CSE-MsgGUID: 5Z/p9E8WSsulv+Ok9SqLhQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61009226"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="61009226"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 16:02:12 -0700
+X-CSE-ConnectionGUID: 94Q9cM1hSMOieNAev6eRzg==
+X-CSE-MsgGUID: C2Q+5umoQKyI9pSyveyLyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
+   d="scan'208";a="177232506"
+Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.108.235]) ([10.125.108.235])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 16:02:12 -0700
+Message-ID: <e0b0180f-17aa-444a-8ede-39709501e82b@intel.com>
+Date: Wed, 24 Sep 2025 16:02:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] x86/sev-es: Include XSS value in GHCB CPUID
+ request
+To: John Allen <john.allen@amd.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, x86@kernel.org, seanjc@google.com,
+ pbonzini@redhat.com
+Cc: rick.p.edgecombe@intel.com, mlevitsk@redhat.com, weijiang.yang@intel.com,
+ chao.gao@intel.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, mingo@redhat.com, tglx@linutronix.de, thomas.lendacky@amd.com
+References: <20250924200852.4452-1-john.allen@amd.com>
+ <20250924200852.4452-3-john.allen@amd.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250924200852.4452-3-john.allen@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Sun, 21 Sep 2025 19:00:56 -0400
-Steven Rostedt <rostedt@kernel.org> wrote:
+On 9/24/25 13:08, John Allen wrote:
+> +	if (has_cpuflag(X86_FEATURE_SHSTK) && regs->ax == 0xd && regs->cx == 1) {
+> +		struct msr m;
+> +
+> +		raw_rdmsr(MSR_IA32_XSS, &m);
+> +		ghcb_set_xss(ghcb, m.q);
+> +	}
 
-> On Sun, 21 Sep 2025 13:06:47 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> > > 
-> > > Hi, the logic seems right, but the warning is triggered when
-> > > I try to run the bpf bench testing:  
-> > 
-> > Hmm, this is strange. Let me check why this happens.
-> > 
-> > Thank you,
-> > 
-> > > 
-> > > $ ./benchs/run_bench_trigger.sh kretprobe-multi-all
-> > > [   20.619642] NOTICE: Automounting of tracing to debugfs is deprecated and will be removed in 2030
-> > > [  139.509036] ------------[ cut here ]------------
-> > > [  139.509180] WARNING: CPU: 2 PID: 522 at kernel/trace/fgraph.c:839 ftrace_return_to_handler+0x2b9/0x2d0
-> > > [  139.509411] Modules linked in: virtio_net
-> > > [  139.509514] CPU: 2 UID: 0 PID: 522 Comm: bench Not tainted 6.17.0-rc5-g1fe6d652bfa0 #106 NONE 
-> > > [  139.509720] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.17.0-1-1 04/01/2014
-> > > [  139.509948] RIP: 0010:ftrace_return_to_handler+0x2b9/0x2d0
-> > > [  139.510086] Code: e8 0c 08 0e 00 0f 0b 49 c7 c1 00 73 20 81 e9 d1 fe ff ff 40 f6 c6 10 75 11 49 c7 c3 ef ff ff ff ba 10 00 00 00 e9 57 fe ff ff <0f> 0b e9 a5 fe ff ff e8 1b 72 0d 01 66 66 2e 0f 1f 84 00 00 00 00
-> > > [  139.510536] RSP: 0018:ffffc9000012cef8 EFLAGS: 00010002
-> > > [  139.510664] RAX: ffff88810f709800 RBX: ffffc900007c3678 RCX: 0000000000000003
-> > > [  139.510835] RDX: 0000000000000008 RSI: 0000000000000018 RDI: 0000000000000000
-> > > [  139.511007] RBP: 0000000000000000 R08: 0000000000000034 R09: ffffffff82550319
-> > > [  139.511184] R10: ffffc9000012cf50 R11: fffffffffffffff7 R12: 0000000000000000
-> > > [  139.511357] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> > > [  139.511532] FS:  00007fe58276fb00(0000) GS:ffff8884ab3b8000(0000) knlGS:0000000000000000
-> > > [  139.511724] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [  139.511865] CR2: 0000562a28314b67 CR3: 00000001143f9000 CR4: 0000000000750ef0
-> > > [  139.512038] PKRU: 55555554
-> > > [  139.512106] Call Trace:
-> > > [  139.512177]  <IRQ>
-> > > [  139.512232]  ? irq_exit_rcu+0x4/0xb0
-> > > [  139.512322]  return_to_handler+0x1e/0x50
-> > > [  139.512422]  ? idle_cpu+0x9/0x50
-> > > [  139.512506]  ? sysvec_apic_timer_interrupt+0x69/0x80
-> > > [  139.512638]  ? idle_cpu+0x9/0x50
-> > > [  139.512731]  ? irq_exit_rcu+0x3a/0xb0
-> > > [  139.512833]  ? ftrace_stub_direct_tramp+0x10/0x10
-> > > [  139.512961]  ? sysvec_apic_timer_interrupt+0x69/0x80
-> > > [  139.513101]  </IRQ>
-> > > [  139.513168]  <TASK>
-> > >   
-> > > > +
-> > > >  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
-> > > >  	trace.retval = ftrace_regs_get_return_value(fregs);
-> > > >  #endif
-> > > > @@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
-> > > >  		}
-> > > >  	}
-> > > >  
-> > > > +	ftrace_test_recursion_unlock(bit);
-> > > > +out:
-> > > >  	/*
-> > > >  	 * The ftrace_graph_return() may still access the current
-> > > >  	 * ret_stack structure, we need to make sure the update of
-> 
-> 
-> Hmm, I wonder if this has to do with the "TRANSITION BIT". The
-> ftrace_test_recursion_trylock() allows one level of recursion. This is
-> to handle the case of an interrupt happening after the recursion bit is
-> set and traces something before it updates the context in the preempt
-> count. This would cause a false positive of the recursion test. To
-> handle this case, it allows a single level of recursion.
-> 
-> I originally was going to mention this, but I still can't see how this
-> would affect it. Because if the entry were to allow one level of
-> recursion, so would the exit. I still see the entry preventing the exit
-> to be called. But perhaps there's an combination that I missed?
-
-If the fgraph allows one level of recursion, fprobe should work around
-functions called from fprobe's callback, such as is_endbr(), as follows:
-
-/* probe on enter */
-call target_func()
-  => function_graph_enter_regs() /* 1st lock */
-    -> fprobe_entry()
-      -> user_callback()
-        -> is_endbr()
-          => function_graph_enter_regs() /* 2nd lock */
-            -> fprobe_entry()
-              -> user_callback()
-                -> is_endbr()
-                  => function_graph_enter_regs() /* lock failed */
-
-/* probe on exit */
-call target_func()
-  => function_graph_enter_regs()
-     -> ftrace_push_return_trace()
-/* run target_func() */
-=> __ftrace_return_to_handler() /* 1st lock */
-  -> fprobe_exit()
-    -> user_callback()
-      -> is_endbr()
-        => function_graph_enter_regs() /* 2nd lock */
-          -> ftrace_push_return_trace()
-         /* unlock 2nd */
-      /* run is_endbr() */
-      => __ftrace_return_to_handler() /* 2nd lock again */
-        -> fprobe_exit()
-          -> user_callback()
-            -> is_endbr()
-              => function_graph_enter_regs() /* lock failed */
-            /* run is_endbr() */
-
-So it can detect the recursion.
-
-Thank you,
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Is there a reason this is open-coding CPUID_LEAF_XSTATE?
 
