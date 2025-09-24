@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-830396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F83FB998BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:11:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A32DB998DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CE4B4C47C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:11:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43C78162A72
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591F32E6CBE;
-	Wed, 24 Sep 2025 11:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4CF2E4257;
+	Wed, 24 Sep 2025 11:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FqQDe9Eo"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bG3AFDyi"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE742E62D4;
-	Wed, 24 Sep 2025 11:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A9F2DE6F9;
+	Wed, 24 Sep 2025 11:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758712287; cv=none; b=TXktnSEAIg2K4vqEJa2BXQOx1XzvMQk1ErWuDNheX6cp+SSYgSlbcqpT6iCpQtNkS7/DWfDUkC27P2erpgs110tjYxXQJ1EUMJHUZ7sUuQdwpkO46va4NEjqYub4NXQ26szfTB/AYFKQPGfLDXfElwvljdiskxz7316KBf5GfaI=
+	t=1758712368; cv=none; b=QJ+eXj848JWdE+GXs/RhS8pJCl5227G+jmlUA2HJSr/+4KU5121Ft3SzOJ4bXdy9wSBoOFAEqwXFV7plSsmq724fVFSjz4QbwZIJVAa1vhrm6pX9exlAfdEidyysxmE25RNpftP9XN56snZlanopobdHBJpobwu0Hg2GnD3S5YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758712287; c=relaxed/simple;
-	bh=5GT6jnvxYjStCKgCq5+Wz35bOeICFGv9mfyP8q18sGI=;
+	s=arc-20240116; t=1758712368; c=relaxed/simple;
+	bh=StyC/ixgTVj+aRseOXWVLm4tngSxQFzQsmw3OnQb6/0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B/wDd7myviC6ZmFC+qLl/J3CSfX3XHxueGGQDlpchjglcFqe1M3LqDo4fFX1fEGnhZjx4eEoOm63YNKKNzLGoP5oJ9Np+o317HAzb8faKb24VnPc42vd64LFsWVLEmfEPUpmQuRZwnmeZmWIiWK3h0BsXpg3TcUEf4x7Ww7ecMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FqQDe9Eo; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=sl/rrLDO4scH0uvvNurE1PCvyIQ4IHi4AHLWEq56IuMZhoD0Y6wUJbnUkohZlA0mt+zs++++IUimPv4gidpXvTFT8G49Ds4cy8CpdspxENPpiwOZuAGVZc0x7OR/TCxCQc4QyLqDSi1S+Yr6c3I/1EqXAkbyjN6BXkkb2/FTv4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bG3AFDyi; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758712280;
-	bh=5GT6jnvxYjStCKgCq5+Wz35bOeICFGv9mfyP8q18sGI=;
+	s=mail; t=1758712360;
+	bh=StyC/ixgTVj+aRseOXWVLm4tngSxQFzQsmw3OnQb6/0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FqQDe9Eo+x/xmzaI1BbvECmNJw21c6MO2jBjAvmTpblE+Q+gR1a9m8bHeSohkfPxj
-	 MO41XNvHtQL2w4W11nwUdY0Nr1MJdNMeIGtrXpLKX7GHdpypxk+Ou/HFM8bHfcxxrj
-	 uXhBevqAezWCIkkpqVmmMO3MjODu92EXK/HpMh2p+E2zODc79juhktSXrlDn0KXdS+
-	 99EW6jPyZBRIlfG9dLatj36vySf7eRYi8Rj+9R6ci5HePQJ+4ugKXyRN7WLn4bw9YG
-	 fbNlzUAHdg1+DwFRIc8uJw+GuiCaB0cgmA7v+5JbFLvUddHPegEoX6Dv6p5VxOi4kN
-	 4mHxFqTQ23HSw==
+	b=bG3AFDyiCxIWHeeIP9y3TqLPh+ah2p8jEDOEPr4JMP8G6122SPwn4qllgz38eQJbC
+	 NJIAYIlQAofDbWO/z+C9wFXzc/n+Qkz9csvEEObOV59Ht73r0SZ0gbgNo0WcARmxrS
+	 BFkQAdx5brvVqfNYLa27lDYaT8Fo1PAAnqwLo8qectAfa7GNCzINgQo476uUA21ruo
+	 bktQadcgbpYISlRe1yFlX8D48KzLFvBTVV9xFiVElePxAIfKX2WMrYLOgMweok7fwb
+	 ZcAMcaLZvNOo3QWK65EQgHSgk2w6njoqTfpeGRuZAv80eQW9xg9B0SMpmUtpDjxjAn
+	 dBpx9iswOeh2g==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 25D9117E068C;
-	Wed, 24 Sep 2025 13:11:19 +0200 (CEST)
-Message-ID: <5fb4a548-4dc4-4964-975f-675541c4b728@collabora.com>
-Date: Wed, 24 Sep 2025 13:11:18 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 491C917E12C1;
+	Wed, 24 Sep 2025 13:12:40 +0200 (CEST)
+Message-ID: <7fef0cb3-bc8e-47b7-a8c4-28060f577d40@collabora.com>
+Date: Wed, 24 Sep 2025 13:12:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,85 +56,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/9] Add thermal sensor driver support for Mediatek
- MT8196
-To: Laura Nao <laura.nao@collabora.com>, srini@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org,
- daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com,
- matthias.bgg@gmail.com
-Cc: nfraprado@collabora.com, arnd@arndb.de, colin.i.king@gmail.com,
- u.kleine-koenig@baylibre.com, andrew-ct.chen@mediatek.com,
- lala.lin@mediatek.com, bchihi@baylibre.com, frank-w@public-files.de,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20250804133035.309990-1-laura.nao@collabora.com>
+Subject: Re: [PATCH v3 2/3] clk: en7523: Add reset-controller support for
+ EN7523 SoC
+To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Felix Fietkau <nbd@nbd.name>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Cc: Andreas Gnau <andreas.gnau@iopsys.eu>
+References: <20250924094112.1918444-1-mikhail.kshevetskiy@iopsys.eu>
+ <20250924104850.1930254-1-mikhail.kshevetskiy@iopsys.eu>
+ <20250924104850.1930254-3-mikhail.kshevetskiy@iopsys.eu>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20250804133035.309990-1-laura.nao@collabora.com>
+In-Reply-To: <20250924104850.1930254-3-mikhail.kshevetskiy@iopsys.eu>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 04/08/25 15:30, Laura Nao ha scritto:
-> This patch series extends the MediaTek LVTS thermal driver to support the
-> MT8196 SoC.
+Il 24/09/25 12:48, Mikhail Kshevetskiy ha scritto:
+> Introduce reset API support to EN7523 clock driver. EN7523 uses the
+> same reset logic as EN7581, so just reuse existing code.
 > 
-> MT8196 requires a different implementation of the lvts_temp_to_raw()
-> function.
-> 
-> To support this, the series introduces:
-> 
-> - A new struct lvts_platform_ops to allow platform-specific
->    conversion logic between raw sensor values and temperature
-> - A variant of the lvts_temp_to_raw() implementation
-> - Platform data and controller definitions for MT8196
-> 
-> Link to v2: https://lore.kernel.org/all/20250730152128.311109-1-laura.nao@collabora.com/
-> 
-> Changes in v3:
-> - Make ops in struct lvts_data a pointer to const struct lvts_platform_ops
-> - Changed mediatek,mt8188-efuse const entry in eFuse binding to an enum
-> with mediatek,mt8196-efuse and mediatek,mt8188-efuse, dropped mediatek,mt8196-efuse
-> const entry
-> 
-
-Whole series is both
-
-Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> 
-#MT8196 Chromebook
-
-and is also
+> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-...and besides, this got also tested on MT8188/95 in our lab (for quite a while).
-
-Regards,
-Angelo
-
-> Laura Nao (9):
->    dt-bindings: thermal: mediatek: Add LVTS thermal controller support
->      for MT8196
->    thermal/drivers/mediatek/lvts: Make number of calibration offsets
->      configurable
->    thermal/drivers/mediatek/lvts: Guard against zero temp_factor in
->      lvts_raw_to_temp
->    thermal: mediatek: lvts: Add platform ops to support alternative
->      conversion logic
->    thermal/drivers/mediatek/lvts: Add lvts_temp_to_raw variant
->    thermal/drivers/mediatek/lvts: Add support for ATP mode
->    thermal/drivers/mediatek/lvts: Support MSR offset for 16-bit
->      calibration data
->    thermal/drivers/mediatek/lvts_thermal: Add MT8196 support
->    dt-bindings: nvmem: mediatek: efuse: Add support for MT8196
-> 
->   .../bindings/nvmem/mediatek,efuse.yaml        |   4 +-
->   .../thermal/mediatek,lvts-thermal.yaml        |   2 +
->   drivers/thermal/mediatek/lvts_thermal.c       | 305 ++++++++++++++++--
->   .../thermal/mediatek,lvts-thermal.h           |  26 ++
->   4 files changed, 314 insertions(+), 23 deletions(-)
-> 
-
 
 
 
