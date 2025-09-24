@@ -1,119 +1,121 @@
-Return-Path: <linux-kernel+bounces-830541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80FA4B99F0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:56:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1828B99F12
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF7A188BCC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:56:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A64413282D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FFA2FC893;
-	Wed, 24 Sep 2025 12:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2152FD7BA;
+	Wed, 24 Sep 2025 12:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Kkn6onVP"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fzx5ZyJ4"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28DA2FC89C
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365FF2FB98F
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758718560; cv=none; b=JMTjcdqQHIYZIfRO25EbsRpEhJlDNovkQJAMIrgYDd1IQfeAd5eKgWG+le2FXTQze+72HVMA6ivBXlT8iqQHYcyHPqHUXoMoZM3dDuMeXxZIRSDfvwJY3UHnqy0YnchsMk5VCALkQApaqiR7z4JCthFIM8eXB6T5LLsr//fFJc8=
+	t=1758718574; cv=none; b=bOIWfmbFEgOv89t9hjlcAWCSEBlPznSnszFQvJ811VtlWYyIkBUWB9MRUYZCo/Nd6tBCCiUo2DjO6M6mnrBJ2JiyyC7Wp/HWftNRysnpPLttGxgtMuNZB7lbP2rk7JFLcF6IYeWbCpV8jthsDkWzSluWWHUW0N6HQVPfJm2TAkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758718560; c=relaxed/simple;
-	bh=8qhfbs5/dOfdODZ9W2ISGsgvtvUAf69XpGYPjAvdJ34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gfufm3Rbsq/kcf+snd4yFKBn9bmTPrRYmowaS3lxMf7hENxRvebTeB/4dFTiwudZxfMkwhOXfCNU71JwX8gkCV3KWgNB0XySON6bu/bVECPgMecP39aMnFLr1RA5R32Pw97EojnmZdRvTU8nUwOxgKypvM/QYJM7gqekiB9tKEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Kkn6onVP; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7945ba93827so628147a34.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 05:55:58 -0700 (PDT)
+	s=arc-20240116; t=1758718574; c=relaxed/simple;
+	bh=YGbqe9ZAFL3N5iLsnVD45Vj6XYPMwC5jXFUrKyVnjHY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j++y6svBvfNMmDVL38NMg30RxU69vKDfAoq4UiCFwsv6xEe+eUsvxhpRLT8tTXPQni+eydjT4CgBBlANGxpbSiV1xlUp9UnAwSFJSOtxFpjqcxs1Zw4D5aRfiIzqdd0nDQRDksmJJzmOJCm489lojtf4l2IwJ/nK5ECT1WwEFvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fzx5ZyJ4; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2699ef1b4e3so10408705ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 05:56:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1758718558; x=1759323358; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8qhfbs5/dOfdODZ9W2ISGsgvtvUAf69XpGYPjAvdJ34=;
-        b=Kkn6onVPAMSNNklmFFZI3aNKbFGXU6nBTzblm3E/Pqfzu0p10WCUO6yPajm/5VwuAM
-         0R/CuTowYLBmljyJC/Kn5QN5Wdco/tdBRn5ekpqnGP38SrN+Ac0292QFuzXolu4Ur2ly
-         nMR4TkZHt1hXvq1/mclPrqQIzGGal2GIP/5UvgAk/Mdh0Y0kr2haii3hP91cObbCQxQO
-         TXW0yvCQfwfgC0aETgt+VkrOzjRw8DVOxHJKZ7J67EtCgL7I4b5l0Qgvqt8gtTaq90iZ
-         SZ+0Z7skuhxl+n3wGdTfN6yE1HSJh0h4Qq/SfGrjta4rO8mi9X8xjGNQPxika3XSUOJm
-         Ns3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758718558; x=1759323358;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1758718572; x=1759323372; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8qhfbs5/dOfdODZ9W2ISGsgvtvUAf69XpGYPjAvdJ34=;
-        b=YF0t+OuqUX6hyvrkV9DXM1vC9MWe897VCUqBKd5ofkI3uve8a/nLaFcADK69R7v15K
-         wwlQ+9rK/xTLtABSLD3W7PRloLo+NKr+p2wvIhc7/0a2gzGKf3cmpTq/YByhIhizVVBt
-         vFofY4j0pdgzyDqqvHM3gVV0eIMEw9w1P4dJE/9ETgOpufQyOlzPbwZ+9eX4McVvH8Uy
-         OP2ph5qGnvSbrJhDvRciDlXzfkGo/4dusG5m0BGuI48RL/minwwDk0YjOti6zBfaJgza
-         6wdDLMmtOL20kwPIXkwJtt1Ez8qmjS7xlrNlWpNFqUERMAMPmAivedmt9T6O0B1pN5Sd
-         9WiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxyw8NdhDk2j3unqKyyyYGSrV8U27miX5ECKbpH02UxL13toltnssy4hGK6RJ26KkC3DKpMxXMFRKXqUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV1SKYS0HTJ9tm1JkB11CGiZ99c9hd4spM0wJrv4xV7hCKijaq
-	Ek00lzFcOiJPDqxG818Qdjck3gQpC4nN1/2iwdxmnhxNvWt0TmP6hCM9Bef0iY1OyLg=
-X-Gm-Gg: ASbGnctOwFH43r2H/y1F6W1PYYaZrZJJUGAa0Rrxw93K9JPmr+N15I0+TvmlGI2JBm/
-	f9WMTo7z4k/wAMADdm9li6SSxDLAsTvM/KyAGGWstAT7f8ImF9HH+OMpbIRbLSr8HjxLPt1I81Z
-	MvRGLZYg7HbWRcuKZH13EyCxKw3DmrlcnXDzAof1RJZu1picNuEv5ESJ6CIcC4HReJv8ihJnX4T
-	oALR3CvKnWA8bChPjp0T9jHQRmpu7/XlWaU5M4Om+KFAOoqwxi+cyDztzeqUjpVTJjdnl9FXOTt
-	SYwuAbQI68LRDIeC0zSMLW0tHxe6EjPx0wf13quQzYib+icut0eiRdn59/uFsYPE9fAtHC8I
-X-Google-Smtp-Source: AGHT+IHQ1WFwERflWPT6pleBXcoHSBQbFQS1yTbSrGY2yC7WZRjb2FbqLBgkt00nf34cnENXHwUiCg==
-X-Received: by 2002:a05:6830:65c3:10b0:746:dc05:8604 with SMTP id 46e09a7af769-79153cba081mr2694566a34.20.1758718557920;
-        Wed, 24 Sep 2025 05:55:57 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7692af2f9desm7576308a34.31.2025.09.24.05.55.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 05:55:57 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v1P2J-0000000B800-3i6s;
-	Wed, 24 Sep 2025 09:55:55 -0300
-Date: Wed, 24 Sep 2025 09:55:55 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Joerg Roedel <jroedel@suse.de>, iommu@lists.linux.dev,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Pavankumar Kondeti <quic_pkondeti@quicinc.com>,
-	Xingang Wang <wangxingang5@huawei.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 0/2] PCI: Fix ACS enablement for Root Ports in DT
- platforms
-Message-ID: <20250924125555.GJ2547959@ziepe.ca>
-References: <20250910-pci-acs-v1-0-fe9adb65ad7d@oss.qualcomm.com>
- <20250918141102.GO1326709@ziepe.ca>
- <tzlbsnsoymhjlri5rm7dw5btb2m2tpzemtyqhjpa2eu3josf5c@uivuvkpx3wep>
- <20250923162139.GC2547959@ziepe.ca>
- <oig5w7dnrdpgvzuqu4johs526qe57x7dkurd2abllqyvpavvti@s3pwtoduusfr>
+        bh=dSa1OETJ6PU6Q1MXWxYehsiy6u+If5pzrQWnK+jSTZk=;
+        b=Fzx5ZyJ4j+0Rb52nAgFUZjrR66oZzUUt5ttrr98PKRKFfxdQToONtkaVtR4sDJsbp5
+         fAqn1vzJWDOb455+D3Xrjrca0i4zofGaMhAlv25ipWLHYllfzZIFkgywzG1OuqPJtqUR
+         Myfp+5UxtCXlBngjeB4XkgSYX9YiyRFte9nwMSOx1qSi98sDqShs6EWJCbeyx97LeyUe
+         RWVOWdWvtv8WBuFi2QkoYd/ztNvhQosPtxXuXDCoegYc/1N2ic42TlJPzt7+XkvVe3j/
+         1eCXu0HKjOiAN00blv6WeIep+a1YfuzVU5rceX/fzU2cutiidZlQ0lAEwaBntQuSr+Y5
+         GPSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758718572; x=1759323372;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dSa1OETJ6PU6Q1MXWxYehsiy6u+If5pzrQWnK+jSTZk=;
+        b=Lu8YkagiNxxLXnYjKdLQfhf48tBzXAGhKENaATksRRm+D+p5UrKbPRVpSoqo5lQ/YA
+         saSP8K9rXS2HkyqZz6JtcieHvNzEcZZ0L7B0GDFQchGYpO1AAO+zmAN7fwihE99/FjpR
+         6DKxE+XtvP5qopivmL3ceJ6G74GwqYPCyEHXLMafi4sgB1V/CFjw+J9rpqmFuMHglKxd
+         bme+t8veU1X+0whZ/stdSVm8yfDthkWabWEL2wyt8HIcu1Z2t6FoiSSeAA77l9KskNHq
+         t2B3u133Mxb9x6kgdliE/5mHPPCoAIGWxzk0Czm1hzWOPhdyeL5Q3pesm1wRbKmtjFya
+         /3Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNoLl3chpnT3mg0vHx4j4Qfja13czCwYd35t3gkBfF/TLlBxQpJl7eTtrR1eBnVak2QTI8Ias17EiPALc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5jQjPHVbIcZ5Ozq/sPuPFkICTBV6DU5kfl2y41FiDZIPBw4Ra
+	Mh7DmJ1Jk0ShyzLQSr34TOOOLQinMZzqiajCTRpEVt6fjhNyPU4kv1cahGlfSbeFyrhrJLm/m2c
+	SfZnj+QkFwR0FHIJX0/pnJI4r7lVEYm4=
+X-Gm-Gg: ASbGncviJ2QUIzl02xzkry/c4yaXegPB6F2e7c+idMsDduK8dThMtLQ+KqbMEq6Ndk0
+	SJPonh/G8DmXYu3KbsqW82+YMOuE0nsGPvHitLHQJaJTFPHMSk4QHdIYa5rMqcQVnrnUWdz0hiZ
+	gFyZcJZvdLiyWjVNApWSRumPYsSmdEGeZjKZxjEkEbmaOiQjHqtJ9b8rhOXdLWu3xfKk6b4aau7
+	7eI/Om7Axvr0RoqaXto/L/htgnnNc1T+96Zh+kO5B0Esv+YxAMqH2pI1aoPv6HX/iuKhz6YJbhE
+	+QYsvfg2dPutl0MYmDZm52ZUsPXD23wXvJfv
+X-Google-Smtp-Source: AGHT+IH4job3PIEwg+n+ghlTlE1Biqa3K8KrolYDQtT4VmgH5e6Wty81d/Gwhyhag7z/wiwZKWJiEU2jY5ciEvxYfNU=
+X-Received: by 2002:a17:902:c404:b0:265:dba2:2315 with SMTP id
+ d9443c01a7336-27cc3a152a8mr41930705ad.2.1758718572411; Wed, 24 Sep 2025
+ 05:56:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <oig5w7dnrdpgvzuqu4johs526qe57x7dkurd2abllqyvpavvti@s3pwtoduusfr>
+References: <aMlfiBynRQrbW3BT@sirena.org.uk>
+In-Reply-To: <aMlfiBynRQrbW3BT@sirena.org.uk>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 24 Sep 2025 14:56:00 +0200
+X-Gm-Features: AS18NWCSyQ02d8rV2QturoMpZoG3x-M2lkSbgrSGVFu_GwtD7A6datCIzaf4A9E
+Message-ID: <CANiq72=5JLSVFFZ9AZyVA+oCLjN5KVtwZVVqRYZL3DhZ39UC-w@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the rust tree with the drm-rust tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Tamir Duberstein <tamird@gmail.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 24, 2025 at 01:51:23PM +0530, Manivannan Sadhasivam wrote:
+On Tue, Sep 16, 2025 at 3:01=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> + use crate::util;
+> + use crate::vbios::Vbios;
 
-> This device is not spec conformant in many areas tbh. But my
-> suggestion would be to follow the vendor suggested erratum until any
-> reported issues.
+I think these two lines should not be added back; otherwise, we get a warni=
+ng:
 
-I mean the ethernet chip retaining it's SBR after a FLR or link up/down
-is probably not a spec requirement..
+    error: unused import: `crate::util`
+      --> drivers/gpu/nova-core/gpu.rs:11:5
+       |
+    11 | use crate::util;
+       |     ^^^^^^^^^^^
+       |
+       =3D note: `-D unused-imports` implied by `-D warnings`
+       =3D help: to override `-D warnings` add `#[allow(unused_imports)]`
 
-Jason
+    error: unused import: `crate::vbios::Vbios`
+      --> drivers/gpu/nova-core/gpu.rs:12:5
+       |
+    12 | use crate::vbios::Vbios;
+       |     ^^^^^^^^^^^^^^^^^^^
+
+Thanks!
+
+Cheers,
+Miguel
 
