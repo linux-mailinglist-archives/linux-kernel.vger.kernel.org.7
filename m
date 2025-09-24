@@ -1,111 +1,205 @@
-Return-Path: <linux-kernel+bounces-830636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D58B9A303
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:13:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF492B9A27F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8E404C6DC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:13:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDD6F4A04FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF50305962;
-	Wed, 24 Sep 2025 14:13:21 +0000 (UTC)
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA1D2E11DF;
+	Wed, 24 Sep 2025 14:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="bRiuonoL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Rw73ToYF"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04A72135D7
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A86CA6F;
+	Wed, 24 Sep 2025 14:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758723201; cv=none; b=aBeXBIhvmeiiwh9TRkgr+0SvFZGczf3E/9VVshUdfHRD8yoaubqa79GIbIomIiaZTEa/NncQ+JKaa6QWYw6E9HyXAMMXmEfI+9M1v/cs2Cs1R/DT3OMCnT666vMIOgh/KUqtk7DNNpATET4rsr0znD1WLr2pI6MmDJIPvV4qFtQ=
+	t=1758722763; cv=none; b=gd2k7oN2gtJQBO1V0Yu5i4ZFnDi8tLQY600Y87feQ4kpF+5ZzTpY8UxRq2E/611HF0K7y0V1cwql8zubLtFuahG6KRWwfXHKikNZem10ZMmAcvkNZ+md3aY4Y6ftmbR7bjePrsvBd3rROmexlyPGCzWDauDZ8QIwOi8kAjBlBFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758723201; c=relaxed/simple;
-	bh=RAQppiXjWIWyTOC11PHSe910HHT72uEJpzqGu/pPfgQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fxN/+1GF8KrJf40rKrsTeqsKN6rujimGCfhiZfUviQH8cPYqsZkfblgaDfnfwdY9M5ly99HV2PbTp5b7QJcFQtg1ynBHwn4ZnqALWsgyXuprseY6lbgBR55JWsSJfFpz7B/C951JKAEFAMzlKEGktvEXopNvxfBgjGfOUN2CgXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-826311c1774so728878485a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:13:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758723195; x=1759327995;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=43BZO3RAppnebCnCAQY4LIb5j3YiQqsMBJqVptEFktE=;
-        b=X7EJ13XZghC9SdMqiRjraWVAAbzhoS/q9sNJ3gPXy529Ebd0Kg1yWf8JJvLNA/8VEu
-         4yhLzolBgzuD26iYLJfBYUcGxDWZgl/N+8RsCmIpXtIitZnT9oEM7mIQUPRnDA/2C55Q
-         wEmhC5E9cBO4UywUWrd1PqEnr0a8Vym89NkknfU3F3hz6rwvHPxWW3X8wW/h1iUWtnFn
-         ianEJPbyQIB7eL4adrPzydsarQpJ7t9jebwoZMyQ1A9JXXMrlUM+Oa8riCs1+xncbz0y
-         /6iuIqiAN1+VYQ1J3gl5SXdkf2ne1P9IeE1DsYAJF8/1rpKzdV2uUR175WloX/faDew7
-         wU7g==
-X-Forwarded-Encrypted: i=1; AJvYcCU3oCEaYjIcvoN0YHA1GaYWsdgClJE1G76nmjnCmdZL9KgX+HovRfDJ95STl1Q9HgcBfIInpvbe49ApwRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKgaLga6GtRAMY4q0IEIuIsT2bnHaOXLbJqMcwcgY9K9EtOarO
-	4bEyGBrNtQ37n9zw+skIVUgkV+YHki4ws3mQLJoVswucWR5oQYNtyS4Xhi9JJtYg
-X-Gm-Gg: ASbGncsqAQhV/CRArO03VDcGJq1JFA6Nctn+kwnRI6r8dc9t4rOzKfzuD0QISyRXR36
-	nKJC5i5j19o0KKnvxNTFR1LWRR/umZ2wY5R4Qeg1Esbfl6rVkQCWh24eiHz1xY4zSRDkFjNJvvZ
-	ZBL367AEJlADS9Pi4/4yiNmLmXmvUT5GA//+B5sSGNGO9uHrGjbkenXv6XCyEFbUMmrC7PJRb9g
-	dURYrg5qH5WKqkfZ+qvlD3JOCyJSlpKBfV/xkpaBMD4u2Pm0BCOnfo7uUOwYz19E0fq/dQnB0Vd
-	/13hpwIz8XhfVAHOWnNf2fSuTO+S5Gc3vloh0er/habQLj2cXyXZH4vHORhOSQFwgXj4Y9bc8Mz
-	Z+aWflNENAo+9VIuAWsT0aIjq0DOfkC79h1TZt39o0U8ZoYk+IUWNpdegxtvsXxFP
-X-Google-Smtp-Source: AGHT+IF4wzL/y4gI7fdcgb34tQrYPJqBZTXimYqXXpKn0hI2kJLnDOmUIyqANegxUP1/x1Vrhwft4g==
-X-Received: by 2002:a05:620a:17a3:b0:83f:c3a7:dc62 with SMTP id af79cd13be357-85174b292aamr853586685a.40.1758723195002;
-        Wed, 24 Sep 2025 07:13:15 -0700 (PDT)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com. [209.85.222.177])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-84b64fc9dc6sm504060185a.16.2025.09.24.07.13.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 07:13:14 -0700 (PDT)
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-854585036e8so158331885a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:13:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWAR/X2dzaFFWVPk2qyibnrR3YqysnF+qEfh1IcNAE8VITsC03YtlPhZB9ZcOv++NimOLqfuMeSNNwxOw4=@vger.kernel.org
-X-Received: by 2002:a05:690e:d4b:b0:635:4ed0:5717 with SMTP id
- 956f58d0204a3-63604666409mr5129283d50.49.1758722693635; Wed, 24 Sep 2025
- 07:04:53 -0700 (PDT)
+	s=arc-20240116; t=1758722763; c=relaxed/simple;
+	bh=zE8BVg0hNz8YbyB+Ov7wTtVVUHqSXYRc38PH+U8cQ5k=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=MwpX9x5tGO5NlFWi6TIMYAzk7YSQraJI3pGEIUtswumlJKce3laYEgMD32IZTg3lW4cQsb8jRcHnWyXde+swjJ0dxMKV9TP3CjOOEAISUhrWHkTWG+TWrKloIEimVKcvUvWWn562aC5RHnqT4ybuDUtdbeMvUSAhog+0CNnOsXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=bRiuonoL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Rw73ToYF; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id D6D6D1D00188;
+	Wed, 24 Sep 2025 10:05:58 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 24 Sep 2025 10:05:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1758722758;
+	 x=1758809158; bh=IBcStZeO9c1HBcH0rLSii4gME1fU0JXoiIWwS/KYvto=; b=
+	bRiuonoLSVsEJs3RW/1B2I+BS4PFriNl9YItil+iZmgo57iICRZyp45kyyLPHR8z
+	Bi/3+dy8sSZfcpV3+sgnWzI1lnoClT18RxBs4U3ckSXhQG1pGmY9dxCmVjlFIRdN
+	U+BT7adAZWC8JFcErWmoEwZbedXp2tHFQ21DkK6nz4qLvlptu31Q/B916LNPcGe+
+	F1sA6bGsXftk/0bSeM3/PTIo2DWs1rcSA+Zh9oFAq0LXqKuhjjq8gkjisf+H1Sdo
+	zWDSWX29MKyVqG8XMgK41K2/zsRIPhl+LLs5c2qbWoiU8fm7R/z7/dZNcNLMiysa
+	+c6ZRX2SzDoi3/w4TxaAkA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758722758; x=
+	1758809158; bh=IBcStZeO9c1HBcH0rLSii4gME1fU0JXoiIWwS/KYvto=; b=R
+	w73ToYFF1cgeNtPC6j55Mmd8ZcV91EDe6BJ0Ofp3Q1A65N9wyLeXf7SJYYfnbX4F
+	NAYrvAAOWffhDh1Zc2oyEDWJbhc2rJj8GI9htSEyiGTtAWqEYGf+oNtgEa0oRxbi
+	LNnpToDE0o3Dw77xYcS5RzX8ojCgwUzyfA50l+7N6Z2ukoe1fvmzk2qAnWBD1pYA
+	fpW9ZSQ5ww1gimYApC6qFK6xAtvDGSCLMp3hMQyFmOtS/H9aVMnG0wYMQZlMEdO8
+	nxHNWRbVY49kVX9Ft8Mza28FlXNGkJIxlDmZpaocBhBMHqj2fFklczFgi4nxGHSg
+	MtO+VLvoZ7ru2uXl6Nu2Q==
+X-ME-Sender: <xms:xfrTaEvH2JuH3zfBHMcvH0AOVRBnmNXrVY9Eh4HV9s9HA7Jxf9QAvA>
+    <xme:xfrTaMQQDb2a-hr-7DKc13zwUgWCTuAjOb9OhA8azW4xWbb3bS61M-wthrkUDacNr
+    yYZz5U7uJrNgPmNNvN77nRzbqDjfyAEEAO-E-X513JvkpriHKCXa-k>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeifeektdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvkedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepshhhhigrmhdqshhunhgurghrrdhsqdhksegrmhgurdgtohhmpdhrtg
+    hpthhtohepghhithesrghmugdrtghomhdprhgtphhtthhopehmrghnihhkrghnthgrrdhg
+    uhhnthhuphgrlhhlihesrghmugdrtghomhdprhgtphhtthhopehmihgthhgrlhdrshhimh
+    gvkhesrghmugdrtghomhdprhgtphhtthhopehrrgguhhgvhidrshhhhigrmhdrphgrnhgu
+    vgihsegrmhgurdgtohhmpdhrtghpthhtohepshhhuhgshhhrrghjhihothhirdgurghtth
+    grsegrmhgurdgtohhmpdhrtghpthhtohepshhrihhnihhvrghsrdhgohhuugesrghmugdr
+    tghomhdprhgtphhtthhopehjohhrghgvrdhmrghrqhhuvghssegrnhgrlhhoghdrtghomh
+    dprhgtphhtthhopegsihhllhihpghtshgrihesrghsphgvvgguthgvtghhrdgtohhm
+X-ME-Proxy: <xmx:xfrTaHMTci2rBtuNS1lbcZGzEzbsW-dDQ_hYT-ifE3U2jMVacYDixg>
+    <xmx:xfrTaEnZBBPjfaXaKALn4VNdfKJltVttlijWAGd9Bu2mHwSTh4C9lw>
+    <xmx:xfrTaFzIrWuCUJ33p3xnh6h2cFnL1l8obnni1aighpAo826wUprq2g>
+    <xmx:xfrTaNDqVidmfXjKGVsW5FdItMn5zQlrZw1UmmlH6kXv1RqueDi5Gw>
+    <xmx:xvrTaGqTlniruo7sjxK6HOJfcNsrasNg6OFcY1r7VI2gFQxwKOs6aaKL>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1E25770006D; Wed, 24 Sep 2025 10:05:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909113840.122785-1-john.madieu.xa@bp.renesas.com> <20250909113840.122785-4-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20250909113840.122785-4-john.madieu.xa@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 24 Sep 2025 16:04:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXfN2qK-Yd=ZAaLek=UMkLK+NzdU5aFr0ET3o9m8RB4pA@mail.gmail.com>
-X-Gm-Features: AS18NWC4NdZL83Kq7qZvbj_wBXjrH_GSLKGUTwSbCh3zlppgYZIteZzcvWX4tWU
-Message-ID: <CAMuHMdXfN2qK-Yd=ZAaLek=UMkLK+NzdU5aFr0ET3o9m8RB4pA@mail.gmail.com>
-Subject: Re: [PATCH v8 3/4] arm64: dts: renesas: r9a09g047: Add TSU node
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: catalin.marinas@arm.com, conor+dt@kernel.org, daniel.lezcano@linaro.org, 
-	krzk+dt@kernel.org, lukasz.luba@arm.com, magnus.damm@gmail.com, 
-	mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org, 
-	rui.zhang@intel.com, sboyd@kernel.org, will@kernel.org, 
-	biju.das.jz@bp.renesas.com, devicetree@vger.kernel.org, john.madieu@gmail.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	rafael@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: A0nVfrWCY5as
+Date: Wed, 24 Sep 2025 16:05:26 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Manikanta Guntupalli" <manikanta.guntupalli@amd.com>,
+ "git (AMD-Xilinx)" <git@amd.com>, "Michal Simek" <michal.simek@amd.com>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Frank Li" <Frank.Li@nxp.com>, "Rob Herring" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ =?UTF-8?Q?Przemys=C5=82aw_Gaj?= <pgaj@cadence.com>,
+ "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
+ "tommaso.merciai.xr@bp.renesas.com" <tommaso.merciai.xr@bp.renesas.com>,
+ "quic_msavaliy@quicinc.com" <quic_msavaliy@quicinc.com>, "S-k,
+ Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
+ "Sakari Ailus" <sakari.ailus@linux.intel.com>,
+ "'billy_tsai@aspeedtech.com'" <billy_tsai@aspeedtech.com>,
+ "Kees Cook" <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ "Jarkko Nikula" <jarkko.nikula@linux.intel.com>,
+ "Jorge Marques" <jorge.marques@analog.com>,
+ "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
+Cc: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
+ "Goud, Srinivas" <srinivas.goud@amd.com>,
+ "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>,
+ "manion05gk@gmail.com" <manion05gk@gmail.com>
+Message-Id: <134c3a96-4023-47ab-8aa9-fd6ab75e5654@app.fastmail.com>
+In-Reply-To: 
+ <DM4PR12MB6109E009DAC953525093FE808C1CA@DM4PR12MB6109.namprd12.prod.outlook.com>
+References: <20250923154551.2112388-1-manikanta.guntupalli@amd.com>
+ <20250923154551.2112388-4-manikanta.guntupalli@amd.com>
+ <13bbd85e-48d2-4163-b9f1-2a2a870d4322@app.fastmail.com>
+ <DM4PR12MB61098EA538FCB7CED2E5C47B8C1CA@DM4PR12MB6109.namprd12.prod.outlook.com>
+ <4199b1ca-c1c7-41ef-b053-415f0cd80468@app.fastmail.com>
+ <DM4PR12MB6109E009DAC953525093FE808C1CA@DM4PR12MB6109.namprd12.prod.outlook.com>
+Subject: Re: [PATCH V7 3/4] i3c: master: Add endianness support for i3c_readl_fifo()
+ and i3c_writel_fifo()
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, 9 Sept 2025 at 13:39, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
-> Add TSU node along with thermal zones and keep it enabled in the SoC DTSI.
+On Wed, Sep 24, 2025, at 14:22, Guntupalli, Manikanta wrote:
+
+>> @@ -55,7 +55,7 @@ static inline void i3c_readl_fifo(const void __iomem *addr, void
+>> *buf,
+>>       if (nbytes & 3) {
+>>               u32 tmp;
+>>
+>> -             tmp = readl(addr);
+>> +             readsl(addr, &tmp, 1);
+>>               memcpy(buf + (nbytes & ~3), &tmp, nbytes & 3);
+>>       }
+>>  }
 >
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> We have not observed any issue on little-endian systems in our testing 
+> so far (as I mentioned earlier in asm-generic/io.h: Add big-endian MMIO 
+> accessors).
 
-LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Did you test the little-endian system with the 'endian' flag set
+to I3C_FIFO_BIG_ENDIAN though? Your v7 code will still work on
+little-endian kernels if that flag is set to I3C_FIFO_LITTLE_ENDIAN,
+and it will also work on big-endian kernels if the flag is
+set to I3C_FIFO_BIG_ENDIAN. But is broken for the other two:
 
-Gr{oetje,eeting}s,
+- on little-endian kernels with I3C_FIFO_BIG_ENDIAN, the entire
+  data buffer is byteswapped in 32-bit chunks
 
-                        Geert
+- on big-endian kernels with I3C_FIFO_LITTLE_ENDIAN, you run into
+  the existing bug of the swapped tail word.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> That said, I understand your point about FIFO semantics being different 
+> from fixed-endian registers. To cover both cases, we considered using 
+> writesl() for little-endian and introducing a writesl_be() helper for 
+> big-endian, as shown below:
+>
+> static inline void i3c_writel_fifo(void __iomem *addr, const void *buf,
+>                                    int nbytes, enum i3c_fifo_endian endian)
+> {
+>         if (endian)
+>                 writesl_be(addr, buf, nbytes / 4);
+>         else
+>                 writesl(addr, buf, nbytes / 4);
+>
+>         if (nbytes & 3) {
+>                 u32 tmp = 0;
+>
+>                 memcpy(&tmp, buf + (nbytes & ~3), nbytes & 3);
+>
+>                 if (endian)
+>                         writesl_be(addr, &tmp, 1);
+>                 else
+>                         writesl(addr, &tmp, 1);
+>         }
+> }
+>
+> With this approach, both little-endian and big-endian cases works as expected.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+This version should fix the cases where you have a big-endian
+kernel with either I3C_FIFO_BIG_ENDIAN or I3C_FIFO_LITTLE_ENDIAN,
+as neither combination does any byte swaps.
+
+However I'm fairly sure it's still broken for little-endian
+kernels when a driver asks for a I3C_FIFO_BIG_ENDIAN conversion,
+same as v7.
+
+     Arnd
 
