@@ -1,116 +1,162 @@
-Return-Path: <linux-kernel+bounces-829858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF4DB98114
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:22:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D528B98149
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C7CE18930B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:22:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF86F2E5E4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327DE21D3C9;
-	Wed, 24 Sep 2025 02:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C9B21B9F1;
+	Wed, 24 Sep 2025 02:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lq9C4i25"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="AFkggTn/"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EF121D5B3
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016B5215043
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758680517; cv=none; b=AwPrm0NocI6tMotjCeXN3pPXSP2ugVEvmuSUxu43J+ZrchC07tL9b4gnsFEC9wdwEVP3EcC72+E5B2jLIrVkpKM7pScIjkHx8hj9D2L70ykF4Mw0HY0+rYzBmuyoXHPV9J3yUlpZPKZBUDrINRHFcEnFcQoEyUKh7r+U1xZXauE=
+	t=1758681377; cv=none; b=ew4eSDCiiEonySIMEI0riRGE1RsRC48lQQqmFwkzIxJjAU9KbjJTsRkfN4AHkowrazzomzQ5cLv2Q30IM73b5mnc+UqtaJRfCJRbp6MZXAf98KAsCBJOgSqfbD90UZUAU11QCFodxA/mckzDJAofm9ylN/nOjuiWeC6XrVGf4rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758680517; c=relaxed/simple;
-	bh=HFHmdE57JXCjKHaQD8SUjF/RrHNTUnZebd0jUZ724UE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=oHezaQ6DrYiAfDoMc6TvhtompR3PTGxLOdmfXxgPjrxJYrQmGfzpTVDlzglQ9XAUXF00LgjigQQFgUucb0zjptFxYEDb7cZS3ebE7JHVsHdTZzvOz/pLtchka7u8REaH4/ip/qSnRcT2DArKOI2LHINwdhPIKzBi5SQvodwiQNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lq9C4i25; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-78febbe521cso55644376d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:21:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758680515; x=1759285315; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uqyfLm8v6T0qYv16JlYYlcUwd5Gfyhb7apOWrngvLGk=;
-        b=Lq9C4i25Dy00dIS6rmK0aQW3YSjKO1Ge3El4drhmWR8TtUvA56/5wP906JlNyfzD1H
-         nzTND4Ed5p1pTR0c77W79N1mT1IcIhDhLNft+msrkSa6DHYqw1YbIohO4H9lzfYxde8+
-         5fNyMyG7ndAelsBopXNTQNV1xvJUEjk/OPQVpEJ83h3rUzs6AyrIFHdHxsrW7o4pKQXd
-         Nof5vj2AewbKWkRE4KhjJ9xEJUcg0kCbOiZxnpS/F/XGdWemD66bJtTvwOPK3MI7eicd
-         moYhd/AGVXU4oBrYVWW6ncPIwwycWVhODNpJJqhAh4m1bm6h4SUdD/TOmrIt1mmR81/x
-         np6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758680515; x=1759285315;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uqyfLm8v6T0qYv16JlYYlcUwd5Gfyhb7apOWrngvLGk=;
-        b=ujamfsyzjutSukw1zsE/aXyK5TfZlK4mOV+CMdU8w8JNf/VvGPaX+kXcMHC0AbR2Zq
-         ndHtaB0+wk8pUwpIO4D2sB3jZCOCo/+PO6xjUczdPwyr/2JWbQuS1OgyFFOc666wzXuS
-         +OETymALMyaxrOVISMnBIfLy3vi5iNV8ys+6tWDLTLsTAnDXMm+J++mCQ7sAlBvODVrR
-         i/9PCTRlCJOn/jgu8Qfbwr7vA63Wzt/48DNqKYbFViTB+huqcZWYSZRJz/mBDlzwGESz
-         Q4QOoF7gMiz/FhlNFQ4ZpdssBRHZCaE54d8vohwa0nm50W+hnoxCZLfsYAcW95yL/lkK
-         OWuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPsTMqjdC0NYYuCTWgk5Z+xJHvilB41feWd4IK+rxiDXKJNkzcn1n0h8Jqm5AQDotjC1duJKun5rog6BE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx686HGydAM68rU///aPWHbf0YhQi1TbYFL9lhxpSA5dluvszfp
-	FyDxmzBZ8WkG+5AKLU/v04jWdj3RveoI9r3FPWeubh2NDRwUh+5QGZLcYVNoeqqjYF4lcu2EHM+
-	VxCtSCx+3H5VIbKt7jrqELl6T+jw6G2U=
-X-Gm-Gg: ASbGncvdnnMVEuASFr2Nmx+2dPhuCyiLSfsCau+5Jc4S1KeSELWEVajDRkkfUeyIrmL
-	/A3cNx5I93mt5IS45h3P/HosTU11oTpchdoOoH7MYwwIzARkaSgws200vAzmKiIJTlFYwtkMFi2
-	U11mDGNhHWouHsdDC6bNp5ontiE65UtXW2AI66Qr5rPS155gdPVrE9OM8X+bwa2x+hfDV5B8ghT
-	tOUfZi36T4WGCjQ4f/+hXRndOCQMnqNcwY4r+nLtVYRFHnOSV5N8z8sx+YAIosbuaTWcZVww5Lp
-	WbrseLaqYrpcAn3SyllkWP65xHVGAYYUw1gtv/ufXR8zVFNTYbIpHtljpp5lTmGzApCJJKCPnth
-	6X+6/2jklNkR5ZYvqK3F3HA==
-X-Google-Smtp-Source: AGHT+IGC6vYlvhs66ktmkSH4DNM8gnu1Y+JkGwS0f32FuoBMmczQj3Zw9gx+tsGTkFNEZOt8dXwS5okLfdhpl2/fdhU=
-X-Received: by 2002:a05:6214:e6f:b0:7e6:6528:a2ff with SMTP id
- 6a1803df08f44-7e710d84958mr51832006d6.38.1758680514753; Tue, 23 Sep 2025
- 19:21:54 -0700 (PDT)
+	s=arc-20240116; t=1758681377; c=relaxed/simple;
+	bh=01wT68UNSwhfpWdAlgiDuuwwdgfaU330mgxCbo3eZNw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hpQe2ieEY5Z6V6w+lJ+LV0FjAMQrPgABeMNyGjUiiSvBpM2U/+ABh3TsBsfAYN8NOxQ0YRA2mtyGHiAbf+/IOivWJ6ynn5vOFm6Ei5Us7nkwEVirvDx8pYkmXiOJQSS+FHjrdpaEh13lmB0TQlKSm/dNM2q/ZWwE7WhwFX3qQ50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=AFkggTn/; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=7ZJyqM6KWG4H2x+DYnhtJLfhL6WirxnLjJxoGlstssw=;
+	b=AFkggTn/hbkhm5HDuXtcJibPy/6RpGAm2JLDcuSeiU5mig+Wd2+mb2a30rulsq
+	1gOySdgBmvoQpj4jvqDXTaym77zs6oRj+dDajbgQHaqI83isQUir7HCvT66bkO0T
+	hIPrFSMqa9/3GYGXkjxlMzyyh/TtxZ5h56CyQtz/HIKyU=
+Received: from ubuntu.localdomain (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgDHD7qDVtNoA0cVBQ--.36297S2;
+	Wed, 24 Sep 2025 10:25:09 +0800 (CST)
+From: buckzhang1212@yeah.net
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Waiman Long <longman@redhat.com>,
+	linux-kernel@vger.kernel.org
+Cc: buckzhang1212@yeah.net
+Subject: [PATCH] locking/mutex:add MUTEX_CHCEK_INIT to detect uninitialized mutex lock
+Date: Tue, 23 Sep 2025 19:25:00 -0700
+Message-Id: <20250924022500.2577-1-buckzhang1212@yeah.net>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 23 Sep 2025 21:21:42 -0500
-X-Gm-Features: AS18NWB2bfaevaok-t0yRcDHeIiepjkPSc3MjLEZsgCVPtK2pHBCYZGFf-QweVs
-Message-ID: <CAH2r5mux1-atMBd92EjpP9HYrLWWJDCC+=DNx+yVxti7ejDNhw@mail.gmail.com>
-Subject: [GIT PULL] ksmbd server fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namjae Jeon <linkinjeon@kernel.org>, "Stefan (metze) Metzmacher" <metze@samba.org>, 
-	CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:M88vCgDHD7qDVtNoA0cVBQ--.36297S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAryfWF1rWr17JrW7ZF47urg_yoW5Ary8pr
+	4Ykw17ur48XF10vr4UAF1fur4Yyw48CFW7CrZ3Ja48ZFnxKFnFqFnrta1UurWFgryxXFZ3
+	tF1jqrWrtr45Aw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U_kucUUUUU=
+X-CM-SenderInfo: pexfy65kdqwiqsrsq5hhdkh0dhw/1tbiNAXFdWjTVoVTSwAA3x
 
-Please pull the following changes since commit
-07e27ad16399afcd693be20211b0dfae63e0615f:
+From: "buck.zhang" <buckzhang1212@yeah.net>
 
-  Linux 6.17-rc7 (2025-09-21 15:08:52 -0700)
+Here is a kernel exception about mutex and I can recreate it stably.
+First we define a custome struct that includes a mutex lock.
+Then allocate this struct by kmalloc without calling mutex_init.
+Finally when multiple tasks call mutex_lock together,kernel will panic.
+But Kernel is good  if only one task call this mutex at the same time.
+the exception reason is that lock->wait_list is an invalid kernel list.
+kernel crash log: 
+Unable to handle kernel NULL pointer dereference at virtual address 0000000
+pc: __mutex_add_waiter+0x68/0x160
+lr: __mutex_add_waiter+0x128/0x160
+sp: ffffffc0866f3ac0
+x29: ffffffc0866f3ad0 x28: ffffff8095148000 x27: 0000000000000000
+x2: ffffffc0866f3b18 x1 : 0000000000000000 x0 : 0000000000000000
+Call trace:
+__mutex_add_waiter+0x68/0x160
+__mutex_lock+0x48c/0x119c
+__mutex_lock_slowpath+0x1c/0x2c
+mutex_lock+0x48/0x144
+Test case:
+struct chip_mutex {
+	struct mutex tmutex;
+};
+static void work_handler1(struct chip_mutex *cmutex)
+{
+        mutex_lock(&(cmutex->tmutex));
+}
+static void work_handler2(struct chip_mutex *cmutex)
+{
+         mutex_lock(&(cmutex->tmutex));
+}
+static void chip_tmutex(void)
+{
+	struct chip_mutex *cmutex;
+	cmutex = kzalloc(sizeof(struct chip_mutex),GFP_KERNEL);
+	work_handler1(cmutex);
+	------
+	work_handler2(cmutex);
+}
 
-are available in the Git repository at:
+Signed-off-by: buck.zhang <buckzhang1212@yeah.net>
+---
+ kernel/locking/mutex.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-  git://git.samba.org/ksmbd.git tags/6.17-rc7-ksmbd-server-fixes
-
-for you to fetch changes up to f7f89250175e0a82e99ed66da7012e869c36497d:
-
-  smb: server: use disable_work_sync in transport_rdma.c (2025-09-21
-19:34:52 -0500)
-
-----------------------------------------------------------------
-Two ksmbd server fixes
-- free_transport fix for disconnect races
-- minor delayed work fix
-----------------------------------------------------------------
-Stefan Metzmacher (2):
-      smb: server: don't use delayed_work for post_recv_credits_work
-      smb: server: use disable_work_sync in transport_rdma.c
-
- fs/smb/server/transport_rdma.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
-
+diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+index de7d6702c..8fbe858c8 100644
+--- a/kernel/locking/mutex.c
++++ b/kernel/locking/mutex.c
+@@ -42,6 +42,16 @@
+ #else
+ # define MUTEX_WARN_ON(cond)
+ #endif
++#define MUTEX_CHCEK_INIT(lock)  mutex_check_waitlist(lock)
++static void mutex_check_waitlist(struct mutex *lock)
++{
++	struct list_head *list = &lock->wait_list;
++
++	if ((unsigned long)list->next < PAGE_OFFSET) {
++		pr_err("BUG: mutex lock is uninitialized，wait_list is Error\n");
++		MUTEX_WARN_ON("mutex lock is uninitialized");
++	}
++}
+ 
+ void
+ __mutex_init(struct mutex *lock, const char *name, struct lock_class_key *key)
+@@ -269,6 +279,7 @@ static void __sched __mutex_lock_slowpath(struct mutex *lock);
+ void __sched mutex_lock(struct mutex *lock)
+ {
+ 	might_sleep();
++	MUTEX_CHCEK_INIT(lock);
+ 
+ 	if (!__mutex_trylock_fast(lock))
+ 		__mutex_lock_slowpath(lock);
+@@ -991,6 +1002,7 @@ __mutex_lock_interruptible_slowpath(struct mutex *lock);
+ int __sched mutex_lock_interruptible(struct mutex *lock)
+ {
+ 	might_sleep();
++	MUTEX_CHCEK_INIT(lock);
+ 
+ 	if (__mutex_trylock_fast(lock))
+ 		return 0;
+@@ -1015,6 +1027,7 @@ EXPORT_SYMBOL(mutex_lock_interruptible);
+ int __sched mutex_lock_killable(struct mutex *lock)
+ {
+ 	might_sleep();
++	MUTEX_CHCEK_INIT(lock);
+ 
+ 	if (__mutex_trylock_fast(lock))
+ 		return 0;
 -- 
-Thanks,
+2.17.1
 
-Steve
 
