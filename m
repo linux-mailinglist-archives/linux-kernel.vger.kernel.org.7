@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-830564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABF3BB99FCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:13:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD43CB99FD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF77B7A260C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:12:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E48521B2521E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EF03019BA;
-	Wed, 24 Sep 2025 13:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7109F2E0B73;
+	Wed, 24 Sep 2025 13:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y+vdXMZ6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScK3mCTe"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FA3502BE;
-	Wed, 24 Sep 2025 13:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B4C502BE
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758719621; cv=none; b=CG89TDUBng7tZwn8sRRH0pUYpXttN1HNCZ2AgjL5MGMFbDWpCw/NcA4bWvn44l4hGybrdj0JY7X/ltdPJxH7PyMrqgvIy53xHHeTT74zFywR30kvm/26RAS/6dh4w5lX3AGQeaPU30QhlygoKQuDLe/Cez/0Y2OLl6OMIZZDJjM=
+	t=1758719679; cv=none; b=iqzgRr1ETOZm4BHufNeOJ0xQGI0hRGZqCJ717xKufuM5cZ1X7ivylsMB5p8Y+3Rn21THjwiZ1LZd1ZdXT4vT1dchzZykbjtSfiWlaTYoJAETSV2jj3zVDUmBLmWVlWJ3/bS1Y70CB3mC6deRwF2Lc+Kk0IqFSdcddBSDvAhVR4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758719621; c=relaxed/simple;
-	bh=0OJ7woFahki0UKCHjdUta5YVNsKKrcWxshhdkEoyQWw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QSoO9BuMB5OtMHjQFiHcAr/ahraysEXupg3E6Y/6L+4/6/QrUjelSVcLXAzz9m7ZE0FwY9RC++Blqlq7VG8fZEe6Jfs2RUiTKv+Sk8ofm8w7J8jq/lmyt3r8FMNoBleHJWZeLpZgMDk3qYBs/2Xjae5W2N5QI67stJ/lLwObUcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y+vdXMZ6; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758719620; x=1790255620;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=0OJ7woFahki0UKCHjdUta5YVNsKKrcWxshhdkEoyQWw=;
-  b=Y+vdXMZ6F6x247PgMZG3VKRYoSyucx5LSqoow0Y4cMwnOy10pPsPq3SC
-   Tu17gnaF3uzazCBLLTHD+5eAsIzTEZS9H11zPz4Y5Pv8pStGb7mACshoe
-   1qolJwvQhtG4YnNiH7pRwKDvoM/75ZjNFAXpkurXWsEtNX9JqsXEaKz+K
-   TRE7u+nQzrxohUZNO9WxwJIzOjJXfC5Yw0s1ZpR6Jha6VfYca+0/sPocN
-   74YmpdIcg+J0pEmd1bjlOtd+xdImGeZ+MbbBObLV8NGp3BaFsUNgof2Qm
-   QKKXZIzThZXp6jg7MGwyNY4X7OmiwTNseVqiGfCBKz941HXJYJiGxWU73
-   w==;
-X-CSE-ConnectionGUID: cGo3ipdcQZq6vRuwDjB+CA==
-X-CSE-MsgGUID: INUXLaL+QCiMHNgExCibTg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="64851674"
-X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
-   d="scan'208";a="64851674"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 06:13:39 -0700
-X-CSE-ConnectionGUID: YuuV7RBHSA+DUuWNRA5dkw==
-X-CSE-MsgGUID: ulUX6XNNRFy3I4O+S2sdnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
-   d="scan'208";a="182309531"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.210])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 06:13:36 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Daniel <dany97@live.ca>
-Cc: Markus.Elfring@web.de, hansg@kernel.org, 
- LKML <linux-kernel@vger.kernel.org>, matan@svgalib.org, 
- platform-driver-x86@vger.kernel.org
-In-Reply-To: <MN2PR06MB559873DBA3BA4491E08949ACDC1DA@MN2PR06MB5598.namprd06.prod.outlook.com>
-References: <78e9dde3-9f21-9b06-663b-e7a23451b9e7@linux.intel.com>
- <MN2PR06MB55984287A9BAB69F1711640DDC11A@MN2PR06MB5598.namprd06.prod.outlook.com>
- <ea57d978-3fd3-fd86-aec7-e814359e3e02@linux.intel.com>
- <MN2PR06MB559873DBA3BA4491E08949ACDC1DA@MN2PR06MB5598.namprd06.prod.outlook.com>
-Subject: Re: [PATCH v5] platform/x86: lg-laptop: Fix WMAB call in
- fan_mode_store()
-Message-Id: <175871961048.19584.6234729612579222383.b4-ty@linux.intel.com>
-Date: Wed, 24 Sep 2025 16:13:30 +0300
+	s=arc-20240116; t=1758719679; c=relaxed/simple;
+	bh=VZv/R+Lydiru7NXai3Ae10i1fqpu1CG63+EFMARw2z4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hg50q70R00QrMd2RMnrybA2LkWk9J9kG62r+vd8ukrn50GRI/++SFp5uZ1xUu5jfS2WoT+2IpIoH8ZzaXmAR7CGXLKPPu3Sdeoo/kTYho1iXabNCkuxBKlQAPg0A7Fl7zZN2WjdUx2UA76jhJQMkcf6SKToj9tfhXz5Tt9QSVqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScK3mCTe; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8276e579242so586164585a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:14:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758719677; x=1759324477; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VZv/R+Lydiru7NXai3Ae10i1fqpu1CG63+EFMARw2z4=;
+        b=ScK3mCTe+VprXhahFbYzMHqB5KcDauoxynO3vtOkpovgORSM+X34DQXz/P5GGmieY3
+         mursmtaEitgq1nUwju5w74m9TWo1S4leSiCkuNDy4pYODwj34dWTneHBsA0Ym5DvGXdI
+         iFRGp84pfYohzcAscR46WHHVTjxQcbE4Dl/wMwpm5auNPMdhWhKv1jbHITNl2OUXfHyO
+         qKZG5xn3Cn7UAKKgGebK6iBWgyjqu1KTF5gKOm2MQopnDJwxFXdsoiTE9XJ8YqBYxTfs
+         9Qtf8kUWItUq6wCxy8Yonu1Wv4G44zOW4dotbM7fclPWKftTDAuBsv2TFphm8Io0yVUF
+         a+DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758719677; x=1759324477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VZv/R+Lydiru7NXai3Ae10i1fqpu1CG63+EFMARw2z4=;
+        b=P0l0F+2OHR6XPLYRqlHYyVCKwDVm61yJ7C9VQ2tX/h04wt9H15VGlQSj+1O/i/zf1/
+         359mD9Mra7Kb+c2xmRPSUxyhlly7ScGzhS89rYhgAPZNinzgJaHQ0ISpjuCK0p6bPamO
+         1sdNbWeoDSqNUVb2nlBHgUrV85741bpAS5OZ8hYDD0YK2AVYfpXJb6L6o/e3xDygPONL
+         IS8OOMqY2jhQgL5uX6K5y1V3Zk3/lxWAx3GYOrYXzm4Aw5yUYQcoCRpdzBQG86N3gf8d
+         l7wzbm49TKpYC3Ql+iUYpbzjROqSfoRycFOPLp1yXUY9ghwbVjq5uCJ1OAiI5yKtifH2
+         DOKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUssYPAQQCQs12BoXiPiysONPiIIBHg9RcTDytdqHNX5S2jZmGYlKIxx7Y/9h3i2ziqt40YMlfQvM2LcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNjbaj1ps4q8KSjumFXe74vda3gwVnMNbFapqL+GNkq5IH0JQP
+	/JG07Z9aVDQC8xcNt76eckUqdCYdEnMTEzODfYIyMciGO/yYRMWSy36mt1Awe8f4TOLmCdWMLQz
+	yP5yL/QwGVNmUhk6Fjpox9NNYscxZihM=
+X-Gm-Gg: ASbGnct2+m61GjzrUdXtnO09svCWds/4ZMKsQMZEYDmRPz8X+zAnQ+PbjFCXwcKJQtM
+	5Msfpu6so3G5MMG+GEd+PRuwVWB9772eRM9NH6jmtHIv3qDo7Jb2AzRRPaf5N43sB4alZHzSioV
+	Kwxng5hg/zcLWNbYgvNzsiA6xOPXbLphpQRrRE/SuTlTMGjqcxVLN57xI9GjXLUuB8zbnQsQhaI
+	VQHx/A+BKAQEtZ0GH3MX2Tr+YS7ZXsW8JGcbLGPpIxGxTs9C5Kh
+X-Google-Smtp-Source: AGHT+IFW5ydJGJomVZSTmzV+enpMyryQsOja9EMJNFRBeWC/1HSTHy/94zFyhyeJUzCqfTu1dgMklmb7QbHYZ8VrMBg=
+X-Received: by 2002:a05:620a:d95:b0:82c:b307:bce9 with SMTP id
+ af79cd13be357-851760476eamr770911085a.66.1758719677227; Wed, 24 Sep 2025
+ 06:14:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+References: <CAEU-x4=Zs22b5LX_rsBVMu4BxvDfO+CZkkuWuVNaxv8mqvh9Gw@mail.gmail.com>
+ <bjtev7sgmcafoysd53xrxih4nawn2dbq4odylwdglbub6td2a3@nhoxenprhjvy>
+ <CAEU-x4kL45DAddmNahjR2C97+43jchpmXep++LbeP8cXLEWN-w@mail.gmail.com>
+ <CAEU-x4nv3XnXchevtwN5mkVcxqnpgBobhavxZc7BjS7EgYG8Ng@mail.gmail.com>
+ <c3plpgl2zsx4do2odwdeowodkkdnfqpexlwqg5a5mckyibxlge@qai35f5yeswy>
+ <CAEU-x4mJiBM_zKg1DaeJkKB3W3Ay08bUTc-D3QjFjDxNiZGd0g@mail.gmail.com>
+ <iav7hzeaarxifwxk7zlfnt6vipqkp4h4ldt634exlvcswz62gj@a7ongaeduylz>
+ <CAEU-x4k_56w17y0DOKG2TRtegGvzVKS9USAERMa1MtO+3wZivA@mail.gmail.com> <jm3z5dcgw66lzh5bbhnitnchbvgnvuvrzxltghrsmwtmbg76jw@rcvcyjevjrmq>
+In-Reply-To: <jm3z5dcgw66lzh5bbhnitnchbvgnvuvrzxltghrsmwtmbg76jw@rcvcyjevjrmq>
+From: Yinon Burgansky <yinonburgansky@gmail.com>
+Date: Wed, 24 Sep 2025 16:14:25 +0300
+X-Gm-Features: AS18NWCPMv2tgalE6efXx36Z9UYxW7tQoHsVEql15JYZ8XgpNe4cJCRv-ZgfGTY
+Message-ID: <CAEU-x4=NvWYPUas5e-V-uLOHiHu9Wc3CHGLwTbKPTM1r3+U1Ng@mail.gmail.com>
+Subject: Re: Touchpad multitouch leaves ghost fingers
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 23 Sep 2025 09:19:39 -0400, Daniel wrote:
+On Wed, Sep 24, 2025 at 11:44=E2=80=AFAM Benjamin Tissoires <bentiss@kernel=
+.org> wrote:
+> oops, yes, my bad. I forgot to put the correct group on the device
+> (multitouch_win_8 instead of generic). I've force pushed a new version,
+> so please redownload and reinstall it.
+Yes, now it works, thank you :)
 
-> On my LG Gram 16Z95P-K.AA75A8 (2022), writes to
-> /sys/devices/platform/lg-laptop/fan_mode have no effect and reads always
-> report a status of 0.
-> 
-> Disassembling the relevant ACPI tables reveals that in the WMAB call to
-> set the fan mode, the new mode is read either from bits 0,1 or bits 4,5
-> (depending on the value of some other EC register).  Thus when we call
-> WMAB twice, first with bits 4,5 zero, then bits 0,1 zero, the second
-> call undoes the effect of the first call.
-> 
-> [...]
+> Now I need to make the kernel patch. Ideally I'd like you to test it,
+> but worse case I can just replay the recording as it seems to be enough.
+Sure, I can try, if you give me instructions to follow.
+This is my current kernel:
+```
+$ uname -a
+Linux fedora 6.16.7-200.fc42.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Sep 11
+17:46:54 UTC 2025 x86_64 GNU/Linux
+```
+After installing, do I wait until Fedora catches up to the new version
+and then reinstall the kernel from dnf?
+Do I need to watch out when doing `dnf update` that it won't override
+the kernel?
 
-
-Thank you for your contribution, it has been applied to my local
-review-ilpo-fixes branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/1] platform/x86: lg-laptop: Fix WMAB call in fan_mode_store()
-      commit: bab04f0166dfaf7d7dfb5fd96d8f961a1b4e1b2c
-
---
- i.
-
+Thanks,
+Yinon
 
