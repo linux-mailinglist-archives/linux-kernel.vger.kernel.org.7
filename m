@@ -1,201 +1,253 @@
-Return-Path: <linux-kernel+bounces-830086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9EBAB98B28
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:53:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D27C6B98B51
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C83571899DAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:54:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D06817DCF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35631FDE01;
-	Wed, 24 Sep 2025 07:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="D3R2aYV/"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853262882C9;
+	Wed, 24 Sep 2025 07:51:35 +0000 (UTC)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6D24502F
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81492286D55
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758700254; cv=none; b=jyN2DZFESOLTMKqFE7qtfAXE/zs5z8h4KNTJpGwDBJHYOUBOejqXR0HJOGofL/dTHbcAGvxgwW5kLKEcjjKOu+esjePGIeTy5Rq2PcKbKDKCOPfRV7PVrDGiu+TOKWLc2ynkUXdflTl/IXWF7/tIy47KM2tmVZuGpUyHf9Yzx6E=
+	t=1758700295; cv=none; b=i2O0+2yRN82nUSunTkhrZO8haNAK545Yxdun5JXZhxdsQOE7+HvQgU2OiYKK4bP6RD+MK5Wou1VNMkzdc8P1Ho0Xx14yXWulLVN0kM3O5K8P3m2RJSpvVjXB512DlHkJ2BDkPqxJoIWqyUbQ/ph1846BDOCWLVGBauDSY0dvh7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758700254; c=relaxed/simple;
-	bh=45ID2kuv0qFzfqDiZyEd9DoHC7kvx6ye7Wh2smi4EfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cbeDdHWZCYTeSRNyUU5gdvi8vrIXAhqxNAaMU/EkFV3WzfW2csCZ0YGxxrxEfP0nDm2Nltw9ApYaOUe7N1H7JsDcET8vQHqHK3dTetnXuU6LpuX5ibWWZhksqR9phm9kmcvOrc1x1XdS6bkOGs8IGjZAqz2b6T+SDXFmAFPtmwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=D3R2aYV/; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b4f7053cc38so4729071a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758700251; x=1759305051; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CV8Ezfn2saza8BjopllSPTGobi36DchCDdd90Jw4e3I=;
-        b=D3R2aYV/E2VgUiaTXCyGZyOYBD0HiSit4mSb8GssohgxP40kNsfleMraXpc0XZAC++
-         S0yn9ZlVzoKjoTNHS2PF+7/7XZcoJ6OZSuwxwbflSkA5azZB7cRsdgaWTHCg0rVS25A3
-         Q+76runYZeLgnHgqpHIdDKWT98mHjZJLjeEIoUrtiIGZeZdPNoj9uzkFdft5d2QvqF6U
-         3n7LD3wxSaNRq7Pp4bzoVEYkH0elXmApzlDGhE9cmJ16tFC/cRhXJejf4Jpf9ysHo2OQ
-         2Il0WzNFFC6swZz+T6/2Ou4j8tHSJfdayS6N8NpgYGnxkKZk7jm8PFKu82nQCLVUzffZ
-         j9Jg==
+	s=arc-20240116; t=1758700295; c=relaxed/simple;
+	bh=aWLfvJIhJGUp5ivux4F05IzZUz29wUscuHa27oPNgME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qhGobhI4GHVT71PCoVgr4iDd7iyJv18f1DWs7ceYKWXMQMVIkplm0eS1wUnMAfWW4bnR7xEZKVgAbF0w8AQnvVqnYtKkuU4HhOoZ3jQgWAckmroMKOCy1Nm6jeNGLfa7G+M3qSqfHcNAJcHkQURvGcP8exITnalUDgt+0MbGrP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-90dd3b43f8eso621476241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:51:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758700251; x=1759305051;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CV8Ezfn2saza8BjopllSPTGobi36DchCDdd90Jw4e3I=;
-        b=m9kqO6vDg3prVtN3EFU1g9NE2UCVzYoK671v/xVncYYC0nkW7NO9R4FyhhjE3AghgM
-         SgYaCqNHdETym4AMXXTE4AZqRayrz7nuY5til51Nmcb5dzJ5i9LcgU8n8TTgyqARHmc0
-         t5TMuQwHcfGZbo68D8J/JcrOAHbC+0VYA/1R17wMmBOC3e0Y5HjLxrkwtGEh8MEKbwIJ
-         9GjtYpZ+a0vCt0BGCpyLobgKqkldPLKO8LbeyZf8lRx1PYRLUrhVJ4Bk4hT2C/RFU/+z
-         YR3908KNq8IlWR7SzV+SMNi5nqSQ4kERbpBFfrsMhUn+vNhJX17rGnokxSm9ezPz22jR
-         D1aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/D84vEM5Pr5Py/ASrx+lj9OLdiIdDBDN8cwNOfrDdO0d6bZXYNua7UfM70crVDPDlAY0bZsmwj4noOR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzIMzKjgIds7flPqQV6HrhKW8d3rBR+ONByrDsC4Vt8+RY/XfB
-	u9WiHntOx41BWy/EdVav1SRvErtbPDmlbnvEepYWOl5r++UNx0D3OXNxgPGO7Fx9OTg=
-X-Gm-Gg: ASbGncvYrBV68GEoLgE0zfblBlW0t1qJf9nSVB6NBxM+lCDSDxzoEyqjsGCBRrffvH+
-	r2D9t1TZgt0FSrqxv2qcjj6orxFwFQOagaxbrFo5B+LXXK6TtFXqU+7+muBzMsiCWv7tq0b21oK
-	hbEqzNF5ue9RBOsCHv8//kG/cFHSVvwwkIE+MJZZMwpnjy99tzfvLg9eB2ETEwQ1QRH7ENUB/3E
-	Dxe+VplwGLh+bz0qxNIoaUkMs8zs3dZtjPkaxGQ+M8314siCjPEfep4DJtoZb2zx2GA47CVi+q/
-	bK8XA5fN1o1qMTwOK6VA4ntpIm4o+pUQr+2b1JtAwiygdYC5smtAPwngpANymoULxB9HKg3k8qo
-	9rSgZ9IJeVHRgqNlC6nRBfXo8XJBcre7y7EcxmHc+sFA53Eut5yeCw4nYVV7lFyXRNRiU1Q3xoQ
-	==
-X-Google-Smtp-Source: AGHT+IF/FsViDZnN1wC3bVBeDjfe2a1td3Uy9MTTTgmPfAiltbIpdnbAcEVw0Jdsi9BK/RiEHIqtzQ==
-X-Received: by 2002:a17:903:4b4b:b0:279:a5bb:54e2 with SMTP id d9443c01a7336-27cc21fabc8mr69834335ad.20.1758700250705;
-        Wed, 24 Sep 2025 00:50:50 -0700 (PDT)
-Received: from [10.88.210.107] ([61.213.176.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ec0a7f443sm13118355ad.105.2025.09.24.00.50.44
+        d=1e100.net; s=20230601; t=1758700291; x=1759305091;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hh+Khf6unZqbzxNHEU+Ts8bq4BIxlEWA7Rzthe6aDww=;
+        b=dKOKZV2+Tswo81jQe7vZbDJV/GgFvqKCKGZv+UQo0cQcGa+KCKp1zT0mRjGBX38uu1
+         UhzP+qlcGdM0059OvldINX7UzBJ4CIVjGAn/JufC+Ibe9plRvgAd1UvYmCoz8b5MOiF/
+         YeyB9HjDFlmZTgmIfAsfaI0xLW0gQSW1ZD/kfqglzWho2cnG0q1fyqDIFbZvHMOwJD4a
+         pcHcxWuilhbrDEOU/UZkYHL7DGJVdXey+qKgkE8OKCEzYgbOHRx1HgfPO8kllDOnkpsP
+         9cHMTE8efu+unnTJnI9PlI1p5JUEivWK6efNYIMMeoAdYcI9SSJGTLYOB96TUN6Nex8X
+         v+KA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxnrnvCqF/M+u159CZZqufOIcqZ39FzsbFgauqgq+ZSu9/Rl+io2AoPyApSeG89InVMUJ9x+49p26OmSA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWHuZRGiN5CqTayBvjJIaWtac2L1vXpibdAQMdhahj0fixkggE
+	y8pxCoTsJveDWt77fHDZ/i7THPaA8BDUBb9kTrLDRj9Pi11BrEBjvDznctq41rBK
+X-Gm-Gg: ASbGncti3GCzvuGdNFEmB/01nGrYFPcOpR6LvkxXJn2Ah6bld6SPBWZHxaq3Cw+ouVR
+	KV0oEjOUl/IZ8uz6V2j/IfgzKSiQ+s/ZCaius7k9vxed8Iq3Sv9f0f7nmMRrCkIcuA3EvSdQk/x
+	KpF0wOXjBwUYxVPRqK9umrHqEeV3aisho07rxvt1rpHgZcBTwRcuj8bac/slJA+SHfsUxCHazEt
+	cpbIaq8HLu7bDWg2ocKhcRvMc7L7pPv4cWkltq05WB+/8RQ41pwOkjgMyqeJt3Z3XPpQz+mnz5E
+	1kivqFS8DfsC8hKSeGnKnABrJXbmW//2gj6pFvcEAoyhKSDn42CdkIjIQ+39yqAO93iFJijna1E
+	SpFoHXNOkk6WfeEQD6pvk84eOfSE2TPo+XIzWG+2et1TCJ7O92AzyB9MrZOe/
+X-Google-Smtp-Source: AGHT+IGPNagFG3wPbqDMG+2blk87CddY9AKWIshubW24WMg91vw9tREjE/9HtQc02ii7CS7+sM18lQ==
+X-Received: by 2002:a05:6122:6d16:b0:54b:d7b6:2f34 with SMTP id 71dfb90a1353d-54bd7b680eemr1136080e0c.0.1758700291112;
+        Wed, 24 Sep 2025 00:51:31 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8e3e5dc2d3esm3024033241.9.2025.09.24.00.51.30
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 00:50:50 -0700 (PDT)
-Message-ID: <37fd969e-3799-48d0-a8e0-1937e5a4ae38@bytedance.com>
-Date: Wed, 24 Sep 2025 15:50:41 +0800
+        Wed, 24 Sep 2025 00:51:30 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-59dff155dc6so2249897137.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:51:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUbR1k6lMn4D2dYno0jKaA3DzeBq3fFKFQRR+boyQ0GjUEaxftEhpZERnui5MQvu6ISQTfu9KtCxF/3fB4=@vger.kernel.org
+X-Received: by 2002:a05:6102:6884:b0:569:93c9:b572 with SMTP id
+ ada2fe7eead31-5a57695d27dmr1659602137.9.1758700290135; Wed, 24 Sep 2025
+ 00:51:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH v2 2/2] memcg: Don't trigger hung task
- warnings when memcg is releasing resources.
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, lance.yang@linux.dev, mhiramat@kernel.org,
- yangyicong@hisilicon.com, will@kernel.org, dianders@chromium.org,
- mingo@kernel.org, lihuafei1@huawei.com, hannes@cmpxchg.org,
- mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
- muchun.song@linux.dev, tj@kernel.org
-References: <20250924034100.3701520-1-sunjunchao@bytedance.com>
- <20250924034100.3701520-3-sunjunchao@bytedance.com>
- <20250924063219.GR4067720@noisy.programming.kicks-ass.net>
-From: Julian Sun <sunjunchao@bytedance.com>
-In-Reply-To: <20250924063219.GR4067720@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250923160524.1096720-1-cosmin-gabriel.tanislav.xa@renesas.com> <20250923160524.1096720-3-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20250923160524.1096720-3-cosmin-gabriel.tanislav.xa@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 24 Sep 2025 09:51:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVEDJZ6wdGZs_CDs=jLPV1u382o6=cZ1HfKQOffGf7jGw@mail.gmail.com>
+X-Gm-Features: AS18NWCUnOtI9sni6QIPbp0MqkmfhYYAKBnwNUuJbeyYXQXVL2FCMeoJiSjFxRk
+Message-ID: <CAMuHMdVEDJZ6wdGZs_CDs=jLPV1u382o6=cZ1HfKQOffGf7jGw@mail.gmail.com>
+Subject: Re: [PATCH 2/7] dt-bindings: iio: adc: document RZ/T2H and RZ/N2H ADC
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/24/25 2:32 PM, Peter Zijlstra wrote:
-> On Wed, Sep 24, 2025 at 11:41:00AM +0800, Julian Sun wrote:
->> Hung task warning in mem_cgroup_css_free() is undesirable and
->> unnecessary since the behavior of waiting for a long time is
->> expected.
->>
->> Use touch_hung_task_detector() to eliminate the possible
->> hung task warning.
->>
->> Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
-> 
-> Still hate this. It is not tied to progress. If progress really stalls,
-> no warning will be given.
+Hi Cosmin,
 
-Hi, peter
+On Tue, 23 Sept 2025 at 18:06, Cosmin Tanislav
+<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> Document the A/D 12-Bit successive approximation converters found in the
+> Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs.
+>
+> RZ/T2H has two ADCs with 4 channels and one with 6.
+> RZ/N2H has two ADCs with 4 channels and one with 15.
+>
+> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 
-Thanks for your review and comments.
+Thanks for your patch!
 
-I did take a look at your solution provided yesterday, and get your 
-point. However AFAICS it can't resolve the unexpected warnings here. 
-Because it only works after we reach the finish_writeback_work(), and 
-the key point here is, it *already* takes a long time before we reach 
-finish_writeback_work(), and there is true progress before finish the 
-writeback work that hung task detector still can not know.
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/renesas,r9a09g077-adc.yaml
+> @@ -0,0 +1,170 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/renesas,r9a09g077-adc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas RZ/T2H / RZ/N2H ADC12
+> +
+> +maintainers:
+> +  - Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> +
+> +description: |
+> +  A/D Converter block is a successive approximation analog-to-digital converter
+> +  with a 12-bit accuracy. Up to 15 analog input channels can be selected.
 
-If we want to make the hung task detector to known the progress of 
-writeback work, we need to add some code within do_writepages(): after 
-each finish of a_ops->writepages(), we need to make detector to known 
-there's progress. Something like this:
+The documentation for several registers talks about bitmasks for ch0-ch15,
+so the actual hardware block supports up to 16 channels.
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 3e248d1c3969..49572a83c47b 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2635,6 +2635,10 @@ int do_writepages(struct address_space *mapping, 
-struct writeback_control *wbc)
-                 else
-                         /* deal with chardevs and other special files */
-                         ret = 0;
-+               /* Make hung task detector to known there's progress. */
-+               if (force_wake)
-+                       wake_up_all(waitq);
-+
-                 if (ret != -ENOMEM || wbc->sync_mode != WB_SYNC_ALL)
-                         break;
+> +  Conversions can be performed in single or continuous mode. Result of the ADC
+> +  is stored in a 16-bit data register corresponding to each channel.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - renesas,r9a09g077-adc # RZ/T2H
+> +      - renesas,r9a09g087-adc # RZ/N2H
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    items:
+> +      - description: A/D scan end interrupt
+> +      - description: A/D scan end interrupt for Group B
+> +      - description: A/D scan end interrupt for Group C
+> +      - description: Window A compare match
+> +      - description: Window B compare match
+> +      - description: Compare match
+> +      - description: Compare mismatch
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: adi
+> +      - const: gbadi
+> +      - const: gcadi
+> +      - const: cmpai
+> +      - const: cmpbi
+> +      - const: wcmpm
+> +      - const: wcmpum
+> +
+> +  clocks:
+> +    items:
+> +      - description: converter clock
 
-which has a big impact on current code - I don't want to introduce this.
+Converter
 
-Yes, the behavior in this patch does have the possibility to paper cover 
-the real warnings, and what I want to argue is that the essence of this 
-patch is the same as the current touch_nmi_watchdog() and 
-touch_softlockup_watchdog() - these functions are used only in specific 
-scenarios we known and only affect a single event. And there seems no 
-report that touch_nmi/softlockup_watchdog() will paper cover the real 
-warnings (do we?).
+> +      - description: peripheral clock
 
-Correct me if there's anything I'm missing or misunderstanding.
+Peripheral
 
+> +
+> +  clock-names:
+> +    items:
+> +      - const: adclk
+> +      - const: pclk
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  renesas,max-channels:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Maximum number of channels supported by the ADC.
+> +      RZ/T2H has two ADCs with 4 channels and one with 6 channels.
+> +      RZ/N2H has two ADCs with 4 channels and one with 15 channels.
 
-> 
->>   mm/memcontrol.c | 10 +++++++++-
->>   1 file changed, 9 insertions(+), 1 deletion(-)
->>
->> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->> index 8dd7fbed5a94..fc73a56372a4 100644
->> --- a/mm/memcontrol.c
->> +++ b/mm/memcontrol.c
->> @@ -63,6 +63,7 @@
->>   #include <linux/seq_buf.h>
->>   #include <linux/sched/isolation.h>
->>   #include <linux/kmemleak.h>
->> +#include <linux/nmi.h>
->>   #include "internal.h"
->>   #include <net/sock.h>
->>   #include <net/ip.h>
->> @@ -3912,8 +3913,15 @@ static void mem_cgroup_css_free(struct cgroup_subsys_state *css)
->>   	int __maybe_unused i;
->>   
->>   #ifdef CONFIG_CGROUP_WRITEBACK
->> -	for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++)
->> +	for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++) {
->> +		/*
->> +		 * We don't want the hung task detector to report warnings
->> +		 * here since there's nothing wrong if the writeback work
->> +		 * lasts for a long time.
->> +		 */
->> +		touch_hung_task_detector(current);
->>   		wb_wait_for_completion(&memcg->cgwb_frn[i].done);
->> +	}
->>   #endif
->>   	if (cgroup_subsys_on_dfl(memory_cgrp_subsys) && !cgroup_memory_nosocket)
->>   		static_branch_dec(&memcg_sockets_enabled_key);
->> -- 
->> 2.39.5
->>
+According to the documentation, both SoCs have three instances?
 
-Thanks,
--- 
-Julian Sun <sunjunchao@bytedance.com>
+I agree with Connor that this should be dropped: the same information
+is available from the channel@N subnodes, and future SoCs could have
+gaps in the numbering.
+
+FTR, from a quick glance, it looks like this module is very similar
+to the ADC on RZ/A2M, so I hope we can reuse the driver for that SoC.
+
+> +patternProperties:
+> +  "^channel@[0-9a-e]$":
+
+0-9a-f
+
+> +    $ref: adc.yaml
+> +    type: object
+> +    description: The external channels which are connected to the ADC.
+> +
+> +    properties:
+> +      reg:
+> +        description: The channel number.
+> +        maximum: 14
+
+15
+But I don't think it is needed, as the dtc check for non-matching unit
+addresses and reg properties should already enforce this.
+
+> +
+> +    required:
+> +      - reg
+> +
+> +    additionalProperties: false
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a09g077-adc
+> +    then:
+> +      properties:
+> +        renesas,max-channels:
+> +          enum: [4, 6]
+> +
+> +      patternProperties:
+> +        "^channel@[6-9a-e]$": false
+
+6-9a-f
+
+> +        "^channel@[0-5]$":
+> +          properties:
+> +            reg:
+> +              maximum: 5
+
+Not needed as per above.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
