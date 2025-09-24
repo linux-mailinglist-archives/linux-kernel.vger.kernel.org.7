@@ -1,112 +1,246 @@
-Return-Path: <linux-kernel+bounces-830482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7D3B99CCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:17:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62CFDB99CDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E0624A4F38
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:17:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 718BD1B20565
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7034C30149A;
-	Wed, 24 Sep 2025 12:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338362FF67C;
+	Wed, 24 Sep 2025 12:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pu2t3hUk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ctoQ0scU"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC1830217E
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B797B14EC46
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758716256; cv=none; b=jzC6V2KykGZz29fvr6eKiUUsIJg4eDkQjK7yWehmelChatFwyLL9fck8Tt6zjs3cK4K2RhZE4yaMwVQNGKsASC91vcTtTnDuRYDmeuKLQTAjK0gQJ7LRPtnVno7cVeRAejzJt51xbr7KN9zBBZR76eCyNZYs/qSB6p4oq/mWA6I=
+	t=1758716346; cv=none; b=Pg4ce3xHDjZLVdDsxQ0LsuHv+87cA1WQOtT/FUp5qcjIkoC4FDyFcDKrR5ygKsCQDxcoKbQ0OADzckJF//EsAdCLXC1q7MYROrLOj4OniGwSE1dNih8CkpTcFru+y8iW0nIMLt+RG5/ZU6amRiEops8RehTfl8rLOUKxrQ4xrkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758716256; c=relaxed/simple;
-	bh=43ScJy7wLNmjH2mCgKx92tBc1uX9OH2KD2Rx0nFjxzQ=;
+	s=arc-20240116; t=1758716346; c=relaxed/simple;
+	bh=TAObwE9kmytBPXBOSqBLKzuNHBV04FYjzO6uMK/yEhc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rl5mJq8gY0sUrWhgJHJnG5wGFovbCwCbPuBbYRScrdQrQ3W0xmMtxp4Ge07zZpwQD9IUvl1waar4HlTI4xmF+/PSvgQzLN06Wu2ZDo7mt2CmgyuLMZ/tpwf6Gm3316nZXsjgCieeyxJwLvMG/BK1UEaAt5yerpcdQSmZz4x9N5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pu2t3hUk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758716254;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=43ScJy7wLNmjH2mCgKx92tBc1uX9OH2KD2Rx0nFjxzQ=;
-	b=Pu2t3hUkQzh6Vy2bUb//P8KCn7cOda9V0QX0hC8266uCae2peqeu4OvFt8vmtDHXELIkGb
-	BZy9g6CJD/4/r/R8pthqbiFeimwBpAIAsmSVdgLY0A6KMMJ17eOvPU3at7pmP5Dx1yWSB7
-	s/nO4pTSklfUKLbYsphCs0RBI9D4o6U=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-137-z9qD9ByFNtinQoRY6VUgPQ-1; Wed, 24 Sep 2025 08:17:33 -0400
-X-MC-Unique: z9qD9ByFNtinQoRY6VUgPQ-1
-X-Mimecast-MFC-AGG-ID: z9qD9ByFNtinQoRY6VUgPQ_1758716252
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b56ae0c8226so478722a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 05:17:32 -0700 (PDT)
+	 To:Cc:Content-Type; b=mPX5ku19fyWqZxKlPLbVtHsYPKfxgc1ku5ktC/qlgB7QGz3XNycvztwzoZT26Yfq67+gMfx8YjvUHreDQhRfrHcimBCQsX0KpObWE2ov3JGSRmLG2EqtBhFQvlYrpwUGBK81riinkb6mqFAxE2U2WVovl099tCNBb9UnOvO6Gr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ctoQ0scU; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-57bd04f2e84so4745960e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 05:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758716343; x=1759321143; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Viin6TuBjIiAgZfSdR4TvqbJlDCKh1ntkn3hWS0V/fU=;
+        b=ctoQ0scUJE+Jo/qe2Wp8X1CPl+F1hL2Z4EbamJQCY6OnY16RwlXW/UwNqoWbo8fJ2K
+         H3/HRA7wgNhH9mC+WHE7EWPGSSfCGvIRNphcgO7nvX4PipcDlv1+UlEGrG0AkNedzJFy
+         yv6dRvkVBXciQ20KbMYTr4VKitqNOx3CI80BnxKiDKYbcKkydy7R1Up7qhhwv4QSGkrc
+         ekxEpnuEmrpvWdCs12iltDOOacJp8qpZFeB5lpXXkNeLjBqt+/SZePTxgi+0W2QYx2Xp
+         dF26BugoTt5O2Xg5Qi6ujVfgV/lQrRqd9Y+FRP8GuJqiGO3ovb4qrUoRdSyS9jIoIQJ0
+         NK+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758716252; x=1759321052;
+        d=1e100.net; s=20230601; t=1758716343; x=1759321143;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=43ScJy7wLNmjH2mCgKx92tBc1uX9OH2KD2Rx0nFjxzQ=;
-        b=RU5jUuiOzuTN0G6pQe6HDK0npX4wgFH7b82VvgTiNQhUkUo1qE9cP0yJsIjSE+/+CJ
-         vXP+PGasRKF+lTFPsvF5G69Z6gC7glFSrweilUGENr1T//3HfbA9GrraULtpshm7h+dJ
-         MlNWR9l0nFbnjAqotE18q6Ot2HcttGQsB9tSC+REHeFDK0wYX2U+YbHZs3FDuJmgzYhH
-         FXj7QObIThGh+Eqtd4V4nj78gVlnjFUWJl9qFOdyp6lHfxTArFMsKsfIUYMjUJfpi+rc
-         cRXz1uRkgMyXup6xA0YecBu21C0/hoE/JHiXDB7gbALof1zDkzkA43A4mu1tjAdGC6ro
-         2y9g==
-X-Gm-Message-State: AOJu0Yxc/vxnEjmGTBZsPkovccjqiklSU+sqvsjnTOVEtexqMipMIZWb
-	yewKOLRSAKkTVQJ5Hi5Y9rXCBd8hZBGVwgiD32bVi/gcKNIA8T0PYx4+a5IiihGRPNc+yt0CtGT
-	hZ8o+H+8XnFn1hqxRnsYAVuEBJSns2/VtD12H7fbxuCGg9owskYuK8tKYEOfXTT15oEcptCstNu
-	WUgcUAiUGaJk97PN5PKQBg0aL4hqjpbXzdyjEUI15R2+y6qYiCPDDPJw==
-X-Gm-Gg: ASbGncsX2xi8jJJBl9Fpa70QNIFkf4UXc+f+D88qPYewZxgX3Juk0iJNjYNDS6Xcvvn
-	jFnVd3MyN80mqL0/EwUv22jkctA8nOtRu1jaTSUmA5OwOzDFPvWmSGQAPiPPQGwEvHr1aXcZb3N
-	EAoMd1dtRLdoq2b/otEHk=
-X-Received: by 2002:a17:902:eccb:b0:262:4878:9dff with SMTP id d9443c01a7336-27cc138187fmr67734695ad.12.1758716251941;
-        Wed, 24 Sep 2025 05:17:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGoX3VdI0G6Fizy/WK4dTtMB9Z+FLYoC7j5niExyF7Cu27KjJ3BZdLL6gEniI2B+Td+UYJGc6x0mdk5W9Gpdi0=
-X-Received: by 2002:a17:902:eccb:b0:262:4878:9dff with SMTP id
- d9443c01a7336-27cc138187fmr67734465ad.12.1758716251606; Wed, 24 Sep 2025
- 05:17:31 -0700 (PDT)
+        bh=Viin6TuBjIiAgZfSdR4TvqbJlDCKh1ntkn3hWS0V/fU=;
+        b=iQbxKrRKSqJQpukO7z4oODs8h2BDqTnoIferTxrvKbPtxVIJ13RAj6OMr7tM+XrIw/
+         Kmt2lOQ69eaWJWzjBFLE1/7Cf8Zg2R6lFqKJIzqQt8iVLXrvx174fIHZ0tMyBPkZn6sp
+         6zaju+Il9250v5zVREe7BAaDVeWFuItbEf9QMQBABpiQxo2LCk0IdbwYW1lnlXC+qeyE
+         6u1gLe1OnphkS1ZQKtIB61oXxRe/ZIpSwNpBYGfqR9WhXX0cV3oxkhXKTc0TfrAvhGrn
+         TsHaPTVFUoWRuPnqyJwbxFgL6XkkYSO8Gs9qgbpEXWIbcg/wpK3itqupqqDex92ESC2S
+         8tyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWku0mJjxQr07Qbrn0X1EhJN1dFOSelMYtTv9XulyJ6NmdG16djg7/VVmk2jl8GX9Bphng7AqQ7R0hDU0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDOt74SFL6EZXTODjltiDhiAdMVrN5AAd8LZETtIuGfqc2KZv9
+	TJA8kwH7KIYhj6HTeDkmjDJPNx6p4uifQYNhREuQhc0fNRuMNnpDhI+aNSkT4XrCMbNbbLTVNQy
+	QJkLRVVx3KT3zzG6Cm/qBX9jC3iL3tJo=
+X-Gm-Gg: ASbGncvrnIDmcK2x8b7OTBN442eOyk1BFHx6amA+ioVUxk/uLwb5tp3Othpkk9C2S+v
+	4UM32ZUgP9v59eTrz7r365nK8qxroxnMX0RoBxUYPAr5nrr1031gusJ33Kk8PwLum2Mk0xHPot2
+	BpmaFAglFf63L8V+opZfvB/iTFnyAxsSaIKip/Ynh+9XyCMoQKcdwGSDiJLYsXo6oFvEjLJ4Slq
+	t/wgOSIhLPoQAXGzf1xLThPDdd8Rz6JEMXWoRqEUA==
+X-Google-Smtp-Source: AGHT+IH19KyEvVApP8Ygpl7PGIGjBWQEeNHARbTawPM6HHgmEIfzlGsjO8pj/xKYNhVCvX3w0gOzQQTIpznCq0dRwcY=
+X-Received: by 2002:a05:6512:33cc:b0:57d:d62e:b205 with SMTP id
+ 2adb3069b0e04-58070dfa09dmr2192192e87.18.1758716342549; Wed, 24 Sep 2025
+ 05:19:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911004416.8663-2-bagasdotme@gmail.com> <aNJ9yJ7XT4Pnsl9E@archie.me>
- <CAHc6FU7aGJZZzN8zhtnwDgXX9gVMh_fbi+sUpJ7tg1MWMa8XVA@mail.gmail.com> <aNMnSapfyfwga0Oz@archie.me>
-In-Reply-To: <aNMnSapfyfwga0Oz@archie.me>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Wed, 24 Sep 2025 14:17:19 +0200
-X-Gm-Features: AS18NWCa5jmffiBOp77B1fu-47YIJ8JwRk0Rn9UG9h-FDhgHGAvfBdeQ_JOjjPg
-Message-ID: <CAHc6FU69a-R-u-Cr90aQMjb_75SChUa9BTSjL4AZKjuo_QVJQw@mail.gmail.com>
-Subject: Re: [PATCH v4] Documentation: gfs2: Consolidate GFS2 docs into its
- own subdirectory
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Documentation <linux-doc@vger.kernel.org>, Linux GFS2 <gfs2@lists.linux.dev>, 
-	Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Jan Kara <jack@suse.cz>, 
-	Christian Brauner <brauner@kernel.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Jeff Layton <jlayton@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, 
-	James Morse <james.morse@arm.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Chen Linxuan <chenlinxuan@uniontech.com>, Matthew Wilcox <willy@infradead.org>
+References: <20250923120902.1844458-2-thorsten.blum@linux.dev>
+In-Reply-To: <20250923120902.1844458-2-thorsten.blum@linux.dev>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Wed, 24 Sep 2025 21:18:46 +0900
+X-Gm-Features: AS18NWCK3rkwobJwuTNUJVl58SJ2S98ySrw3W3vZ9WzHEoGhmsYxNHDOnQ1rRrE
+Message-ID: <CAKFNMonHxWSxW72Af8F_3Mhx39iO5hgVKAhTjpHVKsTBOQ-Z8g@mail.gmail.com>
+Subject: Re: [PATCH] nilfs2: replace vmalloc + copy_from_user with vmemdup_user
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 24, 2025 at 1:03=E2=80=AFAM Bagas Sanjaya <bagasdotme@gmail.com=
-> wrote:
-> OK, I will resend after 6.18-rc1 is out.
+On Tue, Sep 23, 2025 at 9:10=E2=80=AFPM Thorsten Blum wrote:
+>
+> Replace vmalloc() followed by copy_from_user() with vmemdup_user() to
+> improve nilfs_ioctl_clean_segments() and nilfs_ioctl_set_suinfo(). Use
+> kvfree() to free the buffers created by vmemdup_user().
+>
+> Use u64_to_user_ptr() instead of manually casting the pointers and
+> remove the obsolete 'out_free' label.
+>
+> No functional changes intended.
+>
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
 
-I have added the patch to branch for-later. There is no need to resend.
+Thank you for your patch proposal.
 
-Thanks,
-Andreas
+This patch involves rewriting using vmemdup_user(), u64_to_user_ptr(),
+and kvfree(), which to me appear to be equivalent transformations that
+improve readability.
 
+However, I would like to actually perform build tests in different
+environments (to confirm in multiple environments that the typecheck
+for __u64 in u64_to_user_ptr passes without any problems, and that no
+side effects appear with the static coding checker).  Also, since it
+touches parts related to the operation of user-space programs such as
+nilfs_cleanerd and nilfs-resize, I would like to confirm that actual
+device tests pass while changing the allocation sizes.
+
+So, rather than rushing it into the upcoming merge window, please let
+me schedule this to be sent upstream in the cycle after that.
+
+If there are any issues, I would like to provide feedback.
+
+Regards,
+Ryusuke Konishi
+
+>  fs/nilfs2/ioctl.c | 35 ++++++++++-------------------------
+>  1 file changed, 10 insertions(+), 25 deletions(-)
+>
+> diff --git a/fs/nilfs2/ioctl.c b/fs/nilfs2/ioctl.c
+> index 3288c3b4be9e..e17b8da66491 100644
+> --- a/fs/nilfs2/ioctl.c
+> +++ b/fs/nilfs2/ioctl.c
+> @@ -49,7 +49,7 @@ static int nilfs_ioctl_wrap_copy(struct the_nilfs *nilf=
+s,
+>                                                    void *, size_t, size_t=
+))
+>  {
+>         void *buf;
+> -       void __user *base =3D (void __user *)(unsigned long)argv->v_base;
+> +       void __user *base =3D u64_to_user_ptr(argv->v_base);
+>         size_t maxmembs, total, n;
+>         ssize_t nr;
+>         int ret, i;
+> @@ -836,7 +836,6 @@ static int nilfs_ioctl_clean_segments(struct inode *i=
+node, struct file *filp,
+>                 sizeof(struct nilfs_bdesc),
+>                 sizeof(__u64),
+>         };
+> -       void __user *base;
+>         void *kbufs[5];
+>         struct the_nilfs *nilfs;
+>         size_t len, nsegs;
+> @@ -863,7 +862,7 @@ static int nilfs_ioctl_clean_segments(struct inode *i=
+node, struct file *filp,
+>          * use kmalloc() for its buffer because the memory used for the
+>          * segment numbers is small enough.
+>          */
+> -       kbufs[4] =3D memdup_array_user((void __user *)(unsigned long)argv=
+[4].v_base,
+> +       kbufs[4] =3D memdup_array_user(u64_to_user_ptr(argv[4].v_base),
+>                                      nsegs, sizeof(__u64));
+>         if (IS_ERR(kbufs[4])) {
+>                 ret =3D PTR_ERR(kbufs[4]);
+> @@ -883,20 +882,14 @@ static int nilfs_ioctl_clean_segments(struct inode =
+*inode, struct file *filp,
+>                         goto out_free;
+>
+>                 len =3D argv[n].v_size * argv[n].v_nmembs;
+> -               base =3D (void __user *)(unsigned long)argv[n].v_base;
+>                 if (len =3D=3D 0) {
+>                         kbufs[n] =3D NULL;
+>                         continue;
+>                 }
+>
+> -               kbufs[n] =3D vmalloc(len);
+> -               if (!kbufs[n]) {
+> -                       ret =3D -ENOMEM;
+> -                       goto out_free;
+> -               }
+> -               if (copy_from_user(kbufs[n], base, len)) {
+> -                       ret =3D -EFAULT;
+> -                       vfree(kbufs[n]);
+> +               kbufs[n] =3D vmemdup_user(u64_to_user_ptr(argv[n].v_base)=
+, len);
+> +               if (IS_ERR(kbufs[n])) {
+> +                       ret =3D PTR_ERR(kbufs[n]);
+>                         goto out_free;
+>                 }
+>         }
+> @@ -928,7 +921,7 @@ static int nilfs_ioctl_clean_segments(struct inode *i=
+node, struct file *filp,
+>
+>  out_free:
+>         while (--n >=3D 0)
+> -               vfree(kbufs[n]);
+> +               kvfree(kbufs[n]);
+>         kfree(kbufs[4]);
+>  out:
+>         mnt_drop_write_file(filp);
+> @@ -1181,7 +1174,6 @@ static int nilfs_ioctl_set_suinfo(struct inode *ino=
+de, struct file *filp,
+>         struct nilfs_transaction_info ti;
+>         struct nilfs_argv argv;
+>         size_t len;
+> -       void __user *base;
+>         void *kbuf;
+>         int ret;
+>
+> @@ -1212,18 +1204,12 @@ static int nilfs_ioctl_set_suinfo(struct inode *i=
+node, struct file *filp,
+>                 goto out;
+>         }
+>
+> -       base =3D (void __user *)(unsigned long)argv.v_base;
+> -       kbuf =3D vmalloc(len);
+> -       if (!kbuf) {
+> -               ret =3D -ENOMEM;
+> +       kbuf =3D vmemdup_user(u64_to_user_ptr(argv.v_base), len);
+> +       if (IS_ERR(kbuf)) {
+> +               ret =3D PTR_ERR(kbuf);
+>                 goto out;
+>         }
+>
+> -       if (copy_from_user(kbuf, base, len)) {
+> -               ret =3D -EFAULT;
+> -               goto out_free;
+> -       }
+> -
+>         nilfs_transaction_begin(inode->i_sb, &ti, 0);
+>         ret =3D nilfs_sufile_set_suinfo(nilfs->ns_sufile, kbuf, argv.v_si=
+ze,
+>                         argv.v_nmembs);
+> @@ -1232,8 +1218,7 @@ static int nilfs_ioctl_set_suinfo(struct inode *ino=
+de, struct file *filp,
+>         else
+>                 nilfs_transaction_commit(inode->i_sb); /* never fails */
+>
+> -out_free:
+> -       vfree(kbuf);
+> +       kvfree(kbuf);
+>  out:
+>         mnt_drop_write_file(filp);
+>         return ret;
+> --
+> 2.51.0
+>
 
