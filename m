@@ -1,54 +1,86 @@
-Return-Path: <linux-kernel+bounces-830414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B460B99950
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:31:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B239B9995F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65BFD2A6CEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:30:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ABE8320DC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4202F998C;
-	Wed, 24 Sep 2025 11:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5712E7F1C;
+	Wed, 24 Sep 2025 11:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QuG46zSO"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PsSxkKCg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1A22F9993;
-	Wed, 24 Sep 2025 11:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE63242D99
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758713446; cv=none; b=uBnlw25pg4SWjTHpH/kEX4JEwwG08323iq2fvEDVdK/rWMHQTocL64vIhIZH6hVvRCD+C6COzVEndoBwHpy31/D2mC9sFb3qPRq+gUJEHe7557ApD3M1wXh0+Q5YkTqB87mYXFLwm2Jvypo19Y+lRvxthn+zw+GTB06jRGoTV1U=
+	t=1758713587; cv=none; b=MJNaXBGI7diG/S01tYlSes/lLNR7wovczknxR4IkbNIKzzWfm30duAB633erIblKX1gnWyZfCN4aCtJZYVsAOgTTmDC9UXWxh1SjCKtywimH3RGSEZszOxMXvIdbQxXGAOOHsSpuWbieTlJmsPo6GNw7ASQYxoA7CFRMpgrSK6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758713446; c=relaxed/simple;
-	bh=zAejJcsR74t5qZJ7rjpWSVUmAm/GDBIrDrA/WIcoYEs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lR4psmV1Z98QxOu1RAb2Of4iJo3JnPsGR8+KvqCCt3JmwY4dcNFruSAGnHs9zpNYYI3rBdcFpRcnpKEkB0ErW67QeZBS//u9i4Y4U5X3oqRVOafmZf9M9kRL2nA0Pukp3l2l12LSuqyio2yQdMZQ46UjQguvJfeWyptmMGb2hPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QuG46zSO; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758713442;
-	bh=zAejJcsR74t5qZJ7rjpWSVUmAm/GDBIrDrA/WIcoYEs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QuG46zSOaR9X4edxtW+pQ+3UH7B0FcrFvBxe7Vu2/CCarOOCmn5RvqMyETMNLE5Tj
-	 sUYiZCLg71vRI1BbB6aTfIgCBvDQuP5NAbTCPKq2lGB0VN563Jyg+zLAlX3H03CdCi
-	 EeGgtGZL4auDTismc2lxfaK9fjIMJWRm2+o1gjmUt/x4ka+NouSoBNnv3kdEIZ4DS3
-	 qjGWGExCRy0SSX21dBZmYlHnq3+8J2IupiofzMjM/fQB2pAGZsRP5wMWone9L6h1uh
-	 4V+IzMSqztrRXMwUCnlFA9+JsbWCqxcxyRHXiMWDxv0wsctZ72gfkq2KZZAl7Ylf41
-	 kzxsin8p9aL9w==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A001C17E07EE;
-	Wed, 24 Sep 2025 13:30:41 +0200 (CEST)
-Message-ID: <4603e18e-e9c9-4f0e-9c0c-8cbad3567ea8@collabora.com>
-Date: Wed, 24 Sep 2025 13:30:41 +0200
+	s=arc-20240116; t=1758713587; c=relaxed/simple;
+	bh=WP5lOipMeA7uk64A4m+WtqwZnTJaSw+vmUB9azlXq30=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KEz3/Z420XTnr7wMEIaNVUghqXt+HKt1DPxrIW1DfIuY7TG4WNfLoekQi+kZEMCBszpSb2SoQ5LRBzbCJPTBXzjxyiYkdkjG6YksOOZZYX0gj52Tyyf+kzstwA9vxSycMP7c3K8slkwDqR5Xtq7p8cavzUoQfSIkKAn4ZhX7az4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PsSxkKCg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758713579;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ehdJCefWHjHZQ2xeUY6vBszLodzgm+iwxilga3dW7Oo=;
+	b=PsSxkKCgAnDfnG6RK2fyyvv1DfFv4eNS65L/OTFV3aC8WR5Gg5xwQAjENGwxs5DGxqRev0
+	YRYCEeHbC59X7k8E44y+TS6lO5DDLAUM5MXhnoZjSBZXysaPB6lkQwT0fDASNVjdFKJvI+
+	sWLcT/4OJlRCz3JkSL2hBu//FQp26Co=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-274-P_4TR-ceOZumoftnaJaMyA-1; Wed, 24 Sep 2025 07:32:52 -0400
+X-MC-Unique: P_4TR-ceOZumoftnaJaMyA-1
+X-Mimecast-MFC-AGG-ID: P_4TR-ceOZumoftnaJaMyA_1758713571
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e25f5ed85so8279975e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:32:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758713571; x=1759318371;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ehdJCefWHjHZQ2xeUY6vBszLodzgm+iwxilga3dW7Oo=;
+        b=pAuI+h3q8os6TZ0SG1Imtz0xWgcDajyOKLke2T5jo0Fvvw/aSRRYl6GH2DUC955xNR
+         oUmJvRAqgnYbAtNN5U6jhdc6XPUnvzgA2cDNIXRZ0UFu5OnCnh8592P/vJGTNXZiOinL
+         5+7B3dSAnyBkW7LT0c+K1oo70GnH6zLB6kMT45cJJk0aDhagf1CZEPzHKHJXx/SgDtkw
+         oEN2k5nVPfY4qkeOF0lzWf4pMkT156ahDZFY/ceS2j9Kb+YRY0UOiyrQ3wrtKvpx3AG5
+         7YgJ8TllQUMfj4tV9TnIOPT94EUrBDSBvC1N/hLCgRcg3A1IdJMH1CoHIyerOhRCndr2
+         fN7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUFdr3XX+mAntM3GFvpFevpwb85pA5PjKFOeWXAaNprR/62tYFZUnH9bx85Woe0Y8ilRlPsPxptMDvYkHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6SD8CTdz13S0kwAf1J4dBHTvxw6Cqt9F5bk0lEkAkQ5ocLNt3
+	RDfug7zh2Xq/0XUHCiZOTU6ICmvO6MbnmPMLc22u309AIFQGfN09d5JOgVu54qZ21s7AxnCleib
+	WEksnaiPXaYibkftGpQC9RTPZmufgi9ErxvRW2vQv47adRN4kzQ4eZNLv6DxFvlMjcQ==
+X-Gm-Gg: ASbGnctOb0B65X6QwBKJ73D1ez4FZaI9R4P5Udz8SHjUO51CYbP4WUNni/ontUXi2BF
+	gaNNmhW2TcJ00D2qn7EYXc4Fo5W3QQQ3Snrg6tRbB8QsMEgsremhhgHhw3/kMyPt/RhJXdWvWtW
+	VxExV6AXTCs3a3LzurNAqN16vOr7cGRqjhbvVuOtvo4Po+UjqIBypUN+BJETfb6N5Py8DNw97gt
+	gDB7CeJn5n0n/5/DW3ephkZxDGzt9XvxfyxGI7BrL8Kf2Yc+B0UNCr397NNDsDmg+OLp66saZ9m
+	uJXHKDEMeP3miupGx36T1fIfSw9Y3IV/kVmaISuhPJpA1fOf+LZ9Im2Ny3RNrdBSW+ZTu4rkgNk
+	2CHQ2TdXjiulrRZgCgSH8zxKHE3ueTuK5YbINZhyLHuXD1enPr3483WfB3YI0PYRI5w==
+X-Received: by 2002:a05:600c:4ed1:b0:45d:d88b:cc6 with SMTP id 5b1f17b1804b1-46e1dac188fmr61037665e9.25.1758713571146;
+        Wed, 24 Sep 2025 04:32:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH7pGCZ1fOiVqtAVOm2u7cESZGBYcjIfXBGgaEl6BtT//qVBAhf53t3ShXmK+XZpgtplZVSlA==
+X-Received: by 2002:a05:600c:4ed1:b0:45d:d88b:cc6 with SMTP id 5b1f17b1804b1-46e1dac188fmr61037115e9.25.1758713570613;
+        Wed, 24 Sep 2025 04:32:50 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f14:2400:afc:9797:137c:a25b? (p200300d82f1424000afc9797137ca25b.dip0.t-ipconnect.de. [2003:d8:2f14:2400:afc:9797:137c:a25b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a996d7dsm29743925e9.4.2025.09.24.04.32.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 04:32:50 -0700 (PDT)
+Message-ID: <ce93b55c-75a7-4b4d-a68b-9d80baf1578b@redhat.com>
+Date: Wed, 24 Sep 2025 13:32:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,74 +88,171 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/8] dt-bindings: power: Add MT8196 GPU frequency
- control binding
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Jassi Brar <jassisinghbrar@gmail.com>, Chia-I Wu <olvaffe@gmail.com>,
- Chen-Yu Tsai <wenst@chromium.org>, Steven Price <steven.price@arm.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-hardening@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20250923-mt8196-gpufreq-v4-0-6cd63ade73d6@collabora.com>
- <20250923-mt8196-gpufreq-v4-2-6cd63ade73d6@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [syzbot] [mm?] WARNING in memory_failure
+To: syzbot <syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com>,
+ akpm@linux-foundation.org, linmiaohe@huawei.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, nao.horiguchi@gmail.com,
+ syzkaller-bugs@googlegroups.com, Zi Yan <ziy@nvidia.com>
+References: <68d2c943.a70a0220.1b52b.02b3.GAE@google.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-In-Reply-To: <20250923-mt8196-gpufreq-v4-2-6cd63ade73d6@collabora.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <68d2c943.a70a0220.1b52b.02b3.GAE@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 23/09/25 13:39, Nicolas Frattaroli ha scritto:
-> On the MT8196 and MT6991 SoCs, the GPU power and frequency is controlled
-> by some integration logic, referred to as "MFlexGraphics" by MediaTek,
-> which comes in the form of an embedded controller running
-> special-purpose firmware.
+On 23.09.25 18:22, syzbot wrote:
+> Hello,
 > 
-> This controller takes care of the regulators and PLL clock frequencies
-> to squeeze the maximum amount of power out of the silicon.
+> syzbot found the following issue on:
 > 
-> Add a binding which models it as a power domain.
+> HEAD commit:    b5db4add5e77 Merge branch 'for-next/core' into for-kernelci
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10edb8e2580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d2ae34a0711ff2f1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e6367ea2fdab6ed46056
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14160f12580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1361627c580000
 > 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
->   .../bindings/power/mediatek,mt8196-gpufreq.yaml    | 117 +++++++++++++++++++++
->   1 file changed, 117 insertions(+)
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/6eee2232d5c1/disk-b5db4add.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a8b00f2f1234/vmlinux-b5db4add.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/fc0d466f156c/Image-b5db4add.gz.xz
 > 
-> diff --git a/Documentation/devicetree/bindings/power/mediatek,mt8196-gpufreq.yaml b/Documentation/devicetree/bindings/power/mediatek,mt8196-gpufreq.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..03721244a737ce0914a89cc0aedd88fa3b6b2038
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/mediatek,mt8196-gpufreq.yaml
-> @@ -0,0 +1,117 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/power/mediatek,mt8196-gpufreq.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek MFlexGraphics Power and Frequency Controller
-> +
-> +maintainers:
-> +  - Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> +
-> +description: |
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com
+> 
+> Injecting memory failure for pfn 0x104000 at process virtual address 0x20000000
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 6700 at mm/memory-failure.c:2391 memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 6700 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+> pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+> pc : memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
+> lr : memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391
+> sp : ffff8000a41478c0
+> x29: ffff8000a41479a0 x28: 05ffc00000200868 x27: ffff700014828f20
+> x26: 1fffffbff8620001 x25: 05ffc0000020086d x24: 1fffffbff8620000
+> x23: fffffdffc3100008 x22: fffffdffc3100000 x21: fffffdffc3100000
+> x20: 0000000000000023 x19: dfff800000000000 x18: 1fffe00033793888
+> x17: ffff80008f7ee000 x16: ffff80008052aa64 x15: 0000000000000001
+> x14: 1fffffbff8620000 x13: 0000000000000000 x12: 0000000000000000
+> x11: ffff7fbff8620001 x10: 0000000000ff0100 x9 : 0000000000000000
+> x8 : ffff0000d7eedb80 x7 : ffff800080428910 x6 : 0000000000000000
+> x5 : 0000000000000001 x4 : 0000000000000001 x3 : ffff800080cf5438
+> x2 : 0000000000000001 x1 : 0000000000000040 x0 : 0000000000000000
+> Call trace:
+>   memory_failure+0x18ec/0x1db4 mm/memory-failure.c:2391 (P)
+>   madvise_inject_error mm/madvise.c:1475 [inline]
+>   madvise_do_behavior+0x2c8/0x7c4 mm/madvise.c:1875
+>   do_madvise+0x190/0x248 mm/madvise.c:1978
+>   __do_sys_madvise mm/madvise.c:1987 [inline]
+>   __se_sys_madvise mm/madvise.c:1985 [inline]
+>   __arm64_sys_madvise+0xa4/0xc0 mm/madvise.c:1985
+>   __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+>   invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
+>   el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+>   do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+>   el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:744
+>   el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
+>   el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
 
-This vertical bar is not needed. Please drop it.
+We're running into the
 
-Cheers,
-Angelo
+         WARN_ON(folio_test_large(folio));
 
-> +  A special-purpose embedded MCU to control power and frequency of GPU devices
-> +  using MediaTek Flexible Graphics integration hardware.
-> +
+in memory_failure().
+
+Which is weird because we have the
+
+         if (folio_test_large(folio)) {
+                 /*
+                  * The flag must be set after the refcount is bumped
+                  * otherwise it may race with THP split.
+                  * And the flag can't be set in get_hwpoison_page() since
+                  * it is called by soft offline too and it is just called
+                  * for !MF_COUNT_INCREASED.  So here seems to be the best
+                  * place.
+                  *
+                  * Don't need care about the above error handling paths for
+                  * get_hwpoison_page() since they handle either free page
+                  * or unhandlable page.  The refcount is bumped iff the
+                  * page is a valid handlable page.
+                  */
+                 folio_set_has_hwpoisoned(folio);
+                 if (try_to_split_thp_page(p, false) < 0) {
+                         res = -EHWPOISON;
+                         kill_procs_now(p, pfn, flags, folio);
+                         put_page(p);
+                         action_result(pfn, MF_MSG_UNSPLIT_THP, MF_FAILED);
+                         goto unlock_mutex;
+                 }
+                 VM_BUG_ON_PAGE(!page_count(p), p);
+                 folio = page_folio(p);
+         }
+
+before it.
+
+But likely that's what I raised to Zi Yan recently: if try_to_split_thp_page()->split_huge_page()
+silently decided to split to something that is not a small folio (the min_order_for_split() bit),
+this changed the semantics of the function.
+
+Likely split_huge_page() should have failed if the min_order makes us not split to order-0,
+or there would have to be some "parameter" that tells split_huge_page() what expectation (order) the
+callers has.
+
+We can check folio_test_large() after the split, but really, we should just not be splitting at
+all if it doesn't serve our purpose.
+
+-- 
+Cheers
+
+David / dhildenb
+
 
