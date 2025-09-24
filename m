@@ -1,180 +1,151 @@
-Return-Path: <linux-kernel+bounces-830297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4BB1B99595
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:06:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90881B9959B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CCBE3A5964
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:05:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41B953ACDE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE54C2DCBFA;
-	Wed, 24 Sep 2025 10:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6E225A34F;
+	Wed, 24 Sep 2025 10:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="X+xPz5ip"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ErseWRNi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FC62BCF5;
-	Wed, 24 Sep 2025 10:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A562DC341
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758708310; cv=none; b=cEuJoNWxFTs6XjwK4sRjME8Dc/7cgFOrgFiHd2Vh7oyx8ZRd6oGYlrVIlDyGvB+mJazjQt89lN1Cd81efppFTJFdUhMwv6adXzpkTngNzY2mNwHE2HEwXhD87099Pttb/eukKtXHEvDxzbfObNJ7IEA0Wqi+HKnNTNYhvKt/vDQ=
+	t=1758708313; cv=none; b=GqRgBrnTk1ahZdgDLy2wysbJemE3mnp/1HxjquEX8Wn+vsp9T7n8g9PJx8b0HHv3wWSKVjJRAhs2wV71VDyaf9Fbc2ntqzyW0cUD/Xl3RcrpGuvPrtNsNNY8bf0eZnTNFmLtBMtkt5VdsfcOkFjCwC7dMHf0qNkwXYCxCRZTh0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758708310; c=relaxed/simple;
-	bh=GFvcInq1IOuXE1vhB63t9/fSWu4hTelI/2URgyAn79g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fjV/kAXTTrv6Z4w7+8/qU74Ma1ZeU7SyVvpyGDQcyKPKAMGaezzvmHwCh+XCwOPdAl6izqRajl/tzVckBAudjzgnOvJ/eNFUCBmAayX5zVuNQ3i08IBwNFkfb0pk79LBX3k3mTjMHHSA+Ikde6tMhBsP7FkTkx4R4Hcanv+Vybw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=X+xPz5ip; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (85-76-33-231-nat.elisa-mobile.fi [85.76.33.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 5CD9E169;
-	Wed, 24 Sep 2025 12:03:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1758708219;
-	bh=GFvcInq1IOuXE1vhB63t9/fSWu4hTelI/2URgyAn79g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X+xPz5ipCEtVXMBRJ1jvZe1NVoqmlyMiZQhoNJeMTbfWJ2fPhduU3zQx4OnS6Iv9M
-	 owEQ5L8D3MxHWCaguicATmhcu628vb5cYQh0BzvQm6wAbybtKQqA3S1YtngHbrVdDl
-	 ABfCVHXroXYOUx6UynplDNpflCJ6BcgOe2hvsWt4=
-Date: Wed, 24 Sep 2025 13:04:29 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-media@vger.kernel.org, netdev@vger.kernel.org,
-	linux-spi@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Javier Carrasco <javier.carrasco@wolfvision.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Matthias Fend <matthias.fend@emfend.at>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Mark Brown <broonie@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 15/16] property: Drop functions operating on
- "available" child nodes
-Message-ID: <20250924100429.GM28073@pendragon.ideasonboard.com>
-References: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
- <20250924074602.266292-16-sakari.ailus@linux.intel.com>
+	s=arc-20240116; t=1758708313; c=relaxed/simple;
+	bh=pKcp8RbB9qIjTq//aq8x3wJaE/cjRo/2DCN671q8C4I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RZqI1uAlVns0qieLbQvW17ZpYB3hdtYzqPjuEcLkTowma7NU0pQ/aJxqWi9osU/yopy28OhJy+SNvrcD+PvoGZihoonfxDq0mZ4wWmtw4rpZuVIrxo51RxxeJmr5y2QRyPakfa1IDKlVOJrA81LaalpC44wkgRk1uDa3htxporA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ErseWRNi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758708306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pKcp8RbB9qIjTq//aq8x3wJaE/cjRo/2DCN671q8C4I=;
+	b=ErseWRNi+6pJT6rKd0Mk78BAFvCuIqVS0VG20GInb8pg6q3dCLsekUUBZ/4kZ2rAlknRKu
+	EA7+Qio9wr3ckp8WfSmNpuSt+/UY8AsY1FM8DgGgdISiK3zWSh8QW+Kx/8YCKAkjp0ysPd
+	sJ0RBJ+OJcnjx1aiDK3NPzOLbBO+h2I=
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com
+ [209.85.221.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-690-zo-MPsK5OHmvc5ERNOWPUw-1; Wed, 24 Sep 2025 06:05:05 -0400
+X-MC-Unique: zo-MPsK5OHmvc5ERNOWPUw-1
+X-Mimecast-MFC-AGG-ID: zo-MPsK5OHmvc5ERNOWPUw_1758708305
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-54a87b8f9c6so1504384e0c.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:05:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758708305; x=1759313105;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pKcp8RbB9qIjTq//aq8x3wJaE/cjRo/2DCN671q8C4I=;
+        b=anWqpZqB6J40w1Z+FHZcv4idCcRaK1OCB6ctPtoFV3LaBc0uQ5iiVcfOEYGPgve4T8
+         MCC1iJHcL6lpCMxSEu8KSIv4BNXJuqVDzA1l/dW5wujBLxCMHoQ2pXTTTS9D6nZvZPmo
+         9auNrHaJaIhBwFLxqgT2Im6l1e9bVhAR+VqZkVsb71oWqElJuMc1AfhCWP06wb92xdL8
+         geOwQu0clSC8uz58c6On744fW9DxPENf/fGTykGASyVaLzax09PJOOgoTJPhOUfoC2GJ
+         yPnd7hntpv6MmaOhnaIswcV/N+0nFV3qDcApwIrq/8kiMd3NgaXp6oxBKO6hRW31U4LB
+         YM2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXaqj6Fs70mODx2tO4ZDcA8U3s76Zpk4PK/D77Wwu1V/h12zg6gfhk5PhTWVDRbAhprbiiarHP5h+kfGW0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5GfEVuUbDI1EaMACUKLYr969OS41gZhjpq5Xd/0HcqYYh0Eiz
+	umiyvJH26qwtpBaFhnm+DIsiFYsl5fIa0lusWkTcGSp62ybeXg1kJhruz+lwgagjuiXpSOiW1G6
+	5WAHsULVhbWnRRCF2wjBxepWFT9yJcN3n/EjvQsYljDLMnn0EOlqktzhA/g0XqDqboXaONmSZVm
+	xJ3p7uFoPTohNuEET7U4RvlRlDnR4QbbnUHHIfybrA
+X-Gm-Gg: ASbGnctyUM1zzn/VDALBFPVwRlvGajesnbZS2XQwx78ttmgYdXiGE/RM03s+JKYC2ev
+	0yz3e/HlluOKBTU2hvxBcoWufyn2zrcHZO4BDcHJYonKo+Eu5xBGEOQI8yMwZ4PttFrFDiqwt6d
+	6p4BxTnu9PsdbFUBBMFkOOsg==
+X-Received: by 2002:a05:6122:46a7:b0:54a:a874:6e4e with SMTP id 71dfb90a1353d-54bcb11e0c6mr1653508e0c.8.1758708304791;
+        Wed, 24 Sep 2025 03:05:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFPptVrEMQd0wcOTvVhc2Oe3+W+CQLov4+tsA34aiA7Aw3gYYXeQI2LOHtMUYKKnuN1qYBzcewy7H1XCDRJWDE=
+X-Received: by 2002:a05:6122:46a7:b0:54a:a874:6e4e with SMTP id
+ 71dfb90a1353d-54bcb11e0c6mr1653503e0c.8.1758708304461; Wed, 24 Sep 2025
+ 03:05:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250924074602.266292-16-sakari.ailus@linux.intel.com>
+References: <20250922032915.3924368-1-zhaoyang.huang@unisoc.com>
+ <aNGQ66CD9F82BFP-@infradead.org> <CAGWkznGf1eN-iszG21jGNq13C9yz8S0PW03hLc40Gjhn6LRp0Q@mail.gmail.com>
+ <31091c95-1d0c-4e5a-a53b-929529bf0996@acm.org> <CAGWkznGv3jwTLW2nkBds9NrUeNQ1GHK=2kijDotH=DN762PyEQ@mail.gmail.com>
+In-Reply-To: <CAGWkznGv3jwTLW2nkBds9NrUeNQ1GHK=2kijDotH=DN762PyEQ@mail.gmail.com>
+From: Ming Lei <ming.lei@redhat.com>
+Date: Wed, 24 Sep 2025 18:04:52 +0800
+X-Gm-Features: AS18NWAzS4ovR9ej7R-yAyhG3XtRFr7Vvnznyh6lks2oABccTIKfG0VXhGRlpdg
+Message-ID: <CAFj5m9K4yv4wkX2bhXSOf141dY9O96WdNfjMMYXCOoyM_Fdndg@mail.gmail.com>
+Subject: Re: [RFC PATCH] driver: loop: introduce synchronized read for loop driver
+To: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Cc: Bart Van Assche <bvanassche@acm.org>, Suren Baghdasaryan <surenb@google.com>, Todd Kjos <tkjos@android.com>, 
+	Christoph Hellwig <hch@infradead.org>, "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, 
+	Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, steve.kang@unisoc.com, 
+	Minchan Kim <minchan@kernel.org>, Ming Lei <ming.lei@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sakari,
+On Wed, Sep 24, 2025 at 5:13=E2=80=AFPM Zhaoyang Huang <huangzhaoyang@gmail=
+.com> wrote:
+>
+> loop google kernel team. When active_depth of the cgroupv2 is set to
+> 3, the loop device's request I2C will be affected by schedule latency
+> which is introduced by huge numbers of kworker thread corresponding to
+> blkcg for each. What's your opinion on this RFC patch?
 
-Thank you for the patch.
+There are some issues on this RFC patch:
 
-On Wed, Sep 24, 2025 at 10:46:01AM +0300, Sakari Ailus wrote:
-> fwnode_get_next_available_child_node() and later
-> fwnode_for_each_available_child_node() were introduced to mirror the OF
-> interface operating on OF nodes. Now that these two are functionally the
-> same as the variants without "_available" part, drop the "_available"
-> variants.
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
->  drivers/base/property.c  | 30 +-----------------------------
->  include/linux/property.h |  6 ------
->  2 files changed, 1 insertion(+), 35 deletions(-)
-> 
-> diff --git a/drivers/base/property.c b/drivers/base/property.c
-> index ff440456af7b..75c3283fb5ca 100644
-> --- a/drivers/base/property.c
-> +++ b/drivers/base/property.c
-> @@ -802,35 +802,7 @@ fwnode_get_next_child_node(const struct fwnode_handle *fwnode,
->  EXPORT_SYMBOL_GPL(fwnode_get_next_child_node);
->  
->  /**
-> - * fwnode_get_next_available_child_node - Return the next available child node handle for a node
-> - * @fwnode: Firmware node to find the next child node for.
-> - * @child: Handle to one of the node's child nodes or a %NULL handle.
-> - *
-> - * The caller is responsible for calling fwnode_handle_put() on the returned
-> - * fwnode pointer. Note that this function also puts a reference to @child
-> - * unconditionally.
-> - */
-> -struct fwnode_handle *
-> -fwnode_get_next_available_child_node(const struct fwnode_handle *fwnode,
-> -				     struct fwnode_handle *child)
-> -{
-> -	struct fwnode_handle *next_child = child;
-> -
-> -	if (IS_ERR_OR_NULL(fwnode))
-> -		return NULL;
-> -
-> -	do {
-> -		next_child = fwnode_get_next_child_node(fwnode, next_child);
-> -		if (!next_child)
-> -			return NULL;
-> -	} while (!fwnode_device_is_available(next_child));
-> -
-> -	return next_child;
-> -}
-> -EXPORT_SYMBOL_GPL(fwnode_get_next_available_child_node);
-> -
-> -/**
-> - * device_get_next_child_node - Return the next available child node handle for a device
-> + * device_get_next_child_node - Return the next available child node handle
+- current->plug can't be touched by driver, cause there can be request
+from other devices
 
-This last line is an unrelated change. With that fixed,
+- you can't sleep in loop_queue_rq()
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The following patchset should address your issue, and I can rebase & resend
+if no one objects.
 
->   * @dev: Device to find the next child node for.
->   * @child: Handle to one of the device's child nodes or a %NULL handle.
->   *
-> diff --git a/include/linux/property.h b/include/linux/property.h
-> index 8b8bbbe6b5b7..da6202053862 100644
-> --- a/include/linux/property.h
-> +++ b/include/linux/property.h
-> @@ -161,8 +161,6 @@ struct fwnode_handle *fwnode_get_nth_parent(struct fwnode_handle *fwn,
->  					    unsigned int depth);
->  struct fwnode_handle *fwnode_get_next_child_node(
->  	const struct fwnode_handle *fwnode, struct fwnode_handle *child);
-> -struct fwnode_handle *fwnode_get_next_available_child_node(
-> -	const struct fwnode_handle *fwnode, struct fwnode_handle *child);
->  
->  #define fwnode_for_each_child_node(fwnode, child)			\
->  	for (child = fwnode_get_next_child_node(fwnode, NULL); child;	\
-> @@ -172,10 +170,6 @@ struct fwnode_handle *fwnode_get_next_available_child_node(
->  	fwnode_for_each_child_node(fwnode, child)			\
->  		for_each_if(fwnode_name_eq(child, name))
->  
-> -#define fwnode_for_each_available_child_node(fwnode, child)		       \
-> -	for (child = fwnode_get_next_available_child_node(fwnode, NULL); child;\
-> -	     child = fwnode_get_next_available_child_node(fwnode, child))
-> -
->  struct fwnode_handle *device_get_next_child_node(const struct device *dev,
->  						 struct fwnode_handle *child);
->  
+https://lore.kernel.org/linux-block/20250322012617.354222-1-ming.lei@redhat=
+.com/
 
--- 
-Regards,
+Thanks,
 
-Laurent Pinchart
+
+>
+> On Wed, Sep 24, 2025 at 12:30=E2=80=AFAM Bart Van Assche <bvanassche@acm.=
+org> wrote:
+> >
+> > On 9/22/25 8:50 PM, Zhaoyang Huang wrote:
+> > > Yes, we have tried to solve this case from the above perspective. As
+> > > to the scheduler, packing small tasks to one core(Big core in ARM)
+> > > instead of spreading them is desired for power-saving reasons. To the
+> > > number of kworker threads, it is upon current design which will creat=
+e
+> > > new work for each blkcg. According to ANDROID's current approach, eac=
+h
+> > > PID takes one cgroup and correspondingly a kworker thread which
+> > > actually induces this scenario.
+> >
+> > More cgroups means more overhead from cgroup-internal tasks, e.g.
+> > accumulating statistics. How about requesting to the Android core team
+> > to review the approach of associating one cgroup with each PID? I'm
+> > wondering whether the approach of one cgroup per aggregate profile
+> > (SCHED_SP_BACKGROUND, SCHED_SP_FOREGROUND, ...) would work.
+> >
+> > Thanks,
+> >
+> > Bart.
+>
+
 
