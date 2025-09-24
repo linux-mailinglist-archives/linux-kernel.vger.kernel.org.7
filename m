@@ -1,66 +1,67 @@
-Return-Path: <linux-kernel+bounces-830524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D9E4B99E7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:43:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1E96B99E8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4299F17BA31
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:43:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BD337A182B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93050305966;
-	Wed, 24 Sep 2025 12:41:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96195305079;
-	Wed, 24 Sep 2025 12:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AF730C614;
+	Wed, 24 Sep 2025 12:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R9XS8u6N"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EDA305E00;
+	Wed, 24 Sep 2025 12:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758717676; cv=none; b=uKPtxJxXIZqS6qn1Vl/76KiKLkpyjfTrOqj13sQFvsSnykEKaDyFsQ40nFhKhEUlYRDn6kWHqPWmRyeMQNA5lIrlmAaRetyZHBKlaxfyR7VfKr8Hg7xYv8DcfO4fJ7Csnde9ZVGtV5SimZx/ffSWlzrFTUutpwEtHn6iCgZnYf4=
+	t=1758717681; cv=none; b=skQGfBvSObBzWJgGyAfVD2/im17UVdETtnpd1O5lpqjOmv05ysdDgMOCmK40Kvx/GB3tc7JLnEk1TOa8iwevSpTyOlrRsRo1goJZmFAbJC4FedCyR29m1a6b2TfBDmfF0GVUEdZ0WU14ofX9d9DFzJwLjfIO52ely2igsFAlYHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758717676; c=relaxed/simple;
-	bh=ViXFwQPUdN7FsqaWnx8BHSUf0LsN6Dr4PJUVq2VjSWQ=;
+	s=arc-20240116; t=1758717681; c=relaxed/simple;
+	bh=1TSFF/t03+mo3lI9t688Ky27M1IpdTRlH9C4J5A/8uM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aTWMO30Q5z/hj+JkX2b7J5Ak5j9xvsIc3Fvdm2IU1kxzijNBlKI9+itnO00kkGcZ8M43M3Q0NpgWJNgdAFA/M9f+eTxkzMT/IBH7kb/syZfAhLeFin7tcK583Ze5ILRm+eSBeFGEMYS2JGK/BisSs4dvSRuYg51B/7AscSkYpMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8029106F;
-	Wed, 24 Sep 2025 05:41:04 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D75843F66E;
-	Wed, 24 Sep 2025 05:41:09 -0700 (PDT)
-Date: Wed, 24 Sep 2025 13:40:56 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sebin Francis <sebin.francis@ti.com>
-Cc: Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Brian Masney <bmasney@redhat.com>, Dhruva Gole <d-gole@ti.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for NXP i.MX95
-Message-ID: <aNPmydbv6Xm0Tj9B@pluto>
-References: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
- <20250915-clk-ssc-version1-v4-5-5a2cee2f0351@nxp.com>
- <5f508f1d-2d08-4687-86cd-d1944caa0a49@ti.com>
- <PAXPR04MB8459CE9F22CD56A9BFDB5E78881DA@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <082735e7-956b-4574-952e-06ba69db41f1@ti.com>
- <PAXPR04MB84590D5AAAB56ED7E1CBDE05881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <c34157c5-cd13-4e85-a9ee-22446111f633@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=USKG9D0E+tkjCIucKvFYy/I7r1ldxYgKtxagf/0ePF77TAkFdSn8VK0LkppS8dKlpLQHw75mk9ZDnQsm1fgX+pSWIc6ayDrAB7umz86YeYyO+EvjDzpCQxaI1d/Yuf5e1W5mKZMc0OfrPxDiK35Gq0kSx5qTobuqzZlE2eD01v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R9XS8u6N; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=75arEQaQmlwH+QtZOC67dtQpEq7DI3CYJT7DYuP84Y0=; b=R9XS8u6NQDTlySxAj4oJUbz1iq
+	CUyqbcPuY+EOI8rFpt1mlc3T+IcSukamU3hsOYRkz7yoMB9HPuazEBrVV+PCeQZRn2mjrHMoFmk7h
+	ofsTQUKWlXqow0cOQltecwD+g47284sBlUgTM+Mlkq0apR6/xja4TSB4mIUEHc3i15K0GlMwLiq07
+	3/Pb5nuu3tofUVBwnFWcbuIhX/9sLE2CxMoN1WkJWODwgSg9aQk6dMbUnw0YLNiBR+s6CV8Ekl1qg
+	lTrfD/+230OB7QltR3SqVZciRBeEnblAIJUm/dglIwZY6XuDkyTQY72ugJcZIrfyfxlPtZ8rsJpqE
+	NOhib5iw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v1Oo0-00000008jT1-0u6J;
+	Wed, 24 Sep 2025 12:41:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C039B30050D; Wed, 24 Sep 2025 14:41:07 +0200 (CEST)
+Date: Wed, 24 Sep 2025 14:41:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Xiang Gao <gxxa03070307@gmail.com>, mhiramat@kernel.org,
+	mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	mathieu.desnoyers@efficios.com, andrii@kernel.org, mingo@kernel.org,
+	oleg@redhat.com, akpm@linux-foundation.org, gmonaco@redhat.com,
+	ricardo.neri-calderon@linux.intel.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	gaoxiang17 <gaoxiang17@xiaomi.com>
+Subject: Re: [PATCH v2 1/1] tracing/sched: add 'next_policy' to
+ trace_sched_switch
+Message-ID: <20250924124107.GJ3419281@noisy.programming.kicks-ass.net>
+References: <cover.1756212396.git.gaoxiang17@xiaomi.com>
+ <c2894f9b0c5116eeffdc19947529aef5c5d1db4c.1756212396.git.gaoxiang17@xiaomi.com>
+ <20250912103050.5bf82967@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,90 +70,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c34157c5-cd13-4e85-a9ee-22446111f633@ti.com>
+In-Reply-To: <20250912103050.5bf82967@gandalf.local.home>
 
-On Wed, Sep 24, 2025 at 05:45:32PM +0530, Sebin Francis wrote:
-> Hi Peng,
-
-Hi ,
-
+On Fri, Sep 12, 2025 at 10:30:50AM -0400, Steven Rostedt wrote:
+> On Tue, 26 Aug 2025 20:48:54 +0800
+> Xiang Gao <gxxa03070307@gmail.com> wrote:
 > 
-> On 24/09/25 17:13, Peng Fan wrote:
-> > > Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for
-> > > NXP i.MX95
-> > ...
-> > > > > >         SCMI_CLOCK_CFG_OEM_START = 0x80,
-> > > > > > +     SCMI_CLOCK_CFG_IMX_SSC = 0x80,
-> > > > > 
-> > > > > TI is also planning to implement the same in our upcoming platform.
-> > > > > so can we use a generic ID instead of vender specfic message ID?
-> > > > 
-> > > > I tried to push to new generic ID [1] in half a year ago, but in the
-> > > > end ARM decided not to add generic ID for spread spectrum support.
-> > > > 
-> > > > To i.MX, it is too late to use a generic ID and waiting spec, i.MX
-> > > > firmware has been public for quite some time and passed several
-> > > external releases.
-> > > > So I need to use what our firmware adds and spec allows: vendor
-> > > > extension.
-> > > 
-> > > Thanks for the quick response,
-> > > Since this implementation is specific to i.MX, can you move this to a
-> > > vendor specific file, so that it will not break i.MX's firmware and TI can
-> > > implement SSC in TI specific file.
+> > From: gaoxiang17 <gaoxiang17@xiaomi.com>
 > > 
-> > i.MX has encountered issue with pinctrl-scmi.c and pinctrl-imx-scmi.c
-> > both supports SCMI PINCTRL. Current linux scmi does not support
-> > both drivers built in kernel image, because scmi devlink issue.
-> >
-
-Yes indeed, BUT the vendor protocol extensions mechanism was meant to
-serve the development of vendor custom protocols and drivers, it was
-NEVER meant really to allow multiple alternative drivers implementation
-on top of the same standard protocols like it happened with pinctrl-imx-scmi...
- 
-> > Sudeep said he would address the devlink issue in 6.19 cycle.
+> > Sometimes, when analyzing some real-time process issues, it is necessary to know the sched policy.
 > > 
-> > Given the current situation, I'm hesitant to introduce a new driver
-> > saying clk-imx-scmi.c.
-> >
-
-Even if the devlink issues will be solved, in THIS case the problem is
-handling custom vendor extensions inside a standard protocol, as it is
-allowed in this case...
-
-> > What I'm unclear about is whether moving to a vendor-specific file
-> > implies creating a new driver (i.e., clk-imx-scmi.c), or if it could be
-> > handled via a callback or another mechanism. Could you help
-> > clarify the intended direction?
+> > Show up in the trace as:
+> > 
+> > 	 72.267374: sched_switch: prev_comm=grep prev_pid=67 prev_prio=19 prev_state=S ==> next_comm=cat next_pid=66 next_prio=120 next_policy=normal
+> > 	 72.267594: sched_switch: prev_comm=cat prev_pid=66 prev_prio=120 prev_state=R+ ==> next_comm=grep next_pid=67 next_prio=19 next_policy=RR
+> > 	562.192567: sched_switch: prev_comm=grep prev_pid=85 prev_prio=19 prev_state=S ==> next_comm=cat next_pid=84 next_prio=120 next_policy=normal
+> > 	562.192944: sched_switch: prev_comm=cat prev_pid=84 prev_prio=120 prev_state=R+ ==> next_comm=grep next_pid=85 next_prio=19 next_policy=FIFO
+> > 
 > 
-> My intended was to handle it via callback or something similar, so that TI
-> can its own callback for the TI's SSC implementation.
+> Peter,
 > 
+> Are you OK with extending the sched switch tracepoint?
 
-This is exactly what is needed, the ability to extend with vendor
-extensions callback the behavior of a standard protocol where
-allowed....this is NOT currently supported and sincerely that was the
-reason months ago I proposed initially that maybe we could have standardized
-a new common clock extension SSC instead of using the OEM extensions since:
+I'm not convinced; this is a bit like whitespace patches, people will
+want their favourite field added and before you know it the thing will
+be fat as never before.
 
-1. it seemed a pretty generic operation
-2. any per-vendor extension callback of std protocol was NOT ready :P
+OTOH changing it will be yet another opportunity to find people that are
+not following the recommended practise. Someone will come forward and go
+complain we broke their shit or something.
 
-...then this proposal never went anywhere with ATG...AND now looking at
-this thread I think that it is good at the end that we did NOT add a new
-standard extended clock config instead of the IMX OEM, since now it
-seems that TI wants its own non-compatible implementation...
+Anyway, if we go touch it, you might as well go do it right and move
+prev_prio, next_prio and the polcy things into a u8 [*].
 
-So yes the ideal solutiomn would be to extend in a generic way the SCMI
-framework so that you can add in these cases custom handling of vendor
-extensions for standard protocols (and then generalize the current
-clk-scmi IMX support and add the new TI one...)...but I have not thought
-about this and I certainly dont have enough bandwidth now to work on
-this...beside having already in the pipeline other stuff/fixes like
-a proper fix for vendor drivers coex like Peng askes (rightly so a few
-months ago)
+Also, I don't know why we have prev_prio, but if that is useful,
+shouldn't we also have prev_policy for consistenty sake?
 
-Thanks,
-Cristian
+That said, you can mostly guess the policy from the prio, I mean the
+distinction between fair/batch and rr/fifo gets lots, but you can
+readily tell the difference between the fair and rt and deadline tasks.
+
+[*] I mean, we do use -1 for dl, and that'll map to 255 in u8, but we
+can't really use s8 since MAX_PRIO is 140. u8 is bits plenty, but just a
+bit weird *shurg*.
+
+this way the event shrinks by 4 bytes, which is at least somewhat of a
+reason to do this.
+
+> > Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
+> > ---
+> >  include/trace/events/sched.h | 15 +++++++++++++--
+> >  1 file changed, 13 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+> > index 7b2645b50e78..00336211aca6 100644
+> > --- a/include/trace/events/sched.h
+> > +++ b/include/trace/events/sched.h
+> > @@ -234,6 +234,7 @@ TRACE_EVENT(sched_switch,
+> >  		__array(	char,	next_comm,	TASK_COMM_LEN	)
+> >  		__field(	pid_t,	next_pid			)
+> >  		__field(	int,	next_prio			)
+> > +		__field(	unsigned int,	next_policy	)
+> >  	),
+> >  
+> >  	TP_fast_assign(
+> > @@ -244,10 +245,11 @@ TRACE_EVENT(sched_switch,
+> >  		memcpy(__entry->next_comm, next->comm, TASK_COMM_LEN);
+> >  		__entry->next_pid	= next->pid;
+> >  		__entry->next_prio	= next->prio;
+> > +		__entry->next_policy	= next->policy;
+> >  		/* XXX SCHED_DEADLINE */
+> >  	),
+> >  
+> > -	TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d",
+> > +	TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d next_policy=%s",
+> >  		__entry->prev_comm, __entry->prev_pid, __entry->prev_prio,
+> >  
+> >  		(__entry->prev_state & (TASK_REPORT_MAX - 1)) ?
+> > @@ -263,7 +265,16 @@ TRACE_EVENT(sched_switch,
+> >  		  "R",
+> >  
+> >  		__entry->prev_state & TASK_REPORT_MAX ? "+" : "",
+> > -		__entry->next_comm, __entry->next_pid, __entry->next_prio)
+> > +		__entry->next_comm, __entry->next_pid, __entry->next_prio,
+> > +		__print_symbolic(__entry->next_policy,
+> > +				{ SCHED_NORMAL,         "normal" },
+> > +				{ SCHED_FIFO,           "FIFO" },
+> > +				{ SCHED_RR,             "RR" },
+> > +				{ SCHED_BATCH,          "batch" },
+> > +				{ SCHED_IDLE,           "idle" },
+> > +				{ SCHED_DEADLINE,       "deadline" },
+> > +				{ SCHED_EXT,            "sched_ext"})
+> > +	)
+> >  );
+> >  
+> >  /*
+> 
 
