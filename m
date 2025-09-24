@@ -1,114 +1,157 @@
-Return-Path: <linux-kernel+bounces-829830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854EDB97FF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:23:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9652DB97FFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406C74A45D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:23:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0C691AE0A0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2AA1E8322;
-	Wed, 24 Sep 2025 01:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDD51F09A8;
+	Wed, 24 Sep 2025 01:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vE8BijtI"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVrUYCWd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998FA6F305
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007D56F305;
+	Wed, 24 Sep 2025 01:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758676991; cv=none; b=eLEwex78OB/umhHKz/Yr7u0i+FXPVYx+JCRb+xq29TllP1/rR4wdnpt+6hEoQFpURcwKXhkIOrCPNsJDE5pLjMotCyEPYYHPCwTtK5ZCfEpBQljLiER73YMWJiaKdYHpwPY9qAcSuMnN5x7hQ/7/sGZEe7yNLdGiMb2s7NnhB2s=
+	t=1758677030; cv=none; b=W3f/9t8aJxrKgbJdYUXadpN2qFkJvJFOHz9uT3t1BRbRq7uVNWQbu9AB2zrh3J2P3FKtSDqhY0bMssgkzGTrfS3RvpjUPtxZ6LOylP0ju05i2dPBnBwuiDcLzRnq39XOH7IHZtb9+QyFbVKSHnjiNymUcn+D3PbUEw4uns8MEjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758676991; c=relaxed/simple;
-	bh=TgwuxGsn8VB4YZPmw2l+tOHTsIx/q0QGWyZEgrYeFH4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jN7hJCCpAIejSuX6Os9RbDxXBYIYDn3RV5SVGn/0XeaEPzfSSEDaB6KAFUljLtHHTzl1xiomUdf1OBzIUogRv8fo0ROVbp6zLBQtCm0lg/1NDPY2rhiDYTMOodcqjjW4dxR4N4CWUnYxy5b+pXlKWAh+u/7eGcTAnmy80/affhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vE8BijtI; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758676977;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lau8/UwGF11EKFVgHgGuhNYWYNkTOFSSckmL4qmixzM=;
-	b=vE8BijtIke7QuJ6DsZzARjSLXpvnPuprDCEN/BCHmZAqPmsAuhOb5W405Sxd1nwGwnCj+Q
-	04O3AJXRZWXWuzPma6yUp4uHqJ6JAqFW9yWNea9i9DBcflQj+x6g0N2SMCagvAZ6HGIydg
-	gzWNsZX7VtJ2DZ8Unm0WzRo6yodK9l4=
-From: menglong.dong@linux.dev
-To: Steven Rostedt <rostedt@goodmis.org>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] tracing: fprobe: Remove unused local variable
-Date: Wed, 24 Sep 2025 09:22:47 +0800
-Message-ID: <12748427.O9o76ZdvQC@7940hx>
-In-Reply-To: <175867358989.600222.6175459620045800878.stgit@devnote2>
-References: <175867358989.600222.6175459620045800878.stgit@devnote2>
+	s=arc-20240116; t=1758677030; c=relaxed/simple;
+	bh=2fqqjd+Rchrm9DPV7cf+RbmXNcv1N1kzNehE1I4JENc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QCedf/BAjtaZWWbmZDgoeOCltDB6mlH24y8SkZcRBUaCob/KvQnS7tatVOlYKw+drP/x90kTJpFSR0r86pJl4gZdLDHHSr9IWvqEEqbw5tIYylU9KKiupk6oy17R13UBL+e73b94C9b6KRZJrBh82KvV7SC/NirEOibAg5CPVMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVrUYCWd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75E7EC113D0;
+	Wed, 24 Sep 2025 01:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758677029;
+	bh=2fqqjd+Rchrm9DPV7cf+RbmXNcv1N1kzNehE1I4JENc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EVrUYCWdN/u/RRa3ng1+YzBwFtOQJLHoHLXOv7my5v3ozuQU3cuQEb8PIh5O9Y/6e
+	 U5d8Y6lZ8dGCbempPHQFFTL611q6Ugj5na8SYON7Q/k0RRr5fHGsII5tSbATWOnGJ5
+	 +mcdD1EBPA33L9Qs6tb8UNGZsGh5QCC5lcVpH15o7UvzImBZO8pfW52SoDxfSwnH34
+	 tdQ3rYGHIVaTeb9lyyQerCU5dfiKXq2CzzaPpVSupGy8H5TlgaUWph5quQxD6obHiT
+	 ewz1lWIU2dP5P+UVWD+RRWh/B/sYGd6JXJaF2WdqHK7EezZUV+b5XXxYJQaESWp/3E
+	 RRYuaKjx5sZhw==
+Date: Wed, 24 Sep 2025 04:23:46 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] tpm: Require O_EXCL for exclusive /dev/tpm access
+Message-ID: <aNNIIlZCQe8oocta@kernel.org>
+References: <cover.1758646791.git.noodles@meta.com>
+ <83a323d597819d928da45b5b3914b37375c67869.1758646791.git.noodles@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <83a323d597819d928da45b5b3914b37375c67869.1758646791.git.noodles@meta.com>
 
-On 2025/9/24 08:26 Masami Hiramatsu (Google) <mhiramat@kernel.org> write:
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Tue, Sep 23, 2025 at 06:10:28PM +0100, Jonathan McDowell wrote:
+> From: Jonathan McDowell <noodles@meta.com>
 > 
-> The 'ret' local variable in fprobe_remove_node_in_module() was used
-> for checking the error state in the loop, but commit dfe0d675df82
-> ("tracing: fprobe: use rhltable for fprobe_ip_table") removed the loop.
-> So we don't need it anymore.
+> Given that /dev/tpm has not had exclusive access to the TPM since the
+> existence of the kernel resource broker and other internal users, stop
+> defaulted to exclusive access to the first client that opens the device.
+> Continue to support exclusive access, but only with the use of the
+> O_EXCL flag on device open.
 > 
-> Fixes: dfe0d675df82 ("tracing: fprobe: use rhltable for fprobe_ip_table")
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Signed-off-by: Jonathan McDowell <noodles@meta.com>
 > ---
->  kernel/trace/fprobe.c |    5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+>  drivers/char/tpm/tpm-dev.c | 25 +++++++++++++++++++------
+>  drivers/char/tpm/tpm-dev.h |  1 +
+>  2 files changed, 20 insertions(+), 6 deletions(-)
 > 
-> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> index 6a205903b1ed..12ec194fdfed 100644
-> --- a/kernel/trace/fprobe.c
-> +++ b/kernel/trace/fprobe.c
-> @@ -457,8 +457,6 @@ static int fprobe_addr_list_add(struct fprobe_addr_list *alist, unsigned long ad
->  static void fprobe_remove_node_in_module(struct module *mod, struct fprobe_hlist_node *node,
->  					 struct fprobe_addr_list *alist)
+> diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
+> index 80c4b3f3ad18..8921bbb541c1 100644
+> --- a/drivers/char/tpm/tpm-dev.c
+> +++ b/drivers/char/tpm/tpm-dev.c
+> @@ -19,15 +19,21 @@ static int tpm_open(struct inode *inode, struct file *file)
 >  {
-> -	int ret = 0;
-
-Acked-by: Menglong Dong <menglong8.dong@gmail.com>
-
-Thanks~
-
-> -
->  	if (!within_module(node->addr, mod))
->  		return;
->  	if (delete_fprobe_node(node))
-> @@ -467,8 +465,7 @@ static void fprobe_remove_node_in_module(struct module *mod, struct fprobe_hlist
->  	 * If failed to update alist, just continue to update hlist.
->  	 * Therefore, at list user handler will not hit anymore.
+>  	struct tpm_chip *chip;
+>  	struct file_priv *priv;
+> +	int rc;
+>  
+>  	chip = container_of(inode->i_cdev, struct tpm_chip, cdev);
+>  
+>  	/*
+> -	 * Only one client is allowed to have /dev/tpm0 open at a time, so we
+> -	 * treat it as a write lock. The shared /dev/tpmrm0 is treated as a
+> -	 * read lock.
+> +	 * If a client uses the O_EXCL flag then it expects to be the only TPM
+> +	 * user, so we treat it as a write lock. Otherwise we do as /dev/tpmrm
+> +	 * and use a read lock.
 >  	 */
-> -	if (!ret)
-> -		ret = fprobe_addr_list_add(alist, node->addr);
-> +	fprobe_addr_list_add(alist, node->addr);
+> -	if (!down_write_trylock(&chip->open_lock)) {
+> +	if (file->f_flags & O_EXCL)
+> +		rc = down_write_trylock(&chip->open_lock);
+> +	else
+> +		rc = down_read_trylock(&chip->open_lock);
+> +
+> +	if (!rc) {
+>  		dev_dbg(&chip->dev, "Another process owns this TPM\n");
+>  		return -EBUSY;
+>  	}
+> @@ -35,13 +41,17 @@ static int tpm_open(struct inode *inode, struct file *file)
+>  	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+>  	if (priv == NULL)
+>  		goto out;
+> +	priv->exclusive = (file->f_flags & O_EXCL);
+>  
+>  	tpm_common_open(file, chip, priv, NULL);
+>  
+>  	return 0;
+>  
+>   out:
+> -	up_write(&chip->open_lock);
+> +	if (file->f_flags & O_EXCL)
+> +		up_write(&chip->open_lock);
+> +	else
+> +		up_read(&chip->open_lock);
+>  	return -ENOMEM;
 >  }
 >  
->  /* Handle module unloading to manage fprobe_ip_table. */
+> @@ -53,7 +63,10 @@ static int tpm_release(struct inode *inode, struct file *file)
+>  	struct file_priv *priv = file->private_data;
+>  
+>  	tpm_common_release(file, priv);
+> -	up_write(&priv->chip->open_lock);
+> +	if (priv->exclusive)
+> +		up_write(&priv->chip->open_lock);
+> +	else
+> +		up_read(&priv->chip->open_lock);
+>  	kfree(priv);
+>  
+>  	return 0;
+> diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
+> index f3742bcc73e3..0ad8504c73e4 100644
+> --- a/drivers/char/tpm/tpm-dev.h
+> +++ b/drivers/char/tpm/tpm-dev.h
+> @@ -17,6 +17,7 @@ struct file_priv {
+>  	ssize_t response_length;
+>  	bool response_read;
+>  	bool command_enqueued;
+> +	bool exclusive;
+>  
+>  	u8 data_buffer[TPM_BUFSIZE];
+>  };
+> -- 
+> 2.51.0
 > 
-> 
-> 
 
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-
-
+BR, Jarkko
 
