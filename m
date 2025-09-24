@@ -1,123 +1,101 @@
-Return-Path: <linux-kernel+bounces-830900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02505B9AD42
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:16:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 278A4B9AD6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B63E42E847F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:16:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D2A19C3583
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6343D2264DB;
-	Wed, 24 Sep 2025 16:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09F1313E16;
+	Wed, 24 Sep 2025 16:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OESK+YAl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VACrSYaB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Giaxo+9W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA3330FF0D;
-	Wed, 24 Sep 2025 16:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB5630F817;
+	Wed, 24 Sep 2025 16:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758730568; cv=none; b=DPrEyIMQjmVLR1dv8XR3U49zqFJdhn7rIe0nzlWrB7MfxVsxLks1CqqG8YBRzOuzeauLNnU8O9iP4lRsWz3Rpjq1uy337+3hhFlKQu76XHaj5c9tSyHV+2vfDP8TJRrSdb0nYvW2F1GanhUbfKk38RbUZDsFRrJBQyvpOtHA680=
+	t=1758730654; cv=none; b=E6aXEgIrj1SFsMWeyMMo4hpDl3SrqhGX9FzNPTW07J9rr8NMUWtd4JI4QcCgCXxD9HTVr45r1UBGDr5aL4voqxLr0RBXComc1U0o7L8ecykDMSO0SLX76+tyO0gbyBBaUQg8pGP61mtezgPrh6glQDN4kCFbHMPegTrSkJPh+V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758730568; c=relaxed/simple;
-	bh=mg4i2RXqsF8TlpcGWAuJrDAQmmNxwUOdOGnTKHHVRHc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=drSUSUFjSk6K/C+pEmN1pABRGMizQZAMZyoT7pQQ0uwQisdURMNRFClPeoplTpCBthWr1mDxnzmHpmEP7QasTCNqlqZqer4wjpHp0JHw54Uft4I97IMUBkl32u9LYN8rYZVzFUIgcNjJV7dwAi36M/aOSdhb5+XPAOnXeLYlABA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OESK+YAl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VACrSYaB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 24 Sep 2025 16:16:00 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758730562;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xmqn1uaYi108OYm7YZrsQrWxPa21vKamK8gzajt6h5c=;
-	b=OESK+YAlygkR9DaTzWQ+wCCW7hZxhegT6cZs3E2BqdHcCdDEhEIQsIFFQatV15ZDBMBjlI
-	CV4B++32edkPpcdDmyjvWcP3JkYYV74IOguQq26RjOrEPC4DJ2XzmzydTVLdf9O+UXztvT
-	x1dmC1RCwsX5vOtvtCUDop6XSs6ZZsPzFmCm6vaTKZsoIMkpgqes20tYd9Pkk/ag6y4xfJ
-	ndH0Moo5L+0ncpQgbAAIDu5rHPeF0IIgGR/cdkK2vRws5sVlzwmSQdXe+t3rZwn6Is/1/F
-	7gx6h0ybNh2aolPeIBfC/2t1b/aMMmkqi5+CFcHkuww+HaQ3XcMqsuEWraEDgQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758730562;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xmqn1uaYi108OYm7YZrsQrWxPa21vKamK8gzajt6h5c=;
-	b=VACrSYaBks9dQ7oQ/lODENVMymL1bDEXdpp6AJsymH5Itk+TuNt030Sa8Z6mqG0LFqOepA
-	ZNzLAPXdQsAmm1DA==
-From: "tip-bot2 for Ard Biesheuvel" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/apic] x86/boot: Drop erroneous __init annotation from
- early_set_pages_state()
-Cc: Srikanth Aithal <Srikanth.Aithal@amd.com>,
- Ard Biesheuvel <ardb@kernel.org>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250924155310.3341370-2-ardb+git@google.com>
-References: <20250924155310.3341370-2-ardb+git@google.com>
+	s=arc-20240116; t=1758730654; c=relaxed/simple;
+	bh=YyScRpDeb10V1CIi0j2uShOHELjAnAul+CkQll9T1qQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ua8WuID7WLCcwfU74oAfXvqUJCSRpyOaHDaV+Lu7UyxbOZCD9AA7+aCyfwMKHGADYi6tzPg0SkDLTVjyG0Lg8lWTHt+9MzfaY+/mNBTMQjf74QIzPrCw2dENO2Kw8+mAz4IdZfNsBIwsbUyL+XyKoJ6ePhW1b7HX4HWzF/hyLHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Giaxo+9W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDA98C4CEE7;
+	Wed, 24 Sep 2025 16:17:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758730652;
+	bh=YyScRpDeb10V1CIi0j2uShOHELjAnAul+CkQll9T1qQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Giaxo+9WWVfQQcLn8VCqMpjQIOO/w/2HKqAyOLnXVxdUXqVJ+dE2TLIbCwjUuYflM
+	 cKmfEEhP9shRWXiiYUIRtBy00/aES7x7gy38ueo/jMVtmpYHfqTsfU5W/GvoNJUyLZ
+	 EWhrIb55nfjuZbpLqRA3wh9TGe/xGLjGQfH29qAkng+/DHahMel9nM1Ribxcbr+HkT
+	 mM+OxZ9l5i4puI+G80RheK70Wh65yzm1nTki5DqrRx/TUq6TTJfKfWpcI4AWTURqtN
+	 QX4Tev/PTpOKaMkH5QmyAxuYBM2yn7Rp//chCVIwAIAGiFPEBwKn20Vw+tp4yxo7Oo
+	 7XA+cKuzBn6ig==
+Date: Wed, 24 Sep 2025 17:17:27 +0100
+From: Simon Horman <horms@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
+	Moshe Shemesh <moshe@nvidia.com>, Vlad Dogaru <vdogaru@nvidia.com>,
+	Yevgeny Kliteynik <kliteyn@nvidia.com>
+Subject: Re: [PATCH net-next 1/7] net/mlx5: HWS, Generalize complex matchers
+Message-ID: <20250924161727.GM836419@horms.kernel.org>
+References: <1758531671-819655-1-git-send-email-tariqt@nvidia.com>
+ <1758531671-819655-2-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175873056047.709179.8745227045157093968.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1758531671-819655-2-git-send-email-tariqt@nvidia.com>
 
-The following commit has been merged into the x86/apic branch of tip:
+On Mon, Sep 22, 2025 at 12:01:05PM +0300, Tariq Toukan wrote:
+> From: Vlad Dogaru <vdogaru@nvidia.com>
 
-Commit-ID:     1f6113ae5ac4927fe80256154ebb0461e670fa85
-Gitweb:        https://git.kernel.org/tip/1f6113ae5ac4927fe80256154ebb0461e67=
-0fa85
-Author:        Ard Biesheuvel <ardb@kernel.org>
-AuthorDate:    Wed, 24 Sep 2025 17:53:11 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 24 Sep 2025 18:08:34 +02:00
+...
 
-x86/boot: Drop erroneous __init annotation from early_set_pages_state()
+> +static int hws_complex_subrule_create(struct mlx5hws_bwc_matcher *cmatcher,
+> +				      struct mlx5hws_bwc_rule *subrule,
+> +				      u32 *match_params, u32 flow_source,
+> +				      int bwc_queue_idx, int subm_idx,
+> +				      struct mlx5hws_rule_action *actions,
+> +				      u32 *chain_id)
+>  {
 
-The kexec code will call set_pages_state() after tearing down all the GHCBs,
-which will therefore result in a call to early_set_pages_state().
+...
 
-This means the __init annotation is wrong, and must be dropped.
+> +	ret = mlx5hws_bwc_rule_create_simple(subrule, match_params, actions,
+> +					     flow_source, bwc_queue_idx);
+> +	if (ret) {
+> +		goto put_subrule_data;
+> +		goto unlock;
 
-Fixes: c5c30a373693 ("x86/boot: Move startup code out of __head section")
-Reported-by: Srikanth Aithal <Srikanth.Aithal@amd.com>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Tested-by: Srikanth Aithal <Srikanth.Aithal@amd.com>
----
- arch/x86/boot/startup/sev-startup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Tariq and Vlad,
 
-diff --git a/arch/x86/boot/startup/sev-startup.c b/arch/x86/boot/startup/sev-=
-startup.c
-index a9b0a9c..0972542 100644
---- a/arch/x86/boot/startup/sev-startup.c
-+++ b/arch/x86/boot/startup/sev-startup.c
-@@ -44,7 +44,7 @@
- /* Include code shared with pre-decompression boot stage */
- #include "sev-shared.c"
-=20
--void __init
-+void
- early_set_pages_state(unsigned long vaddr, unsigned long paddr,
- 		      unsigned long npages, const struct psc_desc *desc)
- {
+I guess it's a simple editing artifact.
+But it seems that the line above is dead code.
+
+Flagged by Smatch.
+
+>  	}
+
+...
 
