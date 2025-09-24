@@ -1,115 +1,101 @@
-Return-Path: <linux-kernel+bounces-830505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64561B99DCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:34:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CBE1B99DE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FF8A170D79
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:34:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFB2D19C3CA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1AD2FE04E;
-	Wed, 24 Sep 2025 12:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AB81FB1;
+	Wed, 24 Sep 2025 12:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKFN8r8p"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkfN5BYk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C332E54CC
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8F92417C2
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758717275; cv=none; b=hnoH7Ws4kx4LDVYloPfOtS1iNBiVkH0KVYR/3Al9ByF6AX9Lt0E1D9Hb8pGAwxk3S+I1Y2TtCD0X1fDio0iQv/xkyo2vVRcK2P2WlsUeWU6WAKKPrVnVzA4IBJ2jzF9jTQBb7xEKvnidCTl8zut+TDWEnMTbZfpAh27mSYOc10E=
+	t=1758717495; cv=none; b=X6CiI2lolBVre91NpHowWHBSW05i4G7K1JRcxlQu5CN6839E9RDFuobQO0WEFJxOHAbzHsrHZRPoksLM7ub+svcLo93ggWwVro1IwadTq33Ff1D4jfkpdqVkreKVnLRNObD9GzlkjrRTBccGKGD8wMiKlkOYapdCY/3ur4D95tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758717275; c=relaxed/simple;
-	bh=w/Y7hFj+095plLmyj6F//RB0JJaVllnXem2h/GAL5DM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fT31hWZqgmi+mw0XTyHpAImdPqTSAZebYLnCYAl35eQCyKmxUjVlKOLpKtZPcdQu3m2nT+bcXBOLGQ91wJQS4sb2YVrlroM3e12IWdoInn/VViK8n6evlrDrh9Z5eKOwM1A0bQAP45kK7VRBEn6GDkOsvav/nj7bSptHHbqEmBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKFN8r8p; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77e6495c999so5307303b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 05:34:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758717273; x=1759322073; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CTDFZgAdQghFMqYnaQQne0DSQg8eYDQbEUoZypuZEl0=;
-        b=nKFN8r8px+pzegy2l8GzbujA3yONawgNDtwnTyjN3MVG+becplTcAFlrefsHstjep3
-         Uub109iAJRU1KOEBZRFhm0MlO5B/XDZ5204pKV5O1S25FAmW1hjAuKLsZY5D9yBOgue1
-         wzQzZpyoAs3gMYfKOBD0twEMueSvXUHwcdvVcfy/Venut+jIUoEBvOw0k88ejbw3FyaL
-         OXjj5SaAg5Axb1gReX4SUBHgktHAlvjF6sQQatvc5qdtB7sraWLw5SR+ezqLf+E6B1oy
-         GPhrXvwiHxtcwplCpwNX4Nupiar2cWlj1pbTEcCXNi6Pe4jSUNFvZfNpRgbj680D9TDu
-         /CSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758717273; x=1759322073;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CTDFZgAdQghFMqYnaQQne0DSQg8eYDQbEUoZypuZEl0=;
-        b=p236wkX8I8f1b2MIHkUXZ9FI7PG2Nie2CoKRKbAcVVKzuArP4gi8guYPq4G3EIW5Dl
-         /L8slUcazVw11E/RJboSdcuVppdq88lMUEpbKMlXL9F3vBXolbeNMQHIQwgCn41v3PDF
-         21yL9v//JXsR7p3u6Xen+5T4cDbKIqf+0Yt/lF1DhpJVpts4auypNrCXwJ+36pPL1oQQ
-         8PvMJknoIWhVU3MkxK5OUGj7Qmj3XU+s95K3HZq+TniPNyA3IzuS+bE86ff6N+AnwwjN
-         bB4RQNZtWD65TTRa6NdySdegiX9s7nDIj+tf6Jpa6qggnzKm1qzUf9UUjdSD4lL/e85s
-         QpUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+1+wFkbKcS9JCGPkmWfue79nXJOis06jQQJuX2zp5Ce/ddEX4R39M3PS7k4r3DH0qLlOgzQEQwJLDvKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCTuRZAiA/y+edcIJFRRpykz5TRfSwD7t+p7hmDSnHCjMINzQI
-	jlY+KanLWv+nemEx7K/gXxmROJ+vdHs71NdRK3Eh8rPo8xAa7VZnhj5v3iW2GsoRsrGpAj8yY+t
-	Ypb74RHZ3EuqXXGP6wjKO0Hn+BAsHp4A=
-X-Gm-Gg: ASbGncve5oliQCHRBhIeOltTg3o2ZzLxvsbVDYlG4j3yZ7Pe1lWBTIRzNpC2Y5fUNoY
-	lDx2cnzVRyLzMME2DS+I2cAkMjEjPMmbdbtjjDteMHUyjePy5Oh0hGco89BTPw0GjZXpsbWkS4l
-	P04LDx7cyskkmxRsVnpb8IjUhaXwjtOyWnLRYIQv/td3oa69AMiNXV4CdP3uw5CM/Xs2cfFvY7K
-	UUCfh6Id1gC24iqFegv9kjUZJMR7ZE/p+gO6X4a
-X-Google-Smtp-Source: AGHT+IHdx5C/tIG+bo3u5C0cXUba70Ijx6a94OsvdZgP19XusiUpG+AOBXv8usuNF4dJmHieFVzFc321rHyvoQrN75Y=
-X-Received: by 2002:a17:90b:58c5:b0:32b:dfdb:b276 with SMTP id
- 98e67ed59e1d1-332a98fc381mr6768390a91.34.1758717273147; Wed, 24 Sep 2025
- 05:34:33 -0700 (PDT)
+	s=arc-20240116; t=1758717495; c=relaxed/simple;
+	bh=czD1suQinfy+rBLz89im1EB34LEjxwjibqErL74jV8w=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=R8XZeU+5khmrR0WPRthwtWmN/yZJ/SYZBIQ+Vm74385XYCOKaDaURvFko+DSi2g7G8oN87aTO0Wn90Ai4W/woFO8i622knLEoKWJMECO3d0PFA5L14NNBNe9LBO+up4IpSW46E0Zu5Hqtic6Pa9whp0DysCQx2bv6j6kjGMDpAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkfN5BYk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB635C116B1
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:38:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758717495;
+	bh=czD1suQinfy+rBLz89im1EB34LEjxwjibqErL74jV8w=;
+	h=From:Date:Subject:To:Cc:From;
+	b=LkfN5BYkmlc0pmgXks7vEuM73NKcCY8GFehePmf4ozBcifoc3/dJN+pC2PpVpcZT/
+	 fJn4llJGDH3d3YF4cOYGqzhnsscM4EQfLLu+njKTfB5R19U0m9ASIqFJZGfLYAa9Ro
+	 ClfzGTnCUqPu9DFRPRJFQnfMKBbQPODcyih11/ekxJSvfWBBO4tQtkJwEkPDNC4QJ1
+	 XP/c2DF5j+zGitXicE6b2oc567wE2qwJ2c7pqxky3usrVjud+yVHMe/8JrZvN3Gsmg
+	 mpLhHMngQVK2/qd1g8Sce/KE5s9me4F1zrB7oSa59t9zLNQ+1Qnjzc4Sqla/DsncGy
+	 rnyRkSgCeKrIQ==
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-74382048b8cso5341698a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 05:38:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXQhDlln1sd6bOl87fEIbrsS5BOqNEIPQlUTcC9K9tL2xmMZSXDatmX8oO2+PThN/z+aSfH33vs3f1qWwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw09jHy17XHl8LThDKprpTxPC8ijRxqDaSzQaQQBHYeCOe+WDZg
+	je39IKOgxCPa+bVQ1OJt2nEF938POGoER4RTrC5jNz9GvL0WH7UOC2EbAroet0Wt/nZe23uhHxn
+	+MNoUywTdAUIkq88muQc1fXai6VTWDWQ=
+X-Google-Smtp-Source: AGHT+IH4oiQputRouqoqiC1vt+uvYEQ86hVX9sEqhAyohQUCr9e632INcAZEMAkbH+AlDf1Jr76nYYZAxt5YU+wztqc=
+X-Received: by 2002:a05:6830:2653:b0:757:44de:c0c6 with SMTP id
+ 46e09a7af769-79153cb9819mr3497706a34.17.1758717494282; Wed, 24 Sep 2025
+ 05:38:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922131148.1917856-1-mmyangfl@gmail.com> <20250922131148.1917856-6-mmyangfl@gmail.com>
- <20250923174737.4759aaf4@kernel.org>
-In-Reply-To: <20250923174737.4759aaf4@kernel.org>
-From: Yangfl <mmyangfl@gmail.com>
-Date: Wed, 24 Sep 2025 20:33:57 +0800
-X-Gm-Features: AS18NWBjGVWilxW3m5lF33pWes0iHg7AU_L8xzuQ8IGPKI3mtuMEre2fBRoTZXw
-Message-ID: <CAAXyoMNBHgG-DFv16ua-T__iBXg=chFQ6TNoXdZvk4VP2aYESA@mail.gmail.com>
-Subject: Re: [PATCH net-next v11 5/5] net: dsa: yt921x: Add support for
- Motorcomm YT921x
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 24 Sep 2025 14:38:02 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jfvPV2cmk0=7G0LyAYvnKmYMG5fM6p_-oCYTgYTgN96Q@mail.gmail.com>
+X-Gm-Features: AS18NWD-I5Uq4FjQUnyU6MYt8XA4c9y3TTHkTdlRaQUlWgzKG7lMPMZTCK7q9Ik
+Message-ID: <CAJZ5v0jfvPV2cmk0=7G0LyAYvnKmYMG5fM6p_-oCYTgYTgN96Q@mail.gmail.com>
+Subject: [GIT PULL] Power management fix for v6.17
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 24, 2025 at 8:47=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
-...
->
-> > +static void yt921x_mdio_remove(struct mdio_device *mdiodev)
-> > +{
->
-> > +             cancel_delayed_work_sync(&pp->mib_read);
-> > +     }
-> > +
-> > +     dsa_unregister_switch(&priv->ds);
->
-> The work canceling looks racy, the port can come up in between
-> cancel_work and dsa_unregister ? disable_delayed_work.. will likely
-> do the job.
+Hi Linus,
 
-Are you sure about this? There are many others who use
-cancel_delayed_work_sync in their teardown methods (for example
-ar9331_sw_remove). If that is true, they should be fixed too.
+Please pull from the tag
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-6.17-rc8
+
+with top-most commit 8ffe28b4e8d8b18cb2f2933410322c24f039d5d6
+
+ cpufreq: Initialize cpufreq-based invariance before subsys
+
+on top of commit f83ec76bf285bea5727f478a68b894f5543ca76e
+
+ Linux 6.17-rc6
+
+to receive a power management fix for 6.17.
+
+This fixes a locking issue in the cpufreq core introduced recently and
+caught by lockdep (Christian Loehle).
+
+Thanks!
+
+
+---------------
+
+Christian Loehle (1):
+      cpufreq: Initialize cpufreq-based invariance before subsys
+
+---------------
+
+ drivers/cpufreq/cpufreq.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
