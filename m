@@ -1,146 +1,85 @@
-Return-Path: <linux-kernel+bounces-830201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B7DB990A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:10:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8112BB990B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 468E27A39DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:08:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4139A2E6D47
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625BF2D5934;
-	Wed, 24 Sep 2025 09:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040892D5934;
+	Wed, 24 Sep 2025 09:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="Qd533E4B"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X31usdp7"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3ACF28489A;
-	Wed, 24 Sep 2025 09:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA20F213237
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758704990; cv=none; b=FIJWurRDXI1HVTSFenosL31owlmTwFInQTtFGHpRmrtR8rORj9DL5V734k5ZHea5DnfYWEsrgmO9g684ojnbDkM1tgnPC6NGQFJfrkGYZIQt1J+btSV8KTgB6LjCC9gdbae238V0zXNAX2zWR2BMHW0AOgq5KFBbm/RHIWrpuek=
+	t=1758705045; cv=none; b=qdZsMxaDdsPomPpw5ZJypOBTJQPn7UTUcjS4WB/VBojN+kwYgqzLx1j034kMewgy9MB4fUH1y+XzdP3qOs8vrNH4R97itmb81UAqIEcSn0O/Fs/TWJ5BdBu0hBXL/tRZYCgT4VuLZVIFpWRg+I3mLAtX6n7W5HpbCa/J/IyDqyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758704990; c=relaxed/simple;
-	bh=DxOC5F9IpvBeWNXWVDhhsIFZ/wb880yCXv5033VbNeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eud4d+spfX9iknlfe88Cuma5b7TBpjqS+6FXNYu+X6Ey0pLwWrRM2J4BuT6UhwulKEPKhQVwpM5DFfkB+zjYpwk6ZpxvnyKEmDyxnnTEcsU8DIrS1OY6DUs+wPAt5jQK7X12jYZuoQtg0v0xqFkok7m45uRt7K5xQtUz8xF4ll4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=Qd533E4B; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cWrdg01Jtz9sTZ;
-	Wed, 24 Sep 2025 11:09:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
-	t=1758704983;
+	s=arc-20240116; t=1758705045; c=relaxed/simple;
+	bh=wUDySOv7HlKF+HxWT2OI3uXw/DzQu4hAUfLskiKMf/0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uhATclH30MyMEJBC0yWh3HwvzmabiGEUMP1mCRsR7y8ElOJWwt5lc2MepOApSsscjmWN4i74csiSCvT6Aywagw4QvzJyTgOk2z6/cSiuJ/X3bee6xcgH2lzd3gGEqV5HoTKAQmKr8d46GmSNZOUtAHqK7d1+UeA6WQxWqFzt6Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X31usdp7; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758705040;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+o0dWRbJcjyIeHaoH33sWtRhES8NzIAuHFXyzXbR714=;
-	b=Qd533E4BHPUZlzEXHJ880v1Dmvb9GUTRC4spfNwRgCmH9BrGvoknw5Rr1xgYyjQP8OxtU4
-	fUNKI9bOQ4VYBfgtJASAWx43QbG53s0f/FChNx77+8gOu6ke7HgFzkzFNweX8RvqccJcyC
-	oiAPGwUvypY6VDiZYyec7ZZUaJkOOScvLvADDGEexT5PMdrSsjbRR5BKWAMYB3z0qc54Xf
-	nQ3R3LfTwC3urevKbB9pLSGso+NDQRLL/my5gcHzmo7/r7rrxuLQiKK14eXuzBwEjnnwFp
-	YmjlUh3O5Dp7CId7GZNB+nrwjXzUzekh7DtKE3KuKIPXvb1KOeMGswCOrHiG8w==
-Date: Wed, 24 Sep 2025 14:39:27 +0530
-From: Brahmajit Das <listout@listout.xyz>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com, 
-	Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Eduard <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, KP Singh <kpsingh@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Song Liu <song@kernel.org>, 
-	syzkaller-bugs <syzkaller-bugs@googlegroups.com>, Yonghong Song <yonghong.song@linux.dev>
-Subject: Re: [PATCH v2] bpf: fix NULL pointer dereference in print_reg_state()
-Message-ID: <7f4lg3hnkue3qcxc6ej6yqeix4cb2scwjlb4rzhrjb4idjnvqb@kpjtqar55jrq>
-References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
- <20250923174738.1713751-1-listout@listout.xyz>
- <CAADnVQ+SkF2jL6NZLTF7ZKwNOfOtpMqr0ubjXpF1K0+EkHdJHw@mail.gmail.com>
+	bh=wUDySOv7HlKF+HxWT2OI3uXw/DzQu4hAUfLskiKMf/0=;
+	b=X31usdp78cFCydE/T23Kxzp5auuT98YsCa/7QC+DzzcjhZ9cNLbzgf3OHvBQoxaqCa1HnU
+	1Kos01djZWNlz7HEv9WtbVRfkDdzNQLcPzWtVm6RQ7BrWVhQSghLLvZGXHCChG2PZ03USa
+	9pHOsgKsWxY6wWXuuGVHsVZjJOt+ucU=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: hannes@cmpxchg.org,  hughd@google.com,  mhocko@suse.com,
+  shakeel.butt@linux.dev,  muchun.song@linux.dev,  david@redhat.com,
+  lorenzo.stoakes@oracle.com,  ziy@nvidia.com,  harry.yoo@oracle.com,
+  baolin.wang@linux.alibaba.com,  Liam.Howlett@oracle.com,
+  npache@redhat.com,  ryan.roberts@arm.com,  dev.jain@arm.com,
+  baohua@kernel.org,  lance.yang@linux.dev,  akpm@linux-foundation.org,
+  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
+  cgroups@vger.kernel.org,  Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH v2 1/4] mm: thp: replace folio_memcg() with
+ folio_memcg_charged()
+In-Reply-To: <0ac716fb7fea89ada92ad544f88ca546e43d1f29.1758618527.git.zhengqi.arch@bytedance.com>
+	(Qi Zheng's message of "Tue, 23 Sep 2025 17:16:22 +0800")
+References: <cover.1758618527.git.zhengqi.arch@bytedance.com>
+	<0ac716fb7fea89ada92ad544f88ca546e43d1f29.1758618527.git.zhengqi.arch@bytedance.com>
+Date: Wed, 24 Sep 2025 09:10:07 +0000
+Message-ID: <7ia4plbg6wsw.fsf@castle.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQ+SkF2jL6NZLTF7ZKwNOfOtpMqr0ubjXpF1K0+EkHdJHw@mail.gmail.com>
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-On 24.09.2025 09:32, Alexei Starovoitov wrote:
-> On Wed, Sep 24, 2025 at 1:43 AM Brahmajit Das <listout@listout.xyz> wrote:
-> >
-> > Syzkaller reported a general protection fault due to a NULL pointer
-> > dereference in print_reg_state() when accessing reg->map_ptr without
-> > checking if it is NULL.
-> >
-> > The existing code assumes reg->map_ptr is always valid before
-> > dereferencing reg->map_ptr->name, reg->map_ptr->key_size, and
-> > reg->map_ptr->value_size.
-> >
-> > Fix this by adding explicit NULL checks before accessing reg->map_ptr
-> > and its members. This prevents crashes when reg->map_ptr is NULL,
-> > improving the robustness of the BPF verifier's verbose logging.
-> >
-> > Reported-by: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com
-> > Signed-off-by: Brahmajit Das <listout@listout.xyz>
-> > ---
-> >  kernel/bpf/log.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/bpf/log.c b/kernel/bpf/log.c
-> > index f50533169cc3..5ffb8d778b92 100644
-> > --- a/kernel/bpf/log.c
-> > +++ b/kernel/bpf/log.c
-> > @@ -704,7 +704,7 @@ static void print_reg_state(struct bpf_verifier_env *env,
-> >                 verbose_a("ref_obj_id=%d", reg->ref_obj_id);
-> >         if (type_is_non_owning_ref(reg->type))
-> >                 verbose_a("%s", "non_own_ref");
-> > -       if (type_is_map_ptr(t)) {
-> > +       if (type_is_map_ptr(t) && reg->map_ptr) {
-> 
-> You ignored earlier feedback.
-> Fix the root cause, not the symptom.
-> 
-> pw-bot: cr
+Qi Zheng <zhengqi.arch@bytedance.com> writes:
 
-Alexei, I did not, the patches (v1 and v2) were sent in a very short
-timeframe, when you gave me the feedback I had already sent the v2 so
-your feedback applies to v2 as well :)
+> From: Muchun Song <songmuchun@bytedance.com>
+>
+> folio_memcg_charged() is intended for use when the user is unconcerned
+> about the returned memcg pointer. It is more efficient than folio_memcg().
+> Therefore, replace folio_memcg() with folio_memcg_charged().
+>
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
-I'm working on fixing/understanding the issue. I went one function lower
-from where print_reg_state is being called and added a few debugging
-statements like this
-
---- a/kernel/bpf/log.c
-+++ b/kernel/bpf/log.c
-@@ -758,6 +758,12 @@ void print_verifier_state(struct bpf_verifier_env *env, const struct bpf_verifie
-                        continue;
-                if (!print_all && !reg_scratched(env, i))
-                        continue;
-+               pr_err("&state->regs[%d] = %p\n", i, (void *)&state->regs[i]);
-+               pr_err("reg               = %p\n", (void *)reg);
-+               pr_err("&reg->map_ptr      = %p\n", (void *)&reg->map_ptr);
-+               pr_err("&state->regs[%d].map_ptr = %p\n", i, (void *)&state->regs[i].map_ptr);
-+               pr_err("state->regs[%d].map_ptr is NULL %d\n", i, state->regs[i].map_ptr == NULL);
-+               pr_err("regs->map_ptr is NULL %d\n", reg->map_ptr == NULL);
-                verbose(env, " R%d", i);
-                verbose(env, "=");
-                print_reg_state(env, state, reg);
-
-Both reg->map_ptr and state->regs[i].map_ptr reports map_ptr is NULL.
-For now I'm bit stuck and trying to understand why that would be.
-I got the reproducer from
-https://syzkaller.appspot.com/text?tag=ReproC&x=1608c27c580000
-
--- 
-Regards,
-listout
+Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
 
