@@ -1,117 +1,222 @@
-Return-Path: <linux-kernel+bounces-829842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B498B98078
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:49:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29983B9807B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42D071B20F34
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:50:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97D127A6816
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9897C1FDE39;
-	Wed, 24 Sep 2025 01:49:39 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCAE205E2F;
+	Wed, 24 Sep 2025 01:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="F4xoxPze"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DC11FBCB0
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51ED205E25
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758678579; cv=none; b=trm4+bs7yBgbg7/w/rOJKjTyytlWCqp+Ak4IGtvtfeW21isQS/OhLf6fgPRZPXWkMCsfJQmjNOB/ugxiwHmGhUe7zrWeuNQnLEBOV73+ri4E+6lRZLeOomP8P9GD+t3a3qyDjiBOFiO1xFQZfJwMoUGN2oiOi/Iw7uB3xFCjl6w=
+	t=1758678596; cv=none; b=qnmyZrFe7EPIQMkGjBoKwKW0x+rRdhUHgVpGiqM6W7Bnfp9S7+lX4hFOXaCWXptnz0fgZbnf4sQMaAuqbYwo+RsHJqY9tJkE+euRmpUcZniYslj+ib7bHVDkaGmbm3e+DoVewpwf7DD5Ce6WahN0yfTmZva3symBtsmgwNnw0Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758678579; c=relaxed/simple;
-	bh=a78yOSPlJzqWA8H0Kkw+FyKGFUxbJvlfCgdJRUnIxsc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=hh3vEFf9p1124wh8n8XrDKE9+tM1th5QvrPTlsIoF3Utiz6O/hMuj9DdXXJQquDLWn18+QllhQKY1N7c56tM+QQpK6eCvFL4R3mlbSN7auMGyM1QUMeeJxPx4N9JaFCOBENOhi1MrUq6tCXu3gEra0Jfm47eJ1MuN2pKVC0J1ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4257ae42790so38562045ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:49:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758678577; x=1759283377;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mXqa8ZVUKHN/2pgYA2lXi0pwYaxmIHLyLmFVk0Bbclw=;
-        b=sJdVNlizpapAMAmsDU15BYCd+nt8Lx2TWj9hyc1PHxdmr3UKQThq3ORMFaTmnw2a0m
-         wYf0Kp00gL9wPQ4uBOjolSxumn2bKDSTer1j5SToBXWVSRC8WtYwhERt9qW84wUJI+io
-         +7+oPwXdaMSAFeohiN0y/2UxqEh4Y1tCbywhGsLhlZNSoX3rEeLpsX54EIfTDWviNN3c
-         HqZtFOZiwy90pWM0OF8YII1Q8essuDfidsHbuG0xwHOsNUAse10JUCinQMYwuqk/eSyx
-         ZVhCKYsh6UuiragvemsMWi4oVQKI9DHQD6r5a9az9HUW7TLNe5gZOtsFR9hu7LSQNLLt
-         tjSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJWCSD6UAjN+S+Srx9iBQnKq5kd0Nsv4kk074BH3o6Zn0xQV/RKea3Rp6WcLTlwzl/hMeM5jega3BTOXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRG0EGqP8XYHOmAFhVErD0MHQYOk2JlU4s3QNVYDpV/3/lFu70
-	r637S86HMlMLty6Nt/Q911k/VheVd4xDiXcC1OhJyqK2n49BHvOypDylgmBM3hLWuz31fnpyY6D
-	chlePjZsRvEmaPz1Ca5uNl+rILwEnx90MaFdmWFdh4RtN5d9vXzJ0NICLISI=
-X-Google-Smtp-Source: AGHT+IErBKB2pIbdmGNVR8AR4U0hYMeSxtxw4hyHrsOw/lklznaPY96fkm/z7eIS8VTf9QqaCcltWUn3zmEkBCYyXHtqlnWZfzg8
+	s=arc-20240116; t=1758678596; c=relaxed/simple;
+	bh=iedKoULziJzaj0C/IFUUz5eawEUVn2msOhvNokdp6wc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Vnbawdxgi1JQzde8CCoejC1/7YE9Qhp0VqyJrPCtt3xjIdavYPjBZmft8dWkva3Aynh1epMSm+//t11hBaLE15QXuUqI7w3xDCcpLlu+4elEMl8rlSA5hWhY0V7qWGyw+k/02rw6rt+DxiQpAQTYo7Jn8PHps5k7N8HuLRdPbe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=F4xoxPze; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1758678590; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=0NxHbnawDoiwdor0a0/TkIoFsILHYQtnh4tEXaeWR3w=;
+	b=F4xoxPzegiASihfxGaqZBCRDa6m7zwGFzEiEdi38a1Mkljz3NyJu8eNo0j2lKjbgeF+cuS6/75RkkT8Dw7kisrlQtb1jbKNQFsixmd50t3YD2HAXoIB/cONoPB+wbsWpEs5BPXeRnMHC07QgK3xugPnOXBe0eFjXSwEqh2Q5FDY=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WohcHHC_1758678578 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 24 Sep 2025 09:49:48 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Shivank Garg <shivankg@amd.com>
+Cc: <akpm@linux-foundation.org>,  <david@redhat.com>,  <ziy@nvidia.com>,
+  <willy@infradead.org>,  <matthew.brost@intel.com>,
+  <joshua.hahnjy@gmail.com>,  <rakie.kim@sk.com>,  <byungchul@sk.com>,
+  <gourry@gourry.net>,  <apopple@nvidia.com>,
+  <lorenzo.stoakes@oracle.com>,  <Liam.Howlett@oracle.com>,
+  <vbabka@suse.cz>,  <rppt@kernel.org>,  <surenb@google.com>,
+  <mhocko@suse.com>,  <vkoul@kernel.org>,  <lucas.demarchi@intel.com>,
+  <rdunlap@infradead.org>,  <jgg@ziepe.ca>,  <kuba@kernel.org>,
+  <justonli@chromium.org>,  <ivecera@redhat.com>,  <dave.jiang@intel.com>,
+  <Jonathan.Cameron@huawei.com>,  <dan.j.williams@intel.com>,
+  <rientjes@google.com>,  <Raghavendra.KodsaraThimmappa@amd.com>,
+  <bharata@amd.com>,  <alirad.malek@zptcorp.com>,  <yiannis@zptcorp.com>,
+  <weixugc@google.com>,  <linux-kernel@vger.kernel.org>,
+  <linux-mm@kvack.org>
+Subject: Re: [RFC V3 0/9] Accelerate page migration with batch copying and
+ hardware offload
+In-Reply-To: <20250923174752.35701-1-shivankg@amd.com> (Shivank Garg's message
+	of "Tue, 23 Sep 2025 17:47:35 +0000")
+References: <20250923174752.35701-1-shivankg@amd.com>
+Date: Wed, 24 Sep 2025 09:49:37 +0800
+Message-ID: <87plbghb66.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:184e:b0:424:553b:f2f5 with SMTP id
- e9e14a558f8ab-42581e17756mr68269305ab.10.1758678576916; Tue, 23 Sep 2025
- 18:49:36 -0700 (PDT)
-Date: Tue, 23 Sep 2025 18:49:36 -0700
-In-Reply-To: <20250924014929.1097959-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d34e30.a70a0220.4f78.0016.GAE@google.com>
-Subject: Re: [PATCH] comedi: fix divide-by-zero in comedi_buf_munge()
-From: syzbot <syzbot+f6c3c066162d2c43a66c@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com
-Cc: kartikey406@gmail.com, stable@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ascii
 
-> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Hi, Shivank,
 
-This crash does not have a reproducer. I cannot test it.
+Thanks for working on this!
 
+Shivank Garg <shivankg@amd.com> writes:
+
+> This is the third RFC of the patchset to enhance page migration by batching
+> folio-copy operations and enabling acceleration via multi-threaded CPU or
+> DMA offload.
 >
-> The comedi_buf_munge() function performs a modulo operation
-> `async->munge_chan %= async->cmd.chanlist_len` without first
-> checking if chanlist_len is zero. If a user program submits
-> a command with chanlist_len set to zero, this causes a
-> divide-by-zero error when the device processes data in the
-> interrupt handler path.
+> Single-threaded, folio-by-folio copying bottlenecks page migration
+> in modern systems with deep memory hierarchies, especially for large
+> folios where copy overhead dominates, leaving significant hardware
+> potential untapped. 
 >
-> Add a check for zero chanlist_len at the beginning of the
-> function, similar to the existing checks for !map and
-> CMDF_RAWDATA flag. When chanlist_len is zero, update
-> munge_count and return early, indicating the data was
-> handled without munging.
+> By batching the copy phase, we create an opportunity for significant
+> hardware acceleration. This series builds a framework for this acceleration
+> and provides two initial offload driver implementations: one using multiple
+> CPU threads (mtcopy) and another leveraging the DMAEngine subsystem (dcbm).
 >
-> This prevents potential kernel panics from malformed user commands.
+> This version incorporates significant feedback to improve correctness,
+> robustness, and the efficiency of the DMA offload path.
 >
-> Reported-by: syzbot+f6c3c066162d2c43a66c@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=f6c3c066162d2c43a66c
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
-> ---
->  drivers/comedi/comedi_buf.c | 5 +++++
->  1 file changed, 5 insertions(+)
+> Changelog since V2:
 >
-> diff --git a/drivers/comedi/comedi_buf.c b/drivers/comedi/comedi_buf.c
-> index 002c0e76baff..786f888299ce 100644
-> --- a/drivers/comedi/comedi_buf.c
-> +++ b/drivers/comedi/comedi_buf.c
-> @@ -321,6 +321,11 @@ static unsigned int comedi_buf_munge(struct comedi_subdevice *s,
->  		async->munge_count += num_bytes;
->  		return num_bytes;
->  	}
-> +
-> +	if (async->cmd.chanlist_len == 0) {
-> +		async->munge_count += num_bytes;
-> +		return num_bytes;
-> +	}
->  
->  	/* don't munge partial samples */
->  	num_bytes -= num_bytes % num_sample_bytes;
-> -- 
-> 2.43.0
+> 1. DMA Engine Rewrite:
+>    - Switched from per-folio dma_map_page() to batch dma_map_sgtable()
+>    - Single completion interrupt per batch (reduced overhead)
+>    - Order of magnitude improvement in setup time for large batches
+> 2. Code cleanups and refactoring
+> 3. Rebased on latest mainline (6.17-rc6+)
 >
+> MOTIVATION:
+> -----------
+>
+> Current Migration Flow:
+> [ move_pages(), Compaction, Tiering, etc. ]
+>               |
+>               v
+>      [ migrate_pages() ] // Common entry point
+>               |
+>               v
+>     [ migrate_pages_batch() ] // NR_MAX_BATCHED_MIGRATION (512) folios at a time
+>       |
+>       |--> [ migrate_folio_unmap() ]
+>       |
+>       |--> [ try_to_unmap_flush() ] // Perform a single, batched TLB flush
+>       |
+>       |--> [ migrate_folios_move() ] // Bottleneck: Interleaved copy
+>            - For each folio:
+>              - Metadata prep: Copy flags, mappings, etc.
+>              - folio_copy()  <-- Single-threaded, serial data copy.
+>              - Update PTEs & finalize for that single folio.
+>              
+> Understanding overheads in page migration (move_pages() syscall):
+>
+> Total move_pages() overheads = folio_copy() + Other overheads
+> 1. folio_copy() is the core copy operation that interests us.
+> 2. The remaining operations are user/kernel transitions, page table walks,
+> locking, folio unmap, dst folio alloc, TLB flush, copying flags, updating
+> mappings and PTEs etc. that contribute to the remaining overheads.
+>
+> Percentage of folio_copy() overheads in move_pages(N pages) syscall time:
+> Number of pages being migrated and folio size:
+>             4KB     2MB
+> 1 page     <1%     ~66%
+> 512 page   ~35%    ~97%
+>
+> Based on Amdahl's Law, optimizing folio_copy() for large pages offers a
+> substantial performance opportunity.
+>
+> move_pages() syscall speedup = 1 / ((1 - F) + (F / S))
+> Where F is the fraction of time spent in folio_copy() and S is the speedup of
+> folio_copy().
+>
+> For 4KB folios, folio copy overheads are significantly small in single-page
+> migrations to impact overall speedup, even for 512 pages, maximum theoretical
+> speedup is limited to ~1.54x with infinite folio_copy() speedup.
+>
+> For 2MB THPs, folio copy overheads are significant even in single page
+> migrations, with a theoretical speedup of ~3x with infinite folio_copy()
+> speedup and up to ~33x for 512 pages.
+>
+> A realistic value of S (speedup of folio_copy()) is 7.5x for DMA offload
+> based on my measurements for copying 512 2MB pages.
+> This gives move_pages(), a practical speedup of 6.3x for 512 2MB page (also
+> observed in the experiments below).
+>
+> DESIGN: A Pluggable Migrator Framework
+> ---------------------------------------
+>
+> Introduce migrate_folios_batch_move():
+>
+> [ migrate_pages_batch() ]
+>     |
+>     |--> migrate_folio_unmap()
+>     |      
+>     |--> try_to_unmap_flush()
+>     |
+>     +--> [ migrate_folios_batch_move() ] // new batched design
+>             |
+>             |--> Metadata migration
+>             |    - Metadata prep: Copy flags, mappings, etc.
+>             |    - Use MIGRATE_NO_COPY to skip the actual data copy.
+>             |
+>             |--> Batch copy folio data
+>             |    - Migrator is configurable at runtime via sysfs.
+>             |
+>             |          static_call(_folios_copy) // Pluggable migrators
+>             |          /          |            \
+>             |         v           v             v
+>             | [ Default ]  [ MT CPU copy ]  [ DMA Offload ]
+>             |
+>             +--> Update PTEs to point to dst folios and complete migration.
+>
+
+I just jump in the discussion, so this may be discussed before already.
+Sorry if so.  Why not
+
+migrate_folios_unmap()
+try_to_unmap_flush()
+copy folios in parallel if possible
+migrate_folios_move(): with MIGRATE_NO_COPY?
+
+> User Control of Migrator:
+>
+> # echo 1 > /sys/kernel/dcbm/offloading
+>    |
+>    +--> Driver's sysfs handler
+>         |
+>         +--> calls start_offloading(&cpu_migrator)
+>               |
+>               +--> calls offc_update_migrator()
+>                     |
+>                     +--> static_call_update(_folios_copy, mig->migrate_offc)
+>
+> Later, During Migration ...
+> migrate_folios_batch_move()
+>     |
+>     +--> static_call(_folios_copy) // Now dispatches to the selected migrator
+>           |
+>           +-> [ mtcopy | dcbm | kernel_default ]
+>
+
+[snip]
+
+---
+Best Regards,
+Huang, Ying
 
