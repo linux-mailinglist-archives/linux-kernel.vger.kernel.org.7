@@ -1,97 +1,146 @@
-Return-Path: <linux-kernel+bounces-830624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9230EB9A257
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:04:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC45B9A272
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 262EE4C573B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:04:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0379322749
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ADE2046BA;
-	Wed, 24 Sep 2025 14:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C492ECEBC;
+	Wed, 24 Sep 2025 14:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z4Lkhihe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nucleusys.com header.i=@nucleusys.com header.b="iUBDqjfL"
+Received: from lan.nucleusys.com (lan.nucleusys.com [92.247.61.126])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B899E302CC8;
-	Wed, 24 Sep 2025 14:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC114A3C;
+	Wed, 24 Sep 2025 14:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.247.61.126
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758722666; cv=none; b=P8Rq8UaMV9PHwNx1ffLhfAeJ3M+spE51oChUybNQMrUmbwYsII0/JxOhtf9bBszArJqHKNBuOuyN7vfYVcgH3gX1pN6U01yNA0EsB907jkcGkFDWYnEr/naE5UN/5wC+OT7MDRLnu8jp+N9XVUHUhvxZ9dNKnvcPivR9KS1Bt/w=
+	t=1758722717; cv=none; b=Wq1znSqnUdPM8hqFuUp5riD+pk34iFtu6R5r4cQ3g44A0KGTeB3cvLyDBhEZOATNqeyxsnoJpw9fBxA9mb8rDv5RGSOZf0LsUsuyT2XIS/poqRyiab4xZf2N7/DtBLfGvtoUo7ynbHw0OrQsg4RI+bFoIfM/EjTWKzmLNTLQFus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758722666; c=relaxed/simple;
-	bh=dsO08fcg3srSb7kpu3rvFMd5vSL48gCfv9kOMUP1HZA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ntQGSbx+mj4NrqdkbtKmXeNrgXLhM9zA4MJGENcLcYfGHCeN6UV+naqnjQ47mEtDVrznQ1sKtIP85/+BqNAv1kPqsKiK4bsZSYzoxlYKYYnqba3a1p6ZKCzrK8KeFeQgMZcrx2bKWDseW93p7dkqhaUgx9uIVlY+v+UUUdEJPiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z4Lkhihe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 410E4C4CEE7;
-	Wed, 24 Sep 2025 14:04:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758722666;
-	bh=dsO08fcg3srSb7kpu3rvFMd5vSL48gCfv9kOMUP1HZA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Z4LkhiheuA7T6FVnqXet4UgUibLzRFn0qBnABeTtCL8Ok1emS/sKYmUf7K37cO5pB
-	 4Ys0S57/fEkAjTNPVXC8ginDPFibrPOA2W9CVoVRfsrNojH+9xoWUhMlXuIOFinGnU
-	 ciWEZY0/SYAbQ6oWYsXkD3ljKzpfR6ZVZB7Tmg3TKk9PzKdyRZ/4wwDXXgNZqEeebB
-	 ICHB8LpzACOl9cyiHyU9QBV5CR+QVz5kvt9HmChyvaRSV/yYYgzk39xx1Xs8K3EWPO
-	 NrBoUvhdi37898Sl0VdiLHpdki74iRsr8VYz5//+leNqvYd8h1zaCf0dTo2+TDxtQI
-	 UoZgzZAZ9+GDQ==
-From: Mark Brown <broonie@kernel.org>
-To: shenghao-ding@ti.com, kevin-lu@ti.com, baojun.xu@ti.com, 
- lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- Chen Ni <nichen@iscas.ac.cn>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250924020540.234560-1-nichen@iscas.ac.cn>
-References: <20250924020540.234560-1-nichen@iscas.ac.cn>
-Subject: Re: [PATCH] ASoc: tas2783A: Remove unneeded semicolon
-Message-Id: <175872266402.1250098.15941093216733932187.b4-ty@kernel.org>
-Date: Wed, 24 Sep 2025 16:04:24 +0200
+	s=arc-20240116; t=1758722717; c=relaxed/simple;
+	bh=minEcWUjTwDz7RlfoM9/JlDnRLWlpos7Kk7PzRMbms0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EmPmA12FtEezSO88WiGeHUmOMZdbqDM2GKFoYr1po3IduD9AyYDWYbUykq+mU5JnP5qPLlSfsQScChEpjDhw4GgMF4E8wGoa3jeqCpdyVCqOplfgqgZBydI6iLIA4N872twCVZ3up1GLziHnqBXvQ4ZSY9s+znoljAEBmoswVCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nucleusys.com; spf=pass smtp.mailfrom=nucleusys.com; dkim=pass (2048-bit key) header.d=nucleusys.com header.i=@nucleusys.com header.b=iUBDqjfL; arc=none smtp.client-ip=92.247.61.126
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nucleusys.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nucleusys.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nucleusys.com; s=xyz;
+	t=1758722299; bh=minEcWUjTwDz7RlfoM9/JlDnRLWlpos7Kk7PzRMbms0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iUBDqjfLX76ppr6FPR0MSpHrrWkSFUsM+T+tKMaILSR/QQhqQMk7U8cZBA9xQEs0X
+	 RK3RCyL6eL+BztPXqeFibOw1XvLRsknR/12AstOtIZWh+N29zBuiYklFabCItIAsXg
+	 ysrIL8bGTHahdz8TBc/lP8NaTsWtkVkpdwZaECrFQXFj91k7zBYuRThU9NPu9rpI6l
+	 M9qorlAcRjyXT2pOtwcLVwyH/DFNKJhZGo/GoAewDnvOwrMTYwhta8PUNL4A/QqtoW
+	 +hqRX3LaNLGVQTG4G+GHmEa1Tq4EfjssbDdDG/v8o70myN5YzJNMGxZMK13YhTzIva
+	 W0WiE0w4z/Gqg==
+Received: from cabron.k.g (unknown [95.111.117.177])
+	by lan.nucleusys.com (Postfix) with ESMTPSA id D8C8C3FC0B;
+	Wed, 24 Sep 2025 16:58:18 +0300 (EEST)
+Date: Wed, 24 Sep 2025 16:58:14 +0300
+From: Petko Manolov <petkan@nucleusys.com>
+To: I Viswanath <viswanathiyyappan@gmail.com>
+Cc: kuba@kernel.org, michal.pecio@gmail.com, edumazet@google.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, pabeni@redhat.com,
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev, david.hunter.linux@gmail.com,
+	syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
+Subject: Re: [PATCH net v3] net: usb: Remove disruptive netif_wake_queue in
+ rtl8150_set_multicast
+Message-ID: <20250924135814.GC5387@cabron.k.g>
+References: <20250924134350.264597-1-viswanathiyyappan@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-a9b2a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924134350.264597-1-viswanathiyyappan@gmail.com>
 
-On Wed, 24 Sep 2025 10:05:40 +0800, Chen Ni wrote:
-> Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
-> semantic patch at scripts/coccinelle/misc/semicolon.cocci.
+On 25-09-24 19:13:50, I Viswanath wrote:
+> syzbot reported WARNING in rtl8150_start_xmit/usb_submit_urb.
+> This is the sequence of events that leads to the warning:
 > 
+> rtl8150_start_xmit() {
+> 	netif_stop_queue();
+> 	usb_submit_urb(dev->tx_urb);
+> }
 > 
+> rtl8150_set_multicast() {
+> 	netif_stop_queue();
+> 	netif_wake_queue();		<-- wakes up TX queue before URB is done
+> }
+> 
+> rtl8150_start_xmit() {
+> 	netif_stop_queue();
+> 	usb_submit_urb(dev->tx_urb);	<-- double submission
+> }
+> 
+> rtl8150_set_multicast being the ndo_set_rx_mode callback should not be calling
+> netif_stop_queue and notif_start_queue as these handle TX queue
+> synchronization.
 
-Applied to
+netif_[stop|wake]_queue() should have been removed from rtl8150_set_multicast()
+long time ago, but somehow it has slipped under the radar.  As far as i can tell
+this is the only change needed.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Thanks!
+		Petko
 
-[1/1] ASoc: tas2783A: Remove unneeded semicolon
-      commit: 70a0bcde87512c269269443444c109740dcacc19
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> The net core function dev_set_rx_mode handles the synchronization
+> for rtl8150_set_multicast making it safe to remove these locks.
+> 
+> Reported-and-tested-by: syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=78cae3f37c62ad092caa
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Tested-by: Michal Pecio <michal.pecio@gmail.com>
+> Signed-off-by: I Viswanath <viswanathiyyappan@gmail.com>
+> ---
+> v1: 
+> Link: https://lore.kernel.org/netdev/20250920045059.48400-1-viswanathiyyappan@gmail.com/
+>  
+> v2:
+> - Add explanation why netif_stop_queue/netif_wake_queue can be safely removed
+> - Add the net prefix to the patch, designating it to the net tree
+> Link: https://lore.kernel.org/netdev/20250920181852.18164-1-viswanathiyyappan@gmail.com/
+>  
+> v3:
+> - Simplified the event sequence that lead to the warning
+> - Added Tested-by tag
+> 
+>  drivers/net/usb/rtl8150.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/net/usb/rtl8150.c b/drivers/net/usb/rtl8150.c
+> index ddff6f19ff98..92add3daadbb 100644
+> --- a/drivers/net/usb/rtl8150.c
+> +++ b/drivers/net/usb/rtl8150.c
+> @@ -664,7 +664,6 @@ static void rtl8150_set_multicast(struct net_device *netdev)
+>  	rtl8150_t *dev = netdev_priv(netdev);
+>  	u16 rx_creg = 0x9e;
+>  
+> -	netif_stop_queue(netdev);
+>  	if (netdev->flags & IFF_PROMISC) {
+>  		rx_creg |= 0x0001;
+>  		dev_info(&netdev->dev, "%s: promiscuous mode\n", netdev->name);
+> @@ -678,7 +677,6 @@ static void rtl8150_set_multicast(struct net_device *netdev)
+>  		rx_creg &= 0x00fc;
+>  	}
+>  	async_set_registers(dev, RCR, sizeof(rx_creg), rx_creg);
+> -	netif_wake_queue(netdev);
+>  }
+>  
+>  static netdev_tx_t rtl8150_start_xmit(struct sk_buff *skb,
+> -- 
+> 2.47.3
+> 
 
