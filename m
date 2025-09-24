@@ -1,101 +1,75 @@
-Return-Path: <linux-kernel+bounces-830472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB496B99BD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:04:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC19B99BE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E26533A6548
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:04:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F163A525F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EF72FC87B;
-	Wed, 24 Sep 2025 12:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A183002B5;
+	Wed, 24 Sep 2025 12:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MKBRckGQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="teG3MG0U";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="H7hLy4jm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+6DxGoqi"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QjMXdBQg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8ADD26C3BC
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4E42FFDCE;
+	Wed, 24 Sep 2025 12:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758715441; cv=none; b=p6uV4LPe/dsVPfK2WrJPNmhiJ6eAuB9I8Mjp18m6tSWp76s46YJQA0MTdKcYo46ytK6RI212t6gVma3akH26O0coT1jaQa6y0MptkUlh4gBKfwwKJSKjCkV2FzqfLqrN52YxU2JcnczVclLKsteBf0Q3hJpQFAj7LeomIzPFsKY=
+	t=1758715459; cv=none; b=m4EzF07KHGUGBcf/PY47KyY0HdCrkWTbKEBXAgQ3NH7nPAs3+XXbLFNmmH/d43/YWXlrmmgW3cZcjndTW3foCRAYb6R8N1VogD+WyMAOEwmG4UvOECkva9j+vRUDE1hHV/fiNpR1XRmbk/SBmj4JwzVjHYbcnXRF9Jx2NbFz8Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758715441; c=relaxed/simple;
-	bh=2NLiZFXlWo0Y86Y2F9wleIpz3DknLOHsE/giu+9xawE=;
+	s=arc-20240116; t=1758715459; c=relaxed/simple;
+	bh=WkKWSTKQK3ER2Y4tGyeGlKZjke1YkCrFXEV5CaatahE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YekToA+hTuKpOg/hH7cE7hkXgt+KecbJEx5aV5kkXpvUBfKPwz8sAEYJnPd1y7kHQyX5ElH6juO6LJqeiB8opFSPB++3zC3krjeJpVpwwyqw1IVAPXBCzweoTORh/gOQZLvdGP0sOr74iE5DU+wCLp66Ypscd//dEn/Wf7CeleI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MKBRckGQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=teG3MG0U; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=H7hLy4jm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+6DxGoqi; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E5148341CF;
-	Wed, 24 Sep 2025 12:03:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758715438; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oxI3eN4jDvJdpefp+N4v9VQwkmlDp5choMPQxDHEShI=;
-	b=MKBRckGQ6Wp5G9i7SNwaDCY4a3q1xaReKdLWEQr4EUzbuCoFQCF95ZAIKf4+mMCMkv4O88
-	ceQ1H6FXPVlORE/SQDsIfYsEifV4YhnRQOZkbZ/lkPsKqG5LdzCNyKlcHJ3Yshabu2ugTu
-	1ZGBC+edTqvUFB33ai9dnFIw+241kkE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758715438;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oxI3eN4jDvJdpefp+N4v9VQwkmlDp5choMPQxDHEShI=;
-	b=teG3MG0UNyp+gwAfQ+nCoiN7hW5bt4OkTUXNEMWh3pwouPCeIOOwT1klBpm/5orPHFpWzC
-	kR4VnK9iYTYPRfCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=H7hLy4jm;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=+6DxGoqi
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758715436; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oxI3eN4jDvJdpefp+N4v9VQwkmlDp5choMPQxDHEShI=;
-	b=H7hLy4jmv7TijR8S3os29qiVD82igoSgFCqH8v7RQkacBZpShqyyGElAuk2fBUN2MwQ/NU
-	jc6luebVZVlj8xbo1Y8690Y80seh1ERggGA/SepVCoo4T8bBdTy9lZwDTN8z2I1p667YqJ
-	eIOobeWX4Q7g4da81ziMW8+OSj2vsKQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758715436;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oxI3eN4jDvJdpefp+N4v9VQwkmlDp5choMPQxDHEShI=;
-	b=+6DxGoqi6Xcixmylt4Ifq92bDeG1W7PZI0HoT5F7xdAWMvwzd4t85YFdXDGWPaypX5UkoG
-	xpX0ZVwOP32yf/CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DB68813647;
-	Wed, 24 Sep 2025 12:03:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /sSKNSze02hASgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 24 Sep 2025 12:03:56 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 97336A0A9A; Wed, 24 Sep 2025 14:03:56 +0200 (CEST)
-Date: Wed, 24 Sep 2025 14:03:56 +0200
-From: Jan Kara <jack@suse.cz>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+0d671007a95cd2835e05@syzkaller.appspotmail.com, 
-	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH Next] copy_mnt_ns(): Remove unnecessary unlock
-Message-ID: <mb2bpbjtvci4tywtg5brdjkfl3ylopde3j2ymppvmlapzwnwij@wykkbxztyw2f>
-References: <68d3a9d3.a70a0220.4f78.0017.GAE@google.com>
- <tencent_2396E4374C4AA47497768767963CAD360E09@qq.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QIjSiU0dcyeNEwTnUV970g9NVEzeq44URqDNpcNZjh7rHfvzXlnGvlCOzFoBq0Bgq0jDwdRs4oFbreKqXX0ZCKL+dLdz12QUzSjPO3K97QIOD0+/MdxEvzn0cx2vBXkPJD3yMAB7mtiqdq8j8MqCSraIBkWLTE2FiIcGBG73YXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QjMXdBQg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7DF9C4CEE7;
+	Wed, 24 Sep 2025 12:04:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1758715458;
+	bh=WkKWSTKQK3ER2Y4tGyeGlKZjke1YkCrFXEV5CaatahE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QjMXdBQgx/x1h/za5phJQCEeSYjcj+UkrV7fK0KhNTuOix7QnyxRgr/dbnha9vSd9
+	 zdsd6ZvlYBePWju+YtvQKlxSAwrg12fLt0mCCh0F/Ue4NMqcRTXbuCih7Hd1u2XqYI
+	 zqZCxjtSSyjfAVIL0y7H+sT9mHMOZ771oEjotlPU=
+Date: Wed, 24 Sep 2025 14:04:14 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Benno Lossin <lossin@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, acourbot@nvidia.com,
+	Alistair Popple <apopple@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com, Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+	Yury Norov <yury.norov@gmail.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v4 1/6] nova-core: bitfield: Move bitfield-specific code
+ from register! into new macro
+Message-ID: <2025092433-bakeshop-derail-28a7@gregkh>
+References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
+ <20250920182232.2095101-2-joelagnelf@nvidia.com>
+ <2025092157-pauper-snap-aad1@gregkh>
+ <DCYHCLM67KRZ.366VS9PDKLYKY@kernel.org>
+ <2025092125-urban-muppet-1c2f@gregkh>
+ <DCYIX8URVIWM.2ZK3GHH3J82XQ@kernel.org>
+ <2025092432-entrust-citizen-0232@gregkh>
+ <DD0ZTZM8S84H.1YDWSY7DF14LM@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,79 +78,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <tencent_2396E4374C4AA47497768767963CAD360E09@qq.com>
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[qq.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[qq.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[0d671007a95cd2835e05];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,suse.com:email,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,appspotmail.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: E5148341CF
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
+In-Reply-To: <DD0ZTZM8S84H.1YDWSY7DF14LM@kernel.org>
 
-On Wed 24-09-25 18:29:04, Edward Adam Davis wrote:
-> This code segment is already protected by guards, namespace_unlock()
-> should not appear here.
+On Wed, Sep 24, 2025 at 01:28:18PM +0200, Danilo Krummrich wrote:
+> On Wed Sep 24, 2025 at 12:52 PM CEST, Greg KH wrote:
+> > Ok, great, but right now it's not doing that from what I am seeing when
+> > reading the code.  Shouldn't IoMem::new() take that as an argument?
 > 
-> Reported-by: syzbot+0d671007a95cd2835e05@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=0d671007a95cd2835e05
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-
-Indeed. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/namespace.c | 1 -
->  1 file changed, 1 deletion(-)
+> That's correct, neither IoMem nor pci::Bar do consider it yet; it's on the list
+> of things that still need to be done.
 > 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index ac1aedafe05e..c22febeda1ac 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -4134,7 +4134,6 @@ struct mnt_namespace *copy_mnt_ns(u64 flags, struct mnt_namespace *ns,
->  	new = copy_tree(old, old->mnt.mnt_root, copy_flags);
->  	if (IS_ERR(new)) {
->  		emptied_ns = new_ns;
-> -		namespace_unlock();
->  		return ERR_CAST(new);
->  	}
->  	if (user_ns != ns->user_ns) {
-> -- 
-> 2.43.0
+> > But, that feels odd as our current iomem api in C doesn't care about
+> > endian issues at all because it "assumes" that the caller has already
+> > handle this properly and all that the caller "wants" is to write/read to
+> > some memory chunk and not twiddle bits.
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Yet it seems to be the correct place to deal with it. As mentioned below, regmap
+> could just become part of an I/O backend implementation to do exactly that.
+> 
+> >> (Actually, we could even implement an I/O backend that uses regmap.)
+> >
+> > That would probably be best to do eventually as most platform drivers
+> > use regmap today as it's the sanest api we have at the moment.
+> 
+> I agree it's what we should do eventually.
+> 
+> >> So, I think the register!() stuff is rather orthogonal.
+> >
+> > I think it's very relevant as people seem to just be "assuming" that all
+> > the world (hardware and cpus) are little-endian, while in reality, they
+> > are anything but.  As proof, the code that uses this register!() logic
+> > today totally ignores endian issues and just assumes that it is both
+> > running on a little-endian system, AND the hardware is little-endian.
+> >
+> > As a crazy example, look at the USB host controllers that at runtime,
+> > have to be queried to determine what endian they are running on and the
+> > kernel drivers have to handle this "on the fly".  Yes, one can argue
+> > that the hardware developers who came up with that should be forced to
+> > write the drivers as penance for such sins, but in the end, it's us that
+> > has to deal with it...
+> >
+> > So ignoring it will get us quite a ways forward with controlling sane
+> > hardware on sane systems, but when s390 finally realizes they can be
+> > writing their drivers in rust, we are going to have to have these
+> > conversations again :)
+> 
+> I think it's not really that anyone is ignoring it (intentionally). It's two
+> different things that should be addressed here; yet they are related:
+> 
+>   (1) Implementation of an abstract representation of a register that drivers
+>       can interact with.
+> 
+>   (2) The I/O layer that lays out the raw data on the physcial bus.
+> 
+> The register!() macro intends to provide an abstract representation of a
+> register for drivers to interact with. Think of it as an abstract box, where the
+> memory layout does not matter at all -- could be anything.
+> 
+> Theoretically, this abstraction could even store every single field of a
+> register in its own u32 or u64, etc. Of course, that's a waste of memory, which
+> is why we're using this bitfield thing instead.
+> 
+> The only thing that matters is that there is a contract between the struct
+> representing a register (generated by the register!() macro) and the I/O backend
+> layer that lays out the raw value on the bus.
+> 
+> This works attempts to address (1), whereas you are (rightfully) asking for (2).
+> And I think the answer for (2) simply is, we still have to address it.
+
+Ok, fair enough, you've convinced me, I'll let you all argue which side
+the "0" should be on (left or right) :)
+
+Let's wait for the first platform drivers to start showing up that want
+to use regmap, hopefully that will be soon as almost all of the pieces
+are there to do so.
+
+thanks,
+
+greg k-h
 
