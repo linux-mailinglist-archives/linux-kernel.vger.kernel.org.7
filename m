@@ -1,121 +1,123 @@
-Return-Path: <linux-kernel+bounces-830610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7ABB9A1B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:48:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF535B9A19D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F1977B68ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:46:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81B3E1B26691
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB003064AE;
-	Wed, 24 Sep 2025 13:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549CF14A9B;
+	Wed, 24 Sep 2025 13:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HPfYkXLA"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xQmD9x2L"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611B13054E8
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAD61E230E
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758721655; cv=none; b=cjdOvoXOIKkvYRZgrZcW8Bu5uJDZ+2ILGuKiKSfdpWo7mm8KYW+oM1fnWKZlBxhz0NWjvMX2JONHBkopoLHKQEGei/YRVPtISbEJCrhKRoEY7OCG8QUjLsnWCcr3ofoty1zO9WrOQMkPO64tHLnwUVRaTH5XaJl9B2nbnhZlUNY=
+	t=1758721547; cv=none; b=ik9URGe2lXKOwhc3sU8sQKo6DuVXreVfJNUnd3H4HkP243vBMbhvkhGj8Dzxs1V7nfpzNMoqMOZRulOGSJy2PY/hxJyTIguVnJaFvoNolSetObP0EPmdBrQfe3R76SY6cqmAT2xdzZM7IVMEtu/scHfhv2LOy6gKS05y1MesTlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758721655; c=relaxed/simple;
-	bh=g3mVbQEmSZSox+3rar4GDne8V7SWg8EuyYhYo65mxMU=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=hRjNoi76cLG88t1FfquatSTmW0vrJPU3/iPjr5/PuDvxRa/+IPmJQU0CAG756egt3dpAjgH6PmnJGcaf5sDaXTxhkjzcIKbYZkNv/d37e5AVFsoPuNSxqmsT7u6yJOjitk2KGlXy0gsPcXUBe5Lt3BiIYLPuTsSmPOzUtkiW32c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HPfYkXLA; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=/kke/R2RN+R2Wvie6ypomPBx+8JQhx98os7Yw9mzMeE=; b=HPfYkXLA1cT+g9jLGmkau4wDuZ
-	o+0kMKoNnIFvSoPvXh+1LNG1GaGN/naVF5Xf0eA5I8Q/FMRnTLIdoBdimdKRu/MfUmf7tv3VwIiwA
-	UDGzY1H/+wb1ShAoFgOBsqmxkW+EBIKBSSvHLar2zG+Wcwjo8j0H5WpbydqITnzyQ8h1Vwm4BEFsG
-	PdJX530gQxHWZPlZzo2iDcqL8Ri0H0+D6jpMDiWoksSXoqEWc5DBBzYGynkzy/aS48pStQfCHWjPb
-	jVemUao6/1NuSiereFDY0gkhldCSufyVKDtQ6zOrHmMCA3AVaeGY+k7wgSjwMPTGzt/CLU9paraaU
-	5XjFgvjw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v1PqD-00000008jyY-0I9o;
-	Wed, 24 Sep 2025 13:47:29 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 0A0D1302D64; Wed, 24 Sep 2025 15:47:28 +0200 (CEST)
-Message-ID: <20250924134644.154610650@infradead.org>
-User-Agent: quilt/0.68
-Date: Wed, 24 Sep 2025 15:45:10 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: jpoimboe@kernel.org,
- x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
- peterz@infradead.org,
- alexandre.chartre@oracle.com
-Subject: [PATCH 3/3] objtool/x86: Fix NOP decode
-References: <20250924134507.288529132@infradead.org>
+	s=arc-20240116; t=1758721547; c=relaxed/simple;
+	bh=cEMmzRzXMTGSJDBCpuLpTyfKNk+jAauBaEAZNhHggag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ruLkKvH8U5CtmT1YRYBMNSqfWhLNPEkHnsMQh2V905C8DKiHBruAEnIlOZe4zY6kIe9MsEunMuDRUGfrHVDUEwO5S8JFC1CQx9XepyzuC0+SENreg011nl021T/UviwlOlJb8xFk5LEUcs9PwNTnU3ix73LP66pujm2M8LunfvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xQmD9x2L; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ef166e625aso3961891f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:45:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758721544; x=1759326344; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Si08GYvs7O7On4M1lZPat5JwQiuJTzJsw49avbAJ8Uw=;
+        b=xQmD9x2LZEsVtPUWs5Yq320mJSpW1sJzES4OT4lbexyG66ku8TgD5qDoyqKgvg8pZP
+         nW3gk3pDp3mNpd4yKQ8/XbylSSvQRvTcGm5yj2w8GtXF002izmpjH9H40zo/mV64TkV8
+         +ue5zcm2s2a64Sp73cvZaZIbww/GllGn4TZGY3l+ePmHM4x7/8gAbaDqXxoE6P9EtStY
+         n5T7yWZVGBbeIq0hZQmXOdpohoLPt/09MqXvFLvkyzlhC9n9PVdG3biHh6UTW1TF9x4b
+         NCghEWPa46JPNotZUgCUVrHWoEzzR0t5nxPCWswAAylPpUVcaFMk4otsDTCEoOSFCh7y
+         hhGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758721544; x=1759326344;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Si08GYvs7O7On4M1lZPat5JwQiuJTzJsw49avbAJ8Uw=;
+        b=dOywp48kvJaCUbtYPWBLbysEV5W7p6gyXeTpfAawl3EFWZds9ttrXHzWMcZSGe10L9
+         h9eaKSG5QvT+GiBXCLaB55wWBY9vSrDou2/d68vQrBFFYQYi1luYVcH94uCHVaENtw5U
+         f0JNpuGaDiS4tnFolEJIAoUn90eVxD+Wi5EHqkrwH9SVuC5V0BvLiETPVLPAn2feLtuj
+         dPMMP/JEvf0vbHTLMgTLDdnd4ZARoYAQeLKsW1Zn4CQMtfn2haGq9WpzAzb64cBU5zsp
+         NQkeThRw2Cpxsj1cNSGvoN79tKPNo3KRoJmCchImLWZFNEw4fp+HDTi3x3P5vsWgxIH3
+         OrtQ==
+X-Gm-Message-State: AOJu0YzN2NEnXPTeM1sjXaEOZVrZDASmMylazMpfLDlkVAoTRv+C1itw
+	281vIASCJcfWkqExKVBpsFBNyEM4mD4Pk0a2hj8PrE5pgni4oOHN5nkI0cUy05uRcpc=
+X-Gm-Gg: ASbGnctRz7ccguEjujBA42wfyuWnRDqHbvBedCnv3dWVGHrwuXKFTs5IMXA5HRR0krD
+	9s5mW6Rce0kkSEnk/4tIhw2kVzpfgv0Pu2ttWpQ2CiRKAu/XjwMqIta4D5okfzNc8zdmKv1Ypi+
+	6aSyqxB5dE1xsuJj9pHapmuFvwEISCtDGwfm5i7G9yNK7p4PJbgNKRDfvqAFNL75ysvLN3+L1VC
+	SXc6tuuino4e6RNR69qWFJaBXVMUKExJcDqRZOrky+gFcCcY2F94prN5E/a2aqC5cOxDc9QGQCx
+	uXtqtH3YkFqRirnFSrqw9XYsCM3E/uOumQfQqIcCAmWVG4C2DaO36B1kC+ExbsOowilQ6I2xOrH
+	vTnaMEw3CM3+TO3SlkSls1NlkdyGLCa+uSC2u63alaF5sWETgxxPUWivV1alsRACBULeJpKy0Jm
+	h1TlVkVAc8nHNl
+X-Google-Smtp-Source: AGHT+IHMbJb58nATRmai0WS9gfnhVJul59uJVjNVhSmasVwwjHrrbyIG7ZESwXwPwm4dgPq89hsCDA==
+X-Received: by 2002:a05:6000:2204:b0:3ed:e1d8:bd68 with SMTP id ffacd0b85a97d-40e497c34admr16417f8f.7.1758721543997;
+        Wed, 24 Sep 2025 06:45:43 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:bc4b:2611:54b0:29a4? ([2a05:6e02:1041:c10:bc4b:2611:54b0:29a4])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-46e2aacd4dcsm35528145e9.15.2025.09.24.06.45.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 06:45:43 -0700 (PDT)
+Message-ID: <e6a7cfe5-5443-4e10-981f-ca3811dadef8@linaro.org>
+Date: Wed, 24 Sep 2025 15:45:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v6 2/2] riscv: Allow for riscv-clock to pick up
+ mmio address.
+To: aleksa.paunovic@htecgroup.com, Thomas Gleixner <tglx@linutronix.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org,
+ Djordje Todorovic <djordje.todorovic@htecgroup.com>
+References: <20250924-riscv-time-mmio-v6-0-9c6158a14b37@htecgroup.com>
+ <20250924-riscv-time-mmio-v6-2-9c6158a14b37@htecgroup.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20250924-riscv-time-mmio-v6-2-9c6158a14b37@htecgroup.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-For x86_64 the kernel consistently uses 2 instructions for all NOPs:
+On 24/09/2025 13:10, Aleksa Paunovic via B4 Relay wrote:
+> From: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+> 
+> Allow faster rdtime access via GCR.U mtime shadow register on RISC-V
+> devices. This feature can be enabled by setting GCRU_TIME_MMIO
+> during configuration.
+> Reformat the clint timer to use the same mechanism if RISCV_M_MODE is set.
+> 
+> Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+> ---
 
-  90       - NOP
-  0f 1f /0 - NOPL
-
-Notably:
-
- - REP NOP is PAUSE, not a NOP instruction.
-
- - 0f {0c...0f} is reserved space,
-   except for 0f 0d /1, which is PREFETCHW, not a NOP.
-
- - 0f {19,1c...1f} is reserved space,
-   except for 0f 1f /0, which is NOPL.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- tools/objtool/arch/x86/decode.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
---- a/tools/objtool/arch/x86/decode.c
-+++ b/tools/objtool/arch/x86/decode.c
-@@ -494,7 +494,8 @@ int arch_decode_instruction(struct objto
- 		break;
- 
- 	case 0x90:
--		insn->type = INSN_NOP;
-+		if (prefix != 0xf3) /* REP NOP := PAUSE */
-+			insn->type = INSN_NOP;
- 		break;
- 
- 	case 0x9c:
-@@ -547,13 +548,14 @@ int arch_decode_instruction(struct objto
- 
- 		} else if (op2 == 0x0b || op2 == 0xb9) {
- 
--			/* ud2 */
-+			/* ud2, ud1 */
- 			insn->type = INSN_BUG;
- 
--		} else if (op2 == 0x0d || op2 == 0x1f) {
-+		} else if (op2 == 0x1f) {
- 
--			/* nopl/nopw */
--			insn->type = INSN_NOP;
-+			/* 0f 1f /0 := NOPL */
-+			if (modrm_reg == 0)
-+				insn->type = INSN_NOP;
- 
- 		} else if (op2 == 0x1e) {
- 
+Thanks for resending but I was waiting for a tag from the maintainers.
 
 
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
