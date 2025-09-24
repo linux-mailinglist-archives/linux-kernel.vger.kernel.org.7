@@ -1,196 +1,159 @@
-Return-Path: <linux-kernel+bounces-830178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5912B98FA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:51:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC3AB98FB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6492D4A5F24
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:51:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2105018912CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54092D0601;
-	Wed, 24 Sep 2025 08:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADFE2BFC9B;
+	Wed, 24 Sep 2025 08:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzOmaFDo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+nXYfeT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77092C325F;
-	Wed, 24 Sep 2025 08:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5298B29E0E5;
+	Wed, 24 Sep 2025 08:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758703862; cv=none; b=Z2lDu1ppCvavN19ysIIecYPTkk3Hj9cEQ8mCCf6eW+NlnnOYdtskKukGa94d44kzkLVYk463UhSjI/r3HI+dpACH8s+vgsYLmsdWKdFSsoTXmU9p2eIIrkoLLHC9Szye2CIh/469geuHHSOHYJo1C/Enw8tZHeKuheSVtgyo4yA=
+	t=1758703883; cv=none; b=nPktfB0QQZP4TaJ9UPbReN4ccHTddHaeUgFslEfEAwSWg/eNJc2TObZqYyedaeiiJyOiL9dIYdXpZBudH6t03c36MI9FgcHZTnG2/W8A9otiMj/RgdRlTZd//4JFJitOalYSzyUr8ukCd8b50qfMnNjrzI/bYbffrUFm71EpqMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758703862; c=relaxed/simple;
-	bh=PhUkbUI8KogzWtzU+Q9FLveQJuOuUgfGJLwlQrk0GY0=;
+	s=arc-20240116; t=1758703883; c=relaxed/simple;
+	bh=swWhRzwxWwIDowEWS+M6n2E1h9sDSR3qkPXRp6QsC/k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rWlpcxQ1iVVNxZjLAa6XdqtWXzdxj6EaoPPMiR41N6Unxr3otEx1RypSTec2XdgBrJWsxFoxaJxjYp6FV02+16E4UBJWmENrczu17Ung7gC8t7m2I2qxwpyLfaUPDhA+XkNoGuAK+Ucgtn467KcalMEdxZsiOK1PRQMjUSEG3dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzOmaFDo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B36FC4CEE7;
-	Wed, 24 Sep 2025 08:50:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YpyZbD5s+3Nsn1XItaqHGqfzD212uSGoIKNQmYegHXqGYmucLcjcUvqe0VIc7WBOmg34+kq28AuJbOJk/JaDpjqKWDrEqy8slgeY8q0K6fgneBHj5OoE23l0DgFvIInY8zGJlbQ7tVOX9bp0EzUXjJ3PSI9JeXyroZOGLeRzHhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B+nXYfeT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13E5EC4CEE7;
+	Wed, 24 Sep 2025 08:51:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758703861;
-	bh=PhUkbUI8KogzWtzU+Q9FLveQJuOuUgfGJLwlQrk0GY0=;
+	s=k20201202; t=1758703882;
+	bh=swWhRzwxWwIDowEWS+M6n2E1h9sDSR3qkPXRp6QsC/k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UzOmaFDo+t3rdWk5mkSVOnaSKEq4kk3zzNLtDnufs3/UwDbMSUVwpStOBR9tjdsw/
-	 5r5jNuar+AzHnqvMqe/m6cS9V6QnvChSakUGkLC7lB7ulgNA2ifUFYdKy5UsOP1r2N
-	 FrAFYlteFOFMERs1cbWhYuI56KOSyx7EhAy25V0SMh2n9vTMU99xAb672wxXlzHvac
-	 NZSS9lccrxvAdSNX0AuCxKr1fODGczTsjW43e0xqBKrsWsL9BcrK/+1JoHbKERxf1d
-	 iEWF27wTF7ZqwO1VVVNf7Jzi+b4IQqkPF0HuxlnR36skEtyRjMbMvQ/dLifJT5u5La
-	 zkbToNWuYM3TQ==
-Date: Wed, 24 Sep 2025 14:20:52 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Joerg Roedel <jroedel@suse.de>, 
-	iommu@lists.linux.dev, Anders Roxell <anders.roxell@linaro.org>, 
-	Naresh Kamboju <naresh.kamboju@linaro.org>, Pavankumar Kondeti <quic_pkondeti@quicinc.com>, 
-	Xingang Wang <wangxingang5@huawei.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] iommu/of: Call pci_request_acs() before enumerating
- the Root Port device
-Message-ID: <e4fjukl3xkfcxcm5p6jo4davplqlrx4xrpbjhdsduqjlv7oz7l@zilbaf3h6py2>
-References: <20250910-pci-acs-v1-2-fe9adb65ad7d@oss.qualcomm.com>
- <20250923202701.GA2055736@bhelgaas>
+	b=B+nXYfeTdWT1OUmmpPNrxHo3tHzi7HNgGr8P8o0SmS1GOcs1jcaP9AcLb/MNtTZlI
+	 41AQ1tMtBbR22AvX+Kj7BseByGQ53+Uxb7H5fXD9BDxmqYkKhGty5vWrI6K+LAPBoq
+	 u4BbJmYu5UFRlOR9j8NI8NiB3c5lcH6y7yBW8Md6N1gjVEHRuH2FPI2QuyrLefzUe3
+	 rZUu6Tp/64H0G3IIsF33q7JSse0gyjPkDlveUTkG1ZqaHGi0iB0evjAPdbMu3lJSrq
+	 7Ql5vAoS/tvR2t62IRZTSGSRZhmqv7LAhISJFc3HRlcEfGLmjCxOZPdDKGwBzXnWMe
+	 U+4PMhkskv1YA==
+Date: Wed, 24 Sep 2025 10:51:16 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 09/10] man/man2/open_tree{,_attr}.2: document new
+ open_tree_attr() API
+Message-ID: <3c3pxgxomljpwouzrl2tnycal2soox2j6aypk4pb23c63kv366@z7bxgctoukg6>
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+ <20250919-new-mount-api-v4-9-1261201ab562@cyphar.com>
+ <vc2xa2tuqqnkuoyg4hrgt6akt23ap6hxho5qs5hfcbc5nsaosv@idi6hwvyo7r5>
+ <2025-09-24-unsafe-movable-perms-actress-zoAIgs@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jvig5ndc7pvxuonl"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250923202701.GA2055736@bhelgaas>
+In-Reply-To: <2025-09-24-unsafe-movable-perms-actress-zoAIgs@cyphar.com>
 
-On Tue, Sep 23, 2025 at 03:27:01PM -0500, Bjorn Helgaas wrote:
-> On Wed, Sep 10, 2025 at 11:09:21PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > From: Xingang Wang <wangxingang5@huawei.com>
-> > 
-> > When booting with devicetree, ACS is enabled for all ACS capable PCI
-> > devices except the first Root Port enumerated in the system. This is due to
-> > calling pci_request_acs() after the enumeration and initialization of the
-> > Root Port device. 
-> 
-> I suppose you're referring to a path like below, where we *check*
-> pci_acs_enable during PCI enumeration, but we don't *set* it until we
-> add the device and look for a driver for it?
-> 
->   pci_host_common_init
->     devm_pci_alloc_host_bridge
->       devm_of_pci_bridge_init
->         pci_request_acs
->           pci_acs_enable = 1                    # ++ new set here
->     pci_host_probe
->       pci_scan_root_bus_bridge
->         pci_scan_device
->           pci_init_capabilities
->             pci_enable_acs
->               if (pci_acs_enable)               # test here
->                 ...
->       pci_bus_add_devices
->         driver_probe_device
->           pci_dma_configure
->             of_dma_configure
->               of_dma_configure_id
->                 of_iommu_configure
->                   pci_request_acs
->                     pci_acs_enable = 1          # -- previously set here
-> 
 
-Yes!
+--jvig5ndc7pvxuonl
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 09/10] man/man2/open_tree{,_attr}.2: document new
+ open_tree_attr() API
+Message-ID: <3c3pxgxomljpwouzrl2tnycal2soox2j6aypk4pb23c63kv366@z7bxgctoukg6>
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+ <20250919-new-mount-api-v4-9-1261201ab562@cyphar.com>
+ <vc2xa2tuqqnkuoyg4hrgt6akt23ap6hxho5qs5hfcbc5nsaosv@idi6hwvyo7r5>
+ <2025-09-24-unsafe-movable-perms-actress-zoAIgs@cyphar.com>
+MIME-Version: 1.0
+In-Reply-To: <2025-09-24-unsafe-movable-perms-actress-zoAIgs@cyphar.com>
 
-> > But afterwards, ACS is getting enabled for the rest of the PCI
-> > devices, since pci_request_acs() sets the 'pci_acs_enable' flag and
-> > the PCI core uses this flag to enable ACS for the rest of the ACS
-> > capable devices.
-> 
-> I don't quite understand why ACS would be enabled for *any* of the
-> devices because we generally enumerate all of them, which includes the
-> pci_init_capabilities() and pci_enable_acs(), before adding and
-> attaching drivers to them.
-> 
-> But it does seem kind of dumb that we set the system-wide "enable ACS"
-> property in a per-device place like an individual device probe.
-> 
+Hi Aleksa,
 
-I had the same opinion when I saw the 'pci_acs_enable' flag. But I think the
-intention was to enable ACS only if the controller is capable of assigning
-different IOMMU groups per device. Otherwise, ACS is more or less of no use.
+On Wed, Sep 24, 2025 at 04:31:15PM +1000, Aleksa Sarai wrote:
+> On 2025-09-21, Alejandro Colomar <alx@kernel.org> wrote:
+> > On Fri, Sep 19, 2025 at 11:59:50AM +1000, Aleksa Sarai wrote:
+> > > diff --git a/man/man2/open_tree.2 b/man/man2/open_tree.2
+> > > index 7f85df08b43c7b48a9d021dbbeb2c60092a2b2d4..60de4313a9d5be4ef3ff1=
+217051f252506a2ade9 100644
+> > > --- a/man/man2/open_tree.2
+> > > +++ b/man/man2/open_tree.2
+> > > @@ -15,7 +15,19 @@ .SH SYNOPSIS
+> > >  .B #include <sys/mount.h>
+> > >  .P
+> > >  .BI "int open_tree(int " dirfd ", const char *" path ", unsigned int=
+ " flags );
+> > > +.P
+> > > +.BR "#include <sys/syscall.h>" "    /* Definition of " SYS_* " const=
+ants */"
+> > > +.P
+> > > +.BI "int syscall(SYS_open_tree_attr, int " dirfd ", const char *" pa=
+th ,
+> > > +.BI "            unsigned int " flags ", struct mount_attr *_Nullabl=
+e " attr ", \
+> > > +size_t " size );
+> >=20
+> > Do we maybe want to move this to its own separate page?
+> >=20
+> > The separate page could perfectly contain the same exact text you're
+> > adding here; you don't need to repeat open_tree() descriptions.
+> >=20
+> > In general, I feel that while this improves discoverability of related
+> > functions, it produces more complex pages.
+>=20
+> I tried it and I don't think it is a better experience as a reader when
+> split into two pages because of the huge overlap between the two
+> syscalls.
 
-> > Ideally, pci_request_acs() should only be called if the 'iommu-map' DT
-> > property is set for the host bridge device. Hence, call pci_request_acs()
-> > from devm_of_pci_bridge_init() if the 'iommu-map' property is present in
-> > the host bridge DT node. This aligns with the implementation of the ARM64
-> > ACPI driver (drivers/acpi/arm64/iort.c) as well.
-> > 
-> > With this change, ACS will be enabled for all the PCI devices including the
-> > first Root Port device of the DT platforms.
-> > 
-> > Cc: stable@vger.kernel.org # 5.6
-> > Fixes: 6bf6c24720d33 ("iommu/of: Request ACS from the PCI core when configuring IOMMU linkage")
-> > Signed-off-by: Xingang Wang <wangxingang5@huawei.com>
-> > Signed-off-by: Pavankumar Kondeti <quic_pkondeti@quicinc.com>
-> > [mani: reworded subject, description and comment]
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > ---
-> >  drivers/iommu/of_iommu.c | 1 -
-> >  drivers/pci/of.c         | 8 +++++++-
-> >  2 files changed, 7 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-> > index 6b989a62def20ecafd833f00a3a92ce8dca192e0..c31369924944d36a3afd3d4ff08c86fc6daf55de 100644
-> > --- a/drivers/iommu/of_iommu.c
-> > +++ b/drivers/iommu/of_iommu.c
-> > @@ -141,7 +141,6 @@ int of_iommu_configure(struct device *dev, struct device_node *master_np,
-> >  			.np = master_np,
-> >  		};
-> >  
-> > -		pci_request_acs();
-> >  		err = pci_for_each_dma_alias(to_pci_dev(dev),
-> >  					     of_pci_iommu_init, &info);
-> >  		of_pci_check_device_ats(dev, master_np);
-> > diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> > index 3579265f119845637e163d9051437c89662762f8..98c2523f898667b1618c37451d1759959d523da1 100644
-> > --- a/drivers/pci/of.c
-> > +++ b/drivers/pci/of.c
-> > @@ -638,9 +638,15 @@ static int pci_parse_request_of_pci_ranges(struct device *dev,
-> >  
-> >  int devm_of_pci_bridge_init(struct device *dev, struct pci_host_bridge *bridge)
-> >  {
-> > -	if (!dev->of_node)
-> > +	struct device_node *node = dev->of_node;
-> > +
-> > +	if (!node)
-> >  		return 0;
-> >  
-> > +	/* Enable ACS if IOMMU mapping is detected for the host bridge */
-> > +	if (of_property_read_bool(node, "iommu-map"))
-> > +		pci_request_acs();
-> 
-> I'm not really convinced that the existence of 'iommu-map' in
-> devicetree is a clear signal that ACS should be enabled, so I'm a
-> little hesitant about this part.
-> 
-> Is it possible to boot using a devicetree with 'iommu-map', but with
-> the IOMMU disabled or the IOMMU driver not present?  Or other
-> situations where we don't need ACS?
-> 
+Okay.  Thanks!
 
-Certainly possible. But the issue is, we cannot reliably detect the presence of
-IOMMU until the first pci_dev is created, which will be too late as
-pci_acs_init() is called during pci_device_add().
 
-This seems to be the case for ACPI platforms also.
+Have a lovely day!
+Alex
 
-Maybe IOMMU folks Robin/Joerg/Will could comment more.
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
 
-- Mani
+--jvig5ndc7pvxuonl
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-மணிவண்ணன் சதாசிவம்
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjTsQMACgkQ64mZXMKQ
+wqkXxQ/+NaF79nh1DhLU3assTjDV4eziliCQAbS/fAF81drWeRcukrtPfI8johse
+NsJNtLA1lhpp8oNN55TF3tRtYLo37ygjSywl6lEdvBfOer6xzROKszd6HvlOlGkg
+H1i6mJe1aOd8AhCQYMrN8FtAaimdpPt1rbP3A0FC/XgoglJHCE+ibcpc1tqSu2rD
+pm/5biUo1Oa9y9cvcWLJHn9TfxICKe7xlyvS3n+VQypSGe9q+ZKPGuv5mRIgBNvv
+g28m107vqMVHwWSteLuqoGeXTFd41H5D5EoRh5PEXCDJ/4/Ur4AcP9Fbih5zL33q
+EZTnn+B6aevDk8YsDBUE1OyDddLZq2VvTLBK8+o2XESZtyaEkTzP93IoU7onDBS1
+L8/VhSs6vCxumJI70ZZoIM7ZaiE+f7zES0oSP+SzR4+Ul5Kl36YauU2p7gwQx/so
+UkzBta/7acjz93U/r8wlTZ/Pa9iXrYhl6VBQ3iEYlhJ/oiUKjL648HOGUjuirLob
+NdARVALPdK2dYGDVQyN6QoI4h/FiuHi3tquCqste2F33xnYeGiMPJQWWTAq5zt1U
+u1d0QYQ4Tf3OLeYqPIXv5Ba6KkyFxRl2xNrbgx1jS6bWyvDU1iVs76CB2ZjHNNSR
+oNP4TfrbbAmkBnocVrwErbbJoxf2K7lPqPAP4a1iO5hP65Ri8QI=
+=3R+H
+-----END PGP SIGNATURE-----
+
+--jvig5ndc7pvxuonl--
 
