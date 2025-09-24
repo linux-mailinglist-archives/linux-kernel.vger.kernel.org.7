@@ -1,206 +1,234 @@
-Return-Path: <linux-kernel+bounces-829878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04127B981B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:10:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A88E6B981C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:12:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99BA62A0667
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:10:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DC2B3B5992
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7117E221577;
-	Wed, 24 Sep 2025 03:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53378221D87;
+	Wed, 24 Sep 2025 03:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B1MU0p6H"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ry3iHDml"
+Received: from out199-7.us.a.mail.aliyun.com (out199-7.us.a.mail.aliyun.com [47.90.199.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD67DB665
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21FB218AB4
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758683431; cv=none; b=E8ZisYTtuhlXiwOhahDWouvJsIoOnplASaawdnuXkRgdW0ySy06W6UMcoMga8aZpKrRN1m6vGPs5RpC7hc/OvdIQmDJb5CVYKtd5NZa9cDNcjXNcN9YDAPcuzN6NeSDxiVjocJiDHptZ2GYuzkJHSM7Mt56jUeMJ3L8wj8NIlmg=
+	t=1758683542; cv=none; b=l8rDJoVnEBp5uyhQpyfvT4g0po1GQrVvhrsEN1Xw1Tpkh4DLD43ObW8dqHbKiVkpGqqHynpFi8QZdsM4Oqgu8SFyvDp6fE9S7B+u0UOycObkMsk38Q9772JFqgiXlteFfHStWXCN4Ftdvf98EaHjuZjmcUBFxmYWMyQLhWcKuPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758683431; c=relaxed/simple;
-	bh=p+hAlfWLOo8lrVCig+GYlsVpauV6dDxSNvfvnIzo890=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:References:
-	 In-Reply-To:Content-Type; b=dVkgC1euJ/Ox/WaxK6qucpo04aO4teNrNkCkCgV9qJLBFswGHrI/WILxKMw3YZ1ziv6pgwz6kpG9+EKMj/f+CBYuypNuKCforbxygMXYXTz1csFQv7HllI135BVtV+7mM7Wq+jlT/qFAZ03mQoa5QZl2yE4ryGTYtOoSzkz8wt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B1MU0p6H; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758683428;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IkvMMMNr8whS9KWGb21eo2kTG2AVjzPyop3Rbc2zRug=;
-	b=B1MU0p6HtMydS7Goj6Y3rMJY6sDnOup9Zt1JRzNu8cFCdwRnZ7ZORhrInz0GLctcc9V3kV
-	+Dm5u2d35I4pH90u1OzvsH401PW7lSZaZ+W0Q5IzD/gmQm4vJwZu5em3yqfU16oNXnctUX
-	5NMbMV8VD2Q1QmFBv/XFjfSDDp623Ho=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-16-NRxoTIvMNz6VxfmQ9tPgNw-1; Tue, 23 Sep 2025 23:10:27 -0400
-X-MC-Unique: NRxoTIvMNz6VxfmQ9tPgNw-1
-X-Mimecast-MFC-AGG-ID: NRxoTIvMNz6VxfmQ9tPgNw_1758683427
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-79e48b76f68so115831316d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 20:10:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758683424; x=1759288224;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IkvMMMNr8whS9KWGb21eo2kTG2AVjzPyop3Rbc2zRug=;
-        b=qe23wNp08XsJNO7p/AfMqkMsHLtpt+2FbxqrN1yfqTAe1YJB5LHtixoryC6Y9sU/Vp
-         uYn7+2OqfohOPcNZyk/ji8F84BjUM4jlBTAwP5VohVTJwBEyOa+hq9y8qBHenZfS94bJ
-         MT1xfK5ym7jbJBfKn0xw2qPF6wecDHABwbxEAUKgq/WYzK6Yuai3PE1MarhVSoHHFj/N
-         FoE+ZN7tPt6FRxQ/KlPB6brbD+yzR2nBiCa8Bl7eGUBJkdzhRuM7ciXA07pV72ggGHec
-         jkrYcrv/CcLvHdrSRFfdw42MGDcEB7H+ES8hbObYWcBxi6S8xX4WJuJKTumeq8Fsqyi4
-         FSbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXC2kDetgaNOAvrAKMloNOqmgM7FEoAxZcKCr+cLVAXZUHC1JPak7oPJhR9eGI19aw1HQKCDhV5iIdDRJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUgnzFnBMx1/sEzeQukrpjTI3ul+BLxIBb0iJIZPTNLrJgul4A
-	NbX3hSTYfDLBTUlYUPEoEPzWFoWHbGpqS+U3fvBxr4xHvWcDq1HnOWyALOl/Q2vn9kVcXY3A12i
-	AdRp+FphMLJnC0pgiqAt+bkA2uT3NidZxxMX25nJcLqLYeG4MYkrd8cwS/AkUAxPG6w==
-X-Gm-Gg: ASbGncudGMZZkhAroGXKs0wHlpro0ByUqVA21uLDQPQ2rTWLHPAyDaqRq4/sAYLcHbs
-	MWybDrf2kZFLBtEiytg4SJh3ZSXFCU1Msq24SMD+ib7nOxmMnG3DhJ6Dz+ZqX0sfmMDw6YTuCo1
-	z9PBfYpygIZqeg8LAJRd9Avm0AX/QuYSg7rpH7JAuoVS/KsQ7tmCFFJnPjZslPiU2SVQ2ypo/ni
-	362NN8GPLd4gtK3di8MD9qGdUmU7nKLSZjHnDEDNTgM04ppSwlkaoatPFjQo1qv1MWRHTU3ealg
-	eiOzWaAEYaGmN7eKvSsatYycl816r0pabJ8KsSvCBjuHL4h5fTjBglHBEq7rueQY9T5p6Sbz/fM
-	E5d7cSh/w6yw=
-X-Received: by 2002:a05:6214:20c1:b0:70d:fa79:baf0 with SMTP id 6a1803df08f44-7e7131d7020mr59697146d6.38.1758683424384;
-        Tue, 23 Sep 2025 20:10:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGLx9MwpCuNHuqA9U34H+EA7/n5lCOMihDnRBo1m3E6DXMRuUMWw3nLKQP4DFoBN1zvCBLgdw==
-X-Received: by 2002:a05:6214:20c1:b0:70d:fa79:baf0 with SMTP id 6a1803df08f44-7e7131d7020mr59696966d6.38.1758683423944;
-        Tue, 23 Sep 2025 20:10:23 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-793472c3946sm100462706d6.28.2025.09.23.20.10.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Sep 2025 20:10:23 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <dbba6b72-d270-4b7e-bb21-39ac8a46864a@redhat.com>
-Date: Tue, 23 Sep 2025 23:10:22 -0400
+	s=arc-20240116; t=1758683542; c=relaxed/simple;
+	bh=4KRzPk+WDjqQnffj3OHJj3feiD+xFaFO1BvB3rOsjc8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Y0A1G+K52260ZXQJKG92x3FQCAGJwY5u/VboH2Gmz1yXDTK7q/6mgiYueBZ0MURssUyarWfeIQvQnpuL4VQi5RSb4kzCVSRoKZgiBDmr0t/K3IiA8gP6wjrjBNwQjquXkxeQU1pMjn6S52fpEjgbOZbnOxbaoDTFOgSe56o0POQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ry3iHDml; arc=none smtp.client-ip=47.90.199.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1758683521; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=jpN6MR9tWHzIM5XbfO5zo6eTuKj59QIgIbF5cCp3dF8=;
+	b=ry3iHDmlMOJFCVsLB0QrfCdy8xkhscZIEbjVYnvOSr5QOkmGlnin0ReRcAJAb6QTu9vtleZR4cFuSbSuTnXMwX3wVLfUcP4J4IHb+QKTCVnMo2TTmEIAxCWhcpbObbxSIqTvCaIy06sosyYV441Mje9d/LyrZk3rf3BXpH+NrbU=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WohrEz9_1758683508 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 24 Sep 2025 11:11:59 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: Shivank Garg <shivankg@amd.com>,  akpm@linux-foundation.org,
+  david@redhat.com,  willy@infradead.org,  matthew.brost@intel.com,
+  joshua.hahnjy@gmail.com,  rakie.kim@sk.com,  byungchul@sk.com,
+  gourry@gourry.net,  apopple@nvidia.com,  lorenzo.stoakes@oracle.com,
+  Liam.Howlett@oracle.com,  vbabka@suse.cz,  rppt@kernel.org,
+  surenb@google.com,  mhocko@suse.com,  vkoul@kernel.org,
+  lucas.demarchi@intel.com,  rdunlap@infradead.org,  jgg@ziepe.ca,
+  kuba@kernel.org,  justonli@chromium.org,  ivecera@redhat.com,
+  dave.jiang@intel.com,  Jonathan.Cameron@huawei.com,
+  dan.j.williams@intel.com,  rientjes@google.com,
+  Raghavendra.KodsaraThimmappa@amd.com,  bharata@amd.com,
+  alirad.malek@zptcorp.com,  yiannis@zptcorp.com,  weixugc@google.com,
+  linux-kernel@vger.kernel.org,  linux-mm@kvack.org
+Subject: Re: [RFC V3 0/9] Accelerate page migration with batch copying and
+ hardware offload
+In-Reply-To: <C8E561B3-B9DB-4F58-A2C7-4EE17E08A993@nvidia.com> (Zi Yan's
+	message of "Tue, 23 Sep 2025 22:03:18 -0400")
+References: <20250923174752.35701-1-shivankg@amd.com>
+	<87plbghb66.fsf@DESKTOP-5N7EMDA>
+	<C8E561B3-B9DB-4F58-A2C7-4EE17E08A993@nvidia.com>
+Date: Wed, 24 Sep 2025 11:11:36 +0800
+Message-ID: <87tt0sfst3.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] locking/mutex:add MUTEX_CHCEK_INIT to detect
- uninitialized mutex lock
-To: buckzhang1212@yeah.net, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org
-References: <20250924022500.2577-1-buckzhang1212@yeah.net>
-Content-Language: en-US
-In-Reply-To: <20250924022500.2577-1-buckzhang1212@yeah.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ascii
 
-On 9/23/25 10:25 PM, buckzhang1212@yeah.net wrote:
-> From: "buck.zhang" <buckzhang1212@yeah.net>
+Zi Yan <ziy@nvidia.com> writes:
+
+> On 23 Sep 2025, at 21:49, Huang, Ying wrote:
 >
-> Here is a kernel exception about mutex and I can recreate it stably.
-> First we define a custome struct that includes a mutex lock.
-> Then allocate this struct by kmalloc without calling mutex_init.
-> Finally when multiple tasks call mutex_lock together,kernel will panic.
-> But Kernel is good  if only one task call this mutex at the same time.
-> the exception reason is that lock->wait_list is an invalid kernel list.
-> kernel crash log:
-> Unable to handle kernel NULL pointer dereference at virtual address 0000000
-> pc: __mutex_add_waiter+0x68/0x160
-> lr: __mutex_add_waiter+0x128/0x160
-> sp: ffffffc0866f3ac0
-> x29: ffffffc0866f3ad0 x28: ffffff8095148000 x27: 0000000000000000
-> x2: ffffffc0866f3b18 x1 : 0000000000000000 x0 : 0000000000000000
-> Call trace:
-> __mutex_add_waiter+0x68/0x160
-> __mutex_lock+0x48c/0x119c
-> __mutex_lock_slowpath+0x1c/0x2c
-> mutex_lock+0x48/0x144
-> Test case:
-> struct chip_mutex {
-> 	struct mutex tmutex;
-> };
-> static void work_handler1(struct chip_mutex *cmutex)
-> {
->          mutex_lock(&(cmutex->tmutex));
-> }
-> static void work_handler2(struct chip_mutex *cmutex)
-> {
->           mutex_lock(&(cmutex->tmutex));
-> }
-> static void chip_tmutex(void)
-> {
-> 	struct chip_mutex *cmutex;
-> 	cmutex = kzalloc(sizeof(struct chip_mutex),GFP_KERNEL);
-> 	work_handler1(cmutex);
-> 	------
-> 	work_handler2(cmutex);
-> }
+>> Hi, Shivank,
+>>
+>> Thanks for working on this!
+>>
+>> Shivank Garg <shivankg@amd.com> writes:
+>>
+>>> This is the third RFC of the patchset to enhance page migration by batching
+>>> folio-copy operations and enabling acceleration via multi-threaded CPU or
+>>> DMA offload.
+>>>
+>>> Single-threaded, folio-by-folio copying bottlenecks page migration
+>>> in modern systems with deep memory hierarchies, especially for large
+>>> folios where copy overhead dominates, leaving significant hardware
+>>> potential untapped.
+>>>
+>>> By batching the copy phase, we create an opportunity for significant
+>>> hardware acceleration. This series builds a framework for this acceleration
+>>> and provides two initial offload driver implementations: one using multiple
+>>> CPU threads (mtcopy) and another leveraging the DMAEngine subsystem (dcbm).
+>>>
+>>> This version incorporates significant feedback to improve correctness,
+>>> robustness, and the efficiency of the DMA offload path.
+>>>
+>>> Changelog since V2:
+>>>
+>>> 1. DMA Engine Rewrite:
+>>>    - Switched from per-folio dma_map_page() to batch dma_map_sgtable()
+>>>    - Single completion interrupt per batch (reduced overhead)
+>>>    - Order of magnitude improvement in setup time for large batches
+>>> 2. Code cleanups and refactoring
+>>> 3. Rebased on latest mainline (6.17-rc6+)
+>>>
+>>> MOTIVATION:
+>>> -----------
+>>>
+>>> Current Migration Flow:
+>>> [ move_pages(), Compaction, Tiering, etc. ]
+>>>               |
+>>>               v
+>>>      [ migrate_pages() ] // Common entry point
+>>>               |
+>>>               v
+>>>     [ migrate_pages_batch() ] // NR_MAX_BATCHED_MIGRATION (512) folios at a time
+>>>       |
+>>>       |--> [ migrate_folio_unmap() ]
+>>>       |
+>>>       |--> [ try_to_unmap_flush() ] // Perform a single, batched TLB flush
+>>>       |
+>>>       |--> [ migrate_folios_move() ] // Bottleneck: Interleaved copy
+>>>            - For each folio:
+>>>              - Metadata prep: Copy flags, mappings, etc.
+>>>              - folio_copy()  <-- Single-threaded, serial data copy.
+>>>              - Update PTEs & finalize for that single folio.
+>>>
+>>> Understanding overheads in page migration (move_pages() syscall):
+>>>
+>>> Total move_pages() overheads = folio_copy() + Other overheads
+>>> 1. folio_copy() is the core copy operation that interests us.
+>>> 2. The remaining operations are user/kernel transitions, page table walks,
+>>> locking, folio unmap, dst folio alloc, TLB flush, copying flags, updating
+>>> mappings and PTEs etc. that contribute to the remaining overheads.
+>>>
+>>> Percentage of folio_copy() overheads in move_pages(N pages) syscall time:
+>>> Number of pages being migrated and folio size:
+>>>             4KB     2MB
+>>> 1 page     <1%     ~66%
+>>> 512 page   ~35%    ~97%
+>>>
+>>> Based on Amdahl's Law, optimizing folio_copy() for large pages offers a
+>>> substantial performance opportunity.
+>>>
+>>> move_pages() syscall speedup = 1 / ((1 - F) + (F / S))
+>>> Where F is the fraction of time spent in folio_copy() and S is the speedup of
+>>> folio_copy().
+>>>
+>>> For 4KB folios, folio copy overheads are significantly small in single-page
+>>> migrations to impact overall speedup, even for 512 pages, maximum theoretical
+>>> speedup is limited to ~1.54x with infinite folio_copy() speedup.
+>>>
+>>> For 2MB THPs, folio copy overheads are significant even in single page
+>>> migrations, with a theoretical speedup of ~3x with infinite folio_copy()
+>>> speedup and up to ~33x for 512 pages.
+>>>
+>>> A realistic value of S (speedup of folio_copy()) is 7.5x for DMA offload
+>>> based on my measurements for copying 512 2MB pages.
+>>> This gives move_pages(), a practical speedup of 6.3x for 512 2MB page (also
+>>> observed in the experiments below).
+>>>
+>>> DESIGN: A Pluggable Migrator Framework
+>>> ---------------------------------------
+>>>
+>>> Introduce migrate_folios_batch_move():
+>>>
+>>> [ migrate_pages_batch() ]
+>>>     |
+>>>     |--> migrate_folio_unmap()
+>>>     |
+>>>     |--> try_to_unmap_flush()
+>>>     |
+>>>     +--> [ migrate_folios_batch_move() ] // new batched design
+>>>             |
+>>>             |--> Metadata migration
+>>>             |    - Metadata prep: Copy flags, mappings, etc.
+>>>             |    - Use MIGRATE_NO_COPY to skip the actual data copy.
+>>>             |
+>>>             |--> Batch copy folio data
+>>>             |    - Migrator is configurable at runtime via sysfs.
+>>>             |
+>>>             |          static_call(_folios_copy) // Pluggable migrators
+>>>             |          /          |            \
+>>>             |         v           v             v
+>>>             | [ Default ]  [ MT CPU copy ]  [ DMA Offload ]
+>>>             |
+>>>             +--> Update PTEs to point to dst folios and complete migration.
+>>>
+>>
+>> I just jump in the discussion, so this may be discussed before already.
+>> Sorry if so.  Why not
+>>
+>> migrate_folios_unmap()
+>> try_to_unmap_flush()
+>> copy folios in parallel if possible
+>> migrate_folios_move(): with MIGRATE_NO_COPY?
 >
-> Signed-off-by: buck.zhang <buckzhang1212@yeah.net>
-A mutex must be properly initialized before it can be used. The kernel 
-panic you listed above is expected and the panic itself indicates that 
-the code is wrong.
-> ---
->   kernel/locking/mutex.c | 12 ++++++++++++
->   1 file changed, 12 insertions(+)
->
-> diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
-> index de7d6702c..8fbe858c8 100644
-> --- a/kernel/locking/mutex.c
-> +++ b/kernel/locking/mutex.c
-> @@ -42,6 +42,16 @@
->   #else
->   # define MUTEX_WARN_ON(cond)
->   #endif
-> +#define MUTEX_CHCEK_INIT(lock)  mutex_check_waitlist(lock)
-> +static void mutex_check_waitlist(struct mutex *lock)
-> +{
-> +	struct list_head *list = &lock->wait_list;
-> +
-> +	if ((unsigned long)list->next < PAGE_OFFSET) {
-> +		pr_err("BUG: mutex lock is uninitialized，wait_list is Error\n");
-> +		MUTEX_WARN_ON("mutex lock is uninitialized");
-> +	}
-> +}
->   
->   void
->   __mutex_init(struct mutex *lock, const char *name, struct lock_class_key *key)
-> @@ -269,6 +279,7 @@ static void __sched __mutex_lock_slowpath(struct mutex *lock);
->   void __sched mutex_lock(struct mutex *lock)
->   {
->   	might_sleep();
-> +	MUTEX_CHCEK_INIT(lock);
->   
->   	if (!__mutex_trylock_fast(lock))
->   		__mutex_lock_slowpath(lock);
+> Since in move_to_new_folio(), there are various migration preparation
+> works, which can fail. Copying folios regardless might lead to some
+> unnecessary work. What is your take on this?
 
-This check has provided no additional value and it slows down the 
-locking fast path.
+Good point, we should skip copying folios that fails the checks.
 
-NACK
+>>
+>>> User Control of Migrator:
+>>>
+>>> # echo 1 > /sys/kernel/dcbm/offloading
+>>>    |
+>>>    +--> Driver's sysfs handler
+>>>         |
+>>>         +--> calls start_offloading(&cpu_migrator)
+>>>               |
+>>>               +--> calls offc_update_migrator()
+>>>                     |
+>>>                     +--> static_call_update(_folios_copy, mig->migrate_offc)
+>>>
+>>> Later, During Migration ...
+>>> migrate_folios_batch_move()
+>>>     |
+>>>     +--> static_call(_folios_copy) // Now dispatches to the selected migrator
+>>>           |
+>>>           +-> [ mtcopy | dcbm | kernel_default ]
+>>>
+>>
+>> [snip]
 
-> @@ -991,6 +1002,7 @@ __mutex_lock_interruptible_slowpath(struct mutex *lock);
->   int __sched mutex_lock_interruptible(struct mutex *lock)
->   {
->   	might_sleep();
-> +	MUTEX_CHCEK_INIT(lock);
->   
->   	if (__mutex_trylock_fast(lock))
->   		return 0;
-> @@ -1015,6 +1027,7 @@ EXPORT_SYMBOL(mutex_lock_interruptible);
->   int __sched mutex_lock_killable(struct mutex *lock)
->   {
->   	might_sleep();
-> +	MUTEX_CHCEK_INIT(lock);
->   
->   	if (__mutex_trylock_fast(lock))
->   		return 0;
-
+---
+Best Regards,
+Huang, Ying
 
