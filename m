@@ -1,188 +1,268 @@
-Return-Path: <linux-kernel+bounces-830356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC53FB99755
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:41:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A23B9975A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B5C19C099D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:41:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5D2F32549A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CC22DFA5A;
-	Wed, 24 Sep 2025 10:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495C82E03E4;
+	Wed, 24 Sep 2025 10:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T2pZxXuB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LKFMqXQP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8382E03E8
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B982D8DD9;
+	Wed, 24 Sep 2025 10:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758710457; cv=none; b=b33qFcCb0CgzBjxfefDEAo3kDpsaqit8deAeXPosDREeMy0P52wyiaSu+r+KH93Bq8KT5QGO5qfN95kcCGrqsNlkaURxYemaD4FQCrySFaGqCWlck+JpZJ6PURgN6+qEuQFfEMHHRH6WYdtXv52yQDbQF+1OKDxpvScdXaSvY/o=
+	t=1758710454; cv=none; b=Z2vZVmO9rIkRSuY1LBFevPF2U3/nk8avCg7g8znqHwM3yMXvKCSEtkcYqqn1df/gx85tmT6PUi6z65qAs7FGv1F61CeBFCV0YSNMLLDWAEwDqM2o1zJ7BRQkEHM7osr9v+BdR58EzpvBHwi8HuPOF3m7UPuJ9mUrxvfNRHCrHCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758710457; c=relaxed/simple;
-	bh=KQca6ohc3VuWV3PwlUNSpnpD6tBxN+6I8+U6ohAC/0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MUM5WEg1ayOC9BLWCivOzRDJ7khKiOc7RTBuKF6Jl1Mfl7mRNyPQPnH1ddFg9rP7Dx1qJ37YfjMPqenJVQ0Sq8BKYFygJ3yZ24LkBHp0BsfCzxbX/QAxpnQHtjKP1DsgbcTVgFmy2rCq3WF9pEwZjj4KG3iIiwXEwj1F6DfWkM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T2pZxXuB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758710454;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eYvl7ezRqdgxCLchmpqGNEskUuk4TYHOhQ80u6nmeiY=;
-	b=T2pZxXuBvVxSXECEu8KJZc2ZYVl9k//JP7Tt+tABSm4kd5XwVPNWcfGcToxr15fJnME5tU
-	lysJkvQM2xyA8iuklXtJI68rzUi0PR78OiJBL5Q/i+qcQmulLe2VKuLhuAa7sexCfTIXv7
-	s2yWjAe6pR9lWX9Rzi9jLSmxf04cVWA=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-121-irTK8YaGOFmOsO3cg9ZwYA-1; Wed, 24 Sep 2025 06:40:53 -0400
-X-MC-Unique: irTK8YaGOFmOsO3cg9ZwYA-1
-X-Mimecast-MFC-AGG-ID: irTK8YaGOFmOsO3cg9ZwYA_1758710452
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46b303f6c9cso28432275e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:40:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758710452; x=1759315252;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eYvl7ezRqdgxCLchmpqGNEskUuk4TYHOhQ80u6nmeiY=;
-        b=uOGI19bdflUd+flCUHwkD3yOosKnNB+elAf3SQsY7fJte1P72O0DcCEc44zZmcNfrt
-         8T8H4ssRp56F5daaSHgKrWYg0e8RERAVAK8IH1rw4eDL2LMcqRPqD+oIP5gPvXCPlnrA
-         qPjBJp2zejRVU24fcme3e5m5SqstiH0u6RLoNgvnYA+UqZHp8rriNnYb+esrZhfYgFia
-         GhQGnfy+rPfuYsvhcMLDtWtJzbhPp/C5PCK8No7Q1tkOIEXuX7HT65wZQTxuyFk62Gsj
-         oJzEAltaKAPS/86lGxaUrkjq0OCqVjP02UNDLvvpDa7EdgUQu+ynaYsmjlKs6IMxkaib
-         J1GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXks+qufUeA38YbPWSqICHdp99kv8zaDI+UDgKVnsuRziPCYx1rMqvMMlDtXE8WWXx5iQTFIySirVTxARo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8allizARIBEgqIezbeCr3hPYCGLlUdOh/GoK7k7yFkT5cWyIy
-	czze7RCBlrjMl6tyHJGoUpgryy9Q1jIK0t9ddwVF8sXE/r5eF3BjxsnWlT3xuWPcDVgY7Hv5R/c
-	Ic5cOdtce/DNFH1dNZWs4m4w6v23j/zv9ymszh2hCO4CYDu9Ru0wGwtX7jox3x4qTWQ==
-X-Gm-Gg: ASbGncuIarsNGgpMTkMW/GGP7YM2mH2cswVC8uRmCtpJAE+u4TnQcdBMJ2WaBk7DdeR
-	KZ460lsBxwZgHWkZHwBi4APN27oqeuCT0x9ZqMCfqDblMRMzXYKZ4Wn8EdFhSF22rwoG/Lwl1XD
-	BQwUSGUo97xlqm814xi/QkJNANHn+ld1wfIPjrn0H/oYEHNySCSwriHqbob0ELGrgIkVsMrZkCU
-	dMi97+TC7TdWzD7z6w2Z/QuH6dRGT7UA/FiLg/HVWuynR9iNc9wFi2E4mgbHk6ORAa8pk0g4H3x
-	rRvB4x1KHR3JoJMEpTKP+ZvABedc1iJDkychhAOJDVG3W2c1B79MBmJRAy5Nhy0fG2FYn32cCeA
-	ZmefqfIL3vcgERbSUPpQIwZRyndOrGAss1jZrHgnoMJ8Xi0e1VRMJKQR9HL0yF61Gcg==
-X-Received: by 2002:a05:600c:8b16:b0:45b:7d24:beac with SMTP id 5b1f17b1804b1-46e1d988acamr63832525e9.10.1758710452004;
-        Wed, 24 Sep 2025 03:40:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGQUGWyhr6bvPS0QO0bjgArU7ygo/54DWi914RDCMaEcYUUvLnJDJjf0YevNsZ43xh89pWQVw==
-X-Received: by 2002:a05:600c:8b16:b0:45b:7d24:beac with SMTP id 5b1f17b1804b1-46e1d988acamr63832145e9.10.1758710451594;
-        Wed, 24 Sep 2025 03:40:51 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f14:2400:afc:9797:137c:a25b? (p200300d82f1424000afc9797137ca25b.dip0.t-ipconnect.de. [2003:d8:2f14:2400:afc:9797:137c:a25b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a9af775sm26973055e9.7.2025.09.24.03.40.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 03:40:51 -0700 (PDT)
-Message-ID: <bdb25331-4273-4bf8-b095-d052e5124003@redhat.com>
-Date: Wed, 24 Sep 2025 12:40:49 +0200
+	s=arc-20240116; t=1758710454; c=relaxed/simple;
+	bh=WLTg6YhgypSTinJluMxh2Q1bjm4WVEf8y8wZlXZnQg0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WBPAdNNKeX7dWrxiBxrliD5cjtATGl8vpc2fLHX9xxnMpJZcMLEfAvpAMKfvQB4rBFQm9vt2VuXZFM1UrklmW6Wvb/4k9tR9aAPouiOeYDWopULZje1KRNbRQMbHRwLCeKHvxFCU0fE/lM1LW6wCxzTKQyFyUzvbd5stGeepOPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LKFMqXQP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA070C4CEE7;
+	Wed, 24 Sep 2025 10:40:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1758710453;
+	bh=WLTg6YhgypSTinJluMxh2Q1bjm4WVEf8y8wZlXZnQg0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LKFMqXQPRy4tKUX1osFG2qJmVgiVfCn4hrzZTfy6Hc0iDau9ChwwRcHsb93S7dFAq
+	 CRjAvxRLq0kPwdCkoQLeE0j+q2YFfAlMZn9y4CW022IV53eEvOkL0JkiErBgqoIvF3
+	 gH2uTYZs0FsR1VNgjSgu0uwikqlKDIqvfuwRbeIs=
+Date: Wed, 24 Sep 2025 12:40:50 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	dakr@kernel.org, acourbot@nvidia.com,
+	Alistair Popple <apopple@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com, Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+	Yury Norov <yury.norov@gmail.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v4 1/6] nova-core: bitfield: Move bitfield-specific code
+ from register! into new macro
+Message-ID: <2025092425-sinuous-playoff-3618@gregkh>
+References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
+ <20250920182232.2095101-2-joelagnelf@nvidia.com>
+ <2025092157-pauper-snap-aad1@gregkh>
+ <DCYHCLM67KRZ.366VS9PDKLYKY@kernel.org>
+ <2025092125-urban-muppet-1c2f@gregkh>
+ <20250923222434.GA2479829@joelbox2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-new 1/1] mm/khugepaged: abort collapse scan on non-swap
- entries
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, baohua@kernel.org,
- baolin.wang@linux.alibaba.com, dev.jain@arm.com, hughd@google.com,
- ioworker0@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- mpenttil@redhat.com, npache@redhat.com, ryan.roberts@arm.com,
- ziy@nvidia.com, richard.weiyang@gmail.com
-References: <20250924100207.28332-1-lance.yang@linux.dev>
- <1282de5a-3dce-443d-91d1-111103140973@redhat.com>
- <2i5t62obfweid2zrt33vo3boviw4okha4d3gglw76eqv43ofky@pdv3evw5yjmh>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <2i5t62obfweid2zrt33vo3boviw4okha4d3gglw76eqv43ofky@pdv3evw5yjmh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923222434.GA2479829@joelbox2>
 
-On 24.09.25 12:17, Kiryl Shutsemau wrote:
-> On Wed, Sep 24, 2025 at 12:10:47PM +0200, David Hildenbrand wrote:
->> On 24.09.25 12:02, Lance Yang wrote:
->>> From: Lance Yang <lance.yang@linux.dev>
->>>
->>> The existing check in hpage_collapse_scan_pmd() is specific to uffd-wp
->>> markers. Other special markers (e.g., GUARD, POISONED) would not be caught
->>> early, leading to failures deeper in the swap-in logic.
->>>
->>> hpage_collapse_scan_pmd()
->>>    `- collapse_huge_page()
->>>        `- __collapse_huge_page_swapin() -> fails!
->>>
->>> As David suggested[1], this patch skips any such non-swap entries early.
->>> If a special marker is found, the scan is aborted immediately with the
->>> SCAN_PTE_NON_PRESENT result, as Lorenzo suggested[2], avoiding wasted
->>> work.
->>
->> Note that I suggested to skip all non-present entries except swap entries,
->> which includes migration entries, hwpoisoned entries etc.
+On Tue, Sep 23, 2025 at 06:24:34PM -0400, Joel Fernandes wrote:
+> Hi Greg,
 > 
-> Hm. So swap in is fine, but wait for migration to complete is not?
+> On Sun, Sep 21, 2025 at 02:45:27PM +0200, Greg KH wrote:
+> > On Sun, Sep 21, 2025 at 02:33:56PM +0200, Benno Lossin wrote:
+> > > On Sun Sep 21, 2025 at 11:36 AM CEST, Greg KH wrote:
+> > > > On Sat, Sep 20, 2025 at 02:22:27PM -0400, Joel Fernandes wrote:
+> > > >> The bitfield-specific into new macro. This will be used to define
+> > > >> structs with bitfields, similar to C language.
+> > > >> 
+> > > >> Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
+> > > >> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+> > > >> ---
+> > > >>  drivers/gpu/nova-core/bitfield.rs    | 314 +++++++++++++++++++++++++++
+> > > >>  drivers/gpu/nova-core/nova_core.rs   |   3 +
+> > > >>  drivers/gpu/nova-core/regs/macros.rs | 259 +---------------------
+> > > >>  3 files changed, 327 insertions(+), 249 deletions(-)
+> > > >>  create mode 100644 drivers/gpu/nova-core/bitfield.rs
+> > > >> 
+> > > >> diff --git a/drivers/gpu/nova-core/bitfield.rs b/drivers/gpu/nova-core/bitfield.rs
+> > > >> new file mode 100644
+> > > >> index 000000000000..ba6b7caa05d9
+> > > >> --- /dev/null
+> > > >> +++ b/drivers/gpu/nova-core/bitfield.rs
+> > > >> @@ -0,0 +1,314 @@
+> > > >> +// SPDX-License-Identifier: GPL-2.0
+> > > >> +
+> > > >> +//! Bitfield library for Rust structures
+> > > >> +//!
+> > > >> +//! Support for defining bitfields in Rust structures. Also used by the [`register!`] macro.
+> > > >> +//!
+> > > >> +//! # Syntax
+> > > >> +//!
+> > > >> +//! ```rust
+> > > >> +//! #[derive(Debug, Clone, Copy)]
+> > > >> +//! enum Mode {
+> > > >> +//!     Low = 0,
+> > > >> +//!     High = 1,
+> > > >> +//!     Auto = 2,
+> > > >> +//! }
+> > > >> +//!
+> > > >> +//! impl TryFrom<u8> for Mode {
+> > > >> +//!     type Error = u8;
+> > > >> +//!     fn try_from(value: u8) -> Result<Self, Self::Error> {
+> > > >> +//!         match value {
+> > > >> +//!             0 => Ok(Mode::Low),
+> > > >> +//!             1 => Ok(Mode::High),
+> > > >> +//!             2 => Ok(Mode::Auto),
+> > > >> +//!             _ => Err(value),
+> > > >> +//!         }
+> > > >> +//!     }
+> > > >> +//! }
+> > > >> +//!
+> > > >> +//! impl From<Mode> for u32 {
+> > > >> +//!     fn from(mode: Mode) -> u32 {
+> > > >> +//!         mode as u32
+> > > >> +//!     }
+> > > >> +//! }
+> > > >> +//!
+> > > >> +//! #[derive(Debug, Clone, Copy)]
+> > > >> +//! enum State {
+> > > >> +//!     Inactive = 0,
+> > > >> +//!     Active = 1,
+> > > >> +//! }
+> > > >> +//!
+> > > >> +//! impl From<bool> for State {
+> > > >> +//!     fn from(value: bool) -> Self {
+> > > >> +//!         if value { State::Active } else { State::Inactive }
+> > > >> +//!     }
+> > > >> +//! }
+> > > >> +//!
+> > > >> +//! impl From<State> for u32 {
+> > > >> +//!     fn from(state: State) -> u32 {
+> > > >> +//!         state as u32
+> > > >> +//!     }
+> > > >> +//! }
+> > > >> +//!
+> > > >> +//! bitfield! {
+> > > >> +//!     struct ControlReg {
+> > > >> +//!         3:0       mode        as u8 ?=> Mode;
+> > > >> +//!         7         state       as bool => State;
+> > > >> +//!     }
+> > > >> +//! }
+> > > >
+> > > > As discussed at the conference this week, I do object to this as it
+> > > > will allow the same mistakes to happen that we used to do in the kernel
+> > > > for a long time before the regmap() api happened, along with GENMASK().
+> > > 
+> > > Have you read the following macro arm of the implementation?
+> > > 
+> > >     // Generates the accessor methods for a single field.
+> > >     (
+> > >         @leaf_accessor $name:ident $hi:tt:$lo:tt $field:ident
+> > >             { $process:expr } $to_type:ty => $res_type:ty $(, $comment:literal)?;
+> > >     ) => {
+> > >         ::kernel::macros::paste!(
+> > >         const [<$field:upper _RANGE>]: ::core::ops::RangeInclusive<u8> = $lo..=$hi;
+> > >         const [<$field:upper _MASK>]: u32 = ((((1 << $hi) - 1) << 1) + 1) - ((1 << $lo) - 1);
+> > >         const [<$field:upper _SHIFT>]: u32 = Self::[<$field:upper _MASK>].trailing_zeros();
+> > >         );
+> > >     
+> > >         $(
+> > >         #[doc="Returns the value of this field:"]
+> > >         #[doc=$comment]
+> > >         )?
+> > >         #[inline(always)]
+> > >         pub(crate) fn $field(self) -> $res_type {
+> > >             ::kernel::macros::paste!(
+> > >             const MASK: u32 = $name::[<$field:upper _MASK>];
+> > >             const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
+> > >             );
+> > >             let field = ((self.0 & MASK) >> SHIFT);
+> > > 
+> > > Here you can see that it's just a mask + shift operation internally to
+> > > access the field.
+> > >     
+> > >             $process(field)
+> > >         }
+> > >     
+> > >         ::kernel::macros::paste!(
+> > >         $(
+> > >         #[doc="Sets the value of this field:"]
+> > >         #[doc=$comment]
+> > >         )?
+> > >         #[inline(always)]
+> > >         pub(crate) fn [<set_ $field>](mut self, value: $to_type) -> Self {
+> > >             const MASK: u32 = $name::[<$field:upper _MASK>];
+> > >             const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
+> > >             let value = (u32::from(value) << SHIFT) & MASK;
+> > >             self.0 = (self.0 & !MASK) | value;
+> > >     
+> > >             self
+> > >         }
+> > >         );
+> > >     };
+> > 
+> > Yes, that's great, but that is all done in "native cpu" endian, and
+> > might not actually represent what the hardware does at all, which is
+> > what I was trying to get at here, sorry for not being more specific.
+> > 
+> > > Now I too would like to see how exactly this will be used to read data
+> > > from hardware. But at least in theory if the conversion from hardware
+> > > endianness to native endianness is done correctly, this will do the
+> > > right thing :)
+> > 
+> > That's great, so we are close, but it's not quite correct.  How about
+> > something like:
+> > 
+> > 	0:7	reg_X	as __le32
+> > 	8:15	reg_y	as __le32
+> 
+> I don't think we should force endianness requirements within specific fields in
+> the bitfield rust library itself, it is upto the user. bitfields are not only
+> for registers even in C. If you see on the C side, we have rcu_special union
+> which uses 'u32' and does not enforce endianness within the fields or bytes
+> of the struct with respect to the fields. Its all native CPU endian and works
+> fine. You're basically saying in terms of C that, the designers of the C
+> bitfield in C standard force the C language to use endianness in the types, no
+> they can't / shouldn't be forced to.
 
-If so we'd have to add the logic to actually wait for migration entries, 
-and not count them towards max swap entries.
+For "cpu native" structures, just use the bit and genmask macros we have
+today, on top of a normal variable type and you should be fine.  The
+only place you need/want to do stuff like what is being proposed here is
+when you are trying to match up a data structure that is in hardware to
+be able to split the values out of it safely.
 
-But that's a different discussion and could be added on top of cleanly 
-handling all non-swap entries.
+And when dealing with data that goes outside of the kernel (i.e. to/from
+hardware), you HAVE to specify the endianness of that data as the
+hardware is the one that defines this, NOT the cpu that the kernel is
+running on.
 
--- 
-Cheers
+So you should NEVER see a bitfield structure that is defined just as a
+"u32" and expect that to work properly when read/written to hardware
+because while little-endian is what seems to have "won" the recent
+battles on this topic it's not always the case for many places that
+Linux runs on today.
 
-David / dhildenb
+> For the separate issue of enforcing endianness with respect to (across)
+> multiple fields, I agree with you that if the user's backend (the consumer of
+> the data) is not doing such conversion, say via regmap, then that becomes a
+> problem. But that problem is orthogonal/different and cannot be solved here.  
 
+But that is exactly what these macros are being defined here for, so to
+ignore that is going to cause problems :)
+
+thanks,
+
+greg k-h
 
