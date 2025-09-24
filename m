@@ -1,64 +1,38 @@
-Return-Path: <linux-kernel+bounces-830846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D71BEB9AB25
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:36:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18DC5B9AB34
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA39D4E24CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:36:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FF684E25E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83852314A6E;
-	Wed, 24 Sep 2025 15:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yzljfjh+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A23230FF36;
+	Wed, 24 Sep 2025 15:36:02 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EA13148CE;
-	Wed, 24 Sep 2025 15:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E6E27456;
+	Wed, 24 Sep 2025 15:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758728075; cv=none; b=UOe1Z9K4HtbSTbb3H5O1YDGZJbqCAHEA0MqGy0+3Y9eomVSmdC7sOfKnwXsPyqEINEIZOLhl2z3n/upppWYT7FTLgpS5tdfubQfbCffBApitktpNGsq2xgcRPNeazT8UmgmEYBq9MAeab5TABiLwuFXbkjOPPQVE/3k3S2vltUQ=
+	t=1758728162; cv=none; b=JJ/ZIlOu3+ncykKetfTmk9lADUn0OzsXBJ2lWO43O/zSefmsJUAowugfNJKLgz9YRT6kSYhKTeDcItx9KS5ieExr5kHl6L8pvL5hjz2yOJ7F5SgXv30aHYudODFnULiowW4E0KRDGked4yOIZQz0v9eqj8ngLY862cBjFVCb/yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758728075; c=relaxed/simple;
-	bh=wxPjznd3Mk72Y0HMGgxizVz3V7feCsOOYY3Ap7k4Ml4=;
+	s=arc-20240116; t=1758728162; c=relaxed/simple;
+	bh=XnCafYimc1fKKbIvAwPuz4XSnz+AJ3b/OkFAhVB1Nyw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lCfpvZKXLkHIVHOFAj+v5LXqklktYBLJRLEIyLoAeHyPdhFyVTX944tVfh3AHHJpUuaYyoyhzcOjprxeTWp/0o39JLn6ctrVHoSe0U/UJMWRv3By/ULRe2T+lYSjbCYM2RZKXuFnvIJGQ27nDeR0nuKamHKD7ZgqkaQovdkNPyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yzljfjh+; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758728073; x=1790264073;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=wxPjznd3Mk72Y0HMGgxizVz3V7feCsOOYY3Ap7k4Ml4=;
-  b=Yzljfjh+gQmZg/Rvc+I5yydhs2pfcEqCSscGDXcjuYOq6k1uxY7Wui6c
-   29vk0X+w8mevcVcGnA2iMi0/xB204xNR3Tn7DnUwssB2mww+i/7sDjVt3
-   xYIi8KhWnBPWU3MXIs9+5BX2RGDRciwcY1AXiuA5XwBdDPDBefVMExD0U
-   XWbpQni3I1iUmK8ebKnO9u3ZqxY4owrdly2chfxhz4QBbOEtw/UoaEuT1
-   VTD9397YHaRMEaQg/qmqYiuA7+Mx8K3S81OTIVO2aQlTDPH1WsOsKRetu
-   W709yoLlYX+rpyK7pRkWWnLjZ0ij+6VJxkf2VghvEgKdHXce9djA/vTEz
-   A==;
-X-CSE-ConnectionGUID: WlaiVsFISFa+0EyJA7hO7w==
-X-CSE-MsgGUID: SqeyfEU1Q3y2+7FVLhA8AA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="63657304"
-X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
-   d="scan'208";a="63657304"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 08:34:32 -0700
-X-CSE-ConnectionGUID: a078IQKxT/aol6KoHAiYvQ==
-X-CSE-MsgGUID: 9pHK2N6nRhmENOQyBRy5WA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
-   d="scan'208";a="177503430"
-Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.108.218]) ([10.125.108.218])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 08:34:31 -0700
-Message-ID: <0116557c-3b60-441e-8976-ebce1a658a01@intel.com>
-Date: Wed, 24 Sep 2025 08:34:30 -0700
+	 In-Reply-To:Content-Type; b=HB/rgjuOyfhPPW02XVOAbPcpbVBRdjQJtyDzerjdC5tG6EC+AIaY0u7UliKjx5v5xgvZVKuVsNMenIE89Kazc6rpSQqjX2mVe9z++BOdfL0OrC+vtRSqLo1zZ05vlXo7XfPsYewog4c54Tyk7FtfGElZoJjKqUheVST87f00Rhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.105] (unknown [114.241.87.235])
+	by APP-03 (Coremail) with SMTP id rQCowADH24XDD9RoAzdBBQ--.31926S2;
+	Wed, 24 Sep 2025 23:35:31 +0800 (CST)
+Message-ID: <27092a3a-cf9d-4481-99b3-4cc64a544b4f@iscas.ac.cn>
+Date: Wed, 24 Sep 2025 23:35:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,131 +40,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] nvdimm: ndtest: Return -ENOMEM if devm_kcalloc() fails
- in ndtest_probe()
-To: Guangshuo Li <lgs201920130244@gmail.com>,
- Alison Schofield <alison.schofield@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Santosh Sivaraj <santosh@fossix.org>, nvdimm@lists.linux.dev,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250923125953.1859373-1-lgs201920130244@gmail.com>
- <767ef629-519c-431d-9a89-224ceabf22be@intel.com>
- <aNLsXewwa0LXcRUk@aschofie-mobl2.lan>
- <CANUHTR9X2=VPHPY8r++SqHZu-+i7GGP7sqbGUnAx+M89iiYS4A@mail.gmail.com>
+Subject: Re: [PATCH RESEND v6 2/2] riscv: Allow for riscv-clock to pick up
+ mmio address.
+To: aleksa.paunovic@htecgroup.com, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org,
+ Djordje Todorovic <djordje.todorovic@htecgroup.com>
+References: <20250924-riscv-time-mmio-v6-0-9c6158a14b37@htecgroup.com>
+ <20250924-riscv-time-mmio-v6-2-9c6158a14b37@htecgroup.com>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <CANUHTR9X2=VPHPY8r++SqHZu-+i7GGP7sqbGUnAx+M89iiYS4A@mail.gmail.com>
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <20250924-riscv-time-mmio-v6-2-9c6158a14b37@htecgroup.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:rQCowADH24XDD9RoAzdBBQ--.31926S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZrW3ZF4kWw4xJr4UAFWDJwb_yoW8XryDpF
+	s3Cr13Ar15Xr4agwsIyF1DuryFqw4xGa43Kry2yw1Ivr45AFy8Kr4kt34vqFyDXF97Ar12
+	qF1Skr4Y9r1UCrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvqb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
+	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
+	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY
+	1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
+	ZFpf9x07j8KsUUUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
+Hi Aleksa,
 
+On 9/24/25 19:10, Aleksa Paunovic via B4 Relay wrote:
 
-On 9/24/25 12:42 AM, Guangshuo Li wrote:
-> Hi Alison, Dave, and all,
-> 
-> Thanks for the feedback. I’ve adopted your suggestions. Below is what I plan to take in v3.
-> 
-> -       p->dcr_dma = devm_kcalloc(&p->pdev.dev <http://pdev.dev>, NUM_DCR,
-> -                                 sizeof(dma_addr_t), GFP_KERNEL);
-> -       p->label_dma = devm_kcalloc(&p->pdev.dev <http://pdev.dev>, NUM_DCR,
-> -                                   sizeof(dma_addr_t), GFP_KERNEL);
-> -       p->dimm_dma = devm_kcalloc(&p->pdev.dev <http://pdev.dev>, NUM_DCR,
-> -                                  sizeof(dma_addr_t), GFP_KERNEL);
-> 
-> +       p->dcr_dma = devm_kcalloc(&p->pdev.dev <http://pdev.dev>, NUM_DCR,
-> +                                 sizeof(dma_addr_t), GFP_KERNEL);
-> +       if (!p->dcr_dma) {
-> +               rc = -ENOMEM;
-> +               goto err;
-> +       }
-> +
-> +       p->label_dma = devm_kcalloc(&p->pdev.dev <http://pdev.dev>, NUM_DCR,
-> +                                   sizeof(dma_addr_t), GFP_KERNEL);
-> +       if (!p->label_dma) {
-> +               rc = -ENOMEM;
-> +               goto err;
-> +       }
-> +
-> +       p->dimm_dma = devm_kcalloc(&p->pdev.dev <http://pdev.dev>, NUM_DCR,
-> +                                  sizeof(dma_addr_t), GFP_KERNEL);
-> +       if (!p->dimm_dma) {
-> +               rc = -ENOMEM;
-> +               goto err;
-> +       }
+> From: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+>
+> Allow faster rdtime access via GCR.U mtime shadow register on RISC-V
+> devices. This feature can be enabled by setting GCRU_TIME_MMIO
+> during configuration.
+> Reformat the clint timer to use the same mechanism if RISCV_M_MODE is set.
+>
+> Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+> ---
+>  arch/riscv/include/asm/clint.h    | 26 ----------------
+>  arch/riscv/include/asm/timex.h    | 63 ++++++++++++++++++++++-----------------
+>  drivers/clocksource/Kconfig       | 12 ++++++++
+>  drivers/clocksource/timer-clint.c | 20 ++++++-------
+>  drivers/clocksource/timer-riscv.c | 34 +++++++++++++++++++++
+>  5 files changed, 90 insertions(+), 65 deletions(-)
 
-You'll need to create new goto labels because you'll have to free previously allocated memory in the error path. Diff below is uncompiled and untested.
+I have a question about the design of this patch. Do we *really* have to
+combine the GCR.U timer driver into the existing riscv,timer driver?
 
-diff --git a/tools/testing/nvdimm/test/ndtest.c b/tools/testing/nvdimm/test/ndtest.c
-index 68a064ce598c..49d326819ea9 100644
---- a/tools/testing/nvdimm/test/ndtest.c
-+++ b/tools/testing/nvdimm/test/ndtest.c
-@@ -841,6 +841,7 @@ static void ndtest_remove(struct platform_device *pdev)
+It seems at least to me that all we really need is a *new* clocksource
+driver with a higher "rating" than riscv_clocksource and
+clint_clocksource, and the kernel will prefer it anyway.
 
- static int ndtest_probe(struct platform_device *pdev)
- {
-+       struct device *dev = &pdev->dev;
-        struct ndtest_priv *p;
-        int rc;
+In your patch, you're effectively making timer-riscv a driver for both
+riscv,timer and mips,p8700-gcru, while including a whole bunch of
+indirections and renamings. I think the structure of this patch would be
+much simpler if it was just adding a new clocksource driver.
 
-@@ -848,12 +849,23 @@ static int ndtest_probe(struct platform_device *pdev)
-        if (ndtest_bus_register(p))
-                return -ENOMEM;
+Please consider.
 
--       p->dcr_dma = devm_kcalloc(&p->pdev.dev, NUM_DCR,
--                                sizeof(dma_addr_t), GFP_KERNEL);
--       p->label_dma = devm_kcalloc(&p->pdev.dev, NUM_DCR,
--                                  sizeof(dma_addr_t), GFP_KERNEL);
--       p->dimm_dma = devm_kcalloc(&p->pdev.dev, NUM_DCR,
--                                 sizeof(dma_addr_t), GFP_KERNEL);
-+       p->dcr_dma = devm_kcalloc(dev, NUM_DCR, sizeof(dma_addr_t), GFP_KERNEL);
-+       if (!p->dcr_dma)
-+               return -ENOMEM;
-+
-+       p->label_dma = devm_kcalloc(dev, NUM_DCR, sizeof(dma_addr_t),
-+                                   GFP_KERNEL);
-+       if (!p->label_dma) {
-+               rc = -ENOMEM;
-+               goto err_label_dma;
-+       }
-+
-+       p->dimm_dma = devm_kcalloc(dev, NUM_DCR, sizeof(dma_addr_t),
-+                                  GFP_KERNEL);
-+       if (!p->dimm_dma) {
-+               rc = -ENOMEM;
-+               goto err_dimm_dma;
-+       }
-
-        rc = ndtest_nvdimm_init(p);
-        if (rc)
-@@ -863,7 +875,7 @@ static int ndtest_probe(struct platform_device *pdev)
-        if (rc)
-                goto err;
-
--       rc = devm_add_action_or_reset(&pdev->dev, put_dimms, p);
-+       rc = devm_add_action_or_reset(dev, put_dimms, p);
-        if (rc)
-                goto err;
-@@ -872,6 +884,11 @@ static int ndtest_probe(struct platform_device *pdev)
-        return 0;
-
- err:
-+       devm_kfree(dev, p->dimm_dma);
-+err_dimm_dma:
-+       devm_kfree(dev, p->label_dma);
-+err_label_dma:
-+       devm_kfree(dev, p->dcr_dma);
-        pr_err("%s:%d Failed nvdimm init\n", __func__, __LINE__);
-        return rc;
- }
-
-> 
-> If this looks good, I’ll send v3 accordingly. Also, if you’re comfortable with the changes, may I add your Reviewed-by tags?
-
-Please don't add review tags until they are given.
-
-> 
-> Best regards,
-> Guangshuo
+Thanks,
+Vivian "dramforever" Wang
 
 
