@@ -1,102 +1,165 @@
-Return-Path: <linux-kernel+bounces-830642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36271B9A334
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:15:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76754B9A2C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1E1D1B2331C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:15:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C3DE3228BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2640B3064AC;
-	Wed, 24 Sep 2025 14:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0863054EB;
+	Wed, 24 Sep 2025 14:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kael-k.io header.i=@kael-k.io header.b="ijCGY64H"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="MhZiNGUE"
+Received: from fra-out-008.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-008.esa.eu-central-1.outbound.mail-perimeter.amazon.com [35.158.23.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB127303C88;
-	Wed, 24 Sep 2025 14:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D7F1A841C;
+	Wed, 24 Sep 2025 14:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.158.23.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758723322; cv=none; b=mOxTDX3mWLQk+ipLuh/N8887n1SzxaQ2GOWQCRgvYb8zCUv+BG8v8pU2Wkw2wTmYtTnYkOiHs9Lck9Roaj61/Jbp0eoKNO6IWCJKeKTOEBn8B3B6rbO/u2l+AHQ5hG9eJ+OdYsMBz+zEa33sR+rNIEb3yUqN4DhGDPJxlU/Fl8k=
+	t=1758723054; cv=none; b=r+oup9eV9teJ3++Wal4oMHIqeIUoSQTKQ2gE3VDu5B7qB602CSRPInv4r+jDhvsxibOJMsXe+OCBAZOKLpxbPWML9fIN3PqhbMaMl9GmdciU8PXCIxq2HuRnr4YnsSxAX7EfWf8ZXpkE09s5FZ3nogwJleUtJMJny12fssE3FJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758723322; c=relaxed/simple;
-	bh=OKSqrO3LZFuwARINEBqW4y/xQ22Me4w2B7wXbthwvJ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K6/FGQ6Qd9KR5SD/tZ2FLL+rP/DOwZtN0FDiq+oGLGwtZ1X0umoo0idGzGBPBDqqEKqK9XLaxdyLXjYq5VpvIaa9U/aa5atrP1KnF3ZUC66JcatOz2P668nYRd+TloD6jt1QPIsCdPBY8x6bl263MkjkvtU93Qz3TXhjlL4iU2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kael-k.io; spf=pass smtp.mailfrom=kael-k.io; dkim=pass (2048-bit key) header.d=kael-k.io header.i=@kael-k.io header.b=ijCGY64H; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kael-k.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kael-k.io
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cWzQ63W9tz9tCh;
-	Wed, 24 Sep 2025 16:15:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kael-k.io; s=MBO0001;
-	t=1758723310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uDF0NveysQPfSfovDc8hfR/tmWatFKCZKG9GGaknk4M=;
-	b=ijCGY64HEk8wzb//m56CvU+lNNfMHAVTzdMms0OFgUpKqDLz32DFGpqGF2VPokMWIeh0lX
-	c/f097BQWh/WSXJ0lav2UPHwtR90fc4+70gcOYfnf3GsphxGU6dw3CtQsmoaB0+sGx7UHQ
-	pItlqxYVqN6PnxJV8yt/1KMaRqdfaZ1q0R/4PXNpVwienur1gO+8ixvvjrYhYCcUaiNbqC
-	m042OY1PzH5MAIPAzVw2dofPc8cFrv0GvfxnJOOKyDhqLVu13bLR/3er6LF1Nj+FEHy1AU
-	x4pro0kmgVp3j3GhHFQT7S0ljq3uUduX/u8ovhnwbhVpobGlWXm4+M4QAW13hA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of dev@kael-k.io designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=dev@kael-k.io
-From: Kael D'Alcamo <dev@kael-k.io>
-To: Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] dt-bindings: vendor-prefixes: update regex for properties without a prefix
-Date: Wed, 24 Sep 2025 16:09:22 +0200
-Message-ID: <20250924141247.69323-6-dev@kael-k.io>
-In-Reply-To: <20250924141247.69323-2-dev@kael-k.io>
-References: <uprke6fujhmckymlpy6oskecol4awhqyroqlg25tprmhnkeyy6@ztozdrlmeotp>
- <20250924141247.69323-2-dev@kael-k.io>
+	s=arc-20240116; t=1758723054; c=relaxed/simple;
+	bh=jLXnfsqIeqhrtK/x7cXFctB9Va2q5E5qnUz17W6qVHM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P7n6P03sHC+vTJfGy0WE21UfPA4noesJ3YUs0ynBPFatsNq32dGGQczg11cv8rmrWsd1KOdzBzTn1PKwhi7aiwSiprEERwCTfuXFFgOJL6YYrhaReYq+mgQWxGD1Db6mS6VBK6UsvAxOVII5ZBmvzCD3fa4H2nrCajwlr7xEf/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=MhZiNGUE; arc=none smtp.client-ip=35.158.23.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1758723052; x=1790259052;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=H7PQoekK6EZVFPK1EEOcN5aVmt5xxxRbI8vlCeS8OXI=;
+  b=MhZiNGUEPB+Kb3v6NPno7AZC8CjpU2V5OmdcEIyChSF+GZS931pUjpUh
+   gYCZJ1K0l9YnNdsDwBddX4rpn8kjh3rWIjugsq10sjhsvKU8YTvFari23
+   cWoksGDSfNm5EfqNvA35NPZe4FcIW6m/rHhTj+vXdv9G5b1G5wX/Ci8iP
+   rYCdPCQsz1QbcTsitnetMMjb9ZwOnL4UNioZS9Vjvb8XiMljP11db2lIA
+   vVY8SWI7gaDuQ1r9BgP5cOanvMyEf5Kqf/khCwO0SlVbphPZHkRxqR/CX
+   cz/oczCNvGaLQKJhLZ2nkc6r/qUma0ezPoOecUlyXdgj/pEFXojRXU7CA
+   Q==;
+X-CSE-ConnectionGUID: fvRnR7vKS5OGElbsbq+4JQ==
+X-CSE-MsgGUID: pKMy4jDkRBmVJC9sCjDl3Q==
+X-IronPort-AV: E=Sophos;i="6.18,290,1751241600"; 
+   d="scan'208";a="2614389"
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-008.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 14:10:40 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [54.240.197.224:24653]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.27.71:2525] with esmtp (Farcaster)
+ id c28bd279-d355-4d29-a440-08b9384e1c55; Wed, 24 Sep 2025 14:10:40 +0000 (UTC)
+X-Farcaster-Flow-ID: c28bd279-d355-4d29-a440-08b9384e1c55
+Received: from EX19D039EUC004.ant.amazon.com (10.252.61.190) by
+ EX19MTAEUB002.ant.amazon.com (10.252.51.79) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Wed, 24 Sep 2025 14:10:40 +0000
+Received: from dev-dsk-mngyadam-1c-cb3f7548.eu-west-1.amazon.com
+ (10.253.107.175) by EX19D039EUC004.ant.amazon.com (10.252.61.190) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Wed, 24 Sep 2025
+ 14:10:37 +0000
+From: Mahmoud Adam <mngyadam@amazon.de>
+To: <kvm@vger.kernel.org>
+CC: <alex.williamson@redhat.com>, <jgg@ziepe.ca>, <kbusch@kernel.org>,
+	<benh@kernel.crashing.org>, David Woodhouse <dwmw@amazon.co.uk>,
+	<pravkmr@amazon.de>, <nagy@khwaternagy.com>, <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH 0/7] vfio: Add alias region uapi for device feature
+Date: Wed, 24 Sep 2025 16:09:51 +0200
+Message-ID: <20250924141018.80202-1-mngyadam@amazon.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4cWzQ63W9tz9tCh
+X-ClientProxiedBy: EX19D042UWB004.ant.amazon.com (10.13.139.150) To
+ EX19D039EUC004.ant.amazon.com (10.252.61.190)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-Update vendor-prefixes.yaml to allow property names without a prefix
-to contain '#' character in all positions
+This RFC proposes a new uapi VFIO DEVICE_FEATURE to create per-region
+aliases with selectable attributes, initially enabling write-combine
+(WC) where supported by the underlying region. The goal is to expose a
+UAPI for userspace to request an alias of an existing VFIO region with
+extra flags, then interact with it via a stable alias index through
+existing ioctls and mmap where applicable.
 
-Signed-off-by: Kael D'Alcamo <dev@kael-k.io>
----
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This proposal is following Alex's suggestion [1]. This uapi allows
+creating a region alias where the user could specify to enable certain
+attributes through the alias. And then could use the alias index to
+get the region info and grab the offset to operate on.
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 9ec8947dfcad..e12c6ca399ec 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -1811,7 +1811,7 @@ patternProperties:
- 
-   # Normal property name match without a comma
-   # These should catch all node/property names without a prefix
--  "^[a-zA-Z0-9#_][a-zA-Z0-9+\\-._@]{0,63}$": true
-+  "^[a-zA-Z0-9#_][a-zA-Z0-9#+\\-._@]{0,63}$": true
-   "^[a-zA-Z0-9+\\-._]*@[0-9a-zA-Z,]*$": true
-   "^#.*": true
- 
+One example is to create a new Alias for bar 0 or similar BAR with WC
+enabled. Then you can use the alias offset to mmap to the region with
+WC enabled.
+
+The uapi allows the user to request a region index to alias and the
+extra flags to be set. Users can PROBE to get which flags are
+supported by this region. The flags are the same to the region flags
+in the region_info uapi.
+
+This adds two new region flags:
+- VFIO_REGION_INFO_FLAG_ALIAS: set on alias regions.
+- VFIO_REGION_INFO_FLAG_WC: indicates WC is in effect for that region.
+
+Then this series implement this uapi on vfio-pci. For vfio-pci, Alias
+regions are only (for now) possible for mmap supported regions. There
+could be future usages for these alias regions other than mmaps (like
+I think we could use it to also allow to use read & write on
+pci_iomap_wc version of the region?). In case if similar alias region
+already exist return the current alias index to the user.
+
+To mmap the region alias, we use the mmap region ops. Through that we
+translate the vm_pgoff to its aliased region and call vfio_device mmap
+with the alias pgoff. This enables us to mmap the original region then
+update the pgrot for WC afterwards.
+
+The call path would be:
+vfio_pci_core_mmap (index >= VFIO_PCI_NUM_REGIONS)
+ vfio_pci_alias_region_mmap (update vm_pgoff)
+  vfio_pci_core_mmap
+
+This series also adds required locking for region array
+accessing. Since now regions are added after initial setup.
+
+[1]: https://lore.kernel.org/kvm/20250811160710.174ca708.alex.williamson@redhat.com/
+
+references:
+https://lore.kernel.org/kvm/20250804104012.87915-1-mngyadam@amazon.de/
+https://lore.kernel.org/kvm/20240731155352.3973857-1-kbusch@meta.com/
+https://lore.kernel.org/kvm/lrkyq4ivccb6x.fsf@dev-dsk-mngyadam-1c-cb3f7548.eu-west-1.amazon.com/
+
+Mahmoud Adam (7):
+  vfio/pci: refactor region dereferences for RCU.
+  vfio_pci_core: split krealloc to allow use RCU & return index
+  vfio/pci: add RCU locking for regions access
+  vfio: add FEATURE_ALIAS_REGION uapi
+  vfio_pci_core: allow regions with no release op
+  vfio-pci: add alias_region mmap ops
+  vfio-pci-core: implement FEATURE_ALIAS_REGION uapi
+
+ drivers/vfio/pci/vfio_pci_core.c | 289 +++++++++++++++++++++++++++----
+ drivers/vfio/pci/vfio_pci_igd.c  |  34 +++-
+ include/linux/vfio_pci_core.h    |   1 +
+ include/uapi/linux/vfio.h        |  24 +++
+ 4 files changed, 301 insertions(+), 47 deletions(-)
+
 -- 
-2.51.0
+2.47.3
+
+
+
+
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
 
 
