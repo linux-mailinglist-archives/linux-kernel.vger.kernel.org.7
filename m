@@ -1,180 +1,174 @@
-Return-Path: <linux-kernel+bounces-830165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2154B98F3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:44:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A51ECB98F3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C56847A63F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:42:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DFF33A81CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EEC296BAB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0D5296BC4;
 	Wed, 24 Sep 2025 08:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hU6y3XHl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="no0ksgjT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9892F283FF8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F92290D81;
 	Wed, 24 Sep 2025 08:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758703453; cv=none; b=cIgIZeo305YWgXjkrGXYoWHX3bfiwsldoTIRKPnHX85spGsqEIV3R6VZkpy2GRmakvT7cffhFHwaVWdZTG3lwMy9IYVy+C5FqmLib9/kDkIBruWmCs9ql5woTHOUn3RyYSG/79BKHr0w9W+XBFl/EibPX28oTpDu4BreC0yhMns=
+	t=1758703453; cv=none; b=Vwv3guVSHOhL5mNaxk9rFOyhH38Tgtc9RplIZNwQTuz6CSMKt3zUQG+RRQF23ZgILzPNQbAgcSSqIs2fuM+vEMHZhUKixHMAhHjxNdHLTXAuvOiRHwqOEQR0D84l6DdMWfdUD2cy2VeL844RIHoPOCP2p0Pm7KKhnAyWtoMmiNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758703453; c=relaxed/simple;
-	bh=UVMmbVL0WOh/a0kk7Cv/hmAq6hMueEkR3KeH2vwY07A=;
+	bh=7jz7CVzbmny4juN26yg07gL4GH/p+J8RpWH7vznEVcs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=czwSS1mkwfgA8XkB9cz/r5txeP02zrmNrYIUlj/J/PzjRBvF6j1jTcVtOGi1Bg8w2Ri7KPWMbjKr47crG1xnc8n4sRYUZ5TLxAItqZdmxsvP7GGYCKeZsnK0FwpRRQB0q74XEsPTakZyIGOvDXNO2lI1dxGKR3w1dw2YFLk2FKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hU6y3XHl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40FC6C4CEE7;
-	Wed, 24 Sep 2025 08:44:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BKtgRD8hJVQuDsSB597YOcf+Jahc/pypK7nyS3savh7UxlhVoWdudThI877pHx3gvRdmhaANaEFkPm6ovQoVb91bw0H1r8vAsU4LmmJufBc0fh7wPkY3QC27Tq4H4i95CdCJTHZJ6F1TKigeI3jY3eC+BE2nmZZVHT5gdr/DTQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=no0ksgjT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04069C113CF;
+	Wed, 24 Sep 2025 08:44:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1758703453;
-	bh=UVMmbVL0WOh/a0kk7Cv/hmAq6hMueEkR3KeH2vwY07A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hU6y3XHlEzyTRC+38ejejQrXg+oKTfc3iLFAjnqG6VHjwhG3yAJx1bclVTgbzEIwu
-	 My3FhxvM4x+5mKjYyP8J55OCJzwQpdjNL1vuKMUoNEIdeNjqaH8hn02WwErz06i+da
-	 QjW8RyayDYcSoQMDiTRxrJ4vyVozMK2qoxcP29fAgg31LLNcL5zJrNwAzmsWKQsoDy
-	 CjFobIsje9+KTBEFxIM1Oh9nUA39uhXWFqVIH5LDgKc3XdoIXzofcFP5+RmCP9BQqd
-	 MA5fbaZV34Ug0FIAYX6woe+/UJnIrMmT2tDss+cHEHAJFnqN8KvIEb2mhuLKlxmZAZ
-	 dzjlqXDRae6AA==
-Date: Wed, 24 Sep 2025 10:44:09 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Yinon Burgansky <yinonburgansky@gmail.com>
-Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: Touchpad multitouch leaves ghost fingers
-Message-ID: <jm3z5dcgw66lzh5bbhnitnchbvgnvuvrzxltghrsmwtmbg76jw@rcvcyjevjrmq>
-References: <CAEU-x4=Zs22b5LX_rsBVMu4BxvDfO+CZkkuWuVNaxv8mqvh9Gw@mail.gmail.com>
- <bjtev7sgmcafoysd53xrxih4nawn2dbq4odylwdglbub6td2a3@nhoxenprhjvy>
- <CAEU-x4kL45DAddmNahjR2C97+43jchpmXep++LbeP8cXLEWN-w@mail.gmail.com>
- <CAEU-x4nv3XnXchevtwN5mkVcxqnpgBobhavxZc7BjS7EgYG8Ng@mail.gmail.com>
- <c3plpgl2zsx4do2odwdeowodkkdnfqpexlwqg5a5mckyibxlge@qai35f5yeswy>
- <CAEU-x4mJiBM_zKg1DaeJkKB3W3Ay08bUTc-D3QjFjDxNiZGd0g@mail.gmail.com>
- <iav7hzeaarxifwxk7zlfnt6vipqkp4h4ldt634exlvcswz62gj@a7ongaeduylz>
- <CAEU-x4k_56w17y0DOKG2TRtegGvzVKS9USAERMa1MtO+3wZivA@mail.gmail.com>
+	bh=7jz7CVzbmny4juN26yg07gL4GH/p+J8RpWH7vznEVcs=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=no0ksgjTG3FQK08TmBLXJe/PH4muOwkKQKFB5wc9nX2SGXZKyHEIm7JsP36UIKntU
+	 /LadNAGmnB5Ju4GcsBJMKzF1KAu2QKFH2BYq1jIaSajqazGzr96mSjDKZxiVePURKt
+	 el7I0v8oiJ06a5tQ6DmHi2IesHh301eg8N1zHLMy9uJyUhiNI7n25DwKZYyoh4dTqg
+	 4FClQoOYSWhxHnFS3v650PtWEDol93t4uHnvncWfERK+E7bSIXpycI5aC515Q2ZSAz
+	 2wHPHlGBCVnP9sK2x6Xcxjb6V+6pUZnn2+fraFqbaCnrIy+Yo5ZGWofFJNbK9wzeCB
+	 nzMHWfvuVyyUQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 61CECCE0B73; Wed, 24 Sep 2025 01:44:09 -0700 (PDT)
+Date: Wed, 24 Sep 2025 01:44:09 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, Andrii Nakryiko <andrii@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org
+Subject: Re: [PATCH 15/34] rcu: Add noinstr-fast
+ rcu_read_{,un}lock_tasks_trace() APIs
+Message-ID: <d341688c-fa19-4dab-88cb-3a45838cc2f1@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <580ea2de-799a-4ddc-bde9-c16f3fb1e6e7@paulmck-laptop>
+ <20250923142036.112290-15-paulmck@kernel.org>
+ <20250923173216.GU3245006@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEU-x4k_56w17y0DOKG2TRtegGvzVKS9USAERMa1MtO+3wZivA@mail.gmail.com>
+In-Reply-To: <20250923173216.GU3245006@noisy.programming.kicks-ass.net>
 
-On Sep 24 2025, Yinon Burgansky wrote:
-> On Tue, Sep 23, 2025 at 7:30 PM Benjamin Tissoires <bentiss@kernel.org> wrote:
-> > Got something out with https://gitlab.freedesktop.org/libevdev/udev-hid-bpf/-/merge_requests/204
-> > that seems to solve your case on the hid-recorder you provided.
+On Tue, Sep 23, 2025 at 07:32:16PM +0200, Peter Zijlstra wrote:
+> On Tue, Sep 23, 2025 at 07:20:17AM -0700, Paul E. McKenney wrote:
+> > When expressing RCU Tasks Trace in terms of SRCU-fast, it was
+> > necessary to keep a nesting count and per-CPU srcu_ctr structure
+> > pointer in the task_struct structure, which is slow to access.
+> > But an alternative is to instead make rcu_read_lock_tasks_trace() and
+> > rcu_read_unlock_tasks_trace(), which match the underlying SRCU-fast
+> > semantics, avoiding the task_struct accesses.
+> > 
+> > When all callers have switched to the new API, the previous
+> > rcu_read_lock_trace() and rcu_read_unlock_trace() APIs will be removed.
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > Cc: Andrii Nakryiko <andrii@kernel.org>
+> > Cc: Alexei Starovoitov <ast@kernel.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: <bpf@vger.kernel.org>
+> > ---
+> >  include/linux/rcupdate_trace.h | 37 ++++++++++++++++++++++++++++++++++
+> >  1 file changed, 37 insertions(+)
+> > 
+> > diff --git a/include/linux/rcupdate_trace.h b/include/linux/rcupdate_trace.h
+> > index 0bd47f12ecd17b..b87151e6b23881 100644
+> > --- a/include/linux/rcupdate_trace.h
+> > +++ b/include/linux/rcupdate_trace.h
+> > @@ -34,6 +34,43 @@ static inline int rcu_read_lock_trace_held(void)
+> >  
+> >  #ifdef CONFIG_TASKS_TRACE_RCU
+> >  
+> > +/**
+> > + * rcu_read_lock_tasks_trace - mark beginning of RCU-trace read-side critical section
+> > + *
+> > + * When synchronize_rcu_tasks_trace() is invoked by one task, then that
+> > + * task is guaranteed to block until all other tasks exit their read-side
+> > + * critical sections.  Similarly, if call_rcu_trace() is invoked on one
+> > + * task while other tasks are within RCU read-side critical sections,
+> > + * invocation of the corresponding RCU callback is deferred until after
+> > + * the all the other tasks exit their critical sections.
+> > + *
+> > + * For more details, please see the documentation for srcu_read_lock_fast().
+> > + */
+> > +static inline struct srcu_ctr __percpu *rcu_read_lock_tasks_trace(void)
+> > +{
+> > +	struct srcu_ctr __percpu *ret = srcu_read_lock_fast(&rcu_tasks_trace_srcu_struct);
+> > +
+> > +	if (IS_ENABLED(CONFIG_ARCH_WANTS_NO_INSTR))
+> > +		smp_mb();
 > 
-> Thank you so much!
-> The install command didn't work properly for me:
-> ```
-> $ ./install.sh "*DLL0945*"
-> $ tree /usr/local/lib/firmware
-> /usr/local/lib/firmware
-> └── hid
->     └── bpf
->         └── 0011-Synaptics__DLL0945.bpf.o
-> $ reboot
-> $ sudo tree /sys/fs/bpf
-> /sys/fs/bpf
-> 0 directories, 0 files
-> ```
+> I am somewhat confused by the relation between noinstr and smp_mb()
+> here. Subject mentions is, but Changelog is awfully silent again.
 
-oops, yes, my bad. I forgot to put the correct group on the device
-(multitouch_win_8 instead of generic). I've force pushed a new version,
-so please redownload and reinstall it.
+Thank you for looking this over!
 
+To Alexei's point, this commit should be merged with 18/34.
 
-> I tried to add it manually and it seems to work now :)
-> ```
-> $ sudo udev-hid-bpf add /sys/bus/hid/devices/0018:06CB:CE26.0005
-> /usr/local/lib/firmware/hid/bpf/0011-Synaptics__DLL0945.bpf.o
-> $ sudo tree /sys/fs/bpf
-> /sys/fs/bpf
-> └── hid
->     └── 0018_06CB_CE26_0005
->         └── 0011-Synaptics__DLL0945_bpf
->             └── synaptics_dll0945
-> 
-> 4 directories, 1 file
-> ```
-> But I have to do it manually every time.
-> Not sure what's wrong, maybe the added udev rule:
-> ```
-> $ cat /etc/udev/rules.d/81-hid-bpf.rules
-> ACTION!="add|remove|bind", GOTO="hid_bpf_end"
-> SUBSYSTEM!="hid", GOTO="hid_bpf_end"
-> 
-> # We lookup the hwdb during bind to set the property, but we don't do
-> anything else
-> IMPORT{builtin}="hwdb --subsystem=hid --lookup-prefix=hid-bpf:"
-> #ACTION=="add", ENV{.HID_BPF}=="1",
-> RUN{program}+="@@BINDIR@@/udev-hid-bpf add $sys$devpath"
-> #MARKER
-> ACTION=="add", ENV{.HID_BPF}=="1",
-> RUN{program}+="/usr/local/bin/udev-hid-bpf add $sys$devpath"
-> #ACTION=="remove", ENV{.HID_BPF}=="1",
-> RUN{program}+="@@BINDIR@@/udev-hid-bpf remove $sys$devpath"
-> #MARKER
-> ACTION=="remove", ENV{.HID_BPF}=="1",
-> RUN{program}+="/usr/local/bin/udev-hid-bpf remove $sys$devpath"
-> 
-> LABEL="hid_bpf_end"
-> ```
+> Furthermore I note that this is a positive while unlock is a negative
+> relation between the two. Which adds even more confusion.
 
-The udev rule is fine, the hwdb is not. If you look at
-/etc/udev/hwdb.d/81-hid-bpf-testing.hwdb you'll see that it shows:
+You are right, at most one of these two conditions can be correct.  ;-)
 
-hid-bpf:hid:b0018g0001v000006CBp0000CE26
-  HID_BPF_T_002=0011-Synaptics__DLL0945.bpf.o
-  .HID_BPF=1
+I believe that the one above needs a "!".
 
-But if you run `cat /sys/bus/hid/devices/0018:06CB:CE26.*/modalias`
-you'll see that you have something like:
+The point of this is that architectures that set ARCH_WANTS_NO_INSTR
+have promised that any point in the entry/exit code that RCU is not
+watching has been marked noinstr.  For those architectures, SRCU-fast
+can rely on the fact that the key updates in __srcu_read_lock_fast()
+and __srcu_read_unlock_fast() are either interrrupt-disabled regions or
+atomic operations, depending on the architecture.  This means that
+the synchronize_rcu{,_expedited}() calls in the SRCU-fast grace-period
+code will be properly ordered with those accesses.
 
-hid:b0018g0004v000006CBp0000CE26
+But for !ARCH_WANTS_NO_INSTR architectures, it is possible to attach
+various forms of tracing to entry/exit code that RCU is not watching,
+which means that those synchronize_rcu{,_expedited}() calls won't have
+the needed ordering properties.  So we use smp_mb() on the read side
+to force the needed ordering.
 
-the 'g0004' is not correct and therefore the qutobinding doesn't work :(
+Does that help, or am I missing the point of your question?
 
-> this is the udevadm info (after reboot, it is sometimes hidraw3
-> sometimes hidraw4):
-> ```
-> $  udevadm info --query=all --name=/dev/hidraw4
-> P: /devices/pci0000:00/0000:00:15.1/i2c_designware.1/i2c-1/i2c-DLL0945:00/0018:06CB:CE26.0005/hidraw/hidraw4
-> M: hidraw4
-> R: 4
-> J: c242:4
-> U: hidraw
-> D: c 242:4
-> N: hidraw4
-> L: 0
-> E: DEVPATH=/devices/pci0000:00/0000:00:15.1/i2c_designware.1/i2c-1/i2c-DLL0945:00/0018:06CB:CE26.0005/hidraw/hidraw4
-> E: DEVNAME=/dev/hidraw4
-> E: MAJOR=242
-> E: MINOR=4
-> E: SUBSYSTEM=hidraw
-> E: USEC_INITIALIZED=3980846
-> E: ID_VENDOR_FROM_DATABASE=Dell Inc
-> E: ID_PATH=pci-0000:00:15.1-platform-i2c_designware.1
-> E: ID_PATH_TAG=pci-0000_00_15_1-platform-i2c_designware_1
-> E: ID_FOR_SEAT=hidraw-pci-0000_00_15_1-platform-i2c_designware_1
-> E: TAGS=:seat:
-> E: CURRENT_TAGS=:seat:
-> ```
-> 
-> Thank you for the quick fix, it seems to work great so far!
+							Thanx, Paul
 
-\o/.
-
-Now I need to make the kernel patch. Ideally I'd like you to test it,
-but worse case I can just replay the recording as it seems to be enough.
-
-Cheers,
-Benjamin
+> > +	return ret;
+> > +}
+> > +
+> > +/**
+> > + * rcu_read_unlock_tasks_trace - mark end of RCU-trace read-side critical section
+> > + * @scp: return value from corresponding rcu_read_lock_tasks_trace().
+> > + *
+> > + * Pairs with the preceding call to rcu_read_lock_tasks_trace() that
+> > + * returned the value passed in via scp.
+> > + *
+> > + * For more details, please see the documentation for rcu_read_unlock().
+> > + */
+> > +static inline void rcu_read_unlock_tasks_trace(struct srcu_ctr __percpu *scp)
+> > +{
+> > +	if (!IS_ENABLED(CONFIG_ARCH_WANTS_NO_INSTR))
+> > +		smp_mb();
+> > +	srcu_read_unlock_fast(&rcu_tasks_trace_srcu_struct, scp);
+> > +}
+> > +
+> >  /**
+> >   * rcu_read_lock_trace - mark beginning of RCU-trace read-side critical section
+> >   *
+> > -- 
+> > 2.40.1
+> > 
 
