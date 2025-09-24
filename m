@@ -1,162 +1,145 @@
-Return-Path: <linux-kernel+bounces-830295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD1EB99561
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:05:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D84FB9957D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2008B162BD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:04:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00B9C4A44A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D182DE1F0;
-	Wed, 24 Sep 2025 10:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="M6+umNyh"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C0D2DCF45;
+	Wed, 24 Sep 2025 10:04:00 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153EB2DCF45;
-	Wed, 24 Sep 2025 10:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13ED22DCBFD
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758708237; cv=none; b=TDTeeOX6qDG1QCTroerosiA+pCnQ8VqtHFGEkPP+1V3NJaoxq9UeyM9nbTQ4nfVrUpggZdKchyZqP+UOivZ8lMfrxKLwGAqnGqbslMRWrh2YL6QkWarvmQ42sCaN8XAY+Y/YkPisHmYMlK/MAkzOthGkotRaznJLgnB16OojHyY=
+	t=1758708240; cv=none; b=uPuZduO37Xsqj8MTMhKbi0pnkhDqMzOtXYCXiDYBfnbUIh5kOMoNMFe5ocnCVnAZenabI8E9nsIw/2Oz3j6fbmFQPHrpZP5XN/JOwa3uuy80sxi51WMwDGOtuxmS7aXCFrHjQhzRHsl4t9oH7afjRbVFgkv7DATWwrUcJkEVTro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758708237; c=relaxed/simple;
-	bh=6cHySMqB+nzdaLylF7tksdYECDnHe6+rUeyfobW53Vc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KAyN2+dkqjuOWTnmYdSfCaUcslZtTmGl+X9pmqGvuvN8fGEj4DEHHPipHqAlhJzEhTVwNspPE+fL6PvS0waOt8dMgwDKMpjv9RV22+/1F0vq4+l2JoaQet+gpzaiSa0JffPyzk8aT6zJIye7DJ7Q2urztYIvP5i3UlZpGEZGNBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=M6+umNyh; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (85-76-33-231-nat.elisa-mobile.fi [85.76.33.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id A60761E31;
-	Wed, 24 Sep 2025 12:02:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1758708147;
-	bh=6cHySMqB+nzdaLylF7tksdYECDnHe6+rUeyfobW53Vc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M6+umNyhbn87M0CQ8scvEmsXjFyyLqnw083DoAJO+dHBIlcBry/x8wBh+0zKGjNxv
-	 tD4bracrfA2yzq8D303kqqBIEKlec5ILEGaAurnFj9fz6ZnTxrIiYYUTvI0M06gYmB
-	 im46XpsEHCcwd35rSXRDGVxmiz5f9jBNP0f7TZuA=
-Date: Wed, 24 Sep 2025 13:03:17 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-media@vger.kernel.org, netdev@vger.kernel.org,
-	linux-spi@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Javier Carrasco <javier.carrasco@wolfvision.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Matthias Fend <matthias.fend@emfend.at>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Mark Brown <broonie@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 14/16] leds: Use fwnode_get_next_child_node() instead
-Message-ID: <20250924100317.GL28073@pendragon.ideasonboard.com>
-References: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
- <20250924074602.266292-15-sakari.ailus@linux.intel.com>
+	s=arc-20240116; t=1758708240; c=relaxed/simple;
+	bh=0mtVf24+D/MQCrndIP6DN/PDPF6Ctgkw0o/5T/uyuYM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ujPVP/iQw7KnwP+dIFKQ2xgX3vKwjAhIA28Gh1FWJEHzR9L/thJuei/X4onUlN+yvTSKiNi+avgbu4X41KITndJBkH6nHdhHCbG2jT8kmI9HfJoyF7SRQXq+tAYr4EuPx5OTqJymuZ7jaQQP4RS+1yYikdyg9uPdH1PcRXh8+RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4257ae42790so43377065ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:03:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758708230; x=1759313030;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nvny8gHoUWjEHeVJEQBH++fUzkBZJmoWZEK6GwrMEGY=;
+        b=iKIOlXkwOR9sj79X24iq+dkq1gRi3N8zaHjveudRxAo0q+R9/BOUbTihQfKMdAsOd4
+         sRV6GLMuNpEfoe6eq1iQohJQQRjM6Z269cq3biNShobU73hbTag26c/QIKpaA2bJ0PGz
+         8gaBfcilIIoMbqgaOUnG6jBeFvYbvWeHxoBkv18JAdEeEh7gdDSfehnOPdoviV0dKCeq
+         Ttfx5kkRiG58LdyW9Mnx9HEIqJMslDp5my1UmEMWJakjsRumcgyhfNNExvgsXIzVXWF6
+         J0k+8KvVJXDONQZqpv77Xx1D9aju8+MSAnxhJAChcpqkNDOpZD32hI1d1wOstoDiyADx
+         Oldw==
+X-Gm-Message-State: AOJu0YwyPG8Pe3nvJym+GbQU9cHFD+ubJgBwOrp7o/V5+RgRu4jJ9Woz
+	5+P0L0YKZBdVtkJSsX3NlFhJ+CyBIzh0Nhw8LrTMsHu+KgxzlxUai5u0ydBd7n5iaSOKYPKhDz4
+	Tb5KDDah2o7X0uIJI4aDb+vtmVYMztzSJZUr6STbZjrKv+ZZiguH2YhRNLl0=
+X-Google-Smtp-Source: AGHT+IGel8aEsO/KE8wGcjr6QZzs65cBkJKJo6UapeXoV6zU0oWYacRJaKk4qp9rywqOYAiSzzGVWSCfwUcsLd/NFkSmrBmJIk1f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250924074602.266292-15-sakari.ailus@linux.intel.com>
+X-Received: by 2002:a05:6e02:2305:b0:402:b8e3:c9f5 with SMTP id
+ e9e14a558f8ab-42581e04911mr86809035ab.2.1758708230134; Wed, 24 Sep 2025
+ 03:03:50 -0700 (PDT)
+Date: Wed, 24 Sep 2025 03:03:50 -0700
+In-Reply-To: <68d26261.a70a0220.4f78.0004.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d3c206.050a0220.139b6.002f.GAE@google.com>
+Subject: Forwarded: [PATCH] Fix a lock imbalance bug in hugetlb_vmdelete_list()
+ that
+From: syzbot <syzbot+62edf7e27b2e8f754525@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 24, 2025 at 10:46:00AM +0300, Sakari Ailus wrote:
-> fwnode_get_next_child_node() is now the same as
-> fwnode_get_next_available_child_node() on all backends (OF, ACPI and
-> swnode). In order to remove the available variants, switch the uses to
-> non-available variants (device_get_next_child_node() in this case).
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+***
 
-> ---
->  drivers/leds/flash/leds-rt4505.c   | 2 +-
->  drivers/leds/flash/leds-rt8515.c   | 2 +-
->  drivers/leds/flash/leds-sgm3140.c  | 3 +--
->  drivers/leds/flash/leds-tps6131x.c | 2 +-
->  4 files changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/leds/flash/leds-rt4505.c b/drivers/leds/flash/leds-rt4505.c
-> index f16358b8dfc1..18fd5b7e528f 100644
-> --- a/drivers/leds/flash/leds-rt4505.c
-> +++ b/drivers/leds/flash/leds-rt4505.c
-> @@ -365,7 +365,7 @@ static int rt4505_probe(struct i2c_client *client)
->  		return ret;
->  	}
->  
-> -	child = fwnode_get_next_available_child_node(client->dev.fwnode, NULL);
-> +	child = device_get_next_child_node(&client->dev, NULL);
->  	if (!child) {
->  		dev_err(priv->dev, "Failed to get child node\n");
->  		return -EINVAL;
-> diff --git a/drivers/leds/flash/leds-rt8515.c b/drivers/leds/flash/leds-rt8515.c
-> index 6af0d2c7fc56..f6b439674c03 100644
-> --- a/drivers/leds/flash/leds-rt8515.c
-> +++ b/drivers/leds/flash/leds-rt8515.c
-> @@ -304,7 +304,7 @@ static int rt8515_probe(struct platform_device *pdev)
->  		return dev_err_probe(dev, PTR_ERR(rt->enable_torch),
->  				     "cannot get ENT (enable torch) GPIO\n");
->  
-> -	child = fwnode_get_next_available_child_node(dev->fwnode, NULL);
-> +	child = device_get_next_child_node(dev, NULL);
->  	if (!child) {
->  		dev_err(dev,
->  			"No fwnode child node found for connected LED.\n");
-> diff --git a/drivers/leds/flash/leds-sgm3140.c b/drivers/leds/flash/leds-sgm3140.c
-> index 3e83200675f2..dc6840357370 100644
-> --- a/drivers/leds/flash/leds-sgm3140.c
-> +++ b/drivers/leds/flash/leds-sgm3140.c
-> @@ -214,8 +214,7 @@ static int sgm3140_probe(struct platform_device *pdev)
->  		return dev_err_probe(&pdev->dev, ret,
->  				     "Failed to request regulator\n");
->  
-> -	child_node = fwnode_get_next_available_child_node(pdev->dev.fwnode,
-> -							  NULL);
-> +	child_node = device_get_next_child_node(&pdev->dev, NULL);
->  	if (!child_node) {
->  		dev_err(&pdev->dev,
->  			"No fwnode child node found for connected LED.\n");
-> diff --git a/drivers/leds/flash/leds-tps6131x.c b/drivers/leds/flash/leds-tps6131x.c
-> index 6f4d4fd55361..f0f1f2b77d5a 100644
-> --- a/drivers/leds/flash/leds-tps6131x.c
-> +++ b/drivers/leds/flash/leds-tps6131x.c
-> @@ -544,7 +544,7 @@ static int tps6131x_parse_node(struct tps6131x *tps6131x)
->  
->  	tps6131x->valley_current_limit = device_property_read_bool(dev, "ti,valley-current-limit");
->  
-> -	tps6131x->led_node = fwnode_get_next_available_child_node(dev->fwnode, NULL);
-> +	tps6131x->led_node = device_get_next_child_node(dev, NULL);
->  	if (!tps6131x->led_node) {
->  		dev_err(dev, "Missing LED node\n");
->  		return -EINVAL;
+Subject: [PATCH] Fix a lock imbalance bug in hugetlb_vmdelete_list() that
+Author: kartikey406@gmail.com
 
--- 
-Regards,
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.gi=
+t master
 
-Laurent Pinchart
+Fix a lock imbalance bug in hugetlb_vmdelete_list() that causes:
+WARNING: bad unlock balance detected!
+  hugetlb_vmdelete_list+0x179/0x1c0 is trying to release lock=20
+  (&vma_lock->rw_sema) but there are no more locks to release!
+
+The issue is a race condition between multiple threads operating on the
+same VMA:
+
+1. Thread 1 calls hugetlb_vma_trylock_write() when vma->vm_private_data=3DN=
+ULL
+2. trylock returns success (no lock needed for this VMA type)
+3. Thread 2 allocates a lock structure: vma->vm_private_data=3D&new_lock
+4. Thread 1 calls hugetlb_vma_unlock_write(), sees non-NULL vm_private_data
+5. Thread 1 tries to unlock a lock it never acquired =E2=86=92 crash
+
+The fix is to save the VMA lock state at the time we make the locking
+decision, rather than checking it again at unlock time. This prevents
+the time-of-check-time-of-use (TOCTOU) race condition.
+
+Reported-by: syzbot+62edf7e27b2e8f754525@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=3D62edf7e27b2e8f754525
+Fixes: 8d9bfb2608cf ("hugetlb: add vma based lock for pmd sharing")
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/hugetlbfs/inode.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 9e0625167517..ae3e07eacd37 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -475,15 +475,16 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pg=
+off_t start, pgoff_t end,
+ 		      zap_flags_t zap_flags)
+ {
+ 	struct vm_area_struct *vma;
+-
+ 	/*
+ 	 * end =3D=3D 0 indicates that the entire range after start should be
+ 	 * unmapped.  Note, end is exclusive, whereas the interval tree takes
+ 	 * an inclusive "last".
+ 	 */
+ 	vma_interval_tree_foreach(vma, root, start, end ? end - 1 : ULONG_MAX) {
++		struct hugetlb_vma_lock *vma_lock;
+ 		unsigned long v_start;
+ 		unsigned long v_end;
++		vma_lock =3D vma->vm_private_data;
+=20
+ 		if (!hugetlb_vma_trylock_write(vma))
+ 			continue;
+@@ -498,7 +499,8 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgof=
+f_t start, pgoff_t end,
+ 		 * vmas.  Therefore, lock is not held when calling
+ 		 * unmap_hugepage_range for private vmas.
+ 		 */
+-		hugetlb_vma_unlock_write(vma);
++		if (vma_lock)
++			hugetlb_vma_unlock_write(vma);
+ 	}
+ }
+=20
+--=20
+2.43.0
+
 
