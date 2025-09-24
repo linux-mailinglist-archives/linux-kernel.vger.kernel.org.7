@@ -1,246 +1,243 @@
-Return-Path: <linux-kernel+bounces-830382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07243B99849
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:00:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9534BB9984F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 113852A0487
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:00:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F196F7A2EB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19812E425E;
-	Wed, 24 Sep 2025 11:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6392E3B08;
+	Wed, 24 Sep 2025 11:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kael-k.io header.i=@kael-k.io header.b="UoPz72OV"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m9NBSlHU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178D538DEC;
-	Wed, 24 Sep 2025 11:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B9F2D77F1;
+	Wed, 24 Sep 2025 11:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758711628; cv=none; b=nqgxvyLnflfCuiMVTaMAa6XVdQvXzwvPf9924Hj+ENR122eZaFPY5rOlkiITxKvR5UzknaOF4PHas/dn8QgTpyid+1WxLgdwJ4bSP5rBa80uJL2GLvnChr9KpA/T0aK+mnV+OnWEM2ix0Rk+gSsTcs0hJrvFtWC3ml90E7TouBI=
+	t=1758711667; cv=none; b=A8mgWHh4nZPnbE6hRhHIrKnwp0mkUS+yRryDQY3ahmGMkHGTiM+KCQwDs57diJ2KvecXJX56UVArf4Jxb6rwelfQ2AkUpU94vv9mBwvdcLW2XUCxf9lW1PKQouPZlv2Q7j+qWfH0wzZZf38vZ10Elw14DYpTBQCiUGzE2x/RHSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758711628; c=relaxed/simple;
-	bh=7KpDcW/oIVgg5lRaVdhpKQRu1/7ir1rselHbnNp1Mrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PF/OdCTJ08T1bU8aVdp2jmWVB4MlW9n2EV+p5BOUBj2fZ9p0UqwlbvU2QCNLtrr3U+0MnIjBrzf3eVY6xYAsaCBh3ZqrbGamZQcuUyhyUcXNG2/pjWLgOHBj+DybvshbS4e1LHyAPFWDI6S0RLemPPcye2B0dKxhCkcSVths0VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kael-k.io; spf=pass smtp.mailfrom=kael-k.io; dkim=pass (2048-bit key) header.d=kael-k.io header.i=@kael-k.io header.b=UoPz72OV; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kael-k.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kael-k.io
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cWv5J6QKYz9snt;
-	Wed, 24 Sep 2025 13:00:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kael-k.io; s=MBO0001;
-	t=1758711620;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dAaz71v8UalAH+2YQiktqvi4SkWlPgPtsfTdejouApE=;
-	b=UoPz72OVzwXN9741E8vdeHe/Z4pz8IPwTTj+I919pbeW2xeWwfb1g1TDWKnrCnf+FDUZ0Q
-	0SqqbUaqlw0fEHjsi4kFsd6aMiFyPrKHo+REpAYH3Xn+SbfKjPNGcPvN9yzEfkXF3bIwN2
-	rtUV6sktnlVtLnZwmnXU/k74XDh6aEh4sIbZ9bo8QlEfWoZJZ5n+PLYZa6eEQet4+MSXGi
-	gyeqBc8KxWaCCQlxATdOGnV6zIzYxjef0Uoj74ZeEm57CSY8VbwubqeEbwZMcjgKbtp8kp
-	kRJif+30aiupPSQplk3CEunq0jU0nLgUR1DVoYNwyz0tWbgd4sA33Swg45IuUw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of dev@kael-k.io designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=dev@kael-k.io
-Date: Wed, 24 Sep 2025 13:00:08 +0200
-From: Kael D'Alcamo <dev@kael-k.io>
-To: Rob Herring <robh@kernel.org>
-Cc: Olivia Mackall <olivia@selenic.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: rng: sparc_sun_oracle_rng: convert to DT
- schema
-Message-ID: <uprke6fujhmckymlpy6oskecol4awhqyroqlg25tprmhnkeyy6@ztozdrlmeotp>
-References: <20250923103900.136621-1-dev@kael-k.io>
- <20250923142943.GA3134901-robh@kernel.org>
+	s=arc-20240116; t=1758711667; c=relaxed/simple;
+	bh=FWi+sdP+3A5sl++XyQXcfBP4+Bq72Kxuhvvsb8DdlHM=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=A3MvcSEcqhWJvQVJAd+ttR3l2D1Nk8GD5CAoKSnnt8LHCk+YvFycZ2A3mTmqiSSm/83CV3/92M4gy6L9E2NId3aH4R+OswufHy4wkzW7qBtdpN9tzLM7xbQ11N0ODYDxJgeCRDJl4jJttQ0QdrU3u6GCEtPxCMVF03OPu/1cnyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m9NBSlHU; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758711666; x=1790247666;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=FWi+sdP+3A5sl++XyQXcfBP4+Bq72Kxuhvvsb8DdlHM=;
+  b=m9NBSlHUJFnUC5A1DWcr9LZgayEKcdL3h8/VslEpt9WvidYKep//6jc7
+   X2PYe+Y9DDOZkL8l/UdY4h2HZt1jAWjen8UIJOorIbyeE+1hjBy6BBAip
+   Xe5fy8b2/yVWKM2uhXKZmbgwTo+G7zbFUDoSW0MpkFb6HJINNR0dDTnPt
+   pC9V8GE8FdrSE6o8vl7vlWYCBQ1k3Jme4Ss2lkq7AMen3FzcVeFw7A2ut
+   MzWwYWLWeePx7rKO2r9YDqNcTkceNAjZiSYt0xdashy6yRUTKlzMGHTV3
+   EToJsDSm7WlgMUbg3bHSXUw5NNFkxpJ9kBakt7qio6AjsKG1Lrvz6jkhG
+   Q==;
+X-CSE-ConnectionGUID: DHOi0KWEQdCgtnu4144Pvw==
+X-CSE-MsgGUID: gsCFcO6kRwCBRzlxiI/MMA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="72361976"
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
+   d="scan'208";a="72361976"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 04:00:45 -0700
+X-CSE-ConnectionGUID: dnRZxMOrTViMZYn0IV0trw==
+X-CSE-MsgGUID: MbDbjP3iQB2NzSuPYd6zqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
+   d="scan'208";a="181297301"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.210])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 04:00:40 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 24 Sep 2025 14:00:36 +0300 (EEST)
+To: Armin Wolf <W_Armin@gmx.de>
+cc: jlee@suse.com, basak.sb2006@gmail.com, rayanmargham4@gmail.com, 
+    kuurtb@gmail.com, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] platform/x86: acer-wmi: Fix setting of fan
+ behavior
+In-Reply-To: <20250923215205.326367-2-W_Armin@gmx.de>
+Message-ID: <f1be3296-4cae-3c0e-3b5f-23774f20f37a@linux.intel.com>
+References: <20250923215205.326367-1-W_Armin@gmx.de> <20250923215205.326367-2-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923142943.GA3134901-robh@kernel.org>
-X-Rspamd-Queue-Id: 4cWv5J6QKYz9snt
+Content-Type: text/plain; charset=US-ASCII
 
-On 2025-09-23 09:29:43, Rob Herring wrote:
-> On Tue, Sep 23, 2025 at 12:38:22PM +0200, Kael D'Alcamo wrote:
-> > Convert the Devicetree binding documentation for:
-> > * SUNW,n2-rng
-> > * SUNW,vf-rng
-> > * SUNW,kt-rng
-> > * ORCL,m4-rng
-> > * ORCL,m7-rng
-> > from plain text to YAML.
+On Tue, 23 Sep 2025, Armin Wolf wrote:
+
+> After studying the linuwu_sense driver
+> (https://github.com/0x7375646F/Linuwu-Sense) i was able to understand
+> the meaning of the SetGamingFanBehavior() WMI method:
 > 
-> While I welcome any conversions, I wouldn't put Sparc stuff high on 
-> priority list as we're not going to run the validation tools on them 
-> and we can't change anything in their DTs if we did. My priority is the 
-> remaining warnings on arm64 and then active arm32 platforms (e.g. 
-> aspeed). We're down to <700 unique warnings on arm64 (from ~10000). 
+> - the first 16-bit are a bitmap of all fans affected by a fan behavior
+>   change request.
 > 
-> There's builds with warnings of Linus' and next trees here:
+> - the next 8 bits contain four fan mode fields (2-bit), each being
+>   associated with a bit inside the fan bitmap.
 > 
-> https://gitlab.com/robherring/linux-dt/-/jobs
+> There are three fan modes: auto, turbo and custom.
 > 
-> And some scripts to fetch the warnings here:
+> Use this newfound knowledge to fix the turbo fan handling by setting
+> the correct bits before calling SetGamingFanBehavior(). Also check
+> the result of the WMI method call and return an error should the ACPI
+> firmware signal failure.
 > 
-> https://gitlab.com/robherring/ci-jobs
+> Reviewed-by: Kurt Borja <kuurtb@gmail.com>
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  drivers/platform/x86/acer-wmi.c | 76 +++++++++++++++++++++++----------
+>  1 file changed, 53 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
+> index 69336bd778ee..a41555ee8589 100644
+> --- a/drivers/platform/x86/acer-wmi.c
+> +++ b/drivers/platform/x86/acer-wmi.c
+> @@ -68,10 +68,19 @@ MODULE_LICENSE("GPL");
+>  #define ACER_WMID_SET_GAMING_LED_METHODID 2
+>  #define ACER_WMID_GET_GAMING_LED_METHODID 4
+>  #define ACER_WMID_GET_GAMING_SYS_INFO_METHODID 5
+> -#define ACER_WMID_SET_GAMING_FAN_BEHAVIOR 14
+> +#define ACER_WMID_SET_GAMING_FAN_BEHAVIOR_METHODID 14
+>  #define ACER_WMID_SET_GAMING_MISC_SETTING_METHODID 22
+>  #define ACER_WMID_GET_GAMING_MISC_SETTING_METHODID 23
+>  
+> +#define ACER_GAMING_FAN_BEHAVIOR_ID_MASK GENMASK_ULL(15, 0)
+> +#define ACER_GAMING_FAN_BEHAVIOR_SET_MODE_MASK GENMASK_ULL(23, 16)
+> +
+> +#define ACER_GAMING_FAN_BEHAVIOR_CPU BIT(0)
+> +#define ACER_GAMING_FAN_BEHAVIOR_GPU BIT(3)
+> +
+> +#define ACER_GAMING_FAN_BEHAVIOR_CPU_MODE_MASK GENMASK(1, 0)
+> +#define ACER_GAMING_FAN_BEHAVIOR_GPU_MODE_MASK GENMASK(7, 6)
+> +
+>  #define ACER_GAMING_MISC_SETTING_STATUS_MASK GENMASK_ULL(7, 0)
+>  #define ACER_GAMING_MISC_SETTING_INDEX_MASK GENMASK_ULL(7, 0)
+>  #define ACER_GAMING_MISC_SETTING_VALUE_MASK GENMASK_ULL(15, 8)
+> @@ -121,6 +130,12 @@ enum acer_wmi_predator_v4_sensor_id {
+>  	ACER_WMID_SENSOR_GPU_TEMPERATURE	= 0x0A,
+>  };
+>  
+> +enum acer_wmi_gaming_fan_mode {
+> +	ACER_WMID_FAN_MODE_AUTO		= 0x01,
+> +	ACER_WMID_FAN_MODE_TURBO	= 0x02,
+> +	ACER_WMID_FAN_MODE_CUSTOM	= 0x03,
+> +};
+> +
+>  enum acer_wmi_predator_v4_oc {
+>  	ACER_WMID_OC_NORMAL			= 0x0000,
+>  	ACER_WMID_OC_TURBO			= 0x0002,
+> @@ -1565,9 +1580,6 @@ static acpi_status WMID_gaming_set_u64(u64 value, u32 cap)
+>  	case ACER_CAP_TURBO_LED:
+>  		method_id = ACER_WMID_SET_GAMING_LED_METHODID;
+>  		break;
+> -	case ACER_CAP_TURBO_FAN:
+> -		method_id = ACER_WMID_SET_GAMING_FAN_BEHAVIOR;
+> -		break;
+>  	default:
+>  		return AE_BAD_PARAMETER;
+>  	}
+> @@ -1618,25 +1630,43 @@ static int WMID_gaming_get_sys_info(u32 command, u64 *out)
+>  	return 0;
+>  }
+>  
+> +static int WMID_gaming_set_fan_behavior(u16 fan_bitmap, u8 mode_bitmap)
+
+Should the name be in plural as this sets all fans?
+
+Please also consider what I noted to patch 2 about this nesting of 
+FIELD_PREP()s. Getting rid of that effectively means the caller ORs all 
+bits together but I don't think that would make the code harder to read.
+
+> +{
+> +	acpi_status status;
+> +	u64 input = 0;
+> +	u64 result;
+> +
+> +	input |= FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_ID_MASK, fan_bitmap);
+> +	input |= FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_SET_MODE_MASK, mode_bitmap);
+> +
+> +	status = WMI_gaming_execute_u64(ACER_WMID_SET_GAMING_FAN_BEHAVIOR_METHODID, input,
+> +					&result);
+> +	if (ACPI_FAILURE(status))
+> +		return -EIO;
+> +
+> +	/* The return status must be zero for the operation to have succeeded */
+> +	if (FIELD_GET(ACER_GAMING_FAN_BEHAVIOR_STATUS_MASK, result))
+> +		return -EIO;
+> +
+> +	return 0;
+> +}
+> +
+>  static void WMID_gaming_set_fan_mode(u8 fan_mode)
+>  {
+> -	/* fan_mode = 1 is used for auto, fan_mode = 2 used for turbo*/
+> -	u64 gpu_fan_config1 = 0, gpu_fan_config2 = 0;
+> -	int i;
+> -
+> -	if (quirks->cpu_fans > 0)
+> -		gpu_fan_config2 |= 1;
+> -	for (i = 0; i < (quirks->cpu_fans + quirks->gpu_fans); ++i)
+> -		gpu_fan_config2 |= 1 << (i + 1);
+> -	for (i = 0; i < quirks->gpu_fans; ++i)
+> -		gpu_fan_config2 |= 1 << (i + 3);
+> -	if (quirks->cpu_fans > 0)
+> -		gpu_fan_config1 |= fan_mode;
+> -	for (i = 0; i < (quirks->cpu_fans + quirks->gpu_fans); ++i)
+> -		gpu_fan_config1 |= fan_mode << (2 * i + 2);
+> -	for (i = 0; i < quirks->gpu_fans; ++i)
+> -		gpu_fan_config1 |= fan_mode << (2 * i + 6);
+> -	WMID_gaming_set_u64(gpu_fan_config2 | gpu_fan_config1 << 16, ACER_CAP_TURBO_FAN);
+> +	u16 mode_bitmap = 0;
+> +	u16 fan_bitmap = 0;
+> +
+> +	if (quirks->cpu_fans > 0) {
+> +		fan_bitmap |= ACER_GAMING_FAN_BEHAVIOR_CPU;
+> +		mode_bitmap |= FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_CPU_MODE_MASK, fan_mode);
+> +	}
+> +
+> +	if (quirks->gpu_fans > 0) {
+> +		fan_bitmap |= ACER_GAMING_FAN_BEHAVIOR_GPU;
+> +		mode_bitmap |= FIELD_PREP(ACER_GAMING_FAN_BEHAVIOR_GPU_MODE_MASK, fan_mode);
+> +	}
+> +
+> +	WMID_gaming_set_fan_behavior(fan_bitmap, mode_bitmap);
+>  }
+>  
+>  static int WMID_gaming_set_misc_setting(enum acer_wmi_gaming_misc_setting setting, u8 value)
+> @@ -1923,7 +1953,7 @@ static int acer_toggle_turbo(void)
+>  		WMID_gaming_set_u64(0x1, ACER_CAP_TURBO_LED);
+>  
+>  		/* Set FAN mode to auto */
+> -		WMID_gaming_set_fan_mode(0x1);
+> +		WMID_gaming_set_fan_mode(ACER_WMID_FAN_MODE_AUTO);
+>  
+>  		/* Set OC to normal */
+>  		if (has_cap(ACER_CAP_TURBO_OC)) {
+> @@ -1937,7 +1967,7 @@ static int acer_toggle_turbo(void)
+>  		WMID_gaming_set_u64(0x10001, ACER_CAP_TURBO_LED);
+>  
+>  		/* Set FAN mode to turbo */
+> -		WMID_gaming_set_fan_mode(0x2);
+> +		WMID_gaming_set_fan_mode(ACER_WMID_FAN_MODE_TURBO);
+>  
+>  		/* Set OC to turbo mode */
+>  		if (has_cap(ACER_CAP_TURBO_OC)) {
 > 
 
-Thanks for the feedback, I'll definetly take a look to those warnings in 
-order to propose more useful contributions in the future.
+-- 
+ i.
 
-Meanwhile, given that I already wrote this DT binding schema, I think it would
-be a shame to discard the work already done, even if it's low priority.
-
-> > 
-> > Signed-off-by: Kael D'Alcamo <dev@kael-k.io>
-> > ---
-> >  .../bindings/rng/sparc_sun_oracle_rng.txt     | 30 ---------
-> >  .../bindings/rng/sparc_sun_oracle_rng.yaml    | 61 +++++++++++++++++++
-> 
-> SUNW,n2-rng.yaml for the filename.
->
-> >  2 files changed, 61 insertions(+), 30 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.txt
-> >  create mode 100644 Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.txt b/Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.txt
-> > deleted file mode 100644
-> > index b0b211194c71..000000000000
-> > --- a/Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.txt
-> > +++ /dev/null
-> > @@ -1,30 +0,0 @@
-> > -HWRNG support for the n2_rng driver
-> > -
-> > -Required properties:
-> > -- reg		: base address to sample from
-> > -- compatible	: should contain one of the following
-> > -	RNG versions:
-> > -	- 'SUNW,n2-rng' for Niagara 2 Platform (SUN UltraSPARC T2 CPU)
-> > -	- 'SUNW,vf-rng' for Victoria Falls Platform (SUN UltraSPARC T2 Plus CPU)
-> > -	- 'SUNW,kt-rng' for Rainbow/Yosemite Falls Platform (SUN SPARC T3/T4), (UltraSPARC KT/Niagara 3 - development names)
-> > -	more recent systems (after Oracle acquisition of SUN)
-> > -	- 'ORCL,m4-rng' for SPARC T5/M5
-> > -	- 'ORCL,m7-rng' for SPARC T7/M7
-> > -
-> > -Examples:
-> > -/* linux LDOM on SPARC T5-2 */
-> > -Node 0xf029a4f4
-> > -	.node:  f029a4f4
-> > -	rng-#units:  00000002
-> > -	compatible: 'ORCL,m4-rng'
-> > -	reg:  0000000e
-> > -	name: 'random-number-generator'
-> > -
-> > -/* solaris on SPARC M7-8 */
-> > -Node 0xf028c08c
-> > -	rng-#units:  00000003
-> > -	compatible: 'ORCL,m7-rng'
-> > -	reg:  0000000e
-> > -	name:  'random-number-generator'
-> > -
-> > -PS: see as well prtconfs.git by DaveM
-> > diff --git a/Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.yaml b/Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.yaml
-> > new file mode 100644
-> > index 000000000000..fea6be544784
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.yaml
-> > @@ -0,0 +1,61 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/rng/sparc_sun_oracle_rng.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: HWRNG support for the n2_rng driver
-> 
-> SUN UltraSPARC HWRNG
-> 
-> > +
-> > +maintainers:
-> > +  - David S. Miller <davem@davemloft.net>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - SUNW,n2-rng  # for Niagara 2 Platform (SUN UltraSPARC T2 CPU)
-> > +      - SUNW,vf-rng  # for Victoria Falls Platform (SUN UltraSPARC T2 Plus CPU)
-> > +      # for Rainbow/Yosemite Falls Platform (SUN SPARC T3/T4),
-> > +      #  (UltraSPARC KT/Niagara 3 - development names)
-> > +      #  more recent systems (after Oracle acquisition of SUN)
-> > +      - SUNW,kt-rng
-> > +      - ORCL,m4-rng  # for SPARC T5/M5
-> > +      - ORCL,m7-rng  # for SPARC T7/M7
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  "rng-#units":
-> > +    description: Number of RNG units
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    minimum: 1
-> 
-> This will need an exception in vendor-prefixes.yaml to fix the warning. 
-> Looking at some of the Sparc DTs briefly, there's a few more ways '#' 
-> shows up.
-> 
-> I suppose this:
-> 
-> "^[a-zA-Z0-9#_][a-zA-Z0-9+\\-._@]{0,63}$": true
-> 
-> needs to be:
-> 
-> "^[a-zA-Z0-9#_][a-zA-Z0-9#+\\-._@]{0,63}$": true 
-> 
-> (I think the '@' should be dropped here.)
-> 
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +
-> > +additionalProperties: false
-> > +
-> > +# PS: see as well prtconfs.git by DaveM
-> > +examples:
-> > +  - |
-> > +    bus {
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +        rng@e {
-> > +            compatible = "ORCL,m4-rng";
-> > +            reg = <0xe>;
-> > +            rng-#units = <2>;
-> > +        };
-> > +    };
-> > +  - |
-> > +    bus {
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +        rng@e {
-> > +            compatible = "ORCL,m7-rng";
-> > +            reg = <0xe>;
-> > +            rng-#units = <3>;
-> > +        };
-> > +    };
-> 
-> I think one example is enough.
-> 
-> Rob
-
-Kael
 
