@@ -1,242 +1,262 @@
-Return-Path: <linux-kernel+bounces-830389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1A5AB9986E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:05:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19BD8B99895
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C22E3A13B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:05:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C08CB17FB4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6152B2E5B36;
-	Wed, 24 Sep 2025 11:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321112E6105;
+	Wed, 24 Sep 2025 11:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JfBi+CGz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="grT3aDMy";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JfBi+CGz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="grT3aDMy"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dT7yiylI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA1726E6E4
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9352E2EE7
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758711908; cv=none; b=o7CmgadY+jXxs8LY1QSfgYYusWsSYQAlplkatU5PRCzCQdaIw6ssG3t7pLYgxSRtfoI/CUzPVUH3wUZkdmL6wdz8FaNQsIZmeiHL8XVF8JiE62uf4hBDNJ6wYpvzRrv2B4fyU4FhPsUxQhVvkYphIz4qnA5ywewRpi73Q6GqEtY=
+	t=1758711954; cv=none; b=pAZyi2ss5eYR/Er16+OuwSCo1bTPYqPYfKdfmmWsW7lDRk10B5dEOke3OT3MaxmK0kUhqIE7oMWyW6nJyo5b9Lv/L4Yxz5h8sjzQzdznjifhEO8v5qKEHYLDjPnA8MrQf8U9EWXLj3SDN4W9QtywA4BMYGjDy7dBGwIYP0qKzrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758711908; c=relaxed/simple;
-	bh=8A5MmysxBhtmG5TdDxNcLAWj+kAlErz7UozgaIhk7AI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bu9QjULg72fZxmm+Qf5sZ4cK0I9QiRMq073UCu/UOo47SVj73r8eJxl1g04O3X1i40ktDSzybw7xyeMyjESqh4x8FmNXvgmOs0kX52z2Q294Mhg2qbV1pEv1QF1zPmhw2JU99xR9Z5tbzdrcv7O3b+pajXZjYyyTvhDIFQvyp6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JfBi+CGz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=grT3aDMy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JfBi+CGz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=grT3aDMy; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0F1BA33C4D;
-	Wed, 24 Sep 2025 11:05:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758711904; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IN730g8TVV3pXRYVV4cU5ljS04QgWjzQ/7HWfHgg/fY=;
-	b=JfBi+CGzFoX1/os0W15NAGOv4NRE8Asz6VNN7TDWOHuN+8ogddwt8df7bQjgo1ynAXaL6n
-	OtTiMWz+tHFLBwGBaRyngfGuNA/F1my0AUp54f0C5hy6pxCgtvYdEJ9CJH1u0gEcDNEsYg
-	hNmiTFwrJpJN+0SXpRHTvtP1qHSLZuY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758711904;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IN730g8TVV3pXRYVV4cU5ljS04QgWjzQ/7HWfHgg/fY=;
-	b=grT3aDMyg+m8kRfBET4t1nq4wtLBiRvAX633IJRDpNoTCHyR+uUaqf5fJ+TMWl8hd35txV
-	LrymM7ZOqxy7yyAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758711904; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IN730g8TVV3pXRYVV4cU5ljS04QgWjzQ/7HWfHgg/fY=;
-	b=JfBi+CGzFoX1/os0W15NAGOv4NRE8Asz6VNN7TDWOHuN+8ogddwt8df7bQjgo1ynAXaL6n
-	OtTiMWz+tHFLBwGBaRyngfGuNA/F1my0AUp54f0C5hy6pxCgtvYdEJ9CJH1u0gEcDNEsYg
-	hNmiTFwrJpJN+0SXpRHTvtP1qHSLZuY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758711904;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IN730g8TVV3pXRYVV4cU5ljS04QgWjzQ/7HWfHgg/fY=;
-	b=grT3aDMyg+m8kRfBET4t1nq4wtLBiRvAX633IJRDpNoTCHyR+uUaqf5fJ+TMWl8hd35txV
-	LrymM7ZOqxy7yyAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F14A013A61;
-	Wed, 24 Sep 2025 11:05:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oyefOl/Q02h7NQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 24 Sep 2025 11:05:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B167CA0A9A; Wed, 24 Sep 2025 13:05:03 +0200 (CEST)
-Date: Wed, 24 Sep 2025 13:05:03 +0200
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, linux-security-module@vger.kernel.org, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: [syzbot] [fs?] BUG: sleeping function called from invalid
- context in hook_sb_delete
-Message-ID: <fnxbqe3nlcptxqcs7tkt6qnacupkxu2xn4duwc6g6n2bk4tstb@hi2gl5cwishr>
-References: <68d32659.a70a0220.4f78.0012.GAE@google.com>
+	s=arc-20240116; t=1758711954; c=relaxed/simple;
+	bh=fvUBgljBKVg43zzTcyNN9gbB3w/x7fiREhcYmZZivJc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mt+aZXcv1JE61t8bJP5bi4DAX6VMRMTd25rP/Hxmpn1ZcN1a4Pi5wxhlVYXiEsz7/oKemAYhnN9TFJ0N60ZoB97Gt8Ig/xy8sKDJlU+VA/z6uK9VPkUHU5Aqj2jIB+tiWEoLhD3i5VRl7XaeltAZ5nIg29aq2TmDslVzhIVmzU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dT7yiylI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758711948;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pJfstQJzF7vQWtME8nc3e37MPEdGJfdg+SENn3HGjjw=;
+	b=dT7yiylIJrBfLUptE3Bv9xggagrRl7wY84nGwWX1uXRvKpQqo/vZDiRurbFN/FBDI1fT5m
+	Kn2c58j0aAkmOxnXWcxqoRhdEQ3ESleQ4J4CzU8+5q2f9vgSNWW6JNH6w8nE0nf4FLUz8g
+	IXLM/Gyh2Lsnx5duGXoW6y0OTDsfvvI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-488-fuXq1JsBMNunna_WnTFHRQ-1; Wed, 24 Sep 2025 07:05:46 -0400
+X-MC-Unique: fuXq1JsBMNunna_WnTFHRQ-1
+X-Mimecast-MFC-AGG-ID: fuXq1JsBMNunna_WnTFHRQ_1758711946
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e31191379so747975e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:05:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758711945; x=1759316745;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pJfstQJzF7vQWtME8nc3e37MPEdGJfdg+SENn3HGjjw=;
+        b=MYtqp5fyoHyBk/p5ZOp67WN8BHKQ58NQKQNI9dsGLb/VG7FOMRqgXamqe/e55Q18eH
+         eNAB35BBI6Sse/V7WOUL7SltEAKub7Sr4ndY+aiOr2FnCaLSzr4FqjhoaAyOIghtBmqd
+         tDQfFErV3IBxAqRe1Y7QQMYFW9E17tev3XjjcK8Jjz2CxFWPV7s/molAu6tCTWvCsyYK
+         33VmYCLUe+pkFLkOI9VbrxwPVe8s5KehtcmYS9hZLSw4E+j0VK7ee6ykg7UOdpmR6uoi
+         7zJOjDhDDLvlyllsbYp/xAbbK1i1KhD/SCiUP/O5+HbVXyGg9k6VvffFocqqVyexv8AL
+         Qukw==
+X-Gm-Message-State: AOJu0YzYaoL7SHgyci+jllWINzp6BJnjTEFZT0qlCHQ0SUfyvt61TKE+
+	S0Py5OYl9QLLBrRLwqbsnB95UFIyiY0GPOt1yXDvWiWVRa3euUXjOd1I0nL1t6ks3/LgQletWO7
+	C18yiv8X5SCAhG52EL/NstyCIru8kP0RE6u9qfdbEJI4jABhOnSflpXZ/Wmjm//x8Kw==
+X-Gm-Gg: ASbGncuXE7Z45hqH+uRyAz0OUW90DvLAvW5ngq+QNl17I7s/ZtdoLHagSUOi391QWsU
+	tpE2m61c9CSYb7F+6x3ZzvepFblsoA0Mskpx3u4ioTvfCGm06Jf7YWG8r2Nj8plAtt2FOkQ5/ks
+	9qtIu7uJOGEOxtvFPn/R3FBEAzn4nzcwF0Huh5ZsbgyAFQT9KdaIZM4giOALcKKVUZcddOqec/u
+	ylH+U7YRVgY80dNdUlnlsCwmX6j1mA0RE6powigch4ancAk3tosw8rPW6Rp0y4Qu8BhR98a7uog
+	t/GBT1eerU/IuTz5tD4Zkupzacp2B8atGsv8vUlaevoBpphOh5GnDrpwGRJCq2M1XTOi6fvHv90
+	RK+t96IOD6FpWLRRuIUjkyZsaHhowEEKB1E++1zhIhpz30YMquWNuw1lAEqY3QuOQRA==
+X-Received: by 2002:a05:600c:4703:b0:45d:cfee:7058 with SMTP id 5b1f17b1804b1-46e1dad1bcemr54121265e9.22.1758711945451;
+        Wed, 24 Sep 2025 04:05:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHbaeHw9ntX1+d3BLrDR31uBudOw3xXPWA7XtzGS71JBGdZjAGfyJ4Rw0XfiWGDvgzwltJ3qw==
+X-Received: by 2002:a05:600c:4703:b0:45d:cfee:7058 with SMTP id 5b1f17b1804b1-46e1dad1bcemr54120805e9.22.1758711944957;
+        Wed, 24 Sep 2025 04:05:44 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f14:2400:afc:9797:137c:a25b? (p200300d82f1424000afc9797137ca25b.dip0.t-ipconnect.de. [2003:d8:2f14:2400:afc:9797:137c:a25b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a9af289sm28426105e9.6.2025.09.24.04.05.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 04:05:44 -0700 (PDT)
+Message-ID: <6743ead5-4d61-4274-a24f-13a8a8265aee@redhat.com>
+Date: Wed, 24 Sep 2025 13:05:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68d32659.a70a0220.4f78.0012.GAE@google.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=1be6fa3d47bce66e];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	REDIRECTOR_URL(0.00)[goo.gl];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[12479ae15958fc3f54ec];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,syzkaller.appspot.com:url,storage.googleapis.com:url,appspotmail.com:email,goo.gl:url,googlegroups.com:email];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -1.30
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 10/16] mm: define clear_pages(), clear_user_pages()
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+ akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, mingo@redhat.com, mjguzik@gmail.com, luto@kernel.org,
+ peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
+ tglx@linutronix.de, willy@infradead.org, raghavendra.kt@amd.com,
+ boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+References: <20250917152418.4077386-1-ankur.a.arora@oracle.com>
+ <20250917152418.4077386-11-ankur.a.arora@oracle.com>
+ <5ec85b0b-9848-4cee-98f4-37953d504773@redhat.com> <87y0q4ewzf.fsf@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <87y0q4ewzf.fsf@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello!
+On 23.09.25 22:26, Ankur Arora wrote:
+> 
+> David Hildenbrand <david@redhat.com> writes:
+> 
+>> On 17.09.25 17:24, Ankur Arora wrote:
+>>> Define fallback versions of clear_pages(), clear_user_pages().
+>>> In absence of architectural primitives, we just clear pages
+>>> sequentially.
+>>> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+>>> ---
+>>>    include/linux/mm.h | 38 ++++++++++++++++++++++++++++++++++++++
+>>>    1 file changed, 38 insertions(+)
+>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>>> index 1ae97a0b8ec7..0cde9b01da5e 100644
+>>> --- a/include/linux/mm.h
+>>> +++ b/include/linux/mm.h
+>>> @@ -3768,6 +3768,44 @@ static inline void clear_page_guard(struct zone *zone, struct page *page,
+>>>    				unsigned int order) {}
+>>>    #endif	/* CONFIG_DEBUG_PAGEALLOC */
+>>>    +#ifndef clear_pages
+>>> +/**
+>>> + * clear_pages() - clear a page range using a kernel virtual address.
+>>
+>> I'd just call this "clear a page range for kernel-internal use"
+>>
+>>> + * @addr: start address
+>>> + * @npages: number of pages
+>>> + *
+>>> + * Assumes that (@addr, +@npages) references a kernel region.
+>>
+>> And say here simply that "Use clear_user_pages() instead for clearing a page
+>> range to be mapped to user space".
+> 
+> So, comments that actually speak to the use instead of technically
+> correct but unhelpful generalities :). Thanks, good lesson.
+> 
+>>> + * Does absolutely no exception handling.
+>>> + */
+>>> +static inline void clear_pages(void *addr, unsigned int npages)
+>>> +{
+>>> +	do {
+>>> +		clear_page(addr);
+>>> +		addr += PAGE_SIZE;
+>>> +	} while (--npages);
+>>> +}
+>>> +#endif
+>>> +
+>>> +#ifndef clear_user_pages
+>>> +/**
+>>> + * clear_user_pages() - clear a page range mapped by the user.
+>>
+>> I'd call this then "clear a page range to be mapped to user space"
+>>
+>> Because it's usually called before we actually map it and it will properly flush
+>> the dcache if required.
+> 
+> Makes sense.
+> 
+>>> + * @addr: kernel mapped address
+>>
+>> "start address"
+>>
+>>> + * @vaddr: user mapped address
+>>
+>> "start address of the user mapping" ?
+>>
+>>> + * @pg: start page
+>>
+>> Please just call it "page". I know, clear_user_page() has this weird page vs. pg
+>> thingy, but let's do it better here.
+>>
+>>> + * @npages: number of pages
+>>> + *
+>>> + * Assumes that the region (@addr, +@npages) has been validated
+>>> + * already so this does no exception handling.
+>>> + */
+>>> +#define clear_user_pages(addr, vaddr, pg, npages)	\
+>>> +do {							\
+>>> +	clear_user_page(addr, vaddr, pg);		\
+>>> +	addr += PAGE_SIZE;				\
+>>> +	vaddr += PAGE_SIZE;				\
+>>> +	pg++;						\
+>>> +} while (--npages)
+>>> +#endif
+>>
+>> Should indent with one tab.
+> 
+> Will do. Also acking to the ones above.
+> 
+>> Any reason this is not a static inline function?
+> 
+> Alas yes. Most architecture code defines clear_user_page() as a macro
+> where, if they need a to flush the dcache or otherwise do something
+> special, they need access to some external primitive. And this primitive
+> which might not be visible in contexts that we include this header.
+> 
+> For instance this one on sparc:
+>    https://lore.kernel.org/lkml/202509030338.DlQJTxIk-lkp@intel.com/
+> 
+> Defining as a macro to get around that. But maybe there's a better
+> way?
 
-Added Landlock guys to CC since this is a bug in Landlock.
+Can we just move it to mm/utils.c and not have it be an inline function?
 
-On Tue 23-09-25 15:59:37, syzbot wrote:
-> syzbot found the following issue on:
-> 
-> HEAD commit:    ce7f1a983b07 Add linux-next specific files for 20250923
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=118724e2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=1be6fa3d47bce66e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=12479ae15958fc3f54ec
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1376e27c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136e78e2580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/c30be6f36c31/disk-ce7f1a98.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/ae9ea347d4d8/vmlinux-ce7f1a98.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/d59682a4f33c/bzImage-ce7f1a98.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
-> 
-> BUG: sleeping function called from invalid context at fs/inode.c:1928
 
-The first catch from the new might_sleep() annotations in iput().
-
-> in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 6028, name: syz.0.17
-> preempt_count: 1, expected: 0
-> RCU nest depth: 0, expected: 0
-> 2 locks held by syz.0.17/6028:
->  #0: ffff8880326bc0e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
->  #0: ffff8880326bc0e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
->  #0: ffff8880326bc0e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
->  #1: ffff8880326bc998 (&s->s_inode_list_lock){+.+.}-{3:3}, at: spin_lock include/linux/spinlock.h:351 [inline]
->  #1: ffff8880326bc998 (&s->s_inode_list_lock){+.+.}-{3:3}, at: hook_sb_delete+0xae/0xbd0 security/landlock/fs.c:1405
-> Preemption disabled at:
-> [<0000000000000000>] 0x0
-> CPU: 0 UID: 0 PID: 6028 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->  __might_resched+0x495/0x610 kernel/sched/core.c:8960
->  iput+0x2b/0xc50 fs/inode.c:1928
->  hook_sb_delete+0x6b5/0xbd0 security/landlock/fs.c:1468
-
-Indeed looks like a bug because we can call iput() while holding
-sb->s_inode_list_lock in one case in hook_sb_delete().
-
-								Honza
-
->  security_sb_delete+0x80/0x150 security/security.c:1467
->  generic_shutdown_super+0xaa/0x2c0 fs/super.c:634
->  kill_anon_super fs/super.c:1281 [inline]
->  kill_litter_super+0x76/0xb0 fs/super.c:1291
->  deactivate_locked_super+0xbc/0x130 fs/super.c:473
->  cleanup_mnt+0x425/0x4c0 fs/namespace.c:1327
->  task_work_run+0x1d4/0x260 kernel/task_work.c:227
->  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->  exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
->  exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
->  syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
->  syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
->  do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fc08e18eec9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffcd5efff18 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-> RAX: 0000000000000000 RBX: 00007fc08e3e5fa0 RCX: 00007fc08e18eec9
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00002000000002c0
-> RBP: 00007fc08e211f91 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007fc08e3e5fa0 R14: 00007fc08e3e5fa0 R15: 0000000000000002
->  </TASK>
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cheers
+
+David / dhildenb
+
 
