@@ -1,123 +1,238 @@
-Return-Path: <linux-kernel+bounces-830879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D19B9AC58
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:53:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA71B9AC61
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82A022A256B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:53:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6BCA18970DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA4D30C0E7;
-	Wed, 24 Sep 2025 15:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C978E3126D3;
+	Wed, 24 Sep 2025 15:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DXFQWeow"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZoCn+M1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B193D1E1C02
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CCB64A8F;
+	Wed, 24 Sep 2025 15:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758729206; cv=none; b=hl0c4EecJFPcS6YNdUy+2SJRd/+NJSo9ny4wYSTN42UkiHCGwgOOtfKIn+T8dChZDcaZETSTAK88WPuFJopuahG8c2bw32WICE5RjzIACKN9jGcIJhtZ2Mope0g2Goj/Wt8kHrYDkKqkbO5+YMTEJmmSbIGZb4bjFmB1dwwddhc=
+	t=1758729228; cv=none; b=hdNFCFhUq0EJnYN7wcNgEPbHs7rzGWhh7nk4yxS0v0FPU2lWQil4UMXusN7KBadthuv3yYEAGOj8PMHOAhUcNw+Ce0UP/vffjHyWwvUNA1TQR7yoASJ8l2r5KKlFqDm2mgK9MR+7UffC2mY9zhS57E81xfQ+owPOrQVoXIzEE40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758729206; c=relaxed/simple;
-	bh=mBoQGC/qXP1Y+NF80xUNHpJo5vRdP+mJgOjnYpe6+Iw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=e+sMJ+rOs6XjksPfxK4xqbPqn+icDAdWRYN/D+aucdLwbZkjbPA6nV9BtLzuBZahKpUWuk59Gc4mNoKiAxoO/MWLRpfNJr4e5pLkI6eyUP+brETD8XighYgH97gHV8cSlfNtvYy8bVqe5rXVYKUfQZUbZTqrPNkAo+E3ZRt6ASQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DXFQWeow; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45b98de0e34so66437535e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:53:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758729203; x=1759334003; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PpOiZGlYE3bG9q2hQGWV/CtT41/1DXHMadQBXshkUnc=;
-        b=DXFQWeowsQAFGuo+Sz/3x3TCLy68zPBxBN0hfWOO67A1Yf1oPtsKPtQeKBUoO1pM5t
-         imLZ70nBVZouE1dBTwKp9JLdxqC8e9Ea22+rsUQdBrSl4aO3bEkWQEwDbgjcqjFa2Gy1
-         XRJkS7UjifYbHV4e8wkCJYvsqM8J14mD0KgDMTsdGJQCoDDF2HzGKZHQ/SjjXBT9Zs7M
-         ptKTIWv6ifSP7VB1glpou3WPB8BwWai6mBnzXRBxI1alyy5I0P+VfV5RwKaudTNcU7uk
-         XBLSCyqk8qXSSyhGKVK1pQka4hIDq2ssCNgsqgDmf46cQJ7poOaqfYAkHmYLVwEdewk/
-         zkVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758729203; x=1759334003;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PpOiZGlYE3bG9q2hQGWV/CtT41/1DXHMadQBXshkUnc=;
-        b=XIAKeYmVR9STL1ezPbhBI7BJLUbe+GXSlrcb5ef+WcPhHhyGWm1AAcL8dMQTGU4ZGu
-         mZ7uFd+eFMZpJXvRbILAXE5f82rYy4WlE6let2d/78CnzJBJ/jxSB3JW7SufiDODdbL7
-         t7uoUZ6jQKDeoRU19JO9M3+4PWMNFG0S1FvDnVlS9S7hjP3NwisZzgd46Ve3flKWvd9N
-         mFKDntqunqjy2sBwwBOKBfYjQ8PZC4VpDYhXFVDY1aAWUEGQSFIjxn+dx4SaANtToUVQ
-         rdxJDJymnsqntfea9YzjGHLNiwvKbpOVXdO4X9A+SRTW2U+iFDmH5PNXfVe0LuLsGIRC
-         eJvQ==
-X-Gm-Message-State: AOJu0YwpTvkA3VH9De/9BsU969HeOnPzi/iV1WOg7m1qh//DJvg+EV/X
-	2OfZ4xCl+jGPDwUsVSmhvYBSnDRhda74Z3cnVxckot/te1r3otyBzCW8t5xehlUrRdM+g/DWZEr
-	O9XyIzSsHeaULEp34SRkTPYoXq7lv0WypvM9Y0aPUval9QFjBQuLRuFbxKeiKHgrVPP7tNckvqv
-	VNsWpA/zK0iEZg8I/+oaF7HVw55N/VG7D3tA==
-X-Google-Smtp-Source: AGHT+IFfPC69nJQmM0EaCdCuvjkNEWDtxTJ/DiC4Tbx8uFpp9Ug4KJ82Ypgqe4+1EDO4+qGaEJryGoNV
-X-Received: from wmrn44.prod.google.com ([2002:a05:600c:502c:b0:45f:28dd:87d9])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1d16:b0:45d:f7cb:70f4
- with SMTP id 5b1f17b1804b1-46e329bca25mr3557535e9.13.1758729202942; Wed, 24
- Sep 2025 08:53:22 -0700 (PDT)
-Date: Wed, 24 Sep 2025 17:53:11 +0200
+	s=arc-20240116; t=1758729228; c=relaxed/simple;
+	bh=H0LzwzgZoZdJZXsbobQBWIXxDAEPRUzEukhvOfTHsTU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=QBu5JRQ0j/sOcqojJoNjdYvsJetV5ydZQGcoDPnIDDiqk+z4Mf7WCbJlbuZlfmuUUbNqj9Fm50JfzZuzuB061i9/gKre2zSsOEsLkxOKsRhKgFWsBZQz5W1Lyo4FvmNy9Q+pxiswj6DCDkP6HtH7lBUnvUPJ9hiWdNTr2zsIDKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZoCn+M1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 480A0C4CEE7;
+	Wed, 24 Sep 2025 15:53:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758729227;
+	bh=H0LzwzgZoZdJZXsbobQBWIXxDAEPRUzEukhvOfTHsTU=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=tZoCn+M1nDTPC4DtPmwe/lKdjF8Woieav5sRVNGyZTM2JrGjxVqN618SrmB4JTl49
+	 g99lo+52UHv9MnBSgQB+bDJgIaZ+KYGvV6SWJe/HaEaow514yxY76/DN8mFlHNiw04
+	 hukCM2xZ89278hrbRZn1Bbc8RpYazFxqS3KoDH6/uvVjrov9I7WatFowRR/tkrqQq8
+	 yDZ/yF8I6GYjSRdMzZFuzTIwBczC4wqE6C74NrOpSa/mKRrlVOyIQA474nDlmrvFZz
+	 bS5mD9rzTO01BqdDsa61m3zUluT2CK5QI9E15j51yu+bWkY0qmLvhG4yC+FtMto05T
+	 gy9kfKmahym5g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1160; i=ardb@kernel.org;
- h=from:subject; bh=xBv0NEkS9CmLCfSe1qsDoIEcFYWUDrlFjBEC/h4Q8GM=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeOK8PP2bS+63u1vyjD+t57ng2ntvg+CPUpJ3pdum33zL
- Hl8Iy6uo5SFQYyLQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAEzkqjrDb5b/VrJqO5ZHb1TX
- dQ3vXhe2V05g3YkW90c658NPeVo2djP895sdOsOiRTvRhD0hOW2t7KWiz8I3CjjcOfZwHXkunXa cGwA=
-X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
-Message-ID: <20250924155310.3341370-2-ardb+git@google.com>
-Subject: [PATCH] x86/boot: Drop erroneous __init annotation from early_set_pages_state()
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>, "Aithal, Srikanth" <sraithal@amd.com>, 
-	Sean Christopherson <seanjc@google.com>, Ashish Kalra <Ashish.Kalra@amd.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 24 Sep 2025 17:53:40 +0200
+Message-Id: <DD15H63RK1KJ.1J584C1QC4L28@kernel.org>
+Subject: Re: [PATCH v4 1/6] nova-core: bitfield: Move bitfield-specific code
+ from register! into new macro
+Cc: "Greg KH" <gregkh@linuxfoundation.org>, "Benno Lossin"
+ <lossin@kernel.org>, "Joel Fernandes" <joelagnelf@nvidia.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <acourbot@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, "Andreas Hindborg"
+ <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
+ Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>,
+ "Daniel Almeida" <daniel.almeida@collabora.com>,
+ <nouveau@lists.freedesktop.org>
+To: "Yury Norov" <yury.norov@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
+ <20250920182232.2095101-2-joelagnelf@nvidia.com>
+ <2025092157-pauper-snap-aad1@gregkh>
+ <DCYHCLM67KRZ.366VS9PDKLYKY@kernel.org>
+ <2025092125-urban-muppet-1c2f@gregkh>
+ <DCYIX8URVIWM.2ZK3GHH3J82XQ@kernel.org>
+ <2025092432-entrust-citizen-0232@gregkh> <aNQCVslEIHHSm8f5@yury>
+In-Reply-To: <aNQCVslEIHHSm8f5@yury>
 
-From: Ard Biesheuvel <ardb@kernel.org>
+On Wed Sep 24, 2025 at 4:38 PM CEST, Yury Norov wrote:
+> I didn't ask explicitly, and maybe it's a good time to ask now: Joel,
+> Danilo and everyone, have you considered adopting this project in
+> kernel?
+>
+> The bitfield_struct builds everything into the structure:
+>
+>         use bitfield_struct::bitfield;
+>        =20
+>         #[bitfield(u8, order =3D Msb)]
+>         struct MyMsbByte {
+>             /// The first field occupies the *most* significant bits
+>             #[bits(4)]
+>             kind: usize,
+>             system: bool,
+>             #[bits(2)]
+>             level: usize,
+>             present: bool
+>         }
+>         let my_byte_msb =3D MyMsbByte::new()
+>             .with_kind(10)
+>             .with_system(false)
+>             .with_level(2)
+>             .with_present(true);
+>        =20
+>         //                          .- kind
+>         //                          |    .- system
+>         //                          |    | .- level
+>         //                          |    | |  .- present
+>         assert_eq!(my_byte_msb.0, 0b1010_0_10_1);
+>
+> Here MSB is not BE. For BE you'd specify:
+>
+>         #[bitfield(u16, repr =3D be16, from =3D be16::from_ne, into =3D b=
+e16::to_ne)]
+>         struct MyBeBitfield {
+>             #[bits(4)]
+>             first_nibble: u8,
+>             #[bits(12)]
+>             other: u16,
+>         }
+>
+> The "from =3D be16::from_ne",  is seemingly the same as cpu_to_be32() her=
+e.
+>
+> It looks like bitfield_struct tries to resolve hw access problems
+> by outsourcing them to 'from' and 'to' callbacks, and that looks
+> similar to what regmap API does (is that correct?).
+>
+> Greg, Is that what you're asking about?
+>
+> This is another bitfield crate with the similar approach=20
+>
+> https://crates.io/crates/bitfield
+>
+> So we're not the first, and we need to discuss what is already done.
+>
+> As far as I understand, Joel decided to go in the other direction:
+> bitfields are always native in terms of endianess and not designed to
+> be mapped on registers directly. Which means they don't specify order
+> of accesses, number of accesses, access timing, atomicity, alignment,
+> cacheability and whatever else I/O related.
+>
+> I discussed with Joel about the hw register access and he confirmed
+> that the idea of his bitfields is to be a simple wrapper around logical
+> ops, while the I/O is a matter of 'backbone', which is entirely different
+> thing:
 
-The kexec code will call set_pages_state() after tearing down all the
-GHCBs, which will therefore result in a call to early_set_pages_state().
+When I was working on initial Rust driver support about a year ago, I also
+thought about how Rust drivers can deal with registers and added the TODO i=
+n
+[1]. This was picked up by Alex, who came up with a great implementation fo=
+r the
+register!() macro, which Joel splitted up into separate register!() and bit=
+field
+parts in the context of moving it from a nova internal implementation into =
+a
+core kernel API.
 
-This means the __init annotation is wrong, and must be dropped.
+As also described in [2], the idea is to have a macro, register!(), that cr=
+eates
+an abstract representation of a register, in order to remove the need for
+drivers to manually construct values through shift operations, masks, etc.
 
-Fixes: faed658ce71d ("x86/boot: Move startup code out of __head section")
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "Aithal, Srikanth" <sraithal@amd.com>
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Ashish Kalra <Ashish.Kalra@amd.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
+At the same time the idea also is to get proper documentation of the hardwa=
+re
+registers in the kernel; the register!() macro encourages that, by its
+definition trying to come close to how registers are typically documented i=
+n
+datasheets, i.e. get rid of thousands of lines of auto-generated #defines f=
+or
+base addresses, shift and masks with cryptic names and provide something li=
+ke
 
- arch/x86/boot/startup/sev-startup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	register!(NV_PMC_BOOT_0 @ 0x00000000, "Basic revision information about th=
+e GPU" {
+	    28:24   architecture_0 as u8, "Lower bits of the architecture";
+	    23:20   implementation as u8, "Implementation version of the architect=
+ure";
+	    8:8     architecture_1 as u8, "MSB of the architecture";
+	    7:4     major_revision as u8, "Major revision of the chip";
+	    3:0     minor_revision as u8, "Minor revision of the chip";
+	});
 
-diff --git a/arch/x86/boot/startup/sev-startup.c b/arch/x86/boot/startup/sev-startup.c
-index 39465a0ff4e5..c4c389f7cd06 100644
---- a/arch/x86/boot/startup/sev-startup.c
-+++ b/arch/x86/boot/startup/sev-startup.c
-@@ -44,7 +44,7 @@
- /* Include code shared with pre-decompression boot stage */
- #include "sev-shared.c"
- 
--void __init
-+void
- early_set_pages_state(unsigned long vaddr, unsigned long paddr,
- 		      unsigned long npages, const struct psc_desc *desc)
- {
--- 
-2.51.0.534.gc79095c0ca-goog
+instead.
 
+(It has quite some more features that also allow you to directly derive com=
+plex
+types from primitives and define arrays of registers, such as in
+
+	register!(NV_PFALCON_FBIF_TRANSCFG @ PFalconBase[0x00000600[8]] {
+	    1:0     target as u8 ?=3D> FalconFbifTarget;
+	    2:2     mem_type as bool =3D> FalconFbifMemType;
+	});
+
+which makes dealing with such registers in drivers way less error prone.
+
+Here's one example of how it looks like to alter a single field within a
+register:
+
+	// `bar` is the `pci::Bar` I/O backend.
+	regs::NV_PFALCON_FALCON_ENGINE::alter(bar, |v| v.set_reset(true));
+
+Of course you could also alter multiple fields at once by doing more change=
+s
+within the closure.)
+
+It intentionally avoids encoding hardware bus specific endianness, because
+otherwise we'd need to define this for every single register definition, wh=
+ich
+also falls apart when the device can sit on top of multiple different busse=
+s.
+
+Instead, the only thing that matters is that there is a contract between th=
+e
+abstract register representation and the I/O backends, such that the data c=
+an be
+correctly layed out by the I/O backend, which has to be aware of the actual
+hardware bus instead.
+
+As mentioned in another thread, one option for that is to use regmap within=
+ the
+I/O backends, but that still needs to be addressed.
+
+So, for the register!() macro, I think we should keep it an abstract
+representation and deal with endianness in the I/O backend.
+
+However, that's or course orthogonal to the actual feature set of the bitfi=
+eld
+macro itself.
+
+- Danilo
+
+[1] https://docs.kernel.org/gpu/nova/core/todo.html#generic-register-abstra=
+ction-rega
+[2] https://lore.kernel.org/lkml/DD0ZTZM8S84H.1YDWSY7DF14LM@kernel.org/
 
