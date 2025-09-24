@@ -1,108 +1,119 @@
-Return-Path: <linux-kernel+bounces-831238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE3CB9C2A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:40:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F6EB9C2B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E7424E113E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:40:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0CA71888B74
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD04D32896F;
-	Wed, 24 Sep 2025 20:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D59B328960;
+	Wed, 24 Sep 2025 20:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LezvN7pK"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="8EouNj5t"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D1D2868B5
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0B928F4;
+	Wed, 24 Sep 2025 20:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758746421; cv=none; b=XoBCAvMajxqdZpQKWXXD2FOFgwdKvszpvv+LQRk5B6EpltCCIWeEKFRhGHLQJVDZhDA+fgsbxXPYhwCWMTr7BOZ2HYSrTh4vPXXTJi97gF9vg93jCpt1rglDt75FBUFjeJ42/bzp24SXY3nJ25Le67OslR4Q0tz0CQpn7BnHTPk=
+	t=1758746445; cv=none; b=XvVHt9yWUaw9UlcuDNNmcwyAevCyBHnrsU87zrwMyxG1rfS1xTEtI6QTX7E44PKBOFU8tTX/IzKfMI+hxWebqUIDTUn1oIkwDE2a3A5ETAusqjUIX4STP+MIGMewKD7NhDXppI4lgoTgFi5eVkJVeXV9QtI5hYfzrxrr+hf5QW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758746421; c=relaxed/simple;
-	bh=GT1Z3zQ5tXrk46UXjX5RxfRkN7haq4MDk3g9uLlBYwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pNFwsPSkT7V6G0Xv/z/mqCba4bMrFEv61GoUn93lPKcqwwpchhL2E3Z14l5UCKp5gj9clJpdryl5d8l/UcHt4b9WFSPKrkDcd79sqySFj2VHsezxMArKPAhvIwv6uo+/nWMxb8NpicS6N4YI1mS3TdnVjJoorS+o6I14GGgLaEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LezvN7pK; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-889b846c314so13749639f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:40:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1758746418; x=1759351218; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9PDdGlP7wUqpVFvBq+vcD4g0qwNo+YCXe03tGr3XqXM=;
-        b=LezvN7pKxzIth2tp1hq18bdbNdrD4EkwKMS6ncPYB85jfoFjVHSbYTbf06PRAD/9z5
-         7wceSrsCoTHUTMIEgiuvu5hus4/QBfqxEoMrVzxM2XAv9mw0OMg6qSV/uKwjmpFrzBz2
-         yp2qCPEETxXHt4Pdzldy9FxBihFYrBvq9gsew=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758746418; x=1759351218;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9PDdGlP7wUqpVFvBq+vcD4g0qwNo+YCXe03tGr3XqXM=;
-        b=hQbQ4+P+igPtItex+2/F1Qc3RlgFVQIBknFDNpXFyvXiCaSV7y9hhva7i5pHHgXeol
-         Y2qRYKsJGNNdl/hPwmW/KCYpeq0T64NaDsrNEGUfDr8fhI/pdFsgsT8t5oH30Mhm/RGK
-         tY2AUPE1hrl0Yc+4uC6w5dSl5EtwVLY4Z9B7KLoUuh835ObOU1Tm5hxPmjyzTmUHuyX7
-         NaNpBzhIiOTGtVZsiF/1Cpknc9GeLKS90yXcZSV6cXs08xSfiF6VWHRRswvVaMS3AcfG
-         Jgro2sP22dfekSpxfiT3dfgBkP2Jw6yK0VNBlkH8izt7aTEkM140LslfsBSAxWsyHctV
-         rBTw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWlq0s4kvrLssETLKj2AYHPSCfIgnixorm6fz3u6lPfkgshld+RFzZFINDzXcUep7NC08kxEYsWkxpOE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+NjxWzxxg03iUYZek8/PmBDZbEHay5BHQhJxpXvpXv0t5CWr4
-	xmGfmnrcP3OoBN/A10HbrtaQSwqpKAkEOuOzIS3CXH4SBtYiLhmy353pePUYBnSoBGI=
-X-Gm-Gg: ASbGnct4tdgL7MFceofL/+UVWBfQzQRgu/VTqq11Cb/xX3/KZJFfYl/sQXpEBTmdkyy
-	EsNhgQKH8rOLewuHO0S5KB9aprOfHUulWkIdWyArADE7IiIrMZf9s34QNXl5L/iXEdY8OCxzK5J
-	4cUcX5y915wxOddcF5GF5G1s3DsuVCkY74HpeASKlnQmkIfjxDbSMPNK7lZ/BZxLVGAkdBBhNS6
-	TI5U9dqmnPay6FoIZnmDgfPRxbE9P3ekzfdN3EOD1l67m2OusRjWDbnBq7o6A1wJ+FnrSJW5Z6u
-	7tZY9Gg9G5V3BUm121PcBIVlRvjG88cDAPzLUmAICQbDk7X1zX/SL8ZB43sXJ/8IWYEL9jNyDOp
-	+rY5FU8Z+rt2AnG2YjYOIwjemB3jbLc6S85M=
-X-Google-Smtp-Source: AGHT+IEl66KjPbfHgezvX7WogNWPlR6drYL1cc+80f/7wHyxzxceno/Pv/D4A/ViWYjgRD45h23gsA==
-X-Received: by 2002:a05:6602:2d88:b0:89a:8809:1767 with SMTP id ca18e2360f4ac-901509454b7mr162008239f.2.1758746418319;
-        Wed, 24 Sep 2025 13:40:18 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-9040fcf19eesm797539f.22.2025.09.24.13.40.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 13:40:17 -0700 (PDT)
-Message-ID: <4cd10eda-945c-4bd6-a077-1d9a104dba6c@linuxfoundation.org>
-Date: Wed, 24 Sep 2025 14:40:16 -0600
+	s=arc-20240116; t=1758746445; c=relaxed/simple;
+	bh=QTIQkpV/ciuM/sLyZDPrsBTzQxcBE89VDpwEWGscX4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W/u5s1H3G4lNMbMhhWRxGtGeCZkpu/yjUX8ZT8WCPkB4GkjTJYjIih8DnHCMcojuRfdhC0uV3kjCl/pbDWqN6n4dFvBXQQRVxwh+hz7Q4lMEhOok7KjlIj8S+cGJfumx3I4ePHOcvdLS1E34U6gCwt5fo5YW6dC0MpXEx87Dbs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=8EouNj5t; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=ITB1rCZb/1p8Dc/cYBEMMSkfLogfsT+JzDlWdMz+ne4=; b=8EouNj5t5a/wVV06FrfHRkcTwE
+	3fCUlq29rCQLw3onGQP+cEJYbeShna8XxxtQOCfAEsQHrl+04HQONofxi2851Jf4kpmPpR9ye/aqK
+	xFGE2sExRGKAJJ7us7Y/61S9Tmrqmk21X2e0jRzmwvu8hDgkGgmAN+Blcjhbz1apYQ3en17X+fNwJ
+	Zy1/7zDI5qu6VF9ElRhahDa8edqWa3G8AriQ6WCbWSnmtV+yU4knF5wwLl7mCVK5Uk7WDnYc5SP3Y
+	nY7QSPOSIGDsIu0ZpaLFeGLLEUncYMM5gz4qwJ4Gh/8uxtIFNpw6G+Meg4j7OefoM5Cq6RncsETd+
+	rRHkFUKg==;
+Date: Wed, 24 Sep 2025 22:40:35 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: jdelvare@suse.com, lgirdwood@gmail.com, broonie@kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, Alistair Francis
+ <alistair@alistair23.me>
+Subject: Re: [PATCH 2/2] hwmon: (sy7636a) enable regulator only if needed
+Message-ID: <20250924224035.2b20459a@kemnade.info>
+In-Reply-To: <25ef8eef-a4e6-436b-87cd-c77506b4b215@roeck-us.net>
+References: <20250920114311.291450-1-andreas@kemnade.info>
+	<20250920114311.291450-3-andreas@kemnade.info>
+	<25ef8eef-a4e6-436b-87cd-c77506b4b215@roeck-us.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 16/17] usb: vhci-hcd: Switch to dev_err_probe() in probe
- path
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Valentina Manea <valentina.manea.m@gmail.com>, Shuah Khan
- <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel@collabora.com, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20250902-vhci-hcd-cleanup-v1-0-1d46247cb234@collabora.com>
- <20250902-vhci-hcd-cleanup-v1-16-1d46247cb234@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250902-vhci-hcd-cleanup-v1-16-1d46247cb234@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 9/2/25 05:56, Cristian Ciocaltea wrote:
-> Replace pr_err() calls in vhci_hcd_probe() with dev_err_probe(), to
-> simplify error handling a bit and improve consistency.
+On Wed, 24 Sep 2025 09:06:15 -0700
+Guenter Roeck <linux@roeck-us.net> wrote:
+
+> On Sat, Sep 20, 2025 at 01:43:11PM +0200, Andreas Kemnade wrote:
+> > Avoid having all the regulators in the SY7636A enabled all the time
+> > to significantly reduce current consumption. In pratical scenarios,
+> > the regulators are only needed when a refresh is done on the epaper
+> > display powered by the SY7636A. This is can save around 10mA which
+> > is much for this kind of devices.
+> > Also fixes the asymmetrical single enable call.
+> > 
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > ---
+> >  drivers/hwmon/sy7636a-hwmon.c | 34 ++++++++++++++++++++++++----------
+> >  1 file changed, 24 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/hwmon/sy7636a-hwmon.c b/drivers/hwmon/sy7636a-hwmon.c
+> > index e83d0e50c735..0fda69bea3b4 100644
+> > --- a/drivers/hwmon/sy7636a-hwmon.c
+> > +++ b/drivers/hwmon/sy7636a-hwmon.c
+> > @@ -18,14 +18,26 @@
+> >  
+> >  #include <linux/mfd/sy7636a.h>
+> >  
+> > +struct sy7636a_hwmon_data {
+> > +	struct regmap *regmap;
+> > +	struct regulator *regulator;
+> > +};
+> > +
+> > +
+> >  static int sy7636a_read(struct device *dev, enum hwmon_sensor_types type,
+> >  			u32 attr, int channel, long *temp)
+> >  {
+> > -	struct regmap *regmap = dev_get_drvdata(dev);
+> > +	struct sy7636a_hwmon_data *drvdata = dev_get_drvdata(dev);
+> >  	int ret, reg_val;
+> >  
+> > -	ret = regmap_read(regmap,
+> > +	ret = regulator_enable(drvdata->regulator);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = regmap_read(drvdata->regmap,
+> >  			  SY7636A_REG_TERMISTOR_READOUT, &reg_val);  
 > 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
+> Does that really work without delay ? Usually it takes some time for a chip
+> to return useful data after its power supply has been enabled. calls
+> 
+Hmm, enabling the onoff bit behind the regulator is just needed to turn
+ADC on here. But there is also the power good wait which should usually be enough.
+Usually... But there is no guarantee. So yes, better wait for one adc aquisition.
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
+Regards,
+Andreas
 
