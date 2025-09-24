@@ -1,116 +1,134 @@
-Return-Path: <linux-kernel+bounces-830334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0097BB996C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:25:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0FA4B996C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 893837A8DCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:23:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39F323BDA9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9102DEA90;
-	Wed, 24 Sep 2025 10:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912E62DCF61;
+	Wed, 24 Sep 2025 10:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kb1tmWjY"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mjk2ru3n"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041862DE6E6
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B212D8DD9
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758709526; cv=none; b=QBQi+gm0uV2nZ9gRPCFDk57brLr2GC5AR7/ODSef03e9wYx5C+eaBeBDaXInGhOLIP7HlKYG26rxnsPt+lTZi/2twm1w2nMMNqqi12up97OUI0QQvm1978TS10U7WYVCFp7sUISvFTXsYdOhE02kDX1NSL3wi/Jpt66KRtfv9f8=
+	t=1758709544; cv=none; b=ma8fO0aJAHDnKrk9jsggSAzSPLOt7gU3KkGG4BMyMS+I++Gg6BuScScyBom7Fue7/ZqbQq4F2dwCyId5lEE+ONQd3fj7PRYvi1o9aZenAPfA2/OOlb+ZUMgfscyuBmm9Vf5R1ziDMZs7HG73WqKfhUOjnAyIoha+y2Nr9iO2Xf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758709526; c=relaxed/simple;
-	bh=gQ8E927A4tX2ZNYrTzlCctAB5m47ibJs+IG1u3p+hbo=;
+	s=arc-20240116; t=1758709544; c=relaxed/simple;
+	bh=9tTQHdTnMEjzeTy9gNC8FHNqhXGpvcXXbYnm12wLkX4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B7Dl0zH1/TDreinRWT0los+aEyS8Dz1th4PdO2y4EJSRlMktwiFs81Hl89deOBLzNo4cpGHbZW08H8JAY68xst8ClMrCz3/mlArL4hW5oym7I+jWp5KIuembHYW9PnB6iEXVuceZrwoHAIkcQWHYI2G4RwilWH5OZJidmza818w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kb1tmWjY; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61feb87fe26so8627952a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:25:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=iBKZI3H3wsyD+nqHuiNrZh7VZnbO0Xo5sWKN18l3S0BNYAIttq47+IEDA/IJvo0UV81cc2+mvveP1P1vP+JNR5DoNwIH6dAuqKyGYYiT0NfDCLyL952wyC+kqbbHe2ziwmQ6JwfCXR6bTlmF/dW5NnuT39CLiR5L/xTN43jCNkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mjk2ru3n; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-57b35e176dbso5141041e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:25:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758709519; x=1759314319; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gQ8E927A4tX2ZNYrTzlCctAB5m47ibJs+IG1u3p+hbo=;
-        b=kb1tmWjYAxZHv1lEtKs53N0IKcqh5YZzGspNXeX//gkxLfgZyusc8wk+0qFHOItw38
-         S86jENoqHKOS81W2wGHd6TTkCGehE+p4vf94nilorxKiWUMJt4eZ7/RR5/jfJ+JFvjTa
-         n0795byLhWLF0n3lEGyBUbde3qRLhEou8OsZ8l+i0GvYZD7pi5/i2ustfabxeIDY1fPQ
-         lf+XOX1z2eYQw8cvm7PgUk8ctP2KVi0dvFgGgBV5eVqrBTz3uoYR63xOvRLusRlRJfdl
-         /S7AQ1TIGnVdpywQdcDjeQXGOynu6kX3oP/DQx2FWMTF07vdCANYW5B+o8lfhLpIUpY+
-         EGcg==
+        d=linaro.org; s=google; t=1758709541; x=1759314341; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zdjFzTm1jV+mKm+4AQWxy96QqFUQYU3h21wLWV5Vfxw=;
+        b=Mjk2ru3nfgPuCECLTuPGbIYKiw1EeoaNdgoiDY5DYHBxXjeQcCJ3g46IISsoDsyzbr
+         6LklLxgCjUkaNZnuFpVTN2pUQR5K9SENObd5E1HxxC3qP3QeBszD3M6PGp2cAmh/j7T/
+         JAAvedQrbOKmOHATIM6eBW0qgu+2y3NhIyHmPDYHKPgHV4JXLs6t3BhmW5gkhjV9DI9j
+         +F7JjocxTZADCYKvtcPgsZeI9pcovXCPlDDcvrlMescFcgJdKfgzUbEBhOPrUDH5tysF
+         7lb0SsbzJgfkvJbdSWVyJW/6akPNpAHX9agtjsvTYDHGNsOdrzhXKBMRtl4aQrgS9DEB
+         zbrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758709519; x=1759314319;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gQ8E927A4tX2ZNYrTzlCctAB5m47ibJs+IG1u3p+hbo=;
-        b=B9ZxTO/hReRmgZhoNRM7CzzMeLmPkaQdP6JoStYCEU1MOFdxSiCffJFOqV23bigd4h
-         ETQtFGbAAeDh0ITSZdMa31DxG/rMHjxOey4ReKC4d6kF+wRmOwBI0F50A6719afoYdeE
-         1/cLNfH8tk9TxBhtWD7g9hsYTZWYmIlk5Kf+AlPuDVr6DmOQcNmcI9Wt+905wP1iHfZo
-         /f40M8JXjP9QeNqICODJPvcpQsKorzrEEVUelomGQkRFv8VKl7g5gCvmSZgCzLq4BLXN
-         n77o7huuf0PBly5Gras+BYEetVflroC+0Pt6YYgwLc95TCMwwT4UAUVGWPqtNqF0snIw
-         4ttA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWYgzNrWsIQ6MXW+GMnzGJDEwzhvbbotYzOoAszaLeW0/Yonzyow3Gte+H3skOwdc/mL6AMVBU9pSA8OI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXhLt3yVSKfeW2sEM5jQjNfFlPXa1N1YFhKhqigVKrP0xw1HLZ
-	5hZxycbDC6k6ZZ9+2kzjkloBLjtxbkf3kba+alITAWhzn/1TEeV63P9/VVQ3ACgyR6IwMp05ld4
-	1iFrJspQdcE7MhKKBFO6S0Sd+pbkBWr8=
-X-Gm-Gg: ASbGncvDc1aYINN68BAZTiP8np4JTFdq4qlQlNqaW8oZJBMAvNJcr00GcYw/ANG4fz2
-	Oa0M1ACOYiH1uXHBQHUzKjp+VOBplKCBMgYtcj6yjxI+yo4OpBHpeEXnRCMLYGMAU6THw4L3qjy
-	OYfdFAXsWYjPYIaaoCPGIEClEoVNXeDuWNZASytiuj0RW3Jux7DN+HM42/GfRKLdlsVIu6prboz
-	w/HHj/P7sjrpebUgan8AQNNJYiNlLgtMfs9Y4Agoalsi+oKGwFb/g==
-X-Google-Smtp-Source: AGHT+IE12lCZ7Wl/ftwQJZ/gaWQP8iDkebbGgJsyR1xTOQTAeL+WLTgk8+fgJ+TjcKwHn6/rpkz17KvFRLGM6maxk9E=
-X-Received: by 2002:a17:907:3f95:b0:b07:b782:51cc with SMTP id
- a640c23a62f3a-b302cebc948mr516277766b.64.1758709519082; Wed, 24 Sep 2025
- 03:25:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758709541; x=1759314341;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zdjFzTm1jV+mKm+4AQWxy96QqFUQYU3h21wLWV5Vfxw=;
+        b=BdLuXFLa77a5EYy3oSt1Cqpw1SoGHbmsQoSrpJUPlYRsljwPo9aW1NadWMalj+vJLx
+         src0K+do7ZvGZHxF2PUnjmxEklzHjVN2BBVtT8+P7CAn456DsnwG8Hr5FPhU884r7hZB
+         S8uX58MaVAs/zRV0C7srJqSqbk4OUVDTiZskFg8SVhaKbJXyf7kljfMBmNqx2RaS4O7K
+         1CP9aPtiOJaP0PRyuwoOSgih7S+HQOK4HTqtbxv4uEGRMpCcFnVNra8lLUyqSjQ4eZH9
+         NB/bpRXa91N9GEoAQX3NFqFGU4WF7gfPtd4cb+RiFcs+jA64EaaZYf+1aFm+tzlons+t
+         rxjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWm5Fi5gIaRTIM4QMr0RV0VAgKKgo6OoPwrtzQigx0zmj9V89IvoDfM1MgEBnIePWAtv2PzTlH/4v+xhDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9yit9mDem/XPOggIM6XxQpqPwjIm2rQ20sak83MJoaY8w/O1G
+	jacKQRW69PcceNqcIdHJnBafyV1/SHsYkVMJyTOyeN0Iqkvr35XMn1TfULHnbNkxJpnVBnHV43I
+	qpBuWwz/ZCT9+Do6UqueajxWTcdQGSVxWMubCgtZHdA==
+X-Gm-Gg: ASbGncsBjy32ME106o5xRM/WJiD65XgCztnA0P2asgtsZzmn5kw9Q8TwNJkSrRilCP0
+	GekCnbWDBJiqJMbCnz7EB3egaA0DLDHtmLUxdsXamo21EyA52PHT+AHe54xkSJ9oZ8Jso/P6+/X
+	pRthWKFCVEVB5UDRppqAq36qWXGwFdu8Wu7JmYKWeiZFiIvaAd54Y68EpqUmE7jrSBOSr26iupa
+	IRyIm8=
+X-Google-Smtp-Source: AGHT+IFImbpSnkKTmdYZWq2y32wIgPtsOBYgZADyrCIQdkdei+4Xzcd+hFLfmCRQz+/C6K3QYTGKGbeRQIa0uVpBpPY=
+X-Received: by 2002:a05:6512:2398:b0:576:dc00:37cc with SMTP id
+ 2adb3069b0e04-580727044eemr2043332e87.34.1758709541266; Wed, 24 Sep 2025
+ 03:25:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <83171a57-cb40-4c97-b736-0e62930b9e5c@lunn.ch> <20250920181852.18164-1-viswanathiyyappan@gmail.com>
- <20250924094741.65e12028.michal.pecio@gmail.com> <CAPrAcgMrowvfGeOqdWAo4uCZBdUztFY-WEmpwLyp-QthgYYx7A@mail.gmail.com>
- <20250924113653.5dad5e50.michal.pecio@gmail.com>
-In-Reply-To: <20250924113653.5dad5e50.michal.pecio@gmail.com>
-From: viswanath <viswanathiyyappan@gmail.com>
-Date: Wed, 24 Sep 2025 15:55:07 +0530
-X-Gm-Features: AS18NWAdKXxMmFRzk01TMU60U3Xy0PNKUuld4uhrZt1ayU1Hp7kGVqqNqefl328
-Message-ID: <CAPrAcgMhphs1U88_POpxAeAp0KzNCH6-xuvNiSBa5dn7ceSU4w@mail.gmail.com>
-Subject: Re: [PATCH net v2] net: usb: Remove disruptive netif_wake_queue in rtl8150_set_multicast
-To: Michal Pecio <michal.pecio@gmail.com>
-Cc: andrew@lunn.ch, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	david.hunter.linux@gmail.com, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	petkan@nucleusys.com, skhan@linuxfoundation.org, 
-	syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
+References: <20250924064905.276174-1-wei.liu@oss.qualcomm.com>
+In-Reply-To: <20250924064905.276174-1-wei.liu@oss.qualcomm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 24 Sep 2025 12:25:29 +0200
+X-Gm-Features: AS18NWDhFZXcWlgI3iR1wo9nuYptBt7TRZXg-S0z3gK7su7ZFxZUkhzkwnEhO0Q
+Message-ID: <CACRpkdZ49_mo0AN78ri4WTt+V2gNdFOTgxzgfXw+3vd2rNNiJw@mail.gmail.com>
+Subject: Re: [PATCH] Input: gpio-keys - fix misleading GPIO number
+To: Wei <wei.liu@oss.qualcomm.com>
+Cc: dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, gatien.chevallier@foss.st.com, 
+	namcao@linutronix.de, zhiqiang.tu@oss.qualcomm.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 24 Sept 2025 at 15:06, Michal Pecio <michal.pecio@gmail.com> wrote:
+On Wed, Sep 24, 2025 at 8:49=E2=80=AFAM Wei <wei.liu@oss.qualcomm.com> wrot=
+e:
+
+> From: Wei Liu <wei.liu@oss.qualcomm.com>
 >
-> I think yes, usually in USB-speak "completion" is when the URB is
-> finished for any reason, including error or unlink/cancellation.
-> "Free" could suggest usb_free_urb().
+> The error log prints button->gpio, which is unset and default to 0
+> in non-legacy configurations, leading to misleading messages.
 >
-> But I see your point. Maybe "finish execution" is less ambiguous?
+> Use desc_to_gpio() to report the actual global GPIO number.
 >
-
-I will use completion if it's the standard terminology
-
-> I think it's an irrelevant detail which CPU executed which function.
-> It could all happen sequentially on a single core and it's still the
-> same bug.
+> Signed-off-by: Wei Liu <wei.liu@oss.qualcomm.com>
+> ---
+>  drivers/input/keyboard/gpio_keys.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> In fact, I just reproduced it with all CPUs offlined except one.
+> diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/=
+gpio_keys.c
+> index f9db86da0818..243295a3ea1d 100644
+> --- a/drivers/input/keyboard/gpio_keys.c
+> +++ b/drivers/input/keyboard/gpio_keys.c
+> @@ -584,7 +584,7 @@ static int gpio_keys_setup_key(struct platform_device=
+ *pdev,
+>                                 error =3D irq;
+>                                 dev_err_probe(dev, error,
+>                                               "Unable to get irq number f=
+or GPIO %d\n",
+> -                                             button->gpio);
+> +                                             desc_to_gpio(bdata->gpiod))=
+;
 
-My bad, I see it now. I keep forgetting the actual urb execution
-is asynchronous
+That's technically a legacy interface.
 
-Thanks
-Viswanath
+Can we just not mention the GPIO number?
+
+The only thing that would actually make sense in this kind
+of errors is if we add some new interface like:
+
+const char * get_gpiod_debug_string(gpiod);
+
+that can output the chip and line number from the core.
+
+Yours,
+Linus Walleij
 
