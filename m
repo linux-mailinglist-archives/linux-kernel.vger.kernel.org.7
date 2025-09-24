@@ -1,88 +1,89 @@
-Return-Path: <linux-kernel+bounces-830701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02152B9A53E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:47:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30DC8B9A54A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B31A44C49D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:47:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E57144C4B78
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED1F3002A6;
-	Wed, 24 Sep 2025 14:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6650301477;
+	Wed, 24 Sep 2025 14:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LvkujbXU"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bDVhHvc2"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB87CA4E
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA2321D3D2
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758725251; cv=none; b=Nztinq8noYSznD7oMVugwHQiiXo7A+R7YMZBMMtxMrhtbTTerlYAX2743pePRIhA3NsIgmbvvNOajYN85hpZ7F4ZaB4g5CpY1bd4f/eDKEAMm1690veUhm5o8iwju8iXk5Cf7eVBQILNsAXl0MacV1x44R5L3hsrYhvdfLHkVYY=
+	t=1758725295; cv=none; b=lQpDG9BTBOvA0wYNAu1Eae5DfGqnyu39BTCw3QzDCnaPaLNk3vmX7RvZf+8YcDIJRLoHyUNUpmdG4ygvoia2VK//yip6rS2St4B44YzMEKLUfJsqre7qZqUC3kpD/bDtz9EglJegVcu5luh/+1HhGlPp0ha1NW3YKaBjXnCAm9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758725251; c=relaxed/simple;
-	bh=AgDrnMXXXJYoDpwAwUvpBn1pSggFOiq/LNM+/BWg5jc=;
+	s=arc-20240116; t=1758725295; c=relaxed/simple;
+	bh=wNl7jQLwEHKQRZX0SAXvXgHbGWSN5OECo77b/O6rRR4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=II4mhQM2xd+8Hh+ugdIDxILZcs+wI6fNGUC4oIk4UJLIwETXUUs0vrjxNu9jAxetHLc3qJHhf4zD62IDf3LJx8nYt7MO/VEnh49Q5V9mpX+Mg5z3ES3BIFf+HPSby9f5FfJi8Gs2qDoc6+pMihQkjczBWLGGmFGEdTa4x6KRuNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LvkujbXU; arc=none smtp.client-ip=209.85.210.170
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQFoAgWsUtqq42lAUtMb44F4xdgBSAeCXT7FR25/LwPnMLKI+MtakXyLdg+IokGauRbGvZ3tW9cahDqpZDZucReIRQuqzJg8kg95UOV1CRXzllaFsUPIn+NhHZpBgJH0I5LIRnGNoSpOAt08DEBqsSYjKOs0v4U8JkXEtdYiJZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bDVhHvc2; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-77e87003967so2830628b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:47:30 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-26c209802c0so52845345ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:48:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758725250; x=1759330050; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758725293; x=1759330093; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JuKXuzOjDOxictCX/voBvqBpBAsKrQMGlOEziz1SDD8=;
-        b=LvkujbXUSLTMAgY9TUy7P7PDXfgPB0X4TiO6u2qxgoKhnQrbz1VygPkM61Oz9olJkw
-         uFfbTd0s8j7Cd69nI+TXslCoZBsFnaWbrHfIOqE3K5XU5JSHcpU1HmrLImPy0Bl+6yzj
-         GyTkUo+Lb8OCO3EsRl8uz+kVwfvCOxFuMw5s1xI/W1hm3IfbEbrvPcZysxHU/aCcOnEc
-         21aTFs2Rm19+ndOaR+qEl0FJ3FzkZ7pfNDA8REnbWElRxVS7hECaxfrabEQGAT57YAvz
-         xDwuufCyZCX7zmHrKLKN6H17AjeqX5jtF82MzJvqy2EF800HODRfRXdkuoV+axOAhJuv
-         Z/hg==
+        bh=gCnQwG7cHEZFPgTmiyysVJ/gsyay5bIs1U65I8G5nbc=;
+        b=bDVhHvc29lIH9XBjR3fW55NSUCb7UL71qB5s0om3Crh2XyJpCyayXwPakpk591Yiua
+         F1w55xvZKZwpPuHSzC5dLjodto558nD1BeQ433LholI0i3fHbVyUuTpXEIiXG4Zd/TTM
+         2aV0Td29kMy0EAW8SUienJM+pCkamJcwiQZrSZmWRHomh1yGQYZ48+d0qLMsfJzi3cvj
+         FDWM7yMj4frM/kJA1GXebNQ1/4SSMdSES9vut2wbORtJ7vKkadCKBicX9OTaHZrkPV0L
+         Bpm6fwwOXJG02AH7wagRlIB7LcNPdiVZ8UNHtZlChWoEoC9TrUP0yHLp9yFAm4w5XqLe
+         4BvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758725250; x=1759330050;
+        d=1e100.net; s=20230601; t=1758725293; x=1759330093;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JuKXuzOjDOxictCX/voBvqBpBAsKrQMGlOEziz1SDD8=;
-        b=VGjv42jw73hETsWzykl0OSek+WDi3CC/4VEaDv9M0JBh3bA710MW6yCLYq0JRc5Vp1
-         v/8NCFlUtNpIh6xnG58dmOkddbsNPqFrZa/ti1tAojRrvPBdm9nwZnxueie524Q0pneZ
-         wMdwzotxDkP6i3KUUwE4sm50lnMEAuodlAHb048UNMvrLpHJaVfhkX/ethSx39YBBw9a
-         YhWB0bsmJFpO0UVNvIkO2al9ymnLSSu+gcIe2ShH2IyniTKmMDNi1YTefADgCnPwTEr1
-         n5xoISIcY0YNj4HNuzPJwSG5FHrdde+qVyRnVvsTdrc9l5fiRZR03oQkoMNiIhOrnAji
-         D+hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWWoysWT7JLpYSU7/JzLUCgBvLixdBjHqCUznVgQemS21NbXbGIwh+JlJKOY0MA80oteQe+qEk+605wg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztARCu1sRVfiqzQ4ImUUaPee86lvpwyMAOZK5oQSoMRS2LW3Uh
-	vyBE/JKgQSZ+/y2FCHuELQQ6C94YlRuDnRPr0SxRx1U5UkWt70JHV/7Mzm1v7oj/
-X-Gm-Gg: ASbGncvFuLFVMXUOcrg/lG5naqrLkOfeF2BFKI2soTBac+dmjzHRNiIzvtA9Qu/EEor
-	L4MFsUyviAcgiV2NlL09o7vYsoOvpl/4MndyQCwZ/1aPMXGFQ4pGBY5yngxncqNcF4LhGJd1unk
-	1c7bhwzu8jFvTixpNnnmbjVOvEGtZ/8yf//pwtbuJswlXhGMKD4XPd4ouG9wHBtCE/WLQ9+kO46
-	OuQarQKLhLNIZ9D+ItClx8910Nby8s/+qXf83JmvjlZjKb9zVImyk+lgV7sYBRxSNU9XApnRMgE
-	mVesUP4klvD2HapchIVFEGtuxLqzPUrZwb3o5u+7nN1wqZ7F6Peg7SRWEGFxiKkAQrVuos9Y/uQ
-	qoAIJZv22ocj7mwtUOUxJOLhAUN+p6NA6D1k=
-X-Google-Smtp-Source: AGHT+IFFBGlyzzgM0DUwXPrRh1qzXutsF069Qhxcx79xZS73ltfaw+2FZsIv8SJjT1C/iB/wc44oeA==
-X-Received: by 2002:a05:6a00:9a5:b0:780:f6db:b1af with SMTP id d2e1a72fcca58-780fcea2fb2mr222078b3a.16.1758725249706;
-        Wed, 24 Sep 2025 07:47:29 -0700 (PDT)
+        bh=gCnQwG7cHEZFPgTmiyysVJ/gsyay5bIs1U65I8G5nbc=;
+        b=KWutrumvGxL37s0HvQtsQ+HzEXtyFiOV4lB3K75DO3Mj6AamQt0S0V4MjmFsol5CSD
+         Ic/Bz3TrwyCvFe0TAHxC1Jo3CfHFlOLcdt10njfTMFss4Nj29K5e9PDHFXB+UhdbNiOJ
+         2norAaaCSUHG7Jb5SpDrTgNzKWUV2S6ndue8Ca85IeocmHfMOoRwB4MEjhSshzQoZbY+
+         r0V9qM7rcE7280Cf8ts99waVdxud5ICf1/40xTujr9wHIl3I/ffW5h6An2y0EsRJfoMG
+         NYz4+PnDhCT4Ey6Rz8CiHWrbYjm/q3PTrb/7aY6SbToHVXwJl37uk+F5xDphBVsqpcVW
+         iI4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVN0bWOepbxypQBv4YKwIK4+3CKdME9BJ+8xbsNiDHTwPyChRrrnNrT8KYiJlzIStmMHcaslkDBNZzGNH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBi+I/V+wbyCoBTMJmMIGuLetUkPBeKdatoA/iRsoXbLICC7nO
+	/0neyePIacVBqXqNUEzqCgjPaHKjAb4KyjPZklNy7fHXcIx6BROq49lOiCgULikJ
+X-Gm-Gg: ASbGncu1iW/a9Y6mh2QxQfHEvMAaSrnvZ0kEdCVTbcEg3t8O4hhrpeg/zmbJ24+D8qp
+	xx/elQOwUxLciMmrjDTKQVslkMZO4EjwYBMumCY35uvvKk1lkZxeOZFKCBel9f290FfjFu4GqAm
+	grGoPELCSkkOa9GG2xWYz4KTLsdZS68D672HvRgupYp0jtk9oucP/61XkJqOlYiloEcWWymNd1M
+	ZAm3xr/QKQxYIpd/MEpGRnEIWQjHNXLwAv6u2Wr0kOP9zLvPkjM+hyYip2juJSM9JLOOxpu3sMp
+	0kQ8irtAoo59OzIUfGNpIEvkSPHkP35153uBhkTjbUpKXAeulLdWmrhDezbEBbODEYUiExqmxsT
+	3Ng+lVDgkytOTKh3IXRK1xzCQcOL9NRoy3H9VzQGEFAzRnw==
+X-Google-Smtp-Source: AGHT+IF0Wc/aabCHtSWcbcm967HWZ+TJSB9RK+HGHmlKX6l01u9oA0TxcL2DvhecnXy93SqhEsB6PQ==
+X-Received: by 2002:a17:903:4b46:b0:24c:bdf5:d74b with SMTP id d9443c01a7336-27cc27c217dmr79382925ad.19.1758725292956;
+        Wed, 24 Sep 2025 07:48:12 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f52c4e905sm5563011b3a.18.2025.09.24.07.47.29
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2752328629fsm105445555ad.106.2025.09.24.07.48.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 07:47:29 -0700 (PDT)
+        Wed, 24 Sep 2025 07:48:12 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 24 Sep 2025 07:47:28 -0700
+Date: Wed, 24 Sep 2025 07:48:11 -0700
 From: Guenter Roeck <linux@roeck-us.net>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: pali@kernel.org, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] hwmon: (dell-smm) Move clamping of fan speed out of
- i8k_set_fan()
-Message-ID: <964da8dd-449f-42bb-90df-5ecf4b2d1e32@roeck-us.net>
-References: <20250917181036.10972-1-W_Armin@gmx.de>
- <20250917181036.10972-3-W_Armin@gmx.de>
+To: Eugene Shalygin <eugene.shalygin@gmail.com>
+Cc: Ben Copeland <ben.copeland@linaro.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] hwmon: (asus-ec-sensors) add ROG STRIX X870E-E
+ GAMING WIFI
+Message-ID: <e2dac203-2edb-42b3-b75e-f9b119922250@roeck-us.net>
+References: <20250923192935.11339-1-eugene.shalygin@gmail.com>
+ <20250923192935.11339-2-eugene.shalygin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,20 +92,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250917181036.10972-3-W_Armin@gmx.de>
+In-Reply-To: <20250923192935.11339-2-eugene.shalygin@gmail.com>
 
-On Wed, Sep 17, 2025 at 08:10:34PM +0200, Armin Wolf wrote:
-> Currently i8k_set_fan() clamps the fan speed before performing the
-> SMM call to ensure that the speed is not negative and not greater than
-> i8k_fan_max. This however is mostly unnecessary as the hwmon and
-> thermal interfaces alread ensure this. Only the legacy ioctl interface
-> does not ensure that the fan speed passed to i8k_set_fan() does meet
-> the above criteria.
+On Tue, Sep 23, 2025 at 09:26:55PM +0200, Eugene Shalygin wrote:
+> From: Ben Copeland <ben.copeland@linaro.org>
 > 
-> Move the clamping out of i8k_set_fan() and into the legacy ioctl
-> handler to prepare for future changes.
+> Add support for ROG STRIX X870E-E GAMING WIFI
 > 
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> This board uses the same sensor configuration as the
+> ProArt X870E-CREATOR WIFI motherboard.
+> 
+> Signed-off-by: Ben Copeland <ben.copeland@linaro.org>
+> Signed-off-by: Eugene Shalygin <eugene.shalygin@gmail.com>
 
 Applied.
 
