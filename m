@@ -1,129 +1,138 @@
-Return-Path: <linux-kernel+bounces-830322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26861B9965B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:17:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B4BB9965E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3BCB3AC34A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:17:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B69C7322B7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B562DEA86;
-	Wed, 24 Sep 2025 10:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2472DE6ED;
+	Wed, 24 Sep 2025 10:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="PMaf4nmj"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="nT0Sarpa";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JldBqo5T"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8022B2DBF7C
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A662DD60E
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758709013; cv=none; b=IUofRjJzaj+3nKXsa8T8fU4TS1LU30+e6cTltefxH1wnBFlMr8oUMT7miefG1oB69PkTvKe3LBgJCnBfJNwrdHUECj7Y4MxoYA2uyJfyrHCpqmrq+NO8Lex+8WO8YwJ4E1csva39/KwyzaCsDc7uUs7H01I7FtfGKrIhYbH2VXQ=
+	t=1758709030; cv=none; b=vD9PDr2q7mGC+4CskB1l/DmSAorlnWfheBGoDBSHm/UCXoySdzivD0lebkwioHYCVlga9Spmg4TSabj/sUJbEQHQKCQYYJZwT0ecBaAaffEKhZMUIGstGrrCQbdY0g3ZWKvGLUwA2hztZVIM7trdUoUpw7YZ2ugvN5iIAf8uSkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758709013; c=relaxed/simple;
-	bh=S9krJNAXbYfiBjHOowFzU/MHlCd/viA3rjI5GntmR2M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OTxxBjoCfGUxMKPIt22728wY2skPL+as1MElA8DArfuUzF8V64LzLWqoE5W/xpmmwlt2f3q/zUt/plj/cFC+RiR8OOwr4shhyn7lZX2DMn5bFheW4Xs3S+UfrqFE9G+VmqfOH2Mda3HBMXT+yqeQ/cBCBTPdnIFqPAWJHt33mU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=PMaf4nmj; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b3164978f11so227271666b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:16:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1758709006; x=1759313806; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rr4AHNLZpak0/qwDXluW3tBh9480ZbWvsfmpnJ8cepg=;
-        b=PMaf4nmjtw7ODmDHrVU4cW9aHpwbBxRm+TIGSbQio0dAX8jPqG/k/AK5bja+3aSPsG
-         pgsu8of+2dHLuLk55T0SRKpmLLDICByWcq1OAm7jCy0Amer9BxaK2/QT3+QZ3g4w7//g
-         VfGEiM4ttsnzRhgIdw6H/S4jXQvdgTgxciDrU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758709006; x=1759313806;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rr4AHNLZpak0/qwDXluW3tBh9480ZbWvsfmpnJ8cepg=;
-        b=Xh141468YoQgAP5DVmlpQb7RKTsSG6qOHvZGgr2KrNYSI5zn/n97bjL4DWMEXGpYwh
-         s58hF6LIyWyTHTlX9vJHAl2cTRrgoLaQgzVwyixzTv7q/GvwG8j502b0KPRGrwzNWyu5
-         amBoGJzvvfF91EE5xL/BMoehmSyucfh5VfAsRK9SzSfEZG5OUUtbiSCoxjYSzpjulkxz
-         Y7TrmLQutASAG2pIrNaRZObYl2lW6CXjtZLuANBC2Bv//OcqPfRXdPy3GVjzKBlnuEed
-         QAegLvJarrpe0OQQnwxIJJgSDZCH5uaip0rOI/EYTZ4g5w4+auWGv3o7p4dTA5OMSQea
-         W8Sw==
-X-Gm-Message-State: AOJu0YysbZbhxhPZ7f88oVTFSoQnWXHr/jXUU1DWAoJSGFkIeQ5YK+tv
-	+iLHMoNJpk1Alsforb1cBW2rqLpVuBr+Xt/rmcSbx6tnx7R2mirDiTJ/02xgEC2duyFoenv0P8y
-	swC6R
-X-Gm-Gg: ASbGncukYsrjkyrI4OusiIkL39k9lXJ8zQj0qqeWtkjQFi827pVm/J2WmLcCYzb4svU
-	LKo5dDBXXTgfsUAf7dRBV2C6trc8H5mwaiPIiSIrH1ExgG6wVa8Eu/tWf7SXCEPANg4cb0Xr8G5
-	pGXME7MMgnrBEw41Akrwj3gSdkjL74rYQEUwIV/60wvtS8McKLUk2eVbJcg/f9oVRxndDv28uGC
-	djoGtlK3qxCQndFyfmwhAehfGcRJPaNHV8oCnYZFAiZZcUbYIr1swiiD+0P4FQwtHcOb4vFZ+0d
-	z/Q0aPPlHJsZZzgAeOuqg472ph4Ep8Wq2X4RXWCfIayEKkidedTcm72V8iZMA65PRiDNu3dDoH+
-	hAiB4ChIHVp0MBcMCVvME7zp6O5VX3nogcxy21t1L4Xwq7Z1K844c9bST/tu4YmYm9iU3/ZayRu
-	ZcNhi5MUDjVpB+y+dBVJlUlKQ8WduSHi/EvLuakjOVd7/gafEwXei+uHEk9R8=
-X-Google-Smtp-Source: AGHT+IE7L5itM2VG+Ck3uzCsPeP/CVsjTWyWIegSsTc3ax7OvaG0j081Z2YX1lAhE+xoVbkexzcJ/g==
-X-Received: by 2002:a17:907:3f9d:b0:b2a:7f08:23d5 with SMTP id a640c23a62f3a-b302c2f813amr554123866b.63.1758709005631;
-        Wed, 24 Sep 2025 03:16:45 -0700 (PDT)
-Received: from dario-ThinkPad-T14s-Gen-2i.amarulasolutions.com (host-82-56-38-125.retail.telecomitalia.it. [82.56.38.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b28d206bd13sm949712766b.31.2025.09.24.03.16.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 03:16:45 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Eric Biggers <ebiggers@google.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/3] ARM: mxs_defconfig: enable sound drivers for imx28-amarula-rmm
-Date: Wed, 24 Sep 2025 12:16:27 +0200
-Message-ID: <20250924101640.2942635-3-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250924101640.2942635-1-dario.binacchi@amarulasolutions.com>
-References: <20250924101640.2942635-1-dario.binacchi@amarulasolutions.com>
+	s=arc-20240116; t=1758709030; c=relaxed/simple;
+	bh=tgxvA+YW+h3B4D+x7Bo2FWC+EpKnnMYPSIJY/Pwfwg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hCoIqyB/ZozpoGKLYgUHon8ORs5oHZLImq0bsdQJnBweJuQWPTBAXJmmUEQ1HLar6qrC7cHG1xMPfOHk8z0VH0dt7MKZXQJ1gyXmixtWxMhUxkPYl2Pz3OuCp0TRJjM5Bk4S+1H880wFXWfDT9AbGNl8lzA5WGcq/5q6+IuYu2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=nT0Sarpa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JldBqo5T; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id B033EEC0183;
+	Wed, 24 Sep 2025 06:17:03 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Wed, 24 Sep 2025 06:17:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1758709023; x=
+	1758795423; bh=JDTtAbQOmZtZk8z1Mcd5kf03E8S/F8hNJ0v+YQG+MwE=; b=n
+	T0Sarpa/KG1+uAkBBQqbXY4rEH/R2AorxuNHbF0W558Z4sbBbe0Z0+rZF8OYQsZK
+	BU+mCgZFhEOq7OntNt+IksY1Vx9bkdnsFIavtxbpntIGjMNPBMYCZUSnu8/ep4aP
+	7DQ9ogy7n/M3zv3OcTbQLrMxjVteBUcqU+eXf/NsGWj+ARXx0Mu+ZDXTn6KDBnWT
+	AzyMEwpVKQWae2P6ZSnjxG6ydKd0vHoSxcwW3qJ9GDGTTYTF1aAv0vEcPPorpfd6
+	wKV+ezp0sWgtqlot/6kGFxkoozo5mPCGDJeU6HKobCO2Aegu4x52bpWiXW9vc3f0
+	qPL9SNjH/oThyUZaO1Jyw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758709023; x=1758795423; bh=JDTtAbQOmZtZk8z1Mcd5kf03E8S/F8hNJ0v
+	+YQG+MwE=; b=JldBqo5TO55HJf2/UnRQWnRhe5UJYTVIDlVKXKfbfdFTDbdejoL
+	DCSH9xcw8jrDOn82r//G6rIotADGSWUQQkm48dIzfNjfKlFVr5KEHKflvRrNzg9N
+	suvcs53R0h1iGMV6IcWSgoB9YOES7uPePyzOGabU3RFp2Dw14oSCZpRV3/auKtjZ
+	amxi4JHd1KrMxMq3e+k4/WnRBlPbf7SDp4Ky1YQsRGDDZZQHWsDj+XguAtTbJ6dJ
+	kG9RkaE6s+l1j//gRfVIb25dKx3GttQblSiYzwyHW9iD+nFMLej3lRpvZRyTaA+f
+	0+hIEqFDURGCSkT2R3bGnhl9gt+yanpJ/eQ==
+X-ME-Sender: <xms:H8XTaGGdBKmDLwL8l8Syo9qC6GNAyyrH6pRH1EQLYLwqh-dQh776RQ>
+    <xme:H8XTaE_jZ51a-AoPPsU73w0AwDU3jz1Tfg2-7gFsezGxUyauG9Wt_I_1qqVNjHFaO
+    ziGcD88gtDBzB282dnSiQuUkNvYRBot18MZyFJlOaZvBm4tpMofBmNY>
+X-ME-Received: <xmr:H8XTaHhUgTkXh7FsUx97x1ij0ymi8FMEXeRiBYLorV48iYiCYvQuQ_DwnyS3Mw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeifeefhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
+    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
+    frrghtthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtledu
+    hfeffeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepfeeg
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtg
+    homhdprhgtphhtthhopehlrghntggvrdihrghngheslhhinhhugidruggvvhdprhgtphht
+    thhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoh
+    eplhhorhgvnhiiohdrshhtohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtohep
+    lhhirghmrdhhohiflhgvthhtsehorhgrtghlvgdrtghomhdprhgtphhtthhopegsrghohh
+    hurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsggrohhlihhnrdifrghngheslhhi
+    nhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopeguvghvrdhjrghinhesrghrmh
+    drtghomhdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomh
+X-ME-Proxy: <xmx:H8XTaISTvG4b3JkljYyYanWghsQ4CeXpHgOJvgqXm1dsCx6-8Z78NQ>
+    <xmx:H8XTaEAfaxIgpR_50G_AoUmiSrRTKSvo4e-G7nnT-RhDE0K7KSZbUQ>
+    <xmx:H8XTaC9PP0gPhVI_IzpB_VI5dR-uVXnR1CTTabcXNBwlBo_5uoQLcA>
+    <xmx:H8XTaO07S3C9iemYfZQB6v5XV81GaRnlIWtWUbZGz5QGxZ2n3c4ziQ>
+    <xmx:H8XTaOxgtZpX59qH382vwNfECxNqEQUeW0miHTVU5pUtEdsl9OiAcefK>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 24 Sep 2025 06:17:02 -0400 (EDT)
+Date: Wed, 24 Sep 2025 11:17:00 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: David Hildenbrand <david@redhat.com>
+Cc: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, baohua@kernel.org, 
+	baolin.wang@linux.alibaba.com, dev.jain@arm.com, hughd@google.com, ioworker0@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mpenttil@redhat.com, npache@redhat.com, 
+	ryan.roberts@arm.com, ziy@nvidia.com, richard.weiyang@gmail.com
+Subject: Re: [PATCH mm-new 1/1] mm/khugepaged: abort collapse scan on
+ non-swap entries
+Message-ID: <2i5t62obfweid2zrt33vo3boviw4okha4d3gglw76eqv43ofky@pdv3evw5yjmh>
+References: <20250924100207.28332-1-lance.yang@linux.dev>
+ <1282de5a-3dce-443d-91d1-111103140973@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1282de5a-3dce-443d-91d1-111103140973@redhat.com>
 
-Enable TLV320AIC3X I2C codec and simple-card support used on Amarula
-rmm board.
+On Wed, Sep 24, 2025 at 12:10:47PM +0200, David Hildenbrand wrote:
+> On 24.09.25 12:02, Lance Yang wrote:
+> > From: Lance Yang <lance.yang@linux.dev>
+> > 
+> > The existing check in hpage_collapse_scan_pmd() is specific to uffd-wp
+> > markers. Other special markers (e.g., GUARD, POISONED) would not be caught
+> > early, leading to failures deeper in the swap-in logic.
+> > 
+> > hpage_collapse_scan_pmd()
+> >   `- collapse_huge_page()
+> >       `- __collapse_huge_page_swapin() -> fails!
+> > 
+> > As David suggested[1], this patch skips any such non-swap entries early.
+> > If a special marker is found, the scan is aborted immediately with the
+> > SCAN_PTE_NON_PRESENT result, as Lorenzo suggested[2], avoiding wasted
+> > work.
+> 
+> Note that I suggested to skip all non-present entries except swap entries,
+> which includes migration entries, hwpoisoned entries etc.
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Hm. So swap in is fine, but wait for migration to complete is not?
+Seems odd.
 
----
-
- arch/arm/configs/mxs_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/configs/mxs_defconfig b/arch/arm/configs/mxs_defconfig
-index 3b08c63b6de4..603fb003b223 100644
---- a/arch/arm/configs/mxs_defconfig
-+++ b/arch/arm/configs/mxs_defconfig
-@@ -100,6 +100,8 @@ CONFIG_SND=y
- CONFIG_SND_SOC=y
- CONFIG_SND_MXS_SOC=y
- CONFIG_SND_SOC_MXS_SGTL5000=y
-+CONFIG_SND_SOC_TLV320AIC3X_I2C=y
-+CONFIG_SND_SIMPLE_CARD=y
- CONFIG_USB=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_STORAGE=y
 -- 
-2.43.0
-
-base-commit: cec1e6e5d1ab33403b809f79cd20d6aff124ccfe
-branch: microgea-rmm-audio
+  Kiryl Shutsemau / Kirill A. Shutemov
 
