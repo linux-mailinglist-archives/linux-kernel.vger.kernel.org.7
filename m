@@ -1,80 +1,58 @@
-Return-Path: <linux-kernel+bounces-830157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A27AB98EE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:38:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5DE6B98EF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EE021889CE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:38:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FED43A2F87
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBAA28980A;
-	Wed, 24 Sep 2025 08:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EA128A3FA;
+	Wed, 24 Sep 2025 08:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MrjEEQrB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uG/dEQGj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2836A285C89;
-	Wed, 24 Sep 2025 08:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D0D522F;
+	Wed, 24 Sep 2025 08:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758703094; cv=none; b=WQi1iKjTwSEh86eckp5ejKL14aoDgZ+kGCjal8Nx53vMeTzpqSJDVKYzi5ubsx2BrEkZONyhW5s27dd6ob0K8dHPOiPyNUszWywIWg952+Zszsmubx3ElXYWPBq71Xr22J67KKaWxNfNnaJDFItss7Gttp9GS3kLW0gY0PWCf7c=
+	t=1758703169; cv=none; b=qIlBkmE51b0tM7iXCMBem+S6j8Q/I7AtVDB37UpYakOlhcTiVhOnL9DX9C8zprTB5EfOdZzFFuqyZW/vYpj7IEbkmLigavpnX7JRxaV3q76LdTQzIyyj2D9jJ5d/VDzvBDy9RSIKi+xFNqQp+B0n6/Y+GvDgQGMB9xUspPbEnJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758703094; c=relaxed/simple;
-	bh=LYuHbf3X6DV3fONWB8529ftaJPFravWwKtEHngOaLxU=;
+	s=arc-20240116; t=1758703169; c=relaxed/simple;
+	bh=v4R3xTy9sDHf/gHeoXga3Ab4tKHl7nz8GjOrrfNSOf4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TxVB26/J4+MzCjPocUM8qcnfs/Lscs8me5LcaGTM9tBncUMGGkJ1d9WpxKN8+7ktm0GO3avdZY397U57I5j7yJE/rhuAtA+u7qXHg1CsujWBf9wN/r+kzAWNWkXdhI1uA2JZsRERMzCA8/Gpmb/hbXZc7p6BoBdRwlASVcCXuP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MrjEEQrB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26D96C4CEE7;
-	Wed, 24 Sep 2025 08:38:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cjs24BN3kOYqOrVZNwIy04x+sT1IW5CFkxqglhYOm0F3pyA/5+qhfRKb/wIzCKhwICkymIKuORY0klTrlK9w7rnF08Di3K36l0IAsqxrK2tSJT0SD136McXTfWlzr4vvQLUGLBdwezkGk/ITR8VPAeHlrQ9Fq1Yl3cJ7D7b4V7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uG/dEQGj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80E1AC113CF;
+	Wed, 24 Sep 2025 08:39:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758703093;
-	bh=LYuHbf3X6DV3fONWB8529ftaJPFravWwKtEHngOaLxU=;
+	s=k20201202; t=1758703168;
+	bh=v4R3xTy9sDHf/gHeoXga3Ab4tKHl7nz8GjOrrfNSOf4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MrjEEQrB4G7GzDNEh5LtRJOjh7un59kTXyKDwoD8G/JqFQC2TjSUNE060w1Rxd1rB
-	 mf0rMb7ori0QWz+PYLDTWRw2u5W1QzMuGyC1lXiAOyStu2XZW9wQkwLPkNmaVjGaSU
-	 yAmzGJvK38hf20bKRWSOiZ4HXj21wL3awJH4wbITpGB/vQT2AAwEA/bwanlKX7MgSj
-	 9fOe124PO7nF0NriS1jjMNbNLONnUk+ZwUsgEg0jsIvUtidWu3v+elat5CNQOztmFD
-	 XvFnR79h9BGlZNi69mpgestifqXGh+zulwnx7mj5e0tl/34z01kj1a5TNLt3to4sDB
-	 c4yw5krKgvtug==
-Date: Wed, 24 Sep 2025 10:38:09 +0200
+	b=uG/dEQGj8mHxbjC6xz2TNY8JxUomoX3pJr3YmnQIBRhaDJsdKo4oPjnA3drDxVH1Z
+	 9z1L+BEsZt2rGotpT1Z8vgKUOXPinkbiPRIXH5CV8XegactQy6z4z4QYW8QAaYCQvJ
+	 hCZPReRqoT+p3V0p6c0jQMJzsqpTm4eY7a8GsDWz0lAMoP1TUc3IkW0BRmq8JXlXin
+	 vKmZRPPa+rx/BzVXFYxYX5RfXds9QYJV7GTyBMNq0eXv84MZAEdkYvxurodgQyrKAC
+	 ewLyhAC7vqCDnLNZxcfompKouQYT7HpfL6NlXq5O0olxZNskosHTzcgvhQEkb8cHGc
+	 rZ/mG6FLZhVLA==
+Date: Wed, 24 Sep 2025 10:39:26 +0200
 From: Mark Brown <broonie@kernel.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-media@vger.kernel.org, netdev@vger.kernel.org,
-	linux-spi@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Javier Carrasco <javier.carrasco@wolfvision.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Matthias Fend <matthias.fend@emfend.at>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 16/16] spi: cadence: Remove explicit device node
- availability check
-Message-ID: <aNOt8VS8l1qr_Zbx@finisterre.sirena.org.uk>
-References: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
- <20250924074602.266292-17-sakari.ailus@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, achill@achill.org
+Subject: Re: [PATCH 6.6 00/70] 6.6.108-rc1 review
+Message-ID: <aNOuPtJ2KgAenBpA@finisterre.sirena.org.uk>
+References: <20250922192404.455120315@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,37 +60,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HNWgzN9p1fTapGgI"
+	protocol="application/pgp-signature"; boundary="CeKIXtBTPx+EATCF"
 Content-Disposition: inline
-In-Reply-To: <20250924074602.266292-17-sakari.ailus@linux.intel.com>
+In-Reply-To: <20250922192404.455120315@linuxfoundation.org>
 X-Cookie: Filmed before a live audience.
 
 
---HNWgzN9p1fTapGgI
+--CeKIXtBTPx+EATCF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Sep 24, 2025 at 10:46:02AM +0300, Sakari Ailus wrote:
+On Mon, Sep 22, 2025 at 09:29:00PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.108 release.
+> There are 70 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-> Don't check the availability of child device nodes explicitly as this is
-> now embedded in device_for_each_child_node().
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Acked-by: Mark Brown <broonie@kernel.org>
-
---HNWgzN9p1fTapGgI
+--CeKIXtBTPx+EATCF
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjTrfAACgkQJNaLcl1U
-h9DioAgAg3JKw09AiYKmuLbspKZcE/HivhJWWFKV+GD9Cu/js/nAmm+xpTqcCVFm
-BYFM2Ubt9T51fNWCbLsyYLa1VJiE5a05gj4l2c4MHWJZ8QVx7/cMsHN+Tt8+Vueh
-Ha1j9aCK8iPH08dIR81XdsFFOcEBcoqelRUCCHf4XEUyJPUp1F2OVdfPy5h+KwKp
-Eo14XaYCdvkkk+Ei6zQDqrFnK2fBXXkfYN0hcYtinQI7G2cugNnr6QIUnnQrbhFi
-uLwJe8MocnI7Yclco6XZ7kSaOC7GdaA+1BOXJxfnQIB2mi4p3xW2WwvhVylkfdxl
-jaQBBbBuMhVGt0LKNWqCH4Tmkzr63w==
-=/Mvr
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjTrj0ACgkQJNaLcl1U
+h9Buiwf9FWCY5Xuu9645hciY7WrTaV/QKeTOVt6lQF8jTx542LNY7ZaurkL8zFMT
+zvk5+s40adPXejzzJ4ynlaCVBVLaYUf5UuMKxUOat1FMYiYvJ7h5Sa4zknQzEm09
+eIUmCIn3Mcm090JMNJX6UTqivTSTRezcE0nDTZ4Aw/u8YIH5Xfmw2BOyaegM8TQv
+bpCAt5iqwb5Ts8mPk07OkevB5zi2aDtA3bvS1xNwOIvEEhFVPTD60aEovS9pjugv
+PyOCgVzlnzCCtnjHppl26wUKwaglvS89oB2a9HNXNzj1SXLOGuE5HsRZqwnddUXZ
+H0TT1oZeOXkRhRJSbIETTQNTgYJB5g==
+=APqa
 -----END PGP SIGNATURE-----
 
---HNWgzN9p1fTapGgI--
+--CeKIXtBTPx+EATCF--
 
