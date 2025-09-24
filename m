@@ -1,343 +1,204 @@
-Return-Path: <linux-kernel+bounces-830724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44168B9A64F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:56:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40135B9A5D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ED163A3D67
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:55:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77FE33A49C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1FE315D29;
-	Wed, 24 Sep 2025 14:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342AB30F95E;
+	Wed, 24 Sep 2025 14:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="xgAxSahX"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WdOevolK"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010034.outbound.protection.outlook.com [52.101.69.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F97314B90;
-	Wed, 24 Sep 2025 14:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758725445; cv=none; b=G6BtwV2tOcbhiguROefxuLGVmZGHcRnprIEC3e9ym90lbIblhibL/hDWkouPdIPBey2+sFz3+cK7pKU1q3YS7cMJsD6k3Ltq17wo2BkSaVA+X2IwZYbBEqcdWXOMj2biEj3jYDr5Zm3a9Edd5igbJD81WQ2fUuv8emHJUEsujVM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758725445; c=relaxed/simple;
-	bh=7SKzH8PxYzpAySCoXAtnf3AzABu9MFjk+10aWHUVLi0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ErEvoTnDybm4M2ZrGAlWb0Tm8dTq80rfSwUcSJ4GvDiuwd4qRtCb5e5VhVxQV+QKbMakVKZOqjcJugtGFLGkPxKhDpDAcVVuS1me0PUTqwiiEiNB8yLiYs8UuNQByzvawE8wP0CJcbKLpIv2uOUwfpBm4fLSSxgBO8hA+c3+yug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=xgAxSahX; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id B4C301A0F82;
-	Wed, 24 Sep 2025 14:50:41 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 83FEB60634;
-	Wed, 24 Sep 2025 14:50:41 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 58B7D102F1916;
-	Wed, 24 Sep 2025 16:50:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758725440; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=oPEzeTnQ7Or1TuaZXMgQBye/vToi6RorrJA8q5MfX8w=;
-	b=xgAxSahXYK8tzd2470KLTRxFZnW5OqM8zs3ibyWTQ1PBZP/AoO1iH+YGzVEmG92eQtDAQo
-	KSqwOrTR8Et0nyBBM060kEDf9HceqlOMsFvsJOtMonFhjhp0qDmNyLYThfjKNq/dQH37oL
-	NiUnDniBpLBijK4IEV9J0D1r9ETo7OfumAn8AOL4h+N9fJCq6wPLurDPGDP3s44biNrZBx
-	uw6ZmEG/0LfC3XdNFCJHaucZEpmuoCV4LBWDCAbWZhRQoVOr/ufiiPNtUGY1UZO7L/NkBp
-	wpq44H3WnvJs72ICzYkrpQ7eCWKRVzJ5qUlgx6uApZgw4Y0Qz/rlv8mziiIidA==
-From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Date: Wed, 24 Sep 2025 16:49:50 +0200
-Subject: [PATCH bpf-next v4 15/15] selftests/bpf: test_xsk: Integrate
- test_xsk.c to test_progs framework
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D61A30C63B;
+	Wed, 24 Sep 2025 14:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758725420; cv=fail; b=YJGZeTZIbO7nKs2Zw+COf4x3UWvsP/rYjEHJIdoh9t99KBd4Q1hZ42m5zwN/ZCcK0lxmn+kfbuAzjHkNxda6SQo60peaI97wkxVQQPjuhwuL3+StYTlcGk5rVVIZ0Wq3fvSTDgFq6gTSoLh+v78BBRxDWQ6JfGIrnw42liKXHvA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758725420; c=relaxed/simple;
+	bh=M5SHIneSgLRpEQ9xN6vLe3w2HS4hjaIQf0iSfTkppFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=AcLFCSip6jRsy9H7GPKQb+LOVh1UL0FQZbnA5r35+zCyHMQIT5yDEcyc2B1k4OHa5OREGpsfQ+c9zK99xg1dxajUR1TKB1OLTg2KWJln4tjFFWZtLO8ScVbzumAeq/i6VqzvQlbkVx+a9I4zaVEHW0Y3mr9pU2d2fLATrQ+bSa4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WdOevolK; arc=fail smtp.client-ip=52.101.69.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=M+S5CqgdBF9BCjO7om85/c4F08x3vxLo1XFdyNsBMdMow6rqbPf19G+KRijhVnSqIVD/i6P+eHtDIXhEEeF/fri4NUG9hV04nH+CkJ5HFdQHbgupbFTXi24u7ei4h0UEtgxFI7CMvDpRVOgt05DD2iZ/THPz0BoarxRi4Ob+puF48ijzWDTzA367YyJBgGGCMYbcs4zdsbzZ63i3UInrvHITBs4MvsznZbpXiZ9mJRQnmF/0qM/cSZtle/MiUC+kV8wBts5N4ZhxWHUR7vkPEDvjmi1H8R6AofgJV3CHvmDC16IrSjeiKTBpX6IBesICcgTy0B/Qej6CPtQliKJSjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A2uHNANt9VJpHKzs9mw07w87mTB2M8/EXEKDfW9kADo=;
+ b=BmUGcG1Ggz8jEo4hPZp3z34AL0JLWgNqoz4fZfE8ilBx1ATHHqcw9GR3klR2b5kL+TGnaK2OgZseOgrt+RXho1rLOb05vIFaaXXhpbVSLggANsOqZi47gLgOY8KcspeEaWaZwfZ+eWMFhOfnQ5sR8BWjqK7DJZnHrAhQpanrZZnqIrfAQrJajJMsLlOYTibsFbJA5C2mpDRuBSfeL5p+Zgs2M8wGQR4S1Y/qvui9ZegOmNCVXibqVbzpg1Gs5rO+cHBdJh4Gt2vj9i11SWdWvN2mxKjfhGRwM6oeJe7CDfUn3K1n9SXjc+qqpfex3iK3Yb0d4YdBTgHComMPA9bczg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A2uHNANt9VJpHKzs9mw07w87mTB2M8/EXEKDfW9kADo=;
+ b=WdOevolKR+W9v3cdTG8BHCzxjxyil/7XwKF1V4lFh6quzKpHACDjMzUHH09MqYJIx/RORgiJ+4Bk3nNr3RRJOuhJj1sQpCfQo73xwI078IPkoshClIQDns2PNFsI+qY6pGKIsfcOg9MUQNx7dq1eP7IhCk3rKSMZoGm/jvO61fe0caW5Negf1NYvx3wt1d//D/G0ElJeS6o2OBybBl4F3gAVh9zj8FtEOfjZBX7a9vncSLYfID5rIfkthZ9wto1y/U6OrK1sSdxeF0PBTwlhr9kh/R5vMzvCJSkEL+YDUrxiYB8q3WSvejOfdn6MC67K94tYahbA33JLa8P4hEjzog==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by VI0PR04MB10509.eurprd04.prod.outlook.com (2603:10a6:800:214::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
+ 2025 14:50:11 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
+ 14:50:11 +0000
+Date: Wed, 24 Sep 2025 10:50:04 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Sherry Sun <sherry.sun@nxp.com>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	shenwei.wang@nxp.com, peng.fan@nxp.com,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH V2 1/2] tty: serial: imx: Only configure the wake
+ register when device is set as wakeup source
+Message-ID: <aNQFHJlnmn9V2Eyy@lizhi-Precision-Tower-5810>
+References: <20250924031550.2516704-1-sherry.sun@nxp.com>
+ <20250924031550.2516704-2-sherry.sun@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924031550.2516704-2-sherry.sun@nxp.com>
+X-ClientProxiedBy: PH5P222CA0009.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:510:34b::14) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250924-xsk-v4-15-20e57537b876@bootlin.com>
-References: <20250924-xsk-v4-0-20e57537b876@bootlin.com>
-In-Reply-To: <20250924-xsk-v4-0-20e57537b876@bootlin.com>
-To: =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
- Magnus Karlsson <magnus.karlsson@intel.com>, 
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
- Jonathan Lemon <jonathan.lemon@gmail.com>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org, 
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|VI0PR04MB10509:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9dd597eb-b732-4492-4771-08ddfb79a9a0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gqYvU3MD1fw9neA3fw+zeg788WT7JmJVU2FYb/DXiZoeFyv/NukfxQsM7rF9?=
+ =?us-ascii?Q?9Oq/HOGQ4QYLX9sDx6IdBny95B8EJmeqqFrxT9qtip7rbMukNhb5W02rDkMA?=
+ =?us-ascii?Q?ZxLemDSVtB4BJcDc04NZKa8R2bsMQZG/Z+Qy1EWTEV0cyYKRELYHMz6t7F3J?=
+ =?us-ascii?Q?iNIedvpCeXiXy04bQF8vi8NKdr6p25B6ZpA0qhxtVKvfC9+mIdBlVtiezkDk?=
+ =?us-ascii?Q?yH71UZzYXFMC/H8nz6cpJAmWOSJyIORyS5SxR8ZWReNEfdHle+c2tlFl6Y4j?=
+ =?us-ascii?Q?JfFHQ81Hr07aeD5AGGR4hhPeSF2frsxVadckusjQjVqgTDDs7KRE4zHNkNfy?=
+ =?us-ascii?Q?YfbFfwvIFxsaBzu1lHtvD2vH2VNipmiyu45YPzpYEA2vMKraFIvpbYZWvc7n?=
+ =?us-ascii?Q?+2SER4+ytrpLIxWIxhg8uG9dzA3sSmtG4SDC6WgU+9Kt7pRGwjCiwWTFWYWR?=
+ =?us-ascii?Q?K5VPS6A3gqG+JMrbJHAC92dvKpG3qYY78ocew2VsbVvxwixYXqnt+d3RS0FH?=
+ =?us-ascii?Q?yOD81c5guwUewx9cuOjKfc3WUSYhvXh+KK2AvFltN61a79F660dlUD09jJxh?=
+ =?us-ascii?Q?15wniYrsM1n9+/v/Xwq+wy4cjeJ2P+9k0N5BgMxpSvAYDOMkldl4F/k4X8VV?=
+ =?us-ascii?Q?35nyhwC2S+QXYujlfXJI8q9/EB6nkCCLrsuMFgW5OA7cNOSchs1cw40OLo5h?=
+ =?us-ascii?Q?LZZc6xN8ueNYp2gMnT+X4O9+wG6OGSXIV5f/XqxEW9P5X1bcBF+4DzA35Ig8?=
+ =?us-ascii?Q?DTkke5V9lwVzGQkwK2Gro2rZLsHRn5/sXVK+keMH2a5hYB6HLdcxRo90eBrh?=
+ =?us-ascii?Q?5NA43cllCYXsAWslfC3HQjG9s7pAltAwgRsZsnNvR0hsXwv4neWUfikqIY1e?=
+ =?us-ascii?Q?+XjCMFjNVzQ4NupCJ6EvfmHDSTfr1zetCxS7TrdF7uLorvBX4rRvQRtabs43?=
+ =?us-ascii?Q?7UbDLfeO6bik8V/7teU+rL5Kp8HV+Bqxo4/+MVoWBerb6ChGsaRwy5xXUk/B?=
+ =?us-ascii?Q?D1awrqflNfPgJcWxYmmZ1LtJ7CrPbj/Soe7o7KY65+1IvHQ71NRof3NGZYaQ?=
+ =?us-ascii?Q?PaOUBsVwzpbEAj832VMkRv/jBMFXcr/B2ArsFHzxffNrjqyvnWLTQnzDzX+2?=
+ =?us-ascii?Q?gHiXkowwingE8lhblrLapLRUW8T50gt1q0sfmpBMKwdRDnkNmvxHiUGN4pHX?=
+ =?us-ascii?Q?YYo12+JlMZ2m8hOxsRYw4ucx/SXBwgcGWdtInMAAco57LgBRaQibf5h3CLo8?=
+ =?us-ascii?Q?/NPwu/1NBor+L/vl/CyTdbdzAGdv3tFKkW6MlATaiyCOS+1acsMxB1gG0EFh?=
+ =?us-ascii?Q?VQDd78BhuiFrcJfxaSmWtBjz7/z4EOeFk4gRwMILOFTwDrQw/z/AACmH+frs?=
+ =?us-ascii?Q?02MJv9PyfcVno2uME31gUckI4WDOR9anMb+sasxtw7v6olKc9u6ahMA/Tbx/?=
+ =?us-ascii?Q?I5ilmqeyFpegVYa/TMW1D+6QyPEpC/jG3yJ/t2ddlP3D4p1GC2CpeQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WFZ0djL+whwdkSBL1AH46pYxBr7vtMZkuo1/iw8UhpAuskOb5Vvt8l9JASde?=
+ =?us-ascii?Q?6HZNn4KH9/rH1Q6eSBW12DMk4vvx8nbnuHFEAkpGhQmzyoRdE9+gB7jOlBMH?=
+ =?us-ascii?Q?Vt2kY5Dc5nyMZZl70g8aSwFedT2Ixs9gCVI1QQHoWWpaaaisOsBS7xbq1T2M?=
+ =?us-ascii?Q?aeKsctPtZIrWHKrJJxccEF7sDjfJIpphKnRHPmR0PvvO3uw5jLD4GQWBTjyO?=
+ =?us-ascii?Q?vUOsU8iCR475sreWn5g9wOLsdSlhi1gifDwyq+P4ncHJ9BQ7+sGvgjPxoh8/?=
+ =?us-ascii?Q?Dz92u9nFXi1t2gIjcjOq6x9kSFF+n8ZwscgVxVZvXj9qtUeXhTALtnGxkwkr?=
+ =?us-ascii?Q?jlQk8OkVvHtvmvv9dZ6eyiNj1uUHXSoV6okL4/xa/ykxe3NIqOA/xO7eQaHt?=
+ =?us-ascii?Q?BNleCMfrl5UyrO8zaNburs3amWxanm8apnGh/1/mtPNIhMypEf9nsBq3SG5j?=
+ =?us-ascii?Q?YAL0p/fHODd+/uBz9ZQOAEBRmH2wUNhE3DSgx9zau74+GpcNRMJg+5zw9e0X?=
+ =?us-ascii?Q?uZG12AlYScOuqqdEV/z5u0PG+bWRJr/44GNZ+dTsQK2RYp1tAO1K43lo9aLI?=
+ =?us-ascii?Q?4NE0Ykm7Cn8ee1JwM3js6IkSXvFxYw6U8rja3oNIOG3VcnfrWNbNywrcKc9B?=
+ =?us-ascii?Q?yU3nv7Dj6utz9im+/7yHhVXlOD4oUKUCOtOJqszSeak7ys3SEOZnVS2HJEad?=
+ =?us-ascii?Q?YCX963mWv7Xn040PQMNgRGGQ3V3tWtTRp06957XHd6DngiWvbkbF+SqFxsiS?=
+ =?us-ascii?Q?G5+wNkxmREQXusulUtzwyhGlOT8Ja1jlYBRPte0YuMlkET/nicpBj9yjglvk?=
+ =?us-ascii?Q?flrXjPZTi+lpFL00A+WwIuBjoOT0VC3j1x17zpz3W5/JW6prDg8JT5wG4ReC?=
+ =?us-ascii?Q?6QuFoQ9YtHBItyTNrlc8JWb2RFPClvgEHGGJitl713zpFnyI+0s52P1mSaPc?=
+ =?us-ascii?Q?xFGtzltNLfefPAvNFFDgSEt4axpxoQ8j0Aqouj80bmEQNP0XM45fDBWn5KW7?=
+ =?us-ascii?Q?tB11rki6Lm+Tsk8PS60B8zOXQA0L9mBO0a6gJ//5NV9rp7yBFJy0XDtOrlMU?=
+ =?us-ascii?Q?HLJniME98K39ffU45WeXW3hv1mE4rxOQxpiWMptOIuYUdZaV/7FamZid8R0C?=
+ =?us-ascii?Q?XYGK1J5XbBkHWmV8CvK/Byc3YDce+eU/POR9L+VEtgvAEgos7jKJh2OpnZLl?=
+ =?us-ascii?Q?o9ZOt9GhLhfl3oKFfjAii+a/0ZbFtaSCVa/fH08rkgNZe2JRdlo7jrMaVM3a?=
+ =?us-ascii?Q?+CkQZSJKSrgHp0WvPAAvea4Q339rClZaddksJl4eRBSllR/0R1+FBpwUAQfn?=
+ =?us-ascii?Q?oJcajob1UkOAD2MD4iXcAJrQOkmQhG/mPYXr3HbFi89sm8lcy9ASlZhWMtEB?=
+ =?us-ascii?Q?aUm69tFnTddK7/SrC9UudZ0/jCVU/hvxUDJNWyWQARG9ULm3PETHGe/xjb//?=
+ =?us-ascii?Q?wBsybuqThUk7Vn6nhsiXVh06GwL2JMt82LRR5cmBSRgq5pncCaM8spW7ehfa?=
+ =?us-ascii?Q?USkwgzfJdSh+BEuEnlRWTdMXX5vYyOY4rxMK8oW49lBBIajnjw4HZGz7ihdB?=
+ =?us-ascii?Q?mvcVgPN1mUhf1z7hukOaCm9xs6AKo3ANFHmwSgiQ?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9dd597eb-b732-4492-4771-08ddfb79a9a0
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 14:50:11.3599
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: B8fW6oC4zHYXoM5TipctyDAVmg4LFeBj+dHWPTr1KEkGguHCctqNHIA3BtpqvxrU/WF7LzlQ7Ap3cWF1AueskQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10509
 
-test_xsk.c isn't part of the test_progs framework.
-
-Integrate the tests defined by test_xsk.c into the test_progs framework
-through a new file : prog_tests/xsk.c. ZeroCopy mode isn't tested in it
-as veth peers don't support it.
-
-Move test_xsk{.c/.h} to prog_tests/.
-
-Add the find_bit library to test_progs sources in the Makefile as it is
-is used by test_xsk.c
-
-Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
----
- tools/testing/selftests/bpf/Makefile               |  13 +-
- .../selftests/bpf/{ => prog_tests}/test_xsk.c      |   0
- .../selftests/bpf/{ => prog_tests}/test_xsk.h      |   0
- tools/testing/selftests/bpf/prog_tests/xsk.c       | 146 +++++++++++++++++++++
- tools/testing/selftests/bpf/xskxceiver.c           |   2 +-
- 5 files changed, 158 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index ecd6f6fb540d968473227c770c6617f56257c7d8..ff2de16eafdade22c97c6a632bc200fb67e83b2f 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -543,6 +543,8 @@ TRUNNER_TEST_OBJS := $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.test.o,	\
- 				 $$(notdir $$(wildcard $(TRUNNER_TESTS_DIR)/*.c)))
- TRUNNER_EXTRA_OBJS := $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.o,		\
- 				 $$(filter %.c,$(TRUNNER_EXTRA_SOURCES)))
-+TRUNNER_LIB_OBJS := $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.o,		\
-+				 $$(filter %.c,$(TRUNNER_LIB_SOURCES)))
- TRUNNER_EXTRA_HDRS := $$(filter %.h,$(TRUNNER_EXTRA_SOURCES))
- TRUNNER_TESTS_HDR := $(TRUNNER_TESTS_DIR)/tests.h
- TRUNNER_BPF_SRCS := $$(notdir $$(wildcard $(TRUNNER_BPF_PROGS_DIR)/*.c))
-@@ -686,6 +688,10 @@ $(TRUNNER_EXTRA_OBJS): $(TRUNNER_OUTPUT)/%.o:				\
- 	$$(call msg,EXT-OBJ,$(TRUNNER_BINARY),$$@)
- 	$(Q)$$(CC) $$(CFLAGS) -c $$< $$(LDLIBS) -o $$@
- 
-+$(TRUNNER_LIB_OBJS): $(TRUNNER_OUTPUT)/%.o:$(TOOLSDIR)/lib/%.c
-+	$$(call msg,LIB-OBJ,$(TRUNNER_BINARY),$$@)
-+	$(Q)$$(CC) $$(CFLAGS) -c $$< $$(LDLIBS) -o $$@
-+
- # non-flavored in-srctree builds receive special treatment, in particular, we
- # do not need to copy extra resources (see e.g. test_btf_dump_case())
- $(TRUNNER_BINARY)-extras: $(TRUNNER_EXTRA_FILES) | $(TRUNNER_OUTPUT)
-@@ -699,6 +705,7 @@ $(OUTPUT)/$(TRUNNER_BINARY): | $(TRUNNER_BPF_OBJS)
- 
- $(OUTPUT)/$(TRUNNER_BINARY): $(TRUNNER_TEST_OBJS)			\
- 			     $(TRUNNER_EXTRA_OBJS) $$(BPFOBJ)		\
-+			     $(TRUNNER_LIB_OBJS)			\
- 			     $(RESOLVE_BTFIDS)				\
- 			     $(TRUNNER_BPFTOOL)				\
- 			     $(OUTPUT)/veristat				\
-@@ -745,6 +752,7 @@ TRUNNER_EXTRA_SOURCES := test_progs.c		\
- 			 $(VERIFY_SIG_HDR)		\
- 			 flow_dissector_load.h	\
- 			 ip_check_defrag_frags.h
-+TRUNNER_LIB_SOURCES := find_bit.c
- TRUNNER_EXTRA_FILES := $(OUTPUT)/urandom_read				\
- 		       $(OUTPUT)/liburandom_read.so			\
- 		       $(OUTPUT)/xdp_synproxy				\
-@@ -782,6 +790,7 @@ endif
- TRUNNER_TESTS_DIR := map_tests
- TRUNNER_BPF_PROGS_DIR := progs
- TRUNNER_EXTRA_SOURCES := test_maps.c
-+TRUNNER_LIB_SOURCES :=
- TRUNNER_EXTRA_FILES :=
- TRUNNER_BPF_BUILD_RULE := $$(error no BPF objects should be built)
- TRUNNER_BPF_CFLAGS :=
-@@ -803,8 +812,8 @@ $(OUTPUT)/test_verifier: test_verifier.c verifier/tests.h $(BPFOBJ) | $(OUTPUT)
- 	$(Q)$(CC) $(CFLAGS) $(filter %.a %.o %.c,$^) $(LDLIBS) -o $@
- 
- # Include find_bit.c to compile xskxceiver.
--EXTRA_SRC := $(TOOLSDIR)/lib/find_bit.c
--$(OUTPUT)/xskxceiver: $(EXTRA_SRC) test_xsk.c test_xsk.h xskxceiver.c xskxceiver.h $(OUTPUT)/network_helpers.o $(OUTPUT)/xsk.o $(OUTPUT)/xsk_xdp_progs.skel.h $(BPFOBJ) | $(OUTPUT)
-+EXTRA_SRC := $(TOOLSDIR)/lib/find_bit.c prog_tests/test_xsk.c prog_tests/test_xsk.h
-+$(OUTPUT)/xskxceiver: $(EXTRA_SRC) xskxceiver.c xskxceiver.h $(OUTPUT)/network_helpers.o $(OUTPUT)/xsk.o $(OUTPUT)/xsk_xdp_progs.skel.h $(BPFOBJ) | $(OUTPUT)
- 	$(call msg,BINARY,,$@)
- 	$(Q)$(CC) $(CFLAGS) $(filter %.a %.o %.c,$^) $(LDLIBS) -o $@
- 
-diff --git a/tools/testing/selftests/bpf/test_xsk.c b/tools/testing/selftests/bpf/prog_tests/test_xsk.c
-similarity index 100%
-rename from tools/testing/selftests/bpf/test_xsk.c
-rename to tools/testing/selftests/bpf/prog_tests/test_xsk.c
-diff --git a/tools/testing/selftests/bpf/test_xsk.h b/tools/testing/selftests/bpf/prog_tests/test_xsk.h
-similarity index 100%
-rename from tools/testing/selftests/bpf/test_xsk.h
-rename to tools/testing/selftests/bpf/prog_tests/test_xsk.h
-diff --git a/tools/testing/selftests/bpf/prog_tests/xsk.c b/tools/testing/selftests/bpf/prog_tests/xsk.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..7ce5ddd7d3fc848df27534f00a6a9f82fbc797c5
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/xsk.c
-@@ -0,0 +1,146 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <net/if.h>
-+#include <stdarg.h>
-+
-+#include "network_helpers.h"
-+#include "test_progs.h"
-+#include "test_xsk.h"
-+#include "xsk_xdp_progs.skel.h"
-+
-+#define VETH_RX "veth0"
-+#define VETH_TX "veth1"
-+#define MTU	1500
-+
-+int setup_veth(bool busy_poll)
-+{
-+	SYS(fail,
-+	"ip link add %s numtxqueues 4 numrxqueues 4 type veth peer name %s numtxqueues 4 numrxqueues 4",
-+	VETH_RX, VETH_TX);
-+	SYS(fail, "sysctl -wq net.ipv6.conf.%s.disable_ipv6=1", VETH_RX);
-+	SYS(fail, "sysctl -wq net.ipv6.conf.%s.disable_ipv6=1", VETH_TX);
-+
-+	if (busy_poll) {
-+		SYS(fail, "echo 2 > /sys/class/net/%s/napi_defer_hard_irqs", VETH_RX);
-+		SYS(fail, "echo 200000 > /sys/class/net/%s/gro_flush_timeout", VETH_RX);
-+		SYS(fail, "echo 2 > /sys/class/net/%s/napi_defer_hard_irqs", VETH_TX);
-+		SYS(fail, "echo 200000 > /sys/class/net/%s/gro_flush_timeout", VETH_TX);
-+	}
-+
-+	SYS(fail, "ip link set %s mtu %d", VETH_RX, MTU);
-+	SYS(fail, "ip link set %s mtu %d", VETH_TX, MTU);
-+	SYS(fail, "ip link set %s up", VETH_RX);
-+	SYS(fail, "ip link set %s up", VETH_TX);
-+
-+	return 0;
-+
-+fail:
-+	return -1;
-+}
-+
-+void delete_veth(void)
-+{
-+	SYS_NOFAIL("ip link del %s", VETH_RX);
-+	SYS_NOFAIL("ip link del %s", VETH_TX);
-+}
-+
-+int configure_ifobj(struct ifobject *tx, struct ifobject *rx)
-+{
-+	rx->ifindex = if_nametoindex(VETH_RX);
-+	if (!ASSERT_OK_FD(rx->ifindex, "get RX ifindex"))
-+		return -1;
-+
-+	tx->ifindex = if_nametoindex(VETH_TX);
-+	if (!ASSERT_OK_FD(tx->ifindex, "get TX ifindex"))
-+		return -1;
-+
-+	tx->shared_umem = false;
-+	rx->shared_umem = false;
-+
-+
-+	return 0;
-+}
-+
-+static void test_xsk(const struct test_spec *test_to_run, enum test_mode mode)
-+{
-+	struct ifobject *ifobj_tx, *ifobj_rx;
-+	struct test_spec test;
-+	int ret;
-+
-+	ifobj_tx = ifobject_create();
-+	if (!ASSERT_OK_PTR(ifobj_tx, "create ifobj_tx"))
-+		return;
-+
-+	ifobj_rx = ifobject_create();
-+	if (!ASSERT_OK_PTR(ifobj_rx, "create ifobj_rx"))
-+		goto delete_tx;
-+
-+	if (!ASSERT_OK(setup_veth(false), "setup veth"))
-+		goto delete_rx;
-+
-+	if (!ASSERT_OK(configure_ifobj(ifobj_tx, ifobj_rx), "conigure ifobj"))
-+		goto delete_veth;
-+
-+	ret = get_hw_ring_size(ifobj_tx->ifname, &ifobj_tx->ring);
-+	if (!ret) {
-+		ifobj_tx->hw_ring_size_supp = true;
-+		ifobj_tx->set_ring.default_tx = ifobj_tx->ring.tx_pending;
-+		ifobj_tx->set_ring.default_rx = ifobj_tx->ring.rx_pending;
-+	}
-+
-+	if (!ASSERT_OK(init_iface(ifobj_rx, worker_testapp_validate_rx), "init RX"))
-+		goto delete_veth;
-+	if (!ASSERT_OK(init_iface(ifobj_tx, worker_testapp_validate_tx), "init TX"))
-+		goto delete_veth;
-+
-+	test_init(&test, ifobj_tx, ifobj_rx, 0, &tests[0]);
-+
-+	test.tx_pkt_stream_default = pkt_stream_generate(DEFAULT_PKT_CNT, MIN_PKT_SIZE);
-+	if (!ASSERT_OK_PTR(test.tx_pkt_stream_default, "TX pkt generation"))
-+		goto delete_veth;
-+	test.rx_pkt_stream_default = pkt_stream_generate(DEFAULT_PKT_CNT, MIN_PKT_SIZE);
-+	if (!ASSERT_OK_PTR(test.rx_pkt_stream_default, "RX pkt generation"))
-+		goto delete_veth;
-+
-+
-+	test_init(&test, ifobj_tx, ifobj_rx, mode, test_to_run);
-+	ret = test.test_func(&test);
-+	if (ret != TEST_SKIP)
-+		ASSERT_OK(ret, "Run test");
-+	pkt_stream_restore_default(&test);
-+
-+	if (ifobj_tx->hw_ring_size_supp)
-+		hw_ring_size_reset(ifobj_tx);
-+
-+	pkt_stream_delete(test.tx_pkt_stream_default);
-+	pkt_stream_delete(test.rx_pkt_stream_default);
-+	xsk_xdp_progs__destroy(ifobj_tx->xdp_progs);
-+	xsk_xdp_progs__destroy(ifobj_rx->xdp_progs);
-+
-+delete_veth:
-+	delete_veth();
-+delete_rx:
-+	ifobject_delete(ifobj_rx);
-+delete_tx:
-+	ifobject_delete(ifobj_tx);
-+}
-+
-+void test_ns_xsk_skb(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(tests); i++) {
-+		if (test__start_subtest(tests[i].name))
-+			test_xsk(&tests[i], TEST_MODE_SKB);
-+	}
-+}
-+
-+void test_ns_xsk_drv(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(tests); i++) {
-+		if (test__start_subtest(tests[i].name))
-+			test_xsk(&tests[i], TEST_MODE_DRV);
-+	}
-+}
-+
-diff --git a/tools/testing/selftests/bpf/xskxceiver.c b/tools/testing/selftests/bpf/xskxceiver.c
-index 8707f4a0fac64e1ebb6a4241edf8e874a1eb67c3..a54904783c757d282e3b99194aaed5f74d510763 100644
---- a/tools/testing/selftests/bpf/xskxceiver.c
-+++ b/tools/testing/selftests/bpf/xskxceiver.c
-@@ -90,7 +90,7 @@
- #include <sys/mman.h>
- #include <sys/types.h>
- 
--#include "test_xsk.h"
-+#include "prog_tests/test_xsk.h"
- #include "xsk_xdp_progs.skel.h"
- #include "xsk.h"
- #include "xskxceiver.h"
-
--- 
-2.51.0
-
+On Wed, Sep 24, 2025 at 11:15:49AM +0800, Sherry Sun wrote:
+> Currently, the i.MX UART driver enables wake-related registers for all
+> UART devices by default. However, this is unnecessary for devices that
+> are not configured as wakeup sources. To address this, add a
+> device_may_wakeup() check before configuring the UART wake-related
+> registers.
+>
+> Fixes: db1a9b55004c ("tty: serial: imx: Allow UART to be a source for wakeup")
+> Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
+> ---
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+>  drivers/tty/serial/imx.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>
+> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+> index 500dfc009d03..87d841c0b22f 100644
+> --- a/drivers/tty/serial/imx.c
+> +++ b/drivers/tty/serial/imx.c
+> @@ -2697,8 +2697,23 @@ static void imx_uart_save_context(struct imx_port *sport)
+>  /* called with irq off */
+>  static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
+>  {
+> +	struct tty_port *port = &sport->port.state->port;
+> +	struct tty_struct *tty;
+> +	struct device *tty_dev;
+> +	bool may_wake = false;
+>  	u32 ucr3;
+>
+> +	tty = tty_port_tty_get(port);
+> +	if (tty) {
+> +		tty_dev = tty->dev;
+> +		may_wake = tty_dev && device_may_wakeup(tty_dev);
+> +		tty_kref_put(tty);
+> +	}
+> +
+> +	/* only configure the wake register when device set as wakeup source */
+> +	if (!may_wake)
+> +		return;
+> +
+>  	uart_port_lock_irq(&sport->port);
+>
+>  	ucr3 = imx_uart_readl(sport, UCR3);
+> --
+> 2.34.1
+>
 
