@@ -1,86 +1,101 @@
-Return-Path: <linux-kernel+bounces-830167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 186BCB98F46
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:44:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64C19B98F49
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B92477A9B56
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:43:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BD512E0AB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0D628C5D3;
-	Wed, 24 Sep 2025 08:44:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44C828B3E7;
-	Wed, 24 Sep 2025 08:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64DF292B4B;
+	Wed, 24 Sep 2025 08:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="AUeMTNuU"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C63A28B3E7;
+	Wed, 24 Sep 2025 08:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758703459; cv=none; b=UmgogIiWVyDlq95vQxpm5/QKBlteuB+s72EbdbLseAlcfpPXAXu/WkdWQJpdSkqRe2Dk6k2HmM0+Mei3xsJQVQh54lJfplANBCW6WZY01++iMMcGaNVBQZqYFWiy8v/nJ1u5i1eyomUcEYQ0JBEJHGldOi6kJ5TpU7fEFKTXU4k=
+	t=1758703472; cv=none; b=PfaN6Tw7gbz1Z80mGeVvPXmEWj18dz75iRTVhnbENxwoJPSKzXHzFYwi6TCA+dhRw5A1ivEZJFsOV2DrLy7+r1R4XrXgqzMZupj1Hpfa7TP/IWz/53kyBuH2X/EJuBTWftAWHKyp0mNEHhwq7r0jghX5ZcgRRi0BwGXsznDEzZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758703459; c=relaxed/simple;
-	bh=MIBEEF65sED8tkA0qmVYxIsBCuzy3nCLdU4Dm9FzBlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=olG29ibRrlR/AON1547wdBPsoDY1yjSGk6PT1thzyjU3LmEncgAh4GS6n9wrx8SMtCpw9mOv9w96D5QHcfCK582eVMizTItxcj1+mGEER724qBibEOpZ8GJ3aJqP0LGhvbVftsRgF35RWq4oVG6lZ8hNNSPrwFhKxdDo8/Uz+nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BEE7106F;
-	Wed, 24 Sep 2025 01:44:09 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02FF13F66E;
-	Wed, 24 Sep 2025 01:44:15 -0700 (PDT)
-Date: Wed, 24 Sep 2025 09:44:13 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-Cc: gregkh@linuxfoundation.org, dakr@kernel.org, rafael@kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v4] arch_topology: Fix incorrect error check in
- topology_parse_cpu_capacity()
-Message-ID: <20250924-nonchalant-adder-of-support-48db00@sudeepholla>
-References: <20250923174308.1771906-1-kaushlendra.kumar@intel.com>
+	s=arc-20240116; t=1758703472; c=relaxed/simple;
+	bh=/FC2XFlapuWI95y2e7FrTZ+yg3mTJn8rYH76JlgtMSc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mPLfe39BGUMBtwRbFneJGbgIMabXVjcAFay7/UIbuj3uH0KWlOnXHwkBnNy9Skf233pF3/qrYFnSynYt2uRxA7qgnaEuJMF8JQEu1OONiE9BgQpvRIMNGJiv/qVQERcKBFsVZVJd/DQUlmdF3Lzlx4ncPXM2Kx1J6C5XBFyomyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=AUeMTNuU; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: ad2a774e992211f08d9e1119e76e3a28-20250924
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=PFuPLTdWH67tX0oh7ejew8sf/DWLeKIxmgCUYj8rnI8=;
+	b=AUeMTNuU8mESewvD/6TspUB7ttXJd/6/FklSDo91dOizitck7Rg6g9ByCFpWi0gslQzc+fZXFeiwFbMZr/T+xn8jqx/e2YKPonTvHDliZ1vP2o2vL48ppA5GVHHk+DN4G/8aXMR+O/H0+xI+nOD642ZwKx2rTEQC8blygfuCHI8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.4,REQID:d0c0b270-7880-4498-8156-67ac9abbc5d9,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:1ca6b93,CLOUDID:cb99e46c-8443-424b-b119-dc42e68239b0,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,
+	OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: ad2a774e992211f08d9e1119e76e3a28-20250924
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+	(envelope-from <huayu.zong@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1217855027; Wed, 24 Sep 2025 16:44:26 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 24 Sep 2025 16:44:24 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.10 via Frontend Transport; Wed, 24 Sep 2025 16:44:23 +0800
+From: Huayu Zong <huayu.zong@mediatek.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"Matthias Brugger" <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Tinghan Shen
+	<tinghan.shen@mediatek.com>
+CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Huayu Zong
+	<huayu.zong@mediatek.com>
+Subject: [PATCH v2 0/2] Add support for MT8189 SCP and device tree bindings
+Date: Wed, 24 Sep 2025 16:44:16 +0800
+Message-ID: <20250924084422.4604-1-huayu.zong@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250923174308.1771906-1-kaushlendra.kumar@intel.com>
+Content-Type: text/plain
 
-On Tue, Sep 23, 2025 at 11:13:08PM +0530, Kaushlendra Kumar wrote:
-> Fix incorrect use of PTR_ERR_OR_ZERO() in topology_parse_cpu_capacity()
-> which causes the code to proceed with NULL clock pointers. The current
-> logic uses !PTR_ERR_OR_ZERO(cpu_clk) which evaluates to true for both
-> valid pointers and NULL, leading to potential NULL pointer dereference
-> in clk_get_rate().
-> 
-> Per include/linux/err.h documentation, PTR_ERR_OR_ZERO(ptr) returns:
-> "The error code within @ptr if it is an error pointer; 0 otherwise."
-> 
-> This means PTR_ERR_OR_ZERO() returns 0 for both valid pointers AND NULL
-> pointers. Therefore !PTR_ERR_OR_ZERO(cpu_clk) evaluates to true (proceed)
-> when cpu_clk is either valid or NULL, causing clk_get_rate(NULL) to be
-> called when of_clk_get() returns NULL.
-> 
-> Replace with !IS_ERR_OR_NULL(cpu_clk) which only proceeds for valid
-> pointers, preventing potential NULL pointer dereference in clk_get_rate().
->
+  This patch series adds support for the System Companion
+Processor (SCP) on MediaTek MT8189, including device tree
+bindings and driver support.
 
-For the 3rd and final time 😄,
+Huayu Zong (2):
+  dt-bindings: remoteproc: mediatek: Add binding for mt8189 scp
+  remoteproc: mediatek: Support MT8189 SCP
 
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-
-Greg,
-
-Can you please pick this up ? Not urgent for v6.17
+ .../bindings/remoteproc/mtk,scp.yaml          |  2 ++
+ drivers/remoteproc/mtk_common.h               | 10 +++++++
+ drivers/remoteproc/mtk_scp.c                  | 29 +++++++++++++++++--
+ 3 files changed, 39 insertions(+), 2 deletions(-)
 
 -- 
-Regards,
-Sudeep
+2.45.2
+
 
