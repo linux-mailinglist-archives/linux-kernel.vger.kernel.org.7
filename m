@@ -1,191 +1,152 @@
-Return-Path: <linux-kernel+bounces-831063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD113B9B6CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:21:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 203B5B9B69A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:20:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2FD03B60FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:19:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EA071762AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A73319873;
-	Wed, 24 Sep 2025 18:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7744204E;
+	Wed, 24 Sep 2025 18:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jby5UX8s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KWvxC0KE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CBA22B5A5;
-	Wed, 24 Sep 2025 18:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F83F2E11C8;
+	Wed, 24 Sep 2025 18:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758737404; cv=none; b=DSTpvHvwMmZJCK3n1PxfyZGYG4rmY+O5AemXinofek59uKFxABTOxlwl7LlRUsjbb3kaU5RsC+MiHMYlNj2eWtnHwAIOdscnhD3pFw+0Wj+VvTqFo2BoTDmekkdpTxzxo221Wie2JMvq/yayW8r44BvDVUDPf+wJojAlIxV2gcY=
+	t=1758737477; cv=none; b=MjMgSNPPzG6CyekkpR9BYEISHxy5iV9rsvYOrTPClbrXrWE+0DhM2dQhdoURIBtX7OL9dA/eQmY04oeQ+EQsakEURxQtF/NjzvNLgU5RiUzFrQb7rnUM0usk9xoQNRZgLXfG6WkQESuJpSbwCp7AqDDgEocUw+Rl4nwF/ARH0Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758737404; c=relaxed/simple;
-	bh=013OuVuk9BY3uPMbWS193y/MtbSkgfxCeOC89aQxZ+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kvt/v28EghrfDIEkTwbpldLINoiYY57Ru90Bly60fiYUEJCE7vwfs7BpliUmhg2VZCyvCLL8bBwdzZ7YWANVJvN3zb9kB0Fa0qYuz2W7sBx+RYpnNV1PnDTx9S+NnsriT31xTYM85Q8ODmsvWubyNQD1HzwIzYsijEbNGiTyqVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jby5UX8s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50BD6C4CEE7;
-	Wed, 24 Sep 2025 18:10:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758737404;
-	bh=013OuVuk9BY3uPMbWS193y/MtbSkgfxCeOC89aQxZ+A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jby5UX8shQe9oMIt/3d2ULML/jSFmUQD8fgsG0c78V+t3STKNyBBXKPxLoZHFIjgr
-	 IQ8iGg2B+/we99Y6PmylVmrLa2RmF09XPwNUzLVacEbNvCg3JDV/xpqx6hYSzJJdYY
-	 DO7g7GsWsIJM5TNHNWjis9QVTK07e5Zgx5KOdjBDvG4Mk53jsqG7f8ka49ALmSu7iU
-	 ahzaBWKSaGWGtJzA7g18e+7RaTimZl+F+lScZvYU0TGz2//t0IH7O3X4aHDgu43fBM
-	 ZcWuo2jLLoqaMDw4lI5xkGLup1cOGjr11H3IzJKDsAr3uvgZVddwwM13Q7ihXDov7z
-	 tlSENZ1SSIqjQ==
-Date: Wed, 24 Sep 2025 23:39:56 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, 
-	Allen Hubbe <allenbh@gmail.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ntb@lists.linux.dev, imx@lists.linux.dev
-Subject: Re: [PATCH v2 2/3] PCI: endpoint: Add API pci_epf_set_inbound_space()
-Message-ID: <bmz36usaey7skutdukgryq22sgvyidfnmtx6z4zrpcvrgpvcdh@4l47wob6grkn>
-References: <20250915-vntb_msi_doorbell-v2-0-ca71605e3444@nxp.com>
- <20250915-vntb_msi_doorbell-v2-2-ca71605e3444@nxp.com>
+	s=arc-20240116; t=1758737477; c=relaxed/simple;
+	bh=KgqydHycOTAKEoaHdVLF1AZnKczamvX+35kRKuPRWw8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZMkfWOCfzzzaPrhpcrvWF1kEhv+RjG3uTgVqH9hdfDSPASN5PzZpiWKhNi/3XFlxU+3tL7fUxJ9rAKLL+Gy1LwLzWiuUYE9aqXSuRkMUfYdGzYEPzap7WCZ63WORSGqEOIAWnS16ZtRfZlqtdfowqblyX8xJ9OvaDDEyXwS5mH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KWvxC0KE; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758737474; x=1790273474;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=KgqydHycOTAKEoaHdVLF1AZnKczamvX+35kRKuPRWw8=;
+  b=KWvxC0KEV6qRdkd2XpG7LP1nYAnTJFjLmhjP4+HDozQe5sa8O1SS2Xbk
+   LBXVBs/M+AnND1KMgD6OjmtFrAqF+ksrqgi5LsaZjIL6QAcNGhJ34+vku
+   AeijTyE5Wa3OVqOmLaQBsK16Xxy79Q8daKX08Vn03EUM+aPl56ekrOLJI
+   opweUUoBPJ8q99F2sOlI4P0EClgr2l+sCERIfgIlcoRcd8SGWT9VvpZ6i
+   8uaQswM/NUcjnLUlBgJ/C4+zWwK8leQhTFMJFON7Kp9HRkZXoQ1Tdmiub
+   NhPzE3hGZccK1BSeHMTd10YgWRQVdGrZkmGzHVzLcTl6lOm9kf5kzmyfh
+   g==;
+X-CSE-ConnectionGUID: Xpb/j8IjSauYsbpQPUx0lw==
+X-CSE-MsgGUID: Pm+vsTdVQpO5h6ykHLqdcQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="61096420"
+X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
+   d="scan'208";a="61096420"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 11:11:14 -0700
+X-CSE-ConnectionGUID: jvUa3VO0THexc3SFXzDxJA==
+X-CSE-MsgGUID: 2hkBBAw1QOm3+rhPbA3ZuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
+   d="scan'208";a="177531914"
+Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.108.218]) ([10.125.108.218])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 11:11:13 -0700
+Message-ID: <43772918-1911-46a5-8165-bf612056a8e6@intel.com>
+Date: Wed, 24 Sep 2025 11:11:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250915-vntb_msi_doorbell-v2-2-ca71605e3444@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 15/20] cxl: Add a routine to find cxl root decoder on
+ cxl bus using cxl port
+To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+ cpgs@samsung.com
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+ <CGME20250917134202epcas5p23f718742c74c5b519ecbbc1e04840c03@epcas5p2.samsung.com>
+ <20250917134116.1623730-16-s.neeraj@samsung.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250917134116.1623730-16-s.neeraj@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 15, 2025 at 06:22:45PM -0400, Frank Li wrote:
-> Add pci_epf_set_inbound_space() to allow setting any physical address as
-> inbound memory space, such as an MSI message base address.
+
+
+On 9/17/25 6:41 AM, Neeraj Kumar wrote:
+> Add cxl_find_root_decoder_by_port() to find root decoder on cxl bus.
+> It is used to find root decoder using cxl port.
 > 
-> Since PCI BAR size must be a power of two, the input MMIO range
-> [inbound_addr, inbound_addr + size) is mapped by finding n such that
-> [base, base + 2^n) covers the range.
-
-> The base address is also required
-> to be aligned to 2^n.
->
-
-Where does this alignment restriction gets checked?
- 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
 > ---
-> change in v2
-> - add new API pci_epf_set_inbound_space()
-> - fix bits 8 * size_of(dma_addr_t);
-> ---
->  drivers/pci/endpoint/pci-epf-core.c | 86 +++++++++++++++++++++++++++++++++++++
->  include/linux/pci-epf.h             |  6 +++
->  2 files changed, 92 insertions(+)
+>  drivers/cxl/core/port.c | 27 +++++++++++++++++++++++++++
+>  drivers/cxl/cxl.h       |  1 +
+>  2 files changed, 28 insertions(+)
 > 
-> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-> index 4281067d4a62da6fbf6c2fb807b0f1b5afd1f45b..cd10e8619d03c7e2ffe48e437b0aecf0e8a499f4 100644
-> --- a/drivers/pci/endpoint/pci-epf-core.c
-> +++ b/drivers/pci/endpoint/pci-epf-core.c
-> @@ -344,6 +344,92 @@ void *pci_epf_alloc_space(struct pci_epf *epf, size_t size, enum pci_barno bar,
+> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> index 8f36ff413f5d..647d9ce32b64 100644
+> --- a/drivers/cxl/core/port.c
+> +++ b/drivers/cxl/core/port.c
+> @@ -518,6 +518,33 @@ struct cxl_switch_decoder *to_cxl_switch_decoder(struct device *dev)
 >  }
->  EXPORT_SYMBOL_GPL(pci_epf_alloc_space);
+>  EXPORT_SYMBOL_NS_GPL(to_cxl_switch_decoder, "CXL");
 >  
-> +/**
-> + * pci_epf_set_inbound_space() - set MMIO for the PCI EPF register space
-
-This is just assigning the memory for @bar in epf_bar. So, how about,
-pci_epf_assign_bar_space()?
-
-'Assign PCI EPF BAR space'
-
-> + * @epf: the EPF device to whom allocate the memory
-> + * @size: the size of the memory that has to be allocated
-
-s/allocated/assigned since this API is not allocating the space.
-
-> + * @bar: the BAR number corresponding to the allocated register space
-> + * @epc_features: the features provided by the EPC specific to this EPF
-> + * @type: Identifies if the allocation is for primary EPC or secondary EPC
-> + * @inbound_addr: Any physical address space such as MSI message address that
-
-s/inbound_addr/bar_addr
-
-"Address to be assigned for the @bar"
-
-> + *		work as inbound address space. from_memory need be false.
-> + *
-> + * Invoke to allocate memory for the PCI EPF register space.
-
-s/allocate/assign
-
-> + * Flag PCI_BASE_ADDRESS_MEM_TYPE_64 will automatically get set if the BAR
-> + * can only be a 64-bit BAR, or if the requested size is larger than 2 GB.
-> + */
-> +int pci_epf_set_inbound_space(struct pci_epf *epf, size_t size,
-> +			      enum pci_barno bar,
-> +			      const struct pci_epc_features *epc_features,
-> +			      enum pci_epc_interface_type type,
-> +			      dma_addr_t inbound_addr)
+> +static int match_root_decoder(struct device *dev, const void *data)
 > +{
-> +	size_t aligned_size, align = epc_features->align;
-> +	struct pci_epf_bar *epf_bar;
-> +	struct pci_epc *epc;
-> +	dma_addr_t up;
-> +	int pos;
+> +	return is_root_decoder(dev);
+> +}
 > +
-> +	if (!size)
-> +		return -EINVAL;
+> +/**
+> + * cxl_find_root_decoder_by_port() - find a cxl root decoder on cxl bus
+> + * @port: any descendant port in CXL port topology
+> + */
+> +struct cxl_root_decoder *cxl_find_root_decoder_by_port(struct cxl_port *port)
+> +{
+> +	struct cxl_root *cxl_root __free(put_cxl_root) = find_cxl_root(port);
+> +	struct device *dev;
 > +
-> +	up = inbound_addr + size - 1;
-
-s/up/limit?
-
+> +	if (!cxl_root)
+> +		return NULL;
 > +
-> +	/*
-> +	 *  Bits:		15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
-> +	 *  Inbound_addr:	U  U  U  U  U  U  0 X X X X X X X X X
-> +	 *  Up:			U  U  U  U  U  U  1 X X X X X X X X X
-> +	 *
-> +	 *  U means address bits have not change in Range [Inbound_Addr, Up]
-> +	 *  X means bit 0 or 1.
-> +	 *
-> +	 *  Inbound_addr^Up  0  0  0  0  0  0  1 X X X X X X X X X
-> +	 *  Find first bit 1 pos from MSB, 2 ^ pos windows will cover
-> +	 *  [Inbound_Addr, Up] range.
-> +	 */
-> +	for (pos = 8 * sizeof(dma_addr_t) - 1; pos > 0; pos--)
-> +		if ((up ^ inbound_addr) & BIT_ULL(pos))
-> +			break;
+> +	dev = device_find_child(&cxl_root->port.dev, NULL, match_root_decoder);
+> +	if (!dev)
+> +		return NULL;
 > +
-> +	if (pos == 8 * sizeof(dma_addr_t) - 1)
-> +		return -EINVAL;
+> +	/* Release device ref taken via device_find_child() */
+> +	put_device(dev);
+
+Should the caller release the device reference instead?
+
+DJ
+
+> +	return to_cxl_root_decoder(dev);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(cxl_find_root_decoder_by_port, "CXL");
 > +
-> +	size = pci_epf_get_bar_required_size(epf, BIT_ULL(pos + 1), bar,
-> +					     epc_features, type);
-> +
-> +	if (size == 0)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * Allocate enough memory to accommodate the iATU alignment
+>  static void cxl_ep_release(struct cxl_ep *ep)
+>  {
+>  	put_device(ep->ep);
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index 3abadc3dc82e..1eb1aca7c69f 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -866,6 +866,7 @@ struct cxl_nvdimm *to_cxl_nvdimm(struct device *dev);
+>  bool is_cxl_nvdimm(struct device *dev);
+>  int devm_cxl_add_nvdimm(struct cxl_port *parent_port, struct cxl_memdev *cxlmd);
+>  struct cxl_nvdimm_bridge *cxl_find_nvdimm_bridge(struct cxl_port *port);
+> +struct cxl_root_decoder *cxl_find_root_decoder_by_port(struct cxl_port *port);
+>  
+>  #ifdef CONFIG_CXL_REGION
+>  bool is_cxl_pmem_region(struct device *dev);
 
-s/iATU/EPC
-
-> +	 * requirement.  In most cases, this will be the same as .size but
-> +	 * it might be different if, for example, the fixed size of a BAR
-> +	 * is smaller than align.
-> +	 */
-> +	aligned_size = align ? ALIGN(size, align) : size;
-
-This should be handled inside the above API.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
