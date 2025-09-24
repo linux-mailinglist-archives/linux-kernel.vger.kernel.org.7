@@ -1,124 +1,111 @@
-Return-Path: <linux-kernel+bounces-830563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363FEB99FC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:13:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABF3BB99FCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E603C171EF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:13:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF77B7A260C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8490F301477;
-	Wed, 24 Sep 2025 13:13:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4C0502BE;
-	Wed, 24 Sep 2025 13:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EF03019BA;
+	Wed, 24 Sep 2025 13:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y+vdXMZ6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FA3502BE;
+	Wed, 24 Sep 2025 13:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758719606; cv=none; b=NKjVOiJ10mQt+sXXu2S7qBQBEDS2ILiudbzafsId/04jYgMPvMeY8WkBstRpS3fGpNCxW88R+PpsGmqUQeD7gZybryOVAv8qXJnsZuHsf+soWftHNzVnBSLwj84S/5HRky51dlj5BgTOq1DOj5z1KV5LUClRkv0pcfZ47BI/KLM=
+	t=1758719621; cv=none; b=CG89TDUBng7tZwn8sRRH0pUYpXttN1HNCZ2AgjL5MGMFbDWpCw/NcA4bWvn44l4hGybrdj0JY7X/ltdPJxH7PyMrqgvIy53xHHeTT74zFywR30kvm/26RAS/6dh4w5lX3AGQeaPU30QhlygoKQuDLe/Cez/0Y2OLl6OMIZZDJjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758719606; c=relaxed/simple;
-	bh=PaVdJZ/PeqgEBbm90xkNqO1qgjBPVF79+jKWROcFGY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EP49ki1hjQXSEd5+/QSIa1t2Pq9EzH8TixU0VZpXhRl0rMXCPjJcyaxwhbP6A7OjPNIz+j3qrrbK7v1ZKQjpNDoQPXtIEPC0rSuGFOPYSTgGYY3Yt8+mJBNTHL6FGoOI9OozkPzfVhMYEcWlfSWkTX10jyFxdH+mFnUOkVKmANQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD41C106F;
-	Wed, 24 Sep 2025 06:13:15 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C7953F5A1;
-	Wed, 24 Sep 2025 06:13:20 -0700 (PDT)
-Date: Wed, 24 Sep 2025 14:13:18 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Sebin Francis <sebin.francis@ti.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	"Marco Felsch" <m.felsch@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Brian Masney" <bmasney@redhat.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for NXP i.MX95
-Message-ID: <20250924-dark-super-gharial-246400@sudeepholla>
-References: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
- <20250915-clk-ssc-version1-v4-5-5a2cee2f0351@nxp.com>
- <5f508f1d-2d08-4687-86cd-d1944caa0a49@ti.com>
- <PAXPR04MB8459CE9F22CD56A9BFDB5E78881DA@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <082735e7-956b-4574-952e-06ba69db41f1@ti.com>
- <PAXPR04MB84590D5AAAB56ED7E1CBDE05881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1758719621; c=relaxed/simple;
+	bh=0OJ7woFahki0UKCHjdUta5YVNsKKrcWxshhdkEoyQWw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=QSoO9BuMB5OtMHjQFiHcAr/ahraysEXupg3E6Y/6L+4/6/QrUjelSVcLXAzz9m7ZE0FwY9RC++Blqlq7VG8fZEe6Jfs2RUiTKv+Sk8ofm8w7J8jq/lmyt3r8FMNoBleHJWZeLpZgMDk3qYBs/2Xjae5W2N5QI67stJ/lLwObUcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y+vdXMZ6; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758719620; x=1790255620;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=0OJ7woFahki0UKCHjdUta5YVNsKKrcWxshhdkEoyQWw=;
+  b=Y+vdXMZ6F6x247PgMZG3VKRYoSyucx5LSqoow0Y4cMwnOy10pPsPq3SC
+   Tu17gnaF3uzazCBLLTHD+5eAsIzTEZS9H11zPz4Y5Pv8pStGb7mACshoe
+   1qolJwvQhtG4YnNiH7pRwKDvoM/75ZjNFAXpkurXWsEtNX9JqsXEaKz+K
+   TRE7u+nQzrxohUZNO9WxwJIzOjJXfC5Yw0s1ZpR6Jha6VfYca+0/sPocN
+   74YmpdIcg+J0pEmd1bjlOtd+xdImGeZ+MbbBObLV8NGp3BaFsUNgof2Qm
+   QKKXZIzThZXp6jg7MGwyNY4X7OmiwTNseVqiGfCBKz941HXJYJiGxWU73
+   w==;
+X-CSE-ConnectionGUID: cGo3ipdcQZq6vRuwDjB+CA==
+X-CSE-MsgGUID: INUXLaL+QCiMHNgExCibTg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="64851674"
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
+   d="scan'208";a="64851674"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 06:13:39 -0700
+X-CSE-ConnectionGUID: YuuV7RBHSA+DUuWNRA5dkw==
+X-CSE-MsgGUID: ulUX6XNNRFy3I4O+S2sdnQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
+   d="scan'208";a="182309531"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.210])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 06:13:36 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Daniel <dany97@live.ca>
+Cc: Markus.Elfring@web.de, hansg@kernel.org, 
+ LKML <linux-kernel@vger.kernel.org>, matan@svgalib.org, 
+ platform-driver-x86@vger.kernel.org
+In-Reply-To: <MN2PR06MB559873DBA3BA4491E08949ACDC1DA@MN2PR06MB5598.namprd06.prod.outlook.com>
+References: <78e9dde3-9f21-9b06-663b-e7a23451b9e7@linux.intel.com>
+ <MN2PR06MB55984287A9BAB69F1711640DDC11A@MN2PR06MB5598.namprd06.prod.outlook.com>
+ <ea57d978-3fd3-fd86-aec7-e814359e3e02@linux.intel.com>
+ <MN2PR06MB559873DBA3BA4491E08949ACDC1DA@MN2PR06MB5598.namprd06.prod.outlook.com>
+Subject: Re: [PATCH v5] platform/x86: lg-laptop: Fix WMAB call in
+ fan_mode_store()
+Message-Id: <175871961048.19584.6234729612579222383.b4-ty@linux.intel.com>
+Date: Wed, 24 Sep 2025 16:13:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PAXPR04MB84590D5AAAB56ED7E1CBDE05881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Wed, Sep 24, 2025 at 11:43:56AM +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for
-> > NXP i.MX95
-> ...
-> > >>>        SCMI_CLOCK_CFG_OEM_START = 0x80,
-> > >>> +     SCMI_CLOCK_CFG_IMX_SSC = 0x80,
-> > >>
-> > >> TI is also planning to implement the same in our upcoming platform.
-> > >> so can we use a generic ID instead of vender specfic message ID?
-> > >
-> > > I tried to push to new generic ID [1] in half a year ago, but in the
-> > > end ARM decided not to add generic ID for spread spectrum support.
-> > >
-> > > To i.MX, it is too late to use a generic ID and waiting spec, i.MX
-> > > firmware has been public for quite some time and passed several
-> > external releases.
-> > > So I need to use what our firmware adds and spec allows: vendor
-> > > extension.
-> > 
-> > Thanks for the quick response,
-> > Since this implementation is specific to i.MX, can you move this to a
-> > vendor specific file, so that it will not break i.MX's firmware and TI can
-> > implement SSC in TI specific file.
+On Tue, 23 Sep 2025 09:19:39 -0400, Daniel wrote:
+
+> On my LG Gram 16Z95P-K.AA75A8 (2022), writes to
+> /sys/devices/platform/lg-laptop/fan_mode have no effect and reads always
+> report a status of 0.
 > 
-> i.MX has encountered issue with pinctrl-scmi.c and pinctrl-imx-scmi.c
-> both supports SCMI PINCTRL. Current linux scmi does not support
-> both drivers built in kernel image, because scmi devlink issue.
+> Disassembling the relevant ACPI tables reveals that in the WMAB call to
+> set the fan mode, the new mode is read either from bits 0,1 or bits 4,5
+> (depending on the value of some other EC register).  Thus when we call
+> WMAB twice, first with bits 4,5 zero, then bits 0,1 zero, the second
+> call undoes the effect of the first call.
 > 
-> Sudeep said he would address the devlink issue in 6.19 cycle.
->
+> [...]
 
-Yes it is a different issue IMO and nothing related to this.
 
-> Given the current situation, I'm hesitant to introduce a new driver
-> saying clk-imx-scmi.c.
->
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
 
-Yes please don't, and I don't see a strong reason for that(yet).
+The list of commits applied:
+[1/1] platform/x86: lg-laptop: Fix WMAB call in fan_mode_store()
+      commit: bab04f0166dfaf7d7dfb5fd96d8f961a1b4e1b2c
 
-Unlike vendor protocol, there is no way we can no upfront how the vendors
-can use this in their own colourful way. So I am not sure if we start
-building something generic from the start or refactor as more vendors start
-using it. Hard to decide 🙁. Lets see, need to think a bit.
+--
+ i.
 
-If Peng or Sebin or others have some idea, please propose or start the
-discussion so that we can evaluate the approach.
-
--- 
-Regards,
-Sudeep
 
