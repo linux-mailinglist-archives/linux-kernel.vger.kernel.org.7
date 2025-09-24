@@ -1,101 +1,102 @@
-Return-Path: <linux-kernel+bounces-830902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278A4B9AD6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:17:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A234AB9AD64
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D2A19C3583
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:18:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6227B3BD45A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09F1313E16;
-	Wed, 24 Sep 2025 16:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F69313281;
+	Wed, 24 Sep 2025 16:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Giaxo+9W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nh5uPide"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB5630F817;
-	Wed, 24 Sep 2025 16:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EF8191F89;
+	Wed, 24 Sep 2025 16:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758730654; cv=none; b=E6aXEgIrj1SFsMWeyMMo4hpDl3SrqhGX9FzNPTW07J9rr8NMUWtd4JI4QcCgCXxD9HTVr45r1UBGDr5aL4voqxLr0RBXComc1U0o7L8ecykDMSO0SLX76+tyO0gbyBBaUQg8pGP61mtezgPrh6glQDN4kCFbHMPegTrSkJPh+V0=
+	t=1758730650; cv=none; b=rFIHDC07S33EbAtgUbV8m4ljkGZLnDPsi9MU1UpNz4nU+GWQ8WWFeCAh/U4K1oPG9Rt/6+13a3frsoeqH/63CXWuoO4d86qsq1P1l6NqPSoUkifk8haBBWHYBuVESfwcNWiD5Gu11dXmF/kCgtMWH5VXb4qGpOmPhaNB0LZtZwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758730654; c=relaxed/simple;
-	bh=YyScRpDeb10V1CIi0j2uShOHELjAnAul+CkQll9T1qQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ua8WuID7WLCcwfU74oAfXvqUJCSRpyOaHDaV+Lu7UyxbOZCD9AA7+aCyfwMKHGADYi6tzPg0SkDLTVjyG0Lg8lWTHt+9MzfaY+/mNBTMQjf74QIzPrCw2dENO2Kw8+mAz4IdZfNsBIwsbUyL+XyKoJ6ePhW1b7HX4HWzF/hyLHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Giaxo+9W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDA98C4CEE7;
-	Wed, 24 Sep 2025 16:17:29 +0000 (UTC)
+	s=arc-20240116; t=1758730650; c=relaxed/simple;
+	bh=lFc7WZFyHZ2kDXSBgI5uw7/ckDVjfHIb98JLcLwjT3o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZwHc3rhm0thG6Zk5B6idK8kd3WOBJkzQVYYjTKUzVGjuEVT7q3bQlGPRoqClu9dtOfCQcp/vT9Z7ZeEeoNmB1jNMOofHAI6dI0KjaxwxGF6VwZewnzQ3GZCAZ5oWtzLdBk+XKX7ZNkF360VlH4BM/CJBKRSxNe1AMJJYruvZXys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nh5uPide; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD76C4CEF7;
+	Wed, 24 Sep 2025 16:17:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758730652;
-	bh=YyScRpDeb10V1CIi0j2uShOHELjAnAul+CkQll9T1qQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Giaxo+9WWVfQQcLn8VCqMpjQIOO/w/2HKqAyOLnXVxdUXqVJ+dE2TLIbCwjUuYflM
-	 cKmfEEhP9shRWXiiYUIRtBy00/aES7x7gy38ueo/jMVtmpYHfqTsfU5W/GvoNJUyLZ
-	 EWhrIb55nfjuZbpLqRA3wh9TGe/xGLjGQfH29qAkng+/DHahMel9nM1Ribxcbr+HkT
-	 mM+OxZ9l5i4puI+G80RheK70Wh65yzm1nTki5DqrRx/TUq6TTJfKfWpcI4AWTURqtN
-	 QX4Tev/PTpOKaMkH5QmyAxuYBM2yn7Rp//chCVIwAIAGiFPEBwKn20Vw+tp4yxo7Oo
-	 7XA+cKuzBn6ig==
-Date: Wed, 24 Sep 2025 17:17:27 +0100
-From: Simon Horman <horms@kernel.org>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
-	Moshe Shemesh <moshe@nvidia.com>, Vlad Dogaru <vdogaru@nvidia.com>,
-	Yevgeny Kliteynik <kliteyn@nvidia.com>
-Subject: Re: [PATCH net-next 1/7] net/mlx5: HWS, Generalize complex matchers
-Message-ID: <20250924161727.GM836419@horms.kernel.org>
-References: <1758531671-819655-1-git-send-email-tariqt@nvidia.com>
- <1758531671-819655-2-git-send-email-tariqt@nvidia.com>
+	s=k20201202; t=1758730649;
+	bh=lFc7WZFyHZ2kDXSBgI5uw7/ckDVjfHIb98JLcLwjT3o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=nh5uPideomEd4WhMMbS/FPthFE5xriXjfbSEbr7Bw2siJxaYPOGfmLCaXDrEAK7dM
+	 SvKTevswIzlOIRsOsvFahj9FeJL5RQjo2B7ZxuEVO1Zd7fvOmDEGoVhxPGzJeCZ0ec
+	 GgYyFXScleamUok6oRNY1qgox0EF3eRWd0RMq3kOSqZwKxpQ9d2TyQfVbVmjSvMTD2
+	 9KKij0M6jI83SjrNKEW91yym43bmOUJFfE0JgaXIxiQEn/5JEc1XHLRDfvMmSXOV1Y
+	 8NQlZING9z6NBkLA5iNYmZtz5r+/ggrmUdUTZ0fk/kx5iINQGLC5S0ozfWhYwSkO+4
+	 PDG4vL5OyKP6Q==
+From: Nathan Chancellor <nathan@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>, 
+ Nicolas Schier <nicolas.schier@linux.dev>, Petr Pavlu <petr.pavlu@suse.com>, 
+ Luis Chamberlain <mcgrof@kernel.org>, 
+ Sami Tolvanen <samitolvanen@google.com>, 
+ Daniel Gomez <da.gomez@samsung.com>, Alexey Gladkov <legion@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+ linux-kbuild@vger.kernel.org
+In-Reply-To: <cover.1758182101.git.legion@kernel.org>
+References: <cover.1758182101.git.legion@kernel.org>
+Subject: Re: [PATCH v8 0/8] Add generated modalias to
+ modules.builtin.modinfo
+Message-Id: <175873064730.2295881.4958403315180215995.b4-ty@kernel.org>
+Date: Wed, 24 Sep 2025 09:17:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1758531671-819655-2-git-send-email-tariqt@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev
 
-On Mon, Sep 22, 2025 at 12:01:05PM +0300, Tariq Toukan wrote:
-> From: Vlad Dogaru <vdogaru@nvidia.com>
 
-...
+On Thu, 18 Sep 2025 10:05:44 +0200, Alexey Gladkov wrote:
+> The modules.builtin.modinfo file is used by userspace (kmod to be specific) to
+> get information about builtin modules. Among other information about the module,
+> information about module aliases is stored. This is very important to determine
+> that a particular modalias will be handled by a module that is inside the
+> kernel.
+> 
+> There are several mechanisms for creating modalias for modules:
+> 
+> [...]
 
-> +static int hws_complex_subrule_create(struct mlx5hws_bwc_matcher *cmatcher,
-> +				      struct mlx5hws_bwc_rule *subrule,
-> +				      u32 *match_params, u32 flow_source,
-> +				      int bwc_queue_idx, int subm_idx,
-> +				      struct mlx5hws_rule_action *actions,
-> +				      u32 *chain_id)
->  {
+Applied, thanks!
 
-...
+[1/8] s390: vmlinux.lds.S: Reorder sections
+      https://git.kernel.org/kbuild/c/8d18ef04f940a
+[2/8] kbuild: always create intermediate vmlinux.unstripped
+      https://git.kernel.org/kbuild/c/0ce5139fd96e9
+[3/8] kbuild: keep .modinfo section in vmlinux.unstripped
+      https://git.kernel.org/kbuild/c/3e86e4d74c049
+[4/8] kbuild: extract modules.builtin.modinfo from vmlinux.unstripped
+      https://git.kernel.org/kbuild/c/39cfd5b12160b
+[5/8] scsi: Always define blogic_pci_tbl structure
+      https://git.kernel.org/kbuild/c/b88f88c26705a
+[6/8] modpost: Add modname to mod_device_table alias
+      https://git.kernel.org/kbuild/c/83fb49389bbe0
+[7/8] modpost: Create modalias for builtin modules
+      https://git.kernel.org/kbuild/c/5ab23c7923a1d
+[8/8] kbuild: vmlinux.unstripped should always depend on .vmlinux.export.o
+      https://git.kernel.org/kbuild/c/3328d39a8dca2
 
-> +	ret = mlx5hws_bwc_rule_create_simple(subrule, match_params, actions,
-> +					     flow_source, bwc_queue_idx);
-> +	if (ret) {
-> +		goto put_subrule_data;
-> +		goto unlock;
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
 
-Hi Tariq and Vlad,
-
-I guess it's a simple editing artifact.
-But it seems that the line above is dead code.
-
-Flagged by Smatch.
-
->  	}
-
-...
 
