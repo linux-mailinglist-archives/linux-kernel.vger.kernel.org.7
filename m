@@ -1,191 +1,144 @@
-Return-Path: <linux-kernel+bounces-830210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7836AB99106
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:19:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EEFDB9913A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:22:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 748EF19C688D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8E9C3B0CBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215C42D6619;
-	Wed, 24 Sep 2025 09:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2901C2D6E69;
+	Wed, 24 Sep 2025 09:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Riur107r"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wtxX12zZ"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF272367AD
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DA71990D9
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758705567; cv=none; b=AZVaCoeYgDgJIp6r+QbZrV0/BAgNEnRbvwznt1QfI8OnxudmlWxpK4O8NjyW+29AQs6ZeVmv91YSROSuoJYVn+8fpd6z7W9F4w1rNKkXi0W6K0bidObcQm7iir1VDXmZWGHqCNGXP5ToH48Tt6VN2rwL4b5zFeTXn1hvSItGmjI=
+	t=1758705713; cv=none; b=AGNdZDrOxfv7gfxLaOccZp6Bydz2AZeUwnz6+lacoug/YUMBJ27vHj3umjVfozaTjl6HJ4owK2wSlgaxuicS8DSADL5JV5ryVmxXQiGXbOZpQ9N5nJTcXMwBR2Oz2gcpG13ZM3iU8zHaLnH0dS5FQRdhI9MqMzurp8idxsUvOlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758705567; c=relaxed/simple;
-	bh=VqlcvGqMPJAdl7hSEV7CqDPxkgpjg8Yi/vcEVwXAflk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PAo/w6xAz/SvCh9TnqQFmK4V7agf/pT8XsT2toFBrplTWv9jcwQtOKI8q5HnXHd/Z1UnRP4T/JMaXSdaHiuTVrzE44tcBRkhXkGvhGaIBLFHIeYL18ngSGiWKiSvnJ3g2oUh/DvfBBpOgpxtiyGFuHLwvbainDdA2DCppODosDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Riur107r; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1758705713; c=relaxed/simple;
+	bh=7NNM8R5NxUh4SLUZIUUbqIsW2iUc5a409TK77C1tuyE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g2xzUiyMDn5AV5MVMJ64B8iMSIYsM0OqCtynI49buRM/+yrOd7MdH0UZArF+9AyA26dNCO32ezEfjf/UXgRM2yCCqVGJbhfh0uHOQ+/bBrN67WW9ELlfOUIbQcdEUy9s6La+EqJ0cApYbe9eKmzQWb3znQXCZRIro+CJpQ4shYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wtxX12zZ; arc=none smtp.client-ip=209.85.161.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e2826d5c6so6673735e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:19:24 -0700 (PDT)
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-6327423f190so869926eaf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:21:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758705563; x=1759310363; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AcPTl1pw20xF2xL7FtliTszvEQuPfkvcja+d9xb0xj8=;
-        b=Riur107rjbDNCk96GKnA+/aRAPFqD1XKsB8FYTus90l1x1+LnzN0H5WtobKIPmPONk
-         8UFu7qrQ3JSvYHFIXZLOlhDXau3fFfkMzJSPtTQpA5rLn/20rgHfRqQ03wY0jZ4ZtLof
-         puQ7EinPT6L/tUJaj5l/cBkq+cp7QTUsU2zZD/oYsemILZYT4+nnVRdjSIhLp/ZmNPfe
-         mkvH2HwgUYsGcdZeDCM9vig8SE+jNAeyHgyIBuSZRKCWwiTMOa34O/o5FvNlGKMPNuuo
-         1NawgIvbrSUaPrx9ja2mOX183KqMtT3cUcK8H4D6+xsQ/0DvqG6x0iGureeFNzVAtcQ+
-         TLfw==
+        d=linaro.org; s=google; t=1758705706; x=1759310506; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fxVruqv640FOouJsJqQA7LKvaemFmmPlp5hTqabzSp4=;
+        b=wtxX12zZMCbYJ4SaQu86TeoIgpI+rduA9BSMMNzhgxyyxY46tnLzIAV/grdzH1EAek
+         62fWfgsE1BpTdS8vkMF5puLRWog3J/LKyd37ZeMw00HxKpe0XO4GxZGvhm3wOZ238nbj
+         Wy2iVu9FgG6a17jdYZEnDIaKXpbL6d64cpEFq1vuHhzlBNBfh9HV3xcrayFjJOOm6L7M
+         vWQ71SOMcQoTl/B/BKk0VJtszwbzV5oQsHFLjbWKCsk5/AEFlqUt8yBTjhl5lR1gFbc0
+         US1oSH9oXdFJulRd/0dW2Hj/+vunUQB6OYdQRRxT8MGFgVLkHsQqSTqQuNi5cQIY+N5X
+         S+OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758705563; x=1759310363;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AcPTl1pw20xF2xL7FtliTszvEQuPfkvcja+d9xb0xj8=;
-        b=PYJqrRja3hhk9bUwkN+yxvGymQsfZoEz68gc3wAV0A0H3OVY4xsaE0PFquo7jNtiVc
-         9ObHw3YBX/uPqKWoYEX2Lfkn8PwM0BOB3xsgSFKBeyzT/Cr6pr2/NfBpf5UW9L40fqAv
-         x6ryLkKjORwNKOXLJHFhy+vNPTmx3u9chvl4IGA0lvmmypMdMRORRTPCykfGzyO18BY6
-         f56NQHaARLjUZ3Bl4rvIlMK+iWJr8/5cl78szAHizl7pn4UfUaKKXu6WVIfmcVRTBilH
-         VV0TsjaTlu+DwwCZZBlPNd2xT8AdvFf/soxEbJ6kXE1ZtqRq+i1XkrkYuphs2SKGMn3h
-         wDJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVszj/2PRpujkI93ReVnWK8eE5wmSmNlXAmtCffKoQnjntCbvTdHVg7/v646V029EhiQS2kPgnE/ss/Zjc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiU54RSl/09B5FGim4+1p2NyVDBqXtCpeTAiWjb1Kdnzv9qv2/
-	e6TAgEhTyFEMTWA4Mz+1SwG5XEy1G/ExbXyVxewUpbwuGcYWpNLZ1NW0phXne8vMaKA+ZoDlbyx
-	5UgOv
-X-Gm-Gg: ASbGncuQbjihvnaTExLGKvOiWTOhpZ6E8BDoyDjeop/7uIyKmN8J0gPM7eZ2JFwAVpK
-	iEm4cEb5efMudVUsvEwkZqNh2du+DwvxXcFsa59HApjuCWHX1lNBC8Zhbx7jktHrifl16KBFaQ+
-	GXe0yImJ2os2t+gNAO1Y6NmRuRaPvJRiJDX4U8ges6M6TfGn7cZ2NH6E8Yk9IpKq6tgi6hcsypf
-	8V7pHRFG1M2O6VF+abeu20a3NY3bqfdpyvu+LKo/uU+dwdWO/dPi2pCqfxMsUyQmztQUKVV+eBE
-	TT6osNms4pt0RyeaKm6JioksQ9ElQrOgVbOjE1OvFqhjXRmzF9WzGVQAKvUmOU9eAK2pu+bJZab
-	ulCWw7Mjjll5gPIe+XqKFGiDae+HB8HXuCe2zOj3ywOgE/goek7yhWLLL1q+QygdwpiAuxzQIrQ
-	OSSA==
-X-Google-Smtp-Source: AGHT+IF4mH2dS5j7+OOtzr5/SWQTKcTBQFiXcPYBdzwMP3HeuL9qU3UkuqT9UU7izKc1oerlcCqZsA==
-X-Received: by 2002:a05:600c:a07:b0:46e:1c97:e214 with SMTP id 5b1f17b1804b1-46e1daacde6mr47079335e9.19.1758705563403;
-        Wed, 24 Sep 2025 02:19:23 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:bc4b:2611:54b0:29a4? ([2a05:6e02:1041:c10:bc4b:2611:54b0:29a4])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-46e2a9982e0sm24132785e9.5.2025.09.24.02.19.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 02:19:22 -0700 (PDT)
-Message-ID: <8672a8c1-26b2-4b65-a30e-a4c3e0f1f32e@linaro.org>
-Date: Wed, 24 Sep 2025 11:19:21 +0200
+        d=1e100.net; s=20230601; t=1758705706; x=1759310506;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fxVruqv640FOouJsJqQA7LKvaemFmmPlp5hTqabzSp4=;
+        b=FD2N9bTaiqgBoCdH9r3LMSjh7Az62I2IFwBqZpMgU8ZOViLRH4USHWc5vs0NypbQSI
+         rfAYrI5lp/7t/SmZfstviMuTNQei9kfLIuVji01oHoO5sCxFS6NZ92mb8ZiI3tBMuCiX
+         P7XZCdlA7z0AXVr6tHl2hdxWD7QHMkaxTme+7VU0pvZJS+UMaKnrbVyr5WAA1nBlIGQN
+         bo6iwle/8hIZuQv/haa4NJ0EgvaTqhqQRVQvRRpGGWKk0Qb1aKH3yVd4s2SwhjUFtgAI
+         4bpBBDTKpfzQZK5rYvtEWhcLnBnSicbbz+jC9uQu1tGDD338pQnbVzPQBqiHCVyxYxvm
+         eDeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlwCK+JLdH8cv0QB9NHEgt2j0o2iYIVmAbQ3Zt/So+gY7vh5adm7Q6Y48QDkz0l788fURj8brMgLwdJX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeLpb34LP4WtncBYaaMD3Cedds1v1PUrCjKCpPE7/81UYY59Ky
+	VpfCy18hb2Mg9Rn5rhYIDoGgofWeD91SZ03kSq7FRBde/F4y4s2DsKuFZMeI85U02obvRH80PYH
+	3VH4StDfNRAWpmnoNBNifC2tYaMi81Okv7nfiI4t6JA==
+X-Gm-Gg: ASbGncvGSEObBPjgRGETkj/D+2WRid+FBCpKZe87n9atoJUYEJ2SBpFqYLovOHZwG6T
+	HLsG7YoJKVyVGr23QypUyRGcc7yONFLHMA1wlO3yX1EIII8jOXO6Bc3PmkNhxEdXw1PdSO5tNyl
+	77kUwPnibdBekMXRKg7j012Z//btbFJbrJ7NnOe7wimqTle3VNzLY9FcKKyeHcwEL25nyoyiMWJ
+	UCAtClR
+X-Google-Smtp-Source: AGHT+IF9MUcsTpqeMRCCkmOByiXncoZ6aC5AAkRn9kos4HYZSgn1UCyuiasgjldg/eI9Gic3np9EBS9bfwc5jv78a7A=
+X-Received: by 2002:a05:6808:17a0:b0:43b:516a:6a3a with SMTP id
+ 5614622812f47-43f2d4a0853mr2953120b6e.46.1758705706106; Wed, 24 Sep 2025
+ 02:21:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] clocksource/drivers/sh_cmt: Do not power down
- channels used for events
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-References: <20250910142657.1148696-1-niklas.soderlund+renesas@ragnatech.se>
- <20250910142657.1148696-3-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdVKZn-YfBxvwA1wgjksvzZK=NPzaoTCPRur_Z=AneLA6w@mail.gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <CAMuHMdVKZn-YfBxvwA1wgjksvzZK=NPzaoTCPRur_Z=AneLA6w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <aMvV4kK386Sni10i@stanley.mountain> <adbccfc0-0f9c-4b71-9fb5-5582c8180ac7@oss.qualcomm.com>
+ <bb776102-310b-4a84-943a-86d4138592d8@oss.qualcomm.com> <aNOfXlG21HIBR18E@stanley.mountain>
+In-Reply-To: <aNOfXlG21HIBR18E@stanley.mountain>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Wed, 24 Sep 2025 11:21:34 +0200
+X-Gm-Features: AS18NWBAFawQ8-QtJaveVkFxCVFVwvIAoDOcJ1zhiDc0CJ08YKpktCHoZXO_RhA
+Message-ID: <CAHUa44G2yaB28sd0FjkjyCNJKXjx2Jg9j-9HXytyvsmiQ3ThAA@mail.gmail.com>
+Subject: Re: [PATCH next] tee: qcom: prevent potential off by one read
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>, Sumit Garg <sumit.garg@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Sep 24, 2025 at 9:36=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> On Wed, Sep 24, 2025 at 08:58:45AM +1000, Amirreza Zarrabi wrote:
+> >
+> >
+> > On 9/24/2025 8:48 AM, Amirreza Zarrabi wrote:
+> > > On 9/18/2025 7:50 PM, Dan Carpenter wrote:
+> > >> Re-order these checks to check if "i" is a valid array index before =
+using
+> > >> it.  This prevents a potential off by one read access.
+> > >>
+> > >> Fixes: d6e290837e50 ("tee: add Qualcomm TEE driver")
+> > >> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > >> ---
+> > >>  drivers/tee/qcomtee/call.c | 2 +-
+> > >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >>
+> > >> diff --git a/drivers/tee/qcomtee/call.c b/drivers/tee/qcomtee/call.c
+> > >> index cc17a48d0ab7..ac134452cc9c 100644
+> > >> --- a/drivers/tee/qcomtee/call.c
+> > >> +++ b/drivers/tee/qcomtee/call.c
+> > >> @@ -308,7 +308,7 @@ static int qcomtee_params_from_args(struct tee_p=
+aram *params,
+> > >>    }
+> > >>
+> > >>    /* Release any IO and OO objects not processed. */
+> > >> -  for (; u[i].type && i < num_params; i++) {
+> > >> +  for (; i < num_params && u[i].type; i++) {
+> > >>            if (u[i].type =3D=3D QCOMTEE_ARG_TYPE_OO ||
+> > >>                u[i].type =3D=3D QCOMTEE_ARG_TYPE_IO)
+> > >>                    qcomtee_object_put(u[i].o);
+> > >
+> > > This is not required, considering the sequence of clean up, this
+> > > would never happen. `i` at least have been accessed once in the
+> > > switch above.
+> > >
+> > > Regards,
+> > > Amir
+> > >
+> > >
+> >
+> > Also, size of u is always num_params + 1 for the ending 0.
+> > (basically means `i < num_params` can be removed).
+> >
+>
+> Yes.  This is true.
 
-Hi Geert,
+So this patch isn't needed. I'll drop it if no one objects.
 
-On 23/09/2025 16:56, Geert Uytterhoeven wrote:
-> Hi Niklas,
-> 
-> On Wed, 10 Sept 2025 at 16:27, Niklas Söderlund
-> <niklas.soderlund+renesas@ragnatech.se> wrote:
->> The CMT do runtime PM and call clk_enable()/clk_disable() when a new
->> clock event is register and the CMT is not already started. This is not
->> always possible as a spinlock is also needed to sync the internals of
->> the CMT. Running with PROVE_LOCKING uncovers one such issue.
->>
->>      =============================
->>      [ BUG: Invalid wait context ]
->>      6.17.0-rc3-arm64-renesas-03071-gb3c4f4122b28-dirty #21 Not tainted
->>      -----------------------------
->>      swapper/1/0 is trying to lock:
->>      ffff00000898d180 (&dev->power.lock){-...}-{3:3}, at: __pm_runtime_resume+0x38/0x88
->>      ccree e6601000.crypto: ARM CryptoCell 630P Driver: HW version 0xAF400001/0xDCC63000, Driver version 5.0
->>      other info that might help us debug this:
->>      ccree e6601000.crypto: ARM ccree device initialized
->>      context-{5:5}
->>      2 locks held by swapper/1/0:
->>       #0: ffff80008173c298 (tick_broadcast_lock){-...}-{2:2}, at: __tick_broadcast_oneshot_control+0xa4/0x3a8
->>       #1: ffff0000089a5858 (&ch->lock){....}-{2:2}
->>      usbcore: registered new interface driver usbhid
->>      , at: sh_cmt_start+0x30/0x364
->>      stack backtrace:
->>      CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.17.0-rc3-arm64-renesas-03071-gb3c4f4122b28-dirty #21 PREEMPT
->>      Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
->>      Call trace:
->>       show_stack+0x14/0x1c (C)
->>       dump_stack_lvl+0x6c/0x90
->>       dump_stack+0x14/0x1c
->>       __lock_acquire+0x904/0x1584
->>       lock_acquire+0x220/0x34c
->>       _raw_spin_lock_irqsave+0x58/0x80
->>       __pm_runtime_resume+0x38/0x88
->>       sh_cmt_start+0x54/0x364
->>       sh_cmt_clock_event_set_oneshot+0x64/0xb8
->>       clockevents_switch_state+0xfc/0x13c
->>       tick_broadcast_set_event+0x30/0xa4
->>       __tick_broadcast_oneshot_control+0x1e0/0x3a8
->>       tick_broadcast_oneshot_control+0x30/0x40
->>       cpuidle_enter_state+0x40c/0x680
->>       cpuidle_enter+0x30/0x40
->>       do_idle+0x1f4/0x26c
->>       cpu_startup_entry+0x34/0x40
->>       secondary_start_kernel+0x11c/0x13c
->>       __secondary_switched+0x74/0x78
->>
->> Fix this by unconditionally powering on and enabling the needed clocks
->> for all CMT channels which are used for clock events. Do this before
->> registering any clock source or event to avid having to take the
->> spin lock at probe time.
->>
->> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
->> ---
->> * Changes since v1
->> - Move the unconditional power on case before registering any clock
->>    source or event to avoid having to use the spinlock to synchronize the
->>    powerup sequence in probe.
-> 
-> Thanks for your patch, which is now commit cfbc0f1d24030ff9
-> ("clocksource/drivers/sh_cmt: Do not power down channels used for
-> events") in clockevents/timers/drivers/next.
-> 
-> Unfortunately this commit introduces an s2ram regression on e.g.
-> Atmark Techo Armadillo-800EVA with R-Mobile A1: the system wakes
-> up immediately.  There is no evidence of a wake-up event shown in
-> /sys/kernel/debug/wakeup_sources.  This happens with or without
-> console_suspend enabled.
-> 
-> Reverting this commit fixes the issue.  I suspect the system wakes up
-> because the periodic clock event fires, and causes an interrupt.
-
-I'm about to send a PR.
-
-Shall I drop this change which fixes a lock issue or keep it ?
-
-What has the higher priority ?
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Cheers,
+Jens
 
