@@ -1,238 +1,150 @@
-Return-Path: <linux-kernel+bounces-829870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9EEB9817C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:49:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E87B98187
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ADCB7A55B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:48:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EFA316F46B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E407D201113;
-	Wed, 24 Sep 2025 02:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Dd3yICud"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010060.outbound.protection.outlook.com [52.101.84.60])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B82A2248A5;
+	Wed, 24 Sep 2025 02:51:39 +0000 (UTC)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51CC28F4;
-	Wed, 24 Sep 2025 02:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758682182; cv=fail; b=PTUUpwkkD6HrxYMyGaztmua4LhfVjS4/IImKSVUjavN4/qsy3s2xu6y2gCOd4beY1Cf90rbeRRTmAZeBSLOrLZMhkrHZLXcsf2GEnEYQfU2+KXTshFlw2UQ+JDCDIRVBEd5kGjIPRHivX+ykM7suTGxGyGOxEC5rBSHPjdpiZ0A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758682182; c=relaxed/simple;
-	bh=MUZFu9MwHz1lrk1j6fJOeMVdHwklYxLAB8e4IgfR2LE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MN5U3NlVg5Es+PhsxxNm3QJ0DM34x3VLA3UwRasEeGAp9/Ki2CUUiAH8KoQFM4IZpWKcpl2sjgq4MxXOFkJv3mQGWLbE0683Ais4WXZxk/M0vDJ8/sj2NMTDYuF5lgOHainDbytlKF4eBSeNZHcptCUcvoLJr2US3pMLtsZo6ek=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Dd3yICud; arc=fail smtp.client-ip=52.101.84.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K9+k8oNgPE7X+NKFBmneOaJ5g1otmMywKor125fEO/hKzAiOh4JMvctMZODPj6tLTDcUGYjxj5F7qTrwz2y1V+oChw9TEE//jQ8ZWil1vAZQbtShe3OhPJxvAZJO0zYaiFx8B639W+wD0zuSoWQVzOhYOG4K5qSMr1TdJuAePNhprIWLJk2gl+ZASYIV4mDgM5L6Koox3TbXlCNzGzK2IXc4zxc5lHiEkGjnhli8W3pWgXBnfeldkhMcidk22qGVN03eG/r3heCWI2nhOp/tgmLu+CKadNYdJytPU2A15+QpYR6UbIPncLhZYXdCbfScRoDyLaNIrTqOyNqe2vR0aw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nhfBHLtnd7Y/zn391/E1DTqB4jsYsk5gc+O3G3w5LoE=;
- b=CM6pNpnyM8OQLWTFgnznM5XEJfGnLukkerQelLd/IpxjwJCL2VgeRIdbpA6eujU1yJmWUnzgUVtuR5TCaj43Q0sJ/Z9IKIjtuwcI3WQQyhROROyi5dXuLx7jNYnBiP+r4z1jpthK7ChLEbzUpha1eekF9JKAGgKgrsdQTLAkmAP4oobAKQYDZkXwsfGHO1qdBwFkCHejqiJzzwkum69vQJShXXzEEvyn4GOv06rSwkTrQ/KcJ4OWsxpznywzeSiZMGfYSMdIqAqhA6yhSOUgTJxttCXNfHnaXEQiHZlbgE8V0KtubDsv5Xo7ypujOXz2+nOKyw3Mm059f6x0fq+nww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nhfBHLtnd7Y/zn391/E1DTqB4jsYsk5gc+O3G3w5LoE=;
- b=Dd3yICudIvrqbmUuzjlRJ/OAG7lLtfrT26aTcwpuIB7H4tu0pGvgBVVKqhUqa6liNWwVwu1ttpEhuhBLN9nU6vtb1Rvu5wCKpUDmyUA42znYokfFLG6/9+1fopJb2xOSqyXd1YFVvk54qmiCtb0VQI5rPB1qUmux8bT0EgsfTczXyHiTzl6YPaazWtlC8U0Qv5Ul+ii5QsJknahKOkSSXrr+nz8k8020L/j0y6SI++6AZp0j/u+7tuedx3C52c+K4oJEnyb5mDr/16ZqKgufEcEt21UjGCBudlvfzpp/jirFTb5U8xBcPdkjyX9dtLTSmMSeTDZ9mr1A7HXJ1t+L8A==
-Received: from AS8PR04MB8418.eurprd04.prod.outlook.com (2603:10a6:20b:3fa::15)
- by PA4PR04MB7695.eurprd04.prod.outlook.com (2603:10a6:102:e3::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
- 2025 02:49:37 +0000
-Received: from AS8PR04MB8418.eurprd04.prod.outlook.com
- ([fe80::99c9:99a6:e6f3:7a9f]) by AS8PR04MB8418.eurprd04.prod.outlook.com
- ([fe80::99c9:99a6:e6f3:7a9f%3]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
- 02:49:36 +0000
-From: Sherry Sun <sherry.sun@nxp.com>
-To: Frank Li <frank.li@nxp.com>
-CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"jirislaby@kernel.org" <jirislaby@kernel.org>, Shenwei Wang
-	<shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: RE: [PATCH] tty: serial: fsl_lpuart: Add missing wakeup event
- reporting
-Thread-Topic: [PATCH] tty: serial: fsl_lpuart: Add missing wakeup event
- reporting
-Thread-Index: AQHcLJQL03lPvEF0f0eb9GwYFDjpf7ShKF4AgAB53oA=
-Date: Wed, 24 Sep 2025 02:49:36 +0000
-Message-ID:
- <AS8PR04MB84184AE558E7D4412D8BDCA9921CA@AS8PR04MB8418.eurprd04.prod.outlook.com>
-References: <20250923141051.2508077-1-sherry.sun@nxp.com>
- <aNL1viY113RTSHvg@lizhi-Precision-Tower-5810>
-In-Reply-To: <aNL1viY113RTSHvg@lizhi-Precision-Tower-5810>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR04MB8418:EE_|PA4PR04MB7695:EE_
-x-ms-office365-filtering-correlation-id: 83ae368b-bd05-4703-7b69-08ddfb150001
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|38070700021|7053199007;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?MdgwysZ/twXimI214iVu89xfqy20Lm39Eokq/wSo7duPSiMncGj9R17OF1RL?=
- =?us-ascii?Q?l3w96sqaDy2c526cLYTy0Jl4ch89MoTa4AZ6X1ahxXMJqIL3IJeHknTdcsMe?=
- =?us-ascii?Q?ac7P2TDu8fbC14K/nUqaKhYBpMdXbCM900wuXUgQbuLe76NrMGvRBTkdrfEF?=
- =?us-ascii?Q?dZqME31ZCHNl9s1JEl3d7fkK22tpsNAWG5/fdOFfbO82l9/eH25wLeumRILE?=
- =?us-ascii?Q?DmfViKIcuGoQWyiPidkTAjtdY8h+ykHtjzUcqAa25B2EmO0KhMlL2pe+vhB8?=
- =?us-ascii?Q?UoJ49n52PwcA0900EBsCoSRl2m7NirJnRrUKYIk3ZFCkwsYGBnIPJwlQgGAE?=
- =?us-ascii?Q?9738HA8KLxEXXIiWgGQY5XydRetKj1ZeN9qibneDhCliadqJEPRbcE9FQoBp?=
- =?us-ascii?Q?n+ibXThFnHybTdiEF0UdE5C7wOo0fzrQk4dU52jgmLd1n5Z8FI7SZVSKamhd?=
- =?us-ascii?Q?iqv2R9m3mxQbPfYfI3LoXasUb74kxrq8XhNgp2e4fFt1JcglT91RLpD0qmsn?=
- =?us-ascii?Q?bMlkiaadUaBVyvVSPBaIeMH+3vwji7MSca/CXkJ8jeRl/kHnIpZAbkDn+/u8?=
- =?us-ascii?Q?cXJGnmkQOSfDQGhkA4Z0rzZ0xDkzqFS/vksXJO6ew4lWXWrg8PZKJsSrW4Xb?=
- =?us-ascii?Q?K+znmU/B1QL01VRaasjjRGdIoKJCk3kziSFdyp80uo5FaZiaZ5Ei867MolM1?=
- =?us-ascii?Q?rSO0usDzQamGcyJOy368eQSNMG1u3KWI1Fit45SpcD+RZ4br0ISY7x+O15R/?=
- =?us-ascii?Q?8SW3HrE8Z9uYL+cpbK+QNJ8yypA2c7wcb0JcXTvKjjHdlONIfQPfzogVTjT/?=
- =?us-ascii?Q?t1LzEzvjw9Jmvb3r9WvNISEqaWIYJNdqmX5BeD5GWKuN5+OH3V6Frzf8AoBT?=
- =?us-ascii?Q?mqvLUoLDyPsR89OiHNotQqu6cGyuLwGMOz93lhXC6NZ3Y8jxgOZ8BDggUPsz?=
- =?us-ascii?Q?dosKadix0DcpeJIU75GpgTLOohdhilNXhyFqr2xJ5QzSIJn2c0dhd26JH/fF?=
- =?us-ascii?Q?gbK9aek/BR5SHLQ06mrmY99Pvgja9653tz65fnVCp9JQcI4O1amf+Tl7CS00?=
- =?us-ascii?Q?L8UQHrsgZEY5SGHqkckzpTG1QMvpXUS+s7tkVEITylxpv/mcb2fFpRugUXt1?=
- =?us-ascii?Q?gGQwzYAzMa2sS3AgYZiFNSd0dCv03DEjApU220T5PpSjbHO43KiDacl7JlCg?=
- =?us-ascii?Q?TLK6TjnN0VgUVrkgqVmtNEh4j7d2Ecbl4HPbk30bdGMjN+P9xJK8R5XNIYUa?=
- =?us-ascii?Q?SljJXM4vJIYT9qjE338QEIE3BmqI/lnHmi4CxPfWMJsi0tWdqcG1fvVRrMLt?=
- =?us-ascii?Q?GNNjAN6NpVONj855xw5ydQhcprF2aXJ3BVbmlWlvUDppHhWFVLTS4HvD92Ku?=
- =?us-ascii?Q?h6RjmvcF09ifyNpDNg9LEk6ptKmMZq3Qao/vxC9SR1BsXqg+jLMfPmAx2425?=
- =?us-ascii?Q?zAiXXlAQiqLXur8u72VAJnq17KXClK3G0u9UiPgYXKzoMgu/l1EngHcOBm57?=
- =?us-ascii?Q?ZTyfLEjbJEUzYd4=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8418.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(38070700021)(7053199007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?0LJXuILB7Oh3+qU4eFXMXJYsKzPlbiuCdCeIimhDTy3z1aEYAUKdWaxv4N9o?=
- =?us-ascii?Q?QojY4K/n+JkSUTDrBrnbVyinQgLTv0IDfee8WL/Qmx+KDOmHd1xakTlgP071?=
- =?us-ascii?Q?pfXScQgDhnHvXDUEi7ZP9+31js4c8l8u8BaONYr3tiE9apuwfK70WeiJ15sR?=
- =?us-ascii?Q?OulH7o9FzjMuVxIyzAZP3dj055GcDxUhg4tdLZjc6TfmEwFIq8mICJ4BQ9JO?=
- =?us-ascii?Q?1yKTu1lwmKWdifT5McRlWEhlYNDvUWeajs7tvax7iCbUD5py0M20E+yQIrMW?=
- =?us-ascii?Q?qS6UtZ48xKCJz4IyDoOwkhpmtaOLzJNYErnNzmj4OV+IJt/9WJbCT3IZfQ0S?=
- =?us-ascii?Q?sgeSqx9ixPLDiM9BUVM9SNP6xalj7CcJ5pfd357Hv+jXoPVB1bBe81JvRql1?=
- =?us-ascii?Q?CGz9VuJpXUPPUQqXLX2SA4bn1rPat32idWrotjyIq+3PHEBe+nIZMxGcp0Mt?=
- =?us-ascii?Q?Qw3ogTBJxjs50uy9MFJCZHJFxmRExWG39FNCMVWmLk5zwGT9hJd6cjFz4YpQ?=
- =?us-ascii?Q?U6cKpooFqHYHLh6THADYIfgMyrwt9U5BU0m8XpSBXs9uBLJdyjC3rLTcC5dj?=
- =?us-ascii?Q?5hhirq4N5kqYPa9TRQLDAgXaxNA4K85f/AkgsJ2xXi4tWDb3n9APTBw9ksQC?=
- =?us-ascii?Q?Bu+CJ2CkWd/6GR0WfW9HvWgqqEqC34HJ9oHcDDZsTy+wSvTL1mmWWN21lE2J?=
- =?us-ascii?Q?TS5IWyeC31LWyKKZmYOE9j1xQKdpxY6OJ1W9JLsP1FawtDJfMDrPs61B8pkM?=
- =?us-ascii?Q?quOCqkzF3twPK40Mh0GgIbenD8C2QfHJG05OvxjGRT7bhwuWKesZcnyNGo1L?=
- =?us-ascii?Q?ByukNysJYihgdcMQ5wa3yEyclzTTr35g7t3X4cNkmTY/qr/4GrH47jjo0/ou?=
- =?us-ascii?Q?LV2HBc9mNvMBFNcrMqO2APF0L1tz2pEhWy5h6yxRV/vWaPU6R3dk/gtLna1K?=
- =?us-ascii?Q?VucLP/Rc0XR4kvrEm1Ev+cvby5sv6ccLzhCHGYoyDB+kDg37KOtCmOFiy0I3?=
- =?us-ascii?Q?ASnyQ50YKinBmJKS8XWpU+oaLZCcADOuUUbppF5Rn7YuC7XCeIF80JpkoqmN?=
- =?us-ascii?Q?CaDePAnhRSX2rhPQcqR5droHnlloDBu06dqXy1d7ePuLmllIox/wTv/VjJBq?=
- =?us-ascii?Q?gm2zFu1tZmY0XFctMMU74Da3NvGXsRTK+6fdXwu+o/VmhY8lVELDB3DTYP5H?=
- =?us-ascii?Q?yzCOI29JSRsTSHEUGzckRMPwHMI+3ks4uYEfgmcRCb/RY4oO/F1V6wLGoMdj?=
- =?us-ascii?Q?f47Hi/wRZx9jS3ehl/skY3EbEWepQn23BI3m69jfzxlOIGCC8mJmMJRj2lG5?=
- =?us-ascii?Q?iPPfJuTj5+hwp1d2V4wdg5Zwn0XZq5HARUMayDEImmsIRu9cWAldHGLPpNly?=
- =?us-ascii?Q?5+IXDp7tptPpn+Fks5GVCpODERxpL/RziaN/+c3ZsvhUFmAdscXaQIKyRCTI?=
- =?us-ascii?Q?7VzOGQB37TNFzWMCMy1gKNxaHUuitqH1k5fibsTiVsg2ejDCj9QEdU2XDJXR?=
- =?us-ascii?Q?INDRBBMVIN8hD8+qtOB/EKBnI7vLuPkGZbXCtIFjzye3wZRImrv4FLc2uB8X?=
- =?us-ascii?Q?fsvnQzhIBh43xAMcfe8=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA35B1F91D6;
+	Wed, 24 Sep 2025 02:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758682298; cv=none; b=iBx7VBhesJOOGPLjYD2myJ6RWAkMGkfZhsDM9PWQkajXKcy1IymLPgAPXCLWVEpkGpF/2XwrUabto2TMuyxu1+w5O08nVKTNQUNLYUzAOn55q9IEt8wgkNfnnA/LqUPv3TxToy5bZlbWSN7onmPc31pGgmLr1rruIhEBfLmjPTQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758682298; c=relaxed/simple;
+	bh=3oLB6vCE1DfzkqZf/vAwDz1ydYPw5Afe+K3kLP/dAMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGUQyvF5HmSAem38ABWnX07lR4nTlP5DV5ugG6vfVkGYkxgL+EUYTCqmuHbzmNf6/7WNjw5eYyyhjeh1FKHKdTZczosw9CYKsVwgF4nf7G/FPdKNCOvOb8Igop6uEkNy3nIh3jUaC21HCyZECj8LAA37q2gtL07zrH2KzN2r5j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz16t1758682260t98e3d42d
+X-QQ-Originating-IP: AbOZ0NN9SNEvHEDbZxb+4svvgPghtDBuBPNPgeZ/T+s=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 24 Sep 2025 10:50:58 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13274150697629646599
+Date: Wed, 24 Sep 2025 10:50:58 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
+	gustavoars@kernel.org, rdunlap@infradead.org,
+	vadim.fedorenko@linux.dev, joerg@jo-so.de, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v13 5/5] net: rnpgbe: Add register_netdev
+Message-ID: <CB1199BE018DD3DE+20250924025058.GB292859@nic-Precision-5820-Tower>
+References: <20250922014111.225155-1-dong100@mucse.com>
+ <20250922014111.225155-6-dong100@mucse.com>
+ <20250923181639.6755cca4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8418.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83ae368b-bd05-4703-7b69-08ddfb150001
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2025 02:49:36.8646
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: s9/at5e8T0pbouIbqReOK6ZCRAovyOaGFYyIVRxPFnKiwTdSAFjNBT4qPEYrH7Tbiy+l10IsN50FflBvH2dijQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7695
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923181639.6755cca4@kernel.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MijavZDuOhz7yv5Z4Dt2sQhXQGPZTdV+gAL8akzkl3xjzXPLE2Wy2kSp
+	0FVeTaKqOSaY+ZJzuH20boS+NF6eU8UQFVTOWDtuhJ1dwPDfszYEF1/S1Q7cDUZ7WzkYTys
+	kdH0y9rLTTl+rlqr5QJiLdKzRxaQBHVVc5eC4y03mOjdyruSwstc0DCxbozwLSVTHeWiIug
+	KlSEoPKBbICUCMtIPlL+9o243BmbQwFxJiTx+7h8sL2ZlyWlrY27/RfhNWMYwPXf2eLABcx
+	aU12xH/giU/1wWWA9rF3rmPXs8FKW+BQ9hl/PNxjv5EhMyj8Jjzc45FqIasx6XeUGggbKDo
+	VbO/8bM5o53x9ZHu1igyQI87YbDkmgyRmXB9lUx0n/bKpK3ge2tmRiBE4S0tDiCTk/ALxPV
+	atfZ2PMG0nkCQo8h9nm/v+iT9mz/TlheRWN2+7O6rPrUr4zi0ZyjtC80oJo0tYO4U/J/PIw
+	w5RQ1DjpEuk90UHnRy0AVVJWkV8xhNyMidY9mSpNG6DZOTx7s8VrecBTLGfXtzS82/Ey2Jl
+	oW9nxga43B6PDps4lYy2Lh9PHj8lm7pJ2AQNcY9x9c+Pjsr2aON/9a7mDfsNRuNc/su7HcJ
+	0OqhvLuH0OBjwOF10g4t+pVgvh98VnTiPpwu799Xv1whIpyubRSetkN+vgLCxIoafqjE4uM
+	xtcjKZ3/4dspAAqxbGv0YYKkXJ6NZWOM6UFMngnGDKg8AtZJRPl/Sw+VNP48de7NdpmQKJk
+	2tT6bXRDbTTJ4Zmhg5GVxgQWAGvRWZLy4PbJMT3Muu8tTuB5pOeXg1LSz8kj5bKy4Zllm/f
+	0gAQBkhwuYqu4j7ITo7l4APBgWWW9S36vs7e7tgIkIjsXnZ9mV7TJ4B8OSgOitit5nYrbhd
+	wtRwbjuI6hJi8Mbm0pvMYrEJufgy6whJLQw8RNSq4x1H6AX/TsJcnBN1TA9oejHTurXmDQa
+	NkRm4HsJoF9sZmPEW8ffXnfH3eqUGm2zXnKa09ccoR3VC1Wcekv3BpytJjFckigHfBDUD2P
+	jBg2HcGC243mkvBlSgNfGghfvA2mf5Wdw7GoYnauXq6AZRO49e
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
+Hi, Jakub:
 
+On Tue, Sep 23, 2025 at 06:16:39PM -0700, Jakub Kicinski wrote:
+> On Mon, 22 Sep 2025 09:41:11 +0800 Dong Yibo wrote:
+> > +static const struct mucse_hw_operations rnpgbe_hw_ops = {
+> > +	.reset_hw = rnpgbe_reset,
+> > +	.get_perm_mac = rnpgbe_get_permanent_mac,
+> > +	.mbx_send_notify = rnpgbe_mbx_send_notify,
+> 
+> Please don't add abstraction layers, you only have one set of ops right
+> now call them directly. The abstractions layers make the code harder to
+> follow.
+> 
 
-> -----Original Message-----
-> From: Frank Li <frank.li@nxp.com>
-> Sent: Wednesday, September 24, 2025 3:32 AM
-> To: Sherry Sun <sherry.sun@nxp.com>
-> Cc: gregkh@linuxfoundation.org; jirislaby@kernel.org; Shenwei Wang
-> <shenwei.wang@nxp.com>; Peng Fan <peng.fan@nxp.com>; linux-
-> serial@vger.kernel.org; linux-kernel@vger.kernel.org; imx@lists.linux.dev
-> Subject: Re: [PATCH] tty: serial: fsl_lpuart: Add missing wakeup event
-> reporting
->=20
-> On Tue, Sep 23, 2025 at 10:10:51PM +0800, Sherry Sun wrote:
-> > Current lpuart wakeup event would not report itself through sysfs as
-> > being the source of wakeup, so add pm_wakeup_event() to support this.
->=20
-> Current lpuart wakeup event would not report itself as wakeup source
-> through sysfs. Add pm_wakeup_event() to support it.
->=20
-> >
-> > Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
-> > ---
-> >  drivers/tty/serial/fsl_lpuart.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/drivers/tty/serial/fsl_lpuart.c
-> > b/drivers/tty/serial/fsl_lpuart.c index c9519e649e82..9625997758e1
-> > 100644
-> > --- a/drivers/tty/serial/fsl_lpuart.c
-> > +++ b/drivers/tty/serial/fsl_lpuart.c
-> > @@ -3087,7 +3087,9 @@ static int lpuart_suspend_noirq(struct device
-> > *dev)  static int lpuart_resume_noirq(struct device *dev)  {
-> >  	struct lpuart_port *sport =3D dev_get_drvdata(dev);
-> > +	struct tty_port *port =3D &sport->port.state->port;
-> >  	u32 stat;
-> > +	bool wake_active;
->=20
-> move wake_active above u32 stat;.
->=20
-> >
-> >  	pinctrl_pm_select_default_state(dev);
-> >
-> > @@ -3098,6 +3100,12 @@ static int lpuart_resume_noirq(struct device
-> *dev)
-> >  		if (lpuart_is_32(sport)) {
-> >  			stat =3D lpuart32_read(&sport->port, UARTSTAT);
-> >  			lpuart32_write(&sport->port, stat, UARTSTAT);
-> > +
-> > +			/* check whether lpuart wakeup was triggered */
-> > +			wake_active =3D stat & UARTSTAT_RDRF || stat &
-> UARTSTAT_RXEDGIF;
->=20
-> wake_active =3D stat & (UARTSTAT_RDRF | UARTSTAT_RXEDGIF);
+Ok, remove abstraction layers in this series. I will add abstraction
+layers when adding more sets of ops.
 
-Hi Frank, thanks for all above comments, will implement them in V2.
+> > +static netdev_tx_t rnpgbe_xmit_frame(struct sk_buff *skb,
+> > +				     struct net_device *netdev)
+> > +{
+> > +	dev_kfree_skb_any(skb);
+> > +	netdev->stats.tx_dropped++;
+> 
+> Please add your own stats, the stats in struct net_device
+> are deprecated and should not be used by new drivers.
+> 
 
-Best Regards
-Sherry
+Got it, I will fix this.
 
->=20
-> Frank
-> > +
-> > +			if (wake_active &&
-> irqd_is_wakeup_set(irq_get_irq_data(sport->port.irq)))
-> > +				pm_wakeup_event(tty_port_tty_get(port)-
-> >dev, 0);
-> >  		}
+> >  	err = rnpgbe_init_hw(hw, board_type);
+> >  	if (err) {
+> >  		dev_err(&pdev->dev, "Init hw err %d\n", err);
+> >  		goto err_free_net;
 > >  	}
-> >
-> > --
-> > 2.34.1
-> >
+> > +	/* Step 1: Send power-up notification to firmware (no response expected)
+> > +	 * This informs firmware to initialize hardware power state, but
+> > +	 * firmware only acknowledges receipt without returning data. Must be
+> > +	 * done before synchronization as firmware may be in low-power idle
+> > +	 * state initially.
+> > +	 */
+> > +	err = hw->ops->mbx_send_notify(hw, true, mucse_fw_powerup);
+> > +	if (err) {
+> 
+> Don't you have to power it down on errors later in this function?
+
+I will add an lable err_powerdown to handle errors later in this function.
+
+err_powerdown:
+         /* notify powerdown only powerup ok */
+         if (!err_notify) {
+                 err_notify = rnpgbe_send_notify(hw, false, mucse_fw_powerup);
+                 if (err_notify)
+                         dev_warn(&pdev->dev, "Send powerdown to hw failed %d\n",
+                                  err_notify);
+         }
+
+> -- 
+> pw-bot: cr
+> 
+
+thanks for your feedback.
+
 
