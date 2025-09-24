@@ -1,445 +1,344 @@
-Return-Path: <linux-kernel+bounces-830416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E20B99980
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:33:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2979B9999E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E735C4C5A41
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:33:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 027D27A5BBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0DD2FD7D9;
-	Wed, 24 Sep 2025 11:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679282FF172;
+	Wed, 24 Sep 2025 11:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="jeHpkvGl"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010018.outbound.protection.outlook.com [52.101.228.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="gArAq6ZZ"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981592FDC49;
-	Wed, 24 Sep 2025 11:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758713627; cv=fail; b=exZDkKR6047mUcdPOH3tcGdBqRDdtGaY0AL0koHwtB/MdNWR5H0MO/r0XeGF6u0d2MSHRaD3wiQeQpc5qCKbgh/kCKFGDE3IYmd7IrsD2a0FlbdQ6E17YPVstOdNgAzKoNfBHyw/mmi8knH6Mo656b859oBwD94JxHcSeSWvTnA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758713627; c=relaxed/simple;
-	bh=9XuSkl7YHra9+nwRWSs8PjfbKkKNbahIrcKrx8WC4rQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tlpixl0DDyPJJUxLsyrwtACmGfWJUnP7cXR+JosGdIlv2aL5taJ/dAJMbbSLsLhapoWIrr39qhyIRn2eNczJ0jEsHOrm5VW7NtDHVtYT/AxB4ZmeziHSSgNvvjB+qHYwqDNCCzpB0TkO+i1gAOhqe4YQ9xKPOWAybGehkVdvYI8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=jeHpkvGl; arc=fail smtp.client-ip=52.101.228.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P/QlMOKNuCodQlrT2Dlj7EX2BFqoA9SB6nlw9sN57APAukBtn+lg8X3uMduux/k+76dDDaoJl3K+kyrAYQiPDf0vCNgPc3y6WpwLKqFVbnuWxxOwzOgCUmZNWSFyIc2hN4TdunEVeb1k3ClxyxOonqvvVpbhPm7AHWpJgg7yO5JptNv/uJecTzhXpzt4waJJY7RBaqDGKXW2DgC4OK7PMgGd/iQQ/ZpLdUK7Ld8CoqubXt+p7q73xZ+FNAnpW4hrikk7mNwwR9TxQOAZBCBGoKpTph4BDEYf0aExP62eJX9W4P7VdTEQe8ygjeckzsqb4Ce2n2JIKAza+CGi9+a5vg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J0GEbAikADw/iIvnk9GfRaSwCP5DCxRat2xpJAixwzw=;
- b=vRu7THb24IwvSq75IRgRHHmrSDv3B/sAzWAP1rxpYXEUlkkiy5nGySMOyAAnL5bL+LHxwjzFYOsbia50H5TRjgKWb52DNAWBKhnvMmL6PknaFbemqRUqFQZ5zwDKfmHTtspdEVqtFa9AXEk2QvhBTivjNlPr5M0fhwMHMoXdHgPlyTwB0j7F9Bck8MmjNk6k6EefFMa9Z5v7tt5oZtRzqIWg3SXw3OLRe/BsuprbamWzK/KxPnAmtiHPYwn/lChN9WgrwYx/hMTbwP+Nl9sPeVT1Bzv6vHpcl952eRUElxROly4BDVPc0jZi+Q8jdZy3EbAUMXPBI2f/UpplnBRSNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J0GEbAikADw/iIvnk9GfRaSwCP5DCxRat2xpJAixwzw=;
- b=jeHpkvGl6ZzbebQPdPn+PM7CnF98UN0wUzJT40Wip0REeofe6ngA2fjXKRdhVNCSzF2XfIFwKQ4kpImaa3JJ106nTrfCTq/SGsmaxwRFY3le4+iB1p5rf0JrnxEmY++jYKDoYTC+VFwJw578WK99KfC0EAqEn42hxhNSdX6ktZY=
-Received: from TYWPR01MB8805.jpnprd01.prod.outlook.com (2603:1096:400:16b::10)
- by TYVPR01MB10893.jpnprd01.prod.outlook.com (2603:1096:400:2ab::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
- 2025 11:33:35 +0000
-Received: from TYWPR01MB8805.jpnprd01.prod.outlook.com
- ([fe80::6f4b:7755:832e:177b]) by TYWPR01MB8805.jpnprd01.prod.outlook.com
- ([fe80::6f4b:7755:832e:177b%3]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
- 11:33:35 +0000
-From: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-To: geert <geert@linux-m68k.org>
-CC: Jonathan Cameron <jic23@kernel.org>, David Lechner
-	<dlechner@baylibre.com>, =?iso-8859-1?Q?Nuno_S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, magnus.damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH 2/7] dt-bindings: iio: adc: document RZ/T2H and RZ/N2H ADC
-Thread-Topic: [PATCH 2/7] dt-bindings: iio: adc: document RZ/T2H and RZ/N2H
- ADC
-Thread-Index: AQHcLKP9NsNhN/CVKUaGUfMNrBDa6rSh9ryAgAA1ukA=
-Date: Wed, 24 Sep 2025 11:33:34 +0000
-Message-ID:
- <TYWPR01MB88052A16F01666B693EE28E3851CA@TYWPR01MB8805.jpnprd01.prod.outlook.com>
-References: <20250923160524.1096720-1-cosmin-gabriel.tanislav.xa@renesas.com>
- <20250923160524.1096720-3-cosmin-gabriel.tanislav.xa@renesas.com>
- <CAMuHMdVEDJZ6wdGZs_CDs=jLPV1u382o6=cZ1HfKQOffGf7jGw@mail.gmail.com>
-In-Reply-To:
- <CAMuHMdVEDJZ6wdGZs_CDs=jLPV1u382o6=cZ1HfKQOffGf7jGw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB8805:EE_|TYVPR01MB10893:EE_
-x-ms-office365-filtering-correlation-id: 42bbb16b-558a-4b49-eb22-08ddfb5e3271
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?6YXFi8aayvFo70bXLSqdPidWMONoAQNAV/JCHgT2xUvL4ugIwB//iWkY21?=
- =?iso-8859-1?Q?5HXVREtdx0osR02W6vzvgDci50xLowP8Y9HOze25AIoTJUOuNm3D5wh/65?=
- =?iso-8859-1?Q?0K79n6rgrj8WQd78qRa3kRYgnwa0tip0hMGEDTMLAShU9r+PRRE4bLHGxl?=
- =?iso-8859-1?Q?QADUMEZbHZh7r9T4AM9Z7AbWRHJrjRMN+2nx8ryd7C3ELcHp2uRM9RIRgL?=
- =?iso-8859-1?Q?1zMUteTlok1yAxbGLG72UMGU+Sn1nbQjW9BExeFSUlKk1+GuH8Px8KKOP3?=
- =?iso-8859-1?Q?4bgMJMI2k/5ktkDIoggUWAn5slWe/eIOfFMc51TquoTr+89ZXPsJP6cpo8?=
- =?iso-8859-1?Q?1VQJnAAI22GefzZ0qgxOt9g95DHGbBKvLYOmKjsa3CX4813SUZaRPJZ8g6?=
- =?iso-8859-1?Q?LTadf6LQr1EyPeK5Cw+ifipyWAaRqT64ULwmr3YkcxuVaTWrfSqjTNDJCK?=
- =?iso-8859-1?Q?452XAEkBj5WHPNYNoefvuDsM1mq2NFls2cL9yMH4qa/3/RXKyIXIFTfXly?=
- =?iso-8859-1?Q?z1AECN9ai3PZnI6+cQTz+8RdJ8ayAtAoUdaXsez+13f7bvUl7JpGa44ucZ?=
- =?iso-8859-1?Q?OOZPkp/TIxwm5YUrcY6MDHs8uM4Zh2eUlNTDAjghDZeGRPBK47ylfuR/2b?=
- =?iso-8859-1?Q?UZkO4adhT3IY+VR8JeNVkGjI1tByzVG5wyFK1kAjmM862PtJT3jOtDPpgC?=
- =?iso-8859-1?Q?TlrWjCelyMCKufrICQnpLVDyME7itiNt+yKDtGCVYnJy4HjrJfw/WjmdOi?=
- =?iso-8859-1?Q?hFXVu6oGAHuVy7YSkaQZffD8DvCdM9k60gs+HS4Sklk2LplQiNU4WcaxJq?=
- =?iso-8859-1?Q?G2ey3fHvVDT1sWgoUpUNn/7whWRCT5ydtHCknUqYovRYdDu0R14hhqrNSZ?=
- =?iso-8859-1?Q?8y1WRP92vKF5h0sMDzDoHNk2hB1KEDAbFGkIzPuzVA5d8DVlAjjH/SdcKn?=
- =?iso-8859-1?Q?t/gp1IcnR6M/8A/Q3N2zgsG6sN0B129iJLdsl82Y9zIAucbGp9TzsqIbjo?=
- =?iso-8859-1?Q?S03xwaz8NMpOUp/EX2OLzej5HSjE696JfdL4eiIzjdcVvszIsCw7enMUlc?=
- =?iso-8859-1?Q?/QP9PQrB5Q3xHCvY+yKGl5imN1WEPm5B3jBXk8/BqT+juW7Yd8KW6Go46F?=
- =?iso-8859-1?Q?TjQoEk3+9ssKpKxv5FXnrWdxycT+/Op6rLg/zKvZK9RcyreeNsWi+4f9ry?=
- =?iso-8859-1?Q?BGc8/oIRvUlKxE93OuiEVcHiQdmKb2DddVyGM6lOlGRypT5A8Z5o6Gt3CH?=
- =?iso-8859-1?Q?FoH14kJi1fwhh1q5AbiX+KnTJr9/kcFsJa3zsyJRUhgkhPzFv4iHDr72SY?=
- =?iso-8859-1?Q?t3IFcEudSw4JugC6cdg7/jsqF0aipgjcD4l9e0DvUGBqX40Va1HSiSkqbe?=
- =?iso-8859-1?Q?AnaSG1xnIPRBTVL0KepKw5f8KEx3PE7y6fK81uLnkEAPG8dNntPEX185R7?=
- =?iso-8859-1?Q?UaDOu2zhjp2SaksPc/tCBmds+nsDWBWsF07GnL5ShvnZarQHZmP1TvkMef?=
- =?iso-8859-1?Q?E=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB8805.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?BgGmZCP6mlXbJd2LjPiDgGmG9hMtixoSed32hcOiVQmOEIVdz9k0p8gLYO?=
- =?iso-8859-1?Q?Z5762rI4uSFc7w27nioSut/phgn+kkek62PyD8XkV37/fnkpBwYjd1xA+H?=
- =?iso-8859-1?Q?k7oVayDqYMEfeDx1VvMJ4uLqnfp2Bv9HbYrARHii/T6ZofWQGge07a3RJd?=
- =?iso-8859-1?Q?3bFhmwyN4zFFLbvmCMBwZTPJGn/sMw+8qPqB4KcOfSfR32QiWqHoQzWKNw?=
- =?iso-8859-1?Q?IgWzYMnLdG/O5IhfmHDH31dr8Vj9FBYMbYYbIHHuCXFjX/RlZz0fgKGkOF?=
- =?iso-8859-1?Q?Rudkq7A1r84PEesfZaH/goJ4lpR+g7MF1ZNb3n38U31dzfE/sOexMKo7s5?=
- =?iso-8859-1?Q?H2JZqGoJj67yrcVAUuIrZsL2K64f0uimqWWDyBRFZylYrHJ/BwiwL7rAKR?=
- =?iso-8859-1?Q?mFHgDzuCd9oANVmscbJ/hpmp4OjnznOaSarycLXXKzsACG67vpBf4RiWlM?=
- =?iso-8859-1?Q?rWOM/BQrZk+jRhQHfTeLSyPAVStSbkWqdcMJt0wlrTz9msT+tyNSmnd9J4?=
- =?iso-8859-1?Q?9txLn3BgZ1FsbYpnW2HpRrbLrhjhui6svjEndIUPPk1+yGhRLtrRa2rAic?=
- =?iso-8859-1?Q?Ll7t0ljneLvVKIsLH8thYWfXtOFkMbBzxzICBJXATWdmkWuKY42W+67sPx?=
- =?iso-8859-1?Q?OzSYaheycunTOhGh2TTqXM39a3vuLoA2AaoerBKgBYgoLgGwHrowUC+Z9B?=
- =?iso-8859-1?Q?41u0bxC+b/j/GavC4KcJhtSSZsN8Pr1QWlvAKGpAlzjD1MX7MHAL/Z02RF?=
- =?iso-8859-1?Q?qEJHmcBzESS6mYGfHKumOXRPft4Rqpd97WyJBjzDT+oUjnib8LhWWUMqb5?=
- =?iso-8859-1?Q?ofFBOcHYdOiLJW/5jzL8yTKQXqUjEBsQ2nSYOvOhCFv2EMjo1mcT3CkEj8?=
- =?iso-8859-1?Q?gXGkKRLukUbjlUtsO+yTkeZLPxr9+6wZsXkOEhwr0XkPsMkCJYZHFGiPVH?=
- =?iso-8859-1?Q?A08BUpgOTlsR+TK/QcQ5x/r1OgHYnk+UrcuYEfGk0SkWlwQ3dvCSQtmuhO?=
- =?iso-8859-1?Q?m3ghMkczIldj32qz7l2VQHatR9zec1eGkH1GsIPYcxOLKMQ3YxttI4y+GS?=
- =?iso-8859-1?Q?kITmv6QmpGaBdRkkLNbe9tSKHbPNQJRr0c99XnYcE73RO/EAuKtVmxLNvL?=
- =?iso-8859-1?Q?+UvNDJIS/ftwXBeUpgPlVPm/f6Ph+FD0tNJc8svUbpfpUdzBt+w9NOoWlG?=
- =?iso-8859-1?Q?qQN5WlepCgU4RcBloXO9/OaiHVYndbJxbdqGVRTa8PRdezRR5nrm6199w0?=
- =?iso-8859-1?Q?sMC5tXqtaMYa6L6U4TNLfkSBk3ZBLYjhoC3GaXKHtj16UDZg8YzpB5kgQS?=
- =?iso-8859-1?Q?NUDxRbLt/ZYsX+j2L5kJEHrje/N9iIXx12FWUSTp5aCndCuv9asAFKB+fX?=
- =?iso-8859-1?Q?s97LppvqpDO9+xJugnST3Z++LrmfyYWiagUEUNRCYhbR5/aqoBAMQV4AaB?=
- =?iso-8859-1?Q?2ACUcBaNkPnGRIx4Pqqo3ERP7qK6MOMzl21U4EwHiOhZR4Nju+LU34RQsH?=
- =?iso-8859-1?Q?kotg55hwy+3dXKR7V0ROm1UcA4u638Hr2q7eG+Wm6aDBPJn/9YR8FgKRn/?=
- =?iso-8859-1?Q?pra6nLnnDfVcZIY1SeFPofO4aySP65uAZFub5ozR9TJvWHF7leJS1xq37y?=
- =?iso-8859-1?Q?t/UxRvKFoN8YM6CtjyxcGdkjRkCPYszgWL1ds6NxsjP3SlP//1SbSgejz1?=
- =?iso-8859-1?Q?gGJlWgeAjFAX84iV51M=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF95A2FC87B
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758713662; cv=none; b=o5QLAOGFI9KiJ7LaAOOr+OjtuW21FPBheGpvPfIsmPu67sr2JhOAji/hbFj+tDJh34Ga4dAIG4Sb1IoVBhIQSbujqQOp8jopy8rk6Qo401vSEJZc8WWLRZ1vQ00WwBFaek/PuROEKBxzHA20wwKHEkTuy+NsBN4tOy/1o14cdBk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758713662; c=relaxed/simple;
+	bh=WfCTd+L2xydb0/+ZRTCVHpDzBcTwJp7Z8hiBsLE2Yhw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRQZqk8UObXSSCVrJWFfL319iDAaZNu7dTXu/m6Aaup98uyQsUn3MuIBmiD4WVTdkiBy+EQg1HvsjtTFogCpw72InIwqZxK58RyaIc7Z5L0q8fspbDmSfVS1Ys0HV2uFvHRUYtEygK3WurONcIsopLnXzkC8fffEHgpD8quEwf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=gArAq6ZZ; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-77f7da24397so503100b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:34:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1758713655; x=1759318455; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=axgFTvtfqB5sYg3JOViFVqdQRbHH2y4i8d39eYJyJew=;
+        b=gArAq6ZZJZDBGlDexYP/tT+7ksZTdv1Rw653Jik0EyQqpP4GkYEFfXbEtLVBCwydQx
+         2+hsRROwowctlIpPZRycxy+m6JsIgRkWZvqTKrJIqxlQKtFuJggQH7vEsIu/FIfvT8Y7
+         bSBqbw1D26Ku1ezl/lJ2oanCa+FuK/MU1Gn4LaN4gk/aZfzwHv0e1CfbMxltC5E4a2fY
+         dO13jMr5566MMqJOJfcMtgd1lTnfjPZLBuyLNDcUWrnLuvRtMstmySxwL/ahdE97Clww
+         maQGZodsDXq5hRzwbdNsEBXnMjvQO7DDLlVhEJyO6Y/yMgSu1e9eUIx9lFkT0E24Ntca
+         FWsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758713655; x=1759318455;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=axgFTvtfqB5sYg3JOViFVqdQRbHH2y4i8d39eYJyJew=;
+        b=n3Z824ZetPmCZkYH4I5X90pypjr3JbyP9bURM4NPpaXt5nmwF8nHr+mjLYck34jXEh
+         28MqfwVwBVd55C8JwdmEiuMSRUkMnoDsDIYvg67sFG6ue1MY0yeJwTGmbFiFc0X4SQPL
+         hC6Y3xRMn+rOxfU7bd6KNzoY8RIFVUV/S8QIKU95WRAue7V5PSt7yDLF/d0m/gx0ozde
+         kgLv7YEriwLAOPdBBUqXH/L0i7PuWKeozYipxPN22cogmPHRbCEeGl3mLSbWL4fF5IAE
+         1YkIId+MbCFJlh6a8yJhNdBF+fE2QmOV/B2bLwK5IO3xRSnH7GPUJhC8Y10rVrYWsNY0
+         9qvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFu0eu5aqIWRLRZr88t2wiPyDqtxUJubAdS2NNNzrPJXyK/yJZWwNyEl1LZ9StbS9dm96pdKaDqLI/Ceo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8nUIc6LTaEp6WwuR//CLEOExfmflGpnsOBgTBRB8W+pxjQssW
+	Q5jeT4Q5fxYeLDFSL4ikdRr6sAxPnaD7ZuI0aMD8tc8h/uhAOdl7WwvboitKRBnOOg==
+X-Gm-Gg: ASbGncuLDz0o11idkNWu7Oz+2+V3i6FBRjx7t9b/xsIJC6VIQaIKHq17DDJdAt53O+j
+	/ft1+AmXO4rAilvqQ0rjaDm5z9jfRW8Gh6fkm2ynhaZF4QMG3YjjvySQgxKhkUO/f3NovCSNhr+
+	phrkuo/Vl9szRX1GkPZrDTJrJ79X4R4x6X3ZZhyHTce+RCwX43Orme5r+e7uIy/iV0rIMdg1o/x
+	Ms3Cij7eKbbXOlIX+xiufVvsAq527Ve2LSJpjvXEMHGLHZYZWaLo3vn2Eemz67HxC+/w+EWfBiJ
+	uLKCq3a21aDSqJ5K7JQqSOUixXHJJEwfWzLgeLrnQEQI/3I9LRW0lyZeBgfYBKhPSCLxVAp5tar
+	EXvZXWtPoKa3X2PZ4NLKDdZI5az4PzlbhqEq8lW5B5m5b++Hliw==
+X-Google-Smtp-Source: AGHT+IFFmCK2QZicA0k7Iofl/6uD/mibI5NUlo6lTS3nqSxsRXUMWlKsDFnQwzFFG6HSs8kUs8hv9w==
+X-Received: by 2002:a17:902:d541:b0:24c:7f03:61cb with SMTP id d9443c01a7336-27cc48a097fmr74064185ad.26.1758713654547;
+        Wed, 24 Sep 2025 04:34:14 -0700 (PDT)
+Received: from bytedance ([61.213.176.55])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980053078sm190134065ad.10.2025.09.24.04.34.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 04:34:13 -0700 (PDT)
+Date: Wed, 24 Sep 2025 19:33:54 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Matteo Martelli <matteo.martelli@codethink.co.uk>
+Cc: Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH 1/4] sched/fair: Propagate load for throttled cfs_rq
+Message-ID: <20250924113354.GA120@bytedance>
+References: <20250910095044.278-1-ziqianlu@bytedance.com>
+ <20250910095044.278-2-ziqianlu@bytedance.com>
+ <58a587d694f33c2ea487c700b0d046fa@codethink.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB8805.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42bbb16b-558a-4b49-eb22-08ddfb5e3271
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2025 11:33:34.7948
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Zff12XXF/agNcez0AishFNNZ8O4XC8baP3EutsIxelWkqjZlWhvUT4A2USCubof1toLedhnB/FkeUIVhgxZGlCdUcEKxiR8nPzvVVrxI51bOORdz1WmbhLEOs5hykW61
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYVPR01MB10893
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <58a587d694f33c2ea487c700b0d046fa@codethink.co.uk>
 
+Hi Matteo,
 
-
-> -----Original Message-----
-> From: Geert Uytterhoeven <geert@linux-m68k.org>
-> Sent: Wednesday, September 24, 2025 10:51 AM
-> To: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>; David Lechner <dlechner@baylibre=
-.com>; Nuno S=E1
-> <nuno.sa@analog.com>; Andy Shevchenko <andy@kernel.org>; Rob Herring <rob=
-h@kernel.org>; Krzysztof
-> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Geert=
- Uytterhoeven
-> <geert+renesas@glider.be>; magnus.damm <magnus.damm@gmail.com>; Michael T=
-urquette
-> <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Prabhakar Mah=
-adev Lad <prabhakar.mahadev-
-> lad.rj@bp.renesas.com>; linux-iio@vger.kernel.org; linux-renesas-soc@vger=
-.kernel.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-clk@vger.=
-kernel.org
-> Subject: Re: [PATCH 2/7] dt-bindings: iio: adc: document RZ/T2H and RZ/N2=
-H ADC
->
-> Hi Cosmin,
->
-> On Tue, 23 Sept 2025 at 18:06, Cosmin Tanislav
-> <cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> > Document the A/D 12-Bit successive approximation converters found in th=
-e
-> > Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs.
-> >
-> > RZ/T2H has two ADCs with 4 channels and one with 6.
-> > RZ/N2H has two ADCs with 4 channels and one with 15.
-> >
-> > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
->
-> Thanks for your patch!
->
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iio/adc/renesas,r9a09g077-adc.y=
-aml
-> > @@ -0,0 +1,170 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id:
-> http://devicetree.org/schemas/iio/adc%252
-> Frenesas%2Cr9a09g077-adc.yaml%23&data=3D05%7C02%7Ccosmin-
-> gabriel.tanislav.xa%40renesas.com%7C8c536bc422b9440a018708ddfb401335%7C53=
-d82571da1947e49cb4625a166a4a2a
-> %7C0%7C0%7C638942974801495945%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnR=
-ydWUsIlYiOiIwLjAuMDAwMCIsIlAiO
-> iJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3D0zAY5VAR=
-xHP%2FN0wV7Gv1%2B9DZi%2Bg8JzBbi%
-> 2BkzCDdN59M%3D&reserved=3D0
-> > +$schema: http://devicetree.org/meta-
-> schemas%2Fcore.yaml%23&data=3D05%7C02%7Ccosmin-
-> gabriel.tanislav.xa%40renesas.com%7C8c536bc422b9440a018708ddfb401335%7C53=
-d82571da1947e49cb4625a166a4a2a
-> %7C0%7C0%7C638942974801538982%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnR=
-ydWUsIlYiOiIwLjAuMDAwMCIsIlAiO
-> iJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DVlYwNJVc=
-7W%2BnLFKHf%2FG2Gk0HfWSsQ58cR0a8
-> fQpckwE%3D&reserved=3D0
-> > +
-> > +title: Renesas RZ/T2H / RZ/N2H ADC12
-> > +
-> > +maintainers:
-> > +  - Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-> > +
-> > +description: |
-> > +  A/D Converter block is a successive approximation analog-to-digital =
-converter
-> > +  with a 12-bit accuracy. Up to 15 analog input channels can be select=
-ed.
->
-> The documentation for several registers talks about bitmasks for ch0-ch15=
-,
-> so the actual hardware block supports up to 16 channels.
+On Tue, Sep 23, 2025 at 03:05:29PM +0200, Matteo Martelli wrote:
+> Hi Aaron,
+> 
+> On Wed, 10 Sep 2025 17:50:41 +0800, Aaron Lu <ziqianlu@bytedance.com> wrote:
+> > Before task based throttle model, propagating load will stop at a
+> > throttled cfs_rq and that propagate will happen on unthrottle time by
+> > update_load_avg().
+> > 
+> > Now that there is no update_load_avg() on unthrottle for throttled
+> > cfs_rq and all load tracking is done by task related operations, let the
+> > propagate happen immediately.
+> > 
+> > While at it, add a comment to explain why cfs_rqs that are not affected
+> > by throttle have to be added to leaf cfs_rq list in
+> > propagate_entity_cfs_rq() per my understanding of commit 0258bdfaff5b
+> > ("sched/fair: Fix unfairness caused by missing load decay").
+> > 
+> > Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
+> > ---
+> 
+> I have been testing again the patch set "[PATCH v4 0/5] Defer throttle
+> when task exits to user" [1] together with these follow up patches. I
+> found out that with this patch the kernel sometimes produces the warning
+> WARN_ON_ONCE(rq->tmp_alone_branch != &rq->leaf_cfs_rq_list); in
+> assert_list_leaf_cfs_rq() called by enqueue_task_fair(). I could
+> reproduce this systematically by applying both [1] and this patch on top
+> of tag v6.17-rc6 and also by directly testing at commit fe8d238e646e
+> from sched/core branch of tip tree. I couldn't reproduce the warning by
+> testing at commmit 5b726e9bf954 ("sched/fair: Get rid of
+> throttled_lb_pair()").
 >
 
-Maybe the hardware block can support up to 16 channels, but on T2H,
-which uses a 729-pin FCBGA pacakge, ADC2 only exposes 6 channels,
-and on N2H, which uses a 576-pin FCBGA package, ADC2 only exposes 15
-channels. On both of them, only 4 channels are exposed for ADC0 and
-ADC1. As of this moment, this binding describes the ADC hardware blocks
-of T2H and N2H, why would we use 16 here?
+Thanks a lot for the test.
 
-> > +  Conversions can be performed in single or continuous mode. Result of=
- the ADC
-> > +  is stored in a 16-bit data register corresponding to each channel.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - renesas,r9a09g077-adc # RZ/T2H
-> > +      - renesas,r9a09g087-adc # RZ/N2H
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    items:
-> > +      - description: A/D scan end interrupt
-> > +      - description: A/D scan end interrupt for Group B
-> > +      - description: A/D scan end interrupt for Group C
-> > +      - description: Window A compare match
-> > +      - description: Window B compare match
-> > +      - description: Compare match
-> > +      - description: Compare mismatch
-> > +
-> > +  interrupt-names:
-> > +    items:
-> > +      - const: adi
-> > +      - const: gbadi
-> > +      - const: gcadi
-> > +      - const: cmpai
-> > +      - const: cmpbi
-> > +      - const: wcmpm
-> > +      - const: wcmpum
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: converter clock
->
-> Converter
->
+> The test setup is the same used in my previous testing for v3 [2], where
+> the CFS throttling events are mostly triggered by the first ssh logins
+> into the system as the systemd user slice is configured with CPUQuota of
+> 25%. Also note that the same systemd user slice is configured with CPU
 
-Ack.
+I tried to replicate this setup, below is my setup using a 4 cpu VM
+and rt kernel at commit fe8d238e646e("sched/fair: Propagate load for
+throttled cfs_rq"):
+# pwd
+/sys/fs/cgroup/user.slice
+# cat cpu.max
+25000 100000
+# cat cpuset.cpus
+0
 
-> > +      - description: peripheral clock
->
-> Peripheral
->
+I then login using ssh as a normal user and I can see throttle happened
+but couldn't hit this warning. Do you have to do something special to
+trigger it?
 
-Ack.
+> affinity set to only one core. I added some tracing to trace functions
+> throttle_cfs_rq, tg_throttle_down, unthrottle_cfs_rq, tg_unthrottle_up,
+> and it looks like the warning is triggered after the last unthrottle
+> event, however I'm not sure the warning is actually related to the
+> printed trace below or not. See the following logs that contains both
+> the traced function events and the kernel warning.
+> 
+> [   17.859264]  systemd-xdg-aut-1006    [000] dN.2.    17.865040: throttle_cfs_rq <-pick_task_fair
+> [   17.859264]  systemd-xdg-aut-1006    [000] dN.2.    17.865042: tg_throttle_down <-walk_tg_tree_from
+> [   17.859264]  systemd-xdg-aut-1006    [000] dN.2.    17.865042: tg_throttle_down <-walk_tg_tree_from
+> [   17.859264]  systemd-xdg-aut-1006    [000] dN.2.    17.865043: tg_throttle_down <-walk_tg_tree_from
+> [   17.876999]        ktimers/0-15      [000] d.s13    17.882601: unthrottle_cfs_rq <-distribute_cfs_runtime
+> [   17.876999]        ktimers/0-15      [000] d.s13    17.882603: tg_unthrottle_up <-walk_tg_tree_from
+> [   17.876999]        ktimers/0-15      [000] d.s13    17.882605: tg_unthrottle_up <-walk_tg_tree_from
+> [   17.876999]        ktimers/0-15      [000] d.s13    17.882605: tg_unthrottle_up <-walk_tg_tree_from
+> [   17.910250]          systemd-999     [000] dN.2.    17.916019: throttle_cfs_rq <-put_prev_entity
+> [   17.910250]          systemd-999     [000] dN.2.    17.916025: tg_throttle_down <-walk_tg_tree_from
+> [   17.910250]          systemd-999     [000] dN.2.    17.916025: tg_throttle_down <-walk_tg_tree_from
+> [   17.910250]          systemd-999     [000] dN.2.    17.916025: tg_throttle_down <-walk_tg_tree_from
+> [   17.977245]        ktimers/0-15      [000] d.s13    17.982575: unthrottle_cfs_rq <-distribute_cfs_runtime
+> [   17.977245]        ktimers/0-15      [000] d.s13    17.982578: tg_unthrottle_up <-walk_tg_tree_from
+> [   17.977245]        ktimers/0-15      [000] d.s13    17.982579: tg_unthrottle_up <-walk_tg_tree_from
+> [   17.977245]        ktimers/0-15      [000] d.s13    17.982580: tg_unthrottle_up <-walk_tg_tree_from
+> [   18.009244]          systemd-999     [000] dN.2.    18.015030: throttle_cfs_rq <-pick_task_fair
+> [   18.009244]          systemd-999     [000] dN.2.    18.015033: tg_throttle_down <-walk_tg_tree_from
+> [   18.009244]          systemd-999     [000] dN.2.    18.015033: tg_throttle_down <-walk_tg_tree_from
+> [   18.009244]          systemd-999     [000] dN.2.    18.015033: tg_throttle_down <-walk_tg_tree_from
+> [   18.076822]        ktimers/0-15      [000] d.s13    18.082607: unthrottle_cfs_rq <-distribute_cfs_runtime
+> [   18.076822]        ktimers/0-15      [000] d.s13    18.082609: tg_unthrottle_up <-walk_tg_tree_from
+> [   18.076822]        ktimers/0-15      [000] d.s13    18.082611: tg_unthrottle_up <-walk_tg_tree_from
+> [   18.076822]        ktimers/0-15      [000] d.s13    18.082611: tg_unthrottle_up <-walk_tg_tree_from
+> [   18.109820]          systemd-999     [000] dN.2.    18.115604: throttle_cfs_rq <-put_prev_entity
+> [   18.109820]          systemd-999     [000] dN.2.    18.115609: tg_throttle_down <-walk_tg_tree_from
+> [   18.109820]          systemd-999     [000] dN.2.    18.115609: tg_throttle_down <-walk_tg_tree_from
+> [   18.109820]          systemd-999     [000] dN.2.    18.115609: tg_throttle_down <-walk_tg_tree_from
+> [   18.177167]        ktimers/0-15      [000] d.s13    18.182630: unthrottle_cfs_rq <-distribute_cfs_runtime
+> [   18.177167]        ktimers/0-15      [000] d.s13    18.182632: tg_unthrottle_up <-walk_tg_tree_from
+> [   18.177167]        ktimers/0-15      [000] d.s13    18.182633: tg_unthrottle_up <-walk_tg_tree_from
+> [   18.177167]        ktimers/0-15      [000] d.s13    18.182634: tg_unthrottle_up <-walk_tg_tree_from
+> [   18.220827]          systemd-999     [000] dN.2.    18.226594: throttle_cfs_rq <-pick_task_fair
+> [   18.220827]          systemd-999     [000] dN.2.    18.226597: tg_throttle_down <-walk_tg_tree_from
+> [   18.220827]          systemd-999     [000] dN.2.    18.226597: tg_throttle_down <-walk_tg_tree_from
+> [   18.220827]          systemd-999     [000] dN.2.    18.226597: tg_throttle_down <-walk_tg_tree_from
+> [   18.220827]          systemd-999     [000] dN.2.    18.226598: tg_throttle_down <-walk_tg_tree_from
+> [   18.220827]          systemd-999     [000] dN.2.    18.226598: tg_throttle_down <-walk_tg_tree_from
+> [   18.220827]          systemd-999     [000] dN.2.    18.226598: tg_throttle_down <-walk_tg_tree_from
+> [   18.220827]          systemd-999     [000] dN.2.    18.226598: tg_throttle_down <-walk_tg_tree_from
+> [   18.276886]        ktimers/0-15      [000] d.s13    18.282606: unthrottle_cfs_rq <-distribute_cfs_runtime
+> [   18.276886]        ktimers/0-15      [000] d.s13    18.282608: tg_unthrottle_up <-walk_tg_tree_from
+> [   18.276886]        ktimers/0-15      [000] d.s13    18.282610: tg_unthrottle_up <-walk_tg_tree_from
+> [   18.276886]        ktimers/0-15      [000] d.s13    18.282610: tg_unthrottle_up <-walk_tg_tree_from
+> [   18.276886]        ktimers/0-15      [000] d.s13    18.282611: tg_unthrottle_up <-walk_tg_tree_from
+> [   18.276886]        ktimers/0-15      [000] d.s13    18.282611: tg_unthrottle_up <-walk_tg_tree_from
+> [   18.276886]        ktimers/0-15      [000] d.s13    18.282611: tg_unthrottle_up <-walk_tg_tree_from
+> [   18.276886]        ktimers/0-15      [000] d.s13    18.282611: tg_unthrottle_up <-walk_tg_tree_from
+> [   18.421349] ------------[ cut here ]------------
+> [   18.421350] WARNING: CPU: 0 PID: 1 at kernel/sched/fair.c:400 enqueue_task_fair+0x925/0x980
 
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: adclk
-> > +      - const: pclk
-> > +
-> > +  power-domains:
-> > +    maxItems: 1
-> > +
-> > +  renesas,max-channels:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description: |
-> > +      Maximum number of channels supported by the ADC.
-> > +      RZ/T2H has two ADCs with 4 channels and one with 6 channels.
-> > +      RZ/N2H has two ADCs with 4 channels and one with 15 channels.
->
-> According to the documentation, both SoCs have three instances?
->
+I stared at the code and haven't been able to figure out when
+enqueue_task_fair() would end up with a broken leaf cfs_rq list.
 
-Yes, both SoCs have three instances and (obviously) we've tested all
-of them, as they're exposed on the evaluation board, as defined in
-the dts patches in this series.
+No matter what the culprit commit did, enqueue_task_fair() should always
+get all the non-queued cfs_rqs on the list in a bottom up way. It should
+either add the whole hierarchy to rq's leaf cfs_rq list, or stop at one
+of the ancestor cfs_rqs which is already on the list. Either way, the
+list should not be broken.
 
-T2H: ADC0 - 4, ADC1 - 4, ADC2 - 6
-N2H: ADC0 - 4, ADC1 - 4, ADC2 - 15
+> [   18.421355] Modules linked in: efivarfs
+> [   18.421360] CPU: 0 UID: 0 PID: 1 Comm: systemd Not tainted 6.17.0-rc4-00010-gfe8d238e646e #2 PREEMPT_{RT,(full)}
+> [   18.421362] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unknown 02/02/2022
+> [   18.421364] RIP: 0010:enqueue_task_fair+0x925/0x980
+> [   18.421366] Code: b5 48 01 00 00 49 89 95 48 01 00 00 49 89 bd 50 01 00 00 48 89 37 48 89 b0 70 0a 00 00 48 89 90 78 0a 00 00 e9 49 fa ff ff 90 <0f> 0b 90 e9 1c f9 ff ff 90 0f 0b 90 e9 59 fa ff ff 48 8b b0 88 0a
+> [   18.421367] RSP: 0018:ffff9c7c8001fa20 EFLAGS: 00010087
+> [   18.421369] RAX: ffff9358fdc29da8 RBX: 0000000000000003 RCX: ffff9358fdc29340
+> [   18.421370] RDX: ffff935881a89000 RSI: 0000000000000000 RDI: 0000000000000003
+> [   18.421371] RBP: ffff9358fdc293c0 R08: 0000000000000000 R09: 00000000b808a33f
+> [   18.421371] R10: 0000000000200b20 R11: 0000000011659969 R12: 0000000000000001
+> [   18.421372] R13: ffff93588214fe00 R14: 0000000000000000 R15: 0000000000200b20
+> [   18.421375] FS:  00007fb07deddd80(0000) GS:ffff935945f6d000(0000) knlGS:0000000000000000
+> [   18.421376] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   18.421377] CR2: 00005571bafe12a0 CR3: 00000000024e6000 CR4: 00000000000006f0
+> [   18.421377] Call Trace:
+> [   18.421383]  <TASK>
+> [   18.421387]  enqueue_task+0x31/0x70
+> [   18.421389]  ttwu_do_activate+0x73/0x220
+> [   18.421391]  try_to_wake_up+0x2b1/0x7a0
+> [   18.421393]  ? kmem_cache_alloc_node_noprof+0x7f/0x210
+> [   18.421396]  ep_autoremove_wake_function+0x12/0x40
+> [   18.421400]  __wake_up_common+0x72/0xa0
+> [   18.421402]  __wake_up_sync+0x38/0x50
+> [   18.421404]  ep_poll_callback+0xd2/0x240
+> [   18.421406]  __wake_up_common+0x72/0xa0
+> [   18.421407]  __wake_up_sync_key+0x3f/0x60
+> [   18.421409]  sock_def_readable+0x42/0xc0
+> [   18.421414]  unix_dgram_sendmsg+0x48f/0x840
+> [   18.421420]  ____sys_sendmsg+0x31c/0x350
+> [   18.421423]  ___sys_sendmsg+0x99/0xe0
+> [   18.421425]  __sys_sendmsg+0x8a/0xf0
+> [   18.421429]  do_syscall_64+0xa4/0x260
+> [   18.421434]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> [   18.421438] RIP: 0033:0x7fb07e8d4d94
+> [   18.421439] Code: 15 91 10 0d 00 f7 d8 64 89 02 b8 ff ff ff ff eb bf 0f 1f 44 00 00 f3 0f 1e fa 80 3d d5 92 0d 00 00 74 13 b8 2e 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 4c c3 0f 1f 00 55 48 89 e5 48 83 ec 20 89 55
+> [   18.421440] RSP: 002b:00007ffff30e4d08 EFLAGS: 00000202 ORIG_RAX: 000000000000002e
+> [   18.421442] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb07e8d4d94
+> [   18.421442] RDX: 0000000000004000 RSI: 00007ffff30e4e80 RDI: 0000000000000031
+> [   18.421443] RBP: 00007ffff30e5ff0 R08: 00000000000000c0 R09: 0000000000000000
+> [   18.421443] R10: 00007fb07deddc08 R11: 0000000000000202 R12: 00007ffff30e6070
+> [   18.421444] R13: 00007ffff30e4f00 R14: 00007ffff30e4d10 R15: 000000000000000f
+> [   18.421445]  </TASK>
+> [   18.421446] ---[ end trace 0000000000000000 ]---
+> 
+> [1]: https://lore-kernel.gnuweeb.org/lkml/20250829081120.806-1-ziqianlu@bytedance.com/
+> [2]: https://lore.kernel.org/lkml/d37fcac575ee94c3fe605e08e6297986@codethink.co.uk/
+> 
+> I hope this is helpful. I'm happy to provide more information or run
+> additional tests if needed.
 
-> I agree with Connor that this should be dropped: the same information
-> is available from the channel@N subnodes, and future SoCs could have
-> gaps in the numbering.
->
+Yeah, definitely helpful, thanks.
 
-Ack.
+While looking at this commit, I'm thinking maybe we shouldn't use
+cfs_rq_pelt_clock_throttled() to decide if cfs_rq should be added
+to rq's leaf list. The reason is, for a cfs_rq that is in throttled
+hierarchy, it can be removed from that leaf list when it has no entities
+left in dequeue_entity(). So even when it's on the list now doesn't
+mean it will still be on the list at unthrottle time.
 
-> FTR, from a quick glance, it looks like this module is very similar
-> to the ADC on RZ/A2M, so I hope we can reuse the driver for that SoC.
->
-> > +patternProperties:
-> > +  "^channel@[0-9a-e]$":
->
-> 0-9a-f
->
+Considering that the purpose is to have cfs_rq and its ancestors to be
+added to the list in case this cfs_rq may have some removed load that
+needs to be decayed later as described in commit 0258bdfaff5b("sched/fair: 
+Fix unfairness caused by missing load decay"), I'm thinking maybe we
+should deal with cfs_rqs differently according to whether it is in
+throttled hierarchy or not:
+- for cfs_rqs not in throttled hierarchy, add it and its ancestors to
+  the list so that the removed load can be decayed;
+- for cfs_rqs in throttled hierarchy, check on unthrottle time whether
+  it has any removed load that needs to be decayed.
+  The case in my mind is: an blocked task @p gets attached to a throttled
+  cfs_rq by attaching a pid to a cgroup. Assume the cfs_rq was empty, had
+  no tasks throttled or queued underneath it. Then @p is migrated to
+  another cpu before being queued on it, so this cfs_rq now has some
+  removed load on it. On unthrottle, this cfs_rq is considered fully
+  decayed and isn't added to leaf cfs_rq list. Then we have a problem.
 
-15 channels max for N2H, which is where 0-9a-e comes from. f is not valid.
-Do you want to document 16 channels on the presumption that the hardware
-block has 16 channels, even though only up to 15 are ever exposed out of
-any SoC currently supported? This can be amended when/if we add support
-for an SoC with 16 channels using the same ADC IP.
+With the above said, I'm thinking the below diff. No idea if this can
+fix Matteo's problem though, it's just something I think can fix the
+issue I described above, if I understand things correctly...
 
-> > +    $ref: adc.yaml
-> > +    type: object
-> > +    description: The external channels which are connected to the ADC.
-> > +
-> > +    properties:
-> > +      reg:
-> > +        description: The channel number.
-> > +        maximum: 14
->
-> 15
-> But I don't think it is needed, as the dtc check for non-matching unit
-> addresses and reg properties should already enforce this.
->
-
-Other bindings have it like this. Is it not worth matching the address?
-
-Can't ever have enough checks.
-
-> > +
-> > +    required:
-> > +      - reg
-> > +
-> > +    additionalProperties: false
-> > +
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: renesas,r9a09g077-adc
-> > +    then:
-> > +      properties:
-> > +        renesas,max-channels:
-> > +          enum: [4, 6]
-> > +
-> > +      patternProperties:
-> > +        "^channel@[6-9a-e]$": false
->
-> 6-9a-f
->
-
-Same as above.
-
-> > +        "^channel@[0-5]$":
-> > +          properties:
-> > +            reg:
-> > +              maximum: 5
->
-> Not needed as per above.
->
-
-Same as above.
-
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
-________________________________
-
-Renesas Electronics Europe GmbH
-Registered Office: Arcadiastrasse 10
-DE-40472 Duesseldorf
-Commercial Registry: Duesseldorf, HRB 3708
-Managing Director: Carsten Jauch
-VAT-No.: DE 14978647
-Tax-ID-No: 105/5839/1793
-
-Legal Disclaimer: This e-mail communication (and any attachment/s) is confi=
-dential and contains proprietary information, some or all of which may be l=
-egally privileged. It is intended solely for the use of the individual or e=
-ntity to which it is addressed. Access to this email by anyone else is unau=
-thorized. If you are not the intended recipient, any disclosure, copying, d=
-istribution or any action taken or omitted to be taken in reliance on it, i=
-s prohibited and may be unlawful.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index f993de30e1466..444f0eb2df71d 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4062,6 +4062,9 @@ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
+ 	if (child_cfs_rq_on_list(cfs_rq))
+ 		return false;
+ 
++	if (cfs_rq->removed.nr)
++		return false;
++
+ 	return true;
+ }
+ 
+@@ -13167,7 +13170,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
+ 	 * change, make sure this cfs_rq stays on leaf cfs_rq list to have
+ 	 * that removed load decayed or it can cause faireness problem.
+ 	 */
+-	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
++	if (!throttled_hierarchy(cfs_rq))
+ 		list_add_leaf_cfs_rq(cfs_rq);
+ 
+ 	/* Start to propagate at parent */
+@@ -13178,7 +13181,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
+ 
+ 		update_load_avg(cfs_rq, se, UPDATE_TG);
+ 
+-		if (!cfs_rq_pelt_clock_throttled(cfs_rq))
++		if (!throttled_hierarchy(cfs_rq))
+ 			list_add_leaf_cfs_rq(cfs_rq);
+ 	}
+ }
 
