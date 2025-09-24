@@ -1,105 +1,117 @@
-Return-Path: <linux-kernel+bounces-831094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCB68B9B877
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:39:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F57B9B87D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F37917DF91
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:39:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A98B74C7389
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909AB31A576;
-	Wed, 24 Sep 2025 18:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4523064A0;
+	Wed, 24 Sep 2025 18:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QS4gQZ2u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hwZRiJts"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7BF313D72;
-	Wed, 24 Sep 2025 18:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAABC11185
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758739110; cv=none; b=eQc0A82NW1OMq3rD0qaFfzb42BO5DbnaeLbthpWxyG+ZPsDcdLWW8yg5MDELPG+eq6HZqpgaooEt3ayTMC4m/b0Ww5vyWSbAtJ6HAMjR6FJi1zjlOmSds5gJWjZChFKypPGWwRF3wPF1+CsaXm/FUftmgAVdDpsuZsPaDSoAdEI=
+	t=1758739198; cv=none; b=GtPdWMnCBPW1rjrkcr6TuH6SH7Rgbf8+PUcrkKce58OC2pnrbkNxrtCPyef828H8/jIvHIMVgPts/bFfEEvhwU0mgnW1tIxSkV/VfxS+Ri1aTaAEXOfYCVAWcpzRPXMLfMWJRiRnENBpqIrQCf9GVUGgBr9ofu3OSr8M5XtMWwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758739110; c=relaxed/simple;
-	bh=JIUwIwvyK28kGXsFjmWwmTqUM0qtgo11UVD4GpXU9DU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XOeyzt4QCirEAiak7LMnNhdGr84sMgSZ+FUVCz+TYKSc7WmbldjS53a8SMF2iyv+VuEDKDsTw1qJ4Qn78t6Wkiob7wjfecX7TxuWe+syBtzPl8aL8to7xEwiJkUZdskfd/IbXWzlLZD2mEOlHmCsB9PNsOBT+OnqFDjPOSaOk8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QS4gQZ2u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C2A1C4CEE7;
-	Wed, 24 Sep 2025 18:38:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758739110;
-	bh=JIUwIwvyK28kGXsFjmWwmTqUM0qtgo11UVD4GpXU9DU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QS4gQZ2ut/p5CX+SDw9+RK/9FA9j4cDOup/uPL78PwlLRA+8Az8iC5ktHnQ6FenUz
-	 n9UEmWIomcmPGbVdGsDQO33pNlFPpPll8WC51BqC6C7pjq2IY4NqJw1crh2kh5aaIO
-	 DYr/7zLh7ZcCFb6xIkYIk/Pl9m1DBiUt2K7bz2x1h+Lr7rFiYEl0BCOHQAvzVyf8QS
-	 D/+IshKU7j/9s7SU3sCmrYQuAlZwVuP/YgQMoJVOSd5m4hn6UcKxwACPBm7dhtxDMr
-	 DdlavpKVCrxuFSllGp4YSkc0JTIhfaRkBLVUd1e6GgimrNbNOerkrcgJDg7raOlJbL
-	 IsVVZwk5NrL9g==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v1UNo-000000097OU-0ZEg;
-	Wed, 24 Sep 2025 18:38:28 +0000
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] KVM: arm64: selftests: Cover ID_AA64ISAR3_EL1 in set_id_regs
-Date: Wed, 24 Sep 2025 19:38:24 +0100
-Message-ID: <175873910389.2373233.15017711229799268342.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250920-kvm-arm64-id-aa64isar3-el1-v1-0-1764c1c1c96d@kernel.org>
-References: <20250920-kvm-arm64-id-aa64isar3-el1-v1-0-1764c1c1c96d@kernel.org>
+	s=arc-20240116; t=1758739198; c=relaxed/simple;
+	bh=ST5MIPZNh+rk0Xdo2MPGLb53Npr23yQ+YE/sn+TsaZQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g+K/SUiISqcxPMTd87gMxmgXnewX6bLxuk6uTaMesi2dmM5y+o5EApwj0NdQqOVNgQIf68vn/J53fioPS4vwcVlXGLrL5kRQ424XlgnUcMNBSU8GaKPIwyMqEqDSQbVxQMKL7mF5Ydmeo4gIAkdycPKEgn2/R5rAu+pAiWjoXnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hwZRiJts; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-8fea25727a9so19157241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:39:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758739195; x=1759343995; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ST5MIPZNh+rk0Xdo2MPGLb53Npr23yQ+YE/sn+TsaZQ=;
+        b=hwZRiJtsi+oD3Zg9HmVTsFOgshlgZK5eObdHS+VShNItAGcJrORpIImepcXke2K5MF
+         r6hP/lReZoK+QpeSrOqMvmmvAcMZK62OCMBrBUQnRUadsY54bfYS1FYU9ucXsn89YDae
+         HLUVQDbBLXMrCqOUICS+HIfbiV4w+HVw+ed3tWfW3iBXLNts2CrLSXoGTyhrG2ZSthoD
+         qlh60FH3UkJKIUycHjlDbEcdYkp5jOm7M9tojlKWjDWitqbWfKPZD5dPsW9LJqjtsQkv
+         1ihRO1CtIX7DzHTHK3yZFFy9wHxY0B9v9V6WWC1b2TS1ysRVNNyK7Tf9cR2LjVRBPSMJ
+         I+mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758739195; x=1759343995;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ST5MIPZNh+rk0Xdo2MPGLb53Npr23yQ+YE/sn+TsaZQ=;
+        b=skrTOSa5GkreDcsAxRpCp5+uBFOXCqbkOCfA/BMtuUXi90u33LcyTjuhqS/bTzq5My
+         kKjcZEWpXE50vs71eSVIfMSCjWZhq/wxURGhPflJtUf1Si7PFlqvmVNWKZAAx3yHPbw3
+         4Aaz6DIrzurmGyfp+g+xAIR9hlxq65RRRiXWDMEDDMSDZwxAooFoM2OrBlmQSPA7R5y+
+         c3Huc6cLlt+orkELsyV4DYbjQs9ovZPQ8RyNaHybscVGadDzq5rlVsP51y3Td3LDI0/Q
+         Tfe3Ta22pQAnJqwfObn/Z9KQuinQI40jgZxYaaljpBtDf5BsCIPmA/3jcrbzwHkxcDD5
+         aC6A==
+X-Gm-Message-State: AOJu0YxtxvzEPrPVxeJjYcBAwYcWZ9ShxNv159xr88Yl9BroHfwh2HK6
+	EW8sSz7+W/4Y4RxJxdvRSiqmxJhcU0zSycEZIUIiyttC+SlrWnjgNaRXsANFfcHSmJtNzIuQOlo
+	Hla2UpF1BIRQ3sNlXlAlmWDfScOFtRKA=
+X-Gm-Gg: ASbGnctCxoa7m/sHBIpELfo0iO6H4Q37FA5/O7GG5OI+AbFLF96IYV7pvpYnYXgrwxf
+	Q+wCHPZOFrg5X/xbENMspVuFS+fIulFI+wME+Rqfgxhj5tQnRyhC5L1z0m9x2eEOS3+dFaEpelH
+	W3Wl7vFN/kvLY8BMrUeDvHvhgx6T3vK8gRz3JoaLy1d3+gKsbIZoMmqyhhA2toR6xFpuhvQEM5H
+	zH9nMkXW7fxuvRpA5mkvyR7cqvLCak/Hj9dtIVc58y6uYmOww==
+X-Google-Smtp-Source: AGHT+IFKQvu7KK7l/LdyC6yvPgiOYdOAsqsd81zbe9e62XVFhzH2deCxnYNW5eJ9DEvQFVudwuvTGiufcXziCwsP/r0=
+X-Received: by 2002:a05:6102:161e:b0:533:ff66:698c with SMTP id
+ ada2fe7eead31-5acc4a1ef0fmr489265137.2.1758739195537; Wed, 24 Sep 2025
+ 11:39:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, pbonzini@redhat.com, shuah@kernel.org, broonie@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+References: <20250918222607.186488-1-xiyou.wangcong@gmail.com> <78127855-104f-46e2-e5d2-52c622243b08@gentwo.org>
+In-Reply-To: <78127855-104f-46e2-e5d2-52c622243b08@gentwo.org>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Wed, 24 Sep 2025 11:39:44 -0700
+X-Gm-Features: AS18NWCWklyrjJnbHl1kScwWNFAGeo0abQkt5rG3TPvdr87PEwYrqpVB-8wXyvA
+Message-ID: <CAM_iQpU2QucTR7+6TwE9yKb+QZg5u_=r9O_tMfsn7Ss7kJbd9A@mail.gmail.com>
+Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture support
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com, 
+	Cong Wang <cwang@multikernel.io>, Andrew Morton <akpm@linux-foundation.org>, 
+	Baoquan He <bhe@redhat.com>, Alexander Graf <graf@amazon.com>, Mike Rapoport <rppt@kernel.org>, 
+	Changyuan Lyu <changyuanl@google.com>, kexec@lists.infradead.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 20 Sep 2025 20:51:58 +0100, Mark Brown wrote:
-> The set_id_regs selftest lacks coverag for ID_AA64ISR3_EL1 which has
-> several features exposed to KVM guests in it.  Add coverage, and while
-> we're here adjust the test to improve maintainability a bit.
-> 
-> The test will fail without the recently applied change adding FEAT_LSFE:
-> 
->    https://lore.kernel.org/r/175829303126.1764550.939188785634158487.b4-ty@kernel.org
-> 
-> [...]
+On Wed, Sep 24, 2025 at 10:51=E2=80=AFAM Christoph Lameter (Ampere)
+<cl@gentwo.org> wrote:
+> AFAICT various contemporary Android deployments do the multiple kernel
+> approach in one way or another already for security purposes and for
+> specialized controllers. However, the multi kernel approaches are often
+> depending on specialized and dedicated hardware. It may be difficult to
+> support with a generic approach developed here.
 
-Applied to next, thanks!
+You are right, the multikernel concept is indeed pretty old, the BarrelFish
+OS was invented in around 2009. Jailhouse was released 12 years ago.
+There are tons of papers in this area too.
 
-[1/2] KVM: arm64: selftests: Remove a duplicate register listing in set_id_regs
-      commit: 5a070fc376babc7efdc8288b97431e43e18f4646
-[2/2] KVM: arm64: selftests: Cover ID_AA64ISAR3_EL1 in set_id_regs
-      commit: b02a2c060b657296c080cff1b54ee4e9e650811c
+Dual-kernel systems, whether using virtualization or firmware, are indeed
+common at least for automotives today. This is a solid justification of its
+usefulness and real-world practice.
 
-Cheers,
+As you stated, it should not depend on any firmware or specialized
+hardware, hence I am making this effort here. Let's join the effort, instea=
+d
+of inventing things in isolation. This is why I not only open the source co=
+de
+but also open the roadmap and invite the whole communication for
+collaboration.
 
-	M.
--- 
-Without deviation from the norm, progress is not possible.
-
-
+Regards,
+Cong Wang
 
