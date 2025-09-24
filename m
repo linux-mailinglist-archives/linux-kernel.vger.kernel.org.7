@@ -1,255 +1,121 @@
-Return-Path: <linux-kernel+bounces-829988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 852E0B9863F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:31:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95012B98704
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 088763AC07F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:31:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE6C82A2F20
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140FB3BBF2;
-	Wed, 24 Sep 2025 06:31:33 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4292550BA;
+	Wed, 24 Sep 2025 06:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qe8M1AYQ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F91D1F92E
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5141FDD;
+	Wed, 24 Sep 2025 06:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758695492; cv=none; b=m9hgIayEztO2IXZFdJVW9BPVE7us7NvWM4HVEspksQlQ1Gi3SrYGHxcwKWZerWiVzoDJgaZ9Dm5u5uD0orKOo/raGzPP1wpTD/5dUkXQj49xEDhkPxlRm6Ji/7U571eAWMqtr5uqEVFOw5ITOdT+bazIRhKXW9JjBJtyrrD+iZM=
+	t=1758696686; cv=none; b=Y2ViIVmmWd6eskJh4gzl/yNXa994ebYGJj94lCONgI95QpMfPaz42sG2Z6IBxhKpUA6kuECYFZJEAcTTBn+3rdqtnGXZQe4JEX0NF0pqSQCa+aMUZWF6se3AnkZ2nW3SyZWjppgkl0mCgY7AJmLIxf+PHMPQ9q/tpSiKKj/J7Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758695492; c=relaxed/simple;
-	bh=JrMEKcy6a4ezHAC7HsxibFnJo5mw15JJuHwghIAxmms=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HCx+TC0t+IoOVf/UhScfmEffqOuIAEMpw8xrBDLUardXD0ab5lphE27mtXpWnLqPq59ApGvwVTxc68FqyS56XCdwwYmdzFkTQMfbQIDwZmW5PVb9y+gY5oWgvtqIONLeFP5iVULlTHBmCNowIgg9uXoLou1w6qmVhIzfgvAbvKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-425745467d1so45831205ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:31:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758695490; x=1759300290;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5uaqA3uMt/ffDNX61ABkn9g/IYRzpwisZzQElb6ztCk=;
-        b=NfCNX71iaFTCKUbKqlN7k/oA/h1K/XZHN6HWbk6JWpkAcyCWu0emGOjCiOtDCkhWOh
-         tkNc2QsqJEPDyYuTVey3SMiC+s0/Yu+Mpbwix6b8MAV84TnITFytdJ913yYbmCQ/QiNi
-         XOV7y4IhzzKvRYgkomi9BN+BhUaQfNDzKyJsHDLtamL+Lbuwdw2jgSnpRhBqVyrPSpEP
-         H9xcUMPwwkEHCHtDLt1Atn+5T1XWqyxBzqy+GDQiFZvEohzkHuHP0hbEqfnsJF+/PY2n
-         NC6DPhoN7jBf1tjAUCrZ6OiWrekoYkWwYwlU6EwhwBnDLXCrMj2mrhai2+ZnXs6FXu7x
-         wPOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnAgpE3d7N9rcHBooCprgu2BApob9WcVqrM8f4IVuHzIr8nkwC8h1r22kFdwHURYmElWpDzJtc1O6fCVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq6cog1YH5fA5Xre97Jnk3rA4Q81aah4GeXRq06Pl++/u7RKcD
-	qJgf1CVjWV6m7IlaxZw0KqTXcp+htMykRGFrr14IGu5ulXJg2g3LGdUjfILFn/BYOCdTVlqVLOd
-	Tq+O79BGNzK1vkHoE3tDpEl95ugEFRIu65RmF4Nhz9WVHaK1kT7OjZBF+CBo=
-X-Google-Smtp-Source: AGHT+IHJvxZk2WoXOJu/hz+7blCR2WuUWBoSl069fCkN7jgSwpLfo1/cb9knBHNfY/LrPcM/k96dClGNxZzRN6b+UXf/Dw5CsGdf
+	s=arc-20240116; t=1758696686; c=relaxed/simple;
+	bh=K2bOS3pbWoyhTpGBmbM+NzPuDyPHGCYGFF4KgBK2D28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NrbptHU2PcuIxcUTF0k7bgpvZ8TijVj7/ZMqumcmHvOZUv4Mi53rRXqcEoouX53eJ74uFxYN69sAsz76Z2FEKLVhwqF7Yg6koEzvtvtBwYV1DprJ1wGfAGVC1o7f5rO6zCCZlXM2gW6BHdig2ly4/7wPGwjiJCYQbbI0K1PFfAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qe8M1AYQ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fgGZ5MdQVPSnCQ97+Io7ZKtLMPQ2htWlC9C9WcFirJ0=; b=qe8M1AYQnc7JU5DT9p/LAHPBdE
+	Gjm8LVMlnLOGfQXdzhYgBqS3x8e5RCJ/AgECtiUsD7kgJ6zlowRseDahFZCvXNuhOAPTk6SvIz4eq
+	/LsM0USJ7sX600fZp4fVom5+1LMDBAk2jNihUUyxuBxcF0Qo72DOYXy/yjBnant5+k0QZpHmxpd4v
+	tddxDcVyx1waflIJ86eyHDVG+v0CGcVg+mj20PVMidv/Pb0AlEVDwKwQqCVP+9VGW11hzsWOrZdJx
+	Iwos6RHauBCTnc72zpGls3bkoVfryNEdgZCf2PINVKwwXAH++Er/bPHYKpYQA0N1mVOboYlDnsf5P
+	x08RH7ig==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v1J37-0000000AFMH-1S5J;
+	Wed, 24 Sep 2025 06:32:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 007D230033D; Wed, 24 Sep 2025 08:32:19 +0200 (CEST)
+Date: Wed, 24 Sep 2025 08:32:19 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Julian Sun <sunjunchao@bytedance.com>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, lance.yang@linux.dev,
+	mhiramat@kernel.org, yangyicong@hisilicon.com, will@kernel.org,
+	dianders@chromium.org, mingo@kernel.org, lihuafei1@huawei.com,
+	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev, muchun.song@linux.dev, tj@kernel.org
+Subject: Re: [PATCH v2 2/2] memcg: Don't trigger hung task warnings when
+ memcg is releasing resources.
+Message-ID: <20250924063219.GR4067720@noisy.programming.kicks-ass.net>
+References: <20250924034100.3701520-1-sunjunchao@bytedance.com>
+ <20250924034100.3701520-3-sunjunchao@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d93:b0:424:cf7:7d04 with SMTP id
- e9e14a558f8ab-42581e10ec9mr82158825ab.4.1758695489782; Tue, 23 Sep 2025
- 23:31:29 -0700 (PDT)
-Date: Tue, 23 Sep 2025 23:31:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d39041.a70a0220.1b52b.02c0.GAE@google.com>
-Subject: [syzbot] [fs?] KASAN: slab-use-after-free Read in bus_remove_driver
-From: syzbot <syzbot+f6a9069da61d382bf085@syzkaller.appspotmail.com>
-To: dakr@kernel.org, gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rafael@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924034100.3701520-3-sunjunchao@bytedance.com>
 
-Hello,
+On Wed, Sep 24, 2025 at 11:41:00AM +0800, Julian Sun wrote:
+> Hung task warning in mem_cgroup_css_free() is undesirable and
+> unnecessary since the behavior of waiting for a long time is
+> expected.
+> 
+> Use touch_hung_task_detector() to eliminate the possible
+> hung task warning.
+> 
+> Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
 
-syzbot found the following issue on:
+Still hate this. It is not tied to progress. If progress really stalls,
+no warning will be given.
 
-HEAD commit:    ce7f1a983b07 Add linux-next specific files for 20250923
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=170b8d34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1be6fa3d47bce66e
-dashboard link: https://syzkaller.appspot.com/bug?extid=f6a9069da61d382bf085
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13fe94e2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11912142580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c30be6f36c31/disk-ce7f1a98.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ae9ea347d4d8/vmlinux-ce7f1a98.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d59682a4f33c/bzImage-ce7f1a98.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f6a9069da61d382bf085@syzkaller.appspotmail.com
-
-comedi comedi1: c6xdigio: I/O port conflict (0x401,3)
-==================================================================
-BUG: KASAN: slab-use-after-free in sysfs_remove_file_ns+0x3d/0x70 fs/sysfs/file.c:510
-Read of size 8 at addr ffff88814c9b5030 by task syz.0.18/6068
-
-CPU: 0 UID: 0 PID: 6068 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x240 mm/kasan/report.c:482
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- sysfs_remove_file_ns+0x3d/0x70 fs/sysfs/file.c:510
- remove_bind_files drivers/base/bus.c:605 [inline]
- bus_remove_driver+0x198/0x2f0 drivers/base/bus.c:743
- comedi_device_detach_locked+0x178/0x750 drivers/comedi/drivers.c:207
- comedi_device_detach drivers/comedi/drivers.c:215 [inline]
- comedi_device_attach+0x5d4/0x720 drivers/comedi/drivers.c:1011
- do_devconfig_ioctl drivers/comedi/comedi_fops.c:872 [inline]
- comedi_unlocked_ioctl+0x5ff/0x1020 drivers/comedi/comedi_fops.c:2178
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9aee78eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe7540fbc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f9aee9e5fa0 RCX: 00007f9aee78eec9
-RDX: 0000200000000080 RSI: 0000000040946400 RDI: 0000000000000004
-RBP: 00007f9aee811f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f9aee9e5fa0 R14: 00007f9aee9e5fa0 R15: 0000000000000003
- </TASK>
-
-Allocated by task 6067:
- kasan_save_stack mm/kasan/common.c:56 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:77
- poison_kmalloc_redzone mm/kasan/common.c:400 [inline]
- __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:417
- kasan_kmalloc include/linux/kasan.h:262 [inline]
- __kmalloc_cache_noprof+0x3d5/0x6f0 mm/slub.c:5723
- kmalloc_noprof include/linux/slab.h:957 [inline]
- kzalloc_noprof include/linux/slab.h:1094 [inline]
- bus_add_driver+0x162/0x640 drivers/base/bus.c:662
- driver_register+0x23a/0x320 drivers/base/driver.c:249
- c6xdigio_attach+0x94/0x890 drivers/comedi/drivers/c6xdigio.c:253
- comedi_device_attach+0x51f/0x720 drivers/comedi/drivers.c:1007
- do_devconfig_ioctl drivers/comedi/comedi_fops.c:872 [inline]
- comedi_unlocked_ioctl+0x5ff/0x1020 drivers/comedi/comedi_fops.c:2178
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 6067:
- kasan_save_stack mm/kasan/common.c:56 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:77
- __kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:587
- kasan_save_free_info mm/kasan/kasan.h:406 [inline]
- poison_slab_object mm/kasan/common.c:252 [inline]
- __kasan_slab_free+0x5c/0x80 mm/kasan/common.c:284
- kasan_slab_free include/linux/kasan.h:234 [inline]
- slab_free_hook mm/slub.c:2507 [inline]
- slab_free mm/slub.c:6557 [inline]
- kfree+0x19a/0x6d0 mm/slub.c:6765
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x22b/0x480 lib/kobject.c:737
- bus_remove_driver+0x245/0x2f0 drivers/base/bus.c:749
- comedi_device_detach_locked+0x178/0x750 drivers/comedi/drivers.c:207
- comedi_device_detach drivers/comedi/drivers.c:215 [inline]
- comedi_device_attach+0x5d4/0x720 drivers/comedi/drivers.c:1011
- do_devconfig_ioctl drivers/comedi/comedi_fops.c:872 [inline]
- comedi_unlocked_ioctl+0x5ff/0x1020 drivers/comedi/comedi_fops.c:2178
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88814c9b5000
- which belongs to the cache kmalloc-256 of size 256
-The buggy address is located 48 bytes inside of
- freed 256-byte region [ffff88814c9b5000, ffff88814c9b5100)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x14c9b4
-head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-anon flags: 0x57ff00000000040(head|node=1|zone=2|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 057ff00000000040 ffff88813fe26b40 0000000000000000 0000000000000001
-raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
-head: 057ff00000000040 ffff88813fe26b40 0000000000000000 0000000000000001
-head: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
-head: 057ff00000000001 ffffea0005326d01 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000002
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 1, tgid 1 (swapper/0), ts 27843801833, free_ts 0
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1850
- prep_new_page mm/page_alloc.c:1858 [inline]
- get_page_from_freelist+0x2365/0x2440 mm/page_alloc.c:3884
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5183
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:3023 [inline]
- allocate_slab+0x96/0x3a0 mm/slub.c:3196
- new_slab mm/slub.c:3250 [inline]
- ___slab_alloc+0xe94/0x1920 mm/slub.c:4626
- __slab_alloc+0x65/0x100 mm/slub.c:4745
- __slab_alloc_node mm/slub.c:4821 [inline]
- slab_alloc_node mm/slub.c:5232 [inline]
- __do_kmalloc_node mm/slub.c:5601 [inline]
- __kmalloc_node_track_caller_noprof+0x5c7/0x800 mm/slub.c:5711
- __do_krealloc mm/slub.c:6907 [inline]
- krealloc_node_align_noprof+0x140/0x390 mm/slub.c:6966
- add_sysfs_param+0xd4/0xa30 kernel/params.c:655
- kernel_add_sysfs_param+0x7f/0xe0 kernel/params.c:812
- param_sysfs_builtin+0x18a/0x230 kernel/params.c:851
- param_sysfs_builtin_init+0x23/0x30 kernel/params.c:987
- do_one_initcall+0x236/0x820 init/main.c:1283
- do_initcall_level+0x104/0x190 init/main.c:1345
- do_initcalls+0x59/0xa0 init/main.c:1361
-page_owner free stack trace missing
-
-Memory state around the buggy address:
- ffff88814c9b4f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88814c9b4f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff88814c9b5000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                     ^
- ffff88814c9b5080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88814c9b5100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>  mm/memcontrol.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 8dd7fbed5a94..fc73a56372a4 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -63,6 +63,7 @@
+>  #include <linux/seq_buf.h>
+>  #include <linux/sched/isolation.h>
+>  #include <linux/kmemleak.h>
+> +#include <linux/nmi.h>
+>  #include "internal.h"
+>  #include <net/sock.h>
+>  #include <net/ip.h>
+> @@ -3912,8 +3913,15 @@ static void mem_cgroup_css_free(struct cgroup_subsys_state *css)
+>  	int __maybe_unused i;
+>  
+>  #ifdef CONFIG_CGROUP_WRITEBACK
+> -	for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++)
+> +	for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++) {
+> +		/*
+> +		 * We don't want the hung task detector to report warnings
+> +		 * here since there's nothing wrong if the writeback work
+> +		 * lasts for a long time.
+> +		 */
+> +		touch_hung_task_detector(current);
+>  		wb_wait_for_completion(&memcg->cgwb_frn[i].done);
+> +	}
+>  #endif
+>  	if (cgroup_subsys_on_dfl(memory_cgrp_subsys) && !cgroup_memory_nosocket)
+>  		static_branch_dec(&memcg_sockets_enabled_key);
+> -- 
+> 2.39.5
+> 
 
