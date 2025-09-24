@@ -1,128 +1,166 @@
-Return-Path: <linux-kernel+bounces-831097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E349B9B895
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:41:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA7BEB9B8AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A319E4C820A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:41:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2463216FED4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411DC314A90;
-	Wed, 24 Sep 2025 18:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856273064A0;
+	Wed, 24 Sep 2025 18:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DAMo1Qb9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="PATM6Mun"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1DD199230;
-	Wed, 24 Sep 2025 18:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E2931AF12
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758739279; cv=none; b=UOoqhOEO/oeIINtJ82B4FCtB3Hz3a/ss7BejsnyMlgnJFUsQ87CVNJ8N/eu2byDYoRnNleA2Q9A2H4SsnKQ0bNs3/nereTFWsGkhewuZ4RDCRT8v4sm14ywtk45qg9Pb5utjVVJSs7m6ikXW1GbH13hvKk8BcUlZMYL94+plBxE=
+	t=1758739294; cv=none; b=AxC2ufEdoUsFwmbXYJMBheAANrIj14OuWn3A22Q8RJzetAWNY7XD5o8b4eG/WO+0TUs9phWI3Cpbm4r6bGO94AiKJ8f6cInsGQXfRVesFCRykmwU9oNTG0RjStZy4p6+FNgZXLvT4/cbOcnp45NkaDCiSJ3AX9+gzuEIVQHhXR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758739279; c=relaxed/simple;
-	bh=ea8coFrJO1bcM1fHRBo5eWQPSWZqx7Wy+8665WkWPA0=;
+	s=arc-20240116; t=1758739294; c=relaxed/simple;
+	bh=AmtVRRJ1jDNsgzknhAmzKa0wOzllfT760U23kBlxD+M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o+UtXkYH/JLXSbgxDboVnDyzWyYMB9Etlvbi5AzIte319xqJf0nsk4ly3AK1CGFQGcEHrN49ozmL+FsKJ6KZyWCU7DkV6kZKg+yQRr3o7mhmxITxV5tkbO+BTwvd7qfV6UBr5XvJfvOgXSojVId+yBYRU60thqDGSFByQAkVn8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DAMo1Qb9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DBBCC4CEE7;
-	Wed, 24 Sep 2025 18:41:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758739279;
-	bh=ea8coFrJO1bcM1fHRBo5eWQPSWZqx7Wy+8665WkWPA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DAMo1Qb9TEy/uEfx7VtG0STtdFSucvHS6l9/zb6xbwTYQFXVF0sr2YhnhYiTT3RXv
-	 CtWlL0nkb9mpaM1yA5TkA98tgq24fnZOfKVANsmtE2MWRDB4nY+sNUGmd7qoZkPqzA
-	 Nm7rrwxk78r26CU9IdOfeAr0xFrgf4FNQsy/+/NMpVlZ9Qh/slgegLdDUCQRoSA/YX
-	 94H0yHQ4qmt6P2jijXzF0lsYgndaPH8n6NzSuKrmdUL9EzwdouWLEx/CIsVK7qd/uG
-	 kyctJWHY9nyGQg+BNoZ/Cvf9wWZz4678Li+OYM04mUJMuEoFKaU0uD+BPtCmJX6QEr
-	 QDeI45MkYhPmQ==
-Date: Wed, 24 Sep 2025 19:41:15 +0100
-From: Simon Horman <horms@kernel.org>
-To: Deepak Sharma <deepak.sharma.472935@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, pwn9uin@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+07b635b9c111c566af8b@syzkaller.appspotmail.com
-Subject: Re: [PATCH] Fix the cleanup on alloc_mpc failure in
- atm_mpoa_mpoad_attach
-Message-ID: <20250924184115.GS836419@horms.kernel.org>
-References: <20250923132427.74242-1-deepak.sharma.472935@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rxvAvr/9lgVmYBnSmQ/1eocxvZB3uIPUDQhz0ePpC7S7Thb/PEjOcx6dRQgNiLAHBmZXxASiZqVj9qOn1iYlLndN6QU/9sd+aKTgiKLGxueDd2oKwSUbAZOdp1Kjh4LBqj/7cIFiww/yNWiAOvYbqJr5tMpGDQ5oMSLe4ifMw6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PATM6Mun; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=+/I1
+	ab4olDmDZGHkFb/TQwI1UB8ySlew2Es2bhyLFxc=; b=PATM6MunPPhQrDkXlA25
+	6VcLtNz5L6k6gV4cHOpLAqoYi324j5/ewZlnrXU3FSQ5AnzLu/aKcTuw8juOZ1I6
+	UqhizFzH3f7WitkIJhx9OGq2vBfe6efaUzCMamNCDIn945n41H7Cub1LVbpfmhN7
+	3pJ/CEv1xOo81DrULWfegDEHWxurwj5ZfRPutZhirkMsRbUXaFuUyckFdoqtaYmW
+	pkSuvpXzrM2nQzuqtah9mv7RZFWlpUmRGvjw59XD0Q9nAhQE8WFyGUOQvsN1nflh
+	3YPLpEbhlC5H0A1QJ3rD11xTs0jQfwC2WLkZeZ/sIqw0xbd5TCTlKvIU3nfrNgmN
+	EA==
+Received: (qmail 1587696 invoked from network); 24 Sep 2025 20:41:21 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Sep 2025 20:41:21 +0200
+X-UD-Smtp-Session: l3s3148p1@TSMiZpA/OIoujntL
+Date: Wed, 24 Sep 2025 20:41:20 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Phil Edworthy <phil.edworthy@renesas.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
+ Interrupt Multiplexer
+Message-ID: <aNQ7UOniYss92EIS@ninjato>
+References: <20250922152640.154092-1-herve.codina@bootlin.com>
+ <20250922152640.154092-8-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sPDzEL5A/+tREXwg"
+Content-Disposition: inline
+In-Reply-To: <20250922152640.154092-8-herve.codina@bootlin.com>
+
+
+--sPDzEL5A/+tREXwg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250923132427.74242-1-deepak.sharma.472935@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 23, 2025 at 06:54:27PM +0530, Deepak Sharma wrote:
-> Syzbot reported a warning at `add_timer`, which is called from the
-> `atm_mpoa_mpoad_attach` function
-> 
-> The reason for this warning is that in the allocation failure by `alloc_mpc`,
-> there is lack of proper cleanup. And in the event that ATMMPC_CTRL ioctl is
-> called on to again, it will lead to the attempt of starting an already 
-> started timer from the previous ioctl call
-> 
-> Do a `timer_delete` before returning from the `alloc_mpc` failure
-> 
-> Reported-by: syzbot+07b635b9c111c566af8b@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=07b635b9c111c566af8b
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Deepak Sharma <deepak.sharma.472935@gmail.com>
-> ---
->  net/atm/mpc.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/net/atm/mpc.c b/net/atm/mpc.c
-> index f6b447bba329..cd3295c3c480 100644
-> --- a/net/atm/mpc.c
-> +++ b/net/atm/mpc.c
-> @@ -814,7 +814,10 @@ static int atm_mpoa_mpoad_attach(struct atm_vcc *vcc, int arg)
->  		dprintk("allocating new mpc for itf %d\n", arg);
->  		mpc = alloc_mpc();
->  		if (mpc == NULL)
-> +		{
-> +			timer_delete(&mpc_timer);
->  			return -ENOMEM;
-> +		}
->  		mpc->dev_num = arg;
->  		mpc->dev = find_lec_by_itfnum(arg);
->  					/* NULL if there was no lec */
+Hi Herve,
 
-Hi Deepak.
+On Mon, Sep 22, 2025 at 05:26:38PM +0200, Herve Codina (Schneider Electric)=
+ wrote:
+> On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
+> interruption lines are multiplexed by the GPIO Interrupt Multiplexer in
+> order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
+>=20
+> The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
+> IRQ lines out of the 96 available to wire them to the GIC input lines.
+>=20
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
+m>
 
-I have a few questions about this.
+Thanks for improving the driver and removing the requirement of a fixed
+ordering!
 
-1. Is timer_delete() sufficient, or is timer_delete_sync() needed
-   to avoid the timer being rearmed?
+> +static u32 rzn1_irqmux_output_lines[] =3D {
 
-2. If timer_delete_sync() is needed here, then it is probably
-   also needed a few lines above, in place of an existing call to
-   timer_delete().
+const?
 
-3. Is timer_delete()/timer_delete_sync() also needed for the error condition a
-   few lines below the hunk above? That code looks like this:
+> +	103, 104, 105, 106, 107, 108, 109, 110
+> +};
 
-        if (mpc->mpoad_vcc) {
-                pr_info("mpoad is already present for itf %d\n", arg);
-                return -EADDRINUSE;
-        }
+=2E..
 
-Also, this patch is probably for net. So, for reference, it should
-be targeted at that tree like this:
+> +	for (i =3D 0; i < ARRAY_SIZE(rzn1_irqmux_output_lines); i++) {
+> +		if (parent_args->args[1] =3D=3D rzn1_irqmux_output_lines[i])
+> +			return i;
+> +	}
 
-Subject: [PATCH net] ...
+Do we want a check here if the index has already been used in cases of
+an improper 'interrupt-map'? I'd think it would be nice to have but I
+would also not really require it.
 
-And the patch subject should have a prefix. Looking at git history, "atm:"
-seems appropriate.
+=2E..
 
-Subject: [PATCH net] atm: ...
+> +	ret =3D rzn1_irqmux_setup(dev, np, regs);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to setup mux\n");
+> +
+> +	return 0;
 
+Maybe just
+
+	return rzn1_irqmux_setup(dev, np, regs);
+
+The driver core will report a failed probe already.
+
+It still works, so:
+
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Happy hacking,
+
+   Wolfram
+
+
+--sPDzEL5A/+tREXwg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjUO0wACgkQFA3kzBSg
+Kbb7sg/9FlraWenace/wEziJTaN0z5SDtlFavT/tff2xkVPYo/YHX2RD+UF+eP3v
+7KsuMhwUUnLUsY5I1m76gFwa7iwZpY7ADInuWm3oyR79pUvsCUkdK6bCzHyqGZow
+3ITIkEPIVBAjDnGO+tmaXk9WdbpfxwUTbPYhKDxa1f/szLqf0uvDWmmSb3RoQZE5
+r9EBKV9modMar30ppBO6rk1F268MNB/mNGNNS6hqfGYROzHirS7trjP7+8+zSuMX
+idjZzgLdfO2QyWYwcfBCqz6i3LbqWk7HnG02vm4r1MhgMv3Nzi2WKu9MV7NRPh6w
+12JgK8xECSKisTYDJ+paD/ALarKM9tvZ4PI63MMzscCatrLvILLW9nH7EouSjnKc
+RDBhRElN6LSwQidhRLcF1KgKKMmL3AvPvbk8L0Ywjq+ziJ2qpaDWKMr+f2pLylS4
+Wy0X1Owdu/1fTSrjmgrksEqA1nIEAOvjjtJQW/MyjF+KzrnrlpBXlWUtjzinf893
+CeHqKzRiWue0rbjsPfW5CLmbfuqkn5k5+TnjPclMNnFmZAv3hIYdeGYxZ/JwaaVm
+eKoCp9FYTemfmqdeLjZp0FGBcnsvHx+wyzxb+YCI/ypJJyB94x7ikmawUgLmFPfm
+FR93LoSrFnEV8wg9hrPKn/RTwb3U9k4j9pRuAkSZQe4KnzhLWkg=
+=mmQN
+-----END PGP SIGNATURE-----
+
+--sPDzEL5A/+tREXwg--
 
