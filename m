@@ -1,153 +1,324 @@
-Return-Path: <linux-kernel+bounces-830407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC717B9992F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:28:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 337ACB99947
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D1BA4A6FFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:28:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14F124A7471
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FFA2E7BD0;
-	Wed, 24 Sep 2025 11:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y6kVCJUm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA902EFD8E;
+	Wed, 24 Sep 2025 11:29:19 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5D02E7BAE;
-	Wed, 24 Sep 2025 11:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5717D2E9EC9
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758713306; cv=none; b=QNWlSVhX6oXkQkz9O2KqcvJcWEZy3jaRyQTcD3RjcoX9SSI9LQSlB4BhNXJx7my4wLcA2k+exL58cHVY+0LPkUV7pzMA5h35BltYEIFhG5NVQiWl6qyyYML0lhVjboG97tNs5jV2+fVbyir55j7GL+8TDTSLMaQbl/REd3FEChw=
+	t=1758713358; cv=none; b=AdRdvDeG3y1UpORWs6iaTwospZM9YDorH6KhQn94ZvmNwnuASLrNf/3a6/Nby3dmdJ5GVG4CDKKHwVEWGqqX6gh1tvz2gT6KsNopGoNd5ObzxWs4fY5wemsRwX5Wpzm0EZMUNRQrDssXqBYIGPiLtQfuP4aGm4q6pqXnVDtMiag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758713306; c=relaxed/simple;
-	bh=g0mEPqrjAhRTXIvJsgGonBI+aYxFehEStiN+fbiF7lc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=FgTbbaX9DW0z0RESlrV8ZrvslsZQ5/sUX2l36iLZnyOotxPVol9wKqwMdjshamQlyN/QrViv0jetvrhr11mvn9mYZ58AeKW6eB+OLd4kcAaeANbA7BgAJj1MqYMbpvj48Uesif9fQntn9O6ef3P61fbkar+EB9BfZdTJNrIoOtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y6kVCJUm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C7A0C4CEE7;
-	Wed, 24 Sep 2025 11:28:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758713305;
-	bh=g0mEPqrjAhRTXIvJsgGonBI+aYxFehEStiN+fbiF7lc=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=Y6kVCJUmte+uXJqvJMhuy0MMwlx+jh+aqiYE/7C/Nr9Bja3JXDH2pFctlA8nfZY2V
-	 xutkQiANavxpQAvcIGUaGH+kisu8SyK9hTdERq30iuTQwmiIuyCOVax4/0vKfjTMmF
-	 CkzP47fLHp6kJ/PlmYxn7aHVz/9sg2WHny/s4URW+dqGBtmx5CtwvoVQmjTg5SVkJC
-	 jlOtMIzTQ3jw0C4tTgegc26N802DSVKj/bV597Futke0J6tOEW89WFFgBMKg0+lYiy
-	 MuiAmeQ34dKDkzOxcD9GZVC0uTJpfdagfeAizrQr3jfhIRs34eHn2dc8cIjAm7ZH/F
-	 HcW+WZLYSwdnA==
+	s=arc-20240116; t=1758713358; c=relaxed/simple;
+	bh=akZcHAYXhYwPUm65+q7S8pdGRtZAqnfkqf94IHOMMKU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PAve/ptenjOtkNEh9TJIKhstFml3t9JqyTm5uPvSlZkBLa2JeG/HJp9fKaCKu9lAx1+Bfiy8kJyioYlnFgXvrtbADX8Ul4uP8aNUKb+zUoBpaSx1LxVSCunQqMrXvDKkNQdT8WggzGsjbw6QzcQ2DlGOeZQthbh4MjBEWklRxl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
+	by Atcsqr.andestech.com with ESMTPS id 58OBSVRZ074426
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 24 Sep 2025 19:28:31 +0800 (+08)
+	(envelope-from randolph@andestech.com)
+Received: from atctrx.andestech.com (10.0.15.173) by ATCPCS31.andestech.com
+ (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Wed, 24 Sep 2025
+ 19:28:31 +0800
+From: Randolph Lin <randolph@andestech.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <linux-pci@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <jingoohan1@gmail.com>,
+        <mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <alex@ghiti.fr>, <aou@eecs.berkeley.edu>,
+        <palmer@dabbelt.com>, <paul.walmsley@sifive.com>,
+        <ben717@andestech.com>, <inochiama@gmail.com>,
+        <thippeswamy.havalige@amd.com>, <namcao@linutronix.de>,
+        <shradha.t@samsung.com>, <randolph.sklin@gmail.com>,
+        <tim609@andestech.com>, Randolph Lin <randolph@andestech.com>
+Subject: [PATCH v4 4/5] PCI: andes: Add Andes QiLai SoC PCIe host driver support
+Date: Wed, 24 Sep 2025 19:28:19 +0800
+Message-ID: <20250924112820.2003675-5-randolph@andestech.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250924112820.2003675-1-randolph@andestech.com>
+References: <20250924112820.2003675-1-randolph@andestech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 24 Sep 2025 13:28:18 +0200
-Message-Id: <DD0ZTZM8S84H.1YDWSY7DF14LM@kernel.org>
-Cc: "Benno Lossin" <lossin@kernel.org>, "Joel Fernandes"
- <joelagnelf@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <acourbot@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
- Hubbard" <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>, "Yury
- Norov" <yury.norov@gmail.com>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, <nouveau@lists.freedesktop.org>
-To: "Greg KH" <gregkh@linuxfoundation.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v4 1/6] nova-core: bitfield: Move bitfield-specific code
- from register! into new macro
-References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
- <20250920182232.2095101-2-joelagnelf@nvidia.com>
- <2025092157-pauper-snap-aad1@gregkh>
- <DCYHCLM67KRZ.366VS9PDKLYKY@kernel.org>
- <2025092125-urban-muppet-1c2f@gregkh>
- <DCYIX8URVIWM.2ZK3GHH3J82XQ@kernel.org>
- <2025092432-entrust-citizen-0232@gregkh>
-In-Reply-To: <2025092432-entrust-citizen-0232@gregkh>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 58OBSVRZ074426
 
-On Wed Sep 24, 2025 at 12:52 PM CEST, Greg KH wrote:
-> Ok, great, but right now it's not doing that from what I am seeing when
-> reading the code.  Shouldn't IoMem::new() take that as an argument?
+Add driver support for DesignWare based PCIe controller in Andes
+QiLai SoC. The driver only supports the Root Complex mode.
 
-That's correct, neither IoMem nor pci::Bar do consider it yet; it's on the =
-list
-of things that still need to be done.
+Signed-off-by: Randolph Lin <randolph@andestech.com>
+---
+ drivers/pci/controller/dwc/Kconfig            |  13 ++
+ drivers/pci/controller/dwc/Makefile           |   1 +
+ drivers/pci/controller/dwc/pcie-andes-qilai.c | 198 ++++++++++++++++++
+ 3 files changed, 212 insertions(+)
+ create mode 100644 drivers/pci/controller/dwc/pcie-andes-qilai.c
 
-> But, that feels odd as our current iomem api in C doesn't care about
-> endian issues at all because it "assumes" that the caller has already
-> handle this properly and all that the caller "wants" is to write/read to
-> some memory chunk and not twiddle bits.
+diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+index ff6b6d9e18ec..15cf19c9449f 100644
+--- a/drivers/pci/controller/dwc/Kconfig
++++ b/drivers/pci/controller/dwc/Kconfig
+@@ -60,6 +60,19 @@ config PCI_MESON
+ 	  and therefore the driver re-uses the DesignWare core functions to
+ 	  implement the driver.
+ 
++config PCIE_ANDES_QILAI
++	tristate "Andes QiLai PCIe controller"
++	depends on ARCH_ANDES || COMPILE_TEST
++	depends on PCI_MSI
++	select PCIE_DW_HOST
++	help
++	  Say Y here to enable PCIe controller support on Andes QiLai SoCs,
++	  which operate in Root Complex mode. The Andes QiLai SoC PCIe
++	  controller is based on DesignWare IP (5.97a version) and therefore
++	  the driver re-uses the DesignWare core functions to implement the
++	  driver. The Andes QiLai SoC features three Root Complexes, each
++	  operating on PCIe 4.0.
++
+ config PCIE_ARTPEC6
+ 	bool
+ 
+diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+index 6919d27798d1..de9583cbd675 100644
+--- a/drivers/pci/controller/dwc/Makefile
++++ b/drivers/pci/controller/dwc/Makefile
+@@ -5,6 +5,7 @@ obj-$(CONFIG_PCIE_DW_HOST) += pcie-designware-host.o
+ obj-$(CONFIG_PCIE_DW_EP) += pcie-designware-ep.o
+ obj-$(CONFIG_PCIE_DW_PLAT) += pcie-designware-plat.o
+ obj-$(CONFIG_PCIE_AMD_MDB) += pcie-amd-mdb.o
++obj-$(CONFIG_PCIE_ANDES_QILAI) += pcie-andes-qilai.o
+ obj-$(CONFIG_PCIE_BT1) += pcie-bt1.o
+ obj-$(CONFIG_PCI_DRA7XX) += pci-dra7xx.o
+ obj-$(CONFIG_PCI_EXYNOS) += pci-exynos.o
+diff --git a/drivers/pci/controller/dwc/pcie-andes-qilai.c b/drivers/pci/controller/dwc/pcie-andes-qilai.c
+new file mode 100644
+index 000000000000..e13ac01d0067
+--- /dev/null
++++ b/drivers/pci/controller/dwc/pcie-andes-qilai.c
+@@ -0,0 +1,198 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Driver for the PCIe Controller in QiLai from Andes
++ *
++ * Copyright (C) 2025 Andes Technology Corporation
++ */
++
++#include <linux/bitfield.h>
++#include <linux/bits.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++#include <linux/platform_device.h>
++#include <linux/types.h>
++
++#include "pcie-designware.h"
++
++#define PCIE_INTR_CONTROL1			0x15c
++#define PCIE_MSI_CTRL_INT_EN			BIT(28)
++
++#define PCIE_LOGIC_COHERENCY_CONTROL3		0x8e8
++
++/*
++ * Refer to Table A4-5 (Memory type encoding) in the
++ * AMBA AXI and ACE Protocol Specification.
++ *
++ * The selected value corresponds to the Memory type field:
++ * "Write-back, Read and Write-allocate".
++ *
++ * The last three rows in the table A4-5 in
++ * AMBA AXI and ACE Protocol Specification:
++ * ARCACHE        AWCACHE        Memory type
++ * ------------------------------------------------------------------
++ * 1111 (0111)    0111           Write-back Read-allocate
++ * 1011           1111 (1011)    Write-back Write-allocate
++ * 1111           1111           Write-back Read and Write-allocate (selected)
++ */
++#define IOCP_ARCACHE				0b1111
++#define IOCP_AWCACHE				0b1111
++
++#define PCIE_CFG_MSTR_ARCACHE_MODE		GENMASK(6, 3)
++#define PCIE_CFG_MSTR_AWCACHE_MODE		GENMASK(14, 11)
++#define PCIE_CFG_MSTR_ARCACHE_VALUE		GENMASK(22, 19)
++#define PCIE_CFG_MSTR_AWCACHE_VALUE		GENMASK(30, 27)
++
++#define PCIE_GEN_CONTROL2			0x54
++#define PCIE_CFG_LTSSM_EN			BIT(0)
++
++#define PCIE_REGS_PCIE_SII_PM_STATE		0xc0
++#define SMLH_LINK_UP				BIT(6)
++#define RDLH_LINK_UP				BIT(7)
++#define PCIE_REGS_PCIE_SII_LINK_UP		(SMLH_LINK_UP | RDLH_LINK_UP)
++
++struct qilai_pcie {
++	struct dw_pcie pci;
++	void __iomem *apb_base;
++};
++
++#define to_qilai_pcie(_pci) container_of(_pci, struct qilai_pcie, pci)
++
++static bool qilai_pcie_link_up(struct dw_pcie *pci)
++{
++	struct qilai_pcie *pcie = to_qilai_pcie(pci);
++	u32 val;
++
++	/* Read smlh & rdlh link up by checking debug port */
++	val = readl(pcie->apb_base + PCIE_REGS_PCIE_SII_PM_STATE);
++
++	return (val & PCIE_REGS_PCIE_SII_LINK_UP) == PCIE_REGS_PCIE_SII_LINK_UP;
++}
++
++static int qilai_pcie_start_link(struct dw_pcie *pci)
++{
++	struct qilai_pcie *pcie = to_qilai_pcie(pci);
++	u32 val;
++
++	val = readl(pcie->apb_base + PCIE_GEN_CONTROL2);
++	val |= PCIE_CFG_LTSSM_EN;
++	writel(val, pcie->apb_base + PCIE_GEN_CONTROL2);
++
++	return 0;
++}
++
++static const struct dw_pcie_ops qilai_pcie_ops = {
++	.link_up = qilai_pcie_link_up,
++	.start_link = qilai_pcie_start_link,
++};
++
++/*
++ * Setup the Qilai PCIe IOCP (IO Coherence Port) Read/Write Behaviors to the
++ * Write-Back, Read and Write Allocate mode.
++ *
++ * The IOCP HW target is SoC last-level cache (L2 Cache), which serves as the
++ * system cache. The IOCP HW helps maintain cache monitoring, ensuring that
++ * the device can snoop data from/to the cache.
++ */
++static void qilai_pcie_iocp_cache_setup(struct dw_pcie_rp *pp)
++{
++	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
++	u32 val;
++
++	dw_pcie_dbi_ro_wr_en(pci);
++
++	dw_pcie_read(pci->dbi_base + PCIE_LOGIC_COHERENCY_CONTROL3,
++		     sizeof(val), &val);
++	FIELD_MODIFY(PCIE_CFG_MSTR_ARCACHE_MODE, &val, IOCP_ARCACHE);
++	FIELD_MODIFY(PCIE_CFG_MSTR_AWCACHE_MODE, &val, IOCP_AWCACHE);
++	FIELD_MODIFY(PCIE_CFG_MSTR_ARCACHE_VALUE, &val, IOCP_ARCACHE);
++	FIELD_MODIFY(PCIE_CFG_MSTR_AWCACHE_VALUE, &val, IOCP_AWCACHE);
++	dw_pcie_write(pci->dbi_base + PCIE_LOGIC_COHERENCY_CONTROL3,
++		      sizeof(val), val);
++
++	dw_pcie_dbi_ro_wr_dis(pci);
++}
++
++static void qilai_pcie_enable_msi(struct qilai_pcie *pcie)
++{
++	u32 val;
++
++	val = readl(pcie->apb_base + PCIE_INTR_CONTROL1);
++	val |= PCIE_MSI_CTRL_INT_EN;
++	writel(val, pcie->apb_base + PCIE_INTR_CONTROL1);
++}
++
++static int qilai_pcie_host_init(struct dw_pcie_rp *pp)
++{
++	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
++	struct qilai_pcie *pcie = to_qilai_pcie(pci);
++
++	qilai_pcie_enable_msi(pcie);
++
++	return 0;
++}
++
++static void qilai_pcie_host_post_init(struct dw_pcie_rp *pp)
++{
++	qilai_pcie_iocp_cache_setup(pp);
++}
++
++static const struct dw_pcie_host_ops qilai_pcie_host_ops = {
++	.init = qilai_pcie_host_init,
++	.post_init = qilai_pcie_host_post_init,
++};
++
++static int qilai_pcie_probe(struct platform_device *pdev)
++{
++	struct qilai_pcie *pcie;
++	struct dw_pcie *pci;
++	struct device *dev = &pdev->dev;
++	int ret;
++
++	pcie = devm_kzalloc(&pdev->dev, sizeof(*pcie), GFP_KERNEL);
++	if (!pcie)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, pcie);
++
++	pci = &pcie->pci;
++	pcie->pci.dev = dev;
++	pcie->pci.ops = &qilai_pcie_ops;
++	pcie->pci.pp.ops = &qilai_pcie_host_ops;
++	pci->use_parent_dt_ranges = true;
++
++	dw_pcie_cap_set(&pcie->pci, REQ_RES);
++
++	pcie->apb_base = devm_platform_ioremap_resource_byname(pdev, "apb");
++	if (IS_ERR(pcie->apb_base))
++		return PTR_ERR(pcie->apb_base);
++
++	ret = dw_pcie_host_init(&pcie->pci.pp);
++	if (ret) {
++		dev_err_probe(dev, ret, "Failed to initialize PCIe host\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++static const struct of_device_id qilai_pcie_of_match[] = {
++	{ .compatible = "andestech,qilai-pcie" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, qilai_pcie_of_match);
++
++static struct platform_driver qilai_pcie_driver = {
++	.probe = qilai_pcie_probe,
++	.driver = {
++		.name	= "qilai-pcie",
++		.of_match_table = qilai_pcie_of_match,
++		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
++	},
++};
++
++builtin_platform_driver(qilai_pcie_driver);
++
++MODULE_AUTHOR("Randolph Lin <randolph@andestech.com>");
++MODULE_DESCRIPTION("Andes Qilai PCIe driver");
++MODULE_LICENSE("GPL");
+-- 
+2.34.1
 
-Yet it seems to be the correct place to deal with it. As mentioned below, r=
-egmap
-could just become part of an I/O backend implementation to do exactly that.
-
->> (Actually, we could even implement an I/O backend that uses regmap.)
->
-> That would probably be best to do eventually as most platform drivers
-> use regmap today as it's the sanest api we have at the moment.
-
-I agree it's what we should do eventually.
-
->> So, I think the register!() stuff is rather orthogonal.
->
-> I think it's very relevant as people seem to just be "assuming" that all
-> the world (hardware and cpus) are little-endian, while in reality, they
-> are anything but.  As proof, the code that uses this register!() logic
-> today totally ignores endian issues and just assumes that it is both
-> running on a little-endian system, AND the hardware is little-endian.
->
-> As a crazy example, look at the USB host controllers that at runtime,
-> have to be queried to determine what endian they are running on and the
-> kernel drivers have to handle this "on the fly".  Yes, one can argue
-> that the hardware developers who came up with that should be forced to
-> write the drivers as penance for such sins, but in the end, it's us that
-> has to deal with it...
->
-> So ignoring it will get us quite a ways forward with controlling sane
-> hardware on sane systems, but when s390 finally realizes they can be
-> writing their drivers in rust, we are going to have to have these
-> conversations again :)
-
-I think it's not really that anyone is ignoring it (intentionally). It's tw=
-o
-different things that should be addressed here; yet they are related:
-
-  (1) Implementation of an abstract representation of a register that drive=
-rs
-      can interact with.
-
-  (2) The I/O layer that lays out the raw data on the physcial bus.
-
-The register!() macro intends to provide an abstract representation of a
-register for drivers to interact with. Think of it as an abstract box, wher=
-e the
-memory layout does not matter at all -- could be anything.
-
-Theoretically, this abstraction could even store every single field of a
-register in its own u32 or u64, etc. Of course, that's a waste of memory, w=
-hich
-is why we're using this bitfield thing instead.
-
-The only thing that matters is that there is a contract between the struct
-representing a register (generated by the register!() macro) and the I/O ba=
-ckend
-layer that lays out the raw value on the bus.
-
-This works attempts to address (1), whereas you are (rightfully) asking for=
- (2).
-And I think the answer for (2) simply is, we still have to address it.
 
