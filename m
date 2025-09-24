@@ -1,124 +1,116 @@
-Return-Path: <linux-kernel+bounces-830015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EB0B98743
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:00:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A68B98746
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3373E19C0811
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:01:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4E58189C4F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE43266B41;
-	Wed, 24 Sep 2025 07:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C9B266B6B;
+	Wed, 24 Sep 2025 07:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="Y7b6w/X6"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="an1L5zBA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF97D158874;
-	Wed, 24 Sep 2025 07:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A002F25EFBF
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758697241; cv=none; b=Ft0k7poy637TFQhMv6/WNhYsi57lUosNO59KGM9hkVUD8u6kcMAPbRKyEkTaa6ABr1OCbGSh+alPHgpiN4vUA1jxoQ2FMS1wIZ/wjIdaDUkdvQS7CNxDqpPTe7i0Sjzg0mjdj5MCSAf+VavXV/8GsmUbb5zR3xU4iRrt0IKsVcs=
+	t=1758697261; cv=none; b=es8dYksSkdAokN2/0sozDG8QkcgJoe7xd3gM7uUINhlut6i5UsH1/jSR0xIzieYoiwcpbfXWeuiXgZ33OMb4NtI/n1fufqfo+LPZvlJuw+qG6oh5QjrDsQ9TDMjx4oscXj0nZMq0XkoEYyf96fGMbr72ivzlK3ue0Y4v6ZPyv7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758697241; c=relaxed/simple;
-	bh=qaRdaD9e0snQnNI9h8G4rrtJzVPX2MTBs+qyWdj2C8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XDu46H090tcssuAgOToA3fBPDMV9gHjawbHA8RJ7Rz2b2pOHdK5rX6wnfKQwFZOs090YsJ5ogL+pdVhQL6OtwfWCUrUIsM1sgGzp1GS1roV/SDcAaqg1dL8x00jOTsxQzg4UBTyw3CDPi6DhnHuJl2M1CtyJ0cGRy86ugow8EVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=Y7b6w/X6; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=65Ekvlp4lXlO45wPdlxDADgOS4gpl6uVCi+UvvnIXPM=; b=Y7b6w/X6KXErcHzgZZ6rkY95jy
-	s3G9yuimqhtwdtLG8szjXELPBBsSztxHd2DXx6D0iU1NNlhiB6vRmn50rGT7VkuiiqmoZsh3N5UZB
-	9n69tbAClajUkr/VJoceHs8OjmtJKiulTSbCdBbC0J2w9AA0hr2f0ATWv6RYzraM5HQdsA0HQOyVB
-	E24NXHB4ZW/carpz0RGYQZGry+hC4AzuA7I/QMIgnc0qUPRt0fyzknwljgrWGfrZ+Jv5OitKZpecl
-	QAazzZS+SltOTDG6zAwfwwranv4Pz8gH/JxyE54AI3I/yBgfZ3bxFTZXQDGzdUHYqVCrDeTOrU5E6
-	Xb7Zy1xw==;
-Date: Wed, 24 Sep 2025 09:00:23 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Mark Brown <broonie@kernel.org>
-Cc: jdelvare@suse.com, linux@roeck-us.net, lgirdwood@gmail.com,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, Alistair Francis
- <alistair@alistair23.me>
-Subject: Re: [PATCH RFC 1/2] hwmon: (sy7636a) fix races during probe of mfd
- subdevices
-Message-ID: <20250924090023.282ae450@kemnade.info>
-In-Reply-To: <473e217a-c6b3-4ebc-895d-85beab50267c@sirena.org.uk>
-References: <20250920114311.291450-1-andreas@kemnade.info>
-	<20250920114311.291450-2-andreas@kemnade.info>
-	<79aa98fe-b9b6-4210-a556-d33863f0129a@sirena.org.uk>
-	<20250920233307.0c425863@kemnade.info>
-	<473e217a-c6b3-4ebc-895d-85beab50267c@sirena.org.uk>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1758697261; c=relaxed/simple;
+	bh=I0a7rVPJ44Xfxl8Rp+yQVZtLu1K/AejUB+fgH7g7yi0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i2NZ7HrhX+jt9sJoh4kMszC3tHiS52zf2igZxzYbszbpmiVXGHbV7Q9c6edQi7/oa+E+me8t4glsNInNXJO0MVv8CaW5dxzrFjlf909hEjTNBM94Ps7ClQuSARKHG3ZFiH7nqtGNdkODHFX5JmjxRT91kC4nTe5gleZ4Zd4UHvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=an1L5zBA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758697258;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=g3s6WSpa8MQ7Wctb9Z8KxRAVzwFwLWxluun8ISqvxvM=;
+	b=an1L5zBAmcbEldIkK6ltfzQ1GXwOiaIaJrkx0s6lO1OE9UzQFjbZoxbD5nDMJgaRUW5Vmw
+	J+1YxLNKNUqO+tTEq8iCgVBrMAwA8qgtucbK608sGLagh6m7Nk+X4kkvmHFKOkzzPGC+14
+	GN1uiA6zjH8QEJJEDjJ8x/dFwhOW1oc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-323-QRBwU-whPrSFC0YYoeTeKw-1; Wed,
+ 24 Sep 2025 03:00:55 -0400
+X-MC-Unique: QRBwU-whPrSFC0YYoeTeKw-1
+X-Mimecast-MFC-AGG-ID: QRBwU-whPrSFC0YYoeTeKw_1758697254
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5B263195609F;
+	Wed, 24 Sep 2025 07:00:52 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.112.172])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 241F1300018D;
+	Wed, 24 Sep 2025 07:00:48 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com
+Cc: virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V7 0/2] Use virtio map API for VDUSE
+Date: Wed, 24 Sep 2025 15:00:43 +0800
+Message-ID: <20250924070045.10361-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Sat, 20 Sep 2025 23:18:59 +0100
-Mark Brown <broonie@kernel.org> wrote:
+Hi all:
 
-> On Sat, Sep 20, 2025 at 11:33:07PM +0200, Andreas Kemnade wrote:
-> 
-> > Just for learning, yes, it is an abuse of the _optional for non-optional
-> > things, so a dirty hack which should not go in, therefore RFC. But what
-> > happens more than having the hwmon device endlessly deferred at worst?  
-> 
-> There's also the fact that this API is so frequently abused for bad and
-> broken reasons that I regularly audit users and try to fix them, I'd
-> rather not see any new users that don't have a really strong reason to
-> use it.
-> 
-> > The wanted regulator is the one defined in sy7636a-regulator.c. So it
-> > is all an issue internal to the sy7636a.  
-> 
-> > Both subdevices are instantiated via drivers/simple-mfd-i2c.c.
-> > I see several other solutions:
-> > a) call device_is_bound() on every other children of dev->parent, if not
-> > bound defer.
-> > b) do not care about the regulator api at all, just check whether
-> >    the corresponding bit is set before reading temperature, return
-> >    -ENODATA if not, some mutex is probably needed.
-> > c) do not care about the regulator api at all, just set the
-> >    corresponding bit (together with some mutex locking and counting).  
-> 
-> I assume this is using the regulator API because someone might use an
-> external regulator in a system design for some reason (better quality,
-> power efficiency or a shared reference between multiple devices I
-> guess?), or because the supply might also be used by external devices?
-> 
-> > d) copy the of_node pointer from the parent, add a regulator phandle property
-> >    to the node pointing to the regulator in the node itself.
-> >    That sounds like your idea but is against the current dt binding for
-> >    this device and afaik it is uncommon to have mfd-internal things wired
-> >    up this way
-> > 
-> > e) something clean, simple I miss  
-> 
-> The idea is that the relationship between the devices should be
-> registered before the devices, that's how the regulator knows to defer.
-> We used to have an API for doing this for board files which might fit
-> here, but it got removed since nobody wants board files any more.  If
-> you're allocating the devices dynamically that's annoying to implement
-> though...
+With the introduction of the virtio map API, there's no need for VDUSE
+to be hacked with DMA API to work. So this series switches to use
+virtio map API for VDUSE so VDUSE can get rid of the DMA API
+completely.
 
-looking a bit around:
-max5970-regulator.c has hwmon integrated and no extra device. That would
-simplify things. Although it does not report temperature. Some
-touchscreens have temperature via hwmon, some others have temperature
-via iio, directly in one device without mfd. Maybe that is also
-the better way here?
+Please review.
 
-Regards,
-Andreas
+Thanks
+
+Changes since V6:
+
+- Typo fixes
+
+Jason Wang (2):
+  vdpa: introduce map ops
+  vduse: switch to use virtio map API instead of DMA API
+
+ drivers/vdpa/Kconfig                     |  8 +--
+ drivers/vdpa/alibaba/eni_vdpa.c          |  3 +-
+ drivers/vdpa/ifcvf/ifcvf_main.c          |  3 +-
+ drivers/vdpa/mlx5/net/mlx5_vnet.c        |  2 +-
+ drivers/vdpa/octeon_ep/octep_vdpa_main.c |  4 +-
+ drivers/vdpa/pds/vdpa_dev.c              |  3 +-
+ drivers/vdpa/solidrun/snet_main.c        |  4 +-
+ drivers/vdpa/vdpa.c                      |  3 +
+ drivers/vdpa/vdpa_sim/vdpa_sim.c         |  2 +-
+ drivers/vdpa/vdpa_user/iova_domain.c     |  2 +-
+ drivers/vdpa/vdpa_user/iova_domain.h     |  2 +-
+ drivers/vdpa/vdpa_user/vduse_dev.c       | 79 ++++++++++++------------
+ drivers/vdpa/virtio_pci/vp_vdpa.c        |  3 +-
+ drivers/virtio/virtio_vdpa.c             |  4 +-
+ include/linux/vdpa.h                     | 10 ++-
+ include/linux/virtio.h                   |  4 ++
+ 16 files changed, 74 insertions(+), 62 deletions(-)
+
+-- 
+2.31.1
+
 
