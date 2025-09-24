@@ -1,323 +1,115 @@
-Return-Path: <linux-kernel+bounces-831169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76735B9BC02
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:45:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 535BCB9BC0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5940B19C2E19
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:45:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11ECF3266F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1B324A079;
-	Wed, 24 Sep 2025 19:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E262367BF;
+	Wed, 24 Sep 2025 19:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="fQMxzC0A"
-Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rrt8DW7c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755EE21CA03
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 19:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B881DDDD;
+	Wed, 24 Sep 2025 19:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758743118; cv=none; b=TdcAFL+BhmnBBL88J5abL7JNSdJ08JB6hx1A9xnGnBP+5em52EVJFphvcqZCZ03CHU8qHYs7flaxq/4Sy+ck8ps5kBFs2K44GFPMSM2wZgbcJNYo5lO9S+PxZ1vNf8bEuWSZya5I5SRPud+gPauKIq5HgdqFDA+JvviUzBjayI4=
+	t=1758743288; cv=none; b=B3qjIG18CH0AP+P5sxsHnabIatIXkQD5/xrm8AZbhj9gbL4Zie41gpfI6Sq3mnBOqHurvydS2RwC+4eHX6YXU3vZyGG6qV5OkEB2aLsYL85sx5q4qZFmAm9AaXr3gi8vCFjLQO7Clgr+g39khSCLSivdOVeR2m008Bm9ZXccC3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758743118; c=relaxed/simple;
-	bh=i1EWBvl3pgEz04bRJbDeFzyt7OHP5WzSf5nISUU3Ifg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=o4w+yi9t7B0LUQLelC0ZMSIu77QsptzzQm9D5H3rvMlDZBl1nnXHOZjT+K66K4wfPFG/UuARgtDCvdV44crYrm/9VvE8gPEKAPaJ02kH4texAixELEDHPAI+XjphGqwdtnb0o8tsJ0042Bc/YHaMhFKEICszPML6vaMYe4TaDPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=fQMxzC0A; arc=none smtp.client-ip=72.215.153.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id XmpFObDFXIRzTQpn; Wed, 24 Sep 2025 15:45:15 -0400 (EDT)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=dHPUKOiCryntFUoZ4XwzAXg+TxheQ7iawZOAUoLgJWI=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
-	Content-Language:Subject:MIME-Version:Date:Message-ID; b=fQMxzC0A0owxQ2MBbClG
-	zqpE/aUjO/DA87Bp3+WPgog25tX3XTmONjfKoxz6fLi/OVcog+UllxIvANNB56HGGjVhSKgLQsbEv
-	vmXjgwxrfPe/1AS3MyXsf9a8RUgLmH3xr3MChFTHFthRo2K0tIL/VpwXuznhDhSn+S3ob39WZg=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14211693; Wed, 24 Sep 2025 15:45:14 -0400
-Message-ID: <08f9bb89-d61b-410b-91b9-07352ac1398f@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Wed, 24 Sep 2025 15:45:14 -0400
+	s=arc-20240116; t=1758743288; c=relaxed/simple;
+	bh=5pfqoAv3+D7vRUeoIo/VfzuXoXjMCi4EDG4XCp0s5lo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hrmdtRXucl17ASv4444/PnBIfLD9RkvE6ghhVr/x4uFxdsCjtlft91+XLU0pTaJXg7nC5Wp8kkt2ubkxydx/hMk4uXYhWAAbxV05uRLj52+vxewJg1tpekjcBppjHaVmD1ya58AkYppXEZqvcD9+l9yTmpYq2AbbFjOcViluxdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rrt8DW7c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 848B6C4CEF8;
+	Wed, 24 Sep 2025 19:48:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758743287;
+	bh=5pfqoAv3+D7vRUeoIo/VfzuXoXjMCi4EDG4XCp0s5lo=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Rrt8DW7cWd3LwnReiGSAU01NRcAYqOt+0OYrXuJfVrqia4pz5GN6RvVH5cAj5JzzK
+	 sSFaWaluEKCeHqDgLHcDe2a1TaALAxgu6yjS+rGmnY01ivnp6999kGUT4Y85AXATzr
+	 VIgK5YItFGB/IXbwl9XviK/QbiczHwGShBcd5OJRiLUiDTctkiF8fF3yVFkek9b03s
+	 8OENasztYI55YJHNYyrd07ZjbxobnbVhdvq05ZIrH5Wh/C2o+IlZDo8YFnaaMB8J/r
+	 SeLAisysbUcwCCNmJu2VLxg3W22XG6RHzdjAdCC4WgOpmvSSp/EfT0TbP8CSgcvv3L
+	 EVuePkFdHbJOQ==
+From: Nicolas Schier <nsc@kernel.org>
+Date: Wed, 24 Sep 2025 21:47:58 +0200
+Subject: [PATCH v2] Documentation: kbuild: note CONFIG_DEBUG_EFI in
+ reproducible builds
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [SCST PATCH v2 09/16] scsi: qla2xxx: fix races with aborting commands
-Content-Language: en-US
-X-ASG-Orig-Subj: [SCST PATCH v2 09/16] scsi: qla2xxx: fix races with aborting commands
-From: Tony Battersby <tonyb@cybernetics.com>
-To: Dmitry Bogdanov <d.bogdanov@yadro.com>
-Cc: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
- <80974286-f8ac-4eff-9439-c05fe38716b1@cybernetics.com>
- <20250911142135.GA624@yadro.com>
- <e8cc07cf-9bd1-41a4-bd46-44e18179154b@cybernetics.com>
- <66d71ab7-96f9-4d96-9d9c-9d2f43adb170@cybernetics.com>
-In-Reply-To: <66d71ab7-96f9-4d96-9d9c-9d2f43adb170@cybernetics.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1758743115
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 0
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 8329
-X-ASG-Debug-ID: 1758743115-1cf43947df39d8e0001-xx1T2L
+Message-Id: <20250924-kbuild-doc-config-debug-efi-in-reproducible-builds-v2-1-d2d6b9dcdb7d@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAO1K1GgC/yWOwQ6CMBBEf4X07BJaKYIn/8NwKHSBDdiSrRAJ4
+ d+teHyTybzZRUAmDOKe7IJxpUDeRVCXRLSDcT0C2chCZUpnlcphbBaaLFjfQutdRz1YbJYesCM
+ gB4wze7u01EwIZzUANre8rExpZalFHJ45lj+n9FlHHii8PW/nh1X+0r+uUFoqXWZVGiGviitIe
+ JlgBmK/PUZkh1PquRf1cRxf6XwtQsoAAAA=
+X-Change-ID: 20250924-kbuild-doc-config-debug-efi-in-reproducible-builds-eb7489a8d185
+To: Nathan Chancellor <nathan@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Ben Hutchings <ben@decadent.org.uk>, 
+ Jonathan Corbet <corbet@lwn.net>, Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+ linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Nicolas Schier <nsc@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758743285; l=1347;
+ i=nsc@kernel.org; s=20250924; h=from:subject:message-id;
+ bh=WrCEiwhTJ6NTcbC79DuT72IvGk096pO3ljwmap6tib0=;
+ b=xot5rA2LwXMdxklW8rby+ZKjbInYkFumHiXZR1CfKm2wY4feOrauw+nMxZSWK7WWVSMCdldkw
+ 6UFgMUcy8LWDCXjsgQX0qBYlOSJHs7qZotzT0SCFOmaJCF/QO+YW83I
+X-Developer-Key: i=nsc@kernel.org; a=ed25519;
+ pk=+0ar7sBdSzOoVoXxW8B+48yZbV4azT4joSEm8UyP7z4=
 
-This patch applies to the out-of-tree SCST project, not to the Linux
-kernel.  Apply when importing the upstream patch with the same title.
+From: Masahiro Yamada <masahiroy@kernel.org>
 
-SCST addendum:
+CONFIG_EFI_DEBUG embeds absolute file paths into object files, which
+makes the resulting vmlinux specific to the build environment.
 
-sqa_on_hw_pending_cmd_timeout() currently unmaps DMA, sets
-outstanding_cmds[h] to NULL, and forces the command to complete.  This
-could cause a kernel crash if the HW later accesses the DMA mapping.
-It can also cause other problems if outstanding_cmds[h] is reused for a
-different command.  Fix by doing this instead:
+Add a note about this in reproducible-builds.rst
 
-- In sqa_on_hw_pending_cmd_timeout(), call qlt_send_term_exchange()
-  first and then restart the timeout.  After another timeout, reset the
-  ISP.
-
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Nicolas Schier <nsc@kernel.org>
 ---
+Changes in v2:
+  * Fixed a grammar typo (Randy)
+  * v1: https://lore.kernel.org/linux-kbuild/20250625125809.2504963-1-masahiroy@kernel.org
+---
+ Documentation/kbuild/reproducible-builds.rst | 3 +++
+ 1 file changed, 3 insertions(+)
 
-v1 -> v2:
-- On second timeout, reset the ISP rather than unmapping DMA that
-  might be in use by the hardware.
-- Apply "scsi: qla2xxx: clear cmds after chip reset" from Dmitry
-  Bogdanov as prerequisite.  This is required for the ISP reset to clear
-  the locked-up command.
-- Move the revert of 26f9ce53817a ("scsi: qla2xxx: Fix missed DMA unmap
-  for aborted commands") from this patch to the previous patch since
-  that patch fixed the oops, even though this patch is still necessary
-  for its other improvements.  Rename this patch and reword the patch
-  description to match.
-- Remove TRC_CTIO_IGNORED.
+diff --git a/Documentation/kbuild/reproducible-builds.rst b/Documentation/kbuild/reproducible-builds.rst
+index f2dcc39044e66ddd165646e0b51ccb0209aca7dd..96d208e578cd53d3f0c4a24ec983a9179260345d 100644
+--- a/Documentation/kbuild/reproducible-builds.rst
++++ b/Documentation/kbuild/reproducible-builds.rst
+@@ -61,6 +61,9 @@ supported.
+ The Reproducible Builds web site has more information about these
+ `prefix-map options`_.
+ 
++Some CONFIG options such as `CONFIG_DEBUG_EFI` embed absolute paths in
++object files. Such options should be disabled.
++
+ Generated files in source packages
+ ----------------------------------
+ 
 
- qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c | 136 ++++++++++--------
- 1 file changed, 76 insertions(+), 60 deletions(-)
+---
+base-commit: cec1e6e5d1ab33403b809f79cd20d6aff124ccfe
+change-id: 20250924-kbuild-doc-config-debug-efi-in-reproducible-builds-eb7489a8d185
 
-diff --git a/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c b/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
-index e885b9711..07aee6e81 100644
---- a/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
-+++ b/qla2x00t-32gbit/qla2x00-target/scst_qla2xxx.c
-@@ -187,6 +187,7 @@ static struct cmd_state_name {
- 	{QLA_TGT_STATE_NEED_DATA, "NeedData"},
- 	{QLA_TGT_STATE_DATA_IN, "DataIn"},
- 	{QLA_TGT_STATE_PROCESSED, "Processed"},
-+	{QLA_TGT_STATE_DONE, "Done"},
- };
- 
- static char *cmdstate_to_str(uint8_t state)
-@@ -497,23 +498,14 @@ static void sqa_qla2xxx_handle_data(struct qla_tgt_cmd *cmd)
- {
- 	struct scst_cmd *scst_cmd = cmd->scst_cmd;
- 	int rx_status;
--	unsigned long flags;
- 
- 	TRACE_ENTRY();
- 
--	spin_lock_irqsave(&cmd->cmd_lock, flags);
--	if (cmd->aborted) {
--		spin_unlock_irqrestore(&cmd->cmd_lock, flags);
--
-+	if (unlikely(cmd->aborted)) {
- 		scst_set_cmd_error(scst_cmd,
- 			SCST_LOAD_SENSE(scst_sense_internal_failure));
--		scst_rx_data(scst_cmd, SCST_RX_STATUS_ERROR_SENSE_SET,
--			SCST_CONTEXT_THREAD);
--		return;
--	}
--	spin_unlock_irqrestore(&cmd->cmd_lock, flags);
--
--	if (cmd->write_data_transferred) {
-+		rx_status = SCST_RX_STATUS_ERROR_SENSE_SET;
-+	} else if (likely(cmd->write_data_transferred)) {
- 		rx_status = SCST_RX_STATUS_SUCCESS;
- 	} else {
- 		rx_status = SCST_RX_STATUS_ERROR_SENSE_SET;
-@@ -691,6 +683,7 @@ static void sqa_qla2xxx_free_cmd(struct qla_tgt_cmd *cmd)
- 
- 	TRACE_ENTRY();
- 
-+	cmd->state = QLA_TGT_STATE_DONE;
- 	cmd->trc_flags |= TRC_CMD_DONE;
- 	scst_tgt_cmd_done(scst_cmd, scst_work_context);
- 
-@@ -1522,9 +1515,10 @@ static int sqa_xmit_response(struct scst_cmd *scst_cmd)
- 	cmd = scst_cmd_get_tgt_priv(scst_cmd);
- 
- 	if (scst_cmd_aborted_on_xmit(scst_cmd)) {
--		TRACE_MGMT_DBG("sqatgt(%ld/%d): CMD_ABORTED cmd[%p]",
--			cmd->vha->host_no, cmd->vha->vp_idx,
--			cmd);
-+		TRACE_MGMT_DBG(
-+		    "sqatgt(%ld/%d): tag %lld: skipping send response for aborted cmd",
-+		    cmd->vha->host_no, cmd->vha->vp_idx,
-+		    scst_cmd_get_tag(scst_cmd));
- 		qlt_abort_cmd(cmd);
- 		scst_set_delivery_status(scst_cmd, SCST_CMD_DELIVERY_ABORTED);
- 		scst_tgt_cmd_done(scst_cmd, SCST_CONTEXT_DIRECT);
-@@ -1841,72 +1835,94 @@ static int sqa_qla2xxx_dif_tags(struct qla_tgt_cmd *cmd,
- 	return t32;
- }
- 
--static void sqa_cleanup_hw_pending_cmd(scsi_qla_host_t *vha,
--	struct qla_tgt_cmd *cmd)
--{
--	uint32_t h;
--	struct qla_qpair *qpair = cmd->qpair;
--
--	for (h = 1; h < qpair->req->num_outstanding_cmds; h++) {
--		if (qpair->req->outstanding_cmds[h] == (srb_t *)cmd) {
--			printk(KERN_INFO "Clearing handle %d for cmd %p", h,
--			       cmd);
--			//TRACE_DBG("Clearing handle %d for cmd %p", h, cmd);
--			qpair->req->outstanding_cmds[h] = NULL;
--			break;
--		}
--	}
--}
--
- static void sqa_on_hw_pending_cmd_timeout(struct scst_cmd *scst_cmd)
- {
- 	struct qla_tgt_cmd *cmd = scst_cmd_get_tgt_priv(scst_cmd);
- 	struct scsi_qla_host *vha = cmd->vha;
- 	struct qla_qpair *qpair = cmd->qpair;
--	uint8_t aborted = cmd->aborted;
- 	unsigned long flags;
- 
- 	TRACE_ENTRY();
--	TRACE_MGMT_DBG("sqatgt(%ld/%d): Cmd %p HW pending for too long (state %s) %s; %s;",
--		       vha->host_no, vha->vp_idx, cmd,
--		       cmdstate_to_str((uint8_t)cmd->state),
--		       cmd->cmd_sent_to_fw ? "sent to fw" : "not sent to fw",
--		       aborted ? "aborted" : "not aborted");
- 
--
--	qlt_abort_cmd(cmd);
-+	scst_cmd_get(scst_cmd);
- 
- 	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
-+
-+	TRACE_MGMT_DBG(
-+	    "sqatgt(%ld/%d): tag %lld: HW pending for too long (state %s) %s; %s",
-+	    vha->host_no, vha->vp_idx, scst_cmd_get_tag(scst_cmd),
-+	    cmdstate_to_str((uint8_t)cmd->state),
-+	    cmd->cmd_sent_to_fw ? "sent to fw" : "not sent to fw",
-+	    cmd->aborted ? "aborted" : "not aborted");
-+
- 	switch (cmd->state) {
- 	case QLA_TGT_STATE_NEW:
- 	case QLA_TGT_STATE_DATA_IN:
--		PRINT_ERROR("sqa(%ld): A command in state (%s) should not be HW pending. %s",
--			vha->host_no, cmdstate_to_str((uint8_t)cmd->state),
--			aborted ? "aborted" : "not aborted");
--		break;
-+	case QLA_TGT_STATE_DONE:
-+		PRINT_ERROR(
-+		    "sqatgt(%ld/%d): tag %lld: A command in state (%s) should not be HW pending. %s",
-+		    vha->host_no, vha->vp_idx, scst_cmd_get_tag(scst_cmd),
-+		    cmdstate_to_str((uint8_t)cmd->state),
-+		    cmd->aborted ? "aborted" : "not aborted");
-+		goto out_unlock;
- 
- 	case QLA_TGT_STATE_NEED_DATA:
--		/* the abort will nudge it out of FW */
--		TRACE_MGMT_DBG("Force rx_data cmd %p", cmd);
--		sqa_cleanup_hw_pending_cmd(vha, cmd);
--		scst_set_cmd_error(scst_cmd,
--		    SCST_LOAD_SENSE(scst_sense_internal_failure));
--		scst_rx_data(scst_cmd, SCST_RX_STATUS_ERROR_SENSE_SET,
--		    SCST_CONTEXT_THREAD);
--		break;
- 	case QLA_TGT_STATE_PROCESSED:
--		if (!cmd->cmd_sent_to_fw)
--			PRINT_ERROR("sqa(%ld): command should not be in HW pending. It's already processed. ",
--				    vha->host_no);
--		else
--			TRACE_MGMT_DBG("Force finishing cmd %p", cmd);
--		sqa_cleanup_hw_pending_cmd(vha, cmd);
--		scst_set_delivery_status(scst_cmd, SCST_CMD_DELIVERY_FAILED);
--		scst_tgt_cmd_done(scst_cmd, SCST_CONTEXT_THREAD);
- 		break;
- 	}
-+
-+	/* Handle race with normal CTIO completion. */
-+	if (!cmd->cmd_sent_to_fw) {
-+		TRACE_MGMT_DBG(
-+		    "sqatgt(%ld/%d): tag %lld: cmd not sent to fw; assuming just completed",
-+		    vha->host_no, vha->vp_idx,
-+		    scst_cmd_get_tag(scst_cmd));
-+		goto out_unlock;
-+	}
-+
-+	/* The command should be aborted elsewhere if the ISP was reset. */
-+	if (!qpair->fw_started || cmd->reset_count != qpair->chip_reset)
-+		goto out_unlock;
-+
-+	/* Reset the ISP if there was a timeout after sending a term exchange. */
-+	if (cmd->sent_term_exchg &&
-+	     time_is_before_jiffies(cmd->jiffies_at_term_exchg +
-+				    SQA_MAX_HW_PENDING_TIME * HZ / 2)) {
-+		if (!test_bit(ABORT_ISP_ACTIVE, &vha->dpc_flags)) {
-+			if (IS_P3P_TYPE(vha->hw))
-+				set_bit(FCOE_CTX_RESET_NEEDED, &vha->dpc_flags);
-+			else
-+				set_bit(ISP_ABORT_NEEDED, &vha->dpc_flags);
-+			qla2xxx_wake_dpc(vha);
-+		}
-+		goto out_unlock;
-+	}
-+
-+	/*
-+	 * We still expect a CTIO response from the hw.  Terminating the
-+	 * exchange should force the CTIO response to happen sooner.
-+	 */
-+	if (!cmd->sent_term_exchg)
-+		qlt_send_term_exchange(qpair, cmd, &cmd->atio, 1);
-+
-+	/*
-+	 * Restart the timer so that this function is called again
-+	 * after another timeout.  This is similar to
-+	 * scst_update_hw_pending_start() except that we also set
-+	 * cmd_hw_pending to 1.
-+	 *
-+	 * IRQs are already OFF.
-+	 */
-+	spin_lock(&scst_cmd->sess->sess_list_lock);
-+	scst_cmd->cmd_hw_pending = 1;
-+	scst_cmd->hw_pending_start = jiffies;
-+	spin_unlock(&scst_cmd->sess->sess_list_lock);
-+
-+out_unlock:
- 	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
- 
-+	scst_cmd_put(scst_cmd);
-+
- 	TRACE_EXIT();
- }
- 
+Best regards,
 -- 
-2.43.0
-
+Nicolas
 
 
