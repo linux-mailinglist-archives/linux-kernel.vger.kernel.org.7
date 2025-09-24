@@ -1,209 +1,79 @@
-Return-Path: <linux-kernel+bounces-830001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47EFB986D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:43:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D59EB986E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E1381669EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:43:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FAF84C12FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A0624A066;
-	Wed, 24 Sep 2025 06:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGD6gfpE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B30212557;
+	Wed, 24 Sep 2025 06:46:32 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A802D7BF
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE631FDD
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758696220; cv=none; b=mfFkZhQyYQ19wwsar4DyqxoRPqu91i/Kl3EFoWMO/Ly2UUrfmJx5IXXKFDYLLofbKY/LBCo1oa/ew55W0Y+95MluMWeGBE6Ur0qAzYXkccCWjZVr+GwpuihGZIFV0rJutHl4DukgrGfYDG/8aPFxIX0PRPgh46gM2mf1TjHd5ho=
+	t=1758696392; cv=none; b=Ba8VEczmfMyvg6/QkVXrRpqyF1J3Rto6FM1WTzvvlDrcBKaLVNO1lIm49gBNqfW+mUvP01+12x1RaLig75OmmIDFnNhneh8Op8B25/dP1yBKmFtWw2oo/YsdK5B95LxB7UvnMI8u3ahMeZhhylJbAwWKec0hvK6uQ6ZzLNHOUmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758696220; c=relaxed/simple;
-	bh=8DK3jW+UQGE9APyR7Iu45j5l71ebl6KdPy8ALRX1Ows=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MHY2VXOHh3jfLxZQO+1dpTR4QS3nmAx/W0FqeRisFzrSZ++RlFb0QV3bmqh6Kcvtd9HXTqapJKqzwrFNImVzgPpZLb7cqKFTacZ+ZP1geLiyuR5swoMxECVvyrkx+lzPlQz9/OJqQbIvE44IPvP2l1d0fbzqzbmtvi/72rJXyXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGD6gfpE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CD93C4CEE7;
-	Wed, 24 Sep 2025 06:43:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758696219;
-	bh=8DK3jW+UQGE9APyR7Iu45j5l71ebl6KdPy8ALRX1Ows=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=rGD6gfpEQH97FilLSBIZqOpG2kbsAW2mhWqfj/K/dWqLip4nIn5CDRS67u3DjbRkc
-	 8m4FS9Ag012jcUlpDJ2H895+D4Va5p0ATjMwZNa3fW127EPlpVBND1leEtl1iGzBdt
-	 LrEhrsSUJMnRmH2E2SE+qea6zDKDNkTHsp6oUhvlH4lkEfwtiRqh8GB39wd8cm89Ey
-	 gXECtox/g3TYK/UVP5be7Fe/BhvCVzxc9XMIkyFkD/eBEz64ZUpRvqKETf9MStoBKM
-	 CCXwQCB6VJZBMddrSdI6qdmwgSRgDf1UhnQ1iR+bgpcBBCHsa8g5VkDQQ/MoyYKRcp
-	 oTDSphdaIjHJQ==
-Message-ID: <84d65c75-7ab7-4c0c-9085-9423effb8632@kernel.org>
-Date: Wed, 24 Sep 2025 14:43:33 +0800
+	s=arc-20240116; t=1758696392; c=relaxed/simple;
+	bh=c2THiTcMx/kITA23ObrwruPRL1cplr9EbGwCsn/ewH0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Tapa1RmgNVe5tvD50swqlhzmGtoq0aU65+tLpIY0muXJdhbcjyk+Zfkh2awY3zvnCOfK2ANqZBt1+wUIET0A32xVxT1vDAMDcmhikXMxiDwR5mX7Qxjn0R5l9wrmy4RRv7VjSqjGXK7q3jbEn/t1wQ+vmeHew8+S0nk5iKfNT/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-425788b03a0so78101225ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:46:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758696390; x=1759301190;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c2THiTcMx/kITA23ObrwruPRL1cplr9EbGwCsn/ewH0=;
+        b=cKPhMsI2V+HqU7SKqT6qaI1L248UiCqgkACbddbnQDTGC4eFO5oWoplxFjxbsdQI0x
+         y+yyBBl+5EMxHRdSxbfwUnq3iTXdtQv73w+hnIoRAswEuv0xUBJDFfWh9Eobf+eNC36r
+         DYf0GOfysl1HaQFQ9ou9hnCiWn9GrlXhG4BUEQqSwpE0SNX+r5lsoLOVC+Ll/mZWjIrr
+         GFxWI1j0NpNRUWGkTg7slWDtCC7rEE9xijQGOrvaAcwgJ9SwbKj5lm8ztvgX2OgagkBH
+         aGlcf49J/FSV1iyo4ZnDzJQiaGkKn+QTj+maMAqttjYKQzDHTdRzkR4BdkoIstQR4jTV
+         Dp2g==
+X-Gm-Message-State: AOJu0YwKqXHN0k+6uBe5FABMGm6k8fkLNOHRiCtXH2e0XYIQ7aBMJIuH
+	9xR592NIhIceQ8rZhbhhSpktUzQQizZYRwbGhgj2yhwezPb+rLcRpxp+jHTWPBM8VYwOpOiqP9D
+	KVJFJTB47aMYGJM9Yn/DPm9iLV2Oa3Zq+WJA7wb3Lez9oLnAqdXyOk5UdxBw=
+X-Google-Smtp-Source: AGHT+IEE1aJZHGgeqestyz7zJv/ihZoMCp+NZxSfkAr0MOst2uZJf+I7Teio3oAvhaVSHt2oHQRl3GP0yawGJxgB9AlxmnMtOR6F
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, 'Sungjong Seo' <sj1557.seo@samsung.com>,
- 'Sunmin Jeong' <s_min.jeong@samsung.com>
-Subject: Re: [PATCH v2] f2fs: readahead node blocks in F2FS_GET_BLOCK_PRECACHE
- mode
-To: Yunji Kang <yunji0.kang@samsung.com>, jaegeuk@kernel.org
-References: <CGME20250918082037epcas1p1eb201d3b6d5780c0bff3ba32740ccdcf@epcas1p1.samsung.com>
- <20250918082023.57381-1-yunji0.kang@samsung.com>
- <89f237cd-3f86-405a-8f8f-d9cad250ef00@kernel.org>
- <00d401dc2d0a$18100c20$48302460$@samsung.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <00d401dc2d0a$18100c20$48302460$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1949:b0:423:f9d1:e913 with SMTP id
+ e9e14a558f8ab-42581eb8a20mr77433985ab.31.1758696389960; Tue, 23 Sep 2025
+ 23:46:29 -0700 (PDT)
+Date: Tue, 23 Sep 2025 23:46:29 -0700
+In-Reply-To: <673e3029.050a0220.363a1b.0024.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d393c5.a70a0220.1b52b.02c2.GAE@google.com>
+Subject: Forwarded: upstream test
+From: syzbot <syzbot+1f4e278e8e1a9b01f95f@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/24/25 12:17, Yunji Kang wrote:
->>> In f2fs_precache_extents(), For large files, It requires reading many
->>> node blocks. Instead of reading each node block with synchronous I/O,
->>> this patch applies readahead so that node blocks can be fetched in
->>> advance.
->>>
->>> It reduces the overhead of repeated sync reads and improves efficiency
->>> when precaching extents of large files.
->>>
->>> I created a file with the same largest extent and executed the test.
->>> For this experiment, I set the file's largest extent with an offset of
->>> 0 and a size of 1GB. I configured the remaining area with 100MB extents.
->>>
->>> 5GB test file:
->>> dd if=/dev/urandom of=test1 bs=1m count=5120 cp test1 test2 fsync
->>> test1 dd if=test1 of=test2 bs=1m skip=1024 seek=1024 count=100
->>> conv=notrunc dd if=test1 of=test2 bs=1m skip=1224 seek=1224 count=100
->>> conv=notrunc ...
->>> dd if=test1 of=test2 bs=1m skip=5024 seek=5024 count=100 conv=notrunc
->>> reboot
->>>
->>> I also created 10GB and 20GB files with large extents using the same
->>> method.
->>>
->>> ioctl(F2FS_IOC_PRECACHE_EXTENTS) test results are as follows:
->>>   +-----------+---------+---------+-----------+
->>>   | File size | Before  | After   | Reduction |
->>>   +-----------+---------+---------+-----------+
->>>   | 5GB       | 101.8ms | 72.1ms  | 29.2%     |
->>>   | 10GB      | 222.9ms | 149.5ms | 32.9%     |
->>>   | 20GB      | 446.2ms | 276.3ms | 38.1%     |
->>>   +-----------+---------+---------+-----------+
->>
->> Yunji,
->>
->> Will we gain better performance if we readahead more node pages w/
->> sychronous request for precache extent case? Have you tried that?
->>
->> Thanks,
->>
-> 
-> Does “readahead more node pages” mean removing this condition?
-> " offset[i - 1] % MAX_RA_NODE == 0 "
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Actually, I meant a) remove "offset[i - 1] % MAX_RA_NODE == 0" or b)
-increase MAX_RA_NODE.
+***
 
-Also, maybe we can try as below to trigger synchronous IO for such high
-determinacy read.
+Subject: upstream test
+Author: kriish.sharma2006@gmail.com
 
-void df2fs_ra_node_page()
-{
-...
-	err = read_node_folio(afolio, 0);
-...
-}
-
-> 
-> I originally added the condition to prevent unnecessary readahead requests, 
-> but it seems this condition was actually blocking valid readahead as well.
-> 
-> After removing the condition and running tests, 
-> I confirmed that more readahead node pages are being issued.
-> 
-> I’ll share the test results along with the improved patch.
-
-It makes sense, thanks for checking this and sharing the result.
-
-Thanks,
-
-> 
-> Thanks,
-> 
->>> Tested on a 256GB mobile device with an SM8750 chipset.
->>>
->>> Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
->>> Reviewed-by: Sunmin Jeong <s_min.jeong@samsung.com>
->>> Signed-off-by: Yunji Kang <yunji0.kang@samsung.com>
->>> ---
->>> v2:
->>>  - Modify the readahead condition check routine for better code
->>> readability.
->>>  - Update the title from 'node block' to 'node blocks'.
->>>
->>>  fs/f2fs/data.c | 3 +++
->>>  fs/f2fs/f2fs.h | 1 +
->>>  fs/f2fs/node.c | 5 ++++-
->>>  3 files changed, 8 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c index
->>> 7961e0ddfca3..ab3117e3b24a 100644
->>> --- a/fs/f2fs/data.c
->>> +++ b/fs/f2fs/data.c
->>> @@ -1572,6 +1572,9 @@ int f2fs_map_blocks(struct inode *inode, struct
->> f2fs_map_blocks *map, int flag)
->>>  	pgofs =	(pgoff_t)map->m_lblk;
->>>  	end = pgofs + maxblocks;
->>>
->>> +	if (flag == F2FS_GET_BLOCK_PRECACHE)
->>> +		mode = LOOKUP_NODE_PRECACHE;
->>> +
->>>  next_dnode:
->>>  	if (map->m_may_create) {
->>>  		if (f2fs_lfs_mode(sbi))
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h index
->>> 9d3bc9633c1d..3ce41528d48e 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -651,6 +651,7 @@ enum {
->>>  					 * look up a node with readahead called
->>>  					 * by get_data_block.
->>>  					 */
->>> +	LOOKUP_NODE_PRECACHE,		/* look up a node for
->> F2FS_GET_BLOCK_PRECACHE */
->>>  };
->>>
->>>  #define DEFAULT_RETRY_IO_COUNT	8	/* maximum retry read IO or flush
->> count */
->>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c index
->>> 4254db453b2d..d4bf3ce715c5 100644
->>> --- a/fs/f2fs/node.c
->>> +++ b/fs/f2fs/node.c
->>> @@ -860,7 +860,10 @@ int f2fs_get_dnode_of_data(struct dnode_of_data *dn,
->> pgoff_t index, int mode)
->>>  			set_nid(parent, offset[i - 1], nids[i], i == 1);
->>>  			f2fs_alloc_nid_done(sbi, nids[i]);
->>>  			done = true;
->>> -		} else if (mode == LOOKUP_NODE_RA && i == level && level > 1)
->> {
->>> +		} else if ((i == level && level > 1) &&
->>> +				(mode == LOOKUP_NODE_RA ||
->>> +				(mode == LOOKUP_NODE_PRECACHE &&
->>> +				offset[i - 1] % MAX_RA_NODE == 0))) {
->>>  			nfolio[i] = f2fs_get_node_folio_ra(parent, offset[i -
->> 1]);
->>>  			if (IS_ERR(nfolio[i])) {
->>>  				err = PTR_ERR(nfolio[i]);
-> 
-> 
-> 
-
+#syz test:
+http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/
+7595b66ae9de
+<https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/?id=7595b66ae9de667bf35a8c99e8f1bfc4792e207e>
 
