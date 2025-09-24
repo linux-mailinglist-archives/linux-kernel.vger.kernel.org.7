@@ -1,151 +1,106 @@
-Return-Path: <linux-kernel+bounces-830418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32198B999BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:36:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1985BB999CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E63F3320F7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:35:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07CB832113D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9283F2FB98A;
-	Wed, 24 Sep 2025 11:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317C02FE596;
+	Wed, 24 Sep 2025 11:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QlOkXOk3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9aYLxaYQ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WLkIaNPp"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE512FDC4B;
-	Wed, 24 Sep 2025 11:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B1924DFF4;
+	Wed, 24 Sep 2025 11:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758713752; cv=none; b=k8vEDNqOo+dtn1ehHPqqZBbb+IlCkM57fSOeBfuYqudq1ov5+7fzQqUauTnlwRGTndua9g6pOanVQWFA37RZL7TdlH2O5WJSeF3NLb9Nnn7SnklwFutkG1NkRTx432XNSJZSp8IZQij56043Ab9n5lD1Kr8M6Qis76/E7kQNPuY=
+	t=1758713758; cv=none; b=lYd7bta4oq0NYGSxTN5yz/9+0a6O/+Gwl3IxLIsjoiC2c5nII0kBMI1Z/ITNcGgoNf0UsrFPgS8PghfCY1e1DGycGemAkG6xQZCU5Jux88QjUIiE2PsE3LiPQGGwK0YdDSOpoCALQZlbeS2evWlkd3vgWoLwJraxChdlyDHD8qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758713752; c=relaxed/simple;
-	bh=0JGoQ4hmCfZ/TkMkG/taAm55rt5AIxt1SS2NLziKhmk=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=BD6nIUOxE/1Bpo2FXc1RWtXvV9SnAdDc5tfnpGhAmzzBLTaAORJoouyXF9m5IKQ+K3tY669T3vLRDqxSthqmZd3zMLZOytVczCISiTrR3d1/13H8FIXUbD9CASPDpFXK8+Cq1EL86QUjsGUZMfiZrziTOscNI7LXXtYrtL9Kdgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QlOkXOk3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9aYLxaYQ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 24 Sep 2025 13:35:22 +0200 (GMT+02:00)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758713743;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0JGoQ4hmCfZ/TkMkG/taAm55rt5AIxt1SS2NLziKhmk=;
-	b=QlOkXOk3wDqFbbFYZsEnlgMHERzf96yJYS0jGCAx8XL84tsLn5ka3PYxS3tS6fRiz4EdFp
-	hMUyAsiUILtR8JSw3OgT3Fy0mtO9V6+vyErIQ7UEqbgWogA4ThP02dZ7nQf1bcNUN6oc1E
-	qIS9/nd74dV5DEbbsNthzLIIe0mNg8fHArZw72OWjj0HJx2y/wJcXKWq9tADPKUcw2oCa1
-	MNgG8SaKpMW/kXFfHB3IGyN4KRzzDdYS8yZwV4AN2CdSs8O+lduKmgKTYpZGvoSsWu5yzJ
-	vn9hc+ve1LqLnCQYSUPrJ8WxAuF+cXnlxVYaeRwKdflbaBdk98XsHYzpLwzheQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758713743;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0JGoQ4hmCfZ/TkMkG/taAm55rt5AIxt1SS2NLziKhmk=;
-	b=9aYLxaYQfRDX5WwG1TPEXNPpaVf2pDqro4TeNjcbtq5rkULq+SlNuIn8W8JezYqbHJuTiS
-	grPgu4XhzSRIaIAw==
-From: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Nick Alcock <nick.alcock@oracle.com>,
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
-	Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-s390@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>
-Message-ID: <c5e28d44-3480-4e28-aff0-5c5cfd1b0632@linutronix.de>
-In-Reply-To: <ec0894011cb4403f45ad8b30095cc333edc1e5e6.camel@physik.fu-berlin.de>
-References: <20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de> <9a122c6cf3e2e0e61a62b0512eb97804acebeee9.camel@physik.fu-berlin.de> <48fd164e-959b-4263-b3c7-cef5771aa40a@linutronix.de> <60a0af09cc1a5de3b33b9606ed07ae91b42c5432.camel@physik.fu-berlin.de> <bea9cc5c-7fc6-4c87-ab78-8232b2bee4dc@linutronix.de> <ec0894011cb4403f45ad8b30095cc333edc1e5e6.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v3 00/36] sparc64: vdso: Switch to the generic vDSO
- library
+	s=arc-20240116; t=1758713758; c=relaxed/simple;
+	bh=cwneILn6ZVC29eFS05rUz6lGLlw/AQ/6m5dsiihK55g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hoSZnKZhlqnLikwKhdtXdSOd2tQFKE3oGrg00HAy3/u6XlpsAHtM48kgWtOPZYIGFB88L4YWEvPoQXlwpDz14x/mLH645uzYx1lkwUDC7DgBXMsXweWwat1ijV5z/vhUSV6XA5YHIKOEUBz6jydseo4qbcPJvSB62SDQK0JMCPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WLkIaNPp; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758713751;
+	bh=cwneILn6ZVC29eFS05rUz6lGLlw/AQ/6m5dsiihK55g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WLkIaNPpWRiIekxvXilghkdGQpTr7UPljwSUQQNEy+zQxBZhDdmEl7xtSqm6EYArg
+	 EDFH90PlD/WUere4CBQGzMY1VA9HQHBHs2X/xyXG+WAr1RwBJ4qYtA8obudaz7vJp0
+	 fOtyIKJxBngqmWSkrMtRV6fMAYwWhYK7o3+Zh6KX3dqa1NtueX109ivMZ4bsl/l6O1
+	 7+5nyMDMqY4muqjoHCy8f+kZ3KPX/ucBMm0kAPyg397DDYyJ0dRwJsf36Ee4DssNgb
+	 n59KWdu86YleG0oSLiFgcpc2MiWFx2jDhWT0viE8fa0lXoR9ZdFGAA+HGG6KBe74dC
+	 tSdfdXfBU5Qfw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1D9D717E00EC;
+	Wed, 24 Sep 2025 13:35:50 +0200 (CEST)
+Message-ID: <63be9fee-46b4-4bde-8e42-18966981f165@collabora.com>
+Date: Wed, 24 Sep 2025 13:35:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <c5e28d44-3480-4e28-aff0-5c5cfd1b0632@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/8] mailbox: add MediaTek GPUEB IPI mailbox
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Chia-I Wu <olvaffe@gmail.com>,
+ Chen-Yu Tsai <wenst@chromium.org>, Steven Price <steven.price@arm.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-hardening@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250923-mt8196-gpufreq-v4-0-6cd63ade73d6@collabora.com>
+ <20250923-mt8196-gpufreq-v4-5-6cd63ade73d6@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250923-mt8196-gpufreq-v4-5-6cd63ade73d6@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Sep 24, 2025 10:29:00 John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.=
-de>:
+Il 23/09/25 13:39, Nicolas Frattaroli ha scritto:
+> The MT8196 SoC uses an embedded MCU to control frequencies and power of
+> the GPU. This controller is referred to as "GPUEB".
+> 
+> It communicates to the application processor, among other ways, through
+> a mailbox.
+> 
+> The mailbox exposes one interrupt, which appears to only be fired when a
+> response is received, rather than a transaction is completed. For us,
+> this means we unfortunately need to poll for txdone.
+> 
+> The mailbox also requires the EB clock to be on when touching any of the
+> mailbox registers.
+> 
+> Add a simple driver for it based on the common mailbox framework.
+> 
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-> Hi,
->
-> On Wed, 2025-09-24 at 10:07 +0200, Thomas Wei=C3=9Fschuh wrote:
->> Sep 24, 2025 09:40:47 John Paul Adrian Glaubitz <glaubitz@physik.fu-berl=
-in.de>:
->>
->>> Hi Thomas,
->>>
->>> On Sat, 2025-09-20 at 16:37 +0200, Thomas Wei=C3=9Fschuh wrote:
->>>>> Could you share a version of the series based on top of 6.17.0-rcN fo=
-r
->>>>> testing purposes? I would like to test the series on a Sun Netra 240
->>>>> which is based on the UltraSPARC IIIi.
->>>>
->>>> Here is the git branch based on rc4:
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/thomas.weissschuh/linu=
-x.git/log/?h=3Db4/vdso-sparc64-generic-2
->>>>
->>>> Does that work for you?
->>>
->>> I'm getting merge conflicts with "vdso/datastore: Allocate data pages d=
-ynamically" and
->>> "vdso/datapage: Remove inclusion of gettimeofday.h".
->>>
->>> Can these be skipped?
->>
->> No, these are important.
->>
->> What are you trying to merge?
->> I can probably give you a merge.
->
-> I'm using v6.17-rc7 plus all SPARC fixes in Andreas Larsson's linux-sparc=
- for-next branch:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/alarsson/linux-sparc.git/=
-log/?h=3Dfor-next
-
-This merged cleanly for me:
-https://git.kernel.org/pub/scm/linux/kernel/git/thomas.weissschuh/linux.git=
-/log/?h=3Dvdso-sparc64-merge
-
-
-(Only compile-tested)
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
-Thomas
 
