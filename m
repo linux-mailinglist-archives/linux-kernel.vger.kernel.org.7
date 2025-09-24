@@ -1,341 +1,331 @@
-Return-Path: <linux-kernel+bounces-830207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E9EB990F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:18:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A63B990FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2D354C137D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:18:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41B3A2A7E3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D7A2D5957;
-	Wed, 24 Sep 2025 09:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFD32D6638;
+	Wed, 24 Sep 2025 09:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y/l/G7Lu";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VkuoeJpQ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y/l/G7Lu";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VkuoeJpQ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="DLvvx9si"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0792D6626
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53D02367AD;
+	Wed, 24 Sep 2025 09:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758705482; cv=none; b=Fhx6JbMVrL+2KzM0qQBPHyHHtm54lQi5zzoM/w6TyUUvGtsR3KMTnf7Ita2H1ODgDQbF83t8whuA+v7CiexuzESR9XJFgGabXuV/VQPfZ8dN3pzVnUSNLNUZTRRVe5qTek7d3/Ru6w3TQoiX4gteF5MUJ43TU0IBIuOJtrjXDow=
+	t=1758705532; cv=none; b=aLeKMlKlltLh+8NtgI4oOK/xMdPUYFk2+ixZWpaahcmMGM5tH/Mx3EKPtEwaJSXcZZgLMyy5GLYQ6AGIdJ8nKFHBuGX3s6oWiNeNcL4tqHtv41Zk/aFSseY5U/Pd3AJw2kU2vlLg0KA2Nv4WB95f3ay9gN47m4gH4gUCYaq0vuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758705482; c=relaxed/simple;
-	bh=4Etbmz1g9qkS1Q6BZsY0uKc2R19jEFw7N/m0RRsPW6M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RTzuXL7asMGp+XDw3KFtGkXiWBiBTmxzKD/BO6AxQ+Q2mST17yLDvEqh45nO7iLQSXQWRFCJyoXAsCJBVaKIJy7vo1g2RyYyIBShHpKJ7MOodKE+SOBNjq6FHKtglGmrOpViZEUsh5PJUCegFqcWZ202xsixBgjJpB4wG6QJMp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y/l/G7Lu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VkuoeJpQ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y/l/G7Lu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VkuoeJpQ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6632321E01;
-	Wed, 24 Sep 2025 09:17:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758705477; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pC0F7r7OxcKonOTwyWyhvysEfGJ1IIhtY+W1jVxVDug=;
-	b=Y/l/G7LuNXSkEUFYaU3LG8PJHB4euL8VuMm7ftjV2Ze7SpuI5oMb4XQbc7kvzCEoKKL5j0
-	cS2KZldgJA5iuhglWvgchVdl6Xvq26ATx6GwnqWV7aaFKXdnJdTMet+YnlEwCea1e0pfHP
-	3zJlRWUB9KyTWnE9o2/8PMuYC3z3riA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758705477;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pC0F7r7OxcKonOTwyWyhvysEfGJ1IIhtY+W1jVxVDug=;
-	b=VkuoeJpQHIuk6inxFVwZtN00jCjKGZBw9F8zrFMfgsCEqmJ2ZoKWQz25JwLuEpcodF+l48
-	4tQNjK7d5kkwwEAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758705477; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pC0F7r7OxcKonOTwyWyhvysEfGJ1IIhtY+W1jVxVDug=;
-	b=Y/l/G7LuNXSkEUFYaU3LG8PJHB4euL8VuMm7ftjV2Ze7SpuI5oMb4XQbc7kvzCEoKKL5j0
-	cS2KZldgJA5iuhglWvgchVdl6Xvq26ATx6GwnqWV7aaFKXdnJdTMet+YnlEwCea1e0pfHP
-	3zJlRWUB9KyTWnE9o2/8PMuYC3z3riA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758705477;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pC0F7r7OxcKonOTwyWyhvysEfGJ1IIhtY+W1jVxVDug=;
-	b=VkuoeJpQHIuk6inxFVwZtN00jCjKGZBw9F8zrFMfgsCEqmJ2ZoKWQz25JwLuEpcodF+l48
-	4tQNjK7d5kkwwEAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1F8B513A61;
-	Wed, 24 Sep 2025 09:17:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SUp+BkW302jbEQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 24 Sep 2025 09:17:57 +0000
-Message-ID: <234d94ac-3984-4ff9-9743-9178f68370de@suse.de>
-Date: Wed, 24 Sep 2025 11:17:56 +0200
+	s=arc-20240116; t=1758705532; c=relaxed/simple;
+	bh=V1BVU9vghb+3hqADlMRwIMDwc8PSCmJkw/ORv9uoqSo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=euTt982rAghGDelo5k0eBtxDeQVtwoSw2r+/L3/bdr0xmNRGwzhElWaqqB6aZrpAuOYg8LUixtq0i57y9JNjMrxJJvE8Ly8zRs7SW0sSapoc9GGXDiYy1eq063j3RRcAwVuSNIsWkjYvcpjSrEB4z5nK4Jco+Tz2ZJk5cd/h58g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=DLvvx9si; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58O9IV4003463184, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1758705511; bh=Hnuj4b/Pgg3Ub9gafKwfIHogn23g5X7O4ZGoMJATF4Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=DLvvx9si/Zdv1r0CXRWeKZiSdeN0Z0YU/xCjFEDN0x65Lbec4l6QQ2jjLJYbvSIAr
+	 4GQKR8rMH86TzVzgMha6AG/32X4hTQ//gieg76Ky8ySSaDZQGlOFN6l6WxOEEOntp8
+	 ZnfjbstXl8u1Q2/PMZ/LZ7A77j4UQjvr0C/Fcm7NO3u0evmrZWQPpQOMZ4kkr8156A
+	 yVg/db+t8xulWLK4NMmCzUSM0R/UEwXjlqXoZDlVQ21tGVySqUlJ8fFTNCe39EM00M
+	 ivDm9066nlYBflXlF9ibxllNw+LLcFOSqVy0uhphs3qIiffodG03pqavNQtjEvdxRy
+	 Kk+ROKj1IVfgw==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58O9IV4003463184
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 24 Sep 2025 17:18:31 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 24 Sep 2025 17:18:31 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
+ 15.02.1544.027; Wed, 24 Sep 2025 17:18:31 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>,
+        Bitterblue Smith
+	<rtl8821cerfe2@gmail.com>
+CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
+        Bernie Huang
+	<phhuang@realtek.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: RE: [PATCH rtw-next 3/6] wifi: rtw89: implement C2H TX report handler
+Thread-Topic: [PATCH rtw-next 3/6] wifi: rtw89: implement C2H TX report
+ handler
+Thread-Index: AQHcKjJeBA5Do5JYl0SCBEWCp8awr7SiD80A
+Date: Wed, 24 Sep 2025 09:18:31 +0000
+Message-ID: <5d0ee6db6ab44ad48222cc4f224aa307@realtek.com>
+References: <20250920132614.277719-1-pchelkin@ispras.ru>
+ <20250920132614.277719-4-pchelkin@ispras.ru>
+In-Reply-To: <20250920132614.277719-4-pchelkin@ispras.ru>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbcon: Set fb_display[i]->mode to NULL when the mode is
- released
-To: Quanmin Yan <yanquanmin1@huawei.com>, simona@ffwll.ch
-Cc: deller@gmx.de, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, wangkefeng.wang@huawei.com,
- zuoze1@huawei.com, sunnanyong@huawei.com
-References: <20250923110608.3385083-1-yanquanmin1@huawei.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250923110608.3385083-1-yanquanmin1@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[gmx.de,vger.kernel.org,lists.freedesktop.org,huawei.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,bootlin.com:url,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
 
-Hi,
+Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+> rtw89 has several ways of handling TX status report events.  The first on=
+e
+> is based on RPP feature which is used by PCIe HCI.  The other one depends
+> on firmware sending a corresponding C2H message, quite similar to what
+> rtw88 has.
+>=20
+> Toggle a bit in the TX descriptor and place skb in a queue to wait for a
+> message from the firmware.  Do this according to the vendor driver for
+                            ^^ nit: two spaces
 
-thanks for the report.
-
-Am 23.09.25 um 13:06 schrieb Quanmin Yan:
-> Recently, we discovered the following issue through syzkaller:
->
-> BUG: KASAN: slab-use-after-free in fb_mode_is_equal+0x285/0x2f0
-> Read of size 4 at addr ff11000001b3c69c by task syz.xxx
-> ...
-> Call Trace:
->   <TASK>
->   dump_stack_lvl+0xab/0xe0
->   print_address_description.constprop.0+0x2c/0x390
->   print_report+0xb9/0x280
->   kasan_report+0xb8/0xf0
->   fb_mode_is_equal+0x285/0x2f0
->   fbcon_mode_deleted+0x129/0x180
->   fb_set_var+0xe7f/0x11d0
->   do_fb_ioctl+0x6a0/0x750
->   fb_ioctl+0xe0/0x140
->   __x64_sys_ioctl+0x193/0x210
->   do_syscall_64+0x5f/0x9c0
->   entry_SYSCALL_64_after_hwframe+0x76/0x7e
->
-> The issue occurs in the function fb_mode_is_equal(p->mode, mode), I also
-> noticed that when freeing the memory related to fb_info->modelist, there's
-> no attempt to set the corresponding fb_display[i]->mode to NULL after
-> freeing. Based on analysis, the root cause of this bug appears to be that
-> a certain p->mode has become a wild pointer.
->
-> I've identified two code paths for freeing modelist->mode:
-> 1. fb_delete_videomode - removes videomode entry from modelist.
-> 2. fb_destroy_modelist - destroys the entire modelist.
-
-What about fb_new_modelist()? [1] It's called from store_modes() and the 
-whole logic in the caller seems fragile to me. This could leave p->mode 
-set when it should be cleared; and vice versa.
-
-[1] 
-https://elixir.bootlin.com/linux/v6.16.8/source/drivers/video/fbdev/core/fbmem.c#L712
-[2] 
-https://elixir.bootlin.com/linux/v6.16.8/source/drivers/video/fbdev/core/fbsysfs.c#L113
-
->
-> Analysis shows that fb_delete_videomode path should have been fixed in
-> a previous patch[1]. Therefore, the current bug is likely triggered
-> through the fb_destroy_modelist path. I've found a reproducible test case:
-> 1. With /dev/fb0 already registered in the system, load a kernel module
->     to register a new device /dev/fb1;
-> 2. Set fb1's mode to the global fb_display[] array (via FBIOPUT_CON2FBMAP);
-> 3. Switch console from fb to VGA (to allow normal rmmod of the ko);
-> 4. Unload the kernel module - at this point fb1's modelist is freed, leaving
->     a wild pointer in fb_display[];
-> 5. Trigger the bug via system calls through fb0 attempting to delete a mode
->     from fb0.
->
-> To prevent similar issues from recurring, consider traversing fb_display[]
-> whenever releasing a mode from fb_info. If the corresponding mode exists
-> in fb_display[], set its pointer to NULL.
->
-> [1] https://lore.kernel.org/all/20210712085544.2828-1-thunder.leizhen@huawei.com/
->
-> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
+> RTL8851BU.
+>=20
+> It seems the only way to implement TX status reporting for rtw89 USB.
+> This will allow handling TX wait skbs and the ones flagged with
+> IEEE80211_TX_CTL_REQ_TX_STATUS correctly.
+>=20
+> Found by Linux Verification Center (linuxtesting.org).
+>=20
+> Suggested-by: Bitterblue Smith <rtl8821cerfe2@gmail.com>
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 > ---
-> This is my first time working on fb issues. If there are any misunderstandings
-> in my analysis, I would appreciate corrections from the community.
->
->   drivers/video/fbdev/core/fbcon.c  | 11 +++++++++++
->   drivers/video/fbdev/core/modedb.c |  7 +++++++
->   include/linux/fbcon.h             |  2 ++
->   3 files changed, 20 insertions(+)
->
-> diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-> index b062b05f4128..bfbf79d6cd05 100644
-> --- a/drivers/video/fbdev/core/fbcon.c
-> +++ b/drivers/video/fbdev/core/fbcon.c
-> @@ -2803,6 +2803,17 @@ int fbcon_mode_deleted(struct fb_info *info,
->   	return found;
->   }
->   
-> +void fb_display_clean_videomode(struct fb_videomode *m)
-
-Rather fbcon_delete_mode
-
+>  drivers/net/wireless/realtek/rtw89/core.c | 12 +++++++++++-
+>  drivers/net/wireless/realtek/rtw89/core.h |  2 ++
+>  drivers/net/wireless/realtek/rtw89/fw.h   |  5 +++++
+>  drivers/net/wireless/realtek/rtw89/mac.c  | 23 +++++++++++++++++++++++
+>  drivers/net/wireless/realtek/rtw89/mac.h  |  9 +++++++++
+>  drivers/net/wireless/realtek/rtw89/txrx.h |  2 ++
+>  6 files changed, 52 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wire=
+less/realtek/rtw89/core.c
+> index 917b2adede61..d2a559ddfa2e 100644
+> --- a/drivers/net/wireless/realtek/rtw89/core.c
+> +++ b/drivers/net/wireless/realtek/rtw89/core.c
+> @@ -1420,11 +1420,20 @@ static __le32 rtw89_build_txwd_info2_v1(struct rt=
+w89_tx_desc_info *desc_info)
+>         return cpu_to_le32(dword);
+>  }
+>=20
+> +static __le32 rtw89_build_txwd_info3(struct rtw89_tx_desc_info *desc_inf=
+o)
 > +{
-> +	struct fbcon_display *p;
+> +       bool rpt_en =3D desc_info->report;
+> +       u32 dword =3D FIELD_PREP(RTW89_TXWD_INFO3_SPE_RPT, rpt_en);
+
+just:
+	      u32 dword =3D FIELD_PREP(RTW89_TXWD_INFO3_SPE_RPT, desc_info->report=
+);
+
 > +
-> +	for (int i = first_fb_vc; i <= last_fb_vc; i++) {
-
-I think this code also needs to test the fb_info, or it might clear 
-another display's mode. See [3] for an example
-
-[3] 
-https://elixir.bootlin.com/linux/v6.16.8/source/drivers/video/fbdev/core/fbcon.c#L2786
-
-> +		p = &fb_display[i];
-> +		if (p->mode == m)
-> +			p->mode = NULL;
-> +	}
+> +       return cpu_to_le32(dword);
 > +}
 > +
->   #ifdef CONFIG_VT_HW_CONSOLE_BINDING
->   static void fbcon_unbind(void)
->   {
-> diff --git a/drivers/video/fbdev/core/modedb.c b/drivers/video/fbdev/core/modedb.c
-> index 53a610948c4a..5a0ee96ebefa 100644
-> --- a/drivers/video/fbdev/core/modedb.c
-> +++ b/drivers/video/fbdev/core/modedb.c
-> @@ -16,6 +16,7 @@
->   #include <linux/slab.h>
->   #include <linux/fb.h>
->   #include <linux/kernel.h>
-> +#include <linux/fbcon.h>
->   
->   #undef DEBUG
->   
-> @@ -1100,6 +1101,7 @@ void fb_delete_videomode(const struct fb_videomode *mode,
->   		modelist = list_entry(pos, struct fb_modelist, list);
->   		m = &modelist->mode;
->   		if (fb_mode_is_equal(m, mode)) {
-> +			fb_display_clean_videomode(m);
+>  static __le32 rtw89_build_txwd_info4(struct rtw89_tx_desc_info *desc_inf=
+o)
+>  {
+>         bool rts_en =3D !desc_info->is_bmc;
+>         u32 dword =3D FIELD_PREP(RTW89_TXWD_INFO4_RTS_EN, rts_en) |
+> -                   FIELD_PREP(RTW89_TXWD_INFO4_HW_RTS_EN, 1);
+> +                   FIELD_PREP(RTW89_TXWD_INFO4_HW_RTS_EN, 1) |
+> +                   FIELD_PREP(RTW89_TXWD_INFO4_SW_DEFINE, desc_info->sn)=
+;
+>=20
+>         return cpu_to_le32(dword);
+>  }
+> @@ -1447,6 +1456,7 @@ void rtw89_core_fill_txdesc(struct rtw89_dev *rtwde=
+v,
+>         txwd_info->dword0 =3D rtw89_build_txwd_info0(desc_info);
+>         txwd_info->dword1 =3D rtw89_build_txwd_info1(desc_info);
+>         txwd_info->dword2 =3D rtw89_build_txwd_info2(desc_info);
+> +       txwd_info->dword3 =3D rtw89_build_txwd_info3(desc_info);
+>         txwd_info->dword4 =3D rtw89_build_txwd_info4(desc_info);
+>=20
+>  }
+> diff --git a/drivers/net/wireless/realtek/rtw89/core.h b/drivers/net/wire=
+less/realtek/rtw89/core.h
+> index 928c8c84c964..2362724323a9 100644
+> --- a/drivers/net/wireless/realtek/rtw89/core.h
+> +++ b/drivers/net/wireless/realtek/rtw89/core.h
+> @@ -1167,6 +1167,8 @@ struct rtw89_tx_desc_info {
+>         u8 ampdu_density;
+>         u8 ampdu_num;
+>         bool sec_en;
+> +       bool report;
+> +       u8 sn;
 
-There's only one caller of fb_delete_videomode(). I think this call 
-should be right before fb_delete_videomode().
+Since you limit this to 4 bits by:
+   tx_req->desc_info.sn =3D atomic_inc_return(&rtwdev->sn) & 0xF;
 
->   			list_del(pos);
->   			kfree(pos);
->   		}
-> @@ -1113,8 +1115,13 @@ void fb_delete_videomode(const struct fb_videomode *mode,
->   void fb_destroy_modelist(struct list_head *head)
->   {
->   	struct list_head *pos, *n;
-> +	struct fb_modelist *modelist;
-> +	struct fb_videomode *m;
->   
->   	list_for_each_safe(pos, n, head) {
-> +		modelist = list_entry(pos, struct fb_modelist, list);
-> +		m = &modelist->mode;
-> +		fb_display_clean_videomode(m);
+How about just 'u8 sn: 4' here?
 
-Same here: I think fb_destroy_modelist() should only release the mode. 
-Clearing the fbcon mode should be done by the caller.
+>         u8 addr_info_nr;
+>         u8 sec_keyid;
+>         u8 sec_type;
+> diff --git a/drivers/net/wireless/realtek/rtw89/fw.h b/drivers/net/wirele=
+ss/realtek/rtw89/fw.h
+> index ddebf7972068..f196088a8316 100644
+> --- a/drivers/net/wireless/realtek/rtw89/fw.h
+> +++ b/drivers/net/wireless/realtek/rtw89/fw.h
+> @@ -3747,6 +3747,11 @@ struct rtw89_c2h_scanofld {
+>  #define RTW89_GET_MAC_C2H_MCC_REQ_ACK_H2C_FUNC(c2h) \
+>         le32_get_bits(*((const __le32 *)(c2h) + 2), GENMASK(15, 8))
+>=20
+> +#define RTW89_GET_MAC_C2H_TX_RPT_TX_STATE(c2h) \
+> +       le32_get_bits(*((const __le32 *)(c2h) + 2), GENMASK(7, 6))
+> +#define RTW89_GET_MAC_C2H_TX_RPT_SW_DEFINE(c2h) \
+> +       le32_get_bits(*((const __le32 *)(c2h) + 2), GENMASK(12, 8))
+> +
 
-Best regards
-Thomas
+This is old style we don't prefer now.
 
->   		list_del(pos);
->   		kfree(pos);
->   	}
-> diff --git a/include/linux/fbcon.h b/include/linux/fbcon.h
-> index 81f0e698acbf..2b5e93aeaaff 100644
-> --- a/include/linux/fbcon.h
-> +++ b/include/linux/fbcon.h
-> @@ -18,6 +18,7 @@ void fbcon_suspended(struct fb_info *info);
->   void fbcon_resumed(struct fb_info *info);
->   int fbcon_mode_deleted(struct fb_info *info,
->   		       struct fb_videomode *mode);
-> +void fb_display_clean_videomode(struct fb_videomode *m);
->   void fbcon_new_modelist(struct fb_info *info);
->   void fbcon_get_requirement(struct fb_info *info,
->   			   struct fb_blit_caps *caps);
-> @@ -38,6 +39,7 @@ static inline void fbcon_suspended(struct fb_info *info) {}
->   static inline void fbcon_resumed(struct fb_info *info) {}
->   static inline int fbcon_mode_deleted(struct fb_info *info,
->   				     struct fb_videomode *mode) { return 0; }
-> +static inline void fb_display_clean_videomode(struct fb_videomode *m) {}
->   static inline void fbcon_new_modelist(struct fb_info *info) {}
->   static inline void fbcon_get_requirement(struct fb_info *info,
->   					 struct fb_blit_caps *caps) {}
+Please define a struct and masks, and the consumer use le32_get_bits() to
+get the values. See rtw89_fw_c2h_parse_attr() for example.
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+>  struct rtw89_mac_mcc_tsf_rpt {
+>         u32 macid_x;
+>         u32 macid_y;
+> diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wirel=
+ess/realtek/rtw89/mac.c
+> index fd11b8fb3c89..01afdcd5f36c 100644
+> --- a/drivers/net/wireless/realtek/rtw89/mac.c
+> +++ b/drivers/net/wireless/realtek/rtw89/mac.c
+> @@ -5457,6 +5457,17 @@ rtw89_mac_c2h_mcc_status_rpt(struct rtw89_dev *rtw=
+dev, struct sk_buff *c2h, u32
+>         rtw89_complete_cond(&rtwdev->mcc.wait, cond, &data);
+>  }
+>=20
+> +static void
+> +rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32 =
+len)
+> +{
+> +       u8 sw_define =3D RTW89_GET_MAC_C2H_TX_RPT_SW_DEFINE(c2h->data);
+> +       u8 tx_status =3D RTW89_GET_MAC_C2H_TX_RPT_TX_STATE(c2h->data);
+> +
+> +       rtw89_debug(rtwdev, RTW89_DBG_TXRX,
+> +                   "C2H TX RPT: sn %d, tx_status %d\n",
+> +                   sw_define, tx_status);
+> +}
+> +
+>  static void
+>  rtw89_mac_c2h_mrc_tsf_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h,=
+ u32 len)
+>  {
+> @@ -5691,6 +5702,12 @@ void (* const rtw89_mac_c2h_mcc_handler[])(struct =
+rtw89_dev *rtwdev,
+>         [RTW89_MAC_C2H_FUNC_MCC_STATUS_RPT] =3D rtw89_mac_c2h_mcc_status_=
+rpt,
+>  };
+>=20
+> +static
+> +void (* const rtw89_mac_c2h_misc_handler[])(struct rtw89_dev *rtwdev,
+> +                                           struct sk_buff *c2h, u32 len)=
+ =3D {
+> +       [RTW89_MAC_C2H_FUNC_TX_REPORT] =3D rtw89_mac_c2h_tx_rpt,
+> +};
+> +
+
+RTW89_MAC_C2H_FUNC_TX_REPORT is 1, so the size of rtw89_mac_c2h_misc_handle=
+r[] is 2.
+
+But, below you check ' if (func < NUM_OF_RTW89_MAC_C2H_FUNC_MISC)', where
+NUM_OF_RTW89_MAC_C2H_FUNC_MISC is 5.=20
+
+I prefer just defining used enum. Remove RTW89_MAC_C2H_FUNC_WPS_RPT and=20
+RTW89_MAC_C2H_FUNC_BF_SENS_FEEDBACK.
+
+
+>  static
+>  void (* const rtw89_mac_c2h_mlo_handler[])(struct rtw89_dev *rtwdev,
+>                                            struct sk_buff *c2h, u32 len) =
+=3D {
+> @@ -5777,6 +5794,8 @@ bool rtw89_mac_c2h_chk_atomic(struct rtw89_dev *rtw=
+dev, struct sk_buff *c2h,
+>                 }
+>         case RTW89_MAC_C2H_CLASS_MCC:
+>                 return true;
+> +       case RTW89_MAC_C2H_CLASS_MISC:
+> +               return true;
+>         case RTW89_MAC_C2H_CLASS_MLO:
+>                 return true;
+>         case RTW89_MAC_C2H_CLASS_MRC:
+> @@ -5812,6 +5831,10 @@ void rtw89_mac_c2h_handle(struct rtw89_dev *rtwdev=
+, struct sk_buff *skb,
+>                 if (func < NUM_OF_RTW89_MAC_C2H_FUNC_MCC)
+>                         handler =3D rtw89_mac_c2h_mcc_handler[func];
+>                 break;
+> +       case RTW89_MAC_C2H_CLASS_MISC:
+> +               if (func < NUM_OF_RTW89_MAC_C2H_FUNC_MISC)
+> +                       handler =3D rtw89_mac_c2h_misc_handler[func];
+> +               break;
+>         case RTW89_MAC_C2H_CLASS_MLO:
+>                 if (func < NUM_OF_RTW89_MAC_C2H_FUNC_MLO)
+>                         handler =3D rtw89_mac_c2h_mlo_handler[func];
+> diff --git a/drivers/net/wireless/realtek/rtw89/mac.h b/drivers/net/wirel=
+ess/realtek/rtw89/mac.h
+> index 25fe5e5c8a97..632b85aed032 100644
+> --- a/drivers/net/wireless/realtek/rtw89/mac.h
+> +++ b/drivers/net/wireless/realtek/rtw89/mac.h
+> @@ -432,6 +432,14 @@ enum rtw89_mac_c2h_mcc_func {
+>         NUM_OF_RTW89_MAC_C2H_FUNC_MCC,
+>  };
+>=20
+> +enum rtw89_mac_c2h_misc_func {
+> +       RTW89_MAC_C2H_FUNC_WPS_RPT,
+> +       RTW89_MAC_C2H_FUNC_TX_REPORT,
+> +       RTW89_MAC_C2H_FUNC_BF_SENS_FEEDBACK =3D 0x4,
+> +
+> +       NUM_OF_RTW89_MAC_C2H_FUNC_MISC,
+> +};
+> +
+>  enum rtw89_mac_c2h_mlo_func {
+>         RTW89_MAC_C2H_FUNC_MLO_GET_TBL                  =3D 0x0,
+>         RTW89_MAC_C2H_FUNC_MLO_EMLSR_TRANS_DONE         =3D 0x1,
+> @@ -470,6 +478,7 @@ enum rtw89_mac_c2h_class {
+>         RTW89_MAC_C2H_CLASS_WOW =3D 0x3,
+>         RTW89_MAC_C2H_CLASS_MCC =3D 0x4,
+>         RTW89_MAC_C2H_CLASS_FWDBG =3D 0x5,
+> +       RTW89_MAC_C2H_CLASS_MISC =3D 0x9,
+>         RTW89_MAC_C2H_CLASS_MLO =3D 0xc,
+>         RTW89_MAC_C2H_CLASS_MRC =3D 0xe,
+>         RTW89_MAC_C2H_CLASS_AP =3D 0x18,
+> diff --git a/drivers/net/wireless/realtek/rtw89/txrx.h b/drivers/net/wire=
+less/realtek/rtw89/txrx.h
+> index 984c9fdbb018..d7259e6d798e 100644
+> --- a/drivers/net/wireless/realtek/rtw89/txrx.h
+> +++ b/drivers/net/wireless/realtek/rtw89/txrx.h
+> @@ -139,8 +139,10 @@ static inline u8 rtw89_get_data_nss(struct rtw89_dev=
+ *rtwdev, u16 hw_rate)
+>  #define RTW89_TXWD_INFO2_SEC_CAM_IDX GENMASK(7, 0)
+>=20
+>  /* TX WD INFO DWORD 3 */
+> +#define RTW89_TXWD_INFO3_SPE_RPT BIT(10)
+>=20
+>  /* TX WD INFO DWORD 4 */
+> +#define RTW89_TXWD_INFO4_SW_DEFINE GENMASK(3, 0)
+>  #define RTW89_TXWD_INFO4_RTS_EN BIT(27)
+>  #define RTW89_TXWD_INFO4_HW_RTS_EN BIT(31)
+
+We also have rtw89_core_fill_txdesc_v1() and rtw89_core_fill_txdesc_v2().
+If you have looked up the fields already, we can define them by this patch.
 
 
 
