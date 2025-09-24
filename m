@@ -1,104 +1,131 @@
-Return-Path: <linux-kernel+bounces-830115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C809B98C10
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:08:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F37B98C02
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15B544C3843
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:08:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 825F618950CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77A52836BD;
-	Wed, 24 Sep 2025 08:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D972A280331;
+	Wed, 24 Sep 2025 08:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnp4wJ7o"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="31Omeb15";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n9aMu2nr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D03D28136C
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E2D44C63;
+	Wed, 24 Sep 2025 08:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758701270; cv=none; b=F14Uze44ECqKdrDDaUaAd2w2nAFGF3TJCo1R0I6gipBkaHfcmLky3EVaZV7PM0nsTgn7EIkbY8YqlLkw/dauzRxUwjcXFsb+r2cI5z0QmPUtzXujYHv3NHwkmoXkblyFwzo/E8+VEJLB+lzcjNPadfyFo9NC5GzKOVIlYKLiUjc=
+	t=1758701266; cv=none; b=hsw4IzJrTARJ9trTGUqxU8Qao+JVlCMVkeiHqC3NSAKWR1iHr3HNMHVUD+6MhhVLSZC6AgEHFnGGlIQjoNgyTKb6juOqgnHu+ATr/ufn1jV7Q8G++EBDr7vPcWCAy6AgpkmOIDLeG6TrYU8ZKTdohWL+3O/923CTmjlCiOiryuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758701270; c=relaxed/simple;
-	bh=CPJFhlS86lHjQ8Ti2XaTHsWA+1yz9pSmmfGw3hKwYcE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I+Ho4NIGVSidJQPKpx1nhTUoRA/tH1qNUVOflZVOP7CGWlm/l6O31cTJsmko9dFGR5OyHkF+LuGXMnlGOHO8E8+v1BUTRdrsfLtvF7Kp+wDld5XDVUi8LVkc6h9ktFh7az4Ltt45MNUm5Q73elRW4b0HFuoYg16EQLw83p4xKnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fnp4wJ7o; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb7322da8so1172664566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:07:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758701267; x=1759306067; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CPJFhlS86lHjQ8Ti2XaTHsWA+1yz9pSmmfGw3hKwYcE=;
-        b=fnp4wJ7opiJX1+q2nsrQptUKXzAnZRKZg4g8saYB/aUadbuHQV18LvkD45Krh3hDRz
-         kz+GDpHiyI0VBc+MayLeOnRzjJ7IXYB6Pod2t8XJkOtQfa9qg82Z2JuP+RfPfnf/AiRV
-         grH3iZPSRT4EEfNc8/2MZhihK9H/SqM+FC/R1IItW4+i38QU0Ct0Gmkd+ODtRhocuQHz
-         ZnK2BRTNDWnEhz+2Hj7LX2agSpMjUgO3tvjUwCRCB9eO4huo5J4iqtcQ7Tz1zMHr9lUP
-         1bIGafWHzsGQ39i6FuQDJxluLVIqWk4ws7B/s4sg+kYS1LNgF8vrYmfpLCRCUTj6H+Au
-         +Rnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758701267; x=1759306067;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CPJFhlS86lHjQ8Ti2XaTHsWA+1yz9pSmmfGw3hKwYcE=;
-        b=VitvofD5tu3nvpKdViEJ1CC/VZsfIcZ01lmnKjIyShV94QkpAYi6fP8KoFxclaxsvy
-         AZLYYqxn0gVuyyyelMRuxcjDRQFjuoJSPp5OX4ZC+9h4MXR3rdvbT697sUouxkJmQjcV
-         b87qOSOPtB4oZt8BxCHxcfy9/O1XlAT7TUu0RD/nnuJRpQ04IS4uW2BqlYdpQONIIoHh
-         WmqdxAUuXal3OWmvWcMShavs+nPCPnWq7XmJksvFkIcH7t06q65PvIOkmnw31iYPza95
-         PgldV8q1TAg92StUVkHjhwVSd5ASmL5R7+FT6NdzK4zQQ9LzpgAt0wftYxBz0luXKIqO
-         IUFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYN8zr10cEPlecR/73Wpe60tTWhTw3lN+6wviPsWLB/kfDC1iLyKVsWcKl5Fj9sH/zoOizhbvfx9H6UUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk9WQDN+Ef6UI9ykWbqQlFbf0QmoWUK71ynSjs7X26AUhJVnsP
-	9jcB/gJN3qfiKO/tKzQDxL4sdGbTtEvUe1wxYsQA83tVy5mlg7uM0c9wBb0MSkJaQ9uYrl7MuKs
-	FGF/6tk2/r/EIFV0p4F6m0vJbznvvL+s=
-X-Gm-Gg: ASbGnctKCfmvWq0fjRhRa5VpdFZ5n4eL2WcdXZvoUffOWuBz52pH0cKbcvH0sOc+PYv
-	qaED3gsKyufDoYa4VvcEeOol0Jah5+yIxQRrlZlpWnlTnEsXcVA0+0DNWtMkPSutccYrr3F/quw
-	54Wv07N3C3fGsJ6sk7kyQ09UF8XpE7uXTtTg/ySgJrcPcT5lpxXS5IUk/LlsKYvyk1I8OYwWRki
-	Kh2xxBA6yy8bewLQDzHtCbcEfbpEoPhEGkHd/HJZwJcST2Hzqirjg==
-X-Google-Smtp-Source: AGHT+IFWa4lkAHwf/4SArdm61wLTC4F7gQbf86GEjLZLwo2VefWv8FFXmP8OkTgdIk6qtNPTw6EZddqMonym0lxMhp0=
-X-Received: by 2002:a17:907:26c4:b0:b2b:a56f:541a with SMTP id
- a640c23a62f3a-b3027260835mr530198366b.7.1758701266609; Wed, 24 Sep 2025
- 01:07:46 -0700 (PDT)
+	s=arc-20240116; t=1758701266; c=relaxed/simple;
+	bh=QgLVMteIPJ+pMUDeTmzYpa0Om88x4SzL6ygbBAQMfig=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=Df5c11VGFLTUyE2PZuFOLwh0Ghy5w2sC4ERpH5geAsRV+3ofUqKfuWcjMouJUz+ctjJGz4TJXswO+o15SsIyE0REumaiiWTopvZ+ysgsI9EgYcSyjfflaZo68Dorz9sVwqYmsyHokTbaxlXS5ZVQs3g+aPmHZfwBijTIgIbbRck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=31Omeb15; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n9aMu2nr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 24 Sep 2025 10:07:36 +0200 (GMT+02:00)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758701262;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QgLVMteIPJ+pMUDeTmzYpa0Om88x4SzL6ygbBAQMfig=;
+	b=31Omeb15YqChHkBBrePL7NG3JD983FRx11Q5uWT/69RIupuUYdoTYmGARAlJia6NlrrGQN
+	5bccvQRhu9NcTZtmvjlgyrvdEj5A1CDs8zthnojoVFXb7nQgs5SpXbO8rV9L4e+rwnpaCO
+	ua2jL9ZurCRzeQvEx0XtMCN7QuKSfAfEmHL2Y+sW7stPznDDzQHvTqbRTdGYko3+/T12ye
+	j1+Ro5mKKD/7GFoBxJzLa4UvxffzbMiluz2XiPl0kMDb4Rznzr4zg9+LVFIMxv9nAN+P3+
+	XSkEVbGVGFCipqBlQpFNsRbuwLO+4Us4XFeGg8YiuoKCqT4LwQxWTqtgvVs2Lw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758701262;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QgLVMteIPJ+pMUDeTmzYpa0Om88x4SzL6ygbBAQMfig=;
+	b=n9aMu2nrfU7/A2LOU0ndnoE+3K8jSV2X1C4MQa1OTm1DcYDn9hSt6n0FuxlpuJtK/TUJKn
+	tCL0hbarV8eUGJBg==
+From: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Nick Alcock <nick.alcock@oracle.com>,
+	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
+	Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-s390@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>
+Message-ID: <bea9cc5c-7fc6-4c87-ab78-8232b2bee4dc@linutronix.de>
+In-Reply-To: <60a0af09cc1a5de3b33b9606ed07ae91b42c5432.camel@physik.fu-berlin.de>
+References: <20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de> <9a122c6cf3e2e0e61a62b0512eb97804acebeee9.camel@physik.fu-berlin.de> <48fd164e-959b-4263-b3c7-cef5771aa40a@linutronix.de> <60a0af09cc1a5de3b33b9606ed07ae91b42c5432.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v3 00/36] sparc64: vdso: Switch to the generic vDSO
+ library
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923022205.9075-1-viswanathiyyappan@gmail.com> <20250923164916.5b8c7c28@kernel.org>
-In-Reply-To: <20250923164916.5b8c7c28@kernel.org>
-From: viswanath <viswanathiyyappan@gmail.com>
-Date: Wed, 24 Sep 2025 13:37:33 +0530
-X-Gm-Features: AS18NWCT-FjALMCOah9bf_auRuFbM1Q3yx9_Iw8e7RGCWur-FeBhqSVRINH2d0w
-Message-ID: <CAPrAcgOzf4XYGA8X6TneRrmVwYVYgF=KvnpmRbT6XA+D9HR6jQ@mail.gmail.com>
-Subject: Re: [PATCH net] net: usb: remove rtl8150 driver
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: petkan@nucleusys.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, pabeni@redhat.com, linux-usb@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
-	david.hunter.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <bea9cc5c-7fc6-4c87-ab78-8232b2bee4dc@linutronix.de>
 
-On Wed, 24 Sept 2025 at 05:19, Jakub Kicinski <kuba@kernel.org> wrote:
+Sep 24, 2025 09:40:47 John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.=
+de>:
 
-> Thanks for sending this one.
-> Based on Michal's reply I guess we need to wait a bit longer.
+> Hi Thomas,
+>
+> On Sat, 2025-09-20 at 16:37 +0200, Thomas Wei=C3=9Fschuh wrote:
+>>> Could you share a version of the series based on top of 6.17.0-rcN for
+>>> testing purposes? I would like to test the series on a Sun Netra 240
+>>> which is based on the UltraSPARC IIIi.
+>>
+>> Here is the git branch based on rc4:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/thomas.weissschuh/linux.=
+git/log/?h=3Db4/vdso-sparc64-generic-2
+>>
+>> Does that work for you?
+>
+> I'm getting merge conflicts with "vdso/datastore: Allocate data pages dyn=
+amically" and
+> "vdso/datapage: Remove inclusion of gettimeofday.h".
+>
+> Can these be skipped?
 
-Sorry, this version breaks the build.
+No, these are important.
 
-I will submit a v2 that removes the driver properly
+What are you trying to merge?
+I can probably give you a merge.
 
-I hope we won't need to apply it.
 
-Thanks
-Viswanath
+Thomas
 
