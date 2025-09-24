@@ -1,124 +1,123 @@
-Return-Path: <linux-kernel+bounces-830177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89793B98F9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:51:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10741B98F91
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4072E2BE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:51:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3A0E7A92B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193752BE7D9;
-	Wed, 24 Sep 2025 08:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101BE2C0261;
+	Wed, 24 Sep 2025 08:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="F9Bz0c58"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z1GLPm6/"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2562BDC32;
-	Wed, 24 Sep 2025 08:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00DA3FC2;
+	Wed, 24 Sep 2025 08:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758703829; cv=none; b=TXzej9DWmT6OjylElaHNL5xxiZje8QhPvVgGIhZlP6cc+af7lh8iIhCVMSWnYt49kUo5csMvJ4fcKib5Ul7o0v7TgAQl8/j1w+DcZIQChVegDgkfmc8Qy0zUF8MjmzuG9sfBJJvS4W8LXtrgP9EtavpAozMPMvDEK5PcN7yqk30=
+	t=1758703805; cv=none; b=OSSbigFISlwyPwDWpITpfbT+HhcefX1d24gMotkmM2arTS76S6tg+XDtyd/AnC30I87otlE6JDX2UYkSToHde5RTyruLJwd42RyCzSHQqsGkee2pwwCBKc1+oPT2/HPKUyVszwJlAgMMFqAzYVOzaG/u+RMF6xG4xNAGiEiNMTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758703829; c=relaxed/simple;
-	bh=ZbVBS6NLG27rMFDjFvUQ2Kdc8oZwxYtjwgxlVPyJ3E4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QgPDrMzFjFMfE4ceWRTIL+MhSXgxKTiga1a+fr8akuOo4vc8RJIK4L6YgHsPJldidIJe5whtXBEIGgFyXJINNsYvEx5rkEjiSRonnGTfiu+vYJZRXShu3VL6Qci5kK7ULOM4TsoR3ng00qeZ7+Em6kHk11rgtS/+pgmV9g64ygk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=F9Bz0c58; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58O8ns7433418274, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1758703794; bh=yf5hOenGknaU/uDU0whNjq4J3btNq4aBRtTsPFX4uUU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=F9Bz0c58o++VOSoppckg1shYQQAPiAlusN+X4r4QH/tmvw+lm8CkY4SQSppwCRPBF
-	 TCIsVVcy5coc0RUIwHvQkK7EkHsMITb+gdWrKCGz0pxg/1wEvufrmC7pJVQWJYg4FF
-	 eUlx73nBZvGfC3oR4zj14vWHTXnQemkyBs+hNVkyZ3d+POcB7XjNE8iRQXJcXl0Q3B
-	 FvsLLoA0QbxJWcONBWY2Z3rcEm3R3rwqFgMu5/NbYlK9ZrM9j4MsVmL1Mnj1HZa4RH
-	 FinRAs5VmCMBQXwPu0euOAtUyjMDh9K9+aotViQinjGKqFpclnSKSpI7KNmPaaCdAw
-	 Ro9HzNcggwDSQ==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58O8ns7433418274
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Sep 2025 16:49:54 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Wed, 24 Sep 2025 16:49:54 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
- 15.02.1544.027; Wed, 24 Sep 2025 16:49:54 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Fedor Pchelkin <pchelkin@ispras.ru>,
-        Bitterblue Smith
-	<rtl8821cerfe2@gmail.com>
-CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
-        Bernie Huang
-	<phhuang@realtek.com>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>
-Subject: RE: [PATCH rtw-next 1/6] wifi: rtw89: usb: fix leak in rtw89_usb_rx_handler()
-Thread-Topic: [PATCH rtw-next 1/6] wifi: rtw89: usb: fix leak in
- rtw89_usb_rx_handler()
-Thread-Index: AQHcKjJZ7gG/V4UORkyKDEREHbQ2dbSiCanA
-Date: Wed, 24 Sep 2025 08:49:54 +0000
-Message-ID: <1078ec2bdac24744925d24da9522d8d1@realtek.com>
-References: <20250920132614.277719-1-pchelkin@ispras.ru>
- <20250920132614.277719-2-pchelkin@ispras.ru>
-In-Reply-To: <20250920132614.277719-2-pchelkin@ispras.ru>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1758703805; c=relaxed/simple;
+	bh=bsmLWcYiAHZSyPjSOOw20xT5FXztSFu/4czDjVsvnA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fWFFnPcmSPlkKPzSyQ87itjNY5MbL14Ci2ZK0nimJkDtWaFaJaSaOtI/PQTT+vHQ3fFdCGCNnoG5R3FJtLg3ZYJsgieshJtjm0AVAyhvP0RjxGdj7/sHnnE4AWU41Fw5iPBp5Uk9hSSFV+bj6RRD2R8jCdkf2eUpYgilkIoKbDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z1GLPm6/; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=YS3z9Qyy+VZhDj43nkM+N+IZO/NYQl/mTzdy8B5TYcc=; b=Z1GLPm6/kKUoa5+mZe7N7JmnsK
+	6YbQyPdGjfab1Ji6MNZJQyKARUHxHVNgIS7M40pg2PnGmA2lj1nCCTo+WeqbBXUl5qVpiBOapihWi
+	TQ39gnRKqEfgdlqGSB0i5YKrOxMA8yGarbb7kh966GAezqUrbo3+9LYFLZTXqczqNmqxFCMZnBv9y
+	yVzAklEAqWnYmu5uA2MlFrbMQsqtOTK7Vnm0y/sFEHYEJRCPy90qEL7w++s2mi8npBROjIN3ZBZQb
+	u0lI+VWktW8+qGPuSVXVOOjGO+GWuPyDwTEddVb79dwNyaO68Wt/BTrvrgGwO873fqGe454H6+Uoz
+	K5GDKzOg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v1LCH-0000000CGzY-3vgC;
+	Wed, 24 Sep 2025 08:49:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BD6EF30033D; Wed, 24 Sep 2025 10:49:56 +0200 (CEST)
+Date: Wed, 24 Sep 2025 10:49:56 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCHv4 bpf-next 2/6] uprobe: Do not emulate/sstep original
+ instruction when ip is changed
+Message-ID: <20250924084956.GW3245006@noisy.programming.kicks-ass.net>
+References: <20250916215301.664963-1-jolsa@kernel.org>
+ <20250916215301.664963-3-jolsa@kernel.org>
+ <CAEf4BzYTJcq=Kk6W9Gz90gM=mw2fS2T-QBurUhdjBNinReDSjQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzYTJcq=Kk6W9Gz90gM=mw2fS2T-QBurUhdjBNinReDSjQ@mail.gmail.com>
 
-Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> Free allocated skb on the error handling path.
->=20
-> Found by Linux Verification Center (linuxtesting.org).
->=20
-> Fixes: 2135c28be6a8 ("wifi: rtw89: Add usb.{c,h}")
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
-> ---
->  drivers/net/wireless/realtek/rtw89/usb.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/net/wireless/realtek/rtw89/usb.c b/drivers/net/wirel=
-ess/realtek/rtw89/usb.c
-> index 6cf89aee252e..3435599f4740 100644
-> --- a/drivers/net/wireless/realtek/rtw89/usb.c
-> +++ b/drivers/net/wireless/realtek/rtw89/usb.c
-> @@ -422,6 +422,7 @@ static void rtw89_usb_rx_handler(struct work_struct *=
-work)
->                         rtw89_debug(rtwdev, RTW89_DBG_HCI,
->                                     "failed to allocate RX skb of size %u=
-\n",
->                                     desc_info.pkt_size);
-> +                       dev_kfree_skb_any(rx_skb);
->                         continue;
->                 }
+On Tue, Sep 16, 2025 at 03:28:52PM -0700, Andrii Nakryiko wrote:
+> On Tue, Sep 16, 2025 at 2:53 PM Jiri Olsa <jolsa@kernel.org> wrote:
+> >
+> > If uprobe handler changes instruction pointer we still execute single
+> > step) or emulate the original instruction and increment the (new) ip
+> > with its length.
+> >
+> > This makes the new instruction pointer bogus and application will
+> > likely crash on illegal instruction execution.
+> >
+> > If user decided to take execution elsewhere, it makes little sense
+> > to execute the original instruction, so let's skip it.
+> >
+> > Acked-by: Oleg Nesterov <oleg@redhat.com>
+> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  kernel/events/uprobes.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > index 7ca1940607bd..2b32c32bcb77 100644
+> > --- a/kernel/events/uprobes.c
+> > +++ b/kernel/events/uprobes.c
+> > @@ -2741,6 +2741,13 @@ static void handle_swbp(struct pt_regs *regs)
+> >
+> >         handler_chain(uprobe, regs);
+> >
+> > +       /*
+> > +        * If user decided to take execution elsewhere, it makes little sense
+> > +        * to execute the original instruction, so let's skip it.
+> > +        */
+> > +       if (instruction_pointer(regs) != bp_vaddr)
+> > +               goto out;
+> > +
+> 
+> Peter, Ingo,
+> 
+> Are you guys ok with us routing this through the bpf-next tree? We'll
+> have a tiny conflict because in perf/core branch there is
+> arch_uprobe_optimize() call added after handler_chain(), so git merge
+> will be a bit confused, probably. But it should be trivially
+> resolvable.
 
-I feel we should goto free_or_reuse like below:
-
-free_or_reuse:
-		if (skb_queue_len(&rtwusb->rx_free_queue) >=3D RTW89_USB_RX_SKB_NUM)
-			dev_kfree_skb_any(rx_skb);
-		else
-			skb_queue_tail(&rtwusb->rx_free_queue, rx_skb);
-
-If just free skb, rtwusb->rx_free_queue might be starved.
-
+Nah, I suppose that'll be fine. Thanks!
 
