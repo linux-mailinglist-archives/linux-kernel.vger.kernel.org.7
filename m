@@ -1,253 +1,293 @@
-Return-Path: <linux-kernel+bounces-831070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64289B9B6CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:21:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 917DAB9B6D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF892188E971
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:21:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FF84164007
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E18238C23;
-	Wed, 24 Sep 2025 18:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A24331A555;
+	Wed, 24 Sep 2025 18:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d4NG1V3j"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=LIVE.CA header.i=@LIVE.CA header.b="A54DVHpV"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azolkn19012009.outbound.protection.outlook.com [52.103.23.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B31C28F4
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758737758; cv=none; b=mq2x8pILhkgNEA6o+fMWz9ue3AG7tZ9XCjM8TImBsHa+uPgPiq8pYGLwu85uZD5s/Lc8i0cyXdnIN+DbgN2w/Z2QJqy8VQ1i2U9d8/pEWhyIKqoZe31qcN0OKMAyrgBEYbnZDvYB4+K7FLrTvHMpcOxw7A07vOYXorfCpkquV68=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758737758; c=relaxed/simple;
-	bh=pgqs5Ay6DVcSrnEvPattj0BDmX7YbOgW6e4yaI+T7/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gm6h90ZeQtulg4vr/ayRyhA7T+NeRUpm2FN9NK1FOmNXQK3zjBSEC2EpWvymbygL+vPKu7yg00r7wXOhTfKffgLB2JqPqkZVbzc+L3EiwS1umPc8n62mpCxmuS3k079418BijG8Yx37iWd+cnvDzDwuRukbu/Dm2YnPjstEJIds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d4NG1V3j; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758737755;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=D5GCmu/y4XizTk8YGFlDNXswrxzNbODJ9T4sLwRMNCY=;
-	b=d4NG1V3jFD6LorDJGfK0jOblZsBq3aD8RBswyjbsIyZXxaV8UMp1SVd2juhQtvLpNlG613
-	HE+YqmBdAgYtkUX6EBzTb1dSWPorr9gE065Lpb94Dw2BwcLU9ISs5ea+jMF5VeTOdHgDEq
-	XifkBY7bIdwLfvJ3XI2AiuB6A70ZXv0=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-146-01m_fzT1MuSBJnglIwLMLA-1; Wed, 24 Sep 2025 14:15:54 -0400
-X-MC-Unique: 01m_fzT1MuSBJnglIwLMLA-1
-X-Mimecast-MFC-AGG-ID: 01m_fzT1MuSBJnglIwLMLA_1758737753
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3f4fbdf144dso95227f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:15:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758737753; x=1759342553;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D5GCmu/y4XizTk8YGFlDNXswrxzNbODJ9T4sLwRMNCY=;
-        b=LhBOWTdmUZ+d4+UfCHsCYI5+vwzctBCxeHA26JZ+Eari6QrRwYtSQ71J1XKCsdmiCg
-         TD4LHQnQtznsckZB6C5PZNpPfJuLoeL/5bu4PSuYhKb02y9bN1j+EuPofrpnoahbkN3h
-         xtIlKmynxPyjV91F1PdR/4g3LT2d4BppYYiZii8xszB8JHJSJ8L0p3Xh1CJhGqCCZZfV
-         icBjyTOGZ5ZYJ/uMx10kKxmQrIG9sF/ZIJEYaRYrvVvo3wbJvNbfAlZ/sgTZ1TktxPFf
-         C8LPJwykl8MwV+4uWMtow1ba2L5OI0mMrjq5zg1eY6ErCvuMyLgtzo6ApxdzetBpYYzq
-         RfoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIcvttca3rbF9juAMv8OBbhueuXMFIbjryiqRtTnzdLF5a1BGXnZRwMs1yQIvFYJ1WO3x9w/G8SyR2vuc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH6qto/hFRWC6wNvEgFh5eWyKkWtqbAIqfpiDyN3MjhEClxhMa
-	jw7Vxcv9xjkvQPOPSZRZ4Za4Iubf7HMD0FceXz8DzkqxoOh1V/wRkLpMzTzbVbicAiAhJoE1dOb
-	SwZdELdqHoGbmvMMPFibBZdoY7hUqIpd5EbXevXyqaZ4s/5ADtWCVp2u2VvMgIWsJ7A==
-X-Gm-Gg: ASbGncsc3h2uHoaUmsK5KJS0F2ILx+2tOk4+hme9ChSDcAkO9yI6GRIFU4ff8Udvaf8
-	d8esZm/S2DS0FR8Ti/MW+AyI9Q3iKXMrHfHDBoUvry99GHh+AA91pEb3FonRqS/RfUPAnXd7ACj
-	Kiar1tDM/rrhi+FcC0Gq9w7KjzVW0WM9RZkeynJV0StJ/Gl7lbX2iDDYJfdDLTcTtgi3mrfahrw
-	SnIGfQhSRk9TMvNfKc31NEtd3JvF6FnpcDj7lZmP6DK459NqpQTjAAnZZ+O9MmWpEh8l4QtExAK
-	FMqQPupp9Dbup9fowMCkjB6gUDNiR0jWLlwrAnDaSqDfkaTU7hTouyHmlUcBH7SSqn0UEQI2
-X-Received: by 2002:a05:6000:2284:b0:3ec:b384:322b with SMTP id ffacd0b85a97d-40e4ff19bebmr824909f8f.46.1758737752845;
-        Wed, 24 Sep 2025 11:15:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHMZdDp+BFhDVtrTjfLVZ6x4IdbV8pP5igjFYnLDvyjxlGAktmd1iZfdHRlX9DtqxmZchD6BQ==
-X-Received: by 2002:a05:6000:2284:b0:3ec:b384:322b with SMTP id ffacd0b85a97d-40e4ff19bebmr824888f8f.46.1758737752403;
-        Wed, 24 Sep 2025 11:15:52 -0700 (PDT)
-Received: from [192.168.3.141] (p57a1a5c4.dip0.t-ipconnect.de. [87.161.165.196])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbc7460sm29256281f8f.31.2025.09.24.11.15.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 11:15:51 -0700 (PDT)
-Message-ID: <ec4070bf-f1de-450f-8b8a-2f130226b9da@redhat.com>
-Date: Wed, 24 Sep 2025 20:15:49 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C034D599;
+	Wed, 24 Sep 2025 18:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.23.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758737857; cv=fail; b=gSxttfbCkZl521PKYrCzIOzyL4Jw+zgU20XSFxgupzUmrK9CIXvrAmUznYaWtbuQEH2NMV+i7iw9rLTJli5mjcMT1TkazurzCWs7yN3BJ6/v7N73Y9BgZYJTZE1zwD0PTl1CoTFh1YrZtNX+XXywdo0FbGMPKtmxx+HygoJKbz0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758737857; c=relaxed/simple;
+	bh=eK3KCR/He4bpml8z8KKVilWo55FMHfQjFzqkqKEo+98=;
+	h=Message-ID:Date:To:From:Subject:Content-Type:MIME-Version; b=G5ueElLrz2LPg+tkl0aUVak06CDg2pTCt4rGWFysM+yMei2G3ShDl/+zTfTdAXcKiYgOxvuSFIjKe4afgaf1I8Io6BtLLJCHcxhk4cfVYzGAszA7iF+3y3nAggvnGdxqUHgGThFmF/Ymkgg84cpg/DZOMIVBsUCxl+LIv+lgV4g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.ca; spf=pass smtp.mailfrom=live.ca; dkim=pass (2048-bit key) header.d=LIVE.CA header.i=@LIVE.CA header.b=A54DVHpV; arc=fail smtp.client-ip=52.103.23.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.ca
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=e3xxynbh94+w3HgWv3gKUUYXDj1UVT77eYklb4svyk+4tyqiNcsIH3RxtTCtzB32IkAu4cA5YukvelKZtaV+Rwq69CnNxQh6DN8qON2jKN0Ff1Wo7eBxpkUe8D8b/5eb8qdwkkjQJNRBYhjFIjR+yV5otNHWLYFT/Y0j1CmJ4S2quAXVDFuC9Fl7FvBUQGy/tyXzen9gV1DzocCQxIpAyRRaA7McK6C6FQlVvVbWxKfjIrNjO0sxf7guVaEyT+NRmFyNNtVujxsXn55b7mx2WHgJZwE2bkS6YLmhevlhSI+LG/JQNP2y4kUv6PShlXTV/qCiMPi+Nid5WkbDB0zCAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xBc8104s3GbCtHub8taQptOelnFAmA35IoLt3WFfMfg=;
+ b=tcdwRHd0Yh/Z6ZdfTse7wkLhV601XtBXmHIEjqRKtGhooCbFlHsJoEGl4eUXssaTuKFdPvUkha/4bsFQzd/Chi9UfVxvNRCio7mDsIAlUYkfGL9N15bHqvZGhU/Jgwc+7j7hasFNaVbYlV31KrQSUnKOrGxoHmSG+zIFrPomTcOXWEOLz8Fagptt9hEuAC7vMTnqEdpjR1F0lhoMZWIX1xWzSux1Xak3rsQJISPcUPEe/uoim66xoSPYa7Sv2NCIXM2eepPTAPVT9qN8dk46bYUMu5bcvfkTbXkLiMvgajL4KAJUnDN85DFqwmIRHgv84AzZlhzvDsO8fm5+MwiCOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=LIVE.CA; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xBc8104s3GbCtHub8taQptOelnFAmA35IoLt3WFfMfg=;
+ b=A54DVHpVMJFD9d3dsSNm+mjuZdTYEeW0O+GeZ+YikZ/gQtVjU4yPKxva5xXrGOfwQAnKHantPkWDWYWr+jgd97uSxzYv3eIz84PWHpdESL7iOPNzeYvnw5rxuIISODYkNGbakwiDIacFgaTuWWz/Sg1ajou0z7R4VL0FjDTNY8GXBdx0GlsQcJ85h5d++vwHqtAR4o5s4IauBBaxGmL+hbby9vApIFiVYnlw69RzPEM1dtPgpk4cQYwg140qla4QrZPZw4xPQcUr7o+cnWU4GW5pS+iVRpSgra89KjJj7pqifYGgm96WvtkLd3MwSbeQ+xM6shLi0ROwV24uoMZkOw==
+Received: from MN2PR06MB5598.namprd06.prod.outlook.com (2603:10b6:208:c3::13)
+ by PH0PR06MB7141.namprd06.prod.outlook.com (2603:10b6:510:29::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Wed, 24 Sep
+ 2025 18:17:30 +0000
+Received: from MN2PR06MB5598.namprd06.prod.outlook.com
+ ([fe80::96f9:fd1e:4b7c:17f4]) by MN2PR06MB5598.namprd06.prod.outlook.com
+ ([fe80::96f9:fd1e:4b7c:17f4%4]) with mapi id 15.20.9137.018; Wed, 24 Sep 2025
+ 18:17:30 +0000
+Message-ID:
+ <MN2PR06MB55989CB10E91C8DA00EE868DDC1CA@MN2PR06MB5598.namprd06.prod.outlook.com>
+Date: Wed, 24 Sep 2025 14:17:17 -0400
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Matan Ziv-Av <matan@svgalib.org>, Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+From: Daniel <dany97@live.ca>
+Subject: [PATCH v7] platform/x86: lg-laptop: Fix WMAB call in fan_mode_store()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0100.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cb::14) To MN2PR06MB5598.namprd06.prod.outlook.com
+ (2603:10b6:208:c3::13)
+X-Microsoft-Original-Message-ID:
+ <bf08a7dd-1f36-4af2-a1fd-74edef8759bf@live.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] mm: swap: check for stable address space before
- operating on the VMA
-To: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>,
- Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
- akpm@linux-foundation.org, shikemeng@huaweicloud.com, kasong@tencent.com,
- nphamcs@gmail.com, bhe@redhat.com, baohua@kernel.org, chrisl@kernel.org,
- zhangpeng.00@bytedance.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250924181138.1762750-1-charan.kalla@oss.qualcomm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250924181138.1762750-1-charan.kalla@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR06MB5598:EE_|PH0PR06MB7141:EE_
+X-MS-Office365-Filtering-Correlation-Id: cf0ca0e5-6431-41a4-bddd-08ddfb969f76
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|5072599009|23021999003|41001999006|15080799012|461199028|8060799015|19110799012|5062599005|6090799003|1602099012|4302099013|440099028|40105399003|3412199025|10035399007|3430499032|12091999003|26104999006;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OUt2ajFaZWNiaXczUDRkWmdvSEF4blgrZnUrV3lra21tdm5SSDVSYVpXTUFp?=
+ =?utf-8?B?dnBYdFR1OXY0eGpUbW5yS3VlSWVoNmFqWjliY0FQcEZENmZOeFNwdnBQSVpC?=
+ =?utf-8?B?VkpVNU8xK1A4RlMyaWxwMC9aWVpDUFF6UkFEYUx4OTMyUC9CN2hQdjNzUE1F?=
+ =?utf-8?B?Z1NUb0l0VTVWSzAyWFlUNEVQYnRpV2dXSkQvdFI1UFNzYjZsa2s3U2JPMjFU?=
+ =?utf-8?B?YjdwQXBJR0o3QmNnbFBxRGZsSU1tazJqOGgzcndWY0hsWjF6RUV3SkVlNHV5?=
+ =?utf-8?B?Vmh5L0F0TVowWEFJdHFoYVNqa0NTazMvb1pGcTQreStleXc1VGdnaFdwejF4?=
+ =?utf-8?B?dk80M0lUTUxkdVdQU2FNVldIUlRQcnlBK3hoTTBKSEd5V2U5eW9UYTdBVkIy?=
+ =?utf-8?B?VlduVDU5RU40ZUEzR2pzbjhBMnZZVC9aY2ZVY3lTQ2RHQlhaK0JKRmw1TkNt?=
+ =?utf-8?B?RE4zeXVibDVHa25QT1plaFZaOERnUUdSaE1CRlN6Q2JHaWFpMGlhZ09TUGxr?=
+ =?utf-8?B?NCtvaTRyditIV3VYN2VYV21aN0gvWGJtckY1alBkRGZpM2FwbXJyWHhHbUts?=
+ =?utf-8?B?LzVJSlNrYWtua24yL2Fad1NreUc2WElEOStXL253WlVPMnAwVVJzbTBuc0VB?=
+ =?utf-8?B?aitMZFpFRXdxcUhZUklBZ0lPM1NZZVNtM2MwVVFITXhlaS9JZEQ3OWs5UXpU?=
+ =?utf-8?B?dXowTWNEOFd5aFc0Y2txQThoSTFDRXRRY3Y1cnIwU1dWSDFBb2JRYXpCOC9K?=
+ =?utf-8?B?NS9ORDNIaGM5bzNGdytXdFFoZlBVYjdHbTNVVkMzTWpHRnVndEYwemJoMXZ3?=
+ =?utf-8?B?d1k1dnF5aVJvWTgxekkzVE1OSWhWSW44cFp2SXVCdG9IK1V6b3Nqb3ZSdWJ2?=
+ =?utf-8?B?SG9obnd5ZjNpK3dpblFGbHFSTHEvSi9Ea0V6bnJnNmRRdWw3SzVTU3ZMbm5R?=
+ =?utf-8?B?VW9Mc1lRNHZDaExxV1NVUXAxTy9tamNpRTdpWm1TWDI2Tm9DSlRpK3Yydy8z?=
+ =?utf-8?B?aHl1UWFrT0dhanE3Q3JzNS9DaGJjbysvYkxrM3RQa3pZZnpoMjVENFd6cVpY?=
+ =?utf-8?B?cDN0ZFUxSkpuN2lWTzIrck0rcGlpYlFKT0lFQ3pxTDVQR3Z1Yzh6bU8xME03?=
+ =?utf-8?B?SDFMcVlOWjJVZHV0OXlsUXdJczJtc0ZJc3QycW1lMmZWbXZXUGJDdnJKc0FE?=
+ =?utf-8?B?eHNUMmJWWkVQV241Q2xaWWI5Y25rbkR5MEZsbjltQUFhT2ZSQmd4bFQxVkV1?=
+ =?utf-8?B?a2c5ajFncHhYWGg1clNJZ2lJaTRzVWo5cmdYeVc1ejRqeWFYNWduUUcvRGo2?=
+ =?utf-8?B?MWs3WVlNcXJKVWVxSXRieWkrZnM1TDZQL3dHYkZ5RktSMklsV2dkeVBsdGlK?=
+ =?utf-8?B?QzRnaWpOOURkK3Q4cndLUmVYbUtTYkUxd3RjK0tEWndpTTIzOXNsVzdSeU15?=
+ =?utf-8?B?dFlmeTVRck9hV29nOCtWbFlYN0h0a1NhcDZSa1d1L2t4ajdYYjJlK1RSaW5t?=
+ =?utf-8?B?QWZHWk9TQ0ZBVGFJNE84SDJLM2NRL2ZNWWoyVkpCUW1LU1owbENZYTJvWUlo?=
+ =?utf-8?B?QmNDc3ppUVA0a2lya0N0aThKL3Q4bnRvZjNQTFRhS1RiUGlkd1JBcmFUc2h2?=
+ =?utf-8?B?RFhkRHNYWTh4SG1VeHJubmxUWG9nNDJhYkJsM0ZMK1V2ejZoTWVsMU9zcFpu?=
+ =?utf-8?B?TFlQelliUmRMZzlqeVdYZ2FTVXJTRnl4SUlRNnhYTE05d3Zjcjd4YVlPZFoz?=
+ =?utf-8?B?ekxLdHhYaW96MkhSMC9RUkRYYTM1QlBSZmp4cmtNSnVkNkdia0VtRkZNUDB1?=
+ =?utf-8?B?R29FOG9JTFd5R0tXdXcrSDBEblU4NC94ZnVwYml4VStCKyt3RXgvRE1PUXB6?=
+ =?utf-8?B?a2FYbnorbDBnV1R1NmNZZHJvOHNJbFlqTmFBVzVrc0p1WERpU0JIdkRhUTd5?=
+ =?utf-8?Q?TsoiKMoww2xMV/mOQ465KFI2pR5lHz1N?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VUNNcXhtbmNCMmxHaWNwVUZMYUN3QkFjY0xnM1BtczdqblJEUHVqaURYUXhQ?=
+ =?utf-8?B?SEJraVJMbmFuZ0UrV3hWOVVCaEk1UXBpWHR5WkU0OWt3cXlCN2FDK0d0M3ht?=
+ =?utf-8?B?UnNHdjBtNlFFQUlKWDVJbTh2Ni9ndDZ3UER5SFQ1eHdKTUtYOVJBWU1Ldi82?=
+ =?utf-8?B?MGlUSEg3VU45REN6WUl0K0lrSE1VdzhHNnhUNUI5MWllZE9CWWVVVS9Lbmlj?=
+ =?utf-8?B?Szg3eFc1OWp3SW85Y0ErZGlKM01UNDdscnZiT2d1aVJGalZTdlNHVkZpNlBX?=
+ =?utf-8?B?QU5xNFFEcmhBVTdhcjhUaDlicCtycjcvUmh2c1MwOVhxUCszZ3dOV2pBbGxJ?=
+ =?utf-8?B?WUI2YmJPMXovY3kwV3k2V2t1OUFuTlMzUDMzNHpGSWFzZDlrK2Z3VktJd2kz?=
+ =?utf-8?B?RGlTL20xV3dGZHg5N01FVzlLU005RHhNQnk4Qy9EN0pPWDJjUlRGSXNYa3gy?=
+ =?utf-8?B?MWRhd1k1UlNJdXFEcVBxSFNnS242anVGUmtjbDMyYU1ieW51RWhuUDlub3Qy?=
+ =?utf-8?B?c1BqSzNGMzVoUUlFL2dQdmgvZ0dYSG9pKzVxbW1OTDBBckhTSDBhc3gvUWJ5?=
+ =?utf-8?B?NXhRVHVmUXAwZDBBWElEajhBUEpaVFdIdUdPaW9qeHd5Tmx6UUk4cE9UVnRI?=
+ =?utf-8?B?WjB6MkRRM2paYU9ITFdxd2hORU4yVDNuN0hxdUpXR1QyQ1RKclo2K3Judmxh?=
+ =?utf-8?B?TlNaQndVbXlqVnd0enpvOFNYeGlxQTFPNGJmOEVKRXNXN3pjQlhDZ0FUeUtt?=
+ =?utf-8?B?VjRqVEcvcGp1UWpSbjQvaUVJbHNnRFMvWXcrQkFyLzZNZHN4Y2IrT2pjR1Nx?=
+ =?utf-8?B?SXlHVWIzY2J1NEh3eUt0Sm9IYVNDT1FvZkNVOG5mT0FYVGNaSmpjN1RvYWpB?=
+ =?utf-8?B?anJkdHhuRU5xUkYvMDlvVlR0TWdlc1ZZcDBIVTdNZStRZCt4SVBXRXB6WE5t?=
+ =?utf-8?B?MlFWbkJrSTh4NWl6dFM4M21YekdnSjQ5cXZpKy9STTE3andHL1dqSEV1eldp?=
+ =?utf-8?B?K0d6eG4yZ05GTEVlRHNaU0k4TTY4bDZrek01eUF5L0NwTFZCaEYzL3RjRDUv?=
+ =?utf-8?B?YjAvZUV4TE9RdVN3Rzd6OUJvaHErWSs2VWtOdStUNldxZDRqaXVreVhsNmlJ?=
+ =?utf-8?B?eXJmZzV3RVdLbkpiK3N5UXo5T0FHVnNWcXdyNjJXZmVQeWZYWWQ5eU5sMEZY?=
+ =?utf-8?B?Sm5EcW5hWnBvdm5CbXBBWXUzUzF2MUlaa0N5OW56bkFjU1liRFJmQ2dsRDI4?=
+ =?utf-8?B?citBWWhibUV3dDJlRE1kOVR0QWFwS0QwNlE5UmxRZllLM0FLUkRKQTBudERm?=
+ =?utf-8?B?bTNiMGx6N1E1dU44cjllZjZsUzcvdmFzRlkrdEY2WldLanFXaFhwQ1ArajJk?=
+ =?utf-8?B?NUpidmZ6dGVQU2JjWXB1azhEVTRkQXQ3RnNSRi8xdktTcWErUnVFR215b1Ix?=
+ =?utf-8?B?TnRDczBpTXV3ek55UmZIL0g3UmwreFVCWTM2WUxPbFNXUGlnZ3RwVkhOZmk4?=
+ =?utf-8?B?TnFycjFUTG5BU2VXME12eGV3Qm4raXdQeGt4QmxqRW5xaXhzRE5XYktOV0VG?=
+ =?utf-8?B?d0R0UmtOWWZ6WEhLbHNxaGdMM0YrRmJXWDZwSy9DMVBpckRUME4rV1pFd3FS?=
+ =?utf-8?B?WXdlS29SQkdCL3VQamlOQWJFdnB0U2c9PQ==?=
+X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-a1430.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf0ca0e5-6431-41a4-bddd-08ddfb969f76
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR06MB5598.namprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 18:17:30.1042
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR06MB7141
 
-On 24.09.25 20:11, Charan Teja Kalla wrote:
-> It is possible to hit a zero entry while traversing the vmas in
-> unuse_mm() called from swapoff path and accessing it causes the
-> OOPS:
-> 
-> Unable to handle kernel NULL pointer dereference at virtual address
-> 0000000000000446--> Loading the memory from offset 0x40 on the
-> XA_ZERO_ENTRY as address.
-> Mem abort info:
->    ESR = 0x0000000096000005
->    EC = 0x25: DABT (current EL), IL = 32 bits
->    SET = 0, FnV = 0
->    EA = 0, S1PTW = 0
->    FSC = 0x05: level 1 translation fault
-> 
-> The issue is manifested from the below race between the fork() on a
-> process and swapoff:
-> fork(dup_mmap())			swapoff(unuse_mm)
-> ---------------                         -----------------
-> 1) Identical mtree is built using
->     __mt_dup().
-> 
-> 2) copy_pte_range()-->
-> 	copy_nonpresent_pte():
->         The dst mm is added into the
->      mmlist to be visible to the
->      swapoff operation.
-> 
-> 3) Fatal signal is sent to the parent
-> process(which is the current during the
-> fork) thus skip the duplication of the
-> vmas and mark the vma range with
-> XA_ZERO_ENTRY as a marker for this process
-> that helps during exit_mmap().
-> 
-> 				     4) swapoff is tried on the
-> 					'mm' added to the 'mmlist' as
-> 					part of the 2.
-> 
-> 				     5) unuse_mm(), that iterates
-> 					through the vma's of this 'mm'
-> 					will hit the non-NULL zero entry
-> 					and operating on this zero entry
-> 					as a vma is resulting into the
-> 					oops.
-> 
-> The proper fix would be around not exposing this partially-valid tree to
-> others when droping the mmap lock, which is being solved with [1]. A
-> simpler solution would be checking for MMF_UNSTABLE, as it is set if
-> mm_struct is not fully initialized in dup_mmap().
-> 
-> Thanks to Liam/Lorenzo/David for all the suggestions in fixing this
-> issue.
-> 
-> [1] https://lore.kernel.org/all/20250815191031.3769540-1-Liam.Howlett@oracle.com/
-> 
-> Fixes: d24062914837 ("fork: use __mt_dup() to duplicate maple tree in dup_mmap()")
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
+When WMAB is called to set the fan mode, the new mode is read from either
+bits 0-1 or bits 4-5 (depending on the value of some other EC register).
+Thus when WMAB is called with bits 4-5 zeroed and called again with
+bits 0-1 zeroed, the second call undoes the effect of the first call.
+This causes writes to /sys/devices/platform/lg-laptop/fan_mode to have
+no effect (and causes reads to always report a status of zero).
 
-I assume we want to CC stable?
+Fix this by calling WMAB once, with the mode set in bits 0,1 and 4,5.
+When the fan mode is returned from WMAB it always has this form, so
+there is no need to preserve the other bits.  As a bonus, the driver
+now supports the "Performance" fan mode seen in the LG-provided Windows
+control app, which provides less aggressive CPU throttling but louder
+fan noise and shorter battery life.
 
-> ---
-> 
-> V1:
->     -- Checking for xa_zero_entry() instead of most cleaner way of
-> checking for MMF_UNSTABLE
->     -- https://lore.kernel.org/linux-mm/20250808092156.1918973-1-quic_charante@quicinc.com/
-> 
->   mm/swapfile.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 890b410d77b6..10760240a3a2 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -2389,6 +2389,8 @@ static int unuse_mm(struct mm_struct *mm, unsigned int type)
->   	VMA_ITERATOR(vmi, mm, 0);
->   
->   	mmap_read_lock(mm);
-> +	if (check_stable_address_space(mm))
-> +		goto unlock;
->   	for_each_vma(vmi, vma) {
->   		if (vma->anon_vma && !is_vm_hugetlb_page(vma)) {
->   			ret = unuse_vma(vma, type);
-> @@ -2398,6 +2400,7 @@ static int unuse_mm(struct mm_struct *mm, unsigned int type)
->   
->   		cond_resched();
->   	}
-> +unlock:
->   	mmap_read_unlock(mm);
->   	return ret;
->   }
+Also correct the documentation to reflect that 0 corresponds to the
+default mode (what the Windows app calls "Optimal") and 1 corresponds
+to the silent mode.
 
-Yeah, this should do until Liam's rework is in.
+Signed-off-by: Daniel Lee <dany97@live.ca>
+Tested-by: Daniel Lee <dany97@live.ca>
+Fixes: dbf0c5a6b1f8 ("platform/x86: Add LG Gram laptop special features driver")
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=204913#c4
+---
+V1 -> V2: Replace bitops with GENMASK() and FIELD_PREP()
+V2 -> V3: Add parentheses next to function name in summary line
+          Use full name in signoff
+V3 -> V4: Add include for linux/bitfield.h
+          Remove "FIELD" from bitmask macro names
+V4 -> V5: Rename `status` to `mode` in fan_mode_show()
+V5 -> V6: Reword commit message body
+V6 -> V7: Add Link: to relevant bugzilla comment
 
-Acked-by: David Hildenbrand <david@redhat.com>
+ .../admin-guide/laptops/lg-laptop.rst         |  4 +--
+ drivers/platform/x86/lg-laptop.c              | 34 ++++++++-----------
+ 2 files changed, 16 insertions(+), 22 deletions(-)
 
+diff --git a/Documentation/admin-guide/laptops/lg-laptop.rst b/Documentation/admin-guide/laptops/lg-laptop.rst
+index 67fd6932c..c4dd534f9 100644
+--- a/Documentation/admin-guide/laptops/lg-laptop.rst
++++ b/Documentation/admin-guide/laptops/lg-laptop.rst
+@@ -48,8 +48,8 @@ This value is reset to 100 when the kernel boots.
+ Fan mode
+ --------
+ 
+-Writing 1/0 to /sys/devices/platform/lg-laptop/fan_mode disables/enables
+-the fan silent mode.
++Writing 0/1/2 to /sys/devices/platform/lg-laptop/fan_mode sets fan mode to
++Optimal/Silent/Performance respectively.
+ 
+ 
+ USB charge
+diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-laptop.c
+index 4b57102c7..6af6cf477 100644
+--- a/drivers/platform/x86/lg-laptop.c
++++ b/drivers/platform/x86/lg-laptop.c
+@@ -8,6 +8,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/acpi.h>
++#include <linux/bitfield.h>
+ #include <linux/bits.h>
+ #include <linux/device.h>
+ #include <linux/dev_printk.h>
+@@ -75,6 +76,9 @@ MODULE_PARM_DESC(fw_debug, "Enable printing of firmware debug messages");
+ #define WMBB_USB_CHARGE 0x10B
+ #define WMBB_BATT_LIMIT 0x10C
+ 
++#define FAN_MODE_LOWER GENMASK(1, 0)
++#define FAN_MODE_UPPER GENMASK(5, 4)
++
+ #define PLATFORM_NAME   "lg-laptop"
+ 
+ MODULE_ALIAS("wmi:" WMI_EVENT_GUID0);
+@@ -274,29 +278,19 @@ static ssize_t fan_mode_store(struct device *dev,
+ 			      struct device_attribute *attr,
+ 			      const char *buffer, size_t count)
+ {
+-	bool value;
++	unsigned long value;
+ 	union acpi_object *r;
+-	u32 m;
+ 	int ret;
+ 
+-	ret = kstrtobool(buffer, &value);
++	ret = kstrtoul(buffer, 10, &value);
+ 	if (ret)
+ 		return ret;
++	if (value >= 3)
++		return -EINVAL;
+ 
+-	r = lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
+-	if (!r)
+-		return -EIO;
+-
+-	if (r->type != ACPI_TYPE_INTEGER) {
+-		kfree(r);
+-		return -EIO;
+-	}
+-
+-	m = r->integer.value;
+-	kfree(r);
+-	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xffffff0f) | (value << 4));
+-	kfree(r);
+-	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xfffffff0) | value);
++	r = lg_wmab(dev, WM_FAN_MODE, WM_SET,
++		FIELD_PREP(FAN_MODE_LOWER, value) |
++		FIELD_PREP(FAN_MODE_UPPER, value));
+ 	kfree(r);
+ 
+ 	return count;
+@@ -305,7 +299,7 @@ static ssize_t fan_mode_store(struct device *dev,
+ static ssize_t fan_mode_show(struct device *dev,
+ 			     struct device_attribute *attr, char *buffer)
+ {
+-	unsigned int status;
++	unsigned int mode;
+ 	union acpi_object *r;
+ 
+ 	r = lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
+@@ -317,10 +311,10 @@ static ssize_t fan_mode_show(struct device *dev,
+ 		return -EIO;
+ 	}
+ 
+-	status = r->integer.value & 0x01;
++	mode = FIELD_GET(FAN_MODE_LOWER, r->integer.value);
+ 	kfree(r);
+ 
+-	return sysfs_emit(buffer, "%d\n", status);
++	return sysfs_emit(buffer, "%d\n", mode);
+ }
+ 
+ static ssize_t usb_charge_store(struct device *dev,
 -- 
-Cheers
-
-David / dhildenb
-
+2.51.0
 
