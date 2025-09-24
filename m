@@ -1,168 +1,132 @@
-Return-Path: <linux-kernel+bounces-830614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82364B9A1EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:56:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9C7B9A1F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32BCA325E2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:56:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE5144A593F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BE4303CA0;
-	Wed, 24 Sep 2025 13:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB44305050;
+	Wed, 24 Sep 2025 13:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="u3yGVD1D"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="biIpIQMr"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316B02FB608
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7422FFDCF
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758722159; cv=none; b=hDJwb3g24iVrf8H8mdik2yiH4mDAJe1qSzEzPc+ahFRPmZGue1s4IGJIr/wNevzmAqQKjMgpU8g7J22kRIOzouALVEn8+Ey3PxF0EOWOMWEKGnNFx6x9i285T5THgLoQ8QtY+jCkGHiClwmxZFM5swx7qKyIYLWX7iGDZO6Ep2w=
+	t=1758722160; cv=none; b=l6ChhdWn0wy0539J2X98RVKaBpgMSZ26LlPydvYMygZX/iSXWYKc6+RhDdwZXHoEmeM9JFSTbmCBL6+dbwTEKb7D9u7+mfM48/UJBIp7KhZgLPkmHNgUMl99hMUSiyqFq00m6SOQXpLUNNuMVm2TcfffwFOfKXd3cmTp6a4Hn4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758722159; c=relaxed/simple;
-	bh=4S270O0n2JWhFjJ0/OQ/JHGdvT4eV4sO3yg9Io6c/L8=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
-	 References:In-Reply-To; b=m1Vs4v1GaiTCfZBvrHOaZmmH6W45ppiNBWKwYLUqLPs0y49bglppnVwWHAJunBhR4V1xbY/A1NPIUMN3G5QsGJ0CTb9/L/28Yy9tvLIzAdAx97RCOqCFfhWwQJKR36+ebM+6wnQfzX2uRu64FnDLK/5Y3xEC9hdwOon56hUOPwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=u3yGVD1D; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1758722152; bh=4S270O0n2JWhFjJ0/OQ/JHGdvT4eV4sO3yg9Io6c/L8=;
-	h=From:To:Cc:Subject:Date:References:In-Reply-To;
-	b=u3yGVD1DLVoonAVGESsfFRbNyQYTC67D85RnyPTu9hlXhjb51i6NUgWSFVzUhUJUr
-	 egmZ27+NTZveHVZjAeuJHyo6hyLDhAI8B9c7bArsLaWZkbuHnXDwr2fIw/r/wxtWc8
-	 Eh8EBgmJCbwL/o6eCRekJU1eLvZmArAXrh7PhXQI=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-XMAILINFO: N/PZ68u28+T/Pkr5ZUrubj3nRMkWq3KKT8t3I2qYuekDZG39Pe+TEJERT97fel
-	 wjvMDe82xLJeqYdObWLPUDozbfBYiAq7vIzmvJKDanrc4DONltA9H37N8LLLiU+60xjIzXtPveWfN
-	 eu8YqUXYRALJL4bewSHo7Y8RgGPaftgWLzK7gX08+FnN4Csk0a8kM8SOS8V0eNJ/IBTeKsHvE67YC
-	 FocFArRRaJvPfi1zqOpbZE9HNWlKnqZLeJmpCZ6tiBS1VM0EJhVBLzjAeGOgC+MiLYPgsmaPQN+qx
-	 gxnt6Jg3CkoyOF/bwnYHtWAjK94GdlHgaaFeixqoB8Y0a0ME17/0yI0qlwbSCFwtV0kN4+6DxmaD2
-	 AH2qldStqmCiwqEUXPYnr2WBKc9ypVN7UfiZA/hD/EgmK0wiE5efZfAajYs5U/PvYY/0MHbMh4wMT
-	 R+jqe7kbz7fHtlT0mJwaiAYz4WYorW7AWRSSHDyP8qBEg2O3sAYFfbJSb7uujtF0pskswKptizShm
-	 ZheLjrToSR7FwJJPkZWsSDkPo/syEyQB3CS8XuyHij249Qmb7KYdxy4KedNzCS5ds5OpjmAuMPZNb
-	 9xvWDWR/K5PoVObnPjyTGZKyixitl7HidYtRAI0x67xm1H1w2EkBdLz1Y0ZEG0fTILVnoHxTRwSBf
-	 gvtSR0Cw+eyZg3Vg/r6rIGaSG7R02UJ8EksJQnfjyp7/oTQlcQ6jhzSO9eSaQKCCml+mZS4bYtTa4
-	 0BH4t3jwqJeVldAKQlhUxmlSZQ4DU//D7ZHzoMyA/sogD41TesDCXge5H7gPipzbe+0e2h8xr/zgo
-	 NR52+h4X2hB5gxAAUZqx56e3n6MXL0cO9HdQ1z8b/mxlYpOGQXsOmQDWgtwj9/1P34S4Jiiz2MlPM
-	 NKAAsmUN45FPiKMJi443hBCtfOzmjmtVsf85lxPbBk9+bAjWVUf9KBX8fANimXu/UE4NbliA6luy5
-	 cUSnEJfc97ac8yGt/SmmkbXsgwDz/TSk7O0iAvJKZFb83aX1JV7RB1otJLp5CCjXjIFJkjeMfymyc
-	 H5vcp3FdI5sPWdR0sY8QN/+MjzDGpIClgNjHFcHbY8S2TFB8QwfhRvzuIEppzxpyPrNnt0x2WnscD
-	 NVM5GLvNGQ71GyP5aG0AQrAE
-From: "=?utf-8?B?c2hlbmdtaW5naHU1MTI=?=" <shengminghu512@qq.com>
-To: "=?utf-8?B?SmlhcWkgWWFu?=" <jiaqiyan@google.com>
-Cc: "=?utf-8?B?bGlubWlhb2hl?=" <linmiaohe@huawei.com>, "=?utf-8?B?bmFvLmhvcmlndWNoaQ==?=" <nao.horiguchi@gmail.com>, "=?utf-8?B?YWtwbQ==?=" <akpm@linux-foundation.org>, "=?utf-8?B?bGludXgtbW0=?=" <linux-mm@kvack.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?aHUuc2hlbmdtaW5n?=" <hu.shengming@zte.com.cn>, "=?utf-8?B?emhhbmcucnVu?=" <zhang.run@zte.com.cn>
-Subject: Re: [PATCH V2] mm/memory-failure: Ensure collect_procs is retriedwhen unmap fails
+	s=arc-20240116; t=1758722160; c=relaxed/simple;
+	bh=DcpJ689quYGtSVJ/jZ50x9baeFfRVXjVK6frpcghcfw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZjSFT7hiygPquIbehRaljHPbVCHX8PS84FNbNVtOI87zGswJ2kdOogo8SNtrHJxO4sDeKHkB6/HLZkULB4LvTQ6jmEJW+wXc942RCwtlRAVDm3XA0ss1Xeva8OBmeeLA86g4WcZmdDhg/jiX9Z+G5b/zkeQVULrLb7OO5KEK8l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=biIpIQMr; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-57d5ccd73dfso3598541e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:55:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758722157; x=1759326957; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pZpCdxXN+Lj5Wtx0PEqxVxK+0pszwy0+LCFjR3ki0Po=;
+        b=biIpIQMrF4TaUkg6rBPvACClC/j4cy4SwIWwmLA3rCb7ltLj0AZCuHItI/pC3HJ0ul
+         3wJ977BgMlQ39W68QF+J4sONffg9pW727zOyFJG8pmDmNuZRXTauufu6vKQTRt9p+H/Q
+         mGdHHo+oQYgTaVq7IKQ2rSGx8hPYUvc2c0PGdkip2cYVMiJ3BQlx+pLSilXMqXU5earQ
+         0Zcz6HaSSipBi3uHjIl9KNe7znWQ3DpPu0olWUT1cdcmusPaBTaV89jGHwb45r5BI1IL
+         N9BTJOo3dh8jFXBLByC5EQUmJIUJ1aLfguqKGfTCjjiIA44heOZicGAwIgzL3A3y8/un
+         udzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758722157; x=1759326957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pZpCdxXN+Lj5Wtx0PEqxVxK+0pszwy0+LCFjR3ki0Po=;
+        b=j7+vexMa+4jOOpf1JCp5EZTXOSDK6Waw7Q6/JHaTq0fTPCKzjNWJHoYPip5eCw3Bd6
+         WaXBGc3EZJ4O7h9cjdyEqeozkAg0GVv6dzUdSxTR/gcCyAOhnRnxJBnmXBhaFK1LbpDe
+         631uKYurYd7mldWnfGGWFvEXrEAoVtK2f07OLiIFPpTNXj8eHe+WdYAl9l339BJwr8Rg
+         yYvyRl29cvzhmUBleAYcH3oKrG2mTvhT1nb4xxVaH2GYrEHNMWqSb7DtnNHG3XFDiQJN
+         UL6+uNV3pym7cN7Mz1Yo1owOsTm2dFRH/dfIt4001iTQa7ztpSQ/Pra3o3hco62766iI
+         b8qA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoYn7fPjI5JA3GE2SMDBOCKQBaPaiOEkdzYidnbeaUg31IIrkyBItBJ3E/Yytj29rITfS2wJmezUz4xlY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVtkw2NxqTIioYhB+yy358TmAW2n/FtxkATUMiBS57osyybLHI
+	0RU9Nhff0griLbUqVzmYEQxY/iHhBEMoqxF+27uO2BoAhEqnfW2jUOgZmeXSqAiWw79+jEQ66bo
+	HTdqctMpUuRDWU7n1wdWgB+dKi2tZ3zo=
+X-Gm-Gg: ASbGncuYbFade4Su46zQ7H1j7cvxp3i9ptkWyDGwzUyeNIyBwF5Sh7xhQGzQBACIZSb
+	X3Z0bzw9+1pzlJv+tMdTjKamqV9Sgs+3+JbJR5VegW0Q44ChqoB3ZmbY2dJAywDcUKJckUKzvza
+	XD7AKIouByQ9Zaa0AR/0vpPSyofDJlECJ5/iCICr8hIIPpgdo/hJhD4qYOn2zaCneheSg0kA//k
+	ooT/sbv/jI5vviV/PCbj8fYd+dJgfWsZ3hknUDFkg==
+X-Google-Smtp-Source: AGHT+IFFrQiSJq3sO4DDheNScCAZEm7ChSSXL0OrRgD+E9nQCbhqy0d6xm+S7jAokm2e7jUsgL24742yoK4fyiXLJlA=
+X-Received: by 2002:a05:6512:2903:b0:577:1168:5e44 with SMTP id
+ 2adb3069b0e04-580732fc04cmr1917640e87.38.1758722156813; Wed, 24 Sep 2025
+ 06:55:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Wed, 24 Sep 2025 21:55:38 +0800
-X-Priority: 3
-Message-ID: <tencent_E424DB6EA2E9CFD8CD43EE3596DC69506009@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
-References: <tencent_EDEED996FC685E61AADA14A23BCE9CCDAF09@qq.com>
-	<CACw3F53PUGZ-gWKHiBHzcGfM9r8h-vTp7HnGDOZruucMQC5yDg@mail.gmail.com>
-In-Reply-To: <CACw3F53PUGZ-gWKHiBHzcGfM9r8h-vTp7HnGDOZruucMQC5yDg@mail.gmail.com>
-X-QQ-mid: xmsezc43-1t1758722138tuly5dr5b
+MIME-Version: 1.0
+References: <20250922192412.885919229@linuxfoundation.org>
+In-Reply-To: <20250922192412.885919229@linuxfoundation.org>
+From: Dileep malepu <dileep.debian@gmail.com>
+Date: Wed, 24 Sep 2025 19:25:44 +0530
+X-Gm-Features: AS18NWBDacVBK1YPgwur6lrJBXLhApl2Qt6ZIWcyrgcUSkgfBZfG1VuayMkdzxc
+Message-ID: <CAC-m1rryCr1KGcCWYWkd47sy92-SP0+3WFqsU2mPSxmesQr4yg@mail.gmail.com>
+Subject: Re: [PATCH 6.16 000/149] 6.16.9-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SmlhcWkgWWFuIDxqaWFxaXlhbkBnb29nbGUuY29tPiB3cml0ZXM6Cj4gT24gVHVlLCBTZXAg
-MjMsIDIwMjUgYXQgNzo1N+KAr0FNIHNoZW5nbWluZ2h1NTEyIDxzaGVuZ21pbmdodTUxMkBx
-cS5jb20+IHdyb3RlOgo+ID4KPiA+IEZyb206IFNoZW5nbWluZyBIdSA8c2hlbmdtaW5naHU1
-MTJAcXEuY29tPgo+ID4gRGF0ZTogVHVlLCAyMyBTZXAgMjAyNSAyMDo1NjoyOCArMDgwMAo+
-ID4gU3ViamVjdDogW1BBVENIIFYyXSBtbS9tZW1vcnktZmFpbHVyZTogRW5zdXJlIGNvbGxl
-Y3RfcHJvY3MgaXMgcmV0cmllZCB3aGVuCj4gPiAgdW5tYXAgZmFpbHMKPiA+Cj4gPiBJbiB0
-aGUgbWVtb3J5X2ZhaWx1cmUgcHJvY2VzcywgaWYgY29sbGVjdF9wcm9jcyBpcyBub3QgZXhl
-Y3V0ZWQgd2l0aCB0aGUKPiA+IGZsYWcgc2V0LCB0aGUgdG9fa2lsbCBsaXN0IG1heSBiZSBl
-bXB0eS4gRXZlbiBpZiB0aGVyZSBhcmUgcGFnZXMgdGhhdCBmYWlsCj4gCj4gSGkgU2hlbmdt
-aW5nLAo+IAo+IEkgYW0gdHJ5aW5nIHRvIGZpZ3VyZSBvdXQgd2hhdCB5b3VyIGNvZGUgaXMg
-Zm9yLgo+IAo+IElmIHdlIGdldCBpbnRvIGh3cG9pc29uX3VzZXJfbWFwcGluZ3Mgd2l0aCBN
-Rl9BQ1RJT05fUkVRVUlSRUQgKm5vdCoKPiBzZXQgaW4gZmxhZ3MsIGZvcmNlX2Vhcmx5IHNo
-b3VsZCBub3QgYmUgc2V0IGFuZCBpdCBpcyB0b3RhbGx5IHZhbGlkCj4gdGhhdCBjb2xsZWN0
-X3Byb2NzIGFkZCBub3RoaW5nIHRvIHRvIGtpbGwuLi4KPiAKCkhpIEppYXFpCgpUaGFuayB5
-b3UgZm9yIHRoZSByZXZpZXcgYW5kIGZvciB0aGUgZXhwbGFuYXRpb24uIEnigJlkIGxpa2Ug
-dG8gZG91YmxlLWNoZWNrIApteSB1bmRlcnN0YW5kaW5nIGFuZCBhc2sgZm9yIHlvdXIgZ3Vp
-ZGFuY2UuCgo+ID4gdG8gYmUgdW5tYXBwZWQsIFNJR0tJTEwgb3IgU0lHQlVTIGNhbm5vdCBi
-ZSBzZW50IHRvIHRoZSBwcm9jZXNzIHZpYQo+IAo+IHVubGVzcyBzb21lIHByb2Nlc3Mgb3B0
-LWVkIGluIE1DRV9LSUxMX0VBUkxZIGFuZCBjb2xsZWN0X3Byb2NzIHdpbGwKPiBmaW5kIHRo
-YXQgcHJvY2VzcyBpZiBpdCBtYXBwZWQgdGhlIHBvaXNvbmVkIHBhZ2UsIHJlZ2FyZGxlc3Mg
-aWYKPiBmb3JjZV9lYXJseSBpcyAxIG9yIDAuCj4gCj4gSU9XIEkgZG9uJ3QgdGhpbmsgdGhl
-cmUgaXMgYW55IHJlYXNvbiAobm8gYnVnIHRvIGZpeCBhbmQgbm90aGluZyB0bwo+IGltcHJv
-dmUpIGZvciB3aGF0IHlvdSBhcmUgdHJ5aW5nIHRvIGRvIGhlcmUuCj4gCgpZb3VyIGV4cGxh
-bmF0aW9uIG9mIHRoZSBjb2xsZWN0X3Byb2NzIGNvbGxlY3Rpb24gZmxvdyB3YXMgZXh0cmVt
-ZWx5IGRldGFpbGVkIAphbmQgaGVscGZ1bC4gQWZ0ZXIgZGl2aW5nIGRlZXBlciBpbnRvIHRo
-ZSBjb2RlIG15c2VsZiwgSeKAmWQgbGlrZSB0byBkaXNjdXNzIAp3aXRoIHlvdSBhIGZldyBz
-Y2VuYXJpb3MgSeKAmW0gcGFydGljdWxhcmx5IHdvcnJpZWQgYWJvdXQgd2hlcmUgdGhpbmdz
-IG1pZ2h0IApnbyB3cm9uZy4KCkZyb20gcmVhZGluZyB0aGUgY29kZSwgbXkgdW5kZXJzdGFu
-ZGluZyBvZiB0aGUgZmxvdyBpczoKCiAgLSBod3BvaXNvbl91c2VyX21hcHBpbmdzIGhhbmRs
-ZXMgcG9pc29uZWQgcGFnZXMgaW4gdHdvIHdheXM6CiAgICAoMSkgbWFyayBQVEVzIHdpdGgg
-aHdwb2lzb24gc28gdGhhdCBsYXRlciBhY2Nlc3NlcyB0cmlnZ2VyIFNJR0JVUywgb3IKICAg
-ICgyKSBwcm9hY3RpdmVseSBzZW5kIFNJR0JVUy9TSUdLSUxMIHRvIHRlcm1pbmF0ZSBwcm9j
-ZXNzZXMuCgogIC0gVGhlIHNlcXVlbmNlIGlzOiAgCiAgICAgICAgY29sbGVjdF9wcm9jcyAt
-PiB1bm1hcF9wb2lzb25lZF9mb2xpbyAtPiBraWxsX3Byb2NzCgogIC0gRm9yIGtpbGxfcHJv
-Y3MgdG8gc2VuZCBzaWduYWxzLCB0aHJlZSBjb25kaXRpb25zIG11c3QgYmUgc2F0aXNmaWVk
-OiAgCiAgICAgICAgZm9yY2VraWxsID0gZm9saW9fdGVzdF9kaXJ0eShmb2xpbykgfHwgKGZs
-YWdzICYgTUZfTVVTVF9LSUxMKSB8fCAhdW5tYXBfc3VjY2VzcyAgCiAgICAgICAgYW5kIGB0
-b2tpbGxgIG11c3Qgbm90IGJlIGVtcHR5LgoKTXkgY29uY2VybiBpcyB0aGUgZm9sbG93aW5n
-IGNvcm5lciBjYXNlOgoKICAqIElmIHVubWFwX3BvaXNvbmVkX2ZvbGlvKCkgZmFpbHMgb24g
-YSBwb2lzb25lZCBwYWdlLCBpdCBtYXkgbm90IGluc3RhbGwKICAgIGEgaHdwb2lzb24gUFRF
-IGVudHJ5LiAgCiAgKiBBcyB5b3Ugbm90ZSBJZiBjb2xsZWN0X3Byb2NzKCkgZWFybGllciBy
-YW4gd2l0aG91dCBNRl9BQ1RJT05fUkVRVUlSRUQgKGFuZCAKICAgIHNvbWUgcHJvY2Vzc2Vz
-IGRpZCBub3Qgb3B0IGludG8gTUNFX0tJTExfRUFSTFkpLCBgdG9raWxsYCBjYW4gcmVtYWlu
-IGVtcHR5LgogICogSW4gdGhpcyBzaXR1YXRpb24sIGtpbGxfcHJvY3MoKSB3aWxsIG5vdCBk
-ZWxpdmVyIGFueSBzaWduYWwsIGFuZCBhCiAgICBwcm9jZXNzIGNhbiBzdGlsbCBydW4gd2hp
-bGUgdXNpbmcgdGhlIHBvaXNvbmVkIHBhZ2UuCgpNeSBwYXRjaCByZXRyaWVzIGNvbGxlY3Rf
-cHJvY3MoKSAod2l0aCBmb3JjZV9lYXJseSA9IDEpIHdoZW4KdW5tYXBfcG9pc29uZWRfZm9s
-aW8oKSBmYWlscyBhbmQgYHRva2lsbGAgaXMgZW1wdHksIGVuc3VyaW5nIHByb2Nlc3NlcyB0
-aGF0CnN0aWxsIGhvbGQgdGhlIG1hcHBpbmcgYXJlIGNvbGxlY3RlZCBhbmQgY2FuIHJlY2Vp
-dmUgU0lHQlVTL1NJR0tJTEwuIFRoYXQKaXMgdGhlIG1vdGl2YXRpb24gZm9yIHRoZSBjaGFu
-Z2UuCgpNeSBxdWVzdGlvbiBpczogIApJcyB0aGVyZSBhbHJlYWR5IGEgZ3VhcmFudGVlIGlu
-IHRoZSBjdXJyZW50IGRlc2lnbiB0aGF0IGVpdGhlciAoYSkgYQpod3BvaXNvbiBQVEUgZW50
-cnkgd2lsbCBhbHdheXMgYmUgaW5zdGFsbGVkLCBvciAoYikgYSBwcm9jZXNzIHdpbGwgYWx3
-YXlzCmJlIGNvbGxlY3RlZCBpbnRvIGB0b2tpbGxgIGluIHRoaXMgdW5tYXAgZmFpbHVyZSBj
-YXNlPyAgCgpJZiBzdWNoIGEgZ3VhcmFudGVlIGV4aXN0cywgSSBtYXkgaGF2ZSBtaXN1bmRl
-cnN0b29kIHRoZSBpbnRlbmRlZCBmbG93IOKAlApjb3VsZCB5b3UgaGVscCBjbGFyaWZ5IHdo
-ZXJlIHRoYXQgaGFwcGVucyBpbiB0aGUgY29kZT8gSWYgbm90LCBkb2VzIG15CmFwcHJvYWNo
-IG9mIHJldHJ5aW5nIGNvbGxlY3RfcHJvY3MgbWFrZSBzZW5zZT8KClRoYW5rcyBhIGxvdCBm
-b3IgdGhlIGZlZWRiYWNrIGFuZCBndWlkYW5jZSDigJQgSeKAmWQgbGlrZSB0byBhbGlnbiB3
-aXRoIHRoZQppbnRlbmRlZCBzZW1hbnRpY3MgYW5kIHVwZGF0ZSB0aGUgcGF0Y2ggYWNjb3Jk
-aW5nbHkuCgo+ID4gY29sbGVjdF9wcm9jcy4KPiA+Cj4gPiBUaGlzIHBhdGNoIGZpeGVzIHRo
-ZSBpc3N1ZSBieSByZS1leGVjdXRpbmcgY29sbGVjdF9wcm9jcyB3aGVuIHRoZSB0b19raWxs
-Cj4gPiBsaXN0IGlzIGVtcHR5IGFuZCB1bm1hcCBmYWlscy4gVGhpcyBjb2xsZWN0cyBwcm9j
-ZXNzZXMgd2l0aCB1bm1hcCBmYWlsdXJlcwo+ID4gaW50byB0aGUgdG9fa2lsbCBsaXN0LCBh
-bGxvd2luZyBTSUdCVVMgb3IgU0lHS0lMTCB0byB0ZXJtaW5hdGUgdGhlbSBpbgo+ID4gc3Vi
-c2VxdWVudCBjb2RlLgo+ID4KPiA+IFYyOgo+ID4gICAtIFJlc2VudCBhcyBwbGFpbiB0ZXh0
-IChwcmV2aW91cyB2ZXJzaW9uIHdhcyBIVE1MKS4KPiA+ICAgLSBObyBmdW5jdGlvbmFsIGNo
-YW5nZXMuCj4gPgo+ID4gU2lnbmVkLW9mZi1ieTogU2hlbmdtaW5nIEh1IDxodS5zaGVuZ21p
-bmdAenRlLmNvbS5jbj4KPiA+IC0tLQo+ID4gIG1tL21lbW9yeS1mYWlsdXJlLmMgfCA1ICsr
-KystCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigt
-KQo+ID4KPiA+IGRpZmYgLS1naXQgYS9tbS9tZW1vcnktZmFpbHVyZS5jIGIvbW0vbWVtb3J5
-LWZhaWx1cmUuYwo+ID4gaW5kZXggYTI0ODA2YmI4ZTgyLi44MTU3ODIzYzdmYjcgMTAwNjQ0
-Cj4gPiAtLS0gYS9tbS9tZW1vcnktZmFpbHVyZS5jCj4gPiArKysgYi9tbS9tZW1vcnktZmFp
-bHVyZS5jCj4gPiBAQCAtMTYwMCw5ICsxNjAwLDEyIEBAIHN0YXRpYyBib29sIGh3cG9pc29u
-X3VzZXJfbWFwcGluZ3Moc3RydWN0IGZvbGlvICpmb2xpbywgc3RydWN0IHBhZ2UgKnAsCj4g
-PiAgICAgICAgIGNvbGxlY3RfcHJvY3MoZm9saW8sIHAsICZ0b2tpbGwsIGZsYWdzICYgTUZf
-QUNUSU9OX1JFUVVJUkVEKTsKPiA+Cj4gPiAgICAgICAgIHVubWFwX3N1Y2Nlc3MgPSAhdW5t
-YXBfcG9pc29uZWRfZm9saW8oZm9saW8sIHBmbiwgZmxhZ3MgJiBNRl9NVVNUX0tJTEwpOwo+
-ID4gLSAgICAgICBpZiAoIXVubWFwX3N1Y2Nlc3MpCj4gPiArICAgICAgIGlmICghdW5tYXBf
-c3VjY2Vzcykgewo+ID4gICAgICAgICAgICAgICAgIHByX2VycigiJSNseDogZmFpbGVkIHRv
-IHVubWFwIHBhZ2UgKGZvbGlvIG1hcGNvdW50PSVkKVxuIiwKPiA+ICAgICAgICAgICAgICAg
-ICAgICAgICAgcGZuLCBmb2xpb19tYXBjb3VudChmb2xpbykpOwo+ID4gKyAgICAgICAgICAg
-ICAgIGlmIChsaXN0X2VtcHR5KCZ0b2tpbGwpKQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgY29sbGVjdF9wcm9jcyhmb2xpbywgcCwgJnRva2lsbCwgMSk7Cj4gPiArICAgICAgIH0K
-PiA+Cj4gPiAgICAgICAgIC8qCj4gPiAgICAgICAgICAqIHRyeV90b191bm1hcCgpIG1pZ2h0
-IHB1dCBtbG9ja2VkIHBhZ2UgaW4gbHJ1IGNhY2hlLCBzbyBjYWxsCj4gPiAtLQo+ID4gMi4y
-NS4xCgpCZXN0IHJlZ2FyZHMsICAKU2hlbmdtaW5nIEh1
+On Tue, Sep 23, 2025 at 1:12=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.16.9 release.
+> There are 149 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 24 Sep 2025 19:23:52 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.16.9-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
+Build and boot tested 6.16.9-rc1 using qemu-x86_64. The kernel was
+successfully built and booted in a virtualized environment without
+issues.
+
+Build
+kernel: 6.16.9-rc1
+git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc=
+.git
+git commit: fef8d1e3eca6557cae4f0149eb2071123c473c26
+
+Tested-by: Dileep Malepu <dileep.debian@gmail.com>
+
+Best regards
+Dileep Malepu.
 
