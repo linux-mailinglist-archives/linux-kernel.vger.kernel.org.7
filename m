@@ -1,169 +1,268 @@
-Return-Path: <linux-kernel+bounces-830579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBFA8B9A062
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:23:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B78B9A06B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBED2188696E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:24:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D95491897944
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A5C3009E8;
-	Wed, 24 Sep 2025 13:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6566302748;
+	Wed, 24 Sep 2025 13:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Q//IkjTE"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qkqTy1VX"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FC115B971
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5874E1BD035
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758720223; cv=none; b=n7kJ05ULAOL+5JEjq8GVdt1/qXep1fSzCNnstM7ZmV4mo/61yYWUPieXAupoOXzoNZbipJBuy/u2FFcUl7MUqKvH98yrZzYQ4WeoQGQ4Su5Uy26BbX71o2O+bO3VQZooSDCB8c4QsUYXTw7d3QpQT2sZPUN66+dacpZLuWj5D04=
+	t=1758720305; cv=none; b=qwUE2Tl5f2ikshBAbQmqjcVygIkzwt8IBW363cwaqk9TqDmh9Aj/7Vxf0tweD1MDyyD82jF0fXtMDOF2bnzjggDCTaFptV4CxuSjf0lYRIXwFikaAT+7W7RBdrJuW6TyHDbhPrQCJokIHn9Tbt+nsg4fjHHiFC/rhFxHOnM6Jvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758720223; c=relaxed/simple;
-	bh=DYl/Bkmkgnv8NnV8bRJWPp5qpg+MVxlpTt4ZhnmTKGY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ncCg8/43//+j+feUs7mU32Z+sHKDhhz3RacFxmULFbExrJ6qs/P36gFZUFLEjCoZ9EuCedHBIrcilLCOZCvWCRGVoz/PMHB+6CNvQN/6uLjTC5hw+e4L4sBk3XHAqJnvw8VooZMjveDfCpL/XVGGlwVhzViXSFfykMKhMWiaSjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Q//IkjTE; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1758720208; x=1759325008; i=markus.elfring@web.de;
-	bh=oUx7FQDk2SiuLavlx/HNjgWtSxwt+Njd+F6PUkWYXZc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Q//IkjTEddC1uTTET7XqodQwxs0USK5Tp0NlciUFBdusrkoOVGlTSrFHIpLDEqIn
-	 Q56RlA0hhswnOoWSLaWOIFCea5SVxrWvvjbCLIo2aczMHrTP8LxAkNlBWQjfC1bwv
-	 63tCnddtkYK00S6i8jf1CUtxBlXjkgDtgbrIN8cLEV34ni7Bbd501LkisWsg7abDA
-	 K7xdrEOEixs5kFYillU7uEN6W9ixv894l5PFtGtUWreXHa5pdLqhfUnjtDeKODZoE
-	 93WBshPIcXDzD7e9f6j9xy6g8N3NF0gzcOXdoM3w14Glw9iowmKuleSlejR/pGpq/
-	 IyF1ElCPUk/pk4BYZA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.191]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MdfCN-1uRnfK3hGD-00nFl0; Wed, 24
- Sep 2025 15:23:27 +0200
-Message-ID: <8f0366c8-f05e-4687-817f-90a5b47922c9@web.de>
-Date: Wed, 24 Sep 2025 15:23:26 +0200
+	s=arc-20240116; t=1758720305; c=relaxed/simple;
+	bh=P+CF1MWt/yF5R0xFK0U0jQjwmJ1wtsNl/D8RaIUP9Qw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Bb6WJzJy4Wz7OvVjWIPjv6XmvxdvuXsde0lB3ttxqCTwACYkmrRTpG8JWhGT1YewVLfwXU5WqNDRHHZcjv3NB+fxDkL8qREjZnprmDBZ9FG9mGVPrL+GexuZwnnK4NPNMnK0g24w/QJUnlxbu48LQuMJGWDgPxvFl+tLHDz28iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qkqTy1VX; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b5514519038so7363958a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:25:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758720303; x=1759325103; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ew+O7tf8wnkBKLG+cc0gKdz8zPsvoJzeHD52hJbKBEs=;
+        b=qkqTy1VXi0fIQuBlgc0tZ0rv5wL4g6iXCey8cfVNABlRV/vwFri92VRPgXEnj0Jde8
+         8n7eKvFuXVCQ51UGxF7sc19hT/JKdK4OaE8rEgYZiXVHYoLB2cbamKk3d4hwI/fU5Xek
+         J5sO6yn7bpNdjw1lYIEcp3bQBxMufcUzEpskYUVL3y+6mu3ntY7363ZABXtXRrN9zLJs
+         CpfoBLAz1BGvxmPrdj8NvjV7UDoiJrp2tHWnB9OyKgzQHkyNlnDRa3HySmEUj1ycs3Zh
+         Y+JTfMH5YcFiF+b2GgaUCY8V05EonmCmADRIsNNOx4GuIHkMpyBfgqNsErzGd6peZvNp
+         juEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758720303; x=1759325103;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Ew+O7tf8wnkBKLG+cc0gKdz8zPsvoJzeHD52hJbKBEs=;
+        b=TL/7rIpo1+TZ6MDZOJqF80j5RqAL+OJIaWgh4dNQhmfbLZaot1Y5icPXD2hYwF7190
+         Rh4K7CwcSGQJhQ0JbAQnp14DTlmjZE9e2Tw+cIXQS3Ve5PBuwkJv0Kk1cA5jNyd20xG1
+         yYgEo5dRLGhbu0DWn+iwr4G32qRGNB5HGE5thYb7esOmEjT6wPKN5kPWWUudh0ZgMJ/l
+         HUN9dXSrQwteq8FGvQIEu0zVot1NTBY8/uCnyHmgwUa+v6IJe3dyWK+RAxRhMgIlq/qZ
+         5fIaUUWbCHAF2NiwY6MSK43+EMw7wuNN+aSMuwYzHnzkyDEorjXQ87T5jrPyrRnKnMvs
+         9Xyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxxhrvBF3XhPSocG+wuWdTeU9mpMiT6yv6MCqirqfOuD1LymGEfZ//C6aiyfq7FEKdeyO7eDxmAi3GIWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYm18/DfMUsGUh9XL8u4vDdcvwyas8C39aXiHcFWP06gO5OinN
+	kiZtZs/2Hu/2QTG1iyHZztLuA35iJdQQifwIxv/x0o+rWI48MkYJT7JqODveWkSH12FKB/mj4v6
+	0vHhgkQ==
+X-Google-Smtp-Source: AGHT+IEQyRFnQPP+o0XKJ1RGnDTwyJAi4JycOarpv4vDajM8hl05vyvKYPM/lL4EQInAa9aM6dw8fx0JMT8=
+X-Received: from pgww20.prod.google.com ([2002:a05:6a02:2c94:b0:b55:7de:e92d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7a06:b0:2db:f868:216
+ with SMTP id adf61e73a8af0-2dbf86804f3mr3735154637.52.1758720302776; Wed, 24
+ Sep 2025 06:25:02 -0700 (PDT)
+Date: Wed, 24 Sep 2025 06:25:01 -0700
+In-Reply-To: <e8ace4cc-eb22-4117-b34d-16ecc1c8742d@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Alexander Potapenko <glider@google.com>, linux-mm@kvack.org,
- kasan-dev@googlegroups.com
-Cc: LKML <linux-kernel@vger.kernel.org>, Aleksandr Nogikh
- <nogikh@google.com>, Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Dmitry Vyukov <dvyukov@google.com>,
- Marco Elver <elver@google.com>, Mike Rapoport <rppt@kernel.org>,
- Vlastimil Babka <vbabka@suse.cz>
-References: <20250924100301.1558645-1-glider@google.com>
-Subject: Re: [PATCH v2] mm/memblock: Correct totalram_pages accounting with
- KMSAN
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250924100301.1558645-1-glider@google.com>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+References: <e8ace4cc-eb22-4117-b34d-16ecc1c8742d@amd.com>
+Message-ID: <aNPxLQBxUau-FWtj@google.com>
+Subject: Re: AMD SNP guest kdump broken since linuxnext-20250908
+From: Sean Christopherson <seanjc@google.com>
+To: Srikanth Aithal <sraithal@amd.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	KVM <kvm@vger.kernel.org>, Ashish Kalra <Ashish.Kalra@amd.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>, Tom Lendacky <thomas.lendacky@amd.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:GbK73zxLYoS2kQ137BowTVrHDqoJ8gk83c2ByReHUM2nq/LRqlh
- CZO842TFixdnpUk1ktMJFWudMgvfOEDHLgTrHpvgtEf6VDZAlIkg892QjA6IwmIm4AZAGQa
- oNuryIfeGvJ2wsDd3/FylPuN2EIt+UCxKigm6SB0DvsaAXNqmFhAss29qpFku4zedN1kKB/
- RSZKpA/cm2WPRO972GolA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:q/uBpl4JHmo=;6HT6GiaWj/LEuxTLU8Jcvzj9PSt
- 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
 
-=E2=80=A6
-> +++ b/mm/mm_init.c
-> @@ -2548,24 +2548,25 @@ void *__init alloc_large_system_hash(const char =
-*tablename,
-=E2=80=A6
-> +unsigned long __init memblock_free_pages(struct page *page, unsigned lo=
-ng pfn,
-> +					 unsigned int order)
->  {
-=E2=80=A6
->  	if (!kmsan_memblock_free_pages(page, order)) {
->  		/* KMSAN will take care of these pages. */
-> -		return;
-> +		return 0;
->  	}
-=E2=80=A6
++Ard and Boris (and Tom for good measure)
 
-How do you think about to omit curly brackets for this if statement?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?h=3Dv6.17-rc7#n197
+On Wed, Sep 24, 2025, Srikanth Aithal wrote:
+> Hello all,
+>=20
+> kdump on an SNP guest is broken in linux-next, starting with next-2025090=
+8 [1].
+>=20
+> kdump on an SNP guest works with the following kernels as the guest kerne=
+l:
+>=20
+> 1. https://git.kernel.org/pub/scm/virt/kvm/kvm.git, kvm/next
+> 2. git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git next=
+-20250905
+> 3. git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git v6.1=
+7-rc7
+>=20
+> The crash log during kdump varies each time. I have attached all variants=
+ of
+> the error console logs to this bug report as files, as they are too large=
+ to
+> include here.
+>=20
+> kdump with other guest types (normal, SEV, SEV-ES) is working fine.
+>=20
+> I attempted bisecting multiple times, but due to varying error console
+> messages=E2=80=94sometimes with a call trace, sometimes just a hang with =
+no error
+> messages, and sometimes with extensive register dumps including KVM hardw=
+are
+> error messages=E2=80=94I had no success until now. Additionally, a couple=
+ of
+> linux-next bisect attempt pointed to a merge commit where the parent comm=
+its
+> had no issues, suggesting a possible merge problem.
+>=20
+> I am also attaching the host kernel config and guest kernel config used f=
+or
+> these tests.
+>=20
+> Tests were conducted with the following component versions:
+>=20
+>  * Host kernel: next-20250919
+>  * QEMU version: v10.1.0
+>  * EDK2: edk2-stable202508
+>  * Platform: Milan with the latest BIOS v2.20
+>=20
+>=20
+> Thank you,
+>=20
+> Srikanth Aithal <Srikanth.Aithal@amd.com>
+>=20
+> root@ubuntu:~# echo c > /proc/sysrq-trigger
+> [   26.686014] sysrq: Trigger a crash
+> [   26.687006] Kernel panic - not syncing: sysrq triggered crash
+> [   26.688594] CPU: 0 UID: 0 PID: 4235 Comm: bash Kdump: loaded Not taint=
+ed 6.17.0-rc7-next-20250923ce7f1a983b07 #1 PREEMPT(voluntary)
+> [   26.691788] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS u=
+nknown 02/02/2022
+> [   26.693957] Call Trace:
+> [   26.694681]  <TASK>
+> [   26.695320]  vpanic+0x307/0x360
+> [   26.696237]  panic+0x52/0x60
+> [   26.697065]  sysrq_handle_crash+0x11/0x20
+> [   26.698177]  __handle_sysrq+0xb6/0x170
+> [   26.699220]  write_sysrq_trigger+0x50/0x70
+> [   26.700358]  proc_reg_write+0x50/0x90
+> [   26.701395]  ? preempt_count_add+0x42/0xa0
+> [   26.702531]  vfs_write+0xf4/0x430
+> [   26.703481]  ? handle_mm_fault+0xd0/0x200
+> [   26.704602]  ksys_write+0x5c/0xd0
+> [   26.705551]  do_syscall_64+0x4c/0x200
+> [   26.706577]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   26.707961] RIP: 0033:0x7f4cb8024574
+> [   26.708974] Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 0=
+0 00 00 00 00 f3 0f 1e fa 80 3d d5 ea 0e 00 00 74 13 b8 01 00 00 00 0f 05 <=
+48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
+> [   26.713912] RSP: 002b:00007ffdad4f3208 EFLAGS: 00000202 ORIG_RAX: 0000=
+000000000001
+> [   26.715976] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f4cb=
+8024574
+> [   26.717905] RDX: 0000000000000002 RSI: 0000564731e37b80 RDI: 000000000=
+0000001
+> [   26.719843] RBP: 00007ffdad4f3230 R08: 0000000000000073 R09: 000000000=
+0000000
+> [   26.721797] R10: 00000000ffffffff R11: 0000000000000202 R12: 000000000=
+0000002
+> [   26.723715] R13: 0000564731e37b80 R14: 00007f4cb810c5c0 R15: 00007f4cb=
+8109ee0
+> [   26.725658]  </TASK>
+>=20
+> [1373710140.379273] kernel tried to execute NX-protected page - exploit a=
+ttempt? (uid: 0)
+> [2800084354.542901] BUG: unable to handle page fault for address: fffffff=
+f9a91e731
+> [15541331571.597940] #PF: supervisor instruction fetch in kernel mode
+> [11262208929.107056] #PF: error_code(0x0011) - permissions violation
+> [15541331571.597940] PGD 800000e045067 P4D 800000e045067 PUD 800000e04606=
+3 PMD 80000021b8063 PTE 800800000e91e163
 
-Regards,
-Markus
+This is definitely a valid (i.e. not corrupted), NX mapping.
+
+> [1373710140.379273] Oops: Oops: 0011 [#1] SMP NOPTI
+> [11262208929.107056] CPU: 0 UID: 0 PID: 4235 Comm: bash Kdump: loaded Not=
+ tainted 6.17.0-rc7-next-20250923ce7f1a983b07 #1 PREEMPT(voluntary)
+> [2800084354.542901] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), B=
+IOS unknown 02/02/2022
+> [12688583143.270684] RIP: 0010:early_set_pages_state+0x0/0x120
+
+Given that a lore search on early_set_pages_state lights up Ard's series[*]=
+ to
+cleanup the boot code for SEV, and that said series is new in next-20250908=
+ (NOT
+in next-20250905), that seems like a likely culprit.
+
+[*] https://lore.kernel.org/all/20250828102202.1849035-24-ardb+git@google.c=
+om
+
+> [15541331571.597940] Code: 02 02 02 02 02 00 02 02 02 02 02 02 02 02 02 0=
+2 02 02 02 02 00 02 02 02 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 0=
+2 02 <02> 02 02 02 02 02 02 02 02 02 02 02 02 02 02 00 02 02 02 02 02 02
+> [12688583143.270684] RSP: 0018:ffffb608807a7be0 EFLAGS: 00010006
+> [1373710140.379273] RAX: ffff9ed0bfe53000 RBX: ffffffff9abecbe8 RCX: ffff=
+b608807a7be8
+> [2800084354.542901] RDX: 0000000000000001 RSI: 000000007fe53000 RDI: ffff=
+9ed03fe53000
+> [1373710140.379273] RBP: 0000000000000001 R08: 0000000000000001 R09: ffff=
+9ed03fe53000
+> [12688583143.270684] R10: 000000000f001000 R11: 0000000000000000 R12: fff=
+f9ed03fe53000
+> [15541331571.597940] R13: 0000000000000000 R14: ffff9ecfcf00a298 R15: 000=
+0000000001000
+> [11262208929.107056] FS:  00007f4cb7f05740(0000) GS:ffff9ed0a282c000(0000=
+) knlGS:0000000000000000
+> [2800084354.542901] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [18394079999.925196] CR2: ffffffff9a91e731 CR3: 000800000fb1c000 CR4: 000=
+00000003506f0
+> [12688583143.270684] Call Trace:
+> [18394079999.925196]  <TASK>
+> [2800084354.542901]  set_pages_state.part.0+0x63/0xa0
+> [2800084354.542901]  snp_kexec_finish+0x432/0x490
+> [12688583143.270684]  native_machine_crash_shutdown+0x65/0x90
+> [15541331571.597940]  __crash_kexec+0x56/0x120
+> [1373710140.379273]  ? __crash_kexec+0x104/0x120
+> [12688583143.270684]  ? vpanic+0x2a2/0x360
+> [18394079999.925196]  ? panic+0x52/0x60
+> [11262208929.107056]  ? sysrq_handle_crash+0x11/0x20
+> [16967705785.761568]  ? __handle_sysrq+0xb6/0x170
+> [1373710140.379273]  ? write_sysrq_trigger+0x50/0x70
+> [1373710140.379273]  ? proc_reg_write+0x50/0x90
+> [18394079999.925196]  ? preempt_count_add+0x42/0xa0
+> [2800084354.542901]  ? vfs_write+0xf4/0x430
+> [11262208929.107056]  ? handle_mm_fault+0xd0/0x200
+> [18394079999.925196]  ? ksys_write+0x5c/0xd0
+> [12688583143.270684]  ? do_syscall_64+0x4c/0x200
+> [11262208929.107056]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [15541331571.597940]  </TASK>
+> [12688583143.270684] Modules linked in: efivarfs
+> [2800084354.542901] CR2: ffffffff9a91e731
+> [14114957357.434312] ---[ end trace 0000000000000000 ]---
+> [11262208929.107056] RIP: 0010:early_set_pages_state+0x0/0x120
+> [12688583143.270684] Code: 02 02 02 02 02 00 02 02 02 02 02 02 02 02 02 0=
+2 02 02 02 02 00 02 02 02 00 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 0=
+2 02 <02> 02 02 02 02 02 02 02 02 02 02 02 02 02 02 00 02 02 02 02 02 02
+> [15541331571.597940] RSP: 0018:ffffb608807a7be0 EFLAGS: 00010006
+> [14114957357.434312] RAX: ffff9ed0bfe53000 RBX: ffffffff9abecbe8 RCX: fff=
+fb608807a7be8
+> [2800084354.542901] RDX: 0000000000000001 RSI: 000000007fe53000 RDI: ffff=
+9ed03fe53000
+> [15541331571.597940] RBP: 0000000000000001 R08: 0000000000000001 R09: fff=
+f9ed03fe53000
+> [2800084354.542901] R10: 000000000f001000 R11: 0000000000000000 R12: ffff=
+9ed03fe53000
+> [2800084354.542901] R13: 0000000000000000 R14: ffff9ecfcf00a298 R15: 0000=
+000000001000
+> [2800084354.542901] FS:  00007f4cb7f05740(0000) GS:ffff9ed0a282c000(0000)=
+ knlGS:0000000000000000
+> [14114957357.434312] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [11262208929.107056] CR2: ffffffff9a91e731 CR3: 000800000fb1c000 CR4: 000=
+00000003506f0
+> [12688583143.270684] Kernel panic - not syncing: Fatal exception
 
