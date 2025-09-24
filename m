@@ -1,123 +1,98 @@
-Return-Path: <linux-kernel+bounces-830175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10741B98F91
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:50:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31339B98F9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3A0E7A92B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:48:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC2957AB6B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101BE2C0261;
-	Wed, 24 Sep 2025 08:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z1GLPm6/"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493012D0631;
+	Wed, 24 Sep 2025 08:50:10 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00DA3FC2;
-	Wed, 24 Sep 2025 08:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D946F2C326E;
+	Wed, 24 Sep 2025 08:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758703805; cv=none; b=OSSbigFISlwyPwDWpITpfbT+HhcefX1d24gMotkmM2arTS76S6tg+XDtyd/AnC30I87otlE6JDX2UYkSToHde5RTyruLJwd42RyCzSHQqsGkee2pwwCBKc1+oPT2/HPKUyVszwJlAgMMFqAzYVOzaG/u+RMF6xG4xNAGiEiNMTo=
+	t=1758703809; cv=none; b=cbixRdedkSyu2IpxWo2wcvcIeiwfzNxhhOoar8BilXiPUkdlyHAgnA+yF0BPP3r5gOO5eJODmH915gvH9pleB8VllvE34pwFvttDjsFJcGtN3kWbcv2pIO9U5IC5oyToWsAZthxJc1OixNxD7VfJzOSwzUYPPm1S9QiTKiTR150=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758703805; c=relaxed/simple;
-	bh=bsmLWcYiAHZSyPjSOOw20xT5FXztSFu/4czDjVsvnA8=;
+	s=arc-20240116; t=1758703809; c=relaxed/simple;
+	bh=0vYU8utqlJ7TvWiNebrwWUwVSsKdsZJI0lb3s0ESU4o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fWFFnPcmSPlkKPzSyQ87itjNY5MbL14Ci2ZK0nimJkDtWaFaJaSaOtI/PQTT+vHQ3fFdCGCNnoG5R3FJtLg3ZYJsgieshJtjm0AVAyhvP0RjxGdj7/sHnnE4AWU41Fw5iPBp5Uk9hSSFV+bj6RRD2R8jCdkf2eUpYgilkIoKbDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z1GLPm6/; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=YS3z9Qyy+VZhDj43nkM+N+IZO/NYQl/mTzdy8B5TYcc=; b=Z1GLPm6/kKUoa5+mZe7N7JmnsK
-	6YbQyPdGjfab1Ji6MNZJQyKARUHxHVNgIS7M40pg2PnGmA2lj1nCCTo+WeqbBXUl5qVpiBOapihWi
-	TQ39gnRKqEfgdlqGSB0i5YKrOxMA8yGarbb7kh966GAezqUrbo3+9LYFLZTXqczqNmqxFCMZnBv9y
-	yVzAklEAqWnYmu5uA2MlFrbMQsqtOTK7Vnm0y/sFEHYEJRCPy90qEL7w++s2mi8npBROjIN3ZBZQb
-	u0lI+VWktW8+qGPuSVXVOOjGO+GWuPyDwTEddVb79dwNyaO68Wt/BTrvrgGwO873fqGe454H6+Uoz
-	K5GDKzOg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v1LCH-0000000CGzY-3vgC;
-	Wed, 24 Sep 2025 08:49:58 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id BD6EF30033D; Wed, 24 Sep 2025 10:49:56 +0200 (CEST)
-Date: Wed, 24 Sep 2025 10:49:56 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCHv4 bpf-next 2/6] uprobe: Do not emulate/sstep original
- instruction when ip is changed
-Message-ID: <20250924084956.GW3245006@noisy.programming.kicks-ass.net>
-References: <20250916215301.664963-1-jolsa@kernel.org>
- <20250916215301.664963-3-jolsa@kernel.org>
- <CAEf4BzYTJcq=Kk6W9Gz90gM=mw2fS2T-QBurUhdjBNinReDSjQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=txExiWlT0t48CnfXhcUiKfMhosR6MVaoO4Vqligpdo5Su1K6F6oD6wOSucuVYzNfc5LXrf0FE60t08C0IBTMfnlWj1Ya5U6CyIsU+Fga7SBGhWj22KtCE2Hpw05B/3V3Y50qak/EBRJK8qN47Pr/nFERhfuD1UCsRr1M6CFeZsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E087DC4CEE7;
+	Wed, 24 Sep 2025 08:50:02 +0000 (UTC)
+Date: Wed, 24 Sep 2025 09:50:00 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+	lorenzo.stoakes@oracle.com, usamaarif642@gmail.com,
+	yuzhao@google.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+	baohua@kernel.org, voidice@gmail.com, Liam.Howlett@oracle.com,
+	cerasuolodomenico@gmail.com, hannes@cmpxchg.org,
+	kaleshsingh@google.com, npache@redhat.com, riel@surriel.com,
+	roman.gushchin@linux.dev, rppt@kernel.org, ryan.roberts@arm.com,
+	dev.jain@arm.com, ryncsn@gmail.com, shakeel.butt@linux.dev,
+	surenb@google.com, hughd@google.com, willy@infradead.org,
+	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
+	byungchul@sk.com, gourry@gourry.net, ying.huang@linux.alibaba.com,
+	apopple@nvidia.com, qun-wei.lin@mediatek.com,
+	Andrew.Yang@mediatek.com, casper.li@mediatek.com,
+	chinwen.chang@mediatek.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-mm@kvack.org, ioworker0@gmail.com, stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] mm/thp: fix MTE tag mismatch when replacing
+ zero-filled subpages
+Message-ID: <aNOwuKmbAaMaEMb7@arm.com>
+References: <20250922021458.68123-1-lance.yang@linux.dev>
+ <aNGGUXLCn_bWlne5@arm.com>
+ <a3412715-6d9d-4809-9588-ba08da450d16@redhat.com>
+ <aNKJ5glToE4hMhWA@arm.com>
+ <aNLHexcNI53HQ46A@arm.com>
+ <f2fe9c01-2a8d-4de9-abd5-dbb86d15a37b@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzYTJcq=Kk6W9Gz90gM=mw2fS2T-QBurUhdjBNinReDSjQ@mail.gmail.com>
+In-Reply-To: <f2fe9c01-2a8d-4de9-abd5-dbb86d15a37b@linux.dev>
 
-On Tue, Sep 16, 2025 at 03:28:52PM -0700, Andrii Nakryiko wrote:
-> On Tue, Sep 16, 2025 at 2:53 PM Jiri Olsa <jolsa@kernel.org> wrote:
-> >
-> > If uprobe handler changes instruction pointer we still execute single
-> > step) or emulate the original instruction and increment the (new) ip
-> > with its length.
-> >
-> > This makes the new instruction pointer bogus and application will
-> > likely crash on illegal instruction execution.
-> >
-> > If user decided to take execution elsewhere, it makes little sense
-> > to execute the original instruction, so let's skip it.
-> >
-> > Acked-by: Oleg Nesterov <oleg@redhat.com>
-> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  kernel/events/uprobes.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > index 7ca1940607bd..2b32c32bcb77 100644
-> > --- a/kernel/events/uprobes.c
-> > +++ b/kernel/events/uprobes.c
-> > @@ -2741,6 +2741,13 @@ static void handle_swbp(struct pt_regs *regs)
-> >
-> >         handler_chain(uprobe, regs);
-> >
-> > +       /*
-> > +        * If user decided to take execution elsewhere, it makes little sense
-> > +        * to execute the original instruction, so let's skip it.
-> > +        */
-> > +       if (instruction_pointer(regs) != bp_vaddr)
-> > +               goto out;
-> > +
+On Wed, Sep 24, 2025 at 10:49:27AM +0800, Lance Yang wrote:
+> On 2025/9/24 00:14, Catalin Marinas wrote:
+> > So alternative patch that also fixes the deferred struct page init (on
+> > the assumptions that the zero page is always mapped as pte_special():
 > 
-> Peter, Ingo,
-> 
-> Are you guys ok with us routing this through the bpf-next tree? We'll
-> have a tiny conflict because in perf/core branch there is
-> arch_uprobe_optimize() call added after handler_chain(), so git merge
-> will be a bit confused, probably. But it should be trivially
-> resolvable.
+> I can confirm that this alternative patch also works correctly; my tests
+> for MTE all pass ;)
 
-Nah, I suppose that'll be fine. Thanks!
+Thanks Lance for testing. I'll post one of the variants today.
+
+> This looks like a better fix since it solves the boot hang issue too.
+
+In principle, yes, until I tracked down why I changed it in the first
+place - 68d54ceeec0e ("arm64: mte: Allow PTRACE_PEEKMTETAGS access to
+the zero page"). ptrace() can read tags from PROT_MTE mappings and we
+want to allow reading zeroes as well if the page points to the zero
+page. Not flagging the page as PG_mte_tagged caused issues.
+
+I can change the logic in the ptrace() code, I just need to figure out
+what happens to the huge zero page. Ideally we should treat both in the
+same way but, AFAICT, we don't use pmd_mkspecial() on the huge zero
+page, so it gets flagged with PG_mte_tagged.
+
+If I go with the first fix for the page merging, I'll look to defer the
+zero page initialisation post page_alloc_init_late() in a separate
+patch.
+
+-- 
+Catalin
 
