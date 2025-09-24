@@ -1,117 +1,138 @@
-Return-Path: <linux-kernel+bounces-830585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0785B9A0A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:33:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8CCB9A0B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B2FA4A2976
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:33:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 024CE17A175
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB6230217E;
-	Wed, 24 Sep 2025 13:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B6E30277D;
+	Wed, 24 Sep 2025 13:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iTlJxizQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tK4g8xF3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E394143C69;
-	Wed, 24 Sep 2025 13:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF4A2E0413
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758720818; cv=none; b=JJ5kNm1ygmDVU+BE+cIEfNBtG0rS8xlRw0Mv2uY/dXdupy/mnru7o5U84AQUYsoJBb6wqFxTdAV99T6T7lJLi2ixzDoVT/hxHhcWerGwpgGFnTO4XoVgfb/hTERXf5msbq69WVzdWp772jI9t0fh0HIQv4s9cXyHyg5Y+EZZySU=
+	t=1758720868; cv=none; b=D5CdIbD/tBEGXUeuovfs0b9oWwsyWJSjm9VGbgwR9gApH6fuvaZWyisIDWsVgLwk3JDNlx/2In87I7/jqZakmyzo8qHLcSSwAAHBtcspEBAFxKt2WhfvwTpFtblWoUryedIAkr/RDOIELk8wovWH+b1TkQeXVlYYLMyOBY5FKDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758720818; c=relaxed/simple;
-	bh=zEiOrr86mc3pXU3ZmU44YuztailX5N3hOgOdNmn8mW0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=hlLgzpVLXwBGZg5zNhjkeryXEWEIAbRwmpBQtXrtSQMtArO/SJxNKx9AeFesYX2nSg9ImhapMW00JEJdFHowoJ4hF8+68ssGxedjcrvTxyIdlVDAqOzBmOMKRaVEeVKSaK1+9eYL1xnWt6snlQNS8xXO3HyUVsINnX20E7KrI9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iTlJxizQ; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758720816; x=1790256816;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=zEiOrr86mc3pXU3ZmU44YuztailX5N3hOgOdNmn8mW0=;
-  b=iTlJxizQ59ILKETEgchzNK14bqoBrL0VmJ/P4Re4yM8+kO7mws4BmtKa
-   C+0bLsfjxLJpwRfLVpta8ZyBQm4sno0gx2lhoMkj1JpFZkqSgNCcm4EuR
-   SfeQpKwHURH3MbXUn3AG6NYdmfhb+hZttFq120s32NcJU8E2izdaEsw0y
-   /VPtsCqzclziZM3eNvKifCNy7SqcgFD8N0fBfPG/KuhNaXEOABGzeXM/Y
-   Gv98FYSZ0U4a3bcEYF+VqoE/11e3hdzbGnAUn4M5Z3MWLBeBYaLngTzcp
-   RQGu+ErJnbNdkHNCu900tmi3BxyLoMJJVoZcrl9cR/WemwV244P5XiwBL
-   g==;
-X-CSE-ConnectionGUID: zsJcTX4WRZ2xB9DErCfExw==
-X-CSE-MsgGUID: meH+SaTFRsOHae+J4cey/Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="71638539"
-X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
-   d="scan'208";a="71638539"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 06:33:35 -0700
-X-CSE-ConnectionGUID: Z5DrPEzbTPedJnUisz7pWw==
-X-CSE-MsgGUID: 0PZf0EROTPShTLfC8u1ctw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
-   d="scan'208";a="177806509"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.210])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 06:33:33 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 24 Sep 2025 16:33:30 +0300 (EEST)
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-cc: linux-iio@vger.kernel.org, William Breathitt Gray <wbg@kernel.org>, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: Update Intel Quadrature Encoder Peripheral
- maintainer
-In-Reply-To: <20250924131947.70898-1-jarkko.nikula@linux.intel.com>
-Message-ID: <70ef3a26-d70b-3506-3bae-6c87c39f3d22@linux.intel.com>
-References: <20250924131947.70898-1-jarkko.nikula@linux.intel.com>
+	s=arc-20240116; t=1758720868; c=relaxed/simple;
+	bh=3Z6XTJa/2I09pYSflW4MDbMqly8jjfPgHvxuTYEtOvk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K35mp8SqtbtXxwwRhXeajwocRSWy62U1vRtublEpziw1zU3MSKB7BQ1jOkmmHhDm0F0CvdGzsgaoaGo4eZVKAr/9CJ3wiiCdQizpFlveKXDG++8JKnpCF8cmWAz5qukZwmdxKtTLEUpNw9qdvwpBOe3YnxroPlJV8GA9wNoV980=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tK4g8xF3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9351C19422
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:34:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758720867;
+	bh=3Z6XTJa/2I09pYSflW4MDbMqly8jjfPgHvxuTYEtOvk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tK4g8xF3KJeMYnB9VZ4gO8VRMtQvT117WCk3DHhVlEegaKquqejM1Ot5xjEhSSEOK
+	 43WmDcGlPeFBVd6oCpGsmL+8tu5/12oZs4cT3CBOvCTcpV/9ieFFCe0OnqgT5j3e+E
+	 kamp4muCI1+ku/3UZUUk43jADlPfZFB/OGQbWFEL1yIieBn5z+BjOVZvX1yaSW2VRG
+	 8hor0XFKZBCNhDYppKwVU3Vmmj4G7OBcqnycvEma7dxeTlVQ9NQ7zdf/KO//cZhphQ
+	 zs6/ZVsvHe5w9Ygt933ZX8EDJqUdOzRtNRnuAu0X9OGJH948CqCf7TfTwDLEtb4W2w
+	 atUla77I4Zl5A==
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-62fa99bcfcdso10390837a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:34:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW805c11qubmwwrtKeAG+gS+w3Z27TewxteoY629fS830yQnmCFv2ajZoZhdqBB4uRZR4VXS1z6A2lYjts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPOppLo5fOlPU4onOvmSe7uir9YIauUmNa1DYUfCmKJqYJBnRP
+	9Ntt9EpG+R1tAnmwglNLPhIIrIWi6fuc/+GUcELo/nXuqlHp9ytWrFmYpU7VaZ01GGTWkfZlscL
+	BD+xK6JYhqcZwu74pAFKHow13FZBOrA==
+X-Google-Smtp-Source: AGHT+IE6gNa61RcE9DKf2iXVRg4jwELeBK0rbWB2RUsPPFiJAgwlJN43oTxNrNqM4YRqC7tDc6X2gwE56i96k2A7jt0=
+X-Received: by 2002:a05:6402:a00e:b0:62f:b6bd:eff7 with SMTP id
+ 4fb4d7f45d1cf-63467813addmr5004269a12.38.1758720866242; Wed, 24 Sep 2025
+ 06:34:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1129478150-1758720810=:938"
+References: <20250917074812.4042797-1-kevin.tung.openbmc@gmail.com>
+ <9bb9929a-8130-48da-983e-2901a7c3da36@lunn.ch> <CABh9gBew1=hbJvg1Mhg5dE7Lr_Z442_kbBX6zTs_6_C2NRyLbw@mail.gmail.com>
+ <7e6f568da28d7a63738b6ed22b33db3df4c478c9.camel@codeconstruct.com.au> <CABh9gBcoWbXurPo0f9U9+gz8k6gttUvj=NMMDVfgjo5dgaTLSA@mail.gmail.com>
+In-Reply-To: <CABh9gBcoWbXurPo0f9U9+gz8k6gttUvj=NMMDVfgjo5dgaTLSA@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 24 Sep 2025 08:34:15 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+zBK1CBJX0XcaqaYeOPUhoRE-nMeYvkTNwQovJ+dakGg@mail.gmail.com>
+X-Gm-Features: AS18NWBRbwk465MJYJkBc3f6vXfBHLpagMAmj_NyZMMJpbB87hfWSByQAiUtoWU
+Message-ID: <CAL_Jsq+zBK1CBJX0XcaqaYeOPUhoRE-nMeYvkTNwQovJ+dakGg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] Add Meta (Facebook) Yosemite5 BMC (AST2600)
+To: Kevin Tung <kevin.tung.openbmc@gmail.com>
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, Andrew Lunn <andrew@lunn.ch>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, Sep 24, 2025 at 8:05=E2=80=AFAM Kevin Tung <kevin.tung.openbmc@gmai=
+l.com> wrote:
+>
+> On Mon, Sep 22, 2025 at 10:47=E2=80=AFAM Andrew Jeffery
+> <andrew@codeconstruct.com.au> wrote:
+> >
+> > On Thu, 2025-09-18 at 10:21 +0800, Kevin Tung wrote:
+> > > On Wed, Sep 17, 2025 at 11:12=E2=80=AFPM Andrew Lunn <andrew@lunn.ch>=
+ wrote:
+> > > >
+> > > > On Wed, Sep 17, 2025 at 03:48:08PM +0800, Kevin Tung wrote:
+> > > > > Summary:
+> > > > > Add device tree for the Meta (Facebook) Yosemite5 compute node,
+> > > > > based on the AST2600 BMC.
+> > > > >
+> > > > > The Yosemite5 platform provides monitoring of voltages, power,
+> > > > > temperatures, and other critical parameters across the motherboar=
+d,
+> > > > > CXL board, E1.S expansion board, and NIC components. The BMC also
+> > > > > logs relevant events and performs appropriate system actions in
+> > > > > response to abnormal conditions.
+> > > > >
+> > > > > Kevin Tung (2):
+> > > > >   dt-bindings: arm: aspeed: add Meta Yosemite5 board
+> > > > >   ARM: dts: aspeed: yosemite5: Add Meta Yosemite5 BMC
+> > > >
+> > > > The threading between your patches are broken? How did you send the=
+m?
+> > > > git send-email? b4 send?
+> > >
+> > > Yes, the threading is broken. I initially used git send-email, but fo=
+r
+> > > some reason, only the cover letter was sent. I then sent the remainin=
+g
+> > > dt-bindings and DTS patches separately as a follow-up.
+> >
+> > I recommend using b4, it helps blunt some of the sharp edges of git-
+> > send-email.
+> >
+> > https://b4.docs.kernel.org/en/latest/
+> >
+> > Can you please send v2 of the series so that it's properly threaded,
+> > after applying tags you've collected for the involved patches, and
+> > checking your work with `make CHECK_DTBS=3Dy aspeed/aspeed-bmc-facebook=
+-
+> > yosemite5.dtb`?
+> >
+> > Andrew
+>
+> Sure! I have sent v2 of the series using b4, and the patches are now
+> properly threaded.
+> I also checked the work with `make CHECK_DTBS=3Dy
+> aspeed/aspeed-bmc-facebook- yosemite5.dtb`,
+> and the warnings that appear are not related to these patches.
 
---8323328-1129478150-1758720810=:938
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Um, they are related because they are warnings for *your* platform.
+You don't care that there are warnings for your platform?
 
-On Wed, 24 Sep 2025, Jarkko Nikula wrote:
-
-> My address is going to bounce soon and Ilpo agreed to be a new
-> maintainer.
->=20
-> Cc: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-
-Acked-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b9fc91b4ce4f..8fc8426d88c8 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12609,7 +12609,7 @@ S:=09Orphan
->  F:=09drivers/ptp/ptp_dfl_tod.c
-> =20
->  INTEL QUADRATURE ENCODER PERIPHERAL DRIVER
-> -M:=09Jarkko Nikula <jarkko.nikula@linux.intel.com>
-> +M:=09Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
->  L:=09linux-iio@vger.kernel.org
->  F:=09drivers/counter/intel-qep.c
-> =20
->=20
---8323328-1129478150-1758720810=:938--
+Rob
 
