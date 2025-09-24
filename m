@@ -1,186 +1,161 @@
-Return-Path: <linux-kernel+bounces-831458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16EA0B9CB77
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:51:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4DE9B9CB9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 172DF19C60A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:51:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A97016DD4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6582428AAEE;
-	Wed, 24 Sep 2025 23:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D2A26F2BE;
+	Wed, 24 Sep 2025 23:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YD4zubMq"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ea+Y4f2N"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFC022422E
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E651C2750E6
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758757878; cv=none; b=sCy8hm6I/lU41YAp9HBuLTSLS4/i9p+XvSmDdDk8EtGwfuil38qY5KU0oZ8wFdDCXkFikqe43kPuTvA1tFcl/uNcN4NgZfLVNyl/etKLseB2vBi5ppO+FXqY0qnEn0F2KXbfCqdYh0dH4NKVmvKpeWNcMq4urLgrm96r9HiR0Ek=
+	t=1758758156; cv=none; b=jOazvL4DUptELvhkfE62hTcJktC1XCjAe+U+rawho7ntjrUDbGuiC1YVb+SkX+5wT+geb+mzPOqaWjMmXoTsryV3TciURF90mDEiq678GnY2LpyYm7G3yG+HZ/qCeDQPHSkp4Ky/ICi1ffa29ut5oZ2gRCANoCywGvQW2VsTMlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758757878; c=relaxed/simple;
-	bh=bywdX0nhtg4X6nDuC8jT0AaJN0Y+9epl5eMqmA1AZnc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZpMsFSMlkjx2gamq6sRNNecIimwookDnI79HCYUdkYcIOxRLxRx/oO89LoW62CYrH/1ZkkD9FZiDtitNfeyQYKne0Je73fjcIREGU/A4G9VdsSRQVDo70UGvwfeVwUTZn8TR+EU0Dy15F0INvXxjjoE4vK2ZhYzXe6KvUB4oI5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YD4zubMq; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-269ba651d06so709025ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 16:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758757877; x=1759362677; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BcrUofB0dKCSsQ7o/jnuwGUrQDlTZKMr766pxf4U7ew=;
-        b=YD4zubMqj4y/2E16KpijgN6eCpK8QBLzKiSZYb1fSsk6qzhncDbT/rbQdAJv+HOm85
-         0/EEG/xP51Q03P/pirH8g/rLFPU8KsF+CFD2CsSA59vkDNk5wIu+lwgs66KUqVGPtIr7
-         OsJ+ptI45sdzVdEIP8ZpuZO+AdsHMwhmVOkbIw4EvAR/9ts7YZ0mRepPO+QeZbLz/jVN
-         eXec79exBuyuAAdCFIB0SjUPNK4yS294WiF0AsQvacrIJOttlPT2+xJM+UYK7NO1tgAe
-         dpOY9O7hehsil3PU2C+mZb80OXn2smkB8Z+9nqiZFLOag+5kiSEuoN9juzL8xPDrRXL9
-         OH2Q==
+	s=arc-20240116; t=1758758156; c=relaxed/simple;
+	bh=pVFWRyED9uXe9kpHIiNh5s/rNAukrjZqYdBaoVesJPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k7faZ2bBtlAcB8EoXrYCYu1q4e5+SfAq0uPId2Sd70MuttqUa8JF8YSqPCwq2vbVSxy9P15ZiZUO0pSABeQEcjvUb5/lmD5gKbjrezQjLq12gJ6I++TO6bqBwcqP/bykr9eIm0TQq1TrOp5hfzXAMefIhQ322W79BkzkZ6n4isM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ea+Y4f2N; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OCexGJ019034
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:55:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+KQxcXsvZfAS1wOTJMcdFx0mfDRF5q6RjS3aOLT4mUA=; b=ea+Y4f2NY5vZ8Jx8
+	uPTphXJmu2TWODn/nklaUjeLfv7cGSV6z+oFfah1tg251ajdMV0S/urHWVUsvz8P
+	9UaERUeDUZiYO9Y2dJPaeSbwC4z+K1DWLEliefK28hTIi8+nXfjwEliUb9twl3UC
+	Du30Hd5s5U4/LCt5g4J3lZhvMAapmGFC7PlSmuZSigVM9HF7NokpDg0X/f1oHxGp
+	XFU4x+bhPVkv1w1kcDn1R99JpfuCchxIh3y1u75g69wIA2m0NT517H/xETz+rwVT
+	nOBTw8WBeItV+GO4wG2bB+lWuf4kzNA043XnomSuU0eCtfhd7icA6USIUqE28h4o
+	dDG4vA==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49b3nyhwj2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:55:54 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b5527f0d39bso479407a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 16:55:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758757877; x=1759362677;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BcrUofB0dKCSsQ7o/jnuwGUrQDlTZKMr766pxf4U7ew=;
-        b=ProSuH3abQwyxQvAc3up/bQfTqJoZfqlHEIlhxdHp2qYNheGGRoZDjr1VJZcvRQYrt
-         dwwG5OzreFRjcAtP5cwIRmfH8uv9APzhE/Bm0GJNB685T732ljMGtANOTjq+4/Vf36Pd
-         J4TuYvmE4yqvQ672hAEwMoGxLo1muFRT0JkaxnI8zBxLLcALkgvjjLyfCrwCahjBXo+R
-         Yk8aNbmckXfBUodefzVGFwaq8zygtDZkhpuvbbCOnlHI2bKwEb9b+ISC6yGwTykjHlDB
-         cnDJre2X91aSpzZNmv8unoXtc+Z8YowZWOFox36toFBKz4njgCvkwj3sqY114UFkrNvL
-         e0XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgosLi7Sxkw6givTHMijFcz8C0aKm2JnyV1nxPEAXrxfgBO0LKyAB0IL1vFS5I+a0qgvk6dBmTV1vppIk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmSaZhSz0IxIZ20phLNT9dZ5UZQPCAeuZXcuU4AL3ZeWP0H7KI
-	FZTVX5Z/BE3Nn3065nRqAKr0n5RQgsbsFrQnMM+ITuy+Zqo5StAo91HV
-X-Gm-Gg: ASbGncsZeefoShB3Ht+YYfgTXE6vXAQpM/3fjkkBc+0EcAI6K/BeKD5+tMw3/00165Y
-	zCJRDkWXWyWmCpwi+jaa/5Nq27sQsGRApvoeVs76uttvw/A2GJGY6JP9HFLuhlMCjiYlVP1JHym
-	eE+iNORQ+JJCnX4h789ypzl1L1zr22xl8Nz5Gy0Pi07hc7vX5hXWXghQQF3LReBSrlYkhiDekKs
-	/Jd8mktTdIKynKaZCKuTEGNUab/fPbQFPQB0wbEsmhm0o7fD6iwYebnDfqUTaRjPGENCZ0duado
-	UrxIqLtz/nNVtjDQ2CfzLTUqZaMigxN7wD/hRwUYgD7qotMb4ah9yr8D+U78hupfzLDPe3JLMfS
-	0j6uqJ3D6a3cf4r/cuDI=
-X-Google-Smtp-Source: AGHT+IF5/ZHYCLfHMWUKUiXIO0yoi5GrlItBDfQAqCKn6V4VH3FNSKCX4czQoTpWgFwCnc41W0qgng==
-X-Received: by 2002:a17:902:e812:b0:266:914a:2e7a with SMTP id d9443c01a7336-27ed4a7e84amr9318595ad.6.1758757876373;
-        Wed, 24 Sep 2025 16:51:16 -0700 (PDT)
-Received: from localhost ([104.249.174.141])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed69bc273sm4296695ad.124.2025.09.24.16.51.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 16:51:15 -0700 (PDT)
-From: Ben Guo <benx.guo@gmail.com>
-To: alexs@kernel.org,
-	si.yanteng@linux.dev,
-	dzm91@hust.edu.cn,
-	corbet@lwn.net,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org
-Cc: hust-os-kernel-patches@googlegroups.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH] docs/zh_CN: Update Rust index translation and add reference label
-Date: Wed, 24 Sep 2025 23:51:12 +0000
-Message-ID: <20250924235114.209967-1-benx.guo@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1758758153; x=1759362953;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+KQxcXsvZfAS1wOTJMcdFx0mfDRF5q6RjS3aOLT4mUA=;
+        b=d0Dh5wAX7JrM73uM3SGUCJAcUU9hfEnGvQMNOCBsiF6H2zFbM8WuoBgLfPiUvI9G1O
+         bsxpTEfxQ+No5I9BnS5Z7OYbA4zZqZOOOt6uHCzqWQ5xWRwnSJVlstKaK2XEuk6TVanV
+         FDAHMbNVkg+vNKyFS8XnbWaADK6GZV0EdI7gmQBslPLTdF2HToIGNNkPJZmcJJpHgR2Z
+         GAm9MVSJ0EtJz4DxLXYO7FoO9DC20qS/bTmNe751gP4qZ/AAH5TuGhY2iUr1GVCqO8yX
+         yhbl4cFy2Ssf5LUVy5jyuWCKb2anQWHFtREYB3/gVvb2ok8tlEyHGYCexaG1e0odBjUM
+         jhsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdIQKNrf0H2tmZfSTDXh6jyBiqQFUl4bGKe78jrgM+yGbXkq/eSXCqjh6HvCmgImPwvC8IPt60EXh3zD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSaKNMn95b1ML9B3ENgYCgrmn+MPAyd5a3WR6llp2PQTxMQAdk
+	ZDySTDeSusHw9m5wOebkSsJBZdX1kYrRBdqweGX+xCOAwur5glerTqvH4q2RcPxo2gR6kHqU1TT
+	Vuh5gfz0gbCA2yF9+LgfpcGaG88TW3O+md+eE8p9eKaU6MwUWSN3/JukFA5ZZ9Jz9Pj5c/vTdnU
+	jJTA==
+X-Gm-Gg: ASbGncuW4oBjqlUtjEj1xUM5Ef1E8s+4eEYdvoaIXMSYYGCd8iMaBa5dJxMmNViUI/F
+	qOonHeVSg8ifIcPqnyp0aNeih6Eow03qxb3cPldCB4X4ez+s1Io2sb24HLQ85WZrvxDGGqj1ozt
+	Uj+FErYwrAfN8k1674TizxhIXV8vkXjQiIIKNXprbmwXk19raFe46E/nZZsSM5n8xbrtWDyUST/
+	YOYQqy4Xklpl/w4JCmt1/qtM9ZnDfmtUbYLb0WZoDEMv99N5ejjS+1l8Iro+VQKRXA7rVd/mv3B
+	ZT2iN+Jo12MKFQdA8nytUricz8KqSdb5szGPCi1931bo0lt+WGa6tobFoWyZjuJH3qAuS0rWRPZ
+	TNoD3bOf3u+7rRyKPLtZtkLGjTncqC9EN5IQ=
+X-Received: by 2002:a05:6a21:998d:b0:2b6:3182:be12 with SMTP id adf61e73a8af0-2e7c7ea3a80mr1785213637.19.1758758153126;
+        Wed, 24 Sep 2025 16:55:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnZP/Cw7FjCDl1k9YPTWC9PsfI8KuZIFhusxaePj9Boj23xR7A+imFLsr21Pu2tm9ndHFGvA==
+X-Received: by 2002:a05:6a21:998d:b0:2b6:3182:be12 with SMTP id adf61e73a8af0-2e7c7ea3a80mr1785187637.19.1758758152728;
+        Wed, 24 Sep 2025 16:55:52 -0700 (PDT)
+Received: from [10.133.33.164] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7810238cab8sm233347b3a.2.2025.09.24.16.55.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 16:55:52 -0700 (PDT)
+Message-ID: <e06694ec-41a9-4d31-9fd7-8f24f6aa17ba@oss.qualcomm.com>
+Date: Thu, 25 Sep 2025 07:55:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] dt-bindings: leds: Add bindings for Kaanapali PMIC
+ peripherals
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Fenglin Wu <quic_fenglinw@quicinc.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+        Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+References: <20250924-knp-pmic-peri-v2-0-32316039db2f@oss.qualcomm.com>
+Content-Language: en-US
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+In-Reply-To: <20250924-knp-pmic-peri-v2-0-32316039db2f@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=EuPSrTcA c=1 sm=1 tr=0 ts=68d4850a cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=BM8lxeQmQxDjDH1EPigA:9 a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-GUID: VKRa9ZVEKx3FdAX0kvRQyo8c3QjYN96x
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDA5MCBTYWx0ZWRfX87NrxzPgqrHy
+ lg5pw4+ezhbJRtKVUg+QMqkX3gMVlZ6HVOD87Xcc24gaz8V1yI6lWtr2v5Ak8deVXW6hYT4Xzhi
+ 2bp6YfPKCYweh6Gd7d7W49pPsgjcIzHnDMrpA5W3En9ThXAMfd1do+bONBC7rC9QwPbzwjR2vw9
+ c6C2+IykEg5AQstNt7NQ9BiB88JC1H+NgBna9/0jJpg8SkybsHHQzR0MZiQXN3cotQL2GzxYZAJ
+ S2+6hJUWsZaZ4q8dgl8U+PRUM8o0U5u4SZOFb5920w6aacc8eUCsnIsBbtI73uirI38WMEhSbC6
+ 2DTQfWKVSURbWsEBa3DlqFjtCxcsuPgeM0NJ8mdEJw0wnc0XfI36sF1mWO5yPd6ky/iEW0Cz66O
+ hFrARIR9
+X-Proofpoint-ORIG-GUID: VKRa9ZVEKx3FdAX0kvRQyo8c3QjYN96x
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 suspectscore=0 malwarescore=0 spamscore=0 adultscore=0
+ clxscore=1015 priorityscore=1501 impostorscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220090
 
-Update the translated rust/index.rst with new contents,
-and add a reference label in rust/general-information.rst so
-that index.rst can link to it properly.
+this was accidentally sent twice, please ignore this.
 
-Fixes in rust/index.rst:
-- Fixed broken quick-start.rst cross-reference
+Thanks, Jingyi
 
-Update the translation through commit d0b343605f1b
-("kernel-docs: Add new section for Rust learning materials")
-
-Signed-off-by: Ben Guo <benx.guo@gmail.com>
----
- .../zh_CN/rust/general-information.rst        |  1 +
- .../translations/zh_CN/rust/index.rst         | 32 ++++++++++++++++++-
- 2 files changed, 32 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/translations/zh_CN/rust/general-information.rst b/Documentation/translations/zh_CN/rust/general-information.rst
-index 251f6ee2bb44..9b5e37e13f38 100644
---- a/Documentation/translations/zh_CN/rust/general-information.rst
-+++ b/Documentation/translations/zh_CN/rust/general-information.rst
-@@ -13,6 +13,7 @@
- 
- 本文档包含了在内核中使用Rust支持时需要了解的有用信息。
- 
-+.. _rust_code_documentation_zh_cn:
- 
- 代码文档
- --------
-diff --git a/Documentation/translations/zh_CN/rust/index.rst b/Documentation/translations/zh_CN/rust/index.rst
-index b01f887e7167..10413b0c17c0 100644
---- a/Documentation/translations/zh_CN/rust/index.rst
-+++ b/Documentation/translations/zh_CN/rust/index.rst
-@@ -10,7 +10,35 @@
- Rust
- ====
- 
--与内核中的Rust有关的文档。若要开始在内核中使用Rust，请阅读quick-start.rst指南。
-+与内核中的Rust有关的文档。若要开始在内核中使用Rust，请阅读 quick-start.rst 指南。
-+
-+Rust 实验
-+---------
-+Rust 支持在 v6.1 版本中合并到主线，以帮助确定 Rust 作为一种语言是否适合内核，
-+即是否值得进行权衡。
-+
-+目前，Rust 支持主要面向对 Rust 支持感兴趣的内核开发人员和维护者，
-+以便他们可以开始处理抽象和驱动程序，并帮助开发基础设施和工具。
-+
-+如果您是终端用户，请注意，目前没有适合或旨在生产使用的内置驱动程序或模块，
-+并且 Rust 支持仍处于开发/实验阶段，尤其是对于特定内核配置。
-+
-+代码文档
-+--------
-+
-+给定一个内核配置，内核可能会生成 Rust 代码文档，即由 ``rustdoc`` 工具呈现的 HTML。
-+
-+.. only:: rustdoc and html
-+
-+   该内核文档使用 `Rust 代码文档 <rustdoc/kernel/index.html>`_ 构建。
-+
-+.. only:: not rustdoc and html
-+
-+   该内核文档不使用 Rust 代码文档构建。
-+
-+预生成版本提供在：https://rust.docs.kernel.org。
-+
-+请参阅 :ref:`代码文档 <rust_code_documentation_zh_cn>` 部分以获取更多详细信息。
- 
- .. toctree::
-     :maxdepth: 1
-@@ -20,6 +48,8 @@ Rust
-     coding-guidelines
-     arch-support
- 
-+你还可以在 :doc:`../../../process/kernel-docs` 中找到 Rust 的学习材料。
-+
- .. only::  subproject and html
- 
-    Indices
--- 
-2.43.0
-
+On 9/25/2025 7:43 AM, Jingyi Wang wrote:
+> Add bindings for flash led and PWM devices present on Kaanapali PMICs.
+>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+> Changes in v2:
+> - EDITME: describe what is new in this series revision.
+> - EDITME: use bulletpoints and terse descriptions.
+> - Link to v1: https://lore.kernel.org/r/20250924-knp-pmic-peri-v1-0-47413f8ddbf2@oss.qualcomm.com
+>
+> ---
+> Jishnu Prakash (2):
+>       dt-bindings: leds: leds-qcom-lpg: Add support for PMH0101 PWM
+>       dt-bindings: leds: qcom,spmi-flash-led: Add PMH0101 compatible
+>
+>  Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml       | 1 +
+>  Documentation/devicetree/bindings/leds/qcom,spmi-flash-led.yaml | 1 +
+>  2 files changed, 2 insertions(+)
+> ---
+> base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+> change-id: 20250923-knp-pmic-peri-e067c827c531
+>
+> Best regards,
 
