@@ -1,200 +1,314 @@
-Return-Path: <linux-kernel+bounces-830994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E13AB9B181
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:41:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DBDBB9B18D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2E5D17C606
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:41:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2E4E7A97EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7270331770B;
-	Wed, 24 Sep 2025 17:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1996A3161B7;
+	Wed, 24 Sep 2025 17:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FyFqbUnd"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s0Wkc1/p"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359B0315D51
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B55627877B
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758735684; cv=none; b=objlaqRc7G4vMaPdC1I1GCDxIi1v+SECR4UlUjVqw2ABvpv78nsf3JsbumbgvBVI3Pg9r7wO1Vrc0Sa7QUgVD3dalJ5V9s+tVKR5ELGLLYbHyywpNsKtppRdxns/SDHv3BD5EOSqHzG77a7ghY/nUZCINpks5tYRzE50jmHkWTs=
+	t=1758735781; cv=none; b=cZwbmu2X1My2bJHRceYcIvtI19P4uBqjITZx9XjJP88uoW7SVWkcuedRQ1vKc7Lvin228UslJQwBy/4FS3foQDqRWHhc9CQ9pKd0vwGbRqtH3WjPz3njzf/QHPCybYOBXoH24ph/xZ6RQoKiKKxZZrSBhKUvYKkY7fCk9e6WZ6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758735684; c=relaxed/simple;
-	bh=bQYk1EC/G2kWRYB45UUzoDmY01Dotdy7GHuXCL8h2zI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lqcFzpyJYjp63geBvsv9NYu1HRH08utgE3QPmw5drFOrVLYpa/J8cxGLQkjcUSF88zNwmpfcL8tsjARiz7AeIPS97kuZzonP9ozk9KTm9F5m47nNqm2XIJppCS29zYC4saX/l9Emym2cv9BU6R4TX/lAGpOoTI7TcaGGD183scE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FyFqbUnd; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77f41086c11so112569b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:41:22 -0700 (PDT)
+	s=arc-20240116; t=1758735781; c=relaxed/simple;
+	bh=G+3ZRqT1PoaXjRdb5oeX5rvzeJjyHI1vcgX8HaETxWE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=WpxAeeQVyH3iW/d9UAuRRz4DpN1gm6KhYeQ9g7w/SGI3xeH528os64o3+yOjrji6tIHNvRWiqZSPrSZKJKb+kLj4AkjDqs9vJQOjaqsxbMVf5cRSrX61IXBo1T3LwPWJR/KSO9VJtW6Ujg0amqAJm6hJjW1Nafm9gc9L83pdYcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s0Wkc1/p; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b54df707c1cso33332a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:42:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758735682; x=1759340482; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ty52FH05Tvs7xv/IdghzsK+lMAT5+OB4jQyAKfAPbHQ=;
-        b=FyFqbUndW0zeVua9nrw7au3j9ZG22CzQIvGi00NjHH9eGG9S4bgn1D0v2qdQ9DjKH8
-         AythRt1jNl6hg56uwf7u7qTvLtJrZLm8ZYOUiN3s+xiKSfMtijn4beclduqE9+IyaM/6
-         Mf5dcED8zVhgO8+IPcEjmqP5VTYynjm0RpCIMO2q3JjkFE2JW4fl7blRPpCH1bSa+8Og
-         3OOt0MViGEvsBcxaEuOogpZTZLgR86QnpRdtweyEYDskD99qCyIutdUIa+j+uJtEDVv2
-         BPFjnk6GFLGobMq6ButsRLzCtgaPOtWZaBNO/5sGbEjM14NSSdmDxy8OyXY1KWaFX28r
-         PamQ==
+        d=google.com; s=20230601; t=1758735778; x=1759340578; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NKLHKuSSH5KomJKM38o7XR7NGc4hSYm/KrkL7rWCOhI=;
+        b=s0Wkc1/pO0w+kTx7E4dy+4XRUXrQwUyVBbJI0P4w8JDW/7IEUZlNAYjije59K8z6UA
+         XXWT49Ay+6Ml2mI2s9TULe5wCetf3iVQEdXwfqY0WPO20f3sTN1oTvT/QhjGV1tJ7nUd
+         YDKg8o8Ah+uQ2AcxPkDDHBKGokid70KJAkaArAeY/3qLgd1fecE4F4CASJ1YZClu1ssw
+         HRe8SPs9RFLnoU1kV784gn2GwX4XCcFCoj9JQ28e8rNsg/eifXwXRwwxUlLo55AvhqcZ
+         IsbEgk9+AM7KZAmTf1gf2xi7owWds6RPsJ89DURDpyjlOjH+pBwIksBsJASAqAtpUqyr
+         9vLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758735682; x=1759340482;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ty52FH05Tvs7xv/IdghzsK+lMAT5+OB4jQyAKfAPbHQ=;
-        b=QaZqrqBGtxdaVznCWzd0w08ZZfSlZ+d1dnr1vm0INyhEh6UzA6+64NQcbnKzy2J8QZ
-         Z6hp5Yeu1dloDlPARlNQ5GnFTBIBEa3e8MIJz3uHuKOrTAR5BWmSh0FA0XkSbV+jqHpu
-         ijLGnbBoZufA8BIdOpjU+oHOnUuRpt4ZQ5zh1DNmlDqwLIKqyYIuKChXOSFGusZlV6R4
-         M6zA8jgnA8lk8j+v0+7fQ3SwSqBmotK/PjPXCx2jmTXwy5rLr70xnkw92NB7WVz2dPtS
-         gPOmyn4aWhhVA14fQ4lKtQ4z2ip0pTo3Iw86TxTGIGpbVT+7vUWutlPkwik35v5Zdbtq
-         xmyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3rpiKRwfmMnT3ZvlxNHj8LZ4EuwvJnZBepGBigsLq2jcV1qn0Fgly9mIvOj0ggf1ZyTrDS8VIY2vPes8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfWHy7hnktDSG4cDXAPcjJ3e8tYLTCo97tCcKkFNOPh42jtXpm
-	esOxkCEQ3uERCxRAGo7uEt4jw7O/4pAsoNHvjtYuxJnxoQoYBqyKVmw4
-X-Gm-Gg: ASbGnct4eFoxqjJM/ivjB/vzYQC5RC6MtUkJA1A3E66ShkRuJGvywsmej7z/e6P+T23
-	gLo2q9eh38yKpMnT6eA9ns+UVjKkngCP2h3i0PCPVBqIzVUDUI+h/5BXUvOheUtUJjozQzyVdiX
-	ULGBNMLQctvTFoc0QVzWmIpjEmbdQVGujdPEg6JxTp65lufdjIQihwDH0Vxr+cr/2KpnPZbWgic
-	6fm7LmrPPgx/ceWZJeT0tf1mf1FPEW/TDqHxfyU98AzVO+sAuyGyfC5A7PrAJF0AzRJC9/VWd8p
-	XuW0n5JlFa1NDz18ZSJ4w/J5PDhsvXEy+BQtnrADucQHOXgGkdbYtd+pIn6VatxiPjUIqt1C/Pw
-	C9vWEGJO3uLJQDU7nIy4qGlyl97SS3wtFlFGt9ul6vWI7mNizwoGMe+yV1w==
-X-Google-Smtp-Source: AGHT+IEH7V8AaqsK8NVGCCYR/TOu4QgCBqsRmAXHSWKWcD9xohjCTkdmty7dG+stB3XxdKNYyTnwTQ==
-X-Received: by 2002:a05:6a21:3385:b0:240:1d4f:720b with SMTP id adf61e73a8af0-2e7c4dac17dmr504768637.23.1758735682190;
-        Wed, 24 Sep 2025 10:41:22 -0700 (PDT)
-Received: from nikhil-s-Swift-SFG14-73.. ([101.0.63.224])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f0da42fdesm14921267b3a.66.2025.09.24.10.41.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 10:41:21 -0700 (PDT)
-From: Nikhil S <nikhilsunilkumar@gmail.com>
-To: mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nikhil S <nikhilsunilkumar@gmail.com>
-Subject: [PATCH] media: dvbringbuffer : fix space issues
-Date: Wed, 24 Sep 2025 23:11:01 +0530
-Message-ID: <20250924174105.8302-1-nikhilsunilkumar@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1758735778; x=1759340578;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NKLHKuSSH5KomJKM38o7XR7NGc4hSYm/KrkL7rWCOhI=;
+        b=jM3b8G9p3m1JCYhICGcPTuGVe/wXgeW31cjzrn2YmgygR4oFwQKNImxAIEAtWZA0t6
+         X2m4imw4CDJS733KR3Z9m6UawOx2wqsuVYyU0o5QKC/C6fyVKRVmhkoSkJ7vEBhc8tme
+         jGasWkyD4zOjEA5ZZx9A/FjKSjQARgJatOS5Y5++0C51h5iz4mlYGLsVaqb595P9PGyS
+         9LjtXL7Jorq+MQZsxZkHykszJgV/2lrRthcXI8SLyBW0b7IJl5/1AgkHFH4tYL/eyz+C
+         VfjKirUu+lCZM1tp9JpxjYr694fopTM5T4z2SKvgz27sqSavcgejf/Uq/KiLYPZXS1Ce
+         JWrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVKrc7eXNEJ3T9uBrSYKK6L1WGUv10vJkAv4qvIpzfHPZIAXxZ5nIhuQN7jAMXMemMp8BTCZx8Q8VZoUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBpZbo9rpS/kmAvHat+b+4DVF9gTwNS57U+eE4m5cN6BjwqKuX
+	fVjaXuKuwMPOMXlNDvqiEe7SHx8Q0D5en9H/K6DlHotN5kI9wli98OflGzr0Xuh3KgN7SLZZYDs
+	JOf4Xiw==
+X-Google-Smtp-Source: AGHT+IHdLIFgjQqMCG7KTukyX1lK7wVnctYuW/7FsXop1pIla2RIXjz99qbnEjDth8Kr2bCD1ntyG42LX3M=
+X-Received: from pjbcx21.prod.google.com ([2002:a17:90a:fd95:b0:329:ccdd:e725])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c04:b0:334:18f9:8008
+ with SMTP id 98e67ed59e1d1-3342a2701e7mr581983a91.8.1758735778322; Wed, 24
+ Sep 2025 10:42:58 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Wed, 24 Sep 2025 10:42:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
+Message-ID: <20250924174255.2141847-1-seanjc@google.com>
+Subject: [PATCH v3] KVM: selftests: Test prefault memory during concurrent
+ memslot removal
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yan Zhao <yan.y.zhao@intel.com>, Sean Christopherson <seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Fix the space issues detected by the checkpatch tool
+From: Yan Zhao <yan.y.zhao@intel.com>
 
-Signed-off-by: Nikhil S <nikhilsunilkumar@gmail.com>
+Expand the prefault memory selftest to add a regression test for a KVM bug
+where TDX's retry logic (to avoid tripping the zero-step mitigation) would
+result in deadlock due to the memslot deletion waiting on prefaulting to
+release SRCU, and prefaulting waiting on the memslot to fully disappear
+(KVM uses a two-step process to delete memslots, and KVM x86 retries page
+faults if a to-be-deleted, a.k.a. INVALID, memslot is encountered).
+
+To exercise concurrent memslot remove, spawn a second thread to initiate
+memslot removal at roughly the same time as prefaulting.  Test memslot
+removal for all testcases, i.e. don't limit concurrent removal to only the
+success case.  There are essentially three prefault scenarios (so far)
+that are of interest:
+
+ 1. Success
+ 2. ENOENT due to no memslot
+ 3. EAGAIN due to INVALID memslot
+
+For all intents and purposes, #1 and #2 are mutually exclusive, or rather,
+easier to test via separate testcases since writing to non-existent memory
+is trivial.  But for #3, making it mutually exclusive with #1 _or_ #2 is
+actually more complex than testing memslot removal for all scenarios.  The
+only requirement to let memslot removal coexist with other scenarios is a
+way to guarantee a stable result, e.g. that the "no memslot" test observes
+ENOENT, not EAGAIN, for the final checks.
+
+So, rather than make memslot removal mutually exclusive with the ENOENT
+scenario, simply restore the memslot and retry prefaulting.  For the "no
+memslot" case, KVM_PRE_FAULT_MEMORY should be idempotent, i.e. should
+always fail with ENOENT regardless of how many times userspace attempts
+prefaulting.
+
+Pass in both the base GPA and the offset (instead of the "full" GPA) so
+that the worker can recreate the memslot.
+
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+Co-developed-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- drivers/media/dvb-core/dvb_ringbuffer.c | 33 ++++++++++++++-----------
- 1 file changed, 19 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/media/dvb-core/dvb_ringbuffer.c b/drivers/media/dvb-core/dvb_ringbuffer.c
-index 7d4558de8..29b1fa028 100644
---- a/drivers/media/dvb-core/dvb_ringbuffer.c
-+++ b/drivers/media/dvb-core/dvb_ringbuffer.c
-@@ -37,10 +37,10 @@
+v3 of Yan's series to fix a deadlock when prefaulting memory for a TDX
+guest.  The KVM fixes have already been applied, all that remains is this
+selftest.
+
+v3: Test memslot removal for both positive and negative testcases, and simply
+    ensure a stable result by restoring the memslot and retrying if necessary.
+
+v2: https://lore.kernel.org/all/20250822070305.26427-1-yan.y.zhao@intel.com
+
+ .../selftests/kvm/pre_fault_memory_test.c     | 131 +++++++++++++++---
+ 1 file changed, 114 insertions(+), 17 deletions(-)
+
+diff --git a/tools/testing/selftests/kvm/pre_fault_memory_test.c b/tools/testing/selftests/kvm/pre_fault_memory_test.c
+index 0350a8896a2f..f04768c1d2e4 100644
+--- a/tools/testing/selftests/kvm/pre_fault_memory_test.c
++++ b/tools/testing/selftests/kvm/pre_fault_memory_test.c
+@@ -10,6 +10,7 @@
+ #include <test_util.h>
+ #include <kvm_util.h>
+ #include <processor.h>
++#include <pthread.h>
  
- void dvb_ringbuffer_init(struct dvb_ringbuffer *rbuf, void *data, size_t len)
- {
--	rbuf->pread=rbuf->pwrite=0;
--	rbuf->data=data;
--	rbuf->size=len;
--	rbuf->error=0;
-+	rbuf->pread = rbuf->pwrite = 0;
-+	rbuf->data = data;
-+	rbuf->size = len;
-+	rbuf->error = 0;
- 
- 	init_waitqueue_head(&rbuf->queue);
- 
-@@ -235,7 +235,7 @@ ssize_t dvb_ringbuffer_write_user(struct dvb_ringbuffer *rbuf,
- 	return len;
+ /* Arbitrarily chosen values */
+ #define TEST_SIZE		(SZ_2M + PAGE_SIZE)
+@@ -30,18 +31,66 @@ static void guest_code(uint64_t base_gpa)
+ 	GUEST_DONE();
  }
  
--ssize_t dvb_ringbuffer_pkt_write(struct dvb_ringbuffer *rbuf, u8* buf, size_t len)
-+ssize_t dvb_ringbuffer_pkt_write(struct dvb_ringbuffer *rbuf, u8 *buf, size_t len)
+-static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa, u64 size,
+-			     u64 left)
++struct slot_worker_data {
++	struct kvm_vm *vm;
++	u64 gpa;
++	uint32_t flags;
++	bool worker_ready;
++	bool prefault_ready;
++	bool recreate_slot;
++};
++
++static void *delete_slot_worker(void *__data)
++{
++	struct slot_worker_data *data = __data;
++	struct kvm_vm *vm = data->vm;
++
++	WRITE_ONCE(data->worker_ready, true);
++
++	while (!READ_ONCE(data->prefault_ready))
++		cpu_relax();
++
++	vm_mem_region_delete(vm, TEST_SLOT);
++
++	while (!READ_ONCE(data->recreate_slot))
++		cpu_relax();
++
++	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS, data->gpa,
++				    TEST_SLOT, TEST_NPAGES, data->flags);
++
++	return NULL;
++}
++
++static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 base_gpa, u64 offset,
++			     u64 size, u64 expected_left, bool private)
  {
- 	int status;
- 	ssize_t oldpwrite = rbuf->pwrite;
-@@ -245,7 +245,8 @@ ssize_t dvb_ringbuffer_pkt_write(struct dvb_ringbuffer *rbuf, u8* buf, size_t le
- 	DVB_RINGBUFFER_WRITE_BYTE(rbuf, PKT_READY);
- 	status = dvb_ringbuffer_write(rbuf, buf, len);
+ 	struct kvm_pre_fault_memory range = {
+-		.gpa = gpa,
++		.gpa = base_gpa + offset,
+ 		.size = size,
+ 		.flags = 0,
+ 	};
+-	u64 prev;
++	struct slot_worker_data data = {
++		.vm = vcpu->vm,
++		.gpa = base_gpa,
++		.flags = private ? KVM_MEM_GUEST_MEMFD : 0,
++	};
++	bool slot_recreated = false;
++	pthread_t slot_worker;
+ 	int ret, save_errno;
++	u64 prev;
  
--	if (status < 0) rbuf->pwrite = oldpwrite;
-+	if (status < 0)
-+		rbuf->pwrite = oldpwrite;
- 	return status;
+-	do {
++	/*
++	 * Concurrently delete (and recreate) the slot to test KVM's handling
++	 * of a racing memslot deletion with prefaulting.
++	 */
++	pthread_create(&slot_worker, NULL, delete_slot_worker, &data);
++
++	while (!READ_ONCE(data.worker_ready))
++		cpu_relax();
++
++	WRITE_ONCE(data.prefault_ready, true);
++
++	for (;;) {
+ 		prev = range.size;
+ 		ret = __vcpu_ioctl(vcpu, KVM_PRE_FAULT_MEMORY, &range);
+ 		save_errno = errno;
+@@ -49,18 +98,65 @@ static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa, u64 size,
+ 			    "%sexpecting range.size to change on %s",
+ 			    ret < 0 ? "not " : "",
+ 			    ret < 0 ? "failure" : "success");
+-	} while (ret >= 0 ? range.size : save_errno == EINTR);
+ 
+-	TEST_ASSERT(range.size == left,
+-		    "Completed with %lld bytes left, expected %" PRId64,
+-		    range.size, left);
++		/*
++		 * Immediately retry prefaulting if KVM was interrupted by an
++		 * unrelated signal/event.
++		 */
++		if (ret < 0 && save_errno == EINTR)
++			continue;
+ 
+-	if (left == 0)
+-		__TEST_ASSERT_VM_VCPU_IOCTL(!ret, "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
++		/*
++		 * Tell the worker to recreate the slot in order to complete
++		 * prefaulting (if prefault didn't already succeed before the
++		 * slot was deleted) and/or to prepare for the next testcase.
++		 * Wait for the worker to exit so that the next invocation of
++		 * prefaulting is guaranteed to complete (assuming no KVM bugs).
++		 */
++		if (!slot_recreated) {
++			WRITE_ONCE(data.recreate_slot, true);
++			pthread_join(slot_worker, NULL);
++			slot_recreated = true;
++
++			/*
++			 * Retry prefaulting to get a stable result, i.e. to
++			 * avoid seeing random EAGAIN failures.  Don't retry if
++			 * prefaulting already succeeded, as KVM disallows
++			 * prefaulting with size=0, i.e. blindly retrying would
++			 * result in test failures due to EINVAL.  KVM should
++			 * always return success if all bytes are prefaulted,
++			 * i.e. there is no need to guard against EAGAIN being
++			 * returned.
++			 */
++			if (range.size)
++				continue;
++		}
++
++		/*
++		 * All done if there are no remaining bytes to prefault, or if
++		 * prefaulting failed (EINTR was handled above, and EAGAIN due
++		 * to prefaulting a memslot that's being actively deleted should
++		 * be impossible since the memslot has already been recreated).
++		 */
++		if (!range.size || ret < 0)
++			break;
++	}
++
++	TEST_ASSERT(range.size == expected_left,
++		    "Completed with %llu bytes left, expected %lu",
++		    range.size, expected_left);
++
++	/*
++	 * Assert success if prefaulting the entire range should succeed, i.e.
++	 * complete with no bytes remaining.  Otherwise prefaulting should have
++	 * failed due to ENOENT (due to RET_PF_EMULATE for emulated MMIO when
++	 * no memslot exists).
++	 */
++	if (!expected_left)
++		TEST_ASSERT_VM_VCPU_IOCTL(!ret, KVM_PRE_FAULT_MEMORY, ret, vcpu->vm);
+ 	else
+-		/* No memory slot causes RET_PF_EMULATE. it results in -ENOENT. */
+-		__TEST_ASSERT_VM_VCPU_IOCTL(ret && save_errno == ENOENT,
+-					    "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
++		TEST_ASSERT_VM_VCPU_IOCTL(ret && save_errno == ENOENT,
++					  KVM_PRE_FAULT_MEMORY, ret, vcpu->vm);
  }
  
-@@ -258,8 +259,10 @@ ssize_t dvb_ringbuffer_pkt_read_user(struct dvb_ringbuffer *rbuf, size_t idx,
+ static void __test_pre_fault_memory(unsigned long vm_type, bool private)
+@@ -97,9 +193,10 @@ static void __test_pre_fault_memory(unsigned long vm_type, bool private)
  
- 	pktlen = rbuf->data[idx] << 8;
- 	pktlen |= rbuf->data[(idx + 1) % rbuf->size];
--	if (offset > pktlen) return -EINVAL;
--	if ((offset + len) > pktlen) len = pktlen - offset;
-+	if (offset > pktlen)
-+		return -EINVAL;
-+	if ((offset + len) > pktlen)
-+		len = pktlen - offset;
+ 	if (private)
+ 		vm_mem_set_private(vm, guest_test_phys_mem, TEST_SIZE);
+-	pre_fault_memory(vcpu, guest_test_phys_mem, SZ_2M, 0);
+-	pre_fault_memory(vcpu, guest_test_phys_mem + SZ_2M, PAGE_SIZE * 2, PAGE_SIZE);
+-	pre_fault_memory(vcpu, guest_test_phys_mem + TEST_SIZE, PAGE_SIZE, PAGE_SIZE);
++
++	pre_fault_memory(vcpu, guest_test_phys_mem, 0, SZ_2M, 0, private);
++	pre_fault_memory(vcpu, guest_test_phys_mem, SZ_2M, PAGE_SIZE * 2, PAGE_SIZE, private);
++	pre_fault_memory(vcpu, guest_test_phys_mem, TEST_SIZE, PAGE_SIZE, PAGE_SIZE, private);
  
- 	idx = (idx + DVB_RINGBUFFER_PKTHDRSIZE + offset) % rbuf->size;
- 	todo = len;
-@@ -278,7 +281,7 @@ ssize_t dvb_ringbuffer_pkt_read_user(struct dvb_ringbuffer *rbuf, size_t idx,
- }
- 
- ssize_t dvb_ringbuffer_pkt_read(struct dvb_ringbuffer *rbuf, size_t idx,
--				int offset, u8* buf, size_t len)
-+				int offset, u8 *buf, size_t len)
- {
- 	size_t todo;
- 	size_t split;
-@@ -286,8 +289,10 @@ ssize_t dvb_ringbuffer_pkt_read(struct dvb_ringbuffer *rbuf, size_t idx,
- 
- 	pktlen = rbuf->data[idx] << 8;
- 	pktlen |= rbuf->data[(idx + 1) % rbuf->size];
--	if (offset > pktlen) return -EINVAL;
--	if ((offset + len) > pktlen) len = pktlen - offset;
-+	if (offset > pktlen)
-+		return -EINVAL;
-+	if ((offset + len) > pktlen)
-+		len = pktlen - offset;
- 
- 	idx = (idx + DVB_RINGBUFFER_PKTHDRSIZE + offset) % rbuf->size;
- 	todo = len;
-@@ -309,7 +314,7 @@ void dvb_ringbuffer_pkt_dispose(struct dvb_ringbuffer *rbuf, size_t idx)
- 	rbuf->data[(idx + 2) % rbuf->size] = PKT_DISPOSED;
- 
- 	// clean up disposed packets
--	while(dvb_ringbuffer_avail(rbuf) > DVB_RINGBUFFER_PKTHDRSIZE) {
-+	while (dvb_ringbuffer_avail(rbuf) > DVB_RINGBUFFER_PKTHDRSIZE) {
- 		if (DVB_RINGBUFFER_PEEK(rbuf, 2) == PKT_DISPOSED) {
- 			pktlen = DVB_RINGBUFFER_PEEK(rbuf, 0) << 8;
- 			pktlen |= DVB_RINGBUFFER_PEEK(rbuf, 1);
-@@ -321,7 +326,7 @@ void dvb_ringbuffer_pkt_dispose(struct dvb_ringbuffer *rbuf, size_t idx)
- 	}
- }
- 
--ssize_t dvb_ringbuffer_pkt_next(struct dvb_ringbuffer *rbuf, size_t idx, size_t* pktlen)
-+ssize_t dvb_ringbuffer_pkt_next(struct dvb_ringbuffer *rbuf, size_t idx, size_t *pktlen)
- {
- 	int consumed;
- 	int curpktlen;
-@@ -339,7 +344,7 @@ ssize_t dvb_ringbuffer_pkt_next(struct dvb_ringbuffer *rbuf, size_t idx, size_t*
- 	if (consumed < 0)
- 		consumed += rbuf->size;
- 
--	while((dvb_ringbuffer_avail(rbuf) - consumed) > DVB_RINGBUFFER_PKTHDRSIZE) {
-+	while ((dvb_ringbuffer_avail(rbuf) - consumed) > DVB_RINGBUFFER_PKTHDRSIZE) {
- 
- 		curpktlen = rbuf->data[idx] << 8;
- 		curpktlen |= rbuf->data[(idx + 1) % rbuf->size];
+ 	vcpu_args_set(vcpu, 1, guest_test_virt_mem);
+ 	vcpu_run(vcpu);
+
+base-commit: ecbcc2461839e848970468b44db32282e5059925
 -- 
-2.43.0
+2.51.0.536.g15c5d4f767-goog
 
 
