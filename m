@@ -1,214 +1,223 @@
-Return-Path: <linux-kernel+bounces-830459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258E0B99B64
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:00:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA17B99B6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44DFC7A9BEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:58:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60E66325893
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E32A302766;
-	Wed, 24 Sep 2025 11:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C5B3002A3;
+	Wed, 24 Sep 2025 12:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R8WGmGFi"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fW0ETLeQ"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53392301461
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F8A2FFDDE
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758715171; cv=none; b=YhqYYmMp8bQVf/EtrZypN1l8tl7OBmPyaK2CFPlU0QzHGHPErer6Bn0Yu/iwuYPzE0jO8+0SB+YWisQPanktpS25dCqi/+LBUEgr1SsNY+YskAMYnUyfUggiVqKwg61m7gYmnDxr9I5BNXkfJcvmf4ux1c3ns6+ClsBisxyLJEw=
+	t=1758715219; cv=none; b=jpr/lVpNWhm+ADAxTyC/VH/h9T3TwrUc30nYFSpNomyhzgh1k5VwUx+o4CsAKH9CMTjzLansq5IRUsKeqDhq4j/WDA5YZk9BG+Q0AUaWhCD7fL8wm5JMvOhGf3M9Suc8xspkg2ylZQDbhi721kl2CEDt0R8RBEhG/Lxk5DonDYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758715171; c=relaxed/simple;
-	bh=RhnZDstkSyn9NCjV5BXAuD2SyORPxGwmKdcF/ZwFcK0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=D3U+haesKzeAam/AdvLY1AaTPmqpg0EN+yLc62HN0hNeNqjqgGWcEX2U1g/4WcqRQdSs61VQ/hjSQmjegB+MfATrpn1eJ9XItGGg8Km5XGRhh1MYGUAYBClNNprXPkWeJxyj6NVJby/Wc2JNKPIu28vPLB8+Yf6u3F1GWakYvHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R8WGmGFi; arc=none smtp.client-ip=209.85.128.175
+	s=arc-20240116; t=1758715219; c=relaxed/simple;
+	bh=zgbvGJBSx4YBKNkqO/qzz/La9XfnZ3vAatfFaQMoL7I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tmtL3CcyZhcALgCoZrhu0jm7ThTaTMLfykimWuihnviTWowMrqV9S33y231I/xnYQNK/xMlewc4gfj/AYYD5HDQs6SmA3MIXQB8XKa2D+y+x7U6p8g7zJAnCKpr3Tyj95lE+x3CQhFxRQgTGJz/WQAtH3Nz6fSwO/8BHLJhoxqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fW0ETLeQ; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-72e565bf2feso48864547b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:59:26 -0700 (PDT)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b5241e51764so5251791a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 05:00:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758715165; x=1759319965; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UKk+fABFWQAXetRztc6X+KLn2zwUXlziXeAusSSGig4=;
-        b=R8WGmGFip7KpjsQDbVoaa2EZF/ZeMNl4/HfSAN6/HtLsPzEOgIWMyCAvoNznizECjD
-         Hbb7mW0OgxL4XVnH7agc0etA1Qtu9g6T50FTZtXHIcOlHEKUrMZp/LLTOTs/4qgAaiwd
-         dx++Y0c0M5nMjeoHy7v3BbyMVhc+ZyDNlKoHokALHUp8ZsTUatnyiX2pK00nYc4gm0B9
-         mspw8gly9JPvgKcC9rbHeE9+62P2cZ7VsDeqHUY/Ci1FmwkJH9Vw/DCwJRDFVvp1S4T0
-         oFoQvgIUWhnnpx4qLTXfJ5L09z3bQpsd9jGwaA1uY8y6l32AlqdK01SjowE2Ror3nrUh
-         /dfQ==
+        d=gmail.com; s=20230601; t=1758715215; x=1759320015; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UmaGbmiuxIsK0xKTEWJ/f7gfwC2bw8p0SOLh4b9Z4FY=;
+        b=fW0ETLeQCFX8OFWb9u250UoVfhDWanBM+gtDWVOLh0/w6XBqCDew2W0/fZkeJNJiZ1
+         qMORdyFC2XLNKCYNu4P08Y3EanKlp0FmAiHO0HMpwTd7b/DEMCez4DK/ABIXfF/P81mZ
+         np1yGnCd4gD37MIK/3v2bFzRIJz5oKLP5Y4PaxKtE5ctLPwRVByKYVJq53tCe8tb2ffL
+         oyYfuzw7BkjT1g4t8DfbYfn2/AJyt1Rwl3ls6piKNdQSaRnZ6gKunmEeh2bohr8NZOkH
+         b+sESF4Zql4iaDXIVvlXDxsrmaWTvU2jgUQ5MQqJQod0P9Hpapj/VJbBWnQzlveryClN
+         43ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758715165; x=1759319965;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UKk+fABFWQAXetRztc6X+KLn2zwUXlziXeAusSSGig4=;
-        b=k5OYfoj31JIRzDPFq/lbiq/dM1OasKFdUWVt2UzMmkXxggaHGuTEYjaLVrlCc3B8g9
-         JxlwnDKdXbapulUVLrhZdLDEKiFUEKk7e3TE6GXJdfshk44iU+JDoPjAyQtRQ1kFwPNu
-         y6K8kOFFDomVNNaT1K0osIq92AFs3nvma8T/pwKpcMpEwaOFK3AUe9VsbOr+iqgIbkJ9
-         RbrDIa/UbE7Dq3bVtpHp6pNsPxrfvKxmfQCENZFL+CofYYdnssoJydUW8NWAPQkRjqqn
-         5gBkuAh9zsgK14DjpfgX1KJJUmchwH3xJS/KdPUiNhcCRyu404Mq66t01KEhw4o8y0Fb
-         2ECw==
-X-Gm-Message-State: AOJu0YzNtQnJRe2sQLApeik7k6mMuQfqXb2KryyqCYJbO3XlWPoZQpes
-	G6pep1+68CxCjvPAvTFLy943zwdwZdtHZ6Ay4lKLZfgAkXQpNFPRcJfeNGZpw3aXnorF2LE7CO5
-	WP2DcWtMxnt1RfDLpf3onjbme0RYyForrGHrkSXI=
-X-Gm-Gg: ASbGncuLs88QoA2n8pIwf7njdRrsHMB44RVD1Pc5dI/+wL+WsoXyBvqFYIBibLyt2JM
-	L8A1kOyHrkVo6yWxQ4cNM9yICzVNcMfI8iPd9za+drOq592KBeseBAlnpX28bg39bfJUAAm6AHT
-	cF1zAnJ8iT14gVMfoDE2+MAsgm0hzDm2IbWWWOfp/AXb2Gsai1u0XZLwR0mGLG6NisDPwZyCPoO
-	p0dZQ==
-X-Google-Smtp-Source: AGHT+IGq9gXJm3DdUgOwDnFVgjubj0wrxcJoEjbl0tGpFewKUqC+l6hwMClNtpIpXyR+PClD6Jn5VPhTGcTKhWmoAbU=
-X-Received: by 2002:a05:690c:88f:b0:732:41ef:4025 with SMTP id
- 00721157ae682-758a5a541cdmr61248997b3.41.1758715165291; Wed, 24 Sep 2025
- 04:59:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758715215; x=1759320015;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UmaGbmiuxIsK0xKTEWJ/f7gfwC2bw8p0SOLh4b9Z4FY=;
+        b=OEltuCT0pnkcVdJEvMOYdU4LUaYydDRwyp93QjGR5dIZghQ4yYU5VCkaUtlHe1PSH3
+         /k45Xep08EJXC6ZX4smTcoYuUqRU13uDcjBBPBf5mS59Tc5VMIRqaE5ZrjY5p57WE1zN
+         RFejW16fW3aWM9xEhLXRZKJ/CJRvcGRugJZH4eLDLM07rk/4Q4IqHA/CaX29iKm8Y1FY
+         ixaZ8woaawyKnRj0QRyalqI9YP/NHy39+og8vEq9gYaRTpS3VZmVdlsa1hKWgjR8aHpc
+         bm1GvQTLHWPkOYfD9XkcNk5aCaX1wsjWZeIfI856KQwuSvOxDQWD9Wp6vOvYRaTL5rzJ
+         e9CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcxaBWtL7EgvOTsp64jQnUIxQP5bHCYpCiH9Em9kEbISEcBd0MYPHT8ijdfukoroNaxBgXeYnhOFS2YEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ0ud7ioMseKAh1PRlL0C6UkFyghJZQtDyC09fvEArmAw2+95T
+	K1IyDK/lDGFRnIhvkeENrlZkyLUP/ovL4sLxiJanAr5iOp63c/wN5Cfd
+X-Gm-Gg: ASbGncvTB40NTGWOyL+SJ/puTxHUsmX9MezNj/r925OZCMZ2rBrpIhqAYwcPZGGMvUx
+	SagvAoPhqtOXHCFsr/WgyhDp8oPsuzgsjV/7rl/y5FXyEwAjGkiqCPsB5GPTPrdeOevu+0R/L5c
+	qlwAgATrt1YwEHE/6VW11JsJHgCxNJvv6L3TpL/7hHdUJf3Qi2H2SE1osfUagEkwqGhbQ/FCp0+
+	xkwjGBXUXu4M/c9Ve3v4rBwbsu0RgyRCwcgq0NY1fdFv6N5c4Xb1mv3sN7POh1TdIAmme2qn6UY
+	ISebzg+HCVL0kudczahrnM3wh0Ooq9798ImpeUYP4tE9ZRTM9iWY99IHbOhScv21wW59dpmjAwV
+	HRDEW4DHLARFLOQvJtSppqo4=
+X-Google-Smtp-Source: AGHT+IG5AidgxW/pjwMRKvZXF7BqnVmuGXBXEakixJFL1V8tNMywu8qGgSCIq0aUezqYi7cmWgbNjA==
+X-Received: by 2002:a17:903:2450:b0:268:f83a:835a with SMTP id d9443c01a7336-27cc9a91248mr60312585ad.60.1758715214591;
+        Wed, 24 Sep 2025 05:00:14 -0700 (PDT)
+Received: from localhost ([103.88.46.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802de5dbsm189402185ad.84.2025.09.24.05.00.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 05:00:13 -0700 (PDT)
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Rong Xu <xur@google.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	David Kaplan <david.kaplan@amd.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Nam Cao <namcao@linutronix.de>,
+	workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-mm@kvack.org,
+	llvm@lists.linux.dev,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	kasan-dev@googlegroups.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org
+Cc: Jinchao Wang <wangjinchao600@gmail.com>
+Subject: [PATCH v5 16/23] mm/ksw: add self-debug helpers
+Date: Wed, 24 Sep 2025 19:59:22 +0800
+Message-ID: <20250924115931.197077-1-wangjinchao600@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250924115124.194940-1-wangjinchao600@gmail.com>
+References: <20250924115124.194940-1-wangjinchao600@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Cen Zhang <zzzccc427@gmail.com>
-Date: Wed, 24 Sep 2025 19:59:13 +0800
-X-Gm-Features: AS18NWBcb6DXzUV94H3EtOhThJrlFt8J6Cv6Jc4lZR-D2PB6v1LNuhmrfZogChw
-Message-ID: <CAFRLqsVv0R282+xQE4sRM+Tkb0=J_s4Xi0N0K2Cvz++T9fHAPw@mail.gmail.com>
-Subject: [BUG] Bluetooth: race in hci_cmd_sync_dequeue_once cause list corrup
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>, johan.hedberg@gmail.com, marcel@holtmann.org
-Cc: linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi maintainers,
+Provide two debug helpers:
 
-I hit a crash in the Bluetooth subsystem while running syzkaller on
-v6.17-rc5 (commit e5bbb70171d1). The problem seems to be a race
-in hci_cmd_sync_dequeue_once() that leads to list corruption.
+- ksw_watch_show(): print the current watch target address and length.
+- ksw_watch_fire(): intentionally trigger the watchpoint immediately
+  by writing to the watched address, useful for testing HWBP behavior.
 
-hci_cmd_sync_dequeue_once() does:
-  (1) hci_cmd_sync_lookup_entry()  // lock/unlock, return entry
-  (2) hci_cmd_sync_cancel_entry()  // re-take lock, list_del()/kfree()
+Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+---
+ mm/kstackwatch/kstackwatch.h |  2 ++
+ mm/kstackwatch/watch.c       | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+)
 
-Between (1) and (2), the worker thread (hci_cmd_sync_work()) can:
-  lock cmd_sync_work_lock
-  list_del() the same entry
-  unlock
+diff --git a/mm/kstackwatch/kstackwatch.h b/mm/kstackwatch/kstackwatch.h
+index 4045890e5652..528001534047 100644
+--- a/mm/kstackwatch/kstackwatch.h
++++ b/mm/kstackwatch/kstackwatch.h
+@@ -52,5 +52,7 @@ void ksw_watch_exit(void);
+ int ksw_watch_get(struct ksw_watchpoint **out_wp);
+ int ksw_watch_on(struct ksw_watchpoint *wp, ulong watch_addr, u16 watch_len);
+ int ksw_watch_off(struct ksw_watchpoint *wp);
++void ksw_watch_show(void);
++void ksw_watch_fire(void);
+ 
+ #endif /* _KSTACKWATCH_H */
+diff --git a/mm/kstackwatch/watch.c b/mm/kstackwatch/watch.c
+index f32b1e46168c..9837d6873d92 100644
+--- a/mm/kstackwatch/watch.c
++++ b/mm/kstackwatch/watch.c
+@@ -269,3 +269,37 @@ void ksw_watch_exit(void)
+ {
+ 	ksw_watch_free();
+ }
++
++/* self debug function */
++void ksw_watch_show(void)
++{
++	struct ksw_watchpoint *wp = current->ksw_ctx.wp;
++
++	if (!wp) {
++		pr_info("nothing to show\n");
++		return;
++	}
++
++	pr_info("watch target bp_addr: 0x%llx len:%llu\n", wp->attr.bp_addr,
++		wp->attr.bp_len);
++}
++EXPORT_SYMBOL_GPL(ksw_watch_show);
++
++/* self debug function */
++void ksw_watch_fire(void)
++{
++	struct ksw_watchpoint *wp;
++	char *ptr;
++
++	wp = current->ksw_ctx.wp;
++
++	if (!wp) {
++		pr_info("nothing to fire\n");
++		return;
++	}
++
++	ptr = (char *)wp->attr.bp_addr;
++	pr_warn("watch triggered immediately\n");
++	*ptr = 0x42; // This should trigger immediately for any bp_len
++}
++EXPORT_SYMBOL_GPL(ksw_watch_fire);
+-- 
+2.43.0
 
-This leads to a double list_del and wild memory access.
-
-The c reproducer:
-https://github.com/zzzcccyyyggg/Syzkaller-log/blob/main/hci_cmd_sync_dequeue_once/repro.c
-
-The detail KASAN report as follows:
-
-==================================================================
-BUG: KASAN: slab-use-after-free in
-hci_acl_create_conn_sync+0x134a/0x16e0 net/bluetooth/hci_sync.c:6861
-Write of size 2 at addr ffff8881199b0038 by task kworker/u17:0/74
-
-CPU: 2 UID: 0 PID: 74 Comm: kworker/u17:0 Not tainted
-6.17.0-rc5-ge5bbb70171d1-dirty #20 PREEMPT(voluntary)
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-Workqueue: hci0 hci_cmd_sync_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xca/0x130 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0x171/0x7f0 mm/kasan/report.c:482
- kasan_report+0x139/0x170 mm/kasan/report.c:595
- hci_acl_create_conn_sync+0x134a/0x16e0 net/bluetooth/hci_sync.c:6861
- hci_cmd_sync_work+0x798/0xaf0 net/bluetooth/hci_sync.c:332
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0x7a8/0x1030 kernel/workqueue.c:3319
- worker_thread+0xb97/0x11d0 kernel/workqueue.c:3400
- kthread+0x3d4/0x800 kernel/kthread.c:463
- ret_from_fork+0x13b/0x1e0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-Allocated by task 60621:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
- __kasan_kmalloc+0x72/0x90 mm/kasan/common.c:405
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- __hci_conn_add+0x647/0x51d0 net/bluetooth/hci_conn.c:949
- hci_conn_add_unset net/bluetooth/hci_conn.c:1061 [inline]
- hci_connect_acl+0x650/0xe60 net/bluetooth/hci_conn.c:1672
- hci_connect_sco+0x61/0x1c90 net/bluetooth/hci_conn.c:1734
- sco_connect net/bluetooth/sco.c:339 [inline]
- sco_sock_connect+0x638/0x1ed0 net/bluetooth/sco.c:658
- __sys_connect_file net/socket.c:2086 [inline]
- __sys_connect+0x277/0x350 net/socket.c:2105
- __do_sys_connect net/socket.c:2111 [inline]
- __se_sys_connect net/socket.c:2108 [inline]
- __x64_sys_connect+0x7a/0x90 net/socket.c:2108
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd2/0x200 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 76:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:243 [inline]
- __kasan_slab_free+0x41/0x50 mm/kasan/common.c:275
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2428 [inline]
- slab_free mm/slub.c:4701 [inline]
- kfree+0x189/0x390 mm/slub.c:4900
- bt_link_release+0x49/0x60 net/bluetooth/hci_sysfs.c:16
- device_release+0x9c/0x1c0
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x16f/0x270 lib/kobject.c:737
- hci_conn_del_sysfs+0x1e2/0x380 net/bluetooth/hci_sysfs.c:62
- hci_conn_cleanup net/bluetooth/hci_conn.c:173 [inline]
- hci_conn_del+0x1f91/0x37a0 net/bluetooth/hci_conn.c:1211
- hci_conn_failed+0x662/0x820 net/bluetooth/hci_conn.c:1314
- hci_conn_complete_evt+0xf2b/0x3330 net/bluetooth/hci_event.c:3215
- hci_event_func net/bluetooth/hci_event.c:7569 [inline]
- hci_event_packet+0x17cd/0x2da0 net/bluetooth/hci_event.c:7623
- hci_rx_work+0x982/0x2210 net/bluetooth/hci_core.c:4071
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0x7a8/0x1030 kernel/workqueue.c:3319
- worker_thread+0xb97/0x11d0 kernel/workqueue.c:3400
- kthread+0x3d4/0x800 kernel/kthread.c:463
- ret_from_fork+0x13b/0x1e0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-The buggy address belongs to the object at ffff8881199b0000
- which belongs to the cache kmalloc-4k of size 4096
-The buggy address is located 56 bytes inside of
- freed 4096-byte region [ffff8881199b0000, ffff8881199b1000)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1199b0
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-anon flags: 0x200000000000040(head|node=0|zone=2)
-page_type: f5(slab)
-raw: 0200000000000040 ffff888100043040 0000000000000000 dead000000000001
-raw: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
-head: 0200000000000040 ffff888100043040 0000000000000000 dead000000000001
-head: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
-head: 0200000000000003 ffffea0004666c01 00000000ffffffff 00000000ffffffff
-head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff8881199aff00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff8881199aff80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff8881199b0000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                        ^
- ffff8881199b0080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8881199b0100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-Thanks for taking a look.
-
-Best regards,
-Cen Zhang
 
