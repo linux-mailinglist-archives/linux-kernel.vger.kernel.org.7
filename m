@@ -1,109 +1,106 @@
-Return-Path: <linux-kernel+bounces-830543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064CAB99F19
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:57:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2319B99F22
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2775318960F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:58:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A31924C6041
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FCB302156;
-	Wed, 24 Sep 2025 12:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A34F302171;
+	Wed, 24 Sep 2025 12:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YMtq/SBy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FbQFgBYv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E4C2417C2;
-	Wed, 24 Sep 2025 12:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC992417C2;
+	Wed, 24 Sep 2025 12:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758718659; cv=none; b=kU7tePx6y3QsbBbQ19/gNxrslvcSZ1RVHf23o+AvXkHzyaY6dE2OLhe3ek4Qa1UOv6stTDj4WFox+womOxb2VrKiN3Q67SKAQBpyHO29PZWF7r3jTFHT+wfXXhLEYygLaSIkBomTJqy7HmFx/IeW1oo8iOxghTiZDoy5AOs1jHo=
+	t=1758718699; cv=none; b=U49n6cMueKU/cTm/EvyLcYKl02C43JdjZYwT1L5cPgAWvtBE4iFR9sCxLNhX/VTBbngM6Qrl4tlIA7eQPXxnVj3QMwod8OuTrNRmdE92mNFcNrGDqylEnP7aPtdP17+t2Yxhmg3SYEAwZp+iMDbLDNajiJgNHjVutQfEdvzvpsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758718659; c=relaxed/simple;
-	bh=VG20TPc0vSAmEbBXOQRn+cY5clUm9F5ItXR7KZk0Ww8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d7OjGp7E/cd6mCCU22+gO8fcoAo3DZuIK5hx7KWmOgC/3ac6M3Ie7fIFuMXhyo6GLMbLVcbEJhi3t/51Pium7M5XlAG4kLls/boRsF9dBNJaffFW2FyfkmVV3JkIuYnV+wyPPe/8sY4a4pVk0S1iTJWp/XhJkNaHcKrzQI7P/GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YMtq/SBy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79037C4CEE7;
-	Wed, 24 Sep 2025 12:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758718659;
-	bh=VG20TPc0vSAmEbBXOQRn+cY5clUm9F5ItXR7KZk0Ww8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YMtq/SByQ6iK2UkBgv5/kmBi40RN4P0XYKTALZjywJ3uaN/kHmmnmE/qudSKEbSSg
-	 HaV3hbD281tfodz7aUI6qkbjfaBwy7pSwigmgVx1aNUFLFZQ9qwH8lZvyEYrV2ewCI
-	 dKMOW6ZMBHIVTzcfk+pcjhQ13/exrBYe0Um+yR+IPIEGdleZIwJDTDaEmAeh00/zoW
-	 sQGjUOGtYspA1P3J7pHhgG73mhfHDNpwhQEaDERWiIPLjnZqynN2HvwiuoScOqcpwT
-	 XoLflD011vfmzP7dbQiDHTYMZy99mtY5l27KEiAoFY9wsuSIVvi6TrrEHCXo0IKx0R
-	 Q2mmxMbsGmyvw==
-Date: Wed, 24 Sep 2025 14:57:35 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH 1/3] ASoC: mxs-saif: support usage with simple-audio-card
-Message-ID: <aNPqv15dnLCw3qew@finisterre.sirena.org.uk>
-References: <20250924101640.2942635-1-dario.binacchi@amarulasolutions.com>
+	s=arc-20240116; t=1758718699; c=relaxed/simple;
+	bh=8q2piqw+En3iDfggstQ7qEcJddMj9hReIH0MXbimx6E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mhGToTxSt2SuY97T1lOzzSYMmluqftEGgKjQc2FXjXC9kXwBVTcg28W08aOv5YkAXxo7ZJEGifaKVMLu66tpl6YHsu0qfBizNDGD2Ei1QJXrkcd/DfEoGW7Jbzn/yeUkWtnRWi2bu85BU1+2OOfT1cPgaI0ITwcJjVEgkpaBxg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FbQFgBYv; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758718697; x=1790254697;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=8q2piqw+En3iDfggstQ7qEcJddMj9hReIH0MXbimx6E=;
+  b=FbQFgBYvB/CMEPUMgvx+pUcYjbjiXHtT1dfGKS/eCLhzqySgglLNRHvc
+   6iw6yaHVssghxuSGNspm20Q1p8vz+JXrukl2YMdy4gKaH/4PdHM2gZLdt
+   ZszvuqtkqMuTmV1wgUzbYnWW6pVkfRkA8qgXvJpi1KVkaWF6MI+PHrdS1
+   MifOEHC7t6+Wnri3RLr3KP0mQ8AHHwSjHpscR5CEmbVrTgCPs+Gq8U6AQ
+   zeFJHcu49rbegaEQ35J7Fsdz6tWQB3ggv6RF3oa4446aHW8devGy0K8l8
+   xtGMlIUtUaijHeojuO2dtkm0dlkrI6JJ0HIZnLm73nrNSwVH0fQTsc45j
+   A==;
+X-CSE-ConnectionGUID: AUpEcnifRbCL65zY8wSi4w==
+X-CSE-MsgGUID: H5V3KxhQTASLOyfMbvZ1lw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="71691179"
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
+   d="scan'208";a="71691179"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 05:58:16 -0700
+X-CSE-ConnectionGUID: OGc/pHIXTFWUNoUQKKQzFw==
+X-CSE-MsgGUID: h1Euq0i8RWa66OxyS+U1Zw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
+   d="scan'208";a="177799096"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.210])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 05:58:13 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Santosh Kumar Yadav <santoshkumar.yadav@barco.com>, 
+ Hans de Goede <hansg@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Peter Korsgaard <peter.korsgaard@barco.com>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Arnd Bergmann <arnd@arndb.de>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <2meuzip4qnxvle4bwk4hbow4j34ii3cwb46xd5inq5btif5mjg@iiygy6ir7vtr>
+References: <2meuzip4qnxvle4bwk4hbow4j34ii3cwb46xd5inq5btif5mjg@iiygy6ir7vtr>
+Subject: Re: [PATCH] platform/x86: barco-p50-gpio: use software nodes for
+ gpio-leds/keys
+Message-Id: <175871868912.14395.3763768947038329370.b4-ty@linux.intel.com>
+Date: Wed, 24 Sep 2025 15:58:09 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MnrHIRL6ihxwJiWv"
-Content-Disposition: inline
-In-Reply-To: <20250924101640.2942635-1-dario.binacchi@amarulasolutions.com>
-X-Cookie: Filmed before a live audience.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
+
+On Sun, 10 Aug 2025 21:31:37 -0700, Dmitry Torokhov wrote:
+
+> In preparation of dropping support for legacy GPIO API from gpio-keys
+> switch the driver to use software nodes/properties to describe
+> GPIO-connected LED and button.
+> 
+> 
 
 
---MnrHIRL6ihxwJiWv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thank you for your contribution, it has been applied to my local
+review-ilpo-next branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-next branch only once I've pushed my
+local branch there, which might take a while.
 
-On Wed, Sep 24, 2025 at 12:16:25PM +0200, Dario Binacchi wrote:
-> Add support for enabling MCLK output when using the simple-audio-card
-> driver. In the sound/soc/mxs/mxs-sgtl5000.c use case, that driver
-> handles MCLK enable/disable by calling mxs_saif_get_mclk() and
-> mxs_saif_put_mclk() at probe/remove. This does not happen when the
-> simple-audio-card driver is used. Extend the mxs-saif driver to enable
-> MCLK output in that scenario.
+The list of commits applied:
+[1/1] platform/x86: barco-p50-gpio: use software nodes for gpio-leds/keys
+      commit: ff289dc249fd7699081494bd70a91b5718d27114
 
-You've not copied me on the rest of the series so I don't know what's
-going on with dependencies.  When sending a patch series it is important
-to ensure that all the various maintainers understand what the
-relationship between the patches as the expecation is that there will be
-interdependencies.  Either copy everyone on the whole series or at least
-copy them on the cover letter and explain what's going on.  If there are
-no strong interdependencies then it's generally simplest to just send
-the patches separately to avoid any possible confusion.
+--
+ i.
 
---MnrHIRL6ihxwJiWv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjT6r4ACgkQJNaLcl1U
-h9DVqwgAhP2iqSkJ01DCJkMcimnnaPqL1BoYPz9SUVVCg24PgJgprD+E+gepAHr1
-qgKvrq9lNgkRC8rbqU2oSB0sXcc1Pyymo85CERMqZLhF2ZriRI+W1iN85si8e9Iw
-Oa4He4aXvw0UacsqQb+bj7w9JNjqGdB0iGbleQdzPBn2Iyl1aiuLCap98CPK8lLI
-TCZoEaTSLOOHpBOlqYLTaqoJfeDjEDhToR4TI1bYuFbNz2d6ai6OgQoa78W69nWO
-c9DOFsbll0dx+W+blKCNwwvLzQNt0QmCvK+STQwLqzTYOOMQXn4XCBNZY1sbO0Wk
-F37ZIQT/6j7xA8l8k5YNDLGXw2opYA==
-=2GTo
------END PGP SIGNATURE-----
-
---MnrHIRL6ihxwJiWv--
 
