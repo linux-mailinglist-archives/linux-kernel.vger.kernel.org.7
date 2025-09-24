@@ -1,120 +1,102 @@
-Return-Path: <linux-kernel+bounces-830518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6259B99E35
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:41:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3308B99DF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BDB97B2339
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:40:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64A467ABC0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91CF3064B2;
-	Wed, 24 Sep 2025 12:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BF1b1osd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC12B2FC874;
+	Wed, 24 Sep 2025 12:39:37 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1817A301028;
-	Wed, 24 Sep 2025 12:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5E12DECD3
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758717642; cv=none; b=FamZuoKTQM0IucMnhIHEhSZv9f4jR4oF7uNUXES7lamq0SIrufJQu88EgQ9bwV8Wv0uyb7ZkbxfzYf8iCvAX9n1TNyQwsoaYFSmWXfDXZ3T3KKmbt/YamBAgvptl+k1kP3zA30NEbjGca408DuGg7uD7AZSnOMRgbKLSwPgIUIo=
+	t=1758717577; cv=none; b=IrgSzn7hmykj/e8A7fpzGl6DrkjnZ/dpEu8NmbyI+m6q8svUbyoB+y9uI1eH439oeP7ueivM5WvAGKwNhJBFHrD35FlWuzrPgPs4yuBATsY0/MeaGmJbsICrQV+6x7aYnOK5EbB8Q8K6xybMDQEFQBlNDCXG/Dq70SY9N8QvnvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758717642; c=relaxed/simple;
-	bh=o2I34H38DvlXWFr+9zB77lMahqj/GxSAXo8mhBl2Brg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=olxYvsK5WFLnB4u3CAesRZaTaou4oBkOOmm2M/a9DZlbMDG7njV3IM39xrEymv+DTvSQ/992PHFqHguf26L+1v65LOk3ob+ZhXKDUmjSaFEctr8hYE0oHsRze6jlb49X9/JHTrGJV18XZ+PPIEvm/a36ImJ83RJK4OK2uqE6GoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BF1b1osd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57D39C4CEF0;
-	Wed, 24 Sep 2025 12:40:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758717641;
-	bh=o2I34H38DvlXWFr+9zB77lMahqj/GxSAXo8mhBl2Brg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=BF1b1osdRPiUsqBwRxEO3KoBEeqAXV1JFbexgu+zSSNDjiyGXPJfinjpCznTyOQnI
-	 ZReCszz0QEw/2S4QMxWXmt3Vptqlxnk8OfC8q/BjA0scLQIsFQjsW8LRb5DaQoRxs8
-	 G7Q8nk4VWiyVrLRAr7M/t+fI690yYltLUAP8sIzyLI+eAcOZU0L6IbVmy2UMlJ2J2B
-	 /hSZedkijxiLHF21qBhdcdlMwbBnFzd1WpcOVSXYBNWlzu//a+DPIlbgwTFtkQSUqh
-	 U59H9IwYk1er12rWivtamgJR8YOT8o8wiw747ZJEkZfaW7XHbJKHVyzRcSg/Pd9r8M
-	 0HpQzjBdBco8A==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Wed, 24 Sep 2025 14:39:30 +0200
-Subject: [PATCH v18 7/7] modules: add rust modules files to MAINTAINERS
+	s=arc-20240116; t=1758717577; c=relaxed/simple;
+	bh=CrgsaLAKkUPq/Xn/YhT+WQ7Nq5/iVqqODOViwp1jc3k=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=n+/oZjcqFoknU2b8eylLdnknCCBqjy0tPnr6/cg4izorEuBeI3DVcqZFztbC2pn1OeKvVft5amyw0xRBkWMHgIguEI796PyiYET0Ih/zt6k9iVlaT4zLHJ6qXUVnQegho8sOtAc6m+m84WAIFr0XoLJQIsFlCkvj2/PsPo77RwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4247f4fda63so81871935ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 05:39:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758717575; x=1759322375;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tqiLggZgu14N6upcI6vr6abaJeYFuz0NRIQm4lctDM0=;
+        b=HLdgxf0kcczK8m9mApZavjp0MNDwdL2GzEuqPilR4FdrRAbgNUARcWGArqL/YzQe0G
+         +4pbznu815X7ZgAE8O2nDjkVOv0nU9tlo1UBopbovVOYzJlKSvm/6pHN+mdInkjz09rG
+         Z6s5gMbSmij46JzE5cVAd+BVvuseQGwY8nFKNBDXZPZy8Yiiy3LGZgw65Cq4x/7Bt5j2
+         nuxeFUJEpRPDfi1i153wNRI/1Yqb1HnuG9l0zaUgOLw7KT7BZx9YAjH7DIckOsplWXr3
+         UqvmlpZHJ6JLyjMjduBQHTzrHAflA7KfHG0+s8q/UXWBjrd6lV3V1H9I/iXkDopCJocl
+         rdXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUakRvc5SSvDm5BZv9n6+UB/N/oDuulM5D2bvUUNMglM3qEQw4GAfvrq8Ulu4JBnDaxD+wSNvi+WFBVDtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVYhj57uaDK4Q9ol6XeIiDuBfPCxoAHOtEj+qj8gyN9trCtTdA
+	szuu8qdXo+5/CAVQioatFgoQQDHStTcfjtNt8jnBokxlV1nY3sOEBtHATtDKBBP2Swm5ucsIYe9
+	CCxAarAgS9MMdhLQ0ebduXeDanyCg0BwQBikY+5tjb81/L7P46EdXEV1Szpo=
+X-Google-Smtp-Source: AGHT+IGzF9EJRPq5UUICfE6bTYc2f5rGwxLTDig9z1B18QbOvSHlD46gZRc3R3RbIv3AWKEKoKwT51lpzvpnjZGCL4B+bKvdBZux
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250924-module-params-v3-v18-7-bf512c35d910@kernel.org>
-References: <20250924-module-params-v3-v18-0-bf512c35d910@kernel.org>
-In-Reply-To: <20250924-module-params-v3-v18-0-bf512c35d910@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Alice Ryhl <aliceryhl@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
- Danilo Krummrich <dakr@kernel.org>, Benno Lossin <lossin@kernel.org>, 
- Daniel Gomez <da.gomez@kernel.org>, Benno Lossin <lossin@kernel.org>, 
- Nicolas Schier <nicolas.schier@linux.dev>
-Cc: Trevor Gross <tmgross@umich.edu>, 
- Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
- Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
- Daniel Gomez <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>, 
- Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- linux-modules@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=810; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=o2I34H38DvlXWFr+9zB77lMahqj/GxSAXo8mhBl2Brg=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBo0+amMWJlaXP5TF9ysmuYwFRe5s53TWYoH3I7u
- uHaZmEgIHeJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaNPmpgAKCRDhuBo+eShj
- d7aQD/4wntLmxvwiX4j9H+THDkxEQ1KMFImB5iRHF3hDU+NfeGcAptgSSc2PzJ1IYrL2EnIPId6
- mDOsZRXd+0Avw+WJ8ZCVfpsv4KndrJOyl5CBFGrHNOurC46Tk8MKxhqsEbgerEBzgfcSGjCvwW2
- p8+lPmPFZlPBjopUsZPcKD7Pa0/QmPNJP3ib34T5UK364WzXHW2oqjWc21TlxVmAE1LrxZauhzn
- Bv2E0kZ8XqBzUOux4iu49rX16/VhKbwAhyCVB6jNIbnW2Mij3OFljERkBi7sJcZc8HvCebL5qpJ
- +saOgp3rIsxUfD1dSNZIZSY0Rowfo0H5qZpElk6Jqlt9fSpgLzSShM/F11FuNLsIEVuxLqeP8Uq
- aIMZcA7qIAkxKA0ZRGU3b5r6sfMUukn74Jcnjh+q177OjPP0Dq8TpuQHrJ+NojDD7D/WC93zxjF
- pCvWFahA8v+7k9b58vTfSmVkVZSoDPIYLq+tq6+u7KMSh0sgZqsmUb+GPq+az0e43jijjPT84zl
- /8LFJJ9VZ/UBt2hHUb8GQujcx+c2oxlrkc/2diSdRuKpbVhck89x34m/yOUU9gf8+ONVMNUjCjy
- HOdkoYh3l6nReiF86Tct7OGx5n9swLM5ZRiHIwT3pUhuJsP4ViPNT0cXQjw7xaBfGdYXUKzB0Nr
- kAkQmsY9Hei6iTA==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+X-Received: by 2002:a92:c26b:0:b0:424:64d8:73e4 with SMTP id
+ e9e14a558f8ab-42581eac74dmr91442785ab.28.1758717574907; Wed, 24 Sep 2025
+ 05:39:34 -0700 (PDT)
+Date: Wed, 24 Sep 2025 05:39:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d3e686.a70a0220.4f78.0024.GAE@google.com>
+Subject: [syzbot] Monthly comedi report (Sep 2025)
+From: syzbot <syzbot+list0119abf18c5d23a8a062@syzkaller.appspotmail.com>
+To: abbotti@mev.co.uk, hsweeten@visionengravers.com, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The module subsystem people agreed to maintain rust support for modules
-[1]. Thus, add entries for relevant files to modules entry in MAINTAINERS.
+Hello comedi maintainers/developers,
 
-Link: https://lore.kernel.org/all/0d9e596a-5316-4e00-862b-fd77552ae4b5@suse.com/ [1]
+This is a 31-day syzbot report for the comedi subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/comedi
 
-Acked-by: Daniel Gomez <da.gomez@samsung.com>
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 11 issues are still open and 8 have already been fixed.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 7563    Yes   general protection fault in pcl818_ai_cancel
+                  https://syzkaller.appspot.com/bug?extid=fce5d9d5bd067d6fbe9b
+<2> 772     Yes   BUG: unable to handle kernel paging request in subdev_8255_io
+                  https://syzkaller.appspot.com/bug?extid=f7ad508e3c76c097483f
+<3> 349     Yes   BUG: unable to handle kernel paging request in parport_attach
+                  https://syzkaller.appspot.com/bug?extid=c47f45cfb7fc1640ced7
+<4> 28      No    divide error in comedi_inc_scan_progress
+                  https://syzkaller.appspot.com/bug?extid=af53dea94b16396bc646
+<5> 13      Yes   INFO: task hung in comedi_open
+                  https://syzkaller.appspot.com/bug?extid=7811bb68a317954a0347
+
 ---
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d69021b88aef0..55e3bf16ea0a8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17136,6 +17136,8 @@ F:	include/linux/module*.h
- F:	kernel/module/
- F:	lib/test_kmod.c
- F:	lib/tests/module/
-+F:	rust/kernel/module_param.rs
-+F:	rust/macros/module.rs
- F:	scripts/module*
- F:	tools/testing/selftests/kmod/
- F:	tools/testing/selftests/module/
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
--- 
-2.47.2
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-
+You may send multiple commands in a single email message.
 
