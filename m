@@ -1,202 +1,272 @@
-Return-Path: <linux-kernel+bounces-829889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E22B0B98207
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:18:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F24AB9820D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330214C43F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:18:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27DE12E5BFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29792244685;
-	Wed, 24 Sep 2025 03:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A798F22A7F9;
+	Wed, 24 Sep 2025 03:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=simcom.com header.i=@simcom.com header.b="j154YBC3"
+	dkim=pass (1024-bit key) header.d=simcom.com header.i=@simcom.com header.b="Sg+V4z7A"
 Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A4623B628;
-	Wed, 24 Sep 2025 03:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0B12264BA;
+	Wed, 24 Sep 2025 03:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758683851; cv=none; b=s6S393d1dT6hFY4EKG2wY+5vlGJsl/QKnQFIjRerPEp/QOxCmcwaUjIlTDMkuDmBg9AXLe8/x14GOvmF7hIOPwtRoqQ+zDHIipjRRIplkdtU6TxAAIOmdoqnHOWcgmUGi+TuswYaAtraDLEgHmbh95MYWrZlanDRMHjWpxLUHvE=
+	t=1758683914; cv=none; b=snvt1ZGD6BHDQiZuNMzNweuH3MwPkKyKgTYS5BunneYHqwmXLwQjTJzkejhXYb6FvYVpuBOtrhAPGt5z6V3Q+Y0EDAPMarBpi6aoNAQ8ZQMNMLTW4FXrQUPNhK1t9lPRRiDIm9ZqLA+rd3KM5mJ58OqL5jXRk/4Ct2ORYZK4EPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758683851; c=relaxed/simple;
-	bh=c7V474mTW5IspYQd1awSOV7f9p8Em3dMruZdyTMq0P8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JTXIbsyskXa6l5DiMZg2mFBHx+XTS9lynzvdngi+3Yv3FViMcddHiw8b8z33y6X1qDwewlFXDolZI0cpYHDhz58qaedaVk35elMAT2mfdSWIXdPytevagqwn1xzAWBnAHlzF9mDcWE27hDTHOjOQSVdX9oFvKBRcWjF42gg47pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=simcom.com; spf=pass smtp.mailfrom=simcom.com; dkim=pass (1024-bit key) header.d=simcom.com header.i=@simcom.com header.b=j154YBC3; arc=none smtp.client-ip=54.207.19.206
+	s=arc-20240116; t=1758683914; c=relaxed/simple;
+	bh=Ik9FZBrBLeV/X7izHvyRJypllGM/y+8FN3vMk4M2pLs=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=jZKkTslCjV0JaOLSfVp70vVwqVuY41xvcm0BY2kDabynK6HdWHF5ckvw1EJk2FGQTA44DUK1QqpAAPUaormTqMJr5JUQtMr9OwNDoOyLP+AHWf9WH2L20w/MzMOZ9Is6jaaVfBXLL0Up6rg031LfruAhQLn8IPXLf2Dqp9Len2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=simcom.com; spf=pass smtp.mailfrom=simcom.com; dkim=pass (1024-bit key) header.d=simcom.com header.i=@simcom.com header.b=Sg+V4z7A; arc=none smtp.client-ip=54.207.19.206
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=simcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=simcom.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=simcom.com;
-	s=oxqy2404; t=1758683826;
-	bh=kYs7tdBXiTXV0luFtV3IW+T23C6F01Eh7K9J1nRHWso=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=j154YBC38BXqXfxXGS9tKe0wkVpYt4+sMgJ2UOBiy4+Ide0o0R6eCB2+ZYEWm5X1a
-	 RjWGyGG4fgrVqwxm9dmjpBiDHyY7Iypz4QVZ6pHg/FxZlnbyrwv+Z0OJ7eFQ8eiQQk
-	 0oOCSg40pJ/xEAlxMsY6N9j4VP8m6i9ZVBs1opAc=
-X-QQ-mid: zesmtpgz6t1758683824ta6f7e33b
-X-QQ-Originating-IP: rW6UeeFLQY+W3B0keoCsm6i4Mm8olRN7RA/GnwOcMHA=
-Received: from smart.. ( [113.233.137.23])
+	s=oxqy2404; t=1758683889;
+	bh=nMYEhoSAqoAMgJGRcoEG8HUuNnPiAX+olgk9i29gR4k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Sg+V4z7AZjc8lfGK2OLnDPbJDWpemesmX0dmjKWAX4MFv/DNvbo5geGLTP+8Azo84
+	 NBmF1QlECg4ZGapV0xYueQd8hpwcMq49eklCfa6KqiWCUHv7ca1iqSn6oJIILgyoBM
+	 Ltbi7I+AWhXSON5ufu76FTsbIq1ys8j5c08+BWII=
+X-QQ-mid: zesmtpsz4t1758683888tde522e7b
+X-QQ-Originating-IP: 0UHpNvmzOt6JzezinOlEroZZcbXKPDWgANim4LKergw=
+Received: from [127.0.0.1] ( [113.233.137.23])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 24 Sep 2025 11:16:58 +0800 (CST)
+	id ; Wed, 24 Sep 2025 11:18:05 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14064001251587895528
-EX-QQ-RecipientCnt: 5
-From: Xiaowei Li <xiaowei.li@simcom.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xiaowei Li <xiaowei.li@simcom.com>
-Subject: [PATCH v3] USB: serial: option: add SIMCom 8230C compositions
-Date: Wed, 24 Sep 2025 11:16:50 +0800
-Message-Id: <20250924031650.2785000-1-xiaowei.li@simcom.com>
-X-Mailer: git-send-email 2.34.1
+X-BIZMAIL-ID: 9093758353923306593
+Content-Type: multipart/mixed; boundary="------------fJ1rQJHSiz5ML7IjlmNtvQb4"
+Message-ID: <B380E8AC5609CE77+6968ccb5-544a-4ddc-8e74-e5b162b4c34f@simcom.com>
+Date: Wed, 24 Sep 2025 11:17:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] USB: serial: option: add SIMCom 8230C compositions
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250917105342.2687371-1-xiaowei.li@simcom.com>
+ <aNJPuwDMsf5Pyepy@hovoldconsulting.com>
+From: "xiaowei.li@simcom.com" <xiaowei.li@simcom.com>
+In-Reply-To: <aNJPuwDMsf5Pyepy@hovoldconsulting.com>
 X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:simcom.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MRiFTjyIbtS1MKOJh5XvRWv+jTdAa2d7d1SHDdI6KeSJY6kj0LVDaMTL
-	1V3+Z0BzsdO7MTiAHT4ZSkkWHpqhNFfHMXlPkmT2Ey4msMXPx4jSUgHfoVFErhabR/+qDeS
-	4thxAMOgJRVRuAV3ryIzcpHbh8suilULoWaHjLcGhC93RP7B7ZFEbxQR1rhRX8dPibbmvx9
-	KyvX5UF9sYTHa3787oXsq9I1AjuslNCYrHqHl1Jqg6ucHvJuyLh5HvMApt/dJgGy+lAQoZE
-	Ol31O/PsIIwNbYzVeSwuMb+bHXhQkuwKkyAuWhIGEWKHRnWtT+UkTknSvexvfLiU5qWj/N4
-	Yc4HvHppyTdX9eYV8vO+ftqkA2sWaRh14i9JIDMfORmACEH/iXqXdOK+aPnI8smuo+7Vumj
-	BCsJmOr4aERP1dFkPJfQf9dN/ek7fwCgES9prwsHdhwvNHUMitReYH6J4sP4XnI8C62+K60
-	8LdvmOO2/pf83NwNOtAoateWM+uwLyWe1iiAGIGnAKbFr6fIPvomghgpEkYymMrS73oW4TD
-	O7YhU3BFsgPIJ5+5dhfTF9sp4pcCMPy/jVoaGf541wmX3trSGY/LXBUXQCoEDHN2VpFM1N3
-	str4F0qsVRmvq2TVOJ6dduYh/YZI/JkxopwzIcTGionr8IGjV/MD8MeXXM4LBd2PPXvlBrm
-	sTp4glIWx8j3a2wrMqWZb8p20zbBAzxA+ecmf4Ol1Qwbn32lGAb0x4jfV1sZ0vPibx/53ln
-	pF5eUqSPgSR4LqpPY9u9N4jljgVR4joz0/MQycppfXIunYWm1YRYcalAFfRY5uxNSPvnMEr
-	3M0kZSOI6YOZSBkydeN2oomYFurvNV0yQq/Z/fVLY86G0lsf9nOUvYhy7mS8KX0PxKS9TmT
-	dWNDaA1T5VdKiTWb6W65EBrUkiUUr4gJHpBzylJaz+ukHytnOjNrisjfPq9i8tQwWPRz3US
-	SV3nnQiMwEegDW4I3EdAml7HmXN+asrMLGIAI791YFFKBFbBIAxi/F1h9SmLnn1vR1cO4mN
-	PU2Huq+Dw/Yqq6BYekvglTfqZoBf3B95/FuFuqOmYvkkZJUDt78hksDMdJHXDQobGyJhAoQ
-	A==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+Feedback-ID: zesmtpsz:simcom.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NQ1SesBsQjVtSh85u9uba7wtUxUP+h8d5FoifQ0ejSp6QNU3vsgb90vW
+	AVpft/w9BIEgdVOIq4ET795WcAC6CyrW3/1SszZ2VotPM5IhRFHg4+EKp55ETMLpiDXluEY
+	O8CwmwB0T8z6RVC5WF5fuYzUIrh1lGzdIHwra6Kr4lfaYQ1V5T8XIeOn+ENY/iNhBi5zEZh
+	/bE0om+xF8NUjd3Nu5QezT/J5GyxfpO6IQMizVGJxGRz9l8nudg1f3r06sFYJ0cJqAOHdfG
+	mmpppXnUhTNZHVAyiGAgxuJTodJ6aodritmxWmit/YA4EvZGDVSZoMURY73mzniwfgfjpzG
+	wLX1tdPPQhQB2ff+39igWUSZKIYWiVVJbdQY+GYb5tJLkUv92Ump+ei9hBclfJ3VOnbZ6d4
+	V+lSTat5lpOmNmGh6xXOWoJUne5bgJDUwx1oLfFWWzvIU+u4zJatV4Qd7blXr6RIeeD6ph8
+	RjzQoemCPhzcuDbmyras+K2yVf5VZ7j0+HlwESHF/OV2Z2/1LjAdtOAFxWnhzmS3nh5cN1d
+	zQVV71ht1LNx6xFaObTCkRs1+aFXl3agdn1/WYMTX27x5jQZwTZ1ywZFw9fNBSRaATMDSQm
+	1dYXBdXi0RjQf+JUPDpLUXJHx5LHhyvkWLSySYghvityUpZpfKnSHWHAZnjMssaJVT8ywXe
+	RhcobLnkDCMFRs5SYEYENs3BfIZy7XMnntNCHxtTqqFGqTqqWF9EjzqlS1Ie/+wDggNJf8x
+	D1eqy4o8yQuaXuXC983y39Z5xpCzcUxjuOjXpAVkT/UMh2h5avfoxZK1sJS4SvcFIQ64s2J
+	dn8iQco7DoJQn1qw8vW0bXfpGBhhgq5GLuXDf2Zx0Azp5cAtUDsngi/XfsMyefIC/v/gmZ5
+	ydtC8tH4YCpgEw6VQoh//O34HMqWuQXz4oesCIgbIwW/FdNppHU0FxHPwwUZekjZmnZ+jz4
+	lnioL42oGTohna222Q3bB7S3z4ogXkkW3yflKk+JWbDM2GHle3wSv40MCkkX1RGRW+Mt1Zx
+	DtATDMJWO3q3OX88MkU6M1ABlt0PV0/LaA7J/joQ==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
 X-QQ-RECHKSPAM: 0
 
-Add support for SIMCom 8230C which is based on Qualcomm SDX35 chip.
-USB Device Listings:
-0x9071: tty (DM) + tty (NMEA) + tty (AT) + rmnet (QMI mode) + adb
-T:  Bus=01 Lev=01 Prnt=01 Port=05 Cnt=02 Dev#= 10 Spd=480  MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1e0e ProdID=9071 Rev= 5.15
-S:  Manufacturer=SIMCOM
-S:  Product=SDXBAAGHA-IDP _SN:D744C4C5
-S:  SerialNumber=0123456789ABCDEF
-C:* #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=50 Driver=qmi_wwan
-E:  Ad=86(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+This is a multi-part message in MIME format.
+--------------fJ1rQJHSiz5ML7IjlmNtvQb4
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-0x9078: tty (DM) + tty (NMEA) + tty (AT) + ECM + adb
-T:  Bus=01 Lev=01 Prnt=01 Port=05 Cnt=02 Dev#=  9 Spd=480  MxCh= 0
-D:  Ver= 2.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=1e0e ProdID=9078 Rev= 5.15
-S:  Manufacturer=SIMCOM
-S:  Product=SDXBAAGHA-IDP _SN:D744C4C5
-S:  SerialNumber=0123456789ABCDEF
-C:* #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=06 Prot=00 Driver=cdc_ether
-E:  Ad=86(I) Atr=03(Int.) MxPS=  16 Ivl=32ms
-I:  If#= 4 Alt= 0 #EPs= 0 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
-I:* If#= 4 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+Hi Johan,
 
-0x907b: RNDIS + tty (DM) + tty (NMEA) + tty (AT) + adb
-T:  Bus=01 Lev=01 Prnt=01 Port=05 Cnt=02 Dev#=  8 Spd=480  MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1e0e ProdID=907b Rev= 5.15
-S:  Manufacturer=SIMCOM
-S:  Product=SDXBAAGHA-IDP _SN:D744C4C5
-S:  SerialNumber=0123456789ABCDEF
-C:* #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
-A:  FirstIf#= 0 IfCount= 2 Cls=ef(misc ) Sub=04 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 1 Cls=ef(misc ) Sub=04 Prot=01 Driver=rndis_host
-E:  Ad=82(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+Thanks for the feedback. I have addressed the issues in v2:
+- Fixed the From and Signed-off-by mismatch.
+- Added an introductory sentence in the commit message.
+- Added comments for the new USB device entries.
+- Included a changelog below the --- line.
 
-Signed-off-by: Xiaowei Li <xiaowei.li@simcom.com>
----
-Changelog:
-v3:
-- Fixed From and Signed-off-by mismatch.
-- Added introductory sentence in commit message.
-- Added comments for new USB device entries.
+Please find the updated patch attached. Let me know if there are any 
+further comments.
 
- drivers/usb/serial/option.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Best regards,
+Xiaowei Li
 
-diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
-index fc869b7f803f..d6616d635c9f 100644
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -2114,6 +2114,12 @@ static const struct usb_device_id option_ids[] = {
- 	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9003, 0xff) },	/* Simcom SIM7500/SIM7600 MBIM mode */
- 	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9011, 0xff),	/* Simcom SIM7500/SIM7600 RNDIS mode */
- 	  .driver_info = RSVD(7) },
-+	{ USB_DEVICE(0x1e0e, 0x9071),	/* Simcom SIM8230 RMNET mode */
-+	  .driver_info = RSVD(3) | RSVD(4) },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9078, 0xff),	/* Simcom SIM8230 ECM mode */
-+	  .driver_info = RSVD(5) },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x907b, 0xff),	/* Simcom SIM8230 RNDIS mode */
-+	  .driver_info = RSVD(5) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9205, 0xff) },	/* Simcom SIM7070/SIM7080/SIM7090 AT+ECM mode */
- 	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9206, 0xff) },	/* Simcom SIM7070/SIM7080/SIM7090 AT-only mode */
- 	{ USB_DEVICE(ALCATEL_VENDOR_ID, ALCATEL_PRODUCT_X060S_X200),
--- 
-2.34.1
+在 2025/9/23 15:43, Johan Hovold 写道:
+> On Wed, Sep 17, 2025 at 06:53:42PM +0800, xiaowei.li wrote:
+> 
+> Thanks for the v2.
+> 
+> Checkpatch complains that your From (author) name does not match you
+> SoB (a period '.' instead of space and no capitalisation). Could you fix
+> your mailer (or add a From line to the patch) so that the author
+> information in the logs will look correct?
+> 
+> Please consider adding an introductory sentence here (e.g. "Add the
+> following compositions for device X:").
+> 
+>> USB Device Listings:
+> 
+>> Signed-off-by: Xiaowei Li <xiaowei.li@simcom.com>
+>> ---
+> 
+> And when updating patches you should put a short changelog here under
+> the --- line.
+> 
+>>   drivers/usb/serial/option.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+>> index fc869b7f803f..8eadcfe33ecd 100644
+>> --- a/drivers/usb/serial/option.c
+>> +++ b/drivers/usb/serial/option.c
+>> @@ -2114,6 +2114,12 @@ static const struct usb_device_id option_ids[] = {
+>>   	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9003, 0xff) },	/* Simcom SIM7500/SIM7600 MBIM mode */
+>>   	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9011, 0xff),	/* Simcom SIM7500/SIM7600 RNDIS mode */
+>>   	  .driver_info = RSVD(7) },
+>> +	{ USB_DEVICE(0x1e0e, 0x9071),
+>> +	  .driver_info = RSVD(3) | RSVD(4) },
+>> +	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9078, 0xff),
+>> +	  .driver_info = RSVD(5) },
+>> +	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x907b, 0xff),
+>> +	  .driver_info = RSVD(5) },
+> 
+> And please add a comment after these entries with the device and mode
+> (like the surrounding entries have).
+> 
+>>   	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9205, 0xff) },	/* Simcom SIM7070/SIM7080/SIM7090 AT+ECM mode */
+>>   	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9206, 0xff) },	/* Simcom SIM7070/SIM7080/SIM7090 AT-only mode */
+>>   	{ USB_DEVICE(ALCATEL_VENDOR_ID, ALCATEL_PRODUCT_X060S_X200),
+> 
+> Looks all good otherwise.
+> 
+> Johan
+> 
 
+--------------fJ1rQJHSiz5ML7IjlmNtvQb4
+Content-Type: text/plain; charset=UTF-8;
+ name="0001-USB-serial-option-add-SIMCom-8230C-compositions.patch"
+Content-Disposition: attachment;
+ filename*0="0001-USB-serial-option-add-SIMCom-8230C-compositions.patch"
+Content-Transfer-Encoding: base64
+
+RnJvbSA1OWE0MmJiNTA1MjMwM2E1YThkMTBlNGU5ZjczNjJlZDExZmQzNmRjIE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBYaWFvd2VpIExpIDx4aWFvd2VpLmxpQHNpbWNvbS5j
+b20+CkRhdGU6IFdlZCwgMTcgU2VwIDIwMjUgMTg6NTE6MjMgKzA4MDAKU3ViamVjdDogW1BB
+VENIIHYzXSBVU0I6IHNlcmlhbDogb3B0aW9uOiBhZGQgU0lNQ29tIDgyMzBDIGNvbXBvc2l0
+aW9ucwoKQWRkIHN1cHBvcnQgZm9yIFNJTUNvbSA4MjMwQyB3aGljaCBpcyBiYXNlZCBvbiBR
+dWFsY29tbSBTRFgzNSBjaGlwLgpVU0IgRGV2aWNlIExpc3RpbmdzOgoweDkwNzE6IHR0eSAo
+RE0pICsgdHR5IChOTUVBKSArIHR0eSAoQVQpICsgcm1uZXQgKFFNSSBtb2RlKSArIGFkYgpU
+OiAgQnVzPTAxIExldj0wMSBQcm50PTAxIFBvcnQ9MDUgQ250PTAyIERldiM9IDEwIFNwZD00
+ODAgIE14Q2g9IDAKRDogIFZlcj0gMi4wMCBDbHM9MDAoPmlmYyApIFN1Yj0wMCBQcm90PTAw
+IE14UFM9NjQgI0NmZ3M9ICAxClA6ICBWZW5kb3I9MWUwZSBQcm9kSUQ9OTA3MSBSZXY9IDUu
+MTUKUzogIE1hbnVmYWN0dXJlcj1TSU1DT00KUzogIFByb2R1Y3Q9U0RYQkFBR0hBLUlEUCBf
+U046RDc0NEM0QzUKUzogIFNlcmlhbE51bWJlcj0wMTIzNDU2Nzg5QUJDREVGCkM6KiAjSWZz
+PSA1IENmZyM9IDEgQXRyPWEwIE14UHdyPTUwMG1BCkk6KiBJZiM9IDAgQWx0PSAwICNFUHM9
+IDIgQ2xzPWZmKHZlbmQuKSBTdWI9ZmYgUHJvdD0zMCBEcml2ZXI9b3B0aW9uCkU6ICBBZD0w
+MShPKSBBdHI9MDIoQnVsaykgTXhQUz0gNTEyIEl2bD0wbXMKRTogIEFkPTgxKEkpIEF0cj0w
+MihCdWxrKSBNeFBTPSA1MTIgSXZsPTBtcwpJOiogSWYjPSAxIEFsdD0gMCAjRVBzPSAyIENs
+cz1mZih2ZW5kLikgU3ViPTAwIFByb3Q9MDAgRHJpdmVyPW9wdGlvbgpFOiAgQWQ9ODIoSSkg
+QXRyPTAyKEJ1bGspIE14UFM9IDUxMiBJdmw9MG1zCkU6ICBBZD0wMihPKSBBdHI9MDIoQnVs
+aykgTXhQUz0gNTEyIEl2bD0wbXMKSToqIElmIz0gMiBBbHQ9IDAgI0VQcz0gMyBDbHM9ZmYo
+dmVuZC4pIFN1Yj1mZiBQcm90PTQwIERyaXZlcj1vcHRpb24KRTogIEFkPTg0KEkpIEF0cj0w
+MyhJbnQuKSBNeFBTPSAgMTAgSXZsPTMybXMKRTogIEFkPTgzKEkpIEF0cj0wMihCdWxrKSBN
+eFBTPSA1MTIgSXZsPTBtcwpFOiAgQWQ9MDMoTykgQXRyPTAyKEJ1bGspIE14UFM9IDUxMiBJ
+dmw9MG1zCkk6KiBJZiM9IDMgQWx0PSAwICNFUHM9IDMgQ2xzPWZmKHZlbmQuKSBTdWI9ZmYg
+UHJvdD01MCBEcml2ZXI9cW1pX3d3YW4KRTogIEFkPTg2KEkpIEF0cj0wMyhJbnQuKSBNeFBT
+PSAgIDggSXZsPTMybXMKRTogIEFkPTg1KEkpIEF0cj0wMihCdWxrKSBNeFBTPSA1MTIgSXZs
+PTBtcwpFOiAgQWQ9MDQoTykgQXRyPTAyKEJ1bGspIE14UFM9IDUxMiBJdmw9MG1zCkk6KiBJ
+ZiM9IDQgQWx0PSAwICNFUHM9IDIgQ2xzPWZmKHZlbmQuKSBTdWI9NDIgUHJvdD0wMSBEcml2
+ZXI9KG5vbmUpCkU6ICBBZD0wNShPKSBBdHI9MDIoQnVsaykgTXhQUz0gNTEyIEl2bD0wbXMK
+RTogIEFkPTg3KEkpIEF0cj0wMihCdWxrKSBNeFBTPSA1MTIgSXZsPTBtcwoKMHg5MDc4OiB0
+dHkgKERNKSArIHR0eSAoTk1FQSkgKyB0dHkgKEFUKSArIEVDTSArIGFkYgpUOiAgQnVzPTAx
+IExldj0wMSBQcm50PTAxIFBvcnQ9MDUgQ250PTAyIERldiM9ICA5IFNwZD00ODAgIE14Q2g9
+IDAKRDogIFZlcj0gMi4wMCBDbHM9ZWYobWlzYyApIFN1Yj0wMiBQcm90PTAxIE14UFM9NjQg
+I0NmZ3M9ICAxClA6ICBWZW5kb3I9MWUwZSBQcm9kSUQ9OTA3OCBSZXY9IDUuMTUKUzogIE1h
+bnVmYWN0dXJlcj1TSU1DT00KUzogIFByb2R1Y3Q9U0RYQkFBR0hBLUlEUCBfU046RDc0NEM0
+QzUKUzogIFNlcmlhbE51bWJlcj0wMTIzNDU2Nzg5QUJDREVGCkM6KiAjSWZzPSA2IENmZyM9
+IDEgQXRyPWEwIE14UHdyPTUwMG1BCkk6KiBJZiM9IDAgQWx0PSAwICNFUHM9IDIgQ2xzPWZm
+KHZlbmQuKSBTdWI9ZmYgUHJvdD0zMCBEcml2ZXI9b3B0aW9uCkU6ICBBZD0wMShPKSBBdHI9
+MDIoQnVsaykgTXhQUz0gNTEyIEl2bD0wbXMKRTogIEFkPTgxKEkpIEF0cj0wMihCdWxrKSBN
+eFBTPSA1MTIgSXZsPTBtcwpJOiogSWYjPSAxIEFsdD0gMCAjRVBzPSAyIENscz1mZih2ZW5k
+LikgU3ViPTAwIFByb3Q9MDAgRHJpdmVyPW9wdGlvbgpFOiAgQWQ9ODIoSSkgQXRyPTAyKEJ1
+bGspIE14UFM9IDUxMiBJdmw9MG1zCkU6ICBBZD0wMihPKSBBdHI9MDIoQnVsaykgTXhQUz0g
+NTEyIEl2bD0wbXMKSToqIElmIz0gMiBBbHQ9IDAgI0VQcz0gMyBDbHM9ZmYodmVuZC4pIFN1
+Yj1mZiBQcm90PTQwIERyaXZlcj1vcHRpb24KRTogIEFkPTg0KEkpIEF0cj0wMyhJbnQuKSBN
+eFBTPSAgMTAgSXZsPTMybXMKRTogIEFkPTgzKEkpIEF0cj0wMihCdWxrKSBNeFBTPSA1MTIg
+SXZsPTBtcwpFOiAgQWQ9MDMoTykgQXRyPTAyKEJ1bGspIE14UFM9IDUxMiBJdmw9MG1zCkk6
+KiBJZiM9IDMgQWx0PSAwICNFUHM9IDEgQ2xzPTAyKGNvbW0uKSBTdWI9MDYgUHJvdD0wMCBE
+cml2ZXI9Y2RjX2V0aGVyCkU6ICBBZD04NihJKSBBdHI9MDMoSW50LikgTXhQUz0gIDE2IEl2
+bD0zMm1zCkk6ICBJZiM9IDQgQWx0PSAwICNFUHM9IDAgQ2xzPTBhKGRhdGEgKSBTdWI9MDAg
+UHJvdD0wMCBEcml2ZXI9Y2RjX2V0aGVyCkk6KiBJZiM9IDQgQWx0PSAxICNFUHM9IDIgQ2xz
+PTBhKGRhdGEgKSBTdWI9MDAgUHJvdD0wMCBEcml2ZXI9Y2RjX2V0aGVyCkU6ICBBZD04NShJ
+KSBBdHI9MDIoQnVsaykgTXhQUz0gNTEyIEl2bD0wbXMKRTogIEFkPTA0KE8pIEF0cj0wMihC
+dWxrKSBNeFBTPSA1MTIgSXZsPTBtcwpJOiogSWYjPSA1IEFsdD0gMCAjRVBzPSAyIENscz1m
+Zih2ZW5kLikgU3ViPTQyIFByb3Q9MDEgRHJpdmVyPShub25lKQpFOiAgQWQ9MDUoTykgQXRy
+PTAyKEJ1bGspIE14UFM9IDUxMiBJdmw9MG1zCkU6ICBBZD04NyhJKSBBdHI9MDIoQnVsaykg
+TXhQUz0gNTEyIEl2bD0wbXMKCjB4OTA3YjogUk5ESVMgKyB0dHkgKERNKSArIHR0eSAoTk1F
+QSkgKyB0dHkgKEFUKSArIGFkYgpUOiAgQnVzPTAxIExldj0wMSBQcm50PTAxIFBvcnQ9MDUg
+Q250PTAyIERldiM9ICA4IFNwZD00ODAgIE14Q2g9IDAKRDogIFZlcj0gMi4wMCBDbHM9MDAo
+PmlmYyApIFN1Yj0wMCBQcm90PTAwIE14UFM9NjQgI0NmZ3M9ICAxClA6ICBWZW5kb3I9MWUw
+ZSBQcm9kSUQ9OTA3YiBSZXY9IDUuMTUKUzogIE1hbnVmYWN0dXJlcj1TSU1DT00KUzogIFBy
+b2R1Y3Q9U0RYQkFBR0hBLUlEUCBfU046RDc0NEM0QzUKUzogIFNlcmlhbE51bWJlcj0wMTIz
+NDU2Nzg5QUJDREVGCkM6KiAjSWZzPSA2IENmZyM9IDEgQXRyPWEwIE14UHdyPTUwMG1BCkE6
+ICBGaXJzdElmIz0gMCBJZkNvdW50PSAyIENscz1lZihtaXNjICkgU3ViPTA0IFByb3Q9MDEK
+SToqIElmIz0gMCBBbHQ9IDAgI0VQcz0gMSBDbHM9ZWYobWlzYyApIFN1Yj0wNCBQcm90PTAx
+IERyaXZlcj1ybmRpc19ob3N0CkU6ICBBZD04MihJKSBBdHI9MDMoSW50LikgTXhQUz0gICA4
+IEl2bD0zMm1zCkk6KiBJZiM9IDEgQWx0PSAwICNFUHM9IDIgQ2xzPTBhKGRhdGEgKSBTdWI9
+MDAgUHJvdD0wMCBEcml2ZXI9cm5kaXNfaG9zdApFOiAgQWQ9ODEoSSkgQXRyPTAyKEJ1bGsp
+IE14UFM9IDUxMiBJdmw9MG1zCkU6ICBBZD0wMShPKSBBdHI9MDIoQnVsaykgTXhQUz0gNTEy
+IEl2bD0wbXMKSToqIElmIz0gMiBBbHQ9IDAgI0VQcz0gMiBDbHM9ZmYodmVuZC4pIFN1Yj1m
+ZiBQcm90PTMwIERyaXZlcj1vcHRpb24KRTogIEFkPTAyKE8pIEF0cj0wMihCdWxrKSBNeFBT
+PSA1MTIgSXZsPTBtcwpFOiAgQWQ9ODMoSSkgQXRyPTAyKEJ1bGspIE14UFM9IDUxMiBJdmw9
+MG1zCkk6KiBJZiM9IDMgQWx0PSAwICNFUHM9IDIgQ2xzPWZmKHZlbmQuKSBTdWI9MDAgUHJv
+dD0wMCBEcml2ZXI9b3B0aW9uCkU6ICBBZD04NChJKSBBdHI9MDIoQnVsaykgTXhQUz0gNTEy
+IEl2bD0wbXMKRTogIEFkPTAzKE8pIEF0cj0wMihCdWxrKSBNeFBTPSA1MTIgSXZsPTBtcwpJ
+OiogSWYjPSA0IEFsdD0gMCAjRVBzPSAzIENscz1mZih2ZW5kLikgU3ViPWZmIFByb3Q9NDAg
+RHJpdmVyPW9wdGlvbgpFOiAgQWQ9ODYoSSkgQXRyPTAzKEludC4pIE14UFM9ICAxMCBJdmw9
+MzJtcwpFOiAgQWQ9ODUoSSkgQXRyPTAyKEJ1bGspIE14UFM9IDUxMiBJdmw9MG1zCkU6ICBB
+ZD0wNChPKSBBdHI9MDIoQnVsaykgTXhQUz0gNTEyIEl2bD0wbXMKSToqIElmIz0gNSBBbHQ9
+IDAgI0VQcz0gMiBDbHM9ZmYodmVuZC4pIFN1Yj00MiBQcm90PTAxIERyaXZlcj0obm9uZSkK
+RTogIEFkPTA1KE8pIEF0cj0wMihCdWxrKSBNeFBTPSA1MTIgSXZsPTBtcwpFOiAgQWQ9ODco
+SSkgQXRyPTAyKEJ1bGspIE14UFM9IDUxMiBJdmw9MG1zCgpTaWduZWQtb2ZmLWJ5OiBYaWFv
+d2VpIExpIDx4aWFvd2VpLmxpQHNpbWNvbS5jb20+Ci0tLQpDaGFuZ2Vsb2c6CnYzOgotIEZp
+eGVkIEZyb20gYW5kIFNpZ25lZC1vZmYtYnkgbWlzbWF0Y2guCi0gQWRkZWQgaW50cm9kdWN0
+b3J5IHNlbnRlbmNlIGluIGNvbW1pdCBtZXNzYWdlLgotIEFkZGVkIGNvbW1lbnRzIGZvciBu
+ZXcgVVNCIGRldmljZSBlbnRyaWVzLgoKIGRyaXZlcnMvdXNiL3NlcmlhbC9vcHRpb24uYyB8
+IDYgKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0
+IGEvZHJpdmVycy91c2Ivc2VyaWFsL29wdGlvbi5jIGIvZHJpdmVycy91c2Ivc2VyaWFsL29w
+dGlvbi5jCmluZGV4IGZjODY5YjdmODAzZi4uZDY2MTZkNjM1YzlmIDEwMDY0NAotLS0gYS9k
+cml2ZXJzL3VzYi9zZXJpYWwvb3B0aW9uLmMKKysrIGIvZHJpdmVycy91c2Ivc2VyaWFsL29w
+dGlvbi5jCkBAIC0yMTE0LDYgKzIxMTQsMTIgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCB1c2Jf
+ZGV2aWNlX2lkIG9wdGlvbl9pZHNbXSA9IHsKIAl7IFVTQl9ERVZJQ0VfSU5URVJGQUNFX0NM
+QVNTKDB4MWUwZSwgMHg5MDAzLCAweGZmKSB9LAkvKiBTaW1jb20gU0lNNzUwMC9TSU03NjAw
+IE1CSU0gbW9kZSAqLwogCXsgVVNCX0RFVklDRV9JTlRFUkZBQ0VfQ0xBU1MoMHgxZTBlLCAw
+eDkwMTEsIDB4ZmYpLAkvKiBTaW1jb20gU0lNNzUwMC9TSU03NjAwIFJORElTIG1vZGUgKi8K
+IAkgIC5kcml2ZXJfaW5mbyA9IFJTVkQoNykgfSwKKwl7IFVTQl9ERVZJQ0UoMHgxZTBlLCAw
+eDkwNzEpLAkvKiBTaW1jb20gU0lNODIzMCBSTU5FVCBtb2RlICovCisJICAuZHJpdmVyX2lu
+Zm8gPSBSU1ZEKDMpIHwgUlNWRCg0KSB9LAorCXsgVVNCX0RFVklDRV9JTlRFUkZBQ0VfQ0xB
+U1MoMHgxZTBlLCAweDkwNzgsIDB4ZmYpLAkvKiBTaW1jb20gU0lNODIzMCBFQ00gbW9kZSAq
+LworCSAgLmRyaXZlcl9pbmZvID0gUlNWRCg1KSB9LAorCXsgVVNCX0RFVklDRV9JTlRFUkZB
+Q0VfQ0xBU1MoMHgxZTBlLCAweDkwN2IsIDB4ZmYpLAkvKiBTaW1jb20gU0lNODIzMCBSTkRJ
+UyBtb2RlICovCisJICAuZHJpdmVyX2luZm8gPSBSU1ZEKDUpIH0sCiAJeyBVU0JfREVWSUNF
+X0lOVEVSRkFDRV9DTEFTUygweDFlMGUsIDB4OTIwNSwgMHhmZikgfSwJLyogU2ltY29tIFNJ
+TTcwNzAvU0lNNzA4MC9TSU03MDkwIEFUK0VDTSBtb2RlICovCiAJeyBVU0JfREVWSUNFX0lO
+VEVSRkFDRV9DTEFTUygweDFlMGUsIDB4OTIwNiwgMHhmZikgfSwJLyogU2ltY29tIFNJTTcw
+NzAvU0lNNzA4MC9TSU03MDkwIEFULW9ubHkgbW9kZSAqLwogCXsgVVNCX0RFVklDRShBTENB
+VEVMX1ZFTkRPUl9JRCwgQUxDQVRFTF9QUk9EVUNUX1gwNjBTX1gyMDApLAotLSAKMi4zNC4x
+Cgo=
+
+--------------fJ1rQJHSiz5ML7IjlmNtvQb4--
 
