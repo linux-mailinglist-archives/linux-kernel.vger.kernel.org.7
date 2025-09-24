@@ -1,267 +1,207 @@
-Return-Path: <linux-kernel+bounces-830300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 088D1B99589
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:06:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EA3B995B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB9314E1E5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:06:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E498165004
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9955825A34F;
-	Wed, 24 Sep 2025 10:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031DF2DC762;
+	Wed, 24 Sep 2025 10:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="PgQdGmnK"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="qBwQmw84"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010025.outbound.protection.outlook.com [52.101.84.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD3215624D
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758708391; cv=none; b=cDXAcTEUk4lELdKy5R+hmCTptCjXdWYzmzxu75iBbicw070JZ4nl+5AaIFQP/nG1m4rj9m6lhQrKwtYBUGhqF5Eu5S5x19gXybDklUjYepZJDIpD7qai+0dNRksuosUBglvzwIMioXlXJkKK+kAb/23WIkOWLr0sWel6TVoIqYg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758708391; c=relaxed/simple;
-	bh=U4NgULEgdH3+wVK2A6tyf0ydUVdvgU3xgFrasX8sbIc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rEv9SyioHVAsT/qVry1b86vEqXY4w8swHnUyzMeWq90G2CkHn5AM08tAoVAsaxc8+4Ev/Pv3AEYWQlphGiCcoCY968E4KxDnfTOgtfE3d+A6hSH0wefjXDt0F1CtdSRP2C5TFH+4EpQ1pcQlGgDM/1nY+A2U8Xnxe2em4KosO3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=PgQdGmnK; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7704f3c46ceso6211603b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:06:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758708386; x=1759313186; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EfE2mgVlyr7iNmaZ4vQXyrWE/ZvZPrZL7XGUEK7ATPc=;
-        b=PgQdGmnK5nIVXYhMWW3bI7kcM88aqLrVQiCm3VpCZ9kfz8ppcHGXAyhT6/mkg80kjn
-         u6oU3JVrexWEB1xJ+/VAkup5Itikih+4zPfW7MnxssX6xUOdoqBCLee5NdTqBP6hZkNs
-         fiT9SwLkG4I1c/nxntfjl2bD5qDT4FHWXQDqDZHpzYT6YFMCriCogOV8lew/7cC0sGuk
-         dn3u7AENDoe++ZI7OCRTInsiOwlM/owEc3ubmxy5m0pUFYp1lIsOpJq/Cz3mZ99hS0T4
-         lRAfWgPrMmKXgjTFve76jY63yDCobpe4E/7kFv0BXWC/qbNH+sIRL3UU5XD5bTXRB8Td
-         G82w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758708386; x=1759313186;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EfE2mgVlyr7iNmaZ4vQXyrWE/ZvZPrZL7XGUEK7ATPc=;
-        b=xB6KB6g2tMl+K67DdyNHgLAbUoZZS3LMy5NXK7+Fs/3MVoXsMozi5YLUpGzanwrfbJ
-         j7czfEsSKm5IFZEzb4RCkB6nJDDaoJX/c6Jd4qdRso8kE8+NI8qRhaa/7nQ8F6OQgMEh
-         ZoXJRDjKPcU2Bb/TA/OIKSLHDj4YPqAVe3b6PmjCe43Q1EpSjZO6FA6ft16Yx0+g/Tnz
-         4Oud/DNq7xm+BinuxDn9RqmHnmXw+KIyshhEWZIyNVv+SYcPuaOaDWvTGVdTYsqb8Ose
-         yZBFnnkHLezb+GP9Qh2NQW0EhMPJMj3BgLOBWzuZQFLVUSjD1RbhaimwtmQjr7jUjsjS
-         tlAA==
-X-Forwarded-Encrypted: i=1; AJvYcCW55q5gYLiUy1XC+4gQ9CSfAdZe8G8osDN8SPrLfQsX5jH2hksdHJBpek+ryWLNU2DvB9v7pcfZbAmZwio=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0FF+WxeIqgQ2QexBwVHh0hBpndaByjXeZmKPT2/0JFYmrqlUy
-	eSyY01BsaID6cNtuHF/kGAzV5UxyJYhDZZz6+2Xiu83jG/M+815EDiJIi168Ddt4g80=
-X-Gm-Gg: ASbGncvPJwHav4oI2hdcGk8rNj8dxIzrvPnuKOdJ3HMbtJiBjOqdfMqAWHR+rWh4CjM
-	hcYW/H7N+HacD8kRpcTC0ToBBBxn7voIvWMaCJqIJeOE1/knGLDF4eKsYLewq8HVgqOweoRxYlB
-	XhygNkhroe+21JRmVgXk7xFW5GFJKujQroY2GMPQBGcIiM9CBMqszkOnDfgAETIXp4x3quKbXDp
-	GVyu5vhW07sMNK8fKOu4d1zyzysIb2BF+TzLjFxUN/2/SCEdABt0BG1DjOTdFMSyaStb8ki+JrN
-	e302ttaoSWS4Nd3VBXdKyA2H9tx/1j1jhWzhUEs1nHSlfpCkVL1/20B/Kp0NL6HTie+TWE9iWU+
-	69SR2MPvu8DbpAS6xS5mRmdtHJ0Rhasxrp6djdObRugqfdJK8CjONu9iGzE5zKoSoDHD3
-X-Google-Smtp-Source: AGHT+IFhsnsZYVlejzedhp8ryD+eY+C2FjhYDyPffnI2uMukcLjw9DOqyDy7/D84SWZQ/6CRngyUhw==
-X-Received: by 2002:a05:6a00:1990:b0:77f:1a7e:7bc0 with SMTP id d2e1a72fcca58-77f53acfa71mr6945066b3a.31.1758708385394;
-        Wed, 24 Sep 2025 03:06:25 -0700 (PDT)
-Received: from [100.82.90.25] ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f0da43089sm13920289b3a.90.2025.09.24.03.06.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 03:06:24 -0700 (PDT)
-Message-ID: <72d23e4d-6c59-4adf-86ba-aa3ae8566bde@bytedance.com>
-Date: Wed, 24 Sep 2025 18:06:14 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3185323D7D7;
+	Wed, 24 Sep 2025 10:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758708419; cv=fail; b=ebU9IlYgTZQExgZBEgSOnEw5lM/3kKr6p2RtzeXlek+LZ8xLlAy7LsXxvnhylp3tM4OnnIjDymlK8i24Ci9ThPRPkLGN8+6f8cyuXDXZcNHuAEQtpV3HTumR36aIuO4O+sVUyxdj2dKz3slpEO9k+z5dOI4cbyvIuBWtyh1ckvs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758708419; c=relaxed/simple;
+	bh=1e7h4dESQgIpQ1h9gbnk5GirWgxb/vP34pvDRjFo9IE=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=EmMr3WAKpIFU2emozvQannHEnUaTvKbzP3fEJXe4zMGY+zgVVflI0NagJBC9sPjRisvyJAa/mtljyMfTteQ5cD8Gkpv+tSZlSwtmgsga1bRE0LGi3vcRCj6yut14My9fNado+2pRWzyx8bOeKjmG0UWXyTMP5Y/QiWC0cNjOBVE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=qBwQmw84; arc=fail smtp.client-ip=52.101.84.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IiOSXCQgm26NdlYv8zCBI+1XqqbdRjOnGkca5ln+KNpYgWtfGXkqr9xJ+uTogHH65Kh1syPT2jx1uH4WpM25Lpz63HBILaYjFaBju+qzAzf2NM8NA43JFtYBQ04NdprwPIaXWC77iB8BOZBzGieVqXRlejhDGpao9rK7bd2S0gEYYmZsHawlYZb6+1mK0DDc3i53R8NGVfGysc+pG/c5DJDWsPNQ8TS/4jiO8VBRQ6v+UcAhsc7GOpHKLBUlhDmbJweOu4xDs2lzx0i+sFpfjPL4zFy8Dy7dh8e26rcsRItCFXK0mvqPj4dKFh7/TtXCSNpR11vcI/96KL7dLH7DGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ha5Pudu9zkXdDwzzFSI5KfIZJoavXnuq0rQWRmBgMLs=;
+ b=Eo+ifO+Mim79quTSIyfs8Wf6d3488muy0eX7ZaDaY/y4Mg2LLT8SfRSm1T7KkA4m/g/vZ8pXBznNN01Mb9gcB3aGfYGx1Kf7dn//iuO5DOQ6gos7UgSOxkjnGFLZ4toShO3XdaD9OtRnYpeVr/H2g78FgMZxci/rqBIIsjleREqVzdsUKM/lG755ktZUACAQ9fmnC0Mnt7Cz9TtEG3MSLhcb7qGUWCCbESTMBkOz1XxvAD8EXylmAe2ggCUjja9EhKPmnJTvYTYiMCm3+wRxFFP+DHz84Ueh9JFgC8okvxeLZvONjuIlIrcvXthW+ZOM+pv8AZUhY2+gylgVFeHyNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ha5Pudu9zkXdDwzzFSI5KfIZJoavXnuq0rQWRmBgMLs=;
+ b=qBwQmw84UlXiH6mA64gC2pgP34HXWqgoFy6BqZlBMYLBNK3n9mF+Cd3HvaHjaEdgFP9gvXrhXMG9c8aCU2EphMrfCVkEzEF+jgPGkJUpsLmh9g9a4ff16sLUYKspXH0nHZN1erybY9RHbrj1Bk+2H6Lrdwh2DNBerw53tmqFdPtn9Cc21F7L5eTPjE4VTbVkCPvcAW0GqGy6CHXpJPUrvhngyAMe/0ffFLaMUrmZ7XM+QdEfWfmoGOv1DmuiBb0dsJHC5wkZWg9TMa+ZQ8O8LKgon0eLwwKt1nOI8SSr7G0NfuMZpHJq4Zzy+dXWtKFyxS7if7r+d5DNDRXsTqzVnA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB9644.eurprd04.prod.outlook.com (2603:10a6:102:242::11)
+ by DUZPR04MB9745.eurprd04.prod.outlook.com (2603:10a6:10:4e1::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.8; Wed, 24 Sep
+ 2025 10:06:49 +0000
+Received: from PAXPR04MB9644.eurprd04.prod.outlook.com
+ ([fe80::6979:311a:bf0c:1a49]) by PAXPR04MB9644.eurprd04.prod.outlook.com
+ ([fe80::6979:311a:bf0c:1a49%7]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
+ 10:06:49 +0000
+From: "Alice Guo (OSS)" <alice.guo@oss.nxp.com>
+Subject: [PATCH 0/3] Add i.MX94 OCOTP support
+Date: Wed, 24 Sep 2025 18:06:22 +0800
+Message-Id: <20250924-imx943-v1-0-0d32d7852ecb@oss.nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJ7C02gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSyMT3czcCksTY90kI/PEFHPTFEOTtEQloOKCotS0zAqwQdFKZYZKsbW
+ 1AGHzmnVcAAAA
+To: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Alice Guo <alice.guo@nxp.com>, Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: SI2PR01CA0051.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::6) To PAXPR04MB9644.eurprd04.prod.outlook.com
+ (2603:10a6:102:242::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] mm: thp: reparent the split queue during memcg
- offline
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
- shakeel.butt@linux.dev, muchun.song@linux.dev, david@redhat.com,
- lorenzo.stoakes@oracle.com, ziy@nvidia.com, harry.yoo@oracle.com,
- baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
- lance.yang@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-References: <cover.1758618527.git.zhengqi.arch@bytedance.com>
- <55370bda7b2df617033ac12116c1712144bb7591.1758618527.git.zhengqi.arch@bytedance.com>
- <7ia4bjn06w62.fsf@castle.c.googlers.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <7ia4bjn06w62.fsf@castle.c.googlers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9644:EE_|DUZPR04MB9745:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac213895-603d-478d-c4cb-08ddfb52138b
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|7416014|19092799006|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ODhzaTVmTFduNkhDWmQzaWdwenI3b0VEc3FMQ0YyU3lPMUhmcnhjVDQxZFRZ?=
+ =?utf-8?B?R2xhYUNaeUZ2akNrUDFLNnZvck5RdjV3ZFQ4WlhpNHByZEFLUEVyenM1ZEhM?=
+ =?utf-8?B?ZmlPZGxZMk04UXNYeDNSTzhtdW9OSUJOTVV5Q0hoOWpJYzVLR1lkc3FEdjZG?=
+ =?utf-8?B?SUNpbjFxY3ZWNTFhQzhZeTF5QitTWThmdGNpbUNJVXY1VkNCUWQ4NGVGQ3Nm?=
+ =?utf-8?B?elNOaFJUL3BNc2Uwb3hKOW5LbDRWZUxSTzhJTjBibTNGbER6K2VzUkExMm5W?=
+ =?utf-8?B?QzIzYTlsNXJtQUtpM3FQcEZYRVlTZFI1QXNDcHF2ei83TW5iRVdnMlpyZkR5?=
+ =?utf-8?B?cm5UQ2ZMUDUwZEFVQjViN2YzVUZsaXB2Q1pWMFR3SVA1SjlSODNsTmVjRzN6?=
+ =?utf-8?B?OFNxb2Zzdk9QSmpIakhIR0dPTWw5dVB5MmlGOXg5VGZOc0oyRlFBM0YwVmxP?=
+ =?utf-8?B?VCszcnlrTkxSdE5kVjNadS9pSC9XSFEyR0V6VlJHbzkzcEtDVGptOHFOWnN2?=
+ =?utf-8?B?emN6SHNyRUVXMjhpMUp3M0FJUGN2cFZFWU96UFpITVBmVmRDSnl1SUp6LzE2?=
+ =?utf-8?B?VC94b1Y1R3lRT2FkeDhLZHM5Q1VtemZycS9ZM1loM1UvQUs1T3c1bjR2VWxy?=
+ =?utf-8?B?a09kNjgzZVJoREZEREhkOXFGZ1Bvb0h4bldsUHluWnQxbEtxaEV3RkZrV1FF?=
+ =?utf-8?B?aHBLd2dGT29NMWNDNEUySVk2VENpR3B1ZU04NlRHa00zZXNVYUF5d3YvRm55?=
+ =?utf-8?B?OVBSUFpDaDFjMzJ4dzh1dWVlWTZMbXJrSDRQcVdOMDBoSDI1UVlGcW5uRWov?=
+ =?utf-8?B?ejVYdUFSSjBxWGdtN2s1dnQ2Y25OVmhSUzYzd0xJNEh0ZVlyNDBoUjRyRVZw?=
+ =?utf-8?B?U2dGWG9tSzdOWVVjTXJ4ajJVblFoOEJPK1ZrTlkxQUorSHdnQTVHSmo1emhF?=
+ =?utf-8?B?eWtoRGJiN2ZTNXc5UVZSSDNjdDdJYkhSMmQyZDYzNDBLQmZtbUg0Z3duR2Rk?=
+ =?utf-8?B?VlFLR29Lb3pzVDhrRVNidE1XMzNkNURVZUhVRFNJalJPR0ltUEplMmVBK0Rs?=
+ =?utf-8?B?UFZjcTlsbzhlRjkybG51Qjk4aiszdVAwd1RCRnc5NFU5dXhvMWRPekU1NzU5?=
+ =?utf-8?B?ajJiSzBHM3AwU0JDTzZPa0c1R3gxRnNkTTV3YnQvYkxFNkFMa0FPOTdZOEFa?=
+ =?utf-8?B?YXRmbmpCVDNHNmg5ZDhtbXpQZ3BDWXBzeFF0L3R4d0Rkby9lN21tazZsc3NN?=
+ =?utf-8?B?UHAydE9SVTdtWENWeWVLQlJ5S3NDNVV0cVp5N1Zqd3RSV09HdGtKQ3V5K2hK?=
+ =?utf-8?B?Z0xGT1N3akM4dVI4d05sbGhwMW1qN1hrL1N6UGNVYzNtTEJZQjJDY1RRRFdw?=
+ =?utf-8?B?Zno2amlNZGp3VXZJVUNmektnVklwQzRPTlg5ektBTDYzQnY0RFQ3bVdyL1FQ?=
+ =?utf-8?B?UnF5b1R4MTJmSGluSTdCZkxIbElGUXdFNjMweEQxK3crZElPTFNTY1JQQWtH?=
+ =?utf-8?B?clhidHpjdGRkRjV6YkRuOGJuVUQzeWptZjVuSVpsc3BNdXlBemJCZWdYQzc3?=
+ =?utf-8?B?Qk92bFgraWZoWnQ3bTU2N0tyL3Rsd1pjb2kvNGFIMzE2NU80bG41MmJiVlla?=
+ =?utf-8?B?a1dHakM3dXE3TW1QVUhhZlZCenc4YXR2ZjVZRHgwWHdITUhPVWNCRzI5L1ZJ?=
+ =?utf-8?B?U25KbHhnM1NVQm9xb3k4dlpGYndVUlJ2N1hSYU9kTVJlNGlTY1d4VUpWL2xV?=
+ =?utf-8?B?VDU3bm1YYS9lQTBOMVlPL0c5aXVaWDUyYUJ4WHF5ejRDLzBoVzByVldURURn?=
+ =?utf-8?B?M09QR0lWaFFXNFFrL3BwTzZ4eHBXcFFkUDdXVTRYd2RtdklDL0s1OGM4Q1l4?=
+ =?utf-8?B?TGY0NWJpTENNMnBUdkxPbkpiU3huT3BJY21adWU5WXoxcnZIREJBeFJtWkwv?=
+ =?utf-8?B?Z3JqRUFvM3IraTk1ZWpCSkRzdVU5U2hJcHJwaUNGUXlMZ2tLZ0V3ZEdXcXRM?=
+ =?utf-8?B?V1J6WWU1aGhnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9644.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(19092799006)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eWloQzYrMTZlamVmeHpqWDJMWmpkazBXdHozTG9WOFlTckpYWXBqdldMRWcw?=
+ =?utf-8?B?cFU4Ui9PMFIzV1QyYzUwVVhnaVgxUmRlaVdwWjFuQTdUbXFIRnBCMG5oUi9X?=
+ =?utf-8?B?N0RSN3MyY3RJbVI0YW83LytHTE1KSzZGUzVZQUlvWlFjejN3RFdEQThISzA1?=
+ =?utf-8?B?ZzlPdDZDMDlxdVZGQUw4QWJkUEdrZ3hpZUJGd2hOOHFIR2FYWENwM0FQVWx0?=
+ =?utf-8?B?bTR0ZU1LT2w3ZU9vOUJMMmJvNW5YQUlUT0lMYTIrWGNIeGdFR0d3aEgxNFFm?=
+ =?utf-8?B?M0draytuRm1iTUhYK0txL28xbjJmZmRkODRjSnM1SHQrVHVpeGIxbHZBcDJj?=
+ =?utf-8?B?Wlk0ZDNPcGd3dDJsNVg2UVk0eWFmRUdzVXBPRy9wU1R4YmVKSW5paGVMUG4x?=
+ =?utf-8?B?SmtWeGtqRG1wck9remNmc2toaHZiaFgwNDBTU1Iwd3FmS244QnBKQ2JPaTZi?=
+ =?utf-8?B?SC9lWFNCUSt3dGsxSFF3SHEvelhHUmkvNFJXc2dxK2IraUdLMHh0d1RUUnRW?=
+ =?utf-8?B?U3ZtUE9WeHRKUTdhZnRlSXBXckxqUFJKQlhjVmkvMUkydmg0T1p4bytraW10?=
+ =?utf-8?B?RWNMUzk2YlpmL09GUjArZ2NxRVZMWkZvS0lBS3ZrTm0yb2FoOVd5MC8veDBJ?=
+ =?utf-8?B?Sml0TmNZRVk4eWtiNU9pTUx0eHpqNWJoL1ZPUW5mVHlMQVo1NXZqcHljdlNQ?=
+ =?utf-8?B?TCtweVZCMWZ0dHVXNDVwYzNWRlBmSUdTNjNaeHkxRjNNY2ZlNjhqcXRlbGdz?=
+ =?utf-8?B?TnVyOW1LeVp1QVlCOVd0TVBpYllMK1NodkZqTXYwK3BDalYwRjdteWpJRDgw?=
+ =?utf-8?B?ZFMzbVZWeENrcGgvWDNuV1VFNmxVYXhkWkxTazJBNTdkWHJub0NQMWIramIv?=
+ =?utf-8?B?cFVCaEt3Y2w5TlhuUmFWR0tNMVk2U0NJd3ZPUFRGS0VCM2E5dGxsR1dyUGxQ?=
+ =?utf-8?B?dVJSWGpDM25ScWRGc3NySHdpbXpyby9SaXRydytaU0FIL1FIeFczbkFJcnVp?=
+ =?utf-8?B?QW1UNzVtT0RoVlE2dkFMcFpMTi9hQTZRYmUvMDJxTFdIVEhBOHV2L052cU9I?=
+ =?utf-8?B?cGxqa2ZTdkZvWUlxdWJ6VW43RkRLSE5oODBVYTlwd1hWbUh3SDhBK1F2NytU?=
+ =?utf-8?B?U2Vqd2FsNE0wSnRXa09KTHNyeC9LVXNKeFliNUJHR3gyc0grL0VIT0FydkJM?=
+ =?utf-8?B?UmNQbm1IVFpmNlNIdEcwZkVJM1V1Nis0emMyUE9GY2NoT1dxajBvNGs2Z2dl?=
+ =?utf-8?B?M1VOMlp0WGlhRWpKTFZrdTdxQkFERjZydFNGV0lyTXRvNno3WjBHQ01Xclds?=
+ =?utf-8?B?NGFSbitZMTcycEd0WVV3UWlNcEFUY3lzVDk4NDVWSCswWDBGNlFFVWd4cUNu?=
+ =?utf-8?B?RVRac0o4Z0MzVXpveE1LM3JwZHJ0S2dOL09rcjVCaUg3eVo0K2R2ZW9qZTNT?=
+ =?utf-8?B?dFdCYlRDUjJTaFhmeWdLVUJuTnZDUDh1M3JiVGM1bWxxUmlBZkhFRStjK0tY?=
+ =?utf-8?B?U1hYaWFlczM5SUZQS3Z2WnU1bVJmNGl6akQzTC9mSUVKSW1RTy9sWFFMV0wv?=
+ =?utf-8?B?MTc3ZS9tWWhmNTlIdVBrcVcrV3d2WTBSU2ZZM0NjaEtwUWFXQ0kwVUdUWjFT?=
+ =?utf-8?B?YWlFU3VHR0pjT2U2NkZ3UHk1NjhMSlJUWDZ0dFJ3MnJvWWYwMGNKeHJBdnJ1?=
+ =?utf-8?B?Y2RkbFdZM0pGZmQ5czB5a0tieEM2MzhUQVU5T2k5ZUcwWjdCeHU2T1ZqY3dI?=
+ =?utf-8?B?YzlQN0FFS2RWSWpoREVIMmpZSHJZVHg2dEd0THBJck54VUx1SU44TWJZSHNN?=
+ =?utf-8?B?WUxEK1N6RitJWHV3aUJlalpqeWZScmxPckFUWW94SWdQbVcvQjZPckhLSmF2?=
+ =?utf-8?B?ejZXN3NDYnhvZzFKVzBEVnJZc1dlOFljYlNHTnk2MDhzdVZJVlRhS1htbHpL?=
+ =?utf-8?B?OFFoNlB3RlBac3FKMEVORG5pbE8zYTZhcUNSNWd4T2YrMDJibm5pdVl2NUc5?=
+ =?utf-8?B?RXBtRFpoczcyakhsL1NQbkZodnNra0c5N0NhR1RjSTloRDlWWDBrTmxlWVdU?=
+ =?utf-8?B?RHBINHlGZnVBQW5DR2o0eXdiYytDS2hLTkxUVDdTNkNzNFdiMURjbmY0bVBv?=
+ =?utf-8?Q?/+16BwunMZdz1ZCPBzaSPU4le?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac213895-603d-478d-c4cb-08ddfb52138b
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9644.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 10:06:49.3247
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: G0nS5foLAtzS6/rLbGs3cPMvYXwHxXMrQ5ilsgLsX+BQ8YcPzyYw/mn9FK8V4vei9PL6ZtbgESQfiCNGVHgqjQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR04MB9745
 
-Hi Roman,
+This patch series adds support for the OCOTP controller on the i.MX94
+SoC. The OCOTP controller provides access to eFuse regions.
 
-On 9/24/25 5:23 PM, Roman Gushchin wrote:
-> Qi Zheng <zhengqi.arch@bytedance.com> writes:
-> 
->> In the future, we will reparent LRU folios during memcg offline to
->> eliminate dying memory cgroups, which requires reparenting the split queue
->> to its parent.
-> 
-> Nit: commit logs should really focus on the actual change, not the future
-> plans.
+Tested on an i.MX943 EVK board with successful NVMEM read access via
+sysfs.
 
-Got it.
+Signed-off-by: Alice Guo <alice.guo@nxp.com>
+---
+Alice Guo (3):
+      dt-bindings: nvmem: imx-ocotp: Add binding for i.MX94
+      nvmem: imx-ocotp-ele: Add support for i.MX94 OCOTP
+      arm64: dts: imx94: Add OCOTP node
 
-> 
->>
->> Similar to list_lru, the split queue is relatively independent and does
->> not need to be reparented along with objcg and LRU folios (holding
->> objcg lock and lru lock). So let's apply the same mechanism as list_lru
->> to reparent the split queue separately when memcg is offine.
->>
->> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->> ---
->>   include/linux/huge_mm.h |  2 ++
->>   include/linux/mmzone.h  |  1 +
->>   mm/huge_memory.c        | 39 +++++++++++++++++++++++++++++++++++++++
->>   mm/memcontrol.c         |  1 +
->>   mm/mm_init.c            |  1 +
->>   5 files changed, 44 insertions(+)
->>
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index f327d62fc9852..a0d4b751974d2 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -417,6 +417,7 @@ static inline int split_huge_page(struct page *page)
->>   	return split_huge_page_to_list_to_order(page, NULL, ret);
->>   }
->>   void deferred_split_folio(struct folio *folio, bool partially_mapped);
->> +void reparent_deferred_split_queue(struct mem_cgroup *memcg);
->>   
->>   void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
->>   		unsigned long address, bool freeze);
->> @@ -611,6 +612,7 @@ static inline int try_folio_split(struct folio *folio, struct page *page,
->>   }
->>   
->>   static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
->> +static inline void reparent_deferred_split_queue(struct mem_cgroup *memcg) {}
->>   #define split_huge_pmd(__vma, __pmd, __address)	\
->>   	do { } while (0)
->>   
->> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
->> index 7fb7331c57250..f3eb81fee056a 100644
->> --- a/include/linux/mmzone.h
->> +++ b/include/linux/mmzone.h
->> @@ -1346,6 +1346,7 @@ struct deferred_split {
->>   	spinlock_t split_queue_lock;
->>   	struct list_head split_queue;
->>   	unsigned long split_queue_len;
->> +	bool is_dying;
->>   };
->>   #endif
->>   
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 48b51e6230a67..de7806f759cba 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -1094,9 +1094,15 @@ static struct deferred_split *folio_split_queue_lock(struct folio *folio)
->>   	struct deferred_split *queue;
->>   
->>   	memcg = folio_memcg(folio);
->> +retry:
->>   	queue = memcg ? &memcg->deferred_split_queue :
->>   			&NODE_DATA(folio_nid(folio))->deferred_split_queue;
->>   	spin_lock(&queue->split_queue_lock);
->> +	if (unlikely(queue->is_dying == true)) {
->> +		spin_unlock(&queue->split_queue_lock);
->> +		memcg = parent_mem_cgroup(memcg);
->> +		goto retry;
->> +	}
->>   
->>   	return queue;
->>   }
->> @@ -1108,9 +1114,15 @@ folio_split_queue_lock_irqsave(struct folio *folio, unsigned long *flags)
->>   	struct deferred_split *queue;
->>   
->>   	memcg = folio_memcg(folio);
->> +retry:
->>   	queue = memcg ? &memcg->deferred_split_queue :
->>   			&NODE_DATA(folio_nid(folio))->deferred_split_queue;
->>   	spin_lock_irqsave(&queue->split_queue_lock, *flags);
->> +	if (unlikely(queue->is_dying == true)) {
->> +		spin_unlock_irqrestore(&queue->split_queue_lock, *flags);
->> +		memcg = parent_mem_cgroup(memcg);
->> +		goto retry;
->> +	}
->>   
->>   	return queue;
->>   }
->> @@ -4284,6 +4296,33 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
->>   	return split;
->>   }
->>   
->> +void reparent_deferred_split_queue(struct mem_cgroup *memcg)
->> +{
->> +	struct mem_cgroup *parent = parent_mem_cgroup(memcg);
->> +	struct deferred_split *ds_queue = &memcg->deferred_split_queue;
->> +	struct deferred_split *parent_ds_queue = &parent->deferred_split_queue;
->> +	int nid;
->> +
->> +	spin_lock_irq(&ds_queue->split_queue_lock);
->> +	spin_lock_nested(&parent_ds_queue->split_queue_lock, SINGLE_DEPTH_NESTING);
->> +
->> +	if (!ds_queue->split_queue_len)
->> +		goto unlock;
->> +
->> +	list_splice_tail_init(&ds_queue->split_queue, &parent_ds_queue->split_queue);
->> +	parent_ds_queue->split_queue_len += ds_queue->split_queue_len;
->> +	ds_queue->split_queue_len = 0;
->> +	/* Mark the ds_queue dead */
->> +	ds_queue->is_dying = true;
->> +
->> +	for_each_node(nid)
->> +		set_shrinker_bit(parent, nid, shrinker_id(deferred_split_shrinker));
-> 
-> Does this loop need to be under locks?
+ .../devicetree/bindings/nvmem/imx-ocotp.yaml         |  4 +++-
+ arch/arm64/boot/dts/freescale/imx94.dtsi             |  7 +++++++
+ drivers/nvmem/imx-ocotp-ele.c                        | 20 ++++++++++++++++++++
+ 3 files changed, 30 insertions(+), 1 deletion(-)
+---
+base-commit: cec1e6e5d1ab33403b809f79cd20d6aff124ccfe
+change-id: 20250924-imx943-b27ad75d14fa
 
-I think it is not necessary, but the loop overhead should not be high.
-
-> 
->> +
->> +unlock:
->> +	spin_unlock(&parent_ds_queue->split_queue_lock);
->> +	spin_unlock_irq(&ds_queue->split_queue_lock);
->> +}
->> +
->>   #ifdef CONFIG_DEBUG_FS
->>   static void split_huge_pages_all(void)
->>   {
->> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->> index e090f29eb03bd..d03da72e7585d 100644
->> --- a/mm/memcontrol.c
->> +++ b/mm/memcontrol.c
->> @@ -3887,6 +3887,7 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
->>   	zswap_memcg_offline_cleanup(memcg);
->>   
->>   	memcg_offline_kmem(memcg);
->> +	reparent_deferred_split_queue(memcg);
->>   	reparent_shrinker_deferred(memcg);
-> 
-> I guess the naming can be a bit more consistent here :)
-
-Do you mean to change them all to:
-
-memcg_offline_xxx()
-
-or
-
-reparent_xxx() ?
-
-Thanks,
-Qi
-
-> 
-> Thanks!
+Best regards,
+-- 
+Alice Guo <alice.guo@oss.nxp.com>
 
 
