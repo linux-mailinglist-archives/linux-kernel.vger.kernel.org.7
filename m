@@ -1,318 +1,217 @@
-Return-Path: <linux-kernel+bounces-829911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA15FB982E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:17:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78BC5B982A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9968B171A5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:17:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AB762E598F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6985233D9E;
-	Wed, 24 Sep 2025 04:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9699F21FF4C;
+	Wed, 24 Sep 2025 04:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="ISAmdLNH"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Blo7P9/d"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579C113B58C;
-	Wed, 24 Sep 2025 04:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C6F1FDE09
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758687435; cv=none; b=RqGBm1bDMu9b0Kwb2QV2NztibkAgsk4vRlcZh+dEu42D5x0QJ7EZkAH0FLgKf0if/HaMSL6psmHQTk4AMdNtqpOzDvS15Kdca3XPyKOJheCdop8VitRhmnq3by8b/YR1ADeRIpkcVdQZ4PAVtHOWNHC2wOs8IyYK9K7+zW8oWkQ=
+	t=1758686744; cv=none; b=e2Lg45n3wzwlpRAmYtSjOqDnuypZOpsW4w8LWIPe4uiPpLiBU87luZu79rj8dDD4BzacsqCjEbhsyyohIk7MahgSl/gRPuGTuKn0W7cX/My4J7gBTTc8YJNUCuW6qrStu8h7IZF+vRJobChsCPdS92CHp4OesXNYTzCj6u6yZRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758687435; c=relaxed/simple;
-	bh=RcWOriQH3wxqPuV8hyOfl023lGgvyuVAPVJ/Q6kjFl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z59EgFZ/lkuyXNrido0KipXpYMwG8WFMrjimwxsqrei7aYe8w9SL+q7tyK7qlxZ/17qO9wM2acqc6+bTdOSZWO/cDQphzpaxkMch96CYHshuKW11DQt449BDPmekM5SpxD7vUyOFTU1xLRvdAHIkqvIE4WfSva+FBbCbs+8eQx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au; spf=pass smtp.mailfrom=gandalf.ozlabs.org; dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b=ISAmdLNH; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gandalf.ozlabs.org
+	s=arc-20240116; t=1758686744; c=relaxed/simple;
+	bh=NQPZF9e2c9CtsjhkZliyNOSlNI5BNbDFaXzN53vkEB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nTbF0b7fCttiu3KZD4C1Rnx6LZ8xI2rCoBYGkBxwsB7g4tI0eDGNcpkdWmLG51ISaQn1atDVmLkUvm2z+vJKX4jAxlHTwMJ4jkoUXtb105suBMpFpFa6JiTkR/9trq1y9X0iNWjzgGTgzs8e4wuZ3AfUjMNl4ob6BP4aFpZCIYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Blo7P9/d; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3327f8ed081so3083825a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 21:05:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=gibson.dropbear.id.au; s=202508; t=1758687426;
-	bh=ATv45uo5ricw5YDbv1fpXanGdfbAJJwEaGvaVwwd6RI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ISAmdLNHph9rEE4S7uQ7WntBg9GvtSISOTNwaMcccWAvyY3LwFybWvpxudVKNSTs2
-	 IsOdUCq8ckopAT5bi68EjXeB0FKB0sGCaqcF3P0oAUksAZGRqCjFr+OF7ZC5Trn9WJ
-	 Csjsy1Ys2heq3yu+vTthuU3A2vSbu9exZBeMxBc/j1kBkFSSVvhDu31Y7bqtttG3N4
-	 aUkWjBGQ0WNTU3meiZhW+xwmFSgsRE5TbMLrM7B4JdfKl241a7LqXRaj4Y6bB2QgqE
-	 UtGSvDwhcnC6i2nF/pCRRB3Din1LzMrCpOX8fWD3CNmq4qXvC/kHmn/vTZPf49fcjL
-	 iOxN4k0R8+QXg==
-Received: by gandalf.ozlabs.org (Postfix, from userid 1007)
-	id 4cWk820fl2z4wC8; Wed, 24 Sep 2025 14:17:06 +1000 (AEST)
-Date: Wed, 24 Sep 2025 13:54:22 +1000
-From: David Gibson <david@gibson.dropbear.id.au>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Ayush Singh <ayush@beagleboard.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>, Andrew Davis <afd@ti.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	devicetree@vger.kernel.org, Jason Kridner <jkridner@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: Device tree representation of (hotplug) connectors: discussion
- at ELCE
-Message-ID: <aNNrbmZfZU-1xJFm@zatzit>
-References: <aMD_qYx4ZEASD9A1@zatzit>
- <20250911104828.48ef2c0e@bootlin.com>
- <aMebXe-yJy34kST8@zatzit>
- <20250916084631.77127e29@bootlin.com>
- <aMt5kEI_WRDOf-Hw@zatzit>
- <20250918094409.0d5f92ec@bootlin.com>
- <aMzhgDYOuG4qNcc0@zatzit>
- <dcbeaff2-0147-4a27-bb46-e247e42810d7@beagleboard.org>
- <aNJVqSpdAJzGliNx@zatzit>
- <20250923114849.2385736d@bootlin.com>
+        d=bytedance.com; s=google; t=1758686742; x=1759291542; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hj/VG0+ZBnyrZwY9mojsT9ngdgtjWP1naUzw+Q1A/nE=;
+        b=Blo7P9/dMh/mF3FfifPxnRy45IcTrxapY5tdryDyJyoj8hBqhacczEBdE3zPEZvCQ4
+         26ASjvKxlA7gx4W7XK43Svvj/pPl5xERRlDU5Sa2pKdNno26RMO6CULkAPCk41XZWsa8
+         5B4GVk4gaSJmRDTZ7RxQ6NfBcMhLH99QXpO2nIXln66xCBhsznfHekavugqt0v2fKZb7
+         qjf4s+K9MMLSmiPskY2QAnZNZlKt+Jw8SL1xN/2WUsnRKJ9isoC11ogDc6Yu9PPvO46T
+         5b65NUAVc4FZN+TAAGo+DzvaWjiJtpMn38/Vq3+vnU2xJAGEycJX5nk+HXCt4fIVwyJz
+         xDHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758686742; x=1759291542;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hj/VG0+ZBnyrZwY9mojsT9ngdgtjWP1naUzw+Q1A/nE=;
+        b=Fn3nhIh54iXuEPr3NBFOPztxmXsGKpZZiGDhzOqDYVEd3XtHjNG718by4/yXY8q2s1
+         adSH9ZeD9jx6sVagIXWcb3cc8sBL0GGPiZs56N8H9p7pWfqPr40WqXVQHkXxNFWTchw7
+         sMCL8uHQRBhn4ZMiczr6gs6CgwTKhq5PwBCPQ5RTgnC28vMJBgEQvWTnvsX+WDNc9dzk
+         wqECEOEZKHlRVnjV2nT+MMb38oOX+lLKHJD/zf7RXLPo0ignyc7TIuWdah1Rllxe1C3R
+         ULbImxQBfnuqpqvlhnd6Eyh9K/8C1UhzauT7MPD4HbkS6NNW8sEaegywCP+XqPxv9kl8
+         qsIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjYtQK5JSoJFdxr042x6CGJ3CZoJ/xSnnn2kX7nT4EESIm10Loe2xRe02oSVINxVUkC6dGUoow4cxVM3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaMiJYBjtA2Jn0juB6YRP4Pallcq/aiE187CHTvstMQ1bUOy7U
+	kHWsBvI+TPUMT1CDEavACJHJhQsO7dZFjDwqYmYSUlnHYwrqK6VjPlghkEpT+Wy97kI=
+X-Gm-Gg: ASbGncusExqTyMJ40gf9eEHEarVFAL3gk1NcMA5KY5nKCbEOTo6rmwQJtwcXGGK3b+3
+	bbni5VRGbg+VXhjJufNeqsrhjxnC75SVBM9TepOCjCDZvMeyO4p7OI79by+jarvTZPcsu4PG/zr
+	zm/jnVCd6q9atOG3KetugIMJDD++TtOMBpr62b0HDtHbPUG0sl90qq4G8ERDpfDRB1jr9RaQ72I
+	00TNnKRNsCrlZdstz9Vkxk+FQ4PKHwJrvl8TjIb2TchHCCVkkftQFp9H0dxkMC3+jMSf4u/1P1h
+	MtiSotFqrPoXBDyI4vpphtVDAmKVF7oU/UL4AVWbynnAmIq3v8SF+TdRsc+p5cJYPJBdRk23FKY
+	ZGkvrpARlkZJpAR52vp+d6yQOyhLJwPizwajkVCDvI8AF9h7FfHM4K/ENpjyAdKhUYznwciE=
+X-Google-Smtp-Source: AGHT+IGb5iPXT+ZtAJ3FiTP92YXhJI/RPFbN4furn0bB8MFVyoMrlhzBZRruGqdq83PrpiswhpPc8g==
+X-Received: by 2002:a17:90b:58c5:b0:32b:dfdb:b276 with SMTP id 98e67ed59e1d1-332a98fc381mr5336158a91.34.1758686742150;
+        Tue, 23 Sep 2025 21:05:42 -0700 (PDT)
+Received: from [10.88.213.9] ([61.213.176.55])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341bd8b206sm756958a91.2.2025.09.23.21.05.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 21:05:41 -0700 (PDT)
+Message-ID: <aed938d0-e70a-4af6-9950-d4d0b7d6a93f@bytedance.com>
+Date: Wed, 24 Sep 2025 12:05:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZiW09zn6+nXcT26v"
-Content-Disposition: inline
-In-Reply-To: <20250923114849.2385736d@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Re: [PATCH] vduse: Use fixed 4KB bounce pages for arm64 64KB page
+ size
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ xieyongji@bytedance.com
+References: <20250915073429.54027-1-sheng.zhao@bytedance.com>
+ <CACGkMEuvT3=a+6LyaFZFmCZzGS5tntPSbSJg=h6FAHdk89pC8g@mail.gmail.com>
+ <2739dcc3-7c38-492c-854a-731298396a0c@bytedance.com>
+ <CACGkMEv3pUBF3Uv2s3MM0Qn--fP3mwN92SqE9NX4gNuMALBTUg@mail.gmail.com>
+Content-Language: en-US
+From: Sheng Zhao <sheng.zhao@bytedance.com>
+In-Reply-To: <CACGkMEv3pUBF3Uv2s3MM0Qn--fP3mwN92SqE9NX4gNuMALBTUg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---ZiW09zn6+nXcT26v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 23, 2025 at 11:48:49AM +0200, Herve Codina wrote:
-> Hi David,
->=20
-> On Tue, 23 Sep 2025 18:09:13 +1000
-> David Gibson <david@gibson.dropbear.id.au> wrote:
->=20
-> > On Fri, Sep 19, 2025 at 10:47:17AM +0530, Ayush Singh wrote:
-> > > On 9/19/25 10:22, David Gibson wrote:
-> > >  =20
-> > > > On Thu, Sep 18, 2025 at 09:44:09AM +0200, Herve Codina wrote: =20
-> > > > > Hi David,
-> > > > >=20
-> > > > > On Thu, 18 Sep 2025 13:16:32 +1000
-> > > > > David Gibson <david@gibson.dropbear.id.au> wrote:
-> > > > >=20
-> > > > > ...
-> > > > >  =20
-> > > > > > > > Thoughts above suggest a different direction, but here's wh=
-at I was
-> > > > > > > > thinking before:
-> > > > > > > >=20
-> > > > > > > > base board:
-> > > > > > > >=20
-> > > > > > > > 	connector {
-> > > > > > > > 		/export/ "i2c" &i2c0;
-> > > > > > > > 	};
-> > > > > > > >=20
-> > > > > > > > addon:
-> > > > > > > > 	eeprom@10 {
-> > > > > > > > 		compatible =3D "foo,eeprom";
-> > > > > > > > 		bus-reg =3D <&i2c 0x10>;
-> > > > > > > > 	}
-> > > > > > > >=20
-> > > > > > > > Or, if the addon had multiple i2c devices, maybe something =
-like:
-> > > > > > > >=20
-> > > > > > > > 	board-i2c {
-> > > > > > > > 		compatible =3D "i2c-simple-bridge";
-> > > > > > > > 		bus-ranges =3D <&i2c 0 0x3ff>; /* Whole addr space */
-> > > > > > > > 		eeprom@10 {
-> > > > > > > > 			compatible =3D "foo,eeprom";
-> > > > > > > > 			reg =3D <0x10>;
-> > > > > > > > 		}
-> > > > > > > > 		widget@20 {
-> > > > > > > > 			compatible =3D "vendor,widget";
-> > > > > > > > 			reg =3D <0x20>;
-> > > > > > > > 		}
-> > > > > > > > 	}
-> > > > > > > >=20
-> > > > > > > > Writing that, I realise I2C introduces some complications f=
-or this.
-> > > > > > > > Because it has #size-cells =3D <0>, ranges doesn't really w=
-ork (without
-> > > > > > > > listing every single address to be translated).  Likewise, =
-because we
-> > > > > > > > always need the parent bus phandle, we can't use the trick =
-of an empty
-> > > > > > > > 'ranges' to mean an identity mapping.
-> > > > > > > >=20
-> > > > > > > > We could invent encodings to address those, but given the a=
-ddon with
-> > > > > > > > multiple connectors case provides another incentive for a s=
-ingle
-> > > > > > > > connector to allow adding nodes in multiple (but strictly e=
-numerated)
-> > > > > > > > places in the base device tree provides a better approach. =
-=20
-> > > > > > > and the "place in base device tree" is the goal of the extens=
-ion bus.
-> > > > > > >=20
-> > > > > > > The strict enumeration of nodes enumerated is done by two mea=
-ns:
-> > > > > > >   - extension busses at connector level
-> > > > > > >     Those extensions are described as connector sub-nodes.
-> > > > > > >     The addon DT can only add nodes in those sub-nodes to des=
-cribe devices
-> > > > > > >     connected to the relared extension bus.
-> > > > > > >   - export symbols
-> > > > > > >     An addon DT can only use symbols exported to reference sy=
-mbols outside
-> > > > > > >     the addon DT itself.
-> > > > > > >=20
-> > > > > > > Can I assume that bus extensions we proposed (i2c-bus-extensi=
-on and
-> > > > > > > spi-bus-extension) could be a correct solution ? =20
-> > > > > > Maybe?  I prefer the idea of a universal mechanism, not one tha=
-t's
-> > > > > > defined per-bus-type.
-> > > > > >=20
-> > > > > >=20
-> > > > > > Also, IIUC the way bus extension operates is a bit different - =
-nodes
-> > > > > > would be "physically" added under the bus extension node, but t=
-reated
-> > > > > > logically as if they go under the main bus.  What I'm proposing=
- here
-> > > > > > is something at the actualy overlay application layer that allo=
-ws
-> > > > > > nodes to be added to different parts of the base device tree - =
-so you
-> > > > > > could add your i2c device under the main i2c bus. =20
-> > > > > I think we should avoid this kind of node dispatching here and th=
-ere in
-> > > > > the base DT. =20
-> > > > Until I saw Geert's multi-connector case, I would have agreed.  That
-> > > > case makes me thing differently: in order to support that case we
-> > > > already have to handle adding information in multiple places (under
-> > > > all of the connectors the addon uses).  Given we have to handle that
-> > > > anyway, I wonder if it makes more sense to lean into that, and allow
-> > > > updates to multiple (strictly enumerated) places. =20
-> > >=20
-> > > Well, I don't love this idea. Here are my main qalms about the approa=
-ch of
-> > > adding devices directly to the actual i2c/spi etc nodes.
-> > >=20
-> > > 1. In boards with multiple connectors, they sometimes share the same =
-i2c.
-> > > Now assume that someone decided to connect the same i2c device to bot=
-h the
-> > > connectors. If we are using something like bus extension, while the n=
-ode
-> > > would be added, it will fail in the registration since you cannot add=
- the
-> > > same address device a second time. However, if we are adding the devi=
-ce
-> > > directly to the `main_i2c`, the overlay application will just end up
-> > > modifying the exact same device node. There is no error, or even a 2nd
-> > > device node in this case. It is just lost.
-> > >=20
-> > > 2. How well will overlay adding and removing work when the same tree =
-nodes
-> > > are modified by multiple connectors? I have not looked at the interna=
-ls of
-> > > overlay resolution so not sure, but I don't want dynamic addition and
-> > > removal of devices in independent connectors to somehow become couple=
-d. =20
-> >=20
-> > Ah, right.  To be clear: we absolutely don't want multiple addons
-> > altering the same nodes.  But I think we could do that in ways other
-> > than putting everything under a connector.  This is exactly why I
-> > think we should think this through as an end-to-end problem, rather
-> > trying to do it as a tweak to the existing (crap) overlay system.
-> >=20
-> > So, if we're thinking of this as an entirely new way of updating the
-> > base dt - not "an overlay" - we can decide on the rules to ensure that
-> > addition and removal is sane.  Two obvious ones I think we should
-> > definitely have are:
-> >=20
-> > a) Addons can only add completely new nodes, never modify existing
-> >    ones.  This means that whatever addons are present at runtime,
-> >    every node has a single well defined owner (either base board or
-> >    addon).
->=20
-> In this rule I suppose that "never modify existing ones" should be unders=
-tood
-> as "never modify, add or remove properties in existing ones". Because, of=
- course
-> adding a full node in a existing one is allowed (rule b).
+On 2025/9/24 08:57, Jason Wang wrote:
+> On Tue, Sep 23, 2025 at 8:37 PM Sheng Zhao <sheng.zhao@bytedance.com> wrote:
+>>
+>>
+>>
+>> On 2025/9/17 16:16, Jason Wang wrote:
+>>> On Mon, Sep 15, 2025 at 3:34 PM <sheng.zhao@bytedance.com> wrote:
+>>>>
+>>>> From: Sheng Zhao <sheng.zhao@bytedance.com>
+>>>>
+>>>> The allocation granularity of bounce pages is PAGE_SIZE. This may cause
+>>>> even small IO requests to occupy an entire bounce page exclusively. The
+>>>> kind of memory waste will be more significant on arm64 with 64KB pages.
+>>>
+>>> Let's tweak the title as there are archs that are using non 4KB pages
+>>> other than arm.
+>>>
+>>
+>> Got it. I will modify this in v2.
+>>
+>>>>
+>>>> So, optimize it by using fixed 4KB bounce pages.
+>>>>
+>>>> Signed-off-by: Sheng Zhao <sheng.zhao@bytedance.com>
+>>>> ---
+>>>>    drivers/vdpa/vdpa_user/iova_domain.c | 120 +++++++++++++++++----------
+>>>>    drivers/vdpa/vdpa_user/iova_domain.h |   5 ++
+>>>>    2 files changed, 83 insertions(+), 42 deletions(-)
+>>>>
+>>>> diff --git a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vdpa_user/iova_domain.c
+>>>> index 58116f89d8da..768313c80b62 100644
+>>>> --- a/drivers/vdpa/vdpa_user/iova_domain.c
+>>>> +++ b/drivers/vdpa/vdpa_user/iova_domain.c
+>>>> @@ -103,19 +103,26 @@ void vduse_domain_clear_map(struct vduse_iova_domain *domain,
+>>>>    static int vduse_domain_map_bounce_page(struct vduse_iova_domain *domain,
+>>>>                                            u64 iova, u64 size, u64 paddr)
+>>>>    {
+>>>> -       struct vduse_bounce_map *map;
+>>>> +       struct vduse_bounce_map *map, *head_map;
+>>>> +       struct page *tmp_page;
+>>>>           u64 last = iova + size - 1;
+>>>>
+>>>>           while (iova <= last) {
+>>>> -               map = &domain->bounce_maps[iova >> PAGE_SHIFT];
+>>>> +               map = &domain->bounce_maps[iova >> BOUNCE_PAGE_SHIFT];
+>>>
+>>> BOUNCE_PAGE_SIZE is kind of confusing as it's not the size of any page
+>>> at all when PAGE_SIZE is not 4K.
+>>>
+>>
+>> How about BOUNCE_MAP_SIZE?
+> 
+> Fine with me.
+> 
+>>
+>>>>                   if (!map->bounce_page) {
+>>>> -                       map->bounce_page = alloc_page(GFP_ATOMIC);
+>>>> -                       if (!map->bounce_page)
+>>>> -                               return -ENOMEM;
+>>>> +                       head_map = &domain->bounce_maps[(iova & PAGE_MASK) >> BOUNCE_PAGE_SHIFT];
+>>>> +                       if (!head_map->bounce_page) {
+>>>> +                               tmp_page = alloc_page(GFP_ATOMIC);
+>>>> +                               if (!tmp_page)
+>>>> +                                       return -ENOMEM;
+>>>> +                               if (cmpxchg(&head_map->bounce_page, NULL, tmp_page))
+>>>> +                                       __free_page(tmp_page);
+>>>
+>>> I don't understand why we need cmpxchg() logic.
+>>>
+>>> Btw, it looks like you want to make multiple bounce_map to point to
+>>> the same 64KB page? I wonder what's the advantages of doing this. Can
+>>> we simply keep the 64KB page in bounce_map?
+>>>
+>>> Thanks
+>>>
+>>
+>> That's correct. We use fixed 4KB-sized bounce pages, and there will be a
+>> many-to-one relationship between these 4KB bounce pages and the 64KB
+>> memory pages.
+>>
+>> Bounce pages are allocated on demand. As a result, it may occur that
+>> multiple bounce pages corresponding to the same 64KB memory page attempt
+>> to allocate memory simultaneously, so we use cmpxchg to handle this
+>> concurrency.
+>>
+>> In the current implementation, the bounce_map structure requires no
+>> modification. However, if we keep the 64KB page into a single bounce_map
+>> while still wanting to implement a similar logic, we may need an
+>> additional array to store multiple orig_phys values in order to
+>> accommodate the many-to-one relationship.
+> 
+> Or simply having a bitmap is sufficient per bounce_map?
+> 
 
-Yes, that's what I meant.  I'd add never delete subnodes as well. on
-add.  Remove obviously would delete subnodes, but only exactly the
-ones that were added on add.
+Yes, using a bitmap can mark the usage status of each 4KB, but it may 
+not simplify things overall.
 
-> > b) Addons can only add nodes in places that are explicitly allowed by
-> >    the connectors they're connecting to.
->=20
-> I fully agree with those both a) and b) rules.
->=20
-> >=20
-> > We could consider further rules as well though.  For example, we could
-> > say that i2c devices in an addon shouldn't be added directly under the
-> > base board's i2c controller, but under a subnode of that i2c
-> > controller assigned to that connector (which would likely have an
-> > empty 'ranges' property meaning addresses are mapped without
-> > translation).  Not really sure if that rule has more benefits or
-> > drawbacks, but it's worth contemplating.
->=20
-> IMHO, no extra rules are needed in DT addon rules to constraint i2c devic=
-es
-> to be added in a connector node, a connector sub-node or an i2c controller
-> node.
->=20
-> This will be constrained by the connector itself (out of DT addon rules).
+- we will inevitably need to add an additional array per bounce_map to 
+store the orig_phys corresponding to each 4KB for subsequent copying 
+(vduse_domain_bounce).
 
-At this point I'm just considering the end-to-end rules we want to
-enforce.  Exactly what stage of the process enforces each rule is
-another question.
+- compared to the current commit, this modification may only be a 
+structural change and fail to reduce the amount of changes to the code 
+logic. For instance, cmpxchg is still required.
 
-> I mean, according to rule b), the connector will allow some destination
-> places. Either it will allow the i2c controller node or a connector sub-n=
-ode.
 
-Sure.
+Thanks
 
-> This is specific to the connector definition and it should be out of
-> generic DT addon rules.
+> Thanks
+> 
+>>
+>> Thanks
+>>
+> 
 
-Hang on... what distinction are you seeing between the "connector
-definition" and "generic DT addon rules".  As I see it we're trying to
-create a protocol that defines both the base rules and what a
-"connector" even means.
-
---=20
-David Gibson (he or they)	| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you, not the other way
-				| around.
-http://www.ozlabs.org/~dgibson
-
---ZiW09zn6+nXcT26v
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEO+dNsU4E3yXUXRK2zQJF27ox2GcFAmjTa20ACgkQzQJF27ox
-2GflpA/+NrMe97p2QgiD6kBVWD1K8pxYlD7kMeWjmtyqH6CvqujxhrrMOGtmWBQg
-RjHVkLGhSd7HGHp8vYRwHwc9N3RypZi3B3RB0KDLiIyS56fHJSsvQY614a3Rl2V8
-upEnD/N0JxvPr1vbv96oEnJKzkizyozy9DFJdPn/TGcZrv21kY71lAOaT5b8rRzb
-y2N39fSTHCHKrSLk4UgvSeMyndBnEbznQxHhmjlpmgpWn9yPUtB3G47fMWd/I0VT
-BxbEkNkxT+96gf7d6UAZOmTVZBQqBZVDiPANMu7sU770pknKTOhMN6NXslfGnG09
-Z61mGw0QVWOa3DR0irl+L6u2WymmifoaCg/GjdamoVELuZO23Ok/hHRniTomj0OL
-WLoKbmVfb3r57393rvwG1qYrTDWeBAdYIK1Xxi1v+MnEGXfY1czB0NxbGS0GHoP/
-5VrU4CCvIC4XakCPUpuwBiAPITSyzzhrAyfxTCY8RUxL4tz95sKWJZFCHcn+AtLV
-P2iiZsVTSPG4d4EWDzU+QutbaSME2v6P+qpFGBXOTV9ZnEI+Njw+ci+sAVNnOCax
-0tlq3cjNnH4R16UCaxRIRudZjfj3LURN3SpLwydfUiwUpSAyWbovAFA5ReELVW/h
-das4aPjq774lnCY/JQwSm0QO7l54LD5HKxRR1yAdeiYjd7r+guw=
-=/PM3
------END PGP SIGNATURE-----
-
---ZiW09zn6+nXcT26v--
 
