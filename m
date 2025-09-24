@@ -1,151 +1,123 @@
-Return-Path: <linux-kernel+bounces-830298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90881B9959B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:07:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A96C4B995B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41B953ACDE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:05:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A252E3B3C23
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6E225A34F;
-	Wed, 24 Sep 2025 10:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F43B2DCF65;
+	Wed, 24 Sep 2025 10:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ErseWRNi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GBTyqdBq"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A562DC341
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DB22DC341;
+	Wed, 24 Sep 2025 10:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758708313; cv=none; b=GqRgBrnTk1ahZdgDLy2wysbJemE3mnp/1HxjquEX8Wn+vsp9T7n8g9PJx8b0HHv3wWSKVjJRAhs2wV71VDyaf9Fbc2ntqzyW0cUD/Xl3RcrpGuvPrtNsNNY8bf0eZnTNFmLtBMtkt5VdsfcOkFjCwC7dMHf0qNkwXYCxCRZTh0g=
+	t=1758708334; cv=none; b=MhJWR6EKBb1rhQJlB2OBMC35KI2869KyEEREiS1v9Rx3I6G+QVHIQD+ubDyMUsAKn+U+8He/oxYroBXH6VLFlassooJ7IqrRycHSC92cx6dFR8s2qbNkoY0RQBdfB/DwGUy6wzBzZfY5h3SlxpRkvOFVKIaaWe3lIvqf3S3WZnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758708313; c=relaxed/simple;
-	bh=pKcp8RbB9qIjTq//aq8x3wJaE/cjRo/2DCN671q8C4I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RZqI1uAlVns0qieLbQvW17ZpYB3hdtYzqPjuEcLkTowma7NU0pQ/aJxqWi9osU/yopy28OhJy+SNvrcD+PvoGZihoonfxDq0mZ4wWmtw4rpZuVIrxo51RxxeJmr5y2QRyPakfa1IDKlVOJrA81LaalpC44wkgRk1uDa3htxporA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ErseWRNi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758708306;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pKcp8RbB9qIjTq//aq8x3wJaE/cjRo/2DCN671q8C4I=;
-	b=ErseWRNi+6pJT6rKd0Mk78BAFvCuIqVS0VG20GInb8pg6q3dCLsekUUBZ/4kZ2rAlknRKu
-	EA7+Qio9wr3ckp8WfSmNpuSt+/UY8AsY1FM8DgGgdISiK3zWSh8QW+Kx/8YCKAkjp0ysPd
-	sJ0RBJ+OJcnjx1aiDK3NPzOLbBO+h2I=
-Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com
- [209.85.221.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-690-zo-MPsK5OHmvc5ERNOWPUw-1; Wed, 24 Sep 2025 06:05:05 -0400
-X-MC-Unique: zo-MPsK5OHmvc5ERNOWPUw-1
-X-Mimecast-MFC-AGG-ID: zo-MPsK5OHmvc5ERNOWPUw_1758708305
-Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-54a87b8f9c6so1504384e0c.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:05:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758708305; x=1759313105;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pKcp8RbB9qIjTq//aq8x3wJaE/cjRo/2DCN671q8C4I=;
-        b=anWqpZqB6J40w1Z+FHZcv4idCcRaK1OCB6ctPtoFV3LaBc0uQ5iiVcfOEYGPgve4T8
-         MCC1iJHcL6lpCMxSEu8KSIv4BNXJuqVDzA1l/dW5wujBLxCMHoQ2pXTTTS9D6nZvZPmo
-         9auNrHaJaIhBwFLxqgT2Im6l1e9bVhAR+VqZkVsb71oWqElJuMc1AfhCWP06wb92xdL8
-         geOwQu0clSC8uz58c6On744fW9DxPENf/fGTykGASyVaLzax09PJOOgoTJPhOUfoC2GJ
-         yPnd7hntpv6MmaOhnaIswcV/N+0nFV3qDcApwIrq/8kiMd3NgaXp6oxBKO6hRW31U4LB
-         YM2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXaqj6Fs70mODx2tO4ZDcA8U3s76Zpk4PK/D77Wwu1V/h12zg6gfhk5PhTWVDRbAhprbiiarHP5h+kfGW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5GfEVuUbDI1EaMACUKLYr969OS41gZhjpq5Xd/0HcqYYh0Eiz
-	umiyvJH26qwtpBaFhnm+DIsiFYsl5fIa0lusWkTcGSp62ybeXg1kJhruz+lwgagjuiXpSOiW1G6
-	5WAHsULVhbWnRRCF2wjBxepWFT9yJcN3n/EjvQsYljDLMnn0EOlqktzhA/g0XqDqboXaONmSZVm
-	xJ3p7uFoPTohNuEET7U4RvlRlDnR4QbbnUHHIfybrA
-X-Gm-Gg: ASbGnctyUM1zzn/VDALBFPVwRlvGajesnbZS2XQwx78ttmgYdXiGE/RM03s+JKYC2ev
-	0yz3e/HlluOKBTU2hvxBcoWufyn2zrcHZO4BDcHJYonKo+Eu5xBGEOQI8yMwZ4PttFrFDiqwt6d
-	6p4BxTnu9PsdbFUBBMFkOOsg==
-X-Received: by 2002:a05:6122:46a7:b0:54a:a874:6e4e with SMTP id 71dfb90a1353d-54bcb11e0c6mr1653508e0c.8.1758708304791;
-        Wed, 24 Sep 2025 03:05:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFPptVrEMQd0wcOTvVhc2Oe3+W+CQLov4+tsA34aiA7Aw3gYYXeQI2LOHtMUYKKnuN1qYBzcewy7H1XCDRJWDE=
-X-Received: by 2002:a05:6122:46a7:b0:54a:a874:6e4e with SMTP id
- 71dfb90a1353d-54bcb11e0c6mr1653503e0c.8.1758708304461; Wed, 24 Sep 2025
- 03:05:04 -0700 (PDT)
+	s=arc-20240116; t=1758708334; c=relaxed/simple;
+	bh=/uGlAhygClhoPDVRQPCwG9G95dwItASnVdcJVlvF1aY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ni3ROPzgm4DxQnRjUrWt1/JAu0K7w75ak1IUppPWtnHEw3RBSILMxyoV1SrRNJgK1xtqmdep3R3lAIjc6EUmGjWP3mINdlSBGfr0rUqpVYU3K1B1run7X7sm4j1q4OSHaFWorf2qW1I/K0CmbI7MhmPV5715uM0zDIuD8X2yjU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GBTyqdBq; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (85-76-33-231-nat.elisa-mobile.fi [85.76.33.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id AE43C1E30;
+	Wed, 24 Sep 2025 12:04:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1758708244;
+	bh=/uGlAhygClhoPDVRQPCwG9G95dwItASnVdcJVlvF1aY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GBTyqdBqsGwcYQgvCkzmg1ptFgclVBZ2tr2cEBUfdb0bxQsuhoZ1X4p2l3jT1aq5b
+	 WRb7o/3dNvVVj6e//lvTK+82zN0Arkx9zbOzsZp1Dagu7Y0Nps/Li10vjaOGDVbNtl
+	 3Yb19zNB07cjWf1MzBTqyyKVa4YLYrSMtVSz/L/8=
+Date: Wed, 24 Sep 2025 13:04:54 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-media@vger.kernel.org, netdev@vger.kernel.org,
+	linux-spi@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Javier Carrasco <javier.carrasco@wolfvision.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Matthias Fend <matthias.fend@emfend.at>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 16/16] spi: cadence: Remove explicit device node
+ availability check
+Message-ID: <20250924100454.GN28073@pendragon.ideasonboard.com>
+References: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
+ <20250924074602.266292-17-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922032915.3924368-1-zhaoyang.huang@unisoc.com>
- <aNGQ66CD9F82BFP-@infradead.org> <CAGWkznGf1eN-iszG21jGNq13C9yz8S0PW03hLc40Gjhn6LRp0Q@mail.gmail.com>
- <31091c95-1d0c-4e5a-a53b-929529bf0996@acm.org> <CAGWkznGv3jwTLW2nkBds9NrUeNQ1GHK=2kijDotH=DN762PyEQ@mail.gmail.com>
-In-Reply-To: <CAGWkznGv3jwTLW2nkBds9NrUeNQ1GHK=2kijDotH=DN762PyEQ@mail.gmail.com>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Wed, 24 Sep 2025 18:04:52 +0800
-X-Gm-Features: AS18NWAzS4ovR9ej7R-yAyhG3XtRFr7Vvnznyh6lks2oABccTIKfG0VXhGRlpdg
-Message-ID: <CAFj5m9K4yv4wkX2bhXSOf141dY9O96WdNfjMMYXCOoyM_Fdndg@mail.gmail.com>
-Subject: Re: [RFC PATCH] driver: loop: introduce synchronized read for loop driver
-To: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Cc: Bart Van Assche <bvanassche@acm.org>, Suren Baghdasaryan <surenb@google.com>, Todd Kjos <tkjos@android.com>, 
-	Christoph Hellwig <hch@infradead.org>, "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, 
-	Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, steve.kang@unisoc.com, 
-	Minchan Kim <minchan@kernel.org>, Ming Lei <ming.lei@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250924074602.266292-17-sakari.ailus@linux.intel.com>
 
-On Wed, Sep 24, 2025 at 5:13=E2=80=AFPM Zhaoyang Huang <huangzhaoyang@gmail=
-.com> wrote:
->
-> loop google kernel team. When active_depth of the cgroupv2 is set to
-> 3, the loop device's request I2C will be affected by schedule latency
-> which is introduced by huge numbers of kworker thread corresponding to
-> blkcg for each. What's your opinion on this RFC patch?
+Hi Sakari,
 
-There are some issues on this RFC patch:
+Thank you for the patch.
 
-- current->plug can't be touched by driver, cause there can be request
-from other devices
+On Wed, Sep 24, 2025 at 10:46:02AM +0300, Sakari Ailus wrote:
+> Don't check the availability of child device nodes explicitly as this is
+> now embedded in device_for_each_child_node().
+> 
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-- you can't sleep in loop_queue_rq()
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-The following patchset should address your issue, and I can rebase & resend
-if no one objects.
+> ---
+>  drivers/spi/spi-cadence-xspi.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-cadence-xspi.c b/drivers/spi/spi-cadence-xspi.c
+> index 6dcba0e0ddaa..23e426ef9b9c 100644
+> --- a/drivers/spi/spi-cadence-xspi.c
+> +++ b/drivers/spi/spi-cadence-xspi.c
+> @@ -908,9 +908,6 @@ static int cdns_xspi_of_get_plat_data(struct platform_device *pdev)
+>  	unsigned int cs;
+>  
+>  	device_for_each_child_node(&pdev->dev, fwnode_child) {
+> -		if (!fwnode_device_is_available(fwnode_child))
+> -			continue;
+> -
+>  		if (fwnode_property_read_u32(fwnode_child, "reg", &cs)) {
+>  			dev_err(&pdev->dev, "Couldn't get memory chip select\n");
+>  			fwnode_handle_put(fwnode_child);
 
-https://lore.kernel.org/linux-block/20250322012617.354222-1-ming.lei@redhat=
-.com/
+-- 
+Regards,
 
-Thanks,
-
-
->
-> On Wed, Sep 24, 2025 at 12:30=E2=80=AFAM Bart Van Assche <bvanassche@acm.=
-org> wrote:
-> >
-> > On 9/22/25 8:50 PM, Zhaoyang Huang wrote:
-> > > Yes, we have tried to solve this case from the above perspective. As
-> > > to the scheduler, packing small tasks to one core(Big core in ARM)
-> > > instead of spreading them is desired for power-saving reasons. To the
-> > > number of kworker threads, it is upon current design which will creat=
-e
-> > > new work for each blkcg. According to ANDROID's current approach, eac=
-h
-> > > PID takes one cgroup and correspondingly a kworker thread which
-> > > actually induces this scenario.
-> >
-> > More cgroups means more overhead from cgroup-internal tasks, e.g.
-> > accumulating statistics. How about requesting to the Android core team
-> > to review the approach of associating one cgroup with each PID? I'm
-> > wondering whether the approach of one cgroup per aggregate profile
-> > (SCHED_SP_BACKGROUND, SCHED_SP_FOREGROUND, ...) would work.
-> >
-> > Thanks,
-> >
-> > Bart.
->
-
+Laurent Pinchart
 
