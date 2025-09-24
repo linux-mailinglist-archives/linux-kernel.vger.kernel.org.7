@@ -1,156 +1,152 @@
-Return-Path: <linux-kernel+bounces-830536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26936B99EDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:51:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE4BB99EE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BA4A18979FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:51:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A4CD3A3CFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC80C2FDC2C;
-	Wed, 24 Sep 2025 12:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F346F3019A4;
+	Wed, 24 Sep 2025 12:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WG4BIQA9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="AmaFo1FI"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84292E06EF
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12872E7F1C;
+	Wed, 24 Sep 2025 12:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758718273; cv=none; b=U0wilUgkSfTwyOwbmj2EmWxd4NVRkezR3PbEMeGCakbqGxMBMRpzO3W4T7SJ0KGV7SJQA5Y9X46eky4TnAmNtvV185GwVGfK9j60zaGSG3K1R1735qJwQVl5kBLfN9KKSQ3xrXitSpze/aFybwEqSW9BJtLFWg2HDOnrMO1bgP0=
+	t=1758718365; cv=none; b=hRqX08i3/6JyY3d0pJfSyIi4OO1eKI19enNys1NNFJoPRnxe9KMeTscLStk6GzRTSXjido6TtRuUE4OZW6Vs5kU01ww5QKeV67qZmsVnIXaGr6PqdB9eomtIRplZ9Mn1v8rL4GpzcOaY49CnXenGrATfVu/Qq9MpuwXHf+WKk5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758718273; c=relaxed/simple;
-	bh=RTQTYZTiz2YYOPaT/MkK88YrNEGe0k4y4vUiJM9oV9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uJeRNqbhwYd5zfT78ePHKfLBCZb82/JqHDj27n3iORunl4qoEv8RcfnLUB9+75YUvmdG71WlVw621iagCYBxRCJLtQ5MQECFipoJrbb/xJgjkwbloNP1BfN2eaOQvcHVNMV/eOCKGsMjPZFkDSeqgT5OM2j7sV2Wsmt6kl9DnXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WG4BIQA9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758718270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RTQTYZTiz2YYOPaT/MkK88YrNEGe0k4y4vUiJM9oV9U=;
-	b=WG4BIQA9rHsOJ70SKNNnABvQtbuj6cDHHS7wMpXiSQfDr2/ScUMP9GA9ONoYI//D4hZ7Dj
-	RzC0xeoj9MXtokL9fSw5f4oAITfG2ZL5Yni+rOjOCt7bBvuGxZWct44ZV0pm4JtlrAHjKH
-	S5gOiFhSEoPEfGNFZh59tCUYIV3Je6E=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-471-PvkmhR6fP--M8zTnbb8_Mw-1; Wed,
- 24 Sep 2025 08:51:06 -0400
-X-MC-Unique: PvkmhR6fP--M8zTnbb8_Mw-1
-X-Mimecast-MFC-AGG-ID: PvkmhR6fP--M8zTnbb8_Mw_1758718265
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3741919560B7;
-	Wed, 24 Sep 2025 12:51:04 +0000 (UTC)
-Received: from localhost (unknown [10.2.16.108])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EFF741800452;
-	Wed, 24 Sep 2025 12:51:02 +0000 (UTC)
-Date: Wed, 24 Sep 2025 08:51:01 -0400
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>, linux-kernel@vger.kernel.org,
-	pasha.tatashin@soleen.com, Cong Wang <cwang@multikernel.io>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Alexander Graf <graf@amazon.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Changyuan Lyu <changyuanl@google.com>, kexec@lists.infradead.org,
-	linux-mm@kvack.org, multikernel@lists.linux.dev
-Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture
- support
-Message-ID: <20250924125101.GA562097@fedora>
-References: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
- <20250919212650.GA275426@fedora>
- <CAM_iQpXnHr7WC6VN3WB-+=CZGF5pyfo9y9D4MCc_Wwgp29hBrw@mail.gmail.com>
- <20250922142831.GA351870@fedora>
- <CAM_iQpWO71vSV_0qXiUYeKYZMYF0xWNz8MrUVRkqKwDEtQvKqA@mail.gmail.com>
- <20250923170545.GA509965@fedora>
- <3b1a1b17-9a93-47c6-99a1-43639cd05cbf@redhat.com>
+	s=arc-20240116; t=1758718365; c=relaxed/simple;
+	bh=ZrrdwjCMOS1FPrSq5mXZIAim8xhhUBBzz8m/K9cmZtQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gxaoaiZuMG3aV3EVs+YC4pWxmxcZBQ6jIZb5y5Vfg3sMBdB+83HYYVyn1LOfG0F/9DgpMl/zuI+iYW9XfM7D627yXHJEZdpkrSOOben14MRhn4/zM3HrsMFGOdoHc/527fcZZsdTGuytyoks+K+MT1sfaTud461zsu9RZ8dofys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=AmaFo1FI; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=h5K+P/riDmU7tvn3fIuQxPNsf4KltKjt2Yr02gW3kT0=;
+	t=1758718363; x=1759927963; b=AmaFo1FIYGhDn8ysOJWdXbu4JDq0k3l44jZB7KYHhx/0gRQ
+	JnZohNcZSnKzZxp647Uog7uL7ZRedaJ5CgvWhSrsAza12nQTb52sEgrZdXg+OJVF2GYKMYGwNkmkT
+	pku4CmqWF/VFvBo8ZSoUSJsSHBdqn0YEB7ltDz0+Tjsi49G5EYMFwg7irHJOgAVtUkKJH1PlexCbi
+	X3HXUb5O7VJBa7vI13jeBH2ETVxCGePLLhKQ6aaSg9CMSuIrNwBaatrPGJxCMvEH3j+bvgWL6IFwu
+	PvL/Y/xhTRYBw63QylnrampQP9X4ufE8JaWqSUVK4yf2Mx0cfzZt36+NqaXuTNGQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1v1Oz3-00000008sim-1o1i;
+	Wed, 24 Sep 2025 14:52:33 +0200
+Message-ID: <3562eeeb276dc9cc5f3b238a3f597baebfa56bad.camel@sipsolutions.net>
+Subject: Re: [PATCH v2 0/10] KFuzzTest: a new kernel fuzzing framework
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Ethan Graham <ethan.w.s.graham@gmail.com>, ethangraham@google.com, 
+	glider@google.com
+Cc: andreyknvl@gmail.com, andy@kernel.org, brauner@kernel.org, 
+	brendan.higgins@linux.dev, davem@davemloft.net, davidgow@google.com, 
+	dhowells@redhat.com, dvyukov@google.com, elver@google.com, 
+	herbert@gondor.apana.org.au, ignat@cloudflare.com, jack@suse.cz,
+ jannh@google.com, 	kasan-dev@googlegroups.com, kees@kernel.org,
+ kunit-dev@googlegroups.com, 	linux-crypto@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, 	lukas@wunner.de,
+ rmoar@google.com, shuah@kernel.org, sj@kernel.org, 	tarasmadan@google.com
+Date: Wed, 24 Sep 2025 14:52:32 +0200
+In-Reply-To: <20250919145750.3448393-1-ethan.w.s.graham@gmail.com> (sfid-20250919_165801_647339_D5FEA55B)
+References: <20250919145750.3448393-1-ethan.w.s.graham@gmail.com>
+	 (sfid-20250919_165801_647339_D5FEA55B)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CpzOrJ/+7+dHBlWP"
-Content-Disposition: inline
-In-Reply-To: <3b1a1b17-9a93-47c6-99a1-43639cd05cbf@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-malware-bazaar: not-scanned
 
-
---CpzOrJ/+7+dHBlWP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Sep 24, 2025 at 01:38:31PM +0200, David Hildenbrand wrote:
-> > >=20
-> > > Two more points:
-> > >=20
-> > > 1) Security lockdown. Security lockdown transforms multikernel from
-> > > "0-day means total compromise" to "0-day means single workload
-> > > compromise with rapid recovery." This is still a significant improvem=
-ent
-> > > over containers where a single kernel 0-day compromises everything
-> > > simultaneously.
-> >=20
-> > I don't follow. My understanding is that multikernel currently does not
-> > prevent spawned kernels from affecting each other, so a kernel 0-day in
-> > multikernel still compromises everything?
+On Fri, 2025-09-19 at 14:57 +0000, Ethan Graham wrote:
 >=20
-> I would assume that if there is no enforced isolation by the hardware (e.=
-g.,
-> virtualization, including partitioning hypervisors like jailhouse, pkvm e=
-tc)
-> nothing would stop a kernel A to access memory assigned to kernel B.
+> This patch series introduces KFuzzTest, a lightweight framework for
+> creating in-kernel fuzz targets for internal kernel functions.
 >=20
-> And of course, memory is just one of the resources that would not be
-> properly isolated.
->=20
-> Not sure if encrypting memory per kernel would really allow to not let ot=
-her
-> kernels still damage such kernels.
->=20
-> Also, what stops a kernel to just reboot the whole machine? Happy to learn
-> how that will be handled such that there is proper isolation.
+> The primary motivation for KFuzzTest is to simplify the fuzzing of
+> low-level, relatively stateless functions (e.g., data parsers, format
+> converters) that are difficult to exercise effectively from the syscall
+> boundary. It is intended for in-situ fuzzing of kernel code without
+> requiring that it be built as a separate userspace library or that its
+> dependencies be stubbed out. Using a simple macro-based API, developers
+> can add a new fuzz target with minimal boilerplate code.
 
-The reason I've been asking about the fault isolation and security
-statements in the cover letter is because it's unclear:
-1. What is implemented today in multikernel.
-2. What is on the roadmap for multikernel.
-3. What is out of scope for multikernel.
+So ... I guess I understand the motivation to make this easy for
+developers, but I'm not sure I'm happy to have all of this effectively
+depend on syzkaller.
 
-Cong: Can you clarify this? If the answer is that fault isolation and
-security are out of scope, then this discussion can be skipped.
+You spelled out the process to actually declare a fuzz test, but you
+never spelled out the process to actually run fuzzing against it. For
+the record, and everyone else who might be reading, here's my
+understanding:
 
-Thanks,
-Stefan
+ - the FUZZ_TEST() macro declares some magic in the Linux binary,
+   including the name of the struct that describes the necessary input
 
---CpzOrJ/+7+dHBlWP
-Content-Type: application/pgp-signature; name=signature.asc
+ - there's a parser in syzkaller (and not really usable standalone) that
+   can parse the vmlinux binary (and doesn't handle modules) and
+   generates descriptions for the input from it
 
------BEGIN PGP SIGNATURE-----
+ - I _think_ that the bridge tool uses these descriptions, though the
+   example you have in the documentation just says "use this command for
+   this test" and makes no representation as to how the first argument
+   to the bridge tool is created, it just appears out of thin air
 
-iQEzBAEBCgAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmjT6TUACgkQnKSrs4Gr
-c8glqAf/V/fg56oCmCv+HaFs3LvmQyEljhq0JJy17N25yTd+uBaKlL/RQs/qTsez
-VrTtD5K5M/dKzlI9hpUM+/RzrxvYy65ZPp6CIfo1eBCRTUpmLZeUXYnZfjk/oU7A
-8lL4qXt4sohUnt52FX6jT0io63SgZfzVa+ioe2WDZmh/YVkIi9JNjxhH5HJMuUPU
-MxS53WDukYaEaBUJSi4cs/QdjcCudEzZBaeP1FjC6uoeZQ/3lT6Ozr0YGNeHHLUT
-XRG0dL1oq9ABmi7Yy2UHwmqj+4cT2964SErwJUesi+a7ij4/ZL2osb1aurT098ZC
-e75vuYwusPi8KJrYkzuXOLpAWMW6EA==
-=+t3/
------END PGP SIGNATURE-----
+ - the bridge tool will then parse the description and use some random
+   data to create the serialised data that's deserialized in the kernel
+   and then passed to the test
 
---CpzOrJ/+7+dHBlWP--
+   - side note: did that really have to be a custom serialization
+     format? I don't see any discussion on that, there are different
+     formats that exist already, I'd think?
 
+ - the test runs now, and may or may not crash, as you'd expect
+
+
+I was really hoping to integrate this with ARCH=3Dum and other fuzzers[1],
+but ... I don't really think it's entirely feasible. I can basically
+only require hard-coding the input description like the bridge tool
+does, but that doesn't scale, or attempt to extract a few thousand lines
+of code from syzkaller to extract the data...
+
+[1] in particular honggfuzz as I wrote earlier, due to the coverage
+    feedback format issues with afl++, but if I were able to use clang
+    right now I could probably also make afl++ work in a similar way
+    by adding support for --fsanitize-coverage=3Dtrace-pc-guard first.
+
+
+I'm not even saying that you had many choices here, but it's definitely
+annoying, at least to me, that all this infrastructure is effectively
+dependent on syzkaller due to all of this. At the same time, yes, I get
+that parsing dwarf and getting a description out is not an easy feat,
+and without the infrastructure already in syzkaller it'd take more than
+the ~1.1kLOC (and even that is not small) it has now.
+
+
+I guess the biggest question to me is ultimately why all that is
+necessary? Right now, there's only the single example kfuzztest that
+even uses this infrastructure beyond a single linear buffer [2]. Where
+is all that complexity even worth it? It's expressly intended for
+simpler pieces of code that parse something ("data parsers, format
+converters").
+
+[2] admittedly the auxdisplay one is slightly different and uses a
+    string, but that's pretty much equivalent
+
+johannes
 
