@@ -1,126 +1,146 @@
-Return-Path: <linux-kernel+bounces-830123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A00B98C68
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:13:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C588CB98C5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BA197A11CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:12:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3DAC189D747
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431CA28136E;
-	Wed, 24 Sep 2025 08:13:46 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A2C5FDA7;
-	Wed, 24 Sep 2025 08:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15EC28136C;
+	Wed, 24 Sep 2025 08:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WibWyPVD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039F95FDA7;
+	Wed, 24 Sep 2025 08:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758701625; cv=none; b=QV/xKKuHPwtx6E4OPZctqu3P5f+aCUyXipr3Oao6qomJEWN+y2T9DHHT22SK/9Mrpeiph6qVjqjWSoShJEAci8neyqdhkaa/Sxe3Og015NjQxTSToCDXvIWbst8j9bXKL6O6untvjWKkhpdpDIjR/QVz9PP3M1j9qAe89jofCpA=
+	t=1758701595; cv=none; b=TsQwY4MHh9sYSS2qIUS53a7cd+QUP9kj7KxWbTKsHUwBEHebd5+mD8rixWJnL7a1jYvT6aRXHBwlT6D/HKGRFEZnfJBVYnr6KSm8MK1cysCzbVWZlZTy+a4p+RrjmKGnzeVkAsFK5CDs7/6l7OzhIUbd/kUfVD3x9ZQns47Z0rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758701625; c=relaxed/simple;
-	bh=RU9nU4TgrkuZsnJ7uuoI3e4j3dHjMdpU+wa0jq7caDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LPQEd/tojXi3twLrVXBYlf780oefLo7Urvb/xuSSi9WcFHTGeo0PcVt94AZ7Kd+Xig0fUwzSqysIKY/NixIlRocd/FwL0vZNtqRW/bt0iXWXiK9nuQVQ9f6SWfedr0OXqTmmwFHYuLiyQL8+DIikOvpwNFPHg/YLfZaEPC9Z9LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.198])
-	by gateway (Coremail) with SMTP id _____8CxK9IvqNNonP8NAA--.28736S3;
-	Wed, 24 Sep 2025 16:13:35 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.198])
-	by front1 (Coremail) with SMTP id qMiowJAx_8EcqNNorvaqAA--.46292S2;
-	Wed, 24 Sep 2025 16:13:27 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>
-Cc: kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [GIT PULL] LoongArch KVM changes for v6.18
-Date: Wed, 24 Sep 2025 16:13:05 +0800
-Message-ID: <20250924081305.3068787-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1758701595; c=relaxed/simple;
+	bh=bduhBxwlzkxiqK0p2rlEquqVgehvVIbz0epKgJvieeU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=HA9q5F4riEnbAC/L0qVGrXkcWM7mz6844QXQ1xlP3rCNv5ncqVpK+IbvocjxfPTIY+/Cz24598550247cuTRYPoQPjcDreRm2DV48/rDVZOLPOF0FK3v5QtkcG3MCqazFWLXL0/Z5QpRj7GI7skNA4vhkgvVcJuRQBppY5TP48E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WibWyPVD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5075AC113CF;
+	Wed, 24 Sep 2025 08:13:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758701594;
+	bh=bduhBxwlzkxiqK0p2rlEquqVgehvVIbz0epKgJvieeU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WibWyPVDE4S5ffXfVIaLUgJAm0sf8+xPMKr5SjU4IXRk7wDUEhh+eN6O0iFx5mYer
+	 Mc1uaTufmTeV9n/HY074Zcj3LEX0RgqShSHEeVt0+ioiZ7wMwxFOZpswd28n3+Qn2S
+	 ECNv3GIO5rSK0pwz7Jrw6wrlWexKeraxNw4uu30vv5ZVcUe61uUVlkAu8AXzeIkdfr
+	 T8jxzY+RyL+oKkyKEelF3fQzELhYBdJW0RD7OYRPSK4mrMJBPJan6piiBnSj1Txsow
+	 od25p0ED5s7voWtgRtBwv2qxMAVleASIwM/x1JIeVCnzqr13TuLKdjNzCmcwYQUd19
+	 FUSZIl8WhtqRA==
+Date: Wed, 24 Sep 2025 17:13:12 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Menglong Dong <menglong.dong@linux.dev>
+Cc: Menglong Dong <menglong8.dong@gmail.com>, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH 1/2] tracing: fprobe: rename fprobe_entry to
+ fprobe_fgraph_entry
+Message-Id: <20250924171312.5790795400c78d87d5309333@kernel.org>
+In-Reply-To: <5056228.31r3eYUQgx@7950hx>
+References: <20250923092001.1087678-1-dongml2@chinatelecom.cn>
+	<20250924080722.c05ac758a018be619d01b6a9@kernel.org>
+	<5056228.31r3eYUQgx@7950hx>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAx_8EcqNNorvaqAA--.46292S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7tw4fZFWfJF4UJw17Aw43Arc_yoW8uFW5pF
-	13urnrCr4rJrW7Xry8X343WrnrAF1xGryaqF45Kw48CF1DAFyjgryUXr95ZFyjka93Jr10
-	qw1rGw1jvF1UAagCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWU
-	AwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y
-	6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7
-	AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE
-	2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
-	C2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73
-	UjIFyTuYvjxU4s2-UUUUU
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit 07e27ad16399afcd693be20211b0dfae63e0615f:
+On Wed, 24 Sep 2025 08:17:45 +0800
+Menglong Dong <menglong.dong@linux.dev> wrote:
 
-  Linux 6.17-rc7 (2025-09-21 15:08:52 -0700)
+> On 2025/9/24 07:07, Masami Hiramatsu wrote:
+> > On Tue, 23 Sep 2025 17:20:00 +0800
+> > Menglong Dong <menglong8.dong@gmail.com> wrote:
+> > 
+> > > The fprobe_entry() is used by fgraph_ops, so rename it to
+> > > fprobe_fgraph_entry to be more distinctive.
+> > 
+> > Sorry, NAK. fprobe is based on fgraph by design.
+> > So "fprobe_fgraph" sounds redundant.
+> 
+> Hi, Masami. Did you see my next patch that use ftrace
+> for the fprobe to obtain better performance?
+> 
+> Hmm, it seems that the cover-letter is necessary :/
 
-are available in the Git repository at:
+Yeah, I missed [2/2]. And anyway I think this should be
+merged to [2/2].
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-kvm-6.18
+Thank you,
 
-for you to fetch changes up to 66e2d96b1c5875122bfb94239989d832ccf51477:
+> 
+> Thanks!
+> Menglong Dong
+> 
+> > 
+> > Thanks,
+> > 
+> > > 
+> > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> > > ---
+> > >  kernel/trace/fprobe.c | 8 ++++----
+> > >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+> > > index 6a205903b1ed..1785fba367c9 100644
+> > > --- a/kernel/trace/fprobe.c
+> > > +++ b/kernel/trace/fprobe.c
+> > > @@ -254,8 +254,8 @@ static inline int __fprobe_kprobe_handler(unsigned long ip, unsigned long parent
+> > >  	return ret;
+> > >  }
+> > >  
+> > > -static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+> > > -			struct ftrace_regs *fregs)
+> > > +static int fprobe_fgraph_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+> > > +			       struct ftrace_regs *fregs)
+> > >  {
+> > >  	unsigned long *fgraph_data = NULL;
+> > >  	unsigned long func = trace->func;
+> > > @@ -340,7 +340,7 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+> > >  	/* If any exit_handler is set, data must be used. */
+> > >  	return used != 0;
+> > >  }
+> > > -NOKPROBE_SYMBOL(fprobe_entry);
+> > > +NOKPROBE_SYMBOL(fprobe_fgraph_entry);
+> > >  
+> > >  static void fprobe_return(struct ftrace_graph_ret *trace,
+> > >  			  struct fgraph_ops *gops,
+> > > @@ -379,7 +379,7 @@ static void fprobe_return(struct ftrace_graph_ret *trace,
+> > >  NOKPROBE_SYMBOL(fprobe_return);
+> > >  
+> > >  static struct fgraph_ops fprobe_graph_ops = {
+> > > -	.entryfunc	= fprobe_entry,
+> > > +	.entryfunc	= fprobe_fgraph_entry,
+> > >  	.retfunc	= fprobe_return,
+> > >  };
+> > >  static int fprobe_graph_active;
+> > 
+> > 
+> > 
+> 
+> 
+> 
+> 
 
-  LoongArch: KVM: Move kvm_iocsr tracepoint out of generic code (2025-09-23 23:37:26 +0800)
 
-----------------------------------------------------------------
-LoongArch KVM changes for v6.18
-
-1. Add PTW feature detection on new hardware.
-2. Add sign extension with kernel MMIO/IOCSR emulation.
-3. Improve in-kernel IPI emulation.
-4. Improve in-kernel PCH-PIC emulation.
-5. Move kvm_iocsr tracepoint out of generic code.
-
-----------------------------------------------------------------
-Bibo Mao (9):
-      LoongArch: KVM: Add PTW feature detection on new hardware
-      LoongArch: KVM: Add sign extension with kernel MMIO read emulation
-      LoongArch: KVM: Add sign extension with kernel IOCSR read emulation
-      LoongArch: KVM: Add implementation with IOCSR_IPI_SET
-      LoongArch: KVM: Access mailbox directly in mail_send()
-      LoongArch: KVM: Set version information at initial stage
-      LoongArch: KVM: Add IRR and ISR register read emulation
-      LoongArch: KVM: Add different length support in loongarch_pch_pic_read()
-      LoongArch: KVM: Add different length support in loongarch_pch_pic_write()
-
-Steven Rostedt (1):
-      LoongArch: KVM: Move kvm_iocsr tracepoint out of generic code
-
-Yury Norov (NVIDIA) (1):
-      LoongArch: KVM: Rework pch_pic_update_batch_irqs()
-
- arch/loongarch/include/asm/kvm_pch_pic.h |  15 +-
- arch/loongarch/include/uapi/asm/kvm.h    |   1 +
- arch/loongarch/kvm/exit.c                |  19 +--
- arch/loongarch/kvm/intc/ipi.c            |  80 ++++++-----
- arch/loongarch/kvm/intc/pch_pic.c        | 239 +++++++++++++------------------
- arch/loongarch/kvm/trace.h               |  35 +++++
- arch/loongarch/kvm/vcpu.c                |   2 +
- arch/loongarch/kvm/vm.c                  |   4 +
- include/trace/events/kvm.h               |  35 -----
- 9 files changed, 211 insertions(+), 219 deletions(-)
-
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
