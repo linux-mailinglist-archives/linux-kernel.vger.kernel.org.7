@@ -1,171 +1,123 @@
-Return-Path: <linux-kernel+bounces-829992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9422B9865E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:34:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A6FB9866A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 526B57A4FE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:32:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B13C4A7446
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0316D242D90;
-	Wed, 24 Sep 2025 06:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3153246764;
+	Wed, 24 Sep 2025 06:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jh3ptc5M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvIcP+69"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589C61552FD
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355F921D3C9;
+	Wed, 24 Sep 2025 06:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758695660; cv=none; b=IcI2LxMHUtHFHOSs75bwf72p3aRU8AcO+zMCEHDWj6MnoXSJOiaemjfq68N6yRSw/MMTMr6DxvyaHb+jE1ni/VY/Vm+dYsEbl/OKFPzUe4AQjEo9at88rU37t8VA/JIl24p6t0jusVYHhTtfsbWifclnP3/0wv/5WV7pZYu7NcQ=
+	t=1758695887; cv=none; b=qA3QgBnEekRWLBRUtPk5mRiGuH8PCJiLxxx0ku7xxT0fhb6MRfNV0Tyt87bSYzYwFiPkVNhI8wpPj+IPoopf43vZqB0yO0Vef3OQhwcGPCTu214vocBkEs2X4s76qJ+hlpN8iaQx8dBGlhBj5bQJ7OQsTHQmlSkMtwyaFsJDuBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758695660; c=relaxed/simple;
-	bh=n+fob0a/KleEhL3/yk1pmNFL67AabGNBDwLx7nDdKXg=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ldDVgsqZYPpaL9wSMqxi8/pKNW8ni7gCjSLoHWx4amuVlujJLTNgjy+K2p8JXBZUDp5C9jh9IdEO0J4ccaXkD1dkpvfFNdGvIKTfLEaH+nHE02IB3TIkMKJcGVQcoWUagfcS1X5Ny0Z6x7L5STZrnvS6+rB9MoplmujOlp4msfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jh3ptc5M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EE91C4CEE7;
-	Wed, 24 Sep 2025 06:34:17 +0000 (UTC)
+	s=arc-20240116; t=1758695887; c=relaxed/simple;
+	bh=0FWcUptjZXF2KcJSQk5WhzpvjI+nx7EN+MHiNt3QPVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=moNp3AOhvySJc8tTnXjBCFzhtl16mi2/JDS9r1tOffRMtNhMEgkCFQ6XmioZf5XLxpdrQ5bvnD1LcFXHJ7k/znqwDeyXYxmO7uAygiZp86P/q0690O05gg7S285sYlZJqj8LcaYWD0m1wZqD7fUbPe9FzzAh7+sfcsmBpRVl95Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvIcP+69; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C951C4CEE7;
+	Wed, 24 Sep 2025 06:38:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758695659;
-	bh=n+fob0a/KleEhL3/yk1pmNFL67AabGNBDwLx7nDdKXg=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Jh3ptc5MDKfNd29lg4+XyQtcDxf3MKkosBFwUtADKV4ALckS1TQ1GtMXLS53JX+2d
-	 sRv4KWLGQEIRuGzZueURU6rSw+w7aJDAM1eKgFKdrQLcpKI5zcah+6jeYYvSzWFakH
-	 kMwfBAIeInZeVAVaZHU+4IvnZP8i1SlJaQCKwjWR61cRxDrcF18Ciz+Zs7I2LmAGN2
-	 PF6T3A9WYsLm4T6BuTMdHu5dbcFRlCtlPH+mD85mKSaYWOROkKDrc5YL40nTGAxlcc
-	 nqyrIga+WoLJq1Ul7np72mydkFTDRT5KOGegMu3ggxyOYLQp6Z8RhiFPjHnNCEJ6Wq
-	 k4UXmPXt60ipA==
-Message-ID: <dfc68656-1794-4e69-a222-9ba9c8bf3a20@kernel.org>
-Date: Wed, 24 Sep 2025 14:34:15 +0800
+	s=k20201202; t=1758695886;
+	bh=0FWcUptjZXF2KcJSQk5WhzpvjI+nx7EN+MHiNt3QPVY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fvIcP+69cctnyeSa8wmXQoOwoV66mlFGMrhdRLSo1mk9s/x/A9XVuYISm8ZiTWHar
+	 JdytNZlOoXtDsAJO+akVi+BDH7Bmu9jPQK/aD1QE3aVpT51JlXUOyjYM8ORqEKG9Vt
+	 7JFWqhovKhxtuMFWZf6HwC73CsDkH2dAdiCpTH/jVlHDoNxSJGFG+vSH3givFUYCzY
+	 +0shsmUgeYMezZTNsQz5dXziIqUx5GsdqDaiatKPU33GJT5zysUxjzSWBQgnA7/Qjj
+	 v1IofgcRx64iAy9ZSDYyoHGYEz+hy4edn21y2nb9V0bDdWx7/M9cDCsSh+nhTD5Uq7
+	 JtlrLCJ09QO7A==
+Date: Tue, 23 Sep 2025 20:38:05 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
+Subject: Re: [PATCH 1/7] sched_ext: Use rhashtable_lookup() instead of
+ rhashtable_lookup_fast()
+Message-ID: <aNORzVQ6OVkPHAjS@slm.duckdns.org>
+References: <20250922013246.275031-1-tj@kernel.org>
+ <aNOMK1gk9if3UTgQ@gpd4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, Sungjong Seo <sj1557.seo@samsung.com>,
- Sunmin Jeong <s_min.jeong@samsung.com>
-Subject: Re: [PATCH v3] f2fs: readahead node blocks in F2FS_GET_BLOCK_PRECACHE
- mode
-To: Yunji Kang <yunji0.kang@samsung.com>, jaegeuk@kernel.org
-References: <CGME20250924055837epcas1p460d67d7f1c900f5cc25c865cb636e950@epcas1p4.samsung.com>
- <20250924055831.250805-1-yunji0.kang@samsung.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250924055831.250805-1-yunji0.kang@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNOMK1gk9if3UTgQ@gpd4>
 
-On 9/24/25 13:58, Yunji Kang wrote:
-> In f2fs_precache_extents(), For large files, It requires reading many
-> node blocks. Instead of reading each node block with synchronous I/O,
-> this patch applies readahead so that node blocks can be fetched in
-> advance.
-> 
-> It reduces the overhead of repeated sync reads and improves efficiency
-> when precaching extents of large files.
-> 
-> I created a file with the same largest extent and executed the test.
-> For this experiment, I set the file's largest extent with an offset of 0
-> and a size of 1GB. I configured the remaining area with 100MB extents.
-> 
-> 5GB test file:
-> dd if=/dev/urandom of=test1 bs=1m count=5120
-> cp test1 test2
-> fsync test1
-> dd if=test1 of=test2 bs=1m skip=1024 seek=1024 count=100 conv=notrunc
-> dd if=test1 of=test2 bs=1m skip=1224 seek=1224 count=100 conv=notrunc
-> ...
-> dd if=test1 of=test2 bs=1m skip=5024 seek=5024 count=100 conv=notrunc
-> reboot
-> 
-> I also created 10GB and 20GB files with large extents using the same
-> method.
-> 
-> ioctl(F2FS_IOC_PRECACHE_EXTENTS) test results are as follows:
->   +-----------+---------+---------+-----------+
->   | File size | Before  | After   | Reduction |
->   +-----------+---------+---------+-----------+
->   | 5GB       | 101.8ms | 37.0ms  | 72.1%     |
->   | 10GB      | 222.9ms | 56.0ms  | 74.9%     |
->   | 20GB      | 446.2ms | 116.4ms | 73.9%     |
->   +-----------+---------+---------+-----------+
-> Tested on a 256GB mobile device with an SM8750 chipset.
-> 
-> Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
-> Reviewed-by: Sunmin Jeong <s_min.jeong@samsung.com>
-> Signed-off-by: Yunji Kang <yunji0.kang@samsung.com>
-> ---
-> v2:
->  - Modify the readahead condition check routine for better code
-> readability.
->  - Update the title from 'node block' to 'node blocks'.
-> 
-> v3:
->  - Bug fix to allow more node pages to be readahead.
->  - Updated with test results.
-> 
->  fs/f2fs/data.c | 3 +++
->  fs/f2fs/f2fs.h | 1 +
->  fs/f2fs/node.c | 4 +++-
->  3 files changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 7961e0ddfca3..ab3117e3b24a 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1572,6 +1572,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
->  	pgofs =	(pgoff_t)map->m_lblk;
->  	end = pgofs + maxblocks;
->  
-> +	if (flag == F2FS_GET_BLOCK_PRECACHE)
-> +		mode = LOOKUP_NODE_PRECACHE;
+Hello,
 
-If trigger condition of LOOKUP_NODE_RA and LOOKUP_NODE_PRECACHE is the same,
-What about?
+On Wed, Sep 24, 2025 at 08:14:03AM +0200, Andrea Righi wrote:
+> Hi Tejun
+> 
+> On Sun, Sep 21, 2025 at 03:32:40PM -1000, Tejun Heo wrote:
+> > The find_user_dsq() function is called from contexts that are already
+> > under RCU read lock protection. Switch from rhashtable_lookup_fast() to
+> > rhashtable_lookup() to avoid redundant RCU locking.
+> > 
+> > Signed-off-by: Tejun Heo <tj@kernel.org>
+> 
+> It looks like the ttwu_queue() path isn't RCU read lock protected.
+> With this applied:
+> 
+> [    6.647598] =============================
+> [    6.647603] WARNING: suspicious RCU usage
+> [    6.647605] 6.17.0-rc7-virtme #1 Not tainted
+> [    6.647608] -----------------------------
+> [    6.647608] ./include/linux/rhashtable.h:602 suspicious rcu_dereference_check() usage!
+> [    6.647610]
+> [    6.647610] other info that might help us debug this:
+> [    6.647610]
+> [    6.647612]
+> [    6.647612] rcu_scheduler_active = 2, debug_locks = 1
+> [    6.647613] 1 lock held by swapper/10/0:
+> [    6.647614]  #0: ffff8b14bbb3cc98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x20/0x90
+> [    6.647630]
+> [    6.647630] stack backtrace:
+> [    6.647633] CPU: 10 UID: 0 PID: 0 Comm: swapper/10 Not tainted 6.17.0-rc7-virtme #1 PREEMPT(full)
+> [    6.647643] Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
+> [    6.647646] Sched_ext: beerland_1.0.2_g27d63fc3_x86_64_unknown_linux_gnu (enabled+all)
+> [    6.647648] Call Trace:
+> [    6.647652]  <IRQ>
+> [    6.647655]  dump_stack_lvl+0x78/0xe0
+> [    6.647665]  lockdep_rcu_suspicious+0x14a/0x1b0
+> [    6.647672]  __rhashtable_lookup.constprop.0+0x1d5/0x250
+> [    6.647680]  find_dsq_for_dispatch+0xbc/0x190
+> [    6.647684]  do_enqueue_task+0x25b/0x550
+> [    6.647689]  enqueue_task_scx+0x21d/0x360
+> [    6.647692]  ? trace_lock_acquire+0x22/0xb0
+> [    6.647695]  enqueue_task+0x2e/0xd0
+> [    6.647698]  ttwu_do_activate+0xa2/0x290
+> [    6.647703]  sched_ttwu_pending+0xfd/0x250
+> [    6.647706]  __flush_smp_call_function_queue+0x1cd/0x610
+> [    6.647714]  __sysvec_call_function_single+0x34/0x150
+> [    6.647720]  sysvec_call_function_single+0x6e/0x80
+> [    6.647726]  </IRQ>
+> [    6.647726]  <TASK>
+> [    6.647727]  asm_sysvec_call_function_single+0x1a/0x20
+> 
+> Should we revert this?
 
-	if (flag == F2FS_GET_BLOCK_PRECACHE)
-		mode = LOOKUP_NODE_RA;
+IRQ is disabled, so it is in RCU protected region but the lockdep annotation
+isn't happy with it. :-( I'll revert the patch for now.
 
-Thanks,
+Thanks.
 
-> +
->  next_dnode:
->  	if (map->m_may_create) {
->  		if (f2fs_lfs_mode(sbi))
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 9d3bc9633c1d..3ce41528d48e 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -651,6 +651,7 @@ enum {
->  					 * look up a node with readahead called
->  					 * by get_data_block.
->  					 */
-> +	LOOKUP_NODE_PRECACHE,		/* look up a node for F2FS_GET_BLOCK_PRECACHE */
->  };
->  
->  #define DEFAULT_RETRY_IO_COUNT	8	/* maximum retry read IO or flush count */
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 4254db453b2d..63e9ee7ab911 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -860,7 +860,9 @@ int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
->  			set_nid(parent, offset[i - 1], nids[i], i == 1);
->  			f2fs_alloc_nid_done(sbi, nids[i]);
->  			done = true;
-> -		} else if (mode == LOOKUP_NODE_RA && i == level && level > 1) {
-> +		} else if ((mode == LOOKUP_NODE_RA ||
-> +                (mode == LOOKUP_NODE_PRECACHE))
-> +                && i == level && level > 1) {
->  			nfolio[i] = f2fs_get_node_folio_ra(parent, offset[i - 1]);
->  			if (IS_ERR(nfolio[i])) {
->  				err = PTR_ERR(nfolio[i]);
-
+-- 
+tejun
 
