@@ -1,181 +1,180 @@
-Return-Path: <linux-kernel+bounces-830083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C54B98B12
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:53:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF8EB98B15
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 394337B62F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:51:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 692863BF695
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F144284B25;
-	Wed, 24 Sep 2025 07:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E422857F0;
+	Wed, 24 Sep 2025 07:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Vgo3cKoc"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYZEJ6jl"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90B228488B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1E827FD68
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758700133; cv=none; b=PYW+cTsVVvWtfYZLB8UDzjwB79kN5xGOSZJtrvSBMFWEgy32/cA7JKUl9aWJKCJX+zE/VYsG3sAwoAeEObRLkJNVhxrcWpZIn/mFJ85YBIoxrVkAEXzs2CTAnYx6e3/1YNIAOoRJZU0hJ8ZD6LOso0rLjh4NIx1HaBh/gkPB7xQ=
+	t=1758700178; cv=none; b=fj+aRoDph1wOAbVoOBUucUn4ep2LWVkYEnVz4Hc6wTiL1QLYk60QOsWAOkBmNSsxjRSuPWrUwsYP+33Xf5X0FfFVmJHwjXCGl+xc0By0ybhp9pui4gnvARXAR73W8tGflwGAzAh5fGetP2mumSq7d/Ux7JaNN5bRYIHwJkBPguo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758700133; c=relaxed/simple;
-	bh=ntgz0WoIRVipjrzOQMbzUgc/QyjDqtJ9eBcmpETq3SI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j+KZHKzgKMwhBVvzz6KKvXLk/1qHP6w7DOJq8RVbVHY6YnuPl2yaFTZS5yVL1UiqmBrgfgFEsNHWUxcBsEuLSG4cZcgXvyRuWXeTxnngZOcPvHDRXroQud6L4Dn6SMexdyfKZMvA997z8+fMbX2VjOW0JIaPj8oBYu4/OokYzOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Vgo3cKoc; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45dd513f4ecso47014915e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:48:50 -0700 (PDT)
+	s=arc-20240116; t=1758700178; c=relaxed/simple;
+	bh=imem7Fulr1tmQS9v5BeQ71kbYVLrqAiE9Lu1LMtwkdM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GVJSczWuYKwdTS8YHc0Z+rlU0Ca7+cS72iVTQdS5K5j9QksDC+Py9u9hty7IKiQnesaMkl77KdwmcRg9vQ9ZMacZ7vZ+bgacGfrrQ2AzG3dHjazJH292C6rgRafAZ+7Z9f+rSmiL1tF9tpkkyiiNEKHum8+BkCpNjFpjB/3utno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YYZEJ6jl; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ee130237a8so3666413f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:49:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758700129; x=1759304929; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=R8l3AdnOSsRSws2FudDrnNOobQlzeM81boeBiHgd3uA=;
-        b=Vgo3cKocO9IKPAvFAUXQCY1KpmVTN2f1h1FQPIA+GpkLA4VqhPu6o1VF71lkxX2sjT
-         zHfHdxfX+1Pi66GTtnma5ywW3EgNB/Ej/3mtC8EY5IEz1z5rupqzP9vlXq2RmYMLrKSR
-         eVxYeA7Uq6u/aZR0ZOQREL77KOqHgj8BN4nPj6F7H6DMuaBMKGZTwvKTg9ggwLPiXEDv
-         JW5brNLHUaM6ZHpNTb//6VTK9l6UwfzpLhDP2x1xqauShDf478VAj+74iGhiQP5Qax/L
-         Zhz5Xsi/aNWIPufa7BYGyoeT9PzuRDd0gzPahqUgE0TMOMUcTFeoi/KG4IznyHZ4tp+b
-         FU1Q==
+        d=gmail.com; s=20230601; t=1758700175; x=1759304975; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=siednjEVlO5fU6PowVaXN3eMjFaXMH60luleJBwBeaM=;
+        b=YYZEJ6jlfKeHQKjEbf4Pev88qZkDI6JoJwp6A3pPO4v6/RnARs6oBF5o8psJyeeW1R
+         4fTS+gnKZkd1ibou9dN24ipD/ni2fFVlfFr5csuOVoimHlj1CRXBAreTIJtjLDY/+PDt
+         4DxzpdLu/6HfJEF28DJSEPBSL4TBJJIhZS0FwJbKJ7kLYK/FiXQ3BZph9GQ0b/Cy0YBm
+         7ao5XXBIB+roHP0f4F8i30Ue9aDfvkj6NbaFkMR5XjpqIB7pSwU/f7Z8PobrIY8FmXLG
+         jp9K3tyGz2VnkNFpEI/In/jMlqSz/AOuk5aGOG69oVOzskzsQfX3Sb57pkukMMycfAOo
+         YcFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758700129; x=1759304929;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R8l3AdnOSsRSws2FudDrnNOobQlzeM81boeBiHgd3uA=;
-        b=mj1I0NO6a+7fLKewF4ygeq7sz+l7a6YU27sLsQGNzY3k3ratcxxyIolRLdK/V/Lgwf
-         2AvjSNvoS40OLb3Xc82Li2PIESow2A7J1aIDGgZ3ZwRNlpr7sWXuENtVLwaYBcn9K933
-         s2Zu1MJQQUn6i+he+a/nFL616gZV05t1Ems75Rm5RElFDsoZIEElP6zH9+Rb/gm2M6lO
-         UwI06bUPIRp/G4U1CHQf98b6+ONSweIHaf43dxF35TO+g+pLI2F9z6asQe/FxF/k/bSG
-         S8NMWxkVbFvsEViLh+2z99CedNAbmn2lpao9dwmUG9XSojwbKign6Yh3DYZzbEOLgUN2
-         XnJg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9fZsUYjRgCa7yCLMhDfeDG7vZsszGK7AKcvTR4JHH0RctHq7CEtBeAlQS5bZAsWfP1B5hSwr/djkD8tA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNJsabaIKc5oIKbq+hulrg30oUtmEAC+ltJp44iyxwWd262dTK
-	A/6Gki90nWMkpNuTsXPloRUU6C2HTBJGCkKM3PukvmUSer+sczNdcSwQJRvv5mCsngw=
-X-Gm-Gg: ASbGncvrBsa9hYLCQWtYcMXxyMp1+gjQSkOAEI5Y1UuVBxp782iV0ENmsiea9NJyJ61
-	P3XeiHUlY/w0h3RqIrWGdzAvz4ef3zMOuVnUvudX+8woqTvKONa2FfBLnwPGWCWKdnrC60idn/g
-	XC0qKAffvS7k8VLnqOfq8Vp8IbUgTQ3q9QA/3sCjZcKI/1RlgR8KxFC3EeNKRHXWwrjbXzf4K7r
-	qSJe2FdFMo1r/IfD8/iX0xsqcSA4VQmxgoXorCtL/nSGScVdNct0caAFCbdsqfN5NmkNrdcCXPi
-	DS9SQkPau44jJ6O2uXSwilhZJNReXFvkPqX1b7Clkk1+cCj4xK/lnSDEWMFew76E4venpsJoovz
-	/Y0veLwOIPZCs22j/t1cnhC7y+m/gXW4+B3bdXb6bmuYhu40M9xw=
-X-Google-Smtp-Source: AGHT+IFwNQTWzI6GYN83BC1thuAIQC8cKI7ga+QSPsI75xrmILyCBppuSPCKc3GbCcHRTNLHchQcjw==
-X-Received: by 2002:a05:600c:1c87:b0:456:19eb:2e09 with SMTP id 5b1f17b1804b1-46e1d9746d5mr69959415e9.8.1758700128971;
-        Wed, 24 Sep 2025 00:48:48 -0700 (PDT)
-Received: from [10.0.1.22] (109-81-1-107.rct.o2.cz. [109.81.1.107])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a9af289sm20857535e9.6.2025.09.24.00.48.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 00:48:48 -0700 (PDT)
-Message-ID: <2071b071-874c-4f85-8500-033c73dfaaab@suse.com>
-Date: Wed, 24 Sep 2025 09:48:47 +0200
+        d=1e100.net; s=20230601; t=1758700175; x=1759304975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=siednjEVlO5fU6PowVaXN3eMjFaXMH60luleJBwBeaM=;
+        b=rSzbAJNcPKV31YAyy6xezpXTW2wg23bikrfnJClWbeDY4ZozmFveAsg3vIxoJ4EwtO
+         OzGnI1HhFEgKw1NqhYVUdUWwi4z/brWXhS5GdtOuxzQCAaSL0kmlwd2qLYlA0zNaTQKS
+         ZOmI32Trm8rGpymv03b486jkxOT1Lp21OS7EogEERuvmLe7pivSjILMJ1yaobBpoI67Y
+         toJ8I5VznXJz2ISSXMcatA/L33C7ngu1cW8Xz9K0eAxR07bCqnOe89zESW5xxLXt3q4O
+         d1yWAZ7z6PTybjutFW0Mszhxd/fXQjI0lZRXIs6h8GcmTsQleAuB+dloqYq3NFmUDmAn
+         V6Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7vb7rvZmL/A9446rgCOLK7MxJpBl1J9Mot6HUNZYAc1lfQyLM+AuNEDP6GCMB9MI1nDHr0NAGwznG4/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD5rnBKKxjEi/REDmPFWYjLhpszDuE3M4qV+aWXhLL0pjwF4mo
+	uEHt1JmJOte7oVtvCZVCSjqx1msBIVQHXzCJ6g0zf3zpB/vO+3yDXX6kz9v8tOGZPcUrltMuw03
+	0R3cKU7IFIzRhUXL7uqUQr4wMcWkDfGDorIe/
+X-Gm-Gg: ASbGncteTvvAZS8XFlw7QGI+qsH8GaGMqESpmBOyzhDkRHgCJlSGmkr1j2ZDlPA27q8
+	0w6ZH+LPnTAsRB6geWdo4MVUfkp+1vFqsJev+pahuFgEW6VpOh9xM8V8I7pDbE0/uw3IJNCXc37
+	s8niMzj33VGL0Rq5uMKG4KW01Y8jWLkgCDQnWCSTYMwFkDQZpjycZEoP5gSbaKPoj564hBudzgy
+	pfh+zzh
+X-Google-Smtp-Source: AGHT+IGDhPqwBOVdwQrZXuNT95QuC8D3rxlVtM3E8zQRECWZuS/44rqk3DnDKboFwDkEoAIcf8IsbSFEuGVppLC5crc=
+X-Received: by 2002:a05:6000:616:b0:3ee:13ab:cd35 with SMTP id
+ ffacd0b85a97d-405c3e27153mr4511400f8f.1.1758700174654; Wed, 24 Sep 2025
+ 00:49:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] PCI: Support FIXUP quirks in modules
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain
- <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
- linux-pci@vger.kernel.org, David Gow <davidgow@google.com>,
- Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- Johannes Berg <johannes@sipsolutions.net>,
- Sami Tolvanen <samitolvanen@google.com>, Richard Weinberger
- <richard@nod.at>, Wei Liu <wei.liu@kernel.org>,
- Brendan Higgins <brendan.higgins@linux.dev>, kunit-dev@googlegroups.com,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>, linux-um@lists.infradead.org
-References: <20250912230208.967129-1-briannorris@chromium.org>
- <20250912230208.967129-2-briannorris@chromium.org>
- <c84d6952-7977-47cd-8f09-6ea223217337@suse.com> <aNLb9g0AbBXZCJ4m@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <aNLb9g0AbBXZCJ4m@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <580ea2de-799a-4ddc-bde9-c16f3fb1e6e7@paulmck-laptop>
+In-Reply-To: <580ea2de-799a-4ddc-bde9-c16f3fb1e6e7@paulmck-laptop>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 24 Sep 2025 09:49:23 +0200
+X-Gm-Features: AS18NWCV1-h9hv6pfLwDQN-c9dkTUhxsqVE1RICvIEgy9IFTVhrkgbLet2-Jj5s
+Message-ID: <CAADnVQKNxGFOWN7-HmzObYobW2y33g-i3xsNSkKicx88hqe70w@mail.gmail.com>
+Subject: Re: [PATCH 0/34] Implement RCU Tasks Trace in terms of SRCU-fast and optimize
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	Kernel Team <kernel-team@meta.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/23/25 7:42 PM, Brian Norris wrote:
-> Hi Petr,
-> 
-> On Tue, Sep 23, 2025 at 02:55:34PM +0200, Petr Pavlu wrote:
->> On 9/13/25 12:59 AM, Brian Norris wrote:
->>> @@ -259,6 +315,12 @@ void pci_fixup_device(enum pci_fixup_pass pass, struct pci_dev *dev)
->>>  		return;
->>>  	}
->>>  	pci_do_fixups(dev, start, end);
->>> +
->>> +	struct pci_fixup_arg arg = {
->>> +		.dev = dev,
->>> +		.pass = pass,
->>> +	};
->>> +	module_for_each_mod(pci_module_fixup, &arg);
->>
->> The function module_for_each_mod() walks not only modules that are LIVE,
->> but also those in the COMING and GOING states. This means that this code
->> can potentially execute a PCI fixup from a module before its init
->> function is invoked, and similarly, a fixup can be executed after the
->> exit function has already run. Is this intentional?
-> 
-> Thanks for the callout. I didn't really give this part much thought
-> previously.
-> 
-> Per the comments, COMING means "Full formed, running module_init". I
-> believe that is a good thing, actually; specifically for controller
-> drivers, module_init() might be probing the controller and enumerating
-> child PCI devices to which we should apply these FIXUPs. That is a key
-> case to support.
-> 
-> GOING is not clearly defined in the header comments, but it seems like
-> it's a relatively narrow window between determining there are no module
-> refcounts (and transition to GOING) and starting to really tear it down
-> (transitioning to UNFORMED before any significant teardown).
-> module_exit() runs in the GOING phase.
-> 
-> I think it does not make sense to execute FIXUPs on a GOING module; I'll
-> make that change.
+On Tue, Sep 23, 2025 at 4:21=E2=80=AFPM Paul E. McKenney <paulmck@kernel.or=
+g> wrote:
+>
+> Hello!
+>
+> This series re-implements RCU Tasks Trace in terms of SRCU-fast,
+> reducing the size of the Linux-kernel RCU implementation by several
+> hundred lines of code.  It also removes a conditional branch from the
+> srcu_read_lock_fast() implementation in order to make SRCU-fast a
+> bit more fastpath-friendly.  The patches are as follows:
+>
+> 1.      Re-implement RCU Tasks Trace in terms of SRCU-fast.
+>
+> 2.      Remove unused ->trc_ipi_to_cpu and ->trc_blkd_cpu from
+>         task_struct.
+>
+> 3.      Remove ->trc_blkd_node from task_struct.
+>
+> 4.      Remove ->trc_holdout_list from task_struct.
+>
+> 5.      Remove rcu_tasks_trace_qs() and the functions that it calls.
+>
+> 6.      context_tracking: Remove
+>         rcu_task_trace_heavyweight_{enter,exit}().
+>
+> 7.      Remove ->trc_reader_special from task_struct.
+>
+> 8.      Remove now-empty RCU Tasks Trace functions and calls to them.
+>
+> 9.      Remove unused rcu_tasks_trace_lazy_ms and trc_stall_chk_rdr
+>         struct.
+>
+> 10.     Remove now-empty show_rcu_tasks_trace_gp_kthread() function.
+>
+> 11.     Remove now-empty rcu_tasks_trace_get_gp_data() function.
+>
+> 12.     Remove now-empty rcu_tasks_trace_torture_stats_print() function.
+>
+> 13.     Remove now-empty get_rcu_tasks_trace_gp_kthread() function.
+>
+> 14.     Move rcu_tasks_trace_srcu_struct out of #ifdef
+>         CONFIG_TASKS_RCU_GENERIC.
+>
+> 15.     Add noinstr-fast rcu_read_{,un}lock_tasks_trace() APIs.
+>
+> 16.     Remove now-unused rcu_task_ipi_delay and TASKS_TRACE_RCU_READ_MB.
+>
+> 17.     Create a DEFINE_SRCU_FAST().
+>
+> 18.     Use smp_mb() only when necessary in RCU Tasks Trace readers.
+>
+> 19.     Update Requirements.rst for RCU Tasks Trace.
+>
+> 20.     Deprecate rcu_read_{,un}lock_trace().
+>
+> 21.     Mark diagnostic functions as notrace.
+>
+> 22.     Guard __DECLARE_TRACE() use of __DO_TRACE_CALL() with SRCU-fast.
+>
+> 23.     Create an srcu_expedite_current() function.
+>
+> 24.     Test srcu_expedite_current().
+>
+> 25.     Create an rcu_tasks_trace_expedite_current() function.
+>
+> 26.     Test rcu_tasks_trace_expedite_current().
+>
+> 27.     Make DEFINE_SRCU_FAST() available to modules.
+>
+> 28.     Make SRCU-fast available to heap srcu_struct structures.
+>
+> 29.     Make grace-period determination use ssp->srcu_reader_flavor.
+>
+> 30.     Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast().
+>
+> 31.     Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast().
+>
+> 32.     Require special srcu_struct define/init for SRCU-fast readers.
+>
+> 33.     Make SRCU-fast readers enforce use of SRCU-fast definition/init.
+>
+> 34.     Update for SRCU-fast definitions and initialization.
 
-Note that when walking the modules list using module_for_each_mod(),
-the delete_module() operation can concurrently transition a module to
-MODULE_STATE_GOING. If you are thinking about simply having
-pci_module_fixup() check that mod->state isn't MODULE_STATE_GOING,
-I believe this won't quite work.
-
-> 
-> Re-quoting one piece:
->> This means that this code
->> can potentially execute a PCI fixup from a module before its init
->> function is invoked,
-> 
-> IIUC, this part is not true? A module is put into COMING state before
-> its init function is invoked.
-
-When loading a module, the load_module() function calls
-complete_formation(), which puts the module into the COMING state. At
-this point, the new code in pci_fixup_device() can see the new module
-and potentially attempt to invoke its PCI fixups. However, such a module
-has still a bit of way to go before its init function is called from
-do_init_module(). The module hasn't yet had its arguments parsed, is not
-linked in sysfs, isn't fully registered with codetag support, and hasn't
-invoked its constructors (needed for gcov/kasan support).
-
-I don't know enough about PCI fixups and what is allowable in them, but
-I suspect it would be better to ensure that no fixup can be invoked from
-the module during this period.
-
-If the above makes sense, I think using module_for_each_mod() might not
-be the right approach. Alternative options include registering a module
-notifier or having modules explicitly register their PCI fixups in their
-init function.
-
--- 
-Cheers,
-Petr
+Maybe it's just me, but the patch set is too fine grained.
+These 34 patches could be squashed into a handful for better
+review. All these steps: add smp_mb(), make it conditional,
+make it more conditional, remove one field,
+remove another field is a distraction from actual logic at the end.
 
