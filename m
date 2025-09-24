@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-830042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDDDAB988CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:32:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DFFDB988E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9932D3BCFDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:32:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B09188E7C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7103327BF93;
-	Wed, 24 Sep 2025 07:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4876227A47F;
+	Wed, 24 Sep 2025 07:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Apr75Ugi"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DQNWhEJu"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D730B27B33B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BC127B33B
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758699141; cv=none; b=BQsti72+K+DSHStk59lst0qnQQgEZhwL8m1gTyTKEFWuE0sdQ7J9efY9JjR4ui0N4oe5cXlhWYCIElAAsFcdUFRqUeBXFAOGNktxUaUVwX8kg+YSXk7lcVios5QRrmE9tttYkixgJPrewElrEget4hvpp2FOwEupK/MHW/zT/Ko=
+	t=1758699150; cv=none; b=TEkYkOG6YsRPSF3aOCA9aYZEqjup3oy20Ick4mgCCZR56whldadciTSQE40EgTmFoPVzhsnRcVzxFummVFHok/ct+2pyGupIJ9ebDm3uUGY3sTtO+NHI4xCUqZG7ovYLjuTzEBhLCQrZiRXje/a90BY6yc5xSrz4HEX7ePg+0JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758699141; c=relaxed/simple;
-	bh=TX6kI82yO/RlICOevJbAdNu2g5LXBtW4mVT11ZayfNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BwFj4jtNjb95JXZG/o9imm8fMkhSPlzRX7Z+OxJ3dagUpvHlBWkc3+1KcfprW7x21kVmYW9zH9ojQ0UPTB+dG0EKKrDk9AyMLG4E8lBWaOQGGxlbMnT7VsRdgMSNn7Jb/XG62jjoipjlWAiqmotNuCshdXXX4v8pUI9Uw04qEXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Apr75Ugi; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-628f29d68ecso11000559a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:32:19 -0700 (PDT)
+	s=arc-20240116; t=1758699150; c=relaxed/simple;
+	bh=Qtcg7xfRMukim04mCLFrhu+F9aHnN0Lfki5K4xrpcBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BdsjRiuULS1qDm1/NPRrb1otLuU/O7p6dZ67Xxd4dAdaSMrHm6xpHakU/TbLciP80CCZiiLa8IrgCG4MiSoSdO83hOBs4w8NhEUH78NtfyZVTSXkGIV8uqdscwj8mwQAo+AGYByOLhID9oL92miE/wtLkKEqMXxSsSpUYdpP1lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DQNWhEJu; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e2826d5c6so5751135e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:32:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758699138; x=1759303938; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=v9ogATJZj1jG8raAY2zUuQe4EmJHk/4W4xvGLcmqNCI=;
-        b=Apr75Ugi6SUfNBAH+kYzUGDTjoRx4+4tdqorCAQPRdi6ZhXxBv0peiMsD+V4puAl/L
-         VnxwZSNbl9FiKKvSAqE1eYwjqdZWh7FJCNF0dlJCMq2k1bWZYIlAjQgIervtcnAm3t8B
-         GN105YKAWQyS6/Cr/MiE0AtzMIVY2JD6Cl6oo5pZJOVanYffCW03eXtoB23UbA49jJ7r
-         M37tNlpRwrjn7OtFzfza/vp/LuwUFXCQHnS9le2rzn9s9XBPgWtVSKHOOn2Jak7mhDnY
-         wGqCR0eC89eG87mkj1IyXNs4+n6M1Xm2c52C76N990iZ2sIOpbDuxtQDSZpysCj2x7fQ
-         cVpw==
+        d=linaro.org; s=google; t=1758699147; x=1759303947; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UXwsP//vM56W40KjvtwrX9R47nj/UueUere/kbOGRCo=;
+        b=DQNWhEJu5F+DOfFYFGZfdn4c4l3IygqC9ojelnexiXvg3/ZkgeUj9X4LfP2t+MDAvA
+         pTsHTuqTW06Ebj5iO/a3p6E1ffZoz7/TxT7bZzX2o22lTVmuYo102axgTzKVD6F/rTLu
+         JPY/0evv5W499IWc44ywAGi9J/2rF5f60Hdb/geNpZuvLK64p2QcEZxHKPNFxfk9IZYN
+         8VnKUF+DUK2+/wF7Ax408jf8Iki7UqOx/hKt/VBvVYe7k6d4QG0VbRq0Ydg7EzTE4T9h
+         4u/ctbhVUU+KjI4swOF4ZrHiGYQpC1dj+bvEDp0509LFZRGxstVcHWK9vTs7x2xGKYUh
+         wMvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758699138; x=1759303938;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v9ogATJZj1jG8raAY2zUuQe4EmJHk/4W4xvGLcmqNCI=;
-        b=bM/ihs6zN+zc/tgdI8BUrr2cK/jsGux+CoAM3IsSfLEs+T0d2OAo+wnxwzEEGMJ3hF
-         AKeP8VOIirHEe3g0L03oFqp3Sck4yYywyeCpx+IAK7IN0Usc98QtYHHjRE3IyC+VmXml
-         3Z2vCXAYP/olPDIYpU+he3bSbeTGbdy/IWJFr4J/JVo3ltsuD6n0jJFnI4UUlm50bbY+
-         zTrU2A4q5exsDql9v7/FbZF3Kl53gUDtzaZwyPhv8tb9aLoMOc77YEZOUdtsHTfeHfKC
-         zy0+krq/AwCs/o1gg2tr3hNtbbVeVhDyv21DO1tFwmTwf/kViNm34yiMk/FnS7gxMh3U
-         5H9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUvhgOh9wv0rtr/uwwVRjlQ+D7WWgDM6SyK++pdrY8iNx5ON8yQR4E7zNbvrrwgOP+m1UyLUohpqwN0UzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz/AlrfLn6BZTp6M0ay2n0Om7zFN+pSozxRJdysRwarz5fn/4r
-	ZOmmQIM9YrDEf6JTbwXUXFLG21sns2eJRZuSf01jc75SgkSvfTNX6z60kSBdZr4gotX3BK1+5GN
-	YP8KVCLdA+xtU+D9QGIA6EB1a+YYm0rk=
-X-Gm-Gg: ASbGncupNegkQGhyUnO/8sP/BWWQbugzyZl9tnUiBYMmwSdVZg5WrUJPX/NNh3faX38
-	KSGgLElkcS4OzAhXkBEn9neDgB/e0cz223BOcVzZn1rRkzCIdiQIg1+mONmVLdqHu/NkbEAMhFB
-	i0n6omHN2b4bf3aVh+kD41T2GGzQeBG3IZIB297ulgBbOnjAZdSLq8DxkY7+k/EVSxbuwL3PGPH
-	SvGBzeu
-X-Google-Smtp-Source: AGHT+IEsD22J4a5V9bbdMWtQv1Ep8AmuRuA2KpP+ndq9VMyD7XFtjS94kSm5rlJirOSxMvazqqoNAsq4GX/ON5RyqyA=
-X-Received: by 2002:a05:6402:44dc:b0:633:4726:a077 with SMTP id
- 4fb4d7f45d1cf-63467796df4mr4258422a12.15.1758699137992; Wed, 24 Sep 2025
- 00:32:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758699147; x=1759303947;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UXwsP//vM56W40KjvtwrX9R47nj/UueUere/kbOGRCo=;
+        b=krhc09vfuozaOLmpIicsfAdkmfk6nU+Kl6Xd55Ia3VkwGKYArjRC0wIjD38GCw38R1
+         H9k4B2ZZrroEKSqcY2tv18VqlYVJ92hl3HqDgOxSuAlvE0yX4w1tpO1qaDBWzja+U/td
+         lRRFYVqWyRiRLrx8Vm7d5h+kYQNLnFRf1DnCslP7A2bj1B3073MRiTByeL+nBom72jNq
+         w4iWrvxxFEJK7pOWj+9vb37D8MlzJmqhK4mhu5k9OCkBqYW+sFw/dpW44mopYZC+AJp1
+         O69f7ReoeVQ4TSOOc2IGWDJ/phh8AninmjngShmwU0R6Efh7RtpE7/doDZCw7TZw9OMk
+         P3YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiFBOkOfdlvI5DuB4lEAqhlS9e7KbSQSNt+G+MUJIodiTEzg/Qci6tnw/98LIm1GZ0tlGXj0HETGHdafg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxHwADFJ6wlHAFJXDSQD9b6CshIZfiPX52VGVDfLkptlatzf6o
+	VfzO/hXb8hd5/8dPcTfaXkDkq9ES4j62//yO0irTiJtieSQd7solELFzbNvtV+xky/0=
+X-Gm-Gg: ASbGnctT1g0+Itfh6zbLaw56fTbIwOF2psuaG2hD0H965i/1zgZ726vzft1tILTzn84
+	biNPxrmZ4eMU6URAHn4suNTJyBzSXbHBrfHlS8nhs04EfIpqJTYUx1dYgkC7stbLiwp3tB8XVfA
+	XiBURnIBH0EBtZmm6AhaJAwHksr1DDJGNvionXChlyqBNJiHy8yyBTJg1yxAGAW1T+H8kUsEcc9
+	H/ZcDDDFwnultlmWTloFAhVHNPbvCYZxZuzJjL4r8cyg8TzmRROiBbUytIyyKXznLsXipAyfdiB
+	GCZ6dhu0G62KR98OGGRqxC1RJiCgLKixvP9sjUtvK3wfQcVppS+A1r5kyVwtYSuBe4stCUUALEd
+	S0ulWGWDo/dsFO5Z9No5jKauNz3w8nsKgDYMQwlI=
+X-Google-Smtp-Source: AGHT+IFqcDjqsGKdmcV1EsOoO1DT4mayZkZcsrnoULvEIG2jDOzlj2gp/jdzhPJLQtRPGd1AKwtYvQ==
+X-Received: by 2002:a05:600c:4f09:b0:45d:d5df:ab39 with SMTP id 5b1f17b1804b1-46e1dabe432mr51516895e9.26.1758699146691;
+        Wed, 24 Sep 2025 00:32:26 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e2f13764dsm3026115e9.1.2025.09.24.00.32.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 00:32:26 -0700 (PDT)
+Date: Wed, 24 Sep 2025 10:32:22 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+	Sumit Garg <sumit.garg@kernel.org>, linux-arm-msm@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] tee: qcom: prevent potential off by one read
+Message-ID: <aNOehr6hxdb2OypO@stanley.mountain>
+References: <aMvV4kK386Sni10i@stanley.mountain>
+ <adbccfc0-0f9c-4b71-9fb5-5582c8180ac7@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1758219786.git.leon@kernel.org> <0c64474985af55b1aa934b857808068a0e609c6e.1758219787.git.leon@kernel.org>
- <CA+=Fv5Q8dVUFVBh82mAe=fy3mV6mWtQT_0pBPLQwLNBt3f8E1g@mail.gmail.com>
- <20250923171819.GM10800@unreal> <CA+=Fv5SJcQ5C4UeX2+deV9mPAe5QxrocMG8EJ2eVcYjbLE5U+A@mail.gmail.com>
- <20250923235318.GD2617119@nvidia.com>
-In-Reply-To: <20250923235318.GD2617119@nvidia.com>
-From: Magnus Lindholm <linmag7@gmail.com>
-Date: Wed, 24 Sep 2025 09:32:06 +0200
-X-Gm-Features: AS18NWBrVH-9-wBlZ7ZFV3RxYYp-7iSL9DfIPq4jDzU8rxFLx7xmKKzveUA49as
-Message-ID: <CA+=Fv5Tg7sQACpeG8aMZF6_E6dbRnN5ifg0aiHityXadxiHoPA@mail.gmail.com>
-Subject: Re: [PATCH 1/9] alpha: Convert mapping routine to rely on physical address
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Leon Romanovsky <leon@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Andreas Larsson <andreas@gaisler.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "David S. Miller" <davem@davemloft.net>, 
-	Geoff Levand <geoff@infradead.org>, Helge Deller <deller@gmx.de>, Ingo Molnar <mingo@redhat.com>, 
-	iommu@lists.linux.dev, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Jason Wang <jasowang@redhat.com>, 
-	Juergen Gross <jgross@suse.com>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Matt Turner <mattst88@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Richard Henderson <richard.henderson@linaro.org>, 
-	sparclinux@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	virtualization@lists.linux.dev, x86@kernel.org, 
-	xen-devel@lists.xenproject.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <adbccfc0-0f9c-4b71-9fb5-5582c8180ac7@oss.qualcomm.com>
 
-> Suggest testing the same branch with the alpha patch reverted just to
-> rule out any issue in the core code. If it reproduces suggest to
-> bisect Leon's branch.
->
-I can try to revert just the patch containing the alpha-specific stuff and
-see what happens and then, as  you say, maybe do a bisect from there.
-First I'll just try the same kernel again a few times more just to make sure
-that this is really reproducible.
+On Wed, Sep 24, 2025 at 08:48:29AM +1000, Amirreza Zarrabi wrote:
+> On 9/18/2025 7:50 PM, Dan Carpenter wrote:
+> > Re-order these checks to check if "i" is a valid array index before using
+> > it.  This prevents a potential off by one read access.
+> > 
+> > Fixes: d6e290837e50 ("tee: add Qualcomm TEE driver")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/tee/qcomtee/call.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/tee/qcomtee/call.c b/drivers/tee/qcomtee/call.c
+> > index cc17a48d0ab7..ac134452cc9c 100644
+> > --- a/drivers/tee/qcomtee/call.c
+> > +++ b/drivers/tee/qcomtee/call.c
+> > @@ -308,7 +308,7 @@ static int qcomtee_params_from_args(struct tee_param *params,
+> >  	}
+> >  
+> >  	/* Release any IO and OO objects not processed. */
+> > -	for (; u[i].type && i < num_params; i++) {
+> > +	for (; i < num_params && u[i].type; i++) {
+> >  		if (u[i].type == QCOMTEE_ARG_TYPE_OO ||
+> >  		    u[i].type == QCOMTEE_ARG_TYPE_IO)
+> >  			qcomtee_object_put(u[i].o);
+> 
+> This is not required, considering the sequence of clean up, this
+> would never happen. `i` at least have been accessed once in the
+> switch above.
 
-/Magnus
+Only the first iteration has been accessed.  The rest no.
+
+regards,
+dan carpenter
+
 
