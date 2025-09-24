@@ -1,81 +1,93 @@
-Return-Path: <linux-kernel+bounces-829984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD14B985FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:26:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B913B98679
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F6774A6B33
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:26:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DFD73A4454
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C079723AB8B;
-	Wed, 24 Sep 2025 06:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38FBD15DBC1;
+	Wed, 24 Sep 2025 06:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="QzTbaZFZ"
-Received: from mail-106102.protonmail.ch (mail-106102.protonmail.ch [79.135.106.102])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o7a8ePEY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8311C158DAC
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACBD33E7;
+	Wed, 24 Sep 2025 06:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758695186; cv=none; b=LNS7TmTCp2pF+Q4YeF7/zhrIFHQ5BYrGjkOWKOEpMKfiw9DALo2G/fHaqBIErIicA2meBwDs0Vg0OXAzn8q+WYKuR0PwsrjPV7PFwRSMamvqVmfVEnvMNonfKVsH+NjVRUhceGRd2APvyu2BIqUr8ZHbZNlvvCh7lrVRu5vizB4=
+	t=1758696009; cv=none; b=NxIQfcuwyEoaHbHbsLrjd7rsjH+VKo7TNT412RT/LJM0gYGTB+Ly63M62c3dFueGPNpCgS83bVREf2BByvsqdTBg8HXHWe0+OgBJf9bOkP++1kC0g2B2HFDh1PojeC/1VXlmyWmmW32xk4n4i94hFwLKCdeQf6XhNeLnrb2qz0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758695186; c=relaxed/simple;
-	bh=XR91gSIF8yYJ5cE4+Q2CghSblnkU6VvRnTYF/fkodlI=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=bigSQGq2eKhdOPvM0z/c6kFRo5leV3gsBN/LfsbHsa6A+otPOv8D3XOnFnAPYnky/vNm7ilbU8lF2tcqZ852kMJUQgIjOiwHz+7scg/Moi2tywxLYl2AvPzjS2SYRtIng6CaoPitqAi/2P8cl45XW7Rkoj9q0F5fl6+2isVgviQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=QzTbaZFZ; arc=none smtp.client-ip=79.135.106.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1758695176; x=1758954376;
-	bh=XR91gSIF8yYJ5cE4+Q2CghSblnkU6VvRnTYF/fkodlI=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=QzTbaZFZtKbaC4nrn9eTtNgwLz+3fXVgmNm7k2racHNPx+sXksVzWhP2kmP73hGrB
-	 qlf3JhSgh+5jP5Ho7Shnfl0HpzhPPQJRO1CKHLahWUp10pGp35jzoCo+GOfyAlYiGp
-	 0uVJLBqKoixfMrXff5a5wKBIgx3Uy80gRdgeJuRCD1axQXVNFGvRQTblQIMHmb4pDe
-	 o/geZL1debeHZIc1GSej5qyTCp6BwOjk+AK/UTiPYQAQTypIonjPG0ItIv0gldWXBR
-	 0vgHcF3I1b7/oFLMcvrDW/skvTljtKyjlr3/vGsbH3XWPVA3n/JVhwN7KZhhhg45cr
-	 MNVm+nSg8iAXA==
-Date: Wed, 24 Sep 2025 06:26:08 +0000
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Turritopsis Dohrnii Teo En Ming <teo.en.ming@protonmail.com>
-Cc: "??\"ceo@teo-en-ming-corp.com\"" <ceo@teo-en-ming-corp.com>
-Subject: Multi-Kernel Architecture Proposed For The Linux Kernel
-Message-ID: <k5mmH9tDmG_NISYPd0uMa7fNamg6orS3dQV3DuUpI1lBg-oiAe6VJDB4wjbbRXygUmK0JFTZ7EVSXxWdYldrs_s0OmVAyidCAg55zYrY6mE=@protonmail.com>
-Feedback-ID: 39510961:user:proton
-X-Pm-Message-ID: 0271ad7693063da623a80f8ab76d544eb22f323c
+	s=arc-20240116; t=1758696009; c=relaxed/simple;
+	bh=J8hov75qObfU9A6/REJMSZntidGERZYYdpEwKLEA7go=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ROe8dl3Vy9kmfg4Jp4pVu5KFu38VTq0ZDlIxoK2ZTPpWqmNMux1ou2YZYPg7BWpmvwS3zdcYBgeyD/m/o9Y+5uFuyks1zeCZkI0NJWO1rPRr+2aEvnoJZEPuWVfCpZIFOM6FN/GKJUEwgRwV5qm/2yxim8yMvcLkz3dSwjnPPbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o7a8ePEY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5DE6C4CEE7;
+	Wed, 24 Sep 2025 06:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758696009;
+	bh=J8hov75qObfU9A6/REJMSZntidGERZYYdpEwKLEA7go=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o7a8ePEYy62CyYZD1g/mEMj/SXZzafjUOL0ybRLJkgdWTZS/Sq75rPR5sd248sJhc
+	 dd2wZt624QtaNBitVfiwxru6Uk5fBNXwg6lMA/DF7QeQ1CVOWxNoHLsReGUbL3qK24
+	 S/kTG2dwwy8mRh9vp502h4lojs75kVsC+W0PID7wHz4BELZiriVxt6ze5FAhHc2yhD
+	 kuOiDIxUg5URB2kdJcC+yuFCkTbiOqMYrQdnRDERmjQWCUMGhslo6xf1BHUsl7VsKl
+	 FKdfUk6WgxcsGmjM/urRCqU6UkzIF328d+KvPUQJsjIrnMntOy92WHOYBJJN89Aj3w
+	 8O9gnipfky9Kg==
+Date: Wed, 24 Sep 2025 08:29:52 +0200
+From: Nicolas Schier <nsc@kernel.org>
+To: Alexey Gladkov <legion@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH v8 3/8] kbuild: keep .modinfo section in
+ vmlinux.unstripped
+Message-ID: <aNOP4NpaEzIFC7tz@levanger>
+References: <cover.1758182101.git.legion@kernel.org>
+ <aaf67c07447215463300fccaa758904bac42f992.1758182101.git.legion@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aaf67c07447215463300fccaa758904bac42f992.1758182101.git.legion@kernel.org>
 
-Subject: Multi-Kernel Architecture Proposed For The Linux Kernel
+On Thu, Sep 18, 2025 at 10:05:47AM +0200, Alexey Gladkov wrote:
+> From: Masahiro Yamada <masahiroy@kernel.org>
+> 
+> Keep the .modinfo section during linking, but strip it from the final
+> vmlinux.
+> 
+> Adjust scripts/mksysmap to exclude modinfo symbols from kallsyms.
+> 
+> This change will allow the next commit to extract the .modinfo section
+> from the vmlinux.unstripped intermediate.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> ---
+>  include/asm-generic/vmlinux.lds.h | 2 +-
+>  scripts/Makefile.vmlinux          | 7 +++++--
+>  scripts/mksysmap                  | 3 +++
+>  3 files changed, 9 insertions(+), 3 deletions(-)
+> 
 
-Good day from Singapore,
+Thanks!
 
-Here=E2=80=99s a news article I=E2=80=99d like to share.
+Reviewed-by: Nicolas Schier <nsc@kernel.org>
 
-Article: Multi-Kernel Architecture Proposed For The Linux Kernel
-Link: https://www.phoronix.com/news/Linux-Multi-Kernel-Patches
-Date of article: 21 Sep 2025
-
-Thank you.
-
-Regards,
-
-Mr. Turritopsis Dohrnii Teo En Ming
-Targeted Individuals Singapore
-GIMP =3D Government-Induced Medical / Mental Problems
-24 Sep 2025 Wednesday 2.25 PM Singapore Time
-
-
-
+-- 
+Nicolas
 
