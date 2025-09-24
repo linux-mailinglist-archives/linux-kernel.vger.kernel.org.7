@@ -1,79 +1,144 @@
-Return-Path: <linux-kernel+bounces-831456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1F9B9CB6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:48:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4799B9CB71
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3D2F3A89D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:48:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 504461B27F4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080CA2BD5A8;
-	Wed, 24 Sep 2025 23:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3960E2882BB;
+	Wed, 24 Sep 2025 23:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6bcqTxG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F86ehh5+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560EE611E;
-	Wed, 24 Sep 2025 23:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA55611E;
+	Wed, 24 Sep 2025 23:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758757694; cv=none; b=Gvs8F1RZwXW+pm8TP1CAIINKxnGy/F91GbB8stlYAmmQZ85RFbfNYIemqvp8TZ6R+APD+hvW2tyLr+R2hQ1HrP+xZJcKpIjltS6akw1s2md2XAnePGvipfdHnKm1UbKENIux0YB638xkwkHIWqh/8n0KPbtPEFh5mHpD+1OOYDo=
+	t=1758757709; cv=none; b=oQUt36HHDIWeENpbVBQvi49sVG9ba3gjbjGHQA9snKVCLARQx+4Y8GDDXjq9szQtdwO/xlDOs29QFlRSaHRPuVe3C68qL817fLMFKK1f0QVUOq2+fbJX26ZJJG/aKvkUxyp/mqvBlKrCIEI7PPezKKkn+PmovN2QRmCsgN9xQYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758757694; c=relaxed/simple;
-	bh=5X6qdcXYzNCPFMlnp7DLidSigMvUmD1M/KvUGEyjd+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C7U5GN4L+1dPZOZWzS578upde2t003z4u0t1OPteErcotQu1QFNdrfH4NUkJ9T+moFq0quiawJJGt6tVah7JEM5/kjl/wgERlf8Bv5n5aKwPZ7ilkt0jZw+UG5QV16JkjZ/J1sVvh3r7gYJAYySGtoNFeKV5JpHk34NRCMVUXoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6bcqTxG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89E29C4CEE7;
-	Wed, 24 Sep 2025 23:48:12 +0000 (UTC)
+	s=arc-20240116; t=1758757709; c=relaxed/simple;
+	bh=WhjUmH6pVhrmr65bjdt4qxwE7j+BOahAh7bAwCu0juQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Yj9ud/GxGMlKjh8sypM6vqfvqvmd5rymzNtCRe/MxDdJLVBvMKb0dDgAZntK/rANVU2fhSsqcDFR652wVHvWoVIVJfKzc7DRQPEoxfMxL3K9b/iIdkyR4zUbfYnxLJcfUgwozcgN1aPjo0yHe2pclA8dOCpfPROu2gicrMaPl/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F86ehh5+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EA69C4CEE7;
+	Wed, 24 Sep 2025 23:48:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758757692;
-	bh=5X6qdcXYzNCPFMlnp7DLidSigMvUmD1M/KvUGEyjd+k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=l6bcqTxGyiiCIdp7m2DGULN0SQoeMg1Nfmzfo73Vs+a0GZiTM49d7WXvtVyQMv+Yc
-	 egvHfVQZiqSHxcutWsPhC0vc4PH1XS5ql7XJ948OncpyFIH6OFuLjsOP47hPJxmp+2
-	 GzHt6m2JyC4s2v9no3fPOobwRuvMVbizWrvjbw+mckNHtmWvDFiQ/vbZElSi0lM+JC
-	 8n9henNnuk+JsopigjnOSOreRg1CxOkHJJrGfGjIbaBmFgh7SA0aHnDyDh/KzZbMXb
-	 pG4G+G5atz3pZIjMNu6aesQqU7O4f+5aDGh+tQbmXKHPQSJjO/WOWxWH2PtQjLdGv0
-	 msaf4+3nKRZOQ==
-Date: Wed, 24 Sep 2025 16:48:11 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Herve Codina <herve.codina@bootlin.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v3] net: wan: framer: Add version sysfs attribute for
- the Lantiq PEF2256 framer
-Message-ID: <20250924164811.3952a2d7@kernel.org>
-In-Reply-To: <77a27941d6924b1009df0162ed9f0fa07ed6e431.1758726302.git.christophe.leroy@csgroup.eu>
-References: <77a27941d6924b1009df0162ed9f0fa07ed6e431.1758726302.git.christophe.leroy@csgroup.eu>
+	s=k20201202; t=1758757709;
+	bh=WhjUmH6pVhrmr65bjdt4qxwE7j+BOahAh7bAwCu0juQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=F86ehh5+ie9GQ/pUou6FyEKwTrpVexaEzT7rvik40FeC9i9drso1aMFyoksmd6E6N
+	 v0f5oGWcdU44KAUZyT4W0LCJIM/I0FryaFWUEiaNxrnI7uuxxODb5Tjk2OHn8nGo5C
+	 6yJboMoKdtcAMgs+yKn7CzYz5hqPYVl0c/F28fkQiq82AkeWNTkTtyuLjfH6BNTLBk
+	 F/e/QTemaqjBSaE/DiGCIJJ1inVtDANPPoKp5cgV3BwYnNV6EzcjoGOTnyyU2RDTfN
+	 8hbNQ/fOfmXMG6s/CVWwau7u+xslo+kZAwEEpoyD3B6dFbQXyYLAuurkESG/WWfQJH
+	 OijVhJF4tla/Q==
+Date: Wed, 24 Sep 2025 18:48:28 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] PCI: Don't print stale information about resource
+Message-ID: <20250924234828.GA2143336@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250924135641.3399-1-ilpo.jarvinen@linux.intel.com>
 
-On Wed, 24 Sep 2025 17:06:47 +0200 Christophe Leroy wrote:
-> Lantiq PEF2256 framer has some little differences in behaviour
-> depending on its version.
+On Wed, Sep 24, 2025 at 04:56:41PM +0300, Ilpo Järvinen wrote:
+> pbus_size_mem() logs the bridge window resource using pci_info() before
+> the start and end fields of the resource have been updated which then
+> prints stale information.
 > 
-> Add a sysfs attribute to allow user applications to know the
-> version.
+> Set resource addresses earlier to make understanding logs easier.
+> Regrettably, this results in setting the addresses multiple times but
+> that seems unavoidable.
+> 
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
-Outsider question perhaps but what is the version of?
-It sounds like a HW revision but point releases for ASICs are quite
-uncommon. So I suspect it's some SW/FW version?
+Applied to pci/resource for v6.18, thanks!
 
-We generally recommend using devlink dev info for reporting all sort 
-of versions...
--- 
-pw-bot: cr
+> ---
+> 
+> Based on top of pci/resource branch.
+> 
+>  drivers/pci/setup-bus.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> index d264f16772b9..362ad108794d 100644
+> --- a/drivers/pci/setup-bus.c
+> +++ b/drivers/pci/setup-bus.c
+> @@ -1317,6 +1317,7 @@ static void pbus_size_mem(struct pci_bus *bus, unsigned long type,
+>  	resource_size_t children_add_align = 0;
+>  	resource_size_t add_align = 0;
+>  	resource_size_t relaxed_align;
+> +	resource_size_t old_size;
+>  
+>  	if (!b_res)
+>  		return;
+> @@ -1387,20 +1388,24 @@ static void pbus_size_mem(struct pci_bus *bus, unsigned long type,
+>  		}
+>  	}
+>  
+> +	old_size = resource_size(b_res);
+>  	win_align = window_alignment(bus, b_res->flags);
+>  	min_align = calculate_mem_align(aligns, max_order);
+>  	min_align = max(min_align, win_align);
+> -	size0 = calculate_memsize(size, min_size, 0, 0, resource_size(b_res), min_align);
+> +	size0 = calculate_memsize(size, min_size, 0, 0, old_size, min_align);
+>  
+> -	if (size0)
+> +	if (size0) {
+> +		resource_set_range(b_res, min_align, size0);
+>  		b_res->flags &= ~IORESOURCE_DISABLED;
+> +	}
+>  
+>  	if (bus->self && size0 &&
+>  	    !pbus_upstream_space_available(bus, b_res, size0, min_align)) {
+>  		relaxed_align = 1ULL << (max_order + __ffs(SZ_1M));
+>  		relaxed_align = max(relaxed_align, win_align);
+>  		min_align = min(min_align, relaxed_align);
+> -		size0 = calculate_memsize(size, min_size, 0, 0, resource_size(b_res), win_align);
+> +		size0 = calculate_memsize(size, min_size, 0, 0, old_size, win_align);
+> +		resource_set_range(b_res, min_align, size0);
+>  		pci_info(bus->self, "bridge window %pR to %pR requires relaxed alignment rules\n",
+>  			 b_res, &bus->busn_res);
+>  	}
+> @@ -1408,7 +1413,7 @@ static void pbus_size_mem(struct pci_bus *bus, unsigned long type,
+>  	if (realloc_head && (add_size > 0 || children_add_size > 0)) {
+>  		add_align = max(min_align, add_align);
+>  		size1 = calculate_memsize(size, min_size, add_size, children_add_size,
+> -					  resource_size(b_res), add_align);
+> +					  old_size, add_align);
+>  
+>  		if (bus->self && size1 &&
+>  		    !pbus_upstream_space_available(bus, b_res, size1, add_align)) {
+> @@ -1416,7 +1421,7 @@ static void pbus_size_mem(struct pci_bus *bus, unsigned long type,
+>  			relaxed_align = max(relaxed_align, win_align);
+>  			min_align = min(min_align, relaxed_align);
+>  			size1 = calculate_memsize(size, min_size, add_size, children_add_size,
+> -						  resource_size(b_res), win_align);
+> +						  old_size, win_align);
+>  			pci_info(bus->self,
+>  				 "bridge window %pR to %pR requires relaxed alignment rules\n",
+>  				 b_res, &bus->busn_res);
+> 
+> base-commit: 43b4f7cd064b2ae11742f33e2af195adae00c617
+> -- 
+> 2.39.5
+> 
 
