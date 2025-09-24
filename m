@@ -1,131 +1,136 @@
-Return-Path: <linux-kernel+bounces-830092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38B8B98B97
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:03:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 686AAB98B9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B5CF7A4DE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:01:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADD3819C78D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40501280328;
-	Wed, 24 Sep 2025 08:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A5rmQ2ks"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFC228314A;
+	Wed, 24 Sep 2025 08:03:10 +0000 (UTC)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035BB26E6FA
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC761281370
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758700987; cv=none; b=tAJ7uad+0kID+0mCgSvSEZxLM4m6JXPcr02/pIGVXZWGkmC+146F++EheJxrhQFljwoa42QeRiIpH9/HDoPX1R50Ba2UXj2O5Hcv07XMXc0VULrpWWB0Z6+GJ//90oBp9zWsldGvaeY3OKaMU6ln0QI24R1qos4w8+O9d+9BSsg=
+	t=1758700990; cv=none; b=mAk28ldlw84W/elqObjHEWm5tQv4DwnBcAHLnwLsqArkMr60d+QSSthoQpHoe+wuvDCVFfBQfL1FIyG8RrqG9jJZdScpQUXlV5QHmdLcANIdDn1qst75EP54LGfleSWkkmIA6RMLFW7HPXzr480tbtl5KS/KCAqZQHhJsaQ52nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758700987; c=relaxed/simple;
-	bh=gZYO00dsgw1/sZf16O3pqxqviKudSlUhSQE7SGYKT4Y=;
+	s=arc-20240116; t=1758700990; c=relaxed/simple;
+	bh=OcHtj4Ufk8ypmuZRK5EQN7WQ7NBHtAGlR0tqW0SRk3M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I30kTpD2vQudZ0zhYD/Z22UfHNlvARv3nXO0+lcgF2hdkKdOslwYcmoHeCvU7JyQpenrkbCn5zR0olmrkcvYrF7xckq6AqjWZMktITN+QRo7jLq/rzy1IHAJr4vSfV4aVrCCNrAYfG8Ar3uWjdXoXkjBVjKBhUP5+m6kEckzhsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A5rmQ2ks; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=rJbdnFsH9jVqz1fvd0fnsjLaKLSJVcQTBhgwjMeh1WOrEn9Hl7FQny4/aDiK0E0406FeKfUEMqQzTfjSLMqjTi1l/dXQEM9/mfLuWcCEbcW5nvAeuKoUGlKeLubmXstGc3LyR2Z9GKQwb/gMgfEUZvgp9aZIBuXQzu6kaszZSBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-62ecd3c21d3so10384282a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:03:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758700984; x=1759305784; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ehfc7lW7bxLwmLG05CxRKvZLBCPLLvWLd72j5jVN5N8=;
-        b=A5rmQ2ksjJV+pH7ww7oZxhdxMVAJ0gYbbfAM/WrQGTIw58y4P4Jk2lqIzo6/ORDGsB
-         12H5G2Bl7oHGfFvDzPhe4nB1SZ8Ij/ldLcOVUtaebURd9kfKxb0XWQiRG1cZoKLI2KaX
-         Bvv+VL4QOTY7UlAnBIRV4IpLSIChPshAK6gwQBRbuVla0mzqlLfYjGsECHPx2uO3amo9
-         yNU4NXW6yDQyIB7+DJ6RQXPWuAMdwq2AKVe/hrAnOhMc2WZ1ScOvIXQdwdE9LkCnJBKN
-         po+S88dsNg13plFmdClOuJcyCauaMueZ516nahpV4bfGpZGUy9v8MtDXc8+9fokE0wuP
-         I83g==
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-5a392946c4aso1650781137.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:03:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758700984; x=1759305784;
+        d=1e100.net; s=20230601; t=1758700987; x=1759305787;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ehfc7lW7bxLwmLG05CxRKvZLBCPLLvWLd72j5jVN5N8=;
-        b=LLtUmSFTNH5MU1kbl54fIBA2QMRjDhgv7KgMlX99i17yglKy/40FpKcW7Sf9natsop
-         jC6gLph4K4dyv461Cah8Vf5s0Th8JqXLwb2fIG2a5u5RmFdWrQgKim0+gKxxIF80Eo92
-         BLFKiVkGzVcy667aS/4hHDaOfAn5dGS3MIsw13MWkTXwdGIclzgxYpWqglPmtq34a9q6
-         yYTi98sYkufCvvcRl8nwzwHHzkVqP8liQn/0ZjDHS0PE4E+YPr3ZQD82txPHMO2PIbtu
-         nWULACkdAbJp4G5x6JoAFcP/5rox6r0HQA5qS0y8BlyebS7R2cTYjYKujoDLq+yUpYjt
-         plLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVmYVCVzaNRaDRGwlhn74rdj9s9r/2N8R7+YAZqyFcrFIoGsHG6XrBUYsNwhMYfbBy/NcNw79Bx+ofCsI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwULZ8j1Nituj2ZTA8D4UYiXVNbobn5AhA0fGtiKCRWnh0HEEa4
-	+nJE7ykUC/qAr7VD9oG/7v/ceprd76czQXpD5lR1NvV3tjVXuw74r4Uhdm9PwepP7qS3kwQ2XkR
-	9o2Fa3X7zLd67igvsK8/PfieUEKeb28c=
-X-Gm-Gg: ASbGncsACe09UWfU6AGVvJlGff5wTESBaWFkHWRSvY1EI3S0CColYvsZbNoZ03mue8S
-	9i0V76LXUr5YstFipEDWH6kSz9MXo+cZ2yCPDB8vufI6Lm7DQPOTKoyw24Tge4nJGwOuTLHJVSS
-	D2BTzf7pf97mL3EWQ1YOot9rO0njcCGCNpyrZzJZLwQgmIYRPTM/4eZPEH8WSmuKw2gpfCq5Ck2
-	6XPprgOWdXK9UoLySXpbpLY5HSljDUJE2e4e7/IIv/wZ6l3SgKhMw==
-X-Google-Smtp-Source: AGHT+IFxLHXew9N/JexqdNTfDfR/A0LfnbXCLzDT8ABYFnADQGfGxHrMbIpi3ZFG4X939kYRjpoOubp/hHRjAOYou84=
-X-Received: by 2002:a05:6402:254e:b0:634:4e0:836f with SMTP id
- 4fb4d7f45d1cf-63467795097mr4196054a12.1.1758700983944; Wed, 24 Sep 2025
- 01:03:03 -0700 (PDT)
+        bh=xG/1vYGs3+fuqywYG6UuJwna6J76UW6FbhxCIwoVdYk=;
+        b=eU/dhAYsLHH2Ub7XY5jHS7hYXOLpz1danKblaD7k/LIstNcw5+QomCwMJGcdVQSo0M
+         ukU8tGvJXnQrs/a4yRpO8ChkaFQ5+9NuusSFxOaGG37Nvrlikh6EuPngBC/Rt9C1nAIc
+         bvps3M00KSa9cBqZ/fftZMgtaRLKdIX97DH+TzDWzAWgGnqtzSrrmwbAMUernFCmo15S
+         OW9ZlWad3g2vsO9Kx96effeomUWcXJ/Zpe/k6C4TMDsvSgbwQ2d4zPQuEuqqtZqjBxuN
+         nTOmN0hnPeU32CNJbl86Gv0ikAG+OtBH+aovmIsp4fblmSvLnaK1i+s4ln0liqAs6DAu
+         15SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSOYZtHg3aViXHroWaMHkUQHCXKcfPFk6iVyMJqOQLEwTre8ylky8A1Kpn9Za5i1nu2g68RbXxPsMY4NA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyJyrOnADPhYONHcSudrQladPreUM8vN3XCcsfwJ8JdtffPvtd
+	J/J3U7anpfD4hmGitEAAIC6IuZZoAuVAnTSRg2NweauZIQNkPQTkTOEI3hZnA5BH
+X-Gm-Gg: ASbGncsWv69EzsU1Ovct25RY1n/WERI9C2IBLiPfVsFYPmC59QX0dCn3rt3ITkT3D+b
+	OrK2vYww5P6vodLChlvSwl7JcB9jrc50EyEwl+FJBqfuIaEwHhy5kJnkztxf6ymqT7kcETxZFo5
+	7s+NIWYH3d5nIrI2LQpgHbFvtyy/611rTaQSiV8Y1IANSfQGoBllYCCUkSgzO1go2OyRAU3WM+d
+	5yxxRZfIPCsHDXQylWCcLmUvtzPBKmCOe/mhSLrqP7ShSrETgPd/zJapC3UAMGvPbEDSzFEE6hi
+	5cV60JY+eS3WG0hyWZwsxApCm2AOJAD0tOMMKvRq8M1SBmnh8yUZK1CD0+melnXpOZ48BNqUL6t
+	cbmQD6mWwHFeEF2SgBR/kjyesJnrRNXY8dxn9uiBDpr7gMdK/WN6FTWyOjA4M
+X-Google-Smtp-Source: AGHT+IFne6d0YmITSpj8F1OqpAmzR5AL1Ri29kj6dn2CYVfy0YYqW2B9q3lSwi7DSzn32NeajwSLMw==
+X-Received: by 2002:a05:6102:5815:b0:555:ef1e:49bb with SMTP id ada2fe7eead31-5a5785b97c6mr1642964137.21.1758700987432;
+        Wed, 24 Sep 2025 01:03:07 -0700 (PDT)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-57a1b3d226csm4631116137.16.2025.09.24.01.03.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 01:03:07 -0700 (PDT)
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-5a392946c4aso1650763137.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:03:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWM9rKU4q8utyoIulOOPhvujojGvawTnNWZsmzStw4PkDRvUElw9Hgbw3xQtPhEUeIHcBZvUcXuSbHEkDY=@vger.kernel.org
+X-Received: by 2002:a05:6102:6890:b0:52a:ef9a:cbef with SMTP id
+ ada2fe7eead31-5a57a2e5015mr1830757137.35.1758700986150; Wed, 24 Sep 2025
+ 01:03:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <83171a57-cb40-4c97-b736-0e62930b9e5c@lunn.ch> <20250920181852.18164-1-viswanathiyyappan@gmail.com>
- <20250924094741.65e12028.michal.pecio@gmail.com>
-In-Reply-To: <20250924094741.65e12028.michal.pecio@gmail.com>
-From: viswanath <viswanathiyyappan@gmail.com>
-Date: Wed, 24 Sep 2025 13:32:52 +0530
-X-Gm-Features: AS18NWA4QzzqyxonbnUZkhNBqNGPKS9vhQ2TwPcWTvWPtTGvwTC0T-6N-mfumR8
-Message-ID: <CAPrAcgMrowvfGeOqdWAo4uCZBdUztFY-WEmpwLyp-QthgYYx7A@mail.gmail.com>
-Subject: Re: [PATCH net v2] net: usb: Remove disruptive netif_wake_queue in rtl8150_set_multicast
-To: Michal Pecio <michal.pecio@gmail.com>
-Cc: andrew@lunn.ch, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	david.hunter.linux@gmail.com, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	petkan@nucleusys.com, skhan@linuxfoundation.org, 
-	syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
+References: <cover.1758181109.git.thehajime@gmail.com> <4a9dde10c586883d20a8201ca7d76e6d7d52eaf4.1758181109.git.thehajime@gmail.com>
+ <a58620ecefa207e141a435c36492647c3d5bd3df.camel@sipsolutions.net>
+ <m28qib8g1r.wl-thehajime@gmail.com> <6b1abe384237c8129e8043ecdfdad77758d2fd2f.camel@sipsolutions.net>
+ <m27bxu949d.wl-thehajime@gmail.com> <CAMuHMdWAdhiY=MiG5JtboffSo_=D7TD5vFM6Ui5E8eS_VJiJ=g@mail.gmail.com>
+ <23adb61e95275251e459513a03ab7d2bcf1f2e07.camel@sipsolutions.net> <m2zfak7mnd.wl-thehajime@gmail.com>
+In-Reply-To: <m2zfak7mnd.wl-thehajime@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 24 Sep 2025 10:02:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW-417mPdhx8VzD5HK+OBzR6wOwgve7TQVaDB=B1ACQhQ@mail.gmail.com>
+X-Gm-Features: AS18NWDjzUUYN1IH_NRSUgt7ztz7YMlPE3cxQjph-t1F9aMXgPt3FYPP6cpRC98
+Message-ID: <CAMuHMdW-417mPdhx8VzD5HK+OBzR6wOwgve7TQVaDB=B1ACQhQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND v11 10/13] um: nommu: a work around for MMU
+ dependency to PCI driver
+To: Hajime Tazaki <thehajime@gmail.com>
+Cc: johannes@sipsolutions.net, linux-um@lists.infradead.org, 
+	ricarkol@google.com, Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org, 
+	arnd@arndb.de
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 24 Sept 2025 at 13:17, Michal Pecio <michal.pecio@gmail.com> wrote:
+Hi Hajime,
+
+On Wed, 24 Sept 2025 at 01:51, Hajime Tazaki <thehajime@gmail.com> wrote:
+> On Wed, 24 Sep 2025 02:13:47 +0900,
+> Johannes Berg wrote:
+> > On Tue, 2025-09-23 at 17:42 +0200, Geert Uytterhoeven wrote:
+> > > > currently, drivers/pci/Kconfig (CONFIG_PCI) marks as depends on MMU,
+> > > > so we cannot select it when CONFIG_MMU=n.
+> > >
+> > > That is a fairly recent change, see commit 8fe743b5eba0abfb ("PCI:
+> > > Add CONFIG_MMU dependency") in v6.16-rc1.  As this is not a "hard"
+> > > dependency, perhaps it should be reverted, iff you are willing to take
+> > > care of the casual breakage?
+> >
+> > Why though? UML with PCI can't really be a functional thing, only a
+> > testing thing, and testing PCI on !MMU when that is actually impossible
+> > in non-simulation is pointless?
 >
-> It's not freeing which matters but URB completion in the USB subsystem.
-
-Does URB completion include both successful and failed completions? I
-decided to go
-with "free urb" because I wasn't sure of that.
-
-> I think this description is needlessly complex, the essence is:
+> currently nommu UML doesn't come with using PCI except building under
+> kunit (ARCH=um), but I have in my mind to use it under !MMU
+> environment, so would be an option in the future.
 >
-> rtl8150_start_xmit() {
->         netif_stop_queue();
->         usb_submit_urb(dev->tx_urb);
-> }
+> and this series doesn't include PCI w/ !MMU.
 >
-> rtl8150_set_multicast() {
->         netif_stop_queue();
->         netif_wake_queue();  <-- wakes up TX queue before URB is done
-> }
+> so, I would propose the modification to revert the MMU dependency when
+> time has come.
 >
-> rtl8150_start_xmit() {
->         netif_stop_queue();
->         usb_submit_urb(dev->tx_urb);    <-- double submission
-> }
+> btw, what do you mean by "hard" dependency in this context, Geert ?
 
-I wasn't sure how to describe the flow of execution in a multi threaded program.
-I will resubmit a v3 with this version of the execution flow
+I mean the PCI core does not really require an MMU, and PCI in-se
+should work without it (e.g. on Coldfire MCF54xx).  Arnd added the
+dependency to avoid having to deal with future build regressions.
 
-> > Reported-and-tested-by: syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=78cae3f37c62ad092caa
-> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > Signed-off-by: I Viswanath <viswanathiyyappan@gmail.com>
->
+Gr{oetje,eeting}s,
 
-> Tested-by: Michal Pecio <michal.pecio@gmail.com>
+                        Geert
 
-Thanks,
-Viswanath
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
