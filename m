@@ -1,135 +1,124 @@
-Return-Path: <linux-kernel+bounces-830562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F971B99FB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:11:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 363FEB99FC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13C581700A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:11:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E603C171EF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FAD93002A6;
-	Wed, 24 Sep 2025 13:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="BvMnjJdA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hPcd+TMK"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03022BEC3F
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8490F301477;
+	Wed, 24 Sep 2025 13:13:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4C0502BE;
+	Wed, 24 Sep 2025 13:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758719507; cv=none; b=IMN7dn71SAL3PfWdBTz1s53cjN4rNYLV/JaOeIRY+DhKCfmeDH0qDZOtGe3Lx6TLCZJVG9BP/hNbFmY85lMdvICS1XEfF5P3465ISjoYr2Pw5MLKJoWL0JB5mBpFJbXWAguNZNZ11huztirGJymYlcWyTU+hx5EM6S64FWFjdlI=
+	t=1758719606; cv=none; b=NKjVOiJ10mQt+sXXu2S7qBQBEDS2ILiudbzafsId/04jYgMPvMeY8WkBstRpS3fGpNCxW88R+PpsGmqUQeD7gZybryOVAv8qXJnsZuHsf+soWftHNzVnBSLwj84S/5HRky51dlj5BgTOq1DOj5z1KV5LUClRkv0pcfZ47BI/KLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758719507; c=relaxed/simple;
-	bh=EdexPTflT22Ftp6zl2u0hS2bPWc+eqW2DuTW2elpvG0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FMZVgjP2be6tDiszV7HIxbaCFtLZWVWpD2ocRDunkUYm0HUYybiijBcA7ptmZwM5qSICrIVK1V3hye1clx8HbfezdS9Ag2deK9qGviVUUTwc7V1ZUBnchP8tsfrUYULHiZ8uAVC6Ry4aKaGi/ouJvxof+8mn3bJV+Zxp24z83nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=BvMnjJdA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hPcd+TMK; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id 12602EC00D0;
-	Wed, 24 Sep 2025 09:11:45 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Wed, 24 Sep 2025 09:11:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm1; t=1758719505; x=1758805905; bh=wYx2HdEIXg
-	FlbgpS+qiqZSNU/sf04pXjiGxuBrpjJ/Y=; b=BvMnjJdASXv6BaiiWFBTmO6GwU
-	bcpPYuN04WJUVwAZoqo8wqXckpVEM7uNInUZXTEPTskz0NqKKc+jfjfZloCiFOAG
-	WRn20nXWRT6D9/78ufRYhObE4ktHj+JKsUEn4cfQeqFTGM3pyx9Xr7xCUrjFKOSW
-	ZOPpu6T06VJzQ+/QatFQpdYHvKL0AUrVIJsJC3w5/6SInGR1ZrzDBncjVryzbPpr
-	NSzoWc7GFJtNOtRC2RSjOFNA1jI0G3M+fA9LYxkMpfB/oF29Om5Lv5popct8aSLk
-	YPw3qLurVjkxxM0NFRhtoQrORz2LX8mHdW5uANZXwXNJPa8lMWFucagh8vKg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1758719505; x=1758805905; bh=wYx2HdEIXgFlbgpS+qiqZSNU/sf04pXjiGx
-	uBrpjJ/Y=; b=hPcd+TMKtvHJXz/rqV78GS5RxZYLoSWbHdk+HTzaAgmkSbHL+jU
-	PXt+1R3Mxiic1WUmLm3vyGHpdAzSdBDT6s1WUXUqVeshcDh5pKZjt8QpEUwk+kmv
-	ZsQ16Dbhpi6kkILsKbyau7icpETczYboiVI7qYrrR7T6ou2ONtq0omSiIhB5r+dO
-	oODfisje/h0JBiSJKL30L1QquuMWE2tt8nEbv2RdnfWqTyp69PdMobl5JdSxi85q
-	TK0j776ExdtPUmHsnHfGfgIMMLs+rXF4ayqr47TVRLO5aZaHjZGDYoGU/Ra3YgSC
-	+2w6yTyiRVqKpZdPYMmEYZATHUb5zZENApw==
-X-ME-Sender: <xms:EO7TaNCiysv2pVwt2WetTjSSLdo_5FFmktvGhfFm1tsOayBFUt7ydA>
-    <xme:EO7TaDS2GDTpSgK459gTze8fEhSlupR9sLRTcev30qdU2iZ0zeqLK4DZRYT79G-Nd
-    zsU8Qbym2-g9ls_Wd0nt-DzT_Aj-PS56mRYRpeMVN0TlJ_oDj9JCZXj>
-X-ME-Received: <xmr:EO7TaLrHidyGsRsFVgEwP8TeT3MBswlsi6O79TBlPUIHRnbbtYc6ctmsaPuI2PZYz2JmeSOj2RvOsixhOHPk7SD0B4oF8rCQUtSnfjVorvVK2Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeifeeilecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttd
-    enucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihes
-    shgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepgefgheelheejieelhe
-    evfeekhfdtfeeftdefgefhkeffteduveejgeekvefhvdeunecuffhomhgrihhnpehkvghr
-    nhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphht
-    thhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigudefleegqd
-    guvghvvghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtohep
-    lhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhkphesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:EO7TaFynJCZc2PqLjWgEGcAWDhyz8Nz_CZx0voGCnaqNYgA31sZCMw>
-    <xmx:EO7TaAL0mqqaanDfvBPfffjNoSmezNwttM1f_a24Ca3RknDttuth0w>
-    <xmx:EO7TaHJxOuy1WZqi2fKEC2GkqAwdz-NyrhFOVMdEB3j7pHAIMo4FbQ>
-    <xmx:EO7TaFvH0PVyz9RmXqESAojjW3MdhepkXlRabjZcPuPaxiYZ5M0Vgw>
-    <xmx:Ee7TaJqmSD82YNegRS2wXwLG7Scgyo-oO6CvhBf1w0ln5vMyOk4fioWU>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 24 Sep 2025 09:11:43 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] firewire: core: suppress overflow warning when computing jiffies from isochronous cycle
-Date: Wed, 24 Sep 2025 22:11:40 +0900
-Message-ID: <20250924131140.261686-1-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1758719606; c=relaxed/simple;
+	bh=PaVdJZ/PeqgEBbm90xkNqO1qgjBPVF79+jKWROcFGY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EP49ki1hjQXSEd5+/QSIa1t2Pq9EzH8TixU0VZpXhRl0rMXCPjJcyaxwhbP6A7OjPNIz+j3qrrbK7v1ZKQjpNDoQPXtIEPC0rSuGFOPYSTgGYY3Yt8+mJBNTHL6FGoOI9OozkPzfVhMYEcWlfSWkTX10jyFxdH+mFnUOkVKmANQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD41C106F;
+	Wed, 24 Sep 2025 06:13:15 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C7953F5A1;
+	Wed, 24 Sep 2025 06:13:20 -0700 (PDT)
+Date: Wed, 24 Sep 2025 14:13:18 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Sebin Francis <sebin.francis@ti.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	"Marco Felsch" <m.felsch@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"Brian Masney" <bmasney@redhat.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for NXP i.MX95
+Message-ID: <20250924-dark-super-gharial-246400@sudeepholla>
+References: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
+ <20250915-clk-ssc-version1-v4-5-5a2cee2f0351@nxp.com>
+ <5f508f1d-2d08-4687-86cd-d1944caa0a49@ti.com>
+ <PAXPR04MB8459CE9F22CD56A9BFDB5E78881DA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <082735e7-956b-4574-952e-06ba69db41f1@ti.com>
+ <PAXPR04MB84590D5AAAB56ED7E1CBDE05881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <PAXPR04MB84590D5AAAB56ED7E1CBDE05881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
 
-The multiplication by USEC_PER_SEC (=1000000L) may trigger an overflow
-warning with 32 bit storage. In the case of the subsystem the input value
-ranges between 800 and 16000, thus the result always fits within 32 bit
-storage.
+On Wed, Sep 24, 2025 at 11:43:56AM +0000, Peng Fan wrote:
+> > Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for
+> > NXP i.MX95
+> ...
+> > >>>        SCMI_CLOCK_CFG_OEM_START = 0x80,
+> > >>> +     SCMI_CLOCK_CFG_IMX_SSC = 0x80,
+> > >>
+> > >> TI is also planning to implement the same in our upcoming platform.
+> > >> so can we use a generic ID instead of vender specfic message ID?
+> > >
+> > > I tried to push to new generic ID [1] in half a year ago, but in the
+> > > end ARM decided not to add generic ID for spread spectrum support.
+> > >
+> > > To i.MX, it is too late to use a generic ID and waiting spec, i.MX
+> > > firmware has been public for quite some time and passed several
+> > external releases.
+> > > So I need to use what our firmware adds and spec allows: vendor
+> > > extension.
+> > 
+> > Thanks for the quick response,
+> > Since this implementation is specific to i.MX, can you move this to a
+> > vendor specific file, so that it will not break i.MX's firmware and TI can
+> > implement SSC in TI specific file.
+> 
+> i.MX has encountered issue with pinctrl-scmi.c and pinctrl-imx-scmi.c
+> both supports SCMI PINCTRL. Current linux scmi does not support
+> both drivers built in kernel image, because scmi devlink issue.
+> 
+> Sudeep said he would address the devlink issue in 6.19 cycle.
+>
 
-This commit suppresses the warning by using widening conversion to 64 bit
-storage before multiplication, then using narrowing conversion to 32 bit
-storage.
+Yes it is a different issue IMO and nothing related to this.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202509170136.b5ZHaNAV-lkp@intel.com/
-Fixes: 379b870c28c6 ("firewire: core: use helper macros instead of direct access to HZ")
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
----
- drivers/firewire/core.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Given the current situation, I'm hesitant to introduce a new driver
+> saying clk-imx-scmi.c.
+>
 
-diff --git a/drivers/firewire/core.h b/drivers/firewire/core.h
-index 7f2ca93406ce..2dd715a580ac 100644
---- a/drivers/firewire/core.h
-+++ b/drivers/firewire/core.h
-@@ -30,7 +30,7 @@ struct fw_packet;
- // This is the arbitrary value we use to indicate a mismatched gap count.
- #define GAP_COUNT_MISMATCHED	0
- 
--#define isoc_cycles_to_jiffies(cycles)	usecs_to_jiffies(cycles * USEC_PER_SEC / 8000)
-+#define isoc_cycles_to_jiffies(cycles)	usecs_to_jiffies((u32)((u64)(cycles) * USEC_PER_SEC / 8000))
- 
- extern __printf(2, 3)
- void fw_err(const struct fw_card *card, const char *fmt, ...);
+Yes please don't, and I don't see a strong reason for that(yet).
 
-base-commit: 19e73f65940d3d3357c637f3d7e19a59305a748f
+Unlike vendor protocol, there is no way we can no upfront how the vendors
+can use this in their own colourful way. So I am not sure if we start
+building something generic from the start or refactor as more vendors start
+using it. Hard to decide 🙁. Lets see, need to think a bit.
+
+If Peng or Sebin or others have some idea, please propose or start the
+discussion so that we can evaluate the approach.
+
 -- 
-2.48.1
-
+Regards,
+Sudeep
 
