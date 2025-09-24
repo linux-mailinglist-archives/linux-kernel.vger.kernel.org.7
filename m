@@ -1,206 +1,234 @@
-Return-Path: <linux-kernel+bounces-830779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CF7B9A7FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:11:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 707B2B9A910
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA6A93AB7C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:09:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2084117CDAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F1630C340;
-	Wed, 24 Sep 2025 15:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334EF30F544;
+	Wed, 24 Sep 2025 15:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="m8JX20G0"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=lmu.de header.i=@campus.lmu.de header.b="hVFE+7S8"
+Received: from postout2.mail.lrz.de (postout2.mail.lrz.de [129.187.255.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC4D30C61D
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D44C309DB5;
+	Wed, 24 Sep 2025 15:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.187.255.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758726535; cv=none; b=gsM9v0sc4UFp/3m/YQGMYZbdNjhjrnhFCLM1ZEhVWi89W0KxN1uVtqpmVQY4CLGOg14rZgCqqzEhNkyeKlzs1sNSHvd9eFD3IFWlx8hG5iUsd7DyucrgeI6FkolY3uhyNc9Nh7yrY0TYzkbz9dIOmzTDfNSGqWvNpHtHVYble0o=
+	t=1758727071; cv=none; b=ROeTEiEq11g7ZX/aV7NJUak4jbe8EIqtNAKu4CX/lrKB2SHa1Yperar8+ONCTX7fLRHI5cwidtZaWgLt1kTu0Tm1Us/4JPuBFZm4axe9B5YiH/mchnM8snRcVIn+QqNAfUuAs6FtyMup26XQvZu3NJGGvMtdIqS6KcQhQLuq0p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758726535; c=relaxed/simple;
-	bh=6dgUDu9jBHBCpZ3eyTLN4yqD52BDSDkQsSRXB4EAv4o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=KHzDTMgbWKRIZQgdw4/fuOUyROtsTlv48oIxTJm3tmul4Ch5vY/eALn/CHI6JvB5a/0xLcIXCBZXe9XhQRYJDUvrUKGg19avMNd5FgsigSqIAv2Ooq66dWH3dEAqeBwhStFDqTPPsyhDKoPO6gHkE9TL8fqSE3LYuMkdhNlNtEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=m8JX20G0; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1758726522; x=1759331322; i=markus.elfring@web.de;
-	bh=Fxtcx4A1lIkBA+fnaYrI+5nN3wIMjoN2Kn6vJd6kzOg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:Cc:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=m8JX20G0Z5T/yaReHQNndEHofQqCM2lvX0rw2l9sy/Wt78/bOJDfI/hhg+ShEgHq
-	 mfHj6mM8B6HPGOzqYrP0bbiqxkYCUgmDhKOku6acHyttAy2plKI3DeIJg2m9Xqign
-	 lrpNwmgO21vthUFEaCKPpFumukR4VHKaWHD/cwsZVhtsrMxXzOmo7KTwcYm2+e2b8
-	 t8xg+tFfMbFjVKoD/cD9gBfiWdpm3TXNiRIE4yku4djdE9aNF7dGqh3Lk1JA8lUKE
-	 uKx88TwqHBt1ElKaXZW/jNQcleKJV9LgbVsGHxmCaR0YAVhKnEIs9OQ7eaaHfuDzI
-	 Wn054SAqQ1yn1Ri8nQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.191]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MJWsc-1um6533Xei-00Yx6f; Wed, 24
- Sep 2025 17:08:41 +0200
-Message-ID: <1071f2af-39be-425b-bdb0-7f004a6e8f65@web.de>
-Date: Wed, 24 Sep 2025 17:08:39 +0200
+	s=arc-20240116; t=1758727071; c=relaxed/simple;
+	bh=qHJFbsYgS91YYDoS3pNiLv0mtvxMAELdSxOXkcm25+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YlAdYo7LAvOzhUuPe6Op4rqXxTAoL7Jg6hHd9BRhgSOZTsMBJeQBxRftugFC6wS7HqFNQaBgFXvjfKm/l0kLNFkYXds7CvW+jyWCg69mkyUk8kIo4Ny/XyCZy7AeChfwB+pSagndSkG1f/R6gdjPVUHmeLbCgkFDQPq7WU55pac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=campus.lmu.de; spf=pass smtp.mailfrom=campus.lmu.de; dkim=pass (2048-bit key) header.d=lmu.de header.i=@campus.lmu.de header.b=hVFE+7S8; arc=none smtp.client-ip=129.187.255.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=campus.lmu.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=campus.lmu.de
+Received: from lxmhs52.srv.lrz.de (localhost [127.0.0.1])
+	by postout2.mail.lrz.de (Postfix) with ESMTP id 4cX0fy3FrjzySk;
+	Wed, 24 Sep 2025 17:11:22 +0200 (CEST)
+Authentication-Results: postout.lrz.de (amavis); dkim=pass (2048-bit key)
+ reason="pass (just generated, assumed good)" header.d=lmu.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lmu.de; h=
+	content-transfer-encoding:mime-version:x-mailer:message-id:date
+	:date:subject:subject:from:from:received:received; s=
+	lm-postout21; i=@campus.lmu.de; t=1758726681; bh=T6LxtLsJSjh5VFa
+	qIEo/5wr5RrqvMX416qBvYTVfg0E=; b=hVFE+7S8Fn4/3XjSufKRyxWHwW1bTtz
+	VmlF6g1t4TlmQrUK2g6F6vLFlU40czoRwEq0RsFT/3IH7GMQ5G2Ibu8haG+BFOfJ
+	8zZe76T3pWxXCby+AgHbP88DGrWGP+ho9qz0miGx/2adAFJYmk7+vs2VjMqiu7Xh
+	yASlcM7coWzhItLtC4rvkK5u/f1ktq9yjN1Sax5zRaIXtvfODBmowx5M8OtnLBnM
+	79T3dgWtXp1eUoF/g2u9tss/ucgkyjOiwJdjoUojvziOhDN9PlPFzEFrj0M3Pn5p
+	JmU6RCdR9hpgfd6nTab7IgTRGw3ihak6ss8Sxi5Aq73ihDT6fW4jgKA==
+X-Virus-Scanned: by amavisd-new at lrz.de in lxmhs52.srv.lrz.de
+X-Spam-Flag: NO
+X-Spam-Score: -2.886
+X-Spam-Level:
+Received: from postout2.mail.lrz.de ([127.0.0.1])
+ by lxmhs52.srv.lrz.de (lxmhs52.srv.lrz.de [127.0.0.1]) (amavis, port 20024)
+ with LMTP id zUqMeowYmgiG; Wed, 24 Sep 2025 17:11:21 +0200 (CEST)
+Received: from spacestation.cable.virginm.net (oxfd-27-b2-v4wan-164230-cust474.vm42.cable.virginm.net [86.22.133.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by postout2.mail.lrz.de (Postfix) with ESMTPSA id 4cX0fr09PgzyS8;
+	Wed, 24 Sep 2025 17:11:15 +0200 (CEST)
+From: Patrick Roy <patrick.roy@campus.lmu.de>
+To: 
+Cc: Patrick Roy <roypat@amazon.co.uk>,
+	pbonzini@redhat.com,
+	corbet@lwn.net,
+	maz@kernel.org,
+	oliver.upton@linux.dev,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	willy@infradead.org,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	song@kernel.org,
+	jolsa@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jgg@ziepe.ca,
+	jhubbard@nvidia.com,
+	peterx@redhat.com,
+	jannh@google.com,
+	pfalcato@suse.de,
+	shuah@kernel.org,
+	seanjc@google.com,
+	kvm@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	xmarcalx@amazon.co.uk,
+	kalyazin@amazon.co.uk,
+	jackabt@amazon.co.uk,
+	derekmn@amazon.co.uk,
+	tabba@google.com,
+	ackerleytng@google.com
+Subject: [PATCH v7 00/12] Direct Map Removal Support for guest_memfd
+Date: Wed, 24 Sep 2025 16:10:40 +0100
+Message-ID: <20250924151101.2225820-1-patrick.roy@campus.lmu.de>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cocci] [PATCH] cocci: drm: report devm-allocated arguments and
- fields
-To: Oleg Petrov <o.petrov@ispras.ru>, cocci@inria.fr,
- dri-devel@lists.freedesktop.org, lvc-project@linuxtesting.org,
- Julia Lawall <Julia.Lawall@inria.fr>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-References: <20250924140126.23027-1-o.petrov@ispras.ru>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, David Airlie <airlied@gmail.com>,
- Maxime Ripard <mripard@kernel.org>, Nicolas Palix <nicolas.palix@imag.fr>,
- Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
- Vadim Mutilin <mutilin@ispras.ru>
-In-Reply-To: <20250924140126.23027-1-o.petrov@ispras.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:uZrWTvaoGpbDSZWsF91sFFye+hH7BZIZdED6uBooGDJEiUcJfaE
- 7UACdoAp5MMPfoQMjAZ+r6Zj+UgH9dthLqgBDL/un/peke4LAq5DduG8chUXdJZCZIU+Qc+
- QBwUG8Iyc/2gn9DBG36YEGj+s3/pD3AcW8sYy9LeFnQ0WAHkffA1sr8LZXwMAU3e/bPudWy
- 19whwCdVwJht8mnxv6O4w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:8tbrgLiUt60=;1mJvOUB5Vk9P8qigUFuC9CamA7Z
- 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
+Content-Transfer-Encoding: 7bit
 
-> Add two Coccinelle rules: (1) flag a devres-managed pointer
-> passed to a drm-init function, and (2) flag a devres-managed
-> pointer assigned to a field of drm-managed struct. =E2=80=A6
+From: Patrick Roy <roypat@amazon.co.uk>
 
-I suggest to start each enumeration item on a separate text line.
+[ based on kvm/next ]
+
+Unmapping virtual machine guest memory from the host kernel's direct map is a
+successful mitigation against Spectre-style transient execution issues: If the
+kernel page tables do not contain entries pointing to guest memory, then any
+attempted speculative read through the direct map will necessarily be blocked
+by the MMU before any observable microarchitectural side-effects happen. This
+means that Spectre-gadgets and similar cannot be used to target virtual machine
+memory. Roughly 60% of speculative execution issues fall into this category [1,
+Table 1].
+
+This patch series extends guest_memfd with the ability to remove its memory
+from the host kernel's direct map, to be able to attain the above protection
+for KVM guests running inside guest_memfd.
+
+Additionally, a Firecracker branch with support for these VMs can be found on
+GitHub [2].
+
+For more details, please refer to the v5 cover letter [v5]. No
+substantial changes in design have taken place since.
+
+=== Changes Since v6 ===
+
+- Drop patch for passing struct address_space to ->free_folio(), due to
+  possible races with freeing of the address_space. (Hugh)
+- Stop using PG_uptodate / gmem preparedness tracking to keep track of
+  direct map state.  Instead, use the lowest bit of folio->private. (Mike, David)
+- Do direct map removal when establishing mapping of gmem folio instead
+  of at allocation time, due to impossibility of handling direct map
+  removal errors in kvm_gmem_populate(). (Patrick)
+- Do TLB flushes after direct map removal, and provide a module
+  parameter to opt out from them, and a new patch to export
+  flush_tlb_kernel_range() to KVM. (Will)
+
+[1]: https://download.vusec.net/papers/quarantine_raid23.pdf
+[2]: https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding
+[RFCv1]: https://lore.kernel.org/kvm/20240709132041.3625501-1-roypat@amazon.co.uk/
+[RFCv2]: https://lore.kernel.org/kvm/20240910163038.1298452-1-roypat@amazon.co.uk/
+[RFCv3]: https://lore.kernel.org/kvm/20241030134912.515725-1-roypat@amazon.co.uk/
+[v4]: https://lore.kernel.org/kvm/20250221160728.1584559-1-roypat@amazon.co.uk/
+[v5]: https://lore.kernel.org/kvm/20250828093902.2719-1-roypat@amazon.co.uk/
+[v6]: https://lore.kernel.org/kvm/20250912091708.17502-1-roypat@amazon.co.uk/
 
 
-Would you like to refer to =E2=80=9CCoccinelle: api:=E2=80=9D in the patch=
- prefix?
+Patrick Roy (12):
+  arch: export set_direct_map_valid_noflush to KVM module
+  x86/tlb: export flush_tlb_kernel_range to KVM module
+  mm: introduce AS_NO_DIRECT_MAP
+  KVM: guest_memfd: Add stub for kvm_arch_gmem_invalidate
+  KVM: guest_memfd: Add flag to remove from direct map
+  KVM: guest_memfd: add module param for disabling TLB flushing
+  KVM: selftests: load elf via bounce buffer
+  KVM: selftests: set KVM_MEM_GUEST_MEMFD in vm_mem_add() if guest_memfd
+    != -1
+  KVM: selftests: Add guest_memfd based vm_mem_backing_src_types
+  KVM: selftests: cover GUEST_MEMFD_FLAG_NO_DIRECT_MAP in existing
+    selftests
+  KVM: selftests: stuff vm_mem_backing_src_type into vm_shape
+  KVM: selftests: Test guest execution from direct map removed gmem
+
+ Documentation/virt/kvm/api.rst                |  5 ++
+ arch/arm64/include/asm/kvm_host.h             | 12 ++++
+ arch/arm64/mm/pageattr.c                      |  1 +
+ arch/loongarch/mm/pageattr.c                  |  1 +
+ arch/riscv/mm/pageattr.c                      |  1 +
+ arch/s390/mm/pageattr.c                       |  1 +
+ arch/x86/include/asm/tlbflush.h               |  3 +-
+ arch/x86/mm/pat/set_memory.c                  |  1 +
+ arch/x86/mm/tlb.c                             |  1 +
+ include/linux/kvm_host.h                      |  9 +++
+ include/linux/pagemap.h                       | 16 +++++
+ include/linux/secretmem.h                     | 18 -----
+ include/uapi/linux/kvm.h                      |  2 +
+ lib/buildid.c                                 |  4 +-
+ mm/gup.c                                      | 19 ++----
+ mm/mlock.c                                    |  2 +-
+ mm/secretmem.c                                |  8 +--
+ .../testing/selftests/kvm/guest_memfd_test.c  |  2 +
+ .../testing/selftests/kvm/include/kvm_util.h  | 37 ++++++++---
+ .../testing/selftests/kvm/include/test_util.h |  8 +++
+ tools/testing/selftests/kvm/lib/elf.c         |  8 +--
+ tools/testing/selftests/kvm/lib/io.c          | 23 +++++++
+ tools/testing/selftests/kvm/lib/kvm_util.c    | 61 +++++++++--------
+ tools/testing/selftests/kvm/lib/test_util.c   |  8 +++
+ tools/testing/selftests/kvm/lib/x86/sev.c     |  1 +
+ .../selftests/kvm/pre_fault_memory_test.c     |  1 +
+ .../selftests/kvm/set_memory_region_test.c    | 50 ++++++++++++--
+ .../kvm/x86/private_mem_conversions_test.c    |  7 +-
+ virt/kvm/guest_memfd.c                        | 66 +++++++++++++++++--
+ virt/kvm/kvm_main.c                           |  8 +++
+ 30 files changed, 290 insertions(+), 94 deletions(-)
 
 
-=E2=80=A6> +// Copyright: (C) 2025 Oleg Petrov ISPRAS
+base-commit: a6ad54137af92535cfe32e19e5f3bc1bb7dbd383
+-- 
+2.51.0
 
-Would another delimiter be helpful between the personal name and the organ=
-isation identifier?
-
-
-=E2=80=A6> +virtual report
-> +virtual org
-
-The restriction on the support for two operation modes will need further d=
-evelopment considerations.
-
-
-=E2=80=A6> +devm =3D \(devm_kzalloc\|devm_kcalloc\|devm_kmalloc\|devm_kmal=
-loc_array\)(...);
-
-Would it be nicer to write such SmPL disjunctions on multiple lines?
-
-
-=E2=80=A6> +@script:python depends on report@
-> +p << badarg.p;
-> +@@
-> +msg =3D "WARNING devm-allocated argument in a drm-init; use drmm-init f=
-amily (or drmm-alloc)."
-> +coccilib.report.print_report(p[0], msg)
-
-I would like to point out once more that such data can be printed
-also without an extra variable like =E2=80=9Cmsg=E2=80=9D.
-
-
-> +@script:python depends on org@
-> +p << badarg.p;
-> +@@
-> +msg =3D "WARNING devm-allocated argument in a drm-init; use drmm-init f=
-amily (or drmm-alloc)."
-> +coccilib.org.print_report(p[0], msg)
-
-Would the following method call be more appropriate?
-
-coccilib.org.print_todo(p[0],
-                        "WARNING: devm-allocated argument in a drm-init; u=
-se drmm-init family (or drmm-alloc).")
-
-
-Regards,
-Markus
 
