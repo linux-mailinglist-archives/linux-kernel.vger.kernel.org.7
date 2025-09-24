@@ -1,343 +1,250 @@
-Return-Path: <linux-kernel+bounces-830637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D3B0B9A306
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:14:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DFEB9A2D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF03E4C4BAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:13:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80FF04A7278
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463B92135D7;
-	Wed, 24 Sep 2025 14:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1BB305964;
+	Wed, 24 Sep 2025 14:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="JxSo6cCE"
-Received: from fra-out-007.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-007.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.75.33.185])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XWsIeH5m"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12E21A38F9;
-	Wed, 24 Sep 2025 14:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.75.33.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D783054EB;
+	Wed, 24 Sep 2025 14:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758723213; cv=none; b=DZ1Id6KqlzzXtAhn2FZI+68swDzybmq+ML+Yg2ePWjpt1iZ/EVJ3PHXXMjV2IhY9NUuzOuRp1ozlHzcDul0uF9ZANI1sSN2Ma5r70wVhQaEIdrY5QDrBoKIpL9/XrFL3MCwyhUKNUhUbfwMTT7a2KxmFq4dYb4o8jFtCd9bwTTM=
+	t=1758723083; cv=none; b=M6LOz5bxJGBfX57dblzXNWXH7XdyIG+eBl8P0PrxGupjxUB62Wh/l8F2UyhaOlEgzITdXocvBojLoCvwxLBRVVxQGkOLiSAq0Vw3kUYdW2y2kBJkmjAaDQtx9iZ50b6hbp9oNH+2pU+wTzDbCiKFEEX95S+NQgfDQhiyoHDOJNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758723213; c=relaxed/simple;
-	bh=Psf2UiHbIfFoCKVtGR7vRnCiMvd8l30OQ4xeY9HiHrE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bnQ3/U2g7V46yor8D8eQzNsBqNuu4vw1AQ7qQ7KaVwyseOq20cAWNlqjq3yDXiDBi1LZxv5Y4URhxJ7989n9eWKwVinaegqheQ3pBgDafwB4jdYQ3tyVFTeODUFDx9ilOdsG1BpMnvNg+8fdyol2D9zUgzWtbD+k4TXNEXc94Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=JxSo6cCE; arc=none smtp.client-ip=3.75.33.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1758723211; x=1790259211;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=bhLPFvRc8Jr7ZaJZGuxccCtemmZ4vyWewvC1yxLU+O8=;
-  b=JxSo6cCEoQ/HDNcYvYdF1tR78CJGGiuWTQ5mPOQTKOOTXwk4Xot0ZZ0N
-   Tr1svDmMh7PaZsMhgjns60vn3iYBnJwC8uop0tFuV4E+/AQSwLUB47R2W
-   hcsVIXoAanmkq2YAD9gEYwzuP3BaekfQ8Hz8wFU1s53TyRT3W2oe5EI4L
-   grntKS6flk5nyxVoYuGfmhOImZod0Zj/+Exc4NcAVWMCI3sR+pFwaNqXW
-   S7ou2dVhEKPIz0AFOXkU119LCZRAp8LaDL19tkk0cIHvcDTHyEiPs5Mfz
-   akWuJ4iTndAald4ZuV2maBDncNVKGQbcxArjnH/bKp76zvHnjNEbQD5Kl
-   w==;
-X-CSE-ConnectionGUID: AaxHro97QF2ob+ABW/zNLg==
-X-CSE-MsgGUID: F6Ae34Y6SDuTndUMh5RU5A==
-X-IronPort-AV: E=Sophos;i="6.18,290,1751241600"; 
-   d="scan'208";a="2615973"
-Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
-  by internal-fra-out-007.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 14:13:21 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [54.240.197.225:28822]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.10.226:2525] with esmtp (Farcaster)
- id e487420e-1f17-415c-8a4b-03885c61768e; Wed, 24 Sep 2025 14:13:20 +0000 (UTC)
-X-Farcaster-Flow-ID: e487420e-1f17-415c-8a4b-03885c61768e
-Received: from EX19D039EUC004.ant.amazon.com (10.252.61.190) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 24 Sep 2025 14:13:20 +0000
-Received: from dev-dsk-mngyadam-1c-cb3f7548.eu-west-1.amazon.com
- (10.253.107.175) by EX19D039EUC004.ant.amazon.com (10.252.61.190) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Wed, 24 Sep 2025
- 14:13:16 +0000
-From: Mahmoud Adam <mngyadam@amazon.de>
-To: <kvm@vger.kernel.org>
-CC: <alex.williamson@redhat.com>, <jgg@ziepe.ca>, <kbusch@kernel.org>,
-	<benh@kernel.crashing.org>, David Woodhouse <dwmw@amazon.co.uk>,
-	<pravkmr@amazon.de>, <nagy@khwaternagy.com>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 7/7] vfio-pci-core: implement FEATURE_ALIAS_REGION uapi
-Date: Wed, 24 Sep 2025 16:09:58 +0200
-Message-ID: <20250924141018.80202-8-mngyadam@amazon.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250924141018.80202-1-mngyadam@amazon.de>
-References: <20250924141018.80202-1-mngyadam@amazon.de>
+	s=arc-20240116; t=1758723083; c=relaxed/simple;
+	bh=SBJbzI+a5EDCmQJVqd66UPCcUKx8PMbrUQzAs3ufUz4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WkmZbE9OHMSAm5XJ1b7xZL0CHIH1QzubqU9XNcfwdv/9dbUgf3EgC3cRU4gXJTfNKQiH4ACyQVgeU9ZTCKtDOLzRe236vODykodxYOQqd03m0kuDW1r0OPWsXaKeUYb41iX1jywaHAT2xBJamU9nEwERnUKUQk5KgXVyuayX/lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XWsIeH5m; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version:
+	Content-Type; bh=WqpeQ5qAYFhnm6GasJioV7bqqdYfgWz6OOnhDlY+7+U=;
+	b=XWsIeH5mq6Jnb2vVB5KXB7Lfm5A55xzGPNbED0L+TR5yyAm53MwbfXK5CnJOf5
+	NwcYMTTosJu4YEy+ghe9nDfwpTjL5IJAMd6ZUvO0q7KH/TWIAQYVPVDAc7J+NPib
+	5yVRwJLzG3MWPRLucN9oLCCyIM7IvKOLTAtmviSqgINHM=
+Received: from MS-CMFLBWVCLQRG.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wB3u8rm+9NoN1RcDg--.14964S2;
+	Wed, 24 Sep 2025 22:10:47 +0800 (CST)
+From: GuangFei Luo <luogf2025@163.com>
+To: rafael@kernel.org
+Cc: dan.carpenter@linaro.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	luogf2025@163.com
+Subject: Re:[PATCH v6] ACPI: battery: prevent sysfs_add_battery re-entry on rapid events
+Date: Wed, 24 Sep 2025 22:10:45 +0800
+Message-ID: <20250924141047.1477743-1-luogf2025@163.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAJZ5v0htRTTj1QEEmhxBDxYA8oXkg_KP5YrfwyngELDY+Ns1EQ@mail.gmail.com>
+References: <CAJZ5v0htRTTj1QEEmhxBDxYA8oXkg_KP5YrfwyngELDY+Ns1EQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D041UWB002.ant.amazon.com (10.13.139.179) To
- EX19D039EUC004.ant.amazon.com (10.252.61.190)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wB3u8rm+9NoN1RcDg--.14964S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxuFWrGF4fCF4xGr1UKFW8Crg_yoW7tr48pa
+	yUCFWYkF4UJF1UXw12qr1YvryYy3yrtryUWr9rGFy0k34q9F1xJr1UtFnrurZ8Cr4IkF48
+	ZF4xXa13Zr13ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zirb15UUUUU=
+X-CM-SenderInfo: poxrwwisqskqqrwthudrp/1tbiPQ-SmWjT9ip7EAAAs1
 
-This implements the new DEVICE_FEATURE_ALIAS_REGION. As of right now
-Alias is only needed for mmaping. So we will allow aliasing mmap
-supported regions only.
+> On Wed, Sep 24, 2025 at 12:38 AM GuangFei Luo <luogf2025@163.com> wrote:
+> >
+> > > On Tuesday, September 23, 2025 7:12:03 PM CEST Rafael J. Wysocki wrote:
+> > > > On Tue, Sep 23, 2025 at 6:14 PM GuangFei Luo <luogf2025@163.com> wrote:
+> > > > >
+> > > > > The functions battery_hook_add_battery(), battery_hook_remove_battery(),
+> > > > > and sysfs_remove_battery() already acquire locks, so their internal
+> > > > > accesses are safe.
+> > > >
+> > > > In fact, there are two locks in use, battery->sysfs_lock and
+> > > > hook_mutex.  The latter is used for managing hooks and the former is
+> > > > only used by sysfs_remove_battery(), so it only prevents that function
+> > > > from racing with another instance of itself.
+> > > >
+> > > > I would suggest using battery->sysfs_lock for protecting battery->bat
+> > > > in general.
+> > > >
+> > > > > acpi_battery_refresh() does check battery->bat, but its child
+> > > > > functions (sysfs_add_battery() and sysfs_remove_battery()) already
+> > > > > handle locking.
+> > > >
+> > > > What locking?  Before the $subject patch, sysfs_add_battery() doesn't
+> > > > do any locking at all AFAICS.
+> > > >
+> > > > > In acpi_battery_notify(), battery->bat has no lock. However, the
+> > > > > check of battery->bat is at the very end of the function. During
+> > > > > earlier calls, battery->bat has already been protected by locks, so
+> > > > > re-entry will not cause issues.
+> > > >
+> > > > All of the battery->bat checks and the code depending on them need to
+> > > > go under the same lock.  I'd use battery->sysfs_lock for this as
+> > > > already mentioned above.
+> > >
+> > > So my (untested) version of this fix is appended.
+> > >
+> > > Note that it explicitly prevents acpi_battery_notify() from racing with
+> > > addition/removal, PM notifications, and resume.
+> > >
+> > > ---
+> > >  drivers/acpi/battery.c |   36 +++++++++++++++++++++++-------------
+> > >  1 file changed, 23 insertions(+), 13 deletions(-)
+> > >
+> > > --- a/drivers/acpi/battery.c
+> > > +++ b/drivers/acpi/battery.c
+> > > @@ -92,7 +92,7 @@ enum {
+> > >
+> > >  struct acpi_battery {
+> > >       struct mutex lock;
+> > > -     struct mutex sysfs_lock;
+> > > +     struct mutex update_lock;
+> > >       struct power_supply *bat;
+> > >       struct power_supply_desc bat_desc;
+> > >       struct acpi_device *device;
+> > > @@ -904,15 +904,12 @@ static int sysfs_add_battery(struct acpi
+> > >
+> > >  static void sysfs_remove_battery(struct acpi_battery *battery)
+> > >  {
+> > > -     mutex_lock(&battery->sysfs_lock);
+> > > -     if (!battery->bat) {
+> > > -             mutex_unlock(&battery->sysfs_lock);
+> > > +     if (!battery->bat)
+> > >               return;
+> > > -     }
+> > > +
+> > >       battery_hook_remove_battery(battery);
+> > >       power_supply_unregister(battery->bat);
+> > >       battery->bat = NULL;
+> > > -     mutex_unlock(&battery->sysfs_lock);
+> > >  }
+> > >
+> > >  static void find_battery(const struct dmi_header *dm, void *private)
+> > > @@ -1072,6 +1069,9 @@ static void acpi_battery_notify(acpi_han
+> > >
+> > >       if (!battery)
+> > >               return;
+> > > +
+> > > +     guard(mutex)(&battery->update_lock);
+> > > +
+> > >       old = battery->bat;
+> > >       /*
+> > >        * On Acer Aspire V5-573G notifications are sometimes triggered too
+> > > @@ -1094,21 +1094,22 @@ static void acpi_battery_notify(acpi_han
+> > >  }
+> > >
+> > >  static int battery_notify(struct notifier_block *nb,
+> > > -                            unsigned long mode, void *_unused)
+> > > +                       unsigned long mode, void *_unused)
+> > >  {
+> > >       struct acpi_battery *battery = container_of(nb, struct acpi_battery,
+> > >                                                   pm_nb);
+> > > -     int result;
+> > >
+> > > -     switch (mode) {
+> > > -     case PM_POST_HIBERNATION:
+> > > -     case PM_POST_SUSPEND:
+> > > +     if (mode == PM_POST_SUSPEND || mode == PM_POST_HIBERNATION) {
+> > > +             guard(mutex)(&battery->update_lock);
+> > > +
+> > >               if (!acpi_battery_present(battery))
+> > >                       return 0;
+> > >
+> > >               if (battery->bat) {
+> > >                       acpi_battery_refresh(battery);
+> > >               } else {
+> > > +                     int result;
+> > > +
+> > >                       result = acpi_battery_get_info(battery);
+> > >                       if (result)
+> > >                               return result;
+> > > @@ -1120,7 +1121,6 @@ static int battery_notify(struct notifie
+> > >
+> > >               acpi_battery_init_alarm(battery);
+> > >               acpi_battery_get_state(battery);
+> > > -             break;
+> > >       }
+> > >
+> > >       return 0;
+> > > @@ -1198,6 +1198,8 @@ static int acpi_battery_update_retry(str
+> > >  {
+> > >       int retry, ret;
+> > >
+> > > +     guard(mutex)(&battery->update_lock);
+> > > +
+> > >       for (retry = 5; retry; retry--) {
+> > >               ret = acpi_battery_update(battery, false);
+> > >               if (!ret)
+> > > @@ -1230,7 +1232,7 @@ static int acpi_battery_add(struct acpi_
+> > >       if (result)
+> > >               return result;
+> > >
+> > > -     result = devm_mutex_init(&device->dev, &battery->sysfs_lock);
+> > > +     result = devm_mutex_init(&device->dev, &battery->update_lock);
+> > >       if (result)
+> > >               return result;
+> > >
+> > > @@ -1262,6 +1264,8 @@ fail_pm:
+> > >       device_init_wakeup(&device->dev, 0);
+> > >       unregister_pm_notifier(&battery->pm_nb);
+> > >  fail:
+> > > +     guard(mutex)(&battery->update_lock);
+> > > +
+> > >       sysfs_remove_battery(battery);
+> > >
+> > >       return result;
+> > > @@ -1281,6 +1285,9 @@ static void acpi_battery_remove(struct a
+> > >
+> > >       device_init_wakeup(&device->dev, 0);
+> > >       unregister_pm_notifier(&battery->pm_nb);
+> > > +
+> > > +     guard(mutex)(&battery->update_lock);
+> > > +
+> > >       sysfs_remove_battery(battery);
+> > >  }
+> > >
+> > > @@ -1297,6 +1304,9 @@ static int acpi_battery_resume(struct de
+> > >               return -EINVAL;
+> > >
+> > >       battery->update_time = 0;
+> > > +
+> > > +     guard(mutex)(&battery->update_lock);
+> > > +
+> > >       acpi_battery_update(battery, true);
+> > >       return 0;
+> > >  }
+> >
+> > Thanks for the detailed explanation and the updated version of the fix.
+> >
+> > I will test your suggested changes on my platform.
+> > After verification, I will send a v7 based on your suggestion.
+> 
+> Please just verify and I'll add a changelog and subject to the patch
+> and submit it.
+> 
+> Thanks!
 
-If the user requested a similar alias (same flags and aliased
-index). re-use the old index instead by returning it to the
-user. Since creating another alias gives no extra value for the
-user. The region with the new flag (WC), will allow the user to
-mmap the aliased region with WC enabled.
+I have tested your updated patch on my laptop with battery hot-plug scenarios.
+Everything looks normal and I did not observe any issues.
 
-We also supports probing. When the user probe a region index, we
-return the region flags supported to be enabled for this
-region. Initially we are supporting WC only when the region is
-mmap-able.
-
-add vfio_pci_core_register_dev_region_locked to allow externally
-locking the mutex. So that we can check for if a similar region exists
-and add a new region under the same mutex lock, to avoid racing.
-
-Signed-off-by: Mahmoud Adam <mngyadam@amazon.de>
----
- drivers/vfio/pci/vfio_pci_core.c | 173 ++++++++++++++++++++++++++++---
- 1 file changed, 161 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-index 962d3eda1ea9f..3c162cf47a1eb 100644
---- a/drivers/vfio/pci/vfio_pci_core.c
-+++ b/drivers/vfio/pci/vfio_pci_core.c
-@@ -882,20 +882,14 @@ static int msix_mmappable_cap(struct vfio_pci_core_device *vdev,
- 	return vfio_info_add_capability(caps, &header, sizeof(header));
- }
- 
--/*
-- * Registers a new region to vfio_pci_core_device. region_lock should
-- * be held when multiple registers could happen.
-- * Returns region index on success or a negative errno.
-- */
--int vfio_pci_core_register_dev_region(struct vfio_pci_core_device *vdev,
--				      unsigned int type, unsigned int subtype,
--				      const struct vfio_pci_regops *ops,
--				      size_t size, u32 flags, void *data)
-+static int vfio_pci_core_register_dev_region_locked(
-+	struct vfio_pci_core_device *vdev,
-+	unsigned int type, unsigned int subtype,
-+	const struct vfio_pci_regops *ops,
-+	size_t size, u32 flags, void *data)
- {
- 	struct vfio_pci_region *region, *old_region;
- 	int num_regions;
--
--	mutex_lock(&vdev->region_lock);
- 	num_regions = READ_ONCE(vdev->num_regions);
- 
- 	region = kmalloc((num_regions + 1) * sizeof(*region),
-@@ -919,10 +913,29 @@ int vfio_pci_core_register_dev_region(struct vfio_pci_core_device *vdev,
- 	rcu_assign_pointer(vdev->region, region);
- 	synchronize_rcu();
- 	WRITE_ONCE(vdev->num_regions, READ_ONCE(vdev->num_regions) + 1);
--	mutex_unlock(&vdev->region_lock);
- 	kfree(old_region);
- 	return num_regions;
- }
-+
-+/*
-+ * Registers a new region to vfio_pci_core_device. region_lock should
-+ * be held when multiple registers could happen.
-+ * Returns region index on success or a negative errno.
-+ */
-+int vfio_pci_core_register_dev_region(struct vfio_pci_core_device *vdev,
-+				      unsigned int type, unsigned int subtype,
-+				      const struct vfio_pci_regops *ops,
-+				      size_t size, u32 flags, void *data)
-+{
-+	int index;
-+
-+	mutex_lock(&vdev->region_lock);
-+	index = vfio_pci_core_register_dev_region_locked(vdev, type, subtype,
-+							 ops,
-+							 size, flags, data);
-+	mutex_unlock(&vdev->region_lock);
-+	return index;
-+}
- EXPORT_SYMBOL_GPL(vfio_pci_core_register_dev_region);
- 
- static int vfio_pci_info_atomic_cap(struct vfio_pci_core_device *vdev,
-@@ -1528,6 +1541,48 @@ static int vfio_pci_core_feature_token(struct vfio_device *device, u32 flags,
- 	return 0;
- }
- 
-+static bool vfio_pci_region_is_mmap_supported(struct vfio_pci_core_device *vdev,
-+					      int index)
-+{
-+	if (index <= VFIO_PCI_BAR5_REGION_INDEX)
-+		return vdev->bar_mmap_supported[index];
-+
-+	if (index >= VFIO_PCI_NUM_REGIONS) {
-+		int i = index - VFIO_PCI_NUM_REGIONS;
-+		bool is_mmap;
-+		struct vfio_pci_region *region;
-+
-+		rcu_read_lock();
-+		region = &rcu_dereference(vdev->region)[i];
-+		is_mmap = (region->flags & VFIO_REGION_INFO_FLAG_MMAP) &&
-+			region->ops && region->ops->mmap;
-+		rcu_read_unlock();
-+		return is_mmap;
-+	}
-+	return false;
-+}
-+
-+static bool vfio_pci_region_alias_exists(struct vfio_pci_core_device *vdev,
-+					 u32 flags, int index, int *alias_index)
-+{
-+	int i;
-+
-+	for (i = 0; i < READ_ONCE(vdev->num_regions); i++) {
-+		struct vfio_pci_region *region;
-+
-+		region = &rcu_dereference_protected(
-+			vdev->region, lockdep_is_held(&vdev->region_lock))[i];
-+		if (!(region->flags & VFIO_REGION_INFO_FLAG_ALIAS))
-+			continue;
-+		if ((int)(uintptr_t) region->data == index &&
-+		    region->flags == flags) {
-+			*alias_index = i + VFIO_PCI_NUM_REGIONS;
-+			return true;
-+		}
-+	}
-+	return false;
-+}
-+
- static int vfio_pci_alias_region_mmap(struct vfio_pci_core_device *vdev,
- 				      struct vfio_pci_region *region,
- 				      struct vm_area_struct *vma)
-@@ -1555,6 +1610,97 @@ struct vfio_pci_regops vfio_pci_alias_region_ops = {
- 	.mmap = vfio_pci_alias_region_mmap,
- };
- 
-+static int vfio_pci_core_feature_alias_region(
-+	struct vfio_device *device, u32 flags,
-+	struct vfio_device_feature_alias_region __user *arg,
-+	size_t argsz)
-+{
-+	struct vfio_pci_core_device *vdev =
-+		container_of(device, struct vfio_pci_core_device, vdev);
-+	struct pci_dev *pdev = vdev->pdev;
-+	bool is_probe = false;
-+	u32 region_flags;
-+	struct vfio_device_feature_alias_region request_region;
-+	int ret, index, new_index;
-+	size_t size;
-+
-+	ret = vfio_check_feature(flags, argsz, VFIO_DEVICE_FEATURE_SET,
-+				 sizeof(request_region));
-+	if (ret < 0)
-+		return ret;
-+
-+	if (ret == 0) /* probing only */
-+		is_probe = true;
-+
-+	if (copy_from_user(&request_region, arg, sizeof(request_region)))
-+		return -EFAULT;
-+
-+	if (request_region.index >= VFIO_PCI_NUM_REGIONS +
-+					    READ_ONCE(vdev->num_regions))
-+		return -EINVAL;
-+
-+	index = array_index_nospec(request_region.index,
-+				   VFIO_PCI_NUM_REGIONS +
-+				   READ_ONCE(vdev->num_regions));
-+
-+	/* make sure we are not aliasing an alias region */
-+	if (index >= VFIO_PCI_NUM_REGIONS) {
-+		int i;
-+
-+		rcu_read_lock();
-+		i = index - VFIO_PCI_NUM_REGIONS;
-+		if (rcu_dereference(vdev->region)[i].flags &
-+		    VFIO_REGION_INFO_FLAG_ALIAS) {
-+			rcu_read_unlock();
-+			return -EINVAL;
-+		}
-+		rcu_read_unlock();
-+	}
-+
-+	/* For now we only allow aliasing mmap supported regions. */
-+	if (!vfio_pci_region_is_mmap_supported(vdev, index))
-+		return -EINVAL;
-+
-+	if (is_probe) {
-+		request_region.flags = VFIO_REGION_INFO_FLAG_WC;
-+		goto out_copy;
-+	}
-+
-+	if (request_region.flags & ~VFIO_REGION_INFO_FLAG_WC)
-+		return -EINVAL;
-+
-+	region_flags = VFIO_REGION_INFO_FLAG_ALIAS |
-+		       VFIO_REGION_INFO_FLAG_MMAP | VFIO_REGION_INFO_FLAG_WC;
-+
-+	mutex_lock(&vdev->region_lock);
-+	if (vfio_pci_region_alias_exists(vdev, region_flags,
-+					 index, &new_index)) {
-+		request_region.alias_index = new_index;
-+		goto out_copy_unlock;
-+	}
-+
-+	if (index <= VFIO_PCI_BAR5_REGION_INDEX)
-+		size = pci_resource_len(pdev, index);
-+	else
-+		size = vdev->region[index].size;
-+
-+	new_index = vfio_pci_core_register_dev_region_locked(
-+		vdev, 0, 0, &vfio_pci_alias_region_ops, size, region_flags,
-+		(void *)(uintptr_t)index);
-+
-+	if (new_index < 0) {
-+		mutex_unlock(&vdev->region_lock);
-+		return new_index;
-+	}
-+	request_region.alias_index = new_index + VFIO_PCI_NUM_REGIONS;
-+
-+out_copy_unlock:
-+	mutex_unlock(&vdev->region_lock);
-+out_copy:
-+	ret = copy_to_user(arg, &request_region, sizeof(request_region));
-+	return ret ? -EFAULT : 0;
-+}
-+
- int vfio_pci_core_ioctl_feature(struct vfio_device *device, u32 flags,
- 				void __user *arg, size_t argsz)
- {
-@@ -1568,6 +1714,9 @@ int vfio_pci_core_ioctl_feature(struct vfio_device *device, u32 flags,
- 		return vfio_pci_core_pm_exit(device, flags, arg, argsz);
- 	case VFIO_DEVICE_FEATURE_PCI_VF_TOKEN:
- 		return vfio_pci_core_feature_token(device, flags, arg, argsz);
-+	case VFIO_DEVICE_FEATURE_ALIAS_REGION:
-+		return vfio_pci_core_feature_alias_region(device, flags,
-+							  arg, argsz);
- 	default:
- 		return -ENOTTY;
- 	}
--- 
-2.47.3
-
-
-
-
-Amazon Web Services Development Center Germany GmbH
-Tamara-Danz-Str. 13
-10243 Berlin
-Geschaeftsfuehrung: Christian Schlaeger
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
+Thanks!
 
 
