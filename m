@@ -1,155 +1,199 @@
-Return-Path: <linux-kernel+bounces-829861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA283B9813D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:35:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46EC1B98152
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18346189EE4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:35:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6171B1B2070A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52661F09A8;
-	Wed, 24 Sep 2025 02:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A0C7A13A;
+	Wed, 24 Sep 2025 02:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZHQFiypz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="Z0qbgezD"
+Received: from va-2-40.ptr.blmpb.com (va-2-40.ptr.blmpb.com [209.127.231.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CD71FC0EA
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605562147F9
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.127.231.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758681317; cv=none; b=WfOfj0VFejqfLuAMDmjxwtPm70dP5wxi23sWLunW7UVH8SBOkHyv7S6rv/awWmj51vonEtkFu0pEn34xRnr64XJhCqkIEFp+lyOkVOqOTWmRgFmyMeVuBNVcDR64tkITbO499BB1FZeeJrBtA9I1pocdejf2iypZUkzYBeXnAkQ=
+	t=1758681388; cv=none; b=jr60fw0Fc9FV4D2ca6S3MQV5MS/AadKsxcvHYR6sM/B5PHTn6w8+XBOlYDnpUcdDTSFokStiG7kqR92Z8a2sUP1Bm50HsYPEylDyiWY2uCADYTs52VJP3tfkok1hkfgbev+6YywLVxbjq8luZRCOpnKRSiC27rRYJsc6C/0fYBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758681317; c=relaxed/simple;
-	bh=l6mzHrh3DHwqDqhN4KRNV2GU6Fo1OTXQ0leBHA0ZE64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sbbnb5LqbtmUjReSLrEOnzTxso2o/fYgI1T186V45a97elzjD3cudQGcAlR9F0rnaurh6WfZFmtChiNPrh/+9IYqdKNM1QFXLh97DCqToiGG5gW+l2EU3xqbsGtgxpJ8LFJ5Sp8Ap0HJZfG+uHAlhsaDxkXojoJwyRAqV/SydcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZHQFiypz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758681313;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r8pUVu7ebrm0X4wJheoYfCWuw4PuHNLvghKI3Pai2MA=;
-	b=ZHQFiypz6QRpCuNpKx3PvVK/yXKnjgy0IYqI0n+GEFES0Inh+d3nAm7PZ2u+3jenYBpVku
-	s2JwPBQhjEWFFgKt/8xo6q1RoNVRQVyyOrmZBoOhXHh3JPY1GAXOWZXvtoGUz6nSNkQoBX
-	bv4TQwSg9eZhi6iU19Uj53OlHo2voFs=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-215-MVxsJoxEMu6l8sCFbwGk7g-1; Tue,
- 23 Sep 2025 22:35:09 -0400
-X-MC-Unique: MVxsJoxEMu6l8sCFbwGk7g-1
-X-Mimecast-MFC-AGG-ID: MVxsJoxEMu6l8sCFbwGk7g_1758681307
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 006D61956096;
-	Wed, 24 Sep 2025 02:35:07 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.54])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 06F6B1800446;
-	Wed, 24 Sep 2025 02:35:04 +0000 (UTC)
-Date: Wed, 24 Sep 2025 10:35:00 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Andrey Konovalov <andreyknvl@gmail.com>, snovitoll@gmail.com
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, glider@google.com,
-	dvyukov@google.com, elver@google.com, linux-mm@kvack.org,
-	vincenzo.frascino@arm.com, akpm@linux-foundation.org,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org, sj@kernel.org,
-	lorenzo.stoakes@oracle.com, christophe.leroy@csgroup.eu
-Subject: Re: [PATCH v3 00/12] mm/kasan: make kasan=on|off work for all three
- modes
-Message-ID: <aNNY1AzfGua3Kk3S@MiWiFi-R3L-srv>
-References: <20250820053459.164825-1-bhe@redhat.com>
- <CA+fCnZdfv+D7sfRtWgbbFAmWExggzC2by8sDaK7hXfTS7viY8w@mail.gmail.com>
- <aLlJtTeNMdtZAA9B@MiWiFi-R3L-srv>
- <CA+fCnZf2fGTQ6PpoKxDqkOtwcdwyPYx2cFwQw+3xAjOVxjoh6w@mail.gmail.com>
- <75a2eb31-3636-44d4-b2c9-3a24646499a4@gmail.com>
- <CA+fCnZf7jYPUyqHqonWhDKVi9eeN6aaaByMTBYCQrv2-8+hngQ@mail.gmail.com>
- <aMfWz4gwFNMx7x82@MiWiFi-R3L-srv>
- <CA+fCnZcWEuBerMeS4RCXQtged06MJhY=55KsYeJEOJn3K0psXQ@mail.gmail.com>
+	s=arc-20240116; t=1758681388; c=relaxed/simple;
+	bh=UVJsO0fm05URxouO+hmVLn4EhU490r3xcCT+QibkZwE=;
+	h=From:Date:Message-Id:In-Reply-To:To:Subject:Mime-Version:Cc:
+	 References:Content-Type; b=hEZLikZlShQBgPPPb6XqPtuQHDV3of78rMgvysdyl9k93sRndkyNn5jWQ06oVubuB5P/IWp46i1gYVDLtLCLgj+aqstOllhwLB0oAIB1RliGRzMxoLuYiv87XScpxV6TGM8/ShNjBD+HGAu/UnZrrON8t4gC72YG7wbwPJ7tTUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=Z0qbgezD; arc=none smtp.client-ip=209.127.231.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1758681331;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=eok84aP1Pvike2H3H6rF9a3VUr2fUupZ8SYJp6uSjEU=;
+ b=Z0qbgezDvXZ4mBqAUkDqcWvJJozPa4c6/JwipC4VD+eD9k1g+//d0FCpktbMZjFgQcwCaG
+ 0j33v1jmgBIYf2waIspmlmMvGOWnEWIMw4RCU385rrVDCGAzkEc9UDaKP/m9auJll1+rmf
+ D1YfSTT32a5yln3g7NrMXolnIPzOKq8rMuLUAF4tNFuBG+02zqVfybcOK4TnsbZObcAIgT
+ 4c3xGePHqZWuUZPuGLGnQnEUjKlHxDOlvD1nTQoIHGXYL2DunNHaC1wcT7XDHqHt426RqA
+ geH/3PauGhsyAgh+LMG8LUpApWCdyRIba3Ij1RAR7tB1ptVVd2JvYwJqHc1RmA==
+Received: from [127.0.0.1] ([222.128.9.250]) by smtp.feishu.cn with ESMTPS; Wed, 24 Sep 2025 10:35:28 +0800
+From: "BillXiang" <xiangwencheng@lanxincomputing.com>
+Date: Wed, 24 Sep 2025 10:35:25 +0800
+Message-Id: <1be32bd0-a3d1-4fea-8f22-e050f664907b@lanxincomputing.com>
+Content-Transfer-Encoding: 7bit
+X-Lms-Return-Path: <lba+268d358f1+340975+vger.kernel.org+xiangwencheng@lanxincomputing.com>
+In-Reply-To: <20250923-5498566fbd48a3dfd61ecd08@orel>
+User-Agent: Mozilla Thunderbird
+To: "Andrew Jones" <ajones@ventanamicro.com>
+Subject: Re: [PATCH] riscv: Move user-visible sbi ext ids to uapi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+fCnZcWEuBerMeS4RCXQtged06MJhY=55KsYeJEOJn3K0psXQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Mime-Version: 1.0
+Content-Language: en-US
+Cc: <anup@brainfault.org>, <kvm-riscv@lists.infradead.org>, 
+	<linux-kernel@vger.kernel.org>, <paul.walmsley@sifive.com>, 
+	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <alex@ghiti.fr>, 
+	<atishp@rivosinc.com>
+X-Original-From: BillXiang <xiangwencheng@lanxincomputing.com>
+References: <20250917085246.1430354-1-xiangwencheng@lanxincomputing.com> <20250923-5498566fbd48a3dfd61ecd08@orel>
+Content-Type: text/plain; charset=UTF-8
 
-On 09/23/25 at 07:49pm, Andrey Konovalov wrote:
-> On Mon, Sep 15, 2025 at 11:05 AM Baoquan He <bhe@redhat.com> wrote:
-> >
-> > > If you feel strongly that the ~1/8th RAM overhead (coming from the
-> > > physmap shadow and the slab redzones) is still unacceptable for your
-> > > use case (noting that the performance overhead (and the constant
-> > > silent detection of false-positive bugs) would still be there), I
-> > > think you can proceed with your series (unless someone else is
-> > > against).
-> >
-> > Yeah, that would be great if we can also avoid any not needed memory
-> > consumption for kdump.
+On 9/24/2025 4:14 AM, Andrew Jones wrote:
+> On Wed, Sep 17, 2025 at 04:52:46PM +0800, BillXiang wrote:
+>> Move those sbi ext ids to uapi because they will be forwarded
+>> to user space by kvm.
 > 
-> Ack. Let's add support for kasan=off then.
+> We don't need to publish the IDs in UAPI since they are already known to
+> userspace by reading the SBI spec. Indeed QEMU already defines all of
+> these except for the experimental range.>
+> What problem are you trying to solve?
 
-Thanks.
-> 
-> But please describe it in detail in the KASAN documentation.
 
-Will do in next round.
+I'm working on rust-vmm[1], which auto-generates the ID constants
+from uapi/kvm.h via bindgen[2]. Any ID that isn't exported there is
+invisible to us. I expect other VMMs besides QEMU will need these
+numbers as well, so let's keep one canonical definition in the UAPI
+headers for everyone to share.
 
-> 
-> [...]
-> 
-> > When I made patch and posted, I didn't see Sabyrzhan's patches because I
-> > usually don't go through mm mailing list. If I saw his patch earlier, I
-> > would have suggested him to solve this at the same time.
-> >
-> > About Sabyrzhan's patch sereis, I have picked up part of his patches and
-> > credit the author to Sabyrzhan in below patchset.
-> >
-> > [PATCH 0/4] mm/kasan: remove kasan_arch_is_ready()
-> > https://lore.kernel.org/all/20250812130933.71593-1-bhe@redhat.com/T/#u
-> >
-> > About reposting of this series, do you think which one is preferred:
-> >
-> > 1) Firstly merge Sabyrzhan's patch series, I reverted them and apply for
-> >    my patchset.
-> >
-> > 2) Credit the author of patch 1,2,3 of this patch series to Sabyrzhan
-> >    too as below, because Sabyrzhan do the unification of the static keys
-> >    usage and the KASAN initialization calls earlier:
-> 
-> Since the Sabyrzhan's patches are already in mm-stable (and I assume
-> will be merged during the next merge window), just rebase your changes
-> on top.
 
-That's fine, I will rebase.
+[1] https://github.com/rust-vmm
+[2] https://crates.io/crates/bindgen
 
 > 
-> But also note that Sabyrzhan is planning to move out the
-> kasan_enabled() checks into include/linux/kasan.h (which is a clean-up
-> I would have also asked you to do with the kasan=off patches), so
-> maybe you should sync up with him wrt these changes.
-
-Hi Sabyrzhan,
-
-What's your thought? You want to do the cleanup after my rebasing on
-your merged patches or you prefer to do it ahead of time? Please let me
-know so that I can adjust my posting accordingly. Thanks.
-
-Thanks
-Baoquan
-
+> Thanks,
+> drew
+> 
+>>
+>> Signed-off-by: BillXiang <xiangwencheng@lanxincomputing.com>
+>> ---
+>>   arch/riscv/include/asm/sbi.h      | 16 +-----------
+>>   arch/riscv/include/uapi/asm/sbi.h | 43 +++++++++++++++++++++++++++++++
+>>   2 files changed, 44 insertions(+), 15 deletions(-)
+>>   create mode 100644 arch/riscv/include/uapi/asm/sbi.h
+>>
+>> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+>> index 341e74238aa0..e196feaabb2e 100644
+>> --- a/arch/riscv/include/asm/sbi.h
+>> +++ b/arch/riscv/include/asm/sbi.h
+>> @@ -10,13 +10,12 @@
+>>   #include <linux/types.h>
+>>   #include <linux/cpumask.h>
+>>   #include <linux/jump_label.h>
+>> +#include <uapi/asm/sbi.h>
+>>   
+>>   #ifdef CONFIG_RISCV_SBI
+>>   enum sbi_ext_id {
+>>   #ifdef CONFIG_RISCV_SBI_V01
+>>   	SBI_EXT_0_1_SET_TIMER = 0x0,
+>> -	SBI_EXT_0_1_CONSOLE_PUTCHAR = 0x1,
+>> -	SBI_EXT_0_1_CONSOLE_GETCHAR = 0x2,
+>>   	SBI_EXT_0_1_CLEAR_IPI = 0x3,
+>>   	SBI_EXT_0_1_SEND_IPI = 0x4,
+>>   	SBI_EXT_0_1_REMOTE_FENCE_I = 0x5,
+>> @@ -37,13 +36,6 @@ enum sbi_ext_id {
+>>   	SBI_EXT_NACL = 0x4E41434C,
+>>   	SBI_EXT_FWFT = 0x46574654,
+>>   
+>> -	/* Experimentals extensions must lie within this range */
+>> -	SBI_EXT_EXPERIMENTAL_START = 0x08000000,
+>> -	SBI_EXT_EXPERIMENTAL_END = 0x08FFFFFF,
+>> -
+>> -	/* Vendor extensions must lie within this range */
+>> -	SBI_EXT_VENDOR_START = 0x09000000,
+>> -	SBI_EXT_VENDOR_END = 0x09FFFFFF,
+>>   };
+>>   
+>>   enum sbi_ext_base_fid {
+>> @@ -263,12 +255,6 @@ enum sbi_pmu_ctr_type {
+>>   #define SBI_PMU_STOP_FLAG_RESET BIT(0)
+>>   #define SBI_PMU_STOP_FLAG_TAKE_SNAPSHOT BIT(1)
+>>   
+>> -enum sbi_ext_dbcn_fid {
+>> -	SBI_EXT_DBCN_CONSOLE_WRITE = 0,
+>> -	SBI_EXT_DBCN_CONSOLE_READ = 1,
+>> -	SBI_EXT_DBCN_CONSOLE_WRITE_BYTE = 2,
+>> -};
+>> -
+>>   /* SBI STA (steal-time accounting) extension */
+>>   enum sbi_ext_sta_fid {
+>>   	SBI_EXT_STA_STEAL_TIME_SET_SHMEM = 0,
+>> diff --git a/arch/riscv/include/uapi/asm/sbi.h b/arch/riscv/include/uapi/asm/sbi.h
+>> new file mode 100644
+>> index 000000000000..d29ac0abeefe
+>> --- /dev/null
+>> +++ b/arch/riscv/include/uapi/asm/sbi.h
+>> @@ -0,0 +1,43 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>> +/*
+>> + * Copyright (C) 2025 Lanxincomputing Corporation or its affiliates.
+>> + *
+>> + * Authors:
+>> + *     BillXiang <xiangwencheng@lanxincomputing.com>
+>> + */
+>> +
+>> +#ifndef _UAPI_ASM_RISCV_SBI_H
+>> +#define _UAPI_ASM_RISCV_SBI_H
+>> +
+>> +
+>> +enum SBI_EXT_ID {
+>> +	/*
+>> +	* The CONSOLE_GETCHAR/CONSOLE_PUTCHAR SBI calls cannot be
+>> +	* handled in kernel so they will be forwarded to userspace by kvm.
+>> +	*/
+>> +	SBI_EXT_0_1_CONSOLE_PUTCHAR = 0x1,
+>> +	SBI_EXT_0_1_CONSOLE_GETCHAR = 0x2,
+>> +	/*
+>> +	* Both SBI experimental and vendor extensions are
+>> +	* unconditionally forwarded to userspace by kvm.
+>> +	*/
+>> +	/* Experimentals extensions must lie within this range */
+>> +	SBI_EXT_EXPERIMENTAL_START = 0x08000000,
+>> +	SBI_EXT_EXPERIMENTAL_END = 0x08FFFFFF,
+>> +
+>> +	/* Vendor extensions must lie within this range */
+>> +	SBI_EXT_VENDOR_START = 0x09000000,
+>> +	SBI_EXT_VENDOR_END = 0x09FFFFFF,
+>> +};
+>> +
+>> +/*
+>> +* The SBI debug console functions are unconditionally
+>> +* forwarded to the userspace by kvm.
+>> +*/
+>> +enum sbi_ext_dbcn_fid {
+>> +	SBI_EXT_DBCN_CONSOLE_WRITE = 0,
+>> +	SBI_EXT_DBCN_CONSOLE_READ = 1,
+>> +	SBI_EXT_DBCN_CONSOLE_WRITE_BYTE = 2,
+>> +};
+>> +
+>> +#endif /* _UAPI_ASM_RISCV_SBI_H */
+>> \ No newline at end of file
+>> -- 
+>> 2.43.0
 
