@@ -1,138 +1,126 @@
-Return-Path: <linux-kernel+bounces-830058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA7EB98951
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:42:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FA8B9895D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 698F01B20BCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:42:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A59C41B20CC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EE027BF80;
-	Wed, 24 Sep 2025 07:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708A227BF80;
+	Wed, 24 Sep 2025 07:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hKQXgiFp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jD0lJKK+"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F39E7262E
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D99B27FB31
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758699726; cv=none; b=jvMN7R7p6HmGjxDHWHT6nRlmKt7HbFAaYiZqES3N0fVHRmlF99n3lIvp74KDDDeGlOn2Cb0RsgVVq6BztyQeAykVceVR4jmNGs3hxtjs3CPtVfHsf+TCGUbUQArcpnoGXaD9sIHslFiUjhI+eM/uqFKX1ReEYCMX9h+BYPC+wJU=
+	t=1758699731; cv=none; b=H3HdwRoW8haNAwt64JuS0agL8KKJYB4g+PJePtqS/iekdkpAy+AksQCqCGZMjJmoQ5UsGzcglx+xbWD2Dgzo2ravnIyRAEcLMitZmwfEYHMPnXds2PWiSnr72cj7HxOIjXr7tYv8TNJ/jlxt9aV0s071lGHIexTHpaIhKx+CGBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758699726; c=relaxed/simple;
-	bh=s22C2XkvtqXbgWCggQzklD/42otLP53lpOCy5Alg7+4=;
+	s=arc-20240116; t=1758699731; c=relaxed/simple;
+	bh=W4c1hIWAXEsutebUPXVLyK3x1jxvdJ0k+FyBEcIkX8I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sd2wXiKopMvI64ogV01ZmzwhSm1Cid193q8J97nXPBsY6Tu2/W2uwdZ8HGl6kVldy8DiXtm3CPx0p4CFQ6N66fRZURjTC3HQoTUOedqgiHTdOJz/VhJHXDq6hb1Bi8nH7X1G3MEHX/zwaV8AaaLc0ogp/cWswiqDMOlssU/uZyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hKQXgiFp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758699723;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8iP4CgsS/C0dxL3gWclMrWG9rP/QiQu1MTT4mBV3Urc=;
-	b=hKQXgiFpOh+GLqDmK00cvNa7tjcfV6akgjbxsXjcm0bL0ZXpuzoqmoXaVfv8ndSctEbsbO
-	uKLf5l//JllBe8NV5V4Vo7peJKS2l10a9ZuPBNNdxYmo857PKhGIgctaNwmDEJ5DJnRlYa
-	LdZ4egFr6gNiEyoymQg4OpDSHdPzH40=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-153-zA1U8-C8OWWB5tFt-4kszA-1; Wed, 24 Sep 2025 03:42:01 -0400
-X-MC-Unique: zA1U8-C8OWWB5tFt-4kszA-1
-X-Mimecast-MFC-AGG-ID: zA1U8-C8OWWB5tFt-4kszA_1758699720
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45de07b831dso45741865e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:42:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758699720; x=1759304520;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8iP4CgsS/C0dxL3gWclMrWG9rP/QiQu1MTT4mBV3Urc=;
-        b=S0hy/H3kWZdnX6kr5VbFjC7lg5R1m57UG0OJB+bNsj9BQJ2gtV8vl9638S4W89Ga+2
-         foaCpcvoekkebP3JpCd6KT3KPr/EX06lb1eg1GDUU2d783ob/2Tbhg0FaCk/olYiwUiq
-         6BueiI5qQCAIbBc2fwGJItgSMsv4ammOpzUXpp7gM3vDGAdADodwuPMYEHypMRqYJh/0
-         ACn+HXrWcfx8qZHMstn36NbzxnIoz8RmUpSUR3arCr2ElN68lzLdJF08s7z1ly0ObUc6
-         uIcgFAwWAE2RFy8f75qZNkN5CGU3LwhxKoRF6+sZ5wQt4ZJBvohll1/QGH43JOrIke17
-         t1UA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzh0q/jF/XZ/uTFRxgMfOG9OqxCVJo6EWGyG5qaLdSDv83Mz+FDnAWYACRSep7eiblLAjqD/24M/6+398=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfz5HtmF3sJvh7/ZXJBu5HNEBn4OMSlRiYq3Ha3VuadunUUK9z
-	E7BrWfwRyB0GgcBmKaLhmNbn/7flbTpHSgcPVH2Q7qQZYD2vZBJuHkPGwiYZTufWgtVdZMXeU9s
-	288scirFtyg2bUsxGmmEUSZjY4nFjIbMV5GM059Zkrg0pLE88mbuuZwLxHEf3mwEp0A==
-X-Gm-Gg: ASbGncuZS+Lnt9fCC8LLvwmrsYziq4i/IzpWLdyvobkEmOWyauTsWoLc7Mq/8cdShLl
-	8pAuGNMC3riLmED+9MJFcVw0rc18r6K5aqrScm0nTyj07YfDr6pIDLV5kuKBHvqyQOv1A4X/4K5
-	WrCOyaVXHvCoAypE8g3zhcqAhl5UzEH0od0ZQyNCS5tJof8pWU0y7Qrc4ogL4UEXDRmUjBENShu
-	XX9jGbdAlWzPEjOgIi0kOVSioKuKlZ2S02pOvvZXoOe/9EowKfVRpj8khb7aew8IncLcjBIxzjg
-	jGUvhYpklxIfVAHq82UMkrx2WAyIbonDK9A=
-X-Received: by 2002:a05:600c:3547:b0:46e:1d8d:cfa2 with SMTP id 5b1f17b1804b1-46e1dacf6edmr50676295e9.20.1758699720374;
-        Wed, 24 Sep 2025 00:42:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBaH8Qcz+geVHLVmG1y55L66i7iUAa9TF2rE/T5FQj6JWkFbMfTzOEnJtYBSrJWjTl6QSAhw==
-X-Received: by 2002:a05:600c:3547:b0:46e:1d8d:cfa2 with SMTP id 5b1f17b1804b1-46e1dacf6edmr50676015e9.20.1758699719977;
-        Wed, 24 Sep 2025 00:41:59 -0700 (PDT)
-Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40bd194c0bdsm1287994f8f.61.2025.09.24.00.41.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 00:41:59 -0700 (PDT)
-Date: Wed, 24 Sep 2025 03:41:56 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: Simon Schippers <simon.schippers@tu-dortmund.de>,
-	willemdebruijn.kernel@gmail.com, eperezma@redhat.com,
-	stephen@networkplumber.org, leiyang@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev, kvm@vger.kernel.org
-Subject: Re: [PATCH net-next v5 0/8] TUN/TAP & vhost_net: netdev queue flow
- control to avoid ptr_ring tail drop
-Message-ID: <20250924034112-mutt-send-email-mst@kernel.org>
-References: <20250922221553.47802-1-simon.schippers@tu-dortmund.de>
- <20250924031105-mutt-send-email-mst@kernel.org>
- <CACGkMEuriTgw4+bFPiPU-1ptipt-WKvHdavM53ANwkr=iSvYYg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A/6lCjUsj5A+TXrbnocRbJiMWF2A0QBO2hvz0xnNX8069Hnl+PQ/rU8p/itLQswHfKxIJbNydLsIkboT18Zjb71HByqf7uOgTbzZRMrK4Vx6FBrZ5KKPV+g4WUwif/n6zf0hZk/BP8g2BQ2RkysAoEacIqV/6t3NPnlocYMK97k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jD0lJKK+; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oytDn5rsVbbUrvxkkq7U7WmaGRSvw7EafQQ0AHTHvJ4=; b=jD0lJKK+ENt1ozlXGOMLQsTx7W
+	pyjo7FJd0lRujIEwT+MIzG7+ZufPNzgCe9238ZvcmqIIl8k4coUqzdLWkcxRsNzbDt9Nh5v/IIseM
+	ZEaKr06JgtEcTf2itiazYNZarncpy7nYutWJHbpLc0cLDH8cefs6f1mg/cMUd/8/W6Vm6lY1xSzYn
+	eKlIzPUlPQKQqkHNMQ+EaD6qQ3JJYdL7PukTWGixExtO59SVUrK94o6kkhJGwwSZvv4ZNYMuBekkV
+	QbJnOPBpi550Xy3iq32CZyaU+LybLags/SdpQ6oExqp2zpf3sNon0u0roF4hw+u5qArXIfhqURhom
+	pqHe2ncQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v1K8d-00000008i7A-0iu0;
+	Wed, 24 Sep 2025 07:42:07 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BA8F030033D; Wed, 24 Sep 2025 09:42:06 +0200 (CEST)
+Date: Wed, 24 Sep 2025 09:42:06 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexandre Chartre <alexandre.chartre@oracle.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jpoimboe@kernel.org
+Subject: Re: [RFC PATCH v2 00/17] objtool: Function validation tracing
+Message-ID: <20250924074206.GW4068168@noisy.programming.kicks-ass.net>
+References: <20250619145659.1377970-1-alexandre.chartre@oracle.com>
+ <20250924073649.GT4067720@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACGkMEuriTgw4+bFPiPU-1ptipt-WKvHdavM53ANwkr=iSvYYg@mail.gmail.com>
+In-Reply-To: <20250924073649.GT4067720@noisy.programming.kicks-ass.net>
 
-On Wed, Sep 24, 2025 at 03:33:08PM +0800, Jason Wang wrote:
-> On Wed, Sep 24, 2025 at 3:18 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Tue, Sep 23, 2025 at 12:15:45AM +0200, Simon Schippers wrote:
-> > > This patch series deals with TUN, TAP and vhost_net which drop incoming
-> > > SKBs whenever their internal ptr_ring buffer is full. Instead, with this
-> > > patch series, the associated netdev queue is stopped before this happens.
-> > > This allows the connected qdisc to function correctly as reported by [1]
-> > > and improves application-layer performance, see our paper [2]. Meanwhile
-> > > the theoretical performance differs only slightly:
-> >
-> >
-> > About this whole approach.
-> > What if userspace is not consuming packets?
-> > Won't the watchdog warnings appear?
-> > Is it safe to allow userspace to block a tx queue
-> > indefinitely?
+On Wed, Sep 24, 2025 at 09:36:49AM +0200, Peter Zijlstra wrote:
+> > Example 2 (--disas option): Disassemble perf_get_x86_pmu_capability()
+> > ---------------------------------------------------------------------
+> > 
+> > $ ./tools/objtool/objtool --disas=perf_get_x86_pmu_capability --link vmlinux.o
+> > perf_get_x86_pmu_capability:
+> >   d000:  perf_get_x86_pmu_capability         endbr64                                                   
+> >   d004:  perf_get_x86_pmu_capability+0x4     callq  __fentry__                                         
+> >   d009:  perf_get_x86_pmu_capability+0x9     mov    %rdi,%rdx                                          
+> >                                              <alternative.d00c> default - begin
+> >   d00c:  perf_get_x86_pmu_capability+0xc     | jmpq   .altinstr_aux+0x90                               
 > 
-> I think it's safe as it's a userspace device, there's no way to
-> guarantee the userspace can process the packet in time (so no watchdog
-> for TUN).
+> (you probably need to relocate the target -- we never jump into alinstr)
 > 
-> Thanks
+> >                                              <alternative.d00c> default - end
+> >                                              <alternative.d00c> 1/2 - begin
+> >                                              | <fake nop> (5 bytes)                                    
+> >                                              <alternative.d00c> 1/2 end
+> >                                              <alternative.d00c> 2/2 - begin
+> >    5e5:  .altinstr_replacement+0x5e5         | jmpq   perf_get_x86_pmu_capability+0x3f                 
+> >                                              <alternative.d00c> 2/2 end
+> 
+> Idem; the above is *really* hard to decipher.
+> 
+>   d00c:  perf_get_x86_pmu_capability+0xc | jmpq   .altinstr_aux+0x90 | nop5 | jmpq   perf_get_x86_pmu_capability+0x3f
+> 
+> >   d011:  perf_get_x86_pmu_capability+0x11    ud2                                                       
+> >   d013:  perf_get_x86_pmu_capability+0x13    movq   $0x0,(%rdx)                                        
+> >   d01a:  perf_get_x86_pmu_capability+0x1a    movq   $0x0,0x8(%rdx)                                     
+> >   d022:  perf_get_x86_pmu_capability+0x22    movq   $0x0,0x10(%rdx)                                    
+> >   d02a:  perf_get_x86_pmu_capability+0x2a    movq   $0x0,0x18(%rdx)                                    
+> >   d032:  perf_get_x86_pmu_capability+0x32    xor    %eax,%eax                                          
+> >   d034:  perf_get_x86_pmu_capability+0x34    xor    %edx,%edx                                          
+> >   d036:  perf_get_x86_pmu_capability+0x36    xor    %ecx,%ecx                                          
+> >   d038:  perf_get_x86_pmu_capability+0x38    xor    %edi,%edi                                          
+> >   d03a:  perf_get_x86_pmu_capability+0x3a    jmpq   __x86_return_thunk                                 
+> >   d03f:  perf_get_x86_pmu_capability+0x3f    cmpq   $0x0,0x0(%rip)        # x86_pmu+0x10               
+> >   d047:  perf_get_x86_pmu_capability+0x47    je     d013 <perf_get_x86_pmu_capability+0x13>            
+> >   d049:  perf_get_x86_pmu_capability+0x49    mov    0x0(%rip),%eax        # x86_pmu+0x8                
+> >   d04f:  perf_get_x86_pmu_capability+0x4f    mov    %eax,(%rdi)                                        
+> >                                              <jump alternative.d051> default
+> >   d051:  perf_get_x86_pmu_capability+0x51    | xchg   %ax,%ax                                          
+> >                                              <jump alternative.d051> else
+> >   d051:  perf_get_x86_pmu_capability+0x51    | jmp    d053 <perf_get_x86_pmu_capability+0x53>
+> >                                              <jump alternative.d051> end
+> 
+> this is a jump_label; if we would retain the whole 'key' reloc, and
+> not only the key_addend, you could make it something like:
+> 
+>   d051:  perf_get_x86_pmu_capability+0x51      [ jmp.d8 d053 <perf_get_x86_pmu_capability+0x53> ] * perf_is_hybrid
+> 
+> (also, this here reads like it is either nop2 or jmp.d8 +0, which is
+> 'weird')
 
-Hmm. Anyway, I guess if we ever want to enable timeout for tun,
-we can worry about it then. Does not need to block this patchset.
+Also, particularly in alternatives I think it makes sense to make
+explicit distinction between jmp.d8 and jmp.d32 (and similar for Jcc.d8
+/ Jcc.d32).
 
-> >
-> > --
-> > MST
-> >
 
 
