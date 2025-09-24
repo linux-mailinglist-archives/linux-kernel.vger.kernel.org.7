@@ -1,268 +1,205 @@
-Return-Path: <linux-kernel+bounces-831252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC262B9C310
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:50:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ABC4B9C313
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 879453AB92C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:50:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9612A2E7C93
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77B626CE1E;
-	Wed, 24 Sep 2025 20:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291D7327A33;
+	Wed, 24 Sep 2025 20:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jf6ulgRd"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UN1w0mVT"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012056.outbound.protection.outlook.com [52.101.53.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E7E14386D
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758747017; cv=none; b=YTbOyb5Y1Bnm18cIap+DHl2+OLIOqrcFUfntsoU20zks/xfoHf3qJeYmpBGIHyPN3Bd5RPwzgJr7DKTAY3eNbzrGiVp8LBvvnO3wGyP44rZhXAB9m5gGbaH6hGGvs5vfMrdihbGQ1+CDJjFXMTpGvsLlhde49th/QWuGS5kLkC0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758747017; c=relaxed/simple;
-	bh=wRramqrxc3wyAWxpl7hhmu9IRI30Tp2rzVfvYllnaq4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r7r5Id03EI66F4vwao7QW6AHWDZMGPaWE3Q3a7qYtDIn6xNGxzjiMg7B2QIlp9GVThfPpcxrLXa8K5/+eT1T9G0kh7MHThoZx5t8lKMzt3EuLTjY6Vb8ZNb67K7k7GgIpJX7cwwYi4PwKagrmrE4zZZ/PwuubmrfuggDPe/lEtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jf6ulgRd; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b5526b7c54eso166836a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:50:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758747013; x=1759351813; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yUtonTzH+d6Koc9tBSC0pPXzcPpJLfBt1hfJF5PLabQ=;
-        b=Jf6ulgRdx4AUW96P7qeyzjryowFrLkzJSTs/9tIs2za1pVUAp3yEvtamL7+HWdlzVX
-         d9l5yD7L1TcuUFctyUaGIZ52m5Qrf3/AC+Td8/qFfm3rxgWXTObNEKZ7iNdUdUGqcNku
-         ic5ac+PCBoCmjFMWa7+raoSd3Xe6o7tVmoFC2fuGBv/m0i9ebgfPA0MYsdKuplR3+0i2
-         NNB4VRkolviWRXHySNFDE8v878Imu9285Vdm1attzNvjroe9Q00Kd+7PLhpqB9/xLebf
-         W1UoecRXrMTm/QclN6QSg8vTltgbDvuH92Fq9sRCPZcGeXi5WmxYUIQ07aS3EN7Wb+i/
-         l8Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758747013; x=1759351813;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yUtonTzH+d6Koc9tBSC0pPXzcPpJLfBt1hfJF5PLabQ=;
-        b=wi5OMuwGjWvIbRJ5/U6In3vCMWkKAO4kFT4vyQCAEimA4eKH21i92jCVC5XC50wo0Y
-         n7BiMjpY6ymDYRVmiALQoqIdgFVzcGyDaDfcq7SDPkAt3O9Ti1BLLuTrQr5Lyi96aQnZ
-         sjhQPPPr5ODEz7hVlx1h6wBI85/6bqHr6kFZkQrols+yZV34GGfw/i3lwJytSFFqj7zg
-         laagxKVE84thM9Uz1OXyjU/BZ2Ceb0UwciUB5BVHkAV587bpQbQtNkVna6LHicvO8OnG
-         5IRVGTUKwTDkjHACLwCe50R+q/LpWC+8QcPk7knXPjixjZo3mbAiXmde7o5Hm5rLHcRM
-         EqeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbqyiC93ji7JK4kkbs9t2311/dfQHyuElSIPYKFa0spP+vSttLMR5cGXAMsby1qHy7C8fm/CP2G9nUtvg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyCCJzaHtBVa38z59FoqFTWPBGfJstULdBEIEfB/U9vxlW5GLi
-	uYjMze1S3RMxvgdwvg5wdgHY5L5yii6Bui9IC0lrIcivYi2iAmEx3K7eB9S7YRRIx0CUkGpmI+T
-	FxWGuIDQuMlS97wg5FYHlDoqJoitIfFamHU3T2j/8
-X-Gm-Gg: ASbGncsqhV/UzMVb8PBsQOtFeTxw8qSeKiTyuSMmigF50mRTZvuWrFulUxTrJiC9R/a
-	5JHKF8OGf3v8p3IJJYzPeBAh6wzyWPV+RonE5P8ZuTbmreuKCntVsl8BZC1Isz7YQKlJ1U/SJY6
-	L3JRnpWJq38/J481PxLG3aT75Gd7o7ckJnc9wOGBr6ksEWffYwiBBSNnZGhQRxBQfcbrQmE1IM6
-	qda3nzfOkAvFakYygroREB/2erT1NwU0f/jjWvHC7c4cqcYvCLke5w=
-X-Google-Smtp-Source: AGHT+IE38fi+Fg0q1j7Ol0QGEtgHPSQpfsofFwHAAg/Zt4ZhCmzeJrbUHHkyUG+gDW1YXxPVgRa+tkuyDrRHf/9act4=
-X-Received: by 2002:a17:903:264b:b0:269:8059:83ab with SMTP id
- d9443c01a7336-27ed4ab545emr6206725ad.51.1758747013201; Wed, 24 Sep 2025
- 13:50:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C47263899;
+	Wed, 24 Sep 2025 20:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758747019; cv=fail; b=Uj8x/vK4F7DxP5EQu71qODlqoNVl18V1dxMm8MsRWLEnVhE1VxdAbI5HoE4nw1Qk8oSb53p6ePABiLEVKOhufyUOywS9M38mx43P+1A9+bxZ6KWa0n+PseUixUXMe40Ge3zc2GZB/6bvwRnHE2Zz5yseA+koM50J2AD1svWg2co=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758747019; c=relaxed/simple;
+	bh=shnIvPez2wjmltfF3wY/BEwxAU0DGx5t8VUJKtbC8Wg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=J5zUc4bshOt3Q8o0H4p4eEbc9RYKNOfYoeapwfQ22vGa/GBwUm18mM8QAJlPQJoCclBFgGujZnEKiLP1ZHKDjflHmdSpwI0UnHwyWSMNhwy/ytNBue7+iIOHx0GQIS8Dq60kbnitWNCifw06b2SD+d4GRYFlMlRkzYqWfFPP5KA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UN1w0mVT; arc=fail smtp.client-ip=52.101.53.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ysBqPQzWOR/pMG842uicRY58pmjEAQmW7HT9vU6w+iJKlI1JoF7OdxQziSr3G5cY1k632ytNsLHxvV7NwfiOFD+0YPTU0mkXfUSJU8lLLB7Nmkqt38TWyejosRhFLCpXZ0FIkDdZfXmUx8kz6cLKdQKUSbG3BuxQ7joIpqb+sJsbw3Ekd6EilI2CtUjuzyCPx8LPcmbPscHja71ZZHI9DV0zbHjItR8qahhZxDHRrzNn0FrsS4v1u2FPuR4e3fJpNwFQtGn4toOapKpocjXs/bmzAXVlzFLpknWg6UTiLU3g7XF6sRiTqlshawSfPa+Fb/gHQ1/OZem5bttLVC0X9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6il8gdNs96HObSNJEhlChOOMDSSNF8fwTfgGs//wvK8=;
+ b=WM7J+SETu4QNACA/LYErhHw0KASRD7mwSpyzow0KLEj1T4xUlmNlwAeuiK9JobmlZpdoqycZH6El8KZtnIYZvpXxhCI67UAtUHigHhl6pFXHE/yDhxWu4Gvk4Z6bLHq6ABaBT5vkuD9p4+WoZj7lsxuTcDUcFK3GN2sT8iZLVWNtewDoNCMWrTPoG040otob5w3XWZFux7pbPZobW/2IBwceKXoiR50qkBnmuCUNFt17m3H2qSMOFoc8sL1q8Q6nFKc7oeSN0bcZUzyYGtmW9uF+WjJzEntoYBWYRKYNgve55xJH8z2H0EP3CNmBhzgaf/WbGF3FoXugtznLJlsgAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6il8gdNs96HObSNJEhlChOOMDSSNF8fwTfgGs//wvK8=;
+ b=UN1w0mVTQfEOBHelrFBqwODop9XsS8MLUxo2h0BrT0EXNbfzcXeuMfw37GgHXLEdNLhbId4oddMikRZG4HzUpv09Yta6yi6FGABA0+jUfUpjnv7jUhy+MFtSR6W7+ngBAWRc1DgomL7sz4bCraBg7fQbUqV5Pd1aikOBPQX0jgbEwE1SqOYq7una6RyK1MGi7nvU9ZCUanI3KBCiUxXzr6r4ir+nnvPKv17YvLCyGbsG9d88nh6IsFae/BCySa2/yOeAdbLREek5hZzEUKhcJ2Vt+81al2+5pgf+l1xGY3T8haa3Lj9Qim9xE7EfsQ0VcdiglWfhO62WqTWp2R6n2Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by PH7PR12MB7139.namprd12.prod.outlook.com (2603:10b6:510:1ef::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Wed, 24 Sep
+ 2025 20:50:14 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9137.018; Wed, 24 Sep 2025
+ 20:50:14 +0000
+Message-ID: <5edf3123-4721-4a02-b5b8-9556804b248b@nvidia.com>
+Date: Wed, 24 Sep 2025 13:50:11 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/10] gpu: nova-core: Create initial Gsp
+To: Lyude Paul <lyude@redhat.com>, Alistair Popple <apopple@nvidia.com>,
+ rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ dakr@kernel.org, acourbot@nvidia.com
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
+References: <20250922113026.3083103-1-apopple@nvidia.com>
+ <20250922113026.3083103-3-apopple@nvidia.com>
+ <8c754dd68b7caba32888a5b33fac4e4c5c8d6991.camel@redhat.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <8c754dd68b7caba32888a5b33fac4e4c5c8d6991.camel@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0097.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c5::12) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924115124.194940-1-wangjinchao600@gmail.com> <20250924115124.194940-7-wangjinchao600@gmail.com>
-In-Reply-To: <20250924115124.194940-7-wangjinchao600@gmail.com>
-From: Marco Elver <elver@google.com>
-Date: Wed, 24 Sep 2025 22:49:35 +0200
-X-Gm-Features: AS18NWBgUAm60x7jbnTDK3WCQpUXDCFu_1mbN9k4BD6qrp1olQW-5h-0n2U9Y9E
-Message-ID: <CANpmjNOuA3q3BweB9kTUpAX4CX1U25Pqa0Hiyt__=7zio81=Uw@mail.gmail.com>
-Subject: Re: [PATCH v5 06/23] mm/ksw: add singleton /proc/kstackwatch interface
-To: Jinchao Wang <wangjinchao600@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Mike Rapoport <rppt@kernel.org>, 
-	Alexander Potapenko <glider@google.com>, Randy Dunlap <rdunlap@infradead.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, Rong Xu <xur@google.com>, 
-	Naveen N Rao <naveen@kernel.org>, David Kaplan <david.kaplan@amd.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Jinjie Ruan <ruanjinjie@huawei.com>, 
-	Nam Cao <namcao@linutronix.de>, workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-mm@kvack.org, llvm@lists.linux.dev, 
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	kasan-dev@googlegroups.com, "David S. Miller" <davem@davemloft.net>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|PH7PR12MB7139:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b5fe4cf-e49e-416a-2948-08ddfbabf5f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SldGOU1qZEhjWnJ0OEhxLzl3R1loa2FUZ1ordUpZeC9wdGxvV2d1THFpQ29a?=
+ =?utf-8?B?WWpEMmZLWGEweElSK3ZDZlVBOC9KYk1ucFRiUzJYeHNZTjNQMEZEY3lSekVR?=
+ =?utf-8?B?dExWWUhSS2hiN0RodUNyTlRJbnpHVzd3MHNFaWE0blZvN3ZFbklnWnJsSDU5?=
+ =?utf-8?B?c2NlbGFGN3ZOSjFZMFpXbG9JWGFDWFZVTG1aQWRHYXZaWXBMeVR5aVJPMVZt?=
+ =?utf-8?B?ZTJZYWwvUzZERHFtaWNPb09aNnVFK0oxR0poK1pWYTg5MGtORlRKTUZFN1JR?=
+ =?utf-8?B?NHQwUXUwUTFsV3FnOEZ5U0RkNmtFQm9ieFh4dmJ6NEdXeUFkUk5JVEk2RzlU?=
+ =?utf-8?B?UEhyWm5mN3BVWTR5Tkhwek5IVmsvQ3duVmtJUWhwcTRoUHlYdCtsbHBwVWt4?=
+ =?utf-8?B?SEhVV05YSnNCOFhudEpMWTdBM203RHZUMU1NL1JONUdMUGhIZ21qTkFyRVBO?=
+ =?utf-8?B?Z1RCeElCRXdsV3VKU2RMWXdHTmVEempMMmJINWJaOFZQc2VKV3JpeGxZRjlP?=
+ =?utf-8?B?SENEcFRETkdJRHZhSXZITXdxS2VyNDZIRWtidGN5aml1b3hmYytCV0tvL21x?=
+ =?utf-8?B?SlRZQ1FLaWREb3hrUHBxUWNBTGp1bnFkYkZVZmliRE1aem95ZEF6V2Zqb2Ji?=
+ =?utf-8?B?WUsyR05aTFArRDFhUnNQSkZWRm5scEdkckJ1TWs4QWEwZ1FIV2l3Q3ZET0FS?=
+ =?utf-8?B?Y0JaUHV1bWJBRVBKMlB4eXVTUzEzeTY5dkFZRWZJMHJhZUdRU0ZzTzhCS0lZ?=
+ =?utf-8?B?N0JqTXhsaklZL0hpWXJDOXZEejhrbFV1RjhHZW0yd3lCZVhlSGJtQ2Y4NjZa?=
+ =?utf-8?B?R0JXb0dOYVZib2diKzNxWmF0c204cGJ6MVVyWDV6ZTl2YmxpR0NxdkNPbU1U?=
+ =?utf-8?B?OTJ2OHhsMFh4eE1DTkVDUjJBaVc2ZzlreDJYMTBMaTFmRUlHdG1RSkVRV1ZB?=
+ =?utf-8?B?ZnJiRUwrWmU5MkJOTDZwM01Wcm5ZajJkWnJiN2hwZEJISWR1TmNaNzdmWDIr?=
+ =?utf-8?B?dWdTSXBsUlJ0UFVNMWcxaTZxWUJMZDBGTW90a29adWp6L29nWFFNK3pYYVdX?=
+ =?utf-8?B?TUlrZ1R0eXJzNmtZWDBuSUtZZzZxL0U4SGE0R3FIMVkwcmErYU9MdmZTL3N5?=
+ =?utf-8?B?SGhPdjczUEo1R21aeUFmSjFMb2orSGJzalJBYTc3bVc2cUJVUi9RVmV4b0d0?=
+ =?utf-8?B?bXlHZm5YUVRDay9PY3NmVXZsbStCOGlWdmo5KzZpeGVmcmVEYXlJalR1RFpl?=
+ =?utf-8?B?QlU3SFQ4SFEwTitzS2RtckZ2elhPOGpyODR2Y2pXWjNBb09jUkFTeDgrR09S?=
+ =?utf-8?B?TVlCbUxhOTJJT0xONlFoTXFlL1lpVjZWTnlLUmZ6aEY5ekttWXgxdGNmaVI1?=
+ =?utf-8?B?TXhNNnVmckxCYUxLc0pOSGxta3A3ZHRzWndNcEZyRmFpOXdWTXZxOUx3UU0z?=
+ =?utf-8?B?bWVjVjNnY3VyVlEzcnRieTRIeVZ2cWx6K0ZTY0plWmtNTmp1cEF0cnNTSSsr?=
+ =?utf-8?B?TU9ObG9wMTQvL0NUTzZtRWI3Z1hCSFdSU1dXb3RvMHlRRHh0a2c4eldHbnlM?=
+ =?utf-8?B?aU4xZjU0Wk84Vzc0QnBGekJGUnBLS3hqM3hLNlVqMHpscVZMT25uL2tQL3B2?=
+ =?utf-8?B?Z09zVFAzemJpc2hyTitpTm5INDlDWmlSR2xiSW9NNURkN2UwVmNFUlJtSzZ4?=
+ =?utf-8?B?RnB0YWdlWTdKMjJqR1Y4ano3eVBkWlRpL3puVUU4RUhIMC80c29oemIvbkFa?=
+ =?utf-8?B?NENOZmJIckRiOXlCNjl5cDJGbkVFQ2pXNWJvM3RsRWlmSndreHc4WCt5UGtZ?=
+ =?utf-8?B?Y3VINXNxaHJEcmVPcGhITU1pODRXQXF6YVhGaVJjbzk2SFhuaFhEOVNtWnpN?=
+ =?utf-8?B?dElwcXM5enhvcU5OQm1tNDMxNDduRWFkRkVHU1gycEJVYjVQTmh4Mmg3eVNJ?=
+ =?utf-8?Q?OxXhHVENVkY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cDR0SzRUTjRNN0dKb0wyMVlEL3ppdnlJNHJQWGZVWFlzNFk0V2t2ZnZYaCtp?=
+ =?utf-8?B?NzdHcTdiTEdERUdwa2FTL1FNSENJUnYzaFBFU2gxeUNjWGwrV0hUdEw3OWFk?=
+ =?utf-8?B?TWV5L0hKOVYxWFZTYUdPWHQyRXJlZWYra1lodmNrTm5wTnhJc3RwUHBkWmU5?=
+ =?utf-8?B?RkxRYXpnWWNOVDVWeHBpeDFkQ3BqdC9Uayt3NzlDSitHWm9rUXl0L25CaWZn?=
+ =?utf-8?B?TGxVQ2pXRitGSHB5QmpDb0pXNENNVEJRay9DYVdScG1SSytYTFJtSWhkdkpU?=
+ =?utf-8?B?c3NoVnNhRVVYYXFPWUhja2ppVngwR2NxWVpwd1FKdDhuc00vUlNwb0NsakJn?=
+ =?utf-8?B?dStwTkR5NFlsUVRNdCtYTDg5Mi9lanVWZGpySXNmVFR5M2FJQms3bXB1MHZY?=
+ =?utf-8?B?Q1BWVCsreW1RV1JMSHhHcWxhWG5yZEhMVDVGM0kvYkpJWXVZK3RsQWxHeVNm?=
+ =?utf-8?B?b1pTYkptYXNXUEhtOFQ3MDIrQ215Vmg1bC9Uc3lWMWdNaWJsblc4Z2E3ZW13?=
+ =?utf-8?B?RXBnb0ZYd2hYcTk5YWV1bUsvWGJrV0xwK3BjbWpJYTFMOEJ2SmlTVUNRTkI1?=
+ =?utf-8?B?UWFTUExPL1lzVTU2L0xiVHVPYlZkQzk0bEcvRGpqN3hBeEJUYTRudFA1RWtl?=
+ =?utf-8?B?UHFqMjFlWkhmWWJqUHpHd2ppQWVLcjd5cnJiVVdtRGFodG1YKzMvaDJmSk9S?=
+ =?utf-8?B?VndaWlh4OVZPSE9XOUFDdVFocERUMzhwMUFMeG5waUdnL2VXUlZoQmVYVHhy?=
+ =?utf-8?B?RkdSSkx1dytJY1hJdzd2RkdzclBmMHRaV1Z5ZDcvcm9hek81QlpheXl0akdB?=
+ =?utf-8?B?clZKcWd2aXMyVDVuK2dwZG9KVFZLL3NvY2owUnE3alpONU1EQyt3UiswNHJZ?=
+ =?utf-8?B?Ukh2TEZZK2lEUmxzYm9TeFl5QmdZZWRPTTJudlV3TllYTTJwUkdtaHhDRi84?=
+ =?utf-8?B?elB1WWliQWtpWnFTWVk2SGRkVkl5NG9PMU9vVTR4UzdtVmMxSFVUODg2enhX?=
+ =?utf-8?B?SmFtUzdEZUY5MEtFOG5pNVFhV283bElkYWlMdmswd254TXlyTTZEQXB6a0ZL?=
+ =?utf-8?B?Qm93bWs5SzhLT1Y1ZDlQenVlQkNUS2s3MU1SYVZkVTJLZkloRlZuTGlQM3kw?=
+ =?utf-8?B?SE1OYWxYN1BiK0ZtZUNSYUwraVlnbGxHMmJ0alA3S01xVG5HY1YzV0dBa1BH?=
+ =?utf-8?B?bm9hWTZLSFNrQlV3SGxFTDFEVTllYko3NVk4RkRtak5zS3llZkRXWXlFay9Q?=
+ =?utf-8?B?UkltRWpHekFJdU54MVFJem9XMCtWNy96SlJaRTl3TnJUT29sNjBMSTk2REtu?=
+ =?utf-8?B?RzBmcnp5SGJsQTdTSTkreGlqUlFVbDZFd3JxRm5reG03amR3MTFjOXVxVXlI?=
+ =?utf-8?B?RHBmSlRuakp5TU5sTXdrQlR1VlJzem9nbU5aQmFhUHIyNG5FUzZIVTBhcFVV?=
+ =?utf-8?B?RnZnNkpZTjVBeGFqTWVnR1JEaUw0anhiVFEzeXRVZUVQeHlEVHV5MXBoRll4?=
+ =?utf-8?B?eEh1bDNHcHdEaTFGM1M2MGUzbDRiSWtjME85NlN6MjkrT3krTkNscW1HWVM1?=
+ =?utf-8?B?UjB6MmtJV1NMRDRiQ1NFU0V2U3RXTklab2tCSTNDQ3BSaU1zVUFVMW94OVhI?=
+ =?utf-8?B?NkMyTzhkcnMrK0lveEJnZmlkUWdmZUl3Ry8rSEc0NTZCNlNaN0dFNU1Ub3Mw?=
+ =?utf-8?B?ZHZjNS9aWGxFV2NBdnl3WVF3U1lJT3gzOXlUcXp4QXBQbzNZUlZPYXdZZWpG?=
+ =?utf-8?B?d29LNkN3UklSSUROTWZUaDZDNXprME1ZNERGNk1UdWlkd0Q2SlFmSFBFSWF3?=
+ =?utf-8?B?S2RLZWZ1WFVrblFTOEp3cUcwUGpEQVNSMDl4OVBFYlk1K0dlLzl5OWFXZ09Z?=
+ =?utf-8?B?V3EvRXZGU1RCckp6bURoc0d6N0x0cllJenpLN3BNSDc3bW5PU3VUL1p0V0Mz?=
+ =?utf-8?B?Vy83Y3dZenNucnNtZlpWN3J1Y2dZRkJUN1FITjIxbHR6N1MzbGUyTmhybVBF?=
+ =?utf-8?B?YkdCYk1kNGM4UWRIVHZGYkNFeURRRkZ2dXhuOUs1QUtBUWpsSlJLblZTZG9O?=
+ =?utf-8?B?enZLMVQwMTlrV3Y4cms0SW0yNFE4d2VpQitLczFLWkJOdDZoY2pyYjRvV01u?=
+ =?utf-8?Q?8PkBaCVoPkEUM5CB8BjSavGNd?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b5fe4cf-e49e-416a-2948-08ddfbabf5f5
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 20:50:14.2593
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MyfUfRv1CSahsihmFkdhQ3PcGLTrBDlSVRnZWaVDlAuCYApcxoWlTyMX5wesRJMAq2Z/68Vpl4w1Qm2qQTHl4Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7139
 
-On Wed, 24 Sept 2025 at 13:51, Jinchao Wang <wangjinchao600@gmail.com> wrote:
->
-> Provide the /proc/kstackwatch file to read or update the configuration.
-> Only a single process can open this file at a time, enforced using atomic
-> config_file_busy, to prevent concurrent access.
+On 9/24/25 1:13 PM, Lyude Paul wrote:
+> Some comments down below
+...
+>> +/// Creates a self-mapping page table for `obj` at its beginning.
+>> +fn create_pte_array(obj: &mut CoherentAllocation<u8>) {
+>> +    let num_pages = obj.size().div_ceil(GSP_PAGE_SIZE);
+> 
+> Unfortunately there's a bit of a gotcha here - we can't actually use functions
+> like div_ceil as-is, because a number of 32 bit architectures do not support
+> u64 / u64 natively. The problem is we don't have __aeabi_uldivmod implemented
 
-Why is this in /proc and not debugfs?
+I recall that we agreed that nova will depend upon CONFIG_64BIT.
 
-> ksw_get_config() exposes the configuration pointer as const.
->
-> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
-> ---
->  mm/kstackwatch/kernel.c      | 77 +++++++++++++++++++++++++++++++++++-
->  mm/kstackwatch/kstackwatch.h |  3 ++
->  2 files changed, 79 insertions(+), 1 deletion(-)
->
-> diff --git a/mm/kstackwatch/kernel.c b/mm/kstackwatch/kernel.c
-> index 3b7009033dd4..4a06ddadd9c7 100644
-> --- a/mm/kstackwatch/kernel.c
-> +++ b/mm/kstackwatch/kernel.c
-> @@ -3,11 +3,15 @@
->
->  #include <linux/kstrtox.h>
->  #include <linux/module.h>
-> +#include <linux/proc_fs.h>
-> +#include <linux/seq_file.h>
->  #include <linux/string.h>
-> +#include <linux/uaccess.h>
->
->  #include "kstackwatch.h"
->
->  static struct ksw_config *ksw_config;
-> +static atomic_t config_file_busy = ATOMIC_INIT(0);
->
->  struct param_map {
->         const char *name;       /* long name */
-> @@ -74,7 +78,7 @@ static int ksw_parse_param(struct ksw_config *config, const char *key,
->   * - sp_offset  |so (u16) : offset from stack pointer at func_offset
->   * - watch_len  |wl (u16) : watch length (1,2,4,8)
->   */
-> -static int __maybe_unused ksw_parse_config(char *buf, struct ksw_config *config)
-> +static int ksw_parse_config(char *buf, struct ksw_config *config)
->  {
->         char *part, *key, *val;
->         int ret;
-> @@ -109,18 +113,89 @@ static int __maybe_unused ksw_parse_config(char *buf, struct ksw_config *config)
->         return 0;
->  }
->
-> +static ssize_t kstackwatch_proc_write(struct file *file,
-> +                                     const char __user *buffer, size_t count,
-> +                                     loff_t *pos)
-> +{
-> +       char input[MAX_CONFIG_STR_LEN];
-> +       int ret;
-> +
-> +       if (count == 0 || count >= sizeof(input))
-> +               return -EINVAL;
-> +
-> +       if (copy_from_user(input, buffer, count))
-> +               return -EFAULT;
-> +
-> +       input[count] = '\0';
-> +       strim(input);
-> +
-> +       if (!strlen(input)) {
-> +               pr_info("config cleared\n");
-> +               return count;
-> +       }
-> +
-> +       ret = ksw_parse_config(input, ksw_config);
-> +       if (ret) {
-> +               pr_err("Failed to parse config %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       return count;
-> +}
-> +
-> +static int kstackwatch_proc_show(struct seq_file *m, void *v)
-> +{
-> +       seq_printf(m, "%s\n", ksw_config->user_input);
-> +       return 0;
-> +}
-> +
-> +static int kstackwatch_proc_open(struct inode *inode, struct file *file)
-> +{
-> +       if (atomic_cmpxchg(&config_file_busy, 0, 1))
-> +               return -EBUSY;
-> +
-> +       return single_open(file, kstackwatch_proc_show, NULL);
-> +}
-> +
-> +static int kstackwatch_proc_release(struct inode *inode, struct file *file)
-> +{
-> +       atomic_set(&config_file_busy, 0);
-> +       return single_release(inode, file);
-> +}
-> +
-> +static const struct proc_ops kstackwatch_proc_ops = {
-> +       .proc_open = kstackwatch_proc_open,
-> +       .proc_read = seq_read,
-> +       .proc_write = kstackwatch_proc_write,
-> +       .proc_lseek = seq_lseek,
-> +       .proc_release = kstackwatch_proc_release,
-> +};
-> +
-> +const struct ksw_config *ksw_get_config(void)
-> +{
-> +       return ksw_config;
-> +}
->  static int __init kstackwatch_init(void)
->  {
->         ksw_config = kzalloc(sizeof(*ksw_config), GFP_KERNEL);
->         if (!ksw_config)
->                 return -ENOMEM;
->
-> +       if (!proc_create("kstackwatch", 0600, NULL, &kstackwatch_proc_ops)) {
-> +               pr_err("create proc kstackwatch fail");
-> +               kfree(ksw_config);
-> +               return -ENOMEM;
-> +       }
-> +
->         pr_info("module loaded\n");
->         return 0;
->  }
->
->  static void __exit kstackwatch_exit(void)
->  {
-> +       remove_proc_entry("kstackwatch", NULL);
-> +       kfree(ksw_config->func_name);
-> +       kfree(ksw_config->user_input);
->         kfree(ksw_config);
->
->         pr_info("module unloaded\n");
-> diff --git a/mm/kstackwatch/kstackwatch.h b/mm/kstackwatch/kstackwatch.h
-> index a7bad207f863..983125d5cf18 100644
-> --- a/mm/kstackwatch/kstackwatch.h
-> +++ b/mm/kstackwatch/kstackwatch.h
-> @@ -29,4 +29,7 @@ struct ksw_config {
->         char *user_input;
->  };
->
-> +// singleton, only modified in kernel.c
-> +const struct ksw_config *ksw_get_config(void);
-> +
->  #endif /* _KSTACKWATCH_H */
-> --
-> 2.43.0
->
-> --
-> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> To view this discussion visit https://groups.google.com/d/msgid/kasan-dev/20250924115124.194940-7-wangjinchao600%40gmail.com.
+Does that make this point N/A?
+
+
+thanks,
+-- 
+John Hubbard
+
 
