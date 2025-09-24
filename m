@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-831315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70383B9C55F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:14:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C55B9C571
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2323E324A96
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:14:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E72BB3B0516
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6611328CF5D;
-	Wed, 24 Sep 2025 22:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011DB28E59E;
+	Wed, 24 Sep 2025 22:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jLjt/ViS"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AqJcS8DJ"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416CF21C16E
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 22:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783B224679A
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 22:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758752052; cv=none; b=m19379+MI8+zYDQnaIKR+H018YjKzKOyvR+Pspx9Z6oXfBO8ZWxyYrbSGUk8aM/T1BHvCkgfPvS92JTRtvtbprSs8UiopfH+CqX7AvDg9vOxanTmXsw/9CauMvl01ezA4iONwYOBx/5MkWUsUpbBjAFolXX/AXfpo9iBEmRvAk0=
+	t=1758752119; cv=none; b=GCs2BCTasDwrySHkCVw0mH/ukrsOXUxXLNZDLKp4DkdFqgGqljjzHJcfNdn+QMIIk8oLWHJjXOtiim2MMuymfU8JO/c8HdCVRgKap17EExvbfkfBQ7yd2V87BgoevUluFsDVWET5Dkx/v0OIVz+iKMyZbqoT5LbkhbLTqkqg2Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758752052; c=relaxed/simple;
-	bh=3WQK398yoIIxsMcBMA/nyN2X2GhMDXANs0sQqaRcN/c=;
+	s=arc-20240116; t=1758752119; c=relaxed/simple;
+	bh=rcbcTBzXYhcr2a0Ds7yu2X7Qt6EDlxnGTRIFg7v4Db4=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KmD7gf8Bwu9CbM6vB/zxaFYiP7RxTi5dbJKz4C98qeoN09ZWqL3DSWTolnMcbn9PDix8vFRdh3Dbc4AazvC/lenOg5m5CF1emjuVW7fH4Qy4MgOGjw4eYlx0mRp1I7TCD41u2cvLfaZx/Qx1iZSwtzB/rX4mHxa9ypC2q7P33UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jLjt/ViS; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:MIME-Version; b=Xfa+k/o5ehIsNhRSPtnqgvwQPy2Yt9GfIPXxL5w9kylkV+xgA705UKGYI2DICSgIS4h38Y34s5nCKvBr6qhM0jKInMFMxjz+Cs3y4NxPFN3sRSz0Qt4uQoUYJM2pU7eSkFVlfpw8dTONy5zpHq9plYkUFej/RWADdVG3WIpjzLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AqJcS8DJ; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758752050;
+	s=mimecast20190719; t=1758752116;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=o8j7iV5FkPl2M9dbIOEmHdBWpWPt1HoMdUONe8SN81I=;
-	b=jLjt/ViSdNZ3mvyEfRUddrGgD1pBxM8BO7UQ3XkSLlN8QYcdTTaqHfoOw+dE/mcZ4oY6bp
-	jZALOEAu3tJ88inl/AX8hmxt8ylOzz8c00gph4AvsnIoKg6Njt9VRYENHit7AQF3EajHjR
-	D2iteohAPg8rGhyU7obgHnrbUMUAdhM=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=YaaNYfnivueDdmVQWIu0ivJ5WQBBjI+UHXeK/bH1n4Q=;
+	b=AqJcS8DJ4SMFgV3CV8UXeKoqPn3uVq0h65DF7WrDnbijCHkthKWMJjl2FLa/HkbOetcVOJ
+	tRl0J4xubCqyAzUSL5hqfBswCZSGglIugiEk2DUTFjwLA7vl9eU49k7Cxyx0eavS/KIHcp
+	VEBe8E+Zqg4LhqIcOFvERUo8JLHr+ks=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-274-dyOOJxicOqyGmADpwt4tnA-1; Wed, 24 Sep 2025 18:14:03 -0400
-X-MC-Unique: dyOOJxicOqyGmADpwt4tnA-1
-X-Mimecast-MFC-AGG-ID: dyOOJxicOqyGmADpwt4tnA_1758752042
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-828bd08624aso73138485a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:14:03 -0700 (PDT)
+ us-mta-90-yClYfRR0Pi2cBA1M21aHbg-1; Wed, 24 Sep 2025 18:15:15 -0400
+X-MC-Unique: yClYfRR0Pi2cBA1M21aHbg-1
+X-Mimecast-MFC-AGG-ID: yClYfRR0Pi2cBA1M21aHbg_1758752114
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4d6a41b5b66so8365531cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:15:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758752042; x=1759356842;
+        d=1e100.net; s=20230601; t=1758752114; x=1759356914;
         h=mime-version:user-agent:content-transfer-encoding:organization
          :references:in-reply-to:date:cc:to:from:subject:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o8j7iV5FkPl2M9dbIOEmHdBWpWPt1HoMdUONe8SN81I=;
-        b=lBqtsZ9pF1tLrHiBm9RZKJbCrv/0fq/NVXiIJT0RowZ2kDPpqGGvX2BjM0erA9Q90f
-         Y4BtLQ1ASZ4VW5OpWVeRzvYZpB71sdYg6KAJCEE/ItXl+Eou57i9SHO3zKmO0I4AO/mc
-         ZVPFUpabyw+j7/gGy0XujNzxqm25d3NT6BU5lEdvwsbV1iSQNZabzA/5jNFJMm/k5yta
-         PC+WNHU/rfcTmG9vxgFHfViF0HU7n6QHzuGauN6onrpokIIwIVXF57y4YqSX6OjI+LVT
-         0UijjTzyB8Gi2ZWttBPQskHpSd0crqeJ1z7Zae6W6CLIxR0xjKYaOkdSbUzrjr0ZBMdr
-         nTGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSxlXG8YvAyOkHDHjt5QLm5rLwFo/U5QeLMpPYvEaFeaDFco3ro62/eF5FDv4fKdxF4n2IjRkbp8MY5Pw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypSdVC6yvdVJdl/Xd5byTDM4qFevfqHmEkAyMkcRO0C8QenGcF
-	QWqUMusoEhCBLTa50/TWvA5Mk0Y/ssXkEYkJ6kVXTM0evTNJO3mn2bqi+n+LQvpwXlnoDDSqBy9
-	QH/F90m5Z6roe9K5qTiRPXUTW0PWvc2GaUfL8Osa4gSngCGtQj0CLa4OoaTHh51vjCw==
-X-Gm-Gg: ASbGncu2bQr77a2MC7BWLiFdpltt5MUj/AMKaw/BiHnWIIeoR8+TZJYCrwFIZyzgE8I
-	rxIce/pLA1Yuow/H5mFiJ46CpWtxO5FCB7zZ/Dhx0AJ+2blAxp6MNi4bQI6hqB5pTs6UGu0vlOB
-	ZKmxB/T54PFPE++FKpInRibwaXaGH7PzpYbsmdsjimDBGeCd0McAoEnHo3D0jL4KOC6j9LLE7Pr
-	lSiAY58QWJknI5V3rh2kXO5MkHVFRWLl30uhEh1ZJZY0zMjiusH+a63fHHwU7Kk+B1b9QNTtbQg
-	3ASszywP0/Whg3xLwOXWmCZHlSshDxZ5Xf59OLETt+cu1KMlBFyTB6pbzY4E1+s2sHa/DimbwKw
-	etNRHGemG30Cj
-X-Received: by 2002:ad4:5c8c:0:b0:77f:2966:c30a with SMTP id 6a1803df08f44-7fc4bd90845mr21389546d6.57.1758752042512;
-        Wed, 24 Sep 2025 15:14:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH06d8tFJJU/5/C4IFK2xkuHc6eirsKQRzUChX6AUNqxxj7G9XBeE0SQfU4U/rHINQCIfEP9A==
-X-Received: by 2002:ad4:5c8c:0:b0:77f:2966:c30a with SMTP id 6a1803df08f44-7fc4bd90845mr21389076d6.57.1758752041998;
-        Wed, 24 Sep 2025 15:14:01 -0700 (PDT)
+        bh=YaaNYfnivueDdmVQWIu0ivJ5WQBBjI+UHXeK/bH1n4Q=;
+        b=LSKSubF0HSYIe9UI3inlIizlwwa+T2aolqZK0de27BNHl5y/el7SQ8z/qmH2r6Wpbr
+         NZMsbnP8ko6IME4qYmebBYqqpLR4YLRoFucqipvZKIggz6OnXjqV0vaPbUNWAAIXeHKW
+         Sf52ry/CXXHLXlZ1p5coyuq6naS7m6Ioumt69peDYriGllEuaEGc39k0/ve2/AbotmC8
+         +7NJCvzACGY4arbZ/DCSBMVzP1VhCbwjo+AbIY2LXUPD77xdSpv6Qfp8JjPr1MXwSwA8
+         IK0er+vgpUJKQIEd/1FUi6Wy7DqySsrZ6FcyRuFJ0mbstn8TTTmI+lUkk5YRMz+RQXFr
+         xlEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjxGnCBkSN2h4CivU8pt6J/Nb0Dj1F3oqwk+k0iGaQX2Xyvikc19MKvVX+50lylvi/iHrFtmDgC8mBGPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxF1CnAvZLIyxAvAmNae0EBZP3oJkDNqcUd//N3eDxeEOzxGZ2+
+	ADYa1+HMij7jMBDgMFXs3ismZ60LQOf8FYLaRnSCZU10CoQ0LkqiD/g7wAWFA8BaTwNZhr5SPLB
+	TIZxGccAC+dFVh0jkBZ+ax38qgmr6y8/+s2CIwr+JIQFqAZoQbRYGjFCFS7PfZ0XNzw==
+X-Gm-Gg: ASbGncszpnmMLFFHKnHi5A0lrrQ/BpjuAI18Qq2AbFQzCRmwkaQCwdVmhGtvBP9F921
+	LC/7xZelt/pZ7Ti2f3k2OftVKBIlVsoeJeELMpIqu90ZmEdP6C/s5BDHdXubtr2YSQ5vuQaMFkL
+	s3YobaeudmdSDUJCgg3tZe893HPneTl6dESraoy+BbAXbacfj9P0L0glHY2UqpulpcVWc2ALJIO
+	EOoFPaVQMFwMLxuEhwW6qqzlTWn8gZhaDvgiqfO3QAOt/EK265IXK/U6evH5xz8KEGPUs/x4TCl
+	ZdNR3v19Z5wFHzR3VT5rJAA45RuKO88gZHQ1Q9vm4lUd97lVogX1yaL9NrEy+DjLCTvzjGAGsHL
+	ZaNmlPCZRyihA
+X-Received: by 2002:a05:622a:344:b0:4d8:9cc4:494f with SMTP id d75a77b69052e-4da485b8e21mr16346551cf.31.1758752114438;
+        Wed, 24 Sep 2025 15:15:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGD/VK9auAzGR3nxquVQOqdWaQcnzLnf1Vnk3sX/rW8S/PIuRWwQZzw54hrcihzTvx469vM7g==
+X-Received: by 2002:a05:622a:344:b0:4d8:9cc4:494f with SMTP id d75a77b69052e-4da485b8e21mr16345991cf.31.1758752113752;
+        Wed, 24 Sep 2025 15:15:13 -0700 (PDT)
 Received: from [192.168.8.208] (pool-108-49-39-135.bstnma.fios.verizon.net. [108.49.39.135])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8013ca1f1desm2124606d6.23.2025.09.24.15.14.00
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4db11ce3921sm170231cf.46.2025.09.24.15.15.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 15:14:01 -0700 (PDT)
-Message-ID: <929da04e71b03884a5e9b48168db1131449c9435.camel@redhat.com>
-Subject: Re: [PATCH v2 09/10] nova-core: falcon: Add support to write
- firmware version
+        Wed, 24 Sep 2025 15:15:12 -0700 (PDT)
+Message-ID: <550f8456c07c2dec27af87b2269b9cf5094b613c.camel@redhat.com>
+Subject: Re: [PATCH v2 10/10] nova-core: gsp: Boot GSP
 From: Lyude Paul <lyude@redhat.com>
 To: Alistair Popple <apopple@nvidia.com>, rust-for-linux@vger.kernel.org, 
 	dri-devel@lists.freedesktop.org, dakr@kernel.org, acourbot@nvidia.com
@@ -96,10 +95,10 @@ Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
  <jhubbard@nvidia.com>,  Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi
  <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, 
 	nouveau@lists.freedesktop.org
-Date: Wed, 24 Sep 2025 18:14:00 -0400
-In-Reply-To: <20250922113026.3083103-10-apopple@nvidia.com>
+Date: Wed, 24 Sep 2025 18:15:12 -0400
+In-Reply-To: <20250922113026.3083103-11-apopple@nvidia.com>
 References: <20250922113026.3083103-1-apopple@nvidia.com>
-	 <20250922113026.3083103-10-apopple@nvidia.com>
+	 <20250922113026.3083103-11-apopple@nvidia.com>
 Organization: Red Hat Inc.
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -111,60 +110,171 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-Reviewed-b: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Lyude Paul <lyude@redhat.com>
 
 On Mon, 2025-09-22 at 21:30 +1000, Alistair Popple wrote:
-> From: Joel Fernandes <joelagnelf@nvidia.com>
+> Boot the GSP to the RISC-V active state. Completing the boot requires
+> running the CPU sequencer which will be added in a future commit.
 >=20
-> This will be needed by both the GSP boot code as well as GSP resume code
-> in the sequencer.
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
 >=20
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 > ---
->  drivers/gpu/nova-core/falcon.rs | 9 +++++++++
->  drivers/gpu/nova-core/regs.rs   | 6 ++++++
->  2 files changed, 15 insertions(+)
+>=20
+> Changes for v2:
+>  - Rebased on Alex's latest tree
+> ---
+>  drivers/gpu/nova-core/falcon.rs         |  2 -
+>  drivers/gpu/nova-core/firmware/riscv.rs |  3 +-
+>  drivers/gpu/nova-core/gsp.rs            |  2 +-
+>  drivers/gpu/nova-core/gsp/boot.rs       | 56 ++++++++++++++++++++++++-
+>  4 files changed, 57 insertions(+), 6 deletions(-)
 >=20
 > diff --git a/drivers/gpu/nova-core/falcon.rs b/drivers/gpu/nova-core/falc=
 on.rs
-> index c7907f16bcf4..0cb7821341ed 100644
+> index 0cb7821341ed..960801f74bf1 100644
 > --- a/drivers/gpu/nova-core/falcon.rs
 > +++ b/drivers/gpu/nova-core/falcon.rs
-> @@ -619,4 +619,13 @@ pub(crate) fn is_riscv_active(&self, bar: &Bar0) -> =
-Result<bool> {
+> @@ -614,14 +614,12 @@ pub(crate) fn signature_reg_fuse_version(
+>      /// Check if the RISC-V core is active.
+>      ///
+>      /// Returns `true` if the RISC-V core is active, `false` otherwise.
+> -    #[expect(unused)]
+>      pub(crate) fn is_riscv_active(&self, bar: &Bar0) -> Result<bool> {
 >          let cpuctl =3D regs::NV_PRISCV_RISCV_CPUCTL::read(bar, &E::ID);
 >          Ok(cpuctl.active_stat())
 >      }
-> +
-> +    /// Write the application version to the OS register.
-> +    #[expect(dead_code)]
-> +    pub(crate) fn write_os_version(&self, bar: &Bar0, app_version: u32) =
--> Result<()> {
-> +        regs::NV_PFALCON_FALCON_OS::default()
-> +            .set_value(app_version)
-> +            .write(bar, &E::ID);
-> +        Ok(())
-> +    }
->  }
-> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.r=
-s
-> index 5df6a2bf42ad..d9212fa50197 100644
-> --- a/drivers/gpu/nova-core/regs.rs
-> +++ b/drivers/gpu/nova-core/regs.rs
-> @@ -215,6 +215,12 @@ pub(crate) fn vga_workspace_addr(self) -> Option<u64=
-> {
->      31:0    value as u32;
->  });
 > =20
-> +// Used to store version information about the firmware running
-> +// on the Falcon processor.
-> +register!(NV_PFALCON_FALCON_OS @ PFalconBase[0x00000080] {
-> +    31:0    value as u32;
-> +});
+>      /// Write the application version to the OS register.
+> -    #[expect(dead_code)]
+>      pub(crate) fn write_os_version(&self, bar: &Bar0, app_version: u32) =
+-> Result<()> {
+>          regs::NV_PFALCON_FALCON_OS::default()
+>              .set_value(app_version)
+> diff --git a/drivers/gpu/nova-core/firmware/riscv.rs b/drivers/gpu/nova-c=
+ore/firmware/riscv.rs
+> index dec33d2b631a..d1a9e027bac3 100644
+> --- a/drivers/gpu/nova-core/firmware/riscv.rs
+> +++ b/drivers/gpu/nova-core/firmware/riscv.rs
+> @@ -50,7 +50,6 @@ fn new(bin_fw: &BinFirmware<'_>) -> Result<Self> {
+>  }
+> =20
+>  /// A parsed firmware for a RISC-V core, ready to be loaded and run.
+> -#[expect(unused)]
+>  pub(crate) struct RiscvFirmware {
+>      /// Offset at which the code starts in the firmware image.
+>      pub code_offset: u32,
+> @@ -59,7 +58,7 @@ pub(crate) struct RiscvFirmware {
+>      /// Offset at which the manifest starts in the firmware image.
+>      pub manifest_offset: u32,
+>      /// Application version.
+> -    app_version: u32,
+> +    pub app_version: u32,
+>      /// Device-mapped firmware image.
+>      pub ucode: DmaObject,
+>  }
+> diff --git a/drivers/gpu/nova-core/gsp.rs b/drivers/gpu/nova-core/gsp.rs
+> index 1f7427a530e5..8fcfd6447101 100644
+> --- a/drivers/gpu/nova-core/gsp.rs
+> +++ b/drivers/gpu/nova-core/gsp.rs
+> @@ -32,7 +32,7 @@
+>  /// GSP runtime data.
+>  #[pin_data]
+>  pub(crate) struct Gsp {
+> -    libos: CoherentAllocation<LibosMemoryRegionInitArgument>,
+> +    pub libos: CoherentAllocation<LibosMemoryRegionInitArgument>,
+>      pub loginit: CoherentAllocation<u8>,
+>      pub logintr: CoherentAllocation<u8>,
+>      pub logrm: CoherentAllocation<u8>,
+> diff --git a/drivers/gpu/nova-core/gsp/boot.rs b/drivers/gpu/nova-core/gs=
+p/boot.rs
+> index 0b306313ec53..0f3d40ade807 100644
+> --- a/drivers/gpu/nova-core/gsp/boot.rs
+> +++ b/drivers/gpu/nova-core/gsp/boot.rs
+> @@ -5,6 +5,7 @@
+>  use kernel::dma_write;
+>  use kernel::pci;
+>  use kernel::prelude::*;
+> +use kernel::time::Delta;
+> =20
+>  use crate::driver::Bar0;
+>  use crate::falcon::{gsp::Gsp, sec2::Sec2, Falcon};
+> @@ -19,6 +20,7 @@
+>  use crate::gsp::commands::{build_registry, set_system_info};
+>  use crate::gsp::GspFwWprMeta;
+>  use crate::regs;
+> +use crate::util;
+>  use crate::vbios::Vbios;
+> =20
+>  impl super::Gsp {
+> @@ -127,7 +129,7 @@ pub(crate) fn boot(
+> =20
+>          Self::run_fwsec_frts(dev, gsp_falcon, bar, &bios, &fb_layout)?;
+> =20
+> -        let _booter_loader =3D BooterFirmware::new(
+> +        let booter_loader =3D BooterFirmware::new(
+>              dev,
+>              BooterKind::Loader,
+>              chipset,
+> @@ -143,6 +145,58 @@ pub(crate) fn boot(
+>          set_system_info(&mut self.cmdq, pdev, bar)?;
+>          build_registry(&mut self.cmdq, bar)?;
+> =20
+> +        gsp_falcon.reset(bar)?;
+> +        let libos_handle =3D self.libos.dma_handle();
+> +        let (mbox0, mbox1) =3D gsp_falcon.boot(
+> +            bar,
+> +            Some(libos_handle as u32),
+> +            Some((libos_handle >> 32) as u32),
+> +        )?;
+> +        dev_dbg!(
+> +            pdev.as_ref(),
+> +            "GSP MBOX0: {:#x}, MBOX1: {:#x}\n",
+> +            mbox0,
+> +            mbox1
+> +        );
 > +
->  register!(NV_PFALCON_FALCON_RM @ PFalconBase[0x00000084] {
->      31:0    value as u32;
->  });
+> +        dev_dbg!(
+> +            pdev.as_ref(),
+> +            "Using SEC2 to load and run the booter_load firmware...\n"
+> +        );
+> +
+> +        sec2_falcon.reset(bar)?;
+> +        sec2_falcon.dma_load(bar, &booter_loader)?;
+> +        let wpr_handle =3D wpr_meta.dma_handle();
+> +        let (mbox0, mbox1) =3D sec2_falcon.boot(
+> +            bar,
+> +            Some(wpr_handle as u32),
+> +            Some((wpr_handle >> 32) as u32),
+> +        )?;
+> +        dev_dbg!(
+> +            pdev.as_ref(),
+> +            "SEC2 MBOX0: {:#x}, MBOX1{:#x}\n",
+> +            mbox0,
+> +            mbox1
+> +        );
+> +
+> +        // Match what Nouveau does here:
+> +        gsp_falcon.write_os_version(bar, gsp_fw.bootloader.app_version)?=
+;
+> +
+> +        // Poll for RISC-V to become active before running sequencer
+> +        util::wait_on(Delta::from_secs(5), || {
+> +            if gsp_falcon.is_riscv_active(bar).unwrap_or(false) {
+> +                Some(())
+> +            } else {
+> +                None
+> +            }
+> +        })?;
+> +
+> +        dev_dbg!(
+> +            pdev.as_ref(),
+> +            "RISC-V active? {}\n",
+> +            gsp_falcon.is_riscv_active(bar)?,
+> +        );
+> +
+>          Ok(())
+>      }
+>  }
 
 --=20
 Cheers,
