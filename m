@@ -1,210 +1,186 @@
-Return-Path: <linux-kernel+bounces-831348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7CEB9C6C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:01:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4536CB9C6DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2EBB38224A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:01:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 545BC7B7238
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E002D23A4;
-	Wed, 24 Sep 2025 22:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954AF2BD001;
+	Wed, 24 Sep 2025 22:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q60/sf+f"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddeyTkrK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BB02C11E6
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 22:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93D6296BAA;
+	Wed, 24 Sep 2025 22:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758754758; cv=none; b=tE59qgEgPbkbERndu3BskLvVYwNE1LEYuoFVDC//LJ59XLvi+3Oy7S6O1Kc3EpfGU/8n6PpdPghfcKidAi/4j5q5Pf6TV/Pr3y0ktm8DhfaGerMgGqvAnA8Bzc/Y1/PQa7TsRS2t0ZxCJ0KHr0O2mWnPpkfXll6adC5GJmqHHJg=
+	t=1758754778; cv=none; b=hpS9wx5o4xWaCfyPH60j1iMpVfWoNQwKxF2tEdDSjFpfw3DrxQyqg6DwiBW45qJefrN2w4DIsy7ma92zyniw90slGV3x0GUgWcJoo8juSD75Ji+kp77rE7a4w3oyLUV0tmfh0++JOBNVexodYNyARgVrszpqvkHCQANRKl0ySC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758754758; c=relaxed/simple;
-	bh=mEGnnXQgRlibWKuAk39UVRorVYhtRQYwVxrKoedzLa4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HNag9PAjdaFtntegQ8B/1mtjRsJRCruOzBRGi7gxwlad6RCkOr3yezND+j7gLa+4IA8TdrYEQLS1WXyMoBVyWt8fHuNq54e/9HzeTNddEIAXTn7jnWINNuJx8/hrGm96jIu2jX8HSH/RrjU67jf4ZkT69Mf0JAFFpPHq54uHC/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q60/sf+f; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OCx2mU016659
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 22:59:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	a4VNN7OcsZVUmjAxeKnFHAYtKksEdV60jsA1US1GA3E=; b=Q60/sf+fy2I5g/ax
-	qLPNBZFiHiYLzxF1HWQkfOTcTl2LoL6AM3OImurH+26G+p2Ak0geUMqs8okTb56E
-	vON5pEJTAb+y9bo+l0b9THctX6q1VWCtB5rAhyagmhbGvql/4R/6GBiT11HlrFIf
-	S+ookruyguBd8OvuOYHfHd+IW3CXT+ym7+Qf5HYbcb8u9N25T6HgVIKtO82zrnEA
-	TX7ULtKd88Th0INexh88NgoUggx6rLgTxLv7LeS3h+hDk6RHzEvkj20tDUTMyuWw
-	fJx0rKK40G9NIMjXzhFIlBP64ZRqzlRusFdCcYq/sNbE7cDLGTCxiL9g2YGBLzhC
-	bdef7Q==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49b3nyhsnv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 22:59:16 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-77f2e48a829so505622b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:59:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758754755; x=1759359555;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a4VNN7OcsZVUmjAxeKnFHAYtKksEdV60jsA1US1GA3E=;
-        b=pfEk9j/4KJhQFu73oTqrA40Km9pq4o3GzCxMpox/ZmNIIf7Gcm8v3b2qUMto8hrLR+
-         3U4YvcqaGWxiaCufOWFcGqjxuQdy9t+Ug7EpM5ydOxZ2G+D0EvKjOEdcw4+dSC9dBqHl
-         TFNBt+ejoBc34b6nWGu5UBPVDAxmUgVlpDSBXnUbCoPyONggtXRUg6Iytyg5dH2jF0Id
-         lzatwfI1GRislHQWlz/S+hDD93cbLjavnA8tZvfl/CfdI4yLw3UniklrCkRzyNbuWT8t
-         pMrTwhi2J/6KITnW9wNu+ZfFY5sLD/sayeU7PnzaE9AK0JVajs/1I0uFkk5z2XUk/vL/
-         AaCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxtUxOa/IGLw6g5NFMwTlPj0E2JIqJSnIp8yuY9dmBqZXCidG2qjDzacjASPkFgaL/7tgWgdJ1BWHAJNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGFe6YBWqV6MoUJvYjwbxk+5onPPPYDpielKXHDZJLTksP4jai
-	BhctDf2ErYXNnETRK0jLU4wxBZwcy7LkFTWzONVP67yHS1McO2n4nJuTBrct8AFIl9U2jebj9o2
-	gTrjnVoIy6TNj48HJcilViPo7equf/XQBBX0ljbhaC87rkY5F8WkDYnYhx14RaZ1rEco=
-X-Gm-Gg: ASbGncs1mbKw5JoMh7mkuh6a0AFw5vZg7Nq0VxQsdDI8MBk5mLRm64GtxPx9HKJCQby
-	hzVOFkFjOz3DPtGxwcg+F/ua6fBjNg206DFxGBzeLlUADCeLyaXjEHxXbiMRPJgOQIr57Mby0Zu
-	TJuDLNDOYfzYHpiCshCYpWDZ52F6kFCXyoFeieiN2S+uQR/p2tUEQEFw3Fkdxco67Zvo6fe/+iv
-	BvALF3mARHvjEifgUKpfKE/x1SFDXI6L6t76G9Sh8Q3Cct6OQWG9soSL8dJN4U+DKQ8TITM7yE/
-	KiP424KM0cg6U3B8C499ol9eBKOT1tRt+ZdPSwoq/w0KisfL49HVkXuELdN1Z1xpKTm6c6Xd/KJ
-	8VAemPw+/shY5YRU=
-X-Received: by 2002:a05:6a00:4b14:b0:77f:169d:7f62 with SMTP id d2e1a72fcca58-780fce34191mr1734269b3a.14.1758754755258;
-        Wed, 24 Sep 2025 15:59:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG+JrMSMxMf3OSCvo3iH1iXyF3Cweojs5lsX7r1Sy9Lpzpev8hkplQj6hzhhUapLDwvvOD7hA==
-X-Received: by 2002:a05:6a00:4b14:b0:77f:169d:7f62 with SMTP id d2e1a72fcca58-780fce34191mr1734248b3a.14.1758754754815;
-        Wed, 24 Sep 2025 15:59:14 -0700 (PDT)
-Received: from hu-jingyw-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102c2b70esm111166b3a.101.2025.09.24.15.59.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 15:59:13 -0700 (PDT)
-From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Date: Wed, 24 Sep 2025 15:59:01 -0700
-Subject: [PATCH 9/9] clk: qcom: clk-alpha-pll: Add support for controlling
- Rivian PLL
+	s=arc-20240116; t=1758754778; c=relaxed/simple;
+	bh=FwPAG6Tqt4tHEI1fba+e5TRJnDq+yr6G/c1OrQir9Vo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=YDWFEezb0UmfrmcYg5XD9imoTzTKHYl6HmV4T01p1SAu0+7bC6ccMQEpALLh3irEEMbuayT2U/oeot+l+wtTWgeMKTIJrvcxiSvhL/Mz+9D1dgwNz8NOrKho2w7UQAcCTA5k5uv6GaZPNq3M2jJRq3Py6lakx/xiiRjzEDhJI7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddeyTkrK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9DCCC4CEF7;
+	Wed, 24 Sep 2025 22:59:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758754778;
+	bh=FwPAG6Tqt4tHEI1fba+e5TRJnDq+yr6G/c1OrQir9Vo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ddeyTkrK1h52KcVAHNBPgxXUQblsijnomTe+Om0ar+O5gdPuNEHOWfLxnRDAKHZel
+	 B5ZY72VuAOvDuWF/0htNlzxsmzcF/tgvzlO0mhHYKt2Jb50DaA55jqOGjA1TwPuGE6
+	 1O8vZbmPzcI9UEdmpF0xgVJlinjDJpO1IYsKeGcYo4pHsJCrHmSlUCgkdgGzhrmCaQ
+	 /SZYf9mwiXdgSkA6Nx4DvVAHhd6R0ndeY3msXnN03OJI7RA3ODrVGQk1vanPAUo5Gg
+	 bq0hSp7a6xMj8wXMmCkK43n8xtFl2idR6EQXyzUfeq31RMAeFzH5DZjJrNSKuOLo1M
+	 FOGMBA9yee/zg==
+Date: Thu, 25 Sep 2025 07:59:32 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: Menglong Dong <menglong.dong@linux.dev>, Peter Zijlstra
+ <peterz@infradead.org>, Menglong Dong <menglong8.dong@gmail.com>,
+ jolsa@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ kees@kernel.org, samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
+ ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+Subject: Re: [PATCH] tracing: fgraph: Protect return handler from recursion
+ loop
+Message-Id: <20250925075932.e42ead81f0c7d0ba6eb31511@kernel.org>
+In-Reply-To: <20250921190056.2a17d4cc@batman.local.home>
+References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
+	<175828305637.117978.4183947592750468265.stgit@devnote2>
+	<5974303.DvuYhMxLoT@7950hx>
+	<20250921130647.9bd0cba7d49b15d0b0ebe6f7@kernel.org>
+	<20250921190056.2a17d4cc@batman.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250924-knp-clk-v1-9-29b02b818782@oss.qualcomm.com>
-References: <20250924-knp-clk-v1-0-29b02b818782@oss.qualcomm.com>
-In-Reply-To: <20250924-knp-clk-v1-0-29b02b818782@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>, aiqun.yu@oss.qualcomm.com,
-        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-        yijie.yang@oss.qualcomm.com
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758754740; l=2779;
- i=jingyi.wang@oss.qualcomm.com; s=20250911; h=from:subject:message-id;
- bh=CzA5NXZyz2Pthy3HAxfe93Es8lzKUxFSwzcPhak9IUo=;
- b=IzvTSeUy7yNMklbDQREM9TPVxw5tHN+dQiuHGt802VXAb3ScVzm8U5e2OIdEZT0uySkhcT+Pk
- y9ynxfjkuh6BIDoh2grV0nfyyEw9AHRbSH0H6oS5oLvALIaQioHK43a
-X-Developer-Key: i=jingyi.wang@oss.qualcomm.com; a=ed25519;
- pk=PSoHZ6KbUss3IW8FPRVMHMK0Jkkr/jV347mBYJO3iLo=
-X-Authority-Analysis: v=2.4 cv=EuPSrTcA c=1 sm=1 tr=0 ts=68d477c4 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=fFf9reVGpRxvdFVPZdQA:9
- a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-GUID: 9KhT2UTnzvPQSxSle77NJuCd_rKO6DUb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDA5MCBTYWx0ZWRfX1g8n0ohuS+ys
- EWDwSa6vUu+N3VmKoJnxFi95/EavewFzOU2EGvaMzo3Ro1kro0eW0a/kPLcLpr2OicuRF+OxvoC
- FwCzFmrHCdZBiz2wOiP7fOJ2vvHYSnMFcaGgYa5nrlJ07GmQ47OoJ5BFzz+tmfxRROEEkvOjpcE
- k/aybz3+VsPG74mzT65mUyA10loSfHIvGrY1VQU9RsJPgx9hvhaX/QGdeK4RFy6TV1jF1lQwhfa
- hxP8SnW3r2nJL9xFgM5xwaEdEiGLFyDHtjJ9rX+ytfQOQ0KvCtGj0Xu6yVN6c7nYGVE3ZywQyXt
- Xbr2tDTnB/iLO5W9kkxvu8JTkqyjscK0gvB7wsnA2XbCKlbC3fc0XkT7RkC4amE/IaxhQ9w2V4D
- YW9zbMb3
-X-Proofpoint-ORIG-GUID: 9KhT2UTnzvPQSxSle77NJuCd_rKO6DUb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 malwarescore=0 spamscore=0 adultscore=0
- clxscore=1015 priorityscore=1501 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220090
 
-From: Taniya Das <taniya.das@oss.qualcomm.com>
+On Sun, 21 Sep 2025 19:00:56 -0400
+Steven Rostedt <rostedt@kernel.org> wrote:
 
-Add clock ops for Rivian ELU and EKO_T PLLs, add the register offsets
-for the Rivian ELU PLL. Since ELU and EKO_T shared the same offsets and
-PLL ops, reuse the Rivian EKO_T enum.
+> On Sun, 21 Sep 2025 13:06:47 +0900
+> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> > > 
+> > > Hi, the logic seems right, but the warning is triggered when
+> > > I try to run the bpf bench testing:  
+> > 
+> > Hmm, this is strange. Let me check why this happens.
+> > 
+> > Thank you,
+> > 
+> > > 
+> > > $ ./benchs/run_bench_trigger.sh kretprobe-multi-all
+> > > [   20.619642] NOTICE: Automounting of tracing to debugfs is deprecated and will be removed in 2030
+> > > [  139.509036] ------------[ cut here ]------------
+> > > [  139.509180] WARNING: CPU: 2 PID: 522 at kernel/trace/fgraph.c:839 ftrace_return_to_handler+0x2b9/0x2d0
+> > > [  139.509411] Modules linked in: virtio_net
+> > > [  139.509514] CPU: 2 UID: 0 PID: 522 Comm: bench Not tainted 6.17.0-rc5-g1fe6d652bfa0 #106 NONE 
+> > > [  139.509720] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.17.0-1-1 04/01/2014
+> > > [  139.509948] RIP: 0010:ftrace_return_to_handler+0x2b9/0x2d0
+> > > [  139.510086] Code: e8 0c 08 0e 00 0f 0b 49 c7 c1 00 73 20 81 e9 d1 fe ff ff 40 f6 c6 10 75 11 49 c7 c3 ef ff ff ff ba 10 00 00 00 e9 57 fe ff ff <0f> 0b e9 a5 fe ff ff e8 1b 72 0d 01 66 66 2e 0f 1f 84 00 00 00 00
+> > > [  139.510536] RSP: 0018:ffffc9000012cef8 EFLAGS: 00010002
+> > > [  139.510664] RAX: ffff88810f709800 RBX: ffffc900007c3678 RCX: 0000000000000003
+> > > [  139.510835] RDX: 0000000000000008 RSI: 0000000000000018 RDI: 0000000000000000
+> > > [  139.511007] RBP: 0000000000000000 R08: 0000000000000034 R09: ffffffff82550319
+> > > [  139.511184] R10: ffffc9000012cf50 R11: fffffffffffffff7 R12: 0000000000000000
+> > > [  139.511357] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> > > [  139.511532] FS:  00007fe58276fb00(0000) GS:ffff8884ab3b8000(0000) knlGS:0000000000000000
+> > > [  139.511724] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > [  139.511865] CR2: 0000562a28314b67 CR3: 00000001143f9000 CR4: 0000000000750ef0
+> > > [  139.512038] PKRU: 55555554
+> > > [  139.512106] Call Trace:
+> > > [  139.512177]  <IRQ>
+> > > [  139.512232]  ? irq_exit_rcu+0x4/0xb0
+> > > [  139.512322]  return_to_handler+0x1e/0x50
+> > > [  139.512422]  ? idle_cpu+0x9/0x50
+> > > [  139.512506]  ? sysvec_apic_timer_interrupt+0x69/0x80
+> > > [  139.512638]  ? idle_cpu+0x9/0x50
+> > > [  139.512731]  ? irq_exit_rcu+0x3a/0xb0
+> > > [  139.512833]  ? ftrace_stub_direct_tramp+0x10/0x10
+> > > [  139.512961]  ? sysvec_apic_timer_interrupt+0x69/0x80
+> > > [  139.513101]  </IRQ>
+> > > [  139.513168]  <TASK>
+> > >   
+> > > > +
+> > > >  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
+> > > >  	trace.retval = ftrace_regs_get_return_value(fregs);
+> > > >  #endif
+> > > > @@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> > > >  		}
+> > > >  	}
+> > > >  
+> > > > +	ftrace_test_recursion_unlock(bit);
+> > > > +out:
+> > > >  	/*
+> > > >  	 * The ftrace_graph_return() may still access the current
+> > > >  	 * ret_stack structure, we need to make sure the update of
+> 
+> 
+> Hmm, I wonder if this has to do with the "TRANSITION BIT". The
+> ftrace_test_recursion_trylock() allows one level of recursion. This is
+> to handle the case of an interrupt happening after the recursion bit is
+> set and traces something before it updates the context in the preempt
+> count. This would cause a false positive of the recursion test. To
+> handle this case, it allows a single level of recursion.
+> 
+> I originally was going to mention this, but I still can't see how this
+> would affect it. Because if the entry were to allow one level of
+> recursion, so would the exit. I still see the entry preventing the exit
+> to be called. But perhaps there's an combination that I missed?
 
-Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
----
- drivers/clk/qcom/clk-alpha-pll.c | 14 ++++++++++++++
- drivers/clk/qcom/clk-alpha-pll.h |  4 ++++
- 2 files changed, 18 insertions(+)
+If the fgraph allows one level of recursion, fprobe should work around
+functions called from fprobe's callback, such as is_endbr(), as follows:
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 6f50f0c4b984..3fbdee6e67f9 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -243,6 +243,19 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_TEST_CTL] = 0x28,
- 		[PLL_OFF_TEST_CTL_U] = 0x2c,
- 	},
-+	[CLK_ALPHA_PLL_TYPE_RIVIAN_ELU] = {
-+		[PLL_OFF_OPMODE] = 0x04,
-+		[PLL_OFF_STATUS] = 0x0c,
-+		[PLL_OFF_L_VAL] = 0x10,
-+		[PLL_OFF_USER_CTL] = 0x14,
-+		[PLL_OFF_USER_CTL_U] = 0x18,
-+		[PLL_OFF_CONFIG_CTL] = 0x1c,
-+		[PLL_OFF_CONFIG_CTL_U] = 0x20,
-+		[PLL_OFF_CONFIG_CTL_U1] = 0x24,
-+		[PLL_OFF_CONFIG_CTL_U2] = 0x28,
-+		[PLL_OFF_TEST_CTL] = 0x2c,
-+		[PLL_OFF_TEST_CTL_U] = 0x30,
-+	},
- 	[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO] = {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_ALPHA_VAL] = 0x08,
-@@ -3006,6 +3019,7 @@ void qcom_clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regm
- 		clk_taycan_elu_pll_configure(pll, regmap, pll->config);
- 		break;
- 	case CLK_ALPHA_PLL_TYPE_RIVIAN_EVO:
-+	case CLK_ALPHA_PLL_TYPE_RIVIAN_ELU:
- 		clk_rivian_evo_pll_configure(pll, regmap, pll->config);
- 		break;
- 	case CLK_ALPHA_PLL_TYPE_TRION:
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index fc55a42fac2f..da7d3d755923 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -32,6 +32,8 @@ enum {
- 	CLK_ALPHA_PLL_TYPE_TAYCAN_ELU,
- 	CLK_ALPHA_PLL_TYPE_TAYCAN_EKO_T = CLK_ALPHA_PLL_TYPE_TAYCAN_ELU,
- 	CLK_ALPHA_PLL_TYPE_RIVIAN_EVO,
-+	CLK_ALPHA_PLL_TYPE_RIVIAN_ELU,
-+	CLK_ALPHA_PLL_TYPE_RIVIAN_EKO_T = CLK_ALPHA_PLL_TYPE_RIVIAN_ELU,
- 	CLK_ALPHA_PLL_TYPE_DEFAULT_EVO,
- 	CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
- 	CLK_ALPHA_PLL_TYPE_STROMER,
-@@ -210,6 +212,8 @@ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops;
- extern const struct clk_ops clk_alpha_pll_pongo_elu_ops;
- #define clk_alpha_pll_pongo_eko_t_ops clk_alpha_pll_pongo_elu_ops
- extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
-+#define clk_alpha_pll_rivian_elu_ops clk_alpha_pll_rivian_evo_ops
-+#define clk_alpha_pll_rivian_eko_t_ops clk_alpha_pll_rivian_evo_ops
- #define clk_alpha_pll_postdiv_rivian_evo_ops clk_alpha_pll_postdiv_fabia_ops
- 
- extern const struct clk_ops clk_alpha_pll_regera_ops;
+/* probe on enter */
+call target_func()
+  => function_graph_enter_regs() /* 1st lock */
+    -> fprobe_entry()
+      -> user_callback()
+        -> is_endbr()
+          => function_graph_enter_regs() /* 2nd lock */
+            -> fprobe_entry()
+              -> user_callback()
+                -> is_endbr()
+                  => function_graph_enter_regs() /* lock failed */
+
+/* probe on exit */
+call target_func()
+  => function_graph_enter_regs()
+     -> ftrace_push_return_trace()
+/* run target_func() */
+=> __ftrace_return_to_handler() /* 1st lock */
+  -> fprobe_exit()
+    -> user_callback()
+      -> is_endbr()
+        => function_graph_enter_regs() /* 2nd lock */
+          -> ftrace_push_return_trace()
+         /* unlock 2nd */
+      /* run is_endbr() */
+      => __ftrace_return_to_handler() /* 2nd lock again */
+        -> fprobe_exit()
+          -> user_callback()
+            -> is_endbr()
+              => function_graph_enter_regs() /* lock failed */
+            /* run is_endbr() */
+
+So it can detect the recursion.
+
+Thank you,
 
 -- 
-2.25.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
