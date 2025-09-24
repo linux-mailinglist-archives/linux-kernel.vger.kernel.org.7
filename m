@@ -1,134 +1,157 @@
-Return-Path: <linux-kernel+bounces-830840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98CEB9AAE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:34:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 571A8B9AB43
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A4537AC52E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:33:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD695169B38
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15E830FF10;
-	Wed, 24 Sep 2025 15:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868E42FE570;
+	Wed, 24 Sep 2025 15:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FrVbhAZj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rHzkX9St"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B83C8C11
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC96C307AFA;
+	Wed, 24 Sep 2025 15:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758728033; cv=none; b=EJVahsk1xwRsWTVTBOLeE69R+XKKzxniYb3m3r/DgKn5uJ8vheROdebXMar0q0+DjenyrQa3RIaEaRbO3U9PBa/u10+UYBS6ezeTWUSjMQ2AhbwFwizjNitkOIsSBVYtqaYIbLBKoEYJBwCrFxvt9cZWufM5jlncQ9OCNxta/+Q=
+	t=1758728057; cv=none; b=IX2aF39L7T4MnsfQijM/cED4rteJIZvoMbrjLIWjchdpzubFjS6ZZKiBWmEK/OVFJDFcbkI8i1IWdPDm+x6J5IF7jIcHqCI5fR8FFrR62ofnj7IKoeleh0oFJ/zXScrFirXHxRFHSZbXAniYEHzA7sUrN+r658/9FaN5hs2VwJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758728033; c=relaxed/simple;
-	bh=wRch98PTr07OsPbOEWFR6ZR70W6lFXly25dnPdzBGHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dn8pbvA9z3iu6JC3/VeNR39PARtAoXeWjEgU23g2lALwO1wY/+VSNI3IjRvW1GQYcku8InbP/K1iK0kVOQ5hjehEPL8xYaGFpFmoB5vPibrpwvksML61FfAoDq8vuzkXXMm/G3oC7pCThYQnnie186dggxvscJdFGIzcM/2I9Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FrVbhAZj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758728030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ic7zvcyBVtaZcEmsf3hW05wAfmOMNZ5JL2VpkYQoXsc=;
-	b=FrVbhAZjnj+3afecM9iyrE8dm4m7eM3bO9kNMWMYSajELoQ3LWp+5t/KXwf0DRetEtgIYJ
-	9tvyr63oCjkhBxIpB7FEQtNngbjeciwlUJtVZXsW0/6ERUDfM5c3Mh7rIcDIR9VY98+h3q
-	XauT2v1//eTopNsr1NuRTAn9tnroQxk=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-478-S01iI5OnPhaUToRvpcGc6w-1; Wed, 24 Sep 2025 11:33:48 -0400
-X-MC-Unique: S01iI5OnPhaUToRvpcGc6w-1
-X-Mimecast-MFC-AGG-ID: S01iI5OnPhaUToRvpcGc6w_1758728028
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-81ea2cb6f13so4961685a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:33:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758728028; x=1759332828;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ic7zvcyBVtaZcEmsf3hW05wAfmOMNZ5JL2VpkYQoXsc=;
-        b=Dt6iyK/gDKGDmOxlwPpDRjY5JXC/mUvkQm4/UZbchQbSRp8ZkVskYmork/aAbaAhMG
-         U9p6Tly0mjChB0v0aUdaSpxIGmEZebnaP8YiixBuB+lu7YRTXfKhxmdglD0HBoDdatf/
-         6tjzHySU571KZ5X0Og4EV9EAa0Q/XmQKjcUreKbagEYIjcVQCk57M90TKMkpMoO/sv6T
-         TOuOUvflNtzD3sbqNrCABGYzN4+ilWab1bQD4a6W6MQYD0xnjRhhWuriuRJVvfFFXNtt
-         RcolfrwxAY1fsRg+zPlvuC1R/oaXzyKCVea7EV3qP9YZWHMN1W7M76do0ciVVoDLxYVS
-         lCEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmFrP50hTqUFy+2m5L1Px2vjdmRhYfoSbvbq4auJ8Sq0JHIymA5MOAS0z5/cT0XR6EJ2J/8QcPn77hQL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHkMDFOSgHRtWaLVano8iDGO458rt9PijCfkjSnCF4KjFKyOWV
-	MUV5lO3VtrCGlUYylldh+aifXIKeqivgQyNnu0M6VEAgbTJpFDg/2Qa0mOOAeAatojHrSuMZ3qF
-	ExwNii4wbXGL3PZx3tdBhdGaCihk8COgqnPSim0zmtKv9QnEPhPFFgdqAzZrJ/8mUwA==
-X-Gm-Gg: ASbGnctf956zkNAHjphFJIjOvAco4pms+fkEIMjwz8zG936rT1fOhkDpORYesz57mfb
-	u6IKiKcbjuM9F5gakbA4gEcWskYQcb1X4Kob/Kajl63+QPqQL2KGxU0fF9MTwXGCo04QpipcELq
-	cGKpZ7udntPx8vIlChYHYW4QFNwENZ/LLwaJvYoNp3njTgOYyy9HlzzrH87J/6dtc3X+R4Ksfvx
-	NTGY4UIyTk51aJaO8bSyVS3VIYTbPmBrUAu5368VLcvW9AGrqOUtHy6++ytPSDNZvUaETR5zypJ
-	YNWUEu/+2f7Hbm/jiq9Uqh9P/c9TnPqqE5YGNDfHdH9zYH/YzrZq/Gbgj+RHxP5A3szr4g==
-X-Received: by 2002:a05:620a:1a89:b0:828:1529:d028 with SMTP id af79cd13be357-85ae7cd4ac1mr7326885a.61.1758728028087;
-        Wed, 24 Sep 2025 08:33:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE7m0/cbnvCoTKElfyKlC9Akk8QQ848roxwkCAlIQudXokrBobnZdaunrFKeYAlTGXQPxdHhg==
-X-Received: by 2002:a05:620a:1a89:b0:828:1529:d028 with SMTP id af79cd13be357-85ae7cd4ac1mr7322385a.61.1758728027583;
-        Wed, 24 Sep 2025 08:33:47 -0700 (PDT)
-Received: from redhat.com ([2600:382:8504:5608:ca95:838:d4f0:316f])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8363198b0fbsm1167921585a.50.2025.09.24.08.33.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 08:33:46 -0700 (PDT)
-Date: Wed, 24 Sep 2025 11:33:44 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 0/5] clk: Support spread spectrum and use it in
- clk-scmi
-Message-ID: <aNQPWO6pfA_3mmxf@redhat.com>
-References: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
- <PAXPR04MB8459265997E9822F17AD2BC0881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1758728057; c=relaxed/simple;
+	bh=lUZuxPLPBDGO00HWidrCHdCMvKz0T1VhhIVqtlgz3mo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=fjmW5b6PzT1TeJJb5J2+5QPKX+Ix1MSkdki8YwNqBkbcVC1/ORqc6kCFisU6bJmMj5ddP623bc9FlVVUM2Ym5hTQxGnfJc3UAYUha6qi5ItfLTgcPaGYHgTjxXJqoLj57hB7KsJnkxpAPFobRPLAUhrp5jTLoNjpj5UgXJEOeOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rHzkX9St; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B435DC4CEE7;
+	Wed, 24 Sep 2025 15:34:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758728056;
+	bh=lUZuxPLPBDGO00HWidrCHdCMvKz0T1VhhIVqtlgz3mo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rHzkX9StnWCCLKEaIcwoJxUUnBQHkEaH22wijFJc9HcuqRmjkFS6LG3U4Tck2/M8w
+	 nU2aahpaXY7vY7qxjp/hfBmnladUZ9x57PGdpz/FVI2O1PToRlhvvzRfGlqWcYYOAu
+	 qu24BWmHQVwEyFiL1QaLcAYGpupSMHo8NIiwoh7Va9v3E02qXT71h8G60ZDb/IjtJA
+	 ZuyJvkKMDOvOuRVgkRDSdrOexx/mnRul0TCfh77TK8jk1rT7hEgzZdW9jL5WPyUG18
+	 KXJ7NKOGVEO+7BOXJOuDPKlj9et5M8gtCTRgG6R1O0mJlfr3BGVlZ/2VCj5H92N06e
+	 +3d4Sd3jXY8Nw==
+Date: Thu, 25 Sep 2025 00:34:10 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt
+ <rostedt@kernel.org>, Menglong Dong <menglong8.dong@gmail.com>,
+ jolsa@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ kees@kernel.org, samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
+ ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] tracing: fgraph: Protect return handler from
+ recursion loop
+Message-Id: <20250925003410.de2ef839f6ef3921ee08a955@kernel.org>
+In-Reply-To: <175852292275.307379.9040117316112640553.stgit@devnote2>
+References: <175852291163.307379.14414635977719513326.stgit@devnote2>
+	<175852292275.307379.9040117316112640553.stgit@devnote2>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8459265997E9822F17AD2BC0881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 24, 2025 at 02:44:21PM +0000, Peng Fan wrote:
-> Hi Stephen,
+Hi Steve,
+
+Can you pick this ? Or I will do?
+
+Thanks,
+
+On Mon, 22 Sep 2025 15:35:22 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > 
-> > Subject: [PATCH v4 0/5] clk: Support spread spectrum and use it in clk-
-> > scmi
+> function_graph_enter_regs() prevents itself from recursion by
+> ftrace_test_recursion_trylock(), but __ftrace_return_to_handler(),
+> which is called at the exit, does not prevent such recursion.
+> Therefore, while it can prevent recursive calls from
+> fgraph_ops::entryfunc(), it is not able to prevent recursive calls
+> to fgraph from fgraph_ops::retfunc(), resulting in a recursive loop.
+> This can lead an unexpected recursion bug reported by Menglong.
 > 
-> Since clk-scmi.c for spread spectrum support needs some big changes,
-> we may need to change scmi framework to make OEM extension
-> in an elegant way. This will needs some time.
+>  is_endbr() is called in __ftrace_return_to_handler -> fprobe_return
+>   -> kprobe_multi_link_exit_handler -> is_endbr.
 > 
-> To patch 1-4, do you think is it ok to be in linux tree without patch 5?
-> If yes, I will post V5 soon with your comments in patch 2 addressed.
-> Otherwise I have to carry patch 1-4 in future clk-scmi patches.
+> To fix this issue, acquire ftrace_test_recursion_trylock() in the
+> __ftrace_return_to_handler() after unwind the shadow stack to mark
+> this section must prevent recursive call of fgraph inside user-defined
+> fgraph_ops::retfunc().
+> 
+> This is essentially a fix to commit 4346ba160409 ("fprobe: Rewrite
+> fprobe on function-graph tracer"), because before that fgraph was
+> only used from the function graph tracer. Fprobe allowed user to run
+> any callbacks from fgraph after that commit.
+> 
+> Reported-by: Menglong Dong <menglong8.dong@gmail.com>
+> Closes: https://lore.kernel.org/all/20250918120939.1706585-1-dongml2@chinatelecom.cn/
+> Fixes: 4346ba160409 ("fprobe: Rewrite fprobe on function-graph tracer")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  Changes in v2:
+>   - Do not warn on failing ftrace_test_recursion_trylock() because it
+>     allows one-level nest.
+> ---
+>  kernel/trace/fgraph.c |   12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> index 1e3b32b1e82c..484ad7a18463 100644
+> --- a/kernel/trace/fgraph.c
+> +++ b/kernel/trace/fgraph.c
+> @@ -815,6 +815,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+>  	unsigned long bitmap;
+>  	unsigned long ret;
+>  	int offset;
+> +	int bit;
+>  	int i;
+>  
+>  	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
+> @@ -829,6 +830,15 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+>  	if (fregs)
+>  		ftrace_regs_set_instruction_pointer(fregs, ret);
+>  
+> +	bit = ftrace_test_recursion_trylock(trace.func, ret);
+> +	/*
+> +	 * This can fail because ftrace_test_recursion_trylock() allows one nest
+> +	 * call. If we are already in a nested call, then we don't probe this and
+> +	 * just return the original return address.
+> +	 */
+> +	if (unlikely(bit < 0))
+> +		goto out;
+> +
+>  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
+>  	trace.retval = ftrace_regs_get_return_value(fregs);
+>  #endif
+> @@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+>  		}
+>  	}
+>  
+> +	ftrace_test_recursion_unlock(bit);
+> +out:
+>  	/*
+>  	 * The ftrace_graph_return() may still access the current
+>  	 * ret_stack structure, we need to make sure the update of
+> 
 
-This adds a new API, and there wouldn't be any users of it at this
-point. Personally, I think it should probably wait and be merged as
-one series. Unless there's another vendor that's ready to use this.
 
-Brian
-
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
