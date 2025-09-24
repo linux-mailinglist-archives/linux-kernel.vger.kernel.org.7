@@ -1,182 +1,428 @@
-Return-Path: <linux-kernel+bounces-830387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D71BB99865
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:04:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B533B9986B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5365919C7641
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:04:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF91217A98C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E8D2E54DB;
-	Wed, 24 Sep 2025 11:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492F32E62A8;
+	Wed, 24 Sep 2025 11:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="I/UYiK1N"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LxuEm00k"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674292E5B36
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E56E2E5B2E
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758711835; cv=none; b=lzVfsn/Fs60Q+31G9He/8x0D39JnUdlY5ahU0xRhCaUWZbDkS2hWJQpYBZ83dS9RTmqlMhxJEM2obABoXjsQ3tY+ZF2FSuPswXdrwBe1y6xDDqq4efR9PjIcXR7klvYajGgaVkZoyUdO3mt7/SikO6O+f3PSR6zcjsoVychPnpA=
+	t=1758711861; cv=none; b=nH8eSISRznVDVqKoB+Nxc8r1e478cjCZHJVGzwvU1jEu58MSH50Cq67b211JT97ACMKRusmNiDhF1PdFWfyyJVUwL9ixJAQ0F3WYx4wq+pbNUAeyrqSupw4Pl7Nu8jSJ/dcNIj/kPWfLJfO4I/XckW0GCBFwddlUEig4O/RHlmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758711835; c=relaxed/simple;
-	bh=vRaOT9Q3YvJQNWFbw0Fz0aeIvu9zB6I2v+SoiGqfWwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mz/Mr7cgnn/Iry4yBcVrzqVB/vLaVnZysH0uPszp/r+m1103WezjhTn4Z49panbx+6DCmCGHZpmcoMAPMNhTm8egiryGKT5zVhvtIsfyz9ad3MzGycZlSPa/VuSWPbTxkKCl7+1iIaJXL7rRL6WMNqdOZ3fdn8hVJrUFLNAoyjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=I/UYiK1N; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b3194020e86so201110166b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:03:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758711827; x=1759316627; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=f++NaNuyR4eX62VVTKpDJcYw+NpFttUC6PgqiII/fcw=;
-        b=I/UYiK1NiAwsOZ45z3vC7BsSBZrwAnZhqs7wYLM+jzBarnE1vEiy25oGhPWLq71Ukq
-         E4czQjBttMqeJuUWQ2hxTCvhHegoKepzq1z2Ip1wPFjb9zdw5tFk4vo5xXQvtZqZpH+s
-         CikWzYOqCpUq+nII9l/JElw8u8p8fSCXMLNKEjFDdKsb7POGYtYYi0sEHlxewBy4+MuJ
-         8xYl3dXgg5m+O03N98T/SkkWJoUItdDrn5oh0kRPbTNtwc+ic1GJQTeU/ShWWd3EwPtb
-         MTYKLFtwBd2aat7OLDHDrCzkg+1gU1gmNbgVNLcQvFxpXcQ39ansq8uGTysf+kN/P1/z
-         vEWA==
+	s=arc-20240116; t=1758711861; c=relaxed/simple;
+	bh=iQPbGo+q89ygrQb6G+t3T6tJmVxFEjLBCuU/THpeC6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sXOVpfQwAbKL55gwaGUAsK4FF2xX4qyKZjL9e1yti4pltFFqTWAh6SlRbwlSEXWkANlS2bslFBMezUaOyiV32FfSIbdaxyyQiFHuzFZYAD0TLtwLy3GMhDFDUAzo286EsWVH74QU+7dxSQn7oEOUb16W1Hzankew7qUuqQailqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LxuEm00k; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758711854;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mrljuIrpmbITb85jGMlf+AU3g1TLxbNe5fHByQmiOw4=;
+	b=LxuEm00kX9gseM2gkfSaQow0iT+GHXGXbhscl9wskZSYzS3i3UmbFmxIbUCSGt3sxJGwAl
+	ZHyqak9LYk6pGcw49n+LG3k6VLAI1QX2EYq7Vd4PcVPwgyPsDyArgxtvVQPO9BT3wu4wJJ
+	aW3trNlgJ9O9e4p69gHkg7DO5wH6q7Y=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-631-r9FPMZbmO_eYfzWQglmTdQ-1; Wed, 24 Sep 2025 07:04:12 -0400
+X-MC-Unique: r9FPMZbmO_eYfzWQglmTdQ-1
+X-Mimecast-MFC-AGG-ID: r9FPMZbmO_eYfzWQglmTdQ_1758711852
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e1b906bf3so21673175e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:04:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758711827; x=1759316627;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f++NaNuyR4eX62VVTKpDJcYw+NpFttUC6PgqiII/fcw=;
-        b=uNUeYM/4wjSFX0pZ9qYIxWmuFzvcKBfBhINq6njbwdbdUv1+hjrg9AlpWTURLiSxqR
-         2CNok4cUJs9y/DQn6EEickthzR1A5ypnebc9OHxyGIyU6wbVE85LrxefTsIby6VYyIyJ
-         WqPXXHCTO384qBEW7dIfNYEGqmBO2vUPNEqgBJWd5CJnQ6hT0CBiFbErdgen9AMDC02t
-         bnYrKmXrQr1vUdJjgv0FqzzhvQsirt6PN8KSmW4MeuI9yTFqLF/wpClmGfdefcBA0+Ya
-         8n1L0uC1DMH7iyiRAlg4ppMBd1pB4xpMSpwzOwUhrNLRPCJ1qkf5fr/iyhOtgP4B15h1
-         aNVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWF8tQjUiZFxbtn3Z15REqds6b/+2ol8xviv/WRTr8ARP7NAB5R2vjKh64S02CiqdDqGIcXPf54/xDjRX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGSWMQ8C6GbRZPh1ESO4di7fYsBr1AJMo1SGp/17pIP7HCmnQu
-	KTKBefCQVhJ4xAlQtFvT+Rux+d9RGGC/WjrPDIYLEIqi+Mr7WW4ChT12se3Z9PDGSKo=
-X-Gm-Gg: ASbGncvu3RrXOwFd8PTynPmxK5qxXOCbRf7wpKnmCuM/oJ2lFLzlKHgmIlKXt46uFII
-	uPj1HkKIzlXmeNOgyqrXRqfs0hZtNTFpPtbUYs3DedYWkl4Rd8+ND34iDogQ2gbcMxmPytbwO/8
-	tpI36VtdXLQiN/rINOQFuJ8sII+4paKXnA5LGg6HdzqebKIiZqGIwQD4J1vtFltpSt7CrfOVfKd
-	s+hticWRjCXrUCLn6O2qUG0JdsKf9T2ATaeyq5BD8U8Utf1L6S/y6MPHXXH6alczIYhisO5i0oi
-	NLHz6/FObKDM26YH+lY7+coJE6WY3C4QKoyXWwHqNwmEul+QloNUVNeJg7jI8nreH70nvVA8z4x
-	RgAw+6iFIGTIsmvPuk+yItTbqfPDY5EAkUwroHw==
-X-Google-Smtp-Source: AGHT+IFBwMGZ4wBRteHoxqPVvsjT3lf+VIufpVIMyZrC/No4MyrhUd4ysW+E9ZygAk5RcfGCQiGU2A==
-X-Received: by 2002:a17:907:3d02:b0:af9:6bfb:58b7 with SMTP id a640c23a62f3a-b302679e8d7mr570930666b.5.1758711826582;
-        Wed, 24 Sep 2025 04:03:46 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b2d4309ab9asm611622266b.74.2025.09.24.04.03.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 04:03:45 -0700 (PDT)
-Date: Wed, 24 Sep 2025 13:03:43 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: ad7124: fix temperature channel
-Message-ID: <h2rof27omrhv4l6pjisdsnvkpb35ovy7e6m4soeltfun5rafk5@oriv7e3egh3p>
-References: <20250923-iio-adc-ad7124-fix-temperature-channel-v1-1-e421c98c0d72@baylibre.com>
+        d=1e100.net; s=20230601; t=1758711851; x=1759316651;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mrljuIrpmbITb85jGMlf+AU3g1TLxbNe5fHByQmiOw4=;
+        b=WUkwtc15sykjG+UfcKwqISWTePQI0Gyj+gUKVXTJTsWiNQOcS3XtYVc77LrhS0AHtX
+         rVtGhIoW9Dyusl7Rald9FF0uXRE2ssSJXdkD/jdV05RVAg4zh+YUwO/8LxrQ5N0lWYA2
+         rSsZun7aYbtBoCBvf1OgbzULjXcVmQ68/YxYkWcA9MsAkG2gSWeI7TN3ooi2f5dTx46q
+         lKmyLrrQmVNheA2dVHowUhAPjpnmEDsgJ3Ebi6G+zflvr2/HFqTHyEsv1xAMiaQP8TDb
+         NTLBCZY0C4/4qA4BSwup8C5b+o8HdXJ9TuStg2W7kiqSIWUYZUjBptClXjkkPs7iZvJn
+         uS/w==
+X-Gm-Message-State: AOJu0YzC+PSIjS7aZZtVMAjyIJ8lDEeaiCtDwi7yCriAGQdxFQJquudd
+	aDF1PgKEs125yHn0nneozdtbDmKFCqdg+AWJm9MhZ0z9bJk5lqbhIMNaOJgH5XGdTKYndBZksRS
+	cJqNSPD2I4yZhp5CF5vRz55nV2o5wh+5qlXpgjncKV4U/nVIyBHDMzWcU8QSNYm7tZA==
+X-Gm-Gg: ASbGnct5uA45762PXXPTLea/fddwnrzjCFIFiKhUBTYXZIYYhTdL+red9IP+hDFWchG
+	yWCL2z1tK0/oQjjKahJaqpUVMH+robQPlKZFifd4ukjawxtXYyIiM2Ev/wX9/RGhLlmC1g3++dM
+	JxCl95mFY5DrQyr4XcDsci4m3xallmMwUtmd1lC+agDnS8twCfY9gNquNUIQqZbuIhBAHMAVgTs
+	TDpX7qrk0Qvo0b1k1yjKLqtgTrMxIicGPEy8EOiGFydQbz9XoEmVqcrH2wyhZY1kXB0pKsZKuN9
+	n5Dfg5SYyiapPTjROv/+TrlXNFKswM/JCm/uOiiWrpCZewM/t648hUTOf15nCNGVt5UrVVttxAg
+	OZ3SJsJ/M8uNfXrDeZEmmsxp9FUC0IOMZYAsSQP524QfhlfB2kOS77qdI54bgkXifQg==
+X-Received: by 2002:a05:600c:1c08:b0:46d:d6f0:76d8 with SMTP id 5b1f17b1804b1-46e1dac9fcemr74296505e9.35.1758711851517;
+        Wed, 24 Sep 2025 04:04:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IExYOxpci5QLmPvizPk29ikl+FA6dmszx1aCY/b5DkFPNIURQjjjajZAf2da25kjbr5619Hpw==
+X-Received: by 2002:a05:600c:1c08:b0:46d:d6f0:76d8 with SMTP id 5b1f17b1804b1-46e1dac9fcemr74296065e9.35.1758711851051;
+        Wed, 24 Sep 2025 04:04:11 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f14:2400:afc:9797:137c:a25b? (p200300d82f1424000afc9797137ca25b.dip0.t-ipconnect.de. [2003:d8:2f14:2400:afc:9797:137c:a25b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab6a514sm26958575e9.22.2025.09.24.04.04.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 04:04:10 -0700 (PDT)
+Message-ID: <c7a2ad6e-68cb-4689-b72e-6e7ebfcf5e64@redhat.com>
+Date: Wed, 24 Sep 2025 13:04:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="diar7b3iid3lrt6r"
-Content-Disposition: inline
-In-Reply-To: <20250923-iio-adc-ad7124-fix-temperature-channel-v1-1-e421c98c0d72@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v6 01/15] mm/zone_device: support large zone device private
+ folios
+To: Balbir Singh <balbirs@nvidia.com>, Zi Yan <ziy@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, damon@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, Joshua Hahn <joshua.hahnjy@gmail.com>,
+ Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
+ Gregory Price <gourry@gourry.net>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250916122128.2098535-1-balbirs@nvidia.com>
+ <20250916122128.2098535-2-balbirs@nvidia.com>
+ <882D81FA-DA40-4FF9-8192-166DBE1709AF@nvidia.com>
+ <f026c5a1-ec51-4fa5-bc58-c2d690f9248c@nvidia.com>
+ <87F52459-85DC-49C3-9720-819FAA0D1602@nvidia.com>
+ <891b7840-3cde-49d0-bdde-8945e9767627@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <891b7840-3cde-49d0-bdde-8945e9767627@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 23.09.25 05:47, Balbir Singh wrote:
+> On 9/19/25 23:26, Zi Yan wrote:
+>> On 19 Sep 2025, at 1:01, Balbir Singh wrote:
+>>
+>>> On 9/18/25 12:49, Zi Yan wrote:
+>>>> On 16 Sep 2025, at 8:21, Balbir Singh wrote:
+>>>>
+>>>>> Add routines to support allocation of large order zone device folios
+>>>>> and helper functions for zone device folios, to check if a folio is
+>>>>> device private and helpers for setting zone device data.
+>>>>>
+>>>>> When large folios are used, the existing page_free() callback in
+>>>>> pgmap is called when the folio is freed, this is true for both
+>>>>> PAGE_SIZE and higher order pages.
+>>>>>
+>>>>> Zone device private large folios do not support deferred split and
+>>>>> scan like normal THP folios.
+>>>>>
+>>>>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+>>>>> Cc: David Hildenbrand <david@redhat.com>
+>>>>> Cc: Zi Yan <ziy@nvidia.com>
+>>>>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+>>>>> Cc: Rakie Kim <rakie.kim@sk.com>
+>>>>> Cc: Byungchul Park <byungchul@sk.com>
+>>>>> Cc: Gregory Price <gourry@gourry.net>
+>>>>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+>>>>> Cc: Alistair Popple <apopple@nvidia.com>
+>>>>> Cc: Oscar Salvador <osalvador@suse.de>
+>>>>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>>>>> Cc: Nico Pache <npache@redhat.com>
+>>>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>>>> Cc: Dev Jain <dev.jain@arm.com>
+>>>>> Cc: Barry Song <baohua@kernel.org>
+>>>>> Cc: Lyude Paul <lyude@redhat.com>
+>>>>> Cc: Danilo Krummrich <dakr@kernel.org>
+>>>>> Cc: David Airlie <airlied@gmail.com>
+>>>>> Cc: Simona Vetter <simona@ffwll.ch>
+>>>>> Cc: Ralph Campbell <rcampbell@nvidia.com>
+>>>>> Cc: Mika Penttilä <mpenttil@redhat.com>
+>>>>> Cc: Matthew Brost <matthew.brost@intel.com>
+>>>>> Cc: Francois Dugast <francois.dugast@intel.com>
+>>>>> ---
+>>>>>   include/linux/memremap.h | 10 +++++++++-
+>>>>>   mm/memremap.c            | 34 +++++++++++++++++++++-------------
+>>>>>   mm/rmap.c                |  6 +++++-
+>>>>>   3 files changed, 35 insertions(+), 15 deletions(-)
+>>>>>
+>>>>> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+>>>>> index e5951ba12a28..9c20327c2be5 100644
+>>>>> --- a/include/linux/memremap.h
+>>>>> +++ b/include/linux/memremap.h
+>>>>> @@ -206,7 +206,7 @@ static inline bool is_fsdax_page(const struct page *page)
+>>>>>   }
+>>>>>
+>>>>>   #ifdef CONFIG_ZONE_DEVICE
+>>>>> -void zone_device_page_init(struct page *page);
+>>>>> +void zone_device_folio_init(struct folio *folio, unsigned int order);
+>>>>>   void *memremap_pages(struct dev_pagemap *pgmap, int nid);
+>>>>>   void memunmap_pages(struct dev_pagemap *pgmap);
+>>>>>   void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap);
+>>>>> @@ -215,6 +215,14 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn);
+>>>>>   bool pgmap_pfn_valid(struct dev_pagemap *pgmap, unsigned long pfn);
+>>>>>
+>>>>>   unsigned long memremap_compat_align(void);
+>>>>> +
+>>>>> +static inline void zone_device_page_init(struct page *page)
+>>>>> +{
+>>>>> +	struct folio *folio = page_folio(page);
+>>>>> +
+>>>>> +	zone_device_folio_init(folio, 0);
+>>>>
+>>>> I assume it is for legacy code, where only non-compound page exists?
+>>>>
+>>>> It seems that you assume @page is always order-0, but there is no check
+>>>> for it. Adding VM_WARN_ON_ONCE_FOLIO(folio_order(folio) != 0, folio)
+>>>> above it would be useful to detect misuse.
+>>>>
+>>>>> +}
+>>>>> +
+>>>>>   #else
+>>>>>   static inline void *devm_memremap_pages(struct device *dev,
+>>>>>   		struct dev_pagemap *pgmap)
+>>>>> diff --git a/mm/memremap.c b/mm/memremap.c
+>>>>> index 46cb1b0b6f72..a8481ebf94cc 100644
+>>>>> --- a/mm/memremap.c
+>>>>> +++ b/mm/memremap.c
+>>>>> @@ -416,20 +416,19 @@ EXPORT_SYMBOL_GPL(get_dev_pagemap);
+>>>>>   void free_zone_device_folio(struct folio *folio)
+>>>>>   {
+>>>>>   	struct dev_pagemap *pgmap = folio->pgmap;
+>>>>> +	unsigned long nr = folio_nr_pages(folio);
+>>>>> +	int i;
+>>>>>
+>>>>>   	if (WARN_ON_ONCE(!pgmap))
+>>>>>   		return;
+>>>>>
+>>>>>   	mem_cgroup_uncharge(folio);
+>>>>>
+>>>>> -	/*
+>>>>> -	 * Note: we don't expect anonymous compound pages yet. Once supported
+>>>>> -	 * and we could PTE-map them similar to THP, we'd have to clear
+>>>>> -	 * PG_anon_exclusive on all tail pages.
+>>>>> -	 */
+>>>>>   	if (folio_test_anon(folio)) {
+>>>>> -		VM_BUG_ON_FOLIO(folio_test_large(folio), folio);
+>>>>> -		__ClearPageAnonExclusive(folio_page(folio, 0));
+>>>>> +		for (i = 0; i < nr; i++)
+>>>>> +			__ClearPageAnonExclusive(folio_page(folio, i));
+>>>>> +	} else {
+>>>>> +		VM_WARN_ON_ONCE(folio_test_large(folio));
+>>>>>   	}
+>>>>>
+>>>>>   	/*
+>>>>> @@ -456,8 +455,8 @@ void free_zone_device_folio(struct folio *folio)
+>>>>>   	case MEMORY_DEVICE_COHERENT:
+>>>>>   		if (WARN_ON_ONCE(!pgmap->ops || !pgmap->ops->page_free))
+>>>>>   			break;
+>>>>> -		pgmap->ops->page_free(folio_page(folio, 0));
+>>>>> -		put_dev_pagemap(pgmap);
+>>>>> +		pgmap->ops->page_free(&folio->page);
+>>>>> +		percpu_ref_put_many(&folio->pgmap->ref, nr);
+>>>>>   		break;
+>>>>>
+>>>>>   	case MEMORY_DEVICE_GENERIC:
+>>>>> @@ -480,14 +479,23 @@ void free_zone_device_folio(struct folio *folio)
+>>>>>   	}
+>>>>>   }
+>>>>>
+>>>>> -void zone_device_page_init(struct page *page)
+>>>>> +void zone_device_folio_init(struct folio *folio, unsigned int order)
+>>>>>   {
+>>>>> +	struct page *page = folio_page(folio, 0);
+>>>>
+>>>> It is strange to see a folio is converted back to page in
+>>>> a function called zone_device_folio_init().
+>>>>
+>>>>> +
+>>>>> +	VM_WARN_ON_ONCE(order > MAX_ORDER_NR_PAGES);
+>>>>> +
+>>>>>   	/*
+>>>>>   	 * Drivers shouldn't be allocating pages after calling
+>>>>>   	 * memunmap_pages().
+>>>>>   	 */
+>>>>> -	WARN_ON_ONCE(!percpu_ref_tryget_live(&page_pgmap(page)->ref));
+>>>>> -	set_page_count(page, 1);
+>>>>> +	WARN_ON_ONCE(!percpu_ref_tryget_many(&page_pgmap(page)->ref, 1 << order));
+>>>>> +	folio_set_count(folio, 1);
+>>>>>   	lock_page(page);
+>>>>> +
+>>>>> +	if (order > 1) {
+>>>>> +		prep_compound_page(page, order);
+>>>>> +		folio_set_large_rmappable(folio);
+>>>>> +	}
+>>>>
+>>>> OK, so basically, @folio is not a compound page yet when zone_device_folio_init()
+>>>> is called.
+>>>>
+>>>> I feel that your zone_device_page_init() and zone_device_folio_init()
+>>>> implementations are inverse. They should follow the same pattern
+>>>> as __alloc_pages_noprof() and __folio_alloc_noprof(), where
+>>>> zone_device_page_init() does the actual initialization and
+>>>> zone_device_folio_init() just convert a page to folio.
+>>>>
+>>>> Something like:
+>>>>
+>>>> void zone_device_page_init(struct page *page, unsigned int order)
+>>>> {
+>>>> 	VM_WARN_ON_ONCE(order > MAX_ORDER_NR_PAGES);
+>>>>
+>>>> 	/*
+>>>> 	 * Drivers shouldn't be allocating pages after calling
+>>>> 	 * memunmap_pages().
+>>>> 	 */
+>>>>
+>>>>      WARN_ON_ONCE(!percpu_ref_tryget_many(&page_pgmap(page)->ref, 1 << order));
+>>>> 	
+>>>> 	/*
+>>>> 	 * anonymous folio does not support order-1, high order file-backed folio
+>>>> 	 * is not supported at all.
+>>>> 	 */
+>>>> 	VM_WARN_ON_ONCE(order == 1);
+>>>>
+>>>> 	if (order > 1)
+>>>> 		prep_compound_page(page, order);
+>>>>
+>>>> 	/* page has to be compound head here */
+>>>> 	set_page_count(page, 1);
+>>>> 	lock_page(page);
+>>>> }
+>>>>
+>>>> void zone_device_folio_init(struct folio *folio, unsigned int order)
+>>>> {
+>>>> 	struct page *page = folio_page(folio, 0);
+>>>>
+>>>> 	zone_device_page_init(page, order);
+>>>> 	page_rmappable_folio(page);
+>>>> }
+>>>>
+>>>> Or
+>>>>
+>>>> struct folio *zone_device_folio_init(struct page *page, unsigned int order)
+>>>> {
+>>>> 	zone_device_page_init(page, order);
+>>>> 	return page_rmappable_folio(page);
+>>>> }
+>>>>
+>>>>
+>>>> Then, it comes to free_zone_device_folio() above,
+>>>> I feel that pgmap->ops->page_free() should take an additional order
+>>>> parameter to free a compound page like free_frozen_pages().
+>>>>
+>>>>
+>>>> This is my impression after reading the patch and zone device page code.
+>>>>
+>>>> Alistair and David can correct me if this is wrong, since I am new to
+>>>> zone device page code.
+>>>> 	
+>>>
+>>> Thanks, I did not want to change zone_device_page_init() for several
+>>> drivers (outside my test scope) that already assume it has an order size of 0.
+>>
+>> But my proposed zone_device_page_init() should still work for order-0
+>> pages. You just need to change call site to add 0 as a new parameter.
+>>
+> 
+> I did not want to change existing callers (increases testing impact)
+> without a strong reason.
+> 
+>>
+>> One strange thing I found in the original zone_device_page_init() is
+>> the use of page_pgmap() in
+>> WARN_ON_ONCE(!percpu_ref_tryget_many(&page_pgmap(page)->ref, 1 << order)).
+>> page_pgmap() calls page_folio() on the given page to access pgmap field.
+>> And pgmap field is only available in struct folio. The code initializes
+>> struct page, but in middle it suddenly finds the page is actually a folio,
+>> then treat it as a page afterwards. I wonder if it can be done better.
+>>
+>> This might be a question to Alistair, since he made the change.
+>>
+> 
+> I'll let him answer it :)
 
---diar7b3iid3lrt6r
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] iio: adc: ad7124: fix temperature channel
-MIME-Version: 1.0
+Not him, but I think this goes back to my question raised in my other 
+reply: When would we allocate "struct folio" in the future.
 
-Hello David,
+If it's "always" then actually most of the zone-device code would only 
+ever operate on folios and never on pages in the future.
 
-On Tue, Sep 23, 2025 at 03:18:02PM -0500, David Lechner wrote:
-> Fix temperature channel not working due to gain and offset not being
-> initialized. This was causing the raw temperature readings to be always
-> 8388608 (0x800000).
->=20
-> To fix it, we just make sure the gain and offset values are set to the
-> default values and still return early without doing an internal
-> calibration.
->=20
-> While here, add a comment explaining why we don't bother calibrating
-> the temperature channel.
->=20
-> Fixes: 47036a03a303 ("iio: adc: ad7124: Implement internal calibration at=
- probe time")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
->  drivers/iio/adc/ad7124.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> index 374e39736584f55c1290db3e257dff2c60f884d2..94d90a63987c0f9886586db0c=
-4bc1690855be2c1 100644
-> --- a/drivers/iio/adc/ad7124.c
-> +++ b/drivers/iio/adc/ad7124.c
-> @@ -1518,10 +1518,6 @@ static int __ad7124_calibrate_all(struct ad7124_st=
-ate *st, struct iio_dev *indio
->  	int ret, i;
-> =20
->  	for (i =3D 0; i < st->num_channels; i++) {
-> -
-> -		if (indio_dev->channels[i].type !=3D IIO_VOLTAGE)
-> -			continue;
-> -
->  		/*
->  		 * For calibration the OFFSET register should hold its reset default
->  		 * value. For the GAIN register there is no such requirement but
-> @@ -1531,6 +1527,13 @@ static int __ad7124_calibrate_all(struct ad7124_st=
-ate *st, struct iio_dev *indio
->  		st->channels[i].cfg.calibration_offset =3D 0x800000;
->  		st->channels[i].cfg.calibration_gain =3D st->gain_default;
-> =20
-> +		/*
-> +		 * Only the main voltage input channels are important enough
-> +		 * to be automatically calibrated here.
-> +		 */
-> +		if (indio_dev->channels[i].type !=3D IIO_VOLTAGE)
-> +			continue;
-> +
+I recall during a discussion at LSF/MM I raised that, and the answer was 
+(IIRC) that we will allocate "struct folio" as we will initialize the 
+memmap for dax.
 
-I don't understand a detail of the problem. The commit log suggests that
-there is a general problem, but looking at the patch I suspect there is
-only a problem if at probe time the OFFSET and GAIN register for the
-temperature channel are different from their reset default setting.
+So essentially, we'd always have folios and would never really have to 
+operate on pages.
 
-I think the patch is fine, but if my understanding is right the commit
-log is more dramatic than the issue really is, as it needs some fiddling
-with the ADC's registers between poweron and driver loading to trigger.
+-- 
+Cheers
 
-Best regards
-Uwe
+David / dhildenb
 
---diar7b3iid3lrt6r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjT0A0ACgkQj4D7WH0S
-/k629gf9EEyMob63w45sy8E1Tl2I0vbiHhfCGjC0RuxdvWZZ94q7yARaASpMhL0L
-+6NNeLxgzvoVEQ/I680dnAoDBysDPbIY2jT4V4AiwU+8faJMbapw3FMq89ojV1x0
-vaTqrmUHtU/aNqalhl953zpWgSo4YH5ZIkiqgj5yJUTMz23XRmJblV99y97NTjOE
-GbW8kI/Qn1Y57Rhe90rwKM5GYJUs+Il/R61u2o8oSp135MDCGJeD8Q8n17JzH87B
-WXORKMd787hcPOlIJ3KVTYXBBg3YB9fwBT/MC5u8mFr3ZDQJnlf4kdPpm56Er/d/
-zId8hbNmZtRPi0pMVy9PXnn1ehuTYw==
-=1vmw
------END PGP SIGNATURE-----
-
---diar7b3iid3lrt6r--
 
