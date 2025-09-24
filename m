@@ -1,143 +1,133 @@
-Return-Path: <linux-kernel+bounces-830924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6BCB9AEBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:53:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3479B9AEC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4C18321226
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0FAE1B28138
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDE130C36D;
-	Wed, 24 Sep 2025 16:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2CE314A90;
+	Wed, 24 Sep 2025 16:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PHUJ1d9o"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DPW1E8Yw"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441262D97BA
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 16:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441B43128DE
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 16:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758732779; cv=none; b=YbDApL+joX7Qj6XVHIU90aQEpkKGwU+vAL45sT8DNXFZdOc4XOf4l/Yg5SWRdkPzc8TqYjpR91LcNpu3teOM+W4dAajL1ucU6G8omCiC6iOuEV7QdoMNp6fb+Nal37muKheuPWv3M76Dn+a2cljKoWgoaTHxMP/Q+y20qx0JU48=
+	t=1758732789; cv=none; b=VU4mIHFhN3law7yKwGKV1327B7dEgnaECyrLhI1TOWcIYDJMNF8emcdTI7ArPRSRkijEWt3MVlJx01SgqHyb5R859wo+MAztdm82HYfqb90g8qTwizlgG6cDTo5wTilf6iKWtnZY9JpgkQLgJ/X18+az6KvC/sTMQA/hvymShvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758732779; c=relaxed/simple;
-	bh=UrMcgnvepEFw09AKY27xiaGcVJTODrGC0uo1csSp3i0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hhUgv2jqUL2cuZujNYrvuRQKCThZG89wOtK3Pa5HSH2dlX7TNO3x6C6dQ3NqBhW+A1/kKP643Mw+GCzqIbFVHyU0Tv/arvwklkLmNES6gsz6glxsIrmQ956D/7nI+/4mnN4ajEJhhxJv2EWdiFH7OZye9D1DZm8HRRflQ3bexF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PHUJ1d9o; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45f2acb5f42so7044235e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:52:57 -0700 (PDT)
+	s=arc-20240116; t=1758732789; c=relaxed/simple;
+	bh=nMKNSlgd+7V+f9mWKnNERKzzRCQYc2/BYVK3sw3Dg48=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b1A9CuBsxJ1qLhC3WuW9L583x2nsjQcd0cTvSLxkJ0QEd8yZxFi6khkgTKyg+l253V8JNmf85rAxxsiyctpDZk4ddvaSiyVrtvL/hkar2lghirNZyenn3ZMtFkVrcX4Fwdrim8GUXyJ2l6oryM3RL5mMnEnZjzaQcXzZ2YFfccY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DPW1E8Yw; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4c73047a75cso189331cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:53:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758732775; x=1759337575; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GzTtM9WAsK07z8tZ50EdByhyU/vMqn0St2F82RyVOyM=;
-        b=PHUJ1d9o45OIzhnq3djs1HIoKODo1lgRlGRwzGJDHXVsLMkqO51dD+xZZLKMBRMObl
-         NAYxaB9E3n/wYtLxbi+wrUQCJHaIt3zs4T93EP942naLHn0QAeZqwibmFt9OT2es0I31
-         WyREvH3HlCQrAFQNBM1rwMqkJhex0AWnCfGTMuIElDY0/UOyM9IvBKFYs+DRtZGJ4iet
-         OT3AasX+9vHtoIUFSWoa1s4DRxrp+7+rXc+rAck4fMop0e6hbywTddfVL53KPyPm3WuI
-         G/s9jTBJqGI+c8U2aIu0NfjaHwFtAV8gP6bIRos8r5WYUB7sVwqPyWlmUJJ14BGw7xOb
-         dbsA==
+        d=google.com; s=20230601; t=1758732787; x=1759337587; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rAL5Cu+UfMQz37OQN1YYrMC/83wElraN+KKVT4FmBP0=;
+        b=DPW1E8Yw3QdSPQvHnYln+GZgMDUMuVvYyWbSMfcRif/ZD3NBnWpfLzwVZlr+ThLc5/
+         cHmevYxRB/NhIA4Yuc6C0SH9QZ6eibastWiHkUItYXocXRUs4uTrAevZXUGlbqgQW6pR
+         LwQYrXMAk2KizIQCxoQj+AU8NmrCelMyRszZFrTWO2LcsKHxFNlRcCpsK7qDtlROrpNF
+         Gwd/Et9s7PsEppE3vW2DH2HsqQ/toK4tIsMKl8NpExdimxH4Fa1TwgnN+n3t+3jL7Ek7
+         VDmG6MICHvUgHZ7iz+jPghKBF7b6JjtRBmuBKJZakmN6P+AArSI7xy3YUkBNMDiynsu6
+         zUtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758732775; x=1759337575;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GzTtM9WAsK07z8tZ50EdByhyU/vMqn0St2F82RyVOyM=;
-        b=o3/i4eoioF5tDbcBxMuJ1SUtKpcxHOhCKY+XtFhngqRw8LJpM+c/AR75pxB5ePokC4
-         YT4rDulxt3qsrErybGLQH3pR4jZ2zdIqQxAccdZ0fls9rI/x57WxyBQHouT0ZTw+WOOw
-         zIyJ7S4hnahkAmxGnHaw+1z68SqKTZ9Tk9tKEMd1lgcp3Ydp5zUzT2dOnWvgUFHdnUB5
-         eMV4nyoBfzNsIgyJALyNc574P5FlA0RkmRM+HBcarFFoSqBCik5MbsxOUcCXv6qDEXac
-         9qh9RN/wYXkeYUXbXEKmeMTaZDGVRNjCdg+/drwz/kMswj+qJJwHy1uI7n3GMpqh/Kl2
-         PFYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXrIaL+dN1bxMfndSdWV7I+a/HWPP1zYEczZPsUDEXdSLIcpeEG8rnkwQcg5qfj7fykVJoO7ZJ3KxGad+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7BDiSn9vig4wuNhPSweBameT9A3xwGr7B6psXKnsb//Sa/3hD
-	C7qb3Dk6T4RXAXZQ3F5hllrYz/mTKM7pKPVEo1v/NJ/Qlemi09ABarav
-X-Gm-Gg: ASbGncvQMB45gfOXJLe44BOeLc51veFSbnHLn1UKkJCmProAL3SmXeoOPAKNZDezXXN
-	HqkQQQgnw1Yx8e9IY5LfE7I12uwfWhasqmlr3BIOFh5e2xC7YGsQ3CgJLF3C3xdnXKHvBwPVm8s
-	8sTdlLca/2r/RGS3EXGET4jkGoaWa9zdVK16RKVRDAN48pXdoq3Hfx+YWgZ0xN+aVjoM+H5WqTu
-	8gqNFjuWuyMDa9jDhJiz1Llf+UXH4Ioc7wwUqxKnWU4znSn/ZHxfDyn2kLnKcA4/E3B/be3S5LT
-	gpFAu3xSgP7H5IwUXI5NQOl9Q8y2BM19EdM0FvQLDKKCOTMqCxUfv0IACiAVX5LGFHsv8WXxkp7
-	bQ4RmIVDIykolZAIVQtr+usbLWfguhs99yWq2dSjAtoyldDzsrnPf5F3Kkono16FFPhM1UhU9T4
-	/nUsasgtCH+A==
-X-Google-Smtp-Source: AGHT+IHV6Of+qXakfqJ0XhbATMb2AIuLl9e0wcQPO7/GLftVgSTayzqBT8eCMUUPgRnR+4vlJm1a1w==
-X-Received: by 2002:a05:600c:45c6:b0:46b:2fd3:b55f with SMTP id 5b1f17b1804b1-46e32c2f45amr3319005e9.4.1758732775255;
-        Wed, 24 Sep 2025 09:52:55 -0700 (PDT)
-Received: from radijator.localnet (93-138-236-234.adsl.net.t-com.hr. [93.138.236.234])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3f02f332c31sm22789020f8f.45.2025.09.24.09.52.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 09:52:54 -0700 (PDT)
-From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <dujemihanovic32@gmail.com>
-To: soc@lists.linux.dev
-Cc: Karel Balej <balejk@matfyz.cz>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
-Subject: [GIT PULL] PXA1908 DT changes for 6.18
-Date: Wed, 24 Sep 2025 18:52:52 +0200
-Message-ID: <4685744.LvFx2qVVIh@radijator>
+        d=1e100.net; s=20230601; t=1758732787; x=1759337587;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rAL5Cu+UfMQz37OQN1YYrMC/83wElraN+KKVT4FmBP0=;
+        b=N/0JxSJb9DZ5VY+RIpMg7tMzT8vaJBdyaM8JeXKz+ag1Eyf2gN7oKnBHeA2/7PbtLZ
+         13DRmInDipSozvYghRuMXwP88XsYYllJOWUzryHe+QDErmEUuYgLBixnAfXGVtzYVeHz
+         aRn2LQSwGJ1N9RHTMaWDSu4F2muQqKgRmuodDYxlS0hKjKD9pygseBZbkvdOe//RK3OM
+         eaDWe5LoJ9Duw6170LpIx3/t469o2cfa8WJfZhfkq66nkpj+J1biFPNCje5e/8z7IwPG
+         o/q6+ftgEZFaxxIrBRgkMhWuUBvE3Om5CYcw3sNbsgSPSdndZwi4kgIanCBQnzBgwNAl
+         s9fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxaAGX+zwXl37G2erg5y8Gr6QecEMaicG8kVi6tvPTtM99e6cpPe8XD5r4jHfqIDEMFecgdNA3CghLT00=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynQeWmwnThvCXPBODJ/U8XpXcvFA/88rFInLsJjz8uRS1Oyxib
+	UC/yp2oBS4NwhufIH+nBzdQxrQEwi6EX+vQGwaioNZm3oeU1mVet6oKG8yinvixKDDE+C1cKDtY
+	EMzwOS9wXIZ9VfgDNThqm2Zcjr300muL4A1RSgkmn
+X-Gm-Gg: ASbGncsQWjx+1TDAPCF3rtVdndc9YfOa2jJCARI+YnucPZ1PkOVHwHRmr4PT4LngPll
+	GJYlcBp1QvpFMqzbh345zXbvqfSba4nhZQth7oTLtXc01xiF5QzCq/FK+qNaVD8tWwoFd7POLSJ
+	0BYILu3V8VheooivKibQo67T93cXc8ufg0TGUaNZdAKjhQG8ogdiv3rWJsXZElyZNqhQqtk50h+
+	nbquHOh9v8X9abK5JhV0IQweqMx8J7tlmneFYj8ObE/6Q9yg/II
+X-Google-Smtp-Source: AGHT+IFM4bC1CM0lReVKUj4FdqmsLyiIGG5AgB26WGF7py0Fxnl1epvOibVW8GFjcF4KFlPv5Uc4yba9NX1j26NP/mY=
+X-Received: by 2002:a05:622a:1819:b0:4b3:8ee:521b with SMTP id
+ d75a77b69052e-4da23acea56mr1381191cf.0.1758732786627; Wed, 24 Sep 2025
+ 09:53:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz> <20250910-slub-percpu-caches-v8-2-ca3099d8352c@suse.cz>
+In-Reply-To: <20250910-slub-percpu-caches-v8-2-ca3099d8352c@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 24 Sep 2025 09:52:55 -0700
+X-Gm-Features: AS18NWAeKekoZw_EZc6GYInUxqn2E30S29JpUuV_6-vLoJBFCrPesQlPq9v554g
+Message-ID: <CAJuCfpHzNyQw6N5CjfNXsMLyUQem2noSm+_A3O2gm+skA7qDsA@mail.gmail.com>
+Subject: Re: [PATCH v8 02/23] slab: simplify init_kmem_cache_nodes() error handling
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter <cl@gentwo.org>, 
+	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+	maple-tree@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Hi SoC maintainers,
+On Wed, Sep 10, 2025 at 1:01=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> We don't need to call free_kmem_cache_nodes() immediately when failing
+> to allocate a kmem_cache_node, because when we return 0,
+> do_kmem_cache_create() calls __kmem_cache_release() which also performs
+> free_kmem_cache_nodes().
+>
+> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-Here's the first batch of PXA1908 DT changes for 6.18.
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
-Regards,
-Duje
-
-The following changes since commit 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c:
-
-  Linux 6.17-rc5 (2025-09-07 14:22:57 -0700)
-
-are available in the Git repository at:
-
-  https://gitlab.com/pxa1908-mainline/linux.git tags/pxa1908-dt-for-6.18
-
-for you to fetch changes up to efab3844c6f18327886c5c2e0e40acccaf976a89:
-
-  arm64: dts: marvell: samsung,coreprimevelte: Add USB connector (2025-09-2=
-0 14:08:32 +0200)
-
-=2D---------------------------------------------------------------
-PXA1908 DT changes for 6.18
-
-Rollup of hardware support which has accumulated since support for the
-SoC and coreprimevelte board was merged. This most notably includes
-eMMC, PMIC, backlight and touchscreen. A few QoL fixes are also
-included.
-
-=2D---------------------------------------------------------------
-Duje Mihanovi=C4=87 (9):
-      arm64: dts: marvell: samsung,coreprimevelte: Add backlight
-      arm64: dts: marvell: samsung,coreprimevelte: Correct CD GPIO
-      arm64: dts: marvell: samsung,coreprimevelte: Enable eMMC
-      arm64: dts: marvell: pxa1908: Add PWMs
-      arm64: dts: marvell: samsung,coreprimevelte: Add vibrator
-      arm64: dts: marvell: pxa1908: Move ramoops to SoC dtsi
-      arm64: dts: marvell: samsung,coreprimevelte: Drop some reserved memory
-      arm64: dts: marvell: samsung,coreprimevelte: Fill in memory node
-      arm64: dts: marvell: samsung,coreprimevelte: Add USB connector
-
-Karel Balej (3):
-      arm64: dts: samsung,coreprimevelte: add PMIC
-      arm64: dts: samsung,coreprimevelte: add touchscreen
-      arm64: dts: samsung,coreprimevelte: add SDIO
-
- .../marvell/mmp/pxa1908-samsung-coreprimevelte.dts | 266 +++++++++++++++++=
-+---
- arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi       |  46 ++++
- 2 files changed, 278 insertions(+), 34 deletions(-)
-
-
-
+> ---
+>  mm/slub.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 30003763d224c2704a4b93082b8b47af12dcffc5..9f671ec76131c4b0b28d5d568=
+aa45842b5efb6d4 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -5669,10 +5669,8 @@ static int init_kmem_cache_nodes(struct kmem_cache=
+ *s)
+>                 n =3D kmem_cache_alloc_node(kmem_cache_node,
+>                                                 GFP_KERNEL, node);
+>
+> -               if (!n) {
+> -                       free_kmem_cache_nodes(s);
+> +               if (!n)
+>                         return 0;
+> -               }
+>
+>                 init_kmem_cache_node(n);
+>                 s->node[node] =3D n;
+>
+> --
+> 2.51.0
+>
 
