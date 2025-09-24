@@ -1,191 +1,153 @@
-Return-Path: <linux-kernel+bounces-829914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48220B982E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:17:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 896F2B98301
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 007C22E5DDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:17:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E5AC4C0320
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419CB1D5CF2;
-	Wed, 24 Sep 2025 04:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6338218DB35;
+	Wed, 24 Sep 2025 04:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SxJvvQ4O"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FEVtG/3q"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC82724167A
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A97C13B58C
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758687442; cv=none; b=a/wvP1JGbSH8BlEWl2eCoVC2c0YbiZ1cBgxp3VSrLfgT/lkzREZZtNVqUkSZDVjdi6+PsMsBu9Ec7iX3WO4OR9GItU2uhp/xmmdilZaI77ITkWZbBU3aSoWo+AlmIEhuEiRuUCaM35UbXVSyydCQfJ4PTqsBChImoK9UkeIwdrA=
+	t=1758687533; cv=none; b=ej5M9QJDnYV6GbjfzQS4QDvso5jRZHC9lWsgPVj8n5WLtxu8JprCW2NhpSKhgt3wpssJIHAvec5Wp1zD55rLBSqlzire5791q+DATO1pEbRHePvPM+55yoZy6SImoJDYuUzd/ULNSB9RGCxqmilEaphfEn56eioczvmpKoC9mSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758687442; c=relaxed/simple;
-	bh=NKHHQWLLO7iEsaIsR916DMhOaKE+fx0kwZEQxs9hNhg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=nB4EGk8s9TcTAneyL7agoiPJynY1fYIZeJwZiACbuKTBAWHG0FBwr8kHQHVFK4zj0cWKQDE0QWIPF34vnP+uqVpZkmYYpPpdicuaa+TcevBgvfgvBcYhrEh+7zy0VBKw2LH8mjBqdSGOwkVikoXD7a6KG/JbCm+vmTri7kAFIKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=SxJvvQ4O; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250924041710epoutp04d3621f6770ef9218b3be3aed6bf2d392~oHOZuUTas1890718907epoutp049
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:17:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250924041710epoutp04d3621f6770ef9218b3be3aed6bf2d392~oHOZuUTas1890718907epoutp049
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758687430;
-	bh=jYbjNYvDcvxUJIbV4CcVlf3jrFpR4g5YEjPmTZVG/mg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=SxJvvQ4OaCXCEpurWuC5N9CZrzFk2kwvdzhn/abhjeutuKKnay9ibwsZpN97I1aCj
-	 N5mXZvuVgrspY0UDW3xtg7Zz5Y2G5IJYK5xmMqWMEwTWTF5SUxWxLIjVqQq3C6Knhf
-	 B0oTQ9lGEydGGZhfuVkofNJwwwqqAXkLl6nIkUw0=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250924041710epcas1p31839db2ffc0bb57e6874cc1f490e85ae~oHOZcEOi70590605906epcas1p3c;
-	Wed, 24 Sep 2025 04:17:10 +0000 (GMT)
-Received: from epcas1p2.samsung.com (unknown [182.195.36.227]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cWk855sfbz3hhTC; Wed, 24 Sep
-	2025 04:17:09 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250924041709epcas1p487d175805cbfb988b556ae4034995747~oHOYbA3Ls1797517975epcas1p4I;
-	Wed, 24 Sep 2025 04:17:09 +0000 (GMT)
-Received: from yunji0kang01 (unknown [10.253.100.171]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250924041709epsmtip21da12bfd155b24fefb4dd00ea7cbbe94~oHOYYAMdS2684526845epsmtip2P;
-	Wed, 24 Sep 2025 04:17:09 +0000 (GMT)
-From: "Yunji Kang" <yunji0.kang@samsung.com>
-To: "'Chao Yu'" <chao@kernel.org>, <jaegeuk@kernel.org>
-Cc: <linux-f2fs-devel@lists.sourceforge.net>,
-	<linux-kernel@vger.kernel.org>, "'Sungjong Seo'" <sj1557.seo@samsung.com>,
-	"'Sunmin	Jeong'" <s_min.jeong@samsung.com>
-In-Reply-To: <89f237cd-3f86-405a-8f8f-d9cad250ef00@kernel.org>
-Subject: RE: [PATCH v2] f2fs: readahead node blocks in
- F2FS_GET_BLOCK_PRECACHE mode
-Date: Wed, 24 Sep 2025 13:17:08 +0900
-Message-ID: <00d401dc2d0a$18100c20$48302460$@samsung.com>
+	s=arc-20240116; t=1758687533; c=relaxed/simple;
+	bh=XjqILoXA+71KrBfO561DUam3Ijy3SWuNOgMgA4I4huY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TyVjru+sIu+Ynk009Q8Uee+eo+LBJl1egJX/0TgHvCoQuy/Dgkm0Ddefw4F1vv8kFV3Hos49u0Ze36kTdP8c2luTj9RcxD5yPt7YscZXWZRv0GdWDUfCegx8E1L0ZQf7WOPIqmnXvtuczt8ZPZF24s2hGm9BKvJq72SZE5g412U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FEVtG/3q; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58O1vNr3001947
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:18:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=vpne8kZfYGsyYm1tUZn0/7
+	hf3sQHlEA0+dwGg5a9hKo=; b=FEVtG/3qsB5no1GFaKRKUVNyTCbXLi02NF7qcw
+	IVp5yUikaWGHS+IvOoRaS8b8orrZrs8YayozfTRa488RPK+N0LZ4tC9wuTmnoWpS
+	fAtD2xBSW/ZKxA+mMF7qm54LVEQeC/IomiuDIEH8hNYm2Sy3i3guRQTJqFySdVS6
+	sPNBorgTUORDzbFVFAkuKiZppUvZLjOfELtya9GaNtuHel75YUxUe/x51aAhBXuY
+	SdMhkLJfQ3Ah1dNMdzdJqt/9refbK9VFTkLU53Lyv42+I5MgEOfoLMsUunt0OkF3
+	Pe3+t9ZkPtBEwpZG+OZnbzCy99L8qH3dSckaOmCcVJDzfdRw==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499n1fjvq5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:18:51 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b5509ed1854so4168767a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 21:18:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758687530; x=1759292330;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vpne8kZfYGsyYm1tUZn0/7hf3sQHlEA0+dwGg5a9hKo=;
+        b=dSzIhs1MTCEiy3qGzyiiOByCUcYbNWmbPfaMGDf/Jr+5WfDwkOoz1hLbkq7xC07Uwr
+         l94qybBKo8k3T1DEOoVAvoANWDYfgv3usKlHlGp0BkW/CdebVR/uVIn0EDzyQYl/trBZ
+         jmj2UnrAfZFQ2Z2rN6NqAQCqLLHruE0QFZZK05VBvLpeFTuW15EMhMSDyTUfk3undv8w
+         CGuwlsL7VLxKPRZ4NN4y1FWuRT/moDhucvjIdJQ6/Mb2Ev1G5pQwwcRVQlrQBn6iUm39
+         ii1VhdqQ+SLsJMDlyFCE2FKqsj493Wbb5QMLBAm3xNxhCsXR55aEAsrGkuNaRevEukvz
+         wOkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSDIRibs/jzRYeyoIghg2Mkp77b9/hLP3EjOssFqm/GHJU83YZjQlOCjKiap1m6/DbLp+pA1vmv4/gLdc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6YPLNTWGucUeHnR1QFAoFdUCtNu7P/JFvjDaogu6rtKQx1PvN
+	dHOsq1NNkMRIoNhBC4DeSF8LIFRpsXcP/EzNePnnmG5EQNarg2A4kdmOfYYUlsZGuDBkkAnk97I
+	uhGhs3fd8qwc7jFySUvpN1Ids4oSMtUtjaHCfZCqDdsufmyWseTSnOLb+N8LuIKXinBuqXJnw3O
+	8=
+X-Gm-Gg: ASbGncvJjMV7mpr0S947EHzX/PNVT1+N+/GVowcxTAr4Fbo2gNAU6aAHTqdBu2ZvGWS
+	cmSr65J4IRGkYbiBlsnmmvfdkOPN6meEnvcgSItsMxtxqY9QTjM//MO/9ahhgke4LswbdxkkTui
+	G93cD9qfYuSxsHkq4iOJnTyRPEydPYhqdZiEEyV6mzsJeOUfBaFLErvU3IYJZEkp8hlf5TXfqpp
+	gqufwXO6LPw33cE1sj5yYJUWcoMfyumAvwSG+c+B++S6CrsdQt1a5EWZO7CDS3QjGnjBbGCurSo
+	ts3yYRWSx754u8BRoO4SWvfLS69VqaVRBIvGctXUNQJnmptMFGDKZNXn5UUI5rAHUpYoc5ze3u2
+	C0mjZ/YZxXw0Z1p0=
+X-Received: by 2002:a17:903:985:b0:25c:e2c:6653 with SMTP id d9443c01a7336-27cc8f01f45mr56276195ad.48.1758687530137;
+        Tue, 23 Sep 2025 21:18:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEtTISyFv+vw6Rp5AGaka7pB9YW6GXPmR155iN4EzVrngkZl6LwXVUXX9orIpKdONELQ+C7Ng==
+X-Received: by 2002:a17:903:985:b0:25c:e2c:6653 with SMTP id d9443c01a7336-27cc8f01f45mr56275955ad.48.1758687529694;
+        Tue, 23 Sep 2025 21:18:49 -0700 (PDT)
+Received: from hu-jingyw-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2699363989fsm170133885ad.92.2025.09.23.21.18.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 21:18:49 -0700 (PDT)
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Subject: [PATCH 0/2] soc: qcom: smp2p: Add support for remoteproc early
+ attach
+Date: Tue, 23 Sep 2025 21:18:41 -0700
+Message-Id: <20250923-smp2p-v1-0-2c045af73dac@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQLJ+3fmt+QCibYu+QNx3C6/vuLkWQHN7bNGAg+MCJSypyzxwA==
-Content-Language: ko
-X-CMS-MailID: 20250924041709epcas1p487d175805cbfb988b556ae4034995747
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-cpgsPolicy: CPGSC10-711,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250918082037epcas1p1eb201d3b6d5780c0bff3ba32740ccdcf
-References: <CGME20250918082037epcas1p1eb201d3b6d5780c0bff3ba32740ccdcf@epcas1p1.samsung.com>
-	<20250918082023.57381-1-yunji0.kang@samsung.com>
-	<89f237cd-3f86-405a-8f8f-d9cad250ef00@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACFx02gC/x3Myw5AQAyF4VeRrk1ixiV4FbEoii6MSSsiEe9uW
+ H7Jf84NSsKk0CY3CJ2svPsImyYwrugXMjxFg8tcmTUuN7oFF4wtGztRjbOtCohtEJr5+n+6Pnp
+ AJTMI+nH91hvqQQLP8wLp/D9HcAAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Chris Lew <chris.lew@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758687528; l=678;
+ i=jingyi.wang@oss.qualcomm.com; s=20250911; h=from:subject:message-id;
+ bh=XjqILoXA+71KrBfO561DUam3Ijy3SWuNOgMgA4I4huY=;
+ b=/xD14ruMZYYv47gcLQJJp3f0aPAUUPyVcTZPLnh0kqBknliAf74Whd+TZwvqGmm/IJ0AgpxYo
+ GLzosOvKRsrBZwGOfM1DIfUWp7FBu39PZ7ye3xgpggKSo1xCFQuB+KK
+X-Developer-Key: i=jingyi.wang@oss.qualcomm.com; a=ed25519;
+ pk=PSoHZ6KbUss3IW8FPRVMHMK0Jkkr/jV347mBYJO3iLo=
+X-Proofpoint-ORIG-GUID: yc43YxYLCL7AzxRaH6yGHrf1ybX-uuKV
+X-Proofpoint-GUID: yc43YxYLCL7AzxRaH6yGHrf1ybX-uuKV
+X-Authority-Analysis: v=2.4 cv=No/Rc9dJ c=1 sm=1 tr=0 ts=68d3712b cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=zY-m3Q_QrtyZ9r60RnwA:9
+ a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzNyBTYWx0ZWRfX3W6x8ytM/c1y
+ C0Yz0bIuVyIrfxqMjRIQkW2jyfyjPUv0Rfp7a6ofBxchiaNQwALduopOdL90pDgmAINN0Xfahcq
+ bywl4n6hloZsPV3/N5FnSo+Xo0Zx+HREBo0PYgeVmYMk38PrYmn5/l0hZP0n06k/F2wxOlzylHe
+ DdRlRX1/w2N2u98iIxuBJ+6bDoaw/N1tqErhGDafEVB8qjWiDcB7l180aBKhTYAR224/FrlQFMG
+ wKoUnun30vwWeeenDdl0Vm19gETlUi8qSUR3ga2TBj7y38+yFs+p1qX1trplO30xp7DLnVN/u6r
+ yLhaIc5FAgjF9xf83ZgpCExOIB/3or3klOdISLHMGRV+zxA//2uT9EoGmtfwZwt72IP1v5Y7xPa
+ B3qVb0No
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-23_08,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 suspectscore=0 adultscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 priorityscore=1501 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200037
 
-> > In f2fs_precache_extents(), For large files, It requires reading many
-> > node blocks. Instead of reading each node block with synchronous I/O,
-> > this patch applies readahead so that node blocks can be fetched in
-> > advance.
-> >
-> > It reduces the overhead of repeated sync reads and improves efficiency
-> > when precaching extents of large files.
-> >
-> > I created a file with the same largest extent and executed the test.
-> > For this experiment, I set the file's largest extent with an offset of
-> > 0 and a size of 1GB. I configured the remaining area with 100MB extents=
-.
-> >
-> > 5GB test file:
-> > dd if=3D/dev/urandom of=3Dtest1 bs=3D1m count=3D5120 cp test1 test2 fsy=
-nc
-> > test1 dd if=3Dtest1 of=3Dtest2 bs=3D1m skip=3D1024 seek=3D1024 count=3D=
-100
-> > conv=3Dnotrunc dd if=3Dtest1 of=3Dtest2 bs=3D1m skip=3D1224 seek=3D1224=
- count=3D100
-> > conv=3Dnotrunc ...
-> > dd if=3Dtest1 of=3Dtest2 bs=3D1m skip=3D5024 seek=3D5024 count=3D100 co=
-nv=3Dnotrunc
-> > reboot
-> >
-> > I also created 10GB and 20GB files with large extents using the same
-> > method.
-> >
-> > ioctl(F2FS_IOC_PRECACHE_EXTENTS) test results are as follows:
-> >   +-----------+---------+---------+-----------+
-> >   =7C File size =7C Before  =7C After   =7C Reduction =7C
-> >   +-----------+---------+---------+-----------+
-> >   =7C 5GB       =7C 101.8ms =7C 72.1ms  =7C 29.2%     =7C
-> >   =7C 10GB      =7C 222.9ms =7C 149.5ms =7C 32.9%     =7C
-> >   =7C 20GB      =7C 446.2ms =7C 276.3ms =7C 38.1%     =7C
-> >   +-----------+---------+---------+-----------+
->=20
-> Yunji,
->=20
-> Will we gain better performance if we readahead more node pages w/
-> sychronous request for precache extent case? Have you tried that?
->=20
-> Thanks,
->=20
+Some remoteproc will boot during earlier boot stages, add callback
+.irq_get_irqchip_state for remoteproc to check the states in smp2p
+and mark the state "attached", also add smp2p v2 support.
 
-Does =E2=80=9Creadahead=20more=20node=20pages=E2=80=9D=20mean=20removing=20=
-this=20condition?=0D=0A=22=20offset=5Bi=20-=201=5D=20%=20MAX_RA_NODE=20=3D=
-=3D=200=20=22=0D=0A=0D=0AI=20originally=20added=20the=20condition=20to=20pr=
-event=20unnecessary=20readahead=20requests,=20=0D=0Abut=20it=20seems=20this=
-=20condition=20was=20actually=20blocking=20valid=20readahead=20as=20well.=
-=0D=0A=0D=0AAfter=20removing=20the=20condition=20and=20running=20tests,=20=
-=0D=0AI=20confirmed=20that=20more=20readahead=20node=20pages=20are=20being=
-=20issued.=0D=0A=0D=0AI=E2=80=99ll=20share=20the=20test=20results=20along=
-=20with=20the=20improved=20patch.=0D=0A=0D=0AThanks,=0D=0A=0D=0A>=20>=20Tes=
-ted=20on=20a=20256GB=20mobile=20device=20with=20an=20SM8750=20chipset.=0D=
-=0A>=20>=0D=0A>=20>=20Reviewed-by:=20Sungjong=20Seo=20<sj1557.seo=40samsung=
-.com>=0D=0A>=20>=20Reviewed-by:=20Sunmin=20Jeong=20<s_min.jeong=40samsung.c=
-om>=0D=0A>=20>=20Signed-off-by:=20Yunji=20Kang=20<yunji0.kang=40samsung.com=
->=0D=0A>=20>=20---=0D=0A>=20>=20v2:=0D=0A>=20>=20=20-=20Modify=20the=20read=
-ahead=20condition=20check=20routine=20for=20better=20code=0D=0A>=20>=20read=
-ability.=0D=0A>=20>=20=20-=20Update=20the=20title=20from=20'node=20block'=
-=20to=20'node=20blocks'.=0D=0A>=20>=0D=0A>=20>=20=20fs/f2fs/data.c=20=7C=20=
-3=20+++=0D=0A>=20>=20=20fs/f2fs/f2fs.h=20=7C=201=20+=0D=0A>=20>=20=20fs/f2f=
-s/node.c=20=7C=205=20++++-=0D=0A>=20>=20=203=20files=20changed,=208=20inser=
-tions(+),=201=20deletion(-)=0D=0A>=20>=0D=0A>=20>=20diff=20--git=20a/fs/f2f=
-s/data.c=20b/fs/f2fs/data.c=20index=0D=0A>=20>=207961e0ddfca3..ab3117e3b24a=
-=20100644=0D=0A>=20>=20---=20a/fs/f2fs/data.c=0D=0A>=20>=20+++=20b/fs/f2fs/=
-data.c=0D=0A>=20>=20=40=40=20-1572,6=20+1572,9=20=40=40=20int=20f2fs_map_bl=
-ocks(struct=20inode=20*inode,=20struct=0D=0A>=20f2fs_map_blocks=20*map,=20i=
-nt=20flag)=0D=0A>=20>=20=20=09pgofs=20=3D=09(pgoff_t)map->m_lblk;=0D=0A>=20=
->=20=20=09end=20=3D=20pgofs=20+=20maxblocks;=0D=0A>=20>=0D=0A>=20>=20+=09if=
-=20(flag=20=3D=3D=20F2FS_GET_BLOCK_PRECACHE)=0D=0A>=20>=20+=09=09mode=20=3D=
-=20LOOKUP_NODE_PRECACHE;=0D=0A>=20>=20+=0D=0A>=20>=20=20next_dnode:=0D=0A>=
-=20>=20=20=09if=20(map->m_may_create)=20=7B=0D=0A>=20>=20=20=09=09if=20(f2f=
-s_lfs_mode(sbi))=0D=0A>=20>=20diff=20--git=20a/fs/f2fs/f2fs.h=20b/fs/f2fs/f=
-2fs.h=20index=0D=0A>=20>=209d3bc9633c1d..3ce41528d48e=20100644=0D=0A>=20>=
-=20---=20a/fs/f2fs/f2fs.h=0D=0A>=20>=20+++=20b/fs/f2fs/f2fs.h=0D=0A>=20>=20=
-=40=40=20-651,6=20+651,7=20=40=40=20enum=20=7B=0D=0A>=20>=20=20=09=09=09=09=
-=09=20*=20look=20up=20a=20node=20with=20readahead=20called=0D=0A>=20>=20=20=
-=09=09=09=09=09=20*=20by=20get_data_block.=0D=0A>=20>=20=20=09=09=09=09=09=
-=20*/=0D=0A>=20>=20+=09LOOKUP_NODE_PRECACHE,=09=09/*=20look=20up=20a=20node=
-=20for=0D=0A>=20F2FS_GET_BLOCK_PRECACHE=20*/=0D=0A>=20>=20=20=7D;=0D=0A>=20=
->=0D=0A>=20>=20=20=23define=20DEFAULT_RETRY_IO_COUNT=098=09/*=20maximum=20r=
-etry=20read=20IO=20or=20flush=0D=0A>=20count=20*/=0D=0A>=20>=20diff=20--git=
-=20a/fs/f2fs/node.c=20b/fs/f2fs/node.c=20index=0D=0A>=20>=204254db453b2d..d=
-4bf3ce715c5=20100644=0D=0A>=20>=20---=20a/fs/f2fs/node.c=0D=0A>=20>=20+++=
-=20b/fs/f2fs/node.c=0D=0A>=20>=20=40=40=20-860,7=20+860,10=20=40=40=20int=
-=20f2fs_get_dnode_of_data(struct=20dnode_of_data=20*dn,=0D=0A>=20pgoff_t=20=
-index,=20int=20mode)=0D=0A>=20>=20=20=09=09=09set_nid(parent,=20offset=5Bi=
-=20-=201=5D,=20nids=5Bi=5D,=20i=20=3D=3D=201);=0D=0A>=20>=20=20=09=09=09f2f=
-s_alloc_nid_done(sbi,=20nids=5Bi=5D);=0D=0A>=20>=20=20=09=09=09done=20=3D=
-=20true;=0D=0A>=20>=20-=09=09=7D=20else=20if=20(mode=20=3D=3D=20LOOKUP_NODE=
-_RA=20&&=20i=20=3D=3D=20level=20&&=20level=20>=201)=0D=0A>=20=7B=0D=0A>=20>=
-=20+=09=09=7D=20else=20if=20((i=20=3D=3D=20level=20&&=20level=20>=201)=20&&=
-=0D=0A>=20>=20+=09=09=09=09(mode=20=3D=3D=20LOOKUP_NODE_RA=20=7C=7C=0D=0A>=
-=20>=20+=09=09=09=09(mode=20=3D=3D=20LOOKUP_NODE_PRECACHE=20&&=0D=0A>=20>=
-=20+=09=09=09=09offset=5Bi=20-=201=5D=20%=20MAX_RA_NODE=20=3D=3D=200)))=20=
-=7B=0D=0A>=20>=20=20=09=09=09nfolio=5Bi=5D=20=3D=20f2fs_get_node_folio_ra(p=
-arent,=20offset=5Bi=20-=0D=0A>=201=5D);=0D=0A>=20>=20=20=09=09=09if=20(IS_E=
-RR(nfolio=5Bi=5D))=20=7B=0D=0A>=20>=20=20=09=09=09=09err=20=3D=20PTR_ERR(nf=
-olio=5Bi=5D);=0D=0A=0D=0A=0D=0A
+Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+---
+Chris Lew (2):
+      soc: qcom: smp2p: Add irqchip state support
+      soc: qcom: smp2p: Add support for smp2p v2
+
+ drivers/soc/qcom/smp2p.c | 90 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 87 insertions(+), 3 deletions(-)
+---
+base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+change-id: 20250923-smp2p-1591de8af164
+
+Best regards,
+-- 
+Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+
 
