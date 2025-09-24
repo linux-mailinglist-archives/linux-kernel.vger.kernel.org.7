@@ -1,157 +1,196 @@
-Return-Path: <linux-kernel+bounces-830841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 571A8B9AB43
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:37:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71BEB9AB25
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD695169B38
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:35:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA39D4E24CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868E42FE570;
-	Wed, 24 Sep 2025 15:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83852314A6E;
+	Wed, 24 Sep 2025 15:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rHzkX9St"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yzljfjh+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC96C307AFA;
-	Wed, 24 Sep 2025 15:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EA13148CE;
+	Wed, 24 Sep 2025 15:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758728057; cv=none; b=IX2aF39L7T4MnsfQijM/cED4rteJIZvoMbrjLIWjchdpzubFjS6ZZKiBWmEK/OVFJDFcbkI8i1IWdPDm+x6J5IF7jIcHqCI5fR8FFrR62ofnj7IKoeleh0oFJ/zXScrFirXHxRFHSZbXAniYEHzA7sUrN+r658/9FaN5hs2VwJU=
+	t=1758728075; cv=none; b=UOe1Z9K4HtbSTbb3H5O1YDGZJbqCAHEA0MqGy0+3Y9eomVSmdC7sOfKnwXsPyqEINEIZOLhl2z3n/upppWYT7FTLgpS5tdfubQfbCffBApitktpNGsq2xgcRPNeazT8UmgmEYBq9MAeab5TABiLwuFXbkjOPPQVE/3k3S2vltUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758728057; c=relaxed/simple;
-	bh=lUZuxPLPBDGO00HWidrCHdCMvKz0T1VhhIVqtlgz3mo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=fjmW5b6PzT1TeJJb5J2+5QPKX+Ix1MSkdki8YwNqBkbcVC1/ORqc6kCFisU6bJmMj5ddP623bc9FlVVUM2Ym5hTQxGnfJc3UAYUha6qi5ItfLTgcPaGYHgTjxXJqoLj57hB7KsJnkxpAPFobRPLAUhrp5jTLoNjpj5UgXJEOeOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rHzkX9St; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B435DC4CEE7;
-	Wed, 24 Sep 2025 15:34:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758728056;
-	bh=lUZuxPLPBDGO00HWidrCHdCMvKz0T1VhhIVqtlgz3mo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rHzkX9StnWCCLKEaIcwoJxUUnBQHkEaH22wijFJc9HcuqRmjkFS6LG3U4Tck2/M8w
-	 nU2aahpaXY7vY7qxjp/hfBmnladUZ9x57PGdpz/FVI2O1PToRlhvvzRfGlqWcYYOAu
-	 qu24BWmHQVwEyFiL1QaLcAYGpupSMHo8NIiwoh7Va9v3E02qXT71h8G60ZDb/IjtJA
-	 ZuyJvkKMDOvOuRVgkRDSdrOexx/mnRul0TCfh77TK8jk1rT7hEgzZdW9jL5WPyUG18
-	 KXJ7NKOGVEO+7BOXJOuDPKlj9et5M8gtCTRgG6R1O0mJlfr3BGVlZ/2VCj5H92N06e
-	 +3d4Sd3jXY8Nw==
-Date: Thu, 25 Sep 2025 00:34:10 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt
- <rostedt@kernel.org>, Menglong Dong <menglong8.dong@gmail.com>,
- jolsa@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- kees@kernel.org, samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
- ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] tracing: fgraph: Protect return handler from
- recursion loop
-Message-Id: <20250925003410.de2ef839f6ef3921ee08a955@kernel.org>
-In-Reply-To: <175852292275.307379.9040117316112640553.stgit@devnote2>
-References: <175852291163.307379.14414635977719513326.stgit@devnote2>
-	<175852292275.307379.9040117316112640553.stgit@devnote2>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758728075; c=relaxed/simple;
+	bh=wxPjznd3Mk72Y0HMGgxizVz3V7feCsOOYY3Ap7k4Ml4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lCfpvZKXLkHIVHOFAj+v5LXqklktYBLJRLEIyLoAeHyPdhFyVTX944tVfh3AHHJpUuaYyoyhzcOjprxeTWp/0o39JLn6ctrVHoSe0U/UJMWRv3By/ULRe2T+lYSjbCYM2RZKXuFnvIJGQ27nDeR0nuKamHKD7ZgqkaQovdkNPyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yzljfjh+; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758728073; x=1790264073;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wxPjznd3Mk72Y0HMGgxizVz3V7feCsOOYY3Ap7k4Ml4=;
+  b=Yzljfjh+gQmZg/Rvc+I5yydhs2pfcEqCSscGDXcjuYOq6k1uxY7Wui6c
+   29vk0X+w8mevcVcGnA2iMi0/xB204xNR3Tn7DnUwssB2mww+i/7sDjVt3
+   xYIi8KhWnBPWU3MXIs9+5BX2RGDRciwcY1AXiuA5XwBdDPDBefVMExD0U
+   XWbpQni3I1iUmK8ebKnO9u3ZqxY4owrdly2chfxhz4QBbOEtw/UoaEuT1
+   VTD9397YHaRMEaQg/qmqYiuA7+Mx8K3S81OTIVO2aQlTDPH1WsOsKRetu
+   W709yoLlYX+rpyK7pRkWWnLjZ0ij+6VJxkf2VghvEgKdHXce9djA/vTEz
+   A==;
+X-CSE-ConnectionGUID: WlaiVsFISFa+0EyJA7hO7w==
+X-CSE-MsgGUID: SqeyfEU1Q3y2+7FVLhA8AA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="63657304"
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
+   d="scan'208";a="63657304"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 08:34:32 -0700
+X-CSE-ConnectionGUID: a078IQKxT/aol6KoHAiYvQ==
+X-CSE-MsgGUID: 9pHK2N6nRhmENOQyBRy5WA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
+   d="scan'208";a="177503430"
+Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.108.218]) ([10.125.108.218])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 08:34:31 -0700
+Message-ID: <0116557c-3b60-441e-8976-ebce1a658a01@intel.com>
+Date: Wed, 24 Sep 2025 08:34:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] nvdimm: ndtest: Return -ENOMEM if devm_kcalloc() fails
+ in ndtest_probe()
+To: Guangshuo Li <lgs201920130244@gmail.com>,
+ Alison Schofield <alison.schofield@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Santosh Sivaraj <santosh@fossix.org>, nvdimm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250923125953.1859373-1-lgs201920130244@gmail.com>
+ <767ef629-519c-431d-9a89-224ceabf22be@intel.com>
+ <aNLsXewwa0LXcRUk@aschofie-mobl2.lan>
+ <CANUHTR9X2=VPHPY8r++SqHZu-+i7GGP7sqbGUnAx+M89iiYS4A@mail.gmail.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <CANUHTR9X2=VPHPY8r++SqHZu-+i7GGP7sqbGUnAx+M89iiYS4A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Steve,
 
-Can you pick this ? Or I will do?
 
-Thanks,
-
-On Mon, 22 Sep 2025 15:35:22 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On 9/24/25 12:42 AM, Guangshuo Li wrote:
+> Hi Alison, Dave, and all,
 > 
-> function_graph_enter_regs() prevents itself from recursion by
-> ftrace_test_recursion_trylock(), but __ftrace_return_to_handler(),
-> which is called at the exit, does not prevent such recursion.
-> Therefore, while it can prevent recursive calls from
-> fgraph_ops::entryfunc(), it is not able to prevent recursive calls
-> to fgraph from fgraph_ops::retfunc(), resulting in a recursive loop.
-> This can lead an unexpected recursion bug reported by Menglong.
+> Thanks for the feedback. I’ve adopted your suggestions. Below is what I plan to take in v3.
 > 
->  is_endbr() is called in __ftrace_return_to_handler -> fprobe_return
->   -> kprobe_multi_link_exit_handler -> is_endbr.
+> -       p->dcr_dma = devm_kcalloc(&p->pdev.dev <http://pdev.dev>, NUM_DCR,
+> -                                 sizeof(dma_addr_t), GFP_KERNEL);
+> -       p->label_dma = devm_kcalloc(&p->pdev.dev <http://pdev.dev>, NUM_DCR,
+> -                                   sizeof(dma_addr_t), GFP_KERNEL);
+> -       p->dimm_dma = devm_kcalloc(&p->pdev.dev <http://pdev.dev>, NUM_DCR,
+> -                                  sizeof(dma_addr_t), GFP_KERNEL);
 > 
-> To fix this issue, acquire ftrace_test_recursion_trylock() in the
-> __ftrace_return_to_handler() after unwind the shadow stack to mark
-> this section must prevent recursive call of fgraph inside user-defined
-> fgraph_ops::retfunc().
-> 
-> This is essentially a fix to commit 4346ba160409 ("fprobe: Rewrite
-> fprobe on function-graph tracer"), because before that fgraph was
-> only used from the function graph tracer. Fprobe allowed user to run
-> any callbacks from fgraph after that commit.
-> 
-> Reported-by: Menglong Dong <menglong8.dong@gmail.com>
-> Closes: https://lore.kernel.org/all/20250918120939.1706585-1-dongml2@chinatelecom.cn/
-> Fixes: 4346ba160409 ("fprobe: Rewrite fprobe on function-graph tracer")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  Changes in v2:
->   - Do not warn on failing ftrace_test_recursion_trylock() because it
->     allows one-level nest.
-> ---
->  kernel/trace/fgraph.c |   12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-> index 1e3b32b1e82c..484ad7a18463 100644
-> --- a/kernel/trace/fgraph.c
-> +++ b/kernel/trace/fgraph.c
-> @@ -815,6 +815,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
->  	unsigned long bitmap;
->  	unsigned long ret;
->  	int offset;
-> +	int bit;
->  	int i;
->  
->  	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
-> @@ -829,6 +830,15 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
->  	if (fregs)
->  		ftrace_regs_set_instruction_pointer(fregs, ret);
->  
-> +	bit = ftrace_test_recursion_trylock(trace.func, ret);
-> +	/*
-> +	 * This can fail because ftrace_test_recursion_trylock() allows one nest
-> +	 * call. If we are already in a nested call, then we don't probe this and
-> +	 * just return the original return address.
-> +	 */
-> +	if (unlikely(bit < 0))
-> +		goto out;
+> +       p->dcr_dma = devm_kcalloc(&p->pdev.dev <http://pdev.dev>, NUM_DCR,
+> +                                 sizeof(dma_addr_t), GFP_KERNEL);
+> +       if (!p->dcr_dma) {
+> +               rc = -ENOMEM;
+> +               goto err;
+> +       }
 > +
->  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
->  	trace.retval = ftrace_regs_get_return_value(fregs);
->  #endif
-> @@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
->  		}
->  	}
->  
-> +	ftrace_test_recursion_unlock(bit);
-> +out:
->  	/*
->  	 * The ftrace_graph_return() may still access the current
->  	 * ret_stack structure, we need to make sure the update of
+> +       p->label_dma = devm_kcalloc(&p->pdev.dev <http://pdev.dev>, NUM_DCR,
+> +                                   sizeof(dma_addr_t), GFP_KERNEL);
+> +       if (!p->label_dma) {
+> +               rc = -ENOMEM;
+> +               goto err;
+> +       }
+> +
+> +       p->dimm_dma = devm_kcalloc(&p->pdev.dev <http://pdev.dev>, NUM_DCR,
+> +                                  sizeof(dma_addr_t), GFP_KERNEL);
+> +       if (!p->dimm_dma) {
+> +               rc = -ENOMEM;
+> +               goto err;
+> +       }
+
+You'll need to create new goto labels because you'll have to free previously allocated memory in the error path. Diff below is uncompiled and untested.
+
+diff --git a/tools/testing/nvdimm/test/ndtest.c b/tools/testing/nvdimm/test/ndtest.c
+index 68a064ce598c..49d326819ea9 100644
+--- a/tools/testing/nvdimm/test/ndtest.c
++++ b/tools/testing/nvdimm/test/ndtest.c
+@@ -841,6 +841,7 @@ static void ndtest_remove(struct platform_device *pdev)
+
+ static int ndtest_probe(struct platform_device *pdev)
+ {
++       struct device *dev = &pdev->dev;
+        struct ndtest_priv *p;
+        int rc;
+
+@@ -848,12 +849,23 @@ static int ndtest_probe(struct platform_device *pdev)
+        if (ndtest_bus_register(p))
+                return -ENOMEM;
+
+-       p->dcr_dma = devm_kcalloc(&p->pdev.dev, NUM_DCR,
+-                                sizeof(dma_addr_t), GFP_KERNEL);
+-       p->label_dma = devm_kcalloc(&p->pdev.dev, NUM_DCR,
+-                                  sizeof(dma_addr_t), GFP_KERNEL);
+-       p->dimm_dma = devm_kcalloc(&p->pdev.dev, NUM_DCR,
+-                                 sizeof(dma_addr_t), GFP_KERNEL);
++       p->dcr_dma = devm_kcalloc(dev, NUM_DCR, sizeof(dma_addr_t), GFP_KERNEL);
++       if (!p->dcr_dma)
++               return -ENOMEM;
++
++       p->label_dma = devm_kcalloc(dev, NUM_DCR, sizeof(dma_addr_t),
++                                   GFP_KERNEL);
++       if (!p->label_dma) {
++               rc = -ENOMEM;
++               goto err_label_dma;
++       }
++
++       p->dimm_dma = devm_kcalloc(dev, NUM_DCR, sizeof(dma_addr_t),
++                                  GFP_KERNEL);
++       if (!p->dimm_dma) {
++               rc = -ENOMEM;
++               goto err_dimm_dma;
++       }
+
+        rc = ndtest_nvdimm_init(p);
+        if (rc)
+@@ -863,7 +875,7 @@ static int ndtest_probe(struct platform_device *pdev)
+        if (rc)
+                goto err;
+
+-       rc = devm_add_action_or_reset(&pdev->dev, put_dimms, p);
++       rc = devm_add_action_or_reset(dev, put_dimms, p);
+        if (rc)
+                goto err;
+@@ -872,6 +884,11 @@ static int ndtest_probe(struct platform_device *pdev)
+        return 0;
+
+ err:
++       devm_kfree(dev, p->dimm_dma);
++err_dimm_dma:
++       devm_kfree(dev, p->label_dma);
++err_label_dma:
++       devm_kfree(dev, p->dcr_dma);
+        pr_err("%s:%d Failed nvdimm init\n", __func__, __LINE__);
+        return rc;
+ }
+
 > 
+> If this looks good, I’ll send v3 accordingly. Also, if you’re comfortable with the changes, may I add your Reviewed-by tags?
 
+Please don't add review tags until they are given.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Best regards,
+> Guangshuo
+
 
