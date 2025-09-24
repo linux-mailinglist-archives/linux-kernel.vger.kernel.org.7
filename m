@@ -1,110 +1,141 @@
-Return-Path: <linux-kernel+bounces-831276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A456B9C435
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:22:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE27B9C446
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 368A3323976
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DD641BC3725
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B944528750A;
-	Wed, 24 Sep 2025 21:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19164296BB0;
+	Wed, 24 Sep 2025 21:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aWsBifpe"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FiQOgnCO"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECB811185;
-	Wed, 24 Sep 2025 21:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD62C288CA3
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758748932; cv=none; b=RkAYD4Sv8cvPxSz2zvRsQBSo90PpkFLOfocgTGpZMMPqQ5cWKWTznejBH205wJGnHQX9zUhQzSEnRQ12vTDsQ0E5dIxiX9X8DXZBHrk482NfFbxN70EMTo9k75+4aIElyc1AdK1Hua4x0FY7N8JVeA88x7Do2Ng91apa3SPtYrM=
+	t=1758749082; cv=none; b=fL2j7E89W9VYI+8Qp6ibsgqs99teenGmu2OUGYTeuEDnW7slWfIY2HviRY+zdZ7ZpIZe9bKF3QR+tvc8/ox9lH7w5nIXJurxX09j8VttlmCQQoG1E3gnk2r8iaoLfij3Fq8k6ED06J+JrNnNcW8u+ODJDjhTqkvaSbJQGlUDfAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758748932; c=relaxed/simple;
-	bh=FVOwREu1YrMuD4UC8pi0A+VDAALTewZsII/41fs9MnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=no5Be29Hlma/w02NuozKQzOW4+BE7n4Fzpgku36O26aJJVjOzIXXCKhF+xRKHbNdXsYx5MGzJNxPNm2e522kFMH5UGwJmSYcMsSu2rBhaUmGzqCTqmXEtTzYg6d9XrwoR9ls/Dj2/LE6VJVN/nVoXyJ+ev3HU5J9jcU9ar1Z3iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aWsBifpe; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=bb9OUBUC8HoTDeqzOapom6idqxLTPUmtt5z1Cb49IOo=; b=aWsBifpeyHE1US5onTri/T8Uu6
-	vWSouJmMtd2bhGIeT6zgYZNNX0y+1imyh9tx3gpJ8CSvEMs6H8Rbb9IalNweKTvuHBaHAofJ+dwO+
-	WW0wcdtnk1waW4D9Ptf/4lMEU3sKbgDCszDNb7Y+ECPbVcabeJs4mpRDxkr0rpLvvUIVRZPvd+Zx2
-	duptQv41ZhmCQo8ShXdfhCAFVqYTLZgfrNtifEk2M5iTOkHl8NeZpTTxf4LuIprimRnV3qYLRJeCG
-	L39TghwLIaNrOkS5quU5+AZHCdAvP1lvRNwlBCo5iiPW6hHiNOq5GUUoQpL/Hnh8CLXj+CjvLNzN6
-	lNjJFb7Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v1WwB-0000000BgD4-3dyS;
-	Wed, 24 Sep 2025 21:22:07 +0000
-Date: Wed, 24 Sep 2025 22:22:07 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Kriish Sharma <kriish.sharma2006@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH] fs: doc: describe 'pinned' parameter in do_lock_mount()
-Message-ID: <20250924212207.GV39973@ZenIV>
-References: <20250924193611.673838-1-kriish.sharma2006@gmail.com>
- <20250924205730.GU39973@ZenIV>
+	s=arc-20240116; t=1758749082; c=relaxed/simple;
+	bh=yYlJMEiOn4ahL9VGQHqHfLn8g81HGorNFwQNV25DIPY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BNne0CAkbnUGng92ZgGW3hhVFmuxI+ptHdrAzij2vwd1uDwmNOHwI/YhO/2QTVT6W2lGjmQdDsAsqiL4+Qf3TD5ZDqWyhVg8FDFwBi/aW0IWN6PJ6SP2h0vigH9SGBv/nG79QXvOxPFQzazYSapNv38NWcIPeyibokpubwdDToE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FiQOgnCO; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32e715cbad3so350573a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:24:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1758749080; x=1759353880; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+dhLUMSWCJCb7Nc7Lx/+68xlS8KMxySblqVYlmSCjYI=;
+        b=FiQOgnCOJibaeCTr921wkYnyw1rd4ab+Kj4p5eWP8pJXsnyR2P5rAUZ3rVKdL+OZsR
+         BS1JsnZ50k55mxRbXrojHcJFe0oDbJP8ZDzfwKO5EaNNEmkHpb6JejFvoxrDlZlEkJgA
+         9mnprG/0fVZSAYljqsb3lIURw7zgGJ7Q84gLtTD1EQ2i6pHyJyz8ZSPLtydu1N4TWfnr
+         Vi9HYUzcWopX16GuyRPTGynyQd2iEFtBHRj+wHmCaYfmfR0GfqAeGRUbAYQC8rRlN5e2
+         flpZ5eJzlrtyf/U9342uZqBmtxzAmVjVGzaW+zBFlwzlgtES4a2K8OCgn9sCKfTHLuJO
+         I9xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758749080; x=1759353880;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+dhLUMSWCJCb7Nc7Lx/+68xlS8KMxySblqVYlmSCjYI=;
+        b=F+1wPFhghKIhhzfqOs4RPgyO86pf/CpvICHuH+eKHRUu0JXuEhlT6Yd21yA1ZulbSR
+         oQsFkFxV/LBKgOgPIxWGU4q//zeAbzx8Qqs9+WbUMLitG5fRp/puV0hNKwBYcgkw6fxE
+         3Z5Q5OerxOiQp8ICRaE9Mo+ru5LLDl3NJJdxjoOXzUSFXY+AgewCdB1TVZM1kIgec3kI
+         ffPyjNvMYY9lEWII4O421JW/ClugqARjMwk8RGJSPMJxKD08/a/Wm6kqyFxFqlCdy2S+
+         Jc0lg90+QaeJ1ngXkiXe01ctqedjkCvLThvKO3eVGqP/Jk0IeXsYBUYkWaJ6rr6W4b19
+         sXKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZppAYbc/Z4dLI4iNpEkoSwnn+bwjPWnxI7/EX1ju9pi3IMOKCoz4RhG8FgpFBoGyjgQMqiwwtOdWN6zY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfUO03Y7lkLbeCl830LtMyVSKBf/4HKSiYyuoBPgna0g77lldz
+	9R+zxiF94v0xhTxcgWSSl8Jhc1+Kfkojfajyh+5wKDwNP69IAEFzMOM4kIssAvxioILWNz2tiQh
+	IZWLIrzR8KeVkgm5emjJqHarm7Y0WznrT1zVD1ddPorzF3/ZyNK2J9w==
+X-Gm-Gg: ASbGncssnsftNRERcegp1kzznGKccEnhFmciZHG5v1cfM8Aqdamblu/RGL5rGRBBvtQ
+	WcA1gtSTP054Kp1ZeFggX8S/u/+D5Qj7XBQUIMwGqmIY5cPBODwRIiKjjT/HKezoxLp7i/chrRG
+	1lWQW6mb4+aYv7Q2xAwRWgiJbH1RoagjiPuttGQmtIvoqN7EgfWt+Gek9oAko7zn7Eq5kU2MfqJ
+	dqywpeq4keMHADTbA==
+X-Google-Smtp-Source: AGHT+IHR9pP1MvU0qJbfCGQoZkW8eEMjmqKvK5A67Eqc2Nnt+qxlyEAnQFYtUTxdfOJEIc9WV2+K5Q4lRtal6pKd1BM=
+X-Received: by 2002:a17:90b:5343:b0:32d:17ce:49d5 with SMTP id
+ 98e67ed59e1d1-3342a2b08bcmr1001670a91.23.1758749080200; Wed, 24 Sep 2025
+ 14:24:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924205730.GU39973@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <e5d594d0aee93da67a22a42d0e2b4e6e463ab894.camel@gmail.com>
+In-Reply-To: <e5d594d0aee93da67a22a42d0e2b4e6e463ab894.camel@gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 24 Sep 2025 17:24:28 -0400
+X-Gm-Features: AS18NWCNQQSQBWtRenUjLlMUKvi01cd9ZXZW5J6vPc0TKqgJOAr2w5N1LESqTqk
+Message-ID: <CAHC9VhRu=-J5xdKgYOJ1eqQ6EiMoEJ3M+cjDU8AHrts-=DoTvg@mail.gmail.com>
+Subject: Re: [bug report] [regression?] bpf lsm breaks /proc/*/attr/current
+ with security= on commandline
+To: Filip Hejsek <filip.hejsek@gmail.com>
+Cc: linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	regressions@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 24, 2025 at 09:57:30PM +0100, Al Viro wrote:
-> On Wed, Sep 24, 2025 at 07:36:11PM +0000, Kriish Sharma wrote:
-> > The kernel-doc comment for do_lock_mount() was missing a description
-> > for the 'pinned' parameter:
-> > 
-> >   Warning: fs/namespace.c:2772 function parameter 'pinned' not described
-> >   in 'do_lock_mount'
-> > 
-> > This patch adds a short description:
-> > 
-> >   @pinned: receives the pinned mountpoint
-> > 
-> > to fix the warning and improve documentation clarity.
-> 
-> Sigh...  There we go again...
-> 	1.  It does not improve documentation clarity - it adds
-> a misleading line to an opaque chunk of text that does not match
-> what the function *does*.
-> 	2.  In -next both the calling conventions and the comment
-> are both changed, hopefully making it more readable.
-> 	3.  Essentially the same patch has already been posted and
-> discussed.
-> 
-> NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
+On Sat, Sep 13, 2025 at 1:01=E2=80=AFPM Filip Hejsek <filip.hejsek@gmail.co=
+m> wrote:
+>
+> Hello,
+>
+> TLDR: because of bpf lsm, putting security=3Dselinux on commandline
+>       results in /proc/*/attr/current returning errors.
+>
+> When the legacy security=3D commandline option is used, the specified lsm
+> is added to the end of the lsm list. For example, security=3Dapparmor
+> results in the following order of security modules:
+>
+>    capability,landlock,lockdown,yama,bpf,apparmor
+>
+> In particular, the bpf lsm will be ordered before the chosen major lsm.
+>
+> This causes reads and writes of /proc/*/attr/current to fail, because
+> the bpf hook overrides the apparmor/selinux hook.
 
-PS: as for the clarity, I'd like to point out that with your patch
-applied nothing in the comments explains what is *done* to that
-argument - it's not even mentioned there.  Incidentally, "receives"
-normally implies an IN argument; this is an OUT one (function set the
-environment for mounting something at given location and stores the
-resulting context in caller-supplied structure).
+What kernel are you using?  Things appear to work correctly on my
+kernel that is tracking upstream (Fedora Rawhide + some unrelated
+bits):
 
-Comment quality needs to be improved and these warnings actually
-do catch some of the stale (and generally incomprehensible) ones.
-Unfortunately, it's easy to fool the heuristics without doing
-anything about the underlying problem, in effect hiding it.
+% uname -a
+Linux dev-rawhide-1.lan 6.17.0-0.rc7.250923gd1ab3.57.1.secnext.fc44.x86_64 =
+#1 SM
+P PREEMPT_DYNAMIC Tue Sep 23 10:07:14 EDT 2025 x86_64 GNU/Linux
+% cat /proc/cmdline
+BOOT_IMAGE=3D(hd0,gpt4)/boot/vmlinuz-6.17.0-0.rc7.250923gd1ab3.57.1.secnext=
+.fc44.x
+86_64 root=3DUUID=3D285029fa-4431-45e9-af1b-298ab0caf16a ro console=3DttyS0=
+ mitigation
+s=3Doff security=3Dselinux
+% cat /sys/kernel/security/lsm; echo ""
+lockdown,capability,yama,selinux,bpf,landlock,ipe,ima,evm
+% id -Z
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+% cat /proc/self/attr/current; echo ""
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
 
-Folks, please don't do that - this is not an improvement.  If you
-spot something of that sort and want to take a pass at fixing it,
-more power to you, but the main criteria here would be "does that
-text make it easier to understand the function in question and/or
-the rules for using it".  If it's genuinely hard to figure out,
-don't hesitate to ask.
+I even ran it against the LSM initialization rework that has been
+proposed, but has not yet been accepted/merged, and that worked the
+same as above.
+
+Is this a distro kernel with a lot of "special" patches which aren't
+present upstream?
+
+--=20
+paul-moore.com
 
