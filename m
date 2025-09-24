@@ -1,140 +1,213 @@
-Return-Path: <linux-kernel+bounces-829948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FFB6B984C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:46:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5238FB984CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34F814A1771
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:46:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 032574A1C26
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C429F19D8BC;
-	Wed, 24 Sep 2025 05:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD8E23B604;
+	Wed, 24 Sep 2025 05:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="rVGfQL00";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="/mmLDvlU"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="QGzQHyKV"
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F5C1F2C34
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 05:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD281F2C34;
+	Wed, 24 Sep 2025 05:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758692782; cv=none; b=T80o6LDNl+OB5vlw8VBruAQx3r7N4xIzAfefmGtYHC/PlDghNcdFEN7JvPfVN3v7szRq0/2+9rMIr36+hTyTsAs4doIxmoBUlC5MI0Z+lb7J8yAzgrZF1WgGdsnyS4SrQj4WaXnVw7tS2F54VDNi9D6OYgibvZM2kBw2IuuKO60=
+	t=1758692869; cv=none; b=hwGopG/UakhFzRF4Az4/Hm8gCzzOPqGwsHa4VYLViniDSkPfPLurURmEqN7l38FgdeowI2mPBu4TL01LoSS+/j+9ENeUxwFc5FLRgRJZ5JNOM+SnKqlvaRrcm0X+anb0y2BAhPeFUXVVKEjsm/5xK6ao/y6UJm/UKH87TfjuQbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758692782; c=relaxed/simple;
-	bh=UQm9drVUemCLA6x87dfzCzESQo947Sjp8BVETWFiEQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C8ilVekwjLg595aQ22PhANzjdcJRKsw0aHHSWrv2To0wW1q5P7DSr2+8UE4IafFfKo7hQLHK5T5mycOZMdugxZKwL2cE0qDnrteBec4Gl9dLzQBe5Z1qompN+f7xjBR2OGVQHPWwTyFOOvv+7KYyhT6D0doy6EiXUexbrLJy7w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=rVGfQL00; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=/mmLDvlU; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1758692777; x=1759297577;
-	d=konsulko.se; s=rsa2;
-	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
-	 subject:mime-version:date:message-id:from;
-	bh=ceNeCilvWmvDqFapyK6FLjZjj+QYbrWfVKvkUR9mCAg=;
-	b=rVGfQL00k6mSUNSSGnPAcEgyLaqqLxakIkTBof7Q+ftRDBwFHkbG/9DvMSEtvd2QCb8SOYfOBPxCR
-	 N5/c6JN5n/HnV+4qkGDX1ngTXGp/tF3TEUcxUg0vKm3iUEyc0XgbWvfEFAPwnmVu+yH5NxFGapMKDD
-	 WP8LPoBLSH10+RttR/fQ9K8HeqCkcWr7BUN41EcqFWtw8hpj1gkQGryZuAeBqq+Yjmx9Zx8tLgJOK/
-	 o4KujiS68eGAdlPKkVZj3ahR6OBh46vwT43ijVv4aiD7rUKPf8ubyBnA7P4JD7X+kivX0siJk0C+O/
-	 xGhiwYI+m8gABjB3zavHgzN4JkLZD0A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1758692777; x=1759297577;
-	d=konsulko.se; s=ed2;
-	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
-	 subject:mime-version:date:message-id:from;
-	bh=ceNeCilvWmvDqFapyK6FLjZjj+QYbrWfVKvkUR9mCAg=;
-	b=/mmLDvlUG9BCiHooLMXQhGuhyg6nbm5ZccML5W5+71RMPj83kQaXBl75QOy5lV5es2/cebmJCOEfN
-	 KGadZpNAg==
-X-HalOne-ID: c83fe29a-9909-11f0-85ca-fb5fec76084d
-Received: from [192.168.10.245] (host-90-233-199-55.mobileonline.telia.com [90.233.199.55])
-	by mailrelay3.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id c83fe29a-9909-11f0-85ca-fb5fec76084d;
-	Wed, 24 Sep 2025 05:46:16 +0000 (UTC)
-Message-ID: <aabca3ff-3cbe-468a-9b65-290d5239d987@konsulko.se>
-Date: Wed, 24 Sep 2025 07:46:13 +0200
+	s=arc-20240116; t=1758692869; c=relaxed/simple;
+	bh=zyxyBCC7+M/4JZwpaksy46VxxPFcvU2SGq83E8h1N0U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oDndtEWxnI6tw75odWN97Ey9ilkhQlFlSAz2GCHUgWgLcpw7DmnY9nur6wyGZYLjc9xFRKF7n60nd4p4jUrWUXbmg5q3jNUBP/CyVfOWXQfH5B2UkfMIZo2Tx/kyQ6sDeHyjhGkziOOKIbDR1kzBPsA2CtdbuLnJXUHHQJS8uNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=QGzQHyKV; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 58O5duZJ880690;
+	Tue, 23 Sep 2025 22:47:09 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:message-id:mime-version:subject:to; s=PPS06212021; bh=ZOYeoIT/s
+	WQ261qA8anHmeuhZJGCAE7TJyAUxjNUBHk=; b=QGzQHyKVFVsUmSxrEdu2kgVfU
+	LXoJSMlzSNd9OtW26aNCHAiGQKni4ri4PrlzB/zc6GahexYFmgecmnlKGWftwZTw
+	Z6ju6hKEwmDaRGLcC6qZ7mh3FIOCPsBj5165QiCOftda5vs4s3sQuVmlNKe5VkI4
+	+9CchldNf039yDRu//ydRii37Bgeoqnw5VzFn3uUEamVoHvhAgXkARSzCE3jPGLF
+	zNlloCX8McDPbZSsWlh0SLlOZlTb54VOKllRhRHU7xlWSwa1a3My6e2thGLfuWSx
+	F/aM7K1Kx0wA+gYeaEAON1qzr1/dmndycEh23PXie3WWY8LMw2NC8AaYP37uw==
+Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 499qj2v6k6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 23 Sep 2025 22:47:08 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.59; Tue, 23 Sep 2025 22:47:08 -0700
+Received: from pek-lpggp9.wrs.com (10.11.232.110) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
+ 15.1.2507.59 via Frontend Transport; Tue, 23 Sep 2025 22:47:05 -0700
+From: Jianpeng Chang <jianpeng.chang.cn@windriver.com>
+To: <claudiu.manoil@nxp.com>, <vladimir.oltean@nxp.com>, <wei.fang@nxp.com>,
+        <xiaoning.wang@nxp.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <alexandru.marginean@nxp.com>
+CC: <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jianpeng Chang
+	<jianpeng.chang.cn@windriver.com>
+Subject: [PATCH] net: enetc: fix the deadlock of enetc_mdio_lock
+Date: Wed, 24 Sep 2025 13:47:04 +0800
+Message-ID: <20250924054704.2795474-1-jianpeng.chang.cn@windriver.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot ci] Re: rust: zpool: add API for C and Rust
-To: Johannes Weiner <hannes@cmpxchg.org>,
- syzbot ci <syzbot+cica6a1c285444b25f@syzkaller.appspotmail.com>
-Cc: a.hindborg@kernel.org, akpm@linux-foundation.org, alex.gaynor@gmail.com,
- aliceryhl@google.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
- chengming.zhou@linux.dev, dakr@kernel.org, david@redhat.com,
- gary@garyguo.net, gregkh@linuxfoundation.org, liam.howlett@oracle.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- lorenzo.stoakes@oracle.com, lossin@kernel.org, mhocko@suse.com,
- minchan@kernel.org, nphamcs@gmail.com, ojeda@kernel.org, rppt@kernel.org,
- rust-for-linux@vger.kernel.org, senozhatsky@chromium.org, surenb@google.com,
- tmgross@umich.edu, vbabka@suse.cz, yosry.ahmed@linux.dev,
- syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-References: <20250923102547.2545992-1-vitaly.wool@konsulko.se>
- <68d2cfc2.a70a0220.4f78.000a.GAE@google.com>
- <20250923215929.GA1122379@cmpxchg.org>
-Content-Language: en-US
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <20250923215929.GA1122379@cmpxchg.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI0MDA0NiBTYWx0ZWRfX1YIvLLY15STw
+ EVyKUY30H91lvYlOfzJ0WxLD6/ODDBPNeSHGhB1ECDbEYxXuSV1gcqCWsrgBepm1109tQtUfDkb
+ 9PSc24lJP6nsU6tL3Ae56erlCfqfS1EaAcRkoBBsSkDvaPks8iNJKI4nQTuqhp/gqgz2a9h4Kfs
+ FIAHvJ0RCTmXeJia6pRU0xw5eBzAwxI0tqG77Sb3zfs2NJd5rumo80aa0q+0ucA6P7U/Uw2/Xa9
+ SY8ne1vpKmscfo/mhW+K3+89Cqv4BbOajN9ixXsDg8Lt3t4NdfNuQgK+9CzMeTvYGh8jeAJsQQG
+ zMhrUGXAX1GeG7rlUVAOGFVbbKocN/wNr8JcIi6fUjrbFDf0MwCUh7Q+7qnJOM=
+X-Authority-Analysis: v=2.4 cv=btpMBFai c=1 sm=1 tr=0 ts=68d385dc cx=c_pps
+ a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
+ a=yJojWOMRYYMA:10 a=t7CeM3EgAAAA:8 a=SUrsp2iW_RU2dMxpoQgA:9
+ a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: 98_4Sr0jvSwMvNxqyhifXGRkp-o4cp06
+X-Proofpoint-ORIG-GUID: 98_4Sr0jvSwMvNxqyhifXGRkp-o4cp06
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-23_08,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 bulkscore=0 malwarescore=0 clxscore=1011
+ phishscore=0 suspectscore=0 adultscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2507300000 definitions=firstrun
 
+After applying the workaround for err050089, the LS1028A platform
+experiences RCU stalls on RT kernel. This issue is caused by the
+recursive acquisition of the read lock enetc_mdio_lock. Here list some
+of the call stacks identified under the enetc_poll path that may lead to
+a deadlock:
 
+enetc_poll
+  -> enetc_lock_mdio
+  -> enetc_clean_rx_ring OR napi_complete_done
+     -> napi_gro_receive
+        -> enetc_start_xmit
+           -> enetc_lock_mdio
+           -> enetc_map_tx_buffs
+           -> enetc_unlock_mdio
+  -> enetc_unlock_mdio
 
-On 9/23/25 23:59, Johannes Weiner wrote:
-> On Tue, Sep 23, 2025 at 09:50:10AM -0700, syzbot ci wrote:
->> syzbot ci has tested the following series
->>
->> [v6] rust: zpool: add API for C and Rust
->> https://lore.kernel.org/all/20250923102547.2545992-1-vitaly.wool@konsulko.se
->> * [PATCH v6 1/2] mm: reinstate zpool as a thin API
->> * [PATCH v6 2/2] rust: zpool: add abstraction for zpool drivers
->>
->> and found the following issues:
->> * BUG: unable to handle kernel NULL pointer dereference in zswap_store
->> * KASAN: slab-out-of-bounds Read in zpool_get_total_pages
->> * KASAN: slab-out-of-bounds Read in zswap_store
->> * KASAN: slab-use-after-free Read in zpool_get_total_pages
->> * KASAN: use-after-free Read in zpool_get_total_pages
->>
->> Full report is available here:
->> https://ci.syzbot.org/series/e8b22352-ae56-4d7c-9113-75573acf2b64
->>
->> ***
->>
->> BUG: unable to handle kernel NULL pointer dereference in zswap_store
-> 
-> struct zpool {
-> 	void *pool;
-> };
-> 
-> struct zpool *zpool_create_pool(const char *name) \
-> { \
-> 	return (struct zpool *) prefix ## _create_pool(name); \
-> } \
-> 
-> u64 zpool_get_total_pages(struct zpool *zpool) \
-> { \
-> 	return prefix ## _get_total_pages(zpool->pool); \
-> }
-> 
-> You create the zpool by simply casting the backend pool, but then you
-> deref it twice as if it were an actual container for the backend pool.
-> 
-> I'm guessing you didn't test this even superficially?
+After enetc_poll acquires the read lock, a higher-priority writer attempts
+to acquire the lock, causing preemption. The writer detects that a
+read lock is already held and is scheduled out. However, readers under
+enetc_poll cannot acquire the read lock again because a writer is already
+waiting, leading to a thread hang.
 
-LOL, no, forgot to run git commit --amend so came up with a wrong version.
+Currently, the deadlock is avoided by adjusting enetc_lock_mdio to prevent
+recursive lock acquisition.
 
-The Rust version is correct though.
+Fixes: fd5736bf9f23 ("enetc: Workaround for MDIO register access issue")
+Signed-off-by: Jianpeng Chang <jianpeng.chang.cn@windriver.com>
+---
+ drivers/net/ethernet/freescale/enetc/enetc.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-> This also still proposes an API with no in-kernel user.
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
+index e4287725832e..164d2e9ec68c 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+@@ -1558,6 +1558,8 @@ static int enetc_clean_rx_ring(struct enetc_bdr *rx_ring,
+ 	/* next descriptor to process */
+ 	i = rx_ring->next_to_clean;
+ 
++	enetc_lock_mdio();
++
+ 	while (likely(rx_frm_cnt < work_limit)) {
+ 		union enetc_rx_bd *rxbd;
+ 		struct sk_buff *skb;
+@@ -1593,7 +1595,9 @@ static int enetc_clean_rx_ring(struct enetc_bdr *rx_ring,
+ 		rx_byte_cnt += skb->len + ETH_HLEN;
+ 		rx_frm_cnt++;
+ 
++		enetc_unlock_mdio();
+ 		napi_gro_receive(napi, skb);
++		enetc_lock_mdio();
+ 	}
+ 
+ 	rx_ring->next_to_clean = i;
+@@ -1601,6 +1605,7 @@ static int enetc_clean_rx_ring(struct enetc_bdr *rx_ring,
+ 	rx_ring->stats.packets += rx_frm_cnt;
+ 	rx_ring->stats.bytes += rx_byte_cnt;
+ 
++	enetc_unlock_mdio();
+ 	return rx_frm_cnt;
+ }
+ 
+@@ -1910,6 +1915,8 @@ static int enetc_clean_rx_ring_xdp(struct enetc_bdr *rx_ring,
+ 	/* next descriptor to process */
+ 	i = rx_ring->next_to_clean;
+ 
++	enetc_lock_mdio();
++
+ 	while (likely(rx_frm_cnt < work_limit)) {
+ 		union enetc_rx_bd *rxbd, *orig_rxbd;
+ 		struct xdp_buff xdp_buff;
+@@ -1973,7 +1980,9 @@ static int enetc_clean_rx_ring_xdp(struct enetc_bdr *rx_ring,
+ 			 */
+ 			enetc_bulk_flip_buff(rx_ring, orig_i, i);
+ 
++			enetc_unlock_mdio();
+ 			napi_gro_receive(napi, skb);
++			enetc_lock_mdio();
+ 			break;
+ 		case XDP_TX:
+ 			tx_ring = priv->xdp_tx_ring[rx_ring->index];
+@@ -2038,6 +2047,7 @@ static int enetc_clean_rx_ring_xdp(struct enetc_bdr *rx_ring,
+ 		enetc_refill_rx_ring(rx_ring, enetc_bd_unused(rx_ring) -
+ 				     rx_ring->xdp.xdp_tx_in_flight);
+ 
++	enetc_unlock_mdio();
+ 	return rx_frm_cnt;
+ }
+ 
+@@ -2056,6 +2066,7 @@ static int enetc_poll(struct napi_struct *napi, int budget)
+ 	for (i = 0; i < v->count_tx_rings; i++)
+ 		if (!enetc_clean_tx_ring(&v->tx_ring[i], budget))
+ 			complete = false;
++	enetc_unlock_mdio();
+ 
+ 	prog = rx_ring->xdp.prog;
+ 	if (prog)
+@@ -2068,7 +2079,6 @@ static int enetc_poll(struct napi_struct *napi, int budget)
+ 		v->rx_napi_work = true;
+ 
+ 	if (!complete) {
+-		enetc_unlock_mdio();
+ 		return budget;
+ 	}
+ 
+@@ -2079,6 +2089,7 @@ static int enetc_poll(struct napi_struct *napi, int budget)
+ 
+ 	v->rx_napi_work = false;
+ 
++	enetc_lock_mdio();
+ 	/* enable interrupts */
+ 	enetc_wr_reg_hot(v->rbier, ENETC_RBIER_RXTIE);
+ 
+-- 
+2.51.0
 
-That's not correct, zsmalloc is the user.
-
-~Vitaly
 
