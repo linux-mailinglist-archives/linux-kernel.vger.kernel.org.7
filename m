@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-829800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21AB1B97E5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:33:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3C1B97EA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B87E1AE15A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 00:34:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86C04323E19
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 00:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1904617A303;
-	Wed, 24 Sep 2025 00:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08901A256E;
+	Wed, 24 Sep 2025 00:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UJc5/0NN"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rnbO/Ue6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761B9347C7
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E06192D8A;
+	Wed, 24 Sep 2025 00:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758674016; cv=none; b=g1owP9RZAaDNWjzPQVI3JtEHg2xT+royo9h9bIn74MzRJXZTAf4myy1AKpcSDHPLoBMZMzNiIywoOg5g8keeeFZyQxZneySI0amnjLLS7LOElxuNXe+gs/jac3Vs/BzpBOc8EIOfFTdDc6YhOaXcHDkixeAnCKaDWC3C1lreIVE=
+	t=1758674144; cv=none; b=FgJNJXsSPYN8EBOo8gjdvhyosd9MGYzOT3lfS1HS5KfQPugdL30RUuSpUeqB7pYfbQThPdKjfeNh68eBwBieGy4Tmpkkv5fPRWgihURqXUHp4hQw1cTHUz+TlBa/LDKckPJ08pEXxPHUO77exC+SRSo+L9JCOXm+aIYKLGheYow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758674016; c=relaxed/simple;
-	bh=C5xHHpQBIRnwOxQRsuVMnox28OdPSZKgsMEWMSVqR14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sjmGvU8goH25aVjMu+Slw30u1btHujKPUvskT/HGF5QoMQszqKQqmuOYL+naURAOR3/nDQbS7H/f+GVMUnVpcBR+XJ0RG5t/H7R6P+xk3ygOZygI/HpzTH6Vi2VBWYuSYfvXDs+IVWMHSngbtElbqCNOknokWXtkLqZyViD8vHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UJc5/0NN; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-42480cb42e9so26188625ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:33:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1758674012; x=1759278812; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QeCpOzQKe2yNJ/96XeJlPPvMwoakp9LE73apKlL8nBs=;
-        b=UJc5/0NNNFr7vsO9PyYKDsVFmBXJ2pItelTKja5hgRUAFOuPWbIoKedppI7R/QP3s+
-         DyHREbW7v07pepFUQ8yepf8E7UaWLhmvCYwKl1HEQMA090yilk31OI+ki3AGA0jq8EoS
-         gLeRlfGmGYSkgQk/anEf090cyeE+JHkTNGI6s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758674012; x=1759278812;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QeCpOzQKe2yNJ/96XeJlPPvMwoakp9LE73apKlL8nBs=;
-        b=lCUzlj2y8hjjjTtrHr3uauTHs3BHHPRIte24a2h4WSVEutPtAN8RbheZLpeBPxY5XN
-         E05THJsvg02Dstk6wLYE3JEL41M08ct+GaETaColaPubnSE2FlRAC456tK9Uuc/azTQR
-         rk85rGbbSShkcfY1AnnK34KKkzezEGg0DhFr0o8s0GxCej79ReB1f5e2JKjVBzn4tvvm
-         sad9Piajsunirn4T0acKySfgsuQu7Fr8naqJtNYpG8h1vfpHwDLUm5mrNoJJ92YjY/tR
-         uK2N0Ki07qZp3PAU54mSX8JDiWtzDbkEb/vWbJ61Vr2I9CZG20Cw4pq2yFKwlwN4zktr
-         BiTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWDoBLyIoOklsgTVqFBvjwHDRXbCh99J38Cg3HL8FPRHdoJ7wPsIqp3NwFKoUNLYSghBvuXop61hQcdfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyraPXv4FJ20r7j2ZSmRi9zfenhOPCCfSOQujD8E0yWxTPtRQ65
-	h80DI59UVQV0f3A6uQ0pv6TvjOHZ4ldbu6V8xYMZ8x27xBXRzt3nX3RVxT5nspxe1pI=
-X-Gm-Gg: ASbGncuzHe6UkDBkq9GOGxIIBPwo6rQsiHI9tt7HC4nOx/248cOnnWecEz/sSftsatT
-	C9K+ZWGlajxUiOQR/NWPFjtbXjEBagMB+dRmY+/PR4Yh0JjwmkTsgvNqMC2Ep5O95LWdLWVWWOU
-	oLprtj+DDy63pT8CYJgUb0L3TXIHx64jG0fXbq6utIcb9cjz3r26WypM8eo95hQWBf5dTGD/d4l
-	da5xv2VSExFl5PmxESeBOYJX2RI/2ZvOPHF1jCy7QE0fxiOG6dPFu+BBAX3YtnTS4WG2qZ5BV2r
-	9gCYT6OF1j5FJ4rm3nbyuFYEpbJ94kzXcpRKipkQOenX7WhduQNukd5BhKRSpBj7nXHauSQ78Ts
-	HNEkxRERQs2aFRuTw+cZIYM39MwUGnqSY4M5DdEIeXtB2rw==
-X-Google-Smtp-Source: AGHT+IGMzxAmPOIYUqjqDWkSj1Vv2Q3usl1ONJIUBuObLOZq0Lscrf1N9LalcNZh3CtVcwMy11Qc3Q==
-X-Received: by 2002:a05:6e02:2181:b0:424:71e8:3a2e with SMTP id e9e14a558f8ab-42581e7a670mr60747925ab.16.1758674012501;
-        Tue, 23 Sep 2025 17:33:32 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-53d3e337433sm7570329173.27.2025.09.23.17.33.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Sep 2025 17:33:32 -0700 (PDT)
-Message-ID: <69689eef-8323-4afe-bc29-bfb5954137f1@linuxfoundation.org>
-Date: Tue, 23 Sep 2025 18:33:31 -0600
+	s=arc-20240116; t=1758674144; c=relaxed/simple;
+	bh=DRhxi2T0h0T058uT0q5WDIBIuhGBboq7dtvoADz/Vcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LYUlfRe0/N1CXoke1vE+kKixO6G1MwmiBQ+JVTjl/gd+ZHJQek7py+MpMFJVkZ5eYAEj2vcU4js1lOEqPvtirynhQd7okG9dJkgjZvxPZ30xc2RHhYNkjfBY4Tlp+NL8vOsS8Bba5CBsPDgtKGw6nBEJ3UBLe3L3M1SQjNH9iqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rnbO/Ue6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17DBBC4CEF5;
+	Wed, 24 Sep 2025 00:35:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758674143;
+	bh=DRhxi2T0h0T058uT0q5WDIBIuhGBboq7dtvoADz/Vcc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rnbO/Ue6pEe98CQSQtGfI/WCHp27rIl9ETccr9wK+XKbPEhAVgOEGrmuG5DdpnxYB
+	 6V2epqcVFYfp6oNtXqyPk2zHR++EaJK21xyt50aEfVAg8Bh8K/nbuTVeEpEqIWtwAb
+	 KXVY1tj1exQGp2xVpevO/ziNcdTCFWrLiAfB3uAvrREIb6SYKMzJPotf3swUuapCSY
+	 BFY17Z56mWjoU7tKyyVmISX+fR8PZbEAJBxY7jKlLW+JXQoNIddc05W0Zd2dHI1Zpb
+	 14Qh/897rQXmwBSe20Lwo84HWIC38peCrSERGRqLRl0H+Ckpo/UGlBhPaU2tdiYWcz
+	 G65sFg9c4Rrfw==
+Date: Wed, 24 Sep 2025 08:35:37 +0800
+From: "Peter Chen (CIX)" <peter.chen@kernel.org>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Xu Yang <xu.yang_2@nxp.com>
+Subject: Re: [PATCH v4 3/5] usb: chipidea: core: detach power domain for
+ ci_hdrc platform device
+Message-ID: <aNM82SUSoQN6cKkD@nchen-desktop>
+References: <20250922-pm-v4-v4-0-ef48428e8fe0@nxp.com>
+ <20250922-pm-v4-v4-3-ef48428e8fe0@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 00/61] 6.1.154-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20250922192403.524848428@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250922192403.524848428@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922-pm-v4-v4-3-ef48428e8fe0@nxp.com>
 
-On 9/22/25 13:28, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.154 release.
-> There are 61 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 25-09-22 10:21:08, Peng Fan wrote:
+> From: Xu Yang <xu.yang_2@nxp.com>
 > 
-> Responses should be made by Wed, 24 Sep 2025 19:23:52 +0000.
-> Anything received after that time might be too late.
+> When add a platform device by calling ci_hdrc_add_device(), this device
+> will reuse OF node of its parent device. If power-domains property is
+> provided in the OF node, both two platform devices will be attached to
+> the same power domain. This should be unnecessary and may bring other
+> inconsistent behavior. For example, to support wakeup capability, these
+> two platform device need different power domain state. The parent device
+> need NOT power domain on for out-band interrupt, but the ci_hdrc device
+> need power domain on for in-band interrupt. The i.MX95 Soc support
+> out-band wakeup interrupt, the user need to enable wakeup for the parent
+> device, but if the user also enable wakeup for ci_hdrc device, the power
+> domain will keep at on state finally. To exclude such inconsistent
+> behavior and simplify the power management, detach power domain for ci_hdrc
+> platform device.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.154-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+
+Acked-by: Peter Chen <peter.chen@kernel.org>
+
+Peter
+
+> ---
+>  drivers/usb/chipidea/core.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> thanks,
+> diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c
+> index 694b4a8e4e1d8583dcbf4a42f8c2dfd785d5745c..70597f40b9997a9766934c67bbbed38e96c210f8 100644
+> --- a/drivers/usb/chipidea/core.c
+> +++ b/drivers/usb/chipidea/core.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/slab.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/pm_domain.h>
+>  #include <linux/pinctrl/consumer.h>
+>  #include <linux/usb/ch9.h>
+>  #include <linux/usb/gadget.h>
+> @@ -915,6 +916,8 @@ struct platform_device *ci_hdrc_add_device(struct device *dev,
+>  	if (ret)
+>  		goto err;
+>  
+> +	dev_pm_domain_detach(&pdev->dev, false);
+> +
+>  	return pdev;
+>  
+>  err:
 > 
-> greg k-h
+> -- 
+> 2.37.1
 > 
 
-Compiled and booted on my test system. No dmesg regressions.
+-- 
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
+Best regards,
+Peter
 
