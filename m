@@ -1,204 +1,213 @@
-Return-Path: <linux-kernel+bounces-830215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8B5B99167
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:24:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A930FB991D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D961174644
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:24:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA30219C736E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17092D6E74;
-	Wed, 24 Sep 2025 09:23:58 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DD92D6E68;
+	Wed, 24 Sep 2025 09:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pTSQvpMO"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E475228314A;
-	Wed, 24 Sep 2025 09:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2360B2D6E52
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758705838; cv=none; b=acWGcE6c1S6Bhebw5pOyd7UPWYHn+4ZayCKMePNYDzvByzi92vcyeBFyEMHm+uUZj3LNQKX41ZcWVMIIMCW9XxwL3irbumIhp9D+/8Agc1PVtkLaHjT8hLpjNs6dMtfloEFlBhglCHlrLJ83GT4EOBCGhgL3ht7SmrH92beDo3I=
+	t=1758705850; cv=none; b=kVmwNFaLljH8voQzOMao18Q2e2zvZfvK74SkpDnCjm+flKPcjJ3SnrSZrHF3Haa40Rn9ma7f4s2hQ69GACh/uhHsKbIkoZIRI3J+bifnNmfaTqsoTKEwlQUhlQi+G5Kl+LCgYSyCASbzf3SFvw+xiusD1x7CA/sjynkFthQi7W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758705838; c=relaxed/simple;
-	bh=k8ls7HJ0NSab/bPbOZ8rD4KwrDpIQu6nSQmh86M3UxE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=V/D3WdxSmEqdteONW3cYjIUPFcC2gMhHCUmzVYkKcncsHALG4XI2HH0SKpkIIrsbBqhQQ6fw/UOVUjeTcm8F8ytR3bguRiHDDGv2bGyXFLmvSFFckBUrq9Vy5MK36JBSveZN8qpP5gUQhod62p/ZqfVMwb2imGIAg4Q1iNzckUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cWrxg69KVzKHMpM;
-	Wed, 24 Sep 2025 17:23:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 4D7D71A0CCF;
-	Wed, 24 Sep 2025 17:23:42 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAHGWGcuNNoLuybAg--.35059S3;
-	Wed, 24 Sep 2025 17:23:42 +0800 (CST)
-Subject: Re: [PATCH v2] block: plug attempts to batch allocate tags multiple
- times
-To: Xue He <xue01.he@samsung.com>, axboe@kernel.dk, akpm@linux-foundation.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <CGME20250918075946epcas5p39a6793513e02e446b3e4801ba66b6925@epcas5p3.samsung.com>
- <20250918075511.8197-1-xue01.he@samsung.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <7626767b-35c1-4c55-399c-24e21ec81ced@huaweicloud.com>
-Date: Wed, 24 Sep 2025 17:23:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1758705850; c=relaxed/simple;
+	bh=mSV2BTKxKVxAzIGNNjMum25tAnyuhGhXLJzP4cRYY2U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MKlQ7btrnJAOI4gVNyx5vehOUVig1DqF16AdrqYOXtYVnKEF7r/KtTJ1eQQWoKdvKXKx3Phe2lkyTRzItf8SWDc5AX5ih7BmmnfxV/SA+RRB92mkdOpG7pj8/Aexau8x4BgFikTM3laBDsu/P3dkxeZnzQ1C13yy7BFKMmNP9rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pTSQvpMO; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758705841;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wzo9Dce6E9bbwacKQ1Ls7mKYPDh+vWG+TtUgCH/OXas=;
+	b=pTSQvpMOMjgXR64fDZuX0h3oxFz000s6Zr4Ovo6DPMsm1S5N8H8RS0PBUenEQIWyqabi4n
+	rWKzQRXKWeCwCui0yJfERDJiGtQSaY7oxafIm5sfifcNNC0J1B2rfaXfIcmvtRzPDIsuLg
+	SnJeD0BWSWGTvXOWCde/Zfqt48JVv18=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: hannes@cmpxchg.org,  hughd@google.com,  mhocko@suse.com,
+  shakeel.butt@linux.dev,  muchun.song@linux.dev,  david@redhat.com,
+  lorenzo.stoakes@oracle.com,  ziy@nvidia.com,  harry.yoo@oracle.com,
+  baolin.wang@linux.alibaba.com,  Liam.Howlett@oracle.com,
+  npache@redhat.com,  ryan.roberts@arm.com,  dev.jain@arm.com,
+  baohua@kernel.org,  lance.yang@linux.dev,  akpm@linux-foundation.org,
+  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
+  cgroups@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] mm: thp: reparent the split queue during memcg
+ offline
+In-Reply-To: <55370bda7b2df617033ac12116c1712144bb7591.1758618527.git.zhengqi.arch@bytedance.com>
+	(Qi Zheng's message of "Tue, 23 Sep 2025 17:16:25 +0800")
+References: <cover.1758618527.git.zhengqi.arch@bytedance.com>
+	<55370bda7b2df617033ac12116c1712144bb7591.1758618527.git.zhengqi.arch@bytedance.com>
+Date: Wed, 24 Sep 2025 09:23:49 +0000
+Message-ID: <7ia4bjn06w62.fsf@castle.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250918075511.8197-1-xue01.he@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHGWGcuNNoLuybAg--.35059S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF4xZrW8CF15ur4xJrWDurg_yoWrWFykpr
-	W3Ja13Kryaqr1q9FsxX3yUWr1rtwnrGF17J3WfKr1FvrnrCr1fXr4kGF4FvryIyrWkAF48
-	Xr45JFy3Wr1qqa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwx
-	hLUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+Qi Zheng <zhengqi.arch@bytedance.com> writes:
 
-I'm not in the cc list, so it can take sometime before I notice this
-patch.
+> In the future, we will reparent LRU folios during memcg offline to
+> eliminate dying memory cgroups, which requires reparenting the split queue
+> to its parent.
 
-在 2025/09/18 15:55, Xue He 写道:
-> In the existing plug mechanism, tags are allocated in batches based on
-> the number of requests. However, testing has shown that the plug only
-> attempts batch allocation of tags once at the beginning of a batch of
-> I/O operations. Since the tag_mask does not always have enough available
-> tags to satisfy the requested number, a full batch allocation is not
-> guaranteed to succeed each time. The remaining tags are then allocated
-> individually (occurs frequently), leading to multiple single-tag
-> allocation overheads.
-> 
-> This patch aims to retry batch allocation of tags when the initial batch
-> allocation fails to reach the requested number, thereby reducing the
-> overhead of individual allocation attempts.
-> 
-> --------------------------------------------------------------------
-> perf:
-> base code: __blk_mq_alloc_requests() 1.33%
-> patch:__blk_mq_alloc_requests() 0.72%
-> -------------------------------------------------------------------
-> 
-> Signed-off-by: hexue <xue01.he@samsung.com>
+Nit: commit logs should really focus on the actual change, not the future
+plans.
+
+>
+> Similar to list_lru, the split queue is relatively independent and does
+> not need to be reparented along with objcg and LRU folios (holding
+> objcg lock and lru lock). So let's apply the same mechanism as list_lru
+> to reparent the split queue separately when memcg is offine.
+>
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 > ---
-
-Please add change log.
-
->   block/blk-mq.c | 43 +++++++++++++++++++++++--------------------
->   lib/sbitmap.c  |  7 ++++---
->   2 files changed, 27 insertions(+), 23 deletions(-)
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index ba3a4b77f578..3ed8da176831 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -456,28 +456,31 @@ __blk_mq_alloc_requests_batch(struct blk_mq_alloc_data *data)
->   	struct blk_mq_tags *tags;
->   	struct request *rq;
->   	unsigned long tag_mask;
-> -	int i, nr = 0;
->   
-> -	tag_mask = blk_mq_get_tags(data, data->nr_tags, &tag_offset);
-> -	if (unlikely(!tag_mask))
-> -		return NULL;
-> +	do {
-> +		int i, nr = 0;
->   
-> -	tags = blk_mq_tags_from_data(data);
-> -	for (i = 0; tag_mask; i++) {
-> -		if (!(tag_mask & (1UL << i)))
-> -			continue;
-> -		tag = tag_offset + i;
-> -		prefetch(tags->static_rqs[tag]);
-> -		tag_mask &= ~(1UL << i);
-> -		rq = blk_mq_rq_ctx_init(data, tags, tag);
-> -		rq_list_add_head(data->cached_rqs, rq);
-> -		nr++;
-> -	}
-> -	if (!(data->rq_flags & RQF_SCHED_TAGS))
-> -		blk_mq_add_active_requests(data->hctx, nr);
-> -	/* caller already holds a reference, add for remainder */
-> -	percpu_ref_get_many(&data->q->q_usage_counter, nr - 1);
-> -	data->nr_tags -= nr;
-> +		tag_mask = blk_mq_get_tags(data, data->nr_tags, &tag_offset);
-> +		if (unlikely(!tag_mask))
-> +			return NULL;
+>  include/linux/huge_mm.h |  2 ++
+>  include/linux/mmzone.h  |  1 +
+>  mm/huge_memory.c        | 39 +++++++++++++++++++++++++++++++++++++++
+>  mm/memcontrol.c         |  1 +
+>  mm/mm_init.c            |  1 +
+>  5 files changed, 44 insertions(+)
+>
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index f327d62fc9852..a0d4b751974d2 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -417,6 +417,7 @@ static inline int split_huge_page(struct page *page)
+>  	return split_huge_page_to_list_to_order(page, NULL, ret);
+>  }
+>  void deferred_split_folio(struct folio *folio, bool partially_mapped);
+> +void reparent_deferred_split_queue(struct mem_cgroup *memcg);
+>  
+>  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+>  		unsigned long address, bool freeze);
+> @@ -611,6 +612,7 @@ static inline int try_folio_split(struct folio *folio, struct page *page,
+>  }
+>  
+>  static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
+> +static inline void reparent_deferred_split_queue(struct mem_cgroup *memcg) {}
+>  #define split_huge_pmd(__vma, __pmd, __address)	\
+>  	do { } while (0)
+>  
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index 7fb7331c57250..f3eb81fee056a 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -1346,6 +1346,7 @@ struct deferred_split {
+>  	spinlock_t split_queue_lock;
+>  	struct list_head split_queue;
+>  	unsigned long split_queue_len;
+> +	bool is_dying;
+>  };
+>  #endif
+>  
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 48b51e6230a67..de7806f759cba 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1094,9 +1094,15 @@ static struct deferred_split *folio_split_queue_lock(struct folio *folio)
+>  	struct deferred_split *queue;
+>  
+>  	memcg = folio_memcg(folio);
+> +retry:
+>  	queue = memcg ? &memcg->deferred_split_queue :
+>  			&NODE_DATA(folio_nid(folio))->deferred_split_queue;
+>  	spin_lock(&queue->split_queue_lock);
+> +	if (unlikely(queue->is_dying == true)) {
+> +		spin_unlock(&queue->split_queue_lock);
+> +		memcg = parent_mem_cgroup(memcg);
+> +		goto retry;
+> +	}
+>  
+>  	return queue;
+>  }
+> @@ -1108,9 +1114,15 @@ folio_split_queue_lock_irqsave(struct folio *folio, unsigned long *flags)
+>  	struct deferred_split *queue;
+>  
+>  	memcg = folio_memcg(folio);
+> +retry:
+>  	queue = memcg ? &memcg->deferred_split_queue :
+>  			&NODE_DATA(folio_nid(folio))->deferred_split_queue;
+>  	spin_lock_irqsave(&queue->split_queue_lock, *flags);
+> +	if (unlikely(queue->is_dying == true)) {
+> +		spin_unlock_irqrestore(&queue->split_queue_lock, *flags);
+> +		memcg = parent_mem_cgroup(memcg);
+> +		goto retry;
+> +	}
+>  
+>  	return queue;
+>  }
+> @@ -4284,6 +4296,33 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+>  	return split;
+>  }
+>  
+> +void reparent_deferred_split_queue(struct mem_cgroup *memcg)
+> +{
+> +	struct mem_cgroup *parent = parent_mem_cgroup(memcg);
+> +	struct deferred_split *ds_queue = &memcg->deferred_split_queue;
+> +	struct deferred_split *parent_ds_queue = &parent->deferred_split_queue;
+> +	int nid;
 > +
-> +		tags = blk_mq_tags_from_data(data);
-> +		for (i = 0; tag_mask; i++) {
-> +			if (!(tag_mask & (1UL << i)))
-> +				continue;
-> +			tag = tag_offset + i;
-> +			prefetch(tags->static_rqs[tag]);
-> +			tag_mask &= ~(1UL << i);
-> +			rq = blk_mq_rq_ctx_init(data, tags, tag);
-> +			rq_list_add_head(data->cached_rqs, rq);
-> +			nr++;
-> +		}
-> +		if (!(data->rq_flags & RQF_SCHED_TAGS))
-> +			blk_mq_add_active_requests(data->hctx, nr);
-> +		/* caller already holds a reference, add for remainder */
-> +		percpu_ref_get_many(&data->q->q_usage_counter, nr - 1);
+> +	spin_lock_irq(&ds_queue->split_queue_lock);
+> +	spin_lock_nested(&parent_ds_queue->split_queue_lock, SINGLE_DEPTH_NESTING);
+> +
+> +	if (!ds_queue->split_queue_len)
+> +		goto unlock;
+> +
+> +	list_splice_tail_init(&ds_queue->split_queue, &parent_ds_queue->split_queue);
+> +	parent_ds_queue->split_queue_len += ds_queue->split_queue_len;
+> +	ds_queue->split_queue_len = 0;
+> +	/* Mark the ds_queue dead */
+> +	ds_queue->is_dying = true;
+> +
+> +	for_each_node(nid)
+> +		set_shrinker_bit(parent, nid, shrinker_id(deferred_split_shrinker));
 
-This should move outside of the loop, the remainder handling is one time
-thing.
+Does this loop need to be under locks?
 
-> +		data->nr_tags -= nr;
-> +	} while (data->nr_tags);
->   
->   	return rq_list_pop(data->cached_rqs);
->   }
-> diff --git a/lib/sbitmap.c b/lib/sbitmap.c
-> index 4d188d05db15..4ac303842aec 100644
-> --- a/lib/sbitmap.c
-> +++ b/lib/sbitmap.c
-> @@ -534,10 +534,11 @@ unsigned long __sbitmap_queue_get_batch(struct sbitmap_queue *sbq, int nr_tags,
->   		unsigned int map_depth = __map_depth(sb, index);
->   		unsigned long val;
->   
-> -		sbitmap_deferred_clear(map, 0, 0, 0);
->   		val = READ_ONCE(map->word);
-> -		if (val == (1UL << (map_depth - 1)) - 1)
-> -			goto next;
-> +		if (val == (1UL << (map_depth - 1)) - 1) {
-> +			if (!sbitmap_deferred_clear(map, map_depth, 0, 0))
-> +				goto next;
+> +
+> +unlock:
+> +	spin_unlock(&parent_ds_queue->split_queue_lock);
+> +	spin_unlock_irq(&ds_queue->split_queue_lock);
+> +}
+> +
+>  #ifdef CONFIG_DEBUG_FS
+>  static void split_huge_pages_all(void)
+>  {
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index e090f29eb03bd..d03da72e7585d 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -3887,6 +3887,7 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
+>  	zswap_memcg_offline_cleanup(memcg);
+>  
+>  	memcg_offline_kmem(memcg);
+> +	reparent_deferred_split_queue(memcg);
+>  	reparent_shrinker_deferred(memcg);
 
-This looks wrong, you're still using the old val after
-sbitmap_deferred_clear().
-> +		}
->   
->   		nr = find_first_zero_bit(&val, map_depth);
->   		if (nr + nr_tags <= map_depth) {
-> 
+I guess the naming can be a bit more consistent here :)
 
-And I think if above checking failed, sbitmap_deferred_clear() should be
-called and retry as well.
-
-Thanks,
-Kuai
-
+Thanks!
 
