@@ -1,204 +1,176 @@
-Return-Path: <linux-kernel+bounces-830713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40135B9A5D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:52:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBEEB9A5D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77FE33A49C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:52:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C55F31B2700C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342AB30F95E;
-	Wed, 24 Sep 2025 14:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346ED30AD06;
+	Wed, 24 Sep 2025 14:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WdOevolK"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010034.outbound.protection.outlook.com [52.101.69.34])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fARj2G45"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D61A30C63B;
-	Wed, 24 Sep 2025 14:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.34
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758725420; cv=fail; b=YJGZeTZIbO7nKs2Zw+COf4x3UWvsP/rYjEHJIdoh9t99KBd4Q1hZ42m5zwN/ZCcK0lxmn+kfbuAzjHkNxda6SQo60peaI97wkxVQQPjuhwuL3+StYTlcGk5rVVIZ0Wq3fvSTDgFq6gTSoLh+v78BBRxDWQ6JfGIrnw42liKXHvA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758725420; c=relaxed/simple;
-	bh=M5SHIneSgLRpEQ9xN6vLe3w2HS4hjaIQf0iSfTkppFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=AcLFCSip6jRsy9H7GPKQb+LOVh1UL0FQZbnA5r35+zCyHMQIT5yDEcyc2B1k4OHa5OREGpsfQ+c9zK99xg1dxajUR1TKB1OLTg2KWJln4tjFFWZtLO8ScVbzumAeq/i6VqzvQlbkVx+a9I4zaVEHW0Y3mr9pU2d2fLATrQ+bSa4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WdOevolK; arc=fail smtp.client-ip=52.101.69.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M+S5CqgdBF9BCjO7om85/c4F08x3vxLo1XFdyNsBMdMow6rqbPf19G+KRijhVnSqIVD/i6P+eHtDIXhEEeF/fri4NUG9hV04nH+CkJ5HFdQHbgupbFTXi24u7ei4h0UEtgxFI7CMvDpRVOgt05DD2iZ/THPz0BoarxRi4Ob+puF48ijzWDTzA367YyJBgGGCMYbcs4zdsbzZ63i3UInrvHITBs4MvsznZbpXiZ9mJRQnmF/0qM/cSZtle/MiUC+kV8wBts5N4ZhxWHUR7vkPEDvjmi1H8R6AofgJV3CHvmDC16IrSjeiKTBpX6IBesICcgTy0B/Qej6CPtQliKJSjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A2uHNANt9VJpHKzs9mw07w87mTB2M8/EXEKDfW9kADo=;
- b=BmUGcG1Ggz8jEo4hPZp3z34AL0JLWgNqoz4fZfE8ilBx1ATHHqcw9GR3klR2b5kL+TGnaK2OgZseOgrt+RXho1rLOb05vIFaaXXhpbVSLggANsOqZi47gLgOY8KcspeEaWaZwfZ+eWMFhOfnQ5sR8BWjqK7DJZnHrAhQpanrZZnqIrfAQrJajJMsLlOYTibsFbJA5C2mpDRuBSfeL5p+Zgs2M8wGQR4S1Y/qvui9ZegOmNCVXibqVbzpg1Gs5rO+cHBdJh4Gt2vj9i11SWdWvN2mxKjfhGRwM6oeJe7CDfUn3K1n9SXjc+qqpfex3iK3Yb0d4YdBTgHComMPA9bczg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A2uHNANt9VJpHKzs9mw07w87mTB2M8/EXEKDfW9kADo=;
- b=WdOevolKR+W9v3cdTG8BHCzxjxyil/7XwKF1V4lFh6quzKpHACDjMzUHH09MqYJIx/RORgiJ+4Bk3nNr3RRJOuhJj1sQpCfQo73xwI078IPkoshClIQDns2PNFsI+qY6pGKIsfcOg9MUQNx7dq1eP7IhCk3rKSMZoGm/jvO61fe0caW5Negf1NYvx3wt1d//D/G0ElJeS6o2OBybBl4F3gAVh9zj8FtEOfjZBX7a9vncSLYfID5rIfkthZ9wto1y/U6OrK1sSdxeF0PBTwlhr9kh/R5vMzvCJSkEL+YDUrxiYB8q3WSvejOfdn6MC67K94tYahbA33JLa8P4hEjzog==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
- by VI0PR04MB10509.eurprd04.prod.outlook.com (2603:10a6:800:214::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
- 2025 14:50:11 +0000
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
- 14:50:11 +0000
-Date: Wed, 24 Sep 2025 10:50:04 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Sherry Sun <sherry.sun@nxp.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	shenwei.wang@nxp.com, peng.fan@nxp.com,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH V2 1/2] tty: serial: imx: Only configure the wake
- register when device is set as wakeup source
-Message-ID: <aNQFHJlnmn9V2Eyy@lizhi-Precision-Tower-5810>
-References: <20250924031550.2516704-1-sherry.sun@nxp.com>
- <20250924031550.2516704-2-sherry.sun@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924031550.2516704-2-sherry.sun@nxp.com>
-X-ClientProxiedBy: PH5P222CA0009.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:510:34b::14) To AS4PR04MB9621.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ff::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83ACE30E828
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758725421; cv=none; b=Aiy4vD6OkYfAAoh8MXmTjpEHYq6QcXkZGd4F92o/BHrhF/gBghVy4BcVFoO9UAW8nhijmvpR1gB1jdOBdMGr0oqCQP4fjgWUnI1YnzEmdcFWTA8FHhOIfaZNM41vbsqJxdaLe5De+AUymQqAhuncbVZs0EQ28oZZsDc2Rq9wFfc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758725421; c=relaxed/simple;
+	bh=2v58a2Ms4SzGlOmfnHzQTJ6OquVF8bjJ7gbAV/oLr/s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vrv7QQMTuiBQ3uEjPq6v0Xd8osDUhdAKQItbiZE/lNB1B1gXEdj93nlML0c0IHKbj/fI7KxXy4y0K/b3M4rbP8xtraN3bCn85road6bPhTScxrMi4XNsd2l3HkpJMTBRp1rF35l9SQVoS4pE9W043DjREl5la9Lj8hoOvQHzDrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fARj2G45; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ODFGbX019923
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:50:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LOIwUpILHzWH2xAe7aoOnVRAWvWSgZKyb6P3XpLFlVw=; b=fARj2G45QTES3xF3
+	dyIqhnpX2bS71VpsHfUetYxaCogmcz3MfySQjWE/ZAi9vp2NzOgULfu1DxXxGgwS
+	hjI7e/YU2z5jQUPfBtxT2fK1wVuzKiAbiKtp2te1u2WaLzxmKJf+uz6YwpOSObr9
+	xWJJekuXRUGl4dbyIt8ruaaltWCHbyylgQRTiulrnFxEKnqUZkOMt8/Yum66DVPV
+	jlTZs85r4lmEMYVQ+MNtebRtnvztSoKbA/fG6Q60GfnfMYJaPzFufKYU3oK7Tky5
+	mfly4svriCqsIxYG6s2i4ZOW7Ehi6zeHNMB4wM2qbuDOKIiyZNmGwA0hfYbIEBJU
+	W9XsSg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bjpdww89-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:50:13 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4d40407c6acso3869881cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:50:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758725412; x=1759330212;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LOIwUpILHzWH2xAe7aoOnVRAWvWSgZKyb6P3XpLFlVw=;
+        b=am2VHZpFafAzd4PKFHVIVrCBpE7MaEYFpb6Kc1GuOKhJ5PVwekgKpvFP4+30FJE7qD
+         5g+aVa/RBCUp4Dar6+LpQEbPeqTMy5KihMMHFeShxWDw3T4spTOY8jn0VMwMH3M5HFh4
+         Rife72kR4xOwnx8XcDvSsuG4lfRFKmdtya92lCD/Z2GVXZgePKjmdqK2Il7aqk/7qZYu
+         lV4QIuVJzjtR0tJChj++dp37oNFlbZkLu9+jvmDL7cnCJTHv61JlZSjoiwBeiuAzCdEY
+         wecTmrSEuC/cjU0WA//jW2U7NEPxS4cvlL2Wg6bLyWj6VRTXd0SCGrJiPApzWME2upxx
+         FoTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvSa3NPlzIQ339q7F20jC6ScWXdIDjUs5Z5py6WHaLy17OO+u+cnR7p14HPF1e86vPP/KCbJw9gbhVK1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0NrV3h+ZkYP1ZRijoHRuWK5RevbX3TajrRvCDpwsTIT7jtK9F
+	mLT2YdwexpQnLuEbwRafQtYBpPUyYyHnJSrS7MCUIoK+j0dRCTxZqOCKZtwoJ3JpfxocHTJAqJP
+	ZVa/JWkt2YCRGJYAXudcPD0+Aky7tjypPp8NknlgvN5aCCodBmiwYTYD9o6CIhD8gWBA=
+X-Gm-Gg: ASbGncvjaYgiRzx1jaOHQGcstzMnhNf3SL90F/OG4JPAd0glxokRSCsLImMQjjx3jfa
+	ChoDIUL/3lLiBvdm44dI7En3Hy4onscIySvkweCH8blBtY9Doh3PuRKKlvXwXtXc1CtUtCmMaEu
+	ugnELUOiNoAFCYVPdZEKBl1G3tPMFoxfC6yxMbfGaQbo7tMUsa34IbZj3WJSvD+yKxxO4WST4MU
+	wcWcDpx4e1YddWVfN34H6eQlQxXRCpGoH/ISAgw+0SNQnRyAoR0UBg79YqxlbWsp+Jfp0OPZtqT
+	yZOI2qCiwkrKxhCd/SbfsiXF+Qpd7RcXDJ0C/e/AQb5RzgSMzqNKQsC0BOXxJgRoF+XKNt7mUKO
+	diwMV4dgxp39uv1IvjtAx9Q==
+X-Received: by 2002:ac8:5d92:0:b0:4b7:a9cf:91f with SMTP id d75a77b69052e-4da4b0490f1mr104651cf.8.1758725411642;
+        Wed, 24 Sep 2025 07:50:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH/m7Ig+ntA4VCysUPYjwN26MObXEox0OR1XdnFAJSB9eyhSHSgSZI0IYmixSGdsHwEOjXGBQ==
+X-Received: by 2002:ac8:5d92:0:b0:4b7:a9cf:91f with SMTP id d75a77b69052e-4da4b0490f1mr104361cf.8.1758725410925;
+        Wed, 24 Sep 2025 07:50:10 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fd1102d7asm1582827266b.76.2025.09.24.07.50.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 07:50:10 -0700 (PDT)
+Message-ID: <15c56c70-928a-4939-86a2-e7b81f1596a6@oss.qualcomm.com>
+Date: Wed, 24 Sep 2025 16:50:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|VI0PR04MB10509:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9dd597eb-b732-4492-4771-08ddfb79a9a0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gqYvU3MD1fw9neA3fw+zeg788WT7JmJVU2FYb/DXiZoeFyv/NukfxQsM7rF9?=
- =?us-ascii?Q?9Oq/HOGQ4QYLX9sDx6IdBny95B8EJmeqqFrxT9qtip7rbMukNhb5W02rDkMA?=
- =?us-ascii?Q?ZxLemDSVtB4BJcDc04NZKa8R2bsMQZG/Z+Qy1EWTEV0cyYKRELYHMz6t7F3J?=
- =?us-ascii?Q?iNIedvpCeXiXy04bQF8vi8NKdr6p25B6ZpA0qhxtVKvfC9+mIdBlVtiezkDk?=
- =?us-ascii?Q?yH71UZzYXFMC/H8nz6cpJAmWOSJyIORyS5SxR8ZWReNEfdHle+c2tlFl6Y4j?=
- =?us-ascii?Q?JfFHQ81Hr07aeD5AGGR4hhPeSF2frsxVadckusjQjVqgTDDs7KRE4zHNkNfy?=
- =?us-ascii?Q?YfbFfwvIFxsaBzu1lHtvD2vH2VNipmiyu45YPzpYEA2vMKraFIvpbYZWvc7n?=
- =?us-ascii?Q?+2SER4+ytrpLIxWIxhg8uG9dzA3sSmtG4SDC6WgU+9Kt7pRGwjCiwWTFWYWR?=
- =?us-ascii?Q?K5VPS6A3gqG+JMrbJHAC92dvKpG3qYY78ocew2VsbVvxwixYXqnt+d3RS0FH?=
- =?us-ascii?Q?yOD81c5guwUewx9cuOjKfc3WUSYhvXh+KK2AvFltN61a79F660dlUD09jJxh?=
- =?us-ascii?Q?15wniYrsM1n9+/v/Xwq+wy4cjeJ2P+9k0N5BgMxpSvAYDOMkldl4F/k4X8VV?=
- =?us-ascii?Q?35nyhwC2S+QXYujlfXJI8q9/EB6nkCCLrsuMFgW5OA7cNOSchs1cw40OLo5h?=
- =?us-ascii?Q?LZZc6xN8ueNYp2gMnT+X4O9+wG6OGSXIV5f/XqxEW9P5X1bcBF+4DzA35Ig8?=
- =?us-ascii?Q?DTkke5V9lwVzGQkwK2Gro2rZLsHRn5/sXVK+keMH2a5hYB6HLdcxRo90eBrh?=
- =?us-ascii?Q?5NA43cllCYXsAWslfC3HQjG9s7pAltAwgRsZsnNvR0hsXwv4neWUfikqIY1e?=
- =?us-ascii?Q?+XjCMFjNVzQ4NupCJ6EvfmHDSTfr1zetCxS7TrdF7uLorvBX4rRvQRtabs43?=
- =?us-ascii?Q?7UbDLfeO6bik8V/7teU+rL5Kp8HV+Bqxo4/+MVoWBerb6ChGsaRwy5xXUk/B?=
- =?us-ascii?Q?D1awrqflNfPgJcWxYmmZ1LtJ7CrPbj/Soe7o7KY65+1IvHQ71NRof3NGZYaQ?=
- =?us-ascii?Q?PaOUBsVwzpbEAj832VMkRv/jBMFXcr/B2ArsFHzxffNrjqyvnWLTQnzDzX+2?=
- =?us-ascii?Q?gHiXkowwingE8lhblrLapLRUW8T50gt1q0sfmpBMKwdRDnkNmvxHiUGN4pHX?=
- =?us-ascii?Q?YYo12+JlMZ2m8hOxsRYw4ucx/SXBwgcGWdtInMAAco57LgBRaQibf5h3CLo8?=
- =?us-ascii?Q?/NPwu/1NBor+L/vl/CyTdbdzAGdv3tFKkW6MlATaiyCOS+1acsMxB1gG0EFh?=
- =?us-ascii?Q?VQDd78BhuiFrcJfxaSmWtBjz7/z4EOeFk4gRwMILOFTwDrQw/z/AACmH+frs?=
- =?us-ascii?Q?02MJv9PyfcVno2uME31gUckI4WDOR9anMb+sasxtw7v6olKc9u6ahMA/Tbx/?=
- =?us-ascii?Q?I5ilmqeyFpegVYa/TMW1D+6QyPEpC/jG3yJ/t2ddlP3D4p1GC2CpeQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?WFZ0djL+whwdkSBL1AH46pYxBr7vtMZkuo1/iw8UhpAuskOb5Vvt8l9JASde?=
- =?us-ascii?Q?6HZNn4KH9/rH1Q6eSBW12DMk4vvx8nbnuHFEAkpGhQmzyoRdE9+gB7jOlBMH?=
- =?us-ascii?Q?Vt2kY5Dc5nyMZZl70g8aSwFedT2Ixs9gCVI1QQHoWWpaaaisOsBS7xbq1T2M?=
- =?us-ascii?Q?aeKsctPtZIrWHKrJJxccEF7sDjfJIpphKnRHPmR0PvvO3uw5jLD4GQWBTjyO?=
- =?us-ascii?Q?vUOsU8iCR475sreWn5g9wOLsdSlhi1gifDwyq+P4ncHJ9BQ7+sGvgjPxoh8/?=
- =?us-ascii?Q?Dz92u9nFXi1t2gIjcjOq6x9kSFF+n8ZwscgVxVZvXj9qtUeXhTALtnGxkwkr?=
- =?us-ascii?Q?jlQk8OkVvHtvmvv9dZ6eyiNj1uUHXSoV6okL4/xa/ykxe3NIqOA/xO7eQaHt?=
- =?us-ascii?Q?BNleCMfrl5UyrO8zaNburs3amWxanm8apnGh/1/mtPNIhMypEf9nsBq3SG5j?=
- =?us-ascii?Q?YAL0p/fHODd+/uBz9ZQOAEBRmH2wUNhE3DSgx9zau74+GpcNRMJg+5zw9e0X?=
- =?us-ascii?Q?uZG12AlYScOuqqdEV/z5u0PG+bWRJr/44GNZ+dTsQK2RYp1tAO1K43lo9aLI?=
- =?us-ascii?Q?4NE0Ykm7Cn8ee1JwM3js6IkSXvFxYw6U8rja3oNIOG3VcnfrWNbNywrcKc9B?=
- =?us-ascii?Q?yU3nv7Dj6utz9im+/7yHhVXlOD4oUKUCOtOJqszSeak7ys3SEOZnVS2HJEad?=
- =?us-ascii?Q?YCX963mWv7Xn040PQMNgRGGQ3V3tWtTRp06957XHd6DngiWvbkbF+SqFxsiS?=
- =?us-ascii?Q?G5+wNkxmREQXusulUtzwyhGlOT8Ja1jlYBRPte0YuMlkET/nicpBj9yjglvk?=
- =?us-ascii?Q?flrXjPZTi+lpFL00A+WwIuBjoOT0VC3j1x17zpz3W5/JW6prDg8JT5wG4ReC?=
- =?us-ascii?Q?6QuFoQ9YtHBItyTNrlc8JWb2RFPClvgEHGGJitl713zpFnyI+0s52P1mSaPc?=
- =?us-ascii?Q?xFGtzltNLfefPAvNFFDgSEt4axpxoQ8j0Aqouj80bmEQNP0XM45fDBWn5KW7?=
- =?us-ascii?Q?tB11rki6Lm+Tsk8PS60B8zOXQA0L9mBO0a6gJ//5NV9rp7yBFJy0XDtOrlMU?=
- =?us-ascii?Q?HLJniME98K39ffU45WeXW3hv1mE4rxOQxpiWMptOIuYUdZaV/7FamZid8R0C?=
- =?us-ascii?Q?XYGK1J5XbBkHWmV8CvK/Byc3YDce+eU/POR9L+VEtgvAEgos7jKJh2OpnZLl?=
- =?us-ascii?Q?o9ZOt9GhLhfl3oKFfjAii+a/0ZbFtaSCVa/fH08rkgNZe2JRdlo7jrMaVM3a?=
- =?us-ascii?Q?+CkQZSJKSrgHp0WvPAAvea4Q339rClZaddksJl4eRBSllR/0R1+FBpwUAQfn?=
- =?us-ascii?Q?oJcajob1UkOAD2MD4iXcAJrQOkmQhG/mPYXr3HbFi89sm8lcy9ASlZhWMtEB?=
- =?us-ascii?Q?aUm69tFnTddK7/SrC9UudZ0/jCVU/hvxUDJNWyWQARG9ULm3PETHGe/xjb//?=
- =?us-ascii?Q?wBsybuqThUk7Vn6nhsiXVh06GwL2JMt82LRR5cmBSRgq5pncCaM8spW7ehfa?=
- =?us-ascii?Q?USkwgzfJdSh+BEuEnlRWTdMXX5vYyOY4rxMK8oW49lBBIajnjw4HZGz7ihdB?=
- =?us-ascii?Q?mvcVgPN1mUhf1z7hukOaCm9xs6AKo3ANFHmwSgiQ?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9dd597eb-b732-4492-4771-08ddfb79a9a0
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 14:50:11.3599
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B8fW6oC4zHYXoM5TipctyDAVmg4LFeBj+dHWPTr1KEkGguHCctqNHIA3BtpqvxrU/WF7LzlQ7Ap3cWF1AueskQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10509
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] soc: qcom: smp2p: Add irqchip state support
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Lew <chris.lew@oss.qualcomm.com>
+References: <20250923-smp2p-v1-0-2c045af73dac@oss.qualcomm.com>
+ <20250923-smp2p-v1-1-2c045af73dac@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250923-smp2p-v1-1-2c045af73dac@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: m51UJYlEdxmZ2aa2_J7SBMh-ctgMeYkU
+X-Authority-Analysis: v=2.4 cv=Pc//hjhd c=1 sm=1 tr=0 ts=68d40525 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=Ficpkn55UaSewbb4THMA:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-GUID: m51UJYlEdxmZ2aa2_J7SBMh-ctgMeYkU
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDAyMCBTYWx0ZWRfX10M7q9PX5raN
+ 5ba6baOs7xD1HNrrsGxpqc8S4EbNKvW11YGUxyoaKCXyvbVl6bgPkmAYAAUlzV+DzHfIkUY8GIy
+ dyPcAKu8YXS1Zxm9hbJYeNPdE9S5/BXrQIeZJRcKcbhYhw3IGFOQvVPKZf/FBg5sDPhHiFKFyGw
+ gUlHLOx2+7CZCMAl3rTVq31DQw50NTmhKabChgo721dmupTAz9SjSn81oUHJur+ijOSi58s2k7/
+ +Z8GfHps/T/5thcG5UWOeKddhXthj0s2f2Fc3PN+xiu8K+5JSamMM4jaTufKPFbdym50ueKmpmr
+ hC5eQIv4VWh9cFdc8CIbJ2MvGfkOeZWjugZeaI/xrtU6EzXarrsaUqaZ7RjjVlA1isUMuWk85iM
+ pqcfWcw2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_03,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 bulkscore=0 malwarescore=0 impostorscore=0
+ spamscore=0 suspectscore=0 clxscore=1015 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509230020
 
-On Wed, Sep 24, 2025 at 11:15:49AM +0800, Sherry Sun wrote:
-> Currently, the i.MX UART driver enables wake-related registers for all
-> UART devices by default. However, this is unnecessary for devices that
-> are not configured as wakeup sources. To address this, add a
-> device_may_wakeup() check before configuring the UART wake-related
-> registers.
->
-> Fixes: db1a9b55004c ("tty: serial: imx: Allow UART to be a source for wakeup")
-> Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
+On 9/24/25 6:18 AM, Jingyi Wang wrote:
+> From: Chris Lew <chris.lew@oss.qualcomm.com>
+> 
+> A remoteproc booted during earlier boot stages such as UEFI or the
+> bootloader, may need to be attached to without restarting the remoteproc
+> hardware. To do this the remoteproc will need to check the ready and
+> handover states in smp2p without an interrupt notification.
+> 
+> Add support for the .irq_get_irqchip_state callback so remoteproc can
+> read the current state of the fatal, ready and handover bits.
+> 
+> Signed-off-by: Chris Lew <chris.lew@oss.qualcomm.com>
+> Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 > ---
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
->  drivers/tty/serial/imx.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-> index 500dfc009d03..87d841c0b22f 100644
-> --- a/drivers/tty/serial/imx.c
-> +++ b/drivers/tty/serial/imx.c
-> @@ -2697,8 +2697,23 @@ static void imx_uart_save_context(struct imx_port *sport)
->  /* called with irq off */
->  static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
->  {
-> +	struct tty_port *port = &sport->port.state->port;
-> +	struct tty_struct *tty;
-> +	struct device *tty_dev;
-> +	bool may_wake = false;
->  	u32 ucr3;
->
-> +	tty = tty_port_tty_get(port);
-> +	if (tty) {
-> +		tty_dev = tty->dev;
-> +		may_wake = tty_dev && device_may_wakeup(tty_dev);
-> +		tty_kref_put(tty);
-> +	}
+>  drivers/soc/qcom/smp2p.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+> 
+> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+> index cb515c2340c1..e2cfd9ec8875 100644
+> --- a/drivers/soc/qcom/smp2p.c
+> +++ b/drivers/soc/qcom/smp2p.c
+> @@ -222,6 +222,39 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
+>  	}
+>  }
+>  
+> +static void qcom_smp2p_start_in(struct qcom_smp2p *smp2p)
+> +{
+> +	unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
+> +	unsigned int pid = smp2p->remote_pid;
+> +	char buf[SMP2P_MAX_ENTRY_NAME];
+> +	struct smp2p_smem_item *in;
+> +	struct smp2p_entry *entry;
+> +	size_t size;
+> +	int i;
 > +
-> +	/* only configure the wake register when device set as wakeup source */
-> +	if (!may_wake)
+> +	in = qcom_smem_get(pid, smem_id, &size);
+> +	if (IS_ERR(in))
 > +		return;
 > +
->  	uart_port_lock_irq(&sport->port);
->
->  	ucr3 = imx_uart_readl(sport, UCR3);
-> --
-> 2.34.1
->
+> +	smp2p->in = in;
+> +
+> +	/* Check if version is initialized and set to v2 */
+> +	if (in->version == 0)
+> +		return;
+
+This doesn't seem to be fully in line with the comment
+
+Konrad
 
