@@ -1,173 +1,252 @@
-Return-Path: <linux-kernel+bounces-830312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79DFCB9960F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:12:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF35B9961E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89943188FFEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:12:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC2D61B241B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0992D97AC;
-	Wed, 24 Sep 2025 10:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CA52DCF61;
+	Wed, 24 Sep 2025 10:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Oj9XbcHs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eRCdVXsc"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010046.outbound.protection.outlook.com [52.101.201.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001E32D837E
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758708728; cv=none; b=aANZchJVrDh+Ay6+MBo2p+nep+3vat0dgxv3CMY8hEjgRCGEFn0+SYAC1eYlbRTXbBOuBmdKcIi/n+sH/n9+Dd2l8ijE1cXxhgPC4mV4hgb1+E28wDyNsFw22pShL2c8yuKJbdgDBLTSMa1rbuEHkFSXWl/UNoZKdq57UIeeayA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758708728; c=relaxed/simple;
-	bh=qU3G9BG9Ykv/RlUpW2K/aLKHDcUwgzfvCeYGnXNLkys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OXMQq/hgqDkqipgLCvMIX1+Vz9hX/TxWlIz+cnYdJoke0EHPAWAlAWgAsCHOgoJDhDnh2jQfp06DxVdEK7E97q4QnC230yTdjQ2Zt70cN6SWJUJlmw6+vIhvEVilNPoolhwKB+3omzN4qD8MLZP2wlmk/Ji4RiyjsWzj9lR3Vrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Oj9XbcHs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58O4iASl001992
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:12:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6VZxHPqDQuqyBxgI6CajONyRR77vQ7LuPtAXIHSAkHk=; b=Oj9XbcHsNZzCkTSm
-	A+AnA2k4LPLPka2usQObFJPXFUfDkMrvrkSVkaATSJBOCgs/7tovWGnR9yEDnXfG
-	TBWPkXmp6+9FCPpCReGZ5BQLwmwoJo2fjMNEpPeNJuou/kLnL+JqXQ8kgNEhdz1J
-	xlYmR7EAH52RzQAFdsVIOhlJXYEg2aW4c73QoavQtnvTz8nnOzxlYE+SrX8lYakG
-	V08ZYp8C+/GqZLq7BP41J0GtK3bp1LXr+021ZWXtpBSrYCAfMgyi6aJ62S1ylrwi
-	P+7NlBCr5eVRPnxr2t9Vj/T1Gc6YsozabefmWyUxIh1T6RisElZHSLQlVzbVZPp3
-	wX2aVQ==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499k98kwf3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:12:01 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-7f5798303b3so896666d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:12:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758708721; x=1759313521;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6VZxHPqDQuqyBxgI6CajONyRR77vQ7LuPtAXIHSAkHk=;
-        b=CAU3k60uKweSwkdSckXyNz2nAVlkpgoa/fNEZnJPF+u6QZi61ZsJaD+Sb9NscAJFaZ
-         R0e14melx++75E+o6Ej3hYk+paUoYYQXVmQw0rCog9sPmNLCe5/zfb5JPPc87PIyIoW/
-         uSn0Avn4HsbEYaV8R6JoK9rSg2Ly7OS2Y1ZXMCeF8QOwGpcsjjuslFrYLJoUtMLkDQYh
-         iogAOUnvD6XR10ifFm3ir0xktWoy+cu33aojAUXMGds0K+FWpimX5ghI4LmQTSQOeqC/
-         KXShAYeF6GveZoq0FaI+nvJGxo0P6A5+wmRSap48bY4kDeprS9bAUVs+tPyJ9QU/7Gqw
-         T6Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCXY3Ii7yiIa4VcZ6ZKcQ86H1A/O+bTsMotPYwm5IaKi6u5nhVidN1kAikOug3BUGxDHkXeR0kzy8SEWdoo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/pkrGPHWAyxLK8ZjWD1iME7fcTLnocW/W6+FXtGyVZ4HYEUjS
-	Cdib1HYb+cMXvksZBayvQujVLb4MfZ9i+4DfjPq/UqqCn6c7VetBTx8rTlOUaQh11W0mHNP1M5v
-	oqOg4ykCg05nF7bUdsXjr0V57pDHbZgWKDJev9QaVE1TiepZ8Zw6rvwOpzN65ZNXtkC4=
-X-Gm-Gg: ASbGnctx2UN67VZhFQi2jd60/qg8VbQ6mYdOPntJlS5KyDgfCRGLJ2qBp25IN2+/TjV
-	sxKFFaXBMz1b8dncQwi8x8TIEWnUVDnUyKPXROaNGAXvUKmmzJ4vmr1buWFhukPKtJr7513KIuT
-	W+uiSVdGRK+6wlWUIPh65XDeLVDJkcYlm9UslDwCmgLcFClCH7/8hxSD9idtId/qTXFJqXKblo0
-	0bQKMXTEJxJINvOE/FDWma6eDiEhXWIvLC3fG2kKI0PmAKcMsd18r66TtlF9Ibhd5iLWBwbiuai
-	3iF/42SCmC7QPpKqs5vyN4TYyL3ahM0Kd+KBNdmYLlyy3bj1v6upWoMoLLCjl84REGohyZQ8vgT
-	1pooguH9qN4rWOl8JFfIf8g==
-X-Received: by 2002:a05:6214:629:b0:798:f061:66bb with SMTP id 6a1803df08f44-7e6fff99518mr47394226d6.1.1758708720687;
-        Wed, 24 Sep 2025 03:12:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEPa5t9eCVyUNXMj7BXSIPr97UVSHRGddnfRS8EgwDZlymFI65Y8wlIZIkRwrav1CKAZYeiJw==
-X-Received: by 2002:a05:6214:629:b0:798:f061:66bb with SMTP id 6a1803df08f44-7e6fff99518mr47394106d6.1.1758708720234;
-        Wed, 24 Sep 2025 03:12:00 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62faab2b84dsm12172731a12.37.2025.09.24.03.11.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 03:11:59 -0700 (PDT)
-Message-ID: <87dee3d8-1532-4ba7-94ef-737a90c2c469@oss.qualcomm.com>
-Date: Wed, 24 Sep 2025 12:11:57 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF642D8DDF;
+	Wed, 24 Sep 2025 10:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758708762; cv=fail; b=QTHifnabFJLRUI3cOMqIGOp3HH68FzOOvNvwVl1nt1Cifk30x+hFKv6U/Sr6qmYqsU26RNcYJ/vtpFUWQQwRiNqAz7CBbDGuzGZXFj7VJqMICGN8pvKodDMjGBZAqBbQvVzruO4fPjLw9bZAmGbiulRT5IVjA1OEzeMS/e81TDg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758708762; c=relaxed/simple;
+	bh=0VnvIeByqm7wDK0ZQ1hAjwMNJwOxapW3JaogSlAJI14=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RFe48uKwBi3hwASKA3C68qzdXHfpJDQ+8t80E6QEr9mCqWVZexI6R1kM2LYsxlAeKC4SIGpSrP53udw0fB8veBr2+wQtvZUPZa7AbS6KpPufhNW96wYqIn+DumK+0QaCgQEe3Uj6ygxkhqc2SYbC2kMM9U5XOCaB2R535mUszHc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eRCdVXsc; arc=fail smtp.client-ip=52.101.201.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wEqBCLVaYcTt+7E2GpsyE0yi6p4EE+/aXz1Aa0l2KCqvkPByOVm0eihz7xgkhW4ruzbBDBn/V4givzzmeSzHwPTG1gGAVtLbzM8InVdUWa431T3I11M3bEzcgbti9muaD6/wcEd88GOtWWUdqXfdMewtBn/93XR5zhOA8wVItpy8gnCfSDQzznbnJZjgW6BNLJ2EMQfncFXyxIp1DnRhiWnijT+uDxMdb7VIh4vli/C75bohMVixOJ2ItLU9Y46j8X5tNcd6+VRkr6HQzFllV4EMHSvEfdSHT/al0eNHWzP9t21UdQkRkHRg7lExk+kpOOTqtl8fqe+yl35GNTOenw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0VnvIeByqm7wDK0ZQ1hAjwMNJwOxapW3JaogSlAJI14=;
+ b=vQ+snOSy148qxYWpz/KSAeHlHQzh8P5hE6g+1FQXnYtTdDLiL6rlA5tK48gfl1PfzbIczDTjOwbQPVv7ijnhxaRFKpPHYyYESn+XYjoM3OQCX5IqYCiB9Ol4nuh8OozYkU43DlVu337k/TgKrOXz2T0nOpXdWbZH+abQnDijtYGZqIMPLF+0jFP4SLjWjEI3KyMtqj2+waq2wswuDatTgNU5CctHrJKysQjKN/HqyXl3QvaJRCQZaVic/dgXEdl173JrECbKodUOblyD11p2Rx1xeoE7uXoV5FNAvbw3whebUZ+R+SdaiREBXshhpeQFUCor/kJNl3SBjVIzs0QGJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0VnvIeByqm7wDK0ZQ1hAjwMNJwOxapW3JaogSlAJI14=;
+ b=eRCdVXscnC6bsinm2PDWDWJi+nKKwEsw+3JH29+i7kbIhO43DAmZkZLv4xFuAgE3gDen0KGdjX/oKDwLbYmq1Eqs9t0QOfEp8GjGooPlna1Ar4iiqEp1An/8GJV600MCQUEHjdeqzdZGtpr65x4vJer8uFmrIEg3Wg0Sqz8EdS0=
+Received: from DM4PR12MB6109.namprd12.prod.outlook.com (2603:10b6:8:ae::11) by
+ MW4PR12MB6921.namprd12.prod.outlook.com (2603:10b6:303:208::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.19; Wed, 24 Sep 2025 10:12:32 +0000
+Received: from DM4PR12MB6109.namprd12.prod.outlook.com
+ ([fe80::680c:3105:babe:b7e1]) by DM4PR12MB6109.namprd12.prod.outlook.com
+ ([fe80::680c:3105:babe:b7e1%4]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
+ 10:12:31 +0000
+From: "Guntupalli, Manikanta" <manikanta.guntupalli@amd.com>
+To: Arnd Bergmann <arnd@arndb.de>, "git (AMD-Xilinx)" <git@amd.com>, "Simek,
+ Michal" <michal.simek@amd.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Frank Li <Frank.Li@nxp.com>, Rob Herring
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, =?iso-8859-2?Q?Przemys=B3aw_Gaj?= <pgaj@cadence.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	"tommaso.merciai.xr@bp.renesas.com" <tommaso.merciai.xr@bp.renesas.com>,
+	"quic_msavaliy@quicinc.com" <quic_msavaliy@quicinc.com>, "S-k, Shyam-sundar"
+	<Shyam-sundar.S-k@amd.com>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+	"'billy_tsai@aspeedtech.com'" <billy_tsai@aspeedtech.com>, Kees Cook
+	<kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Jarkko
+ Nikula <jarkko.nikula@linux.intel.com>, Jorge Marques
+	<jorge.marques@analog.com>, "linux-i3c@lists.infradead.org"
+	<linux-i3c@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>,
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
+CC: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>, "Goud, Srinivas"
+	<srinivas.goud@amd.com>, "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>,
+	"manion05gk@gmail.com" <manion05gk@gmail.com>
+Subject: RE: [PATCH V7 2/4] asm-generic/io.h: Add big-endian MMIO accessors
+Thread-Topic: [PATCH V7 2/4] asm-generic/io.h: Add big-endian MMIO accessors
+Thread-Index: AQHcLKFYs7kre3e43EuQ9LsQHTc3m7ShGSCAgADudtCAAA9DgIAABNog
+Date: Wed, 24 Sep 2025 10:12:31 +0000
+Message-ID:
+ <DM4PR12MB61095488B6E37E30A43C03498C1CA@DM4PR12MB6109.namprd12.prod.outlook.com>
+References: <20250923154551.2112388-1-manikanta.guntupalli@amd.com>
+ <20250923154551.2112388-3-manikanta.guntupalli@amd.com>
+ <cde37e36-4763-48ca-a038-4a19eb1ef914@app.fastmail.com>
+ <DM4PR12MB610982CB7D66D9DEF758188E8C1CA@DM4PR12MB6109.namprd12.prod.outlook.com>
+ <77978246-11c0-4cea-8a22-26536a78eef1@app.fastmail.com>
+In-Reply-To: <77978246-11c0-4cea-8a22-26536a78eef1@app.fastmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Enabled=True;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SetDate=2025-09-24T10:03:39.0000000Z;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Name=Open
+ Source;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ContentBits=3;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Method=Privileged
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM4PR12MB6109:EE_|MW4PR12MB6921:EE_
+x-ms-office365-filtering-correlation-id: 8fcfa532-8ce6-4f01-120b-08ddfb52dfe7
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020|38070700021;
+x-microsoft-antispam-message-info:
+ =?iso-8859-2?Q?TPeshaHy0c6PaBNdkiOcYhLMxSVTvmPJg32UfoU/96xbUC5hXqO6APj9Bi?=
+ =?iso-8859-2?Q?q2yCJb+LXPOp8jloE1uoaXDRk/8ax66Cb+hIkgn1uR/xdEPAKM1WFf0mo3?=
+ =?iso-8859-2?Q?7cWluY5zC0zq+6Px2gJiE0f+BAIXrv8Y01ym28SE2Qw8v483nauLqNBsKX?=
+ =?iso-8859-2?Q?DOhtTvOpjVJaEz/ky2YY1JXu4MBn/vyscJchzFT13pue/YtjQjjV1CjPGo?=
+ =?iso-8859-2?Q?VqB2wAeg+GNltK9+RPX+b61pwL9oGlbvd0wzTK0C4Z1M9SOzXvSrE3/Rwu?=
+ =?iso-8859-2?Q?LBxjX12xDz4QEMgbUFpGxoWq/dvnszlkIINF0Zd5gA5vvCnZ3QBMVhoyJ4?=
+ =?iso-8859-2?Q?k4x+r+sfCT3c2QTM4vyEhP4DdMcuFnQ88owJkmtHQ9Z9hlr+Kc/U9HA/ga?=
+ =?iso-8859-2?Q?udVBIOVJwfNZz+T0zR/m4up+Bjs7Qv+7gjo/j4+/a194KS/WjzVg/DnIxD?=
+ =?iso-8859-2?Q?LzMKQSlBPsoJJoweauQ09MS9xUillSPpKFz8f8HC7OxhRtE5u79fv4XFQb?=
+ =?iso-8859-2?Q?+tMIy55ZQxVqYc+8H4BIgQqNiHxVhqGP3sJO0CPy3QgXiIRyBqZucGRUlq?=
+ =?iso-8859-2?Q?3D3UfKkwElTCe98fTm9vvUDfWEuiNJZK3+oRPT+Mtl6DzgAfJviX6gqqb6?=
+ =?iso-8859-2?Q?El3YGKWJIPPesVXMqtu5OMtpMKx1XRivgliwGSOZvDtSfV2+0WcUc51vHb?=
+ =?iso-8859-2?Q?JOsalAlWZJYfWq4u6z4r8TyLJJTYjrSvpKbrSEmAKleC/oqrKTznEZKAC5?=
+ =?iso-8859-2?Q?Bhc+vVtLN97HuzXy/UOaVytKCIIzEOlQsBX9e/u0RFKMLiEjyJbEGPn7o/?=
+ =?iso-8859-2?Q?SXbza7eDW1/5pO6+obClciBOrxCouk4kKiXQHyJZFWBwhNSOlFK3w0s5Wi?=
+ =?iso-8859-2?Q?C7YqVMlwkXD3nvXEtE4ZxU5PpDhq8YtH7qiUI2I4TiIJ/FF0A28f95qMmN?=
+ =?iso-8859-2?Q?w/tpEu4hxTL36mfk/bZoawcWuJ7JH91JRvMWXJLikUrqn3en/U/ynRBzBR?=
+ =?iso-8859-2?Q?xShOB1EZoQNNTgflonB1uuim6TTAtQVcOBK+kLFpwEwaGUtRSHycUBAE1Y?=
+ =?iso-8859-2?Q?t9yKJknz3Yj8J6r7KdFX0j+fcVB04U82swxSn2W1k7U1wW94WncPQivVZa?=
+ =?iso-8859-2?Q?c3oueu4oGX/CWHseJxlsnjeTAhEy6iON2sLtz/c5RA53qU5/rwBlmAdIuf?=
+ =?iso-8859-2?Q?GNwhDMrPMXmyKHVsH3X8do3w2Jw75/muMg2CEremJlxSj5z/+BxiMYTHJY?=
+ =?iso-8859-2?Q?1Izh5kC4kOE3gKA4HT31bbtk0qF66583jdRPShnAAHujD7cUtZMyT+kWYl?=
+ =?iso-8859-2?Q?4ZHl+SBmTCEVMNf4U8iS+vhrVZ8ydzd79+QPHccmg48ffF8i9f97IOBNKJ?=
+ =?iso-8859-2?Q?0y27vkhbZOPVKuBQCB8QctrQEHl6DeLANkOq7k4wR4//K/9xNf3PJx7T6X?=
+ =?iso-8859-2?Q?0mSWIZNvOCyl2BUk2ns21Ea9NBQlsK90xT9zAjRCkesrLndteh4rxacbwh?=
+ =?iso-8859-2?Q?C+MugaFcDBhwqDwQr8l0zfcYuczHKgEe30DXLg5zezyHIDX/2jyyfwNk2H?=
+ =?iso-8859-2?Q?6+GakTLa1e/aq/9fbtifXA7D35Fu?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-2?Q?U/JKkA72OJoD2SYwCej5hfdWYHgDmL6D2B5IMobULHc9e67X3TMcHH3CK+?=
+ =?iso-8859-2?Q?AGzgIWRW0oLpiVQa0TgbmNUcKHv3SpB25KQghoBWRkCoAaBqzxS56i/ke1?=
+ =?iso-8859-2?Q?MtCbak1JisDyDUkRWAodz7qbu8nGF2nP762QG+uRLbHWDuIIOLPbWRis+U?=
+ =?iso-8859-2?Q?RyH+UIPWORErwZO26ZS6n+Gwn90hqJjrYIBS/7EdQ3ZxfeBIu+8aBwWfaa?=
+ =?iso-8859-2?Q?LS0k68EeDPKqcyI0bCELsDizK2kTiuN/nskmFTDyjmUi8SpwPFBus5rNaK?=
+ =?iso-8859-2?Q?vkthmzCHffWJAtz19I23OvRGTaGwdvXgYjiFxdXJfhuRIcqmuwN2sORrE7?=
+ =?iso-8859-2?Q?HnVDyYXMZUqBqHMzFrDJYxLbgQNFRTbapZjlFFHFXAHEbD2OVzbRtpn2mY?=
+ =?iso-8859-2?Q?+SR6x5zKh3M1vqTwjBgGlrDmKOUwNdOazLsId3fIQP1RxfnwKcMyeZAzzY?=
+ =?iso-8859-2?Q?fSmaCUOI1o02uvL59z+dXH+qGksBxnbW9VyQOncsACBUhWEizFVjrny4U6?=
+ =?iso-8859-2?Q?xGDEVnam2rKakt2NFCzgSrPGdG+a0Orm2yFmqh8qGSYgqPMh8daojXRwwk?=
+ =?iso-8859-2?Q?RgWCNAxZtbjkuHh97CL1fyAHcTtV+4lBMKc3eq+zcrDNdsjAMv+IfnfrSN?=
+ =?iso-8859-2?Q?sQ0qm6hONMoNHHBoZ+pz2MqB2prfeQAfi2wKlxFWzXLvyDcV2nvD/f0glo?=
+ =?iso-8859-2?Q?RUvpd8SYeQJAmrT0HKnipPlzGsZIIoOIbZtt3warxvxtKWeSOWKIaRKlQi?=
+ =?iso-8859-2?Q?SBBCyQUfhhYQcgAA6qRTLX89QIE27L/wl7At9mGH8by1jCyDTJsNmVT6wo?=
+ =?iso-8859-2?Q?0IJkrq/fMv7mh7Kf6WPA/UUhvkpWeQtGo1KP+lub8CTp8mVEADLuuHsk5I?=
+ =?iso-8859-2?Q?kaPjyIverayG4wlJ2M2SZx3CsaA6zWDb6MM29uFhmgPY7yGjipGc/SHVdg?=
+ =?iso-8859-2?Q?FXC+7uvryZ9b0MKO4N3JPNXkIkXphCzYs6xVQcE7TlToeW85Hl5zybHXiT?=
+ =?iso-8859-2?Q?jJqDlyH3o0yrX1H4y4bydnRnDiwJslgaorTbMflkTs26vIsvsEMZ3nUJRk?=
+ =?iso-8859-2?Q?OWt3j2SYPefhkeVQ69bJii1JQ1Xc7I6rGS5Un3HhDNoM9UJlgFabHY5BNL?=
+ =?iso-8859-2?Q?gg8Dfzd9N9/Ral9AKCdgGoxXSmthjJNt6EptdcBknJFx9qpFxcZPXFHhmf?=
+ =?iso-8859-2?Q?d6Ve58WjeQXva9qiWlhZt0fFfSpQYzv6LQX+TUW4AoXJ27DlOaAKKyhvFu?=
+ =?iso-8859-2?Q?C7xT9oTbr/QqzuwPV5J58KffrLKUP58ULwddaj1wDbAT71L3R+HnlVuAgF?=
+ =?iso-8859-2?Q?C3JhimzOqMuOj91pXXIaMqUEcI6AGUa9TY7B0FDYhftAfoFymA8CyKNnKa?=
+ =?iso-8859-2?Q?ttkPlqLOQXJ+HhUmZOL/Tj3Hi/00Hp7zmDAckkM+PqoJ4n/PY90cqVvoSY?=
+ =?iso-8859-2?Q?UDYESTHSWeNaIJHY0R73wXXDIYWNPRJ2fZUN1NHDdGY/mgKvvqxM0adpC4?=
+ =?iso-8859-2?Q?AlElvfhmOQGf54S8wDKSAfRhL4l7rUbCGOVZ91/xWroiew5dFICiSDE7WI?=
+ =?iso-8859-2?Q?xqqvxzEAwVsKoFT8+EL9PwjDU5hLydW8ShW6T4EoLse7j7jhgjE4VGrcHD?=
+ =?iso-8859-2?Q?TzbXPK2jhSa54=3D?=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] arm64: dts: qcom: rename dtsi files for sm6150,
- x1e80100 and qcs8300
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250923-rename-dts-v1-0-21888b68c781@oss.qualcomm.com>
- <DD075WC7A6KR.NJJA1Q4WAJUZ@fairphone.com>
- <7o2n3wcjlb3ltbqndehfntqvsdpnn633pk4rlfq3h7fz2ygaus@na326qso5rs4>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <7o2n3wcjlb3ltbqndehfntqvsdpnn633pk4rlfq3h7fz2ygaus@na326qso5rs4>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: vv-5MLDeYTvtIUUQKiJFqs-IM2qUvink
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxOCBTYWx0ZWRfX5STySFlNMjNU
- Mm9YPdE2vAdzSxbib9WmEAhB5T6pAz8F1Hwhh8g6aUcnVnX1JSHb77WrUnTGJMSR6YCBuzBBeH8
- PpbHhZEsoMwEt2STJjrKnLqrbjU9dHEQmKFkUTa6y9n7Gnxwv+TeRHaE2TltF2l+tDtPGyUpK/a
- Q6dBasD4p2yz0+jhTMBz888CPodDLuObpikl0PzTKknNVXfFsWnfvtM6kYJGvC8LazrSBXEaDND
- yVJGLiBnOQtJ4Y6/18qQv8iAHuXA6NW3hpjtfbMRhCg+mMS4CLorfOeYB4cIjcO38QzNw5CAh4c
- SOI6EpcF/s0x8sFZECE762+s5aBVNsukVwbx8r73ADD7gMlI8Ym2RFQM5zxeIlvJZB3pyscXyD2
- dcNx76Uh
-X-Proofpoint-ORIG-GUID: vv-5MLDeYTvtIUUQKiJFqs-IM2qUvink
-X-Authority-Analysis: v=2.4 cv=Dp1W+H/+ c=1 sm=1 tr=0 ts=68d3c3f1 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=spyb8OjkCO_OKQTeHmkA:9
- a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_02,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0 impostorscore=0
- phishscore=0 spamscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200018
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6109.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fcfa532-8ce6-4f01-120b-08ddfb52dfe7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2025 10:12:31.8629
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: JQ3q5rNx3dNghNQZnuJ6wmKo79GOLtIuBCpR7yzHVWZRBZ41RlXmK7Aa0QUehkCOkomN9Ue4fO3/eYB0D+MaNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6921
 
-On 9/23/25 5:17 PM, Dmitry Baryshkov wrote:
-> On Tue, Sep 23, 2025 at 03:00:19PM +0200, Luca Weiss wrote:
->> On Tue Sep 23, 2025 at 1:01 PM CEST, Dmitry Baryshkov wrote:
->>> Bjorn said to me that he disliked the conseqeuences of renaming
->>> qcs615.dtsi to sm6150.dtsi. Let's increase entropy even more and rename
->>> even more base DTSI files.
->>>
->>> Leaving jokes aside. It's not uncommon to see different names for the
->>> same SoC (or almost same SoC, with no visible differences from the Linux
->>> side). The platform now known as 'lemans' is a good example, because it
->>> had been using SA8775P, QCS9100 and QCS9075 in different contexts for
->>> slightly different modifications. QCS8300 / QCS8275 is another example.
->>> All such names cause a lot of confusion when somebody tries to follow
->>> the actual SoC used by the platform.
->>>
->>> For 'lemans' after a lot of trial, error, Naks and reviews we've settled
->>> upon having 'lemans.dtsi', the core DT file for the platform and then
->>> naming individual DT files following the marketing name for the platform
->>> or for the SoC.
->>>
->>> Apply the same approach to several other platforms, renaming the base
->>> DTSI and keeping the DT names as is.
->>
->> If we're doing this already, sc7280 -> kodiak? That also covers sc7280,
->> qc{m,s}6490 & 5430 and sm7325.
-> 
-> And few other platform names with multiple SoC names per platform.
-> 
->>
->> Also, does this mean that milos-based Fairphone 6 the dtsi should be
->> milos.dtsi while dts should be sm7635-fairphone-fp6? The latest patch
->> series uses milos-fairphone-fp6.dts.
-> 
-> I'd leave this to Bjorn's discretion.
+[Public]
 
-I think this only makes sense if milos-nos-sm7635-fairphone-fp6 has
-physical differences that stem from the SKU being equipped with a
-differently capable SoC (which remains mostly software compatible
-otherwise)
+Hi,
 
-Konrad
+> -----Original Message-----
+> From: Arnd Bergmann <arnd@arndb.de>
+> Sent: Wednesday, September 24, 2025 3:16 PM
+> To: Guntupalli, Manikanta <manikanta.guntupalli@amd.com>; git (AMD-Xilinx=
+)
+> <git@amd.com>; Simek, Michal <michal.simek@amd.com>; Alexandre Belloni
+> <alexandre.belloni@bootlin.com>; Frank Li <Frank.Li@nxp.com>; Rob Herring
+> <robh@kernel.org>; krzk+dt@kernel.org; Conor Dooley <conor+dt@kernel.org>=
+;
+> Przemys=B3aw Gaj <pgaj@cadence.com>; Wolfram Sang <wsa+renesas@sang-
+> engineering.com>; tommaso.merciai.xr@bp.renesas.com;
+> quic_msavaliy@quicinc.com; S-k, Shyam-sundar <Shyam-sundar.S-k@amd.com>;
+> Sakari Ailus <sakari.ailus@linux.intel.com>; 'billy_tsai@aspeedtech.com'
+> <billy_tsai@aspeedtech.com>; Kees Cook <kees@kernel.org>; Gustavo A. R. S=
+ilva
+> <gustavoars@kernel.org>; Jarkko Nikula <jarkko.nikula@linux.intel.com>; J=
+orge
+> Marques <jorge.marques@analog.com>; linux-i3c@lists.infradead.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Linux-Arch <lin=
+ux-
+> arch@vger.kernel.org>; linux-hardening@vger.kernel.org
+> Cc: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>; Goud, Srinivas
+> <srinivas.goud@amd.com>; Datta, Shubhrajyoti <shubhrajyoti.datta@amd.com>=
+;
+> manion05gk@gmail.com
+> Subject: Re: [PATCH V7 2/4] asm-generic/io.h: Add big-endian MMIO accesso=
+rs
+>
+> On Wed, Sep 24, 2025, at 10:59, Guntupalli, Manikanta wrote:
+> >> From: Arnd Bergmann <arnd@arndb.de>
+> >> Sent: Wednesday, September 24, 2025 12:08 AM
+> >> To: Guntupalli, Manikanta <manikanta.guntupalli@amd.com>; git
+> >> (AMD-Xilinx)
+> >
+> > From both description and implementation, {read,write}{b,w,l,q}()
+> > access little-endian memory and return the result in native endianness:
+> ...
+> > This works on little-endian CPUs, but on big-endian CPUs the
+> > {read,write}{b,w,l,q}() helpers already return data in big-endian
+> > format.
+>
+> > The extra byte swap in io{read,write}*be() therefore corrupts the
+> > data, producing little-endian values when big-endian is expected.
+>
+> > The newly introduced {read,write}{w,l,q}_be() helpers directly access
+> > big-endian IO memory and return results in native endianness, avoiding
+> > this mismatch.
+>
+> No, in both your {read,write}{w,l,q}_be() and the existing io{read,write}=
+*be() helpers,
+> big-endian platforms end up with an even number of swaps
+> (0 or 2), while little-endian platforms have exactly one swap.
+>
+> The only exception is your {read,write}s{w,l,q}_be() string helpers that =
+are wrong
+> because they have an extra swap and are broken on FIFO registers in littl=
+e-endian
+> kernels.
+We have performed our validation on little-endian kernels, and in our testi=
+ng, the helpers worked correctly without any issues.
+
+Thanks,
+Manikanta.
 
