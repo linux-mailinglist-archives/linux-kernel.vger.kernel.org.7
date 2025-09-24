@@ -1,258 +1,186 @@
-Return-Path: <linux-kernel+bounces-831013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17283B9B269
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:58:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F51BB9B27D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C70264E4D22
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:58:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 333194E4E03
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBE03164DF;
-	Wed, 24 Sep 2025 17:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE743164B1;
+	Wed, 24 Sep 2025 17:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TSOLvU/f"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZylsEP/j"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811593128B0;
-	Wed, 24 Sep 2025 17:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173CF3164AB
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758736722; cv=none; b=b4pkw65IPWdvdg/GUj0/6rhZ5Pt7GOpRSO5ubC6E70arEuI3Iy2iWwwd0auO9STfhzcmqBfFXkthQgySyjG5jK0fCOGoUiqqUPjte2VtmZlAEIax4R1hQ7/yuT3BuKIci66sua7qzfbIjHHeI0+1J1yOZ3AsygHROsW2lbA7UfQ=
+	t=1758736752; cv=none; b=BZU3Tz1INxgxgrCh6MUx08l4CGOQH+KOobGM7HuE9vTwRebcFNyOqGCIVMr7DQrAK+JLTRJKTQvL9bs7nUSvK3QRB/jwhIK1UYwfHevXFLlqcpiOvmU4brQ/n/jp4QjdqlmYLnAGrj9ve2bUW/yyge5t0zUHfONoJ/jehUt1cao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758736722; c=relaxed/simple;
-	bh=xpzfl0iM/yVcytRq5VSh7tfIPE227Dq5u9TqwhpPuY4=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=lCUQvCR9JSChwlMAiT5dInTzuyRVe9npn/QDY2xNfA2xEYxsd0DqaBDXuxQf3TgW61m+BmfBhGr4X90Y8uraNkLJhsLpcrvU8AkeGxEdKXGEE093o5hO5iD5g0lwC6wFhngRAPr4L35fsfcSswNn6jGbZxGUi6sA3olmVv7EQPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TSOLvU/f; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758736721; x=1790272721;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=xpzfl0iM/yVcytRq5VSh7tfIPE227Dq5u9TqwhpPuY4=;
-  b=TSOLvU/frg1x6HMlU88vAnXkr9JuSOGh71H/Yi3wC9+db9GOjwi6HH5c
-   xjTUDX8eGrOmnng6ZLQEhWNZFyag0BVz9yi1ypBFk0gjeGtOKWo3mLMiV
-   7ce55wKRwOE+OmyY0cl0yIf9Byy5P+4xNQGYGTAqZVN4D+ertVUJMl2n/
-   9za7ieg2FpYqxSvYExLrvdDQ2tGmpKFLZ4iGzFliU9ZHa3/IUSpH4mPB4
-   dY1y3O2nJF0zKAv0m3VcAR1nXjBooWwZvhFy2aX3CnbUS2qpUBWblGAAJ
-   SXjvoZiKODioKAAqftgxNdbROwJRZ3+xdvUYPv4N1HEhF9DdqK8TUUN+g
-   Q==;
-X-CSE-ConnectionGUID: inMSObH7RYWxrIxEMiutbQ==
-X-CSE-MsgGUID: JFblzqJETDCjDU5ANQ3nSg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="86488669"
-X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
-   d="scan'208";a="86488669"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 10:58:40 -0700
-X-CSE-ConnectionGUID: f+3GSkoUSXiIkhMO1V4L+A==
-X-CSE-MsgGUID: jwQkIeZvQR6owqZfivnjog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
-   d="scan'208";a="181108010"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.210])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 10:58:36 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 24 Sep 2025 20:58:33 +0300 (EEST)
-To: Daniel <dany97@live.ca>
-cc: Markus.Elfring@web.de, Hans de Goede <hansg@kernel.org>, 
-    LKML <linux-kernel@vger.kernel.org>, matan@svgalib.org, 
-    platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v5] platform/x86: lg-laptop: Fix WMAB call in
- fan_mode_store()
-In-Reply-To: <MN2PR06MB5598AC9C807A8D3929E6C30BDC1CA@MN2PR06MB5598.namprd06.prod.outlook.com>
-Message-ID: <98afb5a6-c47f-23c8-84c7-a494a086df27@linux.intel.com>
-References: <78e9dde3-9f21-9b06-663b-e7a23451b9e7@linux.intel.com> <MN2PR06MB55984287A9BAB69F1711640DDC11A@MN2PR06MB5598.namprd06.prod.outlook.com> <ea57d978-3fd3-fd86-aec7-e814359e3e02@linux.intel.com> <MN2PR06MB559873DBA3BA4491E08949ACDC1DA@MN2PR06MB5598.namprd06.prod.outlook.com>
- <175871961048.19584.6234729612579222383.b4-ty@linux.intel.com> <MN2PR06MB5598AC9C807A8D3929E6C30BDC1CA@MN2PR06MB5598.namprd06.prod.outlook.com>
+	s=arc-20240116; t=1758736752; c=relaxed/simple;
+	bh=XAylZFM+l5S3wxTykinSgmWBB9wBd7YhDQtcCe2JXvo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ocE4yATa+p05QFaitcajbN2k+OGSqtnU4p9ngwNEauDFEv2a4N4OmF3OLZ/v7BudekMimhJNjDJ79cCsMyRb6etIBFyeqylUfdFH8m2tkjZnIeUoBFd2p+WuUm23xeirNDKUxASGYbLGWeplf8sdS9QAiT0zxStKJVu3QOwjNd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZylsEP/j; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-267fa729a63so111465ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:59:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758736750; x=1759341550; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qYxzPl4txcDtBsDgUFMQiABFR95EJgZY6ii1JhXVVI8=;
+        b=ZylsEP/j2OrTnkv/sZlpFGAaEaPq+Sdb1o0WZGLXiZpPke9d49o0bCl4wKJi5DROHK
+         b00yKi0UcT01cg1XiFB16ov9+rIq99SjqQhM7H/5Z0fOLU1R+t1mlHrwnNONeKz4JpXe
+         AXxAbOoGyn+mQgb+ENLfXBwb9y5wq9RB3EYfEqx3VrQGTJbsyhxlNPYidRdx1Bk5yibq
+         WgJ2VphDETHS/Jx/zyeEvtndUJ3rz6cQdVPbebCL0wGYtDshVgZe89Xaj6fUUjDCtVfi
+         o1bPXJKuSOznuxiZqDqhX7yvLa8KepHTK9hVk+a7iYS9HlSXb6rxrTHGazjg7cxwzJvQ
+         sfWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758736750; x=1759341550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qYxzPl4txcDtBsDgUFMQiABFR95EJgZY6ii1JhXVVI8=;
+        b=X6m14RYkvHshyFmUu5qJZQsRaLzbGbfIIMPsslMORgkhga54+fA0lbBeYyR3g7mfEl
+         FwcbVcD9+TSzIMtcqUwgG8rua2MFDHUBPJ0icKWoUX3f2dTrfwyvPIhozf5s/k+4iUPV
+         +2yO7XUsW3eHSnZWq3KpvkW4QZrL/LbQ7dVvIRFknW7e6aXMaTDAILrSp6XgH2n9jdUo
+         2XHzD0VYIPMrrJULqecROmCPDXyD6lA/qg8qy/vzFBMjCSytZCc/l+E+9tKRZsQbOo9F
+         Lcfc3ARCW99GsHcxfIMoScRzvr2a/HZ06y8yt3A1BNlVw34DCcsaKTwiSy8nhPoIJ2aQ
+         B2yw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxGuQqOtgJYb6qBl8FCVsC+3eSwW545np2e9S2FxxObUCluqMlmzDuBcKinq5DLyQWJ90SsTOD3coi9Lc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLcqiduR4YM3Blvy9v61wgQpp790rzV4gyc9HRmBofBTMtEz7N
+	s/OwJBGyPkvgt70lVLU4ujzcTWOmk0dI0NQv+YOnwfARPjaDx9zxKJv9MACrdAS3Oxt5w35797+
+	+3GeTD9Xn9wECfVGOXrFThHueg5CA8Es=
+X-Gm-Gg: ASbGnctyUPuN75t68OmIyhmAZf9it0oKWS+ijWQzGsixpY5TaqR+CqqodKXRNsxDQkP
+	5cJSvmE32FO0VdzZi/7WLJzGQWQmPOuokZprlXyO/cFJvUa/M29bK4vtG0LKxDwedQjZ+7tXI1j
+	ASWAB1ZQuxnEgBlk+a7e1MENataXf8WgnvYRsrdW6fX0xeOGUVGF5bwL1qG8mBGSZQeIj2UhhUu
+	f56WCEwKNH4HxBEQg==
+X-Google-Smtp-Source: AGHT+IHtmTWOHSGgYcdz8PkfFJmwvin/TwYsBXRKFtdnnBmyjBC8YY/e52r2/3CWmsd7o/0M3YI4RSTRvcUs/JavpQ0=
+X-Received: by 2002:a17:902:d508:b0:269:96d2:9c96 with SMTP id
+ d9443c01a7336-27ed5b0a538mr1060065ad.0.1758736750323; Wed, 24 Sep 2025
+ 10:59:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1672963698-1758736713=:938"
+References: <tencent_A8BB4A0E44BDCF1DEC33942D2144C521AF07@qq.com>
+In-Reply-To: <tencent_A8BB4A0E44BDCF1DEC33942D2144C521AF07@qq.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 24 Sep 2025 13:58:59 -0400
+X-Gm-Features: AS18NWABn1U1ZnqDyt6w4crHZgXq-GwZsjSJiYpEOu3bz9xtozY2P_noK06Meps
+Message-ID: <CADnq5_PCGv7a4azG+mhv+=Jmp74-O73iUnZctLkNYKabRGcwMg@mail.gmail.com>
+Subject: Re: [PATCH] drm/radeon: Solve the problem of the audio options not
+ disappearing promptly after unplugging the HDMI audio.
+To: 2564278112@qq.com
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com, 
+	simona@ffwll.ch, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Wang Jiang <jiangwang@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, Sep 24, 2025 at 7:44=E2=80=AFAM <2564278112@qq.com> wrote:
+>
+> From: Wang Jiang <jiangwang@kylinos.cn>
+>
+> The audio detection process in the Radeon driver is as follows:
+> radeon_dvi_detect/radeon_dp_detect -> radeon_audio_detect -> radeon_audio=
+_enable -> radeon_audio_component_notify -> radeon_audio_component_get_eld
+> When HDMI is unplugged, radeon_dvi_detect is triggered.
+> At this point, radeon_audio_detect is triggered before radeon_dvi_detect =
+has finished (which also means the new state of the connector has not been =
+reported).
+> In this scenario, radeon_audio_detect can detect that the connector is di=
+sconnected (because the parameter is passed down),
+>  but it is very likely that the audio callback function radeon_audio_comp=
+onent_get_eld cannot detect the disconnection of the connector.
+> As a result, when the audio component (radeon_audio_component_get_eld) pe=
+rforms detection, the connector's state is not shown as disconnected,
+> and connector->eld is not zero, causing the audio component to think the =
+audio driver is still working.
+> I have added a new member (enable_mask) to the audio structure to record =
+the audio enable status.
+> Only when radeon_audio_component_get_eld detects that enable_mask is not =
+zero will it continue to work.
+> There might be other solutions, such as placing radeon_audio_detect/radeo=
+n_audio_component_notify after the completion of radeon_XX_detect.
+> However, I found that this would require significant changes (or perhaps =
+it's just my limited coding skills?).
 
---8323328-1672963698-1758736713=:938
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+This still looks like a race.  I think the get_eld() callback can get
+called whenever.  The proper fix is probably to hold the
+connector->eld_mutex in radeon_audio_detect().
 
-On Wed, 24 Sep 2025, Daniel wrote:
+Alex
 
-> On 2025-09-24 09:13, Ilpo J=C3=A4rvinen wrote:
->=20
-> > Thank you for your contribution, it has been applied to my local
-> > review-ilpo-fixes branch. Note it will show up in the public
-> > platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-> > local branch there, which might take a while.
->=20
-> Thanks a lot, but I was actually thinking about rewording the body of the
-> commit message.  Could I ask that this version be the one to eventually b=
-e
-> pushed to the public repo?
-
-I can replace it but please send the new version into a new thread as=20
-in the same thread won't necessarily end up properly into patchwork and=20
-may confuse other tools as well.
-
-> Also, this patch fixes an issue raised in this comment on the kernel bugz=
-illa:
-> (https://bugzilla.kernel.org/show_bug.cgi?id=3D204913#c4), but crucially =
-not
-> the issue itself.  Do I mention this anywhere in the commit message?
-
-Just use a Link: tag, preferably directly to the comment.
-
---=20
- i.
-
-> -- >8 --
-> Subject: [PATCH v6] platform/x86: lg-laptop: Fix WMAB call in fan_mode_st=
-ore()
->=20
-> When WMAB is called to set the fan mode, the new mode is read from either
-> bits 0-1 or bits 4-5 (depending on the value of some other EC register).
-> Thus when WMAB is called with bits 4-5 zeroed and called again with
-> bits 0-1 zeroed, the second call undoes the effect of the first call.
-> This causes writes to /sys/devices/platform/lg-laptop/fan_mode to have
-> no effect (and causes reads to always report a status of zero).
->=20
-> Fix this by calling WMAB once, with the mode set in bits 0,1 and 4,5.
-> When the fan mode is returned from WMAB it always has this form, so
-> there is no need to preserve the other bits.  As a bonus, the driver
-> now supports the "Performance" fan mode seen in the LG-provided Windows
-> control app, which provides less aggressive CPU throttling but louder
-> fan noise and shorter battery life.
->=20
-> Also correct the documentation to reflect that 0 corresponds to the
-> default mode (what the Windows app calls "Optimal") and 1 corresponds
-> to the silent mode.
->=20
-> Signed-off-by: Daniel Lee <dany97@live.ca>
-> Tested-by: Daniel Lee <dany97@live.ca>
-> Fixes: dbf0c5a6b1f8 ("platform/x86: Add LG Gram laptop special features d=
-river")
+>
+> Signed-off-by: Wang Jiang <jiangwang@kylinos.cn>
 > ---
-> V1 -> V2: Replace bitops with GENMASK() and FIELD_PREP()
-> V2 -> V3: Add parentheses next to function name in summary line
->           Use full name in signoff
-> V3 -> V4: Add include for linux/bitfield.h
->           Remove "FIELD" from bitmask macro names
-> V4 -> V5: Rename `status` to `mode` in fan_mode_show()
-> V5 -> V6: Reword commit message body
->=20
->  .../admin-guide/laptops/lg-laptop.rst         |  4 +--
->  drivers/platform/x86/lg-laptop.c              | 34 ++++++++-----------
->  2 files changed, 16 insertions(+), 22 deletions(-)
->=20
-> diff --git a/Documentation/admin-guide/laptops/lg-laptop.rst b/Documentat=
-ion/admin-guide/laptops/lg-laptop.rst
-> index 67fd6932c..c4dd534f9 100644
-> --- a/Documentation/admin-guide/laptops/lg-laptop.rst
-> +++ b/Documentation/admin-guide/laptops/lg-laptop.rst
-> @@ -48,8 +48,8 @@ This value is reset to 100 when the kernel boots.
->  Fan mode
->  --------
-> =20
-> -Writing 1/0 to /sys/devices/platform/lg-laptop/fan_mode disables/enables
-> -the fan silent mode.
-> +Writing 0/1/2 to /sys/devices/platform/lg-laptop/fan_mode sets fan mode =
-to
-> +Optimal/Silent/Performance respectively.
-> =20
-> =20
->  USB charge
-> diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-l=
-aptop.c
-> index 4b57102c7..6af6cf477 100644
-> --- a/drivers/platform/x86/lg-laptop.c
-> +++ b/drivers/platform/x86/lg-laptop.c
-> @@ -8,6 +8,7 @@
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> =20
->  #include <linux/acpi.h>
-> +#include <linux/bitfield.h>
->  #include <linux/bits.h>
->  #include <linux/device.h>
->  #include <linux/dev_printk.h>
-> @@ -75,6 +76,9 @@ MODULE_PARM_DESC(fw_debug, "Enable printing of firmware=
- debug messages");
->  #define WMBB_USB_CHARGE 0x10B
->  #define WMBB_BATT_LIMIT 0x10C
-> =20
-> +#define FAN_MODE_LOWER GENMASK(1, 0)
-> +#define FAN_MODE_UPPER GENMASK(5, 4)
-> +
->  #define PLATFORM_NAME   "lg-laptop"
-> =20
->  MODULE_ALIAS("wmi:" WMI_EVENT_GUID0);
-> @@ -274,29 +278,19 @@ static ssize_t fan_mode_store(struct device *dev,
->  =09=09=09      struct device_attribute *attr,
->  =09=09=09      const char *buffer, size_t count)
->  {
-> -=09bool value;
-> +=09unsigned long value;
->  =09union acpi_object *r;
-> -=09u32 m;
->  =09int ret;
-> =20
-> -=09ret =3D kstrtobool(buffer, &value);
-> +=09ret =3D kstrtoul(buffer, 10, &value);
->  =09if (ret)
->  =09=09return ret;
-> +=09if (value >=3D 3)
-> +=09=09return -EINVAL;
-> =20
-> -=09r =3D lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
-> -=09if (!r)
-> -=09=09return -EIO;
-> -
-> -=09if (r->type !=3D ACPI_TYPE_INTEGER) {
-> -=09=09kfree(r);
-> -=09=09return -EIO;
-> -=09}
-> -
-> -=09m =3D r->integer.value;
-> -=09kfree(r);
-> -=09r =3D lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xffffff0f) | (value << =
-4));
-> -=09kfree(r);
-> -=09r =3D lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xfffffff0) | value);
-> +=09r =3D lg_wmab(dev, WM_FAN_MODE, WM_SET,
-> +=09=09FIELD_PREP(FAN_MODE_LOWER, value) |
-> +=09=09FIELD_PREP(FAN_MODE_UPPER, value));
->  =09kfree(r);
-> =20
->  =09return count;
-> @@ -305,7 +299,7 @@ static ssize_t fan_mode_store(struct device *dev,
->  static ssize_t fan_mode_show(struct device *dev,
->  =09=09=09     struct device_attribute *attr, char *buffer)
->  {
-> -=09unsigned int status;
-> +=09unsigned int mode;
->  =09union acpi_object *r;
-> =20
->  =09r =3D lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
-> @@ -317,10 +311,10 @@ static ssize_t fan_mode_show(struct device *dev,
->  =09=09return -EIO;
->  =09}
-> =20
-> -=09status =3D r->integer.value & 0x01;
-> +=09mode =3D FIELD_GET(FAN_MODE_LOWER, r->integer.value);
->  =09kfree(r);
-> =20
-> -=09return sysfs_emit(buffer, "%d\n", status);
-> +=09return sysfs_emit(buffer, "%d\n", mode);
+>  drivers/gpu/drm/radeon/radeon.h       | 1 +
+>  drivers/gpu/drm/radeon/radeon_audio.c | 5 +++++
+>  2 files changed, 6 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/radeon/radeon.h b/drivers/gpu/drm/radeon/rad=
+eon.h
+> index 63c47585afbc..2d0a411e3ed6 100644
+> --- a/drivers/gpu/drm/radeon/radeon.h
+> +++ b/drivers/gpu/drm/radeon/radeon.h
+> @@ -1745,6 +1745,7 @@ struct r600_audio_pin {
+>         u32                     offset;
+>         bool                    connected;
+>         u32                     id;
+> +       u8                      enable_mask;
+>  };
+>
+>  struct r600_audio {
+> diff --git a/drivers/gpu/drm/radeon/radeon_audio.c b/drivers/gpu/drm/rade=
+on/radeon_audio.c
+> index 8d64ba18572e..a0717895cc8a 100644
+> --- a/drivers/gpu/drm/radeon/radeon_audio.c
+> +++ b/drivers/gpu/drm/radeon/radeon_audio.c
+> @@ -212,6 +212,7 @@ static void radeon_audio_enable(struct radeon_device =
+*rdev,
+>         if (rdev->audio.funcs->enable)
+>                 rdev->audio.funcs->enable(rdev, pin, enable_mask);
+>
+> +       rdev->audio.pin[pin->id].enable_mask =3D enable_mask;
+>         radeon_audio_component_notify(rdev, pin->id);
 >  }
-> =20
->  static ssize_t usb_charge_store(struct device *dev,
->=20
---8323328-1672963698-1758736713=:938--
+>
+> @@ -274,6 +275,7 @@ int radeon_audio_init(struct radeon_device *rdev)
+>                 rdev->audio.pin[i].connected =3D false;
+>                 rdev->audio.pin[i].offset =3D pin_offsets[i];
+>                 rdev->audio.pin[i].id =3D i;
+> +               rdev->audio.pin[i].enable_mask =3D 0;
+>         }
+>
+>         radeon_audio_interface_init(rdev);
+> @@ -760,6 +762,9 @@ static int radeon_audio_component_get_eld(struct devi=
+ce *kdev, int port,
+>         if (!rdev->audio.enabled || !rdev->mode_info.mode_config_initiali=
+zed)
+>                 return 0;
+>
+> +       if (rdev->audio.pin[port].enable_mask =3D=3D 0)
+> +               return 0;
+> +
+>         list_for_each_entry(connector, &dev->mode_config.connector_list, =
+head) {
+>                 const struct drm_connector_helper_funcs *connector_funcs =
+=3D
+>                                 connector->helper_private;
+> --
+> 2.25.1
+>
 
