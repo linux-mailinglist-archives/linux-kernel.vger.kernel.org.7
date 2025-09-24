@@ -1,95 +1,168 @@
-Return-Path: <linux-kernel+bounces-830110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D2EB98BDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:07:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0BFB98BFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185691896418
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:06:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 549724C4552
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1C4296BCB;
-	Wed, 24 Sep 2025 08:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAA8287252;
+	Wed, 24 Sep 2025 08:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBe/CklQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cemsv/kP"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDBC283CA3;
-	Wed, 24 Sep 2025 08:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3D827FB25;
+	Wed, 24 Sep 2025 08:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758701061; cv=none; b=BEWJzT3UwjOLraYTiNeCXJnfRu15HetebbPXaAO5oyixbvWMd6a96rBdJFHfg+Uf6ZhisxXxdTlI81wJSWC4ItuORuLW92iv3R4TmUAETFhhiaaxY5mtZe+UYJSXQXpo0upIveWk8aQqDdsHge85ya6V8+5m+A7WyFaUCkLIQc4=
+	t=1758701148; cv=none; b=kFPS6ncpkVaK2RHoKwEVBXCfHkPIXb+KcShsDayaB7Gy8CX4f/KkFdcDf5DcLJKDaXRATPI53vcAsr1r2tgg6jp6Hdi+XwcOMmKpETOIbfdGlcmU7/DYnos4BmRK/GHoOT24yTiaWLlIa+2rcMe5KVBmAJ2LQq0lcxXJs+ns1hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758701061; c=relaxed/simple;
-	bh=KUi4KNlx8m6QwUF7u4uAKipbp1lGT0rx7xr1UqzrtbQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=gxQ7sicZPSlZMSKUrAphjWW1KD98IVd/nA0fhGaiJNOnzJ85IWeT9JayzSF3ND6bLvXzaYBiS/2ucdqi+eEGCKlG3Ry06GxlyndX2mk/3SrZ+SR2ZlzbezDtY/KBNyXtkX8FJdJyFmoLjRP2dM5OZeb8hyL6VNvynimW4kpy9o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBe/CklQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56E38C116C6;
-	Wed, 24 Sep 2025 08:04:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758701060;
-	bh=KUi4KNlx8m6QwUF7u4uAKipbp1lGT0rx7xr1UqzrtbQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CBe/CklQWlDgxW9WCFauYOJrEzcV+ffeoHwt4UvmV0mBE+mHJN81GA3Hpp0t04XIE
-	 nf8FiCSn84FJrKmnbns3xGbfr19z4twBhXLV3N7yC4oHrMt97oDUMMaA6j0/qTt6kI
-	 zTnro/oXgyxR9tLKJfuUNIHSIKSVM5e0U20PEU6oXceXXWr/vHQC6Qh2Lg4o/MtHLo
-	 xl3pOVk7G6yTdACRY9z/3oY8JYWWLuEr+7JRKFWXVMPXkgP7M2tirX9ISIb7XkrBho
-	 hfjo51IkO4BIRvSfjuQI4K8WESPUWl276nNy0LFkybFUFuB2/r3moy5Ff3BwM5+4tA
-	 h9rg1x/DbLUvA==
-Date: Wed, 24 Sep 2025 17:04:16 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Feng Yang <yangfeng59949@163.com>
-Cc: alexei.starovoitov@gmail.com, andrii@kernel.org, ast@kernel.org,
- bpf@vger.kernel.org, daniel@iogearbox.net, eddyz87@gmail.com,
- haoluo@google.com, john.fastabend@gmail.com, jolsa@kernel.org,
- kpsingh@kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
- song@kernel.org, yonghong.song@linux.dev
-Subject: Re: [BUG] Failed to obtain stack trace via bpf_get_stackid on ARM64
- architecture
-Message-Id: <20250924170416.0874e56c2ce99a4de92e05b8@kernel.org>
-In-Reply-To: <20250924062536.471231-1-yangfeng59949@163.com>
-References: <20250924003215.365db154e1fc79163d9d80fe@kernel.org>
-	<20250924062536.471231-1-yangfeng59949@163.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758701148; c=relaxed/simple;
+	bh=zyx5Tv/zGehDroMiQn3Y9OOOythlM5P8kXKe/SaxVvg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IrMNUAZAk8C9BtCrDM0JQol3eortOhlE3M++USCFxEwifaUNkT6M56j+JZI8DjuV32TQJBt8SEH6DcakH9l3fDHs4dffb0KHw5++7anQsy1rXpk9LGWJk8kdchl4KzKPdQ2bCSVsn9wqWCsF4b94RI4JfwtXDBfdrC4yBmLARcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cemsv/kP; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58O1qQwH002933;
+	Wed, 24 Sep 2025 08:05:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=xslHDH
+	+2SsplsxwmWxLLGdGGv6s2sKh7a5JKBCPlpyg=; b=cemsv/kPSQcP6jWmJhHG8U
+	nBTMk2zH8e5KpHR9Or9/ty4/QJMjPjCeMELphDi1FAFizvLblj43jwr6+1i4eFOG
+	aQWQAal+Spa28Uu9O7IZErC5gXNK5RKEvGYGDdQGNGMEMxBUXLGbX+FIhrFyVK6s
+	6taPhNEi8RFQD/cUTp1lEBLADycLIiN06Chvpp2iXlPjXHPX2e1tYGeo53jJ7vx2
+	k5YIXdWyLuqZHCAxOB5Hg8p3m+ByeCNsAp4zlxI0/rarqzG6tsWVDeDvNxuPGH0z
+	FUq9bXVjfqpRBDGFw7+YGKLrHE0qT6E1NDlQYG131yn/flfDQsxyT6/aS3j8LhlA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499ky667mn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Sep 2025 08:05:31 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58O7vxU6024436;
+	Wed, 24 Sep 2025 08:05:31 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499ky667mk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Sep 2025 08:05:31 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58O6ILGJ030367;
+	Wed, 24 Sep 2025 08:05:30 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49a9a17aew-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Sep 2025 08:05:30 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58O85Q2Z46203176
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 24 Sep 2025 08:05:26 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 959AF20043;
+	Wed, 24 Sep 2025 08:05:26 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5B07820040;
+	Wed, 24 Sep 2025 08:05:26 +0000 (GMT)
+Received: from [9.152.212.43] (unknown [9.152.212.43])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 24 Sep 2025 08:05:26 +0000 (GMT)
+Message-ID: <72d10c3f-c036-4813-a256-9d7adba4bfec@linux.ibm.com>
+Date: Wed, 24 Sep 2025 10:05:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] s390: replace use of system_wq with system_dfl_wq
+To: Marco Crivellari <marco.crivellari@suse.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>
+References: <20250917153859.363593-1-marco.crivellari@suse.com>
+ <20250917153859.363593-4-marco.crivellari@suse.com>
+Content-Language: en-US
+From: Mete Durlu <meted@linux.ibm.com>
+In-Reply-To: <20250917153859.363593-4-marco.crivellari@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ITLPFSW78Qumnw3udS18HwrX1xwVkJhE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyMCBTYWx0ZWRfX/OY4P5lRpSgT
+ uUw8msrcQZz/HLmmdD5mEKQjkIE5rQSX661XeFrhXpUU6mI6ea1infehbfIB2hbP4xY64fgEi/k
+ PclWrCEmwKoyZ9XdASSDfJwYFRlVKSAfIPcBDpMZ0GJy4Lq0Rzo/HvX2/nMzZa7eTLJIzXv1XbF
+ +gCZTXK9Zf7m7R2BNngz2NuIu5hC2/WKH6et5GfWbQEHDPiA5o1SSmyqdebfipWz/fhjf59HitL
+ RmUwYByInPR2DFK3MtFjFphUQS5UaldnNdkgmJX1MS588MexOguOChUcOPU86S2ZVnVDrvMLdI7
+ /updH9HMCpErj/YurWv30HLoR4vIHVr5n9HNP9IqiKtaZ8gZOaqeH2tW8T4CVZumRSjVGzqwv4l
+ Twy/Nl/A
+X-Authority-Analysis: v=2.4 cv=XYGJzJ55 c=1 sm=1 tr=0 ts=68d3a64b cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8
+ a=VnNF1IyMAAAA:8 a=6K911Lx7mGFY9qHY268A:9 a=QEXdDO2ut3YA:10
+ a=WzC6qhA0u3u7Ye7llzcV:22
+X-Proofpoint-GUID: mz47SYCy-y6mUtn7dxpP9ukB5_NdZ52q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_01,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 clxscore=1015 adultscore=0 malwarescore=0
+ suspectscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200020
 
-On Wed, 24 Sep 2025 14:25:36 +0800
-Feng Yang <yangfeng59949@163.com> wrote:
-
-> By the way, during my testing, I also noticed that when executing bpf_get_stackid via kprobes or tracepoints, 
-> the command bpftrace -e 'kprobe:bpf_get_stackid {printf("bpf_get_stackid\n");}' produces no output. 
-
-I think this is because the bpf_get_stackid is a kind of recursive
-event from kprobes. Kprobe handler can not be reentered.
-
-> However, it does output something when bpf_get_stackid is invoked via uprobes. 
-> This phenomenon also occurs on the x86 architecture, could this be a bug as well?
-
-Maybe if bpf_get_stackid() is kicked from uprobes, it is not recursive
-call from kprobes, so it works.
-
-So it is expected behavior, not a bug. Sorry for confusion.
-
-
-Thank you,
-
+On 9/17/25 5:38 PM, Marco Crivellari wrote:
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
 > 
-> Thanks.
+> This lack of consistentcy cannot be addressed without refactoring the API.
 > 
+> system_wq is a per-CPU worqueue (replaced by system_percpu_wq), but the
+> current code does not benefit from it. Because of that, system_wq has been
+> replaced by system_dfl_wq, the new unbound workqueue.
+
+That sounds right. Thanks!
+
+> The old wq will be kept for a few release cylces.
+> 
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> ---
+>   arch/s390/kernel/hiperdispatch.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/s390/kernel/hiperdispatch.c b/arch/s390/kernel/hiperdispatch.c
+> index e7b66d046e8d..2507bc3f7757 100644
+> --- a/arch/s390/kernel/hiperdispatch.c
+> +++ b/arch/s390/kernel/hiperdispatch.c
+> @@ -191,7 +191,7 @@ int hd_enable_hiperdispatch(void)
+>   		return 0;
+>   	if (hd_online_cores <= hd_entitled_cores)
+>   		return 0;
+> -	mod_delayed_work(system_wq, &hd_capacity_work, HD_DELAY_INTERVAL * hd_delay_factor);
+> +	mod_delayed_work(system_dfl_wq, &hd_capacity_work, HD_DELAY_INTERVAL * hd_delay_factor);
+>   	hd_update_capacities();
+>   	return 1;
+>   }
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thank you for making the change from *_percpu_wq to *_dfl_wq.
+I am not sure if its too late but you can have my r-b
+
+Reviewed-by: Mete Durlu <meted@linux.ibm.com>
 
