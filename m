@@ -1,190 +1,139 @@
-Return-Path: <linux-kernel+bounces-830815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26C2B9AA10
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:28:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C6CB9AA37
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72E774C26EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FFF61B2754F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088923115BD;
-	Wed, 24 Sep 2025 15:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0783D3126D8;
+	Wed, 24 Sep 2025 15:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTKD+yL+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lip7kLZB"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8CD30F94E;
-	Wed, 24 Sep 2025 15:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3F53126D7
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758727472; cv=none; b=cChClYc4YsznVYxApEZ/8eJgyJryFWQZ0iHQWPliZCcLuEDyvzeSwkWVJRvdTbJGPc4/186J7blCMALr0evRI1zpe3Phi5Esw9tYa2BM7HSuP6a3Fv0c4Yrm3v5FkfddOaEw7kT4ISQhkJfjbey2ye6GhnwVgKYocF6JXgxsoqk=
+	t=1758727481; cv=none; b=kykmWNhRexJynpwiiwXL3MSGzsN7ACtHHDFW/y3cJYpQFMMFqIks07NHSVBU2DCqWZl6dlKUPdiQfgFLvJ6sIdbHu09MMxVbQ2plF62gyeiTjFb7ZFyZU0FhXEKV30uLeJJVN7QPLpGeQw/qD5+tnjG5HOkvHD4Ktob2hP+vWFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758727472; c=relaxed/simple;
-	bh=z51gCKwdpZxvFwIfuZnWgQntDhqg+DSi+OiQMo4cKjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VvC7baTeNgRnCGRrSBYaG5JtTGEVuaogQXTKvZoCVTxoAIKbvdKFtdohFeoy8lkJoanjpithD5trTqxs1Mk1Jhy+8acZDt83NWUKZRaHFmY3i8D+bZpSUP3bdGoXvOscCSg9m9f9lkjm2dipB53lmI3bBlLI9DCWX+Kc37UxR+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTKD+yL+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56621C116C6;
-	Wed, 24 Sep 2025 15:24:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758727471;
-	bh=z51gCKwdpZxvFwIfuZnWgQntDhqg+DSi+OiQMo4cKjg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hTKD+yL+GM8Kz5Or9C/Wek6gEMENBW4MdyX9Ax1rFpv/bBkEsP7hfvoUKChVFadcC
-	 6mXioAhDdbIudVwAi5iG/xnJZc9uY2LJOALLbBKzTu41T7dD7OZ9a8LxeDBtQ4Jruf
-	 7xZ3g/n/wjVAVfOp2xsAsJjEBw3NuYnF+I8S+cYnjEsJOstA76m1FGE5TKOXEjD2xO
-	 GouWKyViuajmRXaN1PkKYPVsGX9NvfgBfRHHJJpCFKs4BX2JVu9Q/f25pikW4NzY0a
-	 epWZT7lSa4Zr2wk9X+yxim4nKfvFKo8D65Hl7O4/Nxm0ldcji//TyKCvixzRM9UHvP
-	 vwEXLBdyG121Q==
-Date: Wed, 24 Sep 2025 10:24:30 -0500
-From: Rob Herring <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Dmitry Osipenko <digetx@gmail.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 03/11] dt-bindings: memory: Document Tegra114 Memory
- Controller
-Message-ID: <20250924152430.GA1735105-robh@kernel.org>
-References: <20250915080157.28195-1-clamor95@gmail.com>
- <20250915080157.28195-4-clamor95@gmail.com>
- <20250922160040.GA92842-robh@kernel.org>
- <CAPVz0n3cmFC1PdFnLJ0Vf60i3c6pDO9Lvi8dmAHzBgwgsrPXnA@mail.gmail.com>
+	s=arc-20240116; t=1758727481; c=relaxed/simple;
+	bh=0BPOAm9dP69JEhXlTRE7Dca+7rydr7eI9CX+nU9juPs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uD756Os5wkFrCARP7SIehH3394u3UHsfNFc/wI03ZStA+VVVtniAQBRJa+IcPLcjNbpNnC3mZyc2EV92kJMDnJH/yFp1gGcrZKTocCEqB9oxwsu/JiHo9urkPUB2rbzKMlHGL2pbQnhaTmOQEDNH+y6+RRawuh9bYv3ZqHswZes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lip7kLZB; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso51187775e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:24:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758727478; x=1759332278; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fYxSqnIQ3qjG/8iu9AExs5DpSEa0GvyoBl784AP7Qs8=;
+        b=Lip7kLZBNZZO5+kG+pahRHh6A3oZVmPiqtyNkxxQNuBRTGe9d4m0QxeE5dZ1RGHkHM
+         slcN68FUApI0/qXfiYnM6hb+4ix8pZq4UCd1+Ob72sutGaL7yt1j+wizz7gWAHuAC16J
+         SFqiVVhWy05YkkURJHfR2DFQHsBnMvnaUp3kAk+U9SoVw4tETMQd+U/R9ZCGrS/NusM+
+         wDgtGNOHecQPpn/8J8zEJR0Wn6LrVlzgGz3HHsNJIx1GyniBANOc3WGvU4Wvr0Uyibk+
+         W5fKRrCDEV3NIUI5BK7AQ9GI2KvXrK3UYFgC6lnj18mOddqspNKHpIRE4RAd9HvfwL5r
+         EkcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758727478; x=1759332278;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fYxSqnIQ3qjG/8iu9AExs5DpSEa0GvyoBl784AP7Qs8=;
+        b=Kv3z5eKm5pSVl96za+4YKBCPpwcQSeN0FTNyyJ251SUU4aZoGzTU5xdPYymTHsV6va
+         lJimcu6FdFEL8CMjNAZ7Lxo5zE7bU7bGK15QKEFF4SmDhcLuSdMvOVqJnIPaHO13Wjx/
+         GMu3iPyCYUHyqZ5omR+/DsK0Au1x4x/SnZPk3u8QGy581zAiUxOehS7RzIhcTD7Gmq81
+         QI22pgUTgzX5avKG/cHWLIOh0gROTp0yQGT4azGui+NsZPXzyyT3Ht6mUmm8u/Lyes3d
+         U5nDKy5zRFS00+N48B6Rd1pKq17ljf4rYcgRyHQLndFdRUOL8eMVca6/FOjVEqYjFo/Y
+         R0cw==
+X-Gm-Message-State: AOJu0YygaBY167No2nR25WnICsegAPMbhr3/PenHgwKoW3vmqkvuYYlY
+	Ha4roqtjiy0VzWsNdU2FY7CGdMjSkRmzGiT1WonO4vVPAOHaPu/QhTWSOnPEOJ51D90=
+X-Gm-Gg: ASbGncvaCG4ZMsCLzyOMBgBOLcsVDvAi88c0YMOpy7An/t0esaCE5WCVQvK0Y0K1XFh
+	AVua+abS2aDvWbFFXNHQNTl5r9217YwW0PpMGY6rfLgU9hPU8RZpjnVtL/Hd64YecyETDzSx9WX
+	HWvsi5FUQejKDA5FnLxrft3yU4GSQwkL2jMdVFGumH2xfiPOaY/fzynwnL8dPODCX2YMlPb+6YM
+	VXn8cLKS7F1O8dpCSO9jH8+1o4Vob+e5YgAuEvz1cyU7qYaV+VCE6+u9zV8D8TUQxPdyCv2YgNX
+	thI3ZkriVZxmovLYqfXGsS9qJ4r7EszuTkaVX+9nNTnjE81rxlv11U7AwOonkEQov4wy1GWviZ9
+	uOyv70Rvnb7PePoBswDmmbe1NXA==
+X-Google-Smtp-Source: AGHT+IHSVtQc0PcF907T9ysNH9gXQFv1R4nZa4WXYglWRwMrUQrvL7l25ij/5cog4d6UrbB58i1fUQ==
+X-Received: by 2002:a05:600c:3583:b0:45b:97e0:22a8 with SMTP id 5b1f17b1804b1-46e329eb144mr2418835e9.22.1758727477928;
+        Wed, 24 Sep 2025 08:24:37 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a9ac582sm38510685e9.9.2025.09.24.08.24.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 08:24:37 -0700 (PDT)
+Message-ID: <03cbad1f4f311727b4dce9c969404e2bc138c556.camel@linaro.org>
+Subject: Re: [PATCH v5 2/5] firmware: exynos-acpm: add DVFS protocol
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin	 <peter.griffin@linaro.org>, Michael
+ Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>,  Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Catalin Marinas	
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+Date: Wed, 24 Sep 2025 16:24:35 +0100
+In-Reply-To: <20250924-acpm-clk-v5-2-4cca1fadd00d@linaro.org>
+References: <20250924-acpm-clk-v5-0-4cca1fadd00d@linaro.org>
+	 <20250924-acpm-clk-v5-2-4cca1fadd00d@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPVz0n3cmFC1PdFnLJ0Vf60i3c6pDO9Lvi8dmAHzBgwgsrPXnA@mail.gmail.com>
 
-On Mon, Sep 22, 2025 at 07:18:00PM +0300, Svyatoslav Ryhel wrote:
-> пн, 22 вер. 2025 р. о 19:00 Rob Herring <robh@kernel.org> пише:
-> >
-> > On Mon, Sep 15, 2025 at 11:01:49AM +0300, Svyatoslav Ryhel wrote:
-> > > Add Tegra114 support into existing Tegra124 MC schema with the most
-> > > notable difference in the amount of EMEM timings.
-> > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > ---
-> > >  .../nvidia,tegra124-mc.yaml                   | 97 ++++++++++++++-----
-> > >  1 file changed, 74 insertions(+), 23 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
-> > > index 7b18b4d11e0a..9cc9360d3bd0 100644
-> > > --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
-> > > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
-> > > @@ -19,7 +19,9 @@ description: |
-> > >
-> > >  properties:
-> > >    compatible:
-> > > -    const: nvidia,tegra124-mc
-> > > +    enum:
-> > > +      - nvidia,tegra114-mc
-> > > +      - nvidia,tegra124-mc
-> > >
-> > >    reg:
-> > >      maxItems: 1
-> > > @@ -64,29 +66,10 @@ patternProperties:
-> > >
-> > >            nvidia,emem-configuration:
-> > >              $ref: /schemas/types.yaml#/definitions/uint32-array
-> > > -            description: |
-> > > +            description:
-> > >                Values to be written to the EMEM register block. See section
-> > > -              "15.6.1 MC Registers" in the TRM.
-> > > -            items:
-> > > -              - description: MC_EMEM_ARB_CFG
-> > > -              - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> > > -              - description: MC_EMEM_ARB_TIMING_RCD
-> > > -              - description: MC_EMEM_ARB_TIMING_RP
-> > > -              - description: MC_EMEM_ARB_TIMING_RC
-> > > -              - description: MC_EMEM_ARB_TIMING_RAS
-> > > -              - description: MC_EMEM_ARB_TIMING_FAW
-> > > -              - description: MC_EMEM_ARB_TIMING_RRD
-> > > -              - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> > > -              - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> > > -              - description: MC_EMEM_ARB_TIMING_R2R
-> > > -              - description: MC_EMEM_ARB_TIMING_W2W
-> > > -              - description: MC_EMEM_ARB_TIMING_R2W
-> > > -              - description: MC_EMEM_ARB_TIMING_W2R
-> > > -              - description: MC_EMEM_ARB_DA_TURNS
-> > > -              - description: MC_EMEM_ARB_DA_COVERS
-> > > -              - description: MC_EMEM_ARB_MISC0
-> > > -              - description: MC_EMEM_ARB_MISC1
-> > > -              - description: MC_EMEM_ARB_RING1_THROTTLE
-> > > +              "20.11.1 MC Registers" in the Tegea114 TRM or
-> > > +              "15.6.1 MC Registers" in the Tegra124 TRM.
-> > >
-> > >          required:
-> > >            - clock-frequency
-> > > @@ -109,6 +92,74 @@ required:
-> > >    - "#iommu-cells"
-> > >    - "#interconnect-cells"
-> > >
-> > > +allOf:
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            enum:
-> > > +              - nvidia,tegra114-mc
-> > > +    then:
-> > > +      patternProperties:
-> > > +        "^emc-timings-[0-9]+$":
-> > > +          patternProperties:
-> > > +            "^timing-[0-9]+$":
-> > > +              properties:
-> > > +                nvidia,emem-configuration:
-> > > +                  items:
-> > > +                    - description: MC_EMEM_ARB_CFG
-> > > +                    - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> > > +                    - description: MC_EMEM_ARB_TIMING_RCD
-> > > +                    - description: MC_EMEM_ARB_TIMING_RP
-> > > +                    - description: MC_EMEM_ARB_TIMING_RC
-> > > +                    - description: MC_EMEM_ARB_TIMING_RAS
-> > > +                    - description: MC_EMEM_ARB_TIMING_FAW
-> > > +                    - description: MC_EMEM_ARB_TIMING_RRD
-> > > +                    - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> > > +                    - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> > > +                    - description: MC_EMEM_ARB_TIMING_R2R
-> > > +                    - description: MC_EMEM_ARB_TIMING_W2W
-> > > +                    - description: MC_EMEM_ARB_TIMING_R2W
-> > > +                    - description: MC_EMEM_ARB_TIMING_W2R
-> > > +                    - description: MC_EMEM_ARB_DA_TURNS
-> > > +                    - description: MC_EMEM_ARB_DA_COVERS
-> > > +                    - description: MC_EMEM_ARB_MISC0
-> > > +                    - description: MC_EMEM_ARB_RING1_THROTTLE
-> >
-> > Like I said before, I don't think it is worth enumerating the list of
-> > registers for every variant. If you want to define the length
-> > (minItems/maxItems), then that is fine.
-> >
-> 
-> It worth because position of value matters when reading and list above
-> provides a reference to the order in which register values should be
-> grouped.
+Hi Tudor,
 
-The schema does nothing to validate that. The only thing that gets 
-validated is the length. It is just an opaque blob of data. I'm sure you 
-have to define the order in the driver as well. One place is enough.
+On Wed, 2025-09-24 at 15:11 +0000, Tudor Ambarus wrote:
+> Add ACPM DVFS protocol handler. It constructs DVFS messages that
+> the APM firmware can understand.
+>=20
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> Tested-by: Peter Griffin <peter.griffin@linaro.org> # on gs101-oriole
+> ---
 
-Rob
+[...]
+
+> diff --git a/include/linux/firmware/samsung/exynos-acpm-protocol.h b/incl=
+ude/linux/firmware/samsung/exynos-acpm-protocol.h
+> index f628bf1862c25fa018a2fe5e7e123bf05c5254b9..e41055316bb578bb8250a1b11=
+77f1059eeeb2611 100644
+> --- a/include/linux/firmware/samsung/exynos-acpm-protocol.h
+> +++ b/include/linux/firmware/samsung/exynos-acpm-protocol.h
+> @@ -13,6 +13,15 @@
+> =C2=A0struct acpm_handle;
+> =C2=A0struct device_node;
+> =C2=A0
+> +struct acpm_dvfs_ops {
+> +	int (*set_rate)(const struct acpm_handle *handle,
+> +			unsigned int acpm_chan_id, unsigned int clk_id,
+> +			unsigned long rate);
+> +	unsigned long (*get_rate)(const struct acpm_handle *handle,
+> +				=C2=A0 unsigned int acpm_chan_id,
+> +				=C2=A0 unsigned int clk_id, u32 dbg_val);
+
+Everything seems self-explanatory except this dbg_val. What are API users m=
+eant
+to put there? Maybe some kerneldoc could explain it?
+
+Cheers,
+Andre'
 
