@@ -1,375 +1,593 @@
-Return-Path: <linux-kernel+bounces-831166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CCFEB9BBE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:43:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 237BBB9BBED
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1564219C6FED
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:44:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED383205FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF326502BE;
-	Wed, 24 Sep 2025 19:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D032D94A6;
+	Wed, 24 Sep 2025 19:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJvdvOeb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="WS+U9NAg"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82F130AAC2;
-	Wed, 24 Sep 2025 19:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34006502BE
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 19:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758743001; cv=none; b=hF1VwH28TOYQZnfy73Vb1JYUJdjX5vjDJz2YZTyw4UjxXHqPZjJzii2WAmWMJbQSLzAcKFyVAUq7HnZ+9ahpCzJmRmTrfkWzBafn+zfZSqobgIUjssOaMaQ3Cuh3GnN885Ne6awDH1hyIaie/Sz3GvOGoOBwjQD3Ykq+LIBMEXk=
+	t=1758743043; cv=none; b=qmc6p9MwdPxeqFJJ8QuBgM2Rv/eQ6/6D9hdc3yntIDKpFcQBibYdqZUfhrreNJyTnWI6cC8Csd4raJdZIEcncnS9H/MloDSDNOnCdj8pBub+nsiNGKWSOxyCL+wCFrP6FxIixd6ZDf5qqNG/q2fwpxlDo4mn1nGNtxD9x7in3Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758743001; c=relaxed/simple;
-	bh=eiRrQ8nJJ65azKvRRul53rh53CF5MIRAC7TRyWYYdE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h/be7dHvlhDmpJqBMXG1W9PvX77y4mQERtz6d1KO8jXX63QLNaPJYwFyGxHbeL0wPp3+/3p7idnC5OIAhJtcLzxX+Wze5d7IIJZDJb00rcnt7DIB+h8Iut8m7ycsWkbJ6obc/YMZe9UwcahiW16FUQxsGiQEwQ4v+QJ3UF9WwKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJvdvOeb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55209C4CEE7;
-	Wed, 24 Sep 2025 19:43:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758743001;
-	bh=eiRrQ8nJJ65azKvRRul53rh53CF5MIRAC7TRyWYYdE4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eJvdvOebZJTBsgNeFehV1s1UWntKLNI7oNtE0dFZXMxaVXw43z3sXa6+keYbEa7kF
-	 S0ei9qrpPrYnsx8+6ggUbJdneSeCsEnBOLn9iyZZ4r3q5az7Uo9F1DN+bkfuJ2pHNY
-	 IEfOmHHn3zKBtuPuxGCthh0jkM1i3vfOC5+mUgJWa0XDmAg7A5biAGhQHygwTOCPrf
-	 ftQZXdASS99LqF5jyg1Fw3TkZWeqcy+lW6ALM9WHELEFJxIvTeQSRMfUiev/nwvYbk
-	 jiApDW0AmR7rPXRNn/CxEokZvWu26y1X1G5XLeT2linr4PC5Q+efritpYAyU5BmBf3
-	 L7DfpPaFliceA==
-Date: Wed, 24 Sep 2025 20:43:15 +0100
-From: Conor Dooley <conor@kernel.org>
-To: =?utf-8?B?5L2V5qyi?= <hehuan1@eswincomputing.com>
-Cc: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, jszhang@kernel.org, adrian.hunter@intel.com,
-	p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com, xuxiang@eswincomputing.com,
-	luyulin@eswincomputing.com, dongxuyang@eswincomputing.com,
-	zhangsenchuan@eswincomputing.com, weishangjuan@eswincomputing.com,
-	lizhi2@eswincomputing.com, caohang@eswincomputing.com
-Subject: Re: Re: [PATCH v2 1/2] dt-bindings: mmc: sdhci-of-dwcmshc: Add Eswin
- EIC7700
-Message-ID: <20250924-visiting-sasquatch-c58f782ff686@spud>
-References: <20250912093451.125-1-hehuan1@eswincomputing.com>
- <20250912093713.142-1-hehuan1@eswincomputing.com>
- <20250912-pork-oaf-3480d3d0ef67@spud>
- <674372d7.16fd.199751b489c.Coremail.hehuan1@eswincomputing.com>
+	s=arc-20240116; t=1758743043; c=relaxed/simple;
+	bh=/GBfhvz1vgECsunkS5tptPSlU7u3Qwm1QfJQYBQM/0s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=fKffPEC6P9OtNbIL34Rsl2L5dShO5BEDawEn+lcRFmiKN7oNn57Jen6eBJKxs0V35TYO61EcenJmlHF8ynMz8CQ36FnVPYAbsDYMIC8skzuQcc9qKd4xtT9K4sahspnijUDe+orSlRq+owxsTkcsZH2dGUzbCQ6SOoBDAOUinxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=WS+U9NAg; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id fFlWx7UgbaeEltFH; Wed, 24 Sep 2025 15:43:59 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=LJE7QksyA54DuCSiYbp+rvCz3XErUe18AkzLBqdfi/8=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=WS+U9NAgZ+iLXOaUyUpr
+	Asz/FAmNFsSuYnL+TODp2/ThjUd88QlwJ8b7mR3rc24uF7SIhGmipHGWMaxda0O4QQ4w2ILCZbKyW
+	T7LKcqeVQf89NkQRnUD1vIEfURSNSb5EZqqviDujhdk8iHgUonkZb1EUOwEVyReIsaJ1Emc6cc=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14211690; Wed, 24 Sep 2025 15:43:59 -0400
+Message-ID: <66d71ab7-96f9-4d96-9d9c-9d2f43adb170@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Wed, 24 Sep 2025 15:43:59 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="V6cj8PXmL5zES4xt"
-Content-Disposition: inline
-In-Reply-To: <674372d7.16fd.199751b489c.Coremail.hehuan1@eswincomputing.com>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2 09/16] scsi: qla2xxx: fix races with aborting commands
+Content-Language: en-US
+X-ASG-Orig-Subj: [PATCH v2 09/16] scsi: qla2xxx: fix races with aborting commands
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Dmitry Bogdanov <d.bogdanov@yadro.com>
+Cc: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
+ <80974286-f8ac-4eff-9439-c05fe38716b1@cybernetics.com>
+ <20250911142135.GA624@yadro.com>
+ <e8cc07cf-9bd1-41a4-bd46-44e18179154b@cybernetics.com>
+In-Reply-To: <e8cc07cf-9bd1-41a4-bd46-44e18179154b@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1758743039
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 0
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 19130
+X-ASG-Debug-ID: 1758743039-1cf43947df39d890001-xx1T2L
+
+(target mode)
+
+cmd->cmd_lock only protects cmd->aborted, but when deciding how to
+process a cmd, it is necessary to consider other factors such as
+cmd->state and if the chip has been reset, which are protected by
+qpair->qp_lock_ptr.  So replace cmd_lock with qp_lock_ptr, whick makes
+it possible to check additional values and make decisions about what to
+do without racing with the CTIO handler and other code.
+
+- Lock cmd->qpair->qp_lock_ptr when aborting a cmd.
+- Eliminate cmd->cmd_lock and change cmd->aborted to a bitfield since it
+  is now protected by qp_lock_ptr just like all the other flags.
+- Add another command state QLA_TGT_STATE_DONE to avoid any possible
+  races between qlt_abort_cmd() and tgt_ops->free_cmd().
+- Add the cmd->sent_term_exchg flag to indicate if
+  qlt_send_term_exchange() has already been called.
+- Export qlt_send_term_exchange() for SCST so that it can be called
+  directly instead of trying to make qlt_abort_cmd() work for both
+  TMR abort and HW timeout.
+
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
+
+v1 -> v2:
+- On second timeout, reset the ISP rather than unmapping DMA that
+  might be in use by the hardware.
+- Apply "scsi: qla2xxx: clear cmds after chip reset" from Dmitry
+  Bogdanov as prerequisite.  This is required for the ISP reset to clear
+  the locked-up command.
+- Move the revert of 26f9ce53817a ("scsi: qla2xxx: Fix missed DMA unmap
+  for aborted commands") from this patch to the previous patch since
+  that patch fixed the oops, even though this patch is still necessary
+  for its other improvements.  Rename this patch and reword the patch
+  description to match.
+- No longer export qlt_unmap_sg().
+- Export qla2xxx_wake_dpc().
+- Remove TRC_CTIO_IGNORED.
+
+ drivers/scsi/qla2xxx/qla_os.c      |   1 +
+ drivers/scsi/qla2xxx/qla_target.c  | 198 +++++++++++++----------------
+ drivers/scsi/qla2xxx/qla_target.h  |  17 ++-
+ drivers/scsi/qla2xxx/tcm_qla2xxx.c |   2 +
+ 4 files changed, 102 insertions(+), 116 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 739137ddfd68..2a3eb1dacf86 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -7248,6 +7248,7 @@ qla2xxx_wake_dpc(struct scsi_qla_host *vha)
+ 	if (!test_bit(UNLOADING, &vha->dpc_flags) && t)
+ 		wake_up_process(t);
+ }
++EXPORT_SYMBOL(qla2xxx_wake_dpc);
+ 
+ /*
+ *  qla2x00_rst_aen
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 2abdb8ce0302..c6dc5e9efb69 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -104,8 +104,6 @@ static void qlt_response_pkt(struct scsi_qla_host *ha, struct rsp_que *rsp,
+ 	response_t *pkt);
+ static int qlt_issue_task_mgmt(struct fc_port *sess, u64 lun,
+ 	int fn, void *iocb, int flags);
+-static void qlt_send_term_exchange(struct qla_qpair *, struct qla_tgt_cmd
+-	*cmd, struct atio_from_isp *atio, int ha_locked, int ul_abort);
+ static void qlt_alloc_qfull_cmd(struct scsi_qla_host *vha,
+ 	struct atio_from_isp *atio, uint16_t status, int qfull);
+ static void qlt_disable_vha(struct scsi_qla_host *vha);
+@@ -136,20 +134,6 @@ static struct workqueue_struct *qla_tgt_wq;
+ static DEFINE_MUTEX(qla_tgt_mutex);
+ static LIST_HEAD(qla_tgt_glist);
+ 
+-static const char *prot_op_str(u32 prot_op)
+-{
+-	switch (prot_op) {
+-	case TARGET_PROT_NORMAL:	return "NORMAL";
+-	case TARGET_PROT_DIN_INSERT:	return "DIN_INSERT";
+-	case TARGET_PROT_DOUT_INSERT:	return "DOUT_INSERT";
+-	case TARGET_PROT_DIN_STRIP:	return "DIN_STRIP";
+-	case TARGET_PROT_DOUT_STRIP:	return "DOUT_STRIP";
+-	case TARGET_PROT_DIN_PASS:	return "DIN_PASS";
+-	case TARGET_PROT_DOUT_PASS:	return "DOUT_PASS";
+-	default:			return "UNKNOWN";
+-	}
+-}
+-
+ /* This API intentionally takes dest as a parameter, rather than returning
+  * int value to avoid caller forgetting to issue wmb() after the store */
+ void qlt_do_generation_tick(struct scsi_qla_host *vha, int *dest)
+@@ -252,7 +236,7 @@ static void qlt_queue_unknown_atio(scsi_qla_host_t *vha,
+ 	return;
+ 
+ out_term:
+-	qlt_send_term_exchange(vha->hw->base_qpair, NULL, atio, ha_locked, 0);
++	qlt_send_term_exchange(vha->hw->base_qpair, NULL, atio, ha_locked);
+ 	goto out;
+ }
+ 
+@@ -271,7 +255,7 @@ static void qlt_try_to_dequeue_unknown_atios(struct scsi_qla_host *vha,
+ 			    "Freeing unknown %s %p, because of Abort\n",
+ 			    "ATIO_TYPE7", u);
+ 			qlt_send_term_exchange(vha->hw->base_qpair, NULL,
+-			    &u->atio, ha_locked, 0);
++			    &u->atio, ha_locked);
+ 			goto abort;
+ 		}
+ 
+@@ -285,7 +269,7 @@ static void qlt_try_to_dequeue_unknown_atios(struct scsi_qla_host *vha,
+ 			    "Freeing unknown %s %p, because tgt is being stopped\n",
+ 			    "ATIO_TYPE7", u);
+ 			qlt_send_term_exchange(vha->hw->base_qpair, NULL,
+-			    &u->atio, ha_locked, 0);
++			    &u->atio, ha_locked);
+ 		} else {
+ 			ql_dbg(ql_dbg_async + ql_dbg_verbose, vha, 0x503d,
+ 			    "Reschedule u %p, vha %p, host %p\n", u, vha, host);
+@@ -3461,7 +3445,6 @@ qlt_handle_dif_error(struct qla_qpair *qpair, struct qla_tgt_cmd *cmd,
+ 	uint8_t		*ep = &sts->expected_dif[0];
+ 	uint64_t	lba = cmd->se_cmd.t_task_lba;
+ 	uint8_t scsi_status, sense_key, asc, ascq;
+-	unsigned long flags;
+ 	struct scsi_qla_host *vha = cmd->vha;
+ 
+ 	cmd->trc_flags |= TRC_DIF_ERR;
+@@ -3535,13 +3518,10 @@ qlt_handle_dif_error(struct qla_qpair *qpair, struct qla_tgt_cmd *cmd,
+ 		vha->hw->tgt.tgt_ops->handle_data(cmd);
+ 		break;
+ 	default:
+-		spin_lock_irqsave(&cmd->cmd_lock, flags);
+-		if (cmd->aborted) {
+-			spin_unlock_irqrestore(&cmd->cmd_lock, flags);
++		if (cmd->sent_term_exchg) {
+ 			vha->hw->tgt.tgt_ops->free_cmd(cmd);
+ 			break;
+ 		}
+-		spin_unlock_irqrestore(&cmd->cmd_lock, flags);
+ 
+ 		qlt_send_resp_ctio(qpair, cmd, scsi_status, sense_key, asc,
+ 		    ascq);
+@@ -3696,9 +3676,22 @@ static int __qlt_send_term_exchange(struct qla_qpair *qpair,
+ 	return 0;
+ }
+ 
+-static void qlt_send_term_exchange(struct qla_qpair *qpair,
+-	struct qla_tgt_cmd *cmd, struct atio_from_isp *atio, int ha_locked,
+-	int ul_abort)
++/*
++ * Aborting a command that is active in the FW (i.e. cmd->cmd_sent_to_fw == 1)
++ * will usually trigger the FW to send a completion CTIO with error status,
++ * and the driver will then call the ->handle_data() or ->free_cmd() callbacks.
++ * This can be used to clear a command that is locked up in the FW unless there
++ * is something more seriously wrong.
++ *
++ * Aborting a command that is not active in the FW (i.e.
++ * cmd->cmd_sent_to_fw == 0) will not directly trigger any callbacks.  Instead,
++ * when the target mode midlevel calls qlt_rdy_to_xfer() or
++ * qlt_xmit_response(), the driver will see that the cmd has been aborted and
++ * call the appropriate callback immediately without performing the requested
++ * operation.
++ */
++void qlt_send_term_exchange(struct qla_qpair *qpair,
++	struct qla_tgt_cmd *cmd, struct atio_from_isp *atio, int ha_locked)
+ {
+ 	struct scsi_qla_host *vha;
+ 	unsigned long flags = 0;
+@@ -3722,10 +3715,14 @@ static void qlt_send_term_exchange(struct qla_qpair *qpair,
+ 		qlt_alloc_qfull_cmd(vha, atio, 0, 0);
+ 
+ done:
+-	if (cmd && !ul_abort && !cmd->aborted) {
+-		if (cmd->sg_mapped)
+-			qlt_unmap_sg(vha, cmd);
+-		vha->hw->tgt.tgt_ops->free_cmd(cmd);
++	if (cmd) {
++		/*
++		 * Set this even if -ENOMEM above, since term exchange will be
++		 * sent eventually...
++		 */
++		cmd->sent_term_exchg = 1;
++		cmd->aborted = 1;
++		cmd->jiffies_at_term_exchg = jiffies;
+ 	}
+ 
+ 	if (!ha_locked)
+@@ -3733,6 +3730,7 @@ static void qlt_send_term_exchange(struct qla_qpair *qpair,
+ 
+ 	return;
+ }
++EXPORT_SYMBOL(qlt_send_term_exchange);
+ 
+ static void qlt_init_term_exchange(struct scsi_qla_host *vha)
+ {
+@@ -3783,35 +3781,35 @@ static void qlt_chk_exch_leak_thresh_hold(struct scsi_qla_host *vha)
+ 
+ int qlt_abort_cmd(struct qla_tgt_cmd *cmd)
+ {
+-	struct qla_tgt *tgt = cmd->tgt;
+-	struct scsi_qla_host *vha = tgt->vha;
+-	struct se_cmd *se_cmd = &cmd->se_cmd;
++	struct scsi_qla_host *vha = cmd->vha;
++	struct qla_qpair *qpair = cmd->qpair;
+ 	unsigned long flags;
+ 
+-	ql_dbg(ql_dbg_tgt_mgt, vha, 0xf014,
+-	    "qla_target(%d): terminating exchange for aborted cmd=%p "
+-	    "(se_cmd=%p, tag=%llu)", vha->vp_idx, cmd, &cmd->se_cmd,
+-	    se_cmd->tag);
++	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
+ 
+-	spin_lock_irqsave(&cmd->cmd_lock, flags);
+-	if (cmd->aborted) {
+-		spin_unlock_irqrestore(&cmd->cmd_lock, flags);
+-		/*
+-		 * It's normal to see 2 calls in this path:
+-		 *  1) XFER Rdy completion + CMD_T_ABORT
+-		 *  2) TCM TMR - drain_state_list
+-		 */
+-		ql_dbg(ql_dbg_tgt_mgt, vha, 0xf016,
+-		    "multiple abort. %p transport_state %x, t_state %x, "
+-		    "se_cmd_flags %x\n", cmd, cmd->se_cmd.transport_state,
+-		    cmd->se_cmd.t_state, cmd->se_cmd.se_cmd_flags);
+-		return -EIO;
++	ql_dbg(ql_dbg_tgt_mgt, vha, 0xf014,
++	    "qla_target(%d): tag %lld: cmd being aborted (state %d) %s; %s\n",
++	    vha->vp_idx, cmd->se_cmd.tag, cmd->state,
++	    cmd->cmd_sent_to_fw ? "sent to fw" : "not sent to fw",
++	    cmd->aborted ? "aborted" : "not aborted");
++
++	if (cmd->state != QLA_TGT_STATE_DONE && !cmd->sent_term_exchg) {
++		if (!qpair->fw_started ||
++		    cmd->reset_count != qpair->chip_reset) {
++			/*
++			 * Chip was reset; just pretend that we sent the term
++			 * exchange.
++			 */
++			cmd->sent_term_exchg = 1;
++			cmd->aborted = 1;
++			cmd->jiffies_at_term_exchg = jiffies;
++		} else {
++			qlt_send_term_exchange(qpair, cmd, &cmd->atio, 1);
++		}
+ 	}
+-	cmd->aborted = 1;
+-	cmd->trc_flags |= TRC_ABORT;
+-	spin_unlock_irqrestore(&cmd->cmd_lock, flags);
+ 
+-	qlt_send_term_exchange(cmd->qpair, cmd, &cmd->atio, 0, 1);
++	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL(qlt_abort_cmd);
+@@ -3842,40 +3840,6 @@ void qlt_free_cmd(struct qla_tgt_cmd *cmd)
+ }
+ EXPORT_SYMBOL(qlt_free_cmd);
+ 
+-/*
+- * ha->hardware_lock supposed to be held on entry. Might drop it, then reaquire
+- */
+-static int qlt_term_ctio_exchange(struct qla_qpair *qpair, void *ctio,
+-	struct qla_tgt_cmd *cmd, uint32_t status)
+-{
+-	int term = 0;
+-	struct scsi_qla_host *vha = qpair->vha;
+-
+-	if (cmd->se_cmd.prot_op)
+-		ql_dbg(ql_dbg_tgt_dif, vha, 0xe013,
+-		    "Term DIF cmd: lba[0x%llx|%lld] len[0x%x] "
+-		    "se_cmd=%p tag[%x] op %#x/%s",
+-		     cmd->lba, cmd->lba,
+-		     cmd->num_blks, &cmd->se_cmd,
+-		     cmd->atio.u.isp24.exchange_addr,
+-		     cmd->se_cmd.prot_op,
+-		     prot_op_str(cmd->se_cmd.prot_op));
+-
+-	if (ctio != NULL) {
+-		struct ctio7_from_24xx *c = (struct ctio7_from_24xx *)ctio;
+-
+-		term = !(c->flags &
+-		    cpu_to_le16(OF_TERM_EXCH));
+-	} else
+-		term = 1;
+-
+-	if (term)
+-		qlt_send_term_exchange(qpair, cmd, &cmd->atio, 1, 0);
+-
+-	return term;
+-}
+-
+-
+ /* ha->hardware_lock supposed to be held on entry */
+ static void *qlt_ctio_to_cmd(struct scsi_qla_host *vha,
+ 	struct rsp_que *rsp, uint32_t handle, void *ctio)
+@@ -3981,22 +3945,35 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 	qlt_unmap_sg(vha, cmd);
+ 
+ 	if (unlikely(status != CTIO_SUCCESS)) {
++		bool term_exchg = false;
++
++		/*
++		 * If the hardware terminated the exchange, then we don't need
++		 * to send an explicit term exchange message.
++		 */
++		if (ctio_flags & OF_TERM_EXCH) {
++			cmd->sent_term_exchg = 1;
++			cmd->aborted = 1;
++			cmd->jiffies_at_term_exchg = jiffies;
++		}
++
+ 		switch (status & 0xFFFF) {
+ 		case CTIO_INVALID_RX_ID:
++			term_exchg = true;
+ 			if (printk_ratelimit())
+ 				dev_info(&vha->hw->pdev->dev,
+ 				    "qla_target(%d): CTIO with INVALID_RX_ID ATIO attr %x CTIO Flags %x|%x\n",
+ 				    vha->vp_idx, cmd->atio.u.isp24.attr,
+ 				    ((cmd->ctio_flags >> 9) & 0xf),
+ 				    cmd->ctio_flags);
+-
+ 			break;
++
+ 		case CTIO_LIP_RESET:
+ 		case CTIO_TARGET_RESET:
+ 		case CTIO_ABORTED:
+-			/* driver request abort via Terminate exchange */
++			term_exchg = true;
++			fallthrough;
+ 		case CTIO_TIMEOUT:
+-			/* They are OK */
+ 			ql_dbg(ql_dbg_tgt_mgt, vha, 0xf058,
+ 			    "qla_target(%d): CTIO with "
+ 			    "status %#x received, state %x, se_cmd %p, "
+@@ -4017,6 +3994,7 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 			    logged_out ? "PORT LOGGED OUT" : "PORT UNAVAILABLE",
+ 			    status, cmd->state, se_cmd);
+ 
++			term_exchg = true;
+ 			if (logged_out && cmd->sess) {
+ 				/*
+ 				 * Session is already logged out, but we need
+@@ -4062,19 +4040,21 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 			break;
+ 		}
+ 
++		cmd->trc_flags |= TRC_CTIO_ERR;
+ 
+-		/* "cmd->aborted" means
+-		 * cmd is already aborted/terminated, we don't
+-		 * need to terminate again.  The exchange is already
+-		 * cleaned up/freed at FW level.  Just cleanup at driver
+-		 * level.
++		/*
++		 * In state QLA_TGT_STATE_NEED_DATA the failed CTIO was for
++		 * Data-Out, so either abort the exchange or try sending check
++		 * condition with sense data depending on the severity of
++		 * the error.  In state QLA_TGT_STATE_PROCESSED the failed CTIO
++		 * was for status (and possibly Data-In), so don't try sending
++		 * an error status again in that case (if the error was for
++		 * Data-In with status, we could try sending status without
++		 * Data-In, but we don't do that currently).
+ 		 */
+-		if ((cmd->state != QLA_TGT_STATE_NEED_DATA) &&
+-		    (!cmd->aborted)) {
+-			cmd->trc_flags |= TRC_CTIO_ERR;
+-			if (qlt_term_ctio_exchange(qpair, ctio, cmd, status))
+-				return;
+-		}
++		if (!cmd->sent_term_exchg &&
++		    (term_exchg || cmd->state != QLA_TGT_STATE_NEED_DATA))
++			qlt_send_term_exchange(qpair, cmd, &cmd->atio, 1);
+ 	}
+ 
+ 	if (cmd->state == QLA_TGT_STATE_PROCESSED) {
+@@ -4164,7 +4144,6 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
+ 		goto out_term;
+ 	}
+ 
+-	spin_lock_init(&cmd->cmd_lock);
+ 	cdb = &atio->u.isp24.fcp_cmnd.cdb[0];
+ 	cmd->se_cmd.tag = le32_to_cpu(atio->u.isp24.exchange_addr);
+ 
+@@ -4201,7 +4180,7 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
+ 	 */
+ 	cmd->trc_flags |= TRC_DO_WORK_ERR;
+ 	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
+-	qlt_send_term_exchange(qpair, NULL, &cmd->atio, 1, 0);
++	qlt_send_term_exchange(qpair, NULL, &cmd->atio, 1);
+ 
+ 	qlt_decr_num_pend_cmds(vha);
+ 	cmd->vha->hw->tgt.tgt_ops->rel_cmd(cmd);
+@@ -5360,6 +5339,7 @@ static void qlt_handle_imm_notify(struct scsi_qla_host *vha,
+ 		if (qlt_24xx_handle_els(vha, iocb) == 0)
+ 			send_notify_ack = 0;
+ 		break;
++
+ 	default:
+ 		ql_dbg(ql_dbg_tgt_mgt, vha, 0xf06d,
+ 		    "qla_target(%d): Received unknown immediate "
+@@ -5394,7 +5374,7 @@ static int __qlt_send_busy(struct qla_qpair *qpair,
+ 	sess = qla2x00_find_fcport_by_nportid(vha, &id, 1);
+ 	spin_unlock_irqrestore(&ha->tgt.sess_lock, flags);
+ 	if (!sess) {
+-		qlt_send_term_exchange(qpair, NULL, atio, 1, 0);
++		qlt_send_term_exchange(qpair, NULL, atio, 1);
+ 		return 0;
+ 	}
+ 	/* Sending marker isn't necessary, since we called from ISR */
+@@ -5623,7 +5603,7 @@ static void qlt_24xx_atio_pkt(struct scsi_qla_host *vha,
+ 				ql_dbg(ql_dbg_tgt, vha, 0xe05f,
+ 				    "qla_target: Unable to send command to target, sending TERM EXCHANGE for rsp\n");
+ 				qlt_send_term_exchange(ha->base_qpair, NULL,
+-				    atio, 1, 0);
++				    atio, 1);
+ 				break;
+ 			case -EBUSY:
+ 				ql_dbg(ql_dbg_tgt, vha, 0xe060,
+@@ -5830,7 +5810,7 @@ static void qlt_response_pkt(struct scsi_qla_host *vha,
+ 				ql_dbg(ql_dbg_tgt, vha, 0xe05f,
+ 				    "qla_target: Unable to send command to target, sending TERM EXCHANGE for rsp\n");
+ 				qlt_send_term_exchange(rsp->qpair, NULL,
+-				    atio, 1, 0);
++				    atio, 1);
+ 				break;
+ 			case -EBUSY:
+ 				ql_dbg(ql_dbg_tgt, vha, 0xe060,
+@@ -6720,7 +6700,7 @@ qlt_24xx_process_atio_queue(struct scsi_qla_host *vha, uint8_t ha_locked)
+ 
+ 			adjust_corrupted_atio(pkt);
+ 			qlt_send_term_exchange(ha->base_qpair, NULL, pkt,
+-			    ha_locked, 0);
++			    ha_locked);
+ 		} else {
+ 			qlt_24xx_atio_pkt_all_vps(vha,
+ 			    (struct atio_from_isp *)pkt, ha_locked);
+diff --git a/drivers/scsi/qla2xxx/qla_target.h b/drivers/scsi/qla2xxx/qla_target.h
+index c483966d0a84..eb15d8e9f79e 100644
+--- a/drivers/scsi/qla2xxx/qla_target.h
++++ b/drivers/scsi/qla2xxx/qla_target.h
+@@ -754,6 +754,7 @@ int qla2x00_wait_for_hba_online(struct scsi_qla_host *);
+ #define QLA_TGT_STATE_NEED_DATA		1 /* target needs data to continue */
+ #define QLA_TGT_STATE_DATA_IN		2 /* Data arrived + target processing */
+ #define QLA_TGT_STATE_PROCESSED		3 /* target done processing */
++#define QLA_TGT_STATE_DONE		4 /* cmd being freed */
+ 
+ /* ATIO task_codes field */
+ #define ATIO_SIMPLE_QUEUE           0
+@@ -876,8 +877,6 @@ struct qla_tgt_cmd {
+ 	/* Sense buffer that will be mapped into outgoing status */
+ 	unsigned char sense_buffer[TRANSPORT_SENSE_BUFFER];
+ 
+-	spinlock_t cmd_lock;
+-	/* to save extra sess dereferences */
+ 	unsigned int conf_compl_supported:1;
+ 	unsigned int sg_mapped:1;
+ 	unsigned int write_data_transferred:1;
+@@ -887,13 +886,14 @@ struct qla_tgt_cmd {
+ 	unsigned int cmd_in_wq:1;
+ 	unsigned int edif:1;
+ 
++	/* Set if the exchange has been terminated. */
++	unsigned int sent_term_exchg:1;
++
+ 	/*
+-	 * This variable may be set from outside the LIO and I/O completion
+-	 * callback functions. Do not declare this member variable as a
+-	 * bitfield to avoid a read-modify-write operation when this variable
+-	 * is set.
++	 * Set if sent_term_exchg is set, or if the cmd was aborted by a TMR,
++	 * or if some other error prevents normal processing of the command.
+ 	 */
+-	unsigned int aborted;
++	unsigned int aborted:1;
+ 
+ 	struct scatterlist *sg;	/* cmd data buffer SG vector */
+ 	int sg_cnt;		/* SG segments count */
+@@ -932,6 +932,7 @@ struct qla_tgt_cmd {
+ #define DIF_BUNDL_DMA_VALID 1
+ 	uint16_t prot_flags;
+ 
++	unsigned long jiffies_at_term_exchg;
+ 	uint64_t jiffies_at_alloc;
+ 	uint64_t jiffies_at_free;
+ 
+@@ -1055,6 +1056,8 @@ extern void qlt_response_pkt_all_vps(struct scsi_qla_host *, struct rsp_que *,
+ extern int qlt_rdy_to_xfer(struct qla_tgt_cmd *);
+ extern int qlt_xmit_response(struct qla_tgt_cmd *, int, uint8_t);
+ extern int qlt_abort_cmd(struct qla_tgt_cmd *);
++void qlt_send_term_exchange(struct qla_qpair *qpair,
++	struct qla_tgt_cmd *cmd, struct atio_from_isp *atio, int ha_locked);
+ extern void qlt_xmit_tm_rsp(struct qla_tgt_mgmt_cmd *);
+ extern void qlt_free_mcmd(struct qla_tgt_mgmt_cmd *);
+ extern void qlt_free_cmd(struct qla_tgt_cmd *cmd);
+diff --git a/drivers/scsi/qla2xxx/tcm_qla2xxx.c b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+index ceaf1c7b1d17..169219fe47a2 100644
+--- a/drivers/scsi/qla2xxx/tcm_qla2xxx.c
++++ b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+@@ -303,6 +303,8 @@ static void tcm_qla2xxx_rel_cmd(struct qla_tgt_cmd *cmd)
+  */
+ static void tcm_qla2xxx_free_cmd(struct qla_tgt_cmd *cmd)
+ {
++	cmd->state = QLA_TGT_STATE_DONE;
++
+ 	cmd->qpair->tgt_counters.core_qla_free_cmd++;
+ 	cmd->cmd_in_wq = 1;
+ 
+-- 
+2.43.0
 
 
---V6cj8PXmL5zES4xt
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Sep 23, 2025 at 01:45:46PM +0800, =E4=BD=95=E6=AC=A2 wrote:
-> Dear Conor,
-> Thank you for your valuable and professional suggestions.
-> Please find our explanations embedded below your comments in the
-> original email.
->=20
-> Best regards,
->=20
-> He Huan
-> Eswin Computing
->=20
-> > -----=E5=8E=9F=E5=A7=8B=E9=82=AE=E4=BB=B6-----
-> > =E5=8F=91=E4=BB=B6=E4=BA=BA: "Conor Dooley" <conor@kernel.org>
-> > =E5=8F=91=E9=80=81=E6=97=B6=E9=97=B4:2025-09-13 03:10:04 (=E6=98=9F=E6=
-=9C=9F=E5=85=AD)
-> > =E6=94=B6=E4=BB=B6=E4=BA=BA: hehuan1@eswincomputing.com
-> > =E6=8A=84=E9=80=81: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@ke=
-rnel.org, conor+dt@kernel.org, jszhang@kernel.org, adrian.hunter@intel.com,=
- p.zabel@pengutronix.de, linux-mmc@vger.kernel.org, devicetree@vger.kernel.=
-org, linux-kernel@vger.kernel.org, ningyu@eswincomputing.com, linmin@eswinc=
-omputing.com, pinkesh.vaghela@einfochips.com, xuxiang@eswincomputing.com, l=
-uyulin@eswincomputing.com, dongxuyang@eswincomputing.com, zhangsenchuan@esw=
-incomputing.com, weishangjuan@eswincomputing.com, lizhi2@eswincomputing.com=
-, caohang@eswincomputing.com
-> > =E4=B8=BB=E9=A2=98: Re: [PATCH v2 1/2] dt-bindings: mmc: sdhci-of-dwcms=
-hc: Add Eswin EIC7700
-> >=20
-> > On Fri, Sep 12, 2025 at 05:37:13PM +0800, hehuan1@eswincomputing.com wr=
-ote:
-> > > From: Huan He <hehuan1@eswincomputing.com>
-> > >=20
-> > > EIC7700 use Synopsys dwcmshc IP for SD/eMMC controllers.
-> > > Add Eswin EIC7700 support in sdhci-of-dwcmshc.yaml.
-> > >=20
-> > > Signed-off-by: Huan He <hehuan1@eswincomputing.com>
-> > > ---
-> > >  .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 81 +++++++++++++++++=
---
-> > >  1 file changed, 75 insertions(+), 6 deletions(-)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci=
-=2Eyaml b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> > > index f882219a0a26..e0f34bc28e0c 100644
-> > > --- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> > > +++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> > > @@ -30,6 +30,7 @@ properties:
-> > >            - sophgo,sg2002-dwcmshc
-> > >            - sophgo,sg2042-dwcmshc
-> > >            - thead,th1520-dwcmshc
-> > > +          - eswin,eic7700-dwcmshc
-> > > =20
-> > >    reg:
-> > >      maxItems: 1
-> > > @@ -52,17 +53,51 @@ properties:
-> > >      maxItems: 5
-> > > =20
-> > >    reset-names:
-> > > -    items:
-> > > -      - const: core
-> > > -      - const: bus
-> > > -      - const: axi
-> > > -      - const: block
-> > > -      - const: timer
-> > > +    maxItems: 5
-> > > =20
-> > >    rockchip,txclk-tapnum:
-> > >      description: Specify the number of delay for tx sampling.
-> > >      $ref: /schemas/types.yaml#/definitions/uint8
-> > > =20
-> > > +  clock-output-names:
-> > > +    maxItems: 1
-> > > +    description:
-> > > +      The name of the clock output representing the card clock,
-> > > +      consumed by the PHY.
-> >=20
-> > You have one clock, why do you need this?
->=20
-> Thank you for the feedback.=C2=A0I will remove it in the next version.
->=20
-> >=20
-> > > +
-> > > +  '#clock-cells':
-> > > +    enum: [0]
-> >=20
-> > const: 0
-> >=20
-> > > +    description:
-> > > +      Specifies how many cells are used when referencing the
-> > > +      exported clock from another node. This property indicates
-> > > +      that the clock output has no extra parameters and represents
-> > > +      the card clock.
-> >=20
-> > This description is not needed.
-> >=20
-> > > +
-> > > +  eswin,hsp-sp-csr:
-> > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > > +    items:
-> > > +      - description: Phandle to HSP(High-Speed Peripheral) device
-> > > +      - description: Offset of the stability status register for
-> > > +                     internal clock
-> > > +      - description: Offset of the stability register for host
-> > > +                     regulator voltage.
-> > > +    description: |
-> > > +      High-Speed Peripheral device needed to configure internal
-> > > +      clocks, and the power.
-> > > +
-> > > +  eswin,syscrg-csr:
-> > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > > +    items:
-> > > +      - description: Phandle to system CRG(System Clock and Reset
-> > > +                     Generator) device
-> > > +      - description: Offset of core clock control register
-> > > +    description: |
-> > > +      System Clock and Reset Generator device needed to configure
-> > > +      core clock.
-> >=20
-> > This reeks of improper clock tree description. Why can you not just
-> > request the rate that you need via the common clk framework? Likewise
-> > for reset. You already have a clocks property that has to include the
-> > core clock, so I don't see why you need another property to get around
-> > it.
->=20
-> Thank you for the feedback. You are absolutely right; We've taken your
-> advice. In v3 of the patchset, we have completely removed the=C2=A0
-> eswin,syscrg-csr=C2=A0property. The device tree binding now relies solely
-> on the standard=C2=A0clocks=C2=A0and clock-names=C2=A0properties to acqui=
-re the
-> necessary clock.
-
-Okay cool.
-
-> > As a result, I'm also suspicious of your hsp-sp-csr, but these at least
-> > appear to be internal clocks if your description is to be believed.
-> > I'd like you to explain exactly what those clocks do and what the "HSP"
-> > actually is. What other peripherals use it?
->=20
-> Thank you for raising this. Your concerns regarding the hsp-sp-csr
-> clocks are valid.
-> The functionality and purpose of the HSP (hsp-sp-csr) were explained
-> in our previous patch series for the USB module. The relevant
-> discussion can be found here:
-> https://lore.kernel.org/linux-usb/17731a13.1cce.19974dfc64d.Coremail.caoh=
-ang@eswincomputing.com/
-> Please let us know this explanation has addressed your doubts. We're
-> happy to provide further details if needed.
-
-I'll address this on the usb thread, thanks for the explanation there.
-
-> > Also, your driver turns on this hsp clock but never turns it off. Same
-> > for the power.
->=20
-> The writes to hsp_int_status and hsp_pwr_ctrl are not enabling clocks
-> or power rails.They are stability assertions.
-
-Do you still need to "remove" the assertions if the driver is removed,
-and the clocks get disabled? Or is that not a concern, because the
-hardware can't do anything relevant without the driver loaded? If it;s
-not a concern, then that seems okay to me.
-
-> Assert clock stability: Write a value to the hsp_int_status register.
-> This signals to the eMMC controller that platform clocks (axi master
-> bus clock, internal core base clock, timer clock) are enabled and
-> stable.
-> Assert voltage stability: Write a value to hsp_pwr_ctrl. This signals
-> that VDD is stable and permits transition to high-speed modes (e.g.,
-> UHS-I).
->=20
-> >=20
-> > I want to see the full dts for what you're doing here before I approve
-> > this, there's too much here that looks wrong.
-
-Okay, that doesn't look too bad, with the updates you've made to remove
-the sysrg-csr property.
-
->=20
-> The full dts is as follows:=C2=A0
-> sdhci_emmc: mmc@50450000 {
-> =C2=A0 =C2=A0 compatible =3D "eswin,eic7700-dwcmshc";
-> =C2=A0 =C2=A0 reg =3D <0x0 0x50450000 0x0 0x10000>;
-> =C2=A0 =C2=A0 clocks =3D <&clock 264>, <&clock 546>;
-> =C2=A0 =C2=A0 clock-names =3D "core", "bus";
-> =C2=A0 =C2=A0 assigned-clocks =3D <&clock 264>;
-> =C2=A0 =C2=A0 assigned-clock-rates =3D <200000000>;
-> =C2=A0 =C2=A0 resets =3D <&reset 75>, <&reset 72>, <&reset 88>, <&reset 9=
-2>;
-> =C2=A0 =C2=A0 reset-names =3D "txrx", "phy", "bus", "axi";
-> =C2=A0 =C2=A0 interrupt-parent =3D <&plic>;
-> =C2=A0 =C2=A0 interrupts =3D <79>;
-> =C2=A0 =C2=A0 bus-width =3D <8>;
-> =C2=A0 =C2=A0 non-removable;
-> =C2=A0 =C2=A0 mmc-hs400-1_8v;
-> =C2=A0 =C2=A0 max-frequency =3D <200000000>;
-> =C2=A0 =C2=A0 #size-cells =3D <2>;
-> =C2=A0 =C2=A0 no-sdio;
-> =C2=A0 =C2=A0 no-sd;
-> =C2=A0 =C2=A0 eswin,hsp-sp-csr =3D <&hsp_sp_csr 0x508 0x50c>;
-> =C2=A0 =C2=A0 eswin,drive-impedance-ohms =3D <50>;
-> };
->=20
-> sdio: mmc@0x50460000{
-> =C2=A0 =C2=A0 compatible =3D "eswin,eic7700-dwcmshc";
-> =C2=A0 =C2=A0 reg =3D <0x0 0x50460000 0x0 0x10000>;
-> =C2=A0 =C2=A0 clocks =3D <&clock 265>, <&clock 546>;
-> =C2=A0 =C2=A0 clock-names =3D"core","bus";
-> =C2=A0 =C2=A0 resets =3D <&reset 76>, <&reset 73>, <&reset 87>, <&reset 9=
-1>;
-> =C2=A0 =C2=A0 reset-names =3D "txrx","phy", "bus", "axi";
-> =C2=A0 =C2=A0 interrupt-parent =3D <&plic>;
-> =C2=A0 =C2=A0 interrupts =3D <81>;
-> =C2=A0 =C2=A0 clock-frequency =3D <208000000>;
-> =C2=A0 =C2=A0 max-frequency =3D <208000000>;
-> =C2=A0 =C2=A0 #address-cells =3D <1>;
-> =C2=A0 =C2=A0 #size-cells =3D <0>;
-> =C2=A0 =C2=A0 bus-width =3D <4>;
-> =C2=A0 =C2=A0 no-sdio;
-> =C2=A0 =C2=A0 no-mmc;
-> =C2=A0 =C2=A0 eswin,hsp-sp-csr =3D <&hsp_sp_csr 0x608 0x60c>;
-> =C2=A0 =C2=A0 eswin,drive-impedance-ohms =3D <33>;
-> };
->=20
-> >=20
-> > > +
-> > > +  drive-impedance-ohm:
-> >=20
-> > How come this one has no eswin prefix? Also, the unit is "Ohms", not
-> > "Ohm".
->=20
-> In version 3, we renamed the property from drive-impedance-ohm to
-> eswin,drive-impedance-ohms.
->=20
-> >=20
-> > Additionally, any eswin properties should be restricted to eswin devices
-> > only.
-> >=20
-> > > +    description: Specifies the drive impedance in Ohm.
-> > > +    enum: [33, 40, 50, 66, 100]
-> > > +
-> > >  required:
-> > >    - compatible
-> > >    - regsdhci_eic7700_dt_parse_clk_phases
-> > > @@ -110,6 +145,40 @@ allOf:
-> > >              - const: block
-> > >              - const: timer
-> > > =20
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            const: eswin,eic7700-dwcmshc
-> > > +    then:
-> > > +      properties:
-> > > +        resets:
-> > > +          minItems: 4
-> > > +          maxItems: 4
-> > > +        reset-names:
-> > > +          items:
-> > > +            - const: arstn
-> > > +            - const: phy_rst
-> > > +            - const: prstn
-> > > +            - const: txrx_rst
-> >=20
-> > How come you're so drastically different to the other devices?
-> > Also, putting "_rst" in a reset name is pointless. These are all resets
-> > after all by nature.sdhci_eic7700_dt_parse_clk_phases
->=20
-> We have simplified the names as follows:
-> reset-names:
-> =C2=A0 items:
-> =C2=A0 =C2=A0 - const: axi
-> =C2=A0 =C2=A0 - const: phy
-> =C2=A0 =C2=A0 - const: bus
-> =C2=A0 =C2=A0 - const: txrx
-> Regarding the functionality of these resets:
-> prst and arst: correspond to the resets for the bus and AXI domains.
-> txrx: is used for the reset of the internal transmit and receive clock
-> domains.
-> phy: is used for the reset of the internal PHY.
-> This will be corrected in the next patch. Is this correct?
-
-I don't know if it is correct or not, but it looks better than before.
-Can you explain why you aren't using the "normal" 5 resets that other
-devices do?
-
---V6cj8PXmL5zES4xt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNRJ0gAKCRB4tDGHoIJi
-0k1UAP9e3TiD0Nl0I8BcmGnki3k7pltR5alB/B0PxAW5pp6o1QEAnr7muT+6843N
-c3oUTeRpcCgWHtJ+SI4nCGmuBbpG7gA=
-=FT3q
------END PGP SIGNATURE-----
-
---V6cj8PXmL5zES4xt--
 
