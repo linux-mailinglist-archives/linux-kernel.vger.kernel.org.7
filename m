@@ -1,233 +1,119 @@
-Return-Path: <linux-kernel+bounces-830621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B431B9A23F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:02:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BFA2B9A24E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94A191B25C52
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7E43A5D37
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE6C1E7660;
-	Wed, 24 Sep 2025 14:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529DE21423C;
+	Wed, 24 Sep 2025 14:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="jnyhz+dV"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJllzpq4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E6786329
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF15CA6F;
+	Wed, 24 Sep 2025 14:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758722566; cv=none; b=iGgaS2TVOPQ/IGv228yd09L4ZbrMh5C9IBDQu8j9w+6LSdDvjPwNqol2qYEuPpnS6npxuhjS+pjUH74U1Zlx4XNNaDAl7Q83nhQb2St/Fz7E6pvGVGARw4P8EeimLMu96TNPQnKNpwZkjrHLWXXyJOtSwL9AvpvdNPUGGD12xsU=
+	t=1758722638; cv=none; b=un/b1sqEu9MjAx9Wu/14LJZt/dgmyYiL3yluFbsMgW39ZYLajMQEn5s8MqMxWWRgxKHbNoKlepLbVxAqDVsFQo7QQ6ZodhiEX9+5Am4cM0Wyk0nSLaHhhUYhqDZjPIHRZpLA13O9SGkTpnZJreGqk1tPUZwmvnfULgbEFJzkklk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758722566; c=relaxed/simple;
-	bh=3IffwREs0vhmlCeCQYs5nhAVdpSXz4RSrQPdv05YxDs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JUpiiRvtdVV2wEXSP8DpeWL5Go5QE4JazZhULl/LEgEUVB952mnaaP3mcVH7oe4pcOnl0CmxrWGLPXuejozI4hdBiOAqgD9xyMnOuXvlSU4o/ZOdn7eQ/aSl7lGHWqnLv4zKKE86Iqsox257iV2dCcBZO6L5SdjEfbbLzatXyik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=jnyhz+dV; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from petrov-tower.intra.ispras.ru (unknown [10.10.2.58])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 67E5B402837E;
-	Wed, 24 Sep 2025 14:02:33 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 67E5B402837E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1758722553;
-	bh=T0+3uqja+AcM3h5mmWLoH6MCphRpuvic80vfhVRNM+s=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jnyhz+dVVoAGjN7Ld89McMTj9+MUNsLcickFRlb5ZL9rAlGNExS+L8tKJs4uhjeyG
-	 09A8bmFobZTnQZ1W4vXqaOiPltZjn3KJW8xBWMWvAM7DwAysMsMKyyb7bNujhxAvQX
-	 yjE/LDFUpap7RBzBeY6T7POH1g/VD51pvBY7xIGo=
-From: Oleg Petrov <o.petrov@ispras.ru>
-To: Julia Lawall <Julia.Lawall@inria.fr>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Oleg Petrov <o.petrov@ispras.ru>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	cocci@inria.fr,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Vadim Mutilin <mutilin@ispras.ru>,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] cocci: drm: report devm-allocated arguments and fields
-Date: Wed, 24 Sep 2025 17:01:26 +0300
-Message-Id: <20250924140126.23027-1-o.petrov@ispras.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758722638; c=relaxed/simple;
+	bh=uM6uSHTCjPtmI3Vzh1PPevWg0rMMV9zNEDAVmqFGGZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DUMauiMPnJMB+hpVRM/jXBTVSSeozhMysG5ZQohx1VUfT5v3HK7koWBxrRGtZk0k3f0xNmqy8ga0cAR1Xi+XGzV6Iwv6TdFBDiuUWBMUlVPoZZCGj0AsQppVBl/wN8zPmNreV4NpBUbrhxWCjNc0nG4mq0RyT5lQ59wl+YhpOas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJllzpq4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01256C4CEF0;
+	Wed, 24 Sep 2025 14:03:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758722638;
+	bh=uM6uSHTCjPtmI3Vzh1PPevWg0rMMV9zNEDAVmqFGGZw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sJllzpq4tR6nKD3tdPKsC7Asro+AUPMGKQItIJNnFv3n8cxUL9XcM+EFV2RrItwhY
+	 3nXj3OuDrF8+yWvyozb58DKmtJ47vJ4hqAUVcnIvZWfB35VE2WU4yEGXk/g9JPJHjv
+	 4Rq1uZKXZve+G4awVv9ynerQnOaynp6X7wB/BBKyFhqUgn8Mou+UkEFmrW1GKjUbC3
+	 vSgjyjb8V3QWi7hZ7LdxQbaL1BCRI41uZV/hMwBqR1sD/PpCUDs/0NCQ+zYAkynP9F
+	 anjcYsFg8AbwWAWHb37Vaa/hysBAeX+YhWgH7FZrpvpBKfo43hGbKv4Rc8cEoar9LP
+	 vo5h90Y2c7ADg==
+Date: Wed, 24 Sep 2025 09:03:47 -0500
+From: Rob Herring <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: mediatek: Fix wrong
+ compatible list for hifsys YAML
+Message-ID: <20250924140347.GA1556090-robh@kernel.org>
+References: <20250923201244.952-1-ansuelsmth@gmail.com>
+ <20250923201244.952-2-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923201244.952-2-ansuelsmth@gmail.com>
 
-Add two Coccinelle rules: (1) flag a devres-managed pointer
-passed to a drm-init function, and (2) flag a devres-managed
-pointer assigned to a field of drm-managed struct. The mismatch
-of the lifespan between devres- and drm-managed memory can cause
-a use-after-free error. The rules' have high confidence.
+On Tue, Sep 23, 2025 at 10:12:29PM +0200, Christian Marangi wrote:
+> While converting the hifsys to YAML schema, the "syscon" compatible was
+> dropped for the mt7623 and the mt2701 compatible.
 
-badarg: Report when a pointer to devres-managed memory is passed
-   as the second argument to several drm_*_init* functions that
-   (a) have such rule documented or (b) are some simple wrappers
-   to such a function.
+Is "syscon" really needed? AFAICT, the clock and reset drivers don't 
+need it.
 
-badarg2: The same, but pass the devm-allocated pointer through
-   an intermediate variable before passing to a drm-init function.
-
-badfield: Report when a devm-allocated pointer is assigned to a
-   field of a drm-managed struct.
-
-Found by Linux Verification Center (linuxtesting.org).
-
-Signed-off-by: Oleg Petrov <o.petrov@ispras.ru>
----
-v1: Among drivers/gpu/drm, Coccinelle finds 7 functions (b) that call
-functions (a). I included 5 of those in the rule. I did not check other files.
-The functions are the same for v6.1+.
-Patch https://lore.kernel.org/all/20240216125040.8968-1-e.orlova@ispras.ru/
-fixes such violations in stm module. badargs are obvious from diff,
-and the badfield is fixed in first lines where ldev is allocated.
- .../coccinelle/api/drm_dont_devm_alloc.cocci  | 124 ++++++++++++++++++
- 1 file changed, 124 insertions(+)
- create mode 100644 scripts/coccinelle/api/drm_dont_devm_alloc.cocci
-
-diff --git a/scripts/coccinelle/api/drm_dont_devm_alloc.cocci b/scripts/coccinelle/api/drm_dont_devm_alloc.cocci
-new file mode 100644
-index 000000000000..693977e98666
---- /dev/null
-+++ b/scripts/coccinelle/api/drm_dont_devm_alloc.cocci
-@@ -0,0 +1,124 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+///
-+/// Find (1) devres-allocated (usually by devm_kzalloc) argument to drm_*_init
-+/// functions or (2) assignment of devres-allocated pointer to a field of a drm-
-+/// allocated struct (usually dev_private of drm_device). The mismatch of the
-+/// lifespan between devres- and drm-managed memory can cause a use-after-free.
-+//
-+// Confidence: High
-+// Copyright: (C) 2025 Oleg Petrov ISPRAS
-+// Options: --no-includes --include-headers
-+//
-+
-+virtual report
-+virtual org
-+
-+// find devm-allocated (devres-managed) second arg for drm*init functions
-+@badarg exists@
-+position p;
-+expression devm,e;
-+@@
-+// only devm_kzalloc is really used
-+devm = \(devm_kzalloc\|devm_kcalloc\|devm_kmalloc\|devm_kmalloc_array\)(...);
-+...
-+// The kernel-doc comments (v6+) for these 5 functions
-+// forbid them to use devm-allocated argument.
-+( drm_connector_init
-+| drm_crtc_init_with_planes
-+| drm_connector_init_with_ddc
-+| drm_encoder_init
-+| drm_universal_plane_init
-+// These are the wrappers found in drivers/gpu/drm/*.c
-+// i.e. these call those above and just pass the second argument.
-+| drm_bridge_connector_init
-+| drm_crtc_init
-+| drm_plane_init
-+// drm_simple_display_pipe_init // does not apply
-+| drm_simple_encoder_init
-+| drm_writeback_connector_init
-+// mipi_dbi_dev_init_with_formats // does not apply
-+) ( e,<+...devm@p...+>,...)
-+
-+// same as above, but with an intermediate local variable
-+@badarg2 exists@
-+position p;
-+expression devm,e;
-+identifier vitm;
-+@@
-+// only devm_kzalloc is really used
-+devm = \(devm_kzalloc\|devm_kcalloc\|devm_kmalloc\|devm_kmalloc_array\)(...);
-+...
-+vitm = <+...devm...+>;
-+...
-+// The kernel-doc comments (v6+) for these 5 functions
-+// forbid them to use devm-allocated argument.
-+( drm_connector_init
-+| drm_crtc_init_with_planes
-+| drm_connector_init_with_ddc
-+| drm_encoder_init
-+| drm_universal_plane_init
-+// These are the wrappers found in drivers/gpu/drm/*.c
-+// i.e. these call those above and just pass the second argument.
-+| drm_bridge_connector_init
-+| drm_crtc_init
-+| drm_plane_init
-+// drm_simple_display_pipe_init // does not apply
-+| drm_simple_encoder_init
-+| drm_writeback_connector_init
-+// mipi_dbi_dev_init_with_formats // does not apply
-+) ( e,<+...devm@p...+>,...)
-+
-+// find direct assignment of devres-managed memory to drm device
-+@badfield exists@
-+position p;
-+expression drm,devm;
-+identifier f;
-+@@
-+(
-+drm = \(drm_dev_alloc\|drmm_kzalloc\|drmm_kcalloc\|drmm_kmalloc\|drmm_kmalloc_array\)(...);
-+...
-+devm = \(devm_kzalloc\|devm_kcalloc\|devm_kmalloc\|devm_kmalloc_array\)(...);
-+|
-+devm = \(devm_kzalloc\|devm_kcalloc\|devm_kmalloc\|devm_kmalloc_array\)(...);
-+...
-+drm = \(drm_dev_alloc\|drmm_kzalloc\|drmm_kcalloc\|drmm_kmalloc\|drmm_kmalloc_array\)(...);
-+)
-+...
-+drm->f =@p <+...devm...+>;
-+
-+
-+@script:python depends on report@
-+p << badarg.p;
-+@@
-+msg = "WARNING devm-allocated argument in a drm-init; use drmm-init family (or drmm-alloc)."
-+coccilib.report.print_report(p[0], msg)
-+
-+@script:python depends on org@
-+p << badarg.p;
-+@@
-+msg = "WARNING devm-allocated argument in a drm-init; use drmm-init family (or drmm-alloc)."
-+coccilib.org.print_report(p[0], msg)
-+
-+@script:python depends on report@
-+p << badarg2.p;
-+@@
-+msg = "WARNING devm-allocated argument in a drm-init; use drmm-init family (or drmm-alloc)."
-+coccilib.report.print_report(p[0], msg)
-+
-+@script:python depends on org@
-+p << badarg2.p;
-+@@
-+msg = "WARNING devm-allocated argument in a drm-init; use drmm-init family (or drmm-alloc)."
-+coccilib.org.print_report(p[0], msg)
-+
-+@script:python depends on report@
-+p << badfield.p;
-+@@
-+msg = "WARNING devm-allocated field in a drmm-allocated struct; consider drmm-init family or use drmm-alloc."
-+coccilib.report.print_report(p[0], msg)
-+
-+@script:python depends on org@
-+p << badfield.p;
-+@@
-+msg = "WARNING devm-allocated field in a drmm-allocated struct; consider drmm-init family or use drmm-alloc."
-+coccilib.org.print_report(p[0], msg)
--- 
-2.34.1
-
+> 
+> Add back the compatible to mute DTBs warning on "make dtbs_check" and
+> reflect real state of the .dtsi.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml
+> index 9e7c725093aa..aa3345ea8283 100644
+> --- a/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml
+> @@ -16,13 +16,15 @@ maintainers:
+>  properties:
+>    compatible:
+>      oneOf:
+> -      - enum:
+> -          - mediatek,mt2701-hifsys
+> -          - mediatek,mt7622-hifsys
+> +      - items:
+> +          - const: mediatek,mt2701-hifsys
+> +          - const: syscon
+> +      - const: mediatek,mt7622-hifsys
+>        - items:
+>            - enum:
+>                - mediatek,mt7623-hifsys
+>            - const: mediatek,mt2701-hifsys
+> +          - const: syscon
+>  
+>    reg:
+>      maxItems: 1
+> -- 
+> 2.51.0
+> 
 
