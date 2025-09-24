@@ -1,107 +1,172 @@
-Return-Path: <linux-kernel+bounces-830705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A786B9A562
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:49:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C799B9A571
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C9901626AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:49:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAB66189F283
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8248E3081B8;
-	Wed, 24 Sep 2025 14:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F77309F12;
+	Wed, 24 Sep 2025 14:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F0SJUo4s"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="xcbeB/MI"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916CF2FC860
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B4517BA6;
+	Wed, 24 Sep 2025 14:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758725350; cv=none; b=Ckx/tlLQKbuGv++pwo7CDHpz/o8ZkHKF4GKG/oCxlGyknYdpAbaHXB0eYrvILNYeuYs8JIllBp+A0D6SAnzgT9r9MSODsVi/s70OMSMacsAr44uc2gayH3AgxEhq2a352JiC8w+1cKIWw4PprQ0TXyxOjWeolIzmNuJZpNSaDJ8=
+	t=1758725405; cv=none; b=f2HO1rDqRD0fO53Oqk8aV6gY6+nG5r0yYTC1Ix03QUmdoiDrQngJPpH86xyZr10IakIKZme4m+UIU3ti5dEHIXrDQorUxOHJWxUJ3gDvtwpcaPc8LC2vXr2ikdA6/h028GErXUacfugmURqKuh6vez0XqYpvXzmW5GwbVaAwG4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758725350; c=relaxed/simple;
-	bh=Ne3PQvFuXYtDil7myRTwQQ61xiDQTxe02MSNqQTq5D4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IJMawOJtOVFSW3VRG0e2s+uKUCPn9s8FlfhD5vhX6flvxeixw8L5F45bjbmPRhepFqs6bsKJf1UMqhM1mPsJ4CAAUoHxVTTccHQtELtsxFP5Az2F5oFdf2OVuF2etbUrgtzVtcZxL8zFOHw/rCMXn5DwEkm2amGIG8R0KJlJj/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F0SJUo4s; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so1174076b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:49:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758725349; x=1759330149; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XTcoa6Zz9kvrOd/56qsfvcd4iv+T5ivIw8BtHV3xup0=;
-        b=F0SJUo4sWzkP+5cN5TEHBExEjCJaMM6mLt6fk/j7pASMaVYEv+aPLb/M6PdGdI4CD2
-         y/eQ1TKf7p0rUUGbuChZLPziVe7KXN1c7X6ps8XqW5ClUaWIyRo7GdJQDL+IaHEdGjK1
-         /XCWWIQOJG46NOTd/XAfNg7dJLxSI2EycxBydJkZ6yRNaoG+tH+NGMumn0Kk2rkUCIYe
-         8l3tpKjbZveLjxaQ5ggJRjD8Tfcocwtn8wnukrt8xcB9a07h/6TUmz/lcXH22f9bzhQ5
-         GyEb2/90qJC7Wd7a4iuTOvTCgvOvudxkEe3Xmz2U4wWGi/J8FT61PtM5422YWo7rLkh3
-         Lo4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758725349; x=1759330149;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XTcoa6Zz9kvrOd/56qsfvcd4iv+T5ivIw8BtHV3xup0=;
-        b=AsfGoNW8c98DA+ziB3Tq5bXBa8xZ7klMH4/o/jT3zKpXauclJHZ3C/S7OujePqdKfV
-         p95u5eE9y7w8P1gl1ACSOF9XSb3o/M1QtewkHmeOZpGG/0imUYiEmdcsRRgaK4oGdKrR
-         9IDXMAr9wAs20s0rmCpDg4isJNYMRUHfRCXcM767PS8BBj0kL5szwVYsGt7aq4+jeDsN
-         5MsOqPI4bMzmqo5GR1H/orwy650Z25baCoUAq13/5Ih826munuByhCC8prKRy5V3q15Z
-         d3cpFaqVG0GkoOm49bMWGDbvoOtYkT4wIVGBvEbssr8FdxgnzFZ4qhKTodUgh7K7A/O/
-         ORRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGOK2xH0O2dCLqu0Y5/Diqa0K69pbtrsrG1ISW0FvmEs7TPw1qL/40EVTLAakUpn31H1KYojhSxpSHQ50=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3GjaBKR/u3dkbwM/MT2a9uBCqEb2Wkj8vQYptiF9O1cQib3Y6
-	v+qfLwo9V1aKy9A3jQtyuEJoUlq80ixAX6204iFHPlvrCBRBY9Et40rI
-X-Gm-Gg: ASbGnctsbgucUSMeUlc2DrP7eNJJKKzAcVA0oN5ui0VQa7ydWHCllZSStIQIdLRVVdv
-	/TWmOuZwkW3Ye9MlX/sZUqDgVF8Rju3LYlLNiQ+pIWFa3bTA8EsbaxzpBJpQSNSpxzdfTdAKqxq
-	Awe45Hy+sDPMzcRNBxMeJwhssiBE+3q1mffWA9BjM9Yz8VkQz6QZW4YNS0NjwMd0iRSt/+KsbAL
-	cCum14Mt7H8SK5Z8EAncOXlu6NkRxT9Qymc7NfyxHQiQRcswGLpyB5N+gdOkCf2y7FbvABPdI/i
-	b0BEz9bHnp30KofkxWA7BQw8qB45McIsXIIT6vuA/vGcH8FYsjBQ8d0Jf2kPicv5se7F3S23qlL
-	aIPdayNkdgYUNvhttNzrCoI6ZUC7UOx8IXXB20dDG6NU63A==
-X-Google-Smtp-Source: AGHT+IE3H65r5seFjizDOCCsJIiCdUp7VyrXHd8niwx/uUBuHdurOAYlr+ucwqg/Q6jxd0cGQwOd9A==
-X-Received: by 2002:a05:6a00:1490:b0:771:f071:28fd with SMTP id d2e1a72fcca58-77f6983579fmr2710893b3a.14.1758725348826;
-        Wed, 24 Sep 2025 07:49:08 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7805ca5f7c4sm1821991b3a.81.2025.09.24.07.49.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 07:49:08 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 24 Sep 2025 07:49:07 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Cryolitia PukNgae <cryolitia@uniontech.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com, niecheng1@uniontech.com,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] hwmon: (gpd-fan) complete Kconfig dependencies
-Message-ID: <7db7fb9e-fc02-4d76-aed8-c32d59d51f4f@roeck-us.net>
-References: <20250924-hwmon2-v1-1-fc529865a325@uniontech.com>
+	s=arc-20240116; t=1758725405; c=relaxed/simple;
+	bh=nqIIO7txybV7R91UDPW32xrfVvjRQAGIDMf2qgiDNzM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oWFR1FSI+2AneeycI39dl4NRGu+EP0eJ35b8ivxI1YOfcdyLU0ZGjWbTvIAOwBK25RUIlYiituyDv3bgx8YH5E2AKMJNi5APq4yR4ZFY0WcBLD14068fTjvgB6S1Qt8rI2unr5MJZibCuHJeDs0bDq5GqhMUaHDiD9LEtfoap0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=xcbeB/MI; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 3E0284E40D42;
+	Wed, 24 Sep 2025 14:50:00 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 00BD460634;
+	Wed, 24 Sep 2025 14:50:00 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C441E102F18D8;
+	Wed, 24 Sep 2025 16:49:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758725398; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=5Yy6cV7CI+4JraO3JP09oFw2D7jO5gkDGtxirbXHjaM=;
+	b=xcbeB/MI+amkstuwxBY1vgM1i16KDyFZwzbh1A3A0wKjy+8lBJpjX0CHaQU9iD15Y2vmgQ
+	4n/6aK/Bf4p8sviXKJS0i2D9qVvcXqTZt5pz0R0ZQYhlTmIhSSr6iCxUoLLovmdn9IqMEL
+	ovYGLtEkC6vzLM4Bh2G60xL5iTBUhn8bzrq8KnN5OE0VrbFkUSrws4/JPTHhbO0tg2M7g1
+	67ylyYBvWDtD0jRExy1B4qLJF/sGNG8D4KuZmVW0Uhh7FtEIp8gOwougR5nJfBQHqLRFtP
+	8WJUOnOqK5AcPBeMMS8Uv9fFGe7/GIbH4sP7aOyuijXyd9sIa2xntSZ3WzjgYA==
+From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Subject: [PATCH bpf-next v4 00/15] selftests/bpf: Integrate test_xsk.c to
+ test_progs framework
+Date: Wed, 24 Sep 2025 16:49:35 +0200
+Message-Id: <20250924-xsk-v4-0-20e57537b876@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924-hwmon2-v1-1-fc529865a325@uniontech.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP8E1GgC/2XMQQ6CMBCF4auYrq1pZ1pLXXkP4wLKII1KCSUEQ
+ 7i7TVlodDl58/0LizR4iuy0W9hAk48+dOlQ+x1zbdndiPs63QwEaAGy4HO8c+EaK8gaXUvF0mc
+ /UOPnXLmwqm94R/PIrmlpfRzD8Mr5SeY9l1BiLk2SC27QKAO2tFjZcxXC+PDdwYVnLkzwUVbAp
+ iApadwRla41SP2v8FupTWFSjrAAQpSq+FHrur4B2SMApw4BAAA=
+X-Change-ID: 20250218-xsk-0cf90e975d14
+To: =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
+ Magnus Karlsson <magnus.karlsson@intel.com>, 
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
+ Jonathan Lemon <jonathan.lemon@gmail.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Sep 24, 2025 at 03:48:38PM +0800, Cryolitia PukNgae wrote:
-> From: Cryolitia PukNgae <cryolitia@uniontech.com>
-> 
-> DMI and HAS_IOPORT is also needed
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202509200214.i2QX7iwD-lkp@intel.com/
-> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+Hi all,
 
-Applied.
+The test_xsk.sh script covers many AF_XDP use cases. The tests it runs
+are defined in xksxceiver.c. Since this script is used to test real
+hardware, the goal here is to leave it as it is, and only integrate the
+tests that run on veth peers into the test_progs framework.
 
-Guenter
+Some tests are flaky so they can't be integrated in the CI as they are.
+I think that fixing their flakyness would require a significant amount of
+work. So, as first step, I've excluded them from the list of tests
+migrated to the CI (cf PATCH 14). If these tests get fixed at some
+point, integrating them into the CI will be straightforward.
+
+I noticed a small error on a function's return value while investigating
+on the report's summary issue pointed out by Maciej in previous iteration,
+the new PATCH 3 fixes it.
+
+PATCH 1 extracts test_xsk[.c/.h] from xskxceiver[.c/.h] to make the
+tests available to test_progs.
+PATCH 2 to 7 fix small issues in the current test
+PATCH 8 to 13 handle all errors to release resources instead of calling
+exit() when any error occurs.
+PATCH 14 isolates some flaky tests
+PATCH 15 integrate the non-flaky tests to the test_progs framework
+
+Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+---
+Changes in v4:
+- Fix test_xsk.sh's summary report.
+- Merge PATCH 11 & 12 together, otherwise PATCH 11 fails to build.
+- Split old PATCH 3 in two patches. The first one fixes
+  testapp_stats_rx_dropped(), the second one fixes
+  testapp_xdp_shared_umem(). The unecessary frees (in
+  testapp_stats_rx_full() and testapp_stats_fill_empty() are removed)
+- Link to v3: https://lore.kernel.org/r/20250904-xsk-v3-0-ce382e331485@bootlin.com
+
+Changes in v3:
+- Rebase on latest bpf-next_base to integrate commit c9110e6f7237 ("selftests/bpf:
+Fix count write in testapp_xdp_metadata_copy()").
+- Move XDP_METADATA_COPY_* tests from flaky-tests to nominal tests
+- Link to v2: https://lore.kernel.org/r/20250902-xsk-v2-0-17c6345d5215@bootlin.com
+
+Changes in v2:
+- Rebase on the latest bpf-next_base and integrate the newly added tests
+  to the work (adjust_tail* and tx_queue_consumer tests)
+- Re-order patches to split xkxceiver sooner.
+- Fix the bug reported by Maciej.
+- Fix verbose mode in test_xsk.sh by keeping kselftest (remove PATCH 1,
+  7 and 8)
+- Link to v1: https://lore.kernel.org/r/20250313-xsk-v1-0-7374729a93b9@bootlin.com
+
+---
+Bastien Curutchet (eBPF Foundation) (15):
+      selftests/bpf: test_xsk: Split xskxceiver
+      selftests/bpf: test_xsk: Initialize bitmap before use
+      selftests/bpf: test_xsk: Fix __testapp_validate_traffic()'s return value
+      selftests/bpf: test_xsk: fix memory leak in testapp_stats_rx_dropped()
+      selftests/bpf: test_xsk: fix memory leak in testapp_xdp_shared_umem()
+      selftests/bpf: test_xsk: Wrap test clean-up in functions
+      selftests/bpf: test_xsk: Release resources when swap fails
+      selftests/bpf: test_xsk: Add return value to init_iface()
+      selftests/bpf: test_xsk: Don't exit immediately when xsk_attach fails
+      selftests/bpf: test_xsk: Don't exit immediately when gettimeofday fails
+      selftests/bpf: test_xsk: Don't exit immediately when workers fail
+      selftests/bpf: test_xsk: Don't exit immediately if validate_traffic fails
+      selftests/bpf: test_xsk: Don't exit immediately on allocation failures
+      selftests/bpf: test_xsk: Isolate flaky tests
+      selftests/bpf: test_xsk: Integrate test_xsk.c to test_progs framework
+
+ tools/testing/selftests/bpf/Makefile              |   11 +-
+ tools/testing/selftests/bpf/prog_tests/test_xsk.c | 2595 ++++++++++++++++++++
+ tools/testing/selftests/bpf/prog_tests/test_xsk.h |  294 +++
+ tools/testing/selftests/bpf/prog_tests/xsk.c      |  146 ++
+ tools/testing/selftests/bpf/xskxceiver.c          | 2696 +--------------------
+ tools/testing/selftests/bpf/xskxceiver.h          |  156 --
+ 6 files changed, 3174 insertions(+), 2724 deletions(-)
+---
+base-commit: 1bd67e08d0f3fcb8cc69a73fb7aab9f048be4b8e
+change-id: 20250218-xsk-0cf90e975d14
+
+Best regards,
+-- 
+Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+
 
