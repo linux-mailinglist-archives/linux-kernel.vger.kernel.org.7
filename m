@@ -1,40 +1,41 @@
-Return-Path: <linux-kernel+bounces-830151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 086BAB98EA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:36:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1470B98E9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4464B188C838
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:36:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C18FF1894925
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4C028AB16;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881E1288C8B;
 	Wed, 24 Sep 2025 08:34:54 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39BB285C89
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD95B2874FA
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758702894; cv=none; b=eC01mXXbIxC0gEI0ucOq/DJn+o3ZqRuttkdbhpHzbJvCajfzHPP93I9JPIqDjZbaQPSk5LOfaSIZha/O5AUq+NWr30/hBO9yMMHhHpA25Ol8mv27AGWqYAyW+33MC+hV0oPVNB53GmJFEsCs+mdvxPvx/TOfE4+uxXU/y9U3glY=
+	t=1758702894; cv=none; b=jIiKfW9wqRnLjT5qE4vE5Ys9muJ7UE20psiOZzvzpDxkdi6UKlEVRx19P7/+sdTEdO5X7stiI5Pi+QYPCKPoEsqpYYDBu74zA32bJyntTBPzPaz5PtktNAgcPSMd0cXuoWME5enR1bNJXjdGeibhTt+6DMdKuFWCuLNnJalXA+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758702894; c=relaxed/simple;
-	bh=4wvx639RnwwdY8F0v2Vj37kcv/o6/9JmJ8NAhXnPjto=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=r+Snl3aSsVwH60rQZtjKgstpwBfBkfxVZ7Dg8e9re0ToDsw19zoF9fWIzRpt9rea+4ptTENX829605m63SWkw6TqK5YfIHhtOOa0td+LLlxPN9A3wvoMHj3UCKV7T7pTzh3ke9vdVA7QkAQD7puoMnAJASUSn35vHz+IOKPbaqg=
+	bh=LBjy3XzRX+g+K5biGGKQclnmtSD7CAxE4QMEql4hRcQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=msXMQk9h6g+kaw6iIC07sDgCL3IatQhFGvoG688gJpdE4L5+qbFpz16q8ygB0LKdhj6rlHZlYuWS6EXqsz7DTnwAafkNxNtbPp00sgTAIorSdiTKlIyT7wIWst4sDk2D1HBzg+h4mn/vCELAiJTXCs2NBNs8dWQ5yO9Kv3t5FXs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <jre@pengutronix.de>)
-	id 1v1KxR-0006Aj-7V; Wed, 24 Sep 2025 10:34:37 +0200
+	id 1v1KxR-0006Aj-A5; Wed, 24 Sep 2025 10:34:37 +0200
 From: Jonas Rebmann <jre@pengutronix.de>
-Subject: [PATCH v3 0/3] Mainline Protonic PRT8ML board
-Date: Wed, 24 Sep 2025 10:34:11 +0200
-Message-Id: <20250924-imx8mp-prt8ml-v3-0-f498d7f71a94@pengutronix.de>
+Date: Wed, 24 Sep 2025 10:34:12 +0200
+Subject: [PATCH v3 1/3] dt-bindings: net: dsa: nxp,sja1105: Add reset-gpios
+ property
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,11 +44,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAOt02gC/2XMSw6CMBSF4a2Qjq3pE4oj92EcgL3ATaSQFhsMY
- e8WnBgc/ic530ICeIRALtlCPEQMOLgU8pSRR1e5Fija1EQwoVnBOMV+Nv1IRz+Z/kkZr0Gq3Kh
- clyR9Rg8Nzrt3u6fuMEyDf+985Nv6lUrODlLklNHGMlWB5Tov2HUE174mPziczxbIxkXxS5gjI
- RIhrVG1akBLC3/Euq4f9TOPKPIAAAA=
-X-Change-ID: 20250701-imx8mp-prt8ml-01be34684659
+Message-Id: <20250924-imx8mp-prt8ml-v3-1-f498d7f71a94@pengutronix.de>
+References: <20250924-imx8mp-prt8ml-v3-0-f498d7f71a94@pengutronix.de>
+In-Reply-To: <20250924-imx8mp-prt8ml-v3-0-f498d7f71a94@pengutronix.de>
 To: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
  "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
  Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
@@ -61,16 +60,14 @@ Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-sound@vger.kernel.org, imx@lists.linux.dev, 
  linux-arm-kernel@lists.infradead.org, Jonas Rebmann <jre@pengutronix.de>, 
- Frank Li <Frank.Li@nxp.com>, David Jander <david@protonic.nl>, 
- Lucas Stach <l.stach@pengutronix.de>, 
- Oleksij Rempel <o.rempel@pengutronix.de>
+ Frank Li <Frank.Li@nxp.com>
 X-Mailer: b4 0.15-dev-7abec
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1535; i=jre@pengutronix.de;
- h=from:subject:message-id; bh=4wvx639RnwwdY8F0v2Vj37kcv/o6/9JmJ8NAhXnPjto=;
- b=owGbwMvMwCV2ZcYT3onnbjcwnlZLYsi4vFba0Pk8n2Oeim+bwmwF888J55+v+JZt43defuPjP
- xVJK9vPdZSyMIhxMciKKbLEqskpCBn7XzertIuFmcPKBDKEgYtTACZyRZuRYatq8smImfserIta
- ZfJgl1Nu1Ed3uVcp6fbZmmuSFr3lrWD4XxLwSyzYVJll52yVTfz9Z6anX9m37HnaiWym0rPZ9tO
- rWQE=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1322; i=jre@pengutronix.de;
+ h=from:subject:message-id; bh=LBjy3XzRX+g+K5biGGKQclnmtSD7CAxE4QMEql4hRcQ=;
+ b=owGbwMvMwCV2ZcYT3onnbjcwnlZLYsi4vFZ6h2lV0qRN0/zXP7BQSlw9Ofid5NydT6d06DM36
+ B/wr9Je3lHKwiDGxSArpsgSqyanIGTsf92s0i4WZg4rE8gQBi5OAZiIJhMjw6XJlh6R/3aVqmsE
+ RZRY/22vlpsjrTr5SZ93zAzOnO/yCxn+qfLd3H8g/kah6noONZfrZt3uR99d0+ee3DyXbfLneHk
+ ZXgA=
 X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
  fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
@@ -78,42 +75,40 @@ X-SA-Exim-Mail-From: jre@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-This series adds the Protonic PRT8ML device tree as well as some minor
-corrections to the devicetree bindings used.
+Both the nxp,sja1105 and the nxp,sja1110 series feature an active-low
+reset pin, rendering reset-gpios a valid property for all of the
+nxp,sja1105 family.
 
+Acked-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
 ---
-Changes in v3:
-- Add comment on the intentional limitation to 100Mbps RGMII
-- Link to v2: https://lore.kernel.org/r/20250918-imx8mp-prt8ml-v2-0-3d84b4fe53de@pengutronix.de
+ Documentation/devicetree/bindings/net/dsa/nxp,sja1105.yaml | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Changes in v2:
-- Dropped "ASoC: dt-bindings: asahi-kasei,ak4458: Reference common DAI
-  properties", applied to broonie/sound for-next (Thanks, Mark)
-- Updated description of the reset-gpios property in sja1105 binding to
-  address the issues of connecting this pin to GPIO (Thanks, Vladimir)
-- Added the fec, switch and phy for RJ45 onboard ethernet after
-  successful testing
-- Consistently use interrupts-extended
-- Link to v1: https://lore.kernel.org/r/20250910-imx8mp-prt8ml-v1-0-fd04aed15670@pengutronix.de
+diff --git a/Documentation/devicetree/bindings/net/dsa/nxp,sja1105.yaml b/Documentation/devicetree/bindings/net/dsa/nxp,sja1105.yaml
+index 9432565f4f5d..e9dd914b0734 100644
+--- a/Documentation/devicetree/bindings/net/dsa/nxp,sja1105.yaml
++++ b/Documentation/devicetree/bindings/net/dsa/nxp,sja1105.yaml
+@@ -32,6 +32,15 @@ properties:
+   reg:
+     maxItems: 1
+ 
++  reset-gpios:
++    description:
++      A GPIO connected to the active-low RST_N pin of the SJA1105. Note that
++      reset of this chip is performed via SPI and the RST_N pin must be wired
++      to satisfy the power-up sequence documented in "SJA1105PQRS Application
++      Hints" (AH1704) sec. 2.4.4. Connecting the SJA1105 RST_N pin to a GPIO is
++      therefore discouraged.
++    maxItems: 1
++
+   spi-cpha: true
+   spi-cpol: true
+ 
 
----
-Jonas Rebmann (3):
-      dt-bindings: net: dsa: nxp,sja1105: Add reset-gpios property
-      dt-bindings: arm: fsl: Add Protonic PRT8ML
-      arm64: dts: add Protonic PRT8ML board
-
- Documentation/devicetree/bindings/arm/fsl.yaml     |   1 +
- .../devicetree/bindings/net/dsa/nxp,sja1105.yaml   |   9 +
- arch/arm64/boot/dts/freescale/Makefile             |   1 +
- arch/arm64/boot/dts/freescale/imx8mp-prt8ml.dts    | 501 +++++++++++++++++++++
- 4 files changed, 512 insertions(+)
----
-base-commit: ea21fa34164c9ea0a2a5b8714c7e36f54c7fb46e
-change-id: 20250701-imx8mp-prt8ml-01be34684659
-
-Best regards,
---  
-Jonas Rebmann <jre@pengutronix.de>
+-- 
+2.51.0.297.gca2559c1d6
 
 
