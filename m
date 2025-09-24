@@ -1,228 +1,234 @@
-Return-Path: <linux-kernel+bounces-829979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D957EB985C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:14:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6EEB985CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B99F4A2DF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:14:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B5074A2F37
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28C92417C2;
-	Wed, 24 Sep 2025 06:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CB1242D99;
+	Wed, 24 Sep 2025 06:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="K4god3/1"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011066.outbound.protection.outlook.com [52.101.52.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Evrby7JO";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DW4gAodH";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Evrby7JO";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DW4gAodH"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11F323D7FD
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758694457; cv=fail; b=l3T+7qTu++V5WTeEuAqjdy6J7TUB5llVCOrfeO+hq5EpPj0VhtNNF6DFIuJr+skvqJKwojCoR1SMRKaK3T92/nm/I/OCjQ7sJ1Piv/fZjHVGuozS4hnKZ6x7psNtkyFf894f8w1CpijzgCG0Xf67qd7ul/k/gzCxrJflFzWwKgw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758694457; c=relaxed/simple;
-	bh=GSvjcJbY5z4s3aexCRrmBOcRElt8Gar9POX/JIHGc8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DiLy6RS/zbcP5Gc+rZgXQbRzux6Ngy8tUpqb1cj4XHO3Qw5Z0YCGzY7jqr+8bA0PlDdqkrqsPp7hN/8PP4rLbhofjp/FB+KZNlZ8ci7/bzox1mFvgpgRsycrHjkwu5MR2sI5VCY3phl8I+71/yGIMz/LculNodlQ5iUDg3Yb/UI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=K4god3/1; arc=fail smtp.client-ip=52.101.52.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wJ6+OU7SsTpA1oU4SQj9KLIP7Hi4B+LP+BeJMhTipRg6dYaV2vSMghfkkNx4Qbe+kTQ2H0xve3AA+Zt1dJ7FalCZn1Zo5lXeC4y61dRSmEssllsaiVOckEJclEUpgo86CZwO7/1jf27Rlg911otJkNI71NCvaWGLIiIu3CbA71Nop7UEjwbVMMLeUebWPmvf1fkWZzHt9/f2dodmu5PYqiNCp2fm8vtnymjKGhNnks/rqnkNa2kI17o10OXDBb1aQUb2gMVgtwBQkBKWC/HO46LeAgE0EVMLgPPcZm9H4H64sXx5FVo9SksHnHw2deHmlLZ5KlYr6EzXsLZaNyHbSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=etdQH0gEuc3uzI3kQNobZm5TUahWGQAHVUsup6IWe0I=;
- b=gOXwhUPhSc0RzN29O2s+IUVGVr6ZR24hGI/NeLRmR9s2IYvFPd2TMkA82C+AdcQlDn1uIAWSdJ7Z+t1UJjhcb5M437NNYEkorDUgFj9L2fgBHCCh/YM1/r8oSN1TvWjSHwcsHRN2QZyrvla11rNCkHjmoaDheo1mxdKhWysmMA6S+bDNlxCTBOIhlyiSuBMM1LDmzVMGmeMyi8qXoXMAgciMsIbS8aqUPt9cUfRp8sOu6AkzIGMfQIdHq2jbTjkRn22euijBJIfP3YPTJ4VbcBiwgVg8YHzf7jiW52FuQ5iXUZbWWs1n3eozzkGTCqMdWONaAXABxZKPL9w4hP1YOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=etdQH0gEuc3uzI3kQNobZm5TUahWGQAHVUsup6IWe0I=;
- b=K4god3/1jCEJFYP/g9XwtvxKRy91cMjZo2w4Wg4qOMclxnJRd79gBaDcjrGF4r8cDPKwC+lfWYr/ql5IgYYAEUdnb0DhfMQrgVRqfNcM88yY4cmoK13PiUPBG9QAy1lPEC4SKaKziMn2veiXt83TK9J7bSCi67rwDeuX7FBbZLtGKXkY003bHR/E0e2CG0lJwl684XhI01ui3BdkDpW1fdmMWeWZ3QlPDK0i23oD0S81L09LT9j85Gwrxw4TkMUN2JX3VMwBqj5uAvFVIuDq/KRVkoOZ8sz1MKlHLX7uva7nFdIuLR33IMcoyPzeEl2QXePg41Q/jGGcv6ox6AHk/A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by CH3PR12MB8234.namprd12.prod.outlook.com (2603:10b6:610:125::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
- 2025 06:14:12 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9137.018; Wed, 24 Sep 2025
- 06:14:12 +0000
-Date: Wed, 24 Sep 2025 08:14:03 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
-Subject: Re: [PATCH 1/7] sched_ext: Use rhashtable_lookup() instead of
- rhashtable_lookup_fast()
-Message-ID: <aNOMK1gk9if3UTgQ@gpd4>
-References: <20250922013246.275031-1-tj@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922013246.275031-1-tj@kernel.org>
-X-ClientProxiedBy: PA7P264CA0275.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:373::11) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7877D2417C2
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758694464; cv=none; b=ZtnMoJ9AoGg5Qhp1y3Ux7p0HFikYbAcnMYRfC1x+EL9Brkcral7O9zmoGqeEgNy/vmXFQm4R1ABomBmBx0ZUsAk+CkyubJY/zt6aHnnJuyUlqgeFjSW6dzFy0V4siKEYTATXir2MJ4i9jwyIA3Jb5VgjUikbe+pEXhU6oqEeqvk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758694464; c=relaxed/simple;
+	bh=2f1cjhXTjpJVNqIZQ/x9QZ/fYiIi4/GRvJbAJnnHano=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=svlzPYqv88fvspFFqOCt0dXUKa12CVHllb4JqAZfgaHdmSJW5yTpCj9Wodrm7IffXEGSWNIBXHIbZbyB//SRt3T6tM5AxSbcSRynR9u2ncXGr6+GkljUvfLQ9P+NeDGvSf/SjjCAHdi3DwzDvWle8unPsGkTP4KhmVOdQZoJ6Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Evrby7JO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DW4gAodH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Evrby7JO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DW4gAodH; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 936C922091;
+	Wed, 24 Sep 2025 06:14:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758694460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lPUmYKtSrf64sFK/B5EDnsD6H5h49EYj3T2v1Sipsy8=;
+	b=Evrby7JOXOeIUdwwEkH3pT8Nw4r38FXS+9Q9ma0Zy7wjHEVmCdsuIFYYUnEunAltCL/x/i
+	Uwl03/tDYRNk3h3rFx66vcO/vLWgQGdd6QWMEGplwI878gcymjM6ofnV3f5Tlgs1XTSksf
+	x++4B3uAIR+BcxvEwkyYLS2p/eATKng=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758694460;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lPUmYKtSrf64sFK/B5EDnsD6H5h49EYj3T2v1Sipsy8=;
+	b=DW4gAodHhFNTG/oBwDSju6E/KInHS+4E618OPCW8o+0iUdd5ZF/oxATLR3qGMwtERtgVKK
+	7AWwHzBaG0SNtPCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758694460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lPUmYKtSrf64sFK/B5EDnsD6H5h49EYj3T2v1Sipsy8=;
+	b=Evrby7JOXOeIUdwwEkH3pT8Nw4r38FXS+9Q9ma0Zy7wjHEVmCdsuIFYYUnEunAltCL/x/i
+	Uwl03/tDYRNk3h3rFx66vcO/vLWgQGdd6QWMEGplwI878gcymjM6ofnV3f5Tlgs1XTSksf
+	x++4B3uAIR+BcxvEwkyYLS2p/eATKng=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758694460;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lPUmYKtSrf64sFK/B5EDnsD6H5h49EYj3T2v1Sipsy8=;
+	b=DW4gAodHhFNTG/oBwDSju6E/KInHS+4E618OPCW8o+0iUdd5ZF/oxATLR3qGMwtERtgVKK
+	7AWwHzBaG0SNtPCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3197613647;
+	Wed, 24 Sep 2025 06:14:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8sAmCjyM02hHVAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 24 Sep 2025 06:14:20 +0000
+Message-ID: <a4b677f1-9c30-426b-bead-bebf19f099f5@suse.de>
+Date: Wed, 24 Sep 2025 08:14:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|CH3PR12MB8234:EE_
-X-MS-Office365-Filtering-Correlation-Id: d2036e0e-7505-4ef2-6a97-08ddfb319463
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pDwnIo3domg7WCwX/PklxzqUUT0MXRXhXeXoSL2qJX3br4mF91WnxvAbEov3?=
- =?us-ascii?Q?yVnvWQNaxeDKvCAVeheIA5cYNLQKD/lSinqwUMRbZzWyqKeEWcWdHu+h04SV?=
- =?us-ascii?Q?7pNXPPwAUFDQZqwyiyQHqXOTG11vhBcriu2dBcpRogVoMGHo3rPj/8kv1Jvg?=
- =?us-ascii?Q?TbA0rHj/mkM5Y9K66rKJ16fPObiEMzzNY0o3GAgMvR06M3PGEBl8kYQirKWn?=
- =?us-ascii?Q?Gv+0kQeYDkDc6J4o6nioUX9hV0Ls7+pxTKD/TsvDVVpdcXwu+0TRtMt46EpD?=
- =?us-ascii?Q?Gvg87ucyO/8faumCeeGQfEGhTMBQzvpxunaZX3jzNk7a547X6CjhC14pS1ea?=
- =?us-ascii?Q?LHa+7zL/uTabecv958YaBLgmf2XfilBs7rXHs9gnKVJ2KWsXj5LMyVqRrNS1?=
- =?us-ascii?Q?W9DTkY04z9fFzdaHLHa8iAeXlGsNYRYOK/aO37tuLDUG7LMxcjZ1B7FwfrY7?=
- =?us-ascii?Q?SmF3+QHaFSRrE/cpkm53cOH1KgiJAqsino7V0cXkN/HESuhsbEtzsHp0/ELS?=
- =?us-ascii?Q?fHlV7870SxH2Noww413JLJuv9BENo7Ik6uP/3IisOOB1HjA9FrFRHOyryJln?=
- =?us-ascii?Q?JiNLpG+KEgMTHoJSMh2xTCtb+XM1gw76kopqZMbcNpcERsIXvNxodnZQ4Cuk?=
- =?us-ascii?Q?JcGT8Lyw4trjQ9un5JRlElvVUtvU5pOwTwD7hgDaPlnj/KKwvqFRzGrRtBWF?=
- =?us-ascii?Q?YiiP9HF14wz+PAgvEfrg2HBd59yeqh8nGURyEqdPeI+sQhq4zJGF72GZ+3Yx?=
- =?us-ascii?Q?ViuuiVz/xAEypAwcvxnkDLKWErGO9QcqJ24MIjHMEnRwBZYQQIbRAZvqVTIU?=
- =?us-ascii?Q?nLXvDiEe+l3c8PU7KfybknWewXC+ubB6IwD3RzKN4DquGMQ0FEmGC1+SnXFc?=
- =?us-ascii?Q?vEZVOLsz6d8ZPeADLiPVphe+cCrgW6QEgZmTS/Wz0iagTg+VTXA/VDH8fjvo?=
- =?us-ascii?Q?jDbFrItSOdbKvk+sZaNWca5DvFaJBHFdKnSqBaDFRN0iw12371Chj885FTg0?=
- =?us-ascii?Q?E3Fkd6+mAYaOVSZtJR0f2cAnFISCUpnZJ89wVFoklTqFAyKkY3EuKoQGPIuq?=
- =?us-ascii?Q?LjWxOr5ZkislQ783waacLfeakBHIuK18g1ActbWUxP7xFevi2wm2kJ9CYag9?=
- =?us-ascii?Q?qJV9m3BErzrjFYjBk0QLcoTWb0BXkKToEwA5StuXuieGhDjks3REpLVG3Ln6?=
- =?us-ascii?Q?IyZtC1Odp3H4xRgiDRu9nmrSKk0apVZLRIInHH+FF51/Vs8guyUi7dfj/X0D?=
- =?us-ascii?Q?fJPjbeXOgSIzBRe46z1z/94mCLiXCWPcS3MgyoeaGoICYGy4Uf6+u0BQlt9k?=
- =?us-ascii?Q?DWxznjM0nOOfz1wtF4u5cMlqwTTxmUj+0TTcQH9ZUAtAAGhnSXpClaNgyVpG?=
- =?us-ascii?Q?J9H/ZCS7AzcYFD9hBFPlHlW7ho95KVfwXQglkQTFCoutITWODJ3LWGs2Uey/?=
- =?us-ascii?Q?KbukBr9UKTE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2Lh0wK5LQJMQB2qtiR09Q5vheOBhXSxJOr87RDyXnJcY7QOffIurO3eZIIMM?=
- =?us-ascii?Q?mAeOWGE+Ov+IFToa267dumwvbfsnN87k7qH2GEuvwsLDprVVTPQjzZI15Rxm?=
- =?us-ascii?Q?9Lrlg3D5vaoNHPG9fi5hGMEc/fE4rDbcdtTK7LRSUxadrCROkR/4Dn9XrciJ?=
- =?us-ascii?Q?T0mlvp32tccoVG87LgVNSdWf78j+vLZUhKvCKoh7p34xWrLktTYv/oC8nYH6?=
- =?us-ascii?Q?e330bBz54Z3O9VVKt81Y7FQG68JHB998A9DX5kmsiF/B4L1hlWnZ0xoCaGrj?=
- =?us-ascii?Q?tw3GB5U/b31IzZXtsYZlkX7I9QvFO/vWJVyFQIUZtxUgzYXExQR7mPDztpsa?=
- =?us-ascii?Q?GFThd0/GLMgEDJAMQpYL9+1atM2kPakvH3bOdMFSjP7R3xRYOVxoAfGciTPm?=
- =?us-ascii?Q?QK+linDfmWayp0N425BbFDCOocSGrWT0OJYQiP7d9QZ/qMCs0lOuT1aXLP6K?=
- =?us-ascii?Q?B6V3Meo0MczgRXuYwYB+hbRCeAR4FmjoyldimxulnY6Iw6FwBHTno2AjRIvQ?=
- =?us-ascii?Q?6WKESr3WLP6Ykvg2DuCrvRBRDj09vivwrppATDs4p5ME0PGpuUjaytIYVDEY?=
- =?us-ascii?Q?JWrzO5QBnZ5DZlEsE1dLYAoT+R9iBFOk2tGx589furHFB+FteAHiNp7Nns5i?=
- =?us-ascii?Q?lrYXDoKBIgni9zrQkf30vO/zTJNcKBr9YOShKl0VEltPAMIKe3+ryJ8vansD?=
- =?us-ascii?Q?WbdTDVmYidXum9L28gLJIgVcCZIDOQa2zlYxYtxIYCNm2M33ALJUvlU5Om1R?=
- =?us-ascii?Q?iM0Zs1Wl6LZYWEXxStLPmxId9+INSXXaYWnH3tVLjFgcLIlvOh6ZCJQdBMQC?=
- =?us-ascii?Q?hn/ggAgYHFhDTB1QQlvAmm7Jw8srG092NFU90EauMRmyz1s3pw9qOHpujXsv?=
- =?us-ascii?Q?EyfQpeP7xjAXjtZaHA9NcyqDYso1kf/PN5M8FDz3kabqB3VHXM/aqnS3ZUKf?=
- =?us-ascii?Q?L8yarpvEgQAcDJLQ62AUukZgPib36BiHorhTbbui80Vf30ReFpJb7x1wOA5t?=
- =?us-ascii?Q?uAQcarp6Qi5GI7vfezeU6fGBbxwZmOlKZNC/BccqL+WdsVo9E4whcxB0jtn+?=
- =?us-ascii?Q?cIyCe6xj6MIWHbCSvWAtXARRTtw8xy4hLNewrSVYYPZUcOtJD7K6kvQSJ36u?=
- =?us-ascii?Q?S7uX391ynIyvgBgHR/cGF4EYqAv/ABG83G6xRT6qydkwMBu2GWyfIpuJr+pR?=
- =?us-ascii?Q?eRNdmkYDEJB18BXRiwL/F4q0PT+nvGcfgmAZMePAGIRAlNj/NucYlgYv/jAz?=
- =?us-ascii?Q?wJnacgeG/+xK024QOMZ+ySCTjD/n5SXS2wUHThHisOV/B+1ae3hp/z2v27hp?=
- =?us-ascii?Q?MWBKuXc240DjOiV87/503JUxTOidI9IAt1g3OYhWx8Pl187lsoFDczi8pArT?=
- =?us-ascii?Q?qXGAyjLOtEstN5xguXq88Ow2wGJWz9hXg5nJBFm83/u0QWuhFgfA+XogEXFb?=
- =?us-ascii?Q?/frkskDlrPvypKyNbY55VGPrJYvfZRTaHpDM0Qqsns46r9fC4UeupLxdvn3u?=
- =?us-ascii?Q?FdlVp0wgPNwiqeuwsMjY4qnTWRv6ZDL2nGvn3cNbRFjcnZ3Fi91Zbg8i6HJj?=
- =?us-ascii?Q?9XKxen1U6iri9H5q20a1oEJlxE5AXBOPROpgeiPY?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2036e0e-7505-4ef2-6a97-08ddfb319463
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 06:14:12.2244
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mtvvBz0ogWyCHogvX+qENZfrXlX0PhsLyvmFdqqUBI9Ppv7+UEw1bg+fA1EE29dwd6ZBdVGhEGgZ490VI7KCqQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8234
+User-Agent: Mozilla Thunderbird
+Subject: Re: next-20250922: xe_device_sysfs.c:300:25: error: label 'cleanup'
+ used but not defined
+To: Naresh Kamboju <naresh.kamboju@linaro.org>,
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
+ Linux Regressions <regressions@lists.linux.dev>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Lukasz Laguna <lukasz.laguna@intel.com>,
+ Michal Wajdeczko <michal.wajdeczko@intel.com>,
+ Jonathan Cavitt <jonathan.cavitt@intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Anders Roxell <anders.roxell@linaro.org>,
+ Ben Copeland <benjamin.copeland@linaro.org>
+References: <CA+G9fYuZZUQq=7qPavXnHZtX9oQ=amfYVeYRZu3SHfD0ReD6nQ@mail.gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <CA+G9fYuZZUQq=7qPavXnHZtX9oQ=amfYVeYRZu3SHfD0ReD6nQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-Hi Tejun
+Hi
 
-On Sun, Sep 21, 2025 at 03:32:40PM -1000, Tejun Heo wrote:
-> The find_user_dsq() function is called from contexts that are already
-> under RCU read lock protection. Switch from rhashtable_lookup_fast() to
-> rhashtable_lookup() to avoid redundant RCU locking.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
+Am 23.09.25 um 11:51 schrieb Naresh Kamboju:
+> The arm64 and x86_64 builds failed on the Linux next-20250922 tag build due
+> to following build warnings / errors with gcc and clang toolchain.
+>
+> First seen on next-20250922
+> Good: next-20250919
+> Bad: next-20250922
+>
+> Regression Analysis:
+> - New regression? yes
+> - Reproducibility? yes
+>
+> Test regression: next-20250922: xe_device_sysfs.c:300:25: error: label
+> 'cleanup' used but not defined
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> ## Build error
+> drivers/gpu/drm/xe/xe_device_sysfs.c: In function 'xe_device_sysfs_init':
+> drivers/gpu/drm/xe/xe_device_sysfs.c:300:25: error: label 'cleanup'
+> used but not defined
+>    300 |                         goto cleanup;
+>        |                         ^~~~
 
-It looks like the ttwu_queue() path isn't RCU read lock protected.
-With this applied:
+There's been a merge conflict within this code. drm-tip [1] contains a 
+working version.
 
-[    6.647598] =============================
-[    6.647603] WARNING: suspicious RCU usage
-[    6.647605] 6.17.0-rc7-virtme #1 Not tainted
-[    6.647608] -----------------------------
-[    6.647608] ./include/linux/rhashtable.h:602 suspicious rcu_dereference_check() usage!
-[    6.647610]
-[    6.647610] other info that might help us debug this:
-[    6.647610]
-[    6.647612]
-[    6.647612] rcu_scheduler_active = 2, debug_locks = 1
-[    6.647613] 1 lock held by swapper/10/0:
-[    6.647614]  #0: ffff8b14bbb3cc98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x20/0x90
-[    6.647630]
-[    6.647630] stack backtrace:
-[    6.647633] CPU: 10 UID: 0 PID: 0 Comm: swapper/10 Not tainted 6.17.0-rc7-virtme #1 PREEMPT(full)
-[    6.647643] Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
-[    6.647646] Sched_ext: beerland_1.0.2_g27d63fc3_x86_64_unknown_linux_gnu (enabled+all)
-[    6.647648] Call Trace:
-[    6.647652]  <IRQ>
-[    6.647655]  dump_stack_lvl+0x78/0xe0
-[    6.647665]  lockdep_rcu_suspicious+0x14a/0x1b0
-[    6.647672]  __rhashtable_lookup.constprop.0+0x1d5/0x250
-[    6.647680]  find_dsq_for_dispatch+0xbc/0x190
-[    6.647684]  do_enqueue_task+0x25b/0x550
-[    6.647689]  enqueue_task_scx+0x21d/0x360
-[    6.647692]  ? trace_lock_acquire+0x22/0xb0
-[    6.647695]  enqueue_task+0x2e/0xd0
-[    6.647698]  ttwu_do_activate+0xa2/0x290
-[    6.647703]  sched_ttwu_pending+0xfd/0x250
-[    6.647706]  __flush_smp_call_function_queue+0x1cd/0x610
-[    6.647714]  __sysvec_call_function_single+0x34/0x150
-[    6.647720]  sysvec_call_function_single+0x6e/0x80
-[    6.647726]  </IRQ>
-[    6.647726]  <TASK>
-[    6.647727]  asm_sysvec_call_function_single+0x1a/0x20
+[1] 
+https://gitlab.freedesktop.org/drm/tip/-/blob/drm-tip/drivers/gpu/drm/xe/xe_device_sysfs.c?ref_type=heads#L300
 
-Should we revert this?
+Best regards
+Thomas
 
-Thanks,
--Andrea
+>
+> ## Source
+> * Kernel version: 6.17.0-rc7
+> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+> * Git describe: 6.17.0-rc6-next-20250922
+> * Git commit: bf2602a3cb2381fb1a04bf1c39a290518d2538d1
+> * Architectures: arm64, x86_64
+> * Toolchains: gcc-13 and clang-20
+> * Kconfigs: allyesconfig
+>
+> ## Build
+> * Build log: https://qa-reports.linaro.org/api/testruns/29968978/log_file/
+> * Build details:
+> https://regressions.linaro.org/lkft/linux-next-master/next-20250922/log-parser-build-gcc/gcc-compiler-drivers_gpu_drm_xe_xe_device_sysfs_c-error-label-cleanup-used-but-not-defined/
+> * Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/333Idt9y0485dJThIiCgCMB7ehs
+> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/333Idt9y0485dJThIiCgCMB7ehs/
+> * Kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/333Idt9y0485dJThIiCgCMB7ehs/config
+>
+> --
+> Linaro LKFT
 
-> ---
->  kernel/sched/ext.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index f5873f8ed669..df433f6fab4b 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -207,7 +207,7 @@ static struct scx_dispatch_q *find_global_dsq(struct task_struct *p)
->  
->  static struct scx_dispatch_q *find_user_dsq(struct scx_sched *sch, u64 dsq_id)
->  {
-> -	return rhashtable_lookup_fast(&sch->dsq_hash, &dsq_id, dsq_hash_params);
-> +	return rhashtable_lookup(&sch->dsq_hash, &dsq_id, dsq_hash_params);
->  }
->  
->  /*
-> -- 
-> 2.51.0
-> 
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
+
 
