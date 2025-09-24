@@ -1,126 +1,122 @@
-Return-Path: <linux-kernel+bounces-830317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38199B9963C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:15:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B993DB99645
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E821B2342E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8049E322889
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6292DCF71;
-	Wed, 24 Sep 2025 10:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4492DE717;
+	Wed, 24 Sep 2025 10:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TH9PCkV5"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S93HjY1c"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D892DD60E
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005532DBF7C;
+	Wed, 24 Sep 2025 10:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758708928; cv=none; b=r+bVHgCCFgepDhOzxX8v62UDQWhpxM6LMzDKbddOtyAGxPw9rIl1Dt9tJLGI92pGSZGrzEwdx1ZVuQxnJo9G50FvLyYVmuygOKtWvVq5n+68fve0BjSh1CRbVUDTLnW5U3IgQj9fKOtBgKvd80PLIUkU7s6zoWI5cl50j4IoTCo=
+	t=1758708931; cv=none; b=UHtcOY28oJMWGL2lu3ZLC8JWUOnSSpyJlEkw6nzlo7IDLzIg1JW058LqTt3ZF87tBfUP8thoI0otz1ApoFuMn4FNi1luJzvxcYQjD5qBBnhAmBE5dVV28QLbnhBiE3W6ysz70O0k2XqVOJBXgar770/57/zpYzafhSW7yHiKnFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758708928; c=relaxed/simple;
-	bh=/Q9vCOreIoGjql+sVyN91PZfur9aXF/T51feLqehc4o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z79fWQnWFwbYqttIKxQrRsva893XHC+lFreQxOggkH66O+980TJ0YDre13wc0O+F39rRdH95mbABbFp/nmYbmmAu8gBN3uJiTWXV2xtmEIosjkdIRVfPeHorlB5rpbkBdc7Q9ELKlY8ggJLhX2MerHk2zWIbpCEHDJfzcsjDfEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TH9PCkV5; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3fa528f127fso605992f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:15:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758708922; x=1759313722; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IOhc0Qxyul5wC2rt4MIQkux7LNfnaT0nE4lQR+NyZBI=;
-        b=TH9PCkV5x+RxCdN7VoxYvAurJIrZhR20pr1r7UqewwPKUazge1Eqf9tEfFAjFjOk8d
-         1MBogDvLU5QpoDHgHnOLxxVFIfe3V+tjwZWhIGfv/JWN2CxwR91KLxtXOZjjg3WV7q3t
-         T9ueIsnX7i5WdMyV0NlAB63/Di08TNfQl92tgYyqAcsmyE1/p7fAdn1W5R+/dX2jR3nV
-         98gXMrNbFBdbyx5lRL7xD0yIFKkNn39v3OwClULVyvp3h7C9r3UTpYUSKWTbx5HDwAJn
-         qPVnRcelacyly8DQlYU1kacXBtFDYirmgqKhgQ/8fkfeRMGgjwTBE/FTEux1Db8faiwC
-         UFog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758708922; x=1759313722;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IOhc0Qxyul5wC2rt4MIQkux7LNfnaT0nE4lQR+NyZBI=;
-        b=qFrP6R8aBT5VouUPz/AEiybvo1VBMs7S1cwLxnXZbsdq2qh3GuRs1nzMMSWUOrNaJH
-         B8w/bIQsAmUFDPua0t8+ZJOMgPQDFbSAtGMDskLI++9xRp0OgRP2W0/7v3TbeTNN0qY9
-         TlWFiogHC12wv5oRuZdKNO5QCIh48yjatwoHSq+DnCCPgVsmaFFzg23lcfM6a1nnMIf0
-         G4qwWXKB8smuOOUTcCh0/X3tweDYzsnWKnVqfhD/idikqxMCplveIvKKiepOqNmsumH/
-         m548VRDN9rPCO9rTanbsxjBUWmkPlmTJ9zNZC7szgvD1P4LKbp+sLzwq/dR6QRHCI/z3
-         jYrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUew3cIDW2PH56sMZWE3vDfB5pQ7/SRm2vfSpgAuAYgbEek1g6d+Bzm+GUTJSIydJANKkGayuAINjq7vzo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1nNS9/UVRabff/L7YVZUWumAXce3jTu9qxDsCtUy+csPSppo2
-	TZbQqyV0mrZD1+YA54dwIly7P/F6pP5iJENWxBeT89rfqluKDakGPkYU
-X-Gm-Gg: ASbGncvqzjESa+y4scr/TWPgDip8P2FgGDhvKwj+SG6w8ZOa7CWitxho7Ap4C0rc2ev
-	a+FIkwcjLcZsQMphc4TyQkhMgVl7aNHAxpcxrn6KNVhKlUPu1YUDXAZJwR3RvhQplD4IgiO6ex5
-	3qMgFLf/p/Xn+VL72CWjAr/FXVeGML2Ct25RELKaKPn9K1XDa6/d8efVacst8YF2uzw3vVglmjW
-	j6WX++t+R5+9CajqDp7eG0eWuprnsKhhFZ0fFv5EV5hWlHTDCL88nkURgSPQNtck4kMxjHzbtLD
-	WfAfV0dfo2LR65w9XYbT6KRrUvq+fnxHXZ+Uum4eroVwJ4xs8u532bEBLK6cs/Wh5AET+oE27vl
-	KoISrUZ2dw8VttTLFs+eydQ==
-X-Google-Smtp-Source: AGHT+IEr/rY8DYnEgjfNqtZnQLYi8AIPod0JxD4snpz+21wUk07dSh+fVo+u5hSxKvTeDXsJt+uDWA==
-X-Received: by 2002:a05:6000:400f:b0:401:c55d:2d20 with SMTP id ffacd0b85a97d-40ad1604b9emr1380003f8f.26.1758708921561;
-        Wed, 24 Sep 2025 03:15:21 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e2ab31bdesm24993385e9.11.2025.09.24.03.15.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 03:15:21 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Badal Nilawar <badal.nilawar@intel.com>,
-	Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/xe/xe_late_bind_fw: Fix missing initialization of variable offset
-Date: Wed, 24 Sep 2025 11:14:32 +0100
-Message-ID: <20250924101432.8689-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758708931; c=relaxed/simple;
+	bh=1uyEu6yafkIx0SXozzaxMJRC9ltSjEJEMuHsl0MpVlU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C0BPfDkbAAYVJ+rUWDrQSBiZnNgBqHvtHr41eJU2ui0Evr19z1TDO0K3+XDNx3CIsKC9Y8k8Oo1IvkFfNEkJS/JSBUZT8XodkNeS61jXhu0yTHwTT2aYPhWVC7x3iDyS8HAlT+tglGcI2/gu18I9PYfeLO+IVkJs8mglNsb+iio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S93HjY1c; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758708927;
+	bh=1uyEu6yafkIx0SXozzaxMJRC9ltSjEJEMuHsl0MpVlU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S93HjY1cAJMNbDfCnyhBybY0llsQplGyrGqfWhpQQRCAFvk9J5NX/iMbG2zVt2mqL
+	 s7K6LahFrz2/SowOlGk+h05i3VtpzPIcGdypz9y/6uiDaE7b+W7r/CNZuG++4m2xjR
+	 Lnzvm6aUPI539UHXr8WTczL1o5EwFB8BflEdau/FajawvUsUNLV+UhsrW0FPeYJnwv
+	 sGqZq66K+GRCImEiLFECqD7x7Ng/PsO3vLiZeR7JA5LoAxMsvHnT8IS7wcMLCyMokl
+	 ZNLWzoHsTugp96TAt6fesMYXhvFVKFcYszrWjbaY9r48dsDeTV79SdE09KF8uA0v/c
+	 tJqHUnTPwWlfg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9AFDC17E12A7;
+	Wed, 24 Sep 2025 12:15:26 +0200 (CEST)
+Message-ID: <6af21910-5e45-4eef-90d2-690766913bed@collabora.com>
+Date: Wed, 24 Sep 2025 12:15:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: mediatek: Add binding for
+ mt8189 scp
+To: Huayu Zong <huayu.zong@mediatek.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Tinghan Shen <tinghan.shen@mediatek.com>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20250924084422.4604-1-huayu.zong@mediatek.com>
+ <20250924084422.4604-2-huayu.zong@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250924084422.4604-2-huayu.zong@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The variable offset is not being initialized, and it is only set inside
-a for-loop if entry->name is the same as manifest_entry. In the case
-where it is not initialized a non-zero check on offset is potentialy
-checking a bogus uninitalized value. Fix this by initializing offset
-to zero.
+Il 24/09/25 10:44, Huayu Zong ha scritto:
+> Add the compatible for mt8189 SCP to the binding.
+> 
+> Signed-off-by: Huayu Zong <huayu.zong@mediatek.com>
 
-Fixes: efa29317a553 ("drm/xe/xe_late_bind_fw: Extract and print version info")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/xe/xe_late_bind_fw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please fix the commit description.
 
-diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw.c b/drivers/gpu/drm/xe/xe_late_bind_fw.c
-index 38f3feb2aecd..4f0a529caf20 100644
---- a/drivers/gpu/drm/xe/xe_late_bind_fw.c
-+++ b/drivers/gpu/drm/xe/xe_late_bind_fw.c
-@@ -60,7 +60,7 @@ static int parse_cpd_header(struct xe_late_bind_fw *lb_fw,
- 	const struct gsc_manifest_header *manifest;
- 	const struct gsc_cpd_entry *entry;
- 	size_t min_size = sizeof(*header);
--	u32 offset;
-+	u32 offset = 0;
- 	int i;
- 
- 	/* manifest_entry is mandatory */
--- 
-2.51.0
+Example:
+
+Add a new compatible for MT8189's SCP: even though this is partially
+compatible with the SCP found in MT8192, the register layout has some
+slight differences.
+
+...after which:
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogiaocchino.delregno@collabora.com>
+
+> ---
+>   Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> index 179c98b33b4d..407be544b404 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> @@ -20,6 +20,7 @@ properties:
+>         - mediatek,mt8186-scp
+>         - mediatek,mt8188-scp
+>         - mediatek,mt8188-scp-dual
+> +      - mediatek,mt8189-scp
+>         - mediatek,mt8192-scp
+>         - mediatek,mt8195-scp
+>         - mediatek,mt8195-scp-dual
+> @@ -168,6 +169,7 @@ allOf:
+>               - mediatek,mt8183-scp
+>               - mediatek,mt8186-scp
+>               - mediatek,mt8188-scp
+> +            - mediatek,mt8189-scp
+>       then:
+>         properties:
+>           reg:
+
 
 
